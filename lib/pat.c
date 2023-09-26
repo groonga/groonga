@@ -2846,6 +2846,8 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
 }
 
 typedef struct {
+  const char *key;
+  uint32_t key_size;
   uint16_t *dists;
   uint32_t x_length;
   uint32_t max_distance;
@@ -2865,12 +2867,12 @@ typedef struct {
 grn_inline static uint16_t
 grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
                                         fuzzy_search_data *data,
-                                        const char *sx,
-                                        const char *ex,
                                         const char *sy,
                                         const char *ey,
                                         uint32_t offset)
 {
+  const char *sx = data->key;
+  const char *ex = sx + data->key_size;
   uint32_t cx, cy, x, y;
   const char *px, *py;
 
@@ -3014,8 +3016,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                grn_pat *pat,
                                fuzzy_search_data *data,
                                grn_id id,
-                               const char *key,
-                               uint32_t key_size,
                                int last_check,
                                fuzzy_heap *heap)
 {
@@ -3040,31 +3040,17 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
       }
     }
     if (node->lr[0] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx,
-                                     pat,
-                                     data,
-                                     node->lr[0],
-                                     key,
-                                     key_size,
-                                     check,
-                                     heap);
+      grn_pat_fuzzy_search_recursive(ctx, pat, data, node->lr[0], check, heap);
     }
     if (node->lr[1] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx,
-                                     pat,
-                                     data,
-                                     node->lr[1],
-                                     key,
-                                     key_size,
-                                     check,
-                                     heap);
+      grn_pat_fuzzy_search_recursive(ctx, pat, data, node->lr[1], check, heap);
     }
   } else {
     if (data->prefix_match_size > 0) {
       if (len < data->prefix_match_size) {
         return;
       }
-      if (memcmp(k, key, data->prefix_match_size) != 0) {
+      if (memcmp(k, data->key, data->prefix_match_size) != 0) {
         return;
       }
     }
@@ -3100,13 +3086,8 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
     }
     if (len - offset) {
       uint16_t distance;
-      distance = grn_pat_fuzzy_search_calc_edit_distance(ctx,
-                                                         data,
-                                                         key,
-                                                         key + key_size,
-                                                         k,
-                                                         k + len,
-                                                         offset);
+      distance =
+        grn_pat_fuzzy_search_calc_edit_distance(ctx, data, k, k + len, offset);
       if (distance <= data->max_distance) {
         fuzzy_heap_push(ctx, heap, id, distance);
       }
@@ -3138,6 +3119,8 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
+  data.key = key;
+  data.key_size = key_size;
   if (args) {
     data.max_distance = args->max_distance;
     data.max_expansion = args->max_expansion;
@@ -3149,9 +3132,9 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     data.prefix_match_size = 0;
     data.flags = 0;
   }
-  if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
+  if (data.key_size > GRN_TABLE_MAX_KEY_SIZE ||
       data.max_distance > GRN_TABLE_MAX_KEY_SIZE ||
-      data.prefix_match_size > key_size) {
+      data.prefix_match_size > data.key_size) {
     return GRN_INVALID_ARGUMENT;
   }
 
@@ -3187,7 +3170,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
 
   /*
    * x: each character of the given key
-   * lx: the number of x in character
+   * x_length: the number of x in character
    * y: each character of a key in this pat
    *
    * Example:
@@ -3220,7 +3203,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    * Fill dists and find matched IDs recursively. See
    * grn_pat_fuzzy_search_calc_edit_distance() how to fill dists.
    */
-  grn_pat_fuzzy_search_recursive(ctx, pat, &data, id, key, key_size, -1, heap);
+  grn_pat_fuzzy_search_recursive(ctx, pat, &data, id, -1, heap);
   GRN_FREE(data.dists);
   for (i = 0; i < heap->n_entries; i++) {
     if (data.max_expansion > 0 && i >= data.max_expansion) {
