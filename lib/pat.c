@@ -2857,7 +2857,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
                              uint32_t lx,
                              uint32_t offset,
                              uint32_t max_distance,
-                             grn_bool *can_transition,
+                             bool *can_transition,
                              uint32_t flags)
 {
   uint32_t cx, cy, x, y;
@@ -2875,7 +2875,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
      * with only insertion costs.
      * This is end of row on allocated memory. */
     if (y > lx + max_distance) {
-      *can_transition = GRN_FALSE;
+      *can_transition = false;
       return max_distance + 1;
     }
 
@@ -2901,10 +2901,10 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
   if (lx) {
     /* If there is no cell which is smaller than equal to max distance on end of
      * row, children nodes will be no longer smaller than max distance */
-    *can_transition = GRN_FALSE;
+    *can_transition = false;
     for (x = 1; x <= lx; x++) {
       if (DIST(x, y - 1) <= max_distance) {
-        *can_transition = GRN_TRUE;
+        *can_transition = true;
         break;
       }
     }
@@ -2915,7 +2915,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
 typedef struct {
   const char *key;
   int key_length;
-  grn_bool can_transition;
+  bool can_transition;
 } fuzzy_node;
 
 grn_inline static void
@@ -2949,7 +2949,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
   if (check > last_check) {
     if (len >= last_node->key_length &&
         !memcmp(k, last_node->key, last_node->key_length)) {
-      if (last_node->can_transition == GRN_FALSE) {
+      if (!last_node->can_transition) {
         return;
       }
     }
@@ -2993,13 +2993,13 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
       /* Set already calculated common prefix length */
       if (len >= last_node->key_length &&
           !memcmp(k, last_node->key, last_node->key_length)) {
-        if (last_node->can_transition == GRN_FALSE) {
+        if (!last_node->can_transition) {
           return;
         }
         offset = last_node->key_length;
       } else {
-        if (last_node->can_transition == GRN_FALSE) {
-          last_node->can_transition = GRN_TRUE;
+        if (!last_node->can_transition) {
+          last_node->can_transition = true;
         }
         if (last_node->key_length) {
           const char *kp = k;
@@ -3113,7 +3113,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
 
   last_node.key = NULL;
   last_node.key_length = 0;
-  last_node.can_transition = GRN_TRUE;
+  last_node.can_transition = true;
   _grn_pat_fuzzy_search(ctx,
                         pat,
                         id,
