@@ -2853,7 +2853,7 @@ grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
     if (PAT_LEN(rn) < data->prefix_match_size) {
       break;
     }
-    if (!memcmp(k, data->key, data->prefix_match_size)) {
+    if (memcmp(k, data->key, data->prefix_match_size) == 0) {
       return r;
     }
     break;
@@ -3058,7 +3058,7 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
      * Set already calculated common prefix length. */
     uint32_t offset = 0;
     if (len >= data->last_node.key_length &&
-        !memcmp(k, data->last_node.key, data->last_node.key_length)) {
+        memcmp(k, data->last_node.key, data->last_node.key_length) == 0) {
       if (!data->last_node.can_transition) {
         return;
       }
@@ -3067,7 +3067,7 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
       if (!data->last_node.can_transition) {
         data->last_node.can_transition = true;
       }
-      if (data->last_node.key_length) {
+      if (data->last_node.key_length > 0) {
         const char *kp = k;
         const char *ke = k + len;
         const char *p = data->last_node.key;
@@ -3075,14 +3075,14 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
         int lp;
         for (; p < e && kp < ke && (lp = grn_charlen(ctx, p, e));
              p += lp, kp += lp) {
-          if (p + lp <= e && kp + lp <= ke && memcmp(p, kp, lp)) {
+          if (p + lp <= e && kp + lp <= ke && memcmp(p, kp, lp) != 0) {
             break;
           }
         }
         offset = kp - k;
       }
     }
-    if (len - offset) {
+    if (len > offset) {
       uint16_t distance;
       distance =
         grn_pat_fuzzy_search_calc_edit_distance(ctx, data, k, k + len, offset);
@@ -3223,7 +3223,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     }
   }
   fuzzy_heap_close(ctx, data.heap);
-  if (grn_hash_size(ctx, h)) {
+  if (grn_hash_size(ctx, h) > 0) {
     return GRN_SUCCESS;
   } else {
     return GRN_END_OF_DATA;
