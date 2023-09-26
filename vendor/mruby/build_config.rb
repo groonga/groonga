@@ -5,10 +5,6 @@ MRuby::Lockfile.disable if MRuby.const_defined?(:Lockfile)
 MRuby::Build.new do |conf|
   if ENV["MRUBY_VC"] || ENV["VisualStudioVersion"] || ENV["VSINSTALLDIR"]
     conf.toolchain :visualcpp
-    # Because presym doesn't support Windows style path such as
-    # "C:\Users\...". We need to escape "\" in C string literal like
-    # "C:\\Users\\...".
-    conf.disable_presym
   else
     conf.toolchain :gcc
   end
@@ -60,5 +56,5 @@ MRuby::Build.new do |conf|
   conf.gem :github => "ksss/mruby-file-stat",
            :checksum_hash => "f3e858f01361b9b4a8e77ada52470068630c9530"
   conf.gem :github => "mattn/mruby-onig-regexp",
-           :checksum_hash => "0af2124b095474bd2897021df669e61eac4743ec"
+           :checksum_hash => "2ae5ec5cde0b54fc9c3f81a8cf81f7dac574cff6"
 end

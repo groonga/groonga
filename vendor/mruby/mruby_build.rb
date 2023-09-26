@@ -35,10 +35,7 @@ FileUtils.cp("#{mruby_build_dir}/host/LEGAL", "./")
 FileUtils.cp("#{mruby_build_dir}/host/mrblib/mrblib.c", "./")
 
 FileUtils.rm_rf("mruby-include")
-include_dir = "#{mruby_build_dir}/host/include/"
-# This directory doesn't exist on Windows because we disable presym on Windows.
-# See also build_config.rb.
-FileUtils.cp_r(include_dir, "mruby-include/") if File.exist?(include_dir)
+FileUtils.cp_r("#{mruby_build_dir}/host/include/", "mruby-include/")
 
 File.open("mrbgems_init.c", "w") do |mrbgems_init|
   Dir.glob("#{mruby_build_dir}/host/mrbgems/**/gem_init.c") do |gem_init|
