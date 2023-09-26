@@ -2848,6 +2848,11 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
 typedef struct {
   uint16_t *dists;
   uint32_t x_length;
+  struct {
+    const char *key;
+    uint32_t key_length;
+    bool can_transition;
+  } last_node;
 } fuzzy_search_data;
 
 #define DIST(data, ox, oy)                                                     \
@@ -2862,7 +2867,6 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
                                         const char *ey,
                                         uint32_t offset,
                                         uint32_t max_distance,
-                                        bool *can_transition,
                                         uint32_t flags)
 {
   uint32_t cx, cy, x, y;
@@ -2958,7 +2962,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
      * with only insertion costs.
      * This is end of row on allocated memory. */
     if (y > data->x_length + max_distance) {
-      *can_transition = false;
+      data->last_node.can_transition = false;
       return max_distance + 1;
     }
 
@@ -2990,10 +2994,10 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
   if (data->x_length > 0) {
     /* If there is no cell which is smaller than equal to max distance on end of
      * row, children nodes will be no longer smaller than max distance */
-    *can_transition = false;
+    data->last_node.can_transition = false;
     for (x = 1; x <= data->x_length; x++) {
       if (DIST(data, x, y - 1) <= max_distance) {
-        *can_transition = true;
+        data->last_node.can_transition = true;
         break;
       }
     }
@@ -3001,12 +3005,6 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
   /* The bottom right cell is the distance of this input. */
   return DIST(data, data->x_length, y - 1);
 }
-
-typedef struct {
-  const char *key;
-  uint32_t key_length;
-  bool can_transition;
-} fuzzy_node;
 
 /* id must not be GRN_ID_NIL. Caller must check it. */
 grn_inline static void
@@ -3017,7 +3015,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                const char *key,
                                uint32_t key_size,
                                int last_check,
-                               fuzzy_node *last_node,
                                uint32_t max_distance,
                                uint32_t prefix_match_size,
                                uint32_t flags,
@@ -3037,9 +3034,9 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
 
   /* There are sub nodes. */
   if (check > last_check) {
-    if (len >= last_node->key_length &&
-        !memcmp(k, last_node->key, last_node->key_length)) {
-      if (!last_node->can_transition) {
+    if (len >= data->last_node.key_length &&
+        !memcmp(k, data->last_node.key, data->last_node.key_length)) {
+      if (!data->last_node.can_transition) {
         return;
       }
     }
@@ -3051,7 +3048,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                      key,
                                      key_size,
                                      check,
-                                     last_node,
                                      max_distance,
                                      prefix_match_size,
                                      flags,
@@ -3065,7 +3061,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                      key,
                                      key_size,
                                      check,
-                                     last_node,
                                      max_distance,
                                      prefix_match_size,
                                      flags,
@@ -3085,21 +3080,21 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
      *
      * Set already calculated common prefix length. */
     uint32_t offset = 0;
-    if (len >= last_node->key_length &&
-        !memcmp(k, last_node->key, last_node->key_length)) {
-      if (!last_node->can_transition) {
+    if (len >= data->last_node.key_length &&
+        !memcmp(k, data->last_node.key, data->last_node.key_length)) {
+      if (!data->last_node.can_transition) {
         return;
       }
-      offset = last_node->key_length;
+      offset = data->last_node.key_length;
     } else {
-      if (!last_node->can_transition) {
-        last_node->can_transition = true;
+      if (!data->last_node.can_transition) {
+        data->last_node.can_transition = true;
       }
-      if (last_node->key_length) {
+      if (data->last_node.key_length) {
         const char *kp = k;
         const char *ke = k + len;
-        const char *p = last_node->key;
-        const char *e = last_node->key + last_node->key_length;
+        const char *p = data->last_node.key;
+        const char *e = data->last_node.key + data->last_node.key_length;
         int lp;
         for (; p < e && kp < ke && (lp = grn_charlen(ctx, p, e));
              p += lp, kp += lp) {
@@ -3112,23 +3107,21 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
     }
     if (len - offset) {
       uint16_t distance;
-      distance =
-        grn_pat_fuzzy_search_calc_edit_distance(ctx,
-                                                data,
-                                                key,
-                                                key + key_size,
-                                                k,
-                                                k + len,
-                                                offset,
-                                                max_distance,
-                                                &(last_node->can_transition),
-                                                flags);
+      distance = grn_pat_fuzzy_search_calc_edit_distance(ctx,
+                                                         data,
+                                                         key,
+                                                         key + key_size,
+                                                         k,
+                                                         k + len,
+                                                         offset,
+                                                         max_distance,
+                                                         flags);
       if (distance <= max_distance) {
         fuzzy_heap_push(ctx, heap, id, distance);
       }
     }
-    last_node->key = k;
-    last_node->key_length = len;
+    data->last_node.key = k;
+    data->last_node.key_length = len;
   }
   return;
 }
@@ -3149,7 +3142,6 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   uint32_t len, x, y, i;
   const char *s = key;
   const char *e = (const char *)key + key_size;
-  fuzzy_node last_node;
   fuzzy_heap *heap;
   uint32_t max_distance = 1;
   uint32_t max_expansion = 0;
@@ -3227,9 +3219,9 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     DIST(&data, 0, y) = y;
   }
 
-  last_node.key = NULL;
-  last_node.key_length = 0;
-  last_node.can_transition = true;
+  data.last_node.key = NULL;
+  data.last_node.key_length = 0;
+  data.last_node.can_transition = true;
   /*
    * Fill dists and find matched IDs recursively. See
    * grn_pat_fuzzy_search_calc_edit_distance() how to fill dists.
@@ -3241,7 +3233,6 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                                  key,
                                  key_size,
                                  -1,
-                                 &last_node,
                                  max_distance,
                                  prefix_match_size,
                                  flags,
