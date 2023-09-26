@@ -30,12 +30,11 @@ func_str_len(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs == 1) {
     grn_obj *text = args[0];
-    size_t len = GRN_TEXT_LEN(text);
-    char *null_terminated_text = malloc(len + 1);
-    memcpy(null_terminated_text, GRN_TEXT_VALUE(text), len);
-    null_terminated_text[len] = '\0';
-    length = grn_str_len(ctx, null_terminated_text, ctx->encoding, NULL);
-    free(null_terminated_text);
+    length = grn_str_len(ctx,
+                         GRN_TEXT_VALUE(text),
+                         GRN_TEXT_VALUE(text) + GRN_TEXT_LEN(text),
+                         ctx->encoding,
+                         NULL);
   }
   if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, length);
