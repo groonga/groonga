@@ -3199,6 +3199,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    */
   grn_pat_fuzzy_search_recursive(ctx, &data, id, -1);
   GRN_FREE(data.dists);
+  uint32_t n_results = 0;
   for (i = 0; i < data.heap->n_entries; i++) {
     if (data.max_expansion > 0 && i >= data.max_expansion) {
       break;
@@ -3221,9 +3222,10 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                    NULL,
                    NULL);
     }
+    n_results++;
   }
   fuzzy_heap_close(ctx, data.heap);
-  if (grn_hash_size(ctx, h) > 0) {
+  if (n_results > 0) {
     return GRN_SUCCESS;
   } else {
     return GRN_END_OF_DATA;
