@@ -899,7 +899,7 @@ test_str_len(gconstpointer data)
   input = gcut_data_get_string(data, "input");
   input_end = strchr(input, '\0');
   encoding = gcut_data_get_int(data, "encoding");
-  result = grn_str_len(&context, input, encoding, &input_end);
+  result = grn_str_len(&context, input, input_end, encoding, NULL);
   expected = gcut_data_get_size(data, "expected");
   cut_assert_equal_size(expected, result);
 }
