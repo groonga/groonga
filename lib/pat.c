@@ -2739,47 +2739,6 @@ grn_pat_lcp_search(grn_ctx *ctx,
   return r2;
 }
 
-static grn_id
-grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
-                                                 grn_pat *pat,
-                                                 const void *key,
-                                                 uint32_t key_size)
-{
-  int32_t c0 = -1, c;
-  const uint8_t *k;
-  int32_t len = key_size * 16;
-  grn_id r;
-  pat_node *rn;
-  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-
-  KEY_ENCODE(pat, keybuf, key, key_size);
-  PAT_AT(pat, 0, rn);
-  r = rn->lr[1];
-  while (r) {
-    PAT_AT(pat, r, rn);
-    if (!rn) {
-      return GRN_ID_NIL;
-    }
-    c = PAT_CHK(rn);
-    if (c0 < c && c < len - 1) {
-      r = *grn_pat_next_location(ctx, rn, key, c, len);
-      c0 = c;
-      continue;
-    }
-    if (!(k = pat_node_get_key(ctx, pat, rn))) {
-      break;
-    }
-    if (PAT_LEN(rn) < key_size) {
-      break;
-    }
-    if (!memcmp(k, key, key_size)) {
-      return r;
-    }
-    break;
-  }
-  return GRN_ID_NIL;
-}
-
 typedef struct {
   grn_id id;
   uint16_t distance;
@@ -2846,6 +2805,7 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
 }
 
 typedef struct {
+  grn_pat *pat;
   const char *key;
   uint32_t key_size;
   uint16_t *dists;
@@ -2861,6 +2821,45 @@ typedef struct {
     bool can_transition;
   } last_node;
 } fuzzy_search_data;
+
+static grn_id
+grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
+                                                 fuzzy_search_data *data)
+{
+  int32_t c0 = -1, c;
+  const uint8_t *k;
+  int32_t len = data->prefix_match_size * 16;
+  grn_id r;
+  pat_node *rn;
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+
+  KEY_ENCODE(data->pat, keybuf, data->key, data->prefix_match_size);
+  PAT_AT(data->pat, 0, rn);
+  r = rn->lr[1];
+  while (r) {
+    PAT_AT(data->pat, r, rn);
+    if (!rn) {
+      return GRN_ID_NIL;
+    }
+    c = PAT_CHK(rn);
+    if (c0 < c && c < len - 1) {
+      r = *grn_pat_next_location(ctx, rn, data->key, c, len);
+      c0 = c;
+      continue;
+    }
+    if (!(k = pat_node_get_key(ctx, data->pat, rn))) {
+      break;
+    }
+    if (PAT_LEN(rn) < data->prefix_match_size) {
+      break;
+    }
+    if (!memcmp(k, data->key, data->prefix_match_size)) {
+      return r;
+    }
+    break;
+  }
+  return GRN_ID_NIL;
+}
 
 #define DIST(data, ox, oy)                                                     \
   ((data)->dists[(((data)->x_length + 1) * (oy)) + (ox)])
@@ -3014,7 +3013,6 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
 /* id must not be GRN_ID_NIL. Caller must check it. */
 grn_inline static void
 grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
-                               grn_pat *pat,
                                fuzzy_search_data *data,
                                grn_id id,
                                int last_check)
@@ -3023,13 +3021,13 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
   int check;
   const char *k;
 
-  PAT_AT(pat, id, node);
+  PAT_AT(data->pat, id, node);
   if (!node) {
     return;
   }
   check = PAT_CHK(node);
   uint32_t len = PAT_LEN(node);
-  k = pat_node_get_key(ctx, pat, node);
+  k = pat_node_get_key(ctx, data->pat, node);
 
   /* There are sub nodes. */
   if (check > last_check) {
@@ -3040,10 +3038,10 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
       }
     }
     if (node->lr[0] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, pat, data, node->lr[0], check);
+      grn_pat_fuzzy_search_recursive(ctx, data, node->lr[0], check);
     }
     if (node->lr[1] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, pat, data, node->lr[1], check);
+      grn_pat_fuzzy_search_recursive(ctx, data, node->lr[1], check);
     }
   } else {
     if (data->prefix_match_size > 0) {
@@ -3118,6 +3116,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
+  data.pat = pat;
   data.key = key;
   data.key_size = key_size;
   if (args) {
@@ -3138,11 +3137,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   }
 
   if (data.prefix_match_size > 0) {
-    id =
-      grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx,
-                                                       pat,
-                                                       key,
-                                                       data.prefix_match_size);
+    id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx, &data);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
     id = node->lr[1];
@@ -3202,7 +3197,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    * Fill dists and find matched IDs recursively. See
    * grn_pat_fuzzy_search_calc_edit_distance() how to fill dists.
    */
-  grn_pat_fuzzy_search_recursive(ctx, pat, &data, id, -1);
+  grn_pat_fuzzy_search_recursive(ctx, &data, id, -1);
   GRN_FREE(data.dists);
   for (i = 0; i < data.heap->n_entries; i++) {
     if (data.max_expansion > 0 && i >= data.max_expansion) {
