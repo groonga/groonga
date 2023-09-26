@@ -2919,19 +2919,19 @@ typedef struct {
 } fuzzy_node;
 
 grn_inline static void
-_grn_pat_fuzzy_search(grn_ctx *ctx,
-                      grn_pat *pat,
-                      grn_id id,
-                      const char *key,
-                      uint32_t key_size,
-                      uint16_t *dists,
-                      uint32_t lx,
-                      int last_check,
-                      fuzzy_node *last_node,
-                      uint32_t max_distance,
-                      uint32_t prefix_match_size,
-                      uint32_t flags,
-                      fuzzy_heap *heap)
+grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
+                               grn_pat *pat,
+                               grn_id id,
+                               const char *key,
+                               uint32_t key_size,
+                               uint16_t *dists,
+                               uint32_t lx,
+                               int last_check,
+                               fuzzy_node *last_node,
+                               uint32_t max_distance,
+                               uint32_t prefix_match_size,
+                               uint32_t flags,
+                               fuzzy_heap *heap)
 {
   pat_node *node = NULL;
   int check;
@@ -2953,33 +2953,33 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
         return;
       }
     }
-    _grn_pat_fuzzy_search(ctx,
-                          pat,
-                          node->lr[0],
-                          key,
-                          key_size,
-                          dists,
-                          lx,
-                          check,
-                          last_node,
-                          max_distance,
-                          prefix_match_size,
-                          flags,
-                          heap);
+    grn_pat_fuzzy_search_recursive(ctx,
+                                   pat,
+                                   node->lr[0],
+                                   key,
+                                   key_size,
+                                   dists,
+                                   lx,
+                                   check,
+                                   last_node,
+                                   max_distance,
+                                   prefix_match_size,
+                                   flags,
+                                   heap);
 
-    _grn_pat_fuzzy_search(ctx,
-                          pat,
-                          node->lr[1],
-                          key,
-                          key_size,
-                          dists,
-                          lx,
-                          check,
-                          last_node,
-                          max_distance,
-                          prefix_match_size,
-                          flags,
-                          heap);
+    grn_pat_fuzzy_search_recursive(ctx,
+                                   pat,
+                                   node->lr[1],
+                                   key,
+                                   key_size,
+                                   dists,
+                                   lx,
+                                   check,
+                                   last_node,
+                                   max_distance,
+                                   prefix_match_size,
+                                   flags,
+                                   heap);
   } else {
     if (id) {
       if (prefix_match_size > 0) {
@@ -3114,19 +3114,19 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   last_node.key = NULL;
   last_node.key_length = 0;
   last_node.can_transition = true;
-  _grn_pat_fuzzy_search(ctx,
-                        pat,
-                        id,
-                        key,
-                        key_size,
-                        dists,
-                        lx,
-                        -1,
-                        &last_node,
-                        max_distance,
-                        prefix_match_size,
-                        flags,
-                        heap);
+  grn_pat_fuzzy_search_recursive(ctx,
+                                 pat,
+                                 id,
+                                 key,
+                                 key_size,
+                                 dists,
+                                 lx,
+                                 -1,
+                                 &last_node,
+                                 max_distance,
+                                 prefix_match_size,
+                                 flags,
+                                 heap);
   GRN_FREE(dists);
   for (i = 0; i < heap->n_entries; i++) {
     if (max_expansion > 0 && i >= max_expansion) {
