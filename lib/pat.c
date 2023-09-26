@@ -2937,7 +2937,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
   pat_node *node = NULL;
   int check;
   const char *k;
-  uint32_t offset = 0;
 
   PAT_AT(pat, id, node);
   if (!node) {
@@ -2994,6 +2993,7 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
       }
     }
     /* Set already calculated common prefix length */
+    uint32_t offset = 0;
     if (len >= last_node->key_length &&
         !memcmp(k, last_node->key, last_node->key_length)) {
       if (!last_node->can_transition) {
