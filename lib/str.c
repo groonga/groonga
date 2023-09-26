@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1493,20 +1493,21 @@ grn_encoding_parse(const char *str)
 size_t
 grn_str_len(grn_ctx *ctx,
             const char *str,
+            const char *end,
             grn_encoding encoding,
             const char **last)
 {
   size_t len, tlen;
   const char *p = NULL;
-  for (len = 0;; len++) {
+  for (len = 0; str < end; len++) {
     p = str;
-    if (!(tlen = grn_str_charlen(ctx, str, encoding))) {
+    if (!(tlen = grn_charlen_(ctx, str, end, encoding))) {
       break;
     }
     str += tlen;
   }
   if (last) {
-    *last = p;
+    *last = str;
   }
   return len;
 }
