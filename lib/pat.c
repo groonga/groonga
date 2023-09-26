@@ -2845,16 +2845,21 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
   GRN_FREE(h);
 }
 
-#define DIST(ox, oy) (dists[((lx + 1) * (oy)) + (ox)])
+typedef struct {
+  uint16_t *dists;
+  uint32_t x_length;
+} fuzzy_search_data;
+
+#define DIST(data, ox, oy)                                                     \
+  ((data)->dists[(((data)->x_length + 1) * (oy)) + (ox)])
 
 grn_inline static uint16_t
 grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
+                                        fuzzy_search_data *data,
                                         const char *sx,
                                         const char *ex,
                                         const char *sy,
                                         const char *ey,
-                                        uint16_t *dists,
-                                        uint32_t lx,
                                         uint32_t offset,
                                         uint32_t max_distance,
                                         bool *can_transition,
@@ -2952,7 +2957,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
     /* children nodes will be no longer smaller than max distance
      * with only insertion costs.
      * This is end of row on allocated memory. */
-    if (y > lx + max_distance) {
+    if (y > data->x_length + max_distance) {
       *can_transition = false;
       return max_distance + 1;
     }
@@ -2962,38 +2967,39 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
       if (cx == cy && !memcmp(px, py, cx)) {
         /* Use the upper left cell value as-is when the target
          * characters equal. */
-        DIST(x, y) = DIST(x - 1, y - 1);
+        DIST(data, x, y) = DIST(data, x - 1, y - 1);
       } else {
         uint32_t a, b, c;
-        a = DIST(x - 1, y) + 1;
-        b = DIST(x, y - 1) + 1;
-        c = DIST(x - 1, y - 1) + 1;
+        a = DIST(data, x - 1, y) + 1;
+        b = DIST(data, x, y - 1) + 1;
+        c = DIST(data, x - 1, y - 1) + 1;
         /* Use the minimum value in a, b and c. */
-        DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+        DIST(data, x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
         if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION && x > 1 &&
             y > 1 && cx == cy && memcmp(px, py - cy, cx) == 0 &&
             memcmp(px - cx, py, cx) == 0) {
           /* Use 1 distance for transposition. */
-          uint32_t t = DIST(x - 2, y - 2) + 1;
-          if (t < (DIST(x, y))) {
-            DIST(x, y) = t;
+          uint32_t t = DIST(data, x - 2, y - 2) + 1;
+          if (t < (DIST(data, x, y))) {
+            DIST(data, x, y) = t;
           }
         }
       }
     }
   }
-  if (lx) {
+  if (data->x_length > 0) {
     /* If there is no cell which is smaller than equal to max distance on end of
      * row, children nodes will be no longer smaller than max distance */
     *can_transition = false;
-    for (x = 1; x <= lx; x++) {
-      if (DIST(x, y - 1) <= max_distance) {
+    for (x = 1; x <= data->x_length; x++) {
+      if (DIST(data, x, y - 1) <= max_distance) {
         *can_transition = true;
         break;
       }
     }
   }
-  return DIST(lx, y - 1);
+  /* The bottom right cell is the distance of this input. */
+  return DIST(data, data->x_length, y - 1);
 }
 
 typedef struct {
@@ -3006,11 +3012,10 @@ typedef struct {
 grn_inline static void
 grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                grn_pat *pat,
+                               fuzzy_search_data *data,
                                grn_id id,
                                const char *key,
                                uint32_t key_size,
-                               uint16_t *dists,
-                               uint32_t lx,
                                int last_check,
                                fuzzy_node *last_node,
                                uint32_t max_distance,
@@ -3041,11 +3046,10 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
     if (node->lr[0] != GRN_ID_NIL) {
       grn_pat_fuzzy_search_recursive(ctx,
                                      pat,
+                                     data,
                                      node->lr[0],
                                      key,
                                      key_size,
-                                     dists,
-                                     lx,
                                      check,
                                      last_node,
                                      max_distance,
@@ -3056,11 +3060,10 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
     if (node->lr[1] != GRN_ID_NIL) {
       grn_pat_fuzzy_search_recursive(ctx,
                                      pat,
+                                     data,
                                      node->lr[1],
                                      key,
                                      key_size,
-                                     dists,
-                                     lx,
                                      check,
                                      last_node,
                                      max_distance,
@@ -3111,12 +3114,11 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
       uint16_t distance;
       distance =
         grn_pat_fuzzy_search_calc_edit_distance(ctx,
+                                                data,
                                                 key,
                                                 key + key_size,
                                                 k,
                                                 k + len,
-                                                dists,
-                                                lx,
                                                 offset,
                                                 max_distance,
                                                 &(last_node->can_transition),
@@ -3143,8 +3145,8 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
 {
   pat_node *node;
   grn_id id;
-  uint16_t *dists;
-  uint32_t lx, len, x, y, i;
+  fuzzy_search_data data;
+  uint32_t len, x, y, i;
   const char *s = key;
   const char *e = (const char *)key + key_size;
   fuzzy_node last_node;
@@ -3186,11 +3188,13 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
-  for (lx = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len) {
-    lx++;
+  for (data.x_length = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len) {
+    data.x_length++;
   }
-  dists = GRN_MALLOC((lx + 1) * (lx + max_distance + 1) * sizeof(uint16_t));
-  if (!dists) {
+  data.dists =
+    GRN_MALLOC((data.x_length + 1) * (data.x_length + max_distance + 1) *
+               sizeof(uint16_t));
+  if (!data.dists) {
     fuzzy_heap_close(ctx, heap);
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -3216,11 +3220,11 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    * | ? | 6 | ? | ? | ? | ? |
    * | ? | 7 | ? | ? | ? | ? |
    */
-  for (x = 0; x <= lx; x++) {
-    DIST(x, 0) = x;
+  for (x = 0; x <= data.x_length; x++) {
+    DIST(&data, x, 0) = x;
   }
-  for (y = 0; y <= lx + max_distance; y++) {
-    DIST(0, y) = y;
+  for (y = 0; y <= data.x_length + max_distance; y++) {
+    DIST(&data, 0, y) = y;
   }
 
   last_node.key = NULL;
@@ -3232,18 +3236,17 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    */
   grn_pat_fuzzy_search_recursive(ctx,
                                  pat,
+                                 &data,
                                  id,
                                  key,
                                  key_size,
-                                 dists,
-                                 lx,
                                  -1,
                                  &last_node,
                                  max_distance,
                                  prefix_match_size,
                                  flags,
                                  heap);
-  GRN_FREE(dists);
+  GRN_FREE(data.dists);
   for (i = 0; i < heap->n_entries; i++) {
     if (max_expansion > 0 && i >= max_expansion) {
       break;
