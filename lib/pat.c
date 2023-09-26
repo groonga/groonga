@@ -17,8 +17,6 @@
 */
 
 #include "grn.h"
-#include <string.h>
-#include <limits.h>
 #include "grn_ctx_impl.h"
 #include "grn_pat.h"
 #include "grn_obj.h"
@@ -26,6 +24,10 @@
 #include "grn_util.h"
 #include "grn_normalizer.h"
 #include "grn_wal.h"
+
+#include <limits.h>
+#include <math.h>
+#include <string.h>
 
 #define GRN_PAT_DELETED       (GRN_ID_MAX + 1)
 
