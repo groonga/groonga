@@ -2914,7 +2914,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
 
 typedef struct {
   const char *key;
-  int key_length;
+  uint32_t key_length;
   bool can_transition;
 } fuzzy_node;
 
@@ -2934,7 +2934,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
                       fuzzy_heap *heap)
 {
   pat_node *node = NULL;
-  int check, len;
+  int check;
   const char *k;
   uint32_t offset = 0;
 
@@ -2943,7 +2943,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
     return;
   }
   check = PAT_CHK(node);
-  len = PAT_LEN(node);
+  uint32_t len = PAT_LEN(node);
   k = pat_node_get_key(ctx, pat, node);
 
   if (check > last_check) {
@@ -2983,7 +2983,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
   } else {
     if (id) {
       if (prefix_match_size > 0) {
-        if ((uint32_t)len < prefix_match_size) {
+        if (len < prefix_match_size) {
           return;
         }
         if (memcmp(k, key, prefix_match_size) != 0) {
