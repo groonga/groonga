@@ -2929,6 +2929,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
                       int last_check,
                       fuzzy_node *last_node,
                       uint32_t max_distance,
+                      uint32_t prefix_match_size,
                       uint32_t flags,
                       fuzzy_heap *heap)
 {
@@ -2962,6 +2963,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
                           check,
                           last_node,
                           max_distance,
+                          prefix_match_size,
                           flags,
                           heap);
 
@@ -2975,10 +2977,19 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
                           check,
                           last_node,
                           max_distance,
+                          prefix_match_size,
                           flags,
                           heap);
   } else {
     if (id) {
+      if (prefix_match_size > 0) {
+        if ((uint32_t)len < prefix_match_size) {
+          return;
+        }
+        if (memcmp(k, key, prefix_match_size) != 0) {
+          return;
+        }
+      }
       /* Set already calculated common prefix length */
       if (len >= last_node->key_length &&
           !memcmp(k, last_node->key, last_node->key_length)) {
@@ -3113,6 +3124,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                         -1,
                         &last_node,
                         max_distance,
+                        prefix_match_size,
                         flags,
                         heap);
   GRN_FREE(dists);
