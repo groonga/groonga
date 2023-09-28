@@ -643,7 +643,6 @@ jobs:
       - name: Install Groonga
         shell: cmd
         run: |
-          patch -p1 < packages/source/patches/mruby-demotion-mrb_f_raise-from-mrb_api.diff
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" %VC_ARCHITECTURE%
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
