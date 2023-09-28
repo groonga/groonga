@@ -12348,7 +12348,9 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
   case GRN_WV_NONE:
     return 1;
   case GRN_WV_STATIC:
-    if (data->sid <= (uint32_t)(data->optarg->vector_size)) {
+    if (data->sid == 0) {
+      return 0;
+    } else if (data->sid <= (uint32_t)(data->optarg->vector_size)) {
       if (data->optarg->weight_vector) {
         return (float)(data->optarg->weight_vector[data->sid - 1]);
       } else {
