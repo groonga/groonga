@@ -998,7 +998,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
   else()
     # We need to use function to create a variable scope
     function(grn_build_blosc)
-      set(BLOSC_SOURCE_BASE_NAME "c-blosc2-${GRN_ZSTD_BUNDLED_VERSION}.tar.gz")
+      set(BLOSC_SOURCE_BASE_NAME "c-blosc2-${GRN_BLOSC_BUNDLED_VERSION}.tar.gz")
       set(BLOSC_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BLOSC_SOURCE_BASE_NAME}")
       if(EXISTS ${BLOSC_SOURCE_LOCAL_PATH})
