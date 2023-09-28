@@ -19,11 +19,68 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.0.7 - 2023-09-12"
-msgstr "13.0.7リリース - 2023-09-12"
+msgid "Release 13.0.8 - 2023-09-29"
+msgstr "13.0.8リリース - 2023-09-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/column_create`] Improved `column_create` flags with addition new flags `COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, and `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`."
+msgstr "[{doc}`/reference/commands/column_create`] `column_create` に新しいフラグ `COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, and `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES` を追加しました。"
+
+msgid "Added new bundling library [Blosc](https://www.blosc.org/)."
+msgstr "新しく[Blosc](https://www.blosc.org/)をバンドルしました。"
+
+msgid "`COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, and `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES` flags are require Blosc."
+msgstr "`COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`フラグがBloscを要求します。"
+
+msgid "[{doc}`/reference/commands/status`] Improved `status` output with addition new features `\"blosc\"`."
+msgstr "[{doc}`/reference/commands/status`] `status` コマンドの出力に新しく `\"blosc\"` を追加しました。"
+
+msgid "[{doc}`/reference/executables/groonga`] Improved `groonga --version` output with addition new value `blosc`."
+msgstr "[{doc}`/reference/executables/groonga`] `groonga --version` の出力に新しく `blosc` を追加しました。"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_max_distance` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` の引数に新しく `--fuzzy_max_distance` を追加しました。(実験的)"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_max_expansions` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--fuzzy_max_expansions` を追加しました。(実験的)"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_max_distance_ratio` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--fuzzy_max_distance_ratio` を追加しました。(実験的)"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_prefix_length` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--fuzzy_prefix_length` を追加しました。(実験的)"
+
+msgid "[cast] Added support for casting `\"[0.0, 1.0, 1.1, ...]\"` to `Float`/`Float32` vector."
+msgstr "[cast] `\"[0.0, 1.0, 1.1, ...]\"` を `Float`/`Float32` のベクターへキャストできるようにしました。"
+
+msgid "[fuzzy_search] Rename `max_expansion` option to `max_expansions` option."
+msgstr "[fuzzy_search] `max_expansion` オプションの名前を `max_expansions` に変更しました。"
+
+msgid "`max_expansion` option is deprecate since this release. However, we can use `max_expansion` in the feature to backward compatibility."
+msgstr "`max_expansion` option はこのリリースから非推奨になりますが、後方互換性を維持するために引き続き使えるようにしています。"
+
+msgid "Rename master branch to main branch."
+msgstr "master ブランチの名前を main に変更しました。"
+
+msgid "[RPM] Use CMake for building."
+msgstr "[RPM] CMakeを使ってビルドするようにしました。"
+
+msgid "[Debian] Added support for Debian trixie."
+msgstr "[Debian] Debian trixie をサポートしました。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "[fuzzy_search] Fixed a bug that Groonga may get records that should not match."
+msgstr "[fuzzy_search] ヒットしないはずのレコードがヒットすることがある問題を修正しました。"
+
+msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] Fixed a bug that Groonga crashed when the first phrase group doesn't match anything as below."
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] 以下のように、最初のフレーズグループに何もマッチしない時にGroongaがクラッシュする問題を修正しました。"
+
+msgid "Release 13.0.7 - 2023-09-12"
+msgstr "13.0.7リリース - 2023-09-12"
 
 msgid "[{doc}`/reference/commands/normalize`] Fixed a bug that `normalize` command doesn't output last offset and type."
 msgstr "[{doc}`/reference/commands/normalize`] `normalize` コマンドで最後の `offset` と `type` が表示されない問題を修正しました。"
@@ -39,9 +96,6 @@ msgstr "例えば以下の例では、最後のオフセットは27が正しい�
 
 msgid "Release 13.0.6 - 2023-08-31"
 msgstr "13.0.6リリース - 2023-08-31"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/functions/highlight_html`] Don't report error when we specify empty string into `highlight_html()` as below."
 msgstr "[{doc}`/reference/functions/highlight_html`] 以下のように `highlight_html()` に空文字列を指定してもエラーを報告しなくなりました。"
