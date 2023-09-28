@@ -32,6 +32,7 @@ def download(url, output_path=nil)
 end
 
 all_targets = [
+  "blosc",
   "croaring",
   "zstd",
 ]
@@ -45,6 +46,11 @@ end
 cmakelists = File.read(File.join(__dir__, "..", "CMakeLists.txt"))
 targets.each do |target|
   case target
+  when "blosc"
+    version = cmakelists[/set\(GRN_BLOSC_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/Blosc/c-blosc2/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "c-blosc2-#{version}.tar.gz")
   when "croaring"
     version = cmakelists[/set\(GRN_CROARING_EP_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/"

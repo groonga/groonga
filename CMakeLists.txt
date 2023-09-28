@@ -998,9 +998,19 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
   else()
     # We need to use function to create a variable scope
     function(grn_build_blosc)
+      set(BLOSC_SOURCE_BASE_NAME "c-blosc2-${GRN_ZSTD_BUNDLED_VERSION}.tar.gz")
+      set(BLOSC_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BLOSC_SOURCE_BASE_NAME}")
+      if(EXISTS ${BLOSC_SOURCE_LOCAL_PATH})
+        set(BLOSC_SOURCE_URL ${BLOSC_SOURCE_LOCAL_PATH})
+      else()
+        set(BLOSC_SOURCE_URL
+            "https://github.com/Blosc/c-blosc2/archive/refs/tags")
+        string(APPEND BLOSC_SOURCE_URL "/v${GRN_BLOSC_BUNDLED_VERSION}.tar.gz")
+      endif()
       fetchcontent_declare(
         blosc
-        URL "https://github.com/Blosc/c-blosc2/archive/refs/tags/v${GRN_BLOSC_BUNDLED_VERSION}.tar.gz"
+        URL ${BLOSC_SOURCE_URL}
         URL_HASH "SHA256=${GRN_BLOSC_BUNDLED_SHA256}")
       set(BUILD_BENCHMARKS OFF)
       set(BUILD_EXAMPLES OFF)
