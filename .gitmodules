@@ -1,6 +1,6 @@
 [submodule "vendor/mruby-source"]
 	path = vendor/mruby-source
-	url = https://github.com/komainu8/mruby.git
+	url = https://github.com/mruby/mruby.git
 [submodule "vendor/onigmo-source"]
 	path = vendor/onigmo-source
 	url = https://github.com/k-takata/Onigmo.git
