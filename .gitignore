@@ -13,7 +13,6 @@
 .gdb_history
 .libs
 /*.tar.gz
-/.vagrant/
 /CMakeCache.txt
 /aclocal.m4
 /autom4te.cache
