@@ -68,16 +68,24 @@ concurrency:
 jobs:
   test:
     name: Test
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         image:
-          - ubuntu-focal
-    runs-on: macos-latest
+          - "ubuntu:22.04"
+          - "images:debian/12"
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: canonical/setup-lxd@v0.1.1
       - name: Setup
         run: |
-          vagrant up ${{ matrix.image }}
+          set -x
+          lxc launch ${{ matrix.image }} target
+          lxc config device add target host disk source=$PWD path=/host
+          lxc exec target -- /host/setup.sh
+          lxc exec target -- /host/build.sh /host /tmp/local /tmp/build
+          lxc stop target
+          lxc delete target
