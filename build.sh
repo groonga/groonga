@@ -37,10 +37,6 @@ cmake_args=(
   -G Ninja
   -DCMAKE_INSTALL_PREFIX="${install_prefix}"
 )
-if type ccache > /dev/null 2>&1; then
-  cmake_args+=(-DCMAKE_C_COMPILER_LAUNCHER=ccache)
-  cmake_args+=(-DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
-fi
 cmake "${cmake_args[@]}" "$@"
 cmake --build "${build_directory}"
 cmake --install "${build_directory}"
