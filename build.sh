@@ -25,9 +25,9 @@ set -eux
 
 source_directory="$1"
 shift
-install_prefix="$1"
-shift
 build_directory="$1"
+shift
+install_prefix="$1"
 shift
 
 rm -rf "${build_directory}"
