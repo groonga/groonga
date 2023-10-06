@@ -4,15 +4,15 @@ Execution example::
   # [
   #   [
   #     0,
-  #     1695623979.18858,
-  #     0.0002348423004150391
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   {
-  #     "alloc_count": 410,
-  #     "starttime": 1695623963,
-  #     "start_time": 1695623963,
-  #     "uptime": 16,
-  #     "version": "13.0.7-84-g08b3886",
+  #     "alloc_count": 418,
+  #     "starttime": 1696556919,
+  #     "start_time": 1696556919,
+  #     "uptime": 0,
+  #     "version": "13.0.7-26-g9c546c4",
   #     "n_queries": 0,
   #     "cache_hit_rate": 0.0,
   #     "command_version": 1,
@@ -33,17 +33,17 @@ Execution example::
   #       "poll": false,
   #       "rapidjson": true,
   #       "apache_arrow": true,
-  #       "xxhash": false,
+  #       "xxhash": true,
   #       "blosc": true,
   #       "back_trace": true,
   #       "reference_count": false
   #     },
   #     "apache_arrow": {
-  #       "version_major": 13,
+  #       "version_major": 14,
   #       "version_minor": 0,
   #       "version_patch": 0,
-  #       "version": "13.0.0"
+  #       "version": "14.0.0-SNAPSHOT"
   #     },
-  #     "memory_map_size": 86876160
+  #     "memory_map_size": 99733504
   #   }
   # ]

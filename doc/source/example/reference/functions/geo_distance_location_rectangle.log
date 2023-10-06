@@ -3,21 +3,21 @@ Execution example::
   select Cities --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "185428000x-461000", "rectangle")'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         5807750
   #       ]

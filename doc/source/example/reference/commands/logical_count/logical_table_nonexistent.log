@@ -5,15 +5,15 @@ Execution example::
     --shard_key created_at
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[logical_count] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[logical_count] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>",
   #     [
   #       [
-  #         "Groonga::Sharding::LogicalCountCommand.run_body", 
-  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_count.rb", 
-  #         30
+  #         "execute",
+  #         "lib/groonga/plugins/sharding/logical_count.rb",
+  #         68
   #       ]
   #     ]
   #   ]

@@ -3,31 +3,31 @@ Execution example::
   select --table Video --query tags:@Variety --output_columns _key,title
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         2, 
+  #         2,
   #         "Zenigata Kinjirou"
-  #       ], 
+  #       ],
   #       [
-  #         5, 
+  #         5,
   #         "Hex Gone!"
   #       ]
   #     ]
@@ -36,31 +36,31 @@ Execution example::
   select --table Video --query tags:@Sports --output_columns _key,title
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "Soccer 2010"
-  #       ], 
+  #       ],
   #       [
-  #         4, 
+  #         4,
   #         "Moero!! Ultra Baseball"
   #       ]
   #     ]
@@ -69,35 +69,35 @@ Execution example::
   select --table Video --query tags:@Animation --output_columns _key,title
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         6, 
+  #         6,
   #         "Pikonyan 1"
-  #       ], 
+  #       ],
   #       [
-  #         7, 
+  #         7,
   #         "Draw 8 Month"
-  #       ], 
+  #       ],
   #       [
-  #         8, 
+  #         8,
   #         "K.O."
   #       ]
   #     ]

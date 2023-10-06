@@ -6,55 +6,55 @@ Execution example::
     --limit 2
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "created_at", 
+  #           "created_at",
   #           "Time"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         1436281200.0, 
-  #         5, 
+  #         1,
+  #         "The first post!",
+  #         "Welcome! This is my first post!",
+  #         1436281200.0,
+  #         5,
   #         "Hello"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         1436284800.0, 
-  #         10, 
+  #         2,
+  #         "Groonga",
+  #         "I started to use Groonga. It's very fast!",
+  #         1436284800.0,
+  #         10,
   #         "Groonga"
   #       ]
   #     ]

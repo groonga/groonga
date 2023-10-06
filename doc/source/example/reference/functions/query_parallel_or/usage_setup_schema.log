@@ -1,24 +1,24 @@
 Execution example::
 
   table_create Documents TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Documents content COLUMN_SCALAR Text
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Users TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Users name COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Users memo COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Lexicon TABLE_HASH_KEY ShortText \
     --default_tokenizer 'TokenNgram("unify_alphabet", false)' \
     --normalizer NormalizerNFKC130
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Lexicon users_memo COLUMN_INDEX|WITH_POSITION Users memo
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

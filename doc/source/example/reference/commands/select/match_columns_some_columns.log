@@ -3,27 +3,27 @@ Execution example::
   select Entries --match_columns '_key * 10 || content' --query groonga --output_columns '_key, _score'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
+  #         "Groonga",
   #         11
   #       ]
   #     ]

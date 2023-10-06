@@ -11,4 +11,4 @@ Execution example::
     --drilldowns[tag].columns[tag_length].type UInt32 \
     --drilldowns[tag].columns[tag_length].value 'string_length(_key)' \
     --drilldowns[tag].output_columns _key,tag_length
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

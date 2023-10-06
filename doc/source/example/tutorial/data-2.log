@@ -1,46 +1,46 @@
 Execution example::
 
   column_create --table ToyBox --name is_animal --type Bool
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table ToyBox
   [
   {"_key":"Monkey","is_animal":true}
   {"_key":"Flower","is_animal":false}
   {"_key":"Block"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   select --table ToyBox --output_columns _key,is_animal
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "is_animal", 
+  #           "is_animal",
   #           "Bool"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Monkey", 
+  #         "Monkey",
   #         true
-  #       ], 
+  #       ],
   #       [
-  #         "Flower", 
+  #         "Flower",
   #         false
-  #       ], 
+  #       ],
   #       [
-  #         "Block", 
+  #         "Block",
   #         false
   #       ]
   #     ]

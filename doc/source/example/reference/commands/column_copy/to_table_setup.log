@@ -1,15 +1,15 @@
 Execution example::
 
   table_create Table TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Table column COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create ToTable TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create ToTable to_column COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Table
   [
   {"_key": "key1", "column": "value1"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]

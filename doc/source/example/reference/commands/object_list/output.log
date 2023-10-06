@@ -3,366 +3,402 @@ Execution example::
   object_list
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "UInt64": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 11, 
-  #       "name": "UInt64"
-  #     }, 
-  #     "Int32": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_INT", 
-  #         "value": 8
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 4, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 8, 
-  #       "name": "Int32"
-  #     }, 
-  #     "Int16": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_INT", 
-  #         "value": 8
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 2, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 6, 
-  #       "name": "Int16"
-  #     }, 
-  #     "Float": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_FLOAT", 
-  #         "value": 16
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 12, 
-  #       "name": "Float"
-  #     }, 
-  #     "LongText": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_VAR_SIZE", 
-  #         "value": 16384
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 2147483648, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 16, 
-  #       "name": "LongText"
-  #     }, 
-  #     "TokyoGeoPoint": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_GEO_POINT", 
-  #         "value": 24
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 17, 
-  #       "name": "TokyoGeoPoint"
-  #     }, 
-  #     "Text": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_VAR_SIZE", 
-  #         "value": 16384
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 65536, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 15, 
-  #       "name": "Text"
-  #     }, 
-  #     "ShortText": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_VAR_SIZE", 
-  #         "value": 16384
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 4096, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 14, 
-  #       "name": "ShortText"
-  #     }, 
   #     "Object": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
+  #       "id": 2,
+  #       "name": "Object",
+  #       "opened": false,
+  #       "n_elements": 4,
   #       "type": {
-  #         "id": 32, 
+  #         "id": 32,
   #         "name": "type"
-  #       }, 
-  #       "id": 2, 
-  #       "name": "Object"
-  #     }, 
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "Bool": {
+  #       "id": 3,
+  #       "name": "Bool",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 1
+  #     },
+  #     "Int8": {
+  #       "id": 4,
+  #       "name": "Int8",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 8,
+  #         "names": "KEY_INT"
+  #       },
+  #       "path": null,
+  #       "size": 1
+  #     },
+  #     "UInt8": {
+  #       "id": 5,
+  #       "name": "UInt8",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 1
+  #     },
+  #     "Int16": {
+  #       "id": 6,
+  #       "name": "Int16",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 8,
+  #         "names": "KEY_INT"
+  #       },
+  #       "path": null,
+  #       "size": 2
+  #     },
+  #     "UInt16": {
+  #       "id": 7,
+  #       "name": "UInt16",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 2
+  #     },
+  #     "Int32": {
+  #       "id": 8,
+  #       "name": "Int32",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 8,
+  #         "names": "KEY_INT"
+  #       },
+  #       "path": null,
+  #       "size": 4
+  #     },
+  #     "UInt32": {
+  #       "id": 9,
+  #       "name": "UInt32",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 4
+  #     },
+  #     "Int64": {
+  #       "id": 10,
+  #       "name": "Int64",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 8,
+  #         "names": "KEY_INT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "UInt64": {
+  #       "id": 11,
+  #       "name": "UInt64",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 0,
+  #         "names": "KEY_UINT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "Float": {
+  #       "id": 12,
+  #       "name": "Float",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 16,
+  #         "names": "KEY_FLOAT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "Time": {
+  #       "id": 13,
+  #       "name": "Time",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 8,
+  #         "names": "KEY_INT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "ShortText": {
+  #       "id": 14,
+  #       "name": "ShortText",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 16384,
+  #         "names": "KEY_VAR_SIZE"
+  #       },
+  #       "path": null,
+  #       "size": 4096
+  #     },
+  #     "Text": {
+  #       "id": 15,
+  #       "name": "Text",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 16384,
+  #         "names": "KEY_VAR_SIZE"
+  #       },
+  #       "path": null,
+  #       "size": 65536
+  #     },
+  #     "LongText": {
+  #       "id": 16,
+  #       "name": "LongText",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 16384,
+  #         "names": "KEY_VAR_SIZE"
+  #       },
+  #       "path": null,
+  #       "size": 2147483648
+  #     },
+  #     "TokyoGeoPoint": {
+  #       "id": 17,
+  #       "name": "TokyoGeoPoint",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 24,
+  #         "names": "KEY_GEO_POINT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "WGS84GeoPoint": {
+  #       "id": 18,
+  #       "name": "WGS84GeoPoint",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 24,
+  #         "names": "KEY_GEO_POINT"
+  #       },
+  #       "path": null,
+  #       "size": 8
+  #     },
+  #     "Float32": {
+  #       "id": 19,
+  #       "name": "Float32",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 32,
+  #         "name": "type"
+  #       },
+  #       "flags": {
+  #         "value": 16,
+  #         "names": "KEY_FLOAT"
+  #       },
+  #       "path": null,
+  #       "size": 4
+  #     },
+  #     "TokenMecab": {
+  #       "id": 64,
+  #       "name": "TokenMecab",
+  #       "opened": true,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 33,
+  #         "name": "proc"
+  #       },
+  #       "flags": {
+  #         "value": 4096,
+  #         "names": "CUSTOM_NAME"
+  #       },
+  #       "path": "tokenizers/mecab.so",
+  #       "plugin_id": 1
+  #     },
+  #     "Memos": {
+  #       "id": 256,
+  #       "name": "Memos",
+  #       "opened": false,
+  #       "n_elements": 6,
+  #       "type": {
+  #         "id": 48,
+  #         "name": "table:hash_key"
+  #       },
+  #       "flags": {
+  #         "value": 49152,
+  #         "names": "TABLE_HASH_KEY|PERSISTENT"
+  #       },
+  #       "path": "${DB_PATH}.0000100",
+  #       "range": {
+  #         "id": 0,
+  #         "name": null
+  #       },
+  #       "token_filters": [
+  # 
+  #       ]
+  #     },
+  #     "Memos.content": {
+  #       "id": 257,
+  #       "name": "Memos.content",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 65,
+  #         "name": "column:var_size"
+  #       },
+  #       "flags": {
+  #         "value": 49152,
+  #         "names": "COLUMN_SCALAR|PERSISTENT"
+  #       },
+  #       "path": "${DB_PATH}.0000101",
+  #       "range": {
+  #         "id": 15,
+  #         "name": "Text"
+  #       }
+  #     },
+  #     "Terms": {
+  #       "id": 258,
+  #       "name": "Terms",
+  #       "opened": false,
+  #       "n_elements": 6,
+  #       "type": {
+  #         "id": 49,
+  #         "name": "table:pat_key"
+  #       },
+  #       "flags": {
+  #         "value": 49153,
+  #         "names": "TABLE_PAT_KEY|PERSISTENT"
+  #       },
+  #       "path": "${DB_PATH}.0000102",
+  #       "range": {
+  #         "id": 0,
+  #         "name": null
+  #       },
+  #       "token_filters": [
+  # 
+  #       ]
+  #     },
   #     "Terms.memos_content_index": {
-  #       "opened": true, 
+  #       "id": 259,
+  #       "name": "Terms.memos_content_index",
+  #       "opened": false,
+  #       "n_elements": 4,
+  #       "type": {
+  #         "id": 72,
+  #         "name": "column:index"
+  #       },
+  #       "flags": {
+  #         "value": 33282,
+  #         "names": "COLUMN_INDEX|WITH_POSITION|PERSISTENT"
+  #       },
+  #       "path": "${DB_PATH}.0000103",
+  #       "range": {
+  #         "id": 256,
+  #         "name": "Memos"
+  #       },
   #       "sources": [
   #         {
-  #           "id": 257, 
+  #           "id": 257,
   #           "name": "Memos.content"
   #         }
-  #       ], 
-  #       "range": {
-  #         "id": 256, 
-  #         "name": "Memos"
-  #       }, 
-  #       "flags": {
-  #         "names": "COLUMN_INDEX|WITH_POSITION|PERSISTENT", 
-  #         "value": 33282
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": "/tmp/groonga-databases/commands_object_list.0000103", 
-  #       "type": {
-  #         "id": 72, 
-  #         "name": "column:index"
-  #       }, 
-  #       "id": 259, 
-  #       "name": "Terms.memos_content_index"
-  #     }, 
-  #     "UInt8": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 1, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 5, 
-  #       "name": "UInt8"
-  #     }, 
-  #     "UInt32": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 4, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 9, 
-  #       "name": "UInt32"
-  #     }, 
-  #     "Terms": {
-  #       "opened": true, 
-  #       "token_filters": [], 
-  #       "range": {
-  #         "id": 0, 
-  #         "name": null
-  #       }, 
-  #       "flags": {
-  #         "names": "TABLE_PAT_KEY|PERSISTENT", 
-  #         "value": 49153
-  #       }, 
-  #       "n_elements": 5, 
-  #       "path": "/tmp/groonga-databases/commands_object_list.0000102", 
-  #       "type": {
-  #         "id": 49, 
-  #         "name": "table:pat_key"
-  #       }, 
-  #       "id": 258, 
-  #       "name": "Terms"
-  #     }, 
-  #     "UInt16": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 2, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 7, 
-  #       "name": "UInt16"
-  #     }, 
-  #     "Bool": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_UINT", 
-  #         "value": 0
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 1, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 3, 
-  #       "name": "Bool"
-  #     }, 
-  #     "Memos.content": {
-  #       "opened": true, 
-  #       "range": {
-  #         "id": 15, 
-  #         "name": "Text"
-  #       }, 
-  #       "flags": {
-  #         "names": "COLUMN_SCALAR|PERSISTENT", 
-  #         "value": 49152
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": "/tmp/groonga-databases/commands_object_list.0000101", 
-  #       "type": {
-  #         "id": 65, 
-  #         "name": "column:var_size"
-  #       }, 
-  #       "id": 257, 
-  #       "name": "Memos.content"
-  #     }, 
-  #     "Time": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_INT", 
-  #         "value": 8
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 13, 
-  #       "name": "Time"
-  #     }, 
-  #     "Int64": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_INT", 
-  #         "value": 8
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 10, 
-  #       "name": "Int64"
-  #     }, 
-  #     "WGS84GeoPoint": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_GEO_POINT", 
-  #         "value": 24
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 8, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 18, 
-  #       "name": "WGS84GeoPoint"
-  #     }, 
-  #     "Memos": {
-  #       "opened": true, 
-  #       "token_filters": [], 
-  #       "range": {
-  #         "id": 0, 
-  #         "name": null
-  #       }, 
-  #       "flags": {
-  #         "names": "TABLE_HASH_KEY|PERSISTENT", 
-  #         "value": 49152
-  #       }, 
-  #       "n_elements": 5, 
-  #       "path": "/tmp/groonga-databases/commands_object_list.0000100", 
-  #       "type": {
-  #         "id": 48, 
-  #         "name": "table:hash_key"
-  #       }, 
-  #       "id": 256, 
-  #       "name": "Memos"
-  #     }, 
-  #     "Int8": {
-  #       "opened": true, 
-  #       "flags": {
-  #         "names": "KEY_INT", 
-  #         "value": 8
-  #       }, 
-  #       "n_elements": 4, 
-  #       "path": null, 
-  #       "size": 1, 
-  #       "type": {
-  #         "id": 32, 
-  #         "name": "type"
-  #       }, 
-  #       "id": 4, 
-  #       "name": "Int8"
+  #       ]
   #     }
   #   }
   # ]

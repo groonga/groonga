@@ -3,50 +3,50 @@ Execution example::
   select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "posted_by.name", 
+  #           "posted_by.name",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "comment", 
+  #           "comment",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
+  #         "Bob",
   #         "I've just used 'Try-Groonga' now! #groonga"
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
+  #         "Bob",
   #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "bob", 
+  #         "bob",
   #         2
   #       ]
   #     ]

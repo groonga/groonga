@@ -1,36 +1,36 @@
 Execution example::
 
   column_copy FromTable from_column FromTable to_column
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   select FromTable --output_columns _key,from_column,to_column
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "from_column", 
+  #           "from_column",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "to_column", 
+  #           "to_column",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "key1", 
-  #         "value1", 
+  #         "key1",
+  #         "value1",
   #         "value1"
   #       ]
   #     ]

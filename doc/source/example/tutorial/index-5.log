@@ -3,74 +3,74 @@ Execution example::
   select --table User --limit 0 --drilldown friends
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         6
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "friends", 
+  #           "friends",
   #           "User"
-  #         ], 
+  #         ],
   #         [
-  #           "index_friends", 
+  #           "index_friends",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "username", 
+  #           "username",
   #           "ShortText"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         6
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "taro", 
+  #         "taro",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "jiro", 
+  #         "jiro",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "tomo", 
+  #         "tomo",
   #         5
-  #       ], 
+  #       ],
   #       [
-  #         "moritapo", 
+  #         "moritapo",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "ken", 
+  #         "ken",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "hana", 
+  #         "hana",
   #         1
   #       ]
   #     ]

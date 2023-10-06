@@ -1,13 +1,13 @@
 Execution example::
 
   table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table User --name friends --flags COLUMN_VECTOR --type User
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table User
   [
   {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
@@ -17,4 +17,4 @@ Execution example::
   {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
   {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 6]
+  # [[0,1337566253.89858,0.000355720520019531],6]

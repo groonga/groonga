@@ -3,40 +3,46 @@ Execution example::
   tokenize TokenBigramIgnoreBlankSplitSymbol "日 本 語 ! ! !" NormalizerAuto
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "日本"
-  #     }, 
+  #       "value": "日本",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "本語"
-  #     }, 
+  #       "value": "本語",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "語!"
-  #     }, 
+  #       "value": "語!",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "!!"
-  #     }, 
+  #       "value": "!!",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "!!"
-  #     }, 
+  #       "value": "!!",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "!"
+  #       "value": "!",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

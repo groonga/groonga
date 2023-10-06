@@ -3,14 +3,14 @@ Execution example::
   select Magazine --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
   # [
   #   [
-  #     -63, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "Syntax error: <WEB +||>", 
+  #     -63,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "Syntax error: <WEB +||>",
   #     [
   #       [
-  #         "yy_syntax_error", 
-  #         "lib/grn_ecmascript.lemon", 
+  #         "yy_syntax_error",
+  #         "lib/grn_ecmascript.lemon",
   #         168
   #       ]
   #     ]

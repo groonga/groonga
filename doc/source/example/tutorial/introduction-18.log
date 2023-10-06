@@ -3,72 +3,72 @@ Execution example::
   select --table Site --query title:@test --output_columns _id,_score,title --sort_keys -_score,_id
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         6, 
-  #         4, 
+  #         6,
+  #         4,
   #         "test test test test record six."
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         3, 
+  #         5,
+  #         3,
   #         "test test test record five."
-  #       ], 
+  #       ],
   #       [
-  #         7, 
-  #         3, 
+  #         7,
+  #         3,
   #         "test test test record seven."
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         2, 
+  #         3,
+  #         2,
   #         "test test record three."
-  #       ], 
+  #       ],
   #       [
-  #         8, 
-  #         2, 
+  #         8,
+  #         2,
   #         "test test record eight."
-  #       ], 
+  #       ],
   #       [
-  #         9, 
-  #         2, 
+  #         9,
+  #         2,
   #         "test test record nine."
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         1, 
+  #         1,
+  #         1,
   #         "This is test record 1!"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         1, 
+  #         2,
+  #         1,
   #         "test record 2."
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         1, 
+  #         4,
+  #         1,
   #         "test record four."
   #       ]
   #     ]

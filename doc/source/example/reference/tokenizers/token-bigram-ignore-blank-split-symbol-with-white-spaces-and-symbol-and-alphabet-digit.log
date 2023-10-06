@@ -3,80 +3,94 @@ Execution example::
   tokenize TokenBigramIgnoreBlankSplitSymbolAlphaDigit "Hello 日 本 語 ! ! ! 777" NormalizerAuto
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "he"
-  #     }, 
+  #       "value": "he",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "el"
-  #     }, 
+  #       "value": "el",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "ll"
-  #     }, 
+  #       "value": "ll",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "lo"
-  #     }, 
+  #       "value": "lo",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "o日"
-  #     }, 
+  #       "value": "o日",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "日本"
-  #     }, 
+  #       "value": "日本",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 6, 
-  #       "force_prefix": false, 
-  #       "value": "本語"
-  #     }, 
+  #       "value": "本語",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 7, 
-  #       "force_prefix": false, 
-  #       "value": "語!"
-  #     }, 
+  #       "value": "語!",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 8, 
-  #       "force_prefix": false, 
-  #       "value": "!!"
-  #     }, 
+  #       "value": "!!",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 9, 
-  #       "force_prefix": false, 
-  #       "value": "!!"
-  #     }, 
+  #       "value": "!!",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 10, 
-  #       "force_prefix": false, 
-  #       "value": "!7"
-  #     }, 
+  #       "value": "!7",
+  #       "position": 10,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 11, 
-  #       "force_prefix": false, 
-  #       "value": "77"
-  #     }, 
+  #       "value": "77",
+  #       "position": 11,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 12, 
-  #       "force_prefix": false, 
-  #       "value": "77"
-  #     }, 
+  #       "value": "77",
+  #       "position": 12,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 13, 
-  #       "force_prefix": false, 
-  #       "value": "7"
+  #       "value": "7",
+  #       "position": 13,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

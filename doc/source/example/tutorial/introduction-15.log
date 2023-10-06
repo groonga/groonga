@@ -3,42 +3,42 @@ Execution example::
   select --table Site --offset 0 --limit 3
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "http://example.org/", 
+  #         1,
+  #         "http://example.org/",
   #         "This is test record 1!"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "http://example.net/", 
+  #         2,
+  #         "http://example.net/",
   #         "test record 2."
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "http://example.com/", 
+  #         3,
+  #         "http://example.com/",
   #         "test test record three."
   #       ]
   #     ]
@@ -47,42 +47,42 @@ Execution example::
   select --table Site --offset 3 --limit 3
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "http://example.net/afr", 
+  #         4,
+  #         "http://example.net/afr",
   #         "test record four."
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "http://example.org/aba", 
+  #         5,
+  #         "http://example.org/aba",
   #         "test test test record five."
-  #       ], 
+  #       ],
   #       [
-  #         6, 
-  #         "http://example.com/rab", 
+  #         6,
+  #         "http://example.com/rab",
   #         "test test test test record six."
   #       ]
   #     ]
@@ -91,37 +91,37 @@ Execution example::
   select --table Site --offset 7 --limit 3
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         8, 
-  #         "http://example.org/gat", 
+  #         8,
+  #         "http://example.org/gat",
   #         "test test record eight."
-  #       ], 
+  #       ],
   #       [
-  #         9, 
-  #         "http://example.com/vdw", 
+  #         9,
+  #         "http://example.com/vdw",
   #         "test test record nine."
   #       ]
   #     ]

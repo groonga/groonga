@@ -3,25 +3,28 @@ Execution example::
   tokenize TokenDelimit "Groonga full-text-search HTTP" NormalizerAuto
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "groonga"
-  #     }, 
+  #       "value": "groonga",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "full-text-search"
-  #     }, 
+  #       "value": "full-text-search",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "http"
+  #       "value": "http",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

@@ -1,19 +1,19 @@
 Execution example::
 
   table_create ColumnNormalizations TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create ColumnNormalizations target_column COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create ColumnNormalizations normalized COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Targets TABLE_PAT_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Targets column_normalizations_target_column \
      COLUMN_INDEX ColumnNormalizations target_column
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table ColumnNormalizations
   [
   {"target_column": "a", "normalized": "<A>"},
   {"target_column": "ac", "normalized": "<AC>"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

@@ -3,49 +3,49 @@ Execution example::
   select --table Blog2 --match_columns title||message --query groonga
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "message", 
+  #           "message",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "grn1", 
-  #         "Groonga message", 
+  #         1,
+  #         "grn1",
+  #         "Groonga message",
   #         "Groonga test"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "grn2", 
-  #         "rakutan eggs 4 - 4 Groonga moritars", 
+  #         2,
+  #         "grn2",
+  #         "rakutan eggs 4 - 4 Groonga moritars",
   #         "baseball result"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "grn3", 
-  #         "none", 
+  #         3,
+  #         "grn3",
+  #         "none",
   #         "Groonga message"
   #       ]
   #     ]
@@ -54,43 +54,43 @@ Execution example::
   select --table Blog2 --match_columns title||message --query message
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "message", 
+  #           "message",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "grn1", 
-  #         "Groonga message", 
+  #         1,
+  #         "grn1",
+  #         "Groonga message",
   #         "Groonga test"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "grn3", 
-  #         "none", 
+  #         3,
+  #         "grn3",
+  #         "none",
   #         "Groonga message"
   #       ]
   #     ]
@@ -99,37 +99,37 @@ Execution example::
   select --table Blog2 --match_columns title --query message
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "message", 
+  #           "message",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "grn3", 
-  #         "none", 
+  #         3,
+  #         "grn3",
+  #         "none",
   #         "Groonga message"
   #       ]
   #     ]

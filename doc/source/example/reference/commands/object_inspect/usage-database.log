@@ -3,29 +3,29 @@ Execution example::
   object_inspect
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "disk_usage": 22347776, 
+  #     "type": {
+  #       "id": 55,
+  #       "name": "db"
+  #     },
   #     "name_table": {
-  #       "disk_usage": 1052672, 
-  #       "name": "", 
-  #       "n_records": 256, 
-  #       "value": null, 
+  #       "id": 0,
+  #       "name": "",
+  #       "type": {
+  #         "id": 50,
+  #         "name": "table:dat_key"
+  #       },
   #       "key": {
   #         "type": null
-  #       }, 
-  #       "type": {
-  #         "id": 50, 
-  #         "name": "table:dat_key"
-  #       }, 
-  #       "id": 0
-  #     }, 
-  #     "type": {
-  #       "id": 55, 
-  #       "name": "db"
-  #     }
+  #       },
+  #       "value": null,
+  #       "n_records": 256,
+  #       "disk_usage": 1052672
+  #     },
+  #     "disk_usage": 26542080
   #   }
   # ]

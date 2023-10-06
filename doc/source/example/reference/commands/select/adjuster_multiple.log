@@ -6,52 +6,52 @@ Execution example::
     --output_columns _key,content,_score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
+  #         "The first post!",
+  #         "Welcome! This is my first post!",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
+  #         "Groonga",
+  #         "I started to use Groonga. It's very fast!",
   #         9
-  #       ], 
+  #       ],
   #       [
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         "Mroonga",
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
   #         4
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Senna", 
-  #         "I migrated all Senna system!", 
+  #         "Good-bye Senna",
+  #         "I migrated all Senna system!",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
+  #         "Good-bye Tritonn",
+  #         "I also migrated all Tritonn system!",
   #         1
   #       ]
   #     ]

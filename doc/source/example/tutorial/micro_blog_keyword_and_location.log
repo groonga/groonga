@@ -3,69 +3,69 @@ Execution example::
   select --table Comments --query comment:@New --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "posted_by.name", 
+  #           "posted_by.name",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "comment", 
+  #           "comment",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
+  #         "Bob",
   #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "groonga", 
+  #         "groonga",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "travel", 
+  #         "travel",
   #         1
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "bob", 
+  #         "bob",
   #         1
   #       ]
   #     ]

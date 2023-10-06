@@ -1,29 +1,29 @@
 Execution example::
 
   table_create Users TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   thread_limit 1
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   database_unmap
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
-  % echo "BROKEN" > ${DB_PATH}.0000100
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  $ echo "BROKEN" > ${DB_PATH}.0000100
   
   object_remove Users
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[object][remove] failed to open the target object: <Users>", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[object][remove] failed to open the target object: <Users>",
   #     [
   #       [
-  #         "command_object_remove", 
-  #         "proc_object.c", 
-  #         113
+  #         "command_object_remove",
+  #         "lib/proc/proc_object.c",
+  #         109
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   false
   # ]
   object_exist Users
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

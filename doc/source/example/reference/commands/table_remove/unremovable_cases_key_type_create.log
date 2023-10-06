@@ -1,6 +1,6 @@
 Execution example::
 
   table_create ReferencedByTable TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create ReferenceTable TABLE_HASH_KEY ReferencedByTable
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

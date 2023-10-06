@@ -3,24 +3,24 @@ Execution example::
   select Entries --filter '_key @^ "Goo"' --output_columns _key
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "Good-bye Senna"
-  #       ], 
+  #       ],
   #       [
   #         "Good-bye Tritonn"
   #       ]

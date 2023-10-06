@@ -1,7 +1,7 @@
 Execution example::
 
   table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table PatPrefix
   [
   {"_key":"James"}
@@ -11,35 +11,35 @@ Execution example::
   {"_key":"John"},
   {"_key":"Joseph"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 6]
+  # [[0,1337566253.89858,0.000355720520019531],6]
   select --table PatPrefix --query _key:^Je
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         3, 
+  #         3,
   #         "Jennifer"
-  #       ], 
+  #       ],
   #       [
-  #         4, 
+  #         4,
   #         "Jeff"
   #       ]
   #     ]

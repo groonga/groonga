@@ -5,14 +5,14 @@ Execution example::
     --shard_key timestamp
   # [
   #   [
-  #     -2, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "operation not permitted: <[table][remove] a column that references the table exists: <Bookmarks.log_20160320> -> <Logs_20160320", 
+  #     -2,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "operation not permitted: <[table][remove] a column that references the table exists: <Bookmarks.log_20160320> -> <Logs_20160320",
   #     [
   #       [
-  #         "Groonga::Sharding::LogicalTableRemoveCommand.remove_table", 
-  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_table_remove.rb", 
+  #         "remove",
+  #         "lib/groonga/plugins/sharding/logical_table_remove.rb",
   #         199
   #       ]
   #     ]

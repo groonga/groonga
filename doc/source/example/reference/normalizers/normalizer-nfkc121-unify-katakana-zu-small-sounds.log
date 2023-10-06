@@ -3,18 +3,21 @@ Execution example::
   normalize   'NormalizerNFKC121("unify_katakana_zu_small_sounds", true)'   "ズァズィズェズォ"   WITH_TYPES
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "normalized": "ザジゼゾ", 
+  #     "normalized": "ザジゼゾ",
   #     "types": [
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana"
-  #     ], 
-  #     "checks": []
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "null"
+  #     ],
+  #     "checks": [
+  # 
+  #     ]
   #   }
   # ]

@@ -3,21 +3,21 @@ Execution example::
   object_remove Users
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[object][remove] target object doesn't exist: <Users>", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[object][remove] target object doesn't exist: <Users>",
   #     [
   #       [
-  #         "command_object_remove", 
-  #         "proc_object.c", 
-  #         118
+  #         "command_object_remove",
+  #         "lib/proc/proc_object.c",
+  #         115
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   false
   # ]
   table_create Users TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   object_remove Users
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

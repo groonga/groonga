@@ -3,4 +3,4 @@ Execution example::
   logical_count \
     --logical_table Entries \
     --shard_key created_at
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  # [[0,1337566253.89858,0.000355720520019531],5]

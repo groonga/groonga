@@ -3,35 +3,35 @@ Execution example::
   select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         4, 
+  #         4,
   #         "http://example.net/afr"
-  #       ], 
+  #       ],
   #       [
-  #         5, 
+  #         5,
   #         "http://example.org/aba"
-  #       ], 
+  #       ],
   #       [
-  #         6, 
+  #         6,
   #         "http://example.com/rab"
   #       ]
   #     ]
@@ -40,43 +40,43 @@ Execution example::
   select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "http://example.org/"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
+  #         2,
   #         "http://example.net/"
-  #       ], 
+  #       ],
   #       [
-  #         7, 
+  #         7,
   #         "http://example.net/atv"
-  #       ], 
+  #       ],
   #       [
-  #         8, 
+  #         8,
   #         "http://example.org/gat"
-  #       ], 
+  #       ],
   #       [
-  #         9, 
+  #         9,
   #         "http://example.com/vdw"
   #       ]
   #     ]

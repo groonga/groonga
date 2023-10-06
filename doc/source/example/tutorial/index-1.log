@@ -1,15 +1,15 @@
 Execution example::
 
   table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Video
   [
   {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
@@ -21,4 +21,4 @@ Execution example::
   {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
   {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 8]
+  # [[0,1337566253.89858,0.000355720520019531],8]

@@ -7,43 +7,43 @@ Execution example::
     --output_columns _key,created_at
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "created_at", 
+  #           "created_at",
   #           "Time"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
+  #         "Groonga",
   #         1436284800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Mroonga", 
+  #         "Mroonga",
   #         1436288400.0
-  #       ], 
+  #       ],
   #       [
-  #         "The first post!", 
+  #         "The first post!",
   #         1436281200.0
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Senna", 
+  #         "Good-bye Senna",
   #         1436367600.0
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Tritonn", 
+  #         "Good-bye Tritonn",
   #         1436371200.0
   #       ]
   #     ]

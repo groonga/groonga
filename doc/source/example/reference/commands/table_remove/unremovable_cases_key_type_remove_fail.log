@@ -3,17 +3,17 @@ Execution example::
   table_remove ReferencedByTable
   # [
   #   [
-  #     -2, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[table][remove] a table that references the table exists: <ReferenceTable._key> -> <ReferencedByTable>", 
+  #     -2,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[table][remove] a table that references the table exists: <ReferenceTable._key> -> <ReferencedByTable>",
   #     [
   #       [
-  #         "is_removable_table", 
-  #         "db.c", 
-  #         9488
+  #         "is_removable_table",
+  #         "lib/db.c",
+  #         11455
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   false
   # ]

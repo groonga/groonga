@@ -1,20 +1,20 @@
 Execution example::
 
   table_create Pies TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Pies name COLUMN_SCALAR Text
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Keywords TABLE_PAT_KEY ShortText --default_tokenizer 'TokenTable("table", "Keywords")'
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Keywords index COLUMN_INDEX Pies name
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Keywords
   [
   {"_key": "Apple"}
   {"_key": "Orange"}
   {"_key": "Raspberry"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   load --table Pies
   [
   {"name": "Apple Pie"},
@@ -22,4 +22,4 @@ Execution example::
   {"name": "Raspberry Pie"}
   {"name": "Stargazy Pie"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  # [[0,1337566253.89858,0.000355720520019531],4]

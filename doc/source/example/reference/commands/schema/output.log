@@ -3,330 +3,433 @@ Execution example::
   schema
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
+  #     "plugins": {
+  #     },
+  #     "types": {
+  #       "Bool": {
+  #         "id": 3,
+  #         "name": "Bool",
+  #         "size": 1,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Float": {
+  #         "id": 12,
+  #         "name": "Float",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Float32": {
+  #         "id": 19,
+  #         "name": "Float32",
+  #         "size": 4,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Int16": {
+  #         "id": 6,
+  #         "name": "Int16",
+  #         "size": 2,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Int32": {
+  #         "id": 8,
+  #         "name": "Int32",
+  #         "size": 4,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Int64": {
+  #         "id": 10,
+  #         "name": "Int64",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "Int8": {
+  #         "id": 4,
+  #         "name": "Int8",
+  #         "size": 1,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "LongText": {
+  #         "id": 16,
+  #         "name": "LongText",
+  #         "size": 2147483648,
+  #         "can_be_key_type": false,
+  #         "can_be_value_type": false
+  #       },
+  #       "Object": {
+  #         "id": 2,
+  #         "name": "Object",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "ShortText": {
+  #         "id": 14,
+  #         "name": "ShortText",
+  #         "size": 4096,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": false
+  #       },
+  #       "Text": {
+  #         "id": 15,
+  #         "name": "Text",
+  #         "size": 65536,
+  #         "can_be_key_type": false,
+  #         "can_be_value_type": false
+  #       },
+  #       "Time": {
+  #         "id": 13,
+  #         "name": "Time",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "TokyoGeoPoint": {
+  #         "id": 17,
+  #         "name": "TokyoGeoPoint",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "UInt16": {
+  #         "id": 7,
+  #         "name": "UInt16",
+  #         "size": 2,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "UInt32": {
+  #         "id": 9,
+  #         "name": "UInt32",
+  #         "size": 4,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "UInt64": {
+  #         "id": 11,
+  #         "name": "UInt64",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "UInt8": {
+  #         "id": 5,
+  #         "name": "UInt8",
+  #         "size": 1,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
+  #       "WGS84GeoPoint": {
+  #         "id": 18,
+  #         "name": "WGS84GeoPoint",
+  #         "size": 8,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       }
+  #     },
+  #     "tokenizers": {
+  #       "TokenBigram": {
+  #         "id": 67,
+  #         "name": "TokenBigram"
+  #       },
+  #       "TokenBigramIgnoreBlank": {
+  #         "id": 72,
+  #         "name": "TokenBigramIgnoreBlank"
+  #       },
+  #       "TokenBigramIgnoreBlankSplitSymbol": {
+  #         "id": 73,
+  #         "name": "TokenBigramIgnoreBlankSplitSymbol"
+  #       },
+  #       "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+  #         "id": 74,
+  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+  #       },
+  #       "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+  #         "id": 75,
+  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+  #       },
+  #       "TokenBigramSplitSymbol": {
+  #         "id": 69,
+  #         "name": "TokenBigramSplitSymbol"
+  #       },
+  #       "TokenBigramSplitSymbolAlpha": {
+  #         "id": 70,
+  #         "name": "TokenBigramSplitSymbolAlpha"
+  #       },
+  #       "TokenBigramSplitSymbolAlphaDigit": {
+  #         "id": 71,
+  #         "name": "TokenBigramSplitSymbolAlphaDigit"
+  #       },
+  #       "TokenDelimit": {
+  #         "id": 65,
+  #         "name": "TokenDelimit"
+  #       },
+  #       "TokenDelimitNull": {
+  #         "id": 76,
+  #         "name": "TokenDelimitNull"
+  #       },
+  #       "TokenDocumentVectorBM25": {
+  #         "id": 82,
+  #         "name": "TokenDocumentVectorBM25"
+  #       },
+  #       "TokenDocumentVectorTFIDF": {
+  #         "id": 81,
+  #         "name": "TokenDocumentVectorTFIDF"
+  #       },
+  #       "TokenMecab": {
+  #         "id": 64,
+  #         "name": "TokenMecab"
+  #       },
+  #       "TokenNgram": {
+  #         "id": 78,
+  #         "name": "TokenNgram"
+  #       },
+  #       "TokenPattern": {
+  #         "id": 79,
+  #         "name": "TokenPattern"
+  #       },
+  #       "TokenRegexp": {
+  #         "id": 77,
+  #         "name": "TokenRegexp"
+  #       },
+  #       "TokenTable": {
+  #         "id": 80,
+  #         "name": "TokenTable"
+  #       },
+  #       "TokenTrigram": {
+  #         "id": 68,
+  #         "name": "TokenTrigram"
+  #       },
+  #       "TokenUnigram": {
+  #         "id": 66,
+  #         "name": "TokenUnigram"
+  #       }
+  #     },
+  #     "normalizers": {
+  #       "NormalizerAuto": {
+  #         "id": 83,
+  #         "name": "NormalizerAuto"
+  #       },
+  #       "NormalizerHTML": {
+  #         "id": 90,
+  #         "name": "NormalizerHTML"
+  #       },
+  #       "NormalizerNFKC100": {
+  #         "id": 85,
+  #         "name": "NormalizerNFKC100"
+  #       },
+  #       "NormalizerNFKC121": {
+  #         "id": 86,
+  #         "name": "NormalizerNFKC121"
+  #       },
+  #       "NormalizerNFKC130": {
+  #         "id": 87,
+  #         "name": "NormalizerNFKC130"
+  #       },
+  #       "NormalizerNFKC150": {
+  #         "id": 88,
+  #         "name": "NormalizerNFKC150"
+  #       },
+  #       "NormalizerNFKC51": {
+  #         "id": 84,
+  #         "name": "NormalizerNFKC51"
+  #       },
+  #       "NormalizerTable": {
+  #         "id": 89,
+  #         "name": "NormalizerTable"
+  #       }
+  #     },
+  #     "token_filters": {
+  #       "TokenFilterNFKC100": {
+  #         "id": 226,
+  #         "name": "TokenFilterNFKC100"
+  #       },
+  #       "TokenFilterNFKC121": {
+  #         "id": 227,
+  #         "name": "TokenFilterNFKC121"
+  #       },
+  #       "TokenFilterNFKC130": {
+  #         "id": 228,
+  #         "name": "TokenFilterNFKC130"
+  #       },
+  #       "TokenFilterNFKC150": {
+  #         "id": 229,
+  #         "name": "TokenFilterNFKC150"
+  #       }
+  #     },
   #     "tables": {
-  #       "Terms": {
-  #         "normalizer": {
-  #           "id": 78, 
-  #           "name": "NormalizerAuto"
-  #         }, 
-  #         "name": "Terms", 
-  #         "tokenizer": {
-  #           "id": 67, 
-  #           "name": "TokenBigram"
-  #         }, 
-  #         "command": {
-  #           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto", 
-  #           "name": "table_create", 
-  #           "arguments": {
-  #             "key_type": "ShortText", 
-  #             "default_tokenizer": "TokenBigram", 
-  #             "normalizer": "NormalizerAuto", 
-  #             "flags": "TABLE_PAT_KEY", 
-  #             "name": "Terms"
-  #           }
-  #         }, 
-  #         "indexes": [], 
-  #         "key_type": {
-  #           "type": "type", 
-  #           "id": 14, 
-  #           "name": "ShortText"
-  #         }, 
-  #         "value_type": null, 
-  #         "token_filters": [], 
-  #         "type": "patricia trie", 
-  #         "id": 258, 
-  #         "columns": {
-  #           "memos_content_index": {
-  #             "name": "memos_content_index", 
-  #             "weight": false, 
-  #             "section": false, 
-  #             "compress": null, 
-  #             "command": {
-  #               "command_line": "column_create --table Terms --name memos_content_index --flags COLUMN_INDEX|WITH_POSITION --type Memos --source content", 
-  #               "name": "column_create", 
-  #               "arguments": {
-  #                 "source": "content", 
-  #                 "table": "Terms", 
-  #                 "flags": "COLUMN_INDEX|WITH_POSITION", 
-  #                 "name": "memos_content_index", 
-  #                 "type": "Memos"
-  #               }
-  #             }, 
-  #             "indexes": [], 
-  #             "sources": [
-  #               {
-  #                 "table": "Memos", 
-  #                 "id": 257, 
-  #                 "full_name": "Memos.content", 
-  #                 "name": "content"
-  #               }
-  #             ], 
-  #             "value_type": {
-  #               "type": "reference", 
-  #               "id": 256, 
-  #               "name": "Memos"
-  #             }, 
-  #             "full_name": "Terms.memos_content_index", 
-  #             "position": true, 
-  #             "table": "Terms", 
-  #             "type": "index", 
-  #             "id": 259
-  #           }
-  #         }
-  #       }, 
   #       "Memos": {
-  #         "normalizer": null, 
-  #         "name": "Memos", 
-  #         "tokenizer": null, 
-  #         "command": {
-  #           "command_line": "table_create --name Memos --flags TABLE_HASH_KEY --key_type ShortText", 
-  #           "name": "table_create", 
-  #           "arguments": {
-  #             "key_type": "ShortText", 
-  #             "flags": "TABLE_HASH_KEY", 
-  #             "name": "Memos"
-  #           }
-  #         }, 
-  #         "indexes": [], 
+  #         "id": 256,
+  #         "name": "Memos",
+  #         "type": "hash table",
   #         "key_type": {
-  #           "type": "type", 
-  #           "id": 14, 
-  #           "name": "ShortText"
-  #         }, 
-  #         "value_type": null, 
-  #         "token_filters": [], 
-  #         "type": "hash table", 
-  #         "id": 256, 
+  #           "id": 14,
+  #           "name": "ShortText",
+  #           "type": "type"
+  #         },
+  #         "value_type": null,
+  #         "tokenizer": null,
+  #         "normalizer": null,
+  #         "normalizers": [
+  # 
+  #         ],
+  #         "token_filters": [
+  # 
+  #         ],
+  #         "indexes": [
+  # 
+  #         ],
+  #         "command": {
+  #           "name": "table_create",
+  #           "arguments": {
+  #             "name": "Memos",
+  #             "flags": "TABLE_HASH_KEY",
+  #             "key_type": "ShortText"
+  #           },
+  #           "command_line": "table_create --name Memos --flags TABLE_HASH_KEY --key_type ShortText"
+  #         },
   #         "columns": {
   #           "content": {
-  #             "name": "content", 
-  #             "weight": false, 
-  #             "section": false, 
-  #             "compress": null, 
-  #             "command": {
-  #               "command_line": "column_create --table Memos --name content --flags COLUMN_SCALAR --type Text", 
-  #               "name": "column_create", 
-  #               "arguments": {
-  #                 "table": "Memos", 
-  #                 "flags": "COLUMN_SCALAR", 
-  #                 "name": "content", 
-  #                 "type": "Text"
-  #               }
-  #             }, 
+  #             "id": 257,
+  #             "name": "content",
+  #             "table": "Memos",
+  #             "full_name": "Memos.content",
+  #             "type": "scalar",
+  #             "value_type": {
+  #               "id": 15,
+  #               "name": "Text",
+  #               "type": "type"
+  #             },
+  #             "compress": null,
+  #             "missing": "add",
+  #             "invalid": "error",
+  #             "section": false,
+  #             "weight": false,
+  #             "weight_float32": false,
+  #             "position": false,
+  #             "sources": [
+  # 
+  #             ],
   #             "indexes": [
   #               {
-  #                 "table": "Terms", 
-  #                 "section": 0, 
-  #                 "id": 259, 
-  #                 "full_name": "Terms.memos_content_index", 
-  #                 "name": "memos_content_index"
+  #                 "id": 259,
+  #                 "full_name": "Terms.memos_content_index",
+  #                 "table": "Terms",
+  #                 "name": "memos_content_index",
+  #                 "section": 0
   #               }
-  #             ], 
-  #             "sources": [], 
-  #             "value_type": {
-  #               "type": "type", 
-  #               "id": 15, 
-  #               "name": "Text"
-  #             }, 
-  #             "full_name": "Memos.content", 
-  #             "position": false, 
-  #             "table": "Memos", 
-  #             "type": "scalar", 
-  #             "id": 257
+  #             ],
+  #             "command": {
+  #               "name": "column_create",
+  #               "arguments": {
+  #                 "table": "Memos",
+  #                 "name": "content",
+  #                 "flags": "COLUMN_SCALAR",
+  #                 "type": "Text"
+  #               },
+  #               "command_line": "column_create --table Memos --name content --flags COLUMN_SCALAR --type Text"
+  #             }
   #           }
   #         }
-  #       }
-  #     }, 
-  #     "normalizers": {
-  #       "NormalizerNFKC51": {
-  #         "id": 79, 
-  #         "name": "NormalizerNFKC51"
-  #       }, 
-  #       "NormalizerAuto": {
-  #         "id": 78, 
-  #         "name": "NormalizerAuto"
-  #       }
-  #     }, 
-  #     "token_filters": {}, 
-  #     "tokenizers": {
-  #       "TokenBigramSplitSymbolAlphaDigit": {
-  #         "id": 71, 
-  #         "name": "TokenBigramSplitSymbolAlphaDigit"
-  #       }, 
-  #       "TokenRegexp": {
-  #         "id": 77, 
-  #         "name": "TokenRegexp"
-  #       }, 
-  #       "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
-  #         "id": 75, 
-  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
-  #       }, 
-  #       "TokenBigram": {
-  #         "id": 67, 
-  #         "name": "TokenBigram"
-  #       }, 
-  #       "TokenDelimit": {
-  #         "id": 65, 
-  #         "name": "TokenDelimit"
-  #       }, 
-  #       "TokenUnigram": {
-  #         "id": 66, 
-  #         "name": "TokenUnigram"
-  #       }, 
-  #       "TokenBigramSplitSymbol": {
-  #         "id": 69, 
-  #         "name": "TokenBigramSplitSymbol"
-  #       }, 
-  #       "TokenDelimitNull": {
-  #         "id": 76, 
-  #         "name": "TokenDelimitNull"
-  #       }, 
-  #       "TokenBigramIgnoreBlankSplitSymbolAlpha": {
-  #         "id": 74, 
-  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
-  #       }, 
-  #       "TokenBigramSplitSymbolAlpha": {
-  #         "id": 70, 
-  #         "name": "TokenBigramSplitSymbolAlpha"
-  #       }, 
-  #       "TokenTrigram": {
-  #         "id": 68, 
-  #         "name": "TokenTrigram"
-  #       }, 
-  #       "TokenBigramIgnoreBlankSplitSymbol": {
-  #         "id": 73, 
-  #         "name": "TokenBigramIgnoreBlankSplitSymbol"
-  #       }, 
-  #       "TokenBigramIgnoreBlank": {
-  #         "id": 72, 
-  #         "name": "TokenBigramIgnoreBlank"
-  #       }
-  #     }, 
-  #     "plugins": {}, 
-  #     "types": {
-  #       "UInt64": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 11, 
-  #         "can_be_value_type": true, 
-  #         "name": "UInt64"
-  #       }, 
-  #       "Int32": {
-  #         "can_be_key_type": true, 
-  #         "size": 4, 
-  #         "id": 8, 
-  #         "can_be_value_type": true, 
-  #         "name": "Int32"
-  #       }, 
-  #       "Int16": {
-  #         "can_be_key_type": true, 
-  #         "size": 2, 
-  #         "id": 6, 
-  #         "can_be_value_type": true, 
-  #         "name": "Int16"
-  #       }, 
-  #       "LongText": {
-  #         "can_be_key_type": false, 
-  #         "size": 2147483648, 
-  #         "id": 16, 
-  #         "can_be_value_type": false, 
-  #         "name": "LongText"
-  #       }, 
-  #       "TokyoGeoPoint": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 17, 
-  #         "can_be_value_type": true, 
-  #         "name": "TokyoGeoPoint"
-  #       }, 
-  #       "Text": {
-  #         "can_be_key_type": false, 
-  #         "size": 65536, 
-  #         "id": 15, 
-  #         "can_be_value_type": false, 
-  #         "name": "Text"
-  #       }, 
-  #       "ShortText": {
-  #         "can_be_key_type": true, 
-  #         "size": 4096, 
-  #         "id": 14, 
-  #         "can_be_value_type": false, 
-  #         "name": "ShortText"
-  #       }, 
-  #       "Float": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 12, 
-  #         "can_be_value_type": true, 
-  #         "name": "Float"
-  #       }, 
-  #       "UInt8": {
-  #         "can_be_key_type": true, 
-  #         "size": 1, 
-  #         "id": 5, 
-  #         "can_be_value_type": true, 
-  #         "name": "UInt8"
-  #       }, 
-  #       "UInt32": {
-  #         "can_be_key_type": true, 
-  #         "size": 4, 
-  #         "id": 9, 
-  #         "can_be_value_type": true, 
-  #         "name": "UInt32"
-  #       }, 
-  #       "Object": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 2, 
-  #         "can_be_value_type": true, 
-  #         "name": "Object"
-  #       }, 
-  #       "UInt16": {
-  #         "can_be_key_type": true, 
-  #         "size": 2, 
-  #         "id": 7, 
-  #         "can_be_value_type": true, 
-  #         "name": "UInt16"
-  #       }, 
-  #       "Int64": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 10, 
-  #         "can_be_value_type": true, 
-  #         "name": "Int64"
-  #       }, 
-  #       "Time": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 13, 
-  #         "can_be_value_type": true, 
-  #         "name": "Time"
-  #       }, 
-  #       "Bool": {
-  #         "can_be_key_type": true, 
-  #         "size": 1, 
-  #         "id": 3, 
-  #         "can_be_value_type": true, 
-  #         "name": "Bool"
-  #       }, 
-  #       "WGS84GeoPoint": {
-  #         "can_be_key_type": true, 
-  #         "size": 8, 
-  #         "id": 18, 
-  #         "can_be_value_type": true, 
-  #         "name": "WGS84GeoPoint"
-  #       }, 
-  #       "Int8": {
-  #         "can_be_key_type": true, 
-  #         "size": 1, 
-  #         "id": 4, 
-  #         "can_be_value_type": true, 
-  #         "name": "Int8"
+  #       },
+  #       "Terms": {
+  #         "id": 258,
+  #         "name": "Terms",
+  #         "type": "patricia trie",
+  #         "key_type": {
+  #           "id": 14,
+  #           "name": "ShortText",
+  #           "type": "type"
+  #         },
+  #         "value_type": null,
+  #         "tokenizer": {
+  #           "id": 67,
+  #           "name": "TokenBigram",
+  #           "options": null
+  #         },
+  #         "normalizer": {
+  #           "id": 83,
+  #           "name": "NormalizerAuto",
+  #           "options": null
+  #         },
+  #         "normalizers": [
+  #           {
+  #             "id": 83,
+  #             "name": "NormalizerAuto",
+  #             "options": null
+  #           }
+  #         ],
+  #         "token_filters": [
+  # 
+  #         ],
+  #         "indexes": [
+  # 
+  #         ],
+  #         "command": {
+  #           "name": "table_create",
+  #           "arguments": {
+  #             "name": "Terms",
+  #             "flags": "TABLE_PAT_KEY",
+  #             "key_type": "ShortText",
+  #             "default_tokenizer": "TokenBigram",
+  #             "normalizer": "NormalizerAuto"
+  #           },
+  #           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto"
+  #         },
+  #         "columns": {
+  #           "memos_content_index": {
+  #             "id": 259,
+  #             "name": "memos_content_index",
+  #             "table": "Terms",
+  #             "full_name": "Terms.memos_content_index",
+  #             "type": "index",
+  #             "value_type": {
+  #               "id": 256,
+  #               "name": "Memos",
+  #               "type": "reference"
+  #             },
+  #             "compress": null,
+  #             "missing": null,
+  #             "invalid": null,
+  #             "section": false,
+  #             "weight": false,
+  #             "weight_float32": false,
+  #             "position": true,
+  #             "sources": [
+  #               {
+  #                 "id": 257,
+  #                 "name": "content",
+  #                 "table": "Memos",
+  #                 "full_name": "Memos.content"
+  #               }
+  #             ],
+  #             "indexes": [
+  # 
+  #             ],
+  #             "command": {
+  #               "name": "column_create",
+  #               "arguments": {
+  #                 "table": "Terms",
+  #                 "name": "memos_content_index",
+  #                 "flags": "COLUMN_INDEX|WITH_POSITION",
+  #                 "type": "Memos",
+  #                 "source": "content"
+  #               },
+  #               "command_line": "column_create --table Terms --name memos_content_index --flags COLUMN_INDEX|WITH_POSITION --type Memos --source content"
+  #             }
+  #           }
+  #         }
   #       }
   #     }
   #   }

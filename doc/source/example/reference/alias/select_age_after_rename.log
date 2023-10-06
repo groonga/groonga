@@ -1,19 +1,19 @@
 Execution example::
 
   column_rename Users age years
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   select Users --filter 'age < 20'
   # [
   #   [
-  #     -63, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "Syntax error: <age| |< 20>: [expr][parse] unknown identifier: <age>", 
+  #     -63,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "Syntax error: <age| |< 20>: [expr][parse] unknown identifier: <age>",
   #     [
   #       [
-  #         "yy_syntax_error", 
-  #         "grn_ecmascript.lemon", 
-  #         41
+  #         "yy_syntax_error",
+  #         "lib/grn_ecmascript.lemon",
+  #         173
   #       ]
   #     ]
   #   ]

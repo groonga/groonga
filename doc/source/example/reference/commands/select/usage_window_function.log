@@ -1,7 +1,7 @@
 Execution example::
 
   plugin_register functions/number
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   select \
     --table Entries \
     --columns[n_likes_sum_per_tag].stage initial \
@@ -11,52 +11,52 @@ Execution example::
     --output_columns tag,n_likes,n_likes_sum_per_tag
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes_sum_per_tag", 
+  #           "n_likes_sum_per_tag",
   #           "UInt32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Hello", 
-  #         5, 
+  #         "Hello",
+  #         5,
   #         5
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         10, 
+  #         "Groonga",
+  #         10,
   #         25
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         15, 
+  #         "Groonga",
+  #         15,
   #         25
-  #       ], 
+  #       ],
   #       [
-  #         "Senna", 
-  #         3, 
+  #         "Senna",
+  #         3,
   #         6
-  #       ], 
+  #       ],
   #       [
-  #         "Senna", 
-  #         3, 
+  #         "Senna",
+  #         3,
   #         6
   #       ]
   #     ]

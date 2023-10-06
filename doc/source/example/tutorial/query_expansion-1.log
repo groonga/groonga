@@ -1,26 +1,26 @@
 Execution example::
 
   table_create Doc TABLE_PAT_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Doc body COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Term TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Synonym TABLE_PAT_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Synonym body COLUMN_VECTOR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Doc
   [
   {"_key": "001", "body": "Play all night in this theater."},
   {"_key": "002", "body": "theatre is British spelling."},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   load --table Synonym
   [
   {"_key": "theater", "body": ["theater", "theatre"]},
   {"_key": "theatre", "body": ["theater", "theatre"]},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

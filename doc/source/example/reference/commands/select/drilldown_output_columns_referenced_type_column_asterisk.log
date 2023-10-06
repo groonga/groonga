@@ -7,48 +7,48 @@ Execution example::
     --drilldown_output_columns '_key, *'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "label", 
+  #           "label",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "priority", 
+  #           "priority",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "groonga", 
-  #         "Groonga", 
+  #         "groonga",
+  #         "Groonga",
   #         10
-  #       ], 
+  #       ],
   #       [
-  #         "mroonga", 
-  #         "Mroonga", 
+  #         "mroonga",
+  #         "Mroonga",
   #         5
   #       ]
   #     ]

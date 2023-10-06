@@ -7,37 +7,37 @@ Execution example::
     --sort_keys "-_score"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga is fast", 
-  #         "Groonga! Groonga! Groonga! Groonga is very fast!", 
+  #         "Groonga is fast",
+  #         "Groonga! Groonga! Groonga! Groonga is very fast!",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga is easy", 
-  #         "Groonga is very easy full text search engine!", 
+  #         "Groonga is easy",
+  #         "Groonga is very easy full text search engine!",
   #         2
   #       ]
   #     ]

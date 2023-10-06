@@ -9,4 +9,4 @@ Execution example::
     --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
     --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
     --filter 'n_likes_cumulative_sum_per_tag > 5'
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]

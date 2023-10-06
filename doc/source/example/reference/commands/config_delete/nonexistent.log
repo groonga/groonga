@@ -3,17 +3,17 @@ Execution example::
   config_delete nonexistent
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[config][delete] failed to delete", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[config][delete] failed to delete: <nonexistent>",
   #     [
   #       [
-  #         "grn_config_delete", 
-  #         "config.c", 
-  #         166
+  #         "grn_config_delete",
+  #         "lib/config.c",
+  #         188
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   false
   # ]

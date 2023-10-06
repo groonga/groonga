@@ -1,8 +1,10 @@
 Execution example::
 
+  plugin_register functions/math
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Shops TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Shops from_station COLUMN_SCALAR Int32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Shops from_office COLUMN_SCALAR Int32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

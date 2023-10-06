@@ -1,11 +1,11 @@
 Execution example::
 
   table_create Points TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Points game COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Points score COLUMN_SCALAR UInt32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Points
   [
   ["game",  "score"],
@@ -18,4 +18,4 @@ Execution example::
   ["game2", 200],
   ["game2", 200]
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 8]
+  # [[0,1337566253.89858,0.000355720520019531],8]

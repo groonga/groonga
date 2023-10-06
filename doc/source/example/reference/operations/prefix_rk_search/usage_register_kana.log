@@ -1,11 +1,11 @@
 Execution example::
 
   table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Readings
   [
   {"_key": "ニホン"},
   {"_key": "ニッポン"},
   {"_key": "ローマジ"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]

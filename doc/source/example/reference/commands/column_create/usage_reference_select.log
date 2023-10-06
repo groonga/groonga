@@ -5,39 +5,39 @@ Execution example::
    --output_columns _key,character._key,character.age,character.roles
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "character._key", 
+  #           "character._key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "character.age", 
+  #           "character.age",
   #           "UInt8"
-  #         ], 
+  #         ],
   #         [
-  #           "character.roles", 
+  #           "character.roles",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Alice's Adventure in Wonderland", 
-  #         "alice", 
-  #         7, 
+  #         "Alice's Adventure in Wonderland",
+  #         "alice",
+  #         7,
   #         [
-  #           "adventurer", 
+  #           "adventurer",
   #           "younger-sister"
   #         ]
   #       ]

@@ -1,11 +1,11 @@
 Execution example::
 
-  select Entries --output_columns 'highlight("Groonga is very fast fulltext search engine.", "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>", {"normalizers": "NormalizerAuto", "html_mode": true})' --command_version 2 --match_columns body --query "groonga"
+  select Entries --output_columns 'highlight(body, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>", {"normalizers": "NormalizerAuto", "html_mode": true})' --command_version 2
   # [
   #   [
   #     0,
-  #     1686037492.46897,
-  #     0.0482330322265625
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     [
@@ -19,7 +19,7 @@ Execution example::
   #         ]
   #       ],
   #       [
-  #         "<span class=\"keyword1\">Groonga</span> is very fast fulltext search engine."
+  #         "Mroonga is a <span class=\"keyword2\">ＭｙＳＱＬ</span> storage engine based on <span class=\"keyword1\">Groonga</span>. &lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <span class=\"keyword1\">Groonga</span>."
   #       ]
   #     ]
   #   ]

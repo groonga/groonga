@@ -1,57 +1,57 @@
 Execution example::
 
   plugin_register token_filters/stem
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Memos TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Memos content COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Terms TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenBigram \
     --normalizer NormalizerAuto \
     --token_filters TokenFilterStem
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Memos
   [
   {"content": "I develop Groonga"},
   {"content": "I'm developing Groonga"},
   {"content": "I developed Groonga"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   select Memos --match_columns content --query "develops"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "I develop Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
+  #         2,
   #         "I'm developing Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
+  #         3,
   #         "I developed Groonga"
   #       ]
   #     ]

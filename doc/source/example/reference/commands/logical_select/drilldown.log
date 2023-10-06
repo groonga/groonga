@@ -7,70 +7,70 @@ Execution example::
     --drilldown tag
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "The first post!", 
+  #         "The first post!",
   #         "Hello"
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
+  #         "Groonga",
   #         "Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         "Mroonga", 
+  #         "Mroonga",
   #         "Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Senna", 
+  #         "Good-bye Senna",
   #         "Senna"
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Tritonn", 
+  #         "Good-bye Tritonn",
   #         "Senna"
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Hello", 
+  #         "Hello",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
+  #         "Groonga",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "Senna", 
+  #         "Senna",
   #         2
   #       ]
   #     ]

@@ -7,43 +7,43 @@ Execution example::
     --sort_keys "-_score"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "message", 
+  #           "message",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Notice Notice Notice Notice Notice", 
+  #         "Notice Notice Notice Notice Notice",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Notice Notice Notice Notice", 
+  #         "Notice Notice Notice Notice",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Notice Notice Notice", 
+  #         "Notice Notice Notice",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Notice Notice", 
+  #         "Notice Notice",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "Notice", 
+  #         "Notice",
   #         1
   #       ]
   #     ]

@@ -3,43 +3,43 @@ Execution example::
   select --table User --query friends:@tomo --output_columns _key,username
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "username", 
+  #           "username",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "ken", 
+  #         "ken",
   #         "健作"
-  #       ], 
+  #       ],
   #       [
-  #         "taro", 
+  #         "taro",
   #         "ぐるんが太郎"
-  #       ], 
+  #       ],
   #       [
-  #         "jiro", 
+  #         "jiro",
   #         "ぐるんが次郎"
-  #       ], 
+  #       ],
   #       [
-  #         "moritapo", 
+  #         "moritapo",
   #         "森田"
-  #       ], 
+  #       ],
   #       [
-  #         "hana", 
+  #         "hana",
   #         "花子"
   #       ]
   #     ]
@@ -48,35 +48,35 @@ Execution example::
   select --table User --query friends:@jiro --output_columns _key,username
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "username", 
+  #           "username",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "ken", 
+  #         "ken",
   #         "健作"
-  #       ], 
+  #       ],
   #       [
-  #         "taro", 
+  #         "taro",
   #         "ぐるんが太郎"
-  #       ], 
+  #       ],
   #       [
-  #         "hana", 
+  #         "hana",
   #         "花子"
   #       ]
   #     ]

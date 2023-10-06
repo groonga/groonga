@@ -1,48 +1,48 @@
 Execution example::
 
   tokenize --tokenizer 'TokenNgram("unify_symbol", false)' --string "___---" --normalizer NormalizerAuto
-  #[
-  #  [
-  #    0,
-  #    1558913369.875591,
-  #    0.0008268356323242188
-  #  ],
-  #  [
-  #    {
-  #      "value": "__",
-  #      "position": 0,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "__",
-  #      "position": 1,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "_-",
-  #      "position": 2,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "--",
-  #      "position": 3,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "--",
-  #      "position": 4,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "-",
-  #      "position": 5,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    }
-  #  ]
-  #]
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   [
+  #     {
+  #       "value": "__",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "__",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "_-",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "--",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "--",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "-",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

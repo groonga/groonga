@@ -3,94 +3,94 @@ Execution example::
   select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "posted_by.name", 
+  #           "posted_by.name",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "comment", 
+  #           "comment",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "last_modified", 
+  #           "last_modified",
   #           "Time"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Alice", 
-  #         "I've created micro-blog!", 
+  #         "Alice",
+  #         "I've created micro-blog!",
   #         1268795100.0
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
-  #         "First post. test,test...", 
+  #         "Bob",
+  #         "First post. test,test...",
   #         1268794800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Alice", 
-  #         "@bob Welcome!!!", 
+  #         "Alice",
+  #         "@bob Welcome!!!",
   #         1268795100.0
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
-  #         "@alice Thanks!", 
+  #         "Bob",
+  #         "@alice Thanks!",
   #         1268798400.0
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
-  #         "I've just used 'Try-Groonga' now! #groonga", 
+  #         "Bob",
+  #         "I've just used 'Try-Groonga' now! #groonga",
   #         1268802000.0
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "groonga", 
+  #         "groonga",
   #         1
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "alice", 
+  #         "alice",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "bob", 
+  #         "bob",
   #         3
   #       ]
   #     ]

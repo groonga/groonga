@@ -1,8 +1,8 @@
 Execution example::
 
-  % groonga-suggest-create-dataset ${DB_PATH} query
+  $ groonga-suggest-create-dataset ${DB_PATH} query
   > plugin_register suggest/suggest
-  false
+  true
   > table_create event_type TABLE_HASH_KEY ShortText
   true
   > table_create bigram TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto

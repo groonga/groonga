@@ -4,53 +4,53 @@ Execution example::
   [
   {"_key": "popular", "synonym": ["popular", "n_likes:>=10"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select Entries --match_columns content --query "popular" --query_expander Thesaurus.synonym
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         10, 
+  #         2,
+  #         "Groonga",
+  #         "I started to use Groonga. It's very fast!",
+  #         10,
   #         "Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         15, 
+  #         3,
+  #         "Mroonga",
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
+  #         15,
   #         "Groonga"
   #       ]
   #     ]

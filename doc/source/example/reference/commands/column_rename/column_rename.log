@@ -1,121 +1,125 @@
 Execution example::
 
   table_create Users TABLE_PAT_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Users score COLUMN_SCALAR Int32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Users
   [
   {"_key": "Alice",  "score": 2},
   {"_key": "Bob",    "score": 0},
   {"_key": "Carlos", "score": -1}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   column_rename Users score point
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_list Users
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
-  #         "id", 
+  #         "id",
   #         "UInt32"
-  #       ], 
+  #       ],
   #       [
-  #         "name", 
+  #         "name",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "path", 
+  #         "path",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "type", 
+  #         "type",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "flags", 
+  #         "flags",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "domain", 
+  #         "domain",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "range", 
+  #         "range",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "source", 
+  #         "source",
   #         "ShortText"
   #       ]
-  #     ], 
+  #     ],
   #     [
-  #       256, 
-  #       "_key", 
-  #       "", 
-  #       "", 
-  #       "COLUMN_SCALAR", 
-  #       "Users", 
-  #       "ShortText", 
-  #       []
-  #     ], 
+  #       256,
+  #       "_key",
+  #       "",
+  #       "",
+  #       "COLUMN_SCALAR",
+  #       "Users",
+  #       "ShortText",
+  #       [
+  # 
+  #       ]
+  #     ],
   #     [
-  #       257, 
-  #       "point", 
-  #       "/tmp/groonga-databases/commands_column_rename.0000101", 
-  #       "fix", 
-  #       "COLUMN_SCALAR|PERSISTENT", 
-  #       "Users", 
-  #       "Int32", 
-  #       []
+  #       257,
+  #       "point",
+  #       "${DB_PATH}.0000101",
+  #       "fix",
+  #       "COLUMN_SCALAR|PERSISTENT",
+  #       "Users",
+  #       "Int32",
+  #       [
+  # 
+  #       ]
   #     ]
   #   ]
   # ]
   select Users
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "point", 
+  #           "point",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "Alice", 
+  #         1,
+  #         "Alice",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Bob", 
+  #         2,
+  #         "Bob",
   #         0
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "Carlos", 
+  #         3,
+  #         "Carlos",
   #         -1
   #       ]
   #     ]

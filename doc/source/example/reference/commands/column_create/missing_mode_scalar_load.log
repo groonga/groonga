@@ -4,25 +4,25 @@ Execution example::
   [
   {"_key": "key", "missing_add":    "nonexistent1"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table MissingModeScalar
   [
   {"_key": "key", "missing_ignore": "nonexistent2"}
   ]
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "<MissingModeScalar.missing_ignore>: failed to cast to <MissingModeScalarReferred>: <\"nonexistent2\">", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "<MissingModeScalar.missing_ignore>: failed to cast to <MissingModeScalarReferred>: <\"nonexistent2\">",
   #     [
   #       [
-  #         "grn_ra_cast_value", 
-  #         "lib/store.c", 
-  #         494
+  #         "grn_ra_cast_value",
+  #         "lib/store.c",
+  #         522
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   1
   # ]
   load --table MissingModeScalar
@@ -31,59 +31,59 @@ Execution example::
   ]
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "<MissingModeScalar.missing_nil>: failed to cast to <MissingModeScalarReferred>: <\"nonexistent3\">", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "<MissingModeScalar.missing_nil>: failed to cast to <MissingModeScalarReferred>: <\"nonexistent3\">",
   #     [
   #       [
-  #         "grn_ra_cast_value", 
-  #         "lib/store.c", 
-  #         494
+  #         "grn_ra_cast_value",
+  #         "lib/store.c",
+  #         522
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   1
   # ]
   select --table MissingModeScalar
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_add", 
+  #           "missing_add",
   #           "MissingModeScalarReferred"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_ignore", 
+  #           "missing_ignore",
   #           "MissingModeScalarReferred"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_nil", 
+  #           "missing_nil",
   #           "MissingModeScalarReferred"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "key", 
-  #         "nonexistent1", 
-  #         "", 
+  #         1,
+  #         "key",
+  #         "nonexistent1",
+  #         "",
   #         ""
   #       ]
   #     ]
@@ -92,27 +92,27 @@ Execution example::
   select --table MissingModeScalarReferred
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "nonexistent1"
   #       ]
   #     ]

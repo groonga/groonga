@@ -5,4 +5,4 @@ Execution example::
   {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
   {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

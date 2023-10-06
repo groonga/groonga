@@ -1,45 +1,45 @@
 Execution example::
 
   table_create FromTable TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create FromTable from_column COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create FromTable to_column   COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table FromTable
   [
   {"_key": "key1", "from_column": "value1"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select FromTable --output_columns _key,from_column,to_column
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "from_column", 
+  #           "from_column",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "to_column", 
+  #           "to_column",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "key1", 
-  #         "value1", 
+  #         "key1",
+  #         "value1",
   #         ""
   #       ]
   #     ]

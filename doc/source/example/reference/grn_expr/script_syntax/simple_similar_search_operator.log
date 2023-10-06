@@ -3,24 +3,24 @@ Execution example::
   select Entries --filter 'content *S "I migrated all Solr system!"' --output_columns content
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I migrated all Senna system!"
-  #       ], 
+  #       ],
   #       [
   #         "I also migrated all Tritonn system!"
   #       ]

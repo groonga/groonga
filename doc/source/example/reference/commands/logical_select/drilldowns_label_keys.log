@@ -9,59 +9,59 @@ Execution example::
     --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     {
   #       "tag.n_likes": [
   #         [
   #           4
-  #         ], 
+  #         ],
   #         [
   #           [
-  #             "tag", 
+  #             "tag",
   #             "ShortText"
-  #           ], 
+  #           ],
   #           [
-  #             "n_likes", 
+  #             "n_likes",
   #             "UInt32"
-  #           ], 
+  #           ],
   #           [
-  #             "_nsubrecs", 
+  #             "_nsubrecs",
   #             "Int32"
   #           ]
-  #         ], 
+  #         ],
   #         [
-  #           "Hello", 
-  #           5, 
+  #           "Hello",
+  #           5,
   #           1
-  #         ], 
+  #         ],
   #         [
-  #           "Groonga", 
-  #           10, 
+  #           "Groonga",
+  #           10,
   #           1
-  #         ], 
+  #         ],
   #         [
-  #           "Groonga", 
-  #           15, 
+  #           "Groonga",
+  #           15,
   #           1
-  #         ], 
+  #         ],
   #         [
-  #           "Senna", 
-  #           3, 
+  #           "Senna",
+  #           3,
   #           2
   #         ]
   #       ]

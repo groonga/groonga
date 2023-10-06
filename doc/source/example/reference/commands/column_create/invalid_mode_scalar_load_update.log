@@ -6,61 +6,61 @@ Execution example::
   ]
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "<InvalidModeScalar.invalid_error>: failed to cast to <Int32>: <\"invalid\">", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "<InvalidModeScalar.invalid_error>: failed to cast to <Int32>: <\"invalid\">",
   #     [
   #       [
-  #         "grn_ra_cast_value", 
-  #         "lib/store.c", 
-  #         494
+  #         "grn_ra_cast_value",
+  #         "lib/store.c",
+  #         522
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   1
   # ]
   load --table InvalidModeScalar
   [
   {"_key": "key", "invalid_warn":   "invalid"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table InvalidModeScalar
   [
   {"_key": "key", "invalid_ignore": "invalid"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select \
     --table InvalidModeScalar \
     --output_columns invalid_error,invalid_warn,invalid_ignore
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "invalid_error", 
+  #           "invalid_error",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "invalid_warn", 
+  #           "invalid_warn",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "invalid_ignore", 
+  #           "invalid_ignore",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         29, 
-  #         0, 
+  #         29,
+  #         0,
   #         0
   #       ]
   #     ]

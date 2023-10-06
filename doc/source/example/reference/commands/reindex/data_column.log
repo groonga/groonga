@@ -1,22 +1,22 @@
 Execution example::
 
   table_create Site TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Site title COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create BigramLexicon TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenBigram \
     --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create BigramLexicon site_title COLUMN_INDEX|WITH_POSITION \
     Site title
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create RegexpLexicon TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenRegexp \
     --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create RegexpLexicon site_title COLUMN_INDEX|WITH_POSITION \
     Site title
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   reindex Site.title
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

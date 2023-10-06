@@ -3,23 +3,26 @@ Execution example::
   select Entries --filter 'content *NP1,4 "I started .$"' --output_columns content
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
-  #         1
-  #       ], 
+  #         2
+  #       ],
   #       [
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I started to use Groonga. It's very fast!"
+  #       ],
+  #       [
+  #         "I also started to use Mroonga. It's also very fast! Really fast!"
   #       ]
   #     ]
   #   ]

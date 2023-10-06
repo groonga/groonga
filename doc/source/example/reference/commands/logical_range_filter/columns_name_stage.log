@@ -10,33 +10,33 @@ Execution example::
     --output_columns _id,is_popular,n_likes
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
-  #         "_id", 
+  #         "_id",
   #         "UInt32"
-  #       ], 
+  #       ],
   #       [
-  #         "is_popular", 
+  #         "is_popular",
   #         "Bool"
-  #       ], 
+  #       ],
   #       [
-  #         "n_likes", 
+  #         "n_likes",
   #         "UInt32"
   #       ]
-  #     ], 
+  #     ],
   #     [
-  #       2, 
-  #       true, 
+  #       2,
+  #       true,
   #       10
-  #     ], 
+  #     ],
   #     [
-  #       3, 
-  #       true, 
+  #       3,
+  #       true,
   #       15
   #     ]
   #   ]

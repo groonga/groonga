@@ -3,10 +3,10 @@ Execution example::
   tokenize 'TokenDelimit("delimiter", ",")' "Hello,World"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
   #       "value": "Hello",

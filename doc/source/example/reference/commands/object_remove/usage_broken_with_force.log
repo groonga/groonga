@@ -3,19 +3,19 @@ Execution example::
   object_remove Users --force yes
   # [
   #   [
-  #     -65, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[io][open] file size is too small: <7>(required: >= 64): </tmp/groonga-databases/commands_object_remove.0000100>", 
+  #     -65,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[io][open] file size is too small: <7>(required: >= 64): <${DB_PATH}.0000100>",
   #     [
   #       [
-  #         "grn_io_open", 
-  #         "io.c", 
-  #         604
+  #         "grn_io_open",
+  #         "lib/io.c",
+  #         606
   #       ]
   #     ]
-  #   ], 
+  #   ],
   #   false
   # ]
   object_exist Users
-  # [[0, 1337566253.89858, 0.000355720520019531], false]
+  # [[0,1337566253.89858,0.000355720520019531],false]

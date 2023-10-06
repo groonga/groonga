@@ -3,16 +3,16 @@ Execution example::
   tokenize TokenDelimit "ー—―─━ｰ" --token_filters 'TokenFilterNFKC100("unify_prolonged_sound_mark", true)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "force_prefix_search": false, 
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "ーーーーーー"
+  #       "value": "ーーーーーー",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

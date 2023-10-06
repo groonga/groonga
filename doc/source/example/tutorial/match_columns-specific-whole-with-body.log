@@ -3,21 +3,21 @@ Execution example::
   select --table Entries --output_columns body --match_columns Terms.entries_whole.body --query "Groonga"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "body", 
+  #           "body",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I love Groonga!"
   #       ]

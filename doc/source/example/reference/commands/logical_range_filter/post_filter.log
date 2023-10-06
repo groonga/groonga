@@ -12,33 +12,33 @@ Execution example::
     --output_columns _key,n_likes,n_likes_sum_per_tag
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
-  #         "_key", 
+  #         "_key",
   #         "ShortText"
-  #       ], 
+  #       ],
   #       [
-  #         "n_likes", 
+  #         "n_likes",
   #         "UInt32"
-  #       ], 
+  #       ],
   #       [
-  #         "n_likes_sum_per_tag", 
+  #         "n_likes_sum_per_tag",
   #         "UInt32"
   #       ]
-  #     ], 
+  #     ],
   #     [
-  #       "Groonga", 
-  #       10, 
+  #       "Groonga",
+  #       10,
   #       25
-  #     ], 
+  #     ],
   #     [
-  #       "Mroonga", 
-  #       15, 
+  #       "Mroonga",
+  #       15,
   #       25
   #     ]
   #   ]

@@ -1,14 +1,19 @@
 Execution example::
 
   table_create Logs_20150203 TABLE_HASH_KEY ShortText
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Logs_20150204 TABLE_HASH_KEY ShortText
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20150204 timestamp COLUMN_SCALAR Time
-
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Logs TABLE_HASH_KEY ShortText
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs original_id COLUMN_SCALAR UInt32
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs timestamp_text COLUMN_SCALAR ShortText
-
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Logs_20150203
   [
   {
@@ -20,6 +25,7 @@ Execution example::
     "timestamp": "2015-02-03 12:49:00"
   }
   ]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   load --table Logs_20150204
   [
   {
@@ -27,17 +33,18 @@ Execution example::
     "timestamp": "2015-02-04 00:00:00"
   }
   ]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   logical_select \
     --logical_table Logs \
     --shard_key timestamp \
     --load_table Logs \
-    --load_columns "original_id, timestamp_text" \
-    --load_values "_id, timestamp"
+    --load_columns "_key, original_id, timestamp_text" \
+    --load_values "_key, _id, timestamp"
   # [
   #   [
   #     0,
-  #     0.0,
-  #     0.0
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     [
@@ -80,8 +87,8 @@ Execution example::
   # [
   #   [
   #     0,
-  #     0.0,
-  #     0.0
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     [

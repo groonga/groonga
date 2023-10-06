@@ -1,15 +1,15 @@
 Execution example::
 
   plugin_register token_filters/stop_word
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms is_stop_word COLUMN_SCALAR Bool
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Terms
   [
   {"_key": "and", "is_stop_word": true}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   table_tokenize Terms "Hello and Good-bye" --mode GET
-  # [[0, 1337566253.89858, 0.000355720520019531], []]
+  # [[0,1337566253.89858,0.000355720520019531],[]]

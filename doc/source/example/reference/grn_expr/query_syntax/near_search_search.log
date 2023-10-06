@@ -1,47 +1,47 @@
 Execution example::
 
   table_create NearTokens TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create NearTokens content COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create NearTokenTerms TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenNgram \
     --normalizer NormalizerNFKC130
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create NearTokenTerms index COLUMN_INDEX|WITH_POSITION \
     NearTokens content
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table NearTokens
   [
   {"content": "a 1 2 3 4 5 b 6 7 8 9 10 c"},
   {"content": "a 1 2 3 4 5 b 6 7 8 9 10 11 c"},
   {"content": "a 1 2 3 4 5 b 6 7 8 9 10 11 12 c"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   select NearTokens --match_columns content --query '*N"a b c"'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "a 1 2 3 4 5 b 6 7 8 9 10 c"
   #       ]
   #     ]

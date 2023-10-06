@@ -1,21 +1,21 @@
 Execution example::
 
-  tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
+  tokenize 'TokenDelimit("pattern", "\\\\.\\\\s*")' "This is a pen. This is an apple."
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "value": "This is a pen.",
+  #       "value": "This is a pen",
   #       "position": 0,
   #       "force_prefix": false,
   #       "force_prefix_search": false
   #     },
   #     {
-  #       "value": "This is an apple.",
+  #       "value": "This is an apple",
   #       "position": 1,
   #       "force_prefix": false,
   #       "force_prefix_search": false

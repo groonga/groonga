@@ -3,37 +3,37 @@ Execution example::
   select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sort_keys '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/", 
-  #         "128452975x503157902", 
+  #         "http://example.org/",
+  #         "128452975x503157902",
   #         2054
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.net/", 
-  #         "128487316x502920929", 
+  #         "http://example.net/",
+  #         "128487316x502920929",
   #         6720
   #       ]
   #     ]

@@ -3,6 +3,6 @@ Execution example::
   table_create Terms TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenBigram \
     --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms content_index COLUMN_INDEX Entries content
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

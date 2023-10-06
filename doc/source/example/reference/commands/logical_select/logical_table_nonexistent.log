@@ -3,15 +3,15 @@ Execution example::
   logical_select --logical_table Nonexistent --shard_key created_at
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[logical_select] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>", 
+  #     -22,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "[logical_select] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>",
   #     [
   #       [
-  #         "Groonga::Sharding::LogicalSelectCommand::Executor.execute_search", 
-  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_select.rb", 
-  #         560
+  #         "execute_search",
+  #         "lib/groonga/plugins/sharding/logical_select.rb",
+  #         644
   #       ]
   #     ]
   #   ]

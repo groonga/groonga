@@ -1,11 +1,11 @@
 Execution example::
 
   table_create Entries TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Entries title COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Entries body COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Entries
   [
   {"_key": "http://example.com/entry1", "title":"Hello Groonga.", "body":"This is my first entry."},
@@ -13,12 +13,12 @@ Execution example::
   {"_key": "http://example.com/entry3", "title":"Hello Mroonga, bye Groonga.", "body":"I use Mroonga."},
   {"_key": "http://example.com/entry4", "title":"Say, Hello Groonga!", "body":"I'm back."}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  # [[0,1337566253.89858,0.000355720520019531],4]
   table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms entries_title COLUMN_INDEX|WITH_POSITION Entries title
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms entries_body COLUMN_INDEX|WITH_POSITION Entries body
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms entries_whole COLUMN_INDEX|WITH_POSITION|WITH_SECTION Entries title,body
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

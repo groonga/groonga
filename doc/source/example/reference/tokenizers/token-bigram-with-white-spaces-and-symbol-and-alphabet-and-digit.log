@@ -3,50 +3,58 @@ Execution example::
   tokenize TokenBigram "Hello 日 本 語 ! ! ! 777" NormalizerAuto
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "hello"
-  #     }, 
+  #       "value": "hello",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "日"
-  #     }, 
+  #       "value": "日",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "本"
-  #     }, 
+  #       "value": "本",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "語"
-  #     }, 
+  #       "value": "語",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "!"
-  #     }, 
+  #       "value": "!",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "!"
-  #     }, 
+  #       "value": "!",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 6, 
-  #       "force_prefix": false, 
-  #       "value": "!"
-  #     }, 
+  #       "value": "!",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 7, 
-  #       "force_prefix": false, 
-  #       "value": "777"
+  #       "value": "777",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

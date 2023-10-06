@@ -3,80 +3,94 @@ Execution example::
   tokenize TokenBigram "Fulltext Search" --mode GET
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "Fu"
-  #     }, 
+  #       "value": "Fu",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "ul"
-  #     }, 
+  #       "value": "ul",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "ll"
-  #     }, 
+  #       "value": "ll",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "lt"
-  #     }, 
+  #       "value": "lt",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "te"
-  #     }, 
+  #       "value": "te",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "ex"
-  #     }, 
+  #       "value": "ex",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 6, 
-  #       "force_prefix": false, 
-  #       "value": "xt"
-  #     }, 
+  #       "value": "xt",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 7, 
-  #       "force_prefix": false, 
-  #       "value": "t "
-  #     }, 
+  #       "value": "t ",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 8, 
-  #       "force_prefix": false, 
-  #       "value": " S"
-  #     }, 
+  #       "value": " S",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 9, 
-  #       "force_prefix": false, 
-  #       "value": "Se"
-  #     }, 
+  #       "value": "Se",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 10, 
-  #       "force_prefix": false, 
-  #       "value": "ea"
-  #     }, 
+  #       "value": "ea",
+  #       "position": 10,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 11, 
-  #       "force_prefix": false, 
-  #       "value": "ar"
-  #     }, 
+  #       "value": "ar",
+  #       "position": 11,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 12, 
-  #       "force_prefix": false, 
-  #       "value": "rc"
-  #     }, 
+  #       "value": "rc",
+  #       "position": 12,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 13, 
-  #       "force_prefix": false, 
-  #       "value": "ch"
+  #       "value": "ch",
+  #       "position": 13,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

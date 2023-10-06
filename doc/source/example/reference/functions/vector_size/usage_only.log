@@ -3,40 +3,42 @@ Execution example::
   select Memos --output_columns 'tags, vector_size(tags)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "tags", 
+  #           "tags",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "vector_size", 
+  #           "vector_size",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
   #           "Groonga"
-  #         ], 
+  #         ],
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "Groonga", 
+  #           "Groonga",
   #           "Ruby"
-  #         ], 
+  #         ],
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         [], 
+  #         [
+  # 
+  #         ],
   #         0
   #       ]
   #     ]

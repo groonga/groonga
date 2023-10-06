@@ -3,26 +3,34 @@ Execution example::
   normalize 'NormalizerTable("normalized", "ColumnNormalizations.normalized", "target", "target_column")' "Groonga"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "normalized": "Groong<A>", 
-  #     "types": [], 
-  #     "checks": []
+  #     "normalized": "Groong<A>",
+  #     "types": [
+  # 
+  #     ],
+  #     "checks": [
+  # 
+  #     ]
   #   }
   # ]
   normalize 'NormalizerTable("normalized", "ColumnNormalizations.normalized", "target", "target_column")' "hack"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "normalized": "h<AC>k", 
-  #     "types": [], 
-  #     "checks": []
+  #     "normalized": "h<AC>k",
+  #     "types": [
+  # 
+  #     ],
+  #     "checks": [
+  # 
+  #     ]
   #   }
   # ]

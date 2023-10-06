@@ -1,7 +1,7 @@
 Execution example::
 
   plugin_register functions/string
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   select Entries \
     --columns[content_length].stage initial \
     --columns[content_length].type UInt32 \
@@ -9,52 +9,52 @@ Execution example::
     --output_columns _id,content,content_length
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "content_length", 
+  #           "content_length",
   #           "UInt32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "Welcome! This is my first post!", 
+  #         1,
+  #         "Welcome! This is my first post!",
   #         31
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "I started to use Groonga. It's very fast!", 
+  #         2,
+  #         "I started to use Groonga. It's very fast!",
   #         41
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         3,
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
   #         64
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "I migrated all Senna system!", 
+  #         4,
+  #         "I migrated all Senna system!",
   #         28
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "I also migrated all Tritonn system!", 
+  #         5,
+  #         "I also migrated all Tritonn system!",
   #         35
   #       ]
   #     ]

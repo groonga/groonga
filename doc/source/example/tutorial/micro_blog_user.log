@@ -3,31 +3,31 @@ Execution example::
   select --table Users --filter 'geo_in_circle(location,"146710080x-266315480",20000)' --output_columns _key,name
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "name", 
+  #           "name",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "charlie", 
+  #         "charlie",
   #         "Charlie"
-  #       ], 
+  #       ],
   #       [
-  #         "bob", 
+  #         "bob",
   #         "Bob"
   #       ]
   #     ]

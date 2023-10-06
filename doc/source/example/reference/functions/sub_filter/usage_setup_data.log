@@ -7,11 +7,11 @@ Execution example::
   {"_key": 3, "name": "C", "content": "rroonga"},
   {"_key": 4, "name": "A", "content": "mroonga"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  # [[0,1337566253.89858,0.000355720520019531],4]
   load --table Blog
   [
   {"_key": "groonga's blog", "content": "content of groonga's blog", comments: [1, 2, 3]},
   {"_key": "mroonga's blog", "content": "content of mroonga's blog", comments: [2, 3, 4]},
   {"_key": "rroonga's blog", "content": "content of rroonga's blog", comments: [3]},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]

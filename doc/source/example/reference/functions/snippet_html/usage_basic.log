@@ -3,24 +3,24 @@ Execution example::
   select Documents --output_columns "snippet_html(content)" --command_version 2 --match_columns content --query "fast performance"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "snippet_html", 
+  #           "snippet_html",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "Groonga is a <span class=\"keyword\">fast</span> and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, gro", 
+  #           "Groonga is a <span class=\"keyword\">fast</span> and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, gro",
   #           "onga allows updates without read locks. These characteristics result in superior <span class=\"keyword\">performance</span> on real-time applications."
   #         ]
   #       ]

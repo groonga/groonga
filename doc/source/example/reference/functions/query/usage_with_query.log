@@ -3,52 +3,52 @@ Execution example::
   select Users --output_columns name,memo,_score --filter 'query("memo * 10", "groonga") || query("memo * 20", "mroonga") || query("memo * 1", "user")' --sort_keys -_score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "name", 
+  #           "name",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "memo", 
+  #           "memo",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Tobby", 
-  #         "groonga and mroonga user. mroonga is ...", 
+  #         "Tobby",
+  #         "groonga and mroonga user. mroonga is ...",
   #         51
-  #       ], 
+  #       ],
   #       [
-  #         "Alisa", 
-  #         "mroonga user", 
+  #         "Alisa",
+  #         "mroonga user",
   #         21
-  #       ], 
+  #       ],
   #       [
-  #         "Alice", 
-  #         "groonga user", 
+  #         "Alice",
+  #         "groonga user",
   #         11
-  #       ], 
+  #       ],
   #       [
-  #         "Tom", 
-  #         "nroonga user", 
+  #         "Tom",
+  #         "nroonga user",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "Bob", 
-  #         "rroonga user", 
+  #         "Bob",
+  #         "rroonga user",
   #         1
   #       ]
   #     ]

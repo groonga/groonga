@@ -3,49 +3,49 @@ Execution example::
   select Entries --filter 'n_likes == (_id == 1 ? 5 : 3)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "Good-bye Senna", 
-  #         "I migrated all Senna system!", 
+  #         4,
+  #         "Good-bye Senna",
+  #         "I migrated all Senna system!",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
+  #         5,
+  #         "Good-bye Tritonn",
+  #         "I also migrated all Tritonn system!",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
+  #         1,
+  #         "The first post!",
+  #         "Welcome! This is my first post!",
   #         5
   #       ]
   #     ]

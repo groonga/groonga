@@ -5,71 +5,71 @@ Execution example::
   {"_key": "existent1"},
   {"_key": "existent2"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   load --table MissingModeVector
   [
   {"_key": "key", "missing_add":    ["existent1", "nonexistent1", "existent2"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table MissingModeVector
   [
   {"_key": "key", "missing_ignore": ["existent1", "nonexistent2", "existent2"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table MissingModeVector
   [
   {"_key": "key", "missing_nil":    ["existent1", "nonexistent3", "existent2"]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select --table MissingModeVector
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_add", 
+  #           "missing_add",
   #           "MissingModeVectorReferred"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_ignore", 
+  #           "missing_ignore",
   #           "MissingModeVectorReferred"
-  #         ], 
+  #         ],
   #         [
-  #           "missing_nil", 
+  #           "missing_nil",
   #           "MissingModeVectorReferred"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "key", 
+  #         1,
+  #         "key",
   #         [
-  #           "existent1", 
-  #           "nonexistent1", 
+  #           "existent1",
+  #           "nonexistent1",
   #           "existent2"
-  #         ], 
+  #         ],
   #         [
-  #           "existent1", 
+  #           "existent1",
   #           "existent2"
-  #         ], 
+  #         ],
   #         [
-  #           "existent1", 
-  #           "", 
+  #           "existent1",
+  #           "",
   #           "existent2"
   #         ]
   #       ]
@@ -79,35 +79,35 @@ Execution example::
   select --table MissingModeVectorReferred
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "existent1"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
+  #         2,
   #         "existent2"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
+  #         3,
   #         "nonexistent1"
   #       ]
   #     ]

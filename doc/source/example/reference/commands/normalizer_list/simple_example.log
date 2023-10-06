@@ -3,16 +3,34 @@ Execution example::
   normalizer_list
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
   #       "name": "NormalizerAuto"
-  #     }, 
+  #     },
   #     {
   #       "name": "NormalizerNFKC51"
+  #     },
+  #     {
+  #       "name": "NormalizerNFKC100"
+  #     },
+  #     {
+  #       "name": "NormalizerNFKC121"
+  #     },
+  #     {
+  #       "name": "NormalizerNFKC130"
+  #     },
+  #     {
+  #       "name": "NormalizerNFKC150"
+  #     },
+  #     {
+  #       "name": "NormalizerTable"
+  #     },
+  #     {
+  #       "name": "NormalizerHTML"
   #     }
   #   ]
   # ]

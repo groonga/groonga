@@ -3,34 +3,34 @@ Execution example::
   select Entries --limit 0
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
   #       ]

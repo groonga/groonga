@@ -1,43 +1,43 @@
 Execution example::
 
   table_create --name GeoSite --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table GeoSite --name location --type WGS84GeoPoint
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table GeoIndex --name index_point --type GeoSite --flags COLUMN_INDEX --source location
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table GeoSite
   [
    {"_key":"http://example.org/","location":"128452975x503157902"},
    {"_key":"http://example.net/","location":"128487316x502920929"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/", 
+  #         "http://example.org/",
   #         "128452975x503157902"
   #       ]
   #     ]

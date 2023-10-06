@@ -1,6 +1,11 @@
 Execution example::
 
-  select Entries --filter 'n_likes == 20 - 5'
+  select \
+    --table Entries \
+    --fuzzy_max_distance_ratio 0.34 \
+    --match_columns content \
+    --query Moronga \
+    --output_columns content,_score
   # [
   #   [
   #     0,
@@ -14,27 +19,17 @@ Execution example::
   #       ],
   #       [
   #         [
-  #           "_id",
-  #           "UInt32"
-  #         ],
-  #         [
-  #           "_key",
-  #           "ShortText"
-  #         ],
-  #         [
   #           "content",
   #           "Text"
   #         ],
   #         [
-  #           "n_likes",
-  #           "UInt32"
+  #           "_score",
+  #           "Int32"
   #         ]
   #       ],
   #       [
-  #         3,
-  #         "Mroonga",
   #         "I also started to use Mroonga. It's also very fast! Really fast!",
-  #         15
+  #         1
   #       ]
   #     ]
   #   ]

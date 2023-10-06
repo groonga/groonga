@@ -3,49 +3,67 @@ Execution example::
   tokenizer_list
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
+  #       "name": "TokenMecab"
+  #     },
+  #     {
   #       "name": "TokenDelimit"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenUnigram"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigram"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenTrigram"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramSplitSymbol"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramSplitSymbolAlpha"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramSplitSymbolAlphaDigit"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramIgnoreBlank"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramIgnoreBlankSplitSymbol"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenDelimitNull"
-  #     }, 
+  #     },
   #     {
   #       "name": "TokenRegexp"
+  #     },
+  #     {
+  #       "name": "TokenNgram"
+  #     },
+  #     {
+  #       "name": "TokenPattern"
+  #     },
+  #     {
+  #       "name": "TokenTable"
+  #     },
+  #     {
+  #       "name": "TokenDocumentVectorTFIDF"
+  #     },
+  #     {
+  #       "name": "TokenDocumentVectorBM25"
   #     }
   #   ]
   # ]
