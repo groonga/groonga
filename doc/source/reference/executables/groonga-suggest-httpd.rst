@@ -4,8 +4,10 @@
 
 .. groonga-command
 .. database: groonga-suggest-httpd
-.. % killall lt-groonga-suggest-learner || :
-.. % killall lt-groonga-suggest-httpd || :
+.. $ killall lt-groonga-suggest-learner || :
+.. $ killall groonga-suggest-learner || :
+.. $ killall lt-groonga-suggest-httpd || :
+.. $ killall groonga-suggest-httpd || :
 
 ``groonga-suggest-httpd``
 =========================
@@ -462,7 +464,11 @@ See also
   * :doc:`/reference/commands/suggest`
 
 .. groonga-command
-.. % killall lt-groonga-suggest-learner || :
-.. % killall lt-groonga-suggest-httpd || :
-.. % killall -KILL lt-groonga-suggest-learner || :
-.. % killall -KILL lt-groonga-suggest-httpd || :
+.. $ killall lt-groonga-suggest-learner || :
+.. $ killall groonga-suggest-learner || :
+.. $ killall lt-groonga-suggest-httpd || :
+.. $ killall groonga-suggest-httpd || :
+.. $ killall -KILL lt-groonga-suggest-learner || :
+.. $ killall -KILL groonga-suggest-learner || :
+.. $ killall -KILL lt-groonga-suggest-httpd || :
+.. $ killall -KILL groonga-suggest-httpd || :

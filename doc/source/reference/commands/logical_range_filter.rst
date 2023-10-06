@@ -621,7 +621,6 @@ details.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_range_filter/window_function_for_over_shard.log
-
 .. plugin_register sharding
 .. 
 .. table_create Logs_20170415 TABLE_NO_KEY

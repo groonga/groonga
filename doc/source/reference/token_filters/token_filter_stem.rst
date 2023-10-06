@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: token_filters_example
+.. database: token_filters_stem
 
 .. _token-filter-stem:
 
@@ -58,19 +58,20 @@ You can specify steming algorithm except English with ``algorithm`` option as be
 .. database: token_filters_stem
 .. include:: ../../example/reference/token_filters/stem-algorithm-option.log
 .. plugin_register token_filters/stem
-.. table_create Memos TABLE_NO_KEY
-.. column_create Memos content COLUMN_SCALAR ShortText
-.. table_create Terms TABLE_PAT_KEY ShortText \
+.. table_create FrenchMemos TABLE_NO_KEY
+.. column_create FrenchMemos content COLUMN_SCALAR ShortText
+.. table_create FrenchTerms TABLE_PAT_KEY ShortText \
 ..   --default_tokenizer TokenBigram \
 ..   --normalizer NormalizerAuto \
 ..   --token_filters 'TokenFilterStem("algorithm", "french")'
-.. column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
-.. load --table Memos
+.. column_create FrenchTerms french_memos_content \
+..    COLUMN_INDEX|WITH_POSITION FrenchMemos content
+.. load --table FrenchMemos
 .. [
 .. {"content": "maintenait"},
 .. {"content": "maintenant"}
 .. ]
-.. select Memos --match_columns content --query "maintenir"
+.. select FrenchMemos --match_columns content --query "maintenir"
 
 Parameters
 ----------

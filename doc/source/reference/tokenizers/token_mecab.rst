@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: tokenizers
+.. database: tokenizers_mecab
 
 ``TokenMecab``
 ================
@@ -111,7 +111,7 @@ This option is useful for countermeasure of orthographical variants because it s
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-mecab-use-reading-option.log
-.. tokenize 'TokenMecab("include_form", true)' '彼の名前は山田さんのはずです。'
+.. tokenize 'TokenMecab("use_reading", true)' '彼の名前は山田さんのはずです。'
 
 Advanced usage
 --------------

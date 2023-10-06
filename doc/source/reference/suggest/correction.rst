@@ -1,8 +1,8 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/correction query
 .. database: correction
+.. $ groonga-suggest-create-dataset ${DB_PATH} query
 
 Correction
 ==========

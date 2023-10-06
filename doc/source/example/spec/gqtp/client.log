@@ -1,0 +1,52 @@
+Execution example::
+
+  $ groonga -c
+  status
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   {
+  #     "alloc_count": 418,
+  #     "starttime": 1696557617,
+  #     "start_time": 1696557617,
+  #     "uptime": 0,
+  #     "version": "13.0.7-26-g9c546c4",
+  #     "n_queries": 0,
+  #     "cache_hit_rate": 0.0,
+  #     "command_version": 1,
+  #     "default_command_version": 1,
+  #     "max_command_version": 3,
+  #     "n_jobs": 0,
+  #     "features": {
+  #       "nfkc": true,
+  #       "mecab": true,
+  #       "message_pack": true,
+  #       "mruby": true,
+  #       "onigmo": true,
+  #       "zlib": true,
+  #       "lz4": true,
+  #       "zstandard": true,
+  #       "kqueue": false,
+  #       "epoll": true,
+  #       "poll": false,
+  #       "rapidjson": true,
+  #       "apache_arrow": true,
+  #       "xxhash": true,
+  #       "blosc": true,
+  #       "back_trace": true,
+  #       "reference_count": false
+  #     },
+  #     "apache_arrow": {
+  #       "version_major": 14,
+  #       "version_minor": 0,
+  #       "version_patch": 0,
+  #       "version": "14.0.0-SNAPSHOT"
+  #     },
+  #     "memory_map_size": 99733504
+  #   }
+  # ]
+  > ctrl-d
+  $

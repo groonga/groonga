@@ -407,7 +407,7 @@ entries have ``system`` or ``use`` words:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_count/post_filter.log
-.. logical_cout \
+.. logical_count \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --columns[n_likes_sum_per_tag].stage filtered \
@@ -416,6 +416,7 @@ entries have ``system`` or ``use`` words:
 ..   --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
 ..   --filter 'content @ "system" || content @ "use"' \
 ..   --post_filter 'n_likes_sum_per_tag > 10' \
+..   --output_columns _key,n_likes,n_likes_sum_per_tag
 
 .. _logical-count-dynamic-column-related-parameters:
 
@@ -575,7 +576,6 @@ details.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_count/window_function_for_over_shard.log
-
 .. plugin_register sharding
 .. 
 .. table_create Logs_20170415 TABLE_NO_KEY
@@ -608,8 +608,7 @@ details.
 ..   --columns[count].type UInt32 \
 ..   --columns[count].flags COLUMN_SCALAR \
 ..   --columns[count].value 'window_count()' \
-..   --columns[count].window.group_keys price \
-..   --output_columns price,count
+..   --columns[count].window.group_keys price
 
 .. _logical-count-columns-name-window-sort-keys:
 

@@ -1,6 +1,7 @@
 .. -*- rst -*-
+
 .. groonga-command
-.. database: tokenizers
+.. database: tokenizers_table
 
 ``TokenTable``
 ==============

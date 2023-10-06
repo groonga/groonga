@@ -1,7 +1,6 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: token_filters_example
 
 .. _token-filter-stop-word:
 
@@ -66,7 +65,7 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 You can specify stop word in column except ``is_stop_columns`` by ``columns`` option as below.
 
 .. groonga-command
-.. database: token_filters_stop_word
+.. database: token_filters_stop_word_options
 .. include:: ../../example/reference/token_filters/stop-word-columns-option.log
 .. plugin_register token_filters/stop_word
 .. table_create Memos TABLE_NO_KEY

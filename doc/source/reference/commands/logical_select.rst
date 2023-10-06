@@ -574,8 +574,8 @@ Here is an example that can store ``_id`` and ``timestamp`` that a result of ``l
 ..   --logical_table Logs \
 ..   --shard_key timestamp \
 ..   --load_table Logs \
-..   --load_columns "original_id, timestamp_text" \
-..   --load_values "_id, timestamp"
+..   --load_columns "_key, original_id, timestamp_text" \
+..   --load_values "_key, _id, timestamp"
 .. select --table Logs
 
 .. _logical-select-load-columns:
@@ -893,34 +893,33 @@ details.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/window_function_for_over_shard.log
-
 .. plugin_register sharding
 .. 
-.. table_create Logs_20170415 TABLE_NO_KEY
-.. column_create Logs_20170415 timestamp COLUMN_SCALAR Time
-.. column_create Logs_20170415 price COLUMN_SCALAR UInt32
-.. column_create Logs_20170415 n_likes COLUMN_SCALAR UInt32
+.. table_create ItemLogs_20170415 TABLE_NO_KEY
+.. column_create ItemLogs_20170415 timestamp COLUMN_SCALAR Time
+.. column_create ItemLogs_20170415 price COLUMN_SCALAR UInt32
+.. column_create ItemLogs_20170415 n_likes COLUMN_SCALAR UInt32
 .. 
-.. table_create Logs_20170416 TABLE_NO_KEY
-.. column_create Logs_20170416 timestamp COLUMN_SCALAR Time
-.. column_create Logs_20170416 price COLUMN_SCALAR UInt32
-.. column_create Logs_20170416 n_likes COLUMN_SCALAR UInt32
+.. table_create ItemLogs_20170416 TABLE_NO_KEY
+.. column_create ItemLogs_20170416 timestamp COLUMN_SCALAR Time
+.. column_create ItemLogs_20170416 price COLUMN_SCALAR UInt32
+.. column_create ItemLogs_20170416 n_likes COLUMN_SCALAR UInt32
 .. 
-.. load --table Logs_20170415
+.. load --table ItemLogs_20170415
 .. [
 .. {"timestamp": "2017/04/15 00:00:00", "n_likes": 2, "price": 100},
 .. {"timestamp": "2017/04/15 01:00:00", "n_likes": 1, "price": 100},
 .. {"timestamp": "2017/04/15 01:00:00", "n_likes": 2, "price": 200}
 .. ]
 .. 
-.. load --table Logs_20170416
+.. load --table ItemLogs_20170416
 .. [
 .. {"timestamp": "2017/04/16 10:00:00", "n_likes": 1, "price": 200},
 .. {"timestamp": "2017/04/16 11:00:00", "n_likes": 2, "price": 300},
 .. {"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 300}
 .. ]
 .. 
-.. logical_select Logs \
+.. logical_select ItemLogs \
 ..   --shard_key timestamp \
 ..   --columns[count].stage initial \
 ..   --columns[count].type UInt32 \

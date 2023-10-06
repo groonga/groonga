@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: tokenizers
+.. database: tokenizers_ngram
 
 .. _token-ngram:
 
@@ -171,7 +171,10 @@ can't find the position of the highlight as below.
 .. [
 .. {"body": "ア㌕Ａz"}
 .. ]
-.. select Entries   --match_columns body   --query 'グラム'   --output_columns 'highlight_html(body, Terms)'
+.. select Entries \
+..   --match_columns body \
+..   --query 'グラム' \
+..   --output_columns 'highlight_html(body, Terms)'
 
 Because we use different normalizer to normalize token.
 
@@ -179,15 +182,15 @@ This option is used to reduce the shift of the position of the highlight as belo
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-report-source-location.log
-.. table_create Entries TABLE_NO_KEY
-.. column_create Entries body COLUMN_SCALAR ShortText
-.. table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerNFKC100'
+.. table_remove Terms
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer 'TokenNgram("report_source_location", true)' \
+..   --normalizer 'NormalizerNFKC100'
 .. column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
-.. load --table Entries
-.. [
-.. {"body": "ア㌕Ａz"}
-.. ]
-.. select Entries   --match_columns body   --query 'グラム'   --output_columns 'highlight_html(body, Terms)'
+.. select Entries \
+..   --match_columns body \
+..   --query 'グラム' \
+..   --output_columns 'highlight_html(body, Terms)'
 
 .. _token-ngram-unify-alphabet:
 

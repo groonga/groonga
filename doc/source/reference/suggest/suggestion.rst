@@ -1,8 +1,8 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/suggestion query
 .. database: suggestion
+.. $ groonga-suggest-create-dataset ${DB_PATH} query
 
 Suggestion
 ==========

@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: tokenizers
+.. database: tokenizers_delimit
 
 .. _token-delimit:
 
@@ -75,7 +75,7 @@ You can except the needless spaces by a ``pattern`` option as below example.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-delimit-pattern-option.log
-.. tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
+.. tokenize 'TokenDelimit("pattern", "\\\\.\\\\s*")' "This is a pen. This is an apple."
 
 Advanced usage
 --------------

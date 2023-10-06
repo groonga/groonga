@@ -1,8 +1,8 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/completion query
 .. database: completion
+.. $ groonga-suggest-create-dataset ${DB_PATH} query
 
 Completion
 ==========

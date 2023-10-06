@@ -312,7 +312,7 @@ class Updator
           comment = action[:value]
           if current_output_path
             File.open(current_output_path, "a") do |output|
-              output.puts(comment)
+              output.puts(comment.gsub(/^/, "  "))
             end
           end
           puts(comment)

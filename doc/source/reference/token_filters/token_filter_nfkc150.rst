@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: token_filters_example
+.. database: token_filters_nfkc150
 
 ``TokenFilterNFKC150``
 ======================
