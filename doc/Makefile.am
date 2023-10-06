@@ -14,7 +14,7 @@ update-examples:
 	  GRN_PLUGINS_PATH="$(abs_top_builddir)/plugins"		\
 	  GRN_PLUGINS_DIR="$(abs_top_srcdir)/plugins"			\
 	  GRN_RUBY_SCRIPTS_DIR="$(abs_top_srcdir)/lib/mrb/scripts"	\
-	  $(srcdir)/update_execution_example.py				\
+	  ${RUBY} $(srcdir)/update-execution-example.rb				\
 	  $(SOURCES)
 
 files.am: update-files.sh
