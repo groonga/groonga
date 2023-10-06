@@ -38,3 +38,14 @@ add_custom_target(
   doc_update_files
   COMMAND ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-files.rb
   DEPENDS doc_en_html)
+
+add_custom_target(
+  doc_update_examples
+  COMMAND
+    ${CMAKE_COMMAND} -E env
+    PATH=${CMAKE_CURRENT_BINARY_DIR}/../src:${CMAKE_CURRENT_BINARY_DIR}/../src/suggest:$ENV{PATH}
+    GRN_PLUGINS_PATH=${CMAKE_CURRENT_BINARY_DIR}/../plugins
+    GRN_PLUGINS_DIR=${CMAKE_CURRENT_SOURCE_DIR}/../plugins
+    GRN_RUBY_SCRIPTS_DIR=${CMAKE_CURRENT_SOURCE_DIR}/../lib/mrb/scripts ${RUBY}
+    ${CMAKE_CURRENT_SOURCE_DIR}/update-execution-example.rb
+  VERBATIM)

@@ -22,6 +22,7 @@ require "json"
 class Updator
   def initialize(base_dir)
     @base_dir = base_dir
+    @verbose = (ENV["VERBOSE"] == "true")
   end
 
   def update(source)
@@ -41,6 +42,7 @@ class Updator
 
   private
   def puts(*args)
+    return unless @verbose
     $stderr.puts(*args)
   end
 
@@ -122,10 +124,12 @@ class Updator
   end
 
   def normalize_file_name(file_name)
-    file_name.gsub(/\A.*?\/lib\//, "lib/")
+    file_name = file_name.gsub(/\A\/.*\/\.\.\/plugins\//, "lib/groonga/plugins/")
+    file_name = file_name.gsub(/\A.*?\/lib\//, "lib/")
+    file_name
   end
 
-  def normalize_result(result)
+  def normalize_result(command, result)
     status = result[0]
     if status
       normalized_start_time = 1337566253.89858
@@ -134,7 +138,31 @@ class Updator
       status[2] = normalized_elapsed_time
       status[3] = normalize_error_message(status[3]) if status[3]
       return_code = status[0]
-      if return_code != 0
+      if return_code.zero?
+        if command.start_with?("status")
+          status = result[1]
+          status["alloc_count"] = 29 if status.key?("alloc_count")
+          status["starttime"] = 1696558618 if status.key?("starttime")
+          status["start_time"] = 1696558618 if status.key?("start_time")
+          status["version"] = "2.9.1" if status.key?("version")
+          apache_arrow = status["apache_arrow"]
+          if apache_arrow
+            if apache_arrow.key?("version_major")
+              apache_arrow["version_major"] = 2
+            end
+            if apache_arrow.key?("version_minor")
+              apache_arrow["version_minor"] = 9
+            end
+            if apache_arrow.key?("version_patch")
+              apache_arrow["version_patch"] = 1
+            end
+            if apache_arrow.key?("version")
+              apache_arrow["version"] = "2.9.1"
+            end
+          end
+          status["memory_map_size"] = 2929 if status.key?("memory_map_size")
+        end
+      else
         backtraces = status[4]
         if backtraces
           backtraces.each do |backtrace|
@@ -168,7 +196,7 @@ class Updator
       formatted_result = result
     else
       parsed_result = parse_result(command, result)
-      normalized_result = normalize_result(parsed_result)
+      normalized_result = normalize_result(command, parsed_result)
       formatted_result = JSON.generate(normalized_result)
       if formatted_result.bytesize > 79
         formatted_result = JSON.pretty_generate(normalized_result)

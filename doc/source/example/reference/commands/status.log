@@ -8,11 +8,11 @@ Execution example::
   #     0.000355720520019531
   #   ],
   #   {
-  #     "alloc_count": 418,
-  #     "starttime": 1696556919,
-  #     "start_time": 1696556919,
+  #     "alloc_count": 29,
+  #     "starttime": 1696558618,
+  #     "start_time": 1696558618,
   #     "uptime": 0,
-  #     "version": "13.0.7-26-g9c546c4",
+  #     "version": "2.9.1",
   #     "n_queries": 0,
   #     "cache_hit_rate": 0.0,
   #     "command_version": 1,
@@ -39,11 +39,11 @@ Execution example::
   #       "reference_count": false
   #     },
   #     "apache_arrow": {
-  #       "version_major": 14,
-  #       "version_minor": 0,
-  #       "version_patch": 0,
-  #       "version": "14.0.0-SNAPSHOT"
+  #       "version_major": 2,
+  #       "version_minor": 9,
+  #       "version_patch": 1,
+  #       "version": "2.9.1"
   #     },
-  #     "memory_map_size": 99733504
+  #     "memory_map_size": 2929
   #   }
   # ]

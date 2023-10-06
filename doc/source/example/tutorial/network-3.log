@@ -1,7 +1,7 @@
 Execution example::
 
-http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
-Executed command:
+  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
+  Executed command:
   status
   # [
   #   [
@@ -10,11 +10,11 @@ Executed command:
   #     0.000355720520019531
   #   ],
   #   {
-  #     "alloc_count": 395,
-  #     "starttime": 1696556955,
-  #     "start_time": 1696556955,
+  #     "alloc_count": 29,
+  #     "starttime": 1696558618,
+  #     "start_time": 1696558618,
   #     "uptime": 0,
-  #     "version": "13.0.7-26-g9c546c4",
+  #     "version": "2.9.1",
   #     "n_queries": 0,
   #     "cache_hit_rate": 0.0,
   #     "command_version": 1,
@@ -41,16 +41,16 @@ Executed command:
   #       "reference_count": false
   #     },
   #     "apache_arrow": {
-  #       "version_major": 14,
-  #       "version_minor": 0,
-  #       "version_patch": 0,
-  #       "version": "14.0.0-SNAPSHOT"
+  #       "version_major": 2,
+  #       "version_minor": 9,
+  #       "version_patch": 1,
+  #       "version": "2.9.1"
   #     },
-  #     "memory_map_size": 91344896
+  #     "memory_map_size": 2929
   #   }
   # ]
-http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
-Executed command:
+  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
+  Executed command:
   select --table Site --query title:@this
   # [
   #   [

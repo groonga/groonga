@@ -9,8 +9,8 @@ Execution example::
     ],
     {
       "alloc_count": 418,
-      "starttime": 1696556921,
-      "start_time": 1696556921,
+      "starttime": 1696558835,
+      "start_time": 1696558835,
       "uptime": 0,
       "version": "13.0.7-26-g9c546c4",
       "n_queries": 0,
