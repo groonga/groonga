@@ -39,7 +39,7 @@ EXTRA_DIST =					\
 	CMakeLists.txt				\
 	files.cmake				\
 	images.mk				\
-	update_execution_example.py		\
+	update-execution-example.rb		\
 	$(source_files_relative_from_doc_dir)
 
 $(source_files_relative_from_doc_dir): html
