@@ -851,6 +851,7 @@ set(GRN_DOC_SOURCES
     example/reference/window_functions/window_rank/usage_group_descending.log
     example/reference/window_functions/window_rank/usage_setup.log
     example/reference/window_functions/window_rank/usage_sort_keys.log
+    example/spec/gqtp/client.log
     example/tutorial/data-1.log
     example/tutorial/data-2.log
     example/tutorial/data-3.log
@@ -918,8 +919,6 @@ set(GRN_DOC_SOURCES
     example/tutorial/micro_blog_posted_by.log
     example/tutorial/micro_blog_score.log
     example/tutorial/micro_blog_user.log
-    example/tutorial/network-1.log
-    example/tutorial/network-2.log
     example/tutorial/network-3.log
     example/tutorial/patricia_trie-2.log
     example/tutorial/patricia_trie_prefix_search.log

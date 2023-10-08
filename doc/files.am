@@ -851,6 +851,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_group_descending.log \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_sort_keys.log \
+	$(top_srcdir)/doc/source/example/spec/gqtp/client.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -918,8 +919,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_posted_by.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_score.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_user.log \
-	$(top_srcdir)/doc/source/example/tutorial/network-1.log \
-	$(top_srcdir)/doc/source/example/tutorial/network-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-3.log \
 	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/patricia_trie_prefix_search.log \
@@ -2159,6 +2158,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/window_functions/window_rank/usage_group_descending.log \
 	source/example/reference/window_functions/window_rank/usage_setup.log \
 	source/example/reference/window_functions/window_rank/usage_sort_keys.log \
+	source/example/spec/gqtp/client.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -2226,8 +2226,6 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/micro_blog_posted_by.log \
 	source/example/tutorial/micro_blog_score.log \
 	source/example/tutorial/micro_blog_user.log \
-	source/example/tutorial/network-1.log \
-	source/example/tutorial/network-2.log \
 	source/example/tutorial/network-3.log \
 	source/example/tutorial/patricia_trie-2.log \
 	source/example/tutorial/patricia_trie_prefix_search.log \
