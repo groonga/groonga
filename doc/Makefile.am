@@ -14,16 +14,16 @@ update-examples:
 	  GRN_PLUGINS_PATH="$(abs_top_builddir)/plugins"		\
 	  GRN_PLUGINS_DIR="$(abs_top_srcdir)/plugins"			\
 	  GRN_RUBY_SCRIPTS_DIR="$(abs_top_srcdir)/lib/mrb/scripts"	\
-	  ${RUBY} $(srcdir)/update-execution-example.rb				\
+	  $(RUBY) $(srcdir)/update-execution-example.rb				\
 	  $(SOURCES)
 
-files.am: update-files.sh
+files.am: update-files.rb
 	update-files
 
 update-files: $(BUILT_SOURCES)
 	cd locale/en/LC_MESSAGES && $(MAKE) gettext
 	cd locale/en && $(MAKE) clean html
-	$(srcdir)/update-files.sh > $(srcdir)/files.am
+	$(RUBY) $(srcdir)/update-files.rb
 
 clean-html clean-text clean-markdown update-po:
 	for dir in $(SUBDIRS); do		\
@@ -40,6 +40,7 @@ EXTRA_DIST =					\
 	files.cmake				\
 	images.mk				\
 	update-execution-example.rb		\
+	update-files.rb				\
 	$(source_files_relative_from_doc_dir)
 
 $(source_files_relative_from_doc_dir): html
