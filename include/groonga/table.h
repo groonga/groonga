@@ -588,6 +588,12 @@ grn_table_selector_get_fuzzy_max_distance_ratio(
 GRN_API grn_rc
 grn_table_selector_set_fuzzy_max_distance_ratio(
   grn_ctx *ctx, grn_table_selector *table_selector, float ratio);
+GRN_API bool
+grn_table_selector_get_fuzzy_with_transposition(
+  grn_ctx *ctx, grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_fuzzy_with_transposition(
+  grn_ctx *ctx, grn_table_selector *table_selector, bool with);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,

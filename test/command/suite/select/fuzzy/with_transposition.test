@@ -1,0 +1,21 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenDelimit \
+  --normalizer NormalizerNFKC150
+column_create Lexicon memos_content \
+  COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "これ は ペリカン です"},
+{"content": "これ は リパカン です"}
+]
+
+select Memos \
+  --match_columns content \
+  --query "リペカン" \
+  --fuzzy_max_distance 1 \
+  --fuzzy_with_transposition no \
+  --output_columns *,_score
