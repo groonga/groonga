@@ -25,6 +25,8 @@
 extern "C" {
 #endif
 
+#define GRN_TABLE_SELECTOR_FUZZY_MAX_EXPANSIONS_DEFAULT 10
+
 void
 grn_table_selector_init_from_env(void);
 

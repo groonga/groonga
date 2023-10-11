@@ -1135,7 +1135,9 @@ namespace {
         post_filter(args->get_string(prefix, "post_filter")),
         fuzzy_max_distance(args->get_uint32(prefix, "fuzzy_max_distance", 0)),
         fuzzy_max_expansions(
-          args->get_uint32(prefix, "fuzzy_max_expansions", 0)),
+          args->get_uint32(prefix,
+                           "fuzzy_max_expansions",
+                           GRN_TABLE_SELECTOR_FUZZY_MAX_EXPANSIONS_DEFAULT)),
         fuzzy_prefix_length(args->get_uint32(prefix, "fuzzy_prefix_length", 0)),
         fuzzy_max_distance_ratio(
           args->get_float(prefix, "fuzzy_max_distance_ratio", 0)),

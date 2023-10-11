@@ -120,6 +120,8 @@ grn_table_selector_init(grn_ctx *ctx,
   table_selector->fuzzy_options = fuzzy_options;
   table_selector->fuzzy_options.flags |=
     GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH;
+  table_selector->fuzzy_options.max_expansion =
+    GRN_TABLE_SELECTOR_FUZZY_MAX_EXPANSIONS_DEFAULT;
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
