@@ -21,6 +21,12 @@
 #include <groonga.hpp>
 
 namespace grn {
+  bool
+  CommandArguments::arg_to_bool(grn_obj *arg, bool default_value)
+  {
+    return grn_proc_option_value_bool(ctx_, arg, default_value);
+  }
+
   int32_t
   CommandArguments::arg_to_int32(grn_obj *arg, int32_t default_value)
   {

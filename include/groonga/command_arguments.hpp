@@ -183,6 +183,38 @@ namespace grn {
       return get(fallback_prefix, name, fallback_name);
     }
 
+    bool
+    get_bool(const char *name, bool default_value)
+    {
+      return arg_to_bool(get(name), default_value);
+    }
+
+    bool
+    get_bool(const char *prefix, const char *name, bool default_value)
+    {
+      return arg_to_bool(get(prefix, name), default_value);
+    }
+
+    bool
+    get_bool(const char *prefix,
+             const char *name,
+             const char *fallback_name,
+             bool default_value)
+    {
+      return arg_to_bool(get(prefix, name, fallback_name), default_value);
+    }
+
+    bool
+    get_bool(const char *prefix,
+             const char *fallback_prefix,
+             const char *name,
+             const char *fallback_name,
+             bool default_value)
+    {
+      return arg_to_bool(get(prefix, fallback_prefix, name, fallback_name),
+                         default_value);
+    }
+
     grn_raw_string
     get_string(const char *name,
                grn_raw_string default_value = default_string_value())
@@ -317,6 +349,9 @@ namespace grn {
   private:
     grn_ctx *ctx_;
     grn_user_data *user_data_;
+
+    bool
+    arg_to_bool(grn_obj *arg, bool default_value);
 
     static grn_raw_string
     default_string_value()
