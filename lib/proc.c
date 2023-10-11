@@ -1,7 +1,7 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
-  Copyright(C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1294,31 +1294,25 @@ exit:
   return NULL;
 }
 
-grn_bool
-grn_proc_option_value_bool(grn_ctx *ctx,
-                           grn_obj *option,
-                           grn_bool default_value)
+bool
+grn_proc_option_value_bool(grn_ctx *ctx, grn_obj *option, bool default_value)
 {
-  const char *value;
-  size_t value_length;
-
   if (!option) {
     return default_value;
   }
 
-  value = GRN_TEXT_VALUE(option);
-  value_length = GRN_TEXT_LEN(option);
-
-  if (value_length == 0) {
+  grn_raw_string value;
+  GRN_RAW_STRING_SET(value, option);
+  if (value.length == 0) {
     return default_value;
   }
 
-  if (value_length == strlen("yes") &&
-      strncmp(value, "yes", value_length) == 0) {
-    return GRN_TRUE;
-  } else if (value_length == strlen("no") &&
-             strncmp(value, "no", value_length) == 0) {
-    return GRN_FALSE;
+  if (GRN_RAW_STRING_EQUAL_CSTRING(value, "yes") ||
+      GRN_RAW_STRING_EQUAL_CSTRING(value, "true")) {
+    return true;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(value, "no") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(value, "false")) {
+    return false;
   } else {
     return default_value;
   }

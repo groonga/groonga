@@ -156,10 +156,8 @@ grn_proc_init_thread_limit(grn_ctx *ctx);
 void
 grn_proc_init_tokenize(grn_ctx *ctx);
 
-grn_bool
-grn_proc_option_value_bool(grn_ctx *ctx,
-                           grn_obj *option,
-                           grn_bool default_value);
+bool
+grn_proc_option_value_bool(grn_ctx *ctx, grn_obj *option, bool default_value);
 int32_t
 grn_proc_option_value_int32(grn_ctx *ctx,
                             grn_obj *option,
