@@ -139,7 +139,7 @@ class Updator
       status[3] = normalize_error_message(status[3]) if status[3]
       return_code = status[0]
       if return_code.zero?
-        if command.start_with?("status")
+        if command.start_with?("status") or command.start_with?("/d/status")
           status = result[1]
           status["alloc_count"] = 29 if status.key?("alloc_count")
           status["starttime"] = 1696558618 if status.key?("starttime")
