@@ -594,6 +594,13 @@ grn_table_selector_get_fuzzy_with_transposition(
 GRN_API grn_rc
 grn_table_selector_set_fuzzy_with_transposition(
   grn_ctx *ctx, grn_table_selector *table_selector, bool with);
+GRN_API bool
+grn_table_selector_get_fuzzy_tokenize(grn_ctx *ctx,
+                                      grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_fuzzy_tokenize(grn_ctx *ctx,
+                                      grn_table_selector *table_selector,
+                                      bool tokenize);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,

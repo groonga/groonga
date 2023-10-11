@@ -929,6 +929,9 @@ grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 #define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION     (0x01 << 0)
 #define GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH      (0x01 << 1)
 #define GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO (0x01 << 2)
+/* We want to use GRN_TABLE_FUZZY_SEARCH_TOKENIZE but it breaks
+ * backward compatibility. So we use this inverted name. */
+#define GRN_TABLE_FUZZY_SEARCH_SKIP_TOKENIZE (0x01 << 3)
 
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 

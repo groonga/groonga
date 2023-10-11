@@ -11348,6 +11348,22 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;
+
+  if (data->fuzzy_search_optarg->flags & GRN_TABLE_FUZZY_SEARCH_SKIP_TOKENIZE) {
+    ti = token_info_open(ctx,
+                         data,
+                         GRN_ID_NIL,
+                         data->query,
+                         data->query_len,
+                         1,
+                         EX_FUZZY);
+    if (!ti) {
+      return rc;
+    }
+    data->token_infos[data->n_token_infos++] = ti;
+    return GRN_SUCCESS;
+  }
+
   grn_token_cursor *token_cursor =
     grn_ii_select_data_open_token_cursor(ctx,
                                          data,

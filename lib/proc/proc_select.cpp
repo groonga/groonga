@@ -1143,6 +1143,7 @@ namespace {
           args->get_float(prefix, "fuzzy_max_distance_ratio", 0)),
         fuzzy_with_transposition(
           args->get_bool(prefix, "fuzzy_with_transposition", true)),
+        fuzzy_tokenize(args->get_bool(prefix, "fuzzy_tokenize", false)),
         condition({nullptr, nullptr, nullptr}),
         post_condition({nullptr}),
         filtered(nullptr),
@@ -1199,6 +1200,9 @@ namespace {
       grn_table_selector_set_fuzzy_with_transposition(ctx,
                                                       table_selector,
                                                       fuzzy_with_transposition);
+      grn_table_selector_set_fuzzy_tokenize(ctx,
+                                            table_selector,
+                                            fuzzy_tokenize);
     }
 
     grn_ctx *ctx_;
@@ -1215,6 +1219,7 @@ namespace {
     uint32_t fuzzy_prefix_length;
     float fuzzy_max_distance_ratio;
     bool fuzzy_with_transposition;
+    bool fuzzy_tokenize;
     struct {
       grn_obj *match_columns;
       grn_obj *expression;

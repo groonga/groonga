@@ -1,0 +1,21 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+#@on-error omit
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenMecab \
+  --normalizer NormalizerNFKC150
+#@on-error default
+column_create Lexicon memos_content \
+  COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "とても早いです"}
+]
+
+select Memos \
+  --match_columns content \
+  --query "ともて" \
+  --fuzzy_max_distance 1 \
+  --output_columns *,_score

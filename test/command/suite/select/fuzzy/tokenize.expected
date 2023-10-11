@@ -1,0 +1,43 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenMecab   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Lexicon memos_content   COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "とても早いです"},
+{"content": "おともします。"}
+]
+[[0,0.0,0.0],2]
+select Memos   --match_columns content   --query "ともて"   --fuzzy_max_distance 1   --fuzzy_tokenize yes   --output_columns *,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "おともします。",
+        1
+      ]
+    ]
+  ]
+]
