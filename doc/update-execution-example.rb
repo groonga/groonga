@@ -359,5 +359,5 @@ else
   base_dir = "/tmp/groonga-doc"
 end
 updator = Updator.new(base_dir)
-source = ARGV[0] || File.join(__dir__, "source")
+source = ARGV[0] || ENV["SOURCES"] || File.join(__dir__, "source")
 updator.update(source)
