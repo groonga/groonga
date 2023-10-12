@@ -469,7 +469,8 @@ You can enable typo tolerance search by specifying
 ``--fuzzy_max_distance_ratio 0.34`` will be a good parameter.
 
 :ref:`select-fuzzy-max-distance-ratio` specifies how many typo
-characters is accepted based on each input keyword's length.
+characters is accepted based on the number of characters of each input
+term.
 
 Here is a table that shows how many characters are accepted as typo
 with ``--fuzzy_max_distance_ratio 0.34``:
@@ -477,7 +478,7 @@ with ``--fuzzy_max_distance_ratio 0.34``:
 .. list-table::
    :header-rows: 1
 
-   * - The number of characters of a keyword
+   * - The number of characters of a term
      - The number of accepted typo characters
    * - 1
      - 0 (``floor(1 * 0.34) = floor(0.34) = 0``)
@@ -492,10 +493,10 @@ with ``--fuzzy_max_distance_ratio 0.34``:
    * - 6
      - 2 (``floor(6 * 0.34) = floor(2.04) = 2``)
 
-In other words, Groonga doesn't accept any typo for a short keyword
-(0-2 characters keyword), accepts 1 typo for a middle keyword (3-5
-characters keyword) and accepts 2 or more typos for a long keyword (6-
-characters keyword).
+In other words, Groonga doesn't accept any typo for a short term
+(0-2 characters term), accepts 1 typo for a middle term (3-5
+characters term) and accepts 2 or more typos for a long term (6-
+characters term).
 
 Here is an example that shows that we can search ``Groonga`` with
 ``Moronga`` (2 typos):
@@ -511,7 +512,7 @@ Here is an example that shows that we can search ``Groonga`` with
 
 You can specify the fixed number of typo accept characters by
 :ref:`select-fuzzy-max-distance`. For example, Groonga accepts 2
-characters for all keywords with ``--fuzzy_max_distance 2``. But
+characters for all terms with ``--fuzzy_max_distance 2``. But
 ``--fuzzy_max_distance_ratio`` will be better for many use cases.
 
 You need correct terms for typo tolerance search. Groonga uses terms
@@ -1499,7 +1500,7 @@ distance ``3`` accepts the following terms:
 :ref:`select-fuzzy-max-distance` specifies a fixed size edit distance
 for all queries (both of short queries and long queries).
 
-We can specify an edit distance for each query based on the number of
+You can specify an edit distance for each query based on the number of
 characters of the target query by this parameter. For example, edit
 distance ``1`` is used for ``hye`` with ``--fuzzy_max_distance_ratio
 0.34``. Edit distance ``2`` is used for ``hypehn`` with
@@ -1518,7 +1519,7 @@ with ``--fuzzy_max_distance_ratio 0.34``:
 .. list-table::
    :header-rows: 1
 
-   * - The number of characters of a keyword
+   * - The number of characters of a term
      - The number of accepted typo characters
    * - 1
      - 0 (``floor(1 * 0.34) = floor(0.34) = 0``)
@@ -1536,7 +1537,7 @@ with ``--fuzzy_max_distance_ratio 0.34``:
 Here is an example that accepts 1 typo character for ``vary`` and 2
 typo characters for ``Gnoonag``. This example specifies ``yes`` as
 :ref:`select-match-escalation` to enable fuzzy query for all queries
-(``vary`` and ``Gnoonag``). In general, we should not specify
+(``vary`` and ``Gnoonag``). In general, you should not specify
 ``--match_escalation yes`` because it may increase noisy results.
 
 .. groonga-command
@@ -1637,7 +1638,7 @@ This option will improve performance when a lexicon has many terms.
 
 Here is an example that requires ``gr`` prefix for fixed terms with
 ``groonag`` query. ``Groonga`` (case insensitive for this case because
-we use :doc:`/reference/normalizers/normalizer_auto` for this case)
+you use :doc:`/reference/normalizers/normalizer_auto` for this case)
 can be used for a fixed term but ``Mroonga`` can't be used for a fixed
 term. Because ``Mroonga`` isn't started with ``gr``.
 
@@ -1672,7 +1673,7 @@ distance of this case is ``1``. It's ``2`` (because insertion and
 deletion are needed) otherwise.
 
 Here is an example that uses edit distance ``2`` for transposition. In
-this example, we can't use ``Mroonga`` as a fixed term for ``groonag``
+this example, you can't use ``Mroonga`` as a fixed term for ``groonag``
 because it has edit distance ``3``:
 
 1. Substitute ``g`` with ``M``: ``groonag`` -> ``Mroonag``
@@ -1723,10 +1724,11 @@ For morphological analyzer based tokenizer such as
 :doc:`/reference/tokenizers/token_mecab`, ``no`` is suitable. Because
 typo-ed term isn't tokenized as you expected for most cases. For
 example, ``ともて`` (a typo of ``とても``) may be tokenized to ``とも
-`` (adjective) and ``て`` (conjunctive particle) not ``ともて``.
+`` (adjective) and ``て`` (conjunctive particle) not ``ともて``
+(adverb).
 
 Here is an example that tokenizes the given term before fuzzy
-query. In this example, we can't use ``Groonga`` as a fixed term for
+query. In this example, you can't use ``Groonga`` as a fixed term for
 ``gr00nga`` because ``gr``, ``00`` and ``nga`` are processed separately.
 
 .. groonga-command
