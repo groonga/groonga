@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "doc",
+      "displayName": "For documentation",
+      "inherits": [
+        "base"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "ON",
+        "GRN_WITH_DOC": "ON",
+        "GRN_WITH_MRUBY": "ON"
+      }
+    }
+  ]
+}
