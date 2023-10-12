@@ -48,6 +48,7 @@ add_custom_target(
     GRN_RUBY_SCRIPTS_DIR=${CMAKE_CURRENT_SOURCE_DIR}/../lib/mrb/scripts
     LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}/../lib:$ENV{LD_LIBRARY_PATH}
     PATH=${CMAKE_CURRENT_BINARY_DIR}/../src:${CMAKE_CURRENT_BINARY_DIR}/../src/suggest:$ENV{PATH}
-    ${RUBY}
-    ${CMAKE_CURRENT_SOURCE_DIR}/update-execution-example.rb
+    ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-execution-example.rb
+  DEPENDS groonga groonga-suggest-create-dataset groonga-suggest-httpd
+          groonga-suggest-learner
   VERBATIM)
