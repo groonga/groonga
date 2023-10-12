@@ -2,9 +2,10 @@ Execution example::
 
   select \
     --table Entries \
-    --fuzzy_max_distance_ratio 0.34 \
+    --fuzzy_max_distance 2 \
+    --fuzzy_tokenize yes \
     --match_columns content \
-    --query Moronga \
+    --query gr00nga \
     --output_columns content,_score
   # [
   #   [
@@ -15,7 +16,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         2
+  #         0
   #       ],
   #       [
   #         [
@@ -26,14 +27,6 @@ Execution example::
   #           "_score",
   #           "Int32"
   #         ]
-  #       ],
-  #       [
-  #         "I started to use Groonga. It's very fast!",
-  #         1
-  #       ],
-  #       [
-  #         "I also started to use Mroonga. It's also very fast! Really fast!",
-  #         2
   #       ]
   #     ]
   #   ]

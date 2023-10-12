@@ -2,9 +2,9 @@ Execution example::
 
   select \
     --table Entries \
-    --fuzzy_max_distance_ratio 0.34 \
+    --fuzzy_max_distance 1 \
     --match_columns content \
-    --query Moronga \
+    --query vary \
     --output_columns content,_score
   # [
   #   [
@@ -33,7 +33,7 @@ Execution example::
   #       ],
   #       [
   #         "I also started to use Mroonga. It's also very fast! Really fast!",
-  #         2
+  #         1
   #       ]
   #     ]
   #   ]

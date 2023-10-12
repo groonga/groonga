@@ -330,6 +330,12 @@ set(GRN_DOC_SOURCES
     example/reference/commands/select/drilldowns_label_table.log
     example/reference/commands/select/filter_equal.log
     example/reference/commands/select/filter_less_than.log
+    example/reference/commands/select/fuzzy_max_distance.log
+    example/reference/commands/select/fuzzy_max_distance_ratio.log
+    example/reference/commands/select/fuzzy_max_expansions.log
+    example/reference/commands/select/fuzzy_prefix_length.log
+    example/reference/commands/select/fuzzy_tokenize.log
+    example/reference/commands/select/fuzzy_with_transposition.log
     example/reference/commands/select/limit_negative.log
     example/reference/commands/select/limit_simple.log
     example/reference/commands/select/load_table.log
@@ -368,7 +374,9 @@ set(GRN_DOC_SOURCES
     example/reference/commands/select/usage_drilldown.log
     example/reference/commands/select/usage_drilldown_only_query.log
     example/reference/commands/select/usage_dynamic_column.log
+    example/reference/commands/select/usage_fuzzy_max_distance_ratio.log
     example/reference/commands/select/usage_setup.log
+    example/reference/commands/select/usage_typo_tolerance_japanese.log
     example/reference/commands/select/usage_window_function.log
     example/reference/commands/shutdown/default.log
     example/reference/commands/shutdown/graceful.log
@@ -1371,7 +1379,6 @@ set(GRN_DOC_HTML_FILES
     install/cmake.html
     install/debian.html
     install/docker.html
-    install/fedora.html
     install/mac_os_x.html
     install/others.html
     install/ubuntu.html

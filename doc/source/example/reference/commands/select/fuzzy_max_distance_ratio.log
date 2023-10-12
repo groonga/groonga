@@ -4,7 +4,8 @@ Execution example::
     --table Entries \
     --fuzzy_max_distance_ratio 0.34 \
     --match_columns content \
-    --query Moronga \
+    --query 'vary Gnoonag' \
+    --match_escalation yes \
     --output_columns content,_score
   # [
   #   [
@@ -15,7 +16,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         2
+  #         1
   #       ],
   #       [
   #         [
@@ -29,10 +30,6 @@ Execution example::
   #       ],
   #       [
   #         "I started to use Groonga. It's very fast!",
-  #         1
-  #       ],
-  #       [
-  #         "I also started to use Mroonga. It's also very fast! Really fast!",
   #         2
   #       ]
   #     ]

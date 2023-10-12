@@ -330,6 +330,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_distance.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_distance_ratio.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_expansions.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_prefix_length.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_tokenize.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_with_transposition.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/load_table.log \
@@ -368,7 +374,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_dynamic_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_fuzzy_max_distance_ratio.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_typo_tolerance_japanese.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_window_function.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/default.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/graceful.log \
@@ -1637,6 +1645,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldowns_label_table.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
+	source/example/reference/commands/select/fuzzy_max_distance.log \
+	source/example/reference/commands/select/fuzzy_max_distance_ratio.log \
+	source/example/reference/commands/select/fuzzy_max_expansions.log \
+	source/example/reference/commands/select/fuzzy_prefix_length.log \
+	source/example/reference/commands/select/fuzzy_tokenize.log \
+	source/example/reference/commands/select/fuzzy_with_transposition.log \
 	source/example/reference/commands/select/limit_negative.log \
 	source/example/reference/commands/select/limit_simple.log \
 	source/example/reference/commands/select/load_table.log \
@@ -1675,7 +1689,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/usage_drilldown.log \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
 	source/example/reference/commands/select/usage_dynamic_column.log \
+	source/example/reference/commands/select/usage_fuzzy_max_distance_ratio.log \
 	source/example/reference/commands/select/usage_setup.log \
+	source/example/reference/commands/select/usage_typo_tolerance_japanese.log \
 	source/example/reference/commands/select/usage_window_function.log \
 	source/example/reference/commands/shutdown/default.log \
 	source/example/reference/commands/shutdown/graceful.log \

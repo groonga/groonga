@@ -2,9 +2,10 @@ Execution example::
 
   select \
     --table Entries \
-    --fuzzy_max_distance_ratio 0.34 \
+    --fuzzy_max_distance 2 \
+    --fuzzy_max_expansions 1 \
     --match_columns content \
-    --query Moronga \
+    --query alx \
     --output_columns content,_score
   # [
   #   [
@@ -28,11 +29,11 @@ Execution example::
   #         ]
   #       ],
   #       [
-  #         "I started to use Groonga. It's very fast!",
-  #         1
+  #         "I migrated all Senna system!",
+  #         2
   #       ],
   #       [
-  #         "I also started to use Mroonga. It's also very fast! Really fast!",
+  #         "I also migrated all Tritonn system!",
   #         2
   #       ]
   #     ]
