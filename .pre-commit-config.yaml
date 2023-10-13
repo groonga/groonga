@@ -66,5 +66,13 @@ repos:
     rev: v0.6.13
     hooks:
       - id: cmake-format
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.3"
+    hooks:
+      - id: prettier
+        files: >-
+          (
+          ?CMakePresets\.json|
+          )
 
 exclude: "^vendor/.*"

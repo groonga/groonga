@@ -17,9 +17,7 @@
     {
       "name": "doc",
       "displayName": "For documentation",
-      "inherits": [
-        "base"
-      ],
+      "inherits": ["base"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "GRN_WITH_APACHE_ARROW": "ON",
