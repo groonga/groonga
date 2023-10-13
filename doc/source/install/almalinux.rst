@@ -8,7 +8,7 @@ AlmaLinux OS. You can install them by ``dnf``.
 
 We distribute only 64-bit packages.
 
-.. include:: server-use.inc
+.. include:: server-use.rst
 
 AlmaLinux 9
 -----------

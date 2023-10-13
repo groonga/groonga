@@ -15,7 +15,7 @@ Install::
   % sudo yum install -y https://packages.groonga.org/amazon-linux/2/groonga-release-latest.noarch.rpm
   % sudo yum install -y groonga
 
-.. include:: server-use.inc
+.. include:: server-use.rst
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.

@@ -20,7 +20,7 @@ Install::
   % sudo yum install -y https://packages.groonga.org/centos/7/groonga-release-latest.noarch.rpm
   % sudo yum install -y --enablerepo=epel groonga
 
-.. include:: server-use.inc
+.. include:: server-use.rst
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.

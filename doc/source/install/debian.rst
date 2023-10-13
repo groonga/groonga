@@ -32,7 +32,7 @@ Install::
 
   % sudo apt install -y -V groonga
 
-.. include:: server-use.inc
+.. include:: server-use.rst
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
@@ -81,7 +81,7 @@ Install::
 
   % sudo apt install -y -V groonga
 
-.. include:: server-use.inc
+.. include:: server-use.rst
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
