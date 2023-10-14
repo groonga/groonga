@@ -17,20 +17,27 @@ include(GroongaSphinx)
 include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
 
 set(GRN_DOC_PRE_BUILD_STAMP "${CMAKE_CURRENT_SOURCE_DIR}/build-stamp")
-foreach(LOCALE en ja)
+set(GRN_DOC_LOCALES en ja)
+foreach(LOCALE ${GRN_DOC_LOCALES})
   set(GRN_DOC_HTML_FILES_LOCALE)
   foreach(file ${GRN_DOC_HTML_FILES})
     list(APPEND GRN_DOC_HTML_FILES_LOCALE
          ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/${file})
   endforeach()
   if(EXISTS "${GRN_DOC_PRE_BUILD_STAMP}")
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/${LOCALE}/html/
-            DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE})
+    install(
+      DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/${LOCALE}/html/
+      COMPONENT Document
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE}
+      PATTERN ".buildinfo" EXCLUDE)
   else()
     grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE}
                "${GRN_DOC_SOURCES}" "${GRN_DOC_HTML_FILES_LOCALE}")
-    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/
-            DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE})
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/
+      COMPONENT Document
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE}
+      PATTERN ".buildinfo" EXCLUDE)
   endif()
 endforeach()
 
@@ -51,4 +58,14 @@ add_custom_target(
     ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-execution-example.rb
   DEPENDS groonga groonga-suggest-create-dataset groonga-suggest-httpd
           groonga-suggest-learner
+  VERBATIM)
+
+set(GRN_DOC_DEPLOY_DEPENDS)
+foreach(LOCALE ${GRN_DOC_LOCALES})
+  list(APPEND GRN_DOC_DEPLOY_DEPENDS doc_${LOCALE}_html)
+endforeach()
+add_custom_target(
+  doc_deploy
+  COMMAND ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/deploy.rb
+  DEPENDS ${GRN_DOC_DEPLOY_DEPENDS}
   VERBATIM)
