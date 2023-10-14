@@ -104,6 +104,7 @@ except:
 # directories to ignore when looking for source files.
 exclude_patterns = [
   '**/.#*',
+  'install/server-use.rst',
   'reference/scoring_note.rst',
 ]
 

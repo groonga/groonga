@@ -1033,7 +1033,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
-	$(top_srcdir)/doc/source/install/server-use.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
@@ -2348,7 +2347,6 @@ source_files_relative_from_doc_dir = \
 	source/install/docker.rst \
 	source/install/mac_os_x.rst \
 	source/install/others.rst \
-	source/install/server-use.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
 	source/limitations.rst \
