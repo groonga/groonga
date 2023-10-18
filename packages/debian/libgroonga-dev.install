@@ -1,3 +1,4 @@
 usr/include/groonga/*
-usr/lib/*/pkgconfig/*
+usr/lib/*/cmake/*
 usr/lib/*/libgroonga.so
+usr/lib/*/pkgconfig/*
