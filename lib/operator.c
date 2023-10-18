@@ -999,10 +999,10 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         r = (x_ op (int64_t)GRN_UINT64_VALUE(y));\
         break;\
       case GRN_DB_FLOAT32 :\
-        r = (x_ op GRN_TIME_PACK(GRN_FLOAT32_VALUE(y), 0));\
+        r = (x_ op (GRN_FLOAT32_VALUE(y) * GRN_TIME_USEC_PER_SEC));\
         break;\
       case GRN_DB_FLOAT :\
-        r = (x_ op GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
+        r = (x_ op (GRN_FLOAT_VALUE(y) * GRN_TIME_USEC_PER_SEC));\
         break;\
       case GRN_DB_SHORT_TEXT :\
       case GRN_DB_TEXT :\

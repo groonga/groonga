@@ -1,0 +1,99 @@
+table_create Reports TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Reports content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Reports modified_at COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Reports
+[
+{"_key": "a", "content": "", "modified_at": 1663989875.438}
+]
+[[0,0.0,0.0],1]
+load --table Reports --ifexists 'content == "" && modified_at <= 1663989875.437'
+[
+{"_key": "a", "content": "not update"}
+]
+[[0,0.0,0.0],0]
+select Reports
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "modified_at",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "a",
+        "",
+        1663989875.438
+      ]
+    ]
+  ]
+]
+load --table Reports --ifexists 'content == "" && modified_at <= 1663989875.438'
+[
+{"_key": "a", "content": "update"}
+]
+[[0,0.0,0.0],1]
+select Reports
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "modified_at",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "a",
+        "update",
+        1663989875.438
+      ]
+    ]
+  ]
+]
