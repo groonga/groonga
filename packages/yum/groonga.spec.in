@@ -127,6 +127,7 @@ Summary:	Libraries and header files for Groonga
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	arrow-devel >= @APACHE_ARROW_VERSION@
+Requires:	msgpack-devel
 
 %description devel
 Libraries and header files for Groonga
