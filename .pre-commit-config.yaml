@@ -47,6 +47,7 @@ repos:
           ?lib/grn_table_selector\.h|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
+          ?lib/load\.c|
           ?lib/normalizer\.c|
           ?lib/mrb/mrb_ctx\.c|
           ?lib/mrb/mrb_error\.c|
