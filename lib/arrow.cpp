@@ -24,24 +24,26 @@
 #include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
-#include "grn_arrow.hpp"
-#include <groonga/arrow.hpp>
+#  include "grn_arrow.hpp"
+#  include <groonga/arrow.hpp>
 
-#include <arrow/api.h>
-#include <arrow/io/api.h>
-#include <arrow/ipc/api.h>
+#  include <arrow/api.h>
+#  include <arrow/io/api.h>
+#  include <arrow/ipc/api.h>
 
-#include <map>
-#include <sstream>
+#  include <map>
+#  include <sstream>
 
-#if ARROW_VERSION_MAJOR >= 10
+#  if ARROW_VERSION_MAJOR >= 10
 using string_view = std::string_view;
-#else
+#  else
 using string_view = arrow::util::string_view;
-#endif
+#  endif
 
 namespace grnarrow {
-  grn_rc status_to_rc(const arrow::Status &status) {
+  grn_rc
+  status_to_rc(const arrow::Status &status)
+  {
     switch (status.code()) {
     case arrow::StatusCode::OK:
       return GRN_SUCCESS;
@@ -64,9 +66,9 @@ namespace grnarrow {
     }
   }
 
-  arrow::Status check(grn_ctx *ctx,
-                      grn_rc rc,
-                      const char *context) {
+  arrow::Status
+  check(grn_ctx *ctx, grn_rc rc, const char *context)
+  {
     switch (rc) {
     case GRN_SUCCESS:
       return arrow::Status::OK();
@@ -76,15 +78,15 @@ namespace grnarrow {
     }
   }
 
-  arrow::Status check(grn_ctx *ctx,
-                      grn_rc rc,
-                      std::string context) {
+  arrow::Status
+  check(grn_ctx *ctx, grn_rc rc, std::string context)
+  {
     return check(ctx, rc, context.c_str());
   }
 
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             const char *context) {
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, const char *context)
+  {
     if (status.ok()) {
       return true;
     } else {
@@ -95,26 +97,24 @@ namespace grnarrow {
     }
   }
 
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             const std::string &context) {
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, const std::string &context)
+  {
     return check(ctx, status, context.c_str());
   }
 
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             std::ostream &output) {
-    return check(ctx,
-                 status,
-                 static_cast<std::stringstream &>(output).str());
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, std::ostream &output)
+  {
+    return check(ctx, status, static_cast<std::stringstream &>(output).str());
   }
 
   class ObjectCache {
   public:
-    ObjectCache(grn_ctx *ctx) : ctx_(ctx) {
-    }
+    ObjectCache(grn_ctx *ctx) : ctx_(ctx) {}
 
-    ~ObjectCache() {
+    ~ObjectCache()
+    {
       for (auto &it : cached_objects_) {
         auto object = it.second;
         if (object) {
@@ -123,7 +123,9 @@ namespace grnarrow {
       }
     }
 
-    grn_obj *operator[](grn_id id) {
+    grn_obj *
+    operator[](grn_id id)
+    {
       auto it = cached_objects_.find(id);
       if (it != cached_objects_.end()) {
         return it->second;
@@ -141,72 +143,76 @@ namespace grnarrow {
     std::map<grn_id, grn_obj *> cached_objects_;
   };
 
-  void put_time_value(grn_ctx *ctx,
-                      grn_obj *bulk,
-                      int64_t time_value,
-                      arrow::TimeUnit::type time_unit) {
+  void
+  put_time_value(grn_ctx *ctx,
+                 grn_obj *bulk,
+                 int64_t time_value,
+                 arrow::TimeUnit::type time_unit)
+  {
     switch (time_unit) {
-    case arrow::TimeUnit::SECOND :
+    case arrow::TimeUnit::SECOND:
       GRN_TIME_PUT(ctx, bulk, GRN_TIME_PACK(time_value, 0));
       break;
-    case arrow::TimeUnit::MILLI :
+    case arrow::TimeUnit::MILLI:
       GRN_TIME_PUT(ctx, bulk, GRN_TIME_MSEC_TO_USEC(time_value));
       break;
-    case arrow::TimeUnit::MICRO :
+    case arrow::TimeUnit::MICRO:
       GRN_TIME_PUT(ctx, bulk, time_value);
       break;
-    case arrow::TimeUnit::NANO :
+    case arrow::TimeUnit::NANO:
       GRN_TIME_PUT(ctx, bulk, GRN_TIME_NSEC_TO_USEC(time_value));
       break;
     }
   }
 
-  std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
-                                                             grn_id type_id) {
+  std::shared_ptr<arrow::DataType>
+  grn_type_id_to_arrow_type(grn_ctx *ctx, grn_id type_id)
+  {
     switch (type_id) {
-    case GRN_DB_BOOL :
+    case GRN_DB_BOOL:
       return arrow::boolean();
-    case GRN_DB_UINT8 :
+    case GRN_DB_UINT8:
       return arrow::uint8();
-    case GRN_DB_INT8 :
+    case GRN_DB_INT8:
       return arrow::int8();
-    case GRN_DB_UINT16 :
+    case GRN_DB_UINT16:
       return arrow::uint16();
-    case GRN_DB_INT16 :
+    case GRN_DB_INT16:
       return arrow::int16();
-    case GRN_DB_UINT32 :
+    case GRN_DB_UINT32:
       return arrow::uint32();
-    case GRN_DB_INT32 :
+    case GRN_DB_INT32:
       return arrow::int32();
-    case GRN_DB_UINT64 :
+    case GRN_DB_UINT64:
       return arrow::uint64();
-    case GRN_DB_INT64 :
+    case GRN_DB_INT64:
       return arrow::int64();
-    case GRN_DB_FLOAT32 :
+    case GRN_DB_FLOAT32:
       return arrow::float32();
-    case GRN_DB_FLOAT :
+    case GRN_DB_FLOAT:
       return arrow::float64();
-    case GRN_DB_TIME :
+    case GRN_DB_TIME:
       return arrow::timestamp(arrow::TimeUnit::NANO);
-    case GRN_DB_SHORT_TEXT :
-    case GRN_DB_TEXT :
-    case GRN_DB_LONG_TEXT :
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
       return arrow::utf8();
-    default :
+    default:
       return nullptr;
     }
   }
 
-  std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
-    grn_ctx *ctx,
-    grn_obj *column,
-    ObjectCache &object_cache) {
+  std::shared_ptr<arrow::DataType>
+  grn_column_to_arrow_type(grn_ctx *ctx,
+                           grn_obj *column,
+                           ObjectCache &object_cache)
+  {
     switch (column->header.type) {
-    case GRN_TYPE :
+    case GRN_TYPE:
       return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
-    case GRN_ACCESSOR :
-    case GRN_COLUMN_FIX_SIZE :
-    case GRN_COLUMN_VAR_SIZE :
+    case GRN_ACCESSOR:
+    case GRN_COLUMN_FIX_SIZE:
+    case GRN_COLUMN_VAR_SIZE:
       {
         grn_id range_id = GRN_ID_NIL;
         grn_obj_flags range_flags = 0;
@@ -229,16 +235,16 @@ namespace grnarrow {
         }
       }
       break;
-    case GRN_COLUMN_INDEX :
+    case GRN_COLUMN_INDEX:
       return arrow::uint32();
-    default :
+    default:
       return nullptr;
     }
     return nullptr;
   }
 
-  const std::shared_ptr<arrow::DataType> undictionary(
-    const std::shared_ptr<arrow::DataType> data_type)
+  const std::shared_ptr<arrow::DataType>
+  undictionary(const std::shared_ptr<arrow::DataType> data_type)
   {
     if (data_type->id() != arrow::Type::DICTIONARY) {
       return data_type;
@@ -259,7 +265,8 @@ namespace grnarrow {
         record_ids_(record_ids),
         is_key_(is_key),
         bulk_(),
-        add_record_data_() {
+        add_record_data_()
+    {
       GRN_VOID_INIT(&bulk_);
       add_record_data_.table = grn_loader_->table;
       add_record_data_.depth = 0;
@@ -272,154 +279,159 @@ namespace grnarrow {
       add_record_data_.current.value = nullptr;
     }
 
-    ~RecordAddVisitor() {
-      GRN_OBJ_FIN(ctx_, &bulk_);
-    }
+    ~RecordAddVisitor() { GRN_OBJ_FIN(ctx_, &bulk_); }
 
-    arrow::Status Visit(const arrow::BooleanArray &array) {
+    arrow::Status
+    Visit(const arrow::BooleanArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_BOOL, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_BOOL_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_BOOL_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::Int8Array &array) {
+    arrow::Status
+    Visit(const arrow::Int8Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT8, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_INT8_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_INT8_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt8Array &array) {
+    arrow::Status
+    Visit(const arrow::UInt8Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT8, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_UINT8_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_UINT8_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::Int16Array &array) {
+    arrow::Status
+    Visit(const arrow::Int16Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT16, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_INT16_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_INT16_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt16Array &array) {
+    arrow::Status
+    Visit(const arrow::UInt16Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT16, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_UINT16_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_UINT16_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::Int32Array &array) {
+    arrow::Status
+    Visit(const arrow::Int32Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT32, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_INT32_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_INT32_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt32Array &array) {
+    arrow::Status
+    Visit(const arrow::UInt32Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT32, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_UINT32_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_UINT32_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::Int64Array &array) {
+    arrow::Status
+    Visit(const arrow::Int64Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT64, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_INT64_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_INT64_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt64Array &array) {
+    arrow::Status
+    Visit(const arrow::UInt64Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT64, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_UINT64_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_UINT64_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::HalfFloatArray &array) {
+    arrow::Status
+    Visit(const arrow::HalfFloatArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_FLOAT32_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_FLOAT32_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::FloatArray &array) {
+    arrow::Status
+    Visit(const arrow::FloatArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_FLOAT32_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_FLOAT32_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::DoubleArray &array) {
+    arrow::Status
+    Visit(const arrow::DoubleArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_FLOAT_SET(ctx_, &bulk_, value);
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_FLOAT_SET(ctx_, &bulk_, value);
+      });
     }
 
-    arrow::Status Visit(const arrow::StringArray &array) {
+    arrow::Status
+    Visit(const arrow::StringArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TEXT, GRN_OBJ_DO_SHALLOW_COPY);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.GetView(i);
-                           GRN_TEXT_SET(ctx_,
-                                        &bulk_,
-                                        value.data(),
-                                        value.size());
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.GetView(i);
+        GRN_TEXT_SET(ctx_, &bulk_, value.data(), value.size());
+      });
     }
 
-    arrow::Status Visit(const arrow::Date64Array &array) {
+    arrow::Status
+    Visit(const arrow::Date64Array &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TIME, 0);
-      return add_records(array,
-                         [&](int64_t i) {
-                           const auto &value = array.Value(i);
-                           GRN_TIME_SET(ctx_,
-                                        &bulk_,
-                                        GRN_TIME_MSEC_TO_USEC(value));
-                         });
+      return add_records(array, [&](int64_t i) {
+        const auto &value = array.Value(i);
+        GRN_TIME_SET(ctx_, &bulk_, GRN_TIME_MSEC_TO_USEC(value));
+      });
     }
 
-    arrow::Status Visit(const arrow::TimestampArray &array) {
+    arrow::Status
+    Visit(const arrow::TimestampArray &array)
+    {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TIME, 0);
       const auto &arrow_timestamp_type =
         std::static_pointer_cast<arrow::TimestampType>(array.type());
       const auto time_unit = arrow_timestamp_type->unit();
-      return add_records(array,
-                         [&](int64_t i) {
-                           GRN_BULK_REWIND(&bulk_);
-                           put_time_value(ctx_,
-                                          &bulk_,
-                                          array.Value(i),
-                                          time_unit);
-                         });
+      return add_records(array, [&](int64_t i) {
+        GRN_BULK_REWIND(&bulk_);
+        put_time_value(ctx_, &bulk_, array.Value(i), time_unit);
+      });
     }
 
   private:
@@ -431,7 +443,9 @@ namespace grnarrow {
     grn_loader_add_record_data add_record_data_;
 
     template <typename Array, typename SetBulk>
-    arrow::Status add_records(const Array &array, SetBulk set_bulk) {
+    arrow::Status
+    add_records(const Array &array, SetBulk set_bulk)
+    {
       const auto n_rows = array.length();
       for (int64_t i = 0; i < n_rows; ++i) {
         grn_id record_id;
@@ -450,7 +464,9 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
-    grn_id add_record() {
+    grn_id
+    add_record()
+    {
       if (is_key_) {
         add_record_data_.id = GRN_ID_NIL;
         return grn_loader_add_record(ctx_, grn_loader_, &add_record_data_);
@@ -458,16 +474,16 @@ namespace grnarrow {
 
       grn_id requested_record_id = GRN_ID_NIL;
       switch (bulk_.header.domain) {
-      case GRN_DB_UINT32 :
+      case GRN_DB_UINT32:
         requested_record_id = GRN_UINT32_VALUE(&bulk_);
         break;
-      case GRN_DB_INT32 :
+      case GRN_DB_INT32:
         requested_record_id = GRN_INT32_VALUE(&bulk_);
         break;
-      case GRN_DB_INT64 :
+      case GRN_DB_INT64:
         requested_record_id = static_cast<grn_id>(GRN_INT64_VALUE(&bulk_));
         break;
-      default :
+      default:
         {
           grn_obj casted_record_id;
           GRN_UINT32_INIT(&casted_record_id, 0);
@@ -482,7 +498,8 @@ namespace grnarrow {
             grn_inspect(ctx_, &inspected, &bulk_);
             ERR(GRN_INVALID_ARGUMENT,
                 "[table][load][%.*s][%s] failed to cast to <UInt32>: <%.*s>",
-                name_size, name,
+                name_size,
+                name,
                 GRN_COLUMN_NAME_ID,
                 (int)GRN_TEXT_LEN(&inspected),
                 GRN_TEXT_VALUE(&inspected));
@@ -500,9 +517,7 @@ namespace grnarrow {
           return GRN_ID_NIL;
         }
       } else {
-        return grn_table_at(ctx_,
-                            grn_loader_->table,
-                            requested_record_id);
+        return grn_table_at(ctx_, grn_loader_->table, requested_record_id);
       }
     }
   };
@@ -520,156 +535,187 @@ namespace grnarrow {
         index_(index),
         buffer_(),
         loaded_value_(nullptr),
-        object_cache_(object_cache) {
+        object_cache_(object_cache)
+    {
       GRN_VOID_INIT(&buffer_);
     }
 
-    ~ValueLoadVisitor() {
-      GRN_OBJ_FIN(ctx_, &buffer_);
-    }
+    ~ValueLoadVisitor() { GRN_OBJ_FIN(ctx_, &buffer_); }
 
-    arrow::Status Visit(const arrow::BooleanArray &array) override {
+    arrow::Status
+    Visit(const arrow::BooleanArray &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_BOOL, 0);
-                          GRN_BOOL_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_BOOL, 0);
+        GRN_BOOL_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::Int8Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int8Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT8, 0);
-                          GRN_INT8_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT8, 0);
+        GRN_INT8_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt8Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt8Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT8, 0);
-                          GRN_UINT8_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT8, 0);
+        GRN_UINT8_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::Int16Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int16Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT16, 0);
-                          GRN_INT16_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT16, 0);
+        GRN_INT16_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt16Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt16Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT16, 0);
-                          GRN_UINT16_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT16, 0);
+        GRN_UINT16_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::Int32Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int32Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT32, 0);
-                          GRN_INT32_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT32, 0);
+        GRN_INT32_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt32Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt32Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT32, 0);
-                          GRN_UINT32_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT32, 0);
+        GRN_UINT32_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::Int64Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int64Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT64, 0);
-                          GRN_INT64_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT64, 0);
+        GRN_INT64_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::UInt64Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt64Array &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT64, 0);
-                          GRN_UINT64_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT64, 0);
+        GRN_UINT64_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::HalfFloatArray &array) override {
+    arrow::Status
+    Visit(const arrow::HalfFloatArray &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
-                          GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
+        GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::FloatArray &array) override {
+    arrow::Status
+    Visit(const arrow::FloatArray &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
-                          GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
+        GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::DoubleArray &array) override {
+    arrow::Status
+    Visit(const arrow::DoubleArray &array) override
+    {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
-                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
+        GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+      });
     }
 
-    arrow::Status Visit(const arrow::StringArray &array) override {
+    arrow::Status
+    Visit(const arrow::StringArray &array) override
+    {
       return load_value([&]() {
-                          const auto value = array.GetView(index_);
-                          grn_obj_reinit(ctx_,
-                                         &buffer_,
-                                         GRN_DB_TEXT,
-                                         GRN_OBJ_DO_SHALLOW_COPY);
-                          GRN_TEXT_SET(ctx_,
-                                       &buffer_,
-                                       value.data(),
-                                       value.size());
-                        });
+        const auto value = array.GetView(index_);
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_TEXT, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx_, &buffer_, value.data(), value.size());
+      });
     }
 
-    arrow::Status Visit(const arrow::Date64Array &array) override {
+    arrow::Status
+    Visit(const arrow::Date64Array &array) override
+    {
       return load_value([&]() {
-                          const auto value = array.Value(index_);
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
-                          GRN_TIME_SET(ctx_,
-                                       &buffer_,
-                                       GRN_TIME_MSEC_TO_USEC(value));
-                        });
+        const auto value = array.Value(index_);
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
+        GRN_TIME_SET(ctx_, &buffer_, GRN_TIME_MSEC_TO_USEC(value));
+      });
     }
 
-    arrow::Status Visit(const arrow::TimestampArray &array) override {
+    arrow::Status
+    Visit(const arrow::TimestampArray &array) override
+    {
       const auto &arrow_timestamp_type =
         std::static_pointer_cast<arrow::TimestampType>(array.type());
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
-                          put_time_value(ctx_,
-                                         &buffer_,
-                                         array.Value(index_),
-                                         arrow_timestamp_type->unit());
-                        });
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
+        put_time_value(ctx_,
+                       &buffer_,
+                       array.Value(index_),
+                       arrow_timestamp_type->unit());
+      });
       return arrow::Status::OK();
     }
 
-    arrow::Status Visit(const arrow::ListArray &array) override {
+    arrow::Status
+    Visit(const arrow::ListArray &array) override
+    {
       const auto &value_array = array.value_slice(index_);
       switch (value_array->type_id()) {
-      case arrow::Type::STRUCT :
+      case arrow::Type::STRUCT:
         for (int64_t i = 0; i < value_array->length(); ++i) {
-          ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, i, object_cache_);
+          ValueLoadVisitor sub_visitor(ctx_,
+                                       grn_column_,
+                                       bulk_,
+                                       i,
+                                       object_cache_);
           ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
         }
         break;
-      case arrow::Type::LIST :
+      case arrow::Type::LIST:
         for (int64_t i = 0; i < value_array->length(); ++i) {
           const auto &sub_list_array =
             std::static_pointer_cast<arrow::ListArray>(value_array);
           const auto &sub_value_array = sub_list_array->value_slice(i);
           for (int64_t j = 0; j < sub_value_array->length(); ++j) {
-            ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, j, object_cache_);
+            ValueLoadVisitor sub_visitor(ctx_,
+                                         grn_column_,
+                                         bulk_,
+                                         j,
+                                         object_cache_);
             ARROW_RETURN_NOT_OK(sub_value_array->Accept(&sub_visitor));
           }
         }
         break;
-      default :
+      default:
         {
           grn_obj sub_buffer;
           if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
@@ -723,7 +769,9 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
-    arrow::Status Visit(const arrow::StructArray &array) override {
+    arrow::Status
+    Visit(const arrow::StructArray &array) override
+    {
       const auto &value_column = array.GetFieldByName("value");
       if (!value_column) {
         return arrow::Status::OK();
@@ -737,18 +785,21 @@ namespace grnarrow {
       }
       float weight;
       switch (weight_column->type_id()) {
-      case arrow::Type::INT32 :
-        weight = std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(index_);
+      case arrow::Type::INT32:
+        weight = std::static_pointer_cast<arrow::Int32Array>(weight_column)
+                   ->Value(index_);
         break;
-      case arrow::Type::FLOAT :
-        weight = std::static_pointer_cast<arrow::FloatArray>(weight_column)->Value(index_);
+      case arrow::Type::FLOAT:
+        weight = std::static_pointer_cast<arrow::FloatArray>(weight_column)
+                   ->Value(index_);
         break;
-      default :
+      default:
         return arrow::Status::OK();
       }
 
       const auto &value =
-        std::static_pointer_cast<arrow::StringArray>(value_column)->GetView(index_);
+        std::static_pointer_cast<arrow::StringArray>(value_column)
+          ->GetView(index_);
       const grn_id domain = bulk_->header.domain;
       const auto raw_value = value.data();
       const auto raw_value_size = value.size();
@@ -768,9 +819,8 @@ namespace grnarrow {
                                            &raw_value_buffer,
                                            &value_buffer,
                                            GRN_OBJ_SET);
-        if (ctx_->rc != GRN_SUCCESS &&
-            (grn_obj_is_vector(ctx_, bulk_) ||
-             grn_obj_is_uvector(ctx_, bulk_))) {
+        if (ctx_->rc != GRN_SUCCESS && (grn_obj_is_vector(ctx_, bulk_) ||
+                                        grn_obj_is_uvector(ctx_, bulk_))) {
           ERRCLR(ctx_);
         }
         GRN_OBJ_FIN(ctx_, &raw_value_buffer);
@@ -787,7 +837,8 @@ namespace grnarrow {
                                        domain);
         } else {
           // TODO: Support weight vector for number such as Int64
-          auto id = grn_uvector_get_element_record(ctx_, value_bulk, 0, nullptr);
+          auto id =
+            grn_uvector_get_element_record(ctx_, value_bulk, 0, nullptr);
           grn_uvector_add_element_record(ctx_, bulk_, id, weight);
         }
       }
@@ -795,11 +846,15 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
-    grn_obj *original_value() {
+    grn_obj *
+    original_value()
+    {
       return &buffer_;
     }
 
-    grn_obj *loaded_value() {
+    grn_obj *
+    loaded_value()
+    {
       if (loaded_value_) {
         return loaded_value_;
       }
@@ -817,7 +872,8 @@ namespace grnarrow {
 
     template <typename LoadBulk>
     arrow::Status
-    load_value(LoadBulk load_bulk) {
+    load_value(LoadBulk load_bulk)
+    {
       load_bulk();
       loaded_value_ = &buffer_;
       if (bulk_->header.domain == GRN_DB_VOID) {
@@ -839,9 +895,8 @@ namespace grnarrow {
                                               &buffer_,
                                               bulk_,
                                               GRN_OBJ_SET);
-        if (ctx_->rc != GRN_SUCCESS &&
-            (grn_obj_is_vector(ctx_, bulk_) ||
-             grn_obj_is_uvector(ctx_, bulk_))) {
+        if (ctx_->rc != GRN_SUCCESS && (grn_obj_is_vector(ctx_, bulk_) ||
+                                        grn_obj_is_uvector(ctx_, bulk_))) {
           ERRCLR(ctx_);
         }
       }
@@ -864,7 +919,8 @@ namespace grnarrow {
         column_name_(arrow_field->name()),
         grn_column_(nullptr),
         buffer_(),
-        object_cache_(object_cache) {
+        object_cache_(object_cache)
+    {
       if (grn_loader_) {
         grn_column_ = grn_loader_get_column(ctx_,
                                             grn_loader_,
@@ -916,74 +972,107 @@ namespace grnarrow {
       }
     }
 
-    ~ColumnLoadVisitor() {
+    ~ColumnLoadVisitor()
+    {
       if (!grn_loader_ && grn_obj_is_accessor(ctx_, grn_column_)) {
         grn_obj_unlink(ctx_, grn_column_);
       }
       GRN_OBJ_FIN(ctx_, &buffer_);
     }
 
-    arrow::Status Visit(const arrow::BooleanArray &array) override {
+    arrow::Status
+    Visit(const arrow::BooleanArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int8Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int8Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt8Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt8Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int16Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int16Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt16Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt16Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int32Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int32Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt32Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt32Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int64Array &array) override {
+    arrow::Status
+    Visit(const arrow::Int64Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt64Array &array) override {
+    arrow::Status
+    Visit(const arrow::UInt64Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::HalfFloatArray &array) override {
+    arrow::Status
+    Visit(const arrow::HalfFloatArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::FloatArray &array) override {
+    arrow::Status
+    Visit(const arrow::FloatArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::DoubleArray &array) override {
+    arrow::Status
+    Visit(const arrow::DoubleArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::StringArray &array) override {
+    arrow::Status
+    Visit(const arrow::StringArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Date64Array &array) override {
+    arrow::Status
+    Visit(const arrow::Date64Array &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::TimestampArray &array) override {
+    arrow::Status
+    Visit(const arrow::TimestampArray &array) override
+    {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::ListArray &array) override {
+    arrow::Status
+    Visit(const arrow::ListArray &array) override
+    {
       return set_values(array);
     }
 
@@ -997,54 +1086,56 @@ namespace grnarrow {
     grn_obj buffer_;
     ObjectCache *object_cache_;
 
-    void detect_type(const std::shared_ptr<arrow::DataType> &arrow_type,
-                     grn_id *type_id,
-                     grn_obj_flags *flags) {
+    void
+    detect_type(const std::shared_ptr<arrow::DataType> &arrow_type,
+                grn_id *type_id,
+                grn_obj_flags *flags)
+    {
       switch (arrow_type->id()) {
-      case arrow::Type::BOOL :
+      case arrow::Type::BOOL:
         *type_id = GRN_DB_BOOL;
         break;
-      case arrow::Type::UINT8 :
+      case arrow::Type::UINT8:
         *type_id = GRN_DB_UINT8;
         break;
-      case arrow::Type::INT8 :
+      case arrow::Type::INT8:
         *type_id = GRN_DB_INT8;
         break;
-      case arrow::Type::UINT16 :
+      case arrow::Type::UINT16:
         *type_id = GRN_DB_UINT16;
         break;
-      case arrow::Type::INT16 :
+      case arrow::Type::INT16:
         *type_id = GRN_DB_INT16;
         break;
-      case arrow::Type::UINT32 :
+      case arrow::Type::UINT32:
         *type_id = GRN_DB_UINT32;
         break;
-      case arrow::Type::INT32 :
+      case arrow::Type::INT32:
         *type_id = GRN_DB_INT32;
         break;
-      case arrow::Type::UINT64 :
+      case arrow::Type::UINT64:
         *type_id = GRN_DB_UINT64;
         break;
-      case arrow::Type::INT64 :
+      case arrow::Type::INT64:
         *type_id = GRN_DB_INT64;
         break;
-      case arrow::Type::HALF_FLOAT :
-      case arrow::Type::FLOAT :
+      case arrow::Type::HALF_FLOAT:
+      case arrow::Type::FLOAT:
         *type_id = GRN_DB_FLOAT32;
         break;
-      case arrow::Type::DOUBLE :
+      case arrow::Type::DOUBLE:
         *type_id = GRN_DB_FLOAT;
         break;
-      case arrow::Type::STRING :
+      case arrow::Type::STRING:
         *type_id = GRN_DB_TEXT;
         break;
-      case arrow::Type::DATE64 :
+      case arrow::Type::DATE64:
         *type_id = GRN_DB_TIME;
         break;
-      case arrow::Type::TIMESTAMP :
+      case arrow::Type::TIMESTAMP:
         *type_id = GRN_DB_TIME;
         break;
-      case arrow::Type::LIST :
+      case arrow::Type::LIST:
         *flags |= GRN_OBJ_VECTOR;
         {
           grn_obj_flags sub_flags = 0;
@@ -1054,23 +1145,25 @@ namespace grnarrow {
           *flags |= (sub_flags & GRN_OBJ_WITH_WEIGHT);
         }
         break;
-      case arrow::Type::STRUCT :
+      case arrow::Type::STRUCT:
         // Must be weight vector: {"value": string, "weight": int32}
         *type_id = GRN_DB_TEXT;
         *flags |= GRN_OBJ_WITH_WEIGHT;
         break;
-      case arrow::Type::MAP :
+      case arrow::Type::MAP:
         // TODO: Support as weight vector
         // *type_id = GRN_DB_TEXT;
         // *flags |= GRN_OBJ_VECTOR | GRN_OBJ_WITH_WEIGHT;
-      default :
+      default:
         *type_id = GRN_DB_VOID;
         break;
       }
     }
 
     template <typename T>
-    arrow::Status set_values(const T &array) {
+    arrow::Status
+    set_values(const T &array)
+    {
       int64_t n_rows = array.length();
       for (int i = 0; i < n_rows; ++i) {
         const auto record_id = record_ids_[i];
@@ -1086,7 +1179,8 @@ namespace grnarrow {
           GRN_DEFINE_NAME(grn_table_);
           ERR(GRN_INVALID_ARGUMENT,
               "[table][load][%.*s] nonexistent column: <%s>",
-              name_size, name,
+              name_size,
+              name,
               column_name_.data());
           if (grn_loader_) {
             grn_loader_add_record_data data;
@@ -1114,9 +1208,7 @@ namespace grnarrow {
         if (ctx_->rc != GRN_SUCCESS) {
           if (grn_loader_) {
             grn_loader_add_record_data data;
-            init_grn_loader_add_record_data(&data,
-                                            record_id,
-                                            value);
+            init_grn_loader_add_record_data(&data, record_id, value);
             grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
         }
@@ -1124,9 +1216,10 @@ namespace grnarrow {
       return check(ctx_, ctx_->rc, "[arrow][column-loader][set-value]");
     }
 
-    void init_grn_loader_add_record_data(grn_loader_add_record_data *data,
-                                         grn_id record_id,
-                                         grn_obj *value)
+    void
+    init_grn_loader_add_record_data(grn_loader_add_record_data *data,
+                                    grn_id record_id,
+                                    grn_obj *value)
     {
       data->table = grn_loader_->table;
       data->depth = 0;
@@ -1146,13 +1239,15 @@ namespace grnarrow {
       : ctx_(ctx),
         grn_table_(grn_table),
         key_column_name_(""),
-        object_cache_(ctx_) {
+        object_cache_(ctx_)
+    {
     }
 
-    ~FileLoader() {
-    }
+    ~FileLoader() {}
 
-    grn_rc load_table(const std::shared_ptr<arrow::Table> &arrow_table) {
+    grn_rc
+    load_table(const std::shared_ptr<arrow::Table> &arrow_table)
+    {
       auto n_columns = arrow_table->num_columns();
 
       if (key_column_name_.empty()) {
@@ -1163,12 +1258,12 @@ namespace grnarrow {
           auto id = grn_table_add(ctx_, grn_table_, NULL, 0, NULL);
           GRN_RECORD_PUT(ctx_, &ids, id);
         }
-        const auto& arrow_schema = arrow_table->schema();
+        const auto &arrow_schema = arrow_table->schema();
         for (int i = 0; i < n_columns; ++i) {
           int64_t offset = 0;
-          const auto& arrow_field = arrow_schema->field(i);
-          const auto& arrow_chunked_array = arrow_table->column(i);
-          for (const auto& arrow_array : arrow_chunked_array->chunks()) {
+          const auto &arrow_field = arrow_schema->field(i);
+          const auto &arrow_chunked_array = arrow_table->column(i);
+          for (const auto &arrow_array : arrow_chunked_array->chunks()) {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
             ColumnLoadVisitor visitor(ctx_,
@@ -1189,9 +1284,12 @@ namespace grnarrow {
       return ctx_->rc;
     };
 
-    grn_rc load_record_batch(const std::shared_ptr<arrow::RecordBatch> &arrow_record_batch) {
-      std::vector<std::shared_ptr<arrow::RecordBatch>> arrow_record_batches =
-        {arrow_record_batch};
+    grn_rc
+    load_record_batch(
+      const std::shared_ptr<arrow::RecordBatch> &arrow_record_batch)
+    {
+      std::vector<std::shared_ptr<arrow::RecordBatch>> arrow_record_batches = {
+        arrow_record_batch};
       auto arrow_table = arrow::Table::FromRecordBatches(arrow_record_batches);
       if (!check(ctx_,
                  arrow_table,
@@ -1216,13 +1314,15 @@ namespace grnarrow {
         grn_table_(grn_table),
         grn_columns_(grn_columns),
         object_cache_(ctx_),
-        tag_("[arrow][dump]") {
+        tag_("[arrow][dump]")
+    {
     }
 
-    ~FileDumper() {
-    }
+    ~FileDumper() {}
 
-    grn_rc dump(arrow::io::OutputStream *output) {
+    grn_rc
+    dump(arrow::io::OutputStream *output)
+    {
       std::vector<std::shared_ptr<arrow::Field>> fields;
       auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
       for (size_t i = 0; i < n_columns; ++i) {
@@ -1243,9 +1343,8 @@ namespace grnarrow {
         // dictionary delta.
         field_type = undictionary(field_type);
 
-        auto field = std::make_shared<arrow::Field>(field_name,
-                                                    field_type,
-                                                    false);
+        auto field =
+          std::make_shared<arrow::Field>(field_name, field_type, false);
         fields.push_back(field);
       };
 
@@ -1261,7 +1360,8 @@ namespace grnarrow {
 
       std::vector<grn_id> ids;
       size_t n_records_per_batch = 1000;
-      GRN_TABLE_EACH_BEGIN(ctx_, grn_table_, table_cursor, record_id) {
+      GRN_TABLE_EACH_BEGIN(ctx_, grn_table_, table_cursor, record_id)
+      {
         ids.push_back(record_id);
         if (ids.size() == n_records_per_batch) {
           write_record_batch(ids, schema, writer);
@@ -1270,7 +1370,8 @@ namespace grnarrow {
             break;
           }
         }
-      } GRN_TABLE_EACH_END(ctx_, table_cursor);
+      }
+      GRN_TABLE_EACH_END(ctx_, table_cursor);
       if (!ids.empty()) {
         write_record_batch(ids, schema, writer);
       }
@@ -1294,9 +1395,11 @@ namespace grnarrow {
     ObjectCache object_cache_;
     std::string tag_;
 
-    void write_record_batch(std::vector<grn_id> &ids,
-                            std::shared_ptr<arrow::Schema> &schema,
-                            std::shared_ptr<arrow::ipc::RecordBatchWriter> &writer) {
+    void
+    write_record_batch(std::vector<grn_id> &ids,
+                       std::shared_ptr<arrow::Schema> &schema,
+                       std::shared_ptr<arrow::ipc::RecordBatchWriter> &writer)
+    {
       std::vector<std::shared_ptr<arrow::Array>> columns;
       auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
       for (size_t i = 0; i < n_columns; ++i) {
@@ -1306,50 +1409,50 @@ namespace grnarrow {
         std::shared_ptr<arrow::Array> column;
 
         switch (grn_obj_get_range(ctx_, grn_column)) {
-        case GRN_DB_BOOL :
+        case GRN_DB_BOOL:
           status = build_boolean_array(ids, grn_column, &column);
           break;
-        case GRN_DB_UINT8 :
+        case GRN_DB_UINT8:
           status = build_uint8_array(ids, grn_column, &column);
           break;
-        case GRN_DB_INT8 :
+        case GRN_DB_INT8:
           status = build_int8_array(ids, grn_column, &column);
           break;
-        case GRN_DB_UINT16 :
+        case GRN_DB_UINT16:
           status = build_uint16_array(ids, grn_column, &column);
           break;
-        case GRN_DB_INT16 :
+        case GRN_DB_INT16:
           status = build_int16_array(ids, grn_column, &column);
           break;
-        case GRN_DB_UINT32 :
+        case GRN_DB_UINT32:
           status = build_uint32_array(ids, grn_column, &column);
           break;
-        case GRN_DB_INT32 :
+        case GRN_DB_INT32:
           status = build_int32_array(ids, grn_column, &column);
           break;
-        case GRN_DB_UINT64 :
+        case GRN_DB_UINT64:
           status = build_uint64_array(ids, grn_column, &column);
           break;
-        case GRN_DB_INT64 :
+        case GRN_DB_INT64:
           status = build_int64_array(ids, grn_column, &column);
           break;
-        case GRN_DB_FLOAT32 :
+        case GRN_DB_FLOAT32:
           status = build_float_array(ids, grn_column, &column);
           break;
-        case GRN_DB_FLOAT :
+        case GRN_DB_FLOAT:
           status = build_double_array(ids, grn_column, &column);
           break;
-        case GRN_DB_TIME :
+        case GRN_DB_TIME:
           status = build_timestamp_array(ids, grn_column, &column);
           break;
-        case GRN_DB_SHORT_TEXT :
-        case GRN_DB_TEXT :
-        case GRN_DB_LONG_TEXT :
+        case GRN_DB_SHORT_TEXT:
+        case GRN_DB_TEXT:
+        case GRN_DB_LONG_TEXT:
           status = build_utf8_array(ids, grn_column, &column);
           break;
-        default :
-          status =
-            arrow::Status::NotImplemented("[arrow][dumper] not supported type: TODO");
+        default:
+          status = arrow::Status::NotImplemented(
+            "[arrow][dumper] not supported type: TODO");
           break;
         }
         if (!status.ok()) {
@@ -1364,9 +1467,11 @@ namespace grnarrow {
             tag_ + " failed to write record batch");
     }
 
-    arrow::Status build_boolean_array(std::vector<grn_id> &ids,
-                                      grn_obj *grn_column,
-                                      std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_boolean_array(std::vector<grn_id> &ids,
+                        grn_obj *grn_column,
+                        std::shared_ptr<arrow::Array> *array)
+    {
       arrow::BooleanBuilder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1377,9 +1482,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_uint8_array(std::vector<grn_id> &ids,
-                                    grn_obj *grn_column,
-                                    std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_uint8_array(std::vector<grn_id> &ids,
+                      grn_obj *grn_column,
+                      std::shared_ptr<arrow::Array> *array)
+    {
       arrow::UInt8Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1390,9 +1497,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_int8_array(std::vector<grn_id> &ids,
-                                   grn_obj *grn_column,
-                                   std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_int8_array(std::vector<grn_id> &ids,
+                     grn_obj *grn_column,
+                     std::shared_ptr<arrow::Array> *array)
+    {
       arrow::Int8Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1403,9 +1512,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_uint16_array(std::vector<grn_id> &ids,
-                                     grn_obj *grn_column,
-                                     std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_uint16_array(std::vector<grn_id> &ids,
+                       grn_obj *grn_column,
+                       std::shared_ptr<arrow::Array> *array)
+    {
       arrow::UInt16Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1416,9 +1527,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_int16_array(std::vector<grn_id> &ids,
-                                    grn_obj *grn_column,
-                                    std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_int16_array(std::vector<grn_id> &ids,
+                      grn_obj *grn_column,
+                      std::shared_ptr<arrow::Array> *array)
+    {
       arrow::Int16Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1429,9 +1542,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_uint32_array(std::vector<grn_id> &ids,
-                                     grn_obj *grn_column,
-                                     std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_uint32_array(std::vector<grn_id> &ids,
+                       grn_obj *grn_column,
+                       std::shared_ptr<arrow::Array> *array)
+    {
       arrow::UInt32Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1442,9 +1557,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_int32_array(std::vector<grn_id> &ids,
-                                    grn_obj *grn_column,
-                                    std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_int32_array(std::vector<grn_id> &ids,
+                      grn_obj *grn_column,
+                      std::shared_ptr<arrow::Array> *array)
+    {
       arrow::Int32Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1454,9 +1571,11 @@ namespace grnarrow {
       }
       return builder.Finish(array);
     }
-    arrow::Status build_uint64_array(std::vector<grn_id> &ids,
-                                     grn_obj *grn_column,
-                                     std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_uint64_array(std::vector<grn_id> &ids,
+                       grn_obj *grn_column,
+                       std::shared_ptr<arrow::Array> *array)
+    {
       arrow::UInt64Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1467,9 +1586,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_int64_array(std::vector<grn_id> &ids,
-                                    grn_obj *grn_column,
-                                    std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_int64_array(std::vector<grn_id> &ids,
+                      grn_obj *grn_column,
+                      std::shared_ptr<arrow::Array> *array)
+    {
       arrow::Int64Builder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1480,9 +1601,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_float_array(std::vector<grn_id> &ids,
-                                    grn_obj *grn_column,
-                                    std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_float_array(std::vector<grn_id> &ids,
+                      grn_obj *grn_column,
+                      std::shared_ptr<arrow::Array> *array)
+    {
       arrow::FloatBuilder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1493,9 +1616,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_double_array(std::vector<grn_id> &ids,
-                                     grn_obj *grn_column,
-                                     std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_double_array(std::vector<grn_id> &ids,
+                       grn_obj *grn_column,
+                       std::shared_ptr<arrow::Array> *array)
+    {
       arrow::DoubleBuilder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1506,9 +1631,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_timestamp_array(std::vector<grn_id> &ids,
-                                        grn_obj *grn_column,
-                                        std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_timestamp_array(std::vector<grn_id> &ids,
+                          grn_obj *grn_column,
+                          std::shared_ptr<arrow::Array> *array)
+    {
       auto timestamp_ns_data_type =
         std::make_shared<arrow::TimestampType>(arrow::TimeUnit::NANO);
       arrow::TimestampBuilder builder(timestamp_ns_data_type,
@@ -1523,9 +1650,11 @@ namespace grnarrow {
       return builder.Finish(array);
     }
 
-    arrow::Status build_utf8_array(std::vector<grn_id> &ids,
-                                   grn_obj *grn_column,
-                                   std::shared_ptr<arrow::Array> *array) {
+    arrow::Status
+    build_utf8_array(std::vector<grn_id> &ids,
+                     grn_obj *grn_column,
+                     std::shared_ptr<arrow::Array> *array)
+    {
       arrow::StringBuilder builder(arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
@@ -1539,16 +1668,13 @@ namespace grnarrow {
   class BufferInputStream : public arrow::io::InputStream,
                             public arrow::io::Seekable {
   public:
-    BufferInputStream()
-      : buffer_(),
-        offset_(0),
-        closed_(false) {
-    }
+    BufferInputStream() : buffer_(), offset_(0), closed_(false) {}
 
-    ~BufferInputStream() {
-    }
+    ~BufferInputStream() {}
 
-    void feed(const char *data, size_t data_size) {
+    void
+    feed(const char *data, size_t data_size)
+    {
       if (offset_ == 0) {
         buffer_.append(data, data_size);
       } else {
@@ -1558,49 +1684,65 @@ namespace grnarrow {
       }
     }
 
-    arrow::Status Close() override {
+    arrow::Status
+    Close() override
+    {
       closed_ = true;
       return arrow::Status::OK();
     }
 
-    arrow::Status Abort() override {
+    arrow::Status
+    Abort() override
+    {
       closed_ = true;
       return arrow::Status::OK();
     }
 
-    int64_t tell() const {
+    int64_t
+    tell() const
+    {
       return offset_;
     }
 
-    arrow::Result<int64_t> Tell() const override {
+    arrow::Result<int64_t>
+    Tell() const override
+    {
       return tell();
     }
 
-    arrow::Status Seek(int64_t position) override {
+    arrow::Status
+    Seek(int64_t position) override
+    {
       offset_ = position;
       return arrow::Status::OK();
     }
 
-    bool closed() const override {
+    bool
+    closed() const override
+    {
       return closed_;
     }
 
-    string_view peek(int64_t nbytes) {
+    string_view
+    peek(int64_t nbytes)
+    {
       const int64_t bytes_available =
-        std::min(nbytes,
-                 static_cast<int64_t>(buffer_.size() - offset_));
+        std::min(nbytes, static_cast<int64_t>(buffer_.size() - offset_));
       return string_view(buffer_.data() + offset_,
                          static_cast<size_t>(bytes_available));
     }
 
-    arrow::Result<string_view> Peek(int64_t nbytes) override {
+    arrow::Result<string_view>
+    Peek(int64_t nbytes) override
+    {
       return peek(nbytes);
     }
 
-    int64_t read(int64_t nbytes, void* out) {
+    int64_t
+    read(int64_t nbytes, void *out)
+    {
       const int64_t bytes_available =
-        std::min(nbytes,
-                 static_cast<int64_t>(buffer_.size() - offset_));
+        std::min(nbytes, static_cast<int64_t>(buffer_.size() - offset_));
       if (bytes_available > 0) {
         grn_memcpy(out, buffer_.data() + offset_, bytes_available);
         offset_ += bytes_available;
@@ -1610,14 +1752,17 @@ namespace grnarrow {
       }
     }
 
-    arrow::Result<int64_t> Read(int64_t nbytes, void* out) override {
+    arrow::Result<int64_t>
+    Read(int64_t nbytes, void *out) override
+    {
       return read(nbytes, out);
     }
 
-    std::shared_ptr<arrow::Buffer> read(int64_t nbytes) {
+    std::shared_ptr<arrow::Buffer>
+    read(int64_t nbytes)
+    {
       const int64_t bytes_available =
-        std::min(nbytes,
-                 static_cast<int64_t>(buffer_.size() - offset_));
+        std::min(nbytes, static_cast<int64_t>(buffer_.size() - offset_));
       auto output = std::make_shared<arrow::Buffer>(
         reinterpret_cast<const uint8_t *>(buffer_.data() + offset_),
         bytes_available);
@@ -1625,11 +1770,15 @@ namespace grnarrow {
       return output;
     }
 
-    arrow::Result<std::shared_ptr<arrow::Buffer>> Read(int64_t nbytes) override {
+    arrow::Result<std::shared_ptr<arrow::Buffer>>
+    Read(int64_t nbytes) override
+    {
       return read(nbytes);
     }
 
-    bool supports_zero_copy() const override {
+    bool
+    supports_zero_copy() const override
+    {
       return false;
     }
 
@@ -1644,13 +1793,16 @@ namespace grnarrow {
     StreamLoader(grn_ctx *ctx, grn_loader *loader)
       : ctx_(ctx),
         grn_loader_(loader),
-        decoder_(std::shared_ptr<StreamLoader>(this, [](void*) {})),
+        decoder_(std::shared_ptr<StreamLoader>(this, [](void *) {})),
         buffer_(nullptr),
         object_cache_(ctx_),
-        tag_("[arrow][stream-loader]") {
+        tag_("[arrow][stream-loader]")
+    {
     }
 
-    grn_rc consume(const char *data, size_t data_size) {
+    grn_rc
+    consume(const char *data, size_t data_size)
+    {
       if (data_size == 0) {
         return GRN_SUCCESS;
       }
@@ -1658,12 +1810,17 @@ namespace grnarrow {
       return consume_decoder(data, data_size);
     }
 
-    arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
+    arrow::Status
+    OnRecordBatchDecoded(
+      std::shared_ptr<arrow::RecordBatch> record_batch) override
+    {
       return process_record_batch(std::move(record_batch));
     }
 
   private:
-    grn_rc consume_decoder(const char *data, size_t data_size) {
+    grn_rc
+    consume_decoder(const char *data, size_t data_size)
+    {
       if (!buffer_) {
         auto buffer = arrow::AllocateResizableBuffer(0);
         if (!check(ctx_,
@@ -1697,24 +1854,19 @@ namespace grnarrow {
       return ctx_->rc;
     }
 
-    arrow::Status process_record_batch(
-      std::shared_ptr<arrow::RecordBatch> record_batch) {
+    arrow::Status
+    process_record_batch(std::shared_ptr<arrow::RecordBatch> record_batch)
+    {
       auto grn_table = grn_loader_->table;
       const auto &key_column = record_batch->GetColumnByName("_key");
       const auto &id_column = record_batch->GetColumnByName("_id");
       const auto n_records = record_batch->num_rows();
       std::vector<grn_id> record_ids;
       if (key_column) {
-        RecordAddVisitor visitor(ctx_,
-                                 grn_loader_,
-                                 &record_ids,
-                                 true);
+        RecordAddVisitor visitor(ctx_, grn_loader_, &record_ids, true);
         ARROW_RETURN_NOT_OK(key_column->Accept(&visitor));
       } else if (id_column) {
-        RecordAddVisitor visitor(ctx_,
-                                 grn_loader_,
-                                 &record_ids,
-                                 false);
+        RecordAddVisitor visitor(ctx_, grn_loader_, &record_ids, false);
         ARROW_RETURN_NOT_OK(id_column->Accept(&visitor));
       } else {
         for (int64_t i = 0; i < n_records; ++i) {
@@ -1745,9 +1897,7 @@ namespace grnarrow {
         }
         grn_loader_apply_each(ctx_, grn_loader_, record_id);
       }
-      return check(ctx_,
-                   ctx_->rc,
-                   tag_ + "[consume][record-batch-decoded]");
+      return check(ctx_, ctx_->rc, tag_ + "[consume][record-batch-decoded]");
     }
 
     grn_ctx *ctx_;
@@ -1765,38 +1915,46 @@ namespace grnarrow {
         ctx_(ctx),
         bulk_(bulk),
         position_(0),
-        is_open_(true) {
+        is_open_(true)
+    {
     }
 
-    ~BulkOutputStream() override {
-    }
+    ~BulkOutputStream() override {}
 
-    grn_obj *bulk() const {
+    grn_obj *
+    bulk() const
+    {
       return bulk_;
     }
 
-    arrow::Status Close() override {
+    arrow::Status
+    Close() override
+    {
       is_open_ = false;
       return arrow::Status::OK();
     }
 
-    bool closed() const override {
+    bool
+    closed() const override
+    {
       return !is_open_;
     }
 
-    arrow::Result<int64_t> Tell() const override {
+    arrow::Result<int64_t>
+    Tell() const override
+    {
       return position_;
     }
 
-    arrow::Status Write(const void *data, int64_t n_bytes) override {
+    arrow::Status
+    Write(const void *data, int64_t n_bytes) override
+    {
       if (ARROW_PREDICT_FALSE(!is_open_)) {
         return arrow::Status::IOError("BulkOutputStream is closed");
       }
       if (ARROW_PREDICT_TRUE(n_bytes > 0)) {
-        auto rc = grn_bulk_write(ctx_,
-                                 bulk_,
-                                 static_cast<const char *>(data),
-                                 n_bytes);
+        auto rc =
+          grn_bulk_write(ctx_, bulk_, static_cast<const char *>(data), n_bytes);
         if (ARROW_PREDICT_TRUE(rc == GRN_SUCCESS)) {
           position_ += n_bytes;
           return arrow::Status::OK();
@@ -1829,10 +1987,12 @@ namespace grnarrow {
         n_records_(0),
         current_column_index_(0),
         object_cache_(ctx_),
-        tag_("[arrow][stream-writer]") {
+        tag_("[arrow][stream-writer]")
+    {
     }
 
-    ~StreamWriter() {
+    ~StreamWriter()
+    {
       flush();
       if (writer_) {
         std::ignore = writer_->Close();
@@ -1840,7 +2000,9 @@ namespace grnarrow {
       std::ignore = output_.Close();
     }
 
-    void add_metadata(const char *key, const char *value) {
+    void
+    add_metadata(const char *key, const char *value)
+    {
       arrow::KeyValueMetadata metadata;
       metadata.Append(key, value);
       auto status = schema_builder_.AddMetadata(metadata);
@@ -1848,18 +2010,15 @@ namespace grnarrow {
         std::stringstream context;
         check(ctx_,
               status,
-              context <<
-              tag_ <<
-              "[add-meatadata] " <<
-              "failed to add metadata: <" <<
-              key <<
-              ">: <" <<
-              value <<
-              ">");
+              context << tag_ << "[add-meatadata] "
+                      << "failed to add metadata: <" << key << ">: <" << value
+                      << ">");
       }
     }
 
-    void add_field(const char *name, grn_obj *column) {
+    void
+    add_field(const char *name, grn_obj *column)
+    {
       auto type = grn_column_to_arrow_type(ctx_, column, object_cache_);
       if (!type) {
         auto ctx = ctx_;
@@ -1880,21 +2039,19 @@ namespace grnarrow {
         std::stringstream context;
         check(ctx_,
               status,
-              context <<
-              tag_ <<
-              "[add-field] " <<
-              "failed to add field: <" <<
-              field->ToString() <<
-              ">");
+              context << tag_ << "[add-field] "
+                      << "failed to add field: <" << field->ToString() << ">");
       }
     }
 
-    void write_schema() {
+    void
+    write_schema()
+    {
       auto schema_result = schema_builder_.Finish();
       if (!check(ctx_,
                  schema_result,
                  tag_ + "[write-schema] failed to create schema")) {
-          return;
+        return;
       }
       schema_builder_.Reset();
       schema_ = *schema_result;
@@ -1911,37 +2068,42 @@ namespace grnarrow {
       }
       writer_ = *writer_result;
 
-#if ARROW_VERSION_MAJOR >= 9
+#  if ARROW_VERSION_MAJOR >= 9
       auto record_batch_builder_result =
-        arrow::RecordBatchBuilder::Make(schema_,
-                                        arrow::default_memory_pool());
+        arrow::RecordBatchBuilder::Make(schema_, arrow::default_memory_pool());
       if (record_batch_builder_result.ok()) {
         record_batch_builder_.swap(*record_batch_builder_result);
       }
       auto status = record_batch_builder_result.status();
-#else
+#  else
       auto status =
         arrow::RecordBatchBuilder::Make(schema_,
                                         arrow::default_memory_pool(),
                                         &record_batch_builder_);
-#endif
+#  endif
       check(ctx_,
             status,
             tag_ + "[write-schema] failed to create record batch builder");
     }
 
-    void open_record() {
+    void
+    open_record()
+    {
       current_column_index_ = 0;
     }
 
-    void close_record() {
+    void
+    close_record()
+    {
       n_records_++;
       if (n_records_ == grn_output_auto_flush_interval) {
         flush();
       }
     }
 
-    void add_column_string(const char *value, size_t value_length) {
+    void
+    add_column_string(const char *value, size_t value_length)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
           current_column_index_++);
@@ -1952,15 +2114,14 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][string] " <<
-            "failed to add a column value: <" <<
-            string_view(value, value_length) <<
-            ">");
+            context << tag_ << "[add-column][string] "
+                    << "failed to add a column value: <"
+                    << string_view(value, value_length) << ">");
     }
 
-    void add_column_int8(int8_t value) {
+    void
+    add_column_int8(int8_t value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::Int8Builder>(
           current_column_index_++);
@@ -1971,13 +2132,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][int8] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][int8] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_int32(int32_t value) {
+    void
+    add_column_int32(int32_t value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::Int32Builder>(
           current_column_index_++);
@@ -1988,13 +2149,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][int32] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][int32] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_uint32(uint32_t value) {
+    void
+    add_column_uint32(uint32_t value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::UInt32Builder>(
           current_column_index_++);
@@ -2005,13 +2166,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][uint32] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][uint32] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_int64(int64_t value) {
+    void
+    add_column_int64(int64_t value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::Int64Builder>(
           current_column_index_++);
@@ -2022,13 +2183,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][int64] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][int64] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_uint64(int64_t value) {
+    void
+    add_column_uint64(int64_t value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::UInt64Builder>(
           current_column_index_++);
@@ -2039,13 +2200,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][uint64] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][uint64] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_float32(float value) {
+    void
+    add_column_float32(float value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::FloatBuilder>(
           current_column_index_++);
@@ -2056,13 +2217,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][float32] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][float32] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_float(double value) {
+    void
+    add_column_float(double value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
           current_column_index_++);
@@ -2073,13 +2234,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][float] " <<
-            "failed to add a column value: <" << value << ">");
+            context << tag_ << "[add-column][float] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_timestamp(grn_timeval value) {
+    void
+    add_column_timestamp(grn_timeval value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::TimestampBuilder>(
           current_column_index_++);
@@ -2088,17 +2249,18 @@ namespace grnarrow {
         return;
       }
       std::stringstream context;
-      check(ctx_,
-            status,
-            context <<
-            tag_ <<
-            "[add-column][timestamp] " <<
-            "failed to add a column value: <" <<
-            (value.tv_sec + (value.tv_nsec / GRN_TIME_NSEC_PER_SEC_F)) <<
-            ">");
+      check(
+        ctx_,
+        status,
+        context << tag_ << "[add-column][timestamp] "
+                << "failed to add a column value: <"
+                << (value.tv_sec + (value.tv_nsec / GRN_TIME_NSEC_PER_SEC_F))
+                << ">");
     }
 
-    void add_column_double(double value) {
+    void
+    add_column_double(double value)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
           current_column_index_++);
@@ -2109,15 +2271,13 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][double] " <<
-            "failed to add a column value: <" <<
-            value <<
-            ">");
+            context << tag_ << "[add-column][double] "
+                    << "failed to add a column value: <" << value << ">");
     }
 
-    void add_column_record(grn_obj *record) {
+    void
+    add_column_record(grn_obj *record)
+    {
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
@@ -2126,17 +2286,16 @@ namespace grnarrow {
                                         key,
                                         sizeof(key));
       switch (table->header.domain) {
-      case GRN_DB_INT32 :
+      case GRN_DB_INT32:
         add_column_int32(*reinterpret_cast<int32_t *>(key));
         return;
-      default :
+      default:
         break;
       }
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
-      auto status =
-        column_builder->Append(string_view(key, key_size));
+      auto status = column_builder->Append(string_view(key, key_size));
       if (status.ok()) {
         return;
       }
@@ -2146,17 +2305,17 @@ namespace grnarrow {
       grn_inspect(ctx_, &inspected, record);
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][record] " <<
-            "failed to add a column value: <" <<
-            string_view(GRN_TEXT_VALUE(&inspected),
-                        GRN_TEXT_LEN(&inspected)) <<
-            ">");
+            context << tag_ << "[add-column][record] "
+                    << "failed to add a column value: <"
+                    << string_view(GRN_TEXT_VALUE(&inspected),
+                                   GRN_TEXT_LEN(&inspected))
+                    << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
-    void add_column_uvector(grn_obj *uvector) {
+    void
+    add_column_uvector(grn_obj *uvector)
+    {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::ListBuilder>(
           current_column_index_++);
@@ -2174,13 +2333,9 @@ namespace grnarrow {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
             char key[GRN_TABLE_MAX_KEY_SIZE];
-            auto key_size = grn_table_get_key(ctx_,
-                                              domain,
-                                              record_id,
-                                              key,
-                                              sizeof(key));
-            status =
-              value_builder->Append(string_view(key, key_size));
+            auto key_size =
+              grn_table_get_key(ctx_, domain, record_id, key, sizeof(key));
+            status = value_builder->Append(string_view(key, key_size));
             if (!status.ok()) {
               break;
             }
@@ -2208,34 +2363,32 @@ namespace grnarrow {
       grn_inspect(ctx_, &inspected, uvector);
       check(ctx_,
             status,
-            context <<
-            tag_ <<
-            "[add-column][uvector] " <<
-            "failed to add a column value: <" <<
-            string_view(GRN_TEXT_VALUE(&inspected),
-                        GRN_TEXT_LEN(&inspected)) <<
-            ">");
+            context << tag_ << "[add-column][uvector] "
+                    << "failed to add a column value: <"
+                    << string_view(GRN_TEXT_VALUE(&inspected),
+                                   GRN_TEXT_LEN(&inspected))
+                    << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
-    void flush() {
+    void
+    flush()
+    {
       if (n_records_ == 0) {
         return;
       }
 
       std::shared_ptr<arrow::RecordBatch> record_batch;
-#if ARROW_VERSION_MAJOR >= 9
+#  if ARROW_VERSION_MAJOR >= 9
       auto record_batch_result = record_batch_builder_->Flush();
       if (record_batch_result.ok()) {
         record_batch = *record_batch_result;
       }
       auto status = record_batch_result.status();
-#else
+#  else
       auto status = record_batch_builder_->Flush(&record_batch);
-#endif
-      if (check(ctx_,
-                status,
-                tag_ + "[flush] failed to flush record batch")) {
+#  endif
+      if (check(ctx_, status, tag_ + "[flush] failed to flush record batch")) {
         status = writer_->WriteRecordBatch(*record_batch);
         check(ctx_,
               status,
@@ -2268,9 +2421,11 @@ namespace grnarrow {
     //   ResetFull() is executed.
     // - Some Apache Arrow implementations (clients) have a 2GB limitation on
     //   the value size of array: C#.
-    void reset_full(arrow::ArrayBuilder *builder) {
+    void
+    reset_full(arrow::ArrayBuilder *builder)
+    {
       switch (builder->type()->id()) {
-      case arrow::Type::DICTIONARY :
+      case arrow::Type::DICTIONARY:
         {
           const int64_t dictionary_length_threshold = 10000;
 
@@ -2283,19 +2438,19 @@ namespace grnarrow {
           }
         }
         break;
-      case arrow::Type::LIST :
+      case arrow::Type::LIST:
         {
           auto list_builder = static_cast<arrow::ListBuilder *>(builder);
           auto value_builder = list_builder->value_builder();
           reset_full(value_builder);
         }
         break;
-      default :
+      default:
         break;
       }
     }
   };
-}
+} // namespace grnarrow
 
 namespace grn {
   namespace arrow {
@@ -2309,18 +2464,19 @@ namespace grn {
         ColumnAppender(grn_ctx *ctx,
                        grn_obj *column,
                        grn_table_cursor *cursor,
-                       ::arrow::ArrayBuilder *builder) :
-          ctx_(ctx),
-          column_(column),
-          cursor_(cursor),
-          builder_(builder) {
+                       ::arrow::ArrayBuilder *builder)
+          : ctx_(ctx),
+            column_(column),
+            cursor_(cursor),
+            builder_(builder)
+        {
         }
 
-#define VISIT(TYPE)                                             \
-        ::arrow::Status                                         \
-        Visit(const TYPE &type) override {                      \
-          return Append(type);                                  \
-        }
+#  define VISIT(TYPE)                                                          \
+    ::arrow::Status Visit(const TYPE &type) override                           \
+    {                                                                          \
+      return Append(type);                                                     \
+    }
 
         VISIT(::arrow::BooleanType)
         VISIT(::arrow::Int8Type)
@@ -2336,10 +2492,12 @@ namespace grn {
         VISIT(::arrow::StringType)
         VISIT(::arrow::TimestampType)
 
-#undef VISIT
+#  undef VISIT
 
         template <typename Type>
-        ::arrow::Status Append(const Type& type) {
+        ::arrow::Status
+        Append(const Type &type)
+        {
           using Builder = typename ::arrow::TypeTraits<Type>::BuilderType;
           using CType = typename ::arrow::TypeTraits<Type>::CType;
           auto builder = static_cast<Builder *>(builder_);
@@ -2353,7 +2511,9 @@ namespace grn {
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Append(const ::arrow::StringType& type) {
+        ::arrow::Status
+        Append(const ::arrow::StringType &type)
+        {
           using Builder = ::arrow::StringBuilder;
           auto builder = static_cast<Builder *>(builder_);
           grn_id id;
@@ -2370,21 +2530,19 @@ namespace grn {
       std::unique_ptr<::arrow::ArrayBuilder> builder_;
       grnarrow::ObjectCache object_cache_;
 
-      Impl(grn_ctx *ctx) : ctx_(ctx),
-                           builder_(nullptr),
-                           object_cache_(ctx_) {
-      }
+      Impl(grn_ctx *ctx) : ctx_(ctx), builder_(nullptr), object_cache_(ctx_) {}
 
-      ::arrow::Status add_column(grn_obj *column,
-                                 grn_table_cursor *cursor) {
-        auto arrow_type =
-          grn_column_to_arrow_type(ctx_, column, object_cache_);
+      ::arrow::Status
+      add_column(grn_obj *column, grn_table_cursor *cursor)
+      {
+        auto arrow_type = grn_column_to_arrow_type(ctx_, column, object_cache_);
         if (!arrow_type) {
           grn::TextBulk inspected(ctx_);
           grn_inspect(ctx_, *inspected, column);
           return ::arrow::Status::NotImplemented(
             "[arrow][array-builder][add-column] "
-            "unsupported column: ", inspected.value());
+            "unsupported column: ",
+            inspected.value());
         }
         arrow_type = grnarrow::undictionary(arrow_type);
         if (!builder_) {
@@ -2398,83 +2556,104 @@ namespace grn {
       }
 
       ::arrow::Result<std::shared_ptr<::arrow::Array>>
-      finish() {
+      finish()
+      {
         return builder_->Finish();
       }
     };
 
-    ArrayBuilder::ArrayBuilder(grn_ctx *ctx) : impl_(new Impl(ctx)) {
-    }
+    ArrayBuilder::ArrayBuilder(grn_ctx *ctx) : impl_(new Impl(ctx)) {}
 
     ArrayBuilder::~ArrayBuilder() = default;
 
-    ::arrow::Status ArrayBuilder::add_column(grn_obj *column,
-                                             grn_table_cursor *cursor) {
+    ::arrow::Status
+    ArrayBuilder::add_column(grn_obj *column, grn_table_cursor *cursor)
+    {
       return impl_->add_column(column, cursor);
     }
 
     ::arrow::Result<std::shared_ptr<::arrow::Array>>
-    ArrayBuilder::finish() {
+    ArrayBuilder::finish()
+    {
       return impl_->finish();
     }
 
     namespace {
       class ArrayValueGetter : public ::arrow::ArrayVisitor {
       public:
-        ArrayValueGetter(grn_ctx *ctx,
-                         int64_t index,
-                         grn_obj *value) :
-          ctx_(ctx),
-          index_(index),
-          value_(value) {
+        ArrayValueGetter(grn_ctx *ctx, int64_t index, grn_obj *value)
+          : ctx_(ctx),
+            index_(index),
+            value_(value)
+        {
         }
 
-        ::arrow::Status Visit(const ::arrow::BooleanArray& array) {
+        ::arrow::Status
+        Visit(const ::arrow::BooleanArray &array)
+        {
           GRN_BOOL_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::Int8Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::Int8Array &array)
+        {
           GRN_INT8_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::UInt8Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::UInt8Array &array)
+        {
           GRN_UINT8_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::Int16Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::Int16Array &array)
+        {
           GRN_INT16_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::UInt16Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::UInt16Array &array)
+        {
           GRN_UINT16_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::Int32Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::Int32Array &array)
+        {
           GRN_INT32_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::UInt32Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::UInt32Array &array)
+        {
           GRN_UINT32_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::Int64Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::Int64Array &array)
+        {
           GRN_INT64_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::UInt64Array& array) {
+        ::arrow::Status
+        Visit(const ::arrow::UInt64Array &array)
+        {
           GRN_UINT64_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::TimestampArray& array) {
+        ::arrow::Status
+        Visit(const ::arrow::TimestampArray &array)
+        {
           const auto &arrow_timestamp_type =
             std::static_pointer_cast<::arrow::TimestampType>(array.type());
           const auto time_unit = arrow_timestamp_type->unit();
@@ -2485,7 +2664,9 @@ namespace grn {
           return ::arrow::Status::OK();
         }
 
-        ::arrow::Status Visit(const ::arrow::StringArray& array) {
+        ::arrow::Status
+        Visit(const ::arrow::StringArray &array)
+        {
           auto raw_value = array.GetView(index_);
           grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
           return ::arrow::Status::OK();
@@ -2496,26 +2677,26 @@ namespace grn {
         int64_t index_;
         grn_obj *value_;
       };
-    }
+    } // namespace
 
-    grn_rc get_value(grn_ctx *ctx,
-                     const ::arrow::Array *array,
-                     int64_t index,
-                     grn_obj *value) {
+    grn_rc
+    get_value(grn_ctx *ctx,
+              const ::arrow::Array *array,
+              int64_t index,
+              grn_obj *value)
+    {
       ArrayValueGetter getter(ctx, index, value);
       auto status = array->Accept(&getter);
       grnarrow::check(ctx, status, "[arrow][value][get] failed");
       return ctx->rc;
     }
-  }
-}
+  } // namespace arrow
+} // namespace grn
 #endif /* GRN_WITH_APACHE_ARROW */
 
 extern "C" {
 grn_rc
-grn_arrow_load(grn_ctx *ctx,
-               grn_obj *table,
-               const char *path)
+grn_arrow_load(grn_ctx *ctx, grn_obj *table, const char *path)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
@@ -2524,9 +2705,8 @@ grn_arrow_load(grn_ctx *ctx,
   std::ostringstream context;
   if (!grnarrow::check(ctx,
                        input_result,
-                       context <<
-                       "[arrow][load] failed to open path: " <<
-                       "<" << path << ">")) {
+                       context << "[arrow][load] failed to open path: "
+                               << "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
   }
   auto input = *input_result;
@@ -2546,9 +2726,9 @@ grn_arrow_load(grn_ctx *ctx,
     std::ostringstream context;
     if (!grnarrow::check(ctx,
                          record_batch_result,
-                         context <<
-                         "[arrow][load] failed to get " <<
-                         "the " << i << "-th " << "record")) {
+                         context << "[arrow][load] failed to get "
+                                 << "the " << i << "-th "
+                                 << "record")) {
       break;
     }
     auto record_batch = *record_batch_result;
@@ -2557,7 +2737,7 @@ grn_arrow_load(grn_ctx *ctx,
       break;
     }
   }
-#else /* GRN_WITH_APACHE_ARROW */
+#else  /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][load] Apache Arrow support isn't enabled");
 #endif /* GRN_WITH_APACHE_ARROW */
@@ -2565,38 +2745,38 @@ grn_arrow_load(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_dump(grn_ctx *ctx,
-               grn_obj *table,
-               const char *path)
+grn_arrow_dump(grn_ctx *ctx, grn_obj *table, const char *path)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-  auto all_columns =
-    grn_hash_create(ctx,
-                    NULL,
-                    sizeof(grn_id),
-                    0,
-                    GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  auto all_columns = grn_hash_create(ctx,
+                                     NULL,
+                                     sizeof(grn_id),
+                                     0,
+                                     GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
   grn_table_columns(ctx,
                     table,
-                    "", 0,
+                    "",
+                    0,
                     reinterpret_cast<grn_obj *>(all_columns));
 
   grnarrow::ObjectCache object_cache(ctx);
   grn_obj columns;
   GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_HASH_EACH_BEGIN(ctx, all_columns, cursor, id) {
+  GRN_HASH_EACH_BEGIN(ctx, all_columns, cursor, id)
+  {
     void *key;
     grn_hash_cursor_get_key(ctx, cursor, &key);
     auto column_id = static_cast<grn_id *>(key);
     auto column = object_cache[*column_id];
     GRN_PTR_PUT(ctx, &columns, column);
-  } GRN_HASH_EACH_END(ctx, cursor);
+  }
+  GRN_HASH_EACH_END(ctx, cursor);
   grn_hash_close(ctx, all_columns);
 
   grn_arrow_dump_columns(ctx, table, &columns, path);
   GRN_OBJ_FIN(ctx, &columns);
-#else /* GRN_WITH_APACHE_ARROW */
+#else  /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][dump] Apache Arrow support isn't enabled");
 #endif /* GRN_WITH_APACHE_ARROW */
@@ -2615,16 +2795,15 @@ grn_arrow_dump_columns(grn_ctx *ctx,
   std::stringstream context;
   if (!grnarrow::check(ctx,
                        output_result,
-                       context <<
-                       "[arrow][dump] failed to open path: " <<
-                       "<" << path << ">")) {
+                       context << "[arrow][dump] failed to open path: "
+                               << "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
   }
   auto output = *output_result;
 
   grnarrow::FileDumper dumper(ctx, table, columns);
   dumper.dump(output.get());
-#else /* GRN_WITH_APACHE_ARROW */
+#else  /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][dump] Apache Arrow support isn't enabled");
 #endif /* GRN_WITH_APACHE_ARROW */
@@ -2638,8 +2817,7 @@ struct _grn_arrow_stream_loader {
 #endif
 
 grn_arrow_stream_loader *
-grn_arrow_stream_loader_open(grn_ctx *ctx,
-                             grn_loader *loader)
+grn_arrow_stream_loader_open(grn_ctx *ctx, grn_loader *loader)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
@@ -2656,8 +2834,7 @@ grn_arrow_stream_loader_open(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_stream_loader_close(grn_ctx *ctx,
-                              grn_arrow_stream_loader *loader)
+grn_arrow_stream_loader_close(grn_ctx *ctx, grn_arrow_stream_loader *loader)
 {
   if (!loader) {
     return ctx->rc;
@@ -2697,8 +2874,7 @@ struct _grn_arrow_stream_writer {
 #endif
 
 grn_arrow_stream_writer *
-grn_arrow_stream_writer_open(grn_ctx *ctx,
-                             grn_obj *output_buffer)
+grn_arrow_stream_writer_open(grn_ctx *ctx, grn_obj *output_buffer)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
@@ -2715,8 +2891,7 @@ grn_arrow_stream_writer_open(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_stream_writer_close(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer)
+grn_arrow_stream_writer_close(grn_ctx *ctx, grn_arrow_stream_writer *writer)
 {
   if (!writer) {
     return ctx->rc;
@@ -2759,8 +2934,9 @@ grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->add_metadata(key, value);
 #else
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-writer][add-metadata] Apache Arrow support isn't enabled");
+  ERR(
+    GRN_FUNCTION_NOT_IMPLEMENTED,
+    "[arrow][stream-writer][add-metadata] Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -2773,8 +2949,9 @@ grn_arrow_stream_writer_write_schema(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->write_schema();
 #else
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-writer][write-schema] Apache Arrow support isn't enabled");
+  ERR(
+    GRN_FUNCTION_NOT_IMPLEMENTED,
+    "[arrow][stream-writer][write-schema] Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -2801,8 +2978,9 @@ grn_arrow_stream_writer_close_record(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->close_record();
 #else
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-writer][close-record] Apache Arrow support isn't enabled");
+  ERR(
+    GRN_FUNCTION_NOT_IMPLEMENTED,
+    "[arrow][stream-writer][close-record] Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -3001,8 +3179,7 @@ grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_stream_writer_flush(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer)
+grn_arrow_stream_writer_flush(grn_ctx *ctx, grn_arrow_stream_writer *writer)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW

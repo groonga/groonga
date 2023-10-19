@@ -29,6 +29,7 @@ repos:
           ?include/groonga/util\.h|
           ?lib/aggregators\.c|
           ?lib/alloc\.c|
+          ?lib/arrow\.cpp|
           ?lib/cast\.cpp|
           ?lib/command_arguments\.cpp|
           ?lib/ctx\.c|
