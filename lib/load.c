@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -249,7 +249,7 @@ grn_loader_bracket_get(grn_ctx *ctx, grn_obj *bracket_value, uint32_t offset)
   return NULL;
 }
 
-static void
+grn_id
 grn_loader_add_record(grn_ctx *ctx,
                       grn_loader *loader,
                       grn_loader_add_record_data *data)
@@ -264,7 +264,7 @@ grn_loader_add_record(grn_ctx *ctx,
     int added = 0;
     data->id = grn_table_add_by_key(ctx, data->table, data->key, &added);
     if (data->id == GRN_ID_NIL) {
-      return;
+      return GRN_ID_NIL;
     }
     if (!added && loader->ifexists) {
       grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
@@ -274,10 +274,10 @@ grn_loader_add_record(grn_ctx *ctx,
         data->id = GRN_ID_NIL;
       }
     }
-  }
-  else {
+  } else {
     data->id = grn_table_add(ctx, data->table, NULL, 0, NULL);
   }
+  return data->id;
 }
 
 static void

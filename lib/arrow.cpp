@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -258,8 +258,18 @@ namespace grnarrow {
         grn_loader_(grn_loader),
         record_ids_(record_ids),
         is_key_(is_key),
-        bulk_() {
+        bulk_(),
+        add_record_data_() {
       GRN_VOID_INIT(&bulk_);
+      add_record_data_.table = grn_loader_->table;
+      add_record_data_.depth = 0;
+      add_record_data_.record_value = nullptr;
+      add_record_data_.id = GRN_ID_NIL;
+      add_record_data_.key = &bulk_;
+      add_record_data_.current.column_name = nullptr;
+      add_record_data_.current.column_name_size = 0;
+      add_record_data_.current.column = nullptr;
+      add_record_data_.current.value = nullptr;
     }
 
     ~RecordAddVisitor() {
@@ -418,6 +428,7 @@ namespace grnarrow {
     std::vector<grn_id> *record_ids_;
     bool is_key_;
     grn_obj bulk_;
+    grn_loader_add_record_data add_record_data_;
 
     template <typename Array, typename SetBulk>
     arrow::Status add_records(const Array &array, SetBulk set_bulk) {
@@ -441,10 +452,8 @@ namespace grnarrow {
 
     grn_id add_record() {
       if (is_key_) {
-        return grn_table_add_by_key(ctx_,
-                                    grn_loader_->table,
-                                    &bulk_,
-                                    NULL);
+        add_record_data_.id = GRN_ID_NIL;
+        return grn_loader_add_record(ctx_, grn_loader_, &add_record_data_);
       }
 
       grn_id requested_record_id = GRN_ID_NIL;
