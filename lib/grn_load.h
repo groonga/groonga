@@ -40,7 +40,8 @@ typedef struct grn_load_input_ {
   uint32_t emit_level;
 } grn_load_input;
 
-void grn_load_internal(grn_ctx *ctx, grn_load_input *input);
+void
+grn_load_internal(grn_ctx *ctx, grn_load_input *input);
 
 typedef enum {
   GRN_LOADER_BEGIN = 0,
@@ -116,9 +117,7 @@ typedef struct {
 void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
 void
-grn_loader_on_record_added(grn_ctx *ctx,
-                           grn_loader *loader,
-                           grn_id id);
+grn_loader_on_record_added(grn_ctx *ctx, grn_loader *loader, grn_id id);
 void
 grn_loader_on_column_set(grn_ctx *ctx,
                          grn_loader *loader,
@@ -137,9 +136,7 @@ grn_loader_get_column(grn_ctx *ctx,
                       const char *name,
                       size_t name_length);
 void
-grn_loader_apply_each(grn_ctx *ctx,
-                      grn_loader *loader,
-                      grn_id id);
+grn_loader_apply_each(grn_ctx *ctx, grn_loader *loader, grn_id id);
 
 void
 grn_p_loader(grn_ctx *ctx, grn_loader *loader);

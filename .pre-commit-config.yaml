@@ -41,6 +41,7 @@ repos:
           ?lib/grn_error\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
+          ?lib/grn_load\.h|
           ?lib/grn_proc\.h|
           ?lib/grn_str\.h|
           ?lib/grn_table_selector\.h|
