@@ -1032,7 +1032,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
                   "CMake 3.27 or later is required for bundled LZ4 and bundled Blosc"
               )
             endif()
-            # Because we use shared library for now. We may want to use use
+            # Because we use shared library for now. We may want to use
             # static library for LZ4 like Zstandard.
             set(LZ4_LIBRARY "$<TARGET_IMPORT_FILE:${GRN_LZ4_TARGET}>")
           else()
