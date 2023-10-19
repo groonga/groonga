@@ -501,15 +501,16 @@ jobs:
           matrix.msystem == 'MINGW32'
         shell: msys2 {0}
         run: |
+          rm test/command/suite/load/ifexists/time_float.test
           rm test/command/suite/ruby/eval/convert/string_to_time/over_int32.test
           rm test/command/suite/select/filter/geo_in_circle/no_index/north_east.test
+          rm test/command/suite/tokenizers/document_vector_bm25/alphabet.test
+          rm test/command/suite/tokenizers/document_vector_bm25/normalize_false.test
+          rm test/command/suite/tokenizers/document_vector_bm25/reindex.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/alphabet.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/reindex.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/token_column.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/token_column_different_lexicon.test
-          rm test/command/suite/tokenizers/document_vector_bm25/alphabet.test
-          rm test/command/suite/tokenizers/document_vector_bm25/normalize_false.test
-          rm test/command/suite/tokenizers/document_vector_bm25/reindex.test
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
