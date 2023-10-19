@@ -87,7 +87,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         rm_rf("#{source_dir}/repositories")
       end
     end
-    desc "Release files for Source"
+    desc "Release files for source"
     task source: ["source:clean"]
   end
 
