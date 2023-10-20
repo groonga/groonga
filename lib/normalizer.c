@@ -761,7 +761,8 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   if (data->options->remove_blank_force_is_set) {
     data->remove_blank_p = data->options->remove_blank_force;
   } else {
-    data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) || data->options->remove_blank;
+    data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
+                           data->options->remove_blank;
   }
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
