@@ -500,8 +500,7 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       endif()
       fetchcontent_declare(
         zstd
-	${GRN_FETCH_CONTENT_COMMON_OPTIONS}
-        SOURCE_SUBDIR "build/cmake"
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS} SOURCE_SUBDIR "build/cmake"
         URL ${ZSTD_SOURCE_URL}
         URL_HASH "SHA256=${GRN_ZSTD_BUNDLED_SHA256}")
       set(BUILD_TESTING OFF)
@@ -511,7 +510,8 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       set(ZSTD_USE_STATIC_RUNTIME ON)
       fetchcontent_makeavailable(zstd)
       if(CMAKE_VERSION VERSION_LESS 3.28)
-	set_property(DIRECTORY ${zstd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+        set_property(DIRECTORY ${zstd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                           TRUE)
       endif()
       set(ZSTD_INCLUDE_DIR
           "${zstd_SOURCE_DIR}/lib"
@@ -1004,7 +1004,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       endif()
       fetchcontent_declare(
         blosc
-	${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
         URL ${BLOSC_SOURCE_URL}
         URL_HASH "SHA256=${GRN_BLOSC_BUNDLED_SHA256}")
       set(BUILD_BENCHMARKS OFF)
@@ -1052,7 +1052,8 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       endif()
       fetchcontent_makeavailable(blosc)
       if(CMAKE_VERSION VERSION_LESS 3.28)
-	set_property(DIRECTORY ${blosc_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+        set_property(DIRECTORY ${blosc_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
       endif()
       target_include_directories(blosc2_static
                                  INTERFACE "${blosc_SOURCE_DIR}/include")
