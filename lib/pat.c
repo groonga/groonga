@@ -4056,7 +4056,7 @@ grn_pat_scan(grn_ctx *ctx,
             }
           }
           {
-            grn_bool blank_in_alnum = GRN_FALSE;
+            bool blank_in_alnum = false;
             const unsigned char *start_tp = tp;
             const unsigned char *blank_in_alnum_check_tp;
             while (len--) {
@@ -4075,11 +4075,11 @@ grn_pat_scan(grn_ctx *ctx,
 #define GRN_CHAR_IS_ALNUM(char_type)                                           \
   (GRN_CHAR_TYPE(char_type) == GRN_CHAR_ALPHA ||                               \
    GRN_CHAR_TYPE(char_type) == GRN_CHAR_DIGIT)
-              if (GRN_CHAR_IS_BLANK(blank_in_alnum_check_tp[0]) &&
+              if (GRN_CHAR_IS_BLANK(blank_in_alnum_check_tp[-1]) &&
                   GRN_CHAR_IS_ALNUM(blank_in_alnum_check_tp[-1]) &&
-                  (blank_in_alnum_check_tp + 1) < tp &&
-                  GRN_CHAR_IS_ALNUM(blank_in_alnum_check_tp[1])) {
-                blank_in_alnum = GRN_TRUE;
+                  GRN_CHAR_IS_ALNUM(blank_in_alnum_check_tp[0])) {
+                blank_in_alnum = true;
+                break;
               }
 #undef GRN_CHAR_IS_ALNUM
             }

@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "Groonga is fast"}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns 'highlight(body, "ai", "<keyword>", "</keyword>")'
+[[0,0.0,0.0],[[[1],[["highlight",null]],["Groonga is fast"]]]]
