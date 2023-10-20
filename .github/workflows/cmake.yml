@@ -547,7 +547,7 @@ jobs:
           submodules: recursive
       # Use CMake 3.27 not 3.26.
       # Workaround: https://github.com/actions/runner-images/issues/8598
-      - name: Remove Strawberry Perl from PATH
+      - name: Remove Strawberry Perl
         run: |
           Remove-Item C:\Strawberry -Force -Recurse
       - name: Disable crash dialog
@@ -563,7 +563,11 @@ jobs:
       - name: Download bundled packages
         run: |
           cd vendor
-          ruby download_groonga_normalizer_mysql.rb
+          # TODO: Use download_groonga_normalizer_mysql.rb again
+          # after we release groonga-normalizer-mysql 1.2.3.
+          # ruby download_groonga_normalizer_mysql.rb
+          git clone --quiet --depth 1 --recursive `
+            https://github.com/groonga/groonga-normalizer-mysql.git
           ruby download_lz4.rb
           ruby download_mecab.rb
           ruby download_message_pack.rb
