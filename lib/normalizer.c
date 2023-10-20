@@ -1,7 +1,7 @@
 /*
-  Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
-  Copyright(C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -758,8 +758,11 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
-                         data->options->remove_blank;
+  if (data->options->remove_blank_force_is_set) {
+    data->remove_blank_p = data->options->remove_blank_force;
+  } else {
+    data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) || data->options->remove_blank;
+  }
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
 

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2016  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2016  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -74,6 +74,8 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_to_romaji = GRN_FALSE;
   options->unify_to_katakana = GRN_FALSE;
   options->remove_blank = GRN_FALSE;
+  options->remove_blank_force = false;
+  options->remove_blank_force_is_set = false;
   options->remove_new_line = true;
   options->remove_symbol = false;
   options->strip = false;
@@ -273,6 +275,13 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->remove_blank);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank_force")) {
+      options->remove_blank_force =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->remove_blank_force);
+      options->remove_blank_force_is_set = true;
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_new_line")) {
       options->remove_new_line =
         grn_vector_get_element_bool(ctx,

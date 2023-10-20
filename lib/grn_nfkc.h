@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,6 +56,8 @@ typedef struct {
   grn_bool unify_to_romaji;
   grn_bool unify_to_katakana;
   grn_bool remove_blank;
+  bool remove_blank_force;
+  bool remove_blank_force_is_set;
   bool remove_new_line;
   bool remove_symbol;
   bool strip;
