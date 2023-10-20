@@ -86,18 +86,6 @@ project(
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
 set(GRN_PROJECT_LABEL "Groonga")
 
-set(GRN_INSTALL_COMPONENT_NAME groonga)
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
-# Keep the original CMAKE_INSTALL_COMPONENT and use
-# GRN_INSTALL_COMPONENT_NAME by default.
-install(
-  CODE "
-set(GRN_CMAKE_INSTALL_COMPONENT \${CMAKE_INSTALL_COMPONENT})
-if(NOT CMAKE_INSTALL_COMPONENT)
-  set(CMAKE_INSTALL_COMPONENT ${GRN_INSTALL_COMPONENT_NAME})
-endif()
-")
-
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -452,6 +440,10 @@ if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
 endif()
 
 include(FetchContent)
+set(GRN_FETCH_CONTENT_COMMON_OPTIONS)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.28)
+  list(APPEND GRN_FETCH_CONTENT_COMMON_OPTIONS EXCLUDE_FROM_ALL TRUE)
+endif()
 
 include(ExternalProject)
 set(GRN_EP_COMMON_OPTIONS
@@ -508,16 +500,19 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       endif()
       fetchcontent_declare(
         zstd
+	${GRN_FETCH_CONTENT_COMMON_OPTIONS}
         SOURCE_SUBDIR "build/cmake"
         URL ${ZSTD_SOURCE_URL}
         URL_HASH "SHA256=${GRN_ZSTD_BUNDLED_SHA256}")
       set(BUILD_TESTING OFF)
-      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME zstd)
       set(ZSTD_BUILD_PROGRAMS OFF)
       set(ZSTD_BUILD_SHARED OFF)
       set(ZSTD_BUILD_STATIC ON)
       set(ZSTD_USE_STATIC_RUNTIME ON)
       fetchcontent_makeavailable(zstd)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+	set_property(DIRECTORY ${zstd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
       set(ZSTD_INCLUDE_DIR
           "${zstd_SOURCE_DIR}/lib"
           PARENT_SCOPE)
@@ -525,7 +520,6 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       target_include_directories(libzstd_headers
                                  INTERFACE "${zstd_SOURCE_DIR}/lib")
       target_link_libraries(grn_dependencies INTERFACE libzstd_headers)
-      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
       install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
                     "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
               DESTINATION "${GRN_DATA_DIR}/zstd")
@@ -1010,6 +1004,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       endif()
       fetchcontent_declare(
         blosc
+	${GRN_FETCH_CONTENT_COMMON_OPTIONS}
         URL ${BLOSC_SOURCE_URL}
         URL_HASH "SHA256=${GRN_BLOSC_BUNDLED_SHA256}")
       set(BUILD_BENCHMARKS OFF)
@@ -1018,7 +1013,6 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       set(BUILD_SHARED OFF)
       set(BUILD_STATIC ON)
       set(BUILD_TESTS OFF)
-      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME blosc)
       set(PREFER_EXTERNAL_LZ4 ON)
       if(GRN_WITH_LZ4)
         set(LZ4_INCLUDE_DIR
@@ -1057,9 +1051,11 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
         endif()
       endif()
       fetchcontent_makeavailable(blosc)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+	set_property(DIRECTORY ${blosc_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
       target_include_directories(blosc2_static
                                  INTERFACE "${blosc_SOURCE_DIR}/include")
-      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
       install(
         FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
               "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"
@@ -1213,8 +1209,3 @@ if(GRN_WITH_TOOLS)
     PATTERN "*.rb"
     PATTERN "*.sh")
 endif()
-
-# Restore CMAKE_INSTALL_COMPONENT
-install(CODE "
-set(CMAKE_INSTALL_COMPONENT \${GRN_CMAKE_INSTALL_COMPONENT})
-")
