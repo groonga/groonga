@@ -2102,6 +2102,21 @@ namespace grnarrow {
     }
 
     void
+    add_column_null()
+    {
+      auto column_builder =
+        record_batch_builder_->GetField(current_column_index_++);
+      auto status = column_builder->AppendNull();
+      if (!status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            add_column_error_message(context, "null") << ": null");
+    }
+
+    void
     add_column_string(const char *value, size_t value_length)
     {
       auto column_builder =
@@ -2114,9 +2129,8 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][string] "
-                    << "failed to add a column value: <"
-                    << string_view(value, value_length) << ">");
+            add_column_error_message(context, "string")
+              << "<" << string_view(value, value_length) << ">");
     }
 
     void
@@ -2132,8 +2146,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][int8] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "int8") << "<" << value << ">");
     }
 
     void
@@ -2149,8 +2162,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][int32] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "int32") << "<" << value << ">");
     }
 
     void
@@ -2166,8 +2178,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][uint32] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "uint32") << "<" << value << ">");
     }
 
     void
@@ -2183,8 +2194,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][int64] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "int64") << "<" << value << ">");
     }
 
     void
@@ -2200,8 +2210,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][uint64] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "uint64") << "<" << value << ">");
     }
 
     void
@@ -2217,8 +2226,8 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][float32] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "float32")
+              << "<" << value << ">");
     }
 
     void
@@ -2234,8 +2243,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][float] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "float") << "<" << value << ">");
     }
 
     void
@@ -2249,13 +2257,12 @@ namespace grnarrow {
         return;
       }
       std::stringstream context;
-      check(
-        ctx_,
-        status,
-        context << tag_ << "[add-column][timestamp] "
-                << "failed to add a column value: <"
-                << (value.tv_sec + (value.tv_nsec / GRN_TIME_NSEC_PER_SEC_F))
-                << ">");
+      check(ctx_,
+            status,
+            add_column_error_message(context, "timestamp")
+              << "<"
+              << (value.tv_sec + (value.tv_nsec / GRN_TIME_NSEC_PER_SEC_F))
+              << ">");
     }
 
     void
@@ -2271,8 +2278,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            context << tag_ << "[add-column][double] "
-                    << "failed to add a column value: <" << value << ">");
+            add_column_error_message(context, "double") << "<" << value << ">");
     }
 
     void
@@ -2303,13 +2309,13 @@ namespace grnarrow {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx_, &inspected, record);
-      check(ctx_,
-            status,
-            context << tag_ << "[add-column][record] "
-                    << "failed to add a column value: <"
-                    << string_view(GRN_TEXT_VALUE(&inspected),
-                                   GRN_TEXT_LEN(&inspected))
-                    << ">");
+      check(
+        ctx_,
+        status,
+        add_column_error_message(context, "record")
+          << "<"
+          << string_view(GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected))
+          << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
@@ -2361,13 +2367,13 @@ namespace grnarrow {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx_, &inspected, uvector);
-      check(ctx_,
-            status,
-            context << tag_ << "[add-column][uvector] "
-                    << "failed to add a column value: <"
-                    << string_view(GRN_TEXT_VALUE(&inspected),
-                                   GRN_TEXT_LEN(&inspected))
-                    << ">");
+      check(
+        ctx_,
+        status,
+        add_column_error_message(context, "uvector")
+          << "<"
+          << string_view(GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected))
+          << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
@@ -2414,6 +2420,15 @@ namespace grnarrow {
     int current_column_index_;
     ObjectCache object_cache_;
     std::string tag_;
+
+    std::ostream &
+    add_column_error_message(std::ostream &context, const std::string &type)
+    {
+      return context << tag_ << "[add-column]["
+                     << schema_->field(current_column_index_ - 1)->name()
+                     << "][" << type << "] "
+                     << "failed to add a column value: ";
+    }
 
     // We need to execute ResetFull() with an appropriate dictionary length
     // in order to avoid memory exhaustion and so on.
@@ -2981,6 +2996,21 @@ grn_arrow_stream_writer_close_record(grn_ctx *ctx,
   ERR(
     GRN_FUNCTION_NOT_IMPLEMENTED,
     "[arrow][stream-writer][close-record] Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_null(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_null();
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][null] "
+      "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
