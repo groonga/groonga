@@ -3471,9 +3471,34 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
                                     writer,
                                     "elapsed_time",
                                     grn_ctx_at(ctx, GRN_DB_FLOAT));
-  if (rc != GRN_SUCCESS) {
-    /* TODO */
-  }
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_message",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_file",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_line",
+                                    grn_ctx_at(ctx, GRN_DB_UINT32));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_function",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_input_file",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_input_line",
+                                    grn_ctx_at(ctx, GRN_DB_INT32));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "error_input_command",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
   grn_arrow_stream_writer_write_schema(ctx, writer);
 
   grn_arrow_stream_writer_open_record(ctx, writer);
@@ -3483,6 +3508,43 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
     writer,
     grn_timeval_from_double(ctx, started));
   grn_arrow_stream_writer_add_column_double(ctx, writer, elapsed);
+  if (rc == GRN_SUCCESS) {
+    /* error_message */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_file */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_line */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_function */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_input_file */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_input_line */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+    /* error_input_command */
+    grn_arrow_stream_writer_add_column_null(ctx, writer);
+  } else {
+    grn_arrow_stream_writer_add_column_string(ctx, writer, ctx->errbuf, strlen(ctx->errbuf));
+    if (ctx->errfile && ctx->errfunc) {
+      grn_arrow_stream_writer_add_column_string(ctx, writer, ctx->errfile, strlen(ctx->errfile));
+      grn_arrow_stream_writer_add_column_uint32(ctx, writer, ctx->errline);
+      grn_arrow_stream_writer_add_column_string(ctx, writer, ctx->errfunc, strlen(ctx->errfunc));
+    } else {
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+    }
+    grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+    if (file && command) {
+      grn_arrow_stream_writer_add_column_string(ctx, writer, file, strlen(file));
+      grn_arrow_stream_writer_add_column_int32(ctx, writer, line);
+      grn_arrow_stream_writer_add_column_string(ctx, writer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+    } else {
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+      grn_arrow_stream_writer_add_column_null(ctx, writer);
+    }
+  }
   grn_arrow_stream_writer_close_record(ctx, writer);
 
   grn_arrow_stream_writer_close(ctx, writer);

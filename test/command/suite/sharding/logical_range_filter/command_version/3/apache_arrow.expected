@@ -186,10 +186,17 @@ uint32: uint32
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
+error_message: string
+error_file: string
+error_line: uint32
+error_function: string
+error_input_file: string
+error_input_line: int32
+error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
-	return_code	               start_time	elapsed_time
-0	          0	1970-01-01T09:00:00+09:00	    0.000000
+	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 #>logical_range_filter --command_version "3" --logical_table "Logs" --output_type "apache-arrow" --shard_key "time"
 #:000000000000000 sort(2)[Logs_20150203]: time
 #:000000000000000 send(0)
@@ -285,10 +292,17 @@ uint32: uint32
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
+error_message: string
+error_file: string
+error_line: uint32
+error_function: string
+error_input_file: string
+error_input_line: int32
+error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
-	return_code	               start_time	elapsed_time
-0	          0	1970-01-01T09:00:00+09:00	    0.000000
+	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 #>logical_range_filter --command_version "3" --logical_table "Logs" --output_type "apache-arrow" --shard_key "time"
 #:000000000000000 sort(2)[Logs_20150203]: time
 #:000000000000000 send(0)

@@ -13,10 +13,17 @@ select Data   --command_version 3   --output_type apache-arrow
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
+error_message: string
+error_file: string
+error_line: uint32
+error_function: string
+error_input_file: string
+error_input_line: int32
+error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
-	return_code	               start_time	elapsed_time
-0	          0	1970-01-01T09:00:00+09:00	    0.000000
+	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 ========================================
 _id: uint32
 value: int32

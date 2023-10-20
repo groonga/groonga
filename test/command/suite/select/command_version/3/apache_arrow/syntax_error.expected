@@ -9,9 +9,16 @@ select Records   --command_version 3   --filter nonexistent   --output_type apac
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
+error_message: string
+error_file: string
+error_line: uint32
+error_function: string
+error_input_file: string
+error_input_line: int32
+error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
-	return_code	               start_time	elapsed_time
-0	        -63	1970-01-01T09:00:00+09:00	    0.000000
+	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+0	        -63	1970-01-01T09:00:00+09:00	    0.000000	Syntax error: <nonexistent||>: [expr][parse] unknown identifier: <nonexistent>	grn_ecmascript.lemon	         0	yy_syntax_error	          (null)	          (null)	             (null)
 #|e| [expr][parse] unknown identifier: <nonexistent>
 #|e| Syntax error: <nonexistent||>: [expr][parse] unknown identifier: <nonexistent>
