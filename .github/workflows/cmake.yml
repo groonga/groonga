@@ -545,6 +545,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      # Use CMake 3.27 not 3.26.
+      # Workaround: https://github.com/actions/runner-images/issues/8598
+      - name: Remove Strawberry Perl from PATH
+        run: |
+          Remove-Item C:\Strawberry -Force -Recurse
       - name: Disable crash dialog
         run: |
           reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
