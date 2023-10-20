@@ -510,8 +510,8 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       set(ZSTD_USE_STATIC_RUNTIME ON)
       fetchcontent_makeavailable(zstd)
       if(CMAKE_VERSION VERSION_LESS 3.28)
-        set_property(DIRECTORY ${zstd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
-                                                           TRUE)
+        set_property(DIRECTORY "${zstd_SOURCE_DIR}/build/cmake"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
       endif()
       set(ZSTD_INCLUDE_DIR
           "${zstd_SOURCE_DIR}/lib"
