@@ -4058,6 +4058,7 @@ grn_output_envelope_close(
   case GRN_CONTENT_XML:
   case GRN_CONTENT_MSGPACK:
   case GRN_CONTENT_GROONGA_COMMAND_LIST:
+    break;
   case GRN_CONTENT_APACHE_ARROW:
     grn_output_envelope_close_apache_arrow(ctx,
                                            output,
@@ -4066,6 +4067,7 @@ grn_output_envelope_close(
                                            elapsed,
                                            file,
                                            line);
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
