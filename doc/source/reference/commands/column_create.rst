@@ -1254,7 +1254,7 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------| 
           | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   | 
 
-       ``Float/Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。
+       ``Float`` / ``Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。
 
    * - ``COMPRESS_FILTER_BYTE_DELTA``
      - .. versionadded:: 13.0.8
