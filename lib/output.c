@@ -3628,25 +3628,15 @@ grn_output_envelope_msgpack(grn_ctx *ctx,
 #endif /* GRN_WITH_MESSAGE_PACK */
 
 static void
-grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
-                                       grn_obj *output,
-                                       grn_rc rc,
-                                       double started,
-                                       double elapsed,
-                                       const char *file,
-                                       int line)
+grn_output_envelope_close_apache_arrow_metadata(grn_ctx *ctx,
+                                                grn_obj *output,
+                                                grn_rc rc,
+                                                double started,
+                                                double elapsed,
+                                                const char *file,
+                                                int line)
 {
-  if (ctx->impl->output.arrow_stream_writer) {
-    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
-    ctx->impl->output.arrow_stream_writer = NULL;
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-  }
-
-  ctx->impl->output.arrow_stream_writer =
-    grn_arrow_stream_writer_open(ctx, output);
-  grn_arrow_stream_writer *writer = ctx->impl->output.arrow_stream_writer;
+  grn_arrow_stream_writer *writer = grn_arrow_stream_writer_open(ctx, output);
   if (!writer) {
     return;
   }
@@ -3757,9 +3747,33 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
     }
   }
   grn_arrow_stream_writer_close_record(ctx, writer);
-
   grn_arrow_stream_writer_close(ctx, writer);
-  ctx->impl->output.arrow_stream_writer = NULL;
+}
+
+static void
+grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
+                                       grn_obj *output,
+                                       grn_rc rc,
+                                       double started,
+                                       double elapsed,
+                                       const char *file,
+                                       int line)
+{
+  if (ctx->impl->output.arrow_stream_writer) {
+    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    ctx->impl->output.arrow_stream_writer = NULL;
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  grn_output_envelope_close_apache_arrow_metadata(ctx,
+                                                  output,
+                                                  rc,
+                                                  started,
+                                                  elapsed,
+                                                  file,
+                                                  line);
 }
 
 static void
