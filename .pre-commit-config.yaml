@@ -52,6 +52,7 @@ repos:
           ?lib/mrb/mrb_ctx\.c|
           ?lib/mrb/mrb_error\.c|
           ?lib/obj\.c|
+          ?lib/output\.c|
           ?lib/pat\.c|
           ?lib/proc/proc_column\.c|
           ?lib/proc/proc_highlight\.c|
