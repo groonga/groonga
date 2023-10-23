@@ -1266,7 +1266,7 @@ Here are available flags:
        また、このフラグを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
        データに合わせて効果があるフィルターだけ有効にすることが重要です。
 
-       なお、 ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定しない場合は
+       なお、 ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定しない場合は
        `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
        このフラグを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
        しかし、データによってはこのフラグを有効にせずに単に ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定するだけで
