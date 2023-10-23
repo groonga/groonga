@@ -34,7 +34,6 @@ guide: http://groonga.org/ja/docs/contribution/development/release.html (Japanes
   - [ ] Debian
   - [ ] Ubuntu (launchpad)
   - [ ] AlmaLinux
-  - [ ] AmazonLinux
   - [ ] CentOS
   - [ ] Windows
 - [ ] Upload documentation for https://groonga.org
