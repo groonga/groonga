@@ -1176,7 +1176,7 @@ Here are available flags:
 
        ``COMPRESS_FILTER_SHUFFLE`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
        各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
-       自分でビルドする場合は `:doc:/install/others` を参照してください。
+       自分でビルドする場合は :doc:`/install/others` を参照してください。
 
        このフラグは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
 
