@@ -1348,7 +1348,7 @@ Here are available flags:
        自分でビルドする場合は `:doc:/install/others` を参照してください。
 
        このフラグは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
-       このフラグは、 ``Float/Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
+       このフラグは、 ``Float`` / ``Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
 
        では、このフラグがどのようなデータに対して有効かを記載します。
 
