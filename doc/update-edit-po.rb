@@ -46,6 +46,7 @@ edit_po_mtime = File.mtime(edit_po)
 GetText::Tools::MsgMerge.run("--sort-by-location",
                              "--no-wrap",
                              "--update",
+                             "--use-one-line-per-reference",
                              edit_po,
                              pot)
 if File.exist?(po) and File.mtime(po) > edit_po_mtime
@@ -53,6 +54,7 @@ if File.exist?(po) and File.mtime(po) > edit_po_mtime
                                "--sort-by-location",
                                "--no-wrap",
                                "--no-obsolete-entries",
+                               "--use-one-line-per-reference",
                                po,
                                edit_po)
 end
