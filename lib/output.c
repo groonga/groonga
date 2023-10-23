@@ -3245,6 +3245,84 @@ grn_output_envelope_open_json(grn_ctx *ctx,
 }
 
 static void
+grn_output_envelope_close_json_header(grn_ctx *ctx,
+                                      grn_obj *head,
+                                      grn_rc rc,
+                                      double started,
+                                      double elapsed,
+                                      const char *file,
+                                      int line,
+                                      size_t *indent_level)
+{
+  json_key(ctx, head, "header");
+  json_map_open(ctx, head, indent_level);
+  {
+    json_key(ctx, head, "return_code");
+    grn_text_itoa(ctx, head, rc);
+
+    json_value_end(ctx, head, *indent_level);
+    json_key(ctx, head, "start_time");
+    grn_text_ftoa(ctx, head, started);
+
+    json_value_end(ctx, head, *indent_level);
+    json_key(ctx, head, "elapsed_time");
+    grn_text_ftoa(ctx, head, elapsed);
+
+    if (rc != GRN_SUCCESS) {
+      json_value_end(ctx, head, *indent_level);
+      json_key(ctx, head, "error");
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "message");
+        grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+
+        if (ctx->errfunc && ctx->errfile) {
+          json_value_end(ctx, head, *indent_level);
+          json_key(ctx, head, "function");
+          grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+
+          json_value_end(ctx, head, *indent_level);
+          json_key(ctx, head, "file");
+          grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+
+          json_value_end(ctx, head, *indent_level);
+          json_key(ctx, head, "line");
+          grn_text_ulltoa(ctx, head, ctx->errline);
+        }
+
+        if (file) {
+          grn_obj *command;
+
+          command = GRN_CTX_USER_DATA(ctx)->ptr;
+          if (command) {
+            json_value_end(ctx, head, *indent_level);
+            json_key(ctx, head, "input");
+            json_map_open(ctx, head, indent_level);
+            {
+              json_key(ctx, head, "file");
+              grn_text_esc(ctx, head, file, strlen(file));
+
+              json_value_end(ctx, head, *indent_level);
+              json_key(ctx, head, "line");
+              grn_text_itoa(ctx, head, line);
+
+              json_value_end(ctx, head, *indent_level);
+              json_key(ctx, head, "command");
+              grn_text_esc(ctx,
+                           head,
+                           GRN_TEXT_VALUE(command),
+                           GRN_TEXT_LEN(command));
+            }
+            json_map_close(ctx, head, indent_level);
+          }
+        }
+      }
+      json_map_close(ctx, head, indent_level);
+    }
+  }
+  json_map_close(ctx, head, indent_level);
+}
+static void
 grn_output_envelope_close_json(grn_ctx *ctx,
                                grn_obj *head,
                                grn_obj *foot,
@@ -3266,73 +3344,14 @@ grn_output_envelope_close_json(grn_ctx *ctx,
       json_value_end(ctx, head, indent_level);
     }
 
-    json_key(ctx, head, "header");
-    json_map_open(ctx, head, &indent_level);
-    {
-      json_key(ctx, head, "return_code");
-      grn_text_itoa(ctx, head, rc);
-
-      json_value_end(ctx, head, indent_level);
-      json_key(ctx, head, "start_time");
-      grn_text_ftoa(ctx, head, started);
-
-      json_value_end(ctx, head, indent_level);
-      json_key(ctx, head, "elapsed_time");
-      grn_text_ftoa(ctx, head, elapsed);
-
-      if (rc != GRN_SUCCESS) {
-        json_value_end(ctx, head, indent_level);
-        json_key(ctx, head, "error");
-        json_map_open(ctx, head, &indent_level);
-        {
-          json_key(ctx, head, "message");
-          grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-
-          if (ctx->errfunc && ctx->errfile) {
-            json_value_end(ctx, head, indent_level);
-            json_key(ctx, head, "function");
-            grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-
-            json_value_end(ctx, head, indent_level);
-            json_key(ctx, head, "file");
-            grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
-
-            json_value_end(ctx, head, indent_level);
-            json_key(ctx, head, "line");
-            grn_text_ulltoa(ctx, head, ctx->errline);
-          }
-
-          if (file) {
-            grn_obj *command;
-
-            command = GRN_CTX_USER_DATA(ctx)->ptr;
-            if (command) {
-              json_value_end(ctx, head, indent_level);
-              json_key(ctx, head, "input");
-              json_map_open(ctx, head, &indent_level);
-              {
-                json_key(ctx, head, "file");
-                grn_text_esc(ctx, head, file, strlen(file));
-
-                json_value_end(ctx, head, indent_level);
-                json_key(ctx, head, "line");
-                grn_text_itoa(ctx, head, line);
-
-                json_value_end(ctx, head, indent_level);
-                json_key(ctx, head, "command");
-                grn_text_esc(ctx,
-                             head,
-                             GRN_TEXT_VALUE(command),
-                             GRN_TEXT_LEN(command));
-              }
-              json_map_close(ctx, head, &indent_level);
-            }
-          }
-        }
-        json_map_close(ctx, head, &indent_level);
-      }
-    }
-    json_map_close(ctx, head, &indent_level);
+    grn_output_envelope_close_json_header(ctx,
+                                          head,
+                                          rc,
+                                          started,
+                                          elapsed,
+                                          file,
+                                          line,
+                                          &indent_level);
 
     if (!is_stream_mode && have_body) {
       json_value_end(ctx, head, indent_level);
