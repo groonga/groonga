@@ -734,6 +734,17 @@ grn_ctx_trace_log_emit_string(grn_ctx *ctx,
 }
 
 void
+grn_ctx_trace_log_emit_cstring(grn_ctx *ctx,
+                               const char *name,
+                               const char *value)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  grn_ctx_trace_log_emit_string(ctx, name, value, strlen(value));
+}
+
+void
 grn_ctx_trace_log_emit_uint32(grn_ctx *ctx, const char *name, uint32_t n)
 {
   if (!grn_ctx_trace_log_is_enabled(ctx)) {
@@ -768,9 +779,7 @@ grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
 }
 
 void
-grn_ctx_trace_log_emit_object(grn_ctx *ctx,
-                              const char *name,
-                              grn_obj *object)
+grn_ctx_trace_log_emit_object(grn_ctx *ctx, const char *name, grn_obj *object)
 {
   if (!grn_ctx_trace_log_is_enabled(ctx)) {
     return;
@@ -778,7 +787,10 @@ grn_ctx_trace_log_emit_object(grn_ctx *ctx,
   grn_obj inspected;
   GRN_TEXT_INIT(&inspected, 0);
   grn_inspect(ctx, &inspected, object);
-  grn_ctx_trace_log_emit_string(ctx, name, GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected));
+  grn_ctx_trace_log_emit_string(ctx,
+                                name,
+                                GRN_TEXT_VALUE(&inspected),
+                                GRN_TEXT_LEN(&inspected));
   GRN_OBJ_FIN(ctx, &inspected);
 }
 

@@ -103,6 +103,9 @@ void grn_ctx_trace_log_emit_string(grn_ctx *ctx,
                                    const char *name,
                                    const char *value,
                                    size_t value_length);
+void grn_ctx_trace_log_emit_cstring(grn_ctx *ctx,
+                                    const char *name,
+                                    const char *value);
 void grn_ctx_trace_log_emit_uint32(grn_ctx *ctx,
                                    const char *name,
                                    uint32_t n);
