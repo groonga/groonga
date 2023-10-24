@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -106,6 +106,10 @@ void grn_ctx_trace_log_emit_string(grn_ctx *ctx,
 void grn_ctx_trace_log_emit_uint32(grn_ctx *ctx,
                                    const char *name,
                                    uint32_t n);
+void grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
+                                       const char *name,
+                                       grn_obj *table,
+                                       grn_id id);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 grn_content_type grn_content_type_parse(grn_ctx *ctx,

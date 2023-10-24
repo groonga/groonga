@@ -10720,21 +10720,10 @@ token_info_open(grn_ctx *ctx,
                                data->previous_min);
               ti->ntoken++;
               ti->size += s;
-              if (grn_ctx_trace_log_is_enabled(ctx)) {
-                char key[GRN_TABLE_MAX_KEY_SIZE];
-                int key_size;
-                key_size = grn_table_get_key(ctx,
-                                             data->ii->lexicon,
-                                             *tp,
-                                             key,
-                                             GRN_TABLE_MAX_KEY_SIZE);
-                if (key_size != 0) {
-                  grn_ctx_trace_log_emit_string(ctx,
+              grn_ctx_trace_log_emit_record_key(ctx,
                                                 "ii.select.fuzzy.input.actual",
-                                                key,
-                                                key_size);
-                }
-              }
+                                                data->ii->lexicon,
+                                                *tp);
             }
           });
         }

@@ -748,6 +748,24 @@ grn_ctx_trace_log_emit_uint32(grn_ctx *ctx, const char *name, uint32_t n)
                                GRN_DB_UINT32);
 }
 
+void
+grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
+                                  const char *name,
+                                  grn_obj *table,
+                                  grn_id id)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  char key[GRN_TABLE_MAX_KEY_SIZE];
+  int key_size;
+  key_size = grn_table_get_key(ctx, table, id, key, GRN_TABLE_MAX_KEY_SIZE);
+  if (key_size == 0) {
+    return;
+  }
+  grn_ctx_trace_log_emit_string(ctx, name, key, key_size);
+}
+
 static void
 grn_ctx_impl_clear_n_same_error_messagges(grn_ctx *ctx)
 {
