@@ -2,18 +2,18 @@ table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --normalizer NormalizerNFKC150
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC150
 [[0,0.0,0.0],true]
 column_create Lexicon memos_content   COLUMN_INDEX|WITH_POSITION Memos content
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content": "これ は ペリカン です"},
-{"content": "これ は パソコン です"},
-{"content": "あれ は ペン ですか"}
+{"content": "This is a pen"},
+{"content": "That is a pen"},
+{"content": "They are pens"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --match_columns content   --query "パリカン OR ですよ"   --fuzzy_max_distance 2   --output_columns *,_score   --command_version 3   --output_trace_log yes
+select Memos   --match_columns content   --query "Thas OR ere"   --fuzzy_max_distance 1   --output_columns *,_score   --command_version 3   --output_trace_log yes
 {
   "header": {
     "return_code": 0,
@@ -43,7 +43,7 @@ select Memos   --match_columns content   --query "パリカン OR ですよ"   -
         1,
         0,
         "ii.select.input",
-        "パリカン",
+        "Thas",
         0
       ],
       [
@@ -57,21 +57,21 @@ select Memos   --match_columns content   --query "パリカン OR ですよ"   -
         2,
         0,
         "ii.select.fuzzy.input",
-        "パリカン",
+        "Thas",
         2
       ],
       [
         2,
         1,
         "ii.select.fuzzy.input.actual",
-        "ペリカン",
+        "that",
         3
       ],
       [
         2,
         2,
         "ii.select.fuzzy.input.actual",
-        "パソコン",
+        "this",
         4
       ],
       [
@@ -92,7 +92,7 @@ select Memos   --match_columns content   --query "パリカン OR ですよ"   -
         1,
         0,
         "ii.select.input",
-        "ですよ",
+        "ere",
         7
       ],
       [
@@ -125,11 +125,11 @@ select Memos   --match_columns content   --query "パリカン OR ですよ"   -
     ],
     "records": [
       [
-        "これ は ペリカン です",
-        2.0
+        "This is a pen",
+        1.0
       ],
       [
-        "これ は パソコン です",
+        "That is a pen",
         1.0
       ]
     ]

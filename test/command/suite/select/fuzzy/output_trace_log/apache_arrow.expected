@@ -2,18 +2,18 @@ table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --normalizer NormalizerNFKC150
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC150
 [[0,0.0,0.0],true]
 column_create Lexicon memos_content   COLUMN_INDEX|WITH_POSITION Memos content
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content": "これ は ペリカン です"},
-{"content": "これ は パソコン です"},
-{"content": "あれ は ペン ですか"}
+{"content": "This is a pen"},
+{"content": "That is a pen"},
+{"content": "They are pens"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --match_columns content   --query "パリカン OR ですよ"   --fuzzy_max_distance 2   --output_columns *,_score   --command_version 3   --output_trace_log yes   --output_type apache-arrow
+select Memos   --match_columns content   --query "Thas OR ere"   --fuzzy_max_distance 1   --output_columns *,_score   --command_version 3   --output_trace_log yes   --output_type apache-arrow
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
@@ -37,14 +37,14 @@ elapsed_time: uint64
 -- metadata --
 GROONGA:data_type: trace_log
 	depth	sequence	name	value	elapsed_time
- 0	    1	       0	ii.select.input	パリカン 	           0
+ 0	    1	       0	ii.select.input	Thas 	           0
  1	    2	       0	ii.select.exact.n_hits	    0	           1
- 2	    2	       0	ii.select.fuzzy.input	パリカン 	           2
- 3	    2	       1	ii.select.fuzzy.input.actual	ペリカン 	           3
- 4	    2	       2	ii.select.fuzzy.input.actual	パソコン 	           4
+ 2	    2	       0	ii.select.fuzzy.input	Thas 	           2
+ 3	    2	       1	ii.select.fuzzy.input.actual	that 	           3
+ 4	    2	       2	ii.select.fuzzy.input.actual	this 	           4
  5	    2	       3	ii.select.fuzzy.n_hits	    2	           5
  6	    1	       1	ii.select.n_hits	    2	           6
- 7	    1	       0	ii.select.input	ですよ  	           7
+ 7	    1	       0	ii.select.input	ere  	           7
  8	    2	       0	ii.select.exact.n_hits	    2	           8
  9	    1	       1	ii.select.n_hits	    2	           9
 ========================================
@@ -53,5 +53,5 @@ _score: double
 -- metadata --
 GROONGA:n_hits: 2
 	content	    _score
-0	これ は ペリカン です	  2.000000
-1	これ は パソコン です	  1.000000
+0	This is a pen	  1.000000
+1	That is a pen	  1.000000
