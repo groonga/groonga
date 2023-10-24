@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 13.0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-24 17:10+0900\n"
+"PO-Revision-Date: 2023-10-24 17:25+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,8 +26,8 @@ msgstr "この機能は実験的な機能です。現状、この機能はまだ
 msgid "This feature requires {doc}`/reference/command/command_version` 3 or later."
 msgstr "{doc}`/reference/command/command_version` 3 以降を指定する必要があります。"
 
-msgid "Trace log is similar information to PostgreSQL's [`EXPLAIN (ANALYZE, VERBOSE)`][postgresql-explain] information. It includes the followings:"
-msgstr "トレースログはPostgreSQLの[`EXPLAIN (ANALYZE, VERBOSE)`][postgresql-explain]と似た情報です。これは次のような情報を含みます。"
+msgid "Trace log is similar information to PostgreSQL's [`EXPLAIN (ANALYZE, VERBOSE)`](https://www.postgresql.org/docs/current/sql-explain.html) information. It includes the followings:"
+msgstr "トレースログはPostgreSQLの[`EXPLAIN (ANALYZE, VERBOSE)`](https://www.postgresql.jp/document/current/html/sql-explain.html)と似た情報です。これは次のような情報を含みます。"
 
 msgid "What was executed?"
 msgstr "何が実行されたか"
@@ -44,14 +44,14 @@ msgstr "内部的にどんな値が使われたか"
 msgid "..."
 msgstr ""
 
-msgid "Trace log contents may be insufficient for now because this feature is still experimental. If you want more information, please report it to [the GitHub issue][github-issue] with your use case."
-msgstr "現時点ではトレースログに十分な情報が含まれていないかもしれません。なぜならこの機能はまだ実験的だからです。もしより詳細な情報が欲しい場合は、あなたのユースケースと一緒に[GitHubのissue][github-issue]で報告してください。"
+msgid "Trace log contents may be insufficient for now because this feature is still experimental. If you want more information, please report it to [the GitHub issue](https://github.com/groonga/groonga/issues/new?labels=Feature&template=feature_request.yml) with your use case."
+msgstr "現時点ではトレースログに十分な情報が含まれていないかもしれません。なぜならこの機能はまだ実験的だからです。もしより詳細な情報が欲しい場合は、あなたのユースケースと一緒に[GitHubのissue](https://github.com/groonga/groonga/issues/new?labels=Feature&template=feature_request.yml)で報告してください。"
 
 msgid "Usage"
 msgstr "使い方"
 
-msgid "You can get trace log by specifying `yes` as `output_trace_log`. You also need to specify `3` as :doc:`/reference/command/command_version`."
-msgstr "`output_trace_log`として`yes`を指定するとトレースログを取得できます。:doc:`/reference/command/command_version` に`3`を指定する必要もあります。"
+msgid "You can get trace log by specifying `yes` as `output_trace_log`. You also need to specify `3` as {doc}`/reference/command/command_version`."
+msgstr "`output_trace_log`として`yes`を指定するとトレースログを取得できます。{doc}`/reference/command/command_version` に`3`を指定する必要もあります。"
 
 msgid "Command line style:"
 msgstr "コマンドラインスタイル："
@@ -63,7 +63,7 @@ msgid "Format"
 msgstr "フォーマット"
 
 msgid "Trace log is available only when you use JSON or Apache Arrow {doc}`/reference/command/output_format`. If you don't specify output format, JSON is used by default."
-msgstr "トレースログは{doc}:`/reference/command/output_format`にJSONあるいはApache Arrowを使っているときだけ有効になります。もし、出力形式を指定していない場合は、デフォルトでJSONが使われます。"
+msgstr "トレースログは{doc}`/reference/command/output_format`にJSONあるいはApache Arrowを使っているときだけ有効になります。もし、出力形式を指定していない場合は、デフォルトでJSONが使われます。"
 
 msgid "JSON"
 msgstr ""

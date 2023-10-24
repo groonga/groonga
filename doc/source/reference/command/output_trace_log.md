@@ -13,7 +13,8 @@ This feature requires {doc}`/reference/command/command_version` 3 or later.
 ```
 
 Trace log is similar information to PostgreSQL's [`EXPLAIN (ANALYZE,
-VERBOSE)`][postgresql-explain] information. It includes the followings:
+VERBOSE)`](https://www.postgresql.org/docs/current/sql-explain.html)
+information. It includes the followings:
 
 - What was executed?
 - Which index was used?
@@ -21,14 +22,16 @@ VERBOSE)`][postgresql-explain] information. It includes the followings:
 - What value was used internal?
 - ...
 
-Trace log contents may be insufficient for now because this feature
-is still experimental. If you want more information, please report it
-to [the GitHub issue][github-issue] with your use case.
+Trace log contents may be insufficient for now because this feature is
+still experimental. If you want more information, please report it to
+[the GitHub
+issue](https://github.com/groonga/groonga/issues/new?labels=Feature&template=feature_request.yml)
+with your use case.
 
 ## Usage
 
 You can get trace log by specifying `yes` as `output_trace_log`. You
-also need to specify `3` as :doc:`/reference/command/command_version`.
+also need to specify `3` as {doc}`/reference/command/command_version`.
 
 Command line style:
 
@@ -252,7 +255,3 @@ Example:
 :start-at: depth
 :end-before: ====
 ```
-
-[postgresql-explain]:https://www.postgresql.org/docs/current/sql-explain.html
-
-[github-issue]:https://github.com/groonga/groonga/issues/new?labels=Feature&template=feature_request.yml
