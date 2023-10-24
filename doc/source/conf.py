@@ -106,6 +106,7 @@ exclude_patterns = [
   '**/.#*',
   'install/server-use.rst',
   'reference/scoring_note.rst',
+  'reference/commands/compress_filter.rst',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
