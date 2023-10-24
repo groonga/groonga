@@ -110,10 +110,6 @@ grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
                                              grn_timeval value);
 grn_rc
-grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
-                                          grn_arrow_stream_writer *writer,
-                                          double value);
-grn_rc
 grn_arrow_stream_writer_add_column_record(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           grn_obj *record);

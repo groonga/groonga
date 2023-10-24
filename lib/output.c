@@ -3693,7 +3693,7 @@ grn_output_envelope_close_apache_arrow_metadata(grn_ctx *ctx,
     ctx,
     writer,
     grn_timeval_from_double(ctx, started));
-  grn_arrow_stream_writer_add_column_double(ctx, writer, elapsed);
+  grn_arrow_stream_writer_add_column_float(ctx, writer, elapsed);
   if (rc == GRN_SUCCESS) {
     /* error_message */
     grn_arrow_stream_writer_add_column_null(ctx, writer);

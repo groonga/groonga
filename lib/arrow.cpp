@@ -2282,22 +2282,6 @@ namespace grnarrow {
     }
 
     void
-    add_column_double(double value)
-    {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
-          current_column_index_++);
-      auto status = column_builder->Append(value);
-      if (!status.ok()) {
-        return;
-      }
-      std::stringstream context;
-      check(ctx_,
-            status,
-            add_column_error_message(context, "double") << "<" << value << ">");
-    }
-
-    void
     add_column_record(grn_obj *record)
     {
       auto table = object_cache_[record->header.domain];
@@ -3187,22 +3171,6 @@ grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][timestamp] "
-      "Apache Arrow support isn't enabled");
-#endif
-  GRN_API_RETURN(ctx->rc);
-}
-
-grn_rc
-grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
-                                          grn_arrow_stream_writer *writer,
-                                          double value)
-{
-  GRN_API_ENTER;
-#ifdef GRN_WITH_APACHE_ARROW
-  writer->writer->add_column_double(value);
-#else
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-writer][add-column][double] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
