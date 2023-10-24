@@ -2107,7 +2107,7 @@ namespace grnarrow {
       auto column_builder =
         record_batch_builder_->GetField(current_column_index_++);
       auto status = column_builder->AppendNull();
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2123,7 +2123,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
           current_column_index_++);
       auto status = column_builder->Append(value, value_length);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2140,7 +2140,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::Int8Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2156,7 +2156,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::UInt16Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2172,7 +2172,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::Int32Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2188,7 +2188,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::UInt32Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2204,7 +2204,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::Int64Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2220,7 +2220,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::UInt64Builder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2236,7 +2236,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::FloatBuilder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2253,7 +2253,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
           current_column_index_++);
       auto status = column_builder->Append(value);
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
@@ -2269,7 +2269,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::TimestampBuilder>(
           current_column_index_++);
       auto status = column_builder->Append(GRN_TIMEVAL_TO_NSEC(&value));
-      if (!status.ok()) {
+      if (status.ok()) {
         return;
       }
       std::stringstream context;
