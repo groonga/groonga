@@ -110,6 +110,9 @@ void grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
                                        const char *name,
                                        grn_obj *table,
                                        grn_id id);
+void grn_ctx_trace_log_emit_object(grn_ctx *ctx,
+                                   const char *name,
+                                   grn_obj *object);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 grn_content_type grn_content_type_parse(grn_ctx *ctx,

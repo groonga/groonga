@@ -763,7 +763,23 @@ grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
   if (key_size == 0) {
     return;
   }
+  /* TODO: Support non ShortText key */
   grn_ctx_trace_log_emit_string(ctx, name, key, key_size);
+}
+
+void
+grn_ctx_trace_log_emit_object(grn_ctx *ctx,
+                              const char *name,
+                              grn_obj *object)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect(ctx, &inspected, object);
+  grn_ctx_trace_log_emit_string(ctx, name, GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
 }
 
 static void
