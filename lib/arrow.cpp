@@ -2117,7 +2117,7 @@ namespace grnarrow {
     }
 
     void
-    add_column_string(const char *value, size_t value_length)
+    add_column_text(const char *value, size_t value_length)
     {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
@@ -2129,7 +2129,7 @@ namespace grnarrow {
       std::stringstream context;
       check(ctx_,
             status,
-            add_column_error_message(context, "string")
+            add_column_error_message(context, "text")
               << "<" << string_view(value, value_length) << ">");
     }
 
@@ -3016,17 +3016,17 @@ grn_arrow_stream_writer_add_column_null(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_stream_writer_add_column_string(grn_ctx *ctx,
-                                          grn_arrow_stream_writer *writer,
-                                          const char *value,
-                                          size_t value_length)
+grn_arrow_stream_writer_add_column_text(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *value,
+                                        size_t value_length)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-  writer->writer->add_column_string(value, value_length);
+  writer->writer->add_column_text(value, value_length);
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-writer][add-column][string] "
+      "[arrow][stream-writer][add-column][text] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);

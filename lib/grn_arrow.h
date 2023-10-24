@@ -69,10 +69,10 @@ grn_rc
 grn_arrow_stream_writer_add_column_null(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer);
 grn_rc
-grn_arrow_stream_writer_add_column_string(grn_ctx *ctx,
-                                          grn_arrow_stream_writer *writer,
-                                          const char *value,
-                                          size_t value_length);
+grn_arrow_stream_writer_add_column_text(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *value,
+                                        size_t value_length);
 grn_rc
 grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,

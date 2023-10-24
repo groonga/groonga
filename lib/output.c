@@ -813,7 +813,7 @@ grn_output_str(grn_ctx *ctx,
     break;
   case GRN_CONTENT_APACHE_ARROW:
     if (ctx->impl->output.arrow_stream_writer) {
-      grn_arrow_stream_writer_add_column_string(
+      grn_arrow_stream_writer_add_column_text(
         ctx,
         ctx->impl->output.arrow_stream_writer,
         value,
@@ -3710,20 +3710,20 @@ grn_output_envelope_close_apache_arrow_metadata(grn_ctx *ctx,
     /* error_input_command */
     grn_arrow_stream_writer_add_column_null(ctx, writer);
   } else {
-    grn_arrow_stream_writer_add_column_string(ctx,
-                                              writer,
-                                              ctx->errbuf,
-                                              strlen(ctx->errbuf));
+    grn_arrow_stream_writer_add_column_text(ctx,
+                                            writer,
+                                            ctx->errbuf,
+                                            strlen(ctx->errbuf));
     if (ctx->errfile && ctx->errfunc) {
-      grn_arrow_stream_writer_add_column_string(ctx,
-                                                writer,
-                                                ctx->errfile,
-                                                strlen(ctx->errfile));
+      grn_arrow_stream_writer_add_column_text(ctx,
+                                              writer,
+                                              ctx->errfile,
+                                              strlen(ctx->errfile));
       grn_arrow_stream_writer_add_column_uint32(ctx, writer, ctx->errline);
-      grn_arrow_stream_writer_add_column_string(ctx,
-                                                writer,
-                                                ctx->errfunc,
-                                                strlen(ctx->errfunc));
+      grn_arrow_stream_writer_add_column_text(ctx,
+                                              writer,
+                                              ctx->errfunc,
+                                              strlen(ctx->errfunc));
     } else {
       grn_arrow_stream_writer_add_column_null(ctx, writer);
       grn_arrow_stream_writer_add_column_null(ctx, writer);
@@ -3731,15 +3731,12 @@ grn_output_envelope_close_apache_arrow_metadata(grn_ctx *ctx,
     }
     grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
     if (file && command) {
-      grn_arrow_stream_writer_add_column_string(ctx,
-                                                writer,
-                                                file,
-                                                strlen(file));
+      grn_arrow_stream_writer_add_column_text(ctx, writer, file, strlen(file));
       grn_arrow_stream_writer_add_column_int32(ctx, writer, line);
-      grn_arrow_stream_writer_add_column_string(ctx,
-                                                writer,
-                                                GRN_TEXT_VALUE(command),
-                                                GRN_TEXT_LEN(command));
+      grn_arrow_stream_writer_add_column_text(ctx,
+                                              writer,
+                                              GRN_TEXT_VALUE(command),
+                                              GRN_TEXT_LEN(command));
     } else {
       grn_arrow_stream_writer_add_column_null(ctx, writer);
       grn_arrow_stream_writer_add_column_null(ctx, writer);
