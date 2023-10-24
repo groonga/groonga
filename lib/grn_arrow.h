@@ -78,6 +78,10 @@ grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         int8_t value);
 grn_rc
+grn_arrow_stream_writer_add_column_uint16(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          uint16_t value);
+grn_rc
 grn_arrow_stream_writer_add_column_int32(grn_ctx *ctx,
                                          grn_arrow_stream_writer *writer,
                                          int32_t value);

@@ -2150,6 +2150,22 @@ namespace grnarrow {
     }
 
     void
+    add_column_uint16(uint16_t value)
+    {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::UInt16Builder>(
+          current_column_index_++);
+      auto status = column_builder->Append(value);
+      if (!status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            add_column_error_message(context, "uint16") << "<" << value << ">");
+    }
+
+    void
     add_column_int32(int32_t value)
     {
       auto column_builder =
@@ -3043,6 +3059,22 @@ grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][int8] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_uint16(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          uint16_t value)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_uint16(value);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][uint16] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
