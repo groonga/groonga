@@ -1986,6 +1986,7 @@ namespace grnarrow {
         record_batch_builder_(),
         n_records_(0),
         current_column_index_(0),
+        current_child_index_(-1),
         object_cache_(ctx_),
         tag_("[arrow][stream-writer]")
     {
@@ -2045,6 +2046,39 @@ namespace grnarrow {
     }
 
     void
+    add_field_union(const char *name, grn_obj **columns, size_t n_columns)
+    {
+      std::vector<std::shared_ptr<arrow::Field>> fields;
+      for (size_t i = 0; i < n_columns; ++i) {
+        auto column = columns[i];
+        auto type = grn_column_to_arrow_type(ctx_, column, object_cache_);
+        if (!type) {
+          auto ctx = ctx_;
+          grn_obj inspected;
+          GRN_TEXT_INIT(&inspected, 0);
+          grn_inspect(ctx_, &inspected, column);
+          ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+              "%s[add-field-union] unsupported column: <%.*s>",
+              tag_.c_str(),
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx_, &inspected);
+          return;
+        }
+        fields.emplace_back(arrow::field(std::to_string(i), std::move(type)));
+      }
+      auto field = arrow::field(name, arrow::dense_union(std::move(fields)));
+      auto status = schema_builder_.AddField(field);
+      if (!status.ok()) {
+        std::stringstream context;
+        check(ctx_,
+              status,
+              context << tag_ << "[add-field[union] "
+                      << "failed to add field: <" << field->ToString() << ">");
+      }
+    }
+
+    void
     write_schema()
     {
       auto schema_result = schema_builder_.Finish();
@@ -2090,6 +2124,7 @@ namespace grnarrow {
     open_record()
     {
       current_column_index_ = 0;
+      current_child_index_ = -1;
     }
 
     void
@@ -2104,8 +2139,7 @@ namespace grnarrow {
     void
     add_column_null()
     {
-      auto column_builder =
-        record_batch_builder_->GetField(current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::ArrayBuilder>();
       auto status = column_builder->AppendNull();
       if (status.ok()) {
         return;
@@ -2120,8 +2154,7 @@ namespace grnarrow {
     add_column_text(const char *value, size_t value_length)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::StringBuilder>();
       auto status = column_builder->Append(value, value_length);
       if (status.ok()) {
         return;
@@ -2136,9 +2169,7 @@ namespace grnarrow {
     void
     add_column_int8(int8_t value)
     {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::Int8Builder>(
-          current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::Int8Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2153,8 +2184,7 @@ namespace grnarrow {
     add_column_uint16(uint16_t value)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::UInt16Builder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::UInt16Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2168,9 +2198,7 @@ namespace grnarrow {
     void
     add_column_int32(int32_t value)
     {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::Int32Builder>(
-          current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::Int32Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2185,8 +2213,7 @@ namespace grnarrow {
     add_column_uint32(uint32_t value)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::UInt32Builder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::UInt32Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2200,9 +2227,7 @@ namespace grnarrow {
     void
     add_column_int64(int64_t value)
     {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::Int64Builder>(
-          current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::Int64Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2217,8 +2242,7 @@ namespace grnarrow {
     add_column_uint64(int64_t value)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::UInt64Builder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::UInt64Builder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2232,9 +2256,7 @@ namespace grnarrow {
     void
     add_column_float32(float value)
     {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::FloatBuilder>(
-          current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::FloatBuilder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2250,8 +2272,7 @@ namespace grnarrow {
     add_column_float(double value)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::DoubleBuilder>();
       auto status = column_builder->Append(value);
       if (status.ok()) {
         return;
@@ -2266,8 +2287,7 @@ namespace grnarrow {
     add_column_timestamp(grn_timeval value)
     {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::TimestampBuilder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::TimestampBuilder>();
       auto status = column_builder->Append(GRN_TIMEVAL_TO_NSEC(&value));
       if (status.ok()) {
         return;
@@ -2299,8 +2319,7 @@ namespace grnarrow {
         break;
       }
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
-          current_column_index_++);
+        fetch_current_column_builder<arrow::StringDictionaryBuilder>();
       auto status = column_builder->Append(string_view(key, key_size));
       if (status.ok()) {
         return;
@@ -2322,9 +2341,7 @@ namespace grnarrow {
     void
     add_column_uvector(grn_obj *uvector)
     {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::ListBuilder>(
-          current_column_index_++);
+      auto column_builder = fetch_current_column_builder<arrow::ListBuilder>();
       auto status = column_builder->Append();
       if (status.ok()) {
         auto domain = object_cache_[uvector->header.domain];
@@ -2378,6 +2395,22 @@ namespace grnarrow {
     }
 
     void
+    add_column_union(int8_t type)
+    {
+      auto column_builder =
+        fetch_current_column_builder<arrow::DenseUnionBuilder>();
+      auto status = column_builder->Append(type);
+      if (status.ok()) {
+        current_child_index_ = type;
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            add_column_error_message(context, "union") << "<" << type << ">");
+    }
+
+    void
     flush()
     {
       if (n_records_ == 0) {
@@ -2418,6 +2451,7 @@ namespace grnarrow {
     std::unique_ptr<arrow::RecordBatchBuilder> record_batch_builder_;
     size_t n_records_;
     int current_column_index_;
+    int current_child_index_;
     ObjectCache object_cache_;
     std::string tag_;
 
@@ -2428,6 +2462,26 @@ namespace grnarrow {
                      << schema_->field(current_column_index_ - 1)->name()
                      << "][" << type << "] "
                      << "failed to add a column value: ";
+    }
+
+    // This is a destructive method. This returns the current column
+    // builder and increment the internal counter. The next call
+    // returns the next column builder.
+    template <typename ArrayBuilderType>
+    ArrayBuilderType *
+    fetch_current_column_builder()
+    {
+      if (current_child_index_ == -1) {
+        return record_batch_builder_->GetFieldAs<ArrayBuilderType>(
+          current_column_index_++);
+      } else {
+        auto array_builder =
+          record_batch_builder_->GetField(current_column_index_ - 1);
+        auto target_builder = static_cast<ArrayBuilderType *>(
+          array_builder->child(current_child_index_));
+        current_child_index_ = -1;
+        return target_builder;
+      }
     }
 
     // We need to execute ResetFull() with an appropriate dictionary length
@@ -2940,6 +2994,24 @@ grn_arrow_stream_writer_add_field(grn_ctx *ctx,
 }
 
 grn_rc
+grn_arrow_stream_writer_add_field_union(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *name,
+                                        grn_obj **columns,
+                                        size_t n_columns)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_field_union(name, columns, n_columns);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-field-union] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
                                      grn_arrow_stream_writer *writer,
                                      const char *key,
@@ -3203,6 +3275,22 @@ grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][uvector] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_union(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int8_t type)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_union(type);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][union] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);

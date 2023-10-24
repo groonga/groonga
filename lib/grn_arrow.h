@@ -52,6 +52,12 @@ grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   const char *name,
                                   grn_obj *column);
 grn_rc
+grn_arrow_stream_writer_add_field_union(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *name,
+                                        grn_obj **columns,
+                                        size_t n_columns);
+grn_rc
 grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
                                      grn_arrow_stream_writer *writer,
                                      const char *name,
@@ -117,6 +123,10 @@ grn_rc
 grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
                                            grn_arrow_stream_writer *writer,
                                            grn_obj *uvector);
+grn_rc
+grn_arrow_stream_writer_add_column_union(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int8_t type);
 grn_rc
 grn_arrow_stream_writer_flush(grn_ctx *ctx,
                               grn_arrow_stream_writer *writer);
