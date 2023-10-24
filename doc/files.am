@@ -1033,6 +1033,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
+	$(top_srcdir)/doc/source/install/server-use.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
@@ -1093,6 +1094,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
+	$(top_srcdir)/doc/source/reference/command/output_trace_log.md \
 	$(top_srcdir)/doc/source/reference/command/pretty_print.rst \
 	$(top_srcdir)/doc/source/reference/command/request_id.rst \
 	$(top_srcdir)/doc/source/reference/command/request_timeout.rst \
@@ -2347,6 +2349,7 @@ source_files_relative_from_doc_dir = \
 	source/install/docker.rst \
 	source/install/mac_os_x.rst \
 	source/install/others.rst \
+	source/install/server-use.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
 	source/limitations.rst \
@@ -2407,6 +2410,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
 	source/reference/command/output_format.rst \
+	source/reference/command/output_trace_log.md \
 	source/reference/command/pretty_print.rst \
 	source/reference/command/request_id.rst \
 	source/reference/command/request_timeout.rst \
@@ -2720,6 +2724,7 @@ po_files = \
 	reference/command.po \
 	reference/command/command_version.po \
 	reference/command/output_format.po \
+	reference/command/output_trace_log.po \
 	reference/command/pretty_print.po \
 	reference/command/request_id.po \
 	reference/command/request_timeout.po \
@@ -3031,6 +3036,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command.po \
 	LC_MESSAGES/reference/command/command_version.po \
 	LC_MESSAGES/reference/command/output_format.po \
+	LC_MESSAGES/reference/command/output_trace_log.po \
 	LC_MESSAGES/reference/command/pretty_print.po \
 	LC_MESSAGES/reference/command/request_id.po \
 	LC_MESSAGES/reference/command/request_timeout.po \
@@ -3342,6 +3348,7 @@ edit_po_files = \
 	reference/command.edit \
 	reference/command/command_version.edit \
 	reference/command/output_format.edit \
+	reference/command/output_trace_log.edit \
 	reference/command/pretty_print.edit \
 	reference/command/request_id.edit \
 	reference/command/request_timeout.edit \
@@ -3653,6 +3660,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command.edit \
 	LC_MESSAGES/reference/command/command_version.edit \
 	LC_MESSAGES/reference/command/output_format.edit \
+	LC_MESSAGES/reference/command/output_trace_log.edit \
 	LC_MESSAGES/reference/command/pretty_print.edit \
 	LC_MESSAGES/reference/command/request_id.edit \
 	LC_MESSAGES/reference/command/request_timeout.edit \
@@ -3964,6 +3972,7 @@ mo_files = \
 	reference/command.mo \
 	reference/command/command_version.mo \
 	reference/command/output_format.mo \
+	reference/command/output_trace_log.mo \
 	reference/command/pretty_print.mo \
 	reference/command/request_id.mo \
 	reference/command/request_timeout.mo \
@@ -4275,6 +4284,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command.mo \
 	LC_MESSAGES/reference/command/command_version.mo \
 	LC_MESSAGES/reference/command/output_format.mo \
+	LC_MESSAGES/reference/command/output_trace_log.mo \
 	LC_MESSAGES/reference/command/pretty_print.mo \
 	LC_MESSAGES/reference/command/request_id.mo \
 	LC_MESSAGES/reference/command/request_timeout.mo \
@@ -4622,6 +4632,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
 	html/reference/command/output_format.html \
+	html/reference/command/output_trace_log.html \
 	html/reference/command/pretty_print.html \
 	html/reference/command/request_id.html \
 	html/reference/command/request_timeout.html \

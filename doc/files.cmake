@@ -1033,6 +1033,7 @@ set(GRN_DOC_SOURCES
     install/docker.rst
     install/mac_os_x.rst
     install/others.rst
+    install/server-use.rst
     install/ubuntu.rst
     install/windows.rst
     limitations.rst
@@ -1093,6 +1094,7 @@ set(GRN_DOC_SOURCES
     reference/command.rst
     reference/command/command_version.rst
     reference/command/output_format.rst
+    reference/command/output_trace_log.md
     reference/command/pretty_print.rst
     reference/command/request_id.rst
     reference/command/request_timeout.rst
@@ -1441,6 +1443,7 @@ set(GRN_DOC_HTML_FILES
     reference/command.html
     reference/command/command_version.html
     reference/command/output_format.html
+    reference/command/output_trace_log.html
     reference/command/pretty_print.html
     reference/command/request_id.html
     reference/command/request_timeout.html

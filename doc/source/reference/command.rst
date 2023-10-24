@@ -14,6 +14,7 @@ This section describes about command and built-in commands.
 
    command/command_version
    command/output_format
+   command/output_trace_log
    command/pretty_print
    command/request_id
    command/request_timeout
