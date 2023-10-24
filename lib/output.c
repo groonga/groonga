@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3322,6 +3322,124 @@ grn_output_envelope_close_json_header(grn_ctx *ctx,
   }
   json_map_close(ctx, head, indent_level);
 }
+
+static void
+grn_output_envelope_close_json_trace_log(grn_ctx *ctx,
+                                         grn_obj *head,
+                                         size_t *indent_level)
+{
+  json_value_end(ctx, head, *indent_level);
+  json_key(ctx, head, "trace_log");
+  json_map_open(ctx, head, indent_level);
+  {
+    json_key(ctx, head, "columns");
+    json_array_open(ctx, head, indent_level);
+    {
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "name");
+        grn_text_esc(ctx, head, "depth", strlen("depth"));
+      }
+      json_map_close(ctx, head, indent_level);
+
+      json_element_end(ctx, head, *indent_level);
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "name");
+        grn_text_esc(ctx, head, "sequence", strlen("sequence"));
+      }
+      json_map_close(ctx, head, indent_level);
+
+      json_element_end(ctx, head, *indent_level);
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "name");
+        grn_text_esc(ctx, head, "name", strlen("name"));
+      }
+      json_map_close(ctx, head, indent_level);
+
+      json_element_end(ctx, head, *indent_level);
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "name");
+        grn_text_esc(ctx, head, "value", strlen("value"));
+      }
+      json_map_close(ctx, head, indent_level);
+
+      json_element_end(ctx, head, *indent_level);
+      json_map_open(ctx, head, indent_level);
+      {
+        json_key(ctx, head, "name");
+        grn_text_esc(ctx, head, "elapsed_time", strlen("elapsed_time"));
+      }
+      json_map_close(ctx, head, indent_level);
+    }
+    json_array_close(ctx, head, indent_level);
+
+    json_value_end(ctx, head, *indent_level);
+    json_key(ctx, head, "logs");
+    json_array_open(ctx, head, indent_level);
+    {
+      grn_obj *depths = &(ctx->impl->trace_log.depths);
+      grn_obj *sequences = &(ctx->impl->trace_log.sequences);
+      grn_obj *names = &(ctx->impl->trace_log.names);
+      grn_obj *values = &(ctx->impl->trace_log.values);
+      grn_obj *elapsed_times = &(ctx->impl->trace_log.elapsed_times);
+      uint32_t n_logs = grn_vector_size(ctx, names);
+      uint32_t i;
+      for (i = 0; i < n_logs; i++) {
+        if (i > 0) {
+          json_element_end(ctx, head, *indent_level);
+        }
+        json_array_open(ctx, head, indent_level);
+        {
+          uint16_t depth = GRN_UINT16_VALUE_AT(depths, i);
+          grn_text_ulltoa(ctx, head, depth);
+
+          json_element_end(ctx, head, *indent_level);
+          uint16_t sequence = GRN_UINT16_VALUE_AT(sequences, i);
+          grn_text_ulltoa(ctx, head, sequence);
+
+          json_element_end(ctx, head, *indent_level);
+          const char *name;
+          uint32_t name_size =
+            grn_vector_get_element_float(ctx, names, i, &name, NULL, NULL);
+          grn_text_esc(ctx, head, name, name_size);
+
+          json_element_end(ctx, head, *indent_level);
+          const char *value;
+          grn_id value_domain;
+          uint32_t value_size = grn_vector_get_element_float(ctx,
+                                                             values,
+                                                             i,
+                                                             &value,
+                                                             NULL,
+                                                             &value_domain);
+          switch (value_domain) {
+          case GRN_DB_UINT32:
+            {
+              uint32_t value_uint32 =
+                (value_size == 0) ? 0 : *((const uint32_t *)value);
+              grn_text_ulltoa(ctx, head, value_uint32);
+            }
+            break;
+          default:
+            grn_text_esc(ctx, head, value, value_size);
+            break;
+          }
+
+          json_element_end(ctx, head, *indent_level);
+          uint64_t elapsed_time = GRN_UINT64_VALUE_AT(elapsed_times, i);
+          grn_text_ulltoa(ctx, head, elapsed_time);
+        }
+        json_array_close(ctx, head, indent_level);
+      }
+    }
+    json_array_close(ctx, head, indent_level);
+  }
+  json_map_close(ctx, head, indent_level);
+}
+
 static void
 grn_output_envelope_close_json(grn_ctx *ctx,
                                grn_obj *head,
@@ -3352,6 +3470,10 @@ grn_output_envelope_close_json(grn_ctx *ctx,
                                           file,
                                           line,
                                           &indent_level);
+
+    if (grn_ctx_trace_log_is_enabled(ctx)) {
+      grn_output_envelope_close_json_trace_log(ctx, head, &indent_level);
+    }
 
     if (!is_stream_mode && have_body) {
       json_value_end(ctx, head, indent_level);
@@ -3748,6 +3870,101 @@ grn_output_envelope_close_apache_arrow_metadata(grn_ctx *ctx,
 }
 
 static void
+grn_output_envelope_close_apache_arrow_trace_log(grn_ctx *ctx, grn_obj *output)
+{
+  grn_arrow_stream_writer *writer = grn_arrow_stream_writer_open(ctx, output);
+  if (!writer) {
+    return;
+  }
+
+  grn_arrow_stream_writer_add_metadata(ctx,
+                                       writer,
+                                       "GROONGA:data_type",
+                                       "trace_log");
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "depth",
+                                    grn_ctx_at(ctx, GRN_DB_UINT16));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "sequence",
+                                    grn_ctx_at(ctx, GRN_DB_UINT16));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "name",
+                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  enum value_type {
+    VALUE_TYPE_UINT32,
+    VALUE_TYPE_SHORT_TEXT,
+    N_VALUE_TYPES,
+  };
+  grn_obj *value_types[N_VALUE_TYPES];
+  value_types[VALUE_TYPE_UINT32] = grn_ctx_at(ctx, GRN_DB_UINT32);
+  value_types[VALUE_TYPE_SHORT_TEXT] = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
+  grn_arrow_stream_writer_add_field_union(ctx,
+                                          writer,
+                                          "value",
+                                          value_types,
+                                          N_VALUE_TYPES);
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "elapsed_time",
+                                    grn_ctx_at(ctx, GRN_DB_UINT64));
+  grn_arrow_stream_writer_write_schema(ctx, writer);
+
+  grn_obj *depths = &(ctx->impl->trace_log.depths);
+  grn_obj *sequences = &(ctx->impl->trace_log.sequences);
+  grn_obj *names = &(ctx->impl->trace_log.names);
+  grn_obj *values = &(ctx->impl->trace_log.values);
+  grn_obj *elapsed_times = &(ctx->impl->trace_log.elapsed_times);
+  uint32_t n_logs = grn_vector_size(ctx, names);
+  uint32_t i;
+  for (i = 0; i < n_logs; i++) {
+    grn_arrow_stream_writer_open_record(ctx, writer);
+
+    uint16_t depth = GRN_UINT16_VALUE_AT(depths, i);
+    grn_arrow_stream_writer_add_column_uint16(ctx, writer, depth);
+
+    uint16_t sequence = GRN_UINT16_VALUE_AT(sequences, i);
+    grn_arrow_stream_writer_add_column_uint16(ctx, writer, sequence);
+
+    const char *name;
+    uint32_t name_size =
+      grn_vector_get_element_float(ctx, names, i, &name, NULL, NULL);
+    grn_arrow_stream_writer_add_column_text(ctx, writer, name, name_size);
+
+    const char *value;
+    grn_id value_domain;
+    uint32_t value_size =
+      grn_vector_get_element_float(ctx, values, i, &value, NULL, &value_domain);
+    switch (value_domain) {
+    case GRN_DB_UINT32:
+      {
+        grn_arrow_stream_writer_add_column_union(ctx,
+                                                 writer,
+                                                 VALUE_TYPE_UINT32);
+        uint32_t value_uint32 =
+          (value_size == 0) ? 0 : *((const uint32_t *)value);
+        grn_arrow_stream_writer_add_column_uint32(ctx, writer, value_uint32);
+      }
+      break;
+    default:
+      grn_arrow_stream_writer_add_column_union(ctx,
+                                               writer,
+                                               VALUE_TYPE_SHORT_TEXT);
+      grn_arrow_stream_writer_add_column_text(ctx, writer, value, value_size);
+      break;
+    }
+
+    uint64_t elapsed_time = GRN_UINT64_VALUE_AT(elapsed_times, i);
+    grn_arrow_stream_writer_add_column_uint64(ctx, writer, elapsed_time);
+
+    grn_arrow_stream_writer_close_record(ctx, writer);
+  }
+  grn_arrow_stream_writer_close(ctx, writer);
+}
+
+static void
 grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
                                        grn_obj *output,
                                        grn_rc rc,
@@ -3771,6 +3988,9 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
                                                   elapsed,
                                                   file,
                                                   line);
+  if (grn_ctx_trace_log_is_enabled(ctx)) {
+    grn_output_envelope_close_apache_arrow_trace_log(ctx, output);
+  }
 }
 
 static void

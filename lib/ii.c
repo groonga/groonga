@@ -10694,6 +10694,10 @@ token_info_open(grn_ctx *ctx,
       if (!key) {
         key = _grn_table_key(ctx, data->lexicon, tid, &key_size);
       }
+      grn_ctx_trace_log_emit_string(ctx,
+                                    "ii.select.fuzzy.input",
+                                    key,
+                                    key_size);
       /* TODO: use cursor like EX_PREFIX */
       grn_table_fuzzy_search(ctx,
                              data->lexicon,
@@ -10716,6 +10720,21 @@ token_info_open(grn_ctx *ctx,
                                data->previous_min);
               ti->ntoken++;
               ti->size += s;
+              if (grn_ctx_trace_log_is_enabled(ctx)) {
+                char key[GRN_TABLE_MAX_KEY_SIZE];
+                int key_size;
+                key_size = grn_table_get_key(ctx,
+                                             data->ii->lexicon,
+                                             *tp,
+                                             key,
+                                             GRN_TABLE_MAX_KEY_SIZE);
+                if (key_size != 0) {
+                  grn_ctx_trace_log_emit_string(ctx,
+                                                "ii.select.fuzzy.input.actual",
+                                                key,
+                                                key_size);
+                }
+              }
             }
           });
         }
@@ -15227,17 +15246,25 @@ grn_ii_sel(grn_ctx *ctx,
   if (!s) {
     return GRN_INVALID_ARGUMENT;
   }
+  uint16_t start_depth = grn_ctx_trace_log_get_current_depth(ctx);
+  grn_ctx_trace_log_push(ctx);
+  grn_ctx_trace_log_emit_string(ctx, "ii.select.input", string, string_len);
   {
     grn_select_optarg arg;
     grn_select_optarg_init_by_search_optarg(ctx, &arg, optarg);
     /* todo : support subrec
     grn_rset_init(ctx, s, GRN_REC_DOCUMENT, 0, GRN_REC_NONE, 0, 0);
     */
+    grn_ctx_trace_log_push(ctx);
     if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel() failed!");
-      return ctx->rc;
+      goto exit;
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
+    grn_ctx_trace_log_emit_uint32(ctx,
+                                  "ii.select.exact.n_hits",
+                                  GRN_HASH_SIZE(s));
+    grn_ctx_trace_log_pop(ctx);
     if (op == GRN_OP_OR || ctx->impl->force_match_escalation) {
       grn_id min = GRN_ID_NIL;
       if (((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
@@ -15252,13 +15279,18 @@ grn_ii_sel(grn_ctx *ctx,
             arg.match_info->min = GRN_ID_NIL;
           }
         }
+        grn_ctx_trace_log_push(ctx);
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
                   "grn_ii_select on grn_ii_sel(fuzzy) failed!");
-          return ctx->rc;
+          goto exit;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "fuzzy: %d", GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_emit_uint32(ctx,
+                                      "ii.select.fuzzy.n_hits",
+                                      GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_pop(ctx);
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
             if (min > GRN_ID_NIL && min < arg.match_info->min) {
@@ -15280,9 +15312,13 @@ grn_ii_sel(grn_ctx *ctx,
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
                   "grn_ii_select on grn_ii_sel(unsplit) failed!");
-          return ctx->rc;
+          goto exit;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_emit_uint32(ctx,
+                                      "ii.select.unsplit.n_hits",
+                                      GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_pop(ctx);
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
             if (min > GRN_ID_NIL && min < arg.match_info->min) {
@@ -15300,13 +15336,18 @@ grn_ii_sel(grn_ctx *ctx,
             arg.match_info->min = GRN_ID_NIL;
           }
         }
+        grn_ctx_trace_log_push(ctx);
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
                   "grn_ii_select on grn_ii_sel(partial) failed!");
-          return ctx->rc;
+          goto exit;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "partial: %d", GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_emit_uint32(ctx,
+                                      "ii.select.partial.n_hits",
+                                      GRN_HASH_SIZE(s));
+        grn_ctx_trace_log_pop(ctx);
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
             if (min > GRN_ID_NIL && min < arg.match_info->min) {
@@ -15317,8 +15358,12 @@ grn_ii_sel(grn_ctx *ctx,
       }
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "hits=%d", GRN_HASH_SIZE(s));
-    return GRN_SUCCESS;
+    grn_ctx_trace_log_emit_uint32(ctx, "ii.select.n_hits", GRN_HASH_SIZE(s));
+    grn_ctx_trace_log_pop(ctx);
   }
+exit:
+  grn_ctx_trace_log_set_current_depth(ctx, start_depth);
+  return ctx->rc;
 }
 
 grn_rc

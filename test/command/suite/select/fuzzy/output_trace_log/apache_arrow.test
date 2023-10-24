@@ -1,0 +1,28 @@
+#@require-apache-arrow
+#@require-interface http
+#@require-testee groonga
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenDelimit \
+  --normalizer NormalizerNFKC150
+column_create Lexicon memos_content \
+  COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "これ は ペリカン です"},
+{"content": "これ は パソコン です"},
+{"content": "あれ は ペン ですか"}
+]
+
+select Memos \
+  --match_columns content \
+  --query "パリカン OR ですよ" \
+  --fuzzy_max_distance 2 \
+  --output_columns *,_score \
+  --command_version 3 \
+  --output_trace_log yes \
+  --output_type apache-arrow

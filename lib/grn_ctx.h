@@ -93,6 +93,20 @@ grn_rc grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx);
 
 void grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress);
 
+void grn_ctx_trace_log_enable(grn_ctx *ctx);
+void grn_ctx_trace_log_disable(grn_ctx *ctx);
+uint16_t grn_ctx_trace_log_get_current_depth(grn_ctx *ctx);
+void grn_ctx_trace_log_set_current_depth(grn_ctx *ctx, uint16_t depth);
+void grn_ctx_trace_log_push(grn_ctx *ctx);
+void grn_ctx_trace_log_pop(grn_ctx *ctx);
+void grn_ctx_trace_log_emit_string(grn_ctx *ctx,
+                                   const char *name,
+                                   const char *value,
+                                   size_t value_length);
+void grn_ctx_trace_log_emit_uint32(grn_ctx *ctx,
+                                   const char *name,
+                                   uint32_t n);
+
 grn_content_type grn_get_ctype(grn_obj *var);
 grn_content_type grn_content_type_parse(grn_ctx *ctx,
                                         grn_obj *var,

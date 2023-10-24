@@ -456,6 +456,14 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->progress.callback = NULL;
   ctx->impl->progress.user_data = NULL;
 
+  ctx->impl->trace_log.start_time = 0;
+  GRN_UINT16_INIT(&(ctx->impl->trace_log.depths), GRN_OBJ_VECTOR);
+  GRN_UINT16_INIT(&(ctx->impl->trace_log.sequence_stack), GRN_OBJ_VECTOR);
+  GRN_UINT16_INIT(&(ctx->impl->trace_log.sequences), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(ctx->impl->trace_log.names), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(ctx->impl->trace_log.values), GRN_OBJ_VECTOR);
+  GRN_UINT64_INIT(&(ctx->impl->trace_log.elapsed_times), GRN_OBJ_VECTOR);
+
 exit:
   if (ctx->rc != GRN_SUCCESS) {
     if (ctx->impl->variables) {
@@ -589,6 +597,157 @@ grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress)
   ctx->impl->progress.callback(ctx, progress, ctx->impl->progress.user_data);
 }
 
+void
+grn_ctx_trace_log_enable(grn_ctx *ctx)
+{
+  if (grn_ctx_trace_log_is_enabled(ctx)) {
+    grn_ctx_trace_log_disable(ctx);
+  }
+  grn_timeval now;
+  grn_timeval_now(ctx, &now);
+  ctx->impl->trace_log.start_time = GRN_TIMEVAL_TO_NSEC(&now);
+  GRN_UINT16_PUT(ctx, &(ctx->impl->trace_log.sequence_stack), 0);
+}
+
+void
+grn_ctx_trace_log_disable(grn_ctx *ctx)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  ctx->impl->trace_log.start_time = 0;
+  ctx->impl->trace_log.current_depth = 0;
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.depths));
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.sequence_stack));
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.sequences));
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.names));
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.values));
+  GRN_BULK_REWIND(&(ctx->impl->trace_log.elapsed_times));
+}
+
+uint16_t
+grn_ctx_trace_log_get_current_depth(grn_ctx *ctx)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return 0;
+  }
+  return ctx->impl->trace_log.current_depth;
+}
+
+static inline void
+grn_ctx_trace_log_push_common(grn_ctx *ctx)
+{
+  GRN_UINT16_PUT(ctx, &(ctx->impl->trace_log.sequence_stack), 0);
+}
+
+void
+grn_ctx_trace_log_push(grn_ctx *ctx)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  ctx->impl->trace_log.current_depth++;
+  grn_ctx_trace_log_push_common(ctx);
+}
+
+static inline void
+grn_ctx_trace_log_pop_common(grn_ctx *ctx)
+{
+  uint16_t sequence;
+  GRN_UINT16_POP(&(ctx->impl->trace_log.sequence_stack), sequence);
+}
+
+void
+grn_ctx_trace_log_pop(grn_ctx *ctx)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  ctx->impl->trace_log.current_depth--;
+  grn_ctx_trace_log_pop_common(ctx);
+}
+
+void
+grn_ctx_trace_log_set_current_depth(grn_ctx *ctx, uint16_t depth)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  if (depth == ctx->impl->trace_log.current_depth) {
+    return;
+  }
+  uint16_t i;
+  if (depth > ctx->impl->trace_log.current_depth) {
+    uint16_t n = depth - ctx->impl->trace_log.current_depth;
+    for (i = 0; i < n; i++) {
+      grn_ctx_trace_log_push_common(ctx);
+    }
+  } else {
+    uint16_t n = ctx->impl->trace_log.current_depth - depth;
+    for (i = 0; i < n; i++) {
+      grn_ctx_trace_log_pop_common(ctx);
+    }
+  }
+  ctx->impl->trace_log.current_depth = depth;
+}
+
+static void
+grn_ctx_trace_log_emit_common(grn_ctx *ctx, const char *name)
+{
+  grn_timeval now;
+  grn_timeval_now(ctx, &now);
+  uint64_t elapsed_time =
+    GRN_TIMEVAL_TO_NSEC(&now) - ctx->impl->trace_log.start_time;
+  GRN_UINT16_PUT(ctx,
+                 &(ctx->impl->trace_log.depths),
+                 ctx->impl->trace_log.current_depth);
+  grn_obj *sequence_stack = &(ctx->impl->trace_log.sequence_stack);
+  uint16_t sequence =
+    GRN_UINT16_VALUE_AT(sequence_stack,
+                        GRN_UINT16_VECTOR_SIZE(sequence_stack) - 1)++;
+  GRN_UINT16_PUT(ctx, &(ctx->impl->trace_log.sequences), sequence);
+  grn_vector_add_element_float(ctx,
+                               &(ctx->impl->trace_log.names),
+                               name,
+                               strlen(name),
+                               0.0,
+                               GRN_DB_TEXT);
+  GRN_UINT64_PUT(ctx, &(ctx->impl->trace_log.elapsed_times), elapsed_time);
+}
+
+void
+grn_ctx_trace_log_emit_string(grn_ctx *ctx,
+                              const char *name,
+                              const char *value,
+                              size_t value_length)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  grn_ctx_trace_log_emit_common(ctx, name);
+  grn_vector_add_element_float(ctx,
+                               &(ctx->impl->trace_log.values),
+                               value,
+                               value_length,
+                               0.0,
+                               GRN_DB_TEXT);
+}
+
+void
+grn_ctx_trace_log_emit_uint32(grn_ctx *ctx, const char *name, uint32_t n)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    return;
+  }
+  grn_ctx_trace_log_emit_common(ctx, name);
+  grn_vector_add_element_float(ctx,
+                               &(ctx->impl->trace_log.values),
+                               (const char *)(&n),
+                               sizeof(n),
+                               0.0,
+                               GRN_DB_UINT32);
+}
+
 static void
 grn_ctx_impl_clear_n_same_error_messagges(grn_ctx *ctx)
 {
@@ -673,6 +832,12 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->finalizer) {
     ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
   }
+
+  ctx->impl->trace_log.start_time = 0;
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.depths));
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.names));
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.values));
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.elapsed_times));
 
   {
     while (GRN_PTR_VECTOR_SIZE(&(ctx->impl->children.pool)) > 0) {
@@ -1616,12 +1781,14 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define REQUEST_ID                  "request_id"
 #define REQUEST_TIMEOUT             "request_timeout"
 #define OUTPUT_PRETTY               "output_pretty"
+#define OUTPUT_TRACE_LOG            "output_trace_log"
 #define EXPR_MISSING                "expr_missing"
 #define OUTPUT_TYPE_LEN             (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN         (sizeof(COMMAND_VERSION) - 1)
 #define REQUEST_ID_LEN              (sizeof(REQUEST_ID) - 1)
 #define REQUEST_TIMEOUT_LEN         (sizeof(REQUEST_TIMEOUT) - 1)
 #define OUTPUT_PRETTY_LEN           (sizeof(OUTPUT_PRETTY) - 1)
+#define OUTPUT_TRACE_LOG_LEN        (sizeof(OUTPUT_TRACE_LOG) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
@@ -1698,6 +1865,16 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
             ctx->impl->output.is_pretty = GRN_TRUE;
           } else {
             ctx->impl->output.is_pretty = GRN_FALSE;
+          }
+        } else if (l == OUTPUT_TRACE_LOG_LEN &&
+                   !memcmp(v, OUTPUT_TRACE_LOG, OUTPUT_TRACE_LOG_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
+              !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
+            grn_ctx_trace_log_enable(ctx);
+          } else {
+            grn_ctx_trace_log_disable(ctx);
           }
         } else {
           if (!(val = grn_expr_get_or_add_var(ctx, expr, v, (unsigned int)l))) {
@@ -1810,6 +1987,16 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
             ctx->impl->output.is_pretty = GRN_TRUE;
           } else {
             ctx->impl->output.is_pretty = GRN_FALSE;
+          }
+        } else if (l == OUTPUT_TRACE_LOG_LEN &&
+                   !memcmp(v, OUTPUT_TRACE_LOG, OUTPUT_TRACE_LOG_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+          if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
+              !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
+            grn_ctx_trace_log_enable(ctx);
+          } else {
+            grn_ctx_trace_log_disable(ctx);
           }
         } else if (expr &&
                    (val =
@@ -2012,6 +2199,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       if (processed) {
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_RESULT_CODE, "<", "rc=%d", ctx->rc);
+        grn_ctx_trace_log_disable(ctx);
       }
       if (expr) {
         grn_expr_clear_vars(ctx, expr);

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -210,9 +210,33 @@ struct _grn_ctx_impl {
     grn_progress_callback_func callback;
     void *user_data;
   } progress;
+
+  struct {
+    uint64_t start_time;
+    uint16_t current_depth;
+    grn_obj depths;
+    grn_obj sequence_stack;
+    grn_obj sequences;
+    grn_obj names;
+    grn_obj values;
+    /* in nano seconds */
+    grn_obj elapsed_times;
+  } trace_log;
 };
 
 #define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)
+
+static inline bool
+grn_ctx_trace_log_is_enabled(grn_ctx *ctx)
+{
+  if (!ctx) {
+    return false;
+  }
+  if (!ctx->impl) {
+    return false;
+  }
+  return ctx->impl->trace_log.start_time != 0;
+}
 
 void
 grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
