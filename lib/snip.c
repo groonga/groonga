@@ -23,19 +23,20 @@
 #include "grn_ctx.h"
 
 #if !defined MAX
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #if !defined MIN
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#  define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 static int
 grn_bm_check_euc(const unsigned char *x, const size_t y)
 {
   const unsigned char *p;
-  for (p = x + y - 1; p >= x && *p >= 0x80U; p--);
-  return (int) ((x + y - p) & 1);
+  for (p = x + y - 1; p >= x && *p >= 0x80U; p--)
+    ;
+  return (int)((x + y - p) & 1);
 }
 
 static int
@@ -43,9 +44,8 @@ grn_bm_check_sjis(const unsigned char *x, const size_t y)
 {
   const unsigned char *p;
   for (p = x + y - 1; p >= x; p--)
-    if ((*p < 0x81U) || (*p > 0x9fU && *p < 0xe0U) || (*p > 0xfcU))
-      break;
-  return (int) ((x + y - p) & 1);
+    if ((*p < 0x81U) || (*p > 0x9fU && *p < 0xe0U) || (*p > 0xfcU)) break;
+  return (int)((x + y - p) & 1);
 }
 
 /*
@@ -80,59 +80,64 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
     bmBc[i] = m;
   }
   for (i = 0; i < m - 1; ++i) {
-    bmBc[(unsigned int) x[i]] = m - (i + 1);
+    bmBc[(unsigned int)x[i]] = m - (i + 1);
   }
 }
 
-#define GRN_BM_COMPARE do { \
-  if (string_checks[found]) { \
-    size_t offset = cond->last_offset; \
-    ptrdiff_t found_alpha_head = cond->found_alpha_head; \
-    /* calc real offset */\
-    for (i = cond->last_found; i < found; i++) { \
-      if (string_checks[i] > 0) { \
-        found_alpha_head = i; \
-        offset += (size_t)(string_checks[i]); \
-      } \
-    } \
-    /* if real offset is in a character, move it the head of the character */ \
-    if (string_checks[found] < 0) { \
-      offset -= (size_t)(string_checks[found_alpha_head]); \
-      cond->last_found = found_alpha_head; \
-    } else { \
-      cond->last_found = found; \
-    } \
-    cond->start_offset = cond->last_offset = offset; \
-    if (flags & GRN_SNIP_SKIP_LEADING_SPACES) { \
-      while (cond->start_offset < string_original_length_in_bytes && \
-             (i = grn_isspace(string_original + cond->start_offset, \
-                              string_encoding))) { \
-        cond->start_offset += (size_t)(i); \
-      } \
-    } \
-    for (i = cond->last_found; i < found + m; i++) { \
-      if (string_checks[i] > 0) { \
-        offset += (size_t)(string_checks[i]); \
-      } \
-    } \
-    cond->end_offset = offset; \
-    cond->found = found + shift; \
-    cond->found_alpha_head = found_alpha_head; \
-    /* printf("bm: cond:%p found:%zd last_found:%zd st_off:%zd ed_off:%zd\n", cond, cond->found,cond->last_found,cond->start_offset,cond->end_offset); */ \
-    return; \
-  } \
-} while (0)
+#define GRN_BM_COMPARE                                                         \
+  do {                                                                         \
+    if (string_checks[found]) {                                                \
+      size_t offset = cond->last_offset;                                       \
+      ptrdiff_t found_alpha_head = cond->found_alpha_head;                     \
+      /* calc real offset */                                                   \
+      for (i = cond->last_found; i < found; i++) {                             \
+        if (string_checks[i] > 0) {                                            \
+          found_alpha_head = i;                                                \
+          offset += (size_t)(string_checks[i]);                                \
+        }                                                                      \
+      }                                                                        \
+      /* if real offset is in a character, move it the head of the character   \
+       */                                                                      \
+      if (string_checks[found] < 0) {                                          \
+        offset -= (size_t)(string_checks[found_alpha_head]);                   \
+        cond->last_found = found_alpha_head;                                   \
+      } else {                                                                 \
+        cond->last_found = found;                                              \
+      }                                                                        \
+      cond->start_offset = cond->last_offset = offset;                         \
+      if (flags & GRN_SNIP_SKIP_LEADING_SPACES) {                              \
+        while (cond->start_offset < string_original_length_in_bytes &&         \
+               (i = grn_isspace(string_original + cond->start_offset,          \
+                                string_encoding))) {                           \
+          cond->start_offset += (size_t)(i);                                   \
+        }                                                                      \
+      }                                                                        \
+      for (i = cond->last_found; i < found + m; i++) {                         \
+        if (string_checks[i] > 0) {                                            \
+          offset += (size_t)(string_checks[i]);                                \
+        }                                                                      \
+      }                                                                        \
+      cond->end_offset = offset;                                               \
+      cond->found = found + shift;                                             \
+      cond->found_alpha_head = found_alpha_head;                               \
+      /* printf("bm: cond:%p found:%zd last_found:%zd st_off:%zd               \
+       * ed_off:%zd\n", cond,                                                  \
+       * cond->found,cond->last_found,cond->start_offset,cond->end_offset); */ \
+      return;                                                                  \
+    }                                                                          \
+  } while (0)
 
-#define GRN_BM_BM_COMPARE do { \
-  if (p[-2] == ck) { \
-    for (i = 3; i <= m && p[-(intptr_t)i] == cp[-(intptr_t)i]; ++i) { \
-    } \
-    if (i > m) { \
-      found = p - y - m; \
-      GRN_BM_COMPARE; \
-    } \
-  } \
-} while (0)
+#define GRN_BM_BM_COMPARE                                                      \
+  do {                                                                         \
+    if (p[-2] == ck) {                                                         \
+      for (i = 3; i <= m && p[-(intptr_t)i] == cp[-(intptr_t)i]; ++i) {        \
+      }                                                                        \
+      if (i > m) {                                                             \
+        found = p - y - m;                                                     \
+        GRN_BM_COMPARE;                                                        \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 
 void
 grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
@@ -154,8 +159,10 @@ grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
   const char *string_norm, *keyword_norm;
   unsigned int n, m;
 
-  grn_string_get_original(ctx, string,
-                          &string_original, &string_original_length_in_bytes);
+  grn_string_get_original(ctx,
+                          string,
+                          &string_original,
+                          &string_original_length_in_bytes);
   string_checks = grn_string_get_checks(ctx, string);
   string_encoding = grn_string_get_encoding(ctx, string);
   grn_string_get_normalized(ctx, string, &string_norm, &n, NULL);
@@ -189,19 +196,19 @@ grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
     limit = y + n - 11 * m;
     while (p <= limit) {
       p += bmBc[p[-1]];
-      if(!(delta1 = bmBc[p[-1]])) {
+      if (!(delta1 = bmBc[p[-1]])) {
         goto check;
       }
       p += delta1;
       p += bmBc[p[-1]];
       p += bmBc[p[-1]];
-      if(!(delta1 = bmBc[p[-1]])) {
+      if (!(delta1 = bmBc[p[-1]])) {
         goto check;
       }
       p += delta1;
       p += bmBc[p[-1]];
       p += bmBc[p[-1]];
-      if(!(delta1 = bmBc[p[-1]])) {
+      if (!(delta1 = bmBc[p[-1]])) {
         goto check;
       }
       p += delta1;
@@ -215,7 +222,7 @@ grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
   }
   /* limit check + search */
   limit = y + n;
-  while(p <= limit) {
+  while (p <= limit) {
     if (!(delta1 = bmBc[p[-1]])) {
       GRN_BM_BM_COMPARE;
       p += shift;
@@ -236,13 +243,13 @@ count_mapped_chars(const char *str, const char *end)
     switch (*p) {
     case '<':
     case '>':
-      dl += 4;                  /* &lt; or &gt; */
+      dl += 4; /* &lt; or &gt; */
       break;
     case '&':
-      dl += 5;                  /* &amp; */
+      dl += 5; /* &amp; */
       break;
     case '"':
-      dl += 6;                  /* &quot; */
+      dl += 6; /* &quot; */
       break;
     default:
       dl++;
@@ -265,17 +272,21 @@ grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond)
 }
 
 grn_rc
-grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
-                   grn_encoding enc, grn_obj *normalizer, int flags)
+grn_snip_cond_init(grn_ctx *ctx,
+                   snip_cond *sc,
+                   const char *keyword,
+                   unsigned int keyword_len,
+                   grn_encoding enc,
+                   grn_obj *normalizer,
+                   int flags)
 {
   const char *norm;
   unsigned int norm_blen;
   int f = GRN_STR_REMOVEBLANK;
   memset(sc, 0, sizeof(snip_cond));
-  if (!(sc->keyword = grn_string_open(ctx, keyword, keyword_len,
-                                      normalizer, f))) {
-    GRN_LOG(ctx, GRN_LOG_ALERT,
-            "grn_string_open on snip_cond_init failed!");
+  if (!(sc->keyword =
+          grn_string_open(ctx, keyword, keyword_len, normalizer, f))) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_string_open on snip_cond_init failed!");
     return GRN_NO_MEMORY_AVAILABLE;
   }
   grn_string_get_normalized(ctx, sc->keyword, &norm, &norm_blen, NULL);
@@ -307,22 +318,25 @@ grn_snip_cond_reinit(snip_cond *cond)
 grn_inline static char *
 grn_snip_strndup(grn_ctx *ctx, const char *string, size_t string_len)
 {
-   char *copied_string;
+  char *copied_string;
 
-   copied_string = GRN_MALLOC(string_len + 1);
-   if (!copied_string) {
-     return NULL;
-   }
-   grn_memcpy(copied_string, string, string_len);
-   copied_string[string_len]= '\0'; /* not required, but for ql use */
-   return copied_string;
+  copied_string = GRN_MALLOC(string_len + 1);
+  if (!copied_string) {
+    return NULL;
+  }
+  grn_memcpy(copied_string, string, string_len);
+  copied_string[string_len] = '\0'; /* not required, but for ql use */
+  return copied_string;
 }
 
 grn_inline static grn_rc
 grn_snip_cond_set_tag(grn_ctx *ctx,
-                      const char **dest_tag, size_t *dest_tag_len,
-                      const char *tag, size_t tag_len,
-                      const char *default_tag, size_t default_tag_len,
+                      const char **dest_tag,
+                      size_t *dest_tag_len,
+                      const char *tag,
+                      size_t tag_len,
+                      const char *default_tag,
+                      size_t default_tag_len,
                       int copy_tag)
 {
   if (tag) {
@@ -345,8 +359,7 @@ grn_snip_cond_set_tag(grn_ctx *ctx,
 }
 
 grn_rc
-grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip,
-                        grn_obj *normalizer)
+grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizer)
 {
   grn_snip *snip_;
   if (!snip) {
@@ -407,9 +420,7 @@ grn_snip_set_delimiter_regexp(grn_ctx *ctx,
       snip_->delimiter_pattern_length = (size_t)pattern_length;
     }
     snip_->delimiter_pattern =
-      grn_snip_strndup(ctx,
-                       pattern,
-                       snip_->delimiter_pattern_length);
+      grn_snip_strndup(ctx, pattern, snip_->delimiter_pattern_length);
     if (snip_->delimiter_pattern) {
       snip_->delimiter_regex = grn_onigmo_new(ctx,
                                               pattern,
@@ -423,9 +434,7 @@ grn_snip_set_delimiter_regexp(grn_ctx *ctx,
     snip_->delimiter_pattern = NULL;
   }
 #else
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "%s Onigmo isn't enabled",
-      tag);
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s Onigmo isn't enabled", tag);
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -464,10 +473,14 @@ grn_snip_expand_cond(grn_ctx *ctx, grn_snip *snip)
 }
 
 grn_rc
-grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
-                  const char *keyword, unsigned int keyword_len,
-                  const char *opentag, unsigned int opentag_len,
-                  const char *closetag, unsigned int closetag_len)
+grn_snip_add_cond(grn_ctx *ctx,
+                  grn_obj *snip,
+                  const char *keyword,
+                  unsigned int keyword_len,
+                  const char *opentag,
+                  unsigned int opentag_len,
+                  const char *closetag,
+                  unsigned int closetag_len)
 {
   grn_rc rc;
   int copy_tag;
@@ -488,8 +501,13 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
   }
 
   cond = snip_->cond + snip_->cond_len;
-  rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
-                          snip_->encoding, snip_->normalizer, snip_->flags);
+  rc = grn_snip_cond_init(ctx,
+                          cond,
+                          keyword,
+                          keyword_len,
+                          snip_->encoding,
+                          snip_->normalizer,
+                          snip_->flags);
   if (rc) {
     return rc;
   }
@@ -501,9 +519,12 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
 
   copy_tag = snip_->flags & GRN_SNIP_COPY_TAG;
   rc = grn_snip_cond_set_tag(ctx,
-                             &(cond->opentag), &(cond->opentag_len),
-                             opentag, opentag_len,
-                             snip_->defaultopentag, snip_->defaultopentag_len,
+                             &(cond->opentag),
+                             &(cond->opentag_len),
+                             opentag,
+                             opentag_len,
+                             snip_->defaultopentag,
+                             snip_->defaultopentag_len,
                              copy_tag);
   if (rc) {
     grn_snip_cond_close(ctx, cond);
@@ -511,9 +532,12 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
   }
 
   rc = grn_snip_cond_set_tag(ctx,
-                             &(cond->closetag), &(cond->closetag_len),
-                             closetag, closetag_len,
-                             snip_->defaultclosetag, snip_->defaultclosetag_len,
+                             &(cond->closetag),
+                             &(cond->closetag_len),
+                             closetag,
+                             closetag_len,
+                             snip_->defaultclosetag,
+                             snip_->defaultclosetag_len,
                              copy_tag);
   if (rc) {
     if (opentag && copy_tag) {
@@ -528,16 +552,18 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
 }
 
 static size_t
-grn_snip_find_firstbyte(const char *string, grn_encoding encoding, size_t offset,
+grn_snip_find_firstbyte(const char *string,
+                        grn_encoding encoding,
+                        size_t offset,
                         ssize_t doffset)
 {
   switch (encoding) {
   case GRN_ENC_EUC_JP:
-    while (!(grn_bm_check_euc((unsigned char *) string, offset)))
+    while (!(grn_bm_check_euc((unsigned char *)string, offset)))
       offset = (size_t)((ssize_t)offset + doffset);
     break;
   case GRN_ENC_SJIS:
-    if (!(grn_bm_check_sjis((unsigned char *) string, offset)))
+    if (!(grn_bm_check_sjis((unsigned char *)string, offset)))
       offset = (size_t)((ssize_t)offset + doffset);
     break;
   case GRN_ENC_UTF8:
@@ -552,8 +578,10 @@ grn_snip_find_firstbyte(const char *string, grn_encoding encoding, size_t offset
 
 grn_inline static grn_rc
 grn_snip_set_default_tag(grn_ctx *ctx,
-                         const char **dest_tag, size_t *dest_tag_len,
-                         const char *tag, unsigned int tag_len,
+                         const char **dest_tag,
+                         size_t *dest_tag_len,
+                         const char *tag,
+                         unsigned int tag_len,
                          int copy_tag)
 {
   if (copy_tag && tag) {
@@ -571,10 +599,14 @@ grn_snip_set_default_tag(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
+grn_snip_open(grn_ctx *ctx,
+              int flags,
+              unsigned int width,
               unsigned int max_results,
-              const char *defaultopentag, unsigned int defaultopentag_len,
-              const char *defaultclosetag, unsigned int defaultclosetag_len,
+              const char *defaultopentag,
+              unsigned int defaultopentag_len,
+              const char *defaultclosetag,
+              unsigned int defaultclosetag_len,
               grn_snip_mapping *mapping)
 {
   int copy_tag;
@@ -600,7 +632,8 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   if (grn_snip_set_default_tag(ctx,
                                &(ret->defaultopentag),
                                &(ret->defaultopentag_len),
-                               defaultopentag, defaultopentag_len,
+                               defaultopentag,
+                               defaultopentag_len,
                                copy_tag)) {
     GRN_FREE(ret);
     GRN_API_RETURN(NULL);
@@ -609,7 +642,8 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   if (grn_snip_set_default_tag(ctx,
                                &(ret->defaultclosetag),
                                &(ret->defaultclosetag_len),
-                               defaultclosetag, defaultclosetag_len,
+                               defaultclosetag,
+                               defaultclosetag_len,
                                copy_tag)) {
     if (copy_tag && ret->defaultopentag) {
       GRN_FREE((void *)ret->defaultopentag);
@@ -674,8 +708,8 @@ exec_clean(grn_ctx *ctx, grn_snip *snip)
   }
   snip->tag_count = 0;
   snip->snip_count = 0;
-  for (cond = snip->cond, cond_end = cond + snip->cond_len;
-       cond < cond_end; cond++) {
+  for (cond = snip->cond, cond_end = cond + snip->cond_len; cond < cond_end;
+       cond++) {
     grn_snip_cond_reinit(cond);
   }
   return GRN_SUCCESS;
@@ -685,7 +719,9 @@ grn_rc
 grn_snip_close(grn_ctx *ctx, grn_snip *snip)
 {
   snip_cond *cond, *cond_end;
-  if (!snip) { return GRN_INVALID_ARGUMENT; }
+  if (!snip) {
+    return GRN_INVALID_ARGUMENT;
+  }
   GRN_API_ENTER;
 #ifdef GRN_SUPPORT_REGEXP
   if (snip->delimiter_regex) {
@@ -703,17 +739,25 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
     snip_cond *sc;
     const char *dot = snip->defaultopentag, *dct = snip->defaultclosetag;
     for (i = snip->cond_len, sc = snip->cond; i; i--, sc++) {
-      if (sc->opentag != dot) { GRN_FREE((void *)sc->opentag); }
-      if (sc->closetag != dct) { GRN_FREE((void *)sc->closetag); }
+      if (sc->opentag != dot) {
+        GRN_FREE((void *)sc->opentag);
+      }
+      if (sc->closetag != dct) {
+        GRN_FREE((void *)sc->closetag);
+      }
     }
-    if (dot) { GRN_FREE((void *)dot); }
-    if (dct) { GRN_FREE((void *)dct); }
+    if (dot) {
+      GRN_FREE((void *)dot);
+    }
+    if (dct) {
+      GRN_FREE((void *)dct);
+    }
   }
   if (snip->nstr) {
     grn_obj_close(ctx, snip->nstr);
   }
-  for (cond = snip->cond, cond_end = cond + snip->cond_len;
-       cond < cond_end; cond++) {
+  for (cond = snip->cond, cond_end = cond + snip->cond_len; cond < cond_end;
+       cond++) {
     grn_snip_cond_close(ctx, cond);
   }
   GRN_FREE(snip->cond);
@@ -722,12 +766,16 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
 }
 
 grn_rc
-grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int string_len,
-              unsigned int *nresults, unsigned int *max_tagged_len)
+grn_snip_exec(grn_ctx *ctx,
+              grn_obj *snip,
+              const char *string,
+              unsigned int string_len,
+              unsigned int *nresults,
+              unsigned int *max_tagged_len)
 {
   size_t i;
   grn_snip *snip_;
-  int f = GRN_STR_WITH_CHECKS|GRN_STR_REMOVEBLANK;
+  int f = GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK;
   if (!snip || !string || !nresults || !max_tagged_len) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -758,7 +806,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
       snip_result->tag_count = 0;
 
       while (1) {
-        size_t min_start_offset = (size_t) -1;
+        size_t min_start_offset = (size_t)-1;
         size_t max_end_offset = 0;
         snip_cond *cond = NULL;
 
@@ -778,14 +826,17 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
         }
         /* check whether condition is the first condition in snippet */
         if (snip_result->tag_count == 0) {
-          /* skip condition if the number of rest snippet field is smaller than */
+          /* skip condition if the number of rest snippet field is smaller than
+           */
           /* the number of unfound keywords. */
-          if (snip_->max_results - *nresults <= unfound_cond_count && cond->count > 0) {
+          if (snip_->max_results - *nresults <= unfound_cond_count &&
+              cond->count > 0) {
             bool exclude_other_cond = true;
             for (i = 0; i < snip_->cond_len; i++) {
-              if ((snip_->cond + i) != cond
-                  && snip_->cond[i].end_offset <= cond->start_offset + snip_->width
-                  && snip_->cond[i].count == 0) {
+              if ((snip_->cond + i) != cond &&
+                  snip_->cond[i].end_offset <=
+                    cond->start_offset + snip_->width &&
+                  snip_->cond[i].count == 0) {
                 exclude_other_cond = false;
                 break;
               }
@@ -800,15 +851,16 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
         } else {
 #ifdef GRN_SUPPORT_REGEXP
           if (snip_->delimiter_regex) {
-            size_t range_offset = MIN(snip_result->start_offset + snip_->width,
-                                      cond->start_offset);
-            OnigPosition position = onig_search(snip_->delimiter_regex,
-                                                string,
-                                                string + string_len,
-                                                string + snip_result->start_offset,
-                                                string + range_offset,
-                                                NULL,
-                                                ONIG_OPTION_NONE);
+            size_t range_offset =
+              MIN(snip_result->start_offset + snip_->width, cond->start_offset);
+            OnigPosition position =
+              onig_search(snip_->delimiter_regex,
+                          string,
+                          string + string_len,
+                          string + snip_result->start_offset,
+                          string + range_offset,
+                          NULL,
+                          ONIG_OPTION_NONE);
             if (position != ONIG_MISMATCH) {
               break;
             }
@@ -971,11 +1023,10 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
             } else {
               start_offset_min = match_start_offset - pre_width;
             }
-            start_offset_min =
-              grn_snip_find_firstbyte(string,
-                                      snip_->encoding,
-                                      start_offset_min,
-                                      1);
+            start_offset_min = grn_snip_find_firstbyte(string,
+                                                       snip_->encoding,
+                                                       start_offset_min,
+                                                       1);
           }
 #ifdef GRN_SUPPORT_REGEXP
           if (snip_->delimiter_regex) {
@@ -995,11 +1046,10 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
           }
 #endif
           start_offset_min = MAX(start_offset_min, last_last_end_offset);
-          snip_result->start_offset =
-            grn_snip_find_firstbyte(string,
-                                    snip_->encoding,
-                                    start_offset_min,
-                                    1);
+          snip_result->start_offset = grn_snip_find_firstbyte(string,
+                                                              snip_->encoding,
+                                                              start_offset_min,
+                                                              1);
         }
 
         {
@@ -1013,11 +1063,10 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
             if (end_offset_max >= string_len) {
               valid_end_offset_max = string_len;
             } else {
-              valid_end_offset_max =
-                grn_snip_find_firstbyte(string,
-                                        snip_->encoding,
-                                        end_offset_max,
-                                        -1);
+              valid_end_offset_max = grn_snip_find_firstbyte(string,
+                                                             snip_->encoding,
+                                                             end_offset_max,
+                                                             -1);
             }
             OnigRegion region;
             onig_region_init(&region);
@@ -1037,20 +1086,19 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
           if (end_offset_max >= string_len) {
             snip_result->end_offset = string_len;
           } else {
-            snip_result->end_offset =
-              grn_snip_find_firstbyte(string,
-                                      snip_->encoding,
-                                      end_offset_max,
-                                      -1);
+            snip_result->end_offset = grn_snip_find_firstbyte(string,
+                                                              snip_->encoding,
+                                                              end_offset_max,
+                                                              -1);
           }
         }
       }
       last_last_end_offset = snip_result->end_offset;
 
       if (snip_->mapping == GRN_SNIP_MAPPING_HTML_ESCAPE) {
-        tagged_len +=
-          count_mapped_chars(&string[snip_result->start_offset],
-                             &string[snip_result->end_offset]) + 1;
+        tagged_len += count_mapped_chars(&string[snip_result->start_offset],
+                                         &string[snip_result->end_offset]) +
+                      1;
       } else {
         tagged_len += snip_result->end_offset - snip_result->start_offset + 1;
       }
@@ -1061,7 +1109,8 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
       (*nresults)++;
       snip_result++;
 
-      if (*nresults == snip_->max_results || snip_->tag_count == MAX_SNIP_TAG_COUNT) {
+      if (*nresults == snip_->max_results ||
+          snip_->tag_count == MAX_SNIP_TAG_COUNT) {
         break;
       }
       for (i = 0; i < snip_->cond_len; i++) {
@@ -1084,7 +1133,11 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
 }
 
 grn_rc
-grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned int index, char *result, unsigned int *result_len)
+grn_snip_get_result(grn_ctx *ctx,
+                    grn_obj *snip,
+                    const unsigned int index,
+                    char *result,
+                    unsigned int *result_len)
 {
   char *p;
   size_t i, j, k;
@@ -1102,7 +1155,9 @@ grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned int index, char 
   sres = &snip_->snip_result[index];
   j = sres->first_tag_result_idx;
   for (p = result, i = sres->start_offset; i < sres->end_offset; i++) {
-    for (; j <= sres->last_tag_result_idx && snip_->tag_result[j].start_offset == i; j++) {
+    for (; j <= sres->last_tag_result_idx &&
+           snip_->tag_result[j].start_offset == i;
+         j++) {
       if (snip_->tag_result[j].end_offset > sres->end_offset) {
         continue;
       }
@@ -1150,7 +1205,8 @@ grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned int index, char 
     }
 
     for (k = sres->last_tag_result_idx;
-         snip_->tag_result[k].end_offset <= sres->end_offset; k--) {
+         snip_->tag_result[k].end_offset <= sres->end_offset;
+         k--) {
       /* TODO: avoid all loop */
       if (snip_->tag_result[k].end_offset == i + 1) {
         grn_memcpy(p,
@@ -1165,7 +1221,9 @@ grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned int index, char 
   }
   *p = '\0';
 
-  if(result_len) { *result_len = (unsigned int)(p - result); }
+  if (result_len) {
+    *result_len = (unsigned int)(p - result);
+  }
   GRN_ASSERT((unsigned int)(p - result) <= snip_->max_tagged_len);
 
   GRN_API_RETURN(ctx->rc);

@@ -60,6 +60,7 @@ repos:
           ?lib/proc/proc_query\.c|
           ?lib/proc/proc_select\.cpp|
           ?lib/proc\.c|
+          ?lib/snip\.c|
           ?lib/store\.c|
           ?lib/str\.c|
           ?lib/table_selector\.c|
