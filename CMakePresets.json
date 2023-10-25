@@ -25,6 +25,18 @@
         "GRN_WITH_DOC": "ON",
         "GRN_WITH_MRUBY": "ON"
       }
+    },
+    {
+      "name": "memory-debug",
+      "displayName": "For memory debug",
+      "inherits": ["base"],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "ON",
+        "GRN_WITH_MEMORY_DEBUG": "ON",
+        "GRN_WITH_MRUBY": "ON"
+      }
     }
   ]
 }
