@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -6191,30 +6191,46 @@ grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
                                            grn_obj *vector,
                                            grn_obj *expanded_term)
 {
-  unsigned int i, n;
+  uint32_t i, n;
   n = grn_vector_size(ctx, vector);
-  if (n > 1) {
-    GRN_TEXT_PUTC(ctx, expanded_term, '(');
-  }
+  uint32_t target_n = 0;
   for (i = 0; i < n; i++) {
     const char *value;
     unsigned int length;
-    if (i > 0) {
+    grn_id domain;
+    length = grn_vector_get_element(ctx, vector, i, &value, NULL, &domain);
+    if (grn_type_id_is_text_family(ctx, domain)) {
+      target_n++;
+    }
+  }
+  if (target_n > 1) {
+    GRN_TEXT_PUTC(ctx, expanded_term, '(');
+  }
+  uint32_t target_i = 0;
+  for (i = 0; i < n; i++) {
+    const char *value;
+    unsigned int length;
+    grn_id domain;
+    length = grn_vector_get_element(ctx, vector, i, &value, NULL, &domain);
+    if (!grn_type_id_is_text_family(ctx, domain)) {
+      continue;
+    }
+    if (target_i > 0) {
       GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
     }
-    if (n > 1) {
+    if (target_n > 1) {
       GRN_TEXT_PUTC(ctx, expanded_term, '(');
     }
-    length = grn_vector_get_element(ctx, vector, i, &value, NULL, NULL);
     GRN_TEXT_PUT(ctx, expanded_term, value, length);
-    if (n > 1) {
+    if (target_n > 1) {
       GRN_TEXT_PUTC(ctx, expanded_term, ')');
     }
+    target_i++;
   }
-  if (n > 1) {
+  if (target_n > 1) {
     GRN_TEXT_PUTC(ctx, expanded_term, ')');
   }
-  return i == 0 ? GRN_END_OF_DATA : GRN_SUCCESS;
+  return target_i == 0 ? GRN_END_OF_DATA : GRN_SUCCESS;
 }
 
 typedef struct {
@@ -6242,7 +6258,26 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
   }
 
   grn_obj *column = data->column;
-  if (grn_obj_is_vector_column(ctx, column)) {
+  if (!column) {
+    grn_obj *value =
+      (grn_obj *)(grn_hash_get_value_(ctx, (grn_hash *)table, id, NULL));
+    if (!value) {
+      return GRN_END_OF_DATA;
+    }
+    if (grn_obj_is_vector(ctx, value)) {
+      return grn_expr_syntax_expand_term_by_text_vector(ctx,
+                                                        value,
+                                                        expanded_term);
+    } else if (grn_obj_is_text_family_bulk(ctx, value)) {
+      GRN_TEXT_SET(ctx,
+                   expanded_term,
+                   GRN_TEXT_VALUE(value),
+                   GRN_TEXT_LEN(value));
+      return GRN_SUCCESS;
+    } else {
+      return GRN_END_OF_DATA;
+    }
+  } else if (grn_obj_is_vector_column(ctx, column)) {
     grn_obj values;
     GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
     grn_obj_get_value(ctx, column, id, &values);
@@ -6723,6 +6758,35 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
       if (data.representative_column) {
         grn_obj_unref(ctx, data.representative_column);
       }
+    }
+    break;
+  case GRN_TABLE_HASH_KEY:
+    {
+      /* Object literal for query():
+       * query("...", {"expander": {"key": ["v1", "v2", ...], ...}}) */
+      if (!(DB_OBJ(expander)->range == GRN_ID_NIL &&
+            ((grn_hash *)expander)->value_size == sizeof(grn_obj))) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[query][expand][table] value must be grn_obj");
+        goto exit;
+      }
+
+      grn_user_data user_data;
+      grn_expr_syntax_expand_term_by_column_data data;
+      user_data.ptr = &data;
+      data.table = expander;
+      data.column = NULL;
+      data.representative_column = NULL;
+      data.representative_column_section = 0;
+      data.group_column = NULL;
+      data.group_column_section = 0;
+      grn_expr_syntax_expand_query_terms(ctx,
+                                         query,
+                                         query_size,
+                                         flags,
+                                         expanded_query,
+                                         grn_expr_syntax_expand_term_by_column,
+                                         &user_data);
     }
     break;
   default:

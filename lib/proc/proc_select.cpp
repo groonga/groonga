@@ -2445,8 +2445,7 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                              const char *query,
                              unsigned int query_len,
                              grn_expr_flags flags,
-                             const char *query_expander_name,
-                             unsigned int query_expander_name_len,
+                             grn_obj *query_expander,
                              const char *term_column_name,
                              unsigned int term_column_name_len,
                              const char *expanded_term_column_name,
@@ -2454,18 +2453,20 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                              grn_obj *expanded_query,
                              const char *error_message_tag)
 {
-  grn_obj *query_expander;
-
-  query_expander =
-    grn_ctx_get(ctx, query_expander_name, query_expander_name_len);
-  if (!query_expander) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s nonexistent query expander: <%.*s>",
-                     error_message_tag,
-                     (int)query_expander_name_len,
-                     query_expander_name);
-    return ctx->rc;
+  if (grn_obj_is_text_family_bulk(ctx, query_expander)) {
+    const char *query_expander_name = GRN_TEXT_VALUE(query_expander);
+    size_t query_expander_name_len = GRN_TEXT_LEN(query_expander);
+    query_expander =
+      grn_ctx_get(ctx, query_expander_name, query_expander_name_len);
+    if (!query_expander) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s nonexistent query expander: <%.*s>",
+                       error_message_tag,
+                       (int)query_expander_name_len,
+                       query_expander_name);
+      return ctx->rc;
+    }
   }
 
   if (expanded_term_column_name_len == 0) {
@@ -3063,19 +3064,25 @@ grn_filter_execute(grn_ctx *ctx,
 
       GRN_TEXT_INIT(&query_expander_buf, 0);
       if (filter->query_expander.length > 0) {
+        grn_obj query_expander_name;
+        GRN_TEXT_INIT(&query_expander_name, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx,
+                     &query_expander_name,
+                     filter->query_expander.value,
+                     filter->query_expander.length);
         grn_rc rc;
         rc = grn_proc_syntax_expand_query(ctx,
                                           filter->query.value,
                                           filter->query.length,
                                           flags,
-                                          filter->query_expander.value,
-                                          filter->query_expander.length,
+                                          &query_expander_name,
                                           NULL,
                                           0,
                                           NULL,
                                           0,
                                           &query_expander_buf,
                                           log_tag_prefix);
+        GRN_OBJ_FIN(ctx, &query_expander_name);
         if (rc == GRN_SUCCESS) {
           query = GRN_TEXT_VALUE(&query_expander_buf);
           query_len = GRN_TEXT_LEN(&query_expander_buf);

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,7 @@ namespace {
         selector_data_(selector_data),
         tag_(tag),
         match_columns_raw_(nullptr),
-        query_expander_name_(nullptr),
+        query_expander_(nullptr),
         query_options_(nullptr),
         default_mode_(GRN_OP_MATCH),
         default_operator_(GRN_OP_AND),
@@ -108,6 +108,9 @@ namespace {
 
     virtual ~BaseQueryExecutor()
     {
+      if (query_expander_ && grn_obj_is_accessor(ctx_, query_expander_)) {
+        grn_obj_close(ctx_, query_expander_);
+      }
       if (match_columns_) {
         grn_obj_close(ctx_, match_columns_);
       }
@@ -210,10 +213,10 @@ namespace {
     {
       grn_obj *query_options_ptr = NULL;
 #define OPTIONS                                                                \
-  "expander", GRN_PROC_OPTION_VALUE_RAW, &query_expander_name_,                \
-    "default_mode", GRN_PROC_OPTION_VALUE_MODE, &default_mode_,                \
-    "default_operator", GRN_PROC_OPTION_VALUE_OPERATOR, &default_operator_,    \
-    "flags", GRN_PROC_OPTION_VALUE_EXPR_FLAGS, &flags_specified_, "options",   \
+  "expander", GRN_PROC_OPTION_VALUE_RAW, &query_expander_, "default_mode",     \
+    GRN_PROC_OPTION_VALUE_MODE, &default_mode_, "default_operator",            \
+    GRN_PROC_OPTION_VALUE_OPERATOR, &default_operator_, "flags",               \
+    GRN_PROC_OPTION_VALUE_EXPR_FLAGS, &flags_specified_, "options",            \
     GRN_PROC_OPTION_VALUE_RAW, &query_options_ptr, "enough_filtered_ratio",    \
     GRN_PROC_OPTION_VALUE_DOUBLE, &enough_filtered_ratio_,                     \
     "max_n_enough_filtered_records", GRN_PROC_OPTION_VALUE_INT64,              \
@@ -232,17 +235,22 @@ namespace {
       if (ctx_->rc != GRN_SUCCESS) {
         return false;
       }
-      if (query_expander_name_ &&
-          !grn_obj_is_text_family_bulk(ctx_, query_expander_name_)) {
-        grn::TextBulk inspected(ctx_);
-        grn_inspect(ctx_, *inspected, query_expander_name_);
-        GRN_PLUGIN_ERROR(ctx_,
-                         GRN_INVALID_ARGUMENT,
-                         "%s query expander name must be string: <%.*s>",
-                         tag_,
-                         (int)GRN_TEXT_LEN(*inspected),
-                         GRN_TEXT_VALUE(*inspected));
-        return false;
+      if (query_expander_) {
+        if (query_expander_->header.type == GRN_PTR) {
+          query_expander_ = GRN_PTR_VALUE(query_expander_);
+        }
+        if (!(grn_obj_is_text_family_bulk(ctx_, query_expander_) ||
+              query_expander_->header.type == GRN_TABLE_HASH_KEY)) {
+          grn::TextBulk inspected(ctx_);
+          grn_inspect(ctx_, *inspected, query_expander_);
+          GRN_PLUGIN_ERROR(ctx_,
+                           GRN_INVALID_ARGUMENT,
+                           "%s expander must be string or table: <%.*s>",
+                           tag_,
+                           (int)GRN_TEXT_LEN(*inspected),
+                           GRN_TEXT_VALUE(*inspected));
+          return false;
+        }
       }
       if (query_options_ptr) {
         query_options_ = GRN_PTR_VALUE(query_options_ptr);
@@ -346,7 +354,13 @@ namespace {
     bool
     expand_query(grn_obj *query, grn::TextBulk &expanded_query)
     {
-      if (!query_expander_name_ || GRN_TEXT_LEN(query_expander_name_) == 0) {
+      bool valid_query_expander = true;
+      if (!query_expander_) {
+        valid_query_expander = false;
+      } else if (grn_obj_is_text_family_bulk(ctx_, query_expander_)) {
+        valid_query_expander = (GRN_TEXT_LEN(query_expander_) > 0);
+      }
+      if (!valid_query_expander) {
         GRN_TEXT_SET(ctx_,
                      *expanded_query,
                      GRN_TEXT_VALUE(query),
@@ -357,8 +371,7 @@ namespace {
                                    GRN_TEXT_VALUE(query),
                                    GRN_TEXT_LEN(query),
                                    flags_,
-                                   GRN_TEXT_VALUE(query_expander_name_),
-                                   GRN_TEXT_LEN(query_expander_name_),
+                                   query_expander_,
                                    NULL,
                                    0,
                                    NULL,
@@ -505,7 +518,7 @@ namespace {
     const char *tag_;
 
     grn_obj *match_columns_raw_;
-    grn_obj *query_expander_name_;
+    grn_obj *query_expander_;
     grn_obj *query_options_;
     grn_operator default_mode_;
     grn_operator default_operator_;
@@ -550,7 +563,7 @@ namespace {
         grn_obj *options = args_[2];
         switch (options->header.type) {
         case GRN_BULK:
-          query_expander_name_ = options;
+          query_expander_ = options;
           break;
         case GRN_TABLE_HASH_KEY:
           if (!parse_options(options)) {
@@ -1184,8 +1197,7 @@ command_query_expand(grn_ctx *ctx,
                      grn_obj **args,
                      grn_user_data *user_data)
 {
-  const char *expander;
-  size_t expander_size;
+  grn_obj *expander;
   const char *query;
   size_t query_size;
   const char *flags_raw;
@@ -1197,11 +1209,7 @@ command_query_expand(grn_ctx *ctx,
   size_t expanded_term_column_size;
   grn_obj expanded_query;
 
-  expander = grn_plugin_proc_get_var_string(ctx,
-                                            user_data,
-                                            "expander",
-                                            -1,
-                                            &expander_size);
+  expander = grn_plugin_proc_get_var(ctx, user_data, "expander", -1);
   query =
     grn_plugin_proc_get_var_string(ctx, user_data, "query", -1, &query_size);
   flags_raw = grn_plugin_proc_get_var_string(ctx,
@@ -1241,7 +1249,6 @@ command_query_expand(grn_ctx *ctx,
                                query_size,
                                flags,
                                expander,
-                               expander_size,
                                term_column,
                                term_column_size,
                                expanded_term_column,
