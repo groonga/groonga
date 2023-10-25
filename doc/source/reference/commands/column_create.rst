@@ -1237,7 +1237,8 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------| 
           | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   | 
 
-       ``Float`` / ``Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。
+       ``Float`` / ``Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。
 
    * - ``COMPRESS_FILTER_BYTE_DELTA``
      - .. versionadded:: 13.0.8
@@ -1264,7 +1265,8 @@ Here are available flags:
        ただ、差分を計算しても同じ値が連続しなかったり、差分自体が大きい値になる場合でも、 ``COMPRESS_FILTER_SHUFFLE`` を合わせて使うことで
        圧縮率を向上させられるケースもあります。
 
-       例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。このデータでは同じ値は連続しませんし、差分自体も大きい値です。
+       例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。
+       このデータでは同じ値は連続しませんし、差分自体も大きい値です。
 
        しかし、このデータに ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようになります。
        説明のため、まず以下のように ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` をリトルエンディアンのバイト列で表現します。
