@@ -15238,6 +15238,9 @@ grn_ii_sel(grn_ctx *ctx,
   uint16_t start_depth = grn_ctx_trace_log_get_current_depth(ctx);
   grn_ctx_trace_log_push(ctx);
   grn_ctx_trace_log_emit_string(ctx, "ii.select.input", string, string_len);
+  grn_ctx_trace_log_emit_cstring(ctx,
+                                 "ii.select.operator",
+                                 grn_operator_to_string(op));
   {
     grn_select_optarg arg;
     grn_select_optarg_init_by_search_optarg(ctx, &arg, optarg);
