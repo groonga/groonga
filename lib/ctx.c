@@ -881,6 +881,8 @@ grn_ctx_impl_fin(grn_ctx *ctx)
 
   ctx->impl->trace_log.start_time = 0;
   GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.depths));
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.sequence_stack));
+  GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.sequences));
   GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.names));
   GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.values));
   GRN_OBJ_FIN(ctx, &(ctx->impl->trace_log.elapsed_times));
