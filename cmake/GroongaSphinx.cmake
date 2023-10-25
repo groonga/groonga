@@ -21,8 +21,10 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
     list(APPEND ALL_ABSOLUTE_SOURCES ${SOURCE_DIR}/${SOURCE})
     if("${SOURCE}" STREQUAL "conf.py")
       # target
-    elseif("${SOURCE}" STREQUAL "install/server-use.rst"
-           OR "${SOURCE}" STREQUAL "reference/scoring_note.rst")
+    elseif(
+      "${SOURCE}" STREQUAL "install/server-use.rst"
+      OR "${SOURCE}" STREQUAL "reference/commands/compress_filter.rst"
+      OR "${SOURCE}" STREQUAL "reference/scoring_note.rst")
       # not target
       continue()
     elseif(NOT "${SOURCE}" MATCHES "\\.(rst|md)\$")

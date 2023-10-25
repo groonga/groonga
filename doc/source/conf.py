@@ -105,6 +105,7 @@ except:
 exclude_patterns = [
   '**/.#*',
   'install/server-use.rst',
+  'reference/commands/compress_filter.rst',
   'reference/scoring_note.rst',
 ]
 
