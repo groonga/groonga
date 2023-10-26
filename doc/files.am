@@ -1113,6 +1113,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_rename.rst \
+	$(top_srcdir)/doc/source/reference/commands/compress_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_get.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_set.rst \
@@ -2429,6 +2430,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
 	source/reference/commands/column_rename.rst \
+	source/reference/commands/compress_filter.rst \
 	source/reference/commands/config_delete.rst \
 	source/reference/commands/config_get.rst \
 	source/reference/commands/config_set.rst \
