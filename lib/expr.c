@@ -6152,19 +6152,32 @@ grn_expr_parser_close(grn_ctx *ctx)
 
 typedef grn_rc (*grn_expr_syntax_expand_term_func)(grn_ctx *ctx,
                                                    const char *term,
-                                                   unsigned int term_len,
+                                                   size_t term_len,
+                                                   grn_operator mode,
                                                    grn_obj *substituted_term,
-                                                   grn_user_data *user_data);
+                                                   void *data);
+
+typedef struct {
+  const char *query;
+  size_t query_size;
+  grn_expr_flags flags;
+  grn_obj *expanded_query;
+  grn_expr_syntax_expand_term_func expand_term_func;
+  void *expand_term_func_data;
+} grn_expr_syntax_expand_query_data;
+
 static grn_rc
 grn_expr_syntax_expand_term_by_func(grn_ctx *ctx,
                                     const char *term,
-                                    unsigned int term_len,
+                                    size_t term_len,
+                                    grn_operator mode,
                                     grn_obj *expanded_term,
-                                    grn_user_data *user_data)
+                                    void *data)
 {
   grn_rc rc;
-  grn_obj *expander = user_data->ptr;
+  grn_obj *expander = data;
   grn_obj grn_term;
+  grn_obj grn_mode;
   grn_obj *caller;
   grn_obj *rc_object;
   int nargs = 0;
@@ -6175,9 +6188,14 @@ grn_expr_syntax_expand_term_by_func(grn_ctx *ctx,
   nargs++;
   grn_ctx_push(ctx, expanded_term);
   nargs++;
+  GRN_UINT32_INIT(&grn_mode, 0);
+  GRN_UINT32_SET(ctx, &grn_mode, mode);
+  grn_ctx_push(ctx, &grn_mode);
+  nargs++;
 
   caller = grn_expr_create(ctx, NULL, 0);
   rc = grn_proc_call(ctx, expander, nargs, caller);
+  GRN_OBJ_FIN(ctx, &grn_mode);
   GRN_OBJ_FIN(ctx, &grn_term);
   rc_object = grn_ctx_pop(ctx);
   rc = GRN_INT32_VALUE(rc_object);
@@ -6186,11 +6204,39 @@ grn_expr_syntax_expand_term_by_func(grn_ctx *ctx,
   return rc;
 }
 
+static void
+grn_expr_syntax_expand_term_phrase_product(grn_ctx *ctx,
+                                           const char *term,
+                                           size_t term_len,
+                                           grn_obj *expanded_term)
+{
+  /* In quote and paren:
+   * *NPP:"(...HERE...) (...HERE...) ..."
+   * *NPPP:"(...HERE...) (...HERE...) ..."
+   */
+  const char target_characters[] = {
+    GRN_QUERY_PARENL,
+    GRN_QUERY_PARENR,
+    GRN_QUERY_QUOTEL,
+    GRN_QUERY_ESCAPE,
+    '\0',
+  };
+  grn_expr_syntax_escape(ctx,
+                         term,
+                         term_len,
+                         target_characters,
+                         GRN_QUERY_ESCAPE,
+                         expanded_term);
+}
+
 static grn_rc
 grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
                                            grn_obj *vector,
+                                           grn_operator mode,
                                            grn_obj *expanded_term)
 {
+  bool is_phrase_product = (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
+                            mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT);
   uint32_t i, n;
   n = grn_vector_size(ctx, vector);
   uint32_t target_n = 0;
@@ -6203,7 +6249,7 @@ grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
       target_n++;
     }
   }
-  if (target_n > 1) {
+  if (!is_phrase_product && target_n > 1) {
     GRN_TEXT_PUTC(ctx, expanded_term, '(');
   }
   uint32_t target_i = 0;
@@ -6216,18 +6262,29 @@ grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
       continue;
     }
     if (target_i > 0) {
-      GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
+      if (is_phrase_product) {
+        GRN_TEXT_PUTS(ctx, expanded_term, " ");
+      } else {
+        GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
+      }
     }
-    if (target_n > 1) {
+    if (!is_phrase_product && target_n > 1) {
       GRN_TEXT_PUTC(ctx, expanded_term, '(');
     }
-    GRN_TEXT_PUT(ctx, expanded_term, value, length);
-    if (target_n > 1) {
+    if (is_phrase_product) {
+      grn_expr_syntax_expand_term_phrase_product(ctx,
+                                                 value,
+                                                 length,
+                                                 expanded_term);
+    } else {
+      GRN_TEXT_PUT(ctx, expanded_term, value, length);
+    }
+    if (!is_phrase_product && target_n > 1) {
       GRN_TEXT_PUTC(ctx, expanded_term, ')');
     }
     target_i++;
   }
-  if (target_n > 1) {
+  if (!is_phrase_product && target_n > 1) {
     GRN_TEXT_PUTC(ctx, expanded_term, ')');
   }
   return target_i == 0 ? GRN_END_OF_DATA : GRN_SUCCESS;
@@ -6245,19 +6302,20 @@ typedef struct {
 static grn_rc
 grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
                                       const char *term,
-                                      unsigned int term_len,
+                                      size_t term_len,
+                                      grn_operator mode,
                                       grn_obj *expanded_term,
-                                      grn_user_data *user_data)
+                                      void *data)
 {
-  grn_expr_syntax_expand_term_by_column_data *data = user_data->ptr;
+  grn_expr_syntax_expand_term_by_column_data *column_data = data;
 
-  grn_obj *table = data->table;
+  grn_obj *table = column_data->table;
   grn_id id = grn_table_get(ctx, table, term, term_len);
   if (id == GRN_ID_NIL) {
     return GRN_END_OF_DATA;
   }
 
-  grn_obj *column = data->column;
+  grn_obj *column = column_data->column;
   if (!column) {
     grn_obj *value =
       (grn_obj *)(grn_hash_get_value_(ctx, (grn_hash *)table, id, NULL));
@@ -6267,6 +6325,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
     if (grn_obj_is_vector(ctx, value)) {
       return grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                         value,
+                                                        mode,
                                                         expanded_term);
     } else if (grn_obj_is_text_family_bulk(ctx, value)) {
       GRN_TEXT_SET(ctx,
@@ -6281,16 +6340,18 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
     grn_obj values;
     GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
     grn_obj_get_value(ctx, column, id, &values);
-    grn_rc rc =
-      grn_expr_syntax_expand_term_by_text_vector(ctx, &values, expanded_term);
+    grn_rc rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
+                                                           &values,
+                                                           mode,
+                                                           expanded_term);
     GRN_OBJ_FIN(ctx, &values);
     return rc;
   } else if (grn_obj_is_index_column(ctx, column)) {
-    if (data->representative_column) {
+    if (column_data->representative_column) {
       grn_obj representative_term;
       GRN_RECORD_INIT(&representative_term, 0, DB_OBJ(column)->range);
       grn_obj_get_value(ctx,
-                        data->representative_column,
+                        column_data->representative_column,
                         id,
                         &representative_term);
       grn_id representative_term_id = GRN_ID_NIL;
@@ -6312,9 +6373,10 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
         grn_obj_close(ctx, index_cursor);
         return rc;
       }
-      rc = grn_index_cursor_set_section_id(ctx,
-                                           index_cursor,
-                                           data->representative_column_section);
+      rc = grn_index_cursor_set_section_id(
+        ctx,
+        index_cursor,
+        column_data->representative_column_section);
       if (rc != GRN_SUCCESS) {
         grn_obj_close(ctx, index_cursor);
         return rc;
@@ -6339,6 +6401,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       grn_obj_close(ctx, index_cursor);
       rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                       &synonyms,
+                                                      mode,
                                                       expanded_term);
       GRN_OBJ_FIN(ctx, &synonyms);
       return rc;
@@ -6355,7 +6418,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       }
       rc = grn_index_cursor_set_section_id(ctx,
                                            index_cursor,
-                                           data->group_column_section);
+                                           column_data->group_column_section);
       if (rc != GRN_SUCCESS) {
         grn_obj_close(ctx, index_cursor);
         return rc;
@@ -6365,17 +6428,34 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       grn_obj synonyms;
       GRN_TEXT_INIT(&synonyms, GRN_OBJ_VECTOR);
       while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
-        grn_obj_get_value(ctx, data->group_column, posting->rid, &synonyms);
+        grn_obj_get_value(ctx,
+                          column_data->group_column,
+                          posting->rid,
+                          &synonyms);
       }
       grn_obj_close(ctx, index_cursor);
       rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                       &synonyms,
+                                                      mode,
                                                       expanded_term);
       GRN_OBJ_FIN(ctx, &synonyms);
       return rc;
     }
   } else {
-    grn_obj_get_value(ctx, column, id, expanded_term);
+    bool is_phrase_product = (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
+                              mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT);
+    if (is_phrase_product) {
+      grn_obj value;
+      GRN_TEXT_INIT(&value, 0);
+      grn_obj_get_value(ctx, column, id, &value);
+      grn_expr_syntax_expand_term_phrase_product(ctx,
+                                                 GRN_TEXT_VALUE(&value),
+                                                 GRN_TEXT_LEN(&value),
+                                                 expanded_term);
+      GRN_OBJ_FIN(ctx, &value);
+    } else {
+      grn_obj_get_value(ctx, column, id, expanded_term);
+    }
     return GRN_SUCCESS;
   }
 }
@@ -6389,12 +6469,13 @@ typedef struct {
 static grn_rc
 grn_expr_syntax_expand_term_by_table(grn_ctx *ctx,
                                      const char *term,
-                                     unsigned int term_len,
+                                     size_t term_len,
+                                     grn_operator mode,
                                      grn_obj *expanded_term,
-                                     grn_user_data *user_data)
+                                     void *data)
 {
   grn_rc rc = GRN_END_OF_DATA;
-  grn_expr_syntax_expand_term_by_table_data *data = user_data->ptr;
+  grn_expr_syntax_expand_term_by_table_data *table_data = data;
   grn_obj *table;
   grn_obj *term_column;
   grn_obj *expanded_term_column;
@@ -6403,9 +6484,9 @@ grn_expr_syntax_expand_term_by_table(grn_ctx *ctx,
   grn_obj *found_terms;
   int n_terms;
 
-  table = data->table;
-  term_column = data->term_column;
-  expanded_term_column = data->expanded_term_column;
+  table = table_data->table;
+  term_column = table_data->term_column;
+  expanded_term_column = table_data->expanded_term_column;
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, variable);
   if (ctx->rc != GRN_SUCCESS) {
@@ -6510,32 +6591,50 @@ grn_expr_syntax_expand_term_by_table(grn_ctx *ctx,
   return rc;
 }
 
+static void
+grn_expr_syntax_expand_query_term(grn_ctx *ctx,
+                                  grn_expr_syntax_expand_query_data *data,
+                                  grn_operator mode,
+                                  const char *term,
+                                  size_t term_len,
+                                  const char *fallback_term,
+                                  size_t fallback_term_len)
+{
+  grn_rc rc = data->expand_term_func(ctx,
+                                     term,
+                                     term_len,
+                                     mode,
+                                     data->expanded_query,
+                                     data->expand_term_func_data);
+  if (rc == GRN_SUCCESS) {
+    return;
+  }
+  GRN_TEXT_PUT(ctx, data->expanded_query, fallback_term, fallback_term_len);
+}
+
 static grn_rc
-grn_expr_syntax_expand_query_terms(
-  grn_ctx *ctx,
-  const char *query,
-  unsigned int query_size,
-  grn_expr_flags flags,
-  grn_obj *expanded_query,
-  grn_expr_syntax_expand_term_func expand_term_func,
-  grn_user_data *user_data)
+grn_expr_syntax_expand_query_terms(grn_ctx *ctx,
+                                   grn_expr_syntax_expand_query_data *data)
 {
   grn_obj buf;
+  grn_operator mode = GRN_OP_MATCH;
   unsigned int len;
-  const char *start, *cur = query, *query_end = query + (size_t)query_size;
+  const char *start;
+  const char *cur = data->query;
+  const char *query_end = data->query + data->query_size;
   GRN_TEXT_INIT(&buf, 0);
   for (;;) {
     while (cur < query_end && grn_isspace(cur, ctx->encoding)) {
       if (!(len = grn_charlen(ctx, cur, query_end))) {
         goto exit;
       }
-      GRN_TEXT_PUT(ctx, expanded_query, cur, len);
+      GRN_TEXT_PUT(ctx, data->expanded_query, cur, len);
       cur += len;
     }
     if (query_end <= cur) {
       break;
     }
-    switch (*cur) {
+    switch (cur[0]) {
     case '\0':
       goto exit;
       break;
@@ -6543,9 +6642,53 @@ grn_expr_syntax_expand_query_terms(
     case GRN_QUERY_AND_NOT:
     case GRN_QUERY_PARENL:
     case GRN_QUERY_PARENR:
-    case GRN_QUERY_PREFIX:
-      GRN_TEXT_PUTC(ctx, expanded_query, *cur);
+      GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
       cur++;
+      mode = GRN_OP_MATCH;
+      break;
+    case GRN_QUERY_PREFIX:
+      mode = GRN_OP_MATCH;
+      GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+      cur++;
+      if (cur < query_end && grn_charlen(ctx, cur, query_end) == 1) {
+        switch (cur[0]) {
+        case 'N':
+          mode = GRN_OP_NEAR;
+          GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+          cur++;
+          if (cur < query_end && grn_charlen(ctx, cur, query_end) == 1 &&
+              cur[0] == 'P') {
+            mode = GRN_OP_NEAR_PHRASE;
+            GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+            cur++;
+            if (cur < query_end && grn_charlen(ctx, cur, query_end) == 1 &&
+                cur[0] == 'P') {
+              mode = GRN_OP_NEAR_PHRASE_PRODUCT;
+              GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+              cur++;
+            }
+          }
+          break;
+        case 'O':
+          if (cur + 2 < query_end &&
+              grn_charlen(ctx, cur + 1, query_end) == 1 &&
+              grn_charlen(ctx, cur + 2, query_end) == 1 && cur[1] == 'N' &&
+              cur[2] == 'P') {
+            mode = GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT;
+            GRN_TEXT_PUT(ctx, data->expanded_query, cur, 3);
+            cur += 3;
+            if (cur < query_end && grn_charlen(ctx, cur, query_end) == 1 &&
+                cur[0] == 'P') {
+              mode = GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT;
+              GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+              cur++;
+            }
+          }
+          break;
+        default:
+          break;
+        }
+      }
       break;
     case GRN_QUERY_ADJ_INC:
     case GRN_QUERY_ADJ_DEC:
@@ -6553,39 +6696,109 @@ grn_expr_syntax_expand_query_terms(
       {
         char *end = (char *)query_end;
         strtof(cur + 1, &end);
-        GRN_TEXT_PUT(ctx, expanded_query, cur, end - cur);
+        GRN_TEXT_PUT(ctx, data->expanded_query, cur, end - cur);
         cur = end;
       }
       break;
     case GRN_QUERY_QUOTEL:
       GRN_BULK_REWIND(&buf);
-      for (start = cur++; cur < query_end; cur += len) {
-        if (!(len = grn_charlen(ctx, cur, query_end))) {
-          goto exit;
-        } else if (len == 1) {
-          if (*cur == GRN_QUERY_QUOTER) {
-            cur++;
-            break;
-          } else if (cur + 1 < query_end && *cur == GRN_QUERY_ESCAPE) {
-            cur++;
-            len = grn_charlen(ctx, cur, query_end);
+      if (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
+          mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
+        GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+        cur++;
+        for (start = cur; cur < query_end; cur += len) {
+          len = grn_charlen(ctx, cur, query_end);
+          if (len == 0) {
+            goto exit;
           }
+          int space_char_len = grn_isspace(cur, ctx->encoding);
+          if (space_char_len > 0) {
+            if (GRN_TEXT_LEN(&buf) > 0) {
+              grn_expr_syntax_expand_query_term(ctx,
+                                                data,
+                                                mode,
+                                                GRN_TEXT_VALUE(&buf),
+                                                GRN_TEXT_LEN(&buf),
+                                                GRN_TEXT_VALUE(&buf),
+                                                GRN_TEXT_LEN(&buf));
+              GRN_BULK_REWIND(&buf);
+            }
+            GRN_TEXT_PUT(ctx, data->expanded_query, cur, space_char_len);
+            len = space_char_len;
+            continue;
+          }
+          if (len == 1) {
+            if (cur[0] == GRN_QUERY_QUOTER) {
+              if (GRN_TEXT_LEN(&buf) > 0) {
+                grn_expr_syntax_expand_query_term(ctx,
+                                                  data,
+                                                  mode,
+                                                  GRN_TEXT_VALUE(&buf),
+                                                  GRN_TEXT_LEN(&buf),
+                                                  GRN_TEXT_VALUE(&buf),
+                                                  GRN_TEXT_LEN(&buf));
+                GRN_BULK_REWIND(&buf);
+              }
+              GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+              cur++;
+              break;
+            } else if (cur[0] == GRN_QUERY_ESCAPE && cur + 1 < query_end) {
+              cur++;
+              len = grn_charlen(ctx, cur, query_end);
+            } else if (cur[0] == GRN_QUERY_PARENL) {
+              GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+              continue;
+            } else if (cur[0] == GRN_QUERY_PARENR) {
+              if (GRN_TEXT_LEN(&buf) > 0) {
+                grn_expr_syntax_expand_query_term(ctx,
+                                                  data,
+                                                  mode,
+                                                  GRN_TEXT_VALUE(&buf),
+                                                  GRN_TEXT_LEN(&buf),
+                                                  GRN_TEXT_VALUE(&buf),
+                                                  GRN_TEXT_LEN(&buf));
+                GRN_BULK_REWIND(&buf);
+              }
+              GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+              continue;
+            }
+          }
+          GRN_TEXT_PUT(ctx, &buf, cur, len);
         }
-        GRN_TEXT_PUT(ctx, &buf, cur, len);
+      } else {
+        for (start = cur++; cur < query_end; cur += len) {
+          len = grn_charlen(ctx, cur, query_end);
+          if (len == 0) {
+            goto exit;
+          }
+          if (len == 1) {
+            if (cur[0] == GRN_QUERY_QUOTER) {
+              cur++;
+              break;
+            } else if (cur[0] == GRN_QUERY_ESCAPE && cur + 1 < query_end) {
+              cur++;
+              len = grn_charlen(ctx, cur, query_end);
+            }
+          }
+          GRN_TEXT_PUT(ctx, &buf, cur, len);
+        }
+        grn_expr_syntax_expand_query_term(ctx,
+                                          data,
+                                          mode,
+                                          GRN_TEXT_VALUE(&buf),
+                                          GRN_TEXT_LEN(&buf),
+                                          start,
+                                          cur - start);
       }
-      if (expand_term_func(ctx,
-                           GRN_TEXT_VALUE(&buf),
-                           GRN_TEXT_LEN(&buf),
-                           expanded_query,
-                           user_data)) {
-        GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
-      }
+      mode = GRN_OP_MATCH;
       break;
     case 'O':
-      if (cur + 2 <= query_end && cur[1] == 'R' &&
-          (cur + 2 == query_end || grn_isspace(cur + 2, ctx->encoding))) {
-        GRN_TEXT_PUT(ctx, expanded_query, cur, 2);
+      if (cur + 2 <= query_end && grn_charlen(ctx, cur + 1, query_end) == 1 &&
+          cur[1] == 'R' &&
+          (cur + 2 == query_end || grn_isspace(cur + 2, ctx->encoding) > 0)) {
+        GRN_TEXT_PUT(ctx, data->expanded_query, cur, 2);
         cur += 2;
+        mode = GRN_OP_MATCH;
         break;
       }
       /* fallthru */
@@ -6596,11 +6809,11 @@ grn_expr_syntax_expand_query_terms(
         } else if (grn_isspace(cur, ctx->encoding)) {
           break;
         } else if (len == 1) {
-          if (*cur == GRN_QUERY_PARENL || *cur == GRN_QUERY_PARENR ||
-              *cur == GRN_QUERY_PREFIX) {
+          if (cur[0] == GRN_QUERY_PARENL || cur[0] == GRN_QUERY_PARENR ||
+              cur[0] == GRN_QUERY_PREFIX || cur[0] == GRN_QUERY_QUOTEL) {
             break;
-          } else if (flags & GRN_EXPR_ALLOW_COLUMN &&
-                     *cur == GRN_QUERY_COLUMN) {
+          } else if (data->flags & GRN_EXPR_ALLOW_COLUMN &&
+                     cur[0] == GRN_QUERY_COLUMN) {
             if (cur + 1 < query_end) {
               switch (cur[1]) {
               case '!':
@@ -6610,7 +6823,7 @@ grn_expr_syntax_expand_query_terms(
                 cur += 2;
                 break;
               case '=':
-                cur += (flags & GRN_EXPR_ALLOW_UPDATE) ? 2 : 1;
+                cur += (data->flags & GRN_EXPR_ALLOW_UPDATE) ? 2 : 1;
                 break;
               case '<':
               case '>':
@@ -6623,20 +6836,21 @@ grn_expr_syntax_expand_query_terms(
             } else {
               cur += 1;
             }
-            GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
+            GRN_TEXT_PUT(ctx, data->expanded_query, start, cur - start);
             start = cur;
             break;
           }
         }
       }
       if (start < cur) {
-        if (expand_term_func(ctx,
-                             start,
-                             cur - start,
-                             expanded_query,
-                             user_data)) {
-          GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
-        }
+        grn_expr_syntax_expand_query_term(ctx,
+                                          data,
+                                          mode,
+                                          start,
+                                          cur - start,
+                                          start,
+                                          cur - start);
+        mode = GRN_OP_MATCH;
       }
       break;
     }
@@ -6656,9 +6870,15 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 
+  grn_expr_syntax_expand_query_data data;
+  data.query = query;
   if (query_size < 0) {
-    query_size = strlen(query);
+    data.query_size = strlen(query);
+  } else {
+    data.query_size = query_size;
   }
+  data.flags = flags;
+  data.expanded_query = expanded_query;
 
   switch (expander->header.type) {
   case GRN_PROC:
@@ -6673,17 +6893,9 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
           name);
       goto exit;
     }
-    {
-      grn_user_data user_data;
-      user_data.ptr = expander;
-      grn_expr_syntax_expand_query_terms(ctx,
-                                         query,
-                                         query_size,
-                                         flags,
-                                         expanded_query,
-                                         grn_expr_syntax_expand_term_by_func,
-                                         &user_data);
-    }
+    data.expand_term_func = grn_expr_syntax_expand_term_by_func;
+    data.expand_term_func_data = expander;
+    grn_expr_syntax_expand_query_terms(ctx, &data);
     break;
   case GRN_COLUMN_FIX_SIZE:
   case GRN_COLUMN_VAR_SIZE:
@@ -6700,15 +6912,15 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
         goto exit;
       }
 
-      grn_user_data user_data;
-      grn_expr_syntax_expand_term_by_column_data data;
-      user_data.ptr = &data;
-      data.table = expansion_table;
-      data.column = expander;
-      data.representative_column = NULL;
-      data.representative_column_section = 0;
-      data.group_column = NULL;
-      data.group_column_section = 0;
+      data.expand_term_func = grn_expr_syntax_expand_term_by_column;
+      grn_expr_syntax_expand_term_by_column_data column_data;
+      data.expand_term_func_data = &column_data;
+      column_data.table = expansion_table;
+      column_data.column = expander;
+      column_data.representative_column = NULL;
+      column_data.representative_column_section = 0;
+      column_data.group_column = NULL;
+      column_data.group_column_section = 0;
       if (expander->header.type == GRN_COLUMN_INDEX) {
         grn_obj source_ids;
         GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -6726,17 +6938,17 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
             continue;
           }
           if (source->header.domain == DB_OBJ(expansion_table)->id) {
-            data.representative_column = source;
-            data.representative_column_section = i + 1;
+            column_data.representative_column = source;
+            column_data.representative_column_section = i + 1;
             break;
           } else if (grn_obj_is_text_family_vector_column(ctx, source)) {
             /* TODO: Add support for multiple group columns. */
-            data.group_column = source;
-            data.group_column_section = i + 1;
+            column_data.group_column = source;
+            column_data.group_column_section = i + 1;
             break;
           }
         }
-        if (!data.representative_column && !data.group_column) {
+        if (!column_data.representative_column && !column_data.group_column) {
           GRN_DEFINE_NAME(expander);
           ERR(GRN_INVALID_ARGUMENT,
               "[query][expand][column][index] "
@@ -6748,15 +6960,9 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
         }
       }
 
-      grn_expr_syntax_expand_query_terms(ctx,
-                                         query,
-                                         query_size,
-                                         flags,
-                                         expanded_query,
-                                         grn_expr_syntax_expand_term_by_column,
-                                         &user_data);
-      if (data.representative_column) {
-        grn_obj_unref(ctx, data.representative_column);
+      grn_expr_syntax_expand_query_terms(ctx, &data);
+      if (column_data.representative_column) {
+        grn_obj_unref(ctx, column_data.representative_column);
       }
     }
     break;
@@ -6771,22 +6977,16 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
         goto exit;
       }
 
-      grn_user_data user_data;
-      grn_expr_syntax_expand_term_by_column_data data;
-      user_data.ptr = &data;
-      data.table = expander;
-      data.column = NULL;
-      data.representative_column = NULL;
-      data.representative_column_section = 0;
-      data.group_column = NULL;
-      data.group_column_section = 0;
-      grn_expr_syntax_expand_query_terms(ctx,
-                                         query,
-                                         query_size,
-                                         flags,
-                                         expanded_query,
-                                         grn_expr_syntax_expand_term_by_column,
-                                         &user_data);
+      data.expand_term_func = grn_expr_syntax_expand_term_by_column;
+      grn_expr_syntax_expand_term_by_column_data column_data;
+      data.expand_term_func_data = &column_data;
+      column_data.table = expander;
+      column_data.column = NULL;
+      column_data.representative_column = NULL;
+      column_data.representative_column_section = 0;
+      column_data.group_column = NULL;
+      column_data.group_column_section = 0;
+      grn_expr_syntax_expand_query_terms(ctx, &data);
     }
     break;
   default:
@@ -6826,9 +7026,15 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
+  grn_expr_syntax_expand_query_data data;
+  data.query = query;
   if (query_size < 0) {
-    query_size = strlen(query);
+    data.query_size = strlen(query);
+  } else {
+    data.query_size = query_size;
   }
+  data.flags = flags;
+  data.expanded_query = expanded_query;
 
   if (!grn_obj_is_column(ctx, expanded_term_column)) {
     grn_obj inspected;
@@ -6886,32 +7092,20 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
   }
 
   if (term_column_is_key) {
-    grn_user_data user_data;
-    grn_expr_syntax_expand_term_by_column_data data;
-    user_data.ptr = &data;
-    data.table = table;
-    data.column = expanded_term_column;
-    grn_expr_syntax_expand_query_terms(ctx,
-                                       query,
-                                       query_size,
-                                       flags,
-                                       expanded_query,
-                                       grn_expr_syntax_expand_term_by_column,
-                                       &user_data);
+    data.expand_term_func = grn_expr_syntax_expand_term_by_column;
+    grn_expr_syntax_expand_term_by_column_data column_data;
+    data.expand_term_func_data = &column_data;
+    column_data.table = table;
+    column_data.column = expanded_term_column;
+    grn_expr_syntax_expand_query_terms(ctx, &data);
   } else {
-    grn_user_data user_data;
-    grn_expr_syntax_expand_term_by_table_data data;
-    user_data.ptr = &data;
-    data.table = table;
-    data.term_column = term_column;
-    data.expanded_term_column = expanded_term_column;
-    grn_expr_syntax_expand_query_terms(ctx,
-                                       query,
-                                       query_size,
-                                       flags,
-                                       expanded_query,
-                                       grn_expr_syntax_expand_term_by_table,
-                                       &user_data);
+    data.expand_term_func = grn_expr_syntax_expand_term_by_table;
+    grn_expr_syntax_expand_term_by_table_data table_data;
+    data.expand_term_func_data = &table_data;
+    table_data.table = table;
+    table_data.term_column = term_column;
+    table_data.expanded_term_column = expanded_term_column;
+    grn_expr_syntax_expand_query_terms(ctx, &data);
   }
 
   GRN_API_RETURN(ctx->rc);

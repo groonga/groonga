@@ -1,0 +1,31 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC150 \
+  --default_tokenizer TokenBigram
+column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
+
+table_create Terms TABLE_PAT_KEY ShortText --normalizers NormalizerNFKC150
+column_create Terms expansion COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+["content"],
+["Apache Arrow is fast. Rroonga is fast. Mroonga is fast."],
+["Apache Arrow is fast. Full text search by Ruby is fast. Mroonga is fast."],
+["Apache Arrow is fast. Ruby and Groonga are fast. Mroonga is fast."],
+["Apache Arrow is fast. Ruby is fast. Mroonga is fast."]
+]
+
+load --table Terms
+[
+{"_key": "PGroonga", "expansion": "PGroonga \"Groonga PostgreSQL\""},
+{"_key": "Rroonga",  "expansion": "Rroonga \"Ruby and Groonga\""}
+]
+
+select \
+  --table Memos \
+  --query_expander Terms.expansion \
+  --match_columns content \
+  --query '*NPP"(Arrow) (Mroonga) (Rroonga)"'
