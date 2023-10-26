@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2021-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -118,16 +118,6 @@ typedef struct _grn_snip {
 
 grn_rc
 grn_snip_close(grn_ctx *ctx, grn_snip *snip);
-grn_rc
-grn_snip_cond_init(grn_ctx *ctx,
-                   snip_cond *sc,
-                   const char *keyword,
-                   unsigned int keyword_len,
-                   grn_encoding enc,
-                   grn_obj *normalizer,
-                   int flags);
-void
-grn_snip_cond_reinit(snip_cond *cond);
 grn_rc
 grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond);
 void

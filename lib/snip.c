@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2014  Brazil
-  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -271,7 +271,7 @@ grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond)
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 grn_snip_cond_init(grn_ctx *ctx,
                    snip_cond *sc,
                    const char *keyword,
@@ -302,7 +302,7 @@ grn_snip_cond_init(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-void
+static void
 grn_snip_cond_reinit(snip_cond *cond)
 {
   cond->found = 0;
