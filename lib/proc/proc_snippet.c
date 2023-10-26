@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -195,6 +195,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *prefix = NULL;
   grn_obj *suffix = NULL;
   grn_obj *normalizer_name = NULL;
+  grn_obj *normalizers = NULL;
   grn_obj *default_open_tag = NULL;
   grn_obj *default_close_tag = NULL;
   int n_args_without_option = nargs;
@@ -228,6 +229,9 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                        "normalizer",
                                        GRN_PROC_OPTION_VALUE_RAW,
                                        &normalizer_name,
+                                       "normalizers",
+                                       GRN_PROC_OPTION_VALUE_RAW,
+                                       &normalizers,
                                        "default_open_tag",
                                        GRN_PROC_OPTION_VALUE_RAW,
                                        &default_open_tag,
@@ -275,7 +279,21 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (!snip) {
       goto exit;
     }
-    if (!normalizer_name) {
+    if (normalizers &&
+        grn_obj_is_text_family_bulk(ctx, normalizers) &&
+        GRN_TEXT_LEN(normalizers) > 0) {
+      grn_rc rc = grn_snip_set_normalizers(ctx, snip, normalizers);
+      if (rc != GRN_SUCCESS) {
+        GRN_PLUGIN_ERROR(ctx,
+                         rc,
+                         "%s invalid normalizers: <%.*s>: %s",
+                         tag,
+                         (int)GRN_TEXT_LEN(normalizers),
+                         GRN_TEXT_VALUE(normalizers),
+                         ctx->errbuf);
+        goto exit;
+      }
+    } else if (!normalizer_name) {
       grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
     } else if (GRN_TEXT_LEN(normalizer_name) > 0) {
       grn_obj *normalizer;

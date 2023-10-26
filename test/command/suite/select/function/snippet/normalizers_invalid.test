@@ -1,0 +1,15 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"content": "Groonga and MySQL"},
+{"content": "Groonga and My SQL"}
+]
+
+select Entries \
+  --output_columns ' \
+  snippet(content, \
+  "MySQL", "<keyword>", "</keyword>", \
+  {"normalizers": "NormalizerNFKC150("} \
+  )'

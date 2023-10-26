@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1159,6 +1159,10 @@ GRN_API grn_rc
 grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizer);
 GRN_API grn_obj *
 grn_snip_get_normalizer(grn_ctx *ctx, grn_obj *snip);
+GRN_API grn_rc
+grn_snip_set_normalizers(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizers);
+GRN_API grn_obj *
+grn_snip_get_normalizers(grn_ctx *ctx, grn_obj *snip);
 GRN_API grn_rc
 grn_snip_set_delimiter_regexp(grn_ctx *ctx,
                               grn_obj *snip,

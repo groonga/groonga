@@ -393,6 +393,60 @@ grn_snip_get_normalizer(grn_ctx *ctx, grn_obj *snip)
 }
 
 grn_rc
+grn_snip_set_normalizers(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizers)
+{
+  grn_snip *snip_;
+  if (!snip) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, normalizers)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  snip_ = (grn_snip *)snip;
+  if (GRN_TEXT_LEN(normalizers) == 0) {
+    GRN_BULK_REWIND(&(snip_->normalizers));
+    return GRN_SUCCESS;
+  }
+
+  if (!snip_->lexicon) {
+    /* This is only used for passing normalizer options to grn_string. */
+    snip_->lexicon = grn_table_create(ctx,
+                                      NULL,
+                                      0,
+                                      NULL,
+                                      GRN_OBJ_TABLE_HASH_KEY,
+                                      grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                                      NULL);
+    if (!snip_->lexicon) {
+      return ctx->rc;
+    }
+  }
+  grn_obj_set_info(ctx, snip_->lexicon, GRN_INFO_NORMALIZERS, normalizers);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_TEXT_SET(ctx,
+                 &(snip_->normalizers),
+                 GRN_TEXT_VALUE(normalizers),
+                 GRN_TEXT_LEN(normalizers));
+  }
+  return ctx->rc;
+}
+
+grn_obj *
+grn_snip_get_normalizers(grn_ctx *ctx, grn_obj *snip)
+{
+  grn_snip *snip_;
+
+  if (!snip) {
+    return NULL;
+  }
+
+  snip_ = (grn_snip *)snip;
+  return &(snip_->normalizers);
+}
+
+grn_rc
 grn_snip_set_delimiter_regexp(grn_ctx *ctx,
                               grn_obj *snip,
                               const char *pattern,
@@ -506,7 +560,9 @@ grn_snip_add_cond(grn_ctx *ctx,
                           keyword,
                           keyword_len,
                           snip_->encoding,
-                          snip_->normalizer,
+                          (GRN_TEXT_LEN(&(snip_->normalizers)) > 0)
+                            ? snip_->lexicon
+                            : snip_->normalizer,
                           snip_->flags);
   if (rc) {
     return rc;
@@ -678,6 +734,8 @@ grn_snip_open(grn_ctx *ctx,
   } else {
     ret->normalizer = NULL;
   }
+  ret->lexicon = NULL;
+  GRN_TEXT_INIT(&(ret->normalizers), 0);
   ret->delimiter_pattern = NULL;
   ret->delimiter_pattern_length = 0;
 #ifdef GRN_SUPPORT_REGEXP
@@ -734,6 +792,10 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
   if (snip->normalizer && snip->normalizer != GRN_NORMALIZER_AUTO) {
     grn_obj_unref(ctx, snip->normalizer);
   }
+  if (snip->lexicon) {
+    grn_obj_close(ctx, snip->lexicon);
+  }
+  GRN_OBJ_FIN(ctx, &(snip->normalizers));
   if (snip->flags & GRN_SNIP_COPY_TAG) {
     size_t i;
     snip_cond *sc;
@@ -783,7 +845,11 @@ grn_snip_exec(grn_ctx *ctx,
   snip_ = (grn_snip *)snip;
   exec_clean(ctx, snip_);
   *nresults = 0;
-  snip_->nstr = grn_string_open(ctx, string, string_len, snip_->normalizer, f);
+  grn_obj *lexicon_or_normalizer = (GRN_TEXT_LEN(&(snip_->normalizers)) > 0)
+                                     ? snip_->lexicon
+                                     : snip_->normalizer;
+  snip_->nstr =
+    grn_string_open(ctx, string, string_len, lexicon_or_normalizer, f);
   if (!snip_->nstr) {
     exec_clean(ctx, snip_);
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_string_open on grn_snip_exec failed !");

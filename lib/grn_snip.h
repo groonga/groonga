@@ -108,6 +108,8 @@ typedef struct _grn_snip {
   size_t max_tagged_len;
 
   grn_obj *normalizer;
+  grn_obj *lexicon;
+  grn_obj normalizers;
 
   char *delimiter_pattern;
   size_t delimiter_pattern_length;
