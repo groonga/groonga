@@ -9,4 +9,11 @@ load --table Terms
 ]
 [[0,0.0,0.0],2]
 query_expand   Terms.expansions   '*NPP11,0,5|5"(Groonga) (Rroonga) (Mroonga)"'
-[[0,0.0,0.0],"*NPP11,0,5|5\"(Groonga) (Rroonga) (Mroonga)\""]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  "*NPP11,0,5|5\"(Groonga) (Rroonga \\\"Ruby Groonga\\\") (Mroonga)\""
+]
