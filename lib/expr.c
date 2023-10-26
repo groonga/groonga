@@ -6689,6 +6689,19 @@ grn_expr_syntax_expand_query_terms(grn_ctx *ctx,
           break;
         }
       }
+      if (mode != GRN_OP_MATCH) {
+        while (cur < query_end &&
+               grn_charlen(ctx, cur, query_end) == 1 &&
+               /* Loose. Do we need to process strictly here? */
+               (('0' <= cur[0] && cur[0] < '9') ||
+                cur[0] == '-' ||
+                cur[0] == '+' ||
+                cur[0] == ',' ||
+                cur[0] == '|')) {
+          GRN_TEXT_PUTC(ctx, data->expanded_query, cur[0]);
+          cur++;
+        }
+      }
       break;
     case GRN_QUERY_ADJ_INC:
     case GRN_QUERY_ADJ_DEC:
