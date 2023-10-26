@@ -1163,7 +1163,7 @@ Here are available flags:
 
        .. include:: compress_filter.rst
 
-       では、このフラグがどのようなデータに対して有効かを記載します。
+       Here are a list of which kind of data is suitable for this filter.
 
        このフラグはNバイト目の要素に着目してデータを並び替えます。
        まず、ベクターカラム内の各要素の0バイト目だけのデータを集めて連続で配置します。
