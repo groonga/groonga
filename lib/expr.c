@@ -6208,6 +6208,7 @@ static void
 grn_expr_syntax_expand_term_phrase_product(grn_ctx *ctx,
                                            const char *term,
                                            size_t term_len,
+                                           bool have_last,
                                            grn_obj *expanded_term)
 {
   /* In quote and paren:
@@ -6227,12 +6228,16 @@ grn_expr_syntax_expand_term_phrase_product(grn_ctx *ctx,
                          target_characters,
                          GRN_QUERY_ESCAPE,
                          expanded_term);
+  if (have_last) {
+    GRN_TEXT_PUTC(ctx, expanded_term, '$');
+  }
 }
 
 static grn_rc
 grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
                                            grn_obj *vector,
                                            grn_operator mode,
+                                           bool have_last,
                                            grn_obj *expanded_term)
 {
   bool is_phrase_product = (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
@@ -6275,6 +6280,7 @@ grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
       grn_expr_syntax_expand_term_phrase_product(ctx,
                                                  value,
                                                  length,
+                                                 have_last,
                                                  expanded_term);
     } else {
       GRN_TEXT_PUT(ctx, expanded_term, value, length);
@@ -6309,6 +6315,12 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
 {
   grn_expr_syntax_expand_term_by_column_data *column_data = data;
 
+  bool is_phrase_product = (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
+                            mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT);
+  bool have_last = (is_phrase_product && term[term_len - 1] == '$');
+  if (have_last) {
+    term_len--;
+  }
   grn_obj *table = column_data->table;
   grn_id id = grn_table_get(ctx, table, term, term_len);
   if (id == GRN_ID_NIL) {
@@ -6326,6 +6338,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       return grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                         value,
                                                         mode,
+                                                        have_last,
                                                         expanded_term);
     } else if (grn_obj_is_text_family_bulk(ctx, value)) {
       GRN_TEXT_SET(ctx,
@@ -6343,6 +6356,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
     grn_rc rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                            &values,
                                                            mode,
+                                                           have_last,
                                                            expanded_term);
     GRN_OBJ_FIN(ctx, &values);
     return rc;
@@ -6402,6 +6416,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                       &synonyms,
                                                       mode,
+                                                      have_last,
                                                       expanded_term);
       GRN_OBJ_FIN(ctx, &synonyms);
       return rc;
@@ -6437,13 +6452,12 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
                                                       &synonyms,
                                                       mode,
+                                                      have_last,
                                                       expanded_term);
       GRN_OBJ_FIN(ctx, &synonyms);
       return rc;
     }
   } else {
-    bool is_phrase_product = (mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
-                              mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT);
     if (is_phrase_product) {
       grn_obj value;
       GRN_TEXT_INIT(&value, 0);
@@ -6451,6 +6465,7 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
       grn_expr_syntax_expand_term_phrase_product(ctx,
                                                  GRN_TEXT_VALUE(&value),
                                                  GRN_TEXT_LEN(&value),
+                                                 have_last,
                                                  expanded_term);
       GRN_OBJ_FIN(ctx, &value);
     } else {
