@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
-このフラグは圧縮前にデータをフィルタリングすることで
-``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` の圧縮率を高めるためのフラグです。
+These new flags are for compression rate of ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD``
+to increase by filtering the data before the compression.
 
 ただし、データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
 また、このフラグを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
