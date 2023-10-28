@@ -11,5 +11,6 @@ libgroonga_cpp_source =				\
 	grn_ctx.hpp				\
 	grn_token_column.h			\
 	token_column.cpp			\
+	trace_log.cpp				\
 	vector.cpp				\
 	window_function_executor.cpp
