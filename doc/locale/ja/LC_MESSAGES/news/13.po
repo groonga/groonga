@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-26 14:47+0900\n"
 "Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2023-07-26 14:47+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,116 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.0.8 - 2023-09-29"
-msgstr "13.0.8リリース - 2023-09-29"
+msgid "Release 13.0.9 - 2023-10-29"
+msgstr "13.0.9リリース - 2023-10-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[{doc}`/reference/commands/select`] Changed the default value of `--fuzzy_max_expansions` from 0 to 10."
+msgstr "[{doc}`/reference/commands/select`] `--fuzzy_max_expansions` のデフォルト値を0から10に変更しました。"
+
+msgid "`--fuzzy_max_expansions` can limit number of words that has close edit distance to use search process. This argument can help to balance hit numbers and performance of the search. When `--fuzzy_max_expansions` is 0, the search use all words that the edit distance are under `--fuzzy_max_distance` in the vocabulary list."
+msgstr "`--fuzzy_max_expansions` を使うことで検索に使う編集距離の近い語の数を制限できます。この引数を使って、ヒット数と検索パフォーマンスのバランスを取ることができます。`--fuzzy_max_expansions` が0の場合は語彙表にある編集距離が `--fuzzy_max_distance` 以下の語すべてを使って検索をします。"
+
+msgid "`--fuzzy_max_expansions` is 0 (unlimited) may slow down a search. Therefore, the default value of `--fuzzy_max_expansions` is 10 from this release."
+msgstr "ただ、 `--fuzzy_max_expansions` が0の場合、検索が遅くなる可能性があります。したがって、今回のリリースから `--fuzzy_max_expansions` のデフォルト値を10に変更しました。"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_with_transposition` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--fuzzy_with_transposition` を追加しました。(実験的)"
+
+msgid "Normally, a edit distance `1` for the transposition case. However, we can choose edit distance `1` or `2` for the transposition case by using this argument."
+msgstr "通常、文字の交換は編集距離1ですが、この引数を使うことで、文字の交換の編集距離を1または2に指定できます。"
+
+msgid "If this parameter is `yes`, the edit distance of this case is `1`. It's `2` otherwise."
+msgstr "`--fuzzy_with_transposition` が `yes` の場合、文字の交換の編集距離は `1` になります。それ以外の値が指定された場合は、文字の交換の編集距離は `2` になります。"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_tokenize`."
+msgstr "[{doc}`/reference/commands/select`] `select` の引数に新しく `--fuzzy_tokenize` を追加しました。(実験的)"
+
+msgid "When `--fuzzy_tokenize` is `true`, Gronga use tokenizer that specifies in `--default_tokenizer` in typo tolerance search."
+msgstr "`--fuzzy_tokenize` が `true` の時、 Groongaは、誤字を許容する検索で `--default_tokenizer` で指定したトークナイザーを使います。"
+
+msgid "The default value of `--fuzzy_tokenize` is `fase`.　The useful case of `--fuzzy_tokenize` is the following case."
+msgstr "`--fuzzy_tokenize` のデフォルト値は `false`です。 `--fuzzy_tokenize` が有用なケースは、以下のケースです。"
+
+msgid "Search targets are only Japanese data."
+msgstr "検索対象が日本語のデータのみ。"
+
+msgid "Specify `TokenMecab` in `--fuzzy_tokenize`."
+msgstr "`--fuzzy_tokenize` に `TokenMecab` を指定する。"
+
+msgid "[{doc}`/reference/commands/load`] Added support for `--ifexists` even if we specified `apache-arrow` into `input_type`."
+msgstr "`input_type` が `apache-arrow` のときも `--ifexists` が使えるようになりました。"
+
+msgid "[{doc}`/reference/normalizers`] Improved `NormalizerNFKC*` options with addition new option `remove_blank_force`."
+msgstr "`NormalizerNFKC*` に新しく `remove_blank_force` オプションを追加しました。"
+
+msgid "When `remove_blank_force` is `false`, Normalizer doesn't ignore space as below."
+msgstr "`remove_blank_force` が `false` の時、以下のようにノーマライザーは空白を無視します。"
+
+msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--output_trace_log` (experimental)."
+msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--output_trace_log` を追加しました。(実験的)"
+
+msgid "If we specify `yes` in `--output_trace_log` and `--command_version 3`, Groonga output addition new log as below."
+msgstr "`--output_trace_log` に `yes` を指定し `--command_version 3` を指定した場合、Groongaは以下のようなログを新規に出力します。"
+
+msgid "`--output_trace_log` is valid in only command version 3."
+msgstr "`--output_trace_log` は、コマンドバージョン3でのみ有効です。"
+
+msgid "This will be useful for the following cases:"
+msgstr "以下のケースで有用です。:"
+
+msgid "Detect real words used by fuzzy query."
+msgstr "誤字を許容する検索で使われた実際のキーワードの検知。"
+
+msgid "Measure elapsed timeout without seeing query log."
+msgstr "クエリーログを見ずに実行時間を測定。"
+
+msgid "[{doc}`/reference/functions/query`] Added support for object literal."
+msgstr "[{doc}`/reference/functions/query`] オブジェクトリテラルをサポートしました。"
+
+msgid "[{doc}`/reference/commands/query_expand`] Added support for NPP and ONPP(experimental)."
+msgstr "[{doc}`/reference/commands/query_expand`] NPP と ONPP をサポートしました（実験的）。"
+
+msgid "[{doc}`/reference/functions/snippet`] Added support for `normalizers` option."
+msgstr "`normalizers` オプションをサポートしました。"
+
+msgid "We can use normalizer with option. For example, when we don't want to ignore space in `snippet()` function, we use this option as below."
+msgstr "オプション付きのノーマライザーが使えるようになります。例えば、以下のように `snippet()` 関数内でスペースを無視したくない時にこのオプションを使います。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug in `Time OPERATOR Float{,32}` comparison. [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
+msgstr "`Time OPERATOR Float{,32}` の問題を修正しました。 [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
+
+msgid "Microsecond (small value than second) information in `Float{,32}` isn't used. This is happen only when `Time OPERATOR Float{,32}`."
+msgstr "`Float{,32}` 内のマイクロ秒（秒未満の小さい値）が使えていませんでした。この問題は `Time OPERATOR Float{,32}` の時だけ発生します。"
+
+msgid "This is happen in \"load --ifexists 'A OP B || C OP D'\" as below."
+msgstr "以下のように、 \"load --ifexists 'A OP B || C OP D'\" で発生します。"
+
+msgid "However, this isn't happen in \"select --filter\"."
+msgstr "しかし、 \"select --filter\" では発生しません。"
+
+msgid "Fixed a bug that alnum(a-zA-Z0-9) + blank may be detected."
+msgstr "alnum(a-zA-Z0-9) + blankを検知してしまう問題を修正しました。"
+
+msgid "If the number of input is 2 such as \"ab\" and text with some blanks such as \"a b\" is matched, \"a b\" is detected. However, it should not be detected in this case."
+msgstr "\"ab\"にような2文字の入力と\"a b\"のように複数の空白を含むテキストもヒットしていましたが、\"a b\"はヒットすべきではありません。"
+
+msgid "For example, \"a i\" is detected when this bug occures as below."
+msgstr "例えば、この問題が発生すると、以下のように\"a i\"を検知します。"
+
+msgid "However, the above result is unexpected result. We don't want to detect `a i` in the above case."
+msgstr "しかし、上記の結果は期待していない結果です。上記ケースでは `a i` は検知してほしくありません。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Release 13.0.8 - 2023-09-29"
+msgstr "13.0.8リリース - 2023-09-29"
 
 msgid "[{doc}`/reference/commands/column_create`] Improved `column_create` flags with addition new flags `COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, and `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`."
 msgstr "[{doc}`/reference/commands/column_create`] `column_create` に新しいフラグ `COLUMN_FILTER_SHUFFLE`, `COLUMN_FILTER_BYTE_DELTA`, `COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`, and `COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES` を追加しました。"
@@ -69,9 +174,6 @@ msgstr "[RPM] CMakeを使ってビルドするようにしました。"
 
 msgid "[Debian] Added support for Debian trixie."
 msgstr "[Debian] Debian trixie をサポートしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[fuzzy_search] Fixed a bug that Groonga may get records that should not match."
 msgstr "[fuzzy_search] ヒットしないはずのレコードがヒットすることがある問題を修正しました。"
@@ -279,9 +381,6 @@ msgstr "たとえば、 `*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"` は問題が�
 
 msgid "Fixed a bug that internal lock count may not be decreased when lock acquisition is failed. In normal use-case, this will not be a real problem."
 msgstr "ロック獲得に失敗した場合に内部のロックカウントを減らしていない問題を修正しました。通常はこれが問題になることはありません。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "askdkc"
 msgstr "askdkcさん"
