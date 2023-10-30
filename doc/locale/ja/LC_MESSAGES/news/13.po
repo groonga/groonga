@@ -65,7 +65,7 @@ msgid "[{doc}`/reference/normalizers`] Improved `NormalizerNFKC*` options with a
 msgstr "`NormalizerNFKC*` に新しく `remove_blank_force` オプションを追加しました。"
 
 msgid "When `remove_blank_force` is `false`, Normalizer doesn't ignore space as below."
-msgstr "`remove_blank_force` が `false` の時、以下のようにノーマライザーは空白を無視します。"
+msgstr "`remove_blank_force` が `false` の時、以下のようにノーマライザーは空白を無視しません。"
 
 msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--output_trace_log` (experimental)."
 msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--output_trace_log` を追加しました。(実験的)"
