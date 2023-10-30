@@ -1163,18 +1163,19 @@ Here are available flags:
 
        .. include:: compress_filter.rst
 
-       Here are a list of which kind of data is suitable for this filter.
+       Here are a list of suitable data type for this filter.
 
-       このフラグはNバイト目の要素に着目してデータを並び替えます。
-       まず、ベクターカラム内の各要素の0バイト目だけのデータを集めて連続で配置します。
-       その後、同様に1バイト目のデータだけを集めて連続で配置するということをすべてのバイトに対して繰り返します。
+       This flag reorganize data based on a element of Nth byte.
 
-       ``COMPRESS_ZLIB`` や ``COMPRESS_LZ4`` や ``COMPRESS_ZSTD`` といった圧縮アルゴリズムは同じ値が連続しているデータだと圧縮率が高くなる傾向があります。
-       このフラグのポイントは、Nバイトごとにデータを並び替えることで同じ値が連続しているデータを作り出すことです。
+       First, 0th byte data of each element within the vector column would be gathered and be continuously placed.
+       Then, 1st byte data would be handled as same as 0th byte data, and all byte data would be as so repeatedly.
 
-       具体的には、以下のように動作します。
+       There are tendency for those compression algorithms such as  ``COMPRESS_ZLIB``,``COMPRESS_LZ4``,and  ``COMPRESS_ZSTD`` to have the higher compression rate when the data has same values in continuance.
+       The point for this flag is to produce data having same values in continuance by reorganizing data for every N byte.
 
-       例えば、 ``UInt16`` のベクターカラム ``[1, 1051, 515]`` があるとします。 これをリトルエンディアンのバイト列で表現すると以下のようになります。
+       In particular, it would work as below.
+
+       For example, there is the vector column ``[1, 1051, 515]`` in ``UInt16``. It would be as below representing in the little endien byte column.
 
        .. code-block::
 
@@ -1182,9 +1183,9 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|
           | 0x01   | 0x00   |, | 0x1b   | 0x04   |, | 0x03   | 0x02   |
 
-       このフラグは、上記の ``Byte 0`` の値をまとめ、その後 ``Byte 1`` のデータをまとめて、以下のようなデータを作るフラグです。
-       この、Nバイト毎にまとめる操作を以後、シャッフルと呼びます。
-       上記のデータをシャッフルすると以下のようになります。
+       This flag is to produce the data as following by gathering values of `` Byte 0``, then of `` Byte 1`` from the above data.
+       The action to gather values with every N Byte would be called shuffle from now on.
+       Shuffling the above data would be as below.
 
        .. code-block::
 
@@ -1192,11 +1193,11 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|
           | 0x01   | 0x1b   | 0x03   |, | 0x00   | 0x04   | 0x02   |
 
-       ポイントは「同じ値が連続する箇所があるかどうか？」です。 上記の例を見てみると、シャッフル後のデータは同じ値が連続している箇所がありません。
-       このようなデータでは、シャッフルしても圧縮率の向上に寄与しないため、このフラグを適用するには不向きなデータです。
+       The point is whether there would be same values in continuance or not. Looking at the above example data, it is appeared to have no same values in continuance after shuffling.
+       Those data are not suitable for this flag because it is not contributed to increase the compression rate even shuffling.
 
-       一方で、 ``UInt16`` のベクターカラム ``[1, 2, 3]`` というデータでは、シャッフルすると以下のようになります。
-       まず、説明のため ``UInt16`` の ``[1, 2, 3]`` を以下のようなリトルエンディアンのバイト列表現にします。
+       On the other hand, the vector column ``[1, 2, 3]``  in ``UInt16`` would be as following after  shuffling.
+       First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endien byte column.
 
        .. code-block::
 
@@ -1205,7 +1206,7 @@ Here are available flags:
           | 0x01   | 0x00   |, | 0x02   | 0x00   |, | 0x03   | 0x00   |
 
 
-       そして、 ``UInt16`` の ``[1, 2, 3]`` をシャッフルすると以下のようなデータになります。
+       And, after shuffling ``[1, 2, 3]``  in ``UInt16``, the data would be as below.
 
        .. code-block::
 
@@ -1213,14 +1214,14 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|
           | 0x01   | 0x02   | 0x03   |, | 0x00   | 0x00   | 0x00   |
 
-       ``UInt16`` の ``[1, 2, 3]`` というデータだと、シャッフル後に ``Byte 1`` のデータがすべて ``0x00`` になり、同じ値が連続することになります。
-       したがって、このようなデータは圧縮率の向上に寄与するので、このフラグを適用するのに向いているデータです。
+       After shuffling ``[1, 2, 3]`` in ``UInt16``, the date in ``Byte 1`` would be all ``0x00``. It means there are same values in continuance.
+       Thus, this data pattern is suitable for this flag because it would contribute to increase the compression rate.
 
-       浮動小数点数であれば、符号と指数部が同じデータが該当します。
-       IEEE 754 形式の単精度浮動小数点数の場合、符号は31ビット目に配置され、指数部は30ビット目から23ビット目に配置されます。
-       符号ビットと指数部の上位7ビットで最上位のバイトが構成されるので符号ビットと指数部の上位7ビットが同じになれば、シャッフル後は同じ値が連続することになるからです。
+       In case of a floating-point number, the data having same the code part and the exponent part would be corresponded.
+       In case of the IEEE 754 type single-precision floating-point format, code part would be placed at 31st bit, and exponent part would be placed at 32nd bit.
+       There would be same values in continuance after shuffling the data if the code part and the upper 7 bit of exponent bit become same because the highest byte would be structured with the code part and the upper 7 bit of exponent bit.
 
-       例えば、 ``Float32`` の ``[0.5, 0.6]`` というデータは、IEEE 754 形式の単精度浮動小数点数で表現すると以下のように符号ビットと指数部が同一です。
+       For example, the data, ``[0.5, 0.6]`` in ``Float32``, would have same code bit and exponent part by representing in Single-precision floating-point format in IEEE 754 type as below.
 
        .. code-block::
 
@@ -1229,7 +1230,7 @@ Here are available flags:
           | 0000 0000 0000 0000 0000 000 | 0111 1110   |  0         |
           | 0101 1001 1001 1001 1001 100 | 0111 1110   |  0         |
 
-       これを、シャッフルすると以下のようになり、 ``Byte 3`` に同じ値が連続することになります。
+       Shuffling the given data would have same values in continuance for ``Byte 3`` as below.
 
        .. code-block::
 
@@ -1237,39 +1238,38 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------| 
           | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   | 
 
-       ``Float`` / ``Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、
-       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。
+       In case of the ``Float`` / ``Float32`` type data, please refer to explanations for ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` and ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` since it is also possible to combine ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` or ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` .
 
    * - ``COMPRESS_FILTER_BYTE_DELTA``
      - .. versionadded:: 13.0.8
 
        .. include:: compress_filter.rst
 
-       では、このフラグがどのようなデータに対して有効かを記載します。
+       Here is what kind of the data being effective for this flag.
 
-       このフラグは、圧縮対象の値のバイト間の差分を計算するフラグです。
-       例えば ``UInt8`` のベクターカラム ``[1, 2, 3, 4, 5]`` というデータの場合、このフラグを適用すると ``[1, (2-1), (3-2), (4-3), (5-4)] = [1, 1, 1, 1, 1]`` というデータになります。
-       上記のように差分データを計算することで、同じ値が連続するデータを作り圧縮率を向上させることを狙っています。
-       ポイントは、各要素間の差分を計算することで、同じ値が連続するデータを作り出すことにあります。
+       This flag is to calculate the difference between bytes of values to be compression targeted.
+       As sample case of the vector column ``[1, 2, 3, 4, 5]`` in ``UInt8``, applying this flag would produce data would become ``[1, (2-1), (3-2), (4-3), (5-4)] = [1, 1, 1, 1, 1]``.
 
-       したがって、差分を計算しても同じ値が連続するデータを作り出すことができないデータは、このフラグを適用するには不向きなデータです。
-       どのようなデータであれば、差分を計算して同じ値が連続するようになるのかを以下に記載します。
+       As noted above, it is trying to increase the compression rate by calculating increments and producing same values in continuance.
+       The point is there would be same values in continuance after calculating the increments between each elements.
 
-       まずは、前述の例でもあげた、 ``UInt8`` の ``[1, 2, 3, 4, 5]`` というような一定のペースで値が増加していくデータです。
-       一定のペースなので、 ``UInt8`` の ``[1, 11, 21, 31, 41]`` のように ``10`` ずつ値が増加するようなデータでも良いです。
+       Thus, the data is not suitable to use for this flag if there would not be same values in continuance after  calculating the increments.
+       Here is the list of data pattern to have same values in continuance after calculating increments.
 
-       次に、 ``UInt8`` の ``[5, 5, 5, 5, 5]`` のように同じ値が連続するデータです。
-       このデータは差分を計算すると ``[5, 0, 0, 0, 0]`` となり、 ``0`` が連続するようになります。
-       逆に、 ``UInt8`` の ``[1, 255, 2, 200, 1]`` のように差分を計算しても同じ値が連続しないデータは、このフラグには不向きなデータです。
+       First pattern would be the data increased with constant interval such as ``[1, 2, 3, 4, 5]`` in ``UInt8``.
+       The constant interval could be every ``10`` for ``[1, 11, 21, 31, 41]`` in ``UInt8`` as long as the interval is same.
 
-       ただ、差分を計算しても同じ値が連続しなかったり、差分自体が大きい値になる場合でも、 ``COMPRESS_FILTER_SHUFFLE`` を合わせて使うことで
-       圧縮率を向上させられるケースもあります。
+       Next pattern would be the data having same values in continuance such as ``[5, 5, 5, 5, 5]`` in ``UInt8``.
+       There would be ``0`` in continuance after calculating the increments of this data.
+       In opossite, ``[1, 255, 2, 200, 1]`` in ``UInt8`` is not suitable for this flag because the data would not have same value in continuance after calculating the increments.
 
-       例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。
-       このデータでは同じ値は連続しませんし、差分自体も大きい値です。
+       There would be a case to be able to increase the compression rate by combining  ``COMPRESS_FILTER_SHUFFLE`` even though calculating increments would not have same value in continuance, or increments are too large.
 
-       しかし、このデータに ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようになります。
-       説明のため、まず以下のように ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` をリトルエンディアンのバイト列で表現します。
+       For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in  ``UInt32`` would be ``[4526677, 65724, 65816, 65662]``  after only being applied ``COMPRESS_FILTER_BYTE_DELTA`` .
+       This data would not have values in continuance, and increments are large.
+
+       But applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be different. And it will be explained in following.
+       First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below.
 
        .. code-block::
 
@@ -1277,7 +1277,7 @@ Here are available flags:
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------| 
           | 0x55   | 0x12   | 0x45   | 0x00   |, | 0x11   | 0x13   | 0x46   | 0x00   |, | 0x29   | 0x14   | 0x47   | 0x00   |, | 0xA7   | 0x14   | 0x48   | 0x00   | 
 
-       このデータに対して、 ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようなバイト列になります。
+       Applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be following byte columns.
 
        .. code-block::
 
@@ -1285,31 +1285,29 @@ Here are available flags:
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|
           | 0x55   | 0x11   | 0x29   | 0xA7   |, | 0x12   | 0x13   | 0x14   | 0x14   |, | 0x45   | 0x46   | 0x47   | 0x48   |, | 0x00   | 0x00   | 0x00   | 0x00   | 
 
-       シャッフル後の ``Byte1`` のデータと ``Byte2`` 、 ``Byte 3`` のデータに注目してください。
-       ``Byte 1`` のデータの差分は ``[0x12, 0x01, 0x01, 0x00]`` , ``Byte 2`` のデータの差分は ``[0x45, 0x01, 0x01, 0x01]`` , ``Byte 3`` のデータの差分は ``[0x00, 0x00, 0x00, 0x00]`` となり、
-       差分の値が小さく、また同じ値が連続するようになります。
+       Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte 3`` after the shuffling.
+       The data increments of ``Byte 1`` are ``[0x12, 0x01, 0x01, 0x00]`` . The data increments of ``Byte 2`` are  ``[0x45, 0x01, 0x01, 0x01]`` .
+       The data increments of ``Byte 3`` are ``[0x00, 0x00, 0x00, 0x00]``. From those numbers, you can see the data increments have small values and have same values in continuance.
 
-       このように、 ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは圧縮率の向上が見込めないデータでも、 ``COMPRESS_FILTER_SHUFFLE`` と合わせて使うことで
-       圧縮率の向上を見込めるケースがあります。
+       As you see these, the compression rate could be increase by combining ``COMPRESS_FILTER_SHUFFLE`` even if applying ``COMPRESS_FILTER_BYTE_DELTA`` did not change the rate.
 
-       ただし、 ``COMPRESS_FILTER_SHUFFLE`` は同じバイトのデータを集めるフィルターなので、1バイトのデータに対して適用しても
-       意味がありません。（1バイトのデータの場合は、シャッフルしてもしなくても同じデータ列になるためです。）
-       したがって、 ``COMPRESS_FILTER_BYTE_DELTA`` と ``COMPRESS_FILTER_SHUFFLE`` を合わせて使う場合は、 ``Int8`` / ``UInt8`` 以外
-       のデータに対して使用してください。
+       Please note that  ``COMPRESS_FILTER_SHUFFLE`` would not be effective for the 1 byte data because it is to gather the same byte from the data.
+       (The 1 byte data would have same data column whether being shuffled or not.)
+       Thus, in case of combining ``COMPRESS_FILTER_BYTE_DELTA`` and ``COMPRESS_FILTER_SHUFFLE``, please do not use data in ``Int8`` / ``UInt8``. Only use for other type.
 
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``
      - .. versionadded:: 13.0.8
 
        .. include:: compress_filter.rst
 
-       このフラグは、 ``Float`` / ``Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
+       This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE`` .
 
-       では、このフラグがどのようなデータに対して有効かを記載します。
+       Here is what kind of the data being effective for this flag.
 
-       このフラグは、 ``Float`` / ``Float32`` 型のベクターカラムの各要素の精度を1バイト落とします。
-       精度を落とすとは、浮動小数点数の最下位バイトをすべて0にすることです。
+       This flag would drop the 1 byte of fraction from each vector column elements of ``Float`` / ``Float32`` type.
+       Dropping the fraction means making all of the lower 1 byte of the floating-point number ``0``.
 
-       例えば、 ``Float32`` の ``[1.25, 3.67, 4.55]`` というデータは、IEEE 754 形式の単精度浮動小数点数で表現すると以下のように表現できます。
+       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be presented as following in the IEEE 754 format single-precision floating-point.
 
        .. code-block::
 
@@ -1319,8 +1317,8 @@ Here are available flags:
           | 0001 0010 1000 0111 0101 011 | 0000 0001   | 0          |
           | 0101 1001 1001 1001 1000 100 | 1000 0001   | 0          |
 
-       このフラグを適用すると、最下位バイトをすべて0にするので以下のようなデータになります。
-       仮数部の最下位バイトが0になっていることに注目してください。
+       Applying this flag make all lower 1 byte ``0``. And the data would be as below.
+       Pay attention to all ``0`` for lower 1byte of fixed-point part.
 
        .. code-block::
 
@@ -1330,11 +1328,11 @@ Here are available flags:
           | 0000 0000 1000 0111 0101 011 | 0000 0001   | 0          |
           | 0000 0000 1001 1001 1000 100 | 1000 0001   | 0          |
 
-       ここまでが、このフラグ単独で使用した時に実行される操作です。
-       前述の通り、このフラグは ``COLUMN_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
-       そのため、ここから更にデータをシャッフルすることで、圧縮率の向上を期待しています。
+       These actions are what would be done for single flag usage.
+       As noted, this flag is expected to be combined with ``COLUMN_FILTER_SHUFFLE`` .
+       Thus, by shuffling the data it is to expected increasing the compression rate after using the flag.
 
-       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` を適用したデータをシャッフルすると以下のようなデータになります。
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` then shuffling would produce data as below.
 
        .. code-block::
 
@@ -1342,9 +1340,8 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x00   | 0x00   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       ``Byte 0`` に注目してください。 ``Byte 0`` は ``0`` が連続するデータになります。
-
-       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` を適用せずにシャッフルすると以下のようなデータになり、どのバイトも同じ値は連続していません。
+       Pay attention to the ``Byte 0``. You can find the value ``0`` in continuance for ``Byte 0``.
+       If ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` was not applied and shuffled, the data would be as following table, there would be no same value in continuance for any bytes.
 
        .. code-block::
 
@@ -1352,23 +1349,22 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       このように単純にシャッフルしただけでは、圧縮率の向上が見込めないデータでも ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` を適用することで、圧縮率の向上が見込める場合があります。
-
-       ただし、圧縮対象の浮動小数点数の精度が1バイト分落ちるので、その分不正確なデータになることに注意してください。
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` to those data can be expected to increase the compression rate even if those data cannot increase the compression rate only with shuffling.
+       However, note the data may be inaccurate since the fraction of the floating-point number is dropped for 1 byte.
 
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``
      - .. versionadded:: 13.0.8
 
        .. include:: compress_filter.rst
 
-       このフラグは、 ``Float`` / ``Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
+       This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE``.
 
-       では、このフラグがどのようなデータに対して有効かを記載します。
+       Here is what kind of the data being effective for this flag.
 
-       このフラグは、 ``Float`` / ``Float32`` 型のベクターカラムの各要素の精度を2バイト落とします。
-       精度を落とすとは、浮動小数点数の下位2バイトをすべて ``0`` にすることです。
+       This flag would drop the 2 bytes of fraction from each vector column elements of ``Float`` / ``Float32`` type.
+       Dropping the fraction means making all of the lower 2 bytes of the floating-point number ``0``.
 
-       例えば、 ``Float32`` の ``[1.25, 3.67, 4.55]`` というデータは、IEEE 754 形式の単精度浮動小数点数で表現すると以下のように表現できます。
+       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be presented as following in the IEEE 754 format single-precision floating-point.
 
        .. code-block::
 
@@ -1378,8 +1374,8 @@ Here are available flags:
           | 0001 0010 1000 0111 0101 011 | 0000 0001   | 0          |
           | 0101 1001 1001 1001 1000 100 | 1000 0001   | 0          |
 
-       このフラグを適用すると、下位2バイトをすべて ``0`` にするので以下のようなデータになります。
-       仮数部の下位2バイトがすべて ``0`` になっていることに注目してください。
+       Applying this flag make all lower 2 bytes ``0``. And the data would be as below.
+       Pay attention to all ``0`` for lower 2 bytes of fixed-point part.
 
        .. code-block::
 
@@ -1389,11 +1385,11 @@ Here are available flags:
           | 0000 0000 0000 0000 0101 011 | 0000 0001   | 0          |
           | 0000 0000 0000 0000 1000 100 | 1000 0001   | 0          |
 
-       ここまでが、このフラグ単独で使用した時に実行される操作です。
-       前述の通り、このフラグは ``COLUMN_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
-       そのため、ここから更にデータをシャッフルすることで、圧縮率の向上を期待しています。
+       These actions are what would be done for single flag usage.
+       As noted, this flag is expected to be combined with ``COLUMN_FILTER_SHUFFLE`` .
+       Thus, by shuffling the data it is to expected increasing the compression rate after using the flag.
 
-       ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` を適用したデータをシャッフルすると以下のようなデータになります。
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` then shuffling would produce data as below.
 
        .. code-block::
 
@@ -1401,9 +1397,9 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x00   | 0x00   |, | 0x00   | 0x00   | 0x00   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       ``Byte 0`` と ``Byte 1`` に注目してください。 ``Byte 0`` と ``Byte 1`` は ``0`` が連続するデータになります。
+       Pay attention to the ``Byte 0`` and ``Byte 1``. You can find the value ``0`` in continuance for ``Byte 0`` and ``Byte1``.
 
-       ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` を適用せずにシャッフルすると以下のようなデータになり、どのバイトも同じ値は連続していません。
+       If ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` was not applied and shuffled, the data would be as following table, there would be no same value in continuance for any bytes.
 
        .. code-block::
 
@@ -1411,9 +1407,9 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       このように単純にシャッフルしただけでは、圧縮率の向上が見込めないデータでも ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` を適用することで、圧縮率の向上が見込める場合があります。
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` to those data can be expected to increase the compression rate even if those data cannot increase the compression rate only with shuffling.
 
-       ただし、圧縮対象の浮動小数点数の精度が2バイト分落ちるので、その分不正確なデータになることに注意してください。
+       However, note the data may be inaccurate since the fraction of the floating-point number is dropped for 2 bytes.
 
    * - ``WITH_SECTION``
      - It enables section support to index column.
