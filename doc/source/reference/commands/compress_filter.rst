@@ -1,20 +1,20 @@
 .. -*- rst -*-
 
-このフラグは圧縮前にデータをフィルタリングすることで
-``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` の圧縮率を高めるためのフラグです。
+These flags are to increase compression rate of ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD``
+to increase by filtering the data before the compression.
 
-ただし、データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
-また、このフラグを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
-データに合わせて効果があるフィルターだけ有効にすることが重要です。
+However it could be effective or not depending on the data.
+It might decrease the compression rate.
 
-なお、 ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定しない場合は
-`BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
-このフラグを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
-しかし、データによってはこのフラグを有効にせずに単に ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定するだけで
-十分であることもあるため、実際のデータにあわせて適切にフラグを設定するようにしてください。
+Also, saving column and reference process are going to be slower because enabling these flags would require additional processing.
 
-``COMPRESS_FILTER_SHUFFLE`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
-各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
-自分でビルドする場合は :doc:`/install/others` を参照してください。
+Regardless of setting ``COMPRESS_ZLIB`` , ``COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` , these filters use `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ as the compression alogolizm, thus make the column size smaller than the noncompressed column in most cases.
 
-このフラグは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+Yet, there would be a case that some data would show sufficient work by only suetting ``COMPRESS_ZLIB`` , `COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` .
+So it is advised to set suitable flags depending on the data.
+
+Note that ``COMPRESS_FILTER_SHUFFLE`` flag is ignored if Blosc support is invalid. Blosc support is valid in default in each packages.
+However, We need to valid Blosc support explicitly when we build Groonga from source.
+Please refer :doc:`/install/others` when we build Groonga from source.
+
+These flags are only available with ``COLUMN_VECTOR`` and are ignored with ``COLUMN_SCALAR`` .

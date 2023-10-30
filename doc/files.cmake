@@ -1113,6 +1113,7 @@ set(GRN_DOC_SOURCES
     reference/commands/column_list.rst
     reference/commands/column_remove.rst
     reference/commands/column_rename.rst
+    reference/commands/compress_filter.rst
     reference/commands/config_delete.rst
     reference/commands/config_get.rst
     reference/commands/config_set.rst
