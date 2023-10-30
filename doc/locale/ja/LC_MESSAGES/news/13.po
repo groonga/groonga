@@ -88,8 +88,8 @@ msgstr "クエリーログを見ずに実行時間を測定。"
 msgid "[{doc}`/reference/functions/query`] Added support for object literal."
 msgstr "[{doc}`/reference/functions/query`] オブジェクトリテラルをサポートしました。"
 
-msgid "[{doc}`/reference/commands/query_expand`] Added support for NPP and ONPP(experimental)."
-msgstr "[{doc}`/reference/commands/query_expand`] NPP と ONPP をサポートしました（実験的）。"
+msgid "[{doc}`/reference/commands/query_expand`] Added support for `NPP` and `ONPP` (experimental)."
+msgstr "[{doc}`/reference/commands/query_expand`] `NPP` と `ONPP` をサポートしました（実験的）。"
 
 msgid "[{doc}`/reference/functions/snippet`] Added support for `normalizers` option."
 msgstr "`normalizers` オプションをサポートしました。"
@@ -101,31 +101,34 @@ msgid "Fixes"
 msgstr "修正"
 
 msgid "Fixed a bug in `Time OPERATOR Float{,32}` comparison. [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
-msgstr "`Time OPERATOR Float{,32}` の問題を修正しました。 [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
+msgstr "`Time OPERATOR Float{,32}` が正しく評価されない問題を修正しました。 [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
 
 msgid "Microsecond (small value than second) information in `Float{,32}` isn't used. This is happen only when `Time OPERATOR Float{,32}`."
 msgstr "`Float{,32}` 内のマイクロ秒（秒未満の小さい値）が使えていませんでした。この問題は `Time OPERATOR Float{,32}` の時だけ発生します。"
 
-msgid "This is happen in \"load --ifexists 'A OP B || C OP D'\" as below."
-msgstr "以下のように、 \"load --ifexists 'A OP B || C OP D'\" で発生します。"
+msgid "This is happen in `load --ifexists 'A OP B || C OP D'` as below."
+msgstr "以下のように、 `load --ifexists 'A OP B || C OP D'` でこの問題は発生します。"
 
-msgid "However, this isn't happen in \"select --filter\"."
-msgstr "しかし、 \"select --filter\" では発生しません。"
+msgid "However, this isn't happen in `select --filter`."
+msgstr "しかし、 `select --filter` では発生しません。"
 
-msgid "Fixed a bug that alnum(a-zA-Z0-9) + blank may be detected."
-msgstr "alnum(a-zA-Z0-9) + blankを検知してしまう問題を修正しました。"
+msgid "Fixed a bug that `alnum(a-zA-Z0-9) + blank` may be detected."
+msgstr "`alnum(a-zA-Z0-9) + blank` が検知されることがある問題を修正しました。"
 
-msgid "If the number of input is 2 such as \"ab\" and text with some blanks such as \"a b\" is matched, \"a b\" is detected. However, it should not be detected in this case."
-msgstr "\"ab\"にような2文字の入力と\"a b\"のように複数の空白を含むテキストもヒットしていましたが、\"a b\"はヒットすべきではありません。"
+msgid "If the number of input is 2 such as `ab` and text with some blanks such as `a b` is matched, `a b` is detected. However, it should not be detected in this case."
+msgstr "`ab` や `a b` のように複数の空白を含むテキストがマッチする場合、 `a b`が検知されますが、このケースでは検知すべきではありません。"
 
-msgid "For example, \"a i\" is detected when this bug occures as below."
-msgstr "例えば、この問題が発生すると、以下のように\"a i\"を検知します。"
+msgid "For example, `a i` is detected when this bug occures as below."
+msgstr "例えば、この問題が発生すると、以下のように `a i` を検知してしまいます。"
 
 msgid "However, the above result is unexpected result. We don't want to detect `a i` in the above case."
 msgstr "しかし、上記の結果は期待していない結果です。上記ケースでは `a i` は検知してほしくありません。"
 
 msgid "Thanks"
 msgstr "感謝"
+
+msgid "yssrku"
+msgstr ""
 
 msgid "Release 13.0.8 - 2023-09-29"
 msgstr "13.0.8リリース - 2023-09-29"
