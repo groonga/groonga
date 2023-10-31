@@ -59,10 +59,10 @@ msgid "Specify `TokenMecab` in `--fuzzy_tokenize`."
 msgstr "`--fuzzy_tokenize` に `TokenMecab` を指定する。"
 
 msgid "[{doc}`/reference/commands/load`] Added support for `--ifexists` even if we specified `apache-arrow` into `input_type`."
-msgstr "`input_type` が `apache-arrow` のときも `--ifexists` が使えるようになりました。"
+msgstr "[{doc}`/reference/commands/load`] `input_type` が `apache-arrow` のときも `--ifexists` が使えるようになりました。"
 
 msgid "[{doc}`/reference/normalizers`] Improved `NormalizerNFKC*` options with addition new option `remove_blank_force`."
-msgstr "`NormalizerNFKC*` に新しく `remove_blank_force` オプションを追加しました。"
+msgstr "[{doc}`/reference/normalizers`] `NormalizerNFKC*` に新しく `remove_blank_force` オプションを追加しました。"
 
 msgid "When `remove_blank_force` is `false`, Normalizer doesn't ignore space as below."
 msgstr "`remove_blank_force` が `false` の時、以下のようにノーマライザーは空白を無視しません。"
@@ -92,7 +92,7 @@ msgid "[{doc}`/reference/commands/query_expand`] Added support for `NPP` and `ON
 msgstr "[{doc}`/reference/commands/query_expand`] `NPP` と `ONPP` をサポートしました（実験的）。"
 
 msgid "[{doc}`/reference/functions/snippet`] Added support for `normalizers` option."
-msgstr "`normalizers` オプションをサポートしました。"
+msgstr "[{doc}`/reference/functions/snippet`] `normalizers` オプションをサポートしました。"
 
 msgid "We can use normalizer with option. For example, when we don't want to ignore space in `snippet()` function, we use this option as below."
 msgstr "オプション付きのノーマライザーが使えるようになります。例えば、以下のように `snippet()` 関数内でスペースを無視したくない時にこのオプションを使います。"
