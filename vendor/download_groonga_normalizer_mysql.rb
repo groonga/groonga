@@ -62,7 +62,5 @@ def download(url, base)
   FileUtils.rm_rf(tar_gz)
 end
 
-url = "https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.tar.gz"
-# TODO: Remove me when we release groonga-normalizer-mysql-1.2.3.
-url = "https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-1.2.1.tar.gz"
-download(url, groonga_nromalizer_mysql_base)
+download("https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.tar.gz",
+         groonga_nromalizer_mysql_base)
