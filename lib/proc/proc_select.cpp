@@ -4928,7 +4928,7 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
                *cache_key,
                &(ctx->impl->command.version),
                sizeof(grn_command_version));
-  GRN_BOOL_PUT(ctx, *cache_key, &(ctx->impl->output.is_pretty));
+  GRN_BOOL_PUT(ctx, *cache_key, ctx->impl->output.is_pretty);
 #undef PUT_CACHE_KEY
 }
 
