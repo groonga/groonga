@@ -4929,6 +4929,7 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
                &(ctx->impl->command.version),
                sizeof(grn_command_version));
   GRN_BOOL_PUT(ctx, *cache_key, ctx->impl->output.is_pretty);
+  GRN_BOOL_PUT(ctx, *cache_key, grn_ctx_trace_log_is_enabled(ctx));
 #undef PUT_CACHE_KEY
 }
 

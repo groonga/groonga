@@ -1,0 +1,182 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Lexicon memos_content   COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "This is a pen"},
+{"content": "That is a pen"},
+{"content": "They are pens"}
+]
+[[0,0.0,0.0],3]
+select Memos   --match_columns content   --query "Thas OR ere"   --fuzzy_max_distance 1   --output_columns *,_score   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 2,
+    "columns": [
+      {
+        "name": "content",
+        "type": "ShortText"
+      },
+      {
+        "name": "_score",
+        "type": "Float"
+      }
+    ],
+    "records": [
+      [
+        "This is a pen",
+        1.0
+      ],
+      [
+        "That is a pen",
+        1.0
+      ]
+    ]
+  }
+}
+select Memos   --match_columns content   --query "Thas OR ere"   --fuzzy_max_distance 1   --output_columns *,_score   --command_version 3   --output_trace_log yes
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "trace_log": {
+    "columns": [
+      {
+        "name": "depth"
+      },
+      {
+        "name": "sequence"
+      },
+      {
+        "name": "name"
+      },
+      {
+        "name": "value"
+      },
+      {
+        "name": "elapsed_time"
+      }
+    ],
+    "logs": [
+      [
+        1,
+        0,
+        "ii.select.input",
+        "Thas",
+        0
+      ],
+      [
+        1,
+        1,
+        "ii.select.operator",
+        "or",
+        1
+      ],
+      [
+        2,
+        0,
+        "ii.select.exact.n_hits",
+        0,
+        2
+      ],
+      [
+        2,
+        0,
+        "ii.select.fuzzy.input",
+        "Thas",
+        3
+      ],
+      [
+        2,
+        1,
+        "ii.select.fuzzy.input.actual",
+        "that",
+        4
+      ],
+      [
+        2,
+        2,
+        "ii.select.fuzzy.input.actual",
+        "this",
+        5
+      ],
+      [
+        2,
+        3,
+        "ii.select.fuzzy.n_hits",
+        2,
+        6
+      ],
+      [
+        1,
+        2,
+        "ii.select.n_hits",
+        2,
+        7
+      ],
+      [
+        1,
+        0,
+        "ii.select.input",
+        "ere",
+        8
+      ],
+      [
+        1,
+        1,
+        "ii.select.operator",
+        "or",
+        9
+      ],
+      [
+        2,
+        0,
+        "ii.select.exact.n_hits",
+        2,
+        10
+      ],
+      [
+        1,
+        2,
+        "ii.select.n_hits",
+        2,
+        11
+      ]
+    ]
+  },
+  "body": {
+    "n_hits": 2,
+    "columns": [
+      {
+        "name": "content",
+        "type": "ShortText"
+      },
+      {
+        "name": "_score",
+        "type": "Float"
+      }
+    ],
+    "records": [
+      [
+        "This is a pen",
+        1.0
+      ],
+      [
+        "That is a pen",
+        1.0
+      ]
+    ]
+  }
+}
