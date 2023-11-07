@@ -3021,9 +3021,9 @@ grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->add_metadata(key, value);
 #else
-  ERR(
-    GRN_FUNCTION_NOT_IMPLEMENTED,
-    "[arrow][stream-writer][add-metadata] Apache Arrow support isn't enabled");
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-metadata] Apache Arrow support isn't "
+      "enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -3036,9 +3036,9 @@ grn_arrow_stream_writer_write_schema(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->write_schema();
 #else
-  ERR(
-    GRN_FUNCTION_NOT_IMPLEMENTED,
-    "[arrow][stream-writer][write-schema] Apache Arrow support isn't enabled");
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][write-schema] Apache Arrow support isn't "
+      "enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
@@ -3065,9 +3065,9 @@ grn_arrow_stream_writer_close_record(grn_ctx *ctx,
 #ifdef GRN_WITH_APACHE_ARROW
   writer->writer->close_record();
 #else
-  ERR(
-    GRN_FUNCTION_NOT_IMPLEMENTED,
-    "[arrow][stream-writer][close-record] Apache Arrow support isn't enabled");
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][close-record] Apache Arrow support isn't "
+      "enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }

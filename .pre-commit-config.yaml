@@ -69,6 +69,7 @@ repos:
           ?lib/tokenizer\.c|
           ?lib/trace_log\.cpp|
           ?lib/util\.c|
+          ?lib/vector\.cpp|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit
