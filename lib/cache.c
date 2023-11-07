@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,9 @@
 
 #include <sys/stat.h>
 
+typedef uint8_t grn_cache_flags;
+#define GRN_CACHE_FLAG_WITH_TRACE_LOG (1 << 0)
+
 typedef struct _grn_cache_entry_memory grn_cache_entry_memory;
 
 struct _grn_cache_entry_memory {
@@ -51,6 +54,7 @@ typedef struct _grn_cache_entry_persistent_metadata {
   uint32_t max_nentries;
   uint32_t nfetches;
   uint32_t nhits;
+  uint32_t flags;
 } grn_cache_entry_persistent_metadata;
 
 typedef union _grn_cache_entry_persistent {
@@ -291,6 +295,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
       entry->metadata.max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
       entry->metadata.nfetches = 0;
       entry->metadata.nhits = 0;
+      entry->metadata.flags = GRN_CACHE_FLAG_WITH_TRACE_LOG;
     }
   }
 
@@ -736,10 +741,20 @@ grn_cache_fetch_memory(grn_ctx *ctx, grn_cache *cache,
       goto exit;
     }
     rc = GRN_SUCCESS;
-    GRN_TEXT_PUT(ctx,
-                 output,
-                 GRN_TEXT_VALUE(ce->value),
-                 GRN_TEXT_LEN(ce->value));
+    const char *value = GRN_TEXT_VALUE(ce->value);
+    size_t value_size = GRN_TEXT_LEN(ce->value);
+    grn_cache_flags flags = 0;
+    if (value_size > sizeof(uint8_t)) {
+      flags = *((uint8_t *)value);
+      value += sizeof(uint8_t);
+      value_size -= sizeof(uint8_t);
+    }
+    if (flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+      size_t used_size = grn_ctx_trace_log_restore(ctx, value, value_size);
+      value += used_size;
+      value_size -= used_size;
+    }
+    GRN_TEXT_PUT(ctx, output, value, value_size);
     ce->prev->next = ce->next;
     ce->next->prev = ce->prev;
     {
@@ -805,7 +820,29 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
     }
 
     rc = GRN_SUCCESS;
-    grn_ja_get_value(ctx, values, cache_id, output);
+    if (metadata_entry->metadata.flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+      const uint8_t *data;
+      uint32_t data_size;
+      grn_io_win iw;
+      data = grn_ja_ref(ctx, values, cache_id, &iw, &data_size);
+      if (data) {
+        grn_cache_flags flags = 0;
+        if (data_size > sizeof(uint8_t)) {
+          flags = *data;
+          data += sizeof(uint8_t);
+          data_size -= sizeof(uint8_t);
+        }
+        if (flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+          size_t used_size = grn_ctx_trace_log_restore(ctx, data, data_size);
+          data += used_size;
+          data_size -= used_size;
+        }
+        GRN_TEXT_PUT(ctx, output, data, data_size);
+        grn_ja_unref(ctx, &iw);
+      }
+    } else {
+      grn_ja_get_value(ctx, values, cache_id, output);
+    }
     grn_cache_entry_persistent_delete_link(cache, entry);
     {
       grn_cache_entry_persistent *head_entry;
@@ -863,6 +900,14 @@ grn_cache_update_memory(grn_ctx *ctx, grn_cache *cache,
   obj = grn_obj_open(cache->ctx, GRN_BULK, 0, GRN_DB_TEXT);
   if (!obj) {
     goto exit;
+  }
+  grn_cache_flags flags = 0;
+  if (grn_ctx_trace_log_is_enabled(ctx)) {
+    flags |= GRN_CACHE_FLAG_WITH_TRACE_LOG;
+  }
+  GRN_UINT8_PUT(cache->ctx, obj, flags);
+  if (flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+    grn_ctx_trace_log_dump(ctx, cache->ctx, obj);
   }
   GRN_TEXT_PUT(cache->ctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
   id = grn_hash_add(cache->ctx, cache->impl.memory.hash, key, key_len,
@@ -948,9 +993,35 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
     }
     entry->data.modified_time = ctx->impl->tv;
 
-    grn_ja_put(cache->ctx, values, cache_id,
-               GRN_TEXT_VALUE(value), (uint32_t)GRN_TEXT_LEN(value),
-               GRN_OBJ_SET, NULL);
+    if (metadata_entry->metadata.flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+      grn_obj data;
+      GRN_TEXT_INIT(&data, 0);
+      grn_cache_flags flags = 0;
+      if (grn_ctx_trace_log_is_enabled(ctx)) {
+        flags |= GRN_CACHE_FLAG_WITH_TRACE_LOG;
+      }
+      GRN_UINT8_PUT(cache->ctx, &data, flags);
+      if (flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
+        grn_ctx_trace_log_dump(ctx, cache->ctx, &data);
+      }
+      GRN_TEXT_PUT(cache->ctx, &data, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+      grn_ja_put(cache->ctx,
+                 values,
+                 cache_id,
+                 GRN_TEXT_VALUE(&data),
+                 (uint32_t)GRN_TEXT_LEN(&data),
+                 GRN_OBJ_SET,
+                 NULL);
+      GRN_OBJ_FIN(cache->ctx, &data);
+    } else {
+      grn_ja_put(cache->ctx,
+                 values,
+                 cache_id,
+                 GRN_TEXT_VALUE(value),
+                 (uint32_t)GRN_TEXT_LEN(value),
+                 GRN_OBJ_SET,
+                 NULL);
+    }
 
     head_entry =
       (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,

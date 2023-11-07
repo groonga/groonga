@@ -16,6 +16,7 @@
 */
 
 #include "grn_ctx_impl.h"
+#include "grn_vector.h"
 
 #include <chrono>
 
@@ -54,6 +55,113 @@ grn_ctx_trace_log_disable(grn_ctx *ctx)
   GRN_BULK_REWIND(&(ctx->impl->trace_log.names));
   GRN_BULK_REWIND(&(ctx->impl->trace_log.values));
   GRN_BULK_REWIND(&(ctx->impl->trace_log.elapsed_times));
+}
+
+void
+grn_ctx_trace_log_dump(grn_ctx *ctx, grn_ctx *dump_ctx, grn_obj *output)
+{
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    grn_text_benc(dump_ctx, output, 0);
+    return;
+  }
+
+  auto depths = &(ctx->impl->trace_log.depths);
+  auto sequences = &(ctx->impl->trace_log.sequences);
+  auto names = &(ctx->impl->trace_log.names);
+  auto values = &(ctx->impl->trace_log.values);
+  auto elapsed_times = &(ctx->impl->trace_log.elapsed_times);
+  size_t i;
+  size_t n = GRN_UINT16_VECTOR_SIZE(depths);
+  grn_text_benc(dump_ctx, output, n);
+  for (i = 0; i < n; ++i) {
+    grn_text_benc(dump_ctx, output, GRN_UINT16_VALUE_AT(depths, i));
+  }
+  for (i = 0; i < n; ++i) {
+    grn_text_benc(dump_ctx, output, GRN_UINT16_VALUE_AT(sequences, i));
+  }
+  grn_obj footer;
+  GRN_TEXT_INIT(&footer, 0);
+  auto body = grn_vector_pack(dump_ctx,
+                              names,
+                              0,
+                              grn_vector_size(dump_ctx, names),
+                              0,
+                              output,
+                              &footer);
+  GRN_TEXT_PUT(ctx, output, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+  GRN_TEXT_PUT(ctx, output, GRN_TEXT_VALUE(&footer), GRN_TEXT_LEN(&footer));
+  GRN_BULK_REWIND(&footer);
+  body = grn_vector_pack(dump_ctx,
+                         values,
+                         0,
+                         grn_vector_size(dump_ctx, values),
+                         0,
+                         output,
+                         &footer);
+  GRN_TEXT_PUT(dump_ctx, output, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+  GRN_TEXT_PUT(dump_ctx,
+               output,
+               GRN_TEXT_VALUE(&footer),
+               GRN_TEXT_LEN(&footer));
+  GRN_OBJ_FIN(ctx, &footer);
+  for (i = 0; i < n; ++i) {
+    uint64_t elapsed_time = GRN_UINT64_VALUE_AT(elapsed_times, i);
+    grn_text_benc(dump_ctx, output, (elapsed_time >> 32) & 0xffffffff);
+    grn_text_benc(dump_ctx, output, elapsed_time & 0xffffffff);
+  }
+}
+
+size_t
+grn_ctx_trace_log_restore(grn_ctx *ctx, const uint8_t *data, size_t data_size)
+{
+  auto start = data;
+  auto current = start;
+  auto end = current + data_size;
+  uint32_t n;
+  GRN_B_DEC(n, current);
+  if (n == 0) {
+    return current - start;
+  }
+
+  auto depths = &(ctx->impl->trace_log.depths);
+  auto sequences = &(ctx->impl->trace_log.sequences);
+  auto names = &(ctx->impl->trace_log.names);
+  auto values = &(ctx->impl->trace_log.values);
+  auto elapsed_times = &(ctx->impl->trace_log.elapsed_times);
+  uint32_t i;
+  for (i = 0; i < n; ++i) {
+    uint32_t depth;
+    GRN_B_DEC(depth, current);
+    GRN_UINT16_PUT(ctx, depths, depth);
+  }
+  for (i = 0; i < n; ++i) {
+    uint32_t sequence;
+    GRN_B_DEC(sequence, current);
+    GRN_UINT16_PUT(ctx, sequences, sequence);
+  }
+  uint32_t used_size;
+  grn_vector_unpack(ctx, names, current, end - current, 0, &used_size);
+  current += used_size;
+  grn_vector_unpack(ctx, values, current, end - current, 0, &used_size);
+  current += used_size;
+  for (i = 0; i < n; ++i) {
+    uint32_t elapsed_time_upper;
+    GRN_B_DEC(elapsed_time_upper, current);
+    uint32_t elapsed_time_lower;
+    GRN_B_DEC(elapsed_time_lower, current);
+    GRN_UINT64_PUT(ctx,
+                   elapsed_times,
+                   (static_cast<uint64_t>(elapsed_time_upper) << 32) +
+                     elapsed_time_lower);
+  }
+  if (!grn_ctx_trace_log_is_enabled(ctx)) {
+    GRN_BULK_REWIND(depths);
+    GRN_BULK_REWIND(sequences);
+    GRN_BULK_REWIND(names);
+    GRN_BULK_REWIND(values);
+    GRN_BULK_REWIND(elapsed_times);
+  }
+  return current - start;
 }
 
 uint16_t

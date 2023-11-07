@@ -31,3 +31,12 @@ select Memos \
   --output_columns *,_score \
   --command_version 3 \
   --output_trace_log yes
+
+# Trace logs must be cached too
+select Memos \
+  --match_columns content \
+  --query "Thas OR ere" \
+  --fuzzy_max_distance 1 \
+  --output_columns *,_score \
+  --command_version 3 \
+  --output_trace_log yes

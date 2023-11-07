@@ -95,6 +95,12 @@ void grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress);
 
 void grn_ctx_trace_log_enable(grn_ctx *ctx);
 void grn_ctx_trace_log_disable(grn_ctx *ctx);
+void grn_ctx_trace_log_dump(grn_ctx *ctx,
+                            grn_ctx *dump_ctx,
+                            grn_obj *output);
+size_t grn_ctx_trace_log_restore(grn_ctx *ctx,
+                                 const uint8_t *value,
+                                 size_t value_size);
 uint16_t grn_ctx_trace_log_get_current_depth(grn_ctx *ctx);
 void grn_ctx_trace_log_set_current_depth(grn_ctx *ctx, uint16_t depth);
 void grn_ctx_trace_log_push(grn_ctx *ctx);
