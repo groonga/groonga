@@ -46,6 +46,7 @@ repos:
           ?lib/grn_snip\.h|
           ?lib/grn_str\.h|
           ?lib/grn_table_selector\.h|
+          ?lib/grn_vector\.h|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
           ?lib/load\.c|
