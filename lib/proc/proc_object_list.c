@@ -126,7 +126,7 @@ command_object_list(grn_ctx *ctx,
     grn_ctx_output_str(ctx, name, (size_t)name_size);
 
     GRN_BULK_REWIND(&vector);
-    grn_rc rc = grn_vector_unpack(ctx, &vector, value, value_len, 0);
+    grn_rc rc = grn_vector_unpack(ctx, &vector, value, value_len, 0, NULL);
     if (rc != GRN_SUCCESS) {
       grn_ctx_output_map_open(ctx, "object", 4);
       {

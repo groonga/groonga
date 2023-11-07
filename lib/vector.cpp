@@ -464,12 +464,14 @@ extern "C" {
   grn_rc
   grn_vector_unpack(grn_ctx *ctx,
                     grn_obj *vector,
-                    const char *data,
+                    const uint8_t *data,
                     uint32_t data_size,
-                    grn_vector_pack_flags flags)
+                    grn_vector_pack_flags flags,
+                    uint32_t *used_size)
   {
-    uint8_t *p = (uint8_t *)data;
-    uint8_t *pe = p + data_size;
+    auto start = data;
+    auto p = start;
+    auto pe = p + data_size;
     uint32_t n0 = vector->u.v.n_sections;
     uint32_t n;
     GRN_B_DEC(n, p);
@@ -517,6 +519,9 @@ extern "C" {
       }
     }
     vector->u.v.n_sections += n;
+    if (used_size) {
+      *used_size = p - start;
+    }
     return GRN_SUCCESS;
   }
 

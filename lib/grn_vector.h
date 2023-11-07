@@ -39,9 +39,10 @@ grn_obj *grn_vector_pack(grn_ctx *ctx,
                          grn_obj *footer);
 grn_rc grn_vector_unpack(grn_ctx *ctx,
                          grn_obj *vector,
-                         const char *data,
+                         const uint8_t *data,
                          uint32_t data_size,
-                         grn_vector_pack_flags flags);
+                         grn_vector_pack_flags flags,
+                         uint32_t *used_size);
 
 grn_obj *grn_vector_body(grn_ctx *ctx, grn_obj *vector);
 
