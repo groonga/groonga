@@ -37,8 +37,8 @@ msgstr "ただ、 `--fuzzy_max_expansions` が0の場合、検索が遅くなる
 msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_with_transposition` (experimental)."
 msgstr "[{doc}`/reference/commands/select`] `select` コマンドの引数に新しく `--fuzzy_with_transposition` を追加しました。(実験的)"
 
-msgid "Normally, a edit distance `1` for the transposition case. However, we can choose edit distance `1` or `2` for the transposition case by using this argument."
-msgstr "通常、文字の交換は編集距離1ですが、この引数を使うことで、文字の交換の編集距離を1または2に指定できます。"
+msgid "We can choose edit distance `1` or `2` for the transposition case by using this argument."
+msgstr "この引数を使うことで「隣接する文字の交換」の編集距離を1または2に指定できます。"
 
 msgid "If this parameter is `yes`, the edit distance of this case is `1`. It's `2` otherwise."
 msgstr "`--fuzzy_with_transposition` が `yes` の場合、文字の交換の編集距離は `1` になります。それ以外の値が指定された場合は、文字の交換の編集距離は `2` になります。"
@@ -46,17 +46,17 @@ msgstr "`--fuzzy_with_transposition` が `yes` の場合、文字の交換の編
 msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_tokenize`."
 msgstr "[{doc}`/reference/commands/select`] `select` の引数に新しく `--fuzzy_tokenize` を追加しました。(実験的)"
 
-msgid "When `--fuzzy_tokenize` is `true`, Gronga use tokenizer that specifies in `--default_tokenizer` in typo tolerance search."
-msgstr "`--fuzzy_tokenize` が `true` の時、 Groongaは、誤字を許容する検索で `--default_tokenizer` で指定したトークナイザーを使います。"
+msgid "When `--fuzzy_tokenize` is `yes`, Gronga use tokenizer that specifies in `--default_tokenizer` in typo tolerance search."
+msgstr "`--fuzzy_tokenize` が `yes` の時、 Groongaは、誤字を許容する検索で `--default_tokenizer` で指定したトークナイザーを使います。"
 
-msgid "The default value of `--fuzzy_tokenize` is `fase`.　The useful case of `--fuzzy_tokenize` is the following case."
-msgstr "`--fuzzy_tokenize` のデフォルト値は `false`です。 `--fuzzy_tokenize` が有用なケースは、以下のケースです。"
+msgid "The default value of `--fuzzy_tokenize` is `no`.　The useful case of `--fuzzy_tokenize` is the following case."
+msgstr "`--fuzzy_tokenize` のデフォルト値は `no`です。 `--fuzzy_tokenize` が有用なケースは、以下のケースです。"
 
 msgid "Search targets are only Japanese data."
 msgstr "検索対象が日本語のデータのみ。"
 
-msgid "Specify `TokenMecab` in `--fuzzy_tokenize`."
-msgstr "`--fuzzy_tokenize` に `TokenMecab` を指定する。"
+msgid "Specify `TokenMecab` in `--default_tokenizer`."
+msgstr "`--default_tokenizer` に `TokenMecab` を指定する。"
 
 msgid "[{doc}`/reference/commands/load`] Added support for `--ifexists` even if we specified `apache-arrow` into `input_type`."
 msgstr "[{doc}`/reference/commands/load`] `input_type` が `apache-arrow` のときも `--ifexists` が使えるようになりました。"
