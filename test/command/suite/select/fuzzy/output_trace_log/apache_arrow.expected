@@ -31,7 +31,7 @@ GROONGA:data_type: metadata
 ========================================
 depth: uint16
 sequence: uint16
-name: string
+name: dictionary<values=string, indices=int16, ordered=0>
 value: dense_union<0: uint32=0, 1: string=1>
 elapsed_time: uint64
 -- metadata --

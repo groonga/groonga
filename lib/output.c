@@ -3889,10 +3889,11 @@ grn_output_envelope_close_apache_arrow_trace_log(grn_ctx *ctx, grn_obj *output)
                                     writer,
                                     "sequence",
                                     grn_ctx_at(ctx, GRN_DB_UINT16));
-  grn_arrow_stream_writer_add_field(ctx,
-                                    writer,
-                                    "name",
-                                    grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+  grn_arrow_stream_writer_add_field_text_dictionary(
+    ctx,
+    writer,
+    "name",
+    grn_ctx_at(ctx, GRN_DB_INT16));
   enum value_type {
     VALUE_TYPE_UINT32,
     VALUE_TYPE_SHORT_TEXT,
@@ -3931,7 +3932,10 @@ grn_output_envelope_close_apache_arrow_trace_log(grn_ctx *ctx, grn_obj *output)
     const char *name;
     uint32_t name_size =
       grn_vector_get_element_float(ctx, names, i, &name, NULL, NULL);
-    grn_arrow_stream_writer_add_column_text(ctx, writer, name, name_size);
+    grn_arrow_stream_writer_add_column_text_dictionary(ctx,
+                                                       writer,
+                                                       name,
+                                                       name_size);
 
     const char *value;
     grn_id value_domain;
