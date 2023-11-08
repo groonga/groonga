@@ -47,6 +47,12 @@ grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   const char *name,
                                   grn_obj *column);
 grn_rc
+grn_arrow_stream_writer_add_field_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *name,
+  grn_obj *index_type);
+grn_rc
 grn_arrow_stream_writer_add_field_union(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         const char *name,
@@ -74,6 +80,12 @@ grn_arrow_stream_writer_add_column_text(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         const char *value,
                                         size_t value_length);
+grn_rc
+grn_arrow_stream_writer_add_column_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *value,
+  size_t value_length);
 grn_rc
 grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,

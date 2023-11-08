@@ -2046,6 +2046,36 @@ namespace grnarrow {
     }
 
     void
+    add_field_text_dictionary(const char *name, grn_obj *index_type)
+    {
+      auto arrow_index_type =
+        grn_column_to_arrow_type(ctx_, index_type, object_cache_);
+      if (!arrow_index_type) {
+        auto ctx = ctx_;
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx_, &inspected, index_type);
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+            "%s[add-field-text-dictionary] unsupported index type: <%.*s>",
+            tag_.c_str(),
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx_, &inspected);
+        return;
+      }
+      auto type = arrow::dictionary(arrow_index_type, arrow::utf8());
+      auto field = arrow::field(name, type);
+      auto status = schema_builder_.AddField(field);
+      if (!status.ok()) {
+        std::stringstream context;
+        check(ctx_,
+              status,
+              context << tag_ << "[add-field-text-dictionary] "
+                      << "failed to add field: <" << field->ToString() << ">");
+      }
+    }
+
+    void
     add_field_union(const char *name, grn_obj **columns, size_t n_columns)
     {
       std::vector<std::shared_ptr<arrow::Field>> fields;
@@ -2163,6 +2193,22 @@ namespace grnarrow {
       check(ctx_,
             status,
             add_column_error_message(context, "text")
+              << "<" << string_view(value, value_length) << ">");
+    }
+
+    void
+    add_column_text_dictionary(const char *value, size_t value_length)
+    {
+      auto column_builder =
+        fetch_current_column_builder<arrow::StringDictionaryBuilder>();
+      auto status = column_builder->Append(value, value_length);
+      if (status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            add_column_error_message(context, "text-dictionary")
               << "<" << string_view(value, value_length) << ">");
     }
 
@@ -2994,6 +3040,24 @@ grn_arrow_stream_writer_add_field(grn_ctx *ctx,
 }
 
 grn_rc
+grn_arrow_stream_writer_add_field_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *name,
+  grn_obj *index_type)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_field_text_dictionary(name, index_type);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-field-text-dictionary] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_arrow_stream_writer_add_field_union(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         const char *name,
@@ -3099,6 +3163,24 @@ grn_arrow_stream_writer_add_column_text(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][text] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *value,
+  size_t value_length)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_text_dictionary(value, value_length);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][text-dictionary] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
