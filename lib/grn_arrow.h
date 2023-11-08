@@ -20,32 +20,27 @@
 #include "grn.h"
 #include "grn_load.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _grn_arrow_stream_loader grn_arrow_stream_loader;
 
 grn_arrow_stream_loader *
-grn_arrow_stream_loader_open(grn_ctx *ctx,
-                             grn_loader *loader);
+grn_arrow_stream_loader_open(grn_ctx *ctx, grn_loader *loader);
 grn_rc
-grn_arrow_stream_loader_close(grn_ctx *ctx,
-                              grn_arrow_stream_loader *loader);
+grn_arrow_stream_loader_close(grn_ctx *ctx, grn_arrow_stream_loader *loader);
 grn_rc
 grn_arrow_stream_loader_consume(grn_ctx *ctx,
                                 grn_arrow_stream_loader *loader,
                                 const char *data,
                                 size_t data_size);
 
-
 typedef struct _grn_arrow_stream_writer grn_arrow_stream_writer;
 grn_arrow_stream_writer *
-grn_arrow_stream_writer_open(grn_ctx *ctx,
-                             grn_obj *output_buffer);
+grn_arrow_stream_writer_open(grn_ctx *ctx, grn_obj *output_buffer);
 grn_rc
-grn_arrow_stream_writer_close(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer);
+grn_arrow_stream_writer_close(grn_ctx *ctx, grn_arrow_stream_writer *writer);
 grn_rc
 grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   grn_arrow_stream_writer *writer,
@@ -128,8 +123,7 @@ grn_arrow_stream_writer_add_column_union(grn_ctx *ctx,
                                          grn_arrow_stream_writer *writer,
                                          int8_t type);
 grn_rc
-grn_arrow_stream_writer_flush(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer);
+grn_arrow_stream_writer_flush(grn_ctx *ctx, grn_arrow_stream_writer *writer);
 
 #ifdef __cplusplus
 }

@@ -37,6 +37,7 @@ repos:
           ?lib/db\.c|
           ?lib/error\.c|
           ?lib/expr\.c|
+          ?lib/grn_arrow\.h|
           ?lib/grn_ctx_impl\.h|
           ?lib/grn_error\.h|
           ?lib/grn_ii\.h|

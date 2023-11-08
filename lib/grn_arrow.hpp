@@ -22,63 +22,61 @@
 #include <arrow/api.h>
 
 namespace grnarrow {
-  grn_rc status_to_rc(const arrow::Status &status);
-  arrow::Status check(grn_ctx *ctx,
-                      grn_rc rc,
-                      const char *context);
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             const char *context);
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             const std::string &context);
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             std::ostream &output);
+  grn_rc
+  status_to_rc(const arrow::Status &status);
+  arrow::Status
+  check(grn_ctx *ctx, grn_rc rc, const char *context);
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, const char *context);
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, const std::string &context);
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, std::ostream &output);
 
   template <typename TYPE>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             const char *context) {
+  bool
+  check(grn_ctx *ctx, arrow::Result<TYPE> &result, const char *context)
+  {
     return check(ctx, result.status(), context);
   }
 
   template <typename TYPE>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             const std::string &context) {
+  bool
+  check(grn_ctx *ctx, arrow::Result<TYPE> &result, const std::string &context)
+  {
     return check(ctx, result.status(), context);
   }
 
   template <typename TYPE>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             std::ostream &output) {
+  bool
+  check(grn_ctx *ctx, arrow::Result<TYPE> &result, std::ostream &output)
+  {
     return check(ctx, result.status(), output);
   }
 
-  template <typename ... ARGS>
-  bool check(grn_ctx *ctx,
-             const arrow::Status &status,
-             ARGS&&... args) {
+  template <typename... ARGS>
+  bool
+  check(grn_ctx *ctx, const arrow::Status &status, ARGS &&...args)
+  {
     auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
     return check(ctx, status, context.c_str());
   }
 
-  template <typename TYPE, typename ... ARGS>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             ARGS&&... args) {
+  template <typename TYPE, typename... ARGS>
+  bool
+  check(grn_ctx *ctx, arrow::Result<TYPE> &result, ARGS &&...args)
+  {
     auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
     return check(ctx, result.status(), context.c_str());
   }
-}
+} // namespace grnarrow
 
 namespace grn {
   namespace arrow {
-    grn_rc get_value(grn_ctx *ctx,
-                     const ::arrow::Array *array,
-                     int64_t index,
-                     grn_obj *value);
+    grn_rc
+    get_value(grn_ctx *ctx,
+              const ::arrow::Array *array,
+              int64_t index,
+              grn_obj *value);
   }
-}
+} // namespace grn
