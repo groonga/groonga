@@ -1845,6 +1845,10 @@ h_parse_header_values(grn_ctx *ctx,
             header->content_type = HTTP_CONTENT_TYPE_JSON;
           } else if (STRING_EQUAL_CI(content_type,
                                      content_type_length,
+                                     "application/vnd.apache.arrow.stream")) {
+            header->content_type = HTTP_CONTENT_TYPE_APACHE_ARROW_STREAMING;
+          } else if (STRING_EQUAL_CI(content_type,
+                                     content_type_length,
                                      "application/x-apache-arrow-streaming")) {
             header->content_type = HTTP_CONTENT_TYPE_APACHE_ARROW_STREAMING;
           } else {
@@ -2495,7 +2499,8 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
         "[http][post] Content-Type must be one of "
         "application/x-www-form-urlencoded, "
         "application/json or "
-        "application/x-apache-arrow-streaming: "
+        "application/vnd.apache.arrow.stream "
+        "(application/x-apache-arrow-streaming): "
         "<%.*s>",
         specified_content_type_length,
         specified_content_type);
