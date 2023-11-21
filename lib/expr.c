@@ -4812,6 +4812,28 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
   return GRN_SUCCESS;
 }
 
+static void
+parse_query_accept_space(grn_ctx *ctx,
+                         efs_info *q,
+                         const char *string,
+                         unsigned int string_length)
+{
+  if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+    skip_space(ctx, q);
+    return;
+  }
+
+  if (q->pending_token.string_length > 0) {
+    parse_query_accept_string(ctx,
+                              q,
+                              q->pending_token.string,
+                              q->pending_token.string_length);
+  }
+
+  q->pending_token.string = string;
+  q->pending_token.string_length = string_length;
+}
+
 static grn_rc
 parse_query(grn_ctx *ctx, efs_info *q)
 {
@@ -4823,7 +4845,6 @@ parse_query(grn_ctx *ctx, efs_info *q)
   op->op = q->default_op;
   op->weight = DEFAULT_WEIGHT;
   while (!ctx->rc) {
-    skip_space(ctx, q);
 
     if (q->cur >= q->str_end) {
       goto exit;
@@ -5093,6 +5114,10 @@ parse_query(grn_ctx *ctx, efs_info *q)
         break;
       }
       /* fallthru */
+    case ' ':
+      parse_query_accept_space(ctx, q, q->cur, 1);
+      q->cur++;
+      break;
     default:
       parse_query_word(ctx, q);
       break;

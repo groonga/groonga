@@ -1,0 +1,20 @@
+table_create Names TABLE_PAT_KEY ShortText
+
+table_create Tokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Tokens names_key COLUMN_INDEX|WITH_POSITION Names _key
+
+load --table Names
+[
+{"_key": "name (x y)"}
+]
+
+select Names \
+  --match_columns "_key" \
+  --query " " \
+  --query_flags QUERY_NO_SYNTAX_ERROR
+
+select Names \
+  --match_columns "_key" \
+  --query "' '"
