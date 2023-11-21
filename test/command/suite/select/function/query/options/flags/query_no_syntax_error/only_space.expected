@@ -1,0 +1,45 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice", "memo": "groonga user"},
+]
+[[0,0.0,0.0],1]
+select Users   --filter 'query("name", " ", {"flags": "QUERY_NO_SYNTAX_ERROR"})'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "memo",
+          "ShortText"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
+
