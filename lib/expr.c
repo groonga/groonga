@@ -6100,9 +6100,13 @@ grn_expr_parse(grn_ctx *ctx,
       } else if (flags & GRN_EXPR_SYNTAX_OPTIONS) {
         PARSE(GRN_EXPR_TOKEN_START_OPTIONS);
       }
-      parse_script(ctx, &efsi);
+      parse_script(ctx, q);
     } else {
-      parse_query(ctx, &efsi);
+      efs_info *q = &efsi;
+      if (flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+        PARSE(GRN_EXPR_TOKEN_START_QUERY_NO_SYNTAX_ERROR);
+      }
+      parse_query(ctx, q);
     }
 
     /*

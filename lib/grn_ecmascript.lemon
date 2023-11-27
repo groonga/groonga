@@ -184,6 +184,9 @@ input ::= START_OUTPUT_COLUMNS output_columns.
 input ::= START_ADJUSTER adjuster.
 input ::= START_SORT_KEYS sort_keys.
 input ::= START_OPTIONS object_literal.
+/* Accept empty input with QUERY_NO_SYNTAX_ERROR. */
+input ::= START_QUERY_NO_SYNTAX_ERROR.
+input ::= START_QUERY_NO_SYNTAX_ERROR query.
 
 query ::= query_element.
 query ::= query query_element. {
