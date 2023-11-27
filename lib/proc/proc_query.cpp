@@ -352,7 +352,7 @@ namespace {
     }
 
     bool
-    expand_query(grn_obj *query, grn::TextBulk &expanded_query)
+    expand_query(grn_raw_string *query, grn::TextBulk &expanded_query)
     {
       bool valid_query_expander = true;
       if (!query_expander_) {
@@ -361,15 +361,12 @@ namespace {
         valid_query_expander = (GRN_TEXT_LEN(query_expander_) > 0);
       }
       if (!valid_query_expander) {
-        GRN_TEXT_SET(ctx_,
-                     *expanded_query,
-                     GRN_TEXT_VALUE(query),
-                     GRN_TEXT_LEN(query));
+        GRN_TEXT_SET(ctx_, *expanded_query, query->value, query->length);
         return true;
       }
       grn_proc_syntax_expand_query(ctx_,
-                                   GRN_TEXT_VALUE(query),
-                                   GRN_TEXT_LEN(query),
+                                   query->value,
+                                   query->length,
                                    flags_,
                                    query_expander_,
                                    NULL,
@@ -540,7 +537,7 @@ namespace {
                   grn_selector_data *selector_data)
       : BaseQueryExecutor(
           ctx, table, n_args, args, res, op, selector_data, "[query]"),
-        query_(nullptr)
+        query_()
     {
     }
 
@@ -613,10 +610,10 @@ namespace {
     bool
     parse_query_arg()
     {
-      query_ = args_[1];
-      if (!grn_obj_is_text_family_bulk(ctx_, query_)) {
+      auto query = args_[1];
+      if (!grn_obj_is_text_family_bulk(ctx_, query)) {
         grn::TextBulk inspected(ctx_);
-        grn_inspect(ctx_, *inspected, query_);
+        grn_inspect(ctx_, *inspected, query);
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
                          "%s 2nd argument must be string: <%.*s>",
@@ -625,18 +622,20 @@ namespace {
                          GRN_TEXT_VALUE(*inspected));
         return false;
       }
+      GRN_RAW_STRING_SET(query_, query);
+      grn_raw_string_lstrip(ctx_, &query_);
       return true;
     }
 
     bool
     run() override
     {
-      if (GRN_TEXT_LEN(query_) == 0) {
+      if (query_.length == 0) {
         return true;
       }
 
       grn::TextBulk expanded_query(ctx_);
-      if (!expand_query(query_, expanded_query)) {
+      if (!expand_query(&query_, expanded_query)) {
         return false;
       }
 
@@ -649,7 +648,7 @@ namespace {
                         &res_);
     }
 
-    grn_obj *query_;
+    grn_raw_string query_;
   };
 
   class QueryParallelOrExecutor : public BaseQueryExecutor {
@@ -780,10 +779,10 @@ namespace {
     {
       grn::TextBulk expanded_query(ctx_);
       for (int i = 0; i < n_queries; ++i) {
-        auto query = queries[i];
-        if (!grn_obj_is_text_family_bulk(ctx_, query)) {
+        auto query_bulk = queries[i];
+        if (!grn_obj_is_text_family_bulk(ctx_, query_bulk)) {
           grn::TextBulk inspected(ctx_);
-          grn_inspect(ctx_, *inspected, query);
+          grn_inspect(ctx_, *inspected, query_bulk);
           GRN_PLUGIN_ERROR(ctx_,
                            GRN_INVALID_ARGUMENT,
                            "%s %dth argument must be string: <%.*s>",
@@ -793,11 +792,14 @@ namespace {
                            GRN_TEXT_VALUE(*inspected));
           return false;
         }
-        if (GRN_TEXT_LEN(query) == 0) {
+        grn_raw_string query;
+        GRN_RAW_STRING_SET(query, query_bulk);
+        grn_raw_string_lstrip(ctx_, &query);
+        if (query.length == 0) {
           continue;
         }
         GRN_BULK_REWIND(*expanded_query);
-        if (!expand_query(query, expanded_query)) {
+        if (!expand_query(&query, expanded_query)) {
           return false;
         }
         expanded_queries_.emplace_back(GRN_TEXT_VALUE(*expanded_query),
