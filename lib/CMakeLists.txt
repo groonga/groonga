@@ -83,6 +83,21 @@ elseif(GRN_WITH_RAPIDJSON OR GRN_WITH_APACHE_ARROW)
 endif()
 set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
+find_program(LEMON lemon)
+if(LEMON)
+  set_property(
+    SOURCE expr.c
+    PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"
+             "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.h")
+  add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"
+           "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.h"
+    COMMAND ${LEMON} grn_ecmascript.lemon
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.lemon"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM)
+endif()
+
 if(GRN_EMBED)
   set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
   if(GRN_WITH_MECAB)
