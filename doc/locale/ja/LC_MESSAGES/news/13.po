@@ -46,7 +46,7 @@ msgstr "`--fuzzy_with_transposition` が `yes` の場合、文字の交換の編
 msgid "[{doc}`/reference/commands/select`] Improved `select` arguments with addition new argument `--fuzzy_tokenize`."
 msgstr "[{doc}`/reference/commands/select`] `select` の引数に新しく `--fuzzy_tokenize` を追加しました。(実験的)"
 
-msgid "When `--fuzzy_tokenize` is `yes`, Gronga use tokenizer that specifies in `--default_tokenizer` in typo tolerance search."
+msgid "When `--fuzzy_tokenize` is `yes`, Groonga use tokenizer that specifies in `--default_tokenizer` in typo tolerance search."
 msgstr "`--fuzzy_tokenize` が `yes` の時、 Groongaは、誤字を許容する検索で `--default_tokenizer` で指定したトークナイザーを使います。"
 
 msgid "The default value of `--fuzzy_tokenize` is `no`.　The useful case of `--fuzzy_tokenize` is the following case."
