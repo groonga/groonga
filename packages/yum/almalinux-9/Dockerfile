@@ -1,6 +1,9 @@
 ARG FROM=almalinux:9
 FROM ${FROM}
 
+ENV \
+  SCL=gcc-toolset-12
+
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -18,7 +21,8 @@ RUN \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
-    gcc-c++ \
+    ${SCL}-gcc-c++ \
+    ${SCL}-annobin-plugin-gcc \
     intltool \
     mecab-devel \
     libedit-devel \
