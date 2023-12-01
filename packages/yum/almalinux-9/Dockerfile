@@ -18,11 +18,10 @@ RUN \
   dnf config-manager --set-enabled crb && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
+    ${SCL} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
-    ${SCL}-gcc-c++ \
-    ${SCL}-annobin-plugin-gcc \
     intltool \
     mecab-devel \
     libedit-devel \
