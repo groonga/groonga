@@ -1,6 +1,9 @@
 ARG FROM=almalinux:9
 FROM ${FROM}
 
+ENV \
+  SCL=gcc-toolset-12
+
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -15,10 +18,10 @@ RUN \
   dnf config-manager --set-enabled crb && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
+    ${SCL} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
-    gcc-c++ \
     intltool \
     mecab-devel \
     libedit-devel \
