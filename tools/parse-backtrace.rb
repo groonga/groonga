@@ -40,6 +40,7 @@ parser.parse!
 
 def detect_system_version
   system_release_cpe = "/etc/system-release-cpe"
+  os_release = "/etc/os-release"
   if File.exist?(system_release_cpe)
     components = File.read(system_release_cpe).chomp.split(":")
     if components[-1] == "baseos"
@@ -49,6 +50,16 @@ def detect_system_version
     version = components[-1]
     system_id = components[-3]
     "#{system_id}-#{version}"
+  elsif File.exist?(os_release)
+    variables = {}
+    File.readlines(os_release, chomp: true).each do |line|
+      key, value = line.split("=", 2)
+      value = value.gsub(/\A"(.*?)"\z/, "\\1")
+      variables[key] = value
+    end
+    id = variables["ID"]
+    version_id = variables["VERSION_ID"]
+    "#{id}-#{version_id}"
   else
     raise "unsupported system"
   end
@@ -129,6 +140,56 @@ def prepare_system_amazon_2(options)
   prepare_system_centos_7(options)
 end
 
+def prepare_system_debian_11(options)
+  code_name = "bullseye"
+  run_command("apt", "update")
+  run_command("apt", "install", "-y", "-V", "wget")
+  groonga_apt_source_deb = "groonga-apt-source-latest-#{code_name}.deb"
+  run_command("wget",
+              "https://packages.groonga.org/debian/#{groonga_apt_source_deb}")
+  run_command("apt", "install", "-y", "-V", "./#{groonga_apt_source_deb}")
+  run_command("apt", "update")
+  packages = []
+  if options.version
+    groonga_package_version = "=#{options.version}-1"
+  else
+    groonga_package_version = ""
+  end
+  packages << "libgroonga0#{groonga_package_version}"
+  packages << "libgroonga0-dbgsym#{groonga_package_version}"
+  if options.use_mecab
+    packages << "groonga-tokenizer-mecab#{groonga_package_version}"
+    packages << "groonga-tokenizer-mecab-dbgsym#{groonga_package_version}"
+  end
+  if options.pgroonga_version and options.postgresql_version
+    run_command("wget", "https://www.postgresql.org/media/keys/ACCC4CF8.asc")
+    run_command("gpg",
+                "--no-default-keyring",
+                "--keyring", "/usr/share/keyrings/pgdg.gpg",
+                "--import", "ACCC4CF8.asc")
+    File.write("/etc/apt/sources.list.d/pgdg.sources", <<-SOURCES)
+Types: deb
+URIs: http://apt.postgresql.org/pub/repos/apt
+Suites: #{code_name}-pgdg
+Components: main
+Signed-By: /usr/share/keyrings/pgdg.gpg
+    SOURCES
+    run_command("apt", "update")
+
+    postgresql_major_version = options.postgresql_version.split(".")[0]
+    package_prefix = "postgresql-#{postgresql_major_version}"
+    postgresql_package_version =
+      "=#{options.postgresql_version}-1.pgdg*"
+    pgroonga_package_version = "=#{options.pgroonga_version}-1"
+
+    packages << "#{package_prefix}#{postgresql_package_version}"
+    packages << "#{package_prefix}-dbgsym#{postgresql_package_version}"
+    packages << "#{package_prefix}-pgdg-pgroonga#{pgroonga_package_version}"
+    packages << "#{package_prefix}-pgdg-pgroonga-dbgsym#{pgroonga_package_version}"
+  end
+  run_command("apt", "install", "-y", "-V", *packages)
+end
+
 def prepare_system(system_version, options)
   case system_version
   when "centos-7"
@@ -137,6 +198,8 @@ def prepare_system(system_version, options)
     prepare_system_almalinux_8(options)
   when "amazon-2"
     prepare_system_amazon_2(options)
+  when "debian-11"
+    prepare_system_debian_11(options)
   else
     raise "unsupported system: #{system_version}"
   end
@@ -154,6 +217,20 @@ def resolve_debug_path(path, system_version)
   case system_version
   when /\Acentos-/, /\Aalmalinux-/, /\Aamazon-/
     Dir.glob("/usr/lib/debug#{path}*.debug").first || path
+  when /\Adebian-/
+    build_id = nil
+    capture_command("readelf", "-n", path).each_line do |line|
+      case line
+      when /\A\s*Build ID:\s*(\h+)/
+        build_id = $1
+        break
+      end
+    end
+    if build_id
+      debug_path = "/usr/lib/debug/.build-id/#{build_id[0, 2]}/#{build_id[2..-1]}.debug"
+      return debug_path if File.exist?(debug_path)
+    end
+    path
   else
     raise "unsupported system: #{system_version}"
   end
