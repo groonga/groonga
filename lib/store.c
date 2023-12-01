@@ -3194,7 +3194,10 @@ grn_ja_put_raw(grn_ctx *ctx,
 
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_APPEND:
-    if (value_len) {
+    if (value_len == 0) {
+      return GRN_SUCCESS;
+    }
+    {
       grn_io_win jw;
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
@@ -3249,7 +3252,10 @@ grn_ja_put_raw(grn_ctx *ctx,
     }
     break;
   case GRN_OBJ_PREPEND:
-    if (value_len) {
+    if (value_len == 0) {
+      return GRN_SUCCESS;
+    }
+    {
       grn_io_win jw;
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
