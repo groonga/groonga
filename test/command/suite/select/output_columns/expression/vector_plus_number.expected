@@ -16,7 +16,7 @@ select Entries   --output_columns '_id, tags + 1'  --command_version 3
     "error": {
       "message": "<+> doesn't support vector + non-vector: <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]> + <1>",
       "function": "expr_exec",
-      "file": "expr_executor.c",
+      "file": "expr_executor.cpp",
       "line": 0
     }
   },
