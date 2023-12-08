@@ -225,17 +225,28 @@ text_arithmetic_operation(
     [](int64_t x_int64, int64_t y_int64) { return x_int64 operator y_int64; }, \
     res)
 
+template <typename OPERATION>
+void
+text_unary_arithmetic_operation(grn_ctx *ctx,
+                                grn_obj *x,
+                                OPERATION operation,
+                                grn_obj *res)
+{
+  grn_obj buffer;
+  GRN_INT64_INIT(&buffer, 0);
+  grn_obj_cast(ctx, x, &buffer, false);
+  grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);
+  auto value = GRN_INT64_VALUE(&buffer);
+  GRN_INT64_SET(ctx, res, operation(value));
+  GRN_OBJ_FIN(ctx, &buffer);
+}
+
 #define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator)                        \
-  do {                                                                         \
-    grn_obj buffer;                                                            \
-    int64_t value;                                                             \
-    GRN_INT64_INIT(&buffer, 0);                                                \
-    grn_obj_cast(ctx, x, &buffer, GRN_FALSE);                                  \
-    grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);                                 \
-    value = GRN_INT64_VALUE(&buffer);                                          \
-    GRN_INT64_SET(ctx, res, unary_operator value);                             \
-    GRN_OBJ_FIN(ctx, &buffer);                                                 \
-  } while (0)
+  text_unary_arithmetic_operation(                                             \
+    ctx,                                                                       \
+    x,                                                                         \
+    [](int64_t value) { return unary_operator value; },                        \
+    res)
 
 #define ARITHMETIC_OPERATION_NO_CHECK(y)                                       \
   do {                                                                         \
