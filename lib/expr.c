@@ -7703,7 +7703,7 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
     for (codes = e->codes; codes < codes_end; codes++) {
       switch (codes[0].op) {
       case GRN_OP_CALL:
-        if (codes != codes_end && codes[1].op == GRN_OP_COMMA) {
+        if ((codes + 1) < codes_end && codes[1].op == GRN_OP_COMMA) {
           /*
            * A,B(X):
            *   * push: A <- module_start
