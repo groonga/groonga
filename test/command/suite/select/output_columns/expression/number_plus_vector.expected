@@ -15,7 +15,7 @@ select Entries   --output_columns '_id, 1 + tags'  --command_version 3
     "elapsed_time": 0.0,
     "error": {
       "message": "<+> doesn't support non-vector + vector: <1> + <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]>",
-      "function": "expr_exec",
+      "function": "expr_exec_internal",
       "file": "expr_executor.cpp",
       "line": 0
     }

@@ -80,7 +80,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
     s1 = s0;                                                                   \
     if (sp >= s_ + ctx->impl->stack_size) {                                    \
       if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {                          \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       sp += (ctx->impl->stack - s_);                                           \
       s_ = ctx->impl->stack;                                                   \
@@ -98,7 +98,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
     sp--;                                                                      \
     if (sp < s_) {                                                             \
       ERR(GRN_INVALID_ARGUMENT, "stack underflow");                            \
-      goto exit;                                                               \
+      return false;                                                            \
     }                                                                          \
     s1 = (sp > s_ + 1) ? sp[-2] : NULL;                                        \
   } while (0)
@@ -108,7 +108,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
     s1 = s0;                                                                   \
     if (sp >= s_ + ctx->impl->stack_size) {                                    \
       if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {                          \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       sp += (ctx->impl->stack - s_);                                           \
       s_ = ctx->impl->stack;                                                   \
@@ -127,7 +127,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
     } else {                                                                   \
       if (sp < s_ + 1) {                                                       \
         ERR(GRN_INVALID_ARGUMENT, "stack underflow");                          \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       sp[-1] = s0 = value = vp++;                                              \
       if (vp - e->values > e->values_tail) {                                   \
@@ -150,7 +150,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
     sp--;                                                                      \
     if (sp < s_ + 1) {                                                         \
       ERR(GRN_INVALID_ARGUMENT, "stack underflow");                            \
-      goto exit;                                                               \
+      return false;                                                            \
     }                                                                          \
     s1 = (sp > s_ + 1) ? sp[-2] : NULL;                                        \
     sp[-1] = s0 = value = vp++;                                                \
@@ -255,7 +255,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
   do {                                                                         \
     if ((int64_t)y == 0) {                                                     \
       ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");                    \
-      goto exit;                                                               \
+      return false;                                                            \
     }                                                                          \
   } while (0)
 
@@ -388,7 +388,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
             "not a numerical format: <%.*s>",                                  \
             (int)GRN_TEXT_LEN(y),                                              \
             GRN_TEXT_VALUE(y));                                                \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       set(ctx, res, integer_operation(x_, get(res)));                          \
       break;                                                                   \
@@ -653,7 +653,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       ERR(GRN_INVALID_ARGUMENT, "<%s> doesn't support vector: <%.*s> %s <%.*s>", operator,(int) GRN_TEXT_LEN(&inspected_x), GRN_TEXT_VALUE(&inspected_x), operator,(int) GRN_TEXT_LEN(&inspected_y), GRN_TEXT_VALUE(&inspected_y)); \
       GRN_OBJ_FIN(ctx, &inspected_x);                                                                                                                                                                                               \
       GRN_OBJ_FIN(ctx, &inspected_y);                                                                                                                                                                                               \
-      goto exit;                                                                                                                                                                                                                    \
+      return false;                                                                                                                                                                                                                 \
     }                                                                                                                                                                                                                               \
     ARITHMETIC_OPERATION_DISPATCH(x,                                                                                                                                                                                                \
                                   y,                                                                                                                                                                                                \
@@ -786,7 +786,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
             "not a numerical format: <%.*s>",                                  \
             (int)GRN_TEXT_LEN(y),                                              \
             GRN_TEXT_VALUE(y));                                                \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       /* The following "+ 0" is needed to suppress warnings that say */        \
       /* comparison is always false due to limited range of data type */       \
@@ -1087,7 +1087,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
               "too large UInt64 value to inverse sign: "                       \
               "<%" GRN_FMT_INT64U ">",                                         \
               x_);                                                             \
-          goto exit;                                                           \
+          return false;                                                        \
         } else {                                                               \
           int64_t signed_x_;                                                   \
           signed_x_ = x_;                                                      \
@@ -1144,7 +1144,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       ERR(GRN_INVALID_ARGUMENT,                                                \
           "invalid variable type: 0x%0x",                                      \
           var->header.type);                                                   \
-      goto exit;                                                               \
+      return false;                                                            \
     }                                                                          \
     if (GRN_BULK_VSIZE(var) != (sizeof(grn_obj *) + sizeof(grn_id))) {         \
       ERR(GRN_INVALID_ARGUMENT,                                                \
@@ -1152,7 +1152,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
           "expected: %" GRN_FMT_SIZE "actual: %" GRN_FMT_SIZE,                 \
           (sizeof(grn_obj *) + sizeof(grn_id)),                                \
           GRN_BULK_VSIZE(var));                                                \
-      goto exit;                                                               \
+      return false;                                                            \
     }                                                                          \
     col = GRN_PTR_VALUE(var);                                                  \
     rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));                 \
@@ -1192,8 +1192,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
           "invalid increment target type: %d "                                 \
           "(FIXME: type name is needed)",                                      \
           DB_OBJ(col)->range);                                                 \
-      goto exit;                                                               \
-      break;                                                                   \
+      return false;                                                            \
     }                                                                          \
     exec_operate(grn_obj_set_value(ctx, col, rid, &value, set_flags);          \
                  , grn_obj_get_value(ctx, col, rid, res););                    \
@@ -1237,7 +1236,7 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &variable_value);                                     \
         GRN_OBJ_FIN(ctx, &casted_value);                                       \
         POP1(res);                                                             \
-        goto exit;                                                             \
+        return false;                                                          \
       }                                                                        \
       ARITHMETIC_OPERATION_DISPATCH((&variable_value),                         \
                                     (&casted_value),                           \
@@ -1387,10 +1386,9 @@ grn_expr_exec_get_member_table(
   GRN_RECORD_SET(ctx, result, id);
 }
 
-static grn_obj *
-expr_exec(grn_ctx *ctx, grn_obj *expr)
+static bool
+expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
 {
-  grn_obj *val = NULL;
   uint32_t stack_curr = ctx->impl->stack_curr;
   grn_expr *e = (grn_expr *)expr;
   grn_obj **s_ = ctx->impl->stack;
@@ -1452,7 +1450,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           GRN_UINT32_PUT(ctx, res, GRN_RECORD_VALUE(rec));
         } else {
           ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
-          goto exit;
+          return false;
         }
         code++;
       }
@@ -1463,7 +1461,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         if (code->value) {
           if (sp < s_ + code->nargs - 1) {
             ERR(GRN_INVALID_ARGUMENT, "stack error");
-            goto exit;
+            return false;
           }
           proc = code->value;
           WITH_SPSAVE({ grn_proc_call(ctx, proc, code->nargs - 1, expr); });
@@ -1471,7 +1469,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           int offset = code->nargs;
           if (sp < s_ + offset) {
             ERR(GRN_INVALID_ARGUMENT, "stack error");
-            goto exit;
+            return false;
           }
           proc = sp[-offset];
           if (grn_obj_is_window_function_proc(ctx, proc)) {
@@ -1483,12 +1481,12 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
                 (int)GRN_TEXT_LEN(&inspected),
                 GRN_TEXT_VALUE(&inspected));
             GRN_OBJ_FIN(ctx, &inspected);
-            goto exit;
+            return false;
           } else {
             WITH_SPSAVE({ grn_proc_call(ctx, proc, code->nargs - 1, expr); });
           }
           if (ctx->rc) {
-            goto exit;
+            return false;
           }
           POP1(res);
           {
@@ -1515,7 +1513,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         if (!res) {
           ERR(GRN_INVALID_ARGUMENT, "intern failed");
-          goto exit;
+          return false;
         }
         PUSH1(res);
       }
@@ -1584,7 +1582,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           break;
         default:
           ERR(GRN_INVALID_ARGUMENT, "invalid type");
-          goto exit;
+          return false;
         }
         PUSH1(res);
       }
@@ -1625,7 +1623,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable *= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_SLASH_ASSIGN:
@@ -1639,7 +1637,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable /= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_MOD_ASSIGN:
@@ -1653,7 +1651,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable %%= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_PLUS_ASSIGN:
@@ -1667,7 +1665,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable += \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_MINUS_ASSIGN:
@@ -1681,7 +1679,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable -= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_SHIFTL_ASSIGN:
@@ -1695,7 +1693,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable <<= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_SHIFTR_ASSIGN:
@@ -1709,7 +1707,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable >>= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_SHIFTRR_ASSIGN:
@@ -1723,7 +1721,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable >>>= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_AND_ASSIGN:
@@ -1737,7 +1735,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable &= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_OR_ASSIGN:
@@ -1751,7 +1749,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable |= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_XOR_ASSIGN:
@@ -1765,7 +1763,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT, "variable ^= \"string\" isn't supported");
-          goto exit;
+          return false;
         });
       break;
     case GRN_OP_JUMP:
@@ -1814,7 +1812,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           }
           if (!col) {
             ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
-            goto exit;
+            return false;
           }
           grn_obj_reinit_for(ctx, res, col);
           grn_obj_get_value(ctx, col, GRN_RECORD_VALUE(rec), res);
@@ -2427,7 +2425,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
               GRN_TEXT_VALUE(&inspected_y));
           GRN_OBJ_FIN(ctx, &inspected_x);
           GRN_OBJ_FIN(ctx, &inspected_y);
-          goto exit;
+          return false;
         } else {
           ARITHMETIC_OPERATION_DISPATCH(
             x,
@@ -2483,7 +2481,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
             ERR(GRN_INVALID_ARGUMENT,
                 "\"string\" - \"string\" "
                 "isn't supported");
-            goto exit;
+            return false;
           }, );
       }
       break;
@@ -2501,7 +2499,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           ERR(GRN_INVALID_ARGUMENT,
               "\"string\" * \"string\" "
               "isn't supported");
-          goto exit;
+          return false;
         }, );
       break;
     case GRN_OP_SLASH:
@@ -2512,7 +2510,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
                                     ERR(GRN_INVALID_ARGUMENT,
                                         "\"string\" / \"string\" "
                                         "isn't supported");
-                                    goto exit;
+                                    return false;
                                   });
       break;
     case GRN_OP_MOD:
@@ -2523,7 +2521,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
                                     ERR(GRN_INVALID_ARGUMENT,
                                         "\"string\" %% \"string\" "
                                         "isn't supported");
-                                    goto exit;
+                                    return false;
                                   });
       break;
     case GRN_OP_BITWISE_NOT:
@@ -2675,15 +2673,24 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
       break;
     default:
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");
-      goto exit;
-      break;
+      return false;
     }
   }
   ctx->impl->stack_curr = sp - s_;
-  if (ctx->impl->stack_curr > stack_curr) {
-    val = grn_ctx_pop(ctx);
+  return true;
+}
+
+static grn_obj *
+expr_exec(grn_ctx *ctx, grn_obj *expr)
+{
+  uint32_t stack_curr = ctx->impl->stack_curr;
+  grn_obj *value = nullptr;
+  auto success = expr_exec_internal(ctx, expr);
+  if (success) {
+    if (ctx->impl->stack_curr > stack_curr) {
+      value = grn_ctx_pop(ctx);
+    }
   }
-exit:
   if (ctx->impl->stack_curr > stack_curr) {
     /*
       GRN_LOG(ctx, GRN_LOG_WARNING, "stack balance=%d",
@@ -2691,7 +2698,7 @@ exit:
     */
     ctx->impl->stack_curr = stack_curr;
   }
-  return val;
+  return value;
 }
 
 static grn_obj *
