@@ -341,8 +341,10 @@ jobs:
           MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
-            red-arrow \
             rroonga
+          MAKEFLAGS=-j$(nproc) gem install \
+            --version $(pkg-config --modversion arrow-glib) \
+            red-arrow
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
