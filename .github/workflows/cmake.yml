@@ -788,7 +788,11 @@ jobs:
       - name: Install test dependencies
         run: |
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
-          ridk exec pacman --sync --noconfirm mingw-w64-ucrt-x86_64-arrow
+          ridk exec pacman `
+            --sync `
+            --noconfirm `
+            mingw-w64-ucrt-x86_64-arrow `
+            mingw-w64-ucrt-x86_64-xsimd
           gem install `
             grntest `
             pkg-config `
