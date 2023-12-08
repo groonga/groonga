@@ -199,23 +199,31 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
 #define INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) (~(x))
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x)   (~((long long int)(x)))
 
+template <typename OPERATION>
+void
+text_arithmetic_operation(
+  grn_ctx *ctx, grn_obj *x, grn_obj *y, OPERATION operation, grn_obj *res)
+{
+  res->header.domain = GRN_DB_INT64;
+
+  GRN_INT64_SET(ctx, res, 0);
+  grn_obj_cast(ctx, x, res, false);
+  auto x_int64 = GRN_INT64_VALUE(res);
+
+  GRN_INT64_SET(ctx, res, 0);
+  grn_obj_cast(ctx, y, res, false);
+  auto y_int64 = GRN_INT64_VALUE(res);
+
+  GRN_INT64_SET(ctx, res, operation(x_int64, y_int64));
+}
+
 #define TEXT_ARITHMETIC_OPERATION(operator)                                    \
-  do {                                                                         \
-    long long int x_;                                                          \
-    long long int y_;                                                          \
-                                                                               \
-    res->header.domain = GRN_DB_INT64;                                         \
-                                                                               \
-    GRN_INT64_SET(ctx, res, 0);                                                \
-    grn_obj_cast(ctx, x, res, GRN_FALSE);                                      \
-    x_ = GRN_INT64_VALUE(res);                                                 \
-                                                                               \
-    GRN_INT64_SET(ctx, res, 0);                                                \
-    grn_obj_cast(ctx, y, res, GRN_FALSE);                                      \
-    y_ = GRN_INT64_VALUE(res);                                                 \
-                                                                               \
-    GRN_INT64_SET(ctx, res, x_ operator y_);                                   \
-  } while (0)
+  text_arithmetic_operation(                                                   \
+    ctx,                                                                       \
+    x,                                                                         \
+    y,                                                                         \
+    [](int64_t x_int64, int64_t y_int64) { return x_int64 operator y_int64; }, \
+    res)
 
 #define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator)                        \
   do {                                                                         \
