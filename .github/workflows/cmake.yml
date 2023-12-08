@@ -408,6 +408,7 @@ jobs:
             ${{ matrix.package-prefix }}-ccache
             ${{ matrix.package-prefix }}-toolchain
             ${{ matrix.package-prefix }}-ruby
+            ${{ matrix.package-prefix }}-xsimd
             base-devel
             binutils
             git
