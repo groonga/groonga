@@ -16,7 +16,6 @@ libgroonga_c_sources =				\
 	error.c					\
 	expr.c					\
 	expr_code.c				\
-	expr_executor.c				\
 	file_lock.c				\
 	file_reader.c				\
 	float.c					\

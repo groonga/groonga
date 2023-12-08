@@ -4,6 +4,7 @@ libgroonga_cpp_source =				\
 	cast.cpp				\
 	command_arguments.cpp			\
 	dat.cpp					\
+	expr_executor.cpp			\
 	grn_arrow.h				\
 	grn_arrow.hpp				\
 	grn_bulk.h				\

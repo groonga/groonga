@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1270,11 +1270,11 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
   grn_obj *val = NULL;
   uint32_t stack_curr = ctx->impl->stack_curr;
   grn_expr *e = (grn_expr *)expr;
-  register grn_obj **s_ = ctx->impl->stack;
-  register grn_obj *s0 = NULL;
-  register grn_obj *s1 = NULL;
-  register grn_obj **sp;
-  register grn_obj *vp = e->values;
+  grn_obj **s_ = ctx->impl->stack;
+  grn_obj *s0 = NULL;
+  grn_obj *s1 = NULL;
+  grn_obj **sp;
+  grn_obj *vp = e->values;
   grn_obj *res = NULL, *v0 = grn_expr_get_var_by_offset(ctx, expr, 0);
   grn_expr_code *code = e->codes, *ce = &e->codes[e->codes_curr];
   sp = s_ + stack_curr;
@@ -2701,7 +2701,7 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *pattern;
-  grn_expr_code *operator;
+  grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
     return GRN_FALSE;
@@ -2709,12 +2709,12 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx,
 
   target = &(e->codes[0]);
   pattern = &(e->codes[1]);
-  operator = &(e->codes[2]);
+  operator_code = &(e->codes[2]);
 
-  if (operator->op != GRN_OP_REGEXP) {
+  if (operator_code->op != GRN_OP_REGEXP) {
     return GRN_FALSE;
   }
-  if (operator->nargs != 2) {
+  if (operator_code->nargs != 2) {
     return GRN_FALSE;
   }
 
@@ -2779,7 +2779,7 @@ grn_expr_executor_exec_simple_regexp(grn_ctx *ctx,
                                      grn_id id)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
-  OnigRegex regex = executor->data.simple_regexp.regex;
+  OnigRegex regex = static_cast<OnigRegex>(executor->data.simple_regexp.regex);
   grn_obj *value_buffer = &(executor->data.simple_regexp.value_buffer);
   grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
 
@@ -2810,12 +2810,14 @@ grn_expr_executor_exec_simple_regexp(grn_ctx *ctx,
                               NULL);
 
     {
+      auto target_start = reinterpret_cast<const OnigUChar *>(norm_target_raw);
+      auto target_end = target_start + norm_target_raw_length_in_bytes;
       OnigPosition position;
       position = onig_search(regex,
-                             norm_target_raw,
-                             norm_target_raw + norm_target_raw_length_in_bytes,
-                             norm_target_raw,
-                             norm_target_raw + norm_target_raw_length_in_bytes,
+                             target_start,
+                             target_end,
+                             target_start,
+                             target_end,
                              NULL,
                              ONIG_OPTION_NONE);
       grn_obj_close(ctx, norm_target);
@@ -2835,7 +2837,7 @@ grn_expr_executor_fin_simple_regexp(grn_ctx *ctx,
     return;
   }
 
-  onig_free(executor->data.simple_regexp.regex);
+  onig_free(static_cast<OnigRegex>(executor->data.simple_regexp.regex));
   GRN_OBJ_FIN(ctx, &(executor->data.simple_regexp.value_buffer));
 }
 #endif /* GRN_SUPPORT_REGEXP */
@@ -2891,7 +2893,7 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *sub_text;
-  grn_expr_code *operator;
+  grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
     return GRN_FALSE;
@@ -2899,12 +2901,12 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx,
 
   target = &(e->codes[0]);
   sub_text = &(e->codes[1]);
-  operator = &(e->codes[2]);
+  operator_code = &(e->codes[2]);
 
-  if (operator->op != GRN_OP_MATCH) {
+  if (operator_code->op != GRN_OP_MATCH) {
     return GRN_FALSE;
   }
-  if (operator->nargs != 2) {
+  if (operator_code->nargs != 2) {
     return GRN_FALSE;
   }
 
@@ -2958,13 +2960,15 @@ grn_expr_executor_exec_simple_match_have_sub_text(grn_ctx *ctx,
 
 #ifdef GRN_SUPPORT_REGEXP
   {
-    OnigRegex regex = executor->data.simple_match.regex;
+    auto regex = static_cast<OnigRegex>(executor->data.simple_match.regex);
+    auto target_start = reinterpret_cast<const OnigUChar *>(text);
+    auto target_end = target_start + text_len;
     OnigPosition position;
     position = onig_search(regex,
-                           text,
-                           text + text_len,
-                           text,
-                           text + text_len,
+                           target_start,
+                           target_end,
+                           target_start,
+                           target_end,
                            NULL,
                            ONIG_OPTION_NONE);
     return (position != ONIG_MISMATCH);
@@ -3037,7 +3041,7 @@ grn_expr_executor_fin_simple_match(grn_ctx *ctx,
 
 #ifdef GRN_SUPPORT_REGEXP
   if (executor->data.simple_match.regex) {
-    onig_free(executor->data.simple_match.regex);
+    onig_free(static_cast<OnigRegex>(executor->data.simple_match.regex));
   }
 #endif /* GRN_SUPPORT_REGEXP */
 
@@ -3278,7 +3282,7 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *constant;
-  grn_expr_code *operator;
+  grn_expr_code *operator_code;
   grn_id target_range;
   grn_id constant_range;
   grn_bool constant_value_is_int = GRN_TRUE;
@@ -3293,9 +3297,9 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
 
   target = &(e->codes[0]);
   constant = &(e->codes[1]);
-  operator = &(e->codes[2]);
+  operator_code = &(e->codes[2]);
 
-  switch (operator->op) {
+  switch (operator_code->op) {
   case GRN_OP_EQUAL :
   case GRN_OP_NOT_EQUAL :
   case GRN_OP_LESS :
@@ -3306,7 +3310,7 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   default :
     return GRN_FALSE;
   }
-  if (operator->nargs != 2) {
+  if (operator_code->nargs != 2) {
     return GRN_FALSE;
   }
 
@@ -3424,7 +3428,7 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
     grn_obj *result_buffer =
       &(executor->data.simple_condition_constant.result_buffer);
 
-    switch (operator->op) {
+    switch (operator_code->op) {
     case GRN_OP_EQUAL :
       result = GRN_FALSE;
       break;
@@ -3519,7 +3523,7 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *constant;
-  grn_expr_code *operator;
+  grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
     return GRN_FALSE;
@@ -3527,9 +3531,9 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
 
   target = &(e->codes[0]);
   constant = &(e->codes[1]);
-  operator = &(e->codes[2]);
+  operator_code = &(e->codes[2]);
 
-  switch (operator->op) {
+  switch (operator_code->op) {
   case GRN_OP_EQUAL :
   case GRN_OP_NOT_EQUAL :
   case GRN_OP_LESS :
@@ -3540,7 +3544,7 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
   default :
     return GRN_FALSE;
   }
-  if (operator->nargs != 2) {
+  if (operator_code->nargs != 2) {
     return GRN_FALSE;
   }
 
@@ -3607,7 +3611,7 @@ grn_expr_executor_exec_simple_condition_ra(grn_ctx *ctx,
     void *raw_value;
     raw_value = grn_ra_ref_cache(ctx, ra, id, ra_cache);
     GRN_BULK_REWIND(value_buffer);
-    grn_bulk_write(ctx, value_buffer, raw_value, ra_element_size);
+    grn_bulk_write(ctx, value_buffer, static_cast<char *>(raw_value), ra_element_size);
   }
 
   if (executor->data.simple_condition_ra.exec(ctx,
@@ -3697,7 +3701,7 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *constant;
-  grn_expr_code *operator;
+  grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
     return GRN_FALSE;
@@ -3705,9 +3709,9 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx,
 
   target = &(e->codes[0]);
   constant = &(e->codes[1]);
-  operator = &(e->codes[2]);
+  operator_code = &(e->codes[2]);
 
-  switch (operator->op) {
+  switch (operator_code->op) {
   case GRN_OP_EQUAL :
   case GRN_OP_NOT_EQUAL :
   case GRN_OP_LESS :
@@ -3718,7 +3722,7 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx,
   default :
     return GRN_FALSE;
   }
-  if (operator->nargs != 2) {
+  if (operator_code->nargs != 2) {
     return GRN_FALSE;
   }
 
@@ -4040,6 +4044,7 @@ grn_expr_executor_init_scorer(grn_ctx *ctx,
         &(executor->data.scorer.datas[nth_func]);
       switch (code->op) {
       case GRN_OP_GET_VALUE :
+      {
         data->source = code->value;
         data->cache = grn_column_cache_open(ctx, data->source);
         grn_id range = grn_obj_get_range(ctx, data->source);
@@ -4050,6 +4055,7 @@ grn_expr_executor_init_scorer(grn_ctx *ctx,
         executor->data.scorer.funcs[nth_func] =
           grn_expr_executor_scorer_get_value;
         break;
+      }
       case GRN_OP_PUSH :
         data->source = code->value;
         executor->data.scorer.funcs[nth_func] =
@@ -4161,6 +4167,7 @@ grn_expr_executor_exec_scorer(grn_ctx *ctx,
   return score_buffer;
 }
 
+extern "C" {
 grn_rc
 grn_expr_executor_init(grn_ctx *ctx,
                        grn_expr_executor *executor,
@@ -4249,7 +4256,7 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
 
   GRN_API_ENTER;
 
-  executor = GRN_CALLOC(sizeof(grn_expr_executor));
+  executor = static_cast<grn_expr_executor *>(GRN_CALLOC(sizeof(grn_expr_executor)));
   if (!executor) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -4301,4 +4308,5 @@ grn_expr_executor_exec(grn_ctx *ctx, grn_expr_executor *executor, grn_id id)
   }
 
   GRN_API_RETURN(value);
+}
 }
