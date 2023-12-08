@@ -248,16 +248,20 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
     [](int64_t value) { return unary_operator value; },                        \
     res)
 
-#define ARITHMETIC_OPERATION_NO_CHECK(y)                                       \
-  do {                                                                         \
-  } while (0)
-#define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y)                            \
-  do {                                                                         \
-    if ((int64_t)y == 0) {                                                     \
-      ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");                    \
-      return false;                                                            \
-    }                                                                          \
-  } while (0)
+template <typename RAW>
+bool
+arithmetic_operation_zero_division_check(grn_ctx *ctx, RAW raw_value)
+{
+  if (static_cast<int64_t>(raw_value) != 0) {
+    return true;
+  }
+  ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
+  return false;
+}
+
+#define ARITHMETIC_OPERATION_NO_CHECK(raw_value) true
+#define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(raw_value)                    \
+  arithmetic_operation_zero_division_check(ctx, raw_value)
 
 #define NUMERIC_ARITHMETIC_OPERATION_DISPATCH(set,                             \
                                               get,                             \
@@ -275,7 +279,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint8_t y_;                                                            \
         y_ = GRN_BOOL_VALUE(y) ? 1 : 0;                                        \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -284,7 +290,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int8_t y_;                                                             \
         y_ = GRN_INT8_VALUE(y);                                                \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -293,7 +301,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint8_t y_;                                                            \
         y_ = GRN_UINT8_VALUE(y);                                               \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -302,7 +312,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int16_t y_;                                                            \
         y_ = GRN_INT16_VALUE(y);                                               \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -311,7 +323,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint16_t y_;                                                           \
         y_ = GRN_UINT16_VALUE(y);                                              \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -320,7 +334,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int y_;                                                                \
         y_ = GRN_INT32_VALUE(y);                                               \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -329,7 +345,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         unsigned int y_;                                                       \
         y_ = GRN_UINT32_VALUE(y);                                              \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -338,7 +356,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long int y_;                                                      \
         y_ = GRN_TIME_VALUE(y);                                                \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -347,7 +367,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long int y_;                                                      \
         y_ = GRN_INT64_VALUE(y);                                               \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -356,7 +378,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long unsigned int y_;                                             \
         y_ = GRN_UINT64_VALUE(y);                                              \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, res_domain, 0);                               \
         set(ctx, res, integer_operation(x_, y_));                              \
       }                                                                        \
@@ -365,7 +389,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         float y_;                                                              \
         y_ = GRN_FLOAT32_VALUE(y);                                             \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);                           \
         GRN_FLOAT32_SET(ctx, res, float_operation(x_, y_));                    \
       }                                                                        \
@@ -374,7 +400,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         double y_;                                                             \
         y_ = GRN_FLOAT_VALUE(y);                                               \
-        right_expression_check(y_);                                            \
+        if (!right_expression_check(y_)) {                                     \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);                             \
         GRN_FLOAT_SET(ctx, res, float_operation(x_, y_));                      \
       }                                                                        \
@@ -416,7 +444,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint8_t x_;                                                            \
         x_ = GRN_BOOL_VALUE(x) ? 1 : 0;                                        \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT8_SET,                   \
                                               GRN_UINT8_VALUE,                 \
                                               x_,                              \
@@ -433,7 +463,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int8_t x_;                                                             \
         x_ = GRN_INT8_VALUE(x);                                                \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT8_SET,                    \
                                               GRN_INT8_VALUE,                  \
                                               x_,                              \
@@ -450,7 +482,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint8_t x_;                                                            \
         x_ = GRN_UINT8_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT8_SET,                   \
                                               GRN_UINT8_VALUE,                 \
                                               x_,                              \
@@ -467,7 +501,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int16_t x_;                                                            \
         x_ = GRN_INT16_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT16_SET,                   \
                                               GRN_INT16_VALUE,                 \
                                               x_,                              \
@@ -484,7 +520,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint16_t x_;                                                           \
         x_ = GRN_UINT16_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT16_SET,                  \
                                               GRN_UINT16_VALUE,                \
                                               x_,                              \
@@ -501,7 +539,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int x_;                                                                \
         x_ = GRN_INT32_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT32_SET,                   \
                                               GRN_INT32_VALUE,                 \
                                               x_,                              \
@@ -518,7 +558,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         unsigned int x_;                                                       \
         x_ = GRN_UINT32_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT32_SET,                  \
                                               GRN_UINT32_VALUE,                \
                                               x_,                              \
@@ -535,7 +577,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long int x_;                                                      \
         x_ = GRN_INT64_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT64_SET,                   \
                                               GRN_INT64_VALUE,                 \
                                               x_,                              \
@@ -552,7 +596,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long int x_;                                                      \
         x_ = GRN_TIME_VALUE(x);                                                \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_TIME_SET,                    \
                                               GRN_TIME_VALUE,                  \
                                               x_,                              \
@@ -569,7 +615,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         long long unsigned int x_;                                             \
         x_ = GRN_UINT64_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT64_SET,                  \
                                               GRN_UINT64_VALUE,                \
                                               x_,                              \
@@ -586,7 +634,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         float x_;                                                              \
         x_ = GRN_FLOAT32_VALUE(x);                                             \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_FLOAT32_SET,                 \
                                               GRN_FLOAT32_VALUE,               \
                                               x_,                              \
@@ -603,7 +653,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         double x_;                                                             \
         x_ = GRN_FLOAT_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_FLOAT_SET,                   \
                                               GRN_FLOAT_VALUE,                 \
                                               x_,                              \
@@ -1009,7 +1061,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int8_t x_;                                                             \
         x_ = GRN_INT8_VALUE(x);                                                \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT8, 0);                              \
         GRN_INT8_SET(ctx, res, integer_operation(x_));                         \
       }                                                                        \
@@ -1018,7 +1072,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int16_t x_;                                                            \
         x_ = GRN_UINT8_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT16, 0);                             \
         GRN_INT16_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1027,7 +1083,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int16_t x_;                                                            \
         x_ = GRN_INT16_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT16, 0);                             \
         GRN_INT16_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1036,7 +1094,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int32_t x_;                                                            \
         x_ = GRN_UINT16_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);                             \
         GRN_INT32_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1045,7 +1105,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int32_t x_;                                                            \
         x_ = GRN_INT32_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);                             \
         GRN_INT32_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1054,7 +1116,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_UINT32_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);                             \
         GRN_INT64_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1063,7 +1127,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_INT64_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);                             \
         GRN_INT64_SET(ctx, res, integer_operation(x_));                        \
       }                                                                        \
@@ -1072,7 +1138,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_TIME_VALUE(x);                                                \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_TIME, 0);                              \
         GRN_TIME_SET(ctx, res, integer_operation(x_));                         \
       }                                                                        \
@@ -1081,7 +1149,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         uint64_t x_;                                                           \
         x_ = GRN_UINT64_VALUE(x);                                              \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         if (x_ > (uint64_t)INT64_MAX) {                                        \
           ERR(GRN_INVALID_ARGUMENT,                                            \
               "too large UInt64 value to inverse sign: "                       \
@@ -1100,7 +1170,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         float x_;                                                              \
         x_ = GRN_FLOAT32_VALUE(x);                                             \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);                           \
         GRN_FLOAT32_SET(ctx, res, float_operation(x_));                        \
       }                                                                        \
@@ -1109,7 +1181,9 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
       {                                                                        \
         double x_;                                                             \
         x_ = GRN_FLOAT_VALUE(x);                                               \
-        left_expression_check(x_);                                             \
+        if (!left_expression_check(x_)) {                                      \
+          return false;                                                        \
+        }                                                                      \
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);                             \
         GRN_FLOAT_SET(ctx, res, float_operation(x_));                          \
       }                                                                        \
