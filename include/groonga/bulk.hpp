@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #pragma once
 
@@ -37,20 +37,13 @@ namespace grn {
     {
       return *reinterpret_cast<TYPE *>(GRN_BULK_HEAD(bulk));
     }
-  };
+  }; // namespace bulk
 
   class TextBulk {
   public:
-    TextBulk(grn_ctx *ctx) :
-      ctx_(ctx)
-    {
-      GRN_TEXT_INIT(&bulk_, 0);
-    }
+    TextBulk(grn_ctx *ctx) : ctx_(ctx) { GRN_TEXT_INIT(&bulk_, 0); }
 
-    ~TextBulk()
-    {
-      GRN_OBJ_FIN(ctx_, &bulk_);
-    }
+    ~TextBulk() { GRN_OBJ_FIN(ctx_, &bulk_); }
 
     grn_obj *
     operator*()
@@ -61,12 +54,11 @@ namespace grn {
     std::string
     value()
     {
-      return std::string(GRN_TEXT_VALUE(&bulk_),
-                         GRN_TEXT_LEN(&bulk_));
+      return std::string(GRN_TEXT_VALUE(&bulk_), GRN_TEXT_LEN(&bulk_));
     };
 
   private:
     grn_ctx *ctx_;
     grn_obj bulk_;
   };
-}
+} // namespace grn
