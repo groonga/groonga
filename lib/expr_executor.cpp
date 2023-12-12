@@ -535,7 +535,10 @@ numeric_arithmetic_operation_execute(
       y,
       result);
   default:
-    return true;
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr-executor] unsupported operator: %s",
+        grn_operator_to_string(op));
+    return false;
   }
 }
 
@@ -687,7 +690,16 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       grn::bulk::get<RESULT_TYPE>(res),
       res);
   default:
-    return true;
+    {
+      grn::TextBulk y_inspected(ctx);
+      grn_inspect(ctx, *y_inspected, y);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] unsupported right type: %.*s(%s)",
+          static_cast<int>(GRN_TEXT_LEN(*y_inspected)),
+          GRN_TEXT_VALUE(*y_inspected),
+          grn_obj_type_to_string(y->header.type));
+      return false;
+    }
   }
 }
 
