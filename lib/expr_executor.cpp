@@ -718,12 +718,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     return false;                                                              \
   }
 
-#define ARITHMETIC_OPERATION_DISPATCH(op,                                      \
-                                      x,                                       \
-                                      y,                                       \
-                                      res,                                     \
-                                      text_operation,                          \
-                                      invalid_type_error)                      \
+#define ARITHMETIC_OPERATION_DISPATCH(op, x, y, res, text_operation)           \
   do {                                                                         \
     switch (x->header.domain) {                                                \
     case GRN_DB_BOOL:                                                          \
@@ -864,16 +859,12 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       text_operation;                                                          \
       break;                                                                   \
     default:                                                                   \
-      invalid_type_error;                                                      \
       break;                                                                   \
     }                                                                          \
     code++;                                                                    \
   } while (0)
 
-#define ARITHMETIC_BINARY_OPERATION_DISPATCH(op,                               \
-                                             op_name,                          \
-                                             text_operation,                   \
-                                             invalid_type_error)               \
+#define ARITHMETIC_BINARY_OPERATION_DISPATCH(op, op_name, text_operation)      \
   do {                                                                         \
     grn_obj *x = NULL;                                                         \
     grn_obj *y = NULL;                                                         \
@@ -898,12 +889,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       GRN_OBJ_FIN(ctx, &inspected_y);                                          \
       return false;                                                            \
     }                                                                          \
-    ARITHMETIC_OPERATION_DISPATCH(op,                                          \
-                                  x,                                           \
-                                  y,                                           \
-                                  res,                                         \
-                                  text_operation,                              \
-                                  invalid_type_error);                         \
+    ARITHMETIC_OPERATION_DISPATCH(op, x, y, res, text_operation);              \
   } while (0)
 
 #define SIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y)                          \
@@ -1494,7 +1480,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
                                     (&variable_value),                         \
                                     (&casted_value),                           \
                                     res,                                       \
-                                    text_operation, );                         \
+                                    text_operation);                           \
       grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                      \
       GRN_OBJ_FIN(ctx, (&variable_value));                                     \
       GRN_OBJ_FIN(ctx, (&casted_value));                                       \
@@ -2585,29 +2571,24 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           GRN_OBJ_FIN(ctx, &inspected_y);
           return false;
         } else {
-          ARITHMETIC_OPERATION_DISPATCH(
-            GRN_OP_PLUS,
-            x,
-            y,
-            res,
-            {
-              if (x == res) {
-                grn_obj_cast(ctx, y, res, GRN_FALSE);
-              } else if (y == res) {
-                grn_obj buffer;
-                GRN_TEXT_INIT(&buffer, 0);
-                grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
-                grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
-                GRN_BULK_REWIND(res);
-                grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-                grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
-                GRN_OBJ_FIN(ctx, &buffer);
-              } else {
-                grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-                grn_obj_cast(ctx, x, res, GRN_FALSE);
-                grn_obj_cast(ctx, y, res, GRN_FALSE);
-              }
-            }, );
+          ARITHMETIC_OPERATION_DISPATCH(GRN_OP_PLUS, x, y, res, {
+            if (x == res) {
+              grn_obj_cast(ctx, y, res, GRN_FALSE);
+            } else if (y == res) {
+              grn_obj buffer;
+              GRN_TEXT_INIT(&buffer, 0);
+              grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
+              grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
+              GRN_BULK_REWIND(res);
+              grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
+              grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
+              GRN_OBJ_FIN(ctx, &buffer);
+            } else {
+              grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
+              grn_obj_cast(ctx, x, res, GRN_FALSE);
+              grn_obj_cast(ctx, y, res, GRN_FALSE);
+            }
+          });
         }
       }
       break;
@@ -2620,27 +2601,21 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           ARITHMETIC_OPERATION_NO_CHECK,
           TEXT_UNARY_ARITHMETIC_OPERATION(-), );
       } else {
-        ARITHMETIC_BINARY_OPERATION_DISPATCH(
-          GRN_OP_MINUS,
-          "-",
-          {
-            ERR(GRN_INVALID_ARGUMENT,
-                "\"string\" - \"string\" "
-                "isn't supported");
-            return false;
-          }, );
+        ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_MINUS, "-", {
+          ERR(GRN_INVALID_ARGUMENT,
+              "\"string\" - \"string\" "
+              "isn't supported");
+          return false;
+        });
       }
       break;
     case GRN_OP_STAR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(
-        GRN_OP_STAR,
-        "*",
-        {
-          ERR(GRN_INVALID_ARGUMENT,
-              "\"string\" * \"string\" "
-              "isn't supported");
-          return false;
-        }, );
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_STAR, "*", {
+        ERR(GRN_INVALID_ARGUMENT,
+            "\"string\" * \"string\" "
+            "isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_SLASH:
       DIVISION_OPERATION_DISPATCH(SIGNED_INTEGER_DIVISION_OPERATION_SLASH,
@@ -2675,49 +2650,46 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_BITWISE_OR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_OR,
                                            "|",
-                                           TEXT_ARITHMETIC_OPERATION(|), );
+                                           TEXT_ARITHMETIC_OPERATION(|));
       break;
     case GRN_OP_BITWISE_XOR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_XOR,
                                            "^",
-                                           TEXT_ARITHMETIC_OPERATION(^), );
+                                           TEXT_ARITHMETIC_OPERATION(^));
       break;
     case GRN_OP_BITWISE_AND:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_AND,
                                            "&",
-                                           TEXT_ARITHMETIC_OPERATION(&), );
+                                           TEXT_ARITHMETIC_OPERATION(&));
       break;
     case GRN_OP_SHIFTL:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTL,
                                            "<<",
-                                           TEXT_ARITHMETIC_OPERATION(<<), );
+                                           TEXT_ARITHMETIC_OPERATION(<<));
       break;
     case GRN_OP_SHIFTR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTR,
                                            ">>",
-                                           TEXT_ARITHMETIC_OPERATION(>>), );
+                                           TEXT_ARITHMETIC_OPERATION(>>));
       break;
     case GRN_OP_SHIFTRR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(
-        GRN_OP_SHIFTRR,
-        ">>>",
-        {
-          long long unsigned int x_;
-          long long unsigned int y_;
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTRR, ">>>", {
+        long long unsigned int x_;
+        long long unsigned int y_;
 
-          res->header.type = GRN_BULK;
-          res->header.domain = GRN_DB_INT64;
+        res->header.type = GRN_BULK;
+        res->header.domain = GRN_DB_INT64;
 
-          GRN_INT64_SET(ctx, res, 0);
-          grn_obj_cast(ctx, x, res, GRN_FALSE);
-          x_ = GRN_INT64_VALUE(res);
+        GRN_INT64_SET(ctx, res, 0);
+        grn_obj_cast(ctx, x, res, GRN_FALSE);
+        x_ = GRN_INT64_VALUE(res);
 
-          GRN_INT64_SET(ctx, res, 0);
-          grn_obj_cast(ctx, y, res, GRN_FALSE);
-          y_ = GRN_INT64_VALUE(res);
+        GRN_INT64_SET(ctx, res, 0);
+        grn_obj_cast(ctx, y, res, GRN_FALSE);
+        y_ = GRN_INT64_VALUE(res);
 
-          GRN_INT64_SET(ctx, res, x_ >> y_);
-        }, );
+        GRN_INT64_SET(ctx, res, x_ >> y_);
+      });
       break;
     case GRN_OP_INCR:
       UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_INCR);
