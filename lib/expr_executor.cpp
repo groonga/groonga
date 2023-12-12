@@ -167,31 +167,51 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
 #define INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) (~(x))
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x)   (~((long long int)(x)))
 
-template <typename OPERATION>
-void
-text_arithmetic_operation(
-  grn_ctx *ctx, grn_obj *x, grn_obj *y, OPERATION operation, grn_obj *res)
-{
-  res->header.domain = GRN_DB_INT64;
+namespace {
+  bool
+  text_arithmetic_operation(
+    grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
+  {
+    result->header.domain = GRN_DB_INT64;
 
-  GRN_INT64_SET(ctx, res, 0);
-  grn_obj_cast(ctx, x, res, false);
-  auto x_int64 = GRN_INT64_VALUE(res);
+    GRN_INT64_SET(ctx, result, 0);
+    grn_obj_cast(ctx, x, result, false);
+    auto x_int64 = GRN_INT64_VALUE(result);
 
-  GRN_INT64_SET(ctx, res, 0);
-  grn_obj_cast(ctx, y, res, false);
-  auto y_int64 = GRN_INT64_VALUE(res);
+    GRN_INT64_SET(ctx, result, 0);
+    grn_obj_cast(ctx, y, result, false);
+    auto y_int64 = GRN_INT64_VALUE(result);
 
-  GRN_INT64_SET(ctx, res, operation(x_int64, y_int64));
-}
-
-#define TEXT_ARITHMETIC_OPERATION(operator)                                    \
-  text_arithmetic_operation(                                                   \
-    ctx,                                                                       \
-    x,                                                                         \
-    y,                                                                         \
-    [](int64_t x_int64, int64_t y_int64) { return x_int64 operator y_int64; }, \
-    res)
+    switch (op) {
+    case GRN_OP_BITWISE_OR:
+      GRN_INT64_SET(ctx, result, x_int64 | y_int64);
+      return true;
+    case GRN_OP_BITWISE_XOR:
+      GRN_INT64_SET(ctx, result, x_int64 ^ y_int64);
+      return true;
+    case GRN_OP_BITWISE_AND:
+      GRN_INT64_SET(ctx, result, x_int64 & y_int64);
+      return true;
+    case GRN_OP_SHIFTL:
+      GRN_INT64_SET(ctx, result, x_int64 << y_int64);
+      return true;
+    case GRN_OP_SHIFTR:
+      GRN_INT64_SET(ctx, result, x_int64 >> y_int64);
+      return true;
+    case GRN_OP_SHIFTRR:
+      GRN_INT64_SET(ctx,
+                    result,
+                    static_cast<uint64_t>(x_int64) >>
+                      static_cast<uint64_t>(y_int64));
+      return true;
+    default:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] \"string\" %s \"string\" isn't supported",
+          grn_operator_to_string(op));
+      return false;
+    }
+  }
+} // namespace
 
 template <typename OPERATION>
 void
@@ -478,15 +498,19 @@ numeric_arithmetic_operation_execute(
 {
   switch (op) {
   case GRN_OP_PLUS:
+  case GRN_OP_PLUS_ASSIGN:
     grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x + y));
     return true;
   case GRN_OP_MINUS:
+  case GRN_OP_MINUS_ASSIGN:
     grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x - y));
     return true;
   case GRN_OP_STAR:
+  case GRN_OP_STAR_ASSIGN:
     grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x * y));
     return true;
   case GRN_OP_SLASH:
+  case GRN_OP_SLASH_ASSIGN:
     if (y == 0) {
       ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
       return false;
@@ -494,6 +518,7 @@ numeric_arithmetic_operation_execute(
     grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     return true;
   case GRN_OP_MOD:
+  case GRN_OP_MOD_ASSIGN:
     if (y == 0) {
       ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
       return false;
@@ -503,32 +528,38 @@ numeric_arithmetic_operation_execute(
                                                                  y,
                                                                  result);
   case GRN_OP_SHIFTL:
+  case GRN_OP_SHIFTL_ASSIGN:
     return numeric_arithmetic_operation_execute_shiftl<RESULT_TYPE>(ctx,
                                                                     x,
                                                                     y,
                                                                     result);
   case GRN_OP_SHIFTR:
+  case GRN_OP_SHIFTR_ASSIGN:
     return numeric_arithmetic_operation_execute_shiftr<RESULT_TYPE>(ctx,
                                                                     x,
                                                                     y,
                                                                     result);
   case GRN_OP_SHIFTRR:
+  case GRN_OP_SHIFTRR_ASSIGN:
     return numeric_arithmetic_operation_execute_shiftrr<RESULT_TYPE>(ctx,
                                                                      x,
                                                                      y,
                                                                      result);
   case GRN_OP_BITWISE_OR:
+  case GRN_OP_OR_ASSIGN:
     return numeric_arithmetic_operation_execute_bitwise_or<RESULT_TYPE>(ctx,
                                                                         x,
                                                                         y,
                                                                         result);
   case GRN_OP_BITWISE_XOR:
+  case GRN_OP_XOR_ASSIGN:
     return numeric_arithmetic_operation_execute_bitwise_xor<RESULT_TYPE>(
       ctx,
       x,
       y,
       result);
   case GRN_OP_BITWISE_AND:
+  case GRN_OP_AND_ASSIGN:
     return numeric_arithmetic_operation_execute_bitwise_and<RESULT_TYPE>(
       ctx,
       x,
@@ -703,6 +734,107 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
   }
 }
 
+namespace {
+  bool
+  text_operation(
+    grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
+  {
+    switch (op) {
+    case GRN_OP_STAR_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable *= \"string\" isn't supported");
+      return false;
+    case GRN_OP_SLASH_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable /= \"string\" isn't supported");
+      return false;
+    case GRN_OP_MOD_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable %%= \"string\" isn't supported");
+      return false;
+    case GRN_OP_PLUS_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable += \"string\" isn't supported");
+      return false;
+    case GRN_OP_MINUS_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable -= \"string\" isn't supported");
+      return false;
+    case GRN_OP_SHIFTL_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable <<= \"string\" isn't supported");
+      return false;
+    case GRN_OP_SHIFTR_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable >>= \"string\" isn't supported");
+      return false;
+    case GRN_OP_SHIFTRR_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable >>>= \"string\" isn't supported");
+      return false;
+    case GRN_OP_AND_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable &= \"string\" isn't supported");
+      return false;
+    case GRN_OP_XOR_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable ^= \"string\" isn't supported");
+      return false;
+    case GRN_OP_OR_ASSIGN:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] variable |= \"string\" isn't supported");
+      return false;
+    case GRN_OP_BITWISE_OR:
+    case GRN_OP_BITWISE_XOR:
+    case GRN_OP_BITWISE_AND:
+    case GRN_OP_SHIFTL:
+    case GRN_OP_SHIFTR:
+    case GRN_OP_SHIFTRR:
+      return text_arithmetic_operation(ctx, op, x, y, result);
+    case GRN_OP_PLUS:
+      if (x == result) {
+        grn_obj_cast(ctx, y, result, false);
+      } else if (y == result) {
+        grn::TextBulk buffer(ctx);
+        GRN_TEXT_INIT(*buffer, 0);
+        grn_obj_cast(ctx, x, *buffer, false);
+        grn_obj_cast(ctx, y, *buffer, false);
+        GRN_BULK_REWIND(result);
+        grn_obj_reinit(ctx, result, GRN_DB_TEXT, 0);
+        grn_obj_cast(ctx, *buffer, result, false);
+      } else {
+        grn_obj_reinit(ctx, result, GRN_DB_TEXT, 0);
+        grn_obj_cast(ctx, x, result, false);
+        grn_obj_cast(ctx, y, result, false);
+      }
+      return true;
+    case GRN_OP_MINUS:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] \"string\" - \"string\" isn't supported");
+      return false;
+    case GRN_OP_STAR:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] \"string\" * \"string\" isn't supported");
+      return false;
+    default:
+      {
+        grn::TextBulk x_inspected(ctx);
+        grn_inspect(ctx, *x_inspected, x);
+        grn::TextBulk y_inspected(ctx);
+        grn_inspect(ctx, *y_inspected, y);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[expr-executor] unsupported text operation: %.*s %s %.*s",
+            static_cast<int>(GRN_TEXT_LEN(*x_inspected)),
+            GRN_TEXT_VALUE(*x_inspected),
+            grn_operator_to_string(op),
+            static_cast<int>(GRN_TEXT_LEN(*y_inspected)),
+            GRN_TEXT_VALUE(*y_inspected));
+        return false;
+      }
+    }
+  }
+}; // namespace
+
 #define NUMERIC_ARITHMETIC_OPERATION_DISPATCH(result_type,                     \
                                               x_,                              \
                                               y,                               \
@@ -718,7 +850,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     return false;                                                              \
   }
 
-#define ARITHMETIC_OPERATION_DISPATCH(op, x, y, res, text_operation)           \
+#define ARITHMETIC_OPERATION_DISPATCH(op, x, y, res)                           \
   do {                                                                         \
     switch (x->header.domain) {                                                \
     case GRN_DB_BOOL:                                                          \
@@ -856,7 +988,9 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_SHORT_TEXT:                                                    \
     case GRN_DB_TEXT:                                                          \
     case GRN_DB_LONG_TEXT:                                                     \
-      text_operation;                                                          \
+      if (!text_operation(ctx, op, x, y, res)) {                               \
+        return false;                                                          \
+      }                                                                        \
       break;                                                                   \
     default:                                                                   \
       break;                                                                   \
@@ -864,7 +998,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     code++;                                                                    \
   } while (0)
 
-#define ARITHMETIC_BINARY_OPERATION_DISPATCH(op, op_name, text_operation)      \
+#define ARITHMETIC_BINARY_OPERATION_DISPATCH(op, op_name)                      \
   do {                                                                         \
     grn_obj *x = NULL;                                                         \
     grn_obj *y = NULL;                                                         \
@@ -889,7 +1023,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       GRN_OBJ_FIN(ctx, &inspected_y);                                          \
       return false;                                                            \
     }                                                                          \
-    ARITHMETIC_OPERATION_DISPATCH(op, x, y, res, text_operation);              \
+    ARITHMETIC_OPERATION_DISPATCH(op, x, y, res);                              \
   } while (0)
 
 #define SIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y)                          \
@@ -1444,7 +1578,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     code++;                                                                    \
   } while (0)
 
-#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(op, text_operation)           \
+#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(op)                           \
   do {                                                                         \
     grn_obj *value = NULL;                                                     \
     grn_obj *var = NULL;                                                       \
@@ -1479,8 +1613,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       ARITHMETIC_OPERATION_DISPATCH(op,                                        \
                                     (&variable_value),                         \
                                     (&casted_value),                           \
-                                    res,                                       \
-                                    text_operation);                           \
+                                    res);                                      \
       grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                      \
       GRN_OBJ_FIN(ctx, (&variable_value));                                     \
       GRN_OBJ_FIN(ctx, (&casted_value));                                       \
@@ -1845,70 +1978,37 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       code++;
       break;
     case GRN_OP_STAR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_STAR, {
-        ERR(GRN_INVALID_ARGUMENT, "variable *= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_STAR_ASSIGN);
       break;
     case GRN_OP_SLASH_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SLASH, {
-        ERR(GRN_INVALID_ARGUMENT, "variable /= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SLASH_ASSIGN);
       break;
     case GRN_OP_MOD_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MOD, {
-        ERR(GRN_INVALID_ARGUMENT, "variable %%= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MOD_ASSIGN);
       break;
     case GRN_OP_PLUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_PLUS, {
-        ERR(GRN_INVALID_ARGUMENT, "variable += \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_PLUS_ASSIGN);
       break;
     case GRN_OP_MINUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MINUS, {
-        ERR(GRN_INVALID_ARGUMENT, "variable -= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MINUS_ASSIGN);
       break;
     case GRN_OP_SHIFTL_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTL, {
-        ERR(GRN_INVALID_ARGUMENT, "variable <<= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTL_ASSIGN);
       break;
     case GRN_OP_SHIFTR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTR, {
-        ERR(GRN_INVALID_ARGUMENT, "variable >>= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTR);
       break;
     case GRN_OP_SHIFTRR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTRR, {
-        ERR(GRN_INVALID_ARGUMENT, "variable >>>= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTRR);
       break;
     case GRN_OP_AND_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_AND, {
-        ERR(GRN_INVALID_ARGUMENT, "variable &= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_AND_ASSIGN);
       break;
     case GRN_OP_OR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_OR, {
-        ERR(GRN_INVALID_ARGUMENT, "variable |= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_OR_ASSIGN);
       break;
     case GRN_OP_XOR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_XOR, {
-        ERR(GRN_INVALID_ARGUMENT, "variable ^= \"string\" isn't supported");
-        return false;
-      });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_XOR);
       break;
     case GRN_OP_JUMP:
       code += code->nargs + 1;
@@ -2571,24 +2671,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           GRN_OBJ_FIN(ctx, &inspected_y);
           return false;
         } else {
-          ARITHMETIC_OPERATION_DISPATCH(GRN_OP_PLUS, x, y, res, {
-            if (x == res) {
-              grn_obj_cast(ctx, y, res, GRN_FALSE);
-            } else if (y == res) {
-              grn_obj buffer;
-              GRN_TEXT_INIT(&buffer, 0);
-              grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
-              grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
-              GRN_BULK_REWIND(res);
-              grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-              grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
-              GRN_OBJ_FIN(ctx, &buffer);
-            } else {
-              grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-              grn_obj_cast(ctx, x, res, GRN_FALSE);
-              grn_obj_cast(ctx, y, res, GRN_FALSE);
-            }
-          });
+          ARITHMETIC_OPERATION_DISPATCH(GRN_OP_PLUS, x, y, res);
         }
       }
       break;
@@ -2601,21 +2684,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           ARITHMETIC_OPERATION_NO_CHECK,
           TEXT_UNARY_ARITHMETIC_OPERATION(-), );
       } else {
-        ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_MINUS, "-", {
-          ERR(GRN_INVALID_ARGUMENT,
-              "\"string\" - \"string\" "
-              "isn't supported");
-          return false;
-        });
+        ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_MINUS, "-");
       }
       break;
     case GRN_OP_STAR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_STAR, "*", {
-        ERR(GRN_INVALID_ARGUMENT,
-            "\"string\" * \"string\" "
-            "isn't supported");
-        return false;
-      });
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_STAR, "*");
       break;
     case GRN_OP_SLASH:
       DIVISION_OPERATION_DISPATCH(SIGNED_INTEGER_DIVISION_OPERATION_SLASH,
@@ -2648,48 +2721,22 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         TEXT_UNARY_ARITHMETIC_OPERATION(~), );
       break;
     case GRN_OP_BITWISE_OR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_OR,
-                                           "|",
-                                           TEXT_ARITHMETIC_OPERATION(|));
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_OR, "|");
       break;
     case GRN_OP_BITWISE_XOR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_XOR,
-                                           "^",
-                                           TEXT_ARITHMETIC_OPERATION(^));
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_XOR, "^");
       break;
     case GRN_OP_BITWISE_AND:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_AND,
-                                           "&",
-                                           TEXT_ARITHMETIC_OPERATION(&));
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_AND, "&");
       break;
     case GRN_OP_SHIFTL:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTL,
-                                           "<<",
-                                           TEXT_ARITHMETIC_OPERATION(<<));
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTL, "<<");
       break;
     case GRN_OP_SHIFTR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTR,
-                                           ">>",
-                                           TEXT_ARITHMETIC_OPERATION(>>));
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTR, ">>");
       break;
     case GRN_OP_SHIFTRR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTRR, ">>>", {
-        long long unsigned int x_;
-        long long unsigned int y_;
-
-        res->header.type = GRN_BULK;
-        res->header.domain = GRN_DB_INT64;
-
-        GRN_INT64_SET(ctx, res, 0);
-        grn_obj_cast(ctx, x, res, GRN_FALSE);
-        x_ = GRN_INT64_VALUE(res);
-
-        GRN_INT64_SET(ctx, res, 0);
-        grn_obj_cast(ctx, y, res, GRN_FALSE);
-        y_ = GRN_INT64_VALUE(res);
-
-        GRN_INT64_SET(ctx, res, x_ >> y_);
-      });
+      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTRR, ">>>");
       break;
     case GRN_OP_INCR:
       UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_INCR);
