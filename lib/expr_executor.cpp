@@ -36,36 +36,7 @@ grn_expr_executor_init_general(grn_ctx *ctx, grn_expr_executor *executor)
 {
 }
 
-#define EXPRVP(x) ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
-
-namespace {
-  struct ExecuteData {
-    grn_expr *e;
-    grn_obj **s_;
-    grn_obj *s0;
-    grn_obj *s1;
-    grn_obj **sp;
-    grn_obj *vp;
-    grn_obj *res;
-    grn_obj *v0;
-    grn_expr_code *code;
-    grn_expr_code *ce;
-  };
-}; // namespace
-
-template <typename BLOCK>
-void
-with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
-{
-  ctx->impl->stack_curr = data.sp - ctx->impl->stack;
-  data.e->values_curr = data.vp - data.e->values;
-  block();
-  data.vp = data.e->values + data.e->values_curr;
-  data.sp = ctx->impl->stack + ctx->impl->stack_curr;
-  data.s_ = ctx->impl->stack;
-  data.s0 = (data.sp > data.s_) ? data.sp[-1] : nullptr;
-  data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;
-}
+#define EXPRVP(x)      ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
 
 #define GEO_RESOLUTION 3600000
 #define GEO_RADIOUS    6357303
@@ -84,6 +55,33 @@ with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
   } while (false)
 
 namespace {
+  struct ExecuteData {
+    grn_expr *e;
+    grn_obj **s_;
+    grn_obj *s0;
+    grn_obj *s1;
+    grn_obj **sp;
+    grn_obj *vp;
+    grn_obj *res;
+    grn_obj *v0;
+    grn_expr_code *code;
+    grn_expr_code *ce;
+  };
+
+  template <typename BLOCK>
+  void
+  with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
+  {
+    ctx->impl->stack_curr = data.sp - ctx->impl->stack;
+    data.e->values_curr = data.vp - data.e->values;
+    block();
+    data.vp = data.e->values + data.e->values_curr;
+    data.sp = ctx->impl->stack + ctx->impl->stack_curr;
+    data.s_ = ctx->impl->stack;
+    data.s0 = (data.sp > data.s_) ? data.sp[-1] : nullptr;
+    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;
+  }
+
   inline void
   var_set_value(grn_ctx *ctx, grn_obj *var, grn_obj *value)
   {
@@ -205,9 +203,6 @@ namespace {
     return true;
   }
 
-}; // namespace
-
-namespace {
   inline bool
   text_arithmetic_operation(
     grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
@@ -251,521 +246,520 @@ namespace {
       return false;
     }
   }
-} // namespace
 
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_signed_v<Y>, bool>
-numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
-                                           X x,
-                                           Y y,
-                                           grn_obj *result)
-{
-  if (y == -1) {
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
-  } else {
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_signed_v<Y>, bool>
+  numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
+                                             X x,
+                                             Y y,
+                                             grn_obj *result)
+  {
+    if (y == -1) {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
+    } else {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    }
+    return true;
   }
-  return true;
-}
 
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<!std::is_signed_v<Y>, bool>
-numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<!std::is_signed_v<Y>, bool>
+  numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
+                                             X x,
+                                             Y y,
+                                             grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_mod(grn_ctx *ctx,
                                            X x,
                                            Y y,
                                            grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_mod(grn_ctx *ctx,
-                                         X x,
-                                         Y y,
-                                         grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x % y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_mod(grn_ctx *ctx,
-                                         X x,
-                                         Y y,
-                                         grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx,
-                              result,
-                              static_cast<RESULT_TYPE>(fmod(x, y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_shiftl(grn_ctx *ctx,
-                                            X x,
-                                            Y y,
-                                            grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x << y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftl(grn_ctx *ctx,
-                                            X x,
-                                            Y y,
-                                            grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x)
-                             << static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_shiftr(grn_ctx *ctx,
-                                            X x,
-                                            Y y,
-                                            grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x >> y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftr(grn_ctx *ctx,
-                                            X x,
-                                            Y y,
-                                            grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x) >>
-                             static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<(std::is_same_v<X, int8_t> ||
-                  std::is_same_v<X, uint8_t>)&&!std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
-                                             X x,
-                                             Y y,
-                                             grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<uint8_t>(x) >> y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<(std::is_same_v<X, int16_t> ||
-                  std::is_same_v<X, uint16_t>)&&!std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
-                                             X x,
-                                             Y y,
-                                             grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<uint16_t>(x) >> y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<(std::is_same_v<X, int32_t> ||
-                  std::is_same_v<X, uint32_t>)&&!std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
-                                             X x,
-                                             Y y,
-                                             grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<uint32_t>(x) >> y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<(std::is_same_v<X, int64_t> ||
-                  std::is_same_v<X, uint64_t>)&&!std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
-                                             X x,
-                                             Y y,
-                                             grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<uint64_t>(x) >> y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
-                                             X x,
-                                             Y y,
-                                             grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x) >>
-                             static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_bitwise_or(grn_ctx *ctx,
-                                                X x,
-                                                Y y,
-                                                grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x | y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_bitwise_or(grn_ctx *ctx,
-                                                X x,
-                                                Y y,
-                                                grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x) |
-                             static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_bitwise_xor(grn_ctx *ctx,
-                                                 X x,
-                                                 Y y,
-                                                 grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x ^ y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_bitwise_xor(grn_ctx *ctx,
-                                                 X x,
-                                                 Y y,
-                                                 grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x) ^
-                             static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
-numeric_arithmetic_operation_execute_bitwise_and(grn_ctx *ctx,
-                                                 X x,
-                                                 Y y,
-                                                 grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x & y));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
-                 bool>
-numeric_arithmetic_operation_execute_bitwise_and(grn_ctx *ctx,
-                                                 X x,
-                                                 Y y,
-                                                 grn_obj *result)
-{
-  grn::bulk::set<RESULT_TYPE>(
-    ctx,
-    result,
-    static_cast<RESULT_TYPE>(static_cast<int64_t>(x) &
-                             static_cast<int64_t>(y)));
-  return true;
-}
-
-template <typename RESULT_TYPE, typename X, typename Y>
-bool
-numeric_arithmetic_operation_execute(
-  grn_ctx *ctx, X x, grn_operator op, Y y, grn_obj *result)
-{
-  switch (op) {
-  case GRN_OP_PLUS:
-  case GRN_OP_PLUS_ASSIGN:
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x + y));
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x % y));
     return true;
-  case GRN_OP_MINUS:
-  case GRN_OP_MINUS_ASSIGN:
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x - y));
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_mod(grn_ctx *ctx,
+                                           X x,
+                                           Y y,
+                                           grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx,
+                                result,
+                                static_cast<RESULT_TYPE>(fmod(x, y)));
     return true;
-  case GRN_OP_STAR:
-  case GRN_OP_STAR_ASSIGN:
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x * y));
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_shiftl(grn_ctx *ctx,
+                                              X x,
+                                              Y y,
+                                              grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x << y));
     return true;
-  case GRN_OP_SLASH:
-  case GRN_OP_SLASH_ASSIGN:
-    if (y == 0) {
-      ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
-      return false;
-    }
-    return numeric_arithmetic_operation_execute_slash<RESULT_TYPE>(ctx,
-                                                                   x,
-                                                                   y,
-                                                                   result);
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftl(grn_ctx *ctx,
+                                              X x,
+                                              Y y,
+                                              grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x)
+                               << static_cast<int64_t>(y)));
     return true;
-  case GRN_OP_MOD:
-  case GRN_OP_MOD_ASSIGN:
-    if (y == 0) {
-      ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
-      return false;
-    }
-    return numeric_arithmetic_operation_execute_mod<RESULT_TYPE>(ctx,
-                                                                 x,
-                                                                 y,
-                                                                 result);
-  case GRN_OP_SHIFTL:
-  case GRN_OP_SHIFTL_ASSIGN:
-    return numeric_arithmetic_operation_execute_shiftl<RESULT_TYPE>(ctx,
-                                                                    x,
-                                                                    y,
-                                                                    result);
-  case GRN_OP_SHIFTR:
-  case GRN_OP_SHIFTR_ASSIGN:
-    return numeric_arithmetic_operation_execute_shiftr<RESULT_TYPE>(ctx,
-                                                                    x,
-                                                                    y,
-                                                                    result);
-  case GRN_OP_SHIFTRR:
-  case GRN_OP_SHIFTRR_ASSIGN:
-    return numeric_arithmetic_operation_execute_shiftrr<RESULT_TYPE>(ctx,
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_shiftr(grn_ctx *ctx,
+                                              X x,
+                                              Y y,
+                                              grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x >> y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftr(grn_ctx *ctx,
+                                              X x,
+                                              Y y,
+                                              grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x) >>
+                               static_cast<int64_t>(y)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, int8_t> ||
+                    std::is_same_v<X, uint8_t>)&&!std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
+                                               X x,
+                                               Y y,
+                                               grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<uint8_t>(x) >> y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, int16_t> ||
+                    std::is_same_v<X, uint16_t>)&&!std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
+                                               X x,
+                                               Y y,
+                                               grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<uint16_t>(x) >> y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, int32_t> ||
+                    std::is_same_v<X, uint32_t>)&&!std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
+                                               X x,
+                                               Y y,
+                                               grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<uint32_t>(x) >> y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, int64_t> ||
+                    std::is_same_v<X, uint64_t>)&&!std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
+                                               X x,
+                                               Y y,
+                                               grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<uint64_t>(x) >> y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_shiftrr(grn_ctx *ctx,
+                                               X x,
+                                               Y y,
+                                               grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x) >>
+                               static_cast<int64_t>(y)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_bitwise_or(grn_ctx *ctx,
+                                                  X x,
+                                                  Y y,
+                                                  grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x | y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_bitwise_or(grn_ctx *ctx,
+                                                  X x,
+                                                  Y y,
+                                                  grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x) |
+                               static_cast<int64_t>(y)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_bitwise_xor(grn_ctx *ctx,
+                                                   X x,
+                                                   Y y,
+                                                   grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x ^ y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_bitwise_xor(grn_ctx *ctx,
+                                                   X x,
+                                                   Y y,
+                                                   grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x) ^
+                               static_cast<int64_t>(y)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
+  numeric_arithmetic_operation_execute_bitwise_and(grn_ctx *ctx,
+                                                   X x,
+                                                   Y y,
+                                                   grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x & y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<X> || std::is_floating_point_v<Y>,
+                   bool>
+  numeric_arithmetic_operation_execute_bitwise_and(grn_ctx *ctx,
+                                                   X x,
+                                                   Y y,
+                                                   grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(static_cast<int64_t>(x) &
+                               static_cast<int64_t>(y)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  bool
+  numeric_arithmetic_operation_execute(
+    grn_ctx *ctx, X x, grn_operator op, Y y, grn_obj *result)
+  {
+    switch (op) {
+    case GRN_OP_PLUS:
+    case GRN_OP_PLUS_ASSIGN:
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x + y));
+      return true;
+    case GRN_OP_MINUS:
+    case GRN_OP_MINUS_ASSIGN:
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x - y));
+      return true;
+    case GRN_OP_STAR:
+    case GRN_OP_STAR_ASSIGN:
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x * y));
+      return true;
+    case GRN_OP_SLASH:
+    case GRN_OP_SLASH_ASSIGN:
+      if (y == 0) {
+        ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
+        return false;
+      }
+      return numeric_arithmetic_operation_execute_slash<RESULT_TYPE>(ctx,
                                                                      x,
                                                                      y,
                                                                      result);
-  case GRN_OP_BITWISE_OR:
-  case GRN_OP_OR_ASSIGN:
-    return numeric_arithmetic_operation_execute_bitwise_or<RESULT_TYPE>(ctx,
-                                                                        x,
-                                                                        y,
-                                                                        result);
-  case GRN_OP_BITWISE_XOR:
-  case GRN_OP_XOR_ASSIGN:
-    return numeric_arithmetic_operation_execute_bitwise_xor<RESULT_TYPE>(
-      ctx,
-      x,
-      y,
-      result);
-  case GRN_OP_BITWISE_AND:
-  case GRN_OP_AND_ASSIGN:
-    return numeric_arithmetic_operation_execute_bitwise_and<RESULT_TYPE>(
-      ctx,
-      x,
-      y,
-      result);
-  default:
-    ERR(GRN_INVALID_ARGUMENT,
-        "[expr-executor] unsupported operator: %s",
-        grn_operator_to_script_syntax(op));
-    return false;
-  }
-}
-
-template <typename RESULT_TYPE, typename X>
-bool
-numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
-                                      X x_raw,
-                                      grn_obj *y,
-                                      grn_obj *res,
-                                      grn_id res_domain,
-                                      grn_operator op)
-{
-  switch (y->header.domain) {
-  case GRN_DB_BOOL:
-    {
-      uint8_t y_raw = GRN_BOOL_VALUE(y) ? 1 : 0;
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_INT8:
-    {
-      auto y_raw = GRN_INT8_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_UINT8:
-    {
-      auto y_raw = GRN_UINT8_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_INT16:
-    {
-      auto y_raw = GRN_INT16_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_UINT16:
-    {
-      auto y_raw = GRN_UINT16_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_INT32:
-    {
-      auto y_raw = GRN_INT32_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_UINT32:
-    {
-      auto y_raw = GRN_UINT32_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_TIME:
-    {
-      auto y_raw = GRN_TIME_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_INT64:
-    {
-      auto y_raw = GRN_INT64_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_UINT64:
-    {
-      auto y_raw = GRN_UINT64_VALUE(y);
-      grn_obj_reinit(ctx, res, res_domain, 0);
-      return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
-                                                               x_raw,
-                                                               op,
-                                                               y_raw,
-                                                               res);
-    }
-  case GRN_DB_FLOAT32:
-    {
-      auto y_raw = GRN_FLOAT32_VALUE(y);
-      grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);
-      return numeric_arithmetic_operation_execute<float>(ctx,
-                                                         x_raw,
-                                                         op,
-                                                         y_raw,
-                                                         res);
-    }
-  case GRN_DB_FLOAT:
-    {
-      auto y_raw = GRN_FLOAT_VALUE(y);
-      grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
-      return numeric_arithmetic_operation_execute<double>(ctx,
-                                                          x_raw,
-                                                          op,
-                                                          y_raw,
-                                                          res);
-    }
-  case GRN_DB_SHORT_TEXT:
-  case GRN_DB_TEXT:
-  case GRN_DB_LONG_TEXT:
-    grn_obj_reinit(ctx, res, res_domain, 0);
-    if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {
+      return true;
+    case GRN_OP_MOD:
+    case GRN_OP_MOD_ASSIGN:
+      if (y == 0) {
+        ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
+        return false;
+      }
+      return numeric_arithmetic_operation_execute_mod<RESULT_TYPE>(ctx,
+                                                                   x,
+                                                                   y,
+                                                                   result);
+    case GRN_OP_SHIFTL:
+    case GRN_OP_SHIFTL_ASSIGN:
+      return numeric_arithmetic_operation_execute_shiftl<RESULT_TYPE>(ctx,
+                                                                      x,
+                                                                      y,
+                                                                      result);
+    case GRN_OP_SHIFTR:
+    case GRN_OP_SHIFTR_ASSIGN:
+      return numeric_arithmetic_operation_execute_shiftr<RESULT_TYPE>(ctx,
+                                                                      x,
+                                                                      y,
+                                                                      result);
+    case GRN_OP_SHIFTRR:
+    case GRN_OP_SHIFTRR_ASSIGN:
+      return numeric_arithmetic_operation_execute_shiftrr<RESULT_TYPE>(ctx,
+                                                                       x,
+                                                                       y,
+                                                                       result);
+    case GRN_OP_BITWISE_OR:
+    case GRN_OP_OR_ASSIGN:
+      return numeric_arithmetic_operation_execute_bitwise_or<RESULT_TYPE>(
+        ctx,
+        x,
+        y,
+        result);
+    case GRN_OP_BITWISE_XOR:
+    case GRN_OP_XOR_ASSIGN:
+      return numeric_arithmetic_operation_execute_bitwise_xor<RESULT_TYPE>(
+        ctx,
+        x,
+        y,
+        result);
+    case GRN_OP_BITWISE_AND:
+    case GRN_OP_AND_ASSIGN:
+      return numeric_arithmetic_operation_execute_bitwise_and<RESULT_TYPE>(
+        ctx,
+        x,
+        y,
+        result);
+    default:
       ERR(GRN_INVALID_ARGUMENT,
-          "not a numerical format: <%.*s>",
-          (int)GRN_TEXT_LEN(y),
-          GRN_TEXT_VALUE(y));
-      return false;
-    }
-    return numeric_arithmetic_operation_execute<RESULT_TYPE>(
-      ctx,
-      x_raw,
-      op,
-      grn::bulk::get<RESULT_TYPE>(ctx, res, 0),
-      res);
-  default:
-    {
-      grn::TextBulk y_inspected(ctx);
-      grn_inspect(ctx, *y_inspected, y);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[expr-executor] unsupported right type: %.*s(%s)",
-          static_cast<int>(GRN_TEXT_LEN(*y_inspected)),
-          GRN_TEXT_VALUE(*y_inspected),
-          grn_obj_type_to_string(y->header.type));
+          "[expr-executor] unsupported operator: %s",
+          grn_operator_to_script_syntax(op));
       return false;
     }
   }
-}
 
-namespace {
+  template <typename RESULT_TYPE, typename X>
+  bool
+  numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
+                                        X x_raw,
+                                        grn_obj *y,
+                                        grn_obj *res,
+                                        grn_id res_domain,
+                                        grn_operator op)
+  {
+    switch (y->header.domain) {
+    case GRN_DB_BOOL:
+      {
+        uint8_t y_raw = GRN_BOOL_VALUE(y) ? 1 : 0;
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_INT8:
+      {
+        auto y_raw = GRN_INT8_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_UINT8:
+      {
+        auto y_raw = GRN_UINT8_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_INT16:
+      {
+        auto y_raw = GRN_INT16_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_UINT16:
+      {
+        auto y_raw = GRN_UINT16_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_INT32:
+      {
+        auto y_raw = GRN_INT32_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_UINT32:
+      {
+        auto y_raw = GRN_UINT32_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_TIME:
+      {
+        auto y_raw = GRN_TIME_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_INT64:
+      {
+        auto y_raw = GRN_INT64_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_UINT64:
+      {
+        auto y_raw = GRN_UINT64_VALUE(y);
+        grn_obj_reinit(ctx, res, res_domain, 0);
+        return numeric_arithmetic_operation_execute<RESULT_TYPE>(ctx,
+                                                                 x_raw,
+                                                                 op,
+                                                                 y_raw,
+                                                                 res);
+      }
+    case GRN_DB_FLOAT32:
+      {
+        auto y_raw = GRN_FLOAT32_VALUE(y);
+        grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);
+        return numeric_arithmetic_operation_execute<float>(ctx,
+                                                           x_raw,
+                                                           op,
+                                                           y_raw,
+                                                           res);
+      }
+    case GRN_DB_FLOAT:
+      {
+        auto y_raw = GRN_FLOAT_VALUE(y);
+        grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
+        return numeric_arithmetic_operation_execute<double>(ctx,
+                                                            x_raw,
+                                                            op,
+                                                            y_raw,
+                                                            res);
+      }
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
+      grn_obj_reinit(ctx, res, res_domain, 0);
+      if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "not a numerical format: <%.*s>",
+            (int)GRN_TEXT_LEN(y),
+            GRN_TEXT_VALUE(y));
+        return false;
+      }
+      return numeric_arithmetic_operation_execute<RESULT_TYPE>(
+        ctx,
+        x_raw,
+        op,
+        grn::bulk::get<RESULT_TYPE>(ctx, res, 0),
+        res);
+    default:
+      {
+        grn::TextBulk y_inspected(ctx);
+        grn_inspect(ctx, *y_inspected, y);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[expr-executor] unsupported right type: %.*s(%s)",
+            static_cast<int>(GRN_TEXT_LEN(*y_inspected)),
+            GRN_TEXT_VALUE(*y_inspected),
+            grn_obj_type_to_string(y->header.type));
+        return false;
+      }
+    }
+  }
+
   inline bool
   text_operation(
     grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
