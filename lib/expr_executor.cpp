@@ -207,11 +207,6 @@ namespace {
 
 }; // namespace
 
-#define INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS(x)       (-(x))
-#define FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS(x)         (-(x))
-#define INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) (~(x))
-#define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x)   (~((long long int)(x)))
-
 namespace {
   inline bool
   text_arithmetic_operation(
@@ -257,29 +252,6 @@ namespace {
     }
   }
 } // namespace
-
-template <typename OPERATION>
-void
-text_unary_arithmetic_operation(grn_ctx *ctx,
-                                grn_obj *x,
-                                OPERATION operation,
-                                grn_obj *res)
-{
-  grn_obj buffer;
-  GRN_INT64_INIT(&buffer, 0);
-  grn_obj_cast(ctx, x, &buffer, false);
-  grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);
-  auto value = GRN_INT64_VALUE(&buffer);
-  GRN_INT64_SET(ctx, res, operation(value));
-  GRN_OBJ_FIN(ctx, &buffer);
-}
-
-#define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator)                        \
-  text_unary_arithmetic_operation(                                             \
-    ctx,                                                                       \
-    x,                                                                         \
-    [](int64_t value) { return unary_operator value; },                        \
-    data.res)
 
 template <typename RESULT_TYPE, typename X, typename Y>
 std::enable_if_t<std::is_signed_v<Y>, bool>
@@ -1083,127 +1055,228 @@ namespace {
       return false;
     }
     return arithmetic_operation_dispatch(ctx, data, op, x, y, data.res);
+  }
+
+  template <typename RESULT_TYPE, typename X>
+  std::enable_if_t<std::is_integral_v<X>, bool>
+  numeric_arithmetic_unary_operation_execute_bitwise_not(grn_ctx *ctx,
+                                                         X x,
+                                                         grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(~x));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X>
+  std::enable_if_t<std::is_floating_point_v<X>, bool>
+  numeric_arithmetic_unary_operation_execute_bitwise_not(grn_ctx *ctx,
+                                                         X x,
+                                                         grn_obj *result)
+  {
+    grn::bulk::set<RESULT_TYPE>(
+      ctx,
+      result,
+      static_cast<RESULT_TYPE>(~static_cast<int64_t>(x)));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X>
+  bool
+  numeric_arithmetic_unary_operation_execute(grn_ctx *ctx,
+                                             grn_operator op,
+                                             X x_raw,
+                                             grn_obj *result,
+                                             grn_id result_domain)
+  {
+    switch (op) {
+    case GRN_OP_MINUS:
+      grn_obj_reinit(ctx, result, result_domain, 0);
+      grn::bulk::set<RESULT_TYPE>(ctx,
+                                  result,
+                                  static_cast<RESULT_TYPE>(-x_raw));
+      return true;
+    case GRN_OP_BITWISE_NOT:
+      grn_obj_reinit(ctx, result, result_domain, 0);
+      return numeric_arithmetic_unary_operation_execute_bitwise_not<
+        RESULT_TYPE>(ctx, x_raw, result);
+    default:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] unsupported unary operator: %s",
+          grn_operator_to_script_syntax(op));
+      return false;
+    }
+  }
+
+  inline bool
+  arithmetic_unary_operation_dispatch(grn_ctx *ctx,
+                                      ExecuteData &data,
+                                      grn_operator op)
+  {
+    grn_obj *x = nullptr;
+    CHECK(pop1alloc1(ctx, data, x, data.res));
+    switch (x->header.domain) {
+    case GRN_DB_INT8:
+      {
+        auto x_raw = GRN_INT8_VALUE(x);
+        CHECK(numeric_arithmetic_unary_operation_execute<int8_t>(ctx,
+                                                                 op,
+                                                                 x_raw,
+                                                                 data.res,
+                                                                 GRN_DB_INT8));
+      }
+      break;
+    case GRN_DB_UINT8:
+      {
+        int16_t x_raw = GRN_UINT8_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int16_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT16));
+      }
+      break;
+    case GRN_DB_INT16:
+      {
+        auto x_raw = GRN_INT16_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int16_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT16));
+      }
+      break;
+    case GRN_DB_UINT16:
+      {
+        int32_t x_raw = GRN_UINT16_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int32_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT32));
+      }
+      break;
+    case GRN_DB_INT32:
+      {
+        auto x_raw = GRN_INT32_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int32_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT32));
+      }
+      break;
+    case GRN_DB_UINT32:
+      {
+        int64_t x_raw = GRN_UINT32_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int64_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT64));
+      }
+      break;
+    case GRN_DB_INT64:
+      {
+        auto x_raw = GRN_INT64_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int64_t>(ctx,
+                                                              op,
+                                                              x_raw,
+                                                              data.res,
+                                                              GRN_DB_INT64));
+      }
+      break;
+    case GRN_DB_TIME:
+      {
+        auto x_raw = GRN_TIME_VALUE(x);
+        CHECK(numeric_arithmetic_unary_operation_execute<int64_t>(ctx,
+                                                                  op,
+                                                                  x_raw,
+                                                                  data.res,
+                                                                  GRN_DB_TIME));
+      }
+      break;
+    case GRN_DB_UINT64:
+      {
+        auto x_raw = GRN_UINT64_VALUE(x);
+        if (x_raw >
+            static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "too large UInt64 value to inverse sign: "
+              "<%" GRN_FMT_INT64U ">",
+              x_raw);
+          return false;
+        } else {
+          int64_t signed_x_raw;
+          signed_x_raw = x_raw;
+          CHECK(
+            numeric_arithmetic_unary_operation_execute<int64_t>(ctx,
+                                                                op,
+                                                                signed_x_raw,
+                                                                data.res,
+                                                                GRN_DB_INT64));
+        }
+      }
+      break;
+    case GRN_DB_FLOAT32:
+      {
+        auto x_raw = GRN_FLOAT32_VALUE(x);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<float>(ctx,
+                                                            op,
+                                                            x_raw,
+                                                            data.res,
+                                                            GRN_DB_FLOAT32));
+      }
+      break;
+    case GRN_DB_FLOAT:
+      {
+        auto x_raw = GRN_FLOAT_VALUE(x);
+        CHECK(numeric_arithmetic_unary_operation_execute<double>(ctx,
+                                                                 op,
+                                                                 x_raw,
+                                                                 data.res,
+                                                                 GRN_DB_FLOAT));
+      }
+      break;
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
+      {
+        grn_obj x_casted;
+        GRN_INT64_INIT(&x_casted, 0);
+        grn_obj_cast(ctx, x, &x_casted, false);
+        auto x_casted_raw = GRN_INT64_VALUE(&x_casted);
+        GRN_OBJ_FIN(ctx, &x_casted);
+        CHECK(
+          numeric_arithmetic_unary_operation_execute<int64_t>(ctx,
+                                                              op,
+                                                              x_casted_raw,
+                                                              data.res,
+                                                              GRN_DB_INT64));
+        break;
+      }
+    default:
+      {
+        grn::TextBulk x_inspected(ctx);
+        grn_inspect(ctx, *x_inspected, x);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[expr-executor] unsupported unary operation target type: %.*s(%s)",
+            static_cast<int>(GRN_TEXT_LEN(*x_inspected)),
+            GRN_TEXT_VALUE(*x_inspected),
+            grn_obj_type_to_string(x->header.type));
+        return false;
+      }
+    }
+    data.code++;
     return true;
   }
 }; // namespace
-
-#define ARITHMETIC_UNARY_OPERATION_DISPATCH(integer_operation,                 \
-                                            float_operation,                   \
-                                            text_operation,                    \
-                                            invalid_type_error)                \
-  do {                                                                         \
-    grn_obj *x = NULL;                                                         \
-    CHECK(pop1alloc1(ctx, data, x, data.res));                                 \
-    switch (x->header.domain) {                                                \
-    case GRN_DB_INT8:                                                          \
-      {                                                                        \
-        int8_t x_;                                                             \
-        x_ = GRN_INT8_VALUE(x);                                                \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT8, 0);                         \
-        GRN_INT8_SET(ctx, data.res, integer_operation(x_));                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT8:                                                         \
-      {                                                                        \
-        int16_t x_;                                                            \
-        x_ = GRN_UINT8_VALUE(x);                                               \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT16, 0);                        \
-        GRN_INT16_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT16:                                                         \
-      {                                                                        \
-        int16_t x_;                                                            \
-        x_ = GRN_INT16_VALUE(x);                                               \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT16, 0);                        \
-        GRN_INT16_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT16:                                                        \
-      {                                                                        \
-        int32_t x_;                                                            \
-        x_ = GRN_UINT16_VALUE(x);                                              \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT32, 0);                        \
-        GRN_INT32_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT32:                                                         \
-      {                                                                        \
-        int32_t x_;                                                            \
-        x_ = GRN_INT32_VALUE(x);                                               \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT32, 0);                        \
-        GRN_INT32_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT32:                                                        \
-      {                                                                        \
-        int64_t x_;                                                            \
-        x_ = GRN_UINT32_VALUE(x);                                              \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT64, 0);                        \
-        GRN_INT64_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT64:                                                         \
-      {                                                                        \
-        int64_t x_;                                                            \
-        x_ = GRN_INT64_VALUE(x);                                               \
-        grn_obj_reinit(ctx, data.res, GRN_DB_INT64, 0);                        \
-        GRN_INT64_SET(ctx, data.res, integer_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_TIME:                                                          \
-      {                                                                        \
-        int64_t x_;                                                            \
-        x_ = GRN_TIME_VALUE(x);                                                \
-        grn_obj_reinit(ctx, data.res, GRN_DB_TIME, 0);                         \
-        GRN_TIME_SET(ctx, data.res, integer_operation(x_));                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT64:                                                        \
-      {                                                                        \
-        uint64_t x_;                                                           \
-        x_ = GRN_UINT64_VALUE(x);                                              \
-        if (x_ > (uint64_t)INT64_MAX) {                                        \
-          ERR(GRN_INVALID_ARGUMENT,                                            \
-              "too large UInt64 value to inverse sign: "                       \
-              "<%" GRN_FMT_INT64U ">",                                         \
-              x_);                                                             \
-          return false;                                                        \
-        } else {                                                               \
-          int64_t signed_x_;                                                   \
-          signed_x_ = x_;                                                      \
-          grn_obj_reinit(ctx, data.res, GRN_DB_INT64, 0);                      \
-          GRN_INT64_SET(ctx, data.res, integer_operation(signed_x_));          \
-        }                                                                      \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT32:                                                       \
-      {                                                                        \
-        float x_;                                                              \
-        x_ = GRN_FLOAT32_VALUE(x);                                             \
-        grn_obj_reinit(ctx, data.res, GRN_DB_FLOAT32, 0);                      \
-        GRN_FLOAT32_SET(ctx, data.res, float_operation(x_));                   \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT:                                                         \
-      {                                                                        \
-        double x_;                                                             \
-        x_ = GRN_FLOAT_VALUE(x);                                               \
-        grn_obj_reinit(ctx, data.res, GRN_DB_FLOAT, 0);                        \
-        GRN_FLOAT_SET(ctx, data.res, float_operation(x_));                     \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_SHORT_TEXT:                                                    \
-    case GRN_DB_TEXT:                                                          \
-    case GRN_DB_LONG_TEXT:                                                     \
-      text_operation;                                                          \
-      break;                                                                   \
-    default:                                                                   \
-      invalid_type_error;                                                      \
-      break;                                                                   \
-    }                                                                          \
-    data.code++;                                                               \
-  } while (0)
 
 #define EXEC_OPERATE(operate_sentence, assign_sentence)                        \
   operate_sentence assign_sentence
@@ -2398,10 +2471,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       break;
     case GRN_OP_MINUS:
       if (data.code->nargs == 1) {
-        ARITHMETIC_UNARY_OPERATION_DISPATCH(
-          INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS,
-          FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS,
-          TEXT_UNARY_ARITHMETIC_OPERATION(-), );
+        CHECK(arithmetic_unary_operation_dispatch(ctx, data, GRN_OP_MINUS));
       } else {
         CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MINUS));
       }
@@ -2416,10 +2486,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MOD));
       break;
     case GRN_OP_BITWISE_NOT:
-      ARITHMETIC_UNARY_OPERATION_DISPATCH(
-        INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT,
-        FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT,
-        TEXT_UNARY_ARITHMETIC_OPERATION(~), );
+      CHECK(arithmetic_unary_operation_dispatch(ctx, data, GRN_OP_BITWISE_NOT));
       break;
     case GRN_OP_BITWISE_OR:
       CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_BITWISE_OR));
