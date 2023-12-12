@@ -155,25 +155,28 @@ namespace {
     }
     return true;
   }
-}; // namespace
 
-#define POP1ALLOC1(arg, value)                                                 \
-  do {                                                                         \
-    arg = data.s0;                                                             \
-    if (EXPRVP(data.s0)) {                                                     \
-      value = data.s0;                                                         \
-    } else {                                                                   \
-      if (data.sp < data.s_ + 1) {                                             \
-        ERR(GRN_INVALID_ARGUMENT, "stack underflow");                          \
-        return false;                                                          \
-      }                                                                        \
-      data.sp[-1] = data.s0 = value = data.vp++;                               \
-      if (data.vp - data.e->values > data.e->values_tail) {                    \
-        data.e->values_tail = data.vp - data.e->values;                        \
-      }                                                                        \
-      data.s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;                         \
-    }                                                                          \
-  } while (0)
+  inline bool
+  pop1alloc1(grn_ctx *ctx, ExecuteData &data, grn_obj *&arg, grn_obj *&value)
+  {
+    arg = data.s0;
+    if (EXPRVP(data.s0)) {
+      value = data.s0;
+    } else {
+      if (data.sp < data.s_ + 1) {
+        ERR(GRN_INVALID_ARGUMENT, "stack underflow");
+        return false;
+      }
+      data.sp[-1] = data.s0 = value = data.vp++;
+      if (data.vp - data.e->values > data.e->values_tail) {
+        data.e->values_tail = data.vp - data.e->values;
+      }
+      data.s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;
+    }
+    return true;
+  }
+
+}; // namespace
 
 #define POP2ALLOC1(arg1, arg2, value)                                          \
   do {                                                                         \
@@ -1386,7 +1389,7 @@ namespace {
                                             invalid_type_error)                \
   do {                                                                         \
     grn_obj *x = NULL;                                                         \
-    POP1ALLOC1(x, data.res);                                                   \
+    CHECK(pop1alloc1(ctx, data, x, data.res));                                 \
     switch (x->header.domain) {                                                \
     case GRN_DB_INT8:                                                          \
       {                                                                        \
@@ -1544,7 +1547,7 @@ namespace {
     grn_obj value;                                                             \
     grn_id rid;                                                                \
                                                                                \
-    POP1ALLOC1(var, data.res);                                                 \
+    CHECK(pop1alloc1(ctx, data, var, data.res));                               \
     if (var->header.type != GRN_PTR) {                                         \
       ERR(GRN_INVALID_ARGUMENT,                                                \
           "invalid variable type: 0x%0x",                                      \
@@ -1611,7 +1614,7 @@ namespace {
     grn_obj *res = NULL;                                                       \
     if (data.code->value) {                                                    \
       value = data.code->value;                                                \
-      POP1ALLOC1(var, res);                                                    \
+      CHECK(pop1alloc1(ctx, data, var, res));                                  \
     } else {                                                                   \
       POP2ALLOC1(var, value, res);                                             \
     }                                                                          \
@@ -1821,12 +1824,12 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             col = data.code->value;
             CHECK(alloc1(ctx, data, data.res));
           } else {
-            POP1ALLOC1(col, data.res);
+            CHECK(pop1alloc1(ctx, data, col, data.res));
           }
         } else {
           if (data.code->value) {
             col = data.code->value;
-            POP1ALLOC1(rec, data.res);
+            CHECK(pop1alloc1(ctx, data, rec, data.res));
           } else {
             POP2ALLOC1(rec, col, data.res);
           }
@@ -2071,12 +2074,12 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
               col = data.code->value;
               CHECK(alloc1(ctx, data, data.res));
             } else {
-              POP1ALLOC1(col, data.res);
+              CHECK(pop1alloc1(ctx, data, col, data.res));
             }
           } else {
             if (data.code->value) {
               col = data.code->value;
-              POP1ALLOC1(rec, data.res);
+              CHECK(pop1alloc1(ctx, data, rec, data.res));
             } else {
               POP2ALLOC1(rec, col, data.res);
             }
@@ -2481,7 +2484,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
         y = (lat2 - lat1);
@@ -2502,7 +2505,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = sin(fabs(lng2 - lng1) * 0.5);
         y = sin(fabs(lat2 - lat1) * 0.5);
@@ -2524,7 +2527,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         p = (lat1 + lat2) * 0.5;
         q = (1 - GEO_BES_C3 * sin(p) * sin(p));
@@ -2549,7 +2552,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         p = (lat1 + lat2) * 0.5;
         q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
@@ -2577,7 +2580,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
         y = (lat1 - lat0);
         d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
@@ -2613,7 +2616,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
         y = (lat1 - lat0);
@@ -2646,7 +2649,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         la2 = GRN_INT32_VALUE(value);
         CHECK(pop1(ctx, data, value));
         ln3 = GRN_INT32_VALUE(value);
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         la3 = GRN_INT32_VALUE(value);
         r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
         GRN_INT32_SET(ctx, data.res, r);
@@ -2801,7 +2804,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *value = NULL;
         grn_bool value_boolean;
-        POP1ALLOC1(value, data.res);
+        CHECK(pop1alloc1(ctx, data, value, data.res));
         GRN_OBJ_IS_TRUE(ctx, value, value_boolean);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, !value_boolean);
