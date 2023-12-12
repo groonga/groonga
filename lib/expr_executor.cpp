@@ -627,7 +627,7 @@ numeric_arithmetic_operation_execute(
   default:
     ERR(GRN_INVALID_ARGUMENT,
         "[expr-executor] unsupported operator: %s",
-        grn_operator_to_string(op));
+        grn_operator_to_script_syntax(op));
     return false;
   }
 }
@@ -1057,8 +1057,7 @@ namespace {
   inline bool
   arithmetic_binary_operation_dispatch(grn_ctx *ctx,
                                        ExecuteData &data,
-                                       grn_operator op,
-                                       const char *op_name)
+                                       grn_operator op)
   {
     grn_obj *x = NULL;
     grn_obj *y = NULL;
@@ -1073,17 +1072,17 @@ namespace {
       grn_inspect(ctx, &inspected_y, y);
       ERR(GRN_INVALID_ARGUMENT,
           "<%s> doesn't support vector: <%.*s> %s <%.*s>",
-          op_name,
+          grn_operator_to_script_syntax(op),
           (int)GRN_TEXT_LEN(&inspected_x),
           GRN_TEXT_VALUE(&inspected_x),
-          op_name,
+          grn_operator_to_script_syntax(op),
           (int)GRN_TEXT_LEN(&inspected_y),
           GRN_TEXT_VALUE(&inspected_y));
       GRN_OBJ_FIN(ctx, &inspected_x);
       GRN_OBJ_FIN(ctx, &inspected_y);
       return false;
     }
-    CHECK(arithmetic_operation_dispatch(ctx, data, op, x, y, data.res));
+    return arithmetic_operation_dispatch(ctx, data, op, x, y, data.res);
     return true;
   }
 }; // namespace
@@ -2404,18 +2403,17 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS,
           TEXT_UNARY_ARITHMETIC_OPERATION(-), );
       } else {
-        CHECK(
-          arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MINUS, "-"));
+        CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MINUS));
       }
       break;
     case GRN_OP_STAR:
-      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_STAR, "*"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_STAR));
       break;
     case GRN_OP_SLASH:
-      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SLASH, "/"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SLASH));
       break;
     case GRN_OP_MOD:
-      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MOD, "%"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MOD));
       break;
     case GRN_OP_BITWISE_NOT:
       ARITHMETIC_UNARY_OPERATION_DISPATCH(
@@ -2424,34 +2422,24 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         TEXT_UNARY_ARITHMETIC_OPERATION(~), );
       break;
     case GRN_OP_BITWISE_OR:
-      CHECK(arithmetic_binary_operation_dispatch(ctx,
-                                                 data,
-                                                 GRN_OP_BITWISE_OR,
-                                                 "|"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_BITWISE_OR));
       break;
     case GRN_OP_BITWISE_XOR:
-      CHECK(arithmetic_binary_operation_dispatch(ctx,
-                                                 data,
-                                                 GRN_OP_BITWISE_XOR,
-                                                 "^"));
+      CHECK(
+        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_BITWISE_XOR));
       break;
     case GRN_OP_BITWISE_AND:
-      CHECK(arithmetic_binary_operation_dispatch(ctx,
-                                                 data,
-                                                 GRN_OP_BITWISE_AND,
-                                                 "&"));
+      CHECK(
+        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_BITWISE_AND));
       break;
     case GRN_OP_SHIFTL:
-      CHECK(
-        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTL, "<<"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTL));
       break;
     case GRN_OP_SHIFTR:
-      CHECK(
-        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTR, ">>"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTR));
       break;
     case GRN_OP_SHIFTRR:
-      CHECK(
-        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTRR, ">>>"));
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTRR));
       break;
     case GRN_OP_INCR:
       UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_INCR);
