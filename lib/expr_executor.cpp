@@ -53,16 +53,19 @@ namespace {
   };
 }; // namespace
 
-#define WITH_SPSAVE(block)                                                     \
-  do {                                                                         \
-    ctx->impl->stack_curr = data.sp - ctx->impl->stack;                        \
-    data.e->values_curr = data.vp - data.e->values;                            \
-    block data.vp = data.e->values + data.e->values_curr;                      \
-    data.sp = ctx->impl->stack + ctx->impl->stack_curr;                        \
-    data.s_ = ctx->impl->stack;                                                \
-    data.s0 = (data.sp > data.s_) ? data.sp[-1] : nullptr;                     \
-    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;                 \
-  } while (0)
+template <typename BLOCK>
+void
+with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
+{
+  ctx->impl->stack_curr = data.sp - ctx->impl->stack;
+  data.e->values_curr = data.vp - data.e->values;
+  block();
+  data.vp = data.e->values + data.e->values_curr;
+  data.sp = ctx->impl->stack + ctx->impl->stack_curr;
+  data.s_ = ctx->impl->stack;
+  data.s0 = (data.sp > data.s_) ? data.sp[-1] : nullptr;
+  data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;
+}
 
 #define GEO_RESOLUTION 3600000
 #define GEO_RADIOUS    6357303
@@ -1849,8 +1852,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             return false;
           }
           proc = data.code->value;
-          WITH_SPSAVE(
-            { grn_proc_call(ctx, proc, data.code->nargs - 1, expr); });
+          with_spsave(ctx, data, [&]() {
+            grn_proc_call(ctx, proc, data.code->nargs - 1, expr);
+          });
         } else {
           int offset = data.code->nargs;
           if (data.sp < data.s_ + offset) {
@@ -1869,8 +1873,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             GRN_OBJ_FIN(ctx, &inspected);
             return false;
           } else {
-            WITH_SPSAVE(
-              { grn_proc_call(ctx, proc, data.code->nargs - 1, expr); });
+            with_spsave(ctx, data, [&]() {
+              grn_proc_call(ctx, proc, data.code->nargs - 1, expr);
+            });
           }
           if (ctx->rc) {
             return false;
@@ -2125,12 +2130,12 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         expr = GRN_OBJ_RESOLVE(ctx, expr);
         POP1(table);
         table = GRN_OBJ_RESOLVE(ctx, table);
-        WITH_SPSAVE({
+        with_spsave(ctx, data, [&]() {
           grn_table_select(ctx,
                            table,
                            expr,
                            res,
-                           (grn_operator)GRN_UINT32_VALUE(op));
+                           static_cast<grn_operator>(GRN_UINT32_VALUE(op)));
         });
         PUSH1(res);
       }
@@ -2171,7 +2176,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
               }
               p = tokbuf[i] + 1;
             }
-            WITH_SPSAVE({
+            with_spsave(ctx, data, [&]() {
               grn_table_sort(ctx,
                              table,
                              0,
@@ -2231,8 +2236,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             results.limit = 0;
             results.flags = 0;
             results.op = GRN_OP_OR;
-            WITH_SPSAVE(
-              { grn_table_group(ctx, table, keys, n_keys, &results, 1); });
+            with_spsave(ctx, data, [&]() {
+              grn_table_group(ctx, table, keys, n_keys, &results, 1);
+            });
             for (i = 0; i < n_keys; i++) {
               grn_obj_unlink(ctx, keys[i].key);
             }
@@ -2343,7 +2349,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool matched;
         POP1(y);
         POP1(x);
-        WITH_SPSAVE({ matched = grn_operator_exec_match(ctx, x, y); });
+        with_spsave(ctx, data, [&]() {
+          matched = grn_operator_exec_match(ctx, x, y);
+        });
         ALLOC1(data.res);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
@@ -2381,7 +2389,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool matched;
         POP1(y);
         POP1(x);
-        WITH_SPSAVE({ matched = grn_operator_exec_prefix(ctx, x, y); });
+        with_spsave(ctx, data, [&]() {
+          matched = grn_operator_exec_prefix(ctx, x, y);
+        });
         ALLOC1(data.res);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
@@ -2807,8 +2817,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool matched;
         POP1(pattern);
         POP1(target);
-        WITH_SPSAVE(
-          { matched = grn_operator_exec_regexp(ctx, target, pattern); });
+        with_spsave(ctx, data, [&]() {
+          matched = grn_operator_exec_regexp(ctx, target, pattern);
+        });
         ALLOC1(data.res);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
