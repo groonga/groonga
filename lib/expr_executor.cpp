@@ -176,30 +176,36 @@ namespace {
     return true;
   }
 
-}; // namespace
+  inline bool
+  pop2alloc1(grn_ctx *ctx,
+             ExecuteData &data,
+             grn_obj *&arg1,
+             grn_obj *&arg2,
+             grn_obj *&value)
+  {
+    if (EXPRVP(data.s0)) {
+      data.vp--;
+    }
+    if (EXPRVP(data.s1)) {
+      data.vp--;
+    }
+    arg2 = data.s0;
+    arg1 = data.s1;
+    data.sp--;
+    if (data.sp < data.s_ + 1) {
+      ERR(GRN_INVALID_ARGUMENT, "stack underflow");
+      return false;
+    }
+    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : NULL;
+    data.sp[-1] = data.s0 = value = data.vp++;
+    if (data.vp - data.e->values > data.e->values_tail) {
+      data.e->values_tail = data.vp - data.e->values;
+    }
+    data.s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;
+    return true;
+  }
 
-#define POP2ALLOC1(arg1, arg2, value)                                          \
-  do {                                                                         \
-    if (EXPRVP(data.s0)) {                                                     \
-      data.vp--;                                                               \
-    }                                                                          \
-    if (EXPRVP(data.s1)) {                                                     \
-      data.vp--;                                                               \
-    }                                                                          \
-    arg2 = data.s0;                                                            \
-    arg1 = data.s1;                                                            \
-    data.sp--;                                                                 \
-    if (data.sp < data.s_ + 1) {                                               \
-      ERR(GRN_INVALID_ARGUMENT, "stack underflow");                            \
-      return false;                                                            \
-    }                                                                          \
-    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : NULL;                    \
-    data.sp[-1] = data.s0 = value = data.vp++;                                 \
-    if (data.vp - data.e->values > data.e->values_tail) {                      \
-      data.e->values_tail = data.vp - data.e->values;                          \
-    }                                                                          \
-    data.s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;                           \
-  } while (0)
+}; // namespace
 
 #define INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS(x)       (-(x))
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS(x)         (-(x))
@@ -1032,7 +1038,7 @@ namespace {
     grn_obj *x = NULL;                                                         \
     grn_obj *y = NULL;                                                         \
                                                                                \
-    POP2ALLOC1(x, y, data.res);                                                \
+    CHECK(pop2alloc1(ctx, data, x, y, data.res));                              \
     if (x->header.type == GRN_VECTOR || y->header.type == GRN_VECTOR) {        \
       grn_obj inspected_x;                                                     \
       grn_obj inspected_y;                                                     \
@@ -1365,7 +1371,7 @@ namespace {
     grn_obj *x = NULL;                                                         \
     grn_obj *y = NULL;                                                         \
                                                                                \
-    POP2ALLOC1(x, y, data.res);                                                \
+    CHECK(pop2alloc1(ctx, data, x, y, data.res));                              \
     if (y != data.res) {                                                       \
       data.res->header.domain = x->header.domain;                              \
     }                                                                          \
@@ -1616,7 +1622,7 @@ namespace {
       value = data.code->value;                                                \
       CHECK(pop1alloc1(ctx, data, var, res));                                  \
     } else {                                                                   \
-      POP2ALLOC1(var, value, res);                                             \
+      CHECK(pop2alloc1(ctx, data, var, value, res));                           \
     }                                                                          \
     if (var->header.type == GRN_PTR &&                                         \
         GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {         \
@@ -1831,7 +1837,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             col = data.code->value;
             CHECK(pop1alloc1(ctx, data, rec, data.res));
           } else {
-            POP2ALLOC1(rec, col, data.res);
+            CHECK(pop2alloc1(ctx, data, rec, col, data.res));
           }
         }
         if (col->header.type == GRN_BULK) {
@@ -2081,7 +2087,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
               col = data.code->value;
               CHECK(pop1alloc1(ctx, data, rec, data.res));
             } else {
-              POP2ALLOC1(rec, col, data.res);
+              CHECK(pop2alloc1(ctx, data, rec, col, data.res));
             }
           }
           if (col->header.type == GRN_BULK) {
@@ -2288,7 +2294,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_obj *result = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (grn_obj_is_true(ctx, x)) {
           if (grn_obj_is_true(ctx, y)) {
             result = y;
@@ -2310,7 +2316,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_obj *result = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (grn_obj_is_true(ctx, x)) {
           result = x;
         } else {
@@ -2336,7 +2342,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_bool is_true;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (!grn_obj_is_true(ctx, x) || grn_obj_is_true(ctx, y)) {
           is_true = GRN_FALSE;
         } else {
@@ -2374,7 +2380,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool is_equal;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         is_equal = grn_operator_exec_equal(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, is_equal);
@@ -2386,7 +2392,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool is_not_equal;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         is_not_equal = grn_operator_exec_not_equal(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, is_not_equal);
@@ -2414,7 +2420,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_bool matched = GRN_FALSE;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (GRN_TEXT_LEN(x) >= GRN_TEXT_LEN(y) &&
             !memcmp(GRN_TEXT_VALUE(x) + GRN_TEXT_LEN(x) - GRN_TEXT_LEN(y),
                     GRN_TEXT_VALUE(y),
@@ -2431,7 +2437,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         r = grn_operator_exec_less(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
@@ -2443,7 +2449,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         r = grn_operator_exec_greater(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
@@ -2455,7 +2461,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         r = grn_operator_exec_less_equal(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
@@ -2467,7 +2473,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         r = grn_operator_exec_greater_equal(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
@@ -2662,7 +2668,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        POP2ALLOC1(x, y, data.res);
+        CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (x->header.type == GRN_VECTOR && y->header.type == GRN_VECTOR) {
           grn_id domain_id = x->header.domain;
           if (domain_id == GRN_ID_NIL) {
@@ -2815,7 +2821,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *receiver = NULL;
         grn_obj *index_or_key = NULL;
-        POP2ALLOC1(receiver, index_or_key, data.res);
+        CHECK(pop2alloc1(ctx, data, receiver, index_or_key, data.res));
         if (receiver->header.type == GRN_PTR) {
           grn_obj *index = index_or_key;
           grn_expr_exec_get_member_vector(ctx, expr, receiver, index, data.res);
