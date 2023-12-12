@@ -342,6 +342,7 @@ jobs:
             grntest \
             pkg-config \
             rroonga
+          brew install apache-arrow-glib
           MAKEFLAGS=-j$(nproc) gem install \
             --version $(pkg-config --modversion arrow-glib) \
             red-arrow
