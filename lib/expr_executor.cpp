@@ -722,7 +722,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
                                       x,                                       \
                                       y,                                       \
                                       res,                                     \
-                                      left_expression_check,                   \
                                       text_operation,                          \
                                       invalid_type_error)                      \
   do {                                                                         \
@@ -730,9 +729,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_BOOL:                                                          \
       {                                                                        \
         uint8_t x_ = GRN_BOOL_VALUE(x) ? 1 : 0;                                \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(uint8_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -744,9 +740,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_INT8:                                                          \
       {                                                                        \
         auto x_ = GRN_INT8_VALUE(x);                                           \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(int8_t,                          \
                                               x_,                              \
                                               y,                               \
@@ -758,9 +751,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_UINT8:                                                         \
       {                                                                        \
         auto x_ = GRN_UINT8_VALUE(x);                                          \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(uint8_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -772,9 +762,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_INT16:                                                         \
       {                                                                        \
         auto x_ = GRN_INT16_VALUE(x);                                          \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(int16_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -786,9 +773,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_UINT16:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT16_VALUE(x);                                         \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(uint16_t,                        \
                                               x_,                              \
                                               y,                               \
@@ -800,9 +784,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_INT32:                                                         \
       {                                                                        \
         auto x_ = GRN_INT32_VALUE(x);                                          \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(int32_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -814,9 +795,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_UINT32:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT32_VALUE(x);                                         \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(uint32_t,                        \
                                               x_,                              \
                                               y,                               \
@@ -828,9 +806,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_INT64:                                                         \
       {                                                                        \
         auto x_ = GRN_INT64_VALUE(x);                                          \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(int64_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -842,9 +817,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_TIME:                                                          \
       {                                                                        \
         auto x_ = GRN_TIME_VALUE(x);                                           \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(int64_t,                         \
                                               x_,                              \
                                               y,                               \
@@ -856,9 +828,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_UINT64:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT64_VALUE(x);                                         \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(uint64_t,                        \
                                               x_,                              \
                                               y,                               \
@@ -870,9 +839,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_FLOAT32:                                                       \
       {                                                                        \
         auto x_ = GRN_FLOAT32_VALUE(x);                                        \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(float,                           \
                                               x_,                              \
                                               y,                               \
@@ -884,9 +850,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     case GRN_DB_FLOAT:                                                         \
       {                                                                        \
         auto x_ = GRN_FLOAT_VALUE(x);                                          \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         NUMERIC_ARITHMETIC_OPERATION_DISPATCH(double,                          \
                                               x_,                              \
                                               y,                               \
@@ -909,7 +872,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
 
 #define ARITHMETIC_BINARY_OPERATION_DISPATCH(op,                               \
                                              op_name,                          \
-                                             left_expression_check,            \
                                              text_operation,                   \
                                              invalid_type_error)               \
   do {                                                                         \
@@ -940,7 +902,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
                                   x,                                           \
                                   y,                                           \
                                   res,                                         \
-                                  left_expression_check,                       \
                                   text_operation,                              \
                                   invalid_type_error);                         \
   } while (0)
@@ -1497,9 +1458,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
     code++;                                                                    \
   } while (0)
 
-#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(op,                           \
-                                                 left_expression_check,        \
-                                                 text_operation)               \
+#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(op, text_operation)           \
   do {                                                                         \
     grn_obj *value = NULL;                                                     \
     grn_obj *var = NULL;                                                       \
@@ -1535,7 +1494,6 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
                                     (&variable_value),                         \
                                     (&casted_value),                           \
                                     res,                                       \
-                                    left_expression_check,                     \
                                     text_operation, );                         \
       grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                      \
       GRN_OBJ_FIN(ctx, (&variable_value));                                     \
@@ -1901,103 +1859,70 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       code++;
       break;
     case GRN_OP_STAR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_STAR,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable *= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_STAR, {
+        ERR(GRN_INVALID_ARGUMENT, "variable *= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_SLASH_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_SLASH,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable /= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SLASH, {
+        ERR(GRN_INVALID_ARGUMENT, "variable /= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_MOD_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_MOD,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable %%= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MOD, {
+        ERR(GRN_INVALID_ARGUMENT, "variable %%= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_PLUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_PLUS,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable += \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_PLUS, {
+        ERR(GRN_INVALID_ARGUMENT, "variable += \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_MINUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_MINUS,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable -= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MINUS, {
+        ERR(GRN_INVALID_ARGUMENT, "variable -= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_SHIFTL_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_SHIFTL,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable <<= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTL, {
+        ERR(GRN_INVALID_ARGUMENT, "variable <<= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_SHIFTR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_SHIFTR,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable >>= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTR, {
+        ERR(GRN_INVALID_ARGUMENT, "variable >>= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_SHIFTRR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_SHIFTRR,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable >>>= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTRR, {
+        ERR(GRN_INVALID_ARGUMENT, "variable >>>= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_AND_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_BITWISE_AND,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable &= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_AND, {
+        ERR(GRN_INVALID_ARGUMENT, "variable &= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_OR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_BITWISE_OR,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable |= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_OR, {
+        ERR(GRN_INVALID_ARGUMENT, "variable |= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_XOR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
-        GRN_OP_BITWISE_XOR,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          ERR(GRN_INVALID_ARGUMENT, "variable ^= \"string\" isn't supported");
-          return false;
-        });
+      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_XOR, {
+        ERR(GRN_INVALID_ARGUMENT, "variable ^= \"string\" isn't supported");
+        return false;
+      });
       break;
     case GRN_OP_JUMP:
       code += code->nargs + 1;
@@ -2665,7 +2590,6 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             x,
             y,
             res,
-            ARITHMETIC_OPERATION_NO_CHECK,
             {
               if (x == res) {
                 grn_obj_cast(ctx, y, res, GRN_FALSE);
@@ -2699,7 +2623,6 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
           GRN_OP_MINUS,
           "-",
-          ARITHMETIC_OPERATION_NO_CHECK,
           {
             ERR(GRN_INVALID_ARGUMENT,
                 "\"string\" - \"string\" "
@@ -2712,7 +2635,6 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       ARITHMETIC_BINARY_OPERATION_DISPATCH(
         GRN_OP_STAR,
         "*",
-        ARITHMETIC_OPERATION_NO_CHECK,
         {
           ERR(GRN_INVALID_ARGUMENT,
               "\"string\" * \"string\" "
@@ -2753,38 +2675,32 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_BITWISE_OR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_OR,
                                            "|",
-                                           ARITHMETIC_OPERATION_NO_CHECK,
                                            TEXT_ARITHMETIC_OPERATION(|), );
       break;
     case GRN_OP_BITWISE_XOR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_XOR,
                                            "^",
-                                           ARITHMETIC_OPERATION_NO_CHECK,
                                            TEXT_ARITHMETIC_OPERATION(^), );
       break;
     case GRN_OP_BITWISE_AND:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_AND,
                                            "&",
-                                           ARITHMETIC_OPERATION_NO_CHECK,
                                            TEXT_ARITHMETIC_OPERATION(&), );
       break;
     case GRN_OP_SHIFTL:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTL,
                                            "<<",
-                                           ARITHMETIC_OPERATION_NO_CHECK,
                                            TEXT_ARITHMETIC_OPERATION(<<), );
       break;
     case GRN_OP_SHIFTR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTR,
                                            ">>",
-                                           ARITHMETIC_OPERATION_NO_CHECK,
                                            TEXT_ARITHMETIC_OPERATION(>>), );
       break;
     case GRN_OP_SHIFTRR:
       ARITHMETIC_BINARY_OPERATION_DISPATCH(
         GRN_OP_SHIFTRR,
         ">>>",
-        ARITHMETIC_OPERATION_NO_CHECK,
         {
           long long unsigned int x_;
           long long unsigned int y_;
