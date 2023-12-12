@@ -173,9 +173,6 @@ if(GRN_WITH_BUNDLED_MECAB)
     COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
   add_library(libmecab SHARED ${LIBMECAB_SOURCES})
-  # MeCab can't be built with C++17.
-  # https://github.com/taku910/mecab/pull/71
-  set_target_properties(libmecab PROPERTIES CXX_STANDARD 14)
   if(NOT MSVC)
     set_target_properties(libmecab PROPERTIES OUTPUT_NAME "mecab")
   endif()

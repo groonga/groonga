@@ -76,11 +76,6 @@ target_include_directories(
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
-if(GRN_WITH_APACHE_ARROW AND Arrow_VERSION VERSION_GREATER 9.0.0)
-  set_target_properties(libgroonga PROPERTIES CXX_STANDARD 17)
-elseif(GRN_WITH_RAPIDJSON OR GRN_WITH_APACHE_ARROW)
-  set_target_properties(libgroonga PROPERTIES CXX_STANDARD 11)
-endif()
 set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
 find_program(LEMON lemon)
