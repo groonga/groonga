@@ -296,8 +296,6 @@ numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
   return true;
 }
 
-#define ARITHMETIC_OPERATION_NO_CHECK(raw_value) true
-
 template <typename RESULT_TYPE, typename X, typename Y>
 std::enable_if_t<!std::is_signed_v<Y>, bool>
 numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
@@ -1092,8 +1090,6 @@ namespace {
 
 #define ARITHMETIC_UNARY_OPERATION_DISPATCH(integer_operation,                 \
                                             float_operation,                   \
-                                            left_expression_check,             \
-                                            right_expression_check,            \
                                             text_operation,                    \
                                             invalid_type_error)                \
   do {                                                                         \
@@ -1104,9 +1100,6 @@ namespace {
       {                                                                        \
         int8_t x_;                                                             \
         x_ = GRN_INT8_VALUE(x);                                                \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT8, 0);                         \
         GRN_INT8_SET(ctx, data.res, integer_operation(x_));                    \
       }                                                                        \
@@ -1115,9 +1108,6 @@ namespace {
       {                                                                        \
         int16_t x_;                                                            \
         x_ = GRN_UINT8_VALUE(x);                                               \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT16, 0);                        \
         GRN_INT16_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1126,9 +1116,6 @@ namespace {
       {                                                                        \
         int16_t x_;                                                            \
         x_ = GRN_INT16_VALUE(x);                                               \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT16, 0);                        \
         GRN_INT16_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1137,9 +1124,6 @@ namespace {
       {                                                                        \
         int32_t x_;                                                            \
         x_ = GRN_UINT16_VALUE(x);                                              \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT32, 0);                        \
         GRN_INT32_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1148,9 +1132,6 @@ namespace {
       {                                                                        \
         int32_t x_;                                                            \
         x_ = GRN_INT32_VALUE(x);                                               \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT32, 0);                        \
         GRN_INT32_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1159,9 +1140,6 @@ namespace {
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_UINT32_VALUE(x);                                              \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT64, 0);                        \
         GRN_INT64_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1170,9 +1148,6 @@ namespace {
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_INT64_VALUE(x);                                               \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_INT64, 0);                        \
         GRN_INT64_SET(ctx, data.res, integer_operation(x_));                   \
       }                                                                        \
@@ -1181,9 +1156,6 @@ namespace {
       {                                                                        \
         int64_t x_;                                                            \
         x_ = GRN_TIME_VALUE(x);                                                \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_TIME, 0);                         \
         GRN_TIME_SET(ctx, data.res, integer_operation(x_));                    \
       }                                                                        \
@@ -1192,9 +1164,6 @@ namespace {
       {                                                                        \
         uint64_t x_;                                                           \
         x_ = GRN_UINT64_VALUE(x);                                              \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         if (x_ > (uint64_t)INT64_MAX) {                                        \
           ERR(GRN_INVALID_ARGUMENT,                                            \
               "too large UInt64 value to inverse sign: "                       \
@@ -1213,9 +1182,6 @@ namespace {
       {                                                                        \
         float x_;                                                              \
         x_ = GRN_FLOAT32_VALUE(x);                                             \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_FLOAT32, 0);                      \
         GRN_FLOAT32_SET(ctx, data.res, float_operation(x_));                   \
       }                                                                        \
@@ -1224,9 +1190,6 @@ namespace {
       {                                                                        \
         double x_;                                                             \
         x_ = GRN_FLOAT_VALUE(x);                                               \
-        if (!left_expression_check(x_)) {                                      \
-          return false;                                                        \
-        }                                                                      \
         grn_obj_reinit(ctx, data.res, GRN_DB_FLOAT, 0);                        \
         GRN_FLOAT_SET(ctx, data.res, float_operation(x_));                     \
       }                                                                        \
@@ -2439,8 +2402,6 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         ARITHMETIC_UNARY_OPERATION_DISPATCH(
           INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS,
           FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS,
-          ARITHMETIC_OPERATION_NO_CHECK,
-          ARITHMETIC_OPERATION_NO_CHECK,
           TEXT_UNARY_ARITHMETIC_OPERATION(-), );
       } else {
         CHECK(
@@ -2460,8 +2421,6 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       ARITHMETIC_UNARY_OPERATION_DISPATCH(
         INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT,
         FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        ARITHMETIC_OPERATION_NO_CHECK,
         TEXT_UNARY_ARITHMETIC_OPERATION(~), );
       break;
     case GRN_OP_BITWISE_OR:
