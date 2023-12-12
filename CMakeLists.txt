@@ -78,6 +78,11 @@ if(POLICY CMP0141)
       "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 endif()
 
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 project(
   groonga
   VERSION "${GRN_VERSION}"
@@ -216,8 +221,6 @@ if(GRN_C_COMPILER_GNU_LIKE)
       "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
   set(GRN_CXX_COMPILE_FLAGS
       "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
-  set(CMAKE_C_STANDARD 99)
-  set(CMAKE_C_STANDARD_REQUIRED TRUE)
 endif()
 
 # /Ob1 is used with RelWithDebInfo by default but it's slower than /Ob2 which is
