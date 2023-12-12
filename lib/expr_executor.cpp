@@ -119,22 +119,24 @@ namespace {
     data.sp++;
     return true;
   }
-}; // namespace
 
-#define POP1(v)                                                                \
-  do {                                                                         \
-    if (EXPRVP(data.s0)) {                                                     \
-      data.vp--;                                                               \
-    }                                                                          \
-    v = data.s0;                                                               \
-    data.s0 = data.s1;                                                         \
-    data.sp--;                                                                 \
-    if (data.sp < data.s_) {                                                   \
-      ERR(GRN_INVALID_ARGUMENT, "stack underflow");                            \
-      return false;                                                            \
-    }                                                                          \
-    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : NULL;                    \
-  } while (0)
+  inline bool
+  pop1(grn_ctx *ctx, ExecuteData &data, grn_obj *&v)
+  {
+    if (EXPRVP(data.s0)) {
+      data.vp--;
+    }
+    v = data.s0;
+    data.s0 = data.s1;
+    data.sp--;
+    if (data.sp < data.s_) {
+      ERR(GRN_INVALID_ARGUMENT, "stack underflow");
+      return false;
+    }
+    data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;
+    return true;
+  }
+}; // namespace
 
 #define ALLOC1(value)                                                          \
   do {                                                                         \
@@ -200,7 +202,7 @@ namespace {
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x)   (~((long long int)(x)))
 
 namespace {
-  bool
+  inline bool
   text_arithmetic_operation(
     grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
   {
@@ -1629,7 +1631,7 @@ namespace {
         ERR(GRN_INVALID_ARGUMENT, "invalid value: string");                    \
         GRN_OBJ_FIN(ctx, &variable_value);                                     \
         GRN_OBJ_FIN(ctx, &casted_value);                                       \
-        POP1(res);                                                             \
+        CHECK(pop1(ctx, data, res));                                           \
         return false;                                                          \
       }                                                                        \
       CHECK(arithmetic_operation_dispatch(ctx,                                 \
@@ -1643,7 +1645,7 @@ namespace {
       GRN_OBJ_FIN(ctx, (&casted_value));                                       \
     } else {                                                                   \
       ERR(GRN_INVALID_ARGUMENT, "left hand expression isn't column.");         \
-      POP1(res);                                                               \
+      CHECK(pop1(ctx, data, res));                                             \
     }                                                                          \
   } while (0)
 
@@ -1803,7 +1805,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_POP:
       {
         grn_obj *obj = NULL;
-        POP1(obj);
+        CHECK(pop1(ctx, data, obj));
         data.code++;
       }
       break;
@@ -1884,10 +1886,10 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           if (ctx->rc) {
             return false;
           }
-          POP1(data.res);
+          CHECK(pop1(ctx, data, data.res));
           {
             grn_obj *proc_;
-            POP1(proc_);
+            CHECK(pop1(ctx, data, proc_));
             if (proc != proc_) {
               GRN_LOG(ctx, GRN_LOG_WARNING, "stack may be corrupt");
             }
@@ -1900,7 +1902,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_INTERN:
       {
         grn_obj *obj = NULL;
-        POP1(obj);
+        CHECK(pop1(ctx, data, obj));
         obj = GRN_OBJ_RESOLVE(ctx, obj);
         data.res =
           grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj));
@@ -1918,13 +1920,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_TABLE_CREATE:
       {
         grn_obj *value_type, *key_type, *flags, *name;
-        POP1(value_type);
+        CHECK(pop1(ctx, data, value_type));
         value_type = GRN_OBJ_RESOLVE(ctx, value_type);
-        POP1(key_type);
+        CHECK(pop1(ctx, data, key_type));
         key_type = GRN_OBJ_RESOLVE(ctx, key_type);
-        POP1(flags);
+        CHECK(pop1(ctx, data, flags));
         flags = GRN_OBJ_RESOLVE(ctx, flags);
-        POP1(name);
+        CHECK(pop1(ctx, data, name));
         name = GRN_OBJ_RESOLVE(ctx, name);
         data.res = grn_table_create(ctx,
                                     GRN_TEXT_VALUE(name),
@@ -1941,9 +1943,9 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *name = NULL;
         grn_obj *expr = NULL;
-        POP1(name);
+        CHECK(pop1(ctx, data, name));
         name = GRN_OBJ_RESOLVE(ctx, name);
-        POP1(expr);
+        CHECK(pop1(ctx, data, expr));
         expr = GRN_OBJ_RESOLVE(ctx, expr);
         switch (name->header.domain) {
         case GRN_DB_INT32:
@@ -1993,10 +1995,10 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         if (data.code->value) {
           value = data.code->value;
         } else {
-          POP1(value);
+          CHECK(pop1(ctx, data, value));
         }
         value = GRN_OBJ_RESOLVE(ctx, value);
-        POP1(var);
+        CHECK(pop1(ctx, data, var));
         // var = GRN_OBJ_RESOLVE(ctx, var);
         if (var->header.type == GRN_PTR &&
             GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {
@@ -2049,7 +2051,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_CJUMP:
       {
         grn_obj *v = NULL;
-        POP1(v);
+        CHECK(pop1(ctx, data, v));
         if (!grn_obj_is_true(ctx, v)) {
           data.code += data.code->nargs;
         }
@@ -2103,13 +2105,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *query = NULL;
         grn_obj *index = NULL;
         // todo : grn_search_optarg optarg;
-        POP1(op);
+        CHECK(pop1(ctx, data, op));
         op = GRN_OBJ_RESOLVE(ctx, op);
-        POP1(data.res);
+        CHECK(pop1(ctx, data, data.res));
         data.res = GRN_OBJ_RESOLVE(ctx, data.res);
-        POP1(query);
+        CHECK(pop1(ctx, data, query));
         query = GRN_OBJ_RESOLVE(ctx, query);
-        POP1(index);
+        CHECK(pop1(ctx, data, index));
         index = GRN_OBJ_RESOLVE(ctx, index);
         grn_obj_search(ctx,
                        index,
@@ -2126,13 +2128,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *res = NULL;
         grn_obj *expr = NULL;
         grn_obj *table = NULL;
-        POP1(op);
+        CHECK(pop1(ctx, data, op));
         op = GRN_OBJ_RESOLVE(ctx, op);
-        POP1(res);
+        CHECK(pop1(ctx, data, res));
         res = GRN_OBJ_RESOLVE(ctx, res);
-        POP1(expr);
+        CHECK(pop1(ctx, data, expr));
         expr = GRN_OBJ_RESOLVE(ctx, expr);
-        POP1(table);
+        CHECK(pop1(ctx, data, table));
         table = GRN_OBJ_RESOLVE(ctx, table);
         with_spsave(ctx, data, [&]() {
           grn_table_select(ctx,
@@ -2151,13 +2153,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *res = NULL;
         grn_obj *limit = NULL;
         grn_obj *table = NULL;
-        POP1(keys_);
+        CHECK(pop1(ctx, data, keys_));
         keys_ = GRN_OBJ_RESOLVE(ctx, keys_);
-        POP1(res);
+        CHECK(pop1(ctx, data, res));
         res = GRN_OBJ_RESOLVE(ctx, res);
-        POP1(limit);
+        CHECK(pop1(ctx, data, limit));
         limit = GRN_OBJ_RESOLVE(ctx, limit);
-        POP1(table);
+        CHECK(pop1(ctx, data, table));
         table = GRN_OBJ_RESOLVE(ctx, table);
         {
           grn_table_sort_key *keys;
@@ -2203,11 +2205,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *res = NULL;
         grn_obj *keys_ = NULL;
         grn_obj *table = NULL;
-        POP1(res);
+        CHECK(pop1(ctx, data, res));
         res = GRN_OBJ_RESOLVE(ctx, res);
-        POP1(keys_);
+        CHECK(pop1(ctx, data, keys_));
         keys_ = GRN_OBJ_RESOLVE(ctx, keys_);
-        POP1(table);
+        CHECK(pop1(ctx, data, table));
         table = GRN_OBJ_RESOLVE(ctx, table);
         {
           grn_table_sort_key *keys;
@@ -2258,11 +2260,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *res = NULL;
         grn_obj *str = NULL;
         grn_obj *table = NULL;
-        POP1(res);
+        CHECK(pop1(ctx, data, res));
         res = GRN_OBJ_RESOLVE(ctx, res);
-        POP1(str);
+        CHECK(pop1(ctx, data, str));
         str = GRN_OBJ_RESOLVE(ctx, str);
-        POP1(table);
+        CHECK(pop1(ctx, data, table));
         table = GRN_OBJ_RESOLVE(ctx, table);
         GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, -1, 0);
         format.flags = 0;
@@ -2351,8 +2353,8 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_bool matched;
-        POP1(y);
-        POP1(x);
+        CHECK(pop1(ctx, data, y));
+        CHECK(pop1(ctx, data, x));
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_match(ctx, x, y);
         });
@@ -2391,8 +2393,8 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         grn_bool matched;
-        POP1(y);
-        POP1(x);
+        CHECK(pop1(ctx, data, y));
+        CHECK(pop1(ctx, data, x));
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_prefix(ctx, x, y);
         });
@@ -2471,11 +2473,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -2492,11 +2494,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -2514,11 +2516,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -2539,11 +2541,11 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -2565,13 +2567,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         int r;
         grn_obj *value = NULL;
         double lng0, lat0, lng1, lat1, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
@@ -2599,15 +2601,15 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         int r;
         grn_obj *value = NULL;
         double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, data.res);
         lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -2628,19 +2630,19 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         int r;
         grn_obj *value = NULL;
         int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         ln0 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         la0 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         ln1 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         la1 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         ln2 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         la2 = GRN_INT32_VALUE(value);
-        POP1(value);
+        CHECK(pop1(ctx, data, value));
         ln3 = GRN_INT32_VALUE(value);
         POP1ALLOC1(value, data.res);
         la3 = GRN_INT32_VALUE(value);
@@ -2824,8 +2826,8 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         grn_obj *target = NULL;
         grn_obj *pattern = NULL;
         grn_bool matched;
-        POP1(pattern);
-        POP1(target);
+        CHECK(pop1(ctx, data, pattern));
+        CHECK(pop1(ctx, data, target));
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_regexp(ctx, target, pattern);
         });
