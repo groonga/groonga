@@ -136,24 +136,26 @@ namespace {
     data.s1 = (data.sp > data.s_ + 1) ? data.sp[-2] : nullptr;
     return true;
   }
-}; // namespace
 
-#define ALLOC1(value)                                                          \
-  do {                                                                         \
-    data.s1 = data.s0;                                                         \
-    if (data.sp >= data.s_ + ctx->impl->stack_size) {                          \
-      if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {                          \
-        return false;                                                          \
-      }                                                                        \
-      data.sp += (ctx->impl->stack - data.s_);                                 \
-      data.s_ = ctx->impl->stack;                                              \
-    }                                                                          \
-    *(data.sp) = data.s0 = value = data.vp++;                                  \
-    data.sp++;                                                                 \
-    if (data.vp - data.e->values > data.e->values_tail) {                      \
-      data.e->values_tail = data.vp - data.e->values;                          \
-    }                                                                          \
-  } while (0)
+  inline bool
+  alloc1(grn_ctx *ctx, ExecuteData &data, grn_obj *&value)
+  {
+    data.s1 = data.s0;
+    if (data.sp >= data.s_ + ctx->impl->stack_size) {
+      if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {
+        return false;
+      }
+      data.sp += (ctx->impl->stack - data.s_);
+      data.s_ = ctx->impl->stack;
+    }
+    *(data.sp) = data.s0 = value = data.vp++;
+    data.sp++;
+    if (data.vp - data.e->values > data.e->values_tail) {
+      data.e->values_tail = data.vp - data.e->values;
+    }
+    return true;
+  }
+}; // namespace
 
 #define POP1ALLOC1(arg, value)                                                 \
   do {                                                                         \
@@ -1817,7 +1819,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           rec = data.v0;
           if (data.code->value) {
             col = data.code->value;
-            ALLOC1(data.res);
+            CHECK(alloc1(ctx, data, data.res));
           } else {
             POP1ALLOC1(col, data.res);
           }
@@ -2067,7 +2069,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
             rec = data.v0;
             if (data.code->value) {
               col = data.code->value;
-              ALLOC1(data.res);
+              CHECK(alloc1(ctx, data, data.res));
             } else {
               POP1ALLOC1(col, data.res);
             }
@@ -2358,7 +2360,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_match(ctx, x, y);
         });
-        ALLOC1(data.res);
+        CHECK(alloc1(ctx, data, data.res));
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
       }
@@ -2398,7 +2400,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_prefix(ctx, x, y);
         });
-        ALLOC1(data.res);
+        CHECK(alloc1(ctx, data, data.res));
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
       }
@@ -2831,7 +2833,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         with_spsave(ctx, data, [&]() {
           matched = grn_operator_exec_regexp(ctx, target, pattern);
         });
-        ALLOC1(data.res);
+        CHECK(alloc1(ctx, data, data.res));
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
       }
