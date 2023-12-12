@@ -687,7 +687,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
       ctx,
       x_raw,
       op,
-      grn::bulk::get<RESULT_TYPE>(res),
+      grn::bulk::get<RESULT_TYPE>(ctx, res, 0),
       res);
   default:
     {
