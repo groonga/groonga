@@ -873,7 +873,8 @@ namespace {
     case GRN_DB_BOOL:                                                          \
       {                                                                        \
         uint8_t x_ = GRN_BOOL_VALUE(x) ? 1 : 0;                                \
-        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(x_,               \
+        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,              \
+                                                             x_,               \
                                                              y,                \
                                                              res,              \
                                                              GRN_DB_UINT8,     \
@@ -883,7 +884,8 @@ namespace {
     case GRN_DB_INT8:                                                          \
       {                                                                        \
         auto x_ = GRN_INT8_VALUE(x);                                           \
-        CHECK(numeric_arithmetic_operation_dispatch<int8_t>(x_,                \
+        CHECK(numeric_arithmetic_operation_dispatch<int8_t>(ctx,               \
+                                                            x_,                \
                                                             y,                 \
                                                             res,               \
                                                             GRN_DB_INT8,       \
@@ -893,7 +895,7 @@ namespace {
     case GRN_DB_UINT8:                                                         \
       {                                                                        \
         auto x_ = GRN_UINT8_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(,                 \
+        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,              \
                                                              x_,               \
                                                              y,                \
                                                              res,              \
@@ -904,7 +906,8 @@ namespace {
     case GRN_DB_INT16:                                                         \
       {                                                                        \
         auto x_ = GRN_INT16_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int16_t>(x_,               \
+        CHECK(numeric_arithmetic_operation_dispatch<int16_t>(ctx,              \
+                                                             x_,               \
                                                              y,                \
                                                              res,              \
                                                              GRN_DB_INT16,     \
@@ -914,7 +917,8 @@ namespace {
     case GRN_DB_UINT16:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT16_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint16_t>(x_,              \
+        CHECK(numeric_arithmetic_operation_dispatch<uint16_t>(ctx,             \
+                                                              x_,              \
                                                               y,               \
                                                               res,             \
                                                               GRN_DB_UINT16,   \
@@ -924,7 +928,8 @@ namespace {
     case GRN_DB_INT32:                                                         \
       {                                                                        \
         auto x_ = GRN_INT32_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int32_t>(x_,               \
+        CHECK(numeric_arithmetic_operation_dispatch<int32_t>(ctx,              \
+                                                             x_,               \
                                                              y,                \
                                                              res,              \
                                                              GRN_DB_INT32,     \
@@ -934,7 +939,8 @@ namespace {
     case GRN_DB_UINT32:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT32_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint32_t>(x_,              \
+        CHECK(numeric_arithmetic_operation_dispatch<uint32_t>(ctx,             \
+                                                              x_,              \
                                                               y,               \
                                                               res,             \
                                                               GRN_DB_UINT32,   \
@@ -944,7 +950,8 @@ namespace {
     case GRN_DB_INT64:                                                         \
       {                                                                        \
         auto x_ = GRN_INT64_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(x_,               \
+        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,              \
+                                                             x_,               \
                                                              y,                \
                                                              res,              \
                                                              GRN_DB_INT64,     \
@@ -954,7 +961,7 @@ namespace {
     case GRN_DB_TIME:                                                          \
       {                                                                        \
         auto x_ = GRN_TIME_VALUE(x);                                           \
-        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(,                 \
+        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,              \
                                                              x_,               \
                                                              y,                \
                                                              res,              \
@@ -965,7 +972,8 @@ namespace {
     case GRN_DB_UINT64:                                                        \
       {                                                                        \
         auto x_ = GRN_UINT64_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint64_t>(x_,              \
+        CHECK(numeric_arithmetic_operation_dispatch<uint64_t>(ctx,             \
+                                                              x_,              \
                                                               y,               \
                                                               res,             \
                                                               GRN_DB_UINT64,   \
@@ -975,7 +983,8 @@ namespace {
     case GRN_DB_FLOAT32:                                                       \
       {                                                                        \
         auto x_ = GRN_FLOAT32_VALUE(x);                                        \
-        CHECK(numeric_arithmetic_operation_dispatch<float>(x_,                 \
+        CHECK(numeric_arithmetic_operation_dispatch<float>(ctx,                \
+                                                           x_,                 \
                                                            y,                  \
                                                            res,                \
                                                            GRN_DB_FLOAT32,     \
@@ -985,7 +994,8 @@ namespace {
     case GRN_DB_FLOAT:                                                         \
       {                                                                        \
         auto x_ = GRN_FLOAT_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<double>(x_,                \
+        CHECK(numeric_arithmetic_operation_dispatch<double>(ctx,               \
+                                                            x_,                \
                                                             y,                 \
                                                             res,               \
                                                             GRN_DB_FLOAT,      \
@@ -995,7 +1005,7 @@ namespace {
     case GRN_DB_SHORT_TEXT:                                                    \
     case GRN_DB_TEXT:                                                          \
     case GRN_DB_LONG_TEXT:                                                     \
-      CHECK(text_operation(ctx, op, x, y, res); \
+      CHECK(text_operation(ctx, op, x, y, res));                               \
       break;                                                                   \
     default:                                                                   \
       break;                                                                   \
