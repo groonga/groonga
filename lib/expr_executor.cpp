@@ -281,20 +281,33 @@ text_unary_arithmetic_operation(grn_ctx *ctx,
     [](int64_t value) { return unary_operator value; },                        \
     data.res)
 
-template <typename RAW>
-bool
-arithmetic_operation_zero_division_check(grn_ctx *ctx, RAW raw_value)
+template <typename RESULT_TYPE, typename X, typename Y>
+std::enable_if_t<std::is_signed_v<Y>, bool>
+numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
+                                           X x,
+                                           Y y,
+                                           grn_obj *result)
 {
-  if (static_cast<int64_t>(raw_value) != 0) {
-    return true;
+  if (y == -1) {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
+  } else {
+    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
   }
-  ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
-  return false;
+  return true;
 }
 
 #define ARITHMETIC_OPERATION_NO_CHECK(raw_value) true
-#define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(raw_value)                    \
-  arithmetic_operation_zero_division_check(ctx, raw_value)
+
+template <typename RESULT_TYPE, typename X, typename Y>
+std::enable_if_t<!std::is_signed_v<Y>, bool>
+numeric_arithmetic_operation_execute_slash(grn_ctx *ctx,
+                                           X x,
+                                           Y y,
+                                           grn_obj *result)
+{
+  grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+  return true;
+}
 
 template <typename RESULT_TYPE, typename X, typename Y>
 std::enable_if_t<std::is_integral_v<X> && std::is_integral_v<Y>, bool>
@@ -560,7 +573,10 @@ numeric_arithmetic_operation_execute(
       ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
       return false;
     }
-    grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    return numeric_arithmetic_operation_execute_slash<RESULT_TYPE>(ctx,
+                                                                   x,
+                                                                   y,
+                                                                   result);
     return true;
   case GRN_OP_MOD:
   case GRN_OP_MOD_ASSIGN:
@@ -861,6 +877,14 @@ namespace {
       ERR(GRN_INVALID_ARGUMENT,
           "[expr-executor] \"string\" * \"string\" isn't supported");
       return false;
+    case GRN_OP_SLASH:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] \"string\" / \"string\" isn't supported");
+      return false;
+    case GRN_OP_MOD:
+      ERR(GRN_INVALID_ARGUMENT,
+          "[expr-executor] \"string\" %% \"string\" isn't supported");
+      return false;
     default:
       {
         grn::TextBulk x_inspected(ctx);
@@ -1031,361 +1055,40 @@ namespace {
     data.code++;
     return true;
   }
+
+  inline bool
+  arithmetic_binary_operation_dispatch(grn_ctx *ctx,
+                                       ExecuteData &data,
+                                       grn_operator op,
+                                       const char *op_name)
+  {
+    grn_obj *x = NULL;
+    grn_obj *y = NULL;
+
+    CHECK(pop2alloc1(ctx, data, x, y, data.res));
+    if (x->header.type == GRN_VECTOR || y->header.type == GRN_VECTOR) {
+      grn_obj inspected_x;
+      grn_obj inspected_y;
+      GRN_TEXT_INIT(&inspected_x, 0);
+      GRN_TEXT_INIT(&inspected_y, 0);
+      grn_inspect(ctx, &inspected_x, x);
+      grn_inspect(ctx, &inspected_y, y);
+      ERR(GRN_INVALID_ARGUMENT,
+          "<%s> doesn't support vector: <%.*s> %s <%.*s>",
+          op_name,
+          (int)GRN_TEXT_LEN(&inspected_x),
+          GRN_TEXT_VALUE(&inspected_x),
+          op_name,
+          (int)GRN_TEXT_LEN(&inspected_y),
+          GRN_TEXT_VALUE(&inspected_y));
+      GRN_OBJ_FIN(ctx, &inspected_x);
+      GRN_OBJ_FIN(ctx, &inspected_y);
+      return false;
+    }
+    CHECK(arithmetic_operation_dispatch(ctx, data, op, x, y, data.res));
+    return true;
+  }
 }; // namespace
-
-#define ARITHMETIC_BINARY_OPERATION_DISPATCH(op, op_name)                      \
-  do {                                                                         \
-    grn_obj *x = NULL;                                                         \
-    grn_obj *y = NULL;                                                         \
-                                                                               \
-    CHECK(pop2alloc1(ctx, data, x, y, data.res));                              \
-    if (x->header.type == GRN_VECTOR || y->header.type == GRN_VECTOR) {        \
-      grn_obj inspected_x;                                                     \
-      grn_obj inspected_y;                                                     \
-      GRN_TEXT_INIT(&inspected_x, 0);                                          \
-      GRN_TEXT_INIT(&inspected_y, 0);                                          \
-      grn_inspect(ctx, &inspected_x, x);                                       \
-      grn_inspect(ctx, &inspected_y, y);                                       \
-      ERR(GRN_INVALID_ARGUMENT,                                                \
-          "<%s> doesn't support vector: <%.*s> %s <%.*s>",                     \
-          op_name,                                                             \
-          (int)GRN_TEXT_LEN(&inspected_x),                                     \
-          GRN_TEXT_VALUE(&inspected_x),                                        \
-          op_name,                                                             \
-          (int)GRN_TEXT_LEN(&inspected_y),                                     \
-          GRN_TEXT_VALUE(&inspected_y));                                       \
-      GRN_OBJ_FIN(ctx, &inspected_x);                                          \
-      GRN_OBJ_FIN(ctx, &inspected_y);                                          \
-      return false;                                                            \
-    }                                                                          \
-    CHECK(arithmetic_operation_dispatch(ctx, data, op, x, y, data.res));       \
-  } while (0)
-
-#define SIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y)                          \
-  ((y == -1) ? -(x) : (x) / (y))
-#define UNSIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y) ((x) / (y))
-#define FLOAT_DIVISION_OPERATION_SLASH(x, y)            ((double)(x) / (double)(y))
-#define SIGNED_INTEGER_DIVISION_OPERATION_MOD(x, y)     ((y == -1) ? 0 : (x) % (y))
-#define UNSIGNED_INTEGER_DIVISION_OPERATION_MOD(x, y)   ((x) % (y))
-#define FLOAT_DIVISION_OPERATION_MOD(x, y)              (fmod((x), (y)))
-
-#define DIVISION_OPERATION_DISPATCH_RIGHT(set,                                 \
-                                          get,                                 \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation)                     \
-  do {                                                                         \
-    switch (y->header.domain) {                                                \
-    case GRN_DB_INT8:                                                          \
-      {                                                                        \
-        int8_t y_;                                                             \
-        y_ = GRN_INT8_VALUE(y);                                                \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, signed_integer_operation(x_, y_));                       \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT8:                                                         \
-      {                                                                        \
-        uint8_t y_;                                                            \
-        y_ = GRN_UINT8_VALUE(y);                                               \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, unsigned_integer_operation(x_, y_));                     \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT16:                                                         \
-      {                                                                        \
-        int16_t y_;                                                            \
-        y_ = GRN_INT16_VALUE(y);                                               \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, signed_integer_operation(x_, y_));                       \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT16:                                                        \
-      {                                                                        \
-        uint16_t y_;                                                           \
-        y_ = GRN_UINT16_VALUE(y);                                              \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, unsigned_integer_operation(x_, y_));                     \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT32:                                                         \
-      {                                                                        \
-        int32_t y_;                                                            \
-        y_ = GRN_INT32_VALUE(y);                                               \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, signed_integer_operation(x_, y_));                       \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT32:                                                        \
-      {                                                                        \
-        uint32_t y_;                                                           \
-        y_ = GRN_UINT32_VALUE(y);                                              \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, unsigned_integer_operation(x_, y_));                     \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_TIME:                                                          \
-      {                                                                        \
-        int64_t y_;                                                            \
-        y_ = GRN_TIME_VALUE(y);                                                \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, signed_integer_operation(x_, y_));                       \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT64:                                                         \
-      {                                                                        \
-        int64_t y_;                                                            \
-        y_ = GRN_INT64_VALUE(y);                                               \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, signed_integer_operation(x_, y_));                       \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT64:                                                        \
-      {                                                                        \
-        uint64_t y_;                                                           \
-        y_ = GRN_UINT64_VALUE(y);                                              \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        set(ctx, res, unsigned_integer_operation(x_, y_));                     \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT32:                                                       \
-      {                                                                        \
-        float y_;                                                              \
-        y_ = GRN_FLOAT32_VALUE(y);                                             \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        res->header.domain = GRN_DB_FLOAT32;                                   \
-        GRN_FLOAT32_SET(ctx, res, float_operation(x_, y_));                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT:                                                         \
-      {                                                                        \
-        double y_;                                                             \
-        y_ = GRN_FLOAT_VALUE(y);                                               \
-        ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                          \
-        res->header.domain = GRN_DB_FLOAT;                                     \
-        GRN_FLOAT_SET(ctx, res, float_operation(x_, y_));                      \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_SHORT_TEXT:                                                    \
-    case GRN_DB_TEXT:                                                          \
-    case GRN_DB_LONG_TEXT:                                                     \
-      set(ctx, res, 0);                                                        \
-      if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {                              \
-        ERR(GRN_INVALID_ARGUMENT,                                              \
-            "not a numerical format: <%.*s>",                                  \
-            (int)GRN_TEXT_LEN(y),                                              \
-            GRN_TEXT_VALUE(y));                                                \
-        return false;                                                          \
-      }                                                                        \
-      /* The following "+ 0" is needed to suppress warnings that say */        \
-      /* comparison is always false due to limited range of data type */       \
-      set(ctx, res, signed_integer_operation(x_, (get(res) + 0)));             \
-      break;                                                                   \
-    default:                                                                   \
-      break;                                                                   \
-    }                                                                          \
-  } while (0)
-
-#define DIVISION_OPERATION_DISPATCH_LEFT(x,                                    \
-                                         y,                                    \
-                                         res,                                  \
-                                         signed_integer_operation,             \
-                                         unsigned_integer_operation,           \
-                                         float_operation,                      \
-                                         invalid_type_error)                   \
-  do {                                                                         \
-    switch (x->header.domain) {                                                \
-    case GRN_DB_INT8:                                                          \
-      {                                                                        \
-        int8_t x_;                                                             \
-        x_ = GRN_INT8_VALUE(x);                                                \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT8_SET,                        \
-                                          GRN_INT8_VALUE,                      \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT8:                                                         \
-      {                                                                        \
-        uint8_t x_;                                                            \
-        x_ = GRN_UINT8_VALUE(x);                                               \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT8_SET,                       \
-                                          (int)GRN_UINT8_VALUE,                \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT16:                                                         \
-      {                                                                        \
-        int16_t x_;                                                            \
-        x_ = GRN_INT16_VALUE(x);                                               \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT16_SET,                       \
-                                          GRN_INT16_VALUE,                     \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT16:                                                        \
-      {                                                                        \
-        uint16_t x_;                                                           \
-        x_ = GRN_UINT16_VALUE(x);                                              \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT16_SET,                      \
-                                          (int)GRN_UINT16_VALUE,               \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT32:                                                         \
-      {                                                                        \
-        int32_t x_;                                                            \
-        x_ = GRN_INT32_VALUE(x);                                               \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT32_SET,                       \
-                                          GRN_INT32_VALUE,                     \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT32:                                                        \
-      {                                                                        \
-        uint32_t x_;                                                           \
-        x_ = GRN_UINT32_VALUE(x);                                              \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT32_SET,                      \
-                                          GRN_UINT32_VALUE,                    \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          unsigned_integer_operation,          \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT64:                                                         \
-      {                                                                        \
-        int64_t x_;                                                            \
-        x_ = GRN_INT64_VALUE(x);                                               \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT64_SET,                       \
-                                          GRN_INT64_VALUE,                     \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_TIME:                                                          \
-      {                                                                        \
-        int64_t x_;                                                            \
-        x_ = GRN_TIME_VALUE(x);                                                \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_TIME_SET,                        \
-                                          GRN_TIME_VALUE,                      \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          signed_integer_operation,            \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT64:                                                        \
-      {                                                                        \
-        uint64_t x_;                                                           \
-        x_ = GRN_UINT64_VALUE(x);                                              \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT64_SET,                      \
-                                          GRN_UINT64_VALUE,                    \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          unsigned_integer_operation,          \
-                                          unsigned_integer_operation,          \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT32:                                                       \
-      {                                                                        \
-        float x_;                                                              \
-        x_ = GRN_FLOAT32_VALUE(x);                                             \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_FLOAT32_SET,                     \
-                                          GRN_FLOAT32_VALUE,                   \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          float_operation,                     \
-                                          float_operation,                     \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT:                                                         \
-      {                                                                        \
-        double x_;                                                             \
-        x_ = GRN_FLOAT_VALUE(x);                                               \
-        DIVISION_OPERATION_DISPATCH_RIGHT(GRN_FLOAT_SET,                       \
-                                          GRN_FLOAT_VALUE,                     \
-                                          x_,                                  \
-                                          y,                                   \
-                                          res,                                 \
-                                          float_operation,                     \
-                                          float_operation,                     \
-                                          float_operation);                    \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_SHORT_TEXT:                                                    \
-    case GRN_DB_TEXT:                                                          \
-    case GRN_DB_LONG_TEXT:                                                     \
-      invalid_type_error;                                                      \
-      break;                                                                   \
-    default:                                                                   \
-      break;                                                                   \
-    }                                                                          \
-    data.code++;                                                               \
-  } while (0)
-
-#define DIVISION_OPERATION_DISPATCH(signed_integer_operation,                  \
-                                    unsigned_integer_operation,                \
-                                    float_operation,                           \
-                                    invalid_type_error)                        \
-  do {                                                                         \
-    grn_obj *x = NULL;                                                         \
-    grn_obj *y = NULL;                                                         \
-                                                                               \
-    CHECK(pop2alloc1(ctx, data, x, y, data.res));                              \
-    if (y != data.res) {                                                       \
-      data.res->header.domain = x->header.domain;                              \
-    }                                                                          \
-    DIVISION_OPERATION_DISPATCH_LEFT(x,                                        \
-                                     y,                                        \
-                                     data.res,                                 \
-                                     signed_integer_operation,                 \
-                                     unsigned_integer_operation,               \
-                                     float_operation,                          \
-                                     invalid_type_error);                      \
-    if (y == data.res) {                                                       \
-      data.res->header.domain = x->header.domain;                              \
-    }                                                                          \
-  } while (0)
 
 #define ARITHMETIC_UNARY_OPERATION_DISPATCH(integer_operation,                 \
                                             float_operation,                   \
@@ -2740,33 +2443,18 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           ARITHMETIC_OPERATION_NO_CHECK,
           TEXT_UNARY_ARITHMETIC_OPERATION(-), );
       } else {
-        ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_MINUS, "-");
+        CHECK(
+          arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MINUS, "-"));
       }
       break;
     case GRN_OP_STAR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_STAR, "*");
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_STAR, "*"));
       break;
     case GRN_OP_SLASH:
-      DIVISION_OPERATION_DISPATCH(SIGNED_INTEGER_DIVISION_OPERATION_SLASH,
-                                  UNSIGNED_INTEGER_DIVISION_OPERATION_SLASH,
-                                  FLOAT_DIVISION_OPERATION_SLASH,
-                                  {
-                                    ERR(GRN_INVALID_ARGUMENT,
-                                        "\"string\" / \"string\" "
-                                        "isn't supported");
-                                    return false;
-                                  });
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SLASH, "/"));
       break;
     case GRN_OP_MOD:
-      DIVISION_OPERATION_DISPATCH(SIGNED_INTEGER_DIVISION_OPERATION_MOD,
-                                  UNSIGNED_INTEGER_DIVISION_OPERATION_MOD,
-                                  FLOAT_DIVISION_OPERATION_MOD,
-                                  {
-                                    ERR(GRN_INVALID_ARGUMENT,
-                                        "\"string\" %% \"string\" "
-                                        "isn't supported");
-                                    return false;
-                                  });
+      CHECK(arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_MOD, "%"));
       break;
     case GRN_OP_BITWISE_NOT:
       ARITHMETIC_UNARY_OPERATION_DISPATCH(
@@ -2777,22 +2465,34 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         TEXT_UNARY_ARITHMETIC_OPERATION(~), );
       break;
     case GRN_OP_BITWISE_OR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_OR, "|");
+      CHECK(arithmetic_binary_operation_dispatch(ctx,
+                                                 data,
+                                                 GRN_OP_BITWISE_OR,
+                                                 "|"));
       break;
     case GRN_OP_BITWISE_XOR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_XOR, "^");
+      CHECK(arithmetic_binary_operation_dispatch(ctx,
+                                                 data,
+                                                 GRN_OP_BITWISE_XOR,
+                                                 "^"));
       break;
     case GRN_OP_BITWISE_AND:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_BITWISE_AND, "&");
+      CHECK(arithmetic_binary_operation_dispatch(ctx,
+                                                 data,
+                                                 GRN_OP_BITWISE_AND,
+                                                 "&"));
       break;
     case GRN_OP_SHIFTL:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTL, "<<");
+      CHECK(
+        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTL, "<<"));
       break;
     case GRN_OP_SHIFTR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTR, ">>");
+      CHECK(
+        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTR, ">>"));
       break;
     case GRN_OP_SHIFTRR:
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(GRN_OP_SHIFTRR, ">>>");
+      CHECK(
+        arithmetic_binary_operation_dispatch(ctx, data, GRN_OP_SHIFTRR, ">>>"));
       break;
     case GRN_OP_INCR:
       UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_INCR);
