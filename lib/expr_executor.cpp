@@ -76,39 +76,50 @@ with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
 #define GEO_GRS_C2     6378137
 #define GEO_GRS_C3     0.006694
 
-static inline void
-var_set_value(grn_ctx *ctx, grn_obj *var, grn_obj *value)
-{
-  if (GRN_DB_OBJP(value)) {
-    var->header.type = GRN_PTR;
-    var->header.domain = DB_OBJ(value)->id;
-    GRN_PTR_SET(ctx, var, value);
-  } else {
-    var->header.type = value->header.type;
-    var->header.domain = value->header.domain;
-    GRN_TEXT_SET(ctx, var, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-  }
-}
-
-#define PUSH1(v)                                                               \
+#define CHECK(expression)                                                      \
   do {                                                                         \
-    if (EXPRVP(v)) {                                                           \
-      data.vp++;                                                               \
-      if (data.vp - data.e->values > data.e->values_tail) {                    \
-        data.e->values_tail = data.vp - data.e->values;                        \
-      }                                                                        \
+    if (!(expression)) {                                                       \
+      return false;                                                            \
     }                                                                          \
-    data.s1 = data.s0;                                                         \
-    if (data.sp >= data.s_ + ctx->impl->stack_size) {                          \
-      if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {                          \
-        return false;                                                          \
-      }                                                                        \
-      data.sp += (ctx->impl->stack - data.s_);                                 \
-      data.s_ = ctx->impl->stack;                                              \
-    }                                                                          \
-    *data.sp = data.s0 = v;                                                    \
-    data.sp++;                                                                 \
-  } while (0)
+  } while (false)
+
+namespace {
+  inline void
+  var_set_value(grn_ctx *ctx, grn_obj *var, grn_obj *value)
+  {
+    if (GRN_DB_OBJP(value)) {
+      var->header.type = GRN_PTR;
+      var->header.domain = DB_OBJ(value)->id;
+      GRN_PTR_SET(ctx, var, value);
+    } else {
+      var->header.type = value->header.type;
+      var->header.domain = value->header.domain;
+      GRN_TEXT_SET(ctx, var, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+    }
+  }
+
+  inline bool
+  push1(grn_ctx *ctx, ExecuteData &data, grn_obj *v)
+  {
+    if (EXPRVP(v)) {
+      data.vp++;
+      if (data.vp - data.e->values > data.e->values_tail) {
+        data.e->values_tail = data.vp - data.e->values;
+      }
+    }
+    data.s1 = data.s0;
+    if (data.sp >= data.s_ + ctx->impl->stack_size) {
+      if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {
+        return false;
+      }
+      data.sp += (ctx->impl->stack - data.s_);
+      data.s_ = ctx->impl->stack;
+    }
+    *data.sp = data.s0 = v;
+    data.sp++;
+    return true;
+  }
+}; // namespace
 
 #define POP1(v)                                                                \
   do {                                                                         \
@@ -1794,7 +1805,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       data.code++;
       break;
     case GRN_OP_PUSH:
-      PUSH1(data.code->value);
+      CHECK(push1(ctx, data, data.code->value));
       data.code++;
       break;
     case GRN_OP_POP:
@@ -1889,7 +1900,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
               GRN_LOG(ctx, GRN_LOG_WARNING, "stack may be corrupt");
             }
           }
-          PUSH1(data.res);
+          CHECK(push1(ctx, data, data.res));
         }
       }
       data.code++;
@@ -1908,7 +1919,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           ERR(GRN_INVALID_ARGUMENT, "intern failed");
           return false;
         }
-        PUSH1(data.res);
+        CHECK(push1(ctx, data, data.res));
       }
       data.code++;
       break;
@@ -1930,7 +1941,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
                                     GRN_UINT32_VALUE(flags),
                                     key_type,
                                     value_type);
-        PUSH1(data.res);
+        CHECK(push1(ctx, data, data.res));
       }
       data.code++;
       break;
@@ -1979,7 +1990,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           ERR(GRN_INVALID_ARGUMENT, "invalid type");
           return false;
         }
-        PUSH1(data.res);
+        CHECK(push1(ctx, data, data.res));
       }
       data.code++;
       break;
@@ -2003,7 +2014,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
         } else {
           var_set_value(ctx, var, value);
         }
-        PUSH1(value);
+        CHECK(push1(ctx, data, value));
       }
       data.code++;
       break;
@@ -2138,7 +2149,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
                            res,
                            static_cast<grn_operator>(GRN_UINT32_VALUE(op)));
         });
-        PUSH1(res);
+        CHECK(push1(ctx, data, res));
       }
       data.code++;
       break;
