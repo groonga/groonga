@@ -76,18 +76,19 @@ with_spsave(grn_ctx *ctx, ExecuteData &data, BLOCK block)
 #define GEO_GRS_C2     6378137
 #define GEO_GRS_C3     0.006694
 
-#define VAR_SET_VALUE(ctx, var, value)                                         \
-  do {                                                                         \
-    if (GRN_DB_OBJP(value)) {                                                  \
-      (var)->header.type = GRN_PTR;                                            \
-      (var)->header.domain = DB_OBJ(value)->id;                                \
-      GRN_PTR_SET(ctx, (var), (value));                                        \
-    } else {                                                                   \
-      (var)->header.type = (value)->header.type;                               \
-      (var)->header.domain = (value)->header.domain;                           \
-      GRN_TEXT_SET(ctx, (var), GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));    \
-    }                                                                          \
-  } while (0)
+static inline void
+var_set_value(grn_ctx *ctx, grn_obj *var, grn_obj *value)
+{
+  if (GRN_DB_OBJP(value)) {
+    var->header.type = GRN_PTR;
+    var->header.domain = DB_OBJ(value)->id;
+    GRN_PTR_SET(ctx, var, value);
+  } else {
+    var->header.type = value->header.type;
+    var->header.domain = value->header.domain;
+    GRN_TEXT_SET(ctx, var, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+  }
+}
 
 #define PUSH1(v)                                                               \
   do {                                                                         \
@@ -2000,7 +2001,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           grn_id rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));
           grn_obj_set_value(ctx, col, rid, value, GRN_OBJ_SET);
         } else {
-          VAR_SET_VALUE(ctx, var, value);
+          var_set_value(ctx, var, value);
         }
         PUSH1(value);
       }
