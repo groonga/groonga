@@ -1360,54 +1360,61 @@ namespace {
     data.code++;
     return true;
   }
-}; // namespace
 
-#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(op)                           \
-  do {                                                                         \
-    grn_obj *value = NULL;                                                     \
-    grn_obj *var = NULL;                                                       \
-    grn_obj *res = NULL;                                                       \
-    if (data.code->value) {                                                    \
-      value = data.code->value;                                                \
-      CHECK(pop1alloc1(ctx, data, var, res));                                  \
-    } else {                                                                   \
-      CHECK(pop2alloc1(ctx, data, var, value, res));                           \
-    }                                                                          \
-    if (var->header.type == GRN_PTR &&                                         \
-        GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {         \
-      grn_obj *col = GRN_PTR_VALUE(var);                                       \
-      grn_id rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));        \
-      grn_obj variable_value, casted_value;                                    \
-      grn_id domain;                                                           \
-                                                                               \
-      value = GRN_OBJ_RESOLVE(ctx, value);                                     \
-                                                                               \
-      domain = grn_obj_get_range(ctx, col);                                    \
-      GRN_OBJ_INIT(&variable_value, GRN_BULK, 0, domain);                      \
-      grn_obj_get_value(ctx, col, rid, &variable_value);                       \
-                                                                               \
-      GRN_OBJ_INIT(&casted_value, GRN_BULK, 0, domain);                        \
-      if (grn_obj_cast(ctx, value, &casted_value, GRN_FALSE)) {                \
-        ERR(GRN_INVALID_ARGUMENT, "invalid value: string");                    \
-        GRN_OBJ_FIN(ctx, &variable_value);                                     \
-        GRN_OBJ_FIN(ctx, &casted_value);                                       \
-        CHECK(pop1(ctx, data, res));                                           \
-        return false;                                                          \
-      }                                                                        \
-      CHECK(arithmetic_operation_dispatch(ctx,                                 \
-                                          data,                                \
-                                          op,                                  \
-                                          (&variable_value),                   \
-                                          (&casted_value),                     \
-                                          res));                               \
-      grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                      \
-      GRN_OBJ_FIN(ctx, (&variable_value));                                     \
-      GRN_OBJ_FIN(ctx, (&casted_value));                                       \
-    } else {                                                                   \
-      ERR(GRN_INVALID_ARGUMENT, "left hand expression isn't column.");         \
-      CHECK(pop1(ctx, data, res));                                             \
-    }                                                                          \
-  } while (0)
+  inline bool
+  operation_and_assign_dispatch(grn_ctx *ctx,
+                                ExecuteData &data,
+                                grn_operator op)
+  {
+    grn_obj *value = nullptr;
+    grn_obj *variable = nullptr;
+    grn_obj *result = nullptr;
+    if (data.code->value) {
+      value = data.code->value;
+      CHECK(pop1alloc1(ctx, data, variable, result));
+    } else {
+      CHECK(pop2alloc1(ctx, data, variable, value, result));
+    }
+    if (!(variable->header.type == GRN_PTR &&
+          GRN_BULK_VSIZE(variable) == (sizeof(grn_obj *) + sizeof(grn_id)))) {
+      ERR(GRN_INVALID_ARGUMENT, "left hand expression isn't column.");
+      CHECK(pop1(ctx, data, result));
+    }
+
+    auto column = GRN_PTR_VALUE(variable);
+    auto rid =
+      *reinterpret_cast<grn_id *>(GRN_BULK_HEAD(variable) + sizeof(grn_obj *));
+    value = GRN_OBJ_RESOLVE(ctx, value);
+    auto domain = grn_obj_get_range(ctx, column);
+
+    grn_obj variable_value;
+    GRN_OBJ_INIT(&variable_value, GRN_BULK, 0, domain);
+    grn_obj_get_value(ctx, column, rid, &variable_value);
+
+    grn_obj casted_value;
+    GRN_OBJ_INIT(&casted_value, GRN_BULK, 0, domain);
+    if (grn_obj_cast(ctx, value, &casted_value, false) != GRN_SUCCESS) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid value: string");
+      GRN_OBJ_FIN(ctx, &variable_value);
+      GRN_OBJ_FIN(ctx, &casted_value);
+      CHECK(pop1(ctx, data, result));
+      return false;
+    }
+    auto success = arithmetic_operation_dispatch(ctx,
+                                                 data,
+                                                 op,
+                                                 &variable_value,
+                                                 &casted_value,
+                                                 result);
+    GRN_OBJ_FIN(ctx, &variable_value);
+    GRN_OBJ_FIN(ctx, &casted_value);
+    if (!success) {
+      return false;
+    }
+    grn_obj_set_value(ctx, column, rid, result, GRN_OBJ_SET);
+    return true;
+  }
+}; // namespace
 
 grn_inline static void
 grn_expr_exec_get_member_vector(grn_ctx *ctx,
@@ -1773,37 +1780,37 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       data.code++;
       break;
     case GRN_OP_STAR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_STAR_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_STAR_ASSIGN));
       break;
     case GRN_OP_SLASH_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SLASH_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_SLASH_ASSIGN));
       break;
     case GRN_OP_MOD_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MOD_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_MOD_ASSIGN));
       break;
     case GRN_OP_PLUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_PLUS_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_PLUS_ASSIGN));
       break;
     case GRN_OP_MINUS_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_MINUS_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_MINUS_ASSIGN));
       break;
     case GRN_OP_SHIFTL_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTL_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_SHIFTL_ASSIGN));
       break;
     case GRN_OP_SHIFTR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTR);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_SHIFTR));
       break;
     case GRN_OP_SHIFTRR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_SHIFTRR);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_SHIFTRR));
       break;
     case GRN_OP_AND_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_AND_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_AND_ASSIGN));
       break;
     case GRN_OP_OR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_OR_ASSIGN);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_OR_ASSIGN));
       break;
     case GRN_OP_XOR_ASSIGN:
-      ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(GRN_OP_BITWISE_XOR);
+      CHECK(operation_and_assign_dispatch(ctx, data, GRN_OP_BITWISE_XOR));
       break;
     case GRN_OP_JUMP:
       data.code += data.code->nargs + 1;
