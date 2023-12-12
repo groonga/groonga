@@ -767,7 +767,7 @@ numeric_arithmetic_operation_dispatch(grn_ctx *ctx,
 }
 
 namespace {
-  bool
+  inline bool
   text_operation(
     grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
   {
@@ -865,153 +865,160 @@ namespace {
       }
     }
   }
-}; // namespace
 
-#define ARITHMETIC_OPERATION_DISPATCH(op, x, y, res)                           \
-  do {                                                                         \
-    switch (x->header.domain) {                                                \
-    case GRN_DB_BOOL:                                                          \
-      {                                                                        \
-        uint8_t x_ = GRN_BOOL_VALUE(x) ? 1 : 0;                                \
-        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_UINT8,     \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT8:                                                          \
-      {                                                                        \
-        auto x_ = GRN_INT8_VALUE(x);                                           \
-        CHECK(numeric_arithmetic_operation_dispatch<int8_t>(ctx,               \
-                                                            x_,                \
-                                                            y,                 \
-                                                            res,               \
-                                                            GRN_DB_INT8,       \
-                                                            op));              \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT8:                                                         \
-      {                                                                        \
-        auto x_ = GRN_UINT8_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_UINT8,     \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT16:                                                         \
-      {                                                                        \
-        auto x_ = GRN_INT16_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int16_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_INT16,     \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT16:                                                        \
-      {                                                                        \
-        auto x_ = GRN_UINT16_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint16_t>(ctx,             \
-                                                              x_,              \
-                                                              y,               \
-                                                              res,             \
-                                                              GRN_DB_UINT16,   \
-                                                              op));            \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT32:                                                         \
-      {                                                                        \
-        auto x_ = GRN_INT32_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int32_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_INT32,     \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT32:                                                        \
-      {                                                                        \
-        auto x_ = GRN_UINT32_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint32_t>(ctx,             \
-                                                              x_,              \
-                                                              y,               \
-                                                              res,             \
-                                                              GRN_DB_UINT32,   \
-                                                              op));            \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_INT64:                                                         \
-      {                                                                        \
-        auto x_ = GRN_INT64_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_INT64,     \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_TIME:                                                          \
-      {                                                                        \
-        auto x_ = GRN_TIME_VALUE(x);                                           \
-        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,              \
-                                                             x_,               \
-                                                             y,                \
-                                                             res,              \
-                                                             GRN_DB_TIME,      \
-                                                             op));             \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_UINT64:                                                        \
-      {                                                                        \
-        auto x_ = GRN_UINT64_VALUE(x);                                         \
-        CHECK(numeric_arithmetic_operation_dispatch<uint64_t>(ctx,             \
-                                                              x_,              \
-                                                              y,               \
-                                                              res,             \
-                                                              GRN_DB_UINT64,   \
-                                                              op));            \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT32:                                                       \
-      {                                                                        \
-        auto x_ = GRN_FLOAT32_VALUE(x);                                        \
-        CHECK(numeric_arithmetic_operation_dispatch<float>(ctx,                \
-                                                           x_,                 \
-                                                           y,                  \
-                                                           res,                \
-                                                           GRN_DB_FLOAT32,     \
-                                                           op));               \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_FLOAT:                                                         \
-      {                                                                        \
-        auto x_ = GRN_FLOAT_VALUE(x);                                          \
-        CHECK(numeric_arithmetic_operation_dispatch<double>(ctx,               \
-                                                            x_,                \
-                                                            y,                 \
-                                                            res,               \
-                                                            GRN_DB_FLOAT,      \
-                                                            op));              \
-      }                                                                        \
-      break;                                                                   \
-    case GRN_DB_SHORT_TEXT:                                                    \
-    case GRN_DB_TEXT:                                                          \
-    case GRN_DB_LONG_TEXT:                                                     \
-      CHECK(text_operation(ctx, op, x, y, res));                               \
-      break;                                                                   \
-    default:                                                                   \
-      break;                                                                   \
-    }                                                                          \
-    data.code++;                                                               \
-  } while (0)
+  inline bool
+  arithmetic_operation_dispatch(grn_ctx *ctx,
+                                ExecuteData &data,
+                                grn_operator op,
+                                grn_obj *x,
+                                grn_obj *y,
+                                grn_obj *res)
+  {
+    switch (x->header.domain) {
+    case GRN_DB_BOOL:
+      {
+        uint8_t x_ = GRN_BOOL_VALUE(x) ? 1 : 0;
+        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_UINT8,
+                                                             op));
+      }
+      break;
+    case GRN_DB_INT8:
+      {
+        auto x_ = GRN_INT8_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<int8_t>(ctx,
+                                                            x_,
+                                                            y,
+                                                            res,
+                                                            GRN_DB_INT8,
+                                                            op));
+      }
+      break;
+    case GRN_DB_UINT8:
+      {
+        auto x_ = GRN_UINT8_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<uint8_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_UINT8,
+                                                             op));
+      }
+      break;
+    case GRN_DB_INT16:
+      {
+        auto x_ = GRN_INT16_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<int16_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_INT16,
+                                                             op));
+      }
+      break;
+    case GRN_DB_UINT16:
+      {
+        auto x_ = GRN_UINT16_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<uint16_t>(ctx,
+                                                              x_,
+                                                              y,
+                                                              res,
+                                                              GRN_DB_UINT16,
+                                                              op));
+      }
+      break;
+    case GRN_DB_INT32:
+      {
+        auto x_ = GRN_INT32_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<int32_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_INT32,
+                                                             op));
+      }
+      break;
+    case GRN_DB_UINT32:
+      {
+        auto x_ = GRN_UINT32_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<uint32_t>(ctx,
+                                                              x_,
+                                                              y,
+                                                              res,
+                                                              GRN_DB_UINT32,
+                                                              op));
+      }
+      break;
+    case GRN_DB_INT64:
+      {
+        auto x_ = GRN_INT64_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_INT64,
+                                                             op));
+      }
+      break;
+    case GRN_DB_TIME:
+      {
+        auto x_ = GRN_TIME_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<int64_t>(ctx,
+                                                             x_,
+                                                             y,
+                                                             res,
+                                                             GRN_DB_TIME,
+                                                             op));
+      }
+      break;
+    case GRN_DB_UINT64:
+      {
+        auto x_ = GRN_UINT64_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<uint64_t>(ctx,
+                                                              x_,
+                                                              y,
+                                                              res,
+                                                              GRN_DB_UINT64,
+                                                              op));
+      }
+      break;
+    case GRN_DB_FLOAT32:
+      {
+        auto x_ = GRN_FLOAT32_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<float>(ctx,
+                                                           x_,
+                                                           y,
+                                                           res,
+                                                           GRN_DB_FLOAT32,
+                                                           op));
+      }
+      break;
+    case GRN_DB_FLOAT:
+      {
+        auto x_ = GRN_FLOAT_VALUE(x);
+        CHECK(numeric_arithmetic_operation_dispatch<double>(ctx,
+                                                            x_,
+                                                            y,
+                                                            res,
+                                                            GRN_DB_FLOAT,
+                                                            op));
+      }
+      break;
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
+      CHECK(text_operation(ctx, op, x, y, res));
+      break;
+    default:
+      break;
+    }
+    data.code++;
+    return true;
+  }
+}; // namespace
 
 #define ARITHMETIC_BINARY_OPERATION_DISPATCH(op, op_name)                      \
   do {                                                                         \
@@ -1038,7 +1045,7 @@ namespace {
       GRN_OBJ_FIN(ctx, &inspected_y);                                          \
       return false;                                                            \
     }                                                                          \
-    ARITHMETIC_OPERATION_DISPATCH(op, x, y, data.res);                         \
+    CHECK(arithmetic_operation_dispatch(ctx, data, op, x, y, data.res));       \
   } while (0)
 
 #define SIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y)                          \
@@ -1625,10 +1632,12 @@ namespace {
         POP1(res);                                                             \
         return false;                                                          \
       }                                                                        \
-      ARITHMETIC_OPERATION_DISPATCH(op,                                        \
-                                    (&variable_value),                         \
-                                    (&casted_value),                           \
-                                    res);                                      \
+      CHECK(arithmetic_operation_dispatch(ctx,                                 \
+                                          data,                                \
+                                          op,                                  \
+                                          (&variable_value),                   \
+                                          (&casted_value),                     \
+                                          res));                               \
       grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                      \
       GRN_OBJ_FIN(ctx, (&variable_value));                                     \
       GRN_OBJ_FIN(ctx, (&casted_value));                                       \
@@ -2700,7 +2709,12 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           GRN_OBJ_FIN(ctx, &inspected_y);
           return false;
         } else {
-          ARITHMETIC_OPERATION_DISPATCH(GRN_OP_PLUS, x, y, data.res);
+          CHECK(arithmetic_operation_dispatch(ctx,
+                                              data,
+                                              GRN_OP_PLUS,
+                                              x,
+                                              y,
+                                              data.res));
         }
       }
       break;
