@@ -32,11 +32,11 @@ docker \
   --volume "${GROONGA_REPOSITORY}:/groonga" \
   --volume "$(dirname ${LOG}):/log" \
   ${DOCKER_TAG} \
-  # bash -c " \
-  #   ${INSTALL_RUBY} && \
-  #   /groonga/tools/parse-backtrace.rb \
-  #     --version ${GROONGA_VERSION} \
-  #     --pgroonga-version ${PGROONGA_VERSION} \
-  #     --postgresql-version ${POSTGRESQL_VERSION} \
-  #     /log/$(basename ${LOG}) \
-  # "
+  bash -c " \
+    ${INSTALL_RUBY} && \
+    /groonga/tools/parse-backtrace.rb \
+      --version ${GROONGA_VERSION} \
+      --pgroonga-version ${PGROONGA_VERSION} \
+      --postgresql-version ${POSTGRESQL_VERSION} \
+      /log/$(basename ${LOG}) \
+  "
