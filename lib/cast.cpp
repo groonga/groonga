@@ -20,6 +20,8 @@
 #include "grn_pat.h"
 #include "grn_str.h"
 
+#include <groonga/bulk.hpp>
+
 #ifdef GRN_WITH_RAPIDJSON
 #  include "grn_db.h"
 #  include <groonga/smart_obj.hpp>
@@ -1556,57 +1558,144 @@ grn_caster_cast_bool(grn_ctx *ctx, grn_caster *caster)
   return rc;
 }
 
-#define NUM2DEST(getvalue, totext, tobool, totime, tofloat32, tofloat)         \
-  switch (caster->dest->header.domain) {                                       \
-  case GRN_DB_BOOL:                                                            \
-    tobool(ctx, caster->dest, getvalue(caster->src));                          \
-    break;                                                                     \
-  case GRN_DB_INT8:                                                            \
-    GRN_INT8_SET(ctx, caster->dest, getvalue(caster->src));                    \
-    break;                                                                     \
-  case GRN_DB_UINT8:                                                           \
-    GRN_UINT8_SET(ctx, caster->dest, getvalue(caster->src));                   \
-    break;                                                                     \
-  case GRN_DB_INT16:                                                           \
-    GRN_INT16_SET(ctx, caster->dest, getvalue(caster->src));                   \
-    break;                                                                     \
-  case GRN_DB_UINT16:                                                          \
-    GRN_UINT16_SET(ctx, caster->dest, getvalue(caster->src));                  \
-    break;                                                                     \
-  case GRN_DB_INT32:                                                           \
-    GRN_INT32_SET(ctx, caster->dest, getvalue(caster->src));                   \
-    break;                                                                     \
-  case GRN_DB_UINT32:                                                          \
-    GRN_UINT32_SET(ctx, caster->dest, getvalue(caster->src));                  \
-    break;                                                                     \
-  case GRN_DB_TIME:                                                            \
-    totime(ctx, caster->dest, getvalue(caster->src));                          \
-    break;                                                                     \
-  case GRN_DB_INT64:                                                           \
-    GRN_INT64_SET(ctx, caster->dest, getvalue(caster->src));                   \
-    break;                                                                     \
-  case GRN_DB_UINT64:                                                          \
-    GRN_UINT64_SET(ctx, caster->dest, getvalue(caster->src));                  \
-    break;                                                                     \
-  case GRN_DB_FLOAT32:                                                         \
-    tofloat32(ctx, caster->dest, getvalue(caster->src));                       \
-    break;                                                                     \
-  case GRN_DB_FLOAT:                                                           \
-    tofloat(ctx, caster->dest, getvalue(caster->src));                         \
-    break;                                                                     \
-  case GRN_DB_SHORT_TEXT:                                                      \
-  case GRN_DB_TEXT:                                                            \
-  case GRN_DB_LONG_TEXT:                                                       \
-    totext(ctx, caster->dest, getvalue(caster->src));                          \
-    break;                                                                     \
-  case GRN_DB_TOKYO_GEO_POINT:                                                 \
-  case GRN_DB_WGS84_GEO_POINT:                                                 \
-    rc = GRN_INVALID_ARGUMENT;                                                 \
-    break;                                                                     \
-  default:                                                                     \
-    rc = grn_caster_cast_to_record(ctx, caster);                               \
-    break;                                                                     \
+namespace {
+  template <typename NUMERIC>
+  grn_rc
+  num2bool(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn::bulk::set<bool>(ctx, caster->dest, value != 0);
   }
+
+  template <typename NUMERIC>
+  grn_rc
+  num2time(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    switch (caster->src->header.domain) {
+    case GRN_DB_TIME:
+    case GRN_DB_FLOAT32:
+    case GRN_DB_FLOAT:
+      return grn::bulk::set<NUMERIC>(ctx, caster->dest, value);
+    default:
+      return grn::bulk::set<NUMERIC>(ctx,
+                                     caster->dest,
+                                     static_cast<int64_t>(value) *
+                                       GRN_TIME_USEC_PER_SEC);
+    }
+  }
+
+  template <typename FLOATING_POINT, typename NUMERIC>
+  grn_rc
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::set<FLOATING_POINT>(ctx,
+                                            caster->dest,
+                                            static_cast<FLOATING_POINT>(value) /
+                                              GRN_TIME_USEC_PER_SEC);
+    } else {
+      return grn::bulk::set<FLOATING_POINT>(ctx, caster->dest, value);
+    }
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_integral_v<NUMERIC> && std::is_signed_v<NUMERIC>,
+                   grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_lltoa(ctx, caster->dest, value);
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_integral_v<NUMERIC> && !std::is_signed_v<NUMERIC>,
+                   grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_ulltoa(ctx, caster->dest, value);
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_same_v<NUMERIC, float>, grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_f32toa(ctx, caster->dest, value);
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_same_v<NUMERIC, double>, grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_ftoa(ctx, caster->dest, value);
+  }
+
+  template <typename SOURCE>
+  grn_rc
+  num2dest(grn_ctx *ctx, grn_caster *caster)
+  {
+    switch (caster->dest->header.domain) {
+    case GRN_DB_BOOL:
+      return num2bool(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT8:
+      return grn::bulk::set<int8_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT8:
+      return grn::bulk::set<uint8_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT16:
+      return grn::bulk::set<int16_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT16:
+      return grn::bulk::set<uint16_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT32:
+      return grn::bulk::set<int32_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT32:
+      return grn::bulk::set<uint32_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT64:
+      return grn::bulk::set<int64_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT64:
+      return grn::bulk::set<uint64_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_TIME:
+      return num2time(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_FLOAT32:
+      return num2float<float>(ctx,
+                              caster,
+                              grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_FLOAT:
+      return num2float<double>(ctx,
+                               caster,
+                               grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
+      return num2text(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_TOKYO_GEO_POINT:
+    case GRN_DB_WGS84_GEO_POINT:
+      return GRN_INVALID_ARGUMENT;
+    default:
+      return grn_caster_cast_to_record(ctx, caster);
+    }
+  }
+} // namespace
 
 #define TEXT2DEST(type, tonum, setvalue)                                       \
   do {                                                                         \
@@ -1638,44 +1727,6 @@ grn_caster_cast_bool(grn_ctx *ctx, grn_caster *caster)
       rc = GRN_INVALID_ARGUMENT;                                               \
     }                                                                          \
   } while (0)
-
-#define NUM2BOOL(ctx, dest, value) GRN_BOOL_SET(ctx, dest, value != 0)
-#define FLOAT322BOOL(ctx, dest, value)                                         \
-  do {                                                                         \
-    float value_ = value;                                                      \
-    GRN_BOOL_SET(ctx, dest, value_ < -FLT_EPSILON || FLT_EPSILON < value_);    \
-  } while (0)
-#define FLOAT2BOOL(ctx, dest, value)                                           \
-  do {                                                                         \
-    double value_ = value;                                                     \
-    GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);    \
-  } while (0)
-
-#define NUM2TIME(ctx, dest, value)                                             \
-  GRN_TIME_SET(ctx, dest, (long long int)(value)*GRN_TIME_USEC_PER_SEC);
-#define TIME2TIME(ctx, dest, value) GRN_TIME_SET(ctx, dest, value);
-#define FLOAT322TIME(ctx, dest, value)                                         \
-  do {                                                                         \
-    int64_t usec = llroundf(value * GRN_TIME_USEC_PER_SEC);                    \
-    GRN_TIME_SET(ctx, dest, usec);                                             \
-  } while (0)
-#define FLOAT2TIME(ctx, dest, value)                                           \
-  do {                                                                         \
-    int64_t usec = llround(value * GRN_TIME_USEC_PER_SEC);                     \
-    GRN_TIME_SET(ctx, dest, usec);                                             \
-  } while (0)
-
-#define NUM2FLOAT(ctx, dest, value) GRN_FLOAT_SET(ctx, dest, value);
-#define TIME2FLOAT(ctx, dest, value)                                           \
-  GRN_FLOAT_SET(ctx, dest, (double)(value) / GRN_TIME_USEC_PER_SEC);
-#define FLOAT322FLOAT(ctx, dest, value) GRN_FLOAT_SET(ctx, dest, value);
-#define FLOAT2FLOAT(ctx, dest, value)   GRN_FLOAT_SET(ctx, dest, value);
-
-#define NUM2FLOAT32(ctx, dest, value)   GRN_FLOAT32_SET(ctx, dest, value);
-#define TIME2FLOAT32(ctx, dest, value)                                         \
-  GRN_FLOAT32_SET(ctx, dest, (float)(value) / GRN_TIME_USEC_PER_SEC);
-#define FLOAT322FLOAT32(ctx, dest, value) GRN_FLOAT32_SET(ctx, dest, value);
-#define FLOAT2FLOAT32(ctx, dest, value)   GRN_FLOAT32_SET(ctx, dest, value);
 
 static grn_rc
 grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
@@ -2131,92 +2182,37 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
     rc = grn_caster_cast_bool(ctx, caster);
     break;
   case GRN_DB_INT8:
-    NUM2DEST(GRN_INT8_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<int8_t>(ctx, caster);
     break;
   case GRN_DB_UINT8:
-    NUM2DEST(GRN_UINT8_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<uint8_t>(ctx, caster);
     break;
   case GRN_DB_INT16:
-    NUM2DEST(GRN_INT16_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<int16_t>(ctx, caster);
     break;
   case GRN_DB_UINT16:
-    NUM2DEST(GRN_UINT16_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<uint16_t>(ctx, caster);
     break;
   case GRN_DB_INT32:
-    NUM2DEST(GRN_INT32_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<int32_t>(ctx, caster);
     break;
   case GRN_DB_UINT32:
-    NUM2DEST(GRN_UINT32_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<uint32_t>(ctx, caster);
     break;
   case GRN_DB_INT64:
-    NUM2DEST(GRN_INT64_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
-    break;
-  case GRN_DB_TIME:
-    NUM2DEST(GRN_TIME_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             TIME2TIME,
-             TIME2FLOAT32,
-             TIME2FLOAT);
+    rc = num2dest<int64_t>(ctx, caster);
     break;
   case GRN_DB_UINT64:
-    NUM2DEST(GRN_UINT64_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+    rc = num2dest<uint64_t>(ctx, caster);
     break;
   case GRN_DB_FLOAT32:
-    NUM2DEST(GRN_FLOAT32_VALUE,
-             grn_text_f32toa,
-             FLOAT322BOOL,
-             FLOAT322TIME,
-             FLOAT322FLOAT32,
-             FLOAT322FLOAT);
+    rc = num2dest<float>(ctx, caster);
     break;
   case GRN_DB_FLOAT:
-    NUM2DEST(GRN_FLOAT_VALUE,
-             grn_text_ftoa,
-             FLOAT2BOOL,
-             FLOAT2TIME,
-             FLOAT2FLOAT32,
-             FLOAT2FLOAT);
+    rc = num2dest<double>(ctx, caster);
+    break;
+  case GRN_DB_TIME:
+    rc = num2dest<int64_t>(ctx, caster);
     break;
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
