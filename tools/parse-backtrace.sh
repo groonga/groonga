@@ -20,7 +20,7 @@ case "${DOCKER_TAG}" in
   almalinux:*)
     INSTALL_RUBY="dnf install -y ruby"
     ;;
-  debian:*|ubuntu:*)
+  debian:*|ubuntu:*|arm64v8/debian:*|arm64v8/ubuntu:*)
     INSTALL_RUBY="apt update && apt install -y -V ruby"
     ;;
 esac
