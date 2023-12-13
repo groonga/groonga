@@ -2877,6 +2877,8 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
   const char *ex = sx + data->key_size;
   uint32_t cx, cy, x, y;
   const char *px, *py;
+  const char *px_previous;
+  const char *py_previous;
 
   /*
    * Continue from grn_pat_fuzzy_search().
@@ -2908,8 +2910,9 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
    * | ? | 6 | ? | ? | ? | ? |
    * | ? | 7 | ? | ? | ? | ? |
    */
-  for (py = sy, y = 1; py < ey && (cy = grn_charlen(ctx, py, ey));
-       py += cy, y++) {
+  for (py_previous = NULL, py = sy, y = 1;
+       py < ey && (cy = grn_charlen(ctx, py, ey));
+       py_previous = py, py += cy, y++) {
     if ((uint32_t)(py - sy) >= offset) {
       break;
     }
@@ -2963,7 +2966,8 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
    * | ? | 6 | ? | ? | ? | ? |
    * | ? | 7 | ? | ? | ? | ? |
    */
-  for (; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, y++) {
+  for (; py < ey && (cy = grn_charlen(ctx, py, ey));
+       py_previous = py, py += cy, y++) {
     /* children nodes will be no longer smaller than max distance
      * with only insertion costs.
      * This is end of row on allocated memory. */
@@ -2972,8 +2976,9 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
       return data->max_distance + 1;
     }
 
-    for (px = sx, x = 1; px < ex && (cx = grn_charlen(ctx, px, ex));
-         px += cx, x++) {
+    for (px_previous = NULL, px = sx, x = 1;
+         px < ex && (cx = grn_charlen(ctx, px, ex));
+         px_previous = px, px += cx, x++) {
       if (cx == cy && !memcmp(px, py, cx)) {
         /* Use the upper left cell value as-is when the target
          * characters equal. */
@@ -2985,9 +2990,21 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
         c = DIST(data, x - 1, y - 1) + 1;
         /* Use the minimum value in a, b and c. */
         DIST(data, x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-        if (data->flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION && x > 1 &&
-            y > 1 && cx == cy && memcmp(px, py - cy, cx) == 0 &&
-            memcmp(px - cx, py, cx) == 0) {
+        if (data->flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION &&
+            /* have the previous x character */
+            x > 1 &&
+            /* have the previous y character */
+            y > 1 &&
+            /* the current x character and the previous y character have the
+               same length */
+            cx == (py - py_previous) &&
+            /* the current x character and the previous y character are same. */
+            memcmp(px, py_previous, cx) == 0 &&
+            /* the previous x character and the current y character have the
+               same length */
+            (px - px_previous) == cy &&
+            /* the previous x character and the current y character are same. */
+            memcmp(px_previous, py, cy) == 0) {
           /* Use 1 distance for transposition. */
           uint32_t t = DIST(data, x - 2, y - 2) + 1;
           if (t < (DIST(data, x, y))) {
