@@ -150,6 +150,7 @@ def prepare_system_debian_11(options)
   run_command("apt", "install", "-y", "-V", "./#{groonga_apt_source_deb}")
   run_command("apt", "update")
   packages = []
+  packages << "binutils"
   if options.version
     groonga_package_version = "=#{options.version}-1"
   else
