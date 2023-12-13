@@ -709,21 +709,21 @@ namespace {
       {
         auto y_raw = GRN_FLOAT32_VALUE(y);
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);
-        return numeric_arithmetic_binary_operation_execute<RESULT_TYPE>(ctx,
-                                                                        op,
-                                                                        x_raw,
-                                                                        y_raw,
-                                                                        res);
+        return numeric_arithmetic_binary_operation_execute<float>(ctx,
+                                                                  op,
+                                                                  x_raw,
+                                                                  y_raw,
+                                                                  res);
       }
     case GRN_DB_FLOAT:
       {
         auto y_raw = GRN_FLOAT_VALUE(y);
         grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
-        return numeric_arithmetic_binary_operation_execute<RESULT_TYPE>(ctx,
-                                                                        op,
-                                                                        x_raw,
-                                                                        y_raw,
-                                                                        res);
+        return numeric_arithmetic_binary_operation_execute<double>(ctx,
+                                                                   op,
+                                                                   x_raw,
+                                                                   y_raw,
+                                                                   res);
       }
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
