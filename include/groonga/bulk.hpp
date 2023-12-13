@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <string>
 
 namespace grn {
@@ -89,7 +90,7 @@ namespace grn {
         break;
       case GRN_DB_TIME:
         if constexpr (std::is_floating_point_v<NUMERIC>) {
-          GRN_TIME_SET(ctx, bulk, value * GRN_TIME_USEC_PER_SEC);
+          GRN_TIME_SET(ctx, bulk, std::llround(value * GRN_TIME_USEC_PER_SEC));
         } else {
           GRN_TIME_SET(ctx, bulk, value);
         }
