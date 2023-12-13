@@ -21,11 +21,13 @@
 
 namespace grn {
   namespace bulk {
-    template <typename NUMERIC>
-    NUMERIC
-    get(grn_ctx *ctx, grn_obj *bulk, NUMERIC default_value)
+    template <typename TYPE>
+    TYPE
+    get(grn_ctx *ctx, grn_obj *bulk, TYPE default_value)
     {
       switch (bulk->header.domain) {
+      case GRN_DB_BOOL:
+        return GRN_BOOL_VALUE(bulk);
       case GRN_DB_INT8:
         return GRN_INT8_VALUE(bulk);
       case GRN_DB_UINT8:
@@ -39,15 +41,15 @@ namespace grn {
       case GRN_DB_UINT32:
         return GRN_UINT32_VALUE(bulk);
       case GRN_DB_INT64:
-        return static_cast<NUMERIC>(GRN_INT64_VALUE(bulk));
+        return static_cast<TYPE>(GRN_INT64_VALUE(bulk));
       case GRN_DB_UINT64:
-        return static_cast<NUMERIC>(GRN_UINT64_VALUE(bulk));
+        return static_cast<TYPE>(GRN_UINT64_VALUE(bulk));
       case GRN_DB_FLOAT32:
-        return static_cast<NUMERIC>(GRN_FLOAT32_VALUE(bulk));
+        return static_cast<TYPE>(GRN_FLOAT32_VALUE(bulk));
       case GRN_DB_FLOAT:
-        return static_cast<NUMERIC>(GRN_FLOAT_VALUE(bulk));
+        return static_cast<TYPE>(GRN_FLOAT_VALUE(bulk));
       case GRN_DB_TIME:
-        return static_cast<NUMERIC>(GRN_TIME_VALUE(bulk));
+        return static_cast<TYPE>(GRN_TIME_VALUE(bulk));
       default:
         return default_value;
       }
