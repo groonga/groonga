@@ -1,0 +1,11 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs input COLUMN_SCALAR UInt64
+column_create Logs created_at COLUMN_SCALAR Time
+
+load --table Logs
+[
+{"input": 1382681699}
+]
+
+select Logs \
+  --scorer 'created_at = input'

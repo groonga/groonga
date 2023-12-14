@@ -33,7 +33,6 @@ void test_text_to_uint32(void);
 void test_text_to_int64(void);
 void test_text_to_uint64(void);
 void test_text_to_float(void);
-void test_text_to_time(void);
 void test_text_to_geo_point(void);
 void test_text_to_geo_point_empty(void);
 void test_text_to_geo_point_garbage(void);
@@ -62,7 +61,6 @@ void test_int32_to_uint32(void);
 void test_int32_to_int64(void);
 void test_int32_to_uint64(void);
 void test_int32_to_float(void);
-void test_int32_to_time(void);
 void test_int32_to_geo_point_zero(void);
 void test_int32_to_geo_point_invalid(void);
 
@@ -77,7 +75,6 @@ void test_uint32_to_uint32(void);
 void test_uint32_to_int64(void);
 void test_uint32_to_uint64(void);
 void test_uint32_to_float(void);
-void test_uint32_to_time(void);
 
 void data_int64_to_bool(void);
 void test_int64_to_bool(gconstpointer data);
@@ -90,7 +87,6 @@ void test_int64_to_uint32(void);
 void test_int64_to_int64(void);
 void test_int64_to_uint64(void);
 void test_int64_to_float(void);
-void test_int64_to_time(void);
 
 void data_uint64_to_bool(void);
 void test_uint64_to_bool(gconstpointer data);
@@ -103,7 +99,6 @@ void test_uint64_to_uint32(void);
 void test_uint64_to_int64(void);
 void test_uint64_to_uint64(void);
 void test_uint64_to_float(void);
-void test_uint64_to_time(void);
 
 void test_tokyo_geo_point_to_tokyo_geo_point(void);
 void test_tokyo_geo_point_to_wgs84_geo_point(void);
@@ -246,18 +241,6 @@ test_text_to_float(void)
   grn_obj_reinit(&context, &dest, GRN_DB_FLOAT, 0);
   cast_text("29.029");
   cut_assert_equal_double(29.029, 0.001, GRN_FLOAT_VALUE(&dest));
-}
-
-void
-test_text_to_time(void)
-{
-  long long int sec, usec;
-
-  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
-  cast_text("2009/11/24 05:52:10.02929");
-  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
-  cut_assert_equal_int(1259009530, sec);
-  cut_assert_equal_int(29290, usec);
 }
 
 void
@@ -547,18 +530,6 @@ test_int32_to_float(void)
 }
 
 void
-test_int32_to_time(void)
-{
-  long long int sec, usec;
-
-  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
-  cast_int32(1259009530);
-  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
-  cut_assert_equal_int(1259009530, sec);
-  cut_assert_equal_int(0, usec);
-}
-
-void
 test_int32_to_text(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_TEXT, 0);
@@ -692,18 +663,6 @@ test_uint32_to_float(void)
 }
 
 void
-test_uint32_to_time(void)
-{
-  long long int sec, usec;
-
-  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
-  cast_uint32(1259009530);
-  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
-  cut_assert_equal_int(1259009530, sec);
-  cut_assert_equal_int(0, usec);
-}
-
-void
 test_uint32_to_text(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_TEXT, 0);
@@ -819,18 +778,6 @@ test_int64_to_float(void)
 }
 
 void
-test_int64_to_time(void)
-{
-  long long int sec, usec;
-
-  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
-  cast_int64(1259009530);
-  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
-  cut_assert_equal_int(1259009530, sec);
-  cut_assert_equal_int(0, usec);
-}
-
-void
 test_int64_to_text(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_TEXT, 0);
@@ -943,18 +890,6 @@ test_uint64_to_float(void)
   grn_obj_reinit(&context, &dest, GRN_DB_FLOAT, 0);
   cast_uint64(29);
   cut_assert_equal_double(29, 0.1, GRN_FLOAT_VALUE(&dest));
-}
-
-void
-test_uint64_to_time(void)
-{
-  long long int sec, usec;
-
-  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
-  cast_uint64(1259009530);
-  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
-  cut_assert_equal_int(1259009530, sec);
-  cut_assert_equal_int(0, usec);
 }
 
 void
