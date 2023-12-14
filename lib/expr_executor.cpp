@@ -1292,15 +1292,10 @@ namespace {
     data.res->header.type = GRN_VOID;
     data.res->header.domain = DB_OBJ(column)->range;
     grn_obj value;
-    int32_t delta;
-    int set_flags;
-    if (op == GRN_OP_INCR || op == GRN_OP_INCR_POST) {
-      delta = 1;
-      set_flags = GRN_OBJ_INCR;
-    } else {
-      delta = -1;
-      set_flags = GRN_OBJ_DECR;
-    }
+    int32_t delta = 1;
+    int set_flags = (op == GRN_OP_INCR || op == GRN_OP_INCR_POST)
+                      ? GRN_OBJ_INCR
+                      : GRN_OBJ_DECR;
     switch (DB_OBJ(column)->range) {
     case GRN_DB_INT32:
       GRN_INT32_INIT(&value, 0);
