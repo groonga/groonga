@@ -126,62 +126,6 @@ attributes_bool(void)
 }
 
 void
-data_bool(void)
-{
-#define ADD_DATUM(label, load_command)                          \
-  gcut_add_datum(label,                                         \
-                 "load-command", G_TYPE_STRING, load_command,   \
-                 NULL)
-
-  ADD_DATUM("symbol",
-            "load --table Users --columns '_key,enabled'\n"
-            "[\n"
-            "  [\"mori\",true],\n"
-            "  [\"tapo\",false]\n"
-            "]");
-  ADD_DATUM("number",
-            "load --table Users --columns '_key,enabled'\n"
-            "[\n"
-            "  [\"mori\",1],\n"
-            "  [\"tapo\",0]\n"
-            "]");
-  ADD_DATUM("string",
-            "load --table Users --columns '_key,enabled'\n"
-            "[\n"
-            "  [\"mori\",\"1\"],\n"
-            "  [\"tapo\",\"\"]\n"
-            "]");
-  ADD_DATUM("string (null)",
-            "load --table Users --columns '_key,enabled'\n"
-            "[\n"
-            "  [\"mori\",\"0\"],\n"
-            "  [\"tapo\",null]\n"
-            "]");
-
-#undef ADD_DATUM
-}
-
-void
-test_bool(gconstpointer data)
-{
-  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
-  cut_assert_equal_string("2",
-                          send_command(gcut_data_get_string(data,
-                                                            "load-command")));
-  cut_assert_equal_string("[[[2],"
-                          "["
-                          "[\"_id\",\"UInt32\"],"
-                          "[\"_key\",\"ShortText\"],"
-                          "[\"enabled\",\"Bool\"]"
-                          "],"
-                          "[1,\"mori\",true],"
-                          "[2,\"tapo\",false]"
-                          "]]",
-                          send_command("select Users"));
-}
-
-void
 test_int32_key(void)
 {
   assert_send_command("table_create Students TABLE_HASH_KEY Int32");

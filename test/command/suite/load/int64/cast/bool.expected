@@ -1,0 +1,49 @@
+table_create Entries TABLE_HASH_KEY Int64
+[[0,0.0,0.0],true]
+column_create Entries is_published COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": 0, "is_published": 0},
+{"_key": 1, "is_published": 1}
+]
+[[0,0.0,0.0],2]
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "Int64"
+        ],
+        [
+          "is_published",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        0,
+        false
+      ],
+      [
+        2,
+        1,
+        true
+      ]
+    ]
+  ]
+]
