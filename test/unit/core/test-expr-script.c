@@ -1067,78 +1067,6 @@ data_arithmetic_operator_mod(void)
             "size <= 19.1 % \"9.9\"");
 }
 
-static void
-data_arithmetic_operator_incr(void)
-{
-  int time_at_2009_12_2_15_16_0 = 1259734560;
-
-  ADD_DATUM("++integer",
-            gcut_list_string_new("hoge", NULL),
-            "++size == 5 && size == 5");
-  ADD_DATUM("++float",
-            gcut_list_string_new("hoge", NULL),
-            "++size_in_float == 5 && size_in_float == 5");
-  ADD_DATUM("++time",
-            gcut_list_string_new("hoge", NULL),
-            cut_take_printf("++created_at == %d && created_at == %d",
-                            time_at_2009_12_2_15_16_0 + 5,
-                            time_at_2009_12_2_15_16_0 + 5));
-}
-
-static void
-data_arithmetic_operator_decr(void)
-{
-  int time_at_2009_12_2_15_16_0 = 1259734560;
-
-  ADD_DATUM("--integer",
-            gcut_list_string_new("hoge", NULL),
-            "--size <= 3 && size == 3");
-  ADD_DATUM("--float",
-            gcut_list_string_new("hoge", NULL),
-            "--size_in_float <= 3 && size_in_float == 3");
-  ADD_DATUM("--time",
-            gcut_list_string_new("hoge", NULL),
-            cut_take_printf("--created_at == %d && created_at == %d",
-                            time_at_2009_12_2_15_16_0 + 3,
-                            time_at_2009_12_2_15_16_0 + 3));
-}
-
-static void
-data_arithmetic_operator_incr_post(void)
-{
-  int time_at_2009_12_2_15_16_0 = 1259734560;
-
-  ADD_DATUM("integer++",
-            gcut_list_string_new("hoge", NULL),
-            "size++ <= 4 && size == 5");
-  ADD_DATUM("float++",
-            gcut_list_string_new("hoge", NULL),
-            "size_in_float++ <= 4 && size_in_float == 5");
-  ADD_DATUM("time++",
-            gcut_list_string_new("hoge", NULL),
-            cut_take_printf("created_at++ == %d && created_at == %d",
-                            time_at_2009_12_2_15_16_0 + 4,
-                            time_at_2009_12_2_15_16_0 + 5));
-}
-
-static void
-data_arithmetic_operator_decr_post(void)
-{
-  int time_at_2009_12_2_15_16_0 = 1259734560;
-
-  ADD_DATUM("integer--",
-            gcut_list_string_new("hoge", NULL),
-            "size-- == 4 && size == 3");
-  ADD_DATUM("float--",
-            gcut_list_string_new("hoge", NULL),
-            "size_in_float-- == 4 && size_in_float == 3");
-  ADD_DATUM("time--",
-            gcut_list_string_new("hoge", NULL),
-            cut_take_printf("created_at-- == %d && created_at == %d",
-                            time_at_2009_12_2_15_16_0 + 4,
-                            time_at_2009_12_2_15_16_0 + 3));
-}
-
 void
 data_arithmetic_operator(void)
 {
@@ -1166,10 +1094,6 @@ data_arithmetic_operator(void)
   data_arithmetic_operator_star();
   data_arithmetic_operator_slash();
   data_arithmetic_operator_mod();
-  data_arithmetic_operator_incr();
-  data_arithmetic_operator_decr();
-  data_arithmetic_operator_incr_post();
-  data_arithmetic_operator_decr_post();
 }
 #undef ADD_DATUM
 

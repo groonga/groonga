@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+column_create Values output COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value": 2, "output": 29}
+]
+[[0,0.0,0.0],1]
+select Values   --scorer 'output = ++value'   --output_columns 'value, output'
+[[0,0.0,0.0],[[[1],[["value","UInt64"],["output","UInt64"]],[3,3]]]]
