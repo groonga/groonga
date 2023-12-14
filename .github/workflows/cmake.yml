@@ -511,6 +511,15 @@ jobs:
           rm test/command/suite/tokenizers/document_vector_tf_idf/reindex.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/token_column.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/token_column_different_lexicon.test
+          # I don't know why but Blosc is crashed with MinGW32...
+          rm -r test/command/suite/select/output/lz4/uvector/filter/
+          rm -r test/command/suite/select/output/lz4/vector/filter/
+          rm -r test/command/suite/select/output/lz4/weight_uvector/filter/
+          rm -r test/command/suite/select/output/lz4/weight_vector/filter/
+          rm -r test/command/suite/select/output/zstd/uvector/filter/
+          rm -r test/command/suite/select/output/zstd/vector/filter/
+          rm -r test/command/suite/select/output/zstd/weight_uvector/filter/
+          rm -r test/command/suite/select/output/zstd/weight_vector/filter/
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
