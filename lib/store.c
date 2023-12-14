@@ -388,6 +388,15 @@ grn_ra_set_value_raw(
       rc = GRN_INVALID_ARGUMENT;                                               \
     }                                                                          \
     break;                                                                     \
+  case GRN_DB_UINT64:                                                          \
+    if (s == sizeof(uint64_t)) {                                               \
+      uint64_t *vp = (uint64_t *)p;                                            \
+      *vp op *(int64_t *)v;                                                    \
+      rc = GRN_SUCCESS;                                                        \
+    } else {                                                                   \
+      rc = GRN_INVALID_ARGUMENT;                                               \
+    }                                                                          \
+    break;                                                                     \
   case GRN_DB_FLOAT32:                                                         \
     if (s == sizeof(float)) {                                                  \
       float *vp = (float *)p;                                                  \
