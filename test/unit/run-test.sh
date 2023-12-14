@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source_dir=$(cd $(dirname $0) && pwd)
 : ${BASE_DIR:=$source_dir}
@@ -14,19 +14,19 @@ build_top_dir="$build_dir/../.."
 build_top_dir=$(cd "$build_top_dir" && pwd)
 
 if test x"$NO_MAKE" != x"yes"; then
-  MAKE_ARGS=
+  MAKE_ARGS=()
   case $(uname) in
     Linux)
-      MAKE_ARGS="-j$(nproc)"
+      MAKE_ARGS+=("-j$(nproc)")
       ;;
     Darwin)
-      MAKE_ARGS="-j$(/usr/sbin/sysctl -n hw.ncpu)"
+      MAKE_ARGS+=("-j$(/usr/sbin/sysctl -n hw.ncpu)")
       ;;
     *)
       :
       ;;
   esac
-  make $MAKE_ARGS -C $build_top_dir > /dev/null || exit 1
+  make "${MAKE_ARGS[@]}" -C $build_top_dir > /dev/null || exit 1
 fi
 
 . "${build_top_dir}/config.sh"
@@ -34,23 +34,23 @@ fi
 TZ=Asia/Tokyo
 export TZ
 
-CUTTER_ARGS=
-CUTTER_WRAPPER=
+CUTTER_ARGS=()
+CUTTER_WRAPPER=()
 if test x"$CUTTER_DEBUG" = x"yes"; then
-  CUTTER_WRAPPER="$build_top_dir/libtool --mode=execute gdb --args"
-  CUTTER_ARGS="--keep-opening-modules"
+  CUTTER_WRAPPER+=("$build_top_dir/libtool" "--mode=execute" "gdb" "--args")
+  CUTTER_ARGS+=("--keep-opening-modules")
 elif test x"$CUTTER_CHECK_LEAK" = x"yes"; then
-  CUTTER_WRAPPER="$build_top_dir/libtool --mode=execute valgrind "
-  CUTTER_WRAPPER="$CUTTER_WRAPPER --leak-check=full --show-reachable=yes -v"
-  CUTTER_ARGS="--keep-opening-modules"
+  CUTTER_WRAPPER+=("$build_top_dir/libtool" "--mode=execute" "valgrind")
+  CUTTER_WRAPPER+=("--leak-check=full" "--show-reachable=yes" "-v")
+  CUTTER_ARGS+=("--keep-opening-modules")
 fi
 
-CUTTER_ARGS="$CUTTER_ARGS -s $build_dir"
+CUTTER_ARGS+=("-s" "$build_dir")
 if test x"$CUTTER_VERBOSE" = x"yes"; then
-  CUTTER_ARGS="$CUTTER_ARGS -v v"
+  CUTTER_ARGS+=("-v" "v")
 fi
-CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
-CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
+CUTTER_ARGS+=("--exclude-directory" "fixtures")
+CUTTER_ARGS+=("--exclude-directory" "lib")
 
 GRN_PLUGINS_DIR="$source_top_dir/plugins"
 GRN_PLUGINS_PATH="$build_top_dir/plugins"
@@ -87,4 +87,4 @@ for tmpfs in $tmpfs_candidates; do
   fi
 done
 
-$CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $build_dir
+"${CUTTER_WRAPPER[@]}" $CUTTER "${CUTTER_ARGS[@]}" "$@" $build_dir
