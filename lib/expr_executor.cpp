@@ -1297,6 +1297,22 @@ namespace {
                       ? GRN_OBJ_INCR
                       : GRN_OBJ_DECR;
     switch (DB_OBJ(column)->range) {
+    case GRN_DB_INT8:
+      GRN_INT8_INIT(&value, 0);
+      GRN_INT8_SET(ctx, &value, delta);
+      break;
+    case GRN_DB_UINT8:
+      GRN_UINT8_INIT(&value, 0);
+      GRN_UINT8_SET(ctx, &value, delta);
+      break;
+    case GRN_DB_INT16:
+      GRN_INT16_INIT(&value, 0);
+      GRN_INT16_SET(ctx, &value, delta);
+      break;
+    case GRN_DB_UINT16:
+      GRN_UINT16_INIT(&value, 0);
+      GRN_UINT16_SET(ctx, &value, delta);
+      break;
     case GRN_DB_INT32:
       GRN_INT32_INIT(&value, 0);
       GRN_INT32_SET(ctx, &value, delta);
