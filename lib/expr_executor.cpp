@@ -1343,8 +1343,9 @@ namespace {
       break;
     default:
       ERR(GRN_INVALID_ARGUMENT,
-          "invalid increment target type: %d "
+          "invalid %s target type: %d "
           "(FIXME: type name is needed)",
+          grn_operator_to_script_syntax(op),
           DB_OBJ(column)->range);
       return false;
     }
