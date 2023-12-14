@@ -34,7 +34,7 @@ namespace grn {
     {
       return std::abs(value) < std::numeric_limits<TYPE>::epsilon();
     }
-  };
+  }; // namespace numeric
 
   namespace bulk {
     template <typename TYPE>

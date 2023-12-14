@@ -1626,9 +1626,10 @@ namespace {
   {
     switch (caster->dest->header.domain) {
     case GRN_DB_BOOL:
-      return grn::bulk::set<SOURCE>(ctx,
-                                    caster->dest,
-                                    grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+      return grn::bulk::set<SOURCE>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT8:
       return grn::bulk::set<int8_t>(
         ctx,
