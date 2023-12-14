@@ -19,11 +19,71 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.0.9 - 2023-10-29"
-msgstr "13.0.9リリース - 2023-10-29"
+msgid "Release 13.1.0 - 2023-12-18"
+msgstr "13.1.0リリース - 2023-12-18"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[{doc}`/reference/commands/select`] Groonga also cached trace log."
+msgstr "[{doc}`/reference/commands/select`] トレースログもキャッシュするようにしました。"
+
+msgid "Added support for outputting dict<string> in a responce of Apache Arrow format."
+msgstr "Apache Arrow フォーマットのレスポンスで dict<string> の出力をサポートしました。"
+
+msgid "[{doc}`/reference/executables/groonga-server-http`] Added support for new content type \"application/vnd.apache.arrow.stream\""
+msgstr "[{doc}`/reference/executables/groonga-server-http`] 新しい content type \"application/vnd.apache.arrow.stream\" をサポートしました。"
+
+msgid "[{doc}`/reference/functions/query`] Added support empty input as below."
+msgstr "[{doc}`/reference/functions/query`] 以下のような空の入力をサポートしました。"
+
+msgid "Added support for BFloat16(experimental)"
+msgstr "BFloat16をサポートしました。（実験的）"
+
+msgid "We can just load and select BFloat16. We can't use arithmetic operations such as \"bfloat16_value - 1.2\"."
+msgstr "BFloat16のloadとselectができるだけです。\"bfloat16_value - 1.2\"のような算術演算はできません。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that when Groonga cached `output_pretty=yes` result, Groonga returned a query with `output_pretty` even if we sent a query without `output_pretty`."
+msgstr "[{doc}`/reference/commands/select`] Groonga が `output_pretty=yes` の結果をキャッシュした場合、 `output_pretty` をつけていないクエリーであっても、`output_pretty`をつけて返してしまう問題を修正しました。"
+
+msgid "Fixed a wrong data created bug."
+msgstr "誤ったデータを作り出してしまう問題を修正しました。"
+
+msgid "In general, users can't do this explicitly because the command API doesn't accept `GRN_OBJ_{APPEND,PREPEND}`. This may be used internally when a dynamic numeric vector column is created and a temporary result set is created (OR is used)."
+msgstr ""
+
+msgid "For example, the following query may create wrong data:"
+msgstr ""
+
+msgid "If this is happen, `NUMERIC_DYNAMIC_COLUMN` contains many garbage elements. It also causes too much memory consumption."
+msgstr ""
+
+msgid "Note that this is caused by an uninitialized variable on stack. So this may or may not be happen."
+msgstr ""
+
+msgid "Fixed a bug that may fail to set valid normalizers/token_filters."
+msgstr ""
+
+msgid "[fuzzy_search] Fixed a crash bug when the following three conditions established."
+msgstr ""
+
+msgid "query has 2 or more multi-byte characters"
+msgstr ""
+
+msgid "pat has \"${ASCII}${ASCII}${MULTIBYTE}*\" characters"
+msgstr ""
+
+msgid "WITH_TRANSPOSITION is enabled"
+msgstr ""
+
+msgid "For example, a pat that has \"aaあ\" with query \"あああ\" pair has this problem as below."
+msgstr ""
+
+msgid "Release 13.0.9 - 2023-10-29"
+msgstr "13.0.9リリース - 2023-10-29"
 
 msgid "[{doc}`/reference/commands/select`] Changed the default value of `--fuzzy_max_expansions` from 0 to 10."
 msgstr "[{doc}`/reference/commands/select`] `--fuzzy_max_expansions` のデフォルト値を0から10に変更しました。"
@@ -96,9 +156,6 @@ msgstr "[{doc}`/reference/functions/snippet`] `normalizers` オプションを�
 
 msgid "We can use normalizer with option. For example, when we don't want to ignore space in `snippet()` function, we use this option as below."
 msgstr "オプション付きのノーマライザーが使えるようになります。例えば、以下のように `snippet()` 関数内でスペースを無視したくない時にこのオプションを使います。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a bug in `Time OPERATOR Float{,32}` comparison. [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
 msgstr "`Time OPERATOR Float{,32}` が正しく評価されない問題を修正しました。 [GH-1624](https://github.com/groonga/groonga/issues/1624)[Reported by yssrku]"
