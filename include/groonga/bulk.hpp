@@ -20,6 +20,22 @@
 #include <string>
 
 namespace grn {
+  namespace numeric {
+    template <typename TYPE>
+    std::enable_if_t<std::is_integral_v<TYPE>, bool>
+    is_zero(TYPE value)
+    {
+      return value == 0;
+    }
+
+    template <typename TYPE>
+    std::enable_if_t<std::is_floating_point_v<TYPE>, bool>
+    is_zero(TYPE value)
+    {
+      return std::abs(value) < std::numeric_limits<TYPE>::epsilon();
+    }
+  };
+
   namespace bulk {
     template <typename TYPE>
     TYPE
@@ -61,7 +77,7 @@ namespace grn {
     {
       switch (bulk->header.domain) {
       case GRN_DB_BOOL:
-        GRN_BOOL_SET(ctx, bulk, value != 0);
+        GRN_BOOL_SET(ctx, bulk, !numeric::is_zero(value));
         break;
       case GRN_DB_INT8:
         GRN_INT8_SET(ctx, bulk, value);

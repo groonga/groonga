@@ -248,7 +248,7 @@ namespace {
   }
 
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<std::is_signed_v<Y>, bool>
+  std::enable_if_t<std::is_signed_v<Y> && std::is_integral_v<Y>, bool>
   numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
                                                     X x,
                                                     Y y,
@@ -270,6 +270,22 @@ namespace {
                                                     grn_obj *result)
   {
     grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<std::is_floating_point_v<Y>, bool>
+  numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
+                                                    X x,
+                                                    Y y,
+                                                    grn_obj *result)
+  {
+    // y == -1
+    if (grn::numeric::is_zero(std::abs(y + 1))) {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
+    } else {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    }
     return true;
   }
 
@@ -533,7 +549,7 @@ namespace {
       return true;
     case GRN_OP_SLASH:
     case GRN_OP_SLASH_ASSIGN:
-      if (y == 0) {
+      if (grn::numeric::is_zero(y)) {
         ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
         return false;
       }
@@ -545,7 +561,7 @@ namespace {
       return true;
     case GRN_OP_MOD:
     case GRN_OP_MOD_ASSIGN:
-      if (y == 0) {
+      if (grn::numeric::is_zero(y)) {
         ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");
         return false;
       }
