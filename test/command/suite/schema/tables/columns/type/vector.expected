@@ -15,6 +15,13 @@ schema
     "plugins": {
     },
     "types": {
+      "BFloat16": {
+        "id": 20,
+        "name": "BFloat16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
       "Bool": {
         "id": 3,
         "name": "Bool",

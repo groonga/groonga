@@ -21,6 +21,7 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_expr.h"
+#include "grn_float.h"
 #include "grn_output.h"
 #include "grn_output_columns.h"
 #include "grn_str.h"
@@ -683,6 +684,58 @@ grn_output_uint64(grn_ctx *ctx,
   }
   INCR_LENGTH;
 }
+
+#ifdef GRN_HAVE_BFLOAT16
+void
+grn_output_bfloat16(grn_ctx *ctx,
+                    grn_obj *outbuf,
+                    grn_content_type output_type,
+                    grn_bfloat16 value)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    switch (fpclassify(grn_bfloat16_to_float32(value))) {
+    case FP_NAN:
+    case FP_INFINITE:
+      GRN_TEXT_PUTS(ctx, outbuf, "null");
+      break;
+    default:
+      grn_text_bf16toa(ctx, outbuf, value);
+      break;
+    }
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_bf16toa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<BFLOAT16>");
+    grn_text_bf16toa(ctx, outbuf, value);
+    GRN_TEXT_PUTS(ctx, outbuf, "</BFLOAT16>");
+    break;
+  case GRN_CONTENT_MSGPACK:
+#  ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_pack_float(&ctx->impl->output.msgpacker,
+                       grn_bfloat16_to_float32(value));
+#  endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST:
+    grn_text_bf16toa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW:
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_bfloat16(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  INCR_LENGTH;
+}
+#endif
 
 void
 grn_output_float32(grn_ctx *ctx,
@@ -1508,6 +1561,15 @@ grn_output_bulk(grn_ctx *ctx,
                       output_type,
                       GRN_BULK_VSIZE(bulk) ? GRN_UINT64_VALUE(bulk) : 0);
     break;
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+    grn_output_bfloat16(ctx,
+                        outbuf,
+                        output_type,
+                        GRN_BULK_VSIZE(bulk) > 0 ? GRN_BFLOAT16_VALUE(bulk)
+                                                 : 0);
+    break;
+#endif
   case GRN_DB_FLOAT32:
     grn_output_float32(ctx,
                        outbuf,

@@ -22,6 +22,7 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_expr.h"
+#include "grn_float.h"
 #include "grn_geo.h"
 #include "grn_ii.h"
 #include "grn_load.h"
@@ -826,6 +827,13 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     GRN_OUTPUT_CSTR("blosc");
 #ifdef GRN_WITH_BLOSC
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("bfloat16");
+#ifdef GRN_HAVE_BFLOAT16
     GRN_OUTPUT_BOOL(true);
 #else
     GRN_OUTPUT_BOOL(false);
@@ -1997,6 +2005,10 @@ grn_proc_get_value_double(grn_ctx *ctx,
     value_raw = GRN_FLOAT_VALUE(value);
   } else if (value->header.domain == GRN_DB_FLOAT32) {
     value_raw = GRN_FLOAT32_VALUE(value);
+#ifdef GRN_HAVE_BFLOAT16
+  } else if (value->header.domain == GRN_DB_BFLOAT16) {
+    value_raw = grn_bfloat16_to_float32(GRN_BFLOAT16_VALUE(value));
+#endif
   } else {
     grn_obj buffer;
     grn_rc rc;
@@ -2483,6 +2495,13 @@ larger_number_type(grn_id type1, grn_id type2)
   }
 
   switch (type1) {
+  case GRN_DB_BFLOAT16:
+    if (type2 == GRN_DB_FLOAT32 || type2 == GRN_DB_FLOAT ||
+        type2 == GRN_DB_TIME) {
+      return type2;
+    } else {
+      return type1;
+    }
   case GRN_DB_FLOAT32:
     if (type2 == GRN_DB_FLOAT || type2 == GRN_DB_TIME) {
       return type2;
@@ -2514,6 +2533,13 @@ smaller_number_type(grn_id type1, grn_id type2)
   }
 
   switch (type1) {
+  case GRN_DB_BFLOAT16:
+    if (type2 == GRN_DB_FLOAT32 || type2 == GRN_DB_FLOAT ||
+        type2 == GRN_DB_TIME) {
+      return type1;
+    } else {
+      return type2;
+    }
   case GRN_DB_FLOAT32:
     if (type2 == GRN_DB_FLOAT || type2 == GRN_DB_TIME) {
       return type1;
@@ -2566,6 +2592,10 @@ is_negative_value(grn_obj *number)
     return GRN_INT64_VALUE(number) < 0;
   case GRN_DB_TIME:
     return GRN_TIME_VALUE(number) < 0;
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+    return GRN_BFLOAT16_VALUE(number) < 0;
+#endif
   case GRN_DB_FLOAT32:
     return GRN_FLOAT32_VALUE(number) < 0;
   case GRN_DB_FLOAT:
@@ -2662,6 +2692,12 @@ compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
     COMPARE_AND_RETURN(uint64_t,
                        GRN_UINT64_VALUE(number1),
                        GRN_UINT64_VALUE(number2));
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+    COMPARE_AND_RETURN(grn_bfloat16,
+                       GRN_BFLOAT16_VALUE(number1),
+                       GRN_BFLOAT16_VALUE(number2));
+#endif
   case GRN_DB_FLOAT32:
     COMPARE_AND_RETURN(float,
                        GRN_FLOAT32_VALUE(number1),
@@ -2719,6 +2755,11 @@ get_number_in_grn_uvector(grn_ctx *ctx,
   case GRN_DB_UINT64:
     GET_UVECTOR_ELEMENT_AS(UINT64);
     break;
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+    GET_UVECTOR_ELEMENT_AS(BFLOAT16);
+    break;
+#endif
   case GRN_DB_FLOAT32:
     GET_UVECTOR_ELEMENT_AS(FLOAT32);
     break;

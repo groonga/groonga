@@ -312,6 +312,22 @@ object_list
       "path": null,
       "size": 4
     },
+    "BFloat16": {
+      "id": 20,
+      "name": "BFloat16",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 2
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",

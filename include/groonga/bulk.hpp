@@ -17,10 +17,41 @@
 #pragma once
 
 #include <cmath>
+#include <cstring>
 #include <string>
 
 namespace grn {
   namespace numeric {
+#ifdef GRN_HAVE_BFLOAT16
+    template <typename TYPE>
+    grn_bfloat16
+    to_bfloat16(TYPE value)
+    {
+      if constexpr (std::is_same_v<TYPE, grn_bfloat16>) {
+        return value;
+      } else {
+        grn_bfloat16 value_bfloat16 = 0;
+        float value_float = value;
+        std::memcpy(&value_bfloat16,
+                    reinterpret_cast<char *>(&value_float) + sizeof(float) -
+                      sizeof(grn_bfloat16),
+                    sizeof(grn_bfloat16));
+        return value_bfloat16;
+      }
+    }
+
+    inline float
+    bfloat16_to_float32(grn_bfloat16 value)
+    {
+      float value_float = 0;
+      std::memcpy(reinterpret_cast<char *>(&value_float) + sizeof(float) -
+                    sizeof(grn_bfloat16),
+                  &value,
+                  sizeof(grn_bfloat16));
+      return value_float;
+    }
+#endif
+
     template <typename TYPE>
     std::enable_if_t<std::is_integral_v<TYPE>, bool>
     is_zero(TYPE value)
@@ -34,6 +65,15 @@ namespace grn {
     {
       return std::abs(value) < std::numeric_limits<TYPE>::epsilon();
     }
+
+#ifdef GRN_HAVE_BFLOAT16
+    template <typename TYPE>
+    std::enable_if_t<std::is_same_v<TYPE, grn_bfloat16>, bool>
+    is_zero(TYPE value)
+    {
+      return is_zero(bfloat16_to_float32(value));
+    }
+#endif
   }; // namespace numeric
 
   namespace bulk {
@@ -60,6 +100,10 @@ namespace grn {
         return static_cast<TYPE>(GRN_INT64_VALUE(bulk));
       case GRN_DB_UINT64:
         return static_cast<TYPE>(GRN_UINT64_VALUE(bulk));
+#ifdef GRN_HAVE_BFLOAT16
+      case GRN_DB_BFLOAT16:
+        return static_cast<TYPE>(GRN_BFLOAT16_VALUE(bulk));
+#endif
       case GRN_DB_FLOAT32:
         return static_cast<TYPE>(GRN_FLOAT32_VALUE(bulk));
       case GRN_DB_FLOAT:
@@ -103,6 +147,11 @@ namespace grn {
       case GRN_DB_UINT64:
         GRN_UINT64_SET(ctx, bulk, value);
         break;
+#ifdef GRN_HAVE_BFLOAT16
+      case GRN_DB_BFLOAT16:
+        GRN_BFLOAT16_SET(ctx, bulk, numeric::to_bfloat16(value));
+        break;
+#endif
       case GRN_DB_FLOAT32:
         GRN_FLOAT32_SET(ctx, bulk, value);
         break;

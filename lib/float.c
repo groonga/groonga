@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,22 @@
 
 #include <math.h>
 #include <float.h>
+
+#ifdef GRN_HAVE_BFLOAT16
+float
+grn_bfloat16_to_float32(grn_bfloat16 value)
+{
+  float value_float = 0;
+  memcpy(((char *)(&value_float)) + sizeof(float) - sizeof(grn_bfloat16), &value, sizeof(grn_bfloat16));
+  return value_float;
+}
+
+bool
+grn_bfloat16_is_zero(grn_bfloat16 value)
+{
+  return grn_float32_is_zero(grn_bfloat16_to_float32(value));
+}
+#endif
 
 bool
 grn_float32_is_zero(float value)

@@ -1730,6 +1730,7 @@ AC_CONFIG_FILES([
   groonga.pc
   include/Makefile
   include/groonga/Makefile
+  include/groonga/build_option.h
   include/groonga/version.h
   lib/Makefile
   lib/dat/Makefile

@@ -137,6 +137,8 @@ endif()
 
 configure_file(include/groonga/version.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
+configure_file(include/groonga/build_option_cmake.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/build_option.h)
 
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
@@ -146,6 +148,7 @@ include(CheckSymbolExists)
 include(CheckStructHasMember)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+include(CheckCSourceCompiles)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 include(CMakePackageConfigHelpers)
@@ -297,6 +300,27 @@ if(NOT GRN_ALLOW_WARNING)
     set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} /WX")
     set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} /WX")
   endif()
+endif()
+
+set(GRN_WITH_BFLOAT16
+    "auto"
+    CACHE STRING "Support bfloat16.")
+check_c_source_compiles(
+  [=[
+int
+main(int argc, char *argv)
+{
+  __bf16 value = 1.0;
+  return 0;
+}
+]=]
+  GRN_HAVE_BFLOAT16)
+if(GRN_WITH_BFLOAT16 STREQUAL "yes")
+  if(!GRN_HAVE_BFLOAT16)
+    message(FATAL_ERROR "Compiler doesn't support bfloat16")
+  endif()
+elseif(GRN_WITH_BFLOAT16 STREQUAL "no")
+  set(GRN_HAVE_BFLOAT16 NO)
 endif()
 
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)

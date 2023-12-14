@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -119,6 +119,12 @@ GRN_API void grn_output_uint64(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type,
                                uint64_t value);
+#ifdef GRN_HAVE_BFLOAT16
+GRN_API void grn_output_bfloat16(grn_ctx *ctx,
+                                 grn_obj *outbuf,
+                                 grn_content_type output_type,
+                                 grn_bfloat16 value);
+#endif
 GRN_API void grn_output_float32(grn_ctx *ctx,
                                 grn_obj *outbuf,
                                 grn_content_type output_type,

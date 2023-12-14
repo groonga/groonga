@@ -4077,6 +4077,9 @@ show_version(void)
 #ifdef GRN_WITH_BLOSC
   printf(",blosc");
 #endif
+#ifdef GRN_HAVE_BFLOAT16
+  printf(",bfloat16");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS

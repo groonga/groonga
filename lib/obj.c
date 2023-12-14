@@ -74,6 +74,14 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
       return GRN_INT32_VALUE(obj) != 0;
     case GRN_DB_UINT32:
       return GRN_UINT32_VALUE(obj) != 0;
+#ifdef GRN_HAVE_BFLOAT16
+    case GRN_DB_BFLOAT16:
+      {
+        grn_bfloat16 bfloat16_value;
+        bfloat16_value = GRN_BFLOAT16_VALUE(obj);
+        return grn_bfloat16_is_zero(bfloat16_value);
+      }
+#endif
     case GRN_DB_FLOAT32:
       {
         float float_value;

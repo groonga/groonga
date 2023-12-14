@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "grn_db.h"
+#include "grn_float.h"
 #include "grn_str.h"
 #include "grn_table.h"
 #include "grn_nfkc.h"
@@ -2503,6 +2504,14 @@ grn_text_ftoa_adjust(grn_ctx *ctx, grn_obj *buf, size_t before_size)
   }
 }
 
+#ifdef GRN_HAVE_BFLOAT16
+grn_rc
+grn_text_bf16toa(grn_ctx *ctx, grn_obj *buf, grn_bfloat16 value)
+{
+  return grn_text_f32toa(ctx, buf, grn_bfloat16_to_float32(value));
+}
+#endif
+
 grn_rc
 grn_text_f32toa(grn_ctx *ctx, grn_obj *buf, float f)
 {
@@ -3264,6 +3273,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
                       bulk,
                       GRN_BULK_VSIZE(obj) ? GRN_UINT64_VALUE(obj) : 0);
       break;
+#ifdef GRN_HAVE_BFLOAT16
+    case GRN_DB_BFLOAT16:
+      grn_text_bf16toa(ctx,
+                       bulk,
+                       GRN_BULK_VSIZE(obj) ? GRN_BFLOAT16_VALUE(obj) : 0);
+      break;
+#endif
     case GRN_DB_FLOAT32:
       grn_text_f32toa(ctx,
                       bulk,

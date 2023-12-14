@@ -2197,6 +2197,44 @@ grn_db_open_ensure_float32(grn_ctx *ctx, grn_db *db)
   return float32 != NULL;
 }
 
+#define GRN_TYPE_BFLOAT16_NAME     "BFloat16"
+#define GRN_TYPE_BFLOAT16_NAME_LEN (sizeof(GRN_TYPE_BFLOAT16_NAME) - 1)
+#define GRN_TYPE_BFLOAT16_FLAGS    GRN_OBJ_KEY_FLOAT
+#ifdef GRN_HAVE_BFLOAT16
+#  define GRN_TYPE_BFLOAT16_SIZE sizeof(grn_bfloat16)
+#else
+#  define GRN_TYPE_BFLOAT16_SIZE sizeof(uint16_t)
+#endif
+
+static bool
+grn_db_open_ensure_bfloat16(grn_ctx *ctx, grn_db *db)
+{
+  if (grn_table_get(ctx,
+                    db->keys,
+                    GRN_TYPE_BFLOAT16_NAME,
+                    GRN_TYPE_BFLOAT16_NAME_LEN) == GRN_DB_BFLOAT16) {
+    return false;
+  }
+
+  if (db->keys->header.type != GRN_TABLE_DAT_KEY) {
+    return false;
+  }
+
+  if (grn_table_update_by_id(ctx,
+                             db->keys,
+                             GRN_DB_BFLOAT16,
+                             GRN_TYPE_BFLOAT16_NAME,
+                             GRN_TYPE_BFLOAT16_NAME_LEN) != GRN_SUCCESS) {
+    return false;
+  }
+
+  grn_obj *bfloat16 = grn_type_create_internal(ctx,
+                                               GRN_DB_BFLOAT16,
+                                               GRN_TYPE_BFLOAT16_FLAGS,
+                                               GRN_TYPE_BFLOAT16_SIZE);
+  return bfloat16 != NULL;
+}
+
 grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
@@ -2290,7 +2328,12 @@ grn_db_open(grn_ctx *ctx, const char *path)
     unsigned int n_records;
 
     n_records = grn_table_size(ctx, (grn_obj *)s);
-    need_flush = grn_db_open_ensure_float32(ctx, s);
+    if (grn_db_open_ensure_float32(ctx, s)) {
+      need_flush = true;
+    }
+    if (grn_db_open_ensure_bfloat16(ctx, s)) {
+      need_flush = true;
+    }
 #ifdef GRN_WITH_MECAB
     if (grn_db_init_mecab_tokenizer(ctx)) {
       ERRCLR(ctx);
@@ -14578,6 +14621,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags)
     case GRN_DB_UINT32:
     case GRN_DB_INT64:
     case GRN_DB_UINT64:
+    case GRN_DB_BFLOAT16:
     case GRN_DB_FLOAT32:
     case GRN_DB_FLOAT:
     case GRN_DB_TIME:
@@ -15587,6 +15631,13 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_TYPE_FLOAT32_FLAGS,
                 GRN_TYPE_FLOAT32_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT32) {
+    return GRN_FILE_CORRUPT;
+  }
+  obj = deftype(ctx,
+                GRN_TYPE_BFLOAT16_NAME,
+                GRN_TYPE_BFLOAT16_FLAGS,
+                GRN_TYPE_BFLOAT16_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_BFLOAT16) {
     return GRN_FILE_CORRUPT;
   }
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_MECAB; id++) {

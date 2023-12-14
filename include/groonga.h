@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2014-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "groonga/build_option.h"
 #include "groonga/version.h"
 
 #include "groonga/portability.h"

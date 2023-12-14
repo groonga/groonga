@@ -1,0 +1,52 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data bfloat16s COLUMN_VECTOR BFloat16
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"bfloat16s": [0.0, 0.1, 1.2, -2.9]}
+]
+[[0,0.0,0.0],1]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "bfloat16s",
+          "BFloat16"
+        ]
+      ],
+      [
+        1,
+        [
+          0.0,
+          0.09960938,
+          1.195312,
+          -2.890625
+        ]
+      ]
+    ]
+  ]
+]
+dump
+table_create Data TABLE_NO_KEY
+column_create Data bfloat16s COLUMN_VECTOR BFloat16
+
+load --table Data
+[
+["_id","bfloat16s"],
+[1,[0.0,0.09960938,1.195312,-2.890625]]
+]

@@ -16,6 +16,7 @@
 */
 
 #include "grn_cast.h"
+#include "grn_float.h"
 #include "grn_geo.h"
 #include "grn_pat.h"
 #include "grn_str.h"
@@ -1577,7 +1578,7 @@ namespace {
   }
 
   template <typename FLOATING_POINT, typename NUMERIC>
-  grn_rc
+  std::enable_if_t<std::is_floating_point_v<FLOATING_POINT>, grn_rc>
   num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     if (caster->src->header.domain == GRN_DB_TIME) {
@@ -1589,6 +1590,41 @@ namespace {
       return grn::bulk::set<FLOATING_POINT>(ctx, caster->dest, value);
     }
   }
+
+#ifdef GRN_HAVE_BFLOAT16
+  template <typename FLOATING_POINT, typename NUMERIC>
+  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
+                     std::is_same_v<NUMERIC, grn_bfloat16>,
+                   grn_rc>
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::set<FLOATING_POINT>(ctx,
+                                            caster->dest,
+                                            grn_bfloat32_to_float32(value) /
+                                              GRN_TIME_USEC_PER_SEC);
+    } else {
+      return grn::bulk::set<FLOATING_POINT>(ctx, caster->dest, value);
+    }
+  }
+
+  template <typename FLOATING_POINT, typename NUMERIC>
+  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
+                     !std::is_same_v<NUMERIC, grn_bfloat16>,
+                   grn_rc>
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::set<FLOATING_POINT>(
+        ctx,
+        caster->dest,
+        grn::numeric::to_bfloat16(static_cast<double>(value) /
+                                  GRN_TIME_USEC_PER_SEC));
+    } else {
+      return grn::bulk::set<NUMERIC>(ctx, caster->dest, value);
+    }
+  }
+#endif
 
   template <typename NUMERIC>
   std::enable_if_t<std::is_integral_v<NUMERIC> && std::is_signed_v<NUMERIC>,
@@ -1672,6 +1708,13 @@ namespace {
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_TIME:
       return num2time(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+#ifdef GRN_HAVE_BFLOAT16
+    case GRN_DB_BFLOAT16:
+      return num2float<grn_bfloat16>(
+        ctx,
+        caster,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+#endif
     case GRN_DB_FLOAT32:
       return num2float<float>(ctx,
                               caster,
@@ -1784,6 +1827,9 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
   case GRN_DB_UINT64:
     TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
     break;
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+#endif
   case GRN_DB_FLOAT32:
   case GRN_DB_FLOAT:
     {
@@ -1796,19 +1842,25 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
                    GRN_TEXT_LEN(caster->src));
       GRN_TEXT_PUTC(ctx, &buf, '\0');
       errno = 0;
-      if (caster->dest->header.domain == GRN_DB_FLOAT32) {
-        float value;
-        value = strtof(GRN_TEXT_VALUE(&buf), &end);
-        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-          GRN_FLOAT32_SET(ctx, caster->dest, value);
-        } else {
-          rc = GRN_INVALID_ARGUMENT;
-        }
-      } else {
+      if (caster->dest->header.domain == GRN_DB_FLOAT) {
         double value;
         value = strtod(GRN_TEXT_VALUE(&buf), &end);
         if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
           GRN_FLOAT_SET(ctx, caster->dest, value);
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
+      } else {
+        float value;
+        value = strtof(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+          if (caster->dest->header.domain == GRN_DB_FLOAT32) {
+            GRN_FLOAT32_SET(ctx, caster->dest, value);
+          } else {
+#ifdef GRN_HAVE_BFLOAT16
+            grn::bulk::set(ctx, caster->dest, value);
+#endif
+          }
         } else {
           rc = GRN_INVALID_ARGUMENT;
         }

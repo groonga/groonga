@@ -45,6 +45,10 @@ typedef uint32_t grn_id;
 /* Deprecated since 9.0.2. Use bool directly. */
 typedef bool grn_bool;
 
+#ifdef GRN_HAVE_BFLOAT16
+typedef __bf16 grn_bfloat16;
+#endif
+
 #define GRN_ID_NIL (0x00)
 #define GRN_ID_MAX (0x3fffffff)
 
@@ -572,7 +576,8 @@ typedef enum {
   GRN_DB_LONG_TEXT,
   GRN_DB_TOKYO_GEO_POINT,
   GRN_DB_WGS84_GEO_POINT,
-  GRN_DB_FLOAT32
+  GRN_DB_FLOAT32,
+  GRN_DB_BFLOAT16,
 } grn_builtin_type;
 
 typedef enum {
@@ -1508,6 +1513,10 @@ GRN_API grn_rc
 grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, size_t len);
 GRN_API grn_rc
 grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
+#ifdef GRN_HAVE_BFLOAT16
+GRN_API grn_rc
+grn_text_bf16toa(grn_ctx *ctx, grn_obj *bulk, grn_bfloat16 value);
+#endif
 GRN_API grn_rc
 grn_text_f32toa(grn_ctx *ctx, grn_obj *bulk, float f);
 GRN_API grn_rc
@@ -1628,6 +1637,8 @@ grn_ctx_recv_handler_set(grn_ctx *,
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT64)
 #define GRN_UINT64_INIT(obj, flags)                                            \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_UINT64)
+#define GRN_BFLOAT16_INIT(obj, flags)                                          \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BFLOAT16)
 #define GRN_FLOAT32_INIT(obj, flags)                                           \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_FLOAT32)
 #define GRN_FLOAT_INIT(obj, flags)                                             \
@@ -1689,6 +1700,11 @@ grn_ctx_recv_handler_set(grn_ctx *,
   do {                                                                         \
     uint64_t _val = (uint64_t)(val);                                           \
     grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint64_t));     \
+  } while (0)
+#define GRN_BFLOAT16_SET(ctx, obj, val)                                        \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_bfloat16)); \
   } while (0)
 #define GRN_FLOAT32_SET(ctx, obj, val)                                         \
   do {                                                                         \
@@ -1805,6 +1821,15 @@ grn_ctx_recv_handler_set(grn_ctx *,
                         (offset) * sizeof(uint64_t),                           \
                         sizeof(uint64_t));                                     \
   } while (0)
+#define GRN_BFLOAT16_SET_AT(ctx, obj, offset, val)                             \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write_from((ctx),                                                 \
+                        (obj),                                                 \
+                        (char *)&_val,                                         \
+                        (offset) * sizeof(grn_bfloat16),                       \
+                        sizeof(grn_bfloat16));                                 \
+  } while (0)
 #define GRN_FLOAT32_SET_AT(ctx, obj, offset, val)                              \
   do {                                                                         \
     float _val = (float)(val);                                                 \
@@ -1843,20 +1868,21 @@ grn_ctx_recv_handler_set(grn_ctx *,
                         sizeof(grn_obj *));                                    \
   } while (0)
 
-#define GRN_BOOL_VALUE(obj)    (*((bool *)GRN_BULK_HEAD(obj)))
-#define GRN_INT8_VALUE(obj)    (*((int8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT8_VALUE(obj)   (*((uint8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT16_VALUE(obj)   (*((int16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT16_VALUE(obj)  (*((uint16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT32_VALUE(obj)   (*((int32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT32_VALUE(obj)  (*((uint32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT64_VALUE(obj)   (*((int64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT64_VALUE(obj)  (*((uint64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT32_VALUE(obj) (*((float *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT_VALUE(obj)   (*((double *)GRN_BULK_HEAD(obj)))
-#define GRN_TIME_VALUE         GRN_INT64_VALUE
-#define GRN_RECORD_VALUE(obj)  (*((grn_id *)GRN_BULK_HEAD(obj)))
-#define GRN_PTR_VALUE(obj)     (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_BOOL_VALUE(obj)     (*((bool *)GRN_BULK_HEAD(obj)))
+#define GRN_INT8_VALUE(obj)     (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj)    (*((uint8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj)    (*((int16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj)   (*((uint16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT32_VALUE(obj)    (*((int32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT32_VALUE(obj)   (*((uint32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT64_VALUE(obj)    (*((int64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT64_VALUE(obj)   (*((uint64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_BFLOAT16_VALUE(obj) (*((grn_bfloat16 *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT32_VALUE(obj)  (*((float *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT_VALUE(obj)    (*((double *)GRN_BULK_HEAD(obj)))
+#define GRN_TIME_VALUE          GRN_INT64_VALUE
+#define GRN_RECORD_VALUE(obj)   (*((grn_id *)GRN_BULK_HEAD(obj)))
+#define GRN_PTR_VALUE(obj)      (*((grn_obj **)GRN_BULK_HEAD(obj)))
 #define GRN_GEO_POINT_VALUE(obj, _latitude, _longitude)                        \
   do {                                                                         \
     grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);                 \
@@ -1880,6 +1906,8 @@ grn_ctx_recv_handler_set(grn_ctx *,
   (((int64_t *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT64_VALUE_AT(obj, offset)                                       \
   (((uint64_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_BFLOAT16_VALUE_AT(obj, offset)                                     \
+  (((grn_bfloat16 *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_FLOAT32_VALUE_AT(obj, offset)                                      \
   (((float *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_FLOAT_VALUE_AT(obj, offset) (((double *)GRN_BULK_HEAD(obj))[offset])
@@ -1933,6 +1961,11 @@ grn_ctx_recv_handler_set(grn_ctx *,
     uint64_t _val = (uint64_t)(val);                                           \
     grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint64_t));             \
   } while (0)
+#define GRN_BFLOAT16_PUT(ctx, obj, val)                                        \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_bfloat16));         \
+  } while (0)
 #define GRN_FLOAT32_PUT(ctx, obj, val)                                         \
   do {                                                                         \
     float _val = (float)(val);                                                 \
@@ -1974,6 +2007,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_POP(obj, value)      GRN_BULK_POP(obj, value, uint32_t, 0)
 #define GRN_INT64_POP(obj, value)       GRN_BULK_POP(obj, value, int64_t, 0)
 #define GRN_UINT64_POP(obj, value)      GRN_BULK_POP(obj, value, uint64_t, 0)
+#define GRN_BFLOAT16_POP(obj, value)    GRN_BULK_POP(obj, value, grn_bfloat16, 0.0)
 #define GRN_FLOAT32_POP(obj, value)     GRN_BULK_POP(obj, value, float, 0.0)
 #define GRN_FLOAT_POP(obj, value)       GRN_BULK_POP(obj, value, double, 0.0)
 #define GRN_TIME_POP                    GRN_INT64_POP
@@ -1990,6 +2024,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_VECTOR_SIZE(obj)     GRN_BULK_VECTOR_SIZE(obj, uint32_t)
 #define GRN_INT64_VECTOR_SIZE(obj)      GRN_BULK_VECTOR_SIZE(obj, int64_t)
 #define GRN_UINT64_VECTOR_SIZE(obj)     GRN_BULK_VECTOR_SIZE(obj, uint64_t)
+#define GRN_BFLOAT16_VECTOR_SIZE(obj)   GRN_BULK_VECTOR_SIZE(obj, grn_bfloat16)
 #define GRN_FLOAT32_VECTOR_SIZE(obj)    GRN_BULK_VECTOR_SIZE(obj, float)
 #define GRN_FLOAT_VECTOR_SIZE(obj)      GRN_BULK_VECTOR_SIZE(obj, double)
 #define GRN_TIME_VECTOR_SIZE            GRN_INT64_VECTOR_SIZE

@@ -110,6 +110,12 @@ grn_rc
 grn_arrow_stream_writer_add_column_uint64(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           uint64_t value);
+#ifdef GRN_HAVE_BFLOAT16
+grn_rc
+grn_arrow_stream_writer_add_column_bfloat16(grn_ctx *ctx,
+                                            grn_arrow_stream_writer *writer,
+                                            grn_bfloat16 value);
+#endif
 grn_rc
 grn_arrow_stream_writer_add_column_float32(grn_ctx *ctx,
                                            grn_arrow_stream_writer *writer,

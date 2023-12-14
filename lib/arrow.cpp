@@ -3282,6 +3282,27 @@ grn_arrow_stream_writer_add_column_uint64(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+#ifdef GRN_HAVE_BFLOAT16
+grn_rc
+grn_arrow_stream_writer_add_column_bfloat16(grn_ctx *ctx,
+                                            grn_arrow_stream_writer *writer,
+                                            grn_bfloat16 value)
+{
+  GRN_API_ENTER;
+#  ifdef GRN_WITH_APACHE_ARROW
+  // writer->writer->add_column_bfloat16(value);
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][bfloat16] "
+      "Apache Arrow doesn't support bfloat16 yet");
+#  else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][bfloat16] "
+      "Apache Arrow support isn't enabled");
+#  endif
+  GRN_API_RETURN(ctx->rc);
+}
+#endif
+
 grn_rc
 grn_arrow_stream_writer_add_column_float32(grn_ctx *ctx,
                                            grn_arrow_stream_writer *writer,

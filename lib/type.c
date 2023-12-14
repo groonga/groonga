@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,19 +23,21 @@
 grn_bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
-  return id >= GRN_DB_OBJECT && id <= GRN_DB_FLOAT32;
+  return id >= GRN_DB_OBJECT && id <= GRN_DB_BFLOAT16;
 }
 
 grn_bool
 grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
 {
-  return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32);
+  return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32) ||
+    (id == GRN_DB_BFLOAT16);
 }
 
 bool
 grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)
 {
   switch (id) {
+  case GRN_DB_BFLOAT16 :
   case GRN_DB_FLOAT32 :
   case GRN_DB_FLOAT :
     return true;
@@ -85,6 +87,12 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
     return sizeof(int64_t);
   case GRN_DB_UINT64 :
     return sizeof(uint64_t);
+  case GRN_DB_BFLOAT16 :
+#ifdef GRN_HAVE_BFLOAT16
+    return sizeof(grn_bfloat16);
+#else
+    return sizeof(uint16_t);
+#endif
   case GRN_DB_FLOAT32 :
     return sizeof(float);
   case GRN_DB_FLOAT :
