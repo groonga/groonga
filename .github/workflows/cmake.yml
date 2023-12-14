@@ -352,7 +352,9 @@ jobs:
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
       - name: "Test: command line"
         run: |
-          test/command_line/run-test.rb --groonga-install-prefix=/usr/local
+          test/command_line/run-test.rb \
+            --groonga-install-prefix=/usr/local \
+            -v
       - name: "Test: mruby"
         run: |
           USE_SYSTEM=yes test/mruby/run-test.rb
