@@ -36,6 +36,7 @@ export TZ
 
 CUTTER_ARGS=()
 CUTTER_WRAPPER=()
+CUTTER_ARGS+=("--notify=no")
 if test x"$CUTTER_DEBUG" = x"yes"; then
   CUTTER_WRAPPER+=("$build_top_dir/libtool" "--mode=execute" "gdb" "--args")
   CUTTER_ARGS+=("--keep-opening-modules")
