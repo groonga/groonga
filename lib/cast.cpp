@@ -1569,7 +1569,7 @@ namespace {
     case GRN_DB_FLOAT:
       return grn::bulk::set<NUMERIC>(ctx, caster->dest, value);
     default:
-      return grn::bulk::set<NUMERIC>(ctx,
+      return grn::bulk::set<int64_t>(ctx,
                                      caster->dest,
                                      static_cast<int64_t>(value) *
                                        GRN_TIME_USEC_PER_SEC);
