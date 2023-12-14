@@ -60,6 +60,9 @@ namespace grn {
     set(grn_ctx *ctx, grn_obj *bulk, NUMERIC value)
     {
       switch (bulk->header.domain) {
+      case GRN_DB_BOOL:
+        GRN_BOOL_SET(ctx, bulk, value != 0);
+        break;
       case GRN_DB_INT8:
         GRN_INT8_SET(ctx, bulk, value);
         break;

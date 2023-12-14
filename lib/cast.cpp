@@ -1561,13 +1561,6 @@ grn_caster_cast_bool(grn_ctx *ctx, grn_caster *caster)
 namespace {
   template <typename NUMERIC>
   grn_rc
-  num2bool(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
-  {
-    return grn::bulk::set<bool>(ctx, caster->dest, value != 0);
-  }
-
-  template <typename NUMERIC>
-  grn_rc
   num2time(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     switch (caster->src->header.domain) {
@@ -1633,7 +1626,9 @@ namespace {
   {
     switch (caster->dest->header.domain) {
     case GRN_DB_BOOL:
-      return num2bool(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+      return grn::bulk::set<bool>(ctx,
+                                  caster->dest,
+                                  grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT8:
       return grn::bulk::set<int8_t>(
         ctx,
