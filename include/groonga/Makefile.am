@@ -70,3 +70,6 @@ groonga_include_HEADERS =			\
 nodist_groonga_include_HEADERS =		\
 	build_option.h				\
 	version.h
+
+EXTRA_DIST =					\
+	build_option_cmake.h.in
