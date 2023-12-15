@@ -68,4 +68,5 @@ groonga_include_HEADERS =			\
 	wal.h
 
 nodist_groonga_include_HEADERS =		\
+	build_option.h				\
 	version.h
