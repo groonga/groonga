@@ -53,34 +53,34 @@ msgid "Fixed a wrong data created bug."
 msgstr "誤ったデータを作り出してしまう問題を修正しました。"
 
 msgid "In general, users can't do this explicitly because the command API doesn't accept `GRN_OBJ_{APPEND,PREPEND}`. This may be used internally when a dynamic numeric vector column is created and a temporary result set is created (OR is used)."
-msgstr ""
+msgstr "通常、ユーザーはこれを明示的に実行できません。数値の動的カラムや一時結果セットが作られたとき、あるいは使われているときに内部的に発生することがあります。"
 
 msgid "For example, the following query may create wrong data:"
-msgstr ""
+msgstr "例えば、以下のクエリーで誤ったデータを作り出すことがあります。"
 
 msgid "If this is happen, `NUMERIC_DYNAMIC_COLUMN` contains many garbage elements. It also causes too much memory consumption."
-msgstr ""
+msgstr "もしこの問題が起こった場合は、`NUMERIC_DYNAMIC_COLUMN`は多くのごみ要素を含んでいます。そして、それは多くのメモリー消費の原因にもなります。"
 
 msgid "Note that this is caused by an uninitialized variable on stack. So this may or may not be happen."
-msgstr ""
+msgstr "この問題はスタック上の未初期化の変数が原因です。そのため、発生するかもしれないししないかもしれないことに注意してください。"
 
 msgid "Fixed a bug that may fail to set valid normalizers/token_filters."
-msgstr ""
+msgstr "有効な normalizers/token_filters の設定が失敗することがある問題を修正しました。"
 
 msgid "[fuzzy_search] Fixed a crash bug when the following three conditions established."
-msgstr ""
+msgstr "[fuzzy_search] 以下の３つの条件が成立した時にクラッシュする問題を修正しました。"
 
 msgid "query has 2 or more multi-byte characters"
-msgstr ""
+msgstr "クエリーが2つまたはそれ以上のマルチバイト文字を持っている場合"
 
 msgid "pat has \"${ASCII}${ASCII}${MULTIBYTE}*\" characters"
-msgstr ""
+msgstr "\"${ASCII}${ASCII}${MULTIBYTE}*\" という形式の文字列である場合"
 
 msgid "WITH_TRANSPOSITION is enabled"
-msgstr ""
+msgstr "WITH_TRANSPOSITION が有効な場合"
 
 msgid "For example, a pat that has \"aaあ\" with query \"あああ\" pair has this problem as below."
-msgstr ""
+msgstr "例えば、以下のように、\"aaあ\"と\"あああ\"は問題を起こします。"
 
 msgid "Release 13.0.9 - 2023-10-29"
 msgstr "13.0.9リリース - 2023-10-29"
