@@ -45,6 +45,21 @@
       }
     },
     {
+      "name": "debug-default",
+      "displayName": "Optional features may not be enabled (debug build)",
+      "inherits": ["base", "debug"]
+    },
+    {
+      "name": "release-default",
+      "displayName": "Optional features may not be enabled (release build)",
+      "inherits": ["base", "release"]
+    },
+    {
+      "name": "release-with-debug-info-default",
+      "displayName": "Optional features may not be enabled (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info"]
+    },
+    {
       "name": "debug-maximum",
       "displayName": "Enable all features (debug build)",
       "inherits": ["base", "debug", "maximum"]

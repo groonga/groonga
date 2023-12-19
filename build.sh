@@ -34,7 +34,7 @@ rm -rf "${build_directory}"
 cmake_args=(
   -S "${source_directory}"
   -B "${build_directory}"
-  -G Ninja
+  --preset debug-default
   -DCMAKE_INSTALL_PREFIX="${install_prefix}"
 )
 cmake "${cmake_args[@]}" "$@"
