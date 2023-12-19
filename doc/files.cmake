@@ -1033,8 +1033,9 @@ set(GRN_DOC_SOURCES
     install/docker.rst
     install/mac_os_x.rst
     install/others.rst
+    install/server-use.md
     install/server-use.rst
-    install/ubuntu.rst
+    install/ubuntu.md
     install/windows.rst
     limitations.rst
     news.rst
