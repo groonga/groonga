@@ -21,6 +21,7 @@ SUBDIRS =					\
 	doc
 EXTRA_DIST =					\
 	CMakeLists.txt				\
+	CMakePresets.json			\
 	README.md				\
 	base_version				\
 	bindings				\
