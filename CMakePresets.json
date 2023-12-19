@@ -15,13 +15,58 @@
       }
     },
     {
+      "name": "debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "release-with-debug-info",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "maximum",
+      "hidden": true,
+      "cacheVariables": {
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "auto",
+        "GRN_WITH_MRUBY": "ON"
+      }
+    },
+    {
+      "name": "debug-maximum",
+      "displayName": "Enable all features (debug build)",
+      "inherits": ["base", "debug", "maximum"]
+    },
+    {
+      "name": "release-maximum",
+      "displayName": "Enable all features (release build)",
+      "inherits": ["base", "release", "maximum"]
+    },
+    {
+      "name": "release-with-debug-info-maximum",
+      "displayName": "Enable all features (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info", "maximum"]
+    },
+    {
       "name": "doc",
       "displayName": "For documentation",
       "inherits": ["base"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "GRN_WITH_APACHE_ARROW": "ON",
-        "GRN_WITH_BLOSC": "ON",
+        "GRN_WITH_BLOSC": "auto",
         "GRN_WITH_DOC": "ON",
         "GRN_WITH_MRUBY": "ON"
       }
@@ -33,7 +78,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "GRN_WITH_APACHE_ARROW": "ON",
-        "GRN_WITH_BLOSC": "ON",
+        "GRN_WITH_BLOSC": "auto",
         "GRN_WITH_MEMORY_DEBUG": "ON",
         "GRN_WITH_MRUBY": "ON"
       }
