@@ -25,6 +25,7 @@ EXTRA_DIST =					\
 	README.md				\
 	base_version				\
 	bindings				\
+	build.sh				\
 	bundled_lz4_version			\
 	bundled_mecab_naist_jdic_version	\
 	bundled_mecab_version			\
