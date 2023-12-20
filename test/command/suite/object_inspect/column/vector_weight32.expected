@@ -49,6 +49,7 @@ object_inspect Memos.tags
       "compress": null,
       "weight": true,
       "weight_float32": true,
+      "weight_bfloat16": false,
       "compress_filters": [
 
       ]

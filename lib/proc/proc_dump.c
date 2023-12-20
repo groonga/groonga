@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -479,7 +479,7 @@ dump_record_column_vector(grn_ctx *ctx, grn_dumper *dumper, grn_id id,
   grn_column_flags column_flags = grn_column_get_flags(ctx, column);
   if (column_flags & GRN_OBJ_WITH_WEIGHT) {
     format.flags = GRN_OBJ_FORMAT_WITH_WEIGHT;
-    if (column_flags & GRN_OBJ_WEIGHT_FLOAT32) {
+    if (column_flags & (GRN_OBJ_WEIGHT_FLOAT32 | GRN_OBJ_WEIGHT_BFLOAT16)) {
       format.flags |= GRN_OBJ_FORMAT_WEIGHT_FLOAT32;
     }
     format_argument = &format;

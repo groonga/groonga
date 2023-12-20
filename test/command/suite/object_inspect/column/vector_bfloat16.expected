@@ -1,0 +1,59 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags
+[[0,0.0,0.0],true]
+object_inspect Memos.tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 258,
+    "name": "tags",
+    "table": {
+      "id": 257,
+      "name": "Memos",
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "key": null,
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Memos.tags",
+    "type": {
+      "name": "vector",
+      "raw": {
+        "id": 65,
+        "name": "column:var_size"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 256,
+        "name": "Tags",
+        "type": {
+          "id": 49,
+          "name": "table:pat_key"
+        },
+        "size": 4
+      },
+      "compress": null,
+      "weight": true,
+      "weight_float32": false,
+      "weight_bfloat16": true,
+      "compress_filters": [
+
+      ]
+    },
+    "disk_usage": 0
+  }
+]

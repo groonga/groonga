@@ -403,6 +403,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_WITH_WEIGHT            (0x01 << 8)
 #define GRN_OBJ_WITH_POSITION          (0x01 << 9)
 #define GRN_OBJ_RING_BUFFER            (0x01 << 10)
+#define GRN_OBJ_WEIGHT_BFLOAT16        (0x01 << 11)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f << 8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00 << 8)

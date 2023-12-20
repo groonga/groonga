@@ -24,7 +24,8 @@ extern "C" {
 #endif
 
 typedef uint32_t grn_vector_pack_flags;
-#define GRN_VECTOR_PACK_WEIGHT_FLOAT32 (1 << 1)
+#define GRN_VECTOR_PACK_WEIGHT_FLOAT32  (1 << 1)
+#define GRN_VECTOR_PACK_WEIGHT_BFLOAT16 (1 << 2)
 
 grn_rc
 grn_vector_delimit(grn_ctx *ctx, grn_obj *vector, float weight, grn_id domain);

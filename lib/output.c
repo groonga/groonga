@@ -1446,7 +1446,7 @@ grn_output_table_column_value(grn_ctx *ctx,
           grn_obj_reinit(ctx, buf, DB_OBJ(obj)->range, GRN_OBJ_VECTOR);
           if (flags & GRN_OBJ_WITH_WEIGHT) {
             format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
-            if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
+            if (flags & (GRN_OBJ_WEIGHT_FLOAT32 | GRN_OBJ_WEIGHT_BFLOAT16)) {
               format.flags |= GRN_OBJ_FORMAT_WEIGHT_FLOAT32;
             }
             format_argument = &format;

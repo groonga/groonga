@@ -30,6 +30,16 @@ grn_bfloat16_to_float32(grn_bfloat16 value)
   return value_float;
 }
 
+grn_bfloat16
+grn_float32_to_bfloat16(float value)
+{
+  grn_bfloat16 value_bfloat16 = 0;
+  memcpy(&value_bfloat16,
+         ((char *)&value) + sizeof(float) - sizeof(grn_bfloat16),
+         sizeof(grn_bfloat16));
+  return value_bfloat16;
+}
+
 bool
 grn_bfloat16_is_zero(grn_bfloat16 value)
 {

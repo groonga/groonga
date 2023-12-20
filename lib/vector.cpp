@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2018  Brazil
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,8 @@
 #include "grn_float.h"
 #include "grn_io.h"
 #include "grn_vector.h"
+
+#include "groonga/bulk.hpp"
 
 #include <cstring>
 
@@ -223,7 +225,15 @@ grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
 {
   size_t element_size = grn_type_id_size(ctx, uvector->header.domain);
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
+#ifdef GRN_HAVE_BFLOAT16
+    if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      element_size += sizeof(grn_bfloat16);
+    } else {
+      element_size += sizeof(float);
+    }
+#else
     element_size += sizeof(float);
+#endif
   }
   return static_cast<uint32_t>(element_size);
 }
@@ -455,6 +465,14 @@ grn_vector_pack(grn_ctx *ctx,
       grn_section *section = &(vector->u.v.sections[i + offset]);
       if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
         GRN_FLOAT32_PUT(ctx, footer, section->weight);
+      } else if (flags & GRN_VECTOR_PACK_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+        GRN_BFLOAT16_PUT(ctx,
+                         footer,
+                         grn::numeric::to_bfloat16(section->weight));
+#else
+        GRN_FLOAT32_PUT(ctx, footer, section->weight);
+#endif
       } else {
         grn_text_benc(ctx, footer, static_cast<unsigned int>(section->weight));
       }
@@ -520,6 +538,16 @@ grn_vector_unpack(grn_ctx *ctx,
         if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
           grn_memcpy(&(section->weight), p, sizeof(float));
           p += sizeof(float);
+        } else if (flags & GRN_VECTOR_PACK_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+          grn_bfloat16 weight_bfloat16;
+          grn_memcpy(&weight_bfloat16, p, sizeof(grn_bfloat16));
+          p += sizeof(grn_bfloat16);
+          section->weight = grn_bfloat16_to_float32(weight_bfloat16);
+#else
+          grn_memcpy(&(section->weight), p, sizeof(float));
+          p += sizeof(float);
+#endif
         } else {
           uint32_t weight;
           GRN_B_DEC(weight, p);
@@ -723,7 +751,15 @@ grn_uvector_add_element_record(grn_ctx *ctx,
   }
   GRN_RECORD_PUT(ctx, uvector, id);
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
-    GRN_FLOAT32_PUT(ctx, uvector, weight);
+    if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+      GRN_BFLOAT16_PUT(ctx, uvector, grn::numeric::to_bfloat16(weight));
+#else
+      GRN_FLOAT32_PUT(ctx, uvector, weight);
+#endif
+    } else {
+      GRN_FLOAT32_PUT(ctx, uvector, weight);
+    }
   }
 exit:
   GRN_API_RETURN(ctx->rc);
@@ -768,7 +804,15 @@ grn_uvector_get_element_record(grn_ctx *ctx,
     size_t element_value_size = sizeof(grn_id);
     size_t element_size = element_value_size;
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      element_size += sizeof(float);
+      if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+        element_size += sizeof(grn_bfloat16);
+#else
+        element_size += sizeof(float);
+#endif
+      } else {
+        element_size += sizeof(float);
+      }
     }
     const char *elements_start = GRN_BULK_HEAD(uvector);
     const char *elements_end = GRN_BULK_CURR(uvector);
@@ -784,8 +828,20 @@ grn_uvector_get_element_record(grn_ctx *ctx,
     id = *((grn_id *)(elements_start + (element_size * offset)));
     if (weight) {
       if (grn_obj_is_weight_uvector(ctx, uvector)) {
-        *weight = *((float *)(elements_start + (element_size * offset) +
-                              element_value_size));
+        if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+          grn_bfloat16 weight_bfloat16 =
+            *reinterpret_cast<const grn_bfloat16 *>(
+              elements_start + (element_size * offset) + element_value_size);
+          *weight = grn_bfloat16_to_float32(weight_bfloat16);
+#else
+          *weight = *reinterpret_cast<const float *>(
+            elements_start + (element_size * offset) + element_value_size);
+#endif
+        } else {
+          *weight = *reinterpret_cast<const float *>(
+            elements_start + (element_size * offset) + element_value_size);
+        }
       } else {
         *weight = 0.0;
       }
@@ -855,7 +911,15 @@ grn_uvector_join(grn_ctx *ctx,
   uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
   uint32_t element_content_size = element_size;
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
-    element_content_size -= static_cast<uint32_t>(sizeof(float));
+    if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+      element_content_size -= static_cast<uint32_t>(sizeof(grn_bfloat16));
+#else
+      element_content_size -= static_cast<uint32_t>(sizeof(float));
+#endif
+    } else {
+      element_content_size -= static_cast<uint32_t>(sizeof(float));
+    }
   }
   uint32_t n_elements = grn_uvector_size_internal(ctx, uvector);
   uint32_t i;

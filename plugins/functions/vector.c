@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -210,6 +210,9 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
 
   if (target->header.flags & GRN_OBJ_WITH_WEIGHT) {
     slice->header.flags |= GRN_OBJ_WITH_WEIGHT;
+    if (target->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      slice->header.flags |= GRN_OBJ_WEIGHT_BFLOAT16;
+    }
   }
 
   if (length < 0) {

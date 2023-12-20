@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1211,6 +1211,9 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   grn_ctx_output_cstr(ctx, "weight_float32");
   grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
+
+  grn_ctx_output_cstr(ctx, "weight_bfloat16");
+  grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WEIGHT_BFLOAT16) != 0);
 
   grn_ctx_output_cstr(ctx, "position");
   grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WITH_POSITION) != 0);

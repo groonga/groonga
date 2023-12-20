@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -572,6 +572,8 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (flags & GRN_OBJ_WITH_WEIGHT) {
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buf, " weight:float32");
+    } else if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buf, " weight:bfloat16");
     } else {
       GRN_TEXT_PUTS(ctx, buf, " weight:uint32");
     }
@@ -725,6 +727,13 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       GRN_TEXT_PUTS(ctx, buf, "|");
     }
     GRN_TEXT_PUTS(ctx, buf, "WEIGHT_FLOAT32");
+    have_flags = true;
+  }
+  if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+    if (have_flags) {
+      GRN_TEXT_PUTS(ctx, buf, "|");
+    }
+    GRN_TEXT_PUTS(ctx, buf, "WEIGHT_BFLOAT16");
     have_flags = true;
   }
   if (!have_flags) {

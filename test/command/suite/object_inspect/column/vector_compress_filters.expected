@@ -47,6 +47,7 @@ object_inspect Memos.embedding
       "compress": "zstd",
       "weight": false,
       "weight_float32": false,
+      "weight_bfloat16": false,
       "compress_filters": [
         "shuffle",
         "byte_delta",

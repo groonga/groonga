@@ -1,0 +1,18 @@
+#@require-feature bfloat16
+
+plugin_register functions/vector
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags
+
+load --table Memos
+[
+{"_key": "Groonga", "tags": {"Groonga": 100.5}},
+{"_key": "Rroonga", "tags": {"Groonga": 10.5, "Ruby": 90.5}},
+{"_key": "Nothing"}
+]
+
+select Memos \
+  --output_columns 'tags, vector_join(tags, "\n")'

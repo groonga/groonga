@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -74,6 +74,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_FLOAT32");
     }
+    if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_BFLOAT16");
+    }
     break;
   case GRN_OBJ_COLUMN_INDEX:
     GRN_TEXT_PUTS(ctx, buffer, "COLUMN_INDEX");
@@ -97,6 +100,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     }
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_FLOAT32");
+    }
+    if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_BFLOAT16");
     }
     break;
   }

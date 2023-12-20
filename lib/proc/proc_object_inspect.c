@@ -483,6 +483,8 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
         grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
         grn_ctx_output_cstr(ctx, "weight_float32");
         grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
+        grn_ctx_output_cstr(ctx, "weight_bfloat16");
+        grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WEIGHT_BFLOAT16) != 0);
       }
       grn_ctx_output_cstr(ctx, "compress_filters");
       command_object_inspect_column_data_value_compress_filters(ctx, column);

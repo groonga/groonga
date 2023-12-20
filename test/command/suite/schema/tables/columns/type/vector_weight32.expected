@@ -328,6 +328,7 @@ schema
             "section": false,
             "weight": true,
             "weight_float32": true,
+            "weight_bfloat16": false,
             "position": false,
             "sources": [
 
