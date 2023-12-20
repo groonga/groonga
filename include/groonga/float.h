@@ -17,13 +17,15 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef GRN_HAVE_BFLOAT16
-float grn_bfloat16_to_float32(grn_bfloat16 value);
-grn_bfloat16 grn_float32_to_bfloat16(float value);
+float
+grn_bfloat16_to_float32(grn_bfloat16 value);
+grn_bfloat16
+grn_float32_to_bfloat16(float value);
 #endif
 
 #ifdef __cplusplus
