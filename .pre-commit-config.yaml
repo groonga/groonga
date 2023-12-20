@@ -22,6 +22,7 @@ repos:
           (
           ?include/groonga/bulk\.hpp|
           ?include/groonga/command_arguments\.hpp|
+          ?include/groonga/float\.h|
           ?include/groonga/groonga\.h|
           ?include/groonga/highlighter\.h|
           ?include/groonga/obj\.h|

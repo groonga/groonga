@@ -17,17 +17,14 @@
 
 #pragma once
 
-#include "grn.h"
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 #ifdef GRN_HAVE_BFLOAT16
-bool grn_bfloat16_is_zero(grn_bfloat16 value);
+float grn_bfloat16_to_float32(grn_bfloat16 value);
+grn_bfloat16 grn_float32_to_bfloat16(float value);
 #endif
-bool grn_float32_is_zero(float value);
-bool grn_float_is_zero(double value);
 
 #ifdef __cplusplus
 }

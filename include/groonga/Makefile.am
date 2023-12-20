@@ -18,6 +18,7 @@ groonga_include_HEADERS =			\
 	error.h					\
 	expr.h					\
 	file_reader.h				\
+	float.h					\
 	hash.h					\
 	highlighter.h				\
 	geo.h					\
