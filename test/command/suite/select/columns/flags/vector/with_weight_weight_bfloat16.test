@@ -1,3 +1,5 @@
+#@require-feature bfloat16
+
 table_create Memos TABLE_HASH_KEY ShortText
 
 column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 ShortText

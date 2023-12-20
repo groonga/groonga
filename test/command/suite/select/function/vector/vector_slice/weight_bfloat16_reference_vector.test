@@ -1,3 +1,5 @@
+#@require-feature bfloat16
+
 plugin_register functions/vector
 
 table_create Tags TABLE_PAT_KEY ShortText

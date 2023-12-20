@@ -1,3 +1,5 @@
+#@require-feature bfloat16
+
 table_create Tags TABLE_HASH_KEY ShortText
 table_create CopyBFloat16Value TABLE_HASH_KEY ShortText
 column_create CopyBFloat16Value source_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags

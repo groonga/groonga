@@ -1,3 +1,5 @@
+#@require-feature bfloat16
+
 table_create Tags TABLE_PAT_KEY ShortText
 
 table_create Memos TABLE_HASH_KEY ShortText
