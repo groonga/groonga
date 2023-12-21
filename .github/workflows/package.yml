@@ -126,7 +126,7 @@ jobs:
           rm -rf groonga-${version}
 
       # Artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: source
           path: |
@@ -259,7 +259,7 @@ jobs:
             devscripts \
             qemu-user-static \
             ruby
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
           name: source
       - name: Update version
@@ -299,7 +299,7 @@ jobs:
           YUM_TARGETS: ${{ matrix.target }}
 
       # Artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: packages-${{ matrix.id }}
           path: packages/${{ matrix.task-namespace }}/repositories/
