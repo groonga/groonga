@@ -463,7 +463,7 @@ jobs:
           cp -a *.pkg.tar.* ../../
 
       # Artifact
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.msystem }}
           path: "*.pkg.tar.*"
@@ -705,7 +705,7 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER}.zip" `
             "${Env:INSTALL_FOLDER}.zip"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
@@ -762,7 +762,7 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip" `
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
           path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
