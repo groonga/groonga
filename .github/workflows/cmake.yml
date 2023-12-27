@@ -389,8 +389,6 @@ jobs:
         include:
           - msystem: MINGW64
             package-prefix: mingw-w64-x86_64
-          - msystem: MINGW32
-            package-prefix: mingw-w64-i686
           - msystem: UCRT64
             package-prefix: mingw-w64-ucrt-x86_64
     steps:
@@ -498,30 +496,6 @@ jobs:
         shell: msys2 {0}
         run: |
           ruby test/command_line/run-test.rb
-      - name: Remove tests not for 32bit environment
-        if: |
-          matrix.msystem == 'MINGW32'
-        shell: msys2 {0}
-        run: |
-          rm test/command/suite/load/ifexists/time_float.test
-          rm test/command/suite/ruby/eval/convert/string_to_time/over_int32.test
-          rm test/command/suite/select/filter/geo_in_circle/no_index/north_east.test
-          rm test/command/suite/tokenizers/document_vector_bm25/alphabet.test
-          rm test/command/suite/tokenizers/document_vector_bm25/normalize_false.test
-          rm test/command/suite/tokenizers/document_vector_bm25/reindex.test
-          rm test/command/suite/tokenizers/document_vector_tf_idf/alphabet.test
-          rm test/command/suite/tokenizers/document_vector_tf_idf/reindex.test
-          rm test/command/suite/tokenizers/document_vector_tf_idf/token_column.test
-          rm test/command/suite/tokenizers/document_vector_tf_idf/token_column_different_lexicon.test
-          # I don't know why but Blosc is crashed with MinGW32...
-          rm -r test/command/suite/select/output/lz4/uvector/filter/
-          rm -r test/command/suite/select/output/lz4/vector/filter/
-          rm -r test/command/suite/select/output/lz4/weight_uvector/filter/
-          rm -r test/command/suite/select/output/lz4/weight_vector/filter/
-          rm -r test/command/suite/select/output/zstd/uvector/filter/
-          rm -r test/command/suite/select/output/zstd/vector/filter/
-          rm -r test/command/suite/select/output/zstd/weight_uvector/filter/
-          rm -r test/command/suite/select/output/zstd/weight_vector/filter/
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
