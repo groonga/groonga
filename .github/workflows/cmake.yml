@@ -170,8 +170,9 @@ jobs:
           sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
-            red-arrow \
             rroonga
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            red-arrow -v $(pkg-config --modversion arrow)
       - uses: actions/cache@v3
         with:
           path: |
