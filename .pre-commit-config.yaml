@@ -1,4 +1,4 @@
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -71,6 +71,7 @@ repos:
           ?lib/snip\.c|
           ?lib/store\.c|
           ?lib/str\.c|
+          ?lib/table\.c|
           ?lib/table_selector\.c|
           ?lib/tokenizer\.c|
           ?lib/trace_log\.cpp|
