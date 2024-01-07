@@ -23,6 +23,7 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
       # target
     elseif(
       "${SOURCE}" STREQUAL "install/server-use.rst"
+      OR "${SOURCE}" STREQUAL "install/server-use.md"
       OR "${SOURCE}" STREQUAL "reference/commands/compress_filter.rst"
       OR "${SOURCE}" STREQUAL "reference/scoring_note.rst")
       # not target
