@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -518,6 +518,9 @@ grn_table_get_duplicated_keys(grn_ctx *ctx,
                               grn_obj **duplicated_keys);
 GRN_API bool
 grn_table_have_duplicated_keys(grn_ctx *ctx, grn_obj *table);
+
+GRN_API bool
+grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table);
 
 typedef struct _grn_table_selector grn_table_selector;
 

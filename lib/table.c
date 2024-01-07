@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -749,4 +749,16 @@ grn_table_all_columns(grn_ctx *ctx, grn_obj *table)
   CRITICAL_SECTION_LEAVE(ctx->impl->columns_cache_lock);
 
   return columns;
+}
+
+bool
+grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table)
+{
+  if (!GRN_OBJ_TABLEP(table)) {
+    return false;
+  }
+
+  grn_obj *tokenizer = NULL;
+  grn_table_get_info(ctx, table, NULL, NULL, &tokenizer, NULL, NULL);
+  return tokenizer != NULL;
 }
