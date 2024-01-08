@@ -20,14 +20,18 @@ class TestInValues < QueryOptimizerTestCase
       "tag == 'run' || tag == 'crash' || tag == 'shutdown'"
     assert_equal(<<-DUMP, dump_plan(code))
 [0]
-  op:         <call>
-  logical_op: <or>
-  args[0]:    <#<proc:function in_values arguments:[]>>
-  args[1]:    <#<column:var_size Events.tag range:ShortText type:scalar compress:none>>
-  args[2]:    <"run">
-  args[3]:    <"crash">
-  args[4]:    <"shutdown">
-  expr:       <0..5>
+  op:              <call>
+  logical_op:      <or>
+  weight_factor:   <1.000000>
+  sections:        <[]>
+  weights:         <[]>
+  start_positions: <[]>
+  args[0]:         <#<proc:function in_values arguments:[]>>
+  args[1]:         <#<column:var_size Events.tag range:ShortText type:scalar compress:none>>
+  args[2]:         <"run">
+  args[3]:         <"crash">
+  args[4]:         <"shutdown">
+  expr:            <0..5>
     DUMP
   end
 
@@ -36,20 +40,28 @@ class TestInValues < QueryOptimizerTestCase
       "tag != 'error' && (tag == 'run' || tag == 'crash' || tag == 'shutdown')"
     assert_equal(<<-DUMP, dump_plan(code))
 [0]
-  op:         <not_equal>
-  logical_op: <or>
-  index:      <[]>
-  query:      <"error">
-  expr:       <0..2>
+  op:              <not_equal>
+  logical_op:      <or>
+  weight_factor:   <1.000000>
+  sections:        <[]>
+  weights:         <[]>
+  start_positions: <[]>
+  index:           <[]>
+  query:           <"error">
+  expr:            <0..2>
 [1]
-  op:         <call>
-  logical_op: <and>
-  args[0]:    <#<proc:function in_values arguments:[]>>
-  args[1]:    <#<column:var_size Events.tag range:ShortText type:scalar compress:none>>
-  args[2]:    <"run">
-  args[3]:    <"crash">
-  args[4]:    <"shutdown">
-  expr:       <3..8>
+  op:              <call>
+  logical_op:      <and>
+  weight_factor:   <1.000000>
+  sections:        <[]>
+  weights:         <[]>
+  start_positions: <[]>
+  args[0]:         <#<proc:function in_values arguments:[]>>
+  args[1]:         <#<column:var_size Events.tag range:ShortText type:scalar compress:none>>
+  args[2]:         <"run">
+  args[3]:         <"crash">
+  args[4]:         <"shutdown">
+  expr:            <3..8>
     DUMP
   end
 end

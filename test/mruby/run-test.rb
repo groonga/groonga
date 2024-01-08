@@ -18,7 +18,11 @@ unless ENV["USE_SYSTEM"]
   ENV["BASE_DIR"] ||= build_base_dir_path.to_s
 
   Dir.chdir(build_top_dir_path.to_s) do
-    system("make -j8 > /dev/null") or exit(false)
+    if File.exist?("build.ninja")
+      system("ninja") or exit(false)
+    else
+      system("make -j8 > /dev/null") or exit(false)
+    end
   end
 
   rroonga_built_revision_path = build_base_dir_path + "rroonga.built"

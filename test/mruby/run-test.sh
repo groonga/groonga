@@ -16,11 +16,11 @@ build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 
 case $(uname) in
   Linux|*BSD)
-    LD_LIBRARY_PATH="$build_top_dir/lib/.libs:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$build_top_dir/lib/.libs:$build_top_dir/lib:$LD_LIBRARY_PATH"
     export LD_LIBRARY_PATH
     ;;
   Darwin)
-    DYLD_LIBRARY_PATH="$build_top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
+    DYLD_LIBRARY_PATH="$build_top_dir/lib/.libs:$build_top_dir/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH
     ;;
   *)
