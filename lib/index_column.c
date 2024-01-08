@@ -1024,7 +1024,7 @@ grn_index_column_diff_process_token(grn_ctx *ctx,
       continue;
     }
 
-    if (with_position) {
+    if (with_position && data->have_tokenizer) {
       grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
       data->current.posting.pos = grn_token_get_position(ctx, token);
     }
@@ -1080,6 +1080,9 @@ grn_index_column_diff_compute(grn_ctx *ctx,
                                      NULL,
                                      NULL);
             data->current.posting.sid = (uint32_t)(j + 1);
+            if (!data->have_tokenizer) {
+              data->current.posting.pos = j;
+            }
             grn_index_column_diff_process_token(ctx,
                                                 data,
                                                 element,

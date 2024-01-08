@@ -988,6 +988,11 @@ select_index_fix_column_prefix(grn_ctx *ctx,
   } else {
     grn_index_cursor_set_scale(ctx, index_cursor, options->weight_float);
   }
+  if (options->start_position) {
+    grn_index_cursor_set_start_position(ctx,
+                                        index_cursor,
+                                        *(options->start_position));
+  }
   select_index_report(ctx, "[prefix]", index);
   grn_result_set_add_index_cursor(ctx,
                                   (grn_hash *)result_set,

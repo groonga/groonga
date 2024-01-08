@@ -2527,6 +2527,7 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx,
   uint32_t offset = 1;
   grn_index_datum index_datum;
   unsigned int n_index_data = 0;
+  bool use_start_position = false;
   bool may_use_get_member = false;
 
   ec = &(expr->codes[i]);
@@ -2553,6 +2554,11 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx,
       *sid = index_datum.section;
       if (grn_obj_is_vector_column(ctx, ec->value) && *sid == 0) {
         may_use_get_member = true;
+        grn_obj *lexicon = grn_ctx_at(ctx, (*index)->header.domain);
+        if (!grn_table_have_tokenizer(ctx, lexicon)) {
+          use_start_position = true;
+        }
+        grn_obj_unref(ctx, lexicon);
       }
     }
     break;
@@ -2560,6 +2566,22 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx,
     *index = ec->value;
     grn_obj_refer(ctx, *index);
     may_use_get_member = true;
+    {
+      grn_obj source_ids;
+      GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+      grn_obj_get_info(ctx, *index, GRN_INFO_SOURCE, &source_ids);
+      if (GRN_UINT32_VECTOR_SIZE(&source_ids) == 1) {
+        grn_obj *source = grn_ctx_at(ctx, GRN_UINT32_VALUE_AT(&source_ids, 0));
+        if (grn_obj_is_vector_column(ctx, source)) {
+          grn_obj *lexicon = grn_ctx_at(ctx, (*index)->header.domain);
+          if (!grn_table_have_tokenizer(ctx, lexicon)) {
+            use_start_position = true;
+          }
+          grn_obj_unref(ctx, lexicon);
+        }
+        grn_obj_unref(ctx, source);
+      }
+    }
     break;
   default:
     break;
@@ -2572,9 +2594,19 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx,
          ec[1].value->header.domain == GRN_DB_UINT32) &&
         ec[2].op == GRN_OP_GET_MEMBER) {
       if (ec[1].value->header.domain == GRN_DB_INT32) {
-        *sid = GRN_INT32_VALUE(ec[1].value) + 1;
+        int32_t member = GRN_INT32_VALUE(ec[1].value);
+        if (use_start_position) {
+          *start_position = member;
+        } else {
+          *sid = member + 1;
+        }
       } else {
-        *sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+        uint32_t member = GRN_UINT32_VALUE(ec[1].value);
+        if (use_start_position) {
+          *start_position = (int32_t)member;
+        } else {
+          *sid = member + 1;
+        }
       }
       offset += 2;
     }

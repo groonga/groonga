@@ -280,7 +280,10 @@ module Groonga
           end
           weight, offset = codes[i].weight
           i += offset
-          put_search_index(index_info.index, index_info.section_id, weight)
+          put_search_index(index_info.index,
+                           index_info.section_id,
+                           index_info.start_position,
+                           weight)
        end
       when Procedure
         unless value.scorer?
@@ -305,6 +308,7 @@ module Groonga
           i += offset
           put_search_index(index_info.index,
                            index_info.section_id,
+                           index_info.start_position,
                            weight,
                            scorer,
                            expression,
@@ -314,6 +318,22 @@ module Groonga
         raise ErrorMessage, "invalid match target: <#{value.name}>"
       end
       i + 1
+    end
+
+    def term_search_vector_column_index?(index)
+      source_ids = index.source_ids
+      return false unless source_ids.size == 1
+      context = Context.instance
+      context.with_temporary_open_space do
+        source = context[source_ids[0]]
+        begin
+          return false unless source.vector?
+          return false if index.lexicon.have_tokenizer?
+        ensure
+          source.unref
+        end
+      end
+      true
     end
 
     def match_resolve_index_expression_find_index(expression, codes, i, n_codes)
@@ -329,7 +349,7 @@ module Groonga
           if accessor.have_next? and index_info.index != accessor.object
             accessor.refer
             index_info.index.unref
-            index_info = IndexInfo.new(accessor, index_info.section_id)
+            index_info = IndexInfo.new(accessor, index_info.section_id, nil)
           end
         end
       when FixedSizeColumn, VariableSizeColumn
@@ -337,17 +357,23 @@ module Groonga
       when IndexColumn
         index = value
         section_id = 0
+        start_position = nil
         rest_n_codes = n_codes - i
         if rest_n_codes >= 2 and
           codes[i + 1].value.is_a?(Bulk) and
           (codes[i + 1].value.domain_id == ID::UINT32 or
            codes[i + 1].value.domain_id == ID::INT32) and
           codes[i + 2].op == Operator::GET_MEMBER
-          section_id = codes[i + 1].value.value + 1
+          member = codes[i + 1].value.value
+          if term_search_vector_column_index?(index)
+            start_position = member
+          else
+            section_id = member + 1
+          end
           offset += 2
         end
         index.refer
-        index_info = IndexInfo.new(index, section_id)
+        index_info = IndexInfo.new(index, section_id, start_position)
       end
 
       [index_info, offset]
@@ -360,13 +386,14 @@ module Groonga
       return if index_info.nil?
 
       section_id = index_info.section_id
+      start_position = index_info.start_position
       weight = expr_code.weight
       if accessor.next
         accessor.refer
         index_info.index.unref
-        put_search_index(accessor, section_id, weight)
+        put_search_index(accessor, section_id, start_position, weight)
       else
-        put_search_index(index_info.index, section_id, weight)
+        put_search_index(index_info.index, section_id, start_position, weight)
       end
     end
 
@@ -374,18 +401,24 @@ module Groonga
       column = expr_code.value
       index_info = column.find_index(op)
       return if index_info.nil?
-      put_search_index(index_info.index, index_info.section_id, expr_code.weight)
+      put_search_index(index_info.index,
+                       index_info.section_id,
+                       index_info.start_position,
+                       expr_code.weight)
     end
 
     def match_resolve_index_index_column(index)
       index.refer
-      put_search_index(index, 0, 1)
+      put_search_index(index, 0, nil, 1)
     end
 
     def match_resolve_index_indexable(indexable)
       index_info = indexable.find_index(op)
       return if index_info.nil?
-      put_search_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index,
+                       index_info.section_id,
+                       index_info.start_position,
+                       1)
     end
 
     def match_resolve_index_accessor(accessor)
@@ -395,9 +428,15 @@ module Groonga
       if accessor.next
         accessor.refer
         index_info.index.unref
-        put_search_index(accessor, index_info.section_id, 1)
+        put_search_index(accessor,
+                         index_info.section_id,
+                         index_info.start_position,
+                         1)
       else
-        put_search_index(index_info.index, index_info.section_id, 1)
+        put_search_index(index_info.index,
+                         index_info.section_id,
+                         index_info.start_position,
+                         1)
       end
     end
 
@@ -415,20 +454,27 @@ module Groonga
     def call_relational_resolve_index_indexable(indexable, selector_op)
       index_info = indexable.find_index(selector_op)
       return if index_info.nil?
-      put_search_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index,
+                       index_info.section_id,
+                       index_info.start_position,
+                       1)
     end
 
     def call_relational_resolve_index_accessor(accessor, selector_op)
       self.flags |= ScanInfo::Flags::ACCESSOR
       index_info = accessor.find_index(selector_op)
       return if index_info.nil?
-      put_search_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index,
+                       index_info.section_id,
+                       index_info.start_position,
+                       1)
     end
 
-    def put_search_index(index, section_id, weight, *args)
+    def put_search_index(index, section_id, start_position, weight, *args)
+      start_position ||= @start_position || -1
       search_index = ScanInfoSearchIndex.new(index,
                                              section_id,
-                                             @start_position || -1,
+                                             start_position,
                                              weight + @weight,
                                              *args)
       @search_indexes << search_index

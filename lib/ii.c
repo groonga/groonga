@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -9440,7 +9440,6 @@ grn_vector2updspecs(grn_ctx *ctx,
                     grn_tokenize_mode mode,
                     grn_obj *posting)
 {
-  int j;
   grn_id tid;
   grn_section *v;
   grn_token_cursor *token_cursor;
@@ -9448,8 +9447,11 @@ grn_vector2updspecs(grn_ctx *ctx,
   grn_hash *h = (grn_hash *)out;
   grn_obj *lexicon = ii->lexicon;
   if (in->u.v.body) {
+    bool have_tokenizer = grn_table_have_tokenizer(ctx, lexicon);
     const char *head = GRN_BULK_HEAD(in->u.v.body);
-    for (j = in->u.v.n_sections, v = in->u.v.sections; j; j--, v++) {
+    int32_t i;
+    int32_t n = (int32_t)(in->u.v.n_sections);
+    for (i = 0, v = in->u.v.sections; i < n; i++, v++) {
       unsigned int token_flags = 0;
       if (v->length && (token_cursor = grn_token_cursor_open(ctx,
                                                              lexicon,
@@ -9489,7 +9491,7 @@ grn_vector2updspecs(grn_ctx *ctx,
             }
             if (grn_ii_updspec_add(ctx,
                                    *u,
-                                   token_cursor->pos,
+                                   have_tokenizer ? token_cursor->pos : i,
                                    (int32_t)(v->weight))) {
               GRN_DEFINE_NAME(ii);
               MERR("[ii][update][spec] failed to add to update spec: "
@@ -18608,7 +18610,7 @@ grn_ii_builder_start_value(grn_ctx *ctx,
   } else if (sid != builder->sid) {
     builder->sid = sid;
     builder->pos = 1;
-  } else {
+  } else if (builder->have_tokenizer) {
     /* Insert a space between values. */
     builder->pos++;
   }
