@@ -55,7 +55,6 @@ struct _grn_scan_info {
   int32_t max_nargs;
 };
 
-
 #ifdef __cplusplus
 }
 #endif
