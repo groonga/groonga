@@ -43,6 +43,7 @@ repos:
           ?lib/grn_arrow\.h|
           ?lib/grn_ctx_impl\.h|
           ?lib/grn_error\.h|
+          ?lib/grn_expr\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
           ?lib/grn_load\.h|
