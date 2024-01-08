@@ -3960,33 +3960,46 @@ grn_inspect_scan_info_list(grn_ctx *ctx,
     grn_text_printf(ctx, buffer, "[%d]\n", i);
     grn_text_printf(ctx,
                     buffer,
-                    "  op:         <%s>\n",
+                    "  op:              <%s>\n",
                     grn_operator_to_string(si->op));
     grn_text_printf(ctx,
                     buffer,
-                    "  logical_op: <%s>\n",
+                    "  logical_op:      <%s>\n",
                     grn_operator_to_string(si->logical_op));
+    grn_text_printf(ctx,
+                    buffer,
+                    "  weight_factor:   <%f>\n",
+                    si->weight_factor);
+    grn_text_printf(ctx, buffer, "  sections:        <");
+    grn_inspect(ctx, buffer, &(si->sections));
+    grn_text_printf(ctx, buffer, ">\n");
+    grn_text_printf(ctx, buffer, "  weights:         <");
+    grn_inspect(ctx, buffer, &(si->weights));
+    grn_text_printf(ctx, buffer, ">\n");
+    grn_text_printf(ctx, buffer, "  start_positions: <");
+    grn_inspect(ctx, buffer, &(si->start_positions));
+    grn_text_printf(ctx, buffer, ">\n");
 
     if (si->op == GRN_OP_CALL) {
       int i;
       for (i = 0; i < si->nargs; i++) {
-        grn_text_printf(ctx, buffer, "  args[%d]:    <", i);
+        grn_text_printf(ctx, buffer, "  args[%d]:         <", i);
         grn_inspect(ctx, buffer, si->args[i]);
         GRN_TEXT_PUTS(ctx, buffer, ">\n");
       }
     } else {
-      GRN_TEXT_PUTS(ctx, buffer, "  index:      <");
+      GRN_TEXT_PUTS(ctx, buffer, "  index:           <");
       grn_inspect(ctx, buffer, &(si->index));
       GRN_TEXT_PUTS(ctx, buffer, ">\n");
 
-      GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
+      GRN_TEXT_PUTS(ctx, buffer, "  query:           <");
       grn_inspect(ctx, buffer, si->query);
       GRN_TEXT_PUTS(ctx, buffer, ">\n");
     }
 
     grn_text_printf(ctx,
                     buffer,
-                    "  expr:       <%d..%d>\n",
+                    "  expr:            <%d..%d>\n",
                     si->start,
                     si->end);
   }
