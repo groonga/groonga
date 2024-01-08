@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2015  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -310,6 +310,7 @@ typedef struct {
     grn_bool with_position;
     uint32_t n_elements;
   } index;
+  bool have_tokenizer;
   size_t n_posting_elements;
   grn_obj *source_table;
   grn_obj source_columns;
@@ -1099,7 +1100,11 @@ grn_index_column_diff_compute(grn_ctx *ctx,
               continue;
             }
             data->current.token_id = element;
-            data->current.posting.pos = 0;
+            if (data->have_tokenizer) {
+              data->current.posting.pos = 0;
+            } else {
+              data->current.posting.pos = j;
+            }
             grn_index_column_diff_process_token_id(ctx, data);
             if (ctx->rc != GRN_SUCCESS) {
               break;
@@ -1118,7 +1123,11 @@ grn_index_column_diff_compute(grn_ctx *ctx,
             if (data->current.token_id == GRN_ID_NIL) {
               continue;
             }
-            data->current.posting.pos = 0;
+            if (data->have_tokenizer) {
+              data->current.posting.pos = 0;
+            } else {
+              data->current.posting.pos = j;
+            }
             grn_index_column_diff_process_token_id(ctx, data);
             if (ctx->rc != GRN_SUCCESS) {
               break;
@@ -1237,6 +1246,7 @@ grn_index_column_diff(grn_ctx *ctx,
   if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
+  data.have_tokenizer = grn_table_have_tokenizer(ctx, data.lexicon);
 
   data.diff = grn_table_create(ctx,
                                NULL, 0,

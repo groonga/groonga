@@ -13,5 +13,7 @@ table_create Numbers TABLE_PAT_KEY Int32
 [[0,0.0,0.0],true]
 column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION Entries numbers
 [[0,0.0,0.0],true]
+index_column_diff Numbers entries_numbers
+[[0,0.0,0.0],[]]
 select Entries --filter 'numbers[1] > 19'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","Int32"]],[2,[100,200]]]]]
