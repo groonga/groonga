@@ -3754,6 +3754,7 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     options.scorer = NULL;
     options.query_options = NULL;
     options.min_interval = NULL;
+    options.start_position = NULL;
 
     grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
   }

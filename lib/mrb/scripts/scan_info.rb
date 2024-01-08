@@ -38,13 +38,11 @@ module Groonga
       data.search_indexes.each do |search_index|
         put_index(search_index.index_column,
                   search_index.section_id,
+                  search_index.start_position,
                   search_index.weight,
                   search_index.scorer,
                   search_index.scorer_args_expr,
                   search_index.scorer_args_expr_offset || 0)
-      end
-      if data.start_position
-        self.start_position = data.start_position
       end
     end
   end

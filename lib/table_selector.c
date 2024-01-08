@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -715,9 +715,9 @@ select_index_equal(grn_ctx *ctx,
         grn_obj *index_cursor =
           grn_index_cursor_open(ctx, NULL, index, GRN_ID_NIL, GRN_ID_MAX, 0);
         if (index_cursor) {
+          grn_search_optarg *options = &(table_selector->data.search_options);
           rc = grn_index_cursor_set_term_id(ctx, index_cursor, tid);
           if (rc == GRN_SUCCESS) {
-            grn_search_optarg *options = &(table_selector->data.search_options);
             if (options->weight_vector_float) {
               rc = grn_index_cursor_set_scales(ctx,
                                                index_cursor,
@@ -729,11 +729,12 @@ select_index_equal(grn_ctx *ctx,
                                               options->weight_float);
             }
           }
-          if (si->position.specified) {
+          if (options->start_position) {
             if (rc == GRN_SUCCESS) {
-              rc = grn_index_cursor_set_start_position(ctx,
-                                                       index_cursor,
-                                                       si->position.start);
+              rc =
+                grn_index_cursor_set_start_position(ctx,
+                                                    index_cursor,
+                                                    *(options->start_position));
             }
           }
           if (rc == GRN_SUCCESS) {
@@ -856,9 +857,9 @@ select_index_not_equal(grn_ctx *ctx,
           }
           grn_posting *posting;
           while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            if (si->position.specified) {
+            if (options->start_position) {
               while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
-                if (posting->pos == si->position.start) {
+                if (posting->pos == (uint32_t)(*(options->start_position))) {
                   break;
                 }
               }
@@ -1511,10 +1512,10 @@ select_index_range_column(grn_ctx *ctx,
         } else {
           grn_index_cursor_set_scale(ctx, index_cursor, options->weight_float);
         }
-        if (si->position.specified) {
+        if (options->start_position) {
           grn_index_cursor_set_start_position(ctx,
                                               index_cursor,
-                                              si->position.start);
+                                              *(options->start_position));
         }
         rc = grn_result_set_add_index_cursor(ctx,
                                              (grn_hash *)result_set,
@@ -1741,6 +1742,12 @@ select_index(grn_ctx *ctx, grn_table_selector *table_selector)
       } else {
         options->match_info.min = GRN_ID_NIL;
       }
+      int32_t start_position = GRN_INT32_VALUE_AT(&(si->start_positions), i);
+      if (start_position >= 0) {
+        options->start_position = &start_position;
+      } else {
+        options->start_position = NULL;
+      }
       if (n_indexes == 1 && grn_obj_is_accessor(ctx, index)) {
         rc = grn_accessor_execute(ctx,
                                   index,
@@ -1752,7 +1759,9 @@ select_index(grn_ctx *ctx, grn_table_selector *table_selector)
       } else {
         if (i < n_indexes - 1) {
           if (section > 0 && index == GRN_PTR_VALUE_AT(&(si->index), i + 1) &&
-              !options->scorer && !GRN_PTR_VALUE_AT(&(si->scorers), i + 1)) {
+              !options->scorer && !GRN_PTR_VALUE_AT(&(si->scorers), i + 1) &&
+              start_position < 0 &&
+              GRN_INT32_VALUE_AT(&(si->start_positions), i + 1) < 0) {
             continue;
           }
         }

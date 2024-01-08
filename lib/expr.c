@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1891,6 +1891,7 @@ grn_scan_info_free(grn_ctx *ctx, scan_info *si)
   GRN_OBJ_FIN(ctx, &(si->scorers));
   GRN_OBJ_FIN(ctx, &(si->scorer_args_exprs));
   GRN_OBJ_FIN(ctx, &(si->scorer_args_expr_offsets));
+  GRN_OBJ_FIN(ctx, &(si->start_positions));
   if (si->args != si->initial_args) {
     GRN_FREE(si->args);
   }
@@ -1924,8 +1925,7 @@ grn_scan_info_free(grn_ctx *ctx, scan_info *si)
       GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);                \
       GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);      \
       GRN_UINT32_INIT(&(si)->scorer_args_expr_offsets, GRN_OBJ_VECTOR);        \
-      (si)->position.specified = GRN_FALSE;                                    \
-      (si)->position.start = 0;                                                \
+      GRN_INT32_INIT(&(si)->start_positions, GRN_OBJ_VECTOR);                  \
     }                                                                          \
   } while (0)
 
@@ -2203,6 +2203,7 @@ scan_info_put_index(grn_ctx *ctx,
                     scan_info *si,
                     grn_obj *index,
                     uint32_t sid,
+                    int32_t start_position,
                     float weight,
                     grn_obj *scorer,
                     grn_obj *scorer_args_expr,
@@ -2220,7 +2221,10 @@ scan_info_put_index(grn_ctx *ctx,
       }
       grn_obj *existing_index = GRN_PTR_VALUE_AT(&(si->index), i);
       uint32_t existing_sid = GRN_UINT32_VALUE_AT(&(si->sections), i);
-      if (existing_index == index && existing_sid == sid) {
+      int32_t existing_start_position =
+        GRN_INT32_VALUE_AT(&(si->start_positions), i);
+      if (existing_index == index && existing_sid == sid &&
+          existing_start_position == start_position) {
         break;
       }
     }
@@ -2234,6 +2238,7 @@ scan_info_put_index(grn_ctx *ctx,
     GRN_UINT32_PUT(ctx,
                    &(si->scorer_args_expr_offsets),
                    scorer_args_expr_offset);
+    GRN_INT32_PUT(ctx, &(si->start_positions), start_position);
   } else {
     GRN_PTR_SET_AT(ctx, &(si->index), i, index);
     GRN_UINT32_SET_AT(ctx, &(si->sections), i, sid);
@@ -2244,6 +2249,7 @@ scan_info_put_index(grn_ctx *ctx,
                       &(si->scorer_args_expr_offsets),
                       i,
                       scorer_args_expr_offset);
+    GRN_INT32_SET_AT(ctx, &(si->start_positions), i, start_position);
   }
 }
 
@@ -2300,6 +2306,7 @@ grn_scan_info_put_index(grn_ctx *ctx,
                         scan_info *si,
                         grn_obj *index,
                         uint32_t sid,
+                        int32_t start_position,
                         float weight,
                         grn_obj *scorer,
                         grn_obj *scorer_args_expr,
@@ -2309,6 +2316,7 @@ grn_scan_info_put_index(grn_ctx *ctx,
                       si,
                       index,
                       sid,
+                      start_position,
                       weight,
                       scorer,
                       scorer_args_expr,
@@ -2506,32 +2514,14 @@ grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
   return si->args[i];
 }
 
-int
-grn_scan_info_get_start_position(scan_info *si)
-{
-  return si->position.start;
-}
-
-void
-grn_scan_info_set_start_position(scan_info *si, uint32_t start)
-{
-  si->position.specified = GRN_TRUE;
-  si->position.start = start;
-}
-
-void
-grn_scan_info_reset_position(scan_info *si)
-{
-  si->position.specified = GRN_FALSE;
-}
-
 static uint32_t
 scan_info_build_match_expr_codes_find_index(grn_ctx *ctx,
                                             scan_info *si,
                                             grn_expr *expr,
                                             uint32_t i,
                                             grn_obj **index,
-                                            int *sid)
+                                            uint32_t *sid,
+                                            int32_t *start_position)
 {
   grn_expr_code *ec;
   uint32_t offset = 1;
@@ -2599,7 +2589,8 @@ scan_info_build_match_expr_codes(
 {
   grn_expr_code *ec;
   grn_obj *index = NULL;
-  int sid = 0;
+  uint32_t sid = 0;
+  int32_t start_position = -1;
   uint32_t offset = 0;
 
   ec = &(expr->codes[i]);
@@ -2617,7 +2608,8 @@ scan_info_build_match_expr_codes(
                                                          expr,
                                                          i,
                                                          &index,
-                                                         &sid);
+                                                         &sid,
+                                                         &start_position);
     i += offset - 1;
     if (index) {
       if (ec->value->header.type == GRN_ACCESSOR) {
@@ -2627,6 +2619,7 @@ scan_info_build_match_expr_codes(
                           si,
                           index,
                           sid,
+                          start_position,
                           get_weight(ctx, &(expr->codes[i]), &offset) + weight,
                           NULL,
                           NULL,
@@ -2652,7 +2645,8 @@ scan_info_build_match_expr_codes(
                                                          expr,
                                                          i,
                                                          &index,
-                                                         &sid);
+                                                         &sid,
+                                                         &start_position);
     i += offset;
     if (index) {
       uint32_t scorer_args_expr_offset = 0;
@@ -2666,6 +2660,7 @@ scan_info_build_match_expr_codes(
                           si,
                           index,
                           sid,
+                          start_position,
                           get_weight(ctx, &(expr->codes[i]), &offset) + weight,
                           ec->value,
                           (grn_obj *)expr,
@@ -2831,7 +2826,10 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 }
 
 static void
-scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
+scan_info_build_match(grn_ctx *ctx,
+                      scan_info *si,
+                      int32_t start_position,
+                      float weight)
 {
   grn_obj **p, **pe;
 
@@ -2853,7 +2851,15 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p), weight);
     } else if ((*p)->header.type == GRN_COLUMN_INDEX) {
       grn_obj *index = grn_ctx_at(ctx, grn_obj_id(ctx, (*p)));
-      scan_info_put_index(ctx, si, index, 0, 1 + weight, NULL, NULL, 0);
+      scan_info_put_index(ctx,
+                          si,
+                          index,
+                          0,
+                          start_position,
+                          1 + weight,
+                          NULL,
+                          NULL,
+                          0);
     } else if (grn_obj_is_proc(ctx, *p)) {
       break;
     } else if (GRN_DB_OBJP(*p)) {
@@ -2866,6 +2872,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
                             si,
                             index_datum.index,
                             index_datum.section,
+                            start_position,
                             1 + weight,
                             NULL,
                             NULL,
@@ -2891,6 +2898,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
                             si,
                             index,
                             index_datum.section,
+                            start_position,
                             1 + weight,
                             NULL,
                             NULL,
@@ -3267,6 +3275,7 @@ grn_scan_info_build_full(
     return NULL;
   }
 
+  int32_t start_position = -1;
   next_code_op = (grn_operator)-1;
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr];
        c < ce;
@@ -3307,7 +3316,8 @@ grn_scan_info_build_full(
       sis[i++] = si;
       {
         float weight = grn_weight_bulk_get(ctx, c->value);
-        scan_info_build_match(ctx, si, weight);
+        scan_info_build_match(ctx, si, start_position, weight);
+        start_position = -1;
       }
       if (ctx->rc != GRN_SUCCESS) {
         int j;
@@ -3457,6 +3467,7 @@ grn_scan_info_build_full(
                                     si,
                                     index_datum.index,
                                     index_datum.section,
+                                    start_position,
                                     1,
                                     NULL,
                                     NULL,
@@ -3476,6 +3487,7 @@ grn_scan_info_build_full(
                                     si,
                                     index_datum.index,
                                     index_datum.section,
+                                    start_position,
                                     1,
                                     NULL,
                                     NULL,
@@ -3487,6 +3499,7 @@ grn_scan_info_build_full(
           }
         }
         si = NULL;
+        start_position = -1;
       } else {
         stat = SCAN_COL2;
       }
@@ -3506,12 +3519,12 @@ grn_scan_info_build_full(
       break;
     case GRN_OP_GET_MEMBER:
       {
-        grn_obj *start_position;
+        grn_obj *start_position_object;
         grn_obj buffer;
-        start_position = si->args[--si->nargs];
+        start_position_object = si->args[--si->nargs];
         GRN_INT32_INIT(&buffer, 0);
-        grn_obj_cast(ctx, start_position, &buffer, GRN_FALSE);
-        grn_scan_info_set_start_position(si, GRN_INT32_VALUE(&buffer));
+        grn_obj_cast(ctx, start_position_object, &buffer, false);
+        start_position = GRN_INT32_VALUE(&buffer);
         GRN_OBJ_FIN(ctx, &buffer);
       }
       stat = SCAN_COL1;
@@ -3703,7 +3716,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   grn_scan_info_push_arg(ctx, si, constant->value);
   {
     float weight = grn_weight_bulk_get(ctx, operator->value);
-    scan_info_build_match(ctx, si, weight);
+    scan_info_build_match(ctx, si, -1, weight);
     if (ctx->rc != GRN_SUCCESS) {
       SI_FREE(sis[0]);
       GRN_FREE(sis);
@@ -3840,7 +3853,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     }
     {
       float weight = grn_weight_bulk_get(ctx, operator->value);
-      scan_info_build_match(ctx, si, weight);
+      scan_info_build_match(ctx, si, -1, weight);
     }
 
     if (nth_sis > 0) {

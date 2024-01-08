@@ -4605,6 +4605,7 @@ selector_in_values(grn_ctx *ctx,
     search_options.scorer = NULL;
     search_options.query_options = NULL;
     search_options.min_interval = NULL;
+    search_options.start_position = NULL;
     if (i == n_values - 1) {
       ctx->flags = original_flags;
     }

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -97,6 +97,7 @@ void grn_scan_info_put_index(grn_ctx *ctx,
                              scan_info *si,
                              grn_obj *index,
                              uint32_t sid,
+                             int32_t start_position,
                              float weight,
                              grn_obj *scorer,
                              grn_obj *scorer_args_expr,
@@ -134,9 +135,6 @@ int grn_scan_info_get_quorum_threshold(scan_info *si);
 void grn_scan_info_set_quorum_threshold(scan_info *si, int quorum_threshold);
 grn_bool grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
-int grn_scan_info_get_start_position(scan_info *si);
-void grn_scan_info_set_start_position(scan_info *si, uint32_t start);
-void grn_scan_info_reset_position(scan_info *si);
 
 float grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset);
 grn_rc grn_expr_code_inspect_indented(grn_ctx *ctx,

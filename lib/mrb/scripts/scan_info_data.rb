@@ -428,6 +428,7 @@ module Groonga
     def put_search_index(index, section_id, weight, *args)
       search_index = ScanInfoSearchIndex.new(index,
                                              section_id,
+                                             @start_position || -1,
                                              weight + @weight,
                                              *args)
       @search_indexes << search_index

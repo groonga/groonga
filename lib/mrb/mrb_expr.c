@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2018  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -106,6 +106,7 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   scan_info *si;
   mrb_value mrb_index;
   mrb_int sid;
+  mrb_int start_position;
   mrb_float weight;
   mrb_value mrb_scorer;
   mrb_value mrb_scorer_args_expr;
@@ -114,8 +115,8 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   grn_obj *scorer = NULL;
   grn_obj *scorer_args_expr = NULL;
 
-  mrb_get_args(mrb, "oifooi",
-               &mrb_index, &sid, &weight,
+  mrb_get_args(mrb, "oiifooi",
+               &mrb_index, &sid, &start_position, &weight,
                &mrb_scorer,
                &mrb_scorer_args_expr,
                &scorer_args_expr_offset);
@@ -127,7 +128,8 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   if (!mrb_nil_p(mrb_scorer_args_expr)) {
     scorer_args_expr = DATA_PTR(mrb_scorer_args_expr);
   }
-  grn_scan_info_put_index(ctx, si, index, (uint32_t)sid, (float)weight,
+  grn_scan_info_put_index(ctx, si, index, (uint32_t)sid, start_position,
+                          (float)weight,
                           scorer,
                           scorer_args_expr,
                           (uint32_t)scorer_args_expr_offset);
@@ -445,39 +447,6 @@ mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
   success = grn_scan_info_push_arg(ctx, si, DATA_PTR(mrb_arg));
 
   return mrb_bool_value(success);
-}
-
-static mrb_value
-mrb_grn_scan_info_get_start_position(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  int start_position;
-
-  si = DATA_PTR(self);
-  start_position = grn_scan_info_get_start_position(si);
-  return mrb_int_value(mrb, start_position);
-}
-
-static mrb_value
-mrb_grn_scan_info_set_start_position(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  mrb_int start_position;
-
-  mrb_get_args(mrb, "i", &start_position);
-  si = DATA_PTR(self);
-  grn_scan_info_set_start_position(si, (uint32_t)start_position);
-  return self;
-}
-
-static mrb_value
-mrb_grn_scan_info_reset_position(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-
-  si = DATA_PTR(self);
-  grn_scan_info_reset_position(si);
-  return self;
 }
 
 static mrb_value
@@ -1020,7 +989,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index",
-                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(6));
+                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(7));
   mrb_define_method(mrb, klass, "op",
                     mrb_grn_scan_info_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op=",
@@ -1073,12 +1042,6 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",
                     mrb_grn_scan_info_push_arg, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "start_position",
-                    mrb_grn_scan_info_get_start_position, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "start_position=",
-                    mrb_grn_scan_info_set_start_position, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "reset_position",
-                    mrb_grn_scan_info_reset_position, MRB_ARGS_NONE());
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);
