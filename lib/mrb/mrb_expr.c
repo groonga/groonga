@@ -19,37 +19,31 @@
 #include "../grn_ctx_impl.h"
 
 #ifdef GRN_WITH_MRUBY
-#include <mruby.h>
-#include <mruby/class.h>
-#include <mruby/variable.h>
-#include <mruby/data.h>
-#include <mruby/string.h>
-#include <mruby/array.h>
-#include <mruby/hash.h>
+#  include <mruby.h>
+#  include <mruby/class.h>
+#  include <mruby/variable.h>
+#  include <mruby/data.h>
+#  include <mruby/string.h>
+#  include <mruby/array.h>
+#  include <mruby/hash.h>
 
-#include "../grn_expr.h"
-#include "../grn_proc.h"
-#include "../grn_util.h"
-#include "../grn_mrb.h"
-#include "mrb_accessor.h"
-#include "mrb_ctx.h"
-#include "mrb_expr.h"
-#include "mrb_operator.h"
-#include "mrb_converter.h"
-#include "mrb_options.h"
+#  include "../grn_expr.h"
+#  include "../grn_proc.h"
+#  include "../grn_util.h"
+#  include "../grn_mrb.h"
+#  include "mrb_accessor.h"
+#  include "mrb_ctx.h"
+#  include "mrb_expr.h"
+#  include "mrb_operator.h"
+#  include "mrb_converter.h"
+#  include "mrb_options.h"
 
-static struct mrb_data_type mrb_grn_scan_info_type = {
-  "Groonga::ScanInfo",
-  NULL
-};
-static struct mrb_data_type mrb_grn_expr_code_type = {
-  "Groonga::ExpressionCode",
-  NULL
-};
-static struct mrb_data_type mrb_grn_expression_type = {
-  "Groonga::Expression",
-  NULL
-};
+static struct mrb_data_type mrb_grn_scan_info_type = {"Groonga::ScanInfo",
+                                                      NULL};
+static struct mrb_data_type mrb_grn_expr_code_type = {"Groonga::ExpressionCode",
+                                                      NULL};
+static struct mrb_data_type mrb_grn_expression_type = {"Groonga::Expression",
+                                                       NULL};
 
 static mrb_value
 mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
@@ -115,8 +109,12 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   grn_obj *scorer = NULL;
   grn_obj *scorer_args_expr = NULL;
 
-  mrb_get_args(mrb, "oiifooi",
-               &mrb_index, &sid, &start_position, &weight,
+  mrb_get_args(mrb,
+               "oiifooi",
+               &mrb_index,
+               &sid,
+               &start_position,
+               &weight,
                &mrb_scorer,
                &mrb_scorer_args_expr,
                &scorer_args_expr_offset);
@@ -128,7 +126,11 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   if (!mrb_nil_p(mrb_scorer_args_expr)) {
     scorer_args_expr = DATA_PTR(mrb_scorer_args_expr);
   }
-  grn_scan_info_put_index(ctx, si, index, (uint32_t)sid, start_position,
+  grn_scan_info_put_index(ctx,
+                          si,
+                          index,
+                          (uint32_t)sid,
+                          start_position,
                           (float)weight,
                           scorer,
                           scorer_args_expr,
@@ -472,49 +474,43 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
     weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
 
     mrb_str_cat_lit(mrb, inspected, " weight=");
-    mrb_str_concat(mrb, inspected,
-                   mrb_funcall(mrb,
-                               mrb_float_value(mrb, weight),
-                               "inspect",
-                               0));
+    mrb_str_concat(
+      mrb,
+      inspected,
+      mrb_funcall(mrb, mrb_float_value(mrb, weight), "inspect", 0));
     mrb_str_cat_lit(mrb, inspected, ", offset=");
-    mrb_str_concat(mrb, inspected,
-                   mrb_funcall(mrb,
-                               mrb_int_value(mrb, offset),
-                               "inspect",
-                               0));
+    mrb_str_concat(mrb,
+                   inspected,
+                   mrb_funcall(mrb, mrb_int_value(mrb, offset), "inspect", 0));
   }
 
   mrb_str_cat_lit(mrb, inspected, ", n_args=");
-  mrb_str_concat(mrb, inspected,
-                 mrb_funcall(mrb,
-                             mrb_int_value(mrb, code->nargs),
-                             "inspect",
-                             0));
+  mrb_str_concat(
+    mrb,
+    inspected,
+    mrb_funcall(mrb, mrb_int_value(mrb, code->nargs), "inspect", 0));
 
   mrb_str_cat_lit(mrb, inspected, ", modify=");
-  mrb_str_concat(mrb, inspected,
-                 mrb_funcall(mrb,
-                             mrb_int_value(mrb, code->modify),
-                             "inspect",
-                             0));
+  mrb_str_concat(
+    mrb,
+    inspected,
+    mrb_funcall(mrb, mrb_int_value(mrb, code->modify), "inspect", 0));
 
   mrb_str_cat_lit(mrb, inspected, ", op=");
-  mrb_str_concat(mrb, inspected,
-                 mrb_funcall(mrb,
-                             grn_mrb_value_from_operator(mrb, code->op),
-                             "inspect",
-                             0));
+  mrb_str_concat(
+    mrb,
+    inspected,
+    mrb_funcall(mrb, grn_mrb_value_from_operator(mrb, code->op), "inspect", 0));
 
   mrb_str_cat_lit(mrb, inspected, ", flags=");
-  mrb_str_concat(mrb, inspected,
-                 mrb_funcall(mrb,
-                             mrb_int_value(mrb, code->flags),
-                             "inspect",
-                             0));
+  mrb_str_concat(
+    mrb,
+    inspected,
+    mrb_funcall(mrb, mrb_int_value(mrb, code->flags), "inspect", 0));
 
   mrb_str_cat_lit(mrb, inspected, ", value=");
-  mrb_str_concat(mrb, inspected,
+  mrb_str_concat(mrb,
+                 inspected,
                  mrb_funcall(mrb,
                              grn_mrb_value_from_grn_obj(mrb, code->value),
                              "inspect",
@@ -668,7 +664,7 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
 
   expr = DATA_PTR(self);
   switch (mrb_type(mrb_key)) {
-  case MRB_TT_SYMBOL :
+  case MRB_TT_SYMBOL:
     {
       const char *name;
       mrb_int name_length;
@@ -677,17 +673,17 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
       var = grn_expr_get_var(ctx, expr, name, (unsigned int)name_length);
     }
     break;
-  case MRB_TT_STRING :
-    var = grn_expr_get_var(ctx, expr,
-                           RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
+  case MRB_TT_STRING:
+    var =
+      grn_expr_get_var(ctx, expr, RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
     break;
-  case MRB_TT_INTEGER :
-    var = grn_expr_get_var_by_offset(ctx,
-                                     expr,
-                                     (unsigned int)mrb_integer(mrb_key));
+  case MRB_TT_INTEGER:
+    var =
+      grn_expr_get_var_by_offset(ctx, expr, (unsigned int)mrb_integer(mrb_key));
     break;
-  default :
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+  default:
+    mrb_raisef(mrb,
+               E_ARGUMENT_ERROR,
                "key must be Symbol, String or Fixnum: %S",
                mrb_key);
     break;
@@ -745,8 +741,10 @@ mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
       grn_mrb_ctx_check(mrb);
     }
     GRN_TEXT_INIT(grn_object, 0);
-    GRN_TEXT_SET(ctx, grn_object,
-                 RSTRING_PTR(mrb_object), RSTRING_LEN(mrb_object));
+    GRN_TEXT_SET(ctx,
+                 grn_object,
+                 RSTRING_PTR(mrb_object),
+                 RSTRING_LEN(mrb_object));
     break;
   case MRB_TT_TRUE:
     grn_object = grn_expr_alloc_const(ctx, expr);
@@ -794,8 +792,14 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
     }
   }
 
-  grn_expr_parse(ctx, expr, query, (unsigned int)query_size, default_column,
-                 default_mode, default_operator, flags);
+  grn_expr_parse(ctx,
+                 expr,
+                 query,
+                 (unsigned int)query_size,
+                 default_column,
+                 default_mode,
+                 default_operator,
+                 flags);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
@@ -842,7 +846,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
   op = grn_mrb_value_to_operator(mrb, mrb_op);
   n_args = (int)mrb_n_args;
   switch (mrb_type(mrb_constant)) {
-  case MRB_TT_FALSE :
+  case MRB_TT_FALSE:
     if (mrb_nil_p(mrb_constant)) {
       grn_obj constant;
       GRN_VOID_INIT(&constant);
@@ -856,7 +860,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       GRN_OBJ_FIN(ctx, &constant);
     }
     break;
-  case MRB_TT_TRUE :
+  case MRB_TT_TRUE:
     {
       grn_obj constant;
       GRN_BOOL_INIT(&constant, 0);
@@ -872,41 +876,36 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
                                 op,
                                 n_args);
     break;
-  case MRB_TT_SYMBOL :
+  case MRB_TT_SYMBOL:
     {
       const char *value;
       mrb_int mrb_value_length;
 
-      value = mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &mrb_value_length);
+      value =
+        mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &mrb_value_length);
       unsigned int value_length = (unsigned int)mrb_value_length;
       grn_expr_append_const_str(ctx, expr, value, value_length, op, n_args);
     }
     break;
-  case MRB_TT_FLOAT :
+  case MRB_TT_FLOAT:
     {
       mrb_float value = mrb_float(mrb_constant);
       if (sizeof(mrb_float) == sizeof(float)) {
-        grn_expr_append_const_float32(ctx,
-                                      expr,
-                                      (float)value,
-                                      op,
-                                      n_args);
+        grn_expr_append_const_float32(ctx, expr, (float)value, op, n_args);
       } else {
-        grn_expr_append_const_float(ctx,
-                                    expr,
-                                    value,
-                                    op,
-                                    n_args);
+        grn_expr_append_const_float(ctx, expr, value, op, n_args);
       }
     }
     break;
-  case MRB_TT_STRING :
-    grn_expr_append_const_str(ctx, expr,
+  case MRB_TT_STRING:
+    grn_expr_append_const_str(ctx,
+                              expr,
                               RSTRING_PTR(mrb_constant),
                               RSTRING_LEN(mrb_constant),
-                              op, n_args);
+                              op,
+                              n_args);
     break;
-  default :
+  default:
     {
       grn_mrb_data *data = &(ctx->impl->mrb);
       struct RClass *klass;
@@ -920,8 +919,10 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         mrb_sec = mrb_funcall(mrb, mrb_constant, "to_i", 0);
         mrb_usec = mrb_funcall(mrb, mrb_constant, "usec", 0);
         GRN_TIME_INIT(&constant, 0);
-        GRN_TIME_SET(ctx, &constant,
-                     GRN_TIME_PACK(mrb_integer(mrb_sec), mrb_integer(mrb_usec)));
+        GRN_TIME_SET(
+          ctx,
+          &constant,
+          GRN_TIME_PACK(mrb_integer(mrb_sec), mrb_integer(mrb_usec)));
         grn_expr_append_const(ctx, expr, &constant, op, n_args);
         GRN_OBJ_FIN(ctx, &constant);
       } else if (klass == mrb_class_get_under(mrb, data->module, "Record")) {
@@ -944,7 +945,8 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         grn_obj *vector = DATA_PTR(mrb_constant);
         grn_expr_append_const(ctx, expr, vector, op, n_args);
       } else {
-        mrb_raisef(mrb, E_ARGUMENT_ERROR,
+        mrb_raisef(mrb,
+                   E_ARGUMENT_ERROR,
                    "unsupported constant to append to expression: %S",
                    mrb_constant);
       }
@@ -986,98 +988,196 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "ScanInfo", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
-  mrb_define_method(mrb, klass, "initialize",
-                    mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "put_index",
-                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(7));
-  mrb_define_method(mrb, klass, "op",
-                    mrb_grn_scan_info_get_op, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "op=",
-                    mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "weight_factor",
-                    mrb_grn_scan_info_get_weight_factor, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "weight_factor=",
-                    mrb_grn_scan_info_set_weight_factor, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "end=",
-                    mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "query=",
-                    mrb_grn_scan_info_set_query, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "flags",
-                    mrb_grn_scan_info_get_flags, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "flags=",
-                    mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "logical_op",
-                    mrb_grn_scan_info_get_logical_op, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "logical_op=",
-                    mrb_grn_scan_info_set_logical_op, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "max_interval",
-                    mrb_grn_scan_info_get_max_interval, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "max_interval=",
-                    mrb_grn_scan_info_set_max_interval, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "additional_last_interval",
+  mrb_define_method(mrb,
+                    klass,
+                    "initialize",
+                    mrb_grn_scan_info_initialize,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "put_index",
+                    mrb_grn_scan_info_put_index,
+                    MRB_ARGS_REQ(7));
+  mrb_define_method(mrb,
+                    klass,
+                    "op",
+                    mrb_grn_scan_info_get_op,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "op=",
+                    mrb_grn_scan_info_set_op,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "weight_factor",
+                    mrb_grn_scan_info_get_weight_factor,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "weight_factor=",
+                    mrb_grn_scan_info_set_weight_factor,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "end=",
+                    mrb_grn_scan_info_set_end,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "query=",
+                    mrb_grn_scan_info_set_query,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "flags",
+                    mrb_grn_scan_info_get_flags,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "flags=",
+                    mrb_grn_scan_info_set_flags,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "logical_op",
+                    mrb_grn_scan_info_get_logical_op,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "logical_op=",
+                    mrb_grn_scan_info_set_logical_op,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "max_interval",
+                    mrb_grn_scan_info_get_max_interval,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "max_interval=",
+                    mrb_grn_scan_info_set_max_interval,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "additional_last_interval",
                     mrb_grn_scan_info_get_additional_last_interval,
                     MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "additional_last_interval=",
+  mrb_define_method(mrb,
+                    klass,
+                    "additional_last_interval=",
                     mrb_grn_scan_info_set_additional_last_interval,
                     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "max_element_intervals",
+  mrb_define_method(mrb,
+                    klass,
+                    "max_element_intervals",
                     mrb_grn_scan_info_get_max_element_intervals,
                     MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "max_element_intervals=",
+  mrb_define_method(mrb,
+                    klass,
+                    "max_element_intervals=",
                     mrb_grn_scan_info_set_max_element_intervals,
                     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "min_interval",
-                    mrb_grn_scan_info_get_min_interval, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "min_interval=",
-                    mrb_grn_scan_info_set_min_interval, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "similarity_threshold",
-                    mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "similarity_threshold=",
-                    mrb_grn_scan_info_set_similarity_threshold, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "quorum_threshold",
-                    mrb_grn_scan_info_get_quorum_threshold, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "quorum_threshold=",
-                    mrb_grn_scan_info_set_quorum_threshold, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "get_arg",
-                    mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "push_arg",
-                    mrb_grn_scan_info_push_arg, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "min_interval",
+                    mrb_grn_scan_info_get_min_interval,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "min_interval=",
+                    mrb_grn_scan_info_set_min_interval,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "similarity_threshold",
+                    mrb_grn_scan_info_get_similarity_threshold,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "similarity_threshold=",
+                    mrb_grn_scan_info_set_similarity_threshold,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "quorum_threshold",
+                    mrb_grn_scan_info_get_quorum_threshold,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "quorum_threshold=",
+                    mrb_grn_scan_info_set_quorum_threshold,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "get_arg",
+                    mrb_grn_scan_info_get_arg,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "push_arg",
+                    mrb_grn_scan_info_push_arg,
+                    MRB_ARGS_REQ(1));
 
-  klass = mrb_define_class_under(mrb, module,
-                                 "ExpressionCode", mrb->object_class);
+  klass =
+    mrb_define_class_under(mrb, module, "ExpressionCode", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
-  mrb_define_method(mrb, klass, "initialize",
-                    mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "inspect",
-                    mrb_grn_expr_code_inspect, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "weight",
-                    mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "value",
-                    mrb_grn_expr_code_get_value, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "n_args",
-                    mrb_grn_expr_code_get_n_args, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "op",
-                    mrb_grn_expr_code_get_op, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "flags",
-                    mrb_grn_expr_code_get_flags, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "modify",
-                    mrb_grn_expr_code_get_modify, MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "initialize",
+                    mrb_grn_expr_code_initialize,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "inspect",
+                    mrb_grn_expr_code_inspect,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "weight",
+                    mrb_grn_expr_code_get_weight,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "value",
+                    mrb_grn_expr_code_get_value,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "n_args",
+                    mrb_grn_expr_code_get_n_args,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "op",
+                    mrb_grn_expr_code_get_op,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "flags",
+                    mrb_grn_expr_code_get_flags,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "modify",
+                    mrb_grn_expr_code_get_modify,
+                    MRB_ARGS_NONE());
 
   {
     struct RClass *expression_code_class = klass;
     struct RClass *flags_module;
     flags_module = mrb_define_module_under(mrb, expression_code_class, "Flags");
-    mrb_define_const(mrb, flags_module, "RELATIONAL_EXPRESSION",
+    mrb_define_const(mrb,
+                     flags_module,
+                     "RELATIONAL_EXPRESSION",
                      mrb_int_value(mrb, GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
   }
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-#define DEFINE_FLAG(name)                               \
-  mrb_define_const(mrb, klass,                          \
-                   #name,                               \
-                   mrb_int_value(mrb, GRN_EXPR_ ## name))
+#  define DEFINE_FLAG(name)                                                    \
+    mrb_define_const(mrb, klass, #name, mrb_int_value(mrb, GRN_EXPR_##name))
 
   DEFINE_FLAG(SYNTAX_QUERY);
   DEFINE_FLAG(SYNTAX_SCRIPT);
@@ -1087,36 +1187,71 @@ grn_mrb_expr_init(grn_ctx *ctx)
   DEFINE_FLAG(ALLOW_UPDATE);
   DEFINE_FLAG(ALLOW_LEADING_NOT);
 
-#undef DEFINE_FLAG
+#  undef DEFINE_FLAG
 
-  mrb_define_class_method(mrb, klass, "create",
+  mrb_define_class_method(mrb,
+                          klass,
+                          "create",
                           mrb_grn_expression_class_create,
                           MRB_ARGS_REQ(1));
 
-  mrb_define_method(mrb, klass, "initialize",
-                    mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "empty?",
-                    mrb_grn_expression_is_empty, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "codes",
-                    mrb_grn_expression_codes, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "[]",
-                    mrb_grn_expression_array_reference, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "condition=",
-                    mrb_grn_expression_set_condition, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "take_object",
-                    mrb_grn_expression_take_object, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "allocate_constant",
-                    mrb_grn_expression_allocate_constant, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "initialize",
+                    mrb_grn_expression_initialize,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "empty?",
+                    mrb_grn_expression_is_empty,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "codes",
+                    mrb_grn_expression_codes,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "[]",
+                    mrb_grn_expression_array_reference,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "condition=",
+                    mrb_grn_expression_set_condition,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "take_object",
+                    mrb_grn_expression_take_object,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "allocate_constant",
+                    mrb_grn_expression_allocate_constant,
+                    MRB_ARGS_REQ(1));
 
-  mrb_define_method(mrb, klass, "parse",
-                    mrb_grn_expression_parse, MRB_ARGS_ARG(1, 1));
+  mrb_define_method(mrb,
+                    klass,
+                    "parse",
+                    mrb_grn_expression_parse,
+                    MRB_ARGS_ARG(1, 1));
 
-  mrb_define_method(mrb, klass, "append_object",
-                    mrb_grn_expression_append_object, MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, klass, "append_constant",
-                    mrb_grn_expression_append_constant, MRB_ARGS_REQ(3));
-  mrb_define_method(mrb, klass, "append_operator",
-                    mrb_grn_expression_append_operator, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb,
+                    klass,
+                    "append_object",
+                    mrb_grn_expression_append_object,
+                    MRB_ARGS_REQ(2));
+  mrb_define_method(mrb,
+                    klass,
+                    "append_constant",
+                    mrb_grn_expression_append_constant,
+                    MRB_ARGS_REQ(3));
+  mrb_define_method(mrb,
+                    klass,
+                    "append_operator",
+                    mrb_grn_expression_append_operator,
+                    MRB_ARGS_REQ(2));
 }
 
 grn_obj *
@@ -1152,11 +1287,8 @@ exit:
 }
 
 scan_info **
-grn_mrb_scan_info_build(grn_ctx *ctx,
-                        grn_obj *expr,
-                        int *n,
-                        grn_operator op,
-                        grn_bool record_exist)
+grn_mrb_scan_info_build(
+  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, grn_bool record_exist)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
@@ -1169,7 +1301,10 @@ grn_mrb_scan_info_build(grn_ctx *ctx,
   arena_index = mrb_gc_arena_save(mrb);
 
   mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
-  mrb_sis = mrb_funcall(mrb, mrb_expression, "build_scan_info", 2,
+  mrb_sis = mrb_funcall(mrb,
+                        mrb_expression,
+                        "build_scan_info",
+                        2,
                         grn_mrb_value_from_operator(mrb, op),
                         mrb_bool_value(record_exist));
 
