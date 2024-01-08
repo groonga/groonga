@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,6 +51,16 @@ mrb_grn_table_is_id(mrb_state *mrb, mrb_value self)
   } else {
     return mrb_false_value();
   }
+}
+
+static mrb_value
+mrb_grn_table_have_tokenizer(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)(mrb->ud);
+  grn_obj *table;
+
+  table = DATA_PTR(self);
+  return mrb_bool_value(grn_table_have_tokenizer(ctx, table));
 }
 
 static mrb_value
@@ -473,6 +483,8 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "id?",
                     mrb_grn_table_is_id, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "have_tokenizer?",
+                    mrb_grn_table_have_tokenizer, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "find_column",
                     mrb_grn_table_find_column, MRB_ARGS_REQ(1));
