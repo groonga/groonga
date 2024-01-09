@@ -19,11 +19,29 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.1.0 - 2023-12-26"
-msgstr "13.1.0リリース - 2023-12-26"
+msgid "Release 13.1.1 - 2024-01-09"
+msgstr "13.1.1リリース - 2024-01-09"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Dropped support for mingw32. [GitHub#1654]"
+msgstr "mingw32のサポートをやめました。 [GitHub#1654]"
+
+msgid "Added support for index search of \"vector_column[N] OPERATOR literal\" with `--match_columns` and `--query`."
+msgstr "`--match_columns` と `--query` を使った \"vector_column[N] OPERATOR literal\" でインデックスを使った検索をサポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/windows`] Bundled `groonga-normalizer-mysql` again. [GitHub#1655]"
+msgstr "[{doc}`/install/windows`] `groonga-normalizer-mysql` をバンドルしました。 [GitHub#1655]"
+
+msgid "Groonga 13.1.0 for Windows didn't include `groonga-normalizer-mysql`. This problem only occured in Groonga 13.1.0."
+msgstr "Windows版のGroonga 13.1.0に `groonga-normalizer-mysql` が含まれていませんでした。 この問題はGroonga13.1.0でのみ発生します。"
+
+msgid "Release 13.1.0 - 2023-12-26"
+msgstr "13.1.0リリース - 2023-12-26"
 
 msgid "[{doc}`/reference/commands/select`] Groonga also cached trace log."
 msgstr "[{doc}`/reference/commands/select`] トレースログもキャッシュするようにしました。"
@@ -45,9 +63,6 @@ msgstr "BFloat16のloadとselectができるだけです。 `bfloat16_value - 1.
 
 msgid "[{doc}`/reference/commands/column_create`] Added new flag `WEIGHT_BFLOAT16`."
 msgstr "[{doc}`/reference/commands/column_create`] 新しいフラグ `WEIGHT_BFLOAT16` を追加しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/commands/select`] Fixed a bug that when Groonga cached `output_pretty=yes` result, Groonga returned a query with `output_pretty` even if we sent a query without `output_pretty`."
 msgstr "[{doc}`/reference/commands/select`] Groonga が `output_pretty=yes` の結果をキャッシュした場合、 `output_pretty` をつけていないクエリーであっても、`output_pretty`をつけて返してしまう問題を修正しました。"
