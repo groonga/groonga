@@ -20,7 +20,7 @@
 #include "grn_db.h"
 #include "grn_type.h"
 
-grn_bool
+bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
   return id >= GRN_DB_OBJECT && id <= GRN_DB_BFLOAT16;

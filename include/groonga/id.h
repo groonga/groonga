@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 GRN_API bool grn_id_is_builtin(grn_ctx *ctx, grn_id id);
-GRN_API grn_bool grn_id_is_builtin_type(grn_ctx *ctx, grn_id id);
+GRN_API bool grn_id_is_builtin_type(grn_ctx *ctx, grn_id id);
 GRN_API bool grn_id_maybe_table(grn_ctx *ctx, grn_id id);
 
 #ifdef __cplusplus
