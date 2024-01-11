@@ -560,14 +560,11 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #undef INIT_STRING_ARGUMENT
 
   input.output_ids =
-    grn_plugin_proc_get_var_bool(ctx, user_data, "output_ids", -1, GRN_FALSE);
-  input.output_errors = grn_plugin_proc_get_var_bool(ctx,
-                                                     user_data,
-                                                     "output_errors",
-                                                     -1,
-                                                     GRN_FALSE);
+    grn_plugin_proc_get_var_bool(ctx, user_data, "output_ids", -1, false);
+  input.output_errors =
+    grn_plugin_proc_get_var_bool(ctx, user_data, "output_errors", -1, false);
   input.lock_table =
-    grn_plugin_proc_get_var_bool(ctx, user_data, "lock_table", -1, GRN_FALSE);
+    grn_plugin_proc_get_var_bool(ctx, user_data, "lock_table", -1, false);
   input.emit_level = 1;
 
   grn_load_internal(ctx, &input);
@@ -4996,7 +4993,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                                    -1,
                                                    &(recursive.length));
   bool is_only_opened =
-    grn_plugin_proc_get_var_bool(ctx, user_data, "only_opened", -1, GRN_FALSE);
+    grn_plugin_proc_get_var_bool(ctx, user_data, "only_opened", -1, false);
   grn_rc rc = GRN_SUCCESS;
   if (is_only_opened) {
     rc = grn_obj_flush_only_opened(ctx, target);

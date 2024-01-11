@@ -77,7 +77,7 @@ command_object_remove(grn_ctx *ctx,
 
   db = grn_ctx_db(ctx);
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  force = grn_plugin_proc_get_var_bool(ctx, user_data, "force", -1, GRN_FALSE);
+  force = grn_plugin_proc_get_var_bool(ctx, user_data, "force", -1, false);
 
   if (GRN_TEXT_LEN(name) == 0) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,

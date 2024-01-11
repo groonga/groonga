@@ -1248,7 +1248,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   dumper.is_sort_hash_table =
     grn_plugin_proc_get_var_bool(ctx, user_data,
                                  "sort_hash_table", -1,
-                                 GRN_FALSE);
+                                 false);
   dumper.is_dump_paths = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                       "dump_paths", -1,
                                                       true);

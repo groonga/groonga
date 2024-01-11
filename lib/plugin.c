@@ -1091,7 +1091,7 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
   const char *system_plugins_dir;
   const char *native_plugin_suffix;
   const char *ruby_plugin_suffix;
-  grn_bool is_close_opened_object_mode = GRN_FALSE;
+  bool is_close_opened_object_mode = false;
 
   GRN_API_ENTER;
 
@@ -1100,7 +1100,7 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
   }
 
   if (grn_thread_get_limit() == 1) {
-    is_close_opened_object_mode = GRN_TRUE;
+    is_close_opened_object_mode = true;
   }
 
   processed_paths = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, 0,
@@ -1369,12 +1369,12 @@ grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
   return grn_proc_get_var(ctx, user_data, name, (unsigned int)name_size);
 }
 
-grn_bool
+bool
 grn_plugin_proc_get_var_bool(grn_ctx *ctx,
                              grn_user_data *user_data,
                              const char *name,
                              int name_size,
-                             grn_bool default_value)
+                             bool default_value)
 {
   grn_obj *var;
 

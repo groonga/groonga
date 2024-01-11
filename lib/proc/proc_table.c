@@ -486,7 +486,7 @@ command_table_remove(grn_ctx *ctx,
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   dependent = grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1,
-                                           GRN_FALSE);
+                                           false);
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       (int)GRN_TEXT_LEN(name));
