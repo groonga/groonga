@@ -253,8 +253,7 @@ grn_string_open_(grn_ctx *ctx,
                        GRN_INFO_NORMALIZERS,
                        &normalizers);
     } else {
-      grn_bool is_normalizer_auto;
-      is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
+      bool is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
       if (is_normalizer_auto) {
         grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
         if (!normalizer) {
