@@ -5738,7 +5738,7 @@ grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat)
   return pat->header->curr_key;
 }
 
-grn_bool
+bool
 grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat)
 {
   grn_obj *domain;
