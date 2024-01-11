@@ -26,7 +26,7 @@ grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
   return id >= GRN_DB_OBJECT && id <= GRN_DB_BFLOAT16;
 }
 
-grn_bool
+bool
 grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
 {
   return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32) ||

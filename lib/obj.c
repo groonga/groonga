@@ -178,11 +178,11 @@ grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
   return GRN_TYPE_IS_TEXT_FAMILY(obj->header.domain);
 }
 
-grn_bool
+bool
 grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_bulk(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_type_id_is_number_family(ctx, obj->header.domain);

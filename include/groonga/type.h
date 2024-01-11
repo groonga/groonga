@@ -29,7 +29,7 @@ extern "C" {
   grn_type_id_is_text_family(NULL, (type))
 
 GRN_API bool grn_type_id_is_builtin(grn_ctx *ctx, grn_id id);
-GRN_API grn_bool grn_type_id_is_number_family(grn_ctx *ctx, grn_id id);
+GRN_API bool grn_type_id_is_number_family(grn_ctx *ctx, grn_id id);
 GRN_API bool grn_type_id_is_float_family(grn_ctx *ctx, grn_id id);
 GRN_API grn_bool grn_type_id_is_text_family(grn_ctx *ctx, grn_id id);
 GRN_API bool grn_type_id_is_compatible(grn_ctx *ctx, grn_id id1, grn_id id2);
