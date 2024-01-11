@@ -19,14 +19,13 @@
 #include "grn.h"
 #include "grn_db.h"
 
-grn_bool
+bool
 grn_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
   if (id == GRN_ID_NIL) {
-    return GRN_FALSE;
-  } else {
-    return id < GRN_N_RESERVED_TYPES;
+    return false;
   }
+  return id < GRN_N_RESERVED_TYPES;
 }
 
 grn_bool
