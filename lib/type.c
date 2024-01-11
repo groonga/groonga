@@ -46,7 +46,7 @@ grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)
   }
 }
 
-grn_bool
+bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
 {
   return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;

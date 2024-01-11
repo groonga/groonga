@@ -202,7 +202,7 @@ bool
 grn_obj_is_text_family_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_vector(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_type_id_is_text_family(ctx, obj->header.domain);
