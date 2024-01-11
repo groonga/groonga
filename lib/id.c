@@ -28,7 +28,7 @@ grn_id_is_builtin(grn_ctx *ctx, grn_id id)
   return id < GRN_N_RESERVED_TYPES;
 }
 
-grn_bool
+bool
 grn_id_is_builtin_type(grn_ctx *ctx, grn_id id)
 {
   return grn_type_id_is_builtin(ctx, id);
