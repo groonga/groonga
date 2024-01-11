@@ -37,7 +37,7 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj);
 
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);

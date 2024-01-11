@@ -145,13 +145,13 @@ grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj)
   return false;
 }
 
-grn_bool
+bool
 grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   id = grn_obj_id(ctx, obj);
