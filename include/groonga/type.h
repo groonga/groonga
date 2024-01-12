@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@ extern "C" {
    Use grn_type_id_is_text_family() instead. */
 #define GRN_TYPE_IS_TEXT_FAMILY(type) grn_type_id_is_text_family(NULL, (type))
 
+GRN_API const char *
+grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id);
 GRN_API bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id);
 GRN_API bool

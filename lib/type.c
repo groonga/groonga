@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,53 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_type.h"
+
+const char *
+grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id)
+{
+  switch (id) {
+  case GRN_DB_OBJECT:
+    return "Object";
+  case GRN_DB_BOOL:
+    return "Bool";
+  case GRN_DB_INT8:
+    return "Int8";
+  case GRN_DB_UINT8:
+    return "UInt8";
+  case GRN_DB_INT16:
+    return "Int16";
+  case GRN_DB_UINT16:
+    return "UInt16";
+  case GRN_DB_INT32:
+    return "Int32";
+  case GRN_DB_UINT32:
+    return "UInt32";
+  case GRN_DB_INT64:
+    return "Int64";
+  case GRN_DB_UINT64:
+    return "UInt64";
+  case GRN_DB_FLOAT:
+    return "Float";
+  case GRN_DB_TIME:
+    return "Time";
+  case GRN_DB_SHORT_TEXT:
+    return "ShortText";
+  case GRN_DB_TEXT:
+    return "Text";
+  case GRN_DB_LONG_TEXT:
+    return "LongText";
+  case GRN_DB_TOKYO_GEO_POINT:
+    return "TokyoGeoPoint";
+  case GRN_DB_WGS84_GEO_POINT:
+    return "TokyoWGS84GeoPoint";
+  case GRN_DB_FLOAT32:
+    return "Float32";
+  case GRN_DB_BFLOAT16:
+    return "BFloat16";
+  default:
+    return "not a builtin type";
+  }
+}
 
 bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
