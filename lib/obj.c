@@ -211,7 +211,7 @@ grn_obj_is_text_family_vector(grn_ctx *ctx, grn_obj *obj)
 bool
 grn_obj_is_number_family_vector(grn_ctx *ctx, grn_obj *obj)
 {
-  if (!grn_obj_is_vector(ctx, obj)) {
+  if (!grn_obj_is_uvector(ctx, obj)) {
     return false;
   }
 
