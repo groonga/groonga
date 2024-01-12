@@ -3769,11 +3769,11 @@ grn_text_cgidec(grn_ctx *ctx,
                 const char *delimiters)
 {
   while (p < e) {
-    grn_bool found_delimiter = GRN_FALSE;
+    bool found_delimiter = false;
     const char *delimiter;
     for (delimiter = delimiters; *delimiter; delimiter++) {
       if (*p == *delimiter) {
-        found_delimiter = GRN_TRUE;
+        found_delimiter = true;
         break;
       }
     }
@@ -3850,17 +3850,17 @@ grn_str_url_path_normalize(
   *b = '\0';
 }
 
-grn_bool
+bool
 grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj)
 {
   const char *v = GRN_BULK_HEAD(obj);
   size_t s = GRN_BULK_VSIZE(obj);
   for (; s; s--, v++) {
     if (*v) {
-      return GRN_FALSE;
+      return false;
     }
   }
-  return GRN_TRUE;
+  return true;
 }
 
 char *

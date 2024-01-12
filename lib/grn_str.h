@@ -157,7 +157,7 @@ grn_str_url_path_normalize(
 GRN_API grn_rc
 grn_text_fgets(grn_ctx *ctx, grn_obj *buf, FILE *fp);
 
-grn_bool
+bool
 grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
