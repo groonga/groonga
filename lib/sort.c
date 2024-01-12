@@ -705,13 +705,13 @@ exit :
   return n_sorted_records;
 }
 
-static grn_bool
+static bool
 is_compressed_column(grn_ctx *ctx, grn_obj *obj)
 {
   grn_obj *target_obj;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (obj->header.type == GRN_ACCESSOR) {
@@ -725,37 +725,37 @@ is_compressed_column(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (target_obj->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (target_obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
   case GRN_OBJ_COMPRESS_ZLIB :
   case GRN_OBJ_COMPRESS_LZ4 :
   case GRN_OBJ_COMPRESS_ZSTD :
-    return GRN_TRUE;
+    return true;
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 
-static grn_bool
+static bool
 is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (obj->header.type != GRN_ACCESSOR) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (accessor = (grn_accessor *)obj; accessor; accessor = accessor->next) {
     switch (accessor->action) {
     case GRN_ACCESSOR_GET_VALUE :
       if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(accessor->obj)) {
-        return GRN_TRUE;
+        return true;
       }
       break;
     default :
@@ -763,16 +763,16 @@ is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-static grn_bool
+static bool
 is_encoded_pat_key_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!grn_obj_is_accessor(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   accessor = (grn_accessor *)obj;
@@ -781,11 +781,11 @@ is_encoded_pat_key_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (accessor->action != GRN_ACCESSOR_GET_KEY) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (accessor->obj->header.type != GRN_TABLE_PAT_KEY) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_pat_is_key_encoded(ctx, (grn_pat *)(accessor->obj));
