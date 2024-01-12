@@ -78,6 +78,7 @@ repos:
           ?lib/table_selector\.c|
           ?lib/tokenizer\.c|
           ?lib/trace_log\.cpp|
+          ?lib/type\.c|
           ?lib/util\.c|
           ?lib/vector\.cpp|
           ?src/groonga\.c|

@@ -30,18 +30,18 @@ bool
 grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
 {
   return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32) ||
-    (id == GRN_DB_BFLOAT16);
+         (id == GRN_DB_BFLOAT16);
 }
 
 bool
 grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)
 {
   switch (id) {
-  case GRN_DB_BFLOAT16 :
-  case GRN_DB_FLOAT32 :
-  case GRN_DB_FLOAT :
+  case GRN_DB_BFLOAT16:
+  case GRN_DB_FLOAT32:
+  case GRN_DB_FLOAT:
     return true;
-  default :
+  default:
     return false;
   }
 }
@@ -69,46 +69,46 @@ size_t
 grn_type_id_size(grn_ctx *ctx, grn_id id)
 {
   switch (id) {
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     return sizeof(bool);
-  case GRN_DB_INT8 :
+  case GRN_DB_INT8:
     return sizeof(int8_t);
-  case GRN_DB_UINT8 :
+  case GRN_DB_UINT8:
     return sizeof(uint8_t);
-  case GRN_DB_INT16 :
+  case GRN_DB_INT16:
     return sizeof(int16_t);
-  case GRN_DB_UINT16 :
+  case GRN_DB_UINT16:
     return sizeof(uint16_t);
-  case GRN_DB_INT32 :
+  case GRN_DB_INT32:
     return sizeof(int32_t);
-  case GRN_DB_UINT32 :
+  case GRN_DB_UINT32:
     return sizeof(uint32_t);
-  case GRN_DB_INT64 :
+  case GRN_DB_INT64:
     return sizeof(int64_t);
-  case GRN_DB_UINT64 :
+  case GRN_DB_UINT64:
     return sizeof(uint64_t);
-  case GRN_DB_BFLOAT16 :
+  case GRN_DB_BFLOAT16:
 #ifdef GRN_HAVE_BFLOAT16
     return sizeof(grn_bfloat16);
 #else
     return sizeof(uint16_t);
 #endif
-  case GRN_DB_FLOAT32 :
+  case GRN_DB_FLOAT32:
     return sizeof(float);
-  case GRN_DB_FLOAT :
+  case GRN_DB_FLOAT:
     return sizeof(double);
-  case GRN_DB_TIME :
+  case GRN_DB_TIME:
     return sizeof(int64_t);
-  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_SHORT_TEXT:
     return GRN_TYPE_SHORT_TEXT_SIZE;
-  case GRN_DB_TEXT :
+  case GRN_DB_TEXT:
     return GRN_TYPE_TEXT_SIZE;
-  case GRN_DB_LONG_TEXT :
+  case GRN_DB_LONG_TEXT:
     return GRN_TYPE_LONG_TEXT_SIZE;
-  case GRN_DB_TOKYO_GEO_POINT :
-  case GRN_DB_WGS84_GEO_POINT :
+  case GRN_DB_TOKYO_GEO_POINT:
+  case GRN_DB_WGS84_GEO_POINT:
     return sizeof(grn_geo_point);
-  default :
+  default:
     {
       GRN_API_ENTER;
       size_t size = 0;
@@ -139,8 +139,11 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
 }
 
 grn_obj *
-grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
-                grn_obj_flags flags, unsigned int size)
+grn_type_create(grn_ctx *ctx,
+                const char *name,
+                unsigned int name_size,
+                grn_obj_flags flags,
+                unsigned int size)
 {
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
