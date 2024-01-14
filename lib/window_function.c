@@ -385,7 +385,7 @@ grn_window_reset(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-static grn_bool
+static bool
 grn_expr_is_window_function_call(grn_ctx *ctx,
                                  grn_obj *window_function_call)
 {
@@ -397,20 +397,20 @@ grn_expr_is_window_function_call(grn_ctx *ctx,
   call = &(expr->codes[expr->codes_curr - 1]);
 
   if (func->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (!grn_obj_is_window_function_proc(ctx, func->value)) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (call->op != GRN_OP_CALL) {
-    return GRN_FALSE;
+    return false;
   }
   if (call->nargs != (int32_t)(expr->codes_curr - 1)) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static bool
