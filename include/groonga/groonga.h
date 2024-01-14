@@ -187,7 +187,7 @@ typedef enum {
 
 GRN_API const char *
 grn_log_level_to_string(grn_log_level level);
-GRN_API grn_bool
+GRN_API bool
 grn_log_level_parse(const char *string, grn_log_level *level);
 
 /* query log flags */

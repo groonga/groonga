@@ -72,55 +72,54 @@ grn_log_level_to_string(grn_log_level level)
   }
 }
 
-grn_bool
+bool
 grn_log_level_parse(const char *string, grn_log_level *level)
 {
   if (strcmp(string, " ") == 0 ||
       grn_strcasecmp(string, "none") == 0) {
     *level = GRN_LOG_NONE;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "E") == 0 ||
              grn_strcasecmp(string, "emerg") == 0 ||
              grn_strcasecmp(string, "emergency") == 0) {
     *level = GRN_LOG_EMERG;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "A") == 0 ||
              grn_strcasecmp(string, "alert") == 0) {
     *level = GRN_LOG_ALERT;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "C") == 0 ||
              grn_strcasecmp(string, "crit") == 0 ||
              grn_strcasecmp(string, "critical") == 0) {
     *level = GRN_LOG_CRIT;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "e") == 0 ||
              grn_strcasecmp(string, "error") == 0) {
     *level = GRN_LOG_ERROR;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "w") == 0 ||
              grn_strcasecmp(string, "warn") == 0 ||
              grn_strcasecmp(string, "warning") == 0) {
     *level = GRN_LOG_WARNING;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "n") == 0 ||
              grn_strcasecmp(string, "notice") == 0) {
     *level = GRN_LOG_NOTICE;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "i") == 0 ||
              grn_strcasecmp(string, "info") == 0) {
     *level = GRN_LOG_INFO;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "d") == 0 ||
              grn_strcasecmp(string, "debug") == 0) {
     *level = GRN_LOG_DEBUG;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "-") == 0 ||
              grn_strcasecmp(string, "dump") == 0) {
     *level = GRN_LOG_DUMP;
-    return GRN_TRUE;
-  } else {
-    return GRN_FALSE;
+    return true;
   }
+  return false;
 }
 
 grn_bool
