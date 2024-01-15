@@ -41,7 +41,7 @@ grn_rc grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
  * with a string that makes the filename unique.
  */
 int grn_mkstemp(char *path_template);
-grn_bool grn_path_exist(const char *path);
+bool grn_path_exist(const char *path);
 
 int grn_tokenize(const char *str, size_t str_len,
                  const char **tokbuf, int buf_size,

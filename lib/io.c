@@ -1275,9 +1275,8 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
     fileinfo *fi = &io->fis[fno];
     if (!grn_fileinfo_opened(fi)) {
       char path[PATH_MAX];
-      grn_bool path_exist = GRN_TRUE;
       gen_pathname(io->path, path, fno);
-      path_exist = grn_path_exist(path);
+      bool path_exist = grn_path_exist(path);
       if (!grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {
         DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);
         if (!info->map && !path_exist) {
