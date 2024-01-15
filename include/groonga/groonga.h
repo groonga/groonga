@@ -1241,7 +1241,7 @@ struct _grn_logger {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API grn_bool
+GRN_API bool
 grn_log_flags_parse(const char *string, int string_size, int *flags);
 
 GRN_API grn_rc
@@ -1296,10 +1296,10 @@ grn_logger_putv(grn_ctx *ctx,
 GRN_API void
 grn_logger_reopen(grn_ctx *ctx);
 
-GRN_API grn_bool
+GRN_API bool
 grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
-GRN_API grn_bool
+GRN_API bool
 grn_logger_is_default_logger(grn_ctx *ctx);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
@@ -1376,7 +1376,7 @@ struct _grn_query_logger {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API grn_bool
+GRN_API bool
 grn_query_log_flags_parse(const char *string,
                           int string_size,
                           unsigned int *flags);
@@ -1399,7 +1399,7 @@ grn_query_logger_put(
 GRN_API void
 grn_query_logger_reopen(grn_ctx *ctx);
 
-GRN_API grn_bool
+GRN_API bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag);
 
 GRN_API void
