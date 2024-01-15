@@ -4574,10 +4574,7 @@ main(int argc, char **argv)
     grn_log_level log_level;
 
     if (log_level_arg) {
-      grn_bool parsed;
-
-      parsed = grn_log_level_parse(log_level_arg, &log_level);
-      if (!parsed) {
+      if (!grn_log_level_parse(log_level_arg, &log_level)) {
         const char *const end = log_level_arg + strlen(log_level_arg);
         const char *rest = NULL;
         const int value = grn_atoi(log_level_arg, end, &rest);
