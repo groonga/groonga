@@ -88,10 +88,10 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
                                        GRN_TIME_NSEC_TO_USEC(tv.tv_nsec)));
 }
 
-static grn_bool
+static bool
 grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
 {
-  grn_bool success;
+  bool success;
   const char *function_name;
 #ifdef HAVE__LOCALTIME64_S
   function_name = "localtime_s";
@@ -106,10 +106,10 @@ grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
     struct tm *local_tm;
     local_tm = localtime(&time);
     if (local_tm) {
-      success = GRN_TRUE;
+      success = true;
       memcpy(tm, local_tm, sizeof(struct tm));
     } else {
-      success = GRN_FALSE;
+      success = false;
     }
   }
 # endif /* HAVE_LOCALTIME_R */
@@ -132,7 +132,7 @@ grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
   }
 }
 
-grn_bool
+bool
 grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
 {
   int64_t sec;
@@ -142,16 +142,14 @@ grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
   return grn_time_t_to_tm(ctx, sec, tm);
 }
 
-static grn_bool
+static bool
 grn_time_t_from_tm(grn_ctx *ctx, grn_time_t *time, struct tm *tm)
 {
-  grn_bool success;
-
   tm->tm_yday = -1;
   *time = grn_mktime(tm);
   /* We can't use (*time != -1) because -1 is a valid UNIX time
    * (1969-12-31T23:59:59Z). */
-  success = (tm->tm_yday != -1);
+  bool success = (tm->tm_yday != -1);
   if (!success) {
     ERR(GRN_INVALID_ARGUMENT,
         "mktime: failed to convert struct tm to time_t: "
@@ -167,7 +165,7 @@ grn_time_t_from_tm(grn_ctx *ctx, grn_time_t *time, struct tm *tm)
   return success;
 }
 
-grn_bool
+bool
 grn_time_from_tm(grn_ctx *ctx, int64_t *time, struct tm *tm)
 {
   grn_time_t sec_time_t;
@@ -175,12 +173,12 @@ grn_time_from_tm(grn_ctx *ctx, int64_t *time, struct tm *tm)
   int32_t usec = 0;
 
   if (!grn_time_t_from_tm(ctx, &sec_time_t, tm)) {
-    return GRN_FALSE;
+    return false;
   }
 
   sec = sec_time_t;
   *time = GRN_TIME_PACK(sec, usec);
-  return GRN_TRUE;
+  return true;
 }
 
 grn_rc
