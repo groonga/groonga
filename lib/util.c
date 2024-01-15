@@ -211,7 +211,7 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
 grn_obj *
 grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
 {
-  grn_bool have_content = GRN_FALSE;
+  bool have_content = false;
 
   if (flags == GRN_QUERY_LOG_NONE) {
     GRN_TEXT_PUTS(ctx, buffer, "NONE");
@@ -225,9 +225,9 @@ grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
         GRN_TEXT_PUTS(ctx, buffer, "|");                                       \
       }                                                                        \
       GRN_TEXT_PUTS(ctx, buffer, #NAME);                                       \
-      have_content = GRN_TRUE;                                                 \
+      have_content = true;                                                     \
     }                                                                          \
-  } while (GRN_FALSE)
+  } while (false)
 
   CHECK_FLAG(COMMAND);
   CHECK_FLAG(RESULT_CODE);
@@ -1260,7 +1260,7 @@ static grn_rc
 grn_record_inspect_common(grn_ctx *ctx,
                           grn_obj *buf,
                           grn_obj *obj,
-                          grn_bool with_columns)
+                          bool with_columns)
 {
   grn_obj *table;
 
@@ -1351,20 +1351,20 @@ grn_record_inspect_common(grn_ctx *ctx,
 grn_rc
 grn_record_inspect_without_columns(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+  return grn_record_inspect_common(ctx, buf, obj, false);
 }
 
 static grn_rc
 grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_record_inspect_common(ctx, buf, obj, GRN_TRUE);
+  return grn_record_inspect_common(ctx, buf, obj, true);
 }
 
 static grn_rc
 grn_uvector_record_inspect_common(grn_ctx *ctx,
                                   grn_obj *buf,
                                   grn_obj *obj,
-                                  grn_bool with_columns)
+                                  bool with_columns)
 {
   unsigned int i, n = 0;
   grn_obj record;
@@ -1397,13 +1397,13 @@ grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
                                            grn_obj *buf,
                                            grn_obj *obj)
 {
-  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+  return grn_uvector_record_inspect_common(ctx, buf, obj, false);
 }
 
 static grn_rc
 grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_TRUE);
+  return grn_uvector_record_inspect_common(ctx, buf, obj, true);
 }
 
 grn_obj *
@@ -1735,7 +1735,7 @@ grn_mkstemp(char *path_template)
 }
 #endif   /* WIN32 */
 
-grn_bool
+bool
 grn_path_exist(const char *path)
 {
   struct stat status;
