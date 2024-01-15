@@ -122,7 +122,7 @@ grn_log_level_parse(const char *string, grn_log_level *level)
   return false;
 }
 
-grn_bool
+bool
 grn_log_flags_parse(const char *string,
                     int string_size,
                     int *flags)
@@ -132,7 +132,7 @@ grn_log_flags_parse(const char *string,
   *flags = GRN_LOG_DEFAULT;
 
   if (!string) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (string_size < 0) {
@@ -189,10 +189,10 @@ grn_log_flags_parse(const char *string,
 
 #undef CHECK_FLAG
 
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 typedef struct {
@@ -521,7 +521,7 @@ grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
   return GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_logger_is_default_logger(grn_ctx *ctx)
 {
   return current_logger.log == default_logger.log;
@@ -539,7 +539,7 @@ grn_logger_get_max_level(grn_ctx *ctx)
   return current_logger.max_level;
 }
 
-grn_bool
+bool
 grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 {
   return level <= current_logger.max_level;
@@ -686,7 +686,7 @@ grn_logger_fin(grn_ctx *ctx)
 static bool query_logger_inited = false;
 static grn_logger_output default_query_logger_output = {0};
 
-grn_bool
+bool
 grn_query_log_flags_parse(const char *string,
                           int string_size,
                           unsigned int *flags)
@@ -696,7 +696,7 @@ grn_query_log_flags_parse(const char *string,
   *flags = GRN_QUERY_LOG_NONE;
 
   if (!string) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (string_size < 0) {
@@ -734,10 +734,10 @@ grn_query_log_flags_parse(const char *string,
 
 #undef CHECK_FLAG
 
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
@@ -910,7 +910,7 @@ grn_query_logger_get_flags(grn_ctx *ctx)
   return current_query_logger.flags;
 }
 
-grn_bool
+bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
 {
   return current_query_logger.flags & flag;
