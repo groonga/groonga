@@ -19,7 +19,7 @@
 #include "grn_onigmo.h"
 
 #ifdef GRN_SUPPORT_REGEXP
-grn_bool
+bool
 grn_onigmo_is_valid_encoding(grn_ctx *ctx)
 {
   switch (ctx->encoding) {
@@ -28,9 +28,9 @@ grn_onigmo_is_valid_encoding(grn_ctx *ctx)
   case GRN_ENC_SJIS :
   case GRN_ENC_LATIN1 :
   case GRN_ENC_KOI8R :
-    return GRN_TRUE;
+    return true;
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 
