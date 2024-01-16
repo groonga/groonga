@@ -124,7 +124,7 @@ uint32_t grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 bool grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
 
 grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
-grn_bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
+bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat);

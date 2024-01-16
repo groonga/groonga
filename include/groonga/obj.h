@@ -167,7 +167,7 @@ GRN_API void
 grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv);
 GRN_API uint32_t
 grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API const char *

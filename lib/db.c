@@ -2809,11 +2809,11 @@ grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj)
   return grn_obj_get_io(ctx, obj)->header->last_modified;
 }
 
-grn_bool
+bool
 grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (obj->header.type) {
@@ -2824,7 +2824,7 @@ grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_DAT_KEY:
     return grn_dat_is_dirty(ctx, (grn_dat *)obj);
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
@@ -2834,13 +2834,13 @@ grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
   return grn_obj_get_last_modified(ctx, db);
 }
 
-grn_bool
+bool
 grn_db_is_dirty(grn_ctx *ctx, grn_obj *db)
 {
   grn_obj *keys;
 
   if (!db) {
-    return GRN_FALSE;
+    return false;
   }
 
   keys = ((grn_db *)db)->keys;

@@ -5771,7 +5771,7 @@ grn_pat_dirty(grn_ctx *ctx, grn_pat *pat)
   return rc;
 }
 
-grn_bool
+bool
 grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat)
 {
   return pat->header->n_dirty_opens > 0;
