@@ -35,7 +35,7 @@ extern "C" {
 
 #define GRN_ONIGMO_SYNTAX_DEFAULT ONIG_SYNTAX_RUBY
 
-grn_bool
+bool
 grn_onigmo_is_valid_encoding(grn_ctx *ctx);
 
 GRN_API OnigRegex
