@@ -136,9 +136,7 @@ static mrb_value
 mrb_grn_database_is_dirty(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_bool is_dirty;
-
-  is_dirty = grn_db_is_dirty(ctx, DATA_PTR(self));
+  bool is_dirty = grn_db_is_dirty(ctx, DATA_PTR(self));
 
   return mrb_bool_value(is_dirty);
 }

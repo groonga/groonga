@@ -1772,11 +1772,11 @@ grn_dat_dirty(grn_ctx *ctx, grn_dat *dat)
   return rc;
 }
 
-grn_bool
+bool
 grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat)
 {
   if (!dat->header) {
-    return GRN_FALSE;
+    return false;
   }
 
   return dat->header->n_dirty_opens > 0;
