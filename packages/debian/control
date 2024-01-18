@@ -14,6 +14,7 @@ Build-Depends:
   libpcre3-dev,
   libssl-dev,
   libstemmer-dev,
+  libxsimd-dev,
   libxxhash-dev,
   libzmq3-dev | libzmq-dev,
   libzstd-dev,

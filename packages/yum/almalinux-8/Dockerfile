@@ -34,6 +34,7 @@ RUN \
     rapidjson-devel \
     ruby \
     tar \
+    xsimd-devel \
     xxhash-devel \
     zlib-devel && \
   dnf clean ${quiet} all

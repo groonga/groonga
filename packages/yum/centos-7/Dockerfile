@@ -38,6 +38,7 @@ RUN \
     ruby \
     tar \
     which \
+    xsimd-devel \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \

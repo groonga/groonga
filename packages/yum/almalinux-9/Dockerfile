@@ -37,6 +37,7 @@ RUN \
     ruby \
     tar \
     which \
+    xsimd-devel \
     xxhash-devel \
     zlib-devel && \
   dnf clean ${quiet} all

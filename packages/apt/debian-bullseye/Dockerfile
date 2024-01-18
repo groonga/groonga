@@ -32,6 +32,7 @@ RUN \
     libssl-dev \
     libstemmer-dev \
     libthrift-dev \
+    libxsimd-dev \
     libxxhash-dev \
     libzmq3-dev \
     libzstd-dev \
