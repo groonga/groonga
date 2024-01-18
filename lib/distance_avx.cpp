@@ -15,14 +15,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn.h"
+#include "grn_distance_impl.hpp"
 
-#ifdef GRN_WITH_SIMD_AVX
-#  include "grn_distance_impl.hpp"
-
-#  define GRN_INSTANTIATION_EXTERN
-#  define GRN_INSTANTIATION_ARCH xsimd::avx
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-#  undef GRN_INSTANTIATION_EXTERN
-#endif
+#define GRN_INSTANTIATION_EXTERN
+#define GRN_INSTANTIATION_ARCH xsimd::avx
+#include "grn_distance_instantiation.hpp"
+#undef GRN_INSTANTIATION_ARCH
+#undef GRN_INSTANTIATION_EXTERN

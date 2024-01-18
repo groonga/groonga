@@ -15,11 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn.h"
-
-#ifdef GRN_WITH_XSIMD
-
-#  include "grn_distance.hpp"
+#include "grn_distance.hpp"
 
 namespace grn {
   namespace distance {
@@ -50,9 +46,8 @@ namespace grn {
   } // namespace distance
 } // namespace grn
 
-#  define GRN_INSTANTIATION_EXTERN
-#  define GRN_INSTANTIATION_ARCH xsimd::generic
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-#  undef GRN_INSTANTIATION_EXTERN
-#endif
+#define GRN_INSTANTIATION_EXTERN
+#define GRN_INSTANTIATION_ARCH xsimd::generic
+#include "grn_distance_instantiation.hpp"
+#undef GRN_INSTANTIATION_ARCH
+#undef GRN_INSTANTIATION_EXTERN

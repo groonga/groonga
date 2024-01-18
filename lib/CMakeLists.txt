@@ -69,6 +69,7 @@ if(TARGET xsimd)
       APPEND_STRING
       PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX512}")
   endif()
+  list(APPEND LIBGROONGA_CPP_SOURCES distance_generic.cpp)
 endif()
 
 set(GRN_ALL_SOURCES
