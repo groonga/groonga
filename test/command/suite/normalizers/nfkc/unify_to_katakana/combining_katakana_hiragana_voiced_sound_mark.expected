@@ -1,0 +1,24 @@
+normalize   'NormalizerNFKC("unify_to_katakana", true,                   "report_source_offset", true)'   "゙"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "゙",
+    "types": [
+      "hiragana",
+      "null"
+    ],
+    "checks": [
+      3,
+      0,
+      0
+    ],
+    "offsets": [
+      0,
+      3
+    ]
+  }
+]
