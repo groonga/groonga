@@ -1105,6 +1105,66 @@ else()
   set(GRN_WITH_BLOSC FALSE)
 endif()
 
+set(GRN_XSIMD_BUNDLED_VERSION "12.1.1")
+set(GRN_XSIMD_BUNDLED_SHA256
+    "73f94a051278ef3da4533b691d31244d12074d5d71107473a9fd8d7be15f0110")
+set(GRN_WITH_XSIMD
+    "auto"
+    CACHE STRING "Support SIMD by xsimd.")
+if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
+  if("${GRN_WITH_XSIMD}" STREQUAL "bundled")
+    set(xsimd_FOUND FALSE)
+  else()
+    if("${GRN_WITH_XSIMD}" STREQUAL "system")
+      find_package(xsimd REQUIRED)
+    else()
+      find_package(xsimd)
+    endif()
+  endif()
+  if(xsimd_FOUND)
+    set(GRN_WITH_XSIMD TRUE)
+    target_link_libraries(grn_dependencies INTERFACE xsimd)
+    message(STATUS "xsimd: system")
+  else()
+    # We need to use function to create a variable scope
+    function(grn_build_xsimd)
+      set(XSIMD_SOURCE_BASE_NAME "xsimd-${GRN_XSIMD_BUNDLED_VERSION}.tar.gz")
+      set(XSIMD_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${XSIMD_SOURCE_BASE_NAME}")
+      if(EXISTS ${XSIMD_SOURCE_LOCAL_PATH})
+        set(XSIMD_SOURCE_URL ${XSIMD_SOURCE_LOCAL_PATH})
+      else()
+        set(XSIMD_SOURCE_URL
+            "https://github.com/xtensor-stack/xsimd/archive/refs/tags")
+        string(APPEND XSIMD_SOURCE_URL "/${GRN_XSIMD_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        xsimd
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${XSIMD_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_XSIMD_BUNDLED_SHA256}")
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_EXAMPLES OFF)
+      set(BUILD_TESTS OFF)
+      fetchcontent_makeavailable(xsimd)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${xsimd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
+      endif()
+      target_include_directories(xsimd INTERFACE "${xsimd_SOURCE_DIR}/include")
+      install(FILES "${xsimd_SOURCE_DIR}/LICENSE"
+                    "${xsimd_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/xsimd")
+    endfunction()
+    grn_build_xsimd()
+    set(GRN_WITH_XSIMD TRUE)
+    target_link_libraries(grn_dependencies INTERFACE xsimd)
+    message(STATUS "xsimd: bundled")
+  endif()
+else()
+  set(GRN_WITH_XSIMD FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"

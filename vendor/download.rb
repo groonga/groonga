@@ -34,6 +34,7 @@ end
 all_targets = [
   "blosc",
   "croaring",
+  "xsimd",
   "zstd",
 ]
 
@@ -58,6 +59,11 @@ targets.each do |target|
     download(url, "CRoaring-#{version}.tar.gz") do
       FileUtils.rm_rf("benchmarks/realdata/")
     end
+  when "xsimd"
+    version = cmakelists[/set\(GRN_XSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/xtensor-stack/xsimd/archive/refs/tags/"
+    url << "#{version}.tar.gz"
+    download(url, "xsimd-#{version}.tar.gz")
   when "zstd"
     version = cmakelists[/set\(GRN_ZSTD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/facebook/zstd/releases/download/"
