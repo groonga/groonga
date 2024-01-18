@@ -19,7 +19,7 @@
 
 #include "grn_ctx.h"
 
-#incldue <cmath>
+#include <cmath>
 
 #ifdef GRN_WITH_XSIMD
 #  include <xsimd/xsimd.hpp>
