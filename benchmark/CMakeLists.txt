@@ -14,14 +14,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 pkg_check_modules(gobject gobject-2.0 REQUIRED IMPORTED_TARGET)
-add_library(grnbench
-  SHARED
-  lib/benchmark.c
-  lib/benchmark.h
-  lib/bench-reporter.c
-  lib/bench-reporter.h
-  lib/bench-utils.c
-  lib/bench-utils.h)
+add_library(
+  grnbench SHARED lib/benchmark.c lib/benchmark.h lib/bench-reporter.c
+                  lib/bench-reporter.h lib/bench-utils.c lib/bench-utils.h)
 target_link_libraries(grnbench PkgConfig::gobject)
 
 add_executable(bench-between-sequential bench-between-sequential.c)
@@ -56,4 +51,3 @@ target_link_libraries(bench-result-set libgroonga grnbench)
 
 add_executable(bench-table-factory bench-table-factory.c)
 target_link_libraries(bench-table-factory libgroonga grnbench)
-
