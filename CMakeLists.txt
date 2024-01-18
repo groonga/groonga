@@ -594,7 +594,8 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
           PARENT_SCOPE)
       add_library(libzstd_headers INTERFACE)
       target_include_directories(
-        libzstd_headers INTERFACE "$<BUILD_INTERFACE:${zstd_SOURCE_DIR}/lib>")
+        libzstd_headers SYSTEM
+        INTERFACE "$<BUILD_INTERFACE:${zstd_SOURCE_DIR}/lib>")
       target_link_libraries(grn_dependencies INTERFACE libzstd_headers)
       install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
                     "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
@@ -660,7 +661,7 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
     add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
     target_include_directories(
-      Groonga::RapidJSON
+      Groonga::RapidJSON SYSTEM
       INTERFACE "$<BUILD_INTERFACE:${RAPIDJSON_PREFIX}/include>")
     add_dependencies(Groonga::RapidJSON rapidjson-ep)
     set(RAPIDJSON_SOURCE_DIR
@@ -718,7 +719,7 @@ if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
   if(MECAB_LIBRARIES)
     set(GRN_WITH_MECAB TRUE)
     add_library(libmecab INTERFACE IMPORTED)
-    target_include_directories(libmecab INTERFACE ${MECAB_INCLUDE_DIR})
+    target_include_directories(libmecab SYSTEM INTERFACE ${MECAB_INCLUDE_DIR})
     target_link_libraries(libmecab INTERFACE ${MECAB_LIBRARIES})
     message(STATUS "MeCab: ${MECAB_LIBRARIES}")
   else()
@@ -913,7 +914,8 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
       set(GRN_WITH_XXHASH TRUE)
       add_library(xxhash INTERFACE)
       target_include_directories(
-        xxhash BEFORE INTERFACE "$<BUILD_INTERFACE:${GRN_BUNDLED_XXHASH_DIR}>")
+        xxhash SYSTEM BEFORE
+        INTERFACE "$<BUILD_INTERFACE:${GRN_BUNDLED_XXHASH_DIR}>")
       target_compile_definitions(xxhash INTERFACE XXH_INLINE_ALL)
       target_link_libraries(grn_dependencies INTERFACE xxhash)
       message(STATUS "xxHash: (bundled)")
@@ -1133,7 +1135,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
                                                             TRUE)
       endif()
       target_include_directories(
-        blosc2_static
+        blosc2_static SYSTEM
         INTERFACE "$<BUILD_INTERFACE:${blosc_SOURCE_DIR}/include>")
       install(
         FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
@@ -1201,7 +1203,7 @@ if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
                                                             TRUE)
       endif()
       target_include_directories(
-        xsimd INTERFACE "$<BUILD_INTERFACE:${xsimd_SOURCE_DIR}/include>")
+        xsimd SYSTEM INTERFACE "$<BUILD_INTERFACE:${xsimd_SOURCE_DIR}/include>")
       install(FILES "${xsimd_SOURCE_DIR}/LICENSE"
                     "${xsimd_SOURCE_DIR}/README.md"
               DESTINATION "${GRN_DATA_DIR}/xsimd")
