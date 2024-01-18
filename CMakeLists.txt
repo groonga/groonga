@@ -1,5 +1,5 @@
-# Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -1221,6 +1221,11 @@ if(GRN_WITH_MUNIN_PLUGINS)
              data/munin/groonga_disk_
              data/munin/groonga_throughput_
     DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/munin/plugins)
+endif()
+
+option(GRN_WITH_BENCHMARKS "build benchmarks" OFF)
+if(GRN_WITH_BENCHMARKS)
+  add_subdirectory(benchmark)
 endif()
 
 option(GRN_WITH_EXAMPLES "install examples" OFF)
