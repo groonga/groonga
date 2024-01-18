@@ -1168,7 +1168,6 @@ configure_file(config.h.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
 set(GROONGA_SUGGEST_CREATE_DATASET
     "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
-set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
 configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
 
 set(prefix "${CMAKE_INSTALL_PREFIX}")
