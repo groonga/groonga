@@ -33,7 +33,8 @@ BuildRequires:	openssl-devel
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
 BuildRequires:	ruby
-BuildRequires:	xsimd-devel
+# We can enable this after we drop support for CentOS 7.
+#BuildRequires:	xsimd-devel
 BuildRequires:	xxhash-devel
 BuildRequires:	zlib-devel
 #BuildRequires:	zeromq-devel
