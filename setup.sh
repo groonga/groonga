@@ -48,6 +48,7 @@ case "${distribution}-${code_name}" in
       libmecab-dev
       libmsgpack-dev
       libstemmer-dev
+      libxsimd-dev
       libxxhash-dev
       libzstd-dev
       ninja-build
@@ -55,6 +56,8 @@ case "${distribution}-${code_name}" in
       rapidjson-dev
       zlib1g-dev
     )
+    # Workaround: libxsimd-dev should depend on libxtl-dev
+    package_names+=(libxtl-dev)
     ;;
 esac
 
