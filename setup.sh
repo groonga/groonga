@@ -56,8 +56,8 @@ case "${distribution}-${code_name}" in
       rapidjson-dev
       zlib1g-dev
     )
-    # Workaround: libxsimd-dev should depend on libxtl-dev
-    package_names+=(libxtl-dev)
+    # Workaround: libxsimd-dev should depend on xtl-dev
+    package_names+=(xtl-dev)
     ;;
 esac
 

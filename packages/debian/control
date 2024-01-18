@@ -14,7 +14,7 @@ Build-Depends:
   libpcre3-dev,
   libssl-dev,
   libstemmer-dev,
-# Broken. libxtl-dev dependency is missing.
+# Broken. xtl-dev dependency is missing.
 #  libxsimd-dev,
   libxxhash-dev,
   libzmq3-dev | libzmq-dev,
