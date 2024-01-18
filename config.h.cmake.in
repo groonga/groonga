@@ -60,6 +60,10 @@
 #cmakedefine USE_SELECT
 
 #cmakedefine GRN_WITH_MEMORY_DEBUG
+#cmakedefine GRN_WITH_SIMD
+#cmakedefine GRN_WITH_SIMD_AVX
+#cmakedefine GRN_WITH_SIMD_AVX2
+#cmakedefine GRN_WITH_SIMD_AVX512
 
 /* compiler specific build options */
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@

@@ -36,6 +36,7 @@
 #include "groonga/config.h"
 #include "groonga/dat.h"
 #include "groonga/db.h"
+#include "groonga/distance.h"
 #include "groonga/dump.h"
 #include "groonga/error.h"
 #include "groonga/expr.h"

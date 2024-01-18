@@ -17,11 +17,11 @@
 */
 
 #include "grn.h"
-#include <string.h>
 #include "grn_request_canceler.h"
 #include "grn_request_timer.h"
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
+#include "grn_distance.h"
 #include "grn_encoding.h"
 #include "grn_hash.h"
 #include "grn_ii.h"
@@ -44,8 +44,10 @@
 #include "grn_windows.h"
 #include "grn_group.h"
 #include "grn_slow_log.h"
-#include <stdio.h>
+
 #include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 #ifdef GRN_SUPPORT_REGEXP
@@ -133,6 +135,7 @@ grn_init_from_env(void)
   grn_alloc_init_from_env();
   grn_mrb_init_from_env();
   grn_ctx_impl_mrb_init_from_env();
+  grn_distance_init_from_env();
   grn_hash_init_from_env();
   grn_io_init_from_env();
   grn_ii_init_from_env();

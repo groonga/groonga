@@ -124,6 +124,9 @@ endif
 EXTRA_DIST =						\
 	CMakeLists.txt					\
 	GroongaConfig.cmake.in				\
+	distance_avx.cpp				\
+	distance_avx2.cpp				\
+	distance_avx512.cpp				\
 	grn_ecmascript.c				\
 	grn_ecmascript.h				\
 	grn_ecmascript.lemon				\

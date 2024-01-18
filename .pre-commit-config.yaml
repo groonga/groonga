@@ -22,6 +22,7 @@ repos:
           (
           ?include/groonga/bulk\.hpp|
           ?include/groonga/command_arguments\.hpp|
+          ?include/groonga/distance\.h|
           ?include/groonga/float\.h|
           ?include/groonga/groonga\.h|
           ?include/groonga/highlighter\.h|
@@ -38,11 +39,20 @@ repos:
           ?lib/ctx\.c|
           ?lib/ctx_impl_mrb\.c|
           ?lib/db\.c|
+          ?lib/distance\.cpp|
+          ?lib/distance_avx\.cpp|
+          ?lib/distance_avx2\.cpp|
+          ?lib/distance_avx512\.cpp|
+          ?lib/distance_generic\.cpp|
           ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
           ?lib/grn_arrow\.h|
           ?lib/grn_ctx_impl\.h|
+          ?lib/grn_distance\.h|
+          ?lib/grn_distance\.hpp|
+          ?lib/grn_distance_impl\.hpp|
+          ?lib/grn_distance_instantiation\.hpp|
           ?lib/grn_error\.h|
           ?lib/grn_expr\.h|
           ?lib/grn_ii\.h|

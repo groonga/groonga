@@ -47,6 +47,30 @@ set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNPROC_CPP_SOURCES}
   PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
+if(TARGET xsimd)
+  if(GRN_WITH_SIMD_AVX)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx.cpp)
+    set_property(
+      SOURCE distance_avx.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX}")
+  endif()
+  if(GRN_WITH_SIMD_AVX2)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx2.cpp)
+    set_property(
+      SOURCE distance_avx2.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX2}")
+  endif()
+  if(GRN_WITH_SIMD_AVX2)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx512.cpp)
+    set_property(
+      SOURCE distance_avx512.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX512}")
+  endif()
+endif()
+
 set(GRN_ALL_SOURCES
     ${LIBGROONGA_C_SOURCES}
     ${LIBGROONGA_CPP_SOURCES}
