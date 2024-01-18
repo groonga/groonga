@@ -549,8 +549,8 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
           "${zstd_SOURCE_DIR}/lib"
           PARENT_SCOPE)
       add_library(libzstd_headers INTERFACE)
-      target_include_directories(libzstd_headers
-                                 INTERFACE "${zstd_SOURCE_DIR}/lib")
+      target_include_directories(
+        libzstd_headers INTERFACE "$<BUILD_INTERFACE:${zstd_SOURCE_DIR}/lib>")
       target_link_libraries(grn_dependencies INTERFACE libzstd_headers)
       install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
                     "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
@@ -615,8 +615,9 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
       URL ${RAPIDJSON_SOURCE_URL})
     add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
-    target_include_directories(Groonga::RapidJSON
-                               INTERFACE "${RAPIDJSON_PREFIX}/include")
+    target_include_directories(
+      Groonga::RapidJSON
+      INTERFACE "$<BUILD_INTERFACE:${RAPIDJSON_PREFIX}/include>")
     add_dependencies(Groonga::RapidJSON rapidjson-ep)
     set(RAPIDJSON_SOURCE_DIR
         "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
@@ -867,8 +868,8 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
       set(GRN_WITH_BUNDLED_XXHASH TRUE)
       set(GRN_WITH_XXHASH TRUE)
       add_library(xxhash INTERFACE)
-      target_include_directories(xxhash BEFORE
-                                 INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
+      target_include_directories(
+        xxhash BEFORE INTERFACE "$<BUILD_INTERFACE:${GRN_BUNDLED_XXHASH_DIR}>")
       target_compile_definitions(xxhash INTERFACE XXH_INLINE_ALL)
       target_link_libraries(grn_dependencies INTERFACE xxhash)
       message(STATUS "xxHash: (bundled)")
@@ -1087,8 +1088,9 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
         set_property(DIRECTORY ${blosc_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                             TRUE)
       endif()
-      target_include_directories(blosc2_static
-                                 INTERFACE "${blosc_SOURCE_DIR}/include")
+      target_include_directories(
+        blosc2_static
+        INTERFACE "$<BUILD_INTERFACE:${blosc_SOURCE_DIR}/include>")
       install(
         FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
               "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"
@@ -1151,7 +1153,8 @@ if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
         set_property(DIRECTORY ${xsimd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                             TRUE)
       endif()
-      target_include_directories(xsimd INTERFACE "${xsimd_SOURCE_DIR}/include")
+      target_include_directories(
+        xsimd INTERFACE "$<BUILD_INTERFACE:${xsimd_SOURCE_DIR}/include>")
       install(FILES "${xsimd_SOURCE_DIR}/LICENSE"
                     "${xsimd_SOURCE_DIR}/README.md"
               DESTINATION "${GRN_DATA_DIR}/xsimd")
