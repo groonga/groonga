@@ -19,8 +19,6 @@
 
 #include "grn_distance.hpp"
 
-#include <cmath>
-
 namespace grn {
   namespace distance {
     template <typename Arch,
