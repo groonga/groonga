@@ -14,6 +14,7 @@ groonga_include_HEADERS =			\
 	config.h				\
 	dat.h					\
 	db.h					\
+	distance.h				\
 	dump.h					\
 	error.h					\
 	expr.h					\
