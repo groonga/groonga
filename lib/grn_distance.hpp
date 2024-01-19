@@ -46,7 +46,33 @@ namespace grn {
                  size_t n_elements);
     };
 #endif
+  } // namespace distance
+} // namespace grn
 
+#ifdef GRN_WITH_XSIMD
+#  define GRN_INSTANTIATION_EXTERN extern
+
+#  define GRN_INSTANTIATION_ARCH   xsimd::avx512dq
+#  include "grn_distance_instantiation.hpp"
+#  undef GRN_INSTANTIATION_ARCH
+
+#  define GRN_INSTANTIATION_ARCH xsimd::avx2
+#  include "grn_distance_instantiation.hpp"
+#  undef GRN_INSTANTIATION_ARCH
+
+#  define GRN_INSTANTIATION_ARCH xsimd::sse4_2
+#  include "grn_distance_instantiation.hpp"
+#  undef GRN_INSTANTIATION_ARCH
+
+#  define GRN_INSTANTIATION_ARCH xsimd::generic
+#  include "grn_distance_instantiation.hpp"
+#  undef GRN_INSTANTIATION_ARCH
+
+#  undef GRN_INSTANTIATION_EXTERN
+#endif
+
+namespace grn {
+  namespace distance {
     template <typename ElementType>
     float
     compute_l2_norm(grn_obj *vector)
@@ -110,27 +136,5 @@ namespace grn {
       }
       return multiplication_sum;
     }
-  } // namespace distance
-} // namespace grn
-
-#ifdef GRN_WITH_XSIMD
-#  define GRN_INSTANTIATION_EXTERN extern
-
-#  define GRN_INSTANTIATION_ARCH   xsimd::avx512dq
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-
-#  define GRN_INSTANTIATION_ARCH xsimd::avx2
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-
-#  define GRN_INSTANTIATION_ARCH xsimd::sse4_2
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-
-#  define GRN_INSTANTIATION_ARCH xsimd::generic
-#  include "grn_distance_instantiation.hpp"
-#  undef GRN_INSTANTIATION_ARCH
-
-#  undef GRN_INSTANTIATION_EXTERN
-#endif
+  }
+}
