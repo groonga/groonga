@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,8 @@ void
 grn_proc_init_config_delete(grn_ctx *ctx);
 void
 grn_proc_init_define_selector(grn_ctx *ctx);
+void
+grn_proc_init_distance_cosine(grn_ctx *ctx);
 void
 grn_proc_init_dump(grn_ctx *ctx);
 void

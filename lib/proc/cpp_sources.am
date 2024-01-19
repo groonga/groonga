@@ -1,3 +1,4 @@
 libgrnproc_cpp_sources =			\
+	proc_distance.cpp			\
 	proc_query.cpp				\
 	proc_select.cpp
