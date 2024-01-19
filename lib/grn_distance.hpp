@@ -116,7 +116,7 @@ namespace grn {
 #ifdef GRN_WITH_XSIMD
 #  define GRN_INSTANTIATION_EXTERN extern
 
-#  define GRN_INSTANTIATION_ARCH   xsimd::avx512f
+#  define GRN_INSTANTIATION_ARCH   xsimd::avx512dq
 #  include "grn_distance_instantiation.hpp"
 #  undef GRN_INSTANTIATION_ARCH
 
