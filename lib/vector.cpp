@@ -22,7 +22,7 @@
 #include "grn_io.h"
 #include "grn_vector.h"
 
-#include "groonga/bulk.hpp"
+#include <groonga/bulk.hpp>
 
 #include <cstring>
 
