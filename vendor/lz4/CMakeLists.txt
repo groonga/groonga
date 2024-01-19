@@ -50,7 +50,7 @@ if(GRN_WITH_BUNDLED_LZ4)
       target_compile_definitions(liblz4 INTERFACE "LZ4_DLL_IMPORT=1")
     endif()
   endif()
-  target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
+  target_include_directories(liblz4 SYSTEM BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
   target_compile_definitions(liblz4 PRIVATE "XXH_NAMESPACE=LZ4_")
 
   if(NOT MSVC)
