@@ -197,6 +197,8 @@ Munin plugins for Groonga
 # It seems that preventing installing FetchContent library by EXCLUDE_FROM_ALL
 # doesn't work with old CMake.
 rm -rf $RPM_BUILD_ROOT%{_includedir}/xsimd/
+rm -rf $RPM_BUILD_ROOT%{_libdir}/cmake/xsimd/
+rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig/xsimd.pc
 
 mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 
@@ -328,6 +330,7 @@ exit 0
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
 %{_datadir}/groonga/mruby/
+%{_datadir}/groonga/xsimd/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
 %files examples
