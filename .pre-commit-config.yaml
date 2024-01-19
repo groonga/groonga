@@ -20,6 +20,7 @@ repos:
       - id: clang-format
         files: >-
           (
+          ?benchmark/bench-distance\.c|
           ?include/groonga/bulk\.hpp|
           ?include/groonga/command_arguments\.hpp|
           ?include/groonga/distance\.h|
@@ -76,6 +77,7 @@ repos:
           ?lib/output\.c|
           ?lib/pat\.c|
           ?lib/proc/proc_column\.c|
+          ?lib/proc/proc_distance\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/proc/proc_object_inspect\.c|
           ?lib/proc/proc_query\.c|

@@ -56,8 +56,7 @@
 
 #include "lib/benchmark.h"
 
-typedef struct _BenchmarkData
-{
+typedef struct _BenchmarkData {
   grn_ctx context;
   grn_obj *database;
   grn_obj vector1;
@@ -70,6 +69,16 @@ bench_distance_cosine(gpointer user_data)
   BenchmarkData *data = user_data;
 
   grn_distance_cosine(&(data->context), &(data->vector1), &(data->vector2));
+}
+
+static void
+bench_distance_inner_product(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  grn_distance_inner_product(&(data->context),
+                             &(data->vector1),
+                             &(data->vector2));
 }
 
 static void
@@ -197,7 +206,8 @@ main(int argc, gchar **argv)
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
     g_print("failed to initialize Groonga: <%d>: %s\n",
-            rc, grn_get_global_error_message());
+            rc,
+            grn_get_global_error_message());
     return EXIT_FAILURE;
   }
   bench_init(&argc, &argv);
@@ -212,23 +222,37 @@ main(int argc, gchar **argv)
 
   reporter = bench_reporter_new();
 
-#define REGISTER(label, setup)                          \
-  bench_reporter_register(reporter, label, n,           \
-                          bench_setup_ ## setup,        \
-                          bench_distance_cosine,        \
-                          bench_teardown,               \
+#define REGISTER(label, algorithm, setup)                                      \
+  bench_reporter_register(reporter,                                            \
+                          #algorithm " " label,                                \
+                          n,                                                   \
+                          bench_setup_##setup,                                 \
+                          bench_distance_##algorithm,                          \
+                          bench_teardown,                                      \
                           &data)
-  REGISTER("cosine (Float32, D=75)", float32_75);
-  REGISTER("cosine (Float32, D=300)", float32_300);
-  REGISTER("cosine (Float32, D=512)", float32_512);
-  REGISTER("cosine (Float32, D=600)", float32_600);
-  REGISTER("cosine (Float32, D=1024)", float32_1024);
+  REGISTER("(Float32, D=75)", cosine, float32_75);
+  REGISTER("(Float32, D=300)", cosine, float32_300);
+  REGISTER("(Float32, D=512)", cosine, float32_512);
+  REGISTER("(Float32, D=600)", cosine, float32_600);
+  REGISTER("(Float32, D=1024)", cosine, float32_1024);
 
-  REGISTER("cosine (Float, D=75)", float_75);
-  REGISTER("cosine (Float, D=300)", float_300);
-  REGISTER("cosine (Float, D=512)", float_512);
-  REGISTER("cosine (Float, D=600)", float_600);
-  REGISTER("cosine (Float, D=1024)", float_1024);
+  REGISTER("(Float, D=75)", cosine, float_75);
+  REGISTER("(Float, D=300)", cosine, float_300);
+  REGISTER("(Float, D=512)", cosine, float_512);
+  REGISTER("(Float, D=600)", cosine, float_600);
+  REGISTER("(Float, D=1024)", cosine, float_1024);
+
+  REGISTER("(Float32, D=75)", inner_product, float32_75);
+  REGISTER("(Float32, D=300)", inner_product, float32_300);
+  REGISTER("(Float32, D=512)", inner_product, float32_512);
+  REGISTER("(Float32, D=600)", inner_product, float32_600);
+  REGISTER("(Float32, D=1024)", inner_product, float32_1024);
+
+  REGISTER("(Float, D=75)", inner_product, float_75);
+  REGISTER("(Float, D=300)", inner_product, float_300);
+  REGISTER("(Float, D=512)", inner_product, float_512);
+  REGISTER("(Float, D=600)", inner_product, float_600);
+  REGISTER("(Float, D=1024)", inner_product, float_1024);
 #undef REGISTER
 
   bench_reporter_run(reporter);

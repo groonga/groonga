@@ -66,6 +66,8 @@ grn_proc_init_define_selector(grn_ctx *ctx);
 void
 grn_proc_init_distance_cosine(grn_ctx *ctx);
 void
+grn_proc_init_distance_inner_product(grn_ctx *ctx);
+void
 grn_proc_init_dump(grn_ctx *ctx);
 void
 grn_proc_init_edit_distance(grn_ctx *ctx);

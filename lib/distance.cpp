@@ -101,6 +101,17 @@ namespace {
       grn::distance::compute_inner_product<ElementType>(vector1, vector2);
     return 1 - (inner_product / (l2_norm1 * l2_norm2));
   }
+
+  template <typename ElementType>
+  float
+  compute_distance_inner_product(grn_ctx *ctx,
+                                 grn_obj *vector1,
+                                 grn_obj *vector2)
+  {
+    auto inner_product =
+      grn::distance::compute_inner_product<ElementType>(vector1, vector2);
+    return 1 - inner_product;
+  }
 } // namespace
 
 extern "C" void
@@ -131,6 +142,35 @@ grn_distance_cosine(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
     break;
   case GRN_DB_FLOAT:
     distance = compute_distance_cosine<double>(ctx, vector1, vector2);
+    break;
+  default:
+    // TODO: We should add support for all integer types
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "%s unsupported type: %s",
+        tag,
+        grn_type_id_to_string_builtin(ctx, vector1->header.domain));
+    break;
+  }
+
+  return distance;
+}
+
+extern "C" float
+grn_distance_inner_product(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
+{
+  const char *tag = "[distance][inner-product]";
+  float distance = 0.0;
+
+  if (!validate_vectors(ctx, vector1, vector2, tag)) {
+    return distance;
+  }
+
+  switch (vector1->header.domain) {
+  case GRN_DB_FLOAT32:
+    distance = compute_distance_inner_product<float>(ctx, vector1, vector2);
+    break;
+  case GRN_DB_FLOAT:
+    distance = compute_distance_inner_product<double>(ctx, vector1, vector2);
     break;
   default:
     // TODO: We should add support for all integer types
