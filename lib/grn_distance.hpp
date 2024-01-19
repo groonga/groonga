@@ -136,5 +136,5 @@ namespace grn {
       }
       return multiplication_sum;
     }
-  }
-}
+  } // namespace distance
+} // namespace grn
