@@ -28,6 +28,9 @@ target_link_libraries(bench-cache libgroonga grnbench)
 add_executable(bench-ctx-create bench-ctx-create.c)
 target_link_libraries(bench-ctx-create libgroonga grnbench)
 
+add_executable(bench-distance bench-distance.c)
+target_link_libraries(bench-distance libgroonga grnbench)
+
 add_executable(bench-geo-distance bench-geo-distance.c)
 target_link_libraries(bench-geo-distance libgroonga grnbench)
 
