@@ -133,6 +133,11 @@ grn_distance_cosine(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
     distance = compute_distance_cosine<double>(ctx, vector1, vector2);
     break;
   default:
+    // TODO: We should add support for all integer types
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "%s unsupported type: %s",
+        tag,
+        grn_type_id_to_string_builtin(ctx, vector1->header.domain));
     break;
   }
 
