@@ -18,7 +18,7 @@
 #include "grn_distance_impl.hpp"
 
 #define GRN_INSTANTIATION_EXTERN
-#define GRN_INSTANTIATION_ARCH xsimd::avx512f
+#define GRN_INSTANTIATION_ARCH xsimd::avx512dq
 #include "grn_distance_instantiation.hpp"
 #undef GRN_INSTANTIATION_ARCH
 #undef GRN_INSTANTIATION_EXTERN

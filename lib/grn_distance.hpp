@@ -59,7 +59,7 @@ namespace grn {
           (sizeof(ElementType) * n_elements) >= use_simd_threshold) {
         auto dispatched = xsimd::dispatch<xsimd::arch_list<
 #  ifdef GRN_WITH_SIMD_AVX512
-          xsimd::avx512f,
+          xsimd::avx512dq,
 #  endif
 #  ifdef GRN_WITH_SIMD_AVX2
           xsimd::avx2,
@@ -92,7 +92,7 @@ namespace grn {
           (sizeof(ElementType) * n_elements * 2) >= use_simd_threshold) {
         auto dispatched = xsimd::dispatch<xsimd::arch_list<
 #  ifdef GRN_WITH_SIMD_AVX512
-          xsimd::avx512f,
+          xsimd::avx512dq,
 #  endif
 #  ifdef GRN_WITH_SIMD_AVX2
           xsimd::avx2,

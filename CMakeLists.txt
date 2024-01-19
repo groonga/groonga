@@ -282,9 +282,13 @@ else()
   if(GRN_HAVE_AVX2_FLAG)
     set(GRN_C_FLAGS_AVX2 "-mavx2")
   endif()
+  check_c_compiler_flag("-mavx512cd" GRN_HAVE_AVX512CD_FLAG)
+  check_c_compiler_flag("-mavx512dq" GRN_HAVE_AVX512DQ_FLAG)
   check_c_compiler_flag("-mavx512f" GRN_HAVE_AVX512F_FLAG)
-  if(GRN_HAVE_AVX512F_FLAG)
-    set(GRN_C_FLAGS_AVX512 "-mavx512f")
+  if(GRN_HAVE_AVX512CD_FLAG
+     AND GRN_HAVE_AVX512DQ_FLAG
+     AND GRN_HAVE_AVX512F_FLAG)
+    set(GRN_C_FLAGS_AVX512 "-mavx512f -mavx512cd -mavx512dq")
   endif()
 endif()
 
