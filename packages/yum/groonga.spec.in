@@ -193,6 +193,10 @@ Munin plugins for Groonga
 
 %install
 %cmake_install
+# Workaround for old CMake on CentOS 7.
+# It seems that preventing installing FetchContent library by EXCLUDE_FROM_ALL
+# doesn't work with old CMake.
+rm -rf $RPM_BUILD_ROOT%{_includedir}/xsimd/
 
 mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 
