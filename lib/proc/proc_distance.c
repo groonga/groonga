@@ -102,3 +102,45 @@ grn_proc_init_distance_inner_product(grn_ctx *ctx)
                   0,
                   NULL);
 }
+
+static grn_obj *
+func_distance_l2_norm_squared(grn_ctx *ctx,
+                              int n_args,
+                              grn_obj **args,
+                              grn_user_data *user_data)
+{
+  const char *function_name = "distance_l2_norm_squared";
+
+  grn_obj *distance = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_FLOAT32, 0);
+  GRN_FLOAT32_SET(ctx, distance, 0.0);
+
+  if (n_args != 2) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s(): wrong number of arguments (%d for 2)",
+                     function_name,
+                     n_args);
+    return distance;
+  }
+
+  grn_obj *vector1 = args[0];
+  grn_obj *vector2 = args[1];
+  float distance_raw = grn_distance_l2_norm_squared(ctx, vector1, vector2);
+  GRN_FLOAT32_SET(ctx, distance, distance_raw);
+
+  return distance;
+}
+
+void
+grn_proc_init_distance_l2_norm_squared(grn_ctx *ctx)
+{
+  grn_proc_create(ctx,
+                  "distance_l2_norm_squared",
+                  -1,
+                  GRN_PROC_FUNCTION,
+                  func_distance_l2_norm_squared,
+                  NULL,
+                  NULL,
+                  0,
+                  NULL);
+}

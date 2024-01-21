@@ -1,0 +1,11 @@
+plugin_register functions/number
+
+table_create Data TABLE_NO_KEY
+column_create Data vector1 COLUMN_VECTOR Float32
+column_create Data vector2 COLUMN_VECTOR Float32
+
+#@generate-series 0 0 Data '{"vector1" => [0.1, -0.2, 0.3] * 25, "vector2" => [0.9, -0.2, 1] * 25}'
+
+select \
+  --table Data \
+  --output_columns 'vector1, vector2, number_round(distance_l2_norm_squared(vector1, vector2), 5)'

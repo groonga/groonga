@@ -265,19 +265,19 @@ schema
     },
     "token_filters": {
       "TokenFilterNFKC100": {
-        "id": 228,
+        "id": 229,
         "name": "TokenFilterNFKC100"
       },
       "TokenFilterNFKC121": {
-        "id": 229,
+        "id": 230,
         "name": "TokenFilterNFKC121"
       },
       "TokenFilterNFKC130": {
-        "id": 230,
+        "id": 231,
         "name": "TokenFilterNFKC130"
       },
       "TokenFilterNFKC150": {
-        "id": 231,
+        "id": 232,
         "name": "TokenFilterNFKC150"
       }
     },
@@ -620,19 +620,19 @@ schema
     },
     "token_filters": {
       "TokenFilterNFKC100": {
-        "id": 228,
+        "id": 229,
         "name": "TokenFilterNFKC100"
       },
       "TokenFilterNFKC121": {
-        "id": 229,
+        "id": 230,
         "name": "TokenFilterNFKC121"
       },
       "TokenFilterNFKC130": {
-        "id": 230,
+        "id": 231,
         "name": "TokenFilterNFKC130"
       },
       "TokenFilterNFKC150": {
-        "id": 231,
+        "id": 232,
         "name": "TokenFilterNFKC150"
       }
     },
