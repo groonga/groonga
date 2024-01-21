@@ -1,0 +1,16 @@
+plugin_register functions/number
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Float
+
+load --table Data
+[
+{"value": 44.444},
+{"value": 55.555},
+{"value": -44.444},
+{"value": -55.555}
+]
+
+select Data --output_columns 'number_round(value)'
+select Data --output_columns 'number_round(value, 1)'
+select Data --output_columns 'number_round(value, -1)'
