@@ -82,6 +82,16 @@ bench_distance_inner_product(gpointer user_data)
 }
 
 static void
+bench_distance_l2_norm_squared(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  grn_distance_l2_norm_squared(&(data->context),
+                               &(data->vector1),
+                               &(data->vector2));
+}
+
+static void
 bench_setup_common(gpointer user_data)
 {
   BenchmarkData *data = user_data;
@@ -173,12 +183,6 @@ bench_setup_float_512(gpointer user_data)
 }
 
 static void
-bench_setup_float_600(gpointer user_data)
-{
-  bench_setup_float_n(user_data, 600);
-}
-
-static void
 bench_setup_float_1024(gpointer user_data)
 {
   bench_setup_float_n(user_data, 1024);
@@ -201,7 +205,7 @@ main(int argc, gchar **argv)
   grn_rc rc;
   BenchmarkData data;
   BenchReporter *reporter;
-  gint n = 1000;
+  gint n = 100;
 
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
@@ -233,26 +237,32 @@ main(int argc, gchar **argv)
   REGISTER("(Float32, D=75)", cosine, float32_75);
   REGISTER("(Float32, D=300)", cosine, float32_300);
   REGISTER("(Float32, D=512)", cosine, float32_512);
-  REGISTER("(Float32, D=600)", cosine, float32_600);
   REGISTER("(Float32, D=1024)", cosine, float32_1024);
 
   REGISTER("(Float, D=75)", cosine, float_75);
   REGISTER("(Float, D=300)", cosine, float_300);
   REGISTER("(Float, D=512)", cosine, float_512);
-  REGISTER("(Float, D=600)", cosine, float_600);
   REGISTER("(Float, D=1024)", cosine, float_1024);
 
   REGISTER("(Float32, D=75)", inner_product, float32_75);
   REGISTER("(Float32, D=300)", inner_product, float32_300);
   REGISTER("(Float32, D=512)", inner_product, float32_512);
-  REGISTER("(Float32, D=600)", inner_product, float32_600);
   REGISTER("(Float32, D=1024)", inner_product, float32_1024);
 
   REGISTER("(Float, D=75)", inner_product, float_75);
   REGISTER("(Float, D=300)", inner_product, float_300);
   REGISTER("(Float, D=512)", inner_product, float_512);
-  REGISTER("(Float, D=600)", inner_product, float_600);
   REGISTER("(Float, D=1024)", inner_product, float_1024);
+
+  REGISTER("(Float32, D=75)", l2_norm_squared, float32_75);
+  REGISTER("(Float32, D=300)", l2_norm_squared, float32_300);
+  REGISTER("(Float32, D=512)", l2_norm_squared, float32_512);
+  REGISTER("(Float32, D=1024)", l2_norm_squared, float32_1024);
+
+  REGISTER("(Float, D=75)", l2_norm_squared, float_75);
+  REGISTER("(Float, D=300)", l2_norm_squared, float_300);
+  REGISTER("(Float, D=512)", l2_norm_squared, float_512);
+  REGISTER("(Float, D=1024)", l2_norm_squared, float_1024);
 #undef REGISTER
 
   bench_reporter_run(reporter);

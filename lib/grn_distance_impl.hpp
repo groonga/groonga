@@ -139,6 +139,32 @@ namespace grn {
 
     template <typename Arch, typename ElementType>
     float
+    difference_l2_norm_squared::operator()(Arch,
+                                           const ElementType *vector_raw1,
+                                           const ElementType *vector_raw2,
+                                           size_t n_elements)
+    {
+      using batch = xsimd::batch<ElementType, Arch>;
+      float square_sum = 0;
+      each_batch<Arch, ElementType>(
+        vector_raw1,
+        vector_raw2,
+        n_elements,
+        [&square_sum](batch &vector_batch1, batch &vector_batch2) {
+          auto difference = vector_batch1 - vector_batch2;
+          square_sum += xsimd::reduce_add(difference * difference);
+        },
+        [&square_sum](const ElementType *vector_raw1,
+                      const ElementType *vector_raw2,
+                      size_t i) {
+          auto difference = vector_raw1[i] - vector_raw2[i];
+          square_sum += difference * difference;
+        });
+      return square_sum;
+    }
+
+    template <typename Arch, typename ElementType>
+    float
     inner_product::operator()(Arch,
                               const ElementType *vector_raw1,
                               const ElementType *vector_raw2,

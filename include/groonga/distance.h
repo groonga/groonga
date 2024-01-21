@@ -26,6 +26,8 @@ GRN_API float
 grn_distance_cosine(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2);
 GRN_API float
 grn_distance_inner_product(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2);
+GRN_API float
+grn_distance_l2_norm_squared(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2);
 
 #ifdef __cplusplus
 }

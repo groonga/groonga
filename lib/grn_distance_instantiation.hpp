@@ -34,3 +34,18 @@ grn::distance::inner_product::operator()<GRN_INSTANTIATION_ARCH, double>(
   const double *vector_raw1,
   const double *vector_raw2,
   size_t n_elements);
+
+GRN_INSTANTIATION_EXTERN template float
+grn::distance::difference_l2_norm_squared::operator()<GRN_INSTANTIATION_ARCH,
+                                                      float>(
+  GRN_INSTANTIATION_ARCH,
+  const float *vector_raw1,
+  const float *vector_raw2,
+  size_t n_elements);
+GRN_INSTANTIATION_EXTERN template float
+grn::distance::difference_l2_norm_squared::operator()<GRN_INSTANTIATION_ARCH,
+                                                      double>(
+  GRN_INSTANTIATION_ARCH,
+  const double *vector_raw1,
+  const double *vector_raw2,
+  size_t n_elements);
