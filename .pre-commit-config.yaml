@@ -94,6 +94,7 @@ repos:
           ?lib/type\.c|
           ?lib/util\.c|
           ?lib/vector\.cpp|
+          ?plugins/functions/number\.cpp|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit
