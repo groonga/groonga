@@ -47,7 +47,7 @@ set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNPROC_CPP_SOURCES}
   PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
-if(TARGET xsimd)
+if(GRN_WITH_XSIMD)
   if(GRN_WITH_SIMD_AVX)
     list(APPEND LIBGROONGA_CPP_SOURCES distance_avx.cpp)
     set_property(
