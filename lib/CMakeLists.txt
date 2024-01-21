@@ -62,7 +62,7 @@ if(TARGET xsimd)
       APPEND_STRING
       PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX2}")
   endif()
-  if(GRN_WITH_SIMD_AVX2)
+  if(GRN_WITH_SIMD_AVX512)
     list(APPEND LIBGROONGA_CPP_SOURCES distance_avx512.cpp)
     set_property(
       SOURCE distance_avx512.cpp
