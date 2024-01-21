@@ -86,9 +86,7 @@ bench_distance_l1_norm(gpointer user_data)
 {
   BenchmarkData *data = user_data;
 
-  grn_distance_l1_norm(&(data->context),
-                               &(data->vector1),
-                               &(data->vector2));
+  grn_distance_l1_norm(&(data->context), &(data->vector1), &(data->vector2));
 }
 
 static void

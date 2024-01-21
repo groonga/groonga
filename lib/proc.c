@@ -5576,5 +5576,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
 
   grn_proc_init_distance_cosine(ctx);
   grn_proc_init_distance_inner_product(ctx);
+  grn_proc_init_distance_l1_norm(ctx);
   grn_proc_init_distance_l2_norm_squared(ctx);
 }

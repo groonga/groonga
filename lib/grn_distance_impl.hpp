@@ -153,8 +153,7 @@ namespace grn {
           n_elements,
           [&absolute_sum](batch &vector_batch1, batch &vector_batch2) {
             auto difference = vector_batch1 - vector_batch2;
-            absolute_sum +=
-              xsimd::reduce_add(xsimd::fabs(difference));
+            absolute_sum += xsimd::reduce_add(xsimd::fabs(difference));
           },
           [&absolute_sum](const ElementType *vector_raw1,
                           const ElementType *vector_raw2,
@@ -169,8 +168,7 @@ namespace grn {
           n_elements,
           [&absolute_sum](batch &vector_batch1, batch &vector_batch2) {
             auto difference = vector_batch1 - vector_batch2;
-            absolute_sum +=
-              xsimd::reduce_add(xsimd::abs(difference));
+            absolute_sum += xsimd::reduce_add(xsimd::abs(difference));
           },
           [&absolute_sum](const ElementType *vector_raw1,
                           const ElementType *vector_raw2,
