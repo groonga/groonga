@@ -290,14 +290,15 @@ else()
     check_c_compiler_flag("-mavx512dq" GRN_HAVE_AVX512DQ_FLAG)
     check_c_compiler_flag("-mavx512f" GRN_HAVE_AVX512F_FLAG)
     if(GRN_HAVE_AVX512CD_FLAG
-	AND GRN_HAVE_AVX512DQ_FLAG
-	AND GRN_HAVE_AVX512F_FLAG)
+       AND GRN_HAVE_AVX512DQ_FLAG
+       AND GRN_HAVE_AVX512F_FLAG)
       set(GRN_C_FLAGS_AVX512 "-mavx512f -mavx512cd -mavx512dq")
     endif()
   elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
     check_c_compiler_flag("-march=armv8-a" GRN_HAVE_ARCH_ARMV8_A_FLAG)
-    if(GRN_HAVE_ARCH_ARMV8_A_FLAG
+    if(GRN_HAVE_ARCH_ARMV8_A_FLAG)
       set(GRN_C_FLAGS_NEON64 "-march=armv8-a")
+    endif()
   endif()
 endif()
 
