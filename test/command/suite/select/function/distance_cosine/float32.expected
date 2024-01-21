@@ -1,3 +1,5 @@
+plugin_register functions/number
+[[0,0.0,0.0],true]
 table_create Data TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Data vector1 COLUMN_VECTOR Float32
@@ -9,7 +11,7 @@ load --table Data
 {"vector1":[0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3,0.1,-0.2,0.3],"vector2":[0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1,0.9,-0.2,1]}
 ]
 [[0,0.0,0.0],1]
-select   --table Data   --output_columns 'vector1, vector2, distance_cosine(vector1, vector2)'
+select   --table Data   --output_columns 'vector1, vector2, number_round(distance_cosine(vector1, vector2), 5)'
 [
   [
     0,
@@ -31,7 +33,7 @@ select   --table Data   --output_columns 'vector1, vector2, distance_cosine(vect
           "Float32"
         ],
         [
-          "distance_cosine",
+          "number_round",
           null
         ]
       ],
@@ -190,7 +192,7 @@ select   --table Data   --output_columns 'vector1, vector2, distance_cosine(vect
           -0.2,
           1.0
         ],
-        0.1550742
+        0.15507
       ]
     ]
   ]

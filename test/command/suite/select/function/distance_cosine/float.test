@@ -1,3 +1,5 @@
+plugin_register functions/number
+
 table_create Data TABLE_NO_KEY
 column_create Data vector1 COLUMN_VECTOR Float
 column_create Data vector2 COLUMN_VECTOR Float
@@ -6,4 +8,4 @@ column_create Data vector2 COLUMN_VECTOR Float
 
 select \
   --table Data \
-  --output_columns 'vector1, vector2, distance_cosine(vector1, vector2)'
+  --output_columns 'vector1, vector2, number_round(distance_cosine(vector1, vector2), 5)'
