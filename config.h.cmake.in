@@ -64,6 +64,7 @@
 #cmakedefine GRN_WITH_SIMD_AVX
 #cmakedefine GRN_WITH_SIMD_AVX2
 #cmakedefine GRN_WITH_SIMD_AVX512
+#cmakedefine GRN_WITH_SIMD_NEON64
 
 /* compiler specific build options */
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
