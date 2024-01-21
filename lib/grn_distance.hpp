@@ -37,6 +37,15 @@ namespace grn {
       operator()(Arch, const ElementType *vector_raw, size_t n_elements);
     };
 
+    struct difference_l1_norm {
+      template <typename Arch, typename ElementType>
+      float
+      operator()(Arch,
+                 const ElementType *vector_raw1,
+                 const ElementType *vector_raw2,
+                 size_t n_elements);
+    };
+
     struct difference_l2_norm_squared {
       template <typename Arch, typename ElementType>
       float
@@ -118,6 +127,43 @@ namespace grn {
         square_sum += vector_raw[i] * vector_raw[i];
       }
       return std::sqrt(square_sum);
+    }
+
+    template <typename ElementType>
+    float
+    compute_difference_l1_norm(grn_obj *vector1, grn_obj *vector2)
+    {
+      auto vector_raw1 =
+        reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector1));
+      auto vector_raw2 =
+        reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector2));
+      auto n_elements = GRN_BULK_VSIZE(vector1) / sizeof(ElementType);
+#ifdef GRN_WITH_SIMD
+      if (use_simd &&
+          (sizeof(ElementType) * n_elements * 2) >= use_simd_threshold) {
+        auto dispatched = xsimd::dispatch<xsimd::arch_list<
+#  ifdef GRN_WITH_SIMD_AVX512
+          xsimd::avx512dq,
+#  endif
+#  ifdef GRN_WITH_SIMD_AVX2
+          xsimd::avx2,
+#  endif
+#  ifdef GRN_WITH_SIMD_AVX
+          xsimd::avx,
+#  endif
+#  ifdef GRN_WITH_SIMD_NEON64
+          xsimd::neon64,
+#  endif
+          xsimd::generic>>(difference_l1_norm{});
+        return dispatched(vector_raw1, vector_raw2, n_elements);
+      }
+#endif
+      float absolute_sum = 0;
+      for (size_t i = 0; i < n_elements; ++i) {
+        auto difference = vector_raw1[i] - vector_raw2[i];
+        absolute_sum += difference < 0 ? -difference : difference;
+      }
+      return absolute_sum;
     }
 
     template <typename ElementType>

@@ -115,6 +115,14 @@ namespace {
 
   template <typename ElementType>
   float
+  compute_distance_l1_norm(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
+  {
+    return grn::distance::compute_difference_l1_norm<ElementType>(vector1,
+                                                                  vector2);
+  }
+
+  template <typename ElementType>
+  float
   compute_distance_l2_norm_squared(grn_ctx *ctx,
                                    grn_obj *vector1,
                                    grn_obj *vector2)
@@ -182,6 +190,35 @@ grn_distance_inner_product(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
     break;
   case GRN_DB_FLOAT:
     distance = compute_distance_inner_product<double>(ctx, vector1, vector2);
+    break;
+  default:
+    // TODO: We should add support for all integer types
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "%s unsupported type: %s",
+        tag,
+        grn_type_id_to_string_builtin(ctx, vector1->header.domain));
+    break;
+  }
+
+  return distance;
+}
+
+extern "C" float
+grn_distance_l1_norm(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
+{
+  const char *tag = "[distance][l1-norm]";
+  float distance = 0.0;
+
+  if (!validate_vectors(ctx, vector1, vector2, tag)) {
+    return distance;
+  }
+
+  switch (vector1->header.domain) {
+  case GRN_DB_FLOAT32:
+    distance = compute_distance_l1_norm<float>(ctx, vector1, vector2);
+    break;
+  case GRN_DB_FLOAT:
+    distance = compute_distance_l1_norm<double>(ctx, vector1, vector2);
     break;
   default:
     // TODO: We should add support for all integer types

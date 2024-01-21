@@ -82,6 +82,16 @@ bench_distance_inner_product(gpointer user_data)
 }
 
 static void
+bench_distance_l1_norm(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  grn_distance_l1_norm(&(data->context),
+                               &(data->vector1),
+                               &(data->vector2));
+}
+
+static void
 bench_distance_l2_norm_squared(gpointer user_data)
 {
   BenchmarkData *data = user_data;
@@ -253,6 +263,16 @@ main(int argc, gchar **argv)
   REGISTER("(Float, D=300)", inner_product, float_300);
   REGISTER("(Float, D=512)", inner_product, float_512);
   REGISTER("(Float, D=1024)", inner_product, float_1024);
+
+  REGISTER("(Float32, D=75)", l1_norm, float32_75);
+  REGISTER("(Float32, D=300)", l1_norm, float32_300);
+  REGISTER("(Float32, D=512)", l1_norm, float32_512);
+  REGISTER("(Float32, D=1024)", l1_norm, float32_1024);
+
+  REGISTER("(Float, D=75)", l1_norm, float_75);
+  REGISTER("(Float, D=300)", l1_norm, float_300);
+  REGISTER("(Float, D=512)", l1_norm, float_512);
+  REGISTER("(Float, D=1024)", l1_norm, float_1024);
 
   REGISTER("(Float32, D=75)", l2_norm_squared, float32_75);
   REGISTER("(Float32, D=300)", l2_norm_squared, float32_300);

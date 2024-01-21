@@ -32,6 +32,21 @@ namespace grn {
 
     template <typename Arch, typename ElementType>
     float
+    difference_l1_norm::operator()(Arch,
+                                   const ElementType *vector_raw1,
+                                   const ElementType *vector_raw2,
+                                   size_t n_elements)
+    {
+      float absolute_sum = 0;
+      for (size_t i = 0; i < n_elements; ++i) {
+        auto difference = vector_raw1[i] - vector_raw2[i];
+        absolute_sum += difference < 0 ? -difference : difference;
+      }
+      return absolute_sum;
+    }
+
+    template <typename Arch, typename ElementType>
+    float
     difference_l2_norm_squared::operator()(Arch,
                                            const ElementType *vector_raw1,
                                            const ElementType *vector_raw2,
