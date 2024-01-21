@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1554,6 +1554,15 @@ grn_plugin_proc_get_value_bool(grn_ctx *ctx,
                                const char *tag)
 {
   return grn_proc_get_value_bool(ctx, value, default_value, tag);
+}
+
+int32_t
+grn_plugin_proc_get_value_int32(grn_ctx *ctx,
+                                grn_obj *value,
+                                int32_t default_value_raw,
+                                const char *tag)
+{
+  return grn_proc_get_value_int32(ctx, value, default_value_raw, tag);
 }
 
 int64_t
