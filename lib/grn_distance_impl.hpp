@@ -81,7 +81,21 @@ namespace grn {
       size_t i = 0;
       auto unaligned_size1 = address1 % Arch::alignment();
       auto unaligned_size2 = address2 % Arch::alignment();
+      bool aligned = true;
       if (unaligned_size1 != unaligned_size2) {
+        aligned = false;
+      } else if (unaligned_size1 != 0) {
+        auto adjust_size = Arch::alignment() - unaligned_size1;
+        if ((adjust_size % sizeof(ElementType)) == 0) {
+          // Adjust start alignment.
+          for (; adjust_size > 0; ++i, adjust_size -= sizeof(ElementType)) {
+            sequential_func(vector_raw1, vector_raw2, i);
+          }
+        } else {
+          aligned = false;
+        }
+      }
+      if (!aligned) {
         // Can't align.
         for (; i < n_elements; i += batch::size) {
           auto vector_batch1 = batch::load_unaligned(vector_raw1 + i);
