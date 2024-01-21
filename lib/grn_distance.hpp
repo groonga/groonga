@@ -60,7 +60,11 @@ namespace grn {
 #  include "grn_distance_instantiation.hpp"
 #  undef GRN_INSTANTIATION_ARCH
 
-#  define GRN_INSTANTIATION_ARCH xsimd::sse4_2
+#  define GRN_INSTANTIATION_ARCH xsimd::avx
+#  include "grn_distance_instantiation.hpp"
+#  undef GRN_INSTANTIATION_ARCH
+
+#  define GRN_INSTANTIATION_ARCH xsimd::neon64
 #  include "grn_distance_instantiation.hpp"
 #  undef GRN_INSTANTIATION_ARCH
 
@@ -92,6 +96,9 @@ namespace grn {
 #  endif
 #  ifdef GRN_WITH_SIMD_AVX
           xsimd::avx,
+#  endif
+#  ifdef GRN_WITH_SIMD_NEON64
+          xsimd::neon64,
 #  endif
           xsimd::generic>>(l2_norm{});
         return dispatched(vector_raw, n_elements);
@@ -125,6 +132,9 @@ namespace grn {
 #  endif
 #  ifdef GRN_WITH_SIMD_AVX
           xsimd::avx,
+#  endif
+#  ifdef GRN_WITH_SIMD_NEON64
+          xsimd::neon64,
 #  endif
           xsimd::generic>>(inner_product{});
         return dispatched(vector_raw1, vector_raw2, n_elements);

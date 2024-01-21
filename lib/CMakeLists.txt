@@ -1,5 +1,5 @@
-# Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,13 @@ if(TARGET xsimd)
       SOURCE distance_avx512.cpp
       APPEND_STRING
       PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX512}")
+  endif()
+  if(GRN_WITH_SIMD_NEON64)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_neon64.cpp)
+    set_property(
+      SOURCE distance_neon64.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_NEON64}")
   endif()
   list(APPEND LIBGROONGA_CPP_SOURCES distance_generic.cpp)
 endif()

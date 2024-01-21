@@ -127,6 +127,7 @@ EXTRA_DIST =						\
 	distance_avx.cpp				\
 	distance_avx2.cpp				\
 	distance_avx512.cpp				\
+	distance_neon64.cpp				\
 	distance_generic.cpp				\
 	grn_ecmascript.c				\
 	grn_ecmascript.h				\
