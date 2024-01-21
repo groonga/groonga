@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+// Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -79,7 +79,7 @@ namespace grn {
   namespace bulk {
     template <typename TYPE>
     TYPE
-    get(grn_ctx *ctx, grn_obj *bulk, TYPE default_value, const char *tag)
+    get(grn_ctx *ctx, grn_obj *bulk, TYPE default_value)
     {
       switch (bulk->header.domain) {
       case GRN_DB_BOOL:

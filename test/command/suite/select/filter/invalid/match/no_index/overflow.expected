@@ -519,14 +519,5 @@ load --table Users
 ]
 [[0,0.0,0.0],512]
 select Users --filter 'name @ "a" || (1 | "invalid operator causes overflow")'
-[
-  [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[expr-executor] not a numerical format: <invalid operator causes overflow>"
-  ]
-]
-#|e| [expr-executor] not a numerical format: <invalid operator causes overflow>
+[[[-22,0.0,0.0],"not a numerical format: <invalid operator causes overflow>"]]
+#|e| not a numerical format: <invalid operator causes overflow>

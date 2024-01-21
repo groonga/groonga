@@ -53,11 +53,10 @@ namespace {
   classify(grn_ctx *ctx,
            grn_obj *number,
            grn_obj *interval,
-           grn_obj *classed_number,
-           const char *tag)
+           grn_obj *classed_number)
   {
-    auto number_raw = grn::bulk::get<TYPE>(ctx, number, 0, tag);
-    auto interval_raw = grn::bulk::get<TYPE>(ctx, interval, 0, tag);
+    auto number_raw = grn::bulk::get<TYPE>(ctx, number, 0);
+    auto interval_raw = grn::bulk::get<TYPE>(ctx, interval, 0);
     auto class_raw = classify_raw<TYPE>(ctx, number_raw, interval_raw);
     auto classed_number_raw = class_raw * interval_raw;
     grn::bulk::set<TYPE>(ctx, classed_number, classed_number_raw);
@@ -70,18 +69,22 @@ namespace {
                        grn_user_data *user_data)
   {
 #define FUNCTION_NAME "number_classify"
-    const char *tag = FUNCTION_NAME "():";
+
+    grn_obj *number;
+    grn_obj *interval;
+    grn_obj casted_interval;
+    grn_obj *classed_number;
 
     if (n_args != 2) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s wrong number of arguments (%d for 2)",
-                       tag,
+                       "%s(): wrong number of arguments (%d for 2)",
+                       FUNCTION_NAME,
                        n_args);
       return NULL;
     }
 
-    auto number = args[0];
+    number = args[0];
     if (!grn_obj_is_number_family_bulk(ctx, number)) {
       grn_obj inspected;
 
@@ -89,15 +92,15 @@ namespace {
       grn_inspect(ctx, &inspected, number);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s: the first argument must be a number: %.*s",
-                       tag,
+                       "%s(): the first argument must be a number: %.*s",
+                       FUNCTION_NAME,
                        static_cast<int>(GRN_TEXT_LEN(&inspected)),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       return NULL;
     }
 
-    auto interval = args[1];
+    interval = args[1];
     if (!grn_obj_is_number_family_bulk(ctx, interval)) {
       grn_obj inspected;
 
@@ -105,54 +108,53 @@ namespace {
       grn_inspect(ctx, &inspected, interval);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s the second argument must be a number: %.*s",
-                       tag,
+                       "%s(): the second argument must be a number: %.*s",
+                       FUNCTION_NAME,
                        static_cast<int>(GRN_TEXT_LEN(&inspected)),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       return NULL;
     }
 
-    auto classed_number =
+    classed_number =
       grn_plugin_proc_alloc(ctx, user_data, number->header.domain, 0);
     if (!classed_number) {
       return NULL;
     }
 
-    grn_obj casted_interval;
     GRN_VALUE_FIX_SIZE_INIT(&casted_interval, 0, number->header.domain);
     grn_obj_cast(ctx, interval, &casted_interval, false);
 
     switch (number->header.domain) {
     case GRN_DB_INT8:
-      classify<int8_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<int8_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_UINT8:
-      classify<uint8_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<uint8_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_INT16:
-      classify<int16_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<int16_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_UINT16:
-      classify<uint16_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<uint16_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_INT32:
-      classify<int32_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<int32_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_UINT32:
-      classify<uint32_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<uint32_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_INT64:
-      classify<int64_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<int64_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_UINT64:
-      classify<uint64_t>(ctx, number, &casted_interval, classed_number, tag);
+      classify<uint64_t>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_FLOAT32:
-      classify<float>(ctx, number, &casted_interval, classed_number, tag);
+      classify<float>(ctx, number, &casted_interval, classed_number);
       break;
     case GRN_DB_FLOAT:
-      classify<double>(ctx, number, &casted_interval, classed_number, tag);
+      classify<double>(ctx, number, &casted_interval, classed_number);
       break;
     default:
       {
@@ -162,8 +164,8 @@ namespace {
         GRN_PLUGIN_ERROR(
           ctx,
           GRN_FUNCTION_NOT_IMPLEMENTED,
-          "%s unsupported type: %s",
-          tag,
+          "%s(): unsupported type: %s",
+          FUNCTION_NAME,
           grn_type_id_to_string_builtin(ctx, number->header.domain));
         GRN_OBJ_FIN(ctx, &inspected);
       }
