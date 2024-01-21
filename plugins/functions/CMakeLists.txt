@@ -61,7 +61,7 @@ target_include_directories(string_functions PRIVATE ${ONIGMO_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am NUMBER_SOURCES)
 set_source_files_properties(${NUMBER_SOURCES}
-                            PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+                            PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(number_functions STATIC ${NUMBER_SOURCES})
   set_target_properties(number_functions PROPERTIES POSITION_INDEPENDENT_CODE
