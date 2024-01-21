@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -620,6 +620,7 @@ namespace {
                                                grn_obj *res,
                                                grn_id res_domain)
   {
+    const char *tag = "[expr-executor]";
     switch (y->header.domain) {
     case GRN_DB_BOOL:
       {
@@ -747,7 +748,8 @@ namespace {
       grn_obj_reinit(ctx, res, res_domain, 0);
       if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {
         ERR(GRN_INVALID_ARGUMENT,
-            "not a numerical format: <%.*s>",
+            "%s not a numerical format: <%.*s>",
+            tag,
             (int)GRN_TEXT_LEN(y),
             GRN_TEXT_VALUE(y));
         return false;
@@ -756,14 +758,15 @@ namespace {
         ctx,
         op,
         x_raw,
-        grn::bulk::get<RESULT_TYPE>(ctx, res, 0),
+        grn::bulk::get<RESULT_TYPE>(ctx, res, 0, tag),
         res);
     default:
       {
         grn::TextBulk y_inspected(ctx);
         grn_inspect(ctx, *y_inspected, y);
         ERR(GRN_INVALID_ARGUMENT,
-            "[expr-executor] unsupported right type: %.*s(%s)",
+            "%s unsupported right type: %.*s(%s)",
+            tag,
             static_cast<int>(GRN_TEXT_LEN(*y_inspected)),
             GRN_TEXT_VALUE(*y_inspected),
             grn_obj_type_to_string(y->header.type));

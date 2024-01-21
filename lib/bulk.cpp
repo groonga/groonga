@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,9 @@
 
 extern "C" {
   int64_t
-  grn_bulk_get_int64(grn_ctx *ctx, grn_obj *bulk)
+  grn_bulk_get_int64(grn_ctx *ctx, grn_obj *bulk, int64_t default_value, const char* tag)
   {
-    return grn::bulk::get<int64_t>(ctx, bulk, 0);
+    return grn::bulk::get<int64_t>(ctx, bulk, default_value, tag);
   }
 
   grn_rc
@@ -33,9 +33,9 @@ extern "C" {
   }
 
   double
-  grn_bulk_get_float(grn_ctx *ctx, grn_obj *bulk)
+  grn_bulk_get_float(grn_ctx *ctx, grn_obj *bulk, double default_value, const char* tag)
   {
-    return grn::bulk::get<double>(ctx, bulk, 0);
+    return grn::bulk::get<double>(ctx, bulk, default_value, tag);
   }
 
   grn_rc

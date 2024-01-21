@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -184,7 +184,8 @@ aggregator_mean_update(grn_ctx *ctx, grn_aggregator_data *data)
   GRN_VOID_INIT(&current_value);
   grn_id source_id = grn_aggregator_data_get_source_id(ctx, data);
   grn_obj_get_value(ctx, target, source_id, &current_value);
-  double current_value_float = grn_bulk_get_float(ctx, &current_value);
+  double current_value_float =
+    grn_bulk_get_float(ctx, &current_value, 0.0, tag);
   GRN_OBJ_FIN(ctx, &current_value);
 
   mean_value->n_values++;
@@ -336,7 +337,8 @@ aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
   GRN_VOID_INIT(&current_value);
   grn_id source_id = grn_aggregator_data_get_source_id(ctx, data);
   grn_obj_get_value(ctx, target, source_id, &current_value);
-  double current_value_float = grn_bulk_get_float(ctx, &current_value);
+  double current_value_float =
+    grn_bulk_get_float(ctx, &current_value, 0.0, tag);
   GRN_OBJ_FIN(ctx, &current_value);
 
   const double mean_previous = sd_value->mean;

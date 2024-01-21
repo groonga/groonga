@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1660,73 +1660,79 @@ namespace {
   grn_rc
   num2dest(grn_ctx *ctx, grn_caster *caster)
   {
+    const char *tag = "[cast]";
     switch (caster->dest->header.domain) {
     case GRN_DB_BOOL:
       return grn::bulk::set<SOURCE>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_INT8:
       return grn::bulk::set<int8_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_UINT8:
       return grn::bulk::set<uint8_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_INT16:
       return grn::bulk::set<int16_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_UINT16:
       return grn::bulk::set<uint16_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_INT32:
       return grn::bulk::set<int32_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_UINT32:
       return grn::bulk::set<uint32_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_INT64:
       return grn::bulk::set<int64_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_UINT64:
       return grn::bulk::set<uint64_t>(
         ctx,
         caster->dest,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_TIME:
-      return num2time(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+      return num2time(ctx,
+                      caster,
+                      grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
 #ifdef GRN_HAVE_BFLOAT16
     case GRN_DB_BFLOAT16:
       return num2float<grn_bfloat16>(
         ctx,
         caster,
-        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
 #endif
     case GRN_DB_FLOAT32:
       return num2float<float>(ctx,
                               caster,
-                              grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+                              grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_FLOAT:
-      return num2float<double>(ctx,
-                               caster,
-                               grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+      return num2float<double>(
+        ctx,
+        caster,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT:
-      return num2text(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+      return num2text(ctx,
+                      caster,
+                      grn::bulk::get<SOURCE>(ctx, caster->src, 0, tag));
     case GRN_DB_TOKYO_GEO_POINT:
     case GRN_DB_WGS84_GEO_POINT:
       return GRN_INVALID_ARGUMENT;
