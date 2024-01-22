@@ -276,7 +276,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
           key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}

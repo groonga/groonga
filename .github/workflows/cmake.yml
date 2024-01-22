@@ -88,7 +88,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: cmake-linux-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -172,7 +172,7 @@ jobs:
             pkg-config \
             red-arrow \
             rroonga
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cache/red-datasets
@@ -309,7 +309,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: cmake-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -425,7 +425,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: cmake-windows-mingw-${{ matrix.msystem }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -600,7 +600,7 @@ jobs:
           Write-Output "CCACHE_DIR=${{ github.workspace }}\ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: cmake-windows-msvc-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
