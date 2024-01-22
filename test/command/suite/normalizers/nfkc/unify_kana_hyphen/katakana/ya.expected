@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "report_source_offset", true)'   "ヤ-ユ-ヨ-ャ-ュ-ョ-"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana_hyphen", true,                   "report_source_offset", true)'   "ヤ-ユ-ヨ-ャ-ュ-ョ-"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,

@@ -1,14 +1,16 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
 normalize \
-  'NormalizerNFKC150("unify_katakana_v_sounds", true, \
-                     "unify_katakana_gu_small_sounds", true, \
-                     "unify_katakana_zu_small_sounds", true, \
-                     "unify_katakana_wo_sound", true, \
-                     "unify_kana_case", true, \
-                     "unify_katakana_di_sound", true, \
-                     "unify_katakana_du_sound", true, \
-                     "unify_hyphen_and_prolonged_sound_mark", true, \
-                     "unify_kana_hyphen", true, \
-                     "unify_katakana_trailing_o", true, \
-                     "unify_middle_dot", true)' \
+  'NormalizerNFKC("unify_katakana_v_sounds", true, \
+                  "unify_katakana_gu_small_sounds", true, \
+                  "unify_katakana_zu_small_sounds", true, \
+                  "unify_katakana_wo_sound", true, \
+                  "unify_kana_case", true, \
+                  "unify_katakana_di_sound", true, \
+                  "unify_katakana_du_sound", true, \
+                  "unify_hyphen_and_prolonged_sound_mark", true, \
+                  "unify_kana_hyphen", true, \
+                  "unify_katakana_trailing_o", true, \
+                  "unify_middle_dot", true)' \
   "-˗֊‐‑‒–⁃⁻₋−" \
   WITH_CHECKS|WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

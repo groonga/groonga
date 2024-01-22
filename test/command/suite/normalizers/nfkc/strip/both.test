@@ -1,5 +1,7 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
 normalize \
-  'NormalizerNFKC150("strip", true, \
-                     "report_source_offset", true)' \
+  'NormalizerNFKC("strip", true, \
+                  "report_source_offset", true)' \
   "  hello world\t! \t " \
   WITH_CHECKS|WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

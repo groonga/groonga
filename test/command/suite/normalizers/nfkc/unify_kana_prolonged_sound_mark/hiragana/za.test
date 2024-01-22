@@ -1,5 +1,7 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
 normalize \
-  'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true, \
-                     "report_source_offset", true)' \
+  'NormalizerNFKC("unify_kana_prolonged_sound_mark", true, \
+                  "report_source_offset", true)' \
   "ざーじーずーぜーぞー" \
   WITH_CHECKS|WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

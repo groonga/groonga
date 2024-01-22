@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "report_source_offset", true)'   "ナニヌネノニャニュニョ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_to_romaji", true,                   "report_source_offset", true)'   "ナニヌネノニャニュニョ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
