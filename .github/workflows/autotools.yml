@@ -75,7 +75,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: autotools-linux-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -158,7 +158,7 @@ jobs:
       - name: "Test: mruby"
         run: |
           USE_SYSTEM=yes test/mruby/run-test.rb
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cache/red-datasets
@@ -191,7 +191,7 @@ jobs:
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
           echo "$(brew --prefix ccache)/libexec" >> ${GITHUB_PATH}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ccache
           key: autotools-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
