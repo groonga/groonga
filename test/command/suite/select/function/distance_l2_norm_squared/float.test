@@ -8,4 +8,4 @@ column_create Data vector2 COLUMN_VECTOR Float
 
 select \
   --table Data \
-  --output_columns 'vector1, vector2, number_round(distance_l2_norm_squared(vector1, vector2), 5)'
+  --output_columns 'vector1, vector2, number_round(distance_l2_norm_squared(vector1, vector2), 2)'
