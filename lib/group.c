@@ -1716,7 +1716,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     } else if (n_keys == 1 && n_results == 1) {
       grn_table_group_single_key_records(ctx, table, keys->key, results);
     } else {
-      grn_bool have_vector = GRN_FALSE;
+      bool have_vector = false;
       for (k = 0, kp = keys; k < n_keys; k++, kp++) {
         grn_id range_id;
         grn_obj_flags range_flags = 0;
@@ -1733,7 +1733,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           goto exit;
         }
         if (range_flags & GRN_OBJ_VECTOR) {
-          have_vector = GRN_TRUE;
+          have_vector = true;
           break;
         }
       }
