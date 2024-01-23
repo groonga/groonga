@@ -1,5 +1,7 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
 normalize \
-  'NormalizerNFKC150("unify_kana_hyphen", true, \
-                     "report_source_offset", true)' \
+  'NormalizerNFKC("unify_kana_hyphen", true, \
+                  "report_source_offset", true)' \
   "サ-シ-ス-セ-ソ-" \
   WITH_CHECKS|WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

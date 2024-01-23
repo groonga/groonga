@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("remove_symbol", true,                      "report_source_offset", true)'   "#This & is %% a pen."   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("remove_symbol", true,                   "report_source_offset", true)'   "#This & is %% a pen."   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
