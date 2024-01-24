@@ -19,13 +19,13 @@ Debian GNU/Linux, Ubuntu::
 
   % sudo apt-get install -V -y python3-pip gettext
   % sudo pip install -r doc/requirements.txt
-  % sudo gem install -g doc/Gemfile
+  % (cd doc && bundle install)
 
 CentOS, Fedora::
 
   % sudo yum install -y python-pip gettext
   % sudo pip install -r doc/requirements.txt
-  % sudo gem install -g doc/Gemfile
+  % (cd doc && bundle install)
 
 OS X::
 
@@ -33,7 +33,7 @@ OS X::
   % brew install gettext
   % export PATH=`brew --prefix gettext`/bin:$PATH
   % pip install -r doc/requirements.txt
-  % gem install -g doc/Gemfile
+  % (cd doc && bundle install)
 
 If the version of Python on your platform is too old, you'll need to
 install a newer version of Python 2.7 by your hand. For example, here
