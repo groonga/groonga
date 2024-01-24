@@ -1,5 +1,5 @@
-# Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ if(GRN_WITH_SUGGEST_LEARNER)
   add_library(groonga-suggest-util STATIC ${GROONGA_SUGGEST_UTIL_SOURCES})
   set_source_files_properties(${GROONGA_SUGGEST_UTIL_SOURCES}
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-  target_link_libraries(groonga-suggest-util libgroonga)
+  target_link_libraries(groonga-suggest-util libgroonga Groonga::libevent)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/learner_sources.am
                  GROONGA_SUGGEST_LEARNER_SOURCES)
