@@ -280,7 +280,7 @@ ARGF.each_line do |line|
     next
   end
   case line
-  when /\A\d{4}-\d{2}-\d{2} [^ ]+: (\/[^ \(\[]+)\((.+?)\)\s*\[(.+?)\]\Z/
+  when /\A\d{4}-\d{2}-\d{2} [^ ]+[:|] (\/[^ \(\[]+)\((.+?)\)\s*\[(.+?)\]\Z/
     path = $1
     relative_address = $2
     absolute_address = $3
@@ -293,7 +293,7 @@ ARGF.each_line do |line|
       cache[cache_key] ||= resolve_line(relative_address, debug_path)
       puts(cache[cache_key])
     end
-  when /\A\d{4}-\d{2}-\d{2} [^ ]+: (?:postgres: .+)\s*\[(.+?)\]\Z/
+  when /\A\d{4}-\d{2}-\d{2} [^ ]+[:|] (?:postgres: .+)\s*\[(.+?)\]\Z/
     absolute_address = $1
     path = postgresql_path(system_version, options)
     next if path.nil?
