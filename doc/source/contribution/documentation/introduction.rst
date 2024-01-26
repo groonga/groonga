@@ -56,7 +56,7 @@ Generate HTML
 
 You can generate HTML by the following command::
 
-  % ninja -C ../groonga.doc
+  % cmake --build ../groonga.doc
 
 You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
