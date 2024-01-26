@@ -47,7 +47,7 @@ Groonga disables documentation generation by default. You need to
 enable it explicitly by adding ``--preset=doc`` option to
 ``cmake``::
 
-  % cmake -S . -B ../groonga.doc -G Ninja --preset=doc
+  % cmake -S . -B ../groonga.doc --preset=doc
 
 Now, your Groonga build is documentation ready.
 
