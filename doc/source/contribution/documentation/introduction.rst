@@ -41,7 +41,7 @@ are installation steps based on `pyenv
   % pip install sphinx
 
 Run ``cmake`` with ``--preset=doc``
---------------------------------------------
+-----------------------------------
 
 Groonga disables documentation generation by default. You need to
 enable it explicitly by adding ``--preset=doc`` option to
