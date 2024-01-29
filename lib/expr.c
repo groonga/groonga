@@ -2730,21 +2730,21 @@ scan_info_build_match_expr(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 {
   const char *all_off_options = "?-mix:";
   size_t all_off_options_length = strlen(all_off_options);
   const char *regexp_raw;
   const char *regexp_raw_end;
-  grn_bool escaping = GRN_FALSE;
-  grn_bool in_paren = GRN_FALSE;
-  grn_bool dot = GRN_FALSE;
+  bool escaping = false;
+  bool in_paren = false;
+  bool dot = false;
 
   if (!(regexp->header.domain == GRN_DB_SHORT_TEXT ||
         regexp->header.domain == GRN_DB_TEXT ||
         regexp->header.domain == GRN_DB_LONG_TEXT)) {
-    return GRN_FALSE;
+    return false;
   }
 
   regexp_raw = GRN_TEXT_VALUE(regexp);
@@ -2755,12 +2755,12 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 
     char_len = grn_charlen(ctx, regexp_raw, regexp_raw_end);
     if (char_len == 0) {
-      return GRN_FALSE;
+      return false;
     }
 
     if (char_len == 1) {
       if (escaping) {
-        escaping = GRN_FALSE;
+        escaping = false;
         switch (regexp_raw[0]) {
         case 'Z':
         case 'b':
@@ -2786,7 +2786,7 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         case '7':
         case '8':
         case '9':
-          return GRN_FALSE;
+          return false;
         default:
           break;
         }
@@ -2794,37 +2794,34 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         switch (regexp_raw[0]) {
         case '(':
           if (in_paren) {
-            return GRN_FALSE;
-          } else {
-            const char *options = regexp_raw + 1;
-            if ((size_t)(regexp_raw_end - options) >= all_off_options_length &&
-                memcmp(options, all_off_options, all_off_options_length) == 0) {
-              in_paren = GRN_TRUE;
-              regexp_raw += all_off_options_length;
-              continue;
-            } else {
-              return GRN_FALSE;
-            }
+            return false;
           }
-          break;
+          const char *options = regexp_raw + 1;
+          if ((size_t)(regexp_raw_end - options) >= all_off_options_length &&
+              memcmp(options, all_off_options, all_off_options_length) == 0) {
+            in_paren = true;
+            regexp_raw += all_off_options_length;
+            continue;
+          }
+          return false;
         case ')':
           if (in_paren) {
-            in_paren = GRN_FALSE;
+            in_paren = false;
           } else {
-            return GRN_FALSE;
+            return false;
           }
           break;
         case '.':
-          dot = GRN_TRUE;
+          dot = true;
           break;
         case '*':
           if (!dot) {
-            return GRN_FALSE;
+            return false;
           }
           if (!grn_scan_info_regexp_dot_asterisk_enable) {
-            return GRN_FALSE;
+            return false;
           }
-          dot = GRN_FALSE;
+          dot = false;
           break;
         case '[':
         case ']':
@@ -2835,26 +2832,26 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         case '}':
         case '^':
         case '$':
-          return GRN_FALSE;
+          return false;
         case '\\':
-          escaping = GRN_TRUE;
+          escaping = true;
           break;
         default:
           break;
         }
       }
     } else {
-      escaping = GRN_FALSE;
+      escaping = false;
     }
 
     regexp_raw += char_len;
   }
 
   if (in_paren) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
