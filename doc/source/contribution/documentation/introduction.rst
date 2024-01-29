@@ -40,14 +40,14 @@ are installation steps based on `pyenv
   % pyenv global 2.7.11
   % pip install sphinx
 
-Run ``configure`` with ``--enable-document``
---------------------------------------------
+Run ``cmake`` with ``--preset=doc``
+-----------------------------------
 
 Groonga disables documentation generation by default. You need to
-enable it explicitly by adding ``--enable-document`` option to
-``configure``::
+enable it explicitly by adding ``--preset=doc`` option to
+``cmake``::
 
-  % ./configure --enable-document
+  % cmake -S . -B ../groonga.doc --preset=doc
 
 Now, your Groonga build is documentation ready.
 
@@ -56,9 +56,9 @@ Generate HTML
 
 You can generate HTML by the following command::
 
-  % make -C doc html
+  % cmake --build ../groonga.doc
 
-You can find generated HTML documentation at ``doc/locale/en/html/``.
+You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
 Update
 ------
@@ -69,11 +69,3 @@ documentation.
 
 You can update the target file when you update the existing
 documentation file.
-
-You need to update file list after you add a new file, change file
-path and delete existing file. You can update file list by the
-following command::
-
-  % make -C doc update-files
-
-The command updates ``doc/files.am``.

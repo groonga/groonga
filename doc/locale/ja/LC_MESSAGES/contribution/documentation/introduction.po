@@ -43,11 +43,11 @@ msgstr ""
 msgid "If the version of Python on your platform is too old, you'll need to install a newer version of Python 2.7 by your hand. For example, here are installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_::"
 msgstr "プラットフォームに存在するPythonのバージョンが古すぎる場合は、Python 2.7のより新しいバージョンを手動でインストールする必要があります。例えば、 `pyenv <https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
 
-msgid "Run ``configure`` with ``--enable-document``"
-msgstr "``configure`` を ``--enable-document`` 付きで実行"
+msgid "Run ``cmake`` with ``--preset=doc``"
+msgstr "``cmake`` を ``--preset=doc`` 付きで実行"
 
-msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--enable-document`` option to ``configure``::"
-msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``configure`` に ``--enable-document`` オプションを追加して明示的に有効にする必要があります。::"
+msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--preset=doc`` option to ``cmake``::"
+msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``cmake`` に ``--preset=doc`` オプションを追加して明示的に有効にする必要があります。::"
 
 msgid "Now, your Groonga build is documentation ready."
 msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
@@ -58,8 +58,8 @@ msgstr "HTMLファイルを生成"
 msgid "You can generate HTML by the following command::"
 msgstr "以下のコマンドでHTMLファイルを生成できます。::"
 
-msgid "You can find generated HTML documentation at ``doc/locale/en/html/``."
-msgstr "生成されたHTMLドキュメントは ``doc/locale/ja/html/`` にあります。"
+msgid "You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``."
+msgstr "生成されたHTMLドキュメントは ``../groonga.doc/doc/ja/html/`` にあります。"
 
 msgid "Update"
 msgstr "更新"
@@ -69,9 +69,3 @@ msgstr "ドキュメントのソースは ``doc/source/`` にあります。ソ�
 
 msgid "You can update the target file when you update the existing documentation file."
 msgstr "既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新できます。"
-
-msgid "You need to update file list after you add a new file, change file path and delete existing file. You can update file list by the following command::"
-msgstr "新規ファイル追加・ファイル位置変更・ファイル削除の後は、ファイル一覧を更新する必要があります。以下のコマンドでファイル一覧を更新できます。::"
-
-msgid "The command updates ``doc/files.am``."
-msgstr "このコマンドは ``doc/files.am`` を更新します。"
