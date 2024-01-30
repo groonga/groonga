@@ -40,9 +40,6 @@ msgstr ""
 msgid "OS X::"
 msgstr ""
 
-msgid "If the version of Python on your platform is too old, you'll need to install a newer version of Python 2.7 by your hand. For example, here are installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_::"
-msgstr "プラットフォームに存在するPythonのバージョンが古すぎる場合は、Python 2.7のより新しいバージョンを手動でインストールする必要があります。例えば、 `pyenv <https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
-
 msgid "Run ``cmake`` with ``--preset=doc``"
 msgstr "``cmake`` を ``--preset=doc`` 付きで実行"
 

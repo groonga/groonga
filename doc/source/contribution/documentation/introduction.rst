@@ -17,28 +17,23 @@ Here are command lines to install Sphinx.
 
 Debian GNU/Linux, Ubuntu::
 
-  % sudo apt-get install -V -y python-sphinx
+  % sudo apt-get install -V -y python3-pip gettext
+  % sudo pip install -r doc/requirements.txt
+  % (cd doc && bundle install)
 
 CentOS, Fedora::
 
-  % sudo yum install -y python-pip
-  % sudo pip install sphinx
+  % sudo yum install -y python-pip gettext
+  % sudo pip install -r doc/requirements.txt
+  % (cd doc && bundle install)
 
 OS X::
 
   % brew install python
   % brew install gettext
   % export PATH=`brew --prefix gettext`/bin:$PATH
-  % pip install sphinx
-
-If the version of Python on your platform is too old, you'll need to
-install a newer version of Python 2.7 by your hand. For example, here
-are installation steps based on `pyenv
-<https://github.com/yyuu/pyenv>`_::
-
-  % pyenv install 2.7.11
-  % pyenv global 2.7.11
-  % pip install sphinx
+  % pip install -r doc/requirements.txt
+  % (cd doc && bundle install)
 
 Run ``cmake`` with ``--preset=doc``
 -----------------------------------
