@@ -17,6 +17,9 @@ LOG="$3"
 : ${POSTGRESQL_VERSION:=}
 
 case "${DOCKER_TAG}" in
+  centos:*)
+    INSTALL_RUBY="yum install -y ruby"
+    ;;
   almalinux:*)
     INSTALL_RUBY="dnf install -y ruby"
     ;;
