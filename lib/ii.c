@@ -265,7 +265,7 @@ grn_ii_cursor_set_min_enable_set(bool enable)
   grn_ii_cursor_set_min_enable = enable;
 }
 
-grn_bool
+bool
 grn_ii_cursor_set_min_enable_get(void)
 {
   return grn_ii_cursor_set_min_enable;
@@ -4531,7 +4531,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
   merger_get_next_buffer(ctx, data);
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 merger_merge(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
@@ -4541,37 +4541,37 @@ merger_merge(grn_ctx *ctx, merger_data *data)
       if (chunk_data->id.rid < buffer_data->id.rid) {
         merger_put_next_chunk(ctx, data);
         if (ctx->rc != GRN_SUCCESS) {
-          return GRN_FALSE;
+          return false;
         }
       } else {
         if (buffer_data->id.rid < chunk_data->id.rid) {
           merger_put_next_buffer(ctx, data);
           if (ctx->rc != GRN_SUCCESS) {
-            return GRN_FALSE;
+            return false;
           }
         } else {
           if (buffer_data->id.sid > 0) {
             if (chunk_data->id.sid < buffer_data->id.sid) {
               merger_put_next_chunk(ctx, data);
               if (ctx->rc != GRN_SUCCESS) {
-                return GRN_FALSE;
+                return false;
               }
             } else {
               if (buffer_data->id.sid == chunk_data->id.sid) {
                 merger_get_next_chunk(ctx, data);
                 if (ctx->rc != GRN_SUCCESS) {
-                  return GRN_FALSE;
+                  return false;
                 }
               }
               merger_put_next_buffer(ctx, data);
               if (ctx->rc != GRN_SUCCESS) {
-                return GRN_FALSE;
+                return false;
               }
             }
           } else {
             merger_get_next_chunk(ctx, data);
             if (ctx->rc != GRN_SUCCESS) {
-              return GRN_FALSE;
+              return false;
             }
           }
         }
@@ -4579,20 +4579,20 @@ merger_merge(grn_ctx *ctx, merger_data *data)
     } else {
       merger_put_next_buffer(ctx, data);
       if (ctx->rc != GRN_SUCCESS) {
-        return GRN_FALSE;
+        return false;
       }
     }
   } else {
     if (chunk_data->id.rid > 0) {
       merger_put_next_chunk(ctx, data);
       if (ctx->rc != GRN_SUCCESS) {
-        return GRN_FALSE;
+        return false;
       }
     } else {
-      return GRN_FALSE;
+      return false;
     }
   }
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_rc
@@ -6405,11 +6405,10 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
       }
     } else {
       /* For binary data or text data */
-      grn_bool is_binary_data;
       int target_key_size = key_size;
       int reduced_key_size = 0;
 
-      is_binary_data = (ctx->encoding == GRN_ENC_NONE);
+      bool is_binary_data = (ctx->encoding == GRN_ENC_NONE);
 
       while (*lseg == GRN_II_PSEG_NOT_ASSIGNED && target_key_size > 0) {
         grn_id tid;
@@ -7819,7 +7818,7 @@ struct _grn_ii_cursor {
   size_t n_scales;
 };
 
-static grn_bool
+static bool
 buffer_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c)
 {
   if (*c->ppseg != c->buffer_pseg) {
@@ -7827,12 +7826,12 @@ buffer_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c)
     for (i = ii->header.common->bgqtail; i != ii->header.common->bgqhead;
          i = (i + 1) & (GRN_II_BGQSIZE - 1)) {
       if (ii->header.common->bgqbody[i] == c->buffer_pseg) {
-        return GRN_FALSE;
+        return false;
       }
     }
-    return GRN_TRUE;
+    return true;
   }
-  return GRN_FALSE;
+  return false;
 }
 
 static int
@@ -8085,7 +8084,7 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
         grn_id old_rid = c->pc.rid;
         grn_id old_prev_chunk_rid = c->prev_chunk_rid;
         uint32_t old_chunk = c->curr_chunk;
-        grn_bool old_chunk_used = (c->stat & CHUNK_USED);
+        bool old_chunk_used = (c->stat & CHUNK_USED);
         c->pc.rid = rid;
         c->pc.rest = 0;
         c->prev_chunk_rid = rid - c->cinfo[skip_chunk - 1].dgap;
@@ -8130,7 +8129,7 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 }
 
 typedef struct {
-  grn_bool include_garbage;
+  bool include_garbage;
 } grn_ii_cursor_next_options;
 
 static grn_inline grn_posting *
@@ -8138,7 +8137,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                             grn_ii_cursor *c,
                             grn_ii_cursor_next_options *options)
 {
-  const grn_bool include_garbage = options->include_garbage;
+  const bool include_garbage = options->include_garbage;
   if (c->buf) {
     for (;;) {
       if (c->stat & CHUNK_USED) {
@@ -8565,7 +8564,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
 grn_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
-  grn_ii_cursor_next_options options = {.include_garbage = GRN_FALSE};
+  grn_ii_cursor_next_options options = {.include_garbage = false};
   return grn_ii_cursor_next_internal(ctx, c, &options);
 }
 
@@ -9721,7 +9720,7 @@ grn_ii_column_update_internal(grn_ctx *ctx,
                               grn_obj *posting)
 {
   grn_id *tp;
-  grn_bool do_grn_ii_updspec_cmp = GRN_TRUE;
+  bool do_grn_ii_updspec_cmp = true;
   grn_ii_updspec **u, **un;
   grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
   grn_obj buf, *post = NULL;
@@ -9743,17 +9742,17 @@ grn_ii_column_update_internal(grn_ctx *ctx,
     return ctx->rc;
   }
   if (old || new) {
-    grn_bool is_text_vector_index = GRN_TRUE;
+    bool is_text_vector_index = true;
     if (old) {
       if (!(old->header.type == GRN_VECTOR &&
             grn_type_id_is_text_family(ctx, old->header.domain))) {
-        is_text_vector_index = GRN_FALSE;
+        is_text_vector_index = false;
       }
     }
     if (new) {
       if (!(new->header.type ==
             GRN_VECTOR &&grn_type_id_is_text_family(ctx, new->header.domain))) {
-        is_text_vector_index = GRN_FALSE;
+        is_text_vector_index = false;
       }
     }
     if (is_text_vector_index) {
@@ -9831,7 +9830,7 @@ grn_ii_column_update_internal(grn_ctx *ctx,
     case GRN_BULK:
       {
         if (grn_bulk_is_zero(ctx, new)) {
-          do_grn_ii_updspec_cmp = GRN_FALSE;
+          do_grn_ii_updspec_cmp = false;
         }
         new_ = new;
         GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
@@ -10851,14 +10850,14 @@ token_candidate_adjacent_set(grn_ctx *ctx,
                              token_candidate_node *top,
                              token_candidate_node *curr)
 {
-  grn_bool exists_adjacent = GRN_FALSE;
+  bool exists_adjacent = false;
   token_candidate_node *adj;
   for (adj = top; adj < curr; adj++) {
     if (token_cursor->curr <= adj->token + adj->token_size) {
       if (adj->n_adjacent < TOKEN_CANDIDATE_ADJACENT_MAX_SIZE) {
         adj->adjacent[adj->n_adjacent] = curr - top;
         adj->n_adjacent++;
-        exists_adjacent = GRN_TRUE;
+        exists_adjacent = true;
       }
     }
   }
@@ -12425,8 +12424,8 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->score_func = NULL;
   data->previous_min = GRN_ID_NIL;
   data->current_min = GRN_ID_NIL;
-  data->set_min_enable_for_and_query = GRN_FALSE;
-  data->only_skip_token = GRN_FALSE;
+  data->set_min_enable_for_and_query = false;
+  data->only_skip_token = false;
   data->query_options = NULL;
 
   data->token_infos = NULL;
@@ -12462,7 +12461,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   if (optarg->match_info) {
     if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
       data->previous_min = optarg->match_info->min;
-      data->set_min_enable_for_and_query = GRN_TRUE;
+      data->set_min_enable_for_and_query = true;
     }
   }
 
@@ -13937,7 +13936,7 @@ grn_ii_select_cursor_unshift(grn_ctx *ctx,
                              grn_ii_select_cursor_posting *posting)
 {
   cursor->unshifted_posting = *posting;
-  cursor->have_unshifted_posting = GRN_TRUE;
+  cursor->have_unshifted_posting = true;
 }
 
 grn_ii *
@@ -13981,8 +13980,8 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
                           grn_obj *parsed_strings,
                           grn_obj *parsed_n_following_characters)
 {
-  grn_bool escaping = GRN_FALSE;
-  grn_bool in_paren = GRN_FALSE;
+  bool escaping = false;
+  bool in_paren = false;
   const char *all_off_options = "?-mix:";
   size_t all_off_options_len = strlen(all_off_options);
   int nth_char = 0;
@@ -14012,7 +14011,7 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
     current += char_len;
 
     if (escaping) {
-      escaping = GRN_FALSE;
+      escaping = false;
       if (char_len == 1) {
         switch (*target) {
         case 'A':
@@ -14046,16 +14045,16 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
 
       if (char_len == 1) {
         if (*target == '\\') {
-          escaping = GRN_TRUE;
+          escaping = true;
           continue;
         } else if (*target == '(' &&
                    (size_t)(string_end - current) >= all_off_options_len &&
                    memcmp(current, all_off_options, all_off_options_len) == 0) {
           current += all_off_options_len;
-          in_paren = GRN_TRUE;
+          in_paren = true;
           continue;
         } else if (*target == ')') {
-          in_paren = GRN_FALSE;
+          in_paren = false;
           continue;
         } else if (*target == '.') {
           n_following_characters_start++;
@@ -14166,7 +14165,7 @@ grn_ii_select_regexp(grn_ctx *ctx,
   } else {
     unsigned int i;
     grn_ii_select_regexp_chunk *chunks;
-    grn_bool have_error = GRN_FALSE;
+    bool have_error = false;
 
     chunks = GRN_CALLOC(sizeof(grn_ii_select_regexp_chunk) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
@@ -14184,7 +14183,7 @@ grn_ii_select_regexp(grn_ctx *ctx,
                                                    parsed_string_len,
                                                    optarg);
       if (!chunks[i].cursor) {
-        have_error = GRN_TRUE;
+        have_error = true;
         break;
       }
       grn_ii_select_cursor_set_per_occurrence_mode(ctx, chunks[i].cursor, true);
@@ -15408,7 +15407,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
   char key[GRN_TABLE_MAX_KEY_SIZE];
   int key_size;
   int i = 0;
-  grn_ii_cursor_next_options options = {.include_garbage = GRN_TRUE};
+  grn_ii_cursor_next_options options = {.include_garbage = true};
 
   GRN_TEXT_PUTS(ctx, buf, "  #<");
   key_size =
@@ -16361,7 +16360,7 @@ get_term_buffer(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
  *  - weight == 0
  *  - !(flags & GRN_OBJ_WITH_SECTION) || (rid < 0x100000 && sid < 0x800)
  */
-static grn_bool
+static bool
 try_in_place_packing(grn_ctx *ctx,
                      grn_ii_buffer *ii_buffer,
                      grn_id tid,
@@ -16397,7 +16396,7 @@ try_in_place_packing(grn_ctx *ctx,
           a[1] = pos;
           array_unref(ctx, ii_buffer->ii, tid);
         } else {
-          return GRN_FALSE;
+          return false;
         }
       } else {
         uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
@@ -16408,10 +16407,10 @@ try_in_place_packing(grn_ctx *ctx,
       block->rest -= (p - block->bufcur);
       block->bufcur = p;
       grn_ii_buffer_fetch(ctx, ii_buffer, block);
-      return GRN_TRUE;
+      return true;
     }
   }
-  return GRN_FALSE;
+  return false;
 }
 
 /* grn_ii_buffer_merge merges hit blocks and pack it. */
@@ -16593,7 +16592,7 @@ ii_buffer_value_fin(grn_ctx *ctx, ii_buffer_value *value)
 
 /*
  * ii_buffer_values_append appends a value to ii_buffer.
- * This function deep-copies the value if need_copy == GRN_TRUE.
+ * This function deep-copies the value if need_copy == true.
  */
 static void
 ii_buffer_values_append(grn_ctx *ctx,
@@ -16602,7 +16601,7 @@ ii_buffer_values_append(grn_ctx *ctx,
                         uint32_t weight,
                         const char *p,
                         uint32_t len,
-                        grn_bool need_copy)
+                        bool need_copy)
 {
   if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
     unsigned int i;
@@ -16665,7 +16664,7 @@ grn_ii_buffer_append(grn_ctx *ctx,
                           0,
                           GRN_TEXT_VALUE(value),
                           GRN_TEXT_LEN(value),
-                          GRN_TRUE);
+                          true);
   return ctx->rc;
 }
 
@@ -16895,7 +16894,7 @@ grn_ii_buffer_parse(grn_ctx *ctx,
                                     0,
                                     GRN_TEXT_VALUE(rv),
                                     GRN_TEXT_LEN(rv),
-                                    GRN_FALSE);
+                                    false);
             break;
           case GRN_UVECTOR:
             {
@@ -16910,7 +16909,7 @@ grn_ii_buffer_parse(grn_ctx *ctx,
                                         0,
                                         GRN_BULK_HEAD(rv) + (elem_size * j),
                                         elem_size,
-                                        GRN_FALSE);
+                                        false);
               }
             }
             break;
@@ -16931,7 +16930,7 @@ grn_ii_buffer_parse(grn_ctx *ctx,
                                         (uint32_t)(section->weight),
                                         head + section->offset,
                                         section->length,
-                                        GRN_FALSE);
+                                        false);
               }
             }
             break;
@@ -17119,7 +17118,7 @@ typedef struct {
 } grn_ii_builder_term;
 
 /* grn_ii_builder_term_is_inplace returns whether a term buffer is inplace. */
-grn_inline static grn_bool
+grn_inline static bool
 grn_ii_builder_term_is_inplace(grn_ii_builder_term *term)
 {
   return term->size == GRN_II_BUILDER_TERM_INPLACE_SIZE;
@@ -17376,7 +17375,7 @@ grn_ii_builder_buffer_fin(grn_ctx *ctx, grn_ii_builder_buffer *buf)
 }
 
 /* grn_ii_builder_buffer_is_assigned returns whether a buffer is assigned. */
-static grn_bool
+static bool
 grn_ii_builder_buffer_is_assigned(grn_ctx *ctx, grn_ii_builder_buffer *buf)
 {
   return buf->buf != NULL;
@@ -17841,7 +17840,7 @@ typedef struct {
   uint64_t sid_mask;           /* Mask bits for section ID */
 
   grn_obj *lexicon;         /* Block lexicon (to be closed) */
-  grn_bool have_tokenizer;  /* Whether lexicon has tokenizer */
+  bool have_tokenizer;      /* Whether lexicon has tokenizer */
   bool have_normalizers;    /* Whether lexicon has at least one normalizers */
   bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
@@ -17910,7 +17909,7 @@ grn_ii_builder_init(grn_ctx *ctx,
   builder->sid_mask = 0;
 
   builder->lexicon = NULL;
-  builder->have_tokenizer = GRN_FALSE;
+  builder->have_tokenizer = false;
   builder->have_normalizers = false;
   builder->get_key_optimizable = false;
 
@@ -18099,7 +18098,7 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
                                            builder->ii->lexicon,
                                            &tokenizer);
     if (GRN_TEXT_LEN(&tokenizer) > 0) {
-      builder->have_tokenizer = GRN_TRUE;
+      builder->have_tokenizer = true;
       rc = grn_obj_set_info(ctx,
                             builder->lexicon,
                             GRN_INFO_DEFAULT_TOKENIZER,
@@ -19337,14 +19336,12 @@ grn_ii_builder_read_from_block(grn_ctx *ctx,
 
 /* grn_ii_builder_pack_chunk tries to pack a chunk. */
 static grn_rc
-grn_ii_builder_pack_chunk(grn_ctx *ctx,
-                          grn_ii_builder *builder,
-                          grn_bool *packed)
+grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder, bool *packed)
 {
   grn_id rid;
   uint32_t sid, pos, *a;
   grn_ii_builder_chunk *chunk = &builder->chunk;
-  *packed = GRN_FALSE;
+  *packed = false;
   if (chunk->offset != 1) { /* df != 1 */
     return GRN_SUCCESS;
   }
@@ -19412,7 +19409,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx,
   }
   a[1] = pos;
   array_unref(ctx, builder->ii, chunk->tid);
-  *packed = GRN_TRUE;
+  *packed = true;
 
   grn_ii_builder_chunk_clear(ctx, chunk);
   return GRN_SUCCESS;
@@ -19841,7 +19838,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
       continue;
     }
     if (builder->n_cinfos == 0) {
-      grn_bool packed;
+      bool packed;
       rc = grn_ii_builder_pack_chunk(ctx, builder, &packed);
       if (rc != GRN_SUCCESS) {
         return rc;
