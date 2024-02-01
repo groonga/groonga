@@ -32,7 +32,7 @@ GRN_API grn_column_flags grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii);
 GRN_API uint32_t grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii);
 
 GRN_API void grn_ii_cursor_set_min_enable_set(bool enable);
-GRN_API grn_bool grn_ii_cursor_set_min_enable_get(void);
+GRN_API bool grn_ii_cursor_set_min_enable_get(void);
 
 GRN_API uint32_t grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid);
 GRN_API uint32_t grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
