@@ -11,6 +11,7 @@ libgroonga_cpp_source =				\
 	grn_distance.hpp			\
 	grn_distance_impl.hpp			\
 	grn_distance_instantiation.hpp		\
+	grn_task_executor.hpp			\
 	token_column.cpp			\
 	trace_log.cpp				\
 	vector.cpp				\
