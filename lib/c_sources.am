@@ -24,7 +24,10 @@ libgroonga_c_sources =				\
 	grn_accessor.h				\
 	grn_aggregators.h			\
 	grn_alloc.h				\
+	grn_arrow.h				\
+	grn_bulk.h				\
 	grn_cache.h				\
+	grn_cast.h				\
 	grn_column.h				\
 	grn_com.h				\
 	grn_config.h				\
@@ -34,6 +37,7 @@ libgroonga_c_sources =				\
 	grn_ctx_impl_mrb.h			\
 	grn_dat.h				\
 	grn_db.h				\
+	grn_distance.h				\
 	grn_encoding.h				\
 	grn_error.h				\
 	grn_expr.h				\
@@ -86,6 +90,7 @@ libgroonga_c_sources =				\
 	grn_table_selector.h			\
 	grn_time.h				\
 	grn_token.h				\
+	grn_token_column.h			\
 	grn_token_cursor.h			\
 	grn_token_filters.h			\
 	grn_token_metadata.h			\

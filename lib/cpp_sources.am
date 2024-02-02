@@ -6,16 +6,11 @@ libgroonga_cpp_source =				\
 	dat.cpp					\
 	distance.cpp				\
 	expr_executor.cpp			\
-	grn_arrow.h				\
 	grn_arrow.hpp				\
-	grn_bulk.h				\
-	grn_cast.h				\
 	grn_ctx.hpp				\
-	grn_distance.h				\
 	grn_distance.hpp			\
 	grn_distance_impl.hpp			\
 	grn_distance_instantiation.hpp		\
-	grn_token_column.h			\
 	token_column.cpp			\
 	trace_log.cpp				\
 	vector.cpp				\
