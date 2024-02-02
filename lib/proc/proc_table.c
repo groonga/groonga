@@ -245,7 +245,7 @@ command_table_create(grn_ctx *ctx,
 
 exit :
   {
-    grn_bool success = (ctx->rc == GRN_SUCCESS);
+    bool success = (ctx->rc == GRN_SUCCESS);
     if (key_type) {
       grn_obj_unref(ctx, key_type);
     }
@@ -496,7 +496,7 @@ command_table_remove(grn_ctx *ctx,
                      "[table][remove] table isn't found: <%.*s>",
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
@@ -510,7 +510,7 @@ command_table_remove(grn_ctx *ctx,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name),
                      type_name);
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 

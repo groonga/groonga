@@ -25,7 +25,7 @@
 typedef struct {
   grn_id id;
   int32_t position;
-  grn_bool force_prefix_search;
+  bool force_prefix_search;
   uint64_t source_offset;
   uint32_t source_length;
   uint32_t source_first_character_length;

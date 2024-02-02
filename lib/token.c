@@ -279,14 +279,14 @@ grn_token_get_metadata(grn_ctx *ctx, grn_token *token)
   GRN_API_RETURN(&(token->metadata));
 }
 
-grn_bool
+bool
 grn_token_get_force_prefix_search(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
     ERR(GRN_INVALID_ARGUMENT,
         "[token][force-prefix-search][get] token must not be NULL");
-    GRN_API_RETURN(GRN_FALSE);
+    GRN_API_RETURN(false);
   }
   GRN_API_RETURN(token->force_prefix_search);
 }

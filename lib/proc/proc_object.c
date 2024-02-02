@@ -39,7 +39,7 @@ command_object_exist(grn_ctx *ctx,
   if (GRN_TEXT_LEN(name) == 0) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "[object][exist] name is missing");
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
@@ -82,7 +82,7 @@ command_object_remove(grn_ctx *ctx,
   if (GRN_TEXT_LEN(name) == 0) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "[object][remove] name is missing");
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
@@ -117,7 +117,7 @@ command_object_remove(grn_ctx *ctx,
                        (int)GRN_TEXT_LEN(name),
                        GRN_TEXT_VALUE(name));
     }
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
   }
 
   return NULL;

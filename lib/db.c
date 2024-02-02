@@ -13136,13 +13136,13 @@ exit:
   GRN_API_RETURN(res);
 }
 
-grn_bool
+bool
 grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
 {
-  grn_bool is_opened = GRN_FALSE;
+  bool is_opened = false;
 
   if (!ctx || !ctx->impl || !id) {
-    return GRN_FALSE;
+    return false;
   }
 
   GRN_API_ENTER;
@@ -13157,7 +13157,7 @@ grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
                                      target_ctx->impl->values,
                                      id & ~GRN_OBJ_TMP_OBJECT);
       if (tmp_obj) {
-        is_opened = GRN_TRUE;
+        is_opened = true;
       }
     }
   } else {
@@ -13166,7 +13166,7 @@ grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
       db_value *vp;
       vp = grn_tiny_array_at(&s->values, id);
       if (vp && vp->ptr) {
-        is_opened = GRN_TRUE;
+        is_opened = true;
       }
     }
   }

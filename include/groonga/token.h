@@ -177,7 +177,7 @@ grn_token_set_overlap(grn_ctx *ctx,
 GRN_API grn_obj *
 grn_token_get_metadata(grn_ctx *ctx,
                        grn_token *token);
-GRN_API grn_bool
+GRN_API bool
 grn_token_get_force_prefix_search(grn_ctx *ctx,
                                   grn_token *token);
 GRN_API grn_rc

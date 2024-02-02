@@ -591,7 +591,7 @@ typedef enum {
 
 GRN_API grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id);
-GRN_API grn_bool
+GRN_API bool
 grn_ctx_is_opened(grn_ctx *ctx, grn_id id);
 
 GRN_API grn_rc
