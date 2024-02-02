@@ -5776,12 +5776,12 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
   size_t lower_bound;
   int64_t nloops = 0, nviolations = 0;
   if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
-    GRN_OUTPUT_BOOL(GRN_FALSE);
+    GRN_OUTPUT_BOOL(false);
     return;
   }
   pseg = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
-    GRN_OUTPUT_BOOL(GRN_FALSE);
+    GRN_OUTPUT_BOOL(false);
     return;
   }
   lower_bound =

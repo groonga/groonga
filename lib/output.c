@@ -892,7 +892,7 @@ void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,
                 grn_content_type output_type,
-                grn_bool value)
+                bool value)
 {
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {

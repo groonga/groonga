@@ -189,7 +189,7 @@ command_column_create(grn_ctx *ctx,
                       grn_obj **args,
                       grn_user_data *user_data)
 {
-  grn_bool succeeded = GRN_TRUE;
+  bool succeeded = true;
   grn_obj *table;
   grn_obj *column;
   grn_obj *table_raw;
@@ -216,7 +216,7 @@ command_column_create(grn_ctx *ctx,
                      "[column][create] table doesn't exist: <%.*s>",
                      (int)GRN_TEXT_LEN(table_raw),
                      GRN_TEXT_VALUE(table_raw));
-    succeeded = GRN_FALSE;
+    succeeded = false;
     goto exit;
   }
 
@@ -231,7 +231,7 @@ command_column_create(grn_ctx *ctx,
                                           GRN_TEXT_VALUE(flags_raw),
                                           GRN_BULK_CURR(flags_raw));
       if (ctx->rc) {
-        succeeded = GRN_FALSE;
+        succeeded = false;
         goto exit;
       }
     }
@@ -245,7 +245,7 @@ command_column_create(grn_ctx *ctx,
                      "[column][create] type doesn't exist: <%.*s>",
                      (int)GRN_TEXT_LEN(type_raw),
                      GRN_TEXT_VALUE(type_raw));
-    succeeded = GRN_FALSE;
+    succeeded = false;
     goto exit;
   }
 
@@ -253,7 +253,7 @@ command_column_create(grn_ctx *ctx,
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "[column][create] name is missing");
-    succeeded = GRN_FALSE;
+    succeeded = false;
     goto exit;
   }
 
@@ -271,7 +271,7 @@ command_column_create(grn_ctx *ctx,
                              flags,
                              type);
   if (!column) {
-    succeeded = GRN_FALSE;
+    succeeded = false;
     goto exit;
   }
 
@@ -298,7 +298,7 @@ command_column_create(grn_ctx *ctx,
       ctx->rc = GRN_SUCCESS;
       grn_obj_remove(ctx, column);
       ctx->rc = original_rc;
-      succeeded = GRN_FALSE;
+      succeeded = false;
       goto exit;
     }
   }
@@ -360,7 +360,7 @@ command_column_remove(grn_ctx *ctx,
                      "[column][remove] table isn't found: <%.*s>",
                      (int)GRN_TEXT_LEN(table_raw),
                      GRN_TEXT_VALUE(table_raw));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
@@ -371,7 +371,7 @@ command_column_remove(grn_ctx *ctx,
                      "[column][remove] table isn't found: <%.*s>",
                      (int)GRN_TEXT_LEN(table_raw),
                      GRN_TEXT_VALUE(table_raw));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     grn_obj_unref(ctx, table);
     return NULL;
   }
@@ -387,7 +387,7 @@ command_column_remove(grn_ctx *ctx,
                      GRN_TABLE_MAX_KEY_SIZE - fullname_len,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     grn_obj_unref(ctx, table);
     return NULL;
   }
@@ -403,7 +403,7 @@ command_column_remove(grn_ctx *ctx,
                      GRN_DB_DELIMITER,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     grn_obj_unref(ctx, table);
     return NULL;
   }

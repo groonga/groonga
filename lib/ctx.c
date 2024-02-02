@@ -2632,7 +2632,7 @@ grn_ctx_output_str(grn_ctx *ctx, const char *value, size_t value_len)
 }
 
 void
-grn_ctx_output_bool(grn_ctx *ctx, grn_bool value)
+grn_ctx_output_bool(grn_ctx *ctx, bool value)
 {
   grn_output_bool(ctx, ctx->impl->output.buf, ctx->impl->output.type, value);
 }
