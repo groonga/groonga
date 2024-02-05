@@ -1,0 +1,21 @@
+table_create Data TABLE_NO_KEY
+column_create Data value1 COLUMN_SCALAR Int32
+column_create Data value2 COLUMN_SCALAR Int32
+column_create Data value3 COLUMN_SCALAR Int32
+column_create Data value4 COLUMN_SCALAR Int32
+column_create Data value5 COLUMN_SCALAR Int32
+column_create Data value6 COLUMN_SCALAR Int32
+column_create Data value7 COLUMN_SCALAR Int32
+column_create Data value8 COLUMN_SCALAR Int32
+column_create Data value9 COLUMN_SCALAR Int32
+column_create Data value10 COLUMN_SCALAR Int32
+
+#@start-benchmark 100000 5 load
+#@timeout 300
+#@disable-logging
+#@generate-series 1 10000 Data 'Hash[*10.times.collect {|i| ["value#{i + 1}", rand(2 ** 30)]}.flatten]'
+#@enable-logging
+#@timeout default
+#@finish-benchmark
+
+select Data --limit 0
