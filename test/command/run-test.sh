@@ -148,6 +148,7 @@ have_targets="false"
 use_gdb="false"
 use_rr="false"
 use_valgrind="false"
+benchmark_mode="false"
 next_argument_is_long_option_value="false"
 for argument in "$@"; do
   case "$argument" in
@@ -167,6 +168,10 @@ for argument in "$@"; do
     --valgrind)
       # no argument options
       use_valgrind="true"
+      ;;
+    --benchmark)
+      # no argument options
+      benchmark_mode="true"
       ;;
     --*)
       next_argument_is_long_option_value="true"
@@ -195,7 +200,11 @@ if test "$CI" = "true"; then
 fi
 grntest_options+=("$@")
 if test "$have_targets" != "true"; then
-  grntest_options+=("${SOURCE_DIR}/suite")
+  if test "$benchmark_mode" = "true"; then
+    grntest_options+=("${SOURCE_DIR}/suite_benchmark")
+  else
+    grntest_options+=("${SOURCE_DIR}/suite")
+  fi
 fi
 
 tmpfs_candidates=("/dev/shm" "/run/shm")

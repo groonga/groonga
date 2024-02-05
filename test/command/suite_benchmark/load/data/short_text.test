@@ -1,0 +1,12 @@
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR ShortText
+
+#@start-benchmark 10000 5 load
+#@timeout 300
+#@disable-logging
+#@generate-series 1 10000 Data '{"value" => "xxx" * rand(100)}'
+#@enable-logging
+#@timeout default
+#@finish-benchmark
+
+select Data --limit 0

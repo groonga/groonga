@@ -1,0 +1,178 @@
+# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+name: Benchmark
+on:
+  push:
+    branches:
+      - main
+      - 'maintenance/**'
+    tags:
+      - '*'
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/benchmark.yml'
+      - 'ci/**'
+      - 'cmake/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.hpp'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+      - 'vendor/mruby/**'
+  pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/benchmark.yml'
+      - 'ci/**'
+      - 'cmake/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+      - 'vendor/mruby/**'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ccache
+          key: benchmark-linux-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: benchmark-linux-${{ matrix.cc }}-ccache-
+      - name: Enable Apache Arrow repository
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            lsb-release \
+            wget
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+      - name: Install packages
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            ccache \
+            cmake \
+            gdb \
+            gettext \
+            libarrow-dev \
+            libevent-dev \
+            libluajit-5.1-dev \
+            liblz4-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            libstemmer-dev \
+            libxxhash-dev \
+            libzstd-dev \
+            mecab-naist-jdic \
+            ninja-build \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
+      - name: CMake
+        run: |
+          ccache --show-stats --verbose --version || :
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            --preset=benchmark
+      - name: Build
+        run: |
+          ninja -C ../groonga.build
+          ccache --show-stats --verbose --version || :
+      - name: Install
+        run: |
+          ninja -C ../groonga.build install
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+          echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config \
+            red-arrow \
+            rroonga
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/red-datasets
+          key: red-datasets-ubuntu
+      - name: Run benchmark
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            test/command/suite_benchmark | \
+              tee benchmark.json
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Benchmark
+          tool: 'googlecpp'
+          output-file-path: benchmark.json
+          external-data-json-path: benchmark-results/benchmark-data.json
+          fail-on-alert: true
+      - name: Push benchmark result
+        if: github.event_name == 'push'
+        run: |
+          git push origin gh-pages:gh-pages

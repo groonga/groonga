@@ -97,6 +97,11 @@
         "GRN_WITH_MEMORY_DEBUG": "ON",
         "GRN_WITH_MRUBY": "ON"
       }
+    },
+    {
+      "name": "benchmark",
+      "displayName": "For bencharmk",
+      "inherits": ["base", "release-with-debug-info", "maximum"]
     }
   ]
 }

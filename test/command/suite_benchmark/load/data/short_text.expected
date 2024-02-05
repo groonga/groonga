@@ -1,0 +1,6 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+select Data --limit 0
+[[0,0.0,0.0],[[[50000],[["_id","UInt32"],["value","ShortText"]]]]]
