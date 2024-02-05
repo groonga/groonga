@@ -2,4 +2,4 @@
 layout: skelton
 ---
 
-https://github.com/groonga/groonga/tree/gh-pages
+* [Benchmark](dev/bench/)
