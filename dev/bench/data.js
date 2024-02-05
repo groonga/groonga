@@ -26,7 +26,7 @@ window.BENCHMARK_DATA = {
         "tool": "googlecpp",
         "benches": [
           {
-            "name": "short_text",
+            "name": "load/data/short_text",
             "value": 0.02649119700004121,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0014410000000001366 s\nthreads: undefined"
