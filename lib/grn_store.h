@@ -150,7 +150,7 @@ typedef struct {
   uint32_t einfo_seg_id;     /* ID of the current header segment. */
   void *einfo_seg_addr;      /* Address of the current header segment. */
   void *einfo;               /* Header of the current value. */
-  grn_bool ref_avail;        /* grn_ja_reader_ref() is available or not. */
+  bool ref_avail;            /* grn_ja_reader_ref() is available or not. */
   uint32_t ref_seg_id;       /* ID of the current referenced segment. */
   void *ref_seg_addr;        /* Address of the current referenced segment. */
   uint32_t *ref_seg_ids;     /* IDs of referenced segments. */

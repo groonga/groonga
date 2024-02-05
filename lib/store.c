@@ -3197,11 +3197,11 @@ grn_ja_put_raw(grn_ctx *ctx,
     grn_io_win jw;
     uint32_t old_len;
     void *old_value;
-    grn_bool same_value = GRN_FALSE;
+    bool same_value = false;
 
     old_value = grn_ja_ref(ctx, ja, id, &jw, &old_len);
     if (value_len == old_len && memcmp(value, old_value, value_len) == 0) {
-      same_value = GRN_TRUE;
+      same_value = true;
     }
     grn_ja_unref(ctx, &jw);
     if (same_value) {
@@ -7535,7 +7535,7 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
 {
   reader->ja = ja;
   reader->einfo_seg_id = JA_ELEMENT_SEG_VOID;
-  reader->ref_avail = GRN_FALSE;
+  reader->ref_avail = false;
   reader->ref_seg_id = JA_ELEMENT_SEG_VOID;
   reader->ref_seg_ids = NULL;
   reader->nref_seg_ids = 0;
@@ -7695,14 +7695,14 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
   reader->einfo = einfo;
   if (ETINY_P(einfo)) {
     ETINY_DEC(einfo, reader->value_size);
-    reader->ref_avail = GRN_FALSE;
+    reader->ref_avail = false;
   } else {
     if (EHUGE_P(einfo)) {
       EHUGE_DEC(einfo, seg_id, reader->value_size);
-      reader->ref_avail = GRN_FALSE;
+      reader->ref_avail = false;
     } else {
       EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->value_size);
-      reader->ref_avail = GRN_TRUE;
+      reader->ref_avail = true;
     }
     if (reader->body_seg_addr) {
       if (seg_id != reader->body_seg_id) {
