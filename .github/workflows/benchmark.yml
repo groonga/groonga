@@ -170,7 +170,6 @@ jobs:
           name: Benchmark
           tool: 'googlecpp'
           output-file-path: benchmark.json
-          external-data-json-path: benchmark-results/benchmark-data.json
           fail-on-alert: true
       - name: Push benchmark result
         if: github.event_name == 'push'
