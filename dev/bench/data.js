@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707262673699,
+  "lastUpdate": 1707263747099,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -354,6 +354,42 @@ window.BENCHMARK_DATA = {
             "value": 0.028005016999998134,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0018139999999995382 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "79dbe37ab465b0729cbfd7f2986d551967d8e358",
+          "message": "benchmark: add http-json case",
+          "timestamp": "2024-02-07T08:51:08+09:00",
+          "tree_id": "4201557100d7a63b60e0c398332f61862347a091",
+          "url": "https://github.com/groonga/groonga/commit/79dbe37ab465b0729cbfd7f2986d551967d8e358"
+        },
+        "date": 1707263745877,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "unit": "undefined/iter",
+            "extra": "iterations: undefined\ncpu: undefined undefined\nthreads: undefined"
+          },
+          {
+            "unit": "undefined/iter",
+            "extra": "iterations: undefined\ncpu: undefined undefined\nthreads: undefined"
+          },
+          {
+            "unit": "undefined/iter",
+            "extra": "iterations: undefined\ncpu: undefined undefined\nthreads: undefined"
           }
         ]
       }
