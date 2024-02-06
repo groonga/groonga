@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707194613174,
+  "lastUpdate": 1707198261322,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -138,6 +138,54 @@ window.BENCHMARK_DATA = {
             "value": 0.026499073999957545,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0017179999999998863 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "8fbc284aeb2282073a11d172a482bd5e9a5a02dc",
+          "message": "command: make \"n_workers\" as a common parameter\n\nIt's only used by select for now.\n\nGRN_SELECT_N_WORKERS_DEFAULT is still usable for backward\ncompatibility but it's deprecated. Use GRN_N_WORKERS_DEFAULT instead.",
+          "timestamp": "2024-02-06T14:38:50+09:00",
+          "tree_id": "edad0f7a5281ac2e45254e4dbd286781fb0487e9",
+          "url": "https://github.com/groonga/groonga/commit/8fbc284aeb2282073a11d172a482bd5e9a5a02dc"
+        },
+        "date": 1707198259778,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "load/data/multiple",
+            "value": 0.03688777000002119,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016819999999999335 s\nthreads: undefined"
+          },
+          {
+            "name": "load/data/short_text",
+            "value": 0.028147521999983383,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021219999999997075 s\nthreads: undefined"
+          },
+          {
+            "name": "select/olap/multiple",
+            "value": 0.018036934000008387,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0005509999999997461 s\nthreads: undefined"
+          },
+          {
+            "name": "select/olap/n_workers/multiple",
+            "value": 0.026510713999982727,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0007190000000003305 s\nthreads: undefined"
           }
         ]
       }
