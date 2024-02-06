@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -141,6 +141,18 @@ grn_loader_on_no_identifier_error(grn_ctx *ctx,
         "[table][load][%.*s] neither <_key> nor <_id> is specified",
         name_size,
         name);
+  }
+}
+
+void
+grn_loader_merge(grn_ctx *ctx, grn_loader *loader, grn_loader *loader_other)
+{
+  /* TODO: information updated by grn_loader_on_record_added() such as
+   * loader->n_record_ids are not supported yet. */
+  loader->n_column_errors += loader_other->n_column_errors;
+  if (loader->rc == GRN_SUCCESS && loader_other->rc != GRN_SUCCESS) {
+    loader->rc = loader_other->rc;
+    grn_strcpy(loader->errbuf, GRN_CTX_MSGSIZE, loader_other->errbuf);
   }
 }
 

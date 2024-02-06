@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -126,6 +126,8 @@ void
 grn_loader_on_no_identifier_error(grn_ctx *ctx,
                                   grn_loader *loader,
                                   grn_obj *table);
+void
+grn_loader_merge(grn_ctx *ctx, grn_loader *loader, grn_loader *loader_other);
 grn_id
 grn_loader_add_record(grn_ctx *ctx,
                       grn_loader *loader,
