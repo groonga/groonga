@@ -61,6 +61,7 @@ repos:
           ?lib/grn_io\.h|
           ?lib/grn_load\.h|
           ?lib/grn_proc\.h|
+          ?lib/grn_request_canceler\.h|
           ?lib/grn_scan_info\.h|
           ?lib/grn_snip\.h|
           ?lib/grn_str\.h|

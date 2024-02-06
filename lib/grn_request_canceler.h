@@ -24,8 +24,10 @@
 extern "C" {
 #endif
 
-grn_bool grn_request_canceler_init(void);
-void grn_request_canceler_fin(void);
+grn_bool
+grn_request_canceler_init(void);
+void
+grn_request_canceler_fin(void);
 
 #ifdef __cplusplus
 }
