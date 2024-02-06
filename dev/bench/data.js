@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707132686234,
+  "lastUpdate": 1707178571982,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -66,6 +66,42 @@ window.BENCHMARK_DATA = {
             "value": 0.026424021000025277,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001549999999999968 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "distinct": true,
+          "id": "03286ef39c2af3312cc984fd1f937a25f3468fa9",
+          "message": "Use bool instead of grn_bool in store.{c,h}\n\nhttps://github.com/groonga/groonga/issues/1638\n\nSigned-off-by: Abe Tomoaki <abe@clear-code.com>",
+          "timestamp": "2024-02-06T08:33:19+09:00",
+          "tree_id": "01249d3cfc9d521ff9f094c82b2b818ebbcfdac3",
+          "url": "https://github.com/groonga/groonga/commit/03286ef39c2af3312cc984fd1f937a25f3468fa9"
+        },
+        "date": 1707178570830,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "load/data/multiple",
+            "value": 0.035824695000030715,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018400000000000083 s\nthreads: undefined"
+          },
+          {
+            "name": "load/data/short_text",
+            "value": 0.026267163999989407,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014630000000002141 s\nthreads: undefined"
           }
         ]
       }
