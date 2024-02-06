@@ -199,8 +199,7 @@ jobs:
           #            #      ]
           #            #    }
           jq -s \
-            '{"context": .[0].context, \
-              "benchmarks": [.[0].benchmarks, .[1].benchmarks]}' \
+            '{"context": .[0].context, "benchmarks": [.[0].benchmarks, .[1].benchmarks]}' \
             benchmark-json.json \
             benchmark-apache-arrow.json | \
               jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
