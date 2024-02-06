@@ -24,8 +24,10 @@
 extern "C" {
 #endif
 
-grn_bool grn_request_timer_init(void);
-void grn_request_timer_fin(void);
+grn_bool
+grn_request_timer_init(void);
+void
+grn_request_timer_fin(void);
 
 #ifdef __cplusplus
 }
