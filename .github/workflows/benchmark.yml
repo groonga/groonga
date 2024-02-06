@@ -157,7 +157,7 @@ jobs:
           path: |
             ~/.cache/red-datasets
           key: red-datasets-ubuntu
-      - name: Run benchmark
+      - name: "Benchmark: stdio: json"
         env:
           GRN_N_WORKERS_DEFAULT: "-1"
         run: |
@@ -165,14 +165,53 @@ jobs:
             --base-dir test/command \
             --benchmark \
             test/command/suite_benchmark | \
-              tee benchmark.json
+              tee benchmark-json.json
+      - name: "Benchmark: http: apache-arrow"
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            --input-type apache-arrow \
+            --interface http \
+            --output-type apache-arrow \
+            test/command/suite_benchmark | \
+              tee benchmark-apache-arrow.json
+      - name: Merge benchmark results
+        run: |
+          # json1: {"context": ..., "benchmarks": [{"name": "bench1-1", ...}, ...]}
+          # json2: {"context": ..., "benchmarks": [{"name": "bench2-1", ...}, ...]}
+          # jq ... | \ # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        [json1's benchmark1, ...],
+          #            #        [json2's benchmark1, ...]
+          #            #      ]
+          #            #    }
+          #   jq ...   # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        json1's benchmark1,
+          #            #        ...,
+          #            #        json2's benchmark1,
+          #            #        ...
+          #            #      ]
+          #            #    }
+          jq -s \
+            '{"context": .[0].context, \
+              "benchmarks": [.[0].benchmarks, .[1].benchmarks]}' \
+            benchmark-json.json \
+            benchmark-apache-arrow.json | \
+              jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
+                tee benchmark.sjon
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Benchmark
           tool: 'googlecpp'
           output-file-path: benchmark.json
-          fail-on-alert: true
+          fail-on-alert: ${{ github.event_name == 'pull_request' }}
       - name: Push benchmark result
         if: github.event_name == 'push'
         run: |
