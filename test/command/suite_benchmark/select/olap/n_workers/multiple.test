@@ -1,20 +1,20 @@
-table_create Data TABLE_NO_KEY
-column_create Data value1 COLUMN_SCALAR Int32
-column_create Data value2 COLUMN_SCALAR Int32
-column_create Data value3 COLUMN_SCALAR Int32
-column_create Data value4 COLUMN_SCALAR Int32
-column_create Data value5 COLUMN_SCALAR Int32
-column_create Data value6 COLUMN_SCALAR Int32
-column_create Data value7 COLUMN_SCALAR Int32
-column_create Data value8 COLUMN_SCALAR Int32
-column_create Data value9 COLUMN_SCALAR Int32
-column_create Data value10 COLUMN_SCALAR Int32
+table_create Data TABLE_NO_KEY --output_type json
+column_create Data value1 COLUMN_SCALAR Int32 --output_type json
+column_create Data value2 COLUMN_SCALAR Int32 --output_type json
+column_create Data value3 COLUMN_SCALAR Int32 --output_type json
+column_create Data value4 COLUMN_SCALAR Int32 --output_type json
+column_create Data value5 COLUMN_SCALAR Int32 --output_type json
+column_create Data value6 COLUMN_SCALAR Int32 --output_type json
+column_create Data value7 COLUMN_SCALAR Int32 --output_type json
+column_create Data value8 COLUMN_SCALAR Int32 --output_type json
+column_create Data value9 COLUMN_SCALAR Int32 --output_type json
+column_create Data value10 COLUMN_SCALAR Int32 --output_type json
 
 #@disable-logging
 #@generate-series 1 10000 Data 'Hash[*10.times.collect {|i| ["value#{i + 1}", rand(10)]}.flatten]'
 #@enable-logging
 
-select Data --limit 0
+select Data --limit 0 --output_type json
 
 #@start-benchmark 10000 5 select-2
 #@disable-logging

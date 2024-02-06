@@ -1,5 +1,5 @@
-table_create Data TABLE_NO_KEY
-column_create Data value COLUMN_SCALAR ShortText
+table_create Data TABLE_NO_KEY --output_type json
+column_create Data value COLUMN_SCALAR ShortText --output_type json
 
 #@start-benchmark 10000 5 load
 #@timeout 300
@@ -9,4 +9,4 @@ column_create Data value COLUMN_SCALAR ShortText
 #@timeout default
 #@finish-benchmark
 
-select Data --limit 0
+select Data --limit 0 --output_type json
