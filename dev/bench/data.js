@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707198473280,
+  "lastUpdate": 1707223635674,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -234,6 +234,54 @@ window.BENCHMARK_DATA = {
             "value": 0.014382067999974879,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0005809999999996374 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "ed84655236af474a1eee48800698dd51bec6fa61",
+          "message": "TaskExecutor: use ID directly",
+          "timestamp": "2024-02-06T21:39:57+09:00",
+          "tree_id": "bddc5ba6f195bb1f8bddf38fc1f90989d4012c35",
+          "url": "https://github.com/groonga/groonga/commit/ed84655236af474a1eee48800698dd51bec6fa61"
+        },
+        "date": 1707223634679,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "load/data/multiple",
+            "value": 0.036709383000015805,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0024490000000001177 s\nthreads: undefined"
+          },
+          {
+            "name": "load/data/short_text",
+            "value": 0.02570906300002207,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014210000000001166 s\nthreads: undefined"
+          },
+          {
+            "name": "select/olap/multiple",
+            "value": 0.01717463099998895,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0006029999999999092 s\nthreads: undefined"
+          },
+          {
+            "name": "select/olap/n_workers/multiple",
+            "value": 0.016579061000015827,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004940000000000777 s\nthreads: undefined"
           }
         ]
       }
