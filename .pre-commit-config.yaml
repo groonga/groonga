@@ -48,6 +48,7 @@ repos:
           ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
+          ?lib/grn\.h|
           ?lib/grn_arrow\.h|
           ?lib/grn_bulk\.h|
           ?lib/grn_ctx_impl\.h|

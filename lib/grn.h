@@ -19,32 +19,32 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#  include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef WIN32
-# ifdef __GNUC__
-#  define __MINGW_MSVC_COMPAT_WARNINGS
-# endif /* __GNUC__ */
+#  ifdef __GNUC__
+#    define __MINGW_MSVC_COMPAT_WARNINGS
+#  endif /* __GNUC__ */
 
-# define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_WIN8
+#  define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_WIN8
 
-# ifdef WINVER
-#  undef WINVER
-# endif /* WINVER */
-# define WINVER GRN_MINIMUM_WINDOWS_VERSION
-# ifdef _WIN32_WINNT
-#  undef _WIN32_WINNT
-# endif /* _WIN32_WINNT */
-# define _WIN32_WINNT GRN_MINIMUM_WINDOWS_VERSION
+#  ifdef WINVER
+#    undef WINVER
+#  endif /* WINVER */
+#  define WINVER GRN_MINIMUM_WINDOWS_VERSION
+#  ifdef _WIN32_WINNT
+#    undef _WIN32_WINNT
+#  endif /* _WIN32_WINNT */
+#  define _WIN32_WINNT GRN_MINIMUM_WINDOWS_VERSION
 
-# ifdef WIN32_LEAN_AND_MEAN
-#  undef WIN32_LEAN_AND_MEAN
-# endif /* WIN32_LEAN_AND_MEAN */
-#endif /* WIN32 */
+#  ifdef WIN32_LEAN_AND_MEAN
+#    undef WIN32_LEAN_AND_MEAN
+#  endif /* WIN32_LEAN_AND_MEAN */
+#endif   /* WIN32 */
 
 #ifdef __cplusplus
-# define __STDC_LIMIT_MACROS
+#  define __STDC_LIMIT_MACROS
 #endif
 
 #include <stdlib.h>
@@ -53,360 +53,372 @@
 #include <sys/types.h>
 
 #ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
+#  include <sys/param.h>
 #endif /* HAVE_SYS_PARAM_H */
 
 #ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
+#  include <sys/mman.h>
 #endif /* HAVE_SYS_MMAN_H */
 
 #ifdef HAVE_SYS_TIME_H
-# include <sys/time.h>
+#  include <sys/time.h>
 #endif /* HAVE_SYS_TIME_H */
 
 #ifdef HAVE_SYS_RESOURCE_H
-# include <sys/resource.h>
+#  include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
 #ifdef GRN_STATIC
-# define GRN_API
-# define GRN_VAR extern
-#else
-# ifdef WIN32
-#  define GRN_API __declspec(dllexport)
-#  ifdef GROONGA_MAIN
-#   define GRN_VAR __declspec(dllimport)
-#  else
-#   define GRN_VAR __declspec(dllexport) extern
-#  endif /* GROONGA_MAIN */
-# else
 #  define GRN_API
 #  define GRN_VAR extern
-# endif
+#else
+#  ifdef WIN32
+#    define GRN_API __declspec(dllexport)
+#    ifdef GROONGA_MAIN
+#      define GRN_VAR __declspec(dllimport)
+#    else
+#      define GRN_VAR __declspec(dllexport) extern
+#    endif /* GROONGA_MAIN */
+#  else
+#    define GRN_API
+#    define GRN_VAR extern
+#  endif
 #endif
 
 #ifdef WIN32
-# if defined(__cplusplus) || defined(__GNUC__)
+#  if defined(__cplusplus) || defined(__GNUC__)
+#    define grn_inline inline
+#  else /* defined(__cplusplus) || defined(__GNUC__) */
+#    define grn_inline _inline
+#  endif /* defined(__cplusplus) || defined(__GNUC__) */
+#else    /* WIN32 */
 #  define grn_inline inline
-# else /* defined(__cplusplus) || defined(__GNUC__) */
-#  define grn_inline _inline
-# endif /* defined(__cplusplus) || defined(__GNUC__) */
-#else /* WIN32 */
-# define grn_inline inline
 #endif /* WIN32 */
 
 #ifdef WIN32
-# ifndef NOMINMAX
-#  define NOMINMAX
-# endif
-# include <basetsd.h>
-# include <process.h>
-# include <winsock2.h>
-# include <ws2tcpip.h>
-# include <windows.h>
-# include <stddef.h>
-# include <windef.h>
-# include <float.h>
-# include <time.h>
-# include <sys/types.h>
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
+#  include <basetsd.h>
+#  include <process.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <windows.h>
+#  include <stddef.h>
+#  include <windef.h>
+#  include <float.h>
+#  include <time.h>
+#  include <sys/types.h>
 
-# ifndef __GNUC__
-#  define PATH_MAX (MAX_PATH - 1)
-# endif
+#  ifndef __GNUC__
+#    define PATH_MAX (MAX_PATH - 1)
+#  endif
 
-# ifndef __GNUC__
+#  ifndef __GNUC__
 typedef SSIZE_T ssize_t;
 typedef int pid_t;
 typedef int64_t off64_t;
-# endif
+#  endif
 
-# undef MSG_WAITALL
-# define MSG_WAITALL 0 /* before Vista, not supported... */
-# define SHUT_RDWR SD_BOTH
+#  undef MSG_WAITALL
+#  define MSG_WAITALL 0 /* before Vista, not supported... */
+#  define SHUT_RDWR   SD_BOTH
 
 typedef SOCKET grn_sock;
-# define grn_sock_close(sock) closesocket(sock)
-# define GRN_INVALID_SOCKET INVALID_SOCKET
+#  define grn_sock_close(sock) closesocket(sock)
+#  define GRN_INVALID_SOCKET   INVALID_SOCKET
 
-# define CALLBACK __stdcall
+#  define CALLBACK             __stdcall
 
-# ifndef __GNUC__
-#  include <intrin.h>
-#  pragma intrinsic(_BitScanReverse)
-#  pragma intrinsic(_InterlockedExchangeAdd)
-#  include <sys/timeb.h>
-#  include <errno.h>
-# endif
+#  ifndef __GNUC__
+#    include <intrin.h>
+#    pragma intrinsic(_BitScanReverse)
+#    pragma intrinsic(_InterlockedExchangeAdd)
+#    include <sys/timeb.h>
+#    include <errno.h>
+#  endif
 
 #else /* WIN32 */
 
-# define GROONGA_API
+#  define GROONGA_API
 
-# ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-# endif /* HAVE_UNISTD_H */
+#  ifdef HAVE_UNISTD_H
+#    include <unistd.h>
+#  endif /* HAVE_UNISTD_H */
 
-# ifndef __off64_t_defined
+#  ifndef __off64_t_defined
 typedef off_t off64_t;
-# endif
+#  endif
 
-# ifndef PATH_MAX
-#  if defined(MAXPATHLEN)
-#   define PATH_MAX MAXPATHLEN
-#  else /* MAXPATHLEN */
-#   define PATH_MAX 1024
-#  endif /* MAXPATHLEN */
-# endif /* PATH_MAX */
-# ifndef INT_LEAST8_MAX
+#  ifndef PATH_MAX
+#    if defined(MAXPATHLEN)
+#      define PATH_MAX MAXPATHLEN
+#    else /* MAXPATHLEN */
+#      define PATH_MAX 1024
+#    endif /* MAXPATHLEN */
+#  endif   /* PATH_MAX */
+#  ifndef INT_LEAST8_MAX
 typedef char int_least8_t;
-# endif /* INT_LEAST8_MAX */
-# ifndef UINT_LEAST8_MAX
+#  endif /* INT_LEAST8_MAX */
+#  ifndef UINT_LEAST8_MAX
 typedef unsigned char uint_least8_t;
-# endif /* UINT_LEAST8_MAX */
+#  endif /* UINT_LEAST8_MAX */
 typedef int grn_sock;
-# define grn_sock_close(sock) close(sock)
-# define GRN_INVALID_SOCKET -1
-# define CALLBACK
+#  define grn_sock_close(sock) close(sock)
+#  define GRN_INVALID_SOCKET   -1
+#  define CALLBACK
 
 #endif /* WIN32 */
 
 #ifndef INT8_MAX
-# define INT8_MAX (127)
+#  define INT8_MAX (127)
 #endif /* INT8_MAX */
 
 #ifndef INT8_MIN
-# define INT8_MIN (-128)
+#  define INT8_MIN (-128)
 #endif /* INT8_MIN */
 
 #ifndef INT16_MAX
-# define INT16_MAX (32767)
+#  define INT16_MAX (32767)
 #endif /* INT16_MAX */
 
 #ifndef INT16_MIN
-# define INT16_MIN (-32768)
+#  define INT16_MIN (-32768)
 #endif /* INT16_MIN */
 
 #ifndef INT32_MAX
-# define INT32_MAX (2147483647)
+#  define INT32_MAX (2147483647)
 #endif /* INT32_MAX */
 
 #ifndef INT32_MIN
-# define INT32_MIN (-2147483648)
+#  define INT32_MIN (-2147483648)
 #endif /* INT32_MIN */
 
 #ifndef UINT32_MAX
-# define UINT32_MAX (4294967295)
+#  define UINT32_MAX (4294967295)
 #endif /* UINT32_MAX */
 
 #ifndef INT64_MAX
-# define INT64_MAX (9223372036854775807)
+#  define INT64_MAX (9223372036854775807)
 #endif /* INT64_MAX */
 
 #ifndef INT64_MIN
-# define INT64_MIN (-9223372036854775808)
+#  define INT64_MIN (-9223372036854775808)
 #endif /* INT64_MIN */
 
-
 #ifdef WIN32
-# define grn_lseek(fd, offset, whence) _lseeki64(fd, offset, whence)
+#  define grn_lseek(fd, offset, whence) _lseeki64(fd, offset, whence)
 #else /* WIN32 */
-# define grn_lseek(fd, offset, whence) lseek(fd, offset, whence)
+#  define grn_lseek(fd, offset, whence) lseek(fd, offset, whence)
 #endif /* WIN32 */
 
-
 #ifdef HAVE_PTHREAD_H
-# include <pthread.h>
+#  include <pthread.h>
 typedef pthread_t grn_thread;
-typedef void * grn_thread_func_result;
-# define GRN_THREAD_FUNC_RETURN_VALUE NULL
-# define THREAD_CREATE(thread,func,arg) \
-  (pthread_create(&(thread), NULL, (func), (arg)))
-# define THREAD_JOIN(thread) (pthread_join(thread, NULL))
+typedef void *grn_thread_func_result;
+#  define GRN_THREAD_FUNC_RETURN_VALUE NULL
+#  define THREAD_CREATE(thread, func, arg)                                     \
+    (pthread_create(&(thread), NULL, (func), (arg)))
+#  define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
-# define MUTEX_INIT(m)       pthread_mutex_init(&(m), NULL)
-# define MUTEX_LOCK(m)       pthread_mutex_lock(&(m))
-# define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
-# define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&(m))
-# define MUTEX_FIN(m)        pthread_mutex_destroy(&(m))
+#  define MUTEX_INIT(m)       pthread_mutex_init(&(m), NULL)
+#  define MUTEX_LOCK(m)       pthread_mutex_lock(&(m))
+#  define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
+#  define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&(m))
+#  define MUTEX_FIN(m)        pthread_mutex_destroy(&(m))
 
 typedef pthread_mutex_t grn_critical_section;
-# define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
-# define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
-# define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
-# define CRITICAL_SECTION_FIN(cs)   pthread_mutex_destroy(&(cs))
+#  define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
+#  define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
+#  define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
+#  define CRITICAL_SECTION_FIN(cs)   pthread_mutex_destroy(&(cs))
 
 typedef pthread_cond_t grn_cond;
-# define COND_INIT(c)   pthread_cond_init(&(c), NULL)
-# define COND_SIGNAL(c) pthread_cond_signal(&(c))
-# define COND_WAIT(c,cs) pthread_cond_wait(&(c), &(cs))
-# define COND_BROADCAST(c) pthread_cond_broadcast(&(c))
-# define COND_FIN(c)    pthread_cond_destroy(&(c))
+#  define COND_INIT(c)      pthread_cond_init(&(c), NULL)
+#  define COND_SIGNAL(c)    pthread_cond_signal(&(c))
+#  define COND_WAIT(c, cs)  pthread_cond_wait(&(c), &(cs))
+#  define COND_BROADCAST(c) pthread_cond_broadcast(&(c))
+#  define COND_FIN(c)       pthread_cond_destroy(&(c))
 
 typedef pthread_key_t grn_thread_key;
-# define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
-# define THREAD_KEY_DELETE(key)         pthread_key_delete(key)
-# define THREAD_SETSPECIFIC(key, value) pthread_setspecific(key, value)
-# define THREAD_GETSPECIFIC(key)        pthread_getspecific(key)
+#  define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
+#  define THREAD_KEY_DELETE(key)         pthread_key_delete(key)
+#  define THREAD_SETSPECIFIC(key, value) pthread_setspecific(key, value)
+#  define THREAD_GETSPECIFIC(key)        pthread_getspecific(key)
 
-# ifdef USE_UYIELD
-  extern int grn_uyield_count;
-  #define GRN_TEST_YIELD() do {\
-    if (((++grn_uyield_count) & (0x20 - 1)) == 0) {\
-      sched_yield();\
-      if (grn_uyield_count > 0x1000) {\
-        grn_uyield_count = (uint32_t)time(NULL) % 0x1000;\
-      }\
-    }\
-  } while (0)
+#  ifdef USE_UYIELD
+extern int grn_uyield_count;
+#    define GRN_TEST_YIELD()                                                   \
+      do {                                                                     \
+        if (((++grn_uyield_count) & (0x20 - 1)) == 0) {                        \
+          sched_yield();                                                       \
+          if (grn_uyield_count > 0x1000) {                                     \
+            grn_uyield_count = (uint32_t)time(NULL) % 0x1000;                  \
+          }                                                                    \
+        }                                                                      \
+      } while (0)
 
-  #undef assert
-  #define assert(assert_expr) do {\
-    if (!(assert_expr)){\
-      fprintf(stderr, "assertion failed: %s\n", #assert_expr);\
-      abort();\
-    }\
-    GRN_TEST_YIELD();\
-  } while (0)
+#    undef assert
+#    define assert(assert_expr)                                                \
+      do {                                                                     \
+        if (!(assert_expr)) {                                                  \
+          fprintf(stderr, "assertion failed: %s\n", #assert_expr);             \
+          abort();                                                             \
+        }                                                                      \
+        GRN_TEST_YIELD();                                                      \
+      } while (0)
 
-  #define if (if_cond) \
-    if ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
-  #define while(while_cond) \
-    while ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (while_cond))
+#    define if                                                                 \
+      (if_cond) if ((((++grn_uyield_count) & (0x100 - 1)) != 0 ||              \
+                     (sched_yield() * 0) == 0) &&                              \
+                    (if_cond))
+#    define while(while_cond)                                                  \
+      while ((((++grn_uyield_count) & (0x100 - 1)) != 0 ||                     \
+              (sched_yield() * 0) == 0) &&                                     \
+             (while_cond))
 
-  #if !defined(_POSIX_PRIORITY_SCHEDULING)
-  #define sched_yield() grn_nanosleep(1000000 * 20)
-  #endif
-# else /* USE_UYIELD */
-  #define GRN_TEST_YIELD() do {} while (0)
-# endif /* USE_UYIELD */
+#    if !defined(_POSIX_PRIORITY_SCHEDULING)
+#      define sched_yield() grn_nanosleep(1000000 * 20)
+#    endif
+#  else /* USE_UYIELD */
+#    define GRN_TEST_YIELD()                                                   \
+      do {                                                                     \
+      } while (0)
+#  endif /* USE_UYIELD */
 
 #else /* HAVE_PTHREAD_H */
 
 /* todo */
 typedef int grn_thread_key;
-# define THREAD_KEY_CREATE(key,destr)
-# define THREAD_KEY_DELETE(key)
-# define THREAD_SETSPECIFIC(key)
-# define THREAD_GETSPECIFIC(key,value)
+#  define THREAD_KEY_CREATE(key, destr)
+#  define THREAD_KEY_DELETE(key)
+#  define THREAD_SETSPECIFIC(key)
+#  define THREAD_GETSPECIFIC(key, value)
 
-# ifdef WIN32
+#  ifdef WIN32
 typedef uintptr_t grn_thread;
 typedef unsigned int grn_thread_func_result;
-#  define GRN_THREAD_FUNC_RETURN_VALUE 0
-#  define THREAD_CREATE(thread,func,arg) \
-  (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == (grn_thread)0)
-#  define THREAD_JOIN(thread) \
-  (WaitForSingleObject((HANDLE)(thread), INFINITE) == WAIT_FAILED)
+#    define GRN_THREAD_FUNC_RETURN_VALUE 0
+#    define THREAD_CREATE(thread, func, arg)                                   \
+      (((thread) = _beginthreadex(NULL, 0, (func), (arg), 0, NULL)) ==         \
+       (grn_thread)0)
+#    define THREAD_JOIN(thread)                                                \
+      (WaitForSingleObject((HANDLE)(thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
-#  define MUTEX_INIT(m)       ((m) = CreateMutex(0, FALSE, NULL))
-#  define MUTEX_LOCK(m)       WaitForSingleObject((m), INFINITE)
-#  define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == WAIT_OBJECT_0)
-#  define MUTEX_UNLOCK(m)     ReleaseMutex((m))
-#  define MUTEX_FIN(m)        CloseHandle((m))
+#    define MUTEX_INIT(m)              ((m) = CreateMutex(0, FALSE, NULL))
+#    define MUTEX_LOCK(m)              WaitForSingleObject((m), INFINITE)
+#    define MUTEX_LOCK_CHECK(m)        (MUTEX_LOCK(m) == WAIT_OBJECT_0)
+#    define MUTEX_UNLOCK(m)            ReleaseMutex((m))
+#    define MUTEX_FIN(m)               CloseHandle((m))
 typedef CRITICAL_SECTION grn_critical_section;
-#  define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
-#  define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
-#  define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
-#  define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
+#    define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
+#    define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
+#    define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
+#    define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
 
 typedef CONDITION_VARIABLE grn_cond;
-#  define COND_INIT(c) InitializeConditionVariable(&(c))
-#  define COND_SIGNAL(c) WakeConditionVariable(&(c))
-#  define COND_BROADCAST(c) WakeAllConditionVariable(&(c))
-#  define COND_WAIT(c,cs) SleepConditionVariableCS(&(c), &(cs), INFINITE)
-#  define COND_FIN(c)
+#    define COND_INIT(c)               InitializeConditionVariable(&(c))
+#    define COND_SIGNAL(c)             WakeConditionVariable(&(c))
+#    define COND_BROADCAST(c)          WakeAllConditionVariable(&(c))
+#    define COND_WAIT(c, cs)           SleepConditionVariableCS(&(c), &(cs), INFINITE)
+#    define COND_FIN(c)
 
-# else /* WIN32 */
+#  else /* WIN32 */
 /* todo */
 typedef int grn_cond;
-#  define COND_INIT(c)   ((c) = 0)
-#  define COND_SIGNAL(c)
-#  define COND_WAIT(c,m) do { \
-  MUTEX_UNLOCK(m); \
-  grn_nanosleep(1000000); \
-  MUTEX_LOCK(m); \
-} while (0)
-#  define COND_FIN(c)
+#    define COND_INIT(c) ((c) = 0)
+#    define COND_SIGNAL(c)
+#    define COND_WAIT(c, m)                                                    \
+      do {                                                                     \
+        MUTEX_UNLOCK(m);                                                       \
+        grn_nanosleep(1000000);                                                \
+        MUTEX_LOCK(m);                                                         \
+      } while (0)
+#    define COND_FIN(c)
 /* todo : must be enhanced! */
 
-# endif /* WIN32 */
+#  endif /* WIN32 */
 
-# define GRN_TEST_YIELD() do {} while (0)
+#  define GRN_TEST_YIELD()                                                     \
+    do {                                                                       \
+    } while (0)
 
 #endif /* HAVE_PTHREAD_H */
 
-#define MUTEX_LOCK_ENSURE(ctx_, mutex) do {     \
-  grn_ctx *ctx__ = (ctx_);                      \
-  do {                                          \
-    grn_ctx *ctx = ctx__;                       \
-    if (MUTEX_LOCK_CHECK(mutex)) {              \
-      break;                                    \
-    }                                           \
-    if (ctx) {                                  \
-      SERR("MUTEX_LOCK");                       \
-    }                                           \
-    grn_nanosleep(1000000);                     \
-  } while (GRN_TRUE);                           \
-} while (GRN_FALSE)
+#define MUTEX_LOCK_ENSURE(ctx_, mutex)                                         \
+  do {                                                                         \
+    grn_ctx *ctx__ = (ctx_);                                                   \
+    do {                                                                       \
+      grn_ctx *ctx = ctx__;                                                    \
+      if (MUTEX_LOCK_CHECK(mutex)) {                                           \
+        break;                                                                 \
+      }                                                                        \
+      if (ctx) {                                                               \
+        SERR("MUTEX_LOCK");                                                    \
+      }                                                                        \
+      grn_nanosleep(1000000);                                                  \
+    } while (GRN_TRUE);                                                        \
+  } while (GRN_FALSE)
 
 /* format string for printf */
 #ifdef WIN32
-# define GRN_FMT_INT32D "I32d"
-# define GRN_FMT_INT32U "I32u"
-# define GRN_FMT_INT64D "I64d"
-# define GRN_FMT_INT64U "I64u"
-# define GRN_FMT_INT64X "I64x"
+#  define GRN_FMT_INT32D "I32d"
+#  define GRN_FMT_INT32U "I32u"
+#  define GRN_FMT_INT64D "I64d"
+#  define GRN_FMT_INT64U "I64u"
+#  define GRN_FMT_INT64X "I64x"
 #elif defined(HAVE_INTTYPES_H) && !defined(__cplusplus)
-# include <inttypes.h>
-# define GRN_FMT_INT32D PRId32
-# define GRN_FMT_INT32U PRIu32
-# define GRN_FMT_INT64D PRId64
-# define GRN_FMT_INT64U PRIu64
-# define GRN_FMT_INT64X PRIx64
+#  include <inttypes.h>
+#  define GRN_FMT_INT32D PRId32
+#  define GRN_FMT_INT32U PRIu32
+#  define GRN_FMT_INT64D PRId64
+#  define GRN_FMT_INT64U PRIu64
+#  define GRN_FMT_INT64X PRIx64
 #elif defined(__cplusplus) && __cplusplus >= 201103L
-# include <cinttypes>
-# define GRN_FMT_INT32D PRId32
-# define GRN_FMT_INT32U PRIu32
-# define GRN_FMT_INT64D PRId64
-# define GRN_FMT_INT64U PRIu64
-# define GRN_FMT_INT64X PRIx64
+#  include <cinttypes>
+#  define GRN_FMT_INT32D PRId32
+#  define GRN_FMT_INT32U PRIu32
+#  define GRN_FMT_INT64D PRId64
+#  define GRN_FMT_INT64U PRIu64
+#  define GRN_FMT_INT64X PRIx64
 #else /* WIN32 */
-# define GRN_FMT_INT32D "d"
-# define GRN_FMT_INT32U "u"
-# ifdef __x86_64__
-#  define GRN_FMT_INT64D "ld"
-#  define GRN_FMT_INT64U "lu"
-#  define GRN_FMT_INT64X "lx"
-# else /* __x86_64__ */
-#  define GRN_FMT_INT64D "lld"
-#  define GRN_FMT_INT64U "llu"
-#  define GRN_FMT_INT64X "llx"
-# endif /* __x86_64__ */
-#endif /* WIN32 */
+#  define GRN_FMT_INT32D "d"
+#  define GRN_FMT_INT32U "u"
+#  ifdef __x86_64__
+#    define GRN_FMT_INT64D "ld"
+#    define GRN_FMT_INT64U "lu"
+#    define GRN_FMT_INT64X "lx"
+#  else /* __x86_64__ */
+#    define GRN_FMT_INT64D "lld"
+#    define GRN_FMT_INT64U "llu"
+#    define GRN_FMT_INT64X "llx"
+#  endif /* __x86_64__ */
+#endif   /* WIN32 */
 
 #ifdef WIN32
-# define GRN_FMT_LLD "I64d"
-# define GRN_FMT_LLU "I64u"
-# define GRN_FMT_SIZE  "Iu"
-# define GRN_FMT_SSIZE "Id"
-# ifdef WIN64
-#  define GRN_FMT_SOCKET GRN_FMT_INT64U
-# else /* WIN64 */
-#  define GRN_FMT_SOCKET GRN_FMT_INT32U
-# endif /* WIN64 */
-# define GRN_FMT_DWORD "lu"
-# define GRN_FMT_OFF64_T GRN_FMT_LLD
+#  define GRN_FMT_LLD   "I64d"
+#  define GRN_FMT_LLU   "I64u"
+#  define GRN_FMT_SIZE  "Iu"
+#  define GRN_FMT_SSIZE "Id"
+#  ifdef WIN64
+#    define GRN_FMT_SOCKET GRN_FMT_INT64U
+#  else /* WIN64 */
+#    define GRN_FMT_SOCKET GRN_FMT_INT32U
+#  endif /* WIN64 */
+#  define GRN_FMT_DWORD   "lu"
+#  define GRN_FMT_OFF64_T GRN_FMT_LLD
 #else /* WIN32 */
-# define GRN_FMT_LLD  "lld"
-# define GRN_FMT_LLU  "llu"
-# define GRN_FMT_SIZE  "zu"
-# define GRN_FMT_SSIZE "zd"
-# define GRN_FMT_SOCKET "d"
-# define GRN_FMT_OFF64_T GRN_FMT_INT64D
+#  define GRN_FMT_LLD     "lld"
+#  define GRN_FMT_LLU     "llu"
+#  define GRN_FMT_SIZE    "zu"
+#  define GRN_FMT_SSIZE   "zd"
+#  define GRN_FMT_SOCKET  "d"
+#  define GRN_FMT_OFF64_T GRN_FMT_INT64D
 #endif /* WIN32 */
 
 #ifdef __GNUC__
-# if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
+#  if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
+/* clang-format off */
 /*
  * GRN_ATOMIC_ADD_EX() performs { r = *p; *p += i; } atomically.
  */
@@ -491,29 +503,29 @@ typedef int grn_cond;
 } while (0)
 /* TODO: use _InterlockedCompareExchange64 or inline asm */
 # endif /* ATOMIC 64BIT SET */
+/* clang-format on */
 
 /* todo */
-# define GRN_BIT_SCAN_REV(v,r)  do {            \
-    if (!BitScanReverse(&r, v)) {               \
-      r = 0;                                    \
-    }                                           \
-  } while (0)
-# define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
+#  define GRN_BIT_SCAN_REV(v, r)                                               \
+    do {                                                                       \
+      if (!BitScanReverse(&r, v)) {                                            \
+        r = 0;                                                                 \
+      }                                                                        \
+    } while (0)
+#  define GRN_BIT_SCAN_REV0(v, r) GRN_BIT_SCAN_REV(v, r)
 
 #else /* __GNUC__ */
 
-# if (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
-#  define __FUNCTION__ ""
-#  include <atomic.h>
-#  define GRN_ATOMIC_ADD_EX(p,i,r) \
-  (r = atomic_add_32_nv(p, i) - i)
+#  if (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
+#    define __FUNCTION__ ""
+#    include <atomic.h>
+#    define GRN_ATOMIC_ADD_EX(p, i, r) (r = atomic_add_32_nv(p, i) - i)
 /* todo */
-#  define GRN_SET_64BIT(p,v) \
-  (void)atomic_swap_64(p, v)
-# endif /* ATOMIC ADD */
+#    define GRN_SET_64BIT(p, v)        (void)atomic_swap_64(p, v)
+#  endif /* ATOMIC ADD */
 /* todo */
-# define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
-# define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
+#  define GRN_BIT_SCAN_REV(v, r)  for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV0(v, r) GRN_BIT_SCAN_REV(v, r)
 
 #endif /* __GNUC__ */
 
@@ -526,184 +538,216 @@ grn_inline static int
 grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 {
   for (;; ap++, bp++, as--, bs--) {
-    if (!as) { return 0; }
-    if (!bs) { return 1; }
-    if (*ap < *bp) { return 0; }
-    if (*ap > *bp) { return 1; }
+    if (!as) {
+      return 0;
+    }
+    if (!bs) {
+      return 1;
+    }
+    if (*ap < *bp) {
+      return 0;
+    }
+    if (*ap > *bp) {
+      return 1;
+    }
   }
 }
 #else /* __GNUC__ */
-# define grn_str_greater(ap,as,bp,bs)\
-  (((as) > (bs)) ? (memcmp((ap), (bp), (bs)) >= 0) : (memcmp((ap), (bp), (as)) > 0))
+#  define grn_str_greater(ap, as, bp, bs)                                      \
+    (((as) > (bs)) ? (memcmp((ap), (bp), (bs)) >= 0)                           \
+                   : (memcmp((ap), (bp), (as)) > 0))
 #endif /* __GNUC__ */
 
 #ifdef WORDS_BIGENDIAN
-# define grn_hton(buf,key,size) do {\
-  uint32_t size_ = (uint32_t)size;\
-  uint8_t *buf_ = (uint8_t *)buf;\
-  uint8_t *key_ = (uint8_t *)key;\
-  while (size_--) { *buf_++ = *key_++; }\
-} while (0)
-# define grn_ntohi(buf,key,size) do {\
-  uint32_t size_ = (uint32_t)size;\
-  uint8_t *buf_ = (uint8_t *)buf;\
-  uint8_t *key_ = (uint8_t *)key;\
-  if (size_) { *buf_++ = 0x80 ^ *key_++; size_--; }\
-  while (size_) { *buf_++ = *key_++; size_--; }\
-} while (0)
+#  define grn_hton(buf, key, size)                                             \
+    do {                                                                       \
+      uint32_t size_ = (uint32_t)size;                                         \
+      uint8_t *buf_ = (uint8_t *)buf;                                          \
+      uint8_t *key_ = (uint8_t *)key;                                          \
+      while (size_--) {                                                        \
+        *buf_++ = *key_++;                                                     \
+      }                                                                        \
+    } while (0)
+#  define grn_ntohi(buf, key, size)                                            \
+    do {                                                                       \
+      uint32_t size_ = (uint32_t)size;                                         \
+      uint8_t *buf_ = (uint8_t *)buf;                                          \
+      uint8_t *key_ = (uint8_t *)key;                                          \
+      if (size_) {                                                             \
+        *buf_++ = 0x80 ^ *key_++;                                              \
+        size_--;                                                               \
+      }                                                                        \
+      while (size_) {                                                          \
+        *buf_++ = *key_++;                                                     \
+        size_--;                                                               \
+      }                                                                        \
+    } while (0)
 #else /* WORDS_BIGENDIAN */
-# define grn_hton(buf,key,size) do {\
-  uint32_t size_ = (uint32_t)size;\
-  uint8_t *buf_ = (uint8_t *)buf;\
-  uint8_t *key_ = (uint8_t *)key + size;\
-  while (size_--) { *buf_++ = *(--key_); }\
-} while (0)
-# define grn_ntohi(buf,key,size) do {\
-  uint32_t size_ = (uint32_t)size;\
-  uint8_t *buf_ = (uint8_t *)buf;\
-  uint8_t *key_ = (uint8_t *)key + size;\
-  while (size_ > 1) { *buf_++ = *(--key_); size_--; }\
-  if (size_) { *buf_ = 0x80 ^ *(--key_); } \
-} while (0)
+#  define grn_hton(buf, key, size)                                             \
+    do {                                                                       \
+      uint32_t size_ = (uint32_t)size;                                         \
+      uint8_t *buf_ = (uint8_t *)buf;                                          \
+      uint8_t *key_ = (uint8_t *)key + size;                                   \
+      while (size_--) {                                                        \
+        *buf_++ = *(--key_);                                                   \
+      }                                                                        \
+    } while (0)
+#  define grn_ntohi(buf, key, size)                                            \
+    do {                                                                       \
+      uint32_t size_ = (uint32_t)size;                                         \
+      uint8_t *buf_ = (uint8_t *)buf;                                          \
+      uint8_t *key_ = (uint8_t *)key + size;                                   \
+      while (size_ > 1) {                                                      \
+        *buf_++ = *(--key_);                                                   \
+        size_--;                                                               \
+      }                                                                        \
+      if (size_) {                                                             \
+        *buf_ = 0x80 ^ *(--key_);                                              \
+      }                                                                        \
+    } while (0)
 #endif /* WORDS_BIGENDIAN */
-#define grn_ntoh(buf,key,size) grn_hton(buf,key,size)
+#define grn_ntoh(buf, key, size) grn_hton(buf, key, size)
 
 #ifndef __GNUC_PREREQ
-# if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#  define __GNUC_PREREQ(maj, min) \
-   ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-# else
-#  define __GNUC_PREREQ(maj, min) 0
-# endif /* defined(__GNUC__) && defined(__GNUC_MINOR__) */
-#endif /* __GNUC_PREREQ */
+#  if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#    define __GNUC_PREREQ(maj, min)                                            \
+      ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#  else
+#    define __GNUC_PREREQ(maj, min) 0
+#  endif /* defined(__GNUC__) && defined(__GNUC_MINOR__) */
+#endif   /* __GNUC_PREREQ */
 
 #ifdef _MSC_VER
-# define grn_bswap_uint64(in, out) ((out) = _byteswap_uint64(in))
+#  define grn_bswap_uint64(in, out) ((out) = _byteswap_uint64(in))
 #else /* _MSC_VER */
-# if defined(__GNUC__) && __GNUC_PREREQ(4, 3)
-#  define grn_bswap_uint64(in, out) ((out) = __builtin_bswap64(in))
-# else /* defined(__GNUC__) && __GNUC_PREREQ(4, 3) */
-#  define grn_bswap_uint64(in, out) do {\
-  uint64_t temp_ = (in);\
-  (out) = (temp_ << 56) |\
-          ((temp_ & (0xFFULL << 8)) << 40) |\
-          ((temp_ & (0xFFULL << 16)) << 24) |\
-          ((temp_ & (0xFFULL << 24)) << 8) |\
-          ((temp_ & (0xFFULL << 32)) >> 8) |\
-          ((temp_ & (0xFFULL << 40)) >> 24) |\
-          ((temp_ & (0xFFULL << 48)) >> 40) |\
-          (temp_ >> 56);\
-} while (0)
-# endif /* __GNUC__ */
-#endif /* _MSC_VER */
+#  if defined(__GNUC__) && __GNUC_PREREQ(4, 3)
+#    define grn_bswap_uint64(in, out) ((out) = __builtin_bswap64(in))
+#  else /* defined(__GNUC__) && __GNUC_PREREQ(4, 3) */
+#    define grn_bswap_uint64(in, out)                                          \
+      do {                                                                     \
+        uint64_t temp_ = (in);                                                 \
+        (out) = (temp_ << 56) | ((temp_ & (0xFFULL << 8)) << 40) |             \
+                ((temp_ & (0xFFULL << 16)) << 24) |                            \
+                ((temp_ & (0xFFULL << 24)) << 8) |                             \
+                ((temp_ & (0xFFULL << 32)) >> 8) |                             \
+                ((temp_ & (0xFFULL << 40)) >> 24) |                            \
+                ((temp_ & (0xFFULL << 48)) >> 40) | (temp_ >> 56);             \
+      } while (0)
+#  endif /* __GNUC__ */
+#endif   /* _MSC_VER */
 
 #ifdef WORDS_BIGENDIAN
-# define grn_hton_uint64(in, out) ((out) = (in))
+#  define grn_hton_uint64(in, out) ((out) = (in))
 #else /* WORDS_BIGENDIAN */
-# define grn_hton_uint64(in, out) grn_bswap_uint64(in, out)
+#  define grn_hton_uint64(in, out) grn_bswap_uint64(in, out)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh_uint64(in, out) grn_hton_uint64(in, out)
 
-#define grn_gton(keybuf,key,size) do {\
-  const grn_geo_point *point_ = (const grn_geo_point *)key;\
-  uint64_t la_ = (uint32_t)point_->latitude;\
-  uint64_t lo_ = (uint32_t)point_->longitude;\
-  uint64_t result_;\
-  la_ = (la_ | (la_ << 16)) & 0x0000FFFF0000FFFFULL;\
-  la_ = (la_ | (la_ <<  8)) & 0x00FF00FF00FF00FFULL;\
-  la_ = (la_ | (la_ <<  4)) & 0x0F0F0F0F0F0F0F0FULL;\
-  la_ = (la_ | (la_ <<  2)) & 0x3333333333333333ULL;\
-  la_ = (la_ | (la_ <<  1)) & 0x5555555555555555ULL;\
-  lo_ = (lo_ | (lo_ << 16)) & 0x0000FFFF0000FFFFULL;\
-  lo_ = (lo_ | (lo_ <<  8)) & 0x00FF00FF00FF00FFULL;\
-  lo_ = (lo_ | (lo_ <<  4)) & 0x0F0F0F0F0F0F0F0FULL;\
-  lo_ = (lo_ | (lo_ <<  2)) & 0x3333333333333333ULL;\
-  lo_ = (lo_ | (lo_ <<  1)) & 0x5555555555555555ULL;\
-  result_ = (la_ << 1) | lo_;\
-  grn_hton_uint64(result_, result_);\
-  grn_memcpy(keybuf, &result_, sizeof(result_));\
-} while (0)
+#define grn_gton(keybuf, key, size)                                            \
+  do {                                                                         \
+    const grn_geo_point *point_ = (const grn_geo_point *)key;                  \
+    uint64_t la_ = (uint32_t)point_->latitude;                                 \
+    uint64_t lo_ = (uint32_t)point_->longitude;                                \
+    uint64_t result_;                                                          \
+    la_ = (la_ | (la_ << 16)) & 0x0000FFFF0000FFFFULL;                         \
+    la_ = (la_ | (la_ << 8)) & 0x00FF00FF00FF00FFULL;                          \
+    la_ = (la_ | (la_ << 4)) & 0x0F0F0F0F0F0F0F0FULL;                          \
+    la_ = (la_ | (la_ << 2)) & 0x3333333333333333ULL;                          \
+    la_ = (la_ | (la_ << 1)) & 0x5555555555555555ULL;                          \
+    lo_ = (lo_ | (lo_ << 16)) & 0x0000FFFF0000FFFFULL;                         \
+    lo_ = (lo_ | (lo_ << 8)) & 0x00FF00FF00FF00FFULL;                          \
+    lo_ = (lo_ | (lo_ << 4)) & 0x0F0F0F0F0F0F0F0FULL;                          \
+    lo_ = (lo_ | (lo_ << 2)) & 0x3333333333333333ULL;                          \
+    lo_ = (lo_ | (lo_ << 1)) & 0x5555555555555555ULL;                          \
+    result_ = (la_ << 1) | lo_;                                                \
+    grn_hton_uint64(result_, result_);                                         \
+    grn_memcpy(keybuf, &result_, sizeof(result_));                             \
+  } while (0)
 
-#define grn_ntog(keybuf,key,size) do {\
-  grn_geo_point *point_ = (grn_geo_point *)keybuf;\
-  uint64_t key_ = *(const uint64_t *)key;\
-  uint64_t la_, lo_;\
-  grn_ntoh_uint64(key_, key_);\
-  la_ = (key_ >> 1) & 0x5555555555555555ULL;\
-  lo_ = key_ & 0x5555555555555555ULL;\
-  la_ = (la_ | (la_ >>  1)) & 0x3333333333333333ULL;\
-  la_ = (la_ | (la_ >>  2)) & 0x0F0F0F0F0F0F0F0FULL;\
-  la_ = (la_ | (la_ >>  4)) & 0x00FF00FF00FF00FFULL;\
-  la_ = (la_ | (la_ >>  8)) & 0x0000FFFF0000FFFFULL;\
-  la_ = (la_ | (la_ >> 16)) & 0x00000000FFFFFFFFULL;\
-  lo_ = (lo_ | (lo_ >>  1)) & 0x3333333333333333ULL;\
-  lo_ = (lo_ | (lo_ >>  2)) & 0x0F0F0F0F0F0F0F0FULL;\
-  lo_ = (lo_ | (lo_ >>  4)) & 0x00FF00FF00FF00FFULL;\
-  lo_ = (lo_ | (lo_ >>  8)) & 0x0000FFFF0000FFFFULL;\
-  lo_ = (lo_ | (lo_ >> 16)) & 0x00000000FFFFFFFFULL;\
-  point_->latitude = (int32_t)la_;\
-  point_->longitude = (int32_t)lo_;\
-} while (0)
+#define grn_ntog(keybuf, key, size)                                            \
+  do {                                                                         \
+    grn_geo_point *point_ = (grn_geo_point *)keybuf;                           \
+    uint64_t key_ = *(const uint64_t *)key;                                    \
+    uint64_t la_, lo_;                                                         \
+    grn_ntoh_uint64(key_, key_);                                               \
+    la_ = (key_ >> 1) & 0x5555555555555555ULL;                                 \
+    lo_ = key_ & 0x5555555555555555ULL;                                        \
+    la_ = (la_ | (la_ >> 1)) & 0x3333333333333333ULL;                          \
+    la_ = (la_ | (la_ >> 2)) & 0x0F0F0F0F0F0F0F0FULL;                          \
+    la_ = (la_ | (la_ >> 4)) & 0x00FF00FF00FF00FFULL;                          \
+    la_ = (la_ | (la_ >> 8)) & 0x0000FFFF0000FFFFULL;                          \
+    la_ = (la_ | (la_ >> 16)) & 0x00000000FFFFFFFFULL;                         \
+    lo_ = (lo_ | (lo_ >> 1)) & 0x3333333333333333ULL;                          \
+    lo_ = (lo_ | (lo_ >> 2)) & 0x0F0F0F0F0F0F0F0FULL;                          \
+    lo_ = (lo_ | (lo_ >> 4)) & 0x00FF00FF00FF00FFULL;                          \
+    lo_ = (lo_ | (lo_ >> 8)) & 0x0000FFFF0000FFFFULL;                          \
+    lo_ = (lo_ | (lo_ >> 16)) & 0x00000000FFFFFFFFULL;                         \
+    point_->latitude = (int32_t)la_;                                           \
+    point_->longitude = (int32_t)lo_;                                          \
+  } while (0)
 
 #ifdef HAVE__STRTOUI64
-# define strtoull(nptr,endptr,base) _strtoui64(nptr,endptr,base)
+#  define strtoull(nptr, endptr, base) _strtoui64(nptr, endptr, base)
 #endif /* HAVE__STRTOUI64 */
 
 #ifdef USE_FUTEX
-# include <linux/futex.h>
-# include <sys/syscall.h>
+#  include <linux/futex.h>
+#  include <sys/syscall.h>
 
-# define GRN_FUTEX_WAIT(p) do {\
-  int err;\
-  struct timespec timeout = {1, 0};\
-  while (1) {\
-    if (!(err = syscall(SYS_futex, p, FUTEX_WAIT, *p, &timeout))) {\
-      break;\
-    }\
-    if (err == ETIMEDOUT) {\
-      GRN_LOG(ctx, GRN_LOG_CRIT, "timeout in GRN_FUTEX_WAIT(%p)", p);\
-      break;\
-    } else if (err != EWOULDBLOCK) {\
-      GRN_LOG(ctx, GRN_LOG_CRIT, "error %d in GRN_FUTEX_WAIT(%p)", err);\
-      break;\
-    }\
-  }\
-} while(0)
+#  define GRN_FUTEX_WAIT(p)                                                    \
+    do {                                                                       \
+      int err;                                                                 \
+      struct timespec timeout = {1, 0};                                        \
+      while (1) {                                                              \
+        if (!(err = syscall(SYS_futex, p, FUTEX_WAIT, *p, &timeout))) {        \
+          break;                                                               \
+        }                                                                      \
+        if (err == ETIMEDOUT) {                                                \
+          GRN_LOG(ctx, GRN_LOG_CRIT, "timeout in GRN_FUTEX_WAIT(%p)", p);      \
+          break;                                                               \
+        } else if (err != EWOULDBLOCK) {                                       \
+          GRN_LOG(ctx, GRN_LOG_CRIT, "error %d in GRN_FUTEX_WAIT(%p)", err);   \
+          break;                                                               \
+        }                                                                      \
+      }                                                                        \
+    } while (0)
 
-# define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
+#  define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
 #else /* USE_FUTEX */
-# define GRN_FUTEX_WAIT(p) grn_nanosleep(1000000)
-# define GRN_FUTEX_WAKE(p)
+#  define GRN_FUTEX_WAIT(p) grn_nanosleep(1000000)
+#  define GRN_FUTEX_WAKE(p)
 #endif /* USE_FUTEX */
 
 #ifndef HOST_NAME_MAX
-# ifdef _POSIX_HOST_NAME_MAX
-#  define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-# else /* POSIX_HOST_NAME_MAX */
-#  define HOST_NAME_MAX 128
-# endif /* POSIX_HOST_NAME_MAX */
-#endif /* HOST_NAME_MAX */
+#  ifdef _POSIX_HOST_NAME_MAX
+#    define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#  else /* POSIX_HOST_NAME_MAX */
+#    define HOST_NAME_MAX 128
+#  endif /* POSIX_HOST_NAME_MAX */
+#endif   /* HOST_NAME_MAX */
 
 #define GRN_NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
 
 #ifdef GRN_WITH_ONIGMO
-# define GRN_SUPPORT_REGEXP
+#  define GRN_SUPPORT_REGEXP
 #endif /* GRN_WITH_ONIGMO */
 
 #ifdef __GNUC__
-# define GRN_LIKELY(expr) (__builtin_expect(!!(expr), 1))
-# define GRN_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
+#  define GRN_LIKELY(expr)   (__builtin_expect(!!(expr), 1))
+#  define GRN_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
 #else
-# define GRN_LIKELY(expr) expr
-# define GRN_UNLIKELY(expr) expr
+#  define GRN_LIKELY(expr)   expr
+#  define GRN_UNLIKELY(expr) expr
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API void grn_sleep(uint32_t seconds);
-GRN_API void grn_nanosleep(uint64_t nanoseconds);
+GRN_API void
+grn_sleep(uint32_t seconds);
+GRN_API void
+grn_nanosleep(uint64_t nanoseconds);
 
 #ifdef __cplusplus
 }
