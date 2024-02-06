@@ -320,10 +320,18 @@ GRN_API grn_bool
 grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc
 grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
+GRN_API int32_t
+grn_ctx_get_n_workers(grn_ctx *ctx);
+GRN_API grn_rc
+grn_ctx_set_n_workers(grn_ctx *ctx, int32_t n_workers);
 GRN_API int64_t
 grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc
 grn_set_default_match_escalation_threshold(int64_t threshold);
+GRN_API int32_t
+grn_get_default_n_workers(void);
+GRN_API grn_rc
+grn_set_default_n_workers(int32_t n_workers);
 GRN_API bool
 grn_is_back_trace_enable(void);
 GRN_API grn_rc

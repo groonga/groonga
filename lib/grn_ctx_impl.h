@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -151,11 +151,16 @@ struct _grn_ctx_impl {
   } output;
 
   struct {
+    int32_t n_workers;
+  } parallel;
+
+  struct {
     int flags;
     grn_command_version version;
     struct {
       grn_obj *command;
       grn_command_version version;
+      int32_t n_workers;
     } keep;
   } command;
 

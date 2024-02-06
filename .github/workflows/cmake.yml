@@ -239,7 +239,7 @@ jobs:
       - name: "Test: stdio: n_workers"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
-          export GRN_SELECT_N_WORKERS_DEFAULT=-1
+          export GRN_N_WORKERS_DEFAULT=-1
           grntest \
             --base-dir test/command \
             --n-retries=2 \

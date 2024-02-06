@@ -158,6 +158,8 @@ jobs:
             ~/.cache/red-datasets
           key: red-datasets-ubuntu
       - name: Run benchmark
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
         run: |
           grntest \
             --base-dir test/command \

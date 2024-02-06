@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -109,6 +109,7 @@ int grn_uyield_count = 0;
 
 static grn_bool grn_ctx_per_db = GRN_FALSE;
 static bool grn_back_trace_enable = true;
+static int32_t grn_n_workers_default = 0;
 
 static void
 grn_init_from_env(void)
@@ -132,6 +133,22 @@ grn_init_from_env(void)
     }
   }
 
+  /* For backward compatibility. */
+  {
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_SELECT_N_WORKERS_DEFAULT", env, GRN_ENV_BUFFER_SIZE);
+    if (env[0]) {
+      grn_n_workers_default = atoi(env);
+    }
+  }
+  {
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_N_WORKERS_DEFAULT", env, GRN_ENV_BUFFER_SIZE);
+    if (env[0]) {
+      grn_n_workers_default = atoi(env);
+    }
+  }
+
   grn_alloc_init_from_env();
   grn_mrb_init_from_env();
   grn_ctx_impl_mrb_init_from_env();
@@ -146,7 +163,6 @@ grn_init_from_env(void)
   grn_output_init_from_env();
   grn_proc_init_from_env();
   grn_proc_query_init_from_env();
-  grn_proc_select_init_from_env();
   grn_plugin_init_from_env();
   grn_token_column_init_from_env();
   grn_group_init_from_env();
@@ -387,6 +403,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
 
+  ctx->impl->parallel.n_workers = grn_n_workers_default;
+
   ctx->impl->command.flags = 0;
   if (ctx == &grn_gctx) {
     ctx->impl->command.version = GRN_COMMAND_VERSION_STABLE;
@@ -395,6 +413,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   }
   ctx->impl->command.keep.command = NULL;
   ctx->impl->command.keep.version = ctx->impl->command.version;
+  ctx->impl->command.keep.n_workers = ctx->impl->parallel.n_workers;
 
   if (ctx == &grn_gctx) {
     ctx->impl->match_escalation_threshold =
@@ -513,6 +532,7 @@ grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command)
 {
   ctx->impl->command.keep.command = command;
   ctx->impl->command.keep.version = ctx->impl->command.version;
+  ctx->impl->command.keep.n_workers = ctx->impl->parallel.n_workers;
 }
 
 grn_ctx *
@@ -530,6 +550,7 @@ grn_ctx_pull_child(grn_ctx *ctx)
   grn_ctx_use(child_ctx, grn_ctx_db(ctx));
   child_ctx->impl->parent = ctx;
   child_ctx->impl->command.version = ctx->impl->command.version;
+  child_ctx->impl->parallel.n_workers = ctx->impl->parallel.n_workers;
   CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
   return child_ctx;
 }
@@ -1125,6 +1146,19 @@ grn_set_default_match_escalation_threshold(int64_t threshold)
   return grn_ctx_set_match_escalation_threshold(&grn_gctx, threshold);
 }
 
+int32_t
+grn_get_default_n_workers(void)
+{
+  return grn_n_workers_default;
+}
+
+grn_rc
+grn_set_default_n_workers(int32_t n_workers)
+{
+  grn_n_workers_default = n_workers;
+  return GRN_SUCCESS;
+}
+
 int
 grn_get_lock_timeout(void)
 {
@@ -1332,6 +1366,27 @@ grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force)
 {
   if (ctx->impl) {
     ctx->impl->force_match_escalation = force;
+    return GRN_SUCCESS;
+  } else {
+    return GRN_INVALID_ARGUMENT;
+  }
+}
+
+int32_t
+grn_ctx_get_n_workers(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->parallel.n_workers;
+  } else {
+    return grn_n_workers_default;
+  }
+}
+
+grn_rc
+grn_ctx_set_n_workers(grn_ctx *ctx, int32_t n_workers)
+{
+  if (ctx->impl) {
+    ctx->impl->parallel.n_workers = n_workers;
     return GRN_SUCCESS;
   } else {
     return GRN_INVALID_ARGUMENT;
@@ -1629,6 +1684,16 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
   }
 }
 
+static void
+get_n_workers(grn_ctx *ctx, const char *p, const char *pe)
+{
+  const char *rest;
+  int32_t n_workers = grn_atoi(p, pe, &rest);
+  if (pe == rest) {
+    grn_ctx_set_n_workers(ctx, n_workers);
+  }
+}
+
 #define INDEX_HTML                  "index.html"
 #define OUTPUT_TYPE                 "output_type"
 #define COMMAND_VERSION             "command_version"
@@ -1636,6 +1701,7 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define REQUEST_TIMEOUT             "request_timeout"
 #define OUTPUT_PRETTY               "output_pretty"
 #define OUTPUT_TRACE_LOG            "output_trace_log"
+#define N_WORKERS                   "n_workers"
 #define EXPR_MISSING                "expr_missing"
 #define OUTPUT_TYPE_LEN             (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN         (sizeof(COMMAND_VERSION) - 1)
@@ -1643,6 +1709,7 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define REQUEST_TIMEOUT_LEN         (sizeof(REQUEST_TIMEOUT) - 1)
 #define OUTPUT_PRETTY_LEN           (sizeof(OUTPUT_PRETTY) - 1)
 #define OUTPUT_TRACE_LOG_LEN        (sizeof(OUTPUT_TRACE_LOG) - 1)
+#define N_WORKERS_LEN               (sizeof(N_WORKERS) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
@@ -1730,6 +1797,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           } else {
             grn_ctx_trace_log_disable(ctx);
           }
+        } else if (l == N_WORKERS_LEN &&
+                   !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          get_n_workers(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
         } else {
           if (!(val = grn_expr_get_or_add_var(ctx, expr, v, (unsigned int)l))) {
             val = &buf;
@@ -1852,6 +1924,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           } else {
             grn_ctx_trace_log_disable(ctx);
           }
+        } else if (l == N_WORKERS_LEN &&
+                   !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+          get_n_workers(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
         } else if (expr &&
                    (val =
                       grn_expr_get_or_add_var(ctx, expr, v, (unsigned int)l))) {
@@ -1992,17 +2069,18 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
-      grn_command_version command_version;
       grn_obj *expr = NULL;
       bool is_comment = false;
       bool processed = false;
 
-      command_version = grn_ctx_get_command_version(ctx);
+      grn_command_version command_version = grn_ctx_get_command_version(ctx);
+      int32_t n_workers = grn_ctx_get_n_workers(ctx);
       if (ctx->impl->command.keep.command) {
         grn_obj *val;
         expr = ctx->impl->command.keep.command;
         ctx->impl->command.keep.command = NULL;
         grn_ctx_set_command_version(ctx, ctx->impl->command.keep.version);
+        grn_ctx_set_n_workers(ctx, ctx->impl->command.keep.n_workers);
         if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           GRN_TEXT_PUT(ctx, val, str, str_len);
@@ -2059,6 +2137,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         grn_expr_clear_vars(ctx, expr);
       }
       grn_ctx_set_command_version(ctx, command_version);
+      grn_ctx_set_n_workers(ctx, n_workers);
       if (processed) {
         grn_db_command_processed(ctx, ctx->impl->db);
       }

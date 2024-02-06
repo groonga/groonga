@@ -1,0 +1,83 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value1 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value2 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value3 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value4 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value5 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value6 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value7 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value8 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value9 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Data value10 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+select Data --limit 0
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        10000
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "value1",
+          "Int32"
+        ],
+        [
+          "value10",
+          "Int32"
+        ],
+        [
+          "value2",
+          "Int32"
+        ],
+        [
+          "value3",
+          "Int32"
+        ],
+        [
+          "value4",
+          "Int32"
+        ],
+        [
+          "value5",
+          "Int32"
+        ],
+        [
+          "value6",
+          "Int32"
+        ],
+        [
+          "value7",
+          "Int32"
+        ],
+        [
+          "value8",
+          "Int32"
+        ],
+        [
+          "value9",
+          "Int32"
+        ]
+      ]
+    ]
+  ]
+]

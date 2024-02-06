@@ -40,20 +40,6 @@
 
 #define GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS "$match_columns"
 
-static int32_t grn_select_n_workers_default = 0;
-
-extern "C" void
-grn_proc_select_init_from_env(void)
-{
-  {
-    char env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_SELECT_N_WORKERS_DEFAULT", env, GRN_ENV_BUFFER_SIZE);
-    if (env[0]) {
-      grn_select_n_workers_default = atoi(env);
-    }
-  }
-}
-
 namespace {
   enum class DynamicColumnStage;
   struct DynamicColumns;
@@ -1558,8 +1544,7 @@ namespace {
         adjuster(args->get_string("adjuster")),
         match_escalation(args->get_string("match_escalation")),
         dynamic_columns(ctx, args),
-        task_executor_(
-          ctx, args->get_int32("n_workers", grn_select_n_workers_default))
+        task_executor_(ctx, grn_ctx_get_n_workers(ctx))
     {
       if (ctx_->rc != GRN_SUCCESS) {
         return;
@@ -5011,7 +4996,7 @@ command_select(grn_ctx *ctx,
   return NULL;
 }
 
-#define N_VARS      35
+#define N_VARS      34
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -5057,7 +5042,6 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
                            &(vars[33]),
                            "drilldown_max_n_target_records",
                            -1);
-  grn_plugin_expr_var_init(ctx, &(vars[34]), "n_workers", -1);
 }
 
 extern "C" void
