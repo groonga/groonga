@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707178571982,
+  "lastUpdate": 1707194613174,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -102,6 +102,42 @@ window.BENCHMARK_DATA = {
             "value": 0.026267163999989407,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0014630000000002141 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f851bb12b33c576b9de999e4c35cb80d165ea9a3",
+          "message": "Remove `init_default_hostname` and always use `localhost` as the default hostname (#1694)\n\nGitHub: fix GH-1644\r\n\r\n`init_default_hostname()` is slow on Mac.\r\nRemove `init_default_hostname()` and always use `localhost` as the\r\ndefault hostname.\r\n\r\nSigned-off-by: Abe Tomoaki <abe@clear-code.com>",
+          "timestamp": "2024-02-06T13:38:57+09:00",
+          "tree_id": "ab6b54878ff5078c23f840d493d77ef774c35ae1",
+          "url": "https://github.com/groonga/groonga/commit/f851bb12b33c576b9de999e4c35cb80d165ea9a3"
+        },
+        "date": 1707194611542,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "load/data/multiple",
+            "value": 0.03677418099999841,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002019000000000215 s\nthreads: undefined"
+          },
+          {
+            "name": "load/data/short_text",
+            "value": 0.026499073999957545,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0017179999999998863 s\nthreads: undefined"
           }
         ]
       }
