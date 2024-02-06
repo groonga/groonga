@@ -51,6 +51,7 @@ repos:
           ?lib/grn\.h|
           ?lib/grn_arrow\.h|
           ?lib/grn_bulk\.h|
+          ?lib/grn_ctx\.hpp|
           ?lib/grn_ctx_impl\.h|
           ?lib/grn_distance\.h|
           ?lib/grn_distance\.hpp|

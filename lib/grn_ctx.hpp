@@ -26,12 +26,12 @@ grn_ctx_get_task_executor(grn_ctx *ctx);
 namespace grn {
   class ChildCtxReleaser {
   public:
-    ChildCtxReleaser(grn_ctx *ctx, grn_ctx *child_ctx) :
-      ctx_(ctx),
-      child_ctx_(child_ctx) {
-    };
+    ChildCtxReleaser(grn_ctx *ctx, grn_ctx *child_ctx)
+      : ctx_(ctx),
+        child_ctx_(child_ctx){};
 
-    ~ChildCtxReleaser() {
+    ~ChildCtxReleaser()
+    {
       if (child_ctx_) {
         grn_ctx_release_child(ctx_, child_ctx_);
       }
@@ -41,4 +41,4 @@ namespace grn {
     grn_ctx *ctx_;
     grn_ctx *child_ctx_;
   };
-}
+} // namespace grn
