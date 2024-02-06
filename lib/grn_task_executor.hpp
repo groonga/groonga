@@ -79,7 +79,7 @@ namespace grn {
 
     template <typename Function>
     bool
-    execute(void *object, Function &&func, const char *tag)
+    execute(uintptr_t id, Function &&func, const char *tag)
     {
 #ifdef GRN_WITH_APACHE_ARROW
       if (n_workers_ > 1) {
@@ -92,7 +92,7 @@ namespace grn {
         }
         {
           std::unique_lock<std::mutex> lock(futures_mutex_);
-          futures_.emplace(reinterpret_cast<uintptr_t>(object), *future_result);
+          futures_.emplace(id, *future_result);
         }
         return true;
       }
@@ -101,12 +101,11 @@ namespace grn {
     }
 
     bool
-    wait(void *object, const char *tag)
+    wait(uintptr_t id, const char *tag)
     {
 #ifdef GRN_WITH_APACHE_ARROW
       if (n_workers_ > 1) {
         try {
-          auto id = reinterpret_cast<uintptr_t>(object);
           std::unique_lock<std::mutex> lock(futures_mutex_);
           auto future = futures_.at(id);
           lock.unlock();

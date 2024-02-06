@@ -1728,15 +1728,16 @@ namespace {
       auto dependent_drilldown = (*drilldowns)[table_name];
       auto &task_executor = executor_->task_executor();
       if (dependent_drilldown) {
-        if (!task_executor.wait(dependent_drilldown,
-                                GRN_TEXT_VALUE(*log_tag_prefix))) {
+        const auto id = reinterpret_cast<uintptr_t>(dependent_drilldown);
+        if (!task_executor.wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
           return false;
         }
         target_table = dependent_drilldown->result.table;
       } else {
         auto slice = slices ? (*slices)[table_name] : nullptr;
         if (slice) {
-          if (!task_executor.wait(slice, GRN_TEXT_VALUE(*log_tag_prefix))) {
+          const auto id = reinterpret_cast<uintptr_t>(slice);
+          if (!task_executor.wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
             return false;
           }
           target_table = slice->tables.result;
@@ -2095,6 +2096,7 @@ namespace {
     for (const auto &id : tsorted_ids) {
       auto drilldowns = this;
       auto drilldown = (*drilldowns)[id];
+      const auto execute_id = reinterpret_cast<uintptr_t>(drilldown);
       auto execute = [=]() {
         return drilldown->execute(drilldowns,
                                   table,
@@ -2103,7 +2105,7 @@ namespace {
                                   log_tag_context,
                                   query_log_tag_prefix);
       };
-      if (!executor_->task_executor().execute(drilldown,
+      if (!executor_->task_executor().execute(execute_id,
                                               execute,
                                               log_tag_context)) {
         return false;
@@ -2258,8 +2260,9 @@ namespace {
     n_executing_slices_ = grn_hash_size(ctx_, slices_);
     for (auto slice : *this) {
       auto slices = this;
+      const auto id = reinterpret_cast<uintptr_t>(slice);
       auto execute = [=]() { return slice->execute(slices, table); };
-      if (!executor_->task_executor().execute(slice, execute, "[slices]")) {
+      if (!executor_->task_executor().execute(id, execute, "[slices]")) {
         return false;
       }
     }
