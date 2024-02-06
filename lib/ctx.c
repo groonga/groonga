@@ -1797,8 +1797,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           } else {
             grn_ctx_trace_log_disable(ctx);
           }
-        } else if (l == N_WORKERS_LEN &&
-                   !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
+        } else if (l == N_WORKERS_LEN && !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
           GRN_BULK_REWIND(&buf);
           p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
           get_n_workers(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
@@ -1924,8 +1923,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           } else {
             grn_ctx_trace_log_disable(ctx);
           }
-        } else if (l == N_WORKERS_LEN &&
-                   !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
+        } else if (l == N_WORKERS_LEN && !memcmp(v, N_WORKERS, N_WORKERS_LEN)) {
           GRN_BULK_REWIND(&buf);
           p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
           get_n_workers(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
