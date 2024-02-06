@@ -165,7 +165,17 @@ jobs:
             --base-dir test/command \
             --benchmark \
             test/command/suite_benchmark | \
-              tee benchmark-json.json
+              tee benchmark-stdio-json.json
+      - name: "Benchmark: http: json"
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            --interface http \
+            test/command/suite_benchmark | \
+              tee benchmark-http-json.json
       - name: "Benchmark: http: apache-arrow"
         env:
           GRN_N_WORKERS_DEFAULT: "-1"
@@ -177,33 +187,26 @@ jobs:
             --interface http \
             --output-type apache-arrow \
             test/command/suite_benchmark | \
-              tee benchmark-apache-arrow.json
+              tee benchmark-http-apache-arrow.json
       - name: Merge benchmark results
         run: |
           # json1: {"context": ..., "benchmarks": [{"name": "bench1-1", ...}, ...]}
           # json2: {"context": ..., "benchmarks": [{"name": "bench2-1", ...}, ...]}
-          # jq ... | \ # => {
-          #            #      "context": json1's context,
-          #            #      "benchmarks": [
-          #            #        [json1's benchmark1, ...],
-          #            #        [json2's benchmark1, ...]
-          #            #      ]
-          #            #    }
-          #   jq ...   # => {
-          #            #      "context": json1's context,
-          #            #      "benchmarks": [
-          #            #        json1's benchmark1,
-          #            #        ...,
-          #            #        json2's benchmark1,
-          #            #        ...
-          #            #      ]
-          #            #    }
+          # merged-json: {
+          #   "context": json1's context,
+          #   "benchmarks": [
+          #     json1's benchmark1,
+          #     ...,
+          #     json2's benchmark1,
+          #     ...
+          #   ]
+          # }
           jq -s \
-            '{"context": .[0].context, "benchmarks": [.[0].benchmarks, .[1].benchmarks]}' \
-            benchmark-json.json \
-            benchmark-apache-arrow.json | \
-              jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
-                tee benchmark.json
+            '{"context": .[0].context, "benchmarks": [.[].benchmarks]}' \
+            benchmark-stdio-json.json \
+            benchmark-http-json.json \
+            benchmark-http-apache-arrow.json | \
+              tee benchmark.json
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
