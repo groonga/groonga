@@ -37,7 +37,7 @@ repos:
           ?lib/arrow\.cpp|
           ?lib/cast\.cpp|
           ?lib/command_arguments\.cpp|
-          ?lib/ctx\.c|
+          ?lib/ctx\.cpp|
           ?lib/ctx_impl_mrb\.c|
           ?lib/db\.c|
           ?lib/distance\.cpp|

@@ -7,7 +7,6 @@ libgroonga_c_sources =				\
 	com.c					\
 	command.c				\
 	config.c				\
-	ctx.c					\
 	ctx_impl_lua.c				\
 	ctx_impl_mrb.c				\
 	db.c					\

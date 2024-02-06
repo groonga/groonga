@@ -97,6 +97,7 @@
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
 
+extern "C" {
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_critical_section grn_glock;
@@ -333,7 +334,8 @@ static grn_rc
 grn_ctx_impl_init(grn_ctx *ctx)
 {
   grn_io_mapinfo mi;
-  if (!(ctx->impl = grn_io_anon_map(ctx, &mi, IMPL_SIZE))) {
+  if (!(ctx->impl =
+          static_cast<_grn_ctx_impl *>(grn_io_anon_map(ctx, &mi, IMPL_SIZE)))) {
     return ctx->rc;
   }
   grn_alloc_init_ctx_impl(ctx);
@@ -730,7 +732,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   {
     void *value;
     grn_hash_cursor_get_value(ctx, cursor, &value);
-    grn_ctx_local_variable *variable = value;
+    auto variable = static_cast<grn_ctx_local_variable *>(value);
     if (variable->close_func) {
       variable->close_func(ctx, variable->data);
     }
@@ -1446,7 +1448,7 @@ grn_ctx_set_variable(grn_ctx *ctx,
       ERR(rc, "[ctx][variable][set] failed to add variable");
       goto exit;
     }
-    grn_ctx_local_variable *variable = value;
+    auto variable = static_cast<grn_ctx_local_variable *>(value);
     if (!added) {
       if (variable->close_func) {
         variable->close_func(ctx, variable->data);
@@ -1462,7 +1464,7 @@ grn_ctx_set_variable(grn_ctx *ctx,
                              (unsigned int)name_size,
                              &value);
     if (id != GRN_ID_NIL) {
-      grn_ctx_local_variable *variable = value;
+      auto variable = static_cast<grn_ctx_local_variable *>(value);
       if (variable->close_func) {
         variable->close_func(ctx, variable->data);
       }
@@ -1485,17 +1487,21 @@ grn_ctx_get_variable(grn_ctx *ctx, const char *name, int name_size)
   if (name_size < 0) {
     name_size = (int)strlen(name);
   }
-  void *value;
-  grn_id id = grn_hash_get(ctx,
-                           ctx->impl->variables,
-                           name,
-                           (unsigned int)name_size,
-                           &value);
-  if (id == GRN_ID_NIL) {
-    goto exit;
+  {
+    void *value;
+    grn_id id = grn_hash_get(ctx,
+                             ctx->impl->variables,
+                             name,
+                             (unsigned int)name_size,
+                             &value);
+    if (id == GRN_ID_NIL) {
+      goto exit;
+    }
+    {
+      auto variable = static_cast<grn_ctx_local_variable *>(value);
+      data = variable->data;
+    }
   }
-  grn_ctx_local_variable *variable = value;
-  data = variable->data;
 exit:
   GRN_API_RETURN(data);
 }
@@ -1532,7 +1538,7 @@ grn_content_type_parse(grn_ctx *ctx,
 {
   grn_content_type ct = default_value;
   if (var->header.domain == GRN_DB_INT32) {
-    ct = GRN_INT32_VALUE(var);
+    ct = static_cast<grn_content_type>(GRN_INT32_VALUE(var));
   } else {
     grn_raw_string input;
     GRN_RAW_STRING_SET(input, var);
@@ -1667,7 +1673,7 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
   grn_command_version version;
   const char *rest;
 
-  version = grn_atoui(p, pe, &rest);
+  version = static_cast<grn_command_version>(grn_atoui(p, pe, &rest));
   if (pe == rest) {
     grn_rc rc;
     rc = grn_ctx_set_command_version(ctx, version);
@@ -2191,8 +2197,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
             *flags |= GRN_CTX_MORE;
           }
         }
-        ctx->impl->output.type = header.qtype;
-        ctx->rc = (int16_t)ntohs(header.status);
+        ctx->impl->output.type = static_cast<grn_content_type>(header.qtype);
+        ctx->rc = static_cast<grn_rc>(ntohs(header.status));
         ctx->errbuf[0] = '\0';
         ctx->errline = 0;
         ctx->errfile = NULL;
@@ -2492,7 +2498,8 @@ grn_crash_handler(int signal_number, siginfo_t *info, void *context)
 #  endif /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
 
-  struct sigaction default_action = {0};
+  struct sigaction default_action;
+  memset(&default_action, 0, sizeof(default_action));
   sigemptyset(&default_action.sa_mask);
   default_action.sa_handler = SIG_DFL;
   default_action.sa_flags = SA_SIGINFO | SA_ONSTACK;
@@ -2515,7 +2522,8 @@ grn_set_segv_handler(void)
   SetUnhandledExceptionFilter(grn_exception_filter);
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
   grn_ctx *ctx = &grn_gctx;
-  struct sigaction action = {0};
+  struct sigaction action;
+  memset(&action, 0, sizeof(action));
   sigemptyset(&action.sa_mask);
   action.sa_sigaction = grn_crash_handler;
   action.sa_flags = SA_SIGINFO | SA_ONSTACK;
@@ -2533,7 +2541,8 @@ grn_set_abrt_handler(void)
   grn_rc rc = GRN_SUCCESS;
 #if !defined(WIN32) && defined(HAVE_SIGNAL_H)
   grn_ctx *ctx = &grn_gctx;
-  struct sigaction action = {0};
+  struct sigaction action;
+  memset(&action, 0, sizeof(action));
   sigemptyset(&action.sa_mask);
   action.sa_sigaction = grn_crash_handler;
   action.sa_flags = SA_SIGINFO | SA_ONSTACK;
@@ -2813,4 +2822,5 @@ grn_ctx_output_table_records(grn_ctx *ctx,
                            ctx->impl->output.type,
                            table,
                            format);
+}
 }

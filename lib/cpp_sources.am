@@ -3,6 +3,7 @@ libgroonga_cpp_source =				\
 	bulk.cpp				\
 	cast.cpp				\
 	command_arguments.cpp			\
+	ctx.cpp					\
 	dat.cpp					\
 	distance.cpp				\
 	expr_executor.cpp			\
