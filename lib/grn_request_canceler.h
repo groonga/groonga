@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright (C) 2014-2016  Brazil
+  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +19,10 @@
 #pragma once
 
 #include "grn.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 grn_bool grn_request_canceler_init(void);
 void grn_request_canceler_fin(void);
