@@ -39,6 +39,7 @@
 #include "grn_cache.h"
 #include "grn_expr.h"
 #include "grn_table_selector.h"
+#include "grn_task_executor.hpp"
 #include "grn_token_column.h"
 #include "grn_window_function_executor.h"
 #include "grn_windows.h"
@@ -406,6 +407,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
 
   ctx->impl->parallel.n_workers = grn_n_workers_default;
+  ctx->impl->parallel.task_executor = nullptr;
 
   ctx->impl->command.flags = 0;
   if (ctx == &grn_gctx) {
@@ -801,6 +803,9 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     rc = grn_com_close(ctx, ctx->impl->com);
   }
   GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
+  if (ctx->impl->parallel.task_executor) {
+    delete static_cast<grn::TaskExecutor *>(ctx->impl->parallel.task_executor);
+  }
   if (ctx->impl->output.arrow_stream_writer) {
     grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
   }
@@ -2823,4 +2828,19 @@ grn_ctx_output_table_records(grn_ctx *ctx,
                            table,
                            format);
 }
+}
+
+grn::TaskExecutor *
+grn_ctx_get_task_executor(grn_ctx *ctx)
+{
+  if (!ctx->impl) {
+    return nullptr;
+  }
+  if (!ctx->impl->parallel.task_executor) {
+    ctx->impl->parallel.task_executor = new grn::TaskExecutor(ctx);
+  }
+  auto task_executor =
+    static_cast<grn::TaskExecutor *>(ctx->impl->parallel.task_executor);
+  task_executor->set_n_workers(ctx->impl->parallel.n_workers);
+  return task_executor;
 }

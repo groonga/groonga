@@ -1883,8 +1883,7 @@ namespace grnarrow {
       }
 
       const auto n_columns = record_batch->num_columns();
-      const auto n_workers = std::min(n_columns, grn_ctx_get_n_workers(ctx_));
-      grn::TaskExecutor task_executor(ctx_, n_workers);
+      auto task_executor = grn_ctx_get_task_executor(ctx_);
       for (int i = 0; i < n_columns; ++i) {
         if (i == key_column_index || i == id_column_index) {
           continue;
@@ -1897,7 +1896,7 @@ namespace grnarrow {
           const auto &field = schema->field(i);
           grn_ctx *ctx = ctx_;
           grn_ctx *child_ctx = nullptr;
-          if (task_executor.is_parallel()) {
+          if (task_executor->is_parallel()) {
             ctx = child_ctx = grn_ctx_pull_child(ctx_);
           }
           grn::ChildCtxReleaser releaser(ctx_, child_ctx);
@@ -1910,9 +1909,9 @@ namespace grnarrow {
           auto status = column->Accept(&visitor);
           return grnarrow::check(ctx_, status, column_tag);
         };
-        task_executor.execute(id, execute, column_tag.c_str());
+        task_executor->execute(id, execute, column_tag.c_str());
       }
-      task_executor.wait_all();
+      task_executor->wait_all();
       for (const auto record_id : record_ids) {
         if (record_id == GRN_ID_NIL) {
           continue;

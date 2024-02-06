@@ -38,9 +38,9 @@ namespace grn {
 #endif
 
   public:
-    TaskExecutor(grn_ctx *ctx, int32_t n_workers)
+    TaskExecutor(grn_ctx *ctx)
       : ctx_(ctx),
-        n_workers_(n_workers)
+        n_workers_(0)
 #ifdef GRN_WITH_APACHE_ARROW
         ,
         thread_pool_(nullptr),
@@ -48,21 +48,34 @@ namespace grn {
         futures_mutex_()
 #endif
     {
+    }
+
+    void
+    set_n_workers(int32_t n_workers)
+    {
 #ifdef GRN_WITH_APACHE_ARROW
-      if (n_workers_ < 0) {
-        n_workers_ = ::arrow::internal::ThreadPool::DefaultCapacity();
+      if (n_workers < 0) {
+        n_workers = ::arrow::internal::ThreadPool::DefaultCapacity();
       }
+      if (n_workers == n_workers_) {
+        return;
+      }
+      n_workers_ = n_workers;
       if (n_workers_ > 1) {
-        auto thread_pool_result =
-          ::arrow::internal::ThreadPool::MakeEternal(n_workers_);
-        if (thread_pool_result.ok()) {
-          thread_pool_ = *thread_pool_result;
+        if (thread_pool_) {
+          if (!thread_pool_->SetCapacity(n_workers_).ok()) {
+            n_workers_ = 0;
+          }
         } else {
-          n_workers_ = 0;
+          auto thread_pool_result =
+            ::arrow::internal::ThreadPool::MakeEternal(n_workers_);
+          if (thread_pool_result.ok()) {
+            thread_pool_ = *thread_pool_result;
+          } else {
+            n_workers_ = 0;
+          }
         }
       }
-#else
-      n_workers_ = 0;
 #endif
     }
 

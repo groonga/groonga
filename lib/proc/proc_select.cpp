@@ -1544,7 +1544,7 @@ namespace {
         adjuster(args->get_string("adjuster")),
         match_escalation(args->get_string("match_escalation")),
         dynamic_columns(ctx, args),
-        task_executor_(ctx, grn_ctx_get_n_workers(ctx))
+        task_executor_(grn_ctx_get_task_executor(ctx))
     {
       if (ctx_->rc != GRN_SUCCESS) {
         return;
@@ -1580,7 +1580,7 @@ namespace {
       return args_;
     }
 
-    grn::TaskExecutor &
+    grn::TaskExecutor *
     task_executor()
     {
       return task_executor_;
@@ -1602,7 +1602,7 @@ namespace {
                               "")) {
         return false;
       }
-      if (!task_executor_.wait_all()) {
+      if (!task_executor_->wait_all()) {
         return false;
       }
       return ctx_->rc == GRN_SUCCESS;
@@ -1673,7 +1673,7 @@ namespace {
     DynamicColumns dynamic_columns;
 
   private:
-    grn::TaskExecutor task_executor_;
+    grn::TaskExecutor *task_executor_;
   };
 
   bool
@@ -1726,10 +1726,10 @@ namespace {
 
     if (table_name.length > 0) {
       auto dependent_drilldown = (*drilldowns)[table_name];
-      auto &task_executor = executor_->task_executor();
+      auto task_executor = executor_->task_executor();
       if (dependent_drilldown) {
         const auto id = reinterpret_cast<uintptr_t>(dependent_drilldown);
-        if (!task_executor.wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
+        if (!task_executor->wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
           return false;
         }
         target_table = dependent_drilldown->result.table;
@@ -1737,7 +1737,7 @@ namespace {
         auto slice = slices ? (*slices)[table_name] : nullptr;
         if (slice) {
           const auto id = reinterpret_cast<uintptr_t>(slice);
-          if (!task_executor.wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
+          if (!task_executor->wait(id, GRN_TEXT_VALUE(*log_tag_prefix))) {
             return false;
           }
           target_table = slice->tables.result;
@@ -2044,11 +2044,11 @@ namespace {
                      const char *query_log_tag_prefix)
   {
     auto ctx = ctx_;
-    const auto is_parallel = executor_->task_executor().is_parallel();
-    if (is_parallel) {
-      ctx = grn_ctx_pull_child(ctx_);
+    grn_ctx *child_ctx = nullptr;
+    if (executor_->task_executor()->is_parallel()) {
+      ctx = child_ctx = grn_ctx_pull_child(ctx_);
     }
-    grn::ChildCtxReleaser releaser(ctx_, is_parallel ? ctx : nullptr);
+    grn::ChildCtxReleaser releaser(ctx_, child_ctx);
 
     GRN_API_ENTER;
     auto success = execute_internal(ctx,
@@ -2105,9 +2105,9 @@ namespace {
                                   log_tag_context,
                                   query_log_tag_prefix);
       };
-      if (!executor_->task_executor().execute(execute_id,
-                                              execute,
-                                              log_tag_context)) {
+      if (!executor_->task_executor()->execute(execute_id,
+                                               execute,
+                                               log_tag_context)) {
         return false;
       }
     }
@@ -2228,11 +2228,11 @@ namespace {
   Slice::execute(Slices *slices, grn_obj *table)
   {
     auto ctx = ctx_;
-    const auto is_parallel = executor_->task_executor().is_parallel();
-    if (is_parallel) {
-      ctx = grn_ctx_pull_child(ctx_);
+    grn_ctx *child_ctx = nullptr;
+    if (executor_->task_executor()->is_parallel()) {
+      ctx = child_ctx = grn_ctx_pull_child(ctx_);
     }
-    grn::ChildCtxReleaser releaser(ctx_, is_parallel ? ctx : nullptr);
+    grn::ChildCtxReleaser releaser(ctx_, child_ctx);
 
     GRN_API_ENTER;
     auto success = execute_internal(ctx, slices, table);
@@ -2262,7 +2262,7 @@ namespace {
       auto slices = this;
       const auto id = reinterpret_cast<uintptr_t>(slice);
       auto execute = [=]() { return slice->execute(slices, table); };
-      if (!executor_->task_executor().execute(id, execute, "[slices]")) {
+      if (!executor_->task_executor()->execute(id, execute, "[slices]")) {
         return false;
       }
     }

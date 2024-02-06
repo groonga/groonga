@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,10 @@
 #pragma once
 
 #include "grn_ctx.h"
+#include "grn_task_executor.hpp"
+
+GRN_API grn::TaskExecutor *
+grn_ctx_get_task_executor(grn_ctx *ctx);
 
 namespace grn {
   class ChildCtxReleaser {

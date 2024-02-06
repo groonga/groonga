@@ -152,6 +152,7 @@ struct _grn_ctx_impl {
 
   struct {
     int32_t n_workers;
+    void *task_executor;
   } parallel;
 
   struct {
