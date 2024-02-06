@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017  Brazil
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,11 +20,13 @@
 #include "grn_arrow.h"
 #include "grn_cast.h"
 #include "grn_column.h"
+#include "grn_ctx.hpp"
 #include "grn_db.h"
 #include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
 #  include "grn_arrow.hpp"
+#  include "grn_task_executor.hpp"
 #  include <groonga/arrow.hpp>
 
 #  include <arrow/api.h>
@@ -1857,15 +1859,19 @@ namespace grnarrow {
     arrow::Status
     process_record_batch(std::shared_ptr<arrow::RecordBatch> record_batch)
     {
+      const auto tag = tag_ + "[consume][record-batch-decoded]";
       auto grn_table = grn_loader_->table;
-      const auto &key_column = record_batch->GetColumnByName("_key");
-      const auto &id_column = record_batch->GetColumnByName("_id");
+      const auto &schema = record_batch->schema();
+      const auto key_column_index = schema->GetFieldIndex("_key");
+      const auto id_column_index = schema->GetFieldIndex("_id");
       const auto n_records = record_batch->num_rows();
       std::vector<grn_id> record_ids;
-      if (key_column) {
+      if (key_column_index != -1) {
+        const auto &key_column = record_batch->column(key_column_index);
         RecordAddVisitor visitor(ctx_, grn_loader_, &record_ids, true);
         ARROW_RETURN_NOT_OK(key_column->Accept(&visitor));
-      } else if (id_column) {
+      } else if (id_column_index != -1) {
+        const auto &id_column = record_batch->column(id_column_index);
         RecordAddVisitor visitor(ctx_, grn_loader_, &record_ids, false);
         ARROW_RETURN_NOT_OK(id_column->Accept(&visitor));
       } else {
@@ -1876,28 +1882,44 @@ namespace grnarrow {
         }
       }
 
-      const auto &schema = record_batch->schema();
       const auto n_columns = record_batch->num_columns();
+      const auto n_workers = std::min(n_columns, grn_ctx_get_n_workers(ctx_));
+      grn::TaskExecutor task_executor(ctx_, n_workers);
       for (int i = 0; i < n_columns; ++i) {
-        const auto &column = record_batch->column(i);
-        if (column == key_column) {
+        if (i == key_column_index || i == id_column_index) {
           continue;
         }
-        ColumnLoadVisitor visitor(ctx_,
-                                  grn_loader_,
-                                  grn_table,
-                                  schema->field(i),
-                                  record_ids.data(),
-                                  &object_cache_);
-        ARROW_RETURN_NOT_OK(column->Accept(&visitor));
+        const auto id = static_cast<uintptr_t>(i);
+        const auto column_tag =
+          tag + "[" + schema->field(i)->name() + "(" + std::to_string(i) + ")]";
+        auto execute = [&, this, i]() {
+          const auto &column = record_batch->column(i);
+          const auto &field = schema->field(i);
+          grn_ctx *ctx = ctx_;
+          grn_ctx *child_ctx = nullptr;
+          if (task_executor.is_parallel()) {
+            ctx = child_ctx = grn_ctx_pull_child(ctx_);
+          }
+          grn::ChildCtxReleaser releaser(ctx_, child_ctx);
+          ColumnLoadVisitor visitor(ctx,
+                                    grn_loader_,
+                                    grn_table,
+                                    field,
+                                    record_ids.data(),
+                                    &object_cache_);
+          auto status = column->Accept(&visitor);
+          return grnarrow::check(ctx_, status, column_tag);
+        };
+        task_executor.execute(id, execute, column_tag.c_str());
       }
+      task_executor.wait_all();
       for (const auto record_id : record_ids) {
         if (record_id == GRN_ID_NIL) {
           continue;
         }
         grn_loader_apply_each(ctx_, grn_loader_, record_id);
       }
-      return check(ctx_, ctx_->rc, tag_ + "[consume][record-batch-decoded]");
+      return check(ctx_, ctx_->rc, tag);
     }
 
     grn_ctx *ctx_;
