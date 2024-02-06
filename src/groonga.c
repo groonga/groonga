@@ -3903,27 +3903,6 @@ static const char *const default_bind_address = "0.0.0.0";
 static double default_default_request_timeout = 0.0;
 
 static void
-init_default_hostname(void)
-{
-  static char hostname[HOST_NAME_MAX + 1];
-  struct addrinfo hints, *result;
-
-  hostname[HOST_NAME_MAX] = '\0';
-  if (gethostname(hostname, HOST_NAME_MAX) == -1) return;
-
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_addr = NULL;
-  hints.ai_canonname = NULL;
-  hints.ai_next = NULL;
-  if (getaddrinfo(hostname, NULL, &hints, &result) != 0) return;
-  freeaddrinfo(result);
-
-  default_hostname = hostname;
-}
-
-static void
 init_default_settings(void)
 {
   output = stdout;
@@ -3936,8 +3915,6 @@ init_default_settings(void)
       default_max_n_threads = n_cores;
     }
   }
-
-  init_default_hostname();
 
   default_log_path = grn_default_logger_get_path();
   default_query_log_path = grn_default_query_logger_get_path();
