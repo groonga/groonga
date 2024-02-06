@@ -21,6 +21,7 @@
 #include "grn_cast.h"
 #include "grn_column.h"
 #include "grn_ctx.hpp"
+#include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_output.h"
 
@@ -911,28 +912,21 @@ namespace grnarrow {
     ColumnLoadVisitor(grn_ctx *ctx,
                       grn_loader *grn_loader,
                       grn_obj *grn_table,
+                      grn_obj *grn_column,
                       const std::shared_ptr<arrow::Field> &arrow_field,
                       const grn_id *record_ids,
                       ObjectCache *object_cache)
       : ctx_(ctx),
         grn_loader_(grn_loader),
         grn_table_(grn_table),
+        grn_column_(grn_column),
         record_ids_(record_ids),
         column_name_(arrow_field->name()),
-        grn_column_(nullptr),
         buffer_(),
         object_cache_(object_cache)
     {
       if (grn_loader_) {
-        grn_column_ = grn_loader_get_column(ctx_,
-                                            grn_loader_,
-                                            column_name_.data(),
-                                            column_name_.size());
       } else {
-        grn_column_ = grn_obj_column(ctx_,
-                                     grn_table,
-                                     column_name_.data(),
-                                     column_name_.size());
       }
 
       const auto &arrow_type = arrow_field->type();
@@ -974,13 +968,7 @@ namespace grnarrow {
       }
     }
 
-    ~ColumnLoadVisitor()
-    {
-      if (!grn_loader_ && grn_obj_is_accessor(ctx_, grn_column_)) {
-        grn_obj_unlink(ctx_, grn_column_);
-      }
-      GRN_OBJ_FIN(ctx_, &buffer_);
-    }
+    ~ColumnLoadVisitor() { GRN_OBJ_FIN(ctx_, &buffer_); }
 
     arrow::Status
     Visit(const arrow::BooleanArray &array) override
@@ -1082,9 +1070,9 @@ namespace grnarrow {
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
     grn_obj *grn_table_;
+    grn_obj *grn_column_;
     const grn_id *record_ids_;
     std::string column_name_;
-    grn_obj *grn_column_;
     grn_obj buffer_;
     ObjectCache *object_cache_;
 
@@ -1268,13 +1256,22 @@ namespace grnarrow {
           for (const auto &arrow_array : arrow_chunked_array->chunks()) {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
+            const auto &column_name = arrow_field->name();
+            auto grn_column = grn_obj_column(ctx_,
+                                             grn_table_,
+                                             column_name.data(),
+                                             column_name.size());
             ColumnLoadVisitor visitor(ctx_,
                                       nullptr,
                                       grn_table_,
+                                      grn_column,
                                       arrow_field,
                                       sub_ids,
                                       &object_cache_);
             auto status = arrow_array->Accept(&visitor);
+            if (grn_obj_is_accessor(ctx_, grn_column)) {
+              grn_obj_unlink(ctx_, grn_column);
+            }
             offset += arrow_array->length();
           }
         }
@@ -1884,29 +1881,45 @@ namespace grnarrow {
 
       const auto n_columns = record_batch->num_columns();
       auto task_executor = grn_ctx_get_task_executor(ctx_);
+      std::mutex loader_merge_mutex;
       for (int i = 0; i < n_columns; ++i) {
         if (i == key_column_index || i == id_column_index) {
           continue;
         }
         const auto id = static_cast<uintptr_t>(i);
+        const auto &column_name = schema->field(i)->name();
         const auto column_tag =
-          tag + "[" + schema->field(i)->name() + "(" + std::to_string(i) + ")]";
+          tag + "[" + column_name + "(" + std::to_string(i) + ")]";
+        auto *grn_column = grn_loader_get_column(ctx_,
+                                                 grn_loader_,
+                                                 column_name.data(),
+                                                 column_name.size());
         auto execute = [&, this, i]() {
           const auto &column = record_batch->column(i);
           const auto &field = schema->field(i);
           grn_ctx *ctx = ctx_;
           grn_ctx *child_ctx = nullptr;
+          grn_loader *loader = grn_loader_;
           if (task_executor->is_parallel()) {
             ctx = child_ctx = grn_ctx_pull_child(ctx_);
+            loader = &(child_ctx->impl->loader);
           }
           grn::ChildCtxReleaser releaser(ctx_, child_ctx);
           ColumnLoadVisitor visitor(ctx,
                                     grn_loader_,
                                     grn_table,
+                                    grn_column,
                                     field,
                                     record_ids.data(),
                                     &object_cache_);
           auto status = column->Accept(&visitor);
+          if (child_ctx) {
+            {
+              std::lock_guard<std::mutex> lock(loader_merge_mutex);
+              grn_loader_merge(ctx, grn_loader_, &(child_ctx->impl->loader));
+            }
+            grn_ctx_loader_clear(child_ctx);
+          }
           return grnarrow::check(ctx_, status, column_tag);
         };
         task_executor->execute(id, execute, column_tag.c_str());
