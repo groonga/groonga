@@ -204,7 +204,7 @@ jobs:
             benchmark-json.json \
             benchmark-apache-arrow.json | \
               jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
-                tee benchmark.sjon
+                tee benchmark.json
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
