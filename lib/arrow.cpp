@@ -1890,7 +1890,7 @@ namespace grnarrow {
                                                  grn_loader_,
                                                  column_name.data(),
                                                  column_name.size());
-        auto execute = [&, this, i]() {
+        auto execute = [&, this, i, grn_column]() {
           const auto &column = record_batch->column(i);
           const auto &field = schema->field(i);
           grn_ctx *ctx = ctx_;
