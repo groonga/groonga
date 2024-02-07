@@ -1902,7 +1902,7 @@ namespace grnarrow {
           }
           grn::ChildCtxReleaser releaser(ctx_, child_ctx);
           ColumnLoadVisitor visitor(ctx,
-                                    grn_loader_,
+                                    loader,
                                     grn_table,
                                     grn_column,
                                     field,
