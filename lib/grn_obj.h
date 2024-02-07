@@ -25,7 +25,8 @@
 extern "C" {
 #endif
 
-grn_io *grn_obj_get_io(grn_ctx *ctx, grn_obj *obj);
+grn_io *
+grn_obj_get_io(grn_ctx *ctx, grn_obj *obj);
 
 void
 grn_obj_set_error(grn_ctx *ctx,
@@ -44,7 +45,6 @@ grn_obj_log(grn_ctx *ctx,
             const char *tag,
             const char *format,
             ...);
-
 
 #ifdef __cplusplus
 }
