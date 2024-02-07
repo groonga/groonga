@@ -42,7 +42,7 @@ namespace {
   {
     if (!grn_obj_is_number_family_vector(ctx, vector1)) {
       grn::TextBulk inspected(ctx);
-      grn_inspect(ctx, vector1, *inspected);
+      grn_inspect(ctx, *inspected, vector1);
       ERR(GRN_INVALID_ARGUMENT,
           "%s the 1st argument must be number family vector: %.*s",
           tag,
@@ -53,7 +53,7 @@ namespace {
 
     if (!grn_obj_is_number_family_vector(ctx, vector2)) {
       grn::TextBulk inspected(ctx);
-      grn_inspect(ctx, vector2, *inspected);
+      grn_inspect(ctx, *inspected, vector2);
       ERR(GRN_INVALID_ARGUMENT,
           "%s the 2nd argument must be number family vector: %.*s",
           tag,
