@@ -153,9 +153,12 @@ grn_loader_merge(grn_ctx *ctx, grn_loader *loader, grn_loader *loader_other)
   /* TODO: information updated by grn_loader_on_record_added() such as
    * loader->n_record_ids are not supported yet. */
   loader->n_column_errors += loader_other->n_column_errors;
-  if (loader->error.rc == GRN_SUCCESS && loader_other->error.rc != GRN_SUCCESS) {
+  if (loader->error.rc == GRN_SUCCESS &&
+      loader_other->error.rc != GRN_SUCCESS) {
     loader->error.rc = loader_other->error.rc;
-    grn_strcpy(loader->error.buffer, GRN_CTX_MSGSIZE, loader_other->error.buffer);
+    grn_strcpy(loader->error.buffer,
+               GRN_CTX_MSGSIZE,
+               loader_other->error.buffer);
     loader->error.line = loader_other->error.line;
     loader->error.file = loader_other->error.file;
     loader->error.func = loader_other->error.func;
