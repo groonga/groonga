@@ -12,16 +12,8 @@
   {
     grn_ctx *ctx = efsi->ctx;
     grn_expr *e = (grn_expr *)(efsi->e);
-    grn_obj *array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
-    if (!array_literal) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[expr][array-literal] couldn't create vector: <%.*s>",
-          (int)(efsi->str_end - efsi->str),
-          efsi->str);
-      return;
-    }
-    grn_expr_take_obj(ctx, efsi->e, array_literal);
 
+    grn_id uvector_domain = GRN_ID_NIL;
     int i;
     for (i = n_elements; i > 0; i--) {
       grn_expr_code *code = &(e->codes[e->codes_curr - i]);
@@ -33,13 +25,49 @@
             efsi->str);
         return;
       }
+      if (!(grn_obj_is_number_family_bulk(ctx, code->value) ||
+            grn_obj_maybe_record_bulk(ctx, code->value))) {
+        uvector_domain = GRN_ID_NIL;
+        break;
+      }
+      if (i == n_elements) {
+        uvector_domain = code->value->header.domain;
+      } else {
+        if (uvector_domain != code->value->header.domain) {
+          uvector_domain = GRN_ID_NIL;
+          break;
+        }
+      }
+    }
+
+    grn_obj *array_literal;
+    if (uvector_domain == GRN_ID_NIL) {
+      array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
+    } else {
+      array_literal = grn_obj_open(ctx, GRN_UVECTOR, 0, uvector_domain);
+    }
+    if (!array_literal) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[expr][array-literal] couldn't create vector: <%.*s>",
+          (int)(efsi->str_end - efsi->str),
+          efsi->str);
+      return;
+    }
+    grn_expr_take_obj(ctx, efsi->e, array_literal);
+
+    for (i = n_elements; i > 0; i--) {
+      grn_expr_code *code = &(e->codes[e->codes_curr - i]);
       grn_obj *element = code->value;
-      grn_vector_add_element_float(ctx,
-                                   array_literal,
-                                   GRN_TEXT_VALUE(element),
-                                   GRN_TEXT_LEN(element),
-                                   0,
-                                   element->header.domain);
+      if (uvector_domain == GRN_ID_NIL) {
+        grn_vector_add_element_float(ctx,
+                                     array_literal,
+                                     GRN_TEXT_VALUE(element),
+                                     GRN_TEXT_LEN(element),
+                                     0,
+                                     element->header.domain);
+      } else {
+        grn_bulk_write(ctx, array_literal, GRN_BULK_HEAD(element), GRN_BULK_VSIZE(element));
+      }
       if (ctx->rc != GRN_SUCCESS) {
         char message[GRN_CTX_MSGSIZE];
         grn_strncpy(message, sizeof(message), ctx->errbuf, sizeof(ctx->errbuf));
