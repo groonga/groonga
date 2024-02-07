@@ -93,8 +93,13 @@ typedef struct {
   grn_loader_stat stat;
   grn_content_type input_type;
   grn_loader_columns_status columns_status;
-  grn_rc rc;
-  char errbuf[GRN_CTX_MSGSIZE];
+  struct {
+    grn_rc rc;
+    char buffer[GRN_CTX_MSGSIZE];
+    uint32_t line;
+    const char *file;
+    const char *func;
+  } error;
   grn_bool output_ids;
   grn_bool output_errors;
   grn_bool lock_table;

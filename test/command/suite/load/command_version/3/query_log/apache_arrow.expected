@@ -4,7 +4,7 @@ column_create Numbers value1 COLUMN_SCALAR Int32
 [[0,0.0,0.0],true]
 column_create Numbers value2 COLUMN_SCALAR Int32
 [[0,0.0,0.0],true]
-load --table Numbers --command_version 3
+load --table Numbers --command_version 3 --n_workers 0
 [
 {"_key": 1, "value1": 1, "value2": 2},
 {"_key": "string"},
@@ -32,7 +32,7 @@ load --table Numbers --command_version 3
 #|e| [table][load][Numbers][value1] failed to set column value: <Numbers.value1>: failed to cast to <Int32>: <"string1">: key: <2>, value: <"string1">
 #|e| <Numbers.value2>: failed to cast to <Int32>: <"string2">
 #|e| [table][load][Numbers][value2] failed to set column value: <Numbers.value2>: failed to cast to <Int32>: <"string2">: key: <2>, value: <"string2">
-#>load --command_version "3" --input_type "apache-arrow" --table "Numbers"
+#>load --command_version "3" --input_type "apache-arrow" --n_workers "0" --table "Numbers"
 #:000000000000000 load(3): [1][2][3]
 #:000000000000000 send(0)
 #<000000000000000 rc=-22

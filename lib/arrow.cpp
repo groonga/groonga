@@ -1899,6 +1899,7 @@ namespace grnarrow {
           if (task_executor->is_parallel()) {
             ctx = child_ctx = grn_ctx_pull_child(ctx_);
             loader = &(child_ctx->impl->loader);
+            loader->table = grn_table;
           }
           grn::ChildCtxReleaser releaser(ctx_, child_ctx);
           ColumnLoadVisitor visitor(ctx,

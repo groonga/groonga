@@ -570,7 +570,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_load_internal(ctx, &input);
   if (ctx->rc == GRN_CANCEL) {
     ctx->impl->loader.stat = GRN_LOADER_END;
-    ctx->impl->loader.rc = GRN_SUCCESS;
+    ctx->impl->loader.error.rc = GRN_SUCCESS;
   }
   bool accept_more_data = true;
   if (ctx->impl->loader.stat == GRN_LOADER_END) {
@@ -585,9 +585,12 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  if (ctx->impl->loader.rc != GRN_SUCCESS) {
-    ctx->rc = ctx->impl->loader.rc;
-    grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
+  if (ctx->impl->loader.error.rc != GRN_SUCCESS) {
+    ctx->rc = ctx->impl->loader.error.rc;
+    grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.error.buffer);
+    ctx->errline = ctx->impl->loader.error.line;
+    ctx->errfile = ctx->impl->loader.error.file;
+    ctx->errfunc = ctx->impl->loader.error.func;
   }
   {
     unsigned int n_records;

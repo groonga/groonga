@@ -5,7 +5,7 @@ column_create Numbers value1 COLUMN_SCALAR Int32
 column_create Numbers value2 COLUMN_SCALAR Int32
 
 #@collect-query-log true
-load --table Numbers --command_version 3
+load --table Numbers --command_version 3 --n_workers 0
 [
 {"_key": 1, "value1": 1, "value2": 2},
 {"_key": "string"},

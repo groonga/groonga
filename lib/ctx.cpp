@@ -247,8 +247,11 @@ grn_loader_init(grn_loader *loader)
   loader->n_column_errors = 0;
   loader->stat = GRN_LOADER_BEGIN;
   loader->columns_status = GRN_LOADER_COLUMNS_UNSET;
-  loader->rc = GRN_SUCCESS;
-  loader->errbuf[0] = '\0';
+  loader->error.rc = GRN_SUCCESS;
+  loader->error.buffer[0] = '\0';
+  loader->error.line = 0;
+  loader->error.file = NULL;
+  loader->error.func = NULL;
   loader->output_ids = GRN_FALSE;
   loader->output_errors = GRN_FALSE;
 }

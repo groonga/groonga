@@ -257,6 +257,18 @@ jobs:
             --input-type=apache-arrow \
             --interface=http \
             test/command/suite
+      - name: "Test: HTTP: load: Apache Arrow: n_workers"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          export GRN_N_WORKERS_DEFAULT=-1
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            test/command/suite/load
       - name: "Test: HTTP: command: POST"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
