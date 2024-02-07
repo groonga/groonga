@@ -925,10 +925,6 @@ namespace grnarrow {
         buffer_(),
         object_cache_(object_cache)
     {
-      if (grn_loader_) {
-      } else {
-      }
-
       const auto &arrow_type = arrow_field->type();
       grn_id arrow_type_id = GRN_DB_VOID;
       grn_obj_flags flags = 0;
