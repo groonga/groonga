@@ -192,21 +192,29 @@ jobs:
         run: |
           # json1: {"context": ..., "benchmarks": [{"name": "bench1-1", ...}, ...]}
           # json2: {"context": ..., "benchmarks": [{"name": "bench2-1", ...}, ...]}
-          # merged-json: {
-          #   "context": json1's context,
-          #   "benchmarks": [
-          #     json1's benchmark1,
-          #     ...,
-          #     json2's benchmark1,
-          #     ...
-          #   ]
-          # }
+          # jq ... | \ # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        [json1's benchmark1, ...],
+          #            #        [json2's benchmark1, ...]
+          #            #      ]
+          #            #    }
+          #   jq ...   # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        json1's benchmark1,
+          #            #        ...,
+          #            #        json2's benchmark1,
+          #            #        ...
+          #            #      ]
+          #            #    }
           jq -s \
             '{"context": .[0].context, "benchmarks": [.[].benchmarks]}' \
             benchmark-stdio-json.json \
             benchmark-http-json.json \
             benchmark-http-apache-arrow.json | \
-              tee benchmark.json
+              jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
+                tee benchmark.json
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
