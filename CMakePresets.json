@@ -100,7 +100,7 @@
     },
     {
       "name": "benchmark",
-      "displayName": "For bencharmk",
+      "displayName": "For benchmark",
       "inherits": ["base", "release-with-debug-info", "maximum"]
     }
   ]
