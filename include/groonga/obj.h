@@ -46,6 +46,8 @@ grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
+grn_obj_maybe_record_bulk(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
 grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_vector(grn_ctx *ctx, grn_obj *obj);

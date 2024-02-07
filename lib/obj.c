@@ -189,6 +189,16 @@ grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_maybe_record_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_bulk(ctx, obj)) {
+    return false;
+  }
+
+  return grn_id_maybe_table(ctx, obj->header.domain);
+}
+
+bool
 grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
