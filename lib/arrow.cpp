@@ -1912,7 +1912,7 @@ namespace grnarrow {
           if (child_ctx) {
             {
               std::lock_guard<std::mutex> lock(loader_merge_mutex);
-              grn_loader_merge(ctx, grn_loader_, &(child_ctx->impl->loader));
+              grn_loader_merge(ctx, grn_loader_, loader);
             }
             grn_ctx_loader_clear(child_ctx);
           }
