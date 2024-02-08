@@ -659,6 +659,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_XXHASH=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGROONGA_NORMALIZER_MYSQL_DOC_DIR=share/groonga-normalizer-mysql
           cmake %CMAKE_ARGS% || (type ..\groonga-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\groonga-build || exit /B
           cmake --install ..\groonga-build || exit /B
