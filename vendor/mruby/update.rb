@@ -75,6 +75,9 @@ source_dirs = ["#{mruby_source_dir}/src"] + build.config.gem_dirs
 source_dirs.each do |source_dir|
   Find.find(source_dir) do |path|
     case path
+    when "mrbgems/mruby-dir/src/Win/dirent.c",
+         /\/test\//
+      next
     when /\.[ch]\z/
       sources << path
     end

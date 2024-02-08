@@ -2,15 +2,13 @@ EXTRA_DIST =					\
 	CMakeLists.txt				\
 	LEGAL					\
 	build_config.rb				\
-	mruby-dir/src/Win/dirent.c		\
-	mruby-errno/src/known_errors_def.cstub	\
 	mruby_build.rb				\
 	mruby_build.timestamp			\
 	version
 
 DEFAULT_INCLUDES =						\
 	-I$(builddir)/../mruby-build/host/include		\
-	-I$(builddir)/mruby-file-stat/src			\
+	-I$(builddir)/mrbgems/mruby-file-stat/src		\
 	-I$(builddir)/mruby-include				\
 	-I$(srcdir)/../mruby-include				\
 	-I$(srcdir)/../mruby-source/include			\
@@ -46,29 +44,21 @@ include sources.am
 include built_sources.am
 BUILT_SOURCES =					\
 	$(built_sources)			\
-	mruby-file-stat/src/config.h
+	mrbgems/mruby-file-stat/src/config.h
 libmruby_la_SOURCES += $(built_sources)
 nodist_libmruby_la_SOURCES =			\
-	mruby-file-stat/src/config.h
+	mrbgems/mruby-file-stat/src/config.h
 
 LEGAL: mruby_build.timestamp
 mrblib.c: mruby_build.timestamp
 mrbgems_init.c: mruby_build.timestamp
-mruby-compiler/core/parse.c: mruby_build.timestamp
-mruby-dir/src/dir.c: mruby_build.timestamp
-mruby-dir/src/Win/dirent.c: mruby_build.timestamp
-mruby-errno/src/errno.c: mruby_build.timestamp
-mruby-errno/src/known_errors.def.cstub: mruby_build.timestamp
-mruby-env/src/env.c: mruby_build.timestamp
-mruby-file-stat/src/file-stat.c: mruby_build.timestamp
 if HAVE_SYS_SYSMACROS_H
-mruby-file-stat/src/config.h:
+mrbgems/mruby-file-stat/src/config.h:
 	echo "#define HAVE_SYS_SYSMACROS_H 1" > "$(builddir)/$@"
 else
-mruby-file-stat/src/config.h:
+mrbgems/mruby-file-stat/src/config.h:
 	touch "$(builddir)/$@"
 endif
-mruby-onig-regexp/src/mruby_onig_regexp.c: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
@@ -84,5 +74,12 @@ CLEANFILES = *.gcno *gcda
 MAINTAINERCLEANFILES = mruby_build.timestamp
 endif
 
+dist-hook:
+	for mrbgem in $(srcdir)/mrbgems/mruby-*; do			\
+	  $(MKDIR_P) $(distdir)/mrbgems/$$(basename $${mrbgem});	\
+	  GIT_DIR=$${mrbgem}/.git git archive --format=tar HEAD |	\
+	    tar xf - -C $(distdir)/mrbgems/$$(basename $${mrbgem});	\
+	done
+
 update:
-	cd "$(top_srcdir)/../mruby-source" && $(RUBY) -S rake "dev:mruby:update"
+	cd "$(top_srcdir)" && $(RUBY) -S rake "dev:mruby:update"

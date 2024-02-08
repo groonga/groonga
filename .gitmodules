@@ -16,3 +16,27 @@
 [submodule "vendor/apache-arrow-source"]
 	path = vendor/apache-arrow-source
 	url = https://github.com/apache/arrow.git
+[submodule "vendor/mruby/mrbgems/mruby-dir"]
+	path = vendor/mruby/mrbgems/mruby-dir
+	url = http://github.com/iij/mruby-dir.git
+[submodule "vendor/mruby/mrbgems/mruby-env"]
+	path = vendor/mruby/mrbgems/mruby-env
+	url = http://github.com/iij/mruby-env.git
+[submodule "vendor/mruby/mrbgems/mruby-errno"]
+	path = vendor/mruby/mrbgems/mruby-errno
+	url = http://github.com/iij/mruby-errno.git
+[submodule "vendor/mruby/mrbgems/mruby-pp"]
+	path = vendor/mruby/mrbgems/mruby-pp
+	url = http://github.com/kou/mruby-pp.git
+[submodule "vendor/mruby/mrbgems/mruby-slop"]
+	path = vendor/mruby/mrbgems/mruby-slop
+	url = http://github.com/kou/mruby-slop.git
+[submodule "vendor/mruby/mrbgems/mruby-tsort"]
+	path = vendor/mruby/mrbgems/mruby-tsort
+	url = http://github.com/kou/mruby-tsort.git
+[submodule "vendor/mruby/mrbgems/mruby-file-stat"]
+	path = vendor/mruby/mrbgems/mruby-file-stat
+	url = http://github.com/ksss/mruby-file-stat.git
+[submodule "vendor/mruby/mrbgems/mruby-onig-regexp"]
+	path = vendor/mruby/mrbgems/mruby-onig-regexp
+	url = http://github.com/mattn/mruby-onig-regexp.git

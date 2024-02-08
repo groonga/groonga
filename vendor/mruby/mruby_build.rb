@@ -42,23 +42,3 @@ File.open("mrbgems_init.c", "w") do |mrbgems_init|
     mrbgems_init.puts(File.read(gem_init))
   end
 end
-
-mruby_dir_dir = "#{mruby_build_dir}/repos/host/mruby-dir"
-FileUtils.mkdir_p("mruby-dir/")
-FileUtils.cp_r("#{mruby_dir_dir}/src/", "mruby-dir/")
-
-mruby_env_dir = "#{mruby_build_dir}/repos/host/mruby-env"
-FileUtils.mkdir_p("mruby-env/")
-FileUtils.cp_r("#{mruby_env_dir}/src/", "mruby-env/")
-
-mruby_errno_dir = "#{mruby_build_dir}/repos/host/mruby-errno"
-FileUtils.mkdir_p("mruby-errno/")
-FileUtils.cp_r("#{mruby_errno_dir}/src/", "mruby-errno/")
-
-mruby_file_stat_dir = "#{mruby_build_dir}/repos/host/mruby-file-stat"
-FileUtils.mkdir_p("mruby-file-stat/")
-FileUtils.cp_r("#{mruby_file_stat_dir}/src/", "mruby-file-stat/")
-
-mruby_onig_regexp_dir = "#{mruby_build_dir}/repos/host/mruby-onig-regexp"
-FileUtils.mkdir_p("mruby-onig-regexp/")
-FileUtils.cp_r("#{mruby_onig_regexp_dir}/src/", "mruby-onig-regexp/")

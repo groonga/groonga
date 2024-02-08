@@ -1,5 +1,5 @@
-# Copyright(C) 2013-2018  Brazil
-# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2018  Brazil
+# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,15 @@ if(GRN_WITH_MRUBY)
 
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/built_sources.am"
     MRUBY_BUILT_SOURCES)
+  set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mrbgems/mruby-file-stat/src/file-stat.c
+    PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src)
   set(mruby_pre_build_timestamp
     "${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.timestamp")
   if(EXISTS "${mruby_pre_build_timestamp}")
     set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
-    set_source_files_properties(
-      ${CMAKE_CURRENT_SOURCE_DIR}/mruby-file-stat/src/file-stat.c
-      PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src)
   else()
     set(mruby_build_timestamp
       "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
@@ -71,13 +71,13 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_FILE_STAT_CONFIG_H_CONTENT "")
   endif()
   file(WRITE
-    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src/config.h"
     "${MRUBY_FILE_STAT_CONFIG_H_CONTENT}")
 
   set(MRUBY_ALL_SOURCES
     ${MRUBY_SOURCES}
     ${MRUBY_BUILT_SOURCES}
-    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src/config.h"
     )
   add_library(mruby_headers INTERFACE)
   target_include_directories(mruby_headers INTERFACE

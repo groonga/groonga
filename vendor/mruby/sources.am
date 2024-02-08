@@ -46,7 +46,6 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-io/src/file_test.c \
 	../mruby-source/mrbgems/mruby-io/src/io.c \
 	../mruby-source/mrbgems/mruby-io/src/mruby_io_gem.c \
-	../mruby-source/mrbgems/mruby-io/test/mruby_io_test.c \
 	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c \
 	../mruby-source/mrbgems/mruby-math/src/math.c \
 	../mruby-source/mrbgems/mruby-metaprog/src/metaprog.c \
@@ -55,7 +54,6 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-objectspace/src/mruby_objectspace.c \
 	../mruby-source/mrbgems/mruby-print/src/print.c \
 	../mruby-source/mrbgems/mruby-proc-ext/src/proc.c \
-	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
 	../mruby-source/mrbgems/mruby-random/src/random.c \
 	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
 	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
@@ -63,4 +61,9 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-struct/src/struct.c \
 	../mruby-source/mrbgems/mruby-symbol-ext/src/symbol.c \
 	../mruby-source/mrbgems/mruby-time/include/mruby/time.h \
-	../mruby-source/mrbgems/mruby-time/src/time.c
+	../mruby-source/mrbgems/mruby-time/src/time.c \
+	mrbgems/mruby-dir/src/dir.c \
+	mrbgems/mruby-env/src/env.c \
+	mrbgems/mruby-errno/src/errno.c \
+	mrbgems/mruby-file-stat/src/file-stat.c \
+	mrbgems/mruby-onig-regexp/src/mruby_onig_regexp.c

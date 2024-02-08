@@ -1,8 +1,3 @@
 built_sources =						\
 	mrblib.c					\
-	mrbgems_init.c					\
-	mruby-dir/src/dir.c				\
-	mruby-env/src/env.c				\
-	mruby-errno/src/errno.c				\
-	mruby-file-stat/src/file-stat.c			\
-	mruby-onig-regexp/src/mruby_onig_regexp.c
+	mrbgems_init.c
