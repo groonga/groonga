@@ -944,6 +944,9 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       } else if (klass == mrb_class_get_under(mrb, data->module, "Vector")) {
         grn_obj *vector = DATA_PTR(mrb_constant);
         grn_expr_append_const(ctx, expr, vector, op, n_args);
+      } else if (klass == mrb_class_get_under(mrb, data->module, "UVector")) {
+        grn_obj *uvector = DATA_PTR(mrb_constant);
+        grn_expr_append_const(ctx, expr, uvector, op, n_args);
       } else {
         mrb_raisef(mrb,
                    E_ARGUMENT_ERROR,
