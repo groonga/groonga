@@ -18,12 +18,12 @@
 #include "grn_romaji.h"
 #include "grn_str.h"
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
                           size_t length)
 {
   if (length != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (utf8[0]) {
@@ -39,7 +39,7 @@ grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
       case 0xb7 : /* U+3077 HIRAGANA LETTER PU */
       case 0xb9 : /* U+3079 HIRAGANA LETTER BE */
       case 0xba : /* U+307A HIRAGANA LETTER PE */
-        return GRN_TRUE;
+        return true;
       default :
         /* U+3079 HIRAGANA LETTER BO ..
          * U+307F HIRAGANA LETTER MI */
@@ -59,26 +59,26 @@ grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
       case 0x97 : /* U+30D7 KATAKANA LETTER PU */
       case 0x99 : /* U+30D9 KATAKANA LETTER BE */
       case 0x9a : /* U+30DA KATAKANA LETTER PE */
-        return GRN_TRUE;
+        return true;
       default :
         /* U+30DC KATAKANA LETTER BO ..
          * U+30E2 KATAKANA LETTER MO */
         return (0x9c <= utf8[2] && utf8[2] <= 0xa2);
       }
     default :
-      return GRN_FALSE;
+      return false;
     }
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
                              size_t length)
 {
   if (length != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (utf8[0]) {
@@ -91,9 +91,9 @@ grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
       case 0x86 : /* U+3046 HIRAGANA LETTER U */
       case 0x88 : /* U+3048 HIRAGANA LETTER E */
       case 0x8a : /* U+304A HIRAGANA LETTER O */
-        return GRN_TRUE;
+        return true;
       default :
-        return GRN_FALSE;
+        return false;
       }
     case 0x82 :
       switch (utf8[2]) {
@@ -105,24 +105,24 @@ grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
       case 0xa6 : /* U+30A6 KATAKANA LETTER U */
       case 0xa8 : /* U+30A8 KATAKANA LETTER E */
       case 0xaa : /* U+30AA KATAKANA LETTER O */
-        return GRN_TRUE;
+        return true;
       default :
-        return GRN_FALSE;
+        return false;
       }
     case 0x83 :
       switch (utf8[2]) {
       case 0xa4 : /* U+30E4 KATAKANA LETTER YA */
       case 0xa6 : /* U+30E6 KATAKANA LETTER YU */
       case 0xa8 : /* U+30E8 KATAKANA LETTER YO */
-        return GRN_TRUE;
+        return true;
       default :
-        return GRN_FALSE;
+        return false;
       }
     default :
-      return GRN_FALSE;
+      return false;
     }
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 
@@ -342,7 +342,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
   size_t char_length;
   const unsigned char *next = NULL;
   size_t next_char_length = 0;
-  grn_bool next_small_y = GRN_FALSE;
+  bool next_small_y = false;
   unsigned char next_small_yayuyo = '\0';
   const char aiueo[] = "aiueo";
   const char auo[] = "auo";
@@ -364,7 +364,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           case 0x83 : /* U+3083 HIRAGANA LETTER SMALL YA */
           case 0x85 : /* U+3085 HIRAGANA LETTER SMALL YU */
           case 0x87 : /* U+3087 HIRAGANA LETTER SMALL YO */
-            next_small_y = GRN_TRUE;
+            next_small_y = true;
             next_small_yayuyo = (unsigned char)(aiueo[(next[2] - 1) % 5]);
             break;
           default :
@@ -376,7 +376,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           case 0xa3 : /* U+30E3 KATAKANA LETTER SMALL YA */
           case 0xa5 : /* U+30E5 KATAKANA LETTER SMALL YU */
           case 0xa7 : /* U+30E7 KATAKANA LETTER SMALL YO */
-            next_small_y = GRN_TRUE;
+            next_small_y = true;
             next_small_yayuyo = (unsigned char)(aiueo[(next[2] - 3) % 5]);
             break;
           default :
