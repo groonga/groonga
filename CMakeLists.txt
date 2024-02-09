@@ -291,10 +291,22 @@ else()
     check_c_compiler_flag("-mavx512cd" GRN_HAVE_AVX512CD_FLAG)
     check_c_compiler_flag("-mavx512dq" GRN_HAVE_AVX512DQ_FLAG)
     check_c_compiler_flag("-mavx512f" GRN_HAVE_AVX512F_FLAG)
+    check_c_compiler_flag("-mavx512fp16" GRN_HAVE_AVX512FP16_FLAG)
+    check_c_compiler_flag("-mavx512vnni" GRN_HAVE_AVX512VNNI_FLAG)
+    check_c_compiler_flag("-mavx512vpopcntdq" GRN_HAVE_AVX512VPOPCNTDQ_FLAG)
     if(GRN_HAVE_AVX512CD_FLAG
        AND GRN_HAVE_AVX512DQ_FLAG
-       AND GRN_HAVE_AVX512F_FLAG)
-      set(GRN_C_FLAGS_AVX512 "-mavx512f -mavx512cd -mavx512dq")
+       AND GRN_HAVE_AVX512F_FLAG
+       AND GRN_HAVE_AVX512FP16_FLAG
+       AND GRN_HAVE_AVX512VNNI_FLAG
+       AND GRN_HAVE_AVX512VPOPCNTDQ_FLAG)
+      set(GRN_C_FLAGS_AVX512)
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512f")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512fp16")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512cd")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512dq")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512vnni")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512vpopcntdq")
     endif()
   elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64)$")
     check_c_compiler_flag("-march=armv8-a" GRN_HAVE_ARCH_ARMV8_A_FLAG)
@@ -1242,7 +1254,46 @@ if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
 else()
   set(GRN_WITH_XSIMD FALSE)
 endif()
-if(NOT GRN_WITH_XSIMD)
+
+set(GRN_SIMSIMD_BUNDLED_VERSION "3.7.5")
+set(GRN_SIMSIMD_BUNDLED_SHA256
+    "f8a25da104eb0c456a51c931c7a74a552973278ae012792a8a501cd06169d096")
+option(GRN_WITH_SIMSIMD "Use SimSIMD for similarity distance functions." ON)
+if(GRN_WITH_SIMSIMD)
+  # We need to use function to create a variable scope
+  function(grn_build_simsimd)
+    set(SIMSIMD_SOURCE_BASE_NAME
+        "simsimd-${GRN_SIMSIMD_BUNDLED_VERSION}.tar.gz")
+    set(SIMSIMD_SOURCE_LOCAL_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${SIMSIMD_SOURCE_BASE_NAME}")
+    if(EXISTS ${SIMSIMD_SOURCE_LOCAL_PATH})
+      set(SIMSIMD_SOURCE_URL ${SIMSIMD_SOURCE_LOCAL_PATH})
+    else()
+      set(SIMSIMD_SOURCE_URL
+          "https://github.com/ashvardanian/SimSIMD/archive/refs/tags")
+      string(APPEND SIMSIMD_SOURCE_URL
+             "/v${GRN_SIMSIMD_BUNDLED_VERSION}.tar.gz")
+    endif()
+    fetchcontent_declare(
+      simsimd
+      ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+      URL ${SIMSIMD_SOURCE_URL}
+      URL_HASH "SHA256=${GRN_SIMSIMD_BUNDLED_SHA256}")
+    fetchcontent_makeavailable(simsimd)
+    if(CMAKE_VERSION VERSION_LESS 3.28)
+      set_property(DIRECTORY ${simsimd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
+    endif()
+    install(FILES "${simsimd_SOURCE_DIR}/LICENSE"
+                  "${simsimd_SOURCE_DIR}/README.md"
+            DESTINATION "${GRN_DATA_DIR}/simsimd")
+  endfunction()
+  grn_build_simsimd()
+  target_link_libraries(grn_dependencies INTERFACE simsimd)
+  message(STATUS "SimSIMD: bundled")
+endif()
+
+if(NOT (GRN_WITH_XSIMD OR GRN_WITH_SIMSIMD))
   set(GRN_WITH_SIMD OFF)
   set(GRN_WITH_SIMD_AVX OFF)
   set(GRN_WITH_SIMD_AVX2 OFF)

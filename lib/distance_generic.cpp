@@ -73,11 +73,36 @@ namespace grn {
       }
       return multiplication_sum;
     }
+
+    template <typename Arch, typename ElementType>
+    float
+    cosine::operator()(Arch,
+                       const ElementType *vector_raw1,
+                       const ElementType *vector_raw2,
+                       size_t n_elements)
+    {
+      ElementType inner_product = 0;
+      ElementType square_sum1 = 0;
+      ElementType square_sum2 = 0;
+      for (size_t i = 0; i < n_elements; ++i) {
+        ElementType value1 = vector_raw1[i];
+        ElementType value2 = vector_raw2[i];
+        inner_product += value1 * value2;
+        square_sum1 += value1 * value1;
+        square_sum2 += value2 * value2;
+      }
+      if (numeric::is_zero(inner_product)) {
+        return 1;
+      } else {
+        return 1 - (inner_product /
+                    (std::sqrt(square_sum1) * std::sqrt(square_sum2)));
+      }
+    }
   } // namespace distance
 } // namespace grn
 
-#define GRN_INSTANTIATION_EXTERN
-#define GRN_INSTANTIATION_ARCH xsimd::generic
+#define GRN_INSTANTIATION_SIMSIMD_ARCH serial
+#define GRN_INSTANTIATION_XSIMD_ARCH   xsimd::generic
 #include "grn_distance_instantiation.hpp"
-#undef GRN_INSTANTIATION_ARCH
-#undef GRN_INSTANTIATION_EXTERN
+#undef GRN_INSTANTIATION_SIMSIMD_ARCH
+#undef GRN_INSTANTIATION_XSIMD_ARCH

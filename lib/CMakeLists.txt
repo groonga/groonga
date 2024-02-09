@@ -47,6 +47,12 @@ set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNPROC_CPP_SOURCES}
   PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
+if(GRN_C_COMPILER_GNU_LIKE)
+  set_property(
+    SOURCE distance.cpp
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " -Wno-unknown-pragmas -Wno-float-equal")
+endif()
 if(GRN_WITH_XSIMD)
   if(GRN_WITH_SIMD_AVX)
     list(APPEND LIBGROONGA_CPP_SOURCES distance_avx.cpp)
@@ -77,6 +83,12 @@ if(GRN_WITH_XSIMD)
       PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_NEON64}")
   endif()
   list(APPEND LIBGROONGA_CPP_SOURCES distance_generic.cpp)
+  if(GRN_C_COMPILER_GNU_LIKE)
+    set_property(
+      SOURCE distance_generic.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-float-equal")
+  endif()
 endif()
 
 set(GRN_ALL_SOURCES

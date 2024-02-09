@@ -21,6 +21,7 @@
 
 namespace grn {
   namespace distance {
+#ifdef GRN_WITH_XSIMD
     template <typename Arch,
               typename ElementType,
               typename BatchFunc,
@@ -230,5 +231,45 @@ namespace grn {
         });
       return multiplication_sum;
     }
+
+    template <typename Arch, typename ElementType>
+    float
+    cosine::operator()(Arch,
+                       const ElementType *vector_raw1,
+                       const ElementType *vector_raw2,
+                       size_t n_elements)
+    {
+      using batch = xsimd::batch<ElementType, Arch>;
+      ElementType inner_product = 0;
+      ElementType square_sum1 = 0;
+      ElementType square_sum2 = 0;
+      each_batch<Arch, ElementType>(
+        vector_raw1,
+        vector_raw2,
+        n_elements,
+        [&inner_product, &square_sum1, &square_sum2](batch &vector_batch1,
+                                                     batch &vector_batch2) {
+          inner_product += xsimd::reduce_add(vector_batch1 * vector_batch2);
+          square_sum1 += xsimd::reduce_add(vector_batch1 * vector_batch1);
+          square_sum2 += xsimd::reduce_add(vector_batch2 * vector_batch2);
+        },
+        [&inner_product, &square_sum1, &square_sum2](
+          const ElementType *vector_raw1,
+          const ElementType *vector_raw2,
+          size_t i) {
+          ElementType value1 = vector_raw1[i];
+          ElementType value2 = vector_raw2[i];
+          inner_product += value1 * value2;
+          square_sum1 += value1 * value1;
+          square_sum2 += value2 * value2;
+        });
+      if (numeric::is_zero(inner_product)) {
+        return 1;
+      } else {
+        return 1 - (inner_product /
+                    (std::sqrt(square_sum1) * std::sqrt(square_sum2)));
+      }
+    }
+#endif
   } // namespace distance
 } // namespace grn

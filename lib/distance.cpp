@@ -19,16 +19,21 @@
 
 #include <groonga/bulk.hpp>
 
-#ifdef GRN_WITH_XSIMD
-#  include <xsimd/xsimd.hpp>
-#endif
-
 namespace grn {
   namespace distance {
-#ifdef GRN_WITH_XSIMD
-    bool use_simd = true;
+#ifdef GRN_WITH_SIMSIMD
+    bool use_simsimd = true;
+    namespace simsimd {
+      simsimd_capability_t capabilities = simsimd_cap_serial_k;
+    }
 #else
-    bool use_simd = false;
+    bool use_simsimd = false;
+#endif
+
+#ifdef GRN_WITH_XSIMD
+    bool use_xsimd = true;
+#else
+    bool use_xsimd = false;
 #endif
   } // namespace distance
 } // namespace grn
@@ -89,17 +94,8 @@ namespace {
   float
   compute_distance_cosine(grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2)
   {
-    auto l2_norm1 = grn::distance::compute_l2_norm<ElementType>(vector1);
-    if (grn::numeric::is_zero(l2_norm1)) {
-      return 0.0;
-    }
-    auto l2_norm2 = grn::distance::compute_l2_norm<ElementType>(vector2);
-    if (grn::numeric::is_zero(l2_norm2)) {
-      return 0.0;
-    }
-    auto inner_product =
-      grn::distance::compute_inner_product<ElementType>(vector1, vector2);
-    return 1 - (inner_product / (l2_norm1 * l2_norm2));
+    return grn::distance::compute_distance_cosine<ElementType>(vector1,
+                                                               vector2);
   }
 
   template <typename ElementType>
@@ -108,9 +104,8 @@ namespace {
                                  grn_obj *vector1,
                                  grn_obj *vector2)
   {
-    auto inner_product =
-      grn::distance::compute_inner_product<ElementType>(vector1, vector2);
-    return 1 - inner_product;
+    return grn::distance::compute_distance_inner_product<ElementType>(vector1,
+                                                                      vector2);
   }
 
   template <typename ElementType>
@@ -134,13 +129,28 @@ namespace {
 } // namespace
 
 extern "C" void
+grn_distance_init_external_libraries(void)
+{
+#ifdef GRN_WITH_SIMSIMD
+  grn::distance::simsimd::capabilities = simsimd_capabilities();
+#endif
+}
+
+extern "C" void
 grn_distance_init_from_env(void)
 {
   {
     char grn_distance_simd_env[GRN_ENV_BUFFER_SIZE];
     grn_getenv("GRN_DISTANCE_SIMD", grn_distance_simd_env, GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_distance_simd_env, "no") == 0) {
-      grn::distance::use_simd = false;
+    if (strcmp(grn_distance_simd_env, "simsimd") == 0) {
+      grn::distance::use_simsimd = true;
+      grn::distance::use_xsimd = false;
+    } else if (strcmp(grn_distance_simd_env, "xsimd") == 0) {
+      grn::distance::use_simsimd = false;
+      grn::distance::use_xsimd = true;
+    } else if (strcmp(grn_distance_simd_env, "no") == 0) {
+      grn::distance::use_simsimd = false;
+      grn::distance::use_xsimd = false;
     }
   }
 }

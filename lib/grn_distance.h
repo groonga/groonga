@@ -24,6 +24,8 @@ extern "C" {
 #endif
 
 void
+grn_distance_init_external_libraries(void);
+void
 grn_distance_init_from_env(void);
 
 #ifdef __cplusplus

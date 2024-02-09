@@ -160,6 +160,7 @@
 /vendor/nginx-*/objs
 /vendor/plugins/*/
 /vendor/rapidjson-*
+/vendor/simsimd-*
 /vendor/xsimd-*
 /vendor/xxHash-*
 /vendor/zstd-*

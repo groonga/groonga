@@ -182,6 +182,7 @@ grn_init_external_libraries(void)
 #ifdef GRN_WITH_BLOSC
   blosc2_init();
 #endif
+  grn_distance_init_external_libraries();
 }
 
 static void
