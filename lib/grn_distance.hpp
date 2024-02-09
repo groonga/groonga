@@ -263,13 +263,13 @@ namespace grn {
     float
     compute_distance_inner_product(grn_obj *vector1, grn_obj *vector2)
     {
-#ifdef GRN_WITH_SIMD
-#  ifdef GRN_WITH_SIMSIMD
       auto vector_raw1 =
         reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector1));
       auto vector_raw2 =
         reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector2));
       auto n_elements = GRN_BULK_VSIZE(vector1) / sizeof(ElementType);
+#ifdef GRN_WITH_SIMD
+#  ifdef GRN_WITH_SIMSIMD
       if (use_simsimd &&
           (sizeof(ElementType) * n_elements * 2) >= use_simd_threshold) {
 #    ifdef GRN_WITH_SIMD_AVX512
