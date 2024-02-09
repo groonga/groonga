@@ -261,44 +261,6 @@ namespace grn {
 
     template <typename ElementType>
     float
-    compute_inner_product(grn_obj *vector1, grn_obj *vector2)
-    {
-      auto vector_raw1 =
-        reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector1));
-      auto vector_raw2 =
-        reinterpret_cast<const ElementType *>(GRN_BULK_HEAD(vector2));
-      auto n_elements = GRN_BULK_VSIZE(vector1) / sizeof(ElementType);
-#ifdef GRN_WITH_SIMD
-#  ifdef GRN_WITH_XSIMD
-      if (use_xsimd &&
-          (sizeof(ElementType) * n_elements * 2) >= use_simd_threshold) {
-        auto dispatched = xsimd::dispatch<xsimd::arch_list<
-#    ifdef GRN_WITH_SIMD_AVX512
-          xsimd::avx512dq,
-#    endif
-#    ifdef GRN_WITH_SIMD_AVX2
-          xsimd::avx2,
-#    endif
-#    ifdef GRN_WITH_SIMD_AVX
-          xsimd::avx,
-#    endif
-#    ifdef GRN_WITH_SIMD_NEON64
-          xsimd::neon64,
-#    endif
-          xsimd::generic>>(inner_product{});
-        return dispatched(vector_raw1, vector_raw2, n_elements);
-      }
-#  endif
-#endif
-      float multiplication_sum = 0;
-      for (size_t i = 0; i < n_elements; ++i) {
-        multiplication_sum += vector_raw1[i] * vector_raw2[i];
-      }
-      return multiplication_sum;
-    }
-
-    template <typename ElementType>
-    float
     compute_distance_inner_product(grn_obj *vector1, grn_obj *vector2)
     {
 #ifdef GRN_WITH_SIMD
@@ -329,9 +291,32 @@ namespace grn {
                                                               n_elements);
       }
 #  endif
+#  ifdef GRN_WITH_XSIMD
+      if (use_xsimd &&
+          (sizeof(ElementType) * n_elements * 2) >= use_simd_threshold) {
+        auto dispatched = xsimd::dispatch<xsimd::arch_list<
+#    ifdef GRN_WITH_SIMD_AVX512
+          xsimd::avx512dq,
+#    endif
+#    ifdef GRN_WITH_SIMD_AVX2
+          xsimd::avx2,
+#    endif
+#    ifdef GRN_WITH_SIMD_AVX
+          xsimd::avx,
+#    endif
+#    ifdef GRN_WITH_SIMD_NEON64
+          xsimd::neon64,
+#    endif
+          xsimd::generic>>(inner_product{});
+        return dispatched(vector_raw1, vector_raw2, n_elements);
+      }
+#  endif
 #endif
-
-      return 1 - compute_inner_product<ElementType>(vector1, vector2);
+      float multiplication_sum = 0;
+      for (size_t i = 0; i < n_elements; ++i) {
+        multiplication_sum += vector_raw1[i] * vector_raw2[i];
+      }
+      return 1 - multiplication_sum;
     }
 
     template <typename ElementType>

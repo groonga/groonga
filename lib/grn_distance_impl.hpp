@@ -229,7 +229,7 @@ namespace grn {
                               size_t i) {
           multiplication_sum += vector_raw1[i] * vector_raw2[i];
         });
-      return multiplication_sum;
+      return 1 - multiplication_sum;
     }
 
     template <typename Arch, typename ElementType>
