@@ -193,7 +193,7 @@ namespace grn {
       float absolute_sum = 0;
       for (size_t i = 0; i < n_elements; ++i) {
         auto difference = vector_raw1[i] - vector_raw2[i];
-        absolute_sum += difference < 0 ? -difference : difference;
+        absolute_sum += difference * ((difference > 0) - (difference < 0));
       }
       return absolute_sum;
     }
