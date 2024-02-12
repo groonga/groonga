@@ -49,7 +49,7 @@ grn_file_lock_init(grn_ctx *ctx,
 #endif /* WIN32 */
 }
 
-grn_bool
+bool
 grn_file_lock_acquire(grn_ctx *ctx,
                       grn_file_lock *file_lock,
                       int timeout,
@@ -80,10 +80,9 @@ grn_file_lock_acquire(grn_ctx *ctx,
     ERR(GRN_NO_LOCKS_AVAILABLE,
         "%s failed to acquire lock: <%s>",
         error_message_tag, file_lock->path);
-    return GRN_FALSE;
-  } else {
-    return GRN_TRUE;
+    return false;
   }
+  return true;
 }
 
 void

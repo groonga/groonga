@@ -35,10 +35,10 @@ typedef struct {
 void grn_file_lock_init(grn_ctx *ctx,
                         grn_file_lock *file_lock,
                         const char *path);
-grn_bool grn_file_lock_acquire(grn_ctx *ctx,
-                               grn_file_lock *file_lock,
-                               int timeout,
-                               const char *error_message_tag);
+bool grn_file_lock_acquire(grn_ctx *ctx,
+                           grn_file_lock *file_lock,
+                           int timeout,
+                           const char *error_message_tag);
 void grn_file_lock_release(grn_ctx *ctx, grn_file_lock *file_lock);
 void grn_file_lock_fin(grn_ctx *ctx, grn_file_lock *file_lock);
 
