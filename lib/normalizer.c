@@ -654,16 +654,16 @@ typedef struct {
   grn_string *string;
   grn_nfkc_normalize_options *options;
   grn_nfkc_normalize_context context;
-  grn_bool remove_blank_p;
-  grn_bool remove_tokenized_delimiter_p;
+  bool remove_blank_p;
+  bool remove_tokenized_delimiter_p;
 } grn_nfkc_normalize_data;
 
 grn_inline static void
 grn_nfkc_normalize_context_init(grn_ctx *ctx,
                                 grn_nfkc_normalize_context *context,
-                                grn_bool need_checks,
-                                grn_bool need_types,
-                                grn_bool need_offsets,
+                                bool need_checks,
+                                bool need_types,
+                                bool need_offsets,
                                 const char *context_tag)
 {
   if (!(context->dest = GRN_MALLOC(context->size + 1))) {
@@ -1072,27 +1072,27 @@ grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
           utf8_char[2] == 0xbc);
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
                                     size_t length)
 {
   if (length == 1) {
     if (utf8_char[0] == '-') {
       /* U+002D HYPHEN-MINUS */
-      return GRN_TRUE;
+      return true;
     }
   } else if (length == 2) {
     switch (utf8_char[0]) {
     case 0xcb:
       if (utf8_char[1] == 0x97) {
         /* U+02D7 MODIFIER LETTER MINUS SIGN */
-        return GRN_TRUE;
+        return true;
       }
       break;
     case 0xd6:
       if (utf8_char[1] == 0x8a) {
         /* U+058A ARMENIAN HYPHEN */
-        return GRN_TRUE;
+        return true;
       }
       break;
     default:
@@ -1104,26 +1104,26 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
           (0x90 <= utf8_char[2] && utf8_char[2] <= 0x93)) {
         /* U+2010 HYPHEN ..
          * U+2013 EN DASH */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x81 &&
                  (utf8_char[2] == 0x83 || utf8_char[2] == 0xbb)) {
         /* U+2043 HYPHEN BULLET */
         /* U+207B SUPERSCRIPT MINUS */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x8b) {
         /* U+208B SUBSCRIPT MINUS */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x92) {
         /* U+2212 MINUS SIGN */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_nfkc_normalize_is_prolonged_sound_mark_family(
   const unsigned char *utf8_char, size_t length)
 {
@@ -1133,30 +1133,30 @@ grn_nfkc_normalize_is_prolonged_sound_mark_family(
           (0x94 <= utf8_char[2] && utf8_char[2] <= 0x95)) {
         /* U+2014 EM DASH ..
          * U+2015 HORIZONTAL BAR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x94 &&
                  (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
         /* U+2500 BOX DRAWINGS LIGHT HORIZONTAL ..
          * U+2501 BOX DRAWINGS HEAVY HORIZONTAL */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe3) {
       if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbc) {
         /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xef) {
       if (utf8_char[1] == 0xbd && utf8_char[2] == 0xb0) {
         /* U+FF70 HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
                                         size_t length)
 {
@@ -1164,36 +1164,36 @@ grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
     if (utf8_char[0] == 0xe1) {
       if (utf8_char[1] == 0x90 && utf8_char[2] == 0xa7) {
         /* U+1427 CANADIAN SYLLABICS FINAL MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe2) {
       if (utf8_char[1] == 0x80 && utf8_char[2] == 0xa2) {
         /* U+2022 BULLET */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x99) {
         /* U+2219 BULLET OPERATOR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x8b && utf8_char[2] == 0x85) {
         /* U+22C5 DOT OPERATOR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0xb8 && utf8_char[2] == 0xb1) {
         /* U+2E31 WORD SEPARATOR MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe3) {
       if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbb) {
         /* U+30FB KATAKANA MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xef) {
       if (utf8_char[1] == 0xbd && utf8_char[2] == 0xa5) {
         /* U+FF65 HALFWIDTH KATAKANA MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 grn_inline static const unsigned char *
@@ -2610,7 +2610,7 @@ static void
 grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
 {
   grn_nfkc_normalize_context unify;
-  grn_bool need_swap = GRN_FALSE;
+  bool need_swap = false;
 
   if (!(data->options->unify_kana || data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
@@ -2656,7 +2656,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_v_sounds) {
@@ -2674,7 +2674,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_bu_sound) {
@@ -2692,7 +2692,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_du_small_sounds) {
@@ -2710,7 +2710,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_du_sound) {
@@ -2728,7 +2728,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_zu_small_sounds) {
@@ -2746,7 +2746,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_wo_sound) {
@@ -2764,7 +2764,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_di_sound) {
@@ -2782,7 +2782,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_gu_small_sounds) {
@@ -2800,7 +2800,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_kana_hyphen) {
@@ -2821,7 +2821,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_kana_prolonged_sound_mark) {
@@ -2842,7 +2842,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_trailing_o) {
@@ -2861,7 +2861,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_kana_case) {
@@ -2873,7 +2873,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_to_romaji) {
@@ -2890,7 +2890,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->strip) {
@@ -2913,7 +2913,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         unify.types[unify.n_characters - 1] |= GRN_CHAR_BLANK;
       }
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   grn_nfkc_normalize_context_fin(ctx, &(data->context));
