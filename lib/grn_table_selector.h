@@ -39,8 +39,8 @@ typedef struct {
   grn_obj *initial_result_set;
   grn_obj *result_set;
   grn_id min_id;
-  grn_bool is_first_unskipped_scan_info;
-  grn_bool is_skipped;
+  bool is_first_unskipped_scan_info;
+  bool is_skipped;
   grn_search_optarg search_options;
 } grn_table_selector_data;
 
