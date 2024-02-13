@@ -677,7 +677,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
-  int n_elements = 13;
+  int n_elements = 14;
 #ifdef GRN_WITH_APACHE_ARROW
   n_elements++;
 #endif
