@@ -722,8 +722,6 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_OUTPUT_UINT64(0);
     }
   }
-  GRN_OUTPUT_CSTR("n_workers");
-  GRN_OUTPUT_INT32(grn_ctx_get_n_workers(ctx));
   GRN_OUTPUT_CSTR("features");
   {
     const int n_features = 17;
@@ -872,6 +870,8 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #endif
   GRN_OUTPUT_CSTR("memory_map_size");
   GRN_OUTPUT_UINT64(grn_get_memory_map_size());
+  GRN_OUTPUT_CSTR("n_workers");
+  GRN_OUTPUT_INT32(grn_ctx_get_n_workers(ctx));
   GRN_OUTPUT_MAP_CLOSE();
 
 #ifdef GRN_WITH_MEMORY_DEBUG
