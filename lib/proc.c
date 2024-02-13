@@ -722,6 +722,8 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_OUTPUT_UINT64(0);
     }
   }
+  GRN_OUTPUT_CSTR("n_workers");
+  GRN_OUTPUT_INT32(grn_ctx_get_n_workers(ctx));
   GRN_OUTPUT_CSTR("features");
   {
     const int n_features = 17;
