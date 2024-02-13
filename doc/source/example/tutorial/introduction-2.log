@@ -20,6 +20,7 @@ Execution example::
   #     "default_command_version": 1,
   #     "max_command_version": 3,
   #     "n_jobs": 0,
+  #     "n_workers": 0,
   #     "features": {
   #       "nfkc": true,
   #       "mecab": true,
