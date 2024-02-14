@@ -47,7 +47,8 @@ Execution example::
   #       "version": "2.9.1"
   #     },
   #     "memory_map_size": 2929,
-  #     "n_workers": 0
+  #     "n_workers": 0,
+  #     "default_n_workers": 0
   #   }
   # ]
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
