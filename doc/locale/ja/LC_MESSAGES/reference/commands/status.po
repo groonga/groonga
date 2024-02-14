@@ -211,7 +211,7 @@ msgid "``memory_map_size``"
 msgstr ""
 
 msgid "The total mapped memory size by this Groonga process in bytes."
-msgstr "このGroongaプロセスのメモリーマップサイズの合計です。"
+msgstr "このGroongaプロセスのメモリーマップサイズの合計です。単位はバイトです。"
 
 msgid "``2929``"
 msgstr ""
