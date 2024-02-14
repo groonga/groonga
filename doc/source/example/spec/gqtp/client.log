@@ -45,7 +45,9 @@ Execution example::
   #       "version_patch": 1,
   #       "version": "2.9.1"
   #     },
-  #     "memory_map_size": 2929
+  #     "memory_map_size": 2929,
+  #     "n_workers": 0,
+  #     "default_n_workers": 0
   #   }
   # ]
   > ctrl-d
