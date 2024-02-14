@@ -75,7 +75,6 @@ The command returns the current status as an object::
       "apache_arrow": APACHE_ARROW_INFORMATION,
       "n_workers": N_WORKERS,
       "default_n_workers": DEFAULT_N_WORKERS
-
     }
   ]
 
