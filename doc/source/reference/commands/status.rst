@@ -71,8 +71,10 @@ The command returns the current status as an object::
       "starttime": STARTTIME,
       "uptime": UPTIME,
       "version": VERSION,
+      "n_jobs": N_JOBS,
       "features": FEATURES,
       "apache_arrow": APACHE_ARROW_INFORMATION,
+      "memory_map_size": MEMORY_MAP_SIZE,
       "n_workers": N_WORKERS,
       "default_n_workers": DEFAULT_N_WORKERS
     }
@@ -152,6 +154,10 @@ values:
      - The version of the Groonga process.
      - ``5.0.7``
 
+   * - ``n_jobs``
+     - The number of unprocessed jobs.
+     - ``0``
+
    * - ``features``
      - .. versionadded:: 10.0.1
 
@@ -190,6 +196,10 @@ values:
              "version_patch": 0,
              "version": "2.0.0"
           }
+
+   * - ``memory_map_size``
+     - The total memory map size in bytes of Groonga.
+     - ``2929``
 
    * - ``n_workers``
      - The value of ``n_workers`` set in this context.
