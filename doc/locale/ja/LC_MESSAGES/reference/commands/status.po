@@ -206,3 +206,9 @@ msgstr "このコンテキストで設定されている ``n_workers`` の値で
 
 msgid "``0``"
 msgstr ""
+
+msgid "``default_n_workers``"
+msgstr ""
+
+msgid "The default ``n_workers`` value of the Groonga process."
+msgstr "このGroongaプロセスのデフォルト ``n_workers`` の値です。"

@@ -72,7 +72,10 @@ The command returns the current status as an object::
       "uptime": UPTIME,
       "version": VERSION,
       "features": FEATURES,
-      "apache_arrow": APACHE_ARROW_INFORMATION
+      "apache_arrow": APACHE_ARROW_INFORMATION,
+      "n_workers": N_WORKERS,
+      "default_n_workers": DEFAULT_N_WORKERS
+
     }
   ]
 
@@ -191,4 +194,8 @@ values:
 
    * - ``n_workers``
      - The value of ``n_workers`` set in this context.
+     - ``0``
+
+   * - ``default_n_workers``
+     - The default ``n_workers`` value of the Groonga process.
      - ``0``
