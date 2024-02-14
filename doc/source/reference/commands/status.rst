@@ -188,3 +188,7 @@ values:
              "version_patch": 0,
              "version": "2.0.0"
           }
+
+   * - ``n_workers``
+     - The value of ``n_workers`` set in this context.
+     - ``0``

@@ -197,3 +197,12 @@ msgstr ""
 
 msgid "The information about Apache Arrow that Groonga currently uses. It's only displayed when Apache Arrow is enabled."
 msgstr "Groongaの使用しているApache Arrowの情報です。Apache Arrowが有効な場合のみ表示されます。"
+
+msgid "``n_workers``"
+msgstr ""
+
+msgid "The value of ``n_workers`` set in this context."
+msgstr "このコンテキストで設定されている ``n_workers`` の値です。"
+
+msgid "``0``"
+msgstr ""
