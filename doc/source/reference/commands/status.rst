@@ -192,9 +192,13 @@ values:
           }
 
    * - ``n_workers``
-     - The value of ``n_workers`` set in this context.
+     - .. versionadded:: 13.1.2
+
+       The value of ``n_workers`` set in this context.
      - ``0``
 
    * - ``default_n_workers``
-     - The default ``n_workers`` value of the Groonga process.
+     - .. versionadded:: 13.1.2
+
+       The default ``n_workers`` value of the Groonga process.
      - ``0``
