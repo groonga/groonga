@@ -210,8 +210,8 @@ msgstr "Groongaの使用しているApache Arrowの情報です。Apache Arrow�
 msgid "``memory_map_size``"
 msgstr ""
 
-msgid "The total memory map size in bytes of Groonga."
-msgstr "Groongaのメモリーマップサイズの合計です。"
+msgid "The total mapped memory size by this Groonga process in bytes."
+msgstr "このGroongaプロセスのメモリーマップサイズの合計です。"
 
 msgid "``2929``"
 msgstr ""

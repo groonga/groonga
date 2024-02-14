@@ -198,7 +198,7 @@ values:
           }
 
    * - ``memory_map_size``
-     - The total memory map size in bytes of Groonga.
+     - The total mapped memory size by this Groonga process in bytes.
      - ``2929``
 
    * - ``n_workers``
