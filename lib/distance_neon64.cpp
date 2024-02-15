@@ -17,7 +17,7 @@
 
 #include "grn_distance_impl.hpp"
 
-#define GRN_INSTANTIATION_SIMSIMD_ARCH xsimd::neon
+#define GRN_INSTANTIATION_SIMSIMD_ARCH neon
 #define GRN_INSTANTIATION_XSIMD_ARCH xsimd::neon64
 #include "grn_distance_instantiation.hpp"
 #undef GRN_INSTANTIATION_SIMSIMD_ARCH
