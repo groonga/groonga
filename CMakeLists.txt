@@ -1255,10 +1255,10 @@ else()
   set(GRN_WITH_XSIMD FALSE)
 endif()
 
-set(GRN_SIMSIMD_BUNDLED_VERSION "3.7.5")
+set(GRN_SIMSIMD_BUNDLED_VERSION "3.8.0")
 set(GRN_SIMSIMD_BUNDLED_SHA256
-    "f8a25da104eb0c456a51c931c7a74a552973278ae012792a8a501cd06169d096")
-option(GRN_WITH_SIMSIMD "Use SimSIMD for similarity distance functions." OFF)
+    "e1213104f63ecf107bd2a15d63d29bb2241d8571b11702dd07dd0812c1b600bf")
+option(GRN_WITH_SIMSIMD "Use SimSIMD for similarity distance functions." ON)
 if(GRN_WITH_SIMSIMD)
   # We need to use function to create a variable scope
   function(grn_build_simsimd)
