@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1568,9 +1568,9 @@ namespace {
     case GRN_DB_TIME:
     case GRN_DB_FLOAT32:
     case GRN_DB_FLOAT:
-      return grn::bulk::set<NUMERIC>(ctx, caster->dest, value);
+      return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);
     default:
-      return grn::bulk::set<int64_t>(ctx,
+      return grn::bulk::put<int64_t>(ctx,
                                      caster->dest,
                                      static_cast<int64_t>(value) *
                                        GRN_TIME_USEC_PER_SEC);
@@ -1582,12 +1582,12 @@ namespace {
   num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     if (caster->src->header.domain == GRN_DB_TIME) {
-      return grn::bulk::set<FLOATING_POINT>(ctx,
+      return grn::bulk::put<FLOATING_POINT>(ctx,
                                             caster->dest,
                                             static_cast<FLOATING_POINT>(value) /
                                               GRN_TIME_USEC_PER_SEC);
     } else {
-      return grn::bulk::set<FLOATING_POINT>(ctx, caster->dest, value);
+      return grn::bulk::put<FLOATING_POINT>(ctx, caster->dest, value);
     }
   }
 
@@ -1599,12 +1599,12 @@ namespace {
   num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     if (caster->src->header.domain == GRN_DB_TIME) {
-      return grn::bulk::set<FLOATING_POINT>(ctx,
+      return grn::bulk::put<FLOATING_POINT>(ctx,
                                             caster->dest,
                                             grn_bfloat32_to_float32(value) /
                                               GRN_TIME_USEC_PER_SEC);
     } else {
-      return grn::bulk::set<FLOATING_POINT>(ctx, caster->dest, value);
+      return grn::bulk::put<FLOATING_POINT>(ctx, caster->dest, value);
     }
   }
 
@@ -1615,13 +1615,13 @@ namespace {
   num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     if (caster->src->header.domain == GRN_DB_TIME) {
-      return grn::bulk::set<FLOATING_POINT>(
+      return grn::bulk::put<FLOATING_POINT>(
         ctx,
         caster->dest,
         grn::numeric::to_bfloat16(static_cast<double>(value) /
                                   GRN_TIME_USEC_PER_SEC));
     } else {
-      return grn::bulk::set<NUMERIC>(ctx, caster->dest, value);
+      return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);
     }
   }
 #endif
@@ -1662,47 +1662,47 @@ namespace {
   {
     switch (caster->dest->header.domain) {
     case GRN_DB_BOOL:
-      return grn::bulk::set<SOURCE>(
+      return grn::bulk::put<SOURCE>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT8:
-      return grn::bulk::set<int8_t>(
+      return grn::bulk::put<int8_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_UINT8:
-      return grn::bulk::set<uint8_t>(
+      return grn::bulk::put<uint8_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT16:
-      return grn::bulk::set<int16_t>(
+      return grn::bulk::put<int16_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_UINT16:
-      return grn::bulk::set<uint16_t>(
+      return grn::bulk::put<uint16_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT32:
-      return grn::bulk::set<int32_t>(
+      return grn::bulk::put<int32_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_UINT32:
-      return grn::bulk::set<uint32_t>(
+      return grn::bulk::put<uint32_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_INT64:
-      return grn::bulk::set<int64_t>(
+      return grn::bulk::put<int64_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
     case GRN_DB_UINT64:
-      return grn::bulk::set<uint64_t>(
+      return grn::bulk::put<uint64_t>(
         ctx,
         caster->dest,
         grn::bulk::get<SOURCE>(ctx, caster->src, 0));
@@ -1858,7 +1858,7 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
             GRN_FLOAT32_SET(ctx, caster->dest, value);
           } else {
 #ifdef GRN_HAVE_BFLOAT16
-            grn::bulk::set(ctx, caster->dest, value);
+            grn::bulk::put(ctx, caster->dest, value);
 #endif
           }
         } else {
