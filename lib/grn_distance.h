@@ -28,6 +28,15 @@ grn_distance_init_external_libraries(void);
 void
 grn_distance_init_from_env(void);
 
+grn_rc
+grn_distance_cosine_applier(grn_ctx *ctx, grn_applier_data *data);
+grn_rc
+grn_distance_inner_product_applier(grn_ctx *ctx, grn_applier_data *data);
+grn_rc
+grn_distance_l1_norm_applier(grn_ctx *ctx, grn_applier_data *data);
+grn_rc
+grn_distance_l2_norm_squared_applier(grn_ctx *ctx, grn_applier_data *data);
+
 #ifdef __cplusplus
 }
 #endif

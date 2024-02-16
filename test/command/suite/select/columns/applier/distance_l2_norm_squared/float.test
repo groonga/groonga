@@ -1,0 +1,19 @@
+plugin_register functions/number
+
+table_create Data TABLE_NO_KEY
+column_create Data vector COLUMN_VECTOR Float
+
+load --table Data
+[
+{"vector": [0.1, -0.2, 0.3]},
+{"vector": [0.8, 0.5, -0.1]},
+{"vector": [-0.2, 0.9, 0.1]}
+]
+
+select \
+  --table Data \
+  --filter '_id > 1' \
+  --columns[distance].stage filtered \
+  --columns[distance].type Float32 \
+  --columns[distance].value 'distance_l2_norm_squared(vector, [0.5, 0.2, 0.9])' \
+  --output_columns 'vector, number_round(distance, 5)'

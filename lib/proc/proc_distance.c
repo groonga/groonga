@@ -16,6 +16,7 @@
 */
 
 #include "../grn_ctx.h"
+#include "../grn_distance.h"
 
 #include <groonga/plugin.h>
 
@@ -50,15 +51,16 @@ func_distance_cosine(grn_ctx *ctx,
 void
 grn_proc_init_distance_cosine(grn_ctx *ctx)
 {
-  grn_proc_create(ctx,
-                  "distance_cosine",
-                  -1,
-                  GRN_PROC_FUNCTION,
-                  func_distance_cosine,
-                  NULL,
-                  NULL,
-                  0,
-                  NULL);
+  grn_obj *proc = grn_proc_create(ctx,
+                                  "distance_cosine",
+                                  -1,
+                                  GRN_PROC_FUNCTION,
+                                  func_distance_cosine,
+                                  NULL,
+                                  NULL,
+                                  0,
+                                  NULL);
+  grn_proc_set_applier(ctx, proc, grn_distance_cosine_applier);
 }
 
 static grn_obj *
@@ -92,15 +94,16 @@ func_distance_inner_product(grn_ctx *ctx,
 void
 grn_proc_init_distance_inner_product(grn_ctx *ctx)
 {
-  grn_proc_create(ctx,
-                  "distance_inner_product",
-                  -1,
-                  GRN_PROC_FUNCTION,
-                  func_distance_inner_product,
-                  NULL,
-                  NULL,
-                  0,
-                  NULL);
+  grn_obj *proc = grn_proc_create(ctx,
+                                  "distance_inner_product",
+                                  -1,
+                                  GRN_PROC_FUNCTION,
+                                  func_distance_inner_product,
+                                  NULL,
+                                  NULL,
+                                  0,
+                                  NULL);
+  grn_proc_set_applier(ctx, proc, grn_distance_inner_product_applier);
 }
 
 static grn_obj *
@@ -134,15 +137,16 @@ func_distance_l1_norm(grn_ctx *ctx,
 void
 grn_proc_init_distance_l1_norm(grn_ctx *ctx)
 {
-  grn_proc_create(ctx,
-                  "distance_l1_norm",
-                  -1,
-                  GRN_PROC_FUNCTION,
-                  func_distance_l1_norm,
-                  NULL,
-                  NULL,
-                  0,
-                  NULL);
+  grn_obj *proc = grn_proc_create(ctx,
+                                  "distance_l1_norm",
+                                  -1,
+                                  GRN_PROC_FUNCTION,
+                                  func_distance_l1_norm,
+                                  NULL,
+                                  NULL,
+                                  0,
+                                  NULL);
+  grn_proc_set_applier(ctx, proc, grn_distance_l1_norm_applier);
 }
 
 static grn_obj *
@@ -176,13 +180,14 @@ func_distance_l2_norm_squared(grn_ctx *ctx,
 void
 grn_proc_init_distance_l2_norm_squared(grn_ctx *ctx)
 {
-  grn_proc_create(ctx,
-                  "distance_l2_norm_squared",
-                  -1,
-                  GRN_PROC_FUNCTION,
-                  func_distance_l2_norm_squared,
-                  NULL,
-                  NULL,
-                  0,
-                  NULL);
+  grn_obj *proc = grn_proc_create(ctx,
+                                  "distance_l2_norm_squared",
+                                  -1,
+                                  GRN_PROC_FUNCTION,
+                                  func_distance_l2_norm_squared,
+                                  NULL,
+                                  NULL,
+                                  0,
+                                  NULL);
+  grn_proc_set_applier(ctx, proc, grn_distance_l2_norm_squared_applier);
 }
