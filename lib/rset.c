@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2015  Brazil
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -178,9 +178,11 @@ grn_rset_recinfo_update_calc_values_bulk(
     need_float_value = true;
   }
   if (need_int64_value) {
+    GRN_BULK_REWIND(value_int64);
     grn_obj_cast(ctx, value, value_int64, false);
   }
   if (need_float_value) {
+    GRN_BULK_REWIND(value_float);
     grn_obj_cast(ctx, value, value_float, false);
   }
 
