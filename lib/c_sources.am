@@ -2,6 +2,7 @@ libgroonga_c_sources =				\
 	accessor.c				\
 	aggregators.c				\
 	alloc.c					\
+	applier.c				\
 	cache.c					\
 	column.c				\
 	com.c					\
@@ -23,6 +24,7 @@ libgroonga_c_sources =				\
 	grn_accessor.h				\
 	grn_aggregators.h			\
 	grn_alloc.h				\
+	grn_applier.h				\
 	grn_arrow.h				\
 	grn_bulk.h				\
 	grn_cache.h				\

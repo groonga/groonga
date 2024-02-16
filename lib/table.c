@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "grn_applier.h"
 #include "grn_ctx.h"
 #include "grn_ctx_impl.h"
 #include "grn_expr_executor.h"
@@ -27,8 +28,6 @@ grn_table_apply_expr(grn_ctx *ctx,
                      grn_obj *output_column,
                      grn_obj *expr)
 {
-  grn_expr_executor executor;
-
   GRN_API_ENTER;
 
   if (!grn_obj_is_data_column(ctx, output_column)) {
@@ -55,28 +54,39 @@ grn_table_apply_expr(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  grn_expr_executor_init(ctx, &executor, expr);
-  if (ctx->rc != GRN_SUCCESS) {
+  grn_applier_data data = {0};
+  grn_applier_data_init(ctx, &data, table, output_column);
+  if (grn_applier_data_extract(ctx, &data, expr)) {
+    grn_rc rc = grn_applier_data_run(ctx, &data);
+    grn_applier_data_fin(ctx, &data);
+    GRN_API_RETURN(rc);
+  } else {
+    grn_applier_data_fin(ctx, &data);
+
+    grn_expr_executor executor;
+    grn_expr_executor_init(ctx, &executor, expr);
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_API_RETURN(ctx->rc);
+    }
+    GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID)
+    {
+      grn_obj *value;
+      value = grn_expr_executor_exec(ctx, &executor, id);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      if (value) {
+        grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    GRN_TABLE_EACH_END(ctx, cursor);
+    grn_expr_executor_fin(ctx, &executor);
+
     GRN_API_RETURN(ctx->rc);
   }
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID)
-  {
-    grn_obj *value;
-    value = grn_expr_executor_exec(ctx, &executor, id);
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-    if (value) {
-      grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-  }
-  GRN_TABLE_EACH_END(ctx, cursor);
-  grn_expr_executor_fin(ctx, &executor);
-
-  GRN_API_RETURN(ctx->rc);
 }
 
 grn_id

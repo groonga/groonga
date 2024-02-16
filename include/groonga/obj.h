@@ -145,6 +145,8 @@ GRN_API grn_bool
 grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool

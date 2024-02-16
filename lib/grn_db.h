@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -386,6 +386,7 @@ struct _grn_proc {
       grn_selector_func *selector;
       grn_operator selector_op;
       grn_bool is_stable;
+      grn_applier_func *applier;
     } function;
     struct {
       grn_command_run_func *run;

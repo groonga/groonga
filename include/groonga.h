@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2014-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@
 
 #include "groonga/accessor.h"
 #include "groonga/aggregator.h"
+#include "groonga/applier.h"
 #include "groonga/array.h"
 #include "groonga/arrow.h"
 #include "groonga/cache.h"

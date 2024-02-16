@@ -326,6 +326,17 @@ grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc)
   return proc_->callbacks.function.is_stable;
 }
 
+grn_rc
+grn_proc_set_applier(grn_ctx *ctx, grn_obj *proc, grn_applier_func applier)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  proc_->callbacks.function.applier = applier;
+  return GRN_SUCCESS;
+}
+
 /* grn_expr */
 
 grn_obj *

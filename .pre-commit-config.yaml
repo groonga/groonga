@@ -21,6 +21,7 @@ repos:
         files: >-
           (
           ?benchmark/bench-distance\.c|
+          ?include/groonga/applier\.h|
           ?include/groonga/bulk\.hpp|
           ?include/groonga/command_arguments\.hpp|
           ?include/groonga/distance\.h|
@@ -34,6 +35,7 @@ repos:
           ?include/groonga/util\.h|
           ?lib/aggregators\.c|
           ?lib/alloc\.c|
+          ?lib/applier\.c|
           ?lib/arrow\.cpp|
           ?lib/cast\.cpp|
           ?lib/command_arguments\.cpp|
@@ -49,6 +51,7 @@ repos:
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
           ?lib/grn\.h|
+          ?lib/grn_applier\.h|
           ?lib/grn_arrow\.h|
           ?lib/grn_bulk\.h|
           ?lib/grn_ctx\.hpp|

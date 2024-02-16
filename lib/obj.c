@@ -991,6 +991,17 @@ grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->funcs[PROC_INIT] == NULL;
 }
 
+bool
+grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_function_proc(ctx, obj)) {
+    return false;
+  }
+
+  grn_proc *proc = (grn_proc *)obj;
+  return proc->callbacks.function.applier != NULL;
+}
+
 grn_bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 {
