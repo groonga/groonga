@@ -312,7 +312,7 @@ namespace grn {
       }
 #  endif
 #endif
-      float multiplication_sum = 0;
+      ElementType multiplication_sum = 0;
       for (size_t i = 0; i < n_elements; ++i) {
         multiplication_sum += vector_raw1[i] * vector_raw2[i];
       }
