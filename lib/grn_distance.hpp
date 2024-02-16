@@ -190,7 +190,7 @@ namespace grn {
       }
 #  endif
 #endif
-      float absolute_sum = 0;
+      ElementType absolute_sum = 0;
       for (size_t i = 0; i < n_elements; ++i) {
         auto difference = vector_raw1[i] - vector_raw2[i];
         absolute_sum += difference * ((difference > 0) - (difference < 0));
@@ -251,7 +251,7 @@ namespace grn {
       }
 #  endif
 #endif
-      float square_sum = 0;
+      ElementType square_sum = 0;
       for (size_t i = 0; i < n_elements; ++i) {
         auto difference = vector_raw1[i] - vector_raw2[i];
         square_sum += difference * difference;
