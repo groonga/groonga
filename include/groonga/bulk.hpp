@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+// Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -163,6 +163,61 @@ namespace grn {
           GRN_TIME_SET(ctx, bulk, std::llround(value * GRN_TIME_USEC_PER_SEC));
         } else {
           GRN_TIME_SET(ctx, bulk, value);
+        }
+      default:
+        break;
+      }
+      return ctx->rc;
+    }
+
+    template <typename NUMERIC>
+    grn_rc
+    put(grn_ctx *ctx, grn_obj *bulk, NUMERIC value)
+    {
+      switch (bulk->header.domain) {
+      case GRN_DB_BOOL:
+        GRN_BOOL_PUT(ctx, bulk, !numeric::is_zero(value));
+        break;
+      case GRN_DB_INT8:
+        GRN_INT8_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_UINT8:
+        GRN_UINT8_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_INT16:
+        GRN_INT16_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_UINT16:
+        GRN_UINT16_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_INT32:
+        GRN_INT32_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_UINT32:
+        GRN_UINT32_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_INT64:
+        GRN_INT64_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_UINT64:
+        GRN_UINT64_PUT(ctx, bulk, value);
+        break;
+#ifdef GRN_HAVE_BFLOAT16
+      case GRN_DB_BFLOAT16:
+        GRN_BFLOAT16_PUT(ctx, bulk, numeric::to_bfloat16(value));
+        break;
+#endif
+      case GRN_DB_FLOAT32:
+        GRN_FLOAT32_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_FLOAT:
+        GRN_FLOAT_PUT(ctx, bulk, value);
+        break;
+      case GRN_DB_TIME:
+        if constexpr (std::is_floating_point_v<NUMERIC>) {
+          GRN_TIME_PUT(ctx, bulk, std::llround(value * GRN_TIME_USEC_PER_SEC));
+        } else {
+          GRN_TIME_PUT(ctx, bulk, value);
         }
       default:
         break;
