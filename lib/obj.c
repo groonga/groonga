@@ -822,6 +822,38 @@ grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return false;
+  }
+
+  accessor = (grn_accessor *)obj;
+  while (accessor->next) {
+    accessor = accessor->next;
+  }
+
+  switch (accessor->action) {
+  case GRN_ACCESSOR_GET_ID:
+  case GRN_ACCESSOR_GET_SCORE:
+  case GRN_ACCESSOR_GET_NSUBRECS:
+  case GRN_ACCESSOR_GET_MAX:
+  case GRN_ACCESSOR_GET_MIN:
+  case GRN_ACCESSOR_GET_SUM:
+  case GRN_ACCESSOR_GET_AVG:
+  case GRN_ACCESSOR_GET_MEAN:
+  case GRN_ACCESSOR_GET_VALUE:
+    return true;
+  case GRN_ACCESSOR_GET_COLUMN_VALUE:
+    return grn_obj_is_scalar_column(ctx, accessor->obj);
+  default:
+    return false;
+  }
+}
+
+bool
 grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;

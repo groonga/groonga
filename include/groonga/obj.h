@@ -126,6 +126,8 @@ grn_obj_is_mean_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
+grn_obj_is_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
 grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
