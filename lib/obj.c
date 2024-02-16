@@ -887,6 +887,28 @@ grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
+bool
+grn_obj_is_vector_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return false;
+  }
+
+  accessor = (grn_accessor *)obj;
+  while (accessor->next) {
+    accessor = accessor->next;
+  }
+
+  switch (accessor->action) {
+  case GRN_ACCESSOR_GET_COLUMN_VALUE:
+    return grn_obj_is_vector_column(ctx, accessor->obj);
+  default:
+    return false;
+  }
+}
+
 grn_bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 {
