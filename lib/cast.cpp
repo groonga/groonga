@@ -1658,7 +1658,7 @@ namespace {
 
   template <typename SOURCE>
   grn_rc
-  num2dest(grn_ctx *ctx, grn_caster *caster)
+  num2dest_bulk(grn_ctx *ctx, grn_caster *caster)
   {
     switch (caster->dest->header.domain) {
     case GRN_DB_BOOL:
@@ -1732,6 +1732,40 @@ namespace {
       return GRN_INVALID_ARGUMENT;
     default:
       return grn_caster_cast_to_record(ctx, caster);
+    }
+  }
+
+  template <typename SOURCE>
+  grn_rc
+  num2dest(grn_ctx *ctx, grn_caster *caster)
+  {
+    switch (caster->src->header.type) {
+    case GRN_BULK:
+      return num2dest_bulk<SOURCE>(ctx, caster);
+    case GRN_UVECTOR:
+      {
+        grn_obj sub_src;
+        GRN_VALUE_FIX_SIZE_INIT(&sub_src, 0, caster->src->header.domain);
+        grn_caster sub_caster = {
+          &sub_src,
+          caster->dest,
+          caster->flags,
+          caster->target,
+        };
+        auto raw_values =
+          reinterpret_cast<SOURCE *>(GRN_BULK_HEAD(caster->src));
+        auto n = GRN_BULK_VSIZE(caster->src) / sizeof(SOURCE);
+        grn_rc rc = GRN_SUCCESS;
+        for (size_t i = 0; i < n && rc == GRN_SUCCESS; i++) {
+          auto raw_value = raw_values[i];
+          GRN_TEXT_SET(ctx, &sub_src, &raw_value, sizeof(SOURCE));
+          rc = num2dest_bulk<SOURCE>(ctx, &sub_caster);
+        }
+        GRN_OBJ_FIN(ctx, &sub_src);
+        return rc;
+      }
+    default:
+      return GRN_FUNCTION_NOT_IMPLEMENTED;
     }
   }
 } // namespace
