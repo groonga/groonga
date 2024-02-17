@@ -15140,6 +15140,9 @@ grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
           res += grn_obj_is_locked(ctx, (grn_obj *)(db->specs));
         }
         res += grn_obj_is_locked(ctx, (grn_obj *)db->config);
+        if (grn_options_is_locked(ctx, db->options)) {
+          res++;
+        }
       }
       break;
     case GRN_COLUMN_INDEX:
