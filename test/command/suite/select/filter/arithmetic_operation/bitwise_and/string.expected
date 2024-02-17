@@ -1,0 +1,45 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value1 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Values value2 COLUMN_SCALAR Int16
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value1": "abc", "value2": 7}
+]
+[[0,0.0,0.0],1]
+select Values   --filter true   --scorer '_score = value1 & value2'   --output_columns 'value1, value2, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "value1",
+          "ShortText"
+        ],
+        [
+          "value2",
+          "Int16"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "abc",
+        7,
+        0
+      ]
+    ]
+  ]
+]

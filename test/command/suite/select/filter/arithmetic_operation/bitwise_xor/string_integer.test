@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values value1 COLUMN_SCALAR ShortText
+column_create Values value2 COLUMN_SCALAR Int16
+
+load --table Values
+[
+{"value1": "7", "value2": -126}
+]
+
+select Values \
+  --filter true \
+  --scorer '_score = value1 ^ value2' \
+  --output_columns 'value1, value2, _score'

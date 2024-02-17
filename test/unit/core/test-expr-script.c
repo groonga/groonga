@@ -794,66 +794,6 @@ data_arithmetic_operator_or_assign(void)
 }
 
 static void
-data_arithmetic_operator_bitwise_or(void)
-{
-  ADD_DATUM("integer | integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (8 | 1)");
-  ADD_DATUM("-integer | integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (-8 | 1) + 16");
-  ADD_DATUM("float | integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (8.1 | 1)");
-  ADD_DATUM("integer-string | integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"8\" | 1)");
-  ADD_DATUM("string | integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"abc\" | 1) + 9");
-}
-
-static void
-data_arithmetic_operator_bitwise_xor(void)
-{
-  ADD_DATUM("integer ^ integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (24 ^ 17)");
-  ADD_DATUM("-integer ^ integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (-24 ^ 17) + 16");
-  ADD_DATUM("float ^ integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (24.1 ^ 17)");
-  ADD_DATUM("integer-string ^ integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"24\" ^ 17)");
-  ADD_DATUM("string ^ integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"abc\" ^ 1) + 9");
-}
-
-static void
-data_arithmetic_operator_bitwise_and(void)
-{
-  ADD_DATUM("integer & integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (25 & 41)");
-  ADD_DATUM("-integer & integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (-33 & 41)");
-  ADD_DATUM("float & integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (25.3 & 41)");
-  ADD_DATUM("integer-string & integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"25\" & 41)");
-  ADD_DATUM("string & integer",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"abc\" & 41) + 9");
-}
-
-static void
 data_arithmetic_operator_bitwise_not(void)
 {
   ADD_DATUM("~integer",
@@ -1082,9 +1022,6 @@ data_arithmetic_operator(void)
   data_arithmetic_operator_and_assign();
   data_arithmetic_operator_xor_assign();
   data_arithmetic_operator_or_assign();
-  data_arithmetic_operator_bitwise_or();
-  data_arithmetic_operator_bitwise_xor();
-  data_arithmetic_operator_bitwise_and();
   data_arithmetic_operator_bitwise_not();
   data_arithmetic_operator_shift_l();
   data_arithmetic_operator_shift_r();

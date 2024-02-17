@@ -207,16 +207,20 @@ namespace {
   text_arithmetic_binary_operation(
     grn_ctx *ctx, grn_operator op, grn_obj *x, grn_obj *y, grn_obj *result)
   {
+    grn_obj casted_value;
+    GRN_INT64_INIT(&casted_value, 0);
+    grn_obj_cast(ctx, x, &casted_value, false);
+    auto x_int64 = GRN_BULK_VSIZE(&casted_value) < sizeof(int64_t)
+                     ? 0
+                     : GRN_INT64_VALUE(&casted_value);
+    GRN_BULK_REWIND(&casted_value);
+    grn_obj_cast(ctx, y, &casted_value, false);
+    auto y_int64 = GRN_BULK_VSIZE(&casted_value) < sizeof(int64_t)
+                     ? 0
+                     : GRN_INT64_VALUE(&casted_value);
+    GRN_OBJ_FIN(ctx, &casted_value);
+
     result->header.domain = GRN_DB_INT64;
-
-    GRN_INT64_SET(ctx, result, 0);
-    grn_obj_cast(ctx, x, result, false);
-    auto x_int64 = GRN_INT64_VALUE(result);
-
-    GRN_INT64_SET(ctx, result, 0);
-    grn_obj_cast(ctx, y, result, false);
-    auto y_int64 = GRN_INT64_VALUE(result);
-
     switch (op) {
     case GRN_OP_BITWISE_OR:
       GRN_INT64_SET(ctx, result, x_int64 | y_int64);
