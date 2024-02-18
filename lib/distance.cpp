@@ -19,6 +19,7 @@
 
 #include <groonga/bulk.hpp>
 
+#include "grn_ctx.hpp"
 #include "grn_db.h"
 
 namespace grn {
@@ -145,36 +146,73 @@ namespace {
                  grn_obj *input_column,
                  grn_id input_column_range,
                  grn_obj *literal,
+                 const char *function_name,
                  DistanceFunc distance_func)
   {
+    auto n_records = grn_table_size(ctx, table);
     auto n_elements = GRN_BULK_VSIZE(literal) / sizeof(ElementType);
-    grn_obj input;
-    GRN_VALUE_FIX_SIZE_INIT(&input,
-                            GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY,
-                            input_column_range);
-    grn_obj output;
-    GRN_FLOAT_INIT(&output, 0);
-    GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID)
-    {
-      uint32_t size;
-      auto value = grn_obj_get_value_(ctx, input_column, id, &size);
-      GRN_TEXT_SET(ctx, &input, value, size);
-      if ((GRN_BULK_VSIZE(&input) / sizeof(ElementType)) != n_elements) {
-        continue;
-      }
-      auto distance_raw = distance_func(ctx, &input, literal);
-      if (ctx->rc != GRN_SUCCESS) {
-        continue;
-      }
-      GRN_FLOAT_SET(ctx, &output, distance_raw);
-      grn_obj_set_value(ctx, output_column, id, &output, GRN_OBJ_SET);
-      if (ctx->rc != GRN_SUCCESS) {
-        continue;
-      }
+    auto task_executor = grn_ctx_get_task_executor(ctx);
+    auto n_workers = task_executor->get_n_workers();
+    if (n_workers == 0) {
+      n_workers = 1;
     }
-    GRN_TABLE_EACH_END(ctx, cursor);
-    GRN_OBJ_FIN(ctx, &input);
-    GRN_OBJ_FIN(ctx, &output);
+    int limit = (n_records / n_workers) + 1;
+    for (size_t i = 0; i < n_workers; i++) {
+      auto execute = [&, i]() {
+        grn_obj input;
+        GRN_VALUE_FIX_SIZE_INIT(&input,
+                                GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY,
+                                input_column_range);
+        grn_obj output;
+        GRN_FLOAT_INIT(&output, 0);
+        int offset = limit * i;
+        grn_ctx *task_ctx = ctx;
+        grn_ctx *child_ctx = nullptr;
+        if (task_executor->is_parallel()) {
+          task_ctx = child_ctx = grn_ctx_pull_child(ctx);
+        }
+        grn::ChildCtxReleaser releaser(ctx, child_ctx);
+        auto cursor = grn_table_cursor_open(task_ctx,
+                                            table,
+                                            nullptr,
+                                            0,
+                                            nullptr,
+                                            0,
+                                            offset,
+                                            limit,
+                                            GRN_CURSOR_BY_ID);
+        if (cursor) {
+          grn_id id;
+          while ((id = grn_table_cursor_next(task_ctx, cursor)) != GRN_ID_NIL) {
+            uint32_t size;
+            auto value = grn_obj_get_value_(task_ctx, input_column, id, &size);
+            GRN_TEXT_SET(task_ctx, &input, value, size);
+            if ((GRN_BULK_VSIZE(&input) / sizeof(ElementType)) != n_elements) {
+              continue;
+            }
+            auto distance_raw = distance_func(task_ctx, &input, literal);
+            if (ctx->rc != GRN_SUCCESS) {
+              continue;
+            }
+            GRN_FLOAT_SET(task_ctx, &output, distance_raw);
+            grn_obj_set_value(task_ctx,
+                              output_column,
+                              id,
+                              &output,
+                              GRN_OBJ_SET);
+            if (ctx->rc != GRN_SUCCESS) {
+              continue;
+            }
+          }
+          grn_table_cursor_close(task_ctx, cursor);
+        }
+        GRN_OBJ_FIN(task_ctx, &input);
+        GRN_OBJ_FIN(task_ctx, &output);
+        return true;
+      };
+      task_executor->execute(i, execute, function_name);
+    }
+    task_executor->wait_all();
   }
 
   grn_rc
@@ -190,7 +228,7 @@ namespace {
 
     if (n_args != 2) {
       ERR(GRN_INVALID_ARGUMENT,
-          "%s(): wrong number of arguments (%" GRN_FMT_SIZE " for 2)",
+          "%s: wrong number of arguments (%" GRN_FMT_SIZE " for 2)",
           function_name,
           n_args);
       return ctx->rc;
@@ -202,7 +240,7 @@ namespace {
       grn::TextBulk inspected(ctx);
       grn_inspect(ctx, *inspected, input_column);
       ERR(GRN_INVALID_ARGUMENT,
-          "%s(): 1st argument must be a vector column or accessor: %.*s",
+          "%s: 1st argument must be a vector column or accessor: %.*s",
           function_name,
           static_cast<int>(GRN_TEXT_LEN(*inspected)),
           GRN_TEXT_VALUE(*inspected));
@@ -215,7 +253,7 @@ namespace {
       break;
     default:
       ERR(GRN_INVALID_ARGUMENT,
-          "%s(): 1st argument must be Float or Float32: %s",
+          "%s: 1st argument must be Float or Float32: %s",
           function_name,
           grn_type_id_to_string_builtin(ctx, input_column_range));
       return ctx->rc;
@@ -236,12 +274,11 @@ namespace {
         GRN_OBJ_FIN(ctx, &casted_literal_buffer);
         grn::TextBulk inspected(ctx);
         grn_inspect(ctx, *inspected, literal);
-        ERR(
-          GRN_INVALID_ARGUMENT,
-          "%s(): 2nd argument must be a Float or Float32 vector literal: %.*s",
-          function_name,
-          static_cast<int>(GRN_TEXT_LEN(*inspected)),
-          GRN_TEXT_VALUE(*inspected));
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s: 2nd argument must be a Float or Float32 vector literal: %.*s",
+            function_name,
+            static_cast<int>(GRN_TEXT_LEN(*inspected)),
+            GRN_TEXT_VALUE(*inspected));
         return ctx->rc;
       }
       casted_literal = &casted_literal_buffer;
@@ -259,6 +296,7 @@ namespace {
                                        input_column,
                                        input_column_range,
                                        literal,
+                                       function_name,
                                        distance_func);
         };
         switch (method) {
@@ -297,6 +335,7 @@ namespace {
                                  input_column,
                                  input_column_range,
                                  literal,
+                                 function_name,
                                  distance_func);
         };
         switch (method) {
