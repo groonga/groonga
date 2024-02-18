@@ -30,7 +30,7 @@ namespace grn {
   class TaskExecutor {
   private:
     grn_ctx *ctx_;
-    int32_t n_workers_;
+    uint32_t n_workers_;
 #ifdef GRN_WITH_APACHE_ARROW
     std::shared_ptr<::arrow::internal::ThreadPool> thread_pool_;
     std::unordered_map<uintptr_t, ::arrow::Future<bool>> futures_;
@@ -57,7 +57,7 @@ namespace grn {
       if (n_workers < 0) {
         n_workers = ::arrow::internal::ThreadPool::DefaultCapacity();
       }
-      if (n_workers == n_workers_) {
+      if (static_cast<uint32_t>(n_workers) == n_workers_) {
         return;
       }
       n_workers_ = n_workers;
@@ -79,6 +79,12 @@ namespace grn {
 #endif
     }
 
+    uint32_t
+    get_n_workers()
+    {
+      return n_workers_;
+    }
+
     bool
     is_parallel()
     {
@@ -95,7 +101,7 @@ namespace grn {
     execute(uintptr_t id, Function &&func, const char *tag)
     {
 #ifdef GRN_WITH_APACHE_ARROW
-      if (n_workers_ > 1) {
+      if (is_parallel()) {
         auto future_result = thread_pool_->Submit(func);
         if (!grnarrow::check(ctx_,
                              future_result,
@@ -117,7 +123,7 @@ namespace grn {
     wait(uintptr_t id, const char *tag)
     {
 #ifdef GRN_WITH_APACHE_ARROW
-      if (n_workers_ > 1) {
+      if (is_parallel()) {
         try {
           std::unique_lock<std::mutex> lock(futures_mutex_);
           auto future = futures_.at(id);
@@ -143,7 +149,7 @@ namespace grn {
     wait_all()
     {
 #ifdef GRN_WITH_APACHE_ARROW
-      if (n_workers_ > 1) {
+      if (is_parallel()) {
         thread_pool_->WaitForIdle();
         return ctx_->rc == GRN_SUCCESS;
       }
