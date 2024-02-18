@@ -250,124 +250,85 @@ namespace {
 
     switch (input_column_range) {
     case GRN_DB_FLOAT32:
-      switch (method) {
-      case Method::Cosine:
-        distance_apply<float>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+      {
+        auto apply = [&](auto distance_func) {
+          return distance_apply<float>(ctx,
+                                       data,
+                                       table,
+                                       output_column,
+                                       input_column,
+                                       input_column_range,
+                                       literal,
+                                       distance_func);
+        };
+        switch (method) {
+        case Method::Cosine:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_cosine<float>(ctx, vector1, vector2);
           });
-        break;
-      case Method::InnerProduct:
-        distance_apply<float>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::InnerProduct:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_inner_product<float>(ctx, vector1, vector2);
           });
-        break;
-      case Method::L1Norm:
-        distance_apply<float>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::L1Norm:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_l1_norm<float>(ctx, vector1, vector2);
           });
-        break;
-      case Method::L2NormSquared:
-        distance_apply<float>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::L2NormSquared:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_l2_norm_squared<float>(ctx,
                                                            vector1,
                                                            vector2);
           });
+          break;
+        }
         break;
       }
-      break;
     case GRN_DB_FLOAT:
-      switch (method) {
-      case Method::Cosine:
-        distance_apply<double>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+      {
+        auto apply = [&](auto distance_func) {
+          distance_apply<double>(ctx,
+                                 data,
+                                 table,
+                                 output_column,
+                                 input_column,
+                                 input_column_range,
+                                 literal,
+                                 distance_func);
+        };
+        switch (method) {
+        case Method::Cosine:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_cosine<double>(ctx, vector1, vector2);
           });
-        break;
-      case Method::InnerProduct:
-        distance_apply<double>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::InnerProduct:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_inner_product<double>(ctx,
                                                           vector1,
                                                           vector2);
           });
-        break;
-      case Method::L1Norm:
-        distance_apply<double>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::L1Norm:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_l1_norm<double>(ctx, vector1, vector2);
           });
-        break;
-      case Method::L2NormSquared:
-        distance_apply<double>(
-          ctx,
-          data,
-          table,
-          output_column,
-          input_column,
-          input_column_range,
-          literal,
-          [](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
+          break;
+        case Method::L2NormSquared:
+          apply([](grn_ctx *ctx, grn_obj *vector1, grn_obj *vector2) {
             return compute_distance_l2_norm_squared<double>(ctx,
                                                             vector1,
                                                             vector2);
           });
-        break;
-      default:
+          break;
+        }
         break;
       }
+    default:
+      break;
     }
 
     if (literal == casted_literal) {
