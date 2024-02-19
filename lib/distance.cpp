@@ -150,6 +150,9 @@ namespace {
                  DistanceFunc distance_func)
   {
     auto n_records = grn_table_size(ctx, table);
+    if (n_records == 0) {
+      return;
+    }
     auto n_elements = GRN_BULK_VSIZE(literal) / sizeof(ElementType);
     auto task_executor = grn_ctx_get_task_executor(ctx);
     auto n_workers = task_executor->get_n_workers();
