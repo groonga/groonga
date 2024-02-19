@@ -5,6 +5,7 @@ libgroonga_cpp_source =				\
 	command_arguments.cpp			\
 	ctx.cpp					\
 	dat.cpp					\
+	db_wal_recover.cpp			\
 	distance.cpp				\
 	expr_executor.cpp			\
 	grn_arrow.hpp				\

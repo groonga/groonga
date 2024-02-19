@@ -42,6 +42,7 @@ repos:
           ?lib/ctx\.cpp|
           ?lib/ctx_impl_mrb\.c|
           ?lib/db\.c|
+          ?lib/db_wal_recover\.cpp|
           ?lib/distance\.cpp|
           ?lib/distance_avx\.cpp|
           ?lib/distance_avx2\.cpp|
