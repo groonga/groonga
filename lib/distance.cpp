@@ -160,7 +160,7 @@ namespace {
       n_workers = 1;
     }
     n_workers = std::min(n_workers, n_records);
-    int limit = (n_records / n_workers) + 1;
+    int limit = (n_records == n_workers) ? 1 : ((n_records / n_workers) + 1);
     for (size_t i = 0; i < n_workers; i++) {
       auto execute = [&, i]() {
         grn_obj input;
