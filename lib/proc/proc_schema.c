@@ -23,7 +23,7 @@
 #include <groonga/plugin.h>
 
 typedef struct {
-  grn_bool is_close_opened_object_mode;
+  bool is_close_opened_object_mode;
 } grn_schema_data;
 
 static void
@@ -97,7 +97,7 @@ command_schema_output_value_type(grn_ctx *ctx, grn_obj *value_type)
   command_schema_output_type(ctx, "value_type", value_type);
 }
 
-grn_bool
+bool
 grn_proc_text_include_special_character(grn_ctx *ctx,
                                         const char *text,
                                         size_t size)
@@ -111,14 +111,14 @@ grn_proc_text_include_special_character(grn_ctx *ctx,
     case ' ' :
     case '"' :
     case '\'' :
-      return GRN_TRUE;
+      return true;
       break;
     default :
       break;
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 static void

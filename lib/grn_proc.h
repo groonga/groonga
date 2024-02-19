@@ -308,7 +308,7 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                       grn_raw_string *token_filters_raw,
                       const char *context_tag);
 
-grn_bool
+bool
 grn_proc_text_include_special_character(grn_ctx *ctx,
                                         const char *text,
                                         size_t size);
