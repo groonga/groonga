@@ -1040,6 +1040,12 @@ namespace {
       }
       n_workers = std::min(n_workers, static_cast<uint32_t>(n_columns));
       auto n_columns_per_worker = (n_columns / n_workers) + 1;
+      // We can't use temporary open space with parallel mode because
+      // it may close objects that are still used by other thread. But
+      // we can use temporary open space with reference count
+      // mode. Because it doesn't close used objects.
+      const bool use_temporary_open_space =
+        (!task_executor_->is_parallel() || grn_is_reference_count_enable());
       for (size_t i = 0; i < n_workers; i++) {
         auto execute = [&, i]() {
           size_t start = n_columns_per_worker * i;
@@ -1051,7 +1057,9 @@ namespace {
           }
           grn::ChildCtxReleaser releaser(ctx_, child_ctx);
           for (size_t j = start; j < end; ++j) {
-            grn_ctx_push_temporary_open_space(task_ctx);
+            if (use_temporary_open_space) {
+              grn_ctx_push_temporary_open_space(task_ctx);
+            }
             auto [new_table_id, broken_column_id] = targets[j];
             grn_obj *new_table = nullptr;
             if (new_table_id != GRN_ID_NIL) {
@@ -1063,13 +1071,15 @@ namespace {
               grn_obj_unref(task_ctx, broken_column);
             }
             if (new_table) {
-              grn_obj_unlink(task_ctx, new_table);
+              grn_obj_unref(task_ctx, new_table);
             }
-            GRN_DB_WAL_DISABLE_WAL_BEGIN(task_ctx)
-            {
-              grn_ctx_pop_temporary_open_space(task_ctx);
+            if (use_temporary_open_space) {
+              GRN_DB_WAL_DISABLE_WAL_BEGIN(task_ctx)
+              {
+                grn_ctx_pop_temporary_open_space(task_ctx);
+              }
+              GRN_DB_WAL_DISABLE_WAL_END(task_ctx);
             }
-            GRN_DB_WAL_DISABLE_WAL_END(task_ctx);
             if (task_ctx->rc != GRN_SUCCESS) {
               break;
             }
