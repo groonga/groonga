@@ -16,10 +16,10 @@
 */
 
 #include "grn_ctx_impl.h"
-#include "grn_db.h"
-#include "grn_obj.h"
-#include "grn_ii.h"
 #include "grn_dat.h"
+#include "grn_db.h"
+#include "grn_ii.h"
+#include "grn_obj.h"
 #include "grn_pat.h"
 #include "grn_store.h"
 #include "grn_table.h"
@@ -637,7 +637,7 @@ grn_db_wal_recover_remove_broken_objects(grn_ctx *ctx, grn_db *db)
 }
 
 static void
-grn_db_wal_recover_copy_table(grn_ctx *ctx, grn_obj *table, grn_hash *id_map)
+grn_db_wal_recover_copy_table(grn_ctx *ctx, grn_obj *table, grn_id_map *id_map)
 {
   GRN_DEFINE_NAME(table);
   GRN_LOG(ctx,
@@ -686,7 +686,7 @@ static void
 grn_db_wal_recover_copy_data_column(grn_ctx *ctx,
                                     grn_obj *column,
                                     grn_obj *new_table,
-                                    grn_hash *id_map)
+                                    grn_id_map *id_map)
 {
   if (!grn_db_wal_recover_is_data_column(ctx, column)) {
     return;
@@ -745,7 +745,7 @@ static void
 grn_db_wal_recover_copy_non_reference_data_column(grn_ctx *ctx,
                                                   grn_obj *column,
                                                   grn_obj *new_table,
-                                                  grn_hash *id_map)
+                                                  grn_id_map *id_map)
 {
   if (!grn_id_is_builtin(ctx, DB_OBJ(column)->range)) {
     return;
@@ -756,7 +756,7 @@ grn_db_wal_recover_copy_non_reference_data_column(grn_ctx *ctx,
 static void
 grn_db_wal_recover_copy_non_reference_data_columns(grn_ctx *ctx,
                                                    grn_obj *table,
-                                                   grn_hash *id_map)
+                                                   grn_id_map *id_map)
 {
   grn_hash *columns = grn_table_all_columns(ctx, table);
   if (grn_hash_size(ctx, columns) == 0) {
@@ -802,7 +802,7 @@ static void
 grn_db_wal_recover_copy_reference_data_column(grn_ctx *ctx,
                                               grn_obj *column,
                                               grn_obj *new_table,
-                                              grn_hash *id_map)
+                                              grn_id_map *id_map)
 {
   if (grn_id_is_builtin(ctx, DB_OBJ(column)->range)) {
     return;
@@ -813,7 +813,7 @@ grn_db_wal_recover_copy_reference_data_column(grn_ctx *ctx,
 static void
 grn_db_wal_recover_copy_reference_data_columns(grn_ctx *ctx,
                                                grn_obj *table,
-                                               grn_hash *id_map)
+                                               grn_id_map *id_map)
 {
   grn_hash *columns = grn_table_all_columns(ctx, table);
   if (grn_hash_size(ctx, columns) == 0) {
@@ -859,7 +859,7 @@ static void
 grn_db_wal_recover_copy_auto_generated_column(grn_ctx *ctx,
                                               grn_obj *column,
                                               grn_obj *new_table,
-                                              grn_hash *id_map)
+                                              grn_id_map *id_map)
 {
   if (grn_db_wal_recover_is_data_column(ctx, column)) {
     return;
@@ -912,7 +912,7 @@ grn_db_wal_recover_copy_auto_generated_column(grn_ctx *ctx,
 static void
 grn_db_wal_recover_copy_auto_generated_columns(grn_ctx *ctx,
                                                grn_obj *table,
-                                               grn_hash *id_map)
+                                               grn_id_map *id_map)
 {
   grn_hash *columns = grn_table_all_columns(ctx, table);
   if (grn_hash_size(ctx, columns) == 0) {
@@ -958,7 +958,7 @@ static void
 grn_db_wal_recover_rename_column(grn_ctx *ctx,
                                  grn_db *db,
                                  grn_id broken_column_id,
-                                 grn_hash *id_map)
+                                 grn_id_map *id_map)
 {
   grn_id recovering_column_id =
     grn_id_map_resolve(ctx, id_map, broken_column_id);
@@ -1013,7 +1013,7 @@ static void
 grn_db_wal_recover_rename_table(grn_ctx *ctx,
                                 grn_db *db,
                                 grn_id broken_table_id,
-                                grn_hash *id_map)
+                                grn_id_map *id_map)
 {
   grn_id new_table_id = grn_id_map_resolve(ctx, id_map, broken_table_id);
   grn_obj *new_table = grn_ctx_at(ctx, new_table_id);
@@ -1061,7 +1061,7 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
                                grn_hash *broken_table_ids,
                                grn_hash *broken_column_ids)
 {
-  grn_hash *id_map = grn_id_map_open(ctx);
+  grn_id_map *id_map = grn_id_map_open(ctx);
 
   GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id)
   {

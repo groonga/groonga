@@ -611,32 +611,55 @@ grn_column_get_all_hooked_columns(grn_ctx *ctx,
 grn_rc grn_pvector_fin(grn_ctx *ctx, grn_obj *obj);
 
 
-static inline grn_hash *
+typedef struct grn_id_map
+{
+  grn_hash *hash;
+  grn_critical_section critical_section;
+} grn_id_map;
+
+static inline grn_id_map *
 grn_id_map_open(grn_ctx *ctx)
 {
-  return grn_hash_create(ctx,
-                         NULL,
-                         sizeof(grn_id),
-                         sizeof(grn_id),
-                         GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  grn_id_map *id_map = (grn_id_map *)GRN_MALLOC(sizeof(grn_id_map));
+  if (!id_map) {
+    return NULL;
+  }
+  id_map->hash = grn_hash_create(ctx,
+                                 NULL,
+                                 sizeof(grn_id),
+                                 sizeof(grn_id),
+                                 GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  CRITICAL_SECTION_INIT(id_map->critical_section);
+  return id_map;
 }
 
 static inline grn_rc
-grn_id_map_close(grn_ctx *ctx, grn_hash *id_map)
+grn_id_map_close(grn_ctx *ctx, grn_id_map *id_map)
 {
-  return grn_hash_close(ctx, id_map);
+  if (!id_map) {
+    return GRN_SUCCESS;
+  }
+  grn_rc rc = grn_hash_close(ctx, id_map->hash);
+  CRITICAL_SECTION_FIN(id_map->critical_section);
+  GRN_FREE(id_map);
+  return rc;
 }
 
 static inline void
-grn_id_map_add(grn_ctx *ctx, grn_hash *id_map, grn_id old_id, grn_id new_id)
+grn_id_map_add(grn_ctx *ctx, grn_id_map *id_map, grn_id old_id, grn_id new_id)
 {
+  if (!id_map) {
+    return;
+  }
+  CRITICAL_SECTION_ENTER(id_map->critical_section);
   void *value;
-  grn_hash_add(ctx, id_map, &old_id, sizeof(grn_id), &value, NULL);
+  grn_hash_add(ctx, id_map->hash, &old_id, sizeof(grn_id), &value, NULL);
   *(grn_id *)value = new_id;
+  CRITICAL_SECTION_LEAVE(id_map->critical_section);
 }
 
 static inline grn_id
-grn_id_map_resolve(grn_ctx *ctx, grn_hash *id_map, grn_id id)
+grn_id_map_resolve(grn_ctx *ctx, grn_id_map *id_map, grn_id id)
 {
   if (id == GRN_ID_NIL) {
     return id;
@@ -644,11 +667,14 @@ grn_id_map_resolve(grn_ctx *ctx, grn_hash *id_map, grn_id id)
   if (!id_map) {
     return id;
   }
+  grn_id resolved_id = id;
+  CRITICAL_SECTION_ENTER(id_map->critical_section);
   void *value;
-  if (grn_hash_get(ctx, id_map, &id, sizeof(grn_id), &value) == GRN_ID_NIL) {
-    return id;
+  if (grn_hash_get(ctx, id_map->hash, &id, sizeof(grn_id), &value) != GRN_ID_NIL) {
+    resolved_id = *(grn_id *)value;
   }
-  return *(grn_id *)value;
+  CRITICAL_SECTION_LEAVE(id_map->critical_section);
+  return resolved_id;
 }
 
 #define GRN_DB_WAL_DISABLE_WAL_BEGIN(ctx)                                      \
@@ -667,7 +693,7 @@ grn_table_create_similar_id_map(grn_ctx *ctx,
                                 uint32_t name_size,
                                 const char *path,
                                 grn_obj *base_table,
-                                grn_hash *id_map)
+                                grn_id_map *id_map)
 {
   const char *tag = "[table][create][similar]";
   if (!grn_obj_is_table(ctx, base_table)) {
@@ -794,7 +820,7 @@ grn_column_create_similar_id_map(grn_ctx *ctx,
                                  uint32_t name_size,
                                  const char *path,
                                  grn_obj *base_column,
-                                 grn_hash *id_map)
+                                 grn_id_map *id_map)
 {
   const char *tag = "[column][create][similar]";
 
