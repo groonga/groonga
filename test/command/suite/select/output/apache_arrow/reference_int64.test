@@ -1,0 +1,17 @@
+#@require-apache-arrow
+#@require-interface http
+#@require-testee groonga
+
+table_create Referred TABLE_HASH_KEY Int64
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Referred
+
+load --table Data
+[
+{"value": 29}
+]
+
+select Data \
+  --command_version 3 \
+  --output_type apache-arrow
