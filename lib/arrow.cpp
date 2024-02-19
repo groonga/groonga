@@ -2392,6 +2392,9 @@ namespace grnarrow {
       case GRN_DB_INT32:
         add_column_int32(*reinterpret_cast<int32_t *>(key));
         return;
+      case GRN_DB_INT64:
+        add_column_int64(*reinterpret_cast<int64_t *>(key));
+        return;
       default:
         break;
       }
