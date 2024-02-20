@@ -71,9 +71,9 @@ command_object_remove(grn_ctx *ctx,
 {
   grn_obj *db;
   grn_obj *name;
-  grn_bool force;
+  bool force;
   grn_obj *target;
-  grn_bool failed_to_open;
+  bool failed_to_open;
 
   db = grn_ctx_db(ctx);
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
@@ -96,7 +96,7 @@ command_object_remove(grn_ctx *ctx,
       return NULL;
     }
     grn_obj_close(ctx, target);
-    failed_to_open = GRN_TRUE;
+    failed_to_open = true;
   } else {
     failed_to_open = (ctx->rc != GRN_SUCCESS);
   }
