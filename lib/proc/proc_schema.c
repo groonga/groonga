@@ -723,7 +723,7 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
                                     GRN_TABLE_MAX_KEY_SIZE);    \
     object_name[object_name_size] = '\0';                       \
     ADD(name_, object_name);                                    \
-  } while (GRN_FALSE)
+  } while (false)
 
   ADD_OBJECT_NAME("name", table);
 
@@ -1072,7 +1072,7 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
                                     GRN_TABLE_MAX_KEY_SIZE);    \
     object_name[object_name_size] = '\0';                       \
     ADD(name_, object_name);                                    \
-  } while (GRN_FALSE)
+  } while (false)
 
   ADD_OBJECT_NAME("table", table);
   {
