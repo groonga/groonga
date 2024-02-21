@@ -110,7 +110,7 @@ msgid "This example uses ``Terms.entries_title`` as index, then search \"Groonga
 msgstr "この例では、``Terms.entries_title`` をインデックスとして ``title`` カラムを対象に\"Groonga\"を検索します。"
 
 msgid "This example uses ``Terms.entries_body`` as index, then search \"Groonga\" against body data column."
-msgstr "この例では、 ``Terms.entries_whole`` をインデックスとして、 ``body`` カラムを対象に\"Groonga\"を検索します。"
+msgstr "この例では、 ``Terms.entries_body`` をインデックスとして、 ``body`` カラムを対象に\"Groonga\"を検索します。"
 
 msgid "If you specify multiple index column which is related to specific data columns, you can also specify data column name as suffix. It means that \"Use specific index and search specific data column explicitly\"."
 msgstr "複数カラムにまたがるインデックスは、インデックスカラムの後にデータカラム名を指定することができます。これは、どのインデックスを使ってどのデータカラムを検索するかを明示しています。"
