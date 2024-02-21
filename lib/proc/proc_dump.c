@@ -408,9 +408,9 @@ exit :
 
 static void
 dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
-             grn_bool dump_data_column,
-             grn_bool dump_reference_column,
-             grn_bool dump_index_column)
+             bool dump_data_column,
+             bool dump_reference_column,
+             bool dump_index_column)
 {
   grn_hash *columns;
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -513,7 +513,7 @@ dump_record(grn_ctx *ctx, grn_dumper *dumper,
 
   GRN_TEXT_PUTC(ctx, dumper->output, '[');
   for (i = 0; i < n_columns; i++) {
-    grn_bool is_value_column;
+    bool is_value_column;
     grn_id range;
     grn_obj *column;
     column = GRN_PTR_VALUE_AT(columns, i);
@@ -524,9 +524,9 @@ dump_record(grn_ctx *ctx, grn_dumper *dumper,
         !memcmp(GRN_TEXT_VALUE(column_name),
                 GRN_COLUMN_NAME_VALUE,
                 GRN_COLUMN_NAME_VALUE_LEN)) {
-      is_value_column = GRN_TRUE;
+      is_value_column = true;
     } else {
-      is_value_column = GRN_FALSE;
+      is_value_column = false;
     }
     range = grn_obj_get_range(ctx, column);
 
@@ -707,7 +707,7 @@ dump_records(grn_ctx *ctx,
     grn_obj *sorted;
     grn_table_sort_key sort_keys[1];
     int n_sort_keys = 1;
-    grn_bool is_first_record = GRN_TRUE;
+    bool is_first_record = true;
 
     sort_keys[0].key = grn_obj_column(ctx, table,
                                       GRN_COLUMN_NAME_KEY,
@@ -736,7 +736,7 @@ dump_records(grn_ctx *ctx,
       id = *((grn_id *)value_raw);
 
       if (is_first_record) {
-        is_first_record = GRN_FALSE;
+        is_first_record = false;
       } else {
         GRN_TEXT_PUTS(ctx, dumper->output, ",\n");
       }
@@ -899,7 +899,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
-  dump_columns(ctx, dumper, table, GRN_TRUE, GRN_FALSE, GRN_FALSE);
+  dump_columns(ctx, dumper, table, true, false, false);
 }
 
 static void
@@ -978,7 +978,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_NO_KEY:
-        dump_columns(ctx, dumper, object, GRN_FALSE, GRN_TRUE, GRN_FALSE);
+        dump_columns(ctx, dumper, object, false, true, false);
         break;
       default:
         break;
@@ -1199,7 +1199,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (grn_obj_is_table(ctx, object)) {
-      dump_columns(ctx, dumper, object, GRN_FALSE, GRN_FALSE, GRN_TRUE);
+      dump_columns(ctx, dumper, object, false, false, true);
     }
 
   next_loop :
@@ -1222,12 +1222,12 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   dumper.output = ctx->impl->output.buf;
   if (grn_thread_get_limit() == 1) {
-    dumper.is_close_opened_object_mode = GRN_TRUE;
+    dumper.is_close_opened_object_mode = true;
   } else {
-    dumper.is_close_opened_object_mode = GRN_FALSE;
+    dumper.is_close_opened_object_mode = false;
   }
-  dumper.have_reference_column = GRN_FALSE;
-  dumper.have_index_column = GRN_FALSE;
+  dumper.have_reference_column = false;
+  dumper.have_index_column = false;
 
   tables = grn_plugin_proc_get_var(ctx, user_data, "tables", -1);
   is_dump_plugins = grn_plugin_proc_get_var_bool(ctx, user_data,
