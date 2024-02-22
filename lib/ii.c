@@ -8204,7 +8204,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                     grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx,
                             GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
+                            "[ii][cursor][next][chunk][last][%.*s][%.*s][%u] "
                             "failed to decode the last chunk. "
                             "Another thread might change "
                             "the chunk while decoding: "
@@ -8229,7 +8229,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                     grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx,
                             GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
+                            "[ii][cursor][next][chunk][last][%.*s][%.*s][%u] "
                             "buffer is reused by another thread: <%p>",
                             name_size,
                             name,
@@ -8252,7 +8252,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                     grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx,
                             GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
+                            "[ii][cursor][next][chunk][last][%.*s][%.*s][%u] "
                             "chunk is reused by another thread: "
                             "<%p>: <%d>",
                             name_size,
@@ -8316,7 +8316,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                     grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx,
                             GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][%.*s][%*.s][%u] "
+                            "[ii][cursor][next][chunk][%.*s][%.*s][%u] "
                             "buffer is reused by another thread: <%p>",
                             name_size,
                             name,
@@ -8339,7 +8339,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                     grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx,
                             GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][%*.s][%*.s][%u] "
+                            "[ii][cursor][next][chunk][%.*s][%.*s][%u] "
                             "chunk is reused by another thread: "
                             "<%p>: <%d>",
                             name_size,
@@ -8398,7 +8398,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
               grn_ii_get_term(ctx, c->ii, c->id, &term);
               GRN_LOG(ctx,
                       GRN_LOG_WARNING,
-                      "[ii][cursor][next][buffer][%*.s][%*.s][%u] "
+                      "[ii][cursor][next][buffer][%.*s][%.*s][%u] "
                       "buffer is reused by another thread: "
                       "<%p>: <%d>: <%d>",
                       name_size,
@@ -8426,7 +8426,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, c->ii, c->id, &term);
               ERR(GRN_FILE_CORRUPT,
-                  "[ii][broken][cursor][next][buffer][%*.s][%*.s][%u] "
+                  "[ii][broken][cursor][next][buffer][%.*s][%.*s][%u] "
                   "posting in list in buffer isn't sorted: "
                   "(%d:%d) -> (%d:%d) (%d->%d)",
                   name_size,
@@ -8890,7 +8890,7 @@ cursor_heap_push(grn_ctx *ctx,
         grn_ii_get_term(ctx, c->ii, c->id, &term);
         GRN_LOG(ctx,
                 GRN_LOG_ERROR,
-                "[ii][cursor][heap][push][%*.s][%*.s][%u] "
+                "[ii][cursor][heap][push][%.*s][%.*s][%u] "
                 "invalid cursor: <%p>",
                 name_size,
                 name,
@@ -9575,7 +9575,7 @@ grn_uvector2updspecs_data(grn_ctx *ctx,
           grn_inspect(ctx, &inspected_element, &element_buffer);
           GRN_LOG(ctx,
                   GRN_LOG_WARNING,
-                  "[ii][updspec][uvector][data][%*.s] "
+                  "[ii][updspec][uvector][data][%.*s] "
                   "failed to cast to <%.*s>: <%.*s>",
                   name_size,
                   name,
