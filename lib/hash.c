@@ -218,7 +218,7 @@ grn_tiny_bitmap_put(grn_tiny_bitmap *bitmap, grn_id bit_id)
 /* Requirements: bit_id != GRN_ID_NIL. */
 grn_inline static uint8_t *
 grn_tiny_bitmap_get_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
-                            grn_bool bit)
+                            bool bit)
 {
   uint8_t * const ptr = grn_tiny_bitmap_get_byte(bitmap, bit_id);
   if (ptr) {
@@ -236,7 +236,7 @@ grn_tiny_bitmap_get_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
 /* Note: A bitmap is extended if needed. */
 grn_inline static uint8_t *
 grn_tiny_bitmap_put_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
-                            grn_bool bit)
+                            bool bit)
 {
   uint8_t * const ptr = grn_tiny_bitmap_put_byte(bitmap, bit_id);
   if (ptr) {
@@ -352,13 +352,13 @@ enum {
   GRN_ARRAY_BITMAP_SEGMENT = 1
 };
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_array_is_io_array(grn_array *array)
 {
   return array->io != NULL;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_array_can_use_value_for_garbage(grn_array *array)
 {
   return array->value_size >= sizeof(grn_id);
@@ -1388,7 +1388,7 @@ enum {
 };
 #define GRN_HASH_N_SEGMENTS 4
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_hash_is_io_hash(grn_hash *hash)
 {
   return hash->io != NULL;
@@ -1411,7 +1411,7 @@ grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
   }
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   if (grn_hash_is_io_hash(hash)) {
@@ -1523,13 +1523,12 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
                           grn_hash_entry *entry,
                           const void *key, unsigned int key_size)
 {
-  grn_bool is_large_mode;
   bool key_exist;
   uint64_t key_offset;
   grn_io_hash_entry_normal *io_entry_normal = &(entry->io_entry_normal);
   grn_io_hash_entry_large *io_entry_large = &(entry->io_entry_large);
 
-  is_large_mode = grn_hash_is_large_total_key_size(ctx, hash);
+  bool is_large_mode = grn_hash_is_large_total_key_size(ctx, hash);
 
   if (is_large_mode) {
     key_exist = (io_entry_large->key_size > 0);
@@ -1625,12 +1624,11 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (grn_hash_is_io_hash(hash)) {
-      grn_bool is_large_mode;
       uint8_t *buffer;
       size_t buffer_size;
       uint16_t flag;
 
-      is_large_mode = grn_hash_is_large_total_key_size(ctx, hash);
+      bool is_large_mode = grn_hash_is_large_total_key_size(ctx, hash);
       if (is_large_mode) {
         buffer = entry->io_entry_large.key.buf;
         buffer_size = sizeof(entry->io_entry_large.key.buf);
@@ -1688,10 +1686,10 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
 }
 
 /*
- * grn_hash_entry_compare_key() returns GRN_TRUE if the entry key equals the
- * specified key, or GRN_FALSE otherwise.
+ * grn_hash_entry_compare_key() returns true if the entry key equals the
+ * specified key, or false otherwise.
  */
-grn_inline static grn_bool
+grn_inline static bool
 grn_hash_entry_compare_key(grn_ctx *ctx, grn_hash *hash,
                            grn_hash_entry *entry, uint32_t hash_value,
                            const void *key, unsigned int key_size)
@@ -1699,7 +1697,7 @@ grn_hash_entry_compare_key(grn_ctx *ctx, grn_hash *hash,
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (entry->hash_value != hash_value ||
         entry->header.key_size != key_size) {
-      return GRN_FALSE;
+      return false;
     }
     if (grn_hash_is_io_hash(hash)) {
       if (grn_hash_is_large_total_key_size(ctx, hash)) {
@@ -1728,10 +1726,10 @@ grn_hash_entry_compare_key(grn_ctx *ctx, grn_hash *hash,
     }
   } else {
     if (entry->hash_value != hash_value) {
-      return GRN_FALSE;
+      return false;
     }
     if (key_size == sizeof(uint32_t)) {
-      return GRN_TRUE;
+      return true;
     } else {
       return !memcmp(key, entry->rich_entry.key_and_value, key_size);
     }
@@ -1889,7 +1887,7 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   } else {
     header->normalizer = GRN_ID_NIL;
   }
-  header->truncated = GRN_FALSE;
+  header->truncated = false;
   grn_table_modules_init(ctx, &(hash->token_filters));
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
@@ -2251,7 +2249,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   if (grn_hash_is_io_hash(hash)) {
     if (path) {
       /* Only an I/O hash with a valid path uses the `truncated` flag. */
-      hash->header.common->truncated = GRN_TRUE;
+      hash->header.common->truncated = true;
     }
     rc = grn_io_hash_fin(ctx, hash);
     if (!rc) {
@@ -5061,7 +5059,7 @@ grn_rhash_subrec_info(grn_ctx *ctx, grn_hash *s, grn_id rh, int index,
 }
 #endif /* USE_GRN_INDEX2 */
 
-grn_bool
+bool
 grn_hash_is_large_total_key_size(grn_ctx *ctx, grn_hash *hash)
 {
   return (hash->header.common->flags & GRN_OBJ_KEY_LARGE) == GRN_OBJ_KEY_LARGE;
