@@ -247,7 +247,7 @@ grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void
 grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
 
-grn_bool
+bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_raw_string *token_filters_raw);

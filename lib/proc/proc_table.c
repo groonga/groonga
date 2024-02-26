@@ -66,16 +66,15 @@ command_table_create_parse_flags(grn_ctx *ctx,
   return flags;
 }
 
-grn_bool
+bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_raw_string *token_filters_raw)
 {
-  grn_bool succeeded = GRN_FALSE;
   grn_obj token_filters;
 
   if (token_filters_raw->length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   GRN_TEXT_INIT(&token_filters, GRN_OBJ_DO_SHALLOW_COPY);
@@ -86,7 +85,7 @@ grn_proc_table_set_token_filters(grn_ctx *ctx,
   grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   GRN_OBJ_FIN(ctx, &token_filters);
 
-  return succeeded;
+  return false;
 }
 
 static grn_obj *
@@ -380,13 +379,13 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
       const char *name;
       void *key;
       int i, key_size;
-      grn_bool have_period = GRN_FALSE;
+      bool have_period = false;
 
       key_size = grn_table_cursor_get_key(ctx, cursor, &key);
       name = key;
       for (i = 0; i < key_size; i++) {
         if (name[i] == '.') {
-          have_period = GRN_TRUE;
+          have_period = true;
           break;
         }
       }
@@ -482,7 +481,7 @@ command_table_remove(grn_ctx *ctx,
 {
   grn_obj *name;
   grn_obj *table;
-  grn_bool dependent;
+  bool dependent;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   dependent = grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1,
