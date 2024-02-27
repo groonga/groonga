@@ -137,6 +137,12 @@ grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
                                    grn_tokenizer_query *query,
                                    size_t *length);
 
+GRN_PLUGIN_EXPORT const char *
+grn_tokenizer_query_get_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             size_t *size,
+                             grn_id *domain);
+
 GRN_PLUGIN_EXPORT grn_encoding
 grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query);
 

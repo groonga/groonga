@@ -113,8 +113,8 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     grn_obj_close(ctx, query->normalized_query);
   }
   query->normalized_query = grn_string_open_(ctx,
-                                             query->ptr,
-                                             query->length,
+                                             query->data,
+                                             query->size,
                                              query->lexicon,
                                              (int)(query->normalize_flags),
                                              query->encoding);
@@ -124,8 +124,8 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
                      GRN_TOKENIZER_ERROR,
                      "[tokenizer][normalize] failed to open normalized string: "
                      "<%.*s>(%s)",
-                     (int)(query->length),
-                     query->ptr,
+                     (int)(query->size),
+                     query->data,
                      grn_encoding_to_string(query->encoding));
     return;
   }
@@ -169,9 +169,9 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   query->normalize_flags = 0;
   query->normalized_query = NULL;
-  query->query_buf = NULL;
-  query->ptr = NULL;
-  query->length = 0;
+  query->data = NULL;
+  query->size = 0;
+  query->domain = GRN_ID_NIL;
   query->flags = 0;
   query->tokenize_mode = GRN_TOKENIZE_ADD;
   query->token_mode = query->tokenize_mode;
@@ -258,8 +258,8 @@ grn_tokenizer_query_fin(grn_ctx *ctx, grn_tokenizer_query *query)
   if (query->normalized_query) {
     grn_obj_unlink(ctx, query->normalized_query);
   }
-  if (query->query_buf) {
-    GRN_PLUGIN_FREE(ctx, query->query_buf);
+  if (query->data) {
+    GRN_PLUGIN_FREE(ctx, query->data);
   }
 }
 
@@ -316,32 +316,11 @@ grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
                                    const char *string,
                                    size_t string_length)
 {
-  GRN_API_ENTER;
-
-  if (query->query_buf) {
-    GRN_PLUGIN_FREE(ctx, query->query_buf);
-  }
-
-  if (string_length == 0) {
-    query->query_buf = NULL;
-    query->ptr = NULL;
-    query->length = 0;
-    query->need_normalize = GRN_TRUE;
-  } else {
-    query->query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, string_length + 1);
-    if (!query->query_buf) {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_TOKENIZER_ERROR,
-                       "[tokenizer][query] failed to duplicate query");
-      GRN_API_RETURN(ctx->rc);
-    }
-    grn_memcpy(query->query_buf, string, string_length);
-    query->query_buf[string_length] = '\0';
-    query->ptr = query->query_buf;
-    query->length = (unsigned int)string_length;
-  }
-
-  GRN_API_RETURN(ctx->rc);
+  return grn_tokenizer_query_set_data(ctx,
+                                      query,
+                                      string,
+                                      string_length,
+                                      GRN_DB_TEXT);
 }
 
 const char *
@@ -351,9 +330,70 @@ grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (length) {
-    *length = query->length;
+    *length = query->size;
   }
-  GRN_API_RETURN(query->ptr);
+  GRN_API_RETURN(query->data);
+}
+
+grn_rc
+grn_tokenizer_query_set_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             const char *data,
+                             size_t size,
+                             grn_id domain)
+{
+  GRN_API_ENTER;
+
+  if (query->data) {
+    GRN_PLUGIN_FREE(ctx, query->data);
+  }
+
+  if (data == 0) {
+    query->data = NULL;
+    query->size = 0;
+    query->need_normalize = GRN_TRUE;
+  } else {
+    if (grn_type_id_is_text_family(ctx, domain)) {
+      query->data = (char *)GRN_PLUGIN_MALLOC(ctx, size + 1);
+      if (!query->data) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_TOKENIZER_ERROR,
+                         "[tokenizer][query] failed to duplicate query");
+        GRN_API_RETURN(ctx->rc);
+      }
+      grn_memcpy(query->data, data, size);
+      query->data[size] = '\0';
+    } else {
+      query->data = (char *)GRN_PLUGIN_MALLOC(ctx, size);
+      if (!query->data) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_TOKENIZER_ERROR,
+                         "[tokenizer][query] failed to duplicate query");
+        GRN_API_RETURN(ctx->rc);
+      }
+      grn_memcpy(query->data, data, size);
+    }
+    query->size = size;
+  }
+  query->domain = domain;
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_tokenizer_query_get_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             size_t *size,
+                             grn_id *domain)
+{
+  GRN_API_ENTER;
+  if (size) {
+    *size = query->size;
+  }
+  if (domain) {
+    *domain = query->domain;
+  }
+  GRN_API_RETURN(query->data);
 }
 
 grn_encoding

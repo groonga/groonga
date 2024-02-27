@@ -31,9 +31,10 @@ extern "C" {
 typedef struct _grn_tokenizer_query {
   /* Start _grn_tokenizer_query_deprecated compatible layout. */
   grn_obj *normalized_query;
-  char *query_buf;
+  char *data;
   const char *ptr;
-  unsigned int length;
+  size_t size;
+  grn_id domain;
   grn_encoding encoding;
   uint32_t flags;
   grn_bool have_tokenized_delimiter;
@@ -63,6 +64,12 @@ grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
                                    grn_tokenizer_query *query,
                                    const char *string,
                                    size_t string_length);
+grn_rc
+grn_tokenizer_query_set_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             const char *data,
+                             size_t size,
+                             grn_id domain);
 grn_rc
 grn_tokenizer_query_set_flags(grn_ctx *ctx,
                               grn_tokenizer_query *query,
