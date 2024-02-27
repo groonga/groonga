@@ -170,8 +170,8 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->normalize_flags = 0;
   query->normalized_query = NULL;
   query->data = NULL;
+  query->ptr = NULL;
   query->size = 0;
-  query->domain = GRN_ID_NIL;
   query->flags = 0;
   query->tokenize_mode = GRN_TOKENIZE_ADD;
   query->token_mode = query->tokenize_mode;
@@ -186,6 +186,8 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->need_delimiter_check = GRN_TRUE;
 
   query->options = NULL;
+
+  query->domain = GRN_ID_NIL;
 
   return ctx->rc;
 }
@@ -348,10 +350,8 @@ grn_tokenizer_query_set_data(grn_ctx *ctx,
     GRN_PLUGIN_FREE(ctx, query->data);
   }
 
-  if (data == 0) {
+  if (size == 0) {
     query->data = NULL;
-    query->size = 0;
-    query->need_normalize = GRN_TRUE;
   } else {
     if (grn_type_id_is_text_family(ctx, domain)) {
       query->data = (char *)GRN_PLUGIN_MALLOC(ctx, size + 1);
@@ -373,9 +373,11 @@ grn_tokenizer_query_set_data(grn_ctx *ctx,
       }
       grn_memcpy(query->data, data, size);
     }
-    query->size = size;
   }
+  query->size = size;
+  query->ptr = query->data;
   query->domain = domain;
+  query->need_normalize = GRN_TRUE;
 
   GRN_API_RETURN(ctx->rc);
 }

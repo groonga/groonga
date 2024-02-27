@@ -33,8 +33,7 @@ typedef struct _grn_tokenizer_query {
   grn_obj *normalized_query;
   char *data;
   const char *ptr;
-  size_t size;
-  grn_id domain;
+  uint32_t size;
   grn_encoding encoding;
   uint32_t flags;
   grn_bool have_tokenized_delimiter;
@@ -53,6 +52,8 @@ typedef struct _grn_tokenizer_query {
   grn_bool need_delimiter_check;
 
   grn_obj *options;
+
+  grn_id domain;
 } grn_tokenizer_query;
 
 grn_rc
