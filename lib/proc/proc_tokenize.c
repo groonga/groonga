@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -92,17 +92,23 @@ output_tokens(grn_ctx *ctx,
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
-    char value[GRN_TABLE_MAX_KEY_SIZE];
-    int value_size;
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
     grn_ctx_output_map_open(ctx, "TOKEN", (int)n_elements);
 
     grn_ctx_output_cstr(ctx, "value");
-    value_size = grn_table_get_key(ctx, lexicon, token->id,
-                                   value, GRN_TABLE_MAX_KEY_SIZE);
-    grn_ctx_output_str(ctx, value, (size_t)value_size);
+    {
+      char value[GRN_TABLE_MAX_KEY_SIZE];
+      int value_size;
+      value_size =
+        grn_table_get_key(ctx, lexicon, token->id, value, GRN_TABLE_MAX_KEY_SIZE);
+      grn_obj key;
+      GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, lexicon->header.domain);
+      GRN_TEXT_SET(ctx, &key, value, value_size);
+      grn_ctx_output_obj(ctx, &key, NULL);
+      GRN_OBJ_FIN(ctx, &key);
+    }
 
     grn_ctx_output_cstr(ctx, "position");
     grn_ctx_output_int32(ctx, token->position);
