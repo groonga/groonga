@@ -96,6 +96,7 @@ repos:
           ?lib/proc/proc_query\.c|
           ?lib/proc/proc_select\.cpp|
           ?lib/proc/proc_snippet\.c|
+          ?lib/proc/proc_tokenize\.c|
           ?lib/proc\.c|
           ?lib/snip\.c|
           ?lib/store\.c|

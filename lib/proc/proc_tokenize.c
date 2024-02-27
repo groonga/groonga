@@ -33,15 +33,13 @@ typedef struct {
 } tokenize_token;
 
 static void
-init_tokens(grn_ctx *ctx,
-            grn_obj *tokens)
+init_tokens(grn_ctx *ctx, grn_obj *tokens)
 {
   GRN_VALUE_FIX_SIZE_INIT(tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
 }
 
 static void
-fin_tokens(grn_ctx *ctx,
-           grn_obj *tokens)
+fin_tokens(grn_ctx *ctx, grn_obj *tokens)
 {
   size_t i;
   size_t n_tokens;
@@ -101,10 +99,16 @@ output_tokens(grn_ctx *ctx,
     {
       char value[GRN_TABLE_MAX_KEY_SIZE];
       int value_size;
-      value_size =
-        grn_table_get_key(ctx, lexicon, token->id, value, GRN_TABLE_MAX_KEY_SIZE);
+      value_size = grn_table_get_key(ctx,
+                                     lexicon,
+                                     token->id,
+                                     value,
+                                     GRN_TABLE_MAX_KEY_SIZE);
       grn_obj key;
-      GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, lexicon->header.domain);
+      GRN_OBJ_INIT(&key,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   lexicon->header.domain);
       GRN_TEXT_SET(ctx, &key, value, value_size);
       grn_ctx_output_obj(ctx, &key, NULL);
       GRN_OBJ_FIN(ctx, &key);
@@ -197,13 +201,12 @@ tokenize(grn_ctx *ctx,
 {
   grn_token_cursor *token_cursor;
 
-  token_cursor =
-    grn_token_cursor_open(ctx,
-                          lexicon,
-                          string_raw->value,
-                          string_raw->length,
-                          mode,
-                          flags);
+  token_cursor = grn_token_cursor_open(ctx,
+                                       lexicon,
+                                       string_raw->value,
+                                       string_raw->length,
+                                       mode,
+                                       flags);
   if (!token_cursor) {
     return;
   }
@@ -268,7 +271,10 @@ tokenize(grn_ctx *ctx,
 }
 
 static grn_obj *
-command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+command_table_tokenize(grn_ctx *ctx,
+                       int nargs,
+                       grn_obj **args,
+                       grn_user_data *user_data)
 {
   grn_raw_string table_raw;
   grn_raw_string string_raw;
@@ -276,13 +282,12 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   grn_obj *mode_raw;
   grn_raw_string index_column_raw;
 
-#define GET_VALUE(name)                                         \
-  name ## _raw.value =                                          \
-    grn_plugin_proc_get_var_string(ctx,                         \
-                                   user_data,                   \
-                                   #name,                       \
-                                   strlen(#name),               \
-                                   &(name ## _raw.length))
+#define GET_VALUE(name)                                                        \
+  name##_raw.value = grn_plugin_proc_get_var_string(ctx,                       \
+                                                    user_data,                 \
+                                                    #name,                     \
+                                                    strlen(#name),             \
+                                                    &(name##_raw.length))
 
   GET_VALUE(table);
   GET_VALUE(string);
@@ -293,13 +298,15 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 #undef GET_VALUE
 
   if (table_raw.length == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "[table_tokenize] table name is missing");
     return NULL;
   }
 
   if (string_raw.length == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "[table_tokenize] string is missing");
     return NULL;
   }
@@ -317,11 +324,10 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
       return NULL;
     }
 
-    lexicon = grn_ctx_get(ctx,
-                          table_raw.value,
-                          (int)(table_raw.length));
+    lexicon = grn_ctx_get(ctx, table_raw.value, (int)(table_raw.length));
     if (!lexicon) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
                        "[table_tokenize] nonexistent lexicon: <%.*s>",
                        (int)table_raw.length,
                        table_raw.value);
@@ -329,18 +335,21 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     }
 
     if (index_column_raw.length > 0) {
-      index_column = grn_obj_column(ctx, lexicon,
+      index_column = grn_obj_column(ctx,
+                                    lexicon,
                                     index_column_raw.value,
                                     (uint32_t)(index_column_raw.length));
       if (!index_column) {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
                          "[table_tokenize] nonexistent index column: <%.*s>",
                          (int)index_column_raw.length,
                          index_column_raw.value);
         goto exit;
       }
       if (index_column->header.type != GRN_COLUMN_INDEX) {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
                          "[table_tokenize] "
                          "index column must be COLUMN_INDEX: <%.*s>",
                          (int)index_column_raw.length,
@@ -365,7 +374,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     }
 #undef MODE_NAME_EQUAL
 
-exit:
+  exit:
     grn_obj_unlink(ctx, lexicon);
     if (index_column) {
       grn_obj_unlink(ctx, index_column);
@@ -386,14 +395,18 @@ grn_proc_init_table_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "index_column", -1);
   grn_plugin_command_create(ctx,
-                            "table_tokenize", -1,
+                            "table_tokenize",
+                            -1,
                             command_table_tokenize,
                             5,
                             vars);
 }
 
 static grn_obj *
-command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+command_tokenize(grn_ctx *ctx,
+                 int nargs,
+                 grn_obj **args,
+                 grn_user_data *user_data)
 {
   const char *context_tag = "[tokenize]";
   grn_raw_string tokenizer_raw;
@@ -403,13 +416,12 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   grn_obj *mode_raw;
   grn_raw_string token_filters_raw;
 
-#define GET_VALUE(name)                                         \
-  name ## _raw.value =                                          \
-    grn_plugin_proc_get_var_string(ctx,                         \
-                                   user_data,                   \
-                                   #name,                       \
-                                   strlen(#name),               \
-                                   &(name ## _raw.length))
+#define GET_VALUE(name)                                                        \
+  name##_raw.value = grn_plugin_proc_get_var_string(ctx,                       \
+                                                    user_data,                 \
+                                                    #name,                     \
+                                                    strlen(#name),             \
+                                                    &(name##_raw.length))
 
   GET_VALUE(tokenizer);
   GET_VALUE(string);
@@ -494,9 +506,5 @@ grn_proc_init_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "token_filters", -1);
-  grn_plugin_command_create(ctx,
-                            "tokenize", -1,
-                            command_tokenize,
-                            6,
-                            vars);
+  grn_plugin_command_create(ctx, "tokenize", -1, command_tokenize, 6, vars);
 }
