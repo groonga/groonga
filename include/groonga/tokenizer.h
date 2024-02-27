@@ -23,15 +23,15 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif  /* __cplusplus */
+#endif /* __cplusplus */
 
 #define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8     "\xEF\xBF\xBE"
 #define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN 3
 
-#define GRN_TOKENIZER_BEGIN_MARK_UTF8     "\xEF\xBF\xAF"
-#define GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN 3
-#define GRN_TOKENIZER_END_MARK_UTF8       "\xEF\xBF\xB0"
-#define GRN_TOKENIZER_END_MARK_UTF8_LEN   3
+#define GRN_TOKENIZER_BEGIN_MARK_UTF8              "\xEF\xBF\xAF"
+#define GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN          3
+#define GRN_TOKENIZER_END_MARK_UTF8                "\xEF\xBF\xB0"
+#define GRN_TOKENIZER_END_MARK_UTF8_LEN            3
 
 /*
   grn_tokenizer_charlen() returns the length (#bytes) of the first character
@@ -41,8 +41,11 @@ extern "C" {
 
   Deprecated. Use grn_plugin_charlen() instead.
  */
-int grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
-                          unsigned int str_length, grn_encoding encoding);
+int
+grn_tokenizer_charlen(grn_ctx *ctx,
+                      const char *str_ptr,
+                      unsigned int str_length,
+                      grn_encoding encoding);
 
 /*
   grn_tokenizer_isspace() returns the length (#bytes) of the first character
@@ -51,28 +54,33 @@ int grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
 
   Deprecated. Use grn_plugin_isspace() instead.
  */
-int grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
-                          unsigned int str_length, grn_encoding encoding);
+int
+grn_tokenizer_isspace(grn_ctx *ctx,
+                      const char *str_ptr,
+                      unsigned int str_length,
+                      grn_encoding encoding);
 
 /*
   grn_tokenizer_is_tokenized_delimiter() returns whether is the first
   character in the string specified by `str_ptr' and `str_length' the
   special tokenized delimiter character or not.
  */
-grn_bool grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
-                                              const char *str_ptr,
-                                              unsigned int str_length,
-                                              grn_encoding encoding);
+grn_bool
+grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
+                                     const char *str_ptr,
+                                     unsigned int str_length,
+                                     grn_encoding encoding);
 
 /*
   grn_tokenizer_have_tokenized_delimiter() returns whether is there
   the special delimiter character in the string specified by `str_ptr'
   and `str_length' the special tokenized delimiter character or not.
  */
-GRN_PLUGIN_EXPORT grn_bool grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
-                                                                  const char *str_ptr,
-                                                                  unsigned int str_length,
-                                                                  grn_encoding encoding);
+GRN_PLUGIN_EXPORT grn_bool
+grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
+                                       const char *str_ptr,
+                                       unsigned int str_length,
+                                       grn_encoding encoding);
 
 /*
   grn_tokenizer_query_open() parses `args' and returns a new object of
@@ -84,29 +92,33 @@ GRN_PLUGIN_EXPORT grn_bool grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
 
   See `GRN_STRING_*' flags for `normalize_flags'.
  */
-GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
-                                                                int num_args, grn_obj **args,
-                                                                uint32_t normalize_flags);
+GRN_PLUGIN_EXPORT grn_tokenizer_query *
+grn_tokenizer_query_open(grn_ctx *ctx,
+                         int num_args,
+                         grn_obj **args,
+                         uint32_t normalize_flags);
 
 /*
   grn_tokenizer_query_create() is deprecated. Use grn_tokenizer_query_open()
   instead.
 */
 
-grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
-                                                int num_args, grn_obj **args);
+grn_tokenizer_query *
+grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args);
 
 /*
   grn_tokenizer_query_close() finalizes an object of grn_tokenizer_query
   and then frees memory allocated for that object.
  */
-GRN_PLUGIN_EXPORT void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query);
+GRN_PLUGIN_EXPORT void
+grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_query_destroy() is deprecated. Use grn_tokenizer_query_close()
   instead.
  */
-void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
+void
+grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
 
 GRN_PLUGIN_EXPORT grn_rc
 grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
@@ -146,19 +158,15 @@ grn_tokenizer_query_get_token_filter_index(grn_ctx *ctx,
                                            grn_tokenizer_query *query);
 
 GRN_PLUGIN_EXPORT grn_obj *
-grn_tokenizer_query_get_source_column(grn_ctx *ctx,
-                                      grn_tokenizer_query *query);
+grn_tokenizer_query_get_source_column(grn_ctx *ctx, grn_tokenizer_query *query);
 
 GRN_PLUGIN_EXPORT grn_id
-grn_tokenizer_query_get_source_id(grn_ctx *ctx,
-                                  grn_tokenizer_query *query);
+grn_tokenizer_query_get_source_id(grn_ctx *ctx, grn_tokenizer_query *query);
 
 GRN_PLUGIN_EXPORT grn_obj *
-grn_tokenizer_query_get_index_column(grn_ctx *ctx,
-                                     grn_tokenizer_query *query);
+grn_tokenizer_query_get_index_column(grn_ctx *ctx, grn_tokenizer_query *query);
 GRN_PLUGIN_EXPORT grn_obj *
-grn_tokenizer_query_get_options(grn_ctx *ctx,
-                                grn_tokenizer_query *query);
+grn_tokenizer_query_get_options(grn_ctx *ctx, grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object
@@ -176,13 +184,15 @@ struct _grn_tokenizer_token {
   grn_tokenizer_token_init() initializes `token'. Note that an initialized
   object must be finalized by grn_tokenizer_token_fin().
  */
-GRN_PLUGIN_EXPORT void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token);
+GRN_PLUGIN_EXPORT void
+grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
   grn_tokenizer_token_fin() finalizes `token' that has been initialized by
   grn_tokenizer_token_init().
  */
-GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
+GRN_PLUGIN_EXPORT void
+grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
  * grn_tokenizer_status is a flag set for tokenizer status codes.
@@ -198,39 +208,40 @@ typedef grn_token_status grn_tokenizer_status;
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_CONTINUE instead.
  */
-#define GRN_TOKENIZER_TOKEN_CONTINUE           GRN_TOKEN_CONTINUE
+#define GRN_TOKENIZER_TOKEN_CONTINUE GRN_TOKEN_CONTINUE
 /*
  * GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one.
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_LAST instead.
  */
-#define GRN_TOKENIZER_TOKEN_LAST               GRN_TOKEN_LAST
+#define GRN_TOKENIZER_TOKEN_LAST GRN_TOKEN_LAST
 /*
  * GRN_TOKENIZER_TOKEN_OVERLAP means that ...
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_OVERLAP instead.
  */
-#define GRN_TOKENIZER_TOKEN_OVERLAP            GRN_TOKEN_OVERLAP
+#define GRN_TOKENIZER_TOKEN_OVERLAP GRN_TOKEN_OVERLAP
 /*
  * GRN_TOKENIZER_TOKEN_UNMATURED means that ...
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_UNMATURED instead.
  */
-#define GRN_TOKENIZER_TOKEN_UNMATURED          GRN_TOKEN_UNMATURED
+#define GRN_TOKENIZER_TOKEN_UNMATURED GRN_TOKEN_UNMATURED
 /*
  * GRN_TOKENIZER_TOKEN_REACH_END means that ...
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_REACH_END instead.
  */
-#define GRN_TOKENIZER_TOKEN_REACH_END          GRN_TOKEN_REACH_END
+#define GRN_TOKENIZER_TOKEN_REACH_END GRN_TOKEN_REACH_END
 /*
  * GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_SKIP instead.
  */
-#define GRN_TOKENIZER_TOKEN_SKIP               GRN_TOKEN_SKIP
+#define GRN_TOKENIZER_TOKEN_SKIP GRN_TOKEN_SKIP
 /*
- * GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped
+ * GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is
+ * skipped
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_SKIP_WITH_POSITION instead.
  */
@@ -240,7 +251,7 @@ typedef grn_token_status grn_tokenizer_status;
  *
  * @deprecated since 4.0.8. Use GRN_TOKEN_FORCE_PREIX instead.
  */
-#define GRN_TOKENIZER_TOKEN_FORCE_PREFIX       GRN_TOKEN_FORCE_PREFIX
+#define GRN_TOKENIZER_TOKEN_FORCE_PREFIX GRN_TOKEN_FORCE_PREFIX
 
 /*
  * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They
@@ -259,9 +270,12 @@ typedef grn_token_status grn_tokenizer_status;
   request for the next token or finalization comes. See grn_token_status in
   this header for more details of `status'.
  */
-GRN_PLUGIN_EXPORT void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
-                                                const char *str_ptr, unsigned int str_length,
-                                                grn_token_status status);
+GRN_PLUGIN_EXPORT void
+grn_tokenizer_token_push(grn_ctx *ctx,
+                         grn_tokenizer_token *token,
+                         const char *str_ptr,
+                         unsigned int str_length,
+                         grn_token_status status);
 
 /*
   grn_tokenizer_tokenized_delimiter_next() extracts the next token
@@ -274,11 +288,12 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_toke
   grn_tokenizer_next_by_tokenized_delimiter() for new tokenizer next
   API (grn_tokenizer_next_func).
  */
-GRN_PLUGIN_EXPORT const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
-                                                                     grn_tokenizer_token *token,
-                                                                     const char *str_ptr,
-                                                                     unsigned int str_length,
-                                                                     grn_encoding encoding);
+GRN_PLUGIN_EXPORT const char *
+grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
+                                       grn_tokenizer_token *token,
+                                       const char *str_ptr,
+                                       unsigned int str_length,
+                                       grn_encoding encoding);
 
 /*
   Extract the next token by delimiting by
@@ -311,25 +326,25 @@ grn_tokenizer_next_by_tokenized_delimiter(grn_ctx *ctx,
   grn_tokenizer_set_*_func().
  */
 GRN_PLUGIN_EXPORT grn_rc
-grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
+grn_tokenizer_register(grn_ctx *ctx,
+                       const char *plugin_name_ptr,
                        unsigned int plugin_name_length,
-                       grn_proc_func *init, grn_proc_func *next,
+                       grn_proc_func *init,
+                       grn_proc_func *next,
                        grn_proc_func *fin);
 
 GRN_PLUGIN_EXPORT grn_obj *
-grn_tokenizer_create(grn_ctx *ctx,
-                     const char *name,
-                     int name_length);
+grn_tokenizer_create(grn_ctx *ctx, const char *name, int name_length);
 
-typedef void *grn_tokenizer_init_func(grn_ctx *ctx,
-                                      grn_tokenizer_query *query);
-typedef void grn_tokenizer_next_func(grn_ctx *ctx,
-                                     grn_tokenizer_query *query,
-                                     grn_token *token,
-                                     void *user_data);
-typedef void grn_tokenizer_fin_func(grn_ctx *ctx,
-                                    void *user_data);
-
+typedef void *
+grn_tokenizer_init_func(grn_ctx *ctx, grn_tokenizer_query *query);
+typedef void
+grn_tokenizer_next_func(grn_ctx *ctx,
+                        grn_tokenizer_query *query,
+                        grn_token *token,
+                        void *user_data);
+typedef void
+grn_tokenizer_fin_func(grn_ctx *ctx, void *user_data);
 
 GRN_PLUGIN_EXPORT grn_rc
 grn_tokenizer_set_init_func(grn_ctx *ctx,
@@ -345,5 +360,5 @@ grn_tokenizer_set_fin_func(grn_ctx *ctx,
                            grn_tokenizer_fin_func *fin);
 
 #ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
+} /* extern "C" */
+#endif /* __cplusplus */

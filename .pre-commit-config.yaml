@@ -31,6 +31,7 @@ repos:
           ?include/groonga/obj\.h|
           ?include/groonga/proc\.h|
           ?include/groonga/table\.h|
+          ?include/groonga/tokenizer\.h|
           ?include/groonga/type\.h|
           ?include/groonga/util\.h|
           ?lib/aggregators\.c|
