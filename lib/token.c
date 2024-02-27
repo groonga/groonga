@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -91,6 +91,35 @@ grn_token_set_data(grn_ctx *ctx,
     str_length = (int)strlen(str_ptr);
   }
   GRN_TEXT_SET(ctx, &(token->data), str_ptr, str_length);
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_id
+grn_token_get_domain(grn_ctx *ctx,grn_token *token)
+{
+  GRN_API_ENTER;
+  grn_id domain = GRN_ID_NIL;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][set] token must not be NULL");
+    goto exit;
+  }
+  domain = token->data.header.domain;
+exit:
+  GRN_API_RETURN(domain);
+}
+
+grn_rc
+grn_token_set_domain(grn_ctx *ctx,grn_token *token, grn_id domain)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][set] token must not be NULL");
+    goto exit;
+  }
+  token->data.header.domain = domain;
 exit:
   GRN_API_RETURN(ctx->rc);
 }

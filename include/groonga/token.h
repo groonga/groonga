@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -134,6 +134,10 @@ GRN_API grn_rc grn_token_set_data(grn_ctx *ctx,
                                   grn_token *token,
                                   const char *str_ptr,
                                   int str_length);
+GRN_API grn_id grn_token_get_domain(grn_ctx *ctx, grn_token *token);
+GRN_API grn_rc grn_token_set_domain(grn_ctx *ctx,
+                                    grn_token *token,
+                                    grn_id domain);
 GRN_API grn_token_status grn_token_get_status(grn_ctx *ctx,
                                               grn_token *token);
 GRN_API grn_rc grn_token_set_status(grn_ctx *ctx,
