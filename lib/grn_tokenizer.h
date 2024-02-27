@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -55,11 +55,9 @@ typedef struct _grn_tokenizer_query {
 } grn_tokenizer_query;
 
 grn_rc
-grn_tokenizer_query_init(grn_ctx *ctx,
-                         grn_tokenizer_query *query);
+grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query);
 void
-grn_tokenizer_query_fin(grn_ctx *ctx,
-                        grn_tokenizer_query *query);
+grn_tokenizer_query_fin(grn_ctx *ctx, grn_tokenizer_query *query);
 grn_rc
 grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
                                    grn_tokenizer_query *query,
