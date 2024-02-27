@@ -22,6 +22,15 @@ msgstr "導入"
 msgid "This documentation describes about how to write, generate and manage Groonga documentation."
 msgstr "この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
 
+msgid "Checkout Groonga from the repository"
+msgstr ""
+
+msgid "You should build Groonga documentation from source code at the repository. Because source code in the repository is the latest."
+msgstr ""
+
+msgid "The Groonga repository is hosted on `GitHub <https://github.com/groonga/groonga>`_. Checkout the latest source code from the repository::"
+msgstr ""
+
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 

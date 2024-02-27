@@ -6,6 +6,19 @@ Introduction
 This documentation describes about how to write, generate and manage
 Groonga documentation.
 
+Checkout Groonga from the repository
+------------------------------------
+
+You should build Groonga documentation from source code at the repository.
+Because source code in the repository is the latest.
+
+The Groonga repository is hosted on `GitHub
+<https://github.com/groonga/groonga>`_. Checkout the latest source
+code from the repository::
+
+  % git clone --recursive git@github.com:groonga/groonga.git
+  % cd groonga
+
 Install depended software
 -------------------------
 
