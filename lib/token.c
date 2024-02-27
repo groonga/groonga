@@ -50,8 +50,7 @@ grn_token_get_data(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][get] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][data][get] token must not be NULL");
     GRN_API_RETURN(NULL);
   }
   GRN_API_RETURN(&(token->data));
@@ -62,8 +61,7 @@ grn_token_get_data_raw(grn_ctx *ctx, grn_token *token, size_t *length)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][get][raw] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][data][get][raw] token must not be NULL");
     if (length) {
       *length = 0;
     }
@@ -83,8 +81,7 @@ grn_token_set_data(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][data][set] token must not be NULL");
     goto exit;
   }
   if (str_length == -1) {
@@ -96,13 +93,12 @@ exit:
 }
 
 grn_id
-grn_token_get_domain(grn_ctx *ctx,grn_token *token)
+grn_token_get_domain(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   grn_id domain = GRN_ID_NIL;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][data][set] token must not be NULL");
     goto exit;
   }
   domain = token->data.header.domain;
@@ -111,12 +107,11 @@ exit:
 }
 
 grn_rc
-grn_token_set_domain(grn_ctx *ctx,grn_token *token, grn_id domain)
+grn_token_set_domain(grn_ctx *ctx, grn_token *token, grn_id domain)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][data][set] token must not be NULL");
     goto exit;
   }
   token->data.header.domain = domain;
@@ -129,22 +124,18 @@ grn_token_get_status(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][status][get] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][status][get] token must not be NULL");
     GRN_API_RETURN(GRN_TOKEN_CONTINUE);
   }
   GRN_API_RETURN(token->status);
 }
 
 grn_rc
-grn_token_set_status(grn_ctx *ctx,
-                     grn_token *token,
-                     grn_token_status status)
+grn_token_set_status(grn_ctx *ctx, grn_token *token, grn_token_status status)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][status][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][status][set] token must not be NULL");
     goto exit;
   }
   token->status = status;
@@ -153,14 +144,11 @@ exit:
 }
 
 grn_rc
-grn_token_add_status(grn_ctx *ctx,
-                     grn_token *token,
-                     grn_token_status status)
+grn_token_add_status(grn_ctx *ctx, grn_token *token, grn_token_status status)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][status][add] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][status][add] token must not be NULL");
     goto exit;
   }
   token->status |= status;
@@ -169,14 +157,11 @@ exit:
 }
 
 grn_rc
-grn_token_remove_status(grn_ctx *ctx,
-                        grn_token *token,
-                        grn_token_status status)
+grn_token_remove_status(grn_ctx *ctx, grn_token *token, grn_token_status status)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][status][remove] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][status][remove] token must not be NULL");
     goto exit;
   }
   token->status &= ~status;
@@ -197,9 +182,7 @@ grn_token_get_source_offset(grn_ctx *ctx, grn_token *token)
 }
 
 grn_rc
-grn_token_set_source_offset(grn_ctx *ctx,
-                            grn_token *token,
-                            uint64_t offset)
+grn_token_set_source_offset(grn_ctx *ctx, grn_token *token, uint64_t offset)
 {
   GRN_API_ENTER;
   if (!token) {
@@ -225,9 +208,7 @@ grn_token_get_source_length(grn_ctx *ctx, grn_token *token)
 }
 
 grn_rc
-grn_token_set_source_length(grn_ctx *ctx,
-                            grn_token *token,
-                            uint32_t length)
+grn_token_set_source_length(grn_ctx *ctx, grn_token *token, uint32_t length)
 {
   GRN_API_ENTER;
   if (!token) {
@@ -273,22 +254,18 @@ grn_token_have_overlap(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][overlap][have] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][overlap][have] token must not be NULL");
     GRN_API_RETURN(0);
   }
   GRN_API_RETURN(token->have_overlap);
 }
 
 grn_rc
-grn_token_set_overlap(grn_ctx *ctx,
-                      grn_token *token,
-                      grn_bool have_overlap)
+grn_token_set_overlap(grn_ctx *ctx, grn_token *token, grn_bool have_overlap)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][overlap][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][overlap][set] token must not be NULL");
     goto exit;
   }
   token->have_overlap = have_overlap;
@@ -301,8 +278,7 @@ grn_token_get_metadata(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][metadata][get] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][metadata][get] token must not be NULL");
     GRN_API_RETURN(NULL);
   }
   GRN_API_RETURN(&(token->metadata));
@@ -321,7 +297,9 @@ grn_token_get_force_prefix_search(grn_ctx *ctx, grn_token *token)
 }
 
 grn_rc
-grn_token_set_force_prefix_search(grn_ctx *ctx, grn_token *token, grn_bool force)
+grn_token_set_force_prefix_search(grn_ctx *ctx,
+                                  grn_token *token,
+                                  grn_bool force)
 {
   GRN_API_ENTER;
   if (!token) {
@@ -338,8 +316,7 @@ grn_token_get_position(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][position][get] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][position][get] token must not be NULL");
     GRN_API_RETURN(0);
   }
   GRN_API_RETURN(token->position);
@@ -350,8 +327,7 @@ grn_token_set_position(grn_ctx *ctx, grn_token *token, uint32_t position)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][position][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][position][set] token must not be NULL");
     GRN_API_RETURN(ctx->rc);
   }
   token->position = position;
@@ -363,8 +339,7 @@ grn_token_get_weight(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][weight][get] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][weight][get] token must not be NULL");
     GRN_API_RETURN(0.0);
   }
   GRN_API_RETURN(token->weight);
@@ -375,8 +350,7 @@ grn_token_set_weight(grn_ctx *ctx, grn_token *token, float weight)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[token][float][set] token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT, "[token][float][set] token must not be NULL");
     GRN_API_RETURN(ctx->rc);
   }
   token->weight = weight;
@@ -406,9 +380,7 @@ exit:
 }
 
 grn_rc
-grn_token_copy(grn_ctx *ctx,
-               grn_token *token,
-               grn_token *source)
+grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source)
 {
   GRN_API_ENTER;
   if (!token) {
