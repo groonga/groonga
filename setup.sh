@@ -29,6 +29,7 @@ if [ -f /etc/debian_version ]; then
 
   wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   ${SUDO} apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+  rm "apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb"
   ${SUDO} apt update
 fi
 
@@ -68,7 +69,3 @@ case "${distribution}-${code_name}" in
     ${SUDO} apt install -y -V "${package_names[@]}"
     ;;
 esac
-
-if [ -f "apache-arrow-apt-source-latest-${code_name}.deb" ]; then
-  rm "apache-arrow-apt-source-latest-${code_name}.deb"
-fi
