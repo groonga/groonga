@@ -26,6 +26,10 @@ fi
 if [ -f /etc/debian_version ]; then
   ${SUDO} apt update
   ${SUDO} apt install -y -V lsb-release wget
+
+  wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+  ${SUDO} apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+  ${SUDO} apt update
 fi
 
 if type lsb_release  > /dev/null 2>&1; then
@@ -44,6 +48,7 @@ case "${distribution}-${code_name}" in
       cmake
       g++
       gcc
+      libarrow-dev
       liblz4-dev
       libmecab-dev
       libmsgpack-dev
@@ -64,3 +69,6 @@ case "${distribution}-${code_name}" in
     ;;
 esac
 
+if [ -f "apache-arrow-apt-source-latest-${code_name}.deb" ]; then
+  rm "apache-arrow-apt-source-latest-${code_name}.deb"
+fi
