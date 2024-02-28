@@ -9458,6 +9458,9 @@ grn_vector2updspecs(grn_ctx *ctx,
                                                              v->length,
                                                              mode,
                                                              token_flags))) {
+        if (v->domain != GRN_ID_NIL) {
+          grn_token_cursor_set_query_domain(ctx, token_cursor, v->domain);
+        }
         while (!token_cursor->status) {
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
             if (posting) {
@@ -9599,6 +9602,7 @@ grn_uvector2updspecs_data(grn_ctx *ctx,
       continue;
     }
 
+    grn_token_cursor_set_query_domain(ctx, token_cursor, in->header.domain);
     while (!token_cursor->status) {
       grn_id tid;
       if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
@@ -9833,10 +9837,13 @@ grn_ii_column_update_internal(grn_ctx *ctx,
           do_grn_ii_updspec_cmp = false;
         }
         new_ = new;
-        GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
+        GRN_OBJ_INIT(&newv,
+                     GRN_VECTOR,
+                     GRN_OBJ_DO_SHALLOW_COPY,
+                     new_->header.domain);
         newv.u.v.body = new;
         new = &newv;
-        grn_vector_delimit(ctx, new, 0, GRN_ID_NIL);
+        grn_vector_delimit(ctx, new, 0, new_->header.domain);
         if (new_ != newvalue) {
           grn_obj_close(ctx, new_);
         }
@@ -9993,10 +10000,13 @@ grn_ii_column_update_internal(grn_ctx *ctx,
         //        const char *str = GRN_BULK_HEAD(old);
         //        unsigned int str_len = GRN_BULK_VSIZE(old);
         old_ = old;
-        GRN_OBJ_INIT(&oldv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
+        GRN_OBJ_INIT(&oldv,
+                     GRN_VECTOR,
+                     GRN_OBJ_DO_SHALLOW_COPY,
+                     old_->header.domain);
         oldv.u.v.body = old;
         old = &oldv;
-        grn_vector_delimit(ctx, old, 0, GRN_ID_NIL);
+        grn_vector_delimit(ctx, old, 0, old_->header.domain);
         if (old_ != oldvalue) {
           grn_obj_close(ctx, old_);
         }
