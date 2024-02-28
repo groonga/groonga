@@ -107,6 +107,7 @@ repos:
           ?lib/table\.c|
           ?lib/table_selector\.c|
           ?lib/token\.c|
+          ?lib/token_cursor\.c|
           ?lib/tokenizer\.c|
           ?lib/tokenizers\.c|
           ?lib/trace_log\.cpp|

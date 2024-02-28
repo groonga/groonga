@@ -45,7 +45,8 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     return;
   }
 
-  token_cursor->token_filter.data = GRN_CALLOC(sizeof(void *) * n_token_filters);
+  token_cursor->token_filter.data =
+    GRN_CALLOC(sizeof(void *) * n_token_filters);
   if (!token_cursor->token_filter.data) {
     return;
   }
@@ -72,8 +73,10 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
 }
 
 grn_token_cursor *
-grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
-                      const char *str, size_t str_len,
+grn_token_cursor_open(grn_ctx *ctx,
+                      grn_obj *table,
+                      const char *str,
+                      size_t str_len,
                       grn_tokenize_mode mode,
                       uint32_t flags)
 {
@@ -84,8 +87,13 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_obj *tokenizer;
   grn_obj *token_filters;
   grn_table_flags table_flags;
-  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
-                         NULL, &token_filters)) {
+  if (grn_table_get_info(ctx,
+                         table,
+                         &table_flags,
+                         &encoding,
+                         &tokenizer,
+                         NULL,
+                         &token_filters)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[token-cursor][open] failed to get table information");
     GRN_API_RETURN(NULL);
@@ -136,8 +144,7 @@ grn_token_cursor_set_query_domain(grn_ctx *ctx,
 }
 
 static bool
-grn_token_cursor_ensure_initialize(grn_ctx *ctx,
-                                   grn_token_cursor *token_cursor)
+grn_token_cursor_ensure_initialize(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
   if (token_cursor->initialized) {
     goto exit;
@@ -182,9 +189,7 @@ grn_token_cursor_ensure_initialize(grn_ctx *ctx,
     } else if (tokenizer_proc->funcs[PROC_INIT]) {
       grn_obj str_, flags_, mode_;
       GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
-      GRN_TEXT_SET_REF(&str_,
-                       token_cursor->orig,
-                       token_cursor->orig_blen);
+      GRN_TEXT_SET_REF(&str_, token_cursor->orig, token_cursor->orig_blen);
       GRN_UINT32_INIT(&flags_, 0);
       GRN_UINT32_SET(ctx, &flags_, token_cursor->flags);
       GRN_UINT32_INIT(&mode_, 0);
@@ -198,10 +203,11 @@ grn_token_cursor_ensure_initialize(grn_ctx *ctx,
       grn_ctx_push(ctx, &mode_);
       grn_ctx_push(ctx, &str_);
       grn_ctx_push(ctx, &flags_);
-      tokenizer_proc->funcs[PROC_INIT](ctx,
-                                       1,
-                                       &(token_cursor->table),
-                                       &(token_cursor->tokenizer.pctx.user_data));
+      tokenizer_proc->funcs[PROC_INIT](
+        ctx,
+        1,
+        &(token_cursor->table),
+        &(token_cursor->tokenizer.pctx.user_data));
       grn_obj_close(ctx, &flags_);
       grn_obj_close(ctx, &str_);
       grn_obj_close(ctx, &mode_);
@@ -278,7 +284,7 @@ grn_token_cursor_ensure_initialize(grn_ctx *ctx,
     grn_token_cursor_open_initialize_token_filters(ctx, token_cursor);
   }
 
-exit :
+exit:
   return ctx->rc == GRN_SUCCESS;
 }
 
@@ -354,9 +360,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
 
       grn_tokenizer_query_set_token_filter_index(ctx, query, (unsigned int)i);
 
-#define SKIP_FLAGS                              \
-      (GRN_TOKEN_SKIP |                         \
-       GRN_TOKEN_SKIP_WITH_POSITION)
+#define SKIP_FLAGS (GRN_TOKEN_SKIP | GRN_TOKEN_SKIP_WITH_POSITION)
       if (grn_token_get_status(ctx, current_token) & SKIP_FLAGS) {
         break;
       }
@@ -389,13 +393,11 @@ grn_token_cursor_next_need_keep_original(grn_ctx *ctx,
   }
 
   grn_raw_string current_data;
-  current_data.value = grn_token_get_data_raw(ctx,
-                                              current_token,
-                                              &(current_data.length));
+  current_data.value =
+    grn_token_get_data_raw(ctx, current_token, &(current_data.length));
   grn_raw_string original_data;
-  original_data.value = grn_token_get_data_raw(ctx,
-                                               original_token,
-                                               &(original_data.length));
+  original_data.value =
+    grn_token_get_data_raw(ctx, original_token, &(original_data.length));
   return !GRN_RAW_STRING_EQUAL(current_data, original_data);
 }
 
@@ -419,9 +421,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     if (token_cursor->pending.token) {
       token_cursor->status = token_cursor->pending.status;
       grn_token_copy(ctx, current_token, token_cursor->pending.token);
-      grn_token_remove_status(ctx,
-                              current_token,
-                              GRN_TOKEN_KEEP_ORIGINAL);
+      grn_token_remove_status(ctx, current_token, GRN_TOKEN_KEEP_ORIGINAL);
       size_t size;
       token_cursor->curr = grn_token_get_data_raw(ctx, current_token, &size);
       token_cursor->curr_size = (uint32_t)size;
@@ -437,10 +437,11 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                                                  user_data);
       } else if (tokenizer_proc->funcs[PROC_NEXT]) {
         grn_obj *data, *status_obj;
-        tokenizer_proc->funcs[PROC_NEXT](ctx,
-                                         1,
-                                         &table,
-                                         &token_cursor->tokenizer.pctx.user_data);
+        tokenizer_proc->funcs[PROC_NEXT](
+          ctx,
+          1,
+          &table,
+          &token_cursor->tokenizer.pctx.user_data);
         status_obj = grn_ctx_pop(ctx);
         data = grn_ctx_pop(ctx);
         grn_token_set_data(ctx,
@@ -457,17 +458,17 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     {
       grn_token_status status = grn_token_get_status(ctx, current_token);
       token_cursor->status =
-        ((status & GRN_TOKEN_LAST) ||
-         (token_cursor->mode == GRN_TOKENIZE_GET &&
-          (status & GRN_TOKEN_REACH_END)))
-        ? GRN_TOKEN_CURSOR_DONE : GRN_TOKEN_CURSOR_DOING;
-#define SKIP_FLAGS \
-      (GRN_TOKEN_SKIP | GRN_TOKEN_SKIP_WITH_POSITION)
+        ((status & GRN_TOKEN_LAST) || (token_cursor->mode == GRN_TOKENIZE_GET &&
+                                       (status & GRN_TOKEN_REACH_END)))
+          ? GRN_TOKEN_CURSOR_DONE
+          : GRN_TOKEN_CURSOR_DOING;
+#define SKIP_FLAGS (GRN_TOKEN_SKIP | GRN_TOKEN_SKIP_WITH_POSITION)
       if (status & SKIP_FLAGS) {
         if (status & GRN_TOKEN_SKIP) {
           token_cursor->pos++;
         }
-        if (token_cursor->status == GRN_TOKEN_CURSOR_DONE && tid == GRN_ID_NIL) {
+        if (token_cursor->status == GRN_TOKEN_CURSOR_DONE &&
+            tid == GRN_ID_NIL) {
           token_cursor->status = GRN_TOKEN_CURSOR_DONE_SKIP;
           break;
         } else {
@@ -482,12 +483,14 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         continue;
       }
       if (token_cursor->curr_size > GRN_TABLE_MAX_KEY_SIZE) {
-        GRN_LOG(ctx, GRN_WARN,
+        GRN_LOG(ctx,
+                GRN_WARN,
                 "[token_next] ignore too long token. "
                 "Token must be less than or equal to %d: <%d>(<%.*s>)",
                 GRN_TABLE_MAX_KEY_SIZE,
                 token_cursor->curr_size,
-                token_cursor->curr_size, token_cursor->curr);
+                token_cursor->curr_size,
+                token_cursor->curr);
         continue;
       }
       if (status & GRN_TOKEN_UNMATURED) {
@@ -508,7 +511,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       tid = GRN_RECORD_VALUE(&(current_token->data));
     } else if (token_cursor->mode == GRN_TOKENIZE_ADD) {
       switch (table->header.type) {
-      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_PAT_KEY:
         if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
           tid = grn_pat_get(ctx,
                             (grn_pat *)table,
@@ -517,17 +520,19 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                             NULL);
         }
         if (tid == GRN_ID_NIL) {
-          GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          GRN_TABLE_LOCK_BEGIN(ctx, table)
+          {
             tid = grn_pat_add(ctx,
                               (grn_pat *)table,
                               token_cursor->curr,
                               token_cursor->curr_size,
                               NULL,
                               NULL);
-          } GRN_TABLE_LOCK_END(ctx);
+          }
+          GRN_TABLE_LOCK_END(ctx);
         }
         break;
-      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_DAT_KEY:
         if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
           tid = grn_dat_get(ctx,
                             (grn_dat *)table,
@@ -536,17 +541,19 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                             NULL);
         }
         if (tid == GRN_ID_NIL) {
-          GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          GRN_TABLE_LOCK_BEGIN(ctx, table)
+          {
             tid = grn_dat_add(ctx,
                               (grn_dat *)table,
                               token_cursor->curr,
                               token_cursor->curr_size,
                               NULL,
                               NULL);
-          } GRN_TABLE_LOCK_END(ctx);
+          }
+          GRN_TABLE_LOCK_END(ctx);
         }
         break;
-      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_HASH_KEY:
         if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
           tid = grn_hash_get(ctx,
                              (grn_hash *)table,
@@ -554,16 +561,18 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                              token_cursor->curr_size,
                              NULL);
         }
-        GRN_TABLE_LOCK_BEGIN(ctx, table) {
+        GRN_TABLE_LOCK_BEGIN(ctx, table)
+        {
           tid = grn_hash_add(ctx,
                              (grn_hash *)table,
                              token_cursor->curr,
                              token_cursor->curr_size,
                              NULL,
                              NULL);
-        } GRN_TABLE_LOCK_END(ctx);
+        }
+        GRN_TABLE_LOCK_END(ctx);
         break;
-      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_NO_KEY:
         if (token_cursor->curr_size == sizeof(grn_id)) {
           tid = *((grn_id *)token_cursor->curr);
         } else {
@@ -573,16 +582,28 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       }
     } else if (token_cursor->mode != GRN_TOKENIZE_ONLY) {
       switch (table->header.type) {
-      case GRN_TABLE_PAT_KEY :
-        tid = grn_pat_get(ctx, (grn_pat *)table, token_cursor->curr, token_cursor->curr_size, NULL);
+      case GRN_TABLE_PAT_KEY:
+        tid = grn_pat_get(ctx,
+                          (grn_pat *)table,
+                          token_cursor->curr,
+                          token_cursor->curr_size,
+                          NULL);
         break;
-      case GRN_TABLE_DAT_KEY :
-        tid = grn_dat_get(ctx, (grn_dat *)table, token_cursor->curr, token_cursor->curr_size, NULL);
+      case GRN_TABLE_DAT_KEY:
+        tid = grn_dat_get(ctx,
+                          (grn_dat *)table,
+                          token_cursor->curr,
+                          token_cursor->curr_size,
+                          NULL);
         break;
-      case GRN_TABLE_HASH_KEY :
-        tid = grn_hash_get(ctx, (grn_hash *)table, token_cursor->curr, token_cursor->curr_size, NULL);
+      case GRN_TABLE_HASH_KEY:
+        tid = grn_hash_get(ctx,
+                           (grn_hash *)table,
+                           token_cursor->curr,
+                           token_cursor->curr_size,
+                           NULL);
         break;
-      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_NO_KEY:
         if (token_cursor->curr_size == sizeof(grn_id)) {
           tid = *((grn_id *)token_cursor->curr);
         } else {
@@ -591,8 +612,8 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         break;
       }
     }
-    if (token_cursor->mode != GRN_TOKENIZE_ONLY &&
-        tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
+    if (token_cursor->mode != GRN_TOKENIZE_ONLY && tid == GRN_ID_NIL &&
+        token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
       token_cursor->status = GRN_TOKEN_CURSOR_NOT_FOUND;
     }
     if (grn_token_cursor_next_need_keep_original(ctx, token_cursor)) {
