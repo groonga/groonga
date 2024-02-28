@@ -73,7 +73,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_prepare_debian_control_h3(control, target)
     case target
-    when /\debian-bullseye/, /\Aubuntu-focal/
+    when /\Adebian-bullseye/, /\Aubuntu-focal/
       enable_h3 = "#"
     else
       enable_h3 = ""
