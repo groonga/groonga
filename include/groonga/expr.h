@@ -72,7 +72,7 @@ GRN_API grn_obj *grn_expr_append_const_int32(grn_ctx *ctx,
                                              int nargs);
 GRN_API grn_obj *grn_expr_append_const_bool(grn_ctx *ctx,
                                             grn_obj *expr,
-                                            grn_bool value,
+                                            bool value,
                                             grn_operator op,
                                             int nargs);
 GRN_API grn_obj *grn_expr_append_const_float32(grn_ctx *ctx,

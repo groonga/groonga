@@ -1680,7 +1680,7 @@ grn_expr_append_const_int32(
 
 grn_obj *
 grn_expr_append_const_bool(
-  grn_ctx *ctx, grn_obj *expr, grn_bool value, grn_operator op, int nargs)
+  grn_ctx *ctx, grn_obj *expr, bool value, grn_operator op, int nargs)
 {
   grn_obj *res = NULL;
   GRN_API_ENTER;
@@ -3008,7 +3008,7 @@ scan_info_build_match(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 grn_scan_info_build_full_not(grn_ctx *ctx,
                              scan_info **sis,
                              int *i,
@@ -3020,7 +3020,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
   scan_info *last_si;
 
   if (*i == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   last_si = sis[*i - 1];
@@ -3051,7 +3051,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
         scan_info *all_records_si = NULL;
         SI_ALLOC_RAW(all_records_si, 0);
         if (!all_records_si) {
-          return GRN_FALSE;
+          return false;
         }
         all_records_si->op = GRN_OP_CALL;
         grn_scan_info_push_arg(ctx,
@@ -3067,14 +3067,14 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
           last_si->op = GRN_OP_NOT_EQUAL;
           last_si->end++;
         } else {
-          return GRN_FALSE;
+          return false;
         }
       }
     } else {
       grn_expr_code *next_code = code + 1;
 
       if (next_code >= code_end) {
-        return GRN_FALSE;
+        return false;
       }
 
       switch (next_code->op) {
@@ -3089,7 +3089,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
           scan_info *all_records_si = NULL;
           SI_ALLOC_RAW(all_records_si, 0);
           if (!all_records_si) {
-            return GRN_FALSE;
+            return false;
           }
           all_records_si->op = GRN_OP_CALL;
           grn_scan_info_push_arg(ctx,
@@ -3102,13 +3102,13 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
         }
         break;
       default:
-        return GRN_FALSE;
+        return false;
         break;
       }
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static float
@@ -3226,17 +3226,17 @@ grn_scan_info_build_full(
       break;
     case GRN_OP_PUSH:
       {
-        grn_bool is_completed_term = GRN_FALSE;
+        bool is_completed_term = false;
         if (c->modify > 0) {
           switch ((c + c->modify)->op) {
           case GRN_OP_AND:
           case GRN_OP_OR:
           case GRN_OP_AND_NOT:
           case GRN_OP_ADJUST:
-            is_completed_term = GRN_TRUE;
+            is_completed_term = true;
             break;
           default:
-            is_completed_term = GRN_FALSE;
+            is_completed_term = false;
             break;
           }
         }
@@ -3409,16 +3409,16 @@ grn_scan_info_build_full(
         stat = SCAN_CONST;
       }
       if (c->modify > 0) {
-        grn_bool is_completed_term = GRN_FALSE;
+        bool is_completed_term = false;
         switch ((c + c->modify)->op) {
         case GRN_OP_AND:
         case GRN_OP_OR:
         case GRN_OP_AND_NOT:
         case GRN_OP_ADJUST:
-          is_completed_term = GRN_TRUE;
+          is_completed_term = true;
           break;
         default:
-          is_completed_term = GRN_FALSE;
+          is_completed_term = false;
           break;
         }
         if (is_completed_term) {
@@ -3571,14 +3571,13 @@ grn_scan_info_build_full(
       break;
     case GRN_OP_NOT:
       {
-        grn_bool valid;
-        valid = grn_scan_info_build_full_not(ctx,
-                                             sis,
-                                             &i,
-                                             e->codes,
-                                             c,
-                                             ce,
-                                             &next_code_op);
+        bool valid = grn_scan_info_build_full_not(ctx,
+                                                  sis,
+                                                  &i,
+                                                  e->codes,
+                                                  c,
+                                                  ce,
+                                                  &next_code_op);
         if (!valid) {
           int j;
           for (j = 0; j < i; j++) {
