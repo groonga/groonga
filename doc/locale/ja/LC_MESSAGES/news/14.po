@@ -1,0 +1,96 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 13.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-02-28 22:52+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=; plural=;\n"
+
+msgid "News - 14 series"
+msgstr "お知らせ - 14系"
+
+msgid "Release 14.0.0 - 2024-02-29"
+msgstr "14.0.0リリース - 2024-02-29"
+
+msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 14.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく14.0.0へアップグレードできます。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Added new functions `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()`."
+msgstr "新しい関数 `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()` を追加しました。"
+
+msgid "We can only get records that a small distance as vector with these functions and `limit N`"
+msgstr "これらの関数と`limit N`を使うことで、ベクトル的に距離の近いレコードのみを取得することができます。"
+
+msgid "These functions calculate distance in the `output` stage."
+msgstr "これらの関数は、`output`ステージで距離を計算します。"
+
+msgid "However, we don't optimaize these functions yet."
+msgstr "ただ、これらの関数はまだ最適化できていません。"
+
+msgid "`distance_cosine()`: Calculate cosine similarity."
+msgstr "`distance_cosine()`: コサイン類似度を計算します。"
+
+msgid "`distance_inner_product()`: Calculate inner product."
+msgstr "`distance_inner_product()`: 内積を計算します。"
+
+msgid "`distance_l2_norm_squared()`: Calculate euclidean distance."
+msgstr "`distance_l2_norm_squared()`: ユークリッド距離を計算します。"
+
+msgid "`distance_l1_norm()`: Calculate manhattan distance."
+msgstr "`distance_l1_norm()`: マンハッタン距離を計算します。"
+
+msgid "Added a new function `number_round()`."
+msgstr "新しい関数`number_round()`を追加しました。"
+
+msgid "[{doc}`/reference/commands/load`] Added support for parallel load."
+msgstr "[{doc}`/reference/commands/load`] `load`をパラレルに実行できるようになりました。"
+
+msgid "This feature only enable when the `input_type` of `load` is `apache-arrow`."
+msgstr "この機能は、`load`の`input_type`が`apache-arrow`の時のみ有効です。"
+
+msgid "This feature one thread per column. If there are many target columns, it will reduce load time."
+msgstr "この機能は、一つのカラムを一つのスレッドで実行します。対象のカラムがたくさんある時に、ロード時間の短縮が期待できます。"
+
+msgid "[{doc}`/reference/commands/select`] We can use uvector as much as possible for array literal in `--filter`."
+msgstr ""
+
+msgid "uvector is vector of elements with fix size."
+msgstr ""
+
+msgid "If all elements have the same type, we use uvector instead vector."
+msgstr ""
+
+msgid "[{doc}`/reference/commands/status`] Added `n_workers` to output of `status`."
+msgstr ""
+
+msgid "Optimized a dynamic column creation."
+msgstr ""
+
+msgid "[WAL] Added support for rebuilding broken indexes in parallel."
+msgstr ""
+
+msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
+msgstr ""
+
+msgid "Fixes"
+msgstr ""
+
+msgid "[Windows] Fixed path for documents of \"groonga-normalizer-mysql\" in package for Windows."
+msgstr ""
+
+msgid "Documents of \"groonga-normalizer-mysql\" put under the `share/` in this release."
+msgstr ""
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that Groonga may crash when we use bitwise operations."
+msgstr ""
