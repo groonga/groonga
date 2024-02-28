@@ -228,6 +228,7 @@ struct _grn_select_optarg {
   grn_obj *query_options;
   grn_obj *max_element_intervals;
   int min_interval;
+  grn_id query_domain;
 };
 
 GRN_API grn_rc

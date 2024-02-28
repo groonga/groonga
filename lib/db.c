@@ -4302,18 +4302,50 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
                                    grn_search_optarg *optarg)
 {
   grn_rc rc;
-  unsigned int key_type = GRN_ID_NIL;
+  grn_id key_type = GRN_ID_NIL;
   const char *key;
   unsigned int key_len;
-  grn_obj *table;
   grn_obj casted_query;
   grn_bool need_cast = GRN_FALSE;
+  grn_id *query_domain_keep = optarg ? optarg->query_domain : NULL;
 
-  table = grn_ctx_at(ctx, obj->header.domain);
-  if (table) {
-    key_type = table->header.domain;
-    need_cast = (query->header.domain != key_type);
-    grn_obj_unref(ctx, table);
+  {
+    if (grn_obj_is_index_column(ctx, obj)) {
+      grn_obj *lexicon = grn_ctx_at(ctx, obj->header.domain);
+      if (lexicon) {
+        if (grn_table_have_tokenizer(ctx, lexicon)) {
+          grn_obj source_ids;
+          GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+          grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &source_ids);
+          size_t n_source_ids = GRN_UINT32_VECTOR_SIZE(&source_ids);
+          if (n_source_ids >= 1) {
+            grn_id source_id = GRN_UINT32_VALUE_AT(&source_ids, 0);
+            grn_obj *source = grn_ctx_at(ctx, source_id);
+            if (source) {
+              if (grn_obj_is_table_with_key(ctx, source)) {
+                key_type = source->header.domain;
+              } else {
+                key_type = DB_OBJ(source)->range;
+              }
+              need_cast = (query->header.domain != key_type);
+              grn_obj_unref(ctx, source);
+            }
+          }
+          GRN_OBJ_FIN(ctx, &source_ids);
+        } else {
+          key_type = lexicon->header.domain;
+          need_cast = (query->header.domain != key_type);
+        }
+        grn_obj_unref(ctx, lexicon);
+      }
+    } else {
+      grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
+      if (table) {
+        key_type = table->header.domain;
+        need_cast = (query->header.domain != key_type);
+        grn_obj_unref(ctx, table);
+      }
+    }
   }
   if (need_cast) {
     GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
@@ -4321,11 +4353,17 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
     if (rc == GRN_SUCCESS) {
       key = GRN_BULK_HEAD(&casted_query);
       key_len = GRN_BULK_VSIZE(&casted_query);
+      if (optarg) {
+        optarg->query_domain = &key_type;
+      }
     }
   } else {
     rc = GRN_SUCCESS;
     key = GRN_BULK_HEAD(query);
     key_len = GRN_BULK_VSIZE(query);
+    if (optarg) {
+      optarg->query_domain = &(query->header.domain);
+    }
   }
   if (rc == GRN_SUCCESS) {
     if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
@@ -4406,6 +4444,8 @@ exit:
   if (need_cast) {
     GRN_OBJ_FIN(ctx, &casted_query);
   }
+
+  optarg->query_domain = query_domain_keep;
 
   return rc;
 }

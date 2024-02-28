@@ -10432,6 +10432,11 @@ grn_ii_select_data_open_token_cursor(grn_ctx *ctx,
       return NULL;
     }
   }
+  if (data->optarg->query_domain != GRN_ID_NIL) {
+    grn_token_cursor_set_query_domain(ctx,
+                                      token_cursor,
+                                      data->optarg->query_domain);
+  }
   return token_cursor;
 }
 
@@ -15074,6 +15079,11 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
   select_optarg->fuzzy = search_optarg->fuzzy;
   select_optarg->match_info = &(search_optarg->match_info);
   select_optarg->query_options = search_optarg->query_options;
+  if (search_optarg->query_domain) {
+    select_optarg->query_domain = *(search_optarg->query_domain);
+  } else {
+    select_optarg->query_domain = GRN_ID_NIL;
+  }
 }
 
 static uint32_t
@@ -15229,12 +15239,27 @@ grn_ii_sel(grn_ctx *ctx,
 {
   ERRCLR(ctx);
   if (grn_logger_pass(ctx, GRN_LOG_INFO)) {
-    if (grn_type_id_is_text_family(ctx, ii->lexicon->header.domain)) {
+    grn_id query_domain = GRN_ID_NIL;
+    if (optarg && optarg->query_domain) {
+      query_domain = *(optarg->query_domain);
+    }
+    if (query_domain == GRN_ID_NIL) {
+      query_domain = ii->lexicon->header.domain;
+    }
+    if (grn_type_id_is_text_family(ctx, query_domain)) {
       GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
     } else {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect_key(ctx, &inspected, ii->lexicon, string, string_len);
+      if (query_domain == ii->lexicon->header.domain) {
+        grn_inspect_key(ctx, &inspected, ii->lexicon, string, string_len);
+      } else {
+        grn_obj query;
+        GRN_OBJ_INIT(&query, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, query_domain);
+        GRN_TEXT_SET(ctx, &query, string, string_len);
+        grn_inspect(ctx, &inspected, &query);
+        GRN_OBJ_FIN(ctx, &query);
+      }
       GRN_LOG(ctx,
               GRN_LOG_INFO,
               "grn_ii_sel > (%.*s)",

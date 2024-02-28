@@ -998,6 +998,7 @@ struct _grn_search_optarg {
   grn_obj *max_element_intervals;
   int *min_interval;
   int32_t *start_position;
+  grn_id *query_domain;
 };
 
 GRN_API grn_rc
