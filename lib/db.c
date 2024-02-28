@@ -2193,7 +2193,10 @@ grn_table_add(grn_ctx *ctx,
         GRN_UINT32_INIT(&flags_, 0);
         GRN_VOID_INIT(&oldvalue_);
         grn_obj_reinit_for(ctx, &oldvalue_, table);
-        GRN_TEXT_INIT(&value_, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_OBJ_INIT(&value_,
+                     GRN_BULK,
+                     GRN_OBJ_DO_SHALLOW_COPY,
+                     table->header.domain);
         GRN_TEXT_SET_REF(&value_, key, key_size);
         GRN_UINT32_SET(ctx, &id_, id);
         GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
