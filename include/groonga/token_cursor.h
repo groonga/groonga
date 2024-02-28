@@ -29,8 +29,8 @@ typedef enum {
   GRN_TOKEN_CURSOR_NOT_FOUND
 } grn_token_cursor_status;
 
-#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01<<0)
-#define GRN_TOKEN_CURSOR_PARALLEL                   (0x01<<1)
+#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01 << 0)
+#define GRN_TOKEN_CURSOR_PARALLEL                   (0x01 << 1)
 
 typedef struct _grn_token_cursor grn_token_cursor;
 

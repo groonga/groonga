@@ -32,6 +32,7 @@ repos:
           ?include/groonga/proc\.h|
           ?include/groonga/table\.h|
           ?include/groonga/token\.h|
+          ?include/groonga/token_cursor\.h|
           ?include/groonga/tokenizer\.h|
           ?include/groonga/type\.h|
           ?include/groonga/util\.h|
