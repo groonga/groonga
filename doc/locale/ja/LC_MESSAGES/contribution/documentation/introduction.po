@@ -28,8 +28,8 @@ msgstr "必要なソフトウェアのインストール"
 msgid "Groonga uses Sphinx_ as documentation tool."
 msgstr "Groongaはドキュメントツールとして Sphinx_ を使います。"
 
-msgid "Here are command lines to install Sphinx."
-msgstr "以下はSphinxをインストールするコマンドラインです。"
+msgid "Here are command lines to install Sphinx and the other dependencies."
+msgstr "以下はSphinxと他の必要なソフトウェアをインストールするコマンドラインです。"
 
 msgid "Debian GNU/Linux, Ubuntu::"
 msgstr ""

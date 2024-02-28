@@ -13,10 +13,11 @@ Groonga uses Sphinx_ as documentation tool.
 
 .. _Sphinx: https://www.sphinx-doc.org/
 
-Here are command lines to install Sphinx.
+Here are command lines to install Sphinx and the other dependencies.
 
 Debian GNU/Linux, Ubuntu::
 
+  % ./setup.sh
   % sudo apt-get install -V -y python3-pip gettext
   % sudo pip install -r doc/requirements.txt
   % (cd doc && bundle install)
