@@ -9,4 +9,4 @@ to you help us by moving C API documentation.
 
 We will use `the C domain markup`_ of Sphinx.
 
-.. _the C domain markup: http://sphinx.pocoo.org/latest/domains.html#the-c-domain
+.. _the C domain markup: https://www.sphinx-doc.org/en/master/usage/domains/c.html

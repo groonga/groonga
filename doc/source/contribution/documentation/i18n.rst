@@ -10,7 +10,7 @@ English into other languages such as Japanese. We'll put
 all documentations into doc/source/ and process them by
 Sphinx.
 
-.. _Sphinx I18N feature: http://sphinx.pocoo.org/latest/intl.html
+.. _Sphinx I18N feature: https://www.sphinx-doc.org/en/master/usage/advanced/intl.html
 
 But we still use Japanese in doc/source/ for now. We need to
 translate Japanese documentation in doc/source/ into
