@@ -212,9 +212,12 @@ rm -rf $RPM_BUILD_ROOT%{_includedir}/h3/
 rm -rf $RPM_BUILD_ROOT%{_includedir}/xsimd/
 rm -rf $RPM_BUILD_ROOT%{_libdir}/cmake/h3/
 rm -rf $RPM_BUILD_ROOT%{_libdir}/cmake/xsimd/
-rm -rf $RPM_BUILD_ROOT%{_libdir}/debug/usr/lib/libh3* || :
+rm -rf $RPM_BUILD_ROOT%{_libdir}/debug${_libdir}/libh3* || :
 rm -rf $RPM_BUILD_ROOT%{_libdir}/libh3* || :
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig/xsimd.pc
+rm -rf $RPM_BUILD_ROOT/usr/lib/cmake/h3/
+rm -rf $RPM_BUILD_ROOT/usr/lib/debug/usr/lib/libh3* || :
+rm -rf $RPM_BUILD_ROOT/usr/lib/libh3* || :
 
 mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 
