@@ -30,15 +30,6 @@ GRN_API grn_array *grn_array_create(grn_ctx *ctx, const char *path,
 GRN_API grn_array *grn_array_open(grn_ctx *ctx, const char *path);
 GRN_API grn_rc grn_array_close(grn_ctx *ctx, grn_array *array);
 GRN_API grn_id grn_array_add(grn_ctx *ctx, grn_array *array, void **value);
-GRN_API grn_id grn_array_push(grn_ctx *ctx, grn_array *array,
-                              void (*func)(grn_ctx *ctx, grn_array *array,
-                                           grn_id id, void *func_arg),
-                              void *func_arg);
-GRN_API grn_id grn_array_pull(grn_ctx *ctx, grn_array *array, grn_bool blockp,
-                              void (*func)(grn_ctx *ctx, grn_array *array,
-                                           grn_id id, void *func_arg),
-                              void *func_arg);
-GRN_API void grn_array_unblock(grn_ctx *ctx, grn_array *array);
 GRN_API int grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf);
 GRN_API grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                                    const void *value, int flags);

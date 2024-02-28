@@ -1215,13 +1215,6 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   return id;
 }
 
-void
-grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array)
-{
-  struct grn_array_header * const header = array->header;
-  header->curr_rec = GRN_ID_NIL;
-}
-
 grn_id
 grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 {
