@@ -142,6 +142,14 @@ Requires:	mecab-ipadic
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
 
+%package tokenizer-h3-index
+Summary:	H3 index tokenizer for Groonga
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description tokenizer-h3-index
+H3 index tokenizer for Groonga
+
 %package token-filter-stem
 Summary:	Stemming token filter for Groonga
 Group:		Applications/Text
@@ -183,6 +191,7 @@ Munin plugins for Groonga
   -DGRN_WITH_BLOSC=bundled \
   -DGRN_WITH_DOC=ON \
   -DGRN_WITH_EXAMPLES=ON \
+  -DGRN_WITH_H3=bundled \
   -DGRN_WITH_MECAB=ON \
   -DGRN_WITH_MRUBY=ON \
   -DGRN_WITH_MUNIN_PLUGINS=ON \
@@ -388,6 +397,10 @@ exit 0
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
+
+%files tokenizer-h3-index
+%defattr(-,root,root,-)
+%{_libdir}/groonga/plugins/tokenizers/h3_index.so
 
 %files token-filter-stem
 %defattr(-,root,root,-)

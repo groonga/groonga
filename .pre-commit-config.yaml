@@ -106,11 +106,13 @@ repos:
           ?lib/table_selector\.c|
           ?lib/token\.c|
           ?lib/tokenizer\.c|
+          ?lib/tokenizers\.c|
           ?lib/trace_log\.cpp|
           ?lib/type\.c|
           ?lib/util\.c|
           ?lib/vector\.cpp|
           ?plugins/functions/number\.cpp|
+          ?plugins/tokenizers/h3_index\.c|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit

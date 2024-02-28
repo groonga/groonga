@@ -1,5 +1,6 @@
 EXTRA_DIST =					\
-	CMakeLists.txt
+	CMakeLists.txt				\
+	h3_index.c
 
 AM_CPPFLAGS =					\
 	-I$(top_builddir)			\
