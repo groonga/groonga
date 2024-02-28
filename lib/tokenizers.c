@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -76,8 +76,10 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_uvector_tokenizer *tokenizer = user_data->ptr;
   byte *p = tokenizer->curr + tokenizer->unit;
   if (tokenizer->tail < p) {
-    grn_tokenizer_token_push(ctx, &(tokenizer->token),
-                             (const char *)tokenizer->curr, 0,
+    grn_tokenizer_token_push(ctx,
+                             &(tokenizer->token),
+                             (const char *)tokenizer->curr,
+                             0,
                              GRN_TOKEN_LAST);
   } else {
     grn_token_status status;
@@ -86,8 +88,10 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       status = GRN_TOKEN_CONTINUE;
     }
-    grn_tokenizer_token_push(ctx, &(tokenizer->token),
-                             (const char *)tokenizer->curr, tokenizer->unit,
+    grn_tokenizer_token_push(ctx,
+                             &(tokenizer->token),
+                             (const char *)tokenizer->curr,
+                             tokenizer->unit,
                              status);
     tokenizer->curr = p;
   }
@@ -157,7 +161,8 @@ delimit_open_options(grn_ctx *ctx,
 
   delimit_options_init(options);
 
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -168,12 +173,8 @@ delimit_open_options(grn_ctx *ctx,
       grn_id domain;
 
       have_delimiter = GRN_TRUE;
-      delimiter_length = grn_vector_get_element(ctx,
-                                                raw_options,
-                                                i,
-                                                &delimiter,
-                                                NULL,
-                                                &domain);
+      delimiter_length =
+        grn_vector_get_element(ctx, raw_options, i, &delimiter, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && delimiter_length > 0) {
         grn_vector_add_element(ctx,
                                &(options->delimiters),
@@ -188,12 +189,8 @@ delimit_open_options(grn_ctx *ctx,
       unsigned int pattern_length;
       grn_id domain;
 
-      pattern_length = grn_vector_get_element(ctx,
-                                              raw_options,
-                                              i,
-                                              &pattern,
-                                              NULL,
-                                              &domain);
+      pattern_length =
+        grn_vector_get_element(ctx, raw_options, i, &pattern, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && pattern_length > 0) {
         if (options->regex) {
           onig_free(options->regex);
@@ -207,7 +204,8 @@ delimit_open_options(grn_ctx *ctx,
       }
 #endif /* GRN_SUPPORT_REGEXP */
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   if (!have_delimiter) {
     grn_vector_add_element(ctx,
@@ -276,7 +274,8 @@ delimit_init_raw(grn_ctx *ctx,
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
                               string,
-                              &normalized, &normalized_length_in_bytes,
+                              &normalized,
+                              &normalized_length_in_bytes,
                               NULL);
     tokenizer->start = (const unsigned char *)normalized;
     tokenizer->next = tokenizer->start;
@@ -366,7 +365,8 @@ delimit_next(grn_ctx *ctx,
     delimiters = &(tokenizer->options->delimiters);
     n_delimiters = grn_vector_size(ctx, delimiters);
     for (r = p; r < e; r += cl) {
-      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
+      if (!(cl =
+              grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
         tokenizer->next = (unsigned char *)e;
         break;
       }
@@ -406,10 +406,7 @@ delimit_next(grn_ctx *ctx,
     } else {
       status = GRN_TOKEN_CONTINUE;
     }
-    grn_token_set_data(ctx,
-                       token,
-                       (const char *)p,
-                       (int)(r - p));
+    grn_token_set_data(ctx, token, (const char *)p, (int)(r - p));
     grn_token_set_status(ctx, token, status);
   }
 }
@@ -507,8 +504,7 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
 }
 
 static void
-ngram_switch_to_loose_mode(grn_ctx *ctx,
-                           grn_ngram_tokenizer *tokenizer)
+ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
 {
   grn_obj *string;
   const char *normalized;
@@ -571,17 +567,14 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     loose_offsets = tokenizer->loose.offsets;
     while (normalized < normalized_end) {
       int length;
-      length = grn_charlen_(ctx,
-                            (char *)normalized,
-                            (char *)normalized_end,
-                            encoding);
+      length =
+        grn_charlen_(ctx, (char *)normalized, (char *)normalized_end, encoding);
       if (length == 0) {
         break;
       }
       if ((tokenizer->options.loose_symbol &&
            GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL) ||
-          (!tokenizer->options.remove_blank &&
-           tokenizer->options.loose_blank &&
+          (!tokenizer->options.remove_blank && tokenizer->options.loose_blank &&
            GRN_STR_ISBLANK(*types))) {
         if (tokenizer->options.include_removed_source_location) {
           if (!removed_checks) {
@@ -601,7 +594,8 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
         if (loose_checks) {
           int i;
           if (tokenizer->options.include_removed_source_location) {
-            for (; removed_checks && removed_checks < checks; removed_checks++) {
+            for (; removed_checks && removed_checks < checks;
+                 removed_checks++) {
               if (*removed_checks > 0) {
                 *loose_checks += *removed_checks;
               }
@@ -669,10 +663,9 @@ ngram_init_raw(grn_ctx *ctx,
                grn_tokenizer_query *query,
                const grn_ngram_options *options)
 {
-  unsigned int normalize_flags =
-    GRN_STRING_REMOVE_BLANK |
-    GRN_STRING_WITH_TYPES |
-    GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
+  unsigned int normalize_flags = GRN_STRING_REMOVE_BLANK |
+                                 GRN_STRING_WITH_TYPES |
+                                 GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   grn_ngram_tokenizer *tokenizer;
 
   if (!options->remove_blank) {
@@ -756,10 +749,9 @@ ngram_init_deprecated(grn_ctx *ctx,
                       grn_user_data *user_data,
                       const grn_ngram_options *options)
 {
-  unsigned int normalize_flags =
-    GRN_STRING_REMOVE_BLANK |
-    GRN_STRING_WITH_TYPES |
-    GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
+  unsigned int normalize_flags = GRN_STRING_REMOVE_BLANK |
+                                 GRN_STRING_WITH_TYPES |
+                                 GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   grn_tokenizer_query *query;
 
   if (!options->remove_blank) {
@@ -821,7 +813,10 @@ bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+bigramsad_init(grn_ctx *ctx,
+               int nargs,
+               grn_obj **args,
+               grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
@@ -851,7 +846,10 @@ bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+bigramisa_init(grn_ctx *ctx,
+               int nargs,
+               grn_obj **args,
+               grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
@@ -862,7 +860,10 @@ bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 }
 
 static grn_obj *
-bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+bigramisad_init(grn_ctx *ctx,
+                int nargs,
+                grn_obj **args,
+                grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
@@ -891,39 +892,34 @@ ngram_open_options(grn_ctx *ctx,
 
   ngram_options_init(options, 2);
 
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
 
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "n")) {
-      options->unit = grn_vector_get_element_uint8(ctx,
-                                                   raw_options,
-                                                   i,
-                                                   options->unit);
+      options->unit =
+        grn_vector_get_element_uint8(ctx, raw_options, i, options->unit);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank")) {
-      options->remove_blank = grn_vector_get_element_bool(ctx,
-                                                          raw_options,
-                                                          i,
-                                                          options->remove_blank);
+      options->remove_blank =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->remove_blank);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_symbol")) {
-      options->loose_symbol = grn_vector_get_element_bool(ctx,
-                                                          raw_options,
-                                                          i,
-                                                          options->loose_symbol);
+      options->loose_symbol =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->loose_symbol);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_blank")) {
-      options->loose_blank = grn_vector_get_element_bool(ctx,
-                                                         raw_options,
-                                                         i,
-                                                         options->loose_blank);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_location")) {
+      options->loose_blank =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->loose_blank);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "report_source_location")) {
       options->report_source_location =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->report_source_location);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "include_removed_source_location")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(
+                 name_raw,
+                 "include_removed_source_location")) {
       options->include_removed_source_location =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
@@ -937,18 +933,13 @@ ngram_open_options(grn_ctx *ctx,
                                     options->unify_alphabet);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_digit")) {
       options->unify_digit =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_digit);
+        grn_vector_get_element_bool(ctx, raw_options, i, options->unify_digit);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_symbol")) {
       options->unify_symbol =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_symbol);
+        grn_vector_get_element_bool(ctx, raw_options, i, options->unify_symbol);
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   return options;
 }
@@ -992,7 +983,8 @@ ngram_next(grn_ctx *ctx,
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
   const int16_t *checks = NULL;
-  const uint64_t *offsets = tokenizer->offsets ? tokenizer->offsets + pos : NULL;
+  const uint64_t *offsets =
+    tokenizer->offsets ? tokenizer->offsets + pos : NULL;
   grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
 
   if (tokenizer->checks) {
@@ -1010,24 +1002,21 @@ ngram_next(grn_ctx *ctx,
                                   token,
                                   tokenizer->offsets[tokenizer->n_chars]);
     } else if (checks) {
-      grn_token_set_source_offset(ctx,
-                                  token,
-                                  tokenizer->source_offset);
+      grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
     }
     ngram_switch_to_loose_mode(ctx, tokenizer);
     tokenizer->loose.need_end_mark = GRN_FALSE;
     return;
   }
 
-#define LOOSE_NEED_CHECK(cp, tokenizer) do {                            \
-    if (cp &&                                                           \
-        !tokenizer->loose.ing &&                                        \
-        !tokenizer->loose.need &&                                       \
-        ((tokenizer->options.loose_symbol &&                            \
-          GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) ||                     \
-         (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*cp)))) {   \
-      tokenizer->loose.need = GRN_TRUE;                                 \
-    }                                                                   \
+#define LOOSE_NEED_CHECK(cp, tokenizer)                                        \
+  do {                                                                         \
+    if (cp && !tokenizer->loose.ing && !tokenizer->loose.need &&               \
+        ((tokenizer->options.loose_symbol &&                                   \
+          GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) ||                            \
+         (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*cp)))) {          \
+      tokenizer->loose.need = GRN_TRUE;                                        \
+    }                                                                          \
   } while (GRN_FALSE)
 
   LOOSE_NEED_CHECK(cp, tokenizer);
@@ -1038,32 +1027,42 @@ ngram_next(grn_ctx *ctx,
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) { break; }
+      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
+        break;
+      }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) {
+        break;
+      }
     }
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
-  } else if (cp &&
-             tokenizer->options.unify_digit &&
+  } else if (cp && tokenizer->options.unify_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) { break; }
+      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
+        break;
+      }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) {
+        break;
+      }
     }
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
-  } else if (cp &&
-             tokenizer->options.unify_symbol &&
+  } else if (cp && tokenizer->options.unify_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) { break; }
+      if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) {
+        break;
+      }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) {
+        break;
+      }
     }
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
@@ -1080,7 +1079,9 @@ ngram_next(grn_ctx *ctx,
     }
     r = p + grn_charlen_(ctx, p, e, encoding);
     if (tid && (len > 1 || r == p)) {
-      if (r != p && pos + len - 1 <= tokenizer->tail) { continue; }
+      if (r != p && pos + len - 1 <= tokenizer->tail) {
+        continue;
+      }
       p += strlen(key);
       if (!*p && tokenizer->mode == GRN_TOKEN_GET) {
         tokenizer->status = GRN_TOKEN_CURSOR_DONE;
@@ -1095,7 +1096,9 @@ ngram_next(grn_ctx *ctx,
              (cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
         if (cp) {
           LOOSE_NEED_CHECK(cp, tokenizer);
-          if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+          if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) {
+            break;
+          }
           cp++;
           if ((tokenizer->options.unify_alphabet &&
                GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) ||
@@ -1126,7 +1129,9 @@ ngram_next(grn_ctx *ctx,
   } else {
     tokenizer->skip = tokenizer->overlap ? 1 : n_characters;
   }
-  if (r == e) { status |= GRN_TOKEN_REACH_END; }
+  if (r == e) {
+    status |= GRN_TOKEN_REACH_END;
+  }
 
   {
     ptrdiff_t data_size = r - p;
@@ -1328,7 +1333,7 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->get.n_skip_tokens = 0;
 
   tokenizer->is_begin = GRN_TRUE;
-  tokenizer->is_end   = GRN_FALSE;
+  tokenizer->is_end = GRN_FALSE;
   tokenizer->is_start_token = GRN_TRUE;
   tokenizer->is_overlapping = GRN_FALSE;
 
@@ -1340,7 +1345,8 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
                               string,
-                              &normalized, &normalized_length_in_bytes,
+                              &normalized,
+                              &normalized_length_in_bytes,
                               NULL);
     tokenizer->next = normalized;
     tokenizer->end = tokenizer->next + normalized_length_in_bytes;
@@ -1418,8 +1424,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   if (mode == GRN_TOKEN_GET) {
-    if (is_begin &&
-        char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
+    if (is_begin && char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
         memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, (size_t)char_len) == 0) {
       tokenizer->is_start_token = GRN_TRUE;
       n_characters++;
@@ -1469,16 +1474,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
 
-    char_len = grn_charlen_(ctx,
-                            (const char *)current,
-                            (const char *)end,
-                            encoding);
+    char_len =
+      grn_charlen_(ctx, (const char *)current, (const char *)end, encoding);
     if (char_len == 0) {
       break;
     }
 
-    if (mode == GRN_TOKEN_GET &&
-        current + char_len == end &&
+    if (mode == GRN_TOKEN_GET && current + char_len == end &&
         char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
         memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, (size_t)char_len) == 0) {
       break_by_end_mark = GRN_TRUE;
@@ -1560,7 +1562,7 @@ regexp_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 typedef struct {
 #ifdef GRN_SUPPORT_REGEXP
   OnigRegex regex;
-#else /* GRN_SUPPORT_REGEXP */
+#else  /* GRN_SUPPORT_REGEXP */
   void *regex;
 #endif /* GRN_SUPPORT_REGEXP */
 } grn_pattern_options;
@@ -1603,7 +1605,8 @@ pattern_open_options(grn_ctx *ctx,
 
   pattern_options_init(options);
   GRN_TEXT_INIT(&all_patterns, 0);
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -1613,12 +1616,8 @@ pattern_open_options(grn_ctx *ctx,
       unsigned int pattern_length;
       grn_id domain;
 
-      pattern_length = grn_vector_get_element(ctx,
-                                              raw_options,
-                                              i,
-                                              &pattern,
-                                              NULL,
-                                              &domain);
+      pattern_length =
+        grn_vector_get_element(ctx, raw_options, i, &pattern, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && pattern_length > 0) {
         if (GRN_TEXT_LEN(&all_patterns) > 0) {
           GRN_TEXT_PUTS(ctx, &all_patterns, "|");
@@ -1628,7 +1627,8 @@ pattern_open_options(grn_ctx *ctx,
         GRN_TEXT_PUTS(ctx, &all_patterns, ")");
       }
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   if (GRN_TEXT_LEN(&all_patterns) > 0) {
 #ifdef GRN_SUPPORT_REGEXP
@@ -1708,7 +1708,8 @@ pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
                               string,
-                              &normalized, &normalized_length_in_bytes,
+                              &normalized,
+                              &normalized_length_in_bytes,
                               NULL);
     tokenizer->start = (const unsigned char *)normalized;
     tokenizer->next = tokenizer->start;
@@ -1722,8 +1723,7 @@ pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
 #ifdef GRN_SUPPORT_REGEXP
 static void
-pattern_search(grn_ctx *ctx,
-               grn_pattern_tokenizer *tokenizer)
+pattern_search(grn_ctx *ctx, grn_pattern_tokenizer *tokenizer)
 {
   OnigPosition position;
   OnigRegion region;
@@ -1846,7 +1846,8 @@ table_open_options(grn_ctx *ctx,
   }
 
   table_options_init(options);
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -1856,18 +1857,15 @@ table_open_options(grn_ctx *ctx,
       unsigned int name_length;
       grn_id domain;
 
-      name_length = grn_vector_get_element(ctx,
-                                           raw_options,
-                                           i,
-                                           &name,
-                                           NULL,
-                                           &domain);
+      name_length =
+        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && name_length > 0) {
         options->table = grn_ctx_get(ctx, name, (int)name_length);
         if (!options->table) {
           ERR(GRN_INVALID_ARGUMENT,
               "[tokenizer][table] nonexistent table: <%.*s>",
-              (int)name_length, name);
+              (int)name_length,
+              name);
           break;
         }
         if (options->table->header.type != GRN_TABLE_PAT_KEY) {
@@ -1886,11 +1884,11 @@ table_open_options(grn_ctx *ctx,
         }
       }
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   if (ctx->rc == GRN_SUCCESS && !options->table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[tokenizer][table] table isn't specified");
+    ERR(GRN_INVALID_ARGUMENT, "[tokenizer][table] table isn't specified");
   }
 
   if (ctx->rc != GRN_SUCCESS) {
@@ -1958,7 +1956,8 @@ table_init(grn_ctx *ctx, grn_tokenizer_query *query)
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
                               string,
-                              &normalized, &normalized_length_in_bytes,
+                              &normalized,
+                              &normalized_length_in_bytes,
                               NULL);
     tokenizer->start = (const unsigned char *)normalized;
     tokenizer->next = tokenizer->start;
@@ -1973,8 +1972,7 @@ table_init(grn_ctx *ctx, grn_tokenizer_query *query)
 }
 
 static void
-table_scan(grn_ctx *ctx,
-           grn_table_tokenizer *tokenizer)
+table_scan(grn_ctx *ctx, grn_table_tokenizer *tokenizer)
 {
   const char *rest;
   tokenizer->n_hits =
@@ -1983,8 +1981,7 @@ table_scan(grn_ctx *ctx,
                  tokenizer->next,
                  (unsigned int)(tokenizer->end - tokenizer->next),
                  tokenizer->hits,
-                 sizeof(tokenizer->hits) /
-                 sizeof(*(tokenizer->hits)),
+                 sizeof(tokenizer->hits) / sizeof(*(tokenizer->hits)),
                  &rest);
   tokenizer->current = tokenizer->next;
   tokenizer->next = rest;
@@ -2105,8 +2102,8 @@ document_vector_idf_base_init_tag(grn_ctx *ctx,
 }
 
 static void
-document_vector_idf_base_options_init(grn_ctx *ctx,
-                                      grn_document_vector_idf_base_options *options)
+document_vector_idf_base_options_init(
+  grn_ctx *ctx, grn_document_vector_idf_base_options *options)
 {
   options->index_column = NULL;
   options->df_column = NULL;
@@ -2117,8 +2114,7 @@ document_vector_idf_base_options_init(grn_ctx *ctx,
 
 static void
 document_vector_idf_base_options_fin(
-  grn_ctx *ctx,
-  grn_document_vector_idf_base_options *options)
+  grn_ctx *ctx, grn_document_vector_idf_base_options *options)
 {
   if (ctx->impl->db && ((grn_db *)(ctx->impl->db))->is_closing) {
     return;
@@ -2136,7 +2132,8 @@ document_vector_idf_base_options_parse(
   grn_document_vector_idf_base_algorithm algorithm,
   const char *tag)
 {
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -2146,20 +2143,15 @@ document_vector_idf_base_options_parse(
       unsigned int name_length;
       grn_id domain;
 
-      name_length = grn_vector_get_element(ctx,
-                                           raw_options,
-                                           i,
-                                           &name,
-                                           NULL,
-                                           &domain);
+      name_length =
+        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && name_length > 0) {
         grn_obj *source_lexicon = grn_ctx_at(ctx, lexicon->header.domain);
         char source_lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
-        int source_lexicon_name_length =
-          grn_obj_name(ctx,
-                       source_lexicon,
-                       source_lexicon_name,
-                       GRN_TABLE_MAX_KEY_SIZE);
+        int source_lexicon_name_length = grn_obj_name(ctx,
+                                                      source_lexicon,
+                                                      source_lexicon_name,
+                                                      GRN_TABLE_MAX_KEY_SIZE);
         if (!grn_obj_is_table_with_key(ctx, source_lexicon)) {
           grn_obj inspected;
           GRN_TEXT_INIT(&inspected, 0);
@@ -2173,17 +2165,17 @@ document_vector_idf_base_options_parse(
           grn_obj_unref(ctx, source_lexicon);
           break;
         }
-        options->index_column = grn_obj_column(ctx,
-                                               source_lexicon,
-                                               name,
-                                               name_length);
+        options->index_column =
+          grn_obj_column(ctx, source_lexicon, name, name_length);
         grn_obj_unref(ctx, source_lexicon);
         if (!options->index_column) {
           ERR(GRN_INVALID_ARGUMENT,
               "%s[index_column] nonexistent index column: <%.*s.%.*s>",
               tag,
-              source_lexicon_name_length, source_lexicon_name,
-              (int)name_length, name);
+              source_lexicon_name_length,
+              source_lexicon_name,
+              (int)name_length,
+              name);
           break;
         }
         if (!grn_obj_is_index_column(ctx, options->index_column)) {
@@ -2207,22 +2199,16 @@ document_vector_idf_base_options_parse(
       unsigned int name_length;
       grn_id domain;
 
-      name_length = grn_vector_get_element(ctx,
-                                           raw_options,
-                                           i,
-                                           &name,
-                                           NULL,
-                                           &domain);
+      name_length =
+        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && name_length > 0) {
-        options->df_column = grn_obj_column(ctx,
-                                            lexicon,
-                                            name,
-                                            name_length);
+        options->df_column = grn_obj_column(ctx, lexicon, name, name_length);
         if (!options->df_column) {
           ERR(GRN_INVALID_ARGUMENT,
               "%s[df_column] nonexistent document frequency column: <%.*s>",
               tag,
-              (int)name_length, name);
+              (int)name_length,
+              name);
           break;
         }
         if (!(grn_obj_is_scalar_column(ctx, options->df_column) &&
@@ -2242,36 +2228,27 @@ document_vector_idf_base_options_parse(
         }
       }
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalize")) {
-      options->normalize = grn_vector_get_element_bool(ctx,
-                                                       raw_options,
-                                                       i,
-                                                       options->normalize);
+      options->normalize =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->normalize);
     } else {
       if (algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
         if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "k1")) {
-          options->k1 = grn_vector_get_element_float32(ctx,
-                                                       raw_options,
-                                                       i,
-                                                       options->k1);
+          options->k1 =
+            grn_vector_get_element_float32(ctx, raw_options, i, options->k1);
         } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "b")) {
-          options->b = grn_vector_get_element_float32(ctx,
-                                                      raw_options,
-                                                      i,
-                                                      options->b);
+          options->b =
+            grn_vector_get_element_float32(ctx, raw_options, i, options->b);
         }
       }
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   if (ctx->rc == GRN_SUCCESS) {
     if (!options->index_column) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "%s[index_column] missing",
-          tag);
+      ERR(GRN_INVALID_ARGUMENT, "%s[index_column] missing", tag);
     } else if (!options->df_column) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "%s[df_column] missing",
-          tag);
+      ERR(GRN_INVALID_ARGUMENT, "%s[df_column] missing", tag);
     }
   }
 }
@@ -2301,8 +2278,7 @@ document_vector_idf_base_tokenizer_init(
 
 static void
 document_vector_idf_base_tokenizer_fin(
-  grn_ctx *ctx,
-  grn_document_vector_idf_base_tokenizer *tokenizer)
+  grn_ctx *ctx, grn_document_vector_idf_base_tokenizer *tokenizer)
 {
   GRN_OBJ_FIN(ctx, &(tokenizer->token_ids));
   GRN_OBJ_FIN(ctx, &(tokenizer->normalized_token_ids));
@@ -2334,19 +2310,15 @@ document_vector_idf_base_tokenizer_init_metadata(
 
     metadata->n_documents = 0;
     if (n_metadata > 0) {
-      metadata->n_documents = grn_vector_get_element_uint32(ctx,
-                                                            &metadata_vector,
-                                                            0,
-                                                            0);
+      metadata->n_documents =
+        grn_vector_get_element_uint32(ctx, &metadata_vector, 0, 0);
     }
 
     if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
       metadata->average_dl = 0;
       if (n_metadata > 1) {
-        metadata->average_dl = grn_vector_get_element_float32(ctx,
-                                                              &metadata_vector,
-                                                              1,
-                                                              0);
+        metadata->average_dl =
+          grn_vector_get_element_float32(ctx, &metadata_vector, 1, 0);
       }
     }
 
@@ -2361,7 +2333,8 @@ document_vector_idf_base_tokenizer_init_metadata(
   grn_obj *df_column = tokenizer->options->df_column;
   grn_obj df_value;
   GRN_UINT32_INIT(&df_value, 0);
-  GRN_TABLE_EACH_BEGIN(ctx, metadata->token_table, cursor, source_id) {
+  GRN_TABLE_EACH_BEGIN(ctx, metadata->token_table, cursor, source_id)
+  {
     grn_id id = grn_table_add(ctx,
                               lexicon,
                               (const char *)&source_id,
@@ -2388,7 +2361,8 @@ document_vector_idf_base_tokenizer_init_metadata(
     }
     GRN_UINT32_SET(ctx, &df_value, df);
     grn_obj_set_value(ctx, df_column, id, &df_value, GRN_OBJ_SET);
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+  GRN_TABLE_EACH_END(ctx, cursor);
   GRN_OBJ_FIN(ctx, &df_value);
 
   {
@@ -2452,8 +2426,7 @@ document_vector_idf_base_tokenizer_init_token_ids_token_column(
   if (!source_column) {
     return false;
   }
-  grn_id source_id =
-    grn_tokenizer_query_get_source_id(ctx, metadata->query);
+  grn_id source_id = grn_tokenizer_query_get_source_id(ctx, metadata->query);
   if (source_id == GRN_ID_NIL) {
     return false;
   }
@@ -2498,7 +2471,8 @@ document_vector_idf_base_tokenizer_init_token_ids_token_column(
     GRN_TEXT_PUTC(ctx, &message, '<');
     grn_inspect_name(ctx, &message, token_column);
     GRN_TEXT_PUTC(ctx, &message, '>');
-    GRN_LOG(ctx, GRN_LOG_DEBUG,
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
             "%s[tokenize][token-column] %.*s",
             tag,
             (int)GRN_TEXT_LEN(&message),
@@ -2537,7 +2511,7 @@ document_vector_idf_base_tokenizer_init_token_ids_token_column(
   GRN_OBJ_FIN(ctx, &tokens);
   collected = true;
 
-exit :
+exit:
   for (i = 0; i < n_hooked_columns; i++) {
     grn_obj *column = GRN_PTR_VALUE_AT(&all_hooked_columns, i);
     grn_obj_unref(ctx, column);
@@ -2559,17 +2533,14 @@ document_vector_idf_base_tokenizer_init_token_ids_token_cursor(
   raw_string = grn_tokenizer_query_get_raw_string(ctx,
                                                   metadata->query,
                                                   &raw_string_length);
-  grn_token_cursor *token_cursor =
-    grn_token_cursor_open(ctx,
-                          metadata->token_table,
-                          raw_string,
-                          raw_string_length,
-                          GRN_TOKENIZE_ADD,
-                          0);
+  grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
+                                                         metadata->token_table,
+                                                         raw_string,
+                                                         raw_string_length,
+                                                         GRN_TOKENIZE_ADD,
+                                                         0);
   if (!token_cursor) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "%s failed to create token cursor",
-        tag);
+    ERR(GRN_NO_MEMORY_AVAILABLE, "%s failed to create token cursor", tag);
     return false;
   }
 
@@ -2613,19 +2584,16 @@ document_vector_idf_base_tokenizer_init_token_ids(
                     NULL,
                     sizeof(grn_id),
                     sizeof(uint32_t),
-                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+                    GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
   if (!metadata->token_histogram) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "%s failed to create token histogram",
-        tag);
+    ERR(GRN_NO_MEMORY_AVAILABLE, "%s failed to create token histogram", tag);
     return;
   }
 
-  if (!document_vector_idf_base_tokenizer_init_token_ids_token_column(
-        ctx,
-        tokenizer,
-        metadata,
-        tag)) {
+  if (!document_vector_idf_base_tokenizer_init_token_ids_token_column(ctx,
+                                                                      tokenizer,
+                                                                      metadata,
+                                                                      tag)) {
     if (!document_vector_idf_base_tokenizer_init_token_ids_token_cursor(
           ctx,
           tokenizer,
@@ -2643,7 +2611,8 @@ document_vector_idf_base_tokenizer_init_token_ids(
     GRN_HASH_EACH_BEGIN(ctx,
                         metadata->token_histogram,
                         cursor,
-                        token_histogram_id) {
+                        token_histogram_id)
+    {
       void *key;
       unsigned int key_size;
       void *value;
@@ -2677,16 +2646,15 @@ document_vector_idf_base_tokenizer_init_token_ids(
         const float k1 = tokenizer->options->k1;
         const float b = tokenizer->options->b;
         const float bm25 =
-          idf * (((float)tf * (k1 + 1)) /
-                 ((float)tf + k1 *
-                  (1 - b + b * ((float)(metadata->dl) / metadata->average_dl))));
+          idf *
+          (((float)tf * (k1 + 1)) /
+           ((float)tf +
+            k1 * (1 - b + b * ((float)(metadata->dl) / metadata->average_dl))));
         weight = bm25;
       }
-      grn_uvector_add_element_record(ctx,
-                                     &(tokenizer->token_ids),
-                                     id,
-                                     weight);
-    } GRN_HASH_EACH_END(ctx, cursor);
+      grn_uvector_add_element_record(ctx, &(tokenizer->token_ids), id, weight);
+    }
+    GRN_HASH_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &df_value);
   }
 
@@ -2776,10 +2744,7 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
   grn_tokenizer_query *query = user_data;
   grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
   grn_obj tag;
-  document_vector_idf_base_init_tag(ctx,
-                                    &tag,
-                                    "document-vector-tf-idf",
-                                    query);
+  document_vector_idf_base_init_tag(ctx, &tag, "document-vector-tf-idf", query);
 
   grn_document_vector_idf_base_options *options;
   options = GRN_CALLOC(sizeof(grn_document_vector_idf_base_options));
@@ -2838,10 +2803,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
   }
 
   grn_obj tag;
-  document_vector_idf_base_init_tag(ctx,
-                                    &tag,
-                                    "document-vector-tf-idf",
-                                    query);
+  document_vector_idf_base_init_tag(ctx, &tag, "document-vector-tf-idf", query);
   grn_document_vector_idf_base_tokenizer *tokenizer =
     GRN_CALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
   if (!tokenizer) {
@@ -2916,10 +2878,7 @@ document_vector_bm25_open_options(grn_ctx *ctx,
   grn_tokenizer_query *query = user_data;
   grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
   grn_obj tag;
-  document_vector_idf_base_init_tag(ctx,
-                                    &tag,
-                                    "document-vector-bm25",
-                                    query);
+  document_vector_idf_base_init_tag(ctx, &tag, "document-vector-bm25", query);
 
   grn_document_vector_idf_base_options *options =
     GRN_CALLOC(sizeof(grn_document_vector_idf_base_options));
@@ -2940,7 +2899,6 @@ document_vector_bm25_open_options(grn_ctx *ctx,
     DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25,
     GRN_TEXT_VALUE(&tag));
   GRN_OBJ_FIN(ctx, &tag);
-
 
   if (ctx->rc != GRN_SUCCESS) {
     document_vector_tf_idf_close_options(ctx, options);
@@ -2979,10 +2937,7 @@ document_vector_bm25_init(grn_ctx *ctx, grn_tokenizer_query *query)
   }
 
   grn_obj tag;
-  document_vector_idf_base_init_tag(ctx,
-                                    &tag,
-                                    "document-vector-bm25",
-                                    query);
+  document_vector_idf_base_init_tag(ctx, &tag, "document-vector-bm25", query);
   grn_document_vector_idf_base_tokenizer *tokenizer =
     GRN_CALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
   if (!tokenizer) {
@@ -3065,9 +3020,9 @@ grn_rc
 grn_db_init_mecab_tokenizer(grn_ctx *ctx)
 {
   switch (GRN_CTX_GET_ENCODING(ctx)) {
-  case GRN_ENC_EUC_JP :
-  case GRN_ENC_UTF8 :
-  case GRN_ENC_SJIS :
+  case GRN_ENC_EUC_JP:
+  case GRN_ENC_UTF8:
+  case GRN_ENC_SJIS:
 #if defined(GRN_EMBEDDED) && defined(GRN_WITH_MECAB)
     {
       GRN_PLUGIN_DECLARE_FUNCTIONS(tokenizers_mecab);
@@ -3081,7 +3036,7 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
       }
       return rc;
     }
-#else /* defined(GRN_EMBEDDED) && defined(GRN_WITH_MECAB) */
+#else  /* defined(GRN_EMBEDDED) && defined(GRN_WITH_MECAB) */
     {
       const char *mecab_plugin_name = "tokenizers/mecab";
       char *path;
@@ -3095,14 +3050,21 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
     }
 #endif /* defined(GRN_EMBEDDED) && defined(GRN_WITH_MECAB) */
     break;
-  default :
+  default:
     return GRN_OPERATION_NOT_SUPPORTED;
   }
 }
 
-#define DEF_TOKENIZER(name, init, next, fin, vars)\
-  (grn_proc_create(ctx, (name), (sizeof(name) - 1),\
-                   GRN_PROC_TOKENIZER, (init), (next), (fin), 3, (vars)))
+#define DEF_TOKENIZER(name, init, next, fin, vars)                             \
+  (grn_proc_create(ctx,                                                        \
+                   (name),                                                     \
+                   (sizeof(name) - 1),                                         \
+                   GRN_PROC_TOKENIZER,                                         \
+                   (init),                                                     \
+                   (next),                                                     \
+                   (fin),                                                      \
+                   3,                                                          \
+                   (vars)))
 
 grn_rc
 grn_db_init_builtin_tokenizers(grn_ctx *ctx)
@@ -3160,19 +3122,25 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                       ngram_next_deprecated,
                       ngram_fin_deprecated,
                       vars);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) { return GRN_FILE_CORRUPT; }
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) {
+    return GRN_FILE_CORRUPT;
+  }
   obj = DEF_TOKENIZER("TokenBigram",
                       bigram_init,
                       ngram_next_deprecated,
                       ngram_fin_deprecated,
                       vars);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) { return GRN_FILE_CORRUPT; }
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) {
+    return GRN_FILE_CORRUPT;
+  }
   obj = DEF_TOKENIZER("TokenTrigram",
                       trigram_init,
                       ngram_next_deprecated,
                       ngram_fin_deprecated,
                       vars);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) {
+    return GRN_FILE_CORRUPT;
+  }
 
   DEF_TOKENIZER("TokenBigramSplitSymbol",
                 bigrams_init,
@@ -3216,8 +3184,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
     grn_tokenizer_set_next_func(ctx, tokenizer, delimit_next);
     grn_tokenizer_set_fin_func(ctx, tokenizer, delimit_fin);
   }
-  DEF_TOKENIZER("TokenRegexp",
-                regexp_init, regexp_next, regexp_fin, vars);
+  DEF_TOKENIZER("TokenRegexp", regexp_init, regexp_next, regexp_fin, vars);
   {
     grn_obj *tokenizer;
     tokenizer = grn_tokenizer_create(ctx, "TokenNgram", -1);
