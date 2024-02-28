@@ -125,6 +125,16 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   GRN_API_RETURN(token_cursor);
 }
 
+grn_rc
+grn_token_cursor_set_query_domain(grn_ctx *ctx,
+                                  grn_token_cursor *token_cursor,
+                                  grn_id domain)
+{
+  GRN_API_ENTER;
+  token_cursor->tokenizer.query_domain = domain;
+  GRN_API_RETURN(ctx->rc);
+}
+
 static bool
 grn_token_cursor_ensure_initialize(grn_ctx *ctx,
                                    grn_token_cursor *token_cursor)
