@@ -18701,6 +18701,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
                             uint32_t weight,
                             const char *value,
                             uint32_t value_size,
+                            grn_id value_domain,
                             bool force_as_is)
 {
   uint32_t pos = 0;
@@ -18808,6 +18809,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
         }
         return ctx->rc;
       }
+      grn_token_cursor_set_query_domain(ctx, cursor, value_domain);
       while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
         grn_id tid = grn_token_cursor_next(ctx, cursor);
         if (tid != GRN_ID_NIL) {
@@ -18857,15 +18859,17 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
         key = GRN_BULK_HEAD(&key_buffer);
         key_size = GRN_BULK_VSIZE(&key_buffer);
       }
-      grn_rc rc = grn_ii_builder_append_value(ctx,
-                                              builder,
-                                              src,
-                                              rid,
-                                              sid,
-                                              0,
-                                              key,
-                                              key_size,
-                                              true);
+      grn_rc rc =
+        grn_ii_builder_append_value(ctx,
+                                    builder,
+                                    src,
+                                    rid,
+                                    sid,
+                                    0,
+                                    key,
+                                    key_size,
+                                    builder->ii->lexicon->header.domain,
+                                    true);
       GRN_OBJ_FIN(ctx, &key_buffer);
       return rc;
     } else {
@@ -18877,6 +18881,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                          0,
                                          GRN_TEXT_VALUE(obj),
                                          GRN_TEXT_LEN(obj),
+                                         obj->header.domain,
                                          false);
     }
   case GRN_UVECTOR:
@@ -18908,6 +18913,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                            (uint32_t)weight,
                                            key,
                                            key_size,
+                                           builder->ii->lexicon->header.domain,
                                            true);
           if (rc != GRN_SUCCESS) {
             break;
@@ -18926,6 +18932,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                            0,
                                            p,
                                            value_size,
+                                           obj->header.domain,
                                            false);
           if (rc != GRN_SUCCESS) {
             break;
@@ -18962,6 +18969,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                          (uint32_t)(sec->weight),
                                          head + sec->offset,
                                          sec->length,
+                                         sec->domain,
                                          false);
         if (rc != GRN_SUCCESS) {
           return rc;
