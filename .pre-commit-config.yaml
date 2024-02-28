@@ -77,6 +77,7 @@ repos:
           ?lib/grn_str\.h|
           ?lib/grn_table_selector\.h|
           ?lib/grn_tokenizer\.h|
+          ?lib/grn_tokenizers\.h|
           ?lib/grn_vector\.h|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
