@@ -45,6 +45,8 @@ struct _grn_token_cursor {
     grn_obj *object;
     grn_proc_ctx pctx;
     grn_tokenizer_query query;
+    grn_id query_domain;
+    grn_obj casted_query;
     void *user_data;
     grn_token current_token;
     grn_token next_token;

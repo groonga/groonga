@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -103,6 +103,11 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_tokenizer_query_set_lexicon(ctx, &(token_cursor->tokenizer.query), table);
   grn_tokenizer_query_set_flags(ctx, &(token_cursor->tokenizer.query), flags);
   grn_tokenizer_query_set_mode(ctx, &(token_cursor->tokenizer.query), mode);
+  token_cursor->tokenizer.query_domain = GRN_ID_NIL;
+  GRN_OBJ_INIT(&(token_cursor->tokenizer.casted_query),
+               GRN_BULK,
+               0,
+               table->header.domain);
   grn_token_init(ctx, &(token_cursor->tokenizer.current_token));
   grn_token_init(ctx, &(token_cursor->tokenizer.next_token));
   grn_token_init(ctx, &(token_cursor->tokenizer.original_token));
@@ -149,11 +154,16 @@ grn_token_cursor_ensure_initialize(grn_ctx *ctx,
   if (token_cursor->tokenizer.object) {
     grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
     if (tokenizer_proc->callbacks.tokenizer.init) {
+      grn_id query_domain = token_cursor->tokenizer.query_domain;
+      if (query_domain == GRN_ID_NIL) {
+        query_domain = GRN_DB_TEXT;
+      }
       token_cursor->tokenizer.user_data = NULL;
-      grn_tokenizer_query_set_raw_string(ctx,
-                                         query,
-                                         token_cursor->orig,
-                                         token_cursor->orig_blen);
+      grn_tokenizer_query_set_data(ctx,
+                                   query,
+                                   token_cursor->orig,
+                                   token_cursor->orig_blen,
+                                   query_domain);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -187,27 +197,68 @@ grn_token_cursor_ensure_initialize(grn_ctx *ctx,
       grn_obj_close(ctx, &mode_);
     }
   } else {
-    grn_obj *string;
-    const char *normalized;
+    grn_id query_domain = token_cursor->tokenizer.query_domain;
 
-    grn_tokenizer_query_set_raw_string(ctx,
-                                       query,
-                                       token_cursor->orig,
-                                       token_cursor->orig_blen);
+    grn_tokenizer_query_set_data(ctx,
+                                 query,
+                                 token_cursor->orig,
+                                 token_cursor->orig_blen,
+                                 query_domain == GRN_ID_NIL ? GRN_DB_TEXT
+                                                            : query_domain);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    string = grn_tokenizer_query_get_normalized_string(ctx, query);
-    grn_string_get_normalized(ctx,
-                              string,
-                              &normalized,
-                              &(token_cursor->curr_size),
-                              NULL);
-    token_cursor->curr = (const unsigned char *)normalized;
-    grn_token_set_data(ctx,
-                       &(token_cursor->tokenizer.current_token),
-                       token_cursor->curr,
-                       (int)(token_cursor->curr_size));
+    grn_obj *casted_query = &(token_cursor->tokenizer.casted_query);
+    grn_obj *table = token_cursor->table;
+    grn_id table_id = casted_query->header.domain;
+    if (query_domain == GRN_ID_NIL ||
+        (grn_type_id_is_text_family(ctx, query_domain) &&
+         grn_type_id_is_text_family(ctx, casted_query->header.domain))) {
+      grn_obj *string;
+      const char *normalized;
+      string = grn_tokenizer_query_get_normalized_string(ctx, query);
+      grn_string_get_normalized(ctx,
+                                string,
+                                &normalized,
+                                &(token_cursor->curr_size),
+                                NULL);
+      token_cursor->curr = (const unsigned char *)normalized;
+      grn_token_set_data(ctx,
+                         &(token_cursor->tokenizer.current_token),
+                         token_cursor->curr,
+                         (int)(token_cursor->curr_size));
+    } else {
+      if (query_domain == table_id || query_domain == table->header.domain) {
+        token_cursor->curr = token_cursor->orig;
+        token_cursor->curr_size = token_cursor->orig_blen;
+        grn_token_set_data(ctx,
+                           &(token_cursor->tokenizer.current_token),
+                           token_cursor->curr,
+                           (int)(token_cursor->curr_size));
+        grn_token_set_domain(ctx,
+                             &(token_cursor->tokenizer.current_token),
+                             query_domain);
+      } else {
+        grn_obj query;
+        GRN_OBJ_INIT(&query, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, query_domain);
+        GRN_TEXT_SET(ctx, &query, token_cursor->orig, token_cursor->orig_blen);
+        GRN_BULK_REWIND(casted_query);
+        grn_rc rc = grn_obj_cast(ctx, &query, casted_query, false);
+        GRN_OBJ_FIN(ctx, &query);
+        if (rc == GRN_SUCCESS) {
+          token_cursor->curr = GRN_BULK_HEAD(casted_query);
+          token_cursor->curr_size = GRN_BULK_VSIZE(casted_query);
+          grn_token_set_data(ctx,
+                             &(token_cursor->tokenizer.current_token),
+                             token_cursor->curr,
+                             (int)(token_cursor->curr_size));
+          grn_token_set_domain(
+            ctx,
+            &(token_cursor->tokenizer.current_token),
+            token_cursor->tokenizer.casted_query.header.domain);
+        }
+      }
+    }
     grn_token_set_status(ctx,
                          &(token_cursor->tokenizer.current_token),
                          GRN_TOKEN_LAST);
@@ -442,7 +493,10 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
     }
-    if (token_cursor->mode == GRN_TOKENIZE_ADD) {
+    if (grn_id_maybe_table(ctx, grn_token_get_domain(ctx, current_token)) &&
+        GRN_BULK_VSIZE(&(current_token->data)) == sizeof(grn_id)) {
+      tid = GRN_RECORD_VALUE(&(current_token->data));
+    } else if (token_cursor->mode == GRN_TOKENIZE_ADD) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
@@ -614,6 +668,7 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
   grn_token_fin(ctx, &(token_cursor->tokenizer.current_token));
   grn_token_fin(ctx, &(token_cursor->tokenizer.next_token));
   grn_token_fin(ctx, &(token_cursor->tokenizer.original_token));
+  GRN_OBJ_FIN(ctx, &(token_cursor->tokenizer.casted_query));
   grn_tokenizer_query_fin(ctx, &(token_cursor->tokenizer.query));
   grn_token_cursor_close_token_filters(ctx, token_cursor);
   GRN_OBJ_FIN(ctx, &(token_cursor->original_buffer));
