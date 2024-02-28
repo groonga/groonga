@@ -22,14 +22,11 @@ msgstr "導入"
 msgid "This documentation describes about how to write, generate and manage Groonga documentation."
 msgstr "この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
 
-msgid "Checkout Groonga from the repository"
-msgstr "リポジトリーからGroongaをチェックアウト"
+msgid "How to clone Groonga repository"
+msgstr "Groongaリポジトリのcloneの仕方"
 
-msgid "You should build Groonga documentation from source code at the repository. Because source code in the repository is the latest."
-msgstr "リポジトリーのソースコードからGroongaドキュメントをビルドする必要があります。なぜなら、リポジトリーにあるソースコードが最新の状態だからです。"
-
-msgid "The Groonga repository is hosted on `GitHub <https://github.com/groonga/groonga>`_. Checkout the latest source code from the repository::"
-msgstr "Groongaのリポジトリーは `GitHub <https://github.com/groonga/groonga>`_ にあります。リポジトリーから最新のソースコードをチェックアウトします::"
+msgid "First, please fork Groonga repository on GitHub because you need to build Groonga documentation from the latest source code. You just access https://github.com/groonga/groonga and press `Fork` button. Now you can clone your Groonga repository."
+msgstr "はじめに、GitHub上のGroongaリポジトリをforkしてください。 なぜなら、最新のソースコードからGroongaドキュメントをビルドする必要があるからです。https://github.com/groonga/groonga にアクセスして `Fork` ボタンを押すだけです。これで自分のGroongaリポジトリをcloneすることができます。"
 
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"

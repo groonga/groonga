@@ -6,17 +6,17 @@ Introduction
 This documentation describes about how to write, generate and manage
 Groonga documentation.
 
-Checkout Groonga from the repository
-------------------------------------
+How to clone Groonga repository
+-------------------------------
 
-You should build Groonga documentation from source code at the repository.
-Because source code in the repository is the latest.
+First, please fork Groonga repository on GitHub because
+you need to build Groonga documentation from the latest source code.
+You just access https://github.com/groonga/groonga and press
+`Fork` button. Now you can clone your Groonga repository.
 
-The Groonga repository is hosted on `GitHub
-<https://github.com/groonga/groonga>`_. Checkout the latest source
-code from the repository::
+.. code-block:: console
 
-  % git clone --recursive git@github.com:groonga/groonga.git
+  % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
   % cd groonga
 
 Install depended software
