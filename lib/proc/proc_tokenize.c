@@ -211,6 +211,7 @@ tokenize(grn_ctx *ctx,
     return;
   }
 
+  grn_token_cursor_set_query_domain(ctx, token_cursor, GRN_DB_TEXT);
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
     grn_token *token;
