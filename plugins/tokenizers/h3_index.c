@@ -153,9 +153,10 @@ grn_h3_index_init(grn_ctx *ctx, grn_tokenizer_query *query)
     } else {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s query must be WGS84GeoPoint: %s",
+                       "%s query must be WGS84GeoPoint: %s(%u)",
                        grn_h3_index_tag,
-                       grn_type_id_to_string_builtin(ctx, query_domain));
+                       grn_type_id_to_string_builtin(ctx, query_domain),
+                       query_domain);
       return NULL;
     }
   }
