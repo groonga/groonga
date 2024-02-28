@@ -59,6 +59,11 @@ targets.each do |target|
     download(url, "CRoaring-#{version}.tar.gz") do
       FileUtils.rm_rf("benchmarks/realdata/")
     end
+  when "h3"
+    version = cmakelists[/set\(GRN_H3_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/uber/h3/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "h3-#{version}.tar.gz")
   when "simsimd"
     version = cmakelists[/set\(GRN_SIMSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/ashvardanian/SimSIMD/archive/refs/tags/"

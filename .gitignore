@@ -137,6 +137,7 @@
 /tmp-doc/
 /vendor/CRoaring-*
 /vendor/c-blosc2-*
+/vendor/h3-*
 /vendor/lz4-*
 /vendor/mecab-*
 /vendor/mecab/*.bin

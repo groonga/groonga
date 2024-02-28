@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4056,6 +4056,9 @@ show_version(void)
 #endif
 #ifdef GRN_HAVE_BFLOAT16
   printf(",bfloat16");
+#endif
+#ifdef GRN_HAVE_H3
+  printf(",h3");
 #endif
   printf("]\n");
 

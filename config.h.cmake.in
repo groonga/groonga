@@ -86,6 +86,8 @@
 #cmakedefine GRN_WITH_BENCHMARK
 #cmakedefine GRN_WITH_BLOSC
 #cmakedefine GRN_WITH_CUTTER
+#cmakedefine GRN_WITH_H3
+#cmakedefine GRN_WITH_H3_BUNDLED
 #cmakedefine GRN_WITH_KYTEA
 #cmakedefine GRN_WITH_LZ4
 #cmakedefine GRN_WITH_RAPIDJSON

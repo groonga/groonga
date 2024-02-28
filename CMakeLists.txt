@@ -1301,6 +1301,67 @@ if(NOT (GRN_WITH_XSIMD OR GRN_WITH_SIMSIMD))
   set(GRN_WITH_SIMD_NEON64 OFF)
 endif()
 
+set(GRN_H3_VERSION "4.1.0")
+set(GRN_H3_SHA256
+    "ec99f1f5974846bde64f4513cf8d2ea1b8d172d2218ab41803bf6a63532272bc")
+set(GRN_WITH_H3
+    "auto"
+    CACHE STRING "Use H3 for geospatial index.")
+set(GRN_WITH_H3_BUNDLED FALSE)
+if(NOT "${GRN_WITH_H3}" STREQUAL "no")
+  if("${GRN_WITH_H3}" STREQUAL "bundled")
+    set(h3_FOUND FALSE)
+  else()
+    if("${GRN_WITH_H3}" STREQUAL "system")
+      find_package(h3 REQUIRED)
+    else()
+      find_package(h3)
+    endif()
+  endif()
+  if(h3_FOUND)
+    set(GRN_WITH_XSIMD TRUE)
+    target_link_libraries(grn_dependencies INTERFACE h3::h3)
+    message(STATUS "H3: system")
+  else()
+    # We need to use function to create a variable scope
+    function(grn_build_h3)
+      set(H3_SOURCE_BASE_NAME "h3-${GRN_H3_VERSION}.tar.gz")
+      set(H3_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${H3_SOURCE_BASE_NAME}")
+      if(EXISTS ${H3_SOURCE_LOCAL_PATH})
+        set(H3_SOURCE_URL ${H3_SOURCE_LOCAL_PATH})
+      else()
+        set(H3_SOURCE_URL "https://github.com/uber/h3/archive/refs/tags")
+        string(APPEND H3_SOURCE_URL "/v${GRN_H3_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        h3
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${H3_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_H3_SHA256}")
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_FILTERS OFF)
+      set(BUILD_FUZZERS OFF)
+      set(BUILD_GENERATORS OFF)
+      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+      set(ENABLE_FORMAT OFF)
+      fetchcontent_makeavailable(h3)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${h3_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      install(FILES "${h3_SOURCE_DIR}/CHANGELOG.md" "${h3_SOURCE_DIR}/LICENSE"
+                    "${h3_SOURCE_DIR}/NOTICE" "${h3_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/h3")
+    endfunction()
+    grn_build_h3()
+    target_link_libraries(grn_dependencies INTERFACE h3)
+    set(GRN_WITH_H3_BUNDLED TRUE)
+    message(STATUS "H3: bundled")
+  endif()
+else()
+  set(GRN_WITH_H3 FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"
