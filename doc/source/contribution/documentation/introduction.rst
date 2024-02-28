@@ -16,7 +16,7 @@ You just access https://github.com/groonga/groonga and press
 
 .. code-block:: console
 
-  % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
+  % git clone --recursive https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
   % cd groonga
 
 Install depended software
