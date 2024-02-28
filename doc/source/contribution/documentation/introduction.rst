@@ -16,8 +16,8 @@ You just access https://github.com/groonga/groonga and press
 
 .. code-block:: console
 
-  % git clone --recursive https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
-  % cd groonga
+   % git clone --recursive https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
+   % cd groonga
 
 Install depended software
 -------------------------
@@ -32,27 +32,27 @@ Debian GNU/Linux, Ubuntu:
 
 .. code-block:: console
 
-  % sudo apt-get install -V -y python3-pip gettext
-  % sudo pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+   % sudo apt-get install -V -y python3-pip gettext
+   % sudo pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
 
 CentOS, Fedora:
 
 .. code-block:: console
 
-  % sudo yum install -y python-pip gettext
-  % sudo pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+   % sudo yum install -y python-pip gettext
+   % sudo pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
 
 OS X:
 
 .. code-block:: console
 
-  % brew install python
-  % brew install gettext
-  % export PATH=`brew --prefix gettext`/bin:$PATH
-  % pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+   % brew install python
+   % brew install gettext
+   % export PATH=`brew --prefix gettext`/bin:$PATH
+   % pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
 
 Run ``cmake`` with ``--preset=doc``
 -----------------------------------
@@ -63,7 +63,7 @@ enable it explicitly by adding ``--preset=doc`` option to
 
 .. code-block:: console
 
-  % cmake -S . -B ../groonga.doc --preset=doc
+   % cmake -S . -B ../groonga.doc --preset=doc
 
 Now, your Groonga build is documentation ready.
 
@@ -74,7 +74,7 @@ You can generate HTML by the following command:
 
 .. code-block:: console
 
-  % cmake --build ../groonga.doc
+   % cmake --build ../groonga.doc
 
 You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
