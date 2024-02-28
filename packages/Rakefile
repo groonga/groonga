@@ -71,6 +71,22 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def apt_prepare_debian_control_h3(control, target)
+    case target
+    when /\debian-bullseye/, /\Aubuntu-focal/
+      enable_h3 = "#"
+    else
+      enable_h3 = ""
+    end
+    control.gsub(/@ENABLE_H3@/, enable_h3)
+  end
+
+  def apt_prepare_debian_control(control_in, target)
+    control = control_in.dup
+    control = apt_prepare_debian_control_h3(control, target)
+    control
+  end
+
   def yum_targets_default
     [
       "almalinux-8",

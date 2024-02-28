@@ -1,5 +1,7 @@
 # -*- sh-shell: rpm -*-
 
+%define _rhel %{?rhel:%{rhel}}%{!?rhel:0}
+
 %if ! %{defined cmake}
 %define cmake %{cmake3}
 %endif
@@ -142,6 +144,7 @@ Requires:	mecab-ipadic
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
 
+%if %{_rhel} >= 8
 %package tokenizer-h3-index
 Summary:	H3 index tokenizer for Groonga
 Group:		Applications/Text
@@ -149,6 +152,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 
 %description tokenizer-h3-index
 H3 index tokenizer for Groonga
+%endif
 
 %package token-filter-stem
 Summary:	Stemming token filter for Groonga
@@ -191,7 +195,6 @@ Munin plugins for Groonga
   -DGRN_WITH_BLOSC=bundled \
   -DGRN_WITH_DOC=ON \
   -DGRN_WITH_EXAMPLES=ON \
-  -DGRN_WITH_H3=bundled \
   -DGRN_WITH_MECAB=ON \
   -DGRN_WITH_MRUBY=ON \
   -DGRN_WITH_MUNIN_PLUGINS=ON \
@@ -202,11 +205,15 @@ Munin plugins for Groonga
 
 %install
 %cmake_install
-# Workaround for old CMake on CentOS 7.
+# Workaround for old CMake on CentOS 7 and AlmaLinux 9.
 # It seems that preventing installing FetchContent library by EXCLUDE_FROM_ALL
 # doesn't work with old CMake.
+rm -rf $RPM_BUILD_ROOT%{_includedir}/h3/
 rm -rf $RPM_BUILD_ROOT%{_includedir}/xsimd/
+rm -rf $RPM_BUILD_ROOT%{_libdir}/cmake/h3/
 rm -rf $RPM_BUILD_ROOT%{_libdir}/cmake/xsimd/
+rm -rf $RPM_BUILD_ROOT%{_libdir}/debug/usr/lib/libh3* || :
+rm -rf $RPM_BUILD_ROOT%{_libdir}/libh3* || :
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig/xsimd.pc
 
 mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
@@ -398,9 +405,12 @@ exit 0
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
 
+%if %{_rhel} >= 8
 %files tokenizer-h3-index
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/h3_index.so
+%{_datadir}/groonga/h3/
+%endif
 
 %files token-filter-stem
 %defattr(-,root,root,-)

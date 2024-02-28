@@ -29,7 +29,6 @@ override_dh_auto_configure:
 	  -DGRN_WITH_BLOSC=bundled				\
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
-	  -DGRN_WITH_H3=bundled					\
 	  -DGRN_WITH_MRUBY=ON					\
 	  -DGRN_WITH_MUNIN_PLUGINS=ON
 

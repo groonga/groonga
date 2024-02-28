@@ -132,18 +132,18 @@ Description: MeCab tokenizer for Groonga
  .
  This package provides MeCab tokenizer.
 
-Package: groonga-tokenizer-h3-index
-Section: libs
-Architecture: any
-Depends:
-  ${misc:Depends},
-  ${shlibs:Depends},
-  libgroonga0 (= ${binary:Version})
-Description: H3 index tokenizer for Groonga
- Groonga is an open-source fulltext search engine and column store.
- It lets you write high-performance applications that requires fulltext search.
- .
- This package provides H3 index tokenizer.
+@ENABLE_H3@Package: groonga-tokenizer-h3-index
+@ENABLE_H3@Section: libs
+@ENABLE_H3@Architecture: any
+@ENABLE_H3@Depends:
+@ENABLE_H3@  ${misc:Depends},
+@ENABLE_H3@  ${shlibs:Depends},
+@ENABLE_H3@  libgroonga0 (= ${binary:Version})
+@ENABLE_H3@Description: H3 index tokenizer for Groonga
+@ENABLE_H3@ Groonga is an open-source fulltext search engine and column store.
+@ENABLE_H3@ It lets you write high-performance applications that requires fulltext search.
+@ENABLE_H3@ .
+@ENABLE_H3@ This package provides H3 index tokenizer.
 
 Package: groonga-token-filter-stem
 Section: libs
