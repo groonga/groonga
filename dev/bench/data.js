@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709135929638,
+  "lastUpdate": 1709136184789,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -6126,6 +6126,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02723844800010511,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.002067000000000263 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "535844b78a8066d61ec3dcacc4a16c7b0cd8ae0c",
+          "message": "select: add support for searching by index with non text based tokenizer\n\nTokenH3Index is one of non text based tokenizers.\n\nWe need to accept non text query (such as WGS84GeoPoint query but it's\nnot required for TokenH3Index). So this adds\ngrn_search_optarg::query_domain that shows query type.\n\ngrn_obj_search_column_index_by_key() and grn_ii_sel() use it to\nprocess query with suitable type.\n\nSee the added test which shows that we can search by H3 index with\nWGS84GeoPoint query. (The test uses text because we don't have\nWGS84GeoPoint literal notation.)",
+          "timestamp": "2024-02-28T23:27:16+09:00",
+          "tree_id": "b3d2a35c2a6dfd4dd563268a06a18bb975a1905f",
+          "url": "https://github.com/groonga/groonga/commit/535844b78a8066d61ec3dcacc4a16c7b0cd8ae0c"
+        },
+        "date": 1709136183938,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36731841299996404,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01858299999999985 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.26649862600015695,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.013836000000000875 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016405824999935703,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00038099999999818834 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015253542000039033,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003680000000003958 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.6919478390000222,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00020599999999998397 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.25795209600005364,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.025632999999999545 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15549497499995368,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02825900000000145 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017180696000025364,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019709999999999728 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017139337999935833,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021890000000004406 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.10039026599980616,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.03596300000000163 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.08419162000012648,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02885300000000124 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01817537699997729,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021979999999988398 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.0251359960000741,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019060000000001576 s\nthreads: undefined"
           }
         ]
       }
