@@ -15,26 +15,31 @@ Groonga uses Sphinx_ as documentation tool.
 
 Here are command lines to install Sphinx and the other dependencies.
 
-Debian GNU/Linux, Ubuntu::
+Debian GNU/Linux, Ubuntu:
 
-  % ./setup.sh
-  % sudo apt-get install -V -y python3-pip gettext
-  % sudo pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+.. code-block:: console
 
-CentOS, Fedora::
+   % sudo apt-get install -V -y python3-pip gettext
+   % sudo pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
 
-  % sudo yum install -y python-pip gettext
-  % sudo pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+CentOS, Fedora:
 
-OS X::
+.. code-block:: console
 
-  % brew install python
-  % brew install gettext
-  % export PATH=`brew --prefix gettext`/bin:$PATH
-  % pip install -r doc/requirements.txt
-  % (cd doc && bundle install)
+   % sudo yum install -y python-pip gettext
+   % sudo pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
+
+OS X:
+
+.. code-block:: console
+
+   % brew install python
+   % brew install gettext
+   % export PATH=`brew --prefix gettext`/bin:$PATH
+   % pip install -r doc/requirements.txt
+   % (cd doc && bundle install)
 
 Run ``cmake`` with ``--preset=doc``
 -----------------------------------
