@@ -66,6 +66,7 @@ repos:
           ?lib/grn_distance_instantiation\.hpp|
           ?lib/grn_error\.h|
           ?lib/grn_expr\.h|
+          ?lib/grn_geo\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
           ?lib/grn_load\.h|
