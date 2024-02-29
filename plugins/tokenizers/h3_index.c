@@ -30,6 +30,8 @@
 #  include <h3/h3api.h>
 #endif
 
+#include <math.h>
+
 static const char *grn_h3_index_tag = "[tokenizer][h3-index]";
 
 typedef struct {
