@@ -27,7 +27,7 @@
    M_PI.
 
    See: https://learn.microsoft.com/en-us/cpp/c-runtime-library/math-constants
-   
+
    math.h is included in groonga.h.
    So, we define _USE_MATH_DEFINES before including groonga.h
 */
