@@ -959,8 +959,8 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     center_point = &center_point_;
   }
   center = GRN_GEO_POINT_VALUE_RAW(center_point);
-  center_longitude = GRN_GEO_INT2RAD(center->longitude);
-  center_latitude = GRN_GEO_INT2RAD(center->latitude);
+  center_longitude = GRN_GEO_MSEC2RADIAN(center->longitude);
+  center_latitude = GRN_GEO_MSEC2RADIAN(center->latitude);
 
   distance_raw_func = grn_geo_resolve_distance_raw_func(ctx,
                                                         approximate_type,
@@ -974,32 +974,32 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   switch (distance->header.domain) {
   case GRN_DB_INT32 :
     d = GRN_INT32_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_UINT32 :
     d = GRN_UINT32_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_INT64 :
     d = (double)GRN_INT64_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_UINT64 :
     d = (double)GRN_UINT64_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_FLOAT32 :
     d = GRN_FLOAT32_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_FLOAT :
     d = GRN_FLOAT_VALUE(distance);
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.latitude = center->latitude + GRN_GEO_RADIAN2MSEC(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_SHORT_TEXT :
@@ -2691,10 +2691,10 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
   distance_type dist_type;
   quadrant_type quad_type;
 
-  lat1 = GRN_GEO_INT2RAD(point1->latitude);
-  lng1 = GRN_GEO_INT2RAD(point1->longitude);
-  lat2 = GRN_GEO_INT2RAD(point2->latitude);
-  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  lat1 = GRN_GEO_MSEC2RADIAN(point1->latitude);
+  lng1 = GRN_GEO_MSEC2RADIAN(point1->longitude);
+  lat2 = GRN_GEO_MSEC2RADIAN(point2->latitude);
+  lng2 = GRN_GEO_MSEC2RADIAN(point2->longitude);
   quad_type = geo_quadrant_type(point1, point2);
   if (quad_type <= QUADRANT_4TH) {
     distance = geo_distance_rectangle_square_root(lng1,
@@ -2723,10 +2723,10 @@ grn_geo_distance_sphere_raw(grn_ctx *ctx,
 {
   double lng1, lat1, lng2, lat2, x, y;
 
-  lat1 = GRN_GEO_INT2RAD(point1->latitude);
-  lng1 = GRN_GEO_INT2RAD(point1->longitude);
-  lat2 = GRN_GEO_INT2RAD(point2->latitude);
-  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  lat1 = GRN_GEO_MSEC2RADIAN(point1->latitude);
+  lng1 = GRN_GEO_MSEC2RADIAN(point1->longitude);
+  lat2 = GRN_GEO_MSEC2RADIAN(point2->latitude);
+  lng2 = GRN_GEO_MSEC2RADIAN(point2->longitude);
   x = sin(fabs(lng2 - lng1) * 0.5);
   y = sin(fabs(lat2 - lat1) * 0.5);
   return asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GRN_GEO_RADIUS;
@@ -2739,10 +2739,10 @@ grn_geo_distance_ellipsoid_raw(grn_ctx *ctx,
 {
   double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
 
-  lat1 = GRN_GEO_INT2RAD(point1->latitude);
-  lng1 = GRN_GEO_INT2RAD(point1->longitude);
-  lat2 = GRN_GEO_INT2RAD(point2->latitude);
-  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  lat1 = GRN_GEO_MSEC2RADIAN(point1->latitude);
+  lng1 = GRN_GEO_MSEC2RADIAN(point1->longitude);
+  lat2 = GRN_GEO_MSEC2RADIAN(point2->latitude);
+  lng2 = GRN_GEO_MSEC2RADIAN(point2->longitude);
   p = (lat1 + lat2) * 0.5;
   q = (1 - c3 * sin(p) * sin(p));
   r = sqrt(q);

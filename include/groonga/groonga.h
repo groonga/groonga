@@ -1742,6 +1742,9 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_GEO_DEGREE2MSEC(degree)                                            \
   ((int32_t)((degree)*3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
 #define GRN_GEO_MSEC2DEGREE(msec) ((((int32_t)(msec)) / 3600.0) * 0.001)
+#define GRN_GEO_RADIAN2MSEC(radian)                                            \
+  ((int32_t)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (radian)))
+#define GRN_GEO_MSEC2RADIAN(msec) ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (msec))
 
 #define GRN_GEO_POINT_SET(ctx, obj, _latitude, _longitude)                     \
   do {                                                                         \
@@ -1879,26 +1882,33 @@ grn_ctx_recv_handler_set(grn_ctx *,
                         sizeof(grn_obj *));                                    \
   } while (0)
 
-#define GRN_BOOL_VALUE(obj)     (*((bool *)GRN_BULK_HEAD(obj)))
-#define GRN_INT8_VALUE(obj)     (*((int8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT8_VALUE(obj)    (*((uint8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT16_VALUE(obj)    (*((int16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT16_VALUE(obj)   (*((uint16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT32_VALUE(obj)    (*((int32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT32_VALUE(obj)   (*((uint32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT64_VALUE(obj)    (*((int64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT64_VALUE(obj)   (*((uint64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_BFLOAT16_VALUE(obj) (*((grn_bfloat16 *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT32_VALUE(obj)  (*((float *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT_VALUE(obj)    (*((double *)GRN_BULK_HEAD(obj)))
-#define GRN_TIME_VALUE          GRN_INT64_VALUE
-#define GRN_RECORD_VALUE(obj)   (*((grn_id *)GRN_BULK_HEAD(obj)))
-#define GRN_PTR_VALUE(obj)      (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_BOOL_VALUE(obj)          (*((bool *)GRN_BULK_HEAD(obj)))
+#define GRN_INT8_VALUE(obj)          (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj)         (*((uint8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj)         (*((int16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj)        (*((uint16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT32_VALUE(obj)         (*((int32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT32_VALUE(obj)        (*((uint32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT64_VALUE(obj)         (*((int64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT64_VALUE(obj)        (*((uint64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_BFLOAT16_VALUE(obj)      (*((grn_bfloat16 *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT32_VALUE(obj)       (*((float *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT_VALUE(obj)         (*((double *)GRN_BULK_HEAD(obj)))
+#define GRN_TIME_VALUE               GRN_INT64_VALUE
+#define GRN_RECORD_VALUE(obj)        (*((grn_id *)GRN_BULK_HEAD(obj)))
+#define GRN_PTR_VALUE(obj)           (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE(obj, _latitude, _longitude)                        \
   do {                                                                         \
-    grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);                 \
+    grn_geo_point *_val = GRN_GEO_POINT_VALUE_RAW(obj);                        \
     _latitude = _val->latitude;                                                \
     _longitude = _val->longitude;                                              \
+  } while (0)
+#define GRN_GEO_POINT_VALUE_RADIAN(obj, _latitude, _longitude)                 \
+  do {                                                                         \
+    grn_geo_point *_val = GRN_GEO_POINT_VALUE_RAW(obj);                        \
+    _latitude = GRN_GEO_MSEC2RADIAN(_val->latitude);                           \
+    _longitude = GRN_GEO_MSEC2RADIAN(_val->longitude);                         \
   } while (0)
 
 #define GRN_BOOL_VALUE_AT(obj, offset) (((bool *)GRN_BULK_HEAD(obj))[offset])

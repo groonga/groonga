@@ -45,20 +45,11 @@ extern "C" {
 #define GRN_GEO_GRS_C1       6335439
 #define GRN_GEO_GRS_C2       6378137
 #define GRN_GEO_GRS_C3       0.006694
-#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x))
-#define GRN_GEO_RAD2INT(x)   ((int)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (x)))
 
 #define GRN_GEO_MAX_LATITUDE  324000000       /*  90 * 60 * 60 * 1000 */
 #define GRN_GEO_MAX_LONGITUDE (648000000 - 1) /* 180 * 60 * 60 * 1000 - 1 */
 #define GRN_GEO_MIN_LATITUDE  -GRN_GEO_MAX_LATITUDE
 #define GRN_GEO_MIN_LONGITUDE -GRN_GEO_MAX_LONGITUDE
-
-#define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
-#define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
-  grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
-  _latitude = GRN_GEO_INT2RAD(_val->latitude);\
-  _longitude = GRN_GEO_INT2RAD(_val->longitude);\
-} while (0)
 
 #define GRN_GEO_KEY_MAX_BITS 64
 
