@@ -9,11 +9,14 @@ Groonga documentation.
 Install depended software
 -------------------------
 
+How to Install Sphinx
+-------------------------
+
 Groonga uses Sphinx_ as documentation tool.
 
 .. _Sphinx: https://www.sphinx-doc.org/
 
-Here are command lines to install Sphinx and the other dependencies.
+Here are command lines to install Sphinx.
 
 Debian GNU/Linux, Ubuntu:
 
