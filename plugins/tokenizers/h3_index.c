@@ -19,6 +19,20 @@
 #  define GRN_PLUGIN_FUNCTION_TAG tokenizers_h3_index
 #endif
 
+#ifdef WIN32
+#  define _USE_MATH_DEFINES
+/* We want use M_PI macro in math.h.
+   But we can't use M_PI in VC++ just because we include math.h.
+   We need to define _USE_MATH_DEFINES before including math.h in order to use
+   M_PI.
+
+   See: https://learn.microsoft.com/en-us/cpp/c-runtime-library/math-constants
+
+   math.h is included in groonga.h.
+   So, we define _USE_MATH_DEFINES before including groonga.h
+*/
+#endif /* WIN32 */
+
 #include <groonga.h>
 #include <groonga/tokenizer.h>
 
@@ -29,8 +43,6 @@
 #else
 #  include <h3/h3api.h>
 #endif
-
-#include <math.h>
 
 static const char *grn_h3_index_tag = "[tokenizer][h3-index]";
 
