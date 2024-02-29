@@ -1,3 +1,9 @@
+groonga (14.0.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Horimoto Yasuhiro <horimoto@clear-code.com>  Thu, 29 Feb 2024 09:11:52 -0000
+
 groonga (13.1.1-1) unstable; urgency=low
 
   * New upstream release.
