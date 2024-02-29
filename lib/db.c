@@ -4445,7 +4445,9 @@ exit:
     GRN_OBJ_FIN(ctx, &casted_query);
   }
 
-  optarg->query_domain = query_domain_keep;
+  if (optarg) {
+    optarg->query_domain = query_domain_keep;
+  }
 
   return rc;
 }
