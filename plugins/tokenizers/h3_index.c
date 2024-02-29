@@ -237,8 +237,8 @@ grn_h3_index_next(grn_ctx *ctx,
   grn_h3_index_tokenizer *tokenizer = user_data;
 
   LatLng lat_lng = {
-    .lat = degsToRads(GRN_GEO_MSEC2DEGREE(tokenizer->geo_point.latitude)),
-    .lng = degsToRads(GRN_GEO_MSEC2DEGREE(tokenizer->geo_point.longitude)),
+    .lat = GRN_GEO_MSEC2RADIAN(tokenizer->geo_point.latitude),
+    .lng = GRN_GEO_MSEC2RADIAN(tokenizer->geo_point.longitude),
   };
   H3Error error =
     latLngToCell(&lat_lng, tokenizer->options.resolution, &(tokenizer->index));
