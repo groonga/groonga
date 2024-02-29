@@ -54,6 +54,7 @@ repos:
           ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
+          ?lib/geo\.c|
           ?lib/grn\.h|
           ?lib/grn_applier\.h|
           ?lib/grn_arrow\.h|
