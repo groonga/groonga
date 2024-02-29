@@ -11,7 +11,7 @@ How to clone Groonga repository
 
 First, please fork Groonga repository on GitHub because
 you need to build Groonga documentation from the latest source code.
-You just access https://github.com/groonga/groonga and press
+You need to access https://github.com/groonga/groonga and press
 ``Fork`` button. Now you can clone your Groonga repository:
 
 .. code-block:: console
