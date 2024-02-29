@@ -50,6 +50,7 @@ Debian GNU/Linux, Ubuntu:
 
 .. code-block:: console
 
+   % cd groonga
    % ./setup.sh
 
 Run ``cmake`` with ``--preset=doc``
