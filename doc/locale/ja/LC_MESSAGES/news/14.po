@@ -26,6 +26,21 @@ msgstr "メジャーバージョンアップです! メジャーバージョン�
 msgid "Improvements"
 msgstr "改良"
 
+msgid "Added a new tokenizer `TokenH3Index` (experimental)."
+msgstr "新しいトークナイザー`TokenH3Index`を追加しました。（実験的）"
+
+msgid "`TokenH3Index`tokenizes WGS84GetPoint to UInt64(H3 index)."
+msgstr "`TokenH3Index`は、`WGS84GetPoint` を `UInt64`(H3 index)に変換します。"
+
+msgid "Added support for offline and online index construction with non text based tokenizer (experimental)."
+msgstr "非テキストベースのトークナイザーを使ったインデックスのオンライン構築とオフライン構築をサポートしました。（実験的）"
+
+msgid "`TokenH3Index` is one of non text based tokenizers."
+msgstr "`TokenH3Index` は、非テキストベースのトークナイザーの一つです。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for searching by index with non text based tokenizer (experimental)."
+msgstr "[{doc}`/reference/commands/select`] 非テキストベースのトークナイザーを使ったインデックスでの検索をサポートしました。（実験的）."
+
 msgid "Added new functions `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()`."
 msgstr "新しい関数 `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()` を追加しました。"
 
@@ -53,44 +68,44 @@ msgstr "`distance_l1_norm()`: マンハッタン距離を計算します。"
 msgid "Added a new function `number_round()`."
 msgstr "新しい関数`number_round()`を追加しました。"
 
-msgid "[{doc}`/reference/commands/load`] Added support for parallel load."
-msgstr "[{doc}`/reference/commands/load`] `load`をパラレルに実行できるようになりました。"
+msgid "[{doc}`/reference/commands/load`] Added support for parallel `load`."
+msgstr "[{doc}`/reference/commands/load`] `load`を並列に実行できるようになりました。"
 
 msgid "This feature only enable when the `input_type` of `load` is `apache-arrow`."
 msgstr "この機能は、`load`の`input_type`が`apache-arrow`の時のみ有効です。"
 
 msgid "This feature one thread per column. If there are many target columns, it will reduce load time."
-msgstr "この機能は、一つのカラムを一つのスレッドで実行します。対象のカラムがたくさんある時に、ロード時間の短縮が期待できます。"
+msgstr "この機能は、一つのカラムに対し一つのスレッドを割り当てます。対象のカラムがたくさんある時に、ロード時間の短縮が期待できます。"
 
 msgid "[{doc}`/reference/commands/select`] We can use uvector as much as possible for array literal in `--filter`."
-msgstr ""
+msgstr "[{doc}`/reference/commands/select`] `--filter`内で配列リテラルをなるべく、uvectorとして使えるようにしました。"
 
 msgid "uvector is vector of elements with fix size."
-msgstr ""
+msgstr "uvectorは、要素が固定長サイズのベクターです。"
 
 msgid "If all elements have the same type, we use uvector instead vector."
-msgstr ""
+msgstr "すべての要素の型が同じ場合、ベクターの変わりにuvactorを使えます。"
 
 msgid "[{doc}`/reference/commands/status`] Added `n_workers` to output of `status`."
-msgstr ""
+msgstr "[{doc}`/reference/commands/status`] `status`の結果に`n_workers`を追加しました。"
 
 msgid "Optimized a dynamic column creation."
-msgstr ""
+msgstr "動的カラムの作成を最適化しました。"
 
 msgid "[WAL] Added support for rebuilding broken indexes in parallel."
-msgstr ""
+msgstr "[WAL] 壊れたインデックスの再構築を並列で実行できるようになりました。"
 
 msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
-msgstr ""
+msgstr "[{doc}`/reference/commands/select`] `output_type=apache-arrow`の時に、`_key`が`Int64`型のテーブルへの参照カラムを表示できるようにしました。"
 
 msgid "Fixes"
-msgstr ""
+msgstr "修正"
 
-msgid "[Windows] Fixed path for documents of \"groonga-normalizer-mysql\" in package for Windows."
-msgstr ""
+msgid "[Windows] Fixed path for documents of `groonga-normalizer-mysql` in package for Windows."
+msgstr "[Windows] Windows向けパッケージ内の`groonga-normalizer-mysql`のドキュメントのパスを修正しました。"
 
-msgid "Documents of \"groonga-normalizer-mysql\" put under the `share/` in this release."
-msgstr ""
+msgid "Documents of `groonga-normalizer-mysql` put under the `share/` in this release."
+msgstr "今回のリリースから、`groonga-normalizer-mysql`のドキュメントは`share/`以下に格納されます。"
 
 msgid "[{doc}`/reference/commands/select`] Fixed a bug that Groonga may crash when we use bitwise operations."
-msgstr ""
+msgstr "[{doc}`/reference/commands/select`] ビットごとの演算を行うとGroongaがクラッシュすることがある問題を修正しました。"
