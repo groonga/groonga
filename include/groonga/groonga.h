@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -1742,6 +1743,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_GEO_DEGREE2MSEC(degree)                                            \
   ((int32_t)((degree)*3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
 #define GRN_GEO_MSEC2DEGREE(msec) ((((int32_t)(msec)) / 3600.0) * 0.001)
+#define GRN_GEO_RESOLUTION        3600000
 #define GRN_GEO_RADIAN2MSEC(radian)                                            \
   ((int32_t)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (radian)))
 #define GRN_GEO_MSEC2RADIAN(msec) ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (msec))
