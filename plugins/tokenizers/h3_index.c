@@ -23,7 +23,8 @@
 #  define _USE_MATH_DEFINES
 /* We want use M_PI macro in math.h.
    But we can't use M_PI in VC++ just because we include math.h.
-   We need to define _USE_MATH_DEFINES before including math.h in order to use M_PI.
+   We need to define _USE_MATH_DEFINES before including math.h in order to use
+   M_PI.
 
    See: https://learn.microsoft.com/en-us/cpp/c-runtime-library/math-constants
    
