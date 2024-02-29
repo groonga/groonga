@@ -22,9 +22,6 @@ msgstr "導入"
 msgid "This documentation describes about how to write, generate and manage Groonga documentation."
 msgstr "この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
 
-msgid "Install depended software"
-msgstr "必要なソフトウェアのインストール"
-
 msgid "How to Install Sphinx"
 msgstr "Shpinxのインストール方法"
 
@@ -42,6 +39,12 @@ msgstr ""
 
 msgid "OS X:"
 msgstr ""
+
+msgid "How to Install required packages for generating documents"
+msgstr "ドキュメント生成に必要なパッケージのインストール方法"
+
+msgid "You can install required packages for generating Groonga documentation by the following command."
+msgstr "以下のコマンドでGroongaドキュメントを生成するのに必要なパッケージをインストールできます。"
 
 msgid "Run ``cmake`` with ``--preset=doc``"
 msgstr "``cmake`` を ``--preset=doc`` 付きで実行"

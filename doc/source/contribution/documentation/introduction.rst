@@ -6,9 +6,6 @@ Introduction
 This documentation describes about how to write, generate and manage
 Groonga documentation.
 
-Install depended software
--------------------------
-
 How to Install Sphinx
 -------------------------
 
@@ -43,6 +40,17 @@ OS X:
    % export PATH=`brew --prefix gettext`/bin:$PATH
    % pip install -r doc/requirements.txt
    % (cd doc && bundle install)
+
+How to Install required packages for generating documents
+---------------------------------------------------------
+
+You can install required packages for generating Groonga documentation by the following command.
+
+Debian GNU/Linux, Ubuntu:
+
+.. code-block:: console
+
+   % ./setup.sh
 
 Run ``cmake`` with ``--preset=doc``
 -----------------------------------
