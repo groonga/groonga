@@ -46,3 +46,4 @@ dist-hook:
 	  tar xf - -C $(distdir)/groonga-log-source
 	cd $(distdir) && $(RUBY) download_rapidjson.rb
 	cd $(distdir) && $(RUBY) download.rb blosc
+	cd $(distdir) && $(RUBY) download.rb xsimd
