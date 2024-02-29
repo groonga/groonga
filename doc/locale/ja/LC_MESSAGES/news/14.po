@@ -1,0 +1,111 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 13.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-02-28 22:52+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=; plural=;\n"
+
+msgid "News - 14 series"
+msgstr "お知らせ - 14系"
+
+msgid "Release 14.0.0 - 2024-02-29"
+msgstr "14.0.0リリース - 2024-02-29"
+
+msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 14.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく14.0.0へアップグレードできます。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Added a new tokenizer `TokenH3Index` (experimental)."
+msgstr "新しいトークナイザー`TokenH3Index`を追加しました。（実験的）"
+
+msgid "`TokenH3Index`tokenizes WGS84GetPoint to UInt64(H3 index)."
+msgstr "`TokenH3Index`は、`WGS84GetPoint` を `UInt64`(H3 index)に変換します。"
+
+msgid "Added support for offline and online index construction with non text based tokenizer (experimental)."
+msgstr "非テキストベースのトークナイザーを使ったインデックスのオンライン構築とオフライン構築をサポートしました。（実験的）"
+
+msgid "`TokenH3Index` is one of non text based tokenizers."
+msgstr "`TokenH3Index` は、非テキストベースのトークナイザーの一つです。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for searching by index with non text based tokenizer (experimental)."
+msgstr "[{doc}`/reference/commands/select`] 非テキストベースのトークナイザーを使ったインデックスでの検索をサポートしました。（実験的）."
+
+msgid "Added new functions `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()`."
+msgstr "新しい関数 `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()` を追加しました。"
+
+msgid "We can only get records that a small distance as vector with these functions and `limit N`"
+msgstr "これらの関数と`limit N`を使うことで、ベクトル的に距離の近いレコードのみを取得することができます。"
+
+msgid "These functions calculate distance in the `output` stage."
+msgstr "これらの関数は、`output`ステージで距離を計算します。"
+
+msgid "However, we don't optimaize these functions yet."
+msgstr "ただ、これらの関数はまだ最適化できていません。"
+
+msgid "`distance_cosine()`: Calculate cosine similarity."
+msgstr "`distance_cosine()`: コサイン類似度を計算します。"
+
+msgid "`distance_inner_product()`: Calculate inner product."
+msgstr "`distance_inner_product()`: 内積を計算します。"
+
+msgid "`distance_l2_norm_squared()`: Calculate euclidean distance."
+msgstr "`distance_l2_norm_squared()`: ユークリッド距離を計算します。"
+
+msgid "`distance_l1_norm()`: Calculate manhattan distance."
+msgstr "`distance_l1_norm()`: マンハッタン距離を計算します。"
+
+msgid "Added a new function `number_round()`."
+msgstr "新しい関数`number_round()`を追加しました。"
+
+msgid "[{doc}`/reference/commands/load`] Added support for parallel `load`."
+msgstr "[{doc}`/reference/commands/load`] `load`を並列に実行できるようになりました。"
+
+msgid "This feature only enable when the `input_type` of `load` is `apache-arrow`."
+msgstr "この機能は、`load`の`input_type`が`apache-arrow`の時のみ有効です。"
+
+msgid "This feature one thread per column. If there are many target columns, it will reduce load time."
+msgstr "この機能は、一つのカラムに対し一つのスレッドを割り当てます。対象のカラムがたくさんある時に、ロード時間の短縮が期待できます。"
+
+msgid "[{doc}`/reference/commands/select`] We can use uvector as much as possible for array literal in `--filter`."
+msgstr "[{doc}`/reference/commands/select`] `--filter`内で配列リテラルをなるべく、uvectorとして使えるようにしました。"
+
+msgid "uvector is vector of elements with fix size."
+msgstr "uvectorは、要素が固定長サイズのベクターです。"
+
+msgid "If all elements have the same type, we use uvector instead vector."
+msgstr "すべての要素の型が同じ場合、ベクターの変わりにuvactorを使えます。"
+
+msgid "[{doc}`/reference/commands/status`] Added `n_workers` to output of `status`."
+msgstr "[{doc}`/reference/commands/status`] `status`の結果に`n_workers`を追加しました。"
+
+msgid "Optimized a dynamic column creation."
+msgstr "動的カラムの作成を最適化しました。"
+
+msgid "[WAL] Added support for rebuilding broken indexes in parallel."
+msgstr "[WAL] 壊れたインデックスの再構築を並列で実行できるようになりました。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
+msgstr "[{doc}`/reference/commands/select`] `output_type=apache-arrow`の時に、`_key`が`Int64`型のテーブルへの参照カラムを表示できるようにしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[Windows] Fixed path for documents of `groonga-normalizer-mysql` in package for Windows."
+msgstr "[Windows] Windows向けパッケージ内の`groonga-normalizer-mysql`のドキュメントのパスを修正しました。"
+
+msgid "Documents of `groonga-normalizer-mysql` put under the `share/` in this release."
+msgstr "今回のリリースから、`groonga-normalizer-mysql`のドキュメントは`share/`以下に格納されます。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that Groonga may crash when we use bitwise operations."
+msgstr "[{doc}`/reference/commands/select`] ビットごとの演算を行うとGroongaがクラッシュすることがある問題を修正しました。"

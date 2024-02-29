@@ -1048,6 +1048,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/11.rst \
 	$(top_srcdir)/doc/source/news/12.rst \
 	$(top_srcdir)/doc/source/news/13.md \
+	$(top_srcdir)/doc/source/news/14.md \
 	$(top_srcdir)/doc/source/news/2.rst \
 	$(top_srcdir)/doc/source/news/3.rst \
 	$(top_srcdir)/doc/source/news/4.rst \
@@ -2366,6 +2367,7 @@ source_files_relative_from_doc_dir = \
 	source/news/11.rst \
 	source/news/12.rst \
 	source/news/13.md \
+	source/news/14.md \
 	source/news/2.rst \
 	source/news/3.rst \
 	source/news/4.rst \
@@ -2681,6 +2683,7 @@ po_files = \
 	news/11.po \
 	news/12.po \
 	news/13.po \
+	news/14.po \
 	news/2.po \
 	news/3.po \
 	news/4.po \
@@ -2993,6 +2996,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.po \
 	LC_MESSAGES/news/12.po \
 	LC_MESSAGES/news/13.po \
+	LC_MESSAGES/news/14.po \
 	LC_MESSAGES/news/2.po \
 	LC_MESSAGES/news/3.po \
 	LC_MESSAGES/news/4.po \
@@ -3305,6 +3309,7 @@ edit_po_files = \
 	news/11.edit \
 	news/12.edit \
 	news/13.edit \
+	news/14.edit \
 	news/2.edit \
 	news/3.edit \
 	news/4.edit \
@@ -3617,6 +3622,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.edit \
 	LC_MESSAGES/news/12.edit \
 	LC_MESSAGES/news/13.edit \
+	LC_MESSAGES/news/14.edit \
 	LC_MESSAGES/news/2.edit \
 	LC_MESSAGES/news/3.edit \
 	LC_MESSAGES/news/4.edit \
@@ -3929,6 +3935,7 @@ mo_files = \
 	news/11.mo \
 	news/12.mo \
 	news/13.mo \
+	news/14.mo \
 	news/2.mo \
 	news/3.mo \
 	news/4.mo \
@@ -4241,6 +4248,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.mo \
 	LC_MESSAGES/news/12.mo \
 	LC_MESSAGES/news/13.mo \
+	LC_MESSAGES/news/14.mo \
 	LC_MESSAGES/news/2.mo \
 	LC_MESSAGES/news/3.mo \
 	LC_MESSAGES/news/4.mo \
@@ -4592,6 +4600,7 @@ html_files_relative_from_locale_dir = \
 	html/news/11.html \
 	html/news/12.html \
 	html/news/13.html \
+	html/news/14.html \
 	html/news/2.html \
 	html/news/3.html \
 	html/news/4.html \
