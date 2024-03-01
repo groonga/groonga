@@ -34,6 +34,8 @@ end
 all_targets = [
   "blosc",
   "croaring",
+  "h3",
+  "simsimd",
   "xsimd",
   "zstd",
 ]
