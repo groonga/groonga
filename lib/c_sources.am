@@ -106,6 +106,7 @@ libgroonga_c_sources =				\
 	grn_window_functions.h			\
 	grn_windows.h				\
 	group.c					\
+	h3.c					\
 	hash.c					\
 	highlighter.c				\
 	id.c					\

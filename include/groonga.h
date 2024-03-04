@@ -44,6 +44,7 @@
 #include "groonga/file_reader.h"
 #include "groonga/float.h"
 #include "groonga/geo.h"
+#include "groonga/h3.h"
 #include "groonga/hash.h"
 #include "groonga/highlighter.h"
 #include "groonga/id.h"

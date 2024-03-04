@@ -22,14 +22,6 @@
 #include <groonga.h>
 #include <groonga/tokenizer.h>
 
-#include <config.h>
-
-#ifdef GRN_WITH_H3_BUNDLED
-#  include <h3api.h>
-#else
-#  include <h3/h3api.h>
-#endif
-
 static const char *grn_h3_index_tag = "[tokenizer][h3-index]";
 
 typedef struct {
@@ -52,7 +44,7 @@ grn_h3_index_options_fin(grn_ctx *ctx, grn_h3_index_options *options)
 typedef struct {
   grn_h3_index_options options;
   grn_geo_point geo_point;
-  H3Index index;
+  uint64_t index;
 } grn_h3_index_tokenizer;
 
 static void
@@ -187,47 +179,6 @@ grn_h3_index_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return tokenizer;
 }
 
-static const char *
-grn_h3_error_to_string(H3Error error)
-{
-  switch (error) {
-  case E_SUCCESS:
-    return "success";
-  case E_FAILED:
-    return "failed";
-  case E_DOMAIN:
-    return "outside of acceptable range";
-  case E_LATLNG_DOMAIN:
-    return "latitude or longitude is outside of acceptable range";
-  case E_RES_DOMAIN:
-    return "resolution is outside of acceptable range";
-  case E_CELL_INVALID:
-    return "invalid cell";
-  case E_DIR_EDGE_INVALID:
-    return "invalid directed edge";
-  case E_UNDIR_EDGE_INVALID:
-    return "invalid undirected edge";
-  case E_VERTEX_INVALID:
-    return "invalid vertex";
-  case E_PENTAGON:
-    return "pentagon distortion is encountered";
-  case E_DUPLICATE_INPUT:
-    return "duplicate input is encountered";
-  case E_NOT_NEIGHBORS:
-    return "cells aren't neighbors";
-  case E_RES_MISMATCH:
-    return "cells have incompatible resolutions";
-  case E_MEMORY_ALLOC:
-    return "failed to allocate memory";
-  case E_MEMORY_BOUNDS:
-    return "bounds of provided memory are not large enough";
-  case E_OPTION_INVALID:
-    return "invalid option";
-  default:
-    return "unknown";
-  }
-}
-
 static void
 grn_h3_index_next(grn_ctx *ctx,
                   grn_tokenizer_query *query,
@@ -236,19 +187,11 @@ grn_h3_index_next(grn_ctx *ctx,
 {
   grn_h3_index_tokenizer *tokenizer = user_data;
 
-  LatLng lat_lng = {
-    .lat = GRN_GEO_MSEC2RADIAN(tokenizer->geo_point.latitude),
-    .lng = GRN_GEO_MSEC2RADIAN(tokenizer->geo_point.longitude),
-  };
-  H3Error error =
-    latLngToCell(&lat_lng, tokenizer->options.resolution, &(tokenizer->index));
-  if (error != E_SUCCESS) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s failed to convert point to H3 index: %u: %s",
-                     grn_h3_index_tag,
-                     error,
-                     grn_h3_error_to_string(error));
+  tokenizer->index = grn_h3_geo_point_to_cell(ctx,
+                                              &(tokenizer->geo_point),
+                                              tokenizer->options.resolution,
+                                              grn_h3_index_tag);
+  if (ctx->rc != GRN_SUCCESS) {
     return;
   }
   grn_token_set_data(ctx,

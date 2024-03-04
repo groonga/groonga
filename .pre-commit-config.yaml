@@ -27,6 +27,7 @@ repos:
           ?include/groonga/distance\.h|
           ?include/groonga/float\.h|
           ?include/groonga/groonga\.h|
+          ?include/groonga/h3\.h|
           ?include/groonga/highlighter\.h|
           ?include/groonga/ii\.h|
           ?include/groonga/obj\.h|
@@ -84,6 +85,7 @@ repos:
           ?lib/grn_tokenizer\.h|
           ?lib/grn_tokenizers\.h|
           ?lib/grn_vector\.h|
+          ?lib/h3\.c|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
           ?lib/load\.c|
