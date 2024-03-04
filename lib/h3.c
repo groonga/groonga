@@ -65,10 +65,10 @@ grn_h3_error_to_string(H3Error error)
 }
 
 uint64_t
-grn_h3_geo_point_to_cell(grn_ctx *ctx,
-                         grn_geo_point *geo_point,
-                         int32_t resolution,
-                         const char *tag)
+grn_h3_compute_cell(grn_ctx *ctx,
+                    grn_geo_point *geo_point,
+                    int32_t resolution,
+                    const char *tag)
 {
   GRN_API_ENTER;
   LatLng lat_lng = {

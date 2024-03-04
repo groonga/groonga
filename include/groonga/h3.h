@@ -23,10 +23,10 @@ extern "C" {
 #endif
 
 GRN_API uint64_t
-grn_h3_geo_point_to_cell(grn_ctx *ctx,
-                         grn_geo_point *geo_point,
-                         int32_t resolution,
-                         const char *tag);
+grn_h3_compute_cell(grn_ctx *ctx,
+                    grn_geo_point *geo_point,
+                    int32_t resolution,
+                    const char *tag);
 
 #ifdef __cplusplus
 }

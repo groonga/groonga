@@ -187,10 +187,10 @@ grn_h3_index_next(grn_ctx *ctx,
 {
   grn_h3_index_tokenizer *tokenizer = user_data;
 
-  tokenizer->index = grn_h3_geo_point_to_cell(ctx,
-                                              &(tokenizer->geo_point),
-                                              tokenizer->options.resolution,
-                                              grn_h3_index_tag);
+  tokenizer->index = grn_h3_compute_cell(ctx,
+                                         &(tokenizer->geo_point),
+                                         tokenizer->options.resolution,
+                                         grn_h3_index_tag);
   if (ctx->rc != GRN_SUCCESS) {
     return;
   }
