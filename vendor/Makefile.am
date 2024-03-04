@@ -45,5 +45,4 @@ dist-hook:
 	GIT_DIR=$(srcdir)/groonga-log-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/groonga-log-source
 	cd $(distdir) && $(RUBY) download_rapidjson.rb
-	cd $(distdir) && $(RUBY) download.rb blosc
-	cd $(distdir) && $(RUBY) download.rb xsimd
+	cd $(distdir) && $(RUBY) download.rb
