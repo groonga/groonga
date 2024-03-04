@@ -42,6 +42,8 @@
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
+#include <math.h>
+
 static grn_bool grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
 
 void
