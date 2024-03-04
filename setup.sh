@@ -49,6 +49,7 @@ case "${distribution}-${code_name}" in
       cmake
       g++
       gcc
+      gettext
       libarrow-dev
       liblz4-dev
       libmecab-dev
@@ -58,6 +59,7 @@ case "${distribution}-${code_name}" in
       libzstd-dev
       ninja-build
       pkg-config
+      python3-pip
       rapidjson-dev
       zlib1g-dev
     )
