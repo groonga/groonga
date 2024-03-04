@@ -35,9 +35,8 @@ macOS:
 
 .. code-block:: console
 
-   % brew install python
-   % brew install gettext
-   % export PATH=`brew --prefix gettext`/bin:$PATH
+   % brew install python gettext
+   % export PATH=$(brew --prefix gettext)/bin:$PATH
    % pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
