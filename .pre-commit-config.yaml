@@ -28,6 +28,7 @@ repos:
           ?include/groonga/float\.h|
           ?include/groonga/groonga\.h|
           ?include/groonga/highlighter\.h|
+          ?include/groonga/ii\.h|
           ?include/groonga/obj\.h|
           ?include/groonga/proc\.h|
           ?include/groonga/table\.h|
