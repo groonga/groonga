@@ -19,7 +19,7 @@ Debian GNU/Linux, Ubuntu:
 
 .. code-block:: console
 
-   % sudo apt-get install -V -y python3-pip gettext
+   % ./setup.sh
    % sudo pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
