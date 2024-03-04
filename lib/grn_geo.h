@@ -21,18 +21,6 @@
 #include "grn_ii.h"
 #include "grn_db.h"
 
-#if defined(WIN32) || defined(__sun)
-#  define _USE_MATH_DEFINES
-#  ifndef MAX
-#    define MAX(a, b) ((a) > (b) ? (a) : (b))
-#  endif
-
-#  ifndef MIN
-#    define MIN(a, b) ((a) < (b) ? (a) : (b))
-#  endif
-#endif /* WIN32 or __sun */
-#include <math.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
