@@ -268,7 +268,7 @@ static void
 grn_io_register(grn_ctx *ctx, grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
-    grn_bool succeeded = GRN_FALSE;
+    bool succeeded = false;
     CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios &&
         grn_hash_add(&grn_gctx,
@@ -277,7 +277,7 @@ grn_io_register(grn_ctx *ctx, grn_io *io)
                      (unsigned int)strlen(io->path),
                      (void **)&io,
                      NULL)) {
-      succeeded = GRN_TRUE;
+      succeeded = true;
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
     if (!succeeded) {
@@ -291,7 +291,7 @@ static void
 grn_io_unregister(grn_ctx *ctx, grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
-    grn_bool succeeded = GRN_FALSE;
+    bool succeeded = false;
     CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios) {
       grn_hash_delete(&grn_gctx,
@@ -299,7 +299,7 @@ grn_io_unregister(grn_ctx *ctx, grn_io *io)
                       io->path,
                       (unsigned int)strlen(io->path),
                       NULL);
-      succeeded = GRN_TRUE;
+      succeeded = true;
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
     if (!succeeded) {
@@ -1563,14 +1563,14 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
   return rc;
 }
 
-grn_bool
+bool
 grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
 {
   uint32_t i;
   uint32_t n_files;
 
   if (!io) {
-    return GRN_FALSE;
+    return false;
   }
 
   n_files = grn_io_n_files(ctx, io);
@@ -1581,11 +1581,11 @@ grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
     if (stat(path, &s) != 0) {
       SERR("[io][corrupt] used path doesn't exist: <%s>",
            path);
-      return GRN_TRUE;
+      return true;
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 size_t
@@ -1823,14 +1823,14 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
 
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
-    grn_bool exist = GRN_FALSE;
+    bool exist = false;
     DWORD dwCreationDisposition;
     const char *flags_description;
 
     {
       struct stat stat_buffer;
       if (stat(path, &stat_buffer) == 0) {
-        exist = GRN_TRUE;
+        exist = true;
       }
     }
 

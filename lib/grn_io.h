@@ -417,7 +417,7 @@ void
 grn_io_clear_lock(grn_io *io);
 uint32_t
 grn_io_is_locked(grn_io *io);
-grn_bool
+bool
 grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
 size_t
 grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);

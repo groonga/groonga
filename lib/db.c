@@ -1145,7 +1145,7 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
 grn_bool
 grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_bool is_corrupt = GRN_FALSE;
+  bool is_corrupt = false;
 
   GRN_API_ENTER;
 
