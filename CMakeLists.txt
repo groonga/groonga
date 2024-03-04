@@ -1319,7 +1319,7 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
     endif()
   endif()
   if(h3_FOUND)
-    set(GRN_WITH_XSIMD TRUE)
+    set(GRN_WITH_H3 TRUE)
     message(STATUS "H3: system")
   elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
     # We need to use function to create a variable scope
