@@ -15395,6 +15395,15 @@ exit:
 }
 
 grn_rc
+grn_ii_select_by_id(
+  grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *result_set, grn_operator op)
+{
+  GRN_API_ENTER;
+  grn_rc rc = grn_ii_at(ctx, ii, id, result_set, op);
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
 grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
 {
   int rep = 0;
