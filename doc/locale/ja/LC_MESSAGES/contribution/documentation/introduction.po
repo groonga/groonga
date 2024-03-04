@@ -31,20 +31,20 @@ msgstr "Groongaはドキュメントツールとして Sphinx_ を使います�
 msgid "Here are command lines to install Sphinx."
 msgstr "以下はSphinxをインストールするコマンドラインです。"
 
-msgid "Debian GNU/Linux, Ubuntu::"
+msgid "Debian GNU/Linux, Ubuntu:"
 msgstr ""
 
-msgid "CentOS, Fedora::"
+msgid "CentOS, Fedora:"
 msgstr ""
 
-msgid "OS X::"
+msgid "OS X:"
 msgstr ""
 
 msgid "Run ``cmake`` with ``--preset=doc``"
 msgstr "``cmake`` を ``--preset=doc`` 付きで実行"
 
-msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--preset=doc`` option to ``cmake``::"
-msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``cmake`` に ``--preset=doc`` オプションを追加して明示的に有効にする必要があります。::"
+msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--preset=doc`` option to ``cmake``:"
+msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``cmake`` に ``--preset=doc`` オプションを追加して明示的に有効にする必要があります。:"
 
 msgid "Now, your Groonga build is documentation ready."
 msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
@@ -52,8 +52,8 @@ msgstr "これで、 Groonga ドキュメントをビルドする準備が出来
 msgid "Generate HTML"
 msgstr "HTMLファイルを生成"
 
-msgid "You can generate HTML by the following command::"
-msgstr "以下のコマンドでHTMLファイルを生成できます。::"
+msgid "You can generate HTML by the following command:"
+msgstr "以下のコマンドでHTMLファイルを生成できます。:"
 
 msgid "You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``."
 msgstr "生成されたHTMLドキュメントは ``../groonga.doc/doc/ja/html/`` にあります。"
