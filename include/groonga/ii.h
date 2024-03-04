@@ -32,6 +32,8 @@ GRN_API grn_column_flags
 grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii);
 GRN_API uint32_t
 grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii);
+GRN_API grn_obj *
+grn_ii_get_lexicon(grn_ctx *ctx, grn_ii *ii);
 
 GRN_API void
 grn_ii_cursor_set_min_enable_set(bool enable);

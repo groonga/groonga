@@ -191,8 +191,6 @@ grn_ii_max_section(grn_ii *ii);
 
 const char *
 grn_ii_path(grn_ii *ii);
-grn_obj *
-grn_ii_lexicon(grn_ii *ii);
 
 /*
 grn_rc grn_ii_upd(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,

@@ -6958,6 +6958,16 @@ grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii)
   return ii->n_elements;
 }
 
+grn_obj *
+grn_ii_get_lexicon(grn_ctx *ctx, grn_ii *ii)
+{
+  if (!ii) {
+    return NULL;
+  }
+
+  return ii->lexicon;
+}
+
 void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {
@@ -8793,12 +8803,6 @@ uint32_t
 grn_ii_max_section(grn_ii *ii)
 {
   return ii->header.common->smax;
-}
-
-grn_obj *
-grn_ii_lexicon(grn_ii *ii)
-{
-  return ii->lexicon;
 }
 
 /* private classes */
