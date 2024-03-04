@@ -27,7 +27,7 @@ AlmaLinux, Fedora:
 
 .. code-block:: console
 
-   % sudo yum install -y python-pip gettext
+   % sudo dnf install -y python-pip gettext
    % sudo pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
