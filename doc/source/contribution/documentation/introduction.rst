@@ -23,7 +23,7 @@ Debian GNU/Linux, Ubuntu:
    % sudo pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
-CentOS, Fedora:
+AlmaLinux, Fedora:
 
 .. code-block:: console
 
@@ -31,7 +31,7 @@ CentOS, Fedora:
    % sudo pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
-OS X:
+macOS:
 
 .. code-block:: console
 

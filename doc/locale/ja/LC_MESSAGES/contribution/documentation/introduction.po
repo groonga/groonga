@@ -34,10 +34,10 @@ msgstr "以下はSphinxをインストールするコマンドラインです。
 msgid "Debian GNU/Linux, Ubuntu:"
 msgstr ""
 
-msgid "CentOS, Fedora:"
+msgid "AlmaLinux, Fedora:"
 msgstr ""
 
-msgid "OS X:"
+msgid "macOS:"
 msgstr ""
 
 msgid "Run ``cmake`` with ``--preset=doc``"
