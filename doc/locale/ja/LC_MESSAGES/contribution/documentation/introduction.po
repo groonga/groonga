@@ -22,6 +22,21 @@ msgstr "導入"
 msgid "This documentation describes about how to write, generate and manage Groonga documentation."
 msgstr "この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
 
+msgid "How to fork and clone Groonga repository"
+msgstr "Groongaリポジトリをフォークしクローンする方法"
+
+msgid "Contributing to Groonga's documentation begins with forking and cloning the Groonga repository. These actions are essential first steps that enable personal modifications and experimentation in your personal repository. And also, it enables you to submit them as your contributions to the Groonga repository. Follow these steps."
+msgstr "Groongaドキュメントへ貢献するには、まずはGroongaリポジトリをフォークしクローンするとこから始めます。そうすることで、あなたのリポジトリで個人的な変更や実験が可能になります。他にも、その成果をGroongaリポジトリにあなたの貢献として送ることもできます。まずは、次の手順に倣って、フォークとクローンをしてください。"
+
+msgid "Go to https://github.com/groonga/groonga on GitHub"
+msgstr "GitHubの https://github.com/groonga/groonga へ移動してください。"
+
+msgid "Click the ``Fork`` button to create a copy of the repository"
+msgstr "``Fork`` ボタンをクリックして、Groongaリポジトリをフォークしてください。"
+
+msgid "Clone your Groonga repository with the following command"
+msgstr "下記のコマンドでフォークしたGroongaリポジトリをクローンしてください。"
+
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 

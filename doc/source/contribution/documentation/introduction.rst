@@ -6,6 +6,21 @@ Introduction
 This documentation describes about how to write, generate and manage
 Groonga documentation.
 
+How to fork and clone Groonga repository
+----------------------------------------
+
+Contributing to Groonga's documentation begins with forking and cloning the Groonga repository.
+These actions are essential first steps that enable personal modifications and experimentation in your personal repository.
+And also, it enables you to submit them as your contributions to the Groonga repository. Follow these steps.
+
+1. Go to https://github.com/groonga/groonga on GitHub
+2. Click the ``Fork`` button to create a copy of the repository
+3. Clone your Groonga repository with the following command
+
+.. code-block:: console
+
+   % git clone --recursive git@github.com:${YOUR_GITHUB_ACCOUNT}/groonga.git
+
 Install depended software
 -------------------------
 
