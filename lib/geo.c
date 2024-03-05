@@ -25,6 +25,14 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif
+
+#ifndef MIN
+#  define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
 #define GRN_GEO_POINT_IN_NORTH_EAST(point)                                     \
   ((point)->latitude >= 0 && (point)->longitude >= 0)
 #define GRN_GEO_POINT_IN_NORTH_WEST(point)                                     \
