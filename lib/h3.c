@@ -17,12 +17,15 @@
 
 #include "grn_ctx.h"
 
-#ifdef GRN_WITH_H3_BUNDLED
-#  include <h3api.h>
-#else
-#  include <h3/h3api.h>
+#ifdef GRN_WITH_H3
+#  ifdef GRN_WITH_H3_BUNDLED
+#    include <h3api.h>
+#  else
+#    include <h3/h3api.h>
+#  endif
 #endif
 
+#ifdef GRN_WITH_H3
 static const char *
 grn_h3_error_to_string(H3Error error)
 {
@@ -63,6 +66,7 @@ grn_h3_error_to_string(H3Error error)
     return "unknown";
   }
 }
+#endif
 
 uint64_t
 grn_h3_compute_cell(grn_ctx *ctx,
@@ -70,6 +74,7 @@ grn_h3_compute_cell(grn_ctx *ctx,
                     int32_t resolution,
                     const char *tag)
 {
+#ifdef GRN_WITH_H3
   GRN_API_ENTER;
   LatLng lat_lng = {
     .lat = GRN_GEO_MSEC2RADIAN(geo_point->latitude),
@@ -87,4 +92,9 @@ grn_h3_compute_cell(grn_ctx *ctx,
         GRN_GEO_MSEC2DEGREE(geo_point->longitude));
   }
   GRN_API_RETURN(h3_index);
+#else
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s H3 isn't enabled", tag);
+  GRN_API_RETURN(h3_index);
+#endif
 }
