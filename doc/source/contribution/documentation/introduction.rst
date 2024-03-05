@@ -79,12 +79,16 @@ You can generate HTML by the following command:
 
 You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
-Update
-------
+How to update documentation
+---------------------------
 
-You can find sources of documentation at ``doc/source/``. The sources
-should be written in English. See :doc:`i18n` about how to translate
-documentation.
+Updating Groonga's documentation has a few steps to ensure your contributions are accurately reflected.
+Follow this guide to update and enhance the Groonga documentation effectively.
 
-You can update the target file when you update the existing
-documentation file.
+1. Edit documentation sources
+2. Reflect your modifications
+3. Preview your modifications on HTML
+4. Update translations
+5. Reflect your translations
+6. Preview your translations on HTML
+7. Send pull request to Groonga Repository
