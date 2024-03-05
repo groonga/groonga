@@ -17,6 +17,8 @@
 
 set -eux
 
+GROONGA_DIRECTORY="$(cd $(dirname $0) && pwd)"
+
 if type sudo > /dev/null 2>&1; then
   SUDO=sudo
 else
@@ -69,6 +71,6 @@ esac
 case "${distribution}-${code_name}" in
   debian-*|ubuntu-*)
     ${SUDO} apt install -y -V "${package_names[@]}"
-    ${SUDO} pip install -r doc/requirements.txt
+    ${SUDO} pip install -r ${GROONGA_DIRECTORY}/doc/requirements.txt
     ;;
 esac
