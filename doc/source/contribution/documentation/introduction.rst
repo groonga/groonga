@@ -35,7 +35,6 @@ Debian GNU/Linux, Ubuntu:
 .. code-block:: console
 
    % ./setup.sh
-   % sudo pip install -r doc/requirements.txt
    % (cd doc && bundle install)
 
 AlmaLinux, Fedora:

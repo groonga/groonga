@@ -69,5 +69,6 @@ esac
 case "${distribution}-${code_name}" in
   debian-*|ubuntu-*)
     ${SUDO} apt install -y -V "${package_names[@]}"
+    ${SUDO} pip install -r doc/requirements.txt
     ;;
 esac
