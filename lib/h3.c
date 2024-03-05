@@ -95,6 +95,6 @@ grn_h3_compute_cell(grn_ctx *ctx,
 #else
   GRN_API_ENTER;
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s H3 isn't enabled", tag);
-  GRN_API_RETURN(h3_index);
+  GRN_API_RETURN(0);
 #endif
 }
