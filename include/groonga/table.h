@@ -57,7 +57,7 @@ grn_table_create_similar(grn_ctx *ctx,
                                (key_type),                                     \
                                (value_type))))
 
-/* TODO: int *added -> grn_bool *added */
+/* TODO: int *added -> bool *added */
 GRN_API grn_id
 grn_table_add(grn_ctx *ctx,
               grn_obj *table,
@@ -469,7 +469,7 @@ grn_table_sort_key_close(grn_ctx *ctx,
                          grn_table_sort_key *keys,
                          uint32_t nkeys);
 
-GRN_API grn_bool
+GRN_API bool
 grn_table_is_grouped(grn_ctx *ctx, grn_obj *table);
 
 GRN_API unsigned int
@@ -498,7 +498,7 @@ grn_table_tokenize(grn_ctx *ctx,
                    const char *str,
                    unsigned int str_len,
                    grn_obj *buf,
-                   grn_bool addp);
+                   bool addp);
 
 GRN_API grn_rc
 grn_table_apply_expr(grn_ctx *ctx,

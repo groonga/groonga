@@ -15152,13 +15152,13 @@ grn_table_parse_load_columns(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_bool
+bool
 grn_table_is_grouped(grn_ctx *ctx, grn_obj *table)
 {
   if (GRN_OBJ_TABLEP(table) && GRN_TABLE_IS_GROUPED(table)) {
-    return GRN_TRUE;
+    return true;
   }
-  return GRN_FALSE;
+  return false;
 }
 
 unsigned int
@@ -15176,7 +15176,7 @@ grn_table_tokenize(grn_ctx *ctx,
                    const char *str,
                    unsigned int str_len,
                    grn_obj *buf,
-                   grn_bool addp)
+                   bool addp)
 {
   grn_token_cursor *token_cursor = NULL;
   grn_tokenize_mode mode = addp ? GRN_TOKENIZE_ADD : GRN_TOKENIZE_GET;
