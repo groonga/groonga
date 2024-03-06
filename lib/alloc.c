@@ -26,9 +26,9 @@
 
 static uint32_t alloc_count = 0;
 
-static grn_bool grn_fail_malloc_enable = GRN_FALSE;
+static bool grn_fail_malloc_enable = false;
 static double grn_fail_malloc_prob = 0.0;
-static grn_bool grn_fail_malloc_location = GRN_FALSE;
+static bool grn_fail_malloc_location = false;
 static char *grn_fail_malloc_func = NULL;
 static char *grn_fail_malloc_file = NULL;
 static int grn_fail_malloc_line = 0;
@@ -55,9 +55,9 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_fail_malloc_enable_env, "yes") == 0) {
-      grn_fail_malloc_enable = GRN_TRUE;
+      grn_fail_malloc_enable = true;
     } else {
-      grn_fail_malloc_enable = GRN_FALSE;
+      grn_fail_malloc_enable = false;
     }
   }
   {
@@ -84,7 +84,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_func_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_func_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_func = grn_fail_malloc_func_env;
     }
   }
@@ -94,7 +94,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_file_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_file_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_file = grn_fail_malloc_file_env;
     }
   }
@@ -104,7 +104,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_line_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_line_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_line = atoi(grn_fail_malloc_line_env);
     }
   }
@@ -978,45 +978,45 @@ grn_strdup_default(
   }
 }
 
-grn_bool
+bool
 grn_fail_malloc_should_fail(size_t size,
                             const char *file,
                             int line,
                             const char *func)
 {
   if (!grn_fail_malloc_enable) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (grn_fail_malloc_location) {
     if (grn_fail_malloc_file) {
       if (strcmp(file, grn_fail_malloc_file) != 0) {
-        return GRN_FALSE;
+        return false;
       }
     }
     if (grn_fail_malloc_line > 0) {
       if (line != grn_fail_malloc_line) {
-        return GRN_FALSE;
+        return false;
       }
     }
     if (grn_fail_malloc_func) {
       if (strcmp(func, grn_fail_malloc_func) != 0) {
-        return GRN_FALSE;
+        return false;
       }
     }
-    return GRN_TRUE;
+    return true;
   }
 
   if (grn_fail_malloc_prob > 0.0 && grn_fail_malloc_prob >= rand()) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (grn_fail_malloc_max_count >= 0 &&
       alloc_count >= (uint32_t)grn_fail_malloc_max_count) {
-    return GRN_TRUE;
+    return true;
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 void *
