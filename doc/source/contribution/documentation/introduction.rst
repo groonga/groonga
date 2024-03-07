@@ -83,11 +83,10 @@ How to edit documentation
 --------------------------
 
 The Groonga documentation is written in `reStructuredText (.rst)`_. These files are located in the ``./doc/source``.
-Each page of the documentation corresponds to an ``.rst`` file. Please find the file you wish to edit and make your changes.
+Each page of the documentation corresponds to an ``.rst`` file. For Example, if you want to edit this **Introduction** page, you should edit the ``./doc/source/contribution/documentation/introduction.rst`` file.
+Please find the file you wish to edit and make your changes.
 
 .. _reStructuredText (.rst): https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html
-
-For Example, if you want to edit this **Introduction** page, you should edit the ``./doc/source/contribution/documentation/introduction.rst`` file.
 
 Update
 ------

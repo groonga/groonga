@@ -76,11 +76,8 @@ msgstr "生成されたHTMLドキュメントは ``../groonga.doc/doc/ja/html/``
 msgid "How to edit documentation"
 msgstr "ドキュメントを編集する方法"
 
-msgid "The Groonga documentation is written in `reStructuredText (.rst)`_. These files are located in the ``./doc/source``. Each page of the documentation corresponds to an ``.rst`` file. Please find the file you wish to edit and make your changes."
-msgstr "Groongaドキュメントは、`reStructuredText (.rst)`_ で書かれています。Groongaドキュメントのファイルは、``./doc/source`` 配下にあります。それぞれのページに対応した ``.rst`` ファイルが必ず１つあります。編集したいファイルをみつけて、編集してみてください。"
-
-msgid "For Example, if you want to edit this **Introduction** page, you should edit the ``./doc/source/contribution/documentation/introduction.rst`` file."
-msgstr "例えば、この **導入** ページを編集したい場合は、``./doc/source/contribution/documentation/introduction.rst`` ファイルを編集すればよいのです。"
+msgid "The Groonga documentation is written in `reStructuredText (.rst)`_. These files are located in the ``./doc/source``. Each page of the documentation corresponds to an ``.rst`` file. For Example, if you want to edit this **Introduction** page, you should edit the ``./doc/source/contribution/documentation/introduction.rst`` file. Please find the file you wish to edit and make your changes."
+msgstr "Groongaドキュメントは、`reStructuredText (.rst)`_ で書かれています。Groongaドキュメントのファイルは、``./doc/source`` 配下にあります。それぞれのページに対応した ``.rst`` ファイルが必ず１つあります。例えば、この **導入** ページを編集したい場合は、``./doc/source/contribution/documentation/introduction.rst`` ファイルを編集すればよいのです。編集したいファイルをみつけて、編集してみてください。"
 
 msgid "Update"
 msgstr "更新"
