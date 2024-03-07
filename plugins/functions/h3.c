@@ -21,16 +21,6 @@
 
 #include <groonga/plugin.h>
 
-#include <config.h>
-
-#ifdef GRN_WITH_H3_BUNDLED
-#  include <h3api.h>
-#else
-#  include <h3/h3api.h>
-#endif
-
-#include <math.h>
-
 static grn_obj *
 grn_h3_ensure_wgs84_geo_point(grn_ctx *ctx, grn_obj *input, grn_obj *buffer, const char *tag, const char *input_name)
 {
