@@ -119,6 +119,7 @@ repos:
           ?lib/type\.c|
           ?lib/util\.c|
           ?lib/vector\.cpp|
+          ?plugins/functions/h3\.c|
           ?plugins/functions/number\.cpp|
           ?plugins/tokenizers/h3_index\.c|
           ?src/groonga\.c|

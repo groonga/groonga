@@ -1,5 +1,5 @@
-# Copyright(C) 2015-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2015-2018  Brazil
+# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -140,3 +140,24 @@ else()
   endif()
 endif()
 target_link_libraries(math_functions libgroonga)
+
+if(GRN_WITH_H3)
+  set(H3_SOURCES h3.c)
+  set_source_files_properties(${H3_SOURCES} PROPERTIES COMPILE_FLAGS
+                                                       "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(h3_functions STATIC ${H3_SOURCES})
+    set_target_properties(h3_functions PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(h3_functions MODULE ${H3_SOURCES})
+    set_target_properties(h3_functions PROPERTIES PREFIX "" OUTPUT_NAME "h3")
+    install(TARGETS h3_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:h3_functions>
+        DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(h3_functions libgroonga)
+endif()

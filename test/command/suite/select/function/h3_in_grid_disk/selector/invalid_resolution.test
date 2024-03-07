@@ -1,0 +1,21 @@
+#@on-error omit
+plugin_register tokenizers/h3_index
+plugin_register functions/h3
+#@on-error default
+
+table_create H3Indexes TABLE_PAT_KEY UInt64 \
+  --default_tokenizer 'TokenH3Index("resolution", 10)'
+
+table_create Data TABLE_HASH_KEY ShortText
+column_create Data location COLUMN_SCALAR WGS84GeoPoint
+
+column_create H3Indexes data_location COLUMN_INDEX Data location
+
+load --table Data
+[
+{"_key": "ClearCode: 35.80460x139.45649", "location": "35.80460x139.45649"},
+{"_key": "Shin Tokorozawa: 35.80747x139.45602", "location": "35.80747x139.45602"},
+{"_key": "Koku koen: 35.79841x139.46573", "location": "35.79841x139.46573"}
+]
+
+select Data --filter 'h3_in_grid_disk(location, "35.80460x139.45649", -1, 3)'
