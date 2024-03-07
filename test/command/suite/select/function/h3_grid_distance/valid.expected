@@ -1,0 +1,50 @@
+plugin_register functions/h3
+[[0,0.0,0.0],true]
+table_create Data TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data location COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "ClearCode: 35.80460x139.45649", "location": "35.80460x139.45649"},
+{"_key": "Shin Tokorozawa: 35.80747x139.45602", "location": "35.80747x139.45602"},
+{"_key": "Koku koen: 35.79841x139.46573", "location": "35.79841x139.46573"}
+]
+[[0,0.0,0.0],3]
+select Data --output_columns '_key, h3_grid_distance(location, "35.80460x139.45649", 10)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "h3_grid_distance",
+          null
+        ]
+      ],
+      [
+        "ClearCode: 35.80460x139.45649",
+        0
+      ],
+      [
+        "Shin Tokorozawa: 35.80747x139.45602",
+        3
+      ],
+      [
+        "Koku koen: 35.79841x139.46573",
+        10
+      ]
+    ]
+  ]
+]

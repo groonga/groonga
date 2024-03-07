@@ -55,6 +55,195 @@ grn_h3_ensure_wgs84_geo_point(grn_ctx *ctx,
 }
 
 static grn_obj *
+func_h3_grid_distance(grn_ctx *ctx,
+                      int n_args,
+                      grn_obj **args,
+                      grn_user_data *user_data)
+{
+  const char *tag = "h3_grid_distance():";
+
+  if (n_args != 3) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s wrong number of arguments (%d for 3)",
+                     tag,
+                     n_args);
+    return NULL;
+  }
+
+  grn_obj *distance_obj = NULL;
+
+  grn_obj *point1_obj = args[0];
+  grn_obj *point2_obj = args[1];
+  grn_obj *resolution_obj = args[2];
+
+  grn_obj point1_buffer;
+  GRN_WGS84_GEO_POINT_INIT(&point1_buffer, 0);
+  grn_obj point2_buffer;
+  GRN_WGS84_GEO_POINT_INIT(&point2_buffer, 0);
+
+  int32_t resolution =
+    grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
+
+  point1_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             point1_obj,
+                                             &point1_buffer,
+                                             tag,
+                                             "point1");
+  if (!point1_obj) {
+    goto exit;
+  }
+  point2_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             point2_obj,
+                                             &point2_buffer,
+                                             tag,
+                                             "point2");
+  if (!point2_obj) {
+    goto exit;
+  }
+
+  uint64_t h3_index1 = grn_h3_compute_cell(ctx,
+                                           GRN_GEO_POINT_VALUE_RAW(point1_obj),
+                                           resolution,
+                                           tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+  uint64_t h3_index2 = grn_h3_compute_cell(ctx,
+                                           GRN_GEO_POINT_VALUE_RAW(point2_obj),
+                                           resolution,
+                                           tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+  uint64_t distance =
+    grn_h3_compute_grid_distance(ctx, h3_index1, h3_index2, tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  distance_obj = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT64, 0);
+  if (!distance_obj) {
+    return NULL;
+  }
+  GRN_UINT64_SET(ctx, distance_obj, distance);
+
+exit:
+  GRN_OBJ_FIN(ctx, &point1_buffer);
+  GRN_OBJ_FIN(ctx, &point2_buffer);
+
+  return distance_obj;
+}
+
+static grn_rc
+applier_h3_grid_distance(grn_ctx *ctx, grn_applier_data *data)
+{
+  const char *tag = "h3_grid_distance():";
+
+  grn_obj *table = grn_applier_data_get_table(ctx, data);
+  grn_obj *output_column = grn_applier_data_get_output_column(ctx, data);
+  size_t n_args;
+  grn_obj **args = grn_applier_data_get_args(ctx, data, &n_args);
+
+  if (n_args != 3) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s wrong number of arguments (%zu for 3)",
+                     tag,
+                     n_args);
+    return ctx->rc;
+  }
+
+  grn_obj *input_column = args[0];
+  grn_obj *point2_obj = args[1];
+  grn_obj *resolution_obj = args[2];
+
+  int32_t resolution =
+    grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
+
+  if (!(grn_obj_is_scalar_column(ctx, input_column) ||
+        grn_obj_is_scalar_accessor(ctx, input_column))) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, input_column);
+    GRN_PLUGIN_ERROR(
+      ctx,
+      GRN_INVALID_ARGUMENT,
+      "%s 1st argument must be a scalar column or accessor: %.*s",
+      tag,
+      (int)(GRN_TEXT_LEN(&inspected)),
+      GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+  grn_id input_column_range = grn_obj_get_range(ctx, input_column);
+  if (input_column_range != GRN_DB_WGS84_GEO_POINT) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s 1st argument's type must be WGS84GeoPoint: %s",
+                     tag,
+                     grn_type_id_to_string_builtin(ctx, input_column_range));
+    return ctx->rc;
+  }
+
+  grn_obj point2_buffer;
+  GRN_WGS84_GEO_POINT_INIT(&point2_buffer, 0);
+  point2_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             point2_obj,
+                                             &point2_buffer,
+                                             tag,
+                                             "point2");
+  uint64_t h3_index2 = grn_h3_compute_cell(ctx,
+                                           GRN_GEO_POINT_VALUE_RAW(point2_obj),
+                                           resolution,
+                                           tag);
+  GRN_OBJ_FIN(ctx, &point2_buffer);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+
+  if (grn_table_size(ctx, table) == 0) {
+    return ctx->rc;
+  }
+
+  grn_obj point1_buffer;
+  GRN_WGS84_GEO_POINT_INIT(&point1_buffer, 0);
+  grn_obj distance_buffer;
+  GRN_UINT64_INIT(&distance_buffer, 0);
+  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id)
+  {
+    GRN_BULK_REWIND(&point1_buffer);
+    grn_obj_get_value(ctx, input_column, id, &point1_buffer);
+    if (GRN_BULK_VSIZE(&point1_buffer) != sizeof(grn_geo_point)) {
+      continue;
+    }
+    uint64_t h3_index1 =
+      grn_h3_compute_cell(ctx,
+                          GRN_GEO_POINT_VALUE_RAW(&point1_buffer),
+                          resolution,
+                          tag);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    uint64_t distance_raw =
+      grn_h3_compute_grid_distance(ctx, h3_index1, h3_index2, tag);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    GRN_UINT64_SET(ctx, &distance_buffer, distance_raw);
+    grn_obj_set_value(ctx, output_column, id, &distance_buffer, GRN_OBJ_SET);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &point1_buffer);
+  GRN_OBJ_FIN(ctx, &distance_buffer);
+
+  return ctx->rc;
+}
+
+static grn_obj *
 func_h3_in_grid_disk(grn_ctx *ctx,
                      int n_args,
                      grn_obj **args,
@@ -230,6 +419,19 @@ grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_rc rc = GRN_SUCCESS;
+
+  {
+    grn_obj *proc = grn_proc_create(ctx,
+                                    "h3_grid_distance",
+                                    -1,
+                                    GRN_PROC_FUNCTION,
+                                    func_h3_grid_distance,
+                                    NULL,
+                                    NULL,
+                                    0,
+                                    NULL);
+    grn_proc_set_applier(ctx, proc, applier_h3_grid_distance);
+  }
 
   {
     grn_obj *proc = grn_proc_create(ctx,
