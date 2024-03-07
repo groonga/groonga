@@ -34,6 +34,11 @@ grn_h3_compute_grid_disk(grn_ctx *ctx,
                          int32_t k,
                          grn_obj *h3_indices,
                          const char *tag);
+GRN_API uint64_t
+grn_h3_compute_grid_distance(grn_ctx *ctx,
+                             uint64_t h3_index1,
+                             uint64_t h3_index2,
+                             const char *tag);
 
 #ifdef __cplusplus
 }

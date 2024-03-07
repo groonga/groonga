@@ -175,3 +175,39 @@ grn_h3_compute_grid_disk(grn_ctx *ctx,
   GRN_API_RETURN(0);
 #endif
 }
+
+uint64_t
+grn_h3_compute_grid_distance(grn_ctx *ctx,
+                             uint64_t h3_index1,
+                             uint64_t h3_index2,
+                             const char *tag)
+{
+#ifdef GRN_WITH_H3
+  GRN_API_ENTER;
+
+  int64_t distance;
+  H3Error error = gridDistance(h3_index1, h3_index2, &distance);
+  if (error != E_SUCCESS) {
+    LatLng lat_lng1;
+    cellToLatLng(h3_index1, &lat_lng1);
+    LatLng lat_lng2;
+    cellToLatLng(h3_index2, &lat_lng2);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to compute grid distance: %s(%u): %fx%f<->%fx%f",
+        tag,
+        grn_h3_error_to_string(error),
+        error,
+        radsToDegs(lat_lng1.lat),
+        radsToDegs(lat_lng1.lng),
+        radsToDegs(lat_lng2.lat),
+        radsToDegs(lat_lng2.lng));
+    GRN_API_RETURN(0);
+  }
+
+  GRN_API_RETURN(distance);
+#else
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s H3 isn't enabled", tag);
+  GRN_API_RETURN(0);
+#endif
+}
