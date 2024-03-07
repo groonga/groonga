@@ -22,7 +22,11 @@
 #include <groonga/plugin.h>
 
 static grn_obj *
-grn_h3_ensure_wgs84_geo_point(grn_ctx *ctx, grn_obj *input, grn_obj *buffer, const char *tag, const char *input_name)
+grn_h3_ensure_wgs84_geo_point(grn_ctx *ctx,
+                              grn_obj *input,
+                              grn_obj *buffer,
+                              const char *tag,
+                              const char *input_name)
 {
   if (grn_obj_is_bulk(ctx, input) &&
       input->header.domain == GRN_DB_WGS84_GEO_POINT) {
@@ -51,12 +55,15 @@ grn_h3_ensure_wgs84_geo_point(grn_ctx *ctx, grn_obj *input, grn_obj *buffer, con
 }
 
 static grn_obj *
-func_h3_in_grid_disk(grn_ctx *ctx, int n_args, grn_obj **args,
+func_h3_in_grid_disk(grn_ctx *ctx,
+                     int n_args,
+                     grn_obj **args,
                      grn_user_data *user_data)
 {
-  const char *tag = "h3_in_grid_distance():";
+  const char *tag = "h3_in_grid_disk():";
   if (n_args != 4) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "%s wrong number of arguments (%d for 4)",
                      tag,
                      n_args);
@@ -77,18 +84,31 @@ func_h3_in_grid_disk(grn_ctx *ctx, int n_args, grn_obj **args,
   grn_obj h3_indices;
   GRN_UINT64_INIT(&h3_indices, GRN_OBJ_VECTOR);
 
-  int32_t resolution = grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
+  int32_t resolution =
+    grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
   int32_t k = grn_plugin_proc_get_value_int32(ctx, k_obj, -1, tag);
 
-  target_obj = grn_h3_ensure_wgs84_geo_point(ctx, target_obj, &target_buffer, tag, "target");
+  target_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             target_obj,
+                                             &target_buffer,
+                                             tag,
+                                             "target");
   if (!target_obj) {
     goto exit;
   }
-  uint64_t target_index = grn_h3_compute_cell(ctx, GRN_GEO_POINT_VALUE_RAW(target_obj), resolution, tag);
+  uint64_t target_index =
+    grn_h3_compute_cell(ctx,
+                        GRN_GEO_POINT_VALUE_RAW(target_obj),
+                        resolution,
+                        tag);
   if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
-  origin_obj = grn_h3_ensure_wgs84_geo_point(ctx, origin_obj, &origin_buffer, tag, "origin");
+  origin_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             origin_obj,
+                                             &origin_buffer,
+                                             tag,
+                                             "origin");
   if (!origin_obj) {
     goto exit;
   }
@@ -127,12 +147,19 @@ exit:
 }
 
 static grn_rc
-selector_h3_in_grid_disk(grn_ctx *ctx, grn_obj *table, grn_obj *index, int n_args, grn_obj **args, grn_obj *res, grn_operator op)
+selector_h3_in_grid_disk(grn_ctx *ctx,
+                         grn_obj *table,
+                         grn_obj *index,
+                         int n_args,
+                         grn_obj **args,
+                         grn_obj *res,
+                         grn_operator op)
 {
-  const char *tag = "h3_in_grid_distance():";
+  const char *tag = "h3_in_grid_disk():";
 
   if ((n_args - 1) != 4) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "%s wrong number of arguments (%d for 4)",
                      tag,
                      (n_args - 1));
@@ -149,10 +176,15 @@ selector_h3_in_grid_disk(grn_ctx *ctx, grn_obj *table, grn_obj *index, int n_arg
   grn_obj h3_indices;
   GRN_UINT64_INIT(&h3_indices, GRN_OBJ_VECTOR);
 
-  int32_t resolution = grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
+  int32_t resolution =
+    grn_plugin_proc_get_value_int32(ctx, resolution_obj, -1, tag);
   int32_t k = grn_plugin_proc_get_value_int32(ctx, k_obj, -1, tag);
 
-  origin_obj = grn_h3_ensure_wgs84_geo_point(ctx, origin_obj, &origin_buffer, tag, "origin");
+  origin_obj = grn_h3_ensure_wgs84_geo_point(ctx,
+                                             origin_obj,
+                                             &origin_buffer,
+                                             tag,
+                                             "origin");
   if (!origin_obj) {
     goto exit;
   }
