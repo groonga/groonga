@@ -18,5 +18,5 @@ load --table Data
 ]
 [[0,0.0,0.0],3]
 select Data --filter 'h3_in_grid_disk(location, "35.80460x139.45649", 10, -1)'
-[[[-22,0.0,0.0],"h3_in_grid_distance(): k must be 0 or larger: -1"]]
-#|e| h3_in_grid_distance(): k must be 0 or larger: -1
+[[[-22,0.0,0.0],"h3_in_grid_disk(): k must be 0 or larger: -1"]]
+#|e| h3_in_grid_disk(): k must be 0 or larger: -1

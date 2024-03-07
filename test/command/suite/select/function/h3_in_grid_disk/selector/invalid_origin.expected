@@ -18,5 +18,5 @@ load --table Data
 ]
 [[0,0.0,0.0],3]
 select Data --filter 'h3_in_grid_disk(location, 29, 10, 3)'
-[[[-22,0.0,0.0],"h3_in_grid_distance(): origin must be WGS84GeoPoint: 29"]]
-#|e| h3_in_grid_distance(): origin must be WGS84GeoPoint: 29
+[[[-22,0.0,0.0],"h3_in_grid_disk(): origin must be WGS84GeoPoint: 29"]]
+#|e| h3_in_grid_disk(): origin must be WGS84GeoPoint: 29
