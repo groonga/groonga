@@ -2769,7 +2769,7 @@ fuzzy_heap_open(grn_ctx *ctx, uint32_t max)
   return h;
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
 {
   int n, n2;
@@ -2779,7 +2779,7 @@ fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
     uint32_t max = h->limit * 2;
     fuzzy_heap_node *nodes = GRN_REALLOC(h->nodes, sizeof(fuzzy_heap) * max);
     if (!h) {
-      return GRN_FALSE;
+      return false;
     }
     h->limit = max;
     h->nodes = nodes;
@@ -2796,7 +2796,7 @@ fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
     h->nodes[n2] = node2;
     n = n2;
   }
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_inline void
