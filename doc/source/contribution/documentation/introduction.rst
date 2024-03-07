@@ -87,7 +87,7 @@ Each page of the documentation corresponds to a ``.rst`` file or a ``.md`` file.
 Please find the file you wish to edit and make your changes.
 
 .. _reStructuredText (.rst): https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html
-.. _Markdown (.md): https://daringfireball.net/projects/markdown/
+.. _Markdown (.md): https://myst-parser.readthedocs.io/en/latest/
 
 Update
 ------
