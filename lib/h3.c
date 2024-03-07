@@ -76,6 +76,15 @@ grn_h3_compute_cell(grn_ctx *ctx,
 {
 #ifdef GRN_WITH_H3
   GRN_API_ENTER;
+
+  if (!(0 <= resolution && resolution <= 15)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s resolution must be in 0..15: %d",
+        tag,
+        resolution);
+    GRN_API_RETURN(ctx->rc);
+  }
+
   LatLng lat_lng = {
     .lat = GRN_GEO_MSEC2RADIAN(geo_point->latitude),
     .lng = GRN_GEO_MSEC2RADIAN(geo_point->longitude),
