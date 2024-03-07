@@ -98,3 +98,71 @@ grn_h3_compute_cell(grn_ctx *ctx,
   GRN_API_RETURN(0);
 #endif
 }
+
+grn_rc
+grn_h3_compute_grid_disk(grn_ctx *ctx,
+                         grn_geo_point *geo_point,
+                         int32_t resolution,
+                         int32_t k,
+                         grn_obj *h3_indices,
+                         const char *tag)
+{
+#ifdef GRN_WITH_H3
+  GRN_API_ENTER;
+
+  if (!(0 <= resolution && resolution <= 15)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s resolution must be in 0..15: %d",
+        tag,
+        resolution);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (k < 0) {
+    ERR(GRN_INVALID_ARGUMENT, "%s k must be 0 or larger: %d", tag, k);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  int64_t n_h3_indices = 0;
+  H3Error error = maxGridDiskSize(k, &n_h3_indices);
+  if (error != E_SUCCESS) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to compute the max number of indexes for grid disk: "
+        "%s(%u): k:<%d>",
+        tag,
+        grn_h3_error_to_string(error),
+        error,
+        k);
+  }
+
+  H3Index h3_index = grn_h3_compute_cell(ctx, geo_point, resolution, tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  size_t offset = GRN_BULK_VSIZE(h3_indices);
+  int64_t i;
+  for (i = 0; i < n_h3_indices; i++) {
+    GRN_UINT64_PUT(ctx, h3_indices, 0);
+  }
+  error =
+    gridDisk(h3_index, k, (H3Index *)(GRN_BULK_HEAD(h3_indices) + offset));
+  if (error != E_SUCCESS) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to compute grid disk: %s(%u): k:<%d>, geo_point:<%fx%f>(%d)",
+        tag,
+        grn_h3_error_to_string(error),
+        error,
+        k,
+        GRN_GEO_MSEC2DEGREE(geo_point->latitude),
+        GRN_GEO_MSEC2DEGREE(geo_point->longitude),
+        resolution);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+#else
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s H3 isn't enabled", tag);
+  GRN_API_RETURN(0);
+#endif
+}

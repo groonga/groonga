@@ -27,6 +27,13 @@ grn_h3_compute_cell(grn_ctx *ctx,
                     grn_geo_point *geo_point,
                     int32_t resolution,
                     const char *tag);
+GRN_API grn_rc
+grn_h3_compute_grid_disk(grn_ctx *ctx,
+                         grn_geo_point *geo_point,
+                         int32_t resolution,
+                         int32_t k,
+                         grn_obj *h3_indices,
+                         const char *tag);
 
 #ifdef __cplusplus
 }
