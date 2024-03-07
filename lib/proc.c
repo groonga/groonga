@@ -3873,6 +3873,9 @@ between_create_expr(grn_ctx *ctx,
   if (!*expr) {
     return GRN_FALSE;
   }
+  if (!*variable) {
+    return GRN_FALSE;
+  }
 
   if (data->value->header.type == GRN_BULK) {
     grn_expr_append_obj(ctx, *expr, data->value, GRN_OP_PUSH, 1);
