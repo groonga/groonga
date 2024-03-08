@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709853091715,
+  "lastUpdate": 1709885037009,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -9696,6 +9696,108 @@ window.BENCHMARK_DATA = {
             "value": 0.01719230700001617,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0017649999999997945 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "eebbb4d8a419df8beefb40bfb74559ff6db49be5",
+          "message": "normalizers: fix a bug that checks are invalid\n\nIf this is happen, highlight may return invalid result because\nhighlight uses checks.\n\nIt's happen when multiple normalizers such as NormalizerTable and\nNormalizerNFKC150 are used and REMOVE_BLANK flags is\nused (grn_pat_scan(), which is used for highlight, uses it).\n\ngrn_string_open_() merges checks by each normalizer. The merge logic\nis buggy. If 'NormalizerTable(...), NormalizerNFKC150' is used as\nnormalizers, checks by NormalizerNFKC150 is overwritten by checks by\nNormalizerTable unconditionally. It may produces invalid checks.\n\nThe new merge logic is choosing larger check but I'm not sure this is\ncorrect merge logic... We need more cases to consider the correct\nmerge logic.",
+          "timestamp": "2024-03-08T16:53:18+09:00",
+          "tree_id": "20b30e28aa8d4aacfa9e24be18e7d9813aa7a456",
+          "url": "https://github.com/groonga/groonga/commit/eebbb4d8a419df8beefb40bfb74559ff6db49be5"
+        },
+        "date": 1709885035387,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36480123000001186,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017735999999999502 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27306557599968073,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.016878000000002225 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015174224000020331,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003769999999998497 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015251691999878858,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00037199999999878997 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.372358403000021,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00019399999999999973 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.25207517200010443,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.023393000000000358 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15034101500043562,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.023736999999999453 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01801939900008165,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001870999999999512 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016582139000092866,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0017930000000010438 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.08345617700024377,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.026806999999999664 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.0780471910001097,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.024763000000001895 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018081217000030847,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019360000000002708 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.007429748000049585,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0017930000000015434 s\nthreads: undefined"
           }
         ]
       }
