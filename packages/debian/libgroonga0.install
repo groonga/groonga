@@ -1,5 +1,10 @@
 usr/lib/*/libgroonga*.so.*
-usr/lib/*/groonga/plugins/functions/*
+usr/lib/*/groonga/plugins/functions/index_column.*
+usr/lib/*/groonga/plugins/functions/math.*
+usr/lib/*/groonga/plugins/functions/number.*
+usr/lib/*/groonga/plugins/functions/string.*
+usr/lib/*/groonga/plugins/functions/time.*
+usr/lib/*/groonga/plugins/functions/vector.*
 usr/lib/*/groonga/plugins/query_expanders/*
 usr/lib/*/groonga/plugins/token_filters/stop_word*
 usr/lib/*/groonga/plugins/ruby/*
