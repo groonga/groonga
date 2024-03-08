@@ -304,11 +304,17 @@ grn_string_open_(grn_ctx *ctx,
             for (current_i = 0;
                  current_i < string_->normalized_length_in_bytes;
                  current_i++) {
-              int16_t previous_check = string_->checks[current_i];
-              if (previous_check > 0) {
-                int16_t original_check = previous_checks[previous_i];
-                string_->checks[current_i] = original_check;
-                previous_i += (unsigned int)previous_check;
+              int16_t current_check = string_->checks[current_i];
+              if (current_check > 0) {
+                int16_t previous_check = previous_checks[previous_i];
+                /* TODO: How to merge check? This logic may be
+                 * wrong. We need many cases. We have only a few cases
+                 * in
+                 * test/command/suite/normalizers/multiple/options/ .*/
+                if (previous_check > current_check) {
+                  string_->checks[current_i] = previous_check;
+                }
+                previous_i += (unsigned int)current_check;
               }
             }
           }

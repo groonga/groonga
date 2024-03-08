@@ -1,0 +1,7 @@
+table_create Nomalizations TABLE_PAT_KEY ShortText
+column_create Nomalizations normalized COLUMN_SCALAR ShortText
+
+normalize \
+  --string "ab cd" \
+  --flags REMOVE_BLANK|WITH_TYPES|WITH_CHECKS \
+  --normalizers 'NormalizerTable("normalized", "Nomalizations.normalized"), NormalizerNFKC150'
