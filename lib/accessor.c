@@ -947,8 +947,8 @@ grn_accessor_to_string(grn_ctx *ctx,
        accessor_;
        accessor_ = accessor_->next) {
     bool need_continue = false;
-    grn_bool show_obj_name = GRN_FALSE;
-    grn_bool show_obj_domain_name = GRN_FALSE;
+    bool show_obj_name = false;
+    bool show_obj_domain_name = false;
 
     if (n_components > 0) {
       GRN_TEXT_PUTS(ctx, buffer, ".");
@@ -959,7 +959,7 @@ grn_accessor_to_string(grn_ctx *ctx,
                    buffer,
                    GRN_COLUMN_NAME_ID,
                    GRN_COLUMN_NAME_ID_LEN);
-      show_obj_name = GRN_TRUE;
+      show_obj_name = true;
       break;
     case GRN_ACCESSOR_GET_KEY :
       if (!need_preceding_keys && accessor_->next) {
@@ -969,7 +969,7 @@ grn_accessor_to_string(grn_ctx *ctx,
                      buffer,
                      GRN_COLUMN_NAME_KEY,
                      GRN_COLUMN_NAME_KEY_LEN);
-        show_obj_name = GRN_TRUE;
+        show_obj_name = true;
       }
       break;
     case GRN_ACCESSOR_GET_VALUE :
@@ -977,7 +977,7 @@ grn_accessor_to_string(grn_ctx *ctx,
                    buffer,
                    GRN_COLUMN_NAME_VALUE,
                    GRN_COLUMN_NAME_VALUE_LEN);
-      show_obj_name = GRN_TRUE;
+      show_obj_name = true;
       break;
     case GRN_ACCESSOR_GET_SCORE :
       GRN_TEXT_PUT(ctx,
@@ -1023,7 +1023,7 @@ grn_accessor_to_string(grn_ctx *ctx,
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
       grn_column_name_(ctx, accessor_->obj, buffer);
-      show_obj_domain_name = GRN_TRUE;
+      show_obj_domain_name = true;
       break;
     case GRN_ACCESSOR_GET_DB_OBJ :
       grn_text_printf(ctx, buffer, "(_db)");
