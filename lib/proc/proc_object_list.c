@@ -149,8 +149,8 @@ command_object_list(grn_ctx *ctx,
       uint32_t element_size;
       grn_obj_spec *spec;
       int n_properties = 8;
-      grn_bool need_sources = GRN_FALSE;
-      grn_bool need_token_filters = GRN_FALSE;
+      bool need_sources = false;
+      bool need_token_filters = false;
 
       element_size = grn_vector_get_element(ctx,
                                             &vector,
@@ -176,14 +176,14 @@ command_object_list(grn_ctx *ctx,
 
       switch (spec->header.type) {
       case GRN_COLUMN_INDEX :
-        need_sources = GRN_TRUE;
+        need_sources = true;
         n_properties++;
         break;
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_NO_KEY :
-        need_token_filters = GRN_TRUE;
+        need_token_filters = true;
         n_properties++;
         break;
       }
