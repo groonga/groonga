@@ -3803,14 +3803,14 @@ grn_select_apply_scorer(grn_ctx *ctx, grn_select_data *data)
   return rc == GRN_SUCCESS;
 }
 
-static grn_bool
+static bool
 grn_select_sort(grn_ctx *ctx, grn_select_data *data)
 {
   grn_table_sort_key *keys;
   uint32_t n_keys;
 
   if (data->sort_keys.length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   keys = grn_table_sort_keys_parse(ctx,
@@ -3820,17 +3820,16 @@ grn_select_sort(grn_ctx *ctx, grn_select_data *data)
                                    &n_keys);
   if (!keys) {
     if (ctx->rc == GRN_SUCCESS) {
-      return GRN_TRUE;
-    } else {
-      GRN_PLUGIN_ERROR(ctx,
-                       ctx->rc,
-                       "[select][sort] "
-                       "failed to parse: <%.*s>: %s",
-                       (int)(data->sort_keys.length),
-                       data->sort_keys.value,
-                       ctx->errbuf);
-      return GRN_FALSE;
+      return true;
     }
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][sort] "
+                     "failed to parse: <%.*s>: %s",
+                     (int)(data->sort_keys.length),
+                     data->sort_keys.value,
+                     ctx->errbuf);
+    return false;
   }
 
   data->tables.sorted = grn_table_create(ctx,
@@ -3849,7 +3848,7 @@ grn_select_sort(grn_ctx *ctx, grn_select_data *data)
                      (int)(data->sort_keys.length),
                      data->sort_keys.value,
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
   grn_table_sort(ctx,
