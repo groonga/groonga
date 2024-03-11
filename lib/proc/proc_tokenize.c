@@ -61,8 +61,8 @@ output_tokens(grn_ctx *ctx,
 {
   size_t i, n_tokens, n_elements;
   grn_obj estimated_size;
-  grn_bool have_source_location = GRN_FALSE;
-  grn_bool have_metadata = GRN_FALSE;
+  bool have_source_location = false;
+  bool have_metadata = false;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   n_elements = 4;
@@ -74,10 +74,10 @@ output_tokens(grn_ctx *ctx,
     tokenize_token *token;
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
     if (token->source_offset > 0 || token->source_length > 0) {
-      have_source_location = GRN_TRUE;
+      have_source_location = true;
     }
     if (grn_vector_size(ctx, &(token->metadata)) > 0) {
-      have_metadata = GRN_TRUE;
+      have_metadata = true;
     }
   }
   if (have_source_location) {
