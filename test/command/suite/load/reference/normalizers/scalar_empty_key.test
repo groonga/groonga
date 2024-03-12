@@ -1,0 +1,9 @@
+table_create Values TABLE_HASH_KEY ShortText \
+  --normalizers 'NormalizerNFKC150("remove_symbol", true)'
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Values
+load --table Data
+[
+{"value": "-"}
+]

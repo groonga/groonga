@@ -244,10 +244,16 @@ grn_id grn_table_get_by_key(grn_ctx *ctx,
                             grn_obj *key);
 grn_id grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
+typedef struct
+{
+  bool added;
+  bool ignore_empty_normalized_key;
+  bool ignored;
+} grn_table_add_options;
 grn_id grn_table_add_by_key(grn_ctx *ctx,
                             grn_obj *table,
                             grn_obj *key,
-                            int *added);
+                            grn_table_add_options *options);
 GRN_API grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
                                   grn_encoding *encoding, grn_obj **tokenizer,
                                   grn_obj **normalizer,

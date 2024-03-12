@@ -1427,12 +1427,14 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
     }
     if (rc == GRN_SUCCESS) {
       if (GRN_BULK_VSIZE(p_key) > 0) {
+        grn_table_add_options options;
+        options.ignore_empty_normalized_key = true;
         if (missing_mode == GRN_OBJ_MISSING_ADD) {
-          id = grn_table_add_by_key(ctx, table, p_key, NULL);
+          id = grn_table_add_by_key(ctx, table, p_key, &options);
         } else {
           id = grn_table_get_by_key(ctx, table, p_key);
         }
-        if (id == GRN_ID_NIL) {
+        if (id == GRN_ID_NIL && !options.ignored) {
           if (invalid_mode == GRN_OBJ_INVALID_ERROR) {
             rc = GRN_INVALID_ARGUMENT;
             bool called_from_grn_obj_cast = (caster->target == NULL);

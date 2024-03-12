@@ -2070,32 +2070,38 @@ grn_obj_default_set_value_hook(grn_ctx *ctx,
   return NULL;
 }
 
-grn_id
-grn_table_add(grn_ctx *ctx,
-              grn_obj *table,
-              const void *key,
-              unsigned int key_size,
-              int *added)
+static grn_id
+grn_table_add_internal(grn_ctx *ctx,
+                       grn_obj *table,
+                       const void *key,
+                       unsigned int key_size,
+                       grn_table_add_options *options)
 {
   grn_id id = GRN_ID_NIL;
   GRN_API_ENTER;
   if (table) {
-    int added_ = 0;
+    grn_table_add_options local_options = {0};
+    if (!options) {
+      options = &local_options;
+    }
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY:
       {
         grn_pat *pat = (grn_pat *)table;
         WITH_NORMALIZE(pat, key, key_size, {
-          GRN_TABLE_LOCK_BEGIN(ctx, table)
-          {
-            id = grn_pat_add(ctx, pat, key, key_size, NULL, &added_);
+          if (key_size == 0 && options->ignore_empty_normalized_key) {
+            options->ignored = true;
+          } else {
+            GRN_TABLE_LOCK_BEGIN(ctx, table)
+            {
+              int added = 0;
+              id = grn_pat_add(ctx, pat, key, key_size, NULL, &added);
+              options->added = added;
+            }
+            GRN_TABLE_LOCK_END(ctx);
           }
-          GRN_TABLE_LOCK_END(ctx);
         });
-        if (added) {
-          *added = added_;
-        }
-        if (id == GRN_ID_NIL) {
+        if (id == GRN_ID_NIL && !options->ignored) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key(ctx, &buffer, table, key, key_size);
@@ -2111,16 +2117,19 @@ grn_table_add(grn_ctx *ctx,
       {
         grn_dat *dat = (grn_dat *)table;
         WITH_NORMALIZE(dat, key, key_size, {
-          GRN_TABLE_LOCK_BEGIN(ctx, table)
-          {
-            id = grn_dat_add(ctx, dat, key, key_size, NULL, &added_);
+          if (key_size == 0 && options->ignore_empty_normalized_key) {
+            options->ignored = true;
+          } else {
+            GRN_TABLE_LOCK_BEGIN(ctx, table)
+            {
+              int added = 0;
+              id = grn_dat_add(ctx, dat, key, key_size, NULL, &added);
+              options->added = added;
+            }
+            GRN_TABLE_LOCK_END(ctx);
           }
-          GRN_TABLE_LOCK_END(ctx);
         });
-        if (added) {
-          *added = added_;
-        }
-        if (id == GRN_ID_NIL) {
+        if (id == GRN_ID_NIL && !options->ignored) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key(ctx, &buffer, table, key, key_size);
@@ -2136,16 +2145,19 @@ grn_table_add(grn_ctx *ctx,
       {
         grn_hash *hash = (grn_hash *)table;
         WITH_NORMALIZE(hash, key, key_size, {
-          GRN_TABLE_LOCK_BEGIN(ctx, table)
-          {
-            id = grn_hash_add(ctx, hash, key, key_size, NULL, &added_);
+          if (key_size == 0 && options->ignore_empty_normalized_key) {
+            options->ignored = true;
+          } else {
+            GRN_TABLE_LOCK_BEGIN(ctx, table)
+            {
+              int added;
+              id = grn_hash_add(ctx, hash, key, key_size, NULL, &added);
+              options->added = added;
+            }
+            GRN_TABLE_LOCK_END(ctx);
           }
-          GRN_TABLE_LOCK_END(ctx);
         });
-        if (added) {
-          *added = added_;
-        }
-        if (id == GRN_ID_NIL) {
+        if (id == GRN_ID_NIL && !options->ignored) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key(ctx, &buffer, table, key, key_size);
@@ -2165,10 +2177,7 @@ grn_table_add(grn_ctx *ctx,
           id = grn_array_add(ctx, array, NULL);
         }
         GRN_TABLE_LOCK_END(ctx);
-        added_ = id ? 1 : 0;
-        if (added) {
-          *added = added_;
-        }
+        options->added = (id != GRN_ID_NIL);
         if (id == GRN_ID_NIL) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
@@ -2182,7 +2191,7 @@ grn_table_add(grn_ctx *ctx,
       }
       break;
     }
-    if (added_) {
+    if (options->added) {
       grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT];
       if (hooks) {
         // todo : grn_proc_ctx_open()
@@ -2232,6 +2241,21 @@ grn_table_add(grn_ctx *ctx,
 }
 
 grn_id
+grn_table_add(grn_ctx *ctx,
+              grn_obj *table,
+              const void *key,
+              unsigned int key_size,
+              int *added)
+{
+  grn_table_add_options options = {0};
+  grn_id id = grn_table_add_internal(ctx, table, key, key_size, &options);
+  if (added) {
+    *added = options.added ? 1 : 0;
+  }
+  return id;
+}
+
+grn_id
 grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
 {
   grn_id id = GRN_ID_NIL;
@@ -2255,14 +2279,20 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
 }
 
 grn_id
-grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
+grn_table_add_by_key(grn_ctx *ctx,
+                     grn_obj *table,
+                     grn_obj *key,
+                     grn_table_add_options *options)
 {
   grn_id id = GRN_ID_NIL;
   if (grn_type_id_is_compatible(ctx,
                                 table->header.domain,
                                 key->header.domain)) {
-    id =
-      grn_table_add(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key), added);
+    id = grn_table_add_internal(ctx,
+                                table,
+                                GRN_TEXT_VALUE(key),
+                                GRN_TEXT_LEN(key),
+                                options);
   } else {
     grn_rc rc;
     grn_obj buf;
@@ -2271,11 +2301,11 @@ grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
       grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
       ERR_CAST(table, domain, key);
     } else {
-      id = grn_table_add(ctx,
-                         table,
-                         GRN_TEXT_VALUE(&buf),
-                         GRN_TEXT_LEN(&buf),
-                         added);
+      id = grn_table_add_internal(ctx,
+                                  table,
+                                  GRN_TEXT_VALUE(&buf),
+                                  GRN_TEXT_LEN(&buf),
+                                  options);
     }
     GRN_OBJ_FIN(ctx, &buf);
   }

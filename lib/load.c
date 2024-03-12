@@ -278,12 +278,12 @@ grn_loader_add_record(grn_ctx *ctx,
       }
     }
   } else if (data->key) {
-    int added = 0;
-    data->id = grn_table_add_by_key(ctx, data->table, data->key, &added);
+    grn_table_add_options options = {0};
+    data->id = grn_table_add_by_key(ctx, data->table, data->key, &options);
     if (data->id == GRN_ID_NIL) {
       return GRN_ID_NIL;
     }
-    if (!added && loader->ifexists) {
+    if (!options.added && loader->ifexists) {
       grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
       GRN_RECORD_SET(ctx, v, data->id);
       grn_obj *result = grn_expr_exec(ctx, loader->ifexists, 0);
