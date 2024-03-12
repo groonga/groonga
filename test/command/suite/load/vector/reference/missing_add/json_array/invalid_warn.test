@@ -8,9 +8,6 @@ load --table Tags
 {"_key": "existent"}
 ]
 
-load --table Data
-[
-{"tags": "[\"existent\", \"\\n\", \"nonexistent\"]"}
-]
+#@generate-series 0 0 Data '{"tags" => ["existent", "a" * 4097, "nonexistent"].to_json}'
 
 dump
