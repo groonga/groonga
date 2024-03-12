@@ -9,3 +9,15 @@ load --table Data
 {"value": "-"}
 ]
 [[0,0.0,0.0],1]
+dump
+table_create Data TABLE_NO_KEY
+
+table_create Values TABLE_HASH_KEY ShortText --normalizer "NormalizerNFKC150(\"remove_symbol\", true)"
+
+column_create Data value COLUMN_SCALAR Values
+
+load --table Data
+[
+["_id","value"],
+[1,""]
+]

@@ -7,3 +7,4 @@ load --table Data
 [
 {"value": "-"}
 ]
+dump
