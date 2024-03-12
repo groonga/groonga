@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710232219753,
+  "lastUpdate": 1710232546286,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -10206,6 +10206,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017281070999842996,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0018299999999991101 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "33ddd76e830856a68ea72cabcea6ca90288d943b",
+          "message": "load: Stop reporting an error for key that becomes an empty key by normalization\n\n\"-\" becomes \"\" with NormalizerNFKC150(\"remove_symbol\", true). So the\nfollowing case reports a \"empty key\" error:\n\n    table_create Values TABLE_HASH_KEY ShortText \\\n      --normalizers 'NormalizerNFKC150(\"remove_symbol\", true)'\n    table_create Data TABLE_NO_KEY\n    column_create Data value COLUMN_SCALAR Values\n    load --table Data\n    [\n    {\"value\": \"-\"}\n    ]\n\n\"-\" is treated as \"\" with this change. {\"value\": \"\"} is just ignored.\nSo {\"value\": \"-\"} is also just ignored.",
+          "timestamp": "2024-03-12T17:25:31+09:00",
+          "tree_id": "4fc4b8463b92390429cc1456edc7b444e189509d",
+          "url": "https://github.com/groonga/groonga/commit/33ddd76e830856a68ea72cabcea6ca90288d943b"
+        },
+        "date": 1710232544939,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36125156399964453,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015324000000000199 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2620917620002956,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.013259999999999744 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016147540000019944,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.000344000000000122 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.01514040200004274,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00037400000000117894 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4740179190000617,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00021100000000023877 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2541956070002698,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.025588999999999723 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15159926199999063,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02441299999999974 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017069345999857433,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016730000000002576 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016292704999955276,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016570000000003526 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.08788397000068926,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.030204999999998983 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.07893653500048003,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02698500000000273 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018488715999751548,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021509999999999863 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.026728719999823625,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018209999999988236 s\nthreads: undefined"
           }
         ]
       }
