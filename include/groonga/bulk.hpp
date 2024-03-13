@@ -228,7 +228,10 @@ namespace grn {
 
   class TextBulk {
   public:
-    TextBulk(grn_ctx *ctx, uint8_t flags=0) : ctx_(ctx) { GRN_TEXT_INIT(&bulk_, flags); }
+    TextBulk(grn_ctx *ctx, uint8_t flags = 0) : ctx_(ctx)
+    {
+      GRN_TEXT_INIT(&bulk_, flags);
+    }
 
     ~TextBulk() { GRN_OBJ_FIN(ctx_, &bulk_); }
 
