@@ -474,17 +474,19 @@ namespace {
       grn_id id = GRN_ID_NIL;
       grn::TextBulk key(ctx_, GRN_OBJ_DO_SHALLOW_COPY);
       GRN_TEXT_SET(ctx_, *key, data, size);
-      if (size > 0) {
+      grn_table_add_options options;
+      memset(&options, 0, sizeof(grn_table_add_options));
+      options.ignore_empty_normalized_key = true;
+      if (size == 0) {
+        options.ignored = true;
+      } else {
         if (missing_mode == GRN_OBJ_MISSING_ADD) {
-          grn_table_add_options options;
-          memset(&options, 0, sizeof(grn_table_add_options));
-          options.ignore_empty_normalized_key = true;
           id = grn_table_add_by_key(ctx_, table_, *key, &options);
         } else {
           id = grn_table_get_by_key(ctx_, table_, *key);
         }
       }
-      if (id == GRN_ID_NIL) {
+      if (id == GRN_ID_NIL && !options.ignored) {
         uint32_t invalid_mode = (caster_->flags & GRN_OBJ_INVALID_MASK);
         if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
           ERRCLR(ctx_);

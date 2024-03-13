@@ -14,7 +14,6 @@ load --table Data
 {"tags": "{\"existent\": 1, \"\": 2, \"nonexistent\": 3}"}
 ]
 [[0,0.0,0.0],1]
-#|e| <Data.tags>: failed to cast to <Tags>: <"">
 dump
 table_create Data TABLE_NO_KEY
 
@@ -32,5 +31,5 @@ load --table Tags
 load --table Data
 [
 ["_id","tags"],
-[1,{"existent":1,"nonexistent":3}]
+[1,{"existent":1,"":2,"nonexistent":3}]
 ]
