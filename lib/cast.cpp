@@ -471,11 +471,18 @@ namespace {
     String(const char *data, size_t size, bool copy)
     {
       uint32_t missing_mode = (caster_->flags & GRN_OBJ_MISSING_MASK);
-      grn_id id;
-      if (missing_mode == GRN_OBJ_MISSING_ADD) {
-        id = grn_table_add(ctx_, table_, data, size, NULL);
-      } else {
-        id = grn_table_get(ctx_, table_, data, size);
+      grn_id id = GRN_ID_NIL;
+      grn::TextBulk key(ctx_, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_SET(ctx_, *key, data, size);
+      if (size > 0) {
+        if (missing_mode == GRN_OBJ_MISSING_ADD) {
+          grn_table_add_options options;
+          memset(&options, 0, sizeof(grn_table_add_options));
+          options.ignore_empty_normalized_key = true;
+          id = grn_table_add_by_key(ctx_, table_, *key, &options);
+        } else {
+          id = grn_table_get_by_key(ctx_, table_, *key);
+        }
       }
       if (id == GRN_ID_NIL) {
         uint32_t invalid_mode = (caster_->flags & GRN_OBJ_INVALID_MASK);
@@ -483,11 +490,8 @@ namespace {
           ERRCLR(ctx_);
         }
         grn_ctx *ctx = ctx_;
-        grn_obj src;
-        GRN_TEXT_INIT(&src, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_TEXT_SET(ctx, &src, data, size);
         grn_caster element_caster = {
-          &src,
+          *key,
           caster_->dest,
           caster_->flags,
           caster_->target,
