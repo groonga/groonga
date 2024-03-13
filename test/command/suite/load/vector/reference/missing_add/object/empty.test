@@ -1,3 +1,5 @@
+#@require-input-type json
+
 table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
 
 table_create Data TABLE_NO_KEY
