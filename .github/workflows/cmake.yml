@@ -251,7 +251,6 @@ jobs:
         run: |
           grntest \
             --base-dir test/command \
-            --exclude-test load/vector/reference/missing_add/object/empty \
             --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
@@ -802,7 +801,6 @@ jobs:
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
           grntest `
             --base-directory test\command `
-            --exclude-test load\vector\reference\missing_add\object\empty
             --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
             --input-type apache-arrow `
             --interface http `
