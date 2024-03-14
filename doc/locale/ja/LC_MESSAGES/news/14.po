@@ -17,6 +17,30 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
+msgid "Release 14.0.1 - 2024-03-14"
+msgstr "14.0.1リリース - 2024-03-14"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a crash bug if a request is canceled {doc}`/reference/functions/between` or range search."
+msgstr "{doc}`/reference/functions/between` または、範囲検索時にリクエストキャンセルするとGroongaがクラッシュする問題を修正しました。"
+
+msgid "This bug doesn't necessarily occur. This bug occur when we cancel a request in the specific timing. This bug occur easily when search time is long such as sequential search."
+msgstr "この問題は必ず発生するわけではありません。特定のタイミングでリクエストキャンセルをすると発生します。シーケンシャルサーチなどの検索時間が長い場合に発生しやすいです。"
+
+msgid "Fixed a bug that {doc}`/reference/functions/highlight_html` may return invalid result when the following conditions are met."
+msgstr "以下の条件を満たした時に {doc}`/reference/functions/highlight_html` が正しくない結果を返すことがあります。"
+
+msgid "We use multiple normalizers such as `NormalizerTable` and `NormalizerNFKC150`."
+msgstr "`NormalizerTable` and `NormalizerNFKC150`のように複数のノーマライザーを使っている。"
+
+msgid "We highlight string include whitespace."
+msgstr "空白を含む文字列をハイライトする。"
+
+msgid "For example, this bug occur such as the following case."
+msgstr "例えば、以下のようなケースでこの問題は発生します。"
+
 msgid "Release 14.0.0 - 2024-02-29"
 msgstr "14.0.0リリース - 2024-02-29"
 
@@ -97,9 +121,6 @@ msgstr "[WAL] 壊れたインデックスの再構築を並列で実行できる
 
 msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
 msgstr "[{doc}`/reference/commands/select`] `output_type=apache-arrow`の時に、`_key`が`Int64`型のテーブルへの参照カラムを表示できるようにしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[Windows] Fixed path for documents of `groonga-normalizer-mysql` in package for Windows."
 msgstr "[Windows] Windows向けパッケージ内の`groonga-normalizer-mysql`のドキュメントのパスを修正しました。"
