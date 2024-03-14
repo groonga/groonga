@@ -1,7 +1,7 @@
 # Japanese translations for Groonga package.
 # Copyright (C) 2009-2024 Groonga Project
 # This file is distributed under the same license as the Groonga package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# Horimoto Yasuhiro <horimoto@clear-code.com>, 2024.
 #
 msgid ""
 msgstr ""
