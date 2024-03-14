@@ -1,7 +1,7 @@
 # Japanese translations for Groonga package.
 # Copyright (C) 2009-2024 Groonga Project
 # This file is distributed under the same license as the Groonga package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# Horimoto Yasuhiro <horimoto@clear-code.com>, 2024.
 #
 msgid ""
 msgstr ""
@@ -12,19 +12,55 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=; plural=;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
+
+msgid "Release 14.0.1 - 2024-03-14"
+msgstr "14.0.1リリース - 2024-03-14"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/load`] Stopped reporting an error when we `load` key that becomes an empty key by normalization."
+msgstr "[{doc}`/reference/commands/load`] ノーマライズによって空のキーとなったキーを`load`する時のエラーを止めました。"
+
+msgid "`\"-\"` becomes `\"\"` with `NormalizerNFKC150(\"remove_symbol\", true)`. So the following case reports a \"empty key\" error."
+msgstr "`\"-\"` は、`NormalizerNFKC150(\"remove_symbol\", true)` によって `\"\"` になります。そのため、以下のケースでは\"empty key\"エラーが報告されます。"
+
+msgid "However, if we many `load` in such data, many error log are generated. Because Groonga output many \"empty key\" error because of Groonga can't regist empty string to index."
+msgstr "しかし、このようなデータを大量に`load`した場合、多くのエラーログが生成されます。Groongaは空の文字列をインデックスに登録できないため、\"empty key\"エラーを大量に出力するためです。"
+
+msgid "No problem even if empty string can't register to index in such case. Because we don't match anything even if we search by empty string. So, we stop reporting an \"empty key\" error in such case."
+msgstr "ただ、このようなケースで空の文字列がインデックスへ登録できなくても問題ありません。空の文字列で検索しても何も一致しないためです。そのため、このようなケースの時に\"empty key\"エラーを報告するのを止めました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a crash bug if a request is canceled {doc}`/reference/functions/between` or range search."
+msgstr "{doc}`/reference/functions/between` または、範囲検索時にリクエストキャンセルするとGroongaがクラッシュする問題を修正しました。"
+
+msgid "This bug doesn't necessarily occur. This bug occur when we cancel a request in the specific timing. This bug occur easily when search time is long such as sequential search."
+msgstr "この問題は必ず発生するわけではありません。特定のタイミングでリクエストキャンセルをすると発生します。シーケンシャルサーチなどの検索時間が長い場合に発生しやすいです。"
+
+msgid "Fixed a bug that {doc}`/reference/functions/highlight_html` may return invalid result when the following conditions are met."
+msgstr "以下の条件を満たした時に {doc}`/reference/functions/highlight_html` が正しくない結果を返すことがあります。"
+
+msgid "We use multiple normalizers such as `NormalizerTable` and `NormalizerNFKC150`."
+msgstr "`NormalizerTable` and `NormalizerNFKC150`のように複数のノーマライザーを使っている。"
+
+msgid "We highlight string include whitespace."
+msgstr "空白を含む文字列をハイライトする。"
+
+msgid "For example, this bug occur such as the following case."
+msgstr "例えば、以下のようなケースでこの問題は発生します。"
 
 msgid "Release 14.0.0 - 2024-02-29"
 msgstr "14.0.0リリース - 2024-02-29"
 
 msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 14.0.0 without rebuilding database."
 msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく14.0.0へアップグレードできます。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "Added a new tokenizer `TokenH3Index` (experimental)."
 msgstr "新しいトークナイザー`TokenH3Index`を追加しました。（実験的）"
@@ -97,9 +133,6 @@ msgstr "[WAL] 壊れたインデックスの再構築を並列で実行できる
 
 msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
 msgstr "[{doc}`/reference/commands/select`] `output_type=apache-arrow`の時に、`_key`が`Int64`型のテーブルへの参照カラムを表示できるようにしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[Windows] Fixed path for documents of `groonga-normalizer-mysql` in package for Windows."
 msgstr "[Windows] Windows向けパッケージ内の`groonga-normalizer-mysql`のドキュメントのパスを修正しました。"
