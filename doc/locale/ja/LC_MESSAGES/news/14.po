@@ -65,6 +65,15 @@ msgstr "Groonga 14.0.0では、GroongaのUbuntu向けパッケージを提供し
 msgid "We fixed problrm of build environment for Ubuntu package in 14.0.1. So, we can provide packages for Ubuntu again since this release."
 msgstr "14.0.1でこの問題を修正したので、今回のリリースからGroongaのUbuntu向けパッケージを提供できるようになりました。"
 
+msgid "Fixed build error when we build from source by using [`clang`](https://clang.llvm.org/). [GitHub#1738][Reported by windymelt]"
+msgstr "[`clang`](https://clang.llvm.org/) を使ってソースからビルドした時にビルドエラーになる問題を修正しました。 [GitHub#1738][Reported by windymelt]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "windymelt"
+msgstr "windymeltさん"
+
 msgid "Release 14.0.0 - 2024-02-29"
 msgstr "14.0.0リリース - 2024-02-29"
 
