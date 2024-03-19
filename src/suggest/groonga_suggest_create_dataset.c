@@ -104,7 +104,7 @@ main(int argc, char **argv)
   const char *dataset_name;
   grn_ctx ctx_, *ctx;
   grn_obj *db;
-  grn_bool success = GRN_TRUE;
+  bool success = true;
   int parsed_argc, rest_argc;
   int flags = MODE_NONE;
   const char *default_tokenizer = NULL;
@@ -218,7 +218,7 @@ main(int argc, char **argv)
     GRN_OBJ_FIN(ctx, &text);
     GRN_OBJ_FIN(ctx, db);
   } else {
-    success = GRN_FALSE;
+    success = false;
   }
   grn_ctx_fin(ctx);
   grn_fin();

@@ -79,7 +79,7 @@ typedef struct {
   const char *log_base_path;
   FILE *log_file;
   uint32_t log_count;
-  grn_bool request_reopen_log_file;
+  bool request_reopen_log_file;
 } thd_data;
 
 typedef struct {
@@ -291,7 +291,7 @@ close_log_file(thd_data *thread)
 {
   fclose(thread->log_file);
   thread->log_file = NULL;
-  thread->request_reopen_log_file = GRN_FALSE;
+  thread->request_reopen_log_file = false;
 }
 
 static void
@@ -410,7 +410,7 @@ signal_reopen_log_file(int sig)
   uint32_t i;
 
   for (i = 0; i < max_threads; i++) {
-    threads[i].request_reopen_log_file = GRN_TRUE;
+    threads[i].request_reopen_log_file = true;
   }
 }
 
@@ -606,7 +606,7 @@ serve_threads(uint32_t nthreads, uint16_t port, const char *db_path, void *zmq_c
 
   for (i = 0; i < nthreads; i++) {
     memset(&threads[i], 0, sizeof(threads[i]));
-    threads[i].request_reopen_log_file = GRN_FALSE;
+    threads[i].request_reopen_log_file = false;
     if (!(threads[i].base = event_init())) {
       print_error("error in event_init() on thread %d.", i);
     } else {
