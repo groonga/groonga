@@ -73,11 +73,29 @@ msgstr "以下のコマンドでHTMLファイルを生成できます。:"
 msgid "You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``."
 msgstr "生成されたHTMLドキュメントは ``../groonga.doc/doc/ja/html/`` にあります。"
 
-msgid "Update"
-msgstr "更新"
+msgid "How to update documentation"
+msgstr "ドキュメントを更新する方法"
 
-msgid "You can find sources of documentation at ``doc/source/``. The sources should be written in English. See :doc:`i18n` about how to translate documentation."
-msgstr "ドキュメントのソースは ``doc/source/`` にあります。ソースは英語で書かれているはずです。ドキュメントの翻訳方法については、 :doc:`i18n` をご覧ください。"
+msgid "Updating Groonga's documentation has a few steps to ensure your contributions are accurately reflected. Follow this guide to update and enhance the Groonga documentation effectively."
+msgstr "Groongaドキュメントの更新にあたって、あなたの貢献を正確に反映するためにいくつかのステップがあります。次の手順に倣うことで、効果的にGroogaドキュメントの更新または向上をおこなえるのでみていきましょう。"
 
-msgid "You can update the target file when you update the existing documentation file."
-msgstr "既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新できます。"
+msgid "Edit documentation sources"
+msgstr "ドキュメントのソースを編集してください。"
+
+msgid "Reflect your modifications"
+msgstr "ドキュメントの変更を反映してください。"
+
+msgid "Preview your modifications on HTML"
+msgstr "ドキュメントの変更をHTMLで確認してください。"
+
+msgid "Update translations"
+msgstr "変更箇所の翻訳を更新してください。"
+
+msgid "Reflect your translations"
+msgstr "翻訳の変更を反映してください。"
+
+msgid "Preview your translations on HTML"
+msgstr "翻訳の変更をHTMLで確認してください。"
+
+msgid "Send pull request to Groonga Repository"
+msgstr "Groongaリポジトリにプルリクエストを送りましょう。"
