@@ -247,10 +247,10 @@ grn_config_cursor_close(grn_ctx *ctx, grn_config_cursor *cursor)
   return GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_config_cursor_next(grn_ctx *ctx, grn_obj *cursor)
 {
-  grn_bool have_next;
+  bool have_next;
   grn_config_cursor *config_cursor = (grn_config_cursor *)cursor;
 
   GRN_API_ENTER;

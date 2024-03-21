@@ -38,7 +38,7 @@ GRN_API grn_rc grn_config_delete(grn_ctx *ctx,
                                  const char *key, int32_t key_size);
 
 GRN_API grn_obj *grn_config_cursor_open(grn_ctx *ctx);
-GRN_API grn_bool grn_config_cursor_next(grn_ctx *ctx, grn_obj *cursor);
+GRN_API bool grn_config_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 GRN_API uint32_t grn_config_cursor_get_key(grn_ctx *ctx,
                                            grn_obj *cursor,
                                            const char **key);
