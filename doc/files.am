@@ -22,7 +22,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/documentation.rst \
 	$(top_srcdir)/doc/source/contribution/documentation/c-api.rst \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.rst \
-	$(top_srcdir)/doc/source/contribution/documentation/introduction.rst \
+	$(top_srcdir)/doc/source/contribution/documentation/introduction.md \
 	$(top_srcdir)/doc/source/contribution/report.rst \
 	$(top_srcdir)/doc/source/development.rst \
 	$(top_srcdir)/doc/source/development/travis-ci.rst \
@@ -1341,7 +1341,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution/documentation.rst \
 	source/contribution/documentation/c-api.rst \
 	source/contribution/documentation/i18n.rst \
-	source/contribution/documentation/introduction.rst \
+	source/contribution/documentation/introduction.md \
 	source/contribution/report.rst \
 	source/development.rst \
 	source/development/travis-ci.rst \
