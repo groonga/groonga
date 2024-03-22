@@ -73,6 +73,7 @@ select Memos   --slices[fast].query 'content:@fast'   --slices[fast].sort_keys '
     }
   ]
 ]
+#|d| DDL:2147483654:set_normalizers NormalizerAuto
 #>select --slices[fast].columns[highlighted_content].flags "COLUMN_SCALAR" --slices[fast].columns[highlighted_content].stage "output" --slices[fast].columns[highlighted_content].type "Text" --slices[fast].columns[highlighted_content].value "highlight_html(content)" --slices[fast].limit "2" --slices[fast].output_columns "_id,highlighted_content" --slices[fast].query "content:@fast" --slices[fast].sort_keys "-_id" --table "Memos"
 #:000000000000000 select(3)
 #:000000000000000 slices[fast].filter(3): Memos.content match "fast"
