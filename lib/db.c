@@ -9121,8 +9121,11 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
         grn_obj_name(ctx, proc, name, GRN_TABLE_MAX_KEY_SIZE);
       GRN_TEXT_PUT(ctx, &names, name, name_size);
     }
+    grn_id table_id = DB_OBJ(table)->id;
+    grn_log_level log_level =
+      (table_id & GRN_OBJ_TMP_OBJECT) ? GRN_LOG_DEBUG : GRN_LOG_NOTICE;
     GRN_LOG(ctx,
-            GRN_LOG_NOTICE,
+            log_level,
             "DDL:%u:set_%s%s%.*s",
             DB_OBJ(table)->id,
             module_id,
