@@ -79,6 +79,17 @@ You can generate HTML by the following command:
 
 You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
+How to edit documentation
+-------------------------
+
+The Groonga documentation is written in `reStructuredText (.rst)`_ or `Markdown (.md)`_ . These files are located in the ``doc/source``.
+Each page of the documentation corresponds to a ``.rst`` file or a ``.md`` file. By modifying the corresponding file, you can edit the target document.
+For Example, if you want to edit this :doc:`introduction` page, you should edit the ``doc/source/contribution/documentation/introduction.rst`` file.
+Please find the file you wish to edit and make your changes.
+
+.. _reStructuredText (.rst): https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html
+.. _Markdown (.md): https://myst-parser.readthedocs.io/en/latest/
+
 Update
 ------
 
