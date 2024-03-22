@@ -80,7 +80,7 @@ You can generate HTML by the following command:
 You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``.
 
 How to edit documentation
---------------------------
+-------------------------
 
 The Groonga documentation is written in `reStructuredText (.rst)`_ or `Markdown (.md)`_ . These files are located in the ``doc/source``.
 Each page of the documentation corresponds to a ``.rst`` file or a ``.md`` file. By modifying the corresponding file, you can edit the target document.
