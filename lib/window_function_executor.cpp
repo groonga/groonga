@@ -33,7 +33,7 @@ using string_view = arrow::util::string_view;
 #endif
 
 extern "C" {
-static grn_bool grn_window_function_executor_all_tables_at_once_enable = true;
+static bool grn_window_function_executor_all_tables_at_once_enable = true;
 
 void
 grn_window_function_executor_init_from_env(void)
