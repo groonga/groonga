@@ -31,8 +31,8 @@ msgstr "Groongaドキュメントへ貢献するには、まずはGroongaリポ�
 msgid "Go to https://github.com/groonga/groonga on GitHub"
 msgstr "GitHubの https://github.com/groonga/groonga へ移動してください。"
 
-msgid "Click the ``Fork`` button to create a copy of the repository"
-msgstr "``Fork`` ボタンをクリックして、Groongaリポジトリをフォークしてください。"
+msgid "Click the `Fork` button to create a copy of the repository"
+msgstr "`Fork` ボタンをクリックして、Groongaリポジトリをフォークしてください。"
 
 msgid "Clone your Groonga repository with the following command"
 msgstr "下記のコマンドでフォークしたGroongaリポジトリをクローンしてください。"
@@ -40,8 +40,8 @@ msgstr "下記のコマンドでフォークしたGroongaリポジトリをク�
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 
-msgid "Groonga uses Sphinx_ as documentation tool."
-msgstr "Groongaはドキュメントツールとして Sphinx_ を使います。"
+msgid "Groonga uses [Sphinx](https://www.sphinx-doc.org/) as documentation tool."
+msgstr "Groongaはドキュメントツールとして [Sphinx](https://www.sphinx-doc.org/) を使います。"
 
 msgid "Here are command lines to install Sphinx."
 msgstr "以下はSphinxをインストールするコマンドラインです。"
@@ -55,11 +55,11 @@ msgstr ""
 msgid "macOS:"
 msgstr ""
 
-msgid "Run ``cmake`` with ``--preset=doc``"
-msgstr "``cmake`` を ``--preset=doc`` 付きで実行"
+msgid "Run `cmake` with `--preset=doc`"
+msgstr "`cmake` を `--preset=doc` 付きで実行"
 
-msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--preset=doc`` option to ``cmake``:"
-msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``cmake`` に ``--preset=doc`` オプションを追加して明示的に有効にする必要があります。:"
+msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding `--preset=doc` option to `cmake`:"
+msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 `cmake` に `--preset=doc` オプションを追加して明示的に有効にする必要があります。:"
 
 msgid "Now, your Groonga build is documentation ready."
 msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
@@ -70,20 +70,20 @@ msgstr "HTMLファイルを生成"
 msgid "You can generate HTML by the following command:"
 msgstr "以下のコマンドでHTMLファイルを生成できます。:"
 
-msgid "You can find generated HTML documentation at ``../groonga.doc/doc/en/html/``."
-msgstr "生成されたHTMLドキュメントは ``../groonga.doc/doc/ja/html/`` にあります。"
+msgid "You can find generated HTML documentation at `../groonga.doc/doc/en/html/`."
+msgstr "生成されたHTMLドキュメントは `../groonga.doc/doc/ja/html/` にあります。"
 
 msgid "How to edit documentation"
 msgstr "ドキュメントを編集する方法"
 
-msgid "The Groonga documentation is written in `reStructuredText (.rst)`_ or `Markdown (.md)`_ . These files are located in the ``doc/source``. Each page of the documentation corresponds to a ``.rst`` file or a ``.md`` file. By modifying the corresponding file, you can edit the target document. For Example, if you want to edit this :doc:`introduction` page, you should edit the ``doc/source/contribution/documentation/introduction.rst`` file. Please find the file you wish to edit and make your changes."
-msgstr "Groongaドキュメントは、`reStructuredText (.rst)`_ または `Markdown (.md)`_ で書かれています。Groongaドキュメントのファイルは、``doc/source`` 配下にあります。それぞれのページに対応した ``.rst`` ファイルまたは、 ``.md`` が必ず１つあります。対応するファイルを変更することで、対象のドキュメントを編集できます。例えば、この :doc:`introduction` ページを編集したい場合は、``doc/source/contribution/documentation/introduction.rst`` ファイルを編集すればよいです。編集したいファイルをみつけて、編集してください。"
+msgid "The Groonga documentation is written in [reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) or [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) . These files are located in the `doc/source`. Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document. For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file. Please find the file you wish to edit and make your changes."
+msgstr "Groongaドキュメントは、[reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) または [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) で書かれています。Groongaドキュメントのファイルは、`doc/source` 配下にあります。それぞれのページに対応した `.rst` ファイルまたは、 `.md` が必ず１つあります。対応するファイルを変更することで、対象のドキュメントを編集できます。例えば、この {doc}`introduction` ページを編集したい場合は、`doc/source/contribution/documentation/introduction.rst` ファイルを編集すればよいです。編集したいファイルをみつけて、編集してください。"
 
 msgid "Update"
 msgstr "更新"
 
-msgid "You can find sources of documentation at ``doc/source/``. The sources should be written in English. See :doc:`i18n` about how to translate documentation."
-msgstr "ドキュメントのソースは ``doc/source/`` にあります。ソースは英語で書かれているはずです。ドキュメントの翻訳方法については、 :doc:`i18n` をご覧ください。"
+msgid "You can find sources of documentation at `doc/source/`. The sources should be written in English. See {doc}`i18n` about how to translate documentation."
+msgstr "ドキュメントのソースは `doc/source/` にあります。ソースは英語で書かれているはずです。ドキュメントの翻訳方法については、{doc}`i18n` をご覧ください。"
 
 msgid "You can update the target file when you update the existing documentation file."
 msgstr "既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新できます。"

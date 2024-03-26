@@ -22,7 +22,7 @@ set(GRN_DOC_SOURCES
     contribution/documentation.rst
     contribution/documentation/c-api.rst
     contribution/documentation/i18n.rst
-    contribution/documentation/introduction.rst
+    contribution/documentation/introduction.md
     contribution/report.rst
     development.rst
     development/travis-ci.rst
