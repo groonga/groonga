@@ -79,6 +79,15 @@ msgstr "ドキュメントを編集する方法"
 msgid "The Groonga documentation is written in [reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) or [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) . These files are located in the `doc/source`. Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document. For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file. Please find the file you wish to edit and make your changes."
 msgstr "Groongaドキュメントは、[reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) または [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) で書かれています。Groongaドキュメントのファイルは、`doc/source` 配下にあります。それぞれのページに対応した `.rst` ファイルまたは、 `.md` が必ず１つあります。対応するファイルを変更することで、対象のドキュメントを編集できます。例えば、この {doc}`introduction` ページを編集したい場合は、`doc/source/contribution/documentation/introduction.rst` ファイルを編集すればよいです。編集したいファイルをみつけて、編集してください。"
 
+msgid "Preview modifications on HTML"
+msgstr "HTMLで変更を確認"
+
+msgid "You can preview your modifications on HTML in `../groonga.doc/doc/en/html/` after generating HTML by the following command. An HTML file corresponding to each page of the documentation is generated:"
+msgstr "以下のコマンドで、HTMLを生成後に `../groonga.doc/doc/en/html/` 配下にてHTMLで変更を確認できます。ドキュメントの各ページに対応するHTMLファイルが生成されます。:"
+
+msgid "For example, if you edit this {doc}`introduction` page, you can preview it by the following command:"
+msgstr "例えば、この {doc}`introduction` ページを編集した場合、以下のコマンドを使用してHTMLで変更内容を確認できます。"
+
 msgid "Update"
 msgstr "更新"
 

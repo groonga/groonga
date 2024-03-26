@@ -77,6 +77,20 @@ Each page of the documentation corresponds to a `.rst` file or a `.md` file. By 
 For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
 
+## Preview modifications on HTML
+
+You can preview your modifications on HTML in `../groonga.doc/doc/en/html/` after generating HTML by the following command. An HTML file corresponding to each page of the documentation is generated:
+
+```console
+% cmake --build ../groonga.doc
+```
+
+For example, if you edit this {doc}`introduction` page, you can preview it by the following command:
+
+```console
+% firefox ../groonga.doc/doc/en/html/contribution/documentation/introduction.html
+```
+
 ## Update
 
 You can find sources of documentation at `doc/source/`. The sources
