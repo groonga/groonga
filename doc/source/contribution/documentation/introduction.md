@@ -74,13 +74,13 @@ You can find generated HTML documentation at `../groonga.doc/doc/en/html/`.
 
 The Groonga documentation is written in [reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) or [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) . These files are located in the `doc/source`.
 Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document.
-For Example, if you want to edit this [{doc}`introduction`] page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
+For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
 
 ## Update
 
 You can find sources of documentation at `doc/source/`. The sources
-should be written in English. See [{doc}`i18n`] about how to translate
+should be written in English. See {doc}`i18n` about how to translate
 documentation.
 
 You can update the target file when you update the existing
