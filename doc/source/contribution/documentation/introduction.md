@@ -77,7 +77,7 @@ Each page of the documentation corresponds to a `.rst` file or a `.md` file. By 
 For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
 
-## Preview changes on HTML
+## Preview changes on HTML files
 
 You can preview your documentation changes in your browser in HTML format. Follow these two steps.
 
