@@ -81,10 +81,10 @@ Please find the file you wish to edit and make your changes.
 
 You can preview your documentation changes in your browser in HTML format. Follow these two steps.
 
-1. Generate the HTML with your changes
-2. Preview the generated HTML in your browser
+1. Generate the HTML files with your changes
+2. Preview the generated HTML files in your Web browser
 
-### Generate the HTML with your changes
+### Generate the HTML files with your changes
 
 Use the following command to generate HTML files that reflect your changes. The generated files will be located in `../groonga.doc/doc/en/html/`. Each file corresponds to a `.rst` or `.md` file:
 
@@ -92,9 +92,9 @@ Use the following command to generate HTML files that reflect your changes. The 
 % cmake --build ../groonga.doc
 ```
 
-### Preview the generated HTML in your browser
+### Preview the generated HTML files in your Web browser
 
-Open the generated file in your web browser to preview your changes.
+Open the generated file in your Web browser to preview your changes.
 For example, if you have edited this {doc}`introduction` page, you can preview it by the following command:
 
 ```console
