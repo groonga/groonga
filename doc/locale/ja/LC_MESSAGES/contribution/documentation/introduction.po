@@ -88,14 +88,14 @@ msgstr "HTML形式でドキュメントの変更をブラウザで確認でき�
 msgid "Generate the HTML with your changes"
 msgstr "変更を反映したHTMLを生成する"
 
+msgid "Preview the generated HTML in your browser"
+msgstr "ブラウザで生成されたHTMLを確認する"
+
 msgid "Execute the following command to generate HTML files that reflect your changes:"
 msgstr "次のコマンドで、変更を反映したHTMLファイルを生成します。"
 
 msgid "This command generates HTML files in the `../groonga.doc/doc/en/html/`. Each HTML file corresponds to a `.rst` or `.md` file."
 msgstr "このコマンドは、`../groonga.doc/doc/en/html/`配下にHTMLファイルを生成します。各`.rst`または`.md`ファイルに対応するHTMLファイルが生成されます。"
-
-msgid "Preview the generated HTML in your browser"
-msgstr "ブラウザで生成されたHTMLを確認する"
 
 msgid "Open the generated HTML file in your web browser to preview your changes. For example, if you have edited this {doc}`introduction` page, you can preview it by the following command:"
 msgstr "生成されたHTMLファイルをWebブラウザで開き、変更を確認できます。例えば、この {doc}`introduction` ページを編集した場合、次のコマンドで変更を確認できます。"
