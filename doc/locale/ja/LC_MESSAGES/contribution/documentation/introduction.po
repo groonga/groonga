@@ -97,11 +97,11 @@ msgstr "次のコマンドで、変更を反映したHTMLファイルを生成�
 msgid "Open the generated file in your Web browser to preview your changes. For example, if you have edited this {doc}`introduction` page, you can preview it by the following command:"
 msgstr "生成されたファイルをWebブラウザで開き、変更を確認できます。例えば、この {doc}`introduction` ページを編集した場合、次のコマンドで変更を確認できます。"
 
-msgid "Translate documentation"
-msgstr "ドキュメントを翻訳する"
+msgid "Optional: Translate documentation"
+msgstr "任意: ドキュメントを翻訳する"
 
-msgid "After editing and previewing the Groonga documentation, the next important step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation."
-msgstr "Groongaドキュメントの編集とプレビューが完了したら、次の重要なステップは、ドキュメントの翻訳です。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順に習って、Groongaドキュメントを翻訳しましょう。"
+msgid "After editing and previewing the Groonga documentation, an important, yet optional, step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation."
+msgstr "Groongaドキュメントの編集とプレビューが完了したら、次の重要ですが任意のステップとして、ドキュメントの翻訳があります。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順に習って、Groongaドキュメントを翻訳しましょう。"
 
 msgid "Translate the documentation in `.edit.po` files"
 msgstr "`edit.po` ファイルでドキュメントを翻訳する"

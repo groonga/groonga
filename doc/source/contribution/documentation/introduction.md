@@ -101,9 +101,9 @@ For example, if you have edited this {doc}`introduction` page, you can preview i
 % open ../groonga.doc/doc/en/html/contribution/documentation/introduction.html
 ```
 
-## Translate documentation
+## Optional: Translate documentation
 
-After editing and previewing the Groonga documentation, the next important step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation.
+After editing and previewing the Groonga documentation, an important, yet optional, step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation.
 
 1. Translate the documentation in `.edit.po` files
 
