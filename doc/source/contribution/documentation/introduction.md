@@ -115,6 +115,10 @@ Use the following command to generate `.edit.po` files, which are translation fi
 % cmake --build ../groonga.doc
 ```
 
+```{caution}
+Please ensure you do not modify `.rst` or `.md` files after translating in `.edit.po` files and before applying those translations to `.po` files, as will be described in the following step. Because your changes to `.edit.po` files will be overwritten and lost. To avoid losing your translation work, ensure all edits to `.rst` or `.md` files are completed and fully finalized before you start translating in `.edit.po` files.
+```
+
 For example, if you have edited the {doc}`introduction` page and want to add Japanese translations, update this `../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` file.
 
 ## Update
