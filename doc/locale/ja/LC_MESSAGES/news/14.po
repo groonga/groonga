@@ -17,11 +17,26 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.1 - 2024-03-14"
-msgstr "14.0.1リリース - 2024-03-14"
+msgid "Release 14.0.2 - 2024-03-29"
+msgstr "14.0.2リリース - 2024-03-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Reduced a log level of a log when Groonga setting normalizers/tokenizer/token_filters against temporary table."
+msgstr "一時テーブルに対して、normalizers/tokenizer/token_filtersを設定したときに出力されるログのログレベルを下げました。"
+
+msgid "For example, the target log of this modification is the following log."
+msgstr "例えば、この変更の対象のログは以下のようなログです。"
+
+msgid "PGroonga sets normalizers against temporary table on start. So, this log becomes noise. Because this log become output when PGroonga start because of PGroonga's default log level is `notice`."
+msgstr "PGroongaは起動時に一時テーブルに対してノーマライザーを設定するため、これらのログがノイズになっていました。このログのログレベルは`notice`なので、PGroonga起動時にこのログが出力されてしまうためです。"
+
+msgid "Therefore, we reduce log level to `debug` for the log since this release. Thus, this log does not output when PGroonga start in default."
+msgstr "そのため、今回のリリースからこのようなログのログレベルを`debug`にしました。これにより、デフォルトでは、PGroonga起動時にこのログが出力されないようになります。"
+
+msgid "Release 14.0.1 - 2024-03-14"
+msgstr "14.0.1リリース - 2024-03-14"
 
 msgid "[{doc}`/reference/commands/load`] Stopped reporting an error when we `load` key that becomes an empty key by normalization."
 msgstr "[{doc}`/reference/commands/load`] ノーマライズによって空のキーとなったキーを`load`する時のエラーを止めました。"
