@@ -107,7 +107,7 @@ msgid "After editing and previewing the Groonga documentation, the next step is 
 msgstr "Groongaドキュメントの編集とプレビューが完了したら、次のステップは、ドキュメントの翻訳になります。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順で、Groongaドキュメントを翻訳しましょう。"
 
 msgid "Translate the documentation in `.edit.po` files"
-msgstr "`edit.po` ファイルでドキュメントを翻訳する"
+msgstr "`edit.po` ファイル内のドキュメントを翻訳する"
 
 msgid "Use the following command to generate `.edit.po` files, which are translation files, corresponding to your changes. The generated files will be located in `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. Please add your translations to `.edit.po` files:"
 msgstr "次のコマンドで、変更に対応する翻訳ファイルである `.edit.po` ファイルを生成します。生成されたファイルは `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES` 配下にあります。各 `.rst` または `.md` ファイルに対応するファイルが生成されています。対応する `edit.po` ファイルに翻訳を追加します。"
