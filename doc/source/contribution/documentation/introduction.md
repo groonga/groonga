@@ -118,7 +118,10 @@ Use the following command to generate `.edit.po` files, which are translation fi
 ```
 
 ```{caution}
-Please ensure you do not modify `.rst` or `.md` files after translating in `.edit.po` files and before applying those translations to `.po` files, as will be described in the following step. Because your changes to `.edit.po` files will be overwritten and lost. To avoid losing your translation work, ensure all edits to `.rst` or `.md` files are completed and fully finalized before you start translating in `.edit.po` files.
+Please do not modify the `.rst` or `.md` files while adding translations to the `.edit.po` files.
+Editing `.rst` or `.md` files without first reflecting the translations in `.po` files will result in the loss of those translations.
+If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files.
+The method to reflect translations will be introduced in the next step.
 ```
 
 For example, if you have edited the {doc}`introduction` page and want to add Japanese translations, update this `../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` file.
