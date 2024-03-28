@@ -100,8 +100,11 @@ msgstr "生成されたファイルをWebブラウザで開き、変更を確認
 msgid "Optional: Translate documentation"
 msgstr "任意: ドキュメントを翻訳する"
 
-msgid "After editing and previewing the Groonga documentation, an important, yet optional, step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation."
-msgstr "Groongaドキュメントの編集とプレビューが完了したら、次の重要ですが任意のステップとして、ドキュメントの翻訳があります。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順に習って、Groongaドキュメントを翻訳しましょう。"
+msgid "This is an optional step."
+msgstr "任意のステップになります。"
+
+msgid "After editing and previewing the Groonga documentation, the next step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation."
+msgstr "Groongaドキュメントの編集とプレビューが完了したら、次のステップは、ドキュメントの翻訳になります。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順に習って、Groongaドキュメントを翻訳しましょう。"
 
 msgid "Translate the documentation in `.edit.po` files"
 msgstr "`edit.po` ファイルでドキュメントを翻訳する"
