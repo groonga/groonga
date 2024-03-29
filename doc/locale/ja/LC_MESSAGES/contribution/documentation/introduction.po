@@ -116,7 +116,7 @@ msgid "For example, if you have edited the {doc}`introduction` page and want to 
 msgstr "例えば、この {doc}`introduction` ページを編集して、日本語訳を追加したい場合は、`../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` ファイルを更新します。"
 
 msgid "Please do not modify the `.rst` or `.md` files while adding translations to the `.edit.po` files. Editing `.rst` or `.md` files without first reflecting the translations in `.po` files will result in the loss of those translations. If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files. The method to reflect translations will be introduced in the next step."
-msgstr "`.edit.po` ファイルに翻訳を追加している最中に、翻訳元の `.rst` または、`.md` ファイルを変更しないでください。翻訳した内容を `.po` ファイルに反映せずにを翻訳元を編集してしまうと、翻訳内容が消えてしまいます。翻訳元を編集したい場合は先に翻訳内容を `.po` ファイルに反映してください。反映方法は次のステップで紹介します。"
+msgstr "`.edit.po` ファイルに翻訳を追加している最中に、翻訳元の `.rst` または `.md` ファイルを変更しないでください。翻訳した内容を `.po` ファイルに反映せずにを翻訳元を編集してしまうと、翻訳内容が消えてしまいます。翻訳元を編集したい場合は先に翻訳内容を `.po` ファイルに反映してください。反映方法は次のステップで紹介します。"
 
 msgid "Update"
 msgstr "更新"
