@@ -9363,11 +9363,12 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
                                            GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_OBJECT_CORRUPT,
           "[column][remove][index] "
-          "hook has a dangling reference: <%.*s> -> <%.*s>",
+          "hook has a dangling reference: <%.*s> -> <%.*s>(%u)",
           length,
           name,
           hook_name_length,
-          hook_name);
+          hook_name,
+          data->target);
       rc = ctx->rc;
     } else if (target->header.type == GRN_COLUMN_INDEX) {
       // TODO: multicolumn  MULTI_COLUMN_INDEXP
@@ -14001,12 +14002,13 @@ report_hook_has_dangling_reference_error(grn_ctx *ctx,
                                             reference_name,
                                             GRN_TABLE_MAX_KEY_SIZE);
   ERR(GRN_OBJECT_CORRUPT,
-      "%s hook has a dangling reference: <%.*s> -> <%.*s>",
+      "%s hook has a dangling reference: <%.*s> -> <%.*s>(%u)",
       context_tag,
       target_name_length,
       target_name,
       reference_name_length,
-      reference_name);
+      reference_name,
+      reference_id);
 }
 
 static grn_bool
