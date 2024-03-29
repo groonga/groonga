@@ -101,6 +101,31 @@ For example, if you have edited this {doc}`introduction` page, you can preview i
 % open ../groonga.doc/doc/en/html/contribution/documentation/introduction.html
 ```
 
+## Optional: Translate documentation
+
+This is an optional step.
+
+After editing and previewing the Groonga documentation, the next step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation.
+
+1. Translate the documentation in `.edit.po` files
+
+### Translate the documentation in `.edit.po` files
+
+Use the following command to generate `.edit.po` files, which are translation files, corresponding to your changes. The generated files will be located in `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. Please add your translations to `.edit.po` files:
+
+```console
+% cmake --build ../groonga.doc
+```
+
+For example, if you have edited the {doc}`introduction` page and want to add Japanese translations, update this `../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` file.
+
+```{caution}
+Please do not modify the `.rst` or `.md` files while adding translations to the `.edit.po` files.
+Editing `.rst` or `.md` files without first reflecting the translations in `.po` files will result in the loss of those translations.
+If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files.
+The method to reflect translations will be introduced in the next step.
+```
+
 ## Update
 
 You can find sources of documentation at `doc/source/`. The sources
