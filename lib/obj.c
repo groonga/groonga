@@ -268,13 +268,13 @@ grn_obj_is_db(grn_ctx *ctx, grn_obj *obj)
   return obj->header.type == GRN_DB;
 }
 
-grn_bool
+bool
 grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_bool is_table = GRN_FALSE;
+  bool is_table = false;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (obj->header.type) {
@@ -282,7 +282,7 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
-    is_table = GRN_TRUE;
+    is_table = true;
     break;
   default:
     break;

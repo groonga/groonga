@@ -8312,7 +8312,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   grn_obj *lexicon = NULL;
   grn_id lexicon_domain_id;
   grn_obj *lexicon_domain = NULL;
-  grn_bool lexicon_domain_is_table = false;
+  bool lexicon_domain_is_table = false;
   grn_bool lexicon_have_tokenizer;
   grn_bool is_full_text_search_index;
   grn_id *source_ids;
