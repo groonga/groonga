@@ -108,6 +108,7 @@ This is an optional step.
 After editing and previewing the Groonga documentation, the next step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation.
 
 1. Translate the documentation in `.edit.po` files
+2. Reflect translations to `.po` files
 
 ### Translate the documentation in `.edit.po` files
 
@@ -125,6 +126,18 @@ Editing `.rst` or `.md` files without first reflecting the translations in `.po`
 If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files.
 The method to reflect translations will be introduced in the next step.
 ```
+
+### Reflect translations to `.po` files
+
+After adding your translations to the `.edit.po` files, the next step is to reflect these translations to the `.po` files, which are the finalized translation files. These `.po` files are located in `doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. If you want to edit your translations, edit the corresponding `.edit.po` file and then reflect your changes to the `.po` file.
+
+To reflect translations from the `.edit.po` files to the `.po` files, use the following command:
+
+```console
+% cmake --build ../groonga.doc
+```
+
+For example, if you have added translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/ja/LC_MESSAGES/contribution/documentation/introduction.po` file.
 
 ## Update
 

@@ -109,6 +109,9 @@ msgstr "Groongaドキュメントの編集とプレビューが完了したら�
 msgid "Translate the documentation in `.edit.po` files"
 msgstr "`.edit.po` ファイル内のドキュメントを翻訳する"
 
+msgid "Reflect translations to `.po` files"
+msgstr ""
+
 msgid "Use the following command to generate `.edit.po` files, which are translation files, corresponding to your changes. The generated files will be located in `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. Please add your translations to `.edit.po` files:"
 msgstr "次のコマンドで、翻訳用である `.edit.po` ファイルを生成します。生成されたファイルは `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES` 配下にあります。各 `.rst` または `.md` ファイルに対応するファイルが生成されています。対応する `.edit.po` ファイルに翻訳を追加します。"
 
@@ -117,6 +120,15 @@ msgstr "例えば、この {doc}`introduction` ページを編集して、日本
 
 msgid "Please do not modify the `.rst` or `.md` files while adding translations to the `.edit.po` files. Editing `.rst` or `.md` files without first reflecting the translations in `.po` files will result in the loss of those translations. If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files. The method to reflect translations will be introduced in the next step."
 msgstr "`.edit.po` ファイルに翻訳を追加している最中に、翻訳元の `.rst` または `.md` ファイルを変更しないでください。翻訳した内容を `.po` ファイルに反映せずにを翻訳元を編集してしまうと、翻訳内容が消えてしまいます。翻訳元を編集したい場合は先に翻訳内容を `.po` ファイルに反映してください。反映方法は次のステップで紹介します。"
+
+msgid "After adding your translations to the `.edit.po` files, the next step is to reflect these translations to the `.po` files, which are the finalized translation files. These `.po` files are located in `doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. If you want to edit your translations, edit the corresponding `.edit.po` file and then reflect your changes to the `.po` file."
+msgstr ""
+
+msgid "To reflect translations from the `.edit.po` files to the `.po` files, use the following command:"
+msgstr ""
+
+msgid "For example, if you have added translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/ja/LC_MESSAGES/contribution/documentation/introduction.po` file."
+msgstr ""
 
 msgid "Update"
 msgstr "更新"
