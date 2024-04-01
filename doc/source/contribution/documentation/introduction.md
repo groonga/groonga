@@ -137,7 +137,7 @@ To reflect translations from the `.edit.po` files to the `.po` files, use the fo
 % cmake --build ../groonga.doc
 ```
 
-For example, if you have added translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/ja/LC_MESSAGES/contribution/documentation/introduction.po` file.
+For example, if you have added Japanese translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` file.
 
 ## Update
 
