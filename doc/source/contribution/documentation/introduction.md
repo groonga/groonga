@@ -129,7 +129,7 @@ The method to reflect translations will be introduced in the next step.
 
 ### Reflect translations to `.po` files
 
-After adding your translations to the `.edit.po` files, the next step is to reflect these translations to the `.po` files, which are the finalized translation files. These `.po` files are located in `doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. If you want to edit your translations, edit the corresponding `.edit.po` file and then reflect your changes to the `.po` file.
+After adding your translations to the `.edit.po` files, the next step is to reflect these translations to the `.po` files. `.po` files are the finalized translation files. These `.po` files are located in `doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. If you want to edit your translations, edit the corresponding `.edit.po` file and then reflect your changes to the `.po` file.
 
 To reflect translations from the `.edit.po` files to the `.po` files, use the following command:
 
