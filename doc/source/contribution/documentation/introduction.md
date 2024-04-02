@@ -109,6 +109,7 @@ After editing and previewing the Groonga documentation, the next step is to tran
 
 1. Translate the documentation in `.edit.po` files
 2. Reflect translations to `.po` files
+3. Preview translations on HTML files
 
 ### Translate the documentation in `.edit.po` files
 
@@ -142,6 +143,16 @@ For example, if you have added Japanese translations about the {doc}`introductio
 ```{note}
 Actually, the command to generate translation `.edit.po` files is the same as the one used for reflecting translations.
 Therefore, there's no need to memorize different commands for generating translation files and reflecting the translations.
+```
+
+### Preview translations on HTML files
+
+You can preview your translations in your browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your web browser to review your translations.
+
+For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:
+
+```console
+% open ../groonga.doc/doc/ja/html/contribution/documentation/introduction.html
 ```
 
 ## Update
