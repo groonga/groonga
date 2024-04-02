@@ -147,7 +147,7 @@ Therefore, there's no need to memorize different commands for generating transla
 
 ### Preview translations on HTML files
 
-You can preview your translations in your browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your web browser to review your translations.
+You can preview your translations in your Web browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your Web browser to review your translations.
 
 For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:
 
