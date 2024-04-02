@@ -613,6 +613,9 @@ grn_accessor_execute(grn_ctx *ctx,
                                              &index_data,
                                              1);
   if (n_index_datum == 0) {
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_API_RETURN(ctx->rc);
+    }
     index = (grn_obj *)last_a;
   } else {
     index = index_data.index;
