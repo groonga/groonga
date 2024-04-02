@@ -10752,6 +10752,10 @@ token_info_open(grn_ctx *ctx,
     }
     break;
   }
+  if (ctx->rc != GRN_SUCCESS) {
+    token_info_close(ctx, ti);
+    return NULL;
+  }
   if (cursor_heap_push2(ti->cursors)) {
     token_info_close(ctx, ti);
     return NULL;
