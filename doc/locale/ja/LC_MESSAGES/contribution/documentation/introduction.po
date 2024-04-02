@@ -130,6 +130,9 @@ msgstr "次のコマンドで、翻訳内容を `.edit.po` ファイルから `.
 msgid "For example, if you have added Japanese translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` file."
 msgstr "例えば、この {doc}`introduction` ページの日本語訳を行い、上記のコマンドを実行した場合、翻訳内容は、`/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` ファイルに反映されます。"
 
+msgid "Actually, the command to generate translation `.edit.po` files is the same as the one used for reflecting translations.  Therefore, there's no need to memorize different commands for generating translation files and reflecting the translations."
+msgstr "実は、翻訳を反映するコマンドは、翻訳用の `.edit.po` ファイルを生成するコマンドと同じコマンドです。なので、翻訳用のファイル生成と翻訳の反映で違うコマンドを覚える必要はありません。"
+
 msgid "Update"
 msgstr "更新"
 

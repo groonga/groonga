@@ -139,6 +139,11 @@ To reflect translations from the `.edit.po` files to the `.po` files, use the fo
 
 For example, if you have added Japanese translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` file.
 
+```{note}
+Actually, the command to generate translation `.edit.po` files is the same as the one used for reflecting translations.
+Therefore, there's no need to memorize different commands for generating translation files and reflecting the translations.
+```
+
 ## Update
 
 You can find sources of documentation at `doc/source/`. The sources
