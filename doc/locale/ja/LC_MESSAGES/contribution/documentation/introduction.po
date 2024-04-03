@@ -137,10 +137,10 @@ msgid "Actually, the command to generate translation `.edit.po` files is the sam
 msgstr "実は、翻訳を反映するコマンドは、翻訳用の `.edit.po` ファイルを生成するコマンドと同じコマンドです。なので、翻訳用のファイル生成と翻訳の反映で違うコマンドを覚える必要はありません。"
 
 msgid "You can preview your translations in your Web browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your Web browser to review your translations."
-msgstr "HTML形式でドキュメントの翻訳をWebブラウザで確認できます。翻訳を `.po` ファイルに反映するステップにて、翻訳を反映したHTMLファイルも生成されています。これらのファイルは `../groonga.doc/doc/${LANGUAGE}/html/` 配下に生成されています。各ファイルは `.rst` または `.md` ファイルに対応しています。生成されたファイルをWebブラウザで開き、翻訳を確認できます。"
+msgstr "翻訳が反映されたHTML形式のドキュメントをWebブラウザで確認できます。翻訳を `.po` ファイルに反映するステップにて、HTMLファイルも生成されています。これらのファイルは `../groonga.doc/doc/${LANGUAGE}/html/` 配下に生成されています。各ファイルは `.rst` または `.md` ファイルに対応しています。生成されたファイルをWebブラウザで開き、翻訳を確認できます。"
 
 msgid "For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:"
-msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで翻訳を確認できます"
+msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
 
 msgid "Update"
 msgstr "更新"
