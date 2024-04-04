@@ -113,7 +113,7 @@ msgid "Reflect translations to `.po` files"
 msgstr "翻訳を `.po` ファイルに反映する"
 
 msgid "Preview translations on HTML files"
-msgstr ""
+msgstr "HTMLファイルで翻訳を確認する"
 
 msgid "Use the following command to generate `.edit.po` files, which are translation files, corresponding to your changes. The generated files will be located in `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. Please add your translations to `.edit.po` files:"
 msgstr "次のコマンドで、翻訳用である `.edit.po` ファイルを生成します。生成されたファイルは `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES` 配下にあります。各 `.rst` または `.md` ファイルに対応するファイルが生成されています。対応する `.edit.po` ファイルに翻訳を追加します。"
@@ -136,11 +136,11 @@ msgstr "例えば、この {doc}`introduction` ページの日本語訳を行い
 msgid "Actually, the command to generate translation `.edit.po` files is the same as the one used for reflecting translations. Therefore, there's no need to memorize different commands for generating translation files and reflecting the translations."
 msgstr "実は、翻訳を反映するコマンドは、翻訳用の `.edit.po` ファイルを生成するコマンドと同じコマンドです。なので、翻訳用のファイル生成と翻訳の反映で違うコマンドを覚える必要はありません。"
 
-msgid "You can preview your translations in your browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your web browser to review your translations."
-msgstr ""
+msgid "You can preview your translations in your Web browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your Web browser to review your translations."
+msgstr "翻訳が反映されたHTML形式のドキュメントをWebブラウザで確認できます。翻訳を `.po` ファイルに反映するステップにて、HTMLファイルも生成されています。これらのファイルは `../groonga.doc/doc/${LANGUAGE}/html/` 配下に生成されています。各ファイルは `.rst` または `.md` ファイルに対応しています。生成されたファイルをWebブラウザで開き、翻訳を確認できます。"
 
 msgid "For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:"
-msgstr ""
+msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
 
 msgid "Update"
 msgstr "更新"
