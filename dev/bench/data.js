@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1712245661664,
+  "lastUpdate": 1712246587135,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -14082,6 +14082,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017650322999998025,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0019189999999990326 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "57dbe9cea31c85487b95f95289b2641ca70b8b68",
+          "message": "grn_table_selector_selector: optimize large result set case\n\n\"A AND B\" and update \"A\" may be a heavy process when \"A\" has many\nrecords and B has a few records. This changes it to \"B AND A\" and\nupdate \"B\". This change is faster because we don't need to remove many\nrecords from \"A\". We just need to remove a few records from \"B\".\n\nThis is enabled only when caller calls\ngrn_table_selector_set_ensure_using_select_result(ctx, table_selector,\ntrue) to keep backward compatibility.\n\nSee also the added comment.",
+          "timestamp": "2024-04-04T23:42:43+09:00",
+          "tree_id": "ba648b3d34bf51188265291eae543ae0c5eae4b9",
+          "url": "https://github.com/groonga/groonga/commit/57dbe9cea31c85487b95f95289b2641ca70b8b68"
+        },
+        "date": 1712246585683,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3721641629997521,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017790999999999557 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27246368599992365,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01317299999999988 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016669678000027943,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00038400000000038403 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015561205999972572,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00041500000000016524 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.607301446000065,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00020199999999986895 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2654297700001962,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.028952000000000602 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1633739930006186,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.028166999999998832 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017747095000004265,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020580000000000043 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017141717000072276,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021500000000005126 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.0968299699995896,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.03565099999999888 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.08749250800053687,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.03024999999999939 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01777114500009702,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021100000000000563 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017870863999974063,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020060000000000355 s\nthreads: undefined"
           }
         ]
       }
