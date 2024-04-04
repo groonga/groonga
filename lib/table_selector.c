@@ -2131,7 +2131,25 @@ grn_table_selector_select(grn_ctx *ctx,
   data->variable = grn_expr_get_var_by_offset(ctx, data->expr, 0);
   data->is_skipped = false;
   data->is_first_unskipped_scan_info = true;
-  if (result_set_size > 0 && table_selector->op == GRN_OP_AND) {
+
+  /* This is an optimization for the following cases:
+   *
+   *   XXX && sub_filter(..., "YYY || ZZZ")
+   *   XXX && query(..., "YYY OR ZZZ")
+   *
+   * In these cases, sub_filter()/query() use
+   * grn_table_selector_select() with GRN_OP_OR and result_set with
+   * some records. If we use a copy of result_set as a base result set
+   * and GRN_OP_AND internally, we can reduce set operation cost.
+   *
+   * But if result_set has many records, this optimization will be
+   * slower than the normal operation. So we don't use this
+   * optimization if result_set already has many records. 1_000_000 is
+   * a heuristic value. This may not be a good value.
+   */
+  if (result_set_size > 0 &&
+      result_set_size < 1000000 &&
+      table_selector->op == GRN_OP_AND) {
     bool have_push = false;
     uint32_t i;
     for (i = 0; i < data->scanner->n_sis; i++) {
