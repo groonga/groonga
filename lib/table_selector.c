@@ -1048,25 +1048,24 @@ select_index_fix(grn_ctx *ctx,
     GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
     if (!grn_obj_cast(ctx, si->query, &dest, false)) {
       if (op == GRN_OP_PREFIX) {
-        GRN_TABLE_EACH_BEGIN_MIN(ctx,
-                                 index,
-                                 cursor,
-                                 id,
-                                 GRN_BULK_HEAD(&dest),
-                                 (uint32_t)GRN_BULK_VSIZE(&dest),
-                                 GRN_CURSOR_PREFIX | GRN_CURSOR_GE)
-        {
-          grn_posting_internal posting = {0};
-          posting.rid = id;
-          posting.sid = 1;
-          posting.pos = 0;
-          posting.weight_float = 1;
-          grn_ii_posting_add_float(ctx,
-                                   (grn_posting *)(&posting),
-                                   (grn_hash *)result_set,
-                                   logical_op);
+        grn_table_cursor *cursor =
+          grn_table_cursor_open(ctx,
+                                index,
+                                GRN_BULK_HEAD(&dest),
+                                (uint32_t)GRN_BULK_VSIZE(&dest),
+                                NULL,
+                                0,
+                                0,
+                                -1,
+                                GRN_CURSOR_PREFIX | GRN_CURSOR_GE);
+        if (cursor) {
+          rc = grn_result_set_add_table_cursor(ctx,
+                                               (grn_hash *)result_set,
+                                               cursor,
+                                               1.0,
+                                               logical_op);
+          grn_table_cursor_close(ctx, cursor);
         }
-        GRN_TABLE_EACH_END(ctx, cursor);
       } else {
         grn_hash *pres;
         if ((pres = grn_hash_create(ctx,
@@ -1098,8 +1097,8 @@ select_index_fix(grn_ctx *ctx,
           GRN_HASH_EACH_END(ctx, cursor);
           grn_hash_close(ctx, pres);
         }
+        rc = GRN_SUCCESS;
       }
-      rc = GRN_SUCCESS;
       grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, logical_op);
     }
     GRN_OBJ_FIN(ctx, &dest);
