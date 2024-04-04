@@ -294,7 +294,7 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 bool
 grn_obj_is_table_with_key(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_bool is_table_with_key = false;
+  bool is_table_with_key = false;
 
   if (!obj) {
     return false;
@@ -315,7 +315,7 @@ grn_obj_is_table_with_key(grn_ctx *ctx, grn_obj *obj)
 bool
 grn_obj_is_table_with_value(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_bool is_table_with_value = false;
+  bool is_table_with_value = false;
 
   if (!obj) {
     return false;
@@ -453,20 +453,20 @@ grn_obj_is_result_set(grn_ctx *ctx, grn_obj *obj)
   return flags & GRN_OBJ_WITH_SUBREC;
 }
 
-grn_bool
+bool
 grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_bool is_column = GRN_FALSE;
+  bool is_column = false;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (obj->header.type) {
   case GRN_COLUMN_FIX_SIZE:
   case GRN_COLUMN_VAR_SIZE:
   case GRN_COLUMN_INDEX:
-    is_column = GRN_TRUE;
+    is_column = true;
   default:
     break;
   }
@@ -537,11 +537,11 @@ grn_obj_is_text_family_vector_column(grn_ctx *ctx, grn_obj *obj)
   return grn_type_id_is_text_family(ctx, grn_obj_get_range(ctx, obj));
 }
 
-grn_bool
+bool
 grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_vector_column(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return (obj->header.flags & GRN_OBJ_WITH_WEIGHT) == GRN_OBJ_WITH_WEIGHT;
@@ -578,11 +578,11 @@ grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-grn_bool
+bool
 grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_COLUMN_FIX_SIZE ||

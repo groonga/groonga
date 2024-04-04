@@ -77,7 +77,7 @@ GRN_API bool
 grn_obj_is_patricia_trie(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_result_set(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_number_family_column(grn_ctx *ctx, grn_obj *obj);
@@ -91,11 +91,11 @@ GRN_API bool
 grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_vector_column(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
