@@ -4914,8 +4914,10 @@ namespace {
       if (!grn_select_post_filter(ctx, data)) {
         goto exit;
       }
-      nhits = grn_table_size(ctx, data->tables.result);
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE, ":", "select(%d)", nhits);
+      if (data->filter.post_filter.length != 0) {
+        nhits = grn_table_size(ctx, data->tables.result);
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE, ":", "select(%d)", nhits);
+      }
 
       {
         grn_bool succeeded;
