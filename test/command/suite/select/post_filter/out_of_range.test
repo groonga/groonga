@@ -1,0 +1,10 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt32
+load --table Users
+[
+["_key","age"],
+["Alice",23],
+["Bob",23],
+["Chris",23]
+]
+select Users --filter 'age >= 23' --post_filter 'age >= 24' --limit 10 --offset 2 --sort_keys -_score
