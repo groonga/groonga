@@ -155,6 +155,36 @@ For example, to preview the Japanese translation of the {doc}`introduction` page
 % open ../groonga.doc/doc/ja/html/contribution/documentation/introduction.html
 ```
 
+## Submit contributions
+
+You can submit your contributions to the Groonga repository on GitHub via a pull request.
+Feel free to send a pull request by following two steps.
+
+- Prepare your pull request
+- Submit your pull request
+
+### Prepare your pull request
+
+Ensure your changes are committed and then push your changes to your fork repository on GitHub.
+Follow these commands:
+
+```console
+% git add doc/source/\*.{md,rst}
+# Optional: add translate documentations when you translate them.
+% git add doc/locale/ja/LC_MESSAGES/*.po
+% git commit -m 'Describe your works here'
+% git push
+```
+
+## Submit your pull request
+
+Now you're ready to submit a pull request to the main Groonga repository.
+Follow these steps:
+
+1. Go to your fork repository on GitHub
+2. Click the `Compare & pull request` button
+3. Submit your pull request
+
 ## Update
 
 You can find sources of documentation at `doc/source/`. The sources
