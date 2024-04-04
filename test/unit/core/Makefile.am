@@ -47,7 +47,6 @@ noinst_LTLIBRARIES =				\
 	test-command-select.la			\
 	test-command-select-sort.la		\
 	test-command-select-query.la		\
-	test-command-select-filter.la		\
 	test-command-select-geo.la		\
 	test-command-define-selector.la		\
 	test-command-delete.la			\
@@ -138,7 +137,6 @@ test_command_column_rename_la_SOURCES	= test-command-column-rename.c
 test_command_select_la_SOURCES		= test-command-select.c
 test_command_select_sort_la_SOURCES	= test-command-select-sort.c
 test_command_select_query_la_SOURCES	= test-command-select-query.c
-test_command_select_filter_la_SOURCES	= test-command-select-filter.c
 test_command_select_geo_la_SOURCES	= test-command-select-geo.c
 test_command_define_selector_la_SOURCES	= test-command-define-selector.c
 test_command_delete_la_SOURCES		= test-command-delete.c

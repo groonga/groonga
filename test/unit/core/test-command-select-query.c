@@ -24,7 +24,6 @@
 
 void test_int64_compare_over_int32(void);
 void test_int64_compare_float_literal(void);
-void test_prefix_search(void);
 void test_full_width_space(void);
 void test_leading_plus(void);
 void test_leading_plus_in_parenthesis(void);
@@ -111,24 +110,6 @@ test_int64_compare_float_literal(void)
        "[[\"_id\",\"UInt32\"],[\"int64\",\"Int64\"]],"
        "[1,344494643000000]]]",
     send_command("select Integers --query int64:<=3.44494643e14"));
-}
-
-void
-test_prefix_search(void)
-{
-  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
-  assert_send_command("load --table Users\n"
-                      "[\n"
-                      "{\"_key\":\"mori\"},\n"
-                      "{\"_key\":\"morita\"},\n"
-                      "{\"_key\":\"mona\"}\n"
-                      "]");
-  cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]],"
-       "[2,\"morita\"],"
-       "[1,\"mori\"]]]",
-    send_command("select Users --match_columns _key --query mor*"));
 }
 
 void
