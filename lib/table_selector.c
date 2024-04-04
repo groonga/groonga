@@ -1054,7 +1054,7 @@ select_index_fix(grn_ctx *ctx,
                                  id,
                                  GRN_BULK_HEAD(&dest),
                                  (uint32_t)GRN_BULK_VSIZE(&dest),
-                                 GRN_CURSOR_PREFIX)
+                                 GRN_CURSOR_PREFIX | GRN_CURSOR_GE)
         {
           grn_posting_internal posting = {0};
           posting.rid = id;
