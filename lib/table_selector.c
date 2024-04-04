@@ -2231,14 +2231,47 @@ grn_table_selector_select(grn_ctx *ctx,
       if (si->flags & SCAN_POP) {
         grn_obj *result_set_;
         GRN_PTR_POP(&result_set_stack, result_set_);
+        grn_obj *table1 = result_set_;
+        grn_obj *table2 = data->result_set;
+        /* This is an optimization. In general, we do "result_set_ AND
+         * data->result_set" and update result_set_ in-place. This may
+         * be a heavy process when result_set_ is very large and
+         * data->result_set is small. Because we need to remove many
+         * records from result_set_. If we do "data->result_set AND
+         * result_set_" and update data->result_set, it's faster than
+         * before. Because we don't need to remove many records.
+         *
+         * We can't do this optimization when result_set_ is the given
+         * result_set to keep backward compatibility. Callers must use
+         * grn_table_selector_select()'s return value instead of the
+         * given result_set as the result but some callers may not do
+         * it. So this optimization is enabled only when
+         * grn_table_selector_set_ensure_using_select_result(ctx,
+         * table_selector, true) is called. (Or result_set_ isn't the
+         * given result_set.)
+         *
+         * This optimization will work for GRN_OP_OR but we target
+         * only GRN_OP_AND for now. We'll add support for GRN_OP_OR
+         * when we have an use case. */
+        if ((table_selector->ensure_using_select_result ||
+             table1 != result_set) &&
+            si->logical_op == GRN_OP_AND) {
+          if (grn_table_size(ctx, table1) > grn_table_size(ctx, table2)) {
+            grn_obj *tmp = table1;
+            table1 = table2;
+            table2 = tmp;
+          }
+        }
         grn_table_setoperation_with_weight_factor(ctx,
-                                                  result_set_,
-                                                  data->result_set,
-                                                  result_set_,
+                                                  table1,
+                                                  table2,
+                                                  table1,
                                                   si->logical_op,
                                                   si->weight_factor);
-        grn_obj_close(ctx, data->result_set);
-        data->result_set = result_set_;
+        if (table2 != result_set) {
+          grn_obj_close(ctx, table2);
+        }
+        data->result_set = table1;
         data->min_id = table_selector->min_id;
       } else {
         bool processed = false;

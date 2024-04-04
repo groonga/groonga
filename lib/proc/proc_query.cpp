@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -187,6 +187,9 @@ namespace {
           table_selector,
           max_n_enough_filtered_records_);
       }
+      grn_table_selector_set_ensure_using_select_result(ctx_,
+                                                        table_selector,
+                                                        true);
     }
 
     bool
