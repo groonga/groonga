@@ -2147,8 +2147,7 @@ grn_table_selector_select(grn_ctx *ctx,
    * optimization if result_set already has many records. 1_000_000 is
    * a heuristic value. This may not be a good value.
    */
-  if (result_set_size > 0 &&
-      result_set_size < 1000000 &&
+  if (result_set_size > 0 && result_set_size < 1000000 &&
       table_selector->op == GRN_OP_AND) {
     bool have_push = false;
     uint32_t i;
