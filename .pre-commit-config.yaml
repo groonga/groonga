@@ -24,6 +24,7 @@ repos:
           ?include/groonga/applier\.h|
           ?include/groonga/bulk\.hpp|
           ?include/groonga/command_arguments\.hpp|
+          ?include/groonga/dat\.h|
           ?include/groonga/distance\.h|
           ?include/groonga/float\.h|
           ?include/groonga/groonga\.h|
