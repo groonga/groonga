@@ -14,7 +14,7 @@ load --table Users
 {"name": "Pom"}
 ]
 [[0,0.0,0.0],4]
-select Names --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})'   --output_columns '_key, _score'
+select Names   --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})'   --sort_keys _id   --output_columns '_key, _score'
 [
   [
     0,
@@ -37,12 +37,12 @@ select Names --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 
         ]
       ],
       [
-        "Tomy",
-        2
-      ],
-      [
         "Tom",
         3
+      ],
+      [
+        "Tomy",
+        2
       ]
     ]
   ]

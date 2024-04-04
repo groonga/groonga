@@ -38,7 +38,7 @@ load --table Groups
 {"_key": "group3", "users": ["Alice", "Carlos"]}
 ]
 [[0,0.0,0.0],3]
-select Groups   --filter 'sub_filter(users.files_author_index, "_key @^ \\"ha_\\"")'   --output_columns '_key, users'
+select Groups   --filter 'sub_filter(users.files_author_index, "_key @^ \\"ha_\\"")'   --sort_keys _id   --output_columns '_key, users'
 [
   [
     0,
@@ -61,16 +61,16 @@ select Groups   --filter 'sub_filter(users.files_author_index, "_key @^ \\"ha_\\
         ]
       ],
       [
+        "group2",
+        [
+          "Bob"
+        ]
+      ],
+      [
         "group3",
         [
           "Alice",
           "Carlos"
-        ]
-      ],
-      [
-        "group2",
-        [
-          "Bob"
         ]
       ]
     ]
