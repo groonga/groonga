@@ -116,6 +116,7 @@ grn_table_selector_init(grn_ctx *ctx,
     grn_table_select_enough_filtered_ratio;
   table_selector->max_n_enough_filtered_records =
     grn_table_select_max_n_enough_filtered_records;
+  table_selector->ensure_using_select_result = false;
   grn_fuzzy_search_optarg fuzzy_options = {0};
   table_selector->fuzzy_options = fuzzy_options;
   table_selector->fuzzy_options.flags |=
@@ -241,6 +242,22 @@ grn_table_selector_set_max_n_enough_filtered_records(
 {
   GRN_API_ENTER;
   table_selector->max_n_enough_filtered_records = n;
+  GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_table_selector_get_ensure_using_select_result(
+  grn_ctx *ctx, grn_table_selector *table_selector)
+{
+  return table_selector->ensure_using_select_result;
+}
+
+grn_rc
+grn_table_selector_set_ensure_using_select_result(
+  grn_ctx *ctx, grn_table_selector *table_selector, bool use)
+{
+  GRN_API_ENTER;
+  table_selector->ensure_using_select_result = use;
   GRN_API_RETURN(ctx->rc);
 }
 

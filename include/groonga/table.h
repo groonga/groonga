@@ -564,6 +564,12 @@ grn_table_selector_get_max_n_enough_filtered_records(
 GRN_API grn_rc
 grn_table_selector_set_max_n_enough_filtered_records(
   grn_ctx *ctx, grn_table_selector *table_selector, int64_t n);
+GRN_API bool
+grn_table_selector_get_ensure_using_select_result(
+  grn_ctx *ctx, grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_ensure_using_select_result(
+  grn_ctx *ctx, grn_table_selector *table_selector, bool use);
 GRN_API uint32_t
 grn_table_selector_get_fuzzy_max_distance(grn_ctx *ctx,
                                           grn_table_selector *table_selector);
