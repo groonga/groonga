@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -78,7 +78,10 @@ GRN_API size_t grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)
 
 
 #define GRN_DAT_EACH(ctx,dat,id,key,key_size,block) do {\
-  grn_dat_cursor *_sc = grn_dat_cursor_open(ctx, dat, NULL, 0, NULL, 0, 0, -1, 0);\
+  grn_dat_cursor *_sc = NULL;\
+  if (dat && grn_dat_size(ctx, dat) > 0) {\
+    _sc = grn_dat_cursor_open(ctx, dat, NULL, 0, NULL, 0, 0, -1, 0);\
+  }\
   if (_sc) {\
     grn_id id;\
     unsigned int *_ks = (key_size);\

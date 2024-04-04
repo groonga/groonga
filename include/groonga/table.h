@@ -214,7 +214,7 @@ grn_table_cursor_foreach(grn_ctx *ctx,
     } else {                                                                   \
       (ctx)->seqno++;                                                          \
     }                                                                          \
-    if (table) {                                                               \
+    if ((table) && grn_table_size(ctx, (table)) > 0) {                         \
       switch ((table)->header.type) {                                          \
       case GRN_TABLE_PAT_KEY:                                                  \
         GRN_PAT_EACH((ctx),                                                    \
@@ -262,7 +262,7 @@ grn_table_cursor_foreach(grn_ctx *ctx,
 
 #define GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id)                           \
   do {                                                                         \
-    if ((table)) {                                                             \
+    if ((table) && grn_table_size(ctx, (table)) > 0) {                         \
       grn_table_cursor *cursor;                                                \
       cursor = grn_table_cursor_open((ctx),                                    \
                                      (table),                                  \
@@ -279,7 +279,7 @@ grn_table_cursor_foreach(grn_ctx *ctx,
 
 #define GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, flags)              \
   do {                                                                         \
-    if ((table)) {                                                             \
+    if ((table) && grn_table_size(ctx, (table)) > 0) {                         \
       grn_table_cursor *cursor;                                                \
       cursor = grn_table_cursor_open((ctx),                                    \
                                      (table),                                  \
@@ -296,7 +296,7 @@ grn_table_cursor_foreach(grn_ctx *ctx,
 
 #define GRN_TABLE_EACH_BEGIN_MIN(ctx, table, cursor, id, min, min_size, flags) \
   do {                                                                         \
-    if ((table)) {                                                             \
+    if ((table) && grn_table_size(ctx, (table)) > 0) {                         \
       grn_table_cursor *cursor;                                                \
       cursor = grn_table_cursor_open((ctx),                                    \
                                      (table),                                  \

@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -72,7 +73,10 @@ GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
                                       grn_table_delete_optarg *optarg);
 
 #define GRN_HASH_EACH(ctx,hash,id,key,key_size,value,block) do {\
-  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, -1, 0); \
+  grn_hash_cursor *_sc = NULL;\
+  if (hash && grn_hash_size(ctx, hash) > 0) {\
+    _sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, -1, 0);\
+  }\
   if (_sc) {\
     grn_id id;\
     while ((id = grn_hash_cursor_next(ctx, _sc))) {\
@@ -85,10 +89,12 @@ GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
 } while (0)
 
 #define GRN_HASH_EACH_BEGIN(ctx, hash, cursor, id) do {\
-  grn_hash_cursor *cursor;\
-  cursor = grn_hash_cursor_open((ctx), (hash),\
-                                NULL, 0, NULL, 0,\
-                                0, -1, GRN_CURSOR_BY_ID);\
+  grn_hash_cursor *cursor = NULL;\
+  if (hash && grn_hash_size(ctx, hash) > 0) {\
+    cursor = grn_hash_cursor_open((ctx), (hash),\
+                                  NULL, 0, NULL, 0,\
+                                  0, -1, GRN_CURSOR_BY_ID);\
+  }\
   if (cursor) {\
     grn_id id;\
     while ((id = grn_hash_cursor_next((ctx), cursor)) != GRN_ID_NIL) {

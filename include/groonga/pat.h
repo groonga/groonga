@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -84,8 +85,11 @@ GRN_API grn_rc grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
 GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 
-#define GRN_PAT_EACH(ctx,pat,id,key,key_size,value,block) do {          \
-  grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0); \
+#define GRN_PAT_EACH(ctx,pat,id,key,key_size,value,block) do {\
+  grn_pat_cursor *_sc = NULL;\
+  if (pat && grn_pat_size(ctx, pat) > 0) {\
+    _sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0);\
+  }\
   if (_sc) {\
     grn_id id;\
     while ((id = grn_pat_cursor_next(ctx, _sc))) {\
