@@ -169,11 +169,12 @@ Ensure your changes are committed and then push your changes to your fork reposi
 Follow these commands:
 
 ```console
+% git switch -c your-working-branch
 % git add doc/source/\*.{md,rst}
 # Optional: add translate documentations when you translate them.
 % git add doc/locale/ja/LC_MESSAGES/*.po
 % git commit -m 'Describe your works here'
-% git push
+% git push origin your-working-branch
 ```
 
 ## Submit your pull request
