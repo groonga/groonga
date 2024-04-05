@@ -47,8 +47,10 @@ extern "C" {
     grn_gctx.rc = GRN_SUCCESS;                                                 \
   } while (0)
 
-void grn_error_init_from_env(void);
-void grn_error_cancel(grn_ctx *ctx);
+void
+grn_error_init_from_env(void);
+void
+grn_error_cancel(grn_ctx *ctx);
 
 static grn_inline grn_rc
 grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)
