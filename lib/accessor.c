@@ -700,7 +700,7 @@ typedef struct {
   grn_search_optarg *optarg;
   grn_obj *index;
   bool index_need_unref;
-  grn_operator operator;
+  grn_operator operator_;
   grn_obj query_casted;
   const char *query_raw;
   uint32_t query_raw_len;
@@ -775,16 +775,16 @@ grn_accessor_estimate_size_for_query_prepare(
 
   if (data->optarg) {
     if (data->optarg->mode == GRN_OP_EXACT) {
-      data->operator = GRN_OP_MATCH;
+      data->operator_ = GRN_OP_MATCH;
     } else {
-      data->operator = data->optarg->mode;
+      data->operator_ = data->optarg->mode;
     }
   }
   grn_index_datum index_data;
   unsigned int n_index_datum;
   n_index_datum = grn_column_find_index_data(ctx,
                                              a->obj,
-                                             data->operator,
+                                             data->operator_,
                                              &index_data,
                                              1);
   if (n_index_datum == 0) {
@@ -857,7 +857,7 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
   data.optarg = optarg;
   data.index = NULL;
   data.index_need_unref = false;
-  data.operator = GRN_OP_MATCH;
+  data.operator_ = GRN_OP_MATCH;
   GRN_VOID_INIT(&(data.query_casted));
   data.query_raw = NULL;
   data.query_raw_len = 0;
@@ -875,7 +875,7 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
   } else {
     uint32_t base_estimated_size;
     if (grn_obj_is_table(ctx, data.index)) {
-      if (data.operator == GRN_OP_EQUAL) {
+      if (data.operator_ == GRN_OP_EQUAL) {
         if (grn_table_get(ctx,
                           data.index,
                           data.query_raw,
