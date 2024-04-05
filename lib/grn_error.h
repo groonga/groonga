@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2016  Brazil
-  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2016  Brazil
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,9 @@ extern "C" {
     grn_gctx.errlvl = GRN_OK;                                                  \
     grn_gctx.rc = GRN_SUCCESS;                                                 \
   } while (0)
+
+void grn_error_init_from_env(void);
+void grn_error_cancel(grn_ctx *ctx);
 
 static grn_inline grn_rc
 grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)

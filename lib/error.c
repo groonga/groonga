@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2017  Brazil
-  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2017  Brazil
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 */
 
 #include "grn_error.h"
+#include "grn_str.h"
 #include "grn_windows.h"
 
 #ifdef HAVE_ERRNO_H
@@ -24,6 +25,38 @@
 #endif /* HAVE_ERRNO_H */
 
 #include <string.h>
+
+static uint32_t grn_error_cancel_interval = 0;
+static uint32_t grn_error_cancel_counter = 0;
+
+void
+grn_error_init_from_env(void)
+{
+  {
+    char grn_error_cancel_interval_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_ERROR_CANCEL_INTERVAL",
+               grn_error_cancel_interval_env,
+               GRN_ENV_BUFFER_SIZE);
+    const char *end =
+      grn_error_cancel_interval_env + strlen(grn_error_cancel_interval_env);
+    const char *rest;
+    uint32_t interval = grn_atoui(grn_error_cancel_interval_env, end, &rest);
+    if (end == rest) {
+      grn_error_cancel_interval = interval;
+    }
+  }
+}
+
+void
+grn_error_cancel(grn_ctx *ctx)
+{
+  if (grn_error_cancel_interval == 0) {
+    return;
+  }
+  if ((++grn_error_cancel_counter % grn_error_cancel_interval) == 0) {
+    ctx->rc = GRN_CANCEL;
+  }
+}
 
 #ifdef WIN32
 

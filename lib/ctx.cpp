@@ -151,6 +151,8 @@ grn_init_from_env(void)
     }
   }
 
+  grn_error_init_from_env();
+
   grn_alloc_init_from_env();
   grn_mrb_init_from_env();
   grn_ctx_impl_mrb_init_from_env();
