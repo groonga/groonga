@@ -4922,7 +4922,7 @@ proc_request_cancel(grn_ctx *ctx,
                     grn_user_data *user_data)
 {
   grn_obj *id = VAR(0);
-  grn_bool canceled;
+  bool canceled;
 
   if (GRN_TEXT_LEN(id) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "[request_cancel] ID is missing");

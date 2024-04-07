@@ -28,9 +28,9 @@ GRN_API void grn_request_canceler_register(grn_ctx *ctx,
 GRN_API void grn_request_canceler_unregister(grn_ctx *ctx,
                                              const char *request_id,
                                              unsigned int size);
-GRN_API grn_bool grn_request_canceler_cancel(const char *request_id,
+GRN_API bool grn_request_canceler_cancel(const char *request_id,
                                              unsigned int size);
-GRN_API grn_bool grn_request_canceler_cancel_all(void);
+GRN_API bool grn_request_canceler_cancel_all(void);
 
 #ifdef __cplusplus
 }
