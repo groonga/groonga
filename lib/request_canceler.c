@@ -33,7 +33,7 @@ struct _grn_request_canceler_entry {
 static grn_ctx grn_the_request_canceler_ctx;
 static grn_request_canceler *grn_the_request_canceler = NULL;
 
-grn_bool
+bool
 grn_request_canceler_init(void)
 {
   grn_ctx *ctx = &grn_the_request_canceler_ctx;
@@ -44,18 +44,18 @@ grn_request_canceler_init(void)
   if (!grn_the_request_canceler) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[request-canceler] failed to allocate the global request canceler");
-    return GRN_FALSE;
+    return false;
   }
 
   grn_the_request_canceler->entries =
     grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                     sizeof(grn_request_canceler_entry), GRN_OBJ_KEY_VAR_SIZE);
   if (!grn_the_request_canceler->entries) {
-    return GRN_FALSE;
+    return false;
   }
   MUTEX_INIT(grn_the_request_canceler->mutex);
 
-  return GRN_TRUE;
+  return true;
 }
 
 void
@@ -96,7 +96,7 @@ grn_request_canceler_unregister(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 grn_request_canceler_cancel_entry(grn_request_canceler_entry *entry)
 {
   if (entry->ctx->rc == GRN_SUCCESS) {
@@ -106,16 +106,15 @@ grn_request_canceler_cancel_entry(grn_request_canceler_entry *entry)
       entry->ctx->impl->current_request_timer_id = NULL;
       grn_request_timer_unregister(timer_id);
     }
-    return GRN_TRUE;
-  } else {
-    return GRN_FALSE;
+    return true;
   }
+  return false;
 }
 
-grn_bool
+bool
 grn_request_canceler_cancel(const char *request_id, unsigned int size)
 {
-  grn_bool canceled = GRN_FALSE;
+  bool canceled = false;
   MUTEX_LOCK(grn_the_request_canceler->mutex);
   {
     grn_ctx *ctx = &grn_the_request_canceler_ctx;
@@ -124,7 +123,7 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
     if (grn_hash_get(ctx, entries, request_id, size, &value)) {
       grn_request_canceler_entry *entry = value;
       if (grn_request_canceler_cancel_entry(entry)) {
-        canceled = GRN_TRUE;
+        canceled = true;
       }
     }
   }
@@ -132,10 +131,10 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
   return canceled;
 }
 
-grn_bool
+bool
 grn_request_canceler_cancel_all(void)
 {
-  grn_bool canceled = GRN_FALSE;
+  bool canceled = false;
   MUTEX_LOCK(grn_the_request_canceler->mutex);
   {
     grn_ctx *ctx = &grn_the_request_canceler_ctx;
@@ -151,7 +150,7 @@ grn_request_canceler_cancel_all(void)
         if (grn_hash_cursor_get_value(ctx, cursor, &value) > 0) {
           grn_request_canceler_entry *entry = value;
           if (grn_request_canceler_cancel_entry(entry)) {
-            canceled = GRN_TRUE;
+            canceled = true;
           }
         }
       }

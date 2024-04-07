@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-grn_bool
+bool
 grn_request_canceler_init(void);
 void
 grn_request_canceler_fin(void);
