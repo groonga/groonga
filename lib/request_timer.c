@@ -21,10 +21,10 @@
 static grn_request_timer grn_current_request_timer = { 0 };
 static double grn_request_timer_default_timeout = 0.0;
 
-grn_bool
+bool
 grn_request_timer_init(void)
 {
-  return GRN_TRUE;
+  return true;
 }
 
 void *

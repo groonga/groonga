@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-grn_bool
+bool
 grn_request_timer_init(void);
 void
 grn_request_timer_fin(void);
