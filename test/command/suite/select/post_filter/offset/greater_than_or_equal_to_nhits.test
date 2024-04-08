@@ -2,10 +2,10 @@ table_create Users TABLE_PAT_KEY ShortText
 column_create Users age COLUMN_SCALAR UInt32
 load --table Users
 [
-["_key","age"],
-["Alice",21],
-["Bob",22],
-["Chris",23],
+["_key", "age"],
+["Alice", 21],
+["Bob", 22],
+["Chris", 23],
 ["Diana", 24],
 ["Emily", 25],
 ["Franky", 26]
