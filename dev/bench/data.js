@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1712538654110,
+  "lastUpdate": 1712567739050,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -15102,6 +15102,108 @@ window.BENCHMARK_DATA = {
             "value": 0.0264891679998982,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0019619999999997972 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "otegami@clear-code.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f7793f0c59af90d6d62470d8fe4ebf1e40e1b25",
+          "message": "select post_filter:  ensure `nhits` reflects the result after `post_filter` (#1754)\n\n## Problem\r\n\r\n`[table][sort] grn_output_range_normalize failed\"` is raised because\r\npost-filtered result isn't reflected to `nhits` in [`proc_select.cpp`]\r\n\r\n## Steps to Reproduce\r\n\r\nCreate the table and data.\r\n\r\n```\r\ntable_create Users TABLE_PAT_KEY ShortText\r\ncolumn_create Users age COLUMN_SCALAR UInt32\r\nload --table Users\r\n[\r\n[\"_key\", \"age\"],\r\n[\"Alice\", 21],\r\n[\"Bob\", 22],\r\n[\"Chris\", 23],\r\n[\"Diana\", 24],\r\n[\"Emily\", 25]\r\n]\r\n```\r\n\r\nExecute the query with `post_filter` and `offset`. The `[table][sort]\r\ngrn_output_range_normalize failed` raises.\r\n\r\n```\r\nselect Users \\\r\n  --filter 'age >= 22' \\\r\n  --post_filter 'age <= 24' \\\r\n  --offset 3 \\\r\n  --sort_keys -age\r\n[[[-68,0.0,0.0],\"[table][sort] grn_output_range_normalize failed\"]]\r\n#|e| [table][sort] grn_output_range_normalize failed\r\n```\r\n\r\n## Expected\r\n\r\nWhen using `post_filter` with an `offset` greater than the post-filtered\r\nresult, it should not trigger the `grn_output_range_normalize failed`\r\nerror, similar to when using filter alone.\r\n\r\n```\r\nselect Users \\\r\n  --filter 'age >= 22' \\\r\n  --post_filter 'age <= 24' \\\r\n  --offset 3 \\\r\n  --sort_keys -age\r\n[[0,0.0,0.0],[[[3],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"age\",\"UInt32\"]]]]]\r\n```\r\n\r\n## Explain the problem in detail\r\n\r\nIn general, [`grn_output_range_normalize`] with invalid `offset` raises\r\nthe `grn_output_range_normalize failed` error.\r\n([`grn_output_range_normalize`] validates `offset` and `limit` based on\r\n`size`.) But `select` doesn't raise the error with invalid `offset`\r\nand/or `limit` for backward compatibility. To implement the behavior,\r\n[`proc_select.cpp`] calls [`grn_output_range_normalize`] and ignores the\r\nerror before `grn_table_sort()` is called.\r\n`grn_output_range_normalize()` sets `offset` and `limit` to `0` for\r\ninvalid `offset` and/or `limit`. So the following `grn_table_sort()`\r\ndoesn't raises the error. (`grn_table_sort()` calls\r\n[`grn_output_range_normalize`] internally.)\r\n\r\nIn this case, `size` is different for the [`grn_output_range_normalize`]\r\ncall in [`proc_select.cpp`] and the [`grn_output_range_normalize`] call\r\nin `grn_table_sort()`. So the [`grn_output_range_normalize`] call in\r\n[`proc_select.cpp`] can't do correct validation (can't detect and reset\r\ninvalid `offset`).\r\n\r\n[`proc_select.cpp`] uses `size` that cares about only\r\n`--filter`/`--query` and `grn_table_sort()` uses `size` that cares about\r\nnot only `--filter`/`--query` but also `--post-filter`.\r\n\r\n## Solution\r\n\r\n[`proc_select.cpp`] also uses `size` that cares about not only\r\n`--filter`/`--query` but also `--post-filter`.\r\n\r\n[`proc_select.cpp`]:\r\nhttps://github.com/groonga/groonga/blob/a4ecb3c4f09f63fef00109edede8c8030adf0644/lib/proc/proc_select.cpp#L4903-L4942\r\n[`grn_output_range_normalize`]:\r\nhttps://github.com/groonga/groonga/blob/a4ecb3c4f09f63fef00109edede8c8030adf0644/lib/output.c#L70",
+          "timestamp": "2024-04-08T18:08:54+09:00",
+          "tree_id": "63d3f56e7db955632c5ae22898234bf81fa56962",
+          "url": "https://github.com/groonga/groonga/commit/8f7793f0c59af90d6d62470d8fe4ebf1e40e1b25"
+        },
+        "date": 1712567737328,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3726781839999944,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.020874000000000503 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27632060299998784,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01826999999999948 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016885885000078815,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004260000000002595 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015213633999962894,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003539999999997434 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4884320219999836,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00021400000000063035 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2634331379999253,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02795699999999976 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15249232600018559,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.026578000000002433 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017188029000010374,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001993999999998941 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01677733300005002,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001959000000000849 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.09539285199963388,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.03288500000000161 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.08553553999996666,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.029912999999999884 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017790090999938002,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021009999999987983 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.026856560000112495,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001927000000000234 s\nthreads: undefined"
           }
         ]
       }
