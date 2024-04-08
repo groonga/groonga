@@ -4,10 +4,10 @@ load --table Users
 [
 ["_key", "age"],
 ["Alice", 21],
-["Bob", 25],
+["Bob", 22],
 ["Chris", 23],
 ["Diana", 24],
-["Emily", 22]
+["Emily", 25]
 ]
 select Users \
   --filter 'age >= 22' \
