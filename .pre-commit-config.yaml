@@ -35,6 +35,7 @@ repos:
           ?include/groonga/obj\.h|
           ?include/groonga/pat\.h|
           ?include/groonga/proc\.h|
+          ?include/groonga/request_canceler\.h|
           ?include/groonga/table\.h|
           ?include/groonga/token\.h|
           ?include/groonga/token_cursor\.h|

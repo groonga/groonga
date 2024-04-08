@@ -18,19 +18,22 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API void grn_request_canceler_register(grn_ctx *ctx,
-                                           const char *request_id,
-                                           unsigned int size);
-GRN_API void grn_request_canceler_unregister(grn_ctx *ctx,
-                                             const char *request_id,
-                                             unsigned int size);
-GRN_API bool grn_request_canceler_cancel(const char *request_id,
-                                             unsigned int size);
-GRN_API bool grn_request_canceler_cancel_all(void);
+GRN_API void
+grn_request_canceler_register(grn_ctx *ctx,
+                              const char *request_id,
+                              unsigned int size);
+GRN_API void
+grn_request_canceler_unregister(grn_ctx *ctx,
+                                const char *request_id,
+                                unsigned int size);
+GRN_API bool
+grn_request_canceler_cancel(const char *request_id, unsigned int size);
+GRN_API bool
+grn_request_canceler_cancel_all(void);
 
 #ifdef __cplusplus
 }
