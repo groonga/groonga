@@ -10,4 +10,8 @@ load --table Users
 ["Emily", 25],
 ["Franky", 26]
 ]
-select Users --filter 'age >= 22' --post_filter 'age >= 23 && age <= 25' --limit 10 --offset 3 --sort_keys -_score
+select Users \
+  --filter 'age >= 23' \
+  --post_filter 'age <= 25' \
+  --offset 3 \
+  --sort_keys -age
