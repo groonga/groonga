@@ -4,10 +4,13 @@ load --table Users
 [
 ["_key", "age"],
 ["Alice", 21],
-["Bob", 22],
-["Chris", 23]
+["Bob", 25],
+["Chris", 23],
+["Diana", 24],
+["Emily", 22]
 ]
 select Users \
-  --filter 'age > 21' \
-  --post_filter 'age < 23' \
-  --offset 1
+  --filter 'age >= 22' \
+  --post_filter 'age <= 24' \
+  --offset 3 \
+  --sort_keys -age
