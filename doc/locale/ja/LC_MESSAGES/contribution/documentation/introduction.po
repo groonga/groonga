@@ -142,10 +142,10 @@ msgstr "翻訳が反映されたHTML形式のドキュメントをWebブラウ�
 msgid "For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:"
 msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
 
-msgid "Submit contributions"
+msgid "Send patch"
 msgstr ""
 
-msgid "You can submit your contributions to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
+msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
 msgstr ""
 
 msgid "Prepare your pull request"
