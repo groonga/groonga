@@ -149,13 +149,13 @@ msgid "You can submit your patch to the Groonga repository on GitHub via a pull 
 msgstr "GitHub上のGroongaリポジトリにパッチをプルリクエスト形式で送ることができます。気軽に次の2つの手順に従って送ってみましょう。"
 
 msgid "Prepare your pull request"
-msgstr "プルリクエスト作成の準備をする"
+msgstr "プルリクエストの準備をする"
 
 msgid "Submit your pull request"
 msgstr "プルリクエストを送る"
 
 msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
-msgstr "変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。以下のコマンドに従ってください。"
+msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
 
 msgid "Now you're ready to submit a pull request to the main Groonga repository. Follow these steps:"
 msgstr "これで、メインのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従ってください"
