@@ -175,14 +175,14 @@ stem_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return token_filter;
 }
 
-static grn_bool
-is_stemmable(grn_obj *data, grn_bool *is_all_upper)
+static bool
+is_stemmable(grn_obj *data, bool *is_all_upper)
 {
   const char *current, *end;
-  grn_bool have_lower = GRN_FALSE;
-  grn_bool have_upper = GRN_FALSE;
+  bool have_lower = false;
+  bool have_upper = false;
 
-  *is_all_upper = GRN_FALSE;
+  *is_all_upper = false;
 
   switch (data->header.domain) {
   case GRN_DB_SHORT_TEXT :
@@ -190,7 +190,7 @@ is_stemmable(grn_obj *data, grn_bool *is_all_upper)
   case GRN_DB_LONG_TEXT :
     break;
   default :
-    return GRN_FALSE;
+    return false;
   }
 
   current = GRN_TEXT_VALUE(data);
@@ -198,11 +198,11 @@ is_stemmable(grn_obj *data, grn_bool *is_all_upper)
 
   for (; current < end; current++) {
     if (islower((unsigned char)*current)) {
-      have_lower = GRN_TRUE;
+      have_lower = true;
       continue;
     }
     if (isupper((unsigned char)*current)) {
-      have_upper = GRN_TRUE;
+      have_upper = true;
       continue;
     }
     if (isdigit((unsigned char)*current)) {
@@ -213,15 +213,15 @@ is_stemmable(grn_obj *data, grn_bool *is_all_upper)
     case '\'' :
       break;
     default :
-      return GRN_FALSE;
+      return false;
     }
   }
 
   if (!have_lower && have_upper) {
-    *is_all_upper = GRN_TRUE;
+    *is_all_upper = true;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
@@ -284,7 +284,7 @@ stem_filter(grn_ctx *ctx,
 {
   grn_stem_token_filter *token_filter = user_data;
   grn_obj *data;
-  grn_bool is_all_upper = GRN_FALSE;
+  bool is_all_upper = false;
 
   if (!token_filter->is_enabled) {
     return;
