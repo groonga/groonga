@@ -164,10 +164,13 @@ msgid "Go to your fork repository on GitHub"
 msgstr "GitHubで自分のフォークリポジトリにアクセスします"
 
 msgid "Click the `Compare & pull request` button"
-msgstr "「Compare & pull request」ボタンをクリックします"
+msgstr "`Compare & pull request`ボタンをクリックします"
 
-msgid "Submit your pull request as your patch"
-msgstr "パッチとしてプルリクエストを送ります"
+msgid "Make sure your changes are reflected"
+msgstr "変更がすべて反映されているかを確認します"
+
+msgid "Click the `Create Pull Request` button and send your pull request"
+msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
 
 msgid "Update"
 msgstr "更新"

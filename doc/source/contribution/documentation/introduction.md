@@ -182,7 +182,8 @@ Follow these steps:
 
 1. Go to your fork repository on GitHub
 2. Click the `Compare & pull request` button
-3. Submit your pull request as your patch
+3. Make sure your changes are reflected
+4. Click the `Create Pull Request` button and send your pull request
 
 ## Update
 
