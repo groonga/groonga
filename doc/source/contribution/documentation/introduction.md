@@ -170,7 +170,7 @@ Follow these commands:
 
 ```console
 % git switch -c your-working-branch
-% git add doc/source
+% git add doc
 % git commit -m 'Describe your works here'
 % git push origin your-working-branch
 ```
