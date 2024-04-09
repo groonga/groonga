@@ -170,9 +170,7 @@ Follow these commands:
 
 ```console
 % git switch -c your-working-branch
-% git add doc/source/\*.{md,rst}
-# Optional: add translate documentations when you translate them.
-% git add doc/locale/ja/LC_MESSAGES/*.po
+% git add doc/source
 % git commit -m 'Describe your works here'
 % git push origin your-working-branch
 ```
