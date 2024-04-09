@@ -143,28 +143,31 @@ msgid "For example, to preview the Japanese translation of the {doc}`introductio
 msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
 
 msgid "Send patch"
-msgstr ""
+msgstr "パッチを送る"
 
 msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
-msgstr ""
+msgstr "GitHub上のGroongaリポジトリにパッチをプルリクエストを通じて送れます。気軽に次の2つの手順に従ってプルリクエストを送ってください。"
 
 msgid "Prepare your pull request"
-msgstr ""
+msgstr "プルリクエスト作成の準備をする"
 
 msgid "Submit your pull request"
-msgstr ""
+msgstr "プルリクエストを送る"
 
 msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
-msgstr ""
+msgstr "変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。以下のコマンドに従ってください。"
 
 msgid "Now you're ready to submit a pull request to the main Groonga repository. Follow these steps:"
-msgstr ""
+msgstr "これで、メインのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従ってください"
 
 msgid "Go to your fork repository on GitHub"
-msgstr ""
+msgstr "GitHubで自分のフォークリポジトリにアクセスします"
 
 msgid "Click the `Compare & pull request` button"
-msgstr ""
+msgstr "「Compare & pull request」ボタンをクリックします"
+
+msgid "Submit your pull request as your patch"
+msgstr "パッチとしてプルリクエストを送ります"
 
 msgid "Update"
 msgstr "更新"
