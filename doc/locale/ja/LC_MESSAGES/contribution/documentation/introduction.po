@@ -157,8 +157,8 @@ msgstr "プルリクエストを送る"
 msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
 msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
 
-msgid "Now you're ready to submit a pull request to the main Groonga repository. Follow these steps:"
-msgstr "これで、メインのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従ってください"
+msgid "Now you're ready to submit a pull request to the upstream Groonga repository. Follow these steps:"
+msgstr "これで、アップストリームのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従い実際にプルリクエストを送ってみましょう。"
 
 msgid "Go to your fork repository on GitHub"
 msgstr "GitHubで自分のフォークリポジトリにアクセスします"

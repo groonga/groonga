@@ -177,7 +177,7 @@ Follow these commands:
 
 ### Submit your pull request
 
-Now you're ready to submit a pull request to the main Groonga repository.
+Now you're ready to submit a pull request to the upstream Groonga repository.
 Follow these steps:
 
 1. Go to your fork repository on GitHub
