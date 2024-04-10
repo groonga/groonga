@@ -79,13 +79,8 @@ grn_selector_run(grn_ctx *ctx,
   grn_selector_data *previous_data = ctx->impl->current_selector_data;
   ctx->impl->current_selector_data = &data;
   grn_proc *proc = (grn_proc *)selector;
-  grn_rc rc = proc->callbacks.function.selector(ctx,
-                                                table,
-                                                index,
-                                                (int)n_args,
-                                                args,
-                                                result_set,
-                                                op);
+  grn_rc rc = proc->callbacks.function
+                .selector(ctx, table, index, (int)n_args, args, result_set, op);
   ctx->impl->current_selector_data = previous_data;
 
   GRN_OBJ_FIN(ctx, &(data.score));
@@ -108,29 +103,25 @@ grn_selector_run(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_selector_data_get_selector(grn_ctx *ctx,
-                               grn_selector_data *data)
+grn_selector_data_get_selector(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->selector;
 }
 
 grn_obj *
-grn_selector_data_get_expr(grn_ctx *ctx,
-                           grn_selector_data *data)
+grn_selector_data_get_expr(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->expr;
 }
 
 grn_obj *
-grn_selector_data_get_table(grn_ctx *ctx,
-                            grn_selector_data *data)
+grn_selector_data_get_table(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->table;
 }
 
 grn_obj *
-grn_selector_data_get_index(grn_ctx *ctx,
-                            grn_selector_data *data)
+grn_selector_data_get_index(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->index;
 }
@@ -147,22 +138,19 @@ grn_selector_data_get_args(grn_ctx *ctx,
 }
 
 float
-grn_selector_data_get_weight_factor(grn_ctx *ctx,
-                                    grn_selector_data *data)
+grn_selector_data_get_weight_factor(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->weight_factor;
 }
 
 grn_obj *
-grn_selector_data_get_result_set(grn_ctx *ctx,
-                                 grn_selector_data *data)
+grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->result_set;
 }
 
 grn_operator
-grn_selector_data_get_op(grn_ctx *ctx,
-                         grn_selector_data *data)
+grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->op;
 }
@@ -179,7 +167,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
     value = GRN_PTR_VALUE(value);
   }
   switch (value->header.type) {
-  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_FIX_SIZE:
     {
       if (value->header.domain == data->result_set->header.domain) {
         data->score_column = value;
@@ -202,7 +190,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
       }
     }
     break;
-  default :
+  default:
     if (grn_obj_is_text_family_bulk(ctx, value)) {
       data->score_column = grn_obj_column(ctx,
                                           data->result_set,
@@ -228,8 +216,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
 }
 
 bool
-grn_selector_data_have_score_column(grn_ctx *ctx,
-                                    grn_selector_data *data)
+grn_selector_data_have_score_column(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->score_column != NULL;
 }
@@ -259,19 +246,10 @@ grn_selector_data_set_tags_internal(grn_ctx *ctx,
     for (i = 0; i < n; i++) {
       const char *element;
       grn_id domain;
-      uint32_t element_size = grn_vector_get_element(ctx,
-                                                     new_tags,
-                                                     i,
-                                                     &element,
-                                                     NULL,
-                                                     &domain);
+      uint32_t element_size =
+        grn_vector_get_element(ctx, new_tags, i, &element, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && element_size > 0) {
-        grn_vector_add_element(ctx,
-                               tags,
-                               element,
-                               element_size,
-                               0,
-                               domain);
+        grn_vector_add_element(ctx, tags, element, element_size, 0, domain);
       }
     }
   } else {
@@ -337,7 +315,7 @@ grn_selector_data_parse_tags_column_option_value(grn_ctx *ctx,
             (int)GRN_TEXT_LEN(&inspected),
             GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
-        }
+      }
     }
   } else {
     if (grn_obj_is_text_family_bulk(ctx, value)) {
@@ -366,8 +344,7 @@ grn_selector_data_parse_tags_column_option_value(grn_ctx *ctx,
 }
 
 bool
-grn_selector_data_have_tags_column(grn_ctx *ctx,
-                                   grn_selector_data *data)
+grn_selector_data_have_tags_column(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->tags_column != NULL;
 }
@@ -425,10 +402,8 @@ grn_selector_data_add_score(grn_ctx *ctx,
     if (data->score_table == data->result_set) {
       score_id = result_set_record_id;
     } else {
-      score_id = grn_table_get(ctx,
-                               data->score_table,
-                               &record_id,
-                               sizeof(grn_id));
+      score_id =
+        grn_table_get(ctx, data->score_table, &record_id, sizeof(grn_id));
       if (score_id == GRN_ID_NIL) {
         return;
       }
@@ -471,10 +446,8 @@ grn_selector_data_append_tags(grn_ctx *ctx,
     if (data->tags_table == data->result_set) {
       tags_id = result_set_record_id;
     } else {
-      tags_id = grn_table_get(ctx,
-                              data->tags_table,
-                              &record_id,
-                              sizeof(grn_id));
+      tags_id =
+        grn_table_get(ctx, data->tags_table, &record_id, sizeof(grn_id));
       if (tags_id == GRN_ID_NIL) {
         return;
       }
@@ -483,11 +456,7 @@ grn_selector_data_append_tags(grn_ctx *ctx,
     tags_id = record_id;
   }
 
-  grn_obj_set_value(ctx,
-                    data->tags_column,
-                    tags_id,
-                    tags,
-                    GRN_OBJ_APPEND);
+  grn_obj_set_value(ctx, data->tags_column, tags_id, tags, GRN_OBJ_APPEND);
 }
 
 grn_rc
