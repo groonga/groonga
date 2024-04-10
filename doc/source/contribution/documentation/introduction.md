@@ -184,12 +184,3 @@ Follow these steps:
 2. Click the `Compare & pull request` button
 3. Make sure your changes are reflected
 4. Click the `Create Pull Request` button and send your pull request
-
-## Update
-
-You can find sources of documentation at `doc/source/`. The sources
-should be written in English. See {doc}`i18n` about how to translate
-documentation.
-
-You can update the target file when you update the existing
-documentation file.
