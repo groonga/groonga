@@ -4066,6 +4066,11 @@ grn_table_select(grn_ctx *ctx,
   GRN_API_ENTER;
   grn_table_selector table_selector;
   grn_table_selector_init(ctx, &table_selector, table, expr, op);
+  if (!result_set) {
+    grn_table_selector_set_ensure_using_select_result(ctx,
+                                                      &table_selector,
+                                                      true);
+  }
   result_set = grn_table_selector_select(ctx, &table_selector, result_set);
   grn_table_selector_fin(ctx, &table_selector);
   GRN_API_RETURN(result_set);
