@@ -18,8 +18,9 @@
 
 #include "../grn_ctx.hpp"
 #include "../grn_expr.h"
-#include "../grn_proc.h"
 #include "../grn_hash.h"
+#include "../grn_proc.h"
+#include "../grn_selector.h"
 #include "../grn_table_selector.h"
 
 #include <groonga/plugin.h>
@@ -164,6 +165,13 @@ namespace {
       }
     }
 
+    bool
+    can_swap_result_set()
+    {
+      return selector_data_ &&
+             grn_selector_data_get_can_swap_result_set(ctx_, selector_data_);
+    }
+
     void
     init_table_selector(grn_ctx *ctx,
                         grn_table_selector *table_selector,
@@ -187,9 +195,11 @@ namespace {
           table_selector,
           max_n_enough_filtered_records_);
       }
-      grn_table_selector_set_ensure_using_select_result(ctx_,
-                                                        table_selector,
-                                                        true);
+      if (can_swap_result_set()) {
+        grn_table_selector_set_ensure_using_select_result(ctx_,
+                                                          table_selector,
+                                                          true);
+      }
     }
 
     bool
@@ -484,6 +494,9 @@ namespace {
       if (new_result_set) {
         if (ctx->rc == GRN_SUCCESS) {
           *result_set = new_result_set;
+          if (can_swap_result_set()) {
+            grn_selector_data_set_result_set(ctx, selector_data_, *result_set);
+          }
         } else {
           if (new_result_set != *result_set) {
             grn_obj_close(ctx, new_result_set);
