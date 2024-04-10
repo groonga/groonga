@@ -3077,8 +3077,16 @@ grn_filter_execute(grn_ctx *ctx,
                             table,
                             filter->condition.expression,
                             GRN_OP_OR);
+    grn_table_selector_set_ensure_using_select_result(ctx,
+                                                      &table_selector,
+                                                      true);
     filter->set_fuzzy_options(ctx, &table_selector);
-    grn_table_selector_select(ctx, &table_selector, filter->filtered);
+    grn_obj *result_set =
+      grn_table_selector_select(ctx, &table_selector, filter->filtered);
+    if (result_set != filter->filtered) {
+      grn_obj_close(ctx, filter->filtered);
+      filter->filtered = result_set;
+    }
     grn_table_selector_fin(ctx, &table_selector);
   }
 
@@ -3132,28 +3140,11 @@ grn_filter_execute_post_filter(grn_ctx *ctx,
                                     filter->post_condition.expression,
                                     query_log_tag_prefix,
                                     -1);
-  filter->post_filtered =
-    grn_table_create(ctx,
-                     NULL,
-                     0,
-                     NULL,
-                     GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
-                     table,
-                     NULL);
-  if (!filter->post_filtered) {
-    GRN_PLUGIN_ERROR(ctx,
-                     ctx->rc,
-                     "%s[post-filter] failed to create result set table: %s",
-                     log_tag_prefix,
-                     ctx->errbuf);
-    return false;
-  }
-
-  grn_table_select(ctx,
-                   table,
-                   filter->post_condition.expression,
-                   filter->post_filtered,
-                   GRN_OP_OR);
+  filter->post_filtered = grn_table_select(ctx,
+                                           table,
+                                           filter->post_condition.expression,
+                                           NULL,
+                                           GRN_OP_OR);
 
   return ctx->rc == GRN_SUCCESS;
 }
