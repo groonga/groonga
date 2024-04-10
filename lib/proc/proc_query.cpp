@@ -165,7 +165,7 @@ namespace {
       }
     }
 
-    bool
+    virtual bool
     can_swap_result_set()
     {
       return selector_data_ &&
@@ -695,6 +695,13 @@ namespace {
     ~QueryParallelOrExecutor() override
     {
       GRN_OBJ_FIN(ctx_, &sub_match_columns_);
+    }
+
+  protected:
+    bool
+    can_swap_result_set() override
+    {
+      return false;
     }
 
   private:
