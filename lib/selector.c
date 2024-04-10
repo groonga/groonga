@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,25 +21,6 @@
 #include "grn_posting.h"
 #include "grn_selector.h"
 
-struct _grn_selector_data {
-  grn_obj *selector;
-  grn_obj *expr;
-  grn_obj *table;
-  grn_obj *index;
-  size_t n_args;
-  grn_obj **args;
-  float weight_factor;
-  grn_obj *result_set;
-  grn_operator op;
-  grn_obj *score_table;
-  grn_obj *score_column;
-  grn_obj score;
-  grn_obj *tags_table;
-  grn_obj *tags_column;
-  grn_obj tags;
-  grn_obj default_tags;
-};
-
 grn_selector_data *
 grn_selector_data_get(grn_ctx *ctx)
 {
@@ -47,59 +28,75 @@ grn_selector_data_get(grn_ctx *ctx)
 }
 
 grn_rc
-grn_selector_run(grn_ctx *ctx,
-                 grn_obj *selector,
-                 grn_obj *expr,
-                 grn_obj *table,
-                 grn_obj *index,
-                 size_t n_args,
-                 grn_obj **args,
-                 float weight_factor,
-                 grn_obj *result_set,
-                 grn_operator op)
+grn_selector_run(grn_ctx *ctx, grn_selector_data *data)
 {
-  grn_selector_data data;
-  data.selector = selector;
-  data.expr = expr;
-  data.table = table;
-  data.index = index;
-  data.n_args = n_args;
-  data.args = args;
-  data.weight_factor = weight_factor;
-  data.result_set = result_set;
-  data.op = op;
-  data.score_table = NULL;
-  data.score_column = NULL;
-  GRN_FLOAT_INIT(&(data.score), 0);
-  data.tags_table = NULL;
-  data.tags_column = NULL;
-  GRN_TEXT_INIT(&(data.tags), GRN_OBJ_VECTOR);
-  GRN_TEXT_INIT(&(data.default_tags), GRN_OBJ_VECTOR);
-
   grn_selector_data *previous_data = ctx->impl->current_selector_data;
-  ctx->impl->current_selector_data = &data;
-  grn_proc *proc = (grn_proc *)selector;
-  grn_rc rc = proc->callbacks.function
-                .selector(ctx, table, index, (int)n_args, args, result_set, op);
+  ctx->impl->current_selector_data = data;
+  grn_proc *proc = (grn_proc *)(data->selector);
+  grn_rc rc = proc->callbacks.function.selector(ctx,
+                                                data->table,
+                                                data->index,
+                                                (int)(data->n_args),
+                                                data->args,
+                                                data->result_set,
+                                                data->op);
   ctx->impl->current_selector_data = previous_data;
-
-  GRN_OBJ_FIN(ctx, &(data.score));
-  if (data.score_table) {
-    if (data.score_table != data.result_set) {
-      grn_obj_unref(ctx, data.score_table);
-    }
-    data.score_table = NULL;
-  }
-  GRN_OBJ_FIN(ctx, &(data.default_tags));
-  GRN_OBJ_FIN(ctx, &(data.tags));
-  if (data.tags_table) {
-    if (data.tags_table != data.result_set) {
-      grn_obj_unref(ctx, data.tags_table);
-    }
-    data.tags_table = NULL;
-  }
-
   return rc;
+}
+
+grn_rc
+grn_selector_data_init(grn_ctx *ctx,
+                       grn_selector_data *data,
+                       grn_obj *selector,
+                       grn_obj *expr,
+                       grn_obj *table,
+                       grn_obj *index,
+                       size_t n_args,
+                       grn_obj **args,
+                       float weight_factor,
+                       grn_obj *result_set,
+                       grn_operator op)
+{
+  data->selector = selector;
+  data->expr = expr;
+  data->table = table;
+  data->index = index;
+  data->n_args = n_args;
+  data->args = args;
+  data->weight_factor = weight_factor;
+  data->result_set = result_set;
+  data->op = op;
+  data->score_table = NULL;
+  data->score_column = NULL;
+  GRN_FLOAT_INIT(&(data->score), 0);
+  data->tags_table = NULL;
+  data->tags_column = NULL;
+  GRN_TEXT_INIT(&(data->tags), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(data->default_tags), GRN_OBJ_VECTOR);
+  data->can_swap_result_set = false;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_selector_data_fin(grn_ctx *ctx, grn_selector_data *data)
+{
+
+  GRN_OBJ_FIN(ctx, &(data->score));
+  if (data->score_table) {
+    if (data->score_table != data->result_set) {
+      grn_obj_unref(ctx, data->score_table);
+    }
+    data->score_table = NULL;
+  }
+  GRN_OBJ_FIN(ctx, &(data->default_tags));
+  GRN_OBJ_FIN(ctx, &(data->tags));
+  if (data->tags_table) {
+    if (data->tags_table != data->result_set) {
+      grn_obj_unref(ctx, data->tags_table);
+    }
+    data->tags_table = NULL;
+  }
+  return GRN_SUCCESS;
 }
 
 grn_obj *
@@ -143,6 +140,15 @@ grn_selector_data_get_weight_factor(grn_ctx *ctx, grn_selector_data *data)
   return data->weight_factor;
 }
 
+grn_rc
+grn_selector_data_set_result_set(grn_ctx *ctx,
+                                 grn_selector_data *data,
+                                 grn_obj *result_set)
+{
+  data->result_set = result_set;
+  return GRN_SUCCESS;
+}
+
 grn_obj *
 grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)
 {
@@ -153,6 +159,20 @@ grn_operator
 grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->op;
+}
+
+grn_rc
+grn_selector_data_set_can_swap_result_set(grn_ctx *ctx,
+                                          grn_selector_data *data,
+                                          bool can)
+{
+  return data->can_swap_result_set = can;
+}
+
+bool
+grn_selector_data_get_can_swap_result_set(grn_ctx *ctx, grn_selector_data *data)
+{
+  return data->can_swap_result_set;
 }
 
 grn_rc

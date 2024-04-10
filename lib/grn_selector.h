@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,17 +24,48 @@
 extern "C" {
 #endif
 
+struct _grn_selector_data {
+  grn_obj *selector;
+  grn_obj *expr;
+  grn_obj *table;
+  grn_obj *index;
+  size_t n_args;
+  grn_obj **args;
+  float weight_factor;
+  grn_obj *result_set;
+  grn_operator op;
+  grn_obj *score_table;
+  grn_obj *score_column;
+  grn_obj score;
+  grn_obj *tags_table;
+  grn_obj *tags_column;
+  grn_obj tags;
+  grn_obj default_tags;
+  bool can_swap_result_set;
+};
+
 grn_rc
-grn_selector_run(grn_ctx *ctx,
-                 grn_obj *selector,
-                 grn_obj *expr,
-                 grn_obj *table,
-                 grn_obj *index,
-                 size_t n_args,
-                 grn_obj **args,
-                 float weight_scale,
-                 grn_obj *res,
-                 grn_operator op);
+grn_selector_run(grn_ctx *ctx, grn_selector_data *data);
+
+grn_rc
+grn_selector_data_init(grn_ctx *ctx,
+                       grn_selector_data *data,
+                       grn_obj *selector,
+                       grn_obj *expr,
+                       grn_obj *table,
+                       grn_obj *index,
+                       size_t n_args,
+                       grn_obj **args,
+                       float weight_factor,
+                       grn_obj *result_set,
+                       grn_operator op);
+grn_rc
+grn_selector_data_fin(grn_ctx *ctx, grn_selector_data *data);
+
+grn_rc
+grn_selector_data_set_can_swap_result_set(grn_ctx *ctx,
+                                          grn_selector_data *data,
+                                          bool can);
 
 grn_rc
 grn_selector_data_set_default_tags(grn_ctx *ctx,

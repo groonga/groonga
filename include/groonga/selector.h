@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,13 +59,19 @@ grn_selector_data_get_args(grn_ctx *ctx,
 GRN_API float
 grn_selector_data_get_weight_factor(grn_ctx *ctx,
                                     grn_selector_data *data);
+GRN_API grn_rc
+grn_selector_data_set_result_set(grn_ctx *ctx,
+                                 grn_selector_data *data,
+                                 grn_obj *result_set);
 GRN_API grn_obj *
 grn_selector_data_get_result_set(grn_ctx *ctx,
                                  grn_selector_data *data);
 GRN_API grn_operator
 grn_selector_data_get_op(grn_ctx *ctx,
                          grn_selector_data *data);
-
+GRN_API bool
+grn_selector_data_get_can_swap_result_set(grn_ctx *ctx,
+                                          grn_selector_data *data);
 
 GRN_API grn_rc
 grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
