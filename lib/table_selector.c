@@ -1274,16 +1274,29 @@ select_index_call(grn_ctx *ctx,
       table = grn_ctx_at(ctx, range);
       table_is_referred = true;
     }
-    rc = grn_selector_run(ctx,
-                          selector,
-                          data->expr,
-                          table,
-                          index_datum.index,
-                          (size_t)(si->nargs),
-                          si->args,
-                          si->weight_factor,
-                          result_set,
-                          logical_op);
+    grn_selector_data selector_data;
+    grn_selector_data_init(ctx,
+                           &selector_data,
+                           selector,
+                           data->expr,
+                           table,
+                           index_datum.index,
+                           (size_t)(si->nargs),
+                           si->args,
+                           si->weight_factor,
+                           result_set,
+                           logical_op);
+    bool can_swap_result_set = table_selector->ensure_using_select_result;
+    if (can_swap_result_set) {
+      grn_selector_data_set_can_swap_result_set(ctx, &selector_data, true);
+    }
+    rc = grn_selector_run(ctx, &selector_data);
+    if (rc == GRN_SUCCESS && can_swap_result_set &&
+        result_set != selector_data.result_set) {
+      grn_obj_unref(ctx, result_set);
+      table_selector->data.result_set = selector_data.result_set;
+    }
+    grn_selector_data_fin(ctx, &selector_data);
     if (table_is_referred) {
       grn_obj_unref(ctx, table);
     }
@@ -1889,16 +1902,30 @@ select_index(grn_ctx *ctx, grn_table_selector *table_selector)
                        proc_name);
           select_index_report(ctx, tag, table_selector->table);
         }
-        rc = grn_selector_run(ctx,
-                              selector,
-                              data->expr,
-                              table_selector->table,
-                              NULL,
-                              (size_t)(si->nargs),
-                              si->args,
-                              si->weight_factor,
-                              data->result_set,
-                              si->logical_op);
+        grn_selector_data selector_data;
+        grn_selector_data_init(ctx,
+                               &selector_data,
+                               selector,
+                               data->expr,
+                               table_selector->table,
+                               NULL,
+                               (size_t)(si->nargs),
+                               si->args,
+                               si->weight_factor,
+                               data->result_set,
+                               si->logical_op);
+        bool can_swap_result_set = table_selector->ensure_using_select_result;
+        if (can_swap_result_set) {
+          grn_selector_data_set_can_swap_result_set(ctx, &selector_data, true);
+        }
+        rc = grn_selector_run(ctx, &selector_data);
+        if (rc == GRN_SUCCESS && can_swap_result_set &&
+            data->result_set != selector_data.result_set) {
+          grn_obj *result_set = data->result_set;
+          data->result_set = selector_data.result_set;
+          grn_obj_unref(ctx, result_set);
+        }
+        grn_selector_data_fin(ctx, &selector_data);
       }
     }
   }
