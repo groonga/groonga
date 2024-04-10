@@ -20,7 +20,7 @@
 #include "grn.h"
 #include "grn_ctx_impl.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -42,9 +42,8 @@ grn_selector_data_set_default_tags(grn_ctx *ctx,
                                    grn_obj *tags);
 
 grn_rc
-grn_selector_data_current_set_default_tag_raw_no_validation(grn_ctx *ctx,
-                                                            const char *tag,
-                                                            uint32_t tag_length);
+grn_selector_data_current_set_default_tag_raw_no_validation(
+  grn_ctx *ctx, const char *tag, uint32_t tag_length);
 
 static grn_inline grn_rc
 grn_selector_data_current_set_default_tag_raw(grn_ctx *ctx,
@@ -56,9 +55,10 @@ grn_selector_data_current_set_default_tag_raw(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  return grn_selector_data_current_set_default_tag_raw_no_validation(ctx,
-                                                                     tag,
-                                                                     tag_length);
+  return grn_selector_data_current_set_default_tag_raw_no_validation(
+    ctx,
+    tag,
+    tag_length);
 }
 
 grn_rc
