@@ -25,9 +25,11 @@ puts(<<-LOAD)
 load --table Data
 [
 LOAD
-(1..N_RECORDS).each do |id|
-  puts("{\"_key\":#{id}}")
+N_RECORDS.times do |i|
+  puts(",") unless i.zero?
+  print("{\"_key\":#{i}}")
 end
+puts
 puts(<<-LOAD)
 ]
 LOAD
