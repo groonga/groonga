@@ -9749,6 +9749,12 @@ grn_ii_column_update_internal(grn_ctx *ctx,
         name);
     return ctx->rc;
   }
+  if (old && old->header.type == GRN_VOID) {
+    old = NULL;
+  }
+  if (new &&new->header.type == GRN_VOID) {
+    new = NULL;
+  }
   if (old || new) {
     bool is_text_vector_index = true;
     if (old) {
