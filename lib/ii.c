@@ -11554,6 +11554,8 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
   int last_char_len = 0;
   bool in_paren = false;
   uint32_t phrase_group_id = 0;
+  uint32_t n_phrases_in_group = 0;
+  bool have_no_phrase_group = false;
   uint32_t phrase_id = 0;
   const bool is_product_mode =
     (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
@@ -11602,6 +11604,7 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
         }
         in_paren = true;
         phrase_group_id++;
+        n_phrases_in_group = 0;
         current += char_len;
         continue;
       } else if (char_len == 1 && current[0] == GRN_QUERY_PARENR) {
@@ -11619,6 +11622,9 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
         }
         in_paren = false;
         current += char_len;
+        if (n_phrases_in_group == 0) {
+          have_no_phrase_group = true;
+        }
         continue;
       } else {
         if (!in_paren) {
@@ -11761,6 +11767,7 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
         data->n_token_infos = n_before;
         continue;
       }
+      n_phrases_in_group++;
     } else {
       if (rc != GRN_SUCCESS) {
         goto exit;
@@ -11797,9 +11804,15 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
     phrase_id++;
   }
 
-  if (is_product_mode && in_paren) {
-    ERR(GRN_INVALID_ARGUMENT, "%s close parenthesis is missing", tag);
-    goto exit;
+  if (is_product_mode) {
+    if (in_paren) {
+      ERR(GRN_INVALID_ARGUMENT, "%s close parenthesis is missing", tag);
+      goto exit;
+    }
+    if (have_no_phrase_group) {
+      rc = GRN_END_OF_DATA;
+      goto exit;
+    }
   }
 
   data->n_phrase_groups = phrase_group_id + 1;
