@@ -1923,7 +1923,9 @@ select_index(grn_ctx *ctx, grn_table_selector *table_selector)
             data->result_set != selector_data.result_set) {
           grn_obj *result_set = data->result_set;
           data->result_set = selector_data.result_set;
-          grn_obj_unref(ctx, result_set);
+          if (result_set != data->initial_result_set) {
+            grn_obj_unref(ctx, result_set);
+          }
         }
         grn_selector_data_fin(ctx, &selector_data);
       }
