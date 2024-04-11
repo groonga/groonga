@@ -2543,7 +2543,7 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
       case GRN_OBJ_COLUMN_SCALAR:
         {
           grn_obj buf;
-          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+          GRN_VOID_INIT(&buf);
           rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
           GRN_OBJ_FIN(ctx, &buf);
         }
@@ -2551,7 +2551,7 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
       case GRN_OBJ_COLUMN_VECTOR:
         {
           grn_obj buf;
-          GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
+          GRN_VOID_INIT(&buf);
           rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
           GRN_OBJ_FIN(ctx, &buf);
         }
