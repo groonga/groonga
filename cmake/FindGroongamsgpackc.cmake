@@ -1,4 +1,4 @@
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,26 @@ endif()
 if(Groongamsgpackc_FIND_QUIETLY)
   list(APPEND find_package_args QUIET)
 endif()
-find_package(msgpackc ${find_package_args})
-set(Groongamsgpackc_FOUND ${msgpackc_FOUND})
+
+find_package(msgpack-c ${find_package_args})
+set(Groongamsgpackc_FOUND ${msgpack-c_FOUND})
 if(Groongamsgpackc_FOUND)
-  if(TARGET msgpackc)
-    add_library(Groonga::msgpackc ALIAS msgpackc)
+  if(TARGET msgpack-c)
+    add_library(Groonga::msgpackc ALIAS msgpack-c)
   else()
-    add_library(Groonga::msgpackc ALIAS msgpackc-static)
+    add_library(Groonga::msgpackc ALIAS msgpack-c-static)
+  endif()
+endif()
+
+if(NOT Groongamsgpackc_FOUND)
+  find_package(msgpackc ${find_package_args})
+  set(Groongamsgpackc_FOUND ${msgpackc_FOUND})
+  if(Groongamsgpackc_FOUND)
+    if(TARGET msgpackc)
+      add_library(Groonga::msgpackc ALIAS msgpackc)
+    else()
+      add_library(Groonga::msgpackc ALIAS msgpackc-static)
+    endif()
   endif()
 endif()
 
