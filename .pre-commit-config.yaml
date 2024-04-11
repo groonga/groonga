@@ -129,6 +129,7 @@ repos:
           ?plugins/functions/h3\.c|
           ?plugins/functions/number\.cpp|
           ?plugins/tokenizers/h3_index\.c|
+          ?plugins/tokenizers/mecab\.c|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit
