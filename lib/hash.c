@@ -2897,28 +2897,6 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
 
   if (grn_hash_is_io_hash(hash)) {
     hash->header.common->idx_offset = dest_offset;
-    {
-      grn_log_level log_level;
-      if (grn_hash_is_io_hash(hash)) {
-        log_level = GRN_LOG_INFO;
-      } else {
-        log_level = GRN_LOG_DEBUG;
-      }
-      if (grn_logger_pass(ctx, log_level)) {
-        GRN_DEFINE_NAME(hash);
-        GRN_LOG(ctx, log_level,
-                "[hash][rehash][%.*s] <%u> -> <%u>: "
-                "max-offset:<%u> "
-                "n-garbages:<%u> "
-                "idx-offset:<%u>",
-                name_size, name,
-                n_entries,
-                new_index_size,
-                max_offset,
-                *hash->n_garbages,
-                hash->header.common->idx_offset);
-      }
-    }
   } else {
     grn_id * const old_index = hash->index;
     hash->index = new_index;
