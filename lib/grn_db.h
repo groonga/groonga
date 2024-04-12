@@ -241,6 +241,7 @@ typedef struct
   const void *key;
   uint32_t key_size;
   grn_table_delete_optarg *optarg;
+  grn_obj columns;
 } grn_table_delete_data;
 
 grn_rc
