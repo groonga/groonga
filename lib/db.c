@@ -7041,26 +7041,58 @@ grn_obj_size(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
+static inline bool
+is_same_value(grn_ctx *ctx, grn_obj *value1, grn_obj *value2)
+{
+  void *v1 = GRN_BULK_HEAD(value1);
+  uint32_t size1 = grn_obj_size(ctx, value1);
+  void *v2 = GRN_BULK_HEAD(value2);
+  uint32_t size2 = grn_obj_size(ctx, value2);
+  if (size1 != size2) {
+    return false;
+  }
+  if (memcmp(v1, v2, size1) != 0) {
+    return false;
+  }
+  uint32_t n_elements1 = 0;
+  if (value1 && value1->header.type == GRN_VECTOR) {
+    n_elements1 = grn_vector_size(ctx, value1);
+  }
+  uint32_t n_elements2 = 0;
+  if (value2 && value2->header.type == GRN_VECTOR) {
+    n_elements2 = grn_vector_size(ctx, value2);
+  }
+  if (n_elements1 != n_elements2) {
+    return false;
+  }
+  return true;
+}
+
 grn_inline static bool
 call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 {
   grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
-  void *v = GRN_BULK_HEAD(value);
-  unsigned int s = grn_obj_size(ctx, value);
   if (hooks || obj->header.type == GRN_COLUMN_VAR_SIZE) {
     grn_obj oldbuf, *oldvalue;
     GRN_TEXT_INIT(&oldbuf, 0);
     oldvalue = grn_obj_get_value(ctx, obj, id, &oldbuf);
     if (flags & GRN_OBJ_SET) {
-      void *ov;
-      unsigned int os;
-      ov = GRN_BULK_HEAD(oldvalue);
-      os = grn_obj_size(ctx, oldvalue);
-      if ((ov && v && os == s && !memcmp(ov, v, s)) &&
-          !(obj->header.type == GRN_COLUMN_FIX_SIZE &&
-            grn_bulk_is_zero(ctx, value))) {
+      bool need_update = true;
+      if (is_same_value(ctx, value, oldvalue)) {
+        if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
+          /* We don't need to update the same value but fixed zero
+           * value must be updated because we can't distinct no value
+           * and zero value. For example, grn_obj_get_value() for
+           * Int32 scalar column returns 0 as the initial value. */
+          need_update = grn_bulk_is_zero(ctx, value);
+        } else {
+          /* We don't need to update the same value. */
+          need_update = false;
+        }
+      }
+      if (!need_update) {
         grn_obj_close(ctx, oldvalue);
-        return true;
+        return false;
       }
     }
     if (hooks) {
