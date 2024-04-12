@@ -2607,8 +2607,7 @@ grn_table_delete_data_fin(grn_ctx *ctx, grn_table_delete_data *data)
 }
 
 static inline grn_obj *
-grn_table_delete_data_get_columns(grn_ctx *ctx,
-                                  grn_table_delete_data *data)
+grn_table_delete_data_get_columns(grn_ctx *ctx, grn_table_delete_data *data)
 {
   grn_obj *columns = &(data->columns);
   if (columns->header.type == GRN_DB_VOID) {
