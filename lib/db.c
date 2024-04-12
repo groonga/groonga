@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -2586,6 +2586,7 @@ grn_table_delete_data_init(grn_ctx *ctx,
   data->key_size = 0;
   data->optarg = NULL;
   GRN_VOID_INIT(&(data->columns));
+  GRN_VOID_INIT(&(data->index_columns));
   return GRN_SUCCESS;
 }
 
@@ -2602,6 +2603,8 @@ grn_table_delete_data_fin(grn_ctx *ctx, grn_table_delete_data *data)
     }
   }
   GRN_OBJ_FIN(ctx, columns);
+
+  GRN_OBJ_FIN(ctx, &(data->index_columns));
 
   return GRN_SUCCESS;
 }
@@ -2628,6 +2631,26 @@ grn_table_delete_data_get_columns(grn_ctx *ctx, grn_table_delete_data *data)
     }
   }
   return columns;
+}
+
+static inline grn_obj *
+grn_table_delete_data_get_index_columns(grn_ctx *ctx,
+                                        grn_table_delete_data *data)
+{
+  grn_obj *index_columns = &(data->index_columns);
+  if (index_columns->header.type == GRN_DB_VOID) {
+    GRN_PTR_INIT(index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj *columns = grn_table_delete_data_get_columns(ctx, data);
+    size_t n = GRN_PTR_VECTOR_SIZE(columns);
+    size_t i;
+    for (i = 0; i < n; i++) {
+      grn_obj *column = GRN_PTR_VALUE_AT(columns, i);
+      if (grn_obj_is_index_column(ctx, column)) {
+        GRN_PTR_PUT(ctx, index_columns, column);
+      }
+    }
+  }
+  return index_columns;
 }
 
 static void
@@ -2830,15 +2853,12 @@ exit:
 static grn_rc
 delete_reference_records(grn_ctx *ctx, grn_table_delete_data *data)
 {
-  grn_obj *columns = grn_table_delete_data_get_columns(ctx, data);
-  size_t n = GRN_PTR_VECTOR_SIZE(columns);
+  grn_obj *index_columns = grn_table_delete_data_get_index_columns(ctx, data);
+  size_t n = GRN_PTR_VECTOR_SIZE(index_columns);
   size_t i;
   for (i = 0; i < n; i++) {
-    grn_obj *column = GRN_PTR_VALUE_AT(columns, i);
-    if (!grn_obj_is_index_column(ctx, column)) {
-      continue;
-    }
-    delete_reference_records_in_index(ctx, data, column);
+    grn_obj *index_column = GRN_PTR_VALUE_AT(index_columns, i);
+    delete_reference_records_in_index(ctx, data, index_column);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
