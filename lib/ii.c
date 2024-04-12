@@ -3645,7 +3645,12 @@ lexicon_delete(grn_ctx *ctx, grn_ii *ii, uint32_t tid, grn_hash *h)
 #ifdef CASCADE_DELETE_LEXICON
   lexicon_deletable_arg arg = {ii, h};
   grn_table_delete_optarg optarg = {0, lexicon_deletable, &arg};
-  _grn_table_delete_by_id(ctx, ii->lexicon, tid, &optarg);
+  grn_table_delete_data data;
+  grn_table_delete_data_init(ctx, &data, ii->lexicon);
+  data.id = tid;
+  data.optarg = &optarg;
+  grn_table_delete_by_id_without_lock(ctx, &data);
+  grn_table_delete_data_fin(ctx, &data);
 #endif /* CASCADE_DELETE_LEXICON */
 }
 

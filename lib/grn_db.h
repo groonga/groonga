@@ -234,8 +234,24 @@ grn_rc
 grn_db_command_processed(grn_ctx *ctx,
                          grn_obj *db);
 
-grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
-                               grn_table_delete_optarg *optarg);
+typedef struct
+{
+  grn_obj *table;
+  grn_id id;
+  const void *key;
+  uint32_t key_size;
+  grn_table_delete_optarg *optarg;
+} grn_table_delete_data;
+
+grn_rc
+grn_table_delete_data_init(grn_ctx *ctx,
+                           grn_table_delete_data *data,
+                           grn_obj *table);
+grn_rc
+grn_table_delete_data_fin(grn_ctx *ctx,
+                          grn_table_delete_data *data);
+
+grn_rc grn_table_delete_by_id_without_lock(grn_ctx *ctx, grn_table_delete_data *data);
 
 grn_id grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value);
