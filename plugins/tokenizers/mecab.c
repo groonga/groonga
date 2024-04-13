@@ -172,39 +172,39 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
   GRN_TEXT_INIT(&(options->target_classes), GRN_OBJ_VECTOR);
 }
 
-static grn_bool
+static bool
 mecab_tokenizer_options_need_default_output(
   grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 {
   if (!options) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (options->include_class) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (options->include_reading) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (options->include_form) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (options->use_reading) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (options->use_base_form) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (grn_vector_size(ctx, &(options->target_classes)) > 0) {
-    return GRN_TRUE;
+    return true;
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 static void *
@@ -302,7 +302,7 @@ mecab_tokenizer_options_close(grn_ctx *ctx, void *data)
   GRN_PLUGIN_FREE(ctx, options);
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
 {
   switch (character_bytes) {
@@ -312,9 +312,9 @@ is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
     case '.':
     case '!':
     case '?':
-      return GRN_TRUE;
+      return true;
     default:
-      return GRN_FALSE;
+      return false;
     }
   case 3:
     switch ((unsigned char)(character[0])) {
@@ -324,14 +324,14 @@ is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
         switch ((unsigned char)(character[2])) {
         case 0x81: /* U+3001 (0xE3 0x80 0x81 in UTF-8) IDEOGRAPHIC COMMA */
         case 0x82: /* U+3002 (0xE3 0x80 0x82 in UTF-8) IDEOGRAPHIC FULL STOP */
-          return GRN_TRUE;
+          return true;
         default:
-          return GRN_FALSE;
+          return false;
         }
       default:
-        return GRN_FALSE;
+        return false;
       }
-      return GRN_FALSE;
+      return false;
     case 0xEF:
       switch ((unsigned char)(character[1])) {
       case 0xBC:
@@ -340,19 +340,19 @@ is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
           /* U+FF01 (0xEF 0xBC 0x81 in UTF-8) FULLWIDTH EXCLAMATION MARK */
         case 0x9F:
           /* U+FF1F (0xEF 0xBC 0x9F in UTF-8) FULLWIDTH QUESTION MARK */
-          return GRN_TRUE;
+          return true;
         default:
-          return GRN_FALSE;
+          return false;
         }
       default:
-        return GRN_FALSE;
+        return false;
       }
-      return GRN_FALSE;
+      return false;
     default:
-      return GRN_FALSE;
+      return false;
     }
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
@@ -507,9 +507,8 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
   int argc = 0;
   const char *argv[4];
   const char *tag;
-  grn_bool need_default_output = GRN_FALSE;
 
-  need_default_output =
+  bool need_default_output =
     mecab_tokenizer_options_need_default_output(ctx, options);
 
   if (need_default_output) {
