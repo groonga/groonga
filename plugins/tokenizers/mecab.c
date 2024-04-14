@@ -49,7 +49,7 @@ static const char *grn_mecab_lattice_variable_name = "TokenMecab.lattice";
 static grn_mecab mecab_default;
 static grn_mecab mecab_wakati;
 
-static grn_bool grn_mecab_chunked_tokenize_enabled = GRN_FALSE;
+static bool grn_mecab_chunked_tokenize_enabled = false;
 static int32_t grn_mecab_chunk_size_threshold = 8192;
 
 static const size_t GRN_MECAB_FEATURE_LOCATION_CLASS = 0;
@@ -60,13 +60,13 @@ static const size_t GRN_MECAB_FEATURE_LOCATION_BASE_FORM = 6;
 static const size_t GRN_MECAB_FEATURE_LOCATION_READING = 7;
 
 typedef struct {
-  grn_bool chunked_tokenize;
+  bool chunked_tokenize;
   int32_t chunk_size_threshold;
-  grn_bool include_class;
-  grn_bool include_reading;
-  grn_bool include_form;
-  grn_bool use_reading;
-  grn_bool use_base_form;
+  bool include_class;
+  bool include_reading;
+  bool include_form;
+  bool use_reading;
+  bool use_base_form;
   grn_obj target_classes;
 } grn_mecab_tokenizer_options;
 
@@ -164,11 +164,11 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
 {
   options->chunked_tokenize = grn_mecab_chunked_tokenize_enabled;
   options->chunk_size_threshold = grn_mecab_chunk_size_threshold;
-  options->include_class = GRN_FALSE;
-  options->include_reading = GRN_FALSE;
-  options->include_form = GRN_FALSE;
-  options->use_reading = GRN_FALSE;
-  options->use_base_form = GRN_FALSE;
+  options->include_class = false;
+  options->include_reading = false;
+  options->include_form = false;
+  options->use_reading = false;
+  options->use_base_form = false;
   GRN_TEXT_INIT(&(options->target_classes), GRN_OBJ_VECTOR);
 }
 
@@ -692,8 +692,8 @@ mecab_next_default_format_skip_eos(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
 typedef struct {
   grn_token *token;
   grn_obj *feature_locations;
-  grn_bool ignore_empty_value;
-  grn_bool ignore_asterisk_value;
+  bool ignore_empty_value;
+  bool ignore_asterisk_value;
 } add_feature_data;
 
 static size_t
@@ -823,7 +823,7 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
   return surface_length;
 }
 
-static grn_bool
+static bool
 mecab_next_default_format_match_class(grn_ctx *ctx,
                                       const char *target_class,
                                       size_t target_class_length,
@@ -831,11 +831,11 @@ mecab_next_default_format_match_class(grn_ctx *ctx,
                                       size_t class_length)
 {
   if (class_length == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (target_class_length < class_length) {
-    return GRN_FALSE;
+    return false;
   }
 
   return memcmp(target_class, class, class_length) == 0;
@@ -848,7 +848,7 @@ mecab_next_default_format_consume_needless_tokens(
   grn_obj *target_classes = &(tokenizer->options->target_classes);
   unsigned int n_target_classes;
   const char *last_next = tokenizer->next;
-  grn_bool is_target = GRN_FALSE;
+  bool is_target = false;
 
   n_target_classes = grn_vector_size(ctx, target_classes);
 
@@ -893,9 +893,9 @@ mecab_next_default_format_consume_needless_tokens(
     for (i = 0; i < n_target_classes; i++) {
       const char *target_class;
       size_t target_class_length;
-      grn_bool positive = GRN_TRUE;
+      bool positive = true;
       size_t j;
-      grn_bool matched = GRN_FALSE;
+      bool matched = false;
 
       target_class_length = grn_vector_get_element(ctx,
                                                    target_classes,
@@ -910,7 +910,7 @@ mecab_next_default_format_consume_needless_tokens(
           target_class_length--;
           break;
         case '-':
-          positive = GRN_FALSE;
+          positive = false;
           target_class++;
           target_class_length--;
           break;
@@ -924,7 +924,7 @@ mecab_next_default_format_consume_needless_tokens(
 
         if (target_class_length == 0) {
           is_target = positive;
-          matched = GRN_TRUE;
+          matched = true;
           break;
         }
 
@@ -939,7 +939,7 @@ mecab_next_default_format_consume_needless_tokens(
         target_class_length -= class_length;
         if (target_class_length == 0) {
           is_target = positive;
-          matched = GRN_TRUE;
+          matched = true;
           break;
         }
         if (target_class[0] != '/') {
@@ -1002,8 +1002,8 @@ mecab_next_default_format(grn_ctx *ctx,
     add_feature_data data;
     data.token = token;
     data.feature_locations = &(tokenizer->feature_locations);
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_TRUE;
+    data.ignore_empty_value = true;
+    data.ignore_asterisk_value = true;
     mecab_next_default_format_add_feature(ctx,
                                           &data,
                                           "class",
@@ -1025,8 +1025,8 @@ mecab_next_default_format(grn_ctx *ctx,
     add_feature_data data;
     data.token = token;
     data.feature_locations = &(tokenizer->feature_locations);
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_FALSE;
+    data.ignore_empty_value = true;
+    data.ignore_asterisk_value = false;
     mecab_next_default_format_add_feature(ctx,
                                           &data,
                                           "reading",
@@ -1036,8 +1036,8 @@ mecab_next_default_format(grn_ctx *ctx,
     add_feature_data data;
     data.token = token;
     data.feature_locations = &(tokenizer->feature_locations);
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_TRUE;
+    data.ignore_empty_value = true;
+    data.ignore_asterisk_value = true;
     mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
     mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
     mecab_next_default_format_add_feature(ctx,
@@ -1317,7 +1317,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
   mecab_model_t *mecab_model;
   mecab_t *mecab;
   grn_encoding encoding;
-  grn_bool have_same_encoding_dictionary;
+  bool have_same_encoding_dictionary;
 
   mecab_model = mecab_model_create(ctx, NULL);
   if (!mecab_model) {
