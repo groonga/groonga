@@ -1280,6 +1280,9 @@ grn_array_warm(grn_ctx *ctx, grn_array *array)
 
 static uint32_t grn_hash_initial_max_offset = IDX_MASK_IN_A_SEGMENT + 1;
 
+#define MAX_INDEX_SIZE ((GRN_HASH_MAX_SEGMENT * (IDX_MASK_IN_A_SEGMENT + 1)) >> 1)
+static uint32_t grn_hash_max_index_size = MAX_INDEX_SIZE;
+
 void
 grn_hash_init_from_env(void)
 {
@@ -1290,8 +1293,31 @@ grn_hash_init_from_env(void)
                grn_hash_initial_max_offset_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_hash_initial_max_offset_env[0]) {
-      grn_hash_initial_max_offset =
-        (uint32_t)(atoi(grn_hash_initial_max_offset_env));
+      const char *end =
+        grn_hash_initial_max_offset_env + strlen(grn_hash_initial_max_offset_env);
+      const char *rest;
+      uint32_t offset = grn_atoui(grn_hash_initial_max_offset_env, end, &rest);
+      if (end == rest) {
+        grn_hash_initial_max_offset = offset;
+      }
+    }
+  }
+
+  {
+    /* Just for test. */
+    char grn_hash_max_index_size_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_HASH_MAX_INDEX_SIZE",
+               grn_hash_max_index_size_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_hash_max_index_size_env[0]) {
+      const char *end =
+        grn_hash_max_index_size_env + strlen(grn_hash_max_index_size_env);
+      const char *rest;
+      uint32_t size = grn_atoui(grn_hash_max_index_size_env, end, &rest);
+      /* grn_hash_max_index_size must be positive and 2 ^ N. */
+      if (end == rest && size > 0 && (size & (size - 1)) == 0) {
+        grn_hash_max_index_size = size;
+      }
     }
   }
 }
@@ -1440,8 +1466,6 @@ grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint64_t pos)
 }
 
 #define HASH_IMMEDIATE 1
-
-#define MAX_INDEX_SIZE ((GRN_HASH_MAX_SEGMENT * (IDX_MASK_IN_A_SEGMENT + 1)) >> 1)
 
 grn_inline static uint16_t
 grn_hash_entry_get_key_size(grn_hash *hash, grn_hash_entry *entry)
@@ -2818,7 +2842,7 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
   if (grn_hash_is_io_hash(hash)) {
     uint32_t i;
     src_offset = hash->header.common->idx_offset;
-    dest_offset = MAX_INDEX_SIZE - src_offset;
+    dest_offset = grn_hash_max_index_size - src_offset;
     for (i = 0; i < new_index_size; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
       /*
        * The following grn_io_hash_idx_at() allocates memory for a new segment
@@ -3259,7 +3283,7 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
     return GRN_SUCCESS;
   }
 
-  if (*hash->max_offset > (1 << 29)) {
+  if (*hash->max_offset > grn_hash_max_index_size) {
     GRN_DEFINE_NAME(hash);
     ERR(GRN_TOO_LARGE_OFFSET,
         "%s[%.*s] hash table size limit",
