@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713157715335,
+  "lastUpdate": 1713162858095,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -17958,6 +17958,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017586555999969278,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0019020000000000425 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "064f9550783a7086da4c69e029614a25f3a4dd9f",
+          "message": "hash: fix a data break bug with about 2^28+ records\n\ngrn_hash may rehash with 2^28+ records. If it's happen, grn_hash is\nbroken or rehash is failed.\n\nBecause we need 2^(28+2+1) space to rehash 2^28+ records. We need\n2^(28+2) working space to rehash 2^28+ records. We can use 2^(28+1)\nworking space for 2^28+ but it will not have good computational\nefficiency because it will have many conflict. So we use 2^(28+2)\nworking space. We copy the original 2^28+ records to the new working\nspace. So we need 2^(28+2+1) space in total.\n\nBut we have only 2^30 space in total. So it's happen, grn_hash is\nbroken or rehash is failed.\n\nWe should not rehash again when grn_hash is already rehashed for 2^27+\nrecords.\n\nThis also checks table full in grn_hash_add_entry() to support\ngrn_hash_add() with existing key. If we check table full in\ngrn_hash_ensure_rehash(), we'll report an error for grn_hash_add()\nwith existing key too.",
+          "timestamp": "2024-04-15T15:28:33+09:00",
+          "tree_id": "768f62e6f78c3155f99be0271172621ba484b968",
+          "url": "https://github.com/groonga/groonga/commit/064f9550783a7086da4c69e029614a25f3a4dd9f"
+        },
+        "date": 1713162856125,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.37956536099994764,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01972900000000008 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2654647999999611,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01684899999999978 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01637079500000027,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00034999999999985043 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015218461000017669,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00038099999999974266 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4553441719999682,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.000268000000000157 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.23930116500002896,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006783000000000039 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.12984020100009275,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005826999999999999 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01713195000002088,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020979999999999333 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016994848999956957,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001996000000000109 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.055924813000046925,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007339000000000401 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05399312599985251,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008547000000000637 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018723302000012154,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018269999999999953 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.027392393000013726,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018469999999999598 s\nthreads: undefined"
           }
         ]
       }
