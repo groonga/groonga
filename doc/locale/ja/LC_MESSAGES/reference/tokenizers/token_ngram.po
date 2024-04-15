@@ -105,6 +105,12 @@ msgstr ""
 msgid "This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram."
 msgstr "このオプションは、Ngramの ``N`` を表します。例えば、trigramでは、 ``n`` が ``3`` です。"
 
+msgid "``ignore_blank``"
+msgstr ""
+
+msgid "It ignores white-spaces in continuous symbols and non-ASCII characters. For example, the keyword ``日 本 語 ! ! !`` is tokenized as ``日本語!!!``."
+msgstr "連続する記号と非ASCII文字の間にある空白文字を無視します。例えば、キーワード ``日 本 語 ! ! !`` は ``日本語!!!`` とみなしてトークナイズします。"
+
 msgid "``loose_symbol``"
 msgstr ""
 
