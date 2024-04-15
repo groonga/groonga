@@ -1314,8 +1314,9 @@ grn_hash_init_from_env(void)
         grn_hash_max_index_size_env + strlen(grn_hash_max_index_size_env);
       const char *rest;
       uint32_t size = grn_atoui(grn_hash_max_index_size_env, end, &rest);
-      /* grn_hash_max_index_size must be positive and 2 ^ N. */
-      if (end == rest && size > 0 && (size & (size - 1)) == 0) {
+      /* grn_hash_max_index_size must be positive and
+       * GRN_HASH_MAX_SEGMENT (2^22) * N. */
+      if (end == rest && size > 0 && (size % GRN_HASH_MAX_SEGMENT) == 0) {
         grn_hash_max_index_size = size;
       }
     }
