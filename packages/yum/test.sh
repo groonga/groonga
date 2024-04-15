@@ -72,6 +72,11 @@ if [ "${run_test}" = "yes" ]; then
       . /opt/rh/rh-ruby30/enable
       set -u
       ;;
+    8)
+      ${DNF} module disable -y ruby
+      ${DNF} module enable -y ruby:3.1
+      ${DNF} install -y ruby-devel
+      ;;
     *)
       ${DNF} install -y ruby-devel
       ;;
