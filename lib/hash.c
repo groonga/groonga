@@ -2783,6 +2783,9 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
 
   if (expected_n_entries == 0) {
     expected_n_entries = n_entries * 2;
+    if (expected_n_entries >= grn_hash_max_index_size) {
+      expected_n_entries = grn_hash_max_index_size - 1;
+    }
     if (grn_id_maybe_table(ctx, hash->obj.header.domain)) {
       grn_obj *domain = grn_ctx_at(ctx, hash->obj.header.domain);
       if (grn_obj_is_table(ctx, domain)) {
@@ -2794,7 +2797,7 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
       grn_obj_unref(ctx, domain);
     }
   }
-  if (expected_n_entries > INT_MAX) {
+  if (expected_n_entries >= grn_hash_max_index_size) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   while (new_index_size <= expected_n_entries) {
