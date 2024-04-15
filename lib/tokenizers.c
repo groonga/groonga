@@ -901,6 +901,9 @@ ngram_open_options(grn_ctx *ctx,
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "n")) {
       options->unit =
         grn_vector_get_element_uint8(ctx, raw_options, i, options->unit);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "ignore_blank")) {
+      options->ignore_blank =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->ignore_blank);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank")) {
       options->remove_blank =
         grn_vector_get_element_bool(ctx, raw_options, i, options->remove_blank);
