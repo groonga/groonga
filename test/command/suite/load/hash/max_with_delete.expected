@@ -1,0 +1,145 @@
+table_create Data TABLE_HASH_KEY Int64
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+#|i| [hash][rehash][Data] <1024> -> <4096>: max-offset:<2047> n-garbages:<0> idx-offset:<0>
+#|i| [hash][rehash][Data] <2048> -> <8192>: max-offset:<4095> n-garbages:<0> idx-offset:<4194304>
+log_level --level notice
+[[0,0.0,0.0],true]
+delete Data --filter '_key < 1000'
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+#|i| [hash][rehash][Data] <3097> -> <8192>: max-offset:<8191> n-garbages:<999> idx-offset:<0>
+#|i| [hash][rehash][Data] <4096> -> <16384>: max-offset:<8191> n-garbages:<0> idx-offset:<4194304>
+#|i| [hash][rehash][Data] <8192> -> <32768>: max-offset:<16383> n-garbages:<0> idx-offset:<0>
+#|i| [hash][rehash][Data] <16384> -> <65536>: max-offset:<32767> n-garbages:<0> idx-offset:<4194304>
+#|i| [hash][rehash][Data] <32768> -> <131072>: max-offset:<65535> n-garbages:<0> idx-offset:<0>
+#|i| [hash][rehash][Data] <65536> -> <262144>: max-offset:<131071> n-garbages:<0> idx-offset:<4194304>
+#|i| [hash][rehash][Data] <131072> -> <524288>: max-offset:<262143> n-garbages:<0> idx-offset:<0>
+#|i| [hash][rehash][Data] <262144> -> <1048576>: max-offset:<524287> n-garbages:<0> idx-offset:<4194304>
+#|i| [hash][rehash][Data] <524288> -> <2097152>: max-offset:<1048575> n-garbages:<0> idx-offset:<0>
+#|i| [hash][rehash][Data] <1048576> -> <4194304>: max-offset:<2097151> n-garbages:<0> idx-offset:<4194304>
+log_level --level notice
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+log_level --level notice
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4194304
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "Int64"
+        ]
+      ],
+      [
+        904,
+        4096
+      ],
+      [
+        905,
+        4095
+      ],
+      [
+        906,
+        4094
+      ],
+      [
+        907,
+        4093
+      ],
+      [
+        908,
+        4092
+      ],
+      [
+        909,
+        4091
+      ],
+      [
+        910,
+        4090
+      ],
+      [
+        911,
+        4089
+      ],
+      [
+        912,
+        4088
+      ],
+      [
+        913,
+        4087
+      ]
+    ]
+  ]
+]
+select Data --filter '_key == 1'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","Int64"]],[4194209,1]]]]
+select Data --filter '_key == 4000'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","Int64"]],[4000,4000]]]]
+select Data --filter '_key == 4194304'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","Int64"]],[4194208,4194304]]]]
+load --table Data
+[
+{"_key": 4194305}
+]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][add][hash] failed to add: #<key 4194305 table:#<hash Data key:Int64>>"
+  ],
+  0
+]
+#|e| [hash][add][Data] hash table is full: 4194304
+#|e| [table][add][hash] failed to add: #<key 4194305 table:#<hash Data key:Int64>>
+load --table Data
+[
+{"_key": 1}
+]
+[[0,0.0,0.0],1]
+delete Data --key 1
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": 4194305}
+]
+[[0,0.0,0.0],1]
+load --table Data
+[
+{"_key": 4194306}
+]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][add][hash] failed to add: #<key 4194306 table:#<hash Data key:Int64>>"
+  ],
+  0
+]
+#|e| [hash][add][Data] hash table is full: 4194304
+#|e| [table][add][hash] failed to add: #<key 4194306 table:#<hash Data key:Int64>>

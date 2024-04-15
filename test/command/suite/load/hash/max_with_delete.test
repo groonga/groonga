@@ -1,0 +1,58 @@
+#$GRN_HASH_INITIAL_MAX_OFFSET=2048
+#$GRN_HASH_MAX_INDEX_SIZE=4194304
+
+table_create Data TABLE_HASH_KEY Int64
+
+log_level --level info
+#@add-important-log-levels info
+#@disable-logging
+#@generate-series 1 4000 Data '{"_key" => i}'
+#@enable-logging
+#@remove-important-log-levels info
+log_level --level notice
+
+delete Data --filter '_key < 1000'
+
+log_level --level info
+#@add-important-log-levels info
+# 600 = 10min
+#@timeout 600
+#@disable-logging
+#@generate-series 4001 4194304 Data '{"_key" => i}'
+#@enable-logging
+#@timeout default
+#@remove-important-log-levels info
+log_level --level notice
+
+log_level --level info
+#@add-important-log-levels info
+#@disable-logging
+#@generate-series 1 4000 Data '{"_key" => i}'
+#@enable-logging
+#@remove-important-log-levels info
+log_level --level notice
+
+select Data
+select Data --filter '_key == 1'
+select Data --filter '_key == 4000'
+select Data --filter '_key == 4194304'
+
+load --table Data
+[
+{"_key": 4194305}
+]
+
+load --table Data
+[
+{"_key": 1}
+]
+
+delete Data --key 1
+load --table Data
+[
+{"_key": 4194305}
+]
+load --table Data
+[
+{"_key": 4194306}
+]

@@ -2840,7 +2840,56 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
     }
   }
 
+  /*
+   * Rehash:
+   *   1. Prepare new large space
+   *   2. Copy existing data to new space
+   *
+   * Here is an IO hash case. A non IO hash allocates a new space
+   * instead of reusing two sub-spaces in a large space. An IO hash
+   * uses idx_offset to determine whether the left space (2^(0..29)
+   * space) is used or the right space (2^(29..30) space) is used.
+   *
+   * GRN_HASH_INDEX_SEGMENT space:
+   *
+   *   0           2^29          2^30
+   *   |<------------|------------>|
+   *
+   * Start:
+   *
+   *   0           2^29          2^30
+   *   |<------------|------------>|
+   *   |<-used->     |<-not used-> |
+   *
+   * Rehash (prepare):
+   *
+   *   0           2^29          2^30
+   *   |<------------|------------>|
+   *   |<-used->|    |<-0 clear-> |
+   *
+   * Rehash (coping):
+   *
+   *   0           2^29           2^30
+   *   |<------------|------------>|
+   *   |<-used->     |<-new used-> |
+   *      +------copy--^
+   *
+   * Rehash (copied):
+   *
+   *   0           2^29           2^30
+   *   |<------------|------------>|
+   *   |<-not used-> |<-new used-> |
+   *
+   * Rehash again (prepare):
+   *
+   *   0           2^29           2^30
+   *   |<------------|------------>|
+   *   |<-0 clear->  |<-used->     |
+   *
+   * ...
+   */
   if (grn_hash_is_io_hash(hash)) {
+    /* 1. Prepare new large space: Clear an unused space. */
     uint32_t i;
     src_offset = hash->header.common->idx_offset;
     dest_offset = grn_hash_max_index_size - src_offset;
@@ -2857,6 +2906,7 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
       memset(dest_ptr, 0, GRN_HASH_SEGMENT_SIZE);
     }
   } else {
+    /* 1. Prepare new large space: Allocate a new space. */
     GRN_ASSERT(ctx == hash->ctx);
     new_index = GRN_CTX_ALLOC(ctx, new_index_size * sizeof(grn_id));
     if (!new_index) {
@@ -2866,6 +2916,7 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
   }
 
   {
+    /* 2. Copy existing data to new space */
     uint32_t src_pos, count;
     const uint32_t new_max_offset = new_index_size - 1;
     for (count = 0, src_pos = 0; count < n_entries && src_pos <= max_offset;
@@ -3280,17 +3331,12 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
                        uint32_t threshold,
                        const char *tag)
 {
-  if (threshold < *hash->max_offset) {
+  if (threshold <= *hash->max_offset) {
     return GRN_SUCCESS;
   }
-
-  if (*hash->max_offset > grn_hash_max_index_size) {
-    GRN_DEFINE_NAME(hash);
-    ERR(GRN_TOO_LARGE_OFFSET,
-        "%s[%.*s] hash table size limit",
-        tag,
-        name_size, name);
-    return ctx->rc;
+  /* We can't rehash more. */
+  if (*hash->max_offset == (grn_hash_max_index_size - 1)) {
+    return GRN_SUCCESS;
   }
 
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
@@ -3338,11 +3384,13 @@ grn_hash_add_entry(grn_ctx *ctx,
                    const char *tag)
 {
   uint32_t i;
+  uint32_t i_tries;
+  uint32_t max_tries = grn_hash_max_index_size;
   const uint32_t step = grn_hash_calculate_step(hash_value);
   grn_id id, *index, *garbage_index = NULL;
   uint32_t index_hash_value = 0;
   uint32_t garbage_index_hash_value = 0;
-  for (i = hash_value; ; i += step) {
+  for (i = hash_value, i_tries = 0; i_tries < max_tries; i += step, i_tries++) {
     index = grn_hash_idx_at(ctx, hash, i);
     if (!index) {
       GRN_DEFINE_NAME(hash);
@@ -3400,6 +3448,15 @@ grn_hash_add_entry(grn_ctx *ctx,
   } else {
     target_index = index;
     target_index_hash_value = index_hash_value;
+    if (*(hash->n_entries) == grn_hash_max_index_size) {
+      GRN_DEFINE_NAME(hash);
+      ERR(GRN_TOO_LARGE_OFFSET,
+          "%s[%.*s] hash table is full: %u",
+          tag,
+          name_size, name,
+          grn_hash_max_index_size);
+      return GRN_ID_NIL;
+    }
   }
   if (grn_hash_is_io_hash(hash)) {
     id = grn_io_hash_add(ctx,
