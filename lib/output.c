@@ -1669,7 +1669,7 @@ grn_output_uvector_result_set(grn_ctx *ctx,
   uint32_t n_elements;
   grn_obj **columns;
   grn_obj buf;
-  grn_bool with_column_names = GRN_FALSE;
+  bool with_column_names = false;
 
   n_hits = grn_vector_size(ctx, uvector);
 
@@ -1679,7 +1679,7 @@ grn_output_uvector_result_set(grn_ctx *ctx,
   GRN_TEXT_INIT(&buf, 0);
 
   if (n_hits > 0 && format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
-    with_column_names = GRN_TRUE;
+    with_column_names = true;
   }
 
   n_elements = 1; /* for NHITS */
@@ -1873,12 +1873,12 @@ grn_output_vector(grn_ctx *ctx,
                   grn_obj *vector,
                   grn_obj_format *format)
 {
-  grn_bool with_weight = GRN_FALSE;
+  bool with_weight = false;
   bool is_weight_float32 = false;
 
   if (format) {
     if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
-      with_weight = GRN_TRUE;
+      with_weight = true;
     }
     if (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32) {
       is_weight_float32 = true;
@@ -2079,13 +2079,13 @@ grn_output_table_column_info(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 is_score_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *a;
 
   if (obj->header.type != GRN_ACCESSOR) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (a = (grn_accessor *)obj; a->next; a = a->next) {
@@ -2900,9 +2900,9 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   int len;
   int offset = 0, limit = 0, record_n = 0;
   int column_n = 0, column_text_n = 0, result_set_n = -1;
-  grn_bool in_vector = GRN_FALSE;
+  bool in_vector = false;
   unsigned int vector_element_n = 0;
-  grn_bool in_weight_vector = GRN_FALSE;
+  bool in_weight_vector = false;
   unsigned int weight_vector_item_n = 0;
 
   s = GRN_TEXT_VALUE(output);
@@ -2957,14 +2957,14 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           }
         } else if (EQUAL_NAME_P("VECTOR")) {
           char *c = transform_xml_next_column(&columns, column_n++);
-          in_vector = GRN_TRUE;
+          in_vector = true;
           vector_element_n = 0;
           GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
           GRN_TEXT_PUTS(ctx, transformed, c);
           GRN_TEXT_PUTS(ctx, transformed, "\">");
         } else if (EQUAL_NAME_P("WEIGHT_VECTOR")) {
           char *c = transform_xml_next_column(&columns, column_n++);
-          in_weight_vector = GRN_TRUE;
+          in_weight_vector = true;
           weight_vector_item_n = 0;
           GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
           GRN_TEXT_PUTS(ctx, transformed, c);
@@ -2996,10 +2996,10 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                         "</SEGMENT>\n"
                         "</SEGMENTS>\n");
         } else if (EQUAL_NAME_P("VECTOR")) {
-          in_vector = GRN_FALSE;
+          in_vector = false;
           GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
         } else if (EQUAL_NAME_P("WEIGHT_VECTOR")) {
-          in_weight_vector = GRN_FALSE;
+          in_weight_vector = false;
           GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
         } else {
           switch (place) {
@@ -3015,8 +3015,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                              GRN_TEXT_LEN(&buf));
                 vector_element_n++;
               } else if (in_weight_vector) {
-                grn_bool is_key;
-                is_key = ((weight_vector_item_n % 2) == 0);
+                bool is_key = ((weight_vector_item_n % 2) == 0);
                 if (is_key) {
                   unsigned int weight_vector_key_n;
                   weight_vector_key_n = weight_vector_item_n / 2;
