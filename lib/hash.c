@@ -3390,7 +3390,9 @@ grn_hash_add_entry(grn_ctx *ctx,
   uint32_t i_tries;
   uint32_t max_tries = grn_hash_max_index_size;
   const uint32_t step = grn_hash_calculate_step(hash_value);
-  grn_id id, *index, *garbage_index = NULL;
+  grn_id id;
+  grn_id *index = NULL;
+  grn_id *garbage_index = NULL;
   uint32_t index_hash_value = 0;
   uint32_t garbage_index_hash_value = 0;
   for (i = hash_value, i_tries = 0; i_tries < max_tries; i += step, i_tries++) {
