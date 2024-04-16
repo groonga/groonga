@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("ignore_blank", true)' \
+  "日 本 語 ! ! !" \
+  NormalizerAuto

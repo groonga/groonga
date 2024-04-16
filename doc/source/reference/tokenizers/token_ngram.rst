@@ -122,6 +122,14 @@ There are eight optional parameters.
 
 This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram.
 
+.. _token-ngram-ignore-blank:
+
+``ignore_blank``
+""""""""""""""""
+
+It ignores white-spaces in continuous symbols and non-ASCII characters.
+For example, the keyword ``日 本 語 ! ! !`` is tokenized as ``日本語!!!``.
+
 .. _token-ngram-loose-symbol:
 
 ``loose_symbol``
