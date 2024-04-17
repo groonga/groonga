@@ -155,9 +155,9 @@ For example, to preview the Japanese translation of the {doc}`introduction` page
 % open ../groonga.doc/doc/ja/html/contribution/documentation/introduction.html
 ```
 
-## Submit contributions
+## Send patch
 
-You can submit your contributions to the Groonga repository on GitHub via a pull request.
+You can submit your patch to the Groonga repository on GitHub via a pull request.
 Feel free to send a pull request by following two steps.
 
 - Prepare your pull request
@@ -175,14 +175,15 @@ Follow these commands:
 % git push origin your-working-branch
 ```
 
-## Submit your pull request
+### Submit your pull request
 
-Now you're ready to submit a pull request to the main Groonga repository.
+Now you're ready to submit a pull request to the upstream Groonga repository.
 Follow these steps:
 
 1. Go to your fork repository on GitHub
 2. Click the `Compare & pull request` button
-3. Submit your pull request
+3. Make sure your changes are reflected
+4. Click the `Create Pull Request` button and send your pull request
 
 ## Update
 
