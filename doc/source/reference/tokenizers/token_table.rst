@@ -44,15 +44,15 @@ Here is the sample schema and data:
 .. column_create Keywords index COLUMN_INDEX Pies name
 .. load --table Keywords
 .. [
-.. {"_key": "Apple"}
-.. {"_key": "Orange"}
+.. {"_key": "Apple"},
+.. {"_key": "Orange"},
 .. {"_key": "Raspberry"}
 .. ]
 .. load --table Pies
 .. [
 .. {"name": "Apple Pie"},
-.. {"name": "Orange Pie"}
-.. {"name": "Raspberry Pie"}
+.. {"name": "Orange Pie"},
+.. {"name": "Raspberry Pie"},
 .. {"name": "Stargazy Pie"}
 .. ]
 

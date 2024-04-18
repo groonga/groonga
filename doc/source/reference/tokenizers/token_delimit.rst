@@ -30,7 +30,7 @@ No options(Extracts token by splitting one or more space characters (``U+0020``)
 
 Specify delimiter::
 
-  TokenDelimit("delimiter",  "delimiter1", delimiter", "delimiter2", ...)
+  TokenDelimit("delimiter",  "delimiter1", "delimiter", "delimiter2", ...)
 
 Specify delimiter with regular expression::
 
