@@ -170,7 +170,7 @@ GRN_API void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,
                 grn_content_type output_type,
-                grn_bool value);
+                bool value);
 
 GRN_API void
 grn_ctx_output_flush(grn_ctx *ctx, int flags);
@@ -201,7 +201,7 @@ grn_ctx_output_cstr(grn_ctx *ctx, const char *value);
 GRN_API void
 grn_ctx_output_str(grn_ctx *ctx, const char *value, size_t value_len);
 GRN_API void
-grn_ctx_output_bool(grn_ctx *ctx, grn_bool value);
+grn_ctx_output_bool(grn_ctx *ctx, bool value);
 GRN_API void
 grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format);
 GRN_API void
