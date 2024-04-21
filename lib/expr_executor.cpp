@@ -2652,28 +2652,28 @@ grn_expr_executor_init_constant(grn_ctx *ctx, grn_expr_executor *executor)
   executor->data.constant.value = e->codes[0].value;
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_constant(grn_ctx *ctx, grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
 
   if (e->codes_curr != 1) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
 
   if (target->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (!target->value) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_expr_executor_init_constant(ctx, executor);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
@@ -2698,28 +2698,28 @@ grn_expr_executor_init_value(grn_ctx *ctx, grn_expr_executor *executor)
   GRN_VOID_INIT(&(executor->data.value.value_buffer));
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_value(grn_ctx *ctx, grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
 
   if (e->codes_curr != 1) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
 
   if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
+    return false;
   }
   if (!target->value) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_expr_executor_init_value(ctx, executor);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
@@ -2770,7 +2770,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
     grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
@@ -2779,7 +2779,7 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
@@ -2787,27 +2787,27 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   operator_code = &(e->codes[2]);
 
   if (operator_code->op != GRN_OP_REGEXP) {
-    return GRN_FALSE;
+    return false;
   }
   if (operator_code->nargs != 2) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!target->value) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->value->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
+    return false;
   }
   if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
       GRN_OBJ_COLUMN_SCALAR) {
-    return GRN_FALSE;
+    return false;
   }
   switch (grn_obj_get_range(ctx, target->value)) {
   case GRN_DB_SHORT_TEXT:
@@ -2815,20 +2815,20 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   case GRN_DB_LONG_TEXT:
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
 
   if (pattern->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (pattern->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!pattern->value) {
-    return GRN_FALSE;
+    return false;
   }
   if (pattern->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
+    return false;
   }
   switch (pattern->value->header.domain) {
   case GRN_DB_SHORT_TEXT:
@@ -2836,16 +2836,16 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   case GRN_DB_LONG_TEXT:
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
 
   if (!grn_onigmo_is_valid_encoding(ctx)) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_expr_executor_init_simple_regexp(ctx, executor);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
