@@ -173,7 +173,7 @@ typedef struct {
 
 static const char *GRN_DB_CONFIG_PATH_FORMAT = "%s.conf";
 
-static grn_bool
+static bool
 grn_db_config_create(grn_ctx *ctx,
                      grn_db *s,
                      const char *path,
@@ -203,13 +203,13 @@ grn_db_config_create(grn_ctx *ctx,
         "%s failed to create data store for configuration: <%s>",
         context_tag,
         config_path ? config_path : "(temporary)");
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
-static grn_bool
+static bool
 grn_db_config_open(grn_ctx *ctx, grn_db *s, const char *path)
 {
   char config_path[PATH_MAX];
@@ -225,9 +225,9 @@ grn_db_config_open(grn_ctx *ctx, grn_db *s, const char *path)
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[db][open] failed to open data store for configuration: <%s>",
           config_path);
-      return GRN_FALSE;
+      return false;
     }
-    return GRN_TRUE;
+    return true;
   } else {
     return grn_db_config_create(ctx, s, path, "[db][open]");
   }
@@ -6350,20 +6350,20 @@ exit:
   GRN_API_RETURN((grn_obj *)res);
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj_flags type;
 
   if (column->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
+    return false;
   }
 
   type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
   return type == GRN_OBJ_COLUMN_VECTOR;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_column_is_index(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj_flags type;
@@ -6375,7 +6375,7 @@ grn_column_is_index(grn_ctx *ctx, grn_obj *column)
         continue;
       }
       if (a->action != GRN_ACCESSOR_GET_COLUMN_VALUE) {
-        return GRN_FALSE;
+        return false;
       }
 
       column = a->obj;
@@ -6383,7 +6383,7 @@ grn_column_is_index(grn_ctx *ctx, grn_obj *column)
   }
 
   if (column->header.type != GRN_COLUMN_INDEX) {
-    return GRN_FALSE;
+    return false;
   }
 
   type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
