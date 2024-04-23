@@ -1,0 +1,18 @@
+table_create Names TABLE_HASH_KEY UInt64
+column_create Names name COLUMN_SCALAR LongText
+
+load --table Names
+[
+  ["_key","name"],
+  [1,"山田　太郎"]
+]
+
+table_create Names_index TABLE_PAT_KEY ShortText \
+  --default_tokenizer "TokenNgram(\"report_source_location\", true)" \
+  --normalizer "NormalizerNFKC150(\"report_source_offset\", true)"
+column_create Names_index index COLUMN_INDEX|WITH_POSITION Names name
+
+select Names \
+  --match_columns 'name' \
+  --query '山田 太' \
+  --output_columns 'highlight_html(name, Names_index)'
