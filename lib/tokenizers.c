@@ -1161,6 +1161,51 @@ ngram_next(grn_ctx *ctx,
               break;
             }
           }
+        } else if (tokenizer->ctypes && pos > 0) {
+          const uint_least8_t *ctypes = tokenizer->ctypes + pos;
+          /*
+           * a: U+3042 HIRAGANA LETTER A
+           * i: U+3044 HIRAGANA LETTER I
+           *
+           * Input: "a i"
+           *         ^ ^
+           *         | pos
+           *        pos - 1
+           * tokenizer->ctypes:
+           *   [GRN_CHAR_HIRAGANA|GRN_CHAR_BLANK, GRN_CHAR_HIRAGANA]
+           *                                      ^
+           *                                      ctypes
+           * tokenizer->checks:  [3, 0, 0, 4, 0, 0]
+           *                               ^
+           *                               checks
+           * tokenizer->offsets: [0, 4]
+           *                         ^
+           *                         offsets
+           */
+          if (GRN_CHAR_IS_BLANK(ctypes[-1])) {
+            /*
+             * checks[-1] -> 0
+             * checks[-2] -> 0
+             * checks[-3] -> 3 <- This is used.
+             */
+            int16_t source_previous_character_length = 0;
+            int32_t i;
+            /* This loop is for muti-bytes characters. */
+            for (i = -1; (checks + i) > tokenizer->checks; i--) {
+              if (checks[i] > 0) {
+                source_previous_character_length = checks[i];
+                break;
+              }
+            }
+            /* 4 - 0 -> 4 */
+            uint64_t n_source_leading_bytes = offsets[0] - offsets[-1];
+            /* 4 - 3 -> 1 */
+            int16_t n_source_leading_space_bytes =
+              n_source_leading_bytes - source_previous_character_length;
+            /* 4 - 1 -> 1 */
+            source_first_character_length =
+              checks[0] - n_source_leading_space_bytes;
+          }
         }
         {
           ptrdiff_t i;
