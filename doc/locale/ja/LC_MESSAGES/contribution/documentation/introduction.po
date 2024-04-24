@@ -171,12 +171,3 @@ msgstr "変更がすべて反映されているかを確認します"
 
 msgid "Click the `Create Pull Request` button and send your pull request"
 msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
-
-msgid "Update"
-msgstr "更新"
-
-msgid "You can find sources of documentation at `doc/source/`. The sources should be written in English. See {doc}`i18n` about how to translate documentation."
-msgstr "ドキュメントのソースは `doc/source/` にあります。ソースは英語で書かれているはずです。ドキュメントの翻訳方法については、{doc}`i18n` をご覧ください。"
-
-msgid "You can update the target file when you update the existing documentation file."
-msgstr "既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新できます。"
