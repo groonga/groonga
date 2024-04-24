@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -3052,6 +3052,8 @@ grn_nfkc_normalize(grn_ctx *ctx,
           context->n_characters--;
         }
       }
+      bool have_ignored_character = false;
+      bool have_used_character = false;
       for (; current < current_end; current += current_length) {
         current_length =
           (size_t)grn_charlen_(ctx, current, current_end, GRN_ENC_UTF8);
@@ -3067,7 +3069,7 @@ grn_nfkc_normalize(grn_ctx *ctx,
             context->t[-1] |= GRN_CHAR_BLANK;
           }
           if (!data.options->include_removed_source_location) {
-            source_ += current_length;
+            have_ignored_character = true;
           }
         } else if (grn_nfkc_normalize_remove_target_non_blank_character_p(
                      ctx,
@@ -3075,9 +3077,10 @@ grn_nfkc_normalize(grn_ctx *ctx,
                      current,
                      current_length)) {
           if (!data.options->include_removed_source_location) {
-            source_ += current_length;
+            have_ignored_character = true;
           }
         } else {
+          have_used_character = true;
           if (context->dest_end <= context->d + current_length) {
             grn_nfkc_normalize_expand(ctx, &data, current_length);
             if (ctx->rc != GRN_SUCCESS) {
@@ -3114,6 +3117,9 @@ grn_nfkc_normalize(grn_ctx *ctx,
                          (const unsigned char *)(data.string->original));
           }
         }
+      }
+      if (have_ignored_character && !have_used_character) {
+        source_ = source + source_char_length;
       }
     }
   }
