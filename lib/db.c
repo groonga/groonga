@@ -2539,7 +2539,7 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
     grn_id range = DB_OBJ(obj)->range;
     switch (obj->header.type) {
     case GRN_COLUMN_VAR_SIZE:
-      {
+      if (!grn_obj_is_empty(ctx, obj, id)) {
         grn_obj buf;
         GRN_VOID_INIT(&buf);
         rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
