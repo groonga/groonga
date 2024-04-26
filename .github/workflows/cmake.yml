@@ -371,7 +371,9 @@ jobs:
             -v
       - name: "Test: mruby"
         run: |
-          USE_SYSTEM=yes test/mruby/run-test.rb
+          DYLD_LIBRARY_PATH=/usr/local/lib \
+            USE_SYSTEM=yes \
+            test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
           grntest \
