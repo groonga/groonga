@@ -3484,6 +3484,35 @@ grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
   return size;
 }
 
+bool
+grn_ja_is_empty(grn_ctx *ctx, grn_ja *ja, grn_id id)
+{
+  grn_ja_einfo *einfo = NULL, *ei;
+  uint32_t lseg, *pseg, pos, size;
+  lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
+  pos = id & JA_M_EINFO_IN_A_SEGMENT;
+  pseg = &ja->header->element_segs[lseg];
+  if (*pseg == JA_ELEMENT_SEG_VOID) {
+    return true;
+  }
+  einfo = grn_io_seg_ref(ctx, ja->io, *pseg);
+  if (!einfo) {
+    return true;
+  }
+  ei = &einfo[pos];
+  if (ETINY_P(ei)) {
+    ETINY_DEC(ei, size);
+  } else {
+    if (EHUGE_P(ei)) {
+      size = ei->u.h.size;
+    } else {
+      size = (ei->u.n.c2 << 16) + ei->u.n.size;
+    }
+  }
+  grn_io_seg_unref(ctx, ja->io, *pseg);
+  return size == 0;
+}
+
 grn_rc
 grn_ja_element_info(grn_ctx *ctx,
                     grn_ja *ja,
