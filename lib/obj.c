@@ -1387,6 +1387,18 @@ grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
   return memchr(name, GRN_DB_DELIMITER, (size_t)name_len) != NULL;
 }
 
+bool
+grn_obj_is_empty(grn_ctx *ctx, grn_obj *obj, grn_id id)
+{
+  if (obj->header.type == GRN_COLUMN_VAR_SIZE) {
+    return grn_ja_is_empty(ctx, (grn_ja *)obj, id);
+  }
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[obj][is-empty] unsupported type: %s",
+      grn_obj_type_to_string(obj->header.type));
+  return false;
+}
+
 grn_io *
 grn_obj_get_io(grn_ctx *ctx, grn_obj *obj)
 {
