@@ -2539,25 +2539,11 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
     grn_id range = DB_OBJ(obj)->range;
     switch (obj->header.type) {
     case GRN_COLUMN_VAR_SIZE:
-      switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-      case GRN_OBJ_COLUMN_SCALAR:
-        {
-          grn_obj buf;
-          GRN_VOID_INIT(&buf);
-          rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
-          GRN_OBJ_FIN(ctx, &buf);
-        }
-        break;
-      case GRN_OBJ_COLUMN_VECTOR:
-        {
-          grn_obj buf;
-          GRN_VOID_INIT(&buf);
-          rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
-          GRN_OBJ_FIN(ctx, &buf);
-        }
-        break;
-      default:
-        break;
+      {
+        grn_obj buf;
+        GRN_VOID_INIT(&buf);
+        rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
+        GRN_OBJ_FIN(ctx, &buf);
       }
       break;
     case GRN_COLUMN_FIX_SIZE:
