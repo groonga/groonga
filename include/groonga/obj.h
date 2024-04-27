@@ -97,13 +97,13 @@ GRN_API bool
 grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_value_accessor(grn_ctx *ctx, grn_obj *obj);

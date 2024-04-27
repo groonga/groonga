@@ -589,55 +589,55 @@ grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
          obj->header.type == GRN_COLUMN_VAR_SIZE;
 }
 
-grn_bool
+bool
 grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_COLUMN_INDEX;
 }
 
-grn_bool
+bool
 grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_ACCESSOR;
 }
 
-grn_bool
+bool
 grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!grn_obj_is_accessor(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   accessor = (grn_accessor *)obj;
   if (accessor->next) {
-    return GRN_FALSE;
+    return false;
   }
 
   return accessor->action == GRN_ACCESSOR_GET_ID;
 }
 
-grn_bool
+bool
 grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!grn_obj_is_accessor(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   accessor = (grn_accessor *)obj;
   if (accessor->next) {
-    return GRN_FALSE;
+    return false;
   }
 
   return accessor->action == GRN_ACCESSOR_GET_KEY;
