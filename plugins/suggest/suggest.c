@@ -853,7 +853,7 @@ learner_fin_submit_learn(grn_ctx *ctx, grn_suggest_learner *learner)
   GRN_BULK_REWIND(&(learner->pre_events));
 }
 
-static grn_bool
+static bool
 learner_is_valid_input(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   return learner->post_event_id && learner->post_item_id && learner->seq_id;
