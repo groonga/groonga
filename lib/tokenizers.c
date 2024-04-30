@@ -587,9 +587,6 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
       } else {
         GRN_TEXT_PUT(ctx, &(tokenizer->loose.text), normalized, length);
         *loose_types = *types;
-        if (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*types)) {
-          *loose_types &= (uint_least8_t)(~GRN_STR_BLANK);
-        }
         loose_types++;
         if (loose_checks) {
           int i;
@@ -989,6 +986,8 @@ ngram_next(grn_ctx *ctx,
   const uint64_t *offsets =
     tokenizer->offsets ? tokenizer->offsets + pos : NULL;
   grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
+  const bool in_loose_blank_mode =
+    tokenizer->loose.ing && tokenizer->options.loose_blank;
 
   if (tokenizer->checks) {
     checks = tokenizer->checks + (p - tokenizer->start);
@@ -1030,7 +1029,8 @@ ngram_next(grn_ctx *ctx,
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
+      if (!in_loose_blank_mode &&
+          /* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
         break;
       }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) {
@@ -1045,7 +1045,8 @@ ngram_next(grn_ctx *ctx,
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
+      if (!in_loose_blank_mode &&
+          /* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) {
         break;
       }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) {
@@ -1060,7 +1061,8 @@ ngram_next(grn_ctx *ctx,
       n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
-      if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) {
+      if (!in_loose_blank_mode && !tokenizer->options.ignore_blank &&
+          GRN_STR_ISBLANK(*cp)) {
         break;
       }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) {
@@ -1099,7 +1101,8 @@ ngram_next(grn_ctx *ctx,
              (cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
         if (cp) {
           LOOSE_NEED_CHECK(cp, tokenizer);
-          if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) {
+          if (!in_loose_blank_mode && !tokenizer->options.ignore_blank &&
+              GRN_STR_ISBLANK(*cp)) {
             break;
           }
           cp++;
