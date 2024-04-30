@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -660,7 +660,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
           grn_table_add(ctx, chunks, &id, sizeof(grn_id), &added);
           ctx->encoding = encoding;
         }
-        if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+        if (grn_logger_pass(ctx, log_level)) {
           void *key;
           int key_size;
           key_size = grn_table_cursor_get_key(ctx, cursor, &key);
