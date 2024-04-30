@@ -732,7 +732,6 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
       {
         grn_id *ids;
         uint32_t key_size;
-        size_t j;
         size_t n_ids;
         grn_highlighter_location candidate;
         grn_highlighter_location *first = raw_token_locations + i;
@@ -749,37 +748,17 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         }
         n_ids = key_size / sizeof(grn_id);
         candidate.offset = first->offset;
-        if (n_ids == 1 && grn_ids_is_included(raw_lazy_keyword_ids,
-                                              n_lazy_keyword_ids,
-                                              ids[0])) {
-          candidate.length = first->first_character_length;
-        } else if (first->have_overlap && n_ids > 1) {
-          candidate.length = first->first_character_length;
+        if (n_ids == 1) {
+          if (grn_ids_is_included(raw_lazy_keyword_ids,
+                                  n_lazy_keyword_ids,
+                                  ids[0])) {
+            candidate.length = first->first_character_length;
+          } else {
+            candidate.length = first->length;
+          }
         } else {
-          candidate.length = first->length;
-        }
-        for (j = 1; j < n_ids; j++) {
-          grn_highlighter_location *current = raw_token_locations + i + j;
-          grn_highlighter_location *previous = current - 1;
-          uint32_t current_length;
-          uint32_t previous_length;
-          if (current->have_overlap && j + 1 < n_ids) {
-            current_length = current->first_character_length;
-          } else {
-            current_length = current->length;
-          }
-          if (previous->have_overlap && j + 1 < n_ids) {
-            previous_length = previous->first_character_length;
-          } else {
-            previous_length = previous->length;
-          }
-          if (current->offset == previous->offset) {
-            if (current_length > previous_length) {
-              candidate.length += current_length - previous_length;
-            }
-          } else {
-            candidate.length += current_length;
-          }
+          grn_highlighter_location *last = raw_token_locations + i + n_ids - 1;
+          candidate.length = last->offset + last->length - candidate.offset;
         }
         GRN_TEXT_PUT(ctx, candidates, &candidate, sizeof(candidate));
         grn_highlighter_log_location(ctx,
