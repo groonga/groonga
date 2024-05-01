@@ -19,11 +19,11 @@
 #include "grn_token.h"
 #include "grn_token_metadata.h"
 
-grn_rc
-grn_token_init(grn_ctx *ctx, grn_token *token)
+static inline grn_rc
+grn_token_init_internal(grn_ctx *ctx, grn_token *token, bool deep)
 {
   GRN_API_ENTER;
-  GRN_TEXT_INIT(&(token->data), GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_INIT(&(token->data), deep ? 0 : GRN_OBJ_DO_SHALLOW_COPY);
   token->status = GRN_TOKEN_CONTINUE;
   token->source_offset = 0;
   token->source_length = 0;
@@ -34,6 +34,18 @@ grn_token_init(grn_ctx *ctx, grn_token *token)
   token->position = 0;
   token->weight = 0;
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_token_init(grn_ctx *ctx, grn_token *token)
+{
+  return grn_token_init_internal(ctx, token, false);
+}
+
+grn_rc
+grn_token_init_deep(grn_ctx *ctx, grn_token *token)
+{
+  return grn_token_init_internal(ctx, token, true);
 }
 
 grn_rc
