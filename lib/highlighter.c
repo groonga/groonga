@@ -714,29 +714,24 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
 }
 
 static void
-grn_highlighter_highlight_lexicon(grn_ctx *ctx,
-                                  grn_highlighter *highlighter,
-                                  const char *text,
-                                  size_t text_length,
-                                  grn_obj *output)
+grn_highlighter_tokenize_lexicon(grn_ctx *ctx,
+                                 grn_highlighter *highlighter,
+                                 const char *text,
+                                 size_t text_length)
 {
   const char *tag = "[highlighter][highlight][lexicon]";
   grn_log_level log_level = GRN_LOG_DEBUG;
-  grn_token_cursor *cursor;
-  grn_obj *lazy_keyword_ids = &(highlighter->lexicon.lazy_keyword_ids);
   grn_obj *token_ids = &(highlighter->lexicon.token_ids);
   grn_obj *token_locations = &(highlighter->lexicon.token_locations);
-  grn_obj *candidates = &(highlighter->lexicon.candidates);
 
-  GRN_BULK_REWIND(lazy_keyword_ids);
   GRN_BULK_REWIND(token_ids);
   GRN_BULK_REWIND(token_locations);
-  cursor = grn_token_cursor_open(ctx,
-                                 highlighter->lexicon.object,
-                                 text,
-                                 text_length,
-                                 GRN_TOKENIZE_ADD,
-                                 0);
+  grn_token_cursor *cursor = grn_token_cursor_open(ctx,
+                                                   highlighter->lexicon.object,
+                                                   text,
+                                                   text_length,
+                                                   GRN_TOKENIZE_ADD,
+                                                   0);
   if (!cursor) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -770,6 +765,23 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
   }
   grn_token_cursor_close(ctx, cursor);
   GRN_LOG(ctx, log_level, "%s[tokenize][end]", tag);
+}
+
+static void
+grn_highlighter_highlight_lexicon(grn_ctx *ctx,
+                                  grn_highlighter *highlighter,
+                                  const char *text,
+                                  size_t text_length,
+                                  grn_obj *output)
+{
+  const char *tag = "[highlighter][highlight][lexicon]";
+  grn_log_level log_level = GRN_LOG_DEBUG;
+  grn_obj *lazy_keyword_ids = &(highlighter->lexicon.lazy_keyword_ids);
+  grn_obj *token_ids = &(highlighter->lexicon.token_ids);
+  grn_obj *token_locations = &(highlighter->lexicon.token_locations);
+  grn_obj *candidates = &(highlighter->lexicon.candidates);
+
+  GRN_BULK_REWIND(lazy_keyword_ids);
 
   {
     grn_obj *lexicon = highlighter->lexicon.object;
@@ -1112,6 +1124,17 @@ grn_highlighter_highlight(grn_ctx *ctx,
                                               text,
                                               (size_t)text_length);
     goto exit;
+  }
+
+  if (highlighter->lexicon.object) {
+    /* We need to tokenize the target text with GRN_TOKENIZE_ADD
+     * before we call grn_highlighter_prepare_lexicon() because
+     * grn_highlighter_prepare_lexicon() assumes that the tokens of
+     * the target text exists in highlighter->lexicon.object. */
+    grn_highlighter_tokenize_lexicon(ctx, highlighter, text, text_length);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
   }
 
   if (highlighter->need_prepared) {
