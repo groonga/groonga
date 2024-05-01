@@ -192,6 +192,166 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
 }
 
 static void
+grn_highlighter_prepare_lexicon_add_token_id_chunks(
+  grn_ctx *ctx,
+  grn_highlighter *highlighter,
+  grn_token **tokens,
+  size_t n_tokens,
+  grn_obj *token_id_chunk)
+{
+  if (n_tokens == 0) {
+    if (GRN_TEXT_LEN(token_id_chunk) == 0) {
+      return;
+    }
+    grn_encoding encoding = ctx->encoding;
+    /* token_id_chunk is a binary data */
+    ctx->encoding = GRN_ENC_NONE;
+    grn_table_add(ctx,
+                  highlighter->lexicon.token_id_chunks,
+                  GRN_TEXT_VALUE(token_id_chunk),
+                  (unsigned int)GRN_TEXT_LEN(token_id_chunk),
+                  NULL);
+    ctx->encoding = encoding;
+  } else {
+    grn_token *token = tokens[0];
+    grn_obj *token_data = grn_token_get_data(ctx, token);
+    /* Expand immature token later. */
+    if (grn_token_get_force_prefix_search(ctx, token) &&
+        highlighter->lexicon.object->header.type != GRN_TABLE_HASH_KEY) {
+      grn_obj *lazy_keywords = &(highlighter->lexicon.lazy_keywords);
+      grn_vector_add_element(ctx,
+                             lazy_keywords,
+                             GRN_TEXT_VALUE(token_data),
+                             (uint32_t)GRN_TEXT_LEN(token_data),
+                             0,
+                             GRN_DB_TEXT);
+    }
+    grn_token_status token_status = grn_token_get_status(ctx, token);
+    if (token_status & GRN_TOKEN_UNMATURED &&
+        token_status & GRN_TOKEN_OVERLAP) {
+      /* This skips the current token.
+       *
+       * GRN_TOKENIZE_GET don't emit immature and overlapped token
+       * such as "c" in ["ab", "bc", "c"] for 'abc' with
+       * TokenNgram. But GRN_TOKENIZE_ONLY doesn't do it. So we do it
+       * manually here. */
+      grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                          highlighter,
+                                                          tokens + 1,
+                                                          n_tokens - 1,
+                                                          token_id_chunk);
+    } else {
+      grn_id token_id = GRN_ID_NIL;
+      /* We should not use grn_table_get() here. If we use
+       * grn_table_get(), token is normalized twice. */
+      switch (highlighter->lexicon.object->header.type) {
+      case GRN_TABLE_HASH_KEY:
+        token_id = grn_hash_get(ctx,
+                                (grn_hash *)(highlighter->lexicon.object),
+                                GRN_TEXT_VALUE(token_data),
+                                GRN_TEXT_LEN(token_data),
+                                NULL);
+        break;
+      case GRN_TABLE_PAT_KEY:
+        token_id = grn_pat_get(ctx,
+                               (grn_pat *)(highlighter->lexicon.object),
+                               GRN_TEXT_VALUE(token_data),
+                               GRN_TEXT_LEN(token_data),
+                               NULL);
+        break;
+      case GRN_TABLE_DAT_KEY:
+        token_id = grn_dat_get(ctx,
+                               (grn_dat *)(highlighter->lexicon.object),
+                               GRN_TEXT_VALUE(token_data),
+                               GRN_TEXT_LEN(token_data),
+                               NULL);
+        break;
+      }
+      /* GRN_TOKENIZE_ONLY may emit a token that doesn't exist in
+       * lexicon. */
+      if (token_id == GRN_ID_NIL) {
+        /* Lexicon: ["ab", "bc", "c"]
+         * Input: "abd"
+         * Tokens: ["ab", "bd", "d"]
+         *                ^
+         *                The current token
+         *
+         * Register the current token ID chunk (["ab"]), ignore "bd"
+         * and start a new token ID chunk ([]) with the next token
+         * ("d").
+         */
+
+        /* Register the current token ID chunk. */
+        grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                            highlighter,
+                                                            NULL,
+                                                            0,
+                                                            token_id_chunk);
+        /* Ignore the current token and start a new token ID chunk
+         * from here. */
+        GRN_BULK_REWIND(token_id_chunk);
+        grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                            highlighter,
+                                                            tokens + 1,
+                                                            n_tokens - 1,
+                                                            token_id_chunk);
+      } else {
+        /* This is for loose mode. In loose mode, we have two
+         * tokenized blocks that are separated by
+         * GRN_TOKENIER_END_MARK_UTF8 with GRN_TOKENIZE_ONLY.
+         *
+         * Example:
+         *   Tokenizer: TokenNgram("loose_blank", true)
+         *   Normalizer: NormalizerNFKC150
+         *   Input: "a b"
+         *   Tokens: ["a", "b", "U+FFF0", "ab"]
+         *                      ^
+         *                      GRN_TOKENIZER_END_MARK_UTF8
+         *
+         * If we found the separator, we split tokens with the
+         * separator and create two token ID chunks. */
+        if (GRN_TEXT_LEN(token_data) == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
+            memcmp(GRN_TEXT_VALUE(token_data),
+                   GRN_TOKENIZER_END_MARK_UTF8,
+                   GRN_TOKENIZER_END_MARK_UTF8_LEN) == 0) {
+          /* Register the current token ID chunk. */
+          grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                              highlighter,
+                                                              NULL,
+                                                              0,
+                                                              token_id_chunk);
+          if (n_tokens > 1) {
+            /* If we have more tokens after we skip the
+             * GRN_TOKENIZER_END_MARK_UTF8 token, clear the current
+             * token ID chunk and start a new token ID chunk for
+             * tokens followed by the GRN_TOKENIZER_END_MARK_UTF8
+             * token. */
+            GRN_BULK_REWIND(token_id_chunk);
+            grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                                highlighter,
+                                                                tokens + 1,
+                                                                n_tokens - 1,
+                                                                token_id_chunk);
+          }
+        } else {
+          /* This is an existing token. We just add the current token
+           * to the current token ID chunk and continue collecting
+           * more tokens. */
+          GRN_RECORD_PUT(ctx, token_id_chunk, token_id);
+          grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                              highlighter,
+                                                              tokens + 1,
+                                                              n_tokens - 1,
+                                                              token_id_chunk);
+          grn_id used_token_id;
+          GRN_RECORD_POP(token_id_chunk, used_token_id);
+        }
+      }
+    }
+  }
+}
+
+static void
 grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   grn_obj *lazy_keywords = &(highlighter->lexicon.lazy_keywords);
@@ -244,7 +404,6 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
     const char *keyword;
     unsigned int keyword_length;
     grn_token_cursor *cursor;
-    grn_id token_id;
 
     keyword_length = grn_vector_get_element(ctx,
                                             &(highlighter->raw_keywords),
@@ -252,60 +411,53 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
                                             &keyword,
                                             NULL,
                                             NULL);
-    cursor = grn_token_cursor_open(ctx,
-                                   highlighter->lexicon.object,
-                                   keyword,
-                                   keyword_length,
-                                   GRN_TOKENIZE_ADD,
-                                   0);
-    if (!cursor) {
-      continue;
-    }
-    while (grn_token_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-    }
-    grn_token_cursor_close(ctx, cursor);
 
+    grn_obj tokens;
+    /* grn_token isn't grn_obj but we use GRN_PTR here for easy to implement...
+     */
+    GRN_PTR_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
     cursor = grn_token_cursor_open(ctx,
                                    highlighter->lexicon.object,
                                    keyword,
                                    keyword_length,
-                                   GRN_TOKENIZE_GET,
+                                   GRN_TOKENIZE_ONLY,
                                    0);
     if (!cursor) {
       continue;
     }
     GRN_BULK_REWIND(token_id_chunk);
-    while ((token_id = grn_token_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-      grn_token *token;
-      GRN_TEXT_PUT(ctx, token_id_chunk, &token_id, sizeof(grn_id));
-      token = grn_token_cursor_get_token(ctx, cursor);
-      if (grn_token_get_force_prefix_search(ctx, token) &&
-          highlighter->lexicon.object->header.type != GRN_TABLE_HASH_KEY) {
-        const char *data;
-        size_t data_length;
-
-        data = grn_token_get_data_raw(ctx, token, &data_length);
-        grn_vector_add_element(ctx,
-                               lazy_keywords,
-                               data,
-                               (uint32_t)data_length,
-                               0,
-                               GRN_DB_TEXT);
+    while (cursor->status != GRN_TOKEN_CURSOR_DONE) {
+      grn_token_cursor_next(ctx, cursor);
+      grn_token *token = grn_token_cursor_get_token(ctx, cursor);
+      /* This may be needless. */
+      grn_obj *token_data = grn_token_get_data(ctx, token);
+      if (GRN_TEXT_LEN(token_data) == 0) {
+        break;
       }
+      grn_token *copied_token = GRN_MALLOC(sizeof(grn_token));
+      grn_token_init_deep(ctx, copied_token);
+      grn_token_copy(ctx, copied_token, token);
+      GRN_PTR_PUT(ctx, &tokens, copied_token);
     }
     grn_token_cursor_close(ctx, cursor);
 
-    {
-      grn_encoding encoding = ctx->encoding;
-      /* token_id_chunk is a binary data */
-      ctx->encoding = GRN_ENC_NONE;
-      grn_table_add(ctx,
-                    highlighter->lexicon.token_id_chunks,
-                    GRN_TEXT_VALUE(token_id_chunk),
-                    (unsigned int)GRN_TEXT_LEN(token_id_chunk),
-                    NULL);
-      ctx->encoding = encoding;
+    size_t n_tokens = GRN_PTR_VECTOR_SIZE(&tokens);
+    if (n_tokens == 0) {
+      GRN_OBJ_FIN(ctx, &tokens);
+      continue;
     }
+    grn_token **raw_tokens = (grn_token **)GRN_BULK_HEAD(&tokens);
+    grn_highlighter_prepare_lexicon_add_token_id_chunks(ctx,
+                                                        highlighter,
+                                                        raw_tokens,
+                                                        n_tokens,
+                                                        token_id_chunk);
+    size_t i;
+    for (i = 0; i < n_tokens; i++) {
+      grn_token_fin(ctx, raw_tokens[i]);
+      GRN_FREE(raw_tokens[i]);
+    }
+    GRN_OBJ_FIN(ctx, &tokens);
   }
 }
 
