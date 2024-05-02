@@ -1211,7 +1211,7 @@ ngram_next(grn_ctx *ctx,
               int16_t source_previous_character_length = 0;
               int32_t i;
               /* This loop is for muti-bytes characters. */
-              for (i = -1; (checks + i) > tokenizer->checks; i--) {
+              for (i = -1; (checks + i) >= tokenizer->checks; i--) {
                 if (checks[i] > 0) {
                   source_previous_character_length = checks[i];
                   break;
