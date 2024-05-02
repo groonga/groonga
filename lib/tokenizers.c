@@ -572,10 +572,12 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
       if (length == 0) {
         break;
       }
-      if ((tokenizer->options.loose_symbol &&
-           GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL) ||
-          (!tokenizer->options.remove_blank && tokenizer->options.loose_blank &&
-           GRN_STR_ISBLANK(*types))) {
+      const bool is_loose_symbol = (tokenizer->options.loose_symbol &&
+                                    GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL);
+      const bool is_loose_blank =
+        (!tokenizer->options.remove_blank && tokenizer->options.loose_blank &&
+         GRN_STR_ISBLANK(*types));
+      if (is_loose_symbol || is_loose_blank) {
         if (tokenizer->options.include_removed_source_location) {
           if (!removed_checks) {
             removed_checks = checks;
