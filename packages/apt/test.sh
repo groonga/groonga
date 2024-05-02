@@ -69,7 +69,7 @@ if groonga --version | grep -q apache-arrow; then
     g++ \
     libre2-dev
   if [ "${code_name}" == "bullseye" ]; then
-    sed -i -e 's/-std=c++11//g' /usr/lib/x86_64-linux-gnu/pkgconfig/re2.pc
+    sed -i -e 's/-std=c++11//g' /usr/lib/*/pkgconfig/re2.pc
   fi
   MAKEFLAGS=-j$(nproc) gem install red-arrow
 fi
