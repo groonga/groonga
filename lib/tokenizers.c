@@ -1174,9 +1174,13 @@ ngram_next(grn_ctx *ctx,
              * normalized character doesn't have the previous
              * normalized character's type. */
 
-            /* TODO: This may include leading spaces. It will not be a
-             * problem for highlighting. So we use this for now. */
-            source_first_character_length = offsets[1] - offsets[0];
+            if (tokenizer->options.include_removed_source_location) {
+              source_first_character_length = checks[0] - offsets[0];
+            } else {
+              /* TODO: This may include leading spaces. It will not be a
+               * problem for highlighting. So we use this for now. */
+              source_first_character_length = offsets[1] - offsets[0];
+            }
           } else {
             const uint_least8_t *ctypes = tokenizer->ctypes + pos;
             /*

@@ -1,5 +1,3 @@
-# TODO: source_first_character_length must be 3 not 4 but we can't
-# detect the leading space after "あ". So we use 4 for now.
 tokenize \
   'TokenNgram("report_source_location", true)' \
   " あ " \
