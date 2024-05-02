@@ -1130,10 +1130,17 @@ grn_highlighter_highlight(grn_ctx *ctx,
     /* We need to tokenize the target text with GRN_TOKENIZE_ADD
      * before we call grn_highlighter_prepare_lexicon() because
      * grn_highlighter_prepare_lexicon() assumes that the tokens of
-     * the target text exists in highlighter->lexicon.object. */
+     * the target text exists in highlighter->lexicon.object.
+     *
+     * If we have any new tokens, we need to re-prepare. */
+    uint32_t size_before = grn_table_size(ctx, highlighter->lexicon.object);
     grn_highlighter_tokenize_lexicon(ctx, highlighter, text, text_length);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
+    }
+    uint32_t size_after = grn_table_size(ctx, highlighter->lexicon.object);
+    if (size_after > size_before) {
+      highlighter->need_prepared = true;
     }
   }
 
