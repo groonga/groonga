@@ -1230,11 +1230,9 @@ ngram_next(grn_ctx *ctx,
         }
         {
           ptrdiff_t i;
-          for (i = 0; i < data_size; i++) {
+          for (i = 0; i < data_size && source_first_character_length == 0; i++) {
             if (checks[i] > 0) {
-              if (source_first_character_length == 0) {
-                source_first_character_length = checks[i];
-              }
+              source_first_character_length = checks[i];
             }
           }
         }
