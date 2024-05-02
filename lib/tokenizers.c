@@ -530,7 +530,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
     int16_t *loose_checks = NULL;
     uint64_t *loose_offsets = NULL;
     const int16_t *removed_checks = NULL;
-    uint64_t last_offset = 0;
+    int64_t last_offset = -1;
     unsigned int n_chars = 0;
 
     tokenizer->loose.ctypes =
@@ -583,7 +583,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
             removed_checks = checks;
           }
         }
-        if (offsets && last_offset == 0) {
+        if (offsets && last_offset == -1) {
           last_offset = *offsets;
         }
       } else {
@@ -609,13 +609,9 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
           loose_checks += length;
         }
         if (loose_offsets) {
-          if (last_offset == 0) {
-            *loose_offsets = *offsets;
-          } else {
-            *loose_offsets = last_offset;
-          }
+          *loose_offsets = *offsets;
           loose_offsets++;
-          last_offset = 0;
+          last_offset = -1;
         }
         n_chars++;
       }
@@ -630,10 +626,11 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
     }
     *loose_types = *types;
     if (offsets) {
-      if (last_offset) {
-        *loose_offsets = last_offset;
-      } else {
+      if (last_offset == -1) {
         *loose_offsets = *offsets;
+      } else {
+        /* Remove trailing ignored characters. */
+        *loose_offsets = (uint64_t)last_offset;
       }
     }
     tokenizer->start =
@@ -1152,92 +1149,26 @@ ngram_next(grn_ctx *ctx,
     grn_token_set_data(ctx, token, p, (int)data_size);
     grn_token_set_status(ctx, token, status);
     grn_token_set_overlap(ctx, token, tokenizer->overlap);
-    /* TODO: Clean and complete... */
     if (offsets) {
       grn_token_set_source_offset(ctx, token, offsets[0]);
       if (checks) {
-        int16_t source_first_character_length = 0;
-        if (checks[0] == -1) {
-          ssize_t n_leading_bytes = p - tokenizer->start;
-          ssize_t i;
-          for (i = 1; i <= n_leading_bytes; i++) {
-            if (checks[-i] > 0) {
-              source_first_character_length = checks[-i];
-              break;
-            }
-          }
-        } else if (tokenizer->ctypes) {
-          if (pos == 0) {
-            /* We can't use GRN_CHAR_IS_BLANK() for the first
-             * normalized character. Because GRN_CHAR_BLANK is added
-             * to the previous normalized character's type. The first
-             * normalized character doesn't have the previous
-             * normalized character's type. */
-
-            if (tokenizer->options.include_removed_source_location) {
-              source_first_character_length = checks[0] - offsets[0];
-            } else {
-              /* TODO: This may include leading spaces. It will not be a
-               * problem for highlighting. So we use this for now. */
-              source_first_character_length = offsets[1] - offsets[0];
-            }
-          } else {
-            const uint_least8_t *ctypes = tokenizer->ctypes + pos;
-            /*
-             * a: U+3042 HIRAGANA LETTER A
-             * i: U+3044 HIRAGANA LETTER I
-             *
-             * Input: "a i"
-             *         ^ ^
-             *         | pos
-             *        pos - 1
-             * tokenizer->ctypes:
-             *   [GRN_CHAR_HIRAGANA|GRN_CHAR_BLANK, GRN_CHAR_HIRAGANA]
-             *                                      ^
-             *                                      ctypes
-             * tokenizer->checks:  [3, 0, 0, 4, 0, 0]
-             *                               ^
-             *                               checks
-             * tokenizer->offsets: [0, 4]
-             *                         ^
-             *                         offsets
-             */
-            if (GRN_CHAR_IS_BLANK(ctypes[-1])) {
-              /*
-               * checks[-1] -> 0
-               * checks[-2] -> 0
-               * checks[-3] -> 3 <- This is used.
-               */
-              int16_t source_previous_character_length = 0;
-              int32_t i;
-              /* This loop is for muti-bytes characters. */
-              for (i = -1; (checks + i) >= tokenizer->checks; i--) {
-                if (checks[i] > 0) {
-                  source_previous_character_length = checks[i];
-                  break;
-                }
-              }
-              /* 4 - 0 -> 4 */
-              uint64_t n_source_leading_bytes = offsets[0] - offsets[-1];
-              /* 4 - 3 -> 1 */
-              int16_t n_source_leading_space_bytes =
-                n_source_leading_bytes - source_previous_character_length;
-              /* 4 - 1 -> 1 */
-              source_first_character_length =
-                checks[0] - n_source_leading_space_bytes;
-            }
-          }
-        }
-        {
-          ptrdiff_t i;
-          for (i = 0; i < data_size && source_first_character_length == 0; i++) {
-            if (checks[i] > 0) {
-              source_first_character_length = checks[i];
-            }
-          }
-        }
         uint32_t token_length = (uint32_t)(offsets[n_characters] - offsets[0]);
         grn_token_set_source_length(ctx, token, token_length);
+        int16_t source_first_character_length = 0;
+        if (token_length > 0) {
+          size_t source_length;
+          const char *source =
+            grn_tokenizer_query_get_raw_string(ctx,
+                                               tokenizer->query,
+                                               &source_length);
+          int length = grn_charlen_(ctx,
+                                    source + offsets[0],
+                                    source + source_length,
+                                    encoding);
+          if (length > 0) {
+            source_first_character_length = length;
+          }
+        }
         grn_token_set_source_first_character_length(
           ctx,
           token,

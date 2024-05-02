@@ -138,7 +138,7 @@ tokenize   'TokenNgram("report_source_location", true,               "loose_symb
       "force_prefix": false,
       "force_prefix_search": false,
       "source_offset": 1,
-      "source_length": 2,
+      "source_length": 3,
       "source_first_character_length": 1
     },
     {
@@ -155,9 +155,9 @@ tokenize   'TokenNgram("report_source_location", true,               "loose_symb
       "position": 16,
       "force_prefix": false,
       "force_prefix_search": false,
-      "source_offset": 3,
-      "source_length": 3,
-      "source_first_character_length": 2
+      "source_offset": 4,
+      "source_length": 2,
+      "source_first_character_length": 1
     },
     {
       "value": "23",
@@ -174,7 +174,7 @@ tokenize   'TokenNgram("report_source_location", true,               "loose_symb
       "force_prefix": false,
       "force_prefix_search": false,
       "source_offset": 6,
-      "source_length": 2,
+      "source_length": 3,
       "source_first_character_length": 1
     },
     {
@@ -191,9 +191,9 @@ tokenize   'TokenNgram("report_source_location", true,               "loose_symb
       "position": 20,
       "force_prefix": false,
       "force_prefix_search": false,
-      "source_offset": 8,
-      "source_length": 3,
-      "source_first_character_length": 2
+      "source_offset": 9,
+      "source_length": 2,
+      "source_first_character_length": 1
     },
     {
       "value": "67",
