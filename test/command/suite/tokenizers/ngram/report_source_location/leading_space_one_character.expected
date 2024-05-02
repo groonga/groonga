@@ -1,0 +1,19 @@
+tokenize   'TokenNgram("report_source_location", true)'   " あ"   'NormalizerNFKC150("report_source_offset", true)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "あ",
+      "position": 0,
+      "force_prefix": true,
+      "force_prefix_search": true,
+      "source_offset": 1,
+      "source_length": 3,
+      "source_first_character_length": 3
+    }
+  ]
+]

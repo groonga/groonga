@@ -1164,50 +1164,62 @@ ngram_next(grn_ctx *ctx,
               break;
             }
           }
-        } else if (tokenizer->ctypes && pos > 0) {
-          const uint_least8_t *ctypes = tokenizer->ctypes + pos;
-          /*
-           * a: U+3042 HIRAGANA LETTER A
-           * i: U+3044 HIRAGANA LETTER I
-           *
-           * Input: "a i"
-           *         ^ ^
-           *         | pos
-           *        pos - 1
-           * tokenizer->ctypes:
-           *   [GRN_CHAR_HIRAGANA|GRN_CHAR_BLANK, GRN_CHAR_HIRAGANA]
-           *                                      ^
-           *                                      ctypes
-           * tokenizer->checks:  [3, 0, 0, 4, 0, 0]
-           *                               ^
-           *                               checks
-           * tokenizer->offsets: [0, 4]
-           *                         ^
-           *                         offsets
-           */
-          if (GRN_CHAR_IS_BLANK(ctypes[-1])) {
+        } else if (tokenizer->ctypes) {
+          if (pos == 0) {
+            /* We can't use GRN_CHAR_IS_BLANK() for the first
+             * normalized character. Because GRN_CHAR_BLANK is added
+             * to the previous normalized character's type. The first
+             * normalized character doesn't have the previous
+             * normalized character's type. */
+
+            /* TODO: This may include leading spaces. It will not be a
+             * problem for highlighting. So we use this for now. */
+            source_first_character_length = offsets[1] - offsets[0];
+          } else {
+            const uint_least8_t *ctypes = tokenizer->ctypes + pos;
             /*
-             * checks[-1] -> 0
-             * checks[-2] -> 0
-             * checks[-3] -> 3 <- This is used.
+             * a: U+3042 HIRAGANA LETTER A
+             * i: U+3044 HIRAGANA LETTER I
+             *
+             * Input: "a i"
+             *         ^ ^
+             *         | pos
+             *        pos - 1
+             * tokenizer->ctypes:
+             *   [GRN_CHAR_HIRAGANA|GRN_CHAR_BLANK, GRN_CHAR_HIRAGANA]
+             *                                      ^
+             *                                      ctypes
+             * tokenizer->checks:  [3, 0, 0, 4, 0, 0]
+             *                               ^
+             *                               checks
+             * tokenizer->offsets: [0, 4]
+             *                         ^
+             *                         offsets
              */
-            int16_t source_previous_character_length = 0;
-            int32_t i;
-            /* This loop is for muti-bytes characters. */
-            for (i = -1; (checks + i) > tokenizer->checks; i--) {
-              if (checks[i] > 0) {
-                source_previous_character_length = checks[i];
-                break;
+            if (GRN_CHAR_IS_BLANK(ctypes[-1])) {
+              /*
+               * checks[-1] -> 0
+               * checks[-2] -> 0
+               * checks[-3] -> 3 <- This is used.
+               */
+              int16_t source_previous_character_length = 0;
+              int32_t i;
+              /* This loop is for muti-bytes characters. */
+              for (i = -1; (checks + i) > tokenizer->checks; i--) {
+                if (checks[i] > 0) {
+                  source_previous_character_length = checks[i];
+                  break;
+                }
               }
+              /* 4 - 0 -> 4 */
+              uint64_t n_source_leading_bytes = offsets[0] - offsets[-1];
+              /* 4 - 3 -> 1 */
+              int16_t n_source_leading_space_bytes =
+                n_source_leading_bytes - source_previous_character_length;
+              /* 4 - 1 -> 1 */
+              source_first_character_length =
+                checks[0] - n_source_leading_space_bytes;
             }
-            /* 4 - 0 -> 4 */
-            uint64_t n_source_leading_bytes = offsets[0] - offsets[-1];
-            /* 4 - 3 -> 1 */
-            int16_t n_source_leading_space_bytes =
-              n_source_leading_bytes - source_previous_character_length;
-            /* 4 - 1 -> 1 */
-            source_first_character_length =
-              checks[0] - n_source_leading_space_bytes;
           }
         }
         {
