@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1714553143066,
+  "lastUpdate": 1714611539630,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -20814,6 +20814,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02110590699999193,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001888999999999974 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "00efc11d3c4d7c06d11261f5bcb1c613e1cfa6b3",
+          "message": "highlighter lexicon: add missing re-prepare\n\nIf we have any new tokens in the target text, we need to\nre-prepare. Because grn_highlighter_prepare_lexicon() depends on\nexisting tokens in the lexicon. Because\ngrn_highlighter_prepare_lexicon() uses GRN_TOKENIZE_ONLY not\nGRN_TOKENIZE_ADD.",
+          "timestamp": "2024-05-02T09:51:36+09:00",
+          "tree_id": "588b9981a7aff4e0ea554d07abf601d628cb7072",
+          "url": "https://github.com/groonga/groonga/commit/00efc11d3c4d7c06d11261f5bcb1c613e1cfa6b3"
+        },
+        "date": 1714611538324,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36061199900001384,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.016480000000000106 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2592752850000011,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.013661999999999924 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015849139999943418,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00035099999999976816 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.024942387999999482,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003960000000000352 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.3753689540000096,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00035700000000016274 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.23267120300005217,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006357000000000196 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13212584400002925,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006032000000000093 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017020191000028717,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020249999999999713 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016726801999993768,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020309999999999773 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05355846300022904,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0069809999999998484 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.054100002999916796,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00825800000000071 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01824459800002387,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020850000000000313 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.026988096000081896,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001800999999999997 s\nthreads: undefined"
           }
         ]
       }
