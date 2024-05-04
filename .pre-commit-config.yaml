@@ -85,6 +85,7 @@ repos:
           ?lib/grn_request_canceler\.h|
           ?lib/grn_request_timer\.h|
           ?lib/grn_scan_info\.h|
+          ?lib/grn_scanner\.h|
           ?lib/grn_selector\.h|
           ?lib/grn_snip\.h|
           ?lib/grn_store\.h|

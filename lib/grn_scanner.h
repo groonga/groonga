@@ -31,9 +31,13 @@ typedef struct _grn_scaner {
   uint32_t n_sis;
 } grn_scanner;
 
-grn_scanner *grn_scanner_open(grn_ctx *ctx, grn_obj *expr,
-                              grn_operator op, bool record_exist);
-void grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner);
+grn_scanner *
+grn_scanner_open(grn_ctx *ctx,
+                 grn_obj *expr,
+                 grn_operator op,
+                 bool record_exist);
+void
+grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner);
 
 #ifdef __cplusplus
 }
