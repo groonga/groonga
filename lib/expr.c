@@ -7593,7 +7593,7 @@ grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer)
   grn_scanner *scanner;
 
   GRN_API_ENTER;
-  scanner = grn_scanner_open(ctx, expr, GRN_OP_OR, GRN_FALSE);
+  scanner = grn_scanner_open(ctx, expr, GRN_OP_OR, false);
   if (scanner) {
     grn_inspect_scan_info_list(ctx, buffer, scanner->sis, scanner->n_sis);
     grn_scanner_close(ctx, scanner);

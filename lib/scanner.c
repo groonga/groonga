@@ -22,7 +22,7 @@ grn_scanner *
 grn_scanner_open(grn_ctx *ctx,
                  grn_obj *expr,
                  grn_operator op,
-                 grn_bool record_exist)
+                 bool record_exist)
 {
   grn_scanner *scanner;
 
