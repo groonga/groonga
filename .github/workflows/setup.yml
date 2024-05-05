@@ -73,19 +73,41 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - "ubuntu:22.04"
           - "images:debian/12"
+          - "images:ubuntu/22.04"
+          - "images:ubuntu/24.04"
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: canonical/setup-lxd@v0.1.1
+      - name: Install Incus
+        run: |
+          # We can use the official Ubuntu APT repository when
+          # ubuntu-latest is Ubuntu 24.04.
+          sudo curl -fsSL https://pkgs.zabbly.com/key.asc -o /etc/apt/keyrings/zabbly.asc
+          cat <<SOURCES | sudo tee /etc/apt/sources.list.d/zabbly-incus-stable.sources
+          Enabled: yes
+          Types: deb
+          URIs: https://pkgs.zabbly.com/incus/stable
+          Suites: $(. /etc/os-release && echo ${VERSION_CODENAME})
+          Components: main
+          Architectures: $(dpkg --print-architecture)
+          Signed-By: /etc/apt/keyrings/zabbly.asc
+          SOURCES
+
+          sudo apt update
+          sudo apt install -y -V incus
+      - name: Allow egress network traffic flows for Incus
+        # https://linuxcontainers.org/incus/docs/main/howto/network_bridge_firewalld/#prevent-connectivity-issues-with-incus-and-docker
+        run: |
+          sudo iptables -I DOCKER-USER -i incusbr0 -j ACCEPT
+          sudo iptables -I DOCKER-USER -o incusbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
       - name: Setup
         run: |
           set -x
-          lxc launch ${{ matrix.image }} target
-          lxc config device add target host disk source=$PWD path=/host
-          lxc exec target -- /host/setup.sh
-          lxc exec target -- /host/build.sh /host /tmp/local /tmp/build
-          lxc stop target
-          lxc delete target
+          sudo incus launch ${{ matrix.image }} target
+          sudo incus config device add target host disk source=$PWD path=/host
+          sudo incus exec target -- /host/setup.sh
+          sudo incus exec target -- /host/build.sh /host /tmp/local /tmp/build
+          sudo incus stop target
+          sudo incus delete target
