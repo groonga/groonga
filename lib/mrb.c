@@ -39,7 +39,7 @@
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
 static char grn_mrb_ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
-static grn_bool grn_mrb_order_by_estimated_size_enable = GRN_FALSE;
+static bool grn_mrb_order_by_estimated_size_enable = false;
 
 void
 grn_mrb_init_from_env(void)
@@ -53,14 +53,14 @@ grn_mrb_init_from_env(void)
                grn_order_by_estimated_size_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_order_by_estimated_size_enable_env, "yes") == 0) {
-      grn_mrb_order_by_estimated_size_enable = GRN_TRUE;
+      grn_mrb_order_by_estimated_size_enable = true;
     } else {
-      grn_mrb_order_by_estimated_size_enable = GRN_FALSE;
+      grn_mrb_order_by_estimated_size_enable = false;
     }
   }
 }
 
-grn_bool
+bool
 grn_mrb_is_order_by_estimated_size_enabled(void)
 {
   return grn_mrb_order_by_estimated_size_enable;
@@ -104,21 +104,21 @@ grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
   }
 }
 
-static grn_bool
+static bool
 grn_mrb_is_absolute_path(const char *path)
 {
   if (path[0] == '/') {
-    return GRN_TRUE;
+    return true;
   }
 
   if (isalpha((unsigned char)path[0]) && path[1] == ':' && path[2] == '/') {
-    return GRN_TRUE;
+    return true;
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-static grn_bool
+static bool
 grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
                            char *expanded_path, size_t expanded_path_size)
 {
@@ -156,12 +156,12 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
         path_length, max_path_length,
         expanded_path, grn_encoding_path);
     grn_encoding_converted_free(ctx, grn_encoding_path);
-    return GRN_FALSE;
+    return false;
   }
 
   grn_strcat(expanded_path, expanded_path_size, path);
 
-  return GRN_TRUE;
+  return true;
 }
 
 mrb_value
