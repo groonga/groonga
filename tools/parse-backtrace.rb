@@ -36,6 +36,11 @@ parser.on("--[no-]use-mecab",
           "(#{options.use_mecab})") do |boolean|
   options.use_mecab = boolean
 end
+parser.on("--[no-]use-installed-groonga",
+          "Use groonga already installed on the platform",
+          "(#{options.use_installed_groonga})") do |boolean|
+  options.use_installed_groonga = boolean
+end
 parser.parse!
 
 def detect_system_version
@@ -200,16 +205,18 @@ def prepare_system_ubuntu_22(options)
   run_command("apt", "update")
   packages = []
   packages << "binutils"
-  if options.version
-    groonga_package_version = "=#{options.version}-1.*"
-  else
-    groonga_package_version = ""
-  end
-  packages << "libgroonga0#{groonga_package_version}"
-  packages << "libgroonga0-dbgsym#{groonga_package_version}"
-  if options.use_mecab
-    packages << "groonga-tokenizer-mecab#{groonga_package_version}"
-    packages << "groonga-tokenizer-mecab-dbgsym#{groonga_package_version}"
+  unless options.use_installed_groonga
+    if options.version
+      groonga_package_version = "=#{options.version}-1.*"
+    else
+      groonga_package_version = ""
+    end
+    packages << "libgroonga0#{groonga_package_version}"
+    packages << "libgroonga0-dbgsym#{groonga_package_version}"
+    if options.use_mecab
+      packages << "groonga-tokenizer-mecab#{groonga_package_version}"
+      packages << "groonga-tokenizer-mecab-dbgsym#{groonga_package_version}"
+    end
   end
   if options.pgroonga_version and options.postgresql_version
     run_command("apt", "install", "-y", "-V", "wget")
