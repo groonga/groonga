@@ -191,6 +191,60 @@ Signed-By: /usr/share/keyrings/pgdg.gpg
   run_command("apt", "install", "-y", "-V", *packages)
 end
 
+def prepare_system_ubuntu_22(options)
+  run_command("apt", "update")
+  run_command("apt", "install", "-y", "-V", "software-properties-common")
+  run_command("add-apt-repository", "-y", "universe")
+  run_command("add-apt-repository", "-y", "ppa:groonga/ppa")
+  run_command("add-apt-repository", "-y", "-c", "main/debug", "ppa:groonga/ppa")
+  run_command("apt", "update")
+  packages = []
+  packages << "binutils"
+  if options.version
+    groonga_package_version = "=#{options.version}-1.*"
+  else
+    groonga_package_version = ""
+  end
+  packages << "libgroonga0#{groonga_package_version}"
+  packages << "libgroonga0-dbgsym#{groonga_package_version}"
+  if options.use_mecab
+    packages << "groonga-tokenizer-mecab#{groonga_package_version}"
+    packages << "groonga-tokenizer-mecab-dbgsym#{groonga_package_version}"
+  end
+  if options.pgroonga_version and options.postgresql_version
+    run_command("apt", "install", "-y", "-V", "wget")
+    run_command({"DEBIAN_FRONTEND" => "noninteractive"}, "apt", "install", "-y", "-V", "tzdata")
+    run_command("wget", "https://www.postgresql.org/media/keys/ACCC4CF8.asc")
+    run_command("gpg",
+                "--no-default-keyring",
+                "--keyring", "/usr/share/keyrings/pgdg.gpg",
+                "--import", "ACCC4CF8.asc")
+    File.write("/etc/apt/sources.list.d/pgdg.sources", <<-SOURCES)
+Types: deb
+URIs: http://apt.postgresql.org/pub/repos/apt
+Suites: jammy-pgdg
+Components: main
+Signed-By: /usr/share/keyrings/pgdg.gpg
+    SOURCES
+    run_command("apt", "update")
+
+    postgresql_major_version = options.postgresql_version.split(".")[0]
+    package_prefix = "postgresql-#{postgresql_major_version}"
+    postgresql_package_version =
+      "=#{options.postgresql_version}-1.pgdg*"
+    pgroonga_package_version = "=#{options.pgroonga_version}-1.*"
+
+    packages << "#{package_prefix}#{postgresql_package_version}"
+    packages << "#{package_prefix}-dbgsym#{postgresql_package_version}"
+    # todo
+    # packages << "#{package_prefix}-pgdg-pgroonga#{pgroonga_package_version}"
+    # packages << "#{package_prefix}-pgdg-pgroonga-dbgsym#{pgroonga_package_version}"
+    packages << "#{package_prefix}-pgroonga#{pgroonga_package_version}"
+    packages << "#{package_prefix}-pgroonga-dbgsym#{pgroonga_package_version}"
+  end
+  run_command("apt", "install", "-y", "-V", *packages)
+end
+
 def prepare_system(system_version, options)
   case system_version
   when "centos-7"
@@ -201,6 +255,8 @@ def prepare_system(system_version, options)
     prepare_system_amazon_2(options)
   when "debian-11"
     prepare_system_debian_11(options)
+  when "ubuntu-22.04"
+    prepare_system_ubuntu_22(options)
   else
     raise "unsupported system: #{system_version}"
   end
@@ -218,7 +274,7 @@ def resolve_debug_path(path, system_version)
   case system_version
   when /\Acentos-/, /\Aalmalinux-/, /\Aamazon-/
     Dir.glob("/usr/lib/debug#{path}*.debug").first || path
-  when /\Adebian-/
+  when /\Adebian-/, /\Aubuntu-/
     build_id = nil
     capture_command("readelf", "-n", path).each_line do |line|
       case line
