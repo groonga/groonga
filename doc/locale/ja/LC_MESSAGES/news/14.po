@@ -59,7 +59,7 @@ msgstr "[{doc}`/install/ubuntu`] Ubuntu 24.04 LTS (Noble Numbat) をサポート
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command whlie we execute the other query."
+msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command while we execute the other query."
 msgstr "[{doc}`/reference/commands/request_cancel`] `request_cancel`コマンドで実行中のクエリーを中断した時にGroongaがクラッシュすることがある問題を修正しました。"
 
 msgid "Fixed the unexpected error when using `--post_filter` with `--offset` greater than the post-filtered result"
@@ -80,25 +80,25 @@ msgstr "`TABLE_HASH_KEY`のテーブルに2^28以上のレコードが存在す�
 msgid "Fixed a bug that highlight position slipped out of place in the following cases."
 msgstr "以下のケースでハイライト位置がずれる問題を修正しました。"
 
-msgid "If full width space existed before highlight target charcters as below."
+msgid "If full width space existed before highlight target characters as below."
 msgstr "以下のようにハイライト対象の文字の前に全角スペースがある場合。"
 
 msgid "We expected that Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`. However, Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"` as below."
 msgstr "`\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`となることが期待値ですが、以下のように`\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"`となっていました。"
 
-msgid "If we used `TokenNgram(\"loose_blank\", true)` and if highlight target charcters included full width space as below."
+msgid "If we used `TokenNgram(\"loose_blank\", true)` and if highlight target characters included full width space as below."
 msgstr "`以下のように`TokenNgram(\"loose_blank\", true)`を使っていて、ハイライト対象の文字が全角スペースを含んでいる場合。"
 
 msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山田 太郎</span>\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山田 太</span>\"` as below."
 msgstr "`\"<span class=\\\"keyword\\\">山田 太郎</span>\"`となることが期待値ですが、以下のように`\"<span class=\\\"keyword\\\">山田 太</span>\"`となっていました。"
 
-msgid "If white space existed in the front of highlight target charcters as below."
+msgid "If white space existed in the front of highlight target characters as below."
 msgstr "以下のようにハイライト対象の文字の先頭に空白スペースがある場合。"
 
 msgid "We expected that Groonga returned `\" <span class=\\\"keyword\\\">山</span>田太郎\"`. However, Groonga returned `\" <span class=\\\"keyword\\\">山</span>\"` as below."
 msgstr "`\" <span class=\\\"keyword\\\">山</span>田太郎\"`となることが期待値ですが、以下のように`\" <span class=\\\"keyword\\\">山</span>\"`となっていました。"
 
-msgid "If the second charcter of highlight target was full width space as below."
+msgid "If the second character of highlight target was full width space as below."
 msgstr "以下のようにハイライト対象の２番めの文字が全角スペースの場合。"
 
 msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山　田</span>太郎\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山　田太</span>郎\"` as below."
