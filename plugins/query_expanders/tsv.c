@@ -63,7 +63,7 @@ get_system_synonyms_file(void)
 }
 #endif /* WIN32 */
 
-static grn_bool
+static bool
 is_comment_mark(char character)
 {
   return character == '#';
