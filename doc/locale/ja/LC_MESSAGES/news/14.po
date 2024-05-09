@@ -17,11 +17,95 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.2 - 2024-03-29"
-msgstr "14.0.2リリース - 2024-03-29"
+msgid "Release 14.0.3 - 2024-05-09"
+msgstr "14.0.3リリース - 2024-05-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "We optimized performance as below."
+msgstr "以下の最適化を行いました。"
+
+msgid "We optimized performance of `OR` and `AND` search when the number of hits were many."
+msgstr "ヒット数が多いときの`OR`検索と`AND`検索のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of prefix search(`@^`)."
+msgstr "前方一致検索(`@^`)のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of `AND` search when the number of records of `A` more than `B` in condition of `A AND B`."
+msgstr "`A AND B`という条件で、`B`より`A`のレコード数が多い場合の`AND`検索のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of search when we used many dynamic columns."
+msgstr "多くの動的カラムを設定している場合の検索パフォーマンスを向上しました。"
+
+msgid "[{doc}`/reference/tokenizers/token_ngram`] Added new option `ignore_blank`."
+msgstr "[{doc}`/reference/tokenizers/token_ngram`] 新しいオプション`ignore_blank`を追加しました。"
+
+msgid "We can replace `TokenBigramIgnoreBlank` with `TokenNgram(\"ignore_blank\", true)` as below."
+msgstr "以下のように`TokenBigramIgnoreBlank`を`TokenNgram(\"ignore_blank\", true)`で置き換えることができます。"
+
+msgid "Here is example of use `TokenBigram`."
+msgstr "`TokenBigram`を使う例です。"
+
+msgid "Here is example of use `TokenBigramIgnoreBlank`."
+msgstr "`TokenBigramIgnoreBlank`を使う例です。"
+
+msgid "Here is example of use `TokenNgram(\"ignore_blank\", true)`."
+msgstr "`TokenNgram(\"ignore_blank\", true)`を使う例です。"
+
+msgid "[{doc}`/install/ubuntu`] Add support for Ubuntu 24.04 LTS (Noble Numbat)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 24.04 LTS (Noble Numbat) をサポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command whlie we execute the other query."
+msgstr "[{doc}`/reference/commands/request_cancel`] `request_cancel`コマンドで実行中のクエリーを中断した時にGroongaがクラッシュすることがある問題を修正しました。"
+
+msgid "Fixed the unexpected error when using `--post_filter` with `--offset` greater than the post-filtered result"
+msgstr "`--post_filter`使用時に、`--offset`の値が`--post_filter`の結果より大きい場合に予期しないエラーになる問題を修正しました。"
+
+msgid "In the same situation, using `--filter` with `--offset` doesn't raise the error. This inconsistency in behavior between `--filter` and `--post-filter` has now been resolved."
+msgstr "`--filter` と `--offset`の組み合わせで、同様のケースになった場合はエラーは発生しません。`--filter` と `--post-filter`の挙動を合わせました。"
+
+msgid "Fixed a bug where incorrect search result could be returned when not all phrases within `(...)` matched using near phrase product."
+msgstr "近傍フレーズ直積検索で`(...)`内のすべてのフレーズがマッチしない場合に、誤った検索結果を返す場合がある問題を修正しました。"
+
+msgid "For example, there is no record which matched `(2)` condition using `--query '*NPP1\"(a) (2)\"'`. In this case, the expected behavior would be return no record. However, the actual behavior was equal to the query `--query '*NPP and \"(a)\"` as below. This means that despite no records matched `(2)`, records like `ax1` and `axx1` were incorrectly returned."
+msgstr "例えば以下の、`--query '*NPP1\"(a) (2)\"'`で指定している`(2)`にマッチするレコードはありません。この場合は、何もヒットしないのが正しい挙動ですが、`--query '*NPP1\"(a)`相当の挙動になっていました。つまり、`(2)`にマッチするレコードが無いにも関わらず、`ax1`と`axx1`がヒットしていました。"
+
+msgid "Fixed a bug that rehash failed or data in a table broke when rehash occured that the table with `TABLE_HASH_KEY` has  2^28 or more records."
+msgstr "`TABLE_HASH_KEY`のテーブルに2^28以上のレコードが存在する時にリハッシュが発生すると、リハッシュが失敗するかテーブル内のデータが壊れる問題を修正しました。"
+
+msgid "Fixed a bug that highlight position slipped out of place in the following cases."
+msgstr "以下のケースでハイライト位置がずれる問題を修正しました。"
+
+msgid "If full width space existed before highlight target charcters as below."
+msgstr "以下のようにハイライト対象の文字の前に全角スペースがある場合。"
+
+msgid "We expected that Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`. However, Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"` as below."
+msgstr "`\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`となることが期待値ですが、以下のように`\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"`となっていました。"
+
+msgid "If we used `TokenNgram(\"loose_blank\", true)` and if highlight target charcters included full width space as below."
+msgstr "`以下のように`TokenNgram(\"loose_blank\", true)`を使っていて、ハイライト対象の文字が全角スペースを含んでいる場合。"
+
+msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山田 太郎</span>\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山田 太</span>\"` as below."
+msgstr "`\"<span class=\\\"keyword\\\">山田 太郎</span>\"`となることが期待値ですが、以下のように`\"<span class=\\\"keyword\\\">山田 太</span>\"`となっていました。"
+
+msgid "If white space existed in the front of highlight target charcters as below."
+msgstr "以下のようにハイライト対象の文字の先頭に空白スペースがある場合。"
+
+msgid "We expected that Groonga returned `\" <span class=\\\"keyword\\\">山</span>田太郎\"`. However, Groonga returned `\" <span class=\\\"keyword\\\">山</span>\"` as below."
+msgstr "`\" <span class=\\\"keyword\\\">山</span>田太郎\"`となることが期待値ですが、以下のように`\" <span class=\\\"keyword\\\">山</span>\"`となっていました。"
+
+msgid "If the second charcter of highlight target was full width space as below."
+msgstr "以下のようにハイライト対象の２番めの文字が全角スペースの場合。"
+
+msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山　田</span>太郎\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山　田太</span>郎\"` as below."
+msgstr "`\"<span class=\\\"keyword\\\">山　田</span>太郎\"`となるのが期待値ですが、以下のように`\"<span class=\\\"keyword\\\">山　田太</span>郎\"`となっていました。"
+
+msgid "Release 14.0.2 - 2024-03-29"
+msgstr "14.0.2リリース - 2024-03-29"
 
 msgid "Reduced a log level of a log when Groonga setting normalizers/tokenizer/token_filters against temporary table."
 msgstr "一時テーブルに対して、normalizers/tokenizer/token_filtersを設定したときに出力されるログのログレベルを下げました。"
@@ -49,9 +133,6 @@ msgstr "しかし、このようなデータを大量に`load`した場合、多
 
 msgid "No problem even if empty string can't register to index in such case. Because we don't match anything even if we search by empty string. So, we stop reporting an \"empty key\" error in such case."
 msgstr "ただ、このようなケースで空の文字列がインデックスへ登録できなくても問題ありません。空の文字列で検索しても何も一致しないためです。そのため、このようなケースの時に\"empty key\"エラーを報告するのを止めました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a crash bug if a request is canceled {doc}`/reference/functions/between` or range search."
 msgstr "{doc}`/reference/functions/between` または、範囲検索時にリクエストキャンセルするとGroongaがクラッシュする問題を修正しました。"
