@@ -101,6 +101,36 @@ For example, if you have edited this {doc}`introduction` page, you can preview i
 % open ../groonga.doc/doc/en/html/contribution/documentation/introduction.html
 ```
 
+## Send patch
+
+You can submit your patch to the Groonga repository on GitHub via a pull request.
+Feel free to send a pull request by following two steps.
+
+- Prepare your pull request
+- Submit your pull request
+
+### Prepare your pull request
+
+Ensure your changes are committed and then push your changes to your fork repository on GitHub.
+Follow these commands:
+
+```console
+% git switch -c your-working-branch
+% git add doc
+% git commit -m 'Describe your works here'
+% git push origin your-working-branch
+```
+
+### Submit your pull request
+
+Now you're ready to submit a pull request to the upstream Groonga repository.
+Follow these steps:
+
+1. Go to your fork repository on GitHub
+2. Click the `Compare & pull request` button
+3. Make sure your changes are reflected
+4. Click the `Create Pull Request` button and send your pull request
+
 ## Optional: Translate documentation
 
 This is an optional step.
@@ -155,32 +185,4 @@ For example, to preview the Japanese translation of the {doc}`introduction` page
 % open ../groonga.doc/doc/ja/html/contribution/documentation/introduction.html
 ```
 
-## Send patch
-
-You can submit your patch to the Groonga repository on GitHub via a pull request.
-Feel free to send a pull request by following two steps.
-
-- Prepare your pull request
-- Submit your pull request
-
-### Prepare your pull request
-
-Ensure your changes are committed and then push your changes to your fork repository on GitHub.
-Follow these commands:
-
-```console
-% git switch -c your-working-branch
-% git add doc
-% git commit -m 'Describe your works here'
-% git push origin your-working-branch
-```
-
-### Submit your pull request
-
-Now you're ready to submit a pull request to the upstream Groonga repository.
-Follow these steps:
-
-1. Go to your fork repository on GitHub
-2. Click the `Compare & pull request` button
-3. Make sure your changes are reflected
-4. Click the `Create Pull Request` button and send your pull request
+If the translations seem correct after preview, please send a patch. For more information on this process, see the [Send patch](#send-patch)
