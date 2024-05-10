@@ -74,7 +74,7 @@ msgstr "近傍フレーズ直積検索で`(...)`内のすべてのフレーズ�
 msgid "For example, there is no record which matched `(2)` condition using `--query '*NPP1\"(a) (2)\"'`. In this case, the expected behavior would be return no record. However, the actual behavior was equal to the query `--query '*NPP and \"(a)\"` as below. This means that despite no records matched `(2)`, records like `ax1` and `axx1` were incorrectly returned."
 msgstr "例えば以下の、`--query '*NPP1\"(a) (2)\"'`で指定している`(2)`にマッチするレコードはありません。この場合は、何もヒットしないのが正しい挙動ですが、`--query '*NPP1\"(a)`相当の挙動になっていました。つまり、`(2)`にマッチするレコードが無いにも関わらず、`ax1`と`axx1`がヒットしていました。"
 
-msgid "Fixed a bug that rehash failed or data in a table broke when rehash occured that the table with `TABLE_HASH_KEY` has  2^28 or more records."
+msgid "Fixed a bug that rehash failed or data in a table broke when rehash occurred that the table with `TABLE_HASH_KEY` has  2^28 or more records."
 msgstr "`TABLE_HASH_KEY`のテーブルに2^28以上のレコードが存在する時にリハッシュが発生すると、リハッシュが失敗するかテーブル内のデータが壊れる問題を修正しました。"
 
 msgid "Fixed a bug that highlight position slipped out of place in the following cases."
