@@ -276,7 +276,7 @@ grn_error_set(grn_ctx *ctx,
     do {                                                                       \
       grn_rc rc;                                                               \
       int errno_keep = errno;                                                  \
-      grn_bool show_errno = GRN_FALSE;                                         \
+      bool show_errno = false;                                                 \
       const char *system_message;                                              \
       char user_message[USER_MESSAGE_SIZE];                                    \
       system_message = grn_strerror(errno);                                    \
@@ -381,7 +381,7 @@ grn_error_set(grn_ctx *ctx,
       /* case STRUNCATE : */                                                   \
       default:                                                                 \
         rc = GRN_UNKNOWN_ERROR;                                                \
-        show_errno = GRN_TRUE;                                                 \
+        show_errno = true;                                                     \
         break;                                                                 \
       }                                                                        \
       grn_snprintf(user_message,                                               \
@@ -405,7 +405,7 @@ grn_error_set(grn_ctx *ctx,
     do {                                                                       \
       grn_rc rc;                                                               \
       int errno_keep = errno;                                                  \
-      grn_bool show_errno = GRN_FALSE;                                         \
+      bool show_errno = false;                                                 \
       const char *system_message = grn_error_get_current_system_message();     \
       char user_message[USER_MESSAGE_SIZE];                                    \
       switch (errno_keep) {                                                    \
@@ -539,7 +539,7 @@ grn_error_set(grn_ctx *ctx,
         break;                                                                 \
       default:                                                                 \
         rc = GRN_UNKNOWN_ERROR;                                                \
-        show_errno = GRN_TRUE;                                                 \
+        show_errno = true;                                                     \
         break;                                                                 \
       }                                                                        \
       grn_snprintf(user_message,                                               \
