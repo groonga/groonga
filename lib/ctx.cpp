@@ -645,19 +645,19 @@ grn_ctx_impl_clear_n_same_error_messagges(grn_ctx *ctx)
   ctx->impl->n_same_error_messages = 0;
 }
 
-grn_bool
+bool
 grn_ctx_impl_should_log(grn_ctx *ctx)
 {
   if (!ctx->impl) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (strcmp(ctx->errbuf, ctx->impl->previous_errbuf) == 0) {
     ctx->impl->n_same_error_messages++;
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 void
