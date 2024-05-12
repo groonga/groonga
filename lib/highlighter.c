@@ -565,18 +565,18 @@ grn_highlighter_prepare(grn_ctx *ctx, grn_highlighter *highlighter)
   highlighter->need_prepared = false;
 }
 
-static grn_bool
+static bool
 grn_ids_is_included(grn_id *ids, size_t n_ids, grn_id id)
 {
   size_t i;
 
   for (i = 0; i < n_ids; i++) {
     if (ids[i] == id) {
-      return GRN_TRUE;
+      return true;
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 static void
