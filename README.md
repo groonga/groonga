@@ -31,11 +31,6 @@ Here are shortcut links:
   * Path: vendor/onigmo-source
   * License: BSD license. See vendor/onigmo-source/COPYING for details.
 
-### nginx
-
-  * Path: vendor/nginx-${VERSION}
-  * License: BSD license. See vendor/nginx-${VERSION}/LICENSE for details.
-
 ## Authors
 
 ### Primary authors
