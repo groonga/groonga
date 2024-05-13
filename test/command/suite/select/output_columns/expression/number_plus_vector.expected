@@ -14,7 +14,7 @@ select Entries   --output_columns '_id, 1 + tags'  --command_version 3
     "start_time": 0.0,
     "elapsed_time": 0.0,
     "error": {
-      "message": "<+> doesn't support non-vector + vector: <1> + <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]>",
+      "message": "<+> doesn't support non-vector + vector: <1> + <[\"A\", \"B\"]>",
       "function": "expr_exec_internal",
       "file": "expr_executor.cpp",
       "line": 0
@@ -35,9 +35,9 @@ select Entries   --output_columns '_id, 1 + tags'  --command_version 3
     "records": [
       [
         1,
-        "<+> doesn't support non-vector + vector: <1> + <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]>"
+        "<+> doesn't support non-vector + vector: <1> + <[\"A\", \"B\"]>"
       ]
     ]
   }
 }
-#|e| <+> doesn't support non-vector + vector: <1> + <[{"value":"A", "weight":0.0}, {"value":"B", "weight":0.0}]>
+#|e| <+> doesn't support non-vector + vector: <1> + <["A", "B"]>

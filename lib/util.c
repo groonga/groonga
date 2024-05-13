@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,13 @@
 */
 
 #include "grn_db.h"
-#include "grn_pat.h"
-#include "grn_ii.h"
-#include "grn_util.h"
-#include "grn_string.h"
 #include "grn_expr.h"
+#include "grn_float.h"
+#include "grn_ii.h"
 #include "grn_load.h"
+#include "grn_pat.h"
+#include "grn_string.h"
+#include "grn_util.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -431,6 +432,15 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
   uint32_t i;
   grn_obj *body = vector->u.v.body;
 
+  bool have_weight = false;
+  for (i = 0; i < vector->u.v.n_sections; i++) {
+    grn_section *section = &(vector->u.v.sections[i]);
+    if (!grn_float32_is_zero(section->weight)) {
+      have_weight = true;
+      break;
+    }
+  }
+
   GRN_TEXT_PUTS(ctx, buffer, "[");
   for (i = 0; i < vector->u.v.n_sections; i++) {
     grn_section *section = &(vector->u.v.sections[i]);
@@ -441,8 +451,10 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
     }
 
     value_raw = GRN_BULK_HEAD(body) + section->offset;
-    GRN_TEXT_PUTS(ctx, buffer, "{");
-    GRN_TEXT_PUTS(ctx, buffer, "\"value\":");
+    if (have_weight) {
+      GRN_TEXT_PUTS(ctx, buffer, "{");
+      GRN_TEXT_PUTS(ctx, buffer, "\"value\":");
+    }
     {
       grn_obj value_object;
       GRN_OBJ_INIT(&value_object,
@@ -453,9 +465,11 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
       grn_inspect(ctx, buffer, &value_object);
       GRN_OBJ_FIN(ctx, &value_object);
     }
-    GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
-    grn_text_f32toa(ctx, buffer, section->weight);
-    GRN_TEXT_PUTS(ctx, buffer, "}");
+    if (have_weight) {
+      GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
+      grn_text_f32toa(ctx, buffer, section->weight);
+      GRN_TEXT_PUTS(ctx, buffer, "}");
+    }
   }
   GRN_TEXT_PUTS(ctx, buffer, "]");
 

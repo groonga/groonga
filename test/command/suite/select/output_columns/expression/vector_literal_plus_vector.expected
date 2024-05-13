@@ -22,7 +22,7 @@ select Entries   --output_columns '_id, ["X", "Y"] + tags'  --command_version 3
         "type": "UInt32"
       },
       {
-        "name": "([{\"value\":\"X\", \"weight\":0.0}, {\"value\":\"Y\", \"weight\":0.0}] + tags)",
+        "name": "([\"X\", \"Y\"] + tags)",
         "type": "Text"
       }
     ],
