@@ -173,4 +173,4 @@ msgid "For example, to preview the Japanese translation of the {doc}`introductio
 msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
 
 msgid "If the translations seem correct after preview, please send a patch. For more information on this process, see the [Send patch](#send-patch)"
-msgstr "翻訳を確認して正しく反映されていましたら、パッチを送りましょう。送り方については、[パッチを送る](#send-patch)を参照してください。"
+msgstr "翻訳を確認して正しく反映されていたらパッチを送りましょう。送り方については、[パッチを送る](#send-patch)を参照してください。"
