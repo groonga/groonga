@@ -101,7 +101,7 @@ msgid "Send patch"
 msgstr "パッチを送る"
 
 msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
-msgstr "GitHub上のGroongaリポジトリに対してプルリクエストを通じてパッチを送ることができます。次の手順で、気軽にプルリクエストを作ってみましょう"
+msgstr "GitHub上のGroongaリポジトリに対してプルリクエストを通じてパッチを送ることができます。次の手順で、気軽にプルリクエストを作ってみましょう。"
 
 msgid "Prepare your pull request"
 msgstr "プルリクエストの準備をする"
