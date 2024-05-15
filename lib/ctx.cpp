@@ -560,7 +560,8 @@ grn_ctx_pull_child(grn_ctx *ctx)
   grn_ctx_use(child_ctx, grn_ctx_db(ctx));
   child_ctx->impl->parent = ctx;
   child_ctx->impl->command.version = ctx->impl->command.version;
-  child_ctx->impl->match_escalation_threshold = ctx->impl->match_escalation_threshold;
+  child_ctx->impl->match_escalation_threshold =
+    ctx->impl->match_escalation_threshold;
   child_ctx->impl->force_match_escalation = ctx->impl->force_match_escalation;
   child_ctx->impl->parallel.n_workers = ctx->impl->parallel.n_workers;
   CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
