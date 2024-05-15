@@ -25,6 +25,7 @@ load --table bugs
 [[0,0.0,0.0],3]
 column_create tags bugs_tags_index COLUMN_INDEX|WITH_POSITION bugs tags
 [[0,0.0,0.0],true]
+select --table bugs --filter 'tags @ "MySQL"'
 [
   [
     0,
