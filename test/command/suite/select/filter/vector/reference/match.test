@@ -1,0 +1,27 @@
+table_create bugs TABLE_PAT_KEY UInt32
+
+table_create tags TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create tags name COLUMN_SCALAR ShortText
+
+column_create bugs tags COLUMN_VECTOR tags
+
+load --table tags
+[
+["_key","name"],
+["Linux",""],
+["MySQL",""],
+["groonga",""],
+["mroonga",""]
+]
+
+load --table bugs
+[
+["_key","tags"],
+[1,["Linux","MySQL"]],
+[2,["MySQL","groonga"]],
+[3,["mroonga"]]
+]
+
+column_create tags bugs_tags_index COLUMN_INDEX|WITH_POSITION bugs tags
+
+select --table bugs --filter 'tags @ "MySQL"'
