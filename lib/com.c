@@ -482,7 +482,7 @@ grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
   GRN_API_ENTER;
   if (!grn_com_event_mod(ctx, ev, com->fd, GRN_COM_POLLIN, NULL)) {
     if (listen(com->fd, ev->listen_backlog) == 0) {
-      com->accepting = GRN_TRUE;
+      com->accepting = true;
     } else {
       SOERR("listen - start accept");
     }
@@ -500,7 +500,7 @@ grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev)
   GRN_API_ENTER;
   if (!grn_com_event_mod(ctx, ev, com->fd, 0, NULL)) {
     if (listen(com->fd, 0) == 0) {
-      com->accepting = GRN_FALSE;
+      com->accepting = false;
     } else {
       SOERR("listen - disable accept");
     }
@@ -1144,7 +1144,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     if (!(cs = GRN_CALLOC(sizeof(grn_com)))) { goto exit; }
     cs->fd = lfd;
   }
-  cs->accepting = GRN_TRUE;
+  cs->accepting = true;
 exit :
   if (!cs && lfd != 1) { grn_sock_close(lfd); }
   if (bind_address_info) { freeaddrinfo(bind_address_info); }

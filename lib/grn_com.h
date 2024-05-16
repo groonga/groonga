@@ -114,7 +114,7 @@ struct _grn_com {
   grn_com_queue new_;
   grn_com_event *ev;
   void *opaque;
-  grn_bool accepting;
+  bool accepting;
 };
 
 struct _grn_com_event {
