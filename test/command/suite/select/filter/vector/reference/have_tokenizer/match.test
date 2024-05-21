@@ -5,23 +5,14 @@ column_create tags name COLUMN_SCALAR ShortText
 
 column_create bugs tags COLUMN_VECTOR tags
 
-load --table tags
-[
-["_key","name"],
-["Linux",""],
-["MySQL",""],
-["groonga",""],
-["mroonga",""]
-]
-
 load --table bugs
 [
-["_key","tags"],
-[1,["Linux","MySQL"]],
-[2,["MySQL","groonga"]],
-[3,["mroonga"]]
+["_key", "tags"],
+[1, "Linux MySQL"],
+[2, "MySQL Groonga"],
+[3, "Mroonga"]
 ]
 
-column_create tags bugs_tags_index COLUMN_INDEX|WITH_POSITION bugs tags
+column_create tags bugs_tags_index COLUMN_INDEX bugs tags
 
 select --table bugs --filter 'tags @ "MySQL"'
