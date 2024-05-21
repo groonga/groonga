@@ -4413,7 +4413,8 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
               } else {
                 key_type = DB_OBJ(source)->range;
               }
-              need_cast = (query->header.domain != key_type);
+              need_cast =
+                !grn_type_id_is_compatible(ctx, query->header.domain, key_type);
               grn_obj_unref(ctx, source);
             }
           }
@@ -4428,7 +4429,8 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
       grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
       if (table) {
         key_type = table->header.domain;
-        need_cast = (query->header.domain != key_type);
+        need_cast =
+          !grn_type_id_is_compatible(ctx, query->header.domain, key_type);
         grn_obj_unref(ctx, table);
       }
     }
