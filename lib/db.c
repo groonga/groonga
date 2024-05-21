@@ -4411,10 +4411,10 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
               if (grn_obj_is_table_with_key(ctx, source)) {
                 key_type = source->header.domain;
               } else if (grn_obj_is_reference_column(ctx, source)) {
-                const grn_id range_id = grn_obj_get_range(ctx, source);
-                const grn_obj *const referenced_table =
-                  grn_ctx_at(ctx, range_id);
-                key_type = referenced_table->header.type;
+                const grn_id range_id = DB_OBJ(source)->range;
+                grn_obj *referenced_table = grn_ctx_at(ctx, range_id);
+                key_type = referenced_table->header.domain;
+                grn_obj_unref(ctx, referenced_table);
               } else {
                 key_type = DB_OBJ(source)->range;
               }
