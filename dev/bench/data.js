@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716269231461,
+  "lastUpdate": 1716270686813,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -22752,6 +22752,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017711040999984107,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001835999999999921 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "horimoto@clear-code.com",
+            "name": "Horimoto Yasuhiro",
+            "username": "komainu8"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59bd08a3908c29dfa58310f9596ba217dc9deee4",
+          "message": "Can't fulltext search against reference column of vector (#1780)\n\nFix mroonga/mroonga#674.\r\n\r\n## What happend?\r\n\r\nGroonga always returns that the number of hits is 0 when we execute\r\nfull-text search against reference column of vector as below. Note that\r\na lexicon (`tags` in this case) must have a tokenizer.\r\n\r\n```\r\ntable_create bugs TABLE_PAT_KEY UInt32\r\n\r\ntable_create tags TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit\r\ncolumn_create tags name COLUMN_SCALAR ShortText\r\n\r\ncolumn_create bugs tags COLUMN_VECTOR tags\r\n\r\nload --table bugs\r\n[\r\n[\"_key\", \"tags\"],\r\n[1, \"Linux MySQL\"],\r\n[2, \"MySQL Groonga\"],\r\n[3, \"Mroonga\"]\r\n]\r\n\r\ncolumn_create tags bugs_tags_index COLUMN_INDEX bugs tags\r\n\r\nselect --table bugs --filter 'tags @ \"MySQL\"'\r\n[[0,0.0,0.0],[[[0],[[\"_id\",\"UInt32\"],[\"_key\",\"UInt32\"],[\"tags\",\"tags\"]]]]]\r\n```\r\n\r\n## Solution\r\n\r\nIn this PR, If the source of index was reference column, Groonga get\r\n`key_type` from a table that the reference column refer.\r\n\r\nThis problem occurs from 535844b78a8066d61ec3dcacc4a16c7b0cd8ae0c.\r\nIf the source of index was reference column, Groonga couldn't get `key`\r\nand `key_type` correctly in the above modification.\r\n\r\n---------\r\n\r\nCo-authored-by: Sutou Kouhei <kou@clear-code.com>",
+          "timestamp": "2024-05-21T14:27:18+09:00",
+          "tree_id": "39b8d72422320ed8cf566b68116cb8b14ab4d9ee",
+          "url": "https://github.com/groonga/groonga/commit/59bd08a3908c29dfa58310f9596ba217dc9deee4"
+        },
+        "date": 1716270685692,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.35806439800001044,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015913000000000038 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2603169069999467,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.012865000000000182 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016008412000019234,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00039000000000014023 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.024620735000098648,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0005339999999998124 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4107531169998992,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00017899999999998473 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2299018089998981,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006203000000000097 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13055772600000637,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005302999999999919 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017230805999815857,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019549999999998735 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01656849800008331,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019599999999997397 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.052146596999932626,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006913000000000141 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.051544262999868806,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007387999999999034 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01806311400002869,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018929999999998948 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.02671205399997234,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018669999999997022 s\nthreads: undefined"
           }
         ]
       }
