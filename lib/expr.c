@@ -1348,7 +1348,17 @@ grn_expr_append_obj(
           if (dfi) {
             dfi->code->flags |= GRN_EXPR_CODE_RELATIONAL_EXPRESSION;
           } else {
-            ERR(GRN_SYNTAX_ERROR, "stack under flow in relative op");
+            grn_obj inspected;
+            GRN_TEXT_INIT(&inspected, 0);
+            grn_inspect(ctx, &inspected, expr);
+            ERR(GRN_SYNTAX_ERROR,
+                "[expr][append][obj] "
+                "stack under flow in relative op: <%s>(%d): %.*s",
+                grn_operator_to_string(op),
+                nargs,
+                (int)GRN_TEXT_LEN(&inspected),
+                GRN_TEXT_VALUE(&inspected));
+            GRN_OBJ_FIN(ctx, &inspected);
           }
         }
       }
