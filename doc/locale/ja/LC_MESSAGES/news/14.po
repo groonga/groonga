@@ -17,11 +17,17 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.3 - 2024-05-09"
-msgstr "14.0.3リリース - 2024-05-29"
-
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/functions/query_parallel_or`] Fix a bug that `match_escalation_threshold` and `force_match_escalation` are ignored when you use `query_parallel_or`."
+msgstr ""
+
+msgid "Release 14.0.3 - 2024-05-09"
+msgstr "14.0.3リリース - 2024-05-29"
 
 msgid "We optimized performance as below."
 msgstr "以下の最適化を行いました。"
@@ -55,9 +61,6 @@ msgstr "`TokenNgram(\"ignore_blank\", true)`を使う例です。"
 
 msgid "[{doc}`/install/ubuntu`] Add support for Ubuntu 24.04 LTS (Noble Numbat)."
 msgstr "[{doc}`/install/ubuntu`] Ubuntu 24.04 LTS (Noble Numbat) をサポートしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command while we execute the other query."
 msgstr "[{doc}`/reference/commands/request_cancel`] `request_cancel`コマンドで実行中のクエリーを中断した時にGroongaがクラッシュすることがある問題を修正しました。"
