@@ -17,17 +17,26 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Improvements"
-msgstr "改良"
-
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/reference/functions/query_parallel_or`] Fix a bug that `match_escalation_threshold` and `force_match_escalation` are ignored when you use `query_parallel_or`."
+msgid "[{doc}`/reference/functions/query_parallel_or`] Fixed a bug where the `match_escalation_threshold` or `force_match_escalation` options were ignored when using `query_parallel_or`."
+msgstr ""
+
+msgid "For example, before the fix, even when `match_escalation_threshold` was set to disable match escalation, the results still escalated."
+msgstr ""
+
+msgid "Fixed a bug where full-text search on a reference column of a vector didn't work."
+msgstr ""
+
+msgid "For exampe, before the fix, Groonga always returned 0 hits when performing full-text search on a reference column of a vector. Internally, this happened because Groonga couldn't correctly retrieve `key_type` for reference columns."
 msgstr ""
 
 msgid "Release 14.0.3 - 2024-05-09"
-msgstr "14.0.3リリース - 2024-05-29"
+msgstr "14.0.3リリース - 2024-05-09"
+
+msgid "Improvements"
+msgstr "改良"
 
 msgid "We optimized performance as below."
 msgstr "以下の最適化を行いました。"
