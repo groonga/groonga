@@ -145,7 +145,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   switch (bulk->header.domain) {
   case GRN_DB_BOOL :
     {
-      grn_bool value;
+      bool value;
       value = GRN_BOOL_VALUE(bulk);
       mrb_value_ = mrb_bool_value(value);
     }
@@ -264,7 +264,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   default :
     {
       grn_obj *domain;
-      grn_bool is_record = GRN_FALSE;
+      bool is_record = false;
 
       domain = grn_ctx_at(ctx, bulk->header.domain);
       if (domain) {
@@ -273,7 +273,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
         case GRN_TABLE_PAT_KEY :
         case GRN_TABLE_DAT_KEY :
         case GRN_TABLE_NO_KEY :
-          is_record = GRN_TRUE;
+          is_record = true;
           break;
         default :
           break;
@@ -321,7 +321,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   return mrb_value_;
 }
 
-grn_bool
+bool
 grn_mrb_bulk_cast(mrb_state *mrb, grn_obj *from, grn_obj *to, grn_id domain_id)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -338,7 +338,7 @@ mrb_grn_bulk_s_is_true(mrb_state *mrb, mrb_value klass)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_value_;
   grn_obj bulk;
-  grn_bool is_true;
+  bool is_true;
 
   mrb_get_args(mrb, "o", &mrb_value_);
 
