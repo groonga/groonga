@@ -100,6 +100,8 @@ repos:
           ?lib/ii\.c|
           ?lib/load\.c|
           ?lib/normalizer\.c|
+          ?lib/mrb/mrb_bulk\.c|
+          ?lib/mrb/mrb_bulk\.h|
           ?lib/mrb/mrb_ctx\.c|
           ?lib/mrb/mrb_error\.c|
           ?lib/mrb/mrb_expr\.c|
