@@ -17,8 +17,35 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
+msgid "Release 14.0.4 - 2024-05-29"
+msgstr "14.0.4リリース - 2024-05-29"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/functions/query_parallel_or`] Fixed a bug that the {ref}`select-match-escalation-threshold` or `force_match_escalation` options were ignored when using `query_parallel_or()`."
+msgstr "[{doc}`/reference/functions/query_parallel_or`] `query_parallel_or()`を使用すると、{ref}`select-match-escalation-threshold` または `force_match_escalation` オプションが無視される問題を修正しました。"
+
+msgid "Before the fix, even when `match_escalation_threshold` was set to disable match escalation, the results still escalated when we use `query_parallel_or()`. This problem occurred only `query_parallel_or()`. {doc}`/reference/functions/query` don't occur this problem."
+msgstr "修正前は、検索エスカレーションを無効にしても、`query_parallel_or()`使用時はエスカレーションされていました。この問題は、`query_parallel_or()`でのみ発生します。{doc}`/reference/functions/query`では発生しません。"
+
+msgid "Generally, we don't disable match escalation. Because we want to get something search results. The number of hits is 0 is the unwelcome result of us.  Therefore, this problem has no effect by many users. However, it has effect by user who use stop word as below."
+msgstr "一般的には、ヒット数が0件になってしまうのは嬉しくありません。何かしらの検索結果を得たいことが多いです。したがって、通常、検索エスカレーションは無効にしません。そのため、この問題は多くのユーザーには影響がありませんが、以下のようにストップワードを利用しているユーザーには影響があります。"
+
+msgid "We don't want to match a keyword that is registered as stopword. Therefore, we set `-1` to `match_escalation_threshold` in the above example. We expect that Groonga doesn't return records in the above example because of escalation disable and search keyword(`and`) is registered as stopword. However, If this problem occur, Groonga returns match record. Because if we use `query_parallel_or()`, `match_escalation_threshold` doesn't work."
+msgstr "ストップワードとして登録したキーワードではマッチしてほしくありません。そのため、上記の例では、`match_escalation_threshold`に`-1`を設定しています。エスカレーションが無効でかつ、ストップワードに検索キーワード（`and`）が登録されているため、上記の例では、Groongaは何もレコードを返さないことが期待値です。しかし、この問題が発生すると、Groongaはマッチしたレコードを返却してしまいます。`query_parallel_or()`を使うと、`match_escalation_threshold`が効かないためです。"
+
+msgid "Fixed a bug that full-text search againt a reference column of a vector didn't work."
+msgstr "参照ベクターカラムに対する全文検索が動作しない問題を修正しました。"
+
+msgid "This problem has occured Groonga v14.0.0 or later. This problem has effect if we execute full-text search against a reference column of a vector."
+msgstr "この問題は、Groonga v14.0.0以降で発生します。また、この問題は、参照ベクターカラムに対して全文検索を実行している場合に影響があります。"
+
+msgid "We expected that Groonga returns `[1, \"Linux MySQL\"]` and `[2, \"MySQL Groonga\"]` as below example. However, before the fix, Groonga always returned 0 hits as below because of we executed full-text search on a reference column of a vector."
+msgstr "以下の例では、Groongaが`[1, \"Linux MySQL\"]` と `[2, \"MySQL Groonga\"]`を返すことが期待ですが、修正前は、以下のように常に0件ヒットになっていました。参照ベクターカラムに対して全文検索しているためです。"
+
 msgid "Release 14.0.3 - 2024-05-09"
-msgstr "14.0.3リリース - 2024-05-29"
+msgstr "14.0.3リリース - 2024-05-09"
 
 msgid "Improvements"
 msgstr "改良"
@@ -55,9 +82,6 @@ msgstr "`TokenNgram(\"ignore_blank\", true)`を使う例です。"
 
 msgid "[{doc}`/install/ubuntu`] Add support for Ubuntu 24.04 LTS (Noble Numbat)."
 msgstr "[{doc}`/install/ubuntu`] Ubuntu 24.04 LTS (Noble Numbat) をサポートしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command while we execute the other query."
 msgstr "[{doc}`/reference/commands/request_cancel`] `request_cancel`コマンドで実行中のクエリーを中断した時にGroongaがクラッシュすることがある問題を修正しました。"
