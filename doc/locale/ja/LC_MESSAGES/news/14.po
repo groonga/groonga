@@ -17,19 +17,34 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
+msgid "Release 14.0.4 - 2024-05-29"
+msgstr "14.0.4リリース - 2024-05-29"
+
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/reference/functions/query_parallel_or`] Fixed a bug where the [{ref}`select-match-escalation-threshold`] or `force_match_escalation` options were ignored when using `query_parallel_or`."
+msgid "[{doc}`/reference/functions/query_parallel_or`] Fixed a bug that the {ref}`select-match-escalation-threshold` or `force_match_escalation` options were ignored when using {doc}`/reference/functions/query_parallel_or`"
+msgstr "[{doc}`/reference/functions/query_parallel_or`] {doc}`/reference/functions/query_parallel_or`を使用すると、{ref}`select-match-escalation-threshold` または `force_match_escalation` オプションが無視される問題を修正しました"
+
+msgid "Before the fix, even when `match_escalation_threshold` was set to disable match escalation, the results still escalated. This problem occurred only `query_parallel_or()`. {doc}`/reference/functions/query` don't occur this problem."
+msgstr "修正前は、検索エスカレーションを無効にしても、エスカレーションされていました。この問題は、`query_parallel_or()`でのみ発生します。{doc}`/reference/functions/query`では発生しません。"
+
+msgid "Generally, we don't disable match escalation. Because we want to get something search results. The number of hits is 0 is the unwelcome result of us.  Therefore, this problem has no effect by many users. However, it has effect by user who use stop word as below."
+msgstr "一般的には、ヒット数が0件になってしまうのは嬉しくありません。何かしらの検索結果を得たいことが多いです。したがって、通常、検索エスカレーションは無効にしません。そのため、この問題は多くのユーザーには影響がありませんが、以下のようにストップワードを利用しているユーザーには影響があります。"
+
+msgid "We don't want to match a keyword that is registered as stopword. However, If this problem occur, Groonga returns match record even if we search the stopword. Because if we use `query_parallel_or`, `match_escalation_threshold` doesn't work."
+msgstr "ストップワードとして登録したキーワードではマッチしてほしくありません。しかし、この問題が発生すると、ストップワードで検索しているにも関わらず、Groongaはマッチしたレコードを返却してしまいます。この問題は、`query_parallel_or`を使うと、`match_escalation_threshold`が効かないためです。"
+
+msgid "Fixed a bug where full-text search on a reference column of a vector didn't work"
 msgstr ""
 
-msgid "For example, before the fix, even when `match_escalation_threshold` was set to disable match escalation, the results still escalated."
+msgid "This problem occured v14.0.0 or later."
 msgstr ""
 
-msgid "Fixed a bug where full-text search on a reference column of a vector didn't work."
+msgid "We expected that Groonga returns `[1, \"Linux MySQL\"]` and `[2, \"MySQL Groonga\"]` as below example. However, Groonga always returned 0 hits when performing full-text search on a reference column of a vector as below."
 msgstr ""
 
-msgid "For exampe, before the fix, Groonga always returned 0 hits when performing full-text search on a reference column of a vector. Internally, this happened because Groonga couldn't correctly retrieve `key_type` for reference columns."
+msgid "This problem has effect if we execute full-text search against a reference column of a vector."
 msgstr ""
 
 msgid "Release 14.0.3 - 2024-05-09"
