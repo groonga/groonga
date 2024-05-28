@@ -38,14 +38,11 @@ msgstr "ストップワードとして登録したキーワードではマッチ
 msgid "Fixed a bug that full-text search againt a reference column of a vector didn't work."
 msgstr "参照ベクターカラムに対する全文検索が動作しない問題を修正しました。"
 
-msgid "This problem has occured Groonga v14.0.0 or later."
-msgstr "この問題は、Groonga v14.0.0以降で発生します。"
+msgid "This problem has occured Groonga v14.0.0 or later. This problem has effect if we execute full-text search against a reference column of a vector."
+msgstr "この問題は、Groonga v14.0.0以降で発生します。また、この問題は、参照ベクターカラムに対して全文検索を実行している場合に影響があります。"
 
-msgid "We expected that Groonga returns `[1, \"Linux MySQL\"]` and `[2, \"MySQL Groonga\"]` as below example. However, Groonga always returned 0 hits because of we executed full-text search on a reference column of a vector."
-msgstr "以下の例では、Groongaが`[1, \"Linux MySQL\"]` と `[2, \"MySQL Groonga\"]`を返すことが期待ですが、参照ベクターカラムに対して全文検索しているため常に0件ヒットになります。"
-
-msgid "This problem has effect if we execute full-text search against a reference column of a vector."
-msgstr "この問題は、参照ベクターカラムに対して全文検索を実行している場合に影響があります。"
+msgid "We expected that Groonga returns `[1, \"Linux MySQL\"]` and `[2, \"MySQL Groonga\"]` as below example. However, before the fix, Groonga always returned 0 hits as below because of we executed full-text search on a reference column of a vector."
+msgstr "以下の例では、Groongaが`[1, \"Linux MySQL\"]` と `[2, \"MySQL Groonga\"]`を返すことが期待ですが、修正前は、以下のように常に0件ヒットになっていました。参照ベクターカラムに対して全文検索しているためです。"
 
 msgid "Release 14.0.3 - 2024-05-09"
 msgstr "14.0.3リリース - 2024-05-09"
