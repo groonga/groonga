@@ -288,7 +288,7 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx,
                                     geo_entry *entries,
                                     grn_pat_cursor *pc,
                                     int n,
-                                    grn_bool accessorp,
+                                    bool accessorp,
                                     grn_geo_point *base_point,
                                     double *d_far,
                                     uint8_t *diff_bit)
@@ -570,7 +570,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx,
                                   geo_entry *entries,
                                   int n_entries,
                                   int n,
-                                  grn_bool accessorp,
+                                  bool accessorp,
                                   grn_geo_point *base_point,
                                   double d_far,
                                   uint8_t diff_bit)
@@ -671,7 +671,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                grn_obj *index,
                                grn_pat *pat,
                                grn_pat_cursor *pc,
-                               grn_bool accessorp,
+                               bool accessorp,
                                grn_geo_point *base_point,
                                int offset,
                                int limit,
@@ -685,7 +685,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
     uint8_t diff_bit;
     double d_far;
     geo_entry *ep;
-    grn_bool need_not_indexed_records;
+    bool need_not_indexed_records;
     grn_hash *indexed_records = NULL;
 
     n = grn_geo_table_sort_detect_far_point(ctx,
@@ -1615,7 +1615,7 @@ exit:
   ((((uint8_t *)(a))[((n_bit) / 8)] & (1 << (7 - ((n_bit) % 8)))) >>           \
    (1 << (7 - ((n_bit) % 8))))
 
-static grn_bool
+static bool
 extract_rectangle_in_area(grn_ctx *ctx,
                           grn_geo_area_type area_type,
                           const grn_geo_point *top_left,
@@ -1623,14 +1623,14 @@ extract_rectangle_in_area(grn_ctx *ctx,
                           grn_geo_point *area_top_left,
                           grn_geo_point *area_bottom_right)
 {
-  grn_bool out_of_area = GRN_FALSE;
-  grn_bool cover_all_areas = GRN_FALSE;
+  bool out_of_area = false;
+  bool cover_all_areas = false;
 
   if ((GRN_GEO_POINT_IN_NORTH_WEST(top_left) &&
        GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) ||
       (GRN_GEO_POINT_IN_NORTH_EAST(top_left) &&
        GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right))) {
-    cover_all_areas = GRN_TRUE;
+    cover_all_areas = true;
   }
 
   switch (area_type) {
@@ -1647,7 +1647,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         area_bottom_right->longitude = MAX(bottom_right->longitude, 0);
       }
     } else {
-      out_of_area = GRN_TRUE;
+      out_of_area = true;
     }
     break;
   case GRN_GEO_AREA_NORTH_WEST:
@@ -1663,7 +1663,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
       }
     } else {
-      out_of_area = GRN_TRUE;
+      out_of_area = true;
     }
     break;
   case GRN_GEO_AREA_SOUTH_WEST:
@@ -1679,7 +1679,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
       }
     } else {
-      out_of_area = GRN_TRUE;
+      out_of_area = true;
     }
     break;
   case GRN_GEO_AREA_SOUTH_EAST:
@@ -1695,11 +1695,11 @@ extract_rectangle_in_area(grn_ctx *ctx,
         area_bottom_right->longitude = MAX(bottom_right->longitude, 0);
       }
     } else {
-      out_of_area = GRN_TRUE;
+      out_of_area = true;
     }
     break;
   default:
-    out_of_area = GRN_TRUE;
+    out_of_area = true;
     break;
   }
 
@@ -1716,7 +1716,7 @@ grn_geo_cursor_area_init(grn_ctx *ctx,
   grn_geo_point area_top_left, area_bottom_right;
   in_rectangle_area_data data;
   grn_geo_cursor_entry *entry;
-  grn_bool out_of_area;
+  bool out_of_area;
 
   out_of_area = extract_rectangle_in_area(ctx,
                                           area_type,
