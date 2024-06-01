@@ -82,7 +82,7 @@
 #  include <mruby/variable.h>
 #endif /* GRN_WITH_MRUBY */
 
-static grn_bool grn_ctx_impl_mrb_mruby_enabled = GRN_TRUE;
+static bool grn_ctx_impl_mrb_mruby_enabled = true;
 
 void
 grn_ctx_impl_mrb_init_from_env(void)
@@ -91,7 +91,7 @@ grn_ctx_impl_mrb_init_from_env(void)
     char grn_mruby_enabled_env[GRN_ENV_BUFFER_SIZE];
     grn_getenv("GRN_MRUBY_ENABLED", grn_mruby_enabled_env, GRN_ENV_BUFFER_SIZE);
     if (grn_mruby_enabled_env[0] && strcmp(grn_mruby_enabled_env, "no") == 0) {
-      grn_ctx_impl_mrb_mruby_enabled = GRN_FALSE;
+      grn_ctx_impl_mrb_mruby_enabled = false;
     }
   }
 }
@@ -333,7 +333,7 @@ grn_ctx_impl_mrb_fin_real(grn_ctx *ctx)
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
-  ctx->impl->mrb.initialized = GRN_FALSE;
+  ctx->impl->mrb.initialized = false;
 }
 
 void
@@ -343,7 +343,7 @@ grn_ctx_impl_mrb_fin(grn_ctx *ctx)
     return;
   }
 
-  ctx->impl->mrb.initialized = GRN_FALSE;
+  ctx->impl->mrb.initialized = false;
   grn_ctx_impl_mrb_fin_real(ctx);
 }
 
@@ -351,7 +351,7 @@ void
 grn_ctx_impl_mrb_ensure_init(grn_ctx *ctx)
 {
   if (!ctx->impl->mrb.initialized) {
-    ctx->impl->mrb.initialized = GRN_TRUE;
+    ctx->impl->mrb.initialized = true;
     grn_ctx_impl_mrb_init_lazy(ctx);
   }
 }

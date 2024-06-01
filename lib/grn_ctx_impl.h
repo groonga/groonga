@@ -66,7 +66,7 @@ struct _grn_alloc_info {
 
 typedef struct _grn_mrb_data grn_mrb_data;
 struct _grn_mrb_data {
-  grn_bool initialized;
+  bool initialized;
 #ifdef GRN_WITH_MRUBY
   mrb_state *state;
   char base_directory[PATH_MAX];
