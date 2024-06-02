@@ -220,6 +220,7 @@ jobs:
         with:
           name: Benchmark
           tool: 'googlecpp'
+          max-items-in-chart: 500
           output-file-path: benchmark.json
           fail-on-alert: ${{ github.event_name == 'pull_request' }}
       - name: Push benchmark result
