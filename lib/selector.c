@@ -489,6 +489,32 @@ grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
   grn_selector_data *data = ctx->impl->current_selector_data;
 
   if (data->result_set != result_set) {
+    /* This is for 'A || query("...", "B C", {"tags_column": "tags"})'
+     * case. In this case, we want to use a temporary result set
+     * instead of data->result_set in query(). If we use
+     * data->result_set, it's evaluated as '(A || B) && C' not 'A ||
+     * (B && C)'.
+     *
+     * This is for putting tags data to data->result_set instead of
+     * the temporary result set. If we don't do here, we need to
+     * create a tags_column to the temporary result set and merge
+     * tags_column values in the temporary result set to data->result
+     * later. It may be better approach but I can't decide which
+     * approach is better for now. */
+    if (data->tags_table == data->result_set) {
+      grn_id data_result_set_record_id = GRN_ID_NIL;
+      if (grn_hash_get_key(ctx,
+                           (grn_hash *)result_set,
+                           result_set_record_id,
+                           &data_result_set_record_id,
+                           sizeof(grn_id)) == sizeof(grn_id)) {
+        grn_selector_data_append_tags(ctx,
+                                      data,
+                                      data->result_set,
+                                      data_result_set_record_id,
+                                      record_id);
+      }
+    }
     return ctx->rc;
   }
 

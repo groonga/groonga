@@ -489,11 +489,34 @@ namespace {
                 ctx->errline,
                 ctx->errbuf);
       }
+      auto base_result_set = *result_set;
+      const auto have_multiple_conditions =
+        (grn_expr_get_n_logical_ops(ctx, condition) >= 1);
+      // TODO: We can avoid this when condition uses only OR for
+      // logical operations.
+      const auto need_manual_or =
+        (op == GRN_OP_OR && have_multiple_conditions && base_result_set &&
+         grn_table_size(ctx, base_result_set) > 0);
+      if (need_manual_or) {
+        // We can't use *result_set as the base_result_set with this case.
+        // If we use it for 'A || query("...", "B C")', this expression
+        // is evaluated as '(A || B) && C' not 'A || (B && C)'.
+        base_result_set = nullptr;
+      }
       auto new_result_set =
-        grn_table_selector_select(ctx, &table_selector, *result_set);
+        grn_table_selector_select(ctx, &table_selector, base_result_set);
       if (new_result_set) {
         if (ctx->rc == GRN_SUCCESS) {
-          *result_set = new_result_set;
+          if (need_manual_or) {
+            grn_table_setoperation(ctx,
+                                   *result_set,
+                                   new_result_set,
+                                   *result_set,
+                                   op);
+            grn_obj_close(ctx, new_result_set);
+          } else {
+            *result_set = new_result_set;
+          }
           if (can_swap_result_set()) {
             grn_selector_data_set_result_set(ctx, selector_data_, *result_set);
           }
