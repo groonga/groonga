@@ -219,6 +219,8 @@ grn_expr_get_range_info(grn_ctx *ctx,
                         grn_obj *expr,
                         grn_id *range_id,
                         grn_obj_flags *range_flags);
+uint32_t
+grn_expr_get_n_logical_ops(grn_ctx *ctx, grn_obj *expr);
 
 typedef enum {
   GRN_EXPR_V1_FORMAT_TYPE_OUTPUT_COLUMNS,

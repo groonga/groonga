@@ -8937,6 +8937,29 @@ exit:
   return;
 }
 
+uint32_t
+grn_expr_get_n_logical_ops(grn_ctx *ctx, grn_obj *expr)
+{
+  GRN_API_ENTER;
+  uint32_t n = 0;
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *code;
+  grn_expr_code *code_end = e->codes + e->codes_curr;
+  for (code = e->codes; code < code_end; code++) {
+    switch (code->op) {
+    case GRN_OP_AND:
+    case GRN_OP_OR:
+    case GRN_OP_AND_NOT:
+    case GRN_OP_ADJUST:
+      n++;
+      break;
+    default:
+      break;
+    }
+  }
+  GRN_API_RETURN(n);
+}
+
 /*
  * In command version 1:
  *
