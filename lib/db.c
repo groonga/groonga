@@ -12476,6 +12476,11 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       }
       if (id & GRN_OBJ_TMP_OBJECT) {
         grn_obj_clear_option_values(ctx, obj);
+        if (grn_obj_is_table(ctx, obj)) {
+          grn_ctx_impl_columns_cache_delete(ctx, id);
+        } else if (grn_obj_is_column(ctx, obj)) {
+          grn_ctx_impl_columns_cache_delete(ctx, obj->header.domain);
+        }
       }
       grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, GRN_FALSE);
     }
