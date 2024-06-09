@@ -790,8 +790,6 @@ jobs:
             grntest `
             pkg-config `
             red-arrow
-      - name: Install Red Arrow
-        run: |
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
