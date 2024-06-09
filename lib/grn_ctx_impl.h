@@ -89,7 +89,7 @@ struct _grn_mrb_data {
 
 typedef struct _grn_lua_data grn_lua_data;
 struct _grn_lua_data {
-  grn_bool initialized;
+  bool initialized;
 #ifdef GRN_WITH_LUAJIT
   lua_State *state;
 #endif

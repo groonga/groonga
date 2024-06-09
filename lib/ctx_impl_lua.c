@@ -52,7 +52,7 @@ grn_ctx_impl_lua_fin_real(grn_ctx *ctx)
 void
 grn_ctx_impl_lua_init(grn_ctx *ctx)
 {
-  ctx->impl->lua.initialized = GRN_TRUE;
+  ctx->impl->lua.initialized = true;
   grn_ctx_impl_lua_init_real(ctx);
 }
 
@@ -63,6 +63,6 @@ grn_ctx_impl_lua_fin(grn_ctx *ctx)
     return;
   }
 
-  ctx->impl->lua.initialized = GRN_FALSE;
+  ctx->impl->lua.initialized = false;
   grn_ctx_impl_lua_fin_real(ctx);
 }
