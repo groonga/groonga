@@ -7467,6 +7467,9 @@ grn_ii_update_one_internal(
   }
   buffer_put(ctx, ii, b, bt, br, bs, u, size);
   buffer_close(ctx, ii, pseg);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
   if (!a[0] || POS_IS_EMBED(a[0])) {
     a[0] = pos;
   }
