@@ -5626,9 +5626,21 @@ buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
          ii->seg->header->max_segment);
     return ctx->rc;
   }
-  if ((ds = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
+  ds = segment_get(ctx, ii);
+  if (ds == ii->seg->header->max_segment) {
     GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] segment is full: "
+         "<%.*s>: "
+         "request:<%u>, max:<%u>",
+         name_size,
+         name,
+         lseg,
+         ii->seg->header->max_segment);
+    return ctx->rc;
+  }
+  if (ds == GRN_II_PSEG_NOT_ASSIGNED) {
+    GRN_DEFINE_NAME(ii);
+    MERR("[ii][buffer][flush] couldn't assign a segment: "
          "<%.*s>: "
          "request:<%u>, max:<%u>",
          name_size,
