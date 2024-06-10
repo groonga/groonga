@@ -246,11 +246,17 @@ jobs:
             task-namespace: yum
             target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:9
+    env:
+      APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          path: apache-arrow
+          repository: apache/arrow
       - name: Install dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
