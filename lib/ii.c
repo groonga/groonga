@@ -3302,6 +3302,9 @@ buffer_put(grn_ctx *ctx,
           }
           if (r != rnew) {
             set_jump_r(ctx, ii, b, r, last);
+            if (ctx->rc != GRN_SUCCESS) {
+              break;
+            }
           }
         }
       }
@@ -3389,6 +3392,9 @@ buffer_put(grn_ctx *ctx,
       }
       if (nhops > vhops) {
         set_jump_r(ctx, ii, b, r_start, *lastp);
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
       } else {
         nhops++;
       }
