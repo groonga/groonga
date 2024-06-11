@@ -793,13 +793,13 @@ jobs:
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
-            --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER}"
+            --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: "Test: HTTP: reference count: Apache Arrow: chunked"
         run: |
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
           grntest `
             --base-directory test\command `
-            --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+            --groonga "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin\groonga.exe" `
             --input-type apache-arrow `
             --interface http `
             --n-retries 2 `
