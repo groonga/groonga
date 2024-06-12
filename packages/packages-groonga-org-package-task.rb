@@ -15,7 +15,12 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
+apache_arrow_repository = ENV["APACHE_ARROW_REPOSITORY"]
+if apache_arrow_repository.nil?
+  raise "Specify APACHE_ARROW_REPOSITORY environment variable"
+end
+require "#{apache_arrow_repository}/dev/tasks/linux-packages/package-task"
+
 require_relative "launchpad-helper"
 require_relative "repository-helper"
 
