@@ -435,11 +435,6 @@ grn_table_columns(grn_ctx *ctx,
                   const char *name,
                   unsigned int name_size,
                   grn_obj *res);
-GRN_API grn_table_cursor *
-grn_table_columns_cursor_open(grn_ctx *ctx,
-                              grn_obj *table,
-                              const char *name,
-                              unsigned int name_size);
 
 GRN_API unsigned int
 grn_table_size(grn_ctx *ctx, grn_obj *table);
