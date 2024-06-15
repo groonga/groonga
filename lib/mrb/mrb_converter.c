@@ -58,7 +58,7 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   enum mrb_vtype mrb_value_type;
-  grn_bool try_cast = GRN_FALSE;
+  bool try_cast = false;
   grn_obj *from_bulk = NULL;
 
   if (mrb_nil_p(mrb_value_)) {
@@ -79,7 +79,7 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
       *raw_value_size = RSTRING_LEN(mrb_value_);
       break;
     default :
-      try_cast = GRN_TRUE;
+      try_cast = true;
       break;
     }
     break;
@@ -101,7 +101,7 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
         *raw_value = &(buffer->value.time_value);
         *raw_value_size = sizeof(buffer->value.time_value);
       } else {
-        try_cast = GRN_TRUE;
+        try_cast = true;
         if (mrb_value_type == MRB_TT_DATA &&
             klass == mrb_class_get_under(mrb, data->module, "Bulk")) {
           from_bulk = DATA_PTR(mrb_value_);
