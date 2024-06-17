@@ -3905,6 +3905,9 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     {
       float weight = grn_weight_bulk_get(ctx, operator->value);
       scan_info_build_match(ctx, si, -1, weight);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
     }
 
     if (nth_sis > 0) {
