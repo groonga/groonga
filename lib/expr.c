@@ -2730,7 +2730,7 @@ scan_info_build_match_expr_codes(
       grn_inspect(ctx, &inspected, ec->value);
 
       ERR(GRN_INVALID_ARGUMENT,
-          "invalid match target: <%.*s>",
+          "invalid match target: %.*s",
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
 
