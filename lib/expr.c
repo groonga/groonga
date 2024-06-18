@@ -2750,6 +2750,9 @@ scan_info_build_match_expr(grn_ctx *ctx,
   i = 0;
   while (i < expr->codes_curr) {
     i = scan_info_build_match_expr_codes(ctx, si, expr, i, weight);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
   }
 }
 
