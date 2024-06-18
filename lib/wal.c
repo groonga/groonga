@@ -658,6 +658,9 @@ bool
 grn_wal_exist(grn_ctx *ctx, grn_obj *obj)
 {
   grn_io *io = grn_obj_get_io(ctx, obj);
+  if (!io) {
+    return false;
+  }
   if (io->path[0] == '\0') {
     return false;
   }
