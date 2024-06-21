@@ -90,19 +90,19 @@
 #cmakedefine GRN_WITH_H3_BUNDLED
 #cmakedefine GRN_WITH_KYTEA
 #cmakedefine GRN_WITH_LZ4
-#cmakedefine GRN_WITH_RAPIDJSON
-#cmakedefine GRN_WITH_ZSTD
-#cmakedefine GRN_WITH_ROARING_BITMAPS
-#cmakedefine GRN_WITH_SIMSIMD
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK
 #cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
 #cmakedefine GRN_WITH_ONIGMO
+#cmakedefine GRN_WITH_RAPIDJSON
+#cmakedefine GRN_WITH_ROARING_BITMAPS
+#cmakedefine GRN_WITH_SIMSIMD
 #cmakedefine GRN_WITH_XSIMD
 #cmakedefine GRN_WITH_XXHASH
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB
+#cmakedefine GRN_WITH_ZSTD
 
 /* headers */
 #cmakedefine HAVE_DIRENT_H
