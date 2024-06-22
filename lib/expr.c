@@ -2725,13 +2725,16 @@ scan_info_build_match_expr_codes(
     break;
   default:
     {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      int name_size;
-      name_size = grn_obj_name(ctx, ec->value, name, GRN_TABLE_MAX_KEY_SIZE);
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, ec->value);
+
       ERR(GRN_INVALID_ARGUMENT,
-          "invalid match target: <%.*s>",
-          name_size,
-          name);
+          "invalid match target: %.*s",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+
+      GRN_OBJ_FIN(ctx, &inspected);
       return expr->codes_curr;
     }
     break;
