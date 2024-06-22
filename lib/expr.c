@@ -3986,6 +3986,9 @@ grn_scan_info_build(
   scan_info **sis;
 
   sis = grn_scan_info_build_simple(ctx, expr, n, op, record_exist);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
 #ifdef GRN_WITH_MRUBY
   if (!sis) {
     grn_ctx_impl_mrb_ensure_init(ctx);
