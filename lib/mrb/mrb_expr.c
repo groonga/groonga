@@ -441,7 +441,7 @@ mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   scan_info *si;
   mrb_value mrb_arg;
-  grn_bool success;
+  bool success;
 
   mrb_get_args(mrb, "o", &mrb_arg);
 
@@ -752,7 +752,7 @@ mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
       grn_mrb_ctx_check(mrb);
     }
     GRN_BOOL_INIT(grn_object, 0);
-    GRN_BOOL_SET(ctx, grn_object, GRN_TRUE);
+    GRN_BOOL_SET(ctx, grn_object, true);
     break;
   default:
     mrb_raisef(mrb, E_ARGUMENT_ERROR, "unsupported type: %S", mrb_object);
@@ -855,7 +855,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
     } else {
       grn_obj constant;
       GRN_BOOL_INIT(&constant, 0);
-      GRN_BOOL_SET(ctx, &constant, GRN_FALSE);
+      GRN_BOOL_SET(ctx, &constant, false);
       grn_expr_append_const(ctx, expr, &constant, op, n_args);
       GRN_OBJ_FIN(ctx, &constant);
     }
@@ -864,7 +864,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
     {
       grn_obj constant;
       GRN_BOOL_INIT(&constant, 0);
-      GRN_BOOL_SET(ctx, &constant, GRN_TRUE);
+      GRN_BOOL_SET(ctx, &constant, true);
       grn_expr_append_const(ctx, expr, &constant, op, n_args);
       GRN_OBJ_FIN(ctx, &constant);
     }
@@ -1291,7 +1291,7 @@ exit:
 
 scan_info **
 grn_mrb_scan_info_build(
-  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, grn_bool record_exist)
+  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, bool record_exist)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;

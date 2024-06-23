@@ -31,7 +31,7 @@ scan_info **grn_mrb_scan_info_build(grn_ctx *ctx,
                                     grn_obj *expr,
                                     int *n,
                                     grn_operator op,
-                                    grn_bool record_exist);
+                                    bool record_exist);
 unsigned int grn_mrb_expr_estimate_size(grn_ctx *ctx,
                                         grn_obj *expr,
                                         grn_obj *table);
