@@ -658,6 +658,67 @@ else()
   set(GRN_WITH_ZSTD FALSE)
 endif()
 
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_simdjson_version"
+     GRN_BUNDLED_SIMDJSON_VERSION)
+string(STRIP "${GRN_BUNDLED_SIMDJSON_VERSION}" GRN_BUNDLED_SIMDJSON_VERSION)
+set(GRN_SIMDJSON_EP_VERSION ${GRN_BUNDLED_SIMDJSON_VERSION})
+
+set(GRN_WITH_SIMDJSON
+    "auto"
+    CACHE STRING "Support JSON processing by simdjson.")
+if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
+  if("${GRN_WITH_SIMDJSON}" STREQUAL "bundled")
+    set(simdjson_FOUND FALSE)
+  else()
+    if("${GRN_WITH_SIMDJSON}" STREQUAL "system")
+      find_package(simdjson REQUIRED)
+    else()
+      find_package(simdjson)
+    endif()
+  endif()
+  if(simdjson_FOUND)
+    set(GRN_WITH_SIMDJSON TRUE)
+    message(STATUS "simdjson: (system)")
+  else()
+    function(grn_build_simdjson)
+      set(SIMDJSON_SOURCE_BASE_NAME "simdjson-${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+      set(SIMDJSON_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${SIMDJSON_SOURCE_BASE_NAME}")
+      if(EXISTS ${SIMDJSON_SOURCE_LOCAL_PATH})
+        set(SIMDJSON_SOURCE_URL ${SIMDJSON_SOURCE_LOCAL_PATH})
+      else()
+        set(SIMDJSON_SOURCE_URL
+            "https://github.com/simdjson/simdjson/archive/refs/tags/")
+        string(APPEND SIMDJSON_SOURCE_URL "v${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        simdjson
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${SIMDJSON_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_SIMDJSON_BUNDLED_SHA256}")
+      fetchcontent_makeavailable(simdjson)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${simdjson_SOURCE_DIR}/build/cmake"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      set(SIMDJSON_INCLUDE_DIR
+          "${simdjson_SOURCE_DIR}/lib"
+          PARENT_SCOPE)
+      add_library(libsimdjson_headers INTERFACE)
+      install(FILES "${simdjson_SOURCE_DIR}/AUTHORS" "${simdjson_SOURCE_DIR}/CONTRIBUTORS"
+                    "${simdjson_SOURCE_DIR}/LICENSE" "${simdjson_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/simdjson")
+    endfunction()
+    grn_build_simdjson()
+    set(GRN_WITH_BUNDLED_SIMDJSON TRUE)
+    set(GRN_WITH_SIMDJSON TRUE)
+    message(STATUS "simdjson: (bundled)")
+  endif()
+  target_link_libraries(grn_dependencies INTERFACE simdjson::simdjson)
+else()
+  set(GRN_WITH_SIMDJSON FALSE)
+endif()
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_rapidjson_version"
      GRN_BUNDLED_RAPIDJSON_VERSION)
 string(STRIP "${GRN_BUNDLED_RAPIDJSON_VERSION}" GRN_BUNDLED_RAPIDJSON_VERSION)
@@ -666,6 +727,9 @@ set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 set(GRN_WITH_RAPIDJSON
     "auto"
     CACHE STRING "Support JSON processing by RapidJSON.")
+if(GRN_WITH_SIMDJSON)
+  set(GRN_WITH_RAPIDJSON "no")
+endif()
 if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
   if("${GRN_WITH_RAPIDJSON}" STREQUAL "bundled")
     set(GroongaRapidJSON_FOUND FALSE)

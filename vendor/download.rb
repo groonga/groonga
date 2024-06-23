@@ -35,6 +35,7 @@ all_targets = [
   "blosc",
   "croaring",
   "h3",
+  "simdjson",
   "simsimd",
   "xsimd",
   "zstd",
@@ -66,6 +67,11 @@ targets.each do |target|
     url = "https://github.com/uber/h3/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "h3-#{version}.tar.gz")
+  when "simdjson"
+    version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/simdjson/simdjson/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "simdjson-#{version}.tar.gz")
   when "simsimd"
     version = cmakelists[/set\(GRN_SIMSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/ashvardanian/SimSIMD/archive/refs/tags/"
