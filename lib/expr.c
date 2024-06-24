@@ -4564,7 +4564,7 @@ parse_query_accept_string(grn_ctx *ctx,
   grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
 
-  mode = grn_int32_value_at(&efsi->mode_stack, -1);
+  GRN_INT32_POP(&efsi->mode_stack, mode);
   weight = grn_float32_value_at(&efsi->weight_stack, -1);
   switch (mode) {
   case GRN_OP_ASSIGN:
