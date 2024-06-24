@@ -122,12 +122,12 @@ jobs:
             liblz4-dev \
             libmecab-dev \
             libmsgpack-dev \
+            libsimdjson-dev \
             libstemmer-dev \
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
             ninja-build \
-            rapidjson-dev \
             ruby-dev \
             zlib1g-dev
       - name: CMake
