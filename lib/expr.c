@@ -591,6 +591,7 @@ grn_expr_open(grn_ctx *ctx,
       if ((expr->codes = GRN_MALLOCN(grn_expr_code, size))) {
         expr->codes_curr = 0;
         expr->codes_size = size;
+        expr->latest_parsed = false;
         expr->obj.header = spec->header;
         expr->cache.codes = NULL;
         expr->cache.codes_curr = 0;
@@ -732,6 +733,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     expr->values_size = size;
     expr->codes_curr = 0;
     expr->codes_size = size;
+    expr->latest_parsed = false;
     expr->cache.codes = NULL;
     expr->cache.codes_curr = 0;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
@@ -6140,6 +6142,9 @@ grn_expr_parse(grn_ctx *ctx,
                grn_expr_flags flags)
 {
   efs_info efsi;
+  grn_expr *e = (grn_expr *)expr;
+  uint32_t codes_curr = e->codes_curr;
+  e->latest_parsed = false;
   if (grn_expr_parser_open(ctx)) {
     return ctx->rc;
   }
@@ -6234,7 +6239,16 @@ grn_expr_parse(grn_ctx *ctx,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }
+  if (e->codes_curr > codes_curr) {
+    e->latest_parsed = true;
+  }
   GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_expr_is_latest_parsed(grn_ctx *ctx, grn_obj *expr)
+{
+  return ((grn_expr *)expr)->latest_parsed;
 }
 
 grn_rc

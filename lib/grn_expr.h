@@ -46,6 +46,7 @@ struct _grn_expr {
   uint32_t values_size;
   uint32_t codes_curr;
   uint32_t codes_size;
+  bool latest_parsed;
 
   grn_obj objs;
   grn_obj dfi;
