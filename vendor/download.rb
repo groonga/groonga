@@ -68,7 +68,7 @@ targets.each do |target|
     url << "v#{version}.tar.gz"
     download(url, "h3-#{version}.tar.gz")
   when "simdjson"
-    version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
+    version = File.read(File.join(__dir__, "../../", "bundled_simdjson_version")).chomp
     url = "https://github.com/simdjson/simdjson/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "simdjson-#{version}.tar.gz")
