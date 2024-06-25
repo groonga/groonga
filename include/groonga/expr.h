@@ -158,6 +158,8 @@ grn_expr_parse(grn_ctx *ctx,
                grn_operator default_mode,
                grn_operator default_op,
                grn_expr_flags flags);
+uint32_t
+grn_expr_get_n_codes(grn_ctx *ctx, grn_obj *expr);
 
 GRN_API grn_obj *
 grn_expr_snip(grn_ctx *ctx,
