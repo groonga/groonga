@@ -6237,6 +6237,12 @@ grn_expr_parse(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+uint32_t
+grn_expr_get_n_codes(grn_ctx *ctx, grn_obj *expr)
+{
+  return ((grn_expr *)expr)->codes_curr;
+}
+
 grn_rc
 grn_expr_parser_close(grn_ctx *ctx)
 {
