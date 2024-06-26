@@ -4564,7 +4564,7 @@ parse_query_accept_string(grn_ctx *ctx,
   grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
 
-  GRN_INT32_POP(&efsi->mode_stack, mode);
+  mode = grn_int32_value_at(&efsi->mode_stack, -1);
   weight = grn_float32_value_at(&efsi->weight_stack, -1);
   switch (mode) {
   case GRN_OP_ASSIGN:
@@ -4787,6 +4787,7 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
 {
   const char *end;
   unsigned int len;
+  bool need_mode_pop = false;
   GRN_BULK_REWIND(&q->buf);
   for (end = q->cur;;) {
     /* null check and length check */
@@ -4886,6 +4887,7 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
                GRN_TEXT_LEN(&q->buf) > 0 && *end == GRN_QUERY_PREFIX) {
       q->cur = end + 1;
       GRN_INT32_PUT(ctx, &q->mode_stack, GRN_OP_PREFIX);
+      need_mode_pop = true;
       break;
     } else if (*end == GRN_QUERY_ESCAPE) {
       end += len;
@@ -4902,6 +4904,10 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
                             q,
                             GRN_TEXT_VALUE(&q->buf),
                             GRN_TEXT_LEN(&q->buf));
+  if (need_mode_pop) {
+    int32_t mode;
+    GRN_INT32_POP(&(q->mode_stack), mode);
+  }
 
   return GRN_SUCCESS;
 }
