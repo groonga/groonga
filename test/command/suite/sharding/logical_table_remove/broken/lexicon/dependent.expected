@@ -55,7 +55,7 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
       0.0,
       0.0
     ],
-    "object corrupt: <[column][remove][index] hook has a dangling reference: <Logs_20150204.timestamp> -> <Times_20150204.timestamp_"
+    "object corrupt: <[object][remove][index][Logs_20150204.timestamp] hook has a dangling reference: <Times_20150204.timestamp_inde"
   ]
 ]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
@@ -73,7 +73,7 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
 #|e| [pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
 #|e| grn_ctx_at: failed to open object: <276>(<Times_20150204.timestamp_index>):<72>(<column:index>)
-#|e| [column][remove][index] hook has a dangling reference: <Logs_20150204.timestamp> -> <Times_20150204.timestamp_index>(276)
+#|e| [object][remove][index][Logs_20150204.timestamp] hook has a dangling reference: <Times_20150204.timestamp_index>(276)
 dump
 plugin_register sharding
 
