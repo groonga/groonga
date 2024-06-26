@@ -9471,28 +9471,29 @@ grn_obj_delete_hook(grn_ctx *ctx,
 static grn_rc
 remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
 {
+  const char *tag = "[object][remove][index]";
   grn_rc rc = GRN_SUCCESS;
-  grn_hook *h0, *hooks = DB_OBJ(obj)->hooks[entry];
+  grn_hook *hooks = DB_OBJ(obj)->hooks[entry];
   DB_OBJ(obj)->hooks[entry] = NULL; /* avoid mutual recursive call */
+  if (!hooks) {
+    return rc;
+  }
+  GRN_DEFINE_NAME(obj);
   while (hooks) {
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     if (!target) {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      int length;
       char hook_name[GRN_TABLE_MAX_KEY_SIZE];
       int hook_name_length;
 
-      length = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
       hook_name_length = grn_table_get_key(ctx,
                                            ctx->impl->db,
                                            data->target,
                                            hook_name,
                                            GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_OBJECT_CORRUPT,
-          "[column][remove][index] "
-          "hook has a dangling reference: <%.*s> -> <%.*s>(%u)",
-          length,
+          "%s[%s] hook has a dangling reference: <%.*s>(%u)",
+          tag,
           name,
           hook_name_length,
           hook_name,
@@ -9502,21 +9503,25 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
       // TODO: multicolumn  MULTI_COLUMN_INDEXP
       rc = grn_obj_remove_internal(ctx, target, 0);
     } else {
-      // TODO: err
-      char fn[GRN_TABLE_MAX_KEY_SIZE];
-      int flen;
-      flen = grn_obj_name(ctx, target, fn, GRN_TABLE_MAX_KEY_SIZE);
-      fn[flen] = '\0';
-      ERR(GRN_UNKNOWN_ERROR, "column has unsupported hooks, col=%s", fn);
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_limited(ctx, &inspected, target);
+      ERR(GRN_UNKNOWN_ERROR,
+          "%s[%s] hook has an unsupported index target: %.*s",
+          tag,
+          name,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
       rc = ctx->rc;
     }
     if (rc != GRN_SUCCESS) {
       DB_OBJ(obj)->hooks[entry] = hooks;
       break;
     }
-    h0 = hooks;
+    grn_hook *current_hook = hooks;
     hooks = hooks->next;
-    GRN_FREE(h0);
+    GRN_FREE(current_hook);
   }
   return rc;
 }
