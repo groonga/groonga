@@ -23,34 +23,37 @@ msgstr "14.0.5リリース - 2024-06-29"
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/reference/functions/query`] `query()`のAND検索とOR検索検索を 'A || query(\"...\", \"B C\")' の順で組み合わせたときに、誤った順序で評価される問題を修正しました。"
-msgstr "[{doc}`/reference/functions/query`] `query()`のAND検索とOR検索検索を 'A || query(\"...\", \"B C\")' の順で組み合わせたときに、誤った順序で評価される問題を修正しました。"
+msgid "[{doc}`/reference/functions/query`] Fixed a bug that the order of evaluation of `'A || query(\"...\", \"B C\")'` is wrong"
+msgstr "[{doc}`/reference/functions/query`] `query()`の`AND`検索と`OR`検索検索を `'A || query(\"...\", \"B C\")'` の順で組み合わせたときに、誤った順序で評価される問題を修正しました"
 
-msgid "以下の例では、`memo @ \"Groonga`の条件がマッチする`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットするはずですが、 この問題が発生した場合はヒットしません。したがって、下記の例では何もヒットしません。"
+msgid "We expect that `{\"name\": \"Alice\", \"memo\": \"Groonga user\"}` is hit in the following example. However, if this problem occurred, the following query had not been hit."
 msgstr "以下の例では、`memo @ \"Groonga`の条件がマッチする`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットするはずですが、 この問題が発生した場合はヒットしません。したがって、下記の例では何もヒットしません。"
 
-msgid "修正後は、以下のように`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットします。"
+msgid "After the fix, `{\"name\": \"Alice\", \"memo\": \"Groonga user\"}` is hit such as the following example."
 msgstr "修正後は、以下のように`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットします。"
 
-msgid "この問題は、以下が発生条件なので、`query()`を単独で使用している場合や、`query()`内でAND検索をしていない場合は問題ありません。"
-msgstr "この問題は、以下が発生条件なので、`query()`を単独で使用している場合や、`query()`内でAND検索をしていない場合は問題ありません。"
+msgid "Here is occurrence condition of this problem."
+msgstr "この問題の発生条件は下記の通りです。"
 
-msgid "OR検索と`query()`を組み合わせて使っていること"
-msgstr "OR検索と`query()`を組み合わせて使っていること"
+msgid "We use `OR` search and `query()`."
+msgstr "`OR`検索と`query()`を組み合わせて使っていること。"
 
-msgid "`query()`内でAND検索していること"
-msgstr "`query()`内でAND検索していること"
+msgid "We use `AND` search in `query()`."
+msgstr "`query()`内で`AND`検索していること。"
 
-msgid "`'A || query(\"...\", \"B C\")'`の順序で条件式が記述されていること"
-msgstr "`'A || query(\"...\", \"B C\")'`の順序で条件式が記述されていること"
+msgid "The order of condition expression is `'A || query(\"...\", \"B C\")'`."
+msgstr "`'A || query(\"...\", \"B C\")'`の順序で条件式が記述されていること。"
 
-msgid "[{doc}`/reference/commands/select`] `--query \"A* OR B\"`のように先に前方一致検索を評価する条件が、誤った検索結果を返すことがある問題を修正しました。"
-msgstr "[{doc}`/reference/commands/select`] `--query \"A* OR B\"`のように先に前方一致検索を評価する条件が、誤った検索結果を返すことがある問題を修正しました。"
+msgid "So, this problem doesn't occur if we use only `query()` or we don't use `AND` search in `query()`."
+msgstr "そのため、`query()`を単独で使用している場合や、`query()`内で`AND`検索をしていない場合は問題ありません。"
 
-msgid "この問題は先に前方一致検索を評価する条件の時に発生する可能性があります。 `--query A OR B*`のように最後に前方一致検索を評価するケースでは発生しません。"
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that a condition that evaluate prefix search in advance such as `--query \"A* OR B\"` returned wrong search result"
+msgstr "[{doc}`/reference/commands/select`] `--query \"A* OR B\"`のように先に前方一致検索を評価する条件が、誤った検索結果を返すことがある問題を修正しました"
+
+msgid "This problem may occur when prefix search evaluate in advance. This problem doesn't occur a condition that evaluate prefix search in the end such as `--query A OR B*`."
 msgstr "この問題は先に前方一致検索を評価する条件の時に発生する可能性があります。 `--query A OR B*`のように最後に前方一致検索を評価するケースでは発生しません。"
 
-msgid "この問題が発生すると、以下の`--query \"Bo* OR li\"`という条件が、`Bo`も`li`も前方一致検索として評価されてしまい`li`の検索結果が誤ったものになります。 `Alice`がヒットするのが期待値ですが、以下のように何もヒットしません。これは、前述の通り`li`が前方一致検索として評価されてしまうためです。"
+msgid "If this problem occur, the `Bo` and the `li` of `--query \"Bo* OR li\"` are evaluated as a prefix search. As a result, The following query does not hit. Because `li` is evaluated as a prefix search as mentioned above."
 msgstr "この問題が発生すると、以下の`--query \"Bo* OR li\"`という条件が、`Bo`も`li`も前方一致検索として評価されてしまい`li`の検索結果が誤ったものになります。 `Alice`がヒットするのが期待値ですが、以下のように何もヒットしません。これは、前述の通り`li`が前方一致検索として評価されてしまうためです。"
 
 msgid "Release 14.0.4 - 2024-05-29"
