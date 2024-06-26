@@ -1,0 +1,15 @@
+table_create Users TABLE_HASH_KEY ShortText
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Users _key
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+database_unmap
+#@copy-path fixture/object_remove/too_small.data #{db_path}.0000102
+
+table_remove Users --ensure yes
+
+dump

@@ -1,0 +1,15 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Users _key
+[[0,0.0,0.0],true]
+database_unmap
+[[0,0.0,0.0],true]
+table_remove Users --ensure yes
+[[0,0.0,0.0],true]
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
+#|e| grn_ctx_at: failed to open object: <258>(<Terms.index>):<72>(<column:index>)
+#|e| [object][remove][index][Users] hook has a dangling reference: <Terms.index>(258)
+dump
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto

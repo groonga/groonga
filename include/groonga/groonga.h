@@ -822,6 +822,7 @@ grn_obj_set_value(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
 
 #define GRN_OBJ_REMOVE_DEPENDENT (0x01 << 0)
+#define GRN_OBJ_REMOVE_ENSURE    (0x01 << 1)
 
 GRN_API grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj);

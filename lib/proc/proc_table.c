@@ -487,6 +487,9 @@ command_table_remove(grn_ctx *ctx,
   if (grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1, false)) {
     flags |= GRN_OBJ_REMOVE_DEPENDENT;
   }
+  if (grn_plugin_proc_get_var_bool(ctx, user_data, "ensure", -1, false)) {
+    flags |= GRN_OBJ_REMOVE_ENSURE;
+  }
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       (int)GRN_TEXT_LEN(name));
@@ -522,15 +525,19 @@ command_table_remove(grn_ctx *ctx,
 void
 grn_proc_init_table_remove(grn_ctx *ctx)
 {
-  grn_expr_var vars[2];
+#define N_VARS 3
+  grn_expr_var vars[N_VARS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "dependent", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[2]), "ensure", -1);
   grn_plugin_command_create(ctx,
-                            "table_remove", -1,
+                            "table_remove",
+                            -1,
                             command_table_remove,
-                            2,
+                            N_VARS,
                             vars);
+#undef N_VARS
 }
 
 static grn_obj *
