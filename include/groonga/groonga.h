@@ -828,6 +828,8 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
+grn_obj_remove_flags(grn_ctx *ctx, grn_obj *obj, uint32_t flags);
+GRN_API grn_rc
 grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size);
 
 GRN_API grn_rc

@@ -221,22 +221,20 @@ object_remove(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_options = mrb_nil_value();
-  grn_bool dependent = GRN_FALSE;
+  uint32_t flags = 0;
   grn_obj *object;
 
   mrb_get_args(mrb, "|H", &mrb_options);
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_dependent;
     mrb_dependent = grn_mrb_options_get_lit(mrb, mrb_options, "dependent");
-    dependent = mrb_test(mrb_dependent);
+    if (mrb_test(mrb_dependent)) {
+      flags |= GRN_OBJ_REMOVE_DEPENDENT;
+    }
   }
 
   object = DATA_PTR(self);
-  if (dependent) {
-    grn_obj_remove_dependent(ctx, object);
-  } else {
-    grn_obj_remove(ctx, object);
-  }
+  grn_obj_remove_flags(ctx, object, flags);
   grn_mrb_ctx_check(mrb);
 
   DATA_PTR(self) = NULL;

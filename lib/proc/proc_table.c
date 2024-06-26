@@ -481,11 +481,12 @@ command_table_remove(grn_ctx *ctx,
 {
   grn_obj *name;
   grn_obj *table;
-  bool dependent;
+  uint32_t flags = 0;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  dependent = grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1,
-                                           false);
+  if (grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1, false)) {
+    flags |= GRN_OBJ_REMOVE_DEPENDENT;
+  }
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       (int)GRN_TEXT_LEN(name));
@@ -513,12 +514,8 @@ command_table_remove(grn_ctx *ctx,
     return NULL;
   }
 
-  if (dependent) {
-    grn_obj_remove_dependent(ctx, table);
-  } else {
-    grn_obj_remove(ctx, table);
-  }
-  grn_ctx_output_bool(ctx, !ctx->rc);
+  grn_obj_remove_flags(ctx, table, flags);
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 

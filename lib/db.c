@@ -10465,23 +10465,17 @@ grn_obj_remove_internal(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
 grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_rc rc = GRN_SUCCESS;
-  GRN_API_ENTER;
-  if (ctx->impl && ctx->impl->db && ctx->impl->db != obj) {
-    grn_io *io = grn_obj_get_io(ctx, ctx->impl->db);
-    rc = grn_io_lock(ctx, io, grn_lock_timeout);
-    if (rc == GRN_SUCCESS) {
-      rc = grn_obj_remove_internal(ctx, obj, 0);
-      grn_io_unlock(ctx, io);
-    }
-  } else {
-    rc = grn_obj_remove_internal(ctx, obj, 0);
-  }
-  GRN_API_RETURN(rc);
+  return grn_obj_remove_flags(ctx, obj, 0);
 }
 
 grn_rc
 grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  return grn_obj_remove_flags(ctx, obj, GRN_OBJ_REMOVE_DEPENDENT);
+}
+
+grn_rc
+grn_obj_remove_flags(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
@@ -10489,11 +10483,11 @@ grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj)
     grn_io *io = grn_obj_get_io(ctx, ctx->impl->db);
     rc = grn_io_lock(ctx, io, grn_lock_timeout);
     if (rc == GRN_SUCCESS) {
-      rc = grn_obj_remove_internal(ctx, obj, GRN_OBJ_REMOVE_DEPENDENT);
+      rc = grn_obj_remove_internal(ctx, obj, flags);
       grn_io_unlock(ctx, io);
     }
   } else {
-    rc = grn_obj_remove_internal(ctx, obj, GRN_OBJ_REMOVE_DEPENDENT);
+    rc = grn_obj_remove_internal(ctx, obj, flags);
   }
   GRN_API_RETURN(rc);
 }
