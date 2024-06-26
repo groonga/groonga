@@ -831,6 +831,8 @@ GRN_API grn_rc
 grn_obj_remove_flags(grn_ctx *ctx, grn_obj *obj, uint32_t flags);
 GRN_API grn_rc
 grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size);
+GRN_API grn_rc
+grn_obj_remove_force_by_id(grn_ctx *ctx, grn_id id);
 
 GRN_API grn_rc
 grn_obj_rename(grn_ctx *ctx,

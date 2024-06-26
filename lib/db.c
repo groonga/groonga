@@ -10498,7 +10498,6 @@ grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size)
   grn_rc rc = GRN_SUCCESS;
   grn_obj *db;
   grn_id obj_id;
-  char path[PATH_MAX];
 
   GRN_API_ENTER;
 
@@ -10523,8 +10522,32 @@ grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size)
     goto exit;
   }
 
-  grn_obj_delete_by_id(ctx, db, obj_id, GRN_TRUE);
-  grn_obj_path_by_id(ctx, db, obj_id, path);
+  rc = grn_obj_remove_force_by_id(ctx, obj_id);
+
+exit:
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_obj_remove_force_by_id(grn_ctx *ctx, grn_id id)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *db;
+  char path[PATH_MAX];
+
+  GRN_API_ENTER;
+
+  if (!(ctx->impl && ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[object][remove][force][id] database isn't initialized");
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  db = ctx->impl->db;
+
+  grn_obj_delete_by_id(ctx, db, id, true);
+  grn_obj_path_by_id(ctx, db, id, path);
   grn_io_remove_if_exist(ctx, path);
   grn_strcat(path, PATH_MAX, ".c");
   grn_io_remove_if_exist(ctx, path);
