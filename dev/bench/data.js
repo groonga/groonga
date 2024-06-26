@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719378899573,
+  "lastUpdate": 1719445276113,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -26526,6 +26526,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02429969299998902,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0019539999999991786 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "d6350e737ef63c5879644c6c145602c49f7a9b69",
+          "message": "grn_obj_remove_flags: add support for ensuring removing mode\n\nYou can use this by \"grn_obj_remove_flags(...,\nGRN_OBJ_REMOVE_ENSURE)\".\n\nIt's supported only dangling reference case for now. But other cases\nwill be supported soon.\n\nThis adds the \"ensure\" option to the \"table_remove\" command. It should\nbe documented.",
+          "timestamp": "2024-06-27T08:34:38+09:00",
+          "tree_id": "922dc738212d642ea2094675fb0f2b3788443a73",
+          "url": "https://github.com/groonga/groonga/commit/d6350e737ef63c5879644c6c145602c49f7a9b69"
+        },
+        "date": 1719445274307,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3811644719999663,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.021504999999999913 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2574171569999635,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014463000000000198 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015736611999898287,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004120000000000512 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015736355000001367,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.000484000000000151 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.5507871170000271,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0002979999999999927 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2419828169999505,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008606999999999962 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1334709349999912,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007897000000000237 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017780926999989788,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002401999999999904 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017438935000029687,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002332999999999752 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.053774244999942766,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007707000000000158 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05651217200016845,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009824000000000027 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018817738999985067,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0022560000000000358 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.018076570000005177,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002378999999999798 s\nthreads: undefined"
           }
         ]
       }
