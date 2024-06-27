@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,10 @@ command_object_remove(grn_ctx *ctx,
   }
 
   if (force) {
-    grn_obj_remove_force(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
+    grn_ctx_remove(ctx,
+                   GRN_TEXT_VALUE(name),
+                   (int)GRN_TEXT_LEN(name),
+                   GRN_OBJ_REMOVE_DEPENDENT | GRN_OBJ_REMOVE_ENSURE);
     grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   } else {
     if (failed_to_open) {
