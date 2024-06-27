@@ -13,6 +13,8 @@ table_remove Users --ensure yes
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
 #|e| grn_ctx_at: failed to open object: <258>(<Users.name>):<65>(<column:var_size>)
 #|e| [table][remove][columns][Users] column is broken: <Users.name>(258): [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
+#|e| grn_ctx_at: failed to open object: <258>(<Users.name>):<65>(<column:var_size>)
 dump
 table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]

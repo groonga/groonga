@@ -9501,7 +9501,7 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
       if (flags & GRN_OBJ_REMOVE_ENSURE) {
         ERRCLR(ctx);
         if (data->target != GRN_ID_NIL) {
-          grn_obj_remove_force_by_id(ctx, data->target);
+          grn_ctx_remove_by_id(ctx, data->target, flags);
         }
       }
       rc = ctx->rc;
@@ -9595,7 +9595,7 @@ remove_columns_raw(grn_ctx *ctx,
       }
       if (flags & GRN_OBJ_REMOVE_ENSURE) {
         ERRCLR(ctx);
-        grn_obj_remove_force_by_id(ctx, column_id);
+        grn_ctx_remove_by_id(ctx, column_id, flags);
       }
       rc = ctx->rc;
       if (rc != GRN_SUCCESS) {
@@ -10570,65 +10570,146 @@ grn_obj_remove_flags(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
 grn_rc
 grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size)
 {
-  grn_rc rc = GRN_SUCCESS;
   grn_obj *db;
-  grn_id obj_id;
 
   GRN_API_ENTER;
 
   if (!(ctx->impl && ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[object][remove][force] database isn't initialized");
-    rc = ctx->rc;
-    goto exit;
+    GRN_API_RETURN(ctx->rc);
   }
 
   db = ctx->impl->db;
   if (name_size == -1) {
     name_size = strlen(name);
   }
-  obj_id = grn_table_get(ctx, db, name, name_size);
-  if (obj_id == GRN_ID_NIL) {
+  grn_id id = grn_table_get(ctx, db, name, name_size);
+  if (id == GRN_ID_NIL) {
     ERR(GRN_INVALID_ARGUMENT,
         "[object][remove][force] nonexistent object: <%.*s>",
         name_size,
         name);
-    rc = ctx->rc;
-    goto exit;
+    GRN_API_RETURN(ctx->rc);
   }
 
-  rc = grn_obj_remove_force_by_id(ctx, obj_id);
+  grn_obj_delete_by_id(ctx, db, id, true);
+  {
+    char path[PATH_MAX];
+    grn_obj_path_by_id(ctx, db, id, path);
+    grn_io_remove_if_exist(ctx, path);
+    grn_strcat(path, PATH_MAX, ".c");
+    grn_io_remove_if_exist(ctx, path);
+  }
 
-exit:
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(ctx->rc);
+}
+
+static bool
+grn_ctx_is_table(grn_ctx *ctx, grn_id id)
+{
+  grn_ja *specs = ((grn_db *)(ctx->impl->db))->specs;
+  grn_io_win iw;
+  uint32_t encoded_spec_size;
+  void *encoded_spec = grn_ja_ref(ctx, specs, id, &iw, &encoded_spec_size);
+  if (encoded_spec_size == 0) {
+    return false;
+  }
+
+  bool is_table = false;
+  grn_obj_spec *spec;
+  grn_obj decoded_spec;
+  GRN_TEXT_INIT(&decoded_spec, GRN_OBJ_VECTOR);
+  if (grn_obj_spec_unpack(ctx,
+                          id,
+                          encoded_spec,
+                          encoded_spec_size,
+                          &spec,
+                          &decoded_spec,
+                          "[ctx][is-table]")) {
+    switch (spec->header.type) {
+    case GRN_TABLE_PAT_KEY:
+    case GRN_TABLE_DAT_KEY:
+    case GRN_TABLE_HASH_KEY:
+    case GRN_TABLE_NO_KEY:
+      is_table = true;
+      break;
+    default:
+      break;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &decoded_spec);
+  grn_ja_unref(ctx, &iw);
+
+  return is_table;
 }
 
 grn_rc
-grn_obj_remove_force_by_id(grn_ctx *ctx, grn_id id)
+grn_ctx_remove_by_id(grn_ctx *ctx, grn_id id, uint32_t flags)
 {
-  grn_rc rc = GRN_SUCCESS;
-  grn_obj *db;
-  char path[PATH_MAX];
+  const char *tag = "[ctx][remove][id]";
+
+  if (id == GRN_ID_NIL) {
+    return GRN_SUCCESS;
+  }
 
   GRN_API_ENTER;
 
   if (!(ctx->impl && ctx->impl->db)) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[object][remove][force][id] database isn't initialized");
-    rc = ctx->rc;
-    goto exit;
+    ERR(GRN_INVALID_ARGUMENT, "%s[%u] database isn't initialized", tag, id);
+    GRN_API_RETURN(ctx->rc);
   }
 
-  db = ctx->impl->db;
+  grn_obj *obj = grn_ctx_at(ctx, id);
+  if (!obj) {
+    if (!(flags & GRN_OBJ_REMOVE_ENSURE)) {
+      ERR(GRN_INVALID_ARGUMENT, "%s[%u] object doesn't exist", tag, id);
+      GRN_API_RETURN(ctx->rc);
+    }
+  }
+  grn_obj_remove_flags(ctx, obj, flags);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_API_RETURN(ctx->rc);
+  }
+  if (!(flags & GRN_OBJ_REMOVE_ENSURE)) {
+    GRN_API_RETURN(ctx->rc);
+  }
+  ERRCLR(ctx);
+
+  grn_obj *db = ctx->impl->db;
+  int name_size;
+  const char *name = _grn_table_key(ctx, db, id, &name_size);
+  if (name_size > 0 && grn_ctx_is_table(ctx, id)) {
+    if (flags & GRN_OBJ_REMOVE_DEPENDENT) {
+      grn_rc rc =
+        remove_reference_tables_raw(ctx, id, name, name_size, db, flags);
+      if (rc != GRN_SUCCESS) {
+        GRN_API_RETURN(rc);
+      }
+    } else {
+      if (!is_removable_table_raw(ctx, id, name, name_size, db)) {
+        GRN_API_RETURN(ctx->rc);
+      }
+    }
+
+    /* We can't use remove_index() here because this table can't be opened. */
+
+    grn_rc rc = remove_columns_raw(ctx, id, name, name_size, flags);
+    if (rc != GRN_SUCCESS) {
+      GRN_API_RETURN(rc);
+    }
+  }
 
   grn_obj_delete_by_id(ctx, db, id, true);
-  grn_obj_path_by_id(ctx, db, id, path);
-  grn_io_remove_if_exist(ctx, path);
-  grn_strcat(path, PATH_MAX, ".c");
-  grn_io_remove_if_exist(ctx, path);
+  {
+    char path[PATH_MAX];
+    grn_obj_path_by_id(ctx, db, id, path);
+    grn_io_remove_if_exist(ctx, path);
+    grn_strcat(path, PATH_MAX, ".c");
+    grn_io_remove_if_exist(ctx, path);
+  }
 
-exit:
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc

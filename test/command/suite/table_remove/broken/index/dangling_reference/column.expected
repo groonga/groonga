@@ -13,5 +13,7 @@ table_remove Users --ensure yes
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000103>
 #|e| grn_ctx_at: failed to open object: <259>(<Terms.index>):<72>(<column:index>)
 #|e| [object][remove][index][Users.name] hook has a dangling reference: <Terms.index>(259)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000103>
+#|e| grn_ctx_at: failed to open object: <259>(<Terms.index>):<72>(<column:index>)
 dump
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
