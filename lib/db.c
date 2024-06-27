@@ -9533,7 +9533,7 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
 }
 
 static grn_rc
-remove_columns(grn_ctx *ctx, grn_obj *obj)
+remove_columns(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_hash *cols;
@@ -9577,7 +9577,7 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
           break;
         }
 
-        rc = grn_obj_remove_internal(ctx, col, 0);
+        rc = grn_obj_remove_internal(ctx, col, flags);
         if (rc != GRN_SUCCESS) {
           grn_obj_unlink(ctx, col);
           break;
@@ -10027,7 +10027,7 @@ grn_obj_remove_pat(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = remove_columns(ctx, obj);
+  rc = remove_columns(ctx, obj, flags);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -10084,7 +10084,7 @@ grn_obj_remove_dat(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = remove_columns(ctx, obj);
+  rc = remove_columns(ctx, obj, flags);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -10141,7 +10141,7 @@ grn_obj_remove_hash(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = remove_columns(ctx, obj);
+  rc = remove_columns(ctx, obj, flags);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -10194,7 +10194,7 @@ grn_obj_remove_array(grn_ctx *ctx,
     }
   }
 
-  rc = remove_columns(ctx, obj);
+  rc = remove_columns(ctx, obj, flags);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
