@@ -20,21 +20,21 @@
 #include "../grn_util.h"
 
 #ifdef GRN_WITH_MRUBY
-#include <mruby.h>
-#include <mruby/string.h>
-#include <mruby/class.h>
-#include <mruby/data.h>
+#  include <mruby.h>
+#  include <mruby/string.h>
+#  include <mruby/class.h>
+#  include <mruby/data.h>
 
-#include "../grn_mrb.h"
-#include "mrb_ctx.h"
-#include "mrb_object.h"
-#include "mrb_operator.h"
-#include "mrb_options.h"
-#include "mrb_converter.h"
+#  include "../grn_mrb.h"
+#  include "mrb_ctx.h"
+#  include "mrb_object.h"
+#  include "mrb_operator.h"
+#  include "mrb_options.h"
+#  include "mrb_converter.h"
 
-#include "../grn_db.h"
-#include "../grn_encoding.h"
-#include "../grn_wal.h"
+#  include "../grn_db.h"
+#  include "../grn_encoding.h"
+#  include "../grn_wal.h"
 
 static mrb_value
 object_remove_force(mrb_state *mrb, mrb_value self)
@@ -148,8 +148,7 @@ object_get_path(mrb_state *mrb, mrb_value self)
     const char *utf8_path;
     mrb_value mrb_path;
 
-    utf8_path =
-      grn_encoding_convert_to_utf8_from_locale(ctx, path, -1, NULL);
+    utf8_path = grn_encoding_convert_to_utf8_from_locale(ctx, path, -1, NULL);
     mrb_path = mrb_str_new_cstr(mrb, utf8_path);
     grn_encoding_converted_free(ctx, utf8_path);
 
@@ -358,46 +357,74 @@ grn_mrb_object_init(grn_ctx *ctx)
                           object_remove_force,
                           MRB_ARGS_REQ(1));
 
-  mrb_define_method(mrb, klass, "inspect",
-                    grn_mrb_object_inspect, MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "inspect",
+                    grn_mrb_object_inspect,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "refer", object_refer, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "unref", object_unref, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "reference_count",
-                    object_reference_count, MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "reference_count",
+                    object_reference_count,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "path", object_get_path, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "grn_inspect",
-                    object_grn_inspect, MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "grn_inspect",
+                    object_grn_inspect,
+                    MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "eql?", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "hash", object_hash, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "close",
-                    grn_mrb_object_close, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "close", grn_mrb_object_close, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, klass, "closed?",
-                    grn_mrb_object_is_closed, MRB_ARGS_NONE());
-
-  mrb_define_method(mrb, klass, "domain_id", grn_mrb_object_get_domain_id,
-                    MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "range_id", object_get_range_id,
+  mrb_define_method(mrb,
+                    klass,
+                    "closed?",
+                    grn_mrb_object_is_closed,
                     MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "temporary?", object_is_temporary,
+  mrb_define_method(mrb,
+                    klass,
+                    "domain_id",
+                    grn_mrb_object_get_domain_id,
                     MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "persistent?", object_is_persistent,
+  mrb_define_method(mrb,
+                    klass,
+                    "range_id",
+                    object_get_range_id,
                     MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "true?", grn_mrb_object_is_true,
+  mrb_define_method(mrb,
+                    klass,
+                    "temporary?",
+                    object_is_temporary,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "persistent?",
+                    object_is_persistent,
                     MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "check_corrupt", object_check_corrupt,
+  mrb_define_method(mrb,
+                    klass,
+                    "true?",
+                    grn_mrb_object_is_true,
                     MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "dump_wal", object_dump_wal,
+  mrb_define_method(mrb,
+                    klass,
+                    "check_corrupt",
+                    object_check_corrupt,
                     MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "dump_wal", object_dump_wal, MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
 }
