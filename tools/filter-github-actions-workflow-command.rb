@@ -26,6 +26,10 @@ diff_to_line = nil
 in_diff = false
 diff_content = +""
 
+def remove_escape_sequences(text)
+  text.gsub(/\e\[.+?m/, "")
+end
+
 flush_diff = lambda do
   return unless in_diff
 
@@ -36,7 +40,7 @@ flush_diff = lambda do
   ].join(",")
   # We need to use URL encode for new line:
   # https://github.com/actions/toolkit/issues/193
-  message = diff_content.gsub("\n", "%0A")
+  message = remove_escape_sequences(diff_content).gsub("\n", "%0A")
   puts("::error #{parameters}::#{message}")
 end
 
