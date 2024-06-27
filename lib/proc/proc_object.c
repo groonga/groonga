@@ -37,13 +37,15 @@ command_object_exist(grn_ctx *ctx,
   db = grn_ctx_db(ctx);
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   if (GRN_TEXT_LEN(name) == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "[object][exist] name is missing");
     grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
-  id = grn_table_get(ctx, db,
+  id = grn_table_get(ctx,
+                     db,
                      GRN_TEXT_VALUE(name),
                      (unsigned int)GRN_TEXT_LEN(name));
   grn_ctx_output_bool(ctx, id != GRN_ID_NIL);
@@ -57,7 +59,8 @@ grn_proc_init_object_exist(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_command_create(ctx,
-                            "object_exist", -1,
+                            "object_exist",
+                            -1,
                             command_object_exist,
                             1,
                             vars);
@@ -80,15 +83,14 @@ command_object_remove(grn_ctx *ctx,
   force = grn_plugin_proc_get_var_bool(ctx, user_data, "force", -1, false);
 
   if (GRN_TEXT_LEN(name) == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
                      "[object][remove] name is missing");
     grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
-  target = grn_ctx_get(ctx,
-                       GRN_TEXT_VALUE(name),
-                       (int)GRN_TEXT_LEN(name));
+  target = grn_ctx_get(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
   if (target) {
     grn_obj_remove(ctx, target);
     if (!force || ctx->rc == GRN_SUCCESS) {
@@ -106,13 +108,15 @@ command_object_remove(grn_ctx *ctx,
     grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   } else {
     if (failed_to_open) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
                        "[object][remove] "
                        "failed to open the target object: <%.*s>",
                        (int)GRN_TEXT_LEN(name),
                        GRN_TEXT_VALUE(name));
     } else {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
                        "[object][remove] target object doesn't exist: <%.*s>",
                        (int)GRN_TEXT_LEN(name),
                        GRN_TEXT_VALUE(name));
@@ -131,7 +135,8 @@ grn_proc_init_object_remove(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "force", -1);
   grn_plugin_command_create(ctx,
-                            "object_remove", -1,
+                            "object_remove",
+                            -1,
                             command_object_remove,
                             2,
                             vars);
@@ -147,10 +152,7 @@ command_object_set_visibility(grn_ctx *ctx,
   grn_obj *object;
 
   name.value =
-    grn_plugin_proc_get_var_string(ctx,
-                                   user_data,
-                                   "name", -1,
-                                   &(name.length));
+    grn_plugin_proc_get_var_string(ctx, user_data, "name", -1, &(name.length));
   if (name.length == 0) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -169,10 +171,8 @@ command_object_set_visibility(grn_ctx *ctx,
   }
 
   bool old_visibility = grn_obj_is_visible(ctx, object);
-  bool new_visibility = grn_plugin_proc_get_var_bool(ctx,
-                                                     user_data,
-                                                     "visible", -1,
-                                                     old_visibility);
+  bool new_visibility =
+    grn_plugin_proc_get_var_bool(ctx, user_data, "visible", -1, old_visibility);
   if (grn_obj_set_visibility(ctx, object, new_visibility) != GRN_SUCCESS) {
     goto exit;
   }
@@ -186,7 +186,7 @@ command_object_set_visibility(grn_ctx *ctx,
   }
   grn_ctx_output_map_close(ctx);
 
-exit :
+exit:
   if (grn_obj_is_accessor(ctx, object)) {
     grn_obj_unlink(ctx, object);
   }
@@ -203,7 +203,8 @@ grn_proc_init_object_set_visibility(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "visible", -1);
   grn_plugin_command_create(ctx,
-                            "object_set_visibility", -1,
+                            "object_set_visibility",
+                            -1,
                             command_object_set_visibility,
                             n_vars,
                             vars);
@@ -222,9 +223,7 @@ command_object_warm(grn_ctx *ctx,
   if (GRN_TEXT_LEN(name) == 0) {
     target = grn_ctx_db(ctx);
   } else {
-    target = grn_ctx_get(ctx,
-                         GRN_TEXT_VALUE(name),
-                         (int)GRN_TEXT_LEN(name));
+    target = grn_ctx_get(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
@@ -254,7 +253,8 @@ grn_proc_init_object_warm(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_command_create(ctx,
-                            "object_warm", -1,
+                            "object_warm",
+                            -1,
                             command_object_warm,
                             1,
                             vars);
