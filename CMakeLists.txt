@@ -681,7 +681,8 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
     message(STATUS "simdjson: (system)")
   else()
     function(grn_build_simdjson)
-      set(SIMDJSON_SOURCE_BASE_NAME "simdjson-${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+      set(SIMDJSON_SOURCE_BASE_NAME
+          "simdjson-${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
       set(SIMDJSON_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${SIMDJSON_SOURCE_BASE_NAME}")
       if(EXISTS ${SIMDJSON_SOURCE_LOCAL_PATH})
@@ -689,7 +690,8 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
       else()
         set(SIMDJSON_SOURCE_URL
             "https://github.com/simdjson/simdjson/archive/refs/tags/")
-        string(APPEND SIMDJSON_SOURCE_URL "v${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+        string(APPEND SIMDJSON_SOURCE_URL
+               "v${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
       endif()
       fetchcontent_declare(
         simdjson
@@ -705,9 +707,12 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
           "${simdjson_SOURCE_DIR}/lib"
           PARENT_SCOPE)
       add_library(libsimdjson_headers INTERFACE)
-      install(FILES "${simdjson_SOURCE_DIR}/AUTHORS" "${simdjson_SOURCE_DIR}/CONTRIBUTORS"
-                    "${simdjson_SOURCE_DIR}/LICENSE" "${simdjson_SOURCE_DIR}/README.md"
-              DESTINATION "${GRN_DATA_DIR}/simdjson")
+      install(
+        FILES "${simdjson_SOURCE_DIR}/AUTHORS"
+              "${simdjson_SOURCE_DIR}/CONTRIBUTORS"
+              "${simdjson_SOURCE_DIR}/LICENSE"
+              "${simdjson_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/simdjson")
     endfunction()
     grn_build_simdjson()
     set(GRN_WITH_BUNDLED_SIMDJSON TRUE)
