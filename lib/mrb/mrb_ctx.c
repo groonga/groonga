@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@
 #  include "mrb_ctx.h"
 #  include "mrb_bulk.h"
 #  include "mrb_converter.h"
+#  include "mrb_options.h"
 
 static mrb_value
 ctx_class_instance(mrb_state *mrb, mrb_value klass)
@@ -76,6 +77,43 @@ ctx_array_reference(mrb_state *mrb, mrb_value self)
   }
 
   return grn_mrb_value_from_grn_obj(mrb, object);
+}
+
+static mrb_value
+ctx_remove(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_id_or_name;
+  mrb_value mrb_options = mrb_nil_value();
+  uint32_t flags = 0;
+
+  mrb_get_args(mrb, "o|H", &mrb_id_or_name, &mrb_options);
+
+  if (mrb_nil_p(mrb_id_or_name)) {
+    return mrb_nil_value();
+  }
+
+  if (!mrb_nil_p(mrb_options)) {
+    if (mrb_test(grn_mrb_options_get_lit(mrb, mrb_options, "dependent"))) {
+      flags |= GRN_OBJ_REMOVE_DEPENDENT;
+    }
+    if (mrb_test(grn_mrb_options_get_lit(mrb, mrb_options, "ensure"))) {
+      flags |= GRN_OBJ_REMOVE_ENSURE;
+    }
+  }
+
+  if (mrb_integer_p(mrb_id_or_name)) {
+    grn_id id = (grn_id)mrb_integer(mrb_id_or_name);
+    grn_ctx_remove_by_id(ctx, id, flags);
+  } else {
+    mrb_value mrb_name;
+    mrb_name =
+      mrb_convert_type(mrb, mrb_id_or_name, MRB_TT_STRING, "String", "to_str");
+    grn_ctx_remove(ctx, RSTRING_PTR(mrb_name), RSTRING_LEN(mrb_name), flags);
+  }
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -1136,6 +1174,7 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                           MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "[]", ctx_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "remove", ctx_remove, MRB_ARGS_ARG(1, 1));
   mrb_define_method(mrb, klass, "rc", ctx_get_rc, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "rc=", ctx_set_rc, MRB_ARGS_REQ(1));
   mrb_define_method(mrb,
