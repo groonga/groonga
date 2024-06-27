@@ -9533,7 +9533,7 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
 }
 
 static grn_rc
-remove_columns(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
+remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_hash *cols;
@@ -9542,7 +9542,7 @@ remove_columns(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
                               sizeof(grn_id),
                               0,
                               GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY))) {
-    if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
+    if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
       GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id)
       {
         grn_id *key;
