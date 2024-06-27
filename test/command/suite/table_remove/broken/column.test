@@ -1,0 +1,18 @@
+table_create Users TABLE_NO_KEY
+column_create Users age COLUMN_SCALAR UInt8
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users zzz COLUMN_SCALAR Int32
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+database_unmap
+#@copy-path fixture/object_remove/too_small.data #{db_path}.0000102
+
+table_remove Users --ensure yes
+
+dump
+
+table_create Users TABLE_NO_KEY
+
+dump

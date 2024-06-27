@@ -9554,7 +9554,13 @@ remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
         grn_id column_id = *key;
         col = grn_ctx_at(ctx, column_id);
 
-        if (!col) {
+        if (col) {
+          rc = grn_obj_remove_internal(ctx, col, flags);
+          if (rc != GRN_SUCCESS) {
+            grn_obj_unlink(ctx, col);
+            break;
+          }
+        } else {
           char column_name[GRN_TABLE_MAX_KEY_SIZE];
           int column_name_size;
           column_name_size = grn_table_get_key(ctx,
@@ -9582,14 +9588,14 @@ remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
                 column_id,
                 errbuf);
           }
+          if (flags & GRN_OBJ_REMOVE_ENSURE) {
+            ERRCLR(ctx);
+            grn_obj_remove_force_by_id(ctx, column_id);
+          }
           rc = ctx->rc;
-          break;
-        }
-
-        rc = grn_obj_remove_internal(ctx, col, flags);
-        if (rc != GRN_SUCCESS) {
-          grn_obj_unlink(ctx, col);
-          break;
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
         }
       }
       GRN_HASH_EACH_END(ctx, cursor);

@@ -1,0 +1,20 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users zzz COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+database_unmap
+[[0,0.0,0.0],true]
+table_remove Users --ensure yes
+[[0,0.0,0.0],true]
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
+#|e| grn_ctx_at: failed to open object: <258>(<Users.name>):<65>(<column:var_size>)
+#|e| [table][remove][columns][Users] column is broken: <Users.name>(258): [io][open] file size is too small: <8>(required: >= 64): <db/db.0000102>
+dump
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+dump
+table_create Users TABLE_NO_KEY
