@@ -21,5 +21,6 @@ jobs:
           python -m pip install pre-commit
       - name: Run pre-commit
         run: |
+          set -o pipefail
           pre-commit run --show-diff-on-failure --color=always --all-files | \
             tools/filter-github-actions-workflow-command.rb
