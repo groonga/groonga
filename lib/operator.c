@@ -23,6 +23,7 @@
 #include "grn_normalizer.h"
 #include "grn_onigmo.h"
 
+#include <stdint.h>
 #include <string.h>
 
 static const char *operator_names[] = {
@@ -1257,6 +1258,32 @@ exec_match_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
   return matched;
 }
 
+static bool
+exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
+{
+  bool matched = false;
+  uint32_t i, size;
+  grn_obj element;
+
+  size = grn_vector_size(ctx, vector);
+  GRN_VOID_INIT(&element);
+  for (i=0; i < size; i++) {
+    const char *content;
+    uint32_t content_size;
+    grn_id domain_id;
+
+    content_size =
+      grn_vector_get_element(ctx, vector, i, &content, NULL, &domain_id);
+    grn_obj_reinit(ctx, &element, domain_id, 0);
+    grn_bulk_write(ctx, &element, content, content_size);
+    if (grn_operator_exec_prefix(ctx, &element, query)) {
+      matched = true;
+      break;
+    }
+  }
+  return matched;
+}
+
 #ifdef GRN_SUPPORT_REGEXP
 static grn_bool
 regexp_is_match(grn_ctx *ctx,
@@ -1566,7 +1593,15 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
 {
   grn_bool matched;
   GRN_API_ENTER;
-  matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_PREFIX, target, prefix);
+  switch (target->header.type) {
+  case GRN_VECTOR:
+    matched = exec_prefix_vector_bulk(ctx, target, prefix);
+    break;
+  default:
+    matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_PREFIX, target, prefix);
+    break;
+  }
+
   GRN_API_RETURN(matched);
 }
 
