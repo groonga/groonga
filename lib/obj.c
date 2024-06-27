@@ -1387,6 +1387,19 @@ grn_obj_type_is_table(uint8_t type)
   }
 }
 
+bool
+grn_obj_type_is_column(uint8_t type)
+{
+  switch (type) {
+  case GRN_COLUMN_FIX_SIZE:
+  case GRN_COLUMN_VAR_SIZE:
+  case GRN_COLUMN_INDEX:
+    return true;
+  default:
+    return false;
+  }
+}
+
 grn_bool
 grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
 {
