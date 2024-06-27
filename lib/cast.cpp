@@ -995,6 +995,8 @@ namespace {
     EndObject(size_t n)
     {
       auto record = &(record_stack_.back());
+      auto table = record->table();
+      grn_id domain = DB_OBJ(table)->id;
       grn_id id = GRN_ID_NIL;
       if (!record->add_to_table(caster_, &id)) {
         return false;
