@@ -9551,32 +9551,35 @@ remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
         grn_obj *col;
 
         grn_hash_cursor_get_key(ctx, cursor, (void **)&key);
-        col = grn_ctx_at(ctx, *key);
+        grn_id column_id = *key;
+        col = grn_ctx_at(ctx, column_id);
 
         if (!col) {
           char column_name[GRN_TABLE_MAX_KEY_SIZE];
           int column_name_size;
           column_name_size = grn_table_get_key(ctx,
                                                ctx->impl->db,
-                                               *key,
+                                               column_id,
                                                column_name,
                                                GRN_TABLE_MAX_KEY_SIZE);
           if (ctx->rc == GRN_SUCCESS) {
             ERR(GRN_INVALID_ARGUMENT,
-                "%s[%s] column is broken: <%.*s>",
-                tag,
-                name,
-                column_name_size,
-                column_name);
-          } else {
-            char errbuf[GRN_CTX_MSGSIZE];
-            grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-            ERR(ctx->rc,
-                "%s[%s] column is broken: <%.*s>: %s",
+                "%s[%s] column is broken: <%.*s>(%u)",
                 tag,
                 name,
                 column_name_size,
                 column_name,
+                column_id);
+          } else {
+            char errbuf[GRN_CTX_MSGSIZE];
+            grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+            ERR(ctx->rc,
+                "%s[%s] column is broken: <%.*s>(%u): %s",
+                tag,
+                name,
+                column_name_size,
+                column_name,
+                column_id,
                 errbuf);
           }
           rc = ctx->rc;
