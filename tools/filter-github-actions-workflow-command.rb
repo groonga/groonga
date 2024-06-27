@@ -60,8 +60,8 @@ ARGF.each_line do |line|
     if in_diff
       diff_content << line
     end
-    puts(line)
   end
+  puts(line)
 end
 
 flush_diff.call
