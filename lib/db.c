@@ -10669,13 +10669,13 @@ grn_ctx_remove_by_id(grn_ctx *ctx, grn_id id, uint32_t flags)
     if (!(flags & GRN_OBJ_REMOVE_ENSURE)) {
       GRN_API_RETURN(rc);
     }
-    ERRCLR(ctx);
   } else {
     if (!(flags & GRN_OBJ_REMOVE_ENSURE)) {
       ERR(GRN_INVALID_ARGUMENT, "%s[%u] object doesn't exist", tag, id);
       GRN_API_RETURN(ctx->rc);
     }
   }
+  ERRCLR(ctx);
 
   grn_obj *db = ctx->impl->db;
   int name_size;
