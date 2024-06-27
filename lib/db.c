@@ -9942,33 +9942,31 @@ remove_reference_tables(grn_ctx *ctx,
                                      flags);
 }
 
-static grn_bool
-is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
+static bool
+is_removable_table_raw(grn_ctx *ctx,
+                       grn_id table_id,
+                       const char *table_name,
+                       uint32_t table_name_size,
+                       grn_obj *db)
 {
-  grn_id table_id;
   grn_id reference_object_id;
 
-  table_id = DB_OBJ(table)->id;
   if (table_id & GRN_OBJ_TMP_OBJECT) {
-    return GRN_TRUE;
+    return true;
   }
 
-  reference_object_id = grn_table_find_reference_object(ctx, table);
+  reference_object_id = grn_table_find_reference_object_raw(ctx, table_id);
   if (reference_object_id == GRN_ID_NIL) {
-    return GRN_TRUE;
+    return true;
   }
 
   {
     grn_obj *db;
-    const char *table_name;
-    int table_name_size;
     grn_obj *reference_object;
     const char *reference_object_name;
     int reference_object_name_size;
 
     db = grn_ctx_db(ctx);
-
-    table_name = _grn_table_key(ctx, db, table_id, &table_name_size);
 
     reference_object = grn_ctx_at(ctx, reference_object_id);
     reference_object_name =
@@ -10003,7 +10001,17 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
     }
   }
 
-  return GRN_FALSE;
+  return false;
+}
+
+static bool
+is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
+{
+  grn_id table_id = DB_OBJ(table)->id;
+  const char *table_name;
+  int table_name_size;
+  table_name = _grn_table_key(ctx, db, table_id, &table_name_size);
+  return is_removable_table_raw(ctx, table_id, table_name, table_name_size, db);
 }
 
 static grn_inline void
