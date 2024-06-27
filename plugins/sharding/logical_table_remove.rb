@@ -186,114 +186,14 @@ module Groonga
         if table.nil?
           remove_table_force(shard.table_name)
         else
-          options = {:dependent => @dependent}
-          if @force
-            begin
-              table.remove(options)
-            rescue
-              context.clear_error
-              table.close
-              remove_table_force(shard.table_name)
-            end
-          else
-            table.remove(options)
-          end
+          table.remove(dependent: @dependent, ensure: @force)
         end
 
         remove_referenced_tables(shard, referenced_table_ids)
       end
 
       def remove_table_force(table_name)
-        database = context.database
-
-        prefix = "#{table_name}."
-        database.each_raw(:prefix => prefix) do |id, cursor|
-          column = context[id]
-          if column.nil?
-            context.clear_error
-            column_name = cursor.key
-            remove_column_force(column_name)
-            table = context[table_name]
-            if table.nil?
-              context.clear_error
-            else
-              table.close
-            end
-          else
-            remove_column(column)
-          end
-        end
-
-        table_id = database[table_name]
-        return if table_id.nil?
-
-        database.each_raw do |id, cursor|
-          next if ID.builtin?(id)
-          next if id == table_id
-
-          context.open_temporary(id) do |object|
-            if object.nil?
-              context.clear_error
-              next
-            end
-
-            case object
-            when Table
-              if object.domain_id == table_id
-                begin
-                  object.remove(:dependent => @dependent)
-                rescue
-                  context.clear_error
-                  reference_table_name = object.name
-                  object.close
-                  remove_table_force(reference_table_name)
-                end
-              end
-            when Column
-              if object.range_id == table_id
-                remove_column(object)
-              end
-            end
-          end
-        end
-
-        Object.remove_force(table_name)
-      end
-
-      def remove_column(column)
-        begin
-          column.remove(:dependent => @dependent)
-        rescue
-          context.clear_error
-          column_name = column.name
-          column.close
-          remove_column_force(column_name)
-        end
-      end
-
-      def remove_column_force(column_name)
-        database = context.database
-
-        column_id = database[column_name]
-
-        column = context[column_id]
-        if column.nil?
-          context.clear_error
-        else
-          column.index_ids.each do |id|
-            index_column = context[id]
-            if index_column.nil?
-              context.clear_error
-              index_column_name = database[id]
-              remove_column_force(index_column_name)
-            else
-              remove_column(index_column)
-            end
-          end
-          column.close
-        end
-
-        Object.remove_force(column_name)
+        context.remove(table_name, dependent: true, ensure: true)
       end
 
       def remove_referenced_tables(shard, referenced_table_ids)
@@ -306,26 +206,9 @@ module Groonga
           next if referenced_table_name.nil?
           next unless referenced_table_name.end_with?(shard_suffix)
 
-          referenced_table = context[referenced_table_id]
-          if referenced_table.nil?
-            context.clear_error
-            if @force
-              Object.remove_force(referenced_table_name)
-            end
-            next
-          end
-
-          if @force
-            begin
-              referenced_table.remove(:dependent => @dependent)
-            rescue
-              context.clear_error
-              referenced_table.close
-              remove_table_force(referenced_table_name)
-            end
-          else
-            referenced_table.remove(:dependent => @dependent)
-          end
+          context.remove(referenced_table_id,
+                         dependent: @dependent,
+                         ensure: true)
         end
       end
 
