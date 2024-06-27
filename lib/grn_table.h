@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,9 @@ grn_table_setoperation_with_weight_factor(grn_ctx *ctx,
                                           grn_obj *res,
                                           grn_operator op,
                                           float weight_factor);
+
+grn_id
+grn_table_find_reference_object_raw(grn_ctx *ctx, grn_id table_id);
 
 grn_hash *
 grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
