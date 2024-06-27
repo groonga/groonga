@@ -9834,25 +9834,21 @@ grn_obj_remove_db(
 }
 
 static grn_rc
-remove_reference_tables(grn_ctx *ctx,
-                        grn_obj *table,
-                        grn_obj *db,
-                        uint32_t flags)
+remove_reference_tables_raw(grn_ctx *ctx,
+                            grn_id table_id,
+                            const char *table_name,
+                            uint32_t table_name_size,
+                            grn_obj *db,
+                            uint32_t flags)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_bool is_close_opened_object_mode = GRN_FALSE;
-  grn_id table_id;
-  char table_name[GRN_TABLE_MAX_KEY_SIZE];
-  int table_name_size;
   grn_table_cursor *cursor;
 
   if (grn_thread_get_limit() == 1) {
     is_close_opened_object_mode = GRN_TRUE;
   }
 
-  table_id = DB_OBJ(table)->id;
-  table_name_size =
-    grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
   if ((cursor = grn_table_cursor_open(ctx,
                                       db,
                                       NULL,
@@ -9927,6 +9923,23 @@ remove_reference_tables(grn_ctx *ctx,
   }
 
   return rc;
+}
+
+static grn_rc
+remove_reference_tables(grn_ctx *ctx,
+                        grn_obj *table,
+                        grn_obj *db,
+                        uint32_t flags)
+{
+  grn_id table_id = DB_OBJ(table)->id;
+  uint32_t table_name_size;
+  const char *table_name = _grn_table_key(ctx, db, table_id, &table_name_size);
+  return remove_reference_tables_raw(ctx,
+                                     table_id,
+                                     table_name,
+                                     table_name_size,
+                                     db,
+                                     flags);
 }
 
 static grn_bool
