@@ -473,7 +473,7 @@ namespace {
     std::vector<grn_obj *> values_;
   };
 
-  #ifdef GRN_WITH_RAPIDJSON
+#  ifdef GRN_WITH_RAPIDJSON
   struct Int8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
     grn_ctx *ctx_;
     grn_caster *caster_;
@@ -908,7 +908,8 @@ namespace {
     bool
     String(const char *data, size_t size, bool copy)
     {
-      auto rc = json_to_weight_uvector_add(ctx_, caster_, table_, data, size, weight_);
+      auto rc =
+        json_to_weight_uvector_add(ctx_, caster_, table_, data, size, weight_);
       return rc == GRN_SUCCESS;
     }
 
@@ -1249,7 +1250,7 @@ namespace {
       return true;
     }
   };
-#endif
+#  endif
 
   bool
   json_maybe_container(const char *json, size_t length)
@@ -1425,10 +1426,11 @@ namespace {
               id = GRN_RECORD_VALUE(&casted_value);
             }
             GRN_OBJ_FIN(ctx, &casted_value);
-          auto rc = grn_uvector_add_element_record(ctx_, caster_->dest, id, 0);
-          if (rc != GRN_SUCCESS) {
-            return false;
-          }
+            auto rc =
+              grn_uvector_add_element_record(ctx_, caster_->dest, id, 0);
+            if (rc != GRN_SUCCESS) {
+              return false;
+            }
           } else if (value.get_object().get(object) == simdjson::SUCCESS) {
             // TODO: Nested object isn't supported yet.
             Record record(ctx, domain.get());
@@ -1449,13 +1451,17 @@ namespace {
               std::string_view string_value;
               if (value.get_bool().get(bool_value) == simdjson::SUCCESS) {
                 record.add_bool_value(bool_value);
-              } else if (value.get_int64().get(int64_value) == simdjson::SUCCESS) {
+              } else if (value.get_int64().get(int64_value) ==
+                         simdjson::SUCCESS) {
                 record.add_int64_value(int64_value);
-              } else if (value.get_uint64().get(uint64_value) == simdjson::SUCCESS) {
+              } else if (value.get_uint64().get(uint64_value) ==
+                         simdjson::SUCCESS) {
                 record.add_uint64_value(uint64_value);
-              } else if (value.get_double().get(double_value) == simdjson::SUCCESS) {
+              } else if (value.get_double().get(double_value) ==
+                         simdjson::SUCCESS) {
                 record.add_double_value(double_value);
-              } else if (value.get_string().get(string_value) == simdjson::SUCCESS) {
+              } else if (value.get_string().get(string_value) ==
+                         simdjson::SUCCESS) {
                 record.add_string_value(string_value);
               } else {
                 return GRN_INVALID_ARGUMENT;
@@ -1466,7 +1472,8 @@ namespace {
               return GRN_INVALID_ARGUMENT;
             }
             if (id != GRN_ID_NIL) {
-              auto rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
+              auto rc =
+                grn_uvector_add_element_record(ctx, caster->dest, id, 0);
               if (rc != GRN_SUCCESS) {
                 return rc;
               }
@@ -1480,7 +1487,7 @@ namespace {
     }
     return GRN_SUCCESS;
   }
-#endif
+#  endif
 
 #  ifdef GRN_WITH_RAPIDJSON
   template <typename Handler>
@@ -1560,7 +1567,9 @@ namespace {
         auto domain = grn_ctx_at(ctx, caster->dest->header.domain);
         if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
           if (grn_obj_is_table_with_key(ctx, domain)) {
-            rc = json_to_uvector_rapidjson<TableWeightHandler>(ctx, &document, caster);
+            rc = json_to_uvector_rapidjson<TableWeightHandler>(ctx,
+                                                               &document,
+                                                               caster);
           }
         } else {
           TableHandler handler(ctx, caster);
@@ -1573,7 +1582,7 @@ namespace {
       }
     }
   }
-#endif
+#  endif
 
   grn_rc
   cast_text_to_uvector(grn_ctx *ctx, grn_caster *caster)
@@ -1585,9 +1594,9 @@ namespace {
 
 #  ifdef GRN_WITH_SIMDJSON
     return cast_text_to_uvector_simdjson(ctx, caster);
-#elif defined(GRN_WITH_RAPIDJSON)
+#  elif defined(GRN_WITH_RAPIDJSON)
     return cast_text_to_uvector_rapidjson(ctx, caster);
-#endif
+#  endif
   }
 
 #  ifdef GRN_WITH_SIMDJSON
@@ -1654,7 +1663,7 @@ namespace {
       return GRN_INVALID_ARGUMENT;
     }
   }
-#endif
+#  endif
 
   grn_rc
   cast_text_to_text_vector(grn_ctx *ctx, grn_caster *caster)
@@ -1663,7 +1672,7 @@ namespace {
     return cast_text_to_text_vector_simdjson(ctx, caster);
 #  elif defined(GRN_WITH_RAPIDJSON)
     return cast_text_to_text_vector_rapidjson(ctx, caster);
-#endif
+#  endif
   }
 } // namespace
 #endif
