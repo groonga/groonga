@@ -9533,76 +9533,89 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
 }
 
 static grn_rc
-remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
+remove_columns_raw(grn_ctx *ctx,
+                   grn_id table_id,
+                   const char *table_name,
+                   uint32_t table_name_size,
+                   uint32_t flags)
 {
   const char *tag = "[table][remove][columns]";
   grn_rc rc = GRN_SUCCESS;
-  grn_hash *cols;
-  if ((cols = grn_hash_create(ctx,
-                              NULL,
-                              sizeof(grn_id),
-                              0,
-                              GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY))) {
-    if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
-      GRN_DEFINE_NAME(table);
-      GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id)
-      {
-        grn_id *key;
-        grn_obj *col;
 
-        grn_hash_cursor_get_key(ctx, cursor, (void **)&key);
-        grn_id column_id = *key;
-        col = grn_ctx_at(ctx, column_id);
-
-        if (col) {
-          rc = grn_obj_remove_internal(ctx, col, flags);
-          if (rc != GRN_SUCCESS) {
-            grn_obj_unlink(ctx, col);
-            break;
-          }
-        } else {
-          char column_name[GRN_TABLE_MAX_KEY_SIZE];
-          int column_name_size;
-          column_name_size = grn_table_get_key(ctx,
-                                               ctx->impl->db,
-                                               column_id,
-                                               column_name,
-                                               GRN_TABLE_MAX_KEY_SIZE);
-          if (ctx->rc == GRN_SUCCESS) {
-            ERR(GRN_INVALID_ARGUMENT,
-                "%s[%s] column is broken: <%.*s>(%u)",
-                tag,
-                name,
-                column_name_size,
-                column_name,
-                column_id);
-          } else {
-            char errbuf[GRN_CTX_MSGSIZE];
-            grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-            ERR(ctx->rc,
-                "%s[%s] column is broken: <%.*s>(%u): %s",
-                tag,
-                name,
-                column_name_size,
-                column_name,
-                column_id,
-                errbuf);
-          }
-          if (flags & GRN_OBJ_REMOVE_ENSURE) {
-            ERRCLR(ctx);
-            grn_obj_remove_force_by_id(ctx, column_id);
-          }
-          rc = ctx->rc;
-          if (rc != GRN_SUCCESS) {
-            break;
-          }
-        }
-      }
-      GRN_HASH_EACH_END(ctx, cursor);
+  GRN_TABLE_EACH_BEGIN_MIN(ctx,
+                           ctx->impl->db,
+                           cursor,
+                           column_id,
+                           /* This prefix includes table itself. We'll
+                            * use table_name as-is and ignore the
+                            * target table instead of appending "." to
+                            * prefix. It's for avoiding memory
+                            * allocation. */
+                           table_name,
+                           table_name_size,
+                           GRN_CURSOR_PREFIX)
+  {
+    /* Ignore the target table. */
+    if (column_id == table_id) {
+      continue;
     }
-    grn_hash_close(ctx, cols);
+
+    grn_obj *column = grn_ctx_at(ctx, column_id);
+    if (column) {
+      rc = grn_obj_remove_internal(ctx, column, flags);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_unlink(ctx, column);
+        break;
+      }
+    } else {
+      uint32_t column_name_size;
+      const char *column_name =
+        _grn_table_key(ctx, ctx->impl->db, column_id, &column_name_size);
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] column is broken: <%.*s>(%u)",
+            tag,
+            (int)table_name_size,
+            table_name,
+            column_name_size,
+            column_name,
+            column_id);
+      } else {
+        char errbuf[GRN_CTX_MSGSIZE];
+        grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+        ERR(ctx->rc,
+            "%s[%.*s] column is broken: <%.*s>(%u): %s",
+            tag,
+            (int)table_name_size,
+            table_name,
+            column_name_size,
+            column_name,
+            column_id,
+            errbuf);
+      }
+      if (flags & GRN_OBJ_REMOVE_ENSURE) {
+        ERRCLR(ctx);
+        grn_obj_remove_force_by_id(ctx, column_id);
+      }
+      rc = ctx->rc;
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
   }
+  GRN_TABLE_EACH_END(ctx, cursor);
+
   return rc;
+}
+
+static grn_rc
+remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
+{
+  grn_id table_id = DB_OBJ(table)->id;
+  uint32_t table_name_size;
+  const char *table_name =
+    _grn_table_key(ctx, ctx->impl->db, table_id, &table_name_size);
+  return remove_columns_raw(ctx, table_id, table_name, table_name_size, flags);
 }
 
 static grn_rc
