@@ -42,7 +42,7 @@ end
 
 ARGF.each_line do |line|
   case line
-  when /\A(?:\e\[\d+m)?--- a\/(.+)(?:\e\[\d+m)?$/ # git diff
+  when /\A(?:\e\[\d+m)?--- a\/([^\e]+)/ # git diff
     path = $1
     flush_diff.call
     diff_from = path
@@ -50,16 +50,14 @@ ARGF.each_line do |line|
     diff_from_line = nil
     diff_to_line = nil
     in_diff = false
-  when /\A(?:\e\[\d+m)?\+\+\+ b\/(.+)(?:\e\[\d+m)?$/ # git diff
+  when /\A(?:\e\[\d+m)?\+\+\+ b\/([^\e]+)/ # git diff
     diff_to = $1
   when /\A(?:\e\[\d+m)?@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
     diff_from_line = $1
     diff_to_line = $3
-    in_diff = true
+    in_diff = (diff_from and diff_to)
   else
-    if in_diff
-      diff_content << line
-    end
+    diff_content << line if in_diff
   end
   puts(line)
 end
