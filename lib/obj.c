@@ -1373,6 +1373,20 @@ grn_obj_type_to_string(uint8_t type)
   }
 }
 
+bool
+grn_obj_type_is_table(uint8_t type)
+{
+  switch (type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
+  case GRN_TABLE_NO_KEY:
+    return true;
+  default:
+    return false;
+  }
+}
+
 grn_bool
 grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
 {

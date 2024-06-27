@@ -183,6 +183,8 @@ grn_obj_set_flag_to_string(int flags);
 
 GRN_API const char *
 grn_obj_type_to_string(uint8_t type);
+GRN_API bool
+grn_obj_type_is_table(uint8_t type);
 
 GRN_API grn_bool
 grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len);
