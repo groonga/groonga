@@ -9535,6 +9535,7 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
 static grn_rc
 remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
 {
+  const char *tag = "[table][remove][columns]";
   grn_rc rc = GRN_SUCCESS;
   grn_hash *cols;
   if ((cols = grn_hash_create(ctx,
@@ -9543,6 +9544,7 @@ remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
                               0,
                               GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY))) {
     if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+      GRN_DEFINE_NAME(table);
       GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id)
       {
         grn_id *key;
@@ -9552,25 +9554,29 @@ remove_columns(grn_ctx *ctx, grn_obj *table, uint32_t flags)
         col = grn_ctx_at(ctx, *key);
 
         if (!col) {
-          char name[GRN_TABLE_MAX_KEY_SIZE];
-          int name_size;
-          name_size = grn_table_get_key(ctx,
-                                        ctx->impl->db,
-                                        *key,
-                                        name,
-                                        GRN_TABLE_MAX_KEY_SIZE);
+          char column_name[GRN_TABLE_MAX_KEY_SIZE];
+          int column_name_size;
+          column_name_size = grn_table_get_key(ctx,
+                                               ctx->impl->db,
+                                               *key,
+                                               column_name,
+                                               GRN_TABLE_MAX_KEY_SIZE);
           if (ctx->rc == GRN_SUCCESS) {
             ERR(GRN_INVALID_ARGUMENT,
-                "[object][remove] column is broken: <%.*s>",
-                name_size,
-                name);
+                "%s[%s] column is broken: <%.*s>",
+                tag,
+                name,
+                column_name_size,
+                column_name);
           } else {
             char errbuf[GRN_CTX_MSGSIZE];
             grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
             ERR(ctx->rc,
-                "[object][remove] column is broken: <%.*s>: %s",
-                name_size,
+                "%s[%s] column is broken: <%.*s>: %s",
+                tag,
                 name,
+                column_name_size,
+                column_name,
                 errbuf);
           }
           rc = ctx->rc;
