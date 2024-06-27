@@ -226,10 +226,11 @@ object_remove(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "|H", &mrb_options);
   if (!mrb_nil_p(mrb_options)) {
-    mrb_value mrb_dependent;
-    mrb_dependent = grn_mrb_options_get_lit(mrb, mrb_options, "dependent");
-    if (mrb_test(mrb_dependent)) {
+    if (mrb_test(grn_mrb_options_get_lit(mrb, mrb_options, "dependent"))) {
       flags |= GRN_OBJ_REMOVE_DEPENDENT;
+    }
+    if (mrb_test(grn_mrb_options_get_lit(mrb, mrb_options, "ensure"))) {
+      flags |= GRN_OBJ_REMOVE_ENSURE;
     }
   }
 
