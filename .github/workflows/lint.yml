@@ -16,7 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run pre-commit
+      - name: Install pre-commit
         run: |
           python -m pip install pre-commit
-          pre-commit run --show-diff-on-failure --color=always --all-files
+      - name: Run pre-commit
+        run: |
+          pre-commit run --show-diff-on-failure --color=always --all-files | \
+            tools/filter-github-actions-workflow-command.rb
