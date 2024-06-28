@@ -23,7 +23,6 @@
 #include "grn_normalizer.h"
 #include "grn_onigmo.h"
 
-#include <stdint.h>
 #include <string.h>
 
 static const char *operator_names[] = {
