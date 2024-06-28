@@ -27,7 +27,7 @@ in_diff = false
 diff_content = +""
 
 def remove_escape_sequences(text)
-  text.gsub(/\e\[.+?m/, "")
+  text.gsub(/\e\[.*?m/, "")
 end
 
 flush_diff = lambda do
