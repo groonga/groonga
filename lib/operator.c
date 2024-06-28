@@ -1281,6 +1281,8 @@ exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
       break;
     }
   }
+  GRN_OBJ_FIN(ctx, &element);
+
   return matched;
 }
 
