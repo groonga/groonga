@@ -1596,6 +1596,10 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
   bool matched;
   GRN_API_ENTER;
   switch (target->header.type) {
+  case GRN_UVECTOR:
+    // Probably, we can't search of prefix against UVECTOR.
+    matched = false;
+    break;
   case GRN_VECTOR:
     matched = exec_prefix_vector_bulk(ctx, target, prefix);
     break;
