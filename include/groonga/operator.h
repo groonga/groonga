@@ -46,7 +46,7 @@ GRN_API grn_bool
 grn_operator_exec_greater_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y);
 GRN_API grn_bool
 grn_operator_exec_match(grn_ctx *ctx, grn_obj *target, grn_obj *sub_text);
-GRN_API grn_bool
+GRN_API bool
 grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix);
 GRN_API grn_bool
 grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern);
