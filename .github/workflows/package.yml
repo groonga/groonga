@@ -196,56 +196,67 @@ jobs:
             task-namespace: apt
             target: debian-bullseye
             test-docker-image: debian:bullseye
+            test-docker-platform: linux/amd64
           - label: Debian GNU/Linux bullseye arm64
             id: debian-bullseye-arm64
             task-namespace: apt
             target: debian-bullseye-arm64
             test-docker-image: arm64v8/debian:bullseye
+            test-docker-platform: linux/arm64
           - label: Debian GNU/Linux bookworm amd64
             id: debian-bookworm-amd64
             task-namespace: apt
             target: debian-bookworm
             test-docker-image: debian:bookworm
+            test-docker-platform: linux/amd64
           - label: Debian GNU/Linux bookworm arm64
             id: debian-bookworm-arm64
             task-namespace: apt
             target: debian-bookworm-arm64
             test-docker-image: arm64v8/debian:bookworm
+            test-docker-platform: linux/arm64
           - label: Debian GNU/Linux trixie amd64
             id: debian-trixie-amd64
             task-namespace: apt
             target: debian-trixie
             test-docker-image: debian:trixie
+            test-docker-platform: linux/amd64
           - label: Debian GNU/Linux trixie arm64
             id: debian-trixie-arm64
             task-namespace: apt
             target: debian-trixie-arm64
             test-docker-image: arm64v8/debian:trixie
+            test-docker-platform: linux/arm64
           - label: CentOS 7 x86_64
             id: centos-7-x86_64
             task-namespace: yum
             target: centos-7
             test-docker-image: centos:7
+            test-docker-platform: linux/amd64
           - label: AlmaLinux 8 x86_64
             id: almalinux-8-x86_64
             task-namespace: yum
             target: almalinux-8
             test-docker-image: almalinux:8
+            test-docker-platform: linux/amd64
           - label: AlmaLinux 8 aarch64
             id: almalinux-8-aarch64
             task-namespace: yum
             target: almalinux-8-aarch64
             test-docker-image: arm64v8/almalinux:8
+            test-docker-platform: linux/arm64
           - label: AlmaLinux 9 x86_64
             id: almalinux-9-x86_64
             task-namespace: yum
             target: almalinux-9
             test-docker-image: almalinux:9
+            test-docker-platform: linux/amd64
           - label: AlmaLinux 9 aarch64
             id: almalinux-9-aarch64
             task-namespace: yum
             target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:9
+            test-docker-platform: linux/arm64
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
     runs-on: ubuntu-latest
@@ -330,5 +341,6 @@ jobs:
           docker run \
             --rm \
             --volume ${PWD}:/groonga:ro \
+            --platform ${{ matrix.test-docker-platform }} \
             ${{ matrix.test-docker-image }} \
             /groonga/packages/${{ matrix.task-namespace }}/test.sh
