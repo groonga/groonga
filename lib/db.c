@@ -591,6 +591,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
   if (ctx->rc != GRN_SUCCESS) {
     grn_db_close(ctx, (grn_obj *)s);
     s = NULL;
+    ctx->impl->db = NULL;
     goto exit;
   }
   GRN_API_RETURN((grn_obj *)s);
