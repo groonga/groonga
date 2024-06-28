@@ -1650,8 +1650,8 @@ namespace {
     }
 
     TextHandler handler(ctx, caster);
-    if (document->IsArray()) {
-      auto n = document->Size();
+    if (document.IsArray()) {
+      auto n = document.Size();
       for (size_t i = 0; i < n; ++i) {
         const auto &element = (*document)[i];
         if (!element.Accept(handler)) {
