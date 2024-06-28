@@ -327,14 +327,17 @@ jobs:
       # Test
       - name: Test
         run: |
-          if [[ "${{ matrix.test-docker-image }}" == arm64* ]]; then
-            echo "TEST_DOCKER_PLATFORM=linux/arm64" >> $GITHUB_ENV
-          else
-            echo "TEST_DOCKER_PLATFORM=linux/amd64" >> $GITHUB_ENV
-          fi
+          case "${{ matrix.test-docker-image }}" in
+            arm64v8/*)
+              platform=linux/arm64
+              ;;
+            *)
+              platform=linux/amd64
+              ;;
+          esac
           docker run \
+            --platform ${platform} \
             --rm \
             --volume ${PWD}:/groonga:ro \
-            --platform ${{ env.TEST_DOCKER_PLATFORM }} \
             ${{ matrix.test-docker-image }} \
             /groonga/packages/${{ matrix.task-namespace }}/test.sh
