@@ -1267,7 +1267,7 @@ exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
   grn_obj element;
   GRN_VOID_INIT(&element);
 
-  for (uint32_t i=0; i < size; i++) {
+  for (uint32_t i = 0; i < size; i++) {
     const char *content;
     uint32_t content_size;
     grn_id domain_id;
