@@ -1633,7 +1633,7 @@ namespace {
       return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);
     }
   }
-#endif
+#  endif
 
   template <typename NUMERIC>
   std::enable_if_t<std::is_integral_v<NUMERIC> && std::is_signed_v<NUMERIC>,
