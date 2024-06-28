@@ -35,7 +35,8 @@ flush_diff = lambda do
 
   parameters = [
     "file=#{diff_to}",
-    "line=#{diff_to_line}",
+    "line=#{diff_to_line[0]}",
+    "endLine=#{diff_to_line[1]}",
     "title=diff",
   ].join(",")
   # We need to use URL encode for new line:
@@ -57,8 +58,8 @@ ARGF.each_line do |line|
   when /\A(?:\e\[\d+m)?\+\+\+ b\/([^\e]+)/ # git diff
     diff_to = $1
   when /\A(?:\e\[\d+m)?@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
-    diff_from_line = $1
-    diff_to_line = $3
+    diff_from_line = [$1.to_i, $1.to_i + $2.to_i]
+    diff_to_line = [$3.to_i, $3.to_i + $4.to_i]
     in_diff = (diff_from and diff_to)
   else
     diff_content << line if in_diff
