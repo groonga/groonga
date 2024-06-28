@@ -11,7 +11,9 @@ database_unmap
 
 table_remove Users --ensure yes
 
+#@timeout 60
 dump
+#@timeout default
 
 table_create Users TABLE_NO_KEY
 
