@@ -1635,7 +1635,7 @@ namespace {
       return GRN_INVALID_ARGUMENT;
     }
   }
-#endif
+#  endif
 
 #  ifdef GRN_WITH_RAPIDJSON
   grn_rc
