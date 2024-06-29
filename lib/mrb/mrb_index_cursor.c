@@ -190,7 +190,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   }
   while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
     if (expr) {
-      grn_bool matched_raw = GRN_FALSE;
+      bool matched_raw = false;
       grn_obj *matched;
 
       matched = grn_expr_executor_exec(ctx, &executor, posting->rid);
