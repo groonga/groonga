@@ -54,6 +54,7 @@ case "${distribution}-${code_name}" in
       liblz4-dev
       libmecab-dev
       libmsgpack-dev
+      libsimdjson-dev
       libstemmer-dev
       libxxhash-dev
       libzstd-dev
