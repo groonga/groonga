@@ -8092,6 +8092,108 @@ delete_source_hook(grn_ctx *ctx, grn_obj *obj)
   grn_obj_close(ctx, &data);
 }
 
+/* This should be used only when the target object can't be opened. If
+ * the target object can be opened, use delete_source_hook() instead. */
+/* static void */
+static void
+delete_source_hook_full_scan(grn_ctx *ctx, grn_id target_id, uint32_t flags)
+{
+  bool is_close_opened_object_mode = false;
+  if (grn_thread_get_limit() == 1) {
+    is_close_opened_object_mode = true;
+  }
+
+  GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec)
+  {
+    if (id == target_id) {
+      continue;
+    }
+
+    bool may_have_source = false;
+    switch (spec->header.type) {
+    case GRN_TABLE_HASH_KEY:
+    case GRN_TABLE_PAT_KEY:
+    case GRN_TABLE_DAT_KEY:
+    case GRN_TABLE_NO_KEY:
+    case GRN_COLUMN_VAR_SIZE:
+    case GRN_COLUMN_FIX_SIZE:
+      may_have_source = true;
+      break;
+    default:
+      break;
+    }
+    if (!may_have_source) {
+      continue;
+    }
+
+    if (is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    /* TODO: We should not access to internal variable in
+     * GRN_DB_EACH_SPEC_BEGIN(). */
+    const char *raw_hooks;
+    uint32_t size = grn_vector_get_element(ctx,
+                                           &decoded_spec,
+                                           GRN_SERIALIZED_SPEC_INDEX_HOOK,
+                                           &raw_hooks,
+                                           NULL,
+                                           NULL);
+
+    grn_obj *source = NULL;
+    /* TODO: Unify with grn_hook_unpack() */
+    grn_hook_entry entry;
+    const uint8_t *current = (const uint8_t *)raw_hooks;
+    const uint8_t *end = current + size;
+    for (entry = 0; entry < GRN_N_HOOK_ENTRIES && ctx->rc == GRN_SUCCESS;
+         entry++) {
+      int i;
+      for (i = 0; true; i++) {
+        uint32_t hook_proc_id_plus_one;
+        GRN_B_DEC(hook_proc_id_plus_one, current);
+        if (hook_proc_id_plus_one == 0) {
+          break;
+        }
+        grn_id hook_proc_id = hook_proc_id_plus_one - 1;
+        if (current >= end) {
+          break;
+        }
+        uint32_t hold_size;
+        GRN_B_DEC(hold_size, current);
+        if (current >= end) {
+          break;
+        }
+        if (current + hold_size >= end) {
+          break;
+        }
+        if (hook_proc_id == GRN_ID_NIL) {
+          grn_obj_default_set_value_hook_data *data =
+            (grn_obj_default_set_value_hook_data *)current;
+          if (data->target == target_id) {
+            if (!source) {
+              source = grn_ctx_at(ctx, id);
+              if (!source) {
+                break;
+              }
+            }
+            grn_obj_delete_hook(ctx, source, entry, i);
+            if (ctx->rc != GRN_SUCCESS) {
+              break;
+            }
+          }
+        }
+        current += hold_size;
+      }
+    }
+
+    if (is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  GRN_DB_EACH_SPEC_END(ctx, cursor);
+
+  return;
+}
 
 grn_rc
 grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
@@ -10715,6 +10817,17 @@ grn_ctx_remove_internal(
       }
     }
   } else if (grn_obj_type_is_column(type)) {
+    switch (type) {
+    case GRN_COLUMN_VAR_SIZE:
+    case GRN_COLUMN_INDEX:
+      delete_source_hook_full_scan(ctx, id, flags);
+      if (ctx->rc != GRN_SUCCESS) {
+        return ctx->rc;
+      }
+      break;
+    default:
+      break;
+    }
     grn_rc rc = remove_index_full_scan(ctx, id, flags);
     if (rc != GRN_SUCCESS) {
       return rc;
