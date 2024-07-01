@@ -327,7 +327,16 @@ jobs:
       # Test
       - name: Test
         run: |
+          case "${{ matrix.test-docker-image }}" in
+            arm64v8/*)
+              platform=linux/arm64
+              ;;
+            *)
+              platform=linux/amd64
+              ;;
+          esac
           docker run \
+            --platform ${platform} \
             --rm \
             --volume ${PWD}:/groonga:ro \
             ${{ matrix.test-docker-image }} \
