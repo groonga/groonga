@@ -3548,7 +3548,7 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
       }
       /*
       grn_hook_entry entry;
-      for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
+      for (entry = 0; entry < GRN_N_HOOK_ENTRIES; entry++) {
         grn_hook_free(ctx, DB_OBJ(tc)->hooks[entry]);
       }
       */
@@ -8092,14 +8092,13 @@ delete_source_hook(grn_ctx *ctx, grn_obj *obj)
   grn_obj_close(ctx, &data);
 }
 
-#define N_HOOK_ENTRIES 5
 
 grn_rc
 grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
 {
   grn_rc rc;
   grn_hook_entry e;
-  for (e = 0; e < N_HOOK_ENTRIES; e++) {
+  for (e = 0; e < GRN_N_HOOK_ENTRIES; e++) {
     grn_hook *hooks;
     for (hooks = obj->hooks[e]; hooks; hooks = hooks->next) {
       grn_id id = hooks->proc ? hooks->proc->obj.id : 0;
@@ -8132,7 +8131,7 @@ grn_hook_unpack(grn_ctx *ctx,
 {
   grn_hook_entry e;
   const uint8_t *p = (uint8_t *)buf, *pe = p + buf_size;
-  for (e = 0; e < N_HOOK_ENTRIES; e++) {
+  for (e = 0; e < GRN_N_HOOK_ENTRIES; e++) {
     grn_hook *new, **last = &obj->hooks[e];
     for (;;) {
       grn_id id;
@@ -11233,7 +11232,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   obj->source_size = 0;
   {
     grn_hook_entry entry;
-    for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
+    for (entry = 0; entry < GRN_N_HOOK_ENTRIES; entry++) {
       obj->hooks[entry] = NULL;
     }
   }
@@ -12726,7 +12725,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       if (DB_OBJ(obj)->source) {
         GRN_FREE(DB_OBJ(obj)->source);
       }
-      for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
+      for (entry = 0; entry < GRN_N_HOOK_ENTRIES; entry++) {
         grn_hook_free(ctx, DB_OBJ(obj)->hooks[entry]);
       }
       if (id & GRN_OBJ_TMP_OBJECT) {

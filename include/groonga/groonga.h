@@ -1046,6 +1046,8 @@ typedef enum {
   GRN_HOOK_SELECT
 } grn_hook_entry;
 
+#define GRN_N_HOOK_ENTRIES 5 /* (GRN_HOOK_SELECT + 1) */
+
 GRN_API grn_rc
 grn_obj_add_hook(grn_ctx *ctx,
                  grn_obj *obj,
