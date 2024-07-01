@@ -9570,6 +9570,10 @@ grn_obj_delete_hook(grn_ctx *ctx,
                     int offset)
 {
   GRN_API_ENTER;
+  grn_id removed_hook_target_id = GRN_ID_NIL;
+  char removed_hook_target_name[GRN_TABLE_MAX_KEY_SIZE];
+  uint32_t removed_hook_target_name_size = 0;
+  bool removed = false;
   {
     int i = 0;
     grn_hook *h, **last = &DB_OBJ(obj)->hooks[entry];
@@ -9578,12 +9582,52 @@ grn_obj_delete_hook(grn_ctx *ctx,
         return GRN_INVALID_ARGUMENT;
       }
       if (++i > offset) {
+        removed = true;
+        if (h->proc == NULL &&
+            h->hld_size == sizeof(grn_obj_default_set_value_hook_data)) {
+          grn_obj_default_set_value_hook_data *data =
+            (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(h);
+          removed_hook_target_id = data->target;
+          removed_hook_target_name_size =
+            grn_table_get_key(ctx,
+                              ctx->impl->db,
+                              data->target,
+                              removed_hook_target_name,
+                              GRN_TABLE_MAX_KEY_SIZE);
+        }
         break;
       }
       last = &h->next;
     }
     *last = h->next;
     GRN_FREE(h);
+  }
+  if (removed) {
+    grn_id id = DB_OBJ(obj)->id;
+    uint32_t name_size = 0;
+    const char *name = _grn_table_key(ctx, ctx->impl->db, id, &name_size);
+    if (name_size > 0) {
+      if (removed_hook_target_id == GRN_ID_NIL) {
+        GRN_LOG(ctx,
+                GRN_LOG_NOTICE,
+                "DDL:%u:delete_hook:%s %.*s",
+                id,
+                grn_hook_entry_to_string(entry),
+                (int)name_size,
+                name);
+      } else {
+        GRN_LOG(ctx,
+                GRN_LOG_NOTICE,
+                "DDL:%u:delete_hook:%s %.*s %.*s(%u)",
+                id,
+                grn_hook_entry_to_string(entry),
+                (int)name_size,
+                name,
+                (int)removed_hook_target_name_size,
+                removed_hook_target_name,
+                removed_hook_target_id);
+      }
+    }
   }
   grn_obj_spec_save(ctx, DB_OBJ(obj));
   GRN_API_RETURN(GRN_SUCCESS);
