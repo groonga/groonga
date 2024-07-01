@@ -145,6 +145,25 @@ grn_set_reference_count_enable(bool enable)
   return GRN_SUCCESS;
 }
 
+const char *
+grn_hook_entry_to_string(grn_hook_entry entry)
+{
+  switch (entry) {
+  case GRN_HOOK_SET:
+    return "set";
+  case GRN_HOOK_GET:
+    return "get";
+  case GRN_HOOK_INSERT:
+    return "insert";
+  case GRN_HOOK_DELETE:
+    return "delete";
+  case GRN_HOOK_SELECT:
+    return "select";
+  default:
+    return "unknown";
+  }
+}
+
 grn_inline static void
 gen_pathname(const char *path, char *buffer, int fno)
 {

@@ -1048,6 +1048,9 @@ typedef enum {
 
 #define GRN_N_HOOK_ENTRIES 5 /* (GRN_HOOK_SELECT + 1) */
 
+GRN_API const char *
+grn_hook_entry_to_string(grn_hook_entry entry);
+
 GRN_API grn_rc
 grn_obj_add_hook(grn_ctx *ctx,
                  grn_obj *obj,
