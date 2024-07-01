@@ -9678,9 +9678,10 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect_limited(ctx, &inspected, target);
       ERR(GRN_UNKNOWN_ERROR,
-          "%s[%s] hook has an unsupported index target: %.*s",
+          "%s[%s] hook has an unsupported index target: %u: %.*s",
           tag,
           name,
+          data->target,
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
