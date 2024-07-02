@@ -44,9 +44,9 @@ _database_reopen
 #|n| DDL:262:column_create Terms #recovering#data_content
 #|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
 #|n| DDL:262:set_source Terms.#recovering#data_content #recovering#Data.content
+#|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
 #|n| DDL:261:add_hook:set #recovering#Data.content [Terms.#recovering#data_content(262)]
 #|n| spec:261:update:#recovering#Data.content:65(column:var_size):14(ShortText)
-#|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
 #|n| DDL:259:obj_remove Terms.#broken#data_content
 #|n| DDL:257:delete_hook:set Data.content Terms.#broken#data_content(259) []
 #|n| spec:257:update:Data.content:65(column:var_size):14(ShortText)

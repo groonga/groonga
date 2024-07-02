@@ -50,9 +50,9 @@ _database_reopen
 #|n| DDL:260:column_create Data #recovering#content_terms
 #|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
 #|n| DDL:260:set_source Data.#recovering#content_terms Data.content
+#|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
 #|n| DDL:258:add_hook:set Data.content [Data.#recovering#content_terms(260),Data.content_terms(259)]
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
-#|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
 #|n| DDL:259:obj_remove Data.#broken#content_terms
 #|n| DDL:258:delete_hook:set Data.content Data.#broken#content_terms(259) [Data.content_terms(260)]
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)

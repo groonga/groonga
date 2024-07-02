@@ -38,11 +38,11 @@ _database_reopen
 #|n| DDL:260:column_create Terms #recovering#data_key
 #|n| spec:260:update:Terms.#recovering#data_key:72(column:index):259(#recovering#Data)
 #|n| DDL:260:set_source Terms.#recovering#data_key #recovering#Data
+#|n| spec:260:update:Terms.#recovering#data_key:72(column:index):259(#recovering#Data)
 #|n| DDL:259:add_hook:insert #recovering#Data [Terms.#recovering#data_key(260)]
 #|n| spec:259:update:#recovering#Data:49(table:pat_key):0
 #|n| DDL:259:add_hook:delete #recovering#Data [Terms.#recovering#data_key(260)]
 #|n| spec:259:update:#recovering#Data:49(table:pat_key):0
-#|n| spec:260:update:Terms.#recovering#data_key:72(column:index):259(#recovering#Data)
 #|n| DDL:258:obj_remove Terms.#broken#data_key
 #|n| DDL:257:delete_hook:insert Data Terms.#broken#data_key(258) []
 #|n| spec:257:update:Data:49(table:pat_key):0

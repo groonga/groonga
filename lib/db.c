@@ -8767,6 +8767,7 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     }
     DB_OBJ(obj)->source = v2;
     DB_OBJ(obj)->source_size = s;
+    grn_obj_spec_save(ctx, DB_OBJ(obj));
 
     switch (obj->header.type) {
     case GRN_COLUMN_VAR_SIZE:
@@ -8783,6 +8784,7 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   } else {
     DB_OBJ(obj)->source = NULL;
     DB_OBJ(obj)->source_size = 0;
+    grn_obj_spec_save(ctx, DB_OBJ(obj));
   }
 
   return GRN_SUCCESS;
@@ -8802,7 +8804,6 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_obj_spec_save(ctx, DB_OBJ(obj));
 
   return rc;
 }
