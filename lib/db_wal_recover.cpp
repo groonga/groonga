@@ -39,14 +39,9 @@ grn_db_wal_recover_ensure_remove_by_id(grn_ctx *ctx, grn_db *db, grn_id id)
     return;
   }
 
-  grn_obj_delete_by_id(ctx, (grn_obj *)db, id, true);
-
-  char path[PATH_MAX];
-  grn_obj_path_by_id(ctx, (grn_obj *)db, id, path);
-  grn_io_remove_if_exist(ctx, path);
-  grn_wal_remove(ctx, path, grn_db_wal_recover_tag);
-  grn_strcat(path, PATH_MAX, ".c");
-  grn_io_remove_if_exist(ctx, path);
+  grn_ctx_remove_by_id(ctx,
+                       id,
+                       GRN_OBJ_REMOVE_DEPENDENT | GRN_OBJ_REMOVE_ENSURE);
 }
 
 static void

@@ -1,0 +1,50 @@
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#@require-feature message_pack
+
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_ENABLE_REFERENCE_COUNT=no
+#$GRN_WAL_ROLE=primary
+
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+column_create Terms #recovering#memos_content \
+  COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "hello world"},
+{"content": "good-by world"}
+]
+
+select Memos --query content:@hello
+
+io_flush
+
+_database_close
+
+# Break Terms.#recovering#memos_content
+#@copy-path #{db_path}.0000104.c #{db_path}.0000104
+
+#@add-important-log-levels notice
+_database_reopen
+#@remove-important-log-levels notice
+
+select Memos --query content:@hello
+
+dump
+
+column_remove Memos content
+
+dump
