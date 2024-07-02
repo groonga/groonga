@@ -8054,39 +8054,47 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
-del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_obj *hld)
+del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_id target_id)
 {
+  grn_obj offsets;
+  GRN_INT32_INIT(&offsets, GRN_OBJ_VECTOR);
+
   int i;
-  void *hld_value = NULL;
-  uint32_t hld_size = 0;
-  grn_hook **last;
-  hld_value = GRN_BULK_HEAD(hld);
-  hld_size = GRN_BULK_VSIZE(hld);
-  if (!hld_size) {
-    return;
-  }
-  for (i = 0, last = &DB_OBJ(obj)->hooks[entry]; *last;
-       i++, last = &(*last)->next) {
-    if (!memcmp(GRN_NEXT_ADDR(*last), hld_value, hld_size)) {
-      grn_obj_delete_hook(ctx, obj, entry, i);
-      return;
+  grn_hook *hook;
+  for (i = 0, hook = DB_OBJ(obj)->hooks[entry]; hook; i++, hook = hook->next) {
+    if (hook->proc) {
+      continue;
+    }
+    if (hook->hld_size != sizeof(grn_obj_default_set_value_hook_data)) {
+      continue;
+    }
+    grn_obj_default_set_value_hook_data *data =
+      (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hook);
+    if (data->target == target_id) {
+      GRN_INT32_PUT(ctx, &offsets, i);
     }
   }
+
+  int n = GRN_INT32_VECTOR_SIZE(&offsets);
+  for (i = 0; i < n; i++) {
+    /* This must be larger -> smaller order. If we use smaller ->
+     * larger order, offset is changed. */
+    int offset = GRN_INT32_VALUE_AT(&offsets, n - i - 1);
+    grn_obj_delete_hook(ctx, obj, entry, offset);
+  }
+
+  GRN_OBJ_FIN(ctx, &offsets);
 }
 
 static void
 delete_source_hook(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_id *s = DB_OBJ(obj)->source;
+  grn_id id = DB_OBJ(obj)->id;
+  grn_id *source_ids = DB_OBJ(obj)->source;
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
-  grn_obj_default_set_value_hook_data hook_data = {DB_OBJ(obj)->id, 0};
-  grn_obj *source, data;
-  GRN_TEXT_INIT(&data, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_TEXT_SET_REF(&data, &hook_data, sizeof(hook_data));
-  for (i = 1; i <= n; i++, s++) {
-    hook_data.section = i;
-
-    source = grn_ctx_at(ctx, *s);
+  for (i = 0; i < n; i++) {
+    grn_id source_id = source_ids[i];
+    grn_obj *source = grn_ctx_at(ctx, source_id);
     if (!source) {
       ERRCLR(ctx);
       continue;
@@ -8096,19 +8104,18 @@ delete_source_hook(grn_ctx *ctx, grn_obj *obj)
     case GRN_TABLE_HASH_KEY:
     case GRN_TABLE_PAT_KEY:
     case GRN_TABLE_DAT_KEY:
-      del_hook(ctx, source, GRN_HOOK_INSERT, &data);
-      del_hook(ctx, source, GRN_HOOK_DELETE, &data);
+      del_hook(ctx, source, GRN_HOOK_INSERT, id);
+      del_hook(ctx, source, GRN_HOOK_DELETE, id);
       break;
     case GRN_COLUMN_FIX_SIZE:
     case GRN_COLUMN_VAR_SIZE:
-      del_hook(ctx, source, GRN_HOOK_SET, &data);
+      del_hook(ctx, source, GRN_HOOK_SET, id);
       break;
     default:
       /* invalid target */
       break;
     }
   }
-  grn_obj_close(ctx, &data);
 }
 
 /* This should be used only when the target object can't be opened. If
