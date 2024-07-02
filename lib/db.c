@@ -10306,12 +10306,12 @@ grn_obj_remove_pat(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_pat_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_pat_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10363,12 +10363,12 @@ grn_obj_remove_dat(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_dat_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_dat_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10420,12 +10420,12 @@ grn_obj_remove_hash(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_hash_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_hash_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10473,12 +10473,12 @@ grn_obj_remove_array(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_array_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_array_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10515,12 +10515,12 @@ grn_obj_remove_ja(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_ja_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_ja_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10556,12 +10556,12 @@ grn_obj_remove_ra(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_ra_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_ra_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -10594,12 +10594,12 @@ grn_obj_remove_index(grn_ctx *ctx,
   }
 
   if (path) {
-    rc = grn_ii_remove(ctx, path);
+    grn_obj_remove_log_spec_remove(ctx, db, id, type);
+    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    grn_obj_remove_log_spec_remove(ctx, db, id, type);
-    rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    rc = grn_ii_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
