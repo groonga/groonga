@@ -41,6 +41,7 @@ _database_reopen
 #|n| DDL:261:column_create Terms #recovering#data_content
 #|n| spec:261:update:Terms.#recovering#data_content:72(column:index):257(Data)
 #|n| DDL:261:set_source Terms.#recovering#data_content Data.#recovering#content
+#|n| DDL:260:add_hook:set Data.#recovering#content [Terms.#recovering#data_content(261)]
 #|n| spec:260:update:Data.#recovering#content:65(column:var_size):14(ShortText)
 #|n| spec:261:update:Terms.#recovering#data_content:72(column:index):257(Data)
 #|n| DDL:258:obj_remove Data.#broken#content

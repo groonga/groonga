@@ -9528,6 +9528,43 @@ grn_obj_add_hook(grn_ctx *ctx,
     }
     new->next = *last;
     *last = new;
+    if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
+      grn_id id = DB_OBJ(obj)->id;
+      uint32_t name_size = 0;
+      const char *name = _grn_table_key(ctx, ctx->impl->db, id, &name_size);
+      grn_obj extra_info;
+      GRN_TEXT_INIT(&extra_info, 0);
+      GRN_TEXT_PUTS(ctx, &extra_info, " [");
+      grn_hook *hook;
+      for (hook = new; hook; hook = hook->next) {
+        if (hook != new) {
+          GRN_TEXT_PUTC(ctx, &extra_info, ',');
+        }
+        if (!hook->proc &&
+            hook->hld_size == sizeof(grn_obj_default_set_value_hook_data)) {
+          grn_obj_default_set_value_hook_data *data =
+            (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hook);
+          grn_table_get_key2(ctx, ctx->impl->db, data->target, &extra_info);
+          grn_text_printf(ctx, &extra_info, "(%u)", data->target);
+        } else {
+          grn_id hook_proc_id = DB_OBJ(hook->proc)->id;
+          grn_table_get_key2(ctx, ctx->impl->db, hook_proc_id, &extra_info);
+          grn_text_printf(ctx, &extra_info, "(%u)", hook_proc_id);
+        }
+      }
+      GRN_TEXT_PUTS(ctx, &extra_info, "]");
+      GRN_LOG(ctx,
+              GRN_LOG_NOTICE,
+              "DDL:%u:add_hook:%s%s%.*s%.*s",
+              id,
+              grn_hook_entry_to_string(entry),
+              name_size == 0 ? "" : " ",
+              (int)name_size,
+              name,
+              (int)GRN_TEXT_LEN(&extra_info),
+              GRN_TEXT_VALUE(&extra_info));
+      GRN_OBJ_FIN(ctx, &extra_info);
+    }
     grn_obj_spec_save(ctx, DB_OBJ(obj));
   }
 exit:
