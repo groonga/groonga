@@ -18,4 +18,6 @@ dump
 
 table_remove Users
 
+#@timeout 60
 dump
+#@timeout default
