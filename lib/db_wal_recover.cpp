@@ -55,7 +55,9 @@ grn_db_wal_recover_remove_object(grn_ctx *ctx,
       id = DB_OBJ(object)->id;
     }
     grn_obj_clear_lock(ctx, object);
-    grn_obj_remove(ctx, object);
+    grn_obj_remove_flags(ctx,
+                         object,
+                         GRN_OBJ_REMOVE_DEPENDENT | GRN_OBJ_REMOVE_ENSURE);
   }
   grn_db_wal_recover_ensure_remove_by_id(ctx, db, id);
 }
