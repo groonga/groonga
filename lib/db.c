@@ -9583,7 +9583,7 @@ grn_obj_delete_hook(grn_ctx *ctx,
       }
       if (++i > offset) {
         removed = true;
-        if (h->proc == NULL &&
+        if (!h->proc &&
             h->hld_size == sizeof(grn_obj_default_set_value_hook_data)) {
           grn_obj_default_set_value_hook_data *data =
             (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(h);
