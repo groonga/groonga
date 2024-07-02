@@ -9657,9 +9657,10 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
                                            hook_name,
                                            GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_OBJECT_CORRUPT,
-          "%s[%s] hook has a dangling reference: <%.*s>(%u)",
+          "%s[%s][%s] hook has a dangling reference: <%.*s>(%u)",
           tag,
           name,
+          grn_hook_entry_to_string(entry),
           hook_name_length,
           hook_name,
           data->target);
@@ -9678,9 +9679,10 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, uint32_t flags)
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect_limited(ctx, &inspected, target);
       ERR(GRN_UNKNOWN_ERROR,
-          "%s[%s] hook has an unsupported index target: %u: %.*s",
+          "%s[%s][%s] hook has an unsupported index target: %u: %.*s",
           tag,
           name,
+          grn_hook_entry_to_string(entry),
           data->target,
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
