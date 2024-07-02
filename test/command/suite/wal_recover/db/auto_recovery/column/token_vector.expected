@@ -53,7 +53,7 @@ _database_reopen
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
 #|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
 #|n| DDL:259:obj_remove Data.#broken#content_terms
-#|n| DDL:258:delete_hook:set Data.content Data.#broken#content_terms(259)
+#|n| DDL:258:delete_hook:set Data.content Data.#broken#content_terms(259) [Data.content_terms(260)]
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
 #|n| spec:259:remove:Data.#broken#content_terms:65(column:var_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.content_terms>(260)

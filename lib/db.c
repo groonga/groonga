@@ -9570,9 +9570,8 @@ grn_obj_delete_hook(grn_ctx *ctx,
                     int offset)
 {
   GRN_API_ENTER;
-  grn_id removed_hook_target_id = GRN_ID_NIL;
-  char removed_hook_target_name[GRN_TABLE_MAX_KEY_SIZE];
-  uint32_t removed_hook_target_name_size = 0;
+  grn_obj extra_info;
+  GRN_TEXT_INIT(&extra_info, 0);
   bool removed = false;
   {
     int i = 0;
@@ -9587,13 +9586,9 @@ grn_obj_delete_hook(grn_ctx *ctx,
             h->hld_size == sizeof(grn_obj_default_set_value_hook_data)) {
           grn_obj_default_set_value_hook_data *data =
             (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(h);
-          removed_hook_target_id = data->target;
-          removed_hook_target_name_size =
-            grn_table_get_key(ctx,
-                              ctx->impl->db,
-                              data->target,
-                              removed_hook_target_name,
-                              GRN_TABLE_MAX_KEY_SIZE);
+          GRN_TEXT_PUTC(ctx, &extra_info, ' ');
+          grn_table_get_key2(ctx, ctx->impl->db, data->target, &extra_info);
+          grn_text_printf(ctx, &extra_info, "(%u)", data->target);
         }
         break;
       }
@@ -9606,29 +9601,38 @@ grn_obj_delete_hook(grn_ctx *ctx,
     grn_id id = DB_OBJ(obj)->id;
     uint32_t name_size = 0;
     const char *name = _grn_table_key(ctx, ctx->impl->db, id, &name_size);
-    if (name_size > 0) {
-      if (removed_hook_target_id == GRN_ID_NIL) {
-        GRN_LOG(ctx,
-                GRN_LOG_NOTICE,
-                "DDL:%u:delete_hook:%s %.*s",
-                id,
-                grn_hook_entry_to_string(entry),
-                (int)name_size,
-                name);
+    GRN_TEXT_PUTS(ctx, &extra_info, " [");
+    grn_hook *first_hook = DB_OBJ(obj)->hooks[entry];
+    grn_hook *hook;
+    for (hook = first_hook; hook; hook = hook->next) {
+      if (hook != first_hook) {
+        GRN_TEXT_PUTC(ctx, &extra_info, ',');
+      }
+      if (!hook->proc &&
+          hook->hld_size == sizeof(grn_obj_default_set_value_hook_data)) {
+        grn_obj_default_set_value_hook_data *data =
+          (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hook);
+        grn_table_get_key2(ctx, ctx->impl->db, data->target, &extra_info);
+        grn_text_printf(ctx, &extra_info, "(%u)", data->target);
       } else {
-        GRN_LOG(ctx,
-                GRN_LOG_NOTICE,
-                "DDL:%u:delete_hook:%s %.*s %.*s(%u)",
-                id,
-                grn_hook_entry_to_string(entry),
-                (int)name_size,
-                name,
-                (int)removed_hook_target_name_size,
-                removed_hook_target_name,
-                removed_hook_target_id);
+        grn_id hook_proc_id = DB_OBJ(hook->proc)->id;
+        grn_table_get_key2(ctx, ctx->impl->db, hook_proc_id, &extra_info);
+        grn_text_printf(ctx, &extra_info, "(%u)", hook_proc_id);
       }
     }
+    GRN_TEXT_PUTS(ctx, &extra_info, "]");
+    GRN_LOG(ctx,
+            GRN_LOG_NOTICE,
+            "DDL:%u:delete_hook:%s%s%.*s%.*s",
+            id,
+            grn_hook_entry_to_string(entry),
+            name_size == 0 ? "" : " ",
+            (int)name_size,
+            name,
+            (int)GRN_TEXT_LEN(&extra_info),
+            GRN_TEXT_VALUE(&extra_info));
   }
+  GRN_OBJ_FIN(ctx, &extra_info);
   grn_obj_spec_save(ctx, DB_OBJ(obj));
   GRN_API_RETURN(GRN_SUCCESS);
 }
