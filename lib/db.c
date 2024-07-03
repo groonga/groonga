@@ -55,8 +55,10 @@
 #include "grn_vector.h"
 #include "grn_index_cursor.h"
 #include "grn_wal.h"
-#include <string.h>
+
 #include <math.h>
+#include <string.h>
+#include <sys/stat.h>
 
 static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
 
@@ -10312,6 +10314,45 @@ grn_obj_remove_log_spec_remove(grn_ctx *ctx,
           grn_obj_type_to_string(type));
 }
 
+static void
+grn_ctx_generate_removing_path(grn_ctx *ctx,
+                               grn_id id,
+                               char *path,
+                               size_t path_size)
+{
+  const char *suffix = ".removing";
+  grn_obj_path_by_id(ctx, ctx->impl->db, id, path);
+  grn_strcat(path, path_size, suffix);
+}
+
+static void
+grn_ctx_mark_removing(grn_ctx *ctx, grn_id id)
+{
+  char path[PATH_MAX];
+  grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
+  FILE *removing = grn_fopen(path, "w");
+  if (removing) {
+    fclose(removing);
+  }
+}
+
+bool
+grn_ctx_is_removing(grn_ctx *ctx, grn_id id)
+{
+  char path[PATH_MAX];
+  grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
+  struct stat s;
+  return stat(path, &s) == 0;
+}
+
+static void
+grn_ctx_done_removing(grn_ctx *ctx, grn_id id)
+{
+  char path[PATH_MAX];
+  grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
+  grn_unlink(path);
+}
+
 static grn_rc
 grn_obj_remove_pat(grn_ctx *ctx,
                    grn_obj *obj,
@@ -10351,6 +10392,7 @@ grn_obj_remove_pat(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_pat_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10360,6 +10402,7 @@ grn_obj_remove_pat(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10408,6 +10451,7 @@ grn_obj_remove_dat(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_dat_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10417,6 +10461,7 @@ grn_obj_remove_dat(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10465,6 +10510,7 @@ grn_obj_remove_hash(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_hash_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10474,6 +10520,7 @@ grn_obj_remove_hash(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10518,6 +10565,7 @@ grn_obj_remove_array(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_array_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10527,6 +10575,7 @@ grn_obj_remove_array(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10560,6 +10609,7 @@ grn_obj_remove_ja(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_ja_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10569,6 +10619,7 @@ grn_obj_remove_ja(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10601,6 +10652,7 @@ grn_obj_remove_ra(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_ra_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10610,6 +10662,7 @@ grn_obj_remove_ra(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10639,6 +10692,7 @@ grn_obj_remove_index(grn_ctx *ctx,
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_ii_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10648,6 +10702,7 @@ grn_obj_remove_index(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
+    grn_ctx_done_removing(ctx, id);
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
@@ -10672,6 +10727,7 @@ grn_obj_remove_db_obj(
   }
 
   if (path) {
+    grn_ctx_mark_removing(ctx, id);
     rc = grn_io_remove(ctx, path);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10685,6 +10741,10 @@ grn_obj_remove_db_obj(
       return rc;
     }
     grn_obj_touch(ctx, db, NULL);
+  }
+
+  if (path) {
+    grn_ctx_done_removing(ctx, id);
   }
 
   return rc;
@@ -10957,6 +11017,7 @@ grn_ctx_remove_internal(
     grn_strcat(path, PATH_MAX, ".c");
     grn_io_remove_if_exist(ctx, path);
   }
+  grn_ctx_done_removing(ctx, id);
 
   return ctx->rc;
 }

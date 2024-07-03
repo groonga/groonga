@@ -996,6 +996,8 @@ grn_column_create_similar_id_map(grn_ctx *ctx,
   return column;
 }
 
+bool grn_ctx_is_removing(grn_ctx *ctx, grn_id id);
+
 #ifdef __cplusplus
 }
 #endif

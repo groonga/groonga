@@ -1461,7 +1461,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 
     grn_ctx_push_temporary_open_space(ctx);
     grn_obj *object = grn_ctx_at(ctx, id);
-    if (grn_db_wal_recover_is_target_object(ctx, object)) {
+    if (grn_ctx_is_removing(ctx, id)) {
+      grn_db_wal_recover_remove_object(ctx, db, object, id);
+    } else if (grn_db_wal_recover_is_target_object(ctx, object)) {
       bool is_table = false;
       bool is_column = false;
       if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
