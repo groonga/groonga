@@ -9812,24 +9812,17 @@ remove_columns_raw(grn_ctx *ctx,
   const char *tag = "[table][remove][columns]";
   grn_rc rc = GRN_SUCCESS;
 
+  char prefix[GRN_TABLE_MAX_KEY_SIZE];
+  grn_strncpy(prefix, GRN_TABLE_MAX_KEY_SIZE, table_name, table_name_size);
+  prefix[table_name_size] = GRN_DB_DELIMITER;
   GRN_TABLE_EACH_BEGIN_MIN(ctx,
                            ctx->impl->db,
                            cursor,
                            column_id,
-                           /* This prefix includes table itself. We'll
-                            * use table_name as-is and ignore the
-                            * target table instead of appending "." to
-                            * prefix. It's for avoiding memory
-                            * allocation. */
-                           table_name,
-                           table_name_size,
+                           prefix,
+                           table_name_size + 1 /* GRN_DB_DELIMITER */,
                            GRN_CURSOR_PREFIX)
   {
-    /* Ignore the target table. */
-    if (column_id == table_id) {
-      continue;
-    }
-
     grn_obj *column = grn_ctx_at(ctx, column_id);
     if (column) {
       rc = grn_obj_remove_internal(ctx, column, flags);
