@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719968344659,
+  "lastUpdate": 1719980008767,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -30708,6 +30708,108 @@ window.BENCHMARK_DATA = {
             "value": 0.026982456999917304,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0020729999999999915 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "horimoto@clear-code.com",
+            "name": "Horimoto Yasuhiro",
+            "username": "komainu8"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bbfce6824c08daedd21bbae88a1a103a6e0283b0",
+          "message": "db: add missing header for \"grn_fopen()\" (#1811)\n\nGitHub: fix GH-1810\r\n\r\n\"grn_fopen()\" is defined as \"_fsopen()\" in Windows.\r\n\r\nWe can specify \"shflag\" in the third argument of \"_fsopen()\". We use\r\n\"shflg\" in \"_fsopen()\".\r\n\r\nWe need to include \"share.h\" to use \"shflag\".\r\nSee:\r\nhttps://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/fsopen-wfsopen?view=msvc-160\r\n\r\nHowever, db.c does not include \"share.h\".\r\nSo, \"error C2065: '_SH_DENYNO': undeclared identifier\" occur.\r\n\r\nThis problem only occur in Groonga for Windows.\r\nBecause \"fopen()\" does not have \"shflag\".\r\n(\"grn_fopen()\" is defined \"fopen()\" in Linux.)",
+          "timestamp": "2024-07-03T13:08:26+09:00",
+          "tree_id": "f9cdf98e2d406e01cb798ed5f887d960673058d0",
+          "url": "https://github.com/groonga/groonga/commit/bbfce6824c08daedd21bbae88a1a103a6e0283b0"
+        },
+        "date": 1719980006783,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.35075264800002515,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017464000000000007 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.26597084199988785,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01721800000000015 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015513821999945776,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003419999999996204 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.01514997799995399,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00032999999999949736 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.379090968000014,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0002960000000001295 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2232715039999107,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006383000000000055 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.12727630499995257,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006131999999999388 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017110147000039433,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0022029999999998717 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016617245000020375,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018419999999996772 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05330502900000056,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007372999999999158 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05166846299999861,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007442000000000393 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018136674000004405,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018720000000004844 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017683965000003354,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019869999999994337 s\nthreads: undefined"
           }
         ]
       }
