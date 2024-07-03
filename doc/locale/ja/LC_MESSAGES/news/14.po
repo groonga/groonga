@@ -17,8 +17,26 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.5 - 2024-06-29"
-msgstr "14.0.5リリース - 2024-06-29"
+msgid "Release 14.0.5 - 2024-07-04"
+msgstr "14.0.5リリース - 2024-07-04"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Dropped support for CentOS 7."
+msgstr "CentOS 7のサポートをやめました。"
+
+msgid "Because CentOS 7 reached EOL."
+msgstr "CentOS 7はEOLになったためです。"
+
+msgid "Added a new feature that objects(table or column) as remove as possible."
+msgstr "可能な限りオブジェクト（テーブルやカラム）を削除する機能を追加しました。"
+
+msgid "The crash safe feature of PGroonga will use this feature mainly."
+msgstr "この機能は主にPGroongaのクラッシュセーフ機能で使います。"
+
+msgid "PGroonga will apply PGroonga's WAL to standby database automatically by using [`Custom WAL Resource Managers`](https://www.postgresql.org/docs/current/custom-rmgr.html). However, when PGroonga use `Custom WAL Resource Managers`, all replications are stop if PGroonga fail application of PGroonga's WAL due to break Groonga's object. So, if broken objects exist in database, Groonga will try as remove as possible objects by using this feature."
+msgstr "PGroongaは[`Custom WAL Resource Managers`](https://www.postgresql.jp/document/16/html/custom-rmgr.html)を使うことで、PGroongaのWALをスタンバイへ自動で適用できるようになります。ただ、`Custom WAL Resource Managers`を使用していると、オブジェクトの破損などでPGroongaのWALの適用に失敗した場合にすべてのレプリケーションが停止します。そのため、壊れたオブジェクトがデータベース内に存在する場合、Groongaはこの機能を使って、できる限り壊れたオブジェクトを削除しようとします。"
 
 msgid "Fixes"
 msgstr "修正"
@@ -82,9 +100,6 @@ msgstr "以下の例では、Groongaが`[1, \"Linux MySQL\"]` と `[2, \"MySQL G
 
 msgid "Release 14.0.3 - 2024-05-09"
 msgstr "14.0.3リリース - 2024-05-09"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "We optimized performance as below."
 msgstr "以下の最適化を行いました。"
