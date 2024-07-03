@@ -1,0 +1,12 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+table_create Users2 TABLE_PAT_KEY ShortText
+
+dump
+
+#@add-important-log-levels notice
+table_remove Users
+#@remove-important-log-levels notice
+
+#@read-timeout 0.1
+dump
