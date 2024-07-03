@@ -61,7 +61,7 @@
 #include <sys/stat.h>
 
 #ifdef WIN32
-# include <share.h>
+#  include <share.h>
 #endif
 
 static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
