@@ -1262,8 +1262,7 @@ exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
 {
   bool matched = false;
 
-  uint32_t size;
-  size = grn_vector_size(ctx, vector);
+  uint32_t size = grn_vector_size(ctx, vector);
   grn_obj element;
   GRN_VOID_INIT(&element);
 
