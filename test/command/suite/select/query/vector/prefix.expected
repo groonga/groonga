@@ -5,8 +5,10 @@ column_create Users name COLUMN_VECTOR ShortText
 load --table Users
 [
 {"name": ["Alice"]},
-{"name": ["Bob"]}
+{"name": ["Bob"]},
+{"name": ["Callum"]},
+{"name": ["Marshal"]}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],4]
 select Users --query 'name:^Al'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","ShortText"]],[1,["Alice"]]]]]
