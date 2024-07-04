@@ -3,10 +3,10 @@ column_create Users name COLUMN_VECTOR ShortText
 
 load --table Users
 [
-{"name": ["Alice"]},
-{"name": ["Bob"]},
-{"name": ["Callum"]},
-{"name": ["Marshal"]}
+{"name": ["alice"]},
+{"name": ["bob"]},
+{"name": ["callum"]},
+{"name": ["marshal"]}
 ]
 
-select Users --query 'name:^Al'
+select Users --query 'name:^al'
