@@ -1600,8 +1600,11 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
   case GRN_VECTOR:
     matched = exec_prefix_vector_bulk(ctx, target, prefix);
     break;
-  default:
+  case GRN_BULK:
     matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_PREFIX, target, prefix);
+    break;
+  default:
+    matched = false;
     break;
   }
 
