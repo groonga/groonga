@@ -1,0 +1,51 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": ["alice"]},
+{"name": ["bob"]},
+{"name": ["callum"]},
+{"name": ["elly", "alice"]},
+{"name": ["marshal"]}
+]
+[[0,0.0,0.0],5]
+select Users --query 'name:^al'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        [
+          "alice"
+        ]
+      ],
+      [
+        4,
+        [
+          "elly",
+          "alice"
+        ]
+      ]
+    ]
+  ]
+]

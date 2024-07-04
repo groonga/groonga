@@ -1,0 +1,13 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_VECTOR ShortText
+
+load --table Users
+[
+{"name": ["alice"]},
+{"name": ["bob"]},
+{"name": ["callum"]},
+{"name": ["elly", "alice"]},
+{"name": ["marshal"]}
+]
+
+select Users --query 'name:^al'
