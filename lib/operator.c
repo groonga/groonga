@@ -1268,10 +1268,8 @@ exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
 
   for (uint32_t i = 0; i < size; i++) {
     const char *content;
-    uint32_t content_size;
     grn_id domain_id;
-
-    content_size =
+    uint32_t content_size =
       grn_vector_get_element(ctx, vector, i, &content, NULL, &domain_id);
     grn_obj_reinit(ctx, &element, domain_id, 0);
     grn_bulk_write(ctx, &element, content, content_size);
