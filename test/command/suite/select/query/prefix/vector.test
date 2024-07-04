@@ -6,6 +6,7 @@ load --table Users
 {"name": ["alice"]},
 {"name": ["bob"]},
 {"name": ["callum"]},
+{"name": ["elly", "alice"]},
 {"name": ["marshal"]}
 ]
 
