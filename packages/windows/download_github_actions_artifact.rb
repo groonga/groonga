@@ -35,7 +35,9 @@ workflow_runs_response.workflow_runs.each do |workflow_run|
     puts("Downloading #{name}...")
     File.open("#{output_directory}/#{name}.zip", "wb") do |output|
       uri = URI.parse(client.artifact_download_url('groonga/groonga', id))
-      output.print(uri.open.read)
+      uri.open do |input|
+        IO.copy_stream(input, output)
+      end
     end
     downloaded = true
     break unless target_type == "all"
