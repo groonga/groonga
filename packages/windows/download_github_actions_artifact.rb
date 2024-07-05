@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "fileutils"
+require "open-uri"
 
 require "octokit"
 
@@ -33,7 +34,10 @@ workflow_runs_response.workflow_runs.each do |workflow_run|
     FileUtils.mkdir_p(output_directory)
     puts("Downloading #{name}...")
     File.open("#{output_directory}/#{name}.zip", "wb") do |output|
-      output.print(client.get("/repos/groonga/groonga/actions/artifacts/#{id}/zip"))
+      uri = URI.parse(client.artifact_download_url('groonga/groonga', id))
+      uri.open do |input|
+        IO.copy_stream(input, output)
+      end
     end
     downloaded = true
     break unless target_type == "all"
