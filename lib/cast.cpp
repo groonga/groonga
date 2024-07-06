@@ -1434,7 +1434,7 @@ namespace {
             rc = grn_uvector_add_element_record(ctx, &casted_value, id, 0);
             GRN_OBJ_FIN(ctx, &casted_value);
             if (rc != GRN_SUCCESS) {
-              return false;
+              return rc;
             }
           } else if (value.get_object().get(object) == simdjson::SUCCESS) {
             // TODO: Nested object isn't supported yet.
