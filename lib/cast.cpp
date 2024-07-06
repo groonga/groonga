@@ -1427,6 +1427,7 @@ namespace {
               caster->target,
             };
             auto rc = grn_caster_cast(ctx, &value_caster);
+            grn_id id = GRN_ID_NIL;
             if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
               id = GRN_RECORD_VALUE(&casted_value);
             }
