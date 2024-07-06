@@ -1431,9 +1431,8 @@ namespace {
             if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
               id = GRN_RECORD_VALUE(&casted_value);
             }
+            rc = grn_uvector_add_element_record(ctx, &casted_value, id, 0);
             GRN_OBJ_FIN(ctx, &casted_value);
-            auto rc =
-              grn_uvector_add_element_record(ctx_, caster_->dest, id, 0);
             if (rc != GRN_SUCCESS) {
               return false;
             }
