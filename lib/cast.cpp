@@ -1415,8 +1415,13 @@ namespace {
             GRN_RECORD_INIT(&casted_value,
                             GRN_BULK,
                             caster->dest->header.domain);
+            grn::TextBulk bulk(ctx, GRN_OBJ_DO_SHALLOW_COPY);
+            GRN_TEXT_SET(ctx,
+                         *bulk,
+                         string_element.data(),
+                         string_element.length());
             grn_caster value_caster = {
-              value, // todo
+              *bulk,
               &casted_value,
               caster->flags,
               caster->target,
