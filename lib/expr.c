@@ -44,7 +44,7 @@
 
 #include <math.h>
 
-static grn_bool grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
+static bool grn_scan_info_regexp_dot_asterisk_enable = true;
 
 void
 grn_expr_init_from_env(void)
@@ -55,9 +55,9 @@ grn_expr_init_from_env(void)
                grn_scan_info_regexp_dot_asterisk_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_scan_info_regexp_dot_asterisk_enable_env, "no") == 0) {
-      grn_scan_info_regexp_dot_asterisk_enable = GRN_FALSE;
+      grn_scan_info_regexp_dot_asterisk_enable = false;
     } else {
-      grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
+      grn_scan_info_regexp_dot_asterisk_enable = true;
     }
   }
 }
@@ -4916,9 +4916,9 @@ static grn_rc
 parse_query(grn_ctx *ctx, efs_info *q)
 {
   efs_op op_, *op = &op_;
-  grn_bool first_token = GRN_TRUE;
-  grn_bool only_first_and = GRN_FALSE;
-  grn_bool block_started = GRN_FALSE;
+  bool first_token = true;
+  bool only_first_and = false;
+  bool block_started = false;
 
   op->op = q->default_op;
   op->weight = DEFAULT_WEIGHT;
@@ -4964,7 +4964,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
       q->cur++;
 
       {
-        grn_bool closed = GRN_FALSE;
+        bool closed = false;
         const char *start, *s;
         start = s = q->cur;
         GRN_BULK_REWIND(&q->buf);
@@ -4981,7 +4981,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
           } else if (len == 1) {
             if (*s == GRN_QUERY_QUOTER) {
               q->cur = s + 1;
-              closed = GRN_TRUE;
+              closed = true;
               break;
             } else if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
               s++;
@@ -5063,7 +5063,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
       break;
     case GRN_QUERY_AND:
       if (first_token) {
-        only_first_and = GRN_TRUE;
+        only_first_and = true;
       } else {
         op->op = GRN_OP_AND;
         parse_query_accept_logical_op(ctx,
@@ -5175,7 +5175,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
       PARSE(GRN_EXPR_TOKEN_PARENL);
       q->cur++;
       q->paren_depth++;
-      block_started = GRN_TRUE;
+      block_started = true;
       break;
     case 'O':
       if (q->cur + 2 < q->str_end && q->cur[1] == 'R' && q->cur[2] == ' ') {
@@ -5198,10 +5198,10 @@ parse_query(grn_ctx *ctx, efs_info *q)
       break;
     }
     if (!first_token) {
-      only_first_and = GRN_FALSE;
+      only_first_and = false;
     }
     first_token = block_started;
-    block_started = GRN_FALSE;
+    block_started = false;
   }
 exit:
   if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
