@@ -45,12 +45,12 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
       grn_obj_reinit(ctx, bulk, GRN_DB_VOID, 0);
     } else {
       grn_obj_reinit(ctx, bulk, GRN_DB_BOOL, 0);
-      GRN_BOOL_SET(ctx, bulk, GRN_FALSE);
+      GRN_BOOL_SET(ctx, bulk, false);
     }
     break;
   case MRB_TT_TRUE:
     grn_obj_reinit(ctx, bulk, GRN_DB_BOOL, 0);
-    GRN_BOOL_SET(ctx, bulk, GRN_TRUE);
+    GRN_BOOL_SET(ctx, bulk, true);
     break;
   case MRB_TT_INTEGER:
     grn_obj_reinit(ctx, bulk, GRN_DB_INT64, 0);
@@ -327,7 +327,7 @@ grn_mrb_bulk_cast(mrb_state *mrb, grn_obj *from, grn_obj *to, grn_id domain_id)
   grn_rc rc;
 
   grn_obj_reinit(ctx, to, domain_id, 0);
-  rc = grn_obj_cast(ctx, from, to, GRN_FALSE);
+  rc = grn_obj_cast(ctx, from, to, false);
   return rc == GRN_SUCCESS;
 }
 
