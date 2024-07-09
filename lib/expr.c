@@ -7156,7 +7156,7 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
                                       grn_obj *expanded_query)
 {
   grn_obj *table;
-  grn_bool term_column_is_key;
+  bool term_column_is_key;
 
   GRN_API_ENTER;
 
@@ -7185,12 +7185,12 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
   table = grn_column_table(ctx, expanded_term_column);
 
   if (!term_column) {
-    term_column_is_key = GRN_TRUE;
+    term_column_is_key = true;
   } else {
     if (grn_obj_is_key_accessor(ctx, term_column)) {
-      term_column_is_key = GRN_TRUE;
+      term_column_is_key = true;
     } else if (grn_obj_is_data_column(ctx, term_column)) {
-      term_column_is_key = GRN_FALSE;
+      term_column_is_key = false;
     } else {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
@@ -7257,7 +7257,7 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
   size_t all_off_options_length = strlen(all_off_options);
   const char *regexp_raw;
   const char *regexp_raw_end;
-  grn_bool escaping = GRN_FALSE;
+  bool escaping = false;
   grn_obj keyword;
 
   regexp_raw = GRN_TEXT_VALUE(regexp);
@@ -7271,7 +7271,7 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
 
     if (char_len == 1) {
       if (escaping) {
-        escaping = GRN_FALSE;
+        escaping = false;
         switch (regexp_raw[0]) {
         case 'A':
         case 'z':
@@ -7310,7 +7310,7 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
           }
           break;
         case '\\':
-          escaping = GRN_TRUE;
+          escaping = true;
           break;
         default:
           GRN_TEXT_PUTC(ctx, &keyword, regexp_raw[0]);
@@ -7318,7 +7318,7 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
         }
       }
     } else {
-      escaping = GRN_FALSE;
+      escaping = false;
       GRN_TEXT_PUT(ctx, &keyword, regexp_raw, char_len);
     }
 
