@@ -33,7 +33,7 @@ void grn_mrb_init_from_env(void);
 #ifdef GRN_WITH_MRUBY
 GRN_API mrb_value grn_mrb_load(grn_ctx *ctx, const char *path);
 GRN_API const char *grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx);
-grn_bool grn_mrb_is_order_by_estimated_size_enabled(void);
+bool grn_mrb_is_order_by_estimated_size_enabled(void);
 #endif
 
 #ifdef __cplusplus
