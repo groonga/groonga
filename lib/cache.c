@@ -81,7 +81,7 @@ struct _grn_cache {
       int timeout;
     } persistent;
   } impl;
-  grn_bool is_memory;
+  bool is_memory;
   grn_ctx *ctx;
 };
 
@@ -308,7 +308,7 @@ exit :
 
 static grn_cache *
 grn_cache_open_raw(grn_ctx *ctx,
-                   grn_bool is_memory,
+                   bool is_memory,
                    const char *base_path)
 {
   grn_cache *cache = NULL;
@@ -341,21 +341,21 @@ grn_cache *
 grn_cache_open(grn_ctx *ctx)
 {
   const char *base_path = NULL;
-  grn_bool is_memory;
+  bool is_memory;
 
   if (grn_cache_default_base_path[0] != '\0') {
     base_path = grn_cache_default_base_path;
   }
 
   if (base_path) {
-    is_memory = GRN_FALSE;
+    is_memory = false;
   } else {
     char grn_cache_type_env[GRN_ENV_BUFFER_SIZE];
     grn_getenv("GRN_CACHE_TYPE", grn_cache_type_env, GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_cache_type_env, "persistent") == 0) {
-      is_memory = GRN_FALSE;
+      is_memory = false;
     } else {
-      is_memory = GRN_TRUE;
+      is_memory = true;
     }
   }
 
@@ -365,7 +365,7 @@ grn_cache_open(grn_ctx *ctx)
 grn_cache *
 grn_persistent_cache_open(grn_ctx *ctx, const char *base_path)
 {
-  grn_bool is_memory = GRN_FALSE;
+  bool is_memory = false;
   return grn_cache_open_raw(ctx, is_memory, base_path);
 }
 
@@ -439,7 +439,7 @@ grn_cache_default_reopen(void)
 {
   grn_ctx *ctx = &grn_cache_ctx;
   grn_cache *new_default;
-  grn_bool default_is_current;
+  bool default_is_current;
 
   GRN_API_ENTER;
 
