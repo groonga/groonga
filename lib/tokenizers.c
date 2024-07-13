@@ -465,7 +465,7 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   grn_ngram_options options;
-  grn_bool overlap;
+  bool overlap;
   struct {
     grn_bool ing;
     grn_bool need;
@@ -649,7 +649,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
 
   tokenizer->pos = 0;
   tokenizer->skip = 0;
-  tokenizer->overlap = GRN_FALSE;
+  tokenizer->overlap = false;
   tokenizer->loose.ing = GRN_TRUE;
   tokenizer->source_offset = 0;
 }
@@ -683,7 +683,7 @@ ngram_init_raw(grn_ctx *ctx,
   tokenizer->query = query;
 
   tokenizer->options = *options;
-  tokenizer->overlap = GRN_FALSE;
+  tokenizer->overlap = false;
   tokenizer->loose.ing = GRN_FALSE;
   tokenizer->loose.need = GRN_FALSE;
   tokenizer->loose.need_end_mark = GRN_FALSE;
@@ -1037,7 +1037,7 @@ ngram_next(grn_ctx *ctx,
       }
     }
     tokenizer->next = r;
-    tokenizer->overlap = GRN_FALSE;
+    tokenizer->overlap = false;
   } else if (cp && tokenizer->options.unify_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
@@ -1053,7 +1053,7 @@ ngram_next(grn_ctx *ctx,
       }
     }
     tokenizer->next = r;
-    tokenizer->overlap = GRN_FALSE;
+    tokenizer->overlap = false;
   } else if (cp && tokenizer->options.unify_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
@@ -1069,7 +1069,7 @@ ngram_next(grn_ctx *ctx,
       }
     }
     tokenizer->next = r;
-    tokenizer->overlap = GRN_FALSE;
+    tokenizer->overlap = false;
   } else {
 #ifdef PRE_DEFINED_UNSPLIT_WORDS
     const unsigned char *key = NULL;
@@ -1123,7 +1123,7 @@ ngram_next(grn_ctx *ctx,
       if (n_characters < tokenizer->options.unit) {
         status |= GRN_TOKEN_UNMATURED;
       }
-      tokenizer->overlap = (n_characters > 1) ? GRN_TRUE : GRN_FALSE;
+      tokenizer->overlap = (n_characters > 1);
     }
   }
   tokenizer->pos = pos;
