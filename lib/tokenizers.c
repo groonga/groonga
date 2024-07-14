@@ -149,7 +149,7 @@ delimit_open_options(grn_ctx *ctx,
 {
   grn_delimit_options *options;
   grn_delimit_options_default *options_default = user_data;
-  grn_bool have_delimiter = GRN_FALSE;
+  bool have_delimiter = false;
 
   options = GRN_CALLOC(sizeof(grn_delimit_options));
   if (!options) {
@@ -172,7 +172,7 @@ delimit_open_options(grn_ctx *ctx,
       unsigned int delimiter_length;
       grn_id domain;
 
-      have_delimiter = GRN_TRUE;
+      have_delimiter = true;
       delimiter_length =
         grn_vector_get_element(ctx, raw_options, i, &delimiter, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && delimiter_length > 0) {
@@ -371,10 +371,10 @@ delimit_next(grn_ctx *ctx,
         break;
       }
       {
-        grn_bool found_delimiter = GRN_FALSE;
+        bool found_delimiter = false;
         const unsigned char *current_end = r;
         while (GRN_TRUE) {
-          grn_bool found_delimiter_sub = GRN_FALSE;
+          bool found_delimiter_sub = false;
           for (i = 0; i < n_delimiters; i++) {
             const char *delimiter;
             unsigned int delimiter_length;
@@ -388,8 +388,8 @@ delimit_next(grn_ctx *ctx,
                 memcmp(current_end, delimiter, delimiter_length) == 0) {
               current_end += delimiter_length;
               tokenizer->next = current_end;
-              found_delimiter = GRN_TRUE;
-              found_delimiter_sub = GRN_TRUE;
+              found_delimiter = true;
+              found_delimiter_sub = true;
             }
           }
           if (!found_delimiter_sub) {
