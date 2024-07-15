@@ -450,8 +450,8 @@ static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
 
 typedef struct {
   uint8_t unit;
-  grn_bool unify_alphabet;
-  grn_bool unify_digit;
+  bool unify_alphabet;
+  bool unify_digit;
   grn_bool unify_symbol;
   grn_bool ignore_blank;
   grn_bool remove_blank;
@@ -492,8 +492,8 @@ static void
 ngram_options_init(grn_ngram_options *options, uint8_t unit)
 {
   options->unit = unit;
-  options->unify_alphabet = GRN_TRUE;
-  options->unify_digit = GRN_TRUE;
+  options->unify_alphabet = true;
+  options->unify_digit = true;
   options->unify_symbol = GRN_TRUE;
   options->ignore_blank = GRN_FALSE;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
@@ -804,7 +804,7 @@ bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.unify_symbol = GRN_FALSE;
-  options.unify_alphabet = GRN_FALSE;
+  options.unify_alphabet = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -817,8 +817,8 @@ bigramsad_init(grn_ctx *ctx,
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.unify_symbol = GRN_FALSE;
-  options.unify_alphabet = GRN_FALSE;
-  options.unify_digit = GRN_FALSE;
+  options.unify_alphabet = false;
+  options.unify_digit = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -851,7 +851,7 @@ bigramisa_init(grn_ctx *ctx,
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
   options.unify_symbol = GRN_FALSE;
-  options.unify_alphabet = GRN_FALSE;
+  options.unify_alphabet = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -865,8 +865,8 @@ bigramisad_init(grn_ctx *ctx,
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
   options.unify_symbol = GRN_FALSE;
-  options.unify_alphabet = GRN_FALSE;
-  options.unify_digit = GRN_FALSE;
+  options.unify_alphabet = false;
+  options.unify_digit = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
