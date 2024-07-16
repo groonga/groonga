@@ -452,8 +452,8 @@ typedef struct {
   uint8_t unit;
   bool unify_alphabet;
   bool unify_digit;
-  grn_bool unify_symbol;
-  grn_bool ignore_blank;
+  bool unify_symbol;
+  bool ignore_blank;
   grn_bool remove_blank;
   grn_bool loose_symbol;
   grn_bool loose_blank;
@@ -494,8 +494,8 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->unit = unit;
   options->unify_alphabet = true;
   options->unify_digit = true;
-  options->unify_symbol = GRN_TRUE;
-  options->ignore_blank = GRN_FALSE;
+  options->unify_symbol = true;
+  options->ignore_blank = false;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
   options->loose_symbol = GRN_FALSE;
   options->loose_blank = GRN_FALSE;
@@ -794,7 +794,7 @@ bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.unify_symbol = GRN_FALSE;
+  options.unify_symbol = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -803,7 +803,7 @@ bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.unify_symbol = GRN_FALSE;
+  options.unify_symbol = false;
   options.unify_alphabet = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
@@ -816,7 +816,7 @@ bigramsad_init(grn_ctx *ctx,
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.unify_symbol = GRN_FALSE;
+  options.unify_symbol = false;
   options.unify_alphabet = false;
   options.unify_digit = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
@@ -827,7 +827,7 @@ bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.ignore_blank = GRN_TRUE;
+  options.ignore_blank = true;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -836,8 +836,8 @@ bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.ignore_blank = GRN_TRUE;
-  options.unify_symbol = GRN_FALSE;
+  options.ignore_blank = true;
+  options.unify_symbol = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -849,8 +849,8 @@ bigramisa_init(grn_ctx *ctx,
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.ignore_blank = GRN_TRUE;
-  options.unify_symbol = GRN_FALSE;
+  options.ignore_blank = true;
+  options.unify_symbol = false;
   options.unify_alphabet = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
@@ -863,8 +863,8 @@ bigramisad_init(grn_ctx *ctx,
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.ignore_blank = GRN_TRUE;
-  options.unify_symbol = GRN_FALSE;
+  options.ignore_blank = true;
+  options.unify_symbol = false;
   options.unify_alphabet = false;
   options.unify_digit = false;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
