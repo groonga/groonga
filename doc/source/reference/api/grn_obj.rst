@@ -6,12 +6,7 @@
 Summary
 -------
 
-TODO...
-
-Example
--------
-
-TODO...
+:c:type:`grn_obj` is the object which stores comprehensive data such as built-in object, table, column and so on.
 
 Reference
 ---------
@@ -29,15 +24,145 @@ Reference
    :param table: 対象tableを指定します。
    :param name: カラム名を指定します。
 
+.. c:function:: grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.1.0
+
+   Check whether target object is a accessor object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is accessor, ``GRN_FALSE`` otherwise.
+
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
-   Check whether Groonga built-in object.
+   Check whether target object is a built-in object. The built-in objects are listed in :doc:`/reference/types`.
 
    :param ctx: context
    :param obj: target object
    :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Int8", strlen("Int8"));
+      printf("builtin?: %s\n", grn_obj_is_builtin(ctx, obj) ? "true" : "false");
+
+   As ``Int8`` is built-in object, it prints like the following::
+
+     builtin?: true
+
+.. c:function:: grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
+
+   Check whether target object is a bulk object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is bulk, ``GRN_FALSE`` otherwise.
+
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_INT32_INIT(&obj, 0);
+      printf("bulk?: %s\n", grn_obj_is_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is bulk object, it prints like the following::
+
+     bulk?: true
+
+.. c:function:: grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 6.0.0
+
+   Check whether target object is a column object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is column, ``GRN_FALSE`` otherwise.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("column?: %s\n", grn_obj_is_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is column object, it prints like the following::
+
+     column?: true
+
+.. c:function:: grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.4
+
+   Check whether target object is corrupted.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is corrupted, ``GRN_FALSE`` otherwise.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users", strlen("Users"));
+      printf("corrupted?: %s\n", grn_obj_is_corrupt(ctx, obj) ? "true" : "false");
+
+   If ``Users`` table is corrupted, it prints like the following::
+
+     corrupted?: true
+
+.. c:function:: grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
+
+   Check whether column is a data column.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is data column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("data column?: %s\n", grn_obj_is_data_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is data column, it prints like the following::
+
+     data column?: true
+
+.. c:function:: grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 6.0.5
+
+   Check whether target object is marked as dirty.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object status is dirty. ``GRN_FALSE`` otherwise. TODO: dirty
+
+.. c:function:: grn_bool grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
+
+   Check whether target object is an expression object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is expression object. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 5.0.1
+
+   Check whether target object is a function procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is function object. ``GRN_FALSE`` otherwise. TODO:
+
 .. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 8.0.4
 
    Check whether index column.
 
@@ -45,13 +170,327 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Terms.name_index", strlen("Terms.name_index"));
+      printf("index column?: %s\n", grn_obj_is_index_column(ctx, obj) ? "true" : "false");
+
+   If ``Terms.name_index`` is index column, it prints like the following::
+
+     index column?: true
+
+.. c:function:: grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 9.0.2
+
+   Check whether target object is a id accessor.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is id accessor. ``GRN_FALSE`` otherwise. TODO: difference between is_accessor and is_id_accessor.
+
+.. c:function:: grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.1.0
+
+   Check whether target object is a key accessor.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a key accessor. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 8.0.2
+
+   Check whether target object is a lexicon.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a lexicon. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 8.0.4
+
+   Check whether target object is a number bulk object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a number bulk object. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_INT32_INIT(&obj, 0);
+      printf("number family bulk?: %s\n", grn_obj_is_number_family_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is number family object, it prints like the following::
+
+     number family bulk?: true
+
+.. c:function:: grn_bool grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a normalizer object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a normalizer object. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 6.0.0
+
+   Check whether target object is a reference column.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a reference column. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Site.user", strlen("Site.user"));
+      printf("reference column?: %s\n", grn_obj_is_reference_column(ctx, obj) ? "true" : "false");
+
+   If ``Site.user`` is reference column, it prints like the following::
+
+     reference column?: true
+
+.. c:function:: grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
+
+   Check whether target object is a scalar column.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a scalar column. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("scalar column?: %s\n", grn_obj_is_scalar_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is scalar column, it prints like the following::
+
+     scalar column?: true
+
+.. c:function:: grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a scorer procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a scorer procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a selector procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a selector procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether target object is a selector only procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a selector only procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a table.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a table. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users", strlen("Users"));
+      printf("table?: %s\n", grn_obj_is_table(ctx, obj) ? "true" : "false");
+
+   If ``Users`` is table object, it prints like the following::
+
+     table?: true
+
+.. c:function:: grn_bool grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether target object is a bulk object which belongs to text family.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a bulk object which belongs to text family. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_TEXT_INIT(&obj, 0);
+      printf("text family bulk?: %s\n", grn_obj_is_text_family_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is text family object, it prints like the following::
+
+     text family bulk?: true
+
+.. c:function:: grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 6.0.1
+
+   Check whether target object is a type which belongs to text family.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a type which belongs to a text family. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a tokenizer procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a tokenizer procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a token filter procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a token filter procedure. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether target object is true.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is true. ``GRN_FALSE`` otherwise. If target object type is ``Int32`` or ``UInt32``, ``GRN_TRUE`` means that the value is not zero. If target object type is ``ShortText``, ``GRN_TRUE`` means that it is not empty string.
+
+.. c:function:: grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a type.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is type object. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Object", strlen("Object"));
+      printf("type?: %s\n", grn_obj_is_type(ctx, obj) ? "true" : "false");
+
+   As ``Object`` is type object, it prints like the following::
+
+     type?: true
+
+.. c:function:: grn_bool grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 8.0.8
+
+   Check whether target object is a vector.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a vector object. ``GRN_FALSE`` otherwise. TODO:
+
 .. c:function:: grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
 
-   Check whether vector column.
+   .. versionadded:: 8.0.4
+
+   Check whether target object is a vector column.
 
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.names", strlen("Users.names"));
+      printf("vector column?: %s\n", grn_obj_is_vector_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.names`` is vector column, it prints like the following::
+
+     vector column?: true
+
+.. c:function:: grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether target object is a weight vector column.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a weight vector column. ``GRN_FALSE`` otherwise.
+            Even if the target object isn't column, return ``GRN_FALSE``. The weight vector column is created with ``WITH_WEIGHT`` flags.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.tags", strlen("Users.tags"));
+      printf("weight vector column?: %s\n", grn_obj_is_weight_vector_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.tags`` is weight vector column, it prints like the following::
+
+     weight vector column?: true
+
+.. c:function:: grn_bool grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
+
+   Check whether target object is a window function procedure.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is a weight vector column. ``GRN_FALSE`` otherwise. TODO:
+
+.. c:function:: size_t grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj)
+
+   Check disk usage of target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: The amount of disk usage about specified ``obj``.
+
+.. c:function:: uint32_t grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+   .. versionadded:: 6.0.5
+
+   Check last modified timestamp of target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param tv: TODO:
+   :return: TODO:
 
 .. c:function:: grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 
@@ -186,6 +625,13 @@ Reference
    :param namebuf: 名前を格納するバッファ（呼出側で準備する）を指定します。
    :param buf_size: namebufのサイズ（byte長）を指定します。
 
+.. c:function:: grn_bool grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
+
+   :param ctx: The context object.
+   :param name: The target name.
+   :param name_len: The length of target name.
+   :return: ``GRN_TRUE`` for if the target name is column, ``GRN_FALSE`` otherwise.
+
 .. c:function:: grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
 
    objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。
@@ -258,7 +704,7 @@ Reference
    :param id: The object (table, column and so on) ID to be deleted.
    :param buffer: path string corresponding to the id will be set in this buffer.
 
-.. c:function:: grn_rc grn_obj_cast_by_id(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_bool add_record_if_not_exist)
+.. c:function:: grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_bool add_record_if_not_exist)
 
    It casts value of ``source`` to value with type of
    ``destination``. Casted value is appended to ``destination``.
@@ -281,3 +727,62 @@ Reference
                                    is only used when ``destination``
                                    is a reference type bulk.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
+.. c:function:: grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.1.0
+
+   Reindex target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
+.. c:function:: void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+   .. versionadded:: 6.0.5
+
+   Touch target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+
+.. c:function:: const char *grn_obj_type_to_string(uint8_t type);
+
+   Convert specified type to string.
+
+   :param type: The type.
+   :return: string corresponding to specified ``type``.
+
+.. c:function:: grn_rc grn_obj_set_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_obj *values)
+
+   Set specified option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name: The name of ``values``.
+   :param name_length: The length of ``name``.
+   :param values: The option value.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
+.. c:function:: grn_option_revision grn_obj_get_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_option_revision revision, grn_obj *values)
+   Get specified option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name: The name of ``values``.
+   :param name_length: The length of ``name``.
+   :param revision: The revision of specified option.
+   :param values: The option value.
+   :return: TODO:
+
+.. c:function:: grn_rc grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj)
+
+   Clear option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name_length: The length of ``name``.
+   :param revision: The revision of specified option.
+   :param values: The option value.
+   :return: TODO:
