@@ -446,7 +446,7 @@ delimit_null_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
 /* ngram tokenizer */
 
-static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
+static bool grn_ngram_tokenizer_remove_blank_enable = true;
 
 typedef struct {
   uint8_t unit;
@@ -454,8 +454,8 @@ typedef struct {
   bool unify_digit;
   bool unify_symbol;
   bool ignore_blank;
-  grn_bool remove_blank;
-  grn_bool loose_symbol;
+  bool remove_blank;
+  bool loose_symbol;
   grn_bool loose_blank;
   grn_bool report_source_location;
   grn_bool include_removed_source_location;
@@ -497,7 +497,7 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->unify_symbol = true;
   options->ignore_blank = false;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
-  options->loose_symbol = GRN_FALSE;
+  options->loose_symbol = false;
   options->loose_blank = GRN_FALSE;
   options->report_source_location = GRN_FALSE;
   options->include_removed_source_location = GRN_TRUE;
@@ -3088,9 +3088,9 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                GRN_ENV_BUFFER_SIZE);
     if (grn_ngram_tokenizer_remove_blank_enable_env[0]) {
       if (strcmp(grn_ngram_tokenizer_remove_blank_enable_env, "no") == 0) {
-        grn_ngram_tokenizer_remove_blank_enable = GRN_FALSE;
+        grn_ngram_tokenizer_remove_blank_enable = false;
       } else {
-        grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
+        grn_ngram_tokenizer_remove_blank_enable = true;
       }
     } else {
       /* Deprecated. Use GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE instead. */
@@ -3100,7 +3100,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                  grn_ngram_tokenizer_remove_blank_disable_env,
                  GRN_ENV_BUFFER_SIZE);
       if (grn_ngram_tokenizer_remove_blank_disable_env[0]) {
-        grn_ngram_tokenizer_remove_blank_enable = GRN_FALSE;
+        grn_ngram_tokenizer_remove_blank_enable = false;
       }
     }
   }
