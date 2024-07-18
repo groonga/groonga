@@ -456,9 +456,9 @@ typedef struct {
   bool ignore_blank;
   bool remove_blank;
   bool loose_symbol;
-  grn_bool loose_blank;
-  grn_bool report_source_location;
-  grn_bool include_removed_source_location;
+  bool loose_blank;
+  bool report_source_location;
+  bool include_removed_source_location;
 } grn_ngram_options;
 
 typedef struct {
@@ -498,9 +498,9 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->ignore_blank = false;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
   options->loose_symbol = false;
-  options->loose_blank = GRN_FALSE;
-  options->report_source_location = GRN_FALSE;
-  options->include_removed_source_location = GRN_TRUE;
+  options->loose_blank = false;
+  options->report_source_location = false;
+  options->include_removed_source_location = true;
 }
 
 static void
