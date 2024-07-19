@@ -1293,8 +1293,8 @@ typedef struct {
   struct {
     uint32_t n_skip_tokens;
   } get;
-  grn_bool is_begin;
-  grn_bool is_end;
+  bool is_begin;
+  bool is_end;
   grn_bool is_start_token;
   grn_bool is_overlapping;
   const char *next;
@@ -1330,8 +1330,8 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   tokenizer->get.n_skip_tokens = 0;
 
-  tokenizer->is_begin = GRN_TRUE;
-  tokenizer->is_end = GRN_FALSE;
+  tokenizer->is_begin = true;
+  tokenizer->is_end = false;
   tokenizer->is_start_token = GRN_TRUE;
   tokenizer->is_overlapping = GRN_FALSE;
 
@@ -1373,13 +1373,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_tokenizer_query_get_mode(ctx, tokenizer->query);
   grn_encoding encoding =
     grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
-  grn_bool is_begin = tokenizer->is_begin;
+  bool is_begin = tokenizer->is_begin;
   grn_bool is_start_token = tokenizer->is_start_token;
   grn_bool break_by_blank = GRN_FALSE;
   grn_bool break_by_end_mark = GRN_FALSE;
 
   GRN_BULK_REWIND(buffer);
-  tokenizer->is_begin = GRN_FALSE;
+  tokenizer->is_begin = false;
   tokenizer->is_start_token = GRN_FALSE;
 
   if (char_types) {
@@ -1503,7 +1503,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (mode == GRN_TOKEN_GET) {
     if (current == end) {
-      tokenizer->is_end = GRN_TRUE;
+      tokenizer->is_end = true;
       status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
       if (status & GRN_TOKEN_UNMATURED) {
         status |= GRN_TOKEN_FORCE_PREFIX;
@@ -1525,7 +1525,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   } else {
     if (tokenizer->next == end) {
-      tokenizer->is_end = GRN_TRUE;
+      tokenizer->is_end = true;
     }
     if (break_by_blank) {
       tokenizer->is_start_token = GRN_TRUE;
