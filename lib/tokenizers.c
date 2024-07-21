@@ -1295,8 +1295,8 @@ typedef struct {
   } get;
   bool is_begin;
   bool is_end;
-  grn_bool is_start_token;
-  grn_bool is_overlapping;
+  bool is_start_token;
+  bool is_overlapping;
   const char *next;
   const char *end;
   unsigned int nth_char;
@@ -1332,8 +1332,8 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   tokenizer->is_begin = true;
   tokenizer->is_end = false;
-  tokenizer->is_start_token = GRN_TRUE;
-  tokenizer->is_overlapping = GRN_FALSE;
+  tokenizer->is_start_token = true;
+  tokenizer->is_overlapping = false;
 
   {
     grn_obj *string;
@@ -1374,13 +1374,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_encoding encoding =
     grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
   bool is_begin = tokenizer->is_begin;
-  grn_bool is_start_token = tokenizer->is_start_token;
+  bool is_start_token = tokenizer->is_start_token;
   grn_bool break_by_blank = GRN_FALSE;
   grn_bool break_by_end_mark = GRN_FALSE;
 
   GRN_BULK_REWIND(buffer);
   tokenizer->is_begin = false;
-  tokenizer->is_start_token = GRN_FALSE;
+  tokenizer->is_start_token = false;
 
   if (char_types) {
     char_types += tokenizer->nth_char;
@@ -1424,7 +1424,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (mode == GRN_TOKEN_GET) {
     if (is_begin && char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
         memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, (size_t)char_len) == 0) {
-      tokenizer->is_start_token = GRN_TRUE;
+      tokenizer->is_start_token = true;
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
@@ -1511,7 +1511,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       if (break_by_blank) {
         tokenizer->get.n_skip_tokens = 0;
-        tokenizer->is_start_token = GRN_TRUE;
+        tokenizer->is_start_token = true;
       } else if (break_by_end_mark) {
         if (!is_start_token && (status & GRN_TOKEN_UNMATURED)) {
           status |= GRN_TOKEN_SKIP;
@@ -1528,7 +1528,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       tokenizer->is_end = true;
     }
     if (break_by_blank) {
-      tokenizer->is_start_token = GRN_TRUE;
+      tokenizer->is_start_token = true;
     }
   }
 
