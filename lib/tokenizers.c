@@ -373,7 +373,7 @@ delimit_next(grn_ctx *ctx,
       {
         bool found_delimiter = false;
         const unsigned char *current_end = r;
-        while (GRN_TRUE) {
+        while (true) {
           bool found_delimiter_sub = false;
           for (i = 0; i < n_delimiters; i++) {
             const char *delimiter;
@@ -1375,8 +1375,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
   bool is_begin = tokenizer->is_begin;
   bool is_start_token = tokenizer->is_start_token;
-  grn_bool break_by_blank = GRN_FALSE;
-  grn_bool break_by_end_mark = GRN_FALSE;
+  bool break_by_blank = false;
+  bool break_by_end_mark = false;
 
   GRN_BULK_REWIND(buffer);
   tokenizer->is_begin = false;
@@ -1454,7 +1454,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   }
 
-  while (GRN_TRUE) {
+  while (true) {
     n_characters++;
     GRN_TEXT_PUT(ctx, buffer, current, char_len);
     current += char_len;
@@ -1468,7 +1468,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       char_type = char_types[0];
       char_types++;
       if (GRN_STR_ISBLANK(char_type)) {
-        break_by_blank = GRN_TRUE;
+        break_by_blank = true;
       }
     }
 
@@ -1481,7 +1481,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (mode == GRN_TOKEN_GET && current + char_len == end &&
         char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
         memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, (size_t)char_len) == 0) {
-      break_by_end_mark = GRN_TRUE;
+      break_by_end_mark = true;
     }
 
     if (break_by_blank || break_by_end_mark) {
