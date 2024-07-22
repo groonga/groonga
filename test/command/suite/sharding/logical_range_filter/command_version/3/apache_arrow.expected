@@ -111,8 +111,9 @@ reference_short_text: dictionary<values=string, indices=int32, ordered=0>
 reference_short_text_vector: list<item: dictionary<values=string, indices=int32, ordered=0>>
 time: timestamp[ns]
 uint32: uint32
-	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
-0	2015-02-03 23:59:58	  -29	[
+	  _key	  int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	  uint32
+	(utf8)	(int32)	      (list)	   (int64)	        (dictionary)	                     (list)	              (timestamp)	(uint32)
+0	2015-02-03 23:59:58	    -29	[
   1,
   -2,
   3
@@ -126,8 +127,8 @@ uint32: uint32
   [
     0,
     1
-  ]	2015-02-03T23:59:58+09:00	    29
-1	2015-02-03 23:59:59	  -29	[
+  ]	2015-02-03T23:59:58+09:00	      29
+1	2015-02-03 23:59:59	    -29	[
   1,
   -2,
   3
@@ -143,8 +144,8 @@ uint32: uint32
   [
     2,
     3
-  ]	2015-02-03T23:59:59+09:00	  2929
-2	2015-02-04 00:00:00	 -290	[
+  ]	2015-02-03T23:59:59+09:00	    2929
+2	2015-02-04 00:00:00	   -290	[
   10,
   -20,
   30
@@ -164,8 +165,8 @@ uint32: uint32
     4,
     5,
     6
-  ]	2015-02-04T00:00:00+09:00	   290
-3	2015-02-05 00:00:00	-2900	[
+  ]	2015-02-04T00:00:00+09:00	     290
+3	2015-02-05 00:00:00	  -2900	[
   100,
   -200,
   300
@@ -181,7 +182,7 @@ uint32: uint32
     "2015-02-04 3"
   ]
 -- indices:
-  []	2015-02-05T00:00:00+09:00	  2900
+  []	2015-02-05T00:00:00+09:00	    2900
 ========================================
 return_code: int32
 start_time: timestamp[ns]
@@ -196,6 +197,7 @@ error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
 	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+	    (int32)	              (timestamp)	    (double)	       (utf8)	    (utf8)	  (uint32)	        (utf8)	          (utf8)	         (int32)	             (utf8)
 0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 #>logical_range_filter --command_version "3" --logical_table "Logs" --output_type "apache-arrow" --shard_key "time"
 #:000000000000000 sort(2)[Logs_20150203]: time
@@ -217,8 +219,9 @@ reference_short_text: dictionary<values=string, indices=int32, ordered=0>
 reference_short_text_vector: list<item: dictionary<values=string, indices=int32, ordered=0>>
 time: timestamp[ns]
 uint32: uint32
-	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
-0	2015-02-03 23:59:58	  -29	[
+	  _key	  int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	  uint32
+	(utf8)	(int32)	      (list)	   (int64)	        (dictionary)	                     (list)	              (timestamp)	(uint32)
+0	2015-02-03 23:59:58	    -29	[
   1,
   -2,
   3
@@ -232,8 +235,8 @@ uint32: uint32
   [
     0,
     1
-  ]	2015-02-03T23:59:58+09:00	    29
-1	2015-02-03 23:59:59	  -29	[
+  ]	2015-02-03T23:59:58+09:00	      29
+1	2015-02-03 23:59:59	    -29	[
   1,
   -2,
   3
@@ -249,8 +252,8 @@ uint32: uint32
   [
     2,
     3
-  ]	2015-02-03T23:59:59+09:00	  2929
-2	2015-02-04 00:00:00	 -290	[
+  ]	2015-02-03T23:59:59+09:00	    2929
+2	2015-02-04 00:00:00	   -290	[
   10,
   -20,
   30
@@ -270,8 +273,8 @@ uint32: uint32
     4,
     5,
     6
-  ]	2015-02-04T00:00:00+09:00	   290
-3	2015-02-05 00:00:00	-2900	[
+  ]	2015-02-04T00:00:00+09:00	     290
+3	2015-02-05 00:00:00	  -2900	[
   100,
   -200,
   300
@@ -287,7 +290,7 @@ uint32: uint32
     "2015-02-04 3"
   ]
 -- indices:
-  []	2015-02-05T00:00:00+09:00	  2900
+  []	2015-02-05T00:00:00+09:00	    2900
 ========================================
 return_code: int32
 start_time: timestamp[ns]
@@ -302,6 +305,7 @@ error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
 	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+	    (int32)	              (timestamp)	    (double)	       (utf8)	    (utf8)	  (uint32)	        (utf8)	          (utf8)	         (int32)	             (utf8)
 0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 #>logical_range_filter --command_version "3" --logical_table "Logs" --output_type "apache-arrow" --shard_key "time"
 #:000000000000000 sort(2)[Logs_20150203]: time

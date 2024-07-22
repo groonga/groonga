@@ -21,11 +21,13 @@ error_input_command: string
 -- metadata --
 GROONGA:data_type: metadata
 	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+	    (int32)	              (timestamp)	    (double)	       (utf8)	    (utf8)	  (uint32)	        (utf8)	          (utf8)	         (int32)	             (utf8)
 0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
 ========================================
 _id: uint32
 float32: float
 -- metadata --
 GROONGA:n_hits: 1
-	_id	   float32
-0	  1	  1.100000
+	     _id	   float32
+	(uint32)	   (float)
+0	       1	  1.100000
