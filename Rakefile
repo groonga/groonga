@@ -181,6 +181,13 @@ end
 desc "Create archive"
 task dist: archive_name
 
+namespace :document do
+  desc "Generate C API document (Run doxygen)"
+  task :api do
+    sh("doxygen", "doc/Doxyfile")
+  end
+end
+
 namespace :release do
   namespace :version do
     desc "Update versions for a new release"
