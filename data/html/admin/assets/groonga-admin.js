@@ -1292,7 +1292,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     $("<div />")
       .attr("id", "loadingdialog")
       .attr("style", "text-align: center;")
-      .append($("<img />").attr("src", "assets/loading.gif"))
+      .append($("<div />").attr("id", "progressbar"))
       .append(" Loading...")
       .dialog({
         title: "",
@@ -1312,6 +1312,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         }
       });
     $("#loadingdialog").parents(".ui-dialog").children(".ui-dialog-titlebar").remove();
+    $("#progressbar").progressbar({value: false});
     $("#loadingdialog").dialog("open");
     $(".ui-widget-overlay").css("opacity", "0.0");
   },
