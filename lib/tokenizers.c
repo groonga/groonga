@@ -467,9 +467,9 @@ typedef struct {
   grn_ngram_options options;
   bool overlap;
   struct {
-    grn_bool ing;
-    grn_bool need;
-    grn_bool need_end_mark;
+    bool ing;
+    bool need;
+    bool need_end_mark;
     grn_obj text;
     uint_least8_t *ctypes;
     int16_t *checks;
@@ -650,7 +650,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx, grn_ngram_tokenizer *tokenizer)
   tokenizer->pos = 0;
   tokenizer->skip = 0;
   tokenizer->overlap = false;
-  tokenizer->loose.ing = GRN_TRUE;
+  tokenizer->loose.ing = true;
   tokenizer->source_offset = 0;
 }
 
@@ -684,9 +684,9 @@ ngram_init_raw(grn_ctx *ctx,
 
   tokenizer->options = *options;
   tokenizer->overlap = false;
-  tokenizer->loose.ing = GRN_FALSE;
-  tokenizer->loose.need = GRN_FALSE;
-  tokenizer->loose.need_end_mark = GRN_FALSE;
+  tokenizer->loose.ing = false;
+  tokenizer->loose.need = false;
+  tokenizer->loose.need_end_mark = false;
   GRN_TEXT_INIT(&(tokenizer->loose.text), 0);
   tokenizer->loose.ctypes = NULL;
   tokenizer->loose.checks = NULL;
@@ -1006,7 +1006,7 @@ ngram_next(grn_ctx *ctx,
       grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
     }
     ngram_switch_to_loose_mode(ctx, tokenizer);
-    tokenizer->loose.need_end_mark = GRN_FALSE;
+    tokenizer->loose.need_end_mark = false;
     return;
   }
 
@@ -1016,7 +1016,7 @@ ngram_next(grn_ctx *ctx,
         ((tokenizer->options.loose_symbol &&                                   \
           GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) ||                            \
          (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*cp)))) {          \
-      tokenizer->loose.need = GRN_TRUE;                                        \
+      tokenizer->loose.need = true;                                            \
     }                                                                          \
   } while (GRN_FALSE)
 
@@ -1143,8 +1143,8 @@ ngram_next(grn_ctx *ctx,
     if ((status & (GRN_TOKEN_LAST | GRN_TOKEN_REACH_END)) &&
         !tokenizer->loose.ing && tokenizer->loose.need) {
       status &= (grn_token_status)(~(GRN_TOKEN_LAST | GRN_TOKEN_REACH_END));
-      tokenizer->loose.ing = GRN_TRUE;
-      tokenizer->loose.need_end_mark = GRN_TRUE;
+      tokenizer->loose.ing = true;
+      tokenizer->loose.need_end_mark = true;
     }
     grn_token_set_data(ctx, token, p, (int)data_size);
     grn_token_set_status(ctx, token, status);
