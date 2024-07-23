@@ -58,9 +58,6 @@ msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
-msgid "bullseye"
-msgstr ""
-
 msgid "Build from source"
 msgstr "ソースからビルド"
 

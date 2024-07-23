@@ -52,8 +52,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
-      "debian-bullseye",
-      "debian-bullseye-arm64",
       "debian-bookworm",
       "debian-bookworm-arm64",
       "debian-trixie",
@@ -63,7 +61,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_prepare_debian_control_h3(control, target)
     case target
-    when /\Adebian-bullseye/, /\Aubuntu-focal/
+    when /\Aubuntu-focal/
       enable_h3 = "#"
     else
       enable_h3 = ""
