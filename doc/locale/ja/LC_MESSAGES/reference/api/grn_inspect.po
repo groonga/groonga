@@ -15,12 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
-msgid "戻り値"
-msgstr ""
-
 msgid "``grn_inspect``"
 msgstr ""
 
@@ -75,107 +69,5 @@ msgstr "以下はオブジェクトを調査する例です。"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Inspect specified target ``obj`` object."
-msgstr "指定した ``obj`` オブジェクトを調査します。"
-
-msgid "A table is specified and it's table type is ``TABLE_PAT_KEY``, all keys are shown. If you do not want to this behavior, use :c:func:`grn_inspect_limited` instead."
-msgstr "``TABLE_PAT_KEY`` なテーブルが指定された場合、すべてのキーが表示されます。この挙動が望ましくない場合、 :c:func:`grn_inspect_limited` をかわりに使ってください。"
-
-msgid "The context object"
-msgstr "その時点のコンテキスト。"
-
-msgid "The buffer object which is inspected text will be stored."
-msgstr "調査した内容が保存されるオブジェクト"
-
-msgid "The inspect target object."
-msgstr "対象のオブジェクト"
-
-msgid "``buffer`` object which is inspected text is set."
-msgstr "調査した内容が設定される ``buffer`` オブジェクト"
-
-msgid "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
-msgstr "もし ``obj`` が ``TABLE_PAT_KEY`` なテーブルであれば、次のように表示されます::"
-
-msgid "``indent`` is only added if inspected text contains newline (inspected text must be multiple lines)."
-msgstr "``indent`` は調査した内容が改行を含む場合に追加されます。(調査した内容のテキストは複数行で構成されている必要があります)"
-
-msgid "The pre-pended indentation text."
-msgstr "先頭に挿入されるインデント"
-
-msgid "``buffer`` object which is inspected text is set with indent."
-msgstr "調査した内容がインデントとともに設定される ``buffer`` オブジェクト"
-
-msgid "If inspected text is too long, it will be truncated."
-msgstr "調査した内容が長い場合、切り詰められます。"
-
-msgid "The buffer object which is inspected(truncated) text will be stored."
-msgstr "調査した内容が(切り詰められて)設定されるオブジェクト"
-
-msgid "``buffer`` object which is object detail is set. If inspected text is longer than 64 characters, inspected text is truncated to it. Otherwise, inspected text will not be truncated."
-msgstr "オブジェクトの詳細が設定される ``buffer`` オブジェクト。調査した内容が64文字よりも長い場合には、その内容は切り詰められます。そうでない場合調査した内容がそのまま設定されます。"
-
-msgid "Even though if obj is ``TABLE_PAT_KEY`` table, it prints truncated result like the following::"
-msgstr "``TABLE_PAT_KEY`` なテーブルであっても、切り詰められた内容は次のように表示されます::"
-
-msgid "The buffer object which is object name will be stored."
-msgstr "オブジェクト名が設定されるオブジェクト"
-
-msgid "``buffer`` object which is name of object is set. If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymouse: ID)`` is set to buffer."
-msgstr "オブジェクトの名前が設定される ``buffer`` オブジェクト。指定したオブジェクトが無効な値であれば ``(nil)`` が設定され、内部で使用しているオブジェクトであれば ``(anonymouse: ID)`` が設定されます。"
-
-msgid "Specified object name is printed like this::"
-msgstr "調査対象のオブジェクト名は次のように表示されます::"
-
-msgid "The buffer object which is encoding name will be stored."
-msgstr "エンコーディング名が設定されるオブジェクト"
-
-msgid "The inspect target encoding. encoding must be ``GRN_ENC_DEFAULT``, ``GRN_ENC_NONE``, ``GRN_ENC_EUC_JP``, ``GRN_ENC_UTF8``, ``GRN_ENC_SJIS``, ``GRN_ENC_LATIN1`` or ``GRN_ENC_KOI8R``"
-msgstr "調査対象のエンコーディング。エンコーディングは ``GRN_ENC_DEFAULT``、 ``GRN_ENC_NONE``、 ``GRN_ENC_EUC_JP``、 ``GRN_ENC_UTF8``、 ``GRN_ENC_SJIS``、 ``GRN_ENC_LATIN1``、 ``GRN_ENC_KOI8R`` のいずれかでなければなりません。"
-
-msgid "``buffer`` object which is encoding name is set. If invalid ``encoding`` is given, ``(unknown: ENCODING)`` is set to ``buffer``."
-msgstr "エンコーディング名が設定される ``buffer`` オブジェクト。不正な ``encoding`` が渡された場合、 ``(unknown: ENCODING)`` が ``buffer`` に設定されます。"
-
-msgid "Specified encoding name is printed like the following::"
-msgstr "指定したエンコーディング名が次のように表示されます::"
-
-msgid "The buffer object which is type name will be stored."
-msgstr "型の名前が設定されるオブジェクト"
-
-msgid "The inspect target type."
-msgstr "調査対象の型"
-
-msgid "``buffer`` object which is type name is set. If invalid ``type`` is given, ``(unknown: TYPE_IN_HEX)`` is set to ``buffer``."
-msgstr "型の名前が設定される ``buffer`` オブジェクト。正しくない ``type`` が渡された場合、 ``(unknown: TYPE_IN_HEX)`` が ``buffer`` に設定されます。"
-
-msgid "If obj is builtin type, type name is printed like the following::"
-msgstr "``obj`` が組込の型の場合、型の名前は次のように表示されます:"
-
-msgid "Inspect specified target ``flag``."
-msgstr "指定した ``flag`` を調査します。"
-
-msgid "The buffer object which is flag name will be stored."
-msgstr "フラグの名前が設定されるオブジェクト"
-
-msgid "``buffer`` object which is flag name is set. If invalid ``flags`` is given, empty string is set to ``buffer``."
-msgstr "フラグの名前が設定される ``buffer`` オブジェクト。不正な ``flags`` が与えられた場合、空の文字列が ``buffer`` に設定されます。"
-
-msgid "The query logger flags are printed like the following::"
-msgstr "クエリーログのフラグは次のように表示されます::"
-
-msgid "Inspect specified target ``obj`` object. It prints inspected text."
-msgstr "指定した ``obj`` を調査し、その内容を出力します。"
-
-msgid "If obj is ``ShortText``, it prints like the following::"
-msgstr "オブジェクトが ``ShortText`` なら次のように表示されます::"
-
-msgid "Inspect specified target ``obj`` object. It prints inspected geo point text."
-msgstr "指定した ``obj`` を調査し、geo pointの内容を出力します。"
-
-msgid "If ``point`` indicates New York City, it prints like the following::"
-msgstr "もし ``point`` がニューヨークを示す場合、次のように表示されます::"
-
-msgid "Inspect specified target ``obj`` object. It prints inspected index values."
-msgstr "指定した ``obj`` を調査し、インデックスの値を出力します。"
-
-msgid "If ``obj`` is an index column, it prints like the following::"
-msgstr "もし ``obj`` がインデックスカラムの場合、次のように表示されます::"
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

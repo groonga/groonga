@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_proc``"
 msgstr ""
 
@@ -33,50 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "nameに対応する新たなproc(手続き)をctxが使用するdbに定義します。"
-msgstr ""
-
-msgid "作成するprocの名前を指定します。"
-msgstr ""
-
-msgid "The number of bytes of name parameter. If negative value is specified, name parameter is assumed that NULL-terminated string."
-msgstr ""
-
-msgid "procの種類を指定します。"
-msgstr ""
-
-msgid "初期化関数のポインタを指定します。"
-msgstr ""
-
-msgid "実処理関数のポインタを指定します。"
-msgstr ""
-
-msgid "終了関数のポインタを指定します。"
-msgstr ""
-
-msgid "procで使用する変数の数を指定します。"
-msgstr ""
-
-msgid "procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
-msgstr ""
-
-msgid "user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義されている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
-msgstr ""
-
-msgid ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"
-msgstr ""
-
-msgid "変数の数を取得します。"
-msgstr ""
-
-msgid "objectを破棄するときに呼ばれる関数を設定します。"
-msgstr ""
-
-msgid "table, column, proc, exprのみ設定可能です。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "objectを破棄するときに呼ばれる関数を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

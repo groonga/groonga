@@ -37,16 +37,5 @@ Here is an example that uses Groonga as a full-text search library.
 Reference
 ---------
 
-.. c:function:: grn_rc grn_init(void)
-
-  ``grn_init()`` initializes resources that are used by Groonga. You
-  must call it just once before you call other Groonga APIs.
-
-  :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
-.. c:function:: grn_rc grn_fin(void)
-
-  ``grn_fin()`` releases resources that are used by Groonga. You can't
-  call other Groonga APIs after you call ``grn_fin()``.
-
-  :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+.. note::
+   We are currently switching to automatic generation using Doxygen.
