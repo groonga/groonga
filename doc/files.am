@@ -1061,32 +1061,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/alias.rst \
 	$(top_srcdir)/doc/source/reference/api.rst \
-	$(top_srcdir)/doc/source/reference/api/global_configurations.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_cache.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_column.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_command_version.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_content_type.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_ctx.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_db.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_encoding.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_expr.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_geo.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_hook.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_ii.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_index_cursor.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_info.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_inspect.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_match_escalation.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_obj.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_proc.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_search.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_table.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_table_cursor.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_thread.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_type.rst \
-	$(top_srcdir)/doc/source/reference/api/grn_user_data.rst \
-	$(top_srcdir)/doc/source/reference/api/overview.rst \
-	$(top_srcdir)/doc/source/reference/api/plugin.rst \
 	$(top_srcdir)/doc/source/reference/cast.rst \
 	$(top_srcdir)/doc/source/reference/column.rst \
 	$(top_srcdir)/doc/source/reference/columns/index.rst \
@@ -2380,32 +2354,6 @@ source_files_relative_from_doc_dir = \
 	source/reference.rst \
 	source/reference/alias.rst \
 	source/reference/api.rst \
-	source/reference/api/global_configurations.rst \
-	source/reference/api/grn_cache.rst \
-	source/reference/api/grn_column.rst \
-	source/reference/api/grn_command_version.rst \
-	source/reference/api/grn_content_type.rst \
-	source/reference/api/grn_ctx.rst \
-	source/reference/api/grn_db.rst \
-	source/reference/api/grn_encoding.rst \
-	source/reference/api/grn_expr.rst \
-	source/reference/api/grn_geo.rst \
-	source/reference/api/grn_hook.rst \
-	source/reference/api/grn_ii.rst \
-	source/reference/api/grn_index_cursor.rst \
-	source/reference/api/grn_info.rst \
-	source/reference/api/grn_inspect.rst \
-	source/reference/api/grn_match_escalation.rst \
-	source/reference/api/grn_obj.rst \
-	source/reference/api/grn_proc.rst \
-	source/reference/api/grn_search.rst \
-	source/reference/api/grn_table.rst \
-	source/reference/api/grn_table_cursor.rst \
-	source/reference/api/grn_thread.rst \
-	source/reference/api/grn_type.rst \
-	source/reference/api/grn_user_data.rst \
-	source/reference/api/overview.rst \
-	source/reference/api/plugin.rst \
 	source/reference/cast.rst \
 	source/reference/column.rst \
 	source/reference/columns/index.rst \
@@ -2696,32 +2644,6 @@ po_files = \
 	reference.po \
 	reference/alias.po \
 	reference/api.po \
-	reference/api/global_configurations.po \
-	reference/api/grn_cache.po \
-	reference/api/grn_column.po \
-	reference/api/grn_command_version.po \
-	reference/api/grn_content_type.po \
-	reference/api/grn_ctx.po \
-	reference/api/grn_db.po \
-	reference/api/grn_encoding.po \
-	reference/api/grn_expr.po \
-	reference/api/grn_geo.po \
-	reference/api/grn_hook.po \
-	reference/api/grn_ii.po \
-	reference/api/grn_index_cursor.po \
-	reference/api/grn_info.po \
-	reference/api/grn_inspect.po \
-	reference/api/grn_match_escalation.po \
-	reference/api/grn_obj.po \
-	reference/api/grn_proc.po \
-	reference/api/grn_search.po \
-	reference/api/grn_table.po \
-	reference/api/grn_table_cursor.po \
-	reference/api/grn_thread.po \
-	reference/api/grn_type.po \
-	reference/api/grn_user_data.po \
-	reference/api/overview.po \
-	reference/api/plugin.po \
 	reference/cast.po \
 	reference/column.po \
 	reference/columns/index.po \
@@ -3009,32 +2931,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/reference/alias.po \
 	LC_MESSAGES/reference/api.po \
-	LC_MESSAGES/reference/api/global_configurations.po \
-	LC_MESSAGES/reference/api/grn_cache.po \
-	LC_MESSAGES/reference/api/grn_column.po \
-	LC_MESSAGES/reference/api/grn_command_version.po \
-	LC_MESSAGES/reference/api/grn_content_type.po \
-	LC_MESSAGES/reference/api/grn_ctx.po \
-	LC_MESSAGES/reference/api/grn_db.po \
-	LC_MESSAGES/reference/api/grn_encoding.po \
-	LC_MESSAGES/reference/api/grn_expr.po \
-	LC_MESSAGES/reference/api/grn_geo.po \
-	LC_MESSAGES/reference/api/grn_hook.po \
-	LC_MESSAGES/reference/api/grn_ii.po \
-	LC_MESSAGES/reference/api/grn_index_cursor.po \
-	LC_MESSAGES/reference/api/grn_info.po \
-	LC_MESSAGES/reference/api/grn_inspect.po \
-	LC_MESSAGES/reference/api/grn_match_escalation.po \
-	LC_MESSAGES/reference/api/grn_obj.po \
-	LC_MESSAGES/reference/api/grn_proc.po \
-	LC_MESSAGES/reference/api/grn_search.po \
-	LC_MESSAGES/reference/api/grn_table.po \
-	LC_MESSAGES/reference/api/grn_table_cursor.po \
-	LC_MESSAGES/reference/api/grn_thread.po \
-	LC_MESSAGES/reference/api/grn_type.po \
-	LC_MESSAGES/reference/api/grn_user_data.po \
-	LC_MESSAGES/reference/api/overview.po \
-	LC_MESSAGES/reference/api/plugin.po \
 	LC_MESSAGES/reference/cast.po \
 	LC_MESSAGES/reference/column.po \
 	LC_MESSAGES/reference/columns/index.po \
@@ -3322,32 +3218,6 @@ edit_po_files = \
 	reference.edit \
 	reference/alias.edit \
 	reference/api.edit \
-	reference/api/global_configurations.edit \
-	reference/api/grn_cache.edit \
-	reference/api/grn_column.edit \
-	reference/api/grn_command_version.edit \
-	reference/api/grn_content_type.edit \
-	reference/api/grn_ctx.edit \
-	reference/api/grn_db.edit \
-	reference/api/grn_encoding.edit \
-	reference/api/grn_expr.edit \
-	reference/api/grn_geo.edit \
-	reference/api/grn_hook.edit \
-	reference/api/grn_ii.edit \
-	reference/api/grn_index_cursor.edit \
-	reference/api/grn_info.edit \
-	reference/api/grn_inspect.edit \
-	reference/api/grn_match_escalation.edit \
-	reference/api/grn_obj.edit \
-	reference/api/grn_proc.edit \
-	reference/api/grn_search.edit \
-	reference/api/grn_table.edit \
-	reference/api/grn_table_cursor.edit \
-	reference/api/grn_thread.edit \
-	reference/api/grn_type.edit \
-	reference/api/grn_user_data.edit \
-	reference/api/overview.edit \
-	reference/api/plugin.edit \
 	reference/cast.edit \
 	reference/column.edit \
 	reference/columns/index.edit \
@@ -3635,32 +3505,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.edit \
 	LC_MESSAGES/reference/alias.edit \
 	LC_MESSAGES/reference/api.edit \
-	LC_MESSAGES/reference/api/global_configurations.edit \
-	LC_MESSAGES/reference/api/grn_cache.edit \
-	LC_MESSAGES/reference/api/grn_column.edit \
-	LC_MESSAGES/reference/api/grn_command_version.edit \
-	LC_MESSAGES/reference/api/grn_content_type.edit \
-	LC_MESSAGES/reference/api/grn_ctx.edit \
-	LC_MESSAGES/reference/api/grn_db.edit \
-	LC_MESSAGES/reference/api/grn_encoding.edit \
-	LC_MESSAGES/reference/api/grn_expr.edit \
-	LC_MESSAGES/reference/api/grn_geo.edit \
-	LC_MESSAGES/reference/api/grn_hook.edit \
-	LC_MESSAGES/reference/api/grn_ii.edit \
-	LC_MESSAGES/reference/api/grn_index_cursor.edit \
-	LC_MESSAGES/reference/api/grn_info.edit \
-	LC_MESSAGES/reference/api/grn_inspect.edit \
-	LC_MESSAGES/reference/api/grn_match_escalation.edit \
-	LC_MESSAGES/reference/api/grn_obj.edit \
-	LC_MESSAGES/reference/api/grn_proc.edit \
-	LC_MESSAGES/reference/api/grn_search.edit \
-	LC_MESSAGES/reference/api/grn_table.edit \
-	LC_MESSAGES/reference/api/grn_table_cursor.edit \
-	LC_MESSAGES/reference/api/grn_thread.edit \
-	LC_MESSAGES/reference/api/grn_type.edit \
-	LC_MESSAGES/reference/api/grn_user_data.edit \
-	LC_MESSAGES/reference/api/overview.edit \
-	LC_MESSAGES/reference/api/plugin.edit \
 	LC_MESSAGES/reference/cast.edit \
 	LC_MESSAGES/reference/column.edit \
 	LC_MESSAGES/reference/columns/index.edit \
@@ -3948,32 +3792,6 @@ mo_files = \
 	reference.mo \
 	reference/alias.mo \
 	reference/api.mo \
-	reference/api/global_configurations.mo \
-	reference/api/grn_cache.mo \
-	reference/api/grn_column.mo \
-	reference/api/grn_command_version.mo \
-	reference/api/grn_content_type.mo \
-	reference/api/grn_ctx.mo \
-	reference/api/grn_db.mo \
-	reference/api/grn_encoding.mo \
-	reference/api/grn_expr.mo \
-	reference/api/grn_geo.mo \
-	reference/api/grn_hook.mo \
-	reference/api/grn_ii.mo \
-	reference/api/grn_index_cursor.mo \
-	reference/api/grn_info.mo \
-	reference/api/grn_inspect.mo \
-	reference/api/grn_match_escalation.mo \
-	reference/api/grn_obj.mo \
-	reference/api/grn_proc.mo \
-	reference/api/grn_search.mo \
-	reference/api/grn_table.mo \
-	reference/api/grn_table_cursor.mo \
-	reference/api/grn_thread.mo \
-	reference/api/grn_type.mo \
-	reference/api/grn_user_data.mo \
-	reference/api/overview.mo \
-	reference/api/plugin.mo \
 	reference/cast.mo \
 	reference/column.mo \
 	reference/columns/index.mo \
@@ -4261,32 +4079,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/reference/alias.mo \
 	LC_MESSAGES/reference/api.mo \
-	LC_MESSAGES/reference/api/global_configurations.mo \
-	LC_MESSAGES/reference/api/grn_cache.mo \
-	LC_MESSAGES/reference/api/grn_column.mo \
-	LC_MESSAGES/reference/api/grn_command_version.mo \
-	LC_MESSAGES/reference/api/grn_content_type.mo \
-	LC_MESSAGES/reference/api/grn_ctx.mo \
-	LC_MESSAGES/reference/api/grn_db.mo \
-	LC_MESSAGES/reference/api/grn_encoding.mo \
-	LC_MESSAGES/reference/api/grn_expr.mo \
-	LC_MESSAGES/reference/api/grn_geo.mo \
-	LC_MESSAGES/reference/api/grn_hook.mo \
-	LC_MESSAGES/reference/api/grn_ii.mo \
-	LC_MESSAGES/reference/api/grn_index_cursor.mo \
-	LC_MESSAGES/reference/api/grn_info.mo \
-	LC_MESSAGES/reference/api/grn_inspect.mo \
-	LC_MESSAGES/reference/api/grn_match_escalation.mo \
-	LC_MESSAGES/reference/api/grn_obj.mo \
-	LC_MESSAGES/reference/api/grn_proc.mo \
-	LC_MESSAGES/reference/api/grn_search.mo \
-	LC_MESSAGES/reference/api/grn_table.mo \
-	LC_MESSAGES/reference/api/grn_table_cursor.mo \
-	LC_MESSAGES/reference/api/grn_thread.mo \
-	LC_MESSAGES/reference/api/grn_type.mo \
-	LC_MESSAGES/reference/api/grn_user_data.mo \
-	LC_MESSAGES/reference/api/overview.mo \
-	LC_MESSAGES/reference/api/plugin.mo \
 	LC_MESSAGES/reference/cast.mo \
 	LC_MESSAGES/reference/column.mo \
 	LC_MESSAGES/reference/columns/index.mo \
@@ -4614,32 +4406,6 @@ html_files_relative_from_locale_dir = \
 	html/reference.html \
 	html/reference/alias.html \
 	html/reference/api.html \
-	html/reference/api/global_configurations.html \
-	html/reference/api/grn_cache.html \
-	html/reference/api/grn_column.html \
-	html/reference/api/grn_command_version.html \
-	html/reference/api/grn_content_type.html \
-	html/reference/api/grn_ctx.html \
-	html/reference/api/grn_db.html \
-	html/reference/api/grn_encoding.html \
-	html/reference/api/grn_expr.html \
-	html/reference/api/grn_geo.html \
-	html/reference/api/grn_hook.html \
-	html/reference/api/grn_ii.html \
-	html/reference/api/grn_index_cursor.html \
-	html/reference/api/grn_info.html \
-	html/reference/api/grn_inspect.html \
-	html/reference/api/grn_match_escalation.html \
-	html/reference/api/grn_obj.html \
-	html/reference/api/grn_proc.html \
-	html/reference/api/grn_search.html \
-	html/reference/api/grn_table.html \
-	html/reference/api/grn_table_cursor.html \
-	html/reference/api/grn_thread.html \
-	html/reference/api/grn_type.html \
-	html/reference/api/grn_user_data.html \
-	html/reference/api/overview.html \
-	html/reference/api/plugin.html \
 	html/reference/cast.html \
 	html/reference/column.html \
 	html/reference/columns/index.html \

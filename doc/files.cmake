@@ -1061,32 +1061,6 @@ set(GRN_DOC_SOURCES
     reference.rst
     reference/alias.rst
     reference/api.rst
-    reference/api/global_configurations.rst
-    reference/api/grn_cache.rst
-    reference/api/grn_column.rst
-    reference/api/grn_command_version.rst
-    reference/api/grn_content_type.rst
-    reference/api/grn_ctx.rst
-    reference/api/grn_db.rst
-    reference/api/grn_encoding.rst
-    reference/api/grn_expr.rst
-    reference/api/grn_geo.rst
-    reference/api/grn_hook.rst
-    reference/api/grn_ii.rst
-    reference/api/grn_index_cursor.rst
-    reference/api/grn_info.rst
-    reference/api/grn_inspect.rst
-    reference/api/grn_match_escalation.rst
-    reference/api/grn_obj.rst
-    reference/api/grn_proc.rst
-    reference/api/grn_search.rst
-    reference/api/grn_table.rst
-    reference/api/grn_table_cursor.rst
-    reference/api/grn_thread.rst
-    reference/api/grn_type.rst
-    reference/api/grn_user_data.rst
-    reference/api/overview.rst
-    reference/api/plugin.rst
     reference/cast.rst
     reference/column.rst
     reference/columns/index.rst
@@ -1416,32 +1390,6 @@ set(GRN_DOC_HTML_FILES
     reference.html
     reference/alias.html
     reference/api.html
-    reference/api/global_configurations.html
-    reference/api/grn_cache.html
-    reference/api/grn_column.html
-    reference/api/grn_command_version.html
-    reference/api/grn_content_type.html
-    reference/api/grn_ctx.html
-    reference/api/grn_db.html
-    reference/api/grn_encoding.html
-    reference/api/grn_expr.html
-    reference/api/grn_geo.html
-    reference/api/grn_hook.html
-    reference/api/grn_ii.html
-    reference/api/grn_index_cursor.html
-    reference/api/grn_info.html
-    reference/api/grn_inspect.html
-    reference/api/grn_match_escalation.html
-    reference/api/grn_obj.html
-    reference/api/grn_proc.html
-    reference/api/grn_search.html
-    reference/api/grn_table.html
-    reference/api/grn_table_cursor.html
-    reference/api/grn_thread.html
-    reference/api/grn_type.html
-    reference/api/grn_user_data.html
-    reference/api/overview.html
-    reference/api/plugin.html
     reference/cast.html
     reference/column.html
     reference/columns/index.html
