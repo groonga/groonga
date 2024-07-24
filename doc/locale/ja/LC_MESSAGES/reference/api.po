@@ -20,3 +20,6 @@ msgstr "API"
 
 msgid "Groonga can be used as a fulltext search library. This section describes APIs that are provided by groonga."
 msgstr "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供しているAPIを示します。"
+
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

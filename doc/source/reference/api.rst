@@ -6,11 +6,6 @@ API
 Groonga can be used as a fulltext search library. This section
 describes APIs that are provided by groonga.
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
+.. note::
 
-   api/overview
-   api/global_configurations
-   api/plugin
-   api/*
+    We are currently switching to automatic generation using Doxygen.
