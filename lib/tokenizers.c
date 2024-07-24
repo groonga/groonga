@@ -125,7 +125,7 @@ typedef struct {
 typedef struct {
   grn_tokenizer_query *query;
   grn_delimit_options *options;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   grn_encoding encoding;
   const unsigned char *start;
   const unsigned char *next;
@@ -1018,7 +1018,7 @@ ngram_next(grn_ctx *ctx,
          (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*cp)))) {          \
       tokenizer->loose.need = true;                                            \
     }                                                                          \
-  } while (GRN_FALSE)
+  } while (false)
 
   LOOSE_NEED_CHECK(cp, tokenizer);
 
@@ -1569,7 +1569,7 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   grn_pattern_options *options;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   grn_encoding encoding;
   const unsigned char *start;
   const unsigned char *next;
@@ -1810,7 +1810,7 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   grn_table_options *options;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   grn_encoding encoding;
   const unsigned char *start;
   const unsigned char *current;
