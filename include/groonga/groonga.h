@@ -903,6 +903,13 @@ grn_obj_unref_recursive(grn_ctx *ctx, grn_obj *obj);
 GRN_API void
 grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Returns a pointer to user data that can be registered in the object
+ *
+ * \param ctx The context object
+ * \param obj Only table, column, proc, and expr can be specified
+ * \return Pointer to user data
+ */
 GRN_API grn_user_data *
 grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
