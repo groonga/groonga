@@ -17,11 +17,23 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.5 - 2024-07-04"
-msgstr "14.0.5リリース - 2024-07-04"
+msgid "Release 14.0.6 - 2024-07-29"
+msgstr "14.0.6リリース - 2024-07-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Added support for prefix search with index against vector column."
+msgstr "インデックスを設定したベクターカラムに対して、前方一致検索ができるようになりました。"
+
+msgid "We can prefix search with index against vector column as below since this release."
+msgstr "このリリースから、以下のようにインデックスを設定したベクターカラムに対して前方一致検索ができます。"
+
+msgid "[{doc}`/install/debian`] Dropped support for Debian 11 (bullseye)."
+msgstr "[{doc}`/install/debian`] Debian 11 (bullseye) のサポートをやめました。"
+
+msgid "Release 14.0.5 - 2024-07-04"
+msgstr "14.0.5リリース - 2024-07-04"
 
 msgid "Dropped support for CentOS 7."
 msgstr "CentOS 7のサポートをやめました。"
