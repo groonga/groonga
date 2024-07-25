@@ -9,14 +9,8 @@ distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
 architecture=$(dpkg --print-architecture)
 
-case "${code_name}" in
-  bullseye)
-    ;;
-  *)
-    wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
-    apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
-    ;;
-esac
+wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
 
 wget \
   https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
@@ -68,9 +62,6 @@ if groonga --version | grep -q apache-arrow; then
   apt install -V -y \
     g++ \
     libre2-dev
-  if [ "${code_name}" == "bullseye" ]; then
-    sed -i -e 's/-std=c++11//g' /usr/lib/*/pkgconfig/re2.pc
-  fi
   MAKEFLAGS=-j$(nproc) gem install red-arrow
 fi
 

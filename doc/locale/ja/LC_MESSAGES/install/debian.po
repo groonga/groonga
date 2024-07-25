@@ -58,14 +58,11 @@ msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
-msgid "bullseye"
-msgstr ""
-
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install required packages to build Groonga for Debian bullseye::"
-msgstr "Debian bullseyeでGroongaをビルドするために必要なパッケージをインストールします::"
+msgid "Install required packages to build Groonga::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
 
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
