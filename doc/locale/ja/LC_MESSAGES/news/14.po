@@ -26,8 +26,11 @@ msgstr "改良"
 msgid "Added support for prefix search without index against vector column."
 msgstr "インデックスを設定していないベクターカラムに対して、前方一致検索ができるようになりました。"
 
-msgid "We can prefix search without index against vector column as below since this release."
-msgstr "このリリースから、以下のようにインデックスを設定していないベクターカラムに対して前方一致検索ができます。"
+msgid "We can already prefix search with index against vector column. However, we can't prefix search without index against vector column until now."
+msgstr "すでに、インデックスを設定したベクターカラムに対しては前方一致検索できますが、インデックスを設定していないベクターカラムに対しては、今まで前方一致検索できませんでした。"
+
+msgid "We can also prefix search without index against vector column as below since this release."
+msgstr "このリリースから、以下のようにインデックスを設定していないベクターカラムに対しても前方一致検索ができます。"
 
 msgid "[{doc}`/install/debian`] Dropped support for Debian 11 (bullseye)."
 msgstr "[{doc}`/install/debian`] Debian 11 (bullseye) のサポートをやめました。"
