@@ -43,7 +43,7 @@ GRN_API size_t
 grn_type_id_size(grn_ctx *ctx, grn_id id);
 
 /**
- * \brief Define a new type in db
+ * \brief Define a new type in DB
  *
  * \param ctx The context object
  * \param name Name of type to create
@@ -52,7 +52,7 @@ grn_type_id_size(grn_ctx *ctx, grn_id id);
  *              GRN_OBJ_KEY_INT or GRN_OBJ_KEY_UINT
  * \param size Maximum length if GRN_OBJ_KEY_VAR_SIZE,
  *             otherwise length (in bytes)
- * \return *grn_obj
+ * \return A newly created type on success, `NULL` on error
  */
 GRN_API grn_obj *
 grn_type_create(grn_ctx *ctx,
