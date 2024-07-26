@@ -28,3 +28,14 @@ jobs:
           set -o pipefail
           pre-commit run --show-diff-on-failure --color=always --all-files | \
             tools/filter-github-actions-workflow-command.rb
+  doxygen:
+    name: Doxygen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install doxygen
+        run: sudo apt install -y -V doxygen graphviz
+      - name: Run doxygen
+        run: doxygen doc/Doxyfile
+        env:
+          DOXYGEN_QUIET: YES
