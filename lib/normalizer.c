@@ -846,6 +846,13 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
 }
 
 grn_inline static const unsigned char *
+grn_nfkc_normalize_unify_alphabet_diacritical_mark(
+  const unsigned char *utf8_char, unsigned char *unified)
+{
+  return utf8_char;
+}
+
+grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
 {
@@ -1247,6 +1254,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
   i_byte = 0;
   i_character = 0;
   while (current < end) {
+    unsigned char unified_alpha[2];
     unsigned char unified_kana[3];
     unsigned char unified_kana_case[3];
     unsigned char unified_kana_voiced_sound_mark[3];
@@ -1268,6 +1276,14 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       char_type = data->context.types[i_character];
     } else {
       char_type = data->options->char_type_func(current);
+    }
+
+    if (before && data->options->unify_alphabet_diacritical_mark &&
+        GRN_CHAR_TYPE(char_type) == GRN_CHAR_ALPHA &&
+        unified_char_length == 2) {
+      unifying =
+        grn_nfkc_normalize_unify_alphabet_diacritical_mark(unifying,
+                                                           unified_alpha);
     }
 
     if (before && data->options->unify_kana &&
@@ -2612,7 +2628,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
   grn_nfkc_normalize_context unify;
   bool need_swap = false;
 
-  if (!(data->options->unify_kana || data->options->unify_kana_case ||
+  if (!(data->options->unify_alphabet_diacritical_mark ||
+        data->options->unify_kana || data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
@@ -2646,7 +2663,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     goto exit;
   }
 
-  if (data->options->unify_kana ||
+  if (data->options->unify_alphabet_diacritical_mark ||
+      data->options->unify_kana ||
       data->options->unify_kana_voiced_sound_mark ||
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||

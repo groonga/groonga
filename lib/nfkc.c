@@ -53,6 +53,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->compose_func = compose_func;
   options->include_removed_source_location = GRN_TRUE;
   options->report_source_offset = GRN_FALSE;
+  options->unify_alphabet_diacritical_mark = false;
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
@@ -148,6 +149,13 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->report_source_offset);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_alphabet_diacritical_mark")) {
+      options->unify_alphabet_diacritical_mark =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_alphabet_diacritical_mark);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
       options->unify_kana = grn_vector_get_element_bool(ctx,
                                                         raw_options,
