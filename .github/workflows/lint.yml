@@ -33,9 +33,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
       - name: Install doxygen
         run: sudo apt install -y -V doxygen graphviz
       - name: Run doxygen
-        run: doxygen doc/Doxyfile
+        run: rake document:api
         env:
           DOXYGEN_QUIET: YES
