@@ -42,6 +42,18 @@ grn_type_id_is_compatible(grn_ctx *ctx, grn_id id1, grn_id id2);
 GRN_API size_t
 grn_type_id_size(grn_ctx *ctx, grn_id id);
 
+/**
+ * \brief Define a new type in DB
+ *
+ * \param ctx The context object
+ * \param name Name of type to create
+ * \param name_size Length of the name of type to be created
+ * \param flags GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT,
+ *              GRN_OBJ_KEY_INT or GRN_OBJ_KEY_UINT
+ * \param size Maximum length if GRN_OBJ_KEY_VAR_SIZE,
+ *             otherwise length (in bytes)
+ * \return A newly created type on success, `NULL` on error
+ */
 GRN_API grn_obj *
 grn_type_create(grn_ctx *ctx,
                 const char *name,

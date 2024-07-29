@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_type``"
 msgstr ""
 
@@ -33,14 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "nameに対応する新たなtype（型）をdbに定義します。"
-msgstr ""
-
-msgid "作成するtypeの名前を指定します。"
-msgstr ""
-
-msgid "``GRN_OBJ_KEY_VAR_SIZE``, ``GRN_OBJ_KEY_FLOAT``, ``GRN_OBJ_KEY_INT``, ``GRN_OBJ_KEY_UINT`` のいずれかを指定します。"
-msgstr ""
-
-msgid "``GRN_OBJ_KEY_VAR_SIZE`` の場合は最大長、それ以外の場合は長さ（単位:byte）を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
