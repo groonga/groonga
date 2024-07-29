@@ -196,13 +196,6 @@ jobs:
           path: ccache
           key: autotools-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: autotools-macos-ccache-
-      - name: Adjust msgpack-c.pc
-        run: |
-          sed \
-            -i.bak \
-            -E \
-            -e 's,^(include|lib)dir=,\1dir=${prefix}/,g' \
-            $(brew --prefix msgpack)/lib/pkgconfig/msgpack-c.pc
       - name: Generate configure
         run: |
           ./autogen.sh
