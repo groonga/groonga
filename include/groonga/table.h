@@ -114,6 +114,81 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 #define GRN_CURSOR_SIZE_BY_BIT (0x01 << 5)
 #define GRN_CURSOR_RK          (0x01 << 6)
 
+/**
+ * \brief Creates and returns a cursor to retrieve the records registered in
+ *        the table in order
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param min Minimum limit of key (`NULL` means no minimum limit).
+ *            See below for GRN_CURSOR_PREFIX
+ * \param min_size Size of min. See below for GRN_CURSOR_PREFIX
+ * \param max Maximum limit of key (`NULL` means no minimum limit).
+ *            See below for GRN_CURSOR_PREFIX
+ * \param max_size Size of max. GRN_CURSOR_PREFIX may be ignored
+ * \param offset Extracts records from the range of records that meet the
+ *               condition, starting with the `offset`-th (offset is
+ *               zero-based). When GRN_CURSOR_PREFIX is specified, negative
+ *               numbers cannot be specified
+ * \param limit Only `limit` records in the range that meet the condition are
+ *              extracted. -1 means all.
+ *              When GRN_CURSOR_PREFIX is specified, negative numbers cannot
+ *              be specified
+ * \param flags
+ *     * GRN_CURSOR_ASCENDING: Retrieve records in ascending order
+ *       * If GRN_CURSOR_PREFIX is specified and a record with a near key is
+ *       retrieved, or a common prefix search is used, it will be ignored
+ *     * GRN_CURSOR_DESCENDING: Retrieve records in descending order
+ *       * If GRN_CURSOR_PREFIX is specified and a record with a near key is
+ *         retrieved, or a common prefix search is used, it will be ignored
+ *     * GRN_CURSOR_GT: a key that matches `min` is not included in the cursor
+ *       range
+ *       * If `min` is `NULL`, or if GRN_CURSOR_PREFIX is specified and a record
+ *         with a near key is retrieved, or a common prefix search is used,
+ *         it will be ignored
+ *     * GRN_CURSOR_LT: a key that matches `max` is not included in the cursor
+ *       range
+ *       * If `max` is `NULL`, or if GRN_CURSOR_PREFIX is specified, it will
+ *         be ignored
+ *     * GRN_CURSOR_BY_ID: Retrieves records in ID order
+ *       * If GRN_CURSOR_PREFIX is specified, it will be ignored
+ *     * GRN_CURSOR_BY_KEY: Retrieves records in key order
+ *       * It can be used with table that specify GRN_OBJ_TABLE_PAT_KEY
+ *       * For table with GRN_OBJ_TABLE_HASH_KEY or GRN_OBJ_TABLE_NO_KEY, it
+ *         will be ignored
+ *     * GRN_CURSOR_PREFIX: A cursor is created to retrieve the following
+ *       records for the table GRN_OBJ_TABLE_PAT_KEY
+ *       * If `max` is `NULL`, retrieve the record for which key is a prefix
+ *         match to `min`. `max_size` is ignored
+ *       * If `max` and `max_size` are specified and the table key is of type
+ *         `ShortText`, then a `max` and common prefix search is executed and
+ *         records with a common prefix
+ *         greater than or equal to min_size bytes are retrieved. `min` is
+ *         ignored
+ *       * If `max` and `max_size` are specified and the key of the table is a
+ *         fixed-length type, records are retrieved sequentially from nodes that
+ *         are near each other on the `max` and PAT tree.
+ *         * But, records are not retrieved for nodes in the PAT tree of key for
+ *           bits less than `min_size` bytes and corresponding to nodes on a
+ *           different branch than `max`.
+ *           Being near a position on the PAT tree is not the same as being near
+ *           a key value.
+ *           In this case, `max` must be as wide as or greater than the key size
+ *           of the target table. `min` is ignored
+ *     * GRN_CURSOR_BY_ID, GRN_CURSOR_BY_KEY and GRN_CURSOR_PREFIX cannot be
+ *       specified at the same time.
+ *     * In a table created with GRN_OBJ_TABLE_PAT_KEY, if GRN_CURSOR_PREFIX and
+ *       GRN_CURSOR_RK are specified, retrieves records where key is a prefix
+ *       matching a string of lower case alphabetic characters converted to
+ *       half-width kana characters according to JIS X 4063:2000 (this standard
+ *       is abolished).
+ *       * Supports only GRN_ENC_UTF8
+ *       * GRN_CURSOR_ASCENDING and GRN_CURSOR_DESCENDING are invalid.
+ *         Records cannot be retrieved in ascending or descending order of key
+ *         value
+ *
+ * \return  A newly opened table cursor on success, `NULL` on error
+ */
 GRN_API grn_table_cursor *
 grn_table_cursor_open(grn_ctx *ctx,
                       grn_obj *table,
