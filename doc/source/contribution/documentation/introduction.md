@@ -1,7 +1,18 @@
 # Introduction
 
-This documentation describes about how to write, generate and manage
-Groonga documentation.
+This document outlines the procedures for writing, generating, and managing Groonga's documentation.
+By following the steps below, you can contribute to enhancing and updating Groonga's documentation.
+
+- [How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository): Step-by-step guide on how to fork the Groonga repository and clone it to your local
+- [Install dependent software](#install-dependent-software): Instructions on installing necessary software to work with Groonga documentation
+- [Run `cmake` with `--preset=doc`](run-cmake-with-preset-doc): How to enable documentation generation in your build setup
+- [Generate HTML](#generate-html): Process to generate HTML from your documentation source.
+- [How to edit Documentation](#how-to-edit-documentation): Guidelines on editing existing documents
+- [Preview changes on HTML files](#preview-changes-on-html-files): How to generate and preview your changes in HTML format
+- [Send patch](#send-patch): Submit your changes to the Groonga repository via a pull request
+- [Optional: Translate documentation](#optional-translate-documentation): If applicable, how to translate documentation into other languages
+
+Each section is designed to focus on a specific documentation process, from initial setup to submission. Please follow the relevant section for detailed instructions and contribute to the enhancement of Groonga’s documentation.
 
 ## How to fork and clone Groonga repository
 
@@ -17,7 +28,7 @@ And also, it enables you to submit them as your contributions to the Groonga rep
 % git clone --recursive git@github.com:${YOUR_GITHUB_ACCOUNT}/groonga.git
 ```
 
-## Install depended software
+## Install dependent software
 
 Groonga uses [Sphinx](https://www.sphinx-doc.org/) as documentation tool.
 
