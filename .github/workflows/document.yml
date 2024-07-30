@@ -1,0 +1,39 @@
+name: Build document
+on:
+  push:
+    branches:
+      - main
+      - 'maintenance/**'
+    tags:
+      - '*'
+    paths:
+      - 'Rakefile'
+      - 'doc/Doxyfile'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+      - '.github/workflows/document.yml'
+
+  pull_request:
+    paths:
+      - 'Rakefile'
+      - 'doc/Doxyfile'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+      - '.github/workflows/document.yml'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  # todo: Build and publish the full document, including Sphinx.
+  doxygen:
+    name: Doxygen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+      - name: Install doxygen
+        run: sudo apt install -y -V doxygen graphviz
+      - name: Run doxygen
+        run: rake document:api
