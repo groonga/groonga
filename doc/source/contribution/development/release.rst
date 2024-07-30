@@ -545,8 +545,7 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
    $ cmake -S . -B ../build-dir/groonga.doc --preset=doc --fresh
    $ rake release:document:update BUILD_DIR=../build-dir/groonga.doc GROONGA_ORG_DIR=../groonga.org
 
-ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
-これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
+これで、 ``groonga.org`` の ``docs/`` と ``ja/docs`` 以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
