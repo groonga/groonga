@@ -47,7 +47,6 @@ extern "C" {
  * \param key_type Built-in type or table. If table B is created with table A
  *                 as key_type, B will always be a subset of A.
  *                 Disabled if GRN_OBJ_TABLE_NO_KEY is specified.
- *                 Invalid if GRN_OBJ_TABLE_NO_KEY is specified.
  * \param value_type Type of the value for key.
  *                   A table can have only one value for key, in addition to
  *                   column
