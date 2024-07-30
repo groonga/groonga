@@ -35,7 +35,6 @@ module LaunchpadHelper
     [
       ["focal", "20.04"],
       ["jammy", "22.04"],
-      ["mantic", "23.10"],
       ["noble", "24.04"],
     ]
   end
