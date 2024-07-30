@@ -12,7 +12,6 @@ on:
       - 'include/**/*.h'
       - 'include/**/*.hpp'
       - '.github/workflows/document.yml'
-
   pull_request:
     paths:
       - 'Rakefile'
@@ -33,7 +32,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ruby
-      - name: Install doxygen
+      - name: Install Doxygen
         run: sudo apt install -y -V doxygen graphviz
-      - name: Run doxygen
+      - name: Run Doxygen
         run: rake document:api
