@@ -123,7 +123,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table);
  * \param min Minimum limit of key (`NULL` means no minimum limit).
  *            See below for GRN_CURSOR_PREFIX
  * \param min_size Size of min. See below for GRN_CURSOR_PREFIX
- * \param max Maximum limit of key (`NULL` means no minimum limit).
+ * \param max Maximum limit of key (`NULL` means no maximum limit).
  *            See below for GRN_CURSOR_PREFIX
  * \param max_size Size of max. GRN_CURSOR_PREFIX may be ignored
  * \param offset Extracts records from the range of records that meet the
@@ -157,7 +157,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table);
  *       * For table with GRN_OBJ_TABLE_HASH_KEY or GRN_OBJ_TABLE_NO_KEY, it
  *         will be ignored
  *     * GRN_CURSOR_PREFIX: A cursor is created to retrieve the following
- *       records for the table GRN_OBJ_TABLE_PAT_KEY
+ *       records for the table with GRN_OBJ_TABLE_PAT_KEY
  *       * If `max` is `NULL`, retrieve the record for which key is a prefix
  *         match to `min`. `max_size` is ignored
  *       * If `max` and `max_size` are specified and the table key is of type
