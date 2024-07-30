@@ -542,13 +542,12 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 .. code-block:: console
 
-   $ GROONGA_VERSION=$(git tag --sort=taggerdate | tail -n 1 | tr -d v)
-   $ make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
+   $ cmake -S . -B ../groonga.doc --preset=doc --fresh
+   $ rake release:document:update BUILD_DIR=../groonga.doc GROONGA_ORG_DIR=../groonga.org
 
-ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
-これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
+これで、 ``groonga.org`` の ``docs/`` と ``ja/docs`` 以下に更新したドキュメントがコピーされます。
 
-生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
+生成されているドキュメントに問題のないことを確認できたら、コミット、pushして ``groonga.org`` へと反映します。
 
 また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。
 
