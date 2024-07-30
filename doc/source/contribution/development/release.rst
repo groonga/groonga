@@ -542,8 +542,8 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 .. code-block:: console
 
-   $ cmake -S . -B ../build-dir/groonga.doc --preset=doc --fresh
-   $ rake release:document:update BUILD_DIR=../build-dir/groonga.doc GROONGA_ORG_DIR=../groonga.org
+   $ cmake -S . -B ../groonga.doc --preset=doc --fresh
+   $ rake release:document:update BUILD_DIR=../groonga.doc GROONGA_ORG_DIR=../groonga.org
 
 これで、 ``groonga.org`` の ``docs/`` と ``ja/docs`` 以下に更新したドキュメントがコピーされます。
 
