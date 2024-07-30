@@ -542,7 +542,7 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 .. code-block:: console
 
-   $ cmake -S . -B ../build-dir/groonga.doc --preset=doc --fresh -DGRN_WITH_APACHE_ARROW=ON -DCMAKE_INSTALL_PREFIX="/tmp/local"
+   $ cmake -S . -B ../build-dir/groonga.doc --preset=doc --fresh"
    $ rake release:document:update BUILD_DIR=../build-dir/groonga.doc GROONGA_ORG_DIR=../groonga.org
 
 ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
