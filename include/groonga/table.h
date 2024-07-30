@@ -137,7 +137,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table);
  * \param flags
  *     * GRN_CURSOR_ASCENDING: Retrieve records in ascending order
  *       * If GRN_CURSOR_PREFIX is specified and a record with a near key is
- *       retrieved, or a common prefix search is used, it will be ignored
+ *         retrieved, or a common prefix search is used, it will be ignored
  *     * GRN_CURSOR_DESCENDING: Retrieve records in descending order
  *       * If GRN_CURSOR_PREFIX is specified and a record with a near key is
  *         retrieved, or a common prefix search is used, it will be ignored
