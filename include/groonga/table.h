@@ -25,6 +25,34 @@ extern "C" {
 
 #define GRN_TABLE_MAX_KEY_SIZE (0x1000)
 
+/**
+ * \brief Define a new table in the DB used by ctx
+ *
+ * \param ctx The context object
+ * \param name Name of the table to create. If `NULL`, it is an unnamed table.
+ *             When creating a named table for a persistent db,
+ *             GRN_OBJ_PERSISTENT must be specified in `flags`
+ * \param name_size Length of `name`
+ * \param path File path of the table to create.
+ *             Enabled only if GRN_OBJ_PERSISTENT is specified in `flags`.
+ *             If `NULL`, the file path is automatically assigned.
+ * \param flags
+ *    * GRN_OBJ_TABLE_NO_KEY: Array table
+ *    * GRN_OBJ_TABLE_HASH_KEY: Hash table
+ *    * GRN_OBJ_TABLE_PAT_KEY: Patricia trie
+ *    * GRN_OBJ_KEY_WITH_SIS: All suffixes in the key string are automatically
+ *      registered
+ *    * GRN_OBJ_PERSISTENT: Persistent table
+ *    * GRN_OBJ_KEY_NORMALIZE: Normalized string is the key
+ * \param key_type Built-in type or table. If table B is created with table A
+ *                 as key_type, B will always be a subset of A.
+ *                 Disabled if GRN_OBJ_TABLE_NO_KEY is specified.
+ * \param value_type Type of the value for key.
+ *                   A table can have only one value for key, in addition to
+ *                   column
+ *
+ * \return A newly created table on success, `NULL` on error
+ */
 GRN_API grn_obj *
 grn_table_create(grn_ctx *ctx,
                  const char *name,
