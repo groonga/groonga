@@ -16,16 +16,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: grn_id grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size, int *added)
-
-   keyに対応する新しいrecordをtableに追加し、そのIDを返します。keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返します。
-
-   ``GRN_OBJ_TABLE_NO_KEY`` が指定されたtableでは、key, key_size は無視されます。
-
-   :param table: 対象tableを指定します。
-   :param key: 検索keyを指定します。
-   :param added: NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。
-
 .. c:function:: grn_id grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
 
    It finds a record that has key parameter and returns ID of the found record. If table parameter is a database, it finds an object (table, column and so on) that has key parameter  and returns ID of the found object.
