@@ -1254,7 +1254,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
   i_byte = 0;
   i_character = 0;
   while (current < end) {
-    unsigned char unified_alpha[2];
+    unsigned char unified_alphabet[2];
     unsigned char unified_kana[3];
     unsigned char unified_kana_case[3];
     unsigned char unified_kana_voiced_sound_mark[3];
@@ -1283,7 +1283,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
         unified_char_length == 2) {
       unifying =
         grn_nfkc_normalize_unify_alphabet_diacritical_mark(unifying,
-                                                           unified_alpha);
+                                                           unified_alphabet);
     }
 
     if (before && data->options->unify_kana &&
