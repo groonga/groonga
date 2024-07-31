@@ -273,7 +273,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
 
     case target_namespace
-    when :source
+    when :source, :windows
       return unless use_packages_groonga_org?(target_namespace)
       rsync_dir =
         "#{repository_rsync_base_path}/#{target_namespace}/#{@package}/"
