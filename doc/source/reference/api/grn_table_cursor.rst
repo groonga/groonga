@@ -20,18 +20,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
-
-   :c:func:`grn_table_cursor_open` で生成したcursorを解放します。
-
-   :param tc: 対象cursorを指定します。
-
-.. c:function:: grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc)
-
-   cursorのカレントレコードを一件進めてそのIDを返します。cursorの対象範囲の末尾に達すると ``GRN_ID_NIL`` を返します。
-
-   :param tc: 対象cursorを指定します。
-
 .. c:function:: int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
 
    cursorのカレントレコードのkeyをkeyパラメータにセットし、その長さを返します。

@@ -241,8 +241,26 @@ grn_table_cursor_open(grn_ctx *ctx,
                       int offset,
                       int limit,
                       int flags);
+/**
+ * \brief Free the cursor created by grn_table_cursor_open()
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ *
+ * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if `tc` is invalid
+ */
 GRN_API grn_rc
 grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
+
+/**
+ * \brief Move the cursur forward to the next and return its record ID.
+ *        Return GRN_ID_NIL when the end is reached
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ *
+ * \return Record ID on there is a next, GRN_ID_NIL on no next or on error
+ */
 GRN_API grn_id
 grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
 GRN_API int
