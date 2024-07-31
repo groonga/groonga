@@ -849,6 +849,7 @@ grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
+  // TODO: Implement function to return `unified` instead of `utf8_char`.
   return utf8_char;
 }
 
