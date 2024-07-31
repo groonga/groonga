@@ -84,8 +84,22 @@ grn_table_create_similar(grn_ctx *ctx,
                                (flags),                                        \
                                (key_type),                                     \
                                (value_type))))
-
-/* TODO: int *added -> bool *added */
+/**
+ * \brief Add a new record with `key` to the table and return its ID.
+ *        If `key` already exists in the table, returns the ID of the record.
+ *        For tables with GRN_OBJ_TABLE_NO_KEY, `key` and `key_size` are ignored
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param key Search key
+ * \param key_size Length of `key`
+ * \param added If a non `NULL` value is specified, 1 is set when a new record
+ *              is added, and 0 is set when it is an existing record
+ *
+ * \return Record ID on success, GRN_ID_NIL on error
+ *
+ * \todo int *added -> bool *added
+ */
 GRN_API grn_id
 grn_table_add(grn_ctx *ctx,
               grn_obj *table,
