@@ -1016,6 +1016,11 @@ else()
   set(GRN_WITH_LZ4 FALSE)
 endif()
 
+find_package(Groongalibedit)
+if(Groongalibedit_FOUND)
+  set(GRN_WITH_LIBEDIT TRUE)
+endif()
+
 set(GRN_CROARING_EP_VERSION "1.1.2")
 set(GRN_WITH_ROARING_BITMAPS
     "no"

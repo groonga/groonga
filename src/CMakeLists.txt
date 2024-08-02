@@ -29,6 +29,10 @@ if(MSVC)
     OPTIONAL)
 endif()
 
+if(GRN_WITH_LIBEDIT)
+  target_link_libraries(groonga ${GRN_LIBEDIT_TARGET})
+endif()
+
 if(GRN_WITH_MRUBY)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grndb_sources.am GRNDB_SOURCES)
   add_executable(grndb ${GRNDB_SOURCES})
