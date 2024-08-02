@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1722461134607,
+  "lastUpdate": 1722579666535,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -33972,6 +33972,108 @@ window.BENCHMARK_DATA = {
             "value": 0.026817588000028536,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0018370000000000886 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "watson1978@gmail.com",
+            "name": "Watson",
+            "username": "Watson1978"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89e46ff9437c0ca98e417f1c87372224321b0081",
+          "message": "cmake lz4: fix wrong CMake target name  (#1850)\n\nThis patch will fix build error on Arch Linux by adding the fix that was\r\nmissing at https://github.com/groonga/groonga/pull/1832 .\r\n\r\nArch Linux provides only `LZ4::lz4_shared`. `LZ4::lz4_static` isn't\r\nprovided. We always use `LZ4::lz4_static` because of the wrong target\r\nname (`LZ4::liblz4_shared`). But Arch Linux doesn't provide\r\n`LZ4::lz4_static`. So it causes the following build error.\r\n\r\n### error log:\r\n```\r\n$ cmake -S . -B ../groonga.doc --preset=doc\r\nPreset CMake variables:\r\n\r\n  CMAKE_BUILD_TYPE=\"Debug\"\r\n  CMAKE_EXPORT_COMPILE_COMMANDS=\"ON\"\r\n  GRN_WITH_APACHE_ARROW=\"ON\"\r\n  GRN_WITH_BLOSC=\"auto\"\r\n  GRN_WITH_DOC=\"ON\"\r\n  GRN_WITH_MRUBY=\"ON\"\r\n\r\n-- CMake: 3.30.1\r\n-- CMAKE_SYSTEM_PROCESSOR: x86_64\r\n-- Use ccache for compiling C: /usr/bin/ccache\r\n-- Use ccache for compiling C++: /usr/bin/ccache\r\n-- AVX flags: -mavx\r\n-- AVX2 flags: -mavx2\r\n-- AVX512 flags:  -mavx512f -mavx512fp16 -mavx512cd -mavx512dq -mavx512vnni -mavx512vpopcntdq\r\n-- Arrow version: 16.1.0\r\n-- Found the Arrow shared library: /usr/lib/libarrow.so.1601.0.0\r\n-- Found the Arrow import library: ARROW_IMPORT_LIB-NOTFOUND\r\n-- Found the Arrow static library:\r\n-- Zstandard: system\r\n-- RapidJSON found. Headers: /usr/include\r\n-- RapidJSON: system\r\n-- MeCab: /usr/lib/libmecab.so\r\n-- Checking for module 'kytea'\r\n--   Package 'kytea', required by 'virtual:world', not found\r\nCMake Warning at cmake/FindGroongamsgpackc.cmake:30 (find_package):\r\n  By not providing \"Findmsgpack-c.cmake\" in CMAKE_MODULE_PATH this project\r\n  has asked CMake to find a package configuration file provided by\r\n  \"msgpack-c\", but CMake did not find one.\r\n\r\n  Could not find a package configuration file provided by \"msgpack-c\" with\r\n  any of the following names:\r\n\r\n    msgpack-cConfig.cmake\r\n    msgpack-c-config.cmake\r\n\r\n  Add the installation prefix of \"msgpack-c\" to CMAKE_PREFIX_PATH or set\r\n  \"msgpack-c_DIR\" to a directory containing one of the above files.  If\r\n  \"msgpack-c\" provides a separate development package or SDK, be sure it has\r\n  been installed.\r\nCall Stack (most recent call first):\r\n  CMakeLists.txt:895 (find_package)\r\n\r\n\r\nCMake Warning at cmake/FindGroongaxxHash.cmake:29 (find_package):\r\n  By not providing \"FindxxHash.cmake\" in CMAKE_MODULE_PATH this project has\r\n  asked CMake to find a package configuration file provided by \"xxHash\", but\r\n  CMake did not find one.\r\n\r\n  Could not find a package configuration file provided by \"xxHash\" (requested\r\n  version 0.8.0) with any of the following names:\r\n\r\n    xxHashConfig.cmake\r\n    xxhash-config.cmake\r\n\r\n  Add the installation prefix of \"xxHash\" to CMAKE_PREFIX_PATH or set\r\n  \"xxHash_DIR\" to a directory containing one of the above files.  If \"xxHash\"\r\n  provides a separate development package or SDK, be sure it has been\r\n  installed.\r\nCall Stack (most recent call first):\r\n  CMakeLists.txt:940 (find_package)\r\n\r\n\r\nCMake Warning at CMakeLists.txt:1102 (find_package):\r\n  By not providing \"FindBlosc2.cmake\" in CMAKE_MODULE_PATH this project has\r\n  asked CMake to find a package configuration file provided by \"Blosc2\", but\r\n  CMake did not find one.\r\n\r\n  Could not find a package configuration file provided by \"Blosc2\" (requested\r\n  version 2.10.0) with any of the following names:\r\n\r\n    Blosc2Config.cmake\r\n    blosc2-config.cmake\r\n\r\n  Add the installation prefix of \"Blosc2\" to CMAKE_PREFIX_PATH or set\r\n  \"Blosc2_DIR\" to a directory containing one of the above files.  If \"Blosc2\"\r\n  provides a separate development package or SDK, be sure it has been\r\n  installed.\r\n\r\n\r\nConfiguring for Blosc version: 2.13.2\r\n-- Found LZ4 library: $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n-- Could NOT find ZLIB_NG (missing: ZLIB_NG_LIBRARY ZLIB_NG_INCLUDE_DIR)\r\n-- Found ZSTD library: $<TARGET_PROPERTY:zstd::libzstd_shared,INTERFACE_LINK_LIBRARIES>\r\n-- Building for system processor x86_64\r\n-- Building for compiler ID GNU\r\n-- Detected that BLOSC is used a subproject.\r\n-- Adding run-time support for SSE2\r\n-- Adding run-time support for AVX2\r\n-- Adding run-time support for AVX512\r\n-- Blosc: bundled\r\nCMake Warning at CMakeLists.txt:1210 (find_package):\r\n  By not providing \"Findxsimd.cmake\" in CMAKE_MODULE_PATH this project has\r\n  asked CMake to find a package configuration file provided by \"xsimd\", but\r\n  CMake did not find one.\r\n\r\n  Could not find a package configuration file provided by \"xsimd\" with any of\r\n  the following names:\r\n\r\n    xsimdConfig.cmake\r\n    xsimd-config.cmake\r\n\r\n  Add the installation prefix of \"xsimd\" to CMAKE_PREFIX_PATH or set\r\n  \"xsimd_DIR\" to a directory containing one of the above files.  If \"xsimd\"\r\n  provides a separate development package or SDK, be sure it has been\r\n  installed.\r\n\r\n\r\n-- xsimd v12.1.1\r\n-- xsimd: bundled\r\nCMake Warning at CMakeLists.txt:1318 (find_package):\r\n  By not providing \"Findh3.cmake\" in CMAKE_MODULE_PATH this project has asked\r\n  CMake to find a package configuration file provided by \"h3\", but CMake did\r\n  not find one.\r\n\r\n  Could not find a package configuration file provided by \"h3\" with any of\r\n  the following names:\r\n\r\n    h3Config.cmake\r\n    h3-config.cmake\r\n\r\n  Add the installation prefix of \"h3\" to CMAKE_PREFIX_PATH or set \"h3_DIR\" to\r\n  a directory containing one of the above files.  If \"h3\" provides a separate\r\n  development package or SDK, be sure it has been installed.\r\n\r\n\r\n-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE)\r\n-- H3: bundled\r\n-- Configuring done (0.4s)\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:422 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_LINK_LIBRARIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at /home/watson/src/groonga.doc/_deps/blosc-src/blosc/CMakeLists.txt:87 (target_include_directories):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_INCLUDE_DIRECTORIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at lib/CMakeLists.txt:148 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_INCLUDE_DIRECTORIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at lib/CMakeLists.txt:148 (target_link_libraries):\r\n  Error evaluating generator expression:\r\n\r\n    $<TARGET_PROPERTY:LZ4::lz4_static,INTERFACE_INCLUDE_DIRECTORIES>\r\n\r\n  Target \"LZ4::lz4_static\" not found.\r\n\r\n\r\nCMake Error at CMakeLists.txt:996 (target_link_libraries):\r\n  The link interface of target \"grn_dependencies\" contains:\r\n\r\n    LZ4::lz4_static\r\n\r\n  but the target was not found.  Possible reasons include:\r\n\r\n    * There is a typo in the target name.\r\n    * A find_package call is missing for an IMPORTED target.\r\n    * An ALIAS target is missing.\r\n\r\n\r\n\r\n-- Generating done (0.2s)\r\nCMake Generate step failed.  Build files cannot be regenerated correctly.\r\n```",
+          "timestamp": "2024-08-02T15:15:48+09:00",
+          "tree_id": "bf25db2f7204497458bd0d3be43c8b7254b57da5",
+          "url": "https://github.com/groonga/groonga/commit/89e46ff9437c0ca98e417f1c87372224321b0081"
+        },
+        "date": 1722579664422,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3774744520000013,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02348200000000017 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.25953802099985523,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014783000000000018 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016128091999974004,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003810000000004088 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.023116341999923407,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00039700000000056357 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.3750683540000068,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0003509999999999347 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2389367980000543,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007478999999999847 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13118005199993377,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006976999999999678 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01726552000002357,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021179999999997867 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01705927799997653,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001963000000000076 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05782298299993727,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007796999999999832 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.056226135999963844,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00906099999999982 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017678625999906217,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018700000000003991 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.027779003000034663,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020419999999998772 s\nthreads: undefined"
           }
         ]
       }
