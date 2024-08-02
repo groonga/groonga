@@ -74,7 +74,7 @@ msgid "Install `groonga-tokenizer-mecab` package:"
 msgstr "`groonga-tokenizer-mecab`パッケージをインストールします。"
 
 msgid "If you want to use `TokenFilterStem` as a token filter, install `groonga-token-filter-stem` package."
-msgstr "`TokenFilterStem`をトークンフィルターとして使いたいときは`groonga-tokenizer-filter-stem`パッケージをインストールします。"
+msgstr "`TokenFilterStem`をトークンフィルターとして使いたいときは`groonga-token-filter-stem`パッケージをインストールします。"
 
 msgid "Install groonga-token-filter-stem package:"
 msgstr "`groonga-token-filter-stem`パッケージをインストールします。"
