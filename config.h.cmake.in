@@ -103,6 +103,7 @@
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB
 #cmakedefine GRN_WITH_ZSTD
+#cmakedefine GRN_WITH_LIBEDIT
 
 /* headers */
 #cmakedefine HAVE_DIRENT_H
