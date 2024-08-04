@@ -35,6 +35,7 @@ RUN \
     php-devel \
     pkgconfig \
     ruby \
+    simdjson-devel \
     tar \
     which \
     xxhash-devel \

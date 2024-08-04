@@ -122,6 +122,7 @@ jobs:
             liblz4-dev \
             libmecab-dev \
             libmsgpack-dev \
+            libsimdjson-dev \
             libstemmer-dev \
             libxxhash-dev \
             libzstd-dev \
