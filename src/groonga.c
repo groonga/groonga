@@ -4060,6 +4060,9 @@ show_version(void)
 #ifdef GRN_HAVE_H3
   printf(",h3");
 #endif
+#ifdef GRN_WITH_SIMDJSON
+  printf(",simdjson");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS
