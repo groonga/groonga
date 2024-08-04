@@ -63,7 +63,7 @@ targets.each do |target|
       FileUtils.rm_rf("benchmarks/realdata/")
     end
   when "h3"
-    version = cmakelists[/set\(GRN_H3_VERSION \"(.+)"\)/, 1]
+    version = cmakelists[/set\(GRN_H3_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/uber/h3/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "h3-#{version}.tar.gz")

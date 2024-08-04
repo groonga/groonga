@@ -1378,8 +1378,8 @@ if(NOT (GRN_WITH_XSIMD OR GRN_WITH_SIMSIMD))
   set(GRN_WITH_SIMD_NEON64 OFF)
 endif()
 
-set(GRN_H3_VERSION "4.1.0")
-set(GRN_H3_SHA256
+set(GRN_H3_BUNDLED_VERSION "4.1.0")
+set(GRN_H3_BUNDLED_SHA256
     "ec99f1f5974846bde64f4513cf8d2ea1b8d172d2218ab41803bf6a63532272bc")
 set(GRN_WITH_H3
     "auto"
@@ -1402,20 +1402,20 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
   elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
     # We need to use function to create a variable scope
     function(grn_build_h3)
-      set(H3_SOURCE_BASE_NAME "h3-${GRN_H3_VERSION}.tar.gz")
+      set(H3_SOURCE_BASE_NAME "h3-${GRN_H3_BUNDLED_VERSION}.tar.gz")
       set(H3_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${H3_SOURCE_BASE_NAME}")
       if(EXISTS ${H3_SOURCE_LOCAL_PATH})
         set(H3_SOURCE_URL ${H3_SOURCE_LOCAL_PATH})
       else()
         set(H3_SOURCE_URL "https://github.com/uber/h3/archive/refs/tags")
-        string(APPEND H3_SOURCE_URL "/v${GRN_H3_VERSION}.tar.gz")
+        string(APPEND H3_SOURCE_URL "/v${GRN_H3_BUNDLED_VERSION}.tar.gz")
       endif()
       fetchcontent_declare(
         h3
         ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
         URL ${H3_SOURCE_URL}
-        URL_HASH "SHA256=${GRN_H3_SHA256}")
+        URL_HASH "SHA256=${GRN_H3_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
       set(BUILD_BENCHMARKS OFF)
       set(BUILD_FILTERS OFF)
