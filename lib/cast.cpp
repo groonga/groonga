@@ -1408,35 +1408,35 @@ namespace {
       } else {
         grn::SharedObj domain(ctx, caster->dest->header.domain);
         for (auto value : array) {
+          grn_obj grn_value;
+          GRN_VOID_INIT(&grn_value);
+          grn::UniqueObj unique_grn_value(ctx, &grn_value);
           std::string_view string_value;
+          uint64_t uint64_value;
+          int64_t int64_value;
           simdjson::ondemand::object object;
           if (value.get_string().get(string_value) == simdjson::SUCCESS) {
-            grn_obj casted_value;
-            GRN_RECORD_INIT(&casted_value,
-                            GRN_BULK,
-                            caster->dest->header.domain);
-            grn::TextBulk bulk(ctx, GRN_OBJ_DO_SHALLOW_COPY);
+            grn_obj_reinit(ctx,
+                           &grn_value,
+                           GRN_DB_SHORT_TEXT,
+                           GRN_OBJ_DO_SHALLOW_COPY);
             GRN_TEXT_SET(ctx,
-                         *bulk,
+                         &grn_value,
                          string_value.data(),
                          string_value.length());
-            grn_caster value_caster = {
-              *bulk,
-              &casted_value,
-              caster->flags,
-              caster->target,
-            };
-            auto rc = grn_caster_cast(ctx, &value_caster);
-            grn_id id = GRN_ID_NIL;
-            if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
-              id = GRN_RECORD_VALUE(&casted_value);
-            }
-            rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
-            GRN_OBJ_FIN(ctx, &casted_value);
-            if (rc != GRN_SUCCESS) {
-              return rc;
-            }
+          } else if (value.get_uint64().get(uint64_value) ==
+                     simdjson::SUCCESS) {
+            grn_obj_reinit(ctx, &grn_value, GRN_DB_UINT64, 0);
+            GRN_UINT64_SET(ctx, &grn_value, uint64_value);
+          } else if (value.get_int64().get(int64_value) == simdjson::SUCCESS) {
+            grn_obj_reinit(ctx, &grn_value, GRN_DB_INT64, 0);
+            GRN_INT64_SET(ctx, &grn_value, int64_value);
           } else if (value.get_object().get(object) == simdjson::SUCCESS) {
+          } else {
+            return GRN_INVALID_ARGUMENT;
+          }
+
+          if (grn_value.header.domain == GRN_DB_VOID) {
             // TODO: Nested object isn't supported yet.
             Record record(ctx, domain.get());
             for (auto field : object) {
@@ -1484,7 +1484,41 @@ namespace {
               }
             }
           } else {
-            return GRN_INVALID_ARGUMENT;
+            if (grn_obj_is_table_with_key(ctx, domain.get())) {
+              grn_obj casted_value;
+              GRN_RECORD_INIT(&casted_value,
+                              GRN_BULK,
+                              caster->dest->header.domain);
+              grn::UniqueObj unique_casted_value(ctx, &casted_value);
+              grn_caster value_caster = {
+                &grn_value,
+                &casted_value,
+                caster->flags,
+                caster->target,
+              };
+              auto rc = grn_caster_cast(ctx, &value_caster);
+              grn_id id = GRN_ID_NIL;
+              if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
+                id = GRN_RECORD_VALUE(&casted_value);
+              }
+              rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
+              if (rc != GRN_SUCCESS) {
+                return rc;
+              }
+            } else {
+              if (grn_value.header.domain != GRN_DB_UINT64) {
+                return GRN_INVALID_ARGUMENT;
+              }
+              auto rc =
+                grn_uvector_add_element_record(ctx,
+                                               caster->dest,
+                                               GRN_UINT64_VALUE(&grn_value),
+                                               0);
+
+              if (rc != GRN_SUCCESS) {
+                return rc;
+              }
+            }
           }
         }
       }
