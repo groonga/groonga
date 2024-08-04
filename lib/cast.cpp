@@ -1298,6 +1298,8 @@ namespace {
                                    GRN_TEXT_LEN(caster->src),
                                    GRN_BULK_WSIZE(caster->src));
 
+    const uint32_t missing_mode = (caster->flags & GRN_OBJ_MISSING_MASK);
+
     enum class ValueType {
       INT64,
       UINT64,
@@ -1546,6 +1548,16 @@ namespace {
               grn_id id = GRN_ID_NIL;
               if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
                 id = GRN_RECORD_VALUE(&casted_value);
+              }
+              if (id == GRN_ID_NIL) {
+                if (ctx->rc == GRN_SUCCESS) {
+                  if (missing_mode != GRN_OBJ_MISSING_NIL) {
+                    continue;
+                  }
+                } else {
+                  ERRCLR(ctx);
+                  continue;
+                }
               }
               rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
               if (rc != GRN_SUCCESS) {
