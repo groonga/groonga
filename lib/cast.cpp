@@ -1408,9 +1408,9 @@ namespace {
       } else {
         grn::SharedObj domain(ctx, caster->dest->header.domain);
         for (auto value : array) {
-          std::string_view string_element;
+          std::string_view string_value;
           simdjson::ondemand::object object;
-          if (value.get_string().get(string_element) == simdjson::SUCCESS) {
+          if (value.get_string().get(string_value) == simdjson::SUCCESS) {
             grn_obj casted_value;
             GRN_RECORD_INIT(&casted_value,
                             GRN_BULK,
@@ -1418,8 +1418,8 @@ namespace {
             grn::TextBulk bulk(ctx, GRN_OBJ_DO_SHALLOW_COPY);
             GRN_TEXT_SET(ctx,
                          *bulk,
-                         string_element.data(),
-                         string_element.length());
+                         string_value.data(),
+                         string_value.length());
             grn_caster value_caster = {
               *bulk,
               &casted_value,
