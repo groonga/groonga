@@ -1746,7 +1746,6 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/query_logger/Makefile
   lib/proc/Makefile
   packages/Makefile
-  packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
   plugins/Makefile
   plugins/functions/Makefile
