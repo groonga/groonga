@@ -1327,55 +1327,76 @@ namespace {
       break;
     }
 
-    simdjson::ondemand::array array;
-    auto error = document.get_array().get(array);
-    if (error != simdjson::SUCCESS) {
-      return GRN_INVALID_ARGUMENT;
-    }
     switch (value_type) {
     case ValueType::INT64:
-      for (auto value : array) {
-        int64_t int64_value;
-        auto error = value.get_int64().get(int64_value);
+      {
+        simdjson::ondemand::array array;
+        auto error = document.get_array().get(array);
         if (error != simdjson::SUCCESS) {
           return GRN_INVALID_ARGUMENT;
         }
-        auto rc = grn::bulk::put(ctx, caster->dest, int64_value);
-        if (rc != GRN_SUCCESS) {
-          return rc;
+        for (auto value : array) {
+          int64_t int64_value;
+          auto error = value.get_int64().get(int64_value);
+          if (error != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto rc = grn::bulk::put(ctx, caster->dest, int64_value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
         }
+        break;
       }
-      break;
     case ValueType::UINT64:
-      for (auto value : array) {
-        uint64_t uint64_value;
-        auto error = value.get_uint64().get(uint64_value);
+      {
+        simdjson::ondemand::array array;
+        auto error = document.get_array().get(array);
         if (error != simdjson::SUCCESS) {
           return GRN_INVALID_ARGUMENT;
         }
-        auto rc = grn::bulk::put(ctx, caster->dest, uint64_value);
-        if (rc != GRN_SUCCESS) {
-          return rc;
+        for (auto value : array) {
+          uint64_t uint64_value;
+          auto error = value.get_uint64().get(uint64_value);
+          if (error != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto rc = grn::bulk::put(ctx, caster->dest, uint64_value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
         }
+        break;
       }
-      break;
     case ValueType::DOUBLE:
-      for (auto value : array) {
-        double double_value;
-        auto error = value.get_double().get(double_value);
+      {
+        simdjson::ondemand::array array;
+        auto error = document.get_array().get(array);
         if (error != simdjson::SUCCESS) {
           return GRN_INVALID_ARGUMENT;
         }
-        auto rc = grn::bulk::put(ctx, caster->dest, double_value);
-        if (rc != GRN_SUCCESS) {
-          return rc;
+        for (auto value : array) {
+          double double_value;
+          auto error = value.get_double().get(double_value);
+          if (error != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto rc = grn::bulk::put(ctx, caster->dest, double_value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
         }
+        break;
       }
-      break;
     case ValueType::OTHER:
       if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
         grn::SharedObj domain(ctx, caster->dest->header.domain);
-        if (grn_obj_is_table_with_key(ctx, domain.get())) {
+        if (!grn_obj_is_table_with_key(ctx, domain.get())) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        simdjson::ondemand::array array;
+        simdjson::ondemand::object object;
+        if (document.get_array().get(array) == simdjson::SUCCESS) {
           for (auto value : array) {
             simdjson::ondemand::object object;
             auto error = value.get_object().get(object);
@@ -1402,8 +1423,35 @@ namespace {
               }
             }
           }
+        } else if (document.get_object().get(object) == simdjson::SUCCESS) {
+          for (auto field : object) {
+            std::string_view name;
+            if (field.unescaped_key().get(name) != simdjson::SUCCESS) {
+              return GRN_INVALID_ARGUMENT;
+            }
+            double weight;
+            if (field.value().get_double().get(weight) != simdjson::SUCCESS) {
+              return GRN_INVALID_ARGUMENT;
+            }
+            auto rc = json_to_weight_uvector_add(ctx,
+                                                 caster,
+                                                 domain.get(),
+                                                 name.data(),
+                                                 name.length(),
+                                                 weight);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+          }
+        } else {
+          return GRN_INVALID_ARGUMENT;
         }
       } else {
+        simdjson::ondemand::array array;
+        auto error = document.get_array().get(array);
+        if (error != simdjson::SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
         grn::SharedObj domain(ctx, caster->dest->header.domain);
         for (auto value : array) {
           grn_obj grn_value;
