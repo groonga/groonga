@@ -840,7 +840,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #endif
 
     GRN_OUTPUT_CSTR("h3");
-#ifdef GRN_HAVE_H3
+#ifdef GRN_WITH_H3
     GRN_OUTPUT_BOOL(true);
 #else
     GRN_OUTPUT_BOOL(false);

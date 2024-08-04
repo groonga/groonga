@@ -4057,7 +4057,7 @@ show_version(void)
 #ifdef GRN_HAVE_BFLOAT16
   printf(",bfloat16");
 #endif
-#ifdef GRN_HAVE_H3
+#ifdef GRN_WITH_H3
   printf(",h3");
 #endif
 #ifdef GRN_WITH_SIMDJSON
