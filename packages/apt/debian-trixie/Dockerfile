@@ -35,6 +35,7 @@ RUN \
     libmsgpack-dev \
     libjemalloc-dev \
     libpcre3-dev \
+    libsimdjson-dev \
     libssl-dev \
     libstemmer-dev \
     libthrift-dev \
