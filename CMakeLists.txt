@@ -696,6 +696,7 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
         ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
         URL ${SIMDJSON_SOURCE_URL}
         URL_HASH "SHA256=${GRN_SIMDJSON_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
       fetchcontent_makeavailable(simdjson)
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY "${simdjson_SOURCE_DIR}/build/cmake"
