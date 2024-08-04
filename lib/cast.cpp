@@ -1384,13 +1384,11 @@ namespace {
             }
             for (auto field : object) {
               std::string_view name;
-              error = field.unescaped_key().get(name);
-              if (error != simdjson::SUCCESS) {
+              if (field.unescaped_key().get(name) != simdjson::SUCCESS) {
                 return GRN_INVALID_ARGUMENT;
               }
               double weight;
-              error = field.value().get_double().get(weight);
-              if (error != simdjson::SUCCESS) {
+              if (field.value().get_double().get(weight) != simdjson::SUCCESS) {
                 return GRN_INVALID_ARGUMENT;
               }
               auto rc = json_to_weight_uvector_add(ctx,
