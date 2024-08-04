@@ -1765,7 +1765,7 @@ namespace {
     if (document.IsArray()) {
       auto n = document.Size();
       for (size_t i = 0; i < n; ++i) {
-        const auto &element = (*document)[i];
+        const auto &element = document[i];
         if (!element.Accept(handler)) {
           return GRN_INVALID_ARGUMENT;
         }
