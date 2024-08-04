@@ -21,7 +21,6 @@ RUN \
     intltool \
     libedit-devel \
     libevent-devel \
-    libsimdjson-devel \
     libstemmer-devel \
     libzstd-devel \
     lz4-devel \
@@ -34,6 +33,7 @@ RUN \
     python2-devel \
     rapidjson-devel \
     ruby \
+    simdjson-devel \
     tar \
     xxhash-devel \
     zlib-devel && \

@@ -26,7 +26,6 @@ RUN \
     mecab-devel \
     libedit-devel \
     libevent-devel \
-    libsimdjson-devel \
     libstemmer-devel \
     libzstd-devel \
     lz4-devel \
@@ -36,6 +35,7 @@ RUN \
     php-devel \
     pkgconfig \
     ruby \
+    simdjson-devel \
     tar \
     which \
     xxhash-devel \
