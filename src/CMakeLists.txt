@@ -30,7 +30,7 @@ if(MSVC)
 endif()
 
 if(GRN_WITH_LIBEDIT)
-  target_link_libraries(groonga ${GRN_LIBEDIT_TARGET})
+  target_link_libraries(groonga Groonga::libedit)
 endif()
 
 if(GRN_WITH_MRUBY)

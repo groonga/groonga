@@ -29,7 +29,7 @@ if(PkgConfig_FOUND)
   endif()
   set(Groongalibedit_FOUND ${Groongalibedit_pkg_libedit_FOUND})
   if(Groongalibedit_FOUND)
-    set(GRN_LIBEDIT_TARGET PkgConfig::Groongalibedit_pkg_libedit)
+    add_library(Groonga::libedit ALIAS PkgConfig::Groongalibedit_pkg_libedit)
   endif()
 endif()
 
