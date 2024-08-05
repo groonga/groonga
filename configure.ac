@@ -1746,7 +1746,6 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/query_logger/Makefile
   lib/proc/Makefile
   packages/Makefile
-  packages/apt/env.sh
   plugins/Makefile
   plugins/functions/Makefile
   plugins/query_expanders/Makefile
