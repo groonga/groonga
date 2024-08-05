@@ -14,6 +14,10 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+if(Groongalibedit_FOUND)
+  return()
+endif()
+
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
