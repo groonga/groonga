@@ -32,3 +32,7 @@ if(PkgConfig_FOUND)
     set(GRN_LIBEDIT_TARGET PkgConfig::Groongalibedit_pkg_libedit)
   endif()
 endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Groongalibedit
+                                  REQUIRED_VARS Groongalibedit_FOUND)
