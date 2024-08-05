@@ -106,7 +106,7 @@ You can get the each result of drilldown at once.
 
 
 Sorting drilldown results
-------------------------
+-------------------------
 
 Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
 
