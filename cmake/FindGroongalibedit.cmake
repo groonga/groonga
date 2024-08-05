@@ -21,8 +21,7 @@ endif()
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
-    pkg_check_modules(Groongalibedit_pkg_libedit IMPORTED_TARGET
-                      "libedit")
+    pkg_check_modules(Groongalibedit_pkg_libedit IMPORTED_TARGET "libedit")
   else()
     pkg_check_modules(Groongalibedit_pkg_libedit IMPORTED_TARGET GLOBAL
                       "libedit")
