@@ -36,10 +36,6 @@ Install::
 
   % brew install mecab-ipadic
 
-Configure::
-
-  % sed -i '' -e 's,dicrc.*=.*,dicrc = /usr/local/lib/mecab/dic/ipadic,g' /usr/local/etc/mecabrc
-
 Build from source
 -----------------
 

@@ -37,9 +37,6 @@ msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーと�
 msgid "Then install and configure MeCab dictionary."
 msgstr "それからMeCabの辞書をインストール・設定します。"
 
-msgid "Configure::"
-msgstr "設定::"
-
 msgid "Build from source"
 msgstr "ソースからビルド"
 
