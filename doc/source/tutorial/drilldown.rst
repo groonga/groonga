@@ -79,7 +79,7 @@ Here is a summary of above query.
 
 The value of drilldown are returned as the value of ``_nsubrecs`` column. In this case, ``Site`` table is grouped by ".org", ".net", ".com" domain. ``_nsubrecs`` shows that each three domain has three records.
 
-If you execute drildown to the column which has table as a type, you can get the value of column which is stored in referenced table.
+If you execute drilldown to the column which has table as a type, you can get the value of column which is stored in referenced table.
 ``_nsubrecs`` pseudo column is added to the table which is used for drilldown. this pseudo column stores the number of records which is grouped by.
 
 Then, investigate referenced table in detail. As ``Site`` table use ``SiteDomain`` table as column type of ``domain``, you can use ``--drilldown_output_columns`` to know detail of referenced column.
@@ -97,7 +97,7 @@ Now, you can see detail of each grouped domain, drilldown by ``country`` column 
 Drilldown with multiple column
 ------------------------------
 
-Drilldown feature supports multiple column. Use comma separated multiple column names as ``drildown`` parameter.
+Drilldown feature supports multiple column. Use comma separated multiple column names as ``drilldown`` parameter.
 You can get the each result of drilldown at once.
 
 .. groonga-command
@@ -105,8 +105,8 @@ You can get the each result of drilldown at once.
 .. select --table Site --limit 0 --drilldown domain,country
 
 
-Sorting drildown results
-------------------------
+Sorting drilldown results
+-------------------------
 
 Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
 
@@ -115,7 +115,7 @@ Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For e
 .. select --table Site --limit 0 --drilldown country --drilldown_sort_keys _nsubrecs
 
 
-limits drildown results
+limits drilldown results
 ------------------------
 
 The number of drilldown results is limited to 10 as a default. Use ``drilldown_limit`` and ``drilldown_offset`` parameter to customize orilldown results.
