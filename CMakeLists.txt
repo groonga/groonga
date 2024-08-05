@@ -972,6 +972,25 @@ else()
   set(GRN_WITH_XXHASH FALSE)
 endif()
 
+set(GRN_WITH_LIBEDIT
+    "auto"
+    CACHE STRING "Support command line editing in groonga command by libedit.")
+if(NOT "${GRN_WITH_LIBEDIT}" STREQUAL "no")
+  if("${GRN_WITH_LIBEDIT}" STREQUAL "system")
+    find_package(Groongalibedit REQUIRED)
+  else()
+    find_package(Groongalibedit)
+  endif()
+  if(Groongalibedit_FOUND)
+    set(GRN_WITH_LIBEDIT TRUE)
+    message(STATUS "libedit: system")
+  else()
+    set(GRN_WITH_LIBEDIT FALSE)
+  endif()
+else()
+  set(GRN_WITH_LIBEDIT FALSE)
+endif()
+
 # We need to find LZ4 after xxHash because bundled LZ4 includes its xxhash.h.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
      GRN_BUNDLED_LZ4_VERSION)
@@ -1014,25 +1033,6 @@ if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
   endif()
 else()
   set(GRN_WITH_LZ4 FALSE)
-endif()
-
-set(GRN_WITH_LIBEDIT
-    "auto"
-    CACHE STRING "Support command line editing in groonga command by libedit.")
-if(NOT "${GRN_WITH_LIBEDIT}" STREQUAL "no")
-  if("${GRN_WITH_LIBEDIT}" STREQUAL "system")
-    find_package(Groongalibedit REQUIRED)
-  else()
-    find_package(Groongalibedit)
-  endif()
-  if(Groongalibedit_FOUND)
-    set(GRN_WITH_LIBEDIT TRUE)
-    message(STATUS "libedit: system")
-  else()
-    set(GRN_WITH_LIBEDIT FALSE)
-  endif()
-else()
-  set(GRN_WITH_LIBEDIT FALSE)
 endif()
 
 set(GRN_CROARING_EP_VERSION "1.1.2")
