@@ -356,6 +356,14 @@ Options
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
+.. option:: --default-n-workers <n_workers>
+
+   .. versionadded:: 14.0.7
+
+   Specifies the default value of the ``n_workers`` option of :doc:`/reference/commands/select` command.
+
+   The default value is ``0``.
+
 .. option:: --default-request-timeout <timeout>
 
    Specifies the default request timeout in seconds.
