@@ -369,8 +369,8 @@ msgstr ""
 msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
 msgstr ""
 
-msgid "Specifies the default value of the ``n_workers`` option of :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドの ``n_workers`` オプションのデフォルト値を指定します。"
+msgid "Specifies the default ``n_workers`` value of the Groonga process."
+msgstr "Groongaプロセスのデフォルトの ``n_workers`` の値を指定します。"
 
 msgid "The default value is ``0``."
 msgstr "デフォルト値は ``0`` です。"
