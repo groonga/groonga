@@ -4251,6 +4251,7 @@ main(int argc, char **argv)
   const char *listen_backlog_arg = NULL;
   const char *log_flags_arg = NULL;
   const char *wal_role_arg = NULL;
+  const char *default_n_workers_arg = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
@@ -4299,6 +4300,7 @@ main(int argc, char **argv)
     {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
     {'\0', "log-flags", NULL, 0, GETOPT_OP_NONE},
     {'\0', "wal-role", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "default-n-workers", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}};
   opts[0].arg = &port_arg;
   opts[1].arg = &encoding_arg;
@@ -4327,6 +4329,7 @@ main(int argc, char **argv)
   opts[32].arg = &listen_backlog_arg;
   opts[33].arg = &log_flags_arg;
   opts[34].arg = &wal_role_arg;
+  opts[35].arg = &default_n_workers_arg;
 
   reset_ready_notify_pipe();
 
@@ -4743,6 +4746,20 @@ main(int argc, char **argv)
       fprintf(stderr, "available WAL roles: none, primary, secondary\n");
       return EXIT_FAILURE;
     }
+  }
+
+  if (default_n_workers_arg) {
+    const char *const end =
+      default_n_workers_arg + strlen(default_n_workers_arg);
+    const char *rest = NULL;
+    const int value = grn_atoi(default_n_workers_arg, end, &rest);
+    if (end != rest) {
+      fprintf(stderr,
+              "invalid --default-n-workers value: <%s>\n",
+              default_n_workers_arg);
+      return EXIT_FAILURE;
+    }
+    grn_set_default_n_workers(value);
   }
 
   grn_gctx.errbuf[0] = '\0';
