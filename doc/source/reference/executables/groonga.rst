@@ -360,7 +360,7 @@ Options
 
    .. versionadded:: 14.0.7
 
-   Specifies the default ``n_workers`` value of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`.
+   Specifies the default number of workers of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`.
 
    The default value is ``0``.
 
