@@ -76,18 +76,6 @@ Reference
    :param table: 対象tableを指定します。
    :param id: レコードIDを指定します。
 
-.. c:function:: grn_rc grn_table_update(grn_ctx *ctx, grn_obj *table, const void *src_key, unsigned int src_key_size, const void *dest_key, unsigned int dest_key_size)
- 
-   tableのsrc_keyに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。
-
-   この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。
-
-   :param table: 対象tableを指定します。
-   :param src_key: 対象レコードのkeyを指定します。
-   :param src_key_size: 対象レコードのkeyの長さ(byte)を指定します。
-   :param dest_key: 変更後のkeyを指定します。
-   :param dest_key_size: 変更後のkeyの長さ(byte)を指定します。
-
 .. c:function:: grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table)
 
    tableの全レコードを一括して削除します。

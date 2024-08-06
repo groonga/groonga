@@ -134,6 +134,22 @@ grn_table_update_by_id(grn_ctx *ctx,
                        grn_id id,
                        const void *dest_key,
                        unsigned int dest_key_size);
+/**
+ * \brief Change the key of the record matching the `src_key` of the table.
+ *        Specify the new key and its byte length in `dest_key` and
+ *        `dest_key_size`. This operation is allowed only for table of
+ *        type GRN_TABLE_DAT_KEY
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param src_key Key of record to be updated
+ * \param src_key_size Length of `src_key` (byte)
+ * \param dest_key New key
+ * \param dest_key_size Length of `dest_key_size` (byte)
+ *
+ * \return GRN_SUCCESS on success, GRN_OPERATION_NOT_PERMITTED if not
+ *         GRN_TABLE_DAT_KEY, `grn_rc` according to error on error
+ */
 GRN_API grn_rc
 grn_table_update(grn_ctx *ctx,
                  grn_obj *table,
