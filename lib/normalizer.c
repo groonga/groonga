@@ -850,71 +850,71 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
   if (utf8_char[0] == 0xC3) {
-    /* U+00C0 LATIN CAPITAL LETTER A WITH GRAV À ..
-     * U+00C5 ATIN CAPITAL LETTER A WITH RING ABOVE Å
+    /* U+00C0 LATIN CAPITAL LETTER A WITH GRAV ..
+     * U+00C5 LATIN CAPITAL LETTER A WITH RING ABOVE
      *
-     * U+00E0 LATIN SMALL LETTER A WITH GRAVE à ..
-     * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE å */
+     * U+00E0 LATIN SMALL LETTER A WITH GRAVE ..
+     * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE */
     if ((0x80 <= utf8_char[1] && utf8_char[1] <= 0x85) ||
         (0xA0 <= utf8_char[1] && utf8_char[1] <= 0xA5)) {
       *unified = 0x61; // 'a'
       return unified;
     }
-    /* U+00C7 LATIN CAPITAL LETTER C WITH CEDILLA Ç,
-     * U+00E7 LATIN SMALL LETTER C WITH CEDILLA ç */
+    /* U+00C7 LATIN CAPITAL LETTER C WITH CEDILLA,
+     * U+00E7 LATIN SMALL LETTER C WITH CEDILLA */
     if (utf8_char[1] == 0x87 || utf8_char[1] == 0xA7) {
       *unified = 0x63; // 'c'
       return unified;
     }
-    /* U+00C8 LATIN CAPITAL LETTER E WITH GRAVE È ..
-     * U+00CB LATIN CAPITAL LETTER E WITH DIAERESIS Ë
+    /* U+00C8 LATIN CAPITAL LETTER E WITH GRAVE ..
+     * U+00CB LATIN CAPITAL LETTER E WITH DIAERESIS
      *
-     * U+00E8 LATIN SMALL LETTER E WITH GRAVE è ..
-     * U+00EB LATIN SMALL LETTER E WITH DIAERESIS ë */
+     * U+00E8 LATIN SMALL LETTER E WITH GRAVE ..
+     * U+00EB LATIN SMALL LETTER E WITH DIAERESIS */
     if ((0x88 <= utf8_char[1] && utf8_char[1] <= 0x8B) ||
         (0xA8 <= utf8_char[1] && utf8_char[1] <= 0xAB)) {
       *unified = 0x65; // 'e'
       return unified;
     }
-    /* U+00CC LATIN CAPITAL LETTER I WITH GRAVE Ì ..
-     * U+00CF LATIN CAPITAL LETTER I WITH DIAERESIS Ï
+    /* U+00CC LATIN CAPITAL LETTER I WITH GRAVE ..
+     * U+00CF LATIN CAPITAL LETTER I WITH DIAERESIS
      *
-     * U+00EC LATIN SMALL LETTER I WITH GRAVE ì ..
-     * U+00EF LATIN SMALL LETTER I WITH DIAERESIS ï */
+     * U+00EC LATIN SMALL LETTER I WITH GRAVE ..
+     * U+00EF LATIN SMALL LETTER I WITH DIAERESIS */
     if ((0x8C <= utf8_char[1] && utf8_char[1] <= 0x8F) ||
         (0xAC <= utf8_char[1] && utf8_char[1] <= 0xAF)) {
       *unified = 0x69; // 'i'
       return unified;
     }
-    /* U+00D1 LATIN CAPITAL LETTER N WITH TILDE Ñ,
-     * U+00F1 LATIN SMALL LETTER N WITH TILDE ñ */
+    /* U+00D1 LATIN CAPITAL LETTER N WITH TILDE,
+     * U+00F1 LATIN SMALL LETTER N WITH TILDE */
     if (utf8_char[1] == 0x91 || utf8_char[1] == 0xB1) {
       *unified = 0x6E; // 'n'
       return unified;
     }
-    /* U+00D2 LATIN CAPITAL LETTER O WITH GRAVE Ò ..
-     * U+00D6 LATIN CAPITAL LETTER O WITH DIAERESIS Ö
+    /* U+00D2 LATIN CAPITAL LETTER O WITH GRAVE ..
+     * U+00D6 LATIN CAPITAL LETTER O WITH DIAERESIS
      *
-     * U+00F2 LATIN SMALL LETTER O WITH GRAVE ò ..
-     * U+00F6 LATIN SMALL LETTER O WITH DIAERESIS ö */
+     * U+00F2 LATIN SMALL LETTER O WITH GRAVE ..
+     * U+00F6 LATIN SMALL LETTER O WITH DIAERESIS */
     if ((0x92 <= utf8_char[1] && utf8_char[1] <= 0x96) ||
         (0xB2 <= utf8_char[1] && utf8_char[1] <= 0xB6)) {
       *unified = 0x6F; // 'o'
       return unified;
     }
-    /* U+00D9 LATIN CAPITAL LETTER U WITH GRAVE Ù ..
-     * U+00DC LATIN CAPITAL LETTER U WITH DIAERESIS Ü
+    /* U+00D9 LATIN CAPITAL LETTER U WITH GRAVE ..
+     * U+00DC LATIN CAPITAL LETTER U WITH DIAERESIS
      *
-     * U+00F9 LATIN SMALL LETTER U WITH GRAVE ù ..
-     * U+00FC LATIN SMALL LETTER U WITH DIAERESIS ü */
+     * U+00F9 LATIN SMALL LETTER U WITH GRAVE ..
+     * U+00FC LATIN SMALL LETTER U WITH DIAERESIS */
     if ((0x99 <= utf8_char[1] && utf8_char[1] <= 0x9C) ||
         (0xB9 <= utf8_char[1] && utf8_char[1] <= 0xBC)) {
       *unified = 0x75; // 'u'
       return unified;
     }
-    /* U+00DD LATIN CAPITAL LETTER Y WITH ACUTE Ý,
-     * U+00FD LATIN SMALL LETTER Y WITH ACUTE ý,
-     * U+00FF LATIN SMALL LETTER Y WITH DIAERESIS ÿ */
+    /* U+00DD LATIN CAPITAL LETTER Y WITH ACUTE,
+     * U+00FD LATIN SMALL LETTER Y WITH ACUTE,
+     * U+00FF LATIN SMALL LETTER Y WITH DIAERESIS */
     if (utf8_char[1] == 0x9D || utf8_char[1] == 0xBD || utf8_char[1] == 0xBF) {
       *unified = 0x79; // 'y'
       return unified;
