@@ -356,6 +356,14 @@ Options
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
+.. option:: --default-n-workers <n>
+
+   .. versionadded:: 14.0.7
+
+   Specifies the default number of workers of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`.
+
+   The default value is ``0``.
+
 .. option:: --default-request-timeout <timeout>
 
    Specifies the default request timeout in seconds.

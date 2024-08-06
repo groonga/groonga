@@ -369,6 +369,12 @@ msgstr ""
 msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
 msgstr ""
 
+msgid "Specifies the default number of workers of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`."
+msgstr "Groongaプロセスのデフォルトのワーカー数を指定します。例として、:doc:`/reference/commands/select` の ``n_workers`` のデフォルト値として使用されます。"
+
+msgid "The default value is ``0``."
+msgstr "デフォルト値は ``0`` です。"
+
 msgid "Specifies the default request timeout in seconds."
 msgstr "デフォルトのリクエストタイムアウトを指定します。単位は秒です。"
 
@@ -377,9 +383,6 @@ msgstr "``0.1`` のように小数で指定することで1秒未満のタイム
 
 msgid "If you specify ``0`` or less value, request timeout is disabled by default."
 msgstr "``0`` 未満の値を指定するとデフォルトでリクエストタイムアウトは無効になります。"
-
-msgid "The default value is ``0``."
-msgstr "デフォルト値は ``0`` です。"
 
 msgid ":doc:`/reference/command/request_timeout`"
 msgstr ""
