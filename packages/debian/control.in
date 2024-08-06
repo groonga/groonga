@@ -6,6 +6,7 @@ Uploaders: HAYASHI Kentaro <hayashi@clear-code.com>
 Build-Depends:
   cmake,
   debhelper (>= 9),
+  libedit-dev,
   libevent-dev,
   libjemalloc-dev,
   liblz4-dev,

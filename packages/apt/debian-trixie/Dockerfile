@@ -29,6 +29,7 @@ RUN \
     devscripts \
     lsb-release \
     libarrow-dev \
+    libedit-dev \
     libevent-dev \
     liblz4-dev \
     libmecab-dev \

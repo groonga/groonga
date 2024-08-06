@@ -24,6 +24,7 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	arrow-devel >= @APACHE_ARROW_VERSION@
+BuildRequires:	libedit-devel
 BuildRequires:	libstemmer-devel
 BuildRequires:	libzstd-devel
 BuildRequires:	lz4-devel
@@ -43,6 +44,7 @@ BuildRequires:	zlib-devel
 #BuildRequires:	libevent-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
+Requires:	libedit
 Obsoletes:	%{name} < 1.2.2-0
 
 %description
