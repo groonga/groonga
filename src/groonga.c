@@ -4121,6 +4121,8 @@ show_usage(FILE *output)
     "                                specify max number of threads (default: "
     "%u)\n"
     "      --pid-path <path>:        specify file to write process ID to\n"
+    "      --default-n-workers <n_workers>:\n"
+    "                                specify the default n_workers\n"
     "      --default-request-timeout <timeout>:\n"
     "                                specify the default request timeout in "
     "seconds\n"
