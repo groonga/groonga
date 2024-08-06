@@ -224,7 +224,7 @@ conditions. It can be used for non fulltext search conditions but
 
 ``query`` parameter is used with ``match_columns`` parameter when
 ``query`` parameter is used for specifying fulltext search
-conditions. ``match_columns`` specifies which columnes and indexes are
+conditions. ``match_columns`` specifies which columns and indexes are
 matched against ``query``.
 
 Here is a simple ``query`` usage example.
@@ -236,8 +236,8 @@ Here is a simple ``query`` usage example.
 The ``select`` command searches records that contain a word ``fast``
 in ``content`` column value from ``Entries`` table.
 
-``query`` has query syntax but its deatils aren't described here. See
-:doc:`/reference/grn_expr/query_syntax` for datails.
+``query`` has query syntax but its details aren't described here. See
+:doc:`/reference/grn_expr/query_syntax` for details.
 
 Search condition: ``filter``
 """"""""""""""""""""""""""""
@@ -260,7 +260,7 @@ in ``content`` column value and has ``Groonga`` as ``_key`` from
 
 ``filter`` has more operators and syntax like grouping by ``(...)``
 its details aren't described here. See
-:doc:`/reference/grn_expr/script_syntax` for datails.
+:doc:`/reference/grn_expr/script_syntax` for details.
 
 Paging
 ^^^^^^
@@ -276,13 +276,13 @@ Here is an example to output only the 2nd record.
 started from the 2nd record.
 
 ``limit`` specifies the max number of output records. ``--limit 1``
-means the number of output records is 1 at a maximium. If no records
+means the number of output records is 1 at a maximum. If no records
 are matched, ``select`` command outputs no records.
 
 The total number of records
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can use ``--limit 0`` to retrieve the total number of recrods
+You can use ``--limit 0`` to retrieve the total number of records
 without any contents of records.
 
 .. groonga-command
@@ -629,7 +629,7 @@ records.
 Pay attention to ``_score`` value. ``_score`` value is the number of
 matched counts against ``query`` parameter value. In the example,
 ``query`` parameter value is ``fast``. The fact that ``_score`` value
-is 1 means that ``fast`` appers in ``content`` column only once.  The
+is 1 means that ``fast`` appears in ``content`` column only once.  The
 fact that ``_score`` value is 2 means that ``fast`` appears in
 ``content`` column twice.
 
@@ -666,7 +666,7 @@ columns for fulltext search are ``_key`` and ``content`` columns and
 ``_key`` column's weight is 10 and ``content`` column's weight
 is 1. This weight allocation means ``_key`` column value is more
 important rather than ``content`` column value. In this example, title
-of blog entry is more important rather thatn content of blog entry.
+of blog entry is more important rather than content of blog entry.
 
 You can also specify score function. See :doc:`/reference/scorer` for
 details.
@@ -768,7 +768,7 @@ See :doc:`/reference/grn_expr/query_syntax` for other operations.
 
 Specifies the filter text. Normally, it is used for complex search
 conditions. ``filter`` can be used with ``query`` parameter. If both
-``filter`` and ``query`` are specified, there are conbined with
+``filter`` and ``query`` are specified, there are combined with
 logical and. It means that matched records should be matched against
 both ``filter`` and ``query``.
 
@@ -884,13 +884,13 @@ Advanced search parameters
 
 .. versionadded:: 8.0.1
 
-Specifies threshold to determine whether search storategy
+Specifies threshold to determine whether search strategy
 escalation is used or not. The threshold is compared against the
 number of matched records. If the number of matched records is equal
-to or less than the threshold, the search storategy escalation is
-used. See :doc:`/spec/search` about the search storategy escalation.
+to or less than the threshold, the search strategy escalation is
+used. See :doc:`/spec/search` about the search strategy escalation.
 
-The default threshold is 0. It means that search storategy escalation
+The default threshold is 0. It means that search strategy escalation
 is used only when no records are matched.
 
 The default threshold can be customized by one of the followings.
@@ -918,14 +918,14 @@ records are matched because the ``TokenBigram`` tokenizer tokenizes
 ``gr|ro|oo|on|ng|ga``. See :doc:`/reference/tokenizers` for details.)
 It means that ``groonga`` is indexed but ``groo`` isn't indexed. So no
 records are matched against ``groo`` by exact match. In the case, the
-search storategy escalation is used because the number of matched
+search strategy escalation is used because the number of matched
 records (0) is equal to ``match_escalation_threshold`` (0). One record
 is matched against ``groo`` by unsplit search.
 
 The second ``select`` command also searches records that contain a
 word ``groo`` in ``content`` column value from ``Entries`` table. And
 it also doesn't find matched records. In this case, the search
-storategy escalation is not used because the number of matched
+strategy escalation is not used because the number of matched
 records (0) is larger than ``match_escalation_threshold`` (-1). So no
 more searches aren't executed. And no records are matched.
 
@@ -1010,7 +1010,7 @@ Here are available values:
 ``ALLOW_PRAGMA`` enables pragma at the head of ``query``. This is not
 implemented yet.
 
-``ALLOW_COLUMN`` enables search againt columns that are not included
+``ALLOW_COLUMN`` enables search against columns that are not included
 in ``match_columns``. To specify column, there are ``COLUMN:...``
 syntaxes.
 
@@ -1089,7 +1089,7 @@ Here is an example of ``QUERY_NO_SYNTAX_ERROR``:
 .. include:: ../../example/reference/commands/select/query_flags_query_no_syntax_error.log
 .. select Magazine --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
 
-If you don't specify this flag, the quey causes a syntax error as below.
+If you don't specify this flag, the query causes a syntax error as below.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/query_flags_no_query_no_syntax_error.log
@@ -1115,7 +1115,7 @@ See also :doc:`/reference/grn_expr/query_syntax`.
 """"""""""""""""""
 
 It's for query expansion. Query expansion substitutes specific words
-to another words in query. Nomally, it's used for synonym search.
+to another words in query. Normally, it's used for synonym search.
 
 It specifies a column that is used to substitute ``query`` parameter
 value. The format of this parameter value is
@@ -1134,7 +1134,7 @@ column". Substitution column's value type must be
 Query expansion substitutes key of substitution table in query with
 values in substitution column. If a word in ``query`` is a key of
 substitution table, the word is substituted with substitution column
-value that is associated with the key. Substition isn't performed
+value that is associated with the key. Substitution isn't performed
 recursively. It means that substitution target words in substituted
 query aren't substituted.
 
@@ -1240,9 +1240,9 @@ So, queries tend to take a long time if there are a lot of ``drilldown``, ``dril
 The execution time of the total sum of processes can be shourtend by executing them in parallel.
 This parallel execution is done for each ``select`` command.
 
-"independent" means not using ``dorilldowns.table`` to reference the results of other drilldowns or slices.
+"independent" means not using ``drilldowns.table`` to reference the results of other drilldowns or slices.
 
-If there are dependencies as same meaning as using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices.
+If there are dependencies as same meaning as using ``drilldowns.table``, it wait for finish the dependent drilldowns or slices.
 Therefore, the degree of parallelism is reduced if they have dependencies.
 
 Executing in parallel means using multiple CPUs at the same time.
@@ -2880,9 +2880,9 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 
 .. versionadded:: 6.0.2
 
-Specify ``${LABLE}`` of other ``drilldowns`` or ``slices``.
+Specify ``${LABEL}`` of other ``drilldowns`` or ``slices``.
 
-You can drilldown the result of specified ``${LABLE}``.
+You can drilldown the result of specified ``${LABEL}``.
 It means that this parameter enables a nested drilldown.
 
 Here is an example to execute the nested drilldown. The final result takes first drilldown by ``tag`` and then 2nd drilldown by ``category`` against first result.
@@ -2985,7 +2985,7 @@ In this case, a target vector is considered as multi set.
 Thus, each element is considered as an individual element when there are multiple elements with same value.
 
 For example, there is a vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``.
-The power set is aggrigation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``.
+The power set is aggregation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``.
 However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown.
 Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use empty set.
 

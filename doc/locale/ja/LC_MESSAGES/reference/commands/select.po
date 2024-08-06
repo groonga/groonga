@@ -294,7 +294,7 @@ msgstr "``query`` はWebページの検索ボックス用に用意されてい�
 msgid "Normally, ``query`` parameter is used for specifying fulltext search conditions. It can be used for non fulltext search conditions but ``filter`` is used for the propose."
 msgstr "通常は ``query`` 引数は全文検索条件を指定するために使います。全文検索条件以外も指定できますが、その用途には ``filter`` 引数の方が向いています。"
 
-msgid "``query`` parameter is used with ``match_columns`` parameter when ``query`` parameter is used for specifying fulltext search conditions. ``match_columns`` specifies which columnes and indexes are matched against ``query``."
+msgid "``query`` parameter is used with ``match_columns`` parameter when ``query`` parameter is used for specifying fulltext search conditions. ``match_columns`` specifies which columns and indexes are matched against ``query``."
 msgstr "``query`` 引数で全文検索条件を指定する場合は、 ``match_columns`` 引数と一緒に使います。 ``match_columns`` はどのカラムまたはインデックスを使って ``query`` を検索するかを指定します。"
 
 msgid "Here is a simple ``query`` usage example."
@@ -303,7 +303,7 @@ msgstr "以下は簡単な ``query`` の使用例です。"
 msgid "The ``select`` command searches records that contain a word ``fast`` in ``content`` column value from ``Entries`` table."
 msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの値に ``fast`` を含んでいるレコードを検索します。"
 
-msgid "``query`` has query syntax but its deatils aren't described here. See :doc:`/reference/grn_expr/query_syntax` for datails."
+msgid "``query`` has query syntax but its details aren't described here. See :doc:`/reference/grn_expr/query_syntax` for details."
 msgstr "``query`` はクエリー構文という構文を使いますが、詳細はここでは説明しません。詳細は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 msgid "Search condition: ``filter``"
@@ -318,7 +318,7 @@ msgstr "以下は簡単な ``filter`` の使用例です。"
 msgid "The ``select`` command searches records that contain a word ``fast`` in ``content`` column value and has ``Groonga`` as ``_key`` from ``Entries`` table. There are three operators in the command, ``@``, ``&&`` and ``==``. ``@`` is fulltext search operator. ``&&`` and ``==`` are the same as ECMAScript. ``&&`` is logical AND operator and ``==`` is equality operator."
 msgstr "この ``select`` コマンドは ``Entries`` テーブルの中の ``content`` カラムの値に ``fast`` という単語を含んでいて、かつ、 ``_key`` が ``Groonga`` のレコードを検索します。このコマンドの中には ``@`` と ``&&`` と ``==`` という3つの演算子があります。 ``@`` は全文検索用の演算子です。 ``&&`` と ``==`` はECMAScriptと同じ意味です。 ``&&`` が論理積用の演算子で ``==`` が等価演算子です。"
 
-msgid "``filter`` has more operators and syntax like grouping by ``(...)`` its details aren't described here. See :doc:`/reference/grn_expr/script_syntax` for datails."
+msgid "``filter`` has more operators and syntax like grouping by ``(...)`` its details aren't described here. See :doc:`/reference/grn_expr/script_syntax` for details."
 msgstr "``filter`` にはもっと演算子や構文があります。例えば、 ``(...)`` を使った検索条件のグループ化などです。しかし、ここでは詳細は説明しません。詳細は :doc:`/reference/grn_expr/script_syntax` を参照してください。"
 
 msgid "Paging"
@@ -330,13 +330,13 @@ msgstr "``offset`` と ``limit`` を指定することで出力されるレコ�
 msgid "``offset`` is zero-based. ``--offset 1`` means output range is started from the 2nd record."
 msgstr "``offset`` は0始まりです。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
 
-msgid "``limit`` specifies the max number of output records. ``--limit 1`` means the number of output records is 1 at a maximium. If no records are matched, ``select`` command outputs no records."
+msgid "``limit`` specifies the max number of output records. ``--limit 1`` means the number of output records is 1 at a maximum. If no records are matched, ``select`` command outputs no records."
 msgstr "``limit`` は出力レコード数の最大値を指定します。 ``--limit 1`` は多くても1レコードを出力するという意味になります。もし、1つもレコードがマッチしていなければ ``select`` コマンドはどのレコードも出力しません。"
 
 msgid "The total number of records"
 msgstr "全レコード数"
 
-msgid "You can use ``--limit 0`` to retrieve the total number of recrods without any contents of records."
+msgid "You can use ``--limit 0`` to retrieve the total number of records without any contents of records."
 msgstr "``--limit 0`` を使うとレコードの内容は取得せずに全レコード数だけを取得できます。"
 
 msgid "``--limit 0`` is also useful for retrieving only the number of matched records."
@@ -561,7 +561,7 @@ msgstr "以下は簡単な ``match_columns`` の使用例です。"
 msgid "``--match_columns content`` means the default target column for fulltext search is ``content`` column and its weight is 1. ``--output_columns '_key, _score'`` means that the ``select`` command outputs ``_key`` value and ``_score`` value for matched records."
 msgstr "``--match_columns content`` はデフォルトの全文検索対象カラムに ``content`` カラムを使用し、その重みは1、という意味になります。 ``--output_columns '_key, _score'`` はこの ``select`` コマンドがマッチしたレコードの ``_key`` の値と ``_score`` の値を出力する、ということを指定しています。"
 
-msgid "Pay attention to ``_score`` value. ``_score`` value is the number of matched counts against ``query`` parameter value. In the example, ``query`` parameter value is ``fast``. The fact that ``_score`` value is 1 means that ``fast`` appers in ``content`` column only once.  The fact that ``_score`` value is 2 means that ``fast`` appears in ``content`` column twice."
+msgid "Pay attention to ``_score`` value. ``_score`` value is the number of matched counts against ``query`` parameter value. In the example, ``query`` parameter value is ``fast``. The fact that ``_score`` value is 1 means that ``fast`` appears in ``content`` column only once.  The fact that ``_score`` value is 2 means that ``fast`` appears in ``content`` column twice."
 msgstr "``_score`` の値に注目してください。 ``_score`` の値は ``query`` 引数の値に何個マッチしたかになっています。この例では、 ``query`` 引数の値は ``fast`` です。 ``_score`` の値が1ということは ``content`` カラムの中に ``fast`` が1つだけあるということです。 ``_score`` の値が2ということは ``content`` カラムの中に ``fast`` が2つあるということです。"
 
 msgid "To specify weight, ``column * weight`` syntax is used. Here is a weight usage example."
@@ -579,7 +579,7 @@ msgstr "デフォルトの全文検索対象カラムとして複数のカラム
 msgid "To specify one or more columns, ``column1 * weight1 || column2 * weight2 || ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is used for weight. Here is a one or more columns usage example."
 msgstr "複数のカラムを指定するには ``column1 * weight1 || column2 * weight2 || ...`` という構文を使います。 ``* weight`` は省略することができます。省略した場合は重みが1になります。以下は複数カラムの使用例です。"
 
-msgid "``--match_columns '_key * 10 || content'`` means the default target columns for fulltext search are ``_key`` and ``content`` columns and ``_key`` column's weight is 10 and ``content`` column's weight is 1. This weight allocation means ``_key`` column value is more important rather than ``content`` column value. In this example, title of blog entry is more important rather thatn content of blog entry."
+msgid "``--match_columns '_key * 10 || content'`` means the default target columns for fulltext search are ``_key`` and ``content`` columns and ``_key`` column's weight is 10 and ``content`` column's weight is 1. This weight allocation means ``_key`` column value is more important rather than ``content`` column value. In this example, title of blog entry is more important rather than content of blog entry."
 msgstr "``--match_columns '_key * 10 || content'`` はデフォルト検索対象カラムが ``_key`` カラムと ``content`` カラムで、 ``_key`` カラムの重みは10、 ``content`` カラムの重みは1という意味です。この重み付けは ``_key`` カラムの値は ``content`` カラムの値よりも重要だという意味になります。この例では、ブログエントリのタイトルはブログエントリの内容よりも重要だということです。"
 
 msgid "You can also specify score function. See :doc:`/reference/scorer` for details."
@@ -648,7 +648,7 @@ msgstr "他の演算子は :doc:`/reference/grn_expr/query_syntax` を参照し�
 msgid "``filter``"
 msgstr ""
 
-msgid "Specifies the filter text. Normally, it is used for complex search conditions. ``filter`` can be used with ``query`` parameter. If both ``filter`` and ``query`` are specified, there are conbined with logical and. It means that matched records should be matched against both ``filter`` and ``query``."
+msgid "Specifies the filter text. Normally, it is used for complex search conditions. ``filter`` can be used with ``query`` parameter. If both ``filter`` and ``query`` are specified, there are combined with logical and. It means that matched records should be matched against both ``filter`` and ``query``."
 msgstr "フィルターテキストを指定します。通常、 ``filter`` は複雑な条件を指定するために使います。 ``filter`` は ``query`` 引数と一緒に使うこともできます。 ``filter`` と ``query`` を両方指定した場合はそれらを論理積で組み合わせます。つまり、マッチするレコードは ``filter`` にも ``query`` にもマッチしなければいけないということです。"
 
 msgid "``filter`` parameter is designed for complex conditions. A filter text should be formatted in :doc:`/reference/grn_expr/script_syntax`. The syntax is similar to ECMAScript. For example, ``column == \"value\"`` means that the value of ``column`` column is equal to ``\"value\"``. ``column < value`` means that the value of ``column`` column is less than ``value``."
@@ -699,10 +699,10 @@ msgstr "高度な検索のための引数"
 msgid "``match_escalation_threshold``"
 msgstr ""
 
-msgid "Specifies threshold to determine whether search storategy escalation is used or not. The threshold is compared against the number of matched records. If the number of matched records is equal to or less than the threshold, the search storategy escalation is used. See :doc:`/spec/search` about the search storategy escalation."
+msgid "Specifies threshold to determine whether search strategy escalation is used or not. The threshold is compared against the number of matched records. If the number of matched records is equal to or less than the threshold, the search strategy escalation is used. See :doc:`/spec/search` about the search strategy escalation."
 msgstr "検索方法をエスカレーションするかどうかを決定するための閾値を指定します。この閾値はマッチしたレコード数との比較に使われます。マッチしたレコード数がこの閾値以下の場合は検索方法をエスカレーションします。検索方法のエスカレーションについては :doc:`/spec/search` を参照してください。"
 
-msgid "The default threshold is 0. It means that search storategy escalation is used only when no records are matched."
+msgid "The default threshold is 0. It means that search strategy escalation is used only when no records are matched."
 msgstr "デフォルトの閾値は0です。これは1つもレコードがマッチしなかったときだけ検索方法をエスカレーションするということです。"
 
 msgid "The default threshold can be customized by one of the followings."
@@ -720,10 +720,10 @@ msgstr "設定ファイルの ``match-escalation-threshold`` 設定項目"
 msgid "Here is a simple ``match_escalation_threshold`` usage example. The first ``select`` doesn't have ``match_escalation_threshold`` parameter. The second ``select`` has ``match_escalation_threshold`` parameter."
 msgstr "以下は簡単な ``match_escalation_threshold`` の使用例です。最初の ``select`` は ``match_escalation_threshold`` 引数がありません。2番目の ``select`` は ``match_escalation_threshold`` 引数があります。"
 
-msgid "The first ``select`` command searches records that contain a word ``groo`` in ``content`` column value from ``Entries`` table. But no records are matched because the ``TokenBigram`` tokenizer tokenizes ``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``. (The ``TokenBigramSplitSymbolAlpha`` tokenizer tokenizes ``groonga`` to ``gr|ro|oo|on|ng|ga``. See :doc:`/reference/tokenizers` for details.) It means that ``groonga`` is indexed but ``groo`` isn't indexed. So no records are matched against ``groo`` by exact match. In the case, the search storategy escalation is used because the number of matched records (0) is equal to ``match_escalation_threshold`` (0). One record is matched against ``groo`` by unsplit search."
+msgid "The first ``select`` command searches records that contain a word ``groo`` in ``content`` column value from ``Entries`` table. But no records are matched because the ``TokenBigram`` tokenizer tokenizes ``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``. (The ``TokenBigramSplitSymbolAlpha`` tokenizer tokenizes ``groonga`` to ``gr|ro|oo|on|ng|ga``. See :doc:`/reference/tokenizers` for details.) It means that ``groonga`` is indexed but ``groo`` isn't indexed. So no records are matched against ``groo`` by exact match. In the case, the search strategy escalation is used because the number of matched records (0) is equal to ``match_escalation_threshold`` (0). One record is matched against ``groo`` by unsplit search."
 msgstr "最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。しかし、この検索ではどのレコードにもマッチしません。これは、 ``TokenBigram`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` にトークナイズするからです。（ ``TokenBigramSplitSymbolAlpha`` は ``groonga`` を ``gr|ro|oo|on|ng|ga`` にトークナイズします。詳細は :doc:`/reference/tokenizers` を見てください。）つまり、 ``groonga`` はインデックスに登録されていますが、 ``groo`` はインデックスに登録されていないということです。インデックスに登録されていないので完全一致検索では ``groo`` はどのレコードにもマッチしません。このケースでは検索方法のエスカレーションが行われています。なぜならばマッチしたレコード数（0）が ``match_escalation_threshold`` （0）の値と等しいからです。非分かち書き検索では ``groo`` で1つのレコードがマッチします。"
 
-msgid "The second ``select`` command also searches records that contain a word ``groo`` in ``content`` column value from ``Entries`` table. And it also doesn't find matched records. In this case, the search storategy escalation is not used because the number of matched records (0) is larger than ``match_escalation_threshold`` (-1). So no more searches aren't executed. And no records are matched."
+msgid "The second ``select`` command also searches records that contain a word ``groo`` in ``content`` column value from ``Entries`` table. And it also doesn't find matched records. In this case, the search strategy escalation is not used because the number of matched records (0) is larger than ``match_escalation_threshold`` (-1). So no more searches aren't executed. And no records are matched."
 msgstr "2番目の ``select`` コマンドも ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。そして、この ``select`` コマンドもマッチしません。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （-1）より大きいので、検索方法をエスカレーションしません。そして、1つもレコードがマッチしません。"
 
 msgid "``match_escalation``"
@@ -807,7 +807,7 @@ msgstr ""
 msgid "``ALLOW_PRAGMA`` enables pragma at the head of ``query``. This is not implemented yet."
 msgstr "``ALLOW_PRAGMA`` を指定すると ``query`` の先頭でプラグマを指定することができます。この機能はまだ実装されていません。"
 
-msgid "``ALLOW_COLUMN`` enables search againt columns that are not included in ``match_columns``. To specify column, there are ``COLUMN:...`` syntaxes."
+msgid "``ALLOW_COLUMN`` enables search against columns that are not included in ``match_columns``. To specify column, there are ``COLUMN:...`` syntaxes."
 msgstr "``ALLOW_COLUMN`` を指定すると ``match_columns`` で指定していないカラムでも検索できるように成ります。カラムを指定するには ``COLUMN:...`` というような構文を使います。"
 
 msgid "``ALLOW_UPDATE`` enables column update by ``query`` with ``COLUMN:=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to update column because the column update syntax specifies column."
@@ -852,7 +852,7 @@ msgstr "他のフラグの使い方を示すために使うスキーマ定義と
 msgid "Here is an example of ``QUERY_NO_SYNTAX_ERROR``:"
 msgstr "以下は ``QUERY_NO_SYNTAX_ERROR`` の使用例です。"
 
-msgid "If you don't specify this flag, the quey causes a syntax error as below."
+msgid "If you don't specify this flag, the query causes a syntax error as below."
 msgstr "このフラグを指定しない場合は、このクエリーは次のように構文エラーになります。"
 
 msgid "Here is a usage example of ``NONE``."
@@ -867,7 +867,7 @@ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 msgid "``query_expander``"
 msgstr ""
 
-msgid "It's for query expansion. Query expansion substitutes specific words to another words in query. Nomally, it's used for synonym search."
+msgid "It's for query expansion. Query expansion substitutes specific words to another words in query. Normally, it's used for synonym search."
 msgstr "クエリー展開用の引数です。クエリー展開はクエリー中の特定の単語を別の単語に置換します。通常は類義語検索に使います。"
 
 msgid "It specifies a column that is used to substitute ``query`` parameter value. The format of this parameter value is \"``${TABLE}.${COLUMN}``\". For example, \"``Terms.synonym``\" specifies ``synonym`` column in ``Terms`` table."
@@ -879,7 +879,7 @@ msgstr "クエリー展開用のテーブルを「置換テーブル」と呼び
 msgid "Column for query expansion is called \"substitution column\". Substitution column's value type must be ``ShortText``. Column type must be vector (``COLUMN_VECTOR``)."
 msgstr "クエリー展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は ``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）にしてください。"
 
-msgid "Query expansion substitutes key of substitution table in query with values in substitution column. If a word in ``query`` is a key of substitution table, the word is substituted with substitution column value that is associated with the key. Substition isn't performed recursively. It means that substitution target words in substituted query aren't substituted."
+msgid "Query expansion substitutes key of substitution table in query with values in substitution column. If a word in ``query`` is a key of substitution table, the word is substituted with substitution column value that is associated with the key. Substitution isn't performed recursively. It means that substitution target words in substituted query aren't substituted."
 msgstr "クエリー展開はクエリーの中にある置換テーブルのキーを置換カラムの値で置換します。 ``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換されたクエリー内に置換対象の単語があっても置換されないということです。"
 
 msgid "Here is a sample substitution table to show a simple ``query_expander`` usage example."
@@ -942,10 +942,10 @@ msgstr "デフォルトでは各 ``drilldown`` 、 ``drilldowns`` 、 ``slices``
 msgid "``n_workers`` enables to execute independent ``drilldown``, ``drilldowns`` and ``slices`` in parallel. The execution time of the total sum of processes can be shourtend by executing them in parallel. This parallel execution is done for each ``select`` command."
 msgstr "``n_workers`` を使うと依存関係のない複数の ``drilldown`` 、 ``drilldowns`` 、 ``slices``  を並列に実行できます。そのため、従来はすべての処理の総和分の実行時間がかかっていたところが並列に実行する分短縮できます。この並列実行は、 ``select`` コマンドごとに行います。"
 
-msgid "\"independent\" means not using ``dorilldowns.table`` to reference the results of other drilldowns or slices."
-msgstr "依存関係がないとは、 ``dorilldowns.table`` を使用して他のドリルダウンやスライスの結果を参照していないことです。"
+msgid "\"independent\" means not using ``drilldowns.table`` to reference the results of other drilldowns or slices."
+msgstr "依存関係がないとは、 ``drilldowns.table`` を使用して他のドリルダウンやスライスの結果を参照していないことです。"
 
-msgid "If there are dependencies as same meaning as using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices. Therefore, the degree of parallelism is reduced if they have dependencies."
+msgid "If there are dependencies as same meaning as using ``drilldowns.table``, it wait for finish the dependent drilldowns or slices. Therefore, the degree of parallelism is reduced if they have dependencies."
 msgstr "依存関係がある場合、つまり、 ``drilldowns.table`` を使用している場合、依存するドリルダウンやスライスの処理の終了を待ちます。したがって依存関係がある場合は並列度が下がります。"
 
 msgid "Executing in parallel means using multiple CPUs at the same time. If executing in parallel without free CPU resource, it may actually slow down the execution time. This is because they have to wait for the other process being executed by the target CPU to finish."
@@ -1986,11 +1986,11 @@ msgstr "``tag.n_likes`` はドリルダウン引数グループのラベルで�
 msgid "Note that you can't use ``_value.${KEY_NAME}`` syntax when you just specify one key as ``drilldowns[${LABEL}].keys`` like ``--drilldowns[tag].keys tag``. You should use ``_key`` for the case. It's the same rule in :ref:`select-drilldown-output-columns`."
 msgstr "``--drilldowns[tag].keys tag`` のように ``drilldowns[${LABEL}].keys`` にキーを1つだけしか指定していない場合は ``_value.${KEY_NAME}`` 構文を使うことはできません。この場合は ``_key`` を使ってください。これは、 :ref:`select-drilldown-output-columns` と同じルールです。"
 
-msgid "Specify ``${LABLE}`` of other ``drilldowns`` or ``slices``."
-msgstr "他の ``drilldowns`` または ``slices`` の ``${LABLE}`` を指定します。"
+msgid "Specify ``${LABEL}`` of other ``drilldowns`` or ``slices``."
+msgstr "他の ``drilldowns`` または ``slices`` の ``${LABEL}`` を指定します。"
 
-msgid "You can drilldown the result of specified ``${LABLE}``. It means that this parameter enables a nested drilldown."
-msgstr "指定した ``${LABLE}`` の結果をドリルダウンします。つまり、このパラメータを使うと多段ドリルダウンができます。"
+msgid "You can drilldown the result of specified ``${LABEL}``. It means that this parameter enables a nested drilldown."
+msgstr "指定した ``${LABEL}`` の結果をドリルダウンします。つまり、このパラメータを使うと多段ドリルダウンができます。"
 
 msgid "Here is an example to execute the nested drilldown. The final result takes first drilldown by ``tag`` and then 2nd drilldown by ``category`` against first result."
 msgstr "以下は、多段ドリルダウンを行う例です。最初に ``tag`` でドリルダウンし、次にそのドリルダウン結果を ``category`` でドリルダウンしたものが最終的な結果です。"
@@ -2025,7 +2025,7 @@ msgstr ""
 msgid "This aggregates total with expanding vectors to the power set. In this case, a target vector is considered as multi set. Thus, each element is considered as an individual element when there are multiple elements with same value."
 msgstr "ベクターをべき集合に展開して集計します。 このとき、対象のベクターを多重集合とみなします。 多重集合とみなすので、同じ値の要素が複数ある場合、それぞれ別の要素とみなします。"
 
-msgid "For example, there is a vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``. The power set is aggrigation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``. However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown. Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use empty set."
+msgid "For example, there is a vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``. The power set is aggregation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``. However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown. Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use empty set."
 msgstr "ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。 べき集合は、集合のすべての部分集合の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。 ただし、Groongaは要素数が0の集合（空集合）は使いません。ドリルダウン結果に使うには有益ではないからです。 空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。"
 
 msgid "Subset with 1 element"
