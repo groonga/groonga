@@ -117,6 +117,7 @@ jobs:
             gdb \
             gettext \
             libarrow-dev \
+            libedit-dev \
             libevent-dev \
             libluajit-5.1-dev \
             liblz4-dev \

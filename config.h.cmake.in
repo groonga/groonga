@@ -89,6 +89,7 @@
 #cmakedefine GRN_WITH_H3
 #cmakedefine GRN_WITH_H3_BUNDLED
 #cmakedefine GRN_WITH_KYTEA
+#cmakedefine GRN_WITH_LIBEDIT
 #cmakedefine GRN_WITH_LZ4
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK

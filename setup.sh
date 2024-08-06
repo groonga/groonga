@@ -51,6 +51,7 @@ case "${distribution}-${code_name}" in
       gcc
       gettext
       libarrow-dev
+      libedit-dev
       liblz4-dev
       libmecab-dev
       libmsgpack-dev
