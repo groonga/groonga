@@ -44,6 +44,7 @@ BuildRequires:	zlib-devel
 #BuildRequires:	libevent-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
+Requires:	libedit
 Obsoletes:	%{name} < 1.2.2-0
 
 %description
@@ -57,7 +58,6 @@ Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	arrow@APACHE_ARROW_MAJOR_VERSION@-libs
-Requires:	libedit
 Requires:	libzstd
 Requires:	lz4
 Requires:	msgpack
