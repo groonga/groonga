@@ -356,11 +356,11 @@ Options
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
-.. option:: --default-n-workers <n_workers>
+.. option:: --default-n-workers <n>
 
    .. versionadded:: 14.0.7
 
-   Specifies the default ``n_workers`` value of the Groonga process.
+   Specifies the default ``n_workers`` value of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`.
 
    The default value is ``0``.
 
