@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ÀÁÂÃÄÅàáâãäåĀāĂăĄąǍǎǞǟǠǡǺǻȀȁȂȃȦȧḀḁẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặÅ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ÀÁÂÃÄÅàáâãäå"   WITH_TYPES
 [
   [
     0,
@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ÀÁÂ�
     0.0
   ],
   {
-    "normalized": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "normalized": "aaaaaaaaaaaa",
     "types": [
       "alpha",
       "alpha",
@@ -20,6 +20,46 @@ normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ÀÁÂ�
       "alpha",
       "alpha",
       "alpha",
+      "null"
+    ],
+    "checks": [
+
+    ]
+  }
+]
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ĀāĂăĄą"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "aaaaaa",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "null"
+    ],
+    "checks": [
+
+    ]
+  }
+]
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ǍǎǞǟǠǡǺǻ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "aaaaaaaa",
+    "types": [
       "alpha",
       "alpha",
       "alpha",
@@ -28,18 +68,46 @@ normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ÀÁÂ�
       "alpha",
       "alpha",
       "alpha",
+      "null"
+    ],
+    "checks": [
+
+    ]
+  }
+]
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ȀȁȂȃȦȧ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "aaaaaa",
+    "types": [
       "alpha",
       "alpha",
       "alpha",
       "alpha",
       "alpha",
       "alpha",
-      "alpha",
-      "alpha",
-      "alpha",
-      "alpha",
-      "alpha",
-      "alpha",
+      "null"
+    ],
+    "checks": [
+
+    ]
+  }
+]
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "ḀḁẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặÅ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "types": [
       "alpha",
       "alpha",
       "alpha",
