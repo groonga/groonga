@@ -891,7 +891,7 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
        */
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
        (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7))) {
-    *unified = 0x61; // 'a'
+    *unified = 'a';
     return unified;
   }
 
