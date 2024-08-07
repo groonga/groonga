@@ -148,7 +148,8 @@ grn_table_update_by_id(grn_ctx *ctx,
  * \param dest_key_size Length of `dest_key_size` (byte)
  *
  * \return GRN_SUCCESS on success, GRN_OPERATION_NOT_PERMITTED if not
- *         GRN_TABLE_DAT_KEY, `grn_rc` according to error on error
+ *         GRN_TABLE_DAT_KEY, and the appropriate `grn_rc` for any other
+ *         errors
  */
 GRN_API grn_rc
 grn_table_update(grn_ctx *ctx,
