@@ -845,6 +845,12 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
                                     "");
 }
 
+/*
+ * This function assumes that the input utf8_char is a valid UTF-8 character.
+ * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
+ * before calling this function. This is a precondition in terms of contract
+ * programming.
+ */
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
