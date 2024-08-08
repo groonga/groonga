@@ -212,7 +212,7 @@ jobs:
           - label: Ubuntu focal amd64
             id: ubuntu-focal-amd64
             task-namespace: apt
-            target: ubuntu-focal-amd64
+            target: ubuntu-focal
             test-docker-image: ubuntu:focal
           # - label: AlmaLinux 8 x86_64
           #   id: almalinux-8-x86_64
