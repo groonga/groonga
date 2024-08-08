@@ -850,6 +850,11 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
  * before calling this function. This is a precondition in terms of contract
  * programming.
+ *
+ * Given NFKC normalization converts to lowercase, ranges can include both cases
+ * without affecting results, optimizing character range specifications.
+ * Therefore, where applicable, ranges are used to broadly match characters,
+ * enhancing efficiency.
  */
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
