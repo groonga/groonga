@@ -850,11 +850,6 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
  * before calling this function. This is a precondition in terms of contract
  * programming.
- *
- * Given NFKC normalization converts to lowercase, ranges can include both cases
- * without affecting results, optimizing character range specifications.
- * Therefore, where applicable, ranges are used to broadly match characters,
- * enhancing efficiency.
  */
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
@@ -871,6 +866,8 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
        * U+0101 LATIN SMALL LETTER A WITH MACRON
        * U+0103 LATIN SMALL LETTER A WITH BREVE
        * U+0105 LATIN SMALL LETTER A WITH OGONEK
+       * Uppercase counterparts(U+0102 and U+0104) are omitted as NFKC
+       * normalization converts them to their lowercase equivalents.
        */
       (utf8_char[0] == 0xC4 &&
        (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
@@ -899,8 +896,21 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 && utf8_char[2] == 0x81) ||
       /*
        * Latin Extended Additional
-       * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW ..
+       * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW
+       * U+1EA3 LATIN SMALL LETTER A WITH HOOK ABOVE
+       * U+1EA5 LATIN SMALL LETTER A WITH CIRCUMFLEX
+       * U+1EA7 LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
+       * U+1EA9 LATIN SMALL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
+       * U+1EAB LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
+       * U+1EAD LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
+       * U+1EAF LATIN SMALL LETTER A WITH BREVE AND ACUTE
+       * U+1EB1 LATIN SMALL LETTER A WITH BREVE AND GRAVE
+       * U+1EB3 LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
+       * U+1EB5 LATIN SMALL LETTER A WITH BREVE AND TILDE
        * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
+       * Uppercase counterparts(U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
+       * U+1EAC, U+1EAE, U+1EB0, U+1EB2, U+1EB4, and U+1EB6) are omitted as NFKC
+       * normalization converts them to their lowercase equivalents.
        */
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
        (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7))) {
