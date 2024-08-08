@@ -19,7 +19,7 @@ apt update
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
-  ${repositories_dir}/debian/pool/${code_name}/main/*/*/*_{${architecture},all}.deb
+  ${repositories_dir}/${distribution}/pool/${code_name}/main/*/*/*_{${architecture},all}.deb
 
 groonga --version
 if [ "${architecture}" != "i386" ]; then
