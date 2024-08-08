@@ -861,11 +861,13 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
   /*
+   * Latin-1 Supplement
    * U+00E0 LATIN SMALL LETTER A WITH GRAVE ..
    * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE
    */
   if ((utf8_char[0] == 0xC3 && 0xA0 <= utf8_char[1] && utf8_char[1] <= 0xA5) ||
       /*
+       * Latin Extended-A
        * U+0101 LATIN SMALL LETTER A WITH MACRON
        * U+0103 LATIN SMALL LETTER A WITH BREVE
        * U+0105 LATIN SMALL LETTER A WITH OGONEK
@@ -873,6 +875,7 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
       (utf8_char[0] == 0xC4 &&
        (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
       /*
+       * Latin Extended-B
        * U+01CE LATIN SMALL LETTER A WITH CARON
        * U+01DF LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
        * U+01E1 LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
@@ -882,15 +885,20 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
        (utf8_char[1] == 0x8E || utf8_char[1] == 0x9F || utf8_char[1] == 0xA1 ||
         utf8_char[1] == 0xBB)) ||
       /*
+       * Latin Extended-B
        * U+0201 LATIN SMALL LETTER A WITH DOUBLE GRAVE
        * U+0203 LATIN SMALL LETTER A WITH INVERTED BREVE
        * U+0227 LATIN SMALL LETTER A WITH DOT ABOVE
        */
       (utf8_char[0] == 0xC8 && (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
                                 utf8_char[1] == 0xA7)) ||
-      /* U+1E01 LATIN SMALL LETTER A WITH RING BELOW */
+      /*
+       * Latin Extended Additional
+       * U+1E01 LATIN SMALL LETTER A WITH RING BELOW
+       */
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 && utf8_char[2] == 0x81) ||
       /*
+       * Latin Extended Additional
        * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW ..
        * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
        */
