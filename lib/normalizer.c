@@ -865,8 +865,8 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
        * U+0103 LATIN SMALL LETTER A WITH BREVE
        * U+0105 LATIN SMALL LETTER A WITH OGONEK
        */
-      (utf8_char[0] == 0xC4 && (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
-                                utf8_char[1] == 0x85)) ||
+      (utf8_char[0] == 0xC4 &&
+       (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
       /*
        * U+01CE LATIN SMALL LETTER A WITH CARON
        * U+01DF LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
