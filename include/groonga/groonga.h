@@ -720,6 +720,25 @@ typedef enum {
   GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT,
 } grn_operator;
 
+/**
+ * \brief Retrieves a column from a specified table, or an accessor if the name
+ *        is an accessor string.
+ *
+ * This function returns a column corresponding to the given name from the
+ * specified table. If the name does not correspond to any column, it returns
+ * NULL. If the name is an accessor string, it returns the corresponding
+ * accessor. Accessor strings are dot-concatenated column names, with '_id' and
+ * '_key' as special accessors that return the record ID and key, respectively.
+ * Example: `col1`, `col2.col3`, `col2._id`
+ *
+ * \param ctx The context object
+ * \param table The target table from which the column or accessor is retrieved.
+ * \param name The name of the column or an accessor string.
+ * \param name_size The length of the `name` string.
+ *
+ * \return A pointer to a grn_obj for the column or accessor, or NULL if not
+ * found.
+ */
 GRN_API grn_obj *
 grn_obj_column(grn_ctx *ctx,
                grn_obj *table,
