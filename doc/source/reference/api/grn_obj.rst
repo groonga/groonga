@@ -16,18 +16,12 @@ TODO...
 Reference
 ---------
 
+.. note::
+   We are currently switching to automatic generation using Doxygen.
+
 .. c:type:: grn_obj
 
    TODO...
-
-.. c:function:: grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
-
-   nameがカラム名の場合、それに対応するtableのカラムを返します。対応するカラムが存在しなければNULLを返します。
-
-   nameがアクセサ文字列の場合、それに対応するaccessorを返します。アクセサ文字列とは、カラム名等を'.'で連結した文字列です。'_id', '_key'は特殊なアクセサで、それぞれレコードID/keyを返します。例) 'col1' / 'col2.col3' / 'col2._id'
-
-   :param table: 対象tableを指定します。
-   :param name: カラム名を指定します。
 
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
