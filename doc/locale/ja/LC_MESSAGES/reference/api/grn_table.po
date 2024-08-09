@@ -36,63 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "nameパラメータに対応する新たなtableをctxが使用するdbに定義します。"
-msgstr ""
-
-msgid "作成するtableの名前を指定します。NULLなら無名tableとなります。  persistent dbに対して名前をありのtableを作成するときには、flagsに ``GRN_OBJ_PERSISTENT`` が指定されていなけれなりません。"
-msgstr ""
-
-msgid "作成するtableの名前を指定します。NULLなら無名tableとなります。"
-msgstr ""
-
-msgid "persistent dbに対して名前をありのtableを作成するときには、flagsに ``GRN_OBJ_PERSISTENT`` が指定されていなけれなりません。"
-msgstr ""
-
-msgid "作成するtableのファイルパスを指定します。 flagsに ``GRN_OBJ_PERSISTENT`` が指定されている場合のみ有効です。 NULLなら自動的にファイルパスが付与されます。"
-msgstr ""
-
-msgid "``GRN_OBJ_PERSISTENT`` を指定すると永続tableとなります。  ``GRN_OBJ_TABLE_PAT_KEY``, ``GRN_OBJ_TABLE_HASH_KEY``, ``GRN_OBJ_TABLE_NO_KEY`` のいずれかを指定します。  ``GRN_OBJ_KEY_NORMALIZE`` を指定すると正規化された文字列がkeyとなります。  ``GRN_OBJ_KEY_WITH_SIS`` を指定するとkey文字列の全suffixが自動的に登録されます。"
-msgstr ""
-
-msgid "``GRN_OBJ_PERSISTENT`` を指定すると永続tableとなります。"
-msgstr ""
-
-msgid "``GRN_OBJ_TABLE_PAT_KEY``, ``GRN_OBJ_TABLE_HASH_KEY``, ``GRN_OBJ_TABLE_NO_KEY`` のいずれかを指定します。"
-msgstr ""
-
-msgid "``GRN_OBJ_KEY_NORMALIZE`` を指定すると正規化された文字列がkeyとなります。"
-msgstr ""
-
-msgid "``GRN_OBJ_KEY_WITH_SIS`` を指定するとkey文字列の全suffixが自動的に登録されます。"
-msgstr ""
-
-msgid "keyの型を指定します。``GRN_OBJ_TABLE_NO_KEY`` が指定された場合は無効です。 既存のtypeあるいはtableを指定できます。  key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなります。"
-msgstr ""
-
-msgid "keyの型を指定します。``GRN_OBJ_TABLE_NO_KEY`` が指定された場合は無効です。 既存のtypeあるいはtableを指定できます。"
-msgstr ""
-
-msgid "key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなります。"
-msgstr ""
-
-msgid "keyに対応する値を格納する領域の型を指定します。 tableはcolumnとは別に、keyに対応する値を格納する領域を一つだけ持つことができます。"
-msgstr ""
-
-msgid "keyに対応する新しいrecordをtableに追加し、そのIDを返します。keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返します。"
-msgstr ""
-
-msgid "``GRN_OBJ_TABLE_NO_KEY`` が指定されたtableでは、key, key_size は無視されます。"
-msgstr ""
-
-msgid "対象tableを指定します。"
-msgstr ""
-
-msgid "検索keyを指定します。"
-msgstr ""
-
-msgid "NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。"
-msgstr ""
-
 msgid "It finds a record that has key parameter and returns ID of the found record. If table parameter is a database, it finds an object (table, column and so on) that has key parameter  and returns ID of the found object."
 msgstr ""
 
@@ -108,6 +51,9 @@ msgstr ""
 msgid "注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。"
 msgstr ""
 
+msgid "対象tableを指定します。"
+msgstr ""
+
 msgid "検索idを指定します。"
 msgstr ""
 
@@ -115,6 +61,9 @@ msgid "tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指�
 msgstr ""
 
 msgid "tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキーを検索し、対応するIDを返します。"
+msgstr ""
+
+msgid "検索keyを指定します。"
 msgstr ""
 
 msgid "tableのIDに対応するレコードのkeyを取得します。"
@@ -148,21 +97,6 @@ msgid "tableのidに対応するレコードのkeyを変更します。新しい
 msgstr ""
 
 msgid "この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。"
-msgstr ""
-
-msgid "tableのsrc_keyに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。"
-msgstr ""
-
-msgid "対象レコードのkeyを指定します。"
-msgstr ""
-
-msgid "対象レコードのkeyの長さ(byte)を指定します。"
-msgstr ""
-
-msgid "変更後のkeyを指定します。"
-msgstr ""
-
-msgid "変更後のkeyの長さ(byte)を指定します。"
 msgstr ""
 
 msgid "tableの全レコードを一括して削除します。"
