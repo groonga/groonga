@@ -20,20 +20,6 @@ Reference
 
    TODO...
 
-.. c:function:: int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
-
-   cursorのカレントレコードのkeyをkeyパラメータにセットし、その長さを返します。
-
-   :param tc: 対象cursorを指定します。
-   :param key: カレントレコードのkeyへのポインタがセットされます。
-
-.. c:function:: int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
-
-   cursorパラメータのカレントレコードのvalueをvalueパラメータにセットし、その長さを返します。
-
-   :param tc: 対象cursorを指定します。
-   :param value: カレントレコードのvalueへのポインタがセットされます。
-
 .. c:function:: grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc, const void *value, int flags)
 
    cursorのカレントレコードのvalueを引数の内容に置き換えます。cursorのカレントレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。

@@ -280,8 +280,30 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
  */
 GRN_API grn_id
 grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
+
+/**
+ * \brief Sets the key of the current record in cursor to `key` parameter and
+ *        returns its length
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ * \param key A pointer to the key of the current record is set
+ *
+ * \return Length of `key`
+ */
 GRN_API int
 grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
+
+/**
+ * \brief Sets the value of the current record in cursor to `value` parameter
+ *        and returns its length
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ * \param value A pointer to the value of the current record is set
+ *
+ * \return Length of `value`
+ */
 GRN_API int
 grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 GRN_API uint32_t
