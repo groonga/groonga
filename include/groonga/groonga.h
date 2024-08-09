@@ -737,8 +737,7 @@ typedef enum {
  * \param name The name of the column or an accessor string.
  * \param name_size The length of the `name` string.
  *
- * \return A pointer to a grn_obj for the column or accessor, or NULL if not
- *         found.
+ * \return The column or accessor, or NULL if not found.
  */
 GRN_API grn_obj *
 grn_obj_column(grn_ctx *ctx,
