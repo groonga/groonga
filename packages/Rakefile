@@ -56,6 +56,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "debian-bookworm-arm64",
       "debian-trixie",
       "debian-trixie-arm64",
+      "ubuntu-focal",
     ]
   end
 
