@@ -109,7 +109,7 @@ int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 int grn_uyield_count = 0;
 #endif
 
-static grn_bool grn_ctx_per_db = GRN_FALSE;
+static bool grn_ctx_per_db = false;
 static bool grn_back_trace_enable = true;
 static int32_t grn_n_workers_default = 0;
 
@@ -120,7 +120,7 @@ grn_init_from_env(void)
     char grn_ctx_per_db_env[GRN_ENV_BUFFER_SIZE];
     grn_getenv("GRN_CTX_PER_DB", grn_ctx_per_db_env, GRN_ENV_BUFFER_SIZE);
     if (grn_ctx_per_db_env[0] && strcmp(grn_ctx_per_db_env, "yes") == 0) {
-      grn_ctx_per_db = GRN_TRUE;
+      grn_ctx_per_db = true;
     }
   }
 
@@ -2177,11 +2177,11 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   *flags = 0;
 
   if (ctx->stat == GRN_CTX_QUIT) {
-    grn_bool have_buffer = GRN_FALSE;
+    bool have_buffer = false;
 
     if (ctx->impl && !ctx->impl->com &&
         GRN_TEXT_LEN(ctx->impl->output.buf) > 0) {
-      have_buffer = GRN_TRUE;
+      have_buffer = true;
     }
 
     *flags |= GRN_CTX_QUIT;
