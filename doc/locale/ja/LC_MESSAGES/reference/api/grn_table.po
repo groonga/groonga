@@ -105,27 +105,6 @@ msgstr ""
 msgid "注意: multithread環境では他のthreadのアクセスによって、存在しないアドレスへアクセスし、SIGSEGVが発生する可能性があります。"
 msgstr ""
 
-msgid "table内のレコードをソートし、上位limit個の要素をresultに格納します。"
-msgstr ""
-
-msgid "keys.keyには、tableのcolumn,accessor,procのいずれかが指定できます。keys.flagsには、``GRN_TABLE_SORT_ASC`` / ``GRN_TABLE_SORT_DESC`` のいずれかを指定できます。``GRN_TABLE_SORT_ASC`` では昇順、``GRN_TABLE_SORT_DESC`` では降順でソートされます。keys.offsetは、内部利用のためのメンバです。"
-msgstr ""
-
-msgid "sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納します。"
-msgstr ""
-
-msgid "resに格納するレコードの上限を指定します。"
-msgstr ""
-
-msgid "結果を格納するtableを指定します。"
-msgstr ""
-
-msgid "ソートキー配列へのポインタを指定します。"
-msgstr ""
-
-msgid "ソートキー配列のサイズを指定します。"
-msgstr ""
-
 msgid "tableのレコードを特定の条件でグループ化します。"
 msgstr ""
 
@@ -151,6 +130,9 @@ msgid "対象table1を指定します。"
 msgstr ""
 
 msgid "対象table2を指定します。"
+msgstr ""
+
+msgid "結果を格納するtableを指定します。"
 msgstr ""
 
 msgid "実行する演算の種類を指定します。"

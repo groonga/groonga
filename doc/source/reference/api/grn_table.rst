@@ -92,19 +92,6 @@ Reference
 
    TODO...
 
-.. c:function:: int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result, grn_table_sort_key *keys, int n_keys)
-
-   table内のレコードをソートし、上位limit個の要素をresultに格納します。
-
-   keys.keyには、tableのcolumn,accessor,procのいずれかが指定できます。keys.flagsには、``GRN_TABLE_SORT_ASC`` / ``GRN_TABLE_SORT_DESC`` のいずれかを指定できます。``GRN_TABLE_SORT_ASC`` では昇順、``GRN_TABLE_SORT_DESC`` では降順でソートされます。keys.offsetは、内部利用のためのメンバです。
-
-   :param table: 対象tableを指定します。
-   :param offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納します。
-   :param limit: resに格納するレコードの上限を指定します。
-   :param result: 結果を格納するtableを指定します。
-   :param keys: ソートキー配列へのポインタを指定します。
-   :param n_keys: ソートキー配列のサイズを指定します。
- 
 .. c:type:: grn_table_group_result
 
    TODO...

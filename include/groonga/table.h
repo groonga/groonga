@@ -505,6 +505,26 @@ struct _grn_table_sort_key {
   int offset;
 };
 
+/**
+ * \brief Sorts the records in table and stores the results in `result`
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param offset Starting offset of the sorted record.
+ *               The records are stored in order from the offset (zero-based).
+ * \param limit Maximum number of records to be stored in `result`
+ * \param result Table to store results
+ * \param keys Array of sort keys
+ *             * keys.key: You can specify either column, accessor, or proc of
+ *               table
+ *             * keys.flags: You can specify the next
+ *               * GRN_TABLE_SORT_ASC: Sort in ascending order
+ *               * GRN_TABLE_SORT_DESC: Sort in descending order
+ *             * keys.offset: Member for internal use
+ * \param n_keys Number of elements in `keys` array
+ *
+ * \return Number of sorted records
+ */
 GRN_API int
 grn_table_sort(grn_ctx *ctx,
                grn_obj *table,
