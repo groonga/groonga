@@ -323,7 +323,7 @@ grn_table_cursor_set_value(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Target cursor
  *
- * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT If the current record
+ * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
  *         for cursor does not exist, and the appropriate `grn_rc` for any other
  *         errors
  */
