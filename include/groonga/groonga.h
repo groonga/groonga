@@ -727,9 +727,21 @@ typedef enum {
  *        the specified table. If the name does not correspond to any column, it
  *        returns NULL. If the name is an accessor string, it returns the
  *        corresponding accessor. Accessor strings are dot-concatenated column
- *        names, with '_id' and '_key' as special accessors that return the
- *        record ID and key, respectively. Example: `col1`, `col2.col3`,
- *        `col2._id`
+ *        names. Column names that are started with `_` such as `_id` and `_key`
+ *        are pseudo column names. This function returns an accessor for a
+ *        pseudo column name.
+ *        See https://groonga.org/docs/reference/columns/pseudo.html for pseudo
+ *        column.
+ *
+ *        Column name examples: `name`, `age`
+ *
+ *        Pseudo column name examples: `_key`, `_score`, `_nsubrecs`
+ *
+ *        Accessor string examples: `tag.name`, `user.bookmarks.url`
+ *
+ *        If this function returns an accessor, you must call `grn_obj_unlink()`
+ *        with it when it's no longer needed. You can use
+ *        `grn_obj_is_accessor()` to detect whether it's an accessor or not.
  *
  * \param ctx The context object
  * \param table The target table or accessor from which the column or accessor
