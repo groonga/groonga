@@ -332,7 +332,7 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 GRN_API size_t
 grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor);
 /**
- * \brief Returns the table of cursor.
+ * \brief Return the table of cursor
  *
  * \param ctx The context object
  * \param tc Target cursor
