@@ -20,6 +20,11 @@ override_dh_auto_configure:
 	else							\
 	  GRN_WITH_APACHE_ARROW=OFF;				\
 	fi;							\
+	if [ "$$(lsb_release -cs)" = "focal" ]; then		\
+	  GRN_WITH_SIMDJSON=no;                                 \
+	else                                                    \
+	  GRN_WITH_SIMDJSON=auto;                               \
+	fi;                                                     \
 	dh_auto_configure					\
 	  --buildsystem=cmake+ninja				\
 	  --							\
@@ -30,7 +35,8 @@ override_dh_auto_configure:
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
 	  -DGRN_WITH_MRUBY=ON					\
-	  -DGRN_WITH_MUNIN_PLUGINS=ON
+	  -DGRN_WITH_MUNIN_PLUGINS=ON                           \
+	  -DGRN_WITH_SIMDJSON=$${GRN_WITH_SIMDJSON}
 
 # disable 'make check'.
 override_dh_auto_test:
