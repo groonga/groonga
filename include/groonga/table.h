@@ -506,7 +506,7 @@ struct _grn_table_sort_key {
 };
 
 /**
- * \brief Sorts the records in table and stores the results in `result`
+ * \brief Sort the records in table and store the results in `result`
  *
  * \param ctx The context object
  * \param table Target table
