@@ -36,9 +36,9 @@ typedef struct {
   grn_bool include_removed_source_location;
   grn_bool report_source_offset;
   bool unify_alphabet_diacritical_mark;
-  grn_bool unify_kana;
-  grn_bool unify_kana_case;
-  grn_bool unify_kana_voiced_sound_mark;
+  bool unify_kana;
+  bool unify_kana_case;
+  bool unify_kana_voiced_sound_mark;
   grn_bool unify_hyphen;
   grn_bool unify_prolonged_sound_mark;
   grn_bool unify_hyphen_and_prolonged_sound_mark;
@@ -51,8 +51,8 @@ typedef struct {
   grn_bool unify_katakana_wo_sound;
   grn_bool unify_katakana_di_sound;
   grn_bool unify_katakana_gu_small_sounds;
-  grn_bool unify_kana_hyphen;
-  grn_bool unify_kana_prolonged_sound_mark;
+  bool unify_kana_hyphen;
+  bool unify_kana_prolonged_sound_mark;
   grn_bool unify_katakana_trailing_o;
   grn_bool unify_to_romaji;
   grn_bool unify_to_katakana;

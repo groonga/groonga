@@ -54,9 +54,9 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->include_removed_source_location = GRN_TRUE;
   options->report_source_offset = GRN_FALSE;
   options->unify_alphabet_diacritical_mark = false;
-  options->unify_kana = GRN_FALSE;
-  options->unify_kana_case = GRN_FALSE;
-  options->unify_kana_voiced_sound_mark = GRN_FALSE;
+  options->unify_kana = false;
+  options->unify_kana_case = false;
+  options->unify_kana_voiced_sound_mark = false;
   options->unify_hyphen = GRN_FALSE;
   options->unify_prolonged_sound_mark = GRN_FALSE;
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
@@ -69,8 +69,8 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_katakana_wo_sound = GRN_FALSE;
   options->unify_katakana_di_sound = GRN_FALSE;
   options->unify_katakana_gu_small_sounds = GRN_FALSE;
-  options->unify_kana_hyphen = GRN_FALSE;
-  options->unify_kana_prolonged_sound_mark = GRN_FALSE;
+  options->unify_kana_hyphen = false;
+  options->unify_kana_prolonged_sound_mark = false;
   options->unify_katakana_trailing_o = GRN_FALSE;
   options->unify_to_romaji = GRN_FALSE;
   options->unify_to_katakana = GRN_FALSE;
