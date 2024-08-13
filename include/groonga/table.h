@@ -317,10 +317,28 @@ grn_table_cursor_set_value(grn_ctx *ctx,
                            grn_table_cursor *tc,
                            const void *value,
                            int flags);
+/**
+ * \brief Delete the current record for cursor
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ *
+ * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
+ *         for cursor does not exist, and the appropriate `grn_rc` for any other
+ *         errors
+ */
 GRN_API grn_rc
 grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 GRN_API size_t
 grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor);
+/**
+ * \brief Return the table of cursor
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ *
+ * \return The table of cursor on success, `NULL` on error
+ */
 GRN_API grn_obj *
 grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 

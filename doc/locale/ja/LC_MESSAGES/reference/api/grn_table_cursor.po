@@ -33,32 +33,14 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "cursorのカレントレコードのkeyをkeyパラメータにセットし、その長さを返します。"
+msgid "cursorのカレントレコードのvalueを引数の内容に置き換えます。cursorのカレントレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
 msgstr ""
 
 msgid "対象cursorを指定します。"
-msgstr ""
-
-msgid "カレントレコードのkeyへのポインタがセットされます。"
-msgstr ""
-
-msgid "cursorパラメータのカレントレコードのvalueをvalueパラメータにセットし、その長さを返します。"
-msgstr ""
-
-msgid "カレントレコードのvalueへのポインタがセットされます。"
-msgstr ""
-
-msgid "cursorのカレントレコードのvalueを引数の内容に置き換えます。cursorのカレントレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
 msgstr ""
 
 msgid "新しいvalueの値を指定します。"
 msgstr ""
 
 msgid ":c:func:`grn_obj_set_value()` のflagsと同様の値を指定できます。"
-msgstr ""
-
-msgid "cursorのカレントレコードを削除します。cursorのカレントレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
-msgstr ""
-
-msgid "cursorが属するtableを返します。"
 msgstr ""
