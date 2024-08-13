@@ -721,8 +721,7 @@ typedef enum {
 } grn_operator;
 
 /**
- * \brief Retrieves a column from a specified table, or an accessor if the name
- *        is an accessor string.
+ * \brief Retrieve a column or an accessor from a specified table or accessor.
  *
  *        This function returns a column corresponding to the given name from
  *        the specified table. If the name does not correspond to any column, it
@@ -733,7 +732,8 @@ typedef enum {
  *        `col2._id`
  *
  * \param ctx The context object
- * \param table The target table from which the column or accessor is retrieved.
+ * \param table The target table or accessor from which the column or accessor
+ *              is retrieved.
  * \param name The name of the column or an accessor string.
  * \param name_size The length of the `name` string.
  *
