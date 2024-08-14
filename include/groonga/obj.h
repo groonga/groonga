@@ -37,6 +37,14 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Check whether a Groonga built-in object is or not.
+ *
+ * \param ctx The context object
+ * \param obj The target object to check
+ *
+ * \return `true` if the object is a built-in Groonga object, `false` otherwise.
+ */
 GRN_API bool
 grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
