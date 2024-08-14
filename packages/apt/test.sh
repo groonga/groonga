@@ -2,6 +2,8 @@
 
 set -exu
 
+echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
+
 apt update
 apt install -V -y lsb-release wget
 
