@@ -842,8 +842,17 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
   } while (0)
 
 #define GRN_OBJ_SET_MASK (0x07)
+/**
+ * \brief Replace the value of the record with the specified value
+ */
 #define GRN_OBJ_SET      (0x01)
+/**
+ * \brief Add the specified value to the record value
+ */
 #define GRN_OBJ_INCR     (0x02)
+/**
+ * \brief Subtract the specified value from the record value
+ */
 #define GRN_OBJ_DECR     (0x03)
 #define GRN_OBJ_APPEND   (0x04)
 #define GRN_OBJ_PREPEND  (0x05)

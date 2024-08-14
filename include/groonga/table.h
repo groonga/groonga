@@ -345,13 +345,10 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Table cursor
  * \param value Value to set
- * \param flags
- *      * `GRN_OBJ_SET`
- *        * Replace the value of the record with `value`
- *      * `GRN_OBJ_INCR`
- *        * Add `value` to the record value
- *      * `GRN_OBJ_DECR`
- *        * Subtract `value` from the record value
+ * \param flags Available value:
+ *      * \ref GRN_OBJ_SET
+ *      * \ref GRN_OBJ_INCR
+ *      * \ref GRN_OBJ_DECR
  *
  * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
  *         for cursor does not exist, and the appropriate `grn_rc` for any other
