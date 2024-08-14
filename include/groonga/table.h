@@ -339,6 +339,24 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
                                void **key,
                                uint32_t *key_size,
                                void **value);
+/**
+ * \brief Set `value` to the current record according to `flags`
+ *
+ * \param ctx The context object
+ * \param tc Target cursor
+ * \param value Value to set
+ * \param flags
+ *      * GRN_OBJ_SET
+ *        * Replace the value of the record with `value`
+ *      * GRN_OBJ_INCR
+ *        * Add `value` to the record value
+ *      * GRN_OBJ_DECR
+ *        * Subtracts `value` from the record value
+ *
+ * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
+ *         for cursor does not exist, and the appropriate `grn_rc` for any other
+ *         errors
+ */
 GRN_API grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx,
                            grn_table_cursor *tc,
