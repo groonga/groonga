@@ -351,7 +351,7 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  *      * GRN_OBJ_INCR
  *        * Add `value` to the record value
  *      * GRN_OBJ_DECR
- *        * Subtracts `value` from the record value
+ *        * Subtract `value` from the record value
  *
  * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
  *         for cursor does not exist, and the appropriate `grn_rc` for any other
