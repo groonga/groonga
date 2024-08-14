@@ -7,6 +7,14 @@ apt install -V -y lsb-release wget
 
 distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
+case "${distribution}" in
+  debian)
+    component=main
+    ;;
+  ubuntu)
+    component=universe
+    ;;
+esac
 architecture=$(dpkg --print-architecture)
 
 wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
@@ -19,7 +27,7 @@ apt update
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
-  ${repositories_dir}/${distribution}/pool/${code_name}/main/*/*/*_{${architecture},all}.deb
+  ${repositories_dir}/${distribution}/pool/${code_name}/${component}/*/*/*_{${architecture},all}.deb
 
 groonga --version
 if [ "${architecture}" != "i386" ]; then
