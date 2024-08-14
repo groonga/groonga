@@ -343,14 +343,14 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  * \brief Set `value` to the current record according to `flags`
  *
  * \param ctx The context object
- * \param tc Target cursor
+ * \param tc Table cursor
  * \param value Value to set
  * \param flags
- *      * GRN_OBJ_SET
+ *      * `GRN_OBJ_SET`
  *        * Replace the value of the record with `value`
- *      * GRN_OBJ_INCR
+ *      * `GRN_OBJ_INCR`
  *        * Add `value` to the record value
- *      * GRN_OBJ_DECR
+ *      * `GRN_OBJ_DECR`
  *        * Subtract `value` from the record value
  *
  * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
