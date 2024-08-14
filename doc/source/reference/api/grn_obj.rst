@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
-
-   Check whether Groonga built-in object.
-
-   :param ctx: context
-   :param obj: target object
-   :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
-
 .. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
 
    Check whether index column.
