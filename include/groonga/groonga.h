@@ -845,21 +845,21 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 /**
  * \brief Replace the value of the record with the specified value
  */
-#define GRN_OBJ_SET      (0x01)
+#define GRN_OBJ_SET (0x01)
 /**
  * \brief Add the specified value to the record value
  */
-#define GRN_OBJ_INCR     (0x02)
+#define GRN_OBJ_INCR (0x02)
 /**
  * \brief Subtract the specified value from the record value
  */
-#define GRN_OBJ_DECR     (0x03)
-#define GRN_OBJ_APPEND   (0x04)
-#define GRN_OBJ_PREPEND  (0x05)
-#define GRN_OBJ_GET      (0x01 << 4)
-#define GRN_OBJ_COMPARE  (0x01 << 5)
-#define GRN_OBJ_LOCK     (0x01 << 6)
-#define GRN_OBJ_UNLOCK   (0x01 << 7)
+#define GRN_OBJ_DECR    (0x03)
+#define GRN_OBJ_APPEND  (0x04)
+#define GRN_OBJ_PREPEND (0x05)
+#define GRN_OBJ_GET     (0x01 << 4)
+#define GRN_OBJ_COMPARE (0x01 << 5)
+#define GRN_OBJ_LOCK    (0x01 << 6)
+#define GRN_OBJ_UNLOCK  (0x01 << 7)
 
 GRN_API grn_rc
 grn_obj_set_value(
