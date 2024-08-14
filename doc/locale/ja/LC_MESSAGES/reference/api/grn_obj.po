@@ -36,17 +36,8 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "nameがカラム名の場合、それに対応するtableのカラムを返します。対応するカラムが存在しなければNULLを返します。"
-msgstr ""
-
-msgid "nameがアクセサ文字列の場合、それに対応するaccessorを返します。アクセサ文字列とは、カラム名等を'.'で連結した文字列です。'_id', '_key'は特殊なアクセサで、それぞれレコードID/keyを返します。例) 'col1' / 'col2.col3' / 'col2._id'"
-msgstr ""
-
-msgid "対象tableを指定します。"
-msgstr ""
-
-msgid "カラム名を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
 msgid "Check whether Groonga built-in object."
 msgstr ""
