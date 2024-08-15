@@ -521,8 +521,8 @@ struct _grn_table_sort_key {
  * \param limit Maximum number of records to be stored in `result`
  * \param result Table to store results
  * \param keys Array of sort keys
- *             * keys.key: You can specify either column, accessor, or proc of
- *               table
+ *             * keys.key: You can specify either column of table, accessor of
+ *               table, or proc
  *             * keys.flags: You can specify the next
  *               * \ref GRN_TABLE_SORT_ASC
  *               * \ref GRN_TABLE_SORT_DESC
