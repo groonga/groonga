@@ -106,11 +106,38 @@ grn_table_add(grn_ctx *ctx,
               const void *key,
               unsigned int key_size,
               int *added);
+
+/**
+ * \brief It finds a record that has `key` parameter and returns ID of the found
+ *        record. If table parameter is a database, it finds an object (table,
+ *        column and so on) that has key parameter and returns ID of the found
+ *        object.
+ *
+ * \param ctx The context object
+ * \param table The table or database
+ * \param key The record or object key to be found
+ * \param key_size Length of `key`
+ *
+ * \return ID of the found object on success, \ref GRN_ID_NIL on not found or
+ *         error
+ */
 GRN_API grn_id
 grn_table_get(grn_ctx *ctx,
               grn_obj *table,
               const void *key,
               unsigned int key_size);
+/**
+ * \brief Search the table for a record of ID and return the specified ID if it
+ *        exists, or \ref GRN_ID_NIL if it does not
+ *
+ * \attention It is costly to perform. Do not call them frequently
+ *
+ * \param ctx The context object
+ * \param table The table or database
+ * \param id The ID to be found
+ *
+ * \return Specified ID on success, \ref GRN_ID_NIL on not found or error
+ */
 GRN_API grn_id
 grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
 GRN_API grn_id
