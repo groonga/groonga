@@ -174,7 +174,7 @@ grn_table_update_by_id(grn_ctx *ctx,
  * \param dest_key New key
  * \param dest_key_size Length of `dest_key_size` (byte)
  *
- * \return GRN_SUCCESS on success, GRN_OPERATION_NOT_PERMITTED if not
+ * \return \ref GRN_SUCCESS on success, GRN_OPERATION_NOT_PERMITTED if not
  *         GRN_TABLE_DAT_KEY, and the appropriate `grn_rc` for any other
  *         errors
  */
@@ -291,7 +291,7 @@ grn_table_cursor_open(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Target cursor
  *
- * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if `tc` is invalid
+ * \return \ref GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if `tc` is invalid
  */
 GRN_API grn_rc
 grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
@@ -350,9 +350,9 @@ grn_table_cursor_set_value(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Target cursor
  *
- * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
- *         for cursor does not exist, and the appropriate `grn_rc` for any other
- *         errors
+ * \return \ref GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current
+ *         record for cursor does not exist, and the appropriate `grn_rc` for
+ *         any other errors
  */
 GRN_API grn_rc
 grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
