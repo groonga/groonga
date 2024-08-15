@@ -72,6 +72,11 @@ if groonga --version | grep -q apache-arrow; then
   apt install -V -y \
     g++ \
     libre2-dev
+  # Remove -std=c++11 from RE2 pkg-config to ensure C++17 compatibility for Apache Arrow in Ubuntu focal.
+  # ref: https://github.com/apache/arrow/issues/41396#issuecomment-2081996268
+  if [ "${code_name}" = "focal" ]; then
+    sed -i -e 's/-std=c++11//g' /usr/lib/x86_64-linux-gnu/pkgconfig/re2.pc
+  fi
   MAKEFLAGS=-j$(nproc) gem install red-arrow
 fi
 
