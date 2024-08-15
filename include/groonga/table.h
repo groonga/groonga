@@ -496,7 +496,13 @@ grn_table_cursor_foreach(grn_ctx *ctx,
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
-#define GRN_TABLE_SORT_ASC  (0x00 << 0)
+/**
+ * \brief Sort in ascending order
+ */
+#define GRN_TABLE_SORT_ASC (0x00 << 0)
+/**
+ * \brief Sort in descending order
+ */
 #define GRN_TABLE_SORT_DESC (0x01 << 0)
 
 struct _grn_table_sort_key {
@@ -518,8 +524,8 @@ struct _grn_table_sort_key {
  *             * keys.key: You can specify either column, accessor, or proc of
  *               table
  *             * keys.flags: You can specify the next
- *               * GRN_TABLE_SORT_ASC: Sort in ascending order
- *               * GRN_TABLE_SORT_DESC: Sort in descending order
+ *               * \ref GRN_TABLE_SORT_ASC
+ *               * \ref GRN_TABLE_SORT_DESC
  *             * keys.offset: Member for internal use
  * \param n_keys Number of elements in `keys` array
  *
