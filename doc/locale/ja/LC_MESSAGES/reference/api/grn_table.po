@@ -36,31 +36,13 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It finds a record that has key parameter and returns ID of the found record. If table parameter is a database, it finds an object (table, column and so on) that has key parameter  and returns ID of the found object."
-msgstr ""
-
-msgid "The table or database."
-msgstr ""
-
-msgid "The record or object key to be found."
-msgstr ""
-
-msgid "tableにidに対応するrecordが存在するか確認し、存在すれば指定されたIDを、存在しなければ ``GRN_ID_NIL`` を返します。"
-msgstr ""
-
-msgid "注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。"
-msgstr ""
-
-msgid "対象tableを指定します。"
-msgstr ""
-
-msgid "検索idを指定します。"
-msgstr ""
-
 msgid "tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指定して作ったtableなら、longest common prefix searchを行い、対応するIDを返します。"
 msgstr ""
 
 msgid "tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキーを検索し、対応するIDを返します。"
+msgstr ""
+
+msgid "対象tableを指定します。"
 msgstr ""
 
 msgid "検索keyを指定します。"

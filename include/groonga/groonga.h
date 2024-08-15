@@ -49,6 +49,9 @@ typedef bool grn_bool;
 typedef __bf16 grn_bfloat16;
 #endif
 
+/**
+ * \brief Means "does not exist"
+ */
 #define GRN_ID_NIL (0x00)
 #define GRN_ID_MAX (0x3fffffff)
 
