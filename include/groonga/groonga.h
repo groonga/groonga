@@ -134,6 +134,7 @@ typedef enum {
   GRN_TOO_LARGE_OFFSET = -68,
   GRN_TOO_SMALL_LIMIT = -69,
   GRN_CAS_ERROR = -70,
+  /// When a version not supported by the default version set is specified (-71)
   GRN_UNSUPPORTED_COMMAND_VERSION = -71,
   GRN_NORMALIZER_ERROR = -72,
   GRN_TOKEN_FILTER_ERROR = -73,
@@ -308,8 +309,19 @@ grn_get_package(void);
 GRN_API const char *
 grn_get_package_label(void);
 
+/**
+ * \return Default command version
+ */
 GRN_API grn_command_version
 grn_get_default_command_version(void);
+/**
+ * \brief Set default command version
+ *
+ * \param version New command version
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_UNSUPPORTED_COMMAND_VERSION on
+ *         error
+ */
 GRN_API grn_rc
 grn_set_default_command_version(grn_command_version version);
 GRN_API grn_command_version

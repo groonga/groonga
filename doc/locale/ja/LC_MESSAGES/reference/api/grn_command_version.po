@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_command_version``"
 msgstr ""
 
@@ -33,11 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "デフォルトのcommand_versionを返します。"
-msgstr ""
-
-msgid "デフォルトのcommand_versionを変更します。"
-msgstr ""
-
-msgid "変更後のデフォルトのcommand_versionを指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
