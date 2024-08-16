@@ -541,7 +541,13 @@ grn_table_cursor_foreach(grn_ctx *ctx,
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
-#define GRN_TABLE_SORT_ASC  (0x00 << 0)
+/**
+ * \brief Sort in ascending order
+ */
+#define GRN_TABLE_SORT_ASC (0x00 << 0)
+/**
+ * \brief Sort in descending order
+ */
 #define GRN_TABLE_SORT_DESC (0x01 << 0)
 
 struct _grn_table_sort_key {
@@ -550,6 +556,26 @@ struct _grn_table_sort_key {
   int offset;
 };
 
+/**
+ * \brief Sort the records in table and store the results in `result`
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param offset Starting offset of the sorted record.
+ *               The records are stored in order from the offset (zero-based).
+ * \param limit Maximum number of records to be stored in `result`
+ * \param result Table to store results
+ * \param keys Array of sort keys
+ *             * keys.key: You can specify either column of table, accessor of
+ *               table, or proc
+ *             * keys.flags: You can specify the next
+ *               * \ref GRN_TABLE_SORT_ASC
+ *               * \ref GRN_TABLE_SORT_DESC
+ *             * keys.offset: Member for internal use
+ * \param n_keys Number of elements in `keys` array
+ *
+ * \return Number of sorted records
+ */
 GRN_API int
 grn_table_sort(grn_ctx *ctx,
                grn_obj *table,
