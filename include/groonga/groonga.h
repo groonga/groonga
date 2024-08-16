@@ -59,6 +59,7 @@ typedef __bf16 grn_bfloat16;
 #define GRN_FALSE  false
 
 typedef enum {
+  /// Success
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
   GRN_UNKNOWN_ERROR = -1,
