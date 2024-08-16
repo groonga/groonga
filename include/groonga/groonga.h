@@ -59,7 +59,7 @@ typedef __bf16 grn_bfloat16;
 #define GRN_FALSE  false
 
 typedef enum {
-  /// Success
+  /// Success (0)
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
   GRN_UNKNOWN_ERROR = -1,
@@ -83,6 +83,7 @@ typedef enum {
   GRN_NO_SUCH_DEVICE = -19,
   GRN_NOT_A_DIRECTORY = -20,
   GRN_IS_A_DIRECTORY = -21,
+  /// Invalid function argument (-22)
   GRN_INVALID_ARGUMENT = -22,
   GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM = -23,
   GRN_TOO_MANY_OPEN_FILES = -24,

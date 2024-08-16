@@ -350,9 +350,9 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  *      * \ref GRN_OBJ_INCR
  *      * \ref GRN_OBJ_DECR
  *
- * \return GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current record
- *         for cursor does not exist, and the appropriate `grn_rc` for any other
- *         errors
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the current
+ *         record for cursor does not exist, and the appropriate `grn_rc` for
+ *         any other errors
  */
 GRN_API grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx,
