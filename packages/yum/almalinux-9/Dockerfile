@@ -31,7 +31,6 @@ RUN \
     lz4-devel \
     msgpack-devel \
     openssl-devel \
-    pcre-devel \
     php-devel \
     pkgconfig \
     ruby \

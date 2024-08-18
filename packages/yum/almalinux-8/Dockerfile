@@ -27,7 +27,6 @@ RUN \
     mecab-devel \
     msgpack-devel \
     openssl-devel \
-    pcre-devel \
     php-devel \
     pkgconfig \
     python2-devel \

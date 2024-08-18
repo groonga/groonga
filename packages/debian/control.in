@@ -12,7 +12,6 @@ Build-Depends:
   liblz4-dev,
   libmecab-dev,
   libmsgpack-dev,
-  libpcre3-dev,
   libssl-dev,
   libstemmer-dev,
 # Broken. xtl-dev dependency is missing.
