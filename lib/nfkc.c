@@ -51,8 +51,8 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->char_type_func = char_type_func;
   options->decompose_func = decompose_func;
   options->compose_func = compose_func;
-  options->include_removed_source_location = GRN_TRUE;
-  options->report_source_offset = GRN_FALSE;
+  options->include_removed_source_location = true;
+  options->report_source_offset = false;
   options->unify_alphabet_diacritical_mark = false;
   options->unify_kana = false;
   options->unify_kana_case = false;

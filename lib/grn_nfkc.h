@@ -33,8 +33,8 @@ typedef struct {
   grn_nfkc_char_type_func char_type_func;
   grn_nfkc_decompose_func decompose_func;
   grn_nfkc_compose_func compose_func;
-  grn_bool include_removed_source_location;
-  grn_bool report_source_offset;
+  bool include_removed_source_location;
+  bool report_source_offset;
   bool unify_alphabet_diacritical_mark;
   bool unify_kana;
   bool unify_kana_case;
