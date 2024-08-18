@@ -1,4 +1,4 @@
-# Need xxHash
+#@require-feature xxhash
 
 table_create Data TABLE_NO_KEY
 column_create Data text COLUMN_SCALAR ShortText
