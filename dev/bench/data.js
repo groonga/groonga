@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1724043589619,
+  "lastUpdate": 1724051543838,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -36318,6 +36318,108 @@ window.BENCHMARK_DATA = {
             "value": 0.03048141800002213,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0056589999999996365 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "778c539d8c2f548e77c229ab91cdc7c1bd7f8ba6",
+          "message": "logger: Fix crash bug when log rotate is enabled (#1871)\n\nThis bug occurred in the following conditions.\r\n\r\n* When logging to a file\r\n  *  `--log-path <path>`\r\n  * `--query-log-path <path>`\r\n* Log rotate is enabled\r\n  * `--log-rotate-threshold-size <threshold>`\r\n  * `--query-log-rotate-threshold-size <threshold>`\r\n* Process ID log output is enabled\r\n  * `--log-flags process_id`\r\n\r\nWhen the log is rotated, `output->file` is closed and set to `NULL`.\r\nThe crash occurs because of `flock(fileno(output->file), LOCK_UN);` in\r\nthat state.\r\nThis unlocking was only executed when outputting process ID to the log,\r\nso it occurred only when outputting process ID.",
+          "timestamp": "2024-08-19T16:07:15+09:00",
+          "tree_id": "f9493886189292b72da009630a86240f1b9dc94a",
+          "url": "https://github.com/groonga/groonga/commit/778c539d8c2f548e77c229ab91cdc7c1bd7f8ba6"
+        },
+        "date": 1724051541596,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3790766770000005,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.018248999999999876 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27073939899992183,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01617799999999986 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016261979999910636,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003710000000003433 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.02533051099999284,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004200000000000037 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.6563969580000162,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.000167000000000056 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24758524300006002,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008689999999999864 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1378558919998909,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008360999999999924 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017471391999947627,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002135000000000248 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01769086900003458,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002163000000000359 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05546825999994098,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00790699999999997 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06374800799989089,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01711700000000041 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018162705999998252,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019349999999996592 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.029743290999874716,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.004620999999999986 s\nthreads: undefined"
           }
         ]
       }
