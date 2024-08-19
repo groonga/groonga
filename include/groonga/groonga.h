@@ -287,12 +287,12 @@ GRN_API grn_rc
 grn_ctx_merge_temporary_open_space(grn_ctx *ctx);
 
 /**
- * \return Default encoding
+ * \return The default encoding
  */
 GRN_API grn_encoding
 grn_get_default_encoding(void);
 /**
- * \brief Set default encoding
+ * \brief Set the default encoding
  *
  * \param encoding New encoding
  *
