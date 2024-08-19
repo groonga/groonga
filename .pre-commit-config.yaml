@@ -23,6 +23,7 @@ repos:
           ?benchmark/bench-distance\.c|
           ?include/groonga/applier\.h|
           ?include/groonga/bulk\.hpp|
+          ?include/groonga/column\.h|
           ?include/groonga/command_arguments\.hpp|
           ?include/groonga/dat\.h|
           ?include/groonga/distance\.h|
