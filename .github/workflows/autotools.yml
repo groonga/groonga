@@ -9,6 +9,7 @@ on:
     paths:
       - '**/Makefile.am'
       - '.github/workflows/autotools.yml'
+      - 'Brewfile'
       - 'configure.ac'
       - 'include/**/*.h'
       - 'include/**/*.h.in'
@@ -32,6 +33,7 @@ on:
     paths:
       - '**/Makefile.am'
       - '.github/workflows/autotools.yml'
+      - 'Brewfile'
       - 'configure.ac'
       - 'include/**/*.h'
       - 'include/**/*.h.in'
