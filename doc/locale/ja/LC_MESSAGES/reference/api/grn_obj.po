@@ -39,20 +39,14 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "Check whether index column."
-msgstr "インデックスカラムかどうかを判定します。"
+msgid "Check whether vector column."
+msgstr "ベクターカラムかどうかを判定します。"
 
 msgid "The context object."
 msgstr "その時点のコンテキスト。"
 
 msgid "The target object."
 msgstr "対象のオブジェクト"
-
-msgid "``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
-msgstr "対象のオブジェクトがインデックスカラムの場合には、 ``GRN_TRUE`` です。それ以外の場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も ``GRN_FALSE`` を返します。"
-
-msgid "Check whether vector column."
-msgstr "ベクターカラムかどうかを判定します。"
 
 msgid "``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
 msgstr "対象のオブジェクトがベクターカラムの場合には、 ``GRN_TRUE`` です。それ以外の場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も ``GRN_FALSE`` を返します。"

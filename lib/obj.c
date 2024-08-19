@@ -589,6 +589,14 @@ grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
          obj->header.type == GRN_COLUMN_VAR_SIZE;
 }
 
+/**
+ * \brief Check whether the specified object is an index column or not.
+ *
+ * \param ctx The context object
+ * \param obj The target object to check
+ *
+ * \return `true` if the object is exactly an index column, `false` otherwise.
+ */
 bool
 grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
 {
