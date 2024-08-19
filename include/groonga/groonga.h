@@ -286,8 +286,19 @@ grn_ctx_pop_temporary_open_space(grn_ctx *ctx);
 GRN_API grn_rc
 grn_ctx_merge_temporary_open_space(grn_ctx *ctx);
 
+/**
+ * \return The default encoding
+ */
 GRN_API grn_encoding
 grn_get_default_encoding(void);
+/**
+ * \brief Set the default encoding
+ *
+ * \param encoding New encoding
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT on
+ *         error
+ */
 GRN_API grn_rc
 grn_set_default_encoding(grn_encoding encoding);
 

@@ -20,16 +20,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_encoding grn_get_default_encoding(void)
-
-   デフォルトのencodingを返します。
-
-.. c:function:: grn_rc grn_set_default_encoding(grn_encoding encoding)
-
-   デフォルトのencodingを変更します。
-
-   :param encoding: 変更後のデフォルトのencodingを指定します。
-
 .. c:function:: const char *grn_encoding_to_string(grn_encoding encoding)
 
    Returns string representation for the encoding. For example, 'grn_encoding_to_string(``GRN_ENC_UTF8``)' returns '"utf8"'.

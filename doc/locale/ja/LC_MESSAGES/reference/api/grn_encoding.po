@@ -33,15 +33,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "デフォルトのencodingを返します。"
-msgstr ""
-
-msgid "デフォルトのencodingを変更します。"
-msgstr ""
-
-msgid "変更後のデフォルトのencodingを指定します。"
-msgstr ""
-
 msgid "Returns string representation for the encoding. For example, 'grn_encoding_to_string(``GRN_ENC_UTF8``)' returns '\"utf8\"'."
 msgstr "エンコーディングの形式を文字列で返します。たとえば'grn_encoding_to_string(``GRN_ENC_UTF8``)' は\"utf8\"を返します。"
 
