@@ -313,6 +313,11 @@ grn_logger_output_end(grn_ctx *ctx,
         output->file != stderr &&
         (output->rotate_threshold_size > 0 &&
          output->size >= output->rotate_threshold_size)) {
+#ifndef _WIN32
+      if (output->need_flock) {
+        flock(fileno(output->file), LOCK_UN);
+      }
+#endif
       fclose(output->file);
       output->file = NULL;
       grn_logger_output_rotate(ctx, output);
@@ -321,7 +326,7 @@ grn_logger_output_end(grn_ctx *ctx,
     }
   }
 #ifndef _WIN32
-  if (output->need_flock) {
+  if (output->need_flock && output->file) {
     flock(fileno(output->file), LOCK_UN);
   }
 #endif
