@@ -10,8 +10,6 @@ ARG DEBUG
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "-qq") && \
   apt update ${quiet} && \
-  add-apt-repository -y ppa:groonga/ppa && \
-  apt update ${quiet} && \
   apt install -y -V ${quiet} \
     autoconf-archive \
     build-essential \
