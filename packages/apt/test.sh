@@ -32,7 +32,7 @@ apt install -V -y \
   ${repositories_dir}/${distribution}/pool/${code_name}/${component}/*/*/*_{${architecture},all}.deb
 
 groonga --version
-if [ "${architecture}" != "i386" ] && [ "${distribution}" != "ubuntu" ]; then
+if [ "${distribution}" != "ubuntu" ]; then
   if ! groonga --version | grep -q apache-arrow; then
     echo "Apache Arrow isn't enabled"
     exit 1
