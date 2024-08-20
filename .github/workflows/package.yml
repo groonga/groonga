@@ -216,6 +216,11 @@ jobs:
             task-namespace: apt
             target: ubuntu-focal
             test-docker-image: ubuntu:focal
+          - label: Ubuntu jammy amd64
+            id: ubuntu-jammy-amd64
+            task-namespace: apt
+            target: ubuntu-jammy
+            test-docker-image: ubuntu:jammy
           - label: AlmaLinux 8 x86_64
             id: almalinux-8-x86_64
             task-namespace: yum
