@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1724112310594,
+  "lastUpdate": 1724130137303,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -36522,6 +36522,108 @@ window.BENCHMARK_DATA = {
             "value": 0.022449777000076665,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.002137000000000222 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "a.s.takuya1026@gmail.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f00b0829962907d988c0339f0db11be31b7231dd",
+          "message": "ci package ubuntu: add steps for building and testing Ubuntu focal amd64's package (#1861)\n\nGitHub: ref GH-1865\r\n\r\nIn this PR, we add steps for building and testing Ubuntu focal packages\r\nas part of our regular development workflow on CI.\r\nThe reason for adding this is to prevent potential build failures on\r\nLaunchpad during the release process, which can result in late discovery\r\nof issues and delays.\r\n\r\n## Note about test using `xxHash`\r\n\r\nUbuntu focal provides `xxHash` version 0.7.3, which does not meet the\r\nrequired version 0.8.0. We have updated the tests to skip\r\nxxHash-dependent functionality on Ubuntu focal by adding\r\n`@require-feature xxhash` which is the grntest's function. This change\r\nensures that the test about features requiring `xxHash` are executed\r\nonly when `xxHash` is available.\r\n\r\n```\r\n-- Checking for module 'libxxhash>=0.8.0'\r\n--   Requested 'libxxhash >= 0.8.0' but version of xxhash is 0.7.3\r\nYou may find new versions of xxhash at https://www.xxhash.com/\r\n-- Could NOT find GroongaxxHash (missing: GroongaxxHash_FOUND) (Required is at least version \"0.8.0\")\r\n-- No xxHash\r\n```\r\n\r\n---------\r\n\r\nCo-authored-by: Horimoto Yasuhiro <horimoto@clear-code.com>",
+          "timestamp": "2024-08-20T13:56:55+09:00",
+          "tree_id": "bf0abc5f4feca9b63d81e386d0618751f2d40ecc",
+          "url": "https://github.com/groonga/groonga/commit/f00b0829962907d988c0339f0db11be31b7231dd"
+        },
+        "date": 1724130135668,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36720209300000306,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01603800000000026 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.26867247599983557,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015526000000000012 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01596445000006952,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003489999999999327 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015432399000019359,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003830000000000222 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4167514349999806,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00015599999999998948 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24555566200001522,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008006999999999959 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1360503060000724,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006417000000000589 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01715144899992538,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001861000000000057 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.0169256960000439,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001870999999999734 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05610554100007903,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007660000000000153 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.053843340999833345,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008237999999999468 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017299074000106884,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020860000000001433 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.02735281999991912,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002047000000000132 s\nthreads: undefined"
           }
         ]
       }
