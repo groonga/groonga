@@ -184,6 +184,7 @@ jobs:
           - Debian GNU/Linux trixie amd64
           - Debian GNU/Linux trixie arm64
           - Ubuntu focal amd64
+          - Ubuntu focal aarch64
           - Ubuntu jammy amd64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
@@ -217,6 +218,11 @@ jobs:
             task-namespace: apt
             target: ubuntu-focal
             test-docker-image: ubuntu:focal
+          - label: Ubuntu focal aarch64
+            id: ubuntu-focal-aarch64
+            task-namespace: apt
+            target: ubuntu-focal-aarch64
+            test-docker-image: arm64v8/ubuntu:focal
           - label: Ubuntu jammy amd64
             id: ubuntu-jammy-amd64
             task-namespace: apt
