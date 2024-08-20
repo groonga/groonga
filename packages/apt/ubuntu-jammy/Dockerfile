@@ -36,5 +36,6 @@ RUN \
     ninja-build \
     pkg-config \
     rapidjson-dev \
+    tzdata \
     zlib1g-dev && \
   apt clean
