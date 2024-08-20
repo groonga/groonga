@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
-
-   Check whether index column.
-
-   :param ctx: The context object.
-   :param obj: The target object.
-   :return: ``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
-
 .. c:function:: grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
 
    Check whether vector column.
