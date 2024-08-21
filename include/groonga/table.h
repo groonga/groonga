@@ -681,9 +681,29 @@ grn_table_columns(grn_ctx *ctx,
                   unsigned int name_size,
                   grn_obj *res);
 
+/**
+ * \brief Return the number of records registered in the table
+ *
+ * \param ctx The context object
+ * \param table The table or database
+ *
+ * \return Number of records
+ */
 GRN_API unsigned int
 grn_table_size(grn_ctx *ctx, grn_obj *table);
 
+/**
+ *
+ * \brief Rename table to `name`. All columns of the table are renamed at the
+ *        same time. The table must be a persistent object.
+ *
+ * \param ctx The context object
+ * \param table Target table
+ * \param name New name
+ * \param name_size Length of `name`
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error
+ */
 GRN_API grn_rc
 grn_table_rename(grn_ctx *ctx,
                  grn_obj *table,
