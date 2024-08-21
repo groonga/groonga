@@ -845,15 +845,9 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
                                     "");
 }
 
-/*
- * This function assumes that the input utf8_char is a valid UTF-8 character.
- * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
- * before calling this function. This is a precondition in terms of contract
- * programming.
- */
-grn_inline static const unsigned char *
-grn_nfkc_normalize_unify_alphabet_diacritical_mark(
-  const unsigned char *utf8_char, unsigned char *unified)
+grn_inline static unsigned char *
+grn_nfkc_normalize_unify_a_diacritical_mark(const unsigned char *utf8_char,
+                                            unsigned char *unified)
 {
   /*
    * Latin-1 Supplement
@@ -917,6 +911,44 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
        (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7))) {
     *unified = 'a';
+    return unified;
+  }
+  return NULL;
+}
+
+grn_inline static unsigned char *
+grn_nfkc_normalize_unify_b_diacritical_mark(const unsigned char *utf8_char,
+                                            unsigned char *unified)
+{
+  /*
+   * Latin Extended Additional
+   * U+1E03 LATIN SMALL LETTER B WITH DOT ABOVE
+   * U+1E05 LATIN SMALL LETTER B WITH DOT BELOW
+   * U+1E07 LATIN SMALL LETTER B WITH LINE BELOW
+   * Uppercase counterparts(U+1E04, U+1E06) are covered by the
+   * following condition but they are never appeared here. Because NFKC
+   * normalization converts them to their lowercase equivalents.
+   */
+  if (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
+      (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87)) {
+    *unified = 'b';
+    return unified;
+  }
+  return NULL;
+}
+
+/*
+ * This function assumes that the input utf8_char is a valid UTF-8 character.
+ * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
+ * before calling this function. This is a precondition in terms of contract
+ * programming.
+ */
+grn_inline static const unsigned char *
+grn_nfkc_normalize_unify_alphabet_diacritical_mark(
+  const unsigned char *utf8_char, unsigned char *unified)
+{
+  if (grn_nfkc_normalize_unify_a_diacritical_mark(utf8_char, unified) ||
+      grn_nfkc_normalize_unify_b_diacritical_mark(utf8_char, unified)) {
     return unified;
   }
 
