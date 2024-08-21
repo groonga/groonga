@@ -199,6 +199,7 @@ jobs:
             task-namespace: apt
             target: debian-bookworm-arm64
             test-docker-image: arm64v8/debian:bookworm
+            timeout-minutes: 90
           - label: Debian GNU/Linux trixie amd64
             id: debian-trixie-amd64
             task-namespace: apt
@@ -209,6 +210,7 @@ jobs:
             task-namespace: apt
             target: debian-trixie-arm64
             test-docker-image: arm64v8/debian:trixie
+            timeout-minutes: 270
           - label: Ubuntu focal amd64
             id: ubuntu-focal-amd64
             task-namespace: apt
@@ -237,7 +239,7 @@ jobs:
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ (matrix.id == 'debian-trixie-arm64' && 270) || 90 }}
+    timeout-minutes: ${{ matrix.timeout-minutes || 60 }}
     steps:
       - uses: actions/checkout@v4
         with:
