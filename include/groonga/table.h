@@ -345,7 +345,7 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Table cursor
  * \param value Value to set
- * \param flags Available value:
+ * \param flags Available values:
  *      * \ref GRN_OBJ_SET
  *      * \ref GRN_OBJ_INCR
  *      * \ref GRN_OBJ_DECR
