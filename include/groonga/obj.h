@@ -95,6 +95,14 @@ GRN_API bool
 grn_obj_is_text_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_number_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Check whether the specified object is a vector column or not.
+ *
+ * \param ctx The context object
+ * \param obj The target object to check
+ *
+ * \return `true` if the object is a vector column, `false` otherwise.
+ */
 GRN_API bool
 grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
