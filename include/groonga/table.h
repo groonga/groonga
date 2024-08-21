@@ -687,7 +687,7 @@ grn_table_columns(grn_ctx *ctx,
  * \param ctx The context object
  * \param table The table or database
  *
- * \return Number of records
+ * \return The number of records
  */
 GRN_API unsigned int
 grn_table_size(grn_ctx *ctx, grn_obj *table);
@@ -700,7 +700,7 @@ grn_table_size(grn_ctx *ctx, grn_obj *table);
  * \param ctx The context object
  * \param table Target table
  * \param name New name
- * \param name_size Length of `name`
+ * \param name_size Size of `name` in bytes
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error
  */
