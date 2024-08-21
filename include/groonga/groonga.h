@@ -902,11 +902,6 @@ grn_obj_rename(grn_ctx *ctx,
                grn_obj *obj,
                const char *name,
                unsigned int name_size);
-GRN_API grn_rc
-grn_table_rename(grn_ctx *ctx,
-                 grn_obj *table,
-                 const char *name,
-                 unsigned int name_size);
 
 GRN_API grn_rc
 grn_column_rename(grn_ctx *ctx,
