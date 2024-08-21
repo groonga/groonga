@@ -237,6 +237,7 @@ jobs:
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ (matrix.id == 'debian-trixie-arm64' && 270) || 90 }}
     steps:
       - uses: actions/checkout@v4
         with:
