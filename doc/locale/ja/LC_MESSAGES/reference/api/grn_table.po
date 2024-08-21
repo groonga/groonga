@@ -137,12 +137,3 @@ msgstr ""
 
 msgid "格納したカラムIDの数を返します。"
 msgstr ""
-
-msgid "tableに登録されているレコードの件数を返します。"
-msgstr ""
-
-msgid "ctxが使用するdbにおいてtableに対応する名前をnameに更新します。tableの全てのcolumnも同時に名前が変更されます。tableは永続オブジェクトでなければいけません。"
-msgstr ""
-
-msgid "nameパラメータのsize(byte)を指定します。"
-msgstr ""
