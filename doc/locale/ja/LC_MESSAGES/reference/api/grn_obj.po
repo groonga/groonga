@@ -39,18 +39,6 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "Check whether vector column."
-msgstr "ベクターカラムかどうかを判定します。"
-
-msgid "The context object."
-msgstr "その時点のコンテキスト。"
-
-msgid "The target object."
-msgstr "対象のオブジェクト"
-
-msgid "``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
-msgstr "対象のオブジェクトがベクターカラムの場合には、 ``GRN_TRUE`` です。それ以外の場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も ``GRN_FALSE`` を返します。"
-
 msgid "objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。"
 msgstr ""
 
@@ -248,6 +236,9 @@ msgstr ""
 
 msgid "If ``destination`` is a reference type bulk. (Reference type bulk means that type of ``destination`` is a table.) ``add_record_if_not_exist`` is used. If ``source`` value doesn't exist in the table that is a type of ``destination``. The ``source`` value is added to the table."
 msgstr ""
+
+msgid "The context object."
+msgstr "その時点のコンテキスト。"
 
 msgid "The bulk to be casted."
 msgstr ""
