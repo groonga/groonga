@@ -59,7 +59,7 @@ typedef __bf16 grn_bfloat16;
 #define GRN_FALSE  false
 
 typedef enum {
-  /// Success
+  /// Success (0)
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
   GRN_UNKNOWN_ERROR = -1,
@@ -83,6 +83,7 @@ typedef enum {
   GRN_NO_SUCH_DEVICE = -19,
   GRN_NOT_A_DIRECTORY = -20,
   GRN_IS_A_DIRECTORY = -21,
+  /// Invalid function argument (-22)
   GRN_INVALID_ARGUMENT = -22,
   GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM = -23,
   GRN_TOO_MANY_OPEN_FILES = -24,
@@ -865,15 +866,24 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
   } while (0)
 
 #define GRN_OBJ_SET_MASK (0x07)
-#define GRN_OBJ_SET      (0x01)
-#define GRN_OBJ_INCR     (0x02)
-#define GRN_OBJ_DECR     (0x03)
-#define GRN_OBJ_APPEND   (0x04)
-#define GRN_OBJ_PREPEND  (0x05)
-#define GRN_OBJ_GET      (0x01 << 4)
-#define GRN_OBJ_COMPARE  (0x01 << 5)
-#define GRN_OBJ_LOCK     (0x01 << 6)
-#define GRN_OBJ_UNLOCK   (0x01 << 7)
+/**
+ * \brief Replace the value of the record/column with the specified value
+ */
+#define GRN_OBJ_SET (0x01)
+/**
+ * \brief Add the specified value to the record/column value
+ */
+#define GRN_OBJ_INCR (0x02)
+/**
+ * \brief Subtract the specified value from the record/column value
+ */
+#define GRN_OBJ_DECR    (0x03)
+#define GRN_OBJ_APPEND  (0x04)
+#define GRN_OBJ_PREPEND (0x05)
+#define GRN_OBJ_GET     (0x01 << 4)
+#define GRN_OBJ_COMPARE (0x01 << 5)
+#define GRN_OBJ_LOCK    (0x01 << 6)
+#define GRN_OBJ_UNLOCK  (0x01 << 7)
 
 GRN_API grn_rc
 grn_obj_set_value(
