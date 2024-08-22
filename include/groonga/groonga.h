@@ -849,6 +849,18 @@ GRN_API grn_rc
 grn_obj_set_element_info(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *value);
 
+/**
+ * \brief Retrieve the value of the record corresponding to the given ID
+ *        in the specified object.
+ *
+ * \param ctx The context object
+ * \param obj The target object from which to retrieve the value
+ * \param id The ID of the target record
+ * \param value The buffer to store the retrieved value (must be prepared by the
+ *              caller)
+ *
+ * \return The value of the specified record in the object.
+ */
 GRN_API grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 GRN_API int
