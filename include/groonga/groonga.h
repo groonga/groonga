@@ -161,7 +161,7 @@ typedef enum {
   /// The default encoding specified at build time (0).
   /// The default at build time is "UTF-8".
   GRN_ENC_DEFAULT = 0,
-  /// "none" (1).
+  /// "none" (1)
   /// Used for binary or as an internal initial value.
   GRN_ENC_NONE,
   /// EUC-JP (2)
@@ -400,23 +400,23 @@ grn_get_memory_map_size(void);
 /* grn_encoding */
 /**
  * \brief Return string representation for the encoding. For example,
- *        `grn_encoding_to_string(GRN_ENC_UTF8)` returns `"utf8"`
+ *        `grn_encoding_to_string(GRN_ENC_UTF8)` return `"utf8"`.
  *
  * \param encoding The encoding
  *
  * \return String representation for the encoding on success, "unknown"
- *         on invalid encoding
+ *         on invalid encoding.
  */
 GRN_API const char *
 grn_encoding_to_string(grn_encoding encoding);
 /**
- * \brief Parse encoding name and returns \ref grn_encoding. For example,
- *        `grn_encoding_parse("UTF8")` returns \ref GRN_ENC_UTF8
+ * \brief Parse encoding name and return \ref grn_encoding. For example,
+ *        `grn_encoding_parse("UTF8")` return \ref GRN_ENC_UTF8.
  *
  * \param name The encoding name
  *
  * \return \ref grn_encoding matching `name` on success, \ref GRN_ENC_UTF8 on
- *         invalid encoding name
+ *         invalid encoding name.
  */
 GRN_API grn_encoding
 grn_encoding_parse(const char *name);
