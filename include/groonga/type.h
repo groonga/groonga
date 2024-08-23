@@ -48,9 +48,10 @@ grn_type_id_size(grn_ctx *ctx, grn_id id);
  * \param ctx The context object
  * \param name Name of type to create
  * \param name_size Length of the name of type to be created
- * \param flags GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT,
- *              GRN_OBJ_KEY_INT or GRN_OBJ_KEY_UINT
- * \param size Maximum length if GRN_OBJ_KEY_VAR_SIZE,
+ * \param flags \ref GRN_OBJ_KEY_VAR_SIZE, \ref GRN_OBJ_KEY_FLOAT,
+ *              \ref GRN_OBJ_KEY_INT, \ref GRN_OBJ_KEY_UINT or
+ *              \ref GRN_OBJ_KEY_GEO_POINT
+ * \param size Maximum length if \ref GRN_OBJ_KEY_VAR_SIZE,
  *             otherwise length (in bytes)
  * \return A newly created type on success, `NULL` on error
  */
