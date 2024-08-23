@@ -497,7 +497,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_NO_SUBREC   (0x00 << 13)
 #define GRN_OBJ_WITH_SUBREC (0x01 << 13)
 
-/// variable size
+/// Variable size
 #define GRN_OBJ_KEY_VAR_SIZE (0x01 << 14)
 
 #define GRN_OBJ_TEMPORARY    (0x00 << 15)
