@@ -846,7 +846,7 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
 }
 
 grn_inline static unsigned char *
-grn_nfkc_normalize_unify_a_diacritical_mark(const unsigned char *utf8_char,
+grn_nfkc_normalize_unify_diacritical_mark_a(const unsigned char *utf8_char,
                                             unsigned char *unified)
 {
   /*
@@ -917,7 +917,7 @@ grn_nfkc_normalize_unify_a_diacritical_mark(const unsigned char *utf8_char,
 }
 
 grn_inline static unsigned char *
-grn_nfkc_normalize_unify_b_diacritical_mark(const unsigned char *utf8_char,
+grn_nfkc_normalize_unify_diacritical_mark_b(const unsigned char *utf8_char,
                                             unsigned char *unified)
 {
   /*
@@ -947,8 +947,8 @@ grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
-  if (grn_nfkc_normalize_unify_a_diacritical_mark(utf8_char, unified) ||
-      grn_nfkc_normalize_unify_b_diacritical_mark(utf8_char, unified)) {
+  if (grn_nfkc_normalize_unify_diacritical_mark_a(utf8_char, unified) ||
+      grn_nfkc_normalize_unify_diacritical_mark_b(utf8_char, unified)) {
     return unified;
   }
 
