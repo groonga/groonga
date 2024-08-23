@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_encoding``"
 msgstr ""
 
@@ -33,20 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Returns string representation for the encoding. For example, 'grn_encoding_to_string(``GRN_ENC_UTF8``)' returns '\"utf8\"'."
-msgstr "エンコーディングの形式を文字列で返します。たとえば'grn_encoding_to_string(``GRN_ENC_UTF8``)' は\"utf8\"を返します。"
-
-msgid "\"unknown\" is returned for invalid encoding."
-msgstr "無効なエンコーディングの場合は\"unknown\"を返します。"
-
-msgid "The encoding."
-msgstr "その時点のエンコーディング。"
-
-msgid "Parses encoding name and returns grn_encoding. For example, 'grn_encoding_parse(\"UTF8\")' returns '``GRN_ENC_UTF8``'."
-msgstr "エンコーディング名をパースし、grn_encodingを返します。たとえば、'grn_encoding_parse(\"UTF8\")' は'``GRN_ENC_UTF8``'を返します。"
-
-msgid "``GRN_ENC_UTF8`` is returned for invalid encoding name."
-msgstr "``GRN_ENC_UTF8`` は無効なエンコーディング名が与えた時に返されます。"
-
-msgid "The encoding name."
-msgstr "エンコーディング名。"
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
