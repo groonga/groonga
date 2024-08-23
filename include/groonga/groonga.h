@@ -436,14 +436,32 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_TABLE_DAT_KEY   (0x02)
 #define GRN_OBJ_TABLE_NO_KEY    (0x03)
 
-#define GRN_OBJ_KEY_MASK        (0x07 << 3)
-#define GRN_OBJ_KEY_UINT        (0x00 << 3)
-#define GRN_OBJ_KEY_INT         (0x01 << 3)
-#define GRN_OBJ_KEY_FLOAT       (0x02 << 3)
-#define GRN_OBJ_KEY_GEO_POINT   (0x03 << 3)
-
-#define GRN_OBJ_KEY_WITH_SIS    (0x01 << 6)
-#define GRN_OBJ_KEY_NORMALIZE   (0x01 << 7)
+/// Mask of `GRN_OBJ_KEY_*`
+#define GRN_OBJ_KEY_MASK (0x07 << 3)
+/// Unsigned integer
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_UINT (0x00 << 3)
+/// Signed integer
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_INT (0x01 << 3)
+/// Float
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_FLOAT (0x02 << 3)
+/// Latitude and longitude (\ref grn_geo_point)
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_GEO_POINT (0x03 << 3)
+/// Enable semi-infinite string support.
+/// This is only available with \ref GRN_OBJ_TABLE_PAT_KEY.
+/// You can use efficient suffix search with this but it requires more
+/// storage/memory size. Because it generates many additional data for efficient
+/// suffix search implicitly.
+#define GRN_OBJ_KEY_WITH_SIS (0x01 << 6)
+/**
+ * \deprecated This was used when only NormalizerAuto was available.
+ *             Now you can specify a normalizer, so there is no need
+ *             to use it.
+ */
+#define GRN_OBJ_KEY_NORMALIZE (0x01 << 7)
 
 /* flags for grn_obj_flags and grn_column_flags */
 
@@ -479,9 +497,15 @@ typedef uint32_t grn_column_flags;
 
 /* Don't use (0x01<<12) because it's used internally. */
 
-#define GRN_OBJ_NO_SUBREC    (0x00 << 13)
-#define GRN_OBJ_WITH_SUBREC  (0x01 << 13)
+#define GRN_OBJ_NO_SUBREC   (0x00 << 13)
+#define GRN_OBJ_WITH_SUBREC (0x01 << 13)
 
+/// It shows that the key is variable size not fixed size.
+/// If you're using DB API such as \ref grn_table_create(), you don't need to
+/// use this.
+/// You can use type object such as `ShortText` instead.
+/// If you're using a low-level table such as \ref grn_hash and \ref grn_pat
+/// directly, you can use this to show that the table uses variable size key.
 #define GRN_OBJ_KEY_VAR_SIZE (0x01 << 14)
 
 #define GRN_OBJ_TEMPORARY    (0x00 << 15)
