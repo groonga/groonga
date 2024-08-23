@@ -903,7 +903,7 @@ grn_nfkc_normalize_unify_diacritical_mark_a(const unsigned char *utf8_char,
        * U+1EB3 LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
        * U+1EB5 LATIN SMALL LETTER A WITH BREVE AND TILDE
        * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
-       * Uppercase counterparts(U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
+       * Uppercase counterparts (U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
        * U+1EAC, U+1EAE, U+1EB0, U+1EB2, U+1EB4, and U+1EB6) are covered by the
        * following condition but they are never appeared here. Because NFKC
        * normalization converts them to their lowercase equivalents.
@@ -925,7 +925,7 @@ grn_nfkc_normalize_unify_diacritical_mark_b(const unsigned char *utf8_char,
    * U+1E03 LATIN SMALL LETTER B WITH DOT ABOVE
    * U+1E05 LATIN SMALL LETTER B WITH DOT BELOW
    * U+1E07 LATIN SMALL LETTER B WITH LINE BELOW
-   * Uppercase counterparts(U+1E04, U+1E06) are covered by the
+   * Uppercase counterparts (U+1E04, U+1E06) are covered by the
    * following condition but they are never appeared here. Because NFKC
    * normalization converts them to their lowercase equivalents.
    */
