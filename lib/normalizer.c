@@ -845,9 +845,8 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
                                     "");
 }
 
-grn_inline static unsigned char *
-grn_nfkc_normalize_unify_diacritical_mark_a(const unsigned char *utf8_char,
-                                            unsigned char *unified)
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
 {
   /*
    * Latin-1 Supplement
@@ -910,15 +909,13 @@ grn_nfkc_normalize_unify_diacritical_mark_a(const unsigned char *utf8_char,
        */
       (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
        (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7))) {
-    *unified = 'a';
-    return unified;
+    return true;
   }
-  return NULL;
+  return false;
 }
 
-grn_inline static unsigned char *
-grn_nfkc_normalize_unify_diacritical_mark_b(const unsigned char *utf8_char,
-                                            unsigned char *unified)
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
 {
   /*
    * Latin Extended Additional
@@ -931,10 +928,9 @@ grn_nfkc_normalize_unify_diacritical_mark_b(const unsigned char *utf8_char,
    */
   if (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
       (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87)) {
-    *unified = 'b';
-    return unified;
+    return true;
   }
-  return NULL;
+  return false;
 }
 
 /*
@@ -947,8 +943,11 @@ grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
-  if (grn_nfkc_normalize_unify_diacritical_mark_a(utf8_char, unified) ||
-      grn_nfkc_normalize_unify_diacritical_mark_b(utf8_char, unified)) {
+  if (grn_nfkc_normalize_unify_diacritical_mark_is_a(utf8_char)) {
+    *unified = 'a';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_b(utf8_char)) {
+    *unified = 'b';
     return unified;
   }
 
