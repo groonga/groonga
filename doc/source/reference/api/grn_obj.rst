@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
-
-   objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。
-
-   :param obj: 対象objectを指定します。
-   :param id: 対象レコードのIDを指定します。
-   :param value: 値を格納するバッファ（呼出側で準備する）を指定します。
-
 .. c:function:: int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
 
    objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。
