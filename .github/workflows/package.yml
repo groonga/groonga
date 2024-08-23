@@ -226,6 +226,7 @@ jobs:
             task-namespace: yum
             target: almalinux-8-aarch64
             test-docker-image: arm64v8/almalinux:8
+            timeout-minutes: 60
           - label: AlmaLinux 9 x86_64
             id: almalinux-9-x86_64
             task-namespace: yum
@@ -236,10 +237,11 @@ jobs:
             task-namespace: yum
             target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:9
+            timeout-minutes: 60
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ matrix.timeout-minutes || 60 }}
+    timeout-minutes: ${{ matrix.timeout-minutes || 30 }}
     steps:
       - uses: actions/checkout@v4
         with:
