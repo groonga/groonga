@@ -853,65 +853,65 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
    * U+00E0 LATIN SMALL LETTER A WITH GRAVE ..
    * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE
    */
-  if ((utf8_char[0] == 0xC3 && 0xA0 <= utf8_char[1] && utf8_char[1] <= 0xA5) ||
-      /*
-       * Latin Extended-A
-       * U+0101 LATIN SMALL LETTER A WITH MACRON
-       * U+0103 LATIN SMALL LETTER A WITH BREVE
-       * U+0105 LATIN SMALL LETTER A WITH OGONEK
-       * Uppercase counterparts (U+0102 and U+0104) are covered by the following
-       * condition but they are never appeared here. Because NFKC normalization
-       * converts them to their lowercase equivalents.
-       */
-      (utf8_char[0] == 0xC4 &&
-       (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
-      /*
-       * Latin Extended-B
-       * U+01CE LATIN SMALL LETTER A WITH CARON
-       * U+01DF LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
-       * U+01E1 LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
-       * U+01FB LATIN SMALL LETTER A WITH RING ABOVE AND ACUTE
-       */
-      (utf8_char[0] == 0xC7 &&
-       (utf8_char[1] == 0x8E || utf8_char[1] == 0x9F || utf8_char[1] == 0xA1 ||
-        utf8_char[1] == 0xBB)) ||
-      /*
-       * Latin Extended-B
-       * U+0201 LATIN SMALL LETTER A WITH DOUBLE GRAVE
-       * U+0203 LATIN SMALL LETTER A WITH INVERTED BREVE
-       * U+0227 LATIN SMALL LETTER A WITH DOT ABOVE
-       */
-      (utf8_char[0] == 0xC8 && (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
-                                utf8_char[1] == 0xA7)) ||
-      /*
-       * Latin Extended Additional
-       * U+1E01 LATIN SMALL LETTER A WITH RING BELOW
-       */
-      (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 && utf8_char[2] == 0x81) ||
-      /*
-       * Latin Extended Additional
-       * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW
-       * U+1EA3 LATIN SMALL LETTER A WITH HOOK ABOVE
-       * U+1EA5 LATIN SMALL LETTER A WITH CIRCUMFLEX
-       * U+1EA7 LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
-       * U+1EA9 LATIN SMALL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
-       * U+1EAB LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
-       * U+1EAD LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
-       * U+1EAF LATIN SMALL LETTER A WITH BREVE AND ACUTE
-       * U+1EB1 LATIN SMALL LETTER A WITH BREVE AND GRAVE
-       * U+1EB3 LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
-       * U+1EB5 LATIN SMALL LETTER A WITH BREVE AND TILDE
-       * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
-       * Uppercase counterparts (U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
-       * U+1EAC, U+1EAE, U+1EB0, U+1EB2, U+1EB4, and U+1EB6) are covered by the
-       * following condition but they are never appeared here. Because NFKC
-       * normalization converts them to their lowercase equivalents.
-       */
-      (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
-       (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7))) {
-    return true;
-  }
-  return false;
+  return (utf8_char[0] == 0xC3 && 0xA0 <= utf8_char[1] &&
+          utf8_char[1] <= 0xA5) ||
+         /*
+          * Latin Extended-A
+          * U+0101 LATIN SMALL LETTER A WITH MACRON
+          * U+0103 LATIN SMALL LETTER A WITH BREVE
+          * U+0105 LATIN SMALL LETTER A WITH OGONEK
+          * Uppercase counterparts (U+0102 and U+0104) are covered by the
+          * following condition but they are never appeared here. Because NFKC
+          * normalization converts them to their lowercase equivalents.
+          */
+         (utf8_char[0] == 0xC4 &&
+          (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
+         /*
+          * Latin Extended-B
+          * U+01CE LATIN SMALL LETTER A WITH CARON
+          * U+01DF LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
+          * U+01E1 LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
+          * U+01FB LATIN SMALL LETTER A WITH RING ABOVE AND ACUTE
+          */
+         (utf8_char[0] == 0xC7 &&
+          (utf8_char[1] == 0x8E || utf8_char[1] == 0x9F ||
+           utf8_char[1] == 0xA1 || utf8_char[1] == 0xBB)) ||
+         /*
+          * Latin Extended-B
+          * U+0201 LATIN SMALL LETTER A WITH DOUBLE GRAVE
+          * U+0203 LATIN SMALL LETTER A WITH INVERTED BREVE
+          * U+0227 LATIN SMALL LETTER A WITH DOT ABOVE
+          */
+         (utf8_char[0] == 0xC8 &&
+          (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
+           utf8_char[1] == 0xA7)) ||
+         /*
+          * Latin Extended Additional
+          * U+1E01 LATIN SMALL LETTER A WITH RING BELOW
+          */
+         (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
+          utf8_char[2] == 0x81) ||
+         /*
+          * Latin Extended Additional
+          * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW
+          * U+1EA3 LATIN SMALL LETTER A WITH HOOK ABOVE
+          * U+1EA5 LATIN SMALL LETTER A WITH CIRCUMFLEX
+          * U+1EA7 LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
+          * U+1EA9 LATIN SMALL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
+          * U+1EAB LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
+          * U+1EAD LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
+          * U+1EAF LATIN SMALL LETTER A WITH BREVE AND ACUTE
+          * U+1EB1 LATIN SMALL LETTER A WITH BREVE AND GRAVE
+          * U+1EB3 LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
+          * U+1EB5 LATIN SMALL LETTER A WITH BREVE AND TILDE
+          * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
+          * Uppercase counterparts (U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
+          * U+1EAC, U+1EAE, U+1EB0, U+1EB2, U+1EB4, and U+1EB6) are covered by
+          * the following condition but they are never appeared here. Because
+          * NFKC normalization converts them to their lowercase equivalents.
+          */
+         (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
+          (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7));
 }
 
 grn_inline static bool
@@ -926,11 +926,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
    * following condition but they are never appeared here. Because NFKC
    * normalization converts them to their lowercase equivalents.
    */
-  if (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
-      (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87)) {
-    return true;
-  }
-  return false;
+  return utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
+         (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87);
 }
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
