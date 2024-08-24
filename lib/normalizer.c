@@ -945,9 +945,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_b(utf8_char)) {
     *unified = 'b';
     return unified;
+  } else {
+    return utf8_char;
   }
-
-  return utf8_char;
 }
 
 grn_inline static const unsigned char *
