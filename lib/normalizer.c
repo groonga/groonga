@@ -932,7 +932,6 @@ grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
   }
   return false;
 }
-
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
