@@ -39,25 +39,10 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。"
-msgstr ""
-
-msgid "取得できた件数が戻り値として返されます。エラーが発生した場合は -1 が返されます。"
-msgstr ""
-
-msgid "値が固定長であるカラムのみがobjに指定できます。範囲内のIDに対応するレコードが有効であるとは限りません。delete操作を実行したことのあるテーブルに対しては、:c:func:`grn_table_at()` などによって各レコードの存否を別途確認しなければなりません。"
+msgid "objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
 msgstr ""
 
 msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "値を取得する範囲の開始位置となるレコードIDを指定します。"
-msgstr ""
-
-msgid "値の配列がセットされます。"
-msgstr ""
-
-msgid "objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
 msgstr ""
 
 msgid "対象レコードのIDを指定します。"

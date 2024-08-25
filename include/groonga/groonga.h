@@ -912,6 +912,27 @@ grn_obj_set_element_info(
  */
 GRN_API grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
+/**
+ * \brief Retrieve an array of fixed-size column values starting from a
+ *        specified record ID.
+ *
+ *        This function retrieves values from a fixed-size column (`obj`),
+ *        starting at the record ID given by `offset`. The retrieved values are
+ *        stored in the array pointed to by `values`, and the number of records
+ *        that can be retrieved is returned.
+ *
+ * \note It is not guaranteed that all record IDs within the specified range are
+ *       valid. For tables where records may have been deleted, you must use
+ *       functions such as \ref grn_table_at to check the existence of each
+ *       record.
+ *
+ * \param ctx The context object
+ * \param obj The target fixed-size column
+ * \param offset The starting record ID for retrieving values
+ * \param values A pointer to an array where the values will be stored
+ *
+ * \return The number of records retrieved, or `-1` if an error occurred.
+ */
 GRN_API int
 grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 

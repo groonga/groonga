@@ -23,18 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
-
-   objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。
-
-   取得できた件数が戻り値として返されます。エラーが発生した場合は -1 が返されます。
-
-   .. note:: 値が固定長であるカラムのみがobjに指定できます。範囲内のIDに対応するレコードが有効であるとは限りません。delete操作を実行したことのあるテーブルに対しては、:c:func:`grn_table_at()` などによって各レコードの存否を別途確認しなければなりません。
-
-   :param obj: 対象objectを指定します。
-   :param offset: 値を取得する範囲の開始位置となるレコードIDを指定します。
-   :param values: 値の配列がセットされます。
-
 .. c:function:: grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 
    objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
