@@ -148,6 +148,18 @@ grn_table_lcp_search(grn_ctx *ctx,
 GRN_API int
 grn_table_get_key(
   grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf_size);
+/**
+ * \brief Delete the record matching the key in the table or database.
+ *
+ * \param ctx The context object
+ * \param table The table or database
+ * \param key Key of record to be deleted
+ * \param key_size Size of `key` in bytes
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the
+ *         record does not exist, and the appropriate `grn_rc` for any other
+ *         errors.
+ */
 GRN_API grn_rc
 grn_table_delete(grn_ctx *ctx,
                  grn_obj *table,
