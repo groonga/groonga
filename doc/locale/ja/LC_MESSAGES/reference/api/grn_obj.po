@@ -39,76 +39,10 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
+msgid "objをメモリから解放し、それが永続オブジェクトであった場合は、該当するファイル一式を削除します。"
 msgstr ""
 
 msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "対象レコードのIDを指定します。"
-msgstr ""
-
-msgid "格納する値を指定します。"
-msgstr ""
-
-msgid "以下の値を指定できます。  .. hlist::    :columns: 3     * :c:macro:`GRN_OBJ_SET`    * :c:macro:`GRN_OBJ_INCR`    * :c:macro:`GRN_OBJ_DECR`    * :c:macro:`GRN_OBJ_APPEND`    * :c:macro:`GRN_OBJ_PREPEND`    * :c:macro:`GRN_OBJ_GET`    * :c:macro:`GRN_OBJ_COMPARE`    * :c:macro:`GRN_OBJ_LOCK`    * :c:macro:`GRN_OBJ_UNLOCK`"
-msgstr ""
-
-msgid "以下の値を指定できます。"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_SET`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_INCR`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_DECR`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_APPEND`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_PREPEND`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_GET`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_COMPARE`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_LOCK`"
-msgstr ""
-
-msgid ":c:macro:`GRN_OBJ_UNLOCK`"
-msgstr ""
-
-msgid "レコードの値をvalueと置き換えます。"
-msgstr ""
-
-msgid "レコードの値にvalueを加算します。"
-msgstr ""
-
-msgid "レコードの値にvalueを減算します。"
-msgstr ""
-
-msgid "レコードの値の末尾にvalueを追加します。"
-msgstr ""
-
-msgid "レコードの値の先頭にvalueを追加します。"
-msgstr ""
-
-msgid "新しいレコードの値をvalueにセットします。"
-msgstr ""
-
-msgid "レコードの値とvalueが等しいか調べます。"
-msgstr ""
-
-msgid "当該レコードをロックします。:c:macro:`GRN_OBJ_COMPARE` と共に指定された場合は、レコードの値とvalueが等しい場合に限ってロックします。"
-msgstr ""
-
-msgid "当該レコードのロックを解除します。"
 msgstr ""
 
 msgid "ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェクトでなければいけません。"
