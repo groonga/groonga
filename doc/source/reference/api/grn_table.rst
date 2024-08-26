@@ -36,14 +36,6 @@ Reference
    :param keybuf: keyを格納するバッファ(呼出側で準備する)を指定します。
    :param buf_size: keybufのサイズ(byte長)を指定します。
  
-.. c:function:: grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
-
-   tableのkeyに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
- 
-   :param table: 対象tableを指定します。
-   :param key: 検索keyを指定します。
-   :param key_size: 検索keyのサイズを指定します。
-
 .. c:function:: grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
 
    tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。

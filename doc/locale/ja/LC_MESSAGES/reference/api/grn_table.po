@@ -63,12 +63,6 @@ msgstr ""
 msgid "keybufのサイズ(byte長)を指定します。"
 msgstr ""
 
-msgid "tableのkeyに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
-msgstr ""
-
-msgid "検索keyのサイズを指定します。"
-msgstr ""
-
 msgid "tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
 msgstr ""
 
