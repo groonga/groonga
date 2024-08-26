@@ -223,6 +223,7 @@ jobs:
             task-namespace: apt
             target: ubuntu-focal-arm64
             test-docker-image: arm64v8/ubuntu:focal
+            timeout-minutes: 270
           - label: Ubuntu jammy amd64
             id: ubuntu-jammy-amd64
             task-namespace: apt
