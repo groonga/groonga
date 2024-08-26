@@ -97,6 +97,7 @@ typedef enum {
   GRN_DOMAIN_ERROR = -32,
   GRN_RESULT_TOO_LARGE = -33,
   GRN_RESOURCE_DEADLOCK_AVOIDED = -34,
+  /// Not enough memory available (-35)
   GRN_NO_MEMORY_AVAILABLE = -35,
   GRN_FILENAME_TOO_LONG = -36,
   GRN_NO_LOCKS_AVAILABLE = -37,
@@ -925,6 +926,11 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
  *            range are valid. For tables where records may have been deleted,
  *            you must use functions such as \ref grn_table_at to check the
  *            existence of each record.
+ *
+ * \note If an error occurs and the return value is `-1`, check `ctx->rc` for
+ *       the specific error code (e.g., \ref GRN_NO_MEMORY_AVAILABLE,
+ *       \ref GRN_INVALID_ARGUMENT). Additional details might be available in
+ *       `ctx->errbuf`.
  *
  * \param ctx The context object
  * \param obj The target fixed-size column
