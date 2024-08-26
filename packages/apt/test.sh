@@ -32,7 +32,7 @@ apt install -V -y \
   ${repositories_dir}/${distribution}/pool/${code_name}/${component}/*/*/*_{${architecture},all}.deb
 
 groonga --version
-if [ "${architecture}" != "i386" ] && [ "${distribution}" != "ubuntu" ]; then
+if [ "${distribution}" != "ubuntu" ]; then
   if ! groonga --version | grep -q apache-arrow; then
     echo "Apache Arrow isn't enabled"
     exit 1
@@ -48,19 +48,7 @@ fi
 mkdir -p /test
 cd /test
 cp -a /groonga/test/command ./
-if [ "${architecture}" = "i386" ]; then
-  rm command/suite/ruby/eval/convert/string_to_time/over_int32.test
-  # TODO: debug this
-  rm command/suite/select/filter/geo_in_circle/no_index/north_east.test
-  # Float32 value format is different.
-  rm command/suite/tokenizers/document_vector_tf_idf/alphabet.test
-  rm command/suite/tokenizers/document_vector_tf_idf/reindex.test
-  rm command/suite/tokenizers/document_vector_tf_idf/token_column.test
-  rm command/suite/tokenizers/document_vector_tf_idf/token_column_different_lexicon.test
-  rm command/suite/tokenizers/document_vector_bm25/alphabet.test
-  rm command/suite/tokenizers/document_vector_bm25/normalize_false.test
-  rm command/suite/tokenizers/document_vector_bm25/reindex.test
-elif [ "${architecture}" = "arm64" ]; then
+if [ "${architecture}" = "arm64" ]; then
   # Float32 value format is different.
   rm command/suite/tokenizers/document_vector_bm25/alphabet.test
   rm command/suite/tokenizers/document_vector_bm25/reindex.test
