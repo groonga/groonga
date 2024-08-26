@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (C) 2024  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 # Copyright (C) 2024  Kodama Takuya <otegami@clear-code.com>
 # Copyright (C) 2024  Abe Tomoaki <abe@clear-code.com>
 #
