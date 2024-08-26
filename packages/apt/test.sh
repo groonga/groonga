@@ -71,7 +71,8 @@ fi
 apt install -V -y \
   gcc \
   make \
-  ruby-dev
+  ruby-dev \
+  tzdata
 MAKEFLAGS=-j$(nproc) gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
