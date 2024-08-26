@@ -50,6 +50,16 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def docker_run_options(os, architecture)
+    options = []
+    case architecture
+    when "arm64"
+      # lintian on QEMU is too slow...
+      options.concat("--env", "DEBUILD_LINTIAN=no")
+    end
+    options
+  end
+
   def apt_targets_default
     [
       "debian-bookworm",
