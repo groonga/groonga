@@ -55,7 +55,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     case architecture
     when "arm64"
       # lintian on QEMU is too slow...
-      options.concat("--env", "DEBUILD_LINTIAN=no")
+      options << "--env" << "DEBUILD_LINTIAN=no"
     end
     options
   end
