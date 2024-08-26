@@ -39,6 +39,12 @@ if [ "${architecture}" != "i386" ] && [ "${distribution}" != "ubuntu" ]; then
   fi
 fi
 
+# There are some problems for running arm64 tests:
+#   * Too long test time because of QEMU
+if [ "${architecture}" == "arm64" ]; then
+  exit
+fi
+
 mkdir -p /test
 cd /test
 cp -a /groonga/test/command ./
@@ -82,13 +88,8 @@ grntest_options+=(--base-directory=command)
 grntest_options+=(--n-retries=2)
 grntest_options+=(--reporter=mark)
 grntest_options+=(command/suite)
-# There are some problems for running arm64 tests:
-#   * Too long test time because of QEMU
-#   * Unknown crash with bullseye
-if [ "${architecture}" != "arm64" ]; then
-  grntest "${grntest_options[@]}"
-  # Run only one job to reduce CI time
-  if [ "${code_name}" == "bookworm" ]; then
-    grntest "${grntest_options[@]}" --interface http
-  fi
+grntest "${grntest_options[@]}"
+# Run only one job to reduce CI time
+if [ "${code_name}" == "bookworm" ]; then
+  grntest "${grntest_options[@]}" --interface http
 fi
