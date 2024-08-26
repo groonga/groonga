@@ -8,10 +8,10 @@ Build-Depends:
   debhelper (>= 9),
   libedit-dev,
   libevent-dev,
-  libjemalloc-dev,
   liblz4-dev,
   libmecab-dev,
   libmsgpack-dev,
+  libsimdjson-dev,
   libssl-dev,
   libstemmer-dev,
 # Broken. xtl-dev dependency is missing.
