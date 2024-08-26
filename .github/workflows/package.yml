@@ -185,6 +185,7 @@ jobs:
           - Debian GNU/Linux trixie arm64
           - Ubuntu focal amd64
           - Ubuntu jammy amd64
+          - Ubuntu noble amd64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
           - AlmaLinux 9 x86_64
@@ -222,6 +223,11 @@ jobs:
             task-namespace: apt
             target: ubuntu-jammy
             test-docker-image: ubuntu:jammy
+          - label: Ubuntu noble amd64
+            id: ubuntu-noble-amd64
+            task-namespace: apt
+            target: ubuntu-noble
+            test-docker-image: ubuntu:noble
           - label: AlmaLinux 8 x86_64
             id: almalinux-8-x86_64
             task-namespace: yum
