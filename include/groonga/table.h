@@ -149,10 +149,10 @@ GRN_API int
 grn_table_get_key(
   grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf_size);
 /**
- * \brief Delete the record matching the key in the table or database.
+ * \brief Delete the record matching the key in the table.
  *
  * \param ctx The context object
- * \param table The table or database
+ * \param table The table
  * \param key Key of record to be deleted
  * \param key_size Size of `key` in bytes
  *
