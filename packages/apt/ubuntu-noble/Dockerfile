@@ -24,7 +24,6 @@ RUN \
     libmecab-dev \
     libmsgpack-dev \
     libjemalloc-dev \
-    libpcre3-dev \
     libsimdjson-dev \
     libssl-dev \
     libstemmer-dev \
@@ -36,6 +35,5 @@ RUN \
     ninja-build \
     pkg-config \
     rapidjson-dev \
-    tzdata \
     zlib1g-dev && \
   apt clean
