@@ -1,4 +1,4 @@
-ARG FROM=ubuntu:focal
+ARG FROM=ubuntu:jammy
 FROM ${FROM}
 
 RUN \
@@ -23,7 +23,6 @@ RUN \
     liblz4-dev \
     libmecab-dev \
     libmsgpack-dev \
-    libpcre3-dev \
     libsimdjson-dev \
     libssl-dev \
     libstemmer-dev \
