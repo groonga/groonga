@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1724654351782,
+  "lastUpdate": 1724655428008,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -37746,6 +37746,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017636273999983132,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001903000000000571 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "a.s.takuya1026@gmail.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "99d3276580eb63002af9f2fdff1af0bb7ed0f2cb",
+          "message": "NormalizerNFKC unify_alphabet_diacritical_mark: remove diacritical mark for `b` (#1891)\n\nGitHub: ref GH-1755\r\n\r\nThis PR enhances the NormalizerNFKC by introducing functionality to the\r\n`unify_alphabet_diacritical_mark` option.\r\nThis option is specifically aimed at stripping diacritical marks from\r\ncharacters related to the letter `b`.\r\n\r\nIt ensures that any character with diacritical marks falling under the\r\nCombining Diacritical Marks Unicode block is normalized to `b`.\r\n\r\n## For reviewers\r\nThe following code can generate a mapping between Unicode and UTF-8.\r\n\r\n```ruby\r\n#!/usr/bin/env ruby\r\n\r\ndef have_diactritical_combining_character?(character)\r\n  code_points = character.unicode_normalize(:nfd).codepoints\r\n  code_points.any? do |code_point|\r\n    (0x0300..0x036f).cover?(code_point)\r\n  end\r\nend\r\n\r\ndef base_character(character)\r\n  character.unicode_normalize(:nfd).chars.first\r\nend\r\n\r\ndef base_character_is_lower_alphabet?(character)\r\n  base_code_point = base_character(character).codepoints.first\r\n  ((\"a\".codepoints.first)..(\"z\".codepoints.first)).cover?(base_code_point)\r\nend\r\n\r\ndef base_character_is_capital_alphabet?(character)\r\n  base_code_point = base_character(character).codepoints.first\r\n  ((\"A\".codepoints.first)..(\"Z\".codepoints.first)).cover?(base_code_point)\r\nend \r\n\r\ndef base_character_is_alphabet?(character)\r\n  base_character_is_lower_alphabet?(character) || base_character_is_capital_alphabet?(character)\r\nend\r\n\r\nputs '## Generate mapping about Unicode and UTF-8'\r\n(0x0000..0xffff).each do |code_point|\r\n  begin\r\n    character = code_point.chr(\"UTF-8\")\r\n  rescue RangeError\r\n    next\r\n  end\r\n  next unless have_diactritical_combining_character?(character)\r\n  next unless base_character_is_lower_alphabet?(character)\r\n  next unless base_character(character) == \"b\"\r\n  pp [\"U+%04x\" % code_point, character, character.bytes.collect {|b| \"%#02x\" % b}]\r\nend\r\n\r\nputs \"-\" * 50\r\n\r\nputs '## Generate target characters'\r\n(0x0000..0xffff).each do |code_point|\r\n  begin\r\n    character = code_point.chr(\"UTF-8\")\r\n  rescue RangeError\r\n    next\r\n  end\r\n  next unless have_diactritical_combining_character?(character)\r\n  next unless base_character_is_alphabet?(character)\r\n  next unless [\"b\", \"B\"].any?(base_character(character))\r\n  print character\r\nend\r\n```\r\n```console\r\n$ ruby unicode.rb\r\n## Generate mapping about Unicode and UTF-8\r\n[\"U+1e03\", \"ḃ\", [\"0xe1\", \"0xb8\", \"0x83\"]]\r\n[\"U+1e05\", \"ḅ\", [\"0xe1\", \"0xb8\", \"0x85\"]]\r\n[\"U+1e07\", \"ḇ\", [\"0xe1\", \"0xb8\", \"0x87\"]]\r\n--------------------------------------------------\r\n## Generate target characters\r\nḂḃḄḅḆḇ\r\n```",
+          "timestamp": "2024-08-26T15:05:48+09:00",
+          "tree_id": "5a0ef4617e90e279df5cd0f2916031f924b5887e",
+          "url": "https://github.com/groonga/groonga/commit/99d3276580eb63002af9f2fdff1af0bb7ed0f2cb"
+        },
+        "date": 1724655426213,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.40298052900004677,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.019651999999999975 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.26093242800004646,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.012957999999999997 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015524212000002535,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003579999999999972 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015601755000034245,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00035300000000001996 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.6967981320000263,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00017300000000003424 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24079281400008767,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009594000000000186 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13859343100000387,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008899000000000046 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01772252099999605,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018439999999999568 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017330456999957278,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020920000000000383 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05516019299994923,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008483999999999839 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06438110099998084,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017684999999999756 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018015439999999217,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020269999999999455 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.018230092000010245,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0022460000000004143 s\nthreads: undefined"
           }
         ]
       }
