@@ -967,11 +967,11 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
  */
 #define GRN_OBJ_DECR (0x03)
 /**
- * \brief Append the specified value to the record/column value.
+ * \brief Append the specified value to the column value.
  */
 #define GRN_OBJ_APPEND (0x04)
 /**
- * \brief Prepend the specified value to the record/column value.
+ * \brief Prepend the specified value to the column value.
  */
 #define GRN_OBJ_PREPEND (0x05)
 /**
