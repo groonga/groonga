@@ -186,6 +186,7 @@ jobs:
           - ubuntu-focal-amd64
           - ubuntu-focal-arm64
           - ubuntu-jammy-amd64
+          - ubuntu-jammy-arm64
           - ubuntu-noble-amd64
           - almalinux-8-x86_64
           - almalinux-8-aarch64
@@ -197,7 +198,9 @@ jobs:
           - id: debian-trixie-arm64
             timeout-minutes: 90
           - id: ubuntu-focal-arm64
-            timeout-minutes: 90
+            timeout-minutes: 60
+          - id: ubuntu-jammy-arm64
+            timeout-minutes: 60
           - id: almalinux-8-aarch64
             timeout-minutes: 60
           - id: almalinux-9-aarch64
