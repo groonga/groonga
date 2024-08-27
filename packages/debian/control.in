@@ -5,7 +5,7 @@ Maintainer: Groonga Project <packages@groonga.org>
 Uploaders: HAYASHI Kentaro <hayashi@clear-code.com>
 Build-Depends:
   cmake,
-  debhelper (>= 9),
+  debhelper (>= 12),
   libedit-dev,
   libevent-dev,
   liblz4-dev,
