@@ -1222,22 +1222,28 @@ grn_nfkc_normalize_unify_diacritical_mark_is_o(const unsigned char *utf8_char)
     /*
      * Latin Extended-B
      * U+01A1 LATIN SMALL LETTER O WITH HORN
+     */
+    (utf8_char[0] == 0xc6 && utf8_char[1] == 0xa1) ||
+    /*
+     * Latin Extended-B
      * U+01D2 LATIN SMALL LETTER O WITH CARON
      * U+01EB LATIN SMALL LETTER O WITH OGONEK
      * U+01ED LATIN SMALL LETTER O WITH OGONEK AND MACRON
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc7 &&
+     ((utf8_char[1] == 0x92) ||
+      (0xab <= utf8_char[1] && utf8_char[1] <= 0xad))) ||
+    /*
+     * Latin Extended-B
      * U+020D LATIN SMALL LETTER O WITH DOUBLE GRAVE
      * U+020F LATIN SMALL LETTER O WITH INVERTED BREVE
      * U+022B LATIN SMALL LETTER O WITH DIAERESIS AND MACRON
      * U+022D LATIN SMALL LETTER O WITH TILDE AND MACRON
      * U+022F LATIN SMALL LETTER O WITH DOT ABOVE
      * U+0231 LATIN SMALL LETTER O WITH DOT ABOVE AND MACRON
-     *
      * Each missing one is an upper case.
      */
-    (utf8_char[0] == 0xc6 && utf8_char[1] == 0xa1) ||
-    (utf8_char[0] == 0xc7 &&
-     ((utf8_char[1] == 0x92) ||
-      (0xab <= utf8_char[1] && utf8_char[1] <= 0xad))) ||
     (utf8_char[0] == 0xc8 &&
      ((0x8d <= utf8_char[1] && utf8_char[1] <= 0x8f) ||
       (0xab <= utf8_char[1] && utf8_char[1] <= 0xb1))) ||
