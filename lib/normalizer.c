@@ -1072,6 +1072,38 @@ grn_nfkc_normalize_unify_diacritical_mark_is_g(const unsigned char *utf8_char)
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0xa1));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_h(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0125 LATIN SMALL LETTER H WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0xa5) ||
+    /*
+     * Latin Extended-B
+     * U+021F LATIN SMALL LETTER H WITH CARON
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0x9f) ||
+    /*
+     * Latin Extended Additional
+     * U+1E23 LATIN SMALL LETTER H WITH DOT ABOVE
+     * U+1E25 LATIN SMALL LETTER H WITH DOT BELOW
+     * U+1E27 LATIN SMALL LETTER H WITH DIAERESIS
+     * U+1E29 LATIN SMALL LETTER H WITH CEDILLA
+     * U+1E2B LATIN SMALL LETTER H WITH BREVE BELOW
+     * Uppercase counterparts (e.g. U+1E24) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     *
+     * U+1E96 LATIN SMALL LETTER H WITH LINE BELOW
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0xa3 <= utf8_char[2] && utf8_char[2] <= 0xab)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x96));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1099,6 +1131,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_g(utf8_char)) {
     *unified = 'g';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_h(utf8_char)) {
+    *unified = 'h';
     return unified;
   } else {
     return utf8_char;
