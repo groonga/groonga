@@ -1346,11 +1346,11 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_n(utf8_char)) {
     *unified = 'n';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
-    *unified = 'r';
-    return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_o(utf8_char)) {
     *unified = 'o';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
+    *unified = 'r';
     return unified;
   } else {
     return utf8_char;
