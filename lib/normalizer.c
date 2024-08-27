@@ -1116,6 +1116,50 @@ grn_nfkc_normalize_unify_diacritical_mark_is_h(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_i(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00EC LATIN SMALL LETTER I WITH GRAVE
+     * U+00ED LATIN SMALL LETTER I WITH ACUTE
+     * U+00EE LATIN SMALL LETTER I WITH CIRCUMFLEX
+     * U+00EF LATIN SMALL LETTER I WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xac <= utf8_char[1] && utf8_char[1] <= 0xaf) ||
+    /*
+     * Latin Extended-A
+     * U+0129 LATIN SMALL LETTER I WITH TILDE
+     * U+012B LATIN SMALL LETTER I WITH MACRON
+     * U+012D LATIN SMALL LETTER I WITH BREVE
+     * U+012F LATIN SMALL LETTER I WITH OGONEK
+     * Uppercase counterparts (e.g. U+012A) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0xa9 <= utf8_char[1] && utf8_char[1] <= 0xaf) ||
+    /*
+     * Latin Extended-B
+     * U+01D0 LATIN SMALL LETTER I WITH CARON
+     * U+0209 LATIN SMALL LETTER I WITH DOUBLE GRAVE
+     * U+020B LATIN SMALL LETTER I WITH INVERTED BREVE
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0x90) ||
+    (utf8_char[0] == 0xc8 && (utf8_char[1] == 0x89 || utf8_char[1] == 0x8b)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E2D LATIN SMALL LETTER I WITH TILDE BELOW
+     * U+1E2F LATIN SMALL LETTER I WITH DIAERESIS AND ACUTE
+     * U+1EC9 LATIN SMALL LETTER I WITH HOOK ABOVE
+     * U+1ECB LATIN SMALL LETTER I WITH DOT BELOW
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (utf8_char[2] == 0xad || utf8_char[2] == 0xaf)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (utf8_char[2] == 0x89 || utf8_char[2] == 0x8b)));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_j(const unsigned char *utf8_char)
 {
   return (
@@ -1676,6 +1720,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_h(utf8_char)) {
     *unified = 'h';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_i(utf8_char)) {
+    *unified = 'i';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_j(utf8_char)) {
     *unified = 'j';
