@@ -1195,6 +1195,39 @@ grn_nfkc_normalize_unify_diacritical_mark_is_n(const unsigned char *utf8_char)
      (0x85 <= utf8_char[2] && utf8_char[2] <= 0x8b)));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_r(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0155 LATIN SMALL LETTER R WITH ACUTE
+     * U+0157 LATIN SMALL LETTER R WITH CEDILLA
+     * U+0159 LATIN SMALL LETTER R WITH CARON
+     * Uppercase counterparts (e.g. U+0156) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0x95 <= utf8_char[1] && utf8_char[1] <= 0x99) ||
+    /*
+     * Latin Extended-B
+     * U+0211 LATIN SMALL LETTER R WITH DOUBLE GRAVE
+     * U+0213 LATIN SMALL LETTER R WITH INVERTED BREVE
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc8 && 0x91 <= utf8_char[1] && utf8_char[1] <= 0x93) ||
+    /*
+     * Latin Extended Additional
+     * U+1E59 LATIN SMALL LETTER R WITH DOT ABOVE
+     * U+1E5B LATIN SMALL LETTER R WITH DOT BELOW
+     * U+1E5D LATIN SMALL LETTER R WITH DOT BELOW AND MACRON
+     * U+1E5F LATIN SMALL LETTER R WITH LINE BELOW
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0x99 <= utf8_char[2] && utf8_char[2] <= 0x9f)));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1234,6 +1267,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_n(utf8_char)) {
     *unified = 'n';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
+    *unified = 'r';
     return unified;
   } else {
     return utf8_char;
