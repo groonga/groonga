@@ -178,84 +178,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        label:
-          - Debian GNU/Linux bookworm amd64
-          - Debian GNU/Linux bookworm arm64
-          - Debian GNU/Linux trixie amd64
-          - Debian GNU/Linux trixie arm64
-          - Ubuntu focal amd64
-          - Ubuntu focal arm64
-          - Ubuntu jammy amd64
-          - Ubuntu noble amd64
-          - AlmaLinux 8 x86_64
-          - AlmaLinux 8 aarch64
-          - AlmaLinux 9 x86_64
-          - AlmaLinux 9 aarch64
+        id:
+          - debian-bookworm-amd64
+          - debian-bookworm-arm64
+          - debian-trixie-amd64
+          - debian-trixie-arm64
+          - ubuntu-focal-amd64
+          - ubuntu-focal-arm64
+          - ubuntu-jammy-amd64
+          - ubuntu-noble-amd64
+          - almalinux-8-x86_64
+          - almalinux-8-aarch64
+          - almalinux-9-x86_64
+          - almalinux-9-aarch64
         include:
-          - label: Debian GNU/Linux bookworm amd64
-            id: debian-bookworm-amd64
-            task-namespace: apt
-            target: debian-bookworm
-            test-docker-image: debian:bookworm
-          - label: Debian GNU/Linux bookworm arm64
-            id: debian-bookworm-arm64
-            task-namespace: apt
-            target: debian-bookworm-arm64
-            test-docker-image: arm64v8/debian:bookworm
-            timeout-minutes: 90
-          - label: Debian GNU/Linux trixie amd64
-            id: debian-trixie-amd64
-            task-namespace: apt
-            target: debian-trixie
-            test-docker-image: debian:trixie
-          - label: Debian GNU/Linux trixie arm64
-            id: debian-trixie-arm64
-            task-namespace: apt
-            target: debian-trixie-arm64
-            test-docker-image: arm64v8/debian:trixie
-            timeout-minutes: 270
-          - label: Ubuntu focal amd64
-            id: ubuntu-focal-amd64
-            task-namespace: apt
-            target: ubuntu-focal
-            test-docker-image: ubuntu:focal
-          - label: Ubuntu focal arm64
-            id: ubuntu-focal-arm64
-            task-namespace: apt
-            target: ubuntu-focal-arm64
-            test-docker-image: arm64v8/ubuntu:focal
-            timeout-minutes: 270
-          - label: Ubuntu jammy amd64
-            id: ubuntu-jammy-amd64
-            task-namespace: apt
-            target: ubuntu-jammy
-            test-docker-image: ubuntu:jammy
-          - label: Ubuntu noble amd64
-            id: ubuntu-noble-amd64
-            task-namespace: apt
-            target: ubuntu-noble
-            test-docker-image: ubuntu:noble
-          - label: AlmaLinux 8 x86_64
-            id: almalinux-8-x86_64
-            task-namespace: yum
-            target: almalinux-8
-            test-docker-image: almalinux:8
-          - label: AlmaLinux 8 aarch64
-            id: almalinux-8-aarch64
-            task-namespace: yum
-            target: almalinux-8-aarch64
-            test-docker-image: arm64v8/almalinux:8
+          - id: debian-bookworm-arm64
             timeout-minutes: 60
-          - label: AlmaLinux 9 x86_64
-            id: almalinux-9-x86_64
-            task-namespace: yum
-            target: almalinux-9
-            test-docker-image: almalinux:9
-          - label: AlmaLinux 9 aarch64
-            id: almalinux-9-aarch64
-            task-namespace: yum
-            target: almalinux-9-aarch64
-            test-docker-image: arm64v8/almalinux:9
+          - id: debian-trixie-arm64
+            timeout-minutes: 90
+          - id: ubuntu-focal-arm64
+            timeout-minutes: 90
+          - id: almalinux-8-aarch64
+            timeout-minutes: 60
+          - id: almalinux-9-aarch64
             timeout-minutes: 60
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
@@ -269,6 +214,38 @@ jobs:
         with:
           path: apache-arrow
           repository: apache/arrow
+      - name: Prepare environment variables
+        run: |
+          id=${{ matrix.id }}
+          os_version=${id%-*}
+          os=${os_version%-*}
+          version=${os_version#*-}
+          architecture=${id##*-}
+
+          if [ "${os}" = "debian" ] || [ "${os}" = "ubuntu" ]; then
+            TASK_NAMESPACE=apt
+            if [ "${architecture}" = "amd64" ]; then
+              TARGET="${os_version}"
+              TEST_DOCKER_IMAGE="${os}:${version}"
+            else
+              TARGET="${id}"
+              TEST_DOCKER_IMAGE="arm64v8/${os}:${version}"
+            fi
+          else
+            TASK_NAMESPACE=yum
+            if [ "${architecture}" = "x86_64" ]; then
+              TARGET="${os_version}"
+              TEST_DOCKER_IMAGE="${os}:${version}"
+            else
+              TARGET="${id}"
+              TEST_DOCKER_IMAGE="arm64v8/${os}:${version}"
+            fi
+          esac
+          echo "TASK_NAMESPACE=${TASK_NAMESPACE}" >> ${GITHUB_ENV}
+          echo "TARGET=${TARGET}" >> ${GITHUB_ENV}
+          echo "APT_TARGETS=${TARGET}" >> ${GITHUB_ENV}
+          echo "YUM_TARGETS=${TARGET}" >> ${GITHUB_ENV}
+          echo "TEST_DOCKER_IMAGE=${TEST_DOCKER_IMAGE}" >> ${GITHUB_ENV}
       - name: Install dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
@@ -295,38 +272,32 @@ jobs:
       - name: Cache ccache
         uses: actions/cache@v4
         with:
-          path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
+          path: packages/${{ env.TASK_NAMESPACE }}/build/${{ env.TARGET }}/ccache
           key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
         run: |
           cd packages
           rake docker:pull || :
-          rake ${{ matrix.task-namespace }}:build BUILD_DIR=build
-        env:
-          APT_TARGETS: ${{ matrix.target }}
-          YUM_TARGETS: ${{ matrix.target }}
+          rake ${TASK_NAMESPACE}:build BUILD_DIR=build
       - name: Push the built Docker image
         continue-on-error: true
         run: |
           cd packages
           rake docker:push
-        env:
-          APT_TARGETS: ${{ matrix.target }}
-          YUM_TARGETS: ${{ matrix.target }}
 
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
           name: packages-${{ matrix.id }}
-          path: packages/${{ matrix.task-namespace }}/repositories/
+          path: packages/${{ env.TASK_NAMESPACE }}/repositories/
 
       # Release
       - name: Create assets
         if: |
           startsWith(github.ref, 'refs/tags/')
         run: |
-          tar czf ${{ matrix.id }}.tar.gz packages/${{ matrix.task-namespace }}/repositories/
+          tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
       - name: Upload to release
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -339,7 +310,7 @@ jobs:
       # Test
       - name: Test
         run: |
-          case "${{ matrix.test-docker-image }}" in
+          case "${TEST_DOCKER_IMAGE}" in
             arm64v8/*)
               platform=linux/arm64
               ;;
@@ -351,5 +322,5 @@ jobs:
             --platform ${platform} \
             --rm \
             --volume ${PWD}:/groonga:ro \
-            ${{ matrix.test-docker-image }} \
-            /groonga/packages/${{ matrix.task-namespace }}/test.sh
+            ${TEST_DOCKER_IMAGE} \
+            /groonga/packages/${TASK_NAMESPACE}/test.sh
