@@ -1158,6 +1158,43 @@ grn_nfkc_normalize_unify_diacritical_mark_is_l(const unsigned char *utf8_char)
      (0xb7 <= utf8_char[2] && utf8_char[2] <= 0xbd)));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_n(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00F1 LATIN SMALL LETTER N WITH TILDE
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xb1) ||
+    /*
+     * Latin Extended-A
+     * U+0144 LATIN SMALL LETTER N WITH ACUTE
+     * U+0146 LATIN SMALL LETTER N WITH CEDILLA
+     * U+0148 LATIN SMALL LETTER N WITH CARON
+     * Uppercase counterparts (e.g. U+0145) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0x84 <= utf8_char[1] && utf8_char[1] <= 0x88) ||
+    /*
+     * Latin Extended-B
+     * U+01F9 LATIN SMALL LETTER N WITH GRAVE
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0xb9) ||
+    /*
+     * Latin Extended Additional
+     * U+1E45 LATIN SMALL LETTER N WITH DOT ABOVE
+     * U+1E47 LATIN SMALL LETTER N WITH DOT BELOW
+     * U+1E49 LATIN SMALL LETTER N WITH LINE BELOW
+     * U+1E4B LATIN SMALL LETTER N WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0x85 <= utf8_char[2] && utf8_char[2] <= 0x8b)));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1194,6 +1231,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_l(utf8_char)) {
     *unified = 'l';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_n(utf8_char)) {
+    *unified = 'n';
     return unified;
   } else {
     return utf8_char;
