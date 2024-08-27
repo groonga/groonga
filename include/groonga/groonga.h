@@ -1009,7 +1009,7 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
  *              \ref GRN_OBJ_APPEND \ref GRN_OBJ_PREPEND
  *
  * \return \ref GRN_SUCCESS on success, or \ref GRN_INVALID_ARGUMENT if the
- *         record does not exist, and the appropriate `grn_rc` for any other
+ *         record does not exist, and the appropriate \ref grn_rc for any other
  *         errors.
  */
 GRN_API grn_rc
