@@ -188,6 +188,7 @@ jobs:
           - ubuntu-jammy-amd64
           - ubuntu-jammy-arm64
           - ubuntu-noble-amd64
+          - ubuntu-noble-arm64
           - almalinux-8-x86_64
           - almalinux-8-aarch64
           - almalinux-9-x86_64
@@ -200,6 +201,8 @@ jobs:
           - id: ubuntu-focal-arm64
             timeout-minutes: 60
           - id: ubuntu-jammy-arm64
+            timeout-minutes: 60
+          - id: ubuntu-noble-arm64
             timeout-minutes: 60
           - id: almalinux-8-aarch64
             timeout-minutes: 60
