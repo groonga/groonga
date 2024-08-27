@@ -197,13 +197,13 @@ jobs:
           - id: debian-bookworm-arm64
             timeout-minutes: 60
           - id: debian-trixie-arm64
-            timeout-minutes: 90
+            timeout-minutes: 120
           - id: ubuntu-focal-arm64
             timeout-minutes: 60
           - id: ubuntu-jammy-arm64
             timeout-minutes: 60
           - id: ubuntu-noble-arm64
-            timeout-minutes: 90
+            timeout-minutes: 120
           - id: almalinux-8-aarch64
             timeout-minutes: 60
           - id: almalinux-9-aarch64
