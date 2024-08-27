@@ -1131,6 +1131,33 @@ grn_nfkc_normalize_unify_diacritical_mark_is_k(const unsigned char *utf8_char)
      (0xb1 <= utf8_char[2] && utf8_char[2] <= 0xb5)));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_l(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+013A LATIN SMALL LETTER L WITH ACUTE
+     * U+013C LATIN SMALL LETTER L WITH CEDILLA
+     * U+013E LATIN SMALL LETTER L WITH CARON
+     * Uppercase counterparts (e.g. U+013B) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0xba <= utf8_char[1] && utf8_char[1] <= 0xbe) ||
+    /*
+     * Latin Extended Additional
+     * U+1E37 LATIN SMALL LETTER L WITH DOT BELOW
+     * U+1E39 LATIN SMALL LETTER L WITH DOT BELOW AND MACRON
+     * U+1E3B LATIN SMALL LETTER L WITH LINE BELOW
+     * U+1E3D LATIN SMALL LETTER L WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0xb7 <= utf8_char[2] && utf8_char[2] <= 0xbd)));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1164,6 +1191,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_k(utf8_char)) {
     *unified = 'k';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_l(utf8_char)) {
+    *unified = 'l';
     return unified;
   } else {
     return utf8_char;
