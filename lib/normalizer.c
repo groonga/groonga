@@ -981,6 +981,69 @@ grn_nfkc_normalize_unify_diacritical_mark_is_d(const unsigned char *utf8_char)
      (0x8b <= utf8_char[2] && utf8_char[2] <= 0x93)));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_e(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00E8 LATIN SMALL LETTER E WITH GRAVE
+     * U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     * U+00EA LATIN SMALL LETTER E WITH CIRCUMFLEX
+     * U+00EB LATIN SMALL LETTER E WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xa8 <= utf8_char[1] && utf8_char[1] <= 0xab) ||
+    /*
+     * Latin Extended-A
+     * U+0113 LATIN SMALL LETTER E WITH MACRON
+     * U+0115 LATIN SMALL LETTER E WITH BREVE
+     * U+0117 LATIN SMALL LETTER E WITH DOT ABOVE
+     * U+0119 LATIN SMALL LETTER E WITH OGONEK
+     * U+011B LATIN SMALL LETTER E WITH CARON
+     * Uppercase counterparts (U+0114, U+0116, U+0118, U+011A) are covered
+     * by the following condition but they are never appeared here. Because
+     * NFKC normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0x93 <= utf8_char[1] && utf8_char[1] <= 0x9b) ||
+    /*
+     * Latin Extended-B
+     * U+0205 LATIN SMALL LETTER E WITH DOUBLE GRAVE
+     * U+0207 LATIN SMALL LETTER E WITH INVERTED BREVE
+     * U+0229 LATIN SMALL LETTER E WITH CEDILLA
+     * Uppercase counterparts (U+0206) are covered by the following condition
+     * but they are never appeared here. Because NFKC normalization converts
+     * them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc8 && ((0x85 <= utf8_char[1] && utf8_char[1] <= 0x87) ||
+                              utf8_char[1] == 0xa9)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E15 LATIN SMALL LETTER E WITH MACRON AND GRAVE
+     * U+1E17 LATIN SMALL LETTER E WITH MACRON AND ACUTE
+     * U+1E19 LATIN SMALL LETTER E WITH CIRCUMFLEX BELOW
+     * U+1E1B LATIN SMALL LETTER E WITH TILDE BELOW
+     * U+1E1D LATIN SMALL LETTER E WITH CEDILLA AND BREVE
+     *
+     * U+1EB9 LATIN SMALL LETTER E WITH DOT BELOW
+     * U+1EBB LATIN SMALL LETTER E WITH HOOK ABOVE
+     * U+1EBD LATIN SMALL LETTER E WITH TILDE
+     * U+1EBF LATIN SMALL LETTER E WITH CIRCUMFLEX AND ACUTE
+     *
+     * U+1EC1 LATIN SMALL LETTER E WITH CIRCUMFLEX AND GRAVE
+     * U+1EC3 LATIN SMALL LETTER E WITH CIRCUMFLEX AND HOOK ABOVE
+     * U+1EC5 LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
+     * U+1EC7 LATIN SMALL LETTER E WITH CIRCUMFLEX AND DOT BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0x95 <= utf8_char[2] && utf8_char[2] <= 0x9d)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (0xb9 <= utf8_char[2] && utf8_char[2] <= 0xbf)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0x81 <= utf8_char[2] && utf8_char[2] <= 0x87)));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1002,6 +1065,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_d(utf8_char)) {
     *unified = 'd';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_e(utf8_char)) {
+    *unified = 'e';
     return unified;
   } else {
     return utf8_char;
