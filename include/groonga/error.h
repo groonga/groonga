@@ -33,3 +33,15 @@ grn_windows_error_code_to_rc(int error_code);
 #ifdef __cplusplus
 }
 #endif
+
+/*! \page error_debugging Error Debugging
+ *
+ *  \section error_details Additional Error Details
+ *
+ *  For more detailed error information, check the `ctx->rc` field to find the
+ *  specific error code.
+ *
+ *  Additional information may also be available in the
+ * `ctx->errbuf` field. This field contains any relevant error messages or
+ *  diagnostic details that can help with debugging.
+ */

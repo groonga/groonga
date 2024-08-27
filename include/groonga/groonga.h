@@ -927,17 +927,13 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
  *            you must use functions such as \ref grn_table_at to check the
  *            existence of each record.
  *
- * \note If an error occurs and the return value is `-1`, check `ctx->rc` for
- *       the specific error code (e.g., \ref GRN_NO_MEMORY_AVAILABLE,
- *       \ref GRN_INVALID_ARGUMENT). Additional details might be available in
- *       `ctx->errbuf`.
- *
  * \param ctx The context object
  * \param obj The target fixed-size column
  * \param offset The starting record ID for retrieving values
  * \param values A pointer to an array where the values will be stored
  *
- * \return The number of records retrieved, or `-1` if an error occurred.
+ * \return The number of records retrieved on success, `-1` on error.
+ *         For more details about error, see the \ref error_debugging.
  */
 GRN_API int
 grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
