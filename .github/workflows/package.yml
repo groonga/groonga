@@ -203,7 +203,7 @@ jobs:
           - id: ubuntu-jammy-arm64
             timeout-minutes: 60
           - id: ubuntu-noble-arm64
-            timeout-minutes: 60
+            timeout-minutes: 90
           - id: almalinux-8-aarch64
             timeout-minutes: 60
           - id: almalinux-9-aarch64
