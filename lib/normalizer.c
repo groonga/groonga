@@ -929,6 +929,34 @@ grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
   return utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
          (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87);
 }
+
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_c(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00E7 LATIN SMALL LETTER C WITH CEDILLA
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xa7) ||
+    /*
+     * Latin Extended-A
+     * U+0107 LATIN SMALL LETTER C WITH ACUTE
+     * U+0109 LATIN SMALL LETTER C WITH CIRCUMFLEX
+     * U+010B LATIN SMALL LETTER C WITH DOT ABOVE
+     * U+010D LATIN SMALL LETTER C WITH CARON
+     * Uppercase counterparts (U+0108, U+010A, U+010C) are covered by the
+     * following condition but they are never appeared here. Because NFKC
+     * normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0x87 <= utf8_char[1] && utf8_char[1] <= 0x8d) ||
+    /*
+     * Latin Extended Additional
+     * U+1E09 LATIN SMALL LETTER C WITH CEDILLA AND ACUTE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x89));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -944,6 +972,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_b(utf8_char)) {
     *unified = 'b';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_c(utf8_char)) {
+    *unified = 'c';
     return unified;
   } else {
     return utf8_char;
