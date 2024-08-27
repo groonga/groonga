@@ -973,7 +973,7 @@ grn_nfkc_normalize_unify_diacritical_mark_is_d(const unsigned char *utf8_char)
      * U+1E0F LATIN SMALL LETTER D WITH LINE BELOW
      * U+1E11 LATIN SMALL LETTER D WITH CEDILLA
      * U+1E13 LATIN SMALL LETTER D WITH CIRCUMFLEX BELOW
-     * Uppercase counterparts (U+1E0C, U+1E0E, U+1E10, U+1E12, U+1E14,) are
+     * Uppercase counterparts (U+1E0C, U+1E0E, U+1E10, U+1E12, U+1E14) are
      * covered by the following condition but they are never appeared here.
      * Because NFKC normalization converts them to their lowercase equivalents.
      */
