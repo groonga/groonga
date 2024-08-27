@@ -974,24 +974,10 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
  * \brief Prepend the specified value to the column value.
  */
 #define GRN_OBJ_PREPEND (0x05)
-/**
- * \brief Set the value of the new record/cloumn to value.
- */
-#define GRN_OBJ_GET (0x01 << 4)
-/**
- * \brief Compare the record/column value with value.
- */
+#define GRN_OBJ_GET     (0x01 << 4)
 #define GRN_OBJ_COMPARE (0x01 << 5)
-/**
- * \brief Lock the specified record/column value.
- *        If used with \ref GRN_OBJ_COMPARE, the lock is applied only when the
- *        record/column value matches value.
- */
-#define GRN_OBJ_LOCK (0x01 << 6)
-/**
- * \brief Unlock the specified record/column value.
- */
-#define GRN_OBJ_UNLOCK (0x01 << 7)
+#define GRN_OBJ_LOCK    (0x01 << 6)
+#define GRN_OBJ_UNLOCK  (0x01 << 7)
 
 /**
  * \brief Update the value of a record identified by the given ID in the
