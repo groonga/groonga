@@ -37,3 +37,8 @@ RUN \
     rapidjson-dev \
     zlib1g-dev && \
   apt clean
+
+RUN \
+  if [ $(arch) != "x86_64" ]; then \
+    echo "DEBUILD_LINTIAN=no" >> /etc/devscripts.conf; \
+  fi
