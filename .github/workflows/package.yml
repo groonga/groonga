@@ -240,7 +240,7 @@ jobs:
               TARGET="${id}"
               TEST_DOCKER_IMAGE="arm64v8/${os}:${version}"
             fi
-          esac
+          fi
           echo "TASK_NAMESPACE=${TASK_NAMESPACE}" >> ${GITHUB_ENV}
           echo "TARGET=${TARGET}" >> ${GITHUB_ENV}
           echo "APT_TARGETS=${TARGET}" >> ${GITHUB_ENV}
