@@ -853,8 +853,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
    * U+00E0 LATIN SMALL LETTER A WITH GRAVE ..
    * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE
    */
-  return (utf8_char[0] == 0xC3 && 0xA0 <= utf8_char[1] &&
-          utf8_char[1] <= 0xA5) ||
+  return (utf8_char[0] == 0xc3 && 0xa0 <= utf8_char[1] &&
+          utf8_char[1] <= 0xa5) ||
          /*
           * Latin Extended-A
           * U+0101 LATIN SMALL LETTER A WITH MACRON
@@ -864,7 +864,7 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
           * following condition but they are never appeared here. Because NFKC
           * normalization converts them to their lowercase equivalents.
           */
-         (utf8_char[0] == 0xC4 &&
+         (utf8_char[0] == 0xc4 &&
           (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
          /*
           * Latin Extended-B
@@ -873,23 +873,23 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
           * U+01E1 LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
           * U+01FB LATIN SMALL LETTER A WITH RING ABOVE AND ACUTE
           */
-         (utf8_char[0] == 0xC7 &&
-          (utf8_char[1] == 0x8E || utf8_char[1] == 0x9F ||
-           utf8_char[1] == 0xA1 || utf8_char[1] == 0xBB)) ||
+         (utf8_char[0] == 0xc7 &&
+          (utf8_char[1] == 0x8e || utf8_char[1] == 0x9f ||
+           utf8_char[1] == 0xa1 || utf8_char[1] == 0xbb)) ||
          /*
           * Latin Extended-B
           * U+0201 LATIN SMALL LETTER A WITH DOUBLE GRAVE
           * U+0203 LATIN SMALL LETTER A WITH INVERTED BREVE
           * U+0227 LATIN SMALL LETTER A WITH DOT ABOVE
           */
-         (utf8_char[0] == 0xC8 &&
+         (utf8_char[0] == 0xc8 &&
           (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
-           utf8_char[1] == 0xA7)) ||
+           utf8_char[1] == 0xa7)) ||
          /*
           * Latin Extended Additional
           * U+1E01 LATIN SMALL LETTER A WITH RING BELOW
           */
-         (utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
+         (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
           utf8_char[2] == 0x81) ||
          /*
           * Latin Extended Additional
@@ -910,8 +910,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
           * the following condition but they are never appeared here. Because
           * NFKC normalization converts them to their lowercase equivalents.
           */
-         (utf8_char[0] == 0xE1 && utf8_char[1] == 0xBA &&
-          (0xA1 <= utf8_char[2] && utf8_char[2] <= 0xB7));
+         (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+          (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xb7));
 }
 
 grn_inline static bool
@@ -926,7 +926,7 @@ grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
    * following condition but they are never appeared here. Because NFKC
    * normalization converts them to their lowercase equivalents.
    */
-  return utf8_char[0] == 0xE1 && utf8_char[1] == 0xB8 &&
+  return utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
          (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87);
 }
 /*
