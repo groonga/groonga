@@ -1515,6 +1515,22 @@ grn_nfkc_normalize_unify_diacritical_mark_is_u(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_v(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E7D LATIN SMALL LETTER V WITH TILDE
+     * U+1E7F LATIN SMALL LETTER V WITH DOT BELOW
+     * Uppercase counterparts (U+1E7E) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+    (0xbd <= utf8_char[2] && utf8_char[2] <= 0xbf));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
 {
   return (
@@ -1693,6 +1709,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_u(utf8_char)) {
     *unified = 'u';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_v(utf8_char)) {
+    *unified = 'v';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_w(utf8_char)) {
     *unified = 'w';
