@@ -1341,6 +1341,83 @@ grn_nfkc_normalize_unify_diacritical_mark_is_s(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_u(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00F9 LATIN SMALL LETTER U WITH GRAVE
+     * U+00FA LATIN SMALL LETTER U WITH ACUTE
+     * U+00FB LATIN SMALL LETTER U WITH CIRCUMFLEX
+     * U+00FC LATIN SMALL LETTER U WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xb9 <= utf8_char[1] && utf8_char[1] <= 0xbc) ||
+    /*
+     * Latin Extended-A
+     * U+0169 LATIN SMALL LETTER U WITH TILDE
+     * U+016B LATIN SMALL LETTER U WITH MACRON
+     * U+016D LATIN SMALL LETTER U WITH BREVE
+     * U+016F LATIN SMALL LETTER U WITH RING ABOVE
+     * U+0171 LATIN SMALL LETTER U WITH DOUBLE ACUTE
+     * U+0173 LATIN SMALL LETTER U WITH OGONEK
+     * Uppercase counterparts (e.g. #U+016A) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0xa9 <= utf8_char[1] && utf8_char[1] <= 0xb3) ||
+    /*
+     * Latin Extended-B
+     * U+01B0 LATIN SMALL LETTER U WITH HORN
+     */
+    (utf8_char[0] == 0xc6 && utf8_char[1] == 0xb0) ||
+    /*
+     * Latin Extended-B
+     * U+01D4 LATIN SMALL LETTER U WITH CARON
+     * U+01D6 LATIN SMALL LETTER U WITH DIAERESIS AND MACRON
+     * U+01D8 LATIN SMALL LETTER U WITH DIAERESIS AND ACUTE
+     * U+01DA LATIN SMALL LETTER U WITH DIAERESIS AND CARON
+     * U+01DC LATIN SMALL LETTER U WITH DIAERESIS AND GRAVE
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc7 && 0x94 <= utf8_char[1] && utf8_char[1] <= 0x9c) ||
+    /*
+     * Latin Extended-B
+     * U+0215 LATIN SMALL LETTER U WITH DOUBLE GRAVE
+     * U+0217 LATIN SMALL LETTER U WITH INVERTED BREVE
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc8 && 0x95 <= utf8_char[1] && utf8_char[1] <= 0x97) ||
+    /*
+     * Latin Extended Additional
+     * U+1E73 LATIN SMALL LETTER U WITH DIAERESIS BELOW
+     * U+1E75 LATIN SMALL LETTER U WITH TILDE BELOW
+     * U+1E77 LATIN SMALL LETTER U WITH CIRCUMFLEX BELOW
+     * U+1E79 LATIN SMALL LETTER U WITH TILDE AND ACUTE
+     * U+1E7B LATIN SMALL LETTER U WITH MACRON AND DIAERESIS
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0xb3 <= utf8_char[2] && utf8_char[2] <= 0xbb)) ||
+    /*
+     * Latin Extended Additional
+     * U+1EE5 LATIN SMALL LETTER U WITH DOT BELOW
+     * U+1EE7 LATIN SMALL LETTER U WITH HOOK ABOVE
+     * U+1EE9 LATIN SMALL LETTER U WITH HORN AND ACUTE
+     * U+1EEB LATIN SMALL LETTER U WITH HORN AND GRAVE
+     * U+1EED LATIN SMALL LETTER U WITH HORN AND HOOK ABOVE
+     * U+1EEF LATIN SMALL LETTER U WITH HORN AND TILDE
+     * U+1EF1 LATIN SMALL LETTER U WITH HORN AND DOT BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0xa5 <= utf8_char[2] && utf8_char[2] <= 0xb1)));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
 {
   return (
@@ -1417,6 +1494,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_s(utf8_char)) {
     *unified = 's';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_u(utf8_char)) {
+    *unified = 'u';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_w(utf8_char)) {
     *unified = 'w';
