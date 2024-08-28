@@ -1186,6 +1186,24 @@ grn_nfkc_normalize_unify_diacritical_mark_is_l(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_m(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E3F LATIN SMALL LETTER M WITH ACUTE
+     * U+1E41 LATIN SMALL LETTER M WITH DOT ABOVE
+     * U+1E43 LATIN SMALL LETTER M WITH DOT BELOW
+     * Uppercase counterparts (e.g. U+1E42) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 &&
+     ((utf8_char[1] == 0xb8 && utf8_char[2] == 0xbf) ||
+      (utf8_char[1] == 0xb9 && 0x81 <= utf8_char[2] && utf8_char[2] <= 0x83))));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_n(const unsigned char *utf8_char)
 {
   return (
@@ -1515,6 +1533,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_l(utf8_char)) {
     *unified = 'l';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_m(utf8_char)) {
+    *unified = 'm';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_n(utf8_char)) {
     *unified = 'n';
