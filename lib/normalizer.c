@@ -1491,6 +1491,22 @@ grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x98));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_x(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E8B LATIN SMALL LETTER X WITH DOT ABOVE
+     * U+1E8D LATIN SMALL LETTER X WITH DIAERESIS
+     * Uppercase counterparts (U+1E8C) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+    (0x8b <= utf8_char[2] && utf8_char[2] <= 0x8d));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1554,6 +1570,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_w(utf8_char)) {
     *unified = 'w';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_x(utf8_char)) {
+    *unified = 'x';
     return unified;
   } else {
     return utf8_char;
