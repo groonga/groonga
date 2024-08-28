@@ -84,12 +84,6 @@ Reference
 
    当該レコードのロックを解除します。
 
-.. c:function:: grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
-
-   objをメモリから解放し、それが永続オブジェクトであった場合は、該当するファイル一式を削除します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
 
    ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェクトでなければいけません。

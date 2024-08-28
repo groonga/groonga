@@ -980,6 +980,18 @@ grn_obj_set_value(
 #define GRN_OBJ_REMOVE_DEPENDENT (0x01 << 0)
 #define GRN_OBJ_REMOVE_ENSURE    (0x01 << 1)
 
+/**
+ * \brief Remove the specified object.
+ *
+ *        This function frees the specified object (`obj`) from memory. If the
+ *        object is a persistent object, it also removes the associated files
+ *        from disk.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to be removed.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
