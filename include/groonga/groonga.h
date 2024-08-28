@@ -62,7 +62,6 @@ typedef enum {
   /// Success (0)
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
-  /// Unknown error occurred (-1)
   GRN_UNKNOWN_ERROR = -1,
   GRN_OPERATION_NOT_PERMITTED = -2,
   GRN_NO_SUCH_FILE_OR_DIRECTORY = -3,
@@ -991,8 +990,7 @@ grn_obj_set_value(
  * \param ctx The context object.
  * \param obj The target object to be removed.
  *
- * \return \ref GRN_SUCCESS on success, \ref GRN_UNKNOWN_ERROR on error, and
- *         the appropriate \ref grn_rc for any other errors.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
 GRN_API grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
