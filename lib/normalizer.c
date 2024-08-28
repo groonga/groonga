@@ -1386,6 +1386,42 @@ grn_nfkc_normalize_unify_diacritical_mark_is_s(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_t(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0163 LATIN SMALL LETTER T WITH CEDILLA
+     * U+0165 LATIN SMALL LETTER T WITH CARON
+     * Uppercase counterparts (e.g. U+0164) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0xa3 <= utf8_char[1] && utf8_char[1] <= 0xa5) ||
+    /*
+     * Latin Extended-B
+     * U+021B LATIN SMALL LETTER T WITH COMMA BELOW
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0x9b) ||
+    /*
+     * Latin Extended Additional
+     * U+1E6B LATIN SMALL LETTER T WITH DOT ABOVE
+     * U+1E6D LATIN SMALL LETTER T WITH DOT BELOW
+     * U+1E6F LATIN SMALL LETTER T WITH LINE BELOW
+     * U+1E71 LATIN SMALL LETTER T WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0xab <= utf8_char[2] && utf8_char[2] <= 0xb1)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E97 LATIN SMALL LETTER T WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x97));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_u(const unsigned char *utf8_char)
 {
   return (
@@ -1632,6 +1668,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_s(utf8_char)) {
     *unified = 's';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_t(utf8_char)) {
+    *unified = 't';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_u(utf8_char)) {
     *unified = 'u';
