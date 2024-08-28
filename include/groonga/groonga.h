@@ -990,8 +990,8 @@ grn_obj_set_value(
  * \param ctx The context object.
  * \param obj The target object to be removed.
  *
- * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc for any
- *         errors.
+ * \return \ref GRN_SUCCESS on success, \ref GRN_UNKNOWN_ERROR on error, and
+ *         the appropriate \ref grn_rc for any other errors.
  */
 GRN_API grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
