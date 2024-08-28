@@ -981,7 +981,7 @@ grn_obj_set_value(
 #define GRN_OBJ_REMOVE_ENSURE    (0x01 << 1)
 
 /**
- * \brief Remove the specified object from memory.
+ * \brief Remove the specified object.
  *
  *        This function frees the specified object (`obj`) from memory. If the
  *        object is a persistent object, it also removes the associated files
