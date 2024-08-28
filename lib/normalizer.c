@@ -1045,6 +1045,17 @@ grn_nfkc_normalize_unify_diacritical_mark_is_e(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_f(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E1F LATIN SMALL LETTER F WITH DOT ABOVE
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x9f);
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_g(const unsigned char *utf8_char)
 {
   return (
@@ -1470,6 +1481,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_e(utf8_char)) {
     *unified = 'e';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_f(utf8_char)) {
+    *unified = 'f';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_g(utf8_char)) {
     *unified = 'g';
