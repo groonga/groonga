@@ -1105,6 +1105,22 @@ grn_nfkc_normalize_unify_diacritical_mark_is_h(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_j(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0135 LATIN SMALL LETTER J WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0xb5) ||
+    /*
+     * Latin Extended-B
+     * U+01F0 LATIN SMALL LETTER J WITH CARON
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0xb0));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_k(const unsigned char *utf8_char)
 {
   return (
@@ -1399,6 +1415,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_h(utf8_char)) {
     *unified = 'h';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_j(utf8_char)) {
+    *unified = 'j';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_k(utf8_char)) {
     *unified = 'k';
