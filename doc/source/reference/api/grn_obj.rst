@@ -23,67 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
-
-   objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
-
-   :param obj: 対象objectを指定します。
-   :param id: 対象レコードのIDを指定します。
-   :param value: 格納する値を指定します。
-   :param flags:
-      以下の値を指定できます。
-
-      .. hlist::
-         :columns: 3
-
-         * :c:macro:`GRN_OBJ_SET`
-         * :c:macro:`GRN_OBJ_INCR`
-         * :c:macro:`GRN_OBJ_DECR`
-         * :c:macro:`GRN_OBJ_APPEND`
-         * :c:macro:`GRN_OBJ_PREPEND`
-         * :c:macro:`GRN_OBJ_GET`
-         * :c:macro:`GRN_OBJ_COMPARE`
-         * :c:macro:`GRN_OBJ_LOCK`
-         * :c:macro:`GRN_OBJ_UNLOCK`
-
-.. c:macro:: GRN_OBJ_SET_MASK
-
-.. c:macro:: GRN_OBJ_SET
-
-   レコードの値をvalueと置き換えます。
-
-.. c:macro:: GRN_OBJ_INCR
-
-   レコードの値にvalueを加算します。
-
-.. c:macro:: GRN_OBJ_DECR
-
-   レコードの値にvalueを減算します。
-
-.. c:macro:: GRN_OBJ_APPEND
-
-   レコードの値の末尾にvalueを追加します。
-
-.. c:macro:: GRN_OBJ_PREPEND
-
-   レコードの値の先頭にvalueを追加します。
-
-.. c:macro:: GRN_OBJ_GET
-
-   新しいレコードの値をvalueにセットします。
-
-.. c:macro:: GRN_OBJ_COMPARE
-
-   レコードの値とvalueが等しいか調べます。
-
-.. c:macro:: GRN_OBJ_LOCK
-
-   当該レコードをロックします。:c:macro:`GRN_OBJ_COMPARE` と共に指定された場合は、レコードの値とvalueが等しい場合に限ってロックします。
-
-.. c:macro:: GRN_OBJ_UNLOCK
-
-   当該レコードのロックを解除します。
-
 .. c:function:: grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
 
    ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェクトでなければいけません。

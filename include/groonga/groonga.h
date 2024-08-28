@@ -965,14 +965,44 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 /**
  * \brief Subtract the specified value from the record/column value
  */
-#define GRN_OBJ_DECR    (0x03)
-#define GRN_OBJ_APPEND  (0x04)
+#define GRN_OBJ_DECR (0x03)
+/**
+ * \brief Append the specified value to the column value.
+ */
+#define GRN_OBJ_APPEND (0x04)
+/**
+ * \brief Prepend the specified value to the column value.
+ */
 #define GRN_OBJ_PREPEND (0x05)
 #define GRN_OBJ_GET     (0x01 << 4)
 #define GRN_OBJ_COMPARE (0x01 << 5)
 #define GRN_OBJ_LOCK    (0x01 << 6)
 #define GRN_OBJ_UNLOCK  (0x01 << 7)
 
+/**
+ * \brief Update the value of a record identified by the given ID in the
+ *        specified object.
+ *
+ *        This function updates the value of the record specified by `id` in the
+ *        given object (`obj`). If the corresponding record does not exist, it
+ *        returns \ref GRN_INVALID_ARGUMENT.
+ *
+ * \param ctx The context object.
+ * \param obj The target object where the value will be updated.
+ * \param id The ID of the record to be updated.
+ * \param value The value to be stored in the record.
+ * \param flags Only one flag can be specified, depending on the type of the
+ *              object (`obj`).
+ *              - For a table and a scalar column, use either \ref GRN_OBJ_SET,
+ *                \ref GRN_OBJ_INCR, or \ref GRN_OBJ_DECR.
+ *              - For a vector column, use either \ref GRN_OBJ_SET, \ref
+ *                GRN_OBJ_INCR, \ref GRN_OBJ_DECR \ref GRN_OBJ_APPEND or
+ *                \ref GRN_OBJ_PREPEND.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the
+ *         record does not exist.
+ */
 GRN_API grn_rc
 grn_obj_set_value(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
