@@ -1507,6 +1507,48 @@ grn_nfkc_normalize_unify_diacritical_mark_is_x(const unsigned char *utf8_char)
     (0x8b <= utf8_char[2] && utf8_char[2] <= 0x8d));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_y(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00FD LATIN SMALL LETTER Y WITH ACUTE
+     * U+00FF LATIN SMALL LETTER Y WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xbd) ||
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xbf) ||
+    /*
+     * Latin Extended-A
+     * U+0177 LATIN SMALL LETTER Y WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc5 && utf8_char[1] == 0xb7) ||
+    /*
+     * Latin Extended-B
+     * U+0233 LATIN SMALL LETTER Y WITH MACRON
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0xb3) ||
+    /*
+     * Latin Extended Additional
+     * U+1E8F LATIN SMALL LETTER Y WITH DOT ABOVE
+     * U+1E99 LATIN SMALL LETTER Y WITH RING ABOVE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (utf8_char[2] == 0x8f || utf8_char[2] == 0x99)) ||
+    /*
+     * Latin Extended Additional
+     * U+1EF3 LATIN SMALL LETTER Y WITH GRAVE
+     * U+1EF5 LATIN SMALL LETTER Y WITH DOT BELOW
+     * U+1EF7 LATIN SMALL LETTER Y WITH HOOK ABOVE
+     * U+1EF9 LATIN SMALL LETTER Y WITH TILDE
+     * Uppercase counterparts (e.g. U+1EF4) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0xb3 <= utf8_char[2] && utf8_char[2] <= 0xb9)));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1573,6 +1615,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_x(utf8_char)) {
     *unified = 'x';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_y(utf8_char)) {
+    *unified = 'y';
     return unified;
   } else {
     return utf8_char;
