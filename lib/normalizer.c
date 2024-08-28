@@ -1340,6 +1340,35 @@ grn_nfkc_normalize_unify_diacritical_mark_is_s(const unsigned char *utf8_char)
      (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xa9)));
 }
 
+grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0175 LATIN SMALL LETTER W WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc5 && utf8_char[1] == 0xb5) ||
+    /*
+     * Latin Extended Additional
+     * U+1E81 LATIN SMALL LETTER W WITH GRAVE
+     * U+1E83 LATIN SMALL LETTER W WITH ACUTE
+     * U+1E85 LATIN SMALL LETTER W WITH DIAERESIS
+     * U+1E87 LATIN SMALL LETTER W WITH DOT ABOVE
+     * U+1E89 LATIN SMALL LETTER W WITH DOT BELOW
+     * Uppercase counterparts (e.g. U+1E82) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (0x81 <= utf8_char[2] && utf8_char[2] <= 0x89)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E98 LATIN SMALL LETTER W WITH RING ABOVE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x98));
+}
+
 /*
  * This function assumes that the input utf8_char is a valid UTF-8 character.
  * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
@@ -1388,6 +1417,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_s(utf8_char)) {
     *unified = 's';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_w(utf8_char)) {
+    *unified = 'w';
     return unified;
   } else {
     return utf8_char;

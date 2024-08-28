@@ -1,0 +1,2 @@
+normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "Ŵŵ"   WITH_TYPES
+[[0,0.0,0.0],{"normalized":"ww","types":["alpha","alpha","null"],"checks":[]}]
