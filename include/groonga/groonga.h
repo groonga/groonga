@@ -62,6 +62,7 @@ typedef enum {
   /// Success (0)
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
+  /// Unknown error occurred (-1)
   GRN_UNKNOWN_ERROR = -1,
   GRN_OPERATION_NOT_PERMITTED = -2,
   GRN_NO_SUCH_FILE_OR_DIRECTORY = -3,
