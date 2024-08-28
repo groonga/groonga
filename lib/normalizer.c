@@ -1319,6 +1319,22 @@ grn_nfkc_normalize_unify_diacritical_mark_is_o(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
+grn_nfkc_normalize_unify_diacritical_mark_is_p(const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E55 LATIN SMALL LETTER P WITH ACUTE
+     * U+1E57 LATIN SMALL LETTER P WITH DOT ABOVE
+     * Uppercase counterparts (U+1E56) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+    (0x95 <= utf8_char[2] && utf8_char[2] <= 0x97));
+}
+
+grn_inline static bool
 grn_nfkc_normalize_unify_diacritical_mark_is_r(const unsigned char *utf8_char)
 {
   return (
@@ -1662,6 +1678,9 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_o(utf8_char)) {
     *unified = 'o';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_p(utf8_char)) {
+    *unified = 'p';
     return unified;
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
     *unified = 'r';
