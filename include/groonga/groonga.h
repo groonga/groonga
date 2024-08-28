@@ -992,11 +992,11 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
  * \param id The ID of the record to be updated.
  * \param value The value to be stored in the record.
  * \param flags One of \ref GRN_OBJ_SET \ref GRN_OBJ_INCR \ref GRN_OBJ_DECR
-                \ref GRN_OBJ_APPEND \ref GRN_OBJ_PREPEND
+ *              \ref GRN_OBJ_APPEND \ref GRN_OBJ_PREPEND
  *
- * \return \ref GRN_SUCCESS on success, or \ref GRN_INVALID_ARGUMENT if the
- *         record does not exist, and the appropriate \ref grn_rc for any other
- *         errors.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the
+ *         record does not exist.
  */
 GRN_API grn_rc
 grn_obj_set_value(
