@@ -172,9 +172,9 @@ grn_table_delete(grn_ctx *ctx,
  * \param table The table
  * \param id Id of record to be deleted
  *
- * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the
- *         record does not exist, and the appropriate \ref grn_rc for any
- *         other errors.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the record
+ *         does not exist.
  */
 GRN_API grn_rc
 grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
