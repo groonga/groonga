@@ -35,13 +35,6 @@ Reference
    :param id: 対象レコードのIDを指定します。
    :param keybuf: keyを格納するバッファ(呼出側で準備する)を指定します。
    :param buf_size: keybufのサイズ(byte長)を指定します。
- 
-.. c:function:: grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
-
-   tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
-
-   :param table: 対象tableを指定します。
-   :param id: レコードIDを指定します。
 
 .. c:function:: grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id, const void *dest_key, unsigned int dest_key_size)
 

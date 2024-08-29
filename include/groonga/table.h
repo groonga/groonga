@@ -165,6 +165,17 @@ grn_table_delete(grn_ctx *ctx,
                  grn_obj *table,
                  const void *key,
                  unsigned int key_size);
+/**
+ * \brief Delete the record matching the id in the table.
+ *
+ * \param ctx The context object
+ * \param table The table
+ * \param id Id of record to be deleted
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the
+ *         record does not exist, and the appropriate \ref grn_rc for any
+ *         other errors.
+ */
 GRN_API grn_rc
 grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
 GRN_API grn_rc
