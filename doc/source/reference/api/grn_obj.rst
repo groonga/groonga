@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
-
-   ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェクトでなければいけません。
-
-   :param obj: 対象objectを指定します。
-   :param name: 新しい名前を指定します。
-   :param name_size: nameパラメータのsize（byte）を指定します。
-
 .. c:function:: grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 
    一時的なobjectであるobjをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。

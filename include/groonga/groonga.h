@@ -1037,6 +1037,19 @@ grn_ctx_remove(grn_ctx *ctx, const char *name, int name_size, uint32_t flags);
 GRN_API grn_rc
 grn_ctx_remove_by_id(grn_ctx *ctx, grn_id id, uint32_t flags);
 
+/**
+ * \brief Rename a persistent object in the database used by the context.
+ *
+ *        This function updates the name of the specified object (`obj`) to the
+ *        new name provided. The object must be a persistent object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to be renamed.
+ * \param name The new name for the given object.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_rename(grn_ctx *ctx,
                grn_obj *obj,
