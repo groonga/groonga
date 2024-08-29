@@ -1698,6 +1698,7 @@ grn_nfkc_normalize_unify_alphabet_diacritical_mark(
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_p(utf8_char)) {
     *unified = 'p';
     return unified;
+  // 'q' has no diacritical marks.
   } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
     *unified = 'r';
     return unified;
