@@ -38,10 +38,13 @@ grn_windows_error_code_to_rc(int error_code);
  *
  *  \section error_details Additional Error Details
  *
- *  For more detailed error information, check the `ctx->rc` field to find the
- *  specific error code.
+ *  For more detailed error information, check the `ctx->rc`(\ref _grn_ctx::rc)
+ *  field to find the specific error code.
  *
  *  Additional information may also be available in the
- * `ctx->errbuf` field. This field contains any relevant error messages or
- *  diagnostic details that can help with debugging.
+ *  `ctx->errbuf`(\ref _grn_ctx::errbuf) field. This field contains any
+ *  relevant error messages or diagnostic details that can help with
+ *  debugging.
+ *
+ *  For further details, see \ref _grn_ctx.
  */
