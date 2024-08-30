@@ -156,9 +156,9 @@ grn_table_get_key(
  * \param key Key of record to be deleted
  * \param key_size Size of `key` in bytes
  *
- * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the
- *         record does not exist, and the appropriate `grn_rc` for any other
- *         errors.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the record
+ *         does not exist.
  */
 GRN_API grn_rc
 grn_table_delete(grn_ctx *ctx,
@@ -186,9 +186,9 @@ grn_table_update_by_id(grn_ctx *ctx,
  * \param dest_key New key
  * \param dest_key_size Length of `dest_key_size` (byte)
  *
- * \return \ref GRN_SUCCESS on success, GRN_OPERATION_NOT_PERMITTED if not
- *         GRN_TABLE_DAT_KEY, and the appropriate `grn_rc` for any other
- *         errors
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_OPERATION_NOT_PERMITTED is returned if not
+ *         \ref GRN_TABLE_DAT_KEY.
  */
 GRN_API grn_rc
 grn_table_update(grn_ctx *ctx,
@@ -362,9 +362,9 @@ grn_table_cursor_get_key_value(grn_ctx *ctx,
  *      * \ref GRN_OBJ_INCR
  *      * \ref GRN_OBJ_DECR
  *
- * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if the current
- *         record for cursor does not exist, and the appropriate `grn_rc` for
- *         any other errors
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the current
+ *         record for cursor does not exist.
  */
 GRN_API grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx,
@@ -377,9 +377,9 @@ grn_table_cursor_set_value(grn_ctx *ctx,
  * \param ctx The context object
  * \param tc Target cursor
  *
- * \return \ref GRN_SUCCESS on success, GRN_INVALID_ARGUMENT if the current
- *         record for cursor does not exist, and the appropriate `grn_rc` for
- *         any other errors
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the current
+ *         record for cursor does not exist.
  */
 GRN_API grn_rc
 grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
