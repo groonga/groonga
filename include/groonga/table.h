@@ -166,11 +166,11 @@ grn_table_delete(grn_ctx *ctx,
                  const void *key,
                  unsigned int key_size);
 /**
- * \brief Delete the record matching the id in the table.
+ * \brief Delete the record matching the ID in the table.
  *
  * \param ctx The context object
  * \param table The table
- * \param id Id of record to be deleted
+ * \param id ID of record to be deleted
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if the record
