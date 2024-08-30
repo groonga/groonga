@@ -1062,6 +1062,24 @@ grn_column_rename(grn_ctx *ctx,
                   const char *name,
                   unsigned int name_size);
 
+/**
+ * \brief Frees a temporary object from memory.
+ *
+ *        This function frees the specified object (`obj`) from memory.
+ *        If `obj` includes other associated objects, it recursively frees
+ *        those as well.
+ *
+ * \attention This function should not be used to free persistent objects like
+ *            tables, columns, or expr. For most cases, especially where
+ *            the distinction between temporary and persistent objects is
+ *            unclear, \c grn_obj_unlink() should be used instead.
+ *
+ * \param ctx The context object.
+ * \param obj The temporary object to be freed.
+ *
+ * \return \ref GRN_SUCCESS on success or the appropriate \ref grn_rc on error.
+ *
+ */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
