@@ -71,9 +71,9 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_katakana_gu_small_sounds = GRN_FALSE;
   options->unify_kana_hyphen = false;
   options->unify_kana_prolonged_sound_mark = false;
-  options->unify_katakana_trailing_o = GRN_FALSE;
-  options->unify_to_romaji = GRN_FALSE;
-  options->unify_to_katakana = GRN_FALSE;
+  options->unify_katakana_trailing_o = false;
+  options->unify_to_romaji = false;
+  options->unify_to_katakana = false;
   options->remove_blank = GRN_FALSE;
   options->remove_blank_force = false;
   options->remove_blank_force_is_set = false;
