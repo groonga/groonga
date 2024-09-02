@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1725268167911,
+  "lastUpdate": 1725278453823,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -41418,6 +41418,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02718026499996995,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0021150000000000613 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de65ae649af91b6439360915f29cda5f39d9daf6",
+          "message": "NormalizerNFKC unify_alphabet_diacritical_mark: remove diacritical mark for `i` (#1910)\n\nGitHub: GH-1755\r\n\r\nImplementation of grn_nfkc_normalize_unify_alphabet_diacritical_mark().\r\nCommit to normalize to `i`.\r\n\r\nNote that \"U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE\" isn't\r\nnormalized correctly.\r\nIt should be normalized to \"U+0069 LATIN SMALL LETTER I\" but it's\r\nnormalized to \"U+0069 LATIN SMALL LETTER I\" and \"U+0307 COMBINING DOT\r\nABOVE\". It will not be fixed in `NormalizerNFKC150` or older to keep\r\nbackward compatibility. It should be fixed in `NormalizerNFKC160` or\r\nlater. See also: #1939\r\n\r\nTarget characters:\r\n\r\n```\r\n% ./tools/generate-alphabet-diacritical-mark.rb i\r\n## Generate mapping about Unicode and UTF-8\r\n[\"U+00ec\", \"ì\", [\"0xc3\", \"0xac\"]]\r\n[\"U+00ed\", \"í\", [\"0xc3\", \"0xad\"]]\r\n[\"U+00ee\", \"î\", [\"0xc3\", \"0xae\"]]\r\n[\"U+00ef\", \"ï\", [\"0xc3\", \"0xaf\"]]\r\n[\"U+0129\", \"ĩ\", [\"0xc4\", \"0xa9\"]]\r\n[\"U+012b\", \"ī\", [\"0xc4\", \"0xab\"]]\r\n[\"U+012d\", \"ĭ\", [\"0xc4\", \"0xad\"]]\r\n[\"U+012f\", \"į\", [\"0xc4\", \"0xaf\"]]\r\n[\"U+01d0\", \"ǐ\", [\"0xc7\", \"0x90\"]]\r\n[\"U+0209\", \"ȉ\", [\"0xc8\", \"0x89\"]]\r\n[\"U+020b\", \"ȋ\", [\"0xc8\", \"0x8b\"]]\r\n[\"U+1e2d\", \"ḭ\", [\"0xe1\", \"0xb8\", \"0xad\"]]\r\n[\"U+1e2f\", \"ḯ\", [\"0xe1\", \"0xb8\", \"0xaf\"]]\r\n[\"U+1ec9\", \"ỉ\", [\"0xe1\", \"0xbb\", \"0x89\"]]\r\n[\"U+1ecb\", \"ị\", [\"0xe1\", \"0xbb\", \"0x8b\"]]\r\n--------------------------------------------------\r\n## Generate target characters\r\nÌÍÎÏìíîïĨĩĪīĬĭĮįİǏǐȈȉȊȋḬḭḮḯỈỉỊị\r\n```\r\n\r\n---------\r\n\r\nCo-authored-by: Sutou Kouhei <kou@clear-code.com>",
+          "timestamp": "2024-09-02T20:55:57+09:00",
+          "tree_id": "7308ebed32fedeb3b94c09b72084b23925e0c0d8",
+          "url": "https://github.com/groonga/groonga/commit/de65ae649af91b6439360915f29cda5f39d9daf6"
+        },
+        "date": 1725278451346,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3656078330000696,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015038999999999997 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2777783410001575,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01859800000000017 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01572306899998921,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003600000000003878 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015436447999945813,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003359999999996699 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.3590302929999893,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.000146000000000035 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2458537019999767,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006318000000000018 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13378787699997474,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005437999999999998 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.016888968000046134,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019699999999996942 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016923602999952436,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001972000000000168 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.054411502000050405,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006864999999999483 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05259391299995286,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007589999999999958 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018089586000030522,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0022730000000001915 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017715141000053336,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018539999999999668 s\nthreads: undefined"
           }
         ]
       }
