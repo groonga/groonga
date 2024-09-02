@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2010-2018 Brazil
-# Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2010-2018  Brazil
+# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -744,8 +745,24 @@ def subst(hash, str)
   return str
 end
 
+def downcase(character)
+  downcased_character = character.downcase
+  if character == "\u0130" and downcased_character == "\u0069\u0307"
+    # The lowercase of "U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE"
+    # must be "U+0069 LATIN SMALL LETTER I" but Ruby uses "U+0069
+    # LATIN SMALL LETTER I" + "U+0307 COMBINING DOT ABOVE".
+    downcased_character = "\u0069"
+  elsif character == "\u0049\u0307" and downcased_character == "\u0069\u0307"
+    # The lowercase of "U+0049 LATIN CAPITAL LETTER I" + "U+0307
+    # COMBINING DOT ABOVE" must be "U+0069 LATIN
+    # SMALL LETTER I".
+    downcased_character = "\u0069"
+  end
+  downcased_character
+end
+
 def map_entry(decompose, cc, src, dst)
-  dst.downcase! unless $case_sensitive
+  dst = downcase(dst) unless $case_sensitive
   loop {
     dst2 = subst(cc, dst)
     break if dst2 == dst
@@ -781,7 +798,7 @@ def create_decompose_map()
     (0x1..0x110000).each do |code_point|
       char = [code_point].pack("U")
       next unless char.valid_encoding?
-      downcased_char = char.downcase
+      downcased_char = downcase(char)
       next if char == downcased_char
       decompose_map[char] ||= downcased_char
     end
@@ -829,6 +846,19 @@ def create_compose_map(decompose_map)
     STDERR.puts('try again..')
   }
   return cc
+end
+
+def license_header
+  File.read(__FILE__).
+    # Extract the header comment
+    split(/^[^#]/, 2)[0].
+    # Remove Ruby style comment marks
+    gsub(/^# ?/, "").
+    # Remove shebang
+    gsub(/\A.*$/, "").
+    strip.
+    # Indent
+    gsub(/^(\w)/, "  \\1")
 end
 
 ######## main #######
@@ -883,20 +913,7 @@ File.open(output_path, "w") do |output|
   output.puts(<<-HEADER)
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) #{Time.now.year} Brazil
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#{license_header}
 */
 
 /*
