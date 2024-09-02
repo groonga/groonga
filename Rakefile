@@ -1,10 +1,11 @@
 # -*- ruby -*-
 #
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,6 +16,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "open-uri"
 require "tmpdir"
 
 def sh_capture_output(*command_line)
@@ -286,5 +288,46 @@ namespace :release do
        "-m",
        "Groonga #{version}!!!")
     sh("git", "push", "origin", "v#{version}")
+  end
+end
+
+namespace :nfkc do
+  icu_version = ENV["ICU_VERSION"] || ""
+  icu_version_hyphen = icu_version.gsub(".", "-")
+  icu_version_underscore = icu_version.gsub(".", "_")
+
+  icu4c_src_tgz = File.basename("icu4c-#{icu_version_underscore}-src.tgz")
+
+  file icu4c_src_tgz do
+    icu4c_src_tgz_uri = "https://github.com/unicode-org/icu/releases/download/"
+    icu4c_src_tgz_uri += "release-#{icu_version_hyphen}/"
+    icu4c_src_tgz_uri += icu4c_src_tgz
+    icu4c_src_tgz_uri = URI(icu4c_src_tgz_uri)
+    icu4c_src_tgz_uri.open do |input|
+      File.open(icu4c_src_tgz, "wb") do |output|
+        IO.copy_stream(input, output)
+      end
+    end
+  end
+
+  icu_prefix = "tmp/icu-#{icu_version}/local"
+  file icu_prefix => icu4c_src_tgz do
+    rm_rf("tmp")
+    mkdir_p("tmp")
+    sh("tar", "xf", icu4c_src_tgz, "-C", "tmp")
+    absolute_icu_prefix = File.expand_path(icu_prefix)
+    cd("tmp/icu/source") do
+      sh("./configure", "--prefix=#{absolute_icu_prefix}")
+      sh("make", "-j#{Etc.nprocessors}")
+      sh("make", "install")
+    end
+  end
+
+  desc "Update NFKC to #{icu_version}"
+  task update: icu_prefix do
+    sh({"ICU_HOME" => File.expand_path(icu_prefix)},
+       FileUtils::RUBY,
+       "lib/nfkc.rb",
+       "--source-directory=lib")
   end
 end
