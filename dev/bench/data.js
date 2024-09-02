@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1725236827572,
+  "lastUpdate": 1725268167911,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -41316,6 +41316,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02559699800008275,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.002783000000000424 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "1f30ae4846d99b30fd744db6955f1942296c5e38",
+          "message": "nfkc: fix a bug that U+0130 is normalized to U+0069 U+0307\n\nThe lowercase of \"U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE\" must\nbe \"U+0069 LATIN SMALL LETTER I\".\n\nBut the current implementation uses \"U+0069 LATIN SMALL LETTER I\" +\n\"U+0307 COMBINING DOT ABOVE\".\n\nWe can fix it by regenerating lib/nfkc*.c with this change but we\ndon't. Because it breaks backward compatibility. We will fix this from\nNormalizerNFKC160 by generating lib/nfkc160.c with this change.",
+          "timestamp": "2024-09-02T18:00:08+09:00",
+          "tree_id": "845d2d805cf38589837f0e5731a765d5c9303453",
+          "url": "https://github.com/groonga/groonga/commit/1f30ae4846d99b30fd744db6955f1942296c5e38"
+        },
+        "date": 1725268165497,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3861365019999994,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.024090000000000042 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27284764400008044,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015176000000000162 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015575181000087923,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004879999999995721 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015564512999958424,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00034800000000001496 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.451176676999978,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00015300000000001424 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24054667500007554,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0081119999999998 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14093980399997008,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00737099999999985 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01729736800007231,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020840000000001135 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.018020974999956252,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002467999999999748 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05652662099987538,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00777499999999981 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06240110299995649,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01551100000000008 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018757955000012316,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002061000000000174 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.02718026499996995,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021150000000000613 s\nthreads: undefined"
           }
         ]
       }
