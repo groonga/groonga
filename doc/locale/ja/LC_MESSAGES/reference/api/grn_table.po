@@ -63,16 +63,13 @@ msgstr ""
 msgid "keybufのサイズ(byte長)を指定します。"
 msgstr ""
 
-msgid "tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。"
-msgstr ""
-
-msgid "レコードIDを指定します。"
-msgstr ""
-
 msgid "tableのidに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。"
 msgstr ""
 
 msgid "この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。"
+msgstr ""
+
+msgid "レコードIDを指定します。"
 msgstr ""
 
 msgid "tableの全レコードを一括して削除します。"
