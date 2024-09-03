@@ -432,6 +432,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Sep 03 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.0.7-1
+- New upstream release.
+
 * Mon Jul 29 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.0.6-1
 - New upstream release.
 
