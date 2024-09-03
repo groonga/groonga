@@ -27,7 +27,7 @@ RUN \
     libssl-dev \
     libstemmer-dev \
     libxxhash-dev \
-    libzmq3-dev | libzmq-dev\
+    libzmq3-dev \
     libzstd-dev \
     lsb-release \
     ninja-build \
