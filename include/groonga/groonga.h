@@ -1066,7 +1066,7 @@ grn_column_rename(grn_ctx *ctx,
  * \brief Close an object.
  *
  *        This function frees all resources used by the specified object (`obj`)
- *         from memory. All resources include other associated objects.
+ *        from memory. All resources include other associated objects.
  *
  *        In general, you must close temporary objects explicitly. You don't
  *        need to close persistent objects explicitly because you can close
