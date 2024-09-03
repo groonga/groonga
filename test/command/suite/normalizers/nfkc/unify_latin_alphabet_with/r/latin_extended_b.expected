@@ -1,0 +1,21 @@
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ȐȑȒȓ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "rrrr",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "null"
+    ],
+    "checks": [
+
+    ]
+  }
+]

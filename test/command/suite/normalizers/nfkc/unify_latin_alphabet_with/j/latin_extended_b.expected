@@ -1,0 +1,2 @@
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ǰ"   WITH_TYPES
+[[0,0.0,0.0],{"normalized":"j","types":["alpha","null"],"checks":[]}]
