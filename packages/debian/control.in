@@ -19,6 +19,7 @@ Build-Depends:
   libxxhash-dev,
   libzmq3-dev | libzmq-dev,
   libzstd-dev,
+  lsb-release,
   ninja-build,
   pkg-config,
   rapidjson-dev,
