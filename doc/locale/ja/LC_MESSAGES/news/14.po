@@ -35,6 +35,15 @@ msgstr "ただし、この機能は `LATIN (SMALL|CAPITAL) LETTER X WITH XXX` �
 msgid "We can confirm that can get `ngoằn` with `ngoan` in the following example."
 msgstr "以下の例で、`ngoan`で`ngoằn`を取得できることが確認できます。"
 
+msgid "Current normalizers has the following bug."
+msgstr "現在のノーマライザーには、以下の問題があります。"
+
+msgid "The lowercase of `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` must be `U+0069 LATIN SMALL LETTER I`. But the current implementation uses `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE`."
+msgstr "小文字の `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` は `U+0069 LATIN SMALL LETTER I` でなければなりませんが、現在の実装では、 `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE` を使ってしまいます。"
+
+msgid "We will fix the bug from NormalizerNFKC160."
+msgstr "この問題は、NormalizerNFKC160から修正する予定です。"
+
 msgid "Added support for [simdjson](https://simdjson.org/)."
 msgstr "[simdjson](https://simdjson.org/) をサポートしました。"
 
@@ -91,12 +100,6 @@ msgstr ""
 
 msgid "Fixed a bug that Groonga use bundled Onigmo even if we specify `GRN_WITH_BUNDLED_ONIGMO=OFF`. [termux/termux-packages#21252][Patch by Biswapriyo Nath]"
 msgstr "`GRN_WITH_BUNDLED_ONIGMO=OFF`を指定しているにも関わらず、GroongaがバンドルされているOnigmoを使う問題を修正しました。[termux/termux-packages#21252][Biswapriyo Nathさんがパッチ提供]"
-
-msgid "[Normalizer] Fixed a bug that `U+0130` is normalized to `U+0069` + `U+0307`."
-msgstr "[Normalizer] `U+0130` を `U+0069` + `U+0307` に正規化してしまう問題を修正しました。"
-
-msgid "The lowercase of `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` must be `U+0069 LATIN SMALL LETTER I`. But the current implementation uses `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE`."
-msgstr "小文字の `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` は `U+0069 LATIN SMALL LETTER I` でなければなりませんが、 `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE` を使う実装になっていました。"
 
 msgid "Thanks"
 msgstr "感謝"
