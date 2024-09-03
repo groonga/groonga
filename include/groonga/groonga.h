@@ -1070,12 +1070,16 @@ grn_column_rename(grn_ctx *ctx,
  *        those as well.
  *
  * \attention This function should not be used to free persistent objects like
- *            tables, columns, or expr. For most cases, especially where
- *            the distinction between temporary and persistent objects is
- *            unclear, \c grn_obj_unlink() should be used instead.
+ *            tables, columns, or expr. These objects should be kept open for
+ *            efficiency, and \ref grn_obj_unlink should be used to manage them
+ *            appropriately instead of closing them.
+ *            Closing persistent objects repeatedly can lead to inefficiencies.
+ *            However, both persistent and temporary objects can be specified
+ *            with this function, but be mindful of the performance
+ *            implications.
  *
  * \param ctx The context object.
- * \param obj The temporary object to be freed.
+ * \param obj The object to be freed, typically a temporary object.
  *
  * \return \ref GRN_SUCCESS on success or the appropriate \ref grn_rc on error.
  *
