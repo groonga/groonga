@@ -17,11 +17,98 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.6 - 2024-07-29"
-msgstr "14.0.6リリース - 2024-07-29"
+msgid "Release 14.0.7 - 2024-09-03"
+msgstr "14.0.7リリース - 2024-09-03"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[NormalizerNFKC] Added a new option `unify_latin_alphabet_with`.[pgroonga/pgroonga#418][Reported by Man Hoang]"
+msgstr "[NormalizerNFKC] 新しいオプション `unify_latin_alphabet_with` を追加しました。[pgroonga/pgroonga#418][Man Hoangさんの報告]"
+
+msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "However, this feature focus on only `LATIN (SMALL|CAPITAL) LETTER X WITH XXX`. It doesn't support `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` characters."
+msgstr "ただし、この機能は `LATIN (SMALL|CAPITAL) LETTER X WITH XXX` にのみフォーカスしています。 `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` はサポートしていません。"
+
+msgid "We can confirm that can get `ngoằn` with `ngoan` in the following example."
+msgstr "以下の例で、`ngoan`で`ngoằn`を取得できることが確認できます。"
+
+msgid "Added support for [simdjson](https://simdjson.org/)."
+msgstr "[simdjson](https://simdjson.org/) をサポートしました。"
+
+msgid "Currently, we keeps RapidJSON support but we'll remove RapidJSON support later."
+msgstr "現状、RapidJSONのサポートも維持しますが、RapidJSONは今後サポートをやめる予定です。"
+
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 23.10 (Mantic Minotaur)"
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 23.10 (Mantic Minotaur)のサポートをやめました。"
+
+msgid "Because Ubuntu 23.10 reached EOL at July 11, 2024."
+msgstr "Ubuntu 23.10 は 2024-07-11 にEOLになったためです。"
+
+msgid "Distributed the install packages which enabled `libedit`."
+msgstr "`libedit`を有効にしたパッケージを配布するようにしました。"
+
+msgid "Now in Groonga REPL, we can refer to the command history using the up arrow key."
+msgstr "Groonga REPLで↑キーを使ってコマンド履歴を参照できるようになりました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[status] Fixed a bug that \"h3\" is never shown in `groonga --version`/`status`."
+msgstr "[status] \"h3\"が`groonga --version`や`status`で表示されない問題を修正しました。"
+
+msgid "Fixed a crash bug when log rotate is enabled."
+msgstr "ログローテートが有効な時にクラッシュする問題を修正しました。"
+
+msgid "This bug occurred in the following conditions."
+msgstr "この問題は、以下の条件で発生します。"
+
+msgid "When logging to a file by specification the following options."
+msgstr "以下のオプションを指定して、ファイルにロギングする時。"
+
+msgid "`--log-path <path>`"
+msgstr ""
+
+msgid "`--query-log-path <path>`"
+msgstr ""
+
+msgid "When log rotate is enabled by specification the following options."
+msgstr "以下のオプションを指定して、ログローテートが有効な時。"
+
+msgid "`--log-rotate-threshold-size <threshold>`"
+msgstr ""
+
+msgid "`--query-log-rotate-threshold-size <threshold>`"
+msgstr ""
+
+msgid "When process ID log output is enabled by specification the following options."
+msgstr "以下のオプションを指定して、プロセスIDの出力が有効な時。"
+
+msgid "`--log-flags process_id`"
+msgstr ""
+
+msgid "Fixed a bug that Groonga use bundled Onigmo even if we specify `GRN_WITH_BUNDLED_ONIGMO=OFF`. [termux/termux-packages#21252][Patch by Biswapriyo Nath]"
+msgstr "`GRN_WITH_BUNDLED_ONIGMO=OFF`を指定しているにも関わらず、GroongaがバンドルされているOnigmoを使う問題を修正しました。[termux/termux-packages#21252][Biswapriyo Nathさんがパッチ提供]"
+
+msgid "[Normalizer] Fixed a bug that `U+0130` is normalized to `U+0069` + `U+0307`."
+msgstr "[Normalizer] `U+0130` を `U+0069` + `U+0307` に正規化してしまう問題を修正しました。"
+
+msgid "The lowercase of `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` must be `U+0069 LATIN SMALL LETTER I`. But the current implementation uses `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE`."
+msgstr "小文字の `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` は `U+0069 LATIN SMALL LETTER I` でなければなりませんが、 `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE` を使う実装になっていました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Man Hoang"
+msgstr "Man Hoangさん"
+
+msgid "Biswapriyo Nath"
+msgstr "Biswapriyo Nathさん"
+
+msgid "Release 14.0.6 - 2024-07-29"
+msgstr "14.0.6リリース - 2024-07-29"
 
 msgid "Added support for prefix search without index against vector column."
 msgstr "インデックスを設定していないベクターカラムに対して、前方一致検索ができるようになりました。"
@@ -52,9 +139,6 @@ msgstr "この機能は主にPGroongaのクラッシュセーフ機能で使い�
 
 msgid "PGroonga will apply PGroonga's WAL to standby database automatically by using [`Custom WAL Resource Managers`](https://www.postgresql.org/docs/current/custom-rmgr.html). However, when PGroonga use `Custom WAL Resource Managers`, all replications are stop if PGroonga fail application of PGroonga's WAL due to break Groonga's object. So, if broken objects exist in database, Groonga will try as remove as possible objects by using this feature."
 msgstr "PGroongaは[`Custom WAL Resource Managers`](https://www.postgresql.jp/document/16/html/custom-rmgr.html)を使うことで、PGroongaのWALをスタンバイへ自動で適用できるようになります。ただ、`Custom WAL Resource Managers`を使用していると、オブジェクトの破損などでPGroongaのWALの適用に失敗した場合にすべてのレプリケーションが停止します。そのため、壊れたオブジェクトがデータベース内に存在する場合、Groongaはこの機能を使って、できる限り壊れたオブジェクトを削除しようとします。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/functions/query`] Fixed a bug that the order of evaluation of `'A || query(\"...\", \"B C\")'` is wrong"
 msgstr "[{doc}`/reference/functions/query`] `query()`の`AND`検索と`OR`検索検索を `'A || query(\"...\", \"B C\")'` の順で組み合わせたときに、誤った順序で評価される問題を修正しました"
@@ -253,9 +337,6 @@ msgstr "14.0.1でこの問題を修正したので、今回のリリースから
 
 msgid "Fixed build error when we build from source by using [`clang`](https://clang.llvm.org/). [GitHub#1738][Reported by windymelt]"
 msgstr "[`clang`](https://clang.llvm.org/) を使ってソースからビルドした時にビルドエラーになる問題を修正しました。 [GitHub#1738][Reported by windymelt]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "windymelt"
 msgstr "windymeltさん"
