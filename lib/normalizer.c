@@ -846,7 +846,8 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_a(
+  const unsigned char *utf8_char)
 {
   /*
    * Latin-1 Supplement
@@ -915,7 +916,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_a(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_b(
+  const unsigned char *utf8_char)
 {
   /*
    * Latin Extended Additional
@@ -931,7 +933,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_b(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_c(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_c(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -958,7 +961,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_c(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_d(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_d(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -982,7 +986,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_d(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_e(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_e(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1045,7 +1050,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_e(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_f(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_f(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1056,7 +1062,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_f(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_g(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_g(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1084,7 +1091,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_g(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_h(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_h(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1116,7 +1124,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_h(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_i(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_i(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1160,7 +1169,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_i(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_j(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_j(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1176,7 +1186,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_j(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_k(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_k(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1203,7 +1214,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_k(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_l(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_l(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1230,7 +1242,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_l(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_m(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_m(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1248,7 +1261,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_m(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_n(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_n(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1285,7 +1299,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_n(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_o(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_o(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1363,7 +1378,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_o(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_p(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_p(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1379,7 +1395,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_p(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_r(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_r(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1412,7 +1429,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_r(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_s(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_s(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1446,7 +1464,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_s(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_t(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_t(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1482,7 +1501,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_t(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_u(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_u(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1559,7 +1579,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_u(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_v(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_v(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1575,7 +1596,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_v(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_w(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1604,7 +1626,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_w(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_x(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_x(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1620,7 +1643,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_x(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_y(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_y(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1662,7 +1686,8 @@ grn_nfkc_normalize_unify_diacritical_mark_is_y(const unsigned char *utf8_char)
 }
 
 grn_inline static bool
-grn_nfkc_normalize_unify_diacritical_mark_is_z(const unsigned char *utf8_char)
+grn_nfkc_normalize_unify_latin_alphabet_with_is_z(
+  const unsigned char *utf8_char)
 {
   return (
     /*
@@ -1694,83 +1719,83 @@ grn_nfkc_normalize_unify_diacritical_mark_is_z(const unsigned char *utf8_char)
  * programming.
  */
 grn_inline static const unsigned char *
-grn_nfkc_normalize_unify_alphabet_diacritical_mark(
-  const unsigned char *utf8_char, unsigned char *unified)
+grn_nfkc_normalize_unify_latin_alphabet_with(const unsigned char *utf8_char,
+                                             unsigned char *unified)
 {
-  if (grn_nfkc_normalize_unify_diacritical_mark_is_a(utf8_char)) {
+  if (grn_nfkc_normalize_unify_latin_alphabet_with_is_a(utf8_char)) {
     *unified = 'a';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_b(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_b(utf8_char)) {
     *unified = 'b';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_c(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_c(utf8_char)) {
     *unified = 'c';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_d(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_d(utf8_char)) {
     *unified = 'd';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_e(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_e(utf8_char)) {
     *unified = 'e';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_f(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_f(utf8_char)) {
     *unified = 'f';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_g(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_g(utf8_char)) {
     *unified = 'g';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_h(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_h(utf8_char)) {
     *unified = 'h';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_i(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_i(utf8_char)) {
     *unified = 'i';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_j(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_j(utf8_char)) {
     *unified = 'j';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_k(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_k(utf8_char)) {
     *unified = 'k';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_l(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_l(utf8_char)) {
     *unified = 'l';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_m(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_m(utf8_char)) {
     *unified = 'm';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_n(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_n(utf8_char)) {
     *unified = 'n';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_o(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_o(utf8_char)) {
     *unified = 'o';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_p(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_p(utf8_char)) {
     *unified = 'p';
     return unified;
-    // 'q' has no diacritical marks.
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_r(utf8_char)) {
+    /* 'q' has no "LATIN (SMALL|CAPITAL) LETTER X WITH XXX" */
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_r(utf8_char)) {
     *unified = 'r';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_s(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_s(utf8_char)) {
     *unified = 's';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_t(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_t(utf8_char)) {
     *unified = 't';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_u(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_u(utf8_char)) {
     *unified = 'u';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_v(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_v(utf8_char)) {
     *unified = 'v';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_w(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_w(utf8_char)) {
     *unified = 'w';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_x(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_x(utf8_char)) {
     *unified = 'x';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_y(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_y(utf8_char)) {
     *unified = 'y';
     return unified;
-  } else if (grn_nfkc_normalize_unify_diacritical_mark_is_z(utf8_char)) {
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_z(utf8_char)) {
     *unified = 'z';
     return unified;
   } else {
@@ -2204,12 +2229,11 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       char_type = data->options->char_type_func(current);
     }
 
-    if (before && data->options->unify_alphabet_diacritical_mark &&
+    if (before && data->options->unify_latin_alphabet_with &&
         GRN_CHAR_TYPE(char_type) == GRN_CHAR_ALPHA &&
         (unified_char_length == 2 || unified_char_length == 3)) {
-      unifying =
-        grn_nfkc_normalize_unify_alphabet_diacritical_mark(unifying,
-                                                           unified_alphabet);
+      unifying = grn_nfkc_normalize_unify_latin_alphabet_with(unifying,
+                                                              unified_alphabet);
       if (unifying == unified_alphabet) {
         unified_char_length = sizeof(unified_alphabet);
       }
@@ -3557,8 +3581,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
   grn_nfkc_normalize_context unify;
   bool need_swap = false;
 
-  if (!(data->options->unify_alphabet_diacritical_mark ||
-        data->options->unify_kana || data->options->unify_kana_case ||
+  if (!(data->options->unify_latin_alphabet_with || data->options->unify_kana ||
+        data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
@@ -3592,8 +3616,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     goto exit;
   }
 
-  if (data->options->unify_alphabet_diacritical_mark ||
-      data->options->unify_kana ||
+  if (data->options->unify_latin_alphabet_with || data->options->unify_kana ||
       data->options->unify_kana_voiced_sound_mark ||
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||

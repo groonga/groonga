@@ -35,7 +35,7 @@ typedef struct {
   grn_nfkc_compose_func compose_func;
   bool include_removed_source_location;
   bool report_source_offset;
-  bool unify_alphabet_diacritical_mark;
+  bool unify_latin_alphabet_with;
   bool unify_kana;
   bool unify_kana_case;
   bool unify_kana_voiced_sound_mark;

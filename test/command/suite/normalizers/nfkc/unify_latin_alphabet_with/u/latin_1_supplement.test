@@ -1,0 +1,6 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+normalize \
+  'NormalizerNFKC("unify_latin_alphabet_with", true)' \
+  "ÙÚÛÜùúûü" \
+  WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

@@ -1,2 +1,0 @@
-normalize   'NormalizerNFKC("unify_alphabet_diacritical_mark", true)'   "Ññ"   WITH_TYPES
-[[0,0.0,0.0],{"normalized":"nn","types":["alpha","alpha","null"],"checks":[]}]

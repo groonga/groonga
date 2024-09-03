@@ -53,7 +53,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->compose_func = compose_func;
   options->include_removed_source_location = true;
   options->report_source_offset = false;
-  options->unify_alphabet_diacritical_mark = false;
+  options->unify_latin_alphabet_with = false;
   options->unify_kana = false;
   options->unify_kana_case = false;
   options->unify_kana_voiced_sound_mark = false;
@@ -150,12 +150,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     i,
                                     options->report_source_offset);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "unify_alphabet_diacritical_mark")) {
-      options->unify_alphabet_diacritical_mark =
+                                            "unify_latin_alphabet_with")) {
+      options->unify_latin_alphabet_with =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
-                                    options->unify_alphabet_diacritical_mark);
+                                    options->unify_latin_alphabet_with);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
       options->unify_kana = grn_vector_get_element_bool(ctx,
                                                         raw_options,
