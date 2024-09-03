@@ -1063,26 +1063,28 @@ grn_column_rename(grn_ctx *ctx,
                   unsigned int name_size);
 
 /**
- * \brief Frees a temporary object from memory.
+ * \brief Close an object.
  *
- *        This function frees the specified object (`obj`) from memory.
- *        If `obj` includes other associated objects, it recursively frees
- *        those as well.
+ *        This function frees all resources used by the specified object (`obj`)
+ *         from memory. All resources include other associated objects.
  *
- * \attention This function should not be used to free persistent objects like
- *            tables, columns, or expr. These objects should be kept open for
- *            efficiency, and \ref grn_obj_unlink should be used to manage them
- *            appropriately instead of closing them.
- *            Closing persistent objects repeatedly can lead to inefficiencies.
- *            However, both persistent and temporary objects can be specified
- *            with this function, but be mindful of the performance
- *            implications.
+ *        In general, you must close temporary objects explicitly. You don't
+ *        need to close persistent objects explicitly because you can close
+ *        persistent objects implicitly by closing a DB object.
+ *
+ *        You can use \ref grn_obj_unlink instead. It closes temporary objects
+ *        but does nothing for most persistent objects. It's useful for normal
+ *        use cases.
+ *
+ * \attention In general, you should not close persistent objects such as tables
+ *            and columns for performance reasons. If you close persistent
+ *            objects, you need to re-open them when they are needed again. This
+ *            is inefficient.
  *
  * \param ctx The context object.
- * \param obj The object to be freed, typically a temporary object.
+ * \param obj The object to be closed.
  *
- * \return \ref GRN_SUCCESS on success or the appropriate \ref grn_rc on error.
- *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
