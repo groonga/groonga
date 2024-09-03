@@ -23,11 +23,14 @@ msgstr "14.0.7リリース - 2024-09-03"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[NormalizerNFKC] Added a new option `unify_alphabet_diacritical_mark`.[pgroonga/pgroonga#418][Reported by Man Hoang]"
-msgstr "[NormalizerNFKC] 新しいオプション `unify_alphabet_diacritical_mark` を追加しました。[pgroonga/pgroonga#418][Man Hoangさんの報告]"
+msgid "[NormalizerNFKC] Added a new option `unify_latin_alphabet_with`.[pgroonga/pgroonga#418][Reported by Man Hoang]"
+msgstr "[NormalizerNFKC] 新しいオプション `unify_latin_alphabet_with` を追加しました。[pgroonga/pgroonga#418][Man Hoangさんの報告]"
 
 msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
 msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "However, this feature focus on only `LATIN (SMALL|CAPITAL) LETTER X WITH XXX`. It doesn't support `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` characters."
+msgstr "ただし、この機能は `LATIN (SMALL|CAPITAL) LETTER X WITH XXX` にのみフォーカスしています。 `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` はサポートしていません。"
 
 msgid "We can confirm that can get `ngoằn` with `ngoan` in the following example."
 msgstr "以下の例で、`ngoan`で`ngoằn`を取得できることが確認できます。"
@@ -88,6 +91,12 @@ msgstr ""
 
 msgid "Fixed a bug that Groonga use bundled Onigmo even if we specify `GRN_WITH_BUNDLED_ONIGMO=OFF`. [termux/termux-packages#21252][Patch by Biswapriyo Nath]"
 msgstr "`GRN_WITH_BUNDLED_ONIGMO=OFF`を指定しているにも関わらず、GroongaがバンドルされているOnigmoを使う問題を修正しました。[termux/termux-packages#21252][Biswapriyo Nathさんがパッチ提供]"
+
+msgid "[Normalizer] Fixed a bug that `U+0130` is normalized to `U+0069` + `U+0307`."
+msgstr "[Normalizer] `U+0130` を `U+0069` + `U+0307` に正規化してしまう問題を修正しました。"
+
+msgid "The lowercase of `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` must be `U+0069 LATIN SMALL LETTER I`. But the current implementation uses `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE`."
+msgstr "小文字の `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` は `U+0069 LATIN SMALL LETTER I` でなければなりませんが、 `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE` を使う実装になっていました。"
 
 msgid "Thanks"
 msgstr "感謝"
