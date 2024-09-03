@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj)
-
-   一時的なobjectであるobjをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
-
-   永続的な、table, column, exprなどは解放してはいけません。一般的には、一時的か永続的かを気にしなくてよい :c:func:`grn_obj_unlink()` を用いるべきです。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
 
    objの型を変更します。

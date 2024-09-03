@@ -1062,6 +1062,30 @@ grn_column_rename(grn_ctx *ctx,
                   const char *name,
                   unsigned int name_size);
 
+/**
+ * \brief Close an object.
+ *
+ *        This function frees all resources used by the specified object (`obj`)
+ *        from memory. All resources include other associated objects.
+ *
+ *        In general, you must close temporary objects explicitly. You don't
+ *        need to close persistent objects explicitly because you can close
+ *        persistent objects implicitly by closing a DB object.
+ *
+ *        You can use \ref grn_obj_unlink instead. It closes temporary objects
+ *        but does nothing for most persistent objects. It's useful for normal
+ *        use cases.
+ *
+ * \attention In general, you should not close persistent objects such as tables
+ *            and columns for performance reasons. If you close persistent
+ *            objects, you need to re-open them when they are needed again. This
+ *            is inefficient.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be closed.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
