@@ -1088,6 +1088,23 @@ grn_column_rename(grn_ctx *ctx,
  */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Reinitialize the type and domain of an object.
+ *
+ *        This function changes the type and domain of the specified object
+ *        (`obj`), resetting its state (rewinding) to prepare for new data.
+ *        Before calling this function, The object must have been initialized,
+ *        for example, using the \ref GRN_OBJ_INIT.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be reinitialized. The object must be mutable.
+ * \param domain The new domain type to be assigned to the object.
+ * \param flags \ref GRN_OBJ_VECTOR. if it is specified, the object will be
+ *              configured to store a vector of values of the specified
+ *              `domain`.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /* On non reference count mode (default):
@@ -1827,9 +1844,10 @@ grn_ctx_recv_handler_set(grn_ctx *,
 /* various values exchanged via grn_obj */
 
 #define GRN_OBJ_DO_SHALLOW_COPY (GRN_OBJ_REFER | GRN_OBJ_OUTPLACE)
-#define GRN_OBJ_VECTOR          (0x01 << 7)
+/// A flag indicating a vector type object.
+#define GRN_OBJ_VECTOR       (0x01 << 7)
 
-#define GRN_OBJ_MUTABLE(obj)    ((obj) && (obj)->header.type <= GRN_VECTOR)
+#define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \
