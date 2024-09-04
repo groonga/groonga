@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1725362287664,
+  "lastUpdate": 1725419232302,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -41724,6 +41724,108 @@ window.BENCHMARK_DATA = {
             "value": 0.021860661000005166,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.005761999999999573 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "horimoto@clear-code.com",
+            "name": "Horimoto Yasuhiro",
+            "username": "komainu8"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6def799def67c1ca6bd2b5a5012d72181e813b04",
+          "message": "packages ubuntu focal: unify dependency packages (#1943)\n\nBuild (ubuntu-focal-amd64) job on CI check build error before we build\r\npackage on Launchpad.\r\n\r\nIf we build packages on Launchpad, dependency packages are installed\r\nbased on control.in. On the other hand, if we build packages on CI,\r\ndepndency packages are installed based on Dockerfile.\r\n\r\nSo, the dependency packages of control.in and Dockerfile msut be same.\r\n\r\nThe current different points of control.in and Dockerfile as below.\r\n\r\n```diff\r\n--- /tmp/Dockerfile\t2024-09-03 15:34:20.335871523 +0900\r\n+++ /tmp/control.in\t2024-09-03 15:34:41.244334634 +0900\r\n@@ -1,22 +1,17 @@\r\n-autoconf-archive\r\n-build-essential\r\n-ccache\r\n cmake\r\n debhelper\r\n-devscripts\r\n-dh-apparmor\r\n libedit-dev\r\n libevent-dev\r\n liblz4-dev\r\n libmecab-dev\r\n libmsgpack-dev\r\n-libpcre3-dev\r\n libsimdjson-dev\r\n libssl-dev\r\n libstemmer-dev\r\n-libthrift-dev\r\n+# Broken. xtl-dev dependency is missing.\r\n+#  libxsimd-dev\r\n libxxhash-dev\r\n-libzmq3-dev\r\n+libzmq3-dev | libzmq-dev\r\n libzstd-dev\r\n-lsb-release\r\n ninja-build\r\n```",
+          "timestamp": "2024-09-04T10:28:55+09:00",
+          "tree_id": "3a0f1be99f6d89c834bc467def05dc2eb2b21572",
+          "url": "https://github.com/groonga/groonga/commit/6def799def67c1ca6bd2b5a5012d72181e813b04"
+        },
+        "date": 1725419230664,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.39547432200004096,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.025071999999999955 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2743796770001268,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.016995999999999956 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015926876999969863,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003940000000000887 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.02519042300008323,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00040400000000007097 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.5303267479999931,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00016199999999999548 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24688961199990445,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007818999999999937 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14199535800014473,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007934000000000052 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.018083526000054917,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0020539999999999725 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01766079600008652,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002294999999999714 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05688045399983821,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008313000000000598 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.054773489000126574,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0088980000000001 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01960820000010699,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002579000000000331 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.020321179999996275,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0021940000000002513 s\nthreads: undefined"
           }
         ]
       }
