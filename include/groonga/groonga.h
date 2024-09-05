@@ -1089,7 +1089,7 @@ grn_column_rename(grn_ctx *ctx,
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 /**
- * \brief Reinitialize the type and domain of an object.
+ * \brief Reinitialize an object.
  *
  *        This function changes the type and domain of the specified object
  *        (`obj`), resetting its state (rewinding) to prepare for new data.
