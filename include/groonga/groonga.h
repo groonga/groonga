@@ -1091,10 +1091,18 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 /**
  * \brief Reinitialize an object.
  *
- *        This function changes the type and domain of the specified object
- *        (`obj`), resetting its state (rewinding) to prepare for new data.
- *        Before calling this function, The object must have been initialized,
- *        for example, using the \ref GRN_OBJ_INIT.
+ *        Buffer objects, \ref GRN_BULK, \ref GRN_PTR, \ref GRN_UVECTOR,
+ *        \ref GRN_PVECTOR and \ref GRN_VECTOR are only target objects
+ *        of this function. You can't use other objects such as table and
+ *        column for this function.
+ *
+ *        This function frees the current data in the specified object
+ *        (`obj`) and initializes the specified `obj` for the specified
+ *        `domain` and `flags`.
+ *
+ *        Before calling this function, The object must have been initialized.
+ *        You can use `GRN_XXX_INIT()` macros such as \ref GRN_TEXT_INIT to
+ *        initialize a buffer object.
  *
  * \param ctx The context object.
  * \param obj The object to be reinitialized. The object must be mutable.
