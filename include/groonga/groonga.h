@@ -547,8 +547,10 @@ typedef uint32_t grn_column_flags;
 /* obj types */
 
 #define GRN_VOID (0x00)
+/* string buffer holds contiguous memory */
 #define GRN_BULK (0x02)
-#define GRN_PTR  (0x03)
+/* pointer buffer holds contiguous memory */
+#define GRN_PTR (0x03)
 /* vector of fixed size (uniform) data especially grn_id */
 #define GRN_UVECTOR                 (0x04)
 #define GRN_PVECTOR                 (0x05) /* vector of grn_obj* */
@@ -1853,7 +1855,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 /* various values exchanged via grn_obj */
 
 #define GRN_OBJ_DO_SHALLOW_COPY (GRN_OBJ_REFER | GRN_OBJ_OUTPLACE)
-/// A flag indicating a vector type object.
+/* A flag to initialize a vector object. */
 #define GRN_OBJ_VECTOR       (0x01 << 7)
 
 #define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
