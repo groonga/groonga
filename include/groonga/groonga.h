@@ -1105,11 +1105,11 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj);
  *        initialize a buffer object.
  *
  * \param ctx The context object.
- * \param obj The object to be reinitialized. The object must be mutable.
+ * \param obj The object to be reinitialized. It must be buffer objects.
  * \param domain The new domain type to be assigned to the object.
- * \param flags \ref GRN_OBJ_VECTOR. if it is specified, the object will be
- *              configured to store a vector of values of the specified
- *              `domain`.
+ * \param flags `0` or \ref GRN_OBJ_VECTOR. if \ref GRN_OBJ_VECTOR it is
+ *              specified, the object will be configured to store a vector of
+ *              values of the specified `domain`.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
