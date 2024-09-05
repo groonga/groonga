@@ -547,7 +547,10 @@ typedef uint32_t grn_column_flags;
 /* obj types */
 
 #define GRN_VOID (0x00)
-/* string buffer holds contiguous memory */
+/**
+ * Auto-extendable buffer that can be used for storing a number and variable
+ * size string.
+ */
 #define GRN_BULK (0x02)
 /* pointer buffer holds contiguous memory */
 #define GRN_PTR (0x03)
