@@ -552,7 +552,10 @@ typedef uint32_t grn_column_flags;
  * size string.
  */
 #define GRN_BULK (0x02)
-/* pointer buffer holds contiguous memory */
+/**
+ * Buffer that has a `grn_obj *`. The hold `grn_obj *` can be closed
+ * automatically when this is closed by specifying \ref GRN_OBJ_OWN flag.
+ */
 #define GRN_PTR (0x03)
 /* vector of fixed size (uniform) data especially grn_id */
 #define GRN_UVECTOR                 (0x04)
@@ -616,7 +619,12 @@ struct _grn_obj {
 
 #define GRN_OBJ_REFER    (0x01 << 0)
 #define GRN_OBJ_OUTPLACE (0x01 << 1)
-#define GRN_OBJ_OWN      (0x01 << 5)
+/**
+ * A flag to obtain ownership of the referenced `grn_obj *`. When the
+ * GRN_OBJ_OWN flag is set, the object will be automatically closed using
+ * \ref grn_obj_close when it is released.
+ */
+#define GRN_OBJ_OWN (0x01 << 5)
 
 #define GRN_OBJ_INIT(obj, obj_type, obj_flags, obj_domain)                     \
   do {                                                                         \
