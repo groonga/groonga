@@ -23,11 +23,9 @@ RUN \
     liblz4-dev \
     libmecab-dev \
     libmsgpack-dev \
-    libjemalloc-dev \
     libsimdjson-dev \
     libssl-dev \
     libstemmer-dev \
-    libthrift-dev \
     libxxhash-dev \
     libzmq3-dev \
     libzstd-dev \
