@@ -1119,8 +1119,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj);
  *
  * \param ctx The context object.
  * \param obj The object to be reinitialized. It must be a buffer object.
- * \param domain The new logical scope that defines the object can logically
- *               hold.
+ * \param domain The new type that the object can hold.
  * \param flags `0` or \ref GRN_OBJ_VECTOR. If \ref GRN_OBJ_VECTOR is
  *              specified, the object will be configured to store a vector of
  *              values of the specified `domain`.
