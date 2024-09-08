@@ -2499,7 +2499,7 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return obj;
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 is_comparable_number_type(grn_id type)
 {
   return GRN_DB_INT8 <= type && type <= GRN_DB_TIME;
@@ -2596,7 +2596,7 @@ smaller_number_type(grn_id type1, grn_id type2)
   }
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 is_negative_value(grn_obj *number)
 {
   switch (number->header.domain) {
@@ -2619,42 +2619,42 @@ is_negative_value(grn_obj *number)
   case GRN_DB_FLOAT:
     return GRN_FLOAT_VALUE(number) < 0;
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 number_safe_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_id type)
 {
   grn_obj_reinit(ctx, dest, type, 0);
   if (src->header.domain == type) {
     GRN_TEXT_SET(ctx, dest, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
-    return GRN_TRUE;
+    return true;
   }
 
   switch (type) {
   case GRN_DB_UINT8:
     if (is_negative_value(src)) {
       GRN_UINT8_SET(ctx, dest, 0);
-      return GRN_TRUE;
+      return true;
     }
     break;
   case GRN_DB_UINT16:
     if (is_negative_value(src)) {
       GRN_UINT16_SET(ctx, dest, 0);
-      return GRN_TRUE;
+      return true;
     }
     break;
   case GRN_DB_UINT32:
     if (is_negative_value(src)) {
       GRN_UINT32_SET(ctx, dest, 0);
-      return GRN_TRUE;
+      return true;
     }
     break;
   case GRN_DB_UINT64:
     if (is_negative_value(src)) {
       GRN_UINT64_SET(ctx, dest, 0);
-      return GRN_TRUE;
+      return true;
     }
     break;
   }
