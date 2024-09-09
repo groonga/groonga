@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1725885388231,
+  "lastUpdate": 1725925484676,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -42336,6 +42336,108 @@ window.BENCHMARK_DATA = {
             "value": 0.018104921999906765,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0023730000000005413 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9ca60fbfa2e3436a06bc5419ca06a82b09cdc299",
+          "message": "packages: add support for Amazon Linux 2023 (#1949)\n\nGitHub: fix GH-1845\r\n\r\nAmazon Linux 2023 package doesn't have MeCab support because Amazon\r\nLinux 2023 doesn't provide MeCab package. Existing tests work without\r\nMeCab support. (Tests that need MeCab support are omitted.)\r\n\r\nAmazon Linux 2023 doesn't provide MessagePack packages but MessagePack\r\nsupport is enabled by using bundled MessagePack.\r\n\r\nAmazon Linux 2023 doesn't provide simdjson packages but simdjson support\r\nis enabled by using bundled simdjson.\r\n\r\nReported by Watson. Thanks!!!\r\n\r\nReported by takoyaki-nyokki. Thanks!!!",
+          "timestamp": "2024-09-10T08:40:12+09:00",
+          "tree_id": "83c30800c6b4ebb4cd6ea4f41c6a6827c67e9227",
+          "url": "https://github.com/groonga/groonga/commit/9ca60fbfa2e3436a06bc5419ca06a82b09cdc299"
+        },
+        "date": 1725925482807,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36351562099997636,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.016847000000000154 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2881184030000554,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.021112999999999937 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01678934999995363,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00041499999999991544 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015480379999928573,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003719999999998169 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.3852556580000055,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00013299999999999423 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24677575999999135,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0062980000000000536 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14230476899990663,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006366999999999928 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.016642035999950622,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019330000000000735 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017017992999967646,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0017979999999998275 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.056114847000003465,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007477999999999763 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.0542409650001332,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00815299999999991 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017863994999913757,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019460000000007527 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.03007354600003964,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005354000000000275 s\nthreads: undefined"
           }
         ]
       }
