@@ -98,13 +98,3 @@ Reference
    :param table2: 対象table2を指定します。
    :param res1: 結果を格納するtableを指定します。
    :param res2: 結果を格納するtableを指定します。
-
-.. c:function:: int grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size, grn_obj *res)
- 
-   nameパラメータから始まるtableのカラムIDをresパラメータに格納します。name_sizeパラメータが0の場合はすべてのカラムIDを格納します。
-
-   :param table: 対象tableを指定します。
-   :param name: 取得したいカラム名のprefixを指定します。
-   :param name_size: nameパラメータの長さを指定します。
-   :param res: 結果を格納する ``GRN_TABLE_HASH_KEY`` のtableを指定します。
-   :return: 格納したカラムIDの数を返します。
