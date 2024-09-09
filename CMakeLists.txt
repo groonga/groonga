@@ -699,7 +699,7 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
       grn_prepare_fetchcontent()
       fetchcontent_makeavailable(simdjson)
       if(CMAKE_VERSION VERSION_LESS 3.28)
-        set_property(DIRECTORY "${simdjson_SOURCE_DIR}/build/cmake"
+        set_property(DIRECTORY "${simdjson_SOURCE_DIR}"
                      PROPERTY EXCLUDE_FROM_ALL TRUE)
       endif()
       set(SIMDJSON_INCLUDE_DIR
