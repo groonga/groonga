@@ -1,5 +1,5 @@
-#@on-error omit
+#@require-feature mecab
+
 tokenize \
   'TokenMecab("use_reading", true)' \
   '焼き肉と焼肉とyakiniku'
-#@on-error default

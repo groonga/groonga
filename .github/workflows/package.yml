@@ -192,6 +192,7 @@ jobs:
           - almalinux-8-aarch64
           - almalinux-9-x86_64
           - almalinux-9-aarch64
+          - amazon-linux-2023-x86_64
         include:
           - id: debian-bookworm-arm64
             timeout-minutes: 60
@@ -224,7 +225,7 @@ jobs:
           id=${{ matrix.id }}
           os_version=${id%-*}
           os=${os_version%-*}
-          version=${os_version#*-}
+          version=${os_version##*-}
           architecture=${id##*-}
 
           if [ "${os}" = "debian" ] || [ "${os}" = "ubuntu" ]; then
@@ -238,12 +239,14 @@ jobs:
             fi
           else
             TASK_NAMESPACE=yum
+            # amazon-linux -> amazonlinux
+            docker_os=${os/-/}
             if [ "${architecture}" = "x86_64" ]; then
               TARGET="${os_version}"
-              TEST_DOCKER_IMAGE="${os}:${version}"
+              TEST_DOCKER_IMAGE="${docker_os}:${version}"
             else
               TARGET="${id}"
-              TEST_DOCKER_IMAGE="arm64v8/${os}:${version}"
+              TEST_DOCKER_IMAGE="arm64v8/${docker_os}:${version}"
             fi
           fi
           echo "TASK_NAMESPACE=${TASK_NAMESPACE}" >> ${GITHUB_ENV}

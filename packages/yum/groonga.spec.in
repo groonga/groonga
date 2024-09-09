@@ -1,6 +1,7 @@
 # -*- sh-shell: rpm -*-
 
-%define _rhel %{?rhel:%{rhel}}%{!?rhel:0}
+%define _amzn %{?amzn:%{amzn}}%{!?amzn:0}
+%define is_amazon_linux (%{_amzn} != 0)
 
 %if ! %{defined cmake}
 %define cmake %{cmake3}
@@ -28,12 +29,16 @@ BuildRequires:	libedit-devel
 BuildRequires:	libstemmer-devel
 BuildRequires:	libzstd-devel
 BuildRequires:	lz4-devel
+%if ! %{is_amazon_linux}
 BuildRequires:	mecab-devel
 BuildRequires:	msgpack-devel
+%endif
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	ruby
+%if ! %{is_amazon_linux}
 BuildRequires:	simdjson-devel
+%endif
 # Old xsimd-devel doesn't work. At least 9.0.0 or older don't work.
 # See also -DGRN_WITH_XSIMD=bundled with cmake.
 #BuildRequires:	xsimd-devel
@@ -59,8 +64,10 @@ License:	LGPLv2 and (MIT or GPLv2)
 Requires:	arrow@APACHE_ARROW_MAJOR_VERSION@-libs
 Requires:	libzstd
 Requires:	lz4
+%if ! %{is_amazon_linux}
 Requires:	msgpack
 Requires:	simdjson
+%endif
 Requires:	xxhash-libs
 Requires:	zlib
 Requires(post):	/sbin/ldconfig
@@ -133,11 +140,14 @@ Summary:	Libraries and header files for Groonga
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	arrow-devel >= @APACHE_ARROW_VERSION@
+%if ! %{is_amazon_linux}
 Requires:	msgpack-devel
+%endif
 
 %description devel
 Libraries and header files for Groonga
 
+%if ! %{is_amazon_linux}
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for Groonga
 Group:		Applications/Text
@@ -146,6 +156,7 @@ Requires:	mecab-ipadic
 
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
+%endif
 
 %package token-filter-stem
 Summary:	Stemming token filter for Groonga
@@ -156,7 +167,6 @@ Requires:	libstemmer
 %description token-filter-stem
 Stemming token filter for Groonga. Name is TokenFilterStem.
 
-%if %{_rhel} >= 8
 %package plugin-h3
 Summary:	H3 related plugin for Groonga
 Group:		Applications/Text
@@ -167,7 +177,6 @@ H# plugin for Groonga.
 
 This provides TokenH3Index by tokenizers/h3_index and
 h3_*() functions by functions/h3.
-%endif
 
 %package plugin-suggest
 Summary:	Suggest plugin for Groonga
@@ -177,6 +186,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description plugin-suggest
 Suggest plugin for Groonga
 
+%if ! %{is_amazon_linux}
 %package munin-plugins
 Summary:	Munin plugins for Groonga
 Group:		Applications/System
@@ -186,6 +196,7 @@ Requires(post):	munin-node
 
 %description munin-plugins
 Munin plugins for Groonga
+%endif
 
 %prep
 #% define optflags -O0
@@ -201,9 +212,13 @@ Munin plugins for Groonga
   -DGRN_WITH_BLOSC=bundled \
   -DGRN_WITH_DOC=ON \
   -DGRN_WITH_EXAMPLES=ON \
+%if ! %{is_amazon_linux}
   -DGRN_WITH_MECAB=ON \
+%endif
   -DGRN_WITH_MRUBY=ON \
+%if ! %{is_amazon_linux}
   -DGRN_WITH_MUNIN_PLUGINS=ON \
+%endif
   -DGRN_WITH_TOOLS=ON \
   -DGRN_WITH_XSIMD=bundled
 %cmake_build
@@ -211,7 +226,7 @@ Munin plugins for Groonga
 
 %install
 %cmake_install
-# Workaround for old CMake on CentOS 7 and AlmaLinux 9.
+# Workaround for old CMake on AlmaLinux 9.
 # It seems that preventing installing FetchContent library by EXCLUDE_FROM_ALL
 # doesn't work with old CMake.
 rm -rf $RPM_BUILD_ROOT%{_includedir}/h3/
@@ -231,6 +246,7 @@ mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/groonga
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/groonga/db
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/groonga
 
+%if ! %{is_amazon_linux}
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
 cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
@@ -253,6 +269,7 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
   env.gqtp_pid_path %{_rundir}/groonga/groonga-gqtp.pid
   env.gqtp_query_log_path %{_localstatedir}/log/groonga/query-gqtp.log
 EOC
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -281,9 +298,11 @@ exit 0
 
 %post libs -p /sbin/ldconfig
 
+%if ! %{is_amazon_linux}
 %post munin-plugins
 %{_sbindir}/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
 %systemd_post munin-node
+%endif
 
 %preun server-gqtp
 %systemd_preun groonga-server-gqtp.service
@@ -299,9 +318,11 @@ exit 0
 
 %postun libs -p /sbin/ldconfig
 
+%if ! %{is_amazon_linux}
 %postun munin-plugins
 %{_sbindir}/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
 %systemd_postun munin-node
+%endif
 
 
 %files
@@ -355,6 +376,10 @@ exit 0
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
 %{_datadir}/groonga/mruby/
+%if %{is_amazon_linux}
+%{_datadir}/groonga/msgpack-c/
+%{_datadir}/groonga/simdjson/
+%endif
 %{_datadir}/groonga/xsimd/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
@@ -404,13 +429,11 @@ exit 0
 %{_libdir}/pkgconfig/groonga*.pc
 %{_libdir}/cmake/Groonga/*.cmake
 
-%if %{_rhel} >= 8
 %files plugin-h3
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/functions/h3.so
 %{_libdir}/groonga/plugins/tokenizers/h3_index.so
 %{_datadir}/groonga/h3/
-%endif
 
 %files plugin-suggest
 %defattr(-,root,root,-)
@@ -418,18 +441,22 @@ exit 0
 %dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
+%if ! %{is_amazon_linux}
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
+%endif
 
 %files token-filter-stem
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/token_filters/stem.so
 
+%if ! %{is_amazon_linux}
 %files munin-plugins
 %defattr(-,root,root,-)
 %{_datadir}/munin/plugins/*
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
+%endif
 
 %changelog
 * Tue Sep 03 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.0.7-1

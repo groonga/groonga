@@ -1,4 +1,5 @@
 #@require-feature blosc
+#@require-feature mecab
 
 table_create Logs TABLE_NO_KEY
 column_create Logs scores \

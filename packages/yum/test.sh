@@ -4,12 +4,9 @@ set -exu
 
 os=$(cut -d: -f4 /etc/system-release-cpe)
 case ${os} in
-  centos)
-    version=$(cut -d: -f5 /etc/system-release-cpe)
-    ;;
-  linux)
-    os=oracle-linux
-    version=$(cut -d: -f5 /etc/system-release-cpe)
+  amazon)
+    os=amazon-linux
+    version=$(cut -d: -f6 /etc/system-release-cpe)
     ;;
   *) # For AlmaLinux
     version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
@@ -17,10 +14,10 @@ case ${os} in
 esac
 
 case ${os} in
-  oracle-linux)
-    DNF="dnf --enablerepo=ol${version}_codeready_builder"
+  amazon-linux)
+    DNF="dnf"
     ${DNF} install -y \
-      https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+      https://apache.jfrog.io/artifactory/arrow/amazon-linux/${version}/apache-arrow-release-latest.rpm
     ;;
   *)
     case ${version} in
@@ -65,13 +62,6 @@ if [ "${run_test}" = "yes" ]; then
   cp -a /groonga/test/command ./
 
   case ${version} in
-    7)
-      ${DNF} install -y centos-release-scl-rh
-      ${DNF} install -y rh-ruby30-ruby-devel
-      set +u
-      . /opt/rh/rh-ruby30/enable
-      set -u
-      ;;
     8)
       ${DNF} module disable -y ruby
       ${DNF} module enable -y ruby:3.1
@@ -84,15 +74,17 @@ if [ "${run_test}" = "yes" ]; then
 
   ${DNF} install -y \
     gcc \
-    make \
-    redhat-rpm-config
+    make
+  if [ ${os} != "amazon-linux" ]; then
+    ${DNF} install -y redhat-rpm-config
+  fi
   MAKEFLAGS=-j$(nproc) gem install grntest
 
   export TZ=Asia/Tokyo
 
   grntest_options=()
   grntest_options+=(--base-directory=command)
-  grntest_options+=(--n-retries=3)
+  grntest_options+=(--n-retries=2)
   grntest_options+=(--reporter=mark)
   grntest_options+=(command/suite)
 

@@ -81,6 +81,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "almalinux-8-aarch64",
       "almalinux-9",
       "almalinux-9-aarch64",
+      "amazon-linux-2023",
     ]
   end
 
