@@ -1,5 +1,5 @@
-# Copyright(C) 2013-2016 Brazil
-# Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2016  Brazil
+# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ if(GRN_WITH_BUNDLED_ONIGMO)
 endif()
 add_subdirectory(mruby)
 add_subdirectory(mecab)
-add_subdirectory(message_pack)
 if(GRN_WITH_MRUBY)
   add_subdirectory(groonga-log)
 endif()

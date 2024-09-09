@@ -35,6 +35,7 @@ all_targets = [
   "blosc",
   "croaring",
   "h3",
+  "message-pack",
   "simdjson",
   "simsimd",
   "xsimd",
@@ -67,6 +68,12 @@ targets.each do |target|
     url = "https://github.com/uber/h3/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "h3-#{version}.tar.gz")
+  when "message-pack"
+    version = cmakelists[/set\(GRN_MESSAGE_PACK_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/msgpack/msgpack-c/releases/download/"
+    url << "c-#{version}/"
+    url << "msgpack-c-#{version}.tar.gz"
+    download(url, "msgpack-c-#{version}.tar.gz")
   when "simdjson"
     version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/simdjson/simdjson/archive/refs/tags/"

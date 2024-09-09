@@ -118,7 +118,6 @@ jobs:
           pushd groonga-${version}/vendor
           ruby download_lz4.rb
           ruby download_mecab.rb
-          ruby download_message_pack.rb
           ruby download_rapidjson.rb
           ruby download.rb
           popd

@@ -958,17 +958,23 @@ else()
   set(GRN_WITH_LIBEVENT FALSE)
 endif()
 
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_message_pack_version"
-     GRN_BUNDLED_MESSAGE_PACK_VERSION)
-string(STRIP "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
-             GRN_BUNDLED_MESSAGE_PACK_VERSION)
-
+set(GRN_MESSAGE_PACK_BUNDLED_VERSION "6.1.0")
+set(GRN_MESSAGE_PACK_BUNDLED_SHA256
+    "674119f1a85b5f2ecc4c7d5c2859edf50c0b05e0c10aa0df85eefa2c8c14b796")
 set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
 set(GRN_WITH_MESSAGE_PACK
     "auto"
-    CACHE STRING "use MessagePack for suggestion")
+    CACHE STRING "use MessagePack for suggestion, WAL and so on")
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
-  find_package(Groongamsgpackc)
+  if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "bundled")
+    set(Groongamsgpackc_FOUND FALSE)
+  else()
+    if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "system")
+      find_package(Groongamsgpackc REQUIRED)
+    else()
+      find_package(Groongamsgpackc)
+    endif()
+  endif()
   if(Groongamsgpackc_FOUND)
     set(GRN_WITH_MESSAGE_PACK TRUE)
     target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
@@ -976,22 +982,52 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
       install(FILES "cmake/FindGroongamsgpackc.cmake"
               DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
     endif()
+    message(STATUS "MessagePack: (system)")
   else()
-    set(GRN_BUNDLED_MESSAGE_PACK_DIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
-    )
-    if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
-      set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
-      set(GRN_WITH_MESSAGE_PACK TRUE)
-      target_link_libraries(grn_dependencies INTERFACE msgpackc)
-      message(STATUS "MessagePack: (bundled)")
-    else()
-      if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")
-        message(FATAL_ERROR "No MessagePack found")
+    function(grn_build_message_pack)
+      set(MESSAGE_PACK_SOURCE_BASE_NAME
+          "msgpack-c-${GRN_MESSAGE_PACK_BUNDLED_VERSION}.tar.gz")
+      set(MESSAGE_PACK_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${MESSAGE_PACK_SOURCE_BASE_NAME}")
+      if(EXISTS ${MESSAGE_PACK_SOURCE_LOCAL_PATH})
+        set(MESSAGE_PACK_SOURCE_URL ${MESSAGE_PACK_SOURCE_LOCAL_PATH})
+      else()
+        set(MESSAGE_PACK_SOURCE_URL
+            "https://github.com/msgpack/msgpack-c/releases/download")
+        string(APPEND MESSAGE_PACK_SOURCE_URL
+               "/c-${GRN_MESSAGE_PACK_BUNDLED_VERSION}")
+        string(APPEND MESSAGE_PACK_SOURCE_URL
+               "/${MESSAGE_PACK_SOURCE_BASE_NAME}")
       endif()
-      set(GRN_WITH_MESSAGE_PACK FALSE)
-      message(STATUS "No MessagePack")
-    endif()
+      fetchcontent_declare(
+        msgpack-c
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${MESSAGE_PACK_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_MESSAGE_PACK_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(MSGPACK_BUILD_EXAMPLES
+          OFF
+          CACHE BOOL "" FORCE)
+      fetchcontent_makeavailable(msgpack-c)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${msgpack-c_SOURCE_DIR}"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      install(
+        FILES "${msgpack-c_SOURCE_DIR}/AUTHORS"
+              "${msgpack-c_SOURCE_DIR}/COPYING"
+              "${msgpack-c_SOURCE_DIR}/ChangeLog"
+              "${msgpack-c_SOURCE_DIR}/LICENSE_1_0.txt"
+              "${msgpack-c_SOURCE_DIR}/NOTICE"
+              "${msgpack-c_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/msgpack-c")
+    endfunction()
+    grn_build_message_pack()
+    set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
+    set(GRN_WITH_MESSAGE_PACK TRUE)
+    target_link_libraries(grn_dependencies INTERFACE msgpack-c)
+    add_library(Groonga::msgpackc ALIAS msgpack-c)
+    message(STATUS "MessagePack: (bundled)")
   endif()
 else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
