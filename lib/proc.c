@@ -3590,7 +3590,7 @@ func_html_untag(grn_ctx *ctx,
   grn_obj *text;
   const char *html_raw;
   int i, length;
-  grn_bool in_tag = GRN_FALSE;
+  bool in_tag = false;
 
   if (nargs != 1) {
     ERR(GRN_INVALID_ARGUMENT, "HTML is missing");
@@ -3634,11 +3634,11 @@ func_html_untag(grn_ctx *ctx,
   for (i = 0; i < length; i++) {
     switch (html_raw[i]) {
     case '<':
-      in_tag = GRN_TRUE;
+      in_tag = true;
       break;
     case '>':
       if (in_tag) {
-        in_tag = GRN_FALSE;
+        in_tag = false;
       } else {
         GRN_TEXT_PUTC(ctx, text, html_raw[i]);
       }
@@ -3656,7 +3656,7 @@ func_html_untag(grn_ctx *ctx,
   return text;
 }
 
-static grn_bool
+static bool
 grn_text_equal_cstr(grn_ctx *ctx, grn_obj *text, const char *cstr)
 {
   size_t cstr_len = strlen(cstr);
@@ -3869,7 +3869,7 @@ exit:
   return rc;
 }
 
-static grn_bool
+static bool
 between_create_expr(grn_ctx *ctx,
                     grn_obj *table,
                     between_data *data,
@@ -3878,10 +3878,10 @@ between_create_expr(grn_ctx *ctx,
 {
   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, *expr, *variable);
   if (!*expr) {
-    return GRN_FALSE;
+    return false;
   }
   if (!*variable) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (data->value->header.type == GRN_BULK) {
@@ -3910,7 +3910,7 @@ between_create_expr(grn_ctx *ctx,
 
   grn_expr_append_op(ctx, *expr, GRN_OP_AND, 2);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
