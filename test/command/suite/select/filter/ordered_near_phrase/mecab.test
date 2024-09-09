@@ -1,6 +1,4 @@
-#@on-error omit
-tokenize TokenMecab '京都府 東京都'
-#@on-error default
+#@require-feature mecab
 
 table_create Entries TABLE_NO_KEY
 column_create Entries content COLUMN_SCALAR Text

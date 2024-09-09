@@ -1,37 +1,3 @@
-tokenize TokenMecab '京都府 東京都'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    {
-      "value": "京都",
-      "position": 0,
-      "force_prefix": false,
-      "force_prefix_search": false
-    },
-    {
-      "value": "府",
-      "position": 1,
-      "force_prefix": false,
-      "force_prefix_search": false
-    },
-    {
-      "value": "東京",
-      "position": 2,
-      "force_prefix": false,
-      "force_prefix_search": false
-    },
-    {
-      "value": "都",
-      "position": 3,
-      "force_prefix": false,
-      "force_prefix_search": false
-    }
-  ]
-]
 table_create Entries TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Entries content COLUMN_SCALAR Text

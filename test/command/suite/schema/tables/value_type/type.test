@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 table_create Logs TABLE_NO_KEY --value_type Int32
 
 schema
