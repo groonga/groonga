@@ -712,6 +712,17 @@ grn_table_setoperation(grn_ctx *ctx,
 GRN_API grn_rc
 grn_table_difference(
   grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res1, grn_obj *res2);
+/**
+ * \brief Store the column IDs of the table starting with `name` in `res`.
+ *
+ * \param ctx The context object.
+ * \param table The table.
+ * \param name The column name prefix.
+ * \param name_size Size of `name` in bytes. If `0`, you get all column IDs.
+ * \param res The \ref GRN_TABLE_HASH_KEY table to store results.
+ *
+ * \return The number of IDs.
+ */
 GRN_API int
 grn_table_columns(grn_ctx *ctx,
                   grn_obj *table,
