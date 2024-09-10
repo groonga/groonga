@@ -710,7 +710,7 @@ grn_table_setoperation(grn_ctx *ctx,
                        grn_obj *res,
                        grn_operator op);
 /**
- * \brief Delete duplicate records in `table1` and `table2`.
+ * \brief Delete duplicated records in `table1` and `table2`.
  *
  * \param ctx The context object.
  * \param table1 The table.
