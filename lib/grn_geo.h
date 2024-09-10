@@ -153,7 +153,7 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx,
                               grn_obj *res,
                               grn_operator op);
 
-GRN_API grn_bool
+GRN_API bool
 grn_geo_in_circle(grn_ctx *ctx,
                   grn_obj *point,
                   grn_obj *center,

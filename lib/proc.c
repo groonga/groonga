@@ -3008,7 +3008,7 @@ func_geo_in_circle(grn_ctx *ctx,
                    grn_user_data *user_data)
 {
   grn_obj *obj;
-  grn_bool r = GRN_FALSE;
+  bool r = false;
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
   switch (nargs) {
   case 4:

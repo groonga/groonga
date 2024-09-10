@@ -2481,14 +2481,14 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
   return (int)size;
 }
 
-grn_bool
+bool
 grn_geo_in_circle(grn_ctx *ctx,
                   grn_obj *point,
                   grn_obj *center,
                   grn_obj *radius_or_point,
                   grn_geo_approximate_type approximate_type)
 {
-  grn_bool r = GRN_FALSE;
+  bool r = false;
   grn_obj center_, radius_or_point_;
   grn_id domain = point->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
