@@ -547,8 +547,16 @@ typedef uint32_t grn_column_flags;
 /* obj types */
 
 #define GRN_VOID (0x00)
+/**
+ * Auto-extendable buffer that can be used for storing a number and variable
+ * size string.
+ */
 #define GRN_BULK (0x02)
-#define GRN_PTR  (0x03)
+/**
+ * Buffer that has a `grn_obj *`. The hold `grn_obj *` can be closed
+ * automatically when this is closed by specifying \ref GRN_OBJ_OWN flag.
+ */
+#define GRN_PTR (0x03)
 /* vector of fixed size (uniform) data especially grn_id */
 #define GRN_UVECTOR                 (0x04)
 #define GRN_PVECTOR                 (0x05) /* vector of grn_obj* */
@@ -611,7 +619,15 @@ struct _grn_obj {
 
 #define GRN_OBJ_REFER    (0x01 << 0)
 #define GRN_OBJ_OUTPLACE (0x01 << 1)
-#define GRN_OBJ_OWN      (0x01 << 5)
+/**
+ * A flag to represent that \ref GRN_PTR or \ref GRN_PVECTOR owns associated
+ * \ref grn_obj. When this flag is set, the associated \ref grn_obj will be
+ * automatically closed using \ref grn_obj_close when owning \ref GRN_PTR or
+ * \ref GRN_PVECTOR is closed.
+ *
+ * You can use this flag only with \ref GRN_PTR_INIT.
+ */
+#define GRN_OBJ_OWN (0x01 << 5)
 
 #define GRN_OBJ_INIT(obj, obj_type, obj_flags, obj_domain)                     \
   do {                                                                         \
@@ -1088,6 +1104,31 @@ grn_column_rename(grn_ctx *ctx,
  */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Reinitialize an object.
+ *
+ *        Buffer objects, \ref GRN_BULK, \ref GRN_PTR, \ref GRN_UVECTOR,
+ *        \ref GRN_PVECTOR, and \ref GRN_VECTOR, are only target objects
+ *        of this function. You can't use other objects such as table and
+ *        column for this function.
+ *
+ *        This function frees the current data in the specified object
+ *        (`obj`) and initializes the specified `obj` for the specified
+ *        `domain` and `flags`.
+ *
+ *        Before calling this function, the object must have been initialized.
+ *        You can use `GRN_XXX_INIT()` macros such as \ref GRN_TEXT_INIT to
+ *        initialize a buffer object.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be reinitialized. It must be a buffer object.
+ * \param domain The new type that the object can hold.
+ * \param flags `0` or \ref GRN_OBJ_VECTOR. If \ref GRN_OBJ_VECTOR is
+ *              specified, the object will be configured to store a vector of
+ *              values of the specified `domain`.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /* On non reference count mode (default):
@@ -1827,9 +1868,10 @@ grn_ctx_recv_handler_set(grn_ctx *,
 /* various values exchanged via grn_obj */
 
 #define GRN_OBJ_DO_SHALLOW_COPY (GRN_OBJ_REFER | GRN_OBJ_OUTPLACE)
-#define GRN_OBJ_VECTOR          (0x01 << 7)
+/* A flag to initialize a vector object. */
+#define GRN_OBJ_VECTOR       (0x01 << 7)
 
-#define GRN_OBJ_MUTABLE(obj)    ((obj) && (obj)->header.type <= GRN_VECTOR)
+#define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \

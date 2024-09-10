@@ -23,16 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
-
-   objの型を変更します。
-
-   objは :c:func:`GRN_OBJ_INIT()` マクロなどで初期化済みでなければいけません。
-
-   :param obj: 対象objectを指定します。
-   :param domain: 変更後のobjの型を指定します。
-   :param flags: ``GRN_OBJ_VECTOR`` を指定するとdomain型の値のベクタを格納するオブジェクトになります。
-
 .. c:function:: void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。

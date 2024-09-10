@@ -39,25 +39,13 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "objの型を変更します。"
-msgstr ""
-
-msgid "objは :c:func:`GRN_OBJ_INIT()` マクロなどで初期化済みでなければいけません。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "変更後のobjの型を指定します。"
-msgstr ""
-
-msgid "``GRN_OBJ_VECTOR`` を指定するとdomain型の値のベクタを格納するオブジェクトになります。"
-msgstr ""
-
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
 msgid "objに対応するファイルパスを返します。一時objectならNULLを返します。"
+msgstr ""
+
+msgid "対象objectを指定します。"
 msgstr ""
 
 msgid "objの名前の長さを返します。無名objectなら0を返します。"
