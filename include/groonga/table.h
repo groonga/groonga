@@ -709,6 +709,18 @@ grn_table_setoperation(grn_ctx *ctx,
                        grn_obj *table2,
                        grn_obj *res,
                        grn_operator op);
+/**
+ * \brief Delete duplicate records in `table1` and `table2`.
+ *
+ * \param ctx The context object.
+ * \param table1 The table.
+ * \param table2 The table.
+ * \param res1 Specify `table1`.
+ * \param res2 Specify `table2`.
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT on
+ *         `table1 != res1 || table2 != res2`.
+ */
 GRN_API grn_rc
 grn_table_difference(
   grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res1, grn_obj *res2);

@@ -107,6 +107,3 @@ msgstr ""
 
 msgid "実行する演算の種類を指定します。"
 msgstr ""
-
-msgid "table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納します。"
-msgstr ""

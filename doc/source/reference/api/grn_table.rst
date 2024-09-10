@@ -89,12 +89,3 @@ Reference
    :param table2: 対象table2を指定します。
    :param res: 結果を格納するtableを指定します。
    :param op: 実行する演算の種類を指定します。
-
-.. c:function:: grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res1, grn_obj *res2)
-
-   table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納します。
-
-   :param table1: 対象table1を指定します。
-   :param table2: 対象table2を指定します。
-   :param res1: 結果を格納するtableを指定します。
-   :param res2: 結果を格納するtableを指定します。
