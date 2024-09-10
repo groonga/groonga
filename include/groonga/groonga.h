@@ -620,9 +620,12 @@ struct _grn_obj {
 #define GRN_OBJ_REFER    (0x01 << 0)
 #define GRN_OBJ_OUTPLACE (0x01 << 1)
 /**
- * A flag to obtain ownership of the referenced `grn_obj *`. When the
- * GRN_OBJ_OWN flag is set, the object will be automatically closed using
- * \ref grn_obj_close when it is released.
+ * A flag to represent that \ref GRN_PTR or \ref GRN_PVECTOR owns associated
+ * \ref grn_obj. When this flag is set, the associated \ref grn_obj will be
+ * automatically closed using \ref grn_obj_close when owning \ref GRN_PTR or
+ * \ref GRN_PVECTOR is closed.
+ *
+ * You can use this flag only with \ref GRN_PTR_INIT.
  */
 #define GRN_OBJ_OWN (0x01 << 5)
 
