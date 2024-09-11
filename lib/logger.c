@@ -378,6 +378,9 @@ default_logger_reopen(grn_ctx *ctx, void *user_data)
 static void
 default_logger_fin(grn_ctx *ctx, void *user_data)
 {
+  if (!logger_inited) {
+    return;
+  }
   grn_logger_output_close(ctx, &default_logger_output);
 }
 
