@@ -45,14 +45,6 @@ Reference
    :param table: 対象tableを指定します。
    :param id: レコードIDを指定します。
 
-.. c:function:: grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table)
-
-   tableの全レコードを一括して削除します。
-
-   注意: multithread環境では他のthreadのアクセスによって、存在しないアドレスへアクセスし、SIGSEGVが発生する可能性があります。
-
-   :param table: 対象tableを指定します。
-
 .. c:type:: grn_table_sort_key
 
    TODO...

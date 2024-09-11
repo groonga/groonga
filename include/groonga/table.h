@@ -208,6 +208,17 @@ grn_table_update(grn_ctx *ctx,
                  unsigned int src_key_size,
                  const void *dest_key,
                  unsigned int dest_key_size);
+/**
+ * \brief Delete all records in table.
+ *
+ * \attention Do not use in multi-threading. Because it might access data that
+ *            has already been deleted and crash when it does.
+ *
+ * \param ctx The context object
+ * \param table The table
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
