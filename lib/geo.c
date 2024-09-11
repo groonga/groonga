@@ -2560,45 +2560,45 @@ exit:
   return r;
 }
 
-grn_bool
+bool
 grn_geo_in_rectangle_raw(grn_ctx *ctx,
                          grn_geo_point *point,
                          grn_geo_point *top_left,
                          grn_geo_point *bottom_right)
 {
   if (point->latitude > top_left->latitude) {
-    return GRN_FALSE;
+    return false;
   }
   if (point->latitude < bottom_right->latitude) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
     if (point->longitude >= top_left->longitude) {
-      return GRN_TRUE;
+      return true;
     }
     if (point->longitude <= bottom_right->longitude) {
-      return GRN_TRUE;
+      return true;
     }
-    return GRN_FALSE;
+    return false;
   } else {
     if (point->longitude < top_left->longitude) {
-      return GRN_FALSE;
+      return false;
     }
     if (point->longitude > bottom_right->longitude) {
-      return GRN_FALSE;
+      return false;
     }
-    return GRN_TRUE;
+    return true;
   }
 }
 
-grn_bool
+bool
 grn_geo_in_rectangle(grn_ctx *ctx,
                      grn_obj *point,
                      grn_obj *top_left,
                      grn_obj *bottom_right)
 {
-  grn_bool r = GRN_FALSE;
+  bool r = false;
   grn_obj top_left_, bottom_right_;
   grn_id domain = point->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {

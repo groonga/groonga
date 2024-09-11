@@ -3035,7 +3035,7 @@ func_geo_in_rectangle(grn_ctx *ctx,
                       grn_user_data *user_data)
 {
   grn_obj *obj;
-  grn_bool r = GRN_FALSE;
+  bool r = false;
   if (nargs == 3) {
     r = grn_geo_in_rectangle(ctx, args[0], args[1], args[2]);
   }
