@@ -190,7 +190,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_OPERATION_NOT_PERMITTED is returned if the
- *         other than \ref GRN_TABLE_DAT_KEY is specified.
+ *         table other than \ref GRN_TABLE_DAT_KEY is specified.
  */
 GRN_API grn_rc
 grn_table_update_by_id(grn_ctx *ctx,
