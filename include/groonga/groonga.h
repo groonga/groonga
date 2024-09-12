@@ -1131,31 +1131,40 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj);
  */
 GRN_API grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
-/* On non reference count mode (default):
- * This closes the following objects immediately:
+/**
+ * \brief Unlink an object.
  *
- *   * Acceessor
- *   * Bulk
- *   * DB
- *   * Temporary column
- *   * Temporary table
+ *        This function releases the specified object (`obj`) from memory.
+ *        If the object has dependent objects, they are also recursively
+ *        freed. The behavior of this function varies depending on whether
+ *        reference counting is enabled.
  *
- * This does nothing for other objects such as persisted tables and
- * columns.
+ * Non reference count mode (default: GRN_ENABLE_REFERENCE_COUNT=no)
+ *   The following objects are closed immediately.
+ *   - \ref GRN_ACCESSOR
+ *   - \ref GRN_BULK
+ *   - \ref GRN_DB
+ *   - Temporary column
+ *   - Temporary table
  *
- * On reference count mode (GRN_ENABLE_REFERENCE_COUNT=yes):
- * This closes the following objects immediately:
+ *   Other objects such as persisted tables and columns are not closed.
  *
- *   * Bulk
- *   * DB
+ * Reference count mode (GRN_ENABLE_REFERENCE_COUNT=yes)
+ *   The following objects are closed immediately.
+ *   - \ref GRN_BULK
+ *   - \ref GRN_DB
  *
- * This decreases the reference count of the following objects:
+ *   The reference count is decreased for the following objects.
+ *   - \ref GRN_ACCESSOR
+ *   - Column (both persisted and temporary)
+ *   - Table (both persisted and temporary)
  *
- *   * Acceessor
- *   * Column (both persisted and temporary)
- *   * Table (both persisted and temporary)
+ *   If the reference count reaches zero, the object is closed.
  *
- * If the decreased reference count is zero, the object is closed.
+ * \param ctx The context object.
+ * \param obj The object to be unlinked and freed from memory.
+ *
+ * \return This function does not return a value.
  */
 GRN_API void
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);

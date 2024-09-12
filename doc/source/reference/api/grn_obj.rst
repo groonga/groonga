@@ -23,10 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
-
-   objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
-
 .. c:function:: const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj)
 
    objに対応するファイルパスを返します。一時objectならNULLを返します。
