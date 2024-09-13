@@ -212,8 +212,9 @@ grn_table_update(grn_ctx *ctx,
  * \brief Delete all records in table.
  *
  * \attention Do not use in multi-threading. Because it might access data that
- *            has already been deleted and crash when it does.\n
- *            You need to reopen the target table and its columns in another
+ *            has already been deleted and crash when it does.
+ *
+ * \attention You need to reopen the target table and its columns in another
  *            process when you use this in multi-processing. This removes
  *            related files and creates new files. If you keep using the target
  *            table and its columns in another process, the target table and
