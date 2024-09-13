@@ -13190,16 +13190,17 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-void
+grn_rc
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 {
+  grn_rc rc = GRN_SUCCESS;
   if (!obj) {
-    return;
+    return rc;
   }
 
   if (obj->header.type == GRN_DB) {
-    grn_obj_close(ctx, obj);
-    return;
+    rc = grn_obj_close(ctx, obj);
+    return rc;
   }
 
   if (obj->header.type == GRN_ACCESSOR) {
@@ -13213,22 +13214,22 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
       accessor->reference_count--;
       uint32_t current_reference_count = accessor->reference_count;
       if (current_reference_count == 0) {
-        grn_obj_close(ctx, obj);
+        rc = grn_obj_close(ctx, obj);
       }
       grn_log_reference_count("%p: unlink: done: accessor: %p: %u\n",
                               ctx,
                               obj,
                               current_reference_count);
-      GRN_API_RETURN();
+      GRN_API_RETURN(rc);
     } else {
-      grn_obj_close(ctx, obj);
-      return;
+      rc = grn_obj_close(ctx, obj);
+      return rc;
     }
   }
 
   if (!GRN_DB_OBJP(obj)) {
-    grn_obj_close(ctx, obj);
-    return;
+    rc = grn_obj_close(ctx, obj);
+    return rc;
   }
 
   grn_db_obj *db_obj = DB_OBJ(obj);
@@ -13245,28 +13246,28 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
       db_obj->reference_count--;
       uint32_t current_reference_count = db_obj->reference_count;
       if (current_reference_count == 0) {
-        grn_obj_close(ctx, obj);
+        rc = grn_obj_close(ctx, obj);
       }
       grn_log_reference_count("%p: unlink: done: %u: %p: %u\n",
                               ctx,
                               id,
                               obj,
                               current_reference_count);
-      GRN_API_RETURN();
+      GRN_API_RETURN(rc);
     } else {
-      grn_obj_close(ctx, obj);
-      return;
+      rc = grn_obj_close(ctx, obj);
+      return rc;
     }
   }
 
   /* Don't unlink built-in objects. We must update the same condition
    * in grn_ctx_at() when we need to unlink built-in objects. */
   if (id < GRN_N_RESERVED_TYPES) {
-    return;
+    return rc;
   }
 
   if (!grn_enable_reference_count) {
-    return;
+    return rc;
   }
 
   GRN_API_ENTER;
@@ -13297,7 +13298,8 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
           obj,
           vp->lock,
           vp->ptr);
-      GRN_API_RETURN();
+      rc = ctx->rc;
+      GRN_API_RETURN(rc);
     }
     uint32_t current_lock;
     uint32_t *lock_pointer = &vp->lock;
@@ -13324,7 +13326,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               current_lock,
                               current_reference_count);
       if (current_lock == 0) {
-        grn_obj_close(ctx, obj);
+        rc = grn_obj_close(ctx, obj);
       } else {
         grn_log_reference_count("%p: unlink: unlock: %u: %p: %u: %u\n",
                                 ctx,
@@ -13353,7 +13355,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                             obj,
                             current_reference_count);
   }
-  GRN_API_RETURN();
+  GRN_API_RETURN(rc);
 }
 
 void
