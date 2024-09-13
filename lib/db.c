@@ -13221,14 +13221,12 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               current_reference_count);
       GRN_API_RETURN(rc);
     } else {
-      rc = grn_obj_close(ctx, obj);
-      return rc;
+      return grn_obj_close(ctx, obj);
     }
   }
 
   if (!GRN_DB_OBJP(obj)) {
-    rc = grn_obj_close(ctx, obj);
-    return rc;
+    return grn_obj_close(ctx, obj);
   }
 
   grn_db_obj *db_obj = DB_OBJ(obj);
@@ -13254,8 +13252,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               current_reference_count);
       GRN_API_RETURN(rc);
     } else {
-      rc = grn_obj_close(ctx, obj);
-      return rc;
+      return grn_obj_close(ctx, obj);
     }
   }
 
@@ -13297,8 +13294,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
           obj,
           vp->lock,
           vp->ptr);
-      rc = ctx->rc;
-      GRN_API_RETURN(rc);
+      GRN_API_RETURN(ctx->rc);
     }
     uint32_t current_lock;
     uint32_t *lock_pointer = &vp->lock;
