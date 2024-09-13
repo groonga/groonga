@@ -13199,8 +13199,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (obj->header.type == GRN_DB) {
-    rc = grn_obj_close(ctx, obj);
-    return rc;
+    return grn_obj_close(ctx, obj);
   }
 
   if (obj->header.type == GRN_ACCESSOR) {
