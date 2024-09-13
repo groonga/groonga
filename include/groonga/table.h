@@ -183,7 +183,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
  *        This operation supports only \ref GRN_TABLE_DAT_KEY.
  *
  * \param ctx The context object.
- * \param table The table.
+ * \param table The \ref GRN_TABLE_DAT_KEY table.
  * \param id ID of record to be updated.
  * \param dest_key New key.
  * \param dest_key_size Size of `dest_key` in bytes.
