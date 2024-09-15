@@ -4307,10 +4307,10 @@ func_in_values(grn_ctx *ctx,
   return found;
 }
 
-static grn_bool
+static bool
 is_reference_type_column(grn_ctx *ctx, grn_obj *column)
 {
-  grn_bool is_reference_type;
+  bool is_reference_type;
   grn_obj *range;
 
   range = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
@@ -4318,10 +4318,10 @@ is_reference_type_column(grn_ctx *ctx, grn_obj *column)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
-    is_reference_type = GRN_TRUE;
+    is_reference_type = true;
     break;
   default:
-    is_reference_type = GRN_FALSE;
+    is_reference_type = false;
     break;
   }
   grn_obj_unlink(ctx, range);
@@ -4846,7 +4846,7 @@ proc_range_filter(grn_ctx *ctx,
                                              GRN_ID_NIL,
                                              index_cursor_flags);
         while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
-          grn_bool result_boolean = GRN_FALSE;
+          bool result_boolean = false;
 
           if (filter_expr) {
             grn_obj *result;
@@ -4857,7 +4857,7 @@ proc_range_filter(grn_ctx *ctx,
             }
             result_boolean = grn_obj_is_true(ctx, result);
           } else {
-            result_boolean = GRN_TRUE;
+            result_boolean = true;
           }
 
           if (result_boolean) {
