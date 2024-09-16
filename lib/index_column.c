@@ -306,8 +306,8 @@ typedef struct {
   struct {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
-    grn_bool with_section;
-    grn_bool with_position;
+    bool with_section;
+    bool with_position;
     uint32_t n_elements;
   } index;
   bool have_tokenizer;
@@ -322,7 +322,7 @@ typedef struct {
     grn_id token_id;
     grn_id diff_id;
     grn_posting posting;
-    grn_bool is_new_diff;
+    bool is_new_diff;
   } current;
   struct {
     grn_obj value;
@@ -512,8 +512,8 @@ grn_index_column_diff_compare_posting(grn_ctx *ctx,
                                       grn_index_column_diff_data *data,
                                       const grn_posting *posting)
 {
-  const grn_bool with_section = data->index.with_section;
-  const grn_bool with_position = data->index.with_position;
+  const bool with_section = data->index.with_section;
+  const bool with_position = data->index.with_position;
   const grn_posting *current_posting = &(data->current.posting);
 
   if (posting->rid < current_posting->rid) {
@@ -600,8 +600,8 @@ grn_index_column_diff_posting_list_fin(grn_ctx *ctx,
 
   grn_ii_cursor *cursor = posting_list->cursor;
   if (cursor) {
-    const grn_bool with_section = data->index.with_section;
-    const grn_bool with_position = data->index.with_position;
+    const bool with_section = data->index.with_section;
+    const bool with_position = data->index.with_position;
     if (with_position) {
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
@@ -772,8 +772,8 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     grn_index_column_diff_posting_list_init(ctx, data, posting_list);
   }
 
-  const grn_bool with_section = data->index.with_section;
-  const grn_bool with_position = data->index.with_position;
+  const bool with_section = data->index.with_section;
+  const bool with_position = data->index.with_position;
 
   if (posting_list->last_posting.tf > 0) {
     const grn_index_column_diff_compared compared =
@@ -1016,7 +1016,7 @@ grn_index_column_diff_process_token(grn_ctx *ctx,
     return;
   }
 
-  const grn_bool with_position = data->index.with_position;
+  const bool with_position = data->index.with_position;
   while (grn_token_cursor_get_status(ctx, token_cursor) ==
          GRN_TOKEN_CURSOR_DOING) {
     data->current.token_id = grn_token_cursor_next(ctx, token_cursor);
