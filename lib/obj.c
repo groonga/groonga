@@ -551,17 +551,17 @@ bool
 grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   const grn_id range_id = grn_obj_get_range(ctx, obj);
   if (grn_id_is_builtin(ctx, range_id)) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_obj *range = range = grn_ctx_at(ctx, range_id);
   if (!range) {
-    return GRN_FALSE;
+    return false;
   }
 
   uint8_t range_type = range->header.type;
