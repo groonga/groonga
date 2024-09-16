@@ -24,7 +24,7 @@
 #include <math.h>
 
 static uint64_t grn_index_sparsity = 10;
-static grn_bool grn_index_chunk_split_enable = GRN_TRUE;
+static bool grn_index_chunk_split_enable = true;
 
 void
 grn_index_column_init_from_env(void)
@@ -50,9 +50,9 @@ grn_index_column_init_from_env(void)
                grn_index_chunk_split_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_index_chunk_split_enable_env, "no") == 0) {
-      grn_index_chunk_split_enable = GRN_FALSE;
+      grn_index_chunk_split_enable = false;
     } else {
-      grn_index_chunk_split_enable = GRN_TRUE;
+      grn_index_chunk_split_enable = true;
     }
   }
 }
@@ -176,7 +176,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
 
   grn_table_flags lexicon_flags;
   grn_ii *ii = (grn_ii *)index_column;
-  grn_bool use_grn_ii_build;
+  bool use_grn_ii_build;
   grn_obj *tokenizer = NULL;
   grn_table_get_info(ctx,
                      ii->lexicon,
@@ -188,10 +188,10 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
   switch (lexicon_flags & GRN_OBJ_TABLE_TYPE_MASK) {
   case GRN_OBJ_TABLE_PAT_KEY :
   case GRN_OBJ_TABLE_DAT_KEY :
-    use_grn_ii_build = GRN_TRUE;
+    use_grn_ii_build = true;
     break;
   default :
-    use_grn_ii_build = GRN_FALSE;
+    use_grn_ii_build = false;
     break;
   }
   const grn_column_flags flags = grn_ii_get_flags(ctx, ii);
@@ -200,7 +200,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
        !GRN_TYPE_IS_TEXT_FAMILY(ii->lexicon->header.domain))) {
     /* TODO: Support offline index construction for WITH_POSITION
      * index against UInt32 vector column. */
-    use_grn_ii_build = GRN_FALSE;
+    use_grn_ii_build = false;
   }
 
   size_t n_columns = DB_OBJ(index_column)->source_size / sizeof(grn_id);
@@ -1055,7 +1055,7 @@ grn_index_column_diff_compute(grn_ctx *ctx,
     grn_index_column_diff_progress(ctx, data);
     for (size_t i = 0; i < n_source_columns; i++) {
       grn_obj *source = GRN_PTR_VALUE_AT(source_columns, i);
-      const grn_bool is_reference = grn_obj_is_reference_column(ctx, source);
+      const bool is_reference = grn_obj_is_reference_column(ctx, source);
 
       data->current.posting.rid = id;
       data->current.posting.sid = (uint32_t)(i + 1);
