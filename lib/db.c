@@ -12974,8 +12974,11 @@ grn_table_close_columns(grn_ctx *ctx, grn_obj *table)
 grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
+  if (!obj) {
+    GRN_API_RETURN(GRN_SUCCESS);
+  }
+
   if (obj) {
     if (GRN_DB_OBJP(obj)) {
       grn_id id = DB_OBJ(obj)->id;
@@ -13034,14 +13037,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
         GRN_FREE(obj);
       }
-      rc = GRN_SUCCESS;
       break;
     case GRN_VOID:
     case GRN_BULK:
     case GRN_UVECTOR:
     case GRN_MSG:
       obj->header.type = GRN_VOID;
-      rc = grn_bulk_fin(ctx, obj);
+      grn_bulk_fin(ctx, obj);
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
         GRN_FREE(obj);
       }
@@ -13053,13 +13055,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
       }
       obj->header.type = GRN_VOID;
-      rc = grn_bulk_fin(ctx, obj);
+      grn_bulk_fin(ctx, obj);
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
         GRN_FREE(obj);
       }
       break;
     case GRN_PVECTOR:
-      rc = grn_pvector_fin(ctx, obj);
+      GRN_API_RETURN(grn_pvector_fin(ctx, obj));
       break;
     case GRN_ACCESSOR:
       {
@@ -13070,16 +13072,15 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
           GRN_FREE(p);
         }
       }
-      rc = GRN_SUCCESS;
       break;
     case GRN_SNIP:
-      rc = grn_snip_close(ctx, (grn_snip *)obj);
+      GRN_API_RETURN(grn_snip_close(ctx, (grn_snip *)obj));
       break;
     case GRN_STRING:
-      rc = grn_string_close(ctx, obj);
+      GRN_API_RETURN(grn_string_close(ctx, obj));
       break;
     case GRN_HIGHLIGHTER:
-      rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
+      GRN_API_RETURN(grn_highlighter_close(ctx, (grn_highlighter *)obj));
       break;
     case GRN_CURSOR_TABLE_PAT_KEY:
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
@@ -13104,31 +13105,30 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_TYPE:
       GRN_FREE(obj);
-      rc = GRN_SUCCESS;
       break;
     case GRN_DB:
-      rc = grn_db_close(ctx, obj);
+      GRN_API_RETURN(grn_db_close(ctx, obj));
       break;
     case GRN_TABLE_PAT_KEY:
-      rc = grn_pat_close(ctx, (grn_pat *)obj);
+      GRN_API_RETURN(grn_pat_close(ctx, (grn_pat *)obj));
       break;
     case GRN_TABLE_DAT_KEY:
-      rc = grn_dat_close(ctx, (grn_dat *)obj);
+      GRN_API_RETURN(grn_dat_close(ctx, (grn_dat *)obj));
       break;
     case GRN_TABLE_HASH_KEY:
-      rc = grn_hash_close(ctx, (grn_hash *)obj);
+      GRN_API_RETURN(grn_hash_close(ctx, (grn_hash *)obj));
       break;
     case GRN_TABLE_NO_KEY:
-      rc = grn_array_close(ctx, (grn_array *)obj);
+      GRN_API_RETURN(grn_array_close(ctx, (grn_array *)obj));
       break;
     case GRN_COLUMN_VAR_SIZE:
-      rc = grn_ja_close(ctx, (grn_ja *)obj);
+      GRN_API_RETURN(grn_ja_close(ctx, (grn_ja *)obj));
       break;
     case GRN_COLUMN_FIX_SIZE:
-      rc = grn_ra_close(ctx, (grn_ra *)obj);
+      GRN_API_RETURN(grn_ra_close(ctx, (grn_ra *)obj));
       break;
     case GRN_COLUMN_INDEX:
-      rc = grn_ii_close(ctx, (grn_ii *)obj);
+      GRN_API_RETURN(grn_ii_close(ctx, (grn_ii *)obj));
       break;
     case GRN_PROC:
       {
@@ -13149,15 +13149,14 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
           grn_plugin_close(ctx, p->obj.range);
         }
         GRN_FREE(obj);
-        rc = GRN_SUCCESS;
       }
       break;
     case GRN_EXPR:
-      rc = grn_expr_close(ctx, obj);
+      GRN_API_RETURN(grn_expr_close(ctx, obj));
       break;
     }
   }
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 void
