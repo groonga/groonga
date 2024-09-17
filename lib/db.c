@@ -13073,13 +13073,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     }
     break;
   case GRN_SNIP:
-    grn_rc rc = grn_snip_close(ctx, (grn_snip *)obj);
+    rc = grn_snip_close(ctx, (grn_snip *)obj);
     GRN_API_RETURN(rc);
   case GRN_STRING:
-    grn_rc rc = grn_string_close(ctx, obj);
+    rc = grn_string_close(ctx, obj);
     GRN_API_RETURN(rc);
   case GRN_HIGHLIGHTER:
-    grn_rc rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
+    rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
     GRN_API_RETURN(rc);
   case GRN_CURSOR_TABLE_PAT_KEY:
     grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
@@ -13106,28 +13106,28 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     GRN_FREE(obj);
     break;
   case GRN_DB:
-    grn_rc rc = grn_db_close(ctx, obj);
+    rc = grn_db_close(ctx, obj);
     GRN_API_RETURN(rc);
   case GRN_TABLE_PAT_KEY:
-    grn_rc rc = grn_pat_close(ctx, (grn_pat *)obj);
+    rc = grn_pat_close(ctx, (grn_pat *)obj);
     GRN_API_RETURN(rc);
   case GRN_TABLE_DAT_KEY:
-    grn_rc rc = grn_dat_close(ctx, (grn_dat *)obj);
+    rc = grn_dat_close(ctx, (grn_dat *)obj);
     GRN_API_RETURN(rc);
   case GRN_TABLE_HASH_KEY:
-    grn_rc rc = grn_hash_close(ctx, (grn_hash *)obj);
+    rc = grn_hash_close(ctx, (grn_hash *)obj);
     GRN_API_RETURN(rc);
   case GRN_TABLE_NO_KEY:
-    grn_rc rc = grn_array_close(ctx, (grn_array *)obj);
+    rc = grn_array_close(ctx, (grn_array *)obj);
     GRN_API_RETURN(rc);
   case GRN_COLUMN_VAR_SIZE:
-    grn_rc rc = grn_ja_close(ctx, (grn_ja *)obj);
+    rc = grn_ja_close(ctx, (grn_ja *)obj);
     GRN_API_RETURN(rc);
   case GRN_COLUMN_FIX_SIZE:
-    grn_rc rc = grn_ra_close(ctx, (grn_ra *)obj);
+    rc = grn_ra_close(ctx, (grn_ra *)obj);
     GRN_API_RETURN(rc);
   case GRN_COLUMN_INDEX:
-    grn_rc rc = grn_ii_close(ctx, (grn_ii *)obj);
+    rc = grn_ii_close(ctx, (grn_ii *)obj);
     GRN_API_RETURN(rc);
   case GRN_PROC:
     {
@@ -13151,7 +13151,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     }
     break;
   case GRN_EXPR:
-    grn_rc rc = grn_expr_close(ctx, obj);
+    rc = grn_expr_close(ctx, obj);
     GRN_API_RETURN(rc);
   }
   GRN_API_RETURN(GRN_SUCCESS);
