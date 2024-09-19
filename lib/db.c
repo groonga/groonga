@@ -13159,8 +13159,8 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       grn_proc *p = (grn_proc *)obj;
       /*
         if (obj->header.domain) {
-        grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain,
-        sizeof(grn_id), NULL);
+          grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain,
+          sizeof(grn_id), NULL);
         }
       */
       for (i = 0; i < p->nvars; i++) {
