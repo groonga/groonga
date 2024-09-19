@@ -25,17 +25,6 @@ Reference
    :param table: 対象tableを指定します。
    :param key: 検索keyを指定します。
 
-.. c:function:: int grn_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf_size)
-
-   tableのIDに対応するレコードのkeyを取得します。
-
-   対応するレコードが存在する場合はkey長を返します。見つからない場合は0を返します。対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、keybufに該当するkeyをコピーします。
-
-   :param table: 対象tableを指定します。
-   :param id: 対象レコードのIDを指定します。
-   :param keybuf: keyを格納するバッファ(呼出側で準備する)を指定します。
-   :param buf_size: keybufのサイズ(byte長)を指定します。
-
 .. c:type:: grn_table_sort_key
 
    TODO...

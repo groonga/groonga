@@ -145,6 +145,19 @@ grn_table_lcp_search(grn_ctx *ctx,
                      grn_obj *table,
                      const void *key,
                      unsigned int key_size);
+/**
+ * \brief Get the key assigned to the ID.
+ *        If the size of the key found is larger than `buf_size`, it is not
+ *        stored in `keybuf`.
+ *
+ * \param ctx The context object
+ * \param table The table
+ * \param id: The ID to be found
+ * \param keybuf: Buffer to store the record key.
+ * \param buf_size: Size of `keybuf` in bytes.
+ *
+ * \return key size of the record on success, `0` on not existed.
+ */
 GRN_API int
 grn_table_get_key(
   grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf_size);

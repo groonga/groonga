@@ -45,21 +45,6 @@ msgstr ""
 msgid "検索keyを指定します。"
 msgstr ""
 
-msgid "tableのIDに対応するレコードのkeyを取得します。"
-msgstr ""
-
-msgid "対応するレコードが存在する場合はkey長を返します。見つからない場合は0を返します。対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、keybufに該当するkeyをコピーします。"
-msgstr ""
-
-msgid "対象レコードのIDを指定します。"
-msgstr ""
-
-msgid "keyを格納するバッファ(呼出側で準備する)を指定します。"
-msgstr ""
-
-msgid "keybufのサイズ(byte長)を指定します。"
-msgstr ""
-
 msgid "tableのレコードを特定の条件でグループ化します。"
 msgstr ""
 
