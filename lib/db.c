@@ -13036,7 +13036,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
       GRN_FREE(obj);
     }
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_VOID:
   case GRN_BULK:
   case GRN_UVECTOR:
@@ -13046,7 +13046,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
       GRN_FREE(obj);
     }
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_PTR:
     if (obj->header.impl_flags & GRN_OBJ_OWN) {
       if (GRN_BULK_VSIZE(obj) == sizeof(grn_obj *)) {
@@ -13058,7 +13058,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
       GRN_FREE(obj);
     }
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_PVECTOR:
     {
       grn_rc rc = grn_pvector_fin(ctx, obj);
@@ -13073,7 +13073,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         GRN_FREE(p);
       }
     }
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_SNIP:
     {
       grn_rc rc = grn_snip_close(ctx, (grn_snip *)obj);
@@ -13091,28 +13091,28 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     }
   case GRN_CURSOR_TABLE_PAT_KEY:
     grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_TABLE_DAT_KEY:
     grn_dat_cursor_close(ctx, (grn_dat_cursor *)obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_TABLE_HASH_KEY:
     grn_hash_cursor_close(ctx, (grn_hash_cursor *)obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_TABLE_NO_KEY:
     grn_array_cursor_close(ctx, (grn_array_cursor *)obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_COLUMN_INDEX:
     grn_index_cursor_close(ctx, obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_COLUMN_GEO_INDEX:
     grn_geo_cursor_close(ctx, obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_CURSOR_CONFIG:
     grn_config_cursor_close(ctx, (grn_config_cursor *)obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_TYPE:
     GRN_FREE(obj);
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_DB:
     {
       grn_rc rc = grn_db_close(ctx, obj);
@@ -13173,7 +13173,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       }
       GRN_FREE(obj);
     }
-    break;
+    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_EXPR:
     {
       grn_rc rc = grn_expr_close(ctx, obj);
