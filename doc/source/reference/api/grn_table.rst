@@ -36,15 +36,6 @@ Reference
    :param keybuf: keyを格納するバッファ(呼出側で準備する)を指定します。
    :param buf_size: keybufのサイズ(byte長)を指定します。
 
-.. c:function:: grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id, const void *dest_key, unsigned int dest_key_size)
-
-   tableのidに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。
-
-   この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。
-
-   :param table: 対象tableを指定します。
-   :param id: レコードIDを指定します。
-
 .. c:type:: grn_table_sort_key
 
    TODO...

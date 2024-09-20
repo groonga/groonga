@@ -60,15 +60,6 @@ msgstr ""
 msgid "keybufのサイズ(byte長)を指定します。"
 msgstr ""
 
-msgid "tableのidに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。"
-msgstr ""
-
-msgid "この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。"
-msgstr ""
-
-msgid "レコードIDを指定します。"
-msgstr ""
-
 msgid "tableのレコードを特定の条件でグループ化します。"
 msgstr ""
 
