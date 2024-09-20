@@ -150,13 +150,13 @@ grn_table_lcp_search(grn_ctx *ctx,
  *        If the size of the key found is larger than `buf_size`, it is not
  *        stored in `keybuf`.
  *
- * \param ctx The context object
- * \param table The table
- * \param id: The ID to be found
- * \param keybuf: Buffer to store the record key.
- * \param buf_size: Size of `keybuf` in bytes.
+ * \param ctx The context object.
+ * \param table The table.
+ * \param id The ID to be found.
+ * \param keybuf Buffer to store the record key.
+ * \param buf_size Size of `keybuf` in bytes.
  *
- * \return key size of the record on success, `0` on not existed.
+ * \return Key size of the record on success, `0` on not existed.
  */
 GRN_API int
 grn_table_get_key(
