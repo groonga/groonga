@@ -1134,10 +1134,8 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /**
  * \brief Unlink an object.
  *
- * \details This function releases the specified object (`obj`) from memory.
- *          If the object has dependent objects, they are also recursively
- *          freed. The behavior of this function varies depending on whether
- *          reference counting is enabled.
+ * \details This calls \ref grn_obj_close only when the specified object (`obj`)
+ *          can be closed. See the following description for details.
  *
  * \details Non reference count mode (default: GRN_ENABLE_REFERENCE_COUNT=no)
  *            The following objects are closed immediately.
