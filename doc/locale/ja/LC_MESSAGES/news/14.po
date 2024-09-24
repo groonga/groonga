@@ -38,8 +38,8 @@ msgstr "修正"
 msgid "Fixed a crash bug on Windows when we specify `pgroonga.log_type` on PGroonga."
 msgstr "WindowsのPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
 
-msgid "THnaks"
-msgstr ""
+msgid "Thanks"
+msgstr "感謝"
 
 msgid "takoyaki-nyokki"
 msgstr "takoyaki-nyokkiさん"
@@ -124,9 +124,6 @@ msgstr ""
 
 msgid "Fixed a bug that Groonga use bundled Onigmo even if we specify `GRN_WITH_BUNDLED_ONIGMO=OFF`. [termux/termux-packages#21252][Patch by Biswapriyo Nath]"
 msgstr "`GRN_WITH_BUNDLED_ONIGMO=OFF`を指定しているにも関わらず、GroongaがバンドルされているOnigmoを使う問題を修正しました。[termux/termux-packages#21252][Biswapriyo Nathさんがパッチ提供]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Man Hoang"
 msgstr "Man Hoangさん"
