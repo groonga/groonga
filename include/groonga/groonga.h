@@ -1170,7 +1170,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * \param ctx The context object.
  * \param obj The object to be unlinked and freed from memory.
  *
- * \return This function does not return a value.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
 GRN_API void
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
