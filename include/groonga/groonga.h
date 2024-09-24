@@ -1134,32 +1134,32 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /**
  * \brief Unlink an object.
  *
- *        This function releases the specified object (`obj`) from memory.
- *        If the object has dependent objects, they are also recursively
- *        freed. The behavior of this function varies depending on whether
- *        reference counting is enabled.
+ * \details This function releases the specified object (`obj`) from memory.
+ *          If the object has dependent objects, they are also recursively
+ *          freed. The behavior of this function varies depending on whether
+ *          reference counting is enabled.
  *
- * Non reference count mode (default: GRN_ENABLE_REFERENCE_COUNT=no)
- *   The following objects are closed immediately.
- *   - \ref GRN_ACCESSOR
- *   - \ref GRN_BULK
- *   - \ref GRN_DB
- *   - Temporary column
- *   - Temporary table
+ * \details Non reference count mode (default: GRN_ENABLE_REFERENCE_COUNT=no)
+ *            The following objects are closed immediately.
+ *            - \ref GRN_ACCESSOR
+ *            - \ref GRN_BULK
+ *            - \ref GRN_DB
+ *            - Temporary column
+ *            - Temporary table
  *
- *   Other objects such as persisted tables and columns are not closed.
+ *            Other objects such as persisted tables and columns are not closed.
  *
- * Reference count mode (GRN_ENABLE_REFERENCE_COUNT=yes)
- *   The following objects are closed immediately.
- *   - \ref GRN_BULK
- *   - \ref GRN_DB
+ * \details Reference count mode (GRN_ENABLE_REFERENCE_COUNT=yes)
+ *            The following objects are closed immediately.
+ *            - \ref GRN_BULK
+ *            - \ref GRN_DB
  *
- *   The reference count is decreased for the following objects.
- *   - \ref GRN_ACCESSOR
- *   - Column (both persisted and temporary)
- *   - Table (both persisted and temporary)
+ *            The reference count is decreased for the following objects.
+ *            - \ref GRN_ACCESSOR
+ *            - Column (both persisted and temporary)
+ *            - Table (both persisted and temporary)
  *
- *   If the reference count reaches zero, the object is closed.
+ *            If the reference count reaches zero, the object is closed.
  *
  * \param ctx The context object.
  * \param obj The object to be unlinked and freed from memory.
