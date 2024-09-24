@@ -17,11 +17,38 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.7 - 2024-09-03"
-msgstr "14.0.7リリース - 2024-09-03"
+msgid "Release 14.0.8 - 2024-09-25"
+msgstr "14.0.8リリース - 2024-09-25"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[Amazon Linux 2023] Added support for Amazon Linux 2023. [GH-1845][Reported by takoyaki-nyokki and Watson]"
+msgstr "[Amazon Linux 2023] Amazon Linux 2023 をサポートしました。 [GH-1845][takoyaki-nyokkiさんとWatsonさんからの報告]"
+
+msgid "However, we don't support Amazon Linux 2023 for aarch64. Because the time of build for package of aarch64 is too time consuming."
+msgstr "ただし、Amazon Linux 2023のaarch64版はサポートしていません。パッケージのビルドに時間がかかりすぎるためです。"
+
+msgid "We don't use TokenMecab on Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide MeCab package."
+msgstr "Amazon Linux 2023上ではTokenMecabが使えません。Amazon Linux 2023がMecabパッケージを提供していないためです。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a crash bug on Windows when we specify `pgroonga.log_type` on PGroonga."
+msgstr "WindowsのPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
+
+msgid "THnaks"
+msgstr ""
+
+msgid "takoyaki-nyokki"
+msgstr "takoyaki-nyokkiさん"
+
+msgid "Watson"
+msgstr "Watsonさん"
+
+msgid "Release 14.0.7 - 2024-09-03"
+msgstr "14.0.7リリース - 2024-09-03"
 
 msgid "[NormalizerNFKC] Added a new option `unify_latin_alphabet_with`.[pgroonga/pgroonga#418][Reported by Man Hoang]"
 msgstr "[NormalizerNFKC] 新しいオプション `unify_latin_alphabet_with` を追加しました。[pgroonga/pgroonga#418][Man Hoangさんの報告]"
@@ -61,9 +88,6 @@ msgstr "`libedit`を有効にしたパッケージを配布するようにしま
 
 msgid "Now in Groonga REPL, we can refer to the command history using the up arrow key."
 msgstr "Groonga REPLで↑キーを使ってコマンド履歴を参照できるようになりました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[status] Fixed a bug that \"h3\" is never shown in `groonga --version`/`status`."
 msgstr "[status] \"h3\"が`groonga --version`や`status`で表示されない問題を修正しました。"
