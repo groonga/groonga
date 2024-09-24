@@ -24,19 +24,19 @@ msgid "Improvements"
 msgstr "改良"
 
 msgid "[Amazon Linux 2023] Added support for Amazon Linux 2023. [GH-1845][Reported by takoyaki-nyokki and Watson]"
-msgstr "[Amazon Linux 2023] Amazon Linux 2023 をサポートしました。 [GH-1845][takoyaki-nyokkiさんとWatsonさんからの報告]"
+msgstr "[Amazon Linux 2023] Amazon Linux 2023 をサポートしました。 [GH-1845][takoyaki-nyokkiさんとWatsonさんの報告]"
 
-msgid "However, we don't support Amazon Linux 2023 for aarch64. Because the time of build for package of aarch64 is too time consuming."
-msgstr "ただし、Amazon Linux 2023のaarch64版はサポートしていません。パッケージのビルドに時間がかかりすぎるためです。"
+msgid "However, we don't support Amazon Linux 2023 for aarch64 currently. Because the maintenance costly because of the time of build for package of aarch64 is too time consuming."
+msgstr "今の所、Amazon Linux 2023のaarch64版はサポートしていません。パッケージのビルドに時間がかかりすぎるため、メンテナンスコストが高いためです。"
 
-msgid "We don't use TokenMecab on Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide MeCab package."
-msgstr "Amazon Linux 2023上ではTokenMecabが使えません。Amazon Linux 2023がMecabパッケージを提供していないためです。"
+msgid "We don't use TokenMecab on Groonga for Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide MeCab package."
+msgstr "Amazon Linux 2023版のGroongaではTokenMecabが使えません。Amazon Linux 2023がMecabパッケージを提供していないためです。"
 
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a crash bug on Windows when we specify `pgroonga.log_type` on PGroonga."
-msgstr "WindowsのPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
+msgid "Fixed a crash bug when we specify `pgroonga.log_type` on PGroonga for Windows."
+msgstr "Windows版のPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
 
 msgid "Thanks"
 msgstr "感謝"
