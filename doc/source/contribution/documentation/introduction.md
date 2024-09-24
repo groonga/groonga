@@ -3,16 +3,14 @@
 This document outlines the procedures for writing, generating, and managing Groonga's documentation.
 By following the steps below, you can contribute to enhancing and updating Groonga's documentation.
 
-- [How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository): Step-by-step guide on how to fork the Groonga repository and clone it to your local
-- [Install dependent software](#install-dependent-software): Instructions on installing necessary software to work with Groonga documentation
-- [Run `cmake` with `--preset=doc`](run-cmake-with-preset-doc): How to enable documentation generation in your build setup
-- [Generate HTML](#generate-html): Process to generate HTML from your documentation source.
-- [How to edit Documentation](#how-to-edit-documentation): Guidelines on editing existing documents
-- [Preview changes on HTML files](#preview-changes-on-html-files): How to generate and preview your changes in HTML format
-- [Send patch](#send-patch): Submit your changes to the Groonga repository via a pull request
-- [Optional: Translate documentation](#optional-translate-documentation): If applicable, how to translate documentation into other languages
-
-Each section is designed to focus on a specific documentation process, from initial setup to submission. Please follow the relevant section for detailed instructions and contribute to the enhancement of Groonga’s documentation.
+- [How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository)
+- [Install dependent software](#install-dependent-software)
+- [Run `cmake` with `--preset=doc`](#run-cmake-with---presetdoc)
+- [Generate HTML](#generate-html)
+- [How to edit Documentation](#how-to-edit-documentation)
+- [Preview changes on HTML files](#preview-changes-on-html-files)
+- [Send patch](#send-patch)
+- [Optional: Translate documentation](#optional-translate-documentation)
 
 ## How to fork and clone Groonga repository
 

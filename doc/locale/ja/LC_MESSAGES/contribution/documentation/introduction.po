@@ -22,32 +22,29 @@ msgstr "導入"
 msgid "This document outlines the procedures for writing, generating, and managing Groonga's documentation. By following the steps below, you can contribute to enhancing and updating Groonga's documentation."
 msgstr "このドキュメントは、Groongaドキュメントの執筆、生成、管理の手順について説明します。以下の手順で、Groongaドキュメントの向上や更新に貢献できます。"
 
-msgid "[How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository): Step-by-step guide on how to fork the Groonga repository and clone it to your local"
-msgstr "[Groongaリポジトリをフォークしクローンする方法](#how-to-fork-and-clone-groonga-repository)：Groongaリポジトリをフォークし、ローカルにクローンする方法"
+msgid "[How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository)"
+msgstr "[Groongaリポジトリをフォークしクローンする方法](#how-to-fork-and-clone-groonga-repository)"
 
-msgid "[Install dependent software](#install-dependent-software): Instructions on installing necessary software to work with Groonga documentation"
-msgstr "[必要なソフトウェアのインストール](#install-dependent-software)：Groongaドキュメントを扱うために必要なソフトウェアのインストール方法"
+msgid "[Install dependent software](#install-dependent-software)"
+msgstr "[必要なソフトウェアのインストール](#install-dependent-software)"
 
-msgid "[Run `cmake` with `--preset=doc`](run-cmake-with-preset-doc): How to enable documentation generation in your build setup"
-msgstr "[`cmake` を `--preset=doc` 付きで実行](run-cmake-with-preset-doc): ビルド設定でドキュメント生成を有効にする方法"
+msgid "[Run `cmake` with `--preset=doc`](#run-cmake-with---presetdoc)"
+msgstr "[`cmake` を `--preset=doc` 付きで実行](#run-cmake-with---presetdoc)"
 
-msgid "[Generate HTML](#generate-html): Process to generate HTML from your documentation source."
-msgstr "[HTMLファイルを生成](#generate-html): ドキュメントソースからHTMLを生成する方法"
+msgid "[Generate HTML](#generate-html)"
+msgstr "[HTMLファイルを生成](#generate-html)"
 
-msgid "[How to edit Documentation](#how-to-edit-documentation): Guidelines on editing existing documents"
-msgstr "[ドキュメントを編集する方法](#how-to-edit-documentation): 既存のドキュメントを編集する方法"
+msgid "[How to edit Documentation](#how-to-edit-documentation)"
+msgstr "[ドキュメントを編集する方法](#how-to-edit-documentation)"
 
-msgid "[Preview changes on HTML files](#preview-changes-on-html-files): How to generate and preview your changes in HTML format"
-msgstr "[HTMLファイルで変更を確認する](#preview-changes-on-html-files): HTML形式で変更を生成し、確認する方法"
+msgid "[Preview changes on HTML files](#preview-changes-on-html-files)"
+msgstr "[HTMLファイルで変更を確認する](#preview-changes-on-html-files)"
 
-msgid "[Send patch](#send-patch): Submit your changes to the Groonga repository via a pull request"
-msgstr "[パッチを送る](#send-patch): プルリクエストを通じてGroongaリポジトリに変更を提案する方法"
+msgid "[Send patch](#send-patch)"
+msgstr "[パッチを送る](#send-patch)"
 
-msgid "[Optional: Translate documentation](#optional-translate-documentation): If applicable, how to translate documentation into other languages"
-msgstr "[任意: ドキュメントを翻訳する](#optional-translate-documentation): ドキュメントを他の言語に翻訳する方法"
-
-msgid "Each section is designed to focus on a specific documentation process, from initial setup to submission. Please follow the relevant section for detailed instructions and contribute to the enhancement of Groonga’s documentation."
-msgstr "各セクションは、ドキュメントの環境整備から変更提案までのそれぞれの工程に焦点を当てて書かれています。各工程ごとの内容にならうことで、Groongaのドキュメントの向上に貢献できます。"
+msgid "[Optional: Translate documentation](#optional-translate-documentation)"
+msgstr "[任意: ドキュメントを翻訳する](#optional-translate-documentation)"
 
 msgid "How to fork and clone Groonga repository"
 msgstr "Groongaリポジトリをフォークしクローンする方法"
