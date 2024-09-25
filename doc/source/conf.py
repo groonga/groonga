@@ -130,6 +130,8 @@ exclude_patterns = [
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+# The myst-parser assigns header anchors for h1-h2.
+myst_heading_anchors = 2
 
 # -- Options for HTML output ---------------------------------------------------
 
