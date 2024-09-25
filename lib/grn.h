@@ -143,6 +143,9 @@ typedef SOCKET grn_sock;
 #  define GROONGA_API
 
 #  ifdef HAVE_UNISTD_H
+#    ifndef _LARGEFILE64_SOURCE
+#      define _LARGEFILE64_SOURCE
+#    endif
 #    include <unistd.h>
 #  endif /* HAVE_UNISTD_H */
 
