@@ -244,7 +244,7 @@ class TestIndexMatch < QueryOptimizerTestCase
     end
 
     def test_and_and_not
-      filter = "(message @ 'Groonga') && "
+      filter = +"(message @ 'Groonga') && "
       filter << "(message @ 'Rroonga') &! "
       filter << "(message @ 'Mroonga')"
       assert_equal(<<-DUMP, dump_plan(filter))
