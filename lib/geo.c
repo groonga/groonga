@@ -1853,7 +1853,7 @@ grn_geo_cursor_in_rectangle_set_need_distance(grn_ctx *ctx,
   cursor_in_rectangle->need_distance = need_distance;
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_geo_cursor_entry_next_push(grn_ctx *ctx,
                                grn_geo_cursor_in_rectangle *cursor,
                                grn_geo_cursor_entry *entry)
@@ -1861,7 +1861,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
   grn_geo_cursor_entry *next_entry;
   grn_geo_point entry_base;
   grn_table_cursor *pat_cursor;
-  grn_bool pushed = GRN_FALSE;
+  bool pushed = false;
 
   grn_ntog((uint8_t *)(&entry_base), entry->key, sizeof(grn_geo_point));
   pat_cursor =
@@ -1880,7 +1880,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
       area = &(cursor->areas[cursor->current_area]);
       next_entry = &(area->entries[++area->current_entry]);
       grn_memcpy(next_entry, entry, sizeof(grn_geo_cursor_entry));
-      pushed = GRN_TRUE;
+      pushed = true;
     }
     grn_table_cursor_close(ctx, pat_cursor);
   }
@@ -1888,7 +1888,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
   return pushed;
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_geo_cursor_entry_next(grn_ctx *ctx,
                           grn_geo_cursor_in_rectangle *cursor,
                           grn_geo_cursor_entry *entry)
@@ -1908,7 +1908,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   }
 
   if (!area) {
-    return GRN_FALSE;
+    return false;
   }
 
   top_left_key = area->top_left_key;
@@ -1918,7 +1918,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
              sizeof(grn_geo_cursor_entry));
   while (GRN_TRUE) {
     grn_geo_cursor_entry next_entry0, next_entry1;
-    grn_bool pushed = GRN_FALSE;
+    bool pushed = false;
 
     /*
       top_left_key: tl
@@ -2039,7 +2039,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 
       if (CURSOR_ENTRY_INCLUDED_IN_LATITUDE_DIRECTION(&next_entry1)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
-          pushed = GRN_TRUE;
+          pushed = true;
 #ifdef GEO_DEBUG
           printf("%d: latitude: push 1\n", next_entry1.target_bit);
 #endif
@@ -2047,7 +2047,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
       }
       if (CURSOR_ENTRY_INCLUDED_IN_LATITUDE_DIRECTION(&next_entry0)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
-          pushed = GRN_TRUE;
+          pushed = true;
 #ifdef GEO_DEBUG
           printf("%d: latitude: push 0\n", next_entry0.target_bit);
 #endif
@@ -2079,7 +2079,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 
       if (CURSOR_ENTRY_INCLUDED_IN_LONGITUDE_DIRECTION(&next_entry1)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
-          pushed = GRN_TRUE;
+          pushed = true;
 #ifdef GEO_DEBUG
           printf("%d: longitude: push 1\n", next_entry1.target_bit);
 #endif
@@ -2087,7 +2087,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
       }
       if (CURSOR_ENTRY_INCLUDED_IN_LONGITUDE_DIRECTION(&next_entry0)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
-          pushed = GRN_TRUE;
+          pushed = true;
 #ifdef GEO_DEBUG
           printf("%d: longitude: push 0\n", next_entry0.target_bit);
 #endif
@@ -2126,7 +2126,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   inspect_cursor_entry(ctx, entry);
 #endif
 
-  return GRN_TRUE;
+  return true;
 }
 
 typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx,
