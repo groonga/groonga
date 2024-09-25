@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-08-10 18:57+0900\n"
+"PO-Revision-Date: 2024-09-25 13:19+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -227,3 +227,21 @@ msgstr ""
 
 msgid "The default ``n_workers`` value of the Groonga process."
 msgstr "このGroongaプロセスのデフォルト ``n_workers`` の値です。"
+
+msgid "``os``"
+msgstr ""
+
+msgid "The OS name."
+msgstr "OS名です。"
+
+msgid "``Linux``, ``Darwin``, ``Windows`` and so on"
+msgstr "``Linux`` 、 ``Darwin`` 、 ``Windows`` など"
+
+msgid "``cpu``"
+msgstr ""
+
+msgid "The CPU architecture name."
+msgstr "CPUのアーキテクチャー名です。"
+
+msgid "``x86_64``, ``arm64`` and so on"
+msgstr "``x86_64`` 、 ``arm64`` など"

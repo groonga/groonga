@@ -76,7 +76,9 @@ The command returns the current status as an object::
       "apache_arrow": APACHE_ARROW_INFORMATION,
       "memory_map_size": MEMORY_MAP_SIZE,
       "n_workers": N_WORKERS,
-      "default_n_workers": DEFAULT_N_WORKERS
+      "default_n_workers": DEFAULT_N_WORKERS,
+      "os": OS,
+      "cpu": CPU_N_WORKERS
     }
   ]
 
@@ -212,3 +214,13 @@ values:
 
        The default ``n_workers`` value of the Groonga process.
      - ``0``
+   * - ``os``
+     - .. versionadded:: 14.0.8
+
+       The OS name.
+     - ``Linux``, ``Darwin``, ``Windows`` and so on
+   * - ``cpu``
+     - .. versionadded:: 14.0.8
+
+       The CPU architecture name.
+     - ``x86_64``, ``arm64`` and so on
