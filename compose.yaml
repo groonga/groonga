@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -15,32 +13,18 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set -eu
+services:
+  alpine-3.20:
+    image: ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-alpine-3.20
+    build:
+      cache_from:
+        - ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-alpine-3.20
+      context: dockerfiles
+      dockerfile: alpine.dockerfile
+      args:
+        ALPINE_LINUX_VERSION: "3.20"
+    volumes:
+      - .:/source:delegated
+    command:
+      /source/dockerfiles/run.sh
 
-echo "::group::Build"
-set -x
-cmake \
-  -S /source \
-  -B build \
-  -DCMAKE_INSTALL_PREFIX=/tmp/local \
-  -DGRN_WITH_APACHE_ARROW=OFF \
-  --preset=debug-maximum
-cmake --build build
-cmake --install build
-set +x
-echo "::endgroup"
-
-echo "::group::Test"
-set -x
-export LD_LIBRARY_PATH=/tmp/local/lib
-export PATH=/tmp/local/bin:${PATH}
-export TZ=Asia/Tokyo
-grntest \
-  --base-directory=/source/test/command \
-  --interface=http \
-  --n-retries=2 \
-  --read-timeout=30 \
-  --reporter=mark \
-  /source/test/command/suite
-set +x
-echo "::endgroup"
