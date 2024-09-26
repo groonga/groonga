@@ -749,8 +749,8 @@ grn_table_group_keys_parse(grn_ctx *ctx,
                            int32_t raw_sort_keys_size,
                            uint32_t *n_keys);
 /**
- * \brief The result of the set operation of `table1` and `table2` according to
- *        the specification of `op` is stored in `res`.
+ * \brief Execute the set operation of `table1` and `table2` according to
+ *        the specification of `op` and store the result into `res`.
  *
  * \attention The table specified in `res` will be destructed.
  *
