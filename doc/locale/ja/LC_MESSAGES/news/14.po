@@ -17,6 +17,15 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
+msgid "Release 14.0.9 - 2024-09-27"
+msgstr "14.0.9リリース - 2024-09-27"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed build error when we build from source on Alpine Linux 3.20."
+msgstr "Alpine Linux 3.20上でソースからビルドする時にビルドエラーになる問題を修正しました。"
+
 msgid "Release 14.0.8 - 2024-09-25"
 msgstr "14.0.8リリース - 2024-09-25"
 
@@ -31,9 +40,6 @@ msgstr "今の所、Amazon Linux 2023のaarch64版はサポートしていませ
 
 msgid "We don't use TokenMecab in Groonga for Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide MeCab package."
 msgstr "Amazon Linux 2023版のGroongaではTokenMecabが使えません。Amazon Linux 2023がMecabパッケージを提供していないためです。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a crash bug when we specified `pgroonga.log_type` on PGroonga for Windows."
 msgstr "Windows版のPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
