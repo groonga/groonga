@@ -1189,9 +1189,6 @@ grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 /**
  * \brief Return the file path associated with an object.
  *
- *        Return the file path associated with the specified object (`obj`).
- *        If the object is temporary, it returns `NULL`.
- *
  * \param ctx The context object.
  * \param obj The object whose file path is to be retrieved.
  *
