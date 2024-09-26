@@ -50,14 +50,3 @@ Reference
    :param n_keys: group化キー構造体の配列のサイズを指定します。
    :param results: group化の結果を格納する構造体の配列へのポインタを指定します。
    :param n_results: group化の結果を格納する構造体の配列のサイズを指定します。
-
-.. c:function:: grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res, grn_operator op)
-
-   table1とtable2をopの指定に従って集合演算した結果をresに格納します。
-
-   resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されません。
-
-   :param table1: 対象table1を指定します。
-   :param table2: 対象table2を指定します。
-   :param res: 結果を格納するtableを指定します。
-   :param op: 実行する演算の種類を指定します。

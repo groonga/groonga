@@ -59,21 +59,3 @@ msgstr ""
 
 msgid "group化の結果を格納する構造体の配列のサイズを指定します。"
 msgstr ""
-
-msgid "table1とtable2をopの指定に従って集合演算した結果をresに格納します。"
-msgstr ""
-
-msgid "resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されません。"
-msgstr ""
-
-msgid "対象table1を指定します。"
-msgstr ""
-
-msgid "対象table2を指定します。"
-msgstr ""
-
-msgid "結果を格納するtableを指定します。"
-msgstr ""
-
-msgid "実行する演算の種類を指定します。"
-msgstr ""

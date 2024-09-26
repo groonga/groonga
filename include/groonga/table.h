@@ -748,6 +748,26 @@ grn_table_group_keys_parse(grn_ctx *ctx,
                            const char *raw_sort_keys,
                            int32_t raw_sort_keys_size,
                            uint32_t *n_keys);
+/**
+ * \brief The result of the set operation of `table1` and `table2` according to
+ *        the specification of `op` is stored in `res`.
+ *
+ * \attention The table specified in `res` will be destructed.
+ *
+ * \param ctx The context object.
+ * \param table1 The table.
+ * \param table2 The table.
+ * \param res Specify `table1` or `table2`.
+ * \param op Type of operation.
+ *           - \ref GRN_OP_OR
+ *           - \ref GRN_OP_AND
+ *           - \ref GRN_OP_AND_NOT
+ *           - \ref GRN_OP_ADJUST
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `table1` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_table_setoperation(grn_ctx *ctx,
                        grn_obj *table1,
