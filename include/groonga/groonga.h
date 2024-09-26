@@ -1186,7 +1186,14 @@ grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_rc
 grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
-
+/**
+ * \brief Return the file path associated with an object.
+ *
+ * \param ctx The context object.
+ * \param obj The object whose file path is to be retrieved.
+ *
+ * \return The file path on success, `NULL` if the object is temporary.
+ */
 GRN_API const char *
 grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int
