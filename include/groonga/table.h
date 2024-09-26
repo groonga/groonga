@@ -140,6 +140,20 @@ grn_table_get(grn_ctx *ctx,
  */
 GRN_API grn_id
 grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
+/**
+ * \brief Execute longest common prefix (LCP) search  and return ID found.
+ *
+ * \details Execute longest common prefix search if the table is
+ *          \ref GRN_TABLE_PAT_KEY or \ref GRN_TABLE_DAT_KEY.
+ *          If the table is \ref GRN_TABLE_HASH_KEY, search by match key.
+ *
+ * \param ctx The context object.
+ * \param table The table.
+ * \param key Search key.
+ * \param key_size Length of `key`.
+ *
+ * \return ID on success, \ref GRN_ID_NIL on not found or error.
+ */
 GRN_API grn_id
 grn_table_lcp_search(grn_ctx *ctx,
                      grn_obj *table,

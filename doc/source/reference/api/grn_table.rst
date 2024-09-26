@@ -16,15 +16,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
-
-   tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指定して作ったtableなら、longest common prefix searchを行い、対応するIDを返します。
-
-   tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキーを検索し、対応するIDを返します。
-
-   :param table: 対象tableを指定します。
-   :param key: 検索keyを指定します。
-
 .. c:type:: grn_table_sort_key
 
    TODO...

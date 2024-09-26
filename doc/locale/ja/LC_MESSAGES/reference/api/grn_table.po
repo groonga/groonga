@@ -33,19 +33,10 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指定して作ったtableなら、longest common prefix searchを行い、対応するIDを返します。"
-msgstr ""
-
-msgid "tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキーを検索し、対応するIDを返します。"
+msgid "tableのレコードを特定の条件でグループ化します。"
 msgstr ""
 
 msgid "対象tableを指定します。"
-msgstr ""
-
-msgid "検索keyを指定します。"
-msgstr ""
-
-msgid "tableのレコードを特定の条件でグループ化します。"
 msgstr ""
 
 msgid "group化キー構造体の配列へのポインタを指定します。"
