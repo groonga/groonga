@@ -27,12 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj)
-
-   objに対応するファイルパスを返します。一時objectならNULLを返します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
 
    objの名前の長さを返します。無名objectなら0を返します。

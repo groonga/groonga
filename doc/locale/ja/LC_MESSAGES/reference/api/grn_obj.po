@@ -42,16 +42,13 @@ msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
-msgid "objに対応するファイルパスを返します。一時objectならNULLを返します。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
 msgid "objの名前の長さを返します。無名objectなら0を返します。"
 msgstr ""
 
 msgid "名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに該当する名前をコピーします。"
+msgstr ""
+
+msgid "対象objectを指定します。"
 msgstr ""
 
 msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
