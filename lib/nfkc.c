@@ -58,9 +58,9 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_kana_case = false;
   options->unify_kana_voiced_sound_mark = false;
   options->unify_hyphen = false;
-  options->unify_prolonged_sound_mark = GRN_FALSE;
+  options->unify_prolonged_sound_mark = false;
   options->unify_hyphen_and_prolonged_sound_mark = false;
-  options->unify_middle_dot = GRN_FALSE;
+  options->unify_middle_dot = false;
   options->unify_katakana_v_sounds = GRN_FALSE;
   options->unify_katakana_bu_sound = GRN_FALSE;
   options->unify_katakana_du_small_sounds = GRN_FALSE;

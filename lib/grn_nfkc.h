@@ -40,9 +40,9 @@ typedef struct {
   bool unify_kana_case;
   bool unify_kana_voiced_sound_mark;
   bool unify_hyphen;
-  grn_bool unify_prolonged_sound_mark;
+  bool unify_prolonged_sound_mark;
   bool unify_hyphen_and_prolonged_sound_mark;
-  grn_bool unify_middle_dot;
+  bool unify_middle_dot;
   grn_bool unify_katakana_v_sounds;
   grn_bool unify_katakana_bu_sound;
   grn_bool unify_katakana_du_small_sounds;
