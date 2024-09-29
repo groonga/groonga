@@ -749,6 +749,20 @@ struct _grn_table_group_result {
   uint32_t n_aggregators;
 };
 
+/**
+ * \brief Group the records in the table.
+ *
+ * \param ctx The context object.
+ * \param table The table.
+ * \param keys Array of keys for grouping.
+ * \param n_keys Number of elements in `keys` array.
+ * \param results Array to store the results of grouping.
+ * \param n_results Number of elements in `results` array.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `table` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_table_group(grn_ctx *ctx,
                 grn_obj *table,
