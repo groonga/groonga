@@ -1803,9 +1803,9 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
           if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
               !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
-            ctx->impl->output.is_pretty = GRN_TRUE;
+            ctx->impl->output.is_pretty = true;
           } else {
-            ctx->impl->output.is_pretty = GRN_FALSE;
+            ctx->impl->output.is_pretty = false;
           }
         } else if (l == OUTPUT_TRACE_LOG_LEN &&
                    !memcmp(v, OUTPUT_TRACE_LOG, OUTPUT_TRACE_LOG_LEN)) {
@@ -1929,9 +1929,9 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
           if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
               !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
-            ctx->impl->output.is_pretty = GRN_TRUE;
+            ctx->impl->output.is_pretty = true;
           } else {
-            ctx->impl->output.is_pretty = GRN_FALSE;
+            ctx->impl->output.is_pretty = false;
           }
         } else if (l == OUTPUT_TRACE_LOG_LEN &&
                    !memcmp(v, OUTPUT_TRACE_LOG, OUTPUT_TRACE_LOG_LEN)) {
@@ -2111,7 +2111,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         GRN_BULK_REWIND(&(ctx->impl->output.levels));
         ctx->impl->output.type = GRN_CONTENT_JSON;
         ctx->impl->output.mime_type = "application/json";
-        ctx->impl->output.is_pretty = GRN_FALSE;
+        ctx->impl->output.is_pretty = false;
         grn_timeval_now(ctx, &ctx->impl->tv);
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_COMMAND, ">", "%.*s", str_len, str);
         if (str_len && *str == '/') {
