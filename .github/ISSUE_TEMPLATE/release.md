@@ -21,7 +21,7 @@ guide: http://groonga.org/ja/docs/contribution/development/release.html (Japanes
   - [ ] Announce
     - [ ] [GitHub Dicussions](https://github.com/groonga/groonga/discussions/categories/releases) (Japanese)
     - [ ] [GitHub Dicussions](https://github.com/groonga/groonga/discussions/categories/releases) (English)
-    - [ ] Twitter (Japanese/English)
+    - [ ] X (Japanese/English)
     - [ ] Facebook (Japanese/English)
 - [ ] Update documentation
   - [ ] Update .rst
@@ -34,7 +34,6 @@ guide: http://groonga.org/ja/docs/contribution/development/release.html (Japanes
   - [ ] Debian
   - [ ] Ubuntu (launchpad)
   - [ ] AlmaLinux
-  - [ ] CentOS
   - [ ] Windows
 - [ ] Upload documentation for https://groonga.org
 - [ ] Blog https://github.com/groonga/groonga.org
@@ -43,7 +42,7 @@ guide: http://groonga.org/ja/docs/contribution/development/release.html (Japanes
 - [ ] Announce
   - [ ] [GitHub Dicussions](https://github.com/groonga/groonga/discussions/categories/releases) (Japanese)
   - [ ] [GitHub Dicussions](https://github.com/groonga/groonga/discussions/categories/releases) (English)
-  - [ ] Twitter (Japanese/English)
+  - [ ] X (Japanese/English)
   - [ ] Facebook (Japanese/English)
 - [ ] Update `base_version`
 - [ ] Update `mingw-w64-groonga/PKGBUILD`
