@@ -27,12 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
-
-   objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold)
 
    objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。

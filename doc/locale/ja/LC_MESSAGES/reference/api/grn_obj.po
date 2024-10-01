@@ -42,13 +42,10 @@ msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
-msgid "objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。"
+msgid "objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。"
 msgstr ""
 
 msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。"
 msgstr ""
 
 msgid "objに対応するファイルの整合性を検査します。"
