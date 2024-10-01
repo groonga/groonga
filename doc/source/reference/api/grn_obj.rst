@@ -27,16 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
-
-   objの名前の長さを返します。無名objectなら0を返します。
-
-   名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに該当する名前をコピーします。
-
-   :param obj: 対象objectを指定します。
-   :param namebuf: 名前を格納するバッファ（呼出側で準備する）を指定します。
-   :param buf_size: namebufのサイズ（byte長）を指定します。
-
 .. c:function:: grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
 
    objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。

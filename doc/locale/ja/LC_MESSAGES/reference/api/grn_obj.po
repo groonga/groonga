@@ -42,22 +42,10 @@ msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
-msgid "objの名前の長さを返します。無名objectなら0を返します。"
-msgstr ""
-
-msgid "名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに該当する名前をコピーします。"
+msgid "objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。"
 msgstr ""
 
 msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
-msgstr ""
-
-msgid "namebufのサイズ（byte長）を指定します。"
-msgstr ""
-
-msgid "objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。"
 msgstr ""
 
 msgid "objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。"

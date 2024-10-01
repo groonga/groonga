@@ -1196,6 +1196,26 @@ grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
  */
 GRN_API const char *
 grn_obj_path(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Return an object's name by storing it in `namebuf`.
+ *
+ *        If the object has a name and `buf_size` is greater than or equal to
+ *        the length of the name, the name is copied into `namebuf`.
+ *
+ *        If the length of the name exceeds `buf_size`, the name is not copied
+ *        into `namebuf`, but the length of the name is still returned.
+ *
+ *        The maximum possible length of the name is limited by
+ *        \ref GRN_TABLE_MAX_KEY_SIZE.
+ *
+ * \param ctx The context object.
+ * \param obj The object whose name is to be retrieved.
+ * \param namebuf A buffer allocated by the caller to store the object's name.
+ * \param buf_size The size of `namebuf` in bytes.
+ *
+ * \return The length of the object's name. Returns `0` if the object is unnamed
+ *         or `NULL`.
+ */
 GRN_API int
 grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
