@@ -26,6 +26,7 @@ repos:
           ?include/groonga/column\.h|
           ?include/groonga/command_arguments\.hpp|
           ?include/groonga/dat\.h|
+          ?include/groonga/db\.h|
           ?include/groonga/distance\.h|
           ?include/groonga/error\.h|
           ?include/groonga/expr\.h|
