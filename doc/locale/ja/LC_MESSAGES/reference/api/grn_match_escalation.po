@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_match_escalation``"
 msgstr ""
 
@@ -33,20 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "検索の挙動をエスカレーションする閾値を返します。エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。"
-msgstr ""
-
-msgid "検索の挙動をエスカレーションする閾値を変更します。エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。"
-msgstr ""
-
-msgid "変更後の検索の挙動をエスカレーションする閾値を指定します。"
-msgstr ""
-
-msgid "デフォルトの検索の挙動をエスカレーションする閾値を返します。エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。"
-msgstr ""
-
-msgid "デフォルトの検索の挙動をエスカレーションする閾値を変更します。エスカレーションの詳細は詳細は検索の仕様に関するドキュメントを参照してください。"
-msgstr ""
-
-msgid "変更後のデフォルトの検索の挙動をエスカレーションする閾値を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

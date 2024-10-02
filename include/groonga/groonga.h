@@ -349,8 +349,29 @@ GRN_API grn_command_version
 grn_ctx_get_command_version(grn_ctx *ctx);
 GRN_API grn_rc
 grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
+/**
+ * \param ctx The context object.
+ *
+ * \return The threshold to determine whether search strategy escalation is used
+ *         or not.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API int64_t
 grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
+/**
+ * \brief Set the threshold to determine whether search strategy escalation is
+ *        used or not.
+ *
+ * \param ctx The context object.
+ * \param threshold New threshold.
+ *
+ * \return \ref GRN_SUCCESS.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API grn_rc
 grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, int64_t threshold);
 GRN_API grn_bool
@@ -361,8 +382,26 @@ GRN_API int32_t
 grn_ctx_get_n_workers(grn_ctx *ctx);
 GRN_API grn_rc
 grn_ctx_set_n_workers(grn_ctx *ctx, int32_t n_workers);
+/**
+ * \return The default threshold to determine whether search strategy escalation
+ *         is used or not.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API int64_t
 grn_get_default_match_escalation_threshold(void);
+/**
+ * \brief Set the default threshold to determine whether search strategy
+ *        escalation is used or not.
+ *
+ * \param threshold New default threshold.
+ *
+ * \return \ref GRN_SUCCESS.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API grn_rc
 grn_set_default_match_escalation_threshold(int64_t threshold);
 GRN_API int32_t
