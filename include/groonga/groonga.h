@@ -1285,7 +1285,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
  *
  * \note This function is not implemented yet.
  *       The \ref grn_obj_expire function is intended to serve as a
- *       generic version of grn_ii_expire and grn_io_expire.
+ *       generic version of grn_ii_expire() and grn_io_expire().
  *
  * \param ctx The context object.
  * \param obj The target object whose memory is to be managed.
