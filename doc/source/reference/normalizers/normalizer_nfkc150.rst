@@ -178,7 +178,7 @@ This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ" as below
 .. normalize   'NormalizerNFKC150("unify_katakana_bu_sound", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc150-unify-to-katakana` option.
-This option normalize hiragana to katakana.
+This option normalizes hiragana to katakana.
 
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log
@@ -455,7 +455,7 @@ This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ".
 ``unify_to_katakana``
 """""""""""""""""""""
 
-This option normalize hiragana to katakana.
+This option normalizes hiragana to katakana.
 
 .. _normalizer-nfkc150-unify-to-romaji:
 

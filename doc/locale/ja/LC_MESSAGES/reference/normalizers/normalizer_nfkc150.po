@@ -100,7 +100,7 @@ msgstr "以下は、 :ref:`normalizer-nfkc150-unify-katakana-v-sounds` オプシ
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-katakana-bu-sounds` option. This option enables normalize \"ヴァヴィヴゥヴェヴォ\" to \"ブ\" as below."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-katakana-bu-sounds` オプションの使用例です。このオプションは、以下のように、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"に正規化します。"
 
-msgid "Here is an example of :ref:`normalizer-nfkc150-unify-to-katakana` option. This option normalize hiragana to katakana."
+msgid "Here is an example of :ref:`normalizer-nfkc150-unify-to-katakana` option. This option normalizes hiragana to katakana."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-to-katakana` オプションの使用例です。このオプションは、以下のように、ひらがなをカタカナに正規化します。"
 
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-to-romaji` option. This option enables normalize hiragana and katakana to romaji as below."
@@ -352,7 +352,7 @@ msgstr "このオプションは、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"�
 msgid "``unify_to_katakana``"
 msgstr ""
 
-msgid "This option normalize hiragana to katakana."
+msgid "This option normalizes hiragana to katakana."
 msgstr "このオプションは、ひらがなをカタカナに正規化します。"
 
 msgid "``unify_to_romaji``"
