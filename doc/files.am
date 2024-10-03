@@ -720,6 +720,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log \
@@ -2039,6 +2040,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log \
