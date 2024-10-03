@@ -128,12 +128,3 @@ msgstr "復旧対象のデータベース。"
 
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
 msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "This is a thread unsafe API. You can't touch the database while this API is running."
-msgstr ""
-
-msgid "Unmaps all opened tables and columns in the passed database. Resources used by these opened tables and columns are freed."
-msgstr ""
-
-msgid "Normally, this API isn't useless. Because resources used by opened tables and columns are managed by OS automatically."
-msgstr ""

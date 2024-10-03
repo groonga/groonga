@@ -42,6 +42,24 @@ GRN_API void
 grn_db_touch(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_rc
 grn_db_recover(grn_ctx *ctx, grn_obj *db);
+/**
+ * \brief Unmaps all opened tables and columns in the passed database.
+ *        Resources used by these opened tables and columns are freed.
+ *        Normally, this API isn't useless. Because resources used by opened
+ *        tables and columns are managed by OS automatically.
+ *
+ * \note This is an experimental API.
+ *
+ * \attention This is a thread unsafe API. You can't touch the database while
+ *             this API is running.
+ *
+ * \since 5.0.7
+ *
+ * \param ctx The context object.
+ * \param db The database to be recovered.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_db_unmap(grn_ctx *ctx, grn_obj *db);
 GRN_API uint32_t
