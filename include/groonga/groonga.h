@@ -1262,16 +1262,16 @@ GRN_API int
 grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
- * @brief Retrieve the value range based on the ID associated with an object.
+ * \brief Retrieve the value range based on the ID associated with an object.
  *
  *        For example, it may return \ref GRN_DB_INT32 from \ref
  *        grn_builtin_type to indicate that the object operates within the
  *        integer range.
  *
- * @param ctx The context object.
- * @param obj The target object whose range ID is to be returned.
+ * \param ctx The context object.
+ * \param obj The target object whose range ID is to be returned.
  *
- * @return The ID of the range object. Returns \ref GRN_ID_NIL if no range is
+ * \return The ID of the range object. Returns \ref GRN_ID_NIL if no range is
  *         associated or the object is `NULL`.
  */
 GRN_API grn_id
