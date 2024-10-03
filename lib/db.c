@@ -306,19 +306,19 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->is_deferred_unrefing = false;
 
   {
-    grn_bool use_default_db_key = GRN_TRUE;
-    grn_bool use_pat_as_db_keys = GRN_FALSE;
+    bool use_default_db_key = true;
+    bool use_pat_as_db_keys = false;
     if (grn_db_key[0]) {
       if (!strcmp(grn_db_key, "pat")) {
-        use_default_db_key = GRN_FALSE;
-        use_pat_as_db_keys = GRN_TRUE;
+        use_default_db_key = false;
+        use_pat_as_db_keys = true;
       } else if (!strcmp(grn_db_key, "dat")) {
-        use_default_db_key = GRN_FALSE;
+        use_default_db_key = false;
       }
     }
 
     if (use_default_db_key && !strcmp(GRN_DEFAULT_DB_KEY, "pat")) {
-      use_pat_as_db_keys = GRN_TRUE;
+      use_pat_as_db_keys = true;
     }
     if (use_pat_as_db_keys) {
       s->keys = (grn_obj *)grn_pat_create(ctx,
@@ -789,7 +789,6 @@ grn_rc
 grn_db_close(grn_ctx *ctx, grn_obj *db)
 {
   grn_db *s = (grn_db *)db;
-  grn_bool ctx_used_db;
   if (!s) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -812,7 +811,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_ARRAY_EACH_END(ctx, cursor);
   grn_array_close(ctx, s->deferred_unrefs);
 
-  ctx_used_db = ctx->impl && ctx->impl->db == db;
+  bool ctx_used_db = ctx->impl && ctx->impl->db == db;
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->parser) {
