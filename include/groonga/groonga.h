@@ -1283,10 +1283,6 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 /**
  * \brief Free allocatable memory occupied by an object based on a threshold.
  *
- *        The `threshold` acts as a benchmark to decide how much memory should
- *        be released, ensuring efficient memory management and preventing
- *        excessive memory usage.
- *
  * \note This function is not implemented yet.
  *       The \ref grn_obj_expire function is intended to serve as a
  *       generic version of grn_ii_expire and grn_io_expire.
