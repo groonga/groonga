@@ -27,12 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold)
-
-   objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: int grn_obj_check(grn_ctx *ctx, grn_obj *obj)
 
    objに対応するファイルの整合性を検査します。

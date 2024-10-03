@@ -1280,6 +1280,20 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 #define GRN_OBJ_GET_DOMAIN(obj)                                                \
   ((obj)->header.type == GRN_TABLE_NO_KEY ? GRN_ID_NIL : (obj)->header.domain)
 
+/**
+ * \brief Free allocatable memory occupied by an object based on a threshold.
+ *
+ * \note This function is not implemented yet.
+ *       The \ref grn_obj_expire function is intended to serve as a
+ *       generic version of grn_ii_expire() and grn_io_expire().
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose memory is to be managed.
+ * \param threshold The threshold value used as a benchmark for freeing memory
+ *                  spaces.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API int
 grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
 GRN_API int
