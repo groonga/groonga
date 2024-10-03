@@ -139,6 +139,12 @@ msgstr "以下は :ref:`normalizer-nfkc150-unify-kana-hyphen` オプションの
 msgid "If a previous kana letter is \"ん\" , \"-\" is normalized to \"ん\", And a previous kana letter is \"ン\" , \"-\" is normalized to \"ン\"."
 msgstr "もし、一文字前の文字が\"ん\"であれば、\"-\"は\"ん\"に正規化されます。また、一文字前の文字が\"ン\"であれば、\"-\"は\"ン\"に正規化されます。"
 
+msgid "Here is an example of :ref:`normalizer-nfkc150-unify-latin-alphabet-with` option. This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "以下は :ref:`normalizer-nfkc150-unify-latin-alphabet-with` オプションの使用例です。このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters."
+msgstr "ただし、この機能は LATIN (SMALL|CAPITAL) LETTER X WITH XXX にのみフォーカスしています。 LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX はサポートしていません。"
+
 msgid "Advanced usage"
 msgstr "高度な使い方"
 
@@ -408,6 +414,12 @@ msgstr ""
 
 msgid "This option enables to normalize \"-\" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter."
 msgstr "このオプションは、\"-\" (U+002D HYPHEN-MINUS) を一文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "``unify_latin_alphabet_with``"
+msgstr ""
+
+msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
 
 msgid "See also"
 msgstr "参考"
