@@ -18,7 +18,7 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -29,41 +29,46 @@ struct _grn_db_create_optarg {
   int n_builtin_type_names;
 };
 
-GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+GRN_API grn_obj *
+grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
-#define GRN_DB_OPEN_OR_CREATE(ctx,path,optarg,db) \
-  (((db) = grn_db_open((ctx), (path))) || (db = grn_db_create((ctx), (path), (optarg))))
+#define GRN_DB_OPEN_OR_CREATE(ctx, path, optarg, db)                           \
+  (((db) = grn_db_open((ctx), (path))) ||                                      \
+   (db = grn_db_create((ctx), (path), (optarg))))
 
-GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
-GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
-GRN_API grn_rc grn_db_recover(grn_ctx *ctx, grn_obj *db);
-GRN_API grn_rc grn_db_unmap(grn_ctx *ctx, grn_obj *db);
-GRN_API uint32_t grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db);
-GRN_API bool grn_db_is_dirty(grn_ctx *ctx, grn_obj *db);
-GRN_API grn_rc grn_db_set_cache(grn_ctx *ctx, grn_obj *db, grn_cache *cache);
-GRN_API grn_cache *grn_db_get_cache(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_obj *
+grn_db_open(grn_ctx *ctx, const char *path);
+GRN_API void
+grn_db_touch(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc
+grn_db_recover(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc
+grn_db_unmap(grn_ctx *ctx, grn_obj *db);
+GRN_API uint32_t
+grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db);
+GRN_API bool
+grn_db_is_dirty(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc
+grn_db_set_cache(grn_ctx *ctx, grn_obj *db, grn_cache *cache);
+GRN_API grn_cache *
+grn_db_get_cache(grn_ctx *ctx, grn_obj *db);
 
-#define GRN_DB_EACH_BEGIN_FLAGS(ctx, cursor, id, flags)                 \
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,                                       \
-                             grn_ctx_db((ctx)),                         \
-                             cursor,                                    \
-                             id,                                        \
-                             flags)
+#define GRN_DB_EACH_BEGIN_FLAGS(ctx, cursor, id, flags)                        \
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db((ctx)), cursor, id, flags)
 
-#define GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id)                        \
-  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                          \
-                          cursor,                                       \
-                          id,                                           \
+#define GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id)                               \
+  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                                 \
+                          cursor,                                              \
+                          id,                                                  \
                           GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING)
 
-#define GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id)                       \
-  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                          \
-                          cursor,                                       \
-                          id,                                           \
+#define GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id)                              \
+  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                                 \
+                          cursor,                                              \
+                          id,                                                  \
                           GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING)
 
-#define GRN_DB_EACH_END(ctx, cursor)            \
-  GRN_TABLE_EACH_END(ctx, cursor)
+#define GRN_DB_EACH_END(ctx, cursor) GRN_TABLE_EACH_END(ctx, cursor)
 
 #ifdef __cplusplus
 }
