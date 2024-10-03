@@ -100,6 +100,9 @@ msgstr "以下は、 :ref:`normalizer-nfkc150-unify-katakana-v-sounds` オプシ
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-katakana-bu-sounds` option. This option enables normalize \"ヴァヴィヴゥヴェヴォ\" to \"ブ\" as below."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-katakana-bu-sounds` オプションの使用例です。このオプションは、以下のように、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"に正規化します。"
 
+msgid "Here is an example of :ref:`normalizer-nfkc150-unify-to-katakana` option. This option normalize hiragana to katakana."
+msgstr "以下は、 :ref:`normalizer-nfkc150-unify-to-katakana` オプションの使用例です。このオプションは、以下のように、ひらがなをカタカナに正規化します。"
+
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-to-romaji` option. This option enables normalize hiragana and katakana to romaji as below."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-to-romaji` オプションの使用例です。このオプションは、以下のように、ひらがなとカタカナをローマ字に正規化します。"
 
@@ -148,6 +151,9 @@ msgstr "ただし、この機能は LATIN (SMALL|CAPITAL) LETTER X WITH XXX に�
 msgid "Advanced usage"
 msgstr "高度な使い方"
 
+msgid "With ``TokenMecab``"
+msgstr "``TokenMecab`` と使う"
+
 msgid "You can output romaji of specific a part of speech with using to combine ``TokenMecab`` and ``NormalizerNFKC150`` as below."
 msgstr "``TokenMecab`` と ``NormalizerNFKC150`` を組み合わせて使うことで、特定の品詞の読みをローマ字で出力できます。"
 
@@ -156,6 +162,51 @@ msgstr "まずはじめに、 ``TokenMecab`` の ``target_class`` オプショ�
 
 msgid "Next, you normalize reading of the noun that extracted with ``unify_to_romaji`` option of ``NormalizerNFKC150``."
 msgstr "次に、抽出した名詞の読みを ``NormalizerNFKC130`` の ``unify_to_romaji`` を使って正規化します。"
+
+msgid "Use ``unify_to_katakana`` with other options"
+msgstr "``unify_to_katakana`` を他のオプションと使う"
+
+msgid ":ref:`normalizer-nfkc150-unify-to-katakana` can be combined with the following options to equate special katakana with general katakana."
+msgstr ":ref:`normalizer-nfkc150-unify-to-katakana` は以下に列挙するオプションと組み合わせることで、特殊なカタカナを一般的なカタカナと同一視します。"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-v-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ゔぁゔぃゔゔぇゔぉ\", \"ばびぶべぼ\", \"ヴァヴィヴヴェヴォ\" and \"バビブベボ\""
+msgstr "\"ゔぁゔぃゔゔぇゔぉ\"、\"ばびぶべぼ\"、\"ヴァヴィヴヴェヴォ\"、\"バビブベボ\"を同一視します"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-gu-small-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ぐぁぐぃぐぇぐぉ\", \"がぎげご\", \"グァグィグェグォ\" and \"ガギゲゴ\""
+msgstr "\"ぐぁぐぃぐぇぐぉ\"、\"がぎげご\"、\"グァグィグェグォ\"、\"ガギゲゴ\"を同一視します"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-zu-small-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ずぁずぃずぇずぉ\", \"ざじぜぞ\", \"ズァズィズェズォ\" and \"ザジゼゾ\""
+msgstr "\"ずぁずぃずぇずぉ\"、\"ざじぜぞ\"、\"ズァズィズェズォ\"、\"ザジゼゾ\"を同一視します"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-wo-sound`"
+msgstr ""
+
+msgid "Equivalent: \"お\", \"を\", \"オ\" and \"ヲ\""
+msgstr "\"お\"、\"を\"、\"オ\"、\"ヲ\"を同一視します"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-di-sound`"
+msgstr ""
+
+msgid "Equivalent: \"じ\", \"ぢ\", \"ジ\" and \"ヂ\""
+msgstr "\"じ\"、\"ぢ\"、\"ジ\"、\"ヂ\"を同一視します"
+
+msgid ":ref:`normalizer-nfkc150-unify-katakana-du-sound`"
+msgstr ""
+
+msgid "Equivalent: \"ず\", \"づ\", \"ズ\" and \"ヅ\""
+msgstr "\"ず\"、\"づ\"、\"ズ\"、\"ヅ\"を同一視します"
+
+msgid "For example, using ``unify_to_katakana`` and ``unify_katakana_v_sounds`` together, you can search \"バイオリン\", \"ヴァイオリン\", \"ばいおりん\" and \"ゔぁいおりん\" with \"ばいおりん\"."
+msgstr "例えば、 ``unify_to_katakana`` と ``unify_katakana_v_sounds`` を使うと、\"\"ばいおりん\"で\"バイオリン\"、\"ヴァイオリン\"、\"ばいおりん\"、\"ゔぁいおりん\"が検索できます。"
 
 msgid "Parameters"
 msgstr "引数"
@@ -297,6 +348,12 @@ msgstr ""
 
 msgid "This option enables normalize \"ヴァヴィヴゥヴェヴォ\" to \"ブ\"."
 msgstr "このオプションは、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"に正規化します。"
+
+msgid "``unify_to_katakana``"
+msgstr ""
+
+msgid "This option normalize hiragana to katakana."
+msgstr "このオプションは、ひらがなをカタカナに正規化します。"
 
 msgid "``unify_to_romaji``"
 msgstr ""
