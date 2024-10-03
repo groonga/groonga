@@ -70,6 +70,12 @@ Specify option::
 
   NormalizerNFKC150("unify_kana_hyphen", true)
 
+  NormalizerNFKC150("unify_latin_alphabet_with", true)
+
+.. versionadded:: 14.0.7
+
+  :ref:`normalizer-nfkc150-unify-latin-alphabet-with` is added.
+
 .. versionadded:: 13.0.1
 
   :ref:`normalizer-nfkc150-unify-kana-prolonged-sound-mark` is added.
@@ -252,6 +258,15 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-hyphen.log
 .. normalize   'NormalizerNFKC150("unify_kana_hyphen", true)'   "カ-キ-ク-ケ-コ-"   WITH_TYPES
+
+Here is an example of :ref:`normalizer-nfkc150-unify-latin-alphabet-with` option.
+This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
+
+However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
+
+.. groonga-command
+.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log
+.. normalize   'NormalizerNFKC150("unify_latin_alphabet_with", true)'   "ngoằn"   WITH_TYPES
 
 Advanced usage
 ^^^^^^^^^^^^^^
@@ -602,6 +617,17 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
    よ- -> よお, ろ- -> ろお, を- -> をお
    
    ん- -> んん
+
+.. _normalizer-nfkc150-unify-latin-alphabet-with:
+
+``unify_latin_alphabet_with``
+"""""""""""""""""""""""""""""
+
+.. versionadded:: 14.0.7
+
+This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
+
+However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
 
 See also
 ----------
