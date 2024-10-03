@@ -33,7 +33,7 @@ Syntax
 This command takes two parameters.
 All parameters are required::
 
-  index_column_diff table index_column
+  index_column_diff table name
 
 Usage
 -----
@@ -75,8 +75,8 @@ This section describes all parameters.
 
 Specifies the name of a table include check target of the index column.
 
-``index_column``
-""""""""""""""""
+``name``
+""""""""
 
 Specifies the name of check target of the index column.
 
@@ -121,7 +121,7 @@ was supposed to delete is remaining in a index.
 If there are something in ``missing``, a token that Groonga
 is supposing to remain in a index has been deleted from the index.
 
-``index_column_diff`` returns nothing as below When indexes haven't broken::
+``index_column_diff`` returns nothing as below when indexes haven't broken::
 
   index_column_diff --table table --name index_column
   [[0,0.0,0.0],[]]

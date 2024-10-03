@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-03 18:18+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -57,8 +57,8 @@ msgstr ""
 msgid "Specifies the name of a table include check target of the index column."
 msgstr "チェックするインデックスカラムを含むテーブルの名前を指定します。"
 
-msgid "``index_column``"
-msgstr "``index_column``"
+msgid "``name``"
+msgstr ""
 
 msgid "Specifies the name of check target of the index column."
 msgstr "チェック対象のインデックスカラムの名前を指定します。"
@@ -87,7 +87,7 @@ msgstr "``remains`` になにか出力された場合、Groongaが本来削除�
 msgid "If there are something in ``missing``, a token that Groonga is supposing to remain in a index has been deleted from the index."
 msgstr "``missing`` になにか出力された場合、本来インデックス内に残っているトークンが削除されています。"
 
-msgid "``index_column_diff`` returns nothing as below When indexes haven't broken::"
+msgid "``index_column_diff`` returns nothing as below when indexes haven't broken::"
 msgstr "インデックスの破損が無い時は、以下のように ``index_column_diff`` は何も返しません。"
 
 msgid "``TOKEN_ID``"
