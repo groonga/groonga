@@ -36,6 +36,7 @@ repos:
           ?include/groonga/hash\.h|
           ?include/groonga/highlighter\.h|
           ?include/groonga/ii\.h|
+          ?include/groonga/language_model\.h|
           ?include/groonga/obj\.h|
           ?include/groonga/operator\.h|
           ?include/groonga/output\.h|
@@ -83,6 +84,7 @@ repos:
           ?lib/grn_geo\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
+          ?lib/grn_language_model\.hpp|
           ?lib/grn_load\.h|
           ?lib/grn_mrb\.h|
           ?lib/grn_obj\.h|
@@ -103,6 +105,7 @@ repos:
           ?lib/h3\.c|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
+          ?lib/language_model\.cpp|
           ?lib/load\.c|
           ?lib/normalizer\.c|
           ?lib/mrb/mrb_bulk\.c|
@@ -140,6 +143,7 @@ repos:
           ?lib/util\.c|
           ?lib/vector\.cpp|
           ?plugins/functions/h3\.c|
+          ?plugins/functions/language_model\.c|
           ?plugins/functions/number\.cpp|
           ?plugins/tokenizers/h3_index\.c|
           ?plugins/tokenizers/mecab\.c|

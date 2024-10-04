@@ -26,11 +26,13 @@
 
 namespace grn {
   namespace language_model {
-    void init_from_env(void);
-    void init_external_libraries(void);
+    void
+    init_from_env(void);
+    void
+    init_external_libraries(void);
     void
     fin_external_libraries(void);
-  }
+  } // namespace language_model
 
   class LanguageModelInferencer;
   class LanguageModelLoader;
@@ -42,7 +44,8 @@ namespace grn {
     LanguageModel(Impl *impl);
     ~LanguageModel();
 
-    std::unique_ptr<LanguageModelInferencer> make_inferencer(grn_ctx *ctx);
+    std::unique_ptr<LanguageModelInferencer>
+    make_inferencer(grn_ctx *ctx);
 
   private:
     std::unique_ptr<Impl> impl_;
@@ -50,10 +53,10 @@ namespace grn {
 
   class LanguageModelLoader {
   public:
-    LanguageModelLoader(grn_ctx *ctx) : ctx_(ctx) {
-    }
+    LanguageModelLoader(grn_ctx *ctx) : ctx_(ctx) {}
 
-    std::shared_ptr<LanguageModel> load(void);
+    std::shared_ptr<LanguageModel>
+    load(void);
 
     std::string model_path;
     int32_t n_gpu_layers = 0;
@@ -69,7 +72,8 @@ namespace grn {
     LanguageModelInferencer(Impl *impl);
     ~LanguageModelInferencer();
 
-    void vectorize(std::string_view text, grn_obj *output_vector);
+    void
+    vectorize(std::string_view text, grn_obj *output_vector);
 
   private:
     std::unique_ptr<Impl> impl_;

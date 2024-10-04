@@ -11,7 +11,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #ifdef GRN_EMBEDDED
 #  define GRN_PLUGIN_FUNCTION_TAG functions_language_model
@@ -27,7 +27,7 @@ func_language_model_vectorize(grn_ctx *ctx,
 {
   const char *tag = "language_model_vectorize():";
 
-  if (!(n_args == 2 || n_args ==3)) {
+  if (!(n_args == 2 || n_args == 3)) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "%s wrong number of arguments (%d for 2..3)",
@@ -55,7 +55,10 @@ func_language_model_vectorize(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   }
-  grn_language_model_loader_set_model(ctx, loader, GRN_TEXT_VALUE(model_name), GRN_TEXT_LEN(model_name));
+  grn_language_model_loader_set_model(ctx,
+                                      loader,
+                                      GRN_TEXT_VALUE(model_name),
+                                      GRN_TEXT_LEN(model_name));
 
   grn_obj *text = args[1];
   if (!grn_obj_is_text_family_bulk(ctx, text)) {
@@ -97,15 +100,16 @@ func_language_model_vectorize(grn_ctx *ctx,
     goto exit;
   }
 
-  vector = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_FLOAT32, GRN_OBJ_VECTOR);
+  vector =
+    grn_plugin_proc_alloc(ctx, user_data, GRN_DB_FLOAT32, GRN_OBJ_VECTOR);
   if (!vector) {
     return NULL;
   }
-  grn_rc rc =
-    grn_language_model_inferencer_vectorize(ctx, inferencer,
-                                            GRN_TEXT_VALUE(text),
-                                            GRN_TEXT_LEN(text),
-                                            vector);
+  grn_rc rc = grn_language_model_inferencer_vectorize(ctx,
+                                                      inferencer,
+                                                      GRN_TEXT_VALUE(text),
+                                                      GRN_TEXT_LEN(text),
+                                                      vector);
   if (rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
@@ -135,7 +139,7 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
   size_t n_args;
   grn_obj **args = grn_applier_data_get_args(ctx, data, &n_args);
 
-  if (!(n_args == 2 || n_args ==3)) {
+  if (!(n_args == 2 || n_args == 3)) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "%s wrong number of arguments (%d for 2..3)",
@@ -162,7 +166,10 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   }
-  grn_language_model_loader_set_model(ctx, loader, GRN_TEXT_VALUE(model_name), GRN_TEXT_LEN(model_name));
+  grn_language_model_loader_set_model(ctx,
+                                      loader,
+                                      GRN_TEXT_VALUE(model_name),
+                                      GRN_TEXT_LEN(model_name));
 
   grn_obj *input_column = args[1];
   if (!(grn_obj_is_text_family_scalar_column(ctx, input_column) ||
@@ -206,7 +213,6 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
     goto exit;
   }
 
-
   /* TODO: Implement batch vectorization feature in
    * grn_language_model_inferencer nand use it here. */
   grn_obj text;
@@ -218,11 +224,11 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
     GRN_BULK_REWIND(&text);
     GRN_BULK_REWIND(&vector);
     grn_obj_get_value(ctx, input_column, id, &text);
-    grn_rc rc =
-      grn_language_model_inferencer_vectorize(ctx, inferencer,
-                                              GRN_TEXT_VALUE(&text),
-                                              GRN_TEXT_LEN(&text),
-                                              &vector);
+    grn_rc rc = grn_language_model_inferencer_vectorize(ctx,
+                                                        inferencer,
+                                                        GRN_TEXT_VALUE(&text),
+                                                        GRN_TEXT_LEN(&text),
+                                                        &vector);
     if (rc != GRN_SUCCESS) {
       GRN_PLUGIN_ERROR(ctx,
                        ctx->rc,

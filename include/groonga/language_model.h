@@ -61,7 +61,8 @@ grn_language_model_loader_open(grn_ctx *ctx);
  *         error.
  */
 GRN_API grn_rc
-grn_language_model_loader_close(grn_ctx *ctx, grn_language_model_loader *loader);
+grn_language_model_loader_close(grn_ctx *ctx,
+                                grn_language_model_loader *loader);
 /**
  * \brief Set language model name to load.
  *
@@ -93,8 +94,7 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
  *         See `ctx->rc` for error details.
  */
 GRN_API grn_language_model *
-grn_language_model_loader_load(grn_ctx *ctx,
-                               grn_language_model_loader *loader);
+grn_language_model_loader_load(grn_ctx *ctx, grn_language_model_loader *loader);
 
 /**
  * \brief Close a language model.
@@ -131,7 +131,8 @@ grn_language_model_open_inferencer(grn_ctx *ctx, grn_language_model *model);
  *         error.
  */
 GRN_API grn_rc
-grn_language_model_inferencer_close(grn_ctx *ctx, grn_language_model_inferencer *infererncer);
+grn_language_model_inferencer_close(grn_ctx *ctx,
+                                    grn_language_model_inferencer *infererncer);
 /**
  * \brief Vectorize a text.
  *
@@ -150,11 +151,12 @@ grn_language_model_inferencer_close(grn_ctx *ctx, grn_language_model_inferencer 
  *         error.
  */
 GRN_API grn_rc
-grn_language_model_inferencer_vectorize(grn_ctx *ctx,
-                                        grn_language_model_inferencer *inferencer,
-                                        const char *text,
-                                        int64_t text_length,
-                                        grn_obj *output_vector);
+grn_language_model_inferencer_vectorize(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  const char *text,
+  int64_t text_length,
+  grn_obj *output_vector);
 
 #ifdef __cplusplus
 }
