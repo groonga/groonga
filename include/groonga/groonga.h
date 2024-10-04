@@ -1296,6 +1296,16 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
  */
 GRN_API int
 grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
+/**
+ * \brief Check the integrity of the file corresponding to an object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose file is to be checked.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API int
 grn_obj_check(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
