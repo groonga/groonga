@@ -815,7 +815,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
   for (size_t i = look_ahead_offset; i < n_postings; i++) {
     const size_t offset = i * data->n_posting_elements;
     const uint32_t *raw_posting = raw_postings + offset;
-    grn_posting posting;
+    grn_posting posting = {0};
     size_t i = 0;
     posting.rid = raw_posting[i++];
     if (with_section) {
