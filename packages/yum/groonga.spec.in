@@ -352,11 +352,12 @@ exit 0
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/plugins/functions/index_column.so
+%{_libdir}/groonga/plugins/functions/language_model.so
 %{_libdir}/groonga/plugins/functions/math.so
 %{_libdir}/groonga/plugins/functions/number.so
-%{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/functions/string.so
 %{_libdir}/groonga/plugins/functions/time.so
+%{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_libdir}/groonga/plugins/token_filters/stop_word.so
 %{_libdir}/groonga/plugins/ruby/*.rb
@@ -375,6 +376,7 @@ exit 0
 %{_datadir}/groonga/c-blosc2/
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
+%{_datadir}/groonga/llama.cpp/
 %{_datadir}/groonga/mruby/
 %if %{is_amazon_linux}
 %{_datadir}/groonga/msgpack-c/
