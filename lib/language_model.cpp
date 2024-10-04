@@ -286,6 +286,7 @@ namespace grn {
 
   class LanguageModelInferencer::Impl {
   public:
+#ifdef GRN_WITH_LLAMA_CPP
     Impl(grn_ctx *ctx,
          std::shared_ptr<LanguageModel> model,
          llama_context *llama_ctx)
@@ -296,10 +297,12 @@ namespace grn {
     }
 
     ~Impl() { llama_free(llama_ctx_); }
+#endif
 
     void
     vectorize(std::string_view text, grn_obj *output_vector)
     {
+#ifdef GRN_WITH_LLAMA_CPP
       language_model::CaptureError capture(ctx_);
 
       const auto model = llama_get_model(llama_ctx_);
@@ -364,10 +367,16 @@ namespace grn {
         auto normalized_value = raw_embeddings[i] * normalize;
         GRN_FLOAT32_PUT(ctx_, output_vector, normalized_value);
       }
+#else
+      auto ctx = ctx_;
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "[language-model-inferencer][vectorize] llama.cpp isn't enabled");
+#endif
     }
 
   private:
     grn_ctx *ctx_;
+#ifdef GRN_WITH_LLAMA_CPP
     std::shared_ptr<LanguageModel> model_;
     llama_context *llama_ctx_;
 
@@ -402,6 +411,7 @@ namespace grn {
       }
       return tokens;
     }
+#endif
   };
 
   LanguageModelInferencer::LanguageModelInferencer(Impl *impl)
@@ -421,6 +431,7 @@ namespace grn {
   std::unique_ptr<LanguageModelInferencer>
   LanguageModel::make_inferencer(grn_ctx *ctx)
   {
+#ifdef GRN_WITH_LLAMA_CPP
     auto params = llama_context_default_params();
     params.embeddings = true;
     // We want document vector not token vectors. We want to use the
@@ -434,6 +445,11 @@ namespace grn {
         ctx,
         shared_from_this(),
         llama_new_context_with_model(impl_->get_raw(), params)));
+#else
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[language-model][make-inferencer] llama.cpp isn't enabled");
+    return nullptr;
+#endif
   }
 }; // namespace grn
 
@@ -484,6 +500,7 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
         "[language-model-loader][set-model] loader must not be NULL");
     GRN_API_RETURN(ctx->rc);
   }
+#ifdef GRN_WITH_LLAMA_CPP
   if (model_length < 0) {
     loader->loader.model_path = std::string(model, strlen(model));
   } else {
@@ -497,6 +514,10 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
       loader->loader.model_path = std::move(model_path);
     }
   }
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[language-model-loader][set-model] llama.cpp isn't enabled");
+#endif
   GRN_API_RETURN(ctx->rc);
 }
 
