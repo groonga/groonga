@@ -107,26 +107,3 @@ TODO...
 
    :param db: The database to be recovered.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
-.. c:function:: grn_rc grn_db_unmap(grn_ctx *ctx, grn_obj *db)
-
-   .. note::
-
-      This is an experimental API.
-
-   .. note::
-
-      This is a thread unsafe API. You can't touch the database while
-      this API is running.
-
-   .. versionadded:: 5.0.7
-
-   Unmaps all opened tables and columns in the passed
-   database. Resources used by these opened tables and columns are
-   freed.
-
-   Normally, this API isn't useless. Because resources used by opened
-   tables and columns are managed by OS automatically.
-
-   :param db: The database to be recovered.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
