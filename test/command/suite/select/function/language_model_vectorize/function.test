@@ -1,0 +1,24 @@
+#@omit Need language mode management feature
+
+#@require-feature llama.cpp
+
+plugin_register functions/language_model
+plugin_register functions/vector
+
+table_create Data TABLE_NO_KEY
+column_create Data text COLUMN_SCALAR ShortText
+
+load --table Data
+[
+{"text": "I am a king."},
+{"text": "I am a queen."}
+]
+
+#@timeout 60
+#@read-timeout 30
+select Data \
+  --output_columns ' \
+      text, \
+      vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text), \
+                   0, \
+                   3)'

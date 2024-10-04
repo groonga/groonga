@@ -1,6 +1,7 @@
 EXTRA_DIST =					\
 	CMakeLists.txt				\
-	h3.c
+	h3.c					\
+	language_model.cpp
 
 AM_CPPFLAGS =					\
 	-I$(top_builddir)			\

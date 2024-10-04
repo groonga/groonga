@@ -161,3 +161,27 @@ if(GRN_WITH_H3)
   endif()
   target_link_libraries(h3_functions libgroonga)
 endif()
+
+if(GRN_WITH_LLAMA_CPP)
+  set(LANGUAGE_MODEL_SOURCES language_model.c)
+  set_source_files_properties(${LANGUAGE_MODEL_SOURCES}
+                              PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(language_model_functions STATIC ${LANGUAGE_MODEL_SOURCES})
+    set_target_properties(language_model_functions
+                          PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(language_model_functions MODULE ${LANGUAGE_MODEL_SOURCES})
+    set_target_properties(language_model_functions
+                          PROPERTIES PREFIX "" OUTPUT_NAME "language_model")
+    install(TARGETS language_model_functions
+            DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:language_model_functions>
+        DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(language_model_functions libgroonga)
+endif()

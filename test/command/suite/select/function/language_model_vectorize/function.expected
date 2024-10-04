@@ -1,0 +1,55 @@
+plugin_register functions/language_model
+[[0,0.0,0.0],true]
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"text": "I am a king."},
+{"text": "I am a queen."}
+]
+[[0,0.0,0.0],2]
+select Data   --output_columns '       text,       vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text), 0, 3)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "text",
+          "ShortText"
+        ],
+        [
+          "vector_slice",
+          null
+        ]
+      ],
+      [
+        "I am a king.",
+        [
+          0.008547269,
+          0.006048318,
+          0.003951299
+        ]
+      ],
+      [
+        "I am a queen.",
+        [
+          0.007824666,
+          0.00421184,
+          0.00569254
+        ]
+      ]
+    ]
+  ]
+]
