@@ -42,13 +42,10 @@ msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
-msgid "objに対応するファイルの整合性を検査します。"
+msgid "objをlockします。timeout（秒）経過してもlockを取得できない場合は ``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。"
 msgstr ""
 
 msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "objをlockします。timeout（秒）経過してもlockを取得できない場合は ``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。"
 msgstr ""
 
 msgid "objをunlockします。"
