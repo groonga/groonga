@@ -25,6 +25,7 @@
 #include "grn_encoding.h"
 #include "grn_hash.h"
 #include "grn_ii.h"
+#include "grn_language_model.hpp"
 #include "grn_pat.h"
 #include "grn_index_column.h"
 #include "grn_proc.h"
@@ -161,6 +162,7 @@ grn_init_from_env(void)
   grn_io_init_from_env();
   grn_ii_init_from_env();
   grn_ja_init_from_env();
+  grn::language_model::init_from_env();
   grn_db_init_from_env();
   grn_expr_init_from_env();
   grn_index_column_init_from_env();
@@ -185,6 +187,7 @@ grn_init_external_libraries(void)
   blosc2_init();
 #endif
   grn_distance_init_external_libraries();
+  grn::language_model::init_external_libraries();
 }
 
 static void
@@ -196,6 +199,7 @@ grn_fin_external_libraries(void)
 #ifdef GRN_WITH_BLOSC
   blosc2_destroy();
 #endif
+  grn::language_model::fin_external_libraries();
 }
 
 void
