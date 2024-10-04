@@ -724,7 +724,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_CSTR("features");
   {
-    const int n_features = 19;
+    const int n_features = 20;
     GRN_OUTPUT_MAP_OPEN("features", n_features);
 
     GRN_OUTPUT_CSTR("nfkc");
@@ -848,6 +848,13 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     GRN_OUTPUT_CSTR("simdjson");
 #ifdef GRN_WITH_SIMDJSON
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("llama.cpp");
+#ifdef GRN_WITH_LLAMA_CPP
     GRN_OUTPUT_BOOL(true);
 #else
     GRN_OUTPUT_BOOL(false);

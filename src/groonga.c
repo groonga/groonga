@@ -4063,6 +4063,9 @@ show_version(void)
 #ifdef GRN_WITH_SIMDJSON
   printf(",simdjson");
 #endif
+#ifdef GRN_WITH_LLAMA_CPP
+  printf(",llama.cpp");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS
