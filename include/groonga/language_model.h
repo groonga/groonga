@@ -132,7 +132,7 @@ grn_language_model_open_inferencer(grn_ctx *ctx, grn_language_model *model);
  */
 GRN_API grn_rc
 grn_language_model_inferencer_close(grn_ctx *ctx,
-                                    grn_language_model_inferencer *infererncer);
+                                    grn_language_model_inferencer *inferencer);
 /**
  * \brief Vectorize a text.
  *
