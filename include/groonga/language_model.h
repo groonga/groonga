@@ -30,7 +30,7 @@ extern "C" {
  */
 typedef struct grn_language_model_ grn_language_model;
 /**
- * \brief Language model infererncer.
+ * \brief Language model inferencer.
  *
  *        You need to use \ref grn_language_model_open_inferencer to
  *        open \ref grn_language_model_inferencer.
@@ -151,7 +151,7 @@ grn_language_model_inferencer_close(grn_ctx *ctx, grn_language_model_inferencer 
  */
 GRN_API grn_rc
 grn_language_model_inferencer_vectorize(grn_ctx *ctx,
-                                        grn_language_model_inferencer *infererncer,
+                                        grn_language_model_inferencer *inferencer,
                                         const char *text,
                                         int64_t text_length,
                                         grn_obj *output_vector);
