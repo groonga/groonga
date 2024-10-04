@@ -48,8 +48,6 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db);
  *        Normally, this API is needless. Because resources used by opened
  *        tables and columns are managed by OS automatically.
  *
- * \note This is an experimental API.
- *
  * \attention This is a thread unsafe API. You can't touch the database while
  *            this API is running.
  *
