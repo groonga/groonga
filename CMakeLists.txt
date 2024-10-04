@@ -1499,6 +1499,71 @@ else()
   set(GRN_WITH_H3 FALSE)
 endif()
 
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b3861")
+set(GRN_LLAMA_CPP_BUNDLED_SHA256
+    "53fe4caa810979a1b9ab92cd0d6d3f2fc34337b507f4e0e8a7c9bd106a47413c")
+set(GRN_WITH_LLAMA_CPP
+    "auto"
+    CACHE STRING "Use llama.cpp for LLM.")
+set(GRN_WITH_LLAMA_CPP_BUNDLED FALSE)
+if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
+  if("${GRN_WITH_LLAMA_CPP}" STREQUAL "bundled")
+    set(llama_FOUND FALSE)
+  else()
+    if("${GRN_WITH_LLAMA_CPP}" STREQUAL "system")
+      find_package(llama REQUIRED)
+    else()
+      find_package(llama)
+    endif()
+  endif()
+  if(llama_FOUND)
+    set(GRN_WITH_LLAMA_CPP TRUE)
+    target_link_libraries(grn_dependencies INTERFACE llama)
+    message(STATUS "llama.cpp: system")
+  elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
+    # We need to use function to create a variable scope
+    function(grn_build_llama_cpp)
+      set(LLAMA_CPP_SOURCE_BASE_NAME
+          "llama.cpp-${GRN_LLAMA_CPP_BUNDLED_VERSION}.tar.gz")
+      set(LLAMA_CPP_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${LLAMA_CPP_SOURCE_BASE_NAME}")
+      if(EXISTS ${LLAMA_CPP_SOURCE_LOCAL_PATH})
+        set(LLAMA_CPP_SOURCE_URL ${LLAMA_CPP_SOURCE_LOCAL_PATH})
+      else()
+        set(LLAMA_CPP_SOURCE_URL
+            "https://github.com/ggerganov/llama.cpp/archive/refs/tags")
+        string(APPEND LLAMA_CPP_SOURCE_URL
+               "/${GRN_LLAMA_CPP_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        llama_cpp
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${LLAMA_CPP_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_LLAMA_CPP_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(LLAMA_ALL_WARNINGS OFF)
+      fetchcontent_makeavailable(llama_cpp)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${llama_cpp_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                                TRUE)
+      endif()
+      install(
+        FILES "${llama_cpp_SOURCE_DIR}/AUTHORS"
+              "${llama_cpp_SOURCE_DIR}/LICENSE"
+              "${llama_cpp_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/llama.cpp")
+    endfunction()
+    grn_build_llama_cpp()
+    target_link_libraries(grn_dependencies INTERFACE llama)
+    set(GRN_WITH_LLAMA_CPP_BUNDLED TRUE)
+    message(STATUS "llama.cpp: bundled")
+  else()
+    set(GRN_WITH_LLAMA_CPP FALSE)
+  endif()
+else()
+  set(GRN_WITH_LLAMA_CPP FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"

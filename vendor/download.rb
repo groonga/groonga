@@ -74,6 +74,11 @@ targets.each do |target|
     url << "c-#{version}/"
     url << "msgpack-c-#{version}.tar.gz"
     download(url, "msgpack-c-#{version}.tar.gz")
+  when "llama.cpp"
+    version = cmakelists[/set\(GRN_LLAMA_CPP_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/ggerganov/llama.cpp/archive/refs/tags/"
+    url << "#{version}.tar.gz"
+    download(url, "llama.cpp-#{version}.tar.gz")
   when "simdjson"
     version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/simdjson/simdjson/archive/refs/tags/"
