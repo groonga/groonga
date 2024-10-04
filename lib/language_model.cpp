@@ -157,7 +157,7 @@ namespace grn {
 #ifdef GRN_WITH_LLAMA_CPP
 #  ifdef _WIN32
     static char *windows_language_models_dir = NULL;
-    static char windows_lanauge_models_dir_buffer[PATH_MAX];
+    static char windows_language_models_dir_buffer[PATH_MAX];
     static const char *
     default_system_language_models_dir(void)
     {
