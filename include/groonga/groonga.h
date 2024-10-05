@@ -1308,6 +1308,18 @@ grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
  */
 GRN_API int
 grn_obj_check(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Lock an object with a specified timeout.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to lock.
+ * \param id The ID of the target object.
+ * \param timeout The maximum time to wait for the lock, in seconds.
+ *
+ * \return \ref GRN_SUCCESS on success. the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_RESOURCE_DEADLOCK_AVOIDED is returned if the
+ *         lock could not be acquired within the specified timeout.
+ */
 GRN_API grn_rc
 grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
 GRN_API grn_rc
