@@ -2216,7 +2216,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
           }
         }
         ctx->impl->output.type = static_cast<grn_content_type>(header.qtype);
-        ctx->rc = static_cast<grn_rc>(ntohs(header.status));
+        ctx->rc =
+          static_cast<grn_rc>(static_cast<int16_t>(ntohs(header.status)));
         ctx->errbuf[0] = '\0';
         ctx->errline = 0;
         ctx->errfile = NULL;
