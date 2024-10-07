@@ -54,7 +54,7 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db);
  * \since 5.0.7
  *
  * \param ctx The context object.
- * \param db The database to be recovered.
+ * \param db The database to be unmaped.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
