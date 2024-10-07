@@ -347,7 +347,7 @@ jobs:
 
   macos:
     name: macOS
-    runs-on: macos-latest
+    runs-on: macos-13
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -410,7 +410,9 @@ jobs:
             -v
       - name: "Test: mruby"
         run: |
-          USE_SYSTEM=yes test/mruby/run-test.rb
+          DYLD_LIBRARY_PATH=/usr/local/lib \
+            USE_SYSTEM=yes \
+            test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
           grntest \
