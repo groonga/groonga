@@ -1322,6 +1322,15 @@ grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  */
 GRN_API grn_rc
 grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
+/**
+ * \brief Unlock an object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to unlock.
+ * \param id The ID of the target object.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
 GRN_API grn_rc
