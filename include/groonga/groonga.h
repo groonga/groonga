@@ -1316,7 +1316,7 @@ grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  * \param id The ID of the target object.
  * \param timeout The maximum time to wait for the lock, in seconds.
  *
- * \return \ref GRN_SUCCESS on success. the appropriate \ref grn_rc on error.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_RESOURCE_DEADLOCK_AVOIDED is returned if the
  *         lock could not be acquired within the specified timeout.
  */
