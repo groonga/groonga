@@ -27,12 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout)
-
-   objをlockします。timeout（秒）経過してもlockを取得できない場合は ``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id)
 
    objをunlockします。
