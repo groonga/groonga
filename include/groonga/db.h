@@ -40,6 +40,41 @@ GRN_API grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path);
 GRN_API void
 grn_db_touch(grn_ctx *ctx, grn_obj *db);
+/**
+ * \brief Checks the passed database and recovers it if it is broken and it
+ *        can be recovered.
+ *
+ * This API uses lock existence for checking whether the database is
+ * broken or not.
+ *
+ * Here are recoverable cases:
+ *
+ *   - Index column is broken. The index column must have source column.
+ *
+ * Here are unrecoverable cases:
+ *
+ *   - Object name management feature is broken.
+ *   - Table is broken.
+ *   - Data column is broken.
+ *
+ * Object name management feature is used for managing table name,
+ * column name and so on. If the feature is broken, the database can't
+ * be recovered. Please re-create the database from backup.
+ *
+ * Table and data column can be recovered by removing an existence
+ * lock and re-add data.
+ *
+ * \attention This is a dangerous API. You must not use this API when other
+ *            thread or process opens the target database. If you use this API
+ *            against shared database, the database may be broken.
+ *
+ * \since 4.0.9
+ *
+ * \param ctx The context object.
+ * \param db The database to be recovered.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_db_recover(grn_ctx *ctx, grn_obj *db);
 /**
