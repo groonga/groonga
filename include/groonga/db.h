@@ -38,6 +38,14 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
 GRN_API grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path);
+/**
+ * \brief Update the last modified time of db to the current time.
+ *        The last modified time is used, for example, to verify whether the
+ *        cache is valid or not.
+ *
+ * \param ctx The context object.
+ * \param db The database.
+ */
 GRN_API void
 grn_db_touch(grn_ctx *ctx, grn_obj *db);
 /**

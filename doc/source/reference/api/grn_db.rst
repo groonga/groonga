@@ -54,14 +54,6 @@ TODO...
 
    :param path: 開こうとするdbを格納するファイルパスを指定します。
 
-.. c:function:: void grn_db_touch(grn_ctx *ctx, grn_obj *db)
-
-   dbの内容の最終更新時刻を現在時刻にします。
-
-   最終更新時刻はキャッシュが有効かどうかの判断などに利用されます。
-
-   :param db: 内容が変更されたdbを指定します。
-
 .. c:function:: grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj)
 
    objの属するdbを返します。
