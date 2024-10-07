@@ -41,7 +41,7 @@ grn_db_open(grn_ctx *ctx, const char *path);
 GRN_API void
 grn_db_touch(grn_ctx *ctx, grn_obj *db);
 /**
- * \brief Checks the passed database and recovers it if it is broken and it
+ * \brief Check the passed database and recover it if it is broken and it
  *        can be recovered.
  *
  * This API uses lock existence for checking whether the database is
@@ -61,7 +61,7 @@ grn_db_touch(grn_ctx *ctx, grn_obj *db);
  * column name and so on. If the feature is broken, the database can't
  * be recovered. Please re-create the database from backup.
  *
- * Table and data column can be recovered by removing an existence
+ * Table and data column can be recovered manually by removing an existence
  * lock and re-add data.
  *
  * \attention This is a dangerous API. You must not use this API when other
