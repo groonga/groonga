@@ -415,22 +415,24 @@ jobs:
           USE_SYSTEM=yes test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite
+          DYLD_LIBRARY_PATH=/usr/local/lib \
+            grntest \
+              --base-dir test/command \
+              --n-retries=2 \
+              --read-timeout=30 \
+              --reporter=mark \
+              test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            test/command/suite
+          DYLD_LIBRARY_PATH=/usr/local/lib \
+            grntest \
+              --base-dir test/command \
+              --n-retries=2 \
+              --read-timeout=30 \
+              --reporter=mark \
+              --input-type=apache-arrow \
+              --interface=http \
+              test/command/suite
 
   windows-mingw:
     name: Windows MinGW
