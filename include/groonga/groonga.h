@@ -1354,8 +1354,8 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
  * \param ctx The context object.
  * \param obj Target object.
  *
- * \return The database object to which `obj` belongs if `obj` is the database
- *         object, `NULL` otherwise.
+ * \return The database object to which `obj` belongs, `NULL` if `obj` doesn't
+ *         belong to any database.
  */
 GRN_API grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj);
