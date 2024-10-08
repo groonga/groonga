@@ -1348,6 +1348,15 @@ grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj);
 GRN_API int
 grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
+/**
+ * \brief Return the database to which `obj` belongs.
+ *
+ * \param ctx The context object.
+ * \param obj Target object.
+ *
+ * \return The database object to which `obj` belongs, `NULL` if `obj` doesn't
+ *         belong to any database.
+ */
 GRN_API grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
