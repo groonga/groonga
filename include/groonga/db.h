@@ -30,7 +30,7 @@ struct _grn_db_create_optarg {
 };
 
 /**
- * \brief Create the database.
+ * \brief Create new database.
  *
  * \param ctx The context object.
  * \param path File path of the database. Temporary database if `NULL` is
