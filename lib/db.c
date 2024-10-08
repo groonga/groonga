@@ -13179,8 +13179,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       grn_rc rc = grn_expr_close(ctx, obj);
       GRN_API_RETURN(rc);
     }
+  default:
+    GRN_API_RETURN(GRN_SUCCESS);
   }
-  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 void
