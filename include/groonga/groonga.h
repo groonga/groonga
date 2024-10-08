@@ -1319,6 +1319,28 @@ struct _grn_search_optarg {
   grn_id *query_domain;
 };
 
+/**
+ * \brief Search for `obj` in `query`.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be searched.
+ * \param query Search query.
+ * \param res The table to store results.
+ * \param op Logical operation of the table stored in `res` and the table of
+ *           the search result.
+ *           - \ref GRN_OP_OR
+ *           - \ref GRN_OP_AND
+ *           - \ref GRN_OP_AND_NOT
+ *           - \ref GRN_OP_ADJUST
+ * \param optarg Search options. For example, you can specify the search mode in
+ *               \ref grn_search_optarg::mode.
+ *               If \ref GRN_OP_EQUAL is specified for
+ *               \ref grn_search_optarg::mode, it searching for equal record.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `obj` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_search(grn_ctx *ctx,
                grn_obj *obj,
