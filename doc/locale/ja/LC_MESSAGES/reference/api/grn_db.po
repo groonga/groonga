@@ -33,42 +33,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It is used for specifying options for :c:func:`grn_db_create`."
-msgstr ":c:func:`grn_db_create` のオプションを指定するために使います。"
-
-msgid "組み込み型の名前となるnul終端文字列の配列を指定する。"
-msgstr ""
-
-msgid "n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。"
-msgstr ""
-
-msgid "新たなdbを作成します。"
-msgstr ""
-
-msgid "初期化済みの :c:type:`grn_ctx` を指定します。"
-msgstr ""
-
-msgid "作成するdbを格納するファイルパスを指定します。NULLならtemporary dbとなります。NULL以外のパスを指定した場合はpersistent dbとなります。"
-msgstr ""
-
-msgid "Currently, it is not used. It is just ignored.  作成するdbの組み込み型の名前を変更する時に指定します。  optarg.builtin_type_namesには、組み込み型の名前となるnull終端文字列の配列を指定します。optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を指定します。配列のoffsetはenum型grn_builtin_typeの値に対応します。"
-msgstr ""
-
-msgid "Currently, it is not used. It is just ignored."
-msgstr ""
-
-msgid "作成するdbの組み込み型の名前を変更する時に指定します。"
-msgstr ""
-
-msgid "optarg.builtin_type_namesには、組み込み型の名前となるnull終端文字列の配列を指定します。optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を指定します。配列のoffsetはenum型grn_builtin_typeの値に対応します。"
-msgstr ""
-
-msgid "既存のdbを開きます。"
-msgstr ""
-
-msgid "開こうとするdbを格納するファイルパスを指定します。"
-msgstr ""
-
 msgid "objの属するdbを返します。"
 msgstr ""
 

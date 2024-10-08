@@ -29,6 +29,16 @@ struct _grn_db_create_optarg {
   int n_builtin_type_names;
 };
 
+/**
+ * \brief Create the database.
+ *
+ * \param ctx The context object.
+ * \param path File path of the database. Temporary database if `NULL` is
+ *        specified.
+ * \param optarg Currently, it is not used. It is just ignored.
+ *
+ * \return The database on success, `NULL` on error.
+ */
 GRN_API grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
@@ -36,6 +46,14 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
   (((db) = grn_db_open((ctx), (path))) ||                                      \
    (db = grn_db_create((ctx), (path), (optarg))))
 
+/**
+ * \brief Open the database.
+ *
+ * \param ctx The context object.
+ * \param path File path of the database.
+ *
+ * \return The database on success, `NULL` on error.
+ */
 GRN_API grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path);
 /**
