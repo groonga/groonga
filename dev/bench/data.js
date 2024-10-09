@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1728434233139,
+  "lastUpdate": 1728462107361,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -48048,6 +48048,108 @@ window.BENCHMARK_DATA = {
             "value": 0.01743936300022142,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0018990000000003726 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "horimoto@clear-code.com",
+            "name": "Horimoto Yasuhiro",
+            "username": "komainu8"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6620d732f33890183b9dddee181144422240e094",
+          "message": "grn_obj_close: do nothing and return GRN_SUCCESS for NULL (#1957)\n\nGenerally, functions for release resource do nothing when NULL is\r\nspecified like \"free(NULL)\".\r\n\r\nThis changes API but this doesn't break backward compatibility.\r\nBecause no code exist that use the return value of `grn_obj_close()`\r\nwhen we specify `grn_obj_close(ctx, NULL)` as below.\r\n\r\n---\r\n\r\nFollowing functions use the return value of `grn_obj_close()`.\r\n\r\n```\r\n./lib/com.c:  if (ctx == msg->ctx) { return grn_obj_close(ctx, obj); }\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  rc = grn_obj_close(ctx, obj);\r\n./lib/db.c:  return grn_obj_close(ctx, obj); \r\n```\r\n\r\n---\r\n\r\n`grn_obj_close()` is used in `grn_msg_close()`.\r\nHowever, the return value of `grn_msg_close()` uses no one.\r\n\r\n```\r\n% grep -r grn_msg_close ./**/*.c\r\n./lib/com.c:grn_msg_close(grn_ctx *ctx, grn_obj *obj)\r\n./lib/com.c:    grn_msg_close(ctx, msg);\r\n./lib/com.c:    grn_msg_close(ctx, msg);\r\n./src/grnslap.c:  grn_msg_close(ctx, msg);\r\n./src/groonga.c:        grn_msg_close(&edge->ctx, msg);\r\n./src/groonga.c:        grn_msg_close(ctx, msg);\r\n./src/groonga.c:        grn_msg_close(&edge->ctx, obj);\r\n./src/groonga.c:        grn_msg_close(ctx, obj);\r\n./src/groonga.c:  grn_msg_close(ctx, (grn_obj *)msg);\r\n./src/groonga.c:    grn_msg_close(ctx, msg);\r\n./src/groonga.c:          grn_msg_close(ctx, msg);\r\n./src/groonga.c:          grn_msg_close(ctx, msg);\r\n./src/groonga.c:    grn_msg_close(ctx, msg);\r\n./src/groonga.c:      grn_msg_close(ctx, msg);\r\n```\r\n\r\n---\r\n\r\n`grn_obj_close()` is used in `grn_obj_remove_other()`.\r\n`grn_obj_remove_other()` is used in `grn_obj_remove_internal()`.\r\n\r\n`grn_obj_remove_internal()` is used as below.\r\n\r\n```\r\n./lib/db.c:      rc = grn_obj_remove_internal(ctx, target, flags);\r\n./lib/db.c:      rc = grn_obj_remove_internal(ctx, column, flags);\r\n./lib/db.c:        rc = grn_obj_remove_internal(ctx, obj, 0);\r\n./lib/db.c:          rc = grn_obj_remove_internal(ctx, obj, 0);\r\n./lib/db.c:          rc = grn_obj_remove_internal(ctx, obj, 0);\r\n./lib/db.c:        rc = grn_obj_remove_internal(ctx, obj, 0);\r\n./lib/db.c:          rc = grn_obj_remove_internal(ctx, object, flags);\r\n./lib/db.c:          rc = grn_obj_remove_internal(ctx, object, flags);\r\n./lib/db.c:      rc = grn_obj_remove_internal(ctx, obj, flags);\r\n./lib/db.c:    rc = grn_obj_remove_internal(ctx, obj, flags);\r\n./lib/db.c:      rc = grn_obj_remove_internal(ctx, obj, flags);\r\n```\r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in `remove_index()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `target` is\r\n`NULL` as below.\r\n\r\n```c\r\n    if (!target) { ... }     } else if (target->header.type == GRN_COLUMN_INDEX) {\r\n      // TODO: multicolumn  MULTI_COLUMN_INDEXP\r\n      rc = grn_obj_remove_internal(ctx, target, flags); }\r\n```\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in `remove_columns_raw()`\r\nHowever, `grn_obj_remove_internal()` is not called when `column` is\r\n`NULL` as below.\r\n\r\n```c\r\n    if (column) {\r\n      rc = grn_obj_remove_internal(ctx, column, flags);\r\n      if (rc != GRN_SUCCESS) {\r\n        grn_obj_unlink(ctx, column);\r\n        break;\r\n      }\r\n    } ...\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in\r\n`grn_obj_remove_db_index_columns()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `obj` is `NULL`\r\nas below.\r\n\r\n```c\r\n      if (obj && obj->header.type == GRN_COLUMN_INDEX) {\r\n        rc = grn_obj_remove_internal(ctx, obj, 0);\r\n        ...\r\n      }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in\r\n`grn_obj_remove_db_reference_columns()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `obj` is `NULL`\r\nas below.\r\n\r\n```c\r\n    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {\r\n      grn_obj *obj = grn_ctx_at(ctx, id);\r\n      grn_obj *range = NULL;\r\n\r\n      if (!obj) {\r\n        continue;\r\n      }\r\n\r\n...\r\n\r\n        switch (range->header.type) {\r\n        case GRN_TABLE_NO_KEY:\r\n        case GRN_TABLE_HASH_KEY:\r\n        case GRN_TABLE_PAT_KEY:\r\n        case GRN_TABLE_DAT_KEY:\r\n          rc = grn_obj_remove_internal(ctx, obj, 0);\r\n          break;\r\n        }\r\n...\r\n    }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in\r\n`grn_obj_remove_db_reference_tables()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `obj` is `NULL`\r\nas below.\r\n\r\n```c\r\n    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {\r\n      grn_obj *obj = grn_ctx_at(ctx, id);\r\n      grn_obj *domain = NULL;\r\n\r\n      if (!obj) {\r\n        continue;\r\n      }\r\n\r\n...\r\n\r\n        switch (domain->header.type) {\r\n        case GRN_TABLE_NO_KEY:\r\n        case GRN_TABLE_HASH_KEY:\r\n        case GRN_TABLE_PAT_KEY:\r\n        case GRN_TABLE_DAT_KEY:\r\n          rc = grn_obj_remove_internal(ctx, obj, 0);\r\n          break;\r\n        }\r\n\r\n...\r\n\r\n    }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in `grn_obj_remove_db_all_tables()`\r\nHowever, `grn_obj_remove_internal()` is not called when `obj` is `NULL`\r\nas below.\r\n\r\n```c\r\n    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {\r\n      grn_obj *obj = grn_ctx_at(ctx, id);\r\n\r\n      if (!obj) {\r\n        continue;\r\n      }\r\n\r\n...\r\n\r\n      switch (obj->header.type) {\r\n      case GRN_TABLE_NO_KEY:\r\n      case GRN_TABLE_HASH_KEY:\r\n      case GRN_TABLE_PAT_KEY:\r\n      case GRN_TABLE_DAT_KEY:\r\n        rc = grn_obj_remove_internal(ctx, obj, 0);\r\n        break;\r\n      }\r\n\r\n...\r\n\r\n    }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in `remove_reference_tables_raw()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `object` is\r\n`NULL` as below.\r\n\r\n```c\r\n      object = grn_ctx_at(ctx, id);\r\n      if (!object) {\r\n\r\n        ...\r\n\r\n      switch (object->header.type) {\r\n      case GRN_TABLE_HASH_KEY:\r\n      case GRN_TABLE_PAT_KEY:\r\n      case GRN_TABLE_DAT_KEY:\r\n        if (DB_OBJ(object)->id == table_id) {\r\n          break;\r\n        }\r\n\r\n        if (object->header.domain == table_id) {\r\n          rc = grn_obj_remove_internal(ctx, object, flags);\r\n          is_removed = (grn_table_at(ctx, db, id) == GRN_ID_NIL);\r\n        }\r\n        break;\r\n\r\n      ...\r\n\r\n      case GRN_COLUMN_VAR_SIZE:\r\n      case GRN_COLUMN_FIX_SIZE:\r\n        if (object->header.domain == table_id) {\r\n          break;\r\n        }\r\n        if (DB_OBJ(object)->range == table_id) {\r\n          rc = grn_obj_remove_internal(ctx, object, flags);\r\n          is_removed = (grn_table_at(ctx, db, id) == GRN_ID_NIL);\r\n        }\r\n        break;\r\n\r\n      ...\r\n    }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_internal()` is used in\r\n`grn_ctx_remove_by_id_internal()`.\r\nHowever, `grn_obj_remove_internal()` is not called when `obj` is `NULL`\r\nas below.\r\n\r\n```c\r\n  if (obj) {\r\n    grn_rc rc;\r\n    if (is_top_level) {\r\n      rc = grn_obj_remove_flags(ctx, obj, flags);\r\n    } else {\r\n      rc = grn_obj_remove_internal(ctx, obj, flags);\r\n    }\r\n    ...\r\n  }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_flags()` is used as below.\r\n\r\n```\r\n./lib/db.c:  return grn_obj_remove_flags(ctx, obj, 0);\r\n./lib/db.c:  return grn_obj_remove_flags(ctx, obj, GRN_OBJ_REMOVE_DEPENDENT);\r\n./lib/db.c:    grn_rc rc = grn_obj_remove_flags(ctx, obj, flags);\r\n./lib/db.c:      rc = grn_obj_remove_flags(ctx, obj, flags);\r\n```\r\n\r\n`grn_obj_remove_flags()` is used in `grn_ctx_remove_by_id_internal()`.\r\nHowever, `grn_obj_remove_flags()` is not called when `obj` is `NULL` as\r\nbelow.\r\n\r\n```c\r\n  if (obj) {\r\n    grn_rc rc;\r\n    if (is_top_level) {\r\n      rc = grn_obj_remove_flags(ctx, obj, flags);\r\n    } else {\r\n      rc = grn_obj_remove_internal(ctx, obj, flags);\r\n    }\r\n    ...\r\n  }\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_flags()` is used in `grn_obj_remove_dependent()`.\r\nHowever, the return value of `grn_obj_remove_dependent()` uses no one.\r\n\r\n```\r\n% grep -r grn_obj_remove_dependent ./**/*.c\r\n./lib/db.c:grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj)\r\n```\r\n\r\n---\r\n\r\n`grn_obj_remove_flags()` is used in `grn_ctx_remove()`.\r\nHowever, `grn_obj_remove_flags()` is not called when `obj` is `NULL` as\r\nbelow.\r\n\r\n```c\r\n  grn_obj *obj = grn_ctx_get(ctx, name, name_size);\r\n  if (obj) {\r\n    grn_rc rc = grn_obj_remove_flags(ctx, obj, flags);\r\n    if (rc == GRN_SUCCESS) {\r\n      GRN_API_RETURN(rc);\r\n    }\r\n    if (!(flags & GRN_OBJ_REMOVE_ENSURE)) {\r\n      GRN_API_RETURN(rc);\r\n    }\r\n  } ...\r\n```\r\n\r\nSo, this changes API does not affect. \r\n\r\n---\r\n\r\n`grn_obj_remove_flags()` is used in `grn_ctx_remove_by_id_internal()`\r\nHowever, `grn_obj_remove_flags()` is not called when `obj` is `NULL` as\r\nbelow.\r\n\r\n```c\r\n  grn_obj *obj = grn_ctx_at(ctx, id);\r\n  if (obj) {\r\n    grn_rc rc;\r\n    if (is_top_level) {\r\n      rc = grn_obj_remove_flags(ctx, obj, flags);\r\n    } else {\r\n      rc = grn_obj_remove_internal(ctx, obj, flags);\r\n    }\r\n```\r\n\r\nSo, this changes API does not affect.",
+          "timestamp": "2024-10-09T17:14:34+09:00",
+          "tree_id": "70988820e63c22f7454288c62c755f37949e68a5",
+          "url": "https://github.com/groonga/groonga/commit/6620d732f33890183b9dddee181144422240e094"
+        },
+        "date": 1728462104640,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.373693906000085,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017927999999999847 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2751444769999125,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.018269999999999925 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015731749000053696,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00045400000000000995 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015147846999980175,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00033299999999988894 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.610950503999959,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00016599999999991621 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.25376887499999157,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009901000000000007 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14203267300013067,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00944800000000015 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.016342059000010067,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019939999999996627 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017006077000019104,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0022189999999997767 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06007552100004432,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.011806999999999929 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05597658500005309,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009088999999999264 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.02037052599996514,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.004280000000000672 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.027097853999975996,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002186999999999717 s\nthreads: undefined"
           }
         ]
       }
