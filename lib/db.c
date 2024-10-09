@@ -13041,24 +13041,28 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   case GRN_BULK:
   case GRN_UVECTOR:
   case GRN_MSG:
-    obj->header.type = GRN_VOID;
-    grn_bulk_fin(ctx, obj);
-    if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
-      GRN_FREE(obj);
-    }
-    GRN_API_RETURN(GRN_SUCCESS);
-  case GRN_PTR:
-    if (obj->header.impl_flags & GRN_OBJ_OWN) {
-      if (GRN_BULK_VSIZE(obj) == sizeof(grn_obj *)) {
-        grn_obj_close(ctx, GRN_PTR_VALUE(obj));
+    {
+      obj->header.type = GRN_VOID;
+      grn_rc rc = grn_bulk_fin(ctx, obj);
+      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+        GRN_FREE(obj);
       }
+      GRN_API_RETURN(rc);
     }
-    obj->header.type = GRN_VOID;
-    grn_bulk_fin(ctx, obj);
-    if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
-      GRN_FREE(obj);
+  case GRN_PTR:
+    {
+      if (obj->header.impl_flags & GRN_OBJ_OWN) {
+        if (GRN_BULK_VSIZE(obj) == sizeof(grn_obj *)) {
+          grn_obj_close(ctx, GRN_PTR_VALUE(obj));
+        }
+      }
+      obj->header.type = GRN_VOID;
+      grn_rc rc = grn_bulk_fin(ctx, obj);
+      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+        GRN_FREE(obj);
+      }
+      GRN_API_RETURN(rc);
     }
-    GRN_API_RETURN(GRN_SUCCESS);
   case GRN_PVECTOR:
     {
       grn_rc rc = grn_pvector_fin(ctx, obj);
