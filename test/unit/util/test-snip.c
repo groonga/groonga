@@ -781,7 +781,7 @@ test_html_mapping_escape(void)
 void
 test_close_with_null(void)
 {
-  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT, grn_obj_close(&context, NULL));
+  grn_test_assert_equal_rc(GRN_SUCCESS, grn_obj_close(&context, NULL));
 }
 
 void

@@ -12974,190 +12974,218 @@ grn_table_close_columns(grn_ctx *ctx, grn_obj *table)
 grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_rc rc = GRN_INVALID_ARGUMENT;
+  if (!obj) {
+    return GRN_SUCCESS;
+  }
+
   GRN_API_ENTER;
-  if (obj) {
-    if (GRN_DB_OBJP(obj)) {
-      grn_id id = DB_OBJ(obj)->id;
-      grn_obj *db = DB_OBJ(obj)->db;
-      grn_hook_entry entry;
+  if (GRN_DB_OBJP(obj)) {
+    grn_id id = DB_OBJ(obj)->id;
+    grn_obj *db = DB_OBJ(obj)->db;
+    grn_hook_entry entry;
 
-      grn_log_reference_count("%p: close: %u: %p\n", ctx, id, obj);
+    grn_log_reference_count("%p: close: %u: %p\n", ctx, id, obj);
 
-      if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT) && db) {
-        grn_db_remove_deferred_unref(ctx, db, id);
-        if (grn_reference_count_should_log(ctx, obj->header.type)) {
-          const char *name;
-          uint32_t name_size = 0;
-          name = _grn_table_key(ctx, db, id, &name_size);
-          GRN_LOG(ctx,
-                  GRN_LOG_REFERENCE_COUNT,
-                  "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
-                  id,
-                  name_size,
-                  name,
-                  obj->header.type,
-                  grn_obj_type_to_string(obj->header.type));
-        }
+    if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT) && db) {
+      grn_db_remove_deferred_unref(ctx, db, id);
+      if (grn_reference_count_should_log(ctx, obj->header.type)) {
+        const char *name;
+        uint32_t name_size = 0;
+        name = _grn_table_key(ctx, db, id, &name_size);
+        GRN_LOG(ctx,
+                GRN_LOG_REFERENCE_COUNT,
+                "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
+                id,
+                name_size,
+                name,
+                obj->header.type,
+                grn_obj_type_to_string(obj->header.type));
       }
-
-      if (grn_obj_is_table(ctx, obj) && (id & GRN_OBJ_TMP_OBJECT)) {
-        grn_table_close_columns(ctx, obj);
-      }
-      if (DB_OBJ(obj)->finalizer) {
-        DB_OBJ(obj)->finalizer(ctx, 1, &obj, &DB_OBJ(obj)->user_data);
-      }
-      if (DB_OBJ(obj)->source) {
-        GRN_FREE(DB_OBJ(obj)->source);
-      }
-      for (entry = 0; entry < GRN_N_HOOK_ENTRIES; entry++) {
-        grn_hook_free(ctx, DB_OBJ(obj)->hooks[entry]);
-      }
-      if (id & GRN_OBJ_TMP_OBJECT) {
-        grn_obj_clear_option_values(ctx, obj);
-        if (grn_obj_is_table(ctx, obj)) {
-          grn_ctx_impl_columns_cache_delete(ctx, id);
-        } else if (grn_obj_is_column(ctx, obj)) {
-          grn_ctx_impl_columns_cache_delete(ctx, obj->header.domain);
-        }
-      }
-      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, GRN_FALSE);
     }
-    switch (obj->header.type) {
-    case GRN_VECTOR:
-      if (obj->u.v.body && !(obj->header.impl_flags & GRN_OBJ_REFER)) {
-        grn_obj_close(ctx, obj->u.v.body);
+
+    if (grn_obj_is_table(ctx, obj) && (id & GRN_OBJ_TMP_OBJECT)) {
+      grn_table_close_columns(ctx, obj);
+    }
+    if (DB_OBJ(obj)->finalizer) {
+      DB_OBJ(obj)->finalizer(ctx, 1, &obj, &DB_OBJ(obj)->user_data);
+    }
+    if (DB_OBJ(obj)->source) {
+      GRN_FREE(DB_OBJ(obj)->source);
+    }
+    for (entry = 0; entry < GRN_N_HOOK_ENTRIES; entry++) {
+      grn_hook_free(ctx, DB_OBJ(obj)->hooks[entry]);
+    }
+    if (id & GRN_OBJ_TMP_OBJECT) {
+      grn_obj_clear_option_values(ctx, obj);
+      if (grn_obj_is_table(ctx, obj)) {
+        grn_ctx_impl_columns_cache_delete(ctx, id);
+      } else if (grn_obj_is_column(ctx, obj)) {
+        grn_ctx_impl_columns_cache_delete(ctx, obj->header.domain);
       }
-      if (obj->u.v.sections) {
-        GRN_FREE(obj->u.v.sections);
-      }
-      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
-        GRN_FREE(obj);
-      }
-      rc = GRN_SUCCESS;
-      break;
-    case GRN_VOID:
-    case GRN_BULK:
-    case GRN_UVECTOR:
-    case GRN_MSG:
+    }
+    grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, GRN_FALSE);
+  }
+  switch (obj->header.type) {
+  case GRN_VECTOR:
+    if (obj->u.v.body && !(obj->header.impl_flags & GRN_OBJ_REFER)) {
+      grn_obj_close(ctx, obj->u.v.body);
+    }
+    if (obj->u.v.sections) {
+      GRN_FREE(obj->u.v.sections);
+    }
+    if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+      GRN_FREE(obj);
+    }
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_VOID:
+  case GRN_BULK:
+  case GRN_UVECTOR:
+  case GRN_MSG:
+    {
       obj->header.type = GRN_VOID;
-      rc = grn_bulk_fin(ctx, obj);
+      grn_rc rc = grn_bulk_fin(ctx, obj);
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
         GRN_FREE(obj);
       }
-      break;
-    case GRN_PTR:
+      GRN_API_RETURN(rc);
+    }
+  case GRN_PTR:
+    {
       if (obj->header.impl_flags & GRN_OBJ_OWN) {
         if (GRN_BULK_VSIZE(obj) == sizeof(grn_obj *)) {
           grn_obj_close(ctx, GRN_PTR_VALUE(obj));
         }
       }
       obj->header.type = GRN_VOID;
-      rc = grn_bulk_fin(ctx, obj);
+      grn_rc rc = grn_bulk_fin(ctx, obj);
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
         GRN_FREE(obj);
       }
-      break;
-    case GRN_PVECTOR:
-      rc = grn_pvector_fin(ctx, obj);
-      break;
-    case GRN_ACCESSOR:
-      {
-        grn_accessor *p, *n;
-        for (p = (grn_accessor *)obj; p; p = n) {
-          grn_obj_unref(ctx, p->obj);
-          n = p->next;
-          GRN_FREE(p);
-        }
+      GRN_API_RETURN(rc);
+    }
+  case GRN_PVECTOR:
+    {
+      grn_rc rc = grn_pvector_fin(ctx, obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_ACCESSOR:
+    {
+      grn_accessor *p, *n;
+      for (p = (grn_accessor *)obj; p; p = n) {
+        grn_obj_unref(ctx, p->obj);
+        n = p->next;
+        GRN_FREE(p);
       }
-      rc = GRN_SUCCESS;
-      break;
-    case GRN_SNIP:
-      rc = grn_snip_close(ctx, (grn_snip *)obj);
-      break;
-    case GRN_STRING:
-      rc = grn_string_close(ctx, obj);
-      break;
-    case GRN_HIGHLIGHTER:
-      rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
-      break;
-    case GRN_CURSOR_TABLE_PAT_KEY:
-      grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
-      break;
-    case GRN_CURSOR_TABLE_DAT_KEY:
-      grn_dat_cursor_close(ctx, (grn_dat_cursor *)obj);
-      break;
-    case GRN_CURSOR_TABLE_HASH_KEY:
-      grn_hash_cursor_close(ctx, (grn_hash_cursor *)obj);
-      break;
-    case GRN_CURSOR_TABLE_NO_KEY:
-      grn_array_cursor_close(ctx, (grn_array_cursor *)obj);
-      break;
-    case GRN_CURSOR_COLUMN_INDEX:
-      grn_index_cursor_close(ctx, obj);
-      break;
-    case GRN_CURSOR_COLUMN_GEO_INDEX:
-      grn_geo_cursor_close(ctx, obj);
-      break;
-    case GRN_CURSOR_CONFIG:
-      grn_config_cursor_close(ctx, (grn_config_cursor *)obj);
-      break;
-    case GRN_TYPE:
-      GRN_FREE(obj);
-      rc = GRN_SUCCESS;
-      break;
-    case GRN_DB:
-      rc = grn_db_close(ctx, obj);
-      break;
-    case GRN_TABLE_PAT_KEY:
-      rc = grn_pat_close(ctx, (grn_pat *)obj);
-      break;
-    case GRN_TABLE_DAT_KEY:
-      rc = grn_dat_close(ctx, (grn_dat *)obj);
-      break;
-    case GRN_TABLE_HASH_KEY:
-      rc = grn_hash_close(ctx, (grn_hash *)obj);
-      break;
-    case GRN_TABLE_NO_KEY:
-      rc = grn_array_close(ctx, (grn_array *)obj);
-      break;
-    case GRN_COLUMN_VAR_SIZE:
-      rc = grn_ja_close(ctx, (grn_ja *)obj);
-      break;
-    case GRN_COLUMN_FIX_SIZE:
-      rc = grn_ra_close(ctx, (grn_ra *)obj);
-      break;
-    case GRN_COLUMN_INDEX:
-      rc = grn_ii_close(ctx, (grn_ii *)obj);
-      break;
-    case GRN_PROC:
-      {
-        uint32_t i;
-        grn_proc *p = (grn_proc *)obj;
-        /*
+    }
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_SNIP:
+    {
+      grn_rc rc = grn_snip_close(ctx, (grn_snip *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_STRING:
+    {
+      grn_rc rc = grn_string_close(ctx, obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_HIGHLIGHTER:
+    {
+      grn_rc rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_CURSOR_TABLE_PAT_KEY:
+    grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_TABLE_DAT_KEY:
+    grn_dat_cursor_close(ctx, (grn_dat_cursor *)obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_TABLE_HASH_KEY:
+    grn_hash_cursor_close(ctx, (grn_hash_cursor *)obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_TABLE_NO_KEY:
+    grn_array_cursor_close(ctx, (grn_array_cursor *)obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_COLUMN_INDEX:
+    grn_index_cursor_close(ctx, obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_COLUMN_GEO_INDEX:
+    grn_geo_cursor_close(ctx, obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_CURSOR_CONFIG:
+    grn_config_cursor_close(ctx, (grn_config_cursor *)obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_TYPE:
+    GRN_FREE(obj);
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_DB:
+    {
+      grn_rc rc = grn_db_close(ctx, obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_TABLE_PAT_KEY:
+    {
+      grn_rc rc = grn_pat_close(ctx, (grn_pat *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_TABLE_DAT_KEY:
+    {
+      grn_rc rc = grn_dat_close(ctx, (grn_dat *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_TABLE_HASH_KEY:
+    {
+      grn_rc rc = grn_hash_close(ctx, (grn_hash *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_TABLE_NO_KEY:
+    {
+      grn_rc rc = grn_array_close(ctx, (grn_array *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_COLUMN_VAR_SIZE:
+    {
+      grn_rc rc = grn_ja_close(ctx, (grn_ja *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_COLUMN_FIX_SIZE:
+    {
+      grn_rc rc = grn_ra_close(ctx, (grn_ra *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_COLUMN_INDEX:
+    {
+      grn_rc rc = grn_ii_close(ctx, (grn_ii *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_PROC:
+    {
+      uint32_t i;
+      grn_proc *p = (grn_proc *)obj;
+      /*
         if (obj->header.domain) {
           grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain,
-        sizeof(grn_id), NULL);
+          sizeof(grn_id), NULL);
         }
-        */
-        for (i = 0; i < p->nvars; i++) {
-          grn_obj_close(ctx, &p->vars[i].value);
-        }
-        GRN_REALLOC(p->vars, 0);
-        grn_obj_close(ctx, &p->name_buf);
-        if (p->obj.range != GRN_ID_NIL) {
-          grn_plugin_close(ctx, p->obj.range);
-        }
-        GRN_FREE(obj);
-        rc = GRN_SUCCESS;
+      */
+      for (i = 0; i < p->nvars; i++) {
+        grn_obj_close(ctx, &p->vars[i].value);
       }
-      break;
-    case GRN_EXPR:
-      rc = grn_expr_close(ctx, obj);
-      break;
+      GRN_REALLOC(p->vars, 0);
+      grn_obj_close(ctx, &p->name_buf);
+      if (p->obj.range != GRN_ID_NIL) {
+        grn_plugin_close(ctx, p->obj.range);
+      }
+      GRN_FREE(obj);
     }
+    GRN_API_RETURN(GRN_SUCCESS);
+  case GRN_EXPR:
+    {
+      grn_rc rc = grn_expr_close(ctx, obj);
+      GRN_API_RETURN(rc);
+    }
+  default:
+    GRN_API_RETURN(GRN_SUCCESS);
   }
-  GRN_API_RETURN(rc);
 }
 
 void
