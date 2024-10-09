@@ -412,7 +412,9 @@ jobs:
         # TODO: Disabled temporarily as a workaround for the rpath issue in Rroonga.
         if: false
         run: |
-          USE_SYSTEM=yes test/mruby/run-test.rb
+          DYLD_LIBRARY_PATH=/usr/local/lib \
+            USE_SYSTEM=yes \
+            test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
           DYLD_LIBRARY_PATH=/usr/local/lib \
