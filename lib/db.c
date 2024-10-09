@@ -13043,8 +13043,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   case GRN_MSG:
     {
       obj->header.type = GRN_VOID;
+      bool is_allocated = (obj->header.impl_flags & GRN_OBJ_ALLOCATED);
       grn_rc rc = grn_bulk_fin(ctx, obj);
-      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+      if (is_allocated) {
         GRN_FREE(obj);
       }
       GRN_API_RETURN(rc);
@@ -13057,8 +13058,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
       }
       obj->header.type = GRN_VOID;
+      bool is_allocated = (obj->header.impl_flags & GRN_OBJ_ALLOCATED);
       grn_rc rc = grn_bulk_fin(ctx, obj);
-      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+      if (is_allocated) {
         GRN_FREE(obj);
       }
       GRN_API_RETURN(rc);
