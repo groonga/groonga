@@ -1327,6 +1327,10 @@ grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  * \param id The ID of the target object.
  * \param timeout The maximum time to wait for the lock, in seconds.
  *
+ * \attention You should ensure that every call to \ref grn_obj_lock is paired
+ *            with a call to \ref grn_obj_unlock to maintain lock balance.
+ *            Failing to do can lead to deadlocks.
+ *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_RESOURCE_DEADLOCK_AVOIDED is returned if the
  *         lock could not be acquired within the specified timeout.
@@ -1343,6 +1347,10 @@ grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
  *       increments the count by one, and each unlock operation decrements it by
  *       one. When the lock count reaches zero, the object is considered
  *       unlocked.
+ *
+ * \attention You should ensure that every call to \ref grn_obj_unlock is paired
+ *            with a call to \ref grn_obj_lock to maintain lock balance. Failing
+ *            to do can lead to deadlocks.
  *
  * \param ctx The context object.
  * \param obj The target object to unlock.
