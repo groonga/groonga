@@ -1349,7 +1349,7 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
  * \param ctx The context object.
  * \param obj The target object whose lock status is to be checked.
  *
- * \return `0` if there are no locks. Return a non-zero unsigned integer
+ * \return `0` if there are no locks. Return the number of acquired locks
  *         if the object or any of its related sub-objects are currently locked.
  */
 GRN_API unsigned int
