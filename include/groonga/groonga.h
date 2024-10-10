@@ -1343,6 +1343,15 @@ grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
  */
 GRN_API grn_rc
 grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Check if an object is currently locked.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose lock status is to be checked.
+ *
+ * \return 0 if there are no locks. Return a non-zero unsigned integer
+ *         if the object or any of its related sub-objects are currently locked.
+ */
 GRN_API unsigned int
 grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc

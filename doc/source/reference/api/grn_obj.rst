@@ -27,10 +27,6 @@ Reference
 
    objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。
 
-.. c:function:: unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
-
-   objが現在lockされていれば0以外の値を返します。
-
    :param obj: 対象objectを指定します。
 
 .. c:function:: int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)

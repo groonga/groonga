@@ -42,9 +42,6 @@ msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
 msgstr ""
 
-msgid "objが現在lockされていれば0以外の値を返します。"
-msgstr ""
-
 msgid "対象objectを指定します。"
 msgstr ""
 
