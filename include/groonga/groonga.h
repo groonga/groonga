@@ -1336,6 +1336,14 @@ grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
 /**
  * \brief Unlock an object.
  *
+ * Unlike \ref grn_obj_clear_lock, which forcefully resets the lock count to
+ * zero, this function decrements the lock count of an object by one.
+ *
+ * \note Locks are managed using a counter mechanism where each lock acquisition
+ *       increments the count by one, and each unlock operation decrements it by
+ *       one. When the lock count reaches zero, the object is considered
+ *       unlocked.
+ *
  * \param ctx The context object.
  * \param obj The target object to unlock.
  * \param id The ID of the target object.
@@ -1346,6 +1354,16 @@ GRN_API grn_rc
 grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
 /**
  * \brief Forcefully clear locks on an object.
+ *
+ * Unlike \ref grn_obj_unlock, which decrements the lock count by one,
+ * this function forcefully resets the lock count of an object to zero,
+ * unlocking it regardless of the current lock count.
+ *
+ * \attention In general you should not use this function. Forcefully
+ *            clearing locks might lead to data corruption or
+ *            inconsistencies within the database. Use it only
+ *            when absolutely necessary and ensure that you understand
+ *            the potential consequences.
  *
  * \param ctx The context object.
  * \param obj The target object whose lock is to be cleared.
