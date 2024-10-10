@@ -13324,6 +13324,12 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
       grn_rc rc = GRN_SUCCESS;
       if (current_lock == 0) {
         rc = grn_obj_close(ctx, obj);
+        grn_log_reference_count("%p: unlink: done: %u: %p: %u\n",
+                                ctx,
+                                id,
+                                obj,
+                                current_reference_count);
+        GRN_API_RETURN(rc);
       } else {
         grn_log_reference_count("%p: unlink: unlock: %u: %p: %u: %u\n",
                                 ctx,
@@ -13351,7 +13357,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                             id,
                             obj,
                             current_reference_count);
-    GRN_API_RETURN(rc);
+    GRN_API_RETURN(GRN_SUCCESS);
   }
   GRN_API_RETURN(GRN_SUCCESS);
 }
