@@ -1223,6 +1223,16 @@ grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_user_data *
 grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Set the callback function when finalizing the object.
+ *
+ * \param ctx The context object.
+ * \param obj Target object. Table, column, proc, and expr can be specified.
+ * \param func Callback function when finalizing.
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if `obj`
+ *         is not table, column, proc, and expr.
+ */
 GRN_API grn_rc
 grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 /**

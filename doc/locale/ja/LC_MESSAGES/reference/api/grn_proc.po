@@ -68,15 +68,3 @@ msgstr ""
 
 msgid "変数の数を取得します。"
 msgstr ""
-
-msgid "objectを破棄するときに呼ばれる関数を設定します。"
-msgstr ""
-
-msgid "table, column, proc, exprのみ設定可能です。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "objectを破棄するときに呼ばれる関数を指定します。"
-msgstr ""
