@@ -1348,6 +1348,12 @@ grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
  * this function forcefully resets the lock count of an object to zero,
  * effectively unlocking it regardless of the current lock count.
  *
+ * \attention In general you should not use this function. Forcibly
+ *            clearing locks might lead to data corruption or
+ *            inconsistencies within the database. Use it only
+ *            when absolutely necessary and ensure that you understand
+ *            the potential consequences.
+ *
  * \param ctx The context object.
  * \param obj The target object whose lock is to be cleared.
  *
