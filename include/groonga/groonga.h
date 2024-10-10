@@ -1346,7 +1346,7 @@ grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
  *
  * Unlike \ref grn_obj_unlock, which decrements the lock count by one,
  * this function forcefully resets the lock count of an object to zero,
- * effectively unlocking it regardless of the current lock count.
+ * unlocking it regardless of the current lock count.
  *
  * \attention In general you should not use this function. Forcibly
  *            clearing locks might lead to data corruption or
