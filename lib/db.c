@@ -13193,9 +13193,8 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 grn_rc
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_rc rc = GRN_SUCCESS;
   if (!obj) {
-    return rc;
+    return GRN_SUCCESS;
   }
 
   if (obj->header.type == GRN_DB) {
@@ -13212,6 +13211,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               accessor->reference_count);
       accessor->reference_count--;
       uint32_t current_reference_count = accessor->reference_count;
+      grn_rc rc = GRN_SUCCESS;
       if (current_reference_count == 0) {
         rc = grn_obj_close(ctx, obj);
       }
@@ -13242,6 +13242,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               db_obj->reference_count);
       db_obj->reference_count--;
       uint32_t current_reference_count = db_obj->reference_count;
+      grn_rc rc = GRN_SUCCESS;
       if (current_reference_count == 0) {
         rc = grn_obj_close(ctx, obj);
       }
@@ -13259,11 +13260,11 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   /* Don't unlink built-in objects. We must update the same condition
    * in grn_ctx_at() when we need to unlink built-in objects. */
   if (id < GRN_N_RESERVED_TYPES) {
-    return rc;
+    return GRN_SUCCESS;
   }
 
   if (!grn_enable_reference_count) {
-    return rc;
+    return GRN_SUCCESS;
   }
 
   GRN_API_ENTER;
@@ -13294,7 +13295,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
           obj,
           vp->lock,
           vp->ptr);
-      GRN_API_RETURN(ctx->rc);
+      GRN_API_RETURN(GRN_INVALID_ARGUMENT);
     }
     uint32_t current_lock;
     uint32_t *lock_pointer = &vp->lock;
@@ -13320,6 +13321,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               obj,
                               current_lock,
                               current_reference_count);
+      grn_rc rc = GRN_SUCCESS;
       if (current_lock == 0) {
         rc = grn_obj_close(ctx, obj);
       } else {
@@ -13349,8 +13351,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                             id,
                             obj,
                             current_reference_count);
+    GRN_API_RETURN(rc);
   }
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 void
