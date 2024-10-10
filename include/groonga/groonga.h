@@ -1333,6 +1333,14 @@ grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
  */
 GRN_API grn_rc
 grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
+/**
+ * \brief Forcefully clear locks on an object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose lock is to be cleared.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
 GRN_API unsigned int
