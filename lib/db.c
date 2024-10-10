@@ -13321,9 +13321,8 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               obj,
                               current_lock,
                               current_reference_count);
-      grn_rc rc = GRN_SUCCESS;
       if (current_lock == 0) {
-        rc = grn_obj_close(ctx, obj);
+        grn_rc rc = grn_obj_close(ctx, obj);
         grn_log_reference_count("%p: unlink: done: %u: %p: %u\n",
                                 ctx,
                                 id,
