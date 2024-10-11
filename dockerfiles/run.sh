@@ -35,12 +35,13 @@ set -x
 export LD_LIBRARY_PATH=/tmp/local/lib
 export PATH=/tmp/local/bin:${PATH}
 export TZ=Asia/Tokyo
+cp -a /source/test/command test
 grntest \
-  --base-directory=/source/test/command \
+  --base-directory=test \
   --interface=http \
   --n-retries=2 \
   --read-timeout=30 \
   --reporter=mark \
-  /source/test/command/suite
+  test/suite
 set +x
 echo "::endgroup"
