@@ -35,7 +35,7 @@ set -x
 export LD_LIBRARY_PATH=/tmp/local/lib
 export PATH=/tmp/local/bin:${PATH}
 export TZ=Asia/Tokyo
-cp -a /source/test/command test
+cp -R /source/test/command test
 grntest \
   --base-directory=test \
   --interface=http \
