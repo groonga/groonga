@@ -13295,7 +13295,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
           obj,
           vp->lock,
           vp->ptr);
-      GRN_API_RETURN(GRN_INVALID_ARGUMENT);
+      GRN_API_RETURN(ctx->rc);
     }
     uint32_t current_lock;
     uint32_t *lock_pointer = &vp->lock;
