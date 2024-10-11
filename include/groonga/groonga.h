@@ -1173,38 +1173,38 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /**
  * \brief Unlink an object.
  *
- * \details This calls \ref grn_obj_close only when the specified object (`obj`)
- *          can be closed. See the following description for details.
+ * This calls \ref grn_obj_close only when the specified object (`obj`)
+ * can be closed. See the following description for details.
  *
- *          **Reference Count Mode**:
- *          Reference count mode manages object lifetimes by keeping track of
- *          active references. It can be enabled in two ways:
- *          - **Environment Variable**: Set `GRN_ENABLE_REFERENCE_COUNT` to
- *            `yes` before running the program.
- *          - **API Function**: Use \ref grn_set_reference_count_enable to
- *            enable it at runtime.
+ * **Reference Count Mode**:
+ * Reference count mode manages object lifetimes by keeping track of
+ * active references. It can be enabled in two ways:
+ * - **Environment Variable**: Set `GRN_ENABLE_REFERENCE_COUNT` to
+ *   `yes` before running the program.
+ * - **API Function**: Use \ref grn_set_reference_count_enable to
+ *   enable it at runtime.
  *
- * \details Non reference count mode(default:`GRN_ENABLE_REFERENCE_COUNT=no`):
- *            The following objects are closed immediately.
- *            - \ref GRN_ACCESSOR
- *            - \ref GRN_BULK
- *            - \ref GRN_DB
- *            - Temporary column
- *            - Temporary table
+ * Non reference count mode(default:`GRN_ENABLE_REFERENCE_COUNT=no`):
+ *   The following objects are closed immediately.
+ *   - \ref GRN_ACCESSOR
+ *   - \ref GRN_BULK
+ *   - \ref GRN_DB
+ *   - Temporary column
+ *   - Temporary table
  *
- *            Other objects such as persisted tables and columns are not closed.
+ *   Other objects such as persisted tables and columns are not closed.
  *
- * \details Reference count mode(`GRN_ENABLE_REFERENCE_COUNT=yes`):
- *            The following objects are closed immediately.
- *            - \ref GRN_BULK
- *            - \ref GRN_DB
+ * Reference count mode(`GRN_ENABLE_REFERENCE_COUNT=yes`):
+ *   The following objects are closed immediately.
+ *   - \ref GRN_BULK
+ *   - \ref GRN_DB
  *
- *            The reference count is decreased for the following objects.
- *            - \ref GRN_ACCESSOR
- *            - Column (both persisted and temporary)
- *            - Table (both persisted and temporary)
+ *   The reference count is decreased for the following objects.
+ *   - \ref GRN_ACCESSOR
+ *   - Column (both persisted and temporary)
+ *   - Table (both persisted and temporary)
  *
- *            If the reference count reaches zero, the object is closed.
+ *   If the reference count reaches zero, the object is closed.
  *
  * \param ctx The context object.
  * \param obj The object to be unlinked and freed from memory.
