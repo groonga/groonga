@@ -95,7 +95,7 @@ static int port = DEFAULT_GQTP_PORT;
 static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
-static grn_bool is_daemon_mode = GRN_FALSE;
+static bool is_daemon_mode = false;
 static int listen_backlog = GRN_COM_EVENT_LISTEN_BACKLOG_DEFAULT;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
@@ -103,7 +103,7 @@ static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 static grn_file_reader *input_reader = NULL;
 static FILE *output = NULL;
-static grn_bool is_memcached_mode = GRN_FALSE;
+static bool is_memcached_mode = false;
 static const char *memcached_column_name = NULL;
 
 static int ready_notify_pipe[2];
@@ -112,12 +112,12 @@ static int ready_notify_pipe[2];
 
 static grn_encoding encoding;
 static const char *windows_event_source_name = "Groonga";
-static grn_bool use_windows_event_log = GRN_FALSE;
+static bool use_windows_event_log = false;
 static grn_obj http_response_server_line;
 static grn_wal_role wal_role = GRN_WAL_ROLE_NONE;
 static grn_wal_role worker_wal_role = GRN_WAL_ROLE_NONE;
 
-static grn_bool running_event_loop = GRN_FALSE;
+static bool running_event_loop = false;
 
 #ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
 static bool usr1_received = false;
@@ -1155,7 +1155,7 @@ static void
 run_server_loop(grn_ctx *ctx, grn_com_event *ev)
 {
   request_timer_init();
-  running_event_loop = GRN_TRUE;
+  running_event_loop = true;
   while (!grn_com_event_poll(ctx, ev, request_timer_get_poll_timeout()) &&
          grn_gctx.stat != GRN_CTX_QUIT) {
 #ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
@@ -1179,7 +1179,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     request_timer_process_timeout();
     /* todo : log stat */
   }
-  running_event_loop = GRN_FALSE;
+  running_event_loop = false;
   for (;;) {
     uint32_t i;
     CRITICAL_SECTION_ENTER(q_critical_section);
@@ -4490,7 +4490,7 @@ main(int argc, char **argv)
       break;
     case 'm':
     case 'M':
-      is_memcached_mode = GRN_TRUE;
+      is_memcached_mode = true;
       do_client = g_client;
       do_server = g_server;
       break;
@@ -4506,7 +4506,7 @@ main(int argc, char **argv)
 
 #ifdef WIN32
   if (flags & FLAG_USE_WINDOWS_EVENT_LOG) {
-    use_windows_event_log = GRN_TRUE;
+    use_windows_event_log = true;
   }
 #endif /* WIN32 */
 
