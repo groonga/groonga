@@ -37,6 +37,23 @@ typedef enum {
   GRN_PROC_AGGREGATOR,
 } grn_proc_type;
 
+/**
+ * \brief Create the procedure in the database handled by `ctx`.
+ *
+ * \param ctx The context object.
+ * \param name Name of procedure.
+ * \param name_size The number of bytes of `name` parameter. If negative value
+ *                  is specified, `name` parameter is assumed that
+ *                  NULL-terminated string.
+ * \param type Type of procedure.
+ * \param init Initialization callback function.
+ * \param next Main callback function.
+ * \param fin Finalization callback function.
+ * \param nvars The number of `vars`.
+ * \param vars Variables used in callback functions.
+ *
+ * \return The procedure object on success, `NULL` on error.
+ */
 GRN_API grn_obj *
 grn_proc_create(grn_ctx *ctx,
                 const char *name,
