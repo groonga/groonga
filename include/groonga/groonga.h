@@ -1196,7 +1196,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  *
  * If the decreased reference count is zero, the object is closed.
  */
-GRN_API void
+GRN_API grn_rc
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_refer(grn_ctx *ctx, grn_obj *obj);
