@@ -1177,6 +1177,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * can be closed. See the following description for details.
  *
  * **Reference Count Mode**:
+ *
  * Reference count mode manages object lifetimes by keeping track of
  * active references. It can be enabled in two ways:
  * - **Environment Variable**: Set `GRN_ENABLE_REFERENCE_COUNT` to
