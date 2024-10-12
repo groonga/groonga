@@ -349,7 +349,7 @@ output_envelope(
 
 typedef struct {
   FILE *output;
-  grn_bool is_outputting;
+  bool is_outputting;
 } standalone_output_context;
 
 static void
@@ -367,7 +367,7 @@ s_output_raw(grn_ctx *ctx, int flags, standalone_output_context *output_context)
     written += chunk_size;
   }
 
-  grn_bool is_last_message = (flags & GRN_CTX_TAIL);
+  bool is_last_message = (flags & GRN_CTX_TAIL);
   if (is_last_message) {
     grn_obj *command;
 
@@ -782,8 +782,8 @@ groonga_set_thread_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit, void *data)
     }
   }
 
-  while (GRN_TRUE) {
-    grn_bool is_reduced;
+  while (true) {
+    bool is_reduced;
     CRITICAL_SECTION_ENTER(q_critical_section);
     is_reduced = (n_running_threads <= max_n_floating_threads);
     if (!is_reduced && n_floating_threads > 0) {
@@ -830,7 +830,7 @@ request_timer_register(const char *request_id,
 
   {
     grn_ctx *ctx = &(data->ctx);
-    grn_bool is_first_timer;
+    bool is_first_timer;
     grn_timeval tv;
     uint64_t timeout_unix_time_msec;
     void *value;
@@ -1479,7 +1479,7 @@ h_output_raw(grn_ctx *ctx, int flags, ht_context *hc)
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
-  grn_bool is_last_message = (flags & GRN_CTX_TAIL);
+  bool is_last_message = (flags & GRN_CTX_TAIL);
 
   GRN_TEXT_INIT(&header_, 0);
   GRN_TEXT_INIT(&head_, 0);
@@ -1546,16 +1546,16 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
-  grn_bool should_return_body;
-  grn_bool is_last_message = (flags & GRN_CTX_TAIL);
+  bool should_return_body;
+  bool is_last_message = (flags & GRN_CTX_TAIL);
 
   switch (hc->msg->header.qtype) {
   case 'G':
   case 'P':
-    should_return_body = GRN_TRUE;
+    should_return_body = true;
     break;
   default:
-    should_return_body = GRN_FALSE;
+    should_return_body = false;
     break;
   }
 
