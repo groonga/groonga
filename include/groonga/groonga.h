@@ -947,9 +947,36 @@ grn_obj_set_info(grn_ctx *ctx,
                  grn_obj *obj,
                  grn_info_type type,
                  grn_obj *value);
+/**
+ * \brief Get information on the record with the ID in the object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param id The target ID.
+ * \param type The type of information.
+ * \param valuebuf The buffer to store the retrieved value (must be prepared by
+ *                 the caller).
+ *
+ * \return `valuebuf`.
+ */
 GRN_API grn_obj *
 grn_obj_get_element_info(
-  grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *value);
+  grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *valuebuf);
+/**
+ * \brief Set information on the record with the ID in the object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param id The target ID.
+ * \param type The type of information.
+ * \param value The value to set.
+ *
+ * \return \ref GRN_SUCCESS.
+ */
 GRN_API grn_rc
 grn_obj_set_element_info(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *value);
