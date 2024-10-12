@@ -39,16 +39,13 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されます。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
 msgid "objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメントの解消を行います。"
 msgstr ""
 
 msgid "フラグメント解消が実行されたセグメントの数を返します。"
+msgstr ""
+
+msgid "対象objectを指定します。"
 msgstr ""
 
 msgid "objのidを返します。"
