@@ -1189,7 +1189,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * This is the default. You can disable reference count mode explicitly by
  * `GRN_ENABLE_REFERENCE_COUNT=no` environment variable.
  *
- * The following objects are closed immediately.
+ * The following objects are closed immediately:
  * - \ref GRN_ACCESSOR
  * - \ref GRN_BULK
  * - \ref GRN_DB
@@ -1203,11 +1203,11 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * You need to enable this explicitly by `GRN_ENABLE_REFERENCE_COUNT=yes`
  * environment variable.
  *
- * The following objects are closed immediately.
+ * The following objects are closed immediately:
  * - \ref GRN_BULK
  * - \ref GRN_DB
  *
- * The reference count is decreased for the following objects.
+ * The reference count is decreased for the following objects:
  * - \ref GRN_ACCESSOR
  * - Column (both persisted and temporary)
  * - Table (both persisted and temporary)
