@@ -1184,7 +1184,11 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * - **API Function**: Use \ref grn_set_reference_count_enable to
  *   enable it at runtime.
  *
- * Non reference count mode(default:`GRN_ENABLE_REFERENCE_COUNT=no`):
+ * Non reference count mode:
+ *
+ * This is the default. You can disable reference count mode explicitly by
+ * `GRN_ENABLE_REFERENCE_COUNT=no` environment variable.
+ *
  * The following objects are closed immediately.
  * - \ref GRN_ACCESSOR
  * - \ref GRN_BULK
@@ -1194,7 +1198,11 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  *
  * Other objects such as persisted tables and columns are not closed.
  *
- * Reference count mode(`GRN_ENABLE_REFERENCE_COUNT=yes`):
+ * Reference count mode:
+ *
+ * You need to enable this explicitly by `GRN_ENABLE_REFERENCE_COUNT=yes`
+ * environment variable.
+ *
  * The following objects are closed immediately.
  * - \ref GRN_BULK
  * - \ref GRN_DB
