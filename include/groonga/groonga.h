@@ -1181,8 +1181,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
  * active references. It can be enabled in two ways:
  * - **Environment Variable**: Set `GRN_ENABLE_REFERENCE_COUNT` to
  *   `yes` before running the program.
- * - **API Function**: Use \ref grn_set_reference_count_enable to
- *   enable it at runtime.
+ * - **API**: Use \ref grn_set_reference_count_enable to enable it at runtime.
  *
  * Non reference count mode:
  *
