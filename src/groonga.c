@@ -934,7 +934,7 @@ request_timer_init(void)
   grn_request_timer_set(&timer);
 }
 
-static grn_bool
+static bool
 request_timer_ensure_earliest_unix_time_msec(void)
 {
   request_timer_data *data = &the_request_timer_data;
@@ -942,7 +942,7 @@ request_timer_ensure_earliest_unix_time_msec(void)
   grn_pat_cursor *cursor;
 
   if (data->earliest_unix_time_msec > 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   ctx = &(data->ctx);
@@ -956,7 +956,7 @@ request_timer_ensure_earliest_unix_time_msec(void)
                                1,
                                GRN_CURSOR_ASCENDING);
   if (!cursor) {
-    return GRN_FALSE;
+    return false;
   }
   while (grn_pat_cursor_next(ctx, cursor) != GRN_ID_NIL) {
     void *key;
@@ -1067,7 +1067,7 @@ close_ready_notify_pipe(void)
 }
 
 /* FIXME: callers ignore the return value of send_ready_notify. */
-static grn_bool
+static bool
 send_ready_notify(void)
 {
   if (ready_notify_pipe[PIPE_WRITE] > 0) {
@@ -1080,13 +1080,13 @@ send_ready_notify(void)
                         ready_notify_message_len - n);
       if (m == -1) {
         close_ready_notify_pipe();
-        return GRN_FALSE;
+        return false;
       }
       n += m;
     } while (n < ready_notify_message_len);
   }
   close_ready_notify_pipe();
-  return GRN_TRUE;
+  return true;
 }
 
 static int
@@ -1251,7 +1251,7 @@ run_server(grn_ctx *ctx,
   return exit_code;
 }
 
-static grn_bool
+static bool
 memcached_init(grn_ctx *ctx);
 
 static int
@@ -2686,7 +2686,7 @@ memcached_setup_cas_column(grn_ctx *ctx, const char *name)
   return GRN_TRUE;
 }
 
-static grn_bool
+static bool
 memcached_init(grn_ctx *ctx)
 {
   if (memcached_column_name) {
@@ -2695,7 +2695,7 @@ memcached_init(grn_ctx *ctx)
       ERR(GRN_INVALID_ARGUMENT,
           "memcached column doesn't exist: <%s>",
           memcached_column_name);
-      return GRN_FALSE;
+      return false;
     }
     if (!(grn_obj_is_column(ctx, cache_value) &&
           ((cache_value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
@@ -2708,7 +2708,7 @@ memcached_init(grn_ctx *ctx)
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
-      return GRN_FALSE;
+      return false;
     }
     if (!(GRN_DB_SHORT_TEXT <= grn_obj_get_range(ctx, cache_value) &&
           grn_obj_get_range(ctx, cache_value) <= GRN_DB_LONG_TEXT)) {
@@ -2720,7 +2720,7 @@ memcached_init(grn_ctx *ctx)
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
-      return GRN_FALSE;
+      return false;
     }
 
     cache_table = grn_ctx_at(ctx, cache_value->header.domain);
@@ -2735,7 +2735,7 @@ memcached_init(grn_ctx *ctx)
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
-      return GRN_FALSE;
+      return false;
     }
 
     {
@@ -2754,7 +2754,7 @@ memcached_init(grn_ctx *ctx)
                    value_column_name_size,
                    value_column_name);
       if (!memcached_setup_flags_column(ctx, column_name)) {
-        return GRN_FALSE;
+        return false;
       }
       grn_snprintf(column_name,
                    GRN_TABLE_MAX_KEY_SIZE,
@@ -2763,7 +2763,7 @@ memcached_init(grn_ctx *ctx)
                    value_column_name_size,
                    value_column_name);
       if (!memcached_setup_expire_column(ctx, column_name)) {
-        return GRN_FALSE;
+        return false;
       }
       grn_snprintf(column_name,
                    GRN_TABLE_MAX_KEY_SIZE,
@@ -2772,7 +2772,7 @@ memcached_init(grn_ctx *ctx)
                    value_column_name_size,
                    value_column_name);
       if (!memcached_setup_cas_column(ctx, column_name)) {
-        return GRN_FALSE;
+        return false;
       }
     }
   } else {
@@ -2789,7 +2789,7 @@ memcached_init(grn_ctx *ctx)
                                      grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
                                      NULL);
       if (!cache_table) {
-        return GRN_FALSE;
+        return false;
       }
     }
 
@@ -2807,22 +2807,22 @@ memcached_init(grn_ctx *ctx)
                           GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT,
                           grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
       if (!cache_value) {
-        return GRN_FALSE;
+        return false;
       }
     }
 
     if (!memcached_setup_flags_column(ctx, "flags")) {
-      return GRN_FALSE;
+      return false;
     }
     if (!memcached_setup_expire_column(ctx, "expire")) {
-      return GRN_FALSE;
+      return false;
     }
     if (!memcached_setup_cas_column(ctx, "cas")) {
-      return GRN_FALSE;
+      return false;
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 #define RELATIVE_TIME_THRESH 1000000000
