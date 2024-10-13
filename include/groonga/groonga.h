@@ -1422,6 +1422,22 @@ GRN_API grn_rc
 grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Defragment an object to reduce fragmentation in the database file.
+ *
+ * The defragmentation process aims to reduce the fragmentation in the database
+ * file area occupied by the object, based on the provided threshold value.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to defragment.
+ * \param threshold The threshold value used to guide the defragmentation
+ *                  process.
+ *
+ * \return The total number of segments on which defragmentation was performed
+ *         on success.
+ *
+ *         See `ctx->rc` for error details.
+ */
 GRN_API int
 grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
