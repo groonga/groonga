@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
-
-   objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメントの解消を行います。
-
-   フラグメント解消が実行されたセグメントの数を返します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj)
 
    objのidを返します。
