@@ -92,7 +92,7 @@
 static char bind_address[HOST_NAME_MAX + 1];
 static char hostname[HOST_NAME_MAX + 1];
 static int port = DEFAULT_GQTP_PORT;
-static int batchmode;
+static bool batchmode = false;
 static int number_of_lines = 0;
 static int newdb;
 static bool is_daemon_mode = false;
@@ -278,7 +278,7 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
 grn_inline static grn_rc
 read_next_line(grn_ctx *ctx, grn_obj *buf)
 {
-  static int the_first_read = GRN_TRUE;
+  static bool the_first_read = true;
   grn_rc rc = GRN_SUCCESS;
   if (!batchmode) {
 #ifdef GRN_WITH_LIBEDIT
@@ -310,7 +310,7 @@ read_next_line(grn_ctx *ctx, grn_obj *buf)
                    GRN_TEXT_LEN(&buf_without_bom));
       grn_obj_unlink(ctx, &buf_without_bom);
     }
-    the_first_read = GRN_FALSE;
+    the_first_read = false;
   }
   if (GRN_TEXT_LEN(buf) > 0 &&
       GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\n') {
@@ -4814,7 +4814,7 @@ main(int argc, char **argv)
               grn_gctx.errbuf);
       return EXIT_FAILURE;
     }
-    batchmode = GRN_TRUE;
+    batchmode = true;
   } else {
     if (input_fd_arg) {
       const char *const end = input_fd_arg + strlen(input_fd_arg);
@@ -4836,7 +4836,7 @@ main(int argc, char **argv)
         fprintf(stderr, "%s", grn_gctx.errbuf);
         return EXIT_FAILURE;
       }
-      batchmode = GRN_TRUE;
+      batchmode = true;
     } else {
       input_reader = grn_file_reader_open(&grn_gctx, "-");
       if (!input_reader) {
@@ -4844,7 +4844,7 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
       }
       if (argc - i > 1) {
-        batchmode = GRN_TRUE;
+        batchmode = true;
       } else {
         batchmode = !grn_isatty(0);
       }
