@@ -937,11 +937,34 @@ typedef enum {
   GRN_INFO_NORMALIZERS,
 } grn_info_type;
 
+/**
+ * \brief Get information on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param type The type of information.
+ * \param valuebuf The buffer to store the retrieved value (must be prepared by
+ *                 the caller).
+ *
+ * \return `valuebuf`.
+ */
 GRN_API grn_obj *
 grn_obj_get_info(grn_ctx *ctx,
                  grn_obj *obj,
                  grn_info_type type,
                  grn_obj *valuebuf);
+/**
+ * \brief Set information on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param type The type of information.
+ * \param value The value to set.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `obj` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_set_info(grn_ctx *ctx,
                  grn_obj *obj,
