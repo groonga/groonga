@@ -1310,8 +1310,8 @@ start_service(grn_ctx *ctx,
 
 typedef struct {
   grn_msg *msg;
-  grn_bool in_body;
-  grn_bool is_chunked;
+  bool in_body;
+  bool is_chunked;
 } ht_context;
 
 static void
@@ -1492,13 +1492,13 @@ h_output_raw(grn_ctx *ctx, int flags, ht_context *hc)
   if (!hc->in_body) {
     if (is_last_message) {
       h_output_set_header(ctx, &header_, expr_rc, GRN_TEXT_LEN(&body_), NULL);
-      hc->is_chunked = GRN_FALSE;
+      hc->is_chunked = false;
     } else {
       h_output_set_header(ctx, &header_, expr_rc, -1, NULL);
-      hc->is_chunked = GRN_TRUE;
+      hc->is_chunked = true;
     }
     header = &header_;
-    hc->in_body = GRN_TRUE;
+    hc->in_body = true;
   }
 
   if (GRN_TEXT_LEN(&body_) > 0) {
@@ -2506,8 +2506,8 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
         specified_content_type);
     ht_context context;
     context.msg = msg;
-    context.in_body = GRN_FALSE;
-    context.is_chunked = GRN_FALSE;
+    context.in_body = false;
+    context.is_chunked = false;
     grn_ctx_set_output_type(ctx, GRN_CONTENT_JSON);
     h_output(ctx, GRN_CTX_TAIL, &context);
     return;
@@ -2532,8 +2532,8 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
     if (ctx->rc != GRN_SUCCESS) {
       ht_context context;
       context.msg = msg;
-      context.in_body = GRN_FALSE;
-      context.is_chunked = GRN_FALSE;
+      context.in_body = false;
+      context.is_chunked = false;
       h_output(ctx, GRN_CTX_TAIL, &context);
       return;
     }
@@ -3350,8 +3350,8 @@ h_worker(void *arg)
     n_floating_threads--;
     CRITICAL_SECTION_LEAVE(q_critical_section);
     hc.msg = (grn_msg *)msg;
-    hc.in_body = GRN_FALSE;
-    hc.is_chunked = GRN_FALSE;
+    hc.in_body = false;
+    hc.is_chunked = false;
     do_htreq(ctx, &hc);
     CRITICAL_SECTION_ENTER(q_critical_section);
   }
@@ -3411,8 +3411,8 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
       grn_ctx_use(&ctx_shutdown, (grn_obj *)arg);
       grn_ctx_recv_handler_set(&ctx_shutdown, h_output, &hc);
       hc.msg = (grn_msg *)msg;
-      hc.in_body = GRN_FALSE;
-      hc.is_chunked = GRN_FALSE;
+      hc.in_body = false;
+      hc.is_chunked = false;
       grn_ctx_send(&ctx_shutdown,
                    immediate_path,
                    immediate_path_length,
@@ -4264,7 +4264,7 @@ main(int argc, char **argv)
   grn_command_version default_command_version;
   int64_t default_match_escalation_threshold = 0;
   double default_request_timeout = 0.0;
-  grn_bool need_line_editor = GRN_FALSE;
+  bool need_line_editor = false;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -4852,7 +4852,7 @@ main(int argc, char **argv)
   }
 
   if ((flags & (FLAG_MODE_ALONE | FLAG_MODE_CLIENT)) && !batchmode) {
-    need_line_editor = GRN_TRUE;
+    need_line_editor = true;
   }
 
 #ifdef GRN_WITH_LIBEDIT
