@@ -1,7 +1,5 @@
-:orphan:
-
-How to build Groonga with CMake
-===============================
+Others: Build with CMake
+========================
 
 This document describes how to build Groonga from source with CMake.
 
