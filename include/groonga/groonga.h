@@ -1502,6 +1502,15 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 GRN_API grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Return the ID of an object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose ID is to be retrieved.
+ *
+ * \return The ID of the object, \ref GRN_ID_NIL if the object doesn't belong to
+ *         any database.
+ */
 GRN_API grn_id
 grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
