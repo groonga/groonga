@@ -16,8 +16,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "How to build Groonga with CMake"
-msgstr "CMakeを使ってGroongaをビルドする方法"
+msgid "Others: Build with CMake"
+msgstr "その他: CMakeを使ってビルド"
 
 msgid "This document describes how to build Groonga from source with CMake."
 msgstr "このドキュメントはCMakeを使ってソースコードからGroongaをビルドする方法を説明します。"

@@ -25,5 +25,5 @@ msgstr "CentOS 7がEOLになったのでGroonga 14.0.5以降はCentOS 7用パッ
 msgid "Groonga supports AlmaLinux. So you can continue using Groonga by switching from CentOS 7 to AlmaLinux."
 msgstr "Groongaは、AlmaLinuxをサポートしているので、CentOS 7からAlmaLinuxにOSを切り替えることで引続きGroongaを利用できます。"
 
-msgid "See also :doc:`/install/almalinux`."
-msgstr ":doc:`/install/almalinux`を参照してください。"
+msgid "See also :doc:`/install/almalinux` ."
+msgstr ":doc:`/install/almalinux` を参照してください。"
