@@ -91,8 +91,8 @@ msgstr ""
 msgid "Start HTTP server"
 msgstr "HTTPサーバーを起動"
 
-msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを起動(Debian/Ubuntu/CentOS)::"
+msgid "Starting groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Starting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを起動(Fedora)::"
@@ -100,14 +100,14 @@ msgstr "groonga HTTPサーバーを起動(Fedora)::"
 msgid "Stop HTTP server"
 msgstr "HTTPサーバーを終了"
 
-msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを終了(Debian/Ubuntu/CentOS)::"
+msgid "Stopping groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Restart HTTP server"
 msgstr "HTTPサーバーを再起動"
 
-msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを再起動(Debian/Ubuntu/CentOS)::"
+msgid "Restarting groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを再起動(Fedora)::"
@@ -136,14 +136,11 @@ msgstr ""
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
 msgstr "サーバー設定ファイル (Debian/Ubuntu)::"
 
-msgid "Configuration file for server setting (CentOS)::"
-msgstr "サーバー設定ファイル(CentOS)::"
-
 msgid "Start GQTP server"
 msgstr "GQTPサーバーを起動"
 
-msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga GQTPサーバーを起動(Debian/Ubuntu/CentOS)::"
+msgid "Starting groonga GQTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Starting groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを起動(Fedora)::"
@@ -151,8 +148,8 @@ msgstr "groonga GQTPサーバーを起動(Fedora)::"
 msgid "Stop GQTP server"
 msgstr "GQTPサーバーを終了"
 
-msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga GQTPサーバーを終了(Debian/Ubuntu/CentOS)::"
+msgid "Stopping groonga GQTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Stopping groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを終了(Fedora)::"

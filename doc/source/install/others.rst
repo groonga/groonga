@@ -223,19 +223,14 @@ Here is an example that installs Munin plugins for Groonga::
 ``--with-package-platform=PLATFORM``
 ++++++++++++++++++++++++++++++++++++
 
-Installs platform specific system management files such as init
-script. Available platforms are ``centos``, ``centos5``, ``centos6``,
-``centos7`` and ``fedora``. Platform starts with ``centos`` are for
-Red Hat and Red Hat clone distributions such as CentOS. If ``centos``
-is specified, distribution version is guessed. ``fedora`` is for
-Fedora.
+Installs platform specific system management files such as init script.
+Only Red Hat and Red Hat clone distributions such as AlmaLinux are supported.
 
 Those system management files are not installed by default.
 
-Here is an example that installs CentOS specific system management
-files::
+Here is an example that installs Red Hat or Red Hat clone distributions specific system management files::
 
-  % ./configure --with-package-platform=centos
+  % ./configure --with-package-platform=rhel
 
 ``--help``
 ++++++++++

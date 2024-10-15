@@ -238,14 +238,14 @@ msgstr "以下はGroonga用のMuninプラグインをインストールする例
 msgid "``--with-package-platform=PLATFORM``"
 msgstr ""
 
-msgid "Installs platform specific system management files such as init script. Available platforms are ``centos``, ``centos5``, ``centos6``, ``centos7`` and ``fedora``. Platform starts with ``centos`` are for Red Hat and Red Hat clone distributions such as CentOS. If ``centos`` is specified, distribution version is guessed. ``fedora`` is for Fedora."
-msgstr "initスクリプトなどプラットフォーム依存のシステム管理ファイルをインストールします。利用可能なプラットフォームは ``centos`` 、 ``centos5`` 、 ``centos6`` 、 ``centos7`` 、 ``fedora`` です。 ``centos`` から始まるプラットフォームはRed HatおよびCentOSなどのRed Hatクローンのディストリビューション用です。 ``centos`` を指定した場合はディストリビューションのバージョンを推測します。 ``fedora`` はFedora用です。"
+msgid "Installs platform specific system management files such as init script. Only Red Hat and Red Hat clone distributions such as AlmaLinux are supported."
+msgstr "initスクリプトなどプラットフォーム依存のシステム管理ファイルをインストールします。Red HatおよびAlmaLinuxなどのRed Hatクローンのディストリビューションのみサポートしています。"
 
 msgid "Those system management files are not installed by default."
 msgstr "デフォルトではシステム管理ファイルはインストールされません。"
 
-msgid "Here is an example that installs CentOS specific system management files::"
-msgstr "以下はCentOS用のシステム管理ファイルをインストールする例です::"
+msgid "Here is an example that installs Red Hat or Red Hat clone distributions specific system management files::"
+msgstr "以下はRed Hat系のOS用のシステム管理ファイルをインストールする例です::"
 
 msgid "``--help``"
 msgstr ""
