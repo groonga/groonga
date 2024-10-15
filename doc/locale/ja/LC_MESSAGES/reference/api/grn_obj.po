@@ -39,12 +39,6 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "objのidを返します。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
 msgid "dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。"
 msgstr ""
 

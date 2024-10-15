@@ -23,12 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj)
-
-   objのidを返します。
-
-   :param obj: 対象objectを指定します。
-
 .. c:function:: grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
 
    dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。
