@@ -839,7 +839,7 @@ request_timer_register(const char *request_id,
     is_first_timer = (grn_pat_size(ctx, data->entries) == 0);
     grn_timeval_now(ctx, &tv);
     timeout_unix_time_msec = GRN_TIMEVAL_TO_MSEC(&tv) + (timeout * 1000);
-    while (GRN_TRUE) {
+    while (true) {
       int added;
       id = grn_pat_add(ctx,
                        data->entries,
@@ -1891,7 +1891,7 @@ h_parse_header_values(grn_ctx *ctx,
   return NULL;
 }
 
-static grn_bool
+static bool
 h_parse_header(grn_ctx *ctx,
                const char *start,
                const char *end,
@@ -1901,11 +1901,11 @@ h_parse_header(grn_ctx *ctx,
 
   current = h_parse_header_request_line(ctx, start, end, header);
   if (!current) {
-    return GRN_FALSE;
+    return false;
   }
   current = h_parse_header_values(ctx, current, end, header);
   if (!current) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (current == end) {
@@ -1914,7 +1914,7 @@ h_parse_header(grn_ctx *ctx,
     header->body_start = current;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
@@ -2620,12 +2620,12 @@ static grn_obj *cache_cas = NULL;
 
 #define CTX_GET(name) (grn_ctx_get(ctx, (name), strlen(name)))
 
-static grn_bool
+static bool
 memcached_setup_flags_column(grn_ctx *ctx, const char *name)
 {
   cache_flags = grn_obj_column(ctx, cache_table, name, strlen(name));
   if (cache_flags) {
-    return GRN_TRUE;
+    return true;
   }
 
   cache_flags = grn_column_create(ctx,
@@ -2636,18 +2636,18 @@ memcached_setup_flags_column(grn_ctx *ctx, const char *name)
                                   GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT,
                                   grn_ctx_at(ctx, GRN_DB_UINT32));
   if (!cache_flags) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
-static grn_bool
+static bool
 memcached_setup_expire_column(grn_ctx *ctx, const char *name)
 {
   cache_expire = grn_obj_column(ctx, cache_table, name, strlen(name));
   if (cache_expire) {
-    return GRN_TRUE;
+    return true;
   }
 
   cache_expire = grn_column_create(ctx,
@@ -2658,18 +2658,18 @@ memcached_setup_expire_column(grn_ctx *ctx, const char *name)
                                    GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT,
                                    grn_ctx_at(ctx, GRN_DB_UINT32));
   if (!cache_expire) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
-static grn_bool
+static bool
 memcached_setup_cas_column(grn_ctx *ctx, const char *name)
 {
   cache_cas = grn_obj_column(ctx, cache_table, name, strlen(name));
   if (cache_cas) {
-    return GRN_TRUE;
+    return true;
   }
 
   cache_cas = grn_column_create(ctx,
@@ -2680,10 +2680,10 @@ memcached_setup_cas_column(grn_ctx *ctx, const char *name)
                                 GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT,
                                 grn_ctx_at(ctx, GRN_DB_UINT64));
   if (!cache_cas) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static bool
