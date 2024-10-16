@@ -2351,7 +2351,7 @@ source_files_relative_from_doc_dir = \
 	source/install/almalinux.rst \
 	source/install/amazon_linux.rst \
 	source/install/centos.rst \
-	source/install/cmake.rst \
+	source/install/cmake.md \
 	source/install/debian.rst \
 	source/install/docker.rst \
 	source/install/mac_os_x.rst \
