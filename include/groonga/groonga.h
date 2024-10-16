@@ -1693,6 +1693,24 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
                                  grn_obj *column,
                                  grn_obj *index_columns);
 
+/**
+ * \brief Delete an object (such as a table or column) identified by the ID from
+ *        the database.
+ *
+ * \note This is an internal API intended for use by mroonga.
+ *
+ * \param ctx The context object.
+ * \param db The target database object.
+ * \param id The ID of the object to be deleted.
+ * \param remove_p A boolean flag indicating the deletion mode:
+ *                 - If \ref GRN_TRUE, the function removes the relation between
+ *                   the ID and the key in the database and clears the object
+ *                   cache.
+ *                 - If \ref GRN_FALSE, it only clears the object cache.
+ *
+ * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
 GRN_API grn_rc
