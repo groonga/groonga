@@ -150,7 +150,7 @@ $ cmake . -DCMAKE_INSTALL_PREFIX="/tmp/local/"
 
 Here is an example how to specify `C:\Groonga` as an install directory on Windows.
 
-```
+```pwsh-session
 > cmake . -DCMAKE_INSTALL_PREFIX="C:\Groonga"
 ```
 
