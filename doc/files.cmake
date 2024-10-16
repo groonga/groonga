@@ -1030,7 +1030,7 @@ set(GRN_DOC_SOURCES
     install/almalinux.rst
     install/amazon_linux.rst
     install/centos.rst
-    install/cmake.rst
+    install/cmake.md
     install/debian.rst
     install/docker.rst
     install/mac_os_x.rst
