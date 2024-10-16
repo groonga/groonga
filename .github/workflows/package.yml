@@ -216,7 +216,7 @@ jobs:
           - id: almalinux-8-aarch64
             timeout-minutes: 60
           - id: almalinux-9-aarch64
-            timeout-minutes: 60
+            timeout-minutes: 120
           # - id: amazon-linux-2023-aarch64
           #   timeout-minutes: 120
     env:
