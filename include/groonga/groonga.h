@@ -1710,7 +1710,7 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  *                 - If true, the function clears the object cache and also
  *                   removes the relation between the ID and the key in the
  *                   database.
- *                 - If false, it only clears the object cache.
+ *                 - If false, the function only clears the object cache.
  *
  * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is
