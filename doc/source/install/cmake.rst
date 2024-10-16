@@ -56,7 +56,7 @@ You need to generate build files such as ``Makefile`` for your environment.
 
 You can custom your build configuration by passing options to ``cmake``.
 
-Command Example.
+Command example for GNU/Linux or UNIX.
 
 .. code-block:: console
 
@@ -254,9 +254,28 @@ Build and install Groonga
 
 Now, you can build Groonga.
 
+GNU/Linux or UNIX
++++++++++++++++++
+
 Here is a command line to build and install Groonga.
 
 .. code-block:: console
 
    $ cmake --build -B <Build directory path>
    $ sudo cmake --install -B <Build directory path>
+
+Windows
++++++++
+
+Here is how it is to do it when Visual Studio is specified as the generator, like ``-G "Visual Studio 17 2022"`` .
+
+You can use Visual Studio or ``cmake --build``.
+
+Here is a command line to build and install Groonga by ``cmake --build``.
+
+.. code-block:: pwsh-session
+
+   > cmake --build . --config Release
+   > cmake --build . --config Release --target Install
+
+You should specify ``--config Debug`` instead of ``--config Release`` when debugging.

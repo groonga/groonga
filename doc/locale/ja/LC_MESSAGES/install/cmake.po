@@ -70,8 +70,8 @@ msgstr "``Makefile`` のような、あなたの環境用のビルド用ファ�
 msgid "You can custom your build configuration by passing options to ``cmake``."
 msgstr "``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
 
-msgid "Command Example."
-msgstr "コマンド例"
+msgid "Command example for GNU/Linux or UNIX."
+msgstr "GNU/Linux or UNIXでのコマンド例"
 
 msgid "``-S`` option"
 msgstr "``-S`` オプション"
@@ -210,3 +210,15 @@ msgstr "これで、Groongaをビルドできるようになりました。"
 
 msgid "Here is a command line to build and install Groonga."
 msgstr "以下はGroongaをビルド、インストールするコマンドラインです。"
+
+msgid "Here is how it is to do it when Visual Studio is specified as the generator, like ``-G \"Visual Studio 17 2022\"`` ."
+msgstr "以下は ``-G \"Visual Studio 17 2022\"`` のようにジェネレーターでVisual Studioを指定したときの手順です。"
+
+msgid "You can use Visual Studio or ``cmake --build``."
+msgstr "Visual Studioか ``cmake --build`` を使用できます。"
+
+msgid "Here is a command line to build and install Groonga by ``cmake --build``."
+msgstr "以下は ``cmake --build`` を使ってGroongaをビルド、インストールするコマンドラインです。"
+
+msgid "You should specify ``--config Debug`` instead of ``--config Release`` when debugging."
+msgstr "デバッグをする場合は、 ``--config Release`` の代わりに ``--config Debug`` を指定してください。"
