@@ -123,6 +123,7 @@
 /test/command/groonga-query-log
 /test/command/run-test.sh.log
 /test/command/run-test.sh.trs
+/test/command/suite/**/*.reject
 /test/command/test-suite.log
 /test/mruby/groonga.pc
 /test/mruby/rroonga.built
