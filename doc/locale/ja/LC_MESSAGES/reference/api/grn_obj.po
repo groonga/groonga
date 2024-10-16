@@ -39,19 +39,13 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。"
+msgid "dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。"
 msgstr ""
 
 msgid "The target database."
 msgstr ""
 
 msgid "The object (table, column and so on) ID to be deleted."
-msgstr ""
-
-msgid "If ``GRN_TRUE``, clear object cache and remove relation between ID and key in database. Otherwise, just clear object cache."
-msgstr ""
-
-msgid "dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。"
 msgstr ""
 
 msgid "path string corresponding to the id will be set in this buffer."

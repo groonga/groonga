@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
-
-   dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。
-
-   :param db: The target database.
-   :param id: The object (table, column and so on) ID to be deleted.
-   :param removep: If ``GRN_TRUE``, clear object cache and remove relation between ID and key in database. Otherwise, just clear object cache.
-
 .. c:function:: grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
 
    dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。

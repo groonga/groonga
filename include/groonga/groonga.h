@@ -1693,6 +1693,29 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
                                  grn_obj *column,
                                  grn_obj *index_columns);
 
+/**
+ * \brief Delete an object (such as a table or column) identified by the ID from
+ *        the database.
+ *
+ * \note In general, you should use \ref grn_obj_remove() instead.
+ *       \ref grn_obj_remove is a higher-level API that easily manages
+ *       operations for users. Use this lower-level API,
+ *       \ref grn_obj_delete_by_id, only when finer control over the
+ *       deletion process is necessary.
+ *
+ * \param ctx The context object.
+ * \param db The target database object.
+ * \param id The ID of the object to be deleted.
+ * \param remove_p A boolean flag indicating the deletion mode:
+ *                 - If true, the function clears the object cache and also
+ *                   removes the relation between the ID and the key in the
+ *                   database.
+ *                 - If false, the function only clears the object cache.
+ *
+ * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is
+ *         \ref GRN_ID_NIL.
+ */
 GRN_API grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
 GRN_API grn_rc
