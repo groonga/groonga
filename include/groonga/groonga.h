@@ -1697,7 +1697,7 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  * \brief Delete an object (such as a table or column) identified by the ID from
  *        the database.
  *
- * \note This is an internal API intended for use by mroonga.
+ * \note This is an internal API intended for use by Mroonga.
  *
  * \param ctx The context object.
  * \param db The target database object.
