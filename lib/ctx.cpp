@@ -2180,6 +2180,16 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 
   *flags = 0;
 
+  // In case of GRN_CANCEL, empty the result and quit the process.
+  // When cancelled, the result may be incomplete.
+  // Also, the cancelled means that the result should not be necessary.
+  if (ctx->rc == GRN_CANCEL) {
+    *str = NULL;
+    *str_len = 0;
+    ctx->stat = GRN_CTX_QUIT;
+    *flags |= GRN_CTX_QUIT;
+    return GRN_SUCCESS;
+  }
   if (ctx->stat == GRN_CTX_QUIT) {
     bool have_buffer = false;
 
