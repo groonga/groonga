@@ -1710,7 +1710,8 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  *                 - If false, it only clears the object cache.
  *
  * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
- *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is `NULL`.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is
+ *         \ref GRN_ID_NIL.
  */
 GRN_API grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
