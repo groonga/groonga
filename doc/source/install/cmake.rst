@@ -56,6 +56,46 @@ You need to generate build files such as ``Makefile`` for your environment.
 
 You can custom your build configuration by passing options to ``cmake``.
 
+Command example for GNU/Linux or UNIX.
+
+.. code-block:: console
+
+   $ cmake -S <Groonga source code directory path> -B <Build directory path> --preset=release-maximum
+
+* ``-S`` option
+
+  * Specify the path of the Groonga source code directory
+
+  * Specify the directory from which you downloaded and extracted the files
+
+* ``-B`` option
+
+  * Specify the directory to be used for build
+
+  * Specify a build-only directory outside of Groonga's source code directory
+
+.. _cmake-presets:
+
+CMake presets
++++++++++++++
+
+Using CMake version 3.21.0 or higher, some presets for various build configurations are provided. We have provided a combination of frequently used CMake options, so you can basically use this presets. Use CMake options only if you want to make custom settings. You can get a list of the available presets using ``cmake --list-presets`` .
+
+.. code-block:: console
+
+   $ cmake --list-presets
+   Available configure presets:
+
+     "debug-default"                   - Optional features may not be enabled (debug build)
+     "release-default"                 - Optional features may not be enabled (release build)
+     "release-with-debug-info-default" - Optional features may not be enabled (release build with debug info)
+     "debug-maximum"                   - Enable all features (debug build)
+     "release-maximum"                 - Enable all features (release build)
+     "release-with-debug-info-maximum" - Enable all features (release build with debug info)
+     "doc"                             - For documentation
+     "memory-debug"                    - For memory debug
+     "benchmark"                       - For benchmark
+
 .. _cmake-options:
 
 CMake options
@@ -137,7 +177,7 @@ with the mruby support.
 The default is ``OFF``.
 
 Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must 
-install some requierd libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ 
+install some required libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_
 for more details.
 
 Here is an example how to enable the mruby support.
@@ -217,20 +257,17 @@ Now, you can build Groonga.
 GNU/Linux or UNIX
 +++++++++++++++++
 
-You can use ``make``.
-
-Here is a command line to build and install Groonga by ``make``.
+Here is a command line to build and install Groonga.
 
 .. code-block:: console
 
-   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu) > /dev/null
-   $ sudo make install
-
-We recommend to add ``> /deb/null`` to ``make`` in order to see only warning and error messages.
-Developers shouldn't add new warnings and errors in new commit.
+   $ cmake --build -B <Build directory path>
+   $ sudo cmake --install -B <Build directory path>
 
 Windows
 +++++++
+
+Here is how it is to do it when Visual Studio is specified as the generator, like ``-G "Visual Studio 17 2022"`` .
 
 You can use Visual Studio or ``cmake --build``.
 
