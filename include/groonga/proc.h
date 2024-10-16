@@ -64,6 +64,17 @@ grn_proc_create(grn_ctx *ctx,
                 grn_proc_func *fin,
                 unsigned int nvars,
                 grn_expr_var *vars);
+/**
+ * \brief Get information on procedure and expression that use `user_data`.
+ *
+ * \param ctx The context object.
+ * \param user_data The user_data.
+ * \param vars The buffer to store defined variables.
+ * \param nvars The buffer to store the number of `vars`.
+ * \param caller The buffer to store calling expression.
+ *
+ * \return The procedure object, but `NULL` if it is not set.
+ */
 GRN_API grn_obj *
 grn_proc_get_info(grn_ctx *ctx,
                   grn_user_data *user_data,

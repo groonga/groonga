@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_proc``"
 msgstr ""
 
@@ -33,11 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義されている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
-msgstr ""
-
-msgid ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"
-msgstr ""
-
-msgid "変数の数を取得します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
