@@ -70,6 +70,33 @@ msgstr "``Makefile`` のような、あなたの環境用のビルド用ファ�
 msgid "You can custom your build configuration by passing options to ``cmake``."
 msgstr "``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
 
+msgid "Command Example."
+msgstr "コマンド例"
+
+msgid "``-S`` option"
+msgstr "``-S`` オプション"
+
+msgid "Specify the path of the Groonga source code directory"
+msgstr "Groongaのソースコードディレクトリを指定します"
+
+msgid "Specify the directory from which you downloaded and extracted the files"
+msgstr "ダウンロードして展開したディレクトリを指定します"
+
+msgid "``-B`` option"
+msgstr "``-B`` オプション"
+
+msgid "Specify the directory to be used for build"
+msgstr "ビルドディレクトリを指定します。"
+
+msgid "Specify a build-only directory outside of Groonga's source code directory"
+msgstr "Groongaのソースコードディテクトリの外部にビルド専用のディレクトリを指定します"
+
+msgid "CMake presets"
+msgstr "CMake プリセット"
+
+msgid "Using CMake version 3.21.0 or higher, some presets for various build configurations are provided. We have provided a combination of frequently used CMake options, so you can basically use this presets. Use CMake options only if you want to make custom settings. You can get a list of the available presets using ``cmake --list-presets`` ."
+msgstr "CMakeの3.21.0以降を使うと、ビルド用の設定をまとめたプリセットが利用できます。よく使われるCMakeのオプションの組み合わせが用意してあるので、基本的にはそれらのプリセットをご利用ください。CMakeオプションは個別に設定したい場合にご利用ください。利用できるプリセットは ``cmake --list-presets`` で確認できます。"
+
 msgid "CMake options"
 msgstr "CMake オプション"
 
@@ -121,7 +148,7 @@ msgstr "mrubyサポートを有効にすることで :doc:`/reference/sharding` 
 msgid "The default is ``OFF``."
 msgstr "デフォルトは ``OFF`` です。"
 
-msgid "Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must install some requierd libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ for more details."
+msgid "Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must install some required libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ for more details."
 msgstr "mrubyサポートが有効な場合、Groongaは同梱しているmrubyをビルドします。そのため、mrubyをビルドするのに必要なライブラリをインストールする必要があります。詳細は `mrubyのコンパイルガイド <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ を参照してください。"
 
 msgid "Here is an example how to enable the mruby support."
@@ -181,20 +208,5 @@ msgstr "ビルドおよびインストール"
 msgid "Now, you can build Groonga."
 msgstr "これで、Groongaをビルドできるようになりました。"
 
-msgid "You can use ``make``."
-msgstr "``make`` が使用できます。"
-
-msgid "Here is a command line to build and install Groonga by ``make``."
-msgstr "以下は ``make`` を使ってGroongaをビルド、インストールするコマンドラインです。"
-
-msgid "We recommend to add ``> /deb/null`` to ``make`` in order to see only warning and error messages. Developers shouldn't add new warnings and errors in new commit."
-msgstr "警告メッセージとエラーメッセージだけが見えるように ``make`` 時に ``> /dev/null`` をつけることを推奨します。開発者は新しいコミットで警告メッセージもエラーメッセージも増やすべきではありません。"
-
-msgid "You can use Visual Studio or ``cmake --build``."
-msgstr "Visual Studioか ``cmake --build`` を使用できます。"
-
-msgid "Here is a command line to build and install Groonga by ``cmake --build``."
-msgstr "以下は ``cmake --build`` を使ってGroongaをビルド、インストールするコマンドラインです。"
-
-msgid "You should specify ``--config Debug`` instead of ``--config Release`` when debugging."
-msgstr "デバッグをする場合は、 ``--config Release`` の代わりに ``--config Debug`` を指定してください。"
+msgid "Here is a command line to build and install Groonga."
+msgstr "以下はGroongaをビルド、インストールするコマンドラインです。"
