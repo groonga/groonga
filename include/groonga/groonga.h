@@ -1703,9 +1703,9 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  * \param db The target database object.
  * \param id The ID of the object to be deleted.
  * \param remove_p A boolean flag indicating the deletion mode:
- *                 - If true, the function removes the relation between
- *                   the ID and the key in the database and clears the object
- *                   cache.
+ *                 - If true, the function clears the object cache and also
+ *                   removes the relation between the ID and the key in the
+ *                   database.
  *                 - If false, it only clears the object cache.
  *
  * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
