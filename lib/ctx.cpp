@@ -2188,7 +2188,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       have_buffer = true;
     }
 
-    *flags |= GRN_CTX_QUIT;
+    *flags = GRN_CTX_QUIT;
     if (!have_buffer) {
       *str = NULL;
       *str_len = 0;
@@ -2209,10 +2209,10 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         *str_len = (unsigned int)GRN_BULK_VSIZE(ctx->impl->output.buf);
         if (header.flags & GRN_CTX_QUIT) {
           ctx->stat = GRN_CTX_QUIT;
-          *flags |= GRN_CTX_QUIT;
+          *flags = GRN_CTX_QUIT;
         } else {
           if (!(header.flags & GRN_CTX_TAIL)) {
-            *flags |= GRN_CTX_MORE;
+            *flags = GRN_CTX_MORE;
           }
         }
         ctx->impl->output.type = static_cast<grn_content_type>(header.qtype);
@@ -2225,7 +2225,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         if (ctx->rc == GRN_CANCEL) {
           *str = NULL;
           *str_len = 0;
-          *flags |= GRN_CTX_QUIT;
+          *flags = GRN_CTX_QUIT;
         }
       }
       goto exit;
@@ -2233,7 +2233,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       if (ctx->rc == GRN_CANCEL) {
         *str = NULL;
         *str_len = 0;
-        *flags |= GRN_CTX_QUIT;
+        *flags = GRN_CTX_QUIT;
       } else {
         grn_obj *buf = ctx->impl->output.buf;
         *str = GRN_BULK_HEAD(buf);
