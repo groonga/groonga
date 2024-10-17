@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1729048497758,
+  "lastUpdate": 1729144828295,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
@@ -50190,6 +50190,108 @@ window.BENCHMARK_DATA = {
             "value": 0.0181371810000428,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001922999999999675 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5400b36db0820c8baf37bacafa7d70b67129bb9",
+          "message": "request_cancel: Fix a bug that canceled request may return an invalid response (#2013)\n\nSometimes the following response is received when canceling.\r\n\r\nExample of command version 3 (Incomplete JSON) (`...` is the omission of\r\nan element):\r\n\r\n```\r\n{\r\n  \"body\": {\r\n  \"columns\":[...],\r\n  \"records\":[\r\n    [...],\r\n    \"header\":{\r\n      \"return_code\":-77,\r\n      ...\r\n    }\r\n  }\r\n```\r\n\r\nIf `ctx->rc` is `GRN_CANCEL`, we force using an empty result. Because\r\ncreating result may be incomplete.\r\nWe can do it because the cancelled response must not be used.",
+          "timestamp": "2024-10-17T14:55:28+09:00",
+          "tree_id": "4eddaeb62fe62f038948f4a82cea5bc78f36754e",
+          "url": "https://github.com/groonga/groonga/commit/e5400b36db0820c8baf37bacafa7d70b67129bb9"
+        },
+        "date": 1729144825774,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.34576933499999996,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017076000000000133 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2543658720000508,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014175000000000049 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01775105500007612,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0008550000000002722 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.026130188000024646,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00046100000000071084 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.7264479910000432,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.000167000000000056 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.22836530100011032,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009596999999999967 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13346446100001685,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00866799999999962 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01814608400002271,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019039999999998503 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.018473151999955917,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002704000000000012 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05647768399995812,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00860299999999975 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.05537821100006113,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009215999999998947 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.02140079900004821,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00446199999999955 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.018441960000018298,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002110999999999752 s\nthreads: undefined"
           }
         ]
       }
