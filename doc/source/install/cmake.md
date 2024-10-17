@@ -2,18 +2,88 @@
 
 This document describes how to build Groonga from source with CMake.
 
-To get more details about installing Groonga from the source with CMake on a specific environment,
-find the document for the specific environment from {doc}`/install`.
-
 ## Install depended software
 
 Here is depended software for GNU/Linux, UNIX and Windows.
 
-TODO
-
 ### GNU/Linux or UNIX
 
-> - [CMake](http://www.cmake.org/)
+#### Debian GNU/Linux, Ubuntu
+
+Execute `setup.sh` included in the source code.
+
+If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
+
+#### Amazon Linux 2023
+
+You can run the following commands to install the required packages.
+
+```console
+$ sudo dnf groupinstall -y "Development Tools"
+$ sudo dnf install -y \
+    cmake \
+    intltool \
+    libedit-devel \
+    libevent-devel \
+    libstemmer-devel \
+    libzstd-devel \
+    lz4-devel \
+    openssl-devel \
+    pkgconfig \
+    ruby \
+    tar \
+    wget \
+    which \
+    xxhash-devel \
+    zlib-devel
+```
+
+You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/).
+
+#### AlmaLinux 9
+
+You can run the following commands to install the required packages.
+
+```console
+$ sudo dnf install -y epel-release 'dnf-command(config-manager)'
+$ sudo dnf config-manager --set-enabled crb
+$ sudo dnf groupinstall -y "Development Tools"
+$ sudo dnf install -y \
+    gcc-toolset-12 \
+    ccache \
+    cmake \
+    intltool \
+    mecab-devel \
+    libedit-devel \
+    libevent-devel \
+    libstemmer-devel \
+    libzstd-devel \
+    lz4-devel \
+    msgpack-devel \
+    openssl-devel \
+    php-devel \
+    pkgconfig \
+    ruby \
+    simdjson-devel \
+    tar \
+    wget \
+    which \
+    xxhash-devel \
+    zlib-devel
+```
+
+You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/).
+
+#### macOS
+
+Install [Xcode](https://developer.apple.com/xcode/).
+
+Execute the following command in the extracted source code directory.
+
+```console
+$ cd groonga-14.0.9
+$ brew bundle
+```
 
 ### Windows
 

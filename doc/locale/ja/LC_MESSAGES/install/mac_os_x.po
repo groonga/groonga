@@ -40,14 +40,8 @@ msgstr "それからMeCabの辞書をインストール・設定します。"
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install `Xcode <https://developer.apple.com/xcode/>`_."
-msgstr "`Xcode <https://developer.apple.com/xcode/>`_ をインストールしてください。"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
-
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr "configureを実行します（ ``configure`` のオプションについては :ref:`source-configure` を参照してください）::"
-
-msgid "Build::"
-msgstr "ビルド::"
+msgid "See :doc:`/install/cmake` ."
+msgstr "詳細は :doc:`/install/cmake` を参照してください。"
