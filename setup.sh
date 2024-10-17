@@ -85,7 +85,7 @@ if [ -f /etc/debian_version ]; then
 elif type dnf > /dev/null 2>&1; then
   setup_with_dnf
 elif type brew > /dev/null 2>&1; then
-  (cd $(dirname ${0}) && brew bundle)
+  brew bundle --file="$(dirname "${0}")/Brewfile"
 else
   echo "This OS setup is not supported."
   exit 1
