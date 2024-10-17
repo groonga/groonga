@@ -27,7 +27,6 @@ RUN \
     mecab-devel \
     msgpack-devel \
     openssl-devel \
-    php-devel \
     pkgconfig \
     python2-devel \
     rapidjson-devel \

@@ -20,7 +20,6 @@ RUN \
     libzstd-devel \
     lz4-devel \
     openssl-devel \
-    php-devel \
     pkgconfig \
     ruby \
     tar \
