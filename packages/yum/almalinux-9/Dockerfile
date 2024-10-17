@@ -31,7 +31,6 @@ RUN \
     lz4-devel \
     msgpack-devel \
     openssl-devel \
-    php-devel \
     pkgconfig \
     ruby \
     simdjson-devel \
