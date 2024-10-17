@@ -23,53 +23,70 @@ else
   SUDO=
 fi
 
-if [ -f /etc/debian_version ]; then
-  ${SUDO} apt update
-  ${SUDO} apt install -y -V lsb-release wget
+function setup_apt () {
+  if [ -f /etc/debian_version ]; then
+    ${SUDO} apt update
+    ${SUDO} apt install -y -V lsb-release wget
 
-  wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-  ${SUDO} apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-  rm apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-  ${SUDO} apt update
-fi
+    wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+    ${SUDO} apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+    rm apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+    ${SUDO} apt update
+  fi
 
-if type lsb_release  > /dev/null 2>&1; then
-  distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
-  code_name=$(lsb_release --codename --short)
+  if type lsb_release > /dev/null 2>&1; then
+    distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
+    code_name=$(lsb_release --codename --short)
+  else
+    distribution=unknown
+    code_name=unknown
+  fi
+
+  package_names=()
+  case "${distribution}-${code_name}" in
+    debian-*|ubuntu-*)
+      package_names+=(
+        ccache
+        cmake
+        g++
+        gcc
+        gettext
+        libarrow-dev
+        libedit-dev
+        liblz4-dev
+        libmecab-dev
+        libmsgpack-dev
+        libsimdjson-dev
+        libstemmer-dev
+        libxxhash-dev
+        libzstd-dev
+        ninja-build
+        pkg-config
+        python3-pip
+        rapidjson-dev
+        zlib1g-dev
+      )
+      ;;
+  esac
+
+  case "${distribution}-${code_name}" in
+    debian-*|ubuntu-*)
+      ${SUDO} apt install -y -V "${package_names[@]}"
+      ;;
+  esac
+}
+
+function setup_dnf () {
+  echo 'todo dnf setup'
+}
+
+if type apt > /dev/null 2>&1; then
+  setup_apt
+elif type dnf > /dev/null 2>&1; then
+  setup_dnf
+elif type brew > /dev/null 2>&1; then
+  (cd $(dirname ${0}) && brew bundle)
 else
-  distribution=unknown
-  code_name=unknown
+  echo "This OS setup is not supported."
+  exit 1
 fi
-
-package_names=()
-case "${distribution}-${code_name}" in
-  debian-*|ubuntu-*)
-    package_names+=(
-      ccache
-      cmake
-      g++
-      gcc
-      gettext
-      libarrow-dev
-      libedit-dev
-      liblz4-dev
-      libmecab-dev
-      libmsgpack-dev
-      libsimdjson-dev
-      libstemmer-dev
-      libxxhash-dev
-      libzstd-dev
-      ninja-build
-      pkg-config
-      python3-pip
-      rapidjson-dev
-      zlib1g-dev
-    )
-    ;;
-esac
-
-case "${distribution}-${code_name}" in
-  debian-*|ubuntu-*)
-    ${SUDO} apt install -y -V "${package_names[@]}"
-    ;;
-esac
