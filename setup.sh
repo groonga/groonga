@@ -23,7 +23,7 @@ else
   SUDO=
 fi
 
-function setup_apt () {
+function setup_with_apt () {
   if [ -f /etc/debian_version ]; then
     ${SUDO} apt update
     ${SUDO} apt install -y -V lsb-release wget
@@ -76,14 +76,14 @@ function setup_apt () {
   esac
 }
 
-function setup_dnf () {
+function setup_with_dnf () {
   echo 'todo dnf setup'
 }
 
 if [ -f /etc/debian_version ]; then
-  setup_apt
+  setup_with_apt
 elif type dnf > /dev/null 2>&1; then
-  setup_dnf
+  setup_with_dnf
 elif type brew > /dev/null 2>&1; then
   (cd $(dirname ${0}) && brew bundle)
 else
