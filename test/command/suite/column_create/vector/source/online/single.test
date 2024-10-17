@@ -12,7 +12,7 @@ load --table Notes
 {"title": " "}
 ]
 
-select Notes title_terms \
+select Notes \
   --query _id:2 \
   --output_columns title_terms
 
