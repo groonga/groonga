@@ -22,8 +22,8 @@ msgstr "その他: CMakeを使ってビルド"
 msgid "This document describes how to build Groonga from source with CMake."
 msgstr "このドキュメントはCMakeを使ってソースコードからGroongaをビルドする方法を説明します。"
 
-msgid "To get more details about installing Groonga from the source with CMake on a specific environment, find the document for the specific environment from :doc:`/install`."
-msgstr ":doc:`/install` にある特定環境用のドキュメントに、CMakeでビルドする際のその環境向けのより詳細な情報があります。特定環境用のドキュメントがある場合は、まずそちらを参照してください。"
+msgid "To get more details about installing Groonga from the source with CMake on a specific environment, find the document for the specific environment from {doc}`/install`."
+msgstr "{doc}`/install` にある特定環境用のドキュメントに、CMakeでビルドする際のその環境向けのより詳細な情報があります。特定環境用のドキュメントがある場合は、まずそちらを参照してください。"
 
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
@@ -37,20 +37,20 @@ msgstr ""
 msgid "GNU/Linux or UNIX"
 msgstr "GNU/LinuxまたはUNIX"
 
-msgid "`CMake <http://www.cmake.org/>`_"
+msgid "[CMake](http://www.cmake.org/)"
 msgstr ""
 
 msgid "Windows"
 msgstr ""
 
-msgid "`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/vs/community/>`_"
-msgstr "`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/ja/vs/community/>`_"
+msgid "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)"
+msgstr "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/ja/vs/community/)"
 
 msgid "Download source"
 msgstr "ソースコードのダウンロード"
 
-msgid "You can get the latest source from `packages.groonga.org <https://packages.groonga.org/source/groonga>`_."
-msgstr "`packages.groonga.org <https://packages.groonga.org/source/groonga>`_ から最新のソースコードをダウンロードできます。"
+msgid "You can get the latest source from [packages.groonga.org](https://packages.groonga.org/source/groonga)."
+msgstr "[packages.groonga.org](https://packages.groonga.org/source/groonga)から最新のソースコードをダウンロードできます。"
 
 msgid "Download the latest zipped source from packages.groonga.org."
 msgstr "最新のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
@@ -61,20 +61,20 @@ msgstr ""
 msgid "Then extract it."
 msgstr "その後、アーカイブを展開します。"
 
-msgid "Run ``cmake``"
-msgstr "``cmake`` を実行"
+msgid "Run `cmake`"
+msgstr "`cmake` を実行"
 
-msgid "You need to generate build files such as ``Makefile`` for your environment."
-msgstr "``Makefile`` のような、あなたの環境用のビルド用ファイルを作る必要があります。"
+msgid "You need to generate build files such as `Makefile` for your environment."
+msgstr "`Makefile` のような、あなたの環境用のビルド用ファイルを作る必要があります。"
 
-msgid "You can custom your build configuration by passing options to ``cmake``."
-msgstr "``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
+msgid "You can custom your build configuration by passing options to `cmake`."
+msgstr "`cmake` へオプションを渡してビルドパラメーターをカスタマイズできます。"
 
 msgid "Command example for GNU/Linux or UNIX."
 msgstr "GNU/Linux or UNIXでのコマンド例"
 
-msgid "``-S`` option"
-msgstr "``-S`` オプション"
+msgid "`-S` option"
+msgstr "`-S`オプション"
 
 msgid "Specify the path of the Groonga source code directory"
 msgstr "Groongaのソースコードディレクトリを指定します"
@@ -82,8 +82,8 @@ msgstr "Groongaのソースコードディレクトリを指定します"
 msgid "Specify the directory from which you downloaded and extracted the files"
 msgstr "ダウンロードして展開したディレクトリを指定します"
 
-msgid "``-B`` option"
-msgstr "``-B`` オプション"
+msgid "`-B` option"
+msgstr "`-B`オプション"
 
 msgid "Specify the directory to be used for build"
 msgstr "ビルドディレクトリを指定します。"
@@ -94,8 +94,8 @@ msgstr "Groongaのソースコードディテクトリの外部にビルド専�
 msgid "CMake presets"
 msgstr "CMake プリセット"
 
-msgid "Using CMake version 3.21.0 or higher, some presets for various build configurations are provided. We have provided a combination of frequently used CMake options, so you can basically use this presets. Use CMake options only if you want to make custom settings. You can get a list of the available presets using ``cmake --list-presets`` ."
-msgstr "CMakeの3.21.0以降を使うと、ビルド用の設定をまとめたプリセットが利用できます。よく使われるCMakeのオプションの組み合わせが用意してあるので、基本的にはそれらのプリセットをご利用ください。CMakeオプションは個別に設定したい場合にご利用ください。利用できるプリセットは ``cmake --list-presets`` で確認できます。"
+msgid "Using CMake version 3.21.0 or higher, some presets for various build configurations are provided. We have provided a combination of frequently used CMake options, so you can basically use this presets. Use CMake options only if you want to make custom settings. You can get a list of the available presets using `cmake --list-presets` ."
+msgstr "CMakeの3.21.0以降を使うと、ビルド用の設定をまとめたプリセットが利用できます。よく使われるCMakeのオプションの組み合わせが用意してあるので、基本的にはそれらのプリセットをご利用ください。CMakeオプションは個別に設定したい場合にご利用ください。利用できるプリセットは `cmake --list-presets` で確認できます。"
 
 msgid "CMake options"
 msgstr "CMake オプション"
@@ -103,7 +103,7 @@ msgstr "CMake オプション"
 msgid "This section describes important options of CMake."
 msgstr "このセクションはCMakeの重要なオプションについて記載しています。"
 
-msgid "``-G GENERATOR``"
+msgid "`-G GENERATOR`"
 msgstr ""
 
 msgid "Specify a generator."
@@ -112,49 +112,49 @@ msgstr "ジェネレータを指定します。"
 msgid "The default is depending on the system."
 msgstr "デフォルトはシステムよって異なります。"
 
-msgid "You can check the default generator and available generators by ``cmake --help``."
-msgstr "``cmake --help`` でデフォルトのジェネレータと、利用可能なジェネレータを確認することができます。"
+msgid "You can check the default generator and available generators by `cmake --help`."
+msgstr "`cmake --help` でデフォルトのジェネレータと、利用可能なジェネレータを確認することができます。"
 
-msgid "Here is an example how to specify ``Unix Makefiles`` on GNU/Linux or UNIX."
-msgstr "以下はGNU/LinuxまたはUNIXで ``Unix Makefiles`` をジェネレータに指定する例です。"
+msgid "Here is an example how to specify `Unix Makefiles` on GNU/Linux or UNIX."
+msgstr "以下はGNU/LinuxまたはUNIXで `Unix Makefiles` をジェネレータに指定する例です。"
 
-msgid "Here is an example how to specify ``Visual Studio 17 2022 x64`` as a generator on Windows. You can specify a target platform name (architecture) with the ``-A`` option."
-msgstr "以下はWindowsで ``Visual Studio 17 2022 x64`` をジェネレータに指定する例です。``-A`` オプションでプラットフォーム（アーキテクチャ）を指定できます。"
+msgid "Here is an example how to specify `Visual Studio 17 2022 x64` as a generator on Windows. You can specify a target platform name (architecture) with the `-A` option."
+msgstr "以下はWindowsで `Visual Studio 17 2022 x64` をジェネレータに指定する例です。`-A` オプションでプラットフォーム（アーキテクチャ）を指定できます。"
 
-msgid "``-DCMAKE_INSTALL_PREFIX``"
+msgid "`-DCMAKE_INSTALL_PREFIX`"
 msgstr ""
 
 msgid "Specify a directory to install Groonga."
 msgstr "Groongaのインストール先のディレクトリ/フォルダを指定します。"
 
-msgid "The default is depending on the system, e.g. ``/usr/local`` or ``C:/Program Files/groonga``."
-msgstr "デフォルトはシステムにより異なります。例えば、 ``/usr/local`` や ``C:/Program Files/groonga`` です。"
+msgid "The default is depending on the system, e.g. `/usr/local` or `C:/Program Files/groonga`."
+msgstr "デフォルトはシステムにより異なります。例えば、 `/usr/local` や `C:/Program Files/groonga` です。"
 
-msgid "Here is an example how to specify ``/tmp/local/`` as an install directory on GNU/Linux or UNIX."
-msgstr "以下はGNU/LinuxまたはUNIXで `/tmp/local/`` をインストール先として指定する例です。"
+msgid "Here is an example how to specify `/tmp/local/` as an install directory on GNU/Linux or UNIX."
+msgstr "以下はGNU/LinuxまたはUNIXで `/tmp/local/` をインストール先として指定する例です。"
 
-msgid "Here is an example how to specify ``C:\\Groonga`` as an install directory on Windows."
-msgstr "以下はWindowsで ``C:\\Groonga`` をインストール先として指定する例です。"
+msgid "Here is an example how to specify `C:\\Groonga` as an install directory on Windows."
+msgstr "以下はWindowsで `C:\\Groonga` をインストール先として指定する例です。"
 
-msgid "``-DGRN_WITH_MRUBY``"
+msgid "`-DGRN_WITH_MRUBY`"
 msgstr ""
 
 msgid "Enables mruby support."
 msgstr "mrubyサポートを有効化します。"
 
-msgid "You can use the :doc:`/reference/sharding` plugin and :doc:`/reference/commands/ruby_eval` with the mruby support."
-msgstr "mrubyサポートを有効にすることで :doc:`/reference/sharding` プラグインと :doc:`/reference/commands/ruby_eval` が使用可能になります。"
+msgid "You can use the {doc}`/reference/sharding` plugin and {doc}`/reference/commands/ruby_eval` with the mruby support."
+msgstr "mrubyサポートを有効にすることで {doc}`/reference/sharding` プラグインと {doc}`/reference/commands/ruby_eval` が使用可能になります。"
 
-msgid "The default is ``OFF``."
-msgstr "デフォルトは ``OFF`` です。"
+msgid "The default is `OFF`."
+msgstr "デフォルトは `OFF` です。"
 
-msgid "Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must install some required libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ for more details."
-msgstr "mrubyサポートが有効な場合、Groongaは同梱しているmrubyをビルドします。そのため、mrubyをビルドするのに必要なライブラリをインストールする必要があります。詳細は `mrubyのコンパイルガイド <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ を参照してください。"
+msgid "Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must install some required libraries. See the [mruby compile guide](https://github.com/mruby/mruby/blob/master/doc/guides/compile.md) for more details."
+msgstr "mrubyサポートが有効な場合、Groongaは同梱しているmrubyをビルドします。そのため、mrubyをビルドするのに必要なライブラリをインストールする必要があります。詳細は [mrubyのコンパイルガイド](https://github.com/mruby/mruby/blob/master/doc/guides/compile.md) を参照してください。"
 
 msgid "Here is an example how to enable the mruby support."
 msgstr "以下はmrubyサポートを有効にする例です。"
 
-msgid "``-DGRN_WITH_DEBUG``"
+msgid "`-DGRN_WITH_DEBUG`"
 msgstr ""
 
 msgid "Enables debug options for C/C++ compiler. It's useful for debugging on debugger such as GDB and LLDB."
@@ -163,44 +163,44 @@ msgstr "C/C++コンパイラーのデバッグオプションを有効にしま�
 msgid "Here is an example how to enable debug options."
 msgstr "以下はデバッグオプションを有効にする例です。"
 
-msgid "``-DGRN_WITH_APACHE_ARROW``"
+msgid "`-DGRN_WITH_APACHE_ARROW`"
 msgstr ""
 
 msgid "Enables Apache Arrow support."
 msgstr "Apache Arrowサポートを有効化します。"
 
-msgid "In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in :ref:`select-n-workers` and :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support."
-msgstr "Apache Arrowサポートを有効化すると、Apache ArrowのIPC streaming formatが使えるだけでなく、 :ref:`select-n-workers` や :doc:`/reference/functions/query_parallel_or` でマルチスレッドで処理できるようになります。"
+msgid "In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in {ref}`select-n-workers` and {doc}`/reference/functions/query_parallel_or` with the Apache Arrow support."
+msgstr "Apache Arrowサポートを有効化すると、Apache ArrowのIPC streaming formatが使えるだけでなく、 {ref}`select-n-workers` や {doc}`/reference/functions/query_parallel_or` でマルチスレッドで処理できるようになります。"
 
-msgid "You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_."
-msgstr "Apache Arrowは `公式のドキュメントの手順 <https://arrow.apache.org/install/>`_ にしたがってインストールしてください。"
+msgid "You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/)."
+msgstr "Apache Arrowは [公式のドキュメントの手順](https://arrow.apache.org/install/) にしたがってインストールしてください。"
 
 msgid "Here is an example how to enable the Apache Arrow support."
 msgstr "以下はApache Arrowサポートを有効にする例です。"
 
-msgid "If you install Apache Arrow manually, you need to use the :ref:`cmake-options-cmake-prefix-path` option."
-msgstr "Apache Arrowを手動でインストールしている場合、 :ref:`cmake-options-cmake-prefix-path` オプションを指定してください。"
+msgid "If you install Apache Arrow manually, you need to use the {ref}`cmake-options-cmake-prefix-path` option."
+msgstr "Apache Arrowを手動でインストールしている場合、 {ref}`cmake-options-cmake-prefix-path` オプションを指定してください。"
 
-msgid "``-DCMAKE_PREFIX_PATH=PATHS``"
+msgid "`-DCMAKE_PREFIX_PATH=PATHS`"
 msgstr ""
 
-msgid "Adds search paths for ``.cmake`` files."
-msgstr "``.cmake`` ファイルの検索パスを追加します。"
+msgid "Adds search paths for `.cmake` files."
+msgstr "`.cmake` ファイルの検索パスを追加します。"
 
-msgid "You can specify multiple path separating them with ``:`` on GNU/Linux or UNIX, ``;`` on Windows."
-msgstr "GNU/LinuxまたはUNIXでは ``:`` で、Windowsでは ``;`` 区切ることで複数のパスを指定できます。"
+msgid "You can specify multiple path separating them with `:` on GNU/Linux or UNIX, `;` on Windows."
+msgstr "GNU/LinuxまたはUNIXでは `:` で、Windowsでは `;` 区切ることで複数のパスを指定できます。"
 
-msgid "In case of using libraries installed via a package manager, you do not need to specify this parameter. It is because ``.cmake`` files for those libraries are in the default search paths of CMake."
-msgstr "パッケージ管理システムを使用してインストールしたライブラリを使いたい場合は、 CMake のデフォルトの検索パスに ``.cmake`` ファイルが存在するためこのパラメータを指定する必要はありません。"
+msgid "In case of using libraries installed via a package manager, you do not need to specify this parameter. It is because `.cmake` files for those libraries are in the default search paths of CMake."
+msgstr "パッケージ管理システムを使用してインストールしたライブラリを使いたい場合は、 CMake のデフォルトの検索パスに `.cmake` ファイルが存在するためこのパラメータを指定する必要はありません。"
 
-msgid "In case of using libraries installed in non-system directories such as ``/usr``, you need to specify ``.cmake`` file paths of those libraries by this parameter."
-msgstr "使用してインストールしたライブラリを使いたい場合は、 CMake のデフォルトの検索パスに ``.cmake`` ファイルが存在するためこのパラメータを指定する必要はありません。"
+msgid "In case of using libraries installed in non-system directories such as `/usr`, you need to specify `.cmake` file paths of those libraries by this parameter."
+msgstr "`/usr`のようなシステム以外のディレクトリにインストールされたライブラリを使用する場合は、このパラメータでライブラリの `.cmake` ファイルパスを指定する必要があります。"
 
-msgid "Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake`` on GNU/Linux or UNIX."
-msgstr "以下はGNU/LinuxまたはUNIXで ``/tmp/arrow/cmake/arrowConfig.cmake`` の ``.cmake`` ファイルを指定する例です。"
+msgid "Here is an example how to specify a `.cmake` file path for `/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake` on GNU/Linux or UNIX."
+msgstr "以下はGNU/LinuxまたはUNIXで `/tmp/arrow/cmake/arrowConfig.cmake` の `.cmake` ファイルを指定する例です。"
 
-msgid "Here is an example how to specify a ``.cmake`` file path for ``C:\\arrow\\lib\\cmake\\Arrow\\ArrowConfig.cmake`` on Windows."
-msgstr "以下はWindowsで ``C:\\arrow\\lib\\cmake\\Arrow\\ArrowConfig.cmake`` の ``.cmake`` ファイルを指定する例です。"
+msgid "Here is an example how to specify a `.cmake` file path for `C:\\arrow\\lib\\cmake\\Arrow\\ArrowConfig.cmake` on Windows."
+msgstr "以下はWindowsで `C:\\arrow\\lib\\cmake\\Arrow\\ArrowConfig.cmake` の `.cmake` ファイルを指定する例です。"
 
 msgid "Build and install Groonga"
 msgstr "ビルドおよびインストール"
@@ -211,14 +211,14 @@ msgstr "これで、Groongaをビルドできるようになりました。"
 msgid "Here is a command line to build and install Groonga."
 msgstr "以下はGroongaをビルド、インストールするコマンドラインです。"
 
-msgid "Here is how it is to do it when Visual Studio is specified as the generator, like ``-G \"Visual Studio 17 2022\"`` ."
-msgstr "以下は ``-G \"Visual Studio 17 2022\"`` のようにジェネレーターでVisual Studioを指定したときの手順です。"
+msgid "Here is how it is to do it when Visual Studio is specified as the generator, like `-G \"Visual Studio 17 2022\"` ."
+msgstr "以下は `-G \"Visual Studio 17 2022\"` のようにジェネレーターでVisual Studioを指定したときの手順です。"
 
-msgid "You can use Visual Studio or ``cmake --build``."
-msgstr "Visual Studioか ``cmake --build`` を使用できます。"
+msgid "You can use Visual Studio or `cmake --build`."
+msgstr "Visual Studioか `cmake --build` を使用できます。"
 
-msgid "Here is a command line to build and install Groonga by ``cmake --build``."
-msgstr "以下は ``cmake --build`` を使ってGroongaをビルド、インストールするコマンドラインです。"
+msgid "Here is a command line to build and install Groonga by `cmake --build`."
+msgstr "以下は `cmake --build` を使ってGroongaをビルド、インストールするコマンドラインです。"
 
-msgid "You should specify ``--config Debug`` instead of ``--config Release`` when debugging."
-msgstr "デバッグをする場合は、 ``--config Release`` の代わりに ``--config Debug`` を指定してください。"
+msgid "You should specify `--config Debug` instead of `--config Release` when debugging."
+msgstr "デバッグをする場合は、 `--config Release` の代わりに `--config Debug` を指定してください。"

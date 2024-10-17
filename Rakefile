@@ -204,6 +204,7 @@ namespace :release do
                              version,
                              new_release_date,
                              "doc/source/install.rst",
+                             *Dir.glob("doc/source/install/*.md"),
                              *Dir.glob("doc/source/install/*.rst"),
                              *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
                              File.join(groonga_org_path, "_config.yml"))
@@ -216,6 +217,7 @@ namespace :release do
       sh("git",
          "add",
          "doc/source/install.rst",
+         *Dir.glob("doc/source/install/*.md"),
          *Dir.glob("doc/source/install/*.rst"),
          *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
          "packages/debian/changelog",
