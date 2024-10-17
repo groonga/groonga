@@ -80,7 +80,7 @@ function setup_dnf () {
   echo 'todo dnf setup'
 }
 
-if type apt > /dev/null 2>&1; then
+if [ -f /etc/debian_version ]; then
   setup_apt
 elif type dnf > /dev/null 2>&1; then
   setup_dnf
