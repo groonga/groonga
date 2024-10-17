@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -173,7 +173,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja);
 grn_rc
 grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja);
 grn_rc
-grn_ja_warm(grn_ctx *ctx, grn_ja *ra);
+grn_ja_warm(grn_ctx *ctx, grn_ja *ja);
 
 #define GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE 16
 
