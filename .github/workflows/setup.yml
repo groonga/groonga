@@ -66,7 +66,7 @@ concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
 jobs:
-  test:
+  linux:
     name: Test
     runs-on: ubuntu-latest
     strategy:
@@ -112,3 +112,16 @@ jobs:
           sudo incus exec target -- /host/build.sh /host /tmp/local /tmp/build
           sudo incus stop target
           sudo incus delete target
+  macos:
+    name: Test (macOS)
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup
+        run: |
+          ./setup.sh
+          ./build.sh ./ /tmp/build /tmp/local
