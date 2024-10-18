@@ -4290,6 +4290,11 @@ grn_output_envelope_open(grn_ctx *ctx, grn_obj *output)
 
       bool is_stream_mode = true;
       bool have_body = true;
+      if (ctx->rc == GRN_CANCEL) {
+        // When canceled, Body is empty.
+        // See grn_ctx_recv().
+        have_body = false;
+      }
       if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
         grn_output_envelope_open_json_v1(ctx,
                                          output,
@@ -4340,6 +4345,11 @@ grn_output_envelope_close(
 
       bool is_stream_mode = true;
       bool have_body = true;
+      if (ctx->rc == GRN_CANCEL) {
+        // When canceled, Body is empty.
+        // See grn_ctx_recv().
+        have_body = false;
+      }
       if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
         grn_output_envelope_close_json_v1(ctx,
                                           output,
