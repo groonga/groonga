@@ -836,6 +836,11 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
       if (grn_obj_is_proc(ctx, vp->ptr) || grn_obj_is_table(ctx, vp->ptr)) {
         /* Defer */
       } else {
+        if (vp->ptr->header.type == GRN_COLUMN_VAR_SIZE) {
+          grn_ja *ja = (grn_ja *)(vp->ptr);
+          /* This is already closed by the above ctx->impl->values loop. */
+          ja->parsed_generator = NULL;
+        }
         grn_obj_close(ctx, vp->ptr);
       }
     }
