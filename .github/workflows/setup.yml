@@ -67,7 +67,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   linux:
-    name: Test
+    name: Linux
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -113,7 +113,7 @@ jobs:
           sudo incus stop target
           sudo incus delete target
   macos:
-    name: Test (macOS)
+    name: macOS
     runs-on: macos-latest
     strategy:
       fail-fast: false
