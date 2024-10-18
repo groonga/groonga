@@ -108,6 +108,8 @@ struct _grn_ja {
   grn_db_obj obj;
   grn_io *io;
   struct grn_ja_header *header;
+  grn_raw_string generator;
+  grn_obj *parsed_generator;
 };
 
 void
@@ -174,6 +176,9 @@ grn_rc
 grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja);
 grn_rc
 grn_ja_warm(grn_ctx *ctx, grn_ja *ja);
+
+grn_rc
+grn_ja_set_generator(grn_ctx *ctx, grn_ja *ja, grn_raw_string generator);
 
 #define GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE 16
 

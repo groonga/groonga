@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -930,6 +930,8 @@ _grn_ja_create(grn_ctx *ctx,
 
   ja->io = io;
   ja->header = header;
+  GRN_RAW_STRING_INIT(ja->generator);
+  ja->parsed_generator = NULL;
   SEGMENT_EINFO_ON(ja, 0, 0);
   header->element_segs[0] = 0;
   return ja;
@@ -1026,6 +1028,8 @@ grn_ja_open(grn_ctx *ctx, const char *path)
 
   ja->io = io;
   ja->header = header;
+  GRN_RAW_STRING_INIT(ja->generator);
+  ja->parsed_generator = NULL;
 
   return ja;
 }
@@ -1074,6 +1078,12 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
     grn_obj_flush(ctx, (grn_obj *)ja);
   }
   rc = grn_io_close(ctx, ja->io);
+  if (ja->generator.value) {
+    GRN_FREE((char *)(ja->generator.value));
+  }
+  if (ja->parsed_generator) {
+    grn_obj_close(ctx, ja->parsed_generator);
+  }
   GRN_FREE(ja->header);
   GRN_FREE(ja);
   return rc;
@@ -1099,9 +1109,11 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
   const char *io_path;
-  char *path;
+  char *path = NULL;
   unsigned int max_element_size;
   uint32_t flags;
+  grn_raw_string generator;
+  GRN_RAW_STRING_INIT(generator);
   if ((io_path = grn_io_path(ja->io)) && *io_path != '\0') {
     if (!(path = GRN_STRDUP(io_path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
@@ -1112,6 +1124,7 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   }
   max_element_size = ja->header->max_element_size;
   flags = ja->header->flags;
+  generator = ja->generator;
   if ((rc = grn_io_close(ctx, ja->io))) {
     goto exit;
   }
@@ -1123,11 +1136,17 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   if (rc == GRN_SUCCESS) {
     if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
       rc = GRN_UNKNOWN_ERROR;
+      goto exit;
     }
+    ja->generator = generator;
+    generator.value = NULL;
   }
 exit:
   if (path) {
     GRN_FREE(path);
+  }
+  if (generator.value) {
+    GRN_FREE((char *)(generator.value));
   }
   return rc;
 }
@@ -7555,6 +7574,36 @@ grn_rc
 grn_ja_warm(grn_ctx *ctx, grn_ja *ja)
 {
   return grn_io_warm(ctx, ja->io);
+}
+
+grn_rc
+grn_ja_set_generator(grn_ctx *ctx, grn_ja *ja, grn_raw_string generator)
+{
+  if (GRN_RAW_STRING_EQUAL(ja->generator, generator)) {
+    return GRN_SUCCESS;
+  }
+
+  if (ja->generator.length > 0) {
+    GRN_FREE((char *)(ja->generator.value));
+    GRN_RAW_STRING_INIT(ja->generator);
+  }
+  if (ja->parsed_generator) {
+    grn_obj_close(ctx, ja->parsed_generator);
+    ja->parsed_generator = NULL;
+  }
+  if (generator.length > 0) {
+    ja->generator.value = GRN_MALLOC(generator.length);
+    if (!ja->generator.value) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[ja][set][generator] failed to copy generator");
+      return ctx->rc;
+    }
+    grn_memcpy((char *)(ja->generator.value),
+               generator.value,
+               generator.length);
+    ja->generator.length = generator.length;
+  }
+  return GRN_SUCCESS;
 }
 
 /* grn_ja_reader */
