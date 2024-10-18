@@ -33,11 +33,12 @@ typedef struct {
 
 typedef struct _grn_expr_executor grn_expr_executor;
 
-typedef double (*grn_expr_executor_scorer_func)(grn_ctx *ctx,
-                                                grn_expr_executor *executor,
-                                                grn_id id,
-                                                grn_obj *args,
-                                                grn_expr_executor_scorer_data *data);
+typedef double (*grn_expr_executor_scorer_func)(
+  grn_ctx *ctx,
+  grn_expr_executor *executor,
+  grn_id id,
+  grn_obj *args,
+  grn_expr_executor_scorer_data *data);
 
 typedef struct {
   uint32_t codes_start_offset;
@@ -128,20 +129,15 @@ grn_expr_executor_init(grn_ctx *ctx,
                        grn_expr_executor *executor,
                        grn_obj *expr);
 grn_rc
-grn_expr_executor_fin(grn_ctx *ctx,
-                      grn_expr_executor *executor);
+grn_expr_executor_fin(grn_ctx *ctx, grn_expr_executor *executor);
 
 grn_expr_executor *
-grn_expr_executor_open(grn_ctx *ctx,
-                       grn_obj *expr);
+grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr);
 grn_rc
-grn_expr_executor_close(grn_ctx *ctx,
-                        grn_expr_executor *executor);
+grn_expr_executor_close(grn_ctx *ctx, grn_expr_executor *executor);
 
 grn_obj *
-grn_expr_executor_exec(grn_ctx *ctx,
-                       grn_expr_executor *executor,
-                       grn_id id);
+grn_expr_executor_exec(grn_ctx *ctx, grn_expr_executor *executor, grn_id id);
 
 grn_rc
 grn_expr_executor_exec_batch(grn_ctx *ctx,
