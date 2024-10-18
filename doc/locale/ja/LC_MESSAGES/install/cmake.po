@@ -31,26 +31,14 @@ msgstr "以下は、GNU/Linux、UNIX、Windows向けの必要なソフトウェ�
 msgid "GNU/Linux or UNIX"
 msgstr "GNU/LinuxまたはUNIX"
 
-msgid "Debian GNU/Linux, Ubuntu"
-msgstr ""
-
 msgid "Execute `setup.sh` included in the source code."
 msgstr "ソースコードに含まれる`setup.sh`を実行してください。"
 
 msgid "If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`."
 msgstr "`groonga-14.0.9.tar.gz`を展開した場合は`groonga-14.0.9/setup.sh`がそのスクリプトです。"
 
-msgid "Amazon Linux 2023"
-msgstr ""
-
-msgid "You can run the following commands to install the required packages."
-msgstr "以下のコマンドを実行して必要なパッケージをインストールします。"
-
-msgid "You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/)."
-msgstr "Apache Arrowは [公式のドキュメントの手順](https://arrow.apache.org/install/) にしたがってインストールしてください。"
-
-msgid "AlmaLinux 9"
-msgstr ""
+msgid "`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023."
+msgstr "`setup.sh`はDebian GNU/Linux、Ubuntu、AlmaLinux、Amazon Linux 2023をサポートしています。"
 
 msgid "macOS"
 msgstr ""
@@ -192,6 +180,9 @@ msgstr "Apache Arrowサポートを有効化します。"
 
 msgid "In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in {ref}`select-n-workers` and {doc}`/reference/functions/query_parallel_or` with the Apache Arrow support."
 msgstr "Apache Arrowサポートを有効化すると、Apache ArrowのIPC streaming formatが使えるだけでなく、 {ref}`select-n-workers` や {doc}`/reference/functions/query_parallel_or` でマルチスレッドで処理できるようになります。"
+
+msgid "You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/)."
+msgstr "Apache Arrowは [公式のドキュメントの手順](https://arrow.apache.org/install/) にしたがってインストールしてください。"
 
 msgid "Here is an example how to enable the Apache Arrow support."
 msgstr "以下はApache Arrowサポートを有効にする例です。"

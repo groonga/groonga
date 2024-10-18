@@ -8,71 +8,11 @@ Here is depended software for GNU/Linux, UNIX and Windows.
 
 ### GNU/Linux or UNIX
 
-#### Debian GNU/Linux, Ubuntu
-
 Execute `setup.sh` included in the source code.
 
 If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
 
-#### Amazon Linux 2023
-
-You can run the following commands to install the required packages.
-
-```console
-$ sudo dnf groupinstall -y "Development Tools"
-$ sudo dnf install -y \
-    cmake \
-    intltool \
-    libedit-devel \
-    libevent-devel \
-    libstemmer-devel \
-    libzstd-devel \
-    lz4-devel \
-    openssl-devel \
-    pkgconfig \
-    ruby \
-    tar \
-    wget \
-    which \
-    xxhash-devel \
-    zlib-devel
-```
-
-You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/).
-
-#### AlmaLinux 9
-
-You can run the following commands to install the required packages.
-
-```console
-$ sudo dnf install -y epel-release 'dnf-command(config-manager)'
-$ sudo dnf config-manager --set-enabled crb
-$ sudo dnf groupinstall -y "Development Tools"
-$ sudo dnf install -y \
-    gcc-toolset-12 \
-    ccache \
-    cmake \
-    intltool \
-    mecab-devel \
-    libedit-devel \
-    libevent-devel \
-    libstemmer-devel \
-    libzstd-devel \
-    lz4-devel \
-    msgpack-devel \
-    openssl-devel \
-    php-devel \
-    pkgconfig \
-    ruby \
-    simdjson-devel \
-    tar \
-    wget \
-    which \
-    xxhash-devel \
-    zlib-devel
-```
-
-You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/).
+`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023.
 
 #### macOS
 
