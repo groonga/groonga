@@ -45,4 +45,6 @@ Build from source
 
 You can build Groonga from the source with CMake.
 
+Build from source is for developers.
+
 See :doc:`/install/cmake`.

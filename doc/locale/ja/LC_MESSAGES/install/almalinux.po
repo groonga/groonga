@@ -52,17 +52,11 @@ msgstr "インストール::"
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install required packages to build Groonga::"
-msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
-
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr "configureを実行します（ ``configure`` のオプションについては :ref:`source-configure` を参照してください）::"
-
-msgid "Build::"
-msgstr "ビルド::"
+msgid "See :doc:`/install/cmake` ."
+msgstr "詳細は :doc:`/install/cmake` を参照してください。"
 
 msgid "``groonga`` package is the minimum set of fulltext search engine. If you want to use Groonga for server use, you can install additional preconfigured packages."
 msgstr "``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"
