@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3230,10 +3230,23 @@ grn_expr_executor_data_simple_proc_exec(
       switch (expr->codes[i_expr].op) {
       case GRN_OP_GET_VALUE:
         {
-          grn_obj *buffer = &(buffers[i_buffer++]);
-          GRN_BULK_REWIND(buffer);
-          grn_obj_get_value(ctx, expr->codes[i_expr].value, id, buffer);
-          args[i_arg] = buffer;
+          grn_obj *target = expr->codes[i_expr].value;
+          bool found = false;
+          auto n = GRN_RECORD_VECTOR_SIZE(&(executor->replace_ids));
+          for (size_t i = 0; i < n; ++i) {
+            auto target_id = GRN_RECORD_VALUE_AT(&(executor->replace_ids), i);
+            if (target_id == DB_OBJ(target)->id) {
+              args[i_arg] = GRN_PTR_VALUE_AT(&(executor->replace_values), i);
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            grn_obj *buffer = &(buffers[i_buffer++]);
+            GRN_BULK_REWIND(buffer);
+            grn_obj_get_value(ctx, target, id, buffer);
+            args[i_arg] = buffer;
+          }
           break;
         }
       case GRN_OP_PUSH:
@@ -4241,6 +4254,8 @@ grn_expr_executor_init(grn_ctx *ctx, grn_expr_executor *executor, grn_obj *expr)
 
   executor->expr = expr;
   executor->variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+  GRN_RECORD_INIT(&(executor->replace_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&(executor->replace_values), GRN_OBJ_VECTOR, GRN_ID_NIL);
   if (grn_expr_executor_is_constant(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_constant;
     executor->fin = grn_expr_executor_fin_constant;
@@ -4333,6 +4348,24 @@ grn_expr_executor_close(grn_ctx *ctx, grn_expr_executor *executor)
 
   grn_expr_executor_fin(ctx, executor);
   GRN_FREE(executor);
+
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_rc
+grn_expr_executor_add_replace_value(grn_ctx *ctx,
+                                    grn_expr_executor *executor,
+                                    grn_id id,
+                                    grn_obj *value)
+{
+  GRN_API_ENTER;
+
+  if (!executor) {
+    GRN_API_RETURN(GRN_SUCCESS);
+  }
+
+  GRN_RECORD_PUT(ctx, &(executor->replace_ids), id);
+  GRN_PTR_PUT(ctx, &(executor->replace_values), value);
 
   GRN_API_RETURN(GRN_SUCCESS);
 }
