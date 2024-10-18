@@ -196,6 +196,8 @@ GRN_API bool
 grn_obj_have_source(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_generated_column(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_rc
 grn_obj_reindex(grn_ctx *ctx, grn_obj *obj);

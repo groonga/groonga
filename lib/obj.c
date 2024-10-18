@@ -1207,7 +1207,15 @@ grn_obj_have_source(grn_ctx *ctx, grn_obj *obj)
 bool
 grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)
 {
-  return grn_obj_is_vector_column(ctx, obj) && grn_obj_have_source(ctx, obj);
+  return grn_obj_is_vector_column(ctx, obj) && grn_obj_have_source(ctx, obj) &&
+         ((grn_ja *)obj)->generator.length == 0;
+}
+
+bool
+grn_obj_is_generated_column(grn_ctx *ctx, grn_obj *obj)
+{
+  return grn_obj_is_vector_column(ctx, obj) && grn_obj_have_source(ctx, obj) &&
+         ((grn_ja *)obj)->generator.length > 0;
 }
 
 static void
