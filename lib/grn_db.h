@@ -114,6 +114,7 @@ struct _grn_db {
 #define GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
 #define GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS 5
 #define GRN_SERIALIZED_SPEC_INDEX_EXPR   4
+#define GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR 4
 
 typedef struct {
   grn_obj_header header;
