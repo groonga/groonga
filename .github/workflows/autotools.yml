@@ -23,6 +23,7 @@ on:
       - 'plugins/**/*.cpp'
       - 'plugins/**/*.h'
       - 'plugins/**/*.rb'
+      - 'setup.sh'
       - 'src/**/*.c'
       - 'src/**/*.h'
       - 'test/command/**'
@@ -43,6 +44,7 @@ on:
       - 'lib/**/*.h'
       - 'lib/**/*.rb'
       - 'lib/**/*.rb'
+      - 'setup.sh'
       - 'plugins/**/*.c'
       - 'plugins/**/*.cpp'
       - 'plugins/**/*.h'
@@ -188,7 +190,7 @@ jobs:
           submodules: recursive
       - name: Install packages
         run: |
-          brew bundle
+          ./setup.sh
       - name: Prepare ccache
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
