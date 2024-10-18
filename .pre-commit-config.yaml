@@ -123,6 +123,7 @@ repos:
           ?lib/pat\.c|
           ?lib/proc/proc_column\.c|
           ?lib/proc/proc_distance\.c|
+          ?lib/proc/proc_dump\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/proc/proc_object\.c|
           ?lib/proc/proc_object_inspect\.c|
