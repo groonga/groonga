@@ -109,7 +109,7 @@ jobs:
           sudo incus launch ${{ matrix.image }} target
           sudo incus config device add target host disk source=$PWD path=/host
           sudo incus exec target -- /host/setup.sh
-          sudo incus exec target -- /host/build.sh /host /tmp/local /tmp/build
+          sudo incus exec target -- /host/build.sh /host /tmp/build /tmp/local
           sudo incus stop target
           sudo incus delete target
   macos:
