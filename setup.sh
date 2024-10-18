@@ -77,6 +77,17 @@ function setup_with_apt () {
 }
 
 function setup_with_dnf () {
+  os=$(cut -d: -f4 /etc/system-release-cpe)
+  case ${os} in
+    amazon)
+      os=amazon-linux
+      version=$(cut -d: -f6 /etc/system-release-cpe)
+      ;;
+    *) # For AlmaLinux
+      version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
+      ;;
+  esac
+
   package_names=(
     arrow-devel
     cmake
@@ -95,12 +106,18 @@ function setup_with_dnf () {
     xxhash-devel
     zlib-devel
   )
-  system_release=$(cat /etc/system-release | tr -d " ")
-  case "${system_release,,}" in
-    almalinuxrelease*)
+  case "${os}" in
+    almalinux)
       ${SUDO} dnf install -y epel-release "dnf-command(config-manager)"
-      ${SUDO} dnf install -y \
-        https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+      case "${version}" in
+        8)
+          ${SUDO} dnf config-manager --set-enabled powertools
+          ;;
+        9)
+          ${SUDO} dnf config-manager --set-enabled crb
+          ;;
+      esac
+
       package_names+=(
         ccache
         mecab-devel
@@ -108,27 +125,17 @@ function setup_with_dnf () {
         simdjson-devel
       )
       ;;
-    amazonlinuxrelease2023.*)
-      ${SUDO} dnf install -y \
-        https://apache.jfrog.io/artifactory/arrow/amazon-linux/$(cut -d: -f6 /etc/system-release-cpe)/apache-arrow-release-latest.rpm
+    amazon-linux)
       ;;
     *)
       echo "This OS setup is not supported."
       exit 1
       ;;
   esac
-  case "${system_release,,}" in
-    almalinuxrelease8.*)
-      ${SUDO} dnf config-manager --set-enabled powertools
-      ;;
-    almalinuxrelease9.*)
-      ${SUDO} dnf config-manager --set-enabled crb
-      ;;
-    amazonlinuxrelease2023.*)
-      ;;
-  esac
 
   ${SUDO} dnf update -y
+  ${SUDO} dnf install -y \
+    https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
   ${SUDO} dnf groupinstall -y "Development Tools"
   ${SUDO} dnf install -y "${package_names[@]}"
 }
