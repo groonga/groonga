@@ -23,14 +23,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
-
-   dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。
-
-   :param db: The target database.
-   :param id: The object (table, column and so on) ID to be deleted.
-   :param buffer: path string corresponding to the id will be set in this buffer.
-
 .. c:function:: grn_rc grn_obj_cast_by_id(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_bool add_record_if_not_exist)
 
    It casts value of ``source`` to value with type of
