@@ -20,7 +20,7 @@
 
 #include "grn.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
