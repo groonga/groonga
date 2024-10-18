@@ -62,25 +62,6 @@ Install groonga-normalizer-mysql package::
 Build from source
 -----------------
 
-Install required packages to build Groonga::
+Build from source is for developers.
 
-  % sudo dnf install -y https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm
-  % sudo dnf install -y wget gcc-c++ make mecab-devel
-
-Download source::
-
-  % wget https://packages.groonga.org/source/groonga/groonga-14.0.9.tar.gz
-  % tar xvzf groonga-14.0.9.tar.gz
-  % cd groonga-14.0.9
-
-Configure (see :ref:`source-configure` about ``configure`` options)::
-
-  % ./configure
-
-Build::
-
-  % make -j$(nproc)
-
-Install::
-
-  % sudo make install
+See :doc:`/install/cmake` .
