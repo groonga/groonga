@@ -50,7 +50,7 @@ grn_generated_column_build(grn_ctx *ctx, grn_obj *column)
   grn_obj_set_visibility(ctx, column, false);
   if (ctx->rc == GRN_SUCCESS) {
     grn_obj *generator = ((grn_ja *)(column))->parsed_generator;
-    grn_table_apply_expr(ctx,table,column, generator);
+    grn_table_apply_expr(ctx, table, column, generator);
   }
   if (ctx->rc == GRN_SUCCESS) {
     grn_obj_set_visibility(ctx, column, true);
