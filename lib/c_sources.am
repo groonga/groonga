@@ -19,6 +19,7 @@ libgroonga_c_sources =				\
 	file_lock.c				\
 	file_reader.c				\
 	float.c					\
+	generated_column.c			\
 	geo.c					\
 	grn.h					\
 	grn_accessor.h				\
@@ -46,6 +47,7 @@ libgroonga_c_sources =				\
 	grn_expr_executor.h			\
 	grn_file_lock.h				\
 	grn_float.h				\
+	grn_generated_column.h			\
 	grn_geo.h				\
 	grn_group.h				\
 	grn_hash.h				\

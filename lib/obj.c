@@ -1168,7 +1168,8 @@ grn_obj_set_visibility(grn_ctx *ctx, grn_obj *obj, bool is_visible)
   }
 
   if (!(grn_obj_is_index_column(ctx, obj) ||
-        grn_obj_is_token_column(ctx, obj))) {
+        grn_obj_is_token_column(ctx, obj) ||
+        grn_obj_is_generated_column(ctx, obj))) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect_limited(ctx, &inspected, obj);

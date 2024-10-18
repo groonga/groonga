@@ -69,6 +69,7 @@ repos:
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
           ?lib/geo\.c|
+          ?lib/generated_column\.c|
           ?lib/grn\.h|
           ?lib/grn_applier\.h|
           ?lib/grn_arrow\.h|
@@ -83,6 +84,7 @@ repos:
           ?lib/grn_expr\.h|
           ?lib/grn_expr_executor\.h|
           ?lib/grn_geo\.h|
+          ?lib/grn_generated_column\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
           ?lib/grn_language_model\.hpp|

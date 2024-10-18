@@ -39,6 +39,7 @@
 #include "grn_proc.h"
 #include "grn_plugin.h"
 #include "grn_geo.h"
+#include "grn_generated_column.h"
 #include "grn_scorers.h"
 #include "grn_snip.h"
 #include "grn_string.h"
@@ -2075,12 +2076,21 @@ grn_obj_default_set_value_hook(grn_ctx *ctx,
     if (target) {
       switch (target->header.type) {
       case GRN_COLUMN_VAR_SIZE:
-        grn_token_column_update(ctx,
-                                target,
-                                GRN_UINT32_VALUE(id),
-                                section,
-                                oldvalue,
-                                newvalue);
+        if (((grn_ja *)target)->generator.length > 0) {
+          grn_generated_column_update(ctx,
+                                      target,
+                                      GRN_UINT32_VALUE(id),
+                                      section,
+                                      oldvalue,
+                                      newvalue);
+        } else {
+          grn_token_column_update(ctx,
+                                  target,
+                                  GRN_UINT32_VALUE(id),
+                                  section,
+                                  oldvalue,
+                                  newvalue);
+        }
         break;
       case GRN_COLUMN_INDEX:
         grn_ii_column_update(ctx,
@@ -8832,7 +8842,11 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     switch (obj->header.type) {
     case GRN_COLUMN_VAR_SIZE:
       update_source_hook(ctx, obj);
-      grn_token_column_build(ctx, obj);
+      if (((grn_ja *)obj)->generator.length > 0) {
+        grn_generated_column_build(ctx, obj);
+      } else {
+        grn_token_column_build(ctx, obj);
+      }
       break;
     case GRN_COLUMN_INDEX:
       update_source_hook(ctx, obj);
