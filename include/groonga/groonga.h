@@ -1727,7 +1727,7 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
  * \param buffer A pre-allocated buffer where the resulting pathname will be
  *               stored. For example, `char buffer[PATH_MAX]` can be used.
  *
- * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if `db` is not
  *         a database object or if `buffer` is `NULL`.
  */
