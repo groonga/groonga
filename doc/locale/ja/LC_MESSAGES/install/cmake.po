@@ -58,9 +58,6 @@ msgstr ""
 msgid "Install [Xcode](https://developer.apple.com/xcode/)."
 msgstr "[Xcode](https://developer.apple.com/xcode/)をインストールしてください。"
 
-msgid "Execute the following command in the extracted source code directory."
-msgstr "ソースコードのディレクトリに移動して以下のコマンドを実行してください。"
-
 msgid "Windows"
 msgstr ""
 

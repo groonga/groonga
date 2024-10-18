@@ -78,12 +78,9 @@ You can install Apache Arrow following to [the official installation procedure](
 
 Install [Xcode](https://developer.apple.com/xcode/).
 
-Execute the following command in the extracted source code directory.
+Execute `setup.sh` included in the source code.
 
-```console
-$ cd groonga-14.0.9
-$ brew bundle
-```
+If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
 
 ### Windows
 
