@@ -1712,7 +1712,7 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  *                   database.
  *                 - If false, the function only clears the object cache.
  *
- * \return \ref GRN_SUCCESS on success, or the appropriate \ref grn_rc on error.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is
  *         \ref GRN_ID_NIL.
  */
