@@ -76,6 +76,9 @@ jobs:
           - "images:debian/12"
           - "images:ubuntu/22.04"
           - "images:ubuntu/24.04"
+          - "images:almalinux/8"
+          - "images:almalinux/9"
+          - "images:amazonlinux/2023"
     steps:
       - uses: actions/checkout@v4
         with:

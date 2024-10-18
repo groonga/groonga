@@ -77,7 +77,60 @@ function setup_with_apt () {
 }
 
 function setup_with_dnf () {
-  echo 'todo dnf setup'
+  package_names=(
+    arrow-devel
+    cmake
+    intltool
+    libedit-devel
+    libevent-devel
+    libstemmer-devel
+    libzstd-devel
+    lz4-devel
+    ninja-build
+    openssl-devel
+    pkgconfig
+    ruby
+    tar
+    wget
+    xxhash-devel
+    zlib-devel
+  )
+  system_release=$(cat /etc/system-release | tr -d " ")
+  case "${system_release,,}" in
+    almalinuxrelease*)
+      ${SUDO} dnf install -y epel-release "dnf-command(config-manager)"
+      ${SUDO} dnf install -y \
+        https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+      package_names+=(
+        ccache
+        mecab-devel
+        msgpack-devel
+        simdjson-devel
+      )
+      ;;
+    amazonlinuxrelease2023.*)
+      ${SUDO} dnf install -y \
+        https://apache.jfrog.io/artifactory/arrow/amazon-linux/$(cut -d: -f6 /etc/system-release-cpe)/apache-arrow-release-latest.rpm
+      ;;
+    *)
+      echo "This OS setup is not supported."
+      exit 1
+      ;;
+  esac
+  case "${system_release,,}" in
+    almalinuxrelease8.*)
+      ${SUDO} dnf config-manager --set-enabled powertools
+      ;;
+    almalinuxrelease9.*)
+      ${SUDO} dnf config-manager --set-enabled crb
+      ;;
+    amazonlinuxrelease2023.*)
+      ;;
+  esac
+
+  ${SUDO} dnf update -y
+  ${SUDO} dnf groupinstall -y "Development Tools"
+  ${SUDO} dnf install -y "${package_names[@]}"
 }
 
 if [ -f /etc/debian_version ]; then
