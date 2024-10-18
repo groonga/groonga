@@ -39,18 +39,6 @@ msgstr "リファレンス"
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
 
-msgid "dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。"
-msgstr ""
-
-msgid "The target database."
-msgstr ""
-
-msgid "The object (table, column and so on) ID to be deleted."
-msgstr ""
-
-msgid "path string corresponding to the id will be set in this buffer."
-msgstr ""
-
 msgid "It casts value of ``source`` to value with type of ``destination``. Casted value is appended to ``destination``."
 msgstr ""
 

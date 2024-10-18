@@ -1718,6 +1718,19 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
  */
 GRN_API grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
+/**
+ * \brief Return the pathname of an object ID.
+ *
+ * \param ctx The context object.
+ * \param db The target database object.
+ * \param id The ID of the object whose pathname is to be obtained.
+ * \param buffer A pre-allocated buffer where the resulting pathname will be
+ *               stored. For example, `char buffer[PATH_MAX]` can be used.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `db` is not
+ *         a database object or if `buffer` is `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
 
