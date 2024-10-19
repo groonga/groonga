@@ -11,7 +11,7 @@ Execution example::
   #       [
   #         "execute",
   #         "lib/groonga/plugins/sharding/logical_range_filter.rb",
-  #         187
+  #         2929
   #       ]
   #     ]
   #   ]

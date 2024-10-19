@@ -19,7 +19,7 @@ Execution example::
   #       [
   #         "grn_ra_cast_value",
   #         "lib/store.c",
-  #         522
+  #         2929
   #       ]
   #     ]
   #   ],
@@ -39,7 +39,7 @@ Execution example::
   #       [
   #         "grn_ra_cast_value",
   #         "lib/store.c",
-  #         522
+  #         2929
   #       ]
   #     ]
   #   ],

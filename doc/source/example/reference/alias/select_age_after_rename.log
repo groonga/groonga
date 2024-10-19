@@ -12,8 +12,8 @@ Execution example::
   #     [
   #       [
   #         "yy_syntax_error",
-  #         "lib/grn_ecmascript.lemon",
-  #         173
+  #         "grn_ecmascript.lemon",
+  #         2929
   #       ]
   #     ]
   #   ]

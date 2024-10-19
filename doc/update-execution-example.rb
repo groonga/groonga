@@ -168,6 +168,8 @@ class Updator
           backtraces.each do |backtrace|
             file_name = backtrace[1]
             backtrace[1] = normalize_file_name(file_name)
+            # line
+            backtrace[2] = 2929 if backtrace[2]
           end
         end
       end

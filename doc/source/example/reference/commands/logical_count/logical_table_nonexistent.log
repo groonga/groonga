@@ -13,7 +13,7 @@ Execution example::
   #       [
   #         "execute",
   #         "lib/groonga/plugins/sharding/logical_count.rb",
-  #         68
+  #         2929
   #       ]
   #     ]
   #   ]

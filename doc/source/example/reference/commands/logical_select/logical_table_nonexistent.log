@@ -11,7 +11,7 @@ Execution example::
   #       [
   #         "execute_search",
   #         "lib/groonga/plugins/sharding/logical_select.rb",
-  #         644
+  #         2929
   #       ]
   #     ]
   #   ]

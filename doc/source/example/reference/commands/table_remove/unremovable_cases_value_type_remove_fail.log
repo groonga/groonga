@@ -9,9 +9,9 @@ Execution example::
   #     "[table][remove] a column that references the table exists: <Table.reference_column> -> <ReferencedByColumn>",
   #     [
   #       [
-  #         "is_removable_table",
+  #         "is_removable_table_raw",
   #         "lib/db.c",
-  #         11463
+  #         2929
   #       ]
   #     ]
   #   ],

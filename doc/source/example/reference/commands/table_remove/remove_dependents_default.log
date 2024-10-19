@@ -9,9 +9,9 @@ Execution example::
   #     "[table][remove] a table that references the table exists: <Table1._key> -> <ReferencedTable>",
   #     [
   #       [
-  #         "is_removable_table",
+  #         "is_removable_table_raw",
   #         "lib/db.c",
-  #         11455
+  #         2929
   #       ]
   #     ]
   #   ],

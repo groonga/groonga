@@ -13,7 +13,7 @@ Execution example::
   #       [
   #         "remove",
   #         "lib/groonga/plugins/sharding/logical_table_remove.rb",
-  #         199
+  #         2929
   #       ]
   #     ]
   #   ]

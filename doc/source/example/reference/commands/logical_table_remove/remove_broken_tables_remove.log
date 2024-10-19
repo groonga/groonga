@@ -8,12 +8,12 @@ Execution example::
   #     -55,
   #     1337566253.89858,
   #     0.000355720520019531,
-  #     "object corrupt: <[column][remove][index] hook has a dangling reference: <Logs_20160320.timestamp> -> <Timestamps.logs_20160320_",
+  #     "object corrupt: <[object][remove][index][Logs_20160320.timestamp][set] hook has a dangling reference: <Timestamps.logs_20160320",
   #     [
   #       [
   #         "remove",
   #         "lib/groonga/plugins/sharding/logical_table_remove.rb",
-  #         199
+  #         2929
   #       ]
   #     ]
   #   ]

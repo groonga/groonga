@@ -19,7 +19,7 @@ Execution example::
   #       [
   #         "command_object_remove",
   #         "lib/proc/proc_object.c",
-  #         109
+  #         2929
   #       ]
   #     ]
   #   ],
