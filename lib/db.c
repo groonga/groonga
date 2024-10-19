@@ -7880,7 +7880,7 @@ grn_obj_get_info(grn_ctx *ctx,
           break;
         default:
           ERR(GRN_INVALID_ARGUMENT,
-              "%s[encoding] target object must be one of %s, %s and %s: %s",
+              "%s[encoding] target object must be one of %s, %s or %s: %s",
               tag,
               grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
               grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
@@ -8015,7 +8015,7 @@ grn_obj_get_info(grn_ctx *ctx,
         default:
           ERR(GRN_INVALID_ARGUMENT,
               "[info][get][token-filters] target object must be one of "
-              "%s, %s and %s: %s",
+              "%s, %s or %s: %s",
               grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
               grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
               grn_obj_type_to_string(GRN_TABLE_DAT_KEY),
@@ -8921,7 +8921,7 @@ grn_obj_set_info_require_key_table(grn_ctx *ctx,
   default:
     ERR(GRN_INVALID_ARGUMENT,
         "%s target object must be one of "
-        "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: <%s>",
+        "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY or GRN_TABLE_DAT_KEY: <%s>",
         context_tag,
         grn_obj_type_to_string(table->header.type));
     return ctx->rc;
