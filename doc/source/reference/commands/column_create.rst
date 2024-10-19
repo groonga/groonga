@@ -41,19 +41,19 @@ Usage
 
 This section describes about the followings:
 
-  * :ref:`column-create-scalar`
-  * :ref:`column-create-vector`
-  * :ref:`column-create-vector-weight`
-  * :ref:`column-create-reference`
-  * :ref:`column-create-index`
-  * :ref:`column-create-index-full-text-search`
-  * :ref:`column-create-index-multiple-columns`
-  * :ref:`column-create-index-small`
-  * :ref:`column-create-index-medium`
-  * :ref:`column-create-index-large`
-  * :ref:`column-create-missing-mode`
-  * :ref:`column-create-invalid-mode`
-  * :ref:`column-create-generated-column`
+* :ref:`column-create-scalar`
+* :ref:`column-create-vector`
+* :ref:`column-create-vector-weight`
+* :ref:`column-create-reference`
+* :ref:`column-create-index`
+* :ref:`column-create-index-full-text-search`
+* :ref:`column-create-index-multiple-columns`
+* :ref:`column-create-index-small`
+* :ref:`column-create-index-medium`
+* :ref:`column-create-index-large`
+* :ref:`column-create-missing-mode`
+* :ref:`column-create-invalid-mode`
+* :ref:`column-create-generated-column`
 
 Here is the ``People`` table definition. The ``People`` table is used
 in examples:
@@ -1825,19 +1825,19 @@ Specifies type of the column value.
 If the column is scalar column or vector column, here are available
 types:
 
-  * Builtin types described in :doc:`/reference/types`
-  * Tables defined by users
+* Builtin types described in :doc:`/reference/types`
+* Tables defined by users
 
 If the column is index column, here are available types:
 
-  * Tables defined by users
+* Tables defined by users
 
 See also the followings:
 
-  * :ref:`column-create-scalar`
-  * :ref:`column-create-vector`
-  * :ref:`column-create-reference`
-  * :ref:`column-create-index`
+* :ref:`column-create-scalar`
+* :ref:`column-create-vector`
+* :ref:`column-create-reference`
+* :ref:`column-create-index`
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
