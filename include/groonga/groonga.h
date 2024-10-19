@@ -732,6 +732,14 @@ typedef enum {
 
 GRN_API grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id);
+/*
+ * \brief Check whether object with the ID is opened or not.
+ *
+ * \param ctx The context object.
+ * \param id The object ID to be checked.
+ *
+ * \return `true` if object with the ID is opened, `false` otherwise.
+ */
 GRN_API bool
 grn_ctx_is_opened(grn_ctx *ctx, grn_id id);
 
