@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-20 07:02+0900\n"
+"PO-Revision-Date: 2024-10-20 07:28+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +61,7 @@ msgid "Return value"
 msgstr "戻り値"
 
 msgid "``column_list`` returns the list of column information in the table::"
-msgstr "``column_list`` はテーブルのカラム一覧を返します。"
+msgstr "``column_list`` はテーブルのカラム一覧を返します。::"
 
 msgid "``HEADER``"
 msgstr ""
@@ -72,26 +72,23 @@ msgstr "``HEADER`` については :doc:`/reference/command/output_format` を�
 msgid "``COLUMN_LIST_HEADER``"
 msgstr ""
 
-msgid "``COLUMN_LIST_HEADER`` describes about content of each ``COLUMN_INFORMATION``."
-msgstr "``COLUMN_LIST_HEADER`` は 各 ``COLUMN_INFORMATION`` の内容を説明します。"
+msgid "``COLUMN_LIST_HEADER`` describes about content of each :ref:`column-list-column-information`."
+msgstr "``COLUMN_LIST_HEADER`` は各 :ref:`column-list-column-information` の内容を説明します。"
 
-msgid "``COLUMN_LIST_HEADER`` is the following format::"
-msgstr "``COLUMN_LIST_HEADER`` は以下の形式です::"
+msgid "``COLUMN_LIST_HEADER`` uses the following format:"
+msgstr "``COLUMN_LIST_HEADER`` は次の形式を使います。"
 
 msgid "It means the following:"
 msgstr "以下のことを意味します。"
 
-msgid "The first content in ``COLUMN_INFORMATION`` is ``id`` value and the value type is ``UInt32``."
-msgstr "``COLUMN_INFORMATION`` の1番目の要素は ``id`` の値で、その値の型は ``UInt32`` です。"
+msgid "The first content in :ref:`column-list-column-information` is ``id`` value and the value type is ``UInt32``."
+msgstr ":ref:`column-list-column-information` の1番目の要素は ``id`` の値で、その値の型は ``UInt32`` です。"
 
-msgid "The second content in ``COLUMN_INFORMATION`` is ``name`` value and the value type is ``ShortText``."
-msgstr "``COLUMN_INFORMATION`` の2番目の要素は ``name`` の値で、その値の型は ``ShortText`` です。"
+msgid "The second content in :ref:`column-list-column-information` is ``name`` value and the value type is ``ShortText``."
+msgstr ":ref:`column-list-column-information` の2番目の要素は ``name`` の値で、その値の型は ``ShortText`` です。"
 
-msgid "The third content ...."
-msgstr "``COLUMN_INFORMATION`` の3番目の要素は…"
-
-msgid "See the following ``COLUMN_INFORMATION`` description for details."
-msgstr "詳細については、次の ``COLUMN_INFORMATION`` の説明を参照して下さい。"
+msgid "The third content :ref:`column-list-column-information` is ...."
+msgstr ":ref:`column-list-column-information` の3番目の要素は..."
 
 msgid "This field provides meta-data of column information. So this field will be useful for programs rather than humans."
 msgstr "このフィールドはカラムの情報のメタデータを提供します。したがって、このフィールドは人ではなくプログラムに有用です。"
@@ -99,14 +96,14 @@ msgstr "このフィールドはカラムの情報のメタデータを提供し
 msgid "``COLUMN_INFORMATION``"
 msgstr ""
 
-msgid "Each ``COLUMN_INFORMATION`` is the following format::"
-msgstr "各 ``COLUMN_INFORMATION`` は以下の形式です::"
+msgid "Each ``COLUMN_INFORMATION`` uses the following format::"
+msgstr "各 ``COLUMN_INFORMATION`` は次の形式を使います。::"
 
 msgid "``ID``"
 msgstr ""
 
 msgid "The column ID in the Groonga database. Normally, you don't care about it."
-msgstr "GroongaデータベースのカラムIDです。通常、それを気にする必要はありません。"
+msgstr "このカラムのGroongaデータベース内でのIDです。通常、それを気にする必要はありません。"
 
 msgid "``NAME``"
 msgstr ""
