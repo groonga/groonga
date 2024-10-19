@@ -64,6 +64,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/column_copy/move_column_setup.log
     example/reference/commands/column_copy/to_table.log
     example/reference/commands/column_copy/to_table_setup.log
+    example/reference/commands/column_create/generated_column_load.log
+    example/reference/commands/column_create/generated_column_schema.log
     example/reference/commands/column_create/invalid_mode_scalar_load_initial.log
     example/reference/commands/column_create/invalid_mode_scalar_load_update.log
     example/reference/commands/column_create/invalid_mode_scalar_schema.log

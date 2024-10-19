@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -198,6 +198,7 @@ command_column_create(grn_ctx *ctx,
   grn_obj *type_raw;
   grn_obj *source_raw;
   grn_obj *path_raw;
+  grn_obj *generator;
   grn_column_flags flags;
   grn_obj *type = NULL;
 
@@ -207,6 +208,7 @@ command_column_create(grn_ctx *ctx,
   type_raw = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
   source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
   path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
+  generator = grn_plugin_proc_get_var(ctx, user_data, "generator", -1);
 
   table =
     grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
@@ -275,6 +277,18 @@ command_column_create(grn_ctx *ctx,
     goto exit;
   }
 
+  if (GRN_TEXT_LEN(generator) > 0) {
+    grn_obj_set_info(ctx, column, GRN_INFO_GENERATOR, generator);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_rc original_rc = ctx->rc;
+      ctx->rc = GRN_SUCCESS;
+      grn_obj_remove(ctx, column);
+      ctx->rc = original_rc;
+      succeeded = false;
+      goto exit;
+    }
+  }
+
   if (GRN_TEXT_LEN(source_raw) > 0) {
     grn_obj source_ids;
     GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
@@ -320,7 +334,7 @@ exit:
 void
 grn_proc_init_column_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[6];
+  grn_expr_var vars[7];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
@@ -328,11 +342,12 @@ grn_proc_init_column_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "type", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "source", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "path", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[6]), "generator", -1);
   grn_plugin_command_create(ctx,
                             "column_create",
                             -1,
                             command_column_create,
-                            6,
+                            7,
                             vars);
 }
 
@@ -576,13 +591,16 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
   grn_id id;
   const char *type;
   const char *path;
+  grn_obj generator;
 
+  GRN_TEXT_INIT(&generator, 0);
   switch (column->header.type) {
   case GRN_COLUMN_FIX_SIZE:
     type = "fix";
     break;
   case GRN_COLUMN_VAR_SIZE:
     type = "var";
+    grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
     break;
   case GRN_COLUMN_INDEX:
     type = "index";
@@ -617,7 +635,9 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
     grn_ctx_output_array_close(ctx);
   }
   /* output_obj_source(ctx, (grn_db_obj *)column); */
+  grn_ctx_output_str(ctx, GRN_TEXT_VALUE(&generator), GRN_TEXT_LEN(&generator));
   grn_ctx_output_array_close(ctx);
+  GRN_OBJ_FIN(ctx, &generator);
   GRN_OBJ_FIN(ctx, &o);
   return 1;
 }
@@ -683,7 +703,7 @@ command_column_list(grn_ctx *ctx,
   column_list_size += grn_table_columns(ctx, table, NULL, 0, (grn_obj *)cols);
 
   grn_ctx_output_array_open(ctx, "COLUMN_LIST", column_list_size);
-  grn_ctx_output_array_open(ctx, "HEADER", 8);
+  grn_ctx_output_array_open(ctx, "HEADER", 9);
   grn_ctx_output_array_open(ctx, "PROPERTY", 2);
   grn_ctx_output_cstr(ctx, "id");
   grn_ctx_output_cstr(ctx, "UInt32");
@@ -716,6 +736,10 @@ command_column_list(grn_ctx *ctx,
   grn_ctx_output_cstr(ctx, "source");
   grn_ctx_output_cstr(ctx, "ShortText");
   grn_ctx_output_array_close(ctx);
+  grn_ctx_output_array_open(ctx, "PROPERTY", 2);
+  grn_ctx_output_cstr(ctx, "generator");
+  grn_ctx_output_cstr(ctx, "ShortText");
+  grn_ctx_output_array_close(ctx);
   grn_ctx_output_array_close(ctx);
 
   if ((col = grn_obj_column(ctx,
@@ -727,7 +751,7 @@ command_column_list(grn_ctx *ctx,
     grn_id id;
     grn_obj buf;
     GRN_TEXT_INIT(&buf, 0);
-    grn_ctx_output_array_open(ctx, "COLUMN", 8);
+    grn_ctx_output_array_open(ctx, "COLUMN", 9);
     id = grn_obj_id(ctx, table);
     grn_ctx_output_int64(ctx, id);
     grn_ctx_output_cstr(ctx, GRN_COLUMN_NAME_KEY);
@@ -740,6 +764,7 @@ command_column_list(grn_ctx *ctx,
     grn_proc_output_object_id_name(ctx, table->header.domain);
     grn_ctx_output_array_open(ctx, "SOURCES", 0);
     grn_ctx_output_array_close(ctx);
+    grn_ctx_output_str(ctx, "", 0);
     grn_ctx_output_array_close(ctx);
     GRN_OBJ_FIN(ctx, &buf);
     grn_obj_unlink(ctx, col);

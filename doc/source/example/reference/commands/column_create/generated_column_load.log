@@ -1,0 +1,41 @@
+Execution example::
+
+  load --table Posts
+  [
+  {"title_html", "Hello <em>Groonga</em>"}
+  ]
+  # [[0,1337566253.89858,0.000355720520019531],1]
+  select --table Posts
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ],
+  #       [
+  #         [
+  #           "_id",
+  #           "UInt32"
+  #         ],
+  #         [
+  #           "title_html",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "title_text",
+  #           "ShortText"
+  #         ]
+  #       ],
+  #       [
+  #         1,
+  #         "Hello <em>Groonga</em>",
+  #         "Hello Groonga"
+  #       ]
+  #     ]
+  #   ]
+  # ]

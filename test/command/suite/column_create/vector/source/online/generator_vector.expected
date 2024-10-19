@@ -1,0 +1,60 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Notes title_snippets COLUMN_VECTOR ShortText title   --generator 'snippet(title, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"title": "Hello Groonga"},
+{"title": "Hello Mroonga"}
+]
+[[0,0.0,0.0],2]
+select Notes --output_columns title,title_snippets
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "title",
+          "Text"
+        ],
+        [
+          "title_snippets",
+          "ShortText"
+        ]
+      ],
+      [
+        "Hello Groonga",
+        [
+          "Hello <Groonga>"
+        ]
+      ],
+      [
+        "Hello Mroonga",
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+column_create Notes title_snippets COLUMN_VECTOR ShortText title --generator "snippet(title, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
+
+load --table Notes
+[
+["_id","title"],
+[1,"Hello Groonga"],
+[2,"Hello Mroonga"]
+]

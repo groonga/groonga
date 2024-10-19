@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -367,6 +367,19 @@ dump_string(grn_ctx *ctx, grn_dumper *dumper, grn_obj *string)
 }
 
 static void
+dump_column_generator(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
+{
+  grn_obj generator;
+  GRN_TEXT_INIT(&generator, 0);
+  grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
+  if (GRN_TEXT_LEN(&generator) > 0) {
+    GRN_TEXT_PUTS(ctx, dumper->output, " --generator ");
+    dump_string(ctx, dumper, &generator);
+  }
+  GRN_OBJ_FIN(ctx, &generator);
+}
+
+static void
 dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 {
   grn_id type_id;
@@ -400,6 +413,11 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   case GRN_COLUMN_VAR_SIZE:
   case GRN_COLUMN_INDEX:
     dump_column_sources(ctx, dumper, column);
+    break;
+  }
+  switch (column->header.type) {
+  case GRN_COLUMN_VAR_SIZE:
+    dump_column_generator(ctx, dumper, column);
     break;
   }
   if ((flags & GRN_OBJ_CUSTOM_NAME) && dumper->is_dump_paths) {
@@ -678,7 +696,8 @@ dump_records(grn_ctx *ctx,
       column = grn_ctx_at(ctx, column_id);
       if (column) {
         if (grn_obj_is_index_column(ctx, column) ||
-            grn_obj_is_token_column(ctx, column)) {
+            grn_obj_is_token_column(ctx, column) ||
+            grn_obj_is_generated_column(ctx, column)) {
           have_auto_generated_value_column = true;
           if (dumper->is_close_opened_object_mode) {
             grn_ctx_pop_temporary_open_space(ctx);
