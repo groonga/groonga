@@ -1167,15 +1167,23 @@ Here are available flags:
 
        This flag reorganize data based on a element of Nth byte.
 
-       First, 0th byte data of each element within the vector column would be gathered and be continuously placed.
-       Then, 1st byte data would be handled as same as 0th byte data, and all byte data would be as so repeatedly.
+       First, 0th byte data of each element within the vector column
+       would be gathered and be continuously placed. Then, 1st byte
+       data would be handled as same as 0th byte data and all byte
+       data would be as so repeatedly.
 
-       There are tendency for those compression algorithms such as  ``COMPRESS_ZLIB``,``COMPRESS_LZ4``,and  ``COMPRESS_ZSTD`` to have the higher compression rate when the data has same values in continuance.
-       The point for this flag is to produce data having same values in continuance by reorganizing data for every N byte.
+       There are tendency for those compression algorithms such as
+       ``COMPRESS_ZLIB``, ``COMPRESS_LZ4`` and ``COMPRESS_ZSTD`` to
+       have the higher compression rate when the data has same values
+       in continuance. The point for this flag is to produce data
+       having same values in continuance by reorganizing data for
+       every N byte.
 
        In particular, it would work as below.
 
-       For example, there is the vector column ``[1, 1051, 515]`` in ``UInt16``. It would be as below representing in the little endien byte column.
+       For example, there is the vector column ``[1, 1051, 515]`` in
+       ``UInt16``. It would be as below representing in the little
+       endien byte column.
 
        .. code-block::
 
@@ -1183,9 +1191,11 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|
           | 0x01   | 0x00   |, | 0x1b   | 0x04   |, | 0x03   | 0x02   |
 
-       This flag is to produce the data as following by gathering values of `` Byte 0``, then of `` Byte 1`` from the above data.
-       The action to gather values with every N Byte would be called shuffle from now on.
-       Shuffling the above data would be as below.
+       This flag is to produce the data as following by gathering
+       values of ``Byte 0``, then of ``Byte 1`` from the above data.
+       The action to gather values with every N Byte would be called
+       shuffle from now on. Shuffling the above data would be as
+       below.
 
        .. code-block::
 
@@ -1193,11 +1203,16 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|
           | 0x01   | 0x1b   | 0x03   |, | 0x00   | 0x04   | 0x02   |
 
-       The point is whether there would be same values in continuance or not. Looking at the above example data, it is appeared to have no same values in continuance after shuffling.
-       Those data are not suitable for this flag because it is not contributed to increase the compression rate even shuffling.
+       The point is whether there would be same values in continuance
+       or not. Looking at the above example data, it is appeared to
+       have no same values in continuance after shuffling. Those data
+       are not suitable for this flag because it is not contributed to
+       increase the compression rate even shuffling.
 
-       On the other hand, the vector column ``[1, 2, 3]``  in ``UInt16`` would be as following after  shuffling.
-       First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endien byte column.
+       On the other hand, the vector column ``[1, 2, 3]`` in
+       ``UInt16`` would be as following after shuffling. First for
+       the explanation, ``[1, 2, 3]`` in ``UInt16`` would be
+       represented as below in the little endien byte column.
 
        .. code-block::
 
@@ -1206,7 +1221,8 @@ Here are available flags:
           | 0x01   | 0x00   |, | 0x02   | 0x00   |, | 0x03   | 0x00   |
 
 
-       And, after shuffling ``[1, 2, 3]``  in ``UInt16``, the data would be as below.
+       And, after shuffling ``[1, 2, 3]`` in ``UInt16``, the data
+       would be as below.
 
        .. code-block::
 
@@ -1214,14 +1230,25 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|
           | 0x01   | 0x02   | 0x03   |, | 0x00   | 0x00   | 0x00   |
 
-       After shuffling ``[1, 2, 3]`` in ``UInt16``, the date in ``Byte 1`` would be all ``0x00``. It means there are same values in continuance.
-       Thus, this data pattern is suitable for this flag because it would contribute to increase the compression rate.
+       After shuffling ``[1, 2, 3]`` in ``UInt16``, the date in ``Byte
+       1`` would be all ``0x00``. It means there are same values in
+       continuance.  Thus, this data pattern is suitable for this flag
+       because it would contribute to increase the compression rate.
 
-       In case of a floating-point number, the data having same the code part and the exponent part would be corresponded.
-       In case of the IEEE 754 type single-precision floating-point format, code part would be placed at 31st bit, and exponent part would be placed at 32nd bit.
-       There would be same values in continuance after shuffling the data if the code part and the upper 7 bit of exponent bit become same because the highest byte would be structured with the code part and the upper 7 bit of exponent bit.
+       In case of a floating-point number, the data having same the
+       code part and the exponent part would be corresponded. In case
+       of the IEEE 754 type single-precision floating-point format,
+       code part would be placed at 31st bit, and exponent part would
+       be placed at 32nd bit. There would be same values in
+       continuance after shuffling the data if the code part and the
+       upper 7 bit of exponent bit become same because the highest
+       byte would be structured with the code part and the upper 7 bit
+       of exponent bit.
 
-       For example, the data, ``[0.5, 0.6]`` in ``Float32``, would have same code bit and exponent part by representing in Single-precision floating-point format in IEEE 754 type as below.
+       For example, the data, ``[0.5, 0.6]`` in ``Float32``, would
+       have same code bit and exponent part by representing in
+       Single-precision floating-point format in IEEE 754 type as
+       below.
 
        .. code-block::
 
@@ -1230,7 +1257,8 @@ Here are available flags:
           | 0000 0000 0000 0000 0000 000 | 0111 1110       | 0           |
           | 0101 1001 1001 1001 1001 100 | 0111 1110       | 0           |
 
-       Shuffling the given data would have same values in continuance for ``Byte 3`` as below.
+       Shuffling the given data would have same values in continuance
+       for ``Byte 3`` as below.
 
        .. code-block::
 
@@ -1238,7 +1266,13 @@ Here are available flags:
           |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------| 
           | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   | 
 
-       In case of the ``Float`` / ``Float32`` type data, please refer to explanations for ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` and ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` since it is also possible to combine ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` or ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` .
+       In case of the ``Float`` / ``Float32`` type data, please refer
+       to explanations for
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` and
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` since it is also
+       possible to combine
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` or
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``.
 
    * - ``COMPRESS_FILTER_BYTE_DELTA``
      - .. versionadded:: 13.0.8
@@ -1247,29 +1281,51 @@ Here are available flags:
 
        Here is what kind of the data being effective for this flag.
 
-       This flag is to calculate the difference between bytes of values to be compression targeted.
-       As sample case of the vector column ``[1, 2, 3, 4, 5]`` in ``UInt8``, applying this flag would produce data would become ``[1, (2-1), (3-2), (4-3), (5-4)] = [1, 1, 1, 1, 1]``.
+       This flag is to calculate the difference between bytes of
+       values to be compression targeted. As sample case of the
+       vector column ``[1, 2, 3, 4, 5]`` in ``UInt8``, applying this
+       flag would produce data would become ``[1, (2-1), (3-2), (4-3),
+       (5-4)] = [1, 1, 1, 1, 1]``.
 
-       As noted above, it is trying to increase the compression rate by calculating increments and producing same values in continuance.
-       The point is there would be same values in continuance after calculating the increments between each elements.
+       As noted above, it is trying to increase the compression rate
+       by calculating increments and producing same values in
+       continuance. The point is there would be same values in
+       continuance after calculating the increments between each
+       elements.
 
-       Thus, the data is not suitable to use for this flag if there would not be same values in continuance after  calculating the increments.
-       Here is the list of data pattern to have same values in continuance after calculating increments.
+       Thus, the data is not suitable to use for this flag if there
+       would not be same values in continuance after calculating the
+       increments. Here is the list of data pattern to have same
+       values in continuance after calculating increments.
 
-       First pattern would be the data increased with constant interval such as ``[1, 2, 3, 4, 5]`` in ``UInt8``.
-       The constant interval could be every ``10`` for ``[1, 11, 21, 31, 41]`` in ``UInt8`` as long as the interval is same.
+       First pattern would be the data increased with constant
+       interval such as ``[1, 2, 3, 4, 5]`` in ``UInt8``. The
+       constant interval could be every ``10`` for ``[1, 11, 21, 31,
+       41]`` in ``UInt8`` as long as the interval is same.
 
-       Next pattern would be the data having same values in continuance such as ``[5, 5, 5, 5, 5]`` in ``UInt8``.
-       There would be ``0`` in continuance after calculating the increments of this data.
-       In opossite, ``[1, 255, 2, 200, 1]`` in ``UInt8`` is not suitable for this flag because the data would not have same value in continuance after calculating the increments.
+       Next pattern would be the data having same values in
+       continuance such as ``[5, 5, 5, 5, 5]`` in ``UInt8``. There
+       would be ``0`` in continuance after calculating the increments
+       of this data. In opposite, ``[1, 255, 2, 200, 1]`` in
+       ``UInt8`` is not suitable for this flag because the data would
+       not have same value in continuance after calculating the
+       increments.
 
-       There would be a case to be able to increase the compression rate by combining  ``COMPRESS_FILTER_SHUFFLE`` even though calculating increments would not have same value in continuance, or increments are too large.
+       There would be a case to be able to increase the compression
+       rate by combining ``COMPRESS_FILTER_SHUFFLE`` even though
+       calculating increments would not have same value in
+       continuance, or increments are too large.
 
-       For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in  ``UInt32`` would be ``[4526677, 65724, 65816, 65662]``  after only being applied ``COMPRESS_FILTER_BYTE_DELTA`` .
-       This data would not have values in continuance, and increments are large.
+       For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in
+       ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after
+       only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data
+       would not have values in continuance, and increments are large.
 
-       But applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be different. And it will be explained in following.
-       First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below.
+       But applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be
+       different. And it will be explained in following. First for
+       the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in
+       ``UInt32`` would be represent the byte column in the little
+       endien as below.
 
        .. code-block::
 
@@ -1277,7 +1333,8 @@ Here are available flags:
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------| 
           | 0x55   | 0x12   | 0x45   | 0x00   |, | 0x11   | 0x13   | 0x46   | 0x00   |, | 0x29   | 0x14   | 0x47   | 0x00   |, | 0xA7   | 0x14   | 0x48   | 0x00   | 
 
-       Applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be following byte columns.
+       Applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be
+       following byte columns.
 
        .. code-block::
 
@@ -1285,29 +1342,44 @@ Here are available flags:
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|
           | 0x55   | 0x11   | 0x29   | 0xA7   |, | 0x12   | 0x13   | 0x14   | 0x14   |, | 0x45   | 0x46   | 0x47   | 0x48   |, | 0x00   | 0x00   | 0x00   | 0x00   | 
 
-       Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte 3`` after the shuffling.
-       The data increments of ``Byte 1`` are ``[0x12, 0x01, 0x01, 0x00]`` . The data increments of ``Byte 2`` are  ``[0x45, 0x01, 0x01, 0x01]`` .
-       The data increments of ``Byte 3`` are ``[0x00, 0x00, 0x00, 0x00]``. From those numbers, you can see the data increments have small values and have same values in continuance.
+       Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte
+       3`` after the shuffling. The data increments of ``Byte 1`` are
+       ``[0x12, 0x01, 0x01, 0x00]``. The data increments of ``Byte 2``
+       are ``[0x45, 0x01, 0x01, 0x01]``.  The data increments of
+       ``Byte 3`` are ``[0x00, 0x00, 0x00, 0x00]``. From those
+       numbers, you can see the data increments have small values and
+       have same values in continuance.
 
-       As you see these, the compression rate could be increase by combining ``COMPRESS_FILTER_SHUFFLE`` even if applying ``COMPRESS_FILTER_BYTE_DELTA`` did not change the rate.
+       As you see these, the compression rate could be increase by
+       combining ``COMPRESS_FILTER_SHUFFLE`` even if applying
+       ``COMPRESS_FILTER_BYTE_DELTA`` did not change the rate.
 
-       Please note that  ``COMPRESS_FILTER_SHUFFLE`` would not be effective for the 1 byte data because it is to gather the same byte from the data.
-       (The 1 byte data would have same data column whether being shuffled or not.)
-       Thus, in case of combining ``COMPRESS_FILTER_BYTE_DELTA`` and ``COMPRESS_FILTER_SHUFFLE``, please do not use data in ``Int8`` / ``UInt8``. Only use for other type.
+       Please note that ``COMPRESS_FILTER_SHUFFLE`` would not be
+       effective for the 1 byte data because it is to gather the same
+       byte from the data. (The 1 byte data would have same data
+       column whether being shuffled or not.) Thus, in case of
+       combining ``COMPRESS_FILTER_BYTE_DELTA`` and
+       ``COMPRESS_FILTER_SHUFFLE``, please do not use data in ``Int8``
+       / ``UInt8``. Only use for other type.
 
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``
      - .. versionadded:: 13.0.8
 
        .. include:: compress_filter.rst
 
-       This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE`` .
+       This flag can be used only for ``Float`` / ``Float32``. And it
+       is expected to be combined with ``COMPRESS_FILTER_SHUFFLE`` .
 
        Here is what kind of the data being effective for this flag.
 
-       This flag would drop the 1 byte of fraction from each vector column elements of ``Float`` / ``Float32`` type.
-       Dropping the fraction means making all of the lower 1 byte of the floating-point number ``0``.
+       This flag would drop the 1 byte of fraction from each vector
+       column elements of ``Float`` / ``Float32`` type. Dropping the
+       fraction means making all of the lower 1 byte of the
+       floating-point number ``0``.
 
-       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be presented as following in the IEEE 754 format single-precision floating-point.
+       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be
+       presented as following in the IEEE 754 format single-precision
+       floating-point.
 
        .. code-block::
 
@@ -1317,8 +1389,9 @@ Here are available flags:
           | 0001 0010 1000 0111 0101 011 | 0000 0001       | 0           |
           | 0101 1001 1001 1001 1000 100 | 1000 0001       | 0           |
 
-       Applying this flag make all lower 1 byte ``0``. And the data would be as below.
-       Pay attention to all ``0`` for lower 1byte of fixed-point part.
+       Applying this flag make all lower 1 byte ``0``. And the data
+       would be as below. Pay attention to all ``0`` for lower 1byte
+       of fixed-point part.
 
        .. code-block::
 
@@ -1328,11 +1401,14 @@ Here are available flags:
           | 0000 0000 1000 0111 0101 011 | 0000 0001       | 0           |
           | 0000 0000 1001 1001 1000 100 | 1000 0001       | 0           |
 
-       These actions are what would be done for single flag usage.
-       As noted, this flag is expected to be combined with ``COLUMN_FILTER_SHUFFLE`` .
-       Thus, by shuffling the data it is to expected increasing the compression rate after using the flag.
+       These actions are what would be done for single flag usage. As
+       noted, this flag is expected to be combined with
+       ``COLUMN_FILTER_SHUFFLE`` . Thus, by shuffling the data it is
+       to expected increasing the compression rate after using the
+       flag.
 
-       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` then shuffling would produce data as below.
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` then
+       shuffling would produce data as below.
 
        .. code-block::
 
@@ -1340,8 +1416,11 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x00   | 0x00   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       Pay attention to the ``Byte 0``. You can find the value ``0`` in continuance for ``Byte 0``.
-       If ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` was not applied and shuffled, the data would be as following table, there would be no same value in continuance for any bytes.
+       Pay attention to the ``Byte 0``. You can find the value ``0``
+       in continuance for ``Byte 0``. If
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` was not applied
+       and shuffled, the data would be as following table, there would
+       be no same value in continuance for any bytes.
 
        .. code-block::
 
@@ -1349,22 +1428,30 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` to those data can be expected to increase the compression rate even if those data cannot increase the compression rate only with shuffling.
-       However, note the data may be inaccurate since the fraction of the floating-point number is dropped for 1 byte.
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` to those
+       data can be expected to increase the compression rate even if
+       those data cannot increase the compression rate only with
+       shuffling. However, note the data may be inaccurate since the
+       fraction of the floating-point number is dropped for 1 byte.
 
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``
      - .. versionadded:: 13.0.8
 
        .. include:: compress_filter.rst
 
-       This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE``.
+       This flag can be used only for ``Float`` / ``Float32``. And it
+       is expected to be combined with ``COMPRESS_FILTER_SHUFFLE``.
 
        Here is what kind of the data being effective for this flag.
 
-       This flag would drop the 2 bytes of fraction from each vector column elements of ``Float`` / ``Float32`` type.
-       Dropping the fraction means making all of the lower 2 bytes of the floating-point number ``0``.
+       This flag would drop the 2 bytes of fraction from each vector
+       column elements of ``Float`` / ``Float32`` type. Dropping the
+       fraction means making all of the lower 2 bytes of the
+       floating-point number ``0``.
 
-       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be presented as following in the IEEE 754 format single-precision floating-point.
+       For example, ``[1.25, 3.67, 4.55]`` in ``Float32`` would be
+       presented as following in the IEEE 754 format single-precision
+       floating-point.
 
        .. code-block::
 
@@ -1374,8 +1461,9 @@ Here are available flags:
           | 0001 0010 1000 0111 0101 011 | 0000 0001       | 0           |
           | 0101 1001 1001 1001 1000 100 | 1000 0001       | 0           |
 
-       Applying this flag make all lower 2 bytes ``0``. And the data would be as below.
-       Pay attention to all ``0`` for lower 2 bytes of fixed-point part.
+       Applying this flag make all lower 2 bytes ``0``. And the data
+       would be as below. Pay attention to all ``0`` for lower 2
+       bytes of fixed-point part.
 
        .. code-block::
 
@@ -1385,11 +1473,14 @@ Here are available flags:
           | 0000 0000 0000 0000 0101 011 | 0000 0001       | 0           |
           | 0000 0000 0000 0000 1000 100 | 1000 0001       | 0           |
 
-       These actions are what would be done for single flag usage.
-       As noted, this flag is expected to be combined with ``COLUMN_FILTER_SHUFFLE`` .
-       Thus, by shuffling the data it is to expected increasing the compression rate after using the flag.
+       These actions are what would be done for single flag usage. As
+       noted, this flag is expected to be combined with
+       ``COLUMN_FILTER_SHUFFLE`` . Thus, by shuffling the data it is
+       to expected increasing the compression rate after using the
+       flag.
 
-       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` then shuffling would produce data as below.
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` then
+       shuffling would produce data as below.
 
        .. code-block::
 
@@ -1397,9 +1488,12 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x00   | 0x00   |, | 0x00   | 0x00   | 0x00   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       Pay attention to the ``Byte 0`` and ``Byte 1``. You can find the value ``0`` in continuance for ``Byte 0`` and ``Byte1``.
+       Pay attention to the ``Byte 0`` and ``Byte 1``. You can find
+       the value ``0`` in continuance for ``Byte 0`` and ``Byte1``.
 
-       If ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` was not applied and shuffled, the data would be as following table, there would be no same value in continuance for any bytes.
+       If ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` was not applied
+       and shuffled, the data would be as following table, there would
+       be no same value in continuance for any bytes.
 
        .. code-block::
 
@@ -1407,9 +1501,13 @@ Here are available flags:
           |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
           | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
 
-       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` to those data can be expected to increase the compression rate even if those data cannot increase the compression rate only with shuffling.
+       Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` to those
+       data can be expected to increase the compression rate even if
+       those data cannot increase the compression rate only with
+       shuffling.
 
-       However, note the data may be inaccurate since the fraction of the floating-point number is dropped for 2 bytes.
+       However, note the data may be inaccurate since the fraction of
+       the floating-point number is dropped for 2 bytes.
 
    * - ``WITH_SECTION``
      - It enables section support to index column.

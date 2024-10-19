@@ -729,10 +729,10 @@ msgstr "では、このフラグがどのようなデータに対して有効か
 msgid "This flag reorganize data based on a element of Nth byte."
 msgstr "このフラグはNバイト目の要素に着目してデータを並び替えます。"
 
-msgid "First, 0th byte data of each element within the vector column would be gathered and be continuously placed. Then, 1st byte data would be handled as same as 0th byte data, and all byte data would be as so repeatedly."
+msgid "First, 0th byte data of each element within the vector column would be gathered and be continuously placed. Then, 1st byte data would be handled as same as 0th byte data and all byte data would be as so repeatedly."
 msgstr "まず、ベクターカラム内の各要素の0バイト目だけのデータを集めて連続で配置します。その後、同様に1バイト目のデータだけを集めて連続で配置するということをすべてのバイトに対して繰り返します。"
 
-msgid "There are tendency for those compression algorithms such as  ``COMPRESS_ZLIB``,``COMPRESS_LZ4``,and  ``COMPRESS_ZSTD`` to have the higher compression rate when the data has same values in continuance. The point for this flag is to produce data having same values in continuance by reorganizing data for every N byte."
+msgid "There are tendency for those compression algorithms such as ``COMPRESS_ZLIB``, ``COMPRESS_LZ4`` and ``COMPRESS_ZSTD`` to have the higher compression rate when the data has same values in continuance. The point for this flag is to produce data having same values in continuance by reorganizing data for every N byte."
 msgstr "``COMPRESS_ZLIB`` や ``COMPRESS_LZ4`` や ``COMPRESS_ZSTD`` といった圧縮アルゴリズムは同じ値が連続しているデータだと圧縮率が高くなる傾向があります。"
 
 msgid "In particular, it would work as below."
@@ -741,19 +741,19 @@ msgstr "具体的には、以下のように動作します。"
 msgid "For example, there is the vector column ``[1, 1051, 515]`` in ``UInt16``. It would be as below representing in the little endien byte column."
 msgstr "例えば、 ``UInt16`` のベクターカラム ``[1, 1051, 515]`` があるとします。 これをリトルエンディアンのバイト列で表現すると以下のようになります。"
 
-msgid "This flag is to produce the data as following by gathering values of `` Byte 0``, then of `` Byte 1`` from the above data. The action to gather values with every N Byte would be called shuffle from now on. Shuffling the above data would be as below."
+msgid "This flag is to produce the data as following by gathering values of ``Byte 0``, then of ``Byte 1`` from the above data. The action to gather values with every N Byte would be called shuffle from now on. Shuffling the above data would be as below."
 msgstr "このフラグは、上記の ``Byte 0`` の値をまとめ、その後 ``Byte 1`` のデータをまとめて、以下のようなデータを作るフラグです。この、Nバイト毎にまとめる操作を以後、シャッフルと呼びます。上記のデータをシャッフルすると以下のようになります。"
 
 msgid "The point is whether there would be same values in continuance or not. Looking at the above example data, it is appeared to have no same values in continuance after shuffling. Those data are not suitable for this flag because it is not contributed to increase the compression rate even shuffling."
 msgstr "ポイントは「同じ値が連続する箇所があるかどうか？」です。 上記の例を見てみると、シャッフル後のデータは同じ値が連続している箇所がありません。このようなデータでは、シャッフルしても圧縮率の向上に寄与しないため、このフラグを適用するには不向きなデータです。"
 
-msgid "On the other hand, the vector column ``[1, 2, 3]``  in ``UInt16`` would be as following after  shuffling. First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endien byte column."
+msgid "On the other hand, the vector column ``[1, 2, 3]`` in ``UInt16`` would be as following after shuffling. First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endien byte column."
 msgstr "一方で、 ``UInt16`` のベクターカラム ``[1, 2, 3]`` というデータでは、シャッフルすると以下のようになります。まず、説明のため ``UInt16`` の ``[1, 2, 3]`` を以下のようなリトルエンディアンのバイト列表現にします。"
 
-msgid "And, after shuffling ``[1, 2, 3]``  in ``UInt16``, the data would be as below."
+msgid "And, after shuffling ``[1, 2, 3]`` in ``UInt16``, the data would be as below."
 msgstr "そして、 ``UInt16`` の ``[1, 2, 3]`` をシャッフルすると以下のようなデータになります。"
 
-msgid "After shuffling ``[1, 2, 3]`` in ``UInt16``, the date in ``Byte 1`` would be all ``0x00``. It means there are same values in continuance. Thus, this data pattern is suitable for this flag because it would contribute to increase the compression rate."
+msgid "After shuffling ``[1, 2, 3]`` in ``UInt16``, the date in ``Byte 1`` would be all ``0x00``. It means there are same values in continuance.  Thus, this data pattern is suitable for this flag because it would contribute to increase the compression rate."
 msgstr "``UInt16`` の ``[1, 2, 3]`` というデータだと、シャッフル後に ``Byte 1`` のデータがすべて ``0x00`` になり、同じ値が連続することになります。したがって、このようなデータは圧縮率の向上に寄与するので、このフラグを適用するのに向いているデータです。"
 
 msgid "In case of a floating-point number, the data having same the code part and the exponent part would be corresponded. In case of the IEEE 754 type single-precision floating-point format, code part would be placed at 31st bit, and exponent part would be placed at 32nd bit. There would be same values in continuance after shuffling the data if the code part and the upper 7 bit of exponent bit become same because the highest byte would be structured with the code part and the upper 7 bit of exponent bit."
@@ -765,7 +765,7 @@ msgstr "例えば、 ``Float32`` の ``[0.5, 0.6]`` というデータは、IEEE
 msgid "Shuffling the given data would have same values in continuance for ``Byte 3`` as below."
 msgstr "これを、シャッフルすると以下のようになり、 ``Byte 3`` に同じ値が連続することになります。"
 
-msgid "In case of the ``Float`` / ``Float32`` type data, please refer to explanations for ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` and ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` since it is also possible to combine ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` or ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` ."
+msgid "In case of the ``Float`` / ``Float32`` type data, please refer to explanations for ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` and ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` since it is also possible to combine ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` or ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``."
 msgstr "``Float`` / ``Float32`` 型のデータの場合は、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` または ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` を組み合わせて使うこともできるので、 ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` の説明も合わせて参照してください。"
 
 msgid "``COMPRESS_FILTER_BYTE_DELTA``"
@@ -780,40 +780,40 @@ msgstr "このフラグは、圧縮対象の値のバイト間の差分を計算
 msgid "As noted above, it is trying to increase the compression rate by calculating increments and producing same values in continuance. The point is there would be same values in continuance after calculating the increments between each elements."
 msgstr "上記のように差分データを計算することで、同じ値が連続するデータを作り圧縮率を向上させることを狙っています。ポイントは、各要素間の差分を計算することで、同じ値が連続するデータを作り出すことにあります。"
 
-msgid "Thus, the data is not suitable to use for this flag if there would not be same values in continuance after  calculating the increments. Here is the list of data pattern to have same values in continuance after calculating increments."
+msgid "Thus, the data is not suitable to use for this flag if there would not be same values in continuance after calculating the increments. Here is the list of data pattern to have same values in continuance after calculating increments."
 msgstr "したがって、差分を計算しても同じ値が連続するデータを作り出すことができないデータは、このフラグを適用するには不向きなデータです。どのようなデータであれば、差分を計算して同じ値が連続するようになるのかを以下に記載します。"
 
 msgid "First pattern would be the data increased with constant interval such as ``[1, 2, 3, 4, 5]`` in ``UInt8``. The constant interval could be every ``10`` for ``[1, 11, 21, 31, 41]`` in ``UInt8`` as long as the interval is same."
 msgstr "まずは、前述の例でもあげた、 ``UInt8`` の ``[1, 2, 3, 4, 5]`` というような一定のペースで値が増加していくデータです。一定のペースなので、 ``UInt8`` の ``[1, 11, 21, 31, 41]`` のように ``10`` ずつ値が増加するようなデータでも良いです。"
 
-msgid "Next pattern would be the data having same values in continuance such as ``[5, 5, 5, 5, 5]`` in ``UInt8``. There would be ``0`` in continuance after calculating the increments of this data. In opossite, ``[1, 255, 2, 200, 1]`` in ``UInt8`` is not suitable for this flag because the data would not have same value in continuance after calculating the increments."
+msgid "Next pattern would be the data having same values in continuance such as ``[5, 5, 5, 5, 5]`` in ``UInt8``. There would be ``0`` in continuance after calculating the increments of this data. In opposite, ``[1, 255, 2, 200, 1]`` in ``UInt8`` is not suitable for this flag because the data would not have same value in continuance after calculating the increments."
 msgstr "次に、 ``UInt8`` の ``[5, 5, 5, 5, 5]`` のように同じ値が連続するデータです。このデータは差分を計算すると ``[5, 0, 0, 0, 0]`` となり、 ``0`` が連続するようになります。逆に、 ``UInt8`` の ``[1, 255, 2, 200, 1]`` のように差分を計算しても同じ値が連続しないデータは、このフラグには不向きなデータです。"
 
-msgid "There would be a case to be able to increase the compression rate by combining  ``COMPRESS_FILTER_SHUFFLE`` even though calculating increments would not have same value in continuance, or increments are too large."
+msgid "There would be a case to be able to increase the compression rate by combining ``COMPRESS_FILTER_SHUFFLE`` even though calculating increments would not have same value in continuance, or increments are too large."
 msgstr "ただ、差分を計算しても同じ値が連続しなかったり、差分自体が大きい値になる場合でも、 ``COMPRESS_FILTER_SHUFFLE`` を合わせて使うことで圧縮率を向上させられるケースもあります。"
 
-msgid "For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in  ``UInt32`` would be ``[4526677, 65724, 65816, 65662]``  after only being applied ``COMPRESS_FILTER_BYTE_DELTA`` . This data would not have values in continuance, and increments are large."
+msgid "For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data would not have values in continuance, and increments are large."
 msgstr "例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。このデータでは同じ値は連続しませんし、差分自体も大きい値です。"
 
-msgid "But applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be different. And it will be explained in following. First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below."
+msgid "But applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be different. And it will be explained in following. First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below."
 msgstr "しかし、このデータに ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようになります。説明のため、まず以下のように ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` をリトルエンディアンのバイト列で表現します。"
 
-msgid "Applying ``COMPRESS_FILTER_SHUFFLE``  to this data would be following byte columns."
+msgid "Applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be following byte columns."
 msgstr "このデータに対して、 ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようなバイト列になります。"
 
-msgid "Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte 3`` after the shuffling. The data increments of ``Byte 1`` are ``[0x12, 0x01, 0x01, 0x00]`` . The data increments of ``Byte 2`` are  ``[0x45, 0x01, 0x01, 0x01]`` . The data increments of ``Byte 3`` are ``[0x00, 0x00, 0x00, 0x00]``. From those numbers, you can see the data increments have small values and have same values in continuance."
+msgid "Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte 3`` after the shuffling. The data increments of ``Byte 1`` are ``[0x12, 0x01, 0x01, 0x00]``. The data increments of ``Byte 2`` are ``[0x45, 0x01, 0x01, 0x01]``.  The data increments of ``Byte 3`` are ``[0x00, 0x00, 0x00, 0x00]``. From those numbers, you can see the data increments have small values and have same values in continuance."
 msgstr "シャッフル後の ``Byte1`` のデータと ``Byte2`` 、 ``Byte 3`` のデータに注目してください。 ``Byte 1`` のデータの差分は ``[0x12, 0x01, 0x01, 0x00]`` , ``Byte 2`` のデータの差分は ``[0x45, 0x01, 0x01, 0x01]`` , ``Byte 3`` のデータの差分は ``[0x00, 0x00, 0x00, 0x00]`` となり、差分の値が小さく、また同じ値が連続するようになります。"
 
 msgid "As you see these, the compression rate could be increase by combining ``COMPRESS_FILTER_SHUFFLE`` even if applying ``COMPRESS_FILTER_BYTE_DELTA`` did not change the rate."
 msgstr "このように、 ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは圧縮率の向上が見込めないデータでも、 ``COMPRESS_FILTER_SHUFFLE`` と合わせて使うことで圧縮率の向上を見込めるケースがあります。"
 
-msgid "Please note that  ``COMPRESS_FILTER_SHUFFLE`` would not be effective for the 1 byte data because it is to gather the same byte from the data. (The 1 byte data would have same data column whether being shuffled or not.) Thus, in case of combining ``COMPRESS_FILTER_BYTE_DELTA`` and ``COMPRESS_FILTER_SHUFFLE``, please do not use data in ``Int8`` / ``UInt8``. Only use for other type."
+msgid "Please note that ``COMPRESS_FILTER_SHUFFLE`` would not be effective for the 1 byte data because it is to gather the same byte from the data. (The 1 byte data would have same data column whether being shuffled or not.) Thus, in case of combining ``COMPRESS_FILTER_BYTE_DELTA`` and ``COMPRESS_FILTER_SHUFFLE``, please do not use data in ``Int8`` / ``UInt8``. Only use for other type."
 msgstr "ただし、 ``COMPRESS_FILTER_SHUFFLE`` は同じバイトのデータを集めるフィルターなので、1バイトのデータに対して適用しても意味がありません。（1バイトのデータの場合は、シャッフルしてもしなくても同じデータ列になるためです。）したがって、 ``COMPRESS_FILTER_BYTE_DELTA`` と ``COMPRESS_FILTER_SHUFFLE`` を合わせて使う場合は、 ``Int8`` / ``UInt8`` 以外のデータに対して使用してください。"
 
 msgid "``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``"
 msgstr ""
 
-msgid "This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE`` ."
+msgid "This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with ``COMPRESS_FILTER_SHUFFLE`` ."
 msgstr "このフラグは、 ``Float`` / ``Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。"
 
 msgid "This flag would drop the 1 byte of fraction from each vector column elements of ``Float`` / ``Float32`` type. Dropping the fraction means making all of the lower 1 byte of the floating-point number ``0``."
@@ -840,7 +840,7 @@ msgstr "このように単純にシャッフルしただけでは、圧縮率の
 msgid "``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``"
 msgstr ""
 
-msgid "This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with  ``COMPRESS_FILTER_SHUFFLE``."
+msgid "This flag can be used only for ``Float`` / ``Float32``. And it is expected to be combined with ``COMPRESS_FILTER_SHUFFLE``."
 msgstr "このフラグは、 ``Float`` / ``Float32`` でのみ使用できます。また、 ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。"
 
 msgid "This flag would drop the 2 bytes of fraction from each vector column elements of ``Float`` / ``Float32`` type. Dropping the fraction means making all of the lower 2 bytes of the floating-point number ``0``."
