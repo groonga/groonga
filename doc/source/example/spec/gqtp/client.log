@@ -32,10 +32,14 @@ Execution example::
   #       "kqueue": false,
   #       "epoll": true,
   #       "poll": false,
-  #       "rapidjson": true,
+  #       "rapidjson": false,
   #       "apache_arrow": true,
   #       "xxhash": true,
   #       "blosc": true,
+  #       "bfloat16": true,
+  #       "h3": true,
+  #       "simdjson": true,
+  #       "llama.cpp": true,
   #       "back_trace": true,
   #       "reference_count": false
   #     },
@@ -47,7 +51,9 @@ Execution example::
   #     },
   #     "memory_map_size": 2929,
   #     "n_workers": 0,
-  #     "default_n_workers": 0
+  #     "default_n_workers": 0,
+  #     "os": "Linux",
+  #     "cpu": "x86_64"
   #   }
   # ]
   > ctrl-d

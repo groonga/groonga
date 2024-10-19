@@ -130,14 +130,14 @@ class Updator
   end
 
   def normalize_result(command, result)
-    status = result[0]
-    if status
+    header = result[0]
+    if header
       normalized_start_time = 1337566253.89858
       normalized_elapsed_time = 0.000355720520019531
-      status[1] = normalized_start_time
-      status[2] = normalized_elapsed_time
-      status[3] = normalize_error_message(status[3]) if status[3]
-      return_code = status[0]
+      header[1] = normalized_start_time
+      header[2] = normalized_elapsed_time
+      header[3] = normalize_error_message(header[3]) if header[3]
+      return_code = header[0]
       if return_code.zero?
         if command.start_with?("status") or command.start_with?("/d/status")
           status = result[1]
@@ -161,9 +161,11 @@ class Updator
             end
           end
           status["memory_map_size"] = 2929 if status.key?("memory_map_size")
+          status["os"] = "Linux" if status.key?("os")
+          status["cpu"] = "x86_64" if status.key?("cpu")
         end
       else
-        backtraces = status[4]
+        backtraces = header[4]
         if backtraces
           backtraces.each do |backtrace|
             file_name = backtrace[1]
