@@ -1175,7 +1175,7 @@ grn_obj_set_visibility(grn_ctx *ctx, grn_obj *obj, bool is_visible)
     grn_inspect_limited(ctx, &inspected, obj);
     ERR(GRN_INVALID_ARGUMENT,
         "[obj][set-visibility] "
-        "must be an index column or a token column: <%.*s>",
+        "must be an index column, a token column or a generated column: <%.*s>",
         (int)(GRN_TEXT_LEN(&inspected)),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
