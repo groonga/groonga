@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-20 08:01+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -24,8 +24,11 @@ msgstr "ベクターカラム"
 msgid "Summary"
 msgstr "概要"
 
-msgid "Vector column is a data store object. It can stores zero or more scalar values. In short, scalar value is a single value such as number and string. See :doc:`scalar` about scalar value details."
-msgstr "ベクターカラムはデータストアオブジェクトです。ベクターカラムは0個以上のスカラー値を保存できます。ざっくり言うと、スカラー値とは数値や文字列といった1つの値のことです。スカラー値の詳細は :doc:`scalar` を参照してください。"
+msgid "Vector column is a data store object."
+msgstr "ベクターカラム"
+
+msgid "It can stores zero or more scalar values per records. In short, scalar value is a single value such as number and string. See :doc:`scalar` about scalar value details."
+msgstr "ベクターカラムは0個以上のスカラー値を保存できます。ざっくり言うと、スカラー値とは数値や文字列といった1つの値のことです。スカラー値の詳細は :doc:`scalar` を参照してください。"
 
 msgid "One of vector column use cases is tags store. You can use a vector column to store tag values."
 msgstr "ベクターカラムのユースケースの1つはタグの保存です。ベクターカラムを使うとタグの値を複数保存できます。"
@@ -50,6 +53,9 @@ msgstr "参照型ベクターカラム"
 
 msgid "Weight vector column"
 msgstr "重み付きベクターカラム"
+
+msgid "You can generate a column value from other column's value automatically. It's called as a generated column. See :ref:`column-create-generated-column` how to create a generated column."
+msgstr "他のカラムの値から自動的にカラムの値を生成できます。このようなカラムを自動生成カラムと呼びます。どのように自動生成カラムを作るかは :ref:`column-create-generated-column` を参照してください。"
 
 msgid "This section describes how to use these types."
 msgstr "このセクションではこれらの種類の使い方について説明します。"

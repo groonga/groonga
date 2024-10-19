@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-20 08:04+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -21,8 +21,83 @@ msgstr "スカラーカラム"
 msgid "Summary"
 msgstr "概要"
 
-msgid "TODO"
+msgid "Scalar column is a data store object."
+msgstr "スカラーカラムはデータストアオブジェクトです。"
+
+msgid "It can store one scalar value per record. Scalar value is one of the following type values:"
+msgstr "スカラーカラムは1レコードごとに1つのスカラー値を保存できます。スカラー値は次の型の値のどれか1つです。"
+
+msgid "``Bool``"
 msgstr ""
+
+msgid "``Int8``"
+msgstr ""
+
+msgid "``Int16``"
+msgstr ""
+
+msgid "``Int32``"
+msgstr ""
+
+msgid "``Int64``"
+msgstr ""
+
+msgid "``UInt8``"
+msgstr ""
+
+msgid "``UInt16``"
+msgstr ""
+
+msgid "``UInt32``"
+msgstr ""
+
+msgid "``UInt64``"
+msgstr ""
+
+msgid "``BFloat16``"
+msgstr ""
+
+msgid "``Float32``"
+msgstr ""
+
+msgid "``Float``"
+msgstr ""
+
+msgid "``Time``"
+msgstr ""
+
+msgid "``ShortText``"
+msgstr ""
+
+msgid "``Text``"
+msgstr ""
+
+msgid "``LongText``"
+msgstr ""
+
+msgid "``TokyoGeoPoint``"
+msgstr ""
+
+msgid "``WGS84GeoPoint``"
+msgstr ""
+
+msgid "If you want to store zero or more values per record, you can use multiple scalar columns or one :doc:`vector`. If these values are related and use the same types such as tags (zero or more strings), :doc:`vector` is suitable. If these values aren't related such as title and location, multiple scalar columns are suitable."
+msgstr "1レコードごとに複数の値を保存したいときは、複数のスカラーカラムを使うか、1つの :doc:`vector` を使えます。もしそれらの値が「複数のタグ（0個以上の文字列）」のように関連していてすべて同じ型の値の場合は :doc:`vector` が適しています。もし、それらの値が「タイトル」と「所在地」のように関連していない場合は複数のスカラーカラムが適しています。"
 
 msgid "Usage"
 msgstr "使い方"
+
+msgid "See :doc:`../commands/column_create` how to create a column."
+msgstr "カラムの作り方は :doc:`../commands/column_create` を参照してください。"
+
+msgid "You can generate a column value from other column's value automatically. It's called as a generated column. See :ref:`column-create-generated-column` how to create a generated column."
+msgstr "他のカラムの値から自動的にカラムの値を生成できます。このようなカラムを自動生成カラムと呼びます。どのように自動生成カラムを作るかは :ref:`column-create-generated-column` を参照してください。"
+
+msgid "See also"
+msgstr "参照"
+
+msgid ":doc:`vector`"
+msgstr ""
+
+msgid ":doc:`../commands/column_create`"
+msgstr ""

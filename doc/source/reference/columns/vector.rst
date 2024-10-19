@@ -9,9 +9,11 @@ Vector column
 Summary
 -------
 
-Vector column is a data store object. It can stores zero or more
-scalar values. In short, scalar value is a single value such as number
-and string. See :doc:`scalar` about scalar value details.
+Vector column is a data store object.
+
+It can stores zero or more scalar values per records. In short, scalar
+value is a single value such as number and string. See :doc:`scalar`
+about scalar value details.
 
 One of vector column use cases is tags store. You can use a vector
 column to store tag values.
@@ -31,9 +33,14 @@ Usage
 
 There are three vector column types:
 
-  * Normal vector column
-  * Reference vector column
-  * Weight vector column
+* Normal vector column
+* Reference vector column
+* Weight vector column
+
+You can generate a column value from other column's value
+automatically. It's called as a generated column. See
+:ref:`column-create-generated-column` how to create a generated
+column.
 
 This section describes how to use these types.
 
