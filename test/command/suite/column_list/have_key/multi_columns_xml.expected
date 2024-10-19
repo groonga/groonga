@@ -32,6 +32,9 @@ column_list Users --output_type xml
 <TEXT>ShortText</TEXT></PROPERTY>
 <PROPERTY>
 <TEXT>source</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>generator</TEXT>
 <TEXT>ShortText</TEXT></PROPERTY></HEADER>
 <COLUMN>
 <INT>256</INT>
@@ -41,7 +44,8 @@ column_list Users --output_type xml
 <TEXT>COLUMN_SCALAR</TEXT>
 <TEXT>Users</TEXT>
 <TEXT>ShortText</TEXT>
-<SOURCES></SOURCES></COLUMN>
+<SOURCES></SOURCES>
+<TEXT></TEXT></COLUMN>
 <COLUMN>
 <INT>258</INT>
 <TEXT>age</TEXT>
@@ -50,7 +54,8 @@ column_list Users --output_type xml
 <TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>
 <TEXT>Users</TEXT>
 <TEXT>UInt8</TEXT>
-<SOURCES></SOURCES></COLUMN>
+<SOURCES></SOURCES>
+<TEXT></TEXT></COLUMN>
 <COLUMN>
 <INT>257</INT>
 <TEXT>name</TEXT>
@@ -59,6 +64,7 @@ column_list Users --output_type xml
 <TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>
 <TEXT>Users</TEXT>
 <TEXT>ShortText</TEXT>
-<SOURCES></SOURCES></COLUMN></COLUMN_LIST>
+<SOURCES></SOURCES>
+<TEXT></TEXT></COLUMN></COLUMN_LIST>
 </RESULT>
 

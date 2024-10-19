@@ -1,8 +1,10 @@
-table_create Users TABLE_NO_KEY
+table_create Notes TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Users name COLUMN_SCALAR ShortText
+column_create Notes title COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
-column_list Users
+column_create Notes title_snippets COLUMN_VECTOR ShortText title   --generator 'snippet(title, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+[[0,0.0,0.0],true]
+column_list Notes
 [
   [
     0,
@@ -50,16 +52,29 @@ column_list Users
     ],
     [
       257,
-      "name",
+      "title",
       "db/db.0000101",
       "var",
       "COLUMN_SCALAR|PERSISTENT",
-      "Users",
-      "ShortText",
+      "Notes",
+      "Text",
       [
 
       ],
       ""
+    ],
+    [
+      258,
+      "title_snippets",
+      "db/db.0000102",
+      "var",
+      "COLUMN_VECTOR|PERSISTENT",
+      "Notes",
+      "ShortText",
+      [
+        "Notes.title"
+      ],
+      "snippet(title, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
     ]
   ]
 ]

@@ -42,6 +42,10 @@ column_list Bookmarks
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -54,7 +58,8 @@ column_list Bookmarks
       "ShortText",
       [
 
-      ]
+      ],
+      ""
     ],
     [
       257,
@@ -66,7 +71,8 @@ column_list Bookmarks
       "ShortText",
       [
 
-      ]
+      ],
+      ""
     ]
   ]
 ]

@@ -81,6 +81,7 @@ Return value
       ["domain", "ShortText"],
       ["range",  "ShortText"],
       ["source", "ShortText"]
+      ["generator", "ShortText"]
     ]
 
   It means the following:
@@ -108,7 +109,8 @@ Return value
       FLAGS,
       DOMAIN,
       RANGE,
-      SOURCES
+      SOURCES,
+      GENERATOR
     ]
 
   ``ID``
@@ -193,12 +195,21 @@ Return value
 
   ``SOURCES``
 
-      An array of the source column names of the index. If the index
-      column is multiple column index, the array has two or more
-      source column names.
+      An array of the source column names of the index column or the
+      generated column.
 
-      It is always an empty array for ``COLUMN_SCALAR`` and
-      ``COLUMN_VECTOR``.
+      If the index column is a multiple column index, the array has
+      two or more source column names.
+
+  ``GENERATOR``
+
+      .. versionadded:: 14.1.0
+
+      The generator in :doc:`../grn_expr/script_syntax`.
+
+      This is not an empty string only when the column is a
+      :ref:`generated column<column-create-generated-column>`. This is
+      an empty string otherwise.
 
 See also
 --------

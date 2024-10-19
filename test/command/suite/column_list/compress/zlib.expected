@@ -42,6 +42,10 @@ column_list Memos
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -54,7 +58,8 @@ column_list Memos
       "Text",
       [
 
-      ]
+      ],
+      ""
     ]
   ]
 ]

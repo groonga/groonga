@@ -44,6 +44,10 @@ column_list Users
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -56,7 +60,8 @@ column_list Users
       "ShortText",
       [
 
-      ]
+      ],
+      ""
     ],
     [
       258,
@@ -68,7 +73,8 @@ column_list Users
       "UInt8",
       [
 
-      ]
+      ],
+      ""
     ],
     [
       257,
@@ -80,7 +86,8 @@ column_list Users
       "ShortText",
       [
 
-      ]
+      ],
+      ""
     ]
   ]
 ]

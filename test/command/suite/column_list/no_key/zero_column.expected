@@ -40,6 +40,10 @@ column_list Users
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ]
   ]

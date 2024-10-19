@@ -46,6 +46,10 @@ Execution example::
   #       [
   #         "source",
   #         "ShortText"
+  #       ],
+  #       [
+  #         "generator",
+  #         "ShortText"
   #       ]
   #     ],
   #     [
@@ -58,7 +62,8 @@ Execution example::
   #       "ShortText",
   #       [
   # 
-  #       ]
+  #       ],
+  #       ""
   #     ],
   #     [
   #       257,
@@ -70,7 +75,8 @@ Execution example::
   #       "UInt8",
   #       [
   # 
-  #       ]
+  #       ],
+  #       ""
   #     ],
   #     [
   #       258,
@@ -82,7 +88,8 @@ Execution example::
   #       "ShortText",
   #       [
   # 
-  #       ]
+  #       ],
+  #       ""
   #     ]
   #   ]
   # ]

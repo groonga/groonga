@@ -46,6 +46,10 @@ column_list Lexicon
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -58,7 +62,8 @@ column_list Lexicon
       "ShortText",
       [
 
-      ]
+      ],
+      ""
     ],
     [
       259,
@@ -70,7 +75,8 @@ column_list Lexicon
       "Users",
       [
         "Users.name"
-      ]
+      ],
+      ""
     ]
   ]
 ]

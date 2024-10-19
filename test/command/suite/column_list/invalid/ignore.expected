@@ -42,6 +42,10 @@ column_list Counts
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -54,7 +58,8 @@ column_list Counts
       "UInt8",
       [
 
-      ]
+      ],
+      ""
     ]
   ]
 ]

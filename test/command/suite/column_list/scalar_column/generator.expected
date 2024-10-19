@@ -1,10 +1,10 @@
-table_create Tags TABLE_HASH_KEY ShortText
+table_create Notes TABLE_NO_KEY
 [[0,0.0,0.0],true]
-table_create Memos TABLE_NO_KEY
+column_create Notes title_html COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-column_create Memos tag COLUMN_SCALAR|MISSING_NIL Tags
+column_create Notes title_text COLUMN_SCALAR ShortText title_html   --generator 'html_untag(title_html)'
 [[0,0.0,0.0],true]
-column_list Memos
+column_list Notes
 [
   [
     0,
@@ -51,17 +51,30 @@ column_list Memos
       ]
     ],
     [
-      258,
-      "tag",
-      "db/db.0000102",
-      "fix",
-      "COLUMN_SCALAR|MISSING_NIL|PERSISTENT",
-      "Memos",
-      "Tags",
+      257,
+      "title_html",
+      "db/db.0000101",
+      "var",
+      "COLUMN_SCALAR|PERSISTENT",
+      "Notes",
+      "ShortText",
       [
 
       ],
       ""
+    ],
+    [
+      258,
+      "title_text",
+      "db/db.0000102",
+      "var",
+      "COLUMN_SCALAR|PERSISTENT",
+      "Notes",
+      "ShortText",
+      [
+        "Notes.title_html"
+      ],
+      "html_untag(title_html)"
     ]
   ]
 ]

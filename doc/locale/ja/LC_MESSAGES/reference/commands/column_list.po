@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-20 07:02+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -222,11 +222,20 @@ msgstr "カラムの型名です。型名かテーブル名です。"
 msgid "``SOURCES``"
 msgstr ""
 
-msgid "An array of the source column names of the index. If the index column is multiple column index, the array has two or more source column names."
-msgstr "インデックスのソースカラム名の配列です。インデックスカラムがマルチカラムインデックスの場合、配列は2つまたはそれ以上のソースカラム名を有します。"
+msgid "An array of the source column names of the index column or the generated column."
+msgstr "インデックスカラムまたは自動生成カラムがソースとして使うカラム名の配列です。"
 
-msgid "It is always an empty array for ``COLUMN_SCALAR`` and ``COLUMN_VECTOR``."
-msgstr "``COLUMN_SCALAR`` と ``COLUMN_VECTOR`` では常に空の配列です。"
+msgid "If the index column is a multiple column index, the array has two or more source column names."
+msgstr "インデックスカラムがマルチカラムインデックスの場合、この配列には2つ以上のソースカラム名が入っています。"
+
+msgid "``GENERATOR``"
+msgstr ""
+
+msgid "The generator in :doc:`../grn_expr/script_syntax`."
+msgstr ":doc:`../grn_expr/script_syntax` の生成式です。"
+
+msgid "This is not an empty string only when the column is a :ref:`generated column<column-create-generated-column>`. This is an empty string otherwise."
+msgstr "このカラムが :ref:`自動生成カラム<column-create-generated-column>` でないときだけ、1文字以上の文字列になります。それ以外の場合は空文字列になります。"
 
 msgid "See also"
 msgstr "参考"

@@ -46,6 +46,10 @@ column_list Notes
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -58,7 +62,8 @@ column_list Notes
       "Text",
       [
 
-      ]
+      ],
+      ""
     ],
     [
       259,
@@ -70,7 +75,8 @@ column_list Notes
       "Terms",
       [
         "Notes.title"
-      ]
+      ],
+      ""
     ]
   ]
 ]
