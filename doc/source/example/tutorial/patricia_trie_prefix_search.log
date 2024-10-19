@@ -35,12 +35,12 @@ Execution example::
   #         ]
   #       ],
   #       [
-  #         3,
-  #         "Jennifer"
-  #       ],
-  #       [
   #         4,
   #         "Jeff"
+  #       ],
+  #       [
+  #         3,
+  #         "Jennifer"
   #       ]
   #     ]
   #   ]
