@@ -450,7 +450,7 @@ object_list
       "id": 262,
       "name": "Users.description",
       "opened": false,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 65,
         "name": "column:var_size"
@@ -469,7 +469,7 @@ object_list
       "id": 263,
       "name": "Users.tags",
       "opened": true,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 65,
         "name": "column:var_size"
