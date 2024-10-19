@@ -30,32 +30,32 @@ command_object_list_dump_flags(grn_ctx *ctx, grn_obj_spec *spec)
   GRN_TEXT_INIT(&flags, 0);
 
   switch (spec->header.type) {
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
+  case GRN_TABLE_NO_KEY:
     grn_dump_table_create_flags(ctx, spec->header.flags, &flags);
     break;
-  case GRN_COLUMN_VAR_SIZE :
-  case GRN_COLUMN_FIX_SIZE :
-  case GRN_COLUMN_INDEX :
+  case GRN_COLUMN_VAR_SIZE:
+  case GRN_COLUMN_FIX_SIZE:
+  case GRN_COLUMN_INDEX:
     grn_dump_column_create_flags(ctx, spec->header.flags, &flags);
     break;
-  case GRN_TYPE :
+  case GRN_TYPE:
     if (spec->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
       GRN_TEXT_PUTS(ctx, &flags, "KEY_VAR_SIZE");
     } else {
       switch (spec->header.flags & GRN_OBJ_KEY_MASK) {
-      case GRN_OBJ_KEY_UINT :
+      case GRN_OBJ_KEY_UINT:
         GRN_TEXT_PUTS(ctx, &flags, "KEY_UINT");
         break;
-      case GRN_OBJ_KEY_INT :
+      case GRN_OBJ_KEY_INT:
         GRN_TEXT_PUTS(ctx, &flags, "KEY_INT");
         break;
-      case GRN_OBJ_KEY_FLOAT :
+      case GRN_OBJ_KEY_FLOAT:
         GRN_TEXT_PUTS(ctx, &flags, "KEY_FLOAT");
         break;
-      case GRN_OBJ_KEY_GEO_POINT :
+      case GRN_OBJ_KEY_GEO_POINT:
         GRN_TEXT_PUTS(ctx, &flags, "KEY_GEO_POINT");
         break;
       }
@@ -91,8 +91,12 @@ command_object_list(grn_ctx *ctx,
     return NULL;
   }
 
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, (grn_obj *)db, cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             (grn_obj *)db,
+                             cursor,
+                             id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING)
+  {
     grn_io_win jw;
     uint32_t value_len;
     char *value;
@@ -102,13 +106,18 @@ command_object_list(grn_ctx *ctx,
       n_objects++;
       grn_ja_unref(ctx, &jw);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+  GRN_TABLE_EACH_END(ctx, cursor);
 
   GRN_OBJ_INIT(&vector, GRN_VECTOR, 0, GRN_DB_TEXT);
 
   grn_ctx_output_map_open(ctx, "objects", n_objects);
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, (grn_obj *)db, cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             (grn_obj *)db,
+                             cursor,
+                             id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING)
+  {
     void *name;
     int name_size;
     grn_io_win jw;
@@ -175,14 +184,14 @@ command_object_list(grn_ctx *ctx,
       }
 
       switch (spec->header.type) {
-      case GRN_COLUMN_INDEX :
+      case GRN_COLUMN_INDEX:
         need_sources = true;
         n_properties++;
         break;
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_DAT_KEY:
+      case GRN_TABLE_HASH_KEY:
+      case GRN_TABLE_NO_KEY:
         need_token_filters = true;
         n_properties++;
         break;
@@ -232,15 +241,15 @@ command_object_list(grn_ctx *ctx,
         }
 
         switch (spec->header.type) {
-        case GRN_TYPE :
+        case GRN_TYPE:
           grn_ctx_output_cstr(ctx, "size");
           grn_ctx_output_uint64(ctx, spec->range);
           break;
-        case GRN_PROC :
+        case GRN_PROC:
           grn_ctx_output_cstr(ctx, "plugin_id");
           grn_ctx_output_uint64(ctx, spec->range);
           break;
-        default :
+        default:
           grn_ctx_output_cstr(ctx, "range");
           grn_ctx_output_map_open(ctx, "range", 2);
           {
@@ -275,12 +284,13 @@ command_object_list(grn_ctx *ctx,
           if (n_elements > GRN_SERIALIZED_SPEC_INDEX_SOURCE) {
             uint32_t element_size;
 
-            element_size = grn_vector_get_element(ctx,
-                                                  &vector,
-                                                  GRN_SERIALIZED_SPEC_INDEX_SOURCE,
-                                                  (const char **)&source_ids,
-                                                  NULL,
-                                                  NULL);
+            element_size =
+              grn_vector_get_element(ctx,
+                                     &vector,
+                                     GRN_SERIALIZED_SPEC_INDEX_SOURCE,
+                                     (const char **)&source_ids,
+                                     NULL,
+                                     NULL);
             n_source_ids = (int)(element_size / sizeof(grn_id));
           } else {
             source_ids = NULL;
@@ -326,12 +336,13 @@ command_object_list(grn_ctx *ctx,
           if (n_elements > GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
             uint32_t element_size;
 
-            element_size = grn_vector_get_element(ctx,
-                                                  &vector,
-                                                  GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
-                                                  (const char **)&token_filter_ids,
-                                                  NULL,
-                                                  NULL);
+            element_size =
+              grn_vector_get_element(ctx,
+                                     &vector,
+                                     GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                                     (const char **)&token_filter_ids,
+                                     NULL,
+                                     NULL);
             n_token_filter_ids = (int)(element_size / sizeof(grn_id));
           } else {
             token_filter_ids = NULL;
@@ -372,9 +383,10 @@ command_object_list(grn_ctx *ctx,
       grn_ctx_output_map_close(ctx);
     }
 
-  next :
+  next:
     grn_ja_unref(ctx, &jw);
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+  GRN_TABLE_EACH_END(ctx, cursor);
   grn_ctx_output_map_close(ctx);
 
   GRN_OBJ_FIN(ctx, &vector);
@@ -386,7 +398,8 @@ void
 grn_proc_init_object_list(grn_ctx *ctx)
 {
   grn_plugin_command_create(ctx,
-                            "object_list", -1,
+                            "object_list",
+                            -1,
                             command_object_list,
                             0,
                             NULL);

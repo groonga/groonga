@@ -127,6 +127,7 @@ repos:
           ?lib/proc/proc_highlight\.c|
           ?lib/proc/proc_object\.c|
           ?lib/proc/proc_object_inspect\.c|
+          ?lib/proc/proc_object_list\.c|
           ?lib/proc/proc_query\.c|
           ?lib/proc/proc_schema\.c|
           ?lib/proc/proc_select\.cpp|
