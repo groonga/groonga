@@ -356,7 +356,7 @@ object_list
       "id": 257,
       "name": "Data.number",
       "opened": true,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 64,
         "name": "column:fix_size"
@@ -413,6 +413,10 @@ column_list Data
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -425,7 +429,8 @@ column_list Data
       "Int64",
       [
 
-      ]
+      ],
+      ""
     ]
   ]
 ]
