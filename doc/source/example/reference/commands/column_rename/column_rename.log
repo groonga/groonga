@@ -53,6 +53,10 @@ Execution example::
   #       [
   #         "source",
   #         "ShortText"
+  #       ],
+  #       [
+  #         "generator",
+  #         "ShortText"
   #       ]
   #     ],
   #     [
@@ -65,7 +69,8 @@ Execution example::
   #       "ShortText",
   #       [
   # 
-  #       ]
+  #       ],
+  #       ""
   #     ],
   #     [
   #       257,
@@ -77,7 +82,8 @@ Execution example::
   #       "Int32",
   #       [
   # 
-  #       ]
+  #       ],
+  #       ""
   #     ]
   #   ]
   # ]
