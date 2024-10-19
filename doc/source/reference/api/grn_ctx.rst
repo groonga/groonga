@@ -182,12 +182,3 @@ Reference
    :param ctx: The context object.
    :param type: The new output type.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
-.. c:function:: grn_bool_rc grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
-
-   Checks whether object with the ID is opened or not.
-
-   :param ctx: The context object.
-   :param id: The object ID to be checked.
-   :return: ``GRN_TRUE`` if object with the ID is opened,
-            ``GRN_FALSE`` otherwise.

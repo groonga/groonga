@@ -170,12 +170,3 @@ msgstr ""
 
 msgid "The new output type."
 msgstr "新しい出力形式。"
-
-msgid "Checks whether object with the ID is opened or not."
-msgstr "指定したIDのオブジェクトが開かれているかどうかをチェックします。"
-
-msgid "The object ID to be checked."
-msgstr "チェック対象のオブジェクトのID。"
-
-msgid "``GRN_TRUE`` if object with the ID is opened, ``GRN_FALSE`` otherwise."
-msgstr "指定したIDのオブジェクトが開かれていたら ``GRN_TRUE`` 、そうでなければ ``GRN_FALSE`` 。"
