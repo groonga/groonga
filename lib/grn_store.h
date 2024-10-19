@@ -37,6 +37,8 @@ struct _grn_ra {
   int element_width;
   int element_mask;
   struct grn_ra_header *header;
+  grn_raw_string generator;
+  grn_obj *parsed_generator;
 };
 
 struct grn_ra_header {
@@ -99,6 +101,9 @@ struct _grn_ra_cache {
 
 void *
 grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache);
+
+grn_rc
+grn_ra_set_generator(grn_ctx *ctx, grn_ra *ja, grn_raw_string generator);
 
 /**** variable sized elements ****/
 

@@ -1215,8 +1215,26 @@ grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)
 bool
 grn_obj_is_generated_column(grn_ctx *ctx, grn_obj *obj)
 {
-  return grn_obj_is_vector_column(ctx, obj) && grn_obj_have_source(ctx, obj) &&
-         ((grn_ja *)obj)->generator.length > 0;
+  if (!obj) {
+    return false;
+  }
+
+  grn_raw_string *generator = NULL;
+  switch (obj->header.type) {
+  case GRN_COLUMN_FIX_SIZE:
+    generator = &(((grn_ra *)obj)->generator);
+    break;
+  case GRN_COLUMN_VAR_SIZE:
+    generator = &(((grn_ja *)obj)->generator);
+    break;
+  default:
+    return false;
+  }
+  if (!grn_obj_have_source(ctx, obj)) {
+    return false;
+  }
+
+  return generator->length > 0;
 }
 
 static void

@@ -837,10 +837,17 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
       if (grn_obj_is_proc(ctx, vp->ptr) || grn_obj_is_table(ctx, vp->ptr)) {
         /* Defer */
       } else {
-        if (vp->ptr->header.type == GRN_COLUMN_VAR_SIZE) {
-          grn_ja *ja = (grn_ja *)(vp->ptr);
+        switch (vp->ptr->header.type) {
+        case GRN_COLUMN_FIX_SIZE:
           /* This is already closed by the above ctx->impl->values loop. */
-          ja->parsed_generator = NULL;
+          ((grn_ra *)(vp->ptr))->parsed_generator = NULL;
+          break;
+        case GRN_COLUMN_VAR_SIZE:
+          /* This is already closed by the above ctx->impl->values loop. */
+          ((grn_ja *)(vp->ptr))->parsed_generator = NULL;
+          break;
+        default:
+          break;
         }
         grn_obj_close(ctx, vp->ptr);
       }
@@ -2075,6 +2082,16 @@ grn_obj_default_set_value_hook(grn_ctx *ctx,
     }
     if (target) {
       switch (target->header.type) {
+      case GRN_COLUMN_FIX_SIZE:
+        if (((grn_ra *)target)->generator.length > 0) {
+          grn_generated_column_update(ctx,
+                                      target,
+                                      GRN_UINT32_VALUE(id),
+                                      section,
+                                      oldvalue,
+                                      newvalue);
+        }
+        break;
       case GRN_COLUMN_VAR_SIZE:
         if (((grn_ja *)target)->generator.length > 0) {
           grn_generated_column_update(ctx,
@@ -8040,13 +8057,24 @@ grn_obj_get_info(grn_ctx *ctx,
         }
       }
       {
-        if (obj->header.type == GRN_COLUMN_VAR_SIZE) {
-          grn_raw_string *generator = &(((grn_ja *)obj)->generator);
+        grn_raw_string *generator = NULL;
+        switch (obj->header.type) {
+        case GRN_COLUMN_FIX_SIZE:
+          generator = &(((grn_ra *)obj)->generator);
+          break;
+        case GRN_COLUMN_VAR_SIZE:
+          generator = &(((grn_ja *)obj)->generator);
+          break;
+        default:
+          break;
+        }
+        if (generator) {
           GRN_TEXT_PUT(ctx, valuebuf, generator->value, generator->length);
         } else {
           ERR(GRN_INVALID_ARGUMENT,
-              "%s[generator] target object must be %s: %s",
+              "%s[generator] target object must be one of %s or %s: %s",
               tag,
+              grn_obj_type_to_string(GRN_COLUMN_FIX_SIZE),
               grn_obj_type_to_string(GRN_COLUMN_VAR_SIZE),
               grn_obj_type_to_string(obj->header.type));
         }
@@ -8496,6 +8524,10 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_table_modules_pack(ctx, &(((grn_dat *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
+  case GRN_COLUMN_FIX_SIZE:
+    grn_generator_pack(ctx, ((grn_ra *)obj)->generator, b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    break;
   case GRN_COLUMN_VAR_SIZE:
     grn_generator_pack(ctx, ((grn_ja *)obj)->generator, b);
     grn_vector_delimit(ctx, &v, 0, 0);
@@ -8840,6 +8872,12 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     grn_obj_spec_save(ctx, DB_OBJ(obj));
 
     switch (obj->header.type) {
+    case GRN_COLUMN_FIX_SIZE:
+      update_source_hook(ctx, obj);
+      if (((grn_ra *)obj)->generator.length > 0) {
+        grn_generated_column_build(ctx, obj);
+      }
+      break;
     case GRN_COLUMN_VAR_SIZE:
       update_source_hook(ctx, obj);
       if (((grn_ja *)obj)->generator.length > 0) {
@@ -9470,6 +9508,87 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
+/* This is an internal function. Caller must pass GRN_COLUMN_FIX_SIZE
+ * or GRN_COLUMN_VAR_SIZE as `obj`. This function doesn't validate
+ * it. */
+static grn_rc
+grn_obj_set_generator(grn_ctx *ctx,
+                      grn_obj *obj,
+                      grn_raw_string generator,
+                      const char *context_tag)
+{
+  grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
+  if (!table) {
+    GRN_DEFINE_NAME(obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s belonged table doesn't exist: <%s>(%u): <%u>",
+        context_tag,
+        name,
+        DB_OBJ(obj)->id,
+        obj->header.domain);
+    return ctx->rc;
+  }
+
+  grn_obj **parsed_generator = NULL;
+  if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
+    grn_ra *ra = (grn_ra *)obj;
+    grn_ra_set_generator(ctx, ra, generator);
+    parsed_generator = &(ra->parsed_generator);
+  } else {
+    grn_ja *ja = (grn_ja *)obj;
+    grn_ja_set_generator(ctx, ja, generator);
+    parsed_generator = &(ja->parsed_generator);
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_unref(ctx, table);
+    return ctx->rc;
+  }
+
+  if (generator.length > 0) {
+    grn_obj *variable;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, *parsed_generator, variable);
+    if (*parsed_generator) {
+      grn_expr_parse(ctx,
+                     *parsed_generator,
+                     generator.value,
+                     generator.length,
+                     NULL,
+                     GRN_OP_MATCH,
+                     GRN_OP_AND,
+                     GRN_EXPR_SYNTAX_SCRIPT);
+      if (ctx->rc != GRN_SUCCESS) {
+        GRN_DEFINE_NAME(obj);
+        char errbuf[GRN_CTX_MSGSIZE];
+        grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to parse generator: <%s>(%u): <%u>: %s",
+            context_tag,
+            name,
+            DB_OBJ(obj)->id,
+            obj->header.domain,
+            errbuf);
+        grn_obj_close(ctx, *parsed_generator);
+        *parsed_generator = NULL;
+      }
+    }
+    if (!*parsed_generator) {
+      grn_raw_string empty_generator;
+      GRN_RAW_STRING_INIT(empty_generator);
+      if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
+        grn_ra *ra = (grn_ra *)obj;
+        grn_ra_set_generator(ctx, ra, empty_generator);
+      } else {
+        grn_ja *ja = (grn_ja *)obj;
+        grn_ja_set_generator(ctx, ja, empty_generator);
+      }
+      grn_obj_unref(ctx, table);
+      return ctx->rc;
+    }
+  }
+  grn_obj_unref(ctx, table);
+  return ctx->rc;
+}
+
 static grn_rc
 grn_obj_set_info_generator(grn_ctx *ctx,
                            grn_obj *obj,
@@ -9477,10 +9596,16 @@ grn_obj_set_info_generator(grn_ctx *ctx,
                            grn_obj *generator,
                            const char *context_tag)
 {
-  if (obj->header.type != GRN_COLUMN_VAR_SIZE) {
+  switch (obj->header.type) {
+  case GRN_COLUMN_FIX_SIZE:
+  case GRN_COLUMN_VAR_SIZE:
+    break;
+  default:
     ERR(GRN_INVALID_ARGUMENT,
-        "%s target object must be GRN_COLUMN_VAR_SIZE: <%s>",
+        "%s target object must be one of %s or %s: <%s>",
         context_tag,
+        grn_obj_type_to_string(GRN_COLUMN_FIX_SIZE),
+        grn_obj_type_to_string(GRN_COLUMN_VAR_SIZE),
         grn_obj_type_to_string(obj->header.type));
     return ctx->rc;
   }
@@ -9492,50 +9617,12 @@ grn_obj_set_info_generator(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-  if (!table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s belonged table doesn't exist: <%u>",
-        context_tag,
-        obj->header.domain);
-    return ctx->rc;
-  }
-
-  grn_ja *ja = (grn_ja *)obj;
   grn_raw_string generator_string;
   GRN_RAW_STRING_SET(generator_string, generator);
-  grn_ja_set_generator(ctx, ja, generator_string);
+  grn_obj_set_generator(ctx, obj, generator_string, context_tag);
   if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_unref(ctx, table);
     return ctx->rc;
   }
-
-  if (ja->generator.length > 0) {
-    grn_obj *variable;
-    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, ja->parsed_generator, variable);
-    if (ja->parsed_generator) {
-      grn_expr_parse(ctx,
-                     ja->parsed_generator,
-                     ja->generator.value,
-                     ja->generator.length,
-                     NULL,
-                     GRN_OP_MATCH,
-                     GRN_OP_AND,
-                     GRN_EXPR_SYNTAX_SCRIPT);
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_obj_close(ctx, ja->parsed_generator);
-        ja->parsed_generator = NULL;
-      }
-    }
-    if (!ja->parsed_generator) {
-      generator_string.value = NULL;
-      generator_string.length = 0;
-      grn_ja_set_generator(ctx, ja, generator_string);
-      grn_obj_unref(ctx, table);
-      return ctx->rc;
-    }
-  }
-  grn_obj_unref(ctx, table);
 
   {
     grn_id id = DB_OBJ(obj)->id;
@@ -12167,7 +12254,10 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     &decoded_spec,
                     GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR);
                   if (generator.length > 0) {
-                    grn_ja_set_generator(ctx, (grn_ja *)(vp->ptr), generator);
+                    grn_obj_set_generator(ctx,
+                                          vp->ptr,
+                                          generator,
+                                          "[at][var-size][generator]");
                   }
                 }
                 break;
@@ -12175,6 +12265,18 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_ra_open(ctx, buffer);
                 UNPACK_INFO(spec, &decoded_spec);
+                {
+                  grn_raw_string generator = grn_generator_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_RA_GENERATOR);
+                  if (generator.length > 0) {
+                    grn_obj_set_generator(ctx,
+                                          vp->ptr,
+                                          generator,
+                                          "[at][fix-size][generator]");
+                  }
+                }
                 break;
               case GRN_COLUMN_INDEX:
                 grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);

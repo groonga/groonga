@@ -75,6 +75,8 @@ _grn_ra_create(grn_ctx *ctx,
   ra->header = header;
   ra->element_mask = n_elm - 1;
   ra->element_width = w_elm;
+  GRN_RAW_STRING_INIT(ra->generator);
+  ra->parsed_generator = NULL;
   return ra;
 }
 
@@ -131,6 +133,8 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   ra->header = header;
   ra->element_mask = n_elm - 1;
   ra->element_width = w_elm;
+  GRN_RAW_STRING_INIT(ra->generator);
+  ra->parsed_generator = NULL;
   return ra;
 }
 
@@ -167,6 +171,12 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
       GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)ra);
   }
+  if (ra->generator.value) {
+    GRN_FREE((char *)(ra->generator.value));
+  }
+  if (ra->parsed_generator) {
+    grn_obj_close(ctx, ra->parsed_generator);
+  }
   rc = grn_io_close(ctx, ra->io);
   GRN_FREE(ra);
   return rc;
@@ -193,6 +203,8 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   grn_rc rc;
   const char *io_path;
   char *path;
+  grn_raw_string generator;
+  GRN_RAW_STRING_INIT(generator);
   if ((io_path = grn_io_path(ra->io)) && *io_path != '\0') {
     if (!(path = GRN_STRDUP(io_path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
@@ -203,6 +215,7 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   }
   uint32_t element_size = ra->header->element_size;
   grn_column_flags flags = ra->header->flags;
+  generator = ra->generator;
   if ((rc = grn_io_close(ctx, ra->io))) {
     goto exit;
   }
@@ -213,11 +226,17 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   if (rc == GRN_SUCCESS) {
     if (!_grn_ra_create(ctx, ra, path, element_size, flags)) {
       rc = GRN_UNKNOWN_ERROR;
+      goto exit;
     }
+    ra->generator = generator;
+    generator.value = NULL;
   }
 exit:
   if (path) {
     GRN_FREE(path);
+  }
+  if (generator.value) {
+    GRN_FREE((char *)(generator.value));
   }
   return rc;
 }
@@ -595,6 +614,36 @@ grn_rc
 grn_ra_warm(grn_ctx *ctx, grn_ra *ra)
 {
   return grn_io_warm(ctx, ra->io);
+}
+
+grn_rc
+grn_ra_set_generator(grn_ctx *ctx, grn_ra *ra, grn_raw_string generator)
+{
+  if (GRN_RAW_STRING_EQUAL(ra->generator, generator)) {
+    return GRN_SUCCESS;
+  }
+
+  if (ra->generator.length > 0) {
+    GRN_FREE((char *)(ra->generator.value));
+    GRN_RAW_STRING_INIT(ra->generator);
+  }
+  if (ra->parsed_generator) {
+    grn_obj_close(ctx, ra->parsed_generator);
+    ra->parsed_generator = NULL;
+  }
+  if (generator.length > 0) {
+    ra->generator.value = GRN_MALLOC(generator.length);
+    if (!ra->generator.value) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[ra][set][generator] failed to copy generator");
+      return ctx->rc;
+    }
+    grn_memcpy((char *)(ra->generator.value),
+               generator.value,
+               generator.length);
+    ra->generator.length = generator.length;
+  }
+  return GRN_SUCCESS;
 }
 
 /**** jagged arrays, ja ****/
