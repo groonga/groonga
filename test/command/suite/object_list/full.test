@@ -14,6 +14,12 @@ table_create Terms TABLE_PAT_KEY ShortText \
 column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
   Users _key,description
 
+# token column
+column_create Users description_terms COLUMN_VECTOR Terms description
+# generated column
+column_create Users description_snippets COLUMN_VECTOR ShortText description \
+  --generator 'snippet(description, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+
 #@disable-logging
 thread_limit 1
 #@enable-logging

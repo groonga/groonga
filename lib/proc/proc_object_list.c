@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016  Brazil
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -159,6 +159,7 @@ command_object_list(grn_ctx *ctx,
       grn_obj_spec *spec;
       int n_properties = 8;
       bool need_sources = false;
+      bool need_generator = false;
       bool need_token_filters = false;
 
       element_size = grn_vector_get_element(ctx,
@@ -184,6 +185,13 @@ command_object_list(grn_ctx *ctx,
       }
 
       switch (spec->header.type) {
+      case GRN_COLUMN_FIX_SIZE:
+      case GRN_COLUMN_VAR_SIZE:
+        need_sources = true;
+        n_properties++;
+        need_generator = true;
+        n_properties++;
+        break;
       case GRN_COLUMN_INDEX:
         need_sources = true;
         n_properties++;
@@ -326,6 +334,23 @@ command_object_list(grn_ctx *ctx,
             grn_ctx_output_map_close(ctx);
           }
           grn_ctx_output_array_close(ctx);
+        }
+
+        if (need_generator) {
+          grn_raw_string generator;
+          GRN_RAW_STRING_INIT(generator);
+          if (n_elements > GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR) {
+            generator.length =
+              grn_vector_get_element(ctx,
+                                     &vector,
+                                     GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR,
+                                     &(generator.value),
+                                     NULL,
+                                     NULL);
+          }
+
+          grn_ctx_output_cstr(ctx, "generator");
+          grn_ctx_output_str(ctx, generator.value, generator.length);
         }
 
         if (need_token_filters) {

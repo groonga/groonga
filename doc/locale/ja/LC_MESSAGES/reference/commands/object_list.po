@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-21 11:48+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -285,23 +285,29 @@ msgstr "``\"column:*\"`` というオブジェクトの種類に固有の ``OBJE
 msgid "The type of the column's value. See :ref:`object-list-return-value-range` for details."
 msgstr "このカラムの値の型。詳細は :ref:`object-list-return-value-range` を参照してください。"
 
-msgid "``OBJECT`` (``\"column:index\"`` object type specific properties)"
-msgstr "``OBJECT`` （ ``\"column:index\"`` というオブジェクトの種類に固有のプロパティ）"
-
-msgid "Here are ``\"column:index\"`` object type specific properties in ``OBJECT``::"
-msgstr "``\"column:index\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは次の通りです。::"
-
 msgid "``sources``"
 msgstr ""
 
 msgid "The sources of the index column. See :ref:`object-list-return-value-sources` for details."
 msgstr "このインデックスカラムのソース一覧。詳細は :ref:`object-list-return-value-sources` を参照してください。"
 
+msgid "``OBJECT`` (``\"column:fix\"`` and ``\"column:var\"`` object types specific properties)"
+msgstr "``OBJECT`` （ ``\"column:fix\"`` と ``\"column:var\"`` というオブジェクトの種類に固有のプロパティ）"
+
+msgid "Here are ``\"column:fix\"`` and ``\"column:var\"`` object type specific properties in ``OBJECT``::"
+msgstr "``\"column:fix\"`` と ``\"column:var\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは次の通りです。::"
+
+msgid "The generator expression in :doc:`../grn_expr/script_syntax`."
+msgstr ":doc:`../grn_expr/script_syntax` の生成式です。"
+
+msgid "If the column is not a :ref:`generated column<column-create-generated-column>`, this is an empty string."
+msgstr ":ref:`自動生成カラム<column-create-generated-column>` ではない場合は空文字列になります。"
+
 msgid "``SOURCES``"
 msgstr ""
 
-msgid "``SOURCES`` represents the sources of the index column."
-msgstr "``SOURCES`` はこのインデックスカラムのソースの一覧を表します。"
+msgid "``SOURCES`` represents the sources of an index column or a generated column."
+msgstr "``SOURCES`` はインデックスカラムまたは自動生成カラムのソースを表します。"
 
 msgid "``SOURCES`` is an array of ``SOURCE``::"
 msgstr "``SOURCES`` は ``SOURCE`` の配列です。::"

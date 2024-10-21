@@ -222,11 +222,11 @@ Here are ``"type"`` object type specific properties in ``OBJECT``::
 
 Here is a list of object that is ``"proc"`` object type:
 
-  * :doc:`/reference/command`
-  * :doc:`/reference/function`
-  * :doc:`/reference/normalizers`
-  * :doc:`/reference/tokenizers`
-  * :doc:`/reference/token_filters`
+* :doc:`/reference/command`
+* :doc:`/reference/function`
+* :doc:`/reference/normalizers`
+* :doc:`/reference/tokenizers`
+* :doc:`/reference/token_filters`
 
 Here are ``"proc"`` object type specific properties in ``OBJECT``::
 
@@ -333,7 +333,8 @@ Here are ``"column:*"`` object types specific properties in
 ``OBJECT``::
 
   {
-    "range": RANGE
+    "range": RANGE,
+    "sources": SOURCES
   }
 
 .. list-table::
@@ -344,15 +345,18 @@ Here are ``"column:*"`` object types specific properties in
    * - ``range``
      - The type of the column's value. See
        :ref:`object-list-return-value-range` for details.
+   * - ``sources``
+     - The sources of the index column. See
+       :ref:`object-list-return-value-sources` for details.
 
-``OBJECT`` (``"column:index"`` object type specific properties)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``OBJECT`` (``"column:fix"`` and ``"column:var"`` object types specific properties)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here are ``"column:index"`` object type specific properties in
-``OBJECT``::
+Here are ``"column:fix"`` and ``"column:var"`` object type specific
+properties in ``OBJECT``::
 
   {
-    "sources": SOURCES
+    "generator": GENERATOR
   }
 
 .. list-table::
@@ -360,16 +364,22 @@ Here are ``"column:index"`` object type specific properties in
 
    * - Name
      - Description
-   * - ``sources``
-     - The sources of the index column. See
-       :ref:`object-list-return-value-sources` for details.
+   * - ``range``
+     - .. versionadded:: 14.1.0
+
+       The generator expression in :doc:`../grn_expr/script_syntax`.
+
+       If the column is not a :ref:`generated
+       column<column-create-generated-column>`, this is an empty
+       string.
 
 .. _object-list-return-value-sources:
 
 ``SOURCES``
 ^^^^^^^^^^^
 
-``SOURCES`` represents the sources of the index column.
+``SOURCES`` represents the sources of an index column or a generated
+column.
 
 ``SOURCES`` is an array of ``SOURCE``::
 
@@ -400,4 +410,4 @@ Here are ``"column:index"`` object type specific properties in
 See also
 --------
 
-  * :doc:`schema`
+* :doc:`schema`

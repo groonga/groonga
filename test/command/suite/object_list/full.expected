@@ -10,6 +10,10 @@ table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --def
 [[0,0.0,0.0],true]
 column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Users _key,description
 [[0,0.0,0.0],true]
+column_create Users description_terms COLUMN_VECTOR Terms description
+[[0,0.0,0.0],true]
+column_create Users description_snippets COLUMN_VECTOR ShortText description   --generator 'snippet(description, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+[[0,0.0,0.0],true]
 database_unmap
 [[0,0.0,0.0],true]
 table_create Tags TABLE_HASH_KEY ShortText   --normalizer NormalizerAuto
@@ -463,7 +467,11 @@ object_list
       "range": {
         "id": 14,
         "name": "ShortText"
-      }
+      },
+      "sources": [
+
+      ],
+      "generator": ""
     },
     "Users.tags": {
       "id": 263,
@@ -482,7 +490,11 @@ object_list
       "range": {
         "id": 14,
         "name": "ShortText"
-      }
+      },
+      "sources": [
+
+      ],
+      "generator": ""
     },
     "Terms": {
       "id": 264,
@@ -535,8 +547,60 @@ object_list
         }
       ]
     },
-    "Tags": {
+    "Users.description_terms": {
       "id": 266,
+      "name": "Users.description_terms",
+      "opened": false,
+      "n_elements": 5,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 32769,
+        "names": "COLUMN_VECTOR|PERSISTENT"
+      },
+      "path": "db/db.000010A",
+      "range": {
+        "id": 264,
+        "name": "Terms"
+      },
+      "sources": [
+        {
+          "id": 262,
+          "name": "Users.description"
+        }
+      ],
+      "generator": ""
+    },
+    "Users.description_snippets": {
+      "id": 267,
+      "name": "Users.description_snippets",
+      "opened": false,
+      "n_elements": 5,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 49153,
+        "names": "COLUMN_VECTOR|PERSISTENT"
+      },
+      "path": "db/db.000010B",
+      "range": {
+        "id": 14,
+        "name": "ShortText"
+      },
+      "sources": [
+        {
+          "id": 262,
+          "name": "Users.description"
+        }
+      ],
+      "generator": "snippet(description, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
+    },
+    "Tags": {
+      "id": 268,
       "name": "Tags",
       "opened": true,
       "n_elements": 6,
@@ -548,7 +612,7 @@ object_list
         "value": 49152,
         "names": "TABLE_HASH_KEY|PERSISTENT"
       },
-      "path": "db/db.000010A",
+      "path": "db/db.000010C",
       "range": {
         "id": 0,
         "name": null
@@ -558,7 +622,7 @@ object_list
       ]
     },
     "Tags.users": {
-      "id": 267,
+      "id": 269,
       "name": "Tags.users",
       "opened": true,
       "n_elements": 4,
@@ -570,7 +634,7 @@ object_list
         "value": 32770,
         "names": "COLUMN_INDEX|PERSISTENT"
       },
-      "path": "db/db.000010B",
+      "path": "db/db.000010D",
       "range": {
         "id": 261,
         "name": "Users"
