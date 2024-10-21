@@ -440,9 +440,9 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   if (is_index) {
     n_elements += 5;
   } else {
-    n_elements += 1;
+    n_elements += 2;
     if (is_vector) {
-      n_elements += 2;
+      n_elements += 3;
     }
   }
   grn_ctx_output_map_open(ctx, "value", n_elements);
