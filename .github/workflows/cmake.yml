@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - ci-windows-2019-vc-redist
       - 'maintenance/**'
     tags:
       - '*'
@@ -763,6 +764,7 @@ jobs:
             -ItemType Directory
 
           $VC_REDIST_VERSION = (Get-Content "${Env:VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
+          dir -R "${Env:VC_PREFIX}\Redist\MSVC\"
           $VC_REDIST_DIR = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.CRT"
           $VC_REDIST_DIR_OPEN_MP = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.OpenMP"
           $VC_REDIST_VCRUNTIME = "${VC_REDIST_DIR}\vcruntime140.dll"
