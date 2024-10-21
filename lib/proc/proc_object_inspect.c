@@ -436,13 +436,17 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   default:
     break;
   }
+  bool is_generated_column = grn_obj_is_generated_column(ctx, column);
 
   if (is_index) {
     n_elements += 5;
   } else {
-    n_elements += 3;
+    n_elements += 2;
     if (is_vector) {
       n_elements += 3;
+    }
+    if (is_generated_column) {
+      n_elements += 1;
     }
   }
   grn_ctx_output_map_open(ctx, "value", n_elements);
@@ -488,14 +492,16 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
       }
       grn_ctx_output_cstr(ctx, "compress_filters");
       command_object_inspect_column_data_value_compress_filters(ctx, column);
-      grn_ctx_output_cstr(ctx, "generator");
-      grn_obj generator;
-      GRN_TEXT_INIT(&generator, 0);
-      grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
-      grn_ctx_output_str(ctx,
-                         GRN_TEXT_VALUE(&generator),
-                         GRN_TEXT_LEN(&generator));
-      GRN_OBJ_FIN(ctx, &generator);
+      if (is_generated_column) {
+        grn_ctx_output_cstr(ctx, "generator");
+        grn_obj generator;
+        GRN_TEXT_INIT(&generator, 0);
+        grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
+        grn_ctx_output_str(ctx,
+                           GRN_TEXT_VALUE(&generator),
+                           GRN_TEXT_LEN(&generator));
+        GRN_OBJ_FIN(ctx, &generator);
+      }
     }
   }
   grn_ctx_output_map_close(ctx);
@@ -504,17 +510,21 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 static void
 command_object_inspect_column_sources(grn_ctx *ctx, grn_obj *column)
 {
+  const bool is_generated_column = grn_obj_is_generated_column(ctx, column);
   grn_obj *source_table;
+  if (is_generated_column) {
+    source_table = grn_ctx_at(ctx, column->header.domain);
+  } else {
+    source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+  }
+
   grn_obj source_ids;
-  int i, n_ids;
-
-  source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
-
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
 
-  n_ids = (int)(GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id));
+  int n_ids = (int)(GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id));
   grn_ctx_output_array_open(ctx, "sources", n_ids);
+  int i;
   for (i = 0; i < n_ids; i++) {
     grn_id source_id;
     grn_obj *source;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-21 15:20+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -267,8 +267,35 @@ msgstr "64bitの正の整数です。"
 msgid "Column"
 msgstr "カラム"
 
-msgid "Data column (scalar column and vector column) returns the following information::"
-msgstr "データカラム（スカラーカラムとベクターカラム）を調査すると次の情報を返します。::"
+msgid "Scalar column returns the following information::"
+msgstr "スカラーカラムを調査すると次の情報を返します。::"
+
+msgid "Vector column is similar to scalar column but there are some differences."
+msgstr "ベクターカラムはスカラーカラムと似ていますがいくつか違いがあります。"
+
+msgid "Vector column has ``value.weight`` key."
+msgstr "ベクターカラムの情報にはキー ``value.weight`` があります。"
+
+msgid "Vector column has ``value.weight_float32`` key."
+msgstr "ベクターカラムの情報にはキー ``value.weight_float32`` があります。"
+
+msgid "Vector column has ``value.weight_bfloat16`` key."
+msgstr "ベクターカラムの情報にはキー ``value.weight_bfloat16`` があります。"
+
+msgid "Vector column returns the following information::"
+msgstr "ベクターカラムを調査すると次の情報を返します。"
+
+msgid "Generated scalar/vector column is similar to non generated scalar/vector column but there are some differences."
+msgstr "自動生成スカラー・ベクターカラム非自動生成スカラー・ベクターカラムと似ていますが、いくつか違いがあります。"
+
+msgid "Generated column has ``value.generator`` key."
+msgstr "自動生成カラムカラムの情報にはキー ``value.generator`` があります。"
+
+msgid "Generated column has ``sources`` key."
+msgstr "自動生成カラムの情報にはキー ``sources`` があります。"
+
+msgid "Generated column returns the following information::"
+msgstr "自動生成カラムを調査すると次の情報を返します。::"
 
 msgid "Index column is similar to data column but there are some differences."
 msgstr "インデックスカラムはデータカラムと似ていますがいくつか違いがあります。"
@@ -453,20 +480,110 @@ msgstr "なし"
 msgid "``null``"
 msgstr ""
 
-msgid "``INDEX_COLUMN_VALUE_SECTION``"
-msgstr ""
-
-msgid "Whether the inspected column is created with ``WITH_SECTION`` flag or not.  The value is ``true`` if ``WITH_SECTION`` was specified, ``false`` otherwise."
-msgstr "調査対象のカラムが ``WITH_SECTION`` フラグ付きで作ったカラムかどうかを返します。 ``WITH_SECTION`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは ``false`` になります。"
-
 msgid ":ref:`column-create-flags`"
 msgstr ""
 
-msgid "``INDEX_COLUMN_VALUE_WEIGHT``"
+msgid "``DATA_COLUMN_VALUE_COMPRESS_FILTER``"
 msgstr ""
 
-msgid "Whether the inspected column is created with ``WITH_WEIGHT`` flag or not.  The value is ``true`` if ``WITH_WEIGHT`` was specified, ``false`` otherwise."
+msgid "The compress filter name of the inspected data column."
+msgstr "調査対象のデータカラムの値の圧縮フィルター名です。"
+
+msgid "Here is a list of compress filters:"
+msgstr "以下は圧縮フィルターのリストです。"
+
+msgid "Compress filter"
+msgstr "圧縮フィルター"
+
+msgid "``COMPRESS_FILTER_SHUFFLE``"
+msgstr ""
+
+msgid "``\"shuffle\"``"
+msgstr ""
+
+msgid "``COMPRESS_FILTER_BYTE_DELTA``"
+msgstr ""
+
+msgid "``\"byte_delta\"``"
+msgstr ""
+
+msgid "``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``"
+msgstr ""
+
+msgid "``\"truncate_precision_2bytes\"``"
+msgstr ""
+
+msgid "``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``"
+msgstr ""
+
+msgid "``\"truncate_precision_1byte\"``"
+msgstr ""
+
+msgid "``VECTOR_COLUMN_VALUE_WEIGHT``"
+msgstr ""
+
+msgid "Whether the inspected column is created with ``WITH_WEIGHT`` flag or not. The value is ``true`` if ``WITH_WEIGHT`` was specified, ``false`` otherwise."
 msgstr "調査対象のカラムが ``WITH_WEIGHT`` フラグ付きで作ったカラムかどうかを返します。 ``WITH_WEIGHT`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは ``false`` になります。"
+
+msgid "``VECTOR_COLUMN_VALUE_WEIGHT_FLOAT32``"
+msgstr ""
+
+msgid "Whether the inspected column is created with ``WEIGHT_FLOAT32`` flag or not. The value is ``true`` if ``WEIGHT_FLOAT32`` was specified, ``false`` otherwise."
+msgstr "調査対象のカラムが ``WEIGHT_FLOAT32`` フラグ付きで作ったカラムかどうかを返します。 ``WEIGHT_FLOAT32`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは ``false`` になります。"
+
+msgid "``VECTOR_COLUMN_VALUE_WEIGHT_BFLOAT16``"
+msgstr ""
+
+msgid "Whether the inspected column is created with ``WEIGHT_BFLOAT16`` flag or not. The value is ``true`` if ``WEIGHT_BFLOAT16`` was specified, ``false`` otherwise."
+msgstr "調査対象のカラムが ``WEIGHT_BLOAT16`` フラグ付きで作ったカラムかどうかを返します。 ``WEIGHT_BLOAT16`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは ``false`` になります。"
+
+msgid "``GENERATED_COLUMN_VALUE_GENERATOR``"
+msgstr ""
+
+msgid "The generator expression in :doc:`../grn_expr/script_syntax`."
+msgstr ":doc:`../grn_expr/script_syntax` の生成式です。"
+
+msgid ":ref:`column-create-generate`"
+msgstr ""
+
+msgid "``GENERATED_COLUMN_SOURCE_ID``"
+msgstr ""
+
+msgid "The ID of a source column of the inspected generated column."
+msgstr "調査対象の自動生成カラム内のソースカラムのID。"
+
+msgid "``GENERATED_COLUMN_SOURCE_NAME``"
+msgstr ""
+
+msgid "The name of a source column of the inspected generated column."
+msgstr "調査対象の自動生成カラムのソースカラムの名前。"
+
+msgid "If you want full column name (``TABLE_NAME.COLUMN_NAME`` style), use :ref:`object-inspect-return-value-generated-column-source-full-name` instead."
+msgstr "``TABLE_NAME.COLUMN_NAME`` スタイルの完全なカラム名を欲しい場合は代わりに :ref:`object-inspect-return-value-generated-column-source-full-name` を使ってください。"
+
+msgid "``GENERATED_COLUMN_SOURCE_TABLE``"
+msgstr ""
+
+msgid "The table of a source column of the inspected generated column."
+msgstr "調査対象の自動生成カラム内のソースカラムのテーブル。"
+
+msgid "``GENERATED_COLUMN_SOURCE_FULL_NAME``"
+msgstr ""
+
+msgid "The full name of a source column of the inspected generated column."
+msgstr "調査対象の自動生成カラム内のソースカラムの完全な名前。"
+
+msgid "If you just want only column name, use :ref:`object-inspect-return-value-generated-column-source-name` instead."
+msgstr "カラム名だけが必要な場合は代わりに :ref:`object-inspect-return-value-generated-column-source-name` を使ってください。"
+
+msgid "``INDEX_COLUMN_VALUE_SECTION``"
+msgstr ""
+
+msgid "Whether the inspected column is created with ``WITH_SECTION`` flag or not. The value is ``true`` if ``WITH_SECTION`` was specified, ``false`` otherwise."
+msgstr "調査対象のカラムが ``WITH_SECTION`` フラグ付きで作ったカラムかどうかを返します。 ``WITH_SECTION`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは ``false`` になります。"
+
+msgid "``INDEX_COLUMN_VALUE_WEIGHT``"
+msgstr ""
 
 msgid "``INDEX_COLUMN_VALUE_POSITION``"
 msgstr ""

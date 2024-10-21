@@ -16,11 +16,11 @@ object.
 
 For example:
 
-  * If the object is a table, you can confirm the number of records in
-    the table.
+* If the object is a table, you can confirm the number of records in
+  the table.
 
-  * If the object is a column, you can confirm the type of value of
-    the column.
+* If the object is a column, you can confirm the type of value of
+  the column.
 
 Syntax
 ------
@@ -45,14 +45,14 @@ You can inspect an object in the database specified by ``name``:
 
 The ``object_inspect Users`` returns the following information:
 
-  * The name of the table: ``"name": Users``
+* The name of the table: ``"name": Users``
 
-  * The total used key size: ``"key": {"total_size": 5}``
-    (``"Alice"`` is 5 byte data)
+* The total used key size: ``"key": {"total_size": 5}``
+  (``"Alice"`` is 5 byte data)
 
-  * The maximum total key size: ``"key": {"max_total_size": 4294967295}``
+* The maximum total key size: ``"key": {"max_total_size": 4294967295}``
 
-  * and so on.
+* and so on.
 
 You can inspect the database by not specifying ``name``:
 
@@ -62,10 +62,10 @@ You can inspect the database by not specifying ``name``:
 
 The ``object_inspect`` returns the following information:
 
-  * The table type for object name management:
-    ``"key": {"type": {"name": "table:dat_key"}}``
+* The table type for object name management:
+  ``"key": {"type": {"name": "table:dat_key"}}``
 
-  * and so on.
+* and so on.
 
 Parameters
 ----------
@@ -285,8 +285,7 @@ Column
 
 .. versionadded:: 7.0.2
 
-Data column (scalar column and vector column) returns the following
-information::
+Scalar column returns the following information::
 
   {
     "id": COLUMN_ID,
@@ -303,24 +302,110 @@ information::
     "value": {
       "type": COLUMN_VALUE_TYPE,
       "compress": DATA_COLUMN_VALUE_COMPRESS_METHOD,
+      "compress_filters": [
+        DATA_COLUMN_VALUE_COMPRESS_FILTER,
+        ...
+      ]
     }
+  }
+
+Vector column is similar to scalar column but there are some
+differences.
+
+* Vector column has ``value.weight`` key.
+
+* Vector column has ``value.weight_float32`` key.
+
+* Vector column has ``value.weight_bfloat16`` key.
+
+Vector column returns the following information::
+
+  {
+    "id": COLUMN_ID,
+    "name": COLUMN_NAME
+    "table": COLUMN_TABLE,
+    "full_name": COLUMN_FULL_NAME,
+    "type": {
+      "name": COLUMN_TYPE_NAME,
+      "raw": {
+        "id": COLUMN_TYPE_RAW_ID,
+        "name": COLUMN_TYPE_RAW_NAME
+      }
+    },
+    "value": {
+      "type": COLUMN_VALUE_TYPE,
+      "compress": DATA_COLUMN_VALUE_COMPRESS_METHOD,
+      "weight": VECTOR_COLUMN_VALUE_WEIGHT,
+      "weight_float32": VECTOR_COLUMN_VALUE_WEIGHT_FLOAT32,
+      "weight_bfloat16": VECTOR_COLUMN_VALUE_WEIGHT_BFLOAT16,
+      "compress_filters": [
+        DATA_COLUMN_VALUE_COMPRESS_FILTER,
+        ...
+      ]
+    }
+  }
+
+.. versionadded:: 14.1.0
+
+Generated scalar/vector column is similar to non generated
+scalar/vector column but there are some differences.
+
+* Generated column has ``value.generator`` key.
+
+* Generated column has ``sources`` key.
+
+Generated column returns the following information::
+
+  {
+    "id": COLUMN_ID,
+    "name": COLUMN_NAME
+    "table": COLUMN_TABLE,
+    "full_name": COLUMN_FULL_NAME,
+    "type": {
+      "name": COLUMN_TYPE_NAME,
+      "raw": {
+        "id": COLUMN_TYPE_RAW_ID,
+        "name": COLUMN_TYPE_RAW_NAME
+      }
+    },
+    "value": {
+      "type": COLUMN_VALUE_TYPE,
+      "compress": DATA_COLUMN_VALUE_COMPRESS_METHOD,
+      "weight": VECTOR_COLUMN_VALUE_WEIGHT,
+      "weight_float32": VECTOR_COLUMN_VALUE_WEIGHT_FLOAT32,
+      "weight_bfloat16": VECTOR_COLUMN_VALUE_WEIGHT_BFLOAT16,
+      "compress_filters": [
+        DATA_COLUMN_VALUE_COMPRESS_FILTER,
+        ...
+      ]
+      "generator": GENERATED_COLUMN_VALUE_GENERATOR
+    },
+    "sources": [
+      {
+        "id": GENERATED_COLUMN_SOURCE_ID,
+        "name": GENERATED_COLUMN_SOURCE_NAME,
+        "table": GENERATED_COLUMN_SOURCE_TABLE,
+        "full_name": GENERATED_COLUMN_SOURCE_FULL_NAME
+      },
+      ...
+    ]
   }
 
 Index column is similar to data column but there are some differences.
 
-  * Index column doesn't have ``value.compress`` key.
+* Index column doesn't have ``value.compress`` key.
 
-  * Index column has ``value.section`` key.
+* Index column has ``value.section`` key.
 
-  * Index column has ``value.weight`` key.
+* Index column has ``value.weight`` key.
 
-  * Index column has ``value.position`` key.
+* Index column has ``value.position`` key.
 
-  * Index column has ``value.size`` key.
+* Index column has ``value.size`` key.
 
-  * Index column has ``value.statistics`` key.
+* Index column has ``value.statistics`` key.
 
-  * Index column has ``sources`` key.
+* Index column has ``sources`` key.
 
 Index column returns the following information::
 
@@ -505,13 +590,135 @@ Here is a list of compress methods:
    * - None
      - ``null``
 
+.. seealso:: :ref:`column-create-flags`
+
+.. _object-inspect-return-value-data-column-value-compress-filter:
+
+``DATA_COLUMN_VALUE_COMPRESS_FILTER``
+"""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 13.0.8
+
+The compress filter name of the inspected data column.
+
+Here is a list of compress filters:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Compress filter
+     - Value
+   * - ``COMPRESS_FILTER_SHUFFLE``
+     - ``"shuffle"``
+   * - ``COMPRESS_FILTER_BYTE_DELTA``
+     - ``"byte_delta"``
+   * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``
+     - ``"truncate_precision_2bytes"``
+   * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``
+     - ``"truncate_precision_1byte"``
+
+.. seealso:: :ref:`column-create-flags`
+
+.. _object-inspect-return-value-vector-column-value-weight:
+
+``VECTOR_COLUMN_VALUE_WEIGHT``
+""""""""""""""""""""""""""""""
+
+.. versionadded:: 10.0.4
+
+Whether the inspected column is created with ``WITH_WEIGHT`` flag or
+not. The value is ``true`` if ``WITH_WEIGHT`` was specified, ``false``
+otherwise.
+
+.. seealso:: :ref:`column-create-flags`
+
+.. _object-inspect-return-value-vector-column-value-weight_float32:
+
+``VECTOR_COLUMN_VALUE_WEIGHT_FLOAT32``
+""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 10.0.4
+
+Whether the inspected column is created with ``WEIGHT_FLOAT32`` flag
+or not. The value is ``true`` if ``WEIGHT_FLOAT32`` was specified,
+``false`` otherwise.
+
+.. seealso:: :ref:`column-create-flags`
+
+.. _object-inspect-return-value-vector-column-value-weight_bfloat16:
+
+``VECTOR_COLUMN_VALUE_WEIGHT_BFLOAT16``
+"""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 13.1.0
+
+Whether the inspected column is created with ``WEIGHT_BFLOAT16`` flag
+or not. The value is ``true`` if ``WEIGHT_BFLOAT16`` was specified,
+``false`` otherwise.
+
+.. seealso:: :ref:`column-create-flags`
+
+.. _object-inspect-return-value-vector-column-value-weight_bfloat16:
+
+``GENERATED_COLUMN_VALUE_GENERATOR``
+""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 14.1.0
+
+The generator expression in :doc:`../grn_expr/script_syntax`.
+
+.. seealso:: :ref:`column-create-generator`
+
+.. _object-inspect-return-value-generated-column-source-id:
+
+``GENERATED_COLUMN_SOURCE_ID``
+""""""""""""""""""""""""""""""
+
+The ID of a source column of the inspected generated column.
+
+.. _object-inspect-return-value-generated-column-source-name:
+
+``GENERATED_COLUMN_SOURCE_NAME``
+""""""""""""""""""""""""""""""""
+
+The name of a source column of the inspected generated column.
+
+It doesn't include table name. It's just only column name.
+
+If you want full column name (``TABLE_NAME.COLUMN_NAME`` style), use
+:ref:`object-inspect-return-value-generated-column-source-full-name`
+instead.
+
+.. _object-inspect-return-value-generated-column-source-table:
+
+``GENERATED_COLUMN_SOURCE_TABLE``
+"""""""""""""""""""""""""""""""""
+
+The table of a source column of the inspected generated column.
+
+See :ref:`object-inspect-return-value-table` for format details.
+
+.. _object-inspect-return-value-generated-column-source-full-name:
+
+``GENERATED_COLUMN_SOURCE_FULL_NAME``
+"""""""""""""""""""""""""""""""""""""
+
+The full name of a source column of the inspected generated column.
+
+It includes both table name and column name as
+``TABLE_NAME.COLUMN_NAME`` format.
+
+If you just want only column name, use
+:ref:`object-inspect-return-value-generated-column-source-name`
+instead.
+
 .. _object-inspect-return-value-index-column-value-section:
 
 ``INDEX_COLUMN_VALUE_SECTION``
 """"""""""""""""""""""""""""""
 
 Whether the inspected column is created with ``WITH_SECTION`` flag or
-not.  The value is ``true`` if ``WITH_SECTION`` was specified,
+not. The value is ``true`` if ``WITH_SECTION`` was specified,
 ``false`` otherwise.
 
 .. seealso:: :ref:`column-create-flags`
@@ -522,8 +729,8 @@ not.  The value is ``true`` if ``WITH_SECTION`` was specified,
 """""""""""""""""""""""""""""
 
 Whether the inspected column is created with ``WITH_WEIGHT`` flag or
-not.  The value is ``true`` if ``WITH_WEIGHT`` was specified,
-``false`` otherwise.
+not. The value is ``true`` if ``WITH_WEIGHT`` was specified, ``false``
+otherwise.
 
 .. seealso:: :ref:`column-create-flags`
 

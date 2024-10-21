@@ -1877,6 +1877,8 @@ If you specify a relative path, it is resolved from the current directory for th
 
 The default value is none.
 
+.. _column-create-generator:
+
 ``generator``
 """""""""""""
 
@@ -1889,6 +1891,8 @@ This option is useful if you want to generate a column value from
 other column value automatically.
 
 The default value is none.
+
+.. seealso:: :ref:`column-create-generated-column`
 
 Return value
 ------------

@@ -1,0 +1,81 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Memos title_snippets COLUMN_VECTOR ShortText title   --generator 'snippet(title, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+[[0,0.0,0.0],true]
+object_inspect Memos.title_snippets
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 258,
+    "name": "title_snippets",
+    "table": {
+      "id": 256,
+      "name": "Memos",
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "key": null,
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Memos.title_snippets",
+    "type": {
+      "name": "vector",
+      "raw": {
+        "id": 65,
+        "name": "column:var_size"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "compress": null,
+      "weight": false,
+      "weight_float32": false,
+      "weight_bfloat16": false,
+      "compress_filters": [
+
+      ],
+      "generator": "snippet(title, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
+    },
+    "sources": [
+      {
+        "id": 257,
+        "name": "title",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0,
+          "disk_usage": 0
+        },
+        "full_name": "Memos.title"
+      }
+    ],
+    "disk_usage": 0
+  }
+]

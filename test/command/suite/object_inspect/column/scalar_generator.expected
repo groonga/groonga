@@ -1,0 +1,78 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title_html COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos title_text COLUMN_SCALAR ShortText title_html   --generator 'html_untag(title_html)'
+[[0,0.0,0.0],true]
+object_inspect Memos.title_text
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 258,
+    "name": "title_text",
+    "table": {
+      "id": 256,
+      "name": "Memos",
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "key": null,
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Memos.title_text",
+    "type": {
+      "name": "scalar",
+      "raw": {
+        "id": 65,
+        "name": "column:var_size"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "compress": null,
+      "compress_filters": [
+
+      ],
+      "generator": "html_untag(title_html)"
+    },
+    "sources": [
+      {
+        "id": 257,
+        "name": "title_html",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0,
+          "disk_usage": 0
+        },
+        "full_name": "Memos.title_html"
+      }
+    ],
+    "disk_usage": 0
+  }
+]
