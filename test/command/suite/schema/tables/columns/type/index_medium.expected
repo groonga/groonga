@@ -343,6 +343,7 @@ schema
             "sources": [
 
             ],
+            "generator": "",
             "indexes": [
               {
                 "id": 260,
@@ -385,6 +386,7 @@ schema
             "sources": [
 
             ],
+            "generator": "",
             "indexes": [
               {
                 "id": 260,
@@ -491,6 +493,7 @@ schema
                 "full_name": "Posts.content"
               }
             ],
+            "generator": "",
             "indexes": [
 
             ],

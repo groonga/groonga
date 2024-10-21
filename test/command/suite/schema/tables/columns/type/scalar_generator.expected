@@ -1,8 +1,8 @@
-table_create Tags TABLE_HASH_KEY ShortText
+table_create Notes TABLE_NO_KEY
 [[0,0.0,0.0],true]
-table_create Logs TABLE_NO_KEY
+column_create Notes title_html COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-column_create Logs tag COLUMN_SCALAR|INVALID_WARN Tags
+column_create Notes title_text COLUMN_SCALAR ShortText title_html   --generator 'html_untag(title_html)'
 [[0,0.0,0.0],true]
 schema
 [
@@ -280,9 +280,9 @@ schema
       }
     },
     "tables": {
-      "Logs": {
-        "id": 257,
-        "name": "Logs",
+      "Notes": {
+        "id": 256,
+        "name": "Notes",
         "type": "array",
         "key_type": null,
         "value_type": null,
@@ -300,26 +300,26 @@ schema
         "command": {
           "name": "table_create",
           "arguments": {
-            "name": "Logs",
+            "name": "Notes",
             "flags": "TABLE_NO_KEY"
           },
-          "command_line": "table_create --name Logs --flags TABLE_NO_KEY"
+          "command_line": "table_create --name Notes --flags TABLE_NO_KEY"
         },
         "columns": {
-          "tag": {
-            "id": 258,
-            "name": "tag",
-            "table": "Logs",
-            "full_name": "Logs.tag",
+          "title_html": {
+            "id": 257,
+            "name": "title_html",
+            "table": "Notes",
+            "full_name": "Notes.title_html",
             "type": "scalar",
             "value_type": {
-              "id": 256,
-              "name": "Tags",
-              "type": "reference"
+              "id": 14,
+              "name": "ShortText",
+              "type": "type"
             },
             "compress": null,
             "missing": "add",
-            "invalid": "warn",
+            "invalid": "error",
             "section": false,
             "weight": false,
             "weight_float32": false,
@@ -335,47 +335,58 @@ schema
             "command": {
               "name": "column_create",
               "arguments": {
-                "table": "Logs",
-                "name": "tag",
-                "flags": "COLUMN_SCALAR|INVALID_WARN",
-                "type": "Tags"
+                "table": "Notes",
+                "name": "title_html",
+                "flags": "COLUMN_SCALAR",
+                "type": "ShortText"
               },
-              "command_line": "column_create --table Logs --name tag --flags COLUMN_SCALAR|INVALID_WARN --type Tags"
+              "command_line": "column_create --table Notes --name title_html --flags COLUMN_SCALAR --type ShortText"
+            }
+          },
+          "title_text": {
+            "id": 258,
+            "name": "title_text",
+            "table": "Notes",
+            "full_name": "Notes.title_text",
+            "type": "scalar",
+            "value_type": {
+              "id": 14,
+              "name": "ShortText",
+              "type": "type"
+            },
+            "compress": null,
+            "missing": "add",
+            "invalid": "error",
+            "section": false,
+            "weight": false,
+            "weight_float32": false,
+            "weight_bfloat16": false,
+            "position": false,
+            "sources": [
+              {
+                "id": 257,
+                "name": "title_html",
+                "table": "ShortText",
+                "full_name": "Notes.title_html"
+              }
+            ],
+            "generator": "html_untag(title_html)",
+            "indexes": [
+
+            ],
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Notes",
+                "name": "title_text",
+                "flags": "COLUMN_SCALAR",
+                "type": "ShortText",
+                "source": "title_html",
+                "generator": "html_untag(title_html)"
+              },
+              "command_line": "column_create --table Notes --name title_text --flags COLUMN_SCALAR --type ShortText --source title_html --generator \"html_untag(title_html)\""
             }
           }
-        }
-      },
-      "Tags": {
-        "id": 256,
-        "name": "Tags",
-        "type": "hash table",
-        "key_type": {
-          "id": 14,
-          "name": "ShortText",
-          "type": "type"
-        },
-        "value_type": null,
-        "tokenizer": null,
-        "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
-        "command": {
-          "name": "table_create",
-          "arguments": {
-            "name": "Tags",
-            "flags": "TABLE_HASH_KEY",
-            "key_type": "ShortText"
-          },
-          "command_line": "table_create --name Tags --flags TABLE_HASH_KEY --key_type ShortText"
-        },
-        "columns": {
         }
       }
     }

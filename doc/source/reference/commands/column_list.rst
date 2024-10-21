@@ -218,7 +218,7 @@ more source column names.
 
 .. versionadded:: 14.1.0
 
-The generator in :doc:`../grn_expr/script_syntax`.
+The generator expression in :doc:`../grn_expr/script_syntax`.
 
 This is not an empty string only when the column is a :ref:`generated
 column<column-create-generated-column>`. This is an empty string

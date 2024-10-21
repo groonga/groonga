@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1008,6 +1008,18 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_schema_column_output_generator(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj generator;
+  GRN_TEXT_INIT(&generator, 0);
+  if (grn_obj_is_generated_column(ctx, column)) {
+    grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
+  }
+  grn_ctx_output_str(ctx, GRN_TEXT_VALUE(&generator), GRN_TEXT_LEN(&generator));
+  GRN_OBJ_FIN(ctx, &generator);
+}
+
+static void
 command_schema_output_indexes(grn_ctx *ctx, grn_obj *object)
 {
   uint32_t i;
@@ -1158,6 +1170,19 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &source_ids);
   }
 
+  {
+    grn_obj generator;
+    GRN_TEXT_INIT(&generator, 0);
+    if (grn_obj_is_generated_column(ctx, column)) {
+      grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
+    }
+    if (GRN_TEXT_LEN(&generator) > 0) {
+      GRN_TEXT_PUTC(ctx, &generator, '\0');
+      ADD("generator", GRN_TEXT_VALUE(&generator));
+    }
+    GRN_OBJ_FIN(ctx, &generator);
+  }
+
 #undef ADD_OBJECT_NAME
 #undef ADD
 }
@@ -1189,7 +1214,7 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   command_schema_output_column_name(ctx, column);
 
-  grn_ctx_output_map_open(ctx, "column", 14);
+  grn_ctx_output_map_open(ctx, "column", 15);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, column);
@@ -1236,6 +1261,9 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   grn_ctx_output_cstr(ctx, "sources");
   command_schema_column_output_sources(ctx, column);
+
+  grn_ctx_output_cstr(ctx, "generator");
+  command_schema_column_output_generator(ctx, column);
 
   grn_ctx_output_cstr(ctx, "indexes");
   command_schema_output_indexes(ctx, column);

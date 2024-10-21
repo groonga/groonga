@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-20 07:28+0900\n"
+"PO-Revision-Date: 2024-10-21 11:14+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -228,7 +228,7 @@ msgstr "インデックスカラムがマルチカラムインデックスの場
 msgid "``GENERATOR``"
 msgstr ""
 
-msgid "The generator in :doc:`../grn_expr/script_syntax`."
+msgid "The generator expression in :doc:`../grn_expr/script_syntax`."
 msgstr ":doc:`../grn_expr/script_syntax` の生成式です。"
 
 msgid "This is not an empty string only when the column is a :ref:`generated column<column-create-generated-column>`. This is an empty string otherwise."

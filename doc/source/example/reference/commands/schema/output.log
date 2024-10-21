@@ -11,6 +11,13 @@ Execution example::
   #     "plugins": {
   #     },
   #     "types": {
+  #       "BFloat16": {
+  #         "id": 20,
+  #         "name": "BFloat16",
+  #         "size": 2,
+  #         "can_be_key_type": true,
+  #         "can_be_value_type": true
+  #       },
   #       "Bool": {
   #         "id": 3,
   #         "name": "Bool",
@@ -252,19 +259,19 @@ Execution example::
   #     },
   #     "token_filters": {
   #       "TokenFilterNFKC100": {
-  #         "id": 226,
+  #         "id": 230,
   #         "name": "TokenFilterNFKC100"
   #       },
   #       "TokenFilterNFKC121": {
-  #         "id": 227,
+  #         "id": 231,
   #         "name": "TokenFilterNFKC121"
   #       },
   #       "TokenFilterNFKC130": {
-  #         "id": 228,
+  #         "id": 232,
   #         "name": "TokenFilterNFKC130"
   #       },
   #       "TokenFilterNFKC150": {
-  #         "id": 229,
+  #         "id": 233,
   #         "name": "TokenFilterNFKC150"
   #       }
   #     },
@@ -317,10 +324,12 @@ Execution example::
   #             "section": false,
   #             "weight": false,
   #             "weight_float32": false,
+  #             "weight_bfloat16": false,
   #             "position": false,
   #             "sources": [
   # 
   #             ],
+  #             "generator": "",
   #             "indexes": [
   #               {
   #                 "id": 259,
@@ -405,6 +414,7 @@ Execution example::
   #             "section": false,
   #             "weight": false,
   #             "weight_float32": false,
+  #             "weight_bfloat16": false,
   #             "position": true,
   #             "sources": [
   #               {
@@ -414,6 +424,7 @@ Execution example::
   #                 "full_name": "Memos.content"
   #               }
   #             ],
+  #             "generator": "",
   #             "indexes": [
   # 
   #             ],

@@ -493,6 +493,7 @@ Here are properties of ``COMMAND``:
       ...,
       SOURCE_n
     ],
+    "generator": GENERATOR,
     "indexes": [
       INDEX_1,
       INDEX_2,
@@ -572,8 +573,17 @@ Here are properties of ``COLUMN``:
 
        This is an array of :ref:`schema-return-value-source`.
 
-       Normally, if the column isn't an index column, this is an
-       empty array.
+       If the column is an index column or a :ref:`generated
+       column<column-create-generated-column>`, this has one or more
+       elements. Otherwise, this is an empty array.
+   * - ``generator``
+     - .. versionadded:: 14.1.0
+
+       The generator expression in :doc:`../grn_expr/script_syntax`.
+
+       If the column is not a :ref:`generated
+       column<column-create-generated-column>`, this is an empty
+       string.
    * - ``indexes``
      - The indexes of the column.
 
