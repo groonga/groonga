@@ -1,0 +1,10 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title_html COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Notes title_text COLUMN_SCALAR ShortText title_html   --generator 'html_untag(title_html)'
+[[0,0.0,0.0],true]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes title_html COLUMN_SCALAR ShortText
+column_create Notes title_text COLUMN_SCALAR ShortText title_html --generator "html_untag(title_html)"
