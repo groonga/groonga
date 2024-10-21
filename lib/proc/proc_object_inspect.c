@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016-2017  Brazil
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -440,7 +440,7 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   if (is_index) {
     n_elements += 5;
   } else {
-    n_elements += 2;
+    n_elements += 3;
     if (is_vector) {
       n_elements += 3;
     }
@@ -488,6 +488,14 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
       }
       grn_ctx_output_cstr(ctx, "compress_filters");
       command_object_inspect_column_data_value_compress_filters(ctx, column);
+      grn_ctx_output_cstr(ctx, "generator");
+      grn_obj generator;
+      GRN_TEXT_INIT(&generator, 0);
+      grn_obj_get_info(ctx, column, GRN_INFO_GENERATOR, &generator);
+      grn_ctx_output_str(ctx,
+                         GRN_TEXT_VALUE(&generator),
+                         GRN_TEXT_LEN(&generator));
+      GRN_OBJ_FIN(ctx, &generator);
     }
   }
   grn_ctx_output_map_close(ctx);
@@ -561,7 +569,8 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
   int n_elements = 7;
   bool have_sources = (grn_obj_is_index_column(ctx, column) ||
-                       grn_obj_is_token_column(ctx, column));
+                       grn_obj_is_token_column(ctx, column) ||
+                       grn_obj_is_generated_column(ctx, column));
 
   if (have_sources) {
     n_elements += 1;
