@@ -1,1 +1,1 @@
-arm64v8/ubuntu:noble
+--platform=linux/arm64 arm64v8/ubuntu:noble

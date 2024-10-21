@@ -1,1 +1,1 @@
-arm64v8/debian:trixie
+--platform=linux/arm64 arm64v8/debian:trixie

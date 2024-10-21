@@ -1,1 +1,1 @@
-arm64v8/debian:bookworm
+--platform=linux/arm64 arm64v8/debian:bookworm
