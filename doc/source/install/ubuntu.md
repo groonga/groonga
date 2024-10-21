@@ -83,34 +83,6 @@ sudo apt -V -y install groonga-normalizer-mysql
 
 ## Build from source
 
-Download source:
+Build from source is for developers.
 
-```bash
-wget https://packages.groonga.org/source/groonga/groonga-13.0.9.tar.gz
-tar xvzf groonga-13.0.9.tar.gz
-cd groonga-13.0.9
-```
-
-Install required packages to build Groonga:
-
-```bash
-./setup.sh
-```
-
-Configure:
-
-```bash
-cmake -S . -B build --preset release-with-debug-info-maximum
-```
-
-Build:
-
-```bash
-cmake --build build
-```
-
-Install:
-
-```bash
-sudo cmake --install build
-```
+See {doc}`/install/cmake` .

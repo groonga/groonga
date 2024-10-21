@@ -94,14 +94,8 @@ msgstr "`groonga-normalizer-mysql`パッケージをインストールします�
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Download source:"
-msgstr "ソースをダウンロードします。"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Install required packages to build Groonga:"
-msgstr "Groongaをビルドするために必要なパッケージをインストールします。"
-
-msgid "Configure:"
-msgstr "設定します。"
-
-msgid "Build:"
-msgstr "ビルドします。"
+msgid "See {doc}`/install/cmake` ."
+msgstr "詳細は {doc}`/install/cmake` を参照してください。"
