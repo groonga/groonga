@@ -15,7 +15,7 @@ If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
 Example of command execution.
 
 ```console
-$ ./groonga-14.0.9/setup.sh
+$ groonga-14.0.9/setup.sh
 ```
 
 `setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023.
@@ -31,7 +31,7 @@ If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
 Example of command execution.
 
 ```console
-$ ./groonga-14.0.9/setup.sh
+$ groonga-14.0.9/setup.sh
 ```
 
 ### Windows
