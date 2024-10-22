@@ -21,7 +21,7 @@
 
 #include <groonga/option.h>
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -32,12 +32,13 @@ typedef struct {
   grn_obj *target;
 } grn_caster;
 
-GRN_API grn_rc grn_caster_cast(grn_ctx *ctx,
-                               grn_caster *caster);
-GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
-                            grn_obj *src,
-                            grn_obj *dest,
-                            grn_bool add_record_if_not_exist);
+GRN_API grn_rc
+grn_caster_cast(grn_ctx *ctx, grn_caster *caster);
+GRN_API grn_rc
+grn_obj_cast(grn_ctx *ctx,
+             grn_obj *src,
+             grn_obj *dest,
+             grn_bool add_record_if_not_exist);
 
 #ifdef __cplusplus
 }
