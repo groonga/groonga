@@ -2,18 +2,37 @@
 
 This document describes how to build Groonga from source with CMake.
 
-To get more details about installing Groonga from the source with CMake on a specific environment,
-find the document for the specific environment from {doc}`/install`.
-
 ## Install depended software
 
 Here is depended software for GNU/Linux, UNIX and Windows.
 
-TODO
-
 ### GNU/Linux or UNIX
 
-> - [CMake](http://www.cmake.org/)
+Execute `setup.sh` included in the source code.
+
+If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
+
+Example of command execution.
+
+```console
+$ groonga-14.0.9/setup.sh
+```
+
+`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023.
+
+#### macOS
+
+Install [Xcode](https://developer.apple.com/xcode/).
+
+Execute `setup.sh` included in the source code.
+
+If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`.
+
+Example of command execution.
+
+```console
+$ groonga-14.0.9/setup.sh
+```
 
 ### Windows
 

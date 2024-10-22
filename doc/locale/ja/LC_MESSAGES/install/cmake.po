@@ -22,29 +22,41 @@ msgstr "その他: CMakeを使ってビルド"
 msgid "This document describes how to build Groonga from source with CMake."
 msgstr "このドキュメントはCMakeを使ってソースコードからGroongaをビルドする方法を説明します。"
 
-msgid "To get more details about installing Groonga from the source with CMake on a specific environment, find the document for the specific environment from {doc}`/install`."
-msgstr "{doc}`/install` にある特定環境用のドキュメントに、CMakeでビルドする際のその環境向けのより詳細な情報があります。特定環境用のドキュメントがある場合は、まずそちらを参照してください。"
-
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 
 msgid "Here is depended software for GNU/Linux, UNIX and Windows."
 msgstr "以下は、GNU/Linux、UNIX、Windows向けの必要なソフトウェアの一覧です。"
 
-msgid "TODO"
-msgstr ""
-
 msgid "GNU/Linux or UNIX"
 msgstr "GNU/LinuxまたはUNIX"
 
-msgid "[CMake](http://www.cmake.org/)"
+msgid "Execute `setup.sh` included in the source code."
+msgstr "ソースコードに含まれる`setup.sh`を実行してください。"
+
+msgid "If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`."
+msgstr "`groonga-14.0.9.tar.gz`を展開した場合は`groonga-14.0.9/setup.sh`がそのスクリプトです。"
+
+msgid "Example of command execution."
+msgstr "コマンド実行例"
+
+msgid "`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023."
+msgstr "`setup.sh`はDebian GNU/Linux、Ubuntu、AlmaLinux、Amazon Linux 2023をサポートしています。"
+
+msgid "macOS"
 msgstr ""
+
+msgid "Install [Xcode](https://developer.apple.com/xcode/)."
+msgstr "[Xcode](https://developer.apple.com/xcode/)をインストールしてください。"
 
 msgid "Windows"
 msgstr ""
 
 msgid "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)"
 msgstr "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/ja/vs/community/)"
+
+msgid "[CMake](http://www.cmake.org/)"
+msgstr ""
 
 msgid "Download source"
 msgstr "ソースコードのダウンロード"

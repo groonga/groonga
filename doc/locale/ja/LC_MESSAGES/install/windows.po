@@ -61,5 +61,8 @@ msgstr "ソースからビルド"
 msgid "You can build Groonga from the source with CMake."
 msgstr "CMake を使ってソースコードからビルドすることができます。"
 
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
+
 msgid "See :doc:`/install/cmake`."
 msgstr ":doc:`/install/cmake` を参照してください。"

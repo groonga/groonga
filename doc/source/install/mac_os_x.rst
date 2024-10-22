@@ -39,22 +39,6 @@ Install::
 Build from source
 -----------------
 
-Install `Xcode <https://developer.apple.com/xcode/>`_.
+Build from source is for developers.
 
-Download source::
-
-  % curl -O https://packages.groonga.org/source/groonga/groonga-14.0.9.tar.gz
-  % tar xvzf groonga-14.0.9.tar.gz
-  % cd groonga-14.0.9
-
-Configure (see :ref:`source-configure` about ``configure`` options)::
-
-  % ./configure
-
-Build::
-
-  % make -j$(/usr/sbin/sysctl -n hw.ncpu)
-
-Install::
-
-  % sudo make install
+See :doc:`/install/cmake` .
