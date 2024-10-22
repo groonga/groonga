@@ -37,6 +37,9 @@ msgstr "ソースコードに含まれる`setup.sh`を実行してください�
 msgid "If `groonga-14.0.9.tar.gz` is expanded, it is `groonga-14.0.9/setup.sh`."
 msgstr "`groonga-14.0.9.tar.gz`を展開した場合は`groonga-14.0.9/setup.sh`がそのスクリプトです。"
 
+msgid "Example of command execution."
+msgstr "コマンド実行例"
+
 msgid "`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023."
 msgstr "`setup.sh`はDebian GNU/Linux、Ubuntu、AlmaLinux、Amazon Linux 2023をサポートしています。"
 
