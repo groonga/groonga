@@ -34,6 +34,25 @@ typedef struct {
 
 GRN_API grn_rc
 grn_caster_cast(grn_ctx *ctx, grn_caster *caster);
+/**
+ * \brief Cast and append a value from the source bulk to the destination bulk.
+ *
+ * If `dest` is a reference type bulk. (Reference type bulk means that type of
+ * `dest` is a table.), `add_record_if_not_exist` is used.
+ * If `src` value doesn't exist in the table that is a type of `dest`. The `src`
+ * value is added to the table.
+ *
+ * \param ctx The context object.
+ * \param src The bulk object containing the value to be casted.
+ * \param dest The bulk object specifying the target type and where the casted
+ *             value will be stored.
+ * \param add_record_if_not_exist If `dest` is a reference type bulk and the
+ *                                `src` value doesn't exist in the target table,
+ *                                setting this to true will add the `source`
+ *                                value to the table.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_cast(grn_ctx *ctx,
              grn_obj *src,

@@ -15,12 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
-msgid "戻り値"
-msgstr ""
-
 msgid "``grn_obj``"
 msgstr ""
 
@@ -38,27 +32,3 @@ msgstr "リファレンス"
 
 msgid "We are currently switching to automatic generation using Doxygen."
 msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
-
-msgid "It casts value of ``source`` to value with type of ``destination``. Casted value is appended to ``destination``."
-msgstr ""
-
-msgid "Both ``source`` and ``destination`` must be bulk."
-msgstr ""
-
-msgid "If ``destination`` is a reference type bulk. (Reference type bulk means that type of ``destination`` is a table.) ``add_record_if_not_exist`` is used. If ``source`` value doesn't exist in the table that is a type of ``destination``. The ``source`` value is added to the table."
-msgstr ""
-
-msgid "The context object."
-msgstr "その時点のコンテキスト。"
-
-msgid "The bulk to be casted."
-msgstr ""
-
-msgid "The bulk to specify cast target type and store casted value."
-msgstr ""
-
-msgid "Whether adding a new record if ``source`` value doesn't exist in cast target table. This parameter is only used when ``destination`` is a reference type bulk."
-msgstr ""
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
