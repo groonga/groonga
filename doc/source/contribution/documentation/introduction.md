@@ -77,6 +77,7 @@ Each page of the documentation corresponds to a `.rst` file or a `.md` file. By 
 For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
 
+<!-- prettier-ignore -->
 (how-to-add-new-documentation)=
 ## How to add a new documentation
 
