@@ -543,7 +543,7 @@ msgstr ""
 msgid "The generator expression in :doc:`../grn_expr/script_syntax`."
 msgstr ":doc:`../grn_expr/script_syntax` の生成式です。"
 
-msgid ":ref:`column-create-generate`"
+msgid ":ref:`column-create-generator`"
 msgstr ""
 
 msgid "``GENERATED_COLUMN_SOURCE_ID``"
