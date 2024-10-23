@@ -97,7 +97,7 @@ $ cmake --build ../groonga.doc
 $ ninja doc_update_files -C ../groonga.doc
 ```
 
-Note that you need to submit your new documentation, `doc/files.am`, and `doc/files.cmake` to the Groonga repository in this case.
+Note that you need to commit not only the new documentation but also `doc/files.am` and `doc/files.cmake` in this case.
 
 ## Preview changes on HTML files
 
