@@ -82,7 +82,7 @@ msgstr "Groongaドキュメントは、[reStructuredText (.rst)](https://www.sph
 msgid "How to add a new documentation"
 msgstr "新しいドキュメントを追加する方法"
 
-msgid "If you want to add a new documentation, you need to add new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines."
+msgid "If you want to add a new documentation, you need to add the new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines."
 msgstr "新しいドキュメントを追加したい場合は、以下のコマンドで新しいドキュメントを `doc/files.am`と `doc/files.cmake` に追加する必要があります。"
 
 msgid "Note that you need to commit not only the new documentation but also `doc/files.am` and `doc/files.cmake` in this case."

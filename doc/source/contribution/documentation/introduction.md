@@ -80,7 +80,7 @@ Please find the file you wish to edit and make your changes.
 (how-to-add-new-documentation)=
 ## How to add a new documentation
 
-If you want to add a new documentation, you need to add new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines.
+If you want to add a new documentation, you need to add the new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines.
 
 ```console
 $ cmake -S . -B ../groonga.doc --preset=doc
