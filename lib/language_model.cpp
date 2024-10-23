@@ -352,6 +352,7 @@ namespace grn {
                        grn_obj *input_column,
                        grn_obj *output_column)
     {
+#ifdef GRN_WITH_LLAMA_CPP
       language_model::CaptureError capture(ctx_);
 
       std::vector<grn_id> target_ids;
@@ -423,6 +424,11 @@ namespace grn {
           return;
         }
       }
+#else
+      auto ctx = ctx_;
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "[language-model-inferencer][vectorize] llama.cpp isn't enabled");
+#endif
     }
 
   private:
