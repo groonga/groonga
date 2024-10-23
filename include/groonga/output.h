@@ -37,7 +37,8 @@ typedef struct _grn_obj_format grn_obj_format;
 /* Call grn_ctx_output_flush() internally for each 1024 records in a table.
    The "1024" value may be changed.
    Since 10.0.3 */
-#define GRN_OBJ_FORMAT_AUTO_FLUSH (0x01 << 6)
+#define GRN_OBJ_FORMAT_AUTO_FLUSH            (0x01 << 6)
+#define GRN_OBJ_FORMAT_WITHOUT_RECORDS_IN_V3 (0x01 << 7)
 
 struct _grn_obj_format {
   grn_obj columns;

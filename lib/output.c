@@ -2673,7 +2673,9 @@ grn_output_result_set_open_v3(grn_ctx *ctx,
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       grn_output_table_columns(ctx, outbuf, output_type, result_set, format);
     }
-    grn_output_table_records(ctx, outbuf, output_type, result_set, format);
+    if (!(format->flags & GRN_OBJ_FORMAT_WITHOUT_RECORDS_IN_V3)) {
+      grn_output_table_records(ctx, outbuf, output_type, result_set, format);
+    }
   } else {
     grn_obj *column;
     unsigned int n_records;

@@ -154,7 +154,7 @@ writer_open_result_set(mrb_state *mrb, mrb_value self)
 
   table = DATA_PTR(mrb_table);
   GRN_OBJ_FORMAT_INIT(&format, (int)n_hits, offset, limit, hits_offset);
-  format.flags |= GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+  format.flags |= GRN_OBJ_FORMAT_WITH_COLUMN_NAMES | GRN_OBJ_FORMAT_WITHOUT_RECORDS_IN_V3;
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,
