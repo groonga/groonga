@@ -92,9 +92,9 @@ Please find the file you wish to edit and make your changes.
 If you want to add new documentation, you need to add new documentation into `doc/files.am` and `doc/files.cmake` by the following command.
 
 ```console
-% cmake -S . -B ../groonga.doc --preset=doc
-% cmake --build ../groonga.doc
-% ninja doc_update_files -C ../groonga.doc
+$ cmake -S . -B ../groonga.doc --preset=doc
+$ cmake --build ../groonga.doc
+$ ninja doc_update_files -C ../groonga.doc
 ```
 
 Note that you need to submit your new documentation, `doc/files.am`, and `doc/files.cmake` to the Groonga repository in this case.
