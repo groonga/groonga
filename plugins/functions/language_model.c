@@ -134,7 +134,6 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
 {
   const char *tag = "language_model_vectorize():";
 
-  grn_obj *output_column = grn_applier_data_get_output_column(ctx, data);
   size_t n_args;
   grn_obj **args = grn_applier_data_get_args(ctx, data, &n_args);
 
