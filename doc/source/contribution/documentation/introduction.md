@@ -8,6 +8,7 @@ By following the steps below, you can contribute to enhancing and updating Groon
 - [Run `cmake` with `--preset=doc`](#run-cmake-with---presetdoc)
 - [Generate HTML](#generate-html)
 - [How to edit Documentation](#how-to-edit-documentation)
+- [How to add new documentation](#how-to-add-new-documentation)
 - [Preview changes on HTML files](#preview-changes-on-html-files)
 - [Send patch](#send-patch)
 - [Optional: Translate documentation](#optional-translate-documentation)
@@ -85,6 +86,18 @@ The Groonga documentation is written in [reStructuredText (.rst)](https://www.sp
 Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document.
 For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
+
+## How to add new documentation
+
+If you want to add new documentation, you need to add new documentation into `doc/files.am` and `doc/files.cmake` by the following command.
+
+```console
+% cmake -S . -B ../groonga.doc --preset=doc
+% cmake --build ../groonga.doc
+% ninja doc_update_files -C ../groonga.doc
+```
+
+Note that you need to submit your new documentation, `doc/files.am`, and `doc/files.cmake` to the Groonga repository in this case.
 
 ## Preview changes on HTML files
 
