@@ -229,6 +229,16 @@ typedef enum {
   GRN_CONTENT_APACHE_ARROW
 } grn_content_type;
 
+/**
+ * \brief Groonga object.
+ *
+ * Groonga achieves a form of object-oriented behavior in C using the
+ * \ref grn_obj. The \ref grn_obj structure defines the memory layout used by
+ * all objects in Groonga. Every object type in Groonga shares this structure,
+ * meaning all objects have the same memory layout as \ref grn_obj. This design
+ * ensures that all objects can be handled uniformly, allowing for consistent
+ * casting and manipulation across different object types.
+ */
 typedef struct _grn_obj grn_obj;
 typedef struct _grn_ctx grn_ctx;
 
