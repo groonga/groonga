@@ -22,30 +22,6 @@ msgstr "導入"
 msgid "This document outlines the procedures for writing, generating, and managing Groonga's documentation. By following the steps below, you can contribute to enhancing and updating Groonga's documentation."
 msgstr "このドキュメントは、Groongaドキュメントの執筆、生成、管理の手順について説明します。以下の手順で、Groongaドキュメントの向上や更新に貢献できます。"
 
-msgid "[How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository)"
-msgstr "[Groongaリポジトリをフォークしクローンする方法](#how-to-fork-and-clone-groonga-repository)"
-
-msgid "[Install dependent software](#install-dependent-software)"
-msgstr "[必要なソフトウェアのインストール](#install-dependent-software)"
-
-msgid "[Run `cmake` with `--preset=doc`](#run-cmake-with---presetdoc)"
-msgstr "[`cmake` を `--preset=doc` 付きで実行](#run-cmake-with---presetdoc)"
-
-msgid "[Generate HTML](#generate-html)"
-msgstr "[HTMLファイルを生成](#generate-html)"
-
-msgid "[How to edit Documentation](#how-to-edit-documentation)"
-msgstr "[ドキュメントを編集する方法](#how-to-edit-documentation)"
-
-msgid "[Preview changes on HTML files](#preview-changes-on-html-files)"
-msgstr "[HTMLファイルで変更を確認する](#preview-changes-on-html-files)"
-
-msgid "[Send patch](#send-patch)"
-msgstr "[パッチを送る](#send-patch)"
-
-msgid "[Optional: Translate documentation](#optional-translate-documentation)"
-msgstr "[任意: ドキュメントを翻訳する](#optional-translate-documentation)"
-
 msgid "How to fork and clone Groonga repository"
 msgstr "Groongaリポジトリをフォークしクローンする方法"
 
@@ -102,6 +78,15 @@ msgstr "ドキュメントを編集する方法"
 
 msgid "The Groonga documentation is written in [reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) or [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) . These files are located in the `doc/source`. Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document. For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file. Please find the file you wish to edit and make your changes."
 msgstr "Groongaドキュメントは、[reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) または [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) で書かれています。Groongaドキュメントのファイルは、`doc/source` 配下にあります。それぞれのページに対応した `.rst` ファイルまたは、 `.md` が必ず１つあります。対応するファイルを変更することで、対象のドキュメントを編集できます。例えば、この {doc}`introduction` ページを編集したい場合は、`doc/source/contribution/documentation/introduction.rst` ファイルを編集すればよいです。編集したいファイルをみつけて、編集してください。"
+
+msgid "How to add a new documentation"
+msgstr "新しいドキュメントを追加する方法"
+
+msgid "If you want to add a new documentation, you need to add the new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines."
+msgstr "新しいドキュメントを追加したい場合は、以下のコマンドで新しいドキュメントを `doc/files.am`と `doc/files.cmake` に追加する必要があります。"
+
+msgid "Note that you need to commit not only the new documentation but also `doc/files.am` and `doc/files.cmake` in this case."
+msgstr "このケースでは、新しいドキュメントだけでなく、 `doc/files.am` と `doc/files.cmake` もコミットする必要があることに注意してください。"
 
 msgid "Preview changes on HTML files"
 msgstr "HTMLファイルで変更を確認する"

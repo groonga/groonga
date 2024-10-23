@@ -3,15 +3,6 @@
 This document outlines the procedures for writing, generating, and managing Groonga's documentation.
 By following the steps below, you can contribute to enhancing and updating Groonga's documentation.
 
-- [How to fork and clone Groonga repository](#how-to-fork-and-clone-groonga-repository)
-- [Install dependent software](#install-dependent-software)
-- [Run `cmake` with `--preset=doc`](#run-cmake-with---presetdoc)
-- [Generate HTML](#generate-html)
-- [How to edit Documentation](#how-to-edit-documentation)
-- [Preview changes on HTML files](#preview-changes-on-html-files)
-- [Send patch](#send-patch)
-- [Optional: Translate documentation](#optional-translate-documentation)
-
 ## How to fork and clone Groonga repository
 
 Contributing to Groonga's documentation begins with forking and cloning the Groonga repository.
@@ -85,6 +76,19 @@ The Groonga documentation is written in [reStructuredText (.rst)](https://www.sp
 Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document.
 For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file.
 Please find the file you wish to edit and make your changes.
+
+(how-to-add-new-documentation)=
+## How to add a new documentation
+
+If you want to add a new documentation, you need to add the new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines.
+
+```console
+$ cmake -S . -B ../groonga.doc --preset=doc
+$ cmake --build ../groonga.doc
+$ ninja doc_update_files -C ../groonga.doc
+```
+
+Note that you need to commit not only the new documentation but also `doc/files.am` and `doc/files.cmake` in this case.
 
 ## Preview changes on HTML files
 
