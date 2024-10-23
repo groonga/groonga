@@ -1337,28 +1337,23 @@ set(GRN_DOC_HTML_FILES
     _static/scripts/bootstrap.js
     _static/scripts/bootstrap.js.LICENSE.txt
     _static/scripts/bootstrap.js.map
+    _static/scripts/fontawesome.js
+    _static/scripts/fontawesome.js.LICENSE.txt
+    _static/scripts/fontawesome.js.map
     _static/scripts/pydata-sphinx-theme.js
     _static/scripts/pydata-sphinx-theme.js.map
     _static/searchtools.js
     _static/sphinx_highlight.js
-    _static/styles/bootstrap.css
-    _static/styles/bootstrap.css.map
     _static/styles/pydata-sphinx-theme.css
     _static/styles/pydata-sphinx-theme.css.map
     _static/styles/theme.css
     _static/switcher.json
-    _static/vendor/fontawesome/6.5.2/LICENSE.txt
-    _static/vendor/fontawesome/6.5.2/css/all.min.css
-    _static/vendor/fontawesome/6.5.2/js/all.min.js
-    _static/vendor/fontawesome/6.5.2/js/all.min.js.LICENSE.txt
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.ttf
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.ttf
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.ttf
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-v4compatibility.ttf
-    _static/vendor/fontawesome/6.5.2/webfonts/fa-v4compatibility.woff2
+    _static/vendor/fontawesome/webfonts/fa-brands-400.ttf
+    _static/vendor/fontawesome/webfonts/fa-brands-400.woff2
+    _static/vendor/fontawesome/webfonts/fa-regular-400.ttf
+    _static/vendor/fontawesome/webfonts/fa-regular-400.woff2
+    _static/vendor/fontawesome/webfonts/fa-solid-900.ttf
+    _static/vendor/fontawesome/webfonts/fa-solid-900.woff2
     _static/webpack-macros.html
     characteristic.html
     client.html

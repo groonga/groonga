@@ -4539,28 +4539,23 @@ html_files_relative_from_locale_dir = \
 	html/_static/scripts/bootstrap.js \
 	html/_static/scripts/bootstrap.js.LICENSE.txt \
 	html/_static/scripts/bootstrap.js.map \
+	html/_static/scripts/fontawesome.js \
+	html/_static/scripts/fontawesome.js.LICENSE.txt \
+	html/_static/scripts/fontawesome.js.map \
 	html/_static/scripts/pydata-sphinx-theme.js \
 	html/_static/scripts/pydata-sphinx-theme.js.map \
 	html/_static/searchtools.js \
 	html/_static/sphinx_highlight.js \
-	html/_static/styles/bootstrap.css \
-	html/_static/styles/bootstrap.css.map \
 	html/_static/styles/pydata-sphinx-theme.css \
 	html/_static/styles/pydata-sphinx-theme.css.map \
 	html/_static/styles/theme.css \
 	html/_static/switcher.json \
-	html/_static/vendor/fontawesome/6.5.2/LICENSE.txt \
-	html/_static/vendor/fontawesome/6.5.2/css/all.min.css \
-	html/_static/vendor/fontawesome/6.5.2/js/all.min.js \
-	html/_static/vendor/fontawesome/6.5.2/js/all.min.js.LICENSE.txt \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.ttf \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2 \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.ttf \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2 \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.ttf \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2 \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-v4compatibility.ttf \
-	html/_static/vendor/fontawesome/6.5.2/webfonts/fa-v4compatibility.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-brands-400.ttf \
+	html/_static/vendor/fontawesome/webfonts/fa-brands-400.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-regular-400.ttf \
+	html/_static/vendor/fontawesome/webfonts/fa-regular-400.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-solid-900.ttf \
+	html/_static/vendor/fontawesome/webfonts/fa-solid-900.woff2 \
 	html/_static/webpack-macros.html \
 	html/characteristic.html \
 	html/client.html \
