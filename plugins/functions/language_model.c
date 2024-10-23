@@ -134,7 +134,6 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
 {
   const char *tag = "language_model_vectorize():";
 
-  grn_obj *table = grn_applier_data_get_table(ctx, data);
   grn_obj *output_column = grn_applier_data_get_output_column(ctx, data);
   size_t n_args;
   grn_obj **args = grn_applier_data_get_args(ctx, data, &n_args);
@@ -213,38 +212,18 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
     goto exit;
   }
 
-  /* TODO: Implement batch vectorization feature in
-   * grn_language_model_inferencer nand use it here. */
-  grn_obj text;
-  GRN_TEXT_INIT(&text, 0);
-  grn_obj vector;
-  GRN_FLOAT32_INIT(&vector, GRN_OBJ_VECTOR);
-  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id)
-  {
-    GRN_BULK_REWIND(&text);
-    GRN_BULK_REWIND(&vector);
-    grn_obj_get_value(ctx, input_column, id, &text);
-    grn_rc rc = grn_language_model_inferencer_vectorize(ctx,
-                                                        inferencer,
-                                                        GRN_TEXT_VALUE(&text),
-                                                        GRN_TEXT_LEN(&text),
-                                                        &vector);
-    if (rc != GRN_SUCCESS) {
-      GRN_PLUGIN_ERROR(ctx,
-                       ctx->rc,
-                       "%s failed to vectorize: %s",
-                       tag,
-                       ctx->errbuf);
-      break;
-    }
-    grn_obj_set_value(ctx, output_column, id, &vector, GRN_OBJ_SET);
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
+  grn_rc rc = grn_language_model_inferencer_vectorize_applier(ctx,
+                                                              inferencer,
+                                                              input_column,
+                                                              data);
+  if (rc != GRN_SUCCESS) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "%s failed to vectorize: %s",
+                     tag,
+                     ctx->errbuf);
+    goto exit;
   }
-  GRN_TABLE_EACH_END(ctx, cursor);
-  GRN_OBJ_FIN(ctx, &text);
-  GRN_OBJ_FIN(ctx, &vector);
 
 exit:
   grn_language_model_inferencer_close(ctx, inferencer);

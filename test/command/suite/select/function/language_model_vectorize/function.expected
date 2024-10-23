@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --output_columns '       text,       vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text), 0, 3)'
+select Data   --output_columns '       text,       vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text),                    0,                    3)'
 [
   [
     0,

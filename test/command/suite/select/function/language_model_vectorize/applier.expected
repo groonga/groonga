@@ -45,12 +45,11 @@ select Data   --columns[embeddings].stage output   --columns[embeddings].type Fl
       [
         "I am a queen.",
         [
-          0.007824666,
-          0.00421184,
-          0.00569254
+          0.008066654,
+          0.004132145,
+          0.005748066
         ]
       ]
     ]
   ]
 ]
-#|w| llm_load_vocab: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect

@@ -16,6 +16,9 @@
 */
 
 #include "grn_language_model.hpp"
+#include "grn_db.h"
+
+#include "groonga/smart_obj.hpp"
 
 #ifdef GRN_WITH_LLAMA_CPP
 #  include <llama.h>
@@ -85,7 +88,7 @@ namespace grn {
           break;
         }
       }
-    }; // namespace
+    } // namespace
 #endif
 
     static char language_models_dir[GRN_ENV_BUFFER_SIZE];
@@ -285,6 +288,19 @@ namespace grn {
   }
 
   class LanguageModelInferencer::Impl {
+#ifdef GRN_WITH_LLAMA_CPP
+    struct BatchReleaser {
+      llama_batch *batch_;
+
+      BatchReleaser(llama_batch *batch) : batch_(batch) {}
+      ~BatchReleaser()
+      {
+        if (batch_) {
+          llama_batch_free(*batch_);
+        }
+      }
+    };
+#endif
   public:
 #ifdef GRN_WITH_LLAMA_CPP
     Impl(grn_ctx *ctx,
@@ -292,7 +308,12 @@ namespace grn {
          llama_context *llama_ctx)
       : ctx_(ctx),
         model_(std::move(model)),
-        llama_ctx_(llama_ctx)
+        llama_ctx_(llama_ctx),
+        llama_model_(llama_get_model(llama_ctx_)),
+        n_dimentions_(llama_n_embd(llama_model_)),
+        has_encoder_(llama_model_has_encoder(llama_model_)),
+        has_decoder_(llama_model_has_decoder(llama_model_)),
+        pooling_type_(llama_pooling_type(llama_ctx_))
     {
     }
 
@@ -305,67 +326,19 @@ namespace grn {
 #ifdef GRN_WITH_LLAMA_CPP
       language_model::CaptureError capture(ctx_);
 
-      const auto model = llama_get_model(llama_ctx_);
-      auto tokens = tokenize(text);
+      std::vector<llama_token> tokens;
+      tokenize(text, tokens);
       auto batch = llama_batch_init(tokens.size(), 0, 1);
-      batch.n_tokens = tokens.size();
-      memcpy(batch.token, tokens.data(), sizeof(llama_token) * batch.n_tokens);
-      for (int i = 0; i < batch.n_tokens; ++i) {
-        batch.pos[i] = i;
-        batch.n_seq_id[i] = 1;
-        batch.seq_id[i][0] = 0;
-        batch.logits[i] = true;
-      }
-      auto n_dimentions = llama_n_embd(model);
+      BatchReleaser batch_releaser(&batch);
+      const llama_seq_id sequence_id = 0;
+      add_tokens(batch, tokens, sequence_id);
 
-      llama_kv_cache_clear(llama_ctx_);
-
-      if (llama_model_has_encoder(model) && !llama_model_has_decoder(model)) {
-        // encoder-only model
-        if (llama_encode(llama_ctx_, batch) < 0) {
-          GRN_LM_ERROR(
-            ctx_,
-            GRN_UNKNOWN_ERROR,
-            "[language-model-inferencer][vectorize] failed to encode");
-        }
-      } else if (!llama_model_has_encoder(model) &&
-                 llama_model_has_decoder(model)) {
-        // decoder-only model
-        if (llama_decode(llama_ctx_, batch) < 0) {
-          GRN_LM_ERROR(
-            ctx_,
-            GRN_UNKNOWN_ERROR,
-            "[language-model-inferencer][vectorize] failed to decode");
-        }
+      if (!vectorize_batch(batch)) {
+        return;
       }
 
-      auto pooling_type = llama_pooling_type(llama_ctx_);
-      float *raw_embeddings;
-      if (pooling_type == LLAMA_POOLING_TYPE_NONE) {
-        raw_embeddings =
-          llama_get_embeddings_ith(llama_ctx_, batch.n_tokens - 1);
-      } else {
-        raw_embeddings =
-          llama_get_embeddings_seq(llama_ctx_,
-                                   batch.seq_id[batch.n_tokens - 1][0]);
-      }
-      if (!raw_embeddings) {
-        GRN_LM_ERROR(ctx_,
-                     GRN_UNKNOWN_ERROR,
-                     "[language-model-inferencer][vectorize] "
-                     "failed to get embeddings");
-      }
-
-      // TODO: grn::distance::compute_l2_norm()
-      float square_sum = 0.0;
-      for (int32_t i = 0; i < n_dimentions; ++i) {
-        square_sum += raw_embeddings[i] * raw_embeddings[i];
-      }
-      auto magnitude = std::sqrt(square_sum);
-      const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
-      for (int i = 0; i < n_dimentions; ++i) {
-        auto normalized_value = raw_embeddings[i] * normalize;
-        GRN_FLOAT32_PUT(ctx_, output_vector, normalized_value);
+      if (!store_embeddings(batch, sequence_id, output_vector)) {
+        return;
       }
 #else
       auto ctx = ctx_;
@@ -374,21 +347,106 @@ namespace grn {
 #endif
     }
 
+    void
+    vectorize_in_batch(grn_table_cursor *cursor,
+                       grn_obj *input_column,
+                       grn_obj *output_column)
+    {
+      language_model::CaptureError capture(ctx_);
+
+      std::vector<grn_id> target_ids;
+      int32_t max_n_tokens = 2048;
+      auto batch = llama_batch_init(max_n_tokens, 0, 1);
+      BatchReleaser batch_releaser(&batch);
+
+      grn_obj embeddings;
+      GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
+      grn::UniqueObj smart_embeddings(ctx_, &embeddings);
+
+      auto flush_batch = [&]() {
+        if (!vectorize_batch(batch)) {
+          return false;
+        }
+        const auto n_targets = target_ids.size();
+        for (size_t i = 0; i < n_targets; ++i) {
+          const auto sequence_id = static_cast<llama_seq_id>(i);
+          GRN_BULK_REWIND(&embeddings);
+          if (!store_embeddings(batch, sequence_id, &embeddings)) {
+            return false;
+          }
+          const auto target_id = target_ids[i];
+          grn_obj_set_value(ctx_,
+                            output_column,
+                            target_id,
+                            &embeddings,
+                            GRN_OBJ_SET);
+        }
+        target_ids.clear();
+        batch.n_tokens = 0;
+        return true;
+      };
+
+      std::vector<llama_token> tokens;
+      grn_id id;
+      while ((id = grn_table_cursor_next(ctx_, cursor)) != GRN_ID_NIL) {
+        uint32_t input_size = 0;
+        auto input = grn_obj_get_value_(ctx_, input_column, id, &input_size);
+        tokenize(input, tokens);
+        const auto n_tokens = static_cast<int32_t>(tokens.size());
+        if (n_tokens == 0) {
+          continue;
+        }
+        const auto batch_is_full = (batch.n_tokens + n_tokens > max_n_tokens);
+        if (batch_is_full) {
+          const auto batch_is_small = (batch.n_tokens == 0);
+          if (batch_is_small) {
+            llama_batch_free(batch);
+            batch_releaser.batch_ = nullptr;
+            max_n_tokens = tokens.size();
+            batch = llama_batch_init(max_n_tokens, 0, 1);
+            batch_releaser.batch_ = &batch;
+            add_tokens(batch, tokens, target_ids.size());
+            target_ids.push_back(id);
+          }
+          if (!flush_batch()) {
+            return;
+          }
+          if (batch_is_small) {
+            continue;
+          }
+        }
+        add_tokens(batch, tokens, target_ids.size());
+        target_ids.push_back(id);
+      }
+      if (target_ids.size() > 0) {
+        if (!flush_batch()) {
+          return;
+        }
+      }
+    }
+
   private:
     grn_ctx *ctx_;
 #ifdef GRN_WITH_LLAMA_CPP
     std::shared_ptr<LanguageModel> model_;
     llama_context *llama_ctx_;
+    const llama_model *llama_model_;
+    const int32_t n_dimentions_;
+    const bool has_encoder_;
+    const bool has_decoder_;
+    const enum llama_pooling_type pooling_type_;
 
-    std::vector<llama_token>
-    tokenize(std::string_view text)
+    void
+    tokenize(std::string_view text, std::vector<llama_token> &tokens)
     {
       auto model = llama_get_model(llama_ctx_);
       constexpr auto add_special = true;
       constexpr auto parse_special = false;
       // Guess enough size
       int n_tokens = text.length() + 2 * add_special;
-      std::vector<llama_token> tokens(n_tokens);
+      if (tokens.capacity() < static_cast<size_t>(n_tokens)) {
+        tokens.reserve(n_tokens);
+      }
       n_tokens = llama_tokenize(model,
                                 text.data(),
                                 text.length(),
@@ -409,7 +467,90 @@ namespace grn {
       } else {
         tokens.resize(n_tokens);
       }
-      return tokens;
+    }
+
+    void
+    add_tokens(llama_batch &batch,
+               const std::vector<llama_token> &tokens,
+               llama_seq_id sequence_id)
+    {
+      const auto offset = batch.n_tokens;
+      const auto n_tokens = static_cast<int32_t>(tokens.size());
+      memcpy(batch.token + offset,
+             tokens.data(),
+             sizeof(llama_token) * n_tokens);
+      for (int32_t i = 0; i < n_tokens; ++i) {
+        const auto offset_i = offset + i;
+        batch.pos[offset_i] = i;
+        batch.n_seq_id[offset_i] = 1;
+        batch.seq_id[offset_i][0] = sequence_id;
+        batch.logits[offset_i] = true;
+      }
+      batch.n_tokens += n_tokens;
+    }
+
+    bool
+    vectorize_batch(llama_batch &batch)
+    {
+      llama_kv_cache_clear(llama_ctx_);
+
+      if (has_encoder_ && !has_decoder_) {
+        // encoder-only model
+        if (llama_encode(llama_ctx_, batch) < 0) {
+          GRN_LM_ERROR(
+            ctx_,
+            GRN_UNKNOWN_ERROR,
+            "[language-model-inferencer][vectorize-batch] failed to encode");
+          return false;
+        }
+      } else if (!has_encoder_ && has_decoder_) {
+        // decoder-only model
+        if (llama_decode(llama_ctx_, batch) < 0) {
+          GRN_LM_ERROR(
+            ctx_,
+            GRN_UNKNOWN_ERROR,
+            "[language-model-inferencer][vectorize-batch] failed to decode");
+          return false;
+        }
+      } else {
+        GRN_LM_ERROR(
+          ctx_,
+          GRN_FUNCTION_NOT_IMPLEMENTED,
+          "[language-model-inferencer][vectorize-batch] "
+          "model that has both of encoder and docoder isn't supported yet");
+        return false;
+      }
+
+      return true;
+    }
+
+    bool
+    store_embeddings(llama_batch &batch,
+                     llama_seq_id id,
+                     grn_obj *output_vector)
+    {
+      // pooling_type_ must not be LLAMA_POOLING_TYPE_NONE.
+      auto raw_embeddings = llama_get_embeddings_seq(llama_ctx_, id);
+      if (!raw_embeddings) {
+        GRN_LM_ERROR(ctx_,
+                     GRN_UNKNOWN_ERROR,
+                     "[language-model-inferencer][store-embeddings] "
+                     "failed to get embeddings");
+        return false;
+      }
+
+      // TODO: grn::distance::compute_l2_norm()
+      float square_sum = 0.0;
+      for (int32_t i = 0; i < n_dimentions_; ++i) {
+        square_sum += raw_embeddings[i] * raw_embeddings[i];
+      }
+      auto magnitude = std::sqrt(square_sum);
+      const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
+      for (int i = 0; i < n_dimentions_; ++i) {
+        auto normalized_value = raw_embeddings[i] * normalize;
+        GRN_FLOAT32_PUT(ctx_, output_vector, normalized_value);
+      }
+      return true;
     }
 #endif
   };
@@ -426,6 +567,14 @@ namespace grn {
                                      grn_obj *output_vector)
   {
     return impl_->vectorize(text, output_vector);
+  }
+
+  void
+  LanguageModelInferencer::vectorize_in_batch(grn_table_cursor *cursor,
+                                              grn_obj *input_column,
+                                              grn_obj *output_column)
+  {
+    return impl_->vectorize_in_batch(cursor, input_column, output_column);
   }
 
   std::unique_ptr<LanguageModelInferencer>
@@ -598,6 +747,45 @@ grn_language_model_inferencer_vectorize(
   if (text_length > 0) {
     inferencer->inferencer->vectorize(std::string_view(text, text_length),
                                       output_vector);
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_language_model_inferencer_vectorize_applier(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  grn_obj *input_column,
+  grn_applier_data *data)
+{
+  GRN_API_ENTER;
+  if (!inferencer) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[language-model-inferencer][vectorize-applier] "
+        "inferencer must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  grn_obj *table = grn_applier_data_get_table(ctx, data);
+  grn_obj *output_column = grn_applier_data_get_output_column(ctx, data);
+  if (!(grn_obj_is_vector_column(ctx, output_column) &&
+        DB_OBJ(output_column)->range == GRN_DB_FLOAT32)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, output_column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[language-model-inferencer][vectorize-applier] "
+        "output column must be a Float32 vector column: %.*s",
+        static_cast<int>(GRN_TEXT_LEN(&inspected)),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_API_RETURN(ctx->rc);
+  }
+  auto cursor =
+    grn_table_cursor_open(ctx, table, nullptr, 0, nullptr, 0, 0, -1, 0);
+  if (cursor) {
+    inferencer->inferencer->vectorize_in_batch(cursor,
+                                               input_column,
+                                               output_column);
+    grn_table_cursor_close(ctx, cursor);
   }
   GRN_API_RETURN(ctx->rc);
 }

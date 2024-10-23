@@ -136,7 +136,7 @@ grn_language_model_inferencer_close(grn_ctx *ctx,
 /**
  * \brief Vectorize a text.
  *
- *        In other words, compute embeddings of a text.
+ * In other words, compute embeddings of a text.
  *
  * \param ctx The context object.
  * \param inferencer The inferencer.
@@ -157,6 +157,30 @@ grn_language_model_inferencer_vectorize(
   const char *text,
   int64_t text_length,
   grn_obj *output_vector);
+/**
+ * \brief Vectorize texts in batch.
+ *
+ * In other words, compute embeddings set of texts. This is efficient
+ * than calling grn_language_model_inferencer_vectorize() multiple
+ * times.
+ *
+ * This should be used from an applier.
+ *
+ * \param ctx The context object.
+ * \param inferencer The inferencer.
+ * \param input_column The text family column or accessor. Caller must be
+ *                     ensure it. This function doesn't validate it.
+ * \param data The applier data passed to an applier function.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ */
+GRN_API grn_rc
+grn_language_model_inferencer_vectorize_applier(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  grn_obj *input_column,
+  grn_applier_data *data);
 
 #ifdef __cplusplus
 }
