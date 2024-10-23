@@ -49,8 +49,8 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster);
  *             casted value will be stored.
  * \param add_record_if_not_exist If `dest` is a reference type bulk/vector and
  *                                the `src` value doesn't exist in the target
- *                                table, setting this to true will add the
- *                                `source` value to the table.
+ *                                table, setting this to true will add the `src`
+ *                                value to the table.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
