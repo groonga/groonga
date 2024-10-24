@@ -1,5 +1,7 @@
 .. -*- rst -*-
 
+:orphan:
+
 How to build Groonga at the repository by GNU Autotools
 =======================================================
 

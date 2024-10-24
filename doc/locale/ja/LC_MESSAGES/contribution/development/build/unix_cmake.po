@@ -31,27 +31,6 @@ msgstr "Groongaの開発にWindowsを使いたい場合は :doc:`windows_cmake` 
 msgid "You can't choose this way if you want to release Groonga. Groonga release system is only supported by GNU Autotools build. See :doc:`unix_autotools` about GNU Autotools build."
 msgstr "Groongaをリリースするときはこの方法を使うことはできません。GroongaのリリースシステムはGNU Autotoolsを使ったビルドでしかサポートしてません。GNU Autotoolsを使ったビルドについては :doc:`unix_autotools` を参照してください。"
 
-msgid "Install depended software"
-msgstr "必要なソフトウェアのインストール"
-
-msgid "TODO"
-msgstr ""
-
-msgid "`CMake <http://www.cmake.org/>`_"
-msgstr ""
-
-msgid "`Ruby <https://www.ruby-lang.org/>`_"
-msgstr ""
-
-msgid "`Git <https://git-scm.com/>`_"
-msgstr ""
-
-msgid "`Cutter <http://cutter.sourceforge.net/>`_"
-msgstr ""
-
-msgid "..."
-msgstr ""
-
 msgid "Checkout Groonga from the repository"
 msgstr "リポジトリーからGroongaをチェックアウト"
 
@@ -61,17 +40,11 @@ msgstr "ユーザーはリリースされたソースアーカイブを使いま
 msgid "The Groonga repository is hosted on `GitHub <https://github.com/groonga/groonga>`_. Checkout the latest source code from the repository::"
 msgstr "Groongaのリポジトリーは `GitHub <https://github.com/groonga/groonga>`_ にあります。リポジトリーから最新のソースコードをチェックアウトします::"
 
-msgid "Run ``cmake``"
-msgstr "``cmake`` を実行"
+msgid "Build Groonga"
+msgstr "Groongaをビルドする"
 
-msgid "See :ref:`cmake-run`."
-msgstr ":ref:`cmake-run` を参照してください。"
-
-msgid "Run ``make``"
-msgstr "``make`` を実行"
-
-msgid "See :ref:`cmake-build-and-install`."
-msgstr ":ref:`cmake-build-and-install` を参照してください。"
+msgid "See :doc:`/install/cmake` for details on installing depended software and how to build with CMake."
+msgstr "必要なソフトウェアのインストールやCMakeを使ったビルドについては :doc:`/install/cmake` をご覧ください。"
 
 msgid "See also"
 msgstr "参考"
