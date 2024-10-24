@@ -3501,8 +3501,6 @@ grn_ii_updspec_open(grn_ctx *ctx, uint32_t rid, uint32_t sid)
   return u;
 }
 
-#define GRN_II_MAX_TF 0x1ffff
-
 grn_rc
 grn_ii_updspec_add(grn_ctx *ctx, grn_ii_updspec *u, int pos, int32_t weight)
 {

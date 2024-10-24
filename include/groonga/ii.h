@@ -68,6 +68,8 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 GRN_API grn_rc
 grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 
+#define GRN_II_MAX_TF 0x1ffff
+
 GRN_API grn_rc
 grn_ii_posting_add(grn_ctx *ctx,
                    grn_posting *pos,
