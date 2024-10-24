@@ -1,0 +1,17 @@
+table_create diaries#title TABLE_PAT_KEY   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+table_create diaries TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create diaries title COLUMN_SCALAR LongText
+[[0,0.0,0.0],true]
+column_create diaries#title index COLUMN_INDEX|WITH_POSITION diaries title
+[[0,0.0,0.0],true]
+load --table diaries
+[
+["_key","title"],
+[1, "a a a a"]
+]
+[[0,0.0,0.0],1]
+#|w| [ii][update][one] too many postings: <diaries#title.index>: <"a">(1): record:<diaries>(1:1), n-postings:<4>, n-discarded-postings:<1>
+index_column_diff diaries#title index
+[[0,0.0,0.0],[]]

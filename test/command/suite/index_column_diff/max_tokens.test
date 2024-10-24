@@ -1,0 +1,17 @@
+table_create diaries#title TABLE_PAT_KEY \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText \
+  --default_tokenizer TokenDelimit
+
+table_create diaries TABLE_PAT_KEY Int32
+column_create diaries title COLUMN_SCALAR LongText
+
+column_create diaries#title index COLUMN_INDEX|WITH_POSITION diaries title
+
+load --table diaries
+[
+["_key","title"],
+[1, "a a a a"]
+]
+
+index_column_diff diaries#title index
