@@ -53,15 +53,3 @@ msgstr ""
 
 msgid "出力するレコードidの上限を指定します。"
 msgstr ""
-
-msgid "cursorの範囲内のインデックスの値を順番に取り出します。"
-msgstr ""
-
-msgid "tidにNULL以外を指定した場合は、index_cursorを作成するときに指定したtable_cursorの現在の対象レコードのidを返します。"
-msgstr ""
-
-msgid "戻り値である :c:type:`grn_posting` 構造体は解放する必要はありません。"
-msgstr ""
-
-msgid "テーブルレコードIDを指定します。"
-msgstr ""
