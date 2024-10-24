@@ -28,15 +28,3 @@ Reference
    :param index: 対象インデックスカラムを指定します。
    :param rid_min: 出力するレコードidの下限を指定します。
    :param rid_max: 出力するレコードidの上限を指定します。
- 
-.. c:function:: grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *tid)
- 
-   cursorの範囲内のインデックスの値を順番に取り出します。
-
-   tidにNULL以外を指定した場合は、index_cursorを作成するときに指定したtable_cursorの現在の対象レコードのidを返します。
-
-   戻り値である :c:type:`grn_posting` 構造体は解放する必要はありません。
-
-   :param ic: 対象cursorを指定します。
-   :param tid: テーブルレコードIDを指定します。
-
