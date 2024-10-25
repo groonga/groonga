@@ -467,23 +467,26 @@ GRN_API grn_obj *
 grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
 /**
- * \brief Create index cursor.
+ * \brief Create a cursor that returns postings in \ref GRN_OBJ_COLUMN_INDEX.
  *
- * For each record in `tc`, create a cursor to retrieve the record in `index`.
- * You can specify `rid_min` and `rid_max` to limit the records to be retrieved.
+ * If you specify a valid \ref grn_table_cursor as `tc`, the created cursor
+ * returns all postings for records that are retrieved by `tc`.
  *
- * If you specify `NULL` for `tc`, you must specify the target `term_id` with
+ * If you specify `NULL` as `tc`, the create cursor returns all postings only
+ * for the specified term ID. You must set the term ID by
  * \ref grn_index_cursor_set_term_id.
+ *
+ * You can specify `rid_min` and `rid_max` to limit the postings to be
+ * retrieved.
  *
  * \param ctx The context object
  * \param tc The table cursor.
  * \param index The index column (Object in \ref GRN_OBJ_COLUMN_INDEX).
- * \param rid_min Minimum record ID of index column.
- * \param rid_max Maximum record ID of index column.
+ * \param rid_min Minimum record ID of posting.
+ * \param rid_max Maximum record ID of posting.
  * \param flags `0` or \ref GRN_OBJ_WITH_POSITION.
  *
  * \return The index cursor on success, `NULL` on error.
- *         `NULL` if memory allocation fails.
  *         You must free the return index cursor with \ref grn_obj_close.
  */
 GRN_API grn_obj *
