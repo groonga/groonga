@@ -250,7 +250,7 @@ typedef enum {
  * For this usage, you need to allocate a \ref grn_obj on stack or heap. In
  * general, stack is used to reduce memory allocation cost. Then you need to
  * initialize the allocated \ref grn_obj by `GRN_*_INIT()` macros such as \ref
- * GRN_TEXT_INIT() and \ref GRN_INT32_INIT. You need to free the allocated \ref
+ * GRN_TEXT_INIT and \ref GRN_INT32_INIT. You need to free the allocated \ref
  * grn_obj when it's no longer needed. You can use \ref GRN_OBJ_FIN or \ref
  * grn_obj_close for it. (\ref GRN_OBJ_FIN is an alias of \ref grn_obj_close.)
  * In general, \ref GRN_OBJ_FIN is used for a \ref grn_obj in stack.
