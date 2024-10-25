@@ -61,6 +61,11 @@ module Groonga
             writer.close_result_set
           end
           query_logger.log(:size, ":", "output(#{n_elements})")
+        rescue Groonga::Cancel
+          unless is_first
+            writer.close_table_records
+            writer.close_result_set
+          end
         ensure
           context.close
         end

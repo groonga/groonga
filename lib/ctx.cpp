@@ -2222,23 +2222,12 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         ctx->errline = 0;
         ctx->errfile = NULL;
         ctx->errfunc = NULL;
-        if (ctx->rc == GRN_CANCEL) {
-          *str = NULL;
-          *str_len = 0;
-          *flags = GRN_CTX_QUIT;
-        }
       }
       goto exit;
     } else {
-      if (ctx->rc == GRN_CANCEL) {
-        *str = NULL;
-        *str_len = 0;
-        *flags = GRN_CTX_QUIT;
-      } else {
-        grn_obj *buf = ctx->impl->output.buf;
-        *str = GRN_BULK_HEAD(buf);
-        *str_len = (unsigned int)GRN_BULK_VSIZE(buf);
-      }
+      grn_obj *buf = ctx->impl->output.buf;
+      *str = GRN_BULK_HEAD(buf);
+      *str_len = (unsigned int)GRN_BULK_VSIZE(buf);
       GRN_BULK_REWIND(ctx->impl->output.buf);
       goto exit;
     }
