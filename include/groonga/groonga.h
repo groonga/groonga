@@ -229,6 +229,61 @@ typedef enum {
   GRN_CONTENT_APACHE_ARROW
 } grn_content_type;
 
+/**
+ * \brief The generic Groonga object type.
+ *
+ * This is a generic type to represent most Groonga objects such as database,
+ * table, column, buffer and so on. You can use \ref grn_obj to represent
+ * different types of objects. For example, you can use \ref grn_obj both for
+ * \ref grn_hash and \ref grn_pat. This is convenient to provide generic API.
+ * For example, you can use \ref grn_obj_get_value for table, column and
+ * accessor.
+ *
+ * This is convenient but this may be difficult to understand when you don't
+ * have a common knowledge of object-oriented programming in C. Here are some
+ * examples of common \ref grn_obj usages:
+ *
+ * ## Buffer
+ *
+ * You can use \ref grn_obj as a buffer. You can store scalar values or vector
+ * values in a \ref grn_obj.
+ *
+ * For this usage, you need to allocate a \ref grn_obj on stack or heap. In
+ * general, stack is used to reduce memory allocation cost. Then you need to
+ * initialize the allocated \ref grn_obj by `GRN_*_INIT()` macros such as \ref
+ * GRN_TEXT_INIT and \ref GRN_INT32_INIT. You need to free the allocated \ref
+ * grn_obj when it's no longer needed. You can use \ref GRN_OBJ_FIN or \ref
+ * grn_obj_close for it. (\ref GRN_OBJ_FIN is an alias of \ref grn_obj_close.)
+ * In general, \ref GRN_OBJ_FIN is used for a \ref grn_obj in stack.
+ *
+ * Here is an example to use \ref grn_obj as a text buffer:
+ *
+ * ```c
+ * grn_obj text_buffer;
+ * GRN_TEXT_INIT(&text_buffer, 0);
+ * GRN_TEXT_PUTS(ctx, &text_buffer, "hello ");
+ * grn_text_printf(ctx, &text_buffer, "%s!", "world");
+ * GRN_OBJ_FIN(ctx, &text_buffer);
+ * ```
+ *
+ * ## Object
+ *
+ * You can use \ref grn_obj as a generic type for database, table, column and so
+ * on. In this usage, you use a heap allocated \ref grn_obj. So `grn_obj *` is
+ * used instead of \ref grn_obj.
+ *
+ * For example, you can use \ref grn_db_open to open a database:
+ *
+ * ```c
+ * grn_obj *db = grn_db_open(ctx, "/tmp/db/db");
+ * ```
+ *
+ * You can use \ref grn_obj_close to free the opened database:
+ *
+ * ```c
+ * grn_obj_close(ctx, db);
+ * ```
+ */
 typedef struct _grn_obj grn_obj;
 typedef struct _grn_ctx grn_ctx;
 
