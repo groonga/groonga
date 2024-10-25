@@ -15,17 +15,6 @@ You can't choose this way if you want to release Groonga. Groonga
 release system is only supported by GNU Autotools build. See
 :doc:`unix_autotools` about GNU Autotools build.
 
-Install depended software
--------------------------
-
-TODO
-
-  * `CMake <http://www.cmake.org/>`_
-  * `Ruby <https://www.ruby-lang.org/>`_
-  * `Git <https://git-scm.com/>`_
-  * `Cutter <http://cutter.sourceforge.net/>`_
-  * ...
-
 Checkout Groonga from the repository
 ------------------------------------
 
@@ -37,17 +26,12 @@ The Groonga repository is hosted on `GitHub
 <https://github.com/groonga/groonga>`_. Checkout the latest source
 code from the repository::
 
-  % git clone --recursive git@github.com:groonga/groonga.git
+  $ git clone --recursive git@github.com:groonga/groonga.git
 
-Run ``cmake``
+Build Groonga
 -------------
 
-See :ref:`cmake-run`.
-
-Run ``make``
-------------
-
-See :ref:`cmake-build-and-install`.
+See :doc:`/install/cmake` for details on installing depended software and how to build with CMake.
 
 See also
 --------
