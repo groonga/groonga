@@ -16,6 +16,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+msgid "Building with GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`"
+msgstr "GNU Autotoolsを使ったビルドは廃止予定のため、CMakeを使ってビルドをしてください: :doc:`/install/cmake`"
+
 msgid "How to build Groonga at the repository by GNU Autotools"
 msgstr "GNU Autotoolsを使ってリポジトリーのGroongaをビルドする方法"
 
