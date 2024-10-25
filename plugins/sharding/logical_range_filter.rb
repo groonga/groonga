@@ -34,33 +34,36 @@ module Groonga
 
           n_elements = 0
           is_first = true
-          executor = Executor.new(context)
-          executor.execute do |result_set|
-            n_elements += result_set.size
+          begin
+            executor = Executor.new(context)
+            executor.execute do |result_set|
+              n_elements += result_set.size
 
-            if is_first
-              writer.open_result_set(result_set, output_columns, -1)
-              writer.open_table_records(-1)
-              is_first = false
+              if is_first
+                writer.open_result_set(result_set, output_columns, -1)
+                writer.open_table_records(-1)
+                is_first = false
+              end
+
+              options = {}
+              options[:limit] = limit
+              options[:auto_flush] = true if is_stream_output
+              writer.write_table_records_content(result_set,
+                                                 output_columns,
+                                                 options)
+              writer.flush if is_stream_output
+              if limit != -1
+                limit -= result_set.size
+                break if limit <= 0
+              end
             end
-
-            options = {}
-            options[:limit] = limit
-            options[:auto_flush] = true if is_stream_output
-            writer.write_table_records_content(result_set,
-                                               output_columns,
-                                               options)
-            writer.flush if is_stream_output
-            if limit != -1
-              limit -= result_set.size
-              break if limit <= 0
+            query_logger.log(:size, ":", "output(#{n_elements})")
+          ensure
+            unless is_first
+              writer.close_table_records
+              writer.close_result_set
             end
           end
-          unless is_first
-            writer.close_table_records
-            writer.close_result_set
-          end
-          query_logger.log(:size, ":", "output(#{n_elements})")
         ensure
           context.close
         end
