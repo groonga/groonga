@@ -500,6 +500,18 @@ GRN_API grn_rc
 grn_index_cursor_reset_start_position(grn_ctx *ctx, grn_obj *index_cursor);
 GRN_API uint32_t
 grn_index_cursor_get_start_position(grn_ctx *ctx, grn_obj *index_cursor);
+/**
+ * \brief Retrieve the current posting information and move the cursor to the
+ *        the next.
+ *
+ * \param ctx The context object.
+ * \param index_cursor Target cursor.
+ * \param term_id The buffer to store the ID of the current target record of
+ *                cursor. If `NULL` is specified, it will not be stored.
+ *
+ * \return \ref grn_posting if the next posting is found, `NULL` otherwise.
+ *         You don't need to free the returned \ref grn_posting.
+ */
 GRN_API grn_posting *
 grn_index_cursor_next(grn_ctx *ctx, grn_obj *index_cursor, grn_id *term_id);
 
