@@ -3,7 +3,7 @@
 :orphan:
 
 .. warning::
-  GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`
+  Building with GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`
 
 How to build Groonga at the repository by GNU Autotools
 =======================================================

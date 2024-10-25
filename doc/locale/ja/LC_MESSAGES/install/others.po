@@ -16,8 +16,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`"
-msgstr "GNU Autotoolsは廃止予定のため、CMakeを使ってビルドをしてください: :doc:`/install/cmake`"
+msgid "Building with GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`"
+msgstr "GNU Autotoolsを使ったビルドは廃止予定のため、CMakeを使ってビルドをしてください: :doc:`/install/cmake`"
 
 msgid "Others"
 msgstr "その他"
