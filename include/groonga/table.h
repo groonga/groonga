@@ -466,6 +466,26 @@ grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor);
 GRN_API grn_obj *
 grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
+/**
+ * \brief Create index cursor.
+ *
+ * For each record in `tc`, create a cursor to retrieve the record in `index`.
+ * You can specify `rid_min` and `rid_max` to limit the records to be retrieved.
+ *
+ * If you specify `NULL` for `tc`, you must specify the target `term_id` with
+ * \ref grn_index_cursor_set_term_id.
+ *
+ * \param ctx The context object
+ * \param tc The table cursor.
+ * \param index The index column (Object in \ref GRN_OBJ_COLUMN_INDEX).
+ * \param rid_min Minimum record ID of index column.
+ * \param rid_max Maximum record ID of index column.
+ * \param flags `0` or \ref GRN_OBJ_WITH_POSITION.
+ *
+ * \return The index cursor on success, `NULL` on error.
+ *         `NULL` if memory allocation fails.
+ *         You must free the return index cursor with \ref grn_obj_close.
+ */
 GRN_API grn_obj *
 grn_index_cursor_open(grn_ctx *ctx,
                       grn_table_cursor *tc,
