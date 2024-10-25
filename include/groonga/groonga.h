@@ -235,8 +235,9 @@ typedef enum {
  * This is a generic type to represent most Groonga objects such as database,
  * table, column, buffer and so on. You can use \ref grn_obj to represent
  * different types of objects. For example, you can use \ref grn_obj both for
- * \ref grn_hash and grn_ja. This is convenient to provide generic API. For
- * example, you can use \ref grn_obj_get_value for table, column and accessor.
+ * \ref grn_hash and \ref grn_pat. This is convenient to provide generic API.
+ * For example, you can use \ref grn_obj_get_value for table, column and
+ * accessor.
  *
  * This is convenient but this may be difficult to understand when you don't
  * have a common knowledge of object-oriented programming in C. Here are some
