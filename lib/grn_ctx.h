@@ -24,8 +24,8 @@
 #include <errno.h>
 
 #ifdef HAVE_SIGNAL_H
-#include <signal.h>
-#define GRN_BREAK_POINT raise(SIGTRAP)
+#  include <signal.h>
+#  define GRN_BREAK_POINT raise(SIGTRAP)
 #endif /* HAVE_SIGNAL_H */
 
 #include "grn_alloc.h"
@@ -37,37 +37,41 @@ extern "C" {
 
 /**** api in/out ****/
 
-#define GRN_API_ENTER do {\
-  if ((ctx)->seqno & 1) {\
-    (ctx)->subno++;\
-  } else {\
-    (ctx)->errlvl = GRN_OK;\
-    if ((ctx)->rc != GRN_CANCEL) {\
-      (ctx)->rc = GRN_SUCCESS;\
-    }\
-    (ctx)->seqno++;\
-  }\
-  GRN_TEST_YIELD();\
-} while (0)
+#define GRN_API_ENTER                                                          \
+  do {                                                                         \
+    if ((ctx)->seqno & 1) {                                                    \
+      (ctx)->subno++;                                                          \
+    } else {                                                                   \
+      (ctx)->errlvl = GRN_OK;                                                  \
+      if ((ctx)->rc != GRN_CANCEL) {                                           \
+        (ctx)->rc = GRN_SUCCESS;                                               \
+      }                                                                        \
+      (ctx)->seqno++;                                                          \
+    }                                                                          \
+    GRN_TEST_YIELD();                                                          \
+  } while (0)
 
 /* CAUTION!! : pass only variables or constants as r */
-#define GRN_API_RETURN(...) do {\
-  if (ctx->subno) {\
-    ctx->subno--;\
-  } else {\
-    ctx->seqno++;\
-  }\
-  GRN_TEST_YIELD();\
-  return __VA_ARGS__;\
-} while (0)
+#define GRN_API_RETURN(...)                                                    \
+  do {                                                                         \
+    if (ctx->subno) {                                                          \
+      ctx->subno--;                                                            \
+    } else {                                                                   \
+      ctx->seqno++;                                                            \
+    }                                                                          \
+    GRN_TEST_YIELD();                                                          \
+    return __VA_ARGS__;                                                        \
+  } while (0)
 
 #ifdef DEBUG
-#define GRN_ASSERT(s) grn_assert(ctx,(s),__FILE__,__LINE__,__FUNCTION__)
+#  define GRN_ASSERT(s) grn_assert(ctx, (s), __FILE__, __LINE__, __FUNCTION__)
 #else
-#define GRN_ASSERT(s)
+#  define GRN_ASSERT(s)
 #endif
 
-void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func);
+void
+grn_assert(
+  grn_ctx *ctx, int cond, const char *file, int line, const char *func);
 
 /**** grn_ctx ****/
 
@@ -82,65 +86,81 @@ extern int grn_lock_timeout;
 
 extern grn_timeval grn_starttime;
 
-void grn_ctx_loader_clear(grn_ctx *ctx);
-void grn_log_reopen(grn_ctx *ctx);
+void
+grn_ctx_loader_clear(grn_ctx *ctx);
+void
+grn_log_reopen(grn_ctx *ctx);
 
-GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
-void grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command);
+GRN_API grn_rc
+grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
+void
+grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command);
 
-grn_ctx *grn_ctx_pull_child(grn_ctx *ctx);
-grn_rc grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx);
+grn_ctx *
+grn_ctx_pull_child(grn_ctx *ctx);
+grn_rc
+grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx);
 
-void grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress);
+void
+grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress);
 
-void grn_ctx_trace_log_enable(grn_ctx *ctx);
-void grn_ctx_trace_log_disable(grn_ctx *ctx);
-void grn_ctx_trace_log_dump(grn_ctx *ctx,
-                            grn_ctx *dump_ctx,
-                            grn_obj *output);
-size_t grn_ctx_trace_log_restore(grn_ctx *ctx,
-                                 const uint8_t *value,
-                                 size_t value_size);
-uint16_t grn_ctx_trace_log_get_current_depth(grn_ctx *ctx);
-void grn_ctx_trace_log_set_current_depth(grn_ctx *ctx, uint16_t depth);
-void grn_ctx_trace_log_push(grn_ctx *ctx);
-void grn_ctx_trace_log_pop(grn_ctx *ctx);
-void grn_ctx_trace_log_emit_string(grn_ctx *ctx,
-                                   const char *name,
-                                   const char *value,
-                                   size_t value_length);
-void grn_ctx_trace_log_emit_cstring(grn_ctx *ctx,
-                                    const char *name,
-                                    const char *value);
-void grn_ctx_trace_log_emit_uint32(grn_ctx *ctx,
-                                   const char *name,
-                                   uint32_t n);
-void grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
-                                       const char *name,
-                                       grn_obj *table,
-                                       grn_id id);
-void grn_ctx_trace_log_emit_object(grn_ctx *ctx,
-                                   const char *name,
-                                   grn_obj *object);
+void
+grn_ctx_trace_log_enable(grn_ctx *ctx);
+void
+grn_ctx_trace_log_disable(grn_ctx *ctx);
+void
+grn_ctx_trace_log_dump(grn_ctx *ctx, grn_ctx *dump_ctx, grn_obj *output);
+size_t
+grn_ctx_trace_log_restore(grn_ctx *ctx,
+                          const uint8_t *value,
+                          size_t value_size);
+uint16_t
+grn_ctx_trace_log_get_current_depth(grn_ctx *ctx);
+void
+grn_ctx_trace_log_set_current_depth(grn_ctx *ctx, uint16_t depth);
+void
+grn_ctx_trace_log_push(grn_ctx *ctx);
+void
+grn_ctx_trace_log_pop(grn_ctx *ctx);
+void
+grn_ctx_trace_log_emit_string(grn_ctx *ctx,
+                              const char *name,
+                              const char *value,
+                              size_t value_length);
+void
+grn_ctx_trace_log_emit_cstring(grn_ctx *ctx,
+                               const char *name,
+                               const char *value);
+void
+grn_ctx_trace_log_emit_uint32(grn_ctx *ctx, const char *name, uint32_t n);
+void
+grn_ctx_trace_log_emit_record_key(grn_ctx *ctx,
+                                  const char *name,
+                                  grn_obj *table,
+                                  grn_id id);
+void
+grn_ctx_trace_log_emit_object(grn_ctx *ctx, const char *name, grn_obj *object);
 
-grn_content_type grn_get_ctype(grn_obj *var);
-grn_content_type grn_content_type_parse(grn_ctx *ctx,
-                                        grn_obj *var,
-                                        grn_content_type default_value);
+grn_content_type
+grn_get_ctype(grn_obj *var);
+grn_content_type
+grn_content_type_parse(grn_ctx *ctx,
+                       grn_obj *var,
+                       grn_content_type default_value);
 
 /**** db_obj ****/
 
 /* flag values used for grn_obj.header.impl_flags */
 
-#define GRN_OBJ_ALLOCATED              (0x01<<2) /* allocated by ctx */
-#define GRN_OBJ_EXPRVALUE              (0x01<<3) /* value allocated by grn_expr */
-#define GRN_OBJ_EXPRCONST              (0x01<<4) /* constant allocated by grn_expr */
+#define GRN_OBJ_ALLOCATED (0x01 << 2) /* allocated by ctx */
+#define GRN_OBJ_EXPRVALUE (0x01 << 3) /* value allocated by grn_expr */
+#define GRN_OBJ_EXPRCONST (0x01 << 4) /* constant allocated by grn_expr */
 
 typedef struct _grn_hook grn_hook;
 
 typedef struct {
   grn_obj_header header;
-  grn_id range;  /* table: type of subrecords, column: type of values */
+  grn_id range; /* table: type of subrecords, column: type of values */
   /* -- compatible with grn_accessor -- */
   grn_id id;
   grn_obj *db;
@@ -164,29 +184,32 @@ typedef struct {
   uint32_t reference_count;
 } grn_db_obj;
 
-#define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) do {\
-  (db_obj)->obj.header.type = (obj_type);\
-  (db_obj)->obj.header.impl_flags = 0;\
-  (db_obj)->obj.header.flags = 0;\
-  (db_obj)->obj.header.domain = GRN_ID_NIL;\
-  (db_obj)->obj.id = GRN_ID_NIL;\
-  (db_obj)->obj.user_data.ptr = NULL;\
-  (db_obj)->obj.finalizer = NULL;\
-  (db_obj)->obj.hooks[0] = NULL;\
-  (db_obj)->obj.hooks[1] = NULL;\
-  (db_obj)->obj.hooks[2] = NULL;\
-  (db_obj)->obj.hooks[3] = NULL;\
-  (db_obj)->obj.hooks[4] = NULL;\
-  (db_obj)->obj.source = NULL;\
-  (db_obj)->obj.source_size = 0;\
-  (db_obj)->obj.reference_count = 1;\
-} while (0)
+#define GRN_DB_OBJ_SET_TYPE(db_obj, obj_type)                                  \
+  do {                                                                         \
+    (db_obj)->obj.header.type = (obj_type);                                    \
+    (db_obj)->obj.header.impl_flags = 0;                                       \
+    (db_obj)->obj.header.flags = 0;                                            \
+    (db_obj)->obj.header.domain = GRN_ID_NIL;                                  \
+    (db_obj)->obj.id = GRN_ID_NIL;                                             \
+    (db_obj)->obj.user_data.ptr = NULL;                                        \
+    (db_obj)->obj.finalizer = NULL;                                            \
+    (db_obj)->obj.hooks[0] = NULL;                                             \
+    (db_obj)->obj.hooks[1] = NULL;                                             \
+    (db_obj)->obj.hooks[2] = NULL;                                             \
+    (db_obj)->obj.hooks[3] = NULL;                                             \
+    (db_obj)->obj.hooks[4] = NULL;                                             \
+    (db_obj)->obj.source = NULL;                                               \
+    (db_obj)->obj.source_size = 0;                                             \
+    (db_obj)->obj.reference_count = 1;                                         \
+  } while (0)
 
 /**** receive handler ****/
 
-GRN_API void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
+GRN_API void
+grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
 
-grn_rc grn_db_init_builtin_procs(grn_ctx *ctx);
+grn_rc
+grn_db_init_builtin_procs(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
