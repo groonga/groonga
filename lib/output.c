@@ -2517,6 +2517,22 @@ grn_output_table_records_open(grn_ctx *ctx,
 }
 
 void
+grn_output_table_keys_open(grn_ctx *ctx,
+                           grn_obj *outbuf,
+                           grn_content_type output_type,
+                           int n_records)
+{
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
+
+  if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
+    grn_output_cstr(ctx, outbuf, output_type, "keys");
+    grn_output_array_open(ctx, outbuf, output_type, "keys", n_records);
+  }
+}
+
+void
 grn_output_table_records_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
@@ -2596,6 +2612,9 @@ grn_output_table_records(grn_ctx *ctx,
 {
   if (format) {
     grn_output_table_records_open(ctx, outbuf, output_type, format->limit);
+  } else {
+    unsigned int n_records = grn_table_size(ctx, table);
+    grn_output_table_keys_open(ctx, outbuf, output_type, (int)n_records);
   }
   grn_output_table_records_content(ctx, outbuf, output_type, table, format);
   grn_output_table_records_close(ctx, outbuf, output_type);
@@ -2664,9 +2683,6 @@ grn_output_result_set_open_metadata_v3(grn_ctx *ctx,
   } else {
     int n_elements = 1 + (int)n_additional_elements;
     grn_output_map_open(ctx, outbuf, output_type, "result_set", n_elements);
-    unsigned int n_records = grn_table_size(ctx, result_set);
-    grn_output_cstr(ctx, outbuf, output_type, "keys");
-    grn_output_array_open(ctx, outbuf, output_type, "keys", (int)n_records);
   }
 }
 
