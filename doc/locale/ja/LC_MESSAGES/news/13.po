@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-26 14:47+0900\n"
+"PO-Revision-Date: 2024-10-28 18:53+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -481,8 +481,8 @@ msgstr "`highlight_html` で前方一致検索ができるようになりまし�
 msgid "Note that highlight keyword is also highlighted not only at the first but also in the middle or at the end."
 msgstr "ただし、ハイライトするキーワードは、最初の出現箇所だけでなく、途中および最後の出現箇所もハイライトされます。"
 
-msgid "[{doc}`/reference/normalizers`] Added new options for NormalizerNFKC*."
-msgstr "[{doc}`/reference/normalizers`] `NormalizerNFKC*` に新しいオプションを追加しました。"
+msgid "[{doc}`/reference/normalizers`] Added new options for NormalizerNFKC\\*."
+msgstr "[{doc}`/reference/normalizers`] `NormalizerNFKC\\*` に新しいオプションを追加しました。"
 
 msgid "`unify_kana_prolonged_sound_mark`"
 msgstr ""
@@ -565,16 +565,16 @@ msgstr "MessagePack v6.0.0 をサポートしました。 [GitHub#1536][Reported
 msgid "Groonga can not found MessagePack v6.0.0 or later when we execute configure or cmake until now. Groonga can found MessagePack since this release even if the version of MessagePack is v6.0.0 or later."
 msgstr "今まで、Groongaは `configure` または `cmake` 実行時にMessagePack v6.0.0以降のMessagePackを検出できませんでした。このリリースから、MessagePackがv6.0.0以降であっても検出できるようになります。"
 
-msgid "[{doc}`/reference/normalizers`] Fixed a bug that NormalizerNFKC* did incorrect normalization."
-msgstr "[{doc}`/reference/normalizers`] NormalizerNFKCが不正な正規化をする問題を修正しました。"
+msgid "[{doc}`/reference/normalizers`] Fixed a bug that NormalizerNFKC\\* did incorrect normalization."
+msgstr "[{doc}`/reference/normalizers`] NormalizerNFKC\\*が不正な正規化をする問題を修正しました。"
 
 msgid "This bug occured when `unify_kana_case` and `unify_katakana_v_sounds` used at the same time."
 msgstr "この問題は、 `unify_kana_case` と `unify_katakana_v_sounds` を同時に使う場合に発生します。"
 
-msgid "For example, `ヴァ` was normalized to `バア` with `unify_kana_case` and `unify_katakana_v_sounds`,  but `ヴァ` should be normalized to `バ`."
+msgid "For example, `ヴァ` was normalized to `バア` with `unify_kana_case` and `unify_katakana_v_sounds`, but `ヴァ` should be normalized to `バ`."
 msgstr "例えば、 `unify_kana_case` と `unify_katakana_v_sounds` を同時に使うとき、  `ヴァ` が `バア` にノーマライズされていました。しかし `ヴァ` は `バ` と正規化されるべきです。"
 
-msgid "This was because `ヴァ` was normalized to `ヴア` with `unify_kana_case`, and after that, `ヴア` was normalized to `バア` with `unify_katakana_v_sounds`. We fixed to normalize characters with `unify_katakana_v_sounds` before  `unify_kana_case`."
+msgid "This was because `ヴァ` was normalized to `ヴア` with `unify_kana_case`, and after that, `ヴア` was normalized to `バア` with `unify_katakana_v_sounds`. We fixed to normalize characters with `unify_katakana_v_sounds` before `unify_kana_case`."
 msgstr "これは、 `unify_kana_case` で `ヴァ` が `ヴア` と正規化され、その後、 `unify_katakana_v_sounds` によって `ヴア` が `バア` と正規化されていたことが原因です。`unify_katakana_v_sounds` が `unify_kana_case` より前に適用されるように修正しました。"
 
 msgid "Here is an example of the bug in the previous version."
@@ -601,8 +601,8 @@ msgstr "マッチした左側のフレーズに含まれるトークンの数が
 msgid "Here is an example of this bug."
 msgstr "以下はこの問題の例です。"
 
-msgid "In the example above, the first element interval is specified as `1` with `*ONP-1,0,1 \"abc def\"`  , but all `content` is matched, including those farther than `1`."
-msgstr "上記の例では、 `*ONP-1,0,1 \"abc def\"` で、最初の要素の距離に `1` を指定しています。しかし、距離が `1` より離れているものも含めた、すべての `content` がマッチしています。 "
+msgid "In the example above, the first element interval is specified as `1` with `*ONP-1,0,1 \"abc def\"`, but all `content` is matched, including those farther than `1`."
+msgstr "上記の例では、 `*ONP-1,0,1 \"abc def\"` で、最初の要素の距離に `1` を指定しています。しかし、距離が `1` より離れているものも含めた、すべての `content` がマッチしています。"
 
 msgid "This is because the example satisfies the condition for the bug and the interval is regarded as `0`."
 msgstr "これは、この例がこの問題の発生条件を満たしていて、距離が `0` とみなされているためです。"
@@ -688,8 +688,8 @@ msgstr "[{doc}`/reference/normalizers`] Unicode 15.0 の NFKC（Normalization Fo
 msgid "[{doc}`/reference/token_filters`] Added a new TokenFilter `TokenFilterNFKC150` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0."
 msgstr "[{doc}`/reference/token_filters`] Unicode 15.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたトークンフィルター `TokenFilterNFKC150` を新しく追加しました。"
 
-msgid "[{doc}`/reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC* as below."
-msgstr "[{doc}`/reference/normalizers/normalizer_nfkc150`] `NormalizerNFKC` に以下の新しいオプションを追加しました。"
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC\\* as below."
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc150`] `NormalizerNFKC\\*` に以下の新しいオプションを追加しました。"
 
 msgid "`unify_katakana_gu_small_sounds`"
 msgstr ""
