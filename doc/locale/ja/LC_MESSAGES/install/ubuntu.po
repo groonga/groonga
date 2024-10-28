@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-19 10:44+0900\n"
+"PO-Revision-Date: 2024-10-28 18:57+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -85,7 +85,7 @@ msgstr "[Munin](http://munin-monitoring.org/)プラグインを提供するパ�
 msgid "Install `groonga-munin-plugins` package:"
 msgstr "`groonga-munin-plugins`パッケージをインストールします。"
 
-msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin.  If you want to use that one, install `groonga-normalizer-mysql` package."
+msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install `groonga-normalizer-mysql` package."
 msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには`groonga-normalizer-mysql`パッケージをインストールします。"
 
 msgid "Install `groonga-normalizer-mysql` package:"
