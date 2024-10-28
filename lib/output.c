@@ -2600,6 +2600,17 @@ grn_output_table_records(grn_ctx *ctx,
 }
 
 static void
+grn_output_table_records_close_v1(grn_ctx *ctx,
+                                  grn_obj *outbuf,
+                                  grn_content_type output_type,
+                                  grn_obj_format *format)
+{
+  if (format) {
+    grn_output_table_records_close(ctx, outbuf, output_type);
+  }
+}
+
+static void
 grn_output_table_records_content_v1(grn_ctx *ctx,
                                     grn_obj *outbuf,
                                     grn_content_type output_type,
@@ -2607,9 +2618,7 @@ grn_output_table_records_content_v1(grn_ctx *ctx,
                                     grn_obj_format *format)
 {
   grn_output_table_records_content(ctx, outbuf, output_type, table, format);
-  if (format) {
-    grn_output_table_records_close(ctx, outbuf, output_type);
-  }
+  grn_output_table_records_close_v1(ctx, outbuf, output_type, format);
 }
 
 static void
@@ -2655,6 +2664,19 @@ grn_output_result_set_close_v1(grn_ctx *ctx,
 }
 
 static void
+grn_output_table_records_close_v3(grn_ctx *ctx,
+                                  grn_obj *outbuf,
+                                  grn_content_type output_type,
+                                  grn_obj_format *format)
+{
+  if (format) {
+    grn_output_table_records_close(ctx, outbuf, output_type);
+  } else {
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
+}
+
+static void
 grn_output_table_records_content_v3(grn_ctx *ctx,
                                     grn_obj *outbuf,
                                     grn_content_type output_type,
@@ -2662,11 +2684,7 @@ grn_output_table_records_content_v3(grn_ctx *ctx,
                                     grn_obj_format *format)
 {
   grn_output_table_records_content(ctx, outbuf, output_type, table, format);
-  if (format) {
-    grn_output_table_records_close(ctx, outbuf, output_type);
-  } else {
-    grn_output_array_close(ctx, outbuf, output_type);
-  }
+  grn_output_table_records_close_v3(ctx, outbuf, output_type, format);
 }
 
 static void
