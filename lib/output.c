@@ -2537,7 +2537,6 @@ grn_output_table_records_content(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_obj_format *format)
 {
-
   if (format) {
     grn_table_cursor *tc = grn_table_cursor_open(ctx,
                                                  table,
@@ -2601,6 +2600,19 @@ grn_output_table_records(grn_ctx *ctx,
 }
 
 static void
+grn_output_table_records_content_v1(grn_ctx *ctx,
+                                    grn_obj *outbuf,
+                                    grn_content_type output_type,
+                                    grn_obj *table,
+                                    grn_obj_format *format)
+{
+  grn_output_table_records_content(ctx, outbuf, output_type, table, format);
+  if (format) {
+    grn_output_table_records_close(ctx, outbuf, output_type);
+  }
+}
+
+static void
 grn_output_result_set_open_v1(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -2629,7 +2641,7 @@ grn_output_result_set_open_v1(grn_ctx *ctx,
   } else {
     grn_output_array_open(ctx, outbuf, output_type, "HIT", -1);
   }
-  grn_output_table_records_content(ctx, outbuf, output_type, table, format);
+  grn_output_table_records_content_v1(ctx, outbuf, output_type, table, format);
 }
 
 static void
@@ -2643,6 +2655,21 @@ grn_output_result_set_close_v1(grn_ctx *ctx,
 }
 
 static void
+grn_output_table_records_content_v3(grn_ctx *ctx,
+                                    grn_obj *outbuf,
+                                    grn_content_type output_type,
+                                    grn_obj *table,
+                                    grn_obj_format *format)
+{
+  grn_output_table_records_content(ctx, outbuf, output_type, table, format);
+  if (format) {
+    grn_output_table_records_close(ctx, outbuf, output_type);
+  } else {
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
+}
+
+static void
 grn_output_result_set_open_v3(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -2650,8 +2677,6 @@ grn_output_result_set_open_v3(grn_ctx *ctx,
                               grn_obj_format *format,
                               uint32_t n_additional_elements)
 {
-  grn_obj buf;
-  GRN_TEXT_INIT(&buf, 0);
   if (format) {
     int n_elements = 2;
     /* result_set: {"n_hits": N, ("columns": COLUMNS,) "records": records} */
@@ -2664,32 +2689,19 @@ grn_output_result_set_open_v3(grn_ctx *ctx,
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       grn_output_table_columns(ctx, outbuf, output_type, result_set, format);
     }
-    grn_output_table_records(ctx, outbuf, output_type, result_set, format);
+    grn_output_table_records_open(ctx, outbuf, output_type, format->limit);
   } else {
-    grn_obj *column;
-    unsigned int n_records;
-    int n_elements = 1;
-
-    column = grn_obj_column(ctx,
-                            result_set,
-                            GRN_COLUMN_NAME_KEY,
-                            GRN_COLUMN_NAME_KEY_LEN);
-    n_elements += (int)n_additional_elements;
+    int n_elements = 1 + (int)n_additional_elements;
     grn_output_map_open(ctx, outbuf, output_type, "result_set", n_elements);
-    n_records = grn_table_size(ctx, result_set);
+    unsigned int n_records = grn_table_size(ctx, result_set);
     grn_output_cstr(ctx, outbuf, output_type, "keys");
     grn_output_array_open(ctx, outbuf, output_type, "keys", (int)n_records);
-    GRN_TABLE_EACH_BEGIN(ctx, result_set, cursor, id)
-    {
-      GRN_BULK_REWIND(&buf);
-      grn_obj_get_value(ctx, column, id, &buf);
-      grn_text_esc(ctx, outbuf, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
-    }
-    GRN_TABLE_EACH_END(ctx, cursor);
-    grn_output_array_close(ctx, outbuf, output_type);
-    grn_obj_unlink(ctx, column);
   }
-  GRN_OBJ_FIN(ctx, &buf);
+  grn_output_table_records_content_v3(ctx,
+                                      outbuf,
+                                      output_type,
+                                      result_set,
+                                      format);
 }
 
 static void
