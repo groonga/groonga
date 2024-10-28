@@ -745,6 +745,9 @@ static void
 grn_index_column_diff_process_token_id(grn_ctx *ctx,
                                        grn_index_column_diff_data *data)
 {
+  if (data->n_tokens >= GRN_II_MAX_TF) {
+    return;
+  }
   void *value = NULL;
   int added = 0;
   const grn_id posting_list_id = grn_hash_add(ctx,
@@ -777,6 +780,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     grn_index_column_diff_posting_list_init(ctx, data, posting_list);
   }
 
+  data->n_tokens++;
   const bool with_section = data->index.with_section;
   const bool with_position = data->index.with_position;
 
