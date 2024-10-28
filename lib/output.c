@@ -2668,20 +2668,19 @@ grn_output_result_set_open_metadata_v3(grn_ctx *ctx,
                                        grn_obj_format *format,
                                        uint32_t n_additional_elements)
 {
+  int n_elements = (int)n_additional_elements;
   if (format) {
-    int n_elements = 2;
     /* result_set: {"n_hits": N, ("columns": COLUMNS,) */
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       n_elements++;
     }
-    n_elements += (int)n_additional_elements;
+    n_elements++;
     grn_output_map_open(ctx, outbuf, output_type, "result_set", n_elements);
     grn_output_result_set_n_hits(ctx, outbuf, output_type, format);
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       grn_output_table_columns(ctx, outbuf, output_type, result_set, format);
     }
   } else {
-    int n_elements = 1 + (int)n_additional_elements;
     grn_output_map_open(ctx, outbuf, output_type, "result_set", n_elements);
   }
 }
