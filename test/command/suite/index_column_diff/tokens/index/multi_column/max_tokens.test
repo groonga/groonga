@@ -1,0 +1,24 @@
+table_create diaries#content \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText \
+  --default_tokenizer TokenDelimit
+
+table_create diaries TABLE_NO_KEY
+column_create diaries title COLUMN_SCALAR ShortText
+column_create diaries content COLUMN_SCALAR LongText
+
+column_create diaries#content index \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  diaries title,content
+
+log_level --level error
+#@add-important-log-levels error
+# 60 = 1min
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 diaries '{"title" => "a ", "content" => "a " * (0x1ffff + 1)}'
+#@enable-logging
+#@timeout default
+log_level --level notice
+
+index_column_diff diaries#content index
