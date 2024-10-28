@@ -205,10 +205,10 @@ grn_ctx_output_bool(grn_ctx *ctx, bool value);
 GRN_API void
 grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format);
 GRN_API void
-grn_ctx_output_result_set_header(grn_ctx *ctx,
-                                 grn_obj *result_set,
-                                 grn_obj_format *format,
-                                 uint32_t n_additional_elements);
+grn_ctx_output_result_set_open_metadata(grn_ctx *ctx,
+                                        grn_obj *result_set,
+                                        grn_obj_format *format,
+                                        uint32_t n_additional_elements);
 GRN_API void
 grn_ctx_output_result_set_open(grn_ctx *ctx,
                                grn_obj *result_set,

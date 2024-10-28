@@ -2602,12 +2602,12 @@ grn_output_table_records(grn_ctx *ctx,
 }
 
 static void
-grn_output_result_set_header_v1(grn_ctx *ctx,
-                                grn_obj *outbuf,
-                                grn_content_type output_type,
-                                grn_obj *table,
-                                grn_obj_format *format,
-                                uint32_t n_additional_elements)
+grn_output_result_set_open_metadata_v1(grn_ctx *ctx,
+                                       grn_obj *outbuf,
+                                       grn_content_type output_type,
+                                       grn_obj *table,
+                                       grn_obj_format *format,
+                                       uint32_t n_additional_elements)
 {
   if (format) {
     int resultset_size = 1;
@@ -2642,12 +2642,12 @@ grn_output_result_set_close_v1(grn_ctx *ctx,
 }
 
 static void
-grn_output_result_set_header_v3(grn_ctx *ctx,
-                                grn_obj *outbuf,
-                                grn_content_type output_type,
-                                grn_obj *result_set,
-                                grn_obj_format *format,
-                                uint32_t n_additional_elements)
+grn_output_result_set_open_metadata_v3(grn_ctx *ctx,
+                                       grn_obj *outbuf,
+                                       grn_content_type output_type,
+                                       grn_obj *result_set,
+                                       grn_obj_format *format,
+                                       uint32_t n_additional_elements)
 {
   if (format) {
     int n_elements = 2;
@@ -2681,27 +2681,27 @@ grn_output_result_set_close_v3(grn_ctx *ctx,
 }
 
 void
-grn_output_result_set_header(grn_ctx *ctx,
-                             grn_obj *outbuf,
-                             grn_content_type output_type,
-                             grn_obj *result_set,
-                             grn_obj_format *format,
-                             uint32_t n_additional_elements)
+grn_output_result_set_open_metadata(grn_ctx *ctx,
+                                    grn_obj *outbuf,
+                                    grn_content_type output_type,
+                                    grn_obj *result_set,
+                                    grn_obj_format *format,
+                                    uint32_t n_additional_elements)
 {
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
-    grn_output_result_set_header_v1(ctx,
-                                    outbuf,
-                                    output_type,
-                                    result_set,
-                                    format,
-                                    n_additional_elements);
+    grn_output_result_set_open_metadata_v1(ctx,
+                                           outbuf,
+                                           output_type,
+                                           result_set,
+                                           format,
+                                           n_additional_elements);
   } else {
-    grn_output_result_set_header_v3(ctx,
-                                    outbuf,
-                                    output_type,
-                                    result_set,
-                                    format,
-                                    n_additional_elements);
+    grn_output_result_set_open_metadata_v3(ctx,
+                                           outbuf,
+                                           output_type,
+                                           result_set,
+                                           format,
+                                           n_additional_elements);
   }
 }
 
@@ -2721,12 +2721,12 @@ grn_output_result_set_open(grn_ctx *ctx,
       grn_arrow_stream_writer_open(ctx, outbuf);
   }
 
-  grn_output_result_set_header(ctx,
-                               outbuf,
-                               output_type,
-                               result_set,
-                               format,
-                               n_additional_elements);
+  grn_output_result_set_open_metadata(ctx,
+                                      outbuf,
+                                      output_type,
+                                      result_set,
+                                      format,
+                                      n_additional_elements);
   grn_output_table_records(ctx, outbuf, output_type, result_set, format);
 }
 

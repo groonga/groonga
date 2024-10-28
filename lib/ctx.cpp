@@ -2751,17 +2751,17 @@ grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format)
 }
 
 void
-grn_ctx_output_result_set_header(grn_ctx *ctx,
-                                 grn_obj *result_set,
-                                 grn_obj_format *format,
-                                 uint32_t n_additional_elements)
+grn_ctx_output_result_set_open_metadata(grn_ctx *ctx,
+                                        grn_obj *result_set,
+                                        grn_obj_format *format,
+                                        uint32_t n_additional_elements)
 {
-  grn_output_result_set_header(ctx,
-                               ctx->impl->output.buf,
-                               ctx->impl->output.type,
-                               result_set,
-                               format,
-                               n_additional_elements);
+  grn_output_result_set_open_metadata(ctx,
+                                      ctx->impl->output.buf,
+                                      ctx->impl->output.type,
+                                      result_set,
+                                      format,
+                                      n_additional_elements);
 }
 
 void
