@@ -774,13 +774,13 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
         message);
     return;
   }
+  data->n_tokens++;
 
   grn_index_column_diff_posting_list *posting_list = value;
   if (added) {
     grn_index_column_diff_posting_list_init(ctx, data, posting_list);
   }
 
-  data->n_tokens++;
   const bool with_section = data->index.with_section;
   const bool with_position = data->index.with_position;
 
