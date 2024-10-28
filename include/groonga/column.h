@@ -25,6 +25,25 @@ extern "C" {
 
 typedef struct _grn_column_cache grn_column_cache;
 
+/**
+ * \brief Name of the pseudo column `_id`.
+ *
+ * The `_id` pseudo column serves as a unique identifier for each record in a
+ * Groonga table. It is automatically defined for all tables upon creation and
+ * is immutable as long as the record exists. The `_id` value ranges from 1 to
+ * 1,073,741,824. And it also typically increments by one for each new record
+ * added. Once a record is deleted, its `_id` value becomes available for reuse.
+ *
+ * \since 3.1.1
+ *
+ * Here is an example to use \ref GRN_COLUMN_NAME_ID with \ref
+ * GRN_COLUMN_NAME_ID_LEN:
+ *
+ * ```c
+ * grn_obj *id_column;
+ * id_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
+ * ```
+ */
 #define GRN_COLUMN_NAME_ID           "_id"
 #define GRN_COLUMN_NAME_ID_LEN       (sizeof(GRN_COLUMN_NAME_ID) - 1)
 #define GRN_COLUMN_NAME_KEY          "_key"
