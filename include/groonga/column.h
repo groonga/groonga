@@ -31,7 +31,7 @@ typedef struct _grn_column_cache grn_column_cache;
  * The `_id` pseudo column serves as a unique identifier for each record in a
  * Groonga table. It is automatically defined for all tables upon creation and
  * is immutable as long as the record exists. The `_id` value ranges from 1 to
- * 1,073,741,824. And it also typically increments by one for each new record
+ * \ref GRN_ID_MAX. And it also typically increments by one for each new record
  * added. Once a record is deleted, its `_id` value becomes available for reuse.
  *
  * \since 3.1.1
