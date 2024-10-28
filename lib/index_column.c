@@ -338,6 +338,7 @@ typedef struct {
     grn_timeval start_time;
     grn_timeval previous_time;
   } progress;
+  size_t n_tokens;
 } grn_index_column_diff_data;
 
 static void
@@ -752,10 +753,10 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
                                               sizeof(grn_id),
                                               &value,
                                               &added);
-  if (data->current.total_tf >= GRN_II_MAX_TF) {
+  if (data->n_tokens >= GRN_II_MAX_TF) {
     return;
   }
-  data->current.total_tf++;
+  data->n_tokens++;
   if (posting_list_id == GRN_ID_NIL) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
@@ -1060,7 +1061,7 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
       grn_obj *source = GRN_PTR_VALUE_AT(source_columns, i);
       const bool is_reference = grn_obj_is_reference_column(ctx, source);
 
-      data->current.total_tf = 0;
+      data->n_tokens = 0;
       data->current.posting.rid = id;
       data->current.posting.sid = (uint32_t)(i + 1);
 
