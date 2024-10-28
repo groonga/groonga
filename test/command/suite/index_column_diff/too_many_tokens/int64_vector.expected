@@ -1,0 +1,14 @@
+table_create diaries#page   --flags TABLE_PAT_KEY   --key_type Int64
+[[0,0.0,0.0],true]
+table_create diaries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create diaries page COLUMN_VECTOR Int64
+[[0,0.0,0.0],true]
+column_create diaries#page index COLUMN_INDEX|WITH_POSITION diaries page
+[[0,0.0,0.0],true]
+log_level --level error
+[[0,0.0,0.0],true]
+log_level --level notice
+[[0,0.0,0.0],true]
+index_column_diff diaries#page index
+[[0,0.0,0.0],[]]
