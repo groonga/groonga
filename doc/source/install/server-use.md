@@ -9,3 +9,4 @@ There are two packages for server use.
 * groonga-server-gqtp (GQTP based server package)
 
 See {doc}`/server` section about details.
+```

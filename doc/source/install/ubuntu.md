@@ -16,9 +16,9 @@ Archive) on Launchpad. You can install Groonga by APT from the PPA.
 
 Here are supported Ubuntu versions:
 
-  * 20.04 LTS Focal Fossa
-  * 22.04 LTS Jammy Jellyfish
-  * 23.04 Lunar Lobster
+- 20.04 LTS Focal Fossa
+- 22.04 LTS Jammy Jellyfish
+- 23.04 Lunar Lobster
 
 Enable the universe repository to install Groonga:
 
@@ -41,6 +41,7 @@ sudo apt -V -y install groonga
 ```
 
 ```{include} server-use.md
+
 ```
 
 If you want to use [MeCab](https://taku910.github.io/mecab/) as a
@@ -72,7 +73,7 @@ sudo apt -V -y install groonga-munin-plugins
 ```
 
 There is a package that provides MySQL compatible normalizer as a
-Groonga plugin.  If you want to use that one, install
+Groonga plugin. If you want to use that one, install
 `groonga-normalizer-mysql` package.
 
 Install `groonga-normalizer-mysql` package:

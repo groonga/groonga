@@ -169,8 +169,7 @@ repos:
         files: >-
           (
           ?CMakePresets\.json|
-          ?doc/source/contribution/documentation/introduction\.md|
-          ?doc/source/install/cmake\.md|
+          ?doc/source/.*\.md|
           )
 
 exclude: "^vendor/.*"
