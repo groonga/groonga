@@ -37,7 +37,7 @@ typedef struct _grn_column_cache grn_column_cache;
  * \since 3.1.1
  *
  * Here is an example to use \ref GRN_COLUMN_NAME_ID with \ref
- * GRN_COLUMN_NAME_ID_LEN:
+ * GRN_COLUMN_NAME_ID_LEN to retrieve the `_id` column object:
  *
  * ```c
  * grn_obj *id_column;
