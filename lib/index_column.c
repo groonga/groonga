@@ -322,6 +322,9 @@ typedef struct {
   grn_obj *remains;
   grn_obj *missings;
   struct {
+    size_t n_tokens;
+  } current_source;
+  struct {
     grn_id token_id;
     grn_posting posting;
   } current;
@@ -338,7 +341,6 @@ typedef struct {
     grn_timeval start_time;
     grn_timeval previous_time;
   } progress;
-  size_t n_tokens;
 } grn_index_column_diff_data;
 
 static void
@@ -745,7 +747,7 @@ static void
 grn_index_column_diff_process_token_id(grn_ctx *ctx,
                                        grn_index_column_diff_data *data)
 {
-  if (data->n_tokens >= GRN_II_MAX_TF) {
+  if (data->current_source.n_tokens >= GRN_II_MAX_TF) {
     return;
   }
   void *value = NULL;
@@ -774,7 +776,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
         message);
     return;
   }
-  data->n_tokens++;
+  data->current_source.n_tokens++;
 
   grn_index_column_diff_posting_list *posting_list = value;
   if (added) {
@@ -1065,7 +1067,7 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
       grn_obj *source = GRN_PTR_VALUE_AT(source_columns, i);
       const bool is_reference = grn_obj_is_reference_column(ctx, source);
 
-      data->n_tokens = 0;
+      data->current_source.n_tokens = 0;
       data->current.posting.rid = id;
       data->current.posting.sid = (uint32_t)(i + 1);
 
