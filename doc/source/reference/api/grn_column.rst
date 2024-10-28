@@ -18,18 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:macro:: GRN_COLUMN_NAME_ID
-
-   It returns the name of :doc:`/reference/columns/pseudo` ``_id``.
-
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_ID_LEN` like
-   the following::
-
-     grn_obj *id_column;
-     id_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
-
-   Since 3.1.1.
-
 .. c:macro:: GRN_COLUMN_NAME_ID_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_ID`.
