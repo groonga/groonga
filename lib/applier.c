@@ -65,7 +65,9 @@ bool
 grn_applier_data_extract(grn_ctx *ctx, grn_applier_data *data, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
-  if (e->codes_curr < 3) {
+  grn_expr_code *codes = e->codes;
+  uint32_t codes_curr = e->codes_curr;
+  if (codes_curr < 3) {
     return false;
   }
   if (e->codes[0].op != GRN_OP_PUSH) {
@@ -76,10 +78,51 @@ grn_applier_data_extract(grn_ctx *ctx, grn_applier_data *data, grn_obj *expr)
   }
   data->applier = e->codes[0].value;
   for (uint32_t i = 1; i < e->codes_curr - 1; i++) {
-    switch (e->codes[0].op) {
+    switch (e->codes[i].op) {
     case GRN_OP_GET_VALUE:
     case GRN_OP_PUSH:
-      GRN_PTR_PUT(ctx, &(data->args), e->codes[i].value);
+      if (e->codes[i].modify == 0) {
+        GRN_PTR_PUT(ctx, &(data->args), e->codes[i].value);
+      } else {
+        uint32_t call_i = i + e->codes[i].modify;
+        if (e->codes[call_i].op != GRN_OP_CALL) {
+          return false;
+        }
+        if (!grn_obj_is_function_proc(ctx, e->codes[i].value)) {
+          return false;
+        }
+        /* Literal arguments are only supported for now. Nested
+         * function call isn't supported yet. */
+        for (uint32_t j = i + 1; j < call_i; j++) {
+          if (e->codes[j].op != GRN_OP_PUSH) {
+            return false;
+          }
+          grn_obj *arg = e->codes[j].value;
+          if (!arg) {
+            return false;
+          }
+          switch (arg->header.type) {
+          case GRN_BULK:
+          case GRN_VECTOR:
+          case GRN_UVECTOR:
+          case GRN_PVECTOR:
+            /* supported */
+            break;
+          default:
+            return false;
+          }
+        }
+        e->codes += i;
+        e->codes_curr = call_i - i + 1;
+        grn_expr_executor executor;
+        grn_expr_executor_init(ctx, &executor, expr);
+        grn_obj *arg = grn_expr_executor_exec(ctx, &executor, GRN_ID_NIL);
+        GRN_PTR_PUT(ctx, &(data->args), arg);
+        grn_expr_executor_fin(ctx, &executor);
+        e->codes = codes;
+        e->codes_curr = codes_curr;
+        i += e->codes[i].modify;
+      }
       break;
     default:
       return false;
