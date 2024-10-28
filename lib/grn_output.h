@@ -36,6 +36,12 @@ grn_output_result_set_open(grn_ctx *ctx,
                            grn_obj_format *format,
                            uint32_t n_additional_elements);
 GRN_API void
+grn_output_result_set_content(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              grn_obj *result_set,
+                              grn_obj_format *format);
+GRN_API void
 grn_output_result_set_close(grn_ctx *ctx,
                             grn_obj *outbuf,
                             grn_content_type output_type,

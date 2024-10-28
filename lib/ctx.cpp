@@ -2762,6 +2762,11 @@ grn_ctx_output_result_set_open(grn_ctx *ctx,
                              result_set,
                              format,
                              n_additional_elements);
+  grn_output_result_set_content(ctx,
+                                ctx->impl->output.buf,
+                                ctx->impl->output.type,
+                                result_set,
+                                format);
 }
 
 void
