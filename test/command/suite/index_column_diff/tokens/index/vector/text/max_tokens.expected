@@ -1,0 +1,14 @@
+table_create diaries#contents   --flags TABLE_PAT_KEY   --key_type ShortText
+[[0,0.0,0.0],true]
+table_create diaries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create diaries contents COLUMN_VECTOR Text
+[[0,0.0,0.0],true]
+column_create diaries#contents index COLUMN_INDEX|WITH_POSITION diaries contents
+[[0,0.0,0.0],true]
+log_level --level error
+[[0,0.0,0.0],true]
+log_level --level notice
+[[0,0.0,0.0],true]
+index_column_diff diaries#contents index
+[[0,0.0,0.0],[]]

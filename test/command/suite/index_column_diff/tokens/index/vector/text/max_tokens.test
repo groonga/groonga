@@ -1,0 +1,20 @@
+table_create diaries#contents \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText
+
+table_create diaries TABLE_NO_KEY
+column_create diaries contents COLUMN_VECTOR Text
+
+column_create diaries#contents index COLUMN_INDEX|WITH_POSITION diaries contents
+
+log_level --level error
+#@add-important-log-levels error
+# 60 = 1min
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 diaries '{"contents" => (0x1ffff + 1).times.collect{ "a" }}'
+#@enable-logging
+#@timeout default
+log_level --level notice
+
+index_column_diff diaries#contents index
