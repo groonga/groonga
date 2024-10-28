@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-20 08:01+0900\n"
+"PO-Revision-Date: 2024-10-28 14:56+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -42,23 +42,23 @@ msgstr "各要素がテキストなら、各要素に対して全文検索する
 msgid "Usage"
 msgstr "使い方"
 
-msgid "There are three vector column types:"
-msgstr "ベクターカラムには3種類あります。"
+msgid "There are four vector column types:"
+msgstr "4種類ベクターカラムがあります。"
 
 msgid "Normal vector column"
 msgstr "ノーマルベクターカラム"
 
 msgid "Reference vector column"
-msgstr "参照型ベクターカラム"
+msgstr "参照ベクターカラム"
 
 msgid "Weight vector column"
 msgstr "重み付きベクターカラム"
 
-msgid "You can generate a column value from other column's value automatically. It's called as a generated column. See :ref:`column-create-generated-column` how to create a generated column."
-msgstr "他のカラムの値から自動的にカラムの値を生成できます。このようなカラムを自動生成カラムと呼びます。どのように自動生成カラムを作るかは :ref:`column-create-generated-column` を参照してください。"
+msgid "Generated vector column"
+msgstr "生成ベクターカラム"
 
 msgid "This section describes how to use these types."
-msgstr "このセクションではこれらの種類の使い方について説明します。"
+msgstr "このセクションではこれらのベクターカラムの使い方について説明します。"
 
 msgid "Normal vector column stores zero or more scalar data. For example, scalar data are number, string and so on."
 msgstr "ノーマルベクターカラムは0個以上のスカラーデータを保存します。スカラーデータとは、例えば、数値や文字列です。"
@@ -142,7 +142,7 @@ msgid "TODO"
 msgstr ""
 
 msgid "Reference vector column is space-efficient if there are many same value elements. Reference vector column keeps reference record IDs not value itself. Record ID is smaller than value itself."
-msgstr ""
+msgstr "同じ要素がたくさんある場合は、参照ベクターカラムは空間効率がよいです。参照ベクターカラムは値そのものではなく参照先のレコードIDのみを保持します。レコードIDは値よりも小さいです。"
 
 msgid "Weight vector column is similar to normal vector column. It can store elements. It can also stores weights for them. Weight is degree of importance of the element."
 msgstr "重み付きベクターカラムはノーマルベクターカラムに似ています。複数の要素を保存できます。さらに、要素の重みも保存できます。重みとはその要素の重要度です。"
@@ -221,3 +221,9 @@ msgstr "``tags @ \"groonga\" * 5`` は ``\"groonga\"`` タグを含むレコー�
 
 msgid "For example, record ``\"http://mroonga.org/\"`` has both ``\"mysql\"`` tag and ``\"groonga\"`` tag. So its score is increased by ``565`` (``= ((1 + 50) * 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55``). The search score is 1 by ``--filter true`` before applying ``--adjuster``. So the final search score is ``566`` (``= 1 + 565``) of record ``\"http://mroonga.org/\"``."
 msgstr "例えば、 ``\"http://mroonga.org/\"`` レコードは ``\"mysql\"`` タグと ``\"groonga\"`` タグを両方持っています。そのため、スコアーは ``565`` （ ``= ((1 + 50) * 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55`` ）増えます。 ``--adjuster`` を適用する前は、``--filter true`` によって検索スコアーは1になっています。そのため、 ``\"http://mroonga.org/\"`` レコードの最終的な検索スコアーは ``566`` （ ``= 1 + 565`` ）になります。"
+
+msgid "You can use a vector column as a :ref:`generated-column`."
+msgstr "ベクターカラムを :ref:`generated-column` として使うことができます。"
+
+msgid "See :ref:`column-create-generated-column` for details."
+msgstr "詳細は :ref:`column-create-generated-column` を参照してください。"

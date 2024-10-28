@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-10-28 14:58+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,9 @@ msgstr ""
 msgid "Column"
 msgstr "カラム"
 
+msgid "Summary"
+msgstr "概要"
+
 msgid "Column is a data store object or an index object for fast search."
 msgstr "カラムはデータストアオブジェクトまたは高速な検索のための転置索引オブジェクトです。"
 
@@ -27,8 +30,17 @@ msgstr "カラムは必ず1つのテーブルに属します。テーブルは0�
 msgid "Both data store column and index column have type. Type of data store column specifies data range. In other words, it is \"value type\". Type of index column specifies set of documents to be indexed. A set of documents is a table in Groonga. In other words, type of index column must be a table."
 msgstr "データストアカラムもインデックスカラムもどちらも型を持ちます。データストアカラムの型は値域を指定します。言い換えると、データストアカラムの型は「値の型」です。インデックスカラムの型はインデックス対象のドキュメント集合を指定します。Groongaではテーブルがドキュメント集合になります。よって、インデックスカラムの型はテーブルにしなければいけません。"
 
-msgid "Here are data store columns:"
-msgstr "以下がデータストアカラムです。"
+msgid "Data store columns"
+msgstr "データストアカラム"
 
-msgid "Here is an index column:"
-msgstr "以下がインデックスカラムです。"
+msgid "Index column"
+msgstr "インデックスカラム"
+
+msgid "Generated column"
+msgstr "生成カラム"
+
+msgid "You can generate contents of a data store column from other column's value automatically. It's called as a generated column."
+msgstr "他のカラムの値からデータストアカラムの内容を自動的に生成できます。このようなカラムを生成カラムと呼びます。"
+
+msgid ":doc:`columns/vector` and :doc:`columns/scalar` can be a generated column. You can use :ref:`column-create-generator` to create a generated column. See :ref:`column-create-generated-column` for details."
+msgstr ":doc:`columns/vector` と :doc:`columns/scalar` は生成カラムとして使うことができます。生成カラムを作るには :ref:`column-create-generator` を使います。詳細は :ref:`column-create-generated-column` を参照してください。"

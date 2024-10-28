@@ -31,16 +31,12 @@ with weight carefully.
 Usage
 -----
 
-There are three vector column types:
+There are four vector column types:
 
 * Normal vector column
 * Reference vector column
 * Weight vector column
-
-You can generate a column value from other column's value
-automatically. It's called as a generated column. See
-:ref:`column-create-generated-column` how to create a generated
-column.
+* Generated vector column
 
 This section describes how to use these types.
 
@@ -335,3 +331,15 @@ of record ``"http://mroonga.org/"``.
 .. groonga-command
 .. table_remove Tags
 .. table_remove Bookmarks
+
+.. _generated-vector-column:
+
+Generated vector column
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use a vector column as a :ref:`generated-column`.
+
+How to create
+"""""""""""""
+
+See :ref:`column-create-generated-column` for details.

@@ -44,10 +44,39 @@ Usage
 
 See :doc:`../commands/column_create` how to create a column.
 
-You can generate a column value from other column's value
-automatically. It's called as a generated column. See
-:ref:`column-create-generated-column` how to create a generated
-column.
+There are three scalar column types:
+
+* Normal scalar column
+* Reference scalar column
+* Generated scalar column
+
+This section describes how to use these types.
+
+.. _normal-scalar-column:
+
+Normal scalar column
+^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _reference-scalar-column:
+
+Reference scalar column
+^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _generated-scalar-column:
+
+Generated scalar column
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use a scalar column as a :ref:`generated-column`.
+
+How to create
+"""""""""""""
+
+See :ref:`column-create-generated-column` for details.
 
 See also
 --------

@@ -369,9 +369,8 @@ properties in ``OBJECT``::
 
        The generator expression in :doc:`../grn_expr/script_syntax`.
 
-       If the column is not a :ref:`generated
-       column<column-create-generated-column>`, this is an empty
-       string.
+       If the column is not a :ref:`generated-column`, this is an
+       empty string.
 
 .. _object-list-return-value-sources:
 

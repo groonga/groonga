@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-20 08:04+0900\n"
+"PO-Revision-Date: 2024-10-28 14:54+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -90,8 +90,32 @@ msgstr "使い方"
 msgid "See :doc:`../commands/column_create` how to create a column."
 msgstr "カラムの作り方は :doc:`../commands/column_create` を参照してください。"
 
-msgid "You can generate a column value from other column's value automatically. It's called as a generated column. See :ref:`column-create-generated-column` how to create a generated column."
-msgstr "他のカラムの値から自動的にカラムの値を生成できます。このようなカラムを自動生成カラムと呼びます。どのように自動生成カラムを作るかは :ref:`column-create-generated-column` を参照してください。"
+msgid "There are three scalar column types:"
+msgstr "3種類のスカラーカラムがあります。"
+
+msgid "Normal scalar column"
+msgstr "ノーマルスカラーカラム"
+
+msgid "Reference scalar column"
+msgstr "参照スカラーカラム"
+
+msgid "Generated scalar column"
+msgstr "生成スカラーカラム"
+
+msgid "This section describes how to use these types."
+msgstr "このセクションではこれらのスカラーカラムの使い方を説明します。"
+
+msgid "TODO"
+msgstr ""
+
+msgid "You can use a scalar column as a :ref:`generated-column`."
+msgstr "スカラーカラム :ref:`generated-column` として使うことができます。"
+
+msgid "How to create"
+msgstr "作り方"
+
+msgid "See :ref:`column-create-generated-column` for details."
+msgstr "詳細は :ref:`column-create-generated-column` を参照してください。"
 
 msgid "See also"
 msgstr "参照"
