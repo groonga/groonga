@@ -53,7 +53,7 @@ typedef struct _grn_column_cache grn_column_cache;
  * \brief Length of the pseudo `_id` column name.
  *
  * The \ref GRN_COLUMN_NAME_ID_LEN macro returns the byte size of the
- * /ref GRN_COLUMN_NAME_ID, excluding the null terminator.
+ * \ref GRN_COLUMN_NAME_ID, excluding the null terminator.
  *
  * \since 3.1.1
  */
