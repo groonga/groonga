@@ -48,7 +48,15 @@ typedef struct _grn_column_cache grn_column_cache;
  * grn_obj_unlink(ctx, id_accessor);
  * ```
  */
-#define GRN_COLUMN_NAME_ID           "_id"
+#define GRN_COLUMN_NAME_ID "_id"
+/**
+ * \brief Length of the pseudo `_id` column name.
+ *
+ * The \ref GRN_COLUMN_NAME_ID_LEN macro returns the byte size of the
+ * /ref GRN_COLUMN_NAME_ID, excluding the null terminator.
+ *
+ * \since 3.1.1
+ */
 #define GRN_COLUMN_NAME_ID_LEN       (sizeof(GRN_COLUMN_NAME_ID) - 1)
 #define GRN_COLUMN_NAME_KEY          "_key"
 #define GRN_COLUMN_NAME_KEY_LEN      (sizeof(GRN_COLUMN_NAME_KEY) - 1)

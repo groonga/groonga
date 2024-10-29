@@ -18,12 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:macro:: GRN_COLUMN_NAME_ID_LEN
-
-   It returns the byte size of :c:macro:`GRN_COLUMN_NAME_ID`.
-
-   Since 3.1.1.
-
 .. c:macro:: GRN_COLUMN_NAME_KEY
 
    It returns the name of :doc:`/reference/columns/pseudo` ``_key``.
