@@ -1,14 +1,14 @@
-table_create diaries#pages   --flags TABLE_PAT_KEY   --key_type Int64
+table_create cursors   --flags TABLE_PAT_KEY   --key_type Int64
 [[0,0.0,0.0],true]
-table_create diaries TABLE_NO_KEY
+table_create posting_lists TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create diaries pages COLUMN_VECTOR Int64
+column_create posting_lists deltas COLUMN_VECTOR Int64
 [[0,0.0,0.0],true]
-column_create diaries#pages index COLUMN_INDEX|WITH_POSITION diaries pages
+column_create cursors index COLUMN_INDEX|WITH_POSITION posting_lists deltas
 [[0,0.0,0.0],true]
 log_level --level error
 [[0,0.0,0.0],true]
 log_level --level notice
 [[0,0.0,0.0],true]
-index_column_diff diaries#pages index
+index_column_diff cursors index
 [[0,0.0,0.0],[]]

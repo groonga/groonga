@@ -1,20 +1,20 @@
-table_create diaries#pages \
+table_create cursors \
   --flags TABLE_PAT_KEY \
   --key_type Int64
 
-table_create diaries TABLE_NO_KEY
-column_create diaries pages COLUMN_VECTOR Int64
+table_create posting_lists TABLE_NO_KEY
+column_create posting_lists deltas COLUMN_VECTOR Int64
 
-column_create diaries#pages index COLUMN_INDEX|WITH_POSITION diaries pages
+column_create cursors index COLUMN_INDEX|WITH_POSITION posting_lists deltas
 
 log_level --level error
 #@add-important-log-levels error
 # 60 = 1min
 #@timeout 60
 #@disable-logging
-#@generate-series 1 1 diaries '{"pages" => (0x1ffff + 1).times.collect{ "1" }}'
+#@generate-series 1 1 posting_lists '{"deltas" => (0x1ffff + 1).times.to_a}'
 #@enable-logging
 #@timeout default
 log_level --level notice
 
-index_column_diff diaries#pages index
+index_column_diff cursors index
