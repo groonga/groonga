@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -33,10 +34,7 @@ class Updator
     @current_db = nil
     @output_log = false
     Find.find(source) do |path|
-      case File.extname(path)
-      when ".rst"
-        update_rst(path)
-      end
+      update_file(path)
     end
   end
 
@@ -96,7 +94,7 @@ class Updator
 
   def read_output(output)
     data = ""
-    timeout = 1
+    timeout = 10
     while IO.select([output], nil, nil, timeout)
       break if output.eof?
       data << output.readpartial(4096)
@@ -188,7 +186,12 @@ class Updator
              "2023-10-05 17:26:13.890356")
   end
 
+  def detect_markup(path)
+    File.extname(path)[1..-1].to_sym
+  end
+
   def execute_command(input, output, command, current_output_path, output_log)
+    markup = detect_markup(current_output_path)
     input.puts(command)
     input.flush
     is_command = /\A[a-z\/]/.match?(command)
@@ -210,10 +213,12 @@ class Updator
     puts(formatted_result)
     if current_output_path
       File.open(current_output_path, "a") do |o|
-        command_prefix = "  "
+        command_prefix = +""
+        command_prefix << "  " if markup == :rst
         command_prefix << "$ curl http://localhost:10041" if is_path_style
         o.puts(command.gsub(/^/, command_prefix))
-        output_prefix = "  "
+        output_prefix = +""
+        output_prefix << "  " if markup == :rst
         output_prefix << "# " unless is_path_style
         o.puts(formatted_result.gsub(/^/, output_prefix))
 
@@ -229,13 +234,24 @@ class Updator
     end
   end
 
-  def update_rst(path)
+  def update_file(path)
     if @processed_files.key?(path)
       puts("Skipped processed file: #{path}")
       return
     end
-    @processed_files[path] = true
-    @current_path = path
+    case File.extname(path)
+    when ".rst"
+      @processed_files[path] = true
+      @current_path = path
+      update_rst(path)
+    when ".md"
+      @processed_files[path] = true
+      @current_path = path
+      update_md(path)
+    end
+  end
+
+  def update_rst(path)
     groonga_command_block = ""
     in_groonga_command = false
     File.read(path).each_line do |line|
@@ -253,7 +269,51 @@ class Updator
           in_groonga_command = true
         when /\A\.\. groonga-include\s*:/
           include_path = line.split(":", 2)[1].strip
-          update_rst(File.join(File.dirname(@current_path), include_path))
+          update_file(File.join(File.dirname(@current_path), include_path))
+        end
+      end
+    end
+    unless groonga_command_block.empty?
+      process_groonga_command(groonga_command_block)
+    end
+  end
+
+  def update_md(path)
+    groonga_command_block = ""
+    in_groonga_command = false
+    in_include = false
+    File.read(path).each_line do |line|
+      if in_groonga_command
+        if in_include
+          if line.chomp == "```"
+            in_groonga_command = false
+            in_include = false
+            process_groonga_command(groonga_command_block)
+            groonga_command_block.clear
+          else
+            groonga_command_block << line
+          end
+        else
+          case line.chomp
+          when /\A```{include} /
+            in_include = true
+            groonga_command_block << line.gsub(/\A```{include} /, "include::")
+          when /\A<!-- database: /
+            @current_db = line.split(":", 2)[1].strip
+          when ""
+            # Ignore
+          else
+            in_groonga_command = false
+          end
+        end
+      else
+        case line.chomp
+        when "<!-- groonga-command -->"
+          in_groonga_command = true
+          in_include = false
+        when /\A<!-- groonga-include\s*:/
+          include_path = line.split(":", 2)[1].strip
+          update_file(File.join(File.dirname(@current_path), include_path))
         end
       end
     end
@@ -264,6 +324,7 @@ class Updator
 
   def process_groonga_command(groonga_command)
     current_output_path = nil
+    markup = nil
     actions = []
     command = ""
     in_load_values = false
@@ -280,11 +341,17 @@ class Updator
         path = line.split("::", 2)[1].strip
         base_dir = File.dirname(@current_path)
         current_output_path = File.join(base_dir, path)
+        markup = detect_markup(current_output_path)
         puts("### Current output path: #{current_output_path}")
         FileUtils.mkdir_p(File.dirname(current_output_path))
         File.open(current_output_path, "w") do |output|
-          output.puts("Execution example::")
-          output.puts
+          if markup == :rst
+            output.puts("Execution example::")
+            output.puts
+          else
+            output.puts("Execution example:")
+            output.puts
+          end
         end
       when /\A[%$] /
         actions << {
@@ -321,6 +388,8 @@ class Updator
       end
     end
     return if actions.empty?
+
+    in_fenced_code_block = false
     run_groonga do |input, output|
       output_log = false
       actions.each do |action|
@@ -335,8 +404,23 @@ class Updator
           command_line_output = `#{expanded_command_line}`
           if current_output_path
             File.open(current_output_path, "a") do |output|
-              output.puts("  $ #{command_line}")
-              output.puts(command_line_output.gsub(/^/, "  "))
+              if markup == :rst
+                output.puts("  $ #{command_line}")
+                output.puts(command_line_output.gsub(/^/, "  "))
+              else
+                if in_fenced_code_block
+                  output.puts("```")
+                  output.puts
+                end
+                output.puts("```console")
+                output.puts("$ #{command_line}")
+                output.puts(command_line_output)
+                output.puts("```")
+                if in_fenced_code_block
+                  output.puts
+                  output.puts("```shell")
+                end
+              end
             end
           end
           puts(command_line_output)
@@ -344,14 +428,29 @@ class Updator
           comment = action[:value]
           if current_output_path
             File.open(current_output_path, "a") do |output|
-              output.puts(comment.gsub(/^/, "  "))
+              if markup == :rst
+                output.puts(comment.gsub(/^/, "  "))
+              else
+                output.puts(comment)
+              end
             end
           end
           puts(comment)
         when :command
           command = action[:value]
+          if markup == :md and not in_fenced_code_block
+            File.open(current_output_path, "a") do |output|
+              output.puts("```shell")
+            end
+            in_fenced_code_block = true
+          end
           execute_command(input, output, command, current_output_path, output_log)
         end
+      end
+    end
+    if markup == :md and in_fenced_code_block
+      File.open(current_output_path, "a") do |output|
+        output.puts("```")
       end
     end
   end
