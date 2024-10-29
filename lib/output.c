@@ -2516,7 +2516,7 @@ grn_output_table_records_open(grn_ctx *ctx,
   }
 }
 
-void
+static void
 grn_output_table_keys_open(grn_ctx *ctx,
                            grn_obj *outbuf,
                            grn_content_type output_type,
