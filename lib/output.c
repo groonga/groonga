@@ -2741,7 +2741,7 @@ grn_output_result_set_open(grn_ctx *ctx,
                                       output_type,
                                       result_set,
                                       format,
-                                      n_additional_elements);
+                                      n_additional_elements + 1);
   grn_output_table_records(ctx, outbuf, output_type, result_set, format);
 }
 
