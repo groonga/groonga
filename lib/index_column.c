@@ -750,6 +750,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
   if (data->current_source.n_tokens >= GRN_II_MAX_TF) {
     return;
   }
+
   void *value = NULL;
   int added = 0;
   const grn_id posting_list_id = grn_hash_add(ctx,
