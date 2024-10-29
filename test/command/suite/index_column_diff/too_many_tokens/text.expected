@@ -1,14 +1,14 @@
-table_create diaries#content   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer TokenDelimit
+table_create Terms   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer TokenDelimit
 [[0,0.0,0.0],true]
-table_create diaries TABLE_NO_KEY
+table_create Diaries TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create diaries content COLUMN_SCALAR LongText
+column_create Diaries content COLUMN_SCALAR LongText
 [[0,0.0,0.0],true]
-column_create diaries#content index COLUMN_INDEX|WITH_POSITION diaries content
+column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries content
 [[0,0.0,0.0],true]
 log_level --level error
 [[0,0.0,0.0],true]
 log_level --level notice
 [[0,0.0,0.0],true]
-index_column_diff diaries#content index
+index_column_diff Terms index
 [[0,0.0,0.0],[]]
