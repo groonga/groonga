@@ -28,7 +28,6 @@ extern "C" {
 
 #define GRN_EXPR_CONST_BLK_SIZE GRN_STACK_SIZE
 
-typedef struct _grn_expr grn_expr;
 struct _grn_expr {
   grn_db_obj obj;
   grn_obj name_buf;
