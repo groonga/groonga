@@ -57,8 +57,37 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  */
-#define GRN_COLUMN_NAME_ID_LEN       (sizeof(GRN_COLUMN_NAME_ID) - 1)
-#define GRN_COLUMN_NAME_KEY          "_key"
+#define GRN_COLUMN_NAME_ID_LEN (sizeof(GRN_COLUMN_NAME_ID) - 1)
+/**
+ * \brief Name of the pseudo column `_key`.
+ *
+ * The `_key` pseudo column represents the primary key value of a record in a
+ * Groonga table. It is defined only for tables that have a primary key. The
+ * primary key value is unique within the table and is immutable.
+ *
+ * \since 3.1.1
+ *
+ * Here is an example of using \ref grn_obj_column with \ref GRN_COLUMN_NAME_KEY
+ * and \ref GRN_COLUMN_NAME_KEY_LEN to retrieve the `_key` column object:
+ *
+ * ```c
+ * grn_obj *key_accessor = grn_obj_column(ctx,
+ *                                       table,
+ *                                       GRN_COLUMN_NAME_KEY,
+ *                                       GRN_COLUMN_NAME_KEY_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, key_accessor);
+ * ```
+ */
+#define GRN_COLUMN_NAME_KEY "_key"
+/**
+ * \brief Length of the pseudo `_key` column name.
+ *
+ * The \ref GRN_COLUMN_NAME_KEY_LEN macro returns the byte size of the
+ * \ref GRN_COLUMN_NAME_KEY, excluding the null terminator.
+ *
+ * \since 3.1.1
+ */
 #define GRN_COLUMN_NAME_KEY_LEN      (sizeof(GRN_COLUMN_NAME_KEY) - 1)
 #define GRN_COLUMN_NAME_VALUE        "_value"
 #define GRN_COLUMN_NAME_VALUE_LEN    (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
