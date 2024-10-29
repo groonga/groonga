@@ -1,12 +1,11 @@
-table_create Terms \
-  --flags TABLE_PAT_KEY \
-  --key_type ShortText \
-  --default_tokenizer TokenDelimit
-
 table_create Diaries TABLE_NO_KEY
 column_create Diaries title COLUMN_SCALAR ShortText
 column_create Diaries content COLUMN_SCALAR LongText
 
+table_create Terms \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText \
+  --default_tokenizer TokenDelimit
 column_create Terms index \
   COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
   Diaries title,content

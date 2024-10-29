@@ -1,10 +1,9 @@
-table_create Terms \
-  --flags TABLE_PAT_KEY \
-  --key_type ShortText
-
 table_create Diaries TABLE_NO_KEY
 column_create Diaries contents COLUMN_VECTOR Text
 
+table_create Terms \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText
 column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries contents
 
 log_level --level error
@@ -12,7 +11,7 @@ log_level --level error
 # 60 = 1min
 #@timeout 60
 #@disable-logging
-#@generate-series 1 1 Diaries '{"contents" => (0x1ffff + 1).times.collect{ "a" }}'
+#@generate-series 1 1 Diaries '{"contents" => ["a"] * (0x1ffff + 1)}'
 #@enable-logging
 #@timeout default
 log_level --level notice
