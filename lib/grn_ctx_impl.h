@@ -117,7 +117,7 @@ struct _grn_ctx_impl {
   grn_obj *curr_expr;
   grn_obj current_request_id;
   void *current_request_timer_id;
-  void *parser;
+  grn_obj expr_parsers;
   grn_timeval tv;
   grn_selector_data *current_selector_data;
 

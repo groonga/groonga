@@ -28,6 +28,7 @@ extern "C" {
 
 #define GRN_EXPR_CONST_BLK_SIZE GRN_STACK_SIZE
 
+typedef struct _grn_expr grn_expr;
 struct _grn_expr {
   grn_db_obj obj;
   grn_obj name_buf;
@@ -61,6 +62,11 @@ struct _grn_expr {
   grn_obj *parent;
   grn_obj *condition;
 };
+
+void *
+grn_expr_parser_open(grn_ctx *ctx);
+grn_rc
+grn_expr_parser_close(grn_ctx *ctx, void *parser);
 
 #define SCAN_ACCESSOR  (0x01)
 #define SCAN_PUSH      (0x02)

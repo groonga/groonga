@@ -528,8 +528,6 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 typedef struct _grn_expr grn_expr;
 
-grn_rc grn_expr_parser_close(grn_ctx *ctx);
-
 /**
  * grn_table_open:
  * @name: The table name to be opened. `NULL` means anonymous table.

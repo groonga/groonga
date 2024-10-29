@@ -815,9 +815,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   bool ctx_used_db = ctx->impl && ctx->impl->db == db;
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
-    if (ctx->impl->parser) {
-      grn_expr_parser_close(ctx);
-    }
+    grn_ctx_expr_parsers_clear(ctx);
   }
 
   if (ctx_used_db) {

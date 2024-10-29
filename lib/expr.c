@@ -4138,6 +4138,7 @@ grn_float32_value_at(grn_obj *obj, int offset)
 
 typedef struct {
   grn_ctx *ctx;
+  void *parser;
   grn_obj *e;
   grn_obj *v;
   const char *str;
@@ -4530,16 +4531,20 @@ section_weight_cb(
 #include "grn_ecmascript.h"
 #include "grn_ecmascript.c"
 
-static grn_rc
+void *
 grn_expr_parser_open(grn_ctx *ctx)
 {
-  if (!ctx->impl->parser) {
-    ctx->impl->parser = grn_expr_parserAlloc(malloc);
-  }
+  return (void *)grn_expr_parserAlloc(malloc);
+}
+
+grn_rc
+grn_expr_parser_close(grn_ctx *ctx, void *expr_parser)
+{
+  grn_expr_parserFree((yyParser *)expr_parser, free);
   return ctx->rc;
 }
 
-#define PARSE(token) grn_expr_parser(ctx->impl->parser, (token), 0, q)
+#define PARSE(token) grn_expr_parser((yyParser *)(q->parser), (token), 0, q)
 
 static void
 parse_query_accept_string(grn_ctx *ctx,
@@ -5452,7 +5457,7 @@ exit:
 static void
 set_tos_minor_to_curr(grn_ctx *ctx, efs_info *q)
 {
-  yyParser *parser = ctx->impl->parser;
+  yyParser *parser = q->parser;
   yyStackEntry *yytos = parser->yytos;
   yytos->minor.yy0 = ((grn_expr *)(q->e))->codes_curr;
 }
@@ -6145,12 +6150,15 @@ grn_expr_parse(grn_ctx *ctx,
                grn_operator default_op,
                grn_expr_flags flags)
 {
-  efs_info efsi;
-  if (grn_expr_parser_open(ctx)) {
+  void *parser = grn_ctx_expr_parser_pull(ctx);
+  if (!parser) {
     return ctx->rc;
   }
+
   GRN_API_ENTER;
+  efs_info efsi;
   efsi.ctx = ctx;
+  efsi.parser = parser;
   efsi.str = str;
   if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
       (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
@@ -6240,6 +6248,7 @@ grn_expr_parse(grn_ctx *ctx,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }
+  grn_ctx_expr_parser_release(ctx, parser);
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -6247,17 +6256,6 @@ uint32_t
 grn_expr_get_n_codes(grn_ctx *ctx, grn_obj *expr)
 {
   return ((grn_expr *)expr)->codes_curr;
-}
-
-grn_rc
-grn_expr_parser_close(grn_ctx *ctx)
-{
-  if (ctx->impl->parser) {
-    yyParser *parser = (yyParser *)ctx->impl->parser;
-    ctx->impl->parser = NULL;
-    grn_expr_parserFree(parser, free);
-  }
-  return ctx->rc;
 }
 
 typedef grn_rc (*grn_expr_syntax_expand_term_func)(grn_ctx *ctx,

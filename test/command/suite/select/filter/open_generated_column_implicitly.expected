@@ -1,0 +1,61 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create --name Memos --flags TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create   --table Memos   --name content_html   --flags COLUMN_SCALAR   --type ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content_html": "Groonga is <em>fast</em> and <em>embeddable</em> full text search engine."},
+{"content_html": "PGroonga is a PostgreSQL extension that uses <em>Groonga</em>."},
+{"content_html": "PostgreSQL is a <em>RDBMS</em>."}
+]
+[[0,0.0,0.0],3]
+column_create   --table Memos   --name content_text   --flags COLUMN_SCALAR   --type ShortText   --source content_html   --generator 'html_untag(content_html)'
+[[0,0.0,0.0],true]
+database_unmap
+[[0,0.0,0.0],true]
+select   --table Memos   --output_columns "content_html,content_text,string_length(content_text)"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "content_html",
+          "ShortText"
+        ],
+        [
+          "content_text",
+          "ShortText"
+        ],
+        [
+          "string_length",
+          null
+        ]
+      ],
+      [
+        "Groonga is <em>fast</em> and <em>embeddable</em> full text search engine.",
+        "Groonga is fast and embeddable full text search engine.",
+        55
+      ],
+      [
+        "PGroonga is a PostgreSQL extension that uses <em>Groonga</em>.",
+        "PGroonga is a PostgreSQL extension that uses Groonga.",
+        53
+      ],
+      [
+        "PostgreSQL is a <em>RDBMS</em>.",
+        "PostgreSQL is a RDBMS.",
+        22
+      ]
+    ]
+  ]
+]

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -100,6 +100,13 @@ grn_ctx *
 grn_ctx_pull_child(grn_ctx *ctx);
 grn_rc
 grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx);
+
+void *
+grn_ctx_expr_parser_pull(grn_ctx *ctx);
+grn_rc
+grn_ctx_expr_parser_release(grn_ctx *ctx, void *parser);
+grn_rc
+grn_ctx_expr_parsers_clear(grn_ctx *ctx);
 
 void
 grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress);

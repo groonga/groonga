@@ -411,7 +411,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->curr_expr = NULL;
   GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
   ctx->impl->current_request_timer_id = NULL;
-  ctx->impl->parser = NULL;
+  /* grn_obj * isn't void * but sizeof(grn_obj *) and sizeof(void *)
+   * is same. So we reuse GRN_PVECTOR here. */
+  GRN_PTR_INIT(&(ctx->impl->expr_parsers), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
@@ -596,6 +598,39 @@ grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx)
   return ctx->rc;
 }
 
+void *
+grn_ctx_expr_parser_pull(grn_ctx *ctx)
+{
+  void *parser = NULL;
+  if (GRN_PTR_VECTOR_SIZE(&(ctx->impl->expr_parsers)) == 0) {
+    parser = grn_expr_parser_open(ctx);
+  } else {
+    grn_obj *value;
+    GRN_PTR_POP(&(ctx->impl->expr_parsers), value);
+    parser = reinterpret_cast<void *>(value);
+  }
+  return parser;
+}
+
+grn_rc
+grn_ctx_expr_parser_release(grn_ctx *ctx, void *parser)
+{
+  GRN_PTR_PUT(ctx, &(ctx->impl->expr_parsers), parser);
+  return ctx->rc;
+}
+
+grn_rc
+grn_ctx_expr_parsers_clear(grn_ctx *ctx)
+{
+  while (GRN_PTR_VECTOR_SIZE(&(ctx->impl->expr_parsers)) > 0) {
+    grn_obj *value;
+    GRN_PTR_POP(&(ctx->impl->expr_parsers), value);
+    auto expr_parser = reinterpret_cast<void *>(value);
+    grn_expr_parser_close(ctx, expr_parser);
+  }
+  return ctx->rc;
+}
+
 grn_rc
 grn_ctx_set_progress_callback(grn_ctx *ctx,
                               grn_progress_callback_func func,
@@ -772,9 +807,8 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   grn_ctx_impl_mrb_fin(ctx);
   GRN_OBJ_FIN(ctx, &(ctx->impl->slow_log.start_times));
   grn_ctx_loader_clear(ctx);
-  if (ctx->impl->parser) {
-    grn_expr_parser_close(ctx);
-  }
+  grn_ctx_expr_parsers_clear(ctx);
+  GRN_OBJ_FIN(ctx, &(ctx->impl->expr_parsers));
   GRN_OBJ_FIN(ctx, &ctx->impl->current_request_id);
   if (ctx->impl->values) {
 #ifndef GRN_WITH_MEMORY_DEBUG
