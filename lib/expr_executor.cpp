@@ -3130,6 +3130,11 @@ grn_expr_executor_data_simple_proc_init(
   grn_expr *expr;
   grn_proc *proc;
 
+  data->args = NULL;
+  data->n_args = 0;
+  data->buffers = NULL;
+  data->n_buffers = 0;
+
   expr = (grn_expr *)(executor->expr);
   proc = (grn_proc *)(expr->codes[data->codes_start_offset].value);
   proc_ctx->proc = proc;
