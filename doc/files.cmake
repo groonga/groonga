@@ -479,6 +479,11 @@ set(GRN_DOC_SOURCES
     example/reference/functions/in_values/usage_options.log
     example/reference/functions/in_values/usage_setup_data.log
     example/reference/functions/in_values/usage_setup_schema.log
+    example/reference/functions/language_model_vectorize/usage_register.md
+    example/reference/functions/language_model_vectorize/usage_rerank.md
+    example/reference/functions/language_model_vectorize/usage_setup_data.md
+    example/reference/functions/language_model_vectorize/usage_setup_generated_column.md
+    example/reference/functions/language_model_vectorize/usage_setup_schema.md
     example/reference/functions/math_abs/nearest_shops.log
     example/reference/functions/math_abs/usage_setup_data.log
     example/reference/functions/math_abs/usage_setup_schema.log
@@ -1202,6 +1207,7 @@ set(GRN_DOC_SOURCES
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
+    reference/functions/language_model_vectorize.md
     reference/functions/math_abs.rst
     reference/functions/now.rst
     reference/functions/number_classify.rst
@@ -1231,6 +1237,7 @@ set(GRN_DOC_SOURCES
     reference/grn_expr/query_syntax.rst
     reference/grn_expr/script_syntax.rst
     reference/indexing.rst
+    reference/language_model.md
     reference/log.rst
     reference/normalizers.rst
     reference/normalizers/normalizer_auto.rst
@@ -1551,6 +1558,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
+    reference/functions/language_model_vectorize.html
     reference/functions/math_abs.html
     reference/functions/now.html
     reference/functions/number_classify.html
@@ -1580,6 +1588,7 @@ set(GRN_DOC_HTML_FILES
     reference/grn_expr/query_syntax.html
     reference/grn_expr/script_syntax.html
     reference/indexing.html
+    reference/language_model.html
     reference/log.html
     reference/normalizers.html
     reference/normalizers/normalizer_auto.html

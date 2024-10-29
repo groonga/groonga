@@ -479,6 +479,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_rerank.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_generated_column.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/nearest_shops.log \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_schema.log \
@@ -1202,6 +1207,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/language_model_vectorize.md \
 	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/number_classify.rst \
@@ -1231,6 +1237,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.rst \
 	$(top_srcdir)/doc/source/reference/indexing.rst \
+	$(top_srcdir)/doc/source/reference/language_model.md \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_auto.rst \
@@ -1802,6 +1809,11 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/language_model_vectorize/usage_register.md \
+	source/example/reference/functions/language_model_vectorize/usage_rerank.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_generated_column.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_schema.md \
 	source/example/reference/functions/math_abs/nearest_shops.log \
 	source/example/reference/functions/math_abs/usage_setup_data.log \
 	source/example/reference/functions/math_abs/usage_setup_schema.log \
@@ -2525,6 +2537,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/language_model_vectorize.md \
 	source/reference/functions/math_abs.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/number_classify.rst \
@@ -2554,6 +2567,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/grn_expr/query_syntax.rst \
 	source/reference/grn_expr/script_syntax.rst \
 	source/reference/indexing.rst \
+	source/reference/language_model.md \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
 	source/reference/normalizers/normalizer_auto.rst \
@@ -2840,6 +2854,7 @@ po_files = \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
+	reference/functions/language_model_vectorize.po \
 	reference/functions/math_abs.po \
 	reference/functions/now.po \
 	reference/functions/number_classify.po \
@@ -2869,6 +2884,7 @@ po_files = \
 	reference/grn_expr/query_syntax.po \
 	reference/grn_expr/script_syntax.po \
 	reference/indexing.po \
+	reference/language_model.po \
 	reference/log.po \
 	reference/normalizers.po \
 	reference/normalizers/normalizer_auto.po \
@@ -3153,6 +3169,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
+	LC_MESSAGES/reference/functions/language_model_vectorize.po \
 	LC_MESSAGES/reference/functions/math_abs.po \
 	LC_MESSAGES/reference/functions/now.po \
 	LC_MESSAGES/reference/functions/number_classify.po \
@@ -3182,6 +3199,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.po \
 	LC_MESSAGES/reference/grn_expr/script_syntax.po \
 	LC_MESSAGES/reference/indexing.po \
+	LC_MESSAGES/reference/language_model.po \
 	LC_MESSAGES/reference/log.po \
 	LC_MESSAGES/reference/normalizers.po \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.po \
@@ -3466,6 +3484,7 @@ edit_po_files = \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
+	reference/functions/language_model_vectorize.edit \
 	reference/functions/math_abs.edit \
 	reference/functions/now.edit \
 	reference/functions/number_classify.edit \
@@ -3495,6 +3514,7 @@ edit_po_files = \
 	reference/grn_expr/query_syntax.edit \
 	reference/grn_expr/script_syntax.edit \
 	reference/indexing.edit \
+	reference/language_model.edit \
 	reference/log.edit \
 	reference/normalizers.edit \
 	reference/normalizers/normalizer_auto.edit \
@@ -3779,6 +3799,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
+	LC_MESSAGES/reference/functions/language_model_vectorize.edit \
 	LC_MESSAGES/reference/functions/math_abs.edit \
 	LC_MESSAGES/reference/functions/now.edit \
 	LC_MESSAGES/reference/functions/number_classify.edit \
@@ -3808,6 +3829,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.edit \
 	LC_MESSAGES/reference/grn_expr/script_syntax.edit \
 	LC_MESSAGES/reference/indexing.edit \
+	LC_MESSAGES/reference/language_model.edit \
 	LC_MESSAGES/reference/log.edit \
 	LC_MESSAGES/reference/normalizers.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.edit \
@@ -4092,6 +4114,7 @@ mo_files = \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
+	reference/functions/language_model_vectorize.mo \
 	reference/functions/math_abs.mo \
 	reference/functions/now.mo \
 	reference/functions/number_classify.mo \
@@ -4121,6 +4144,7 @@ mo_files = \
 	reference/grn_expr/query_syntax.mo \
 	reference/grn_expr/script_syntax.mo \
 	reference/indexing.mo \
+	reference/language_model.mo \
 	reference/log.mo \
 	reference/normalizers.mo \
 	reference/normalizers/normalizer_auto.mo \
@@ -4405,6 +4429,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
+	LC_MESSAGES/reference/functions/language_model_vectorize.mo \
 	LC_MESSAGES/reference/functions/math_abs.mo \
 	LC_MESSAGES/reference/functions/now.mo \
 	LC_MESSAGES/reference/functions/number_classify.mo \
@@ -4434,6 +4459,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.mo \
 	LC_MESSAGES/reference/grn_expr/script_syntax.mo \
 	LC_MESSAGES/reference/indexing.mo \
+	LC_MESSAGES/reference/language_model.mo \
 	LC_MESSAGES/reference/log.mo \
 	LC_MESSAGES/reference/normalizers.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.mo \
@@ -4753,6 +4779,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/language_model_vectorize.html \
 	html/reference/functions/math_abs.html \
 	html/reference/functions/now.html \
 	html/reference/functions/number_classify.html \
@@ -4782,6 +4809,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
 	html/reference/indexing.html \
+	html/reference/language_model.html \
 	html/reference/log.html \
 	html/reference/normalizers.html \
 	html/reference/normalizers/normalizer_auto.html \

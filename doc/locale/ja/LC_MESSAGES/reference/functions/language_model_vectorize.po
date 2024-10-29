@@ -1,0 +1,102 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 14.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-10-29 13:29+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`language_model_vectorize`"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`language_model_vectorize` generates a normalized embedding from the given text."
+msgstr "`language_model_vectorize`は指定されたテキストの正規化されたエンべディングを返します。"
+
+msgid "See also {doc}`../language_model` how to prepare a language model."
+msgstr "言語モデルの準備方法は{doc}`../language_model`を参照してください。"
+
+msgid "You can use {ref}`generated-column` to automate embeddings generation."
+msgstr "エンべディングを自動生成するために{ref}`generated-column`を使うことができます。"
+
+msgid "To enable this function, register `functions/language_model` plugin by the following command:"
+msgstr "この関数を有効にするには次のコマンドで`functions/language_model`プラグインを有効にしてください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`language_model_vectorize` requires two parameters:"
+msgstr "`language_model_vectorize`には必須の引数が2つあります。"
+
+msgid "`mode_name` is the name of language mode to be used. It's associated with file name. If `${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf` exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by removing directory and `.gguf` extension."
+msgstr "`mode_name`は使用する言語モデルの名前です。この名前はファイル名と紐付いています。もし`${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`が存在している場合、この言語モデルは`mistral-7b-v0.1.Q4_K_M`という名前で参照できます。この名前はディレクトリー部分と`.gguf`拡張子を削除することで計算できます。"
+
+msgid "`text` is the input text."
+msgstr "`text`は入力テキストです。"
+
+msgid "Requirements"
+msgstr "必要条件"
+
+msgid "You need llama.cpp enabled Groonga. The official packages enable it."
+msgstr "llama.cppを有効にしたGroongaが必要です。公式パッケージでは有効になっています。"
+
+msgid "You need enough CPU/memory resources to use this feature. Language model related features require more resources than other features."
+msgstr "この機能を使うには十分なCPU・メモリーリソースが必要です。言語モデル関連の機能は他の機能よりも多くのリソースを必要とします。"
+
+msgid "You can use GPU in the feature."
+msgstr "将来的にはGPUも使えるようになります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You need to register `functions/language_model` plugin at first:"
+msgstr "最初に`functions/language_model`プラグインを登録する必要があります。"
+
+msgid "Here is a schema definition and sample data."
+msgstr "スキーマ定義とサンプルデータは次のとおりです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ："
+
+msgid "Sample data:"
+msgstr "サンプルデータ："
+
+msgid "Here is a schema that creates a {ref}`generated-column` that generates embeddings of `Memos.content` automatically:"
+msgstr "`Memos.content`のエンべディングを自動生成する{ref}`generated-column`の定義は次のとおりです。"
+
+msgid "You can re-rank matched records by using `distance_inner_product()` not `distance_cosine()` because `language_model_vectorize()` returns a normalized embedding. The following example uses all records instead of filtered records to show this usage simply:"
+msgstr "`language_model_vectorize()`は正規化されたエンべディングを返すので、`distance_cosine()`ではなく`distance_inner_product()`を使ってマッチしたレコードを類似度で並び替えることができます。以下の例ではわかりやすさのために絞り込まれたレコードではなくすべてのレコードを対象にしています。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "There are two required parameters."
+msgstr "必須の引数が2つあります。"
+
+msgid "`model_name`"
+msgstr ""
+
+msgid "`text`"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "`language_model_vectorize` returns `Float32` vector which as a normalized embedding."
+msgstr "`language_model_vectorize`は`Float32`のベクターとして正規化されたエンべディングを返します。"

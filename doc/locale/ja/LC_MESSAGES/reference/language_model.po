@@ -1,0 +1,54 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 14.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-10-29 12:07+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Language model"
+msgstr "言語モデル"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Language model is useful for full text search too. Groonga can integrate with language model."
+msgstr "言語モデルは全文検索でも有用です。Groongaは言語モデルを統合しています。"
+
+msgid "Groonga uses language models in local. We'll provide a tool to manage language models in local in the feature but it doesn't exist yet for now. You need to download one or more language models manually for now."
+msgstr "Groongaはローカルの言語モデルを使います。将来的にはローカルの言語モデルを管理するツールを提供する予定ですが、現時点ではまだ存在していません。現時点では、手動で言語モデルをダウンロードする必要があります。"
+
+msgid "This feature uses [llama.cpp](https://github.com/ggerganov/llama.cpp) internally. You can use only GGUF formatted language models. See also the \"supported models\" section in the llama.cpp README."
+msgstr "この機能は内部で[llama.cpp](https://github.com/ggerganov/llama.cpp)を使っています。GGUFフォーマットの言語モデルだけを使うことができます。llama.cppのREADMEにある「supported models」セクションも参照してください。"
+
+msgid "How to manage language models"
+msgstr "言語モデルの管理方法"
+
+msgid "You need to put GGUF formatted language models to `${PREFIX}/share/groonga/language_models/`."
+msgstr "GGUFフォーマットの言語モデルと`${PREFIX}/share/groonga/language_models/`に配置する必要があります。"
+
+msgid "For example: `/usr/local/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`"
+msgstr "例：`/usr/local/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`"
+
+msgid "You can download GGUF formatted language models from [Hugging Face](https://huggingface.co/). Some official language models provide GGUF formatted language models too. But most of them don't provide GGUF formatted language models."
+msgstr "GGUFフォーマットの言語モデルは[Hugging Face](https://huggingface.co/)からダウンロードできます。いくつかの言語モデルは公式のGGUFフォーマットの言語モデルも提供しています。しかし、多くの言語モデルはGGUFフォーマットの言語モデルを提供していません。"
+
+msgid "You can convert existing language models on Hugging Face to GGUF format by [GGUF-my-repo](https://huggingface.co/spaces/ggml-org/gguf-my-repo)."
+msgstr "[GGUF-my-repo](https://huggingface.co/spaces/ggml-org/gguf-my-repo)を使うことで、Hugging Face上で既存の言語モデルをGGUFフォーマットに変換できます。"
+
+msgid "Functions"
+msgstr "関数"
+
+msgid "{doc}`functions/language_model_vectorize`"
+msgstr ""
