@@ -4,6 +4,7 @@
 # `language_model_vectorize`
 
 ```{versionadded} 14.1.0
+
 ```
 
 ```{note}
@@ -30,7 +31,7 @@ plugin_register functions/vector
 
 `language_model_vectorize` requires two parameters:
 
-```js
+```
 language_model_vectorize(model_name, text)
 ```
 
@@ -110,6 +111,7 @@ normalized embedding. The following example uses all records instead
 of filtered records to show this usage simply:
 
 <!-- groonga-command -->
+
 ```{include} ../../example/reference/functions/language_model_vectorize/usage_rerank.md
 select \
   --table Memos \
