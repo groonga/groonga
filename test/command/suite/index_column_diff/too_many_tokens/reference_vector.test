@@ -1,0 +1,14 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR Tags
+
+column_create Tags memos_tags COLUMN_INDEX|WITH_POSITION Memos tags
+
+log_level --level error
+#@disable-logging
+#@generate-series 1 1 Memos '{"tags" => ["tag"] * (0x1ffff + 1)}'
+#@enable-logging
+log_level --level notice
+
+index_column_diff Tags memos_tags
