@@ -5,7 +5,7 @@ table_create Deltas TABLE_PAT_KEY Int64
 column_create Deltas index COLUMN_INDEX|WITH_POSITION PostingLists deltas
 
 #@disable-logging
-#@generate-series 1 1 PostingLists '{"deltas" => (0x1ffff + 1).times.to_a}'
+#@generate-series 1 1 PostingLists '{"deltas" => [1] * (0x1ffff + 1)}'
 #@enable-logging
 
 index_column_diff Deltas index
