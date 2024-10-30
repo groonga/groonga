@@ -40,7 +40,7 @@ module Groonga
               n_elements += result_set.size
 
               if is_first
-                writer.open_result_set(result_set, output_columns, -1)
+                writer.open_result_set_metadata(result_set, output_columns, -1, 1)
                 writer.open_table_records(-1)
                 is_first = false
               end

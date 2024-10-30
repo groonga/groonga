@@ -2703,6 +2703,14 @@ grn_output_result_set_open_metadata(grn_ctx *ctx,
                                     grn_obj_format *format,
                                     uint32_t n_additional_elements)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    }
+    ctx->impl->output.arrow_stream_writer =
+      grn_arrow_stream_writer_open(ctx, outbuf);
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_result_set_open_metadata_v1(ctx,
                                            outbuf,
@@ -2728,14 +2736,6 @@ grn_output_result_set_open(grn_ctx *ctx,
                            grn_obj_format *format,
                            uint32_t n_additional_elements)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    if (ctx->impl->output.arrow_stream_writer) {
-      grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
-    }
-    ctx->impl->output.arrow_stream_writer =
-      grn_arrow_stream_writer_open(ctx, outbuf);
-  }
-
   grn_output_result_set_open_metadata(ctx,
                                       outbuf,
                                       output_type,
