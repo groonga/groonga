@@ -1,0 +1,17 @@
+table_create Diaries TABLE_NO_KEY
+column_create Diaries content COLUMN_SCALAR LongText
+
+table_create Terms \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText \
+  --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries content
+
+log_level --level error
+#@add-important-log-levels error
+#@disable-logging
+#@generate-series 1 1 Diaries '{"content" => "a b " * (0x1ffff + 1)}'
+#@enable-logging
+log_level --level notice
+
+index_column_diff Terms index
