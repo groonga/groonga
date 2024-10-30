@@ -6,9 +6,6 @@ column_create Memos tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
 column_create Tags memos_tags COLUMN_INDEX|WITH_POSITION Memos tags
 [[0,0.0,0.0],true]
-log_level --level error
-[[0,0.0,0.0],true]
-log_level --level notice
-[[0,0.0,0.0],true]
+#|w| [ii][update][one] too many postings: <Tags.memos_tags>: <"tag">(1): record:<Memos>(1:1), n-postings:<131072>, n-discarded-postings:<1>
 index_column_diff Tags memos_tags
 [[0,0.0,0.0],[]]
