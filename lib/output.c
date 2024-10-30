@@ -2736,7 +2736,6 @@ grn_output_result_set_open(grn_ctx *ctx,
                            grn_obj_format *format,
                            uint32_t n_additional_elements)
 {
-  /* grn_output_result_set_open_metadata() to set `arrow_stream_writer`. */
   grn_output_result_set_open_metadata(ctx,
                                       outbuf,
                                       output_type,
