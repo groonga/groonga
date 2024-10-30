@@ -5,7 +5,6 @@ table_create Terms TABLE_PAT_KEY ShortText
 column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries contents
 
 log_level --level error
-#@add-important-log-levels error
 #@disable-logging
 #@generate-series 1 1 Diaries '{"contents" => ["a"] * (0x1ffff + 1)}'
 #@enable-logging
