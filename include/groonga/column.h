@@ -73,9 +73,9 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * ```c
  * grn_obj *key_accessor = grn_obj_column(ctx,
- *                                       table,
- *                                       GRN_COLUMN_NAME_KEY,
- *                                       GRN_COLUMN_NAME_KEY_LEN);
+ *                                        table,
+ *                                        GRN_COLUMN_NAME_KEY,
+ *                                        GRN_COLUMN_NAME_KEY_LEN);
  * // ...
  * grn_obj_unlink(ctx, key_accessor);
  * ```
