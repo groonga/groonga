@@ -63,7 +63,8 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * The `_key` pseudo column represents the primary key value of a record in a
  * Groonga table. It is defined only for tables that have a primary key. The
- * primary key value is unique within the table and is immutable.
+ * primary key value is unique within the table. It is also immutable except
+ * \ref GRN_TABLE_DAT_KEY.
  *
  * \since 3.1.1
  *
