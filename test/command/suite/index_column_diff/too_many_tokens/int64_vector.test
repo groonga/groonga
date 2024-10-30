@@ -6,14 +6,11 @@ table_create cursors \
   --key_type Int64
 column_create cursors index COLUMN_INDEX|WITH_POSITION PostingLists deltas
 
-log_level --level error
-#@add-important-log-levels error
 # 60 = 1min
 #@timeout 60
 #@disable-logging
 #@generate-series 1 1 PostingLists '{"deltas" => (0x1ffff + 1).times.to_a}'
 #@enable-logging
 #@timeout default
-log_level --level notice
 
 index_column_diff cursors index
