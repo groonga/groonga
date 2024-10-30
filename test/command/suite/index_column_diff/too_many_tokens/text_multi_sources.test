@@ -9,7 +9,7 @@ column_create Terms index \
 
 log_level --level error
 #@disable-logging
-#@generate-series 1 1 Diaries '{"title" => "a " * 2, "content" => "a " * (0x1ffff - 1)}'
+#@generate-series 1 1 Diaries '{"title" => "a", "content" => "a " * (0x1ffff + 1)}'
 #@enable-logging
 log_level --level notice
 
