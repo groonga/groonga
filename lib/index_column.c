@@ -759,10 +759,6 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
                                               sizeof(grn_id),
                                               &value,
                                               &added);
-  if (data->n_tokens >= GRN_II_MAX_TF) {
-    return;
-  }
-  data->n_tokens++;
   if (posting_list_id == GRN_ID_NIL) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
