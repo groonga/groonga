@@ -12,12 +12,9 @@ column_create Terms index \
 
 log_level --level error
 #@add-important-log-levels error
-# 60 = 1min
-#@timeout 60
 #@disable-logging
 #@generate-series 1 1 Diaries '{"title" => "a " * 2, "content" => "a " * (0x1ffff - 1)}'
 #@enable-logging
-#@timeout default
 log_level --level notice
 
 index_column_diff Terms index
