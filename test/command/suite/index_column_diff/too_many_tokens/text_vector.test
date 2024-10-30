@@ -1,9 +1,7 @@
 table_create Diaries TABLE_NO_KEY
 column_create Diaries contents COLUMN_VECTOR Text
 
-table_create Terms \
-  --flags TABLE_PAT_KEY \
-  --key_type ShortText
+table_create Terms TABLE_PAT_KEY ShortText
 column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries contents
 
 log_level --level error

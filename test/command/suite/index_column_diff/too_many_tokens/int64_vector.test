@@ -1,9 +1,7 @@
 table_create PostingLists TABLE_NO_KEY
 column_create PostingLists deltas COLUMN_VECTOR Int64
 
-table_create cursors \
-  --flags TABLE_PAT_KEY \
-  --key_type Int64
+table_create cursors TABLE_PAT_KEY Int64
 column_create cursors index COLUMN_INDEX|WITH_POSITION PostingLists deltas
 
 #@disable-logging
