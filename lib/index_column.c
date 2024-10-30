@@ -323,9 +323,7 @@ typedef struct {
   grn_obj *missings;
   struct {
     grn_id token_id;
-    grn_id diff_id;
     grn_posting posting;
-    bool is_new_diff;
   } current;
   struct {
     grn_obj value;
