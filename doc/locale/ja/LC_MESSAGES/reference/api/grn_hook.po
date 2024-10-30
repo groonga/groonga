@@ -83,6 +83,3 @@ msgstr ""
 
 msgid "hook固有情報格納バッファを指定します。"
 msgstr ""
-
-msgid "objに定義されているhookを削除します。"
-msgstr ""

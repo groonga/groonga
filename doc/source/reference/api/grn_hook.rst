@@ -55,11 +55,3 @@ Reference
    :param entry: hookタイプを指定します。
    :param offset: 実行順位を指定します。
    :param data: hook固有情報格納バッファを指定します。
-
-.. c:function:: grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset)
-
-   objに定義されているhookを削除します。
-
-   :param obj: 対象objectを指定します。
-   :param entry: hookタイプを指定します。
-   :param offset: 実行順位を指定します。
