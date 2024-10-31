@@ -1,0 +1,16 @@
+table_create Diaries TABLE_NO_KEY
+column_create Diaries title COLUMN_SCALAR ShortText
+column_create Diaries content COLUMN_SCALAR LongText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Diaries title,content
+
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 Diaries '{"title" => "a", "content" => "a " * (0x1ffff + 1)}'
+#@enable-logging
+#@timeout default
+
+index_column_diff Terms index

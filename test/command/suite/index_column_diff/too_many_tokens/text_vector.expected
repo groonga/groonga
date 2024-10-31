@@ -1,0 +1,11 @@
+table_create Diaries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Diaries contents COLUMN_VECTOR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries contents
+[[0,0.0,0.0],true]
+#|w| [ii][update][one] too many postings: <Terms.index>: <"a">(1): record:<Diaries>(1:1), n-postings:<131072>, n-discarded-postings:<1>
+index_column_diff Terms index
+[[0,0.0,0.0],[]]

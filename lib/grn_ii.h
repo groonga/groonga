@@ -83,6 +83,8 @@ struct _grn_ii {
 
 #define GRN_II_PSEG_NOT_ASSIGNED 0xffffffff
 
+#define GRN_II_MAX_TF            0x1ffff
+
 #define GRN_II_HEADER_COMMON_FIELDS                                            \
   uint64_t total_chunk_size;                                                   \
   uint64_t bmax;                                                               \
