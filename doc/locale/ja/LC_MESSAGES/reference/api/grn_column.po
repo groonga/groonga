@@ -36,23 +36,14 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_value``."
-msgstr ""
-
-msgid "It is useful to use with :c:macro:`GRN_COLUMN_NAME_VALUE_LEN` like the following::"
-msgstr ""
-
-msgid "Since 3.1.1."
-msgstr "3.1.1から。"
-
-msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_VALUE`."
-msgstr ""
-
 msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_score``."
 msgstr ":doc:`/reference/columns/pseudo` ``_score`` の名前を返します。"
 
 msgid "It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` like the following::"
 msgstr "以下のように :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` と一緒に使うと便利です::"
+
+msgid "Since 3.1.1."
+msgstr "3.1.1から。"
 
 msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_SCORE`."
 msgstr ":c:macro:`GRN_COLUMN_NAME_SCORE` のサイズをバイト数で返します。"
