@@ -89,8 +89,38 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  */
-#define GRN_COLUMN_NAME_KEY_LEN      (sizeof(GRN_COLUMN_NAME_KEY) - 1)
-#define GRN_COLUMN_NAME_VALUE        "_value"
+#define GRN_COLUMN_NAME_KEY_LEN (sizeof(GRN_COLUMN_NAME_KEY) - 1)
+/**
+ * \brief Name of the pseudo column `_value`.
+ *
+ * The `_value` pseudo column represents the value of a record in a
+ * Groonga table. It is defined only for tables that have a `value_type`
+ * specified. The value is mutable.
+ *
+ * \since 3.1.1
+ *
+ * Here is an example of using \ref grn_obj_column with \ref
+ * GRN_COLUMN_NAME_VALUE and \ref GRN_COLUMN_NAME_VALUE_LEN to retrieve the
+ * `_value` column object:
+ *
+ * ```c
+ * grn_obj *value_accessor = grn_obj_column(ctx,
+ *                                          table,
+ *                                          GRN_COLUMN_NAME_VALUE,
+ *                                          GRN_COLUMN_NAME_VALUE_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, value_accessor);
+ * ```
+ */
+#define GRN_COLUMN_NAME_VALUE "_value"
+/**
+ * \brief Length of the pseudo `_value` column name.
+ *
+ * The \ref GRN_COLUMN_NAME_VALUE_LEN macro returns the byte size of the
+ * \ref GRN_COLUMN_NAME_VALUE, excluding the null terminator.
+ *
+ * \since 3.1.1
+ */
 #define GRN_COLUMN_NAME_VALUE_LEN    (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
 #define GRN_COLUMN_NAME_SCORE        "_score"
 #define GRN_COLUMN_NAME_SCORE_LEN    (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
