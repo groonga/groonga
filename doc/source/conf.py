@@ -18,9 +18,36 @@ import sys, os
 import gettext
 from datetime import datetime
 
-# Hack to allow include directives to contain content.
-# This modification is necessary to embed Groonga execution commands
-# within include blocks. It prevents warnings during documentation generation.
+# Workaround to allow the include directive to contain content when using
+# Markdown (MyST-Parser).
+#
+# This is necessary only when using Markdown through the MyST-Parser. If we
+# stop using Markdown or switch to a different parser in the future, this
+# workaround could be removed.
+#
+# Without this change, we encounter warnings during documentation generation
+# when using include directives with content. For example:
+#
+# ```{include} filename.md
+# plugin_register functions/language_model
+# ```
+#
+# This results in the warning:
+#   WARNING: include: Has content, but none permitted [myst.directive_parse]
+#
+# We considered the following approaches but chose this workaround for ease of
+# maintenance:
+# - Implementing a new directive in Python that allows content:
+#   - This would be increasing maintenance costs since our team primarily uses
+#     Ruby or C, not Python.
+# - Modifying the Ruby script that updates execution examples:
+#   - This could be hard to figure out how to do and increase maintenance costs
+#     because it might be a complex approach.
+#
+# This workaround functions by setting `Include.has_content = True`, which
+# modifies the default behavior of the include directive to accept content. This
+# suppresses the warnings and allows us to embed Groonga execution commands
+# within include blocks as needed.
 docutils.parsers.rst.directives.misc.Include.has_content = True
 
 # If extensions (or modules to document with autodoc) are in another directory,
