@@ -61,7 +61,7 @@ on relational data model.
 Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
-Requires:	arrow@APACHE_ARROW_MAJOR_VERSION@-libs
+Requires:	arrow@APACHE_ARROW_SO_VERSION@-libs
 Requires:	libzstd
 Requires:	lz4
 %if ! %{is_amazon_linux}
