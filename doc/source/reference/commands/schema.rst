@@ -573,7 +573,7 @@ Here are properties of ``COLUMN``:
 
        This is an array of :ref:`schema-return-value-source`.
 
-       If the column is an index column or a :ref:`generated- column`,
+       If the column is an index column or a :ref:`generated-column`,
        this has one or more elements. Otherwise, this is an empty
        array.
    * - ``generator``

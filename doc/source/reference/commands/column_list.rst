@@ -220,8 +220,8 @@ more source column names.
 
 The generator expression in :doc:`../grn_expr/script_syntax`.
 
-This is not an empty string only when the column is a :ref:`generated-
-column`. This is an empty string otherwise.
+This is not an empty string only when the column is a
+:ref:`generated-column`. This is an empty string otherwise.
 
 See also
 --------
