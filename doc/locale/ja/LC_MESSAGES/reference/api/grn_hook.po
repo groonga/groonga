@@ -69,13 +69,10 @@ msgstr ""
 msgid "hook固有情報を指定します。"
 msgstr ""
 
-msgid "objに定義されているhookの数を返します。"
+msgid "objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されている場合は、その内容をdataにコピーして返します。"
 msgstr ""
 
 msgid "hookタイプを指定します。"
-msgstr ""
-
-msgid "objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されている場合は、その内容をdataにコピーして返します。"
 msgstr ""
 
 msgid "実行順位を指定します。"

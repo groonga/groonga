@@ -1706,6 +1706,15 @@ grn_obj_add_hook(grn_ctx *ctx,
                  int offset,
                  grn_obj *proc,
                  grn_obj *data);
+/**
+ * \brief Get the number of hooks set on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ *
+ * \return The number of hooks set on the object.
+ */
 GRN_API int
 grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
 GRN_API grn_obj *
