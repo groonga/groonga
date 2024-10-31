@@ -658,7 +658,7 @@ or not. The value is ``true`` if ``WEIGHT_BFLOAT16`` was specified,
 
 .. seealso:: :ref:`column-create-flags`
 
-.. _object-inspect-return-value-vector-column-value-weight_bfloat16:
+.. _object-inspect-return-value-generated-column-value-generator:
 
 ``GENERATED_COLUMN_VALUE_GENERATOR``
 """"""""""""""""""""""""""""""""""""
