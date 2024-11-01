@@ -121,8 +121,39 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  */
-#define GRN_COLUMN_NAME_VALUE_LEN    (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
-#define GRN_COLUMN_NAME_SCORE        "_score"
+#define GRN_COLUMN_NAME_VALUE_LEN (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
+/**
+ * \brief Name of the pseudo column `_score`.
+ *
+ * The `_score` pseudo column represents the score value of each record.
+ * It is defined only in tables that are generated as search results.
+ * The score value is set during the execution of the search process,
+ * but it can be freely modified.
+ *
+ * \since 3.1.1
+ *
+ * Here is an example of using \ref grn_obj_column with \ref
+ * GRN_COLUMN_NAME_SCORE and \ref GRN_COLUMN_NAME_SCORE_LEN to retrieve the
+ * `_score` column object:
+ *
+ * ```c
+ * grn_obj *score_accessor = grn_obj_column(ctx,
+ *                                          table,
+ *                                          GRN_COLUMN_NAME_SCORE,
+ *                                          GRN_COLUMN_NAME_SCORE_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, score_accessor);
+ * ```
+ */
+#define GRN_COLUMN_NAME_SCORE "_score"
+/**
+ * \brief Length of the pseudo `_score` column name.
+ *
+ * The \ref GRN_COLUMN_NAME_SCORE_LEN macro returns the byte size of the
+ * \ref GRN_COLUMN_NAME_SCORE, excluding the null terminator.
+ *
+ * \since 3.1.1
+ */
 #define GRN_COLUMN_NAME_SCORE_LEN    (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
 #define GRN_COLUMN_NAME_NSUBRECS     "_nsubrecs"
 #define GRN_COLUMN_NAME_NSUBRECS_LEN (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
