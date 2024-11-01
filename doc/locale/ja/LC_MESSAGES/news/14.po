@@ -17,20 +17,89 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.0.9 - 2024-09-27"
-msgstr "14.0.9リリース - 2024-09-27"
+msgid "Release 14.1.0 - 2024-11-05"
+msgstr "14.1.0リリース - 2024-11-05"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[status] Added `llama.cpp` to the `status` results."
+msgstr "[status] `status`の結果に`llama.cpp`を追加しました。"
+
+msgid "The status results display whether `llama.cpp` is enabled or disabled under the `features` section, as follows. (Only the relevant parts are extracted for explanation due to the lengthy status output.)"
+msgstr "以下のように、`status`の結果の`features`に新しく`llama.cpp`の有効/無効を表示するようになっています。(`status`の表示は長いので説明に必要な部分のみ抜粋しています。)"
+
+msgid "The `llama.cpp` feature is used in the newly introduced `language_model_vectorize()` function described next."
+msgstr "`llama.cpp`は次に紹介する`language_model_vectorize()`に使用しています。"
+
+msgid "[`language_model_vectorize()`] Added new function `language_model_vectorize()` (Experimental)"
+msgstr "[`language_model_vectorize()`] 新しい関数 `language_model_vectorize()` を追加しました。(実験的)"
+
+msgid "This feature is still experimental and unstable. It also consumes a significant amount of CPU and memory."
+msgstr "まだ実験的な機能なので安定していません。また、この機能はCPUとメモリーを多く使います。"
+
+msgid "The function returns normalized embeddings (vector representations) of the given text. An embedding represents the semantic information of the text as a vector. By converting meanings of the text into vectors, you can perform semantic searches instead of literal text searches."
+msgstr "この関数は、与えられたテキストの正規化されたエンべディング（ベクトル表現）を返します。エンべディングとは、与えられたテキストの意味情報をベクトルとして表現することです。意味をベクトルとして表現できることで、字面ではなく意味ベースの検索ができるようになります。"
+
+msgid "For example, \"牛乳\" (\"milk\" in kanji) and \"ミルク\" (\"milk\" in katakana) look completely different but share the same meaning. Traditionally, you could search for words with different spellings but the same meaning by using synonym expansion. But this required maintaining a synonym table."
+msgstr "例えば、「牛乳」と「ミルク」は字面は全然違いますが、同じ意味を持つ言葉です。従来でも同義語展開を使えば、「牛乳」と「ミルク」のような字面の異なる意味が同じ言葉を検索できますが、同義語展開用のテーブルをメンテナンスしなければなりません。"
+
+msgid "With semantic search enabled, you can find words with similar meanings without preparing or maintaining a synonym table."
+msgstr "意味ベースの検索ができるようになると、同義語展開用のテーブルを準備、メンテナンスせずに意味の近い言葉を検索できるようになります。"
+
+msgid "[{doc}`/reference/commands/column_create`] Added a new `--generator` argument."
+msgstr "[{doc}`/reference/commands/column_create`] 新しい引数 `--generator` を追加しました。"
+
+msgid "You can now automatically generate columns based on the values of other columns. The benefits of this feature include:"
+msgstr "カラムを自動生成できます。他のカラムの値からカラムの値を自動で生成できます。この機能のメリットは以下の2点です。"
+
+msgid "Users no longer need to manage text generation processes manually."
+msgstr "わざわざユーザーがテキスト生成処理を管理する必要がありません。"
+
+msgid "You can reduce the amount of data to load since only the source columns are necessary."
+msgstr "生成元のカラムさえあれば良いので、`load`するデータ量を減らすことができます。"
+
+msgid "For example, you can use `language_model_vectorize()` to embed the values of other columns and store them in automatically generated columns. This allows users to `load` only the text to be searched while simultaneously storing the embedded data."
+msgstr "例えば、他のカラムの値を`language_model_vectorize()`でエンべディングして、その値を自動生成したカラムに格納するということもできます。これを利用すれば、ユーザーは検索対象のテキストを`load`するだけで、エンべディングされたデータも同時に格納できるようになります。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "[{doc}`/server/gqtp`] Fixed an issue where the `RC` value of `INVALID_ARGUMENT` returned to the GQTP client was `65514` instead of `-22`."
+msgstr "[{doc}`/server/gqtp`] GQPTクライアントに返却する`INVALID_ARGUMENT`の`RC`の値が`-22`ではなく、`65514`になっていた問題を修正しました。"
+
+msgid "This fix does not affect users who are not using GQTP clients."
+msgstr "GQTPクライアントを利用していないユーザーには影響ありません。"
+
+msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed an issue where an extra `\"records\": []` was output in the response when using command version 3."
+msgstr "[{doc}`/reference/commands/logical_range_filter`] command version 3 の時の応答に、余分な`\"records\":[]`が出力される問題を修正しました。"
+
+msgid "This issue happens only with command version 3. The default command version is 1. You can check your Groonga's command version using the `status` command."
+msgstr "この問題は、command version 3の時のみ発生します。デフォルトのcommand versionは1です。お使いのGroongaのcommand versionは`status`コマンドで確認できます。"
+
+msgid "As a follow, an extra `\"records\": []` was output. This does not happen if you are not using command version 3."
+msgstr "以下のように、余分な`\"records\":[]`が出力されますが、command version 3を使ってない場合は発生しません。"
+
+msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed an issue where the response became invalid JSON when a request was canceled using {doc}`/reference/commands/request_cancel`."
+msgstr "[{doc}`/reference/commands/logical_range_filter`] {doc}`/reference/commands/request_cancel` でキャンセルした時の応答が、不正なJSONになる問題を修正しました。"
+
+msgid "A bug was fixed where the response output could become invalid JSON depending on the timing of the cancellation."
+msgstr "キャンセルのタイミングによって応答の出力が不正なJSONになる不具合を修正しました。"
+
+msgid "[{doc}`/reference/commands/index_column_diff`] Fixed an issue where index corruption was falsely detected when a single record contained a large number of identical tokens."
+msgstr "[{doc}`/reference/commands/index_column_diff`] 1つのレコードに同じトークンが大量に存在する時にインデックスの破損を誤検知する問題を修正しました。"
+
+msgid "This issue occurs when a single record contains more than 131,071 instances of the same token. There's no easy way to check the number of tokens. If you regularly use `index_column_diff` to detect index corruption, we recommend updating as a precaution."
+msgstr "この問題の発生条件は、一つのレコードに同一のトークンが131,071個以上含まれていることですが、トークン数を簡単に確認する手段が無いので、`index_column_diff`を使って定期的にインデックスの破損を検出している場合は、念の為バージョンアップしておくことをおすすめします。"
+
+msgid "Release 14.0.9 - 2024-09-27"
+msgstr "14.0.9リリース - 2024-09-27"
 
 msgid "Fixed build error when we build from source on Alpine Linux 3.20."
 msgstr "Alpine Linux 3.20上でソースからビルドする時にビルドエラーになる問題を修正しました。"
 
 msgid "Release 14.0.8 - 2024-09-25"
 msgstr "14.0.8リリース - 2024-09-25"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[Amazon Linux 2023] Added support for Amazon Linux 2023. [GH-1845][Reported by takoyaki-nyokki and Watson]"
 msgstr "[Amazon Linux 2023] Amazon Linux 2023 をサポートしました。 [GH-1845][takoyaki-nyokkiさんとWatsonさんの報告]"
