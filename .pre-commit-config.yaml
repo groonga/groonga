@@ -32,6 +32,7 @@ repos:
           ?include/groonga/error\.h|
           ?include/groonga/expr\.h|
           ?include/groonga/float\.h|
+          ?include/groonga/geo\.h|
           ?include/groonga/groonga\.h|
           ?include/groonga/h3\.h|
           ?include/groonga/hash\.h|
