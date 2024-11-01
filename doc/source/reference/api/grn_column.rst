@@ -18,24 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:macro:: GRN_COLUMN_NAME_SCORE
-
-   It returns the name of :doc:`/reference/columns/pseudo` ``_score``.
-
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` like
-   the following::
-
-     grn_obj *score_column;
-     score_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
-
-   Since 3.1.1.
-
-.. c:macro:: GRN_COLUMN_NAME_SCORE_LEN
-
-   It returns the byte size of :c:macro:`GRN_COLUMN_NAME_SCORE`.
-
-   Since 3.1.1.
-
 .. c:macro:: GRN_COLUMN_NAME_NSUBRECS
 
    It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``.
