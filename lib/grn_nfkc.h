@@ -56,7 +56,7 @@ typedef struct {
   bool unify_katakana_trailing_o;
   bool unify_to_romaji;
   bool unify_to_katakana;
-  grn_bool remove_blank;
+  bool remove_blank;
   bool remove_blank_force;
   bool remove_blank_force_is_set;
   bool remove_new_line;

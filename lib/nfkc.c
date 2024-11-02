@@ -74,7 +74,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_katakana_trailing_o = false;
   options->unify_to_romaji = false;
   options->unify_to_katakana = false;
-  options->remove_blank = GRN_FALSE;
+  options->remove_blank = false;
   options->remove_blank_force = false;
   options->remove_blank_force_is_set = false;
   options->remove_new_line = true;
