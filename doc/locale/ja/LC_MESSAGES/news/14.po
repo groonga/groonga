@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 13.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-28 18:55+0900\n"
+"PO-Revision-Date: 2024-11-03 08:32+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,74 +23,110 @@ msgstr "14.1.0リリース - 2024-11-05"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[status] Added `llama.cpp` to the `status` results."
-msgstr "[status] `status`の結果に`llama.cpp`を追加しました。"
+msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"llama.cpp\"]` entry"
+msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"llama.cpp\"]`エントリーを追加"
 
-msgid "The status results display whether `llama.cpp` is enabled or disabled under the `features` section, as follows. (Only the relevant parts are extracted for explanation due to the lengthy status output.)"
-msgstr "以下のように、`status`の結果の`features`に新しく`llama.cpp`の有効/無効を表示するようになっています。(`status`の表示は長いので説明に必要な部分のみ抜粋しています。)"
+msgid "The `.[\"features\"]` entry shows whether each feature is enabled or not like the following:"
+msgstr "`.[\"features\"]`エントリーは次のように各機能が有効かどうかを示しています。"
 
-msgid "The `llama.cpp` feature is used in the newly introduced `language_model_vectorize()` function described next."
-msgstr "`llama.cpp`は次に紹介する`language_model_vectorize()`に使用しています。"
+msgid "This release added `llama.cpp` to the `.[\"features\"]` entry:"
+msgstr "このリリースは`.[\"features\"]`エントリーに`llama.cpp`を追加しました。"
 
-msgid "[`language_model_vectorize()`] Added new function `language_model_vectorize()` (Experimental)"
-msgstr "[`language_model_vectorize()`] 新しい関数 `language_model_vectorize()` を追加しました。(実験的)"
+msgid "You can use `.[\"features\"][\"llama.cpp\"]` to know whether [llama.cpp](https://github.com/ggerganov/llama.cpp) is enabled or not."
+msgstr "[llama.cpp](https://github.com/ggerganov/llama.cpp)が有効になっているかどうかを確認するために`.[\"features\"][\"llama.cpp\"]`を使うことができます。"
 
-msgid "This feature is still experimental and unstable. It also consumes a significant amount of CPU and memory."
-msgstr "まだ実験的な機能なので安定していません。また、この機能はCPUとメモリーを多く使います。"
+msgid "You need the llama.cpp support to use [{doc}`/reference/functions/language_model_vectorize`] function described next."
+msgstr "次で紹介する[{doc}`/reference/functions/language_model_vectorize`]を使うためにはllama.cppサポートが必要です。"
 
-msgid "The function returns normalized embeddings (vector representations) of the given text. An embedding represents the semantic information of the text as a vector. By converting meanings of the text into vectors, you can perform semantic searches instead of literal text searches."
-msgstr "この関数は、与えられたテキストの正規化されたエンべディング（ベクトル表現）を返します。エンべディングとは、与えられたテキストの意味情報をベクトルとして表現することです。意味をベクトルとして表現できることで、字面ではなく意味ベースの検索ができるようになります。"
+msgid "[{doc}`/reference/functions/language_model_vectorize`] Added (Experimental)"
+msgstr "[{doc}`/reference/functions/language_model_vectorize`] 追加（実験的）"
 
-msgid "For example, \"牛乳\" (\"milk\" in kanji) and \"ミルク\" (\"milk\" in katakana) look completely different but share the same meaning. Traditionally, you could search for words with different spellings but the same meaning by using synonym expansion. But this required maintaining a synonym table."
-msgstr "例えば、「牛乳」と「ミルク」は字面は全然違いますが、同じ意味を持つ言葉です。従来でも同義語展開を使えば、「牛乳」と「ミルク」のような字面の異なる意味が同じ言葉を検索できますが、同義語展開用のテーブルをメンテナンスしなければなりません。"
+msgid "This feature is still experimental and unstable."
+msgstr "この機能はまだ実験的で安定していません。"
+
+msgid "This feature may consume a significant amount of CPU and memory."
+msgstr "この機能は従来よりも多くのCPUとメモリーを使うかもしれません。"
+
+msgid "The function returns normalized embeddings (vector representations) of the given text. An embedding represents the semantic information of the text as a vector. By converting meanings of the text into vectors, you can perform semantic searches instead of keyword based searches."
+msgstr "この関数は、与えられたテキストの正規化されたエンべディング（ベクトル表現）を返します。エンべディングとは、与えられたテキストの意味情報をベクトルとして表現したものです。意味をベクトルとして表現することで、全文検索ではなくセマンティックサーチができるようになります。"
+
+msgid "For example, \"United States\" and \"America\" look completely different but share the same meaning. Traditionally, you could search for words with different spellings but the same meaning by using synonym expansion. But this required maintaining a synonym table."
+msgstr "例えば、「牛乳」と「ミルク」は字面は全然違いますが、同じ意味を持つ言葉です。従来でも同義語展開を使えば「牛乳」と「ミルク」のような字面の異なる意味が同じ言葉を検索できますが、同義語展開用のテーブルをメンテナンスしなければなりません。"
 
 msgid "With semantic search enabled, you can find words with similar meanings without preparing or maintaining a synonym table."
-msgstr "意味ベースの検索ができるようになると、同義語展開用のテーブルを準備、メンテナンスせずに意味の近い言葉を検索できるようになります。"
+msgstr "セマンティックサーチができるようになると、同義語展開用のテーブルを準備、メンテナンスせずに意味の近い言葉を検索できるようになります。"
 
-msgid "[{doc}`/reference/commands/column_create`] Added a new `--generator` argument."
-msgstr "[{doc}`/reference/commands/column_create`] 新しい引数 `--generator` を追加しました。"
+msgid "[{doc}`/reference/commands/column_create`] Added the {ref}`column-create-generator` parameter"
+msgstr "[{doc}`/reference/commands/column_create`] {ref}`column-create-generator`引数を追加"
 
-msgid "You can now automatically generate columns based on the values of other columns. The benefits of this feature include:"
-msgstr "カラムを自動生成できます。他のカラムの値からカラムの値を自動で生成できます。この機能のメリットは以下の2点です。"
+msgid "This release added the {ref}`generated-column` feature. You can use this feature to generate column values based on the values of other column automatically."
+msgstr "このリリースでは{ref}`generated-column`機能を追加しました。この機能を使うと、他のカラムの値を使ってカラムの値を自動生成できます。"
 
-msgid "Users no longer need to manage text generation processes manually."
-msgstr "わざわざユーザーがテキスト生成処理を管理する必要がありません。"
+msgid "You can create a generated column by using {doc}`/reference/commands/column_create` and {ref}`column-create-generator`. See {ref}`column-create-generated-column` for details."
+msgstr "{doc}`/reference/commands/column_create`と{ref}`column-create-generator`を使うと生成カラムを作ることができます。詳細は{ref}`column-create-generated-column`を参照してください。"
 
-msgid "You can reduce the amount of data to load since only the source columns are necessary."
-msgstr "生成元のカラムさえあれば良いので、`load`するデータ量を減らすことができます。"
+msgid "Here are merits of this feature:"
+msgstr "この機能のメリットは次のとおりです。"
 
-msgid "For example, you can use `language_model_vectorize()` to embed the values of other columns and store them in automatically generated columns. This allows users to `load` only the text to be searched while simultaneously storing the embedded data."
-msgstr "例えば、他のカラムの値を`language_model_vectorize()`でエンべディングして、その値を自動生成したカラムに格納するということもできます。これを利用すれば、ユーザーは検索対象のテキストを`load`するだけで、エンべディングされたデータも同時に格納できるようになります。"
+msgid "You no longer need to manage generation processes manually"
+msgstr "生成処理を手動で管理する必要がない"
+
+msgid "You can reduce the amount of data to load since only the source columns are necessary"
+msgstr "生成元のカラムだけあればよいので、ロードするデータ量を減らせる"
+
+msgid "For example, you can use {doc}`/reference/functions/language_model_vectorize` to generate embeddings of the values of other columns. An embedding may not be small. If it's represented as an 1024 dimensions vector of 32-bit float, its size is 4KiB. If you generate embeddings automatically by {doc}`/reference/functions/language_model_vectorize` and {ref}`generated-column`, you don't need to send 4KiB embeddings to Groonga."
+msgstr "たとえば、他のカラムの値のエンべディングを生成するために{doc}`/reference/functions/language_model_vectorize`を使うことができます。エンべディングは小さくないかもしれません。もし、エンべディングが1024次元の32-bit浮動小数点数で表現されている場合、エンべディングのサイズは4KiBになります。{doc}`/reference/functions/language_model_vectorize`と{ref}`generated-column`でエンべディングを自動で生成すると4KiBのエンべディング一式をGroongaに送る必要はありません。"
+
+msgid "You can {doc}`/reference/commands/load` only the text to be searched while simultaneously storing the embedding with this feature."
+msgstr "この機能により、検索対象のテキストを{doc}`/reference/commands/load`するだけで、同時に対応するエンべディングも保存できます。"
 
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/server/gqtp`] Fixed an issue where the `RC` value of `INVALID_ARGUMENT` returned to the GQTP client was `65514` instead of `-22`."
-msgstr "[{doc}`/server/gqtp`] GQPTクライアントに返却する`INVALID_ARGUMENT`の`RC`の値が`-22`ではなく、`65514`になっていた問題を修正しました。"
+msgid "[{doc}`/server/gqtp`] Fixed a bug that wrong return code is returned"
+msgstr "[{doc}`/server/gqtp`] 間違ったリターンコードが返される問題を修正"
+
+msgid "This is a client side problem. This problem was introduced in 14.0.0."
+msgstr "これはクライアント側の問題です。この問題は14.0.0から存在します。"
+
+msgid "GQTP client converts {doc}`/reference/command/return_code` received from server wrongly. For example, `INVALID_ARGUMENT` code is `-22` but it was converted to `65514`."
+msgstr "GQTPクライアントはサーバーから受け取った{doc}`/reference/command/return_code`を間違って変換していました。たとえば、`INVALID_ARGUMENT`の値は`-22`ですが、これを`65514`に変換していました。"
 
 msgid "This fix does not affect users who are not using GQTP clients."
 msgstr "GQTPクライアントを利用していないユーザーには影響ありません。"
 
-msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed an issue where an extra `\"records\": []` was output in the response when using command version 3."
-msgstr "[{doc}`/reference/commands/logical_range_filter`] command version 3 の時の応答に、余分な`\"records\":[]`が出力される問題を修正しました。"
+msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed a bug that invalid JSON format response may be returned"
+msgstr "[{doc}`/reference/commands/logical_range_filter`] 不正なJSONフォーマットのレスポンスが返されることがある問題を修正"
 
-msgid "This issue happens only with command version 3. The default command version is 1. You can check your Groonga's command version using the `status` command."
-msgstr "この問題は、command version 3の時のみ発生します。デフォルトのcommand versionは1です。お使いのGroongaのcommand versionは`status`コマンドで確認できます。"
+msgid "This problem happens only with {doc}`/reference/command/command_version` 3. The default command version is 1."
+msgstr "この問題は{doc}`/reference/command/command_version` 3でのみ発生します。デフォルトのコマンドバージョンは1です。"
 
-msgid "As a follow, an extra `\"records\": []` was output. This does not happen if you are not using command version 3."
-msgstr "以下のように、余分な`\"records\":[]`が出力されますが、command version 3を使ってない場合は発生しません。"
+msgid "You can check your Groonga's default command version using the {doc}`/reference/commands/status` command:"
+msgstr "あなたのGroongaのデフォルトのコマンドバージョンは{doc}`/reference/commands/status`コマンドで確認できます。"
 
-msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed an issue where the response became invalid JSON when a request was canceled using {doc}`/reference/commands/request_cancel`."
-msgstr "[{doc}`/reference/commands/logical_range_filter`] {doc}`/reference/commands/request_cancel` でキャンセルした時の応答が、不正なJSONになる問題を修正しました。"
+msgid "Here is an example invalid JSON format response. You can see that there is an extra `\"records\": []` before the actual `\"records: [...]\"`:"
+msgstr "以下が不正なJSONフォーマットのレスポンス例です。実際の`\"records: [...]\"`の前に不要な`\"records\": []`があります。"
 
-msgid "A bug was fixed where the response output could become invalid JSON depending on the timing of the cancellation."
-msgstr "キャンセルのタイミングによって応答の出力が不正なJSONになる不具合を修正しました。"
+msgid "[{doc}`/reference/commands/request_cancel`] Fixed a bug that invalid JSON format response may be returned"
+msgstr "[{doc}`/reference/commands/logical_range_filter`] 不正なJSONフォーマットのレスポンスが返されることがある問題を修正"
 
-msgid "[{doc}`/reference/commands/index_column_diff`] Fixed an issue where index corruption was falsely detected when a single record contained a large number of identical tokens."
-msgstr "[{doc}`/reference/commands/index_column_diff`] 1つのレコードに同じトークンが大量に存在する時にインデックスの破損を誤検知する問題を修正しました。"
+msgid "You can stop a running command by {doc}`/reference/commands/request_cancel`."
+msgstr "{doc}`/reference/commands/request_cancel`で実行中のコマンドを止めることができます。"
 
-msgid "This issue occurs when a single record contains more than 131,071 instances of the same token. There's no easy way to check the number of tokens. If you regularly use `index_column_diff` to detect index corruption, we recommend updating as a precaution."
-msgstr "この問題の発生条件は、一つのレコードに同一のトークンが131,071個以上含まれていることですが、トークン数を簡単に確認する手段が無いので、`index_column_diff`を使って定期的にインデックスの破損を検出している場合は、念の為バージョンアップしておくことをおすすめします。"
+msgid "You might get an invalid JSON format response when you cancel a command. It depends on the timing of the cancellation."
+msgstr "コマンドをキャンセルすると不正なJSONフォーマットのレスポンスを受け取ることがありました。これはキャンセルのタイミングによって発生したりしなかったりします。"
+
+msgid "This release fixed the cancellation process. You will not receive an invalid JSON format response even when you cancel a command."
+msgstr "このリリースではキャンセル処理時の出力処理を改良しました。コマンドをキャンセルしたときでも不正なJSONフォーマットのレスポンスを受け取ることはなくなるはずです。"
+
+msgid "[{doc}`/reference/commands/index_column_diff`] Fixed a bug that false positive diff may be reported"
+msgstr "[{doc}`/reference/commands/index_column_diff`] 擬陽性の差分が報告されるかもしれない問題を修正"
+
+msgid "You can use {doc}`/reference/commands/index_column_diff` to detect index corruption."
+msgstr "{doc}`/reference/commands/index_column_diff`を使うとインデックスの破損を検出できます。"
+
+msgid "{doc}`/reference/commands/index_column_diff` reports a missing record when a single record contains more than 131,072 instances of the same token. This release fixed this problem."
+msgstr "1つのレコード中に同じトークンが131,072個以上含まれている場合、{doc}`/reference/commands/index_column_diff`は本来インデックス内にあるべきレコードが含まれていないと報告します。このリリースではこの問題を修正しました。"
 
 msgid "Release 14.0.9 - 2024-09-27"
 msgstr "14.0.9リリース - 2024-09-27"
