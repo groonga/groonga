@@ -190,7 +190,7 @@ grn_alloc_info_add(
   if (new_alloc_info) {
     new_alloc_info->address = address;
     new_alloc_info->size = size;
-    new_alloc_info->freed = GRN_FALSE;
+    new_alloc_info->freed = false;
     grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
                                  sizeof(new_alloc_info->alloc_backtrace));
     if (file) {
@@ -295,7 +295,7 @@ grn_alloc_info_check(grn_ctx *ctx, void *address)
                 alloc_info->alloc_backtrace,
                 alloc_info->free_backtrace);
       } else {
-        alloc_info->freed = GRN_TRUE;
+        alloc_info->freed = true;
         grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
                                      sizeof(alloc_info->free_backtrace));
       }

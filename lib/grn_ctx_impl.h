@@ -53,7 +53,7 @@ extern "C" {
 typedef struct _grn_alloc_info grn_alloc_info;
 struct _grn_alloc_info {
   void *address;
-  int freed;
+  bool freed;
   size_t size;
   char alloc_backtrace[4096];
   char free_backtrace[4096];
