@@ -1727,7 +1727,7 @@ grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
  * \param offset The offset of execution order.
  * \param data The buffer to store hook data.
  *
- * \return The procedure if the hook is set, `NULL` otherwise.
+ * \return The procedure object if the hook is set, `NULL` otherwise.
  */
 GRN_API grn_obj *
 grn_obj_get_hook(
