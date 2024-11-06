@@ -18,24 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:macro:: GRN_COLUMN_NAME_NSUBRECS
-
-   It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``.
-
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` like
-   the following::
-
-     grn_obj *nsubrecs_column;
-     nsubrecs_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_NSUBRECS, GRN_COLUMN_NAME_NSUBRECS_LEN);
-
-   Since 3.1.1.
-
-.. c:macro:: GRN_COLUMN_NAME_NSUBRECS_LEN
-
-   It returns the byte size of :c:macro:`GRN_COLUMN_NAME_NSUBRECS`.
-
-   Since 3.1.1.
-
 .. c:function:: grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size, const char *path, grn_obj_flags flags, grn_obj *type)
 
    tableに新たなカラムを定義します。nameは省略できません。一つのtableに同一のnameのcolumnを複数定義することはできません。

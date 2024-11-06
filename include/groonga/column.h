@@ -154,8 +154,41 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  */
-#define GRN_COLUMN_NAME_SCORE_LEN    (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
-#define GRN_COLUMN_NAME_NSUBRECS     "_nsubrecs"
+#define GRN_COLUMN_NAME_SCORE_LEN (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
+/**
+ * \brief Name of the pseudo column `_nsubrecs`.
+ *
+ * The `_nsubrecs` pseudo column represents the number of records that had the
+ * same grouping key value before grouping. It is defined only for tables that
+ * are generated as search results from grouping (drilldown) operations. When a
+ * grouping (drilldown) operation is performed, the number of records that had
+ * the same grouping key value in the original table is recorded in the
+ * `_nsubrecs` column of the result table.
+ *
+ * \since 3.1.1
+ *
+ * Here is an example of using \ref grn_obj_column with \ref
+ * GRN_COLUMN_NAME_NSUBRECS and \ref GRN_COLUMN_NAME_NSUBRECS_LEN to retrieve
+ * the `_nsubrecs` column object:
+ *
+ * ```c
+ * grn_obj *nsubrecs_accessor = grn_obj_column(ctx,
+ *                                             table,
+ *                                             GRN_COLUMN_NAME_NSUBRECS,
+ *                                             GRN_COLUMN_NAME_NSUBRECS_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, nsubrecs_accessor);
+ * ```
+ */
+#define GRN_COLUMN_NAME_NSUBRECS "_nsubrecs"
+/**
+ * \brief Length of the pseudo `_nsubrecs` column name.
+ *
+ * The \ref GRN_COLUMN_NAME_NSUBRECS_LEN macro returns the byte size of
+ * \ref GRN_COLUMN_NAME_NSUBRECS, excluding the null terminator.
+ *
+ * \since 3.1.1
+ */
 #define GRN_COLUMN_NAME_NSUBRECS_LEN (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
 #define GRN_COLUMN_NAME_MAX          "_max"
 #define GRN_COLUMN_NAME_MAX_LEN      (sizeof(GRN_COLUMN_NAME_MAX) - 1)

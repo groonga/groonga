@@ -36,18 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``."
-msgstr ":doc:`/reference/columns/pseudo` ``_nsubrecs`` の名前を返します"
-
-msgid "It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` like the following::"
-msgstr "以下のように :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` と一緒に使うと便利です::"
-
-msgid "Since 3.1.1."
-msgstr "3.1.1から。"
-
-msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_NSUBRECS`."
-msgstr ":c:macro:`GRN_COLUMN_NAME_NSUBRECS` のサイズをバイト数で返す。"
-
 msgid "tableに新たなカラムを定義します。nameは省略できません。一つのtableに同一のnameのcolumnを複数定義することはできません。"
 msgstr ""
 
