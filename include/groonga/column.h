@@ -36,17 +36,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  *
- * Here is an example to use \ref grn_obj_column with \ref GRN_COLUMN_NAME_ID
- * and \ref GRN_COLUMN_NAME_ID_LEN to retrieve the `_id` column object:
- *
- * ```c
- * grn_obj *id_accessor = grn_obj_column(ctx,
- *                                       table,
- *                                       GRN_COLUMN_NAME_ID,
- *                                       GRN_COLUMN_NAME_ID_LEN);
- * // ...
- * grn_obj_unlink(ctx, id_accessor);
- * ```
+ * For usage examples, see \ref grn_obj_column.
  */
 #define GRN_COLUMN_NAME_ID "_id"
 /**
@@ -68,17 +58,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  *
- * Here is an example of using \ref grn_obj_column with \ref GRN_COLUMN_NAME_KEY
- * and \ref GRN_COLUMN_NAME_KEY_LEN to retrieve the `_key` column object:
- *
- * ```c
- * grn_obj *key_accessor = grn_obj_column(ctx,
- *                                        table,
- *                                        GRN_COLUMN_NAME_KEY,
- *                                        GRN_COLUMN_NAME_KEY_LEN);
- * // ...
- * grn_obj_unlink(ctx, key_accessor);
- * ```
+ * For usage examples, see \ref grn_obj_column.
  */
 #define GRN_COLUMN_NAME_KEY "_key"
 /**
@@ -99,18 +79,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  *
- * Here is an example of using \ref grn_obj_column with \ref
- * GRN_COLUMN_NAME_VALUE and \ref GRN_COLUMN_NAME_VALUE_LEN to retrieve the
- * `_value` column object:
- *
- * ```c
- * grn_obj *value_accessor = grn_obj_column(ctx,
- *                                          table,
- *                                          GRN_COLUMN_NAME_VALUE,
- *                                          GRN_COLUMN_NAME_VALUE_LEN);
- * // ...
- * grn_obj_unlink(ctx, value_accessor);
- * ```
+ * For usage examples, see \ref grn_obj_column.
  */
 #define GRN_COLUMN_NAME_VALUE "_value"
 /**
@@ -132,18 +101,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  *
- * Here is an example of using \ref grn_obj_column with \ref
- * GRN_COLUMN_NAME_SCORE and \ref GRN_COLUMN_NAME_SCORE_LEN to retrieve the
- * `_score` column object:
- *
- * ```c
- * grn_obj *score_accessor = grn_obj_column(ctx,
- *                                          table,
- *                                          GRN_COLUMN_NAME_SCORE,
- *                                          GRN_COLUMN_NAME_SCORE_LEN);
- * // ...
- * grn_obj_unlink(ctx, score_accessor);
- * ```
+ * For usage examples, see \ref grn_obj_column.
  */
 #define GRN_COLUMN_NAME_SCORE "_score"
 /**
@@ -167,18 +125,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *
  * \since 3.1.1
  *
- * Here is an example of using \ref grn_obj_column with \ref
- * GRN_COLUMN_NAME_NSUBRECS and \ref GRN_COLUMN_NAME_NSUBRECS_LEN to retrieve
- * the `_nsubrecs` column object:
- *
- * ```c
- * grn_obj *nsubrecs_accessor = grn_obj_column(ctx,
- *                                             table,
- *                                             GRN_COLUMN_NAME_NSUBRECS,
- *                                             GRN_COLUMN_NAME_NSUBRECS_LEN);
- * // ...
- * grn_obj_unlink(ctx, nsubrecs_accessor);
- * ```
+ * For usage examples, see \ref grn_obj_column.
  */
 #define GRN_COLUMN_NAME_NSUBRECS "_nsubrecs"
 /**
