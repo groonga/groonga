@@ -1717,6 +1717,18 @@ grn_obj_add_hook(grn_ctx *ctx,
  */
 GRN_API int
 grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
+/**
+ * \brief Get the hook set on the object. If hook data is set, it is stored in
+ *        `data`.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ * \param offset The offset of execution order.
+ * \param data The buffer to store hook data.
+ *
+ * \return The procedure object if the hook is set, `NULL` otherwise.
+ */
 GRN_API grn_obj *
 grn_obj_get_hook(
   grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset, grn_obj *data);
