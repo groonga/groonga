@@ -8133,7 +8133,7 @@ del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_id target_id)
     if (hook->proc) {
       continue;
     }
-    if (hook->data_holder_size != sizeof(grn_obj_default_set_value_hook_data)) {
+    if (hook->data_size != sizeof(grn_obj_default_set_value_hook_data)) {
       continue;
     }
     grn_obj_default_set_value_hook_data *data =
@@ -8301,13 +8301,13 @@ grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
       if ((rc = grn_text_benc(ctx, buf, id + 1))) {
         goto exit;
       }
-      if ((rc = grn_text_benc(ctx, buf, hooks->data_holder_size))) {
+      if ((rc = grn_text_benc(ctx, buf, hooks->data_size))) {
         goto exit;
       }
       if ((rc = grn_bulk_write(ctx,
                                buf,
                                (char *)GRN_NEXT_ADDR(hooks),
-                               hooks->data_holder_size))) {
+                               hooks->data_size))) {
         goto exit;
       }
     }
@@ -8331,7 +8331,7 @@ grn_hook_unpack(grn_ctx *ctx,
     grn_hook *new, **last = &obj->hooks[e];
     for (;;) {
       grn_id id;
-      uint32_t data_holder_size;
+      uint32_t data_size;
       GRN_B_DEC(id, p);
       if (!id--) {
         break;
@@ -8339,11 +8339,11 @@ grn_hook_unpack(grn_ctx *ctx,
       if (p >= pe) {
         return GRN_FILE_CORRUPT;
       }
-      GRN_B_DEC(data_holder_size, p);
+      GRN_B_DEC(data_size, p);
       if (p >= pe) {
         return GRN_FILE_CORRUPT;
       }
-      if (!(new = GRN_MALLOC(sizeof(grn_hook) + data_holder_size))) {
+      if (!(new = GRN_MALLOC(sizeof(grn_hook) + data_size))) {
         return GRN_NO_MEMORY_AVAILABLE;
       }
       if (id) {
@@ -8355,9 +8355,9 @@ grn_hook_unpack(grn_ctx *ctx,
       } else {
         new->proc = NULL;
       }
-      if ((new->data_holder_size = data_holder_size)) {
-        grn_memcpy(GRN_NEXT_ADDR(new), p, data_holder_size);
-        p += data_holder_size;
+      if ((new->data_size = data_size)) {
+        grn_memcpy(GRN_NEXT_ADDR(new), p, data_size);
+        p += data_size;
       }
       *last = new;
       last = &new->next;
@@ -9750,7 +9750,7 @@ grn_obj_add_hook(grn_ctx *ctx,
                  grn_hook_entry entry,
                  int offset,
                  grn_obj *proc,
-                 grn_obj *hook_data_holder)
+                 grn_obj *hook_data)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
@@ -9758,21 +9758,21 @@ grn_obj_add_hook(grn_ctx *ctx,
     rc = GRN_INVALID_ARGUMENT;
   } else {
     int i;
-    void *data_holder_value = NULL;
-    uint32_t data_holder_size = 0;
+    void *data_value = NULL;
+    uint32_t data_size = 0;
     grn_hook *new, **last = &DB_OBJ(obj)->hooks[entry];
-    if (hook_data_holder) {
-      data_holder_value = GRN_BULK_HEAD(hook_data_holder);
-      data_holder_size = GRN_BULK_VSIZE(hook_data_holder);
+    if (hook_data) {
+      data_value = GRN_BULK_HEAD(hook_data);
+      data_size = GRN_BULK_VSIZE(hook_data);
     }
-    if (!(new = GRN_MALLOC(sizeof(grn_hook) + data_holder_size))) {
+    if (!(new = GRN_MALLOC(sizeof(grn_hook) + data_size))) {
       rc = GRN_NO_MEMORY_AVAILABLE;
       goto exit;
     }
     new->proc = (grn_proc *)proc;
-    new->data_holder_size = data_holder_size;
-    if (data_holder_size) {
-      grn_memcpy(GRN_NEXT_ADDR(new), data_holder_value, data_holder_size);
+    new->data_size = data_size;
+    if (data_size) {
+      grn_memcpy(GRN_NEXT_ADDR(new), data_value, data_size);
     }
     for (i = 0; i != offset && *last; i++) {
       last = &(*last)->next;
@@ -9791,8 +9791,8 @@ grn_obj_add_hook(grn_ctx *ctx,
         if (hook != new) {
           GRN_TEXT_PUTC(ctx, &extra_info, ',');
         }
-        if (!hook->proc && hook->data_holder_size ==
-                             sizeof(grn_obj_default_set_value_hook_data)) {
+        if (!hook->proc &&
+            hook->data_size == sizeof(grn_obj_default_set_value_hook_data)) {
           grn_obj_default_set_value_hook_data *data =
             (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hook);
           grn_table_get_key2(ctx, ctx->impl->db, data->target, &extra_info);
@@ -9859,7 +9859,7 @@ grn_obj_get_hook(grn_ctx *ctx,
     grn_bulk_write(ctx,
                    data_holder_buf,
                    (char *)GRN_NEXT_ADDR(hook),
-                   hook->data_holder_size);
+                   hook->data_size);
   }
   GRN_API_RETURN(res);
 }
@@ -9883,8 +9883,8 @@ grn_obj_delete_hook(grn_ctx *ctx,
       }
       if (++i > offset) {
         removed = true;
-        if (!h->proc && h->data_holder_size ==
-                          sizeof(grn_obj_default_set_value_hook_data)) {
+        if (!h->proc &&
+            h->data_size == sizeof(grn_obj_default_set_value_hook_data)) {
           grn_obj_default_set_value_hook_data *data =
             (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(h);
           GRN_TEXT_PUTC(ctx, &extra_info, ' ');
@@ -9909,8 +9909,8 @@ grn_obj_delete_hook(grn_ctx *ctx,
       if (hook != first_hook) {
         GRN_TEXT_PUTC(ctx, &extra_info, ',');
       }
-      if (!hook->proc && hook->data_holder_size ==
-                           sizeof(grn_obj_default_set_value_hook_data)) {
+      if (!hook->proc &&
+          hook->data_size == sizeof(grn_obj_default_set_value_hook_data)) {
         grn_obj_default_set_value_hook_data *data =
           (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hook);
         grn_table_get_key2(ctx, ctx->impl->db, data->target, &extra_info);

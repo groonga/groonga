@@ -365,7 +365,7 @@ struct _grn_type {
 struct _grn_hook {
   grn_hook *next;
   grn_proc *proc;
-  uint32_t data_holder_size;
+  uint32_t data_size;
 };
 
 typedef struct _grn_proc_ctx grn_proc_ctx;
