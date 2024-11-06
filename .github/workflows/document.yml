@@ -46,7 +46,7 @@ jobs:
       - name: Create archive
         run: |
           version=$(cat base_version)
-          tar czf documents-${version}.tar.gz -C /tmp/groonga.doc.dest/usr/local/share doc
+          tar czf documents-${version}.tar.gz -C /tmp/groonga.dest/usr/local/share doc
 
       # Artifact
       - uses: actions/upload-artifact@v4
