@@ -9842,7 +9842,7 @@ grn_obj_get_hook(grn_ctx *ctx,
                  grn_obj *obj,
                  grn_hook_entry entry,
                  int offset,
-                 grn_obj *data_holder_buf)
+                 grn_obj *data_buf)
 {
   grn_obj *res = NULL;
   GRN_API_ENTER;
@@ -9856,10 +9856,7 @@ grn_obj_get_hook(grn_ctx *ctx,
       }
     }
     res = (grn_obj *)hook->proc;
-    grn_bulk_write(ctx,
-                   data_holder_buf,
-                   (char *)GRN_NEXT_ADDR(hook),
-                   hook->data_size);
+    grn_bulk_write(ctx, data_buf, (char *)GRN_NEXT_ADDR(hook), hook->data_size);
   }
   GRN_API_RETURN(res);
 }
