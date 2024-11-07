@@ -1700,10 +1700,16 @@ GRN_API void *
 grn_proc_get_hook_local_data(grn_ctx *ctx, grn_obj *exec_info);
 
 typedef enum {
+  /// Hooked on update.
   GRN_HOOK_SET = 0,
+  /// Hooked on getting
   GRN_HOOK_GET,
+  /// Hooked on insertion.
   GRN_HOOK_INSERT,
+  /// Hooked on deletion.
   GRN_HOOK_DELETE,
+  /// Hooked during the search process. You can use it to check the status of a
+  /// process or to terminate a process.
   GRN_HOOK_SELECT
 } grn_hook_entry;
 
@@ -1712,6 +1718,20 @@ typedef enum {
 GRN_API const char *
 grn_hook_entry_to_string(grn_hook_entry entry);
 
+/**
+ * \brief Add a hook to the object. If multiple hooks are set for the object,
+ *        they are called in the order they are registered in the hook list.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ * \param offset The offset of execution order. Add to the beginning if `0` is
+ *               specified. Add to the end if `-1` is specified.
+ * \param proc The procedure object.
+ * \param data The hook data.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_add_hook(grn_ctx *ctx,
                  grn_obj *obj,

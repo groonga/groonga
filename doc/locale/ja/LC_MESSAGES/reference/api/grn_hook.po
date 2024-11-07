@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_hook``"
 msgstr ""
 
@@ -33,38 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "objに対してhookを追加します。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。  ``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。  ``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調べたり、実行の中断を指示することができます。"
-msgstr ""
-
-msgid "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。"
-msgstr ""
-
-msgid "``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。"
-msgstr ""
-
-msgid "``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調べたり、実行の中断を指示することができます。"
-msgstr ""
-
-msgid "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。  0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。  objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
-msgstr ""
-
-msgid "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。"
-msgstr ""
-
-msgid "0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。"
-msgstr ""
-
-msgid "objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
-msgstr ""
-
-msgid "手続きを指定します。"
-msgstr ""
-
-msgid "hook固有情報を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
