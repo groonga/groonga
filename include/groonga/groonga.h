@@ -939,6 +939,19 @@ typedef enum {
  *        with it when it's no longer needed. You can use
  *        `grn_obj_is_accessor()` to detect whether it's an accessor or not.
  *
+ *        To illustrate its usage, here is an example to use \ref grn_obj_column
+ *        with pseudo column like \ref GRN_COLUMN_NAME_ID and
+ *        \ref GRN_COLUMN_NAME_ID_LEN to retrieve the accessor object for `_id`.
+ *
+ *        ```c
+ *        grn_obj *id_accessor = grn_obj_column(ctx,
+ *                                              table,
+ *                                              GRN_COLUMN_NAME_ID,
+ *                                              GRN_COLUMN_NAME_ID_LEN);
+ *        // ...
+ *        grn_obj_unlink(ctx, id_accessor);
+ *        ```
+ *
  * \param ctx The context object
  * \param table The target table or accessor from which the column or accessor
  *              is retrieved.
