@@ -1003,9 +1003,9 @@ typedef enum {
  *
  * Accessor string examples: `tag.name`, `user.bookmarks.url`
  *
- * If this function returns an accessor, you must call `grn_obj_unlink()`
+ * If this function returns an accessor, you must call \ref grn_obj_unlink
  * with it when it's no longer needed. You can use
- * `grn_obj_is_accessor()` to detect whether it's an accessor or not.
+ * \ref grn_obj_is_accessor to detect whether it's an accessor or not.
  *
  * To illustrate its usage, here is an example to use \ref grn_obj_column
  * with pseudo column like \ref GRN_COLUMN_NAME_ID and
