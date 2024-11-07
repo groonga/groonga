@@ -941,7 +941,7 @@ typedef enum {
  *
  *        To illustrate its usage, here is an example to use \ref grn_obj_column
  *        with pseudo column like \ref GRN_COLUMN_NAME_ID and
- *        \ref GRN_COLUMN_NAME_ID_LEN to retrieve the `_id` column object
+ *        \ref GRN_COLUMN_NAME_ID_LEN to retrieve the accessor object for `_id`.
  *
  *        ```c
  *        grn_obj *id_accessor = grn_obj_column(ctx,
