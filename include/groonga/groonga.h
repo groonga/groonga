@@ -1020,7 +1020,7 @@ typedef enum {
  * grn_obj_unlink(ctx, id_accessor);
  * ```
  *
- * \param ctx The context object
+ * \param ctx The context object.
  * \param table The target table or accessor from which the column or accessor
  *              is retrieved.
  * \param name The name of the column or an accessor string.
