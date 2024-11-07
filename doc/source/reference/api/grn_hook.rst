@@ -16,26 +16,5 @@ TODO...
 Reference
 ---------
 
-.. c:type:: grn_hook_entry
-
-   TODO...
-
-.. c:function:: grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset, grn_obj *proc, grn_obj *data)
-
-   objに対してhookを追加します。
-
-   :param obj: 対象objectを指定します。
-   :param entry:
-      ``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。
-
-      ``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。
-
-      ``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調べたり、実行の中断を指示することができます。
-   :param offset:
-      hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。
-
-      0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。
-
-      objectに複数のhookが定義されている場合は順位の順に呼び出されます。
-   :param proc: 手続きを指定します。
-   :param data: hook固有情報を指定します。
+.. note::
+   We are currently switching to automatic generation using Doxygen.
