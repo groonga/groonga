@@ -1707,7 +1707,7 @@ grn_hook_entry_to_string(grn_hook_entry entry);
 
 /**
  * \brief Add a hook to the object. If multiple hooks are set for the object,
- *        they are called in order.
+ *        they are called in the order they are registered in the hook list.
  *
  * \param ctx The context object.
  * \param obj The target object.
