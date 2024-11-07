@@ -51,16 +51,14 @@ jobs:
         run: |
           ccache --show-stats --verbose --version || :
           cmake -S . -B /tmp/groonga.build --preset=doc
-          DESTDIR=/tmp/groonga.dest cmake --build /tmp/groonga.build --target install
+          mkdir -p /tmp/groonga.org/ja
+          rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
           ccache --show-stats --verbose --version || :
       - name: Create archive
         run: |
           version=$(cat base_version)
-          tar \
-            --exclude='.buildinfo' \
-            -czf document-${version}.tar.gz \
-            -C /tmp/groonga.dest/usr/local/share \
-            doc
+          mv /tmp/groonga.org /tmp/document-${version}
+          tar -czf document-${version}.tar.gz -C /tmp/ document-${version}
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
