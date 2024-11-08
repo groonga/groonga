@@ -43,6 +43,15 @@ foreach(LOCALE ${GRN_DOC_LOCALES})
 endforeach()
 
 add_custom_target(
+  doc_c_api
+  ALL COMMAND
+  OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/en/html/reference
+  doxygen ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
+  DEPENDS doc_en_html
+  VERBATIM)
+
+add_custom_target(
   doc_update_files
   COMMAND ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-files.rb
   DEPENDS doc_en_html)
