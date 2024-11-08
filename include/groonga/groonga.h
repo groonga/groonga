@@ -570,7 +570,7 @@ typedef uint32_t grn_column_flags;
 /// Indicates that the column stores a vector of values.
 #define GRN_OBJ_COLUMN_VECTOR (0x01)
 /// Index column type.
-/// Indicates that the column is used as a transposed index.
+/// Indicates that the column is used as a inverted index.
 #define GRN_OBJ_COLUMN_INDEX  (0x02)
 
 #define GRN_OBJ_COMPRESS_MASK (0x07 << 4)
@@ -588,14 +588,14 @@ typedef uint32_t grn_column_flags;
 /**
  * Enable section (paragraph) information.
  * This flag is only effective when used in conjunction with
- * \ref GRN_OBJ_COLUMN_INDEX. When set, the transposed index will store section
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store section
  * (paragraph) information.
  */
 #define GRN_OBJ_WITH_SECTION (0x01 << 7)
 /**
  * Enable weight information.
  * This flag is only effective when used in conjunction with
- * \ref GRN_OBJ_COLUMN_INDEX. When set, the transposed index will store weight
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store weight
  * information, allowing for weighted search esults based on predefined
  * criteria.
  */
@@ -603,7 +603,7 @@ typedef uint32_t grn_column_flags;
 /**
  * Enable position information.
  * This flag is only effective when used in conjunction with
- * \ref GRN_OBJ_COLUMN_INDEX. When set, the transposed index will store
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store
  * occurrence position information, enabling the tracking of term positions
  * within the indexed data
  */
