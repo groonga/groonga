@@ -149,6 +149,34 @@ typedef struct _grn_column_cache grn_column_cache;
 #define GRN_COLUMN_NAME_MEAN     "_mean"
 #define GRN_COLUMN_NAME_MEAN_LEN (sizeof(GRN_COLUMN_NAME_MEAN) - 1)
 
+/**
+ * \brief Create a new column in a table.
+ *
+ * \param ctx The context object.
+ * \param table The target table.
+ * \param name The name of the column. The name must be unique within the table.
+ *             Duplicate column names are not allowed in the same table.
+ * \param name_size The size of the `name` parameter in bytes.
+ * \param path The file path where the column will be stored. This parameter is
+ *              only effective if the \ref GRN_OBJ_PERSISTENT flag is specified
+ *              in `flags`.
+ * \param flags Available values:
+ *   * \ref GRN_OBJ_PERSISTENT
+ *   * \ref GRN_OBJ_COLUMN_INDEX
+ *   * \ref GRN_OBJ_COLUMN_SCALAR
+ *   * \ref GRN_OBJ_COLUMN_VECTOR
+ *   * \ref GRN_OBJ_COMPRESS_ZLIB
+ *   * \ref GRN_OBJ_COMPRESS_LZO
+ *   * When only used with \ref GRN_OBJ_COLUMN_INDEX as follows:
+ *     * \ref GRN_OBJ_WITH_SECTION
+ *     * \ref GRN_OBJ_WITH_WEIGHT
+ *     * \ref GRN_OBJ_WITH_POSITION
+ * \param type The type of the column values. You can specify a predefined type
+ *             or a table.
+ *
+ * \return A newly created column object on success. `NULL` on error.
+ *         See `ctx->rc` for error details.
+ */
 GRN_API grn_obj *
 grn_column_create(grn_ctx *ctx,
                   grn_obj *table,

@@ -36,54 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "tableに新たなカラムを定義します。nameは省略できません。一つのtableに同一のnameのcolumnを複数定義することはできません。"
-msgstr ""
-
-msgid "対象tableを指定します。"
-msgstr ""
-
-msgid "カラム名を指定します。"
-msgstr ""
-
-msgid "nameパラメータのsize(byte)を指定します。"
-msgstr ""
-
-msgid "カラムを格納するファイルパスを指定します。 flagsに ``GRN_OBJ_PERSISTENT`` が指定されている場合のみ有効です。 NULLなら自動的にファイルパスが付与されます。"
-msgstr ""
-
-msgid "``GRN_OBJ_PERSISTENT`` を指定すると永続columnとなります。  ``GRN_OBJ_COLUMN_INDEX`` を指定すると転置インデックスとなります。  ``GRN_OBJ_COLUMN_SCALAR`` を指定するとスカラ値(単独の値)を格納します。  ``GRN_OBJ_COLUMN_VECTOR`` を指定すると値の配列を格納します。  ``GRN_OBJ_COMPRESS_ZLIB`` を指定すると値をzlib圧縮して格納します。  ``GRN_OBJ_COMPRESS_LZO`` を指定すると値をlzo圧縮して格納します。  ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_SECTION`` を指定すると、転置索引にsection(段落情報)を合わせて格納します。  ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_WEIGHT`` を指定すると、転置索引にweight情報を合わせて格納します。  ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_POSITION`` を指定すると、転置索引に出現位置情報を合わせて格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_PERSISTENT`` を指定すると永続columnとなります。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_INDEX`` を指定すると転置インデックスとなります。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_SCALAR`` を指定するとスカラ値(単独の値)を格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_VECTOR`` を指定すると値の配列を格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COMPRESS_ZLIB`` を指定すると値をzlib圧縮して格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COMPRESS_LZO`` を指定すると値をlzo圧縮して格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_SECTION`` を指定すると、転置索引にsection(段落情報)を合わせて格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_WEIGHT`` を指定すると、転置索引にweight情報を合わせて格納します。"
-msgstr ""
-
-msgid "``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_POSITION`` を指定すると、転置索引に出現位置情報を合わせて格納します。"
-msgstr ""
-
-msgid "カラム値の型を指定します。定義済みのtypeあるいはtableを指定できます。"
-msgstr ""
-
 msgid "oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、id, sectionに対応するエントリを更新します。columnは ``GRN_OBJ_COLUMN_INDEX`` 型のカラムでなければなりません。"
 msgstr ""
 

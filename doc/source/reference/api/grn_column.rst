@@ -18,37 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size, const char *path, grn_obj_flags flags, grn_obj *type)
-
-   tableに新たなカラムを定義します。nameは省略できません。一つのtableに同一のnameのcolumnを複数定義することはできません。
-
-   :param table: 対象tableを指定します。
-   :param name: カラム名を指定します。
-   :param name_size: nameパラメータのsize(byte)を指定します。
-   :param path:
-      カラムを格納するファイルパスを指定します。
-      flagsに ``GRN_OBJ_PERSISTENT`` が指定されている場合のみ有効です。
-      NULLなら自動的にファイルパスが付与されます。
-   :param flags:
-      ``GRN_OBJ_PERSISTENT`` を指定すると永続columnとなります。
-
-      ``GRN_OBJ_COLUMN_INDEX`` を指定すると転置インデックスとなります。
-
-      ``GRN_OBJ_COLUMN_SCALAR`` を指定するとスカラ値(単独の値)を格納します。
-
-      ``GRN_OBJ_COLUMN_VECTOR`` を指定すると値の配列を格納します。
-
-      ``GRN_OBJ_COMPRESS_ZLIB`` を指定すると値をzlib圧縮して格納します。
-
-      ``GRN_OBJ_COMPRESS_LZO`` を指定すると値をlzo圧縮して格納します。
-
-      ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_SECTION`` を指定すると、転置索引にsection(段落情報)を合わせて格納します。
-
-      ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_WEIGHT`` を指定すると、転置索引にweight情報を合わせて格納します。
-
-      ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_POSITION`` を指定すると、転置索引に出現位置情報を合わせて格納します。
-   :param type: カラム値の型を指定します。定義済みのtypeあるいはtableを指定できます。
-
 .. c:function:: grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column, grn_id id, unsigned int section, grn_obj *oldvalue, grn_obj *newvalue)
 
    oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、id, sectionに対応するエントリを更新します。columnは ``GRN_OBJ_COLUMN_INDEX`` 型のカラムでなければなりません。
