@@ -588,10 +588,10 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_COMPRESS_ZSTD (0x03 << 4)
 
 /**
- * Enable section (paragraph) information.
+ * Enable section information.
  * This flag is only effective when used in conjunction with
  * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store section
- * (paragraph) information.
+ * information.
  */
 #define GRN_OBJ_WITH_SECTION (0x01 << 7)
 /**
