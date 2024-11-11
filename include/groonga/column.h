@@ -166,7 +166,8 @@ typedef struct _grn_column_cache grn_column_cache;
  *   * \ref GRN_OBJ_COLUMN_SCALAR
  *   * \ref GRN_OBJ_COLUMN_VECTOR
  *   * \ref GRN_OBJ_COMPRESS_ZLIB
- *   * \ref GRN_OBJ_COMPRESS_LZO
+ *   * \ref GRN_OBJ_COMPRESS_LZ4
+ *   * \ref GRN_OBJ_COMPRESS_ZSTD
  *   * When only used with \ref GRN_OBJ_COLUMN_INDEX as follows:
  *   * \ref GRN_OBJ_WITH_SECTION
  *   * \ref GRN_OBJ_WITH_WEIGHT
