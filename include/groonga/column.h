@@ -159,9 +159,9 @@ typedef struct _grn_column_cache grn_column_cache;
  * \param name_size The size of the `name` parameter in bytes.
  * \param path The file path where the column will be stored. This parameter is
  *             only effective if the \ref GRN_OBJ_PERSISTENT flag is specified
- *             in `flags`. If you specify \ref GRN_OBJ_PERSISTENT and `NULL` for
- *             `path`, auto generated path is used. In general, you don't need
- *             to specify a path explicitly.
+ *             in `flags`. If you specify \ref GRN_OBJ_PERSISTENT for flags and
+ *             `NULL` for `path`, auto generated path is used. In general, you
+ *             don't need to specify a path explicitly.
  * \param flags Available values:
  *              * **General flags:**
  *                * \ref GRN_OBJ_PERSISTENT
