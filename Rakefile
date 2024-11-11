@@ -259,6 +259,17 @@ namespace :release do
         end
       end
     end
+    namespace :blog do
+      desc "Generate Blog from release note"
+      task :generate do
+        groonga_org_path = File.expand_path(env_var("GROONGA_ORG_DIR"))
+
+        ruby("tools/generate-blog-entry-from-release-note.rb",
+             groonga_org_path,
+             package,
+             version.chomp)
+      end
+    end
   end
 
   desc "Tag"
