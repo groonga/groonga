@@ -598,8 +598,9 @@ typedef uint32_t grn_column_flags;
  * Enable weight information.
  * This flag is only effective when used in conjunction with
  * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store weight
- * information, allowing for weighted search results based on predefined
- * criteria.
+ * information. This allows search results to be scored based on the weights
+ * assigned to individual columns. Enabling weights increases memory usage. Do
+ * not enable if weights are not needed.
  */
 #define GRN_OBJ_WITH_WEIGHT (0x01 << 8)
 /**
