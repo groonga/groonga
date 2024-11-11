@@ -171,7 +171,7 @@ typedef struct _grn_column_cache grn_column_cache;
  *                * \ref GRN_OBJ_COMPRESS_ZLIB
  *                * \ref GRN_OBJ_COMPRESS_LZ4
  *                * \ref GRN_OBJ_COMPRESS_ZSTD
- *              * **Index flags**(Only used with \ref GRN_OBJ_COLUMN_INDEX):
+ *              * **Index flags** (Only used with \ref GRN_OBJ_COLUMN_INDEX):
  *                * \ref GRN_OBJ_WITH_SECTION
  *                * \ref GRN_OBJ_WITH_WEIGHT
  *                * \ref GRN_OBJ_WITH_POSITION
