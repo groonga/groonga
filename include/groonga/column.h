@@ -178,7 +178,7 @@ typedef struct _grn_column_cache grn_column_cache;
  * \param type The type of the column values. You can specify a predefined type
  *             or a table.
  *
- * \return A newly created column object on success. `NULL` on error.
+ * \return A newly created column object on success, `NULL` on error.
  *         See `ctx->rc` for error details.
  */
 GRN_API grn_obj *
