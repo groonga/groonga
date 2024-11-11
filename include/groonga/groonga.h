@@ -584,7 +584,7 @@ typedef uint32_t grn_column_flags;
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
 #define GRN_OBJ_COMPRESS_LZO GRN_OBJ_COMPRESS_LZ4
 /// Zstandard (zstd) compression.
-/// Indicates that the objects are compressed using Zstandard (zstd).
+/// Indicates that the objects are compressed using Zstandard.
 #define GRN_OBJ_COMPRESS_ZSTD (0x03 << 4)
 
 /**
