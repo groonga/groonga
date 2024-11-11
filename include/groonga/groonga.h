@@ -1738,8 +1738,8 @@ grn_obj_search(grn_ctx *ctx,
                grn_search_optarg *optarg);
 
 GRN_API grn_rc
-grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, grn_bool is_stable);
-GRN_API grn_bool
+grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, bool is_stable);
+GRN_API bool
 grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc);
 
 /*-------------------------------------------------------------

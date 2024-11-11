@@ -308,7 +308,7 @@ grn_proc_get_selector_operator(grn_ctx *ctx, grn_obj *proc)
 }
 
 grn_rc
-grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, grn_bool is_stable)
+grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, bool is_stable)
 {
   grn_proc *proc_ = (grn_proc *)proc;
   if (!grn_obj_is_function_proc(ctx, proc)) {
@@ -318,12 +318,12 @@ grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, grn_bool is_stable)
   return GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc)
 {
   grn_proc *proc_ = (grn_proc *)proc;
   if (!grn_obj_is_function_proc(ctx, proc)) {
-    return GRN_FALSE;
+    return false;
   }
   return proc_->callbacks.function.is_stable;
 }

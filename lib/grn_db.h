@@ -411,7 +411,7 @@ struct _grn_proc {
     struct {
       grn_selector_func *selector;
       grn_operator selector_op;
-      grn_bool is_stable;
+      bool is_stable;
       grn_applier_func *applier;
     } function;
     struct {

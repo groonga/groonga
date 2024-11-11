@@ -5328,7 +5328,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
                            NULL,
                            0,
                            NULL);
-    grn_proc_set_is_stable(ctx, proc, GRN_FALSE);
+    grn_proc_set_is_stable(ctx, proc, false);
   }
 
   {
@@ -5342,7 +5342,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
                            NULL,
                            0,
                            NULL);
-    grn_proc_set_is_stable(ctx, proc, GRN_FALSE);
+    grn_proc_set_is_stable(ctx, proc, false);
   }
 
   grn_proc_create(ctx,

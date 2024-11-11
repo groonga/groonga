@@ -1427,7 +1427,7 @@ grn_proc_create(grn_ctx *ctx,
     memset(&(res->callbacks), 0, sizeof(res->callbacks));
     if (type == GRN_PROC_FUNCTION) {
       res->callbacks.function.selector_op = GRN_OP_NOP;
-      res->callbacks.function.is_stable = GRN_TRUE;
+      res->callbacks.function.is_stable = true;
     }
     GRN_TEXT_INIT(&res->name_buf, 0);
     res->vars = NULL;
