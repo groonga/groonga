@@ -642,7 +642,7 @@ typedef uint32_t grn_column_flags;
 
 #define GRN_OBJ_TEMPORARY    (0x00 << 15)
 /// Persistent object flag.
-/// When set, the object is stored persistently in the database.
+/// When set, the object is persisted to storage.
 #define GRN_OBJ_PERSISTENT (0x01 << 15)
 
 /* flags only for grn_table_flags */
