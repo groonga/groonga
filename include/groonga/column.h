@@ -161,17 +161,18 @@ typedef struct _grn_column_cache grn_column_cache;
  *             only effective if the \ref GRN_OBJ_PERSISTENT flag is specified
  *             in `flags`.
  * \param flags Available values:
- *   * \ref GRN_OBJ_PERSISTENT
- *   * \ref GRN_OBJ_COLUMN_INDEX
- *   * \ref GRN_OBJ_COLUMN_SCALAR
- *   * \ref GRN_OBJ_COLUMN_VECTOR
- *   * \ref GRN_OBJ_COMPRESS_ZLIB
- *   * \ref GRN_OBJ_COMPRESS_LZ4
- *   * \ref GRN_OBJ_COMPRESS_ZSTD
- *   * When only used with \ref GRN_OBJ_COLUMN_INDEX as follows:
- *   * \ref GRN_OBJ_WITH_SECTION
- *   * \ref GRN_OBJ_WITH_WEIGHT
- *   * \ref GRN_OBJ_WITH_POSITION
+ *              * **General flags:**
+ *                * \ref GRN_OBJ_PERSISTENT
+ *                * \ref GRN_OBJ_COLUMN_INDEX
+ *                * \ref GRN_OBJ_COLUMN_SCALAR
+ *                * \ref GRN_OBJ_COLUMN_VECTOR
+ *                * \ref GRN_OBJ_COMPRESS_ZLIB
+ *                * \ref GRN_OBJ_COMPRESS_LZ4
+ *                * \ref GRN_OBJ_COMPRESS_ZSTD
+ *              * **Index flags**(Only used with \ref GRN_OBJ_COLUMN_INDEX):
+ *                * \ref GRN_OBJ_WITH_SECTION
+ *                * \ref GRN_OBJ_WITH_WEIGHT
+ *                * \ref GRN_OBJ_WITH_POSITION
  * \param type The type of the column values. You can specify a predefined type
  *             or a table.
  *
