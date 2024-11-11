@@ -591,7 +591,8 @@ typedef uint32_t grn_column_flags;
  * Enable section information.
  * This flag is only effective when used in conjunction with
  * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store section
- * information.
+ * information. This allows the same index column to support multiple documents
+ * using multiple columns.
  */
 #define GRN_OBJ_WITH_SECTION (0x01 << 7)
 /**
