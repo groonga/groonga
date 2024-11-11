@@ -600,8 +600,7 @@ typedef uint32_t grn_column_flags;
  * This flag is only effective when used in conjunction with
  * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store weight
  * information. This allows search results to be scored based on the weights
- * assigned to individual columns. Enabling weights increases memory usage. Do
- * not enable if weights are not needed.
+ * assigned to individual columns.
  */
 #define GRN_OBJ_WITH_WEIGHT (0x01 << 8)
 /**
@@ -610,8 +609,7 @@ typedef uint32_t grn_column_flags;
  * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store the
  * occurrence positions of terms within documents. This enables phrase searches.
  * Full-text search indexes must have position information enabled because
- * phrase searches rely on it. Enabling position information increases memory
- * usage. Do not enable if position information are not needed.
+ * phrase searches rely on it.
  */
 #define GRN_OBJ_WITH_POSITION          (0x01 << 9)
 #define GRN_OBJ_RING_BUFFER            (0x01 << 10)
