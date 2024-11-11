@@ -570,7 +570,7 @@ typedef uint32_t grn_column_flags;
 /// Indicates that the column stores a vector of values.
 #define GRN_OBJ_COLUMN_VECTOR (0x01)
 /// Index column type.
-/// Indicates that the column is used as a inverted index.
+/// Indicates that the column is an inverted index.
 #define GRN_OBJ_COLUMN_INDEX  (0x02)
 
 #define GRN_OBJ_COMPRESS_MASK (0x07 << 4)
