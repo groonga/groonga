@@ -560,31 +560,45 @@ typedef uint32_t grn_column_flags;
 
 /* flags for grn_obj_flags and grn_column_flags */
 
-/// Mask for column types.
-/// Used to isolate the column type bits from the flags.
+/**
+ * Mask for column types.
+ * Used to isolate the column type bits from the flags.
+ */
 #define GRN_OBJ_COLUMN_TYPE_MASK (0x07)
-/// Scalar column type.
-/// Indicates that the column stores a scalar value.
+/**
+ * Scalar column type.
+ * Indicates that the column stores a scalar value.
+ */
 #define GRN_OBJ_COLUMN_SCALAR (0x00)
-/// Vector column type.
-/// Indicates that the column stores a vector of values.
+/**
+ * Vector column type.
+ * Indicates that the column stores a vector of values.
+ */
 #define GRN_OBJ_COLUMN_VECTOR (0x01)
-/// Index column type.
-/// Indicates that the column is an inverted index.
+/**
+ * Index column type.
+ * Indicates that the column is an inverted index.
+ */
 #define GRN_OBJ_COLUMN_INDEX  (0x02)
 
 #define GRN_OBJ_COMPRESS_MASK (0x07 << 4)
 #define GRN_OBJ_COMPRESS_NONE (0x00 << 4)
-/// zlib compression.
-/// Indicates that the objects are compressed using zlib.
+/**
+ * zlib compression.
+ * Indicates that the objects are compressed using zlib.
+ */
 #define GRN_OBJ_COMPRESS_ZLIB (0x01 << 4)
-/// LZ4 compression.
-/// Indicates that the objects are compressed using LZ4.
+/**
+ * LZ4 compression.
+ * Indicates that the objects are compressed using LZ4.
+ */
 #define GRN_OBJ_COMPRESS_LZ4 (0x02 << 4)
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
 #define GRN_OBJ_COMPRESS_LZO GRN_OBJ_COMPRESS_LZ4
-/// Zstandard (zstd) compression.
-/// Indicates that the objects are compressed using Zstandard.
+/**
+ * Zstandard (zstd) compression.
+ * Indicates that the objects are compressed using Zstandard.
+ */
 #define GRN_OBJ_COMPRESS_ZSTD (0x03 << 4)
 
 /**
@@ -640,8 +654,10 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_KEY_VAR_SIZE (0x01 << 14)
 
 #define GRN_OBJ_TEMPORARY    (0x00 << 15)
-/// Persistent object.
-/// When set, the object is persisted to storage.
+/**
+ * Persistent object.
+ * When set, the object is persisted to storage.
+ */
 #define GRN_OBJ_PERSISTENT (0x01 << 15)
 
 /* flags only for grn_table_flags */
