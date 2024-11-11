@@ -1,29 +1,34 @@
 #!/usr/bin/env ruby
 
-groonga_org_repository_path = ENV['GROONGA_ORG_PATH']
-if groonga_org_repository_path.nil?
-  puts("Usage: GROONGA_ORG_PATH=xxx ruby generate-blog-entry-from-release-note.rb")
+document_repository_path = ARGV[0]
+if document_repository_path.nil?
   return
 end
 
-base_version_file = File.join(__dir__,
-                              "..",
-                              "base_version")
-groonga_version = File.read(base_version_file).chomp
+package = ARGV[1]
+if package.nil?
+  return
+end
 
-def contents_ja(groonga_version)
-  groonga_major_version = groonga_version.split('.')[0];
+version = ARGV[2]
+if version.nil?
+  return
+end
+
+
+def contents_ja(package, version)
+  major_version = version.split('.')[0];
 
   contents = <<CONTENTS
 ---
 layout: post.ja
-title: Groonga #{groonga_version}リリース
-description: Groonga #{groonga_version}をリリースしました！
+title: #{package} #{version}リリース
+description: #{package} #{version}をリリースしました！
 ---
 
-## Groonga #{groonga_version}リリース
+## #{package} #{version}リリース
 
-Groonga #{groonga_version}をリリースしました！
+#{package} #{version}をリリースしました！
 
 それぞれの環境毎のインストール方法: [インストール](/ja/docs/install.html)
 
@@ -31,24 +36,24 @@ Groonga #{groonga_version}をリリースしました！
 
 主な変更点は以下のリンクを参照してください。
 
-[Groonga #{groonga_version} release-note](/ja/docs/news/#{groonga_major_version}.html#release-#{groonga_version})
+[#{package} #{version} release-note](/ja/docs/news/#{major_version}.html#release-#{version.gsub(".", "-")})
 
 CONTENTS
 end
 
-def contents_en(groonga_version)
-  groonga_major_version = groonga_version.split('.')[0];
+def contents_en(package, version)
+  major_version = version.split('.')[0];
 
   contents = <<CONTENTS
 ---
 layout: post.en
-title: Groonga #{groonga_version} has been released
-description: Groonga #{groonga_version} has been released!
+title: #{package} #{version} has been released
+description: #{package} #{version} has been released!
 ---
 
-## Groonga #{groonga_version} has been released
+## #{package} #{version} has been released
 
-Groonga #{groonga_version} has been released!
+#{package} #{version} has been released!
 
 How to install: [Install](/docs/install.html)
 
@@ -56,16 +61,16 @@ How to install: [Install](/docs/install.html)
 
 Please refer the following link.
 
-[Groonga #{groonga_version} release-note](/docs/news/#{groonga_major_version}.html#release-#{groonga_version})
+[#{package} #{version} release-note](/docs/news/#{major_version}.html#release-#{version.gsub(".", "-")})
 
 CONTENTS
 end
 
-groonga_blog_file_name = "#{Time.now.strftime("%F")}-groonga-#{groonga_version}.md"
-File.open("#{groonga_org_repository_path}/ja/_posts/#{groonga_blog_file_name}", "w") do |blog_ja|
-  blog_ja.write(contents_ja(groonga_version))
+blog_file_name = "#{Time.now.strftime("%F")}-#{package}-#{version}.md"
+File.open("#{document_repository_path}/ja/_posts/#{blog_file_name}", "w") do |blog_ja|
+  blog_ja.write(contents_ja(package.capitalize, version))
 end
 
-File.open("#{groonga_org_repository_path}/en/_posts/#{groonga_blog_file_name}", "w") do |blog_en|
-  blog_en.write(contents_en(groonga_version))
+File.open("#{document_repository_path}/en/_posts/#{blog_file_name}", "w") do |blog_en|
+  blog_en.write(contents_en(package.capitalize, version))
 end
