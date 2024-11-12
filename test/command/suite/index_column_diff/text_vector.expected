@@ -33,9 +33,7 @@ index_column_diff Terms data_index
         "id": 1,
         "value": "hello"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -54,9 +52,7 @@ index_column_diff Terms data_index
         "id": 2,
         "value": "world"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -75,9 +71,7 @@ index_column_diff Terms data_index
         "id": 3,
         "value": "good"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -96,9 +90,7 @@ index_column_diff Terms data_index
         "id": 4,
         "value": "-"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -117,9 +109,7 @@ index_column_diff Terms data_index
         "id": 5,
         "value": "by"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -138,9 +128,7 @@ index_column_diff Terms data_index
         "id": 6,
         "value": "groonga"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,

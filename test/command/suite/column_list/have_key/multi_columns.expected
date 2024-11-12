@@ -58,9 +58,7 @@ column_list Users
       "COLUMN_SCALAR",
       "Users",
       "ShortText",
-      [
-
-      ],
+      [],
       ""
     ],
     [
@@ -71,9 +69,7 @@ column_list Users
       "COLUMN_SCALAR|PERSISTENT",
       "Users",
       "UInt8",
-      [
-
-      ],
+      [],
       ""
     ],
     [
@@ -84,9 +80,7 @@ column_list Users
       "COLUMN_SCALAR|PERSISTENT",
       "Users",
       "ShortText",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

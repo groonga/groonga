@@ -56,9 +56,7 @@ column_list Memos
       "COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES|PERSISTENT",
       "Memos",
       "Float",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

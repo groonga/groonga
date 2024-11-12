@@ -7,12 +7,8 @@ normalize   'NormalizerHTML("report_source_offset", true)'   "a&lt;b&amp;<b>c</b
   ],
   {
     "normalized": "a<b&cAdZe",
-    "types": [
-
-    ],
-    "checks": [
-
-    ],
+    "types": [],
+    "checks": [],
     "offsets": [
       0,
       1,

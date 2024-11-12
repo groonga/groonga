@@ -49,8 +49,7 @@ select Memos   --output_columns 'tags, vector_join(tags)'
         "GroongaRuby"
       ],
       [
-        {
-        },
+        {},
         ""
       ]
     ]

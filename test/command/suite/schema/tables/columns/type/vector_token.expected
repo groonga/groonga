@@ -14,8 +14,7 @@ schema
     0.0
   ],
   {
-    "plugins": {
-    },
+    "plugins": {},
     "types": {
       "BFloat16": {
         "id": 20,
@@ -290,15 +289,9 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "normalizers": [],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -327,13 +320,9 @@ schema
             "weight_float32": false,
             "weight_bfloat16": false,
             "position": false,
-            "sources": [
-
-            ],
+            "sources": [],
             "generator": "",
-            "indexes": [
-
-            ],
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -373,9 +362,7 @@ schema
               }
             ],
             "generator": "",
-            "indexes": [
-
-            ],
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -417,12 +404,8 @@ schema
             "options": null
           }
         ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -434,8 +417,7 @@ schema
           },
           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC121"
         },
-        "columns": {
-        }
+        "columns": {}
       }
     }
   }

@@ -47,9 +47,7 @@ select Memos   --output_columns 'numbers, vector_join(numbers)'
         "1129"
       ],
       [
-        [
-
-        ],
+        [],
         ""
       ]
     ]

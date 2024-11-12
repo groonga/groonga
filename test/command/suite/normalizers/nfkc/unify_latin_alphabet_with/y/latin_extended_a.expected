@@ -13,8 +13,6 @@ normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ŶŷŸ"   WIT
       "alpha",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

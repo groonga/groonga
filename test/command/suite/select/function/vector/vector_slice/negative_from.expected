@@ -53,12 +53,8 @@ select Memos   --output_columns 'tags, vector_slice(tags, -2, 1)'
         ]
       ],
       [
-        [
-
-        ],
-        [
-
-        ]
+        [],
+        []
       ]
     ]
   ]

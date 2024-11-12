@@ -301,9 +301,7 @@ schema
           "options": null
         },
         "normalizer": null,
-        "normalizers": [
-
-        ],
+        "normalizers": [],
         "token_filters": [
           {
             "id": 256,
@@ -311,9 +309,7 @@ schema
             "options": null
           }
         ],
-        "indexes": [
-
-        ],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -325,8 +321,7 @@ schema
           },
           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --token_filters TokenFilterStopWord"
         },
-        "columns": {
-        }
+        "columns": {}
       }
     }
   }

@@ -40,9 +40,7 @@ select Notes --output_columns title,title_snippets
       ],
       [
         "Hello Mroonga",
-        [
-
-        ]
+        []
       ]
     ]
   ]

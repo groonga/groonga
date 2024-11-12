@@ -57,10 +57,8 @@ select Memos   --columns[slice].stage output   --columns[slice].type Tags   --co
         }
       ],
       [
-        {
-        },
-        {
-        }
+        {},
+        {}
       ]
     ]
   ]

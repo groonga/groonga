@@ -56,9 +56,7 @@ column_list Counts
       "COLUMN_SCALAR|PERSISTENT",
       "Counts",
       "UInt8",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

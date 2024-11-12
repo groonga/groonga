@@ -55,9 +55,7 @@ select Memos   --output_columns 'tags, vector_find(tags, "Full text search", "@"
         "vector_find(): unsupported mode: <match>"
       ],
       [
-        [
-
-        ],
+        [],
         "vector_find(): unsupported mode: <match>"
       ]
     ]

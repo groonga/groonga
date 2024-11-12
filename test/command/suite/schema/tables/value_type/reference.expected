@@ -10,8 +10,7 @@ schema
     0.0
   ],
   {
-    "plugins": {
-    },
+    "plugins": {},
     "types": {
       "BFloat16": {
         "id": 20,
@@ -290,15 +289,9 @@ schema
         },
         "tokenizer": null,
         "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "normalizers": [],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -308,8 +301,7 @@ schema
           },
           "command_line": "table_create --name Logs --flags TABLE_NO_KEY --value_type Users"
         },
-        "columns": {
-        }
+        "columns": {}
       },
       "Users": {
         "id": 256,
@@ -323,15 +315,9 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "normalizers": [],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -341,8 +327,7 @@ schema
           },
           "command_line": "table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText"
         },
-        "columns": {
-        }
+        "columns": {}
       }
     }
   }

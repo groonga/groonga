@@ -47,9 +47,7 @@ object_inspect Memos.title_text
         "size": 4096
       },
       "compress": null,
-      "compress_filters": [
-
-      ],
+      "compress_filters": [],
       "generator": "html_untag(title_html)"
     },
     "sources": [

@@ -52,9 +52,7 @@ object_inspect Notes.title_terms
       "weight": false,
       "weight_float32": false,
       "weight_bfloat16": false,
-      "compress_filters": [
-
-      ]
+      "compress_filters": []
     },
     "sources": [
       {

@@ -44,9 +44,7 @@ select Memos --filter 'tags && true'
       [
         2,
         "no tag",
-        [
-
-        ]
+        []
       ]
     ]
   ]

@@ -34,9 +34,7 @@ index_column_diff Values data_index
         "id": 1,
         "value": "Hello World"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -49,9 +47,7 @@ index_column_diff Values data_index
         "id": 2,
         "value": "Good-by World"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -64,9 +60,7 @@ index_column_diff Values data_index
         "id": 3,
         "value": "Hello Groonga"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,
@@ -79,9 +73,7 @@ index_column_diff Values data_index
         "id": 4,
         "value": "Good-by Groonga"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,
