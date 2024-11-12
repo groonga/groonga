@@ -38,49 +38,49 @@ extern "C" {
 #define GRN_DB_DELIMITER            '.'
 #define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
 
-#define GRN_N_RESERVED_TYPES 256
+#define GRN_N_RESERVED_TYPES        256
 
 /* #define GRN_REFERENCE_COUNT_DEBUG */
 #ifdef GRN_REFERENCE_COUNT_DEBUG
-# define grn_log_reference_count(...) printf(__VA_ARGS__)
+#  define grn_log_reference_count(...) printf(__VA_ARGS__)
 #else
-# define grn_log_reference_count(...)
+#  define grn_log_reference_count(...)
 #endif
 
-#define GRN_TABLE_GROUPED (0x01<<0)
-#define GRN_TABLE_IS_GROUPED(table)\
+#define GRN_TABLE_GROUPED (0x01 << 0)
+#define GRN_TABLE_IS_GROUPED(table)                                            \
   ((table)->header.impl_flags & GRN_TABLE_GROUPED)
-#define GRN_TABLE_GROUPED_ON(table)\
+#define GRN_TABLE_GROUPED_ON(table)                                            \
   ((table)->header.impl_flags |= GRN_TABLE_GROUPED)
-#define GRN_TABLE_IS_MULTI_KEYS_GROUPED(table)\
-  (GRN_TABLE_IS_GROUPED(table) &&\
-   table->header.domain == GRN_ID_NIL)
+#define GRN_TABLE_IS_MULTI_KEYS_GROUPED(table)                                 \
+  (GRN_TABLE_IS_GROUPED(table) && table->header.domain == GRN_ID_NIL)
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
-#define GRN_DEFINE_NAME_CUSTOM(obj, prefix)                             \
-  const char *prefix;                                                   \
-  char prefix ## _buffer[GRN_TABLE_MAX_KEY_SIZE];                       \
-  int prefix ## _size;                                                  \
-  do {                                                                  \
-    if (!obj) {                                                         \
-      prefix = "(NULL)";                                                \
-      prefix ## _size = (int)strlen(prefix);                            \
-    } else if (DB_OBJ(obj)->id == GRN_ID_NIL) {                         \
-      prefix = "(temporary)";                                           \
-      prefix ## _size = (int)strlen(prefix);                            \
-    } else {                                                            \
-      prefix ## _size = grn_obj_name(ctx, (grn_obj *)obj,               \
-                                     prefix ## _buffer,                 \
-                                     GRN_TABLE_MAX_KEY_SIZE);           \
-      prefix = prefix ## _buffer;                                       \
-      if (prefix ## _size == 0) {                                       \
-        prefix = "(anonymous)";                                         \
-        prefix ## _size = (int)strlen(prefix);                          \
-      } else if (prefix ## _size < GRN_TABLE_MAX_KEY_SIZE) {            \
-        prefix ## _buffer[prefix ## _size] = '\0';                      \
-      }                                                                 \
-    }                                                                   \
+#define GRN_DEFINE_NAME_CUSTOM(obj, prefix)                                    \
+  const char *prefix;                                                          \
+  char prefix##_buffer[GRN_TABLE_MAX_KEY_SIZE];                                \
+  int prefix##_size;                                                           \
+  do {                                                                         \
+    if (!obj) {                                                                \
+      prefix = "(NULL)";                                                       \
+      prefix##_size = (int)strlen(prefix);                                     \
+    } else if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
+      prefix = "(temporary)";                                                  \
+      prefix##_size = (int)strlen(prefix);                                     \
+    } else {                                                                   \
+      prefix##_size = grn_obj_name(ctx,                                        \
+                                   (grn_obj *)obj,                             \
+                                   prefix##_buffer,                            \
+                                   GRN_TABLE_MAX_KEY_SIZE);                    \
+      prefix = prefix##_buffer;                                                \
+      if (prefix##_size == 0) {                                                \
+        prefix = "(anonymous)";                                                \
+        prefix##_size = (int)strlen(prefix);                                   \
+      } else if (prefix##_size < GRN_TABLE_MAX_KEY_SIZE) {                     \
+        prefix##_buffer[prefix##_size] = '\0';                                 \
+      }                                                                        \
+    }                                                                          \
   } while (false)
 
 #define GRN_DEFINE_NAME(obj) GRN_DEFINE_NAME_CUSTOM(obj, name)
@@ -107,103 +107,110 @@ struct _grn_db {
   bool is_deferred_unrefing;
 };
 
-#define GRN_SERIALIZED_SPEC_INDEX_SPEC   0
-#define GRN_SERIALIZED_SPEC_INDEX_PATH   1
-#define GRN_SERIALIZED_SPEC_INDEX_SOURCE 2
-#define GRN_SERIALIZED_SPEC_INDEX_HOOK   3
+#define GRN_SERIALIZED_SPEC_INDEX_SPEC          0
+#define GRN_SERIALIZED_SPEC_INDEX_PATH          1
+#define GRN_SERIALIZED_SPEC_INDEX_SOURCE        2
+#define GRN_SERIALIZED_SPEC_INDEX_HOOK          3
 #define GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
-#define GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS 5
-#define GRN_SERIALIZED_SPEC_INDEX_EXPR   4
-#define GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR 4
-#define GRN_SERIALIZED_SPEC_INDEX_RA_GENERATOR 4
+#define GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS   5
+#define GRN_SERIALIZED_SPEC_INDEX_EXPR          4
+#define GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR  4
+#define GRN_SERIALIZED_SPEC_INDEX_RA_GENERATOR  4
 
 typedef struct {
   grn_obj_header header;
   grn_id range;
 } grn_obj_spec;
 
-bool grn_obj_spec_unpack(grn_ctx *ctx,
+bool
+grn_obj_spec_unpack(grn_ctx *ctx,
+                    grn_id id,
+                    void *encoded_spec,
+                    uint32_t encoded_spec_size,
+                    grn_obj_spec **spec,
+                    grn_obj *decoded_spec,
+                    const char *error_message_tag);
+
+void
+grn_obj_spec_get_path(grn_ctx *ctx,
+                      grn_obj_spec *spec,
+                      grn_id id,
+                      char *buffer,
+                      grn_db *db,
+                      grn_obj *decoded_spec);
+
+#define GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec)                          \
+  do {                                                                         \
+    grn_obj *db = grn_ctx_db((ctx));                                           \
+    grn_db *db_raw = (grn_db *)db;                                             \
+    grn_obj decoded_spec;                                                      \
+    grn_io_win iw;                                                             \
+    bool iw_need_unref = false;                                                \
+    GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);                   \
+    GRN_TABLE_EACH_BEGIN((ctx), db, cursor, id)                                \
+    {                                                                          \
+      void *encoded_spec;                                                      \
+      uint32_t encoded_spec_size;                                              \
+      bool success;                                                            \
+      grn_obj_spec *spec;                                                      \
+                                                                               \
+      if (iw_need_unref) {                                                     \
+        grn_ja_unref(ctx, &iw);                                                \
+        iw_need_unref = false;                                                 \
+      }                                                                        \
+      encoded_spec =                                                           \
+        grn_ja_ref((ctx), db_raw->specs, id, &iw, &encoded_spec_size);         \
+      if (!encoded_spec) {                                                     \
+        continue;                                                              \
+      }                                                                        \
+      iw_need_unref = true;                                                    \
+                                                                               \
+      GRN_BULK_REWIND(&decoded_spec);                                          \
+      success = grn_obj_spec_unpack(ctx,                                       \
+                                    id,                                        \
+                                    encoded_spec,                              \
+                                    encoded_spec_size,                         \
+                                    &spec,                                     \
+                                    &decoded_spec,                             \
+                                    __FUNCTION__);                             \
+      if (!success) {                                                          \
+        continue;                                                              \
+      }
+
+#define GRN_DB_EACH_SPEC_END(ctx, cursor)                                      \
+  }                                                                            \
+  GRN_TABLE_EACH_END(ctx, cursor);                                             \
+  if (iw_need_unref) {                                                         \
+    grn_ja_unref(ctx, &iw);                                                    \
+  }                                                                            \
+  GRN_OBJ_FIN((ctx), &decoded_spec);                                           \
+  }                                                                            \
+  while (false)
+
+void
+grn_db_init_from_env(void);
+
+void
+grn_db_wal_recover(grn_ctx *ctx, grn_db *db);
+
+GRN_API grn_rc
+grn_db_close(grn_ctx *ctx, grn_obj *db);
+
+grn_obj *
+grn_db_keys(grn_obj *s);
+
+void
+grn_db_generate_pathname(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
+grn_rc
+grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db);
+
+grn_rc
+grn_db_set_option_values(grn_ctx *ctx,
+                         grn_obj *db,
                          grn_id id,
-                         void *encoded_spec,
-                         uint32_t encoded_spec_size,
-                         grn_obj_spec **spec,
-                         grn_obj *decoded_spec,
-                         const char *error_message_tag);
-
-void grn_obj_spec_get_path(grn_ctx *ctx,
-                           grn_obj_spec *spec,
-                           grn_id id,
-                           char *buffer,
-                           grn_db *db,
-                           grn_obj *decoded_spec);
-
-#define GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec) do {              \
-  grn_obj *db = grn_ctx_db((ctx));                                      \
-  grn_db *db_raw = (grn_db *)db;                                        \
-  grn_obj decoded_spec;                                                 \
-  grn_io_win iw;                                                        \
-  bool iw_need_unref = false;                                           \
-  GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);              \
-  GRN_TABLE_EACH_BEGIN((ctx), db, cursor, id) {                         \
-    void *encoded_spec;                                                 \
-    uint32_t encoded_spec_size;                                         \
-    bool success;                                                       \
-    grn_obj_spec *spec;                                                 \
-                                                                        \
-    if (iw_need_unref) {                                                \
-      grn_ja_unref(ctx, &iw);                                           \
-      iw_need_unref = false;                                            \
-    }                                                                   \
-    encoded_spec = grn_ja_ref((ctx),                                    \
-                              db_raw->specs,                            \
-                              id,                                       \
-                              &iw,                                      \
-                              &encoded_spec_size);                      \
-    if (!encoded_spec) {                                                \
-      continue;                                                         \
-    }                                                                   \
-    iw_need_unref = true;                                               \
-                                                                        \
-    GRN_BULK_REWIND(&decoded_spec);                                     \
-    success = grn_obj_spec_unpack(ctx,                                  \
-                                  id,                                   \
-                                  encoded_spec,                         \
-                                  encoded_spec_size,                    \
-                                  &spec,                                \
-                                  &decoded_spec,                        \
-                                  __FUNCTION__);                        \
-   if (!success) {                                                      \
-     continue;                                                          \
-   }                                                                    \
-
-#define GRN_DB_EACH_SPEC_END(ctx, cursor)         \
-  } GRN_TABLE_EACH_END(ctx, cursor);              \
-  if (iw_need_unref) {                            \
-    grn_ja_unref(ctx, &iw);                       \
-  }                                               \
-  GRN_OBJ_FIN((ctx), &decoded_spec);              \
-} while(false)
-
-void grn_db_init_from_env(void);
-
-void grn_db_wal_recover(grn_ctx *ctx, grn_db *db);
-
-GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
-
-grn_obj *grn_db_keys(grn_obj *s);
-
-void grn_db_generate_pathname(grn_ctx *ctx,
-                              grn_obj *db,
-                              grn_id id,
-                              char *buffer);
-grn_rc grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db);
-
-grn_rc grn_db_set_option_values(grn_ctx *ctx,
-                                grn_obj *db,
-                                grn_id id,
-                                const char *name,
-                                int name_length,
-                                grn_obj *values);
+                         const char *name,
+                         int name_length,
+                         grn_obj *values);
 grn_option_revision
 grn_db_get_option_values(grn_ctx *ctx,
                          grn_obj *db,
@@ -212,32 +219,28 @@ grn_db_get_option_values(grn_ctx *ctx,
                          int name_length,
                          grn_option_revision revision,
                          grn_obj *values);
-grn_rc grn_db_clear_option_values(grn_ctx *ctx,
-                                  grn_obj *db,
-                                  grn_id id);
-grn_rc grn_obj_refer_auto_release(grn_ctx *ctx,
-                                  grn_obj *obj,
-                                  uint32_t count);
-grn_rc grn_obj_refer_recursive_auto_release(grn_ctx *ctx,
-                                            grn_obj *obj,
-                                            uint32_t count);
-grn_rc grn_obj_refer_recursive_dependent_auto_release(grn_ctx *ctx,
-                                                      grn_obj *obj,
-                                                      uint32_t count);
+grn_rc
+grn_db_clear_option_values(grn_ctx *ctx, grn_obj *db, grn_id id);
+grn_rc
+grn_obj_refer_auto_release(grn_ctx *ctx, grn_obj *obj, uint32_t count);
+grn_rc
+grn_obj_refer_recursive_auto_release(grn_ctx *ctx,
+                                     grn_obj *obj,
+                                     uint32_t count);
+grn_rc
+grn_obj_refer_recursive_dependent_auto_release(grn_ctx *ctx,
+                                               grn_obj *obj,
+                                               uint32_t count);
 grn_rc
 grn_db_add_deferred_unref(grn_ctx *ctx,
                           grn_obj *db,
                           grn_deferred_unref *deferred_unref);
 grn_rc
-grn_db_remove_deferred_unref(grn_ctx *ctx,
-                             grn_obj *db,
-                             grn_id id);
+grn_db_remove_deferred_unref(grn_ctx *ctx, grn_obj *db, grn_id id);
 grn_rc
-grn_db_command_processed(grn_ctx *ctx,
-                         grn_obj *db);
+grn_db_command_processed(grn_ctx *ctx, grn_obj *db);
 
-typedef struct
-{
+typedef struct {
   grn_obj *table;
   grn_id id;
   const void *key;
@@ -252,48 +255,71 @@ grn_table_delete_data_init(grn_ctx *ctx,
                            grn_table_delete_data *data,
                            grn_obj *table);
 grn_rc
-grn_table_delete_data_fin(grn_ctx *ctx,
-                          grn_table_delete_data *data);
+grn_table_delete_data_fin(grn_ctx *ctx, grn_table_delete_data *data);
 
-grn_rc grn_table_delete_by_id_without_lock(grn_ctx *ctx, grn_table_delete_data *data);
+grn_rc
+grn_table_delete_by_id_without_lock(grn_ctx *ctx, grn_table_delete_data *data);
 
-grn_id grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
-                       void **value);
-grn_id grn_table_get_by_key(grn_ctx *ctx,
-                            grn_obj *table,
-                            grn_obj *key);
-grn_id grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
-                       void **value, int *added);
-typedef struct
-{
+grn_id
+grn_table_get_v(
+  grn_ctx *ctx, grn_obj *table, const void *key, int key_size, void **value);
+grn_id
+grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key);
+grn_id
+grn_table_add_v(grn_ctx *ctx,
+                grn_obj *table,
+                const void *key,
+                int key_size,
+                void **value,
+                int *added);
+typedef struct {
   bool added;
   bool ignore_empty_normalized_key;
   bool ignored;
 } grn_table_add_options;
-grn_id grn_table_add_by_key(grn_ctx *ctx,
-                            grn_obj *table,
-                            grn_obj *key,
-                            grn_table_add_options *options);
-GRN_API grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
-                                  grn_encoding *encoding, grn_obj **tokenizer,
-                                  grn_obj **normalizer,
-                                  grn_obj **token_filters);
-const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);
+grn_id
+grn_table_add_by_key(grn_ctx *ctx,
+                     grn_obj *table,
+                     grn_obj *key,
+                     grn_table_add_options *options);
+GRN_API grn_rc
+grn_table_get_info(grn_ctx *ctx,
+                   grn_obj *table,
+                   grn_table_flags *flags,
+                   grn_encoding *encoding,
+                   grn_obj **tokenizer,
+                   grn_obj **normalizer,
+                   grn_obj **token_filters);
+const char *
+_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);
 
-grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
-                        const void *key, uint32_t key_size,
-                        grn_operator mode, grn_obj *res, grn_operator op);
+grn_rc
+grn_table_search(grn_ctx *ctx,
+                 grn_obj *table,
+                 const void *key,
+                 uint32_t key_size,
+                 grn_operator mode,
+                 grn_obj *res,
+                 grn_operator op);
 
-grn_rc grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table,
-                              const void *key, uint32_t key_size,
-                              grn_fuzzy_search_optarg *args, grn_obj *res, grn_operator op);
+grn_rc
+grn_table_fuzzy_search(grn_ctx *ctx,
+                       grn_obj *table,
+                       const void *key,
+                       uint32_t key_size,
+                       grn_fuzzy_search_optarg *args,
+                       grn_obj *res,
+                       grn_operator op);
 
-grn_id grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
+grn_id
+grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
 
-int grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk);
+int
+grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk);
 
-grn_table_cursor *grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
-                                              grn_id min, grn_id max, int flags);
+grn_table_cursor *
+grn_table_cursor_open_by_id(
+  grn_ctx *ctx, grn_obj *table, grn_id min, grn_id max, int flags);
 
 grn_inline static void
 grn_table_add_subrec(grn_ctx *ctx,
@@ -316,10 +342,11 @@ grn_table_add_subrec(grn_ctx *ctx,
   }
 }
 
-grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
+grn_obj *
+grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
-grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
-
+grn_rc
+grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
 
 typedef enum {
   PROC_INIT = 0,
@@ -333,33 +360,30 @@ struct _grn_type {
 
 #define GRN_TYPE_SIZE(type) ((type)->range)
 
-#define GRN_TABLE_SORT_GEO            (0x02<<0)
+#define GRN_TABLE_SORT_GEO  (0x02 << 0)
 
-#define GRN_OBJ_TMP_OBJECT 0x80000000
-#define GRN_OBJ_TMP_COLUMN 0x40000000
+#define GRN_OBJ_TMP_OBJECT  0x80000000
+#define GRN_OBJ_TMP_COLUMN  0x40000000
 
-#define GRN_DB_OBJP(obj) \
-  (obj &&\
-   ((GRN_SNIP == ((grn_db_obj *)obj)->header.type) ||\
-    ((GRN_CURSOR_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
-     (((grn_db_obj *)obj)->header.type <= GRN_COLUMN_INDEX))))
+#define GRN_DB_OBJP(obj)                                                       \
+  (obj && ((GRN_SNIP == ((grn_db_obj *)obj)->header.type) ||                   \
+           ((GRN_CURSOR_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) && \
+            (((grn_db_obj *)obj)->header.type <= GRN_COLUMN_INDEX))))
 
-#define GRN_OBJ_TABLEP(obj) \
-  (obj &&\
-   (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
+#define GRN_OBJ_TABLEP(obj)                                                    \
+  (obj && (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&          \
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
-#define GRN_OBJ_INDEX_COLUMNP(obj) \
-  (obj &&\
-   DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX)
+#define GRN_OBJ_INDEX_COLUMNP(obj)                                             \
+  (obj && DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX)
 
-#define GRN_OBJ_VECTOR_COLUMNP(obj) \
-  (obj &&\
-   DB_OBJ(obj)->header.type == GRN_COLUMN_VAR_SIZE &&\
-   (DB_OBJ(obj)->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)
+#define GRN_OBJ_VECTOR_COLUMNP(obj)                                            \
+  (obj && DB_OBJ(obj)->header.type == GRN_COLUMN_VAR_SIZE &&                   \
+   (DB_OBJ(obj)->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) ==                   \
+     GRN_OBJ_COLUMN_VECTOR)
 
-#define GRN_OBJ_WEIGHT_VECTOR_COLUMNP(obj) \
-  (GRN_OBJ_VECTOR_COLUMNP(obj) &&\
+#define GRN_OBJ_WEIGHT_VECTOR_COLUMNP(obj)                                     \
+  (GRN_OBJ_VECTOR_COLUMNP(obj) &&                                              \
    (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_WEIGHT))
 
 struct _grn_hook {
@@ -420,13 +444,13 @@ struct _grn_proc {
     struct {
       grn_tokenizer_init_func *init;
       grn_tokenizer_next_func *next;
-      grn_tokenizer_fin_func  *fin;
+      grn_tokenizer_fin_func *fin;
     } tokenizer;
     struct {
-      grn_token_filter_init_func   *init;
+      grn_token_filter_init_func *init;
       grn_token_filter_init_query_func *init_query;
       grn_token_filter_filter_func *filter;
-      grn_token_filter_fin_func    *fin;
+      grn_token_filter_fin_func *fin;
     } token_filter;
     struct {
       grn_scorer_score_func *score;
@@ -448,30 +472,48 @@ struct _grn_proc {
 };
 
 #define GRN_PROC_GET_VARS() (grn_proc_get_vars(ctx, user_data))
-#define GRN_PROC_GET_VAR(name) (grn_proc_get_var(ctx, user_data, name, strlen(name)))
-#define GRN_PROC_GET_VAR_BY_OFFSET(offset) (grn_proc_get_var_by_offset(ctx, user_data, offset))
-#define GRN_PROC_GET_OR_ADD_VAR(name) (grn_proc_get_or_add_var(ctx, user_data, name, strlen(name)))
-#define GRN_PROC_ALLOC(domain, flags) (grn_proc_alloc(ctx, user_data, domain, flags))
+#define GRN_PROC_GET_VAR(name)                                                 \
+  (grn_proc_get_var(ctx, user_data, name, strlen(name)))
+#define GRN_PROC_GET_VAR_BY_OFFSET(offset)                                     \
+  (grn_proc_get_var_by_offset(ctx, user_data, offset))
+#define GRN_PROC_GET_OR_ADD_VAR(name)                                          \
+  (grn_proc_get_or_add_var(ctx, user_data, name, strlen(name)))
+#define GRN_PROC_ALLOC(domain, flags)                                          \
+  (grn_proc_alloc(ctx, user_data, domain, flags))
 
-grn_obj *grn_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data);
+grn_obj *
+grn_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data);
 
-grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
-                          const char *name, unsigned int name_size);
+grn_obj *
+grn_proc_get_var(grn_ctx *ctx,
+                 grn_user_data *user_data,
+                 const char *name,
+                 unsigned int name_size);
 
-GRN_API grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
-                                            unsigned int offset);
-GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
-                                         const char *name, unsigned int name_size);
+GRN_API grn_obj *
+grn_proc_get_var_by_offset(grn_ctx *ctx,
+                           grn_user_data *user_data,
+                           unsigned int offset);
+GRN_API grn_obj *
+grn_proc_get_or_add_var(grn_ctx *ctx,
+                        grn_user_data *user_data,
+                        const char *name,
+                        unsigned int name_size);
 
-GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                                grn_id domain, unsigned char flags);
+GRN_API grn_obj *
+grn_proc_alloc(grn_ctx *ctx,
+               grn_user_data *user_data,
+               grn_id domain,
+               unsigned char flags);
 
-GRN_API grn_rc grn_proc_call(grn_ctx *ctx, grn_obj *proc,
-                             int nargs, grn_obj *caller);
+GRN_API grn_rc
+grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller);
 
-grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
-                                 const char *name, unsigned int name_size);
-
+grn_obj *
+grn_expr_get_or_add_var(grn_ctx *ctx,
+                        grn_obj *expr,
+                        const char *name,
+                        unsigned int name_size);
 
 typedef struct _grn_accessor grn_accessor;
 
@@ -504,25 +546,25 @@ typedef enum {
   GRN_ACCESSOR_FUNCALL
 } grn_accessor_action;
 
-GRN_API const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
-void grn_obj_get_range_info(grn_ctx *ctx,
-                            grn_obj *obj,
-                            grn_id *range_id,
-                            grn_obj_flags *range_flags);
+GRN_API const char *
+grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
+void
+grn_obj_get_range_info(grn_ctx *ctx,
+                       grn_obj *obj,
+                       grn_id *range_id,
+                       grn_obj_flags *range_flags);
 
-
-grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
+grn_rc
+grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* flag value used for grn_obj.header.flags */
 
-#define GRN_OBJ_CUSTOM_NAME            (0x01<<12) /* db_obj which has custom name */
+#define GRN_OBJ_CUSTOM_NAME (0x01 << 12) /* db_obj which has custom name */
 
-#define GRN_OBJ_RESOLVE(ctx,obj) \
-  (((obj)->header.type != GRN_PTR)\
-   ? (obj)\
-   : GRN_PTR_VALUE(obj)\
-      ? GRN_PTR_VALUE(obj)\
-      : grn_ctx_at((ctx), (obj)->header.domain))
+#define GRN_OBJ_RESOLVE(ctx, obj)                                              \
+  (((obj)->header.type != GRN_PTR) ? (obj)                                     \
+   : GRN_PTR_VALUE(obj)            ? GRN_PTR_VALUE(obj)                        \
+                                   : grn_ctx_at((ctx), (obj)->header.domain))
 
 /* expr */
 
@@ -538,9 +580,11 @@ typedef struct _grn_expr grn_expr;
  * function when you want to open a permanent named table that is
  * registered in DB.
  **/
-GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
-                                const char *name, unsigned int name_size,
-                                const char *path);
+GRN_API grn_obj *
+grn_table_open(grn_ctx *ctx,
+               const char *name,
+               unsigned int name_size,
+               const char *path);
 
 /**
  * grn_column_open:
@@ -553,9 +597,13 @@ GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
  * @name in @table. grn_ctx_get() is better rather than this function
  * when you want to open a column of an permanent table in DB.
  **/
-grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
-                         const char *name, unsigned int name_size,
-                         const char *path, grn_obj *type);
+grn_obj *
+grn_column_open(grn_ctx *ctx,
+                grn_obj *table,
+                const char *name,
+                unsigned int name_size,
+                const char *path,
+                grn_obj *type);
 
 /**
  * grn_obj_path_rename:
@@ -564,64 +612,93 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
  *
  * It renames object's path that is stored in @old_path to @new_path.
  **/
-grn_rc grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
+grn_rc
+grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
-grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
-#define GRN_DB_CHECK_NAME_ERR(error_context, name, name_size) \
-  ERR(GRN_INVALID_ARGUMENT,\
-       "%s name can't start with '%c' and contains only 0-9, A-Z, a-z, #, @, - or _: <%.*s>",\
-      error_context, GRN_DB_PSEUDO_COLUMN_PREFIX, name_size, name)
+grn_rc
+grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
+#define GRN_DB_CHECK_NAME_ERR(error_context, name, name_size)                  \
+  ERR(GRN_INVALID_ARGUMENT,                                                    \
+      "%s name can't start with '%c' and contains only 0-9, A-Z, a-z, #, @, "  \
+      "- or _: <%.*s>",                                                        \
+      error_context,                                                           \
+      GRN_DB_PSEUDO_COLUMN_PREFIX,                                             \
+      name_size,                                                               \
+      name)
 
-#define GRN_DB_P(s) ((s) && ((grn_db *)s)->obj.header.type == GRN_DB)
+#define GRN_DB_P(s)            ((s) && ((grn_db *)s)->obj.header.type == GRN_DB)
 #define GRN_DB_PERSISTENT_P(s) (((grn_db *)s)->specs)
 
-#define GRN_OBJ_GET_VALUE_IMD (0xffffffffU)
+#define GRN_OBJ_GET_VALUE_IMD  (0xffffffffU)
 
-grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
+grn_rc
+grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
 
-#define GRN_ACCESSORP(obj) \
+#define GRN_ACCESSORP(obj)                                                     \
   ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR))
 
-uint32_t grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj);
+uint32_t
+grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj);
 
-grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
-int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
-void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
+grn_id
+grn_obj_register(grn_ctx *ctx,
+                 grn_obj *db,
+                 const char *name,
+                 unsigned int name_size);
+int
+grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
+void
+grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
-grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
+grn_rc
+grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
 
-void grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj);
-void grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj);
+void
+grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj);
+void
+grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj);
 
-void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
-GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
-grn_hash *grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);
-grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
+void
+grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+GRN_API grn_rc
+grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+grn_hash *
+grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);
+grn_obj *
+grn_expr_open(grn_ctx *ctx,
+              grn_obj_spec *spec,
+              const uint8_t *p,
+              const uint8_t *pe);
 
-GRN_API grn_rc grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
-                                              grn_table_sort_key *group_key,
-                                              grn_obj *result_set,
-                                              uint32_t range_gap);
+GRN_API grn_rc
+grn_table_group_with_range_gap(grn_ctx *ctx,
+                               grn_obj *table,
+                               grn_table_sort_key *group_key,
+                               grn_obj *result_set,
+                               uint32_t range_gap);
 
-grn_obj *grn_table_column(grn_ctx *ctx,
-                          grn_obj *table,
-                          const char *name,
-                          ssize_t name_size);
-grn_rc grn_table_parse_load_columns(grn_ctx *ctx,
-                                    grn_obj *table,
-                                    const char *input,
-                                    size_t input_size,
-                                    grn_obj *columns);
+grn_obj *
+grn_table_column(grn_ctx *ctx,
+                 grn_obj *table,
+                 const char *name,
+                 ssize_t name_size);
+grn_rc
+grn_table_parse_load_columns(grn_ctx *ctx,
+                             grn_obj *table,
+                             const char *input,
+                             size_t input_size,
+                             grn_obj *columns);
 
 typedef struct {
   grn_id target;
   unsigned int section;
 } grn_obj_default_set_value_hook_data;
 
-grn_obj *grn_obj_default_set_value_hook(grn_ctx *ctx,
-                                        int nargs,
-                                        grn_obj **args,
-                                        grn_user_data *user_data);
+grn_obj *
+grn_obj_default_set_value_hook(grn_ctx *ctx,
+                               int nargs,
+                               grn_obj **args,
+                               grn_user_data *user_data);
 
 grn_rc
 grn_column_get_all_token_columns(grn_ctx *ctx,
@@ -632,11 +709,10 @@ grn_column_get_all_hooked_columns(grn_ctx *ctx,
                                   grn_obj *obj,
                                   grn_obj *hooked_columns);
 
-grn_rc grn_pvector_fin(grn_ctx *ctx, grn_obj *obj);
+grn_rc
+grn_pvector_fin(grn_ctx *ctx, grn_obj *obj);
 
-
-typedef struct grn_id_map
-{
+typedef struct grn_id_map {
   grn_hash *hash;
   grn_critical_section critical_section;
 } grn_id_map;
@@ -694,7 +770,8 @@ grn_id_map_resolve(grn_ctx *ctx, grn_id_map *id_map, grn_id id)
   grn_id resolved_id = id;
   CRITICAL_SECTION_ENTER(id_map->critical_section);
   void *value;
-  if (grn_hash_get(ctx, id_map->hash, &id, sizeof(grn_id), &value) != GRN_ID_NIL) {
+  if (grn_hash_get(ctx, id_map->hash, &id, sizeof(grn_id), &value) !=
+      GRN_ID_NIL) {
     resolved_id = *(grn_id *)value;
   }
   CRITICAL_SECTION_LEAVE(id_map->critical_section);
@@ -703,11 +780,11 @@ grn_id_map_resolve(grn_ctx *ctx, grn_id_map *id_map, grn_id id)
 
 #define GRN_DB_WAL_DISABLE_WAL_BEGIN(ctx)                                      \
   do {                                                                         \
-    grn_wal_role wal_role_current = grn_ctx_get_wal_role(ctx);            \
+    grn_wal_role wal_role_current = grn_ctx_get_wal_role(ctx);                 \
     grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
 
 #define GRN_DB_WAL_DISABLE_WAL_END(ctx)                                        \
-  grn_ctx_set_wal_role(ctx, wal_role_current);                             \
+  grn_ctx_set_wal_role(ctx, wal_role_current);                                 \
   }                                                                            \
   while (false)
 
@@ -996,7 +1073,8 @@ grn_column_create_similar_id_map(grn_ctx *ctx,
   return column;
 }
 
-bool grn_ctx_is_removing(grn_ctx *ctx, grn_id id);
+bool
+grn_ctx_is_removing(grn_ctx *ctx, grn_id id);
 
 #ifdef __cplusplus
 }
