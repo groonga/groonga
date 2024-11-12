@@ -218,8 +218,8 @@ grn_column_create_similar(grn_ctx *ctx,
  * \brief Update an entry in an index column based on the old and new values.
  *
  * \param ctx      The context object.
- * \param column   The target index column to be updated. Must be of type \ref
- *                 GRN_OBJ_COLUMN_INDEX.
+ * \param column   The target index column to be updated. The type of `column`
+ *                 must be \ref GRN_OBJ_COLUMN_INDEX.
  * \param id       The ID of the record whose index entry will be updated.
  * \param section  The section number within the record's index where the update
  *                 will be done.
@@ -231,8 +231,8 @@ grn_column_create_similar(grn_ctx *ctx,
  *                 the `id` and `section`.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
- *         For example, \ref GRN_INVALID_ARGUMENT is returned if the `column` is
- *         not of type \ref GRN_OBJ_COLUMN_INDEX.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the type of
+ *         `column` is not \ref GRN_OBJ_COLUMN_INDEX.
  */
 GRN_API grn_rc
 grn_column_index_update(grn_ctx *ctx,
