@@ -36,25 +36,10 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、id, sectionに対応するエントリを更新します。columnは ``GRN_OBJ_COLUMN_INDEX`` 型のカラムでなければなりません。"
+msgid "columnが属するtableを返します。"
 msgstr ""
 
 msgid "対象columnを指定します。"
-msgstr ""
-
-msgid "対象レコードのIDを指定します。"
-msgstr ""
-
-msgid "対象レコードのセクション番号を指定します。"
-msgstr ""
-
-msgid "更新前の値を指定します。"
-msgstr ""
-
-msgid "更新後の値を指定します。"
-msgstr ""
-
-msgid "columnが属するtableを返します。"
 msgstr ""
 
 msgid "ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オブジェクトでなければいけません。"

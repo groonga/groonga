@@ -18,16 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column, grn_id id, unsigned int section, grn_obj *oldvalue, grn_obj *newvalue)
-
-   oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、id, sectionに対応するエントリを更新します。columnは ``GRN_OBJ_COLUMN_INDEX`` 型のカラムでなければなりません。
-
-   :param column: 対象columnを指定します。
-   :param id: 対象レコードのIDを指定します。
-   :param section: 対象レコードのセクション番号を指定します。
-   :param oldvalue: 更新前の値を指定します。
-   :param newvalue: 更新後の値を指定します。
-
 .. c:function:: grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column)
 
    columnが属するtableを返します。
