@@ -79,8 +79,9 @@ repos:
           ?lib/grn_ctx\.hpp|
           ?lib/grn_ctx\.h|
           ?lib/grn_ctx_impl\.h|
-          ?lib/grn_distance\.h|
+          ?lib/grn_db\.h|
           ?lib/grn_distance\.hpp|
+          ?lib/grn_distance\.h|
           ?lib/grn_distance_impl\.hpp|
           ?lib/grn_distance_instantiation\.hpp|
           ?lib/grn_error\.h|
