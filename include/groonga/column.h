@@ -224,8 +224,11 @@ grn_column_create_similar(grn_ctx *ctx,
  * \param section  The section number within the record's index where the update
  *                 will be done.
  * \param oldvalue The value before the update, used to identify the specific
- *                 index entry to be updated.
+ *                 index entry to be updated. You can use `NULL` when this is
+ *                 the first update.
  * \param newvalue The new value to replace the old value in the index entry.
+ *                 You can use `NULL` when you want to remove index entries for
+ *                 the `id` and `section`.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if the `column` is
