@@ -400,8 +400,22 @@ grn_get_default_command_version(void);
  */
 GRN_API grn_rc
 grn_set_default_command_version(grn_command_version version);
+/**
+ * \param ctx The context object.
+ *
+ * \return Command version of this context.
+ */
 GRN_API grn_command_version
 grn_ctx_get_command_version(grn_ctx *ctx);
+/**
+ * \brief Set command version for this context.
+ *
+ * \param ctx The context object.
+ * \param version New command version.
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_UNSUPPORTED_COMMAND_VERSION on
+ *         error.
+ */
 GRN_API grn_rc
 grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
 /**

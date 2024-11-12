@@ -83,16 +83,6 @@ Reference
    :param func: ``ctx`` を破棄するときに呼ばれる関数を指定します。
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
-.. c:function:: grn_command_version grn_ctx_get_command_version(grn_ctx *ctx)
-
-   command_versionを返します。
-
-.. c:function:: grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
-
-   command_versionを変更します。
-
-   :param version: 変更後のcommand_versionを指定します。
-
 .. c:function:: grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db)
 
    ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態(init直後の状態)になります。

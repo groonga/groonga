@@ -108,15 +108,6 @@ msgstr ""
 msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
 msgstr ""
 
-msgid "command_versionを返します。"
-msgstr ""
-
-msgid "command_versionを変更します。"
-msgstr ""
-
-msgid "変更後のcommand_versionを指定します。"
-msgstr ""
-
 msgid "ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態(init直後の状態)になります。"
 msgstr ""
 
