@@ -76,37 +76,27 @@ select Terms   --limit -1   --sort_keys _id   --columns[index_records].stage out
       [
         1,
         "groonga",
-        [
-
-        ]
+        []
       ],
       [
         2,
         "full",
-        [
-
-        ]
+        []
       ],
       [
         3,
         "-",
-        [
-
-        ]
+        []
       ],
       [
         4,
         "text",
-        [
-
-        ]
+        []
       ],
       [
         5,
         "search",
-        [
-
-        ]
+        []
       ]
     ]
   ]

@@ -34,8 +34,6 @@ normalize   'NormalizerNFKC("unify_kana_case", true)'   "ァアィイゥウェ�
       "katakana",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

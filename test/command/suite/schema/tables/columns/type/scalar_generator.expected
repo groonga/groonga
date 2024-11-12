@@ -12,8 +12,7 @@ schema
     0.0
   ],
   {
-    "plugins": {
-    },
+    "plugins": {},
     "types": {
       "BFloat16": {
         "id": 20,
@@ -288,15 +287,9 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "normalizers": [],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -325,13 +318,9 @@ schema
             "weight_float32": false,
             "weight_bfloat16": false,
             "position": false,
-            "sources": [
-
-            ],
+            "sources": [],
             "generator": "",
-            "indexes": [
-
-            ],
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -371,9 +360,7 @@ schema
               }
             ],
             "generator": "html_untag(title_html)",
-            "indexes": [
-
-            ],
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {

@@ -59,8 +59,7 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _ke
         "Rroonga"
       ]
     ],
-    {
-    }
+    {}
   ]
 ]
 #|w| [table-sort-key][string] ignore invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>

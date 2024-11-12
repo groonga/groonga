@@ -55,8 +55,6 @@ normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true)'   "カガキ�
       "katakana",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

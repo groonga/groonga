@@ -34,8 +34,7 @@ check --obj Memos.tags
           "variation": 1
         }
       ],
-      "garbage_counts": {
-      },
+      "garbage_counts": {},
       "free_elements": {
         "1": {
           "segment": 1,
@@ -159,8 +158,7 @@ check --obj Memos.tags
           "variation": 1
         }
       ],
-      "garbage_counts": {
-      },
+      "garbage_counts": {},
       "free_elements": {
         "1": {
           "segment": 1,

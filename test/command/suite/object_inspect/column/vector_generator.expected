@@ -50,9 +50,7 @@ object_inspect Memos.title_snippets
       "weight": false,
       "weight_float32": false,
       "weight_bfloat16": false,
-      "compress_filters": [
-
-      ],
+      "compress_filters": [],
       "generator": "snippet(title, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
     },
     "sources": [

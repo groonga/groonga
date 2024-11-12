@@ -346,9 +346,7 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": []
     }
   }
 ]

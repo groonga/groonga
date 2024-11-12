@@ -60,9 +60,7 @@ column_list Lexicon
       "COLUMN_SCALAR",
       "Lexicon",
       "ShortText",
-      [
-
-      ],
+      [],
       ""
     ],
     [

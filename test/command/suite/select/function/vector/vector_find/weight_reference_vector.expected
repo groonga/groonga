@@ -52,8 +52,7 @@ select Memos   --output_columns 'tags, vector_find(tags, "Full text search")'
         "Full text search"
       ],
       [
-        {
-        },
+        {},
         null
       ]
     ]

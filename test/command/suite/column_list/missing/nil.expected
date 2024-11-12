@@ -58,9 +58,7 @@ column_list Memos
       "COLUMN_SCALAR|MISSING_NIL|PERSISTENT",
       "Memos",
       "Tags",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

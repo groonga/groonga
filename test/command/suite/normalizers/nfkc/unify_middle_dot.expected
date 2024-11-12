@@ -18,8 +18,6 @@ normalize   'NormalizerNFKC("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・�
       "symbol",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

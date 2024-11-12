@@ -60,9 +60,7 @@ column_list Notes
       "COLUMN_SCALAR|PERSISTENT",
       "Notes",
       "Text",
-      [
-
-      ],
+      [],
       ""
     ],
     [

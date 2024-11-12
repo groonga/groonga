@@ -56,9 +56,7 @@ column_list Memos
       "COLUMN_SCALAR|COMPRESS_ZLIB|PERSISTENT",
       "Memos",
       "Text",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

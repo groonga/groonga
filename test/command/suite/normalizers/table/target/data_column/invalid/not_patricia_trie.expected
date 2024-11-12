@@ -25,12 +25,8 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized",         
   ],
   {
     "normalized": "",
-    "types": [
-
-    ],
-    "checks": [
-
-    ]
+    "types": [],
+    "checks": []
   }
 ]
 #|e| [normalizer][table][target] table must be a TABLE_PAT_KEY: <#<table:hash Terms key:ShortText value:(nil) size:1 columns:[nor...(149)>

@@ -27,8 +27,6 @@ normalize NormalizerNFKC121 "ЛИЦЕНЗИЯ лицензия" WITH_TYPES
       "alpha",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

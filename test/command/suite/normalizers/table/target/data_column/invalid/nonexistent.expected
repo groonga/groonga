@@ -21,12 +21,8 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized",         
   ],
   {
     "normalized": "",
-    "types": [
-
-    ],
-    "checks": [
-
-    ]
+    "types": [],
+    "checks": []
   }
 ]
 #|e| [normalizer][table][target] nonexistent column: <nonexistent>

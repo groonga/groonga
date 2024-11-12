@@ -55,9 +55,7 @@ select Memos   --slices[groonga].match_columns '_key'   --slices[groonga].query 
       ]
     ],
     {
-      "groonga": [
-
-      ]
+      "groonga": []
     }
   ]
 ]

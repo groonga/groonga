@@ -446,9 +446,7 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": []
     },
     "Users.description": {
       "id": 262,
@@ -468,9 +466,7 @@ object_list
         "id": 14,
         "name": "ShortText"
       },
-      "sources": [
-
-      ],
+      "sources": [],
       "generator": ""
     },
     "Users.tags": {
@@ -491,9 +487,7 @@ object_list
         "id": 14,
         "name": "ShortText"
       },
-      "sources": [
-
-      ],
+      "sources": [],
       "generator": ""
     },
     "Terms": {
@@ -514,9 +508,7 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": []
     },
     "Terms.users": {
       "id": 265,
@@ -617,9 +609,7 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": []
     },
     "Tags.users": {
       "id": 269,

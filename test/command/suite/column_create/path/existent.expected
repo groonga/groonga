@@ -348,9 +348,7 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": []
     },
     "Data.number": {
       "id": 257,
@@ -370,9 +368,7 @@ object_list
         "id": 10,
         "name": "Int64"
       },
-      "sources": [
-
-      ],
+      "sources": [],
       "generator": ""
     }
   }
@@ -431,9 +427,7 @@ column_list Data
       "COLUMN_SCALAR|PERSISTENT",
       "Data",
       "Int64",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

@@ -27,8 +27,6 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   ".あ
       "symbol",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

@@ -7,9 +7,7 @@ normalize NormalizerAuto "ｱ㌕ＡZ" WITH_CHECKS
   ],
   {
     "normalized": "アキログラムaz",
-    "types": [
-
-    ],
+    "types": [],
     "checks": [
       3,
       0,

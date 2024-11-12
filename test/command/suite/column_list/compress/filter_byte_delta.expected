@@ -56,9 +56,7 @@ column_list Memos
       "COLUMN_SCALAR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA|PERSISTENT",
       "Memos",
       "Text",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

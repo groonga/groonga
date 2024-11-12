@@ -52,9 +52,7 @@ select Memos   --output_columns 'tags, vector_find(tags, "ga", "@$")'
         "vector_find(): unsupported mode: <suffix>"
       ],
       [
-        [
-
-        ],
+        [],
         "vector_find(): unsupported mode: <suffix>"
       ]
     ]

@@ -21,8 +21,6 @@ normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ẀẁẂẃ�
       "alpha",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

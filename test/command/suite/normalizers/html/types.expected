@@ -17,8 +17,6 @@ normalize   'NormalizerHTML'   "a&lt;b&#x80;<b>c</b>&#x3042;d"   WITH_TYPES
       "alpha",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

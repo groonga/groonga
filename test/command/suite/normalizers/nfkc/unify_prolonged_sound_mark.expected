@@ -16,8 +16,6 @@ normalize   'NormalizerNFKC("unify_prolonged_sound_mark", true)'   "ー—―─
       "katakana",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

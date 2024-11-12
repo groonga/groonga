@@ -54,9 +54,7 @@ select Memos   --output_columns 'numbers, vector_find(numbers, 4, "<")'
         2
       ],
       [
-        [
-
-        ],
+        [],
         null
       ]
     ]

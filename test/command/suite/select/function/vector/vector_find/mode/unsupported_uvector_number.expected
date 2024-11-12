@@ -57,9 +57,7 @@ select Memos   --output_columns 'numbers, vector_find(numbers, 4, "@$")'
         "vector_find(): unsupported mode: <suffix>"
       ],
       [
-        [
-
-        ],
+        [],
         "vector_find(): unsupported mode: <suffix>"
       ]
     ]

@@ -10,12 +10,8 @@ normalize   'NormalizerNFKC130("unify_kana", true),    NormalizerTable("normaliz
   ],
   {
     "normalized": "",
-    "types": [
-
-    ],
-    "checks": [
-
-    ]
+    "types": [],
+    "checks": []
   }
 ]
 #|e| [normalizer][table][normalized] nonexistent column: <Nonexistent.nonexistent>

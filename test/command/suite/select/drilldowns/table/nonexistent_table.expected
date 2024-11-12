@@ -68,8 +68,7 @@ select Memos   --drilldowns[invalid].keys nonexistent   --drilldowns[nonexistent
         "Rroonga"
       ]
     ],
-    {
-    }
+    {}
   ]
 ]
 #|w| [table-sort-key][string] ignore invalid sort key: <nonexistent>: table:<Memos> keys:<nonexistent>

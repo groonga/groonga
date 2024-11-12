@@ -278,7 +278,6 @@ schema
         "name": "TokenFilterNFKC150"
       }
     },
-    "tables": {
-    }
+    "tables": {}
   }
 ]

@@ -8,8 +8,7 @@ schema
     0.0
   ],
   {
-    "plugins": {
-    },
+    "plugins": {},
     "types": {
       "BFloat16": {
         "id": 20,
@@ -305,12 +304,8 @@ schema
             ]
           }
         ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "token_filters": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -321,8 +316,7 @@ schema
           },
           "command_line": "table_create --name Tags --flags TABLE_PAT_KEY --key_type ShortText --normalizer \"NormalizerNFKC100(\\\"unify_kana\\\", true)\""
         },
-        "columns": {
-        }
+        "columns": {}
       }
     }
   }

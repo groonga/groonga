@@ -41,11 +41,7 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   ".a.b
   ],
   {
     "normalized": ".<A>.<B>.<C>.<D>.<E>.<F>.<G>.<H>.<I>.<J>.<K>.<L>.<M>.<N>.<O>.<P>.<Q>.<R>.<S>.<T>.<U>.<V>.<W>.<X>.<Y>.<Z>.",
-    "types": [
-
-    ],
-    "checks": [
-
-    ]
+    "types": [],
+    "checks": []
   }
 ]

@@ -56,9 +56,7 @@ column_list Counts
       "COLUMN_SCALAR|INVALID_WARN|PERSISTENT",
       "Counts",
       "UInt8",
-      [
-
-      ],
+      [],
       ""
     ]
   ]

@@ -21,8 +21,6 @@ normalize   'NormalizerNFKC("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋
       "symbol",
       "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]
