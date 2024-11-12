@@ -142,7 +142,7 @@ void grn_obj_spec_get_path(grn_ctx *ctx,
   grn_db *db_raw = (grn_db *)db;                                        \
   grn_obj decoded_spec;                                                 \
   grn_io_win iw;                                                        \
-  grn_bool iw_need_unref = GRN_FALSE;                                   \
+  bool iw_need_unref = false;                                           \
   GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);              \
   GRN_TABLE_EACH_BEGIN((ctx), db, cursor, id) {                         \
     void *encoded_spec;                                                 \
@@ -152,7 +152,7 @@ void grn_obj_spec_get_path(grn_ctx *ctx,
                                                                         \
     if (iw_need_unref) {                                                \
       grn_ja_unref(ctx, &iw);                                           \
-      iw_need_unref = GRN_FALSE;                                        \
+      iw_need_unref = false;                                            \
     }                                                                   \
     encoded_spec = grn_ja_ref((ctx),                                    \
                               db_raw->specs,                            \
@@ -162,7 +162,7 @@ void grn_obj_spec_get_path(grn_ctx *ctx,
     if (!encoded_spec) {                                                \
       continue;                                                         \
     }                                                                   \
-    iw_need_unref = GRN_TRUE;                                           \
+    iw_need_unref = true;                                               \
                                                                         \
     GRN_BULK_REWIND(&decoded_spec);                                     \
     success = grn_obj_spec_unpack(ctx,                                  \
@@ -182,7 +182,7 @@ void grn_obj_spec_get_path(grn_ctx *ctx,
     grn_ja_unref(ctx, &iw);                       \
   }                                               \
   GRN_OBJ_FIN((ctx), &decoded_spec);              \
-} while(GRN_FALSE)
+} while(false)
 
 void grn_db_init_from_env(void);
 
