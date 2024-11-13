@@ -2766,7 +2766,7 @@ delete_reference_records_in_index(grn_ctx *ctx,
   grn_obj source_ids;
   unsigned int i, n_ids;
   grn_obj sources;
-  grn_bool have_reference_source = GRN_FALSE;
+  bool have_reference_source = false;
 
   GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, 0);
@@ -2785,7 +2785,7 @@ delete_reference_records_in_index(grn_ctx *ctx,
     source = grn_ctx_at(ctx, source_id);
     if (grn_obj_get_range(ctx, source) == index->header.domain) {
       GRN_PTR_PUT(ctx, &sources, source);
-      have_reference_source = GRN_TRUE;
+      have_reference_source = true;
     } else {
       grn_obj_unlink(ctx, source);
       GRN_PTR_PUT(ctx, &sources, NULL);
@@ -4447,7 +4447,7 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
   const char *key;
   unsigned int key_len;
   grn_obj casted_query;
-  grn_bool need_cast = GRN_FALSE;
+  bool need_cast = false;
   grn_id *query_domain_keep = optarg ? optarg->query_domain : NULL;
 
   {
@@ -5542,7 +5542,7 @@ grn_column_create(grn_ctx *ctx,
   grn_id id = GRN_ID_NIL;
   grn_id range = GRN_ID_NIL;
   grn_id domain = GRN_ID_NIL;
-  grn_bool is_persistent_table;
+  bool is_persistent_table;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
   unsigned int fullname_size;
   char buffer[PATH_MAX];
@@ -5899,13 +5899,13 @@ grn_accessor_refer(grn_ctx *ctx, grn_obj *accessor)
   ((grn_accessor *)accessor)->reference_count++;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_obj_get_accessor_rset_value(grn_ctx *ctx,
                                 grn_obj *obj,
                                 grn_accessor **res,
                                 uint8_t action)
 {
-  grn_bool succeeded = GRN_FALSE;
+  bool succeeded = false;
   grn_accessor **rp;
 
   for (rp = res; GRN_TRUE; rp = &(*rp)->next) {
@@ -5918,7 +5918,7 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx,
       grn_table_group_flags flags;                                             \
       flags = DB_OBJ(obj)->group.flags;                                        \
       if (flags & flag) {                                                      \
-        succeeded = GRN_TRUE;                                                  \
+        succeeded = true;                                                      \
         (*rp)->action = action;                                                \
         goto exit;                                                             \
       }                                                                        \
@@ -5928,7 +5928,7 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx,
     case GRN_ACCESSOR_GET_SCORE:
       if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
         (*rp)->action = action;
-        succeeded = GRN_TRUE;
+        succeeded = true;
         goto exit;
       }
       break;
@@ -5950,7 +5950,7 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx,
     case GRN_ACCESSOR_GET_NSUBRECS:
       if (GRN_TABLE_IS_GROUPED(obj)) {
         (*rp)->action = action;
-        succeeded = GRN_TRUE;
+        succeeded = true;
         goto exit;
       }
       break;
