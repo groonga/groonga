@@ -806,6 +806,13 @@ struct _grn_obj {
 
 GRN_API grn_rc
 grn_ctx_use(grn_ctx *ctx, grn_obj *db);
+/**
+ * \brief Retrieve the DB that the context is handling.
+ *
+ * \param ctx The context object.
+ *
+ * \return The DB object in handling, `NULL` if no DB handling.
+ */
 GRN_API grn_obj *
 grn_ctx_db(grn_ctx *ctx);
 GRN_API grn_obj *
