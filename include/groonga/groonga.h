@@ -987,40 +987,40 @@ typedef enum {
 /**
  * \brief Retrieve a column or an accessor from a specified table or accessor.
  *
- *        This function returns a column corresponding to the given name from
- *        the specified table. If the name does not correspond to any column, it
- *        returns NULL. If the name is an accessor string, it returns the
- *        corresponding accessor. Accessor strings are dot-concatenated column
- *        names. Column names that are started with `_` such as `_id` and `_key`
- *        are pseudo column names. This function returns an accessor for a
- *        pseudo column name.
- *        See https://groonga.org/docs/reference/columns/pseudo.html for pseudo
- *        column.
+ * This function returns a column corresponding to the given name from
+ * the specified table. If the name does not correspond to any column, it
+ * returns NULL. If the name is an accessor string, it returns the
+ * corresponding accessor. Accessor strings are dot-concatenated column
+ * names. Column names that are started with `_` such as `_id` and `_key`
+ * are pseudo column names. This function returns an accessor for a
+ * pseudo column name.
+ * See https://groonga.org/docs/reference/columns/pseudo.html for pseudo
+ * column.
  *
- *        Column name examples: `name`, `age`
+ * Column name examples: `name`, `age`
  *
- *        Pseudo column name examples: `_key`, `_score`, `_nsubrecs`
+ * Pseudo column name examples: `_key`, `_score`, `_nsubrecs`
  *
- *        Accessor string examples: `tag.name`, `user.bookmarks.url`
+ * Accessor string examples: `tag.name`, `user.bookmarks.url`
  *
- *        If this function returns an accessor, you must call `grn_obj_unlink()`
- *        with it when it's no longer needed. You can use
- *        `grn_obj_is_accessor()` to detect whether it's an accessor or not.
+ * If this function returns an accessor, you must call \ref grn_obj_unlink
+ * with it when it's no longer needed. You can use
+ * \ref grn_obj_is_accessor to detect whether it's an accessor or not.
  *
- *        To illustrate its usage, here is an example to use \ref grn_obj_column
- *        with pseudo column like \ref GRN_COLUMN_NAME_ID and
- *        \ref GRN_COLUMN_NAME_ID_LEN to retrieve the accessor object for `_id`.
+ * To illustrate its usage, here is an example to use \ref grn_obj_column
+ * with pseudo column like \ref GRN_COLUMN_NAME_ID and
+ * \ref GRN_COLUMN_NAME_ID_LEN to retrieve the accessor object for `_id`.
  *
- *        ```c
- *        grn_obj *id_accessor = grn_obj_column(ctx,
- *                                              table,
- *                                              GRN_COLUMN_NAME_ID,
- *                                              GRN_COLUMN_NAME_ID_LEN);
- *        // ...
- *        grn_obj_unlink(ctx, id_accessor);
- *        ```
+ * ```c
+ * grn_obj *id_accessor = grn_obj_column(ctx,
+ *                                       table,
+ *                                       GRN_COLUMN_NAME_ID,
+ *                                       GRN_COLUMN_NAME_ID_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, id_accessor);
+ * ```
  *
- * \param ctx The context object
+ * \param ctx The context object.
  * \param table The target table or accessor from which the column or accessor
  *              is retrieved.
  * \param name The name of the column or an accessor string.
