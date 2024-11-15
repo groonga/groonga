@@ -217,12 +217,12 @@ grn_column_create_similar(grn_ctx *ctx,
 /**
  * \brief Update an entry in an index column based on the old and new values.
  *
- * \param ctx      The context object.
- * \param column   The target index column to be updated. The type of `column`
- *                 must be \ref GRN_OBJ_COLUMN_INDEX.
- * \param id       The ID of the record whose index entry will be updated.
- * \param section  The section number within the record's index where the update
- *                 will be done.
+ * \param ctx The context object.
+ * \param column The target index column to be updated. The type of `column`
+ *               must be \ref GRN_OBJ_COLUMN_INDEX.
+ * \param id The ID of the record whose index entry will be updated.
+ * \param section The section number within the record's index where the update
+ *                will be done.
  * \param oldvalue The value before the update, used to identify the specific
  *                 index entry to be updated. You can use `NULL` when this is
  *                 the first update.
