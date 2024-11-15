@@ -105,6 +105,7 @@
 #cmakedefine GRN_WITH_ROARING_BITMAPS
 #cmakedefine GRN_WITH_SIMDJSON
 #cmakedefine GRN_WITH_SIMSIMD
+#cmakedefine GRN_WITH_USEARCH
 #cmakedefine GRN_WITH_XSIMD
 #cmakedefine GRN_WITH_XXHASH
 #cmakedefine GRN_WITH_ZEROMQ

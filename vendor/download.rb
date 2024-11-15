@@ -90,6 +90,11 @@ targets.each do |target|
     url = "https://github.com/ashvardanian/SimSIMD/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "simsimd-#{version}.tar.gz")
+  when "usearch"
+    version = cmakelists[/set\(GRN_USEARCH_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/unum-cloud/usearch/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "usearch-#{version}.tar.gz")
   when "xsimd"
     version = cmakelists[/set\(GRN_XSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/xtensor-stack/xsimd/archive/refs/tags/"
