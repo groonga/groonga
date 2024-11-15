@@ -1587,7 +1587,7 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
   endif()
   if(usearch_FOUND)
     set(GRN_WITH_USEARCH TRUE)
-    target_link_libraries(grn_dependencies INTERFACE usearch)
+    target_link_libraries(grn_dependencies INTERFACE usearch::usearch)
     message(STATUS "usearch: system")
   elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
     # We need to use function to create a variable scope
