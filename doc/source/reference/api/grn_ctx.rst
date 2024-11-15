@@ -91,10 +91,6 @@ Reference
 
    :param db: ctxが使用するdbを指定します。
 
-.. c:function:: grn_obj *grn_ctx_db(grn_ctx *ctx)
-
-   ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返します。
-
 .. c:function:: grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
 
    ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。

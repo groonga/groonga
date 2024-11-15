@@ -117,9 +117,6 @@ msgstr "``GRN_CTX_PER_DB`` フラグを指定した :c:type:`grn_ctx` と一緒�
 msgid "ctxが使用するdbを指定します。"
 msgstr ""
 
-msgid "ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返します。"
-msgstr ""
-
 msgid "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。"
 msgstr ""
 
