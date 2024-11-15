@@ -39,6 +39,7 @@ all_targets = [
   "message-pack",
   "simdjson",
   "simsimd",
+  "usearch",
   "xsimd",
   "zstd",
 ]
