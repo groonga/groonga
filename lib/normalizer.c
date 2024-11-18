@@ -3949,6 +3949,12 @@ grn_nfkc_normalize_remove_target_non_blank_character_p(
   if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
     return data->options->remove_symbol;
   }
+  /* `unify_middle_dot` is `true` and the unified middle dot is handled as a
+   * symbol. */
+  if (data->options->unify_middle_dot &&
+      grn_nfkc_normalize_is_middle_dot_family(current, current_length)) {
+    return data->options->remove_symbol;
+  }
   return false;
 }
 

@@ -1,0 +1,37 @@
+normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_middle_dot", true)'   "This ·ᐧ•∙ is ⋅⸱ middle ・･ dots"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "this  is  middle  dots",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "others",
+      "alpha",
+      "alpha",
+      "others",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "null"
+    ],
+    "checks": []
+  }
+]
