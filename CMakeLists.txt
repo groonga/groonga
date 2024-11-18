@@ -1569,8 +1569,6 @@ else()
 endif()
 
 set(GRN_USEARCH_BUNDLED_VERSION "2.16.2")
-set(GRN_USEARCH_BUNDLED_SHA256
-    "f10f39397f45b664168c85b1b7facc7d6277ae1b92cb08b99aa2275cd7a4d24a")
 set(GRN_WITH_USEARCH
     "auto"
     CACHE STRING "Use USearch for ANN Search.")
