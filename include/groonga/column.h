@@ -245,7 +245,7 @@ grn_column_index_update(grn_ctx *ctx,
  * \brief Retrieve a table to which a given column belongs.
  *
  * \param ctx The context object.
- * \param column The target column object whose parent table is to be retrieved.
+ * \param column The target column to retrieve the table to which it belongs.
  *
  * \return The table object that contains the specified column on success,
  *         `NULL` if the column does not belong to any table.
