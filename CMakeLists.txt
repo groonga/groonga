@@ -1590,9 +1590,15 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
   elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
     # We need to use function to create a variable scope
     function(grn_build_usearch)
+      set(USEARCH_SOURCE_BASE_NAME
+          "usearch-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+      set(USEARCH_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${USEARCH_SOURCE_BASE_NAME}")
       if(EXISTS ${USEARCH_SOURCE_LOCAL_PATH})
         fetchcontent_declare(
-          usearch SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vendor/usearch")
+          usearch
+          ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+          URL ${USEARCH_SOURCE_LOCAL_PATH})
       else()
         set(USEARCH_SUBMODULES "fp16")
         fetchcontent_declare(
