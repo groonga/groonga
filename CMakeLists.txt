@@ -1570,7 +1570,7 @@ endif()
 
 set(GRN_USEARCH_BUNDLED_VERSION "2.16.2")
 set(GRN_WITH_USEARCH
-    "auto"
+    "no"
     CACHE STRING "Use USearch for ANN Search.")
 set(GRN_WITH_USEARCH_BUNDLED FALSE)
 if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
