@@ -2327,7 +2327,12 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
-    if (before && data->options->unify_middle_dot) {
+    /* When both `unify_middle_dot` and `remove_symbol` are enabled, the middle
+     * dot is handled as a symbol and has already been removed. Therefore, when
+     * `unify_middle_dot` is enabled and `remove_symbol` is disabled, the middle
+     * dot is unified. */
+    if (before && data->options->unify_middle_dot &&
+        !data->options->remove_symbol) {
       if (grn_nfkc_normalize_is_middle_dot_family(unifying,
                                                   unified_char_length)) {
         unifying = unified_middle_dot;
@@ -3946,15 +3951,20 @@ grn_nfkc_normalize_remove_target_non_blank_character_p(
   const unsigned char *current,
   size_t current_length)
 {
+  if (!data->options->remove_symbol) {
+    return false;
+  }
+
   if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
-    return data->options->remove_symbol;
+    return true;
   }
   /* `unify_middle_dot` is `true` and the unified middle dot is handled as a
    * symbol. */
   if (data->options->unify_middle_dot &&
       grn_nfkc_normalize_is_middle_dot_family(current, current_length)) {
-    return data->options->remove_symbol;
+    return true;
   }
+
   return false;
 }
 
