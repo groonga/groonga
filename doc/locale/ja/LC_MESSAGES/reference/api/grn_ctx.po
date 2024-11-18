@@ -108,15 +108,6 @@ msgstr ""
 msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
 msgstr ""
 
-msgid "ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態(init直後の状態)になります。"
-msgstr ""
-
-msgid "Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag."
-msgstr "``GRN_CTX_PER_DB`` フラグを指定した :c:type:`grn_ctx` と一緒に使ってはいけません。"
-
-msgid "ctxが使用するdbを指定します。"
-msgstr ""
-
 msgid "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。"
 msgstr ""
 

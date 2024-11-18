@@ -83,14 +83,6 @@ Reference
    :param func: ``ctx`` を破棄するときに呼ばれる関数を指定します。
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
-.. c:function:: grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db)
-
-   ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態(init直後の状態)になります。
-
-   Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag.
-
-   :param db: ctxが使用するdbを指定します。
-
 .. c:function:: grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
 
    ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。

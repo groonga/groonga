@@ -804,14 +804,24 @@ struct _grn_obj {
 
 #define GRN_OBJ_FIN(ctx, obj) (grn_obj_close((ctx), (obj)))
 
+/**
+ * \brief Set the database that the context is using.
+ *
+ * You can initialize it if you specify `NULL` for the parameter `db`.
+ *
+ * \param ctx The context object.
+ * \param db The database object.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 /**
- * \brief Retrieve the DB that the context is using.
+ * \brief Retrieve the database that the context is using.
  *
  * \param ctx The context object.
  *
- * \return The DB object in use, `NULL` if DB is not in use.
+ * \return The database object in use, `NULL` if database is not in use.
  */
 GRN_API grn_obj *
 grn_ctx_db(grn_ctx *ctx);
