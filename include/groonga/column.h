@@ -247,7 +247,7 @@ grn_column_index_update(grn_ctx *ctx,
  * \param ctx The context object.
  * \param column The target column to retrieve the table to which it belongs.
  *
- * \return The table object that contains the specified column on success,
+ * \return The table object to which the target column belongs on success,
  *         `NULL` if the column is broken.
  */
 GRN_API grn_obj *
