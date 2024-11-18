@@ -3585,6 +3585,10 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
 {
   grn_nfkc_normalize_context unify;
   bool need_swap = false;
+  /* If both `unify_middle_dot` and `remove_symbol` are enabled, unification is
+   * not necessary because the middle dot has already been removed. */
+  bool unify_middle_dot =
+    (data->options->unify_middle_dot && !data->options->remove_symbol);
 
   if (!(data->options->unify_latin_alphabet_with || data->options->unify_kana ||
         data->options->unify_kana_case ||
@@ -3592,8 +3596,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
         data->options->unify_hyphen_and_prolonged_sound_mark ||
-        data->options->unify_middle_dot ||
-        data->options->unify_katakana_v_sounds ||
+        unify_middle_dot || data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
         data->options->unify_katakana_du_small_sounds ||
         data->options->unify_katakana_du_sound ||
@@ -3626,7 +3629,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||
       data->options->unify_hyphen_and_prolonged_sound_mark ||
-      data->options->unify_middle_dot || data->options->unify_to_katakana) {
+      unify_middle_dot || data->options->unify_to_katakana) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify, true);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
