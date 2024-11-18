@@ -3962,7 +3962,11 @@ grn_nfkc_normalize_remove_target_non_blank_character_p(
     return true;
   }
   /* `unify_middle_dot` is `true` and the unified middle dot is handled as a
-   * symbol. */
+   * symbol.
+   *
+   * The best implementation is to normalize and then remove the symbols.
+   * However, at the time of this change, that way had a large impact, so this
+   * is the implementation. */
   if (data->options->unify_middle_dot &&
       grn_nfkc_normalize_is_middle_dot_family(current, current_length)) {
     return true;
