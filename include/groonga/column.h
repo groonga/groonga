@@ -241,6 +241,15 @@ grn_column_index_update(grn_ctx *ctx,
                         unsigned int section,
                         grn_obj *oldvalue,
                         grn_obj *newvalue);
+/**
+ * \brief Retrieve a table that contains a given column.
+ *
+ * \param ctx The context object.
+ * \param column The target column object whose parent table is to be retrieved.
+ *
+ * \return The table object that contains the specified column on success,
+ *         `NULL` if the column does not belong to any table.
+ */
 GRN_API grn_obj *
 grn_column_table(grn_ctx *ctx, grn_obj *column);
 GRN_API grn_rc

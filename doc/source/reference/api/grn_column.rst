@@ -18,12 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column)
-
-   columnが属するtableを返します。
-
-   :param column: 対象columnを指定します。
-
 .. c:function:: grn_rc grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned int name_size)
 
    ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オブジェクトでなければいけません。
