@@ -248,7 +248,7 @@ grn_column_index_update(grn_ctx *ctx,
  * \param column The target column to retrieve the table to which it belongs.
  *
  * \return The table object that contains the specified column on success,
- *         `NULL` if the column does not belong to any table.
+ *         `NULL` if the column is broken.
  */
 GRN_API grn_obj *
 grn_column_table(grn_ctx *ctx, grn_obj *column);
