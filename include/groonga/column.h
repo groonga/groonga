@@ -242,7 +242,7 @@ grn_column_index_update(grn_ctx *ctx,
                         grn_obj *oldvalue,
                         grn_obj *newvalue);
 /**
- * \brief Retrieve a table that contains a given column.
+ * \brief Retrieve a table to which a given column belongs.
  *
  * \param ctx The context object.
  * \param column The target column object whose parent table is to be retrieved.
