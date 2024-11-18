@@ -36,13 +36,10 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "columnが属するtableを返します。"
+msgid "ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オブジェクトでなければいけません。"
 msgstr ""
 
 msgid "対象columnを指定します。"
-msgstr ""
-
-msgid "ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オブジェクトでなければいけません。"
 msgstr ""
 
 msgid "新しい名前を指定します。"

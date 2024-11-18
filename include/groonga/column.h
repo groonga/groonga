@@ -241,6 +241,15 @@ grn_column_index_update(grn_ctx *ctx,
                         unsigned int section,
                         grn_obj *oldvalue,
                         grn_obj *newvalue);
+/**
+ * \brief Retrieve a table to which a given column belongs.
+ *
+ * \param ctx The context object.
+ * \param column The target column to retrieve the table to which it belongs.
+ *
+ * \return The table object to which the target column belongs on success,
+ *         `NULL` if the column is broken.
+ */
 GRN_API grn_obj *
 grn_column_table(grn_ctx *ctx, grn_obj *column);
 GRN_API grn_rc
