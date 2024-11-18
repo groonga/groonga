@@ -85,7 +85,7 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
     msgpack_pack_nil(packer);
     break;
   case GRN_DB_BOOL :
-    if (*((grn_bool *)value)) {
+    if (*((bool *)value)) {
       msgpack_pack_true(packer);
     } else {
       msgpack_pack_false(packer);
@@ -195,11 +195,11 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
     switch (element->type) {
     case MSGPACK_OBJECT_BOOLEAN :
       {
-        grn_bool value = element->via.boolean;
+        bool value = element->via.boolean;
         grn_vector_add_element(ctx,
                                vector,
                                (const char *)&value,
-                               sizeof(grn_bool),
+                               sizeof(bool),
                                0,
                                GRN_DB_BOOL);
       }
