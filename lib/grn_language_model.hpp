@@ -29,8 +29,6 @@ namespace grn {
     void
     init_from_env(void);
     void
-    init_external_libraries(void);
-    void
     fin_external_libraries(void);
   } // namespace language_model
 

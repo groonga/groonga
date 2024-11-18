@@ -187,7 +187,6 @@ grn_init_external_libraries(void)
   blosc2_init();
 #endif
   grn_distance_init_external_libraries();
-  grn::language_model::init_external_libraries();
 }
 
 static void

@@ -136,21 +136,40 @@ namespace grn {
     };
 
     static ModelCache model_cache;
-#endif
 
-    void
-    init_external_libraries(void)
-    {
-#ifdef GRN_WITH_LLAMA_CPP
-      llama_log_set(log_callback, &grn_gctx);
-      llama_backend_init();
+    static bool initialized = false;
+    static std::once_flag initialize_once;
+
+    namespace {
+      void
+      init_external_libraries(void)
+      {
+        llama_log_set(log_callback, &grn_gctx);
+        llama_backend_init();
+        initialized = true;
+      }
+
+      void
+      ensure_init_external_libraries(void)
+      {
+        std::call_once(initialize_once, init_external_libraries);
+      }
+    } // namespace
+#else
+    namespace {
+      void
+      ensure_init_external_libraries(void)
+      {
+      }
+    } // namespace
 #endif
-    }
 
     void
     fin_external_libraries(void)
     {
 #ifdef GRN_WITH_LLAMA_CPP
+      if (!initialized) return;
+
       model_cache.clear();
       llama_backend_free();
       llama_log_set(nullptr, nullptr);
@@ -638,6 +657,7 @@ struct grn_language_model_loader_ {
 grn_language_model_loader *
 grn_language_model_loader_open(grn_ctx *ctx)
 {
+  grn::language_model::ensure_init_external_libraries();
   auto loader = new grn_language_model_loader_(ctx);
   return loader;
 }
@@ -710,6 +730,8 @@ grn_language_model_close(grn_ctx *ctx, grn_language_model *model)
 grn_language_model_inferencer *
 grn_language_model_open_inferencer(grn_ctx *ctx, grn_language_model *model)
 {
+  grn::language_model::ensure_init_external_libraries();
+
   GRN_API_ENTER;
   if (!model) {
     ERR(GRN_INVALID_ARGUMENT,
