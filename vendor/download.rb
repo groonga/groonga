@@ -31,6 +31,12 @@ def download(url, output_path=nil)
   end
 end
 
+def git_clone(url, tag, submodule: false)
+  args = ["clone", url, "--branch", tag]
+  args += ["--recursive"] if submodule
+  system("git", *args)
+end
+
 all_targets = [
   "blosc",
   "croaring",
@@ -93,9 +99,8 @@ targets.each do |target|
     download(url, "simsimd-#{version}.tar.gz")
   when "usearch"
     version = cmakelists[/set\(GRN_USEARCH_BUNDLED_VERSION \"(.+)"\)/, 1]
-    url = "https://github.com/unum-cloud/usearch/archive/refs/tags/"
-    url << "v#{version}.tar.gz"
-    download(url, "usearch-#{version}.tar.gz")
+    url = "https://github.com/unum-cloud/usearch.git"
+    git_clone(url, "v#{version}", submodule: true)
   when "xsimd"
     version = cmakelists[/set\(GRN_XSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/xtensor-stack/xsimd/archive/refs/tags/"

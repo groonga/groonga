@@ -1592,26 +1592,20 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
   elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
     # We need to use function to create a variable scope
     function(grn_build_usearch)
-      set(USEARCH_SOURCE_BASE_NAME
-          "usearch-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
-      set(USEARCH_SOURCE_LOCAL_PATH
-          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${USEARCH_SOURCE_BASE_NAME}")
       if(EXISTS ${USEARCH_SOURCE_LOCAL_PATH})
-        set(USEARCH_SOURCE_URL ${USEARCH_SOURCE_LOCAL_PATH})
+        fetchcontent_declare(
+          usearch SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vendor/usearch")
       else()
-        set(USEARCH_SOURCE_URL
-            "https://github.com/unum-cloud/usearch/archive/refs/tags")
-        string(APPEND USEARCH_SOURCE_URL
-               "/v${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+        set(USEARCH_SUBMODULES "fp16")
+        fetchcontent_declare(
+          usearch
+          GIT_REPOSITORY "https://github.com/unum-cloud/usearch.git"
+          GIT_TAG "v${GRN_USEARCH_BUNDLED_VERSION}"
+          GIT_SUBMODULES ${USEARCH_SUBMODULES})
       endif()
-      fetchcontent_declare(
-        usearch
-        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
-        URL ${USEARCH_SOURCE_URL}
-        URL_HASH "SHA256=${GRN_USEARCH_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
-      set(USEARCH_USE_FP16LIB OFF)
       fetchcontent_makeavailable(usearch)
+      include_directories("${usearch_SOURCE_DIR}/fp16/include")
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY ${usearch_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                               TRUE)
