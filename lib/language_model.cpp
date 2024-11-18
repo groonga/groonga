@@ -161,27 +161,33 @@ namespace grn {
 #  ifdef _WIN32
     static char *windows_language_models_dir = NULL;
     static char windows_language_models_dir_buffer[PATH_MAX];
-    static const char *
-    default_system_language_models_dir(void)
-    {
-      if (!windows_language_models_dir) {
-        const char *base_dir;
-        const char *relative_path = GRN_RELATIVE_LANGUAGE_MODELS_DIR;
+    namespace {
+      const char *
+      default_system_language_models_dir(void)
+      {
+        if (!windows_language_models_dir) {
+          const char *base_dir;
+          const char *relative_path = GRN_RELATIVE_LANGUAGE_MODELS_DIR;
 
-        base_dir = grn_windows_base_dir();
-        grn_strcpy(windows_language_models_dir_buffer, PATH_MAX, base_dir);
-        grn_strcat(windows_language_models_dir_buffer, PATH_MAX, "/");
-        grn_strcat(windows_language_models_dir_buffer, PATH_MAX, relative_path);
-        windows_language_models_dir = windows_language_models_dir_buffer;
+          base_dir = grn_windows_base_dir();
+          grn_strcpy(windows_language_models_dir_buffer, PATH_MAX, base_dir);
+          grn_strcat(windows_language_models_dir_buffer, PATH_MAX, "/");
+          grn_strcat(windows_language_models_dir_buffer,
+                     PATH_MAX,
+                     relative_path);
+          windows_language_models_dir = windows_language_models_dir_buffer;
+        }
+        return windows_language_models_dir;
       }
-      return windows_language_models_dir;
-    }
+    } // namespace
 #  else
-    static const char *
-    default_system_language_models_dir(void)
-    {
-      return GRN_LANGUAGE_MODELS_DIR;
-    }
+    namespace {
+      const char *
+      default_system_language_models_dir(void)
+      {
+        return GRN_LANGUAGE_MODELS_DIR;
+      }
+    } // namespace
 #  endif
 
     const char *
