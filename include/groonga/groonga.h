@@ -1313,6 +1313,20 @@ grn_obj_rename(grn_ctx *ctx,
                const char *name,
                unsigned int name_size);
 
+/**
+ * \brief Rename a column in the database used by the context.
+ *
+ * \param ctx The context object.
+ * \param column The column object to be renamed. It must be a persistent
+ *               object.
+ * \param name The new name for the column.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the new name
+ *         exceeds the maximum allowed size which is defined by \ref
+ *         GRN_TABLE_MAX_KEY_SIZE.
+ */
 GRN_API grn_rc
 grn_column_rename(grn_ctx *ctx,
                   grn_obj *column,
