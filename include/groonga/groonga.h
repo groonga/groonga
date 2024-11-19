@@ -809,6 +809,8 @@ struct _grn_obj {
  *
  * You can initialize it if you specify `NULL` for the parameter `db`.
  *
+ * \attention Don't use it with context that has \ref GRN_CTX_PER_DB flag.
+ *
  * \param ctx The context object.
  * \param db The database object.
  *
