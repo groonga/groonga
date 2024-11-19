@@ -36,18 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オブジェクトでなければいけません。"
-msgstr ""
-
-msgid "対象columnを指定します。"
-msgstr ""
-
-msgid "新しい名前を指定します。"
-msgstr ""
-
-msgid "nameパラメータのsize（byte）を指定します。"
-msgstr ""
-
 msgid "カラムobjの名前の長さを返します。buf_sizeの長さが名前の長さ以上であった場合は、namebufに該当する名前をコピーします。"
 msgstr ""
 
