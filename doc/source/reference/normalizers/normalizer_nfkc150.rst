@@ -159,7 +159,7 @@ This option enables normalize hyphen and prolonged sound to "-" (U+002D HYPHEN-M
 Here is an example of :ref:`normalizer-nfkc150-unify-middle-dot` option.
 This option enables normalize middle dot to "·" (U+00B7 MIDDLE DOT) as below.
 
-You can use it with ``remove_symbol`` to remove the middle dot.
+You can use it with :ref:`normalizer-nfkc150-remove-symbol` to remove all middle dot like characters.
 
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log
@@ -438,7 +438,7 @@ Middle dot of the target of normalizing is as below.
 * "・" (U+30FB KATAKANA MIDDLE DOT)
 * "･" (U+FF65 HALFWIDTH KATAKANA MIDDLE DOT)
 
-You can use it with ``remove_symbol`` to remove the middle dot.
+You can use it with :ref:`normalizer-nfkc150-remove-symbol` to remove all middle dot like characters.
 
 .. _normalizer-nfkc150-unify-katakana-v-sounds:
 

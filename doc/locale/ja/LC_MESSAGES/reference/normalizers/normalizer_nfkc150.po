@@ -94,8 +94,8 @@ msgstr "以下は、 :ref:`normalizer-nfkc150-unify-hyphen-and-prolonged-sound-m
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-middle-dot` option. This option enables normalize middle dot to \"·\" (U+00B7 MIDDLE DOT) as below."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-middle-dot` オプションの使用例です。このオプションは、中点を\"·\" (U+00B7 MIDDLE DOT)に正規化します。"
 
-msgid "You can use it with ``remove_symbol`` to remove the middle dot."
-msgstr "``remove_symbol`` と一緒に使うと中点を削除できます。"
+msgid "You can use it with :ref:`normalizer-nfkc150-remove-symbol` to remove all middle dot like characters."
+msgstr ":ref:`normalizer-nfkc150-remove-symbol` と一緒に使うと中点を削除できます。"
 
 msgid "Here is an example of :ref:`normalizer-nfkc150-unify-katakana-v-sounds` option. This option enables normalize \"ヴァヴィヴヴェヴォ\" to \"バビブベボ\" as below."
 msgstr "以下は、 :ref:`normalizer-nfkc150-unify-katakana-v-sounds` オプションの使用例です。このオプションは、以下のように、\"ヴァヴィヴヴェヴォ\"を\"バビブベボ\"に正規化します。"
