@@ -18,14 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
-
-   カラムobjの名前の長さを返します。buf_sizeの長さが名前の長さ以上であった場合は、namebufに該当する名前をコピーします。
-
-   :param obj: 対象objectを指定します。
-   :param namebuf: 名前を格納するバッファ（呼出側で準備する）を指定します。
-   :param buf_size: namebufのサイズ（byte長）を指定します。
-
 .. c:function:: int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op, grn_obj **indexbuf, int buf_size, int *section)
 
    columnに張られているindexのうち、opの操作を実行可能なものの数を返します。またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。
