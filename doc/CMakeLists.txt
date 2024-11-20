@@ -42,10 +42,11 @@ foreach(LOCALE ${GRN_DOC_LOCALES})
   endif()
 endforeach()
 
+find_program(DOXYGEN doxygen REQUIRED)
 add_custom_target(
   doc_c_api ALL
-  COMMAND OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/en/html/reference doxygen
-          ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+  COMMAND OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/en/html/reference
+          ${DOXYGEN} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
   DEPENDS doc_en_html
   VERBATIM)
