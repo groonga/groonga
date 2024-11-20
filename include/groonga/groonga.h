@@ -1520,6 +1520,26 @@ grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int
 grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
+/**
+ * \brief Return the name of a column by storing it in `namebuf`.
+ *
+ * If the column has a name and `buf_size` is greater than or equal to
+ * the length of the name, the name is copied into `namebuf`.
+ *
+ * If the length of the name exceeds `buf_size`, the name is not copied
+ * into `namebuf`, but the length of the name is still returned.
+ *
+ * The maximum possible length of the name is limited by
+ * \ref GRN_TABLE_MAX_KEY_SIZE.
+ *
+ * \param ctx The context object.
+ * \param obj The column whose name is to be retrieved.
+ * \param namebuf A buffer allocated by the caller to store the column's name.
+ * \param buf_size The size of `namebuf` in bytes.
+ *
+ * \return The length of the column's name. Returns `0` if the column is unnamed
+ *         or the `obj` parameter is `NULL`.
+ */
 GRN_API int
 grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 

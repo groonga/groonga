@@ -36,18 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "カラムobjの名前の長さを返します。buf_sizeの長さが名前の長さ以上であった場合は、namebufに該当する名前をコピーします。"
-msgstr ""
-
-msgid "対象objectを指定します。"
-msgstr ""
-
-msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
-msgstr ""
-
-msgid "namebufのサイズ（byte長）を指定します。"
-msgstr ""
-
 msgid "columnに張られているindexのうち、opの操作を実行可能なものの数を返します。またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。"
 msgstr ""
 
