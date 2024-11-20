@@ -21,6 +21,7 @@ class GroongaBlogTask < BlogTask
     super("groonga")
   end
 
+  private
   def document_repository_path
     env_var("GROONGA_ORG_DIR")
   end
