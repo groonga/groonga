@@ -1537,8 +1537,8 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
  * \param namebuf A buffer allocated by the caller to store the column's name.
  * \param buf_size The size of `namebuf` in bytes.
  *
- * \return The length of the column's name. Returns `0` if the column is unnamed
- *         or the `obj` parameter is `NULL`.
+ * \return The length of the column's name. Returns `0` if the `obj` parameter
+ *         is `NULL`.
  */
 GRN_API int
 grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
