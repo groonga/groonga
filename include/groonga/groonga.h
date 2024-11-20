@@ -1521,7 +1521,7 @@ GRN_API int
 grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
- * \brief Return the name of a column by storing it in `namebuf`.
+ * \brief Return a column's name by storing it in `namebuf`.
  *
  * If the column has a name and `buf_size` is greater than or equal to
  * the length of the name, the name is copied into `namebuf`.
