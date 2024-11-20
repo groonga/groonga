@@ -1532,6 +1532,8 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
  * The maximum possible length of the name is limited by
  * \ref GRN_TABLE_MAX_KEY_SIZE.
  *
+ * If the `obj` is an accessor, it returns the accessor's name instead.
+ *
  * \param ctx The context object.
  * \param obj The column whose name is to be retrieved.
  * \param namebuf A buffer allocated by the caller to store the column's name.
