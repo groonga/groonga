@@ -96,6 +96,7 @@ repos:
           ?lib/grn_mrb\.h|
           ?lib/grn_obj\.h|
           ?lib/grn_output\.h|
+          ?lib/grn_pat\.h|
           ?lib/grn_proc\.h|
           ?lib/grn_request_canceler\.h|
           ?lib/grn_request_timer\.h|

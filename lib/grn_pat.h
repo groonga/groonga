@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-#define GRN_PAT_MAX_KEY_SIZE                    GRN_TABLE_MAX_KEY_SIZE
-#define GRN_PAT_MAX_TOTAL_KEY_SIZE              (UINT32_MAX - 1)
+#define GRN_PAT_MAX_KEY_SIZE       GRN_TABLE_MAX_KEY_SIZE
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE (UINT32_MAX - 1)
 
 struct _grn_pat {
   grn_db_obj obj;
@@ -89,46 +89,69 @@ typedef struct _grn_pat_cursor_entry grn_pat_cursor_entry;
 
 struct _grn_pat_cursor {
   grn_db_obj obj;
-  grn_id curr_rec;   /* ID of the latest record */
+  grn_id curr_rec; /* ID of the latest record */
   grn_pat *pat;
   grn_ctx *ctx;
-  uint32_t size;     /* stack size (the maximum number of entries) */
-  uint32_t sp;       /* stack pointer (the number of entries) */
-  grn_id tail;       /* sentinel (the end of the traversal) */
-  uint32_t rest;     /* limit rest (the number of remaining records) */
+  uint32_t size;            /* stack size (the maximum number of entries) */
+  uint32_t sp;              /* stack pointer (the number of entries) */
+  grn_id tail;              /* sentinel (the end of the traversal) */
+  uint32_t rest;            /* limit rest (the number of remaining records) */
   grn_pat_cursor_entry *ss; /* stack buffer (pointer to entries) */
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
 
-GRN_API grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
+GRN_API grn_id
+grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 
 /* private */
-GRN_API grn_rc grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);
-const char *_grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size);
-grn_id grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
-const char *grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);
-GRN_API grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
-void grn_pat_check(grn_ctx *ctx, grn_pat *pat);
-void grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf);
-void grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf);
+GRN_API grn_rc
+grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);
+const char *
+_grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size);
+grn_id
+grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
+const char *
+grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);
+GRN_API grn_id
+grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
+void
+grn_pat_check(grn_ctx *ctx, grn_pat *pat);
+void
+grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf);
+void
+grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf);
 
-grn_rc grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size);
-void grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size);
+void
+grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
 
-GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
-                                    const void *key, unsigned int key_size,
-                                    grn_fuzzy_search_optarg *args, grn_hash *h);
+GRN_API grn_rc
+grn_pat_fuzzy_search(grn_ctx *ctx,
+                     grn_pat *pat,
+                     const void *key,
+                     unsigned int key_size,
+                     grn_fuzzy_search_optarg *args,
+                     grn_hash *h);
 
-uint32_t grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
+uint32_t
+grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
-bool grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
+bool
+grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
 
-grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
-bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
-grn_rc grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
-grn_rc grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat);
-grn_rc grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat);
-grn_rc grn_pat_warm(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
+bool
+grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat);
+grn_rc
+grn_pat_warm(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }
