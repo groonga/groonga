@@ -6223,3 +6223,10 @@ grn_pat_warm(grn_ctx *ctx, grn_pat *pat)
 {
   return grn_io_warm(ctx, pat->io);
 }
+
+int
+grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
+{
+  // todo
+  return 0;
+}
