@@ -4161,7 +4161,7 @@ show_usage(FILE *output)
     "                           separating flags with '|'\n"
     "                           Example: default|+pid|-time\n"
     "                           [none|time|title|message|location|\n"
-    "                            pid|process_id|thread_id|\n"
+    "                            pid|process_id|thread_id|context_id|\n"
     "                            all|default]\n"
     "                           (default: %s)\n"
     "      --log-path <path>:   specify log path\n"

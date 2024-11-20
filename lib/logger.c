@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -184,6 +184,8 @@ grn_log_flags_parse(const char *string,
     CHECK_FLAG(PID);
     CHECK_FLAG(PROCESS_ID);
     CHECK_FLAG(THREAD_ID);
+    CHECK_FLAG(CTX_ID);
+    CHECK_FLAG(CONTEXT_ID);
     CHECK_FLAG(ALL);
     CHECK_FLAG(DEFAULT);
 
@@ -626,6 +628,17 @@ grn_logger_putv(grn_ctx *ctx,
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
                      "%s%08ld", prefix, GetCurrentThreadId());
 #endif /* HAVE_PTHREAD_H */
+        const size_t lbuf_size = strlen(lbuf_current);
+        lbuf_current += lbuf_size;
+        lbuf_rest_size -= lbuf_size;
+      }
+      if (current_logger.flags & GRN_LOG_CONTEXT_ID) {
+        const char *prefix = "";
+        if (lbuf_current != lbuf) {
+          prefix = "|";
+        }
+        grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
+                     "%s%p", prefix, ctx);
         const size_t lbuf_size = strlen(lbuf_current);
         lbuf_current += lbuf_size;
         lbuf_rest_size -= lbuf_size;

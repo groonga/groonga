@@ -2105,9 +2105,12 @@ grn_snip_get_result(grn_ctx *ctx,
 #define GRN_LOG_PID        (0x01 << 4)
 #define GRN_LOG_PROCESS_ID GRN_LOG_PID
 #define GRN_LOG_THREAD_ID  (0x01 << 5)
+#define GRN_LOG_CONTEXT_ID (0x01 << 6)
+/* It's an alias of GRN_LOG_CONTEXT_ID because we have grn_ctx. */
+#define GRN_LOG_CTX_ID GRN_LOG_CONTEXT_ID
 #define GRN_LOG_ALL                                                            \
   (GRN_LOG_TIME | GRN_LOG_TITLE | GRN_LOG_MESSAGE | GRN_LOG_LOCATION |         \
-   GRN_LOG_PROCESS_ID | GRN_LOG_THREAD_ID)
+   GRN_LOG_PROCESS_ID | GRN_LOG_THREAD_ID | GRN_LOG_CONTEXT_ID)
 #define GRN_LOG_DEFAULT (GRN_LOG_TIME | GRN_LOG_MESSAGE)
 
 /* Deprecated since 2.1.2. Use grn_logger instead. */

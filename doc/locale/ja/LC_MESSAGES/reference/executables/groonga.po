@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2024-11-20 17:32+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -276,23 +276,26 @@ msgstr ""
 msgid "ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/groonga.logです)"
 msgstr ""
 
-msgid "Specify log flags. Default value is ``time|message``."
-msgstr "ログフラグを指定します。デフォルト値は ``time|message`` です。"
+msgid "Specify log flags. Default value is ``time|+message``."
+msgstr "ログフラグを指定します。デフォルト値は ``time|+message`` です。"
 
-msgid "``+`` prefix means that ``add the flag``."
-msgstr "``+`` 接頭辞は、フラグを追加します。"
+msgid "``+`` prefix means that you add a flag to the current flags. For example, ``+process_id`` means that you add the ``process_id`` flag to the current flags."
+msgstr "フラグの前に ``+`` をつけると現在のフラグにこのフラグを追加します。たとえば、 ``+process_id`` は現在のフラグに ``process_id`` フラグを追加します。"
 
-msgid "``-`` prefix means that ``remove the flag``."
-msgstr "``-`` 接頭辞は、フラグを削除します。"
+msgid "``-`` prefix means that you remove a flag to the current flags. For example, ``-time`` means that you remove the ``time`` flag from the current flags."
+msgstr "フラグの前に ``-`` をつけると現在のフラグからこのフラグを削除します。たとえば、 ``-time`` は現在のフラグから ``time`` フラグを削除します。"
 
-msgid "No prefix means that ``replace existing flags``."
-msgstr "接頭辞無しは、既存のフラグを置き換えます。"
+msgid "No prefix means that you replace the current flags with a flag. For example, ``time|message`` equals to ``message`` because the first ``time`` flag is replaced with the second ``message`` flag."
+msgstr "フラグの前になにもつけないと現在のフラグを指定したフラグで置き換えます。たとえば、 ``time|message`` は ``message` と同じです。なぜなら最初の ``time`` フラグは次の ``message`` フラグで置き換えられるからです。"
 
 msgid "Multiple log flags can be specified by separating flags with ``|``."
 msgstr "``|`` でフラグを区切ることで、複数のログフラグを指定できます。"
 
-msgid "We can specify flags below."
-msgstr "指定できるフラグは以下の通りです。"
+msgid "Here are available flags:"
+msgstr "利用可能なフラグは次のとおりです。"
+
+msgid "Description"
+msgstr "説明"
 
 msgid "Output nothing into the log."
 msgstr "ログに何も出力しません。"
@@ -306,32 +309,41 @@ msgstr "タイムスタンプをログに出力します。"
 msgid "``message``"
 msgstr ""
 
-msgid "Output log message into the log."
-msgstr "ログメッセージをログに出力します。"
+msgid "Output message into the log."
+msgstr "メッセージをログに出力します。"
 
 msgid "``location``"
 msgstr ""
 
-msgid "Output process id and a location of an output of the log (file name, line and function name) into the log."
-msgstr "プロセスIDとログの出力場所(ファイル名、行数、関数名)をログに出力します。"
+msgid "Output process ID and a location of an output of the log (file name, line and function name) into the log."
+msgstr "プロセスIDとログを出力した場所の情報（ファイル名・行数・関数名）をログに出力します。"
 
 msgid "``process_id``"
 msgstr ""
 
-msgid "Output process id into the log."
+msgid "Output process ID into the log."
 msgstr "プロセスIDをログに出力します。"
 
 msgid "``pid``"
 msgstr ""
 
 msgid "This flag is an alias of ``process_id``."
-msgstr "このフラグは、 ``process_id`` の別名です。"
+msgstr "このフラグは ``process_id`` の別名です。"
 
 msgid "``thread_id``"
 msgstr ""
 
-msgid "Output thread id into log"
-msgstr "スレッドIDををログに出力します。"
+msgid "Output thread ID into log."
+msgstr "スレッドIDをログに出力します。"
+
+msgid "``context_id``"
+msgstr ""
+
+msgid "Output context ID into log."
+msgstr "コンテキストIDをログに出力します。"
+
+msgid "Context ID is logged in :ref:`query-log` too. So this is useful to associate logs of the same context in :ref:`process-log` and :ref:`query-log`."
+msgstr "コンテキストIDは :ref:`query-log` にも出力されます。そのため、このフラグを使うと :ref:`process-log` と :ref:`query-log` にある同一コンテキストのログを関連付けやすくなります。"
 
 msgid "``all``"
 msgstr ""
@@ -342,8 +354,8 @@ msgstr "このフラグは、 ``none`` と ``default`` フラグ以外の全て�
 msgid "``default``"
 msgstr ""
 
-msgid "Output timestamp and log message into the log."
-msgstr "タイムスタンプとログメッセージをログに出力します。"
+msgid "This equals to ``time|+message``."
+msgstr "``time|+message`` と同じです。"
 
 msgid "Specifies threshold for log rotation. Log file is rotated when log file size is larger than or equals to the threshold (default: 0; disabled)."
 msgstr "ログローテーションの閾値を指定します。ログファイルのサイズが閾値に指定した値以上になると、ローテートされます。（デフォルトは0（無効）です）"
@@ -528,10 +540,10 @@ msgstr ""
 msgid "ログ出力を行います。"
 msgstr ""
 
-msgid "ロックを解除します。"
+msgid "``clearlock``"
 msgstr ""
 
-msgid "``clearlock``"
+msgid "ロックを解除します。"
 msgstr ""
 
 msgid "Usage"
