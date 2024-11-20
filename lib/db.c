@@ -14839,9 +14839,17 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
       if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
         grn_id id;
         while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
-          grn_obj *ja = grn_ctx_at(ctx, id);
-          if (ja && ja->header.type == GRN_COLUMN_VAR_SIZE) {
-            r += grn_ja_defrag(ctx, (grn_ja *)ja, threshold);
+          grn_obj *table = grn_ctx_at(ctx, id);
+          if (!table) {
+            continue;
+          }
+          switch (table->header.type) {
+          case GRN_COLUMN_VAR_SIZE:
+            r += grn_ja_defrag(ctx, (grn_ja *)table, threshold);
+            break;
+          case GRN_TABLE_PAT_KEY:
+            r += grn_pat_defrag(ctx, (grn_pat *)table);
+            break;
           }
         }
         grn_table_cursor_close(ctx, cur);
