@@ -80,9 +80,6 @@ grn_wal_event_to_string(grn_wal_event event)
   case GRN_WAL_EVENT_REHASH :
     string = "rehash";
     break;
-  case GRN_WAL_EVENT_DEFRAG :
-    string = "defrag";
-    break;
   case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
     string = "delete-info-phase1";
     break;

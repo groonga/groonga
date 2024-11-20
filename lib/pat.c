@@ -697,15 +697,6 @@ grn_pat_wal_add_entry_delete_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_END);
 }
 
-static grn_rc
-grn_pat_wal_add_entry_defrag_entry(grn_ctx *ctx,
-                                   grn_pat_wal_add_entry_data *data,
-                                   grn_pat_wal_add_entry_used *used)
-{
-  // todo
-  return GRN_SUCCESS;
-}
-
 static void
 grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
                                      grn_pat_wal_add_entry_data *data,
@@ -897,10 +888,6 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
   case GRN_WAL_EVENT_DELETE_ENTRY:
     usage = "deleting entry";
     rc = grn_pat_wal_add_entry_delete_entry(ctx, data, &used);
-    break;
-  case GRN_WAL_EVENT_DEFRAG:
-    usage = "defrag";
-    rc = grn_pat_wal_add_entry_defrag_entry(ctx, data, &used);
     break;
   default:
     usage = "not implemented event";
@@ -6153,15 +6140,6 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   grn_pat_del_internal(ctx, pat, &data);
 }
 
-static void
-grn_pat_wal_recover_defrag_entry(grn_ctx *ctx,
-                                 grn_pat *pat,
-                                 grn_wal_reader_entry *entry,
-                                 const char *wal_error_tag)
-{
-  // todo
-}
-
 grn_rc
 grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
 {
@@ -6213,10 +6191,6 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
         break;
       case GRN_WAL_EVENT_DELETE_ENTRY:
         grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
-        break;
-      case GRN_WAL_EVENT_DEFRAG:
-        // todo
-        grn_pat_wal_recover_defrag_entry(ctx, pat, &entry, wal_error_tag);
         break;
       default:
         grn_wal_set_recover_error(ctx,
