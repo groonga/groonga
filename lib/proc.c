@@ -568,9 +568,11 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   input.emit_level = 1;
 
   grn_load_internal(ctx, &input);
-  if (ctx->rc == GRN_CANCEL) {
+  if (ctx->rc != GRN_SUCCESS) {
     ctx->impl->loader.stat = GRN_LOADER_END;
-    ctx->impl->loader.error.rc = GRN_SUCCESS;
+    if (ctx->rc == GRN_CANCEL) {
+      ctx->impl->loader.error.rc = GRN_SUCCESS;
+    }
   }
   bool accept_more_data = true;
   if (ctx->impl->loader.stat == GRN_LOADER_END) {
