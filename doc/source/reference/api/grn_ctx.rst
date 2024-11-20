@@ -38,25 +38,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_ctx_init(grn_ctx *ctx, int flags)
-
-   ctxを初期化します。
-
-   :param ctx: 初期化するctx構造体へのポインタを指定します。
-   :param flags: 初期化する ``ctx`` のオプションを指定します。
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
-.. c:function:: grn_rc grn_ctx_fin(grn_ctx *ctx)
-
-   ctxの管理するメモリを解放し、使用を終了します。
-
-   If ``ctx`` is initialized by :c:func:`grn_ctx_open()` not
-   :c:func:`grn_ctx_init()`, you need to use
-   :c:func:`grn_ctx_close()` instead of :c:func:`grn_ctx_fin()`.
-
-   :param ctx: 解放するctx構造体へのポインタを指定します。
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
 .. c:function:: grn_ctx *grn_ctx_open(int flags)
 
    初期化された :c:type:`grn_ctx` オブジェクトを返します。

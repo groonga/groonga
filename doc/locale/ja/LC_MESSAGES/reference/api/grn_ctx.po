@@ -66,31 +66,13 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "ctxを初期化します。"
-msgstr ""
-
-msgid "初期化するctx構造体へのポインタを指定します。"
-msgstr ""
-
-msgid "初期化する ``ctx`` のオプションを指定します。"
-msgstr ""
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "ctxの管理するメモリを解放し、使用を終了します。"
-msgstr ""
-
-msgid "If ``ctx`` is initialized by :c:func:`grn_ctx_open()` not :c:func:`grn_ctx_init()`, you need to use :c:func:`grn_ctx_close()` instead of :c:func:`grn_ctx_fin()`."
-msgstr ":c:func:`grn_ctx_init()` ではなく :c:func:`grn_ctx_open()` で ``ctx`` を初期化した場合、 :c:func:`grn_ctx_fin()` ではなく :c:func:`grn_ctx_close()` を使わなければいけません。"
-
-msgid "解放するctx構造体へのポインタを指定します。"
-msgstr ""
-
 msgid "初期化された :c:type:`grn_ctx` オブジェクトを返します。"
 msgstr ""
 
 msgid ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` ではGroongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
+msgstr ""
+
+msgid "初期化する ``ctx`` のオプションを指定します。"
 msgstr ""
 
 msgid "It calls :c:func:`grn_ctx_fin()` and frees allocated memory for ``ctx`` by :c:func:`grn_ctx_open()`."
@@ -98,6 +80,9 @@ msgstr ":c:func:`grn_ctx_fin()` を呼び出し、その後、 :c:func:`grn_ctx_
 
 msgid "no longer needed :c:type:`grn_ctx`."
 msgstr "もう使わない :c:type:`grn_ctx` 。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 msgid "ctxを破棄するときに呼ばれる関数を設定します。"
 msgstr ""
