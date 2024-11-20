@@ -14848,8 +14848,10 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
       }
     }
     break;
-  case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+    r = grn_pat_defrag(ctx, (grn_pat *)obj);
+    break;
+  case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
     {
