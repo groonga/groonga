@@ -1533,6 +1533,8 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
  * \ref GRN_TABLE_MAX_KEY_SIZE.
  *
  * If the `obj` is an accessor, it returns the accessor's name instead.
+ * For detailed information on accessor's naming conventions, see
+ * \ref grn_obj_column.
  *
  * \param ctx The context object.
  * \param obj The column whose name is to be retrieved.
