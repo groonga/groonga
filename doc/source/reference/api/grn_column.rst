@@ -18,16 +18,6 @@ TODO...
 Reference
 ---------
 
-.. c:function:: int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op, grn_obj **indexbuf, int buf_size, int *section)
-
-   columnに張られているindexのうち、opの操作を実行可能なものの数を返します。またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。
-
-   :param column: 対象のcolumnを指定します。
-   :param op: indexで実行したい操作を指定します。
-   :param indexbuf: indexを格納するバッファ（呼出側で準備する）を指定します。
-   :param buf_size: indexbufのサイズ（byte長）を指定します。
-   :param section: section番号を格納するint長バッファ（呼出側で準備する）を指定します。
-
 .. c:function:: grn_rc grn_column_truncate(grn_ctx *ctx, grn_obj *column)
 
    .. note::
