@@ -1609,7 +1609,8 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
       endif()
       grn_prepare_fetchcontent()
       fetchcontent_makeavailable(usearch)
-      include_directories("${usearch_SOURCE_DIR}/fp16/include")
+      target_include_directories(usearch SYSTEM
+                                 INTERFACE "${usearch_SOURCE_DIR}/fp16/include")
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY ${usearch_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                               TRUE)
