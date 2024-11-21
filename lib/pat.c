@@ -6229,11 +6229,6 @@ int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
   CRITICAL_SECTION_ENTER(pat->lock);
-  grn_pat_cursor *cur;
-  if (!(cur = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0))) {
-    return 0;
-  }
-
   GRN_DEFINE_NAME(pat);
   GRN_LOG(ctx,
           GRN_LOG_NOTICE,
@@ -6242,19 +6237,40 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
           name,
           pat->header->curr_key);
 
-  pat->header->curr_key = 0;
-  grn_id id;
-  while ((id = grn_pat_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+  grn_pat *work = grn_pat_create(ctx,
+                                 NULL,
+                                 pat->header->key_size,
+                                 pat->header->value_size,
+                                 pat->header->flags);
+  unsigned int table_size = grn_table_size(ctx, (grn_obj *)pat);
+  uint8_t keys[table_size - 1];
+  size_t i = 0;
+  GRN_PAT_EACH(ctx, pat, id, NULL, NULL, NULL, {
     pat_node *node = pat_get(ctx, pat, id);
-    uint8_t *key = NULL;
     if (PAT_IMD(node)) {
-      key = (uint8_t *)&(node->key);
-    } else {
-      KEY_AT(pat, node->key, key, 0);
+      continue;
     }
-    pat_node_set_key(ctx, pat, node, key, PAT_LEN(node));
-  }
-  grn_pat_cursor_close(ctx, cur);
+    uint8_t *key = NULL;
+    KEY_AT(pat, node->key, key, 0);
+    keys[i++] = key_put(ctx, work, key, PAT_LEN(node));
+  });
+
+  uint8_t *current_key_seg;
+  uint8_t *new_key_seg;
+  KEY_AT(pat, 0, current_key_seg, 0);
+  KEY_AT(work, 0, new_key_seg, 0);
+  grn_memcpy(current_key_seg, new_key_seg, work->header->curr_key);
+  pat->header->curr_key = work->header->curr_key;
+  grn_pat_close(ctx, work);
+
+  i = 0;
+  GRN_PAT_EACH(ctx, pat, id, NULL, NULL, NULL, {
+    pat_node *node = pat_get(ctx, pat, id);
+    if (PAT_IMD(node)) {
+      continue;
+    }
+    node->key = keys[i++];
+  });
 
   GRN_LOG(ctx,
           GRN_LOG_NOTICE,
@@ -6264,5 +6280,5 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
           pat->header->curr_key);
   CRITICAL_SECTION_LEAVE(pat->lock);
 
-  return grn_table_size(ctx, (grn_obj *)pat);
+  return table_size;
 }
