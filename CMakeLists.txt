@@ -1568,7 +1568,7 @@ else()
   set(GRN_WITH_LLAMA_CPP FALSE)
 endif()
 
-set(GRN_USEARCH_BUNDLED_VERSION "2.16.2")
+set(GRN_USEARCH_BUNDLED_VERSION "2.16.5")
 set(GRN_WITH_USEARCH
     "no"
     CACHE STRING "Use USearch for ANN Search.")
