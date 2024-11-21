@@ -1971,7 +1971,7 @@ typedef struct _grn_index_datum {
  *                   with at least `n_index_data` elements.
  * \param n_index_data The maximum number of entries to store in `index_data`.
  *
- * \return The total number of indexes found that support the specified
+ * \return The total number of found indexes that support the specified
  *         operation. If more indexes are found than `n_index_data`, only the
  *         first `n_index_data` entries are filled in `index_data`.
  */
