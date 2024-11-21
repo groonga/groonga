@@ -6228,6 +6228,41 @@ grn_pat_warm(grn_ctx *ctx, grn_pat *pat)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
-  // todo
-  return 0;
+  CRITICAL_SECTION_ENTER(pat->lock);
+  grn_pat_cursor *cur;
+  if (!(cur = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0))) {
+    return 0;
+  }
+
+  GRN_DEFINE_NAME(pat);
+  GRN_LOG(ctx,
+          GRN_LOG_NOTICE,
+          "[pat][key][defrag] start: <%.*s>: key_size=%u",
+          name_size,
+          name,
+          pat->header->curr_key);
+
+  pat->header->curr_key = 0;
+  grn_id id;
+  while ((id = grn_pat_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+    pat_node *node = pat_get(ctx, pat, id);
+    uint8_t *key = NULL;
+    if (PAT_IMD(node)) {
+      key = (uint8_t *)&(node->key);
+    } else {
+      KEY_AT(pat, node->key, key, 0);
+    }
+    pat_node_set_key(ctx, pat, node, key, PAT_LEN(node));
+  }
+  grn_pat_cursor_close(ctx, cur);
+
+  GRN_LOG(ctx,
+          GRN_LOG_NOTICE,
+          "[pat][key][defrag] end: <%.*s>: key_size=%u",
+          name_size,
+          name,
+          pat->header->curr_key);
+  CRITICAL_SECTION_LEAVE(pat->lock);
+
+  return grn_table_size(ctx, (grn_obj *)pat);
 }
