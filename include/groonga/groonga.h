@@ -336,7 +336,7 @@ struct _grn_ctx {
 /**
  * \brief Initialize the context.
  *
- * \param ctx The context object.
+ * \param ctx The context object allocated by the caller.
  * \param flags Initialization options.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
@@ -352,7 +352,7 @@ grn_ctx_init(grn_ctx *ctx, int flags);
  *            \ref grn_ctx_init. If the context is opened with
  *            \ref grn_ctx_open, it need to be closed with \ref grn_ctx_close.
  *
- * \param ctx The context object.
+ * \param ctx The context object initialized by \ref grn_ctx_init.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
