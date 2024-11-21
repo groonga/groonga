@@ -1935,7 +1935,9 @@ grn_obj_open(grn_ctx *ctx,
              grn_obj_flags flags,
              grn_id domain);
 
-/* Deprecated since 5.0.1. Use grn_column_find_index_data() instead. */
+/**
+ * \deprecated Since 5.0.1. Use \ref grn_column_find_index_data instead.
+ */
 GRN_API int
 grn_column_index(grn_ctx *ctx,
                  grn_obj *column,
@@ -1950,7 +1952,29 @@ typedef struct _grn_index_datum {
   unsigned int section;
 } grn_index_datum;
 
-/* @since 5.0.1. */
+/**
+ * \brief Return indexes that can perform a specified operation by storing it in
+ *        `index_data`.
+ *
+ * \note This function replaces the deprecated \ref grn_column_index function.
+ *
+ * \since 5.0.1
+ *
+ * \param ctx The context object.
+ * \param column The target column to search for associated indexes.
+ * \param op The operator that the indexes should support.
+ *           (e.g., \ref GRN_OP_EQUAL, \ref GRN_OP_PREFIX, \ref GRN_OP_LESS, and
+ *           so on.).
+ * \param index_data An array to store information about the found indexes.
+ *                   Each element is a \ref grn_index_datum structure containing
+ *                   details about an index. The caller must allocate this array
+ *                   with at least `n_index_data` elements.
+ * \param n_index_data The maximum number of entries to store in `index_data`.
+ *
+ * \return The total number of found indexes that support the specified
+ *         operation. If more indexes are found than `n_index_data`, only the
+ *         first `n_index_data` entries are filled in `index_data`.
+ */
 GRN_API unsigned int
 grn_column_find_index_data(grn_ctx *ctx,
                            grn_obj *column,

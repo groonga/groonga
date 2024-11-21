@@ -36,24 +36,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "columnに張られているindexのうち、opの操作を実行可能なものの数を返します。またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。"
-msgstr ""
-
-msgid "対象のcolumnを指定します。"
-msgstr ""
-
-msgid "indexで実行したい操作を指定します。"
-msgstr ""
-
-msgid "indexを格納するバッファ（呼出側で準備する）を指定します。"
-msgstr ""
-
-msgid "indexbufのサイズ（byte長）を指定します。"
-msgstr ""
-
-msgid "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
-msgstr ""
-
 msgid "This is a dangerous API. You must not use this API when other thread or process accesses the target column. If you use this API against shared column, the process that accesses the column may be broken and the column may be broken."
 msgstr ""
 
