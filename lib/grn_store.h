@@ -264,44 +264,6 @@ grn_rc
 grn_ja_reader_pread(
   grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf);
 
-/*
-typedef struct _grn_vgram_vnode
-{
-  struct _grn_vgram_vnode *car;
-  struct _grn_vgram_vnode *cdr;
-  grn_id tid;
-  grn_id vid;
-  int freq;
-  int len;
-} grn_vgram_vnode;
-
-typedef struct _grn_vgram grn_vgram;
-struct _grn_vgram {
-  void *vgram;
-};
-
-struct _grn_vgram_buf {
-  size_t len;
-  grn_id *tvs;
-  grn_id *tvp;
-  grn_id *tve;
-  grn_vgram_vnode *vps;
-  grn_vgram_vnode *vpp;
-  grn_vgram_vnode *vpe;
-};
-
-grn_vgram *grn_vgram_create(const char *path);
-grn_vgram *grn_vgram_open(const char *path);
-grn_rc grn_vgram_close(grn_vgram *vgram);
-grn_rc grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash
-*terms);
-
-grn_vgram_buf *grn_vgram_buf_open(size_t len);
-grn_rc grn_vgram_buf_add(grn_vgram_buf *b, grn_id tid);
-grn_rc grn_vgram_buf_close(grn_vgram_buf *b);
-
-*/
-
 #ifdef __cplusplus
 }
 #endif

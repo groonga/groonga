@@ -133,7 +133,6 @@ struct _grn_ii_updspec {
   int32_t offset;
   struct _grn_ii_pos *pos;
   struct _grn_ii_pos *tail;
-  /* grn_vgram_vnode *vnodes; */
 };
 
 typedef struct _grn_ii_updspec grn_ii_updspec;
@@ -193,15 +192,6 @@ grn_ii_max_section(grn_ii *ii);
 
 const char *
 grn_ii_path(grn_ii *ii);
-
-/*
-grn_rc grn_ii_upd(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
-                   const char *oldvalue, unsigned int oldvalue_len,
-                   const char *newvalue, unsigned int newvalue_len);
-grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
-                      unsigned int section,
-                      grn_values *oldvalues, grn_values *newvalues);
-*/
 
 #define GRN_II_DEFAULT_NEAR_MIN_INTERVAL (INT32_MIN)
 
