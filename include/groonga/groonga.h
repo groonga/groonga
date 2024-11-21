@@ -333,8 +333,29 @@ struct _grn_ctx {
 #define GRN_CTX_BATCH_MODE (0x04)
 #define GRN_CTX_PER_DB     (0x08)
 
+/**
+ * \brief Initialize the context.
+ *
+ * \param ctx The context object allocated by the caller.
+ * \param flags Initialization options.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_init(grn_ctx *ctx, int flags);
+/**
+ * \brief Finish the context.
+ *
+ * This function releases memory that was managed by the context and finishes.
+ *
+ * \attention This function finishes the context initialized by
+ *            \ref grn_ctx_init. If the context is opened with
+ *            \ref grn_ctx_open, it need to be closed with \ref grn_ctx_close.
+ *
+ * \param ctx The context object initialized by \ref grn_ctx_init.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_fin(grn_ctx *ctx);
 GRN_API grn_ctx *
