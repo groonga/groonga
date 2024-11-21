@@ -48,10 +48,10 @@
       "name": "wasi",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_COMPILER_TARGET": "wasm32-unknown-wasi",
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_CXX_COMPILER_TARGET": "wasm32-unknown-wasi",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_C_COMPILER_TARGET": "wasm32-unknown-wasi",
         "CMAKE_SYSTEM_NAME": "WASI",
         "GRN_WITH_BLOSC": "no",
         "GRN_WITH_H3": "no",
