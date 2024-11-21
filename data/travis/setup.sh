@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,23 +27,26 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
   sudo apt install -qq -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
-       autoconf-archive \
-       autotools-dev \
+       ccache \
+       cmake \
        libarrow-dev \
        libevent-dev \
        libmecab-dev \
        libmsgpack-dev \
        libstemmer-dev \
        mecab-naist-jdic \
+       ninja \
        pkg-config
   git clone --recursive --depth 1 --branch main https://github.com/groonga/groonga.git
-  cd groonga
-  touch lib/grn_ecmascript.c
-  ./autogen.sh
-  ./configure --prefix=/usr --localstatedir=/var --enable-debug
-  make -j$(nproc) > /dev/null
-  sudo make install > /dev/null
-  cd ..
+  touch groonga/lib/grn_ecmascript.c
+  cmake \
+    -S groonga \
+    -B groonga.build \
+    --preset debug-maximum \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_LOCALSTATEDIR=/var
+  ninja -C groonga.build > /dev/null
+  sudo ninja -C groonga.build install > /dev/null
 else
   if dpkg -l libzmq3 > /dev/null 2>&1; then
     sudo apt-get purge libzmq3
