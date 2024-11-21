@@ -24,7 +24,6 @@
 #include <math.h>
 
 static uint64_t grn_index_sparsity = 10;
-static bool grn_index_chunk_split_enable = true;
 
 void
 grn_index_column_init_from_env(void)
@@ -41,18 +40,6 @@ grn_index_column_init_from_env(void)
       if (errno == 0) {
         grn_index_sparsity = sparsity;
       }
-    }
-  }
-
-  {
-    char grn_index_chunk_split_enable_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_INDEX_CHUNK_SPLIT_ENABLE",
-               grn_index_chunk_split_enable_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_index_chunk_split_enable_env, "no") == 0) {
-      grn_index_chunk_split_enable = false;
-    } else {
-      grn_index_chunk_split_enable = true;
     }
   }
 }
@@ -225,11 +212,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
   }
   grn_obj_set_visibility(ctx, index_column, false);
   if (use_grn_ii_build) {
-    if (grn_index_chunk_split_enable) {
-      grn_ii_build2(ctx, ii, NULL);
-    } else {
-      grn_ii_build(ctx, ii, grn_index_sparsity);
-    }
+    grn_ii_build(ctx, ii, NULL);
   } else {
     for (i = 0; i < n_columns; i++) {
       grn_obj *column = columns[i];

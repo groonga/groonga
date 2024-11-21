@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -285,13 +285,11 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf);
 
 grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii);
-grn_rc
-grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity);
 
 typedef struct grn_ii_builder_options grn_ii_builder_options;
 
 grn_rc
-grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options);
+grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options);
 
 grn_rc
 grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii);
