@@ -1963,7 +1963,8 @@ typedef struct _grn_index_datum {
  * \param ctx The context object.
  * \param column The target column to search for associated indexes.
  * \param op The operator that the indexes should support.
- *           (e.g., \ref GRN_OP_EQUAL, GRN_OP_PREFIX, GRN_OP_LESS, and so on.).
+ *           (e.g., \ref GRN_OP_EQUAL, \ref GRN_OP_PREFIX, \ref GRN_OP_LESS, and
+ *           so on.).
  * \param index_data An array to store information about the found indexes.
  *                   Each element is a \ref grn_index_datum structure containing
  *                   details about an index. The caller must allocate this array
