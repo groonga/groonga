@@ -31,6 +31,16 @@ def download(url, output_path=nil)
   end
 end
 
+def git_clone_archive(url, tag, archive_path)
+  clone_dir = File.basename(archive_path, ".tar.gz")
+  FileUtils.rm_rf(clone_dir)
+  system("git", "clone", url, "--branch", tag, "--recursive", clone_dir)
+  # Use `tar` instead of `git archive` to include submodules.
+  system("tar", "--exclude-vcs", "--exclude-vcs-ignores",
+         "-czf", archive_path, clone_dir)
+  FileUtils.rm_rf(clone_dir)
+end
+
 all_targets = [
   "blosc",
   "croaring",
@@ -39,6 +49,7 @@ all_targets = [
   "message-pack",
   "simdjson",
   "simsimd",
+  "usearch",
   "xsimd",
   "zstd",
 ]
@@ -90,6 +101,10 @@ targets.each do |target|
     url = "https://github.com/ashvardanian/SimSIMD/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "simsimd-#{version}.tar.gz")
+  when "usearch"
+    version = cmakelists[/set\(GRN_USEARCH_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/unum-cloud/usearch.git"
+    git_clone_archive(url, "v#{version}", "usearch-#{version}.tar.gz")
   when "xsimd"
     version = cmakelists[/set\(GRN_XSIMD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/xtensor-stack/xsimd/archive/refs/tags/"

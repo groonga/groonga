@@ -1568,6 +1568,68 @@ else()
   set(GRN_WITH_LLAMA_CPP FALSE)
 endif()
 
+set(GRN_USEARCH_BUNDLED_VERSION "2.16.5")
+set(GRN_WITH_USEARCH
+    "no"
+    CACHE STRING "Use USearch for ANN Search.")
+set(GRN_WITH_USEARCH_BUNDLED FALSE)
+if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
+  if("${GRN_WITH_USEARCH}" STREQUAL "bundled")
+    set(usearch_FOUND FALSE)
+  else()
+    if("${GRN_WITH_USEARCH}" STREQUAL "system")
+      find_package(usearch REQUIRED)
+    else()
+      find_package(usearch)
+    endif()
+  endif()
+  if(usearch_FOUND)
+    set(GRN_WITH_USEARCH TRUE)
+    target_link_libraries(grn_dependencies INTERFACE usearch::usearch)
+    message(STATUS "usearch: system")
+  elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
+    # We need to use function to create a variable scope
+    function(grn_build_usearch)
+      set(USEARCH_SOURCE_BASE_NAME
+          "usearch-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+      set(USEARCH_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${USEARCH_SOURCE_BASE_NAME}")
+      if(EXISTS ${USEARCH_SOURCE_LOCAL_PATH})
+        fetchcontent_declare(
+          usearch
+          ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+          URL ${USEARCH_SOURCE_LOCAL_PATH})
+      else()
+        set(USEARCH_SUBMODULES "fp16")
+        fetchcontent_declare(
+          usearch
+          GIT_REPOSITORY "https://github.com/unum-cloud/usearch.git"
+          GIT_TAG "v${GRN_USEARCH_BUNDLED_VERSION}"
+          GIT_SUBMODULES ${USEARCH_SUBMODULES})
+      endif()
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(usearch)
+      target_include_directories(usearch SYSTEM
+                                 INTERFACE "${usearch_SOURCE_DIR}/fp16/include")
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${usearch_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                              TRUE)
+      endif()
+      install(FILES "${usearch_SOURCE_DIR}/LICENSE"
+                    "${usearch_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/usearch")
+    endfunction()
+    grn_build_usearch()
+    target_link_libraries(grn_dependencies INTERFACE usearch)
+    set(GRN_WITH_USEARCH_BUNDLED TRUE)
+    message(STATUS "usearch: bundled")
+  else()
+    set(GRN_WITH_USEARCH FALSE)
+  endif()
+else()
+  set(GRN_WITH_USEARCH FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"
