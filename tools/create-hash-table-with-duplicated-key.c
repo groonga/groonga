@@ -25,7 +25,7 @@
  * lib/hash.c. */
 #define GRN_HASH_ENTRY_SEGMENT 1
 
-grn_inline static void *
+static inline void *
 grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
                        uint64_t offset, int flags)
 {
