@@ -32,7 +32,7 @@ def download(url, output_path=nil)
 end
 
 def git_clone_archive(url, tag, archive_path)
-  clone_dir = archive_path.sub(/\.tar\..*\z/, "")
+  clone_dir = File.basename(archive_path, ".tar.gz")
   FileUtils.rm_rf(clone_dir)
   system("git", "clone", url, "--branch", tag, "--recursive", clone_dir)
   # Use `tar` instead of `git archive` to include submodules.
