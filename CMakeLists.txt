@@ -1570,7 +1570,7 @@ else()
   set(GRN_WITH_LLAMA_CPP FALSE)
 endif()
 
-set(GRN_USEARCH_BUNDLED_VERSION "2.16.5")
+set(GRN_USEARCH_BUNDLED_VERSION "2.16.6")
 set(GRN_WITH_USEARCH
     "no"
     CACHE STRING "Use USearch for ANN Search.")
@@ -1611,8 +1611,6 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
       endif()
       grn_prepare_fetchcontent()
       fetchcontent_makeavailable(usearch)
-      target_include_directories(usearch SYSTEM
-                                 INTERFACE "${usearch_SOURCE_DIR}/fp16/include")
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY ${usearch_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                               TRUE)
