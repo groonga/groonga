@@ -45,6 +45,38 @@
       }
     },
     {
+      "name": "wasi",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_C_COMPILER_TARGET": "wasm32-unknown-wasi",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_COMPILER_TARGET": "wasm32-unknown-wasi",
+        "CMAKE_SYSTEM_NAME": "WASI",
+        "GRN_WITH_BLOSC": "no",
+        "GRN_WITH_H3": "no",
+        "GRN_WITH_KYTEA": "no",
+        "GRN_WITH_LIBEDIT": "no",
+        "GRN_WITH_LIBEVENT": "no",
+        "GRN_WITH_LIBSTEMMER": "no",
+        "GRN_WITH_LLAMA_CPP": "no",
+        "GRN_WITH_LZ4": "no",
+        "GRN_WITH_MECAB": "no",
+        "GRN_WITH_MESSAGE_PACK": "no",
+        "GRN_WITH_MRUBY": "no",
+        "GRN_WITH_RAPIDJSON": "no",
+        "GRN_WITH_ROARING_BITMAPS": "no",
+        "GRN_WITH_SIMDJSON": "no",
+        "GRN_WITH_SIMSIMD": "no",
+        "GRN_WITH_USEARCH": "no",
+        "GRN_WITH_XSIMD": "no",
+        "GRN_WITH_XXHASH": "no",
+        "GRN_WITH_ZEROMQ": "no",
+        "GRN_WITH_ZLIB": "no",
+        "GRN_WITH_ZSTD": "no"
+      }
+    },
+    {
       "name": "debug-default",
       "displayName": "Optional features may not be enabled (debug build)",
       "inherits": ["base", "debug"]
@@ -73,6 +105,21 @@
       "name": "release-with-debug-info-maximum",
       "displayName": "Enable all features (release build with debug info)",
       "inherits": ["base", "release-with-debug-info", "maximum"]
+    },
+    {
+      "name": "debug-wasi",
+      "displayName": "Build for WASI (debug build)",
+      "inherits": ["base", "debug", "wasi"]
+    },
+    {
+      "name": "release-wasi",
+      "displayName": "Build for WASI (release build)",
+      "inherits": ["base", "release", "wasi"]
+    },
+    {
+      "name": "release-with-debug-info-wasi",
+      "displayName": "Build for WASI (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info", "wasi"]
     },
     {
       "name": "doc",
