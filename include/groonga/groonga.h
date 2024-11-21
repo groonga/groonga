@@ -1935,7 +1935,9 @@ grn_obj_open(grn_ctx *ctx,
              grn_obj_flags flags,
              grn_id domain);
 
-/* Deprecated since 5.0.1. Use grn_column_find_index_data() instead. */
+/**
+ * \deprecated Since 5.0.1. Use \ref grn_column_find_index_data instead.
+ */
 GRN_API int
 grn_column_index(grn_ctx *ctx,
                  grn_obj *column,
