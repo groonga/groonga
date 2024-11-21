@@ -614,7 +614,7 @@ exit:
   return (grn_obj *)expr;
 }
 
-static grn_inline bool
+static inline bool
 grn_expr_is_takable_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
 {
   if (grn_is_reference_count_enable()) {
@@ -1897,7 +1897,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_TERM_EXTRACT_POLICY      0
 #define DEFAULT_WEIGHT_VECTOR_SIZE       4096
 
-static grn_inline void
+static inline void
 grn_scan_info_free(grn_ctx *ctx, scan_info *si)
 {
   GRN_OBJ_FIN(ctx, &(si->weights));
@@ -4182,7 +4182,7 @@ typedef struct {
   float weight;
 } efs_op;
 
-grn_inline static void
+inline static void
 skip_space(grn_ctx *ctx, efs_info *q)
 {
   unsigned int len;

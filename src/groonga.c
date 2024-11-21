@@ -275,7 +275,7 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
 }
 #endif /* GRN_WITH_LIBEDIT */
 
-grn_inline static grn_rc
+static inline grn_rc
 read_next_line(grn_ctx *ctx, grn_obj *buf)
 {
   static bool the_first_read = true;
@@ -323,7 +323,7 @@ read_next_line(grn_ctx *ctx, grn_obj *buf)
   return rc;
 }
 
-grn_inline static grn_rc
+static inline grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
   grn_rc rc = GRN_SUCCESS;

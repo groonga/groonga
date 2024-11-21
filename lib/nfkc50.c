@@ -6999,7 +6999,7 @@ static const char *grn_nfkc50_compose_prefix_cc80_table_e1bd[] = {
   "\xe1\xbd\xaa", "\xe1\xbd\xab"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc80(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7154,7 +7154,7 @@ static const char *grn_nfkc50_compose_prefix_cc81_table_e1bd[] = {
   "\xe1\xbd\xac", "\xe1\xbd\xad"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc81(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7248,7 +7248,7 @@ static const char *grn_nfkc50_compose_prefix_cc82_table_e1ba[] = {
   "\xe1\xbb\x87"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc82(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7303,7 +7303,7 @@ static const char *grn_nfkc50_compose_prefix_cc83_table_c6[] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, "\xe1\xbb\xaf"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc83(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7378,7 +7378,7 @@ static const char *grn_nfkc50_compose_prefix_cc88_table_d3[] = {
   "\xd3\xaa", "\xd3\xab"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc88(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7444,7 +7444,7 @@ static const char *grn_nfkc50_compose_prefix_cc8a_table_[] = {
   "\xe1\xba\x99"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc8a(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7466,7 +7466,7 @@ static const char *grn_nfkc50_compose_prefix_cca7_table_[] = {
   "\xc5\x9f", "\xc5\xa3"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca7(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7521,7 +7521,7 @@ static const char *grn_nfkc50_compose_prefix_cc84_table_d0[] = {
   "\xd3\xa3"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc84(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7620,7 +7620,7 @@ static const char *grn_nfkc50_compose_prefix_cc86_table_d0[] = {
   "\xd0\xb9"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc86(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7684,7 +7684,7 @@ static const char *grn_nfkc50_compose_prefix_cca8_table_[] = {
   NULL, NULL, NULL, NULL, "\xc5\xb3"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca8(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7711,7 +7711,7 @@ static const char *grn_nfkc50_compose_prefix_cc87_table_c5[] = {
   "\xe1\xb9\xa5", NULL, NULL, NULL, NULL, NULL, "\xe1\xb9\xa7"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc87(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7755,7 +7755,7 @@ static const char *grn_nfkc50_compose_prefix_cc8c_table_[] = {
   NULL, "\xc5\xbe"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc8c(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7794,7 +7794,7 @@ static const char *grn_nfkc50_compose_prefix_cc8b_table_[] = {
   "\xc5\x91", NULL, NULL, NULL, NULL, NULL, "\xc5\xb1"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc8b(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7828,7 +7828,7 @@ static const char *grn_nfkc50_compose_prefix_cc9b_table_[] = {
   "\xc6\xa1", NULL, NULL, NULL, NULL, NULL, "\xc6\xb0"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc9b(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7854,7 +7854,7 @@ static const char *grn_nfkc50_compose_prefix_cc8f_table_d1[] = {
   "\xd1\xb6", "\xd1\xb7"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc8f(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7886,7 +7886,7 @@ static const char *grn_nfkc50_compose_prefix_cc91_table_[] = {
   NULL, "\xc8\x93", NULL, NULL, "\xc8\x97"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc91(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7906,7 +7906,7 @@ static const char *grn_nfkc50_compose_prefix_cca6_table_[] = {
   "\xc8\x99", "\xc8\x9b"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca6(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -7922,7 +7922,7 @@ grn_nfkc50_compose_prefix_cca6(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_d993(const unsigned char *utf8)
 {
   {
@@ -7950,7 +7950,7 @@ static const char *grn_nfkc50_compose_prefix_d994_table_db[] = {
   NULL, "\xdb\x93", NULL, NULL, "\xdb\x80"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_d994(const unsigned char *utf8)
 {
   {
@@ -7980,7 +7980,7 @@ grn_nfkc50_compose_prefix_d994(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_d995(const unsigned char *utf8)
 {
   {
@@ -8003,7 +8003,7 @@ static const char *grn_nfkc50_compose_prefix_e0a4bc_table_e0a4[] = {
   "\xe0\xa4\xb1", NULL, NULL, "\xe0\xa4\xb4"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0a4bc(const unsigned char *utf8)
 {
   {
@@ -8028,7 +8028,7 @@ grn_nfkc50_compose_prefix_e0a4bc(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0a6be(const unsigned char *utf8)
 {
   {
@@ -8052,7 +8052,7 @@ grn_nfkc50_compose_prefix_e0a6be(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0a797(const unsigned char *utf8)
 {
   {
@@ -8076,7 +8076,7 @@ grn_nfkc50_compose_prefix_e0a797(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0ad96(const unsigned char *utf8)
 {
   {
@@ -8100,7 +8100,7 @@ grn_nfkc50_compose_prefix_e0ad96(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0acbe(const unsigned char *utf8)
 {
   {
@@ -8124,7 +8124,7 @@ grn_nfkc50_compose_prefix_e0acbe(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0ad97(const unsigned char *utf8)
 {
   {
@@ -8148,7 +8148,7 @@ grn_nfkc50_compose_prefix_e0ad97(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0af97(const unsigned char *utf8)
 {
   {
@@ -8181,7 +8181,7 @@ static const char *grn_nfkc50_compose_prefix_e0aebe_table_e0af[] = {
   "\xe0\xaf\x8a", "\xe0\xaf\x8b"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0aebe(const unsigned char *utf8)
 {
   {
@@ -8206,7 +8206,7 @@ grn_nfkc50_compose_prefix_e0aebe(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b196(const unsigned char *utf8)
 {
   {
@@ -8234,7 +8234,7 @@ static const char *grn_nfkc50_compose_prefix_e0b395_table_e0b3[] = {
   "\xe0\xb3\x87", NULL, NULL, NULL, "\xe0\xb3\x8b"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b395(const unsigned char *utf8)
 {
   {
@@ -8264,7 +8264,7 @@ grn_nfkc50_compose_prefix_e0b395(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b396(const unsigned char *utf8)
 {
   {
@@ -8288,7 +8288,7 @@ grn_nfkc50_compose_prefix_e0b396(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b382(const unsigned char *utf8)
 {
   {
@@ -8316,7 +8316,7 @@ static const char *grn_nfkc50_compose_prefix_e0b4be_table_e0b5[] = {
   "\xe0\xb5\x8a", "\xe0\xb5\x8b"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b4be(const unsigned char *utf8)
 {
   {
@@ -8341,7 +8341,7 @@ grn_nfkc50_compose_prefix_e0b4be(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b597(const unsigned char *utf8)
 {
   {
@@ -8369,7 +8369,7 @@ static const char *grn_nfkc50_compose_prefix_e0b78a_table_e0b7[] = {
   "\xe0\xb7\x9a", NULL, NULL, "\xe0\xb7\x9d"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b78a(const unsigned char *utf8)
 {
   {
@@ -8394,7 +8394,7 @@ grn_nfkc50_compose_prefix_e0b78a(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b78f(const unsigned char *utf8)
 {
   {
@@ -8418,7 +8418,7 @@ grn_nfkc50_compose_prefix_e0b78f(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e0b79f(const unsigned char *utf8)
 {
   {
@@ -8442,7 +8442,7 @@ grn_nfkc50_compose_prefix_e0b79f(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e180ae(const unsigned char *utf8)
 {
   {
@@ -8477,7 +8477,7 @@ static const char *grn_nfkc50_compose_prefix_e1acb5_table_e1ac[] = {
   NULL, "\xe1\xad\x80", "\xe1\xad\x81"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e1acb5(const unsigned char *utf8)
 {
   {
@@ -8507,7 +8507,7 @@ grn_nfkc50_compose_prefix_e1acb5(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca5(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8534,7 +8534,7 @@ static const char *grn_nfkc50_compose_prefix_cca3_table_c6[] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, "\xe1\xbb\xb1"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca3(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8567,7 +8567,7 @@ static const char *grn_nfkc50_compose_prefix_ccb1_table_[] = {
   "\xe1\xba\x95"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_ccb1(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8589,7 +8589,7 @@ static const char *grn_nfkc50_compose_prefix_ccad_table_[] = {
   "\xe1\xb9\xb1", "\xe1\xb9\xb7"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_ccad(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8611,7 +8611,7 @@ static const char *grn_nfkc50_compose_prefix_ccb0_table_[] = {
   "\xe1\xb9\xb5"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_ccb0(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8627,7 +8627,7 @@ grn_nfkc50_compose_prefix_ccb0(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_ccae(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8642,7 +8642,7 @@ grn_nfkc50_compose_prefix_ccae(const unsigned char *utf8)
   return NULL;
 }
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cca4(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8675,7 +8675,7 @@ static const char *grn_nfkc50_compose_prefix_cc89_table_c6[] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, "\xe1\xbb\xad"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc89(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -8726,7 +8726,7 @@ static const char *grn_nfkc50_compose_prefix_cc93_table_cf[] = {
   "\xe1\xbd\xa0"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc93(const unsigned char *utf8)
 {
   {
@@ -8765,7 +8765,7 @@ static const char *grn_nfkc50_compose_prefix_cc94_table_cf[] = {
   "\xe1\xbd\xa1"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cc94(const unsigned char *utf8)
 {
   {
@@ -8817,7 +8817,7 @@ static const char *grn_nfkc50_compose_prefix_cd82_table_e1bd[] = {
   "\xe1\xbd\xae", "\xe1\xbd\xaf"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cd82(const unsigned char *utf8)
 {
   {
@@ -8898,7 +8898,7 @@ static const char *grn_nfkc50_compose_prefix_cd85_table_e1bf[] = {
   "\xe1\xbf\xb7"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_cd85(const unsigned char *utf8)
 {
   {
@@ -8996,7 +8996,7 @@ static const char *grn_nfkc50_compose_prefix_ccb8_table_e28a[] = {
   "\xe2\x8b\xaa", "\xe2\x8b\xab", "\xe2\x8b\xac", "\xe2\x8b\xad"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_ccb8(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
@@ -9081,7 +9081,7 @@ static const char *grn_nfkc50_compose_prefix_e38299_table_e383[] = {
   NULL, NULL, NULL, NULL, "\xe3\x83\xbe"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e38299(const unsigned char *utf8)
 {
   {
@@ -9128,7 +9128,7 @@ static const char *grn_nfkc50_compose_prefix_e3829a_table_e383[] = {
   NULL, "\xe3\x83\x9a", NULL, NULL, "\xe3\x83\x9d"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e3829a(const unsigned char *utf8)
 {
   {
@@ -9165,7 +9165,7 @@ static const char *grn_nfkc50_compose_prefix_e185a1_table_e184[] = {
   "\xed\x83\x80", "\xed\x8c\x8c", "\xed\x95\x98"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a1(const unsigned char *utf8)
 {
   {
@@ -10608,7 +10608,7 @@ static const char *grn_nfkc50_compose_prefix_e186a8_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xad"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186a8(const unsigned char *utf8)
 {
   {
@@ -13112,7 +13112,7 @@ static const char *grn_nfkc50_compose_prefix_e186a9_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xae"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186a9(const unsigned char *utf8)
 {
   {
@@ -15616,7 +15616,7 @@ static const char *grn_nfkc50_compose_prefix_e186aa_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xaf"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186aa(const unsigned char *utf8)
 {
   {
@@ -18120,7 +18120,7 @@ static const char *grn_nfkc50_compose_prefix_e186ab_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb0"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186ab(const unsigned char *utf8)
 {
   {
@@ -20624,7 +20624,7 @@ static const char *grn_nfkc50_compose_prefix_e186ac_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb1"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186ac(const unsigned char *utf8)
 {
   {
@@ -23128,7 +23128,7 @@ static const char *grn_nfkc50_compose_prefix_e186ad_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb2"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186ad(const unsigned char *utf8)
 {
   {
@@ -25632,7 +25632,7 @@ static const char *grn_nfkc50_compose_prefix_e186ae_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb3"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186ae(const unsigned char *utf8)
 {
   {
@@ -28136,7 +28136,7 @@ static const char *grn_nfkc50_compose_prefix_e186af_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb4"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186af(const unsigned char *utf8)
 {
   {
@@ -30640,7 +30640,7 @@ static const char *grn_nfkc50_compose_prefix_e186b0_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb5"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b0(const unsigned char *utf8)
 {
   {
@@ -33144,7 +33144,7 @@ static const char *grn_nfkc50_compose_prefix_e186b1_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb6"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b1(const unsigned char *utf8)
 {
   {
@@ -35648,7 +35648,7 @@ static const char *grn_nfkc50_compose_prefix_e186b2_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb7"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b2(const unsigned char *utf8)
 {
   {
@@ -38152,7 +38152,7 @@ static const char *grn_nfkc50_compose_prefix_e186b3_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb8"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b3(const unsigned char *utf8)
 {
   {
@@ -40656,7 +40656,7 @@ static const char *grn_nfkc50_compose_prefix_e186b4_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xb9"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b4(const unsigned char *utf8)
 {
   {
@@ -43160,7 +43160,7 @@ static const char *grn_nfkc50_compose_prefix_e186b5_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xba"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b5(const unsigned char *utf8)
 {
   {
@@ -45664,7 +45664,7 @@ static const char *grn_nfkc50_compose_prefix_e186b6_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xbb"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b6(const unsigned char *utf8)
 {
   {
@@ -48168,7 +48168,7 @@ static const char *grn_nfkc50_compose_prefix_e186b7_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xbc"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b7(const unsigned char *utf8)
 {
   {
@@ -50672,7 +50672,7 @@ static const char *grn_nfkc50_compose_prefix_e186b8_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xbd"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b8(const unsigned char *utf8)
 {
   {
@@ -53176,7 +53176,7 @@ static const char *grn_nfkc50_compose_prefix_e186b9_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xbe"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186b9(const unsigned char *utf8)
 {
   {
@@ -55680,7 +55680,7 @@ static const char *grn_nfkc50_compose_prefix_e186ba_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9d\xbf"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186ba(const unsigned char *utf8)
 {
   {
@@ -58184,7 +58184,7 @@ static const char *grn_nfkc50_compose_prefix_e186bb_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x80"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186bb(const unsigned char *utf8)
 {
   {
@@ -60688,7 +60688,7 @@ static const char *grn_nfkc50_compose_prefix_e186bc_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x81"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186bc(const unsigned char *utf8)
 {
   {
@@ -63192,7 +63192,7 @@ static const char *grn_nfkc50_compose_prefix_e186bd_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x82"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186bd(const unsigned char *utf8)
 {
   {
@@ -65696,7 +65696,7 @@ static const char *grn_nfkc50_compose_prefix_e186be_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x83"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186be(const unsigned char *utf8)
 {
   {
@@ -68200,7 +68200,7 @@ static const char *grn_nfkc50_compose_prefix_e186bf_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x84"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e186bf(const unsigned char *utf8)
 {
   {
@@ -70704,7 +70704,7 @@ static const char *grn_nfkc50_compose_prefix_e18780_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x85"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e18780(const unsigned char *utf8)
 {
   {
@@ -73208,7 +73208,7 @@ static const char *grn_nfkc50_compose_prefix_e18781_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x86"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e18781(const unsigned char *utf8)
 {
   {
@@ -75712,7 +75712,7 @@ static const char *grn_nfkc50_compose_prefix_e18782_table_ed9d[] = {
   NULL, NULL, NULL, NULL, "\xed\x9e\x87"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e18782(const unsigned char *utf8)
 {
   {
@@ -76804,7 +76804,7 @@ static const char *grn_nfkc50_compose_prefix_e185a2_table_e184[] = {
   "\xed\x83\x9c", "\xed\x8c\xa8", "\xed\x95\xb4"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a2(const unsigned char *utf8)
 {
   {
@@ -76835,7 +76835,7 @@ static const char *grn_nfkc50_compose_prefix_e185a3_table_e184[] = {
   "\xed\x83\xb8", "\xed\x8d\x84", "\xed\x96\x90"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a3(const unsigned char *utf8)
 {
   {
@@ -76866,7 +76866,7 @@ static const char *grn_nfkc50_compose_prefix_e185a4_table_e184[] = {
   "\xed\x84\x94", "\xed\x8d\xa0", "\xed\x96\xac"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a4(const unsigned char *utf8)
 {
   {
@@ -76897,7 +76897,7 @@ static const char *grn_nfkc50_compose_prefix_e185a5_table_e184[] = {
   "\xed\x84\xb0", "\xed\x8d\xbc", "\xed\x97\x88"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a5(const unsigned char *utf8)
 {
   {
@@ -76928,7 +76928,7 @@ static const char *grn_nfkc50_compose_prefix_e185a6_table_e184[] = {
   "\xed\x85\x8c", "\xed\x8e\x98", "\xed\x97\xa4"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a6(const unsigned char *utf8)
 {
   {
@@ -76959,7 +76959,7 @@ static const char *grn_nfkc50_compose_prefix_e185a7_table_e184[] = {
   "\xed\x85\xa8", "\xed\x8e\xb4", "\xed\x98\x80"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a7(const unsigned char *utf8)
 {
   {
@@ -76990,7 +76990,7 @@ static const char *grn_nfkc50_compose_prefix_e185a8_table_e184[] = {
   "\xed\x86\x84", "\xed\x8f\x90", "\xed\x98\x9c"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a8(const unsigned char *utf8)
 {
   {
@@ -77021,7 +77021,7 @@ static const char *grn_nfkc50_compose_prefix_e185a9_table_e184[] = {
   "\xed\x86\xa0", "\xed\x8f\xac", "\xed\x98\xb8"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185a9(const unsigned char *utf8)
 {
   {
@@ -77052,7 +77052,7 @@ static const char *grn_nfkc50_compose_prefix_e185aa_table_e184[] = {
   "\xed\x86\xbc", "\xed\x90\x88", "\xed\x99\x94"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185aa(const unsigned char *utf8)
 {
   {
@@ -77083,7 +77083,7 @@ static const char *grn_nfkc50_compose_prefix_e185ab_table_e184[] = {
   "\xed\x87\x98", "\xed\x90\xa4", "\xed\x99\xb0"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185ab(const unsigned char *utf8)
 {
   {
@@ -77114,7 +77114,7 @@ static const char *grn_nfkc50_compose_prefix_e185ac_table_e184[] = {
   "\xed\x87\xb4", "\xed\x91\x80", "\xed\x9a\x8c"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185ac(const unsigned char *utf8)
 {
   {
@@ -77145,7 +77145,7 @@ static const char *grn_nfkc50_compose_prefix_e185ad_table_e184[] = {
   "\xed\x88\x90", "\xed\x91\x9c", "\xed\x9a\xa8"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185ad(const unsigned char *utf8)
 {
   {
@@ -77176,7 +77176,7 @@ static const char *grn_nfkc50_compose_prefix_e185ae_table_e184[] = {
   "\xed\x88\xac", "\xed\x91\xb8", "\xed\x9b\x84"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185ae(const unsigned char *utf8)
 {
   {
@@ -77207,7 +77207,7 @@ static const char *grn_nfkc50_compose_prefix_e185af_table_e184[] = {
   "\xed\x89\x88", "\xed\x92\x94", "\xed\x9b\xa0"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185af(const unsigned char *utf8)
 {
   {
@@ -77238,7 +77238,7 @@ static const char *grn_nfkc50_compose_prefix_e185b0_table_e184[] = {
   "\xed\x89\xa4", "\xed\x92\xb0", "\xed\x9b\xbc"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b0(const unsigned char *utf8)
 {
   {
@@ -77269,7 +77269,7 @@ static const char *grn_nfkc50_compose_prefix_e185b1_table_e184[] = {
   "\xed\x8a\x80", "\xed\x93\x8c", "\xed\x9c\x98"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b1(const unsigned char *utf8)
 {
   {
@@ -77300,7 +77300,7 @@ static const char *grn_nfkc50_compose_prefix_e185b2_table_e184[] = {
   "\xed\x8a\x9c", "\xed\x93\xa8", "\xed\x9c\xb4"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b2(const unsigned char *utf8)
 {
   {
@@ -77331,7 +77331,7 @@ static const char *grn_nfkc50_compose_prefix_e185b3_table_e184[] = {
   "\xed\x8a\xb8", "\xed\x94\x84", "\xed\x9d\x90"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b3(const unsigned char *utf8)
 {
   {
@@ -77362,7 +77362,7 @@ static const char *grn_nfkc50_compose_prefix_e185b4_table_e184[] = {
   "\xed\x8b\x94", "\xed\x94\xa0", "\xed\x9d\xac"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b4(const unsigned char *utf8)
 {
   {
@@ -77393,7 +77393,7 @@ static const char *grn_nfkc50_compose_prefix_e185b5_table_e184[] = {
   "\xed\x8b\xb0", "\xed\x94\xbc", "\xed\x9e\x88"
 };
 
-static grn_inline const char *
+static inline const char *
 grn_nfkc50_compose_prefix_e185b5(const unsigned char *utf8)
 {
   {

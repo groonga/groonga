@@ -302,7 +302,7 @@ mecab_tokenizer_options_close(grn_ctx *ctx, void *data)
   GRN_PLUGIN_FREE(ctx, options);
 }
 
-static grn_inline bool
+static inline bool
 is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
 {
   switch (character_bytes) {

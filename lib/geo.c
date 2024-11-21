@@ -638,7 +638,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx,
   return n_entries;
 }
 
-static grn_inline grn_obj *
+static inline grn_obj *
 find_geo_sort_index(grn_ctx *ctx, grn_obj *key)
 {
   grn_obj *index = NULL;
@@ -665,7 +665,7 @@ find_geo_sort_index(grn_ctx *ctx, grn_obj *key)
   return index;
 }
 
-static grn_inline int
+static inline int
 grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                grn_obj *table,
                                grn_obj *index,
@@ -1853,7 +1853,7 @@ grn_geo_cursor_in_rectangle_set_need_distance(grn_ctx *ctx,
   cursor_in_rectangle->need_distance = need_distance;
 }
 
-static grn_inline bool
+static inline bool
 grn_geo_cursor_entry_next_push(grn_ctx *ctx,
                                grn_geo_cursor_in_rectangle *cursor,
                                grn_geo_cursor_entry *entry)
@@ -1888,7 +1888,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
   return pushed;
 }
 
-static grn_inline bool
+static inline bool
 grn_geo_cursor_entry_next(grn_ctx *ctx,
                           grn_geo_cursor_in_rectangle *cursor,
                           grn_geo_cursor_entry *entry)
@@ -2672,7 +2672,7 @@ geo_longitude_distance_type(int start_longitude, int end_longitude)
   }
 }
 
-static grn_inline quadrant_type
+static inline quadrant_type
 geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
 {
 #define QUADRANT_1ST_WITH_AXIS(point)                                          \
@@ -2740,7 +2740,7 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
 #undef QUADRANT_4TH_WITH_AXIS
 }
 
-static grn_inline double
+static inline double
 geo_distance_rectangle_square_root(double start_longitude,
                                    double start_latitude,
                                    double end_longitude,
@@ -2755,7 +2755,7 @@ geo_distance_rectangle_square_root(double start_longitude,
   return sqrt((x * x) + (y * y));
 }
 
-static grn_inline double
+static inline double
 geo_distance_rectangle_short_dist_type(
   quadrant_type quad_type, double lng1, double lat1, double lng2, double lat2)
 {
@@ -2807,7 +2807,7 @@ geo_distance_rectangle_short_dist_type(
   return distance;
 }
 
-static grn_inline double
+static inline double
 geo_distance_rectangle_long_dist_type(
   quadrant_type quad_type, double lng1, double lat1, double lng2, double lat2)
 {

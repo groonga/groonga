@@ -425,7 +425,7 @@ selector_create_result_set(grn_ctx *ctx, grn_table_selector *table_selector)
   return result_set;
 }
 
-static grn_inline int32_t
+static inline int32_t
 exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
 {
   if (!result) {
@@ -457,7 +457,7 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
   }
 }
 
-static grn_inline void
+static inline void
 select_sequential_scan(grn_ctx *ctx,
                        grn_table_selector *table_selector,
                        grn_obj *result_set)
@@ -575,13 +575,13 @@ select_sequential_scan(grn_ctx *ctx,
   grn_expr_executor_fin(ctx, &executor);
 }
 
-static grn_inline void
+static inline void
 select_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
 {
   grn_report_index(ctx, "[table-selector][select]", tag, index);
 }
 
-static grn_inline void
+static inline void
 select_index_not_used_report(grn_ctx *ctx,
                              const char *tag,
                              grn_obj *index,
@@ -594,7 +594,7 @@ select_index_not_used_report(grn_ctx *ctx,
                             reason);
 }
 
-static grn_inline bool
+static inline bool
 select_index_use_sequential_search(grn_ctx *ctx,
                                    grn_table_selector *table_selector,
                                    grn_obj *result_set,
@@ -643,7 +643,7 @@ select_index_use_sequential_search(grn_ctx *ctx,
   return true;
 }
 
-static grn_inline grn_id
+static inline grn_id
 select_index_resolve_key(grn_ctx *ctx, grn_obj *domain, grn_obj *key)
 {
   if (GRN_OBJ_GET_DOMAIN(key) == DB_OBJ(domain)->id) {
@@ -668,7 +668,7 @@ select_index_resolve_key(grn_ctx *ctx, grn_obj *domain, grn_obj *key)
   }
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_equal(grn_ctx *ctx,
                    grn_table_selector *table_selector,
                    grn_obj *index,
@@ -777,7 +777,7 @@ select_index_equal(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_not_equal(grn_ctx *ctx,
                        grn_table_selector *table_selector,
                        grn_obj *index,
@@ -901,7 +901,7 @@ select_index_not_equal(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_fix_column_prefix(grn_ctx *ctx,
                                grn_table_selector *table_selector,
                                grn_obj *index,
@@ -1031,7 +1031,7 @@ exit:
   return ctx->rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_fix(grn_ctx *ctx,
                  grn_table_selector *table_selector,
                  grn_obj *index,
@@ -1166,7 +1166,7 @@ select_index_fix(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_match(grn_ctx *ctx,
                    grn_table_selector *table_selector,
                    grn_obj *index,
@@ -1180,7 +1180,7 @@ select_index_match(grn_ctx *ctx,
   return grn_obj_search(ctx, index, si->query, result_set, logical_op, options);
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_extract(grn_ctx *ctx,
                      grn_table_selector *table_selector,
                      grn_obj *index,
@@ -1212,7 +1212,7 @@ select_index_extract(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_call(grn_ctx *ctx,
                   grn_table_selector *table_selector,
                   grn_obj *index,
@@ -1305,7 +1305,7 @@ select_index_call(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_range_id(grn_ctx *ctx,
                       grn_table_selector *table_selector,
                       grn_obj *table,
@@ -1393,7 +1393,7 @@ select_index_range_id(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_range_key(grn_ctx *ctx,
                        grn_table_selector *table_selector,
                        grn_obj *table,
@@ -1484,7 +1484,7 @@ select_index_range_key(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_range_column(grn_ctx *ctx,
                           grn_table_selector *table_selector,
                           grn_obj *index,
@@ -1593,7 +1593,7 @@ select_index_range_column(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 select_index_range(grn_ctx *ctx,
                    grn_table_selector *table_selector,
                    grn_obj *index,
@@ -1717,7 +1717,7 @@ select_index_dispatch(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline bool
+static inline bool
 select_index(grn_ctx *ctx, grn_table_selector *table_selector)
 {
   grn_table_selector_data *data = &(table_selector->data);

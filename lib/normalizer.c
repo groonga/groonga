@@ -84,7 +84,7 @@ static unsigned char symbol[] = {
   0,    0,   0,   0,   0,   0,   '$', 0,    0,   '%', '#', '&', '*', '@',
   0,    0,   0,   0,   0,   0,   0,   0};
 
-grn_inline static grn_obj *
+inline static grn_obj *
 eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -362,7 +362,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-grn_inline static grn_obj *
+inline static grn_obj *
 sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -658,7 +658,7 @@ typedef struct {
   bool remove_tokenized_delimiter_p;
 } grn_nfkc_normalize_data;
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_context_init(grn_ctx *ctx,
                                 grn_nfkc_normalize_context *context,
                                 bool need_checks,
@@ -706,7 +706,7 @@ grn_nfkc_normalize_context_init(grn_ctx *ctx,
   context->o = context->offsets;
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_context_fin(grn_ctx *ctx,
                                grn_nfkc_normalize_context *context)
 {
@@ -724,7 +724,7 @@ grn_nfkc_normalize_context_fin(grn_ctx *ctx,
   }
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_context_swap(grn_ctx *ctx,
                                 grn_nfkc_normalize_context *context1,
                                 grn_nfkc_normalize_context *context2)
@@ -735,7 +735,7 @@ grn_nfkc_normalize_context_swap(grn_ctx *ctx,
   *context2 = tmp;
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_context_rewind(grn_ctx *ctx,
                                   grn_nfkc_normalize_context *context)
 {
@@ -747,7 +747,7 @@ grn_nfkc_normalize_context_rewind(grn_ctx *ctx,
   context->o = context->offsets;
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_data_init(grn_ctx *ctx,
                              grn_nfkc_normalize_data *data,
                              grn_obj *string,
@@ -778,7 +778,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
                                   "");
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_context_expand(grn_ctx *ctx,
                                   grn_nfkc_normalize_context *context,
                                   size_t least_required_size,
@@ -834,7 +834,7 @@ grn_nfkc_normalize_context_expand(grn_ctx *ctx,
   }
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_expand(grn_ctx *ctx,
                           grn_nfkc_normalize_data *data,
                           size_t least_required_size)
@@ -845,7 +845,7 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
                                     "");
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_a(
   const unsigned char *utf8_char)
 {
@@ -915,7 +915,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_a(
           (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xb7));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_b(
   const unsigned char *utf8_char)
 {
@@ -932,7 +932,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_b(
          (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87);
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_c(
   const unsigned char *utf8_char)
 {
@@ -960,7 +960,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_c(
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x89));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_d(
   const unsigned char *utf8_char)
 {
@@ -985,7 +985,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_d(
      (0x8b <= utf8_char[2] && utf8_char[2] <= 0x93)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_e(
   const unsigned char *utf8_char)
 {
@@ -1049,7 +1049,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_e(
      (0x81 <= utf8_char[2] && utf8_char[2] <= 0x87)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_f(
   const unsigned char *utf8_char)
 {
@@ -1061,7 +1061,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_f(
     utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x9f);
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_g(
   const unsigned char *utf8_char)
 {
@@ -1090,7 +1090,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_g(
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0xa1));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_h(
   const unsigned char *utf8_char)
 {
@@ -1123,7 +1123,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_h(
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x96));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_i(
   const unsigned char *utf8_char)
 {
@@ -1168,7 +1168,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_i(
      (utf8_char[2] == 0x89 || utf8_char[2] == 0x8b)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_j(
   const unsigned char *utf8_char)
 {
@@ -1185,7 +1185,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_j(
     (utf8_char[0] == 0xc7 && utf8_char[1] == 0xb0));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_k(
   const unsigned char *utf8_char)
 {
@@ -1213,7 +1213,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_k(
      (0xb1 <= utf8_char[2] && utf8_char[2] <= 0xb5)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_l(
   const unsigned char *utf8_char)
 {
@@ -1241,7 +1241,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_l(
      (0xb7 <= utf8_char[2] && utf8_char[2] <= 0xbd)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_m(
   const unsigned char *utf8_char)
 {
@@ -1260,7 +1260,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_m(
       (utf8_char[1] == 0xb9 && 0x81 <= utf8_char[2] && utf8_char[2] <= 0x83))));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_n(
   const unsigned char *utf8_char)
 {
@@ -1298,7 +1298,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_n(
      (0x85 <= utf8_char[2] && utf8_char[2] <= 0x8b)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_o(
   const unsigned char *utf8_char)
 {
@@ -1377,7 +1377,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_o(
       (utf8_char[1] == 0xbb && 0x8d <= utf8_char[2] && utf8_char[2] <= 0xa3))));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_p(
   const unsigned char *utf8_char)
 {
@@ -1394,7 +1394,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_p(
     (0x95 <= utf8_char[2] && utf8_char[2] <= 0x97));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_r(
   const unsigned char *utf8_char)
 {
@@ -1428,7 +1428,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_r(
      (0x99 <= utf8_char[2] && utf8_char[2] <= 0x9f)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_s(
   const unsigned char *utf8_char)
 {
@@ -1463,7 +1463,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_s(
      (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xa9)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_t(
   const unsigned char *utf8_char)
 {
@@ -1500,7 +1500,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_t(
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x97));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_u(
   const unsigned char *utf8_char)
 {
@@ -1578,7 +1578,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_u(
      (0xa5 <= utf8_char[2] && utf8_char[2] <= 0xb1)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_v(
   const unsigned char *utf8_char)
 {
@@ -1595,7 +1595,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_v(
     (0xbd <= utf8_char[2] && utf8_char[2] <= 0xbf));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_w(
   const unsigned char *utf8_char)
 {
@@ -1625,7 +1625,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_w(
     (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x98));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_x(
   const unsigned char *utf8_char)
 {
@@ -1642,7 +1642,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_x(
     (0x8b <= utf8_char[2] && utf8_char[2] <= 0x8d));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_y(
   const unsigned char *utf8_char)
 {
@@ -1685,7 +1685,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_y(
      (0xb3 <= utf8_char[2] && utf8_char[2] <= 0xb9)));
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_unify_latin_alphabet_with_is_z(
   const unsigned char *utf8_char)
 {
@@ -1718,7 +1718,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with_is_z(
  * before calling this function. This is a precondition in terms of contract
  * programming.
  */
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_latin_alphabet_with(const unsigned char *utf8_char,
                                              unsigned char *unified)
 {
@@ -1803,7 +1803,7 @@ grn_nfkc_normalize_unify_latin_alphabet_with(const unsigned char *utf8_char,
   }
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
 {
@@ -1830,7 +1830,7 @@ grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
@@ -1877,7 +1877,7 @@ grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
@@ -1924,7 +1924,7 @@ grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
@@ -1966,7 +1966,7 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
@@ -2014,14 +2014,14 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
   return utf8_char;
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char, size_t length)
 {
   /* U+002D HYPHEN-MINUS */
   return (length == 1 && utf8_char[0] == '-');
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
                                            size_t length)
 {
@@ -2030,7 +2030,7 @@ grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
           utf8_char[2] == 0xbc);
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
                                     size_t length)
 {
@@ -2081,7 +2081,7 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
   return false;
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_is_prolonged_sound_mark_family(
   const unsigned char *utf8_char, size_t length)
 {
@@ -2114,7 +2114,7 @@ grn_nfkc_normalize_is_prolonged_sound_mark_family(
   return false;
 }
 
-grn_inline static bool
+inline static bool
 grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
                                         size_t length)
 {
@@ -2154,7 +2154,7 @@ grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
   return false;
 }
 
-grn_inline static const unsigned char *
+inline static const unsigned char *
 grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
                                      unsigned char *unified)
 {
@@ -3461,7 +3461,7 @@ grn_nfkc_normalize_strip(grn_ctx *ctx,
   return current;
 }
 
-grn_inline static void
+inline static void
 grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
                                   grn_nfkc_normalize_data *data,
                                   grn_nfkc_normalize_context *unify,
@@ -3920,7 +3920,7 @@ exit:
   grn_nfkc_normalize_context_fin(ctx, &unify);
 }
 
-static grn_inline bool
+static inline bool
 grn_nfkc_normalize_remove_target_blank_character_p(
   grn_ctx *ctx,
   const grn_nfkc_normalize_data *data,
@@ -3947,7 +3947,7 @@ grn_nfkc_normalize_remove_target_blank_character_p(
   }
 }
 
-static grn_inline bool
+static inline bool
 grn_nfkc_normalize_remove_target_non_blank_character_p(
   grn_ctx *ctx,
   const grn_nfkc_normalize_data *data,
@@ -4143,7 +4143,7 @@ exit:
 }
 #endif /* GRN_WITH_NFKC */
 
-grn_inline static grn_obj *
+inline static grn_obj *
 ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -4257,7 +4257,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 
 /* use cp1252 as latin1 */
-grn_inline static grn_obj *
+inline static grn_obj *
 latin1_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -4404,7 +4404,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-grn_inline static grn_obj *
+inline static grn_obj *
 koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;

@@ -67,7 +67,7 @@ class CriticalSection {
   CriticalSection &operator=(const CriticalSection &);
 };
 
-grn_inline static int
+inline static int
 grn_dat_name(grn_ctx *ctx, grn_dat *dat, char *buffer, int buffer_size)
 {
   int name_size;

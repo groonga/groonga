@@ -18,7 +18,7 @@
 #include "grn_romaji.h"
 #include "grn_str.h"
 
-static grn_inline bool
+static inline bool
 grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
                           size_t length)
 {
@@ -73,7 +73,7 @@ grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
   }
 }
 
-static grn_inline bool
+static inline bool
 grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
                              size_t length)
 {
@@ -126,7 +126,7 @@ grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
   }
 }
 
-static grn_inline unsigned char
+static inline unsigned char
 grn_romaji_hepburn_consonant(grn_ctx *ctx,
                              const unsigned char *current,
                              size_t char_length,

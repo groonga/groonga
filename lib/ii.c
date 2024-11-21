@@ -296,7 +296,7 @@ grn_ii_get_term(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *term)
 
 /* segment */
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_get_array_pseg_inline(grn_ii *ii, uint32_t lseg)
 {
   if (lseg < GRN_II_MAX_LSEG) {
@@ -306,7 +306,7 @@ grn_ii_get_array_pseg_inline(grn_ii *ii, uint32_t lseg)
   }
 }
 
-grn_inline static void
+inline static void
 grn_ii_set_array_pseg_inline(grn_ii *ii, uint32_t lseg, uint32_t pseg)
 {
   if (lseg < GRN_II_MAX_LSEG) {
@@ -316,7 +316,7 @@ grn_ii_set_array_pseg_inline(grn_ii *ii, uint32_t lseg, uint32_t pseg)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_get_buffer_pseg_inline(grn_ii *ii, uint32_t lseg)
 {
   if (lseg < GRN_II_MAX_LSEG) {
@@ -326,7 +326,7 @@ grn_ii_get_buffer_pseg_inline(grn_ii *ii, uint32_t lseg)
   }
 }
 
-grn_inline static uint32_t *
+inline static uint32_t *
 grn_ii_get_buffer_pseg_address_inline(grn_ii *ii, uint32_t lseg)
 {
   if (lseg < GRN_II_MAX_LSEG) {
@@ -336,7 +336,7 @@ grn_ii_get_buffer_pseg_address_inline(grn_ii *ii, uint32_t lseg)
   }
 }
 
-grn_inline static void
+inline static void
 grn_ii_set_buffer_pseg_inline(grn_ii *ii, uint32_t lseg, uint32_t pseg)
 {
   if (lseg < GRN_II_MAX_LSEG) {
@@ -346,7 +346,7 @@ grn_ii_set_buffer_pseg_inline(grn_ii *ii, uint32_t lseg, uint32_t pseg)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_n_logical_segments_inline(grn_ii *ii)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
@@ -356,7 +356,7 @@ grn_ii_n_logical_segments_inline(grn_ii *ii)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 segment_get(grn_ctx *ctx, grn_ii *ii)
 {
   grn_ii_header_common *header = ii->header.common;
@@ -403,7 +403,7 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
   return pseg;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 segment_get_clear(grn_ctx *ctx, grn_ii *ii, uint32_t *pseg)
 {
   uint32_t seg = segment_get(ctx, ii);
@@ -421,7 +421,7 @@ segment_get_clear(grn_ctx *ctx, grn_ii *ii, uint32_t *pseg)
   }
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 buffer_segment_new(grn_ctx *ctx, grn_ii *ii, uint32_t *segno)
 {
   uint32_t lseg, pseg;
@@ -524,7 +524,7 @@ buffer_segment_reserve(grn_ctx *ctx,
   return ctx->rc;
 }
 
-grn_inline static void
+inline static void
 buffer_garbage_enqueue(grn_ii *ii, uint32_t lseg)
 {
   const uint32_t pseg = grn_ii_get_buffer_pseg_inline(ii, lseg);
@@ -536,7 +536,7 @@ buffer_garbage_enqueue(grn_ii *ii, uint32_t lseg)
   }
 }
 
-grn_inline static void
+inline static void
 buffer_segment_update(grn_ii *ii, uint32_t lseg, uint32_t pseg)
 {
   buffer_garbage_enqueue(ii, lseg);
@@ -547,7 +547,7 @@ buffer_segment_update(grn_ii *ii, uint32_t lseg, uint32_t pseg)
   }
 }
 
-grn_inline static void
+inline static void
 buffer_segment_clear(grn_ii *ii, uint32_t lseg)
 {
   buffer_garbage_enqueue(ii, lseg);
@@ -988,25 +988,25 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   }
 }
 
-static grn_inline bool
+static inline bool
 data_records_use_p_for_enc(uint32_t n_records, uint32_t max_record_id)
 {
   return n_records >= 16 && (n_records > (max_record_id >> 8));
 }
 
-static grn_inline bool
+static inline bool
 data_sections_use_p_for_enc(uint32_t n_records)
 {
   return n_records >= 3;
 }
 
-static grn_inline bool
+static inline bool
 data_positions_use_p_for_enc(uint32_t n_positions, uint32_t max_position)
 {
   return n_positions >= 32 && n_positions > (max_position >> 13);
 }
 
-static grn_inline void
+static inline void
 datavec_set_data_size(grn_ctx *ctx,
                       grn_ii *ii,
                       datavec *dv,
@@ -1078,7 +1078,7 @@ typedef struct {
   const uint8_t *input;
 } grn_codec_data;
 
-static grn_inline void
+static inline void
 grn_codec_error(grn_ctx *ctx,
                 grn_rc rc,
                 grn_codec_data *data,
@@ -1121,13 +1121,13 @@ grn_codec_error(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &term);
 }
 
-static grn_inline size_t
+static inline size_t
 grn_enc_estimate_byte(grn_ctx *ctx, grn_codec_data *data)
 {
   return GRN_B_ENC_MAX_SIZE * data->n_values;
 }
 
-static grn_inline uint8_t *
+static inline uint8_t *
 grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
 {
   uint8_t *output = data->output;
@@ -1138,7 +1138,7 @@ grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
   return output;
 }
 
-static grn_inline const uint8_t *
+static inline const uint8_t *
 grn_dec_byte_check(grn_ctx *ctx,
                    grn_codec_data *data,
                    uint32_t *value,
@@ -1233,7 +1233,7 @@ grn_dec_byte_check(grn_ctx *ctx,
   return input;
 }
 
-static grn_inline const uint8_t *
+static inline const uint8_t *
 grn_dec_byte(grn_ctx *ctx, grn_codec_data *data)
 {
   const uint8_t *input = data->input;
@@ -2476,13 +2476,13 @@ unpack(grn_ctx *ctx,
   return dp;
 }
 
-static grn_inline size_t
+static inline size_t
 grn_enc_estimate_p_for(grn_ctx *ctx, grn_codec_data *data)
 {
   return PACK_MAX_SIZE * ((data->n_values / UNIT_SIZE) + 1);
 }
 
-static grn_inline uint8_t *
+static inline uint8_t *
 grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
 {
   uint8_t *output = data->output;
@@ -2527,7 +2527,7 @@ grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
   return output;
 }
 
-static grn_inline const uint8_t *
+static inline const uint8_t *
 grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
 {
   const uint8_t *input = data->input;
@@ -3005,7 +3005,7 @@ typedef struct {
 #define GRN_II_POS_LOFFSET_SHIFT_SIZE       ((16 - GRN_II_W_LOFFSET) + 2)
 #define GRN_II_POS_LOFFSET_SHIFT_SIZE_LARGE ((16 - GRN_II_W_LOFFSET_LARGE) + 2)
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_pos_lseg(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
@@ -3015,7 +3015,7 @@ grn_ii_pos_lseg(grn_ii *ii, uint32_t pos)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_pos_loffset(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
@@ -3027,7 +3027,7 @@ grn_ii_pos_loffset(grn_ii *ii, uint32_t pos)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_ii_pos_pack(grn_ii *ii, uint32_t lseg, uint32_t loffset)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
@@ -3042,7 +3042,7 @@ grn_ii_pos_pack(grn_ii *ii, uint32_t lseg, uint32_t loffset)
 #define POS_LOFFSET_HEADER sizeof(buffer_header)
 #define POS_LOFFSET_TERM   sizeof(buffer_term)
 
-grn_inline static bool
+inline static bool
 grn_ii_pos_is_available(grn_ctx *ctx, uint32_t flags, const char *context)
 {
   if (flags & GRN_OBJ_INDEX_LARGE) {
@@ -3073,7 +3073,7 @@ grn_ii_pos_is_available(grn_ctx *ctx, uint32_t flags, const char *context)
 #define POS_RID_SID_EXTRACT_RID(pos) BIT31_12((pos))
 #define POS_RID_SID_EXTRACT_SID(pos) BIT11_01((pos))
 
-grn_inline static uint32_t
+inline static uint32_t
 buffer_open(
   grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b)
 {
@@ -3094,7 +3094,7 @@ buffer_open(
   return pseg;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 buffer_close(grn_ctx *ctx, grn_ii *ii, uint32_t pseg)
 {
   if (pseg >= ii->seg->header->max_segment) {
@@ -3116,7 +3116,7 @@ typedef struct {
 #define BUFFER_REC_AT(b, pos)  ((buffer_rec *)(b) + (pos))
 #define BUFFER_REC_POS(b, rec) ((uint16_t)((rec) - (buffer_rec *)(b)))
 
-grn_inline static void
+inline static void
 buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
 {
   int pos, rid, sid;
@@ -3162,7 +3162,7 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
   }
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
 {
   uint16_t i = BUFFER_REC_POS(b, r);
@@ -3222,7 +3222,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
   return GRN_SUCCESS;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 set_jump_r(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *from, int to)
 {
   int i, j, max_jump = 100;
@@ -3264,7 +3264,7 @@ set_jump_r(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *from, int to)
     n = (n & 0x0000FFFF) + ((n >> 16) & 0x0000FFFF);                           \
   } while (0)
 
-grn_inline static grn_rc
+inline static grn_rc
 buffer_put(grn_ctx *ctx,
            grn_ii *ii,
            buffer *b,
@@ -3431,7 +3431,7 @@ buffer_put(grn_ctx *ctx,
 
 /* array */
 
-grn_inline static uint32_t *
+inline static uint32_t *
 array_at(grn_ctx *ctx, grn_ii *ii, uint32_t id)
 {
   if (id > GRN_ID_MAX) {
@@ -3449,7 +3449,7 @@ array_at(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
 }
 
-grn_inline static uint32_t *
+inline static uint32_t *
 array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
 {
   byte *p = NULL;
@@ -3474,7 +3474,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
 }
 
-grn_inline static void
+inline static void
 array_unref(grn_ctx *ctx, grn_ii *ii, uint32_t id)
 {
   const uint32_t pseg = grn_ii_get_array_pseg_inline(ii, id >> W_ARRAY);
@@ -3568,7 +3568,7 @@ grn_ii_updspec_close(grn_ctx *ctx, grn_ii_updspec *u)
   return GRN_SUCCESS;
 }
 
-grn_inline static uint8_t *
+inline static uint8_t *
 encode_rec(
   grn_ctx *ctx, grn_ii *ii, grn_ii_updspec *u, unsigned int *size, int deletep)
 {
@@ -3643,7 +3643,7 @@ lexicon_deletable(grn_ctx *ctx, grn_obj *lexicon, grn_id tid, void *arg)
 }
 #endif /* CASCADE_DELETE_LEXICON */
 
-grn_inline static void
+inline static void
 lexicon_delete(grn_ctx *ctx, grn_ii *ii, uint32_t tid, grn_hash *h)
 {
 #ifdef CASCADE_DELETE_LEXICON
@@ -4234,7 +4234,7 @@ typedef struct {
   } dest;
 } merger_data;
 
-grn_inline static void
+inline static void
 merger_init_chunk_data(grn_ctx *ctx, merger_data *data, datavec *rdv)
 {
   merger_chunk_data *chunk_data = &(data->source.chunk);
@@ -4254,7 +4254,7 @@ merger_init_chunk_data(grn_ctx *ctx, merger_data *data, datavec *rdv)
   chunk_data->position_gaps_end = chunk_data->position_gaps + rdv[j].data_size;
 }
 
-grn_inline static void
+inline static void
 merger_report_error(grn_ctx *ctx,
                     merger_data *data,
                     const char *message,
@@ -4300,7 +4300,7 @@ merger_report_error(grn_ctx *ctx,
                     GRN_LOG_CRIT);
 }
 
-grn_inline static void
+inline static void
 merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
 {
   merger_chunk_data *chunk_data = &(data->source.chunk);
@@ -4330,7 +4330,7 @@ merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
   }
 }
 
-grn_inline static void
+inline static void
 merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
 {
   uint32_t record_id_gap = id->rid - data->last_id.rid;
@@ -4356,7 +4356,7 @@ merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
   data->last_id.sid = id->sid;
 }
 
-grn_inline static void
+inline static void
 merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
 {
   merger_chunk_data *chunk_data = &(data->source.chunk);
@@ -4446,7 +4446,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
   merger_get_next_chunk(ctx, data);
 }
 
-grn_inline static void
+inline static void
 merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
@@ -4477,7 +4477,7 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
   }
 }
 
-grn_inline static void
+inline static void
 merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
@@ -4540,7 +4540,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
   merger_get_next_buffer(ctx, data);
 }
 
-grn_inline static bool
+inline static bool
 merger_merge(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
@@ -5027,7 +5027,7 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
   }
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 buffer_merge_internal(grn_ctx *ctx,
                       grn_ii *ii,
                       uint32_t seg,
@@ -5606,7 +5606,7 @@ fake_map(grn_ctx *ctx,
   iw->addr = addr;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw;
@@ -6070,7 +6070,7 @@ array_update(grn_ctx *ctx, grn_ii *ii, uint32_t dls, buffer *db)
   }
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 buffer_split_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw0, dw1;
@@ -6326,7 +6326,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
    ((buffer)->header.nterms > 1 && (buffer)->header.chunk_size * 100 >         \
                                      (ii)->header.common->total_chunk_size))
 
-grn_inline static void
+inline static void
 buffer_new_find_segment(grn_ctx *ctx,
                         grn_ii *ii,
                         int size,
@@ -6385,7 +6385,7 @@ buffer_new_find_segment(grn_ctx *ctx,
   array_unref(ctx, ii, tid);
 }
 
-grn_inline static void
+inline static void
 buffer_new_lexicon_pat(grn_ctx *ctx,
                        grn_ii *ii,
                        int size,
@@ -6502,7 +6502,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
   }
 }
 
-grn_inline static void
+inline static void
 buffer_new_lexicon_other(grn_ctx *ctx,
                          grn_ii *ii,
                          int size,
@@ -6522,7 +6522,7 @@ buffer_new_lexicon_other(grn_ctx *ctx,
   GRN_TABLE_EACH_END(ctx, cursor);
 }
 
-static grn_inline uint32_t
+static inline uint32_t
 buffer_new_internal(grn_ctx *ctx,
                     grn_ii *ii,
                     int size,
@@ -6590,7 +6590,7 @@ buffer_new_internal(grn_ctx *ctx,
   return pseg;
 }
 
-static grn_inline uint32_t
+static inline uint32_t
 buffer_new(grn_ctx *ctx,
            grn_ii *ii,
            int size,
@@ -7046,7 +7046,7 @@ grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible)
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 
-grn_inline static grn_rc
+inline static grn_rc
 grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
 {
   if (ii->wal_touched) {
@@ -7064,7 +7064,7 @@ grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_ii_update_one_internal(
   grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
@@ -7563,7 +7563,7 @@ grn_ii_update_one(
   return rc;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_ii_delete_one_internal(
   grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
@@ -8041,7 +8041,7 @@ grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor)
   return cursor->ii;
 }
 
-static grn_inline float
+static inline float
 grn_ii_cursor_resolve_scale(grn_ctx *ctx,
                             grn_ii_cursor *cursor,
                             uint32_t section_id)
@@ -8084,7 +8084,7 @@ grn_ii_cursor_set_scales(grn_ctx *ctx,
   return ctx->rc;
 }
 
-static grn_inline void
+static inline void
 grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 {
   if (c->min >= min) {
@@ -8166,7 +8166,7 @@ typedef struct {
   bool include_garbage;
 } grn_ii_cursor_next_options;
 
-static grn_inline grn_posting *
+static inline grn_posting *
 grn_ii_cursor_next_internal(grn_ctx *ctx,
                             grn_ii_cursor *c,
                             grn_ii_cursor_next_options *options)
@@ -8857,7 +8857,7 @@ grn_inspect_cursor_heap(grn_ctx *ctx, grn_obj *buffer, cursor_heap *heap)
   grn_text_printf(ctx, buffer, ">");
 }
 
-static grn_inline cursor_heap *
+static inline cursor_heap *
 cursor_heap_open(grn_ctx *ctx, int max)
 {
   cursor_heap *h = GRN_CALLOC(sizeof(cursor_heap));
@@ -8874,7 +8874,7 @@ cursor_heap_open(grn_ctx *ctx, int max)
   return h;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 cursor_heap_push(grn_ctx *ctx,
                  cursor_heap *h,
                  grn_ii *ii,
@@ -8949,20 +8949,20 @@ cursor_heap_push(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 cursor_heap_push2(cursor_heap *h)
 {
   grn_rc rc = GRN_SUCCESS;
   return rc;
 }
 
-static grn_inline grn_ii_cursor *
+static inline grn_ii_cursor *
 cursor_heap_min(cursor_heap *h)
 {
   return h->n_entries ? h->bins[0] : NULL;
 }
 
-static grn_inline void
+static inline void
 cursor_heap_recalc_min(cursor_heap *h)
 {
   int n = 0, n1, n2, m;
@@ -8994,7 +8994,7 @@ cursor_heap_recalc_min(cursor_heap *h)
   }
 }
 
-static grn_inline void
+static inline void
 cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
 {
   if (h->n_entries) {
@@ -9029,7 +9029,7 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
   }
 }
 
-static grn_inline void
+static inline void
 cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
 {
   if (h->n_entries) {
@@ -9066,7 +9066,7 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
   }
 }
 
-static grn_inline void
+static inline void
 cursor_heap_close(grn_ctx *ctx, cursor_heap *h)
 {
   int i;
@@ -9365,7 +9365,7 @@ grn_uvector2updspecs(grn_ctx *ctx,
   }
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_ii_column_update_internal(grn_ctx *ctx,
                               grn_ii *ii,
                               grn_id rid,
@@ -10065,7 +10065,7 @@ typedef struct {
   uint32_t n_occurrences;
 } grn_ii_select_data;
 
-static grn_inline grn_token_cursor *
+static inline grn_token_cursor *
 grn_ii_select_data_open_token_cursor(grn_ctx *ctx,
                                      grn_ii_select_data *data,
                                      const char *text,
@@ -10097,7 +10097,7 @@ grn_ii_select_data_open_token_cursor(grn_ctx *ctx,
   return token_cursor;
 }
 
-grn_inline static void
+inline static void
 token_info_expand_both(grn_ctx *ctx,
                        grn_ii_select_data *data,
                        const char *key,
@@ -10184,7 +10184,7 @@ token_info_expand_both(grn_ctx *ctx,
   }
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_close(grn_ctx *ctx, token_info *ti)
 {
   cursor_heap_close(ctx, ti->cursors);
@@ -10206,7 +10206,7 @@ token_info_close(grn_ctx *ctx, token_info *ti)
  * normalize the input multipe times with a non-idempotent normalizer,
  * the tokenized result is broken.
  */
-grn_inline static token_info *
+inline static token_info *
 token_info_open(grn_ctx *ctx,
                 grn_ii_select_data *data,
                 grn_id tid,
@@ -10427,7 +10427,7 @@ token_info_open(grn_ctx *ctx,
   return ti;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
 {
   grn_ii_cursor *c;
@@ -10447,7 +10447,7 @@ token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
   return GRN_SUCCESS;
 }
 
-static grn_inline grn_rc
+static inline grn_rc
 token_info_skip_pos(
   grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, int32_t pos)
 {
@@ -10469,7 +10469,7 @@ token_info_skip_pos(
   return GRN_SUCCESS;
 }
 
-grn_inline static int
+inline static int
 token_compare(const void *a, const void *b)
 {
   const token_info *t1 = *((token_info **)a), *t2 = *((token_info **)b);
@@ -10520,7 +10520,7 @@ typedef struct {
   uint32_t selected_candidate;
 } token_candidate_data;
 
-grn_inline static void
+inline static void
 token_candidate_adjacent_set(grn_ctx *ctx,
                              grn_token_cursor *token_cursor,
                              token_candidate_node *top,
@@ -10546,7 +10546,7 @@ token_candidate_adjacent_set(grn_ctx *ctx,
   }
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_init(grn_ctx *ctx,
                      token_candidate_data *data,
                      grn_ii_select_data *select_data,
@@ -10629,7 +10629,7 @@ token_candidate_init(grn_ctx *ctx,
 #undef TOKEN_CANDIDATE_NODE_SET
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_queue_init(grn_ctx *ctx, token_candidate_queue *q)
 {
   q->top = 0;
@@ -10644,7 +10644,7 @@ token_candidate_queue_init(grn_ctx *ctx, token_candidate_queue *q)
   return GRN_SUCCESS;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_enqueue(grn_ctx *ctx,
                         token_candidate_queue *q,
                         uint32_t candidate)
@@ -10663,7 +10663,7 @@ token_candidate_enqueue(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_dequeue(grn_ctx *ctx,
                         token_candidate_queue *q,
                         uint32_t *candidate)
@@ -10676,13 +10676,13 @@ token_candidate_dequeue(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-grn_inline static void
+inline static void
 token_candidate_queue_fin(grn_ctx *ctx, token_candidate_queue *q)
 {
   GRN_FREE(q->candidates);
 }
 
-grn_inline static token_candidate_node *
+inline static token_candidate_node *
 token_candidate_last_node(grn_ctx *ctx,
                           token_candidate_data *data,
                           uint32_t candidate,
@@ -10693,7 +10693,7 @@ token_candidate_last_node(grn_ctx *ctx,
   return data->nodes + i + offset;
 }
 
-grn_inline static uint64_t
+inline static uint64_t
 token_candidate_score(grn_ctx *ctx,
                       token_candidate_data *data,
                       uint32_t candidate,
@@ -10713,7 +10713,7 @@ token_candidate_score(grn_ctx *ctx,
   return score;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_select(grn_ctx *ctx,
                        token_candidate_data *data,
                        uint32_t offset,
@@ -10776,7 +10776,7 @@ exit:
   return rc;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_candidate_build(grn_ctx *ctx, token_candidate_data *data, int offset)
 {
   grn_rc rc = GRN_END_OF_DATA;
@@ -10835,7 +10835,7 @@ exit:
   return rc;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_build_skipping_overlap(grn_ctx *ctx,
                                   grn_ii_select_data *select_data,
                                   grn_token_cursor *token_cursor,
@@ -10871,7 +10871,7 @@ exit:
   return rc;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_build_phrase(grn_ctx *ctx,
                         grn_ii_select_data *data,
                         const char *phrase,
@@ -11021,14 +11021,14 @@ exit:
   return rc;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_build(grn_ctx *ctx, grn_ii_select_data *data)
 {
   data->only_skip_token = false;
   return token_info_build_phrase(ctx, data, data->query, data->query_len);
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
 {
   token_info *ti;
@@ -11123,7 +11123,7 @@ exit:
   return rc;
 }
 
-grn_inline static bool
+inline static bool
 token_info_build_near_phrase_is_same_phrase(grn_ctx *ctx,
                                             grn_ii_select_data *data,
                                             uint32_t start1,
@@ -11164,7 +11164,7 @@ token_info_build_near_phrase_is_same_phrase(grn_ctx *ctx,
   return i1 == n1 && i2 == n2;
 }
 
-grn_inline static bool
+inline static bool
 token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
                                               grn_ii_select_data *data,
                                               uint32_t n_token_infos_before,
@@ -11193,7 +11193,7 @@ token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
   return false;
 }
 
-grn_inline static grn_rc
+inline static grn_rc
 token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
 {
   const char *tag = "[ii][token-info][build]";
@@ -11494,7 +11494,7 @@ token_info_clear_offset(token_info **tis, uint32_t n)
   }
 }
 
-grn_inline static void
+inline static void
 bt_zap(btr *bt)
 {
   bt->n = 0;
@@ -11504,7 +11504,7 @@ bt_zap(btr *bt)
   bt->n_must_lasts = 0;
 }
 
-grn_inline static btr *
+inline static btr *
 bt_open(grn_ctx *ctx, int size)
 {
   btr *bt = GRN_CALLOC(sizeof(btr));
@@ -11518,7 +11518,7 @@ bt_open(grn_ctx *ctx, int size)
   return bt;
 }
 
-grn_inline static void
+inline static void
 bt_close(grn_ctx *ctx, btr *bt)
 {
   if (!bt) {
@@ -11531,7 +11531,7 @@ bt_close(grn_ctx *ctx, btr *bt)
 /* Adds a token info to the given tree. btr::min and btr::max are updated
  * are updated when the given token info is minimum or maximum token info
  * in the given tree. */
-grn_inline static void
+inline static void
 bt_push(btr *bt, token_info *ti)
 {
   bool min_p = true;
@@ -11565,7 +11565,7 @@ bt_push(btr *bt, token_info *ti)
 
 /* Drops the minimum token info. Note that you can't push a token info to
  * this btr after this function is called. */
-grn_inline static void
+inline static void
 bt_pop(btr *bt)
 {
   btr_node *min;
@@ -11599,7 +11599,7 @@ bt_pop(btr *bt)
 
 /* Replace the token info of the minimum node. Note that bt->min may
  * not be correct until you call bt_reorder_min(). */
-grn_inline static void
+inline static void
 bt_replace_min(btr *bt, token_info *ti)
 {
   btr_node *min, **last;
@@ -11619,7 +11619,7 @@ bt_replace_min(btr *bt, token_info *ti)
 
 /* Re-order the minimum token info. The minimum token info must be
  * updated before you call this function. */
-grn_inline static void
+inline static void
 bt_reorder_min(btr *bt)
 {
   btr_node *node, *min, **last;
@@ -11655,7 +11655,7 @@ bt_reorder_min(btr *bt)
 
 /* select */
 
-grn_inline static void
+inline static void
 grn_rset_add_record(grn_ctx *ctx,
                     grn_hash *rset,
                     grn_rset_posinfo *posinfo,
@@ -12029,7 +12029,7 @@ grn_result_set_copy(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_inline static void
+inline static void
 res_add(grn_ctx *ctx,
         grn_hash *s,
         grn_rset_posinfo *pi,
@@ -12779,7 +12779,7 @@ grn_ii_select_cursor_set_per_occurrence_mode(grn_ctx *ctx,
   cursor->per_occurrence_mode = mode;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_skip_pos(grn_ctx *ctx, grn_ii_select_data *data, int32_t pos)
 {
   if (token_info_skip_pos(ctx, data->token_info, data->rid, data->sid, pos) !=
@@ -12804,7 +12804,7 @@ grn_ii_select_skip_pos(grn_ctx *ctx, grn_ii_select_data *data, int32_t pos)
  * last. So if this function doesn't return a "must_last" token info,
  * we misjudge the number of phrases that must be last.
  */
-grn_inline static bool
+inline static bool
 grn_ii_select_data_find_phrase(grn_ctx *ctx,
                                grn_ii_select_data *data,
                                uint32_t phrase_id,
@@ -12865,7 +12865,7 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
   return false;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        grn_ii_select_data *data,
                                        int32_t start_pos,
@@ -12909,7 +12909,7 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
   return true;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
                                                grn_ii_select_data *data,
                                                int interval)
@@ -12989,7 +12989,7 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
   }
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
                                           grn_ii_select_data *data,
                                           int interval)
@@ -13007,7 +13007,7 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
   return matched;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
                                                 grn_ii_select_data *data)
 {
@@ -13108,7 +13108,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
   }
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_cursor_next_prepare(grn_ctx *ctx, grn_ii_select_cursor *cursor)
 {
   grn_ii_select_data *data = &(cursor->data);
@@ -13161,7 +13161,7 @@ grn_ii_select_cursor_next_prepare(grn_ctx *ctx, grn_ii_select_cursor *cursor)
   return true;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_cursor_next_skip(grn_ctx *ctx, grn_ii_select_cursor *cursor)
 {
   grn_ii_select_data *data = &(cursor->data);
@@ -13189,7 +13189,7 @@ grn_ii_select_cursor_next_skip(grn_ctx *ctx, grn_ii_select_cursor *cursor)
   }
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_cursor_next_find_one_token(grn_ctx *ctx,
                                          grn_ii_select_cursor *cursor,
                                          const char *tag)
@@ -13213,7 +13213,7 @@ grn_ii_select_cursor_next_find_one_token(grn_ctx *ctx,
   return true;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                     grn_ii_select_cursor *cursor,
                                     const char *tag)
@@ -13424,7 +13424,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
   return true;
 }
 
-grn_inline static bool
+inline static bool
 grn_ii_select_cursor_next_find(grn_ctx *ctx,
                                grn_ii_select_cursor *cursor,
                                const char *tag)
@@ -15434,14 +15434,14 @@ typedef struct {
 } grn_ii_builder_term;
 
 /* grn_ii_builder_term_is_inplace returns whether a term buffer is inplace. */
-grn_inline static bool
+inline static bool
 grn_ii_builder_term_is_inplace(grn_ii_builder_term *term)
 {
   return term->size == GRN_II_BUILDER_TERM_INPLACE_SIZE;
 }
 
 /* grn_ii_builder_term_get_buf returns a term buffer. */
-grn_inline static uint8_t *
+inline static uint8_t *
 grn_ii_builder_term_get_buf(grn_ii_builder_term *term)
 {
   if (grn_ii_builder_term_is_inplace(term)) {
@@ -15512,7 +15512,7 @@ grn_ii_builder_term_extend(grn_ctx *ctx, grn_ii_builder_term *term)
 }
 
 /* grn_ii_builder_term_append appends an integer to a term buffer. */
-grn_inline static grn_rc
+inline static grn_rc
 grn_ii_builder_term_append(grn_ctx *ctx,
                            grn_ii_builder_term *term,
                            uint64_t value)
@@ -15611,7 +15611,7 @@ grn_ii_builder_block_fin(grn_ctx *ctx, grn_ii_builder_block *block)
  * grn_ii_builder_block_next reads the next integer. Note that this function
  * returns GRN_END_OF_DATA if it reaches the end of a block.
  */
-grn_inline static grn_rc
+inline static grn_rc
 grn_ii_builder_block_next(grn_ctx *ctx,
                           grn_ii_builder_block *block,
                           uint64_t *value)
@@ -16516,7 +16516,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
 }
 
 /* grn_ii_builder_get_term gets a term associated with tid. */
-grn_inline static grn_rc
+inline static grn_rc
 grn_ii_builder_get_term(grn_ctx *ctx,
                         grn_ii_builder *builder,
                         grn_id tid,

@@ -122,7 +122,7 @@ typedef struct {
   score_heap_node *nodes;
 } score_heap;
 
-static grn_inline score_heap *
+static inline score_heap *
 score_heap_open(grn_ctx *ctx, uint32_t max)
 {
   score_heap *h = GRN_PLUGIN_MALLOC(ctx, sizeof(score_heap));
@@ -137,7 +137,7 @@ score_heap_open(grn_ctx *ctx, uint32_t max)
   return h;
 }
 
-static grn_inline bool
+static inline bool
 score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
 {
   uint32_t n, n2;
@@ -166,7 +166,7 @@ score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
   return true;
 }
 
-static grn_inline void
+static inline void
 score_heap_close(grn_ctx *ctx, score_heap *h)
 {
   GRN_PLUGIN_FREE(ctx, h->nodes);

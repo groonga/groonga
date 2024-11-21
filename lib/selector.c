@@ -405,7 +405,7 @@ grn_selector_data_current_set_default_tag_raw_no_validation(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline void
+static inline void
 grn_selector_data_add_score(grn_ctx *ctx,
                             grn_selector_data *data,
                             grn_obj *result_set,
@@ -440,7 +440,7 @@ grn_selector_data_add_score(grn_ctx *ctx,
                     GRN_OBJ_INCR);
 }
 
-static grn_inline void
+static inline void
 grn_selector_data_append_tags(grn_ctx *ctx,
                               grn_selector_data *data,
                               grn_obj *result_set,

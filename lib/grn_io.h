@@ -200,7 +200,7 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
 /*
  * io mustn't be NULL;
  */
-static grn_inline void *
+static inline void *
 grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
 {
   const char *tag = "[io][seg][ref]";
@@ -361,7 +361,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
   return info->map;
 }
 
-static grn_inline void
+static inline void
 grn_io_seg_unref(grn_ctx *ctx, grn_io *io, uint32_t segno)
 {
   if (GRN_IO_EXPIRE_SEGMENT ==
@@ -422,7 +422,7 @@ grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
 size_t
 grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);
 
-static grn_inline void *
+static inline void *
 grn_io_array_at(
   grn_ctx *ctx, grn_io *io, uint32_t array, uint64_t offset, int *flags)
 {

@@ -565,7 +565,7 @@ grn_aggregator_create(grn_ctx *ctx,
   GRN_API_RETURN(aggregator);
 }
 
-grn_inline static void
+inline static void
 grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_obj *table,
                            grn_id group_id,
@@ -616,7 +616,7 @@ typedef struct {
   bool is_vector;
 } group_key;
 
-static grn_inline void
+static inline void
 group_key_init(grn_ctx *ctx,
                group_key *key,
                grn_obj *object,
@@ -636,7 +636,7 @@ group_key_init(grn_ctx *ctx,
   key->is_vector = (range_flags & GRN_OBJ_VECTOR) ? true : false;
 }
 
-static grn_inline void
+static inline void
 group_key_fin(grn_ctx *ctx,
               group_key *key)
 {
@@ -646,7 +646,7 @@ group_key_fin(grn_ctx *ctx,
   grn_obj_unref(ctx, key->range);
 }
 
-static grn_inline grn_obj *
+static inline grn_obj *
 group_key_get_value(grn_ctx *ctx,
                     group_key *key,
                     grn_id id,
@@ -678,7 +678,7 @@ typedef struct {
   grn_rset_recinfo *ri;
 } multi_keys_data;
 
-static grn_inline void
+static inline void
 grn_table_group_multi_keys_add_record(grn_ctx *ctx, multi_keys_data *data)
 {
   grn_obj *bulk = &(data->bulk);
@@ -794,7 +794,7 @@ typedef struct {
   multi_keys_data multi_keys_data;
 } single_key_records_data;
 
-static grn_inline grn_id
+static inline grn_id
 grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
                                               single_key_records_data *data,
                                               grn_table_cursor *cursor,
@@ -1398,7 +1398,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx, multi_keys_data *data)
   grn_table_cursor_close(ctx, tc);
 }
 
-static grn_inline void
+static inline void
 grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
                                          multi_keys_data *data,
                                          grn_obj *key_buffers,

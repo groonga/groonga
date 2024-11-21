@@ -52,7 +52,7 @@ grn_error_init_from_env(void);
 void
 grn_error_cancel(grn_ctx *ctx);
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)
 {
   if (rc != GRN_SUCCESS) {
@@ -73,7 +73,7 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap);
 GRN_API void
 grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 
-static grn_inline void
+static inline void
 grn_error_setv(grn_ctx *ctx,
                grn_log_level level,
                grn_rc rc,
@@ -111,7 +111,7 @@ grn_error_setv(grn_ctx *ctx,
   va_end(logger_putv_args);
 }
 
-static grn_inline void
+static inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,
               grn_rc rc,
@@ -120,7 +120,7 @@ grn_error_set(grn_ctx *ctx,
               const char *function,
               const char *format,
               ...) GRN_ATTRIBUTE_PRINTF(7);
-static grn_inline void
+static inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,
               grn_rc rc,

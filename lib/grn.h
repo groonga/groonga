@@ -86,16 +86,6 @@
 #endif
 
 #ifdef WIN32
-#  if defined(__cplusplus) || defined(__GNUC__)
-#    define grn_inline inline
-#  else /* defined(__cplusplus) || defined(__GNUC__) */
-#    define grn_inline _inline
-#  endif /* defined(__cplusplus) || defined(__GNUC__) */
-#else    /* WIN32 */
-#  define grn_inline inline
-#endif /* WIN32 */
-
-#ifdef WIN32
 #  ifndef NOMINMAX
 #    define NOMINMAX
 #  endif
@@ -538,7 +528,7 @@ typedef uint8_t byte;
 #define GRN_ID_WIDTH 30
 
 #ifdef __GNUC__
-grn_inline static int
+static inline int
 grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 {
   for (;; ap++, bp++, as--, bs--) {

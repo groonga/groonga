@@ -1771,7 +1771,7 @@ get_n_workers(grn_ctx *ctx, const char *p, const char *pe)
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
 
-static grn_inline int
+static inline int
 command_proc_p(grn_obj *expr)
 {
   return (expr->header.type == GRN_PROC &&

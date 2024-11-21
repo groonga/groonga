@@ -76,7 +76,7 @@ grn_rc
 grn_selector_data_current_set_default_tag_raw_no_validation(
   grn_ctx *ctx, const char *tag, uint32_t tag_length);
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_selector_data_current_set_default_tag_raw(grn_ctx *ctx,
                                               const char *tag,
                                               uint32_t tag_length)
@@ -99,7 +99,7 @@ grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
                                                   grn_id record_id,
                                                   double score);
 
-static grn_inline grn_rc
+static inline grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
                                     grn_obj *result_set,
                                     grn_id result_set_record_id,

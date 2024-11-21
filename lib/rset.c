@@ -18,7 +18,7 @@
 
 #include "grn_db.h"
 
-grn_inline static void
+inline static void
 grn_rset_subrecs_push(byte *subrecs,
                       size_t size,
                       size_t n_subrecs,
@@ -42,7 +42,7 @@ grn_rset_subrecs_push(byte *subrecs,
   grn_memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }
 
-grn_inline static void
+inline static void
 grn_rset_subrecs_replace_min(byte *subrecs,
                              size_t size,
                              size_t n_subrecs,

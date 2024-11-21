@@ -679,7 +679,7 @@ grn_loader_brace_set_value(grn_ctx *ctx,
   }
 }
 
-static grn_inline int
+static inline int
 name_equal(const char *p, size_t size, const char *name)
 {
   if (strlen(name) != size) {
@@ -789,7 +789,7 @@ grn_loader_parse_id_value(grn_ctx *ctx,
   }
 }
 
-static grn_inline void
+static inline void
 grn_loader_brace_add_record_internal(grn_ctx *ctx,
                                      grn_loader *loader,
                                      grn_loader_add_record_data *data)
@@ -1126,7 +1126,7 @@ grn_loader_bracket_set_values(grn_ctx *ctx,
   GRN_HASH_EACH_END(ctx, cursor);
 }
 
-static grn_inline void
+static inline void
 grn_loader_bracket_add_record_internal(grn_ctx *ctx,
                                        grn_loader *loader,
                                        grn_loader_add_record_data *data)

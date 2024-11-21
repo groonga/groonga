@@ -321,7 +321,7 @@ grn_table_cursor *
 grn_table_cursor_open_by_id(
   grn_ctx *ctx, grn_obj *table, grn_id min, grn_id max, int flags);
 
-grn_inline static void
+inline static void
 grn_table_add_subrec(grn_ctx *ctx,
                      grn_obj *table,
                      grn_rset_recinfo *ri,
@@ -407,7 +407,7 @@ struct _grn_proc_ctx {
   grn_user_data data[16];
 };
 
-static grn_inline void
+static inline void
 grn_proc_ctx_init(grn_proc_ctx *pctx,
                   grn_hook *hooks,
                   unsigned short n_args,

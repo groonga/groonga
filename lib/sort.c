@@ -109,7 +109,7 @@ struct sort_key_ {
   grn_expr_executor expr_executor;
 };
 
-grn_inline static size_t
+inline static size_t
 grn_sort_key_size(sort_key_offset offset)
 {
   if (offset == KEY_BULK) {
@@ -119,7 +119,7 @@ grn_sort_key_size(sort_key_offset offset)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_sort_key_get_size(const uint8_t *size_raw,
                       sort_key_offset key_offset)
 {
@@ -130,7 +130,7 @@ grn_sort_key_get_size(const uint8_t *size_raw,
   }
 }
 
-grn_inline static void
+inline static void
 grn_sort_key_set_size(uint8_t *size_raw,
                       sort_key_offset key_offset,
                       uint32_t size)
@@ -207,7 +207,7 @@ struct sort_compare_data_ {
   }\
 } while (0)
 
-static grn_inline grn_id
+static inline grn_id
 sort_value_get_resolve_id(grn_ctx *ctx,
                           const sort_key *key,
                           sort_entry *entry,
@@ -336,7 +336,7 @@ sort_value_execute_expr(grn_ctx *ctx,
   }
 }
 
-static grn_inline int
+static inline int
 sort_value_compare(grn_ctx *ctx,
                    sort_entry *a,
                    sort_entry *b,
@@ -424,7 +424,7 @@ sort_value_compare(grn_ctx *ctx,
   return 0;
 }
 
-static grn_inline void
+static inline void
 sort_value_swap(grn_ctx *ctx, sort_entry *a, sort_entry *b, sort_data *data)
 {
   sort_entry c = *a;
@@ -432,7 +432,7 @@ sort_value_swap(grn_ctx *ctx, sort_entry *a, sort_entry *b, sort_data *data)
   *b = c;
 }
 
-static grn_inline sort_entry *
+static inline sort_entry *
 sort_value_part(grn_ctx *ctx,
                 sort_entry *b,
                 sort_entry *e,
@@ -470,7 +470,7 @@ sort_value_part(grn_ctx *ctx,
   return e;
 }
 
-static grn_inline void
+static inline void
 sort_value_body(grn_ctx *ctx,
                 sort_entry *head,
                 sort_entry *tail,
@@ -490,7 +490,7 @@ sort_value_body(grn_ctx *ctx,
   }
 }
 
-static grn_inline sort_entry *
+static inline sort_entry *
 sort_value_pack(grn_ctx *ctx,
                 grn_obj *table,
                 sort_entry *head,
