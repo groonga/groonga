@@ -828,14 +828,13 @@ request_timer_register(const char *request_id,
   request_timer_data *data = user_data;
   grn_id id = GRN_ID_NIL;
 
-  {
+  if (MUTEX_LOCK_CHECK(data->mutex)) {
     grn_ctx *ctx = &(data->ctx);
     bool is_first_timer;
     grn_timeval tv;
     uint64_t timeout_unix_time_msec;
     void *value;
 
-    MUTEX_LOCK(data->mutex);
     is_first_timer = (grn_pat_size(ctx, data->entries) == 0);
     grn_timeval_now(ctx, &tv);
     timeout_unix_time_msec = GRN_TIMEVAL_TO_MSEC(&tv) + (timeout * 1000);
@@ -875,12 +874,11 @@ request_timer_unregister(void *timer_id, void *user_data)
   request_timer_data *data = user_data;
   grn_id id = (grn_id)(uint64_t)timer_id;
 
-  {
+  if (MUTEX_LOCK_CHECK(data->mutex)) {
     grn_ctx *ctx = &(data->ctx);
     uint64_t timeout_unix_time_msec;
     int key_size;
 
-    MUTEX_LOCK(data->mutex);
     key_size = grn_pat_get_key(ctx,
                                data->entries,
                                id,
@@ -980,7 +978,10 @@ request_timer_get_poll_timeout(void)
   grn_ctx *ctx;
   grn_timeval tv;
 
-  MUTEX_LOCK(data->mutex);
+  if (!MUTEX_LOCK_CHECK(data->mutex)) {
+    return timeout;
+  }
+
   ctx = &(data->ctx);
   if (grn_pat_size(ctx, data->entries) == 0) {
     goto exit;
