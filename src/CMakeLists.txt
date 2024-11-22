@@ -58,5 +58,6 @@ if(NOT WIN32)
   set_source_files_properties(${GRNSLAP_SOURCES}
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   target_link_libraries(grnslap libgroonga)
+  target_link_libraries(grnslap Threads::Threads)
   # install(TARGETS grnslap DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
