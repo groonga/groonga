@@ -1,0 +1,193 @@
+table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+load --table PatPrefix
+[
+{"_key":"James"},
+{"_key":"Jason"},
+{"_key":"Jennifer"},
+{"_key":"Jeff"},
+{"_key":"John"},
+{"_key":"Joseph"}
+]
+[[0,0.0,0.0],6]
+delete PatPrefix Jeff
+[[0,0.0,0.0],true]
+delete PatPrefix John
+[[0,0.0,0.0],true]
+delete PatPrefix James
+[[0,0.0,0.0],true]
+select PatPrefix
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "Jason"
+      ],
+      [
+        3,
+        "Jennifer"
+      ],
+      [
+        6,
+        "Joseph"
+      ]
+    ]
+  ]
+]
+defrag
+[[0,0.0,0.0],true]
+#|n| [pat][key][defrag] start: <PatPrefix>: key_size=24
+#|n| [pat][key][defrag] end: <PatPrefix>: key_size=19
+select PatPrefix
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "Jason"
+      ],
+      [
+        3,
+        "Jennifer"
+      ],
+      [
+        6,
+        "Joseph"
+      ]
+    ]
+  ]
+]
+load --table PatPrefix
+[
+{"_key":"James"},
+{"_key":"Jeff"},
+{"_key":"John"}
+]
+[[0,0.0,0.0],3]
+delete PatPrefix Jason
+[[0,0.0,0.0],true]
+delete PatPrefix James
+[[0,0.0,0.0],true]
+select PatPrefix
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        8,
+        "Jeff"
+      ],
+      [
+        3,
+        "Jennifer"
+      ],
+      [
+        9,
+        "John"
+      ],
+      [
+        6,
+        "Joseph"
+      ]
+    ]
+  ]
+]
+defrag PatPrefix
+[[0,0.0,0.0],true]
+#|n| [pat][key][defrag] start: <PatPrefix>: key_size=24
+#|n| [pat][key][defrag] end: <PatPrefix>: key_size=14
+select PatPrefix
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        8,
+        "Jeff"
+      ],
+      [
+        3,
+        "Jennifer"
+      ],
+      [
+        9,
+        "John"
+      ],
+      [
+        6,
+        "Joseph"
+      ]
+    ]
+  ]
+]
