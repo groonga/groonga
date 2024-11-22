@@ -173,6 +173,28 @@ grn_pat_cursor_delete(grn_ctx *ctx,
     }                                                                          \
   } while (0)
 
+#define GRN_PAT_EACH_BEGIN(ctx, pat, cursur, id, key, key_size, value)         \
+  do {                                                                         \
+    grn_pat_cursor *cursur = NULL;                                             \
+    if (pat && grn_pat_size(ctx, pat) > 0) {                                   \
+      cursur = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0);      \
+    }                                                                          \
+    if (cursur) {                                                              \
+      grn_id id;                                                               \
+      while ((id = grn_pat_cursor_next(ctx, cursur))) {                        \
+        grn_pat_cursor_get_key_value(ctx,                                      \
+                                     cursur,                                   \
+                                     (void **)(key),                           \
+                                     (key_size),                               \
+                                     (void **)(value));
+
+#define GRN_PAT_EACH_END(ctx, cursur)                                          \
+  }                                                                            \
+  grn_pat_cursor_close(ctx, cursur);                                           \
+  }                                                                            \
+  }                                                                            \
+  while (0)
+
 #ifdef __cplusplus
 }
 #endif
