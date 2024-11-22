@@ -16,43 +16,6 @@ delete PatPrefix John
 [[0,0.0,0.0],true]
 delete PatPrefix James
 [[0,0.0,0.0],true]
-select PatPrefix
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        3
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        2,
-        "Jason"
-      ],
-      [
-        3,
-        "Jennifer"
-      ],
-      [
-        6,
-        "Joseph"
-      ]
-    ]
-  ]
-]
 defrag
 [[0,0.0,0.0],true]
 #|n| [pat][key][defrag] start: <PatPrefix>: key_size=24
@@ -105,47 +68,6 @@ delete PatPrefix Jason
 [[0,0.0,0.0],true]
 delete PatPrefix James
 [[0,0.0,0.0],true]
-select PatPrefix
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        4
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        8,
-        "Jeff"
-      ],
-      [
-        3,
-        "Jennifer"
-      ],
-      [
-        9,
-        "John"
-      ],
-      [
-        6,
-        "Joseph"
-      ]
-    ]
-  ]
-]
 defrag PatPrefix
 [[0,0.0,0.0],true]
 #|n| [pat][key][defrag] start: <PatPrefix>: key_size=24

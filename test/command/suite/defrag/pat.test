@@ -13,8 +13,6 @@ delete PatPrefix Jeff
 delete PatPrefix John
 delete PatPrefix James
 
-select PatPrefix
-
 #@add-important-log-levels notice
 defrag
 
@@ -29,8 +27,6 @@ load --table PatPrefix
 
 delete PatPrefix Jason
 delete PatPrefix James
-
-select PatPrefix
 
 #@add-important-log-levels notice
 defrag PatPrefix
