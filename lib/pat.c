@@ -6237,17 +6237,10 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
           name,
           pat->header->curr_key);
 
-  grn_pat *work = grn_pat_create(ctx,
-                                 NULL,
-                                 pat->header->key_size,
-                                 pat->header->value_size,
-                                 pat->header->flags);
-  if (!work) {
-    return 0;
-  }
-
   unsigned int table_size = grn_table_size(ctx, (grn_obj *)pat);
   uint8_t keys[table_size - 1];
+  uint8_t *key_buffer = GRN_MALLOC(sizeof(uint8_t*) * pat->header->curr_key);
+  uint32_t curr_key = 0;
   size_t i = 0;
   GRN_PAT_EACH(ctx, pat, id, NULL, NULL, NULL, {
     pat_node *node = pat_get(ctx, pat, id);
@@ -6255,18 +6248,20 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
       continue;
     }
     uint8_t *key = NULL;
+    uint32_t key_length = PAT_LEN(node);
     KEY_AT(pat, node->key, key, 0);
-    keys[i++] = key_put(ctx, work, key, PAT_LEN(node));
+    grn_memcpy((key_buffer + curr_key), key, key_length);
+    keys[i++] = curr_key;
+    curr_key += key_length;
   });
 
   uint8_t *current_key_seg;
-  uint8_t *new_key_seg;
   KEY_AT(pat, 0, current_key_seg, 0);
-  KEY_AT(work, 0, new_key_seg, 0);
-  grn_memcpy(current_key_seg, new_key_seg, work->header->curr_key);
-  int defrag_size = pat->header->curr_key - work->header->curr_key;
-  pat->header->curr_key = work->header->curr_key;
-  grn_pat_close(ctx, work);
+  grn_memcpy(current_key_seg, key_buffer, curr_key);
+  GRN_FREE(key_buffer);
+
+  int defrag_size = pat->header->curr_key - curr_key;
+  pat->header->curr_key = curr_key;
 
   i = 0;
   GRN_PAT_EACH(ctx, pat, id, NULL, NULL, NULL, {
