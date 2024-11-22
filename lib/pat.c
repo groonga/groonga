@@ -6242,6 +6242,10 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
                                  pat->header->key_size,
                                  pat->header->value_size,
                                  pat->header->flags);
+  if (!work) {
+    return 0;
+  }
+
   unsigned int table_size = grn_table_size(ctx, (grn_obj *)pat);
   uint8_t keys[table_size - 1];
   size_t i = 0;
