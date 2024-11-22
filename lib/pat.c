@@ -6236,14 +6236,6 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     goto exit;
   }
 
-  GRN_DEFINE_NAME(pat);
-  GRN_LOG(ctx,
-          GRN_LOG_NOTICE,
-          "[pat][key][defrag] start: <%.*s>: key_size=%u",
-          name_size,
-          name,
-          pat->header->curr_key);
-
   size_t i = 0;
   uint32_t *current_keys = GRN_MALLOC(sizeof(uint32_t) * pat_size);
   uint32_t total_key_size = 0;
@@ -6285,12 +6277,14 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   defrag_size = pat->header->curr_key - new_curr_key;
   pat->header->curr_key = new_curr_key;
 
+  GRN_DEFINE_NAME(pat);
   GRN_LOG(ctx,
           GRN_LOG_NOTICE,
-          "[pat][key][defrag] end: <%.*s>: key_size=%u",
+          "[pat][key][defrag] <%.*s>: total_key_size:%u defrag_size:%d",
           name_size,
           name,
-          pat->header->curr_key);
+          pat->header->curr_key,
+          defrag_size);
 
 exit:
   CRITICAL_SECTION_LEAVE(pat->lock);
