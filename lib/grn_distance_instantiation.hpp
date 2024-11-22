@@ -69,7 +69,7 @@ namespace grn {
 #  undef FUNC
 #  undef FUNC_EXPANDED
     } // namespace simsimd
-  }   // namespace distance
+  } // namespace distance
 } // namespace grn
 #endif
 

@@ -2622,10 +2622,7 @@ namespace grn {
         }
 
 #  define VISIT(TYPE)                                                          \
-    ::arrow::Status Visit(const TYPE &type) override                           \
-    {                                                                          \
-      return Append(type);                                                     \
-    }
+    ::arrow::Status Visit(const TYPE &type) override { return Append(type); }
 
         VISIT(::arrow::BooleanType)
         VISIT(::arrow::Int8Type)

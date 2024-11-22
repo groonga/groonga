@@ -329,7 +329,7 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx,
       if ((diff_bit_current % 2) == 1) {
         diff_bit_current--;
       }
-      if (diff_bit_current<diff_bit_prev && * diff_bit> diff_bit_current) {
+      if (diff_bit_current < diff_bit_prev && *diff_bit > diff_bit_current) {
         if (i == n) {
           grn_ii_cursor_close(ctx, ic);
           break;

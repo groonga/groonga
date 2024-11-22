@@ -1929,7 +1929,8 @@ grn_ulltoa(uint64_t i, char *p, char *end, char **rest)
 }
 
 #define I2B(i)                                                                 \
-  ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(i)&0x3f])
+  ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(i) &    \
+                                                                      0x3f])
 
 #define B2I(b)                                                                 \
   (((b) < '+' || 'z' < (b))                                                    \
@@ -1970,7 +1971,7 @@ grn_btoi(char *b)
   return id ^ MASK;
 }
 
-#define I2B32H(i) ("0123456789ABCDEFGHIJKLMNOPQRSTUV"[(i)&0x1f])
+#define I2B32H(i) ("0123456789ABCDEFGHIJKLMNOPQRSTUV"[(i) & 0x1f])
 
 char *
 grn_lltob32h(int64_t i, char *p)

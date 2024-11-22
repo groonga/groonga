@@ -373,8 +373,8 @@ namespace {
   }
 
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<(std::is_same_v<X, int8_t> ||
-                    std::is_same_v<X, uint8_t>)&&!std::is_floating_point_v<Y>,
+  std::enable_if_t<(std::is_same_v<X, int8_t> || std::is_same_v<X, uint8_t>) &&
+                     !std::is_floating_point_v<Y>,
                    bool>
   numeric_arithmetic_binary_operation_execute_shiftrr(grn_ctx *ctx,
                                                       X x,
@@ -390,7 +390,8 @@ namespace {
 
   template <typename RESULT_TYPE, typename X, typename Y>
   std::enable_if_t<(std::is_same_v<X, int16_t> ||
-                    std::is_same_v<X, uint16_t>)&&!std::is_floating_point_v<Y>,
+                    std::is_same_v<X, uint16_t>) &&
+                     !std::is_floating_point_v<Y>,
                    bool>
   numeric_arithmetic_binary_operation_execute_shiftrr(grn_ctx *ctx,
                                                       X x,
@@ -406,7 +407,8 @@ namespace {
 
   template <typename RESULT_TYPE, typename X, typename Y>
   std::enable_if_t<(std::is_same_v<X, int32_t> ||
-                    std::is_same_v<X, uint32_t>)&&!std::is_floating_point_v<Y>,
+                    std::is_same_v<X, uint32_t>) &&
+                     !std::is_floating_point_v<Y>,
                    bool>
   numeric_arithmetic_binary_operation_execute_shiftrr(grn_ctx *ctx,
                                                       X x,
@@ -422,7 +424,8 @@ namespace {
 
   template <typename RESULT_TYPE, typename X, typename Y>
   std::enable_if_t<(std::is_same_v<X, int64_t> ||
-                    std::is_same_v<X, uint64_t>)&&!std::is_floating_point_v<Y>,
+                    std::is_same_v<X, uint64_t>) &&
+                     !std::is_floating_point_v<Y>,
                    bool>
   numeric_arithmetic_binary_operation_execute_shiftrr(grn_ctx *ctx,
                                                       X x,

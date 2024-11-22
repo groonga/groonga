@@ -455,7 +455,7 @@ grn_io_array_at(
     int flags_ = 0;                                                            \
     uint8_t *ptr_ =                                                            \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_, );     \
-    res = ptr_ ? ((*ptr_ >> ((offset)&7)) & 1) : 0;                            \
+    res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;                          \
   } while (0)
 
 #define GRN_IO_ARRAY_BIT_ON(io, array, offset)                                 \
@@ -464,7 +464,7 @@ grn_io_array_at(
     uint8_t *ptr_ =                                                            \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);       \
     if (ptr_) {                                                                \
-      *ptr_ |= (1 << ((offset)&7));                                            \
+      *ptr_ |= (1 << ((offset) & 7));                                          \
     }                                                                          \
   } while (0)
 
@@ -474,7 +474,7 @@ grn_io_array_at(
     uint8_t *ptr =                                                             \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);       \
     if (ptr_) {                                                                \
-      *ptr_ &= ~(1 << ((offset)&7));                                           \
+      *ptr_ &= ~(1 << ((offset) & 7));                                         \
     }                                                                          \
   } while (0)
 
@@ -484,7 +484,7 @@ grn_io_array_at(
     uint8_t *ptr_ =                                                            \
       grn_io_array_at((io), (array), ((offset) >> 3) + 1, &flags_);            \
     if (ptr_) {                                                                \
-      *ptr_ ^= (1 << ((offset)&7));                                            \
+      *ptr_ ^= (1 << ((offset) & 7));                                          \
     }                                                                          \
   } while (0)
 

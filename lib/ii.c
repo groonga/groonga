@@ -558,13 +558,13 @@ buffer_segment_clear(grn_ii *ii, uint32_t lseg)
 /* chunk */
 
 #define HEADER_CHUNK_AT(ii, offset)                                            \
-  ((((ii)->header.common->chunks[((offset) >> 3)]) >> ((offset)&7)) & 1)
+  ((((ii)->header.common->chunks[((offset) >> 3)]) >> ((offset) & 7)) & 1)
 
 #define HEADER_CHUNK_ON(ii, offset)                                            \
-  (((ii)->header.common->chunks[((offset) >> 3)]) |= (1 << ((offset)&7)))
+  (((ii)->header.common->chunks[((offset) >> 3)]) |= (1 << ((offset) & 7)))
 
 #define HEADER_CHUNK_OFF(ii, offset)                                           \
-  (((ii)->header.common->chunks[((offset) >> 3)]) &= ~(1 << ((offset)&7)))
+  (((ii)->header.common->chunks[((offset) >> 3)]) &= ~(1 << ((offset) & 7)))
 
 #define N_GARBAGES_TH 1
 
@@ -3066,7 +3066,7 @@ grn_ii_pos_is_available(grn_ctx *ctx, uint32_t flags, const char *context)
   return true;
 }
 
-#define POS_IS_EMBED(pos)            ((pos)&1)
+#define POS_IS_EMBED(pos)            ((pos) & 1)
 #define POS_EMBED_RID(rid)           (((rid) << 1) | 1)
 #define POS_EMBED_RID_SID(rid, sid)  ((((rid) << 12) + ((sid) << 1)) | 1)
 #define POS_RID_EXTRACT(pos)         ((pos) >> 1)
@@ -9399,7 +9399,7 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   if (old && old->header.type == GRN_VOID) {
     old = NULL;
   }
-  if (new &&new->header.type == GRN_VOID) {
+  if (new && new->header.type == GRN_VOID) {
     new = NULL;
   }
   if (old || new) {
@@ -9814,7 +9814,7 @@ exit:
       grn_obj_close(ctx, old);
     }
   }
-  if (new &&new->header.type == GRN_TABLE_HASH_KEY) {
+  if (new && new->header.type == GRN_TABLE_HASH_KEY) {
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_ii_updspec_close(ctx, *u);
@@ -15210,7 +15210,7 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
 #define II_BUFFER_TYPE_RID          0x80000000
 #define II_BUFFER_TYPE_WEIGHT       0x40000000
-#define II_BUFFER_TYPE(id)          (((id)&II_BUFFER_TYPE_MASK))
+#define II_BUFFER_TYPE(id)          (((id) & II_BUFFER_TYPE_MASK))
 #define II_BUFFER_PACK(value, type) ((value) | (type))
 #define II_BUFFER_UNPACK(id, type)  ((id) & ~(type))
 #define II_BUFFER_ORDER             GRN_CURSOR_BY_KEY
@@ -15419,8 +15419,7 @@ grn_ii_builder_options_fix(grn_ii_builder_options *options)
 }
 
 #define GRN_II_BUILDER_TERM_INPLACE_SIZE                                       \
-  (sizeof(grn_ii_builder_term) - (uintptr_t) &                                 \
-   ((grn_ii_builder_term *)0)->dummy)
+  (sizeof(grn_ii_builder_term) - (uintptr_t)&((grn_ii_builder_term *)0)->dummy)
 
 typedef struct {
   grn_id rid;   /* Last record ID */

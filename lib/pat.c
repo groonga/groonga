@@ -111,7 +111,7 @@ pat_key_storage_size(uint32_t key_size)
 #define PAT_DEL_OFF(x) ((x)->bits &= ~PAT_DELETING)
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 #define PAT_LEN_SET(x, v)                                                      \
-  ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v)-1) << 3))
+  ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
 #define PAT_CHK_SET(x, v)                ((x)->check = (v))
 
 #define PAT_CHECK_BYTE_DIFFERENCES_SHIFT 4
@@ -124,7 +124,7 @@ pat_key_storage_size(uint32_t key_size)
   ((check) >> PAT_CHECK_BYTE_DIFFERENCES_SHIFT)
 #define PAT_CHECK_BIT_DIFFERENCES(check)                                       \
   (((check) >> PAT_CHECK_BIT_DIFFERENCES_SHIFT) & 0b111)
-#define PAT_CHECK_IS_TERMINATED(check) ((check)&1)
+#define PAT_CHECK_IS_TERMINATED(check) ((check) & 1)
 #define PAT_CHECK_ADD_BIT_DIFFERENCES(check, n)                                \
   ((check) + ((n) << PAT_CHECK_BIT_DIFFERENCES_SHIFT))
 

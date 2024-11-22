@@ -28,7 +28,7 @@ namespace grn {
   public:
     ChildCtxReleaser(grn_ctx *ctx, grn_ctx *child_ctx)
       : ctx_(ctx),
-        child_ctx_(child_ctx){};
+        child_ctx_(child_ctx) {};
 
     ~ChildCtxReleaser()
     {

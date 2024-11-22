@@ -36,22 +36,22 @@ uint32_t grn_output_auto_flush_interval = 1024;
 void
 grn_output_init_from_env(void)
 {
-  {
-    char grn_output_auto_flush_interval_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_OUTPUT_AUTO_FLUSH_INTERVAL",
-               grn_output_auto_flush_interval_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (grn_output_auto_flush_interval_env[0]) {
-      size_t env_len = strlen(grn_output_auto_flush_interval_env);
-      uint32_t interval =
-        grn_atoui(grn_output_auto_flush_interval_env,
-                  grn_output_auto_flush_interval_env + env_len,
-                  NULL);
-      if (interval > 0) {
-        grn_output_auto_flush_interval = interval;
-      }
+  /* clang-format is broken with this additional block... */
+  /* { */
+  char grn_output_auto_flush_interval_env[GRN_ENV_BUFFER_SIZE];
+  grn_getenv("GRN_OUTPUT_AUTO_FLUSH_INTERVAL",
+             grn_output_auto_flush_interval_env,
+             GRN_ENV_BUFFER_SIZE);
+  if (grn_output_auto_flush_interval_env[0]) {
+    size_t env_len = strlen(grn_output_auto_flush_interval_env);
+    uint32_t interval = grn_atoui(grn_output_auto_flush_interval_env,
+                                  grn_output_auto_flush_interval_env + env_len,
+                                  NULL);
+    if (interval > 0) {
+      grn_output_auto_flush_interval = interval;
     }
   }
+  /* } */
 }
 
 #define LEVELS        (&ctx->impl->output.levels)

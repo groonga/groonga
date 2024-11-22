@@ -2377,7 +2377,7 @@ grn_default_query_logger_get_rotate_threshold_size(void);
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 /* This assumes that GRN_BULK_BUFSIZE is less than 32 (= 0x20). */
 #define GRN_BULK_BUFSIZE_MAX          0x1f
-#define GRN_BULK_SIZE_IN_FLAGS(flags) (size_t)((flags)&GRN_BULK_BUFSIZE_MAX)
+#define GRN_BULK_SIZE_IN_FLAGS(flags) (size_t)((flags) & GRN_BULK_BUFSIZE_MAX)
 #define GRN_BULK_OUTP(bulk)           ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk)                                                  \
   do {                                                                         \
@@ -2404,7 +2404,7 @@ grn_default_query_logger_get_rotate_threshold_size(void);
     if (GRN_BULK_OUTP(buf)) {                                                  \
       (buf)->u.b.curr = (char *)(p);                                           \
     } else {                                                                   \
-      (buf)->header.flags = (grn_obj_flags)((char *)(p)-GRN_BULK_HEAD(buf));   \
+      (buf)->header.flags = (grn_obj_flags)((char *)(p) - GRN_BULK_HEAD(buf)); \
     }                                                                          \
   } while (0)
 #define GRN_BULK_INCR_LEN(bulk, len)                                           \
@@ -2520,13 +2520,13 @@ grn_ctx_recv_handler_set(grn_ctx *,
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK,              \
-               ((flags)&GRN_OBJ_DO_SHALLOW_COPY),                              \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK,            \
+               ((flags) & GRN_OBJ_DO_SHALLOW_COPY),                            \
                (domain))
 #define GRN_VALUE_VAR_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,               \
-               ((flags)&GRN_OBJ_DO_SHALLOW_COPY),                              \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,             \
+               ((flags) & GRN_OBJ_DO_SHALLOW_COPY),                            \
                (domain))
 
 #define GRN_VOID_INIT(obj) GRN_OBJ_INIT((obj), GRN_VOID, 0, GRN_DB_VOID)
@@ -2601,7 +2601,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_RECORD_INIT GRN_VALUE_FIX_SIZE_INIT
 #define GRN_PTR_INIT(obj, flags, domain)                                       \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,               \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,             \
                ((flags) & (GRN_OBJ_DO_SHALLOW_COPY | GRN_OBJ_OWN)),            \
                (domain))
 #define GRN_TOKYO_GEO_POINT_INIT(obj, flags)                                   \
@@ -2682,7 +2682,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
   } while (0)
 
 #define GRN_GEO_DEGREE2MSEC(degree)                                            \
-  ((int32_t)((degree)*3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
+  ((int32_t)((degree) * 3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
 #define GRN_GEO_MSEC2DEGREE(msec) ((((int32_t)(msec)) / 3600.0) * 0.001)
 #define GRN_GEO_RESOLUTION        3600000
 #define GRN_GEO_M_PI              3.14159265358979323846

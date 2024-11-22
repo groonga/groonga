@@ -3619,12 +3619,13 @@ grn_ja_element_info(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-#define COMPRESSED_VALUE_META_FLAG(meta)             ((meta)&0xf000000000000000)
-#define COMPRESSED_VALUE_META_FLAG_RAW               0x1000000000000000
-#define COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(meta) ((meta)&0x0fffffffffffffff)
+#define COMPRESSED_VALUE_META_FLAG(meta) ((meta) & 0xf000000000000000)
+#define COMPRESSED_VALUE_META_FLAG_RAW   0x1000000000000000
+#define COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(meta)                           \
+  ((meta) & 0x0fffffffffffffff)
 
-#define COMPRESS_THRESHOLD_BYTE                      256
-#define COMPRESS_PACKED_VALUE_SIZE_MAX               257
+#define COMPRESS_THRESHOLD_BYTE        256
+#define COMPRESS_PACKED_VALUE_SIZE_MAX 257
 /* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
 
 #if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) || defined(GRN_WITH_ZSTD)
@@ -7790,7 +7791,7 @@ grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
     reader->body_seg_addr = seg_addr;
   }
   seg_addr = (char *)reader->body_seg_addr + reader->body_seg_offset;
-  reader->value_size = (uint32_t) * (uint64_t *)seg_addr;
+  reader->value_size = (uint32_t)*(uint64_t *)seg_addr;
   return GRN_SUCCESS;
 }
 #endif /* GRN_WITH_COMPRESSED */
