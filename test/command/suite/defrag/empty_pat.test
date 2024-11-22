@@ -1,0 +1,3 @@
+table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+defrag
+object_inspect PatPrefix

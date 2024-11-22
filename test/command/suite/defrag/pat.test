@@ -15,6 +15,7 @@ delete PatPrefix James
 
 #@add-important-log-levels notice
 defrag
+object_inspect PatPrefix
 
 select PatPrefix
 
@@ -30,5 +31,6 @@ delete PatPrefix James
 
 #@add-important-log-levels notice
 defrag PatPrefix
+object_inspect PatPrefix
 
 select PatPrefix
