@@ -98,16 +98,16 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
     }                                                                          \
   } while (false)
 
-inline static grn_id
+static inline grn_id
 grn_table_add_v_inline(grn_ctx *ctx,
                        grn_obj *table,
                        const void *key,
                        int key_size,
                        void **value,
                        int *added);
-inline static grn_id
+static inline grn_id
 grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
-inline static int
+static inline int
 grn_table_cursor_get_value_inline(grn_ctx *ctx,
                                   grn_table_cursor *tc,
                                   void **value);
@@ -171,7 +171,7 @@ grn_hook_entry_to_string(grn_hook_entry entry)
   }
 }
 
-inline static void
+static inline void
 gen_pathname(const char *path, char *buffer, int fno)
 {
   size_t len = strlen(path);
@@ -2432,7 +2432,7 @@ grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id)
   GRN_API_RETURN(id);
 }
 
-inline static grn_id
+static inline grn_id
 grn_table_add_v_inline(grn_ctx *ctx,
                        grn_obj *table,
                        const void *key,
@@ -3630,7 +3630,7 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
   GRN_API_RETURN(rc);
 }
 
-inline static grn_id
+static inline grn_id
 grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc)
 {
   const char *tag = "[table][cursor][next]";
@@ -3783,7 +3783,7 @@ grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
   GRN_API_RETURN(len);
 }
 
-inline static int
+static inline int
 grn_table_cursor_get_value_inline(grn_ctx *ctx,
                                   grn_table_cursor *tc,
                                   void **value)
@@ -5893,13 +5893,13 @@ grn_accessor_new_key(grn_ctx *ctx, grn_obj *table)
   return accessor;
 }
 
-inline static void
+static inline void
 grn_accessor_refer(grn_ctx *ctx, grn_obj *accessor)
 {
   ((grn_accessor *)accessor)->reference_count++;
 }
 
-inline static bool
+static inline bool
 grn_obj_get_accessor_rset_value(grn_ctx *ctx,
                                 grn_obj *obj,
                                 grn_accessor **res,
@@ -6398,7 +6398,7 @@ exit:
   GRN_API_RETURN((grn_obj *)res);
 }
 
-inline static bool
+static inline bool
 grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj_flags type;
@@ -6411,7 +6411,7 @@ grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
   return type == GRN_OBJ_COLUMN_VECTOR;
 }
 
-inline static bool
+static inline bool
 grn_column_is_index(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj_flags type;
@@ -7116,7 +7116,7 @@ is_same_value(grn_ctx *ctx, grn_obj *value1, grn_obj *value2)
   return true;
 }
 
-inline static bool
+static inline bool
 call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 {
   grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
@@ -8608,7 +8608,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_obj_close(ctx, &v);
 }
 
-inline static void
+static inline void
 grn_obj_set_info_source_invalid_lexicon_error(grn_ctx *ctx,
                                               const char *message,
                                               grn_obj *actual_type,
@@ -8661,7 +8661,7 @@ grn_obj_set_info_source_invalid_lexicon_error(grn_ctx *ctx,
       source_name);
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_id lexicon_id;
@@ -8820,7 +8820,7 @@ exit:
   return ctx->rc;
 }
 
-inline static void
+static inline void
 grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_obj buf;
@@ -8851,7 +8851,7 @@ grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   void *v = GRN_BULK_HEAD(value);
@@ -8900,7 +8900,7 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_rc rc;
@@ -13860,7 +13860,7 @@ grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-inline static void
+static inline void
 grn_vector_clear(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->u.v.body && !(obj->header.impl_flags & GRN_OBJ_REFER)) {

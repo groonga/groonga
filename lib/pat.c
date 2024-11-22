@@ -90,13 +90,13 @@ typedef struct {
 #define PAT_DELETING  (1 << 1)
 #define PAT_IMMEDIATE (1 << 2)
 
-inline static bool
+static inline bool
 pat_key_is_embeddable(uint32_t key_size)
 {
   return key_size <= sizeof(uint32_t);
 }
 
-inline static uint32_t
+static inline uint32_t
 pat_key_storage_size(uint32_t key_size)
 {
   return pat_key_is_embeddable(key_size) ? 0 : key_size;
@@ -841,7 +841,7 @@ grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
 {
   if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
@@ -914,7 +914,7 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
   return rc;
 }
 
-inline static void
+static inline void
 grn_pat_wal_add_entry_data_set_record_direction(
   grn_ctx *ctx,
   grn_pat_wal_add_entry_data *data,
@@ -950,7 +950,7 @@ grn_pat_wal_add_entry_data_set_record_direction(
     n = grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);                \
   } while (0)
 
-inline static pat_node *
+static inline pat_node *
 pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   int flags = GRN_TABLE_ADD;
@@ -962,7 +962,7 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 
 /* sis operation */
 
-inline static sis_node *
+static inline sis_node *
 sis_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   int flags = 0;
@@ -972,7 +972,7 @@ sis_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return grn_io_array_at(ctx, pat->io, SEGMENT_SIS, id, &flags);
 }
 
-inline static sis_node *
+static inline sis_node *
 sis_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   int flags = GRN_TABLE_ADD;
@@ -1016,7 +1016,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
     ptr = grn_io_array_at(ctx, pat->io, SEGMENT_KEY, pos, &flags);             \
   } while (0)
 
-inline static uint32_t
+static inline uint32_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
   uint32_t res, ts;
@@ -1060,7 +1060,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   return res;
 }
 
-inline static uint8_t *
+static inline uint8_t *
 pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
 {
   if (PAT_IMD(n)) {
@@ -1072,7 +1072,7 @@ pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
   }
 }
 
-inline static grn_rc
+static inline grn_rc
 pat_node_set_key(
   grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, uint32_t len)
 {
@@ -1093,7 +1093,7 @@ pat_node_set_key(
   return rc;
 }
 
-inline static void
+static inline void
 pat_node_set_shared_key(grn_ctx *ctx,
                         grn_pat *pat,
                         pat_node *node,
@@ -1122,7 +1122,7 @@ enum {
   DL_PHASE2
 };
 
-inline static grn_id *
+static inline grn_id *
 grn_pat_next_location(grn_ctx *ctx,
                       pat_node *node,
                       const uint8_t *key,
@@ -1141,7 +1141,7 @@ grn_pat_next_location(grn_ctx *ctx,
   }
 }
 
-inline static grn_pat_delinfo *
+static inline grn_pat_delinfo *
 delinfo_search(grn_pat *pat, grn_id id, uint32_t *index)
 {
   uint32_t i;
@@ -1163,20 +1163,20 @@ delinfo_search(grn_pat *pat, grn_id id, uint32_t *index)
   return NULL;
 }
 
-inline static uint32_t
+static inline uint32_t
 delinfo_turn_1_pre(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo **di)
 {
   *di = &pat->header->delinfos[pat->header->curr_del];
   return (pat->header->curr_del + 1) & GRN_PAT_MDELINFOS;
 }
 
-inline static void
+static inline void
 delinfo_turn_1_post(grn_ctx *ctx, grn_pat *pat, uint32_t next_delete_info_index)
 {
   pat->header->curr_del = next_delete_info_index;
 }
 
-inline static grn_rc
+static inline grn_rc
 delinfo_turn_2_internal(
   grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di, pat_node *ln, pat_node *dn)
 {
@@ -1253,7 +1253,7 @@ delinfo_turn_2_internal(
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 delinfo_turn_2(grn_ctx *ctx,
                grn_pat *pat,
                grn_pat_wal_add_entry_data *base_wal_data,
@@ -1297,13 +1297,13 @@ delinfo_turn_2(grn_ctx *ctx,
   return rc;
 }
 
-inline static void
+static inline void
 delinfo_turn_2_post(grn_ctx *ctx, grn_pat *pat)
 {
   pat->header->curr_del2 = (pat->header->curr_del2 + 1) & GRN_PAT_MDELINFOS;
 }
 
-inline static uint32_t
+static inline uint32_t
 delinfo_compute_storage_size(grn_ctx *ctx, grn_pat_delinfo *di, pat_node *dn)
 {
   if (di->shared) {
@@ -1317,7 +1317,7 @@ delinfo_compute_storage_size(grn_ctx *ctx, grn_pat_delinfo *di, pat_node *dn)
   }
 }
 
-inline static grn_rc
+static inline grn_rc
 delinfo_turn_3_internal(grn_ctx *ctx,
                         grn_pat *pat,
                         grn_pat_delinfo *di,
@@ -1334,7 +1334,7 @@ delinfo_turn_3_internal(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 delinfo_turn_3(grn_ctx *ctx,
                grn_pat *pat,
                grn_pat_wal_add_entry_data *base_wal_data,
@@ -1366,13 +1366,13 @@ delinfo_turn_3(grn_ctx *ctx,
   return rc;
 }
 
-inline static void
+static inline void
 delinfo_turn_3_post(grn_ctx *ctx, grn_pat *pat)
 {
   pat->header->curr_del3 = (pat->header->curr_del3 + 1) & GRN_PAT_MDELINFOS;
 }
 
-inline static grn_pat_delinfo *
+static inline grn_pat_delinfo *
 delinfo_new(grn_ctx *ctx,
             grn_pat *pat,
             grn_pat_wal_add_entry_data *base_wal_data)
@@ -1417,7 +1417,7 @@ delinfo_new(grn_ctx *ctx,
 
 /* pat operation */
 
-inline static grn_pat *
+static inline grn_pat *
 _grn_pat_create(grn_ctx *ctx,
                 grn_pat *pat,
                 const char *path,
@@ -1789,7 +1789,7 @@ typedef struct {
   int32_t check_max;
 } grn_pat_add_data;
 
-inline static bool
+static inline bool
 grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
 {
   grn_pat *pat = data->wal_data.pat;
@@ -1976,7 +1976,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
   return true;
 }
 
-inline static void
+static inline void
 grn_pat_enable_node(grn_ctx *ctx,
                     grn_pat *pat,
                     pat_node *node,
@@ -2004,7 +2004,7 @@ grn_pat_enable_node(grn_ctx *ctx,
   *id_location = id;
 }
 
-inline static void
+static inline void
 grn_pat_reuse_shared_node(grn_ctx *ctx,
                           grn_pat *pat,
                           pat_node *node,
@@ -2023,7 +2023,7 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
   grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
-inline static void
+static inline void
 grn_pat_add_shared_node(grn_ctx *ctx,
                         grn_pat *pat,
                         pat_node *node,
@@ -2041,7 +2041,7 @@ grn_pat_add_shared_node(grn_ctx *ctx,
   grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_pat_reuse_node(grn_ctx *ctx,
                    grn_pat *pat,
                    pat_node *node,
@@ -2076,7 +2076,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_pat_add_node(grn_ctx *ctx,
                  grn_pat *pat,
                  pat_node *node,
@@ -2110,7 +2110,7 @@ grn_pat_add_node(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_id
+static inline grn_id
 grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
 {
   grn_pat *pat = data->wal_data.pat;
@@ -2285,7 +2285,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
   return data->wal_data.record_id;
 }
 
-inline static bool
+static inline bool
 chop(grn_ctx *ctx,
      grn_pat *pat,
      const char **key,
@@ -2476,7 +2476,7 @@ grn_pat_add(grn_ctx *ctx,
   return r0;
 }
 
-inline static grn_id
+static inline grn_id
 _grn_pat_get(
   grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
 {
@@ -2866,7 +2866,7 @@ grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
 #define DIST(data, ox, oy)                                                     \
   ((data)->dists[(((data)->x_length + 1) * (oy)) + (ox)])
 
-inline static uint16_t
+static inline uint16_t
 grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
                                         fuzzy_search_data *data,
                                         const char *sy,
@@ -3030,7 +3030,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
 }
 
 /* id must not be GRN_ID_NIL. Caller must check it. */
-inline static void
+static inline void
 grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                fuzzy_search_data *data,
                                grn_id id,
@@ -3297,7 +3297,7 @@ typedef struct {
   uint32_t n_entries;
 } grn_pat_del_data;
 
-inline static grn_rc
+static inline grn_rc
 grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
 {
   grn_pat_delinfo *di = data->di;
@@ -3436,7 +3436,7 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 _grn_pat_del(grn_ctx *ctx,
              grn_pat *pat,
              const char *key,
@@ -4157,7 +4157,7 @@ grn_pat_scan(grn_ctx *ctx,
 
 #define INITIAL_SIZE 512
 
-inline static void
+static inline void
 push(grn_pat_cursor *c, grn_id id, uint16_t check)
 {
   grn_ctx *ctx = c->ctx;
@@ -4193,7 +4193,7 @@ push(grn_pat_cursor *c, grn_id id, uint16_t check)
   se->check = check;
 }
 
-inline static grn_pat_cursor_entry *
+static inline grn_pat_cursor_entry *
 pop(grn_pat_cursor *c)
 {
   return c->sp ? &c->ss[--c->sp] : NULL;
@@ -4294,7 +4294,7 @@ grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c)
   GRN_FREE(c);
 }
 
-inline static int
+static inline int
 bitcmp(const void *s1, const void *s2, int offset, int length)
 {
   int r, rest = length + (offset & 7) - 8, bl = offset >> 3,
@@ -4320,7 +4320,7 @@ bitcmp(const void *s1, const void *s2, int offset, int length)
   return (*a & mask) - (*b & mask);
 }
 
-inline static grn_rc
+static inline grn_rc
 set_cursor_prefix(grn_ctx *ctx,
                   grn_pat *pat,
                   grn_pat_cursor *c,
@@ -4387,7 +4387,7 @@ set_cursor_prefix(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 set_cursor_near(grn_ctx *ctx,
                 grn_pat *pat,
                 grn_pat_cursor *c,
@@ -4443,7 +4443,7 @@ set_cursor_near(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 set_cursor_common_prefix(grn_ctx *ctx,
                          grn_pat *pat,
                          grn_pat_cursor *c,
@@ -4511,7 +4511,7 @@ set_cursor_common_prefix(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 set_cursor_ascend(grn_ctx *ctx,
                   grn_pat *pat,
                   grn_pat_cursor *c,
@@ -4599,7 +4599,7 @@ set_cursor_ascend(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 set_cursor_descend(grn_ctx *ctx,
                    grn_pat *pat,
                    grn_pat_cursor *c,

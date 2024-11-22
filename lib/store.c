@@ -1999,7 +1999,7 @@ grn_ja_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
 {
   if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
@@ -4313,7 +4313,7 @@ exit:
 }
 
 #ifdef GRN_WITH_ZLIB
-inline static grn_rc
+static inline grn_rc
 grn_ja_put_zlib(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
@@ -4404,7 +4404,7 @@ grn_ja_put_zlib(grn_ctx *ctx,
   return rc;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_putv_zlib(grn_ctx *ctx,
                  grn_ja *ja,
                  grn_id id,
@@ -4541,7 +4541,7 @@ grn_ja_putv_zlib(grn_ctx *ctx,
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
-inline static grn_rc
+static inline grn_rc
 grn_ja_put_lz4(grn_ctx *ctx,
                grn_ja *ja,
                grn_id id,
@@ -4633,7 +4633,7 @@ grn_ja_put_lz4(grn_ctx *ctx,
   return rc;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_putv_lz4(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
@@ -4704,7 +4704,7 @@ grn_ja_putv_lz4(grn_ctx *ctx,
 #endif /* GRN_WITH_LZ4 */
 
 #ifdef GRN_WITH_ZSTD
-inline static grn_rc
+static inline grn_rc
 grn_ja_put_zstd(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
@@ -4769,7 +4769,7 @@ grn_ja_put_zstd(grn_ctx *ctx,
   return rc;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_putv_zstd(grn_ctx *ctx,
                  grn_ja *ja,
                  grn_id id,
@@ -4988,7 +4988,7 @@ exit:
 #endif /* GRN_WITH_ZSTD */
 
 #ifdef GRN_WITH_BLOSC
-inline static blosc2_schunk *
+static inline blosc2_schunk *
 grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
                                grn_ja *ja,
                                grn_id id,
@@ -5071,7 +5071,7 @@ grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
   return blosc2_schunk_new(storage);
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_put_blosc(grn_ctx *ctx,
                  grn_ja *ja,
                  grn_id id,
@@ -5166,7 +5166,7 @@ grn_ja_put_blosc(grn_ctx *ctx,
   return rc;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_putv_blosc(grn_ctx *ctx,
                   grn_ja *ja,
                   grn_id id,
@@ -5317,7 +5317,7 @@ grn_ja_put(grn_ctx *ctx,
   }
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_ja_putv_internal(grn_ctx *ctx,
                      grn_ja *ja,
                      grn_id id,

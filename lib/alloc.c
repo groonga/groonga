@@ -134,7 +134,7 @@ grn_alloc_info_fin(void)
   CRITICAL_SECTION_FIN(grn_alloc_info_lock);
 }
 
-inline static void
+static inline void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
 #  ifdef HAVE_BACKTRACE
@@ -173,7 +173,7 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
 #  endif /* HAVE_BACKTRACE */
 }
 
-inline static void
+static inline void
 grn_alloc_info_add(
   void *address, size_t size, const char *file, int line, const char *func)
 {
@@ -210,7 +210,7 @@ grn_alloc_info_add(
   CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
-inline static void
+static inline void
 grn_alloc_info_change(void *old_address, void *new_address, size_t size)
 {
   grn_ctx *ctx;
@@ -269,7 +269,7 @@ grn_alloc_info_dump(grn_ctx *ctx)
   printf("total: %" GRN_FMT_SIZE ":%d\n", total, i);
 }
 
-inline static void
+static inline void
 grn_alloc_info_check(grn_ctx *ctx, void *address)
 {
   grn_alloc_info *alloc_info;

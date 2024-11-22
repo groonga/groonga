@@ -4182,7 +4182,7 @@ typedef struct {
   float weight;
 } efs_op;
 
-inline static void
+static inline void
 skip_space(grn_ctx *ctx, efs_info *q)
 {
   unsigned int len;

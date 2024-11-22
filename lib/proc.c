@@ -2756,7 +2756,7 @@ compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
 #undef COMPARE_AND_RETURN
 }
 
-inline static void
+static inline void
 get_number_in_grn_uvector(grn_ctx *ctx,
                           grn_obj *uvector,
                           unsigned int offset,
@@ -2815,7 +2815,7 @@ get_number_in_grn_uvector(grn_ctx *ctx,
 #undef GET_UVECTOR_ELEMENT_AS
 }
 
-inline static void
+static inline void
 apply_max(grn_ctx *ctx,
           grn_obj *number,
           grn_obj *max,

@@ -38,7 +38,7 @@
 #  endif /* _WIN64 */
 #endif   /* defined(HAVE__GMTIME64_S) && defined(__GNUC__) */
 
-inline static int
+static inline int
 grn_str_charlen_utf8(grn_ctx *ctx,
                      const unsigned char *str,
                      const unsigned char *end)
@@ -216,7 +216,7 @@ static unsigned char symbol[] = {
   0,    0,   0,   0,   0,   0,   '$', 0,    0,   '%', '#', '&', '*', '@',
   0,    0,   0,   0,   0,   0,   0,   0};
 
-inline static grn_rc
+static inline grn_rc
 normalize_euc(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
@@ -489,7 +489,7 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
 }
 
 #ifdef GRN_WITH_NFKC
-inline static grn_rc
+static inline grn_rc
 normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -648,7 +648,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 }
 #endif /* GRN_WITH_NFKC */
 
-inline static grn_rc
+static inline grn_rc
 normalize_sjis(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
@@ -910,7 +910,7 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 normalize_none(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -1018,7 +1018,7 @@ normalize_none(grn_ctx *ctx, grn_str *nstr)
 }
 
 /* use cp1252 as latin1 */
-inline static grn_rc
+static inline grn_rc
 normalize_latin1(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -1159,7 +1159,7 @@ normalize_latin1(grn_ctx *ctx, grn_str *nstr)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static inline grn_rc
 normalize_koi8r(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -2122,7 +2122,7 @@ grn_str_tok(const char *str,
   return (int)(tok - tokbuf);
 }
 
-inline static int
+static inline int
 op_getopt_flag(int *flags,
                const grn_str_getopt_opt *o,
                int argc,

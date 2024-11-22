@@ -1806,7 +1806,7 @@ namespace {
 // consistent implementation but there are custom cast processes in
 // load.c and arrow.cpp for a vector value. We can reconsider the
 // current design later.
-inline static grn_rc
+static inline grn_rc
 grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -1911,7 +1911,7 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
   return rc;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_caster_cast_bool(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;

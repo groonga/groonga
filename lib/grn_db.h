@@ -321,7 +321,7 @@ grn_table_cursor *
 grn_table_cursor_open_by_id(
   grn_ctx *ctx, grn_obj *table, grn_id min, grn_id max, int flags);
 
-inline static void
+static inline void
 grn_table_add_subrec(grn_ctx *ctx,
                      grn_obj *table,
                      grn_rset_recinfo *ri,

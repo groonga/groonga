@@ -315,7 +315,7 @@ grn_snip_cond_reinit(snip_cond *cond)
   cond->stopflag = SNIPCOND_NONSTOP;
 }
 
-inline static char *
+static inline char *
 grn_snip_strndup(grn_ctx *ctx, const char *string, size_t string_len)
 {
   char *copied_string;
@@ -329,7 +329,7 @@ grn_snip_strndup(grn_ctx *ctx, const char *string, size_t string_len)
   return copied_string;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_snip_cond_set_tag(grn_ctx *ctx,
                       const char **dest_tag,
                       size_t *dest_tag_len,
@@ -632,7 +632,7 @@ grn_snip_find_firstbyte(const char *string,
   return offset;
 }
 
-inline static grn_rc
+static inline grn_rc
 grn_snip_set_default_tag(grn_ctx *ctx,
                          const char **dest_tag,
                          size_t *dest_tag_len,

@@ -1435,7 +1435,7 @@ namespace {
   }
 }; // namespace
 
-inline static void
+static inline void
 grn_expr_exec_get_member_vector(grn_ctx *ctx,
                                 grn_obj *expr,
                                 grn_obj *column_and_record_id,
@@ -1537,7 +1537,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &values);
 }
 
-inline static void
+static inline void
 grn_expr_exec_get_member_table(
   grn_ctx *ctx, grn_obj *expr, grn_obj *table, grn_obj *key, grn_obj *result)
 {
