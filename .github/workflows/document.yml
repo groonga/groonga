@@ -2,18 +2,26 @@ name: Build document
 on:
   push:
     paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document.yml'
       - 'Rakefile'
+      - 'cmake/**'
       - 'doc/**'
       - 'include/**/*.h'
       - 'include/**/*.hpp'
-      - '.github/workflows/document.yml'
   pull_request:
     paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document.yml'
       - 'Rakefile'
+      - 'cmake/**'
       - 'doc/**'
       - 'include/**/*.h'
       - 'include/**/*.hpp'
-      - '.github/workflows/document.yml'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
