@@ -361,6 +361,11 @@ jobs:
           submodules: recursive
       - name: Install packages
         run: |
+          # Workaround. pkg-config formula is deprecated but still
+          # installed in GitHub Actions runner. We can remove this
+          # when GitHub Actions runner doesn't include pkg-config
+          # formula by default.
+          brew uninstall pkg-config || :
           ./setup.sh
       - name: Prepare ccache
         run: |
