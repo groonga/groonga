@@ -6239,7 +6239,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   unsigned int table_size = grn_table_size(ctx, (grn_obj *)pat);
   uint8_t keys[table_size - 1];
-  uint8_t *key_buffer = GRN_MALLOC(sizeof(uint8_t*) * pat->header->curr_key);
+  uint8_t *key_buffer = GRN_MALLOC(sizeof(uint8_t *) * pat->header->curr_key);
   uint32_t curr_key = 0;
   size_t i = 0;
   GRN_PAT_EACH(ctx, pat, id, NULL, NULL, NULL, {
