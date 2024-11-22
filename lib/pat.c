@@ -6269,9 +6269,9 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   GRN_PAT_EACH_END(ctx, cursor);
   GRN_FREE(current_keys);
 
-  uint8_t *current_key_seg;
-  KEY_AT(pat, 0, current_key_seg, 0);
-  grn_memcpy(current_key_seg, new_key_buffer, new_curr_key);
+  uint8_t *current_key_buffer;
+  KEY_AT(pat, 0, current_key_buffer, 0);
+  grn_memcpy(current_key_buffer, new_key_buffer, new_curr_key);
   GRN_FREE(new_key_buffer);
 
   defrag_size = pat->header->curr_key - new_curr_key;
