@@ -35,7 +35,7 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
        libmsgpack-dev \
        libstemmer-dev \
        mecab-naist-jdic \
-       ninja \
+       ninja-build \
        pkg-config
   git clone --recursive --depth 1 --branch main https://github.com/groonga/groonga.git
   touch groonga/lib/grn_ecmascript.c
