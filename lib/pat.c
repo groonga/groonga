@@ -6245,7 +6245,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
           pat->header->curr_key);
 
   size_t i = 0;
-  uint8_t *current_keys = GRN_MALLOC(sizeof(uint8_t) * pat_size);
+  uint32_t *current_keys = GRN_MALLOC(sizeof(uint32_t) * pat_size);
   uint32_t total_key_size = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
