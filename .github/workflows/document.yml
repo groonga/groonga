@@ -45,7 +45,7 @@ jobs:
       - name: Build document
         run: |
           ccache --show-stats --verbose --version || :
-          cmake -S . -B /tmp/groonga.build --preset=doc
+          cmake -S . -B /tmp/groonga.build --preset=doc -DSPHINX_BUILD_OPTS="--fail-on-warning"
           mkdir -p /tmp/groonga.org/ja
           rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
           ccache --show-stats --verbose --version || :
