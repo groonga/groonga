@@ -180,7 +180,7 @@ grn_pat_cursor_delete(grn_ctx *ctx,
         grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0);             \
       if (cursur) {                                                            \
         grn_id id;                                                             \
-        while ((id = grn_pat_cursor_next(ctx, cursur))) {
+        while ((id = grn_pat_cursor_next(ctx, cursur)) != GRN_ID_NIL) {
 
 #define GRN_PAT_EACH_END(ctx, cursur)                                          \
   }                                                                            \
@@ -188,7 +188,7 @@ grn_pat_cursor_delete(grn_ctx *ctx,
   }                                                                            \
   }                                                                            \
   }                                                                            \
-  while (0)
+  while (false)
 
 #ifdef __cplusplus
 }
