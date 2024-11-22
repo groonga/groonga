@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2022-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,16 +21,18 @@ add_executable(groonga ${GROONGA_SOURCES})
 set_source_files_properties(${GROONGA_SOURCES}
                             PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 target_link_libraries(groonga libgroonga)
+if(GRN_WITH_LIBEDIT)
+  target_link_libraries(groonga Groonga::libedit)
+endif()
+if(WIN32)
+  target_link_libraries(groonga PRIVATE ws2_32.lib)
+endif()
 install(TARGETS groonga DESTINATION ${BINDIR})
 if(MSVC)
   install(
     FILES $<TARGET_PDB_FILE:groonga>
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
     OPTIONAL)
-endif()
-
-if(GRN_WITH_LIBEDIT)
-  target_link_libraries(groonga Groonga::libedit)
 endif()
 
 if(GRN_WITH_MRUBY)
