@@ -6264,6 +6264,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   KEY_AT(pat, 0, current_key_seg, 0);
   KEY_AT(work, 0, new_key_seg, 0);
   grn_memcpy(current_key_seg, new_key_seg, work->header->curr_key);
+  int defrag_size = pat->header->curr_key - work->header->curr_key;
   pat->header->curr_key = work->header->curr_key;
   grn_pat_close(ctx, work);
 
@@ -6284,5 +6285,5 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
           pat->header->curr_key);
   CRITICAL_SECTION_LEAVE(pat->lock);
 
-  return table_size;
+  return defrag_size;
 }
