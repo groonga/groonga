@@ -44,7 +44,7 @@ struct _grn_pat {
   grn_obj token_filter_procs;
   grn_id *cache;
   uint32_t cache_size;
-  grn_bool is_dirty;
+  bool is_dirty;
   grn_critical_section lock;
 };
 

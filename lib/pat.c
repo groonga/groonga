@@ -1522,7 +1522,7 @@ grn_pat_create(grn_ctx *ctx,
   }
   pat->cache = NULL;
   pat->cache_size = 0;
-  pat->is_dirty = GRN_FALSE;
+  pat->is_dirty = false;
   CRITICAL_SECTION_INIT(pat->lock);
   return pat;
 }
@@ -1636,7 +1636,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   }
   pat->cache = NULL;
   pat->cache_size = 0;
-  pat->is_dirty = GRN_FALSE;
+  pat->is_dirty = false;
   CRITICAL_SECTION_INIT(pat->lock);
   return pat;
 }
@@ -5762,7 +5762,7 @@ grn_pat_dirty(grn_ctx *ctx, grn_pat *pat)
   CRITICAL_SECTION_ENTER(pat->lock);
   if (!pat->is_dirty) {
     uint32_t n_dirty_opens;
-    pat->is_dirty = GRN_TRUE;
+    pat->is_dirty = true;
     GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), 1, n_dirty_opens);
     rc = grn_io_flush(ctx, pat->io);
   }
@@ -5785,7 +5785,7 @@ grn_pat_clean(grn_ctx *ctx, grn_pat *pat)
   CRITICAL_SECTION_ENTER(pat->lock);
   if (pat->is_dirty) {
     uint32_t n_dirty_opens;
-    pat->is_dirty = GRN_FALSE;
+    pat->is_dirty = false;
     GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), -1, n_dirty_opens);
     rc = grn_io_flush(ctx, pat->io);
   }
@@ -5800,7 +5800,7 @@ grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat)
   grn_rc rc = GRN_SUCCESS;
 
   CRITICAL_SECTION_ENTER(pat->lock);
-  pat->is_dirty = GRN_FALSE;
+  pat->is_dirty = false;
   pat->header->n_dirty_opens = 0;
   rc = grn_io_flush(ctx, pat->io);
   CRITICAL_SECTION_LEAVE(pat->lock);
