@@ -361,12 +361,11 @@ grn_ctx_fin(grn_ctx *ctx);
 /**
  * \brief Open the context.
  *
- * \note This function also allocates the context buffer. However,
- *       \ref grn_ctx_init requires the caller to allocate a context buffer.
- * \note Initialized with either \ref grn_ctx_init or \ref grn_ctx_open,
- *       you can finish with \ref grn_ctx_fin.
- * \note You can also close the context allocated by this function with
- *       \ref grn_ctx_close after finishing with \ref grn_ctx_fin.
+ * \note This function also allocates the context itself. However,
+ *       \ref grn_ctx_init requires the caller to allocate a context itself.
+ *
+ * \attention The context opened with this function should be closed with
+ *            \ref grn_ctx_close.
  *
  * \param flags Initialization options.
  *
