@@ -266,8 +266,8 @@ grn_column_table(grn_ctx *ctx, grn_obj *column);
  * \param column The column to be truncated.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
- *         For example, \ref GRN_INVALID_ARGUMENT is returned if \a column is
- *         NULL or not a supported type.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if a column is
+ *         `NULL` or not a supported type.
  */
 GRN_API grn_rc
 grn_column_truncate(grn_ctx *ctx, grn_obj *column);
