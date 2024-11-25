@@ -6303,16 +6303,6 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   defrag_size = pat->header->curr_key - new_curr_key;
   pat->header->curr_key = new_curr_key;
-
-  GRN_DEFINE_NAME(pat);
-  GRN_LOG(ctx,
-          GRN_LOG_NOTICE,
-          "[pat][key][defrag] <%.*s>: total_key_size:%u defrag_size:%d",
-          name_size,
-          name,
-          pat->header->curr_key,
-          defrag_size);
-
 exit:
   CRITICAL_SECTION_LEAVE(pat->lock);
   return defrag_size;
