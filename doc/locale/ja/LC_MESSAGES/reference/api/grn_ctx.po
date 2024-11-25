@@ -66,24 +66,6 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "初期化された :c:type:`grn_ctx` オブジェクトを返します。"
-msgstr ""
-
-msgid ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` ではGroongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
-msgstr ""
-
-msgid "初期化する ``ctx`` のオプションを指定します。"
-msgstr ""
-
-msgid "It calls :c:func:`grn_ctx_fin()` and frees allocated memory for ``ctx`` by :c:func:`grn_ctx_open()`."
-msgstr ":c:func:`grn_ctx_fin()` を呼び出し、その後、 :c:func:`grn_ctx_open()` によって割り当てた ``ctx`` のメモリを解放する。"
-
-msgid "no longer needed :c:type:`grn_ctx`."
-msgstr "もう使わない :c:type:`grn_ctx` 。"
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
 msgid "ctxを破棄するときに呼ばれる関数を設定します。"
 msgstr ""
 
@@ -92,6 +74,9 @@ msgstr ""
 
 msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
 msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 msgid "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。"
 msgstr ""
