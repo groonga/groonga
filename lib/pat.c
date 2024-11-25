@@ -6231,13 +6231,13 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   int defrag_size = 0;
 
   CRITICAL_SECTION_ENTER(pat->lock);
-  uint32_t pat_size = grn_pat_size(ctx, pat);
-  if (pat_size == 0) {
+  uint32_t n_records = grn_pat_size(ctx, pat);
+  if (n_records == 0) {
     goto exit;
   }
 
   size_t i = 0;
-  uint32_t *current_keys = GRN_MALLOC(sizeof(uint32_t) * pat_size);
+  uint32_t *current_keys = GRN_MALLOC(sizeof(uint32_t) * n_records);
   uint32_t total_key_size = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
