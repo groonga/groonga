@@ -260,6 +260,10 @@ grn_column_table(grn_ctx *ctx, grn_obj *column);
  *            API on a shared column while it is being accessed by other threads
  *            or processes may lead to data corruption or undefined behavior.
  *
+ * \attention When using this API in a multi-process environment, ensure that
+ *            all other processes have closed the target column before
+ *            truncating and reopen it after the truncation is complete.
+ *
  * \since 4.0.9
  *
  * \param ctx The context object.
