@@ -252,6 +252,27 @@ grn_column_index_update(grn_ctx *ctx,
  */
 GRN_API grn_obj *
 grn_column_table(grn_ctx *ctx, grn_obj *column);
+/**
+ * \brief Delete all values in the specified column.
+ *
+ * \attention This is a dangerous API. You must not use this API when other
+ *            threads or processes are accessing the target column. Using this
+ *            API on a shared column while it is being accessed by other threads
+ *            or processes may lead to data corruption or undefined behavior.
+ *
+ * \attention When using this API in a multi-process environment, ensure that
+ *            all other processes have closed the target column before
+ *            truncating and reopen it after the truncation is complete.
+ *
+ * \since 4.0.9
+ *
+ * \param ctx The context object.
+ * \param column The column to be truncated.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if a column is
+ *         `NULL` or not a supported type.
+ */
 GRN_API grn_rc
 grn_column_truncate(grn_ctx *ctx, grn_obj *column);
 
