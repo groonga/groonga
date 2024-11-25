@@ -43,8 +43,9 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
     -S groonga \
     -B groonga.build \
     --preset debug-maximum \
+    -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
     -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_LOCALSTATEDIR=/var
+    -DCMAKE_INSTALL_SYSCONFDIR=/etc
   ninja -C groonga.build > /dev/null
   sudo ninja -C groonga.build install > /dev/null
 else
