@@ -3620,7 +3620,8 @@ uint32_t
 grn_pat_size(grn_ctx *ctx, grn_pat *pat)
 {
   if (!pat) {
-    return GRN_INVALID_ARGUMENT;
+    ERR(GRN_INVALID_ARGUMENT, "[pat][size] pat is null");
+    return 0;
   }
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return 0;
