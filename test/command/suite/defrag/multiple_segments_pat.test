@@ -1,0 +1,22 @@
+table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+
+#@timeout 30
+#@disable-logging
+#@generate-series 0 800000 PatPrefix '{"_key" => "N%08d" % i}'
+#@enable-logging
+#@timeout default
+
+delete PatPrefix --filter '_id > 700000'
+
+defrag
+object_inspect PatPrefix
+select PatPrefix --filter '_id == 700000'
+
+load --table PatPrefix
+[
+{"_key":"James"},
+{"_key":"Jeff"},
+{"_key":"John"}
+]
+
+select PatPrefix --filter '_key == "Jeff"'
