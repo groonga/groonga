@@ -6251,7 +6251,16 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   GRN_PAT_EACH_END(ctx, cursor);
 
   uint8_t *new_key_buffer = GRN_MALLOC(total_key_size);
+  uint8_t *new_key_buffer_ptr = new_key_buffer;
   uint32_t new_curr_key = 0;
+
+  uint32_t segment_size = (pat->header->curr_key >> W_OF_KEY_IN_A_SEGMENT) + 1;
+  uint32_t *segment_head = GRN_MALLOC(sizeof(uint32_t) * segment_size);
+  uint32_t *buffer_size_per_segment =
+    GRN_MALLOC(sizeof(uint32_t) * segment_size);
+  segment_head[0] = 0;
+  buffer_size_per_segment[0] = 0;
+
   i = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
@@ -6259,20 +6268,38 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     if (PAT_IMD(node)) {
       continue;
     }
-    uint8_t *key = NULL;
+
     uint32_t key_length = PAT_LEN(node);
+    uint32_t segment = (new_curr_key + key_length) >> W_OF_KEY_IN_A_SEGMENT;
+    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != segment) {
+      new_curr_key = segment << W_OF_KEY_IN_A_SEGMENT;
+      segment_head[segment] = new_curr_key;
+      buffer_size_per_segment[segment] = 0;
+    }
+    buffer_size_per_segment[segment] += key_length;
+
+    uint8_t *key = NULL;
     KEY_AT(pat, current_keys[i++], key, 0);
-    grn_memcpy((new_key_buffer + new_curr_key), key, key_length);
+    grn_memcpy(new_key_buffer_ptr, key, key_length);
     node->key = new_curr_key;
     new_curr_key += key_length;
+    new_key_buffer_ptr += key_length;
   }
   GRN_PAT_EACH_END(ctx, cursor);
   GRN_FREE(current_keys);
 
-  uint8_t *key_buffer;
-  KEY_AT(pat, 0, key_buffer, 0);
-  grn_memcpy(key_buffer, new_key_buffer, new_curr_key);
+  new_key_buffer_ptr = new_key_buffer;
+  for (size_t segment = 0; segment < segment_size; segment++) {
+    uint8_t *key_buffer;
+    KEY_AT(pat, segment_head[segment], key_buffer, 0);
+    grn_memcpy(key_buffer,
+               new_key_buffer_ptr,
+               buffer_size_per_segment[segment]);
+    new_key_buffer_ptr += buffer_size_per_segment[segment];
+  }
   GRN_FREE(new_key_buffer);
+  GRN_FREE(segment_head);
+  GRN_FREE(buffer_size_per_segment);
 
   defrag_size = pat->header->curr_key - new_curr_key;
   pat->header->curr_key = new_curr_key;
