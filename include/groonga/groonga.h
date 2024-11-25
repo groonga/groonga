@@ -380,7 +380,7 @@ grn_ctx_open(int flags);
  * (Internally, \ref grn_ctx_fin is called to release allocated memory.)
  *
  * \attention This function closes the context opened by \ref grn_ctx_open.
- *            If the context is initialized with \ref grn_ctx_init, it need
+ *            If the context is initialized with \ref grn_ctx_init, it needs
  *            to be closed with \ref grn_ctx_fin.
  *
  * \param ctx The context object initialized by \ref grn_ctx_open.
