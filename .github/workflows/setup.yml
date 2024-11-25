@@ -139,5 +139,6 @@ jobs:
           # when GitHub Actions runner doesn't include pkg-config
           # formula by default.
           brew uninstall pkg-config || :
+          brew uninstall pkg-config@0.29.2 || :
           ./setup.sh
           ./build.sh ./ /tmp/build /tmp/local
