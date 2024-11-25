@@ -358,8 +358,35 @@ grn_ctx_init(grn_ctx *ctx, int flags);
  */
 GRN_API grn_rc
 grn_ctx_fin(grn_ctx *ctx);
+/**
+ * \brief Open the context.
+ *
+ * \note This function also allocates the context itself. However,
+ *       \ref grn_ctx_init requires the caller to allocate a context itself.
+ *
+ * \attention The context opened with this function should be closed with
+ *            \ref grn_ctx_close.
+ *
+ * \param flags Initialization options.
+ *
+ * \return Initialized context object, `NULL` if initialization fails.
+ */
 GRN_API grn_ctx *
 grn_ctx_open(int flags);
+/**
+ * \brief Close the context.
+ *
+ * This function releases memory that was managed by the context and closes.
+ * (Internally, \ref grn_ctx_fin is called to release allocated memory.)
+ *
+ * \attention This function closes the context opened by \ref grn_ctx_open.
+ *            If the context is initialized with \ref grn_ctx_init, it needs
+ *            to be closed with \ref grn_ctx_fin.
+ *
+ * \param ctx The context object initialized by \ref grn_ctx_open.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_close(grn_ctx *ctx);
 GRN_API grn_rc
