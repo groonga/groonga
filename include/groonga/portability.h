@@ -214,7 +214,7 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
-# define grn_qsort_r(base, nmemb, size, compar, arg) qsort_s(base, nmemb, size, compar, arg)
+# define grn_qsort_r(base, nmemb, size, compar, arg) qsort_s((base), (nmemb), (size), (compar), (arg))
 #else /* WIN32 */
-# define grn_qsort_r(base, nmemb, size, compar, arg) qsort_r(base, nmemb, size, compar, arg)
+# define grn_qsort_r(base, nmemb, size, compar, arg) qsort_r((base), (nmemb), (size), (compar), (arg))
 #endif /* WIN32 */
