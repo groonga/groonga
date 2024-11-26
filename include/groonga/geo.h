@@ -28,6 +28,29 @@ typedef struct {
   int32_t longitude;
 } grn_geo_point;
 
+/**
+ * \brief Select records within a specified rectangular area defined by the
+ *        `top_left_point` and `bottom_right_point` parameters.
+ *
+ * \param ctx The context object.
+ * \param index The index column used for searching. The type of it must be
+ *              TokyoGeoPoint or WGS84GeoPoint.
+ * \param top_left_point The top left point of the target rectangle. The type of
+ *                       it must be ShortText, Text, LongText, TokyoGeoPoint, or
+ *                       WGS84GeoPoint.
+ * \param bottom_right_point The bottom right point of the target rectangle. The
+ *                           type of it must be ShortText, Text, LongText,
+ *                           TokyoGeoPoint, or WGS84GeoPoint.
+ * \param res The table to store found record IDs. It must be \ref
+ *            GRN_TABLE_HASH_KEY type table.
+ * \param op The operator for matched records.
+ *           - \ref GRN_OP_OR
+ *           - \ref GRN_OP_AND
+ *           - \ref GRN_OP_AND_NOT
+ *           - \ref GRN_OP_ADJUST
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_geo_select_in_rectangle(grn_ctx *ctx,
                             grn_obj *index,
