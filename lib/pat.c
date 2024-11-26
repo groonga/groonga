@@ -6228,15 +6228,15 @@ grn_pat_warm(grn_ctx *ctx, grn_pat *pat)
 typedef struct {
   grn_ctx *ctx;
   grn_pat *pat;
-} compare_arg;
+} pat_node_compare_by_key_data;
 
 int
-grn_pat_defrag_id_compare(const void *id1, const void *id2, void *arg)
+grn_pat_node_compare_by_key(const void *id1, const void *id2, void *arg)
 {
-  grn_ctx *ctx = ((compare_arg *)arg)->ctx;
-  grn_pat *pat = ((compare_arg *)arg)->pat;
-  pat_node *node1 = pat_get(ctx, pat, *(grn_id *)id1);
-  pat_node *node2 = pat_get(ctx, pat, *(grn_id *)id2);
+  grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
+  grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
+  pat_node *node1 = pat_get(ctx, pat, *((grn_id *)id1));
+  pat_node *node2 = pat_get(ctx, pat, *((grn_id *)id2));
   if (node1->key > node2->key) {
     return 1;
   }
@@ -6249,7 +6249,7 @@ grn_pat_defrag_id_compare(const void *id1, const void *id2, void *arg)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
-  int defrag_size = 0;
+  int reduced_bytes = 0;
 
   CRITICAL_SECTION_ENTER(pat->lock);
   uint32_t n_records = grn_pat_size(ctx, pat);
@@ -6257,47 +6257,47 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     goto exit;
   }
 
-  size_t n_in_key_segments = 0;
-  grn_id *ids = GRN_MALLOC(sizeof(grn_id) * n_records);
+  size_t n_targets = 0;
+  grn_id *target_ids = GRN_MALLOC(sizeof(grn_id) * n_records);
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
     pat_node *node = pat_get(ctx, pat, id);
     if (PAT_IMD(node)) {
       continue;
     }
-    ids[n_in_key_segments++] = id;
+    target_ids[n_targets++] = id;
   }
   GRN_PAT_EACH_END(ctx, cursor);
 
   /* Defragment from the head of the key segment. */
-  compare_arg arg = {ctx, pat};
-  grn_qsort_r(ids,
-              n_in_key_segments,
+  pat_node_compare_by_key_data arg = {ctx, pat};
+  grn_qsort_r(target_ids,
+              n_targets,
               sizeof(grn_id),
-              grn_pat_defrag_id_compare,
+              grn_pat_node_compare_by_key,
               &arg);
   uint32_t new_curr_key = 0;
-  for (size_t i = 0; i < n_in_key_segments; i++) {
-    pat_node *node = pat_get(ctx, pat, ids[i]);
+  for (size_t i = 0; i < n_targets; i++) {
+    pat_node *node = pat_get(ctx, pat, target_ids[i]);
     uint32_t key_length = PAT_LEN(node);
-    uint32_t segment = (new_curr_key + key_length) >> W_OF_KEY_IN_A_SEGMENT;
-    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != segment) {
-      new_curr_key = segment << W_OF_KEY_IN_A_SEGMENT;
+    uint32_t new_segment = (new_curr_key + key_length) >> W_OF_KEY_IN_A_SEGMENT;
+    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_segment) {
+      new_curr_key = new_segment << W_OF_KEY_IN_A_SEGMENT;
     }
 
-    uint8_t *key = NULL;
-    KEY_AT(pat, node->key, key, 0);
-    uint8_t *key_buffer;
-    KEY_AT(pat, new_curr_key, key_buffer, 0);
-    grn_memcpy(key_buffer, key, key_length);
+    uint8_t *key_position = NULL;
+    KEY_AT(pat, node->key, key_position, 0);
+    uint8_t *new_key_position;
+    KEY_AT(pat, new_curr_key, new_key_position, 0);
+    grn_memcpy(new_key_position, key_position, key_length);
     node->key = new_curr_key;
     new_curr_key += key_length;
   }
-  GRN_FREE(ids);
+  GRN_FREE(target_ids);
 
-  defrag_size = pat->header->curr_key - new_curr_key;
+  reduced_bytes = pat->header->curr_key - new_curr_key;
   pat->header->curr_key = new_curr_key;
 exit:
   CRITICAL_SECTION_LEAVE(pat->lock);
-  return defrag_size;
+  return reduced_bytes;
 }
