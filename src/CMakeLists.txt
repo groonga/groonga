@@ -20,7 +20,7 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_sources.am GROONGA_SOURCES)
 add_executable(groonga ${GROONGA_SOURCES})
 set_source_files_properties(${GROONGA_SOURCES}
                             PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-target_link_libraries(groonga libgroonga)
+target_link_libraries(groonga libgroonga Threads::Threads)
 if(GRN_WITH_LIBEDIT)
   target_link_libraries(groonga Groonga::libedit)
 endif()
