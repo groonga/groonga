@@ -390,7 +390,7 @@ grn_ctx_open(int flags);
 GRN_API grn_rc
 grn_ctx_close(grn_ctx *ctx);
 /**
- * \brief Set the callback function to be called when finishing the context.
+ * \brief Set the callback function to be called when the context is finished.
  *
  * \param ctx The context object.
  * \param func The callback function called on finish.
