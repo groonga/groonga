@@ -33,28 +33,16 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It selects records that are in the rectangle specified by top_left_point parameter and bottom_right_point parameter. Records are searched by index parameter. Found records are added to res parameter table with op parameter operation."
+msgid "It estimates number of records in the rectangle specified by top_left_point parameter and bottom_right_point parameter. Number of records is estimated by index parameter. If an error is occurred, -1 is returned."
 msgstr ""
 
 msgid "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
 msgstr ""
 
-msgid "the top left point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or  WGS84GeoPoint)"
+msgid "the top left point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
 msgstr ""
 
 msgid "the bottom right point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
-msgstr ""
-
-msgid "the table to store found record IDs. It must be ``GRN_TABLE_HASH_KEY`` type table."
-msgstr ""
-
-msgid "the operator for matched records."
-msgstr ""
-
-msgid "It estimates number of records in the rectangle specified by top_left_point parameter and bottom_right_point parameter. Number of records is estimated by index parameter. If an error is occurred, -1 is returned."
-msgstr ""
-
-msgid "the top left point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
 msgstr ""
 
 msgid "It opens a cursor to get records in the rectangle specified by top_left_point parameter and bottom_right_point parameter."
