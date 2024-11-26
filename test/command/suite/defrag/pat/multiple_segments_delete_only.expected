@@ -1,10 +1,12 @@
-table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+table_create --name PatTable --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
-delete PatPrefix --filter '_id > 700000'
+delete PatTable --filter '_id > 100 && _id < 199'
+[[0,0.0,0.0],true]
+delete PatTable --filter '_id > 699990 && _id < 700000'
 [[0,0.0,0.0],true]
 defrag
 [[0,0.0,0.0],true]
-object_inspect PatPrefix
+object_inspect PatTable
 [
   [
     0,
@@ -13,7 +15,7 @@ object_inspect PatPrefix
   ],
   {
     "id": 256,
-    "name": "PatPrefix",
+    "name": "PatTable",
     "type": {
       "id": 49,
       "name": "table:pat_key"
@@ -28,17 +30,17 @@ object_inspect PatPrefix
         },
         "size": 4096
       },
-      "total_size": 6300007,
+      "total_size": 7199053,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 700000,
+    "n_records": 799898,
     "disk_usage": 0
   }
 ]
-select PatPrefix --filter '_id == 700000'
+select PatTable --filter '_id == 700000'
 [
   [
     0,
@@ -62,17 +64,8 @@ select PatPrefix --filter '_id == 700000'
       ],
       [
         700000,
-        "N00699999"
+        "N00699997"
       ]
     ]
   ]
 ]
-load --table PatPrefix
-[
-{"_key":"James"},
-{"_key":"Jeff"},
-{"_key":"John"}
-]
-[[0,0.0,0.0],3]
-select PatPrefix --filter '_key == "Jeff"'
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[800003,"Jeff"]]]]

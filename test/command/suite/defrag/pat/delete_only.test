@@ -1,0 +1,22 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create --table Users --name comment --flgas COLUMN_SCALAR --type ShortText
+
+load --table Users
+[
+{"_key":"James", "comment":"immediate:false"},
+{"_key":"Jason", "comment":"immediate:false"},
+{"_key":"Jennifer", "comment":"immediate:false"},
+{"_key":"Jeff", "comment":"immediate:true"},
+{"_key":"John", "comment":"immediate:true"},
+{"_key":"Joseph", "comment":"immediate:false"}
+]
+
+# immediate:true
+delete Users Jeff
+# immediate:false
+delete Users James
+
+defrag
+object_inspect Users
+
+select Users

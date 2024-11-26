@@ -1,24 +1,12 @@
-table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+table_create --name PatTable --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
-load --table PatPrefix
-[
-{"_key":"James"},
-{"_key":"Jason"},
-{"_key":"Jennifer"},
-{"_key":"Jeff"},
-{"_key":"John"},
-{"_key":"Joseph"}
-]
-[[0,0.0,0.0],6]
-delete PatPrefix Jeff
+delete PatTable --filter '_id > 100 && _id < 199'
 [[0,0.0,0.0],true]
-delete PatPrefix John
-[[0,0.0,0.0],true]
-delete PatPrefix James
+delete PatTable --filter '_id > 699990 && _id < 700000'
 [[0,0.0,0.0],true]
 defrag
 [[0,0.0,0.0],true]
-object_inspect PatPrefix
+object_inspect PatTable
 [
   [
     0,
@@ -27,7 +15,7 @@ object_inspect PatPrefix
   ],
   {
     "id": 256,
-    "name": "PatPrefix",
+    "name": "PatTable",
     "type": {
       "id": 49,
       "name": "table:pat_key"
@@ -42,17 +30,19 @@ object_inspect PatPrefix
         },
         "size": 4096
       },
-      "total_size": 19,
+      "total_size": 7199053,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 3,
+    "n_records": 799898,
     "disk_usage": 0
   }
 ]
-select PatPrefix
+select PatTable --filter '_id == 200'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[200,"N00000199"]]]]
+select PatTable --filter '_id == 700000'
 [
   [
     0,
@@ -62,7 +52,7 @@ select PatPrefix
   [
     [
       [
-        3
+        1
       ],
       [
         [
@@ -75,34 +65,15 @@ select PatPrefix
         ]
       ],
       [
-        2,
-        "Jason"
-      ],
-      [
-        3,
-        "Jennifer"
-      ],
-      [
-        6,
-        "Joseph"
+        700000,
+        "N00699997"
       ]
     ]
   ]
 ]
-load --table PatPrefix
-[
-{"_key":"James"},
-{"_key":"Jeff"},
-{"_key":"John"}
-]
-[[0,0.0,0.0],3]
-delete PatPrefix Jason
+defrag
 [[0,0.0,0.0],true]
-delete PatPrefix James
-[[0,0.0,0.0],true]
-defrag PatPrefix
-[[0,0.0,0.0],true]
-object_inspect PatPrefix
+object_inspect PatTable
 [
   [
     0,
@@ -111,7 +82,7 @@ object_inspect PatPrefix
   ],
   {
     "id": 256,
-    "name": "PatPrefix",
+    "name": "PatTable",
     "type": {
       "id": 49,
       "name": "table:pat_key"
@@ -126,17 +97,19 @@ object_inspect PatPrefix
         },
         "size": 4096
       },
-      "total_size": 14,
+      "total_size": 8099053,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 4,
+    "n_records": 899899,
     "disk_usage": 0
   }
 ]
-select PatPrefix
+select PatTable --filter '_id == 200'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[200,"N00000199"]]]]
+select PatTable --filter '_id == 900000'
 [
   [
     0,
@@ -146,7 +119,7 @@ select PatPrefix
   [
     [
       [
-        4
+        1
       ],
       [
         [
@@ -159,20 +132,8 @@ select PatPrefix
         ]
       ],
       [
-        8,
-        "Jeff"
-      ],
-      [
-        3,
-        "Jennifer"
-      ],
-      [
-        9,
-        "John"
-      ],
-      [
-        6,
-        "Joseph"
+        900000,
+        "N00999994"
       ]
     ]
   ]

@@ -1,0 +1,210 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create --table Users --name comment --flgas COLUMN_SCALAR --type ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"James", "comment":"immediate:false"},
+{"_key":"Jason", "comment":"immediate:false"},
+{"_key":"Jennifer", "comment":"immediate:false"},
+{"_key":"Jeff", "comment":"immediate:true"},
+{"_key":"John", "comment":"immediate:true"},
+{"_key":"Joseph", "comment":"immediate:false"}
+]
+[[0,0.0,0.0],6]
+delete Users Jeff
+[[0,0.0,0.0],true]
+delete Users James
+[[0,0.0,0.0],true]
+defrag
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 19,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 4,
+    "disk_usage": 0
+  }
+]
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "comment",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "Jason",
+        "immediate:false"
+      ],
+      [
+        3,
+        "Jennifer",
+        "immediate:false"
+      ],
+      [
+        5,
+        "John",
+        "immediate:true"
+      ],
+      [
+        6,
+        "Joseph",
+        "immediate:false"
+      ]
+    ]
+  ]
+]
+load --table Users
+[
+{"_key":"James", "comment": "immediate:false"},
+{"_key":"Jeff", "comment": "immediate:true"},
+{"_key":"Joy", "comment": "immediate:true"}
+]
+[[0,0.0,0.0],3]
+defrag Users
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 24,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 7,
+    "disk_usage": 0
+  }
+]
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        7
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "comment",
+          "ShortText"
+        ]
+      ],
+      [
+        7,
+        "James",
+        "immediate:false"
+      ],
+      [
+        2,
+        "Jason",
+        "immediate:false"
+      ],
+      [
+        8,
+        "Jeff",
+        "immediate:true"
+      ],
+      [
+        3,
+        "Jennifer",
+        "immediate:false"
+      ],
+      [
+        5,
+        "John",
+        "immediate:true"
+      ],
+      [
+        6,
+        "Joseph",
+        "immediate:false"
+      ],
+      [
+        9,
+        "Joy",
+        "immediate:true"
+      ]
+    ]
+  ]
+]
