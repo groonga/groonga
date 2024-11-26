@@ -33,7 +33,7 @@ typedef struct {
  *        `top_left_point` and `bottom_right_point` parameters.
  *
  * \param ctx The context object.
- * \param index The index column.
+ * \param index The index column for `TokyoGeoPoint` or `WGS84GeoPoint` type.
  * \param top_left_point The top left point of the target rectangle. Its type
  *                       must be one of the followings.
  *                       - \ref GRN_DB_SHORT_TEXT
