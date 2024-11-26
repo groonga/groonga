@@ -6289,7 +6289,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     KEY_AT(pat, node->key, key_position, 0);
     uint8_t *new_key_position;
     KEY_AT(pat, new_curr_key, new_key_position, 0);
-    grn_memcpy(new_key_position, key_position, key_length);
+    grn_memmove(new_key_position, key_position, key_length);
     node->key = new_curr_key;
     new_curr_key += key_length;
   }
