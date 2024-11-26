@@ -66,18 +66,6 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "ctxを破棄するときに呼ばれる関数を設定します。"
-msgstr ""
-
-msgid "対象ctxを指定します。"
-msgstr ""
-
-msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
-msgstr ""
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
 msgid "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。"
 msgstr ""
 
@@ -104,6 +92,9 @@ msgstr "その時点のコンテキスト。"
 
 msgid "The output buffer to store tables."
 msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 msgid "Gets the current output type of the context."
 msgstr "コンテキストの出力形式を取得します。"

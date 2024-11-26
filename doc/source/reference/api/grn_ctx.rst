@@ -38,14 +38,6 @@ Reference
 
    TODO...
 
-.. c:function:: grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func)
-
-   ctxを破棄するときに呼ばれる関数を設定します。
-
-   :param ctx: 対象ctxを指定します。
-   :param func: ``ctx`` を破棄するときに呼ばれる関数を指定します。
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
 .. c:function:: grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
 
    ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。
