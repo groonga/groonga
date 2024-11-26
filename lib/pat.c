@@ -6231,22 +6231,9 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   int defrag_size = 0;
 
   CRITICAL_SECTION_ENTER(pat->lock);
-  uint32_t n_records = grn_pat_size(ctx, pat);
-  if (n_records == 0) {
+  if (grn_pat_size(ctx, pat) == 0) {
     goto exit;
   }
-
-  size_t i = 0;
-  uint32_t *current_keys = GRN_MALLOC(sizeof(uint32_t) * n_records);
-  GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
-  {
-    pat_node *node = pat_get(ctx, pat, id);
-    if (PAT_IMD(node)) {
-      continue;
-    }
-    current_keys[i++] = node->key;
-  }
-  GRN_PAT_EACH_END(ctx, cursor);
 
   uint8_t *new_key_buffer = GRN_MALLOC(GRN_PAT_SEGMENT_SIZE);
   uint8_t *new_key_buffer_ptr = new_key_buffer;
@@ -6255,7 +6242,6 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   uint32_t segment_head = 0;
   uint32_t buffer_size_in_segment = 0;
 
-  i = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
     pat_node *node = pat_get(ctx, pat, id);
@@ -6278,14 +6264,13 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     buffer_size_in_segment += key_length;
 
     uint8_t *key = NULL;
-    KEY_AT(pat, current_keys[i++], key, 0);
+    KEY_AT(pat, node->key, key, 0);
     grn_memcpy(new_key_buffer_ptr, key, key_length);
     node->key = new_curr_key;
     new_curr_key += key_length;
     new_key_buffer_ptr += key_length;
   }
   GRN_PAT_EACH_END(ctx, cursor);
-  GRN_FREE(current_keys);
 
   uint8_t *key_buffer;
   KEY_AT(pat, segment_head, key_buffer, 0);
