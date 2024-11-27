@@ -6270,19 +6270,20 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   GRN_PAT_EACH_END(ctx, cursor);
 
   /* Defragment from the head of the key segment. */
-  pat_node_compare_by_key_data arg = {ctx, pat};
+  pat_node_compare_by_key_data data = {ctx, pat};
   grn_qsort_r(target_ids,
               n_targets,
               sizeof(grn_id),
               grn_pat_node_compare_by_key,
-              &arg);
+              &data);
   uint32_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     pat_node *node = pat_get(ctx, pat, target_ids[i]);
     uint32_t key_length = PAT_LEN(node);
-    uint32_t new_segment = (new_curr_key + key_length) >> W_OF_KEY_IN_A_SEGMENT;
-    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_segment) {
-      new_curr_key = new_segment << W_OF_KEY_IN_A_SEGMENT;
+    uint32_t new_tail_segment =
+      (new_curr_key + key_length) >> W_OF_KEY_IN_A_SEGMENT;
+    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_tail_segment) {
+      new_curr_key = new_tail_segment << W_OF_KEY_IN_A_SEGMENT;
     }
 
     uint8_t *key_position = NULL;
