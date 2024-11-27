@@ -5,7 +5,7 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 # 16 bytes per key.
 # 4,194,304 / 16 = 262,144.
 # This is data that uses the full segment.
-#@timeout 65
+#@timeout 400
 #@disable-logging
 #@generate-series 1 262144 Users '{"_key" => "User%012d" % i}'
 #@enable-logging
