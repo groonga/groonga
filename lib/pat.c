@@ -6257,8 +6257,21 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     goto exit;
   }
 
+  /* First, get the number of targets. */
   size_t n_targets = 0;
-  grn_id *target_ids = GRN_MALLOC(sizeof(grn_id) * n_records);
+  GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
+  {
+    pat_node *node = pat_get(ctx, pat, id);
+    if (PAT_IMD(node)) {
+      continue;
+    }
+    n_targets++;
+  }
+  GRN_PAT_EACH_END(ctx, cursor);
+
+  /* Allocate only the necessary areas. */
+  grn_id *target_ids = GRN_MALLOC(sizeof(grn_id) * n_targets);
+  n_targets = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
     pat_node *node = pat_get(ctx, pat, id);
