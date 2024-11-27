@@ -1,0 +1,128 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create --table Users --name immediate --type Bool
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"James", "immediate":false},
+{"_key":"Jason-Jason", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"John", "immediate":true}
+]
+[[0,0.0,0.0],4]
+delete Users James
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 24,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 3,
+    "disk_usage": 0
+  }
+]
+defrag
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 19,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 3,
+    "disk_usage": 0
+  }
+]
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        2,
+        "Jason-Jason",
+        false
+      ],
+      [
+        3,
+        "Jennifer",
+        false
+      ],
+      [
+        4,
+        "John",
+        true
+      ]
+    ]
+  ]
+]
