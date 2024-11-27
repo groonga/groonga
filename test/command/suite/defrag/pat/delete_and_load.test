@@ -23,15 +23,12 @@ object_inspect Users
 
 select Users
 
-### Additional load and defragmentation.
+### Should load normally after defragmentation.
 load --table Users
 [
 {"_key":"James", "immediate":false},
 {"_key":"Jeff", "immediate":true},
 {"_key":"Joy", "immediate":true}
 ]
-
-defrag Users
-object_inspect Users
 
 select Users
