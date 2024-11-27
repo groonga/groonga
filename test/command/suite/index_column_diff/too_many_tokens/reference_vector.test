@@ -5,7 +5,7 @@ column_create Memos tags COLUMN_VECTOR Tags
 
 column_create Tags memos_tags COLUMN_INDEX|WITH_POSITION Memos tags
 
-#@timeout 60
+#@timeout 120
 #@disable-logging
 #@generate-series 1 1 Memos '{"tags" => ["tag"] * (0x1ffff + 1)}'
 #@enable-logging

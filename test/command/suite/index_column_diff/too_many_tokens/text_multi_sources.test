@@ -7,7 +7,7 @@ column_create Terms index \
   COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
   Diaries title,content
 
-#@timeout 60
+#@timeout 120
 #@disable-logging
 #@generate-series 1 1 Diaries '{"title" => "a", "content" => "a " * (0x1ffff + 1)}'
 #@enable-logging

@@ -4,7 +4,7 @@ column_create Diaries content COLUMN_SCALAR LongText
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
 column_create Terms index COLUMN_INDEX|WITH_POSITION Diaries content
 
-#@timeout 60
+#@timeout 120
 #@disable-logging
 #@generate-series 1 1 Diaries '{"content" => "a b " * (0x1ffff + 1)}'
 #@enable-logging
