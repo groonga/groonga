@@ -5,7 +5,7 @@ column_create --table Users --name immediate --type Bool
 load --table Users
 [
 {"_key":"James", "immediate":false},
-{"_key":"Jason-Jason", "immediate":false},
+{"_key":"Jason-TEST", "immediate":false},
 {"_key":"Jennifer", "immediate":false},
 {"_key":"John", "immediate":true}
 ]
@@ -36,7 +36,7 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 24,
+      "total_size": 23,
       "max_total_size": 4294967294
     },
     "value": {
@@ -72,7 +72,7 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 19,
+      "total_size": 18,
       "max_total_size": 4294967294
     },
     "value": {
@@ -110,7 +110,7 @@ select Users
       ],
       [
         2,
-        "Jason-Jason",
+        "Jason-TEST",
         false
       ],
       [
