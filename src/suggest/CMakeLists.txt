@@ -51,8 +51,14 @@ if(GRN_WITH_SUGGEST_LEARNER)
   add_executable(groonga-suggest-learner ${GROONGA_SUGGEST_LEARNER_SOURCES})
   set_source_files_properties(${GROONGA_SUGGEST_LEARNER_SOURCES}
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-  target_link_libraries(groonga-suggest-learner groonga-suggest-util libgroonga
-                        Groonga::libevent Groonga::zeromq Groonga::msgpackc)
+  target_link_libraries(
+    groonga-suggest-learner
+    groonga-suggest-util
+    libgroonga
+    Groonga::libevent
+    Groonga::zeromq
+    Groonga::msgpackc
+    Threads::Threads)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/httpd_sources.am
                  GROONGA_SUGGEST_HTTPD_SOURCES)
