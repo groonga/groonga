@@ -1,0 +1,20 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+#@timeout 300
+#@disable-logging
+#@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
+#@enable-logging
+delete Users --filter '_id > 1'
+
+### Additional load and defragmentation.
+#@disable-logging
+#@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
+#@enable-logging
+delete Users --filter '_id > 1000'
+
+object_inspect Users
+defrag
+object_inspect Users
+
+# `_id` 2~4 deleted by `delete Users --filter '_id > 1'` are reused.
+select Users --filter '_id >= 2 && _id <= 4'
