@@ -1,5 +1,7 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 
+### Test when the segment is stored in full.
+
 # About data to load.
 # 4,194,304 bytes per segment.
 # 16 bytes per key.
