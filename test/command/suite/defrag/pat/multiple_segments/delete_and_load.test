@@ -1,11 +1,5 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 
-# About data to load.
-# 4,194,304 bytes per segment.
-# 12 bytes per key (e.g. User00000199).
-# 4,194,304 / 12 = 349,525 with a remainder of 4.
-# This is data that has a remainder in one segment.
-
 #@timeout 120
 #@disable-logging
 #@generate-series 0 10000 Users '{"_key" => "User%08d" % i}'
