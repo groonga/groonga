@@ -1,0 +1,52 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+# About data to load.
+# 4,194,304 bytes per segment.
+# 12 bytes per key (e.g. User00000199).
+# 4,194,304 / 12 = 349,525 with a remainder of 4.
+# This is data that has a remainder in one segment.
+
+#@timeout 30
+#@disable-logging
+#@generate-series 0 10000 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Jeff"},
+{"_key":"John"}
+]
+#@generate-series 10000 800000 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Joi"},
+{"_key":"Jay"}
+]
+#@enable-logging
+#@timeout default
+
+delete Users --filter '_id > 100 && _id < 199'
+delete Users --filter '_id > 699990 && _id < 700000'
+
+object_inspect Users
+defrag
+object_inspect Users
+select Users --filter '_id == 200'
+select Users --filter '_id == 700000'
+
+### Additional load and defragmentation.
+#@timeout 30
+#@disable-logging
+#@generate-series 900000 999999 Users '{"_key" => "User%08d" % i}'
+load --table Users
+[
+{"_key":"Foo"}
+]
+#@enable-logging
+#@timeout default
+
+object_inspect Users
+defrag
+object_inspect Users
+select Users --filter '_id == 200'
+select Users --filter '_id == 900000'
