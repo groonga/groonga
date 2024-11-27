@@ -1,0 +1,105 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+delete Users --filter '_id > 100 && _id < 199'
+[[0,0.0,0.0],true]
+delete Users --filter '_id > 699990 && _id < 700000'
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 9600020,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 799898,
+    "disk_usage": 0
+  }
+]
+defrag
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 9598736,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 799898,
+    "disk_usage": 0
+  }
+]
+select Users --filter '_id == 700000'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        700000,
+        "User00699997"
+      ]
+    ]
+  ]
+]
