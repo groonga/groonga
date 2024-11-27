@@ -1,15 +1,17 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 
-#@timeout 300
+#@timeout 60
 #@disable-logging
 #@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
 #@enable-logging
+#@timeout default
 delete Users --filter '_id > 1'
 
-### Additional load and defragmentation.
+#@timeout 60
 #@disable-logging
 #@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
 #@enable-logging
+#@timeout default
 delete Users --filter '_id > 1000'
 
 object_inspect Users
