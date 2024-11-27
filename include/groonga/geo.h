@@ -65,12 +65,41 @@ grn_geo_select_in_rectangle(grn_ctx *ctx,
                             grn_obj *bottom_right_point,
                             grn_obj *res,
                             grn_operator op);
+/**
+ * \brief Estimate the number of records within a specified rectangular area
+ *        defined by the `top_left_point` and `bottom_right_point` parameters.
+ *
+ * \since 4.0.8
+ *
+ * \param ctx The context object.
+ * \param index The index column for `TokyoGeoPoint` or `WGS84GeoPoint` type.
+ * \param top_left_point The top left point of the target rectangle. Its type
+ *                       must be one of the followings:
+ *                       - \ref GRN_DB_SHORT_TEXT
+ *                       - \ref GRN_DB_TEXT
+ *                       - \ref GRN_DB_LONG_TEXT
+ *                       - \ref GRN_DB_TOKYO_GEO_POINT
+ *                       - \ref GRN_DB_WGS84_GEO_POINT
+ * \param bottom_right_point The bottom right point of the target rectangle. Its
+ *                           type must be one of the followings:
+ *                           - \ref GRN_DB_SHORT_TEXT
+ *                           - \ref GRN_DB_TEXT
+ *                           - \ref GRN_DB_LONG_TEXT
+ *                           - \ref GRN_DB_TOKYO_GEO_POINT
+ *                           - \ref GRN_DB_WGS84_GEO_POINT
+ *
+ * \return The estimated number of records within the specified rectangle.
+ *         Returns 0 if no records are found or if an error occurs.
+ *         See `ctx->rc` for error details.
+ */
 GRN_API unsigned int
 grn_geo_estimate_size_in_rectangle(grn_ctx *ctx,
                                    grn_obj *index,
                                    grn_obj *top_left_point,
                                    grn_obj *bottom_right_point);
-/* Deprecated since 4.0.8. Use grn_geo_estimate_size_in_rectangle() instead. */
+/**
+ * \deprecated Since 4.0.8. Use \ref grn_geo_estimate_size_in_rectangle instead.
+ */
 GRN_API int
 grn_geo_estimate_in_rectangle(grn_ctx *ctx,
                               grn_obj *index,
