@@ -28,19 +28,12 @@ object_inspect Users
 select Users --filter '_id == 200'
 select Users --filter '_id == 700000'
 
-### Additional load and defragmentation.
-#@timeout 120
-#@disable-logging
-#@generate-series 900000 999999 Users '{"_key" => "User%08d" % i}'
+### Should load normally after defragmentation.
 load --table Users
 [
-{"_key":"Foo"}
+{"_key":"FooFoo"}
 ]
-#@enable-logging
-#@timeout default
 
-object_inspect Users
-defrag
-object_inspect Users
-select Users --filter '_id == 200'
-select Users --filter '_id == 900000'
+# Test the record that was the end of the key buffer and the record that was added.
+select Users --filter '_key == "User00800000"'
+select Users --filter '_key == "FooFoo"'

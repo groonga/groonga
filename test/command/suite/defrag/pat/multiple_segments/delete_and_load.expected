@@ -132,77 +132,12 @@ select Users --filter '_id == 700000'
     ]
   ]
 ]
-object_inspect Users
+load --table Users
 [
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "id": 256,
-    "name": "Users",
-    "type": {
-      "id": 49,
-      "name": "table:pat_key"
-    },
-    "key": {
-      "type": {
-        "id": 14,
-        "name": "ShortText",
-        "type": {
-          "id": 32,
-          "name": "type"
-        },
-        "size": 4096
-      },
-      "total_size": 10798736,
-      "max_total_size": 4294967294
-    },
-    "value": {
-      "type": null
-    },
-    "n_records": 899899,
-    "disk_usage": 0
-  }
+{"_key":"FooFoo"}
 ]
-defrag
-[[0,0.0,0.0],true]
-object_inspect Users
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "id": 256,
-    "name": "Users",
-    "type": {
-      "id": 49,
-      "name": "table:pat_key"
-    },
-    "key": {
-      "type": {
-        "id": 14,
-        "name": "ShortText",
-        "type": {
-          "id": 32,
-          "name": "type"
-        },
-        "size": 4096
-      },
-      "total_size": 10798736,
-      "max_total_size": 4294967294
-    },
-    "value": {
-      "type": null
-    },
-    "n_records": 899899,
-    "disk_usage": 0
-  }
-]
-select Users --filter '_id == 200'
+[[0,0.0,0.0],1]
+select Users --filter '_key == "User00800000"'
 [
   [
     0,
@@ -225,38 +160,11 @@ select Users --filter '_id == 200'
         ]
       ],
       [
-        200,
-        "User00000199"
+        800003,
+        "User00800000"
       ]
     ]
   ]
 ]
-select Users --filter '_id == 900000'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        900000,
-        "User00999994"
-      ]
-    ]
-  ]
-]
+select Users --filter '_key == "FooFoo"'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[800006,"FooFoo"]]]]
