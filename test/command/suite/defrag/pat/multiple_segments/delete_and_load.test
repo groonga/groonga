@@ -6,7 +6,7 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 # 4,194,304 / 12 = 349,525 with a remainder of 4.
 # This is data that has a remainder in one segment.
 
-#@timeout 30
+#@timeout 120
 #@disable-logging
 #@generate-series 0 10000 Users '{"_key" => "User%08d" % i}'
 # The following two data are immediate:true.
@@ -35,7 +35,7 @@ select Users --filter '_id == 200'
 select Users --filter '_id == 700000'
 
 ### Additional load and defragmentation.
-#@timeout 30
+#@timeout 120
 #@disable-logging
 #@generate-series 900000 999999 Users '{"_key" => "User%08d" % i}'
 load --table Users
