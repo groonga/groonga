@@ -1,0 +1,14 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+# About data to load.
+# 4,194,304 bytes per segment.
+# 16 bytes per key.
+# 4,194,304 / 16 = 262,144.
+# This is data that uses the full segment.
+#@timeout 30
+#@disable-logging
+#@generate-series 1 262144 Users '{"_key" => "User%012d" % i}'
+#@enable-logging
+#@timeout default
+
+object_inspect Users
