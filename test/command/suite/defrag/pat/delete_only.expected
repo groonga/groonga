@@ -1,21 +1,55 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
-column_create --table Users --name comment --flgas COLUMN_SCALAR --type ShortText
+column_create --table Users --name immediate --type Bool
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key":"James", "comment":"immediate:false"},
-{"_key":"Jason", "comment":"immediate:false"},
-{"_key":"Jennifer", "comment":"immediate:false"},
-{"_key":"Jeff", "comment":"immediate:true"},
-{"_key":"John", "comment":"immediate:true"},
-{"_key":"Joseph", "comment":"immediate:false"}
+{"_key":"James", "immediate":false},
+{"_key":"Jason", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"John", "immediate":true},
+{"_key":"Joseph", "immediate":false}
 ]
 [[0,0.0,0.0],6]
 delete Users Jeff
 [[0,0.0,0.0],true]
 delete Users James
 [[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 24,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": null
+    },
+    "n_records": 4,
+    "disk_usage": 0
+  }
+]
 defrag
 [[0,0.0,0.0],true]
 object_inspect Users
@@ -74,29 +108,29 @@ select Users
           "ShortText"
         ],
         [
-          "comment",
-          "ShortText"
+          "immediate",
+          "Bool"
         ]
       ],
       [
         2,
         "Jason",
-        "immediate:false"
+        false
       ],
       [
         3,
         "Jennifer",
-        "immediate:false"
+        false
       ],
       [
         5,
         "John",
-        "immediate:true"
+        true
       ],
       [
         6,
         "Joseph",
-        "immediate:false"
+        false
       ]
     ]
   ]

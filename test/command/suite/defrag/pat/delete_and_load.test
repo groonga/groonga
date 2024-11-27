@@ -1,14 +1,15 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
-column_create --table Users --name comment --flgas COLUMN_SCALAR --type ShortText
+column_create --table Users --name immediate --type Bool
 
+# Keys of 4 bytes or lower are stored immediately.
 load --table Users
 [
-{"_key":"James", "comment":"immediate:false"},
-{"_key":"Jason", "comment":"immediate:false"},
-{"_key":"Jennifer", "comment":"immediate:false"},
-{"_key":"Jeff", "comment":"immediate:true"},
-{"_key":"John", "comment":"immediate:true"},
-{"_key":"Joseph", "comment":"immediate:false"}
+{"_key":"James", "immediate":false},
+{"_key":"Jason", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"John", "immediate":true},
+{"_key":"Joseph", "immediate":false}
 ]
 
 # immediate:true
@@ -16,6 +17,7 @@ delete Users Jeff
 # immediate:false
 delete Users James
 
+object_inspect Users
 defrag
 object_inspect Users
 
@@ -24,9 +26,9 @@ select Users
 ### Additional load and defragmentation.
 load --table Users
 [
-{"_key":"James", "comment": "immediate:false"},
-{"_key":"Jeff", "comment": "immediate:true"},
-{"_key":"Joy", "comment": "immediate:true"}
+{"_key":"James", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"Joy", "immediate":true}
 ]
 
 defrag Users
