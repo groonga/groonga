@@ -33,7 +33,7 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It estimates number of records in the rectangle specified by top_left_point parameter and bottom_right_point parameter. Number of records is estimated by index parameter. If an error is occurred, -1 is returned."
+msgid "It opens a cursor to get records in the rectangle specified by top_left_point parameter and bottom_right_point parameter."
 msgstr ""
 
 msgid "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
@@ -43,9 +43,6 @@ msgid "the top left point of the target rectangle. (ShortText, Text, LongText, T
 msgstr ""
 
 msgid "the bottom right point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
-msgstr ""
-
-msgid "It opens a cursor to get records in the rectangle specified by top_left_point parameter and bottom_right_point parameter."
 msgstr ""
 
 msgid "the cursor returns records from offset parameter position. offset parameter is based on 0."
