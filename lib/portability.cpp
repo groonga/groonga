@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include "grn.h"
+#include "grn_portability.h"
 
 extern "C" {
 
