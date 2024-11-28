@@ -101,17 +101,3 @@ Reference
 
    :param ctx: The context object.
    :return: The output type of the context.
-
-.. c:function:: grn_rc grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
-
-   Sets the new output type to the context. It is used by executing a
-   command by :c:func:`grn_expr_exec()`. If you use
-   :c:func:`grn_ctx_send()`, the new output type isn't
-   used. :c:func:`grn_ctx_send()` sets output type from command line
-   internally.
-
-   Normally, this function isn't needed.
-
-   :param ctx: The context object.
-   :param type: The new output type.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
