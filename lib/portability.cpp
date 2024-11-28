@@ -33,7 +33,7 @@ grn_qsort_r_grn_id(grn_id *base,
     std::sort(base,
               base + n_members,
               [compare, arg](const grn_id id1, const grn_id id2) {
-                return compare(id1, id2, arg) == -1;
+                return compare(id1, id2, arg) < 0;
               });
   } else {
     std::sort(base, base + n_members);
