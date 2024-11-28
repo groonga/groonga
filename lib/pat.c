@@ -1036,7 +1036,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     return 0;
   }
 
-  ts = (res + len) >> W_OF_KEY_IN_A_SEGMENT;
+  ts = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
   if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
     res = pat->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
   }
