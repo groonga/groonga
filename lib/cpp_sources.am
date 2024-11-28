@@ -16,6 +16,7 @@ libgroonga_cpp_source =				\
 	grn_language_model.hpp			\
 	grn_task_executor.hpp			\
 	language_model.cpp			\
+	portability.cpp				\
 	token_column.cpp			\
 	trace_log.cpp				\
 	vector.cpp				\

@@ -99,6 +99,7 @@ repos:
           ?lib/grn_obj\.h|
           ?lib/grn_output\.h|
           ?lib/grn_pat\.h|
+          ?lib/grn_portability\.h|
           ?lib/grn_proc\.h|
           ?lib/grn_request_canceler\.h|
           ?lib/grn_request_timer\.h|
@@ -130,6 +131,7 @@ repos:
           ?lib/operator\.c|
           ?lib/output\.c|
           ?lib/pat\.c|
+          ?lib/portability\.cpp|
           ?lib/proc/proc_column\.c|
           ?lib/proc/proc_distance\.c|
           ?lib/proc/proc_dump\.c|
