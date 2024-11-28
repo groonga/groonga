@@ -9377,7 +9377,10 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   grn_id *tp;
   bool do_grn_ii_updspec_cmp = true;
   grn_ii_updspec **u, **un;
-  grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
+  grn_obj *old_value = oldvalue;
+  grn_obj *new_value = newvalue;
+  grn_obj old_buffer;
+  grn_obj new_buffer;
   grn_obj buf, *post = NULL;
 
   if (!ii) {
@@ -9396,23 +9399,23 @@ grn_ii_column_update_internal(grn_ctx *ctx,
         name);
     return ctx->rc;
   }
-  if (old && old->header.type == GRN_VOID) {
-    old = NULL;
+  if (old_value && old_value->header.type == GRN_VOID) {
+    old_value = NULL;
   }
-  if (new && new->header.type == GRN_VOID) {
-    new = NULL;
+  if (new_value && new_value->header.type == GRN_VOID) {
+    new_value = NULL;
   }
-  if (old || new) {
+  if (old_value || new_value) {
     bool is_text_vector_index = true;
-    if (old) {
-      if (!(old->header.type == GRN_VECTOR &&
-            grn_type_id_is_text_family(ctx, old->header.domain))) {
+    if (old_value) {
+      if (!(old_value->header.type == GRN_VECTOR &&
+            grn_type_id_is_text_family(ctx, old_value->header.domain))) {
         is_text_vector_index = false;
       }
     }
-    if (new) {
-      if (!(new->header.type ==
-            GRN_VECTOR &&grn_type_id_is_text_family(ctx, new->header.domain))) {
+    if (new_value) {
+      if (!(new_value->header.type == GRN_VECTOR &&
+            grn_type_id_is_text_family(ctx, new_value->header.domain))) {
         is_text_vector_index = false;
       }
     }
@@ -9423,19 +9426,19 @@ grn_ii_column_update_internal(grn_ctx *ctx,
         grn_obj old_elem, new_elem;
         unsigned int i, max_n;
         unsigned int old_n = 0, new_n = 0;
-        if (old) {
-          old_n = grn_vector_size(ctx, old);
+        if (old_value) {
+          old_n = grn_vector_size(ctx, old_value);
           GRN_OBJ_INIT(&old_elem,
                        GRN_BULK,
                        GRN_OBJ_DO_SHALLOW_COPY,
-                       old->header.domain);
+                       old_value->header.domain);
         }
-        if (new) {
-          new_n = grn_vector_size(ctx, new);
+        if (new_value) {
+          new_n = grn_vector_size(ctx, new_value);
           GRN_OBJ_INIT(&new_elem,
                        GRN_BULK,
                        GRN_OBJ_DO_SHALLOW_COPY,
-                       new->header.domain);
+                       new_value->header.domain);
         }
         max_n = (old_n > new_n) ? old_n : new_n;
         for (i = 0; i < max_n; i++) {
@@ -9444,14 +9447,16 @@ grn_ii_column_update_internal(grn_ctx *ctx,
           if (i < old_n) {
             const char *value;
             unsigned int size;
-            size = grn_vector_get_element(ctx, old, i, &value, NULL, NULL);
+            size =
+              grn_vector_get_element(ctx, old_value, i, &value, NULL, NULL);
             GRN_TEXT_SET_REF(&old_elem, value, size);
             old_p = &old_elem;
           }
           if (i < new_n) {
             const char *value;
             unsigned int size;
-            size = grn_vector_get_element(ctx, new, i, &value, NULL, NULL);
+            size =
+              grn_vector_get_element(ctx, new_value, i, &value, NULL, NULL);
             GRN_TEXT_SET_REF(&new_elem, value, size);
             new_p = &new_elem;
           }
@@ -9466,10 +9471,10 @@ grn_ii_column_update_internal(grn_ctx *ctx,
             break;
           }
         }
-        if (old) {
+        if (old_value) {
           GRN_OBJ_FIN(ctx, &old_elem);
         }
-        if (new) {
+        if (new_value) {
           GRN_OBJ_FIN(ctx, &new_elem);
         }
         return ctx->rc;
@@ -9483,112 +9488,117 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   if (grn_io_lock(ctx, ii->seg, grn_lock_timeout)) {
     return ctx->rc;
   }
-  if (new) {
-    unsigned char type = (ii->obj.header.domain == new->header.domain)
+  if (new_value) {
+    unsigned char type = (ii->obj.header.domain == new_value->header.domain)
                            ? GRN_UVECTOR
-                           : new->header.type;
+                           : new_value->header.type;
     switch (type) {
     case GRN_BULK:
       {
-        if (grn_bulk_is_zero(ctx, new)) {
+        if (grn_bulk_is_zero(ctx, new_value)) {
           do_grn_ii_updspec_cmp = false;
         }
-        new_ = new;
-        GRN_OBJ_INIT(&newv,
+        grn_obj *new_value_before = new_value;
+        GRN_OBJ_INIT(&new_buffer,
                      GRN_VECTOR,
                      GRN_OBJ_DO_SHALLOW_COPY,
-                     new_->header.domain);
-        newv.u.v.body = new;
-        new = &newv;
-        grn_vector_delimit(ctx, new, 0, new_->header.domain);
-        if (new_ != newvalue) {
-          grn_obj_close(ctx, new_);
+                     new_value->header.domain);
+        new_buffer.u.v.body = new_value;
+        new_value = &new_buffer;
+        grn_vector_delimit(ctx, new_value, 0, new_value_before->header.domain);
+        if (new_value_before != newvalue) {
+          grn_obj_close(ctx, new_value_before);
         }
       }
       /* fallthru */
     case GRN_VECTOR:
-      new_ = new;
-      new = (grn_obj *)grn_hash_create(ctx,
-                                       NULL,
-                                       sizeof(grn_id),
-                                       sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY);
-      if (!new) {
-        GRN_DEFINE_NAME(ii);
-        MERR("[ii][column][update][new][vector] failed to create a hash table: "
-             "<%.*s>: ",
-             name_size,
-             name);
-      } else {
-        grn_vector2updspecs(ctx,
-                            ii,
-                            rid,
-                            section,
-                            new_,
-                            new,
-                            GRN_TOKEN_ADD,
-                            post);
-      }
-      if (new_ != newvalue) {
-        grn_obj_close(ctx, new_);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
+      {
+        grn_obj *new_value_before = new_value;
+        new_value = (grn_obj *)grn_hash_create(ctx,
+                                               NULL,
+                                               sizeof(grn_id),
+                                               sizeof(grn_ii_updspec *),
+                                               GRN_HASH_TINY);
+        if (!new_value) {
+          GRN_DEFINE_NAME(ii);
+          MERR(
+            "[ii][column][update][new][vector] failed to create a hash table: "
+            "<%.*s>: ",
+            name_size,
+            name);
+        } else {
+          grn_vector2updspecs(ctx,
+                              ii,
+                              rid,
+                              section,
+                              new_value_before,
+                              new_value,
+                              GRN_TOKEN_ADD,
+                              post);
+        }
+        if (new_value_before != newvalue) {
+          grn_obj_close(ctx, new_value_before);
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
       }
       break;
     case GRN_UVECTOR:
-      new_ = new;
-      new = (grn_obj *)grn_hash_create(ctx,
-                                       NULL,
-                                       sizeof(grn_id),
-                                       sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY);
-      if (!new) {
-        GRN_DEFINE_NAME(ii);
-        MERR(
-          "[ii][column][update][new][uvector] failed to create a hash table: "
-          "<%.*s>: ",
-          name_size,
-          name);
-      } else {
-        if (new_->header.type == GRN_UVECTOR) {
-          grn_uvector2updspecs(ctx,
-                               ii,
-                               rid,
-                               section,
-                               new_,
-                               new,
-                               GRN_TOKEN_ADD,
-                               post);
+      {
+        grn_obj *new_value_before = new_value;
+        new_value = (grn_obj *)grn_hash_create(ctx,
+                                               NULL,
+                                               sizeof(grn_id),
+                                               sizeof(grn_ii_updspec *),
+                                               GRN_HASH_TINY);
+        if (!new_value) {
+          GRN_DEFINE_NAME(ii);
+          MERR(
+            "[ii][column][update][new][uvector] failed to create a hash table: "
+            "<%.*s>: ",
+            name_size,
+            name);
         } else {
-          grn_obj uvector;
-          uint32_t weight = 0;
-          GRN_VALUE_FIX_SIZE_INIT(&uvector,
-                                  GRN_OBJ_VECTOR,
-                                  new_->header.domain);
-          if (new_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
-            uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+          if (new_value_before->header.type == GRN_UVECTOR) {
+            grn_uvector2updspecs(ctx,
+                                 ii,
+                                 rid,
+                                 section,
+                                 new_value_before,
+                                 new_value,
+                                 GRN_TOKEN_ADD,
+                                 post);
+          } else {
+            grn_obj uvector;
+            uint32_t weight = 0;
+            GRN_VALUE_FIX_SIZE_INIT(&uvector,
+                                    GRN_OBJ_VECTOR,
+                                    new_value_before->header.domain);
+            if (new_value_before->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
+              uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+            }
+            grn_uvector_add_element(ctx,
+                                    &uvector,
+                                    GRN_RECORD_VALUE(new_value_before),
+                                    weight);
+            grn_uvector2updspecs(ctx,
+                                 ii,
+                                 rid,
+                                 section,
+                                 &uvector,
+                                 new_value,
+                                 GRN_TOKEN_ADD,
+                                 post);
+            GRN_OBJ_FIN(ctx, &uvector);
           }
-          grn_uvector_add_element(ctx,
-                                  &uvector,
-                                  GRN_RECORD_VALUE(new_),
-                                  weight);
-          grn_uvector2updspecs(ctx,
-                               ii,
-                               rid,
-                               section,
-                               &uvector,
-                               new,
-                               GRN_TOKEN_ADD,
-                               post);
-          GRN_OBJ_FIN(ctx, &uvector);
         }
-      }
-      if (new_ != newvalue) {
-        grn_obj_close(ctx, new_);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
+        if (new_value_before != newvalue) {
+          grn_obj_close(ctx, new_value_before);
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
       }
       break;
     case GRN_TABLE_HASH_KEY:
@@ -9621,23 +9631,26 @@ grn_ii_column_update_internal(grn_ctx *ctx,
       0,
     };
     grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
-    grn_hash_sort(ctx, (grn_hash *)new, -1, sorted, &arg);
-    GRN_TEXT_PUT(ctx, posting, ((grn_hash *)new)->n_entries, sizeof(uint32_t));
+    grn_hash_sort(ctx, (grn_hash *)new_value, -1, sorted, &arg);
+    GRN_TEXT_PUT(ctx,
+                 posting,
+                 ((grn_hash *)new_value)->n_entries,
+                 sizeof(uint32_t));
     GRN_ARRAY_EACH(ctx, sorted, 0, 0, id, &tp, {
-      grn_hash_get_key(ctx, (grn_hash *)new, *tp, &tid, sizeof(grn_id));
+      grn_hash_get_key(ctx, (grn_hash *)new_value, *tp, &tid, sizeof(grn_id));
       gap = tid - tid_;
       GRN_TEXT_PUT(ctx, posting, &gap, sizeof(grn_id));
       tid_ = tid;
     });
     GRN_ARRAY_EACH(ctx, sorted, 0, 0, id, &tp, {
-      grn_hash_get_value(ctx, (grn_hash *)new, *tp, &u_);
+      grn_hash_get_value(ctx, (grn_hash *)new_value, *tp, &u_);
       u_->offset = offset++;
       GRN_TEXT_PUT(ctx, posting, &u_->tf, sizeof(int32_t));
     });
     tpe = (grn_id *)GRN_BULK_CURR(post);
     for (tp = (grn_id *)GRN_BULK_HEAD(post); tp < tpe; tp++) {
       grn_hash_get(ctx,
-                   (grn_hash *)new,
+                   (grn_hash *)new_value,
                    (void *)tp,
                    sizeof(grn_id),
                    (void **)&u);
@@ -9647,111 +9660,116 @@ grn_ii_column_update_internal(grn_ctx *ctx,
     grn_array_close(ctx, sorted);
   }
 
-  if (old) {
-    unsigned char type = (ii->obj.header.domain == old->header.domain)
+  if (old_value) {
+    unsigned char type = (ii->obj.header.domain == old_value->header.domain)
                            ? GRN_UVECTOR
-                           : old->header.type;
+                           : old_value->header.type;
     switch (type) {
     case GRN_BULK:
       {
         //        const char *str = GRN_BULK_HEAD(old);
         //        unsigned int str_len = GRN_BULK_VSIZE(old);
-        old_ = old;
-        GRN_OBJ_INIT(&oldv,
+        grn_obj *old_value_before = old_value;
+        GRN_OBJ_INIT(&old_buffer,
                      GRN_VECTOR,
                      GRN_OBJ_DO_SHALLOW_COPY,
-                     old_->header.domain);
-        oldv.u.v.body = old;
-        old = &oldv;
-        grn_vector_delimit(ctx, old, 0, old_->header.domain);
-        if (old_ != oldvalue) {
-          grn_obj_close(ctx, old_);
+                     old_value->header.domain);
+        old_buffer.u.v.body = old_value;
+        old_value = &old_buffer;
+        grn_vector_delimit(ctx, old_value, 0, old_value_before->header.domain);
+        if (old_value_before != oldvalue) {
+          grn_obj_close(ctx, old_value_before);
         }
       }
       /* fallthru */
     case GRN_VECTOR:
-      old_ = old;
-      old = (grn_obj *)grn_hash_create(ctx,
-                                       NULL,
-                                       sizeof(grn_id),
-                                       sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY);
-      if (!old) {
-        GRN_DEFINE_NAME(ii);
-        MERR("[ii][column][update][old][vector] failed to create a hash table: "
-             "<%.*s>: ",
-             name_size,
-             name);
-      } else {
-        grn_vector2updspecs(ctx,
-                            ii,
-                            rid,
-                            section,
-                            old_,
-                            old,
-                            GRN_TOKEN_DEL,
-                            NULL);
-      }
-      if (old_ != oldvalue) {
-        grn_obj_close(ctx, old_);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
+      {
+        grn_obj *old_value_keep = old_value;
+        old_value = (grn_obj *)grn_hash_create(ctx,
+                                               NULL,
+                                               sizeof(grn_id),
+                                               sizeof(grn_ii_updspec *),
+                                               GRN_HASH_TINY);
+        if (!old_value) {
+          GRN_DEFINE_NAME(ii);
+          MERR(
+            "[ii][column][update][old][vector] failed to create a hash table: "
+            "<%.*s>: ",
+            name_size,
+            name);
+        } else {
+          grn_vector2updspecs(ctx,
+                              ii,
+                              rid,
+                              section,
+                              old_value_keep,
+                              old_value,
+                              GRN_TOKEN_DEL,
+                              NULL);
+        }
+        if (old_value_keep != oldvalue) {
+          grn_obj_close(ctx, old_value_keep);
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
       }
       break;
     case GRN_UVECTOR:
-      old_ = old;
-      old = (grn_obj *)grn_hash_create(ctx,
-                                       NULL,
-                                       sizeof(grn_id),
-                                       sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY);
-      if (!old) {
-        GRN_DEFINE_NAME(ii);
-        MERR(
-          "[ii][column][update][old][uvector] failed to create a hash table: "
-          "<%.*s>: ",
-          name_size,
-          name);
-      } else {
-        if (old_->header.type == GRN_UVECTOR) {
-          grn_uvector2updspecs(ctx,
-                               ii,
-                               rid,
-                               section,
-                               old_,
-                               old,
-                               GRN_TOKEN_DEL,
-                               NULL);
+      {
+        grn_obj *old_value_keep = old_value;
+        old_value = (grn_obj *)grn_hash_create(ctx,
+                                               NULL,
+                                               sizeof(grn_id),
+                                               sizeof(grn_ii_updspec *),
+                                               GRN_HASH_TINY);
+        if (!old_value) {
+          GRN_DEFINE_NAME(ii);
+          MERR(
+            "[ii][column][update][old][uvector] failed to create a hash table: "
+            "<%.*s>: ",
+            name_size,
+            name);
         } else {
-          grn_obj uvector;
-          uint32_t weight = 0;
-          GRN_VALUE_FIX_SIZE_INIT(&uvector,
-                                  GRN_OBJ_VECTOR,
-                                  old_->header.domain);
-          if (old_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
-            uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+          if (old_value_keep->header.type == GRN_UVECTOR) {
+            grn_uvector2updspecs(ctx,
+                                 ii,
+                                 rid,
+                                 section,
+                                 old_value_keep,
+                                 old_value,
+                                 GRN_TOKEN_DEL,
+                                 NULL);
+          } else {
+            grn_obj uvector;
+            uint32_t weight = 0;
+            GRN_VALUE_FIX_SIZE_INIT(&uvector,
+                                    GRN_OBJ_VECTOR,
+                                    old_value_keep->header.domain);
+            if (old_value_keep->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
+              uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+            }
+            grn_uvector_add_element(ctx,
+                                    &uvector,
+                                    GRN_RECORD_VALUE(old_value_keep),
+                                    weight);
+            grn_uvector2updspecs(ctx,
+                                 ii,
+                                 rid,
+                                 section,
+                                 &uvector,
+                                 old_value,
+                                 GRN_TOKEN_DEL,
+                                 NULL);
+            GRN_OBJ_FIN(ctx, &uvector);
           }
-          grn_uvector_add_element(ctx,
-                                  &uvector,
-                                  GRN_RECORD_VALUE(old_),
-                                  weight);
-          grn_uvector2updspecs(ctx,
-                               ii,
-                               rid,
-                               section,
-                               &uvector,
-                               old,
-                               GRN_TOKEN_DEL,
-                               NULL);
-          GRN_OBJ_FIN(ctx, &uvector);
         }
-      }
-      if (old_ != oldvalue) {
-        grn_obj_close(ctx, old_);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
+        if (old_value_keep != oldvalue) {
+          grn_obj_close(ctx, old_value_keep);
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
       }
       break;
     case GRN_TABLE_HASH_KEY:
@@ -9772,10 +9790,10 @@ grn_ii_column_update_internal(grn_ctx *ctx,
     }
   }
 
-  if (old) {
+  if (old_value) {
     grn_id eid;
-    grn_hash *o = (grn_hash *)old;
-    grn_hash *n = (grn_hash *)new;
+    grn_hash *o = (grn_hash *)old_value;
+    grn_hash *n = (grn_hash *)new_value;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
       if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id), (void **)&un))) {
         if (do_grn_ii_updspec_cmp && !grn_ii_updspec_cmp(*u, *un)) {
@@ -9790,8 +9808,8 @@ grn_ii_column_update_internal(grn_ctx *ctx,
       }
     });
   }
-  if (new) {
-    grn_hash *n = (grn_hash *)new;
+  if (new_value) {
+    grn_hash *n = (grn_hash *)new_value;
     GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_ii_update_one(ctx, ii, *tp, *u, n);
       if (ctx->rc != GRN_SUCCESS) {
@@ -9805,22 +9823,22 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   }
 exit:
   grn_io_unlock(ctx, ii->seg);
-  if (old && old->header.type == GRN_TABLE_HASH_KEY) {
-    grn_hash *o = (grn_hash *)old;
+  if (old_value && old_value->header.type == GRN_TABLE_HASH_KEY) {
+    grn_hash *o = (grn_hash *)old_value;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
       grn_ii_updspec_close(ctx, *u);
     });
-    if (old != oldvalue) {
-      grn_obj_close(ctx, old);
+    if (old_value != oldvalue) {
+      grn_obj_close(ctx, old_value);
     }
   }
-  if (new && new->header.type == GRN_TABLE_HASH_KEY) {
-    grn_hash *n = (grn_hash *)new;
+  if (new_value && new_value->header.type == GRN_TABLE_HASH_KEY) {
+    grn_hash *n = (grn_hash *)new_value;
     GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_ii_updspec_close(ctx, *u);
     });
-    if (new != newvalue) {
-      grn_obj_close(ctx, new);
+    if (new_value != newvalue) {
+      grn_obj_close(ctx, new_value);
     }
   }
   return ctx->rc;
