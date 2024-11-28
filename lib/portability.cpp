@@ -25,18 +25,18 @@ extern "C" {
 /* todo: Implement the general grn_qsort_r() that takes `base` as `void *`. */
 void
 grn_qsort_r_grn_id(grn_id *base,
-                   size_t nmemb,
-                   int (*compar)(const grn_id, const grn_id, void *),
+                   size_t n_members,
+                   int (*compare)(const grn_id, const grn_id, void *),
                    void *arg)
 {
-  if (compar) {
+  if (compare) {
     std::sort(base,
-              base + nmemb,
-              [compar, arg](const grn_id id1, const grn_id id2) {
-                return compar(id1, id2, arg) == -1;
+              base + n_members,
+              [compare, arg](const grn_id id1, const grn_id id2) {
+                return compare(id1, id2, arg) == -1;
               });
   } else {
-    std::sort(base, base + nmemb);
+    std::sort(base, base + n_members);
   }
 }
 }
