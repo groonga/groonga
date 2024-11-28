@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_geo``"
 msgstr ""
 
@@ -33,8 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It returns the next posting that has record ID. It returns NULL after all records are returned."
-msgstr ""
-
-msgid "the geo cursor."
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
