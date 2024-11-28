@@ -141,10 +141,10 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
                                  int offset,
                                  int limit);
 /**
- * \brief Retrieve the next posting from the geo cursor and advance to the next.
+ * \brief Retrieve the next posting from the cursor and advance to the next.
  *
  * \param ctx The context object.
- * \param geo_cursor The geo cursor from which to retrieve the next posting.
+ * \param cursor The cursor from which to retrieve the next posting.
  *
  * \return \ref grn_posting if the next posting is found, `NULL` otherwise.
  *         You don't need to free the returned \ref grn_posting.
