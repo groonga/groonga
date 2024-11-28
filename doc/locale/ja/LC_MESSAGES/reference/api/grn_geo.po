@@ -33,24 +33,6 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It opens a cursor to get records in the rectangle specified by top_left_point parameter and bottom_right_point parameter."
-msgstr ""
-
-msgid "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
-msgstr ""
-
-msgid "the top left point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
-msgstr ""
-
-msgid "the bottom right point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)"
-msgstr ""
-
-msgid "the cursor returns records from offset parameter position. offset parameter is based on 0."
-msgstr ""
-
-msgid "the cursor returns at most limit parameter records. -1 means no limit."
-msgstr ""
-
 msgid "It returns the next posting that has record ID. It returns NULL after all records are returned."
 msgstr ""
 
