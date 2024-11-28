@@ -105,6 +105,34 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
                               grn_obj *index,
                               grn_obj *top_left_point,
                               grn_obj *bottom_right_point);
+/**
+ * \brief Create and return a cursor to retrieve records within a specified
+ *        rectangular area defined by the `top_left_point` and
+ *        `bottom_right_point` parameters.
+ *
+ * \param ctx The context object.
+ * \param index The index column for `TokyoGeoPoint` or `WGS84GeoPoint` type.
+ * \param top_left_point The top-left point of the target rectangle. Its type
+ *                       must be one of the following:
+ *                       - \ref GRN_DB_SHORT_TEXT
+ *                       - \ref GRN_DB_TEXT
+ *                       - \ref GRN_DB_LONG_TEXT
+ *                       - \ref GRN_DB_TOKYO_GEO_POINT
+ *                       - \ref GRN_DB_WGS84_GEO_POINT
+ * \param bottom_right_point The bottom-right point of the target rectangle. Its
+ *                           type must be one of the following:
+ *                           - \ref GRN_DB_SHORT_TEXT
+ *                           - \ref GRN_DB_TEXT
+ *                           - \ref GRN_DB_LONG_TEXT
+ *                           - \ref GRN_DB_TOKYO_GEO_POINT
+ *                           - \ref GRN_DB_WGS84_GEO_POINT
+ * \param offset The starting position of the records to return (zero-based
+ *               index).
+ * \param limit The maximum number of records to return. `-1` means no limit.
+ *
+ * \return A newly opened cursor on success, `NULL` on error.
+ *         See `ctx->rc` for error details.
+ */
 GRN_API grn_obj *
 grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
                                  grn_obj *index,
