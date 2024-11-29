@@ -6247,6 +6247,8 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
   return 0;
 }
 
+/* See test/command/suite/defrag/pat/README.md when you change this.
+ * You must update tests for this too. */
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
