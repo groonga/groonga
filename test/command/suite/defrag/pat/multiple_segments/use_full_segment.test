@@ -5,19 +5,19 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 # About data to load.
 # 4,194,304 bytes per segment.
 # 16 bytes per key.
-# 4,194,304 / 16 = 262144.
+# 4,194,304 / 16 = 262,144.
 # This is data that uses the full segment.
 
 #@timeout 120
 #@disable-logging
-#@generate-series 0 10000 Users '{"_key" => "User%012d" % i}'
+#@generate-series 1 262144 Users '{"_key" => "User%012d" % i}'
 # The following two data are immediate:true.
 load --table Users
 [
 {"_key":"Jeff"},
 {"_key":"John"}
 ]
-#@generate-series 10000 800000 Users '{"_key" => "User%012d" % i}'
+#@generate-series 262145 500000 Users '{"_key" => "User%012d" % i}'
 # The following two data are immediate:true.
 load --table Users
 [
@@ -28,10 +28,14 @@ load --table Users
 #@timeout default
 
 # Delete data in multiple segments so that fragmentation occurs in multiple segments.
-delete Users --filter '_id > 100 && _id < 199'
-delete Users --filter '_id > 699990 && _id < 700000'
+delete Users --filter '_key == "User000000000100"'
+delete Users --filter '_key == "User000000300000"'
 
 object_inspect Users
 defrag
 object_inspect Users
-select Users --filter '_id == 700000'
+
+# Last record of the first segment.
+select Users --filter '_key == "User000000262145"'
+# First record of the next segment.
+select Users --filter '_key == "User000000262146"'

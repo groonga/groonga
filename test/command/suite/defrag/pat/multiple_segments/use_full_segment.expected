@@ -1,8 +1,8 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
-delete Users --filter '_id > 100 && _id < 199'
+delete Users --filter '_key == "User000000000100"'
 [[0,0.0,0.0],true]
-delete Users --filter '_id > 699990 && _id < 700000'
+delete Users --filter '_key == "User000000300000"'
 [[0,0.0,0.0],true]
 object_inspect Users
 [
@@ -28,13 +28,13 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 12800016,
+      "total_size": 8000000,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 799898,
+    "n_records": 500002,
     "disk_usage": 0
   }
 ]
@@ -64,17 +64,17 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 12798304,
+      "total_size": 7999968,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 799898,
+    "n_records": 500002,
     "disk_usage": 0
   }
 ]
-select Users --filter '_id == 700000'
+select Users --filter '_key == "User000000262145"'
 [
   [
     0,
@@ -97,8 +97,37 @@ select Users --filter '_id == 700000'
         ]
       ],
       [
-        700000,
-        "User000000699997"
+        262147,
+        "User000000262145"
+      ]
+    ]
+  ]
+]
+select Users --filter '_key == "User000000262146"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        262148,
+        "User000000262146"
       ]
     ]
   ]
