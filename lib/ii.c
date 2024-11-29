@@ -15231,18 +15231,18 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 
 /********************** buffered index builder ***********************/
 
-const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
+static const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
 #define II_BUFFER_TYPE_RID          0x80000000
 #define II_BUFFER_TYPE_WEIGHT       0x40000000
 #define II_BUFFER_TYPE(id)          (((id) & II_BUFFER_TYPE_MASK))
 #define II_BUFFER_PACK(value, type) ((value) | (type))
 #define II_BUFFER_UNPACK(id, type)  ((id) & ~(type))
 #define II_BUFFER_ORDER             GRN_CURSOR_BY_KEY
-const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16380;
-const uint32_t II_BUFFER_PACKED_BUF_SIZE = 0x4000000;
-const uint32_t II_BUFFER_NCOUNTERS_MARGIN = 0x100000;
-const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
-const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
+static const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16380;
+static const uint32_t II_BUFFER_PACKED_BUF_SIZE = 0x4000000;
+static const uint32_t II_BUFFER_NCOUNTERS_MARGIN = 0x100000;
+static const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
+static const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
   unsigned int sid; /* Section ID */
