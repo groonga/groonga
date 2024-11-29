@@ -11555,11 +11555,11 @@ bt_push(btr *bt, token_info *ti)
   bool min_p = true;
   bool max_p = true;
   int32_t pos = ti->pos;
-  btr_node *node, *new, **last;
-  new = bt->nodes + bt->n++;
-  new->ti = ti;
-  new->car = NULL;
-  new->cdr = NULL;
+  btr_node *node, *new_node, **last;
+  new_node = bt->nodes + bt->n++;
+  new_node->ti = ti;
+  new_node->car = NULL;
+  new_node->cdr = NULL;
   for (last = &bt->root; (node = *last);) {
     if (pos < node->ti->pos) {
       last = &node->car;
@@ -11569,7 +11569,7 @@ bt_push(btr *bt, token_info *ti)
       min_p = false;
     }
   }
-  *last = new;
+  *last = new_node;
   if (min_p) {
     bt->min = ti;
   }
