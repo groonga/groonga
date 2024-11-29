@@ -23,10 +23,21 @@ select Users
 load --table Users
 [
 {"_key":"HogePiyo", "immediate":false},
-{"_key":"Foo", "immediate":true}
+{"_key":"Foo", "immediate":true},
+{"_key":"Groonga", "immediate":false}
 ]
 
 # `total_size` should increase.
 object_inspect Users
 
 select Users
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"FooFoo"}
+]
+
+# Test the record that was the end of the key buffer and the record that was added.
+select Users --filter '_key == "Groonga"'
+select Users --filter '_key == "FooFoo"'

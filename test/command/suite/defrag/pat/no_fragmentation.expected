@@ -144,9 +144,10 @@ select Users
 load --table Users
 [
 {"_key":"HogePiyo", "immediate":false},
-{"_key":"Foo", "immediate":true}
+{"_key":"Foo", "immediate":true},
+{"_key":"Groonga", "immediate":false}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],3]
 object_inspect Users
 [
   [
@@ -171,13 +172,13 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 32,
+      "total_size": 39,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 8,
+    "n_records": 9,
     "disk_usage": 0
   }
 ]
@@ -191,7 +192,7 @@ select Users
   [
     [
       [
-        8
+        9
       ],
       [
         [
@@ -211,6 +212,11 @@ select Users
         8,
         "Foo",
         true
+      ],
+      [
+        9,
+        "Groonga",
+        false
       ],
       [
         7,
@@ -245,6 +251,79 @@ select Users
       [
         6,
         "Joseph",
+        false
+      ]
+    ]
+  ]
+]
+load --table Users
+[
+{"_key":"FooFoo"}
+]
+[[0,0.0,0.0],1]
+select Users --filter '_key == "Groonga"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        9,
+        "Groonga",
+        false
+      ]
+    ]
+  ]
+]
+select Users --filter '_key == "FooFoo"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        10,
+        "FooFoo",
         false
       ]
     ]
