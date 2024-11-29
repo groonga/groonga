@@ -1019,9 +1019,8 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
 static inline uint32_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
-  uint32_t res, ts;
   //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
-  res = pat->header->curr_key;
+  uint32_t res = pat->header->curr_key;
   if (res < GRN_PAT_MAX_TOTAL_KEY_SIZE &&
       len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
     GRN_DEFINE_NAME(pat);
@@ -1036,9 +1035,12 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     return 0;
   }
 
-  ts = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
-  if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
-    res = pat->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
+  /* Check if the key to be added can fit in the current segment. */
+  uint32_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
+  if (res >> W_OF_KEY_IN_A_SEGMENT != end_segment) {
+    /* If it does not fit, update `curr_key`(`res`) to add it to the next
+     * segment. */
+    res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
   }
   {
     uint8_t *dest;
