@@ -1,6 +1,13 @@
 # Patricia trie defragmentation: Test cases
 
-Common: Defragmentation should reduce `total_size`.
+## Common checkpoints
+
+* Defragmentation should reduce `total_size`
+* Test with data that includes the keys immediate=true and immediate=false
+  * immediate=true
+    * Key length is less than or equal to 4 bytes
+  * immediate=false
+    * Key length is greater than or equal to 5 bytes
 
 ## Reduced of `total_size`
 
