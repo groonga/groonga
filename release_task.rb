@@ -23,12 +23,12 @@ class ReleaseTask
   end
 
   def define
-    define_generate_announce_task
+    define_generate_blog_task
   end
 
   private
 
-  def define_generate_announce_task
+  def define_generate_blog_task
     namespace :release do
       namespace :blog do
         desc "Generate release announce posts from a release note"
