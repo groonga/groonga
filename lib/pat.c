@@ -1035,8 +1035,11 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     return 0;
   }
 
+  /* Check if the key to be added can fit in the current segment. */
   uint32_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
   if (res >> W_OF_KEY_IN_A_SEGMENT != end_segment) {
+    /* If it does not fit, update `curr_key`(`res`) to add it to the next
+     * segment. */
     res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
   }
   {
