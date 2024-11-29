@@ -4009,7 +4009,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
 static void
 merge_dump_source(grn_ctx *ctx,
                   grn_ii *ii,
-                  buffer *buffer,
+                  buffer *buf,
                   const uint8_t *chunk,
                   grn_log_level log_level)
 {
@@ -4025,7 +4025,7 @@ merge_dump_source(grn_ctx *ctx,
   data.chunk = chunk;
   data.term = NULL;
   data.nth_term = 0;
-  data.n_terms = buffer->header.nterms;
+  data.n_terms = buf->header.nterms;
   data.nth_chunk = 0;
   data.n_chunks = 0;
   datavec_init(ctx, ii, data.data_vector, 0, 0);
@@ -4048,7 +4048,7 @@ merge_dump_source(grn_ctx *ctx,
   for (data.nth_term = 0; data.nth_term < data.n_terms; data.nth_term++) {
     uint16_t position;
 
-    data.term = buffer->terms + data.nth_term;
+    data.term = buf->terms + data.nth_term;
     if (data.term->tid == 0) {
       GRN_LOG(ctx,
               data.log_level,
@@ -4083,7 +4083,7 @@ merge_dump_source(grn_ctx *ctx,
 
     position = data.term->pos_in_buffer;
     while (position > 0) {
-      buffer_rec *record = BUFFER_REC_AT(buffer, position);
+      buffer_rec *record = BUFFER_REC_AT(buf, position);
       uint8_t *record_data = GRN_NEXT_ADDR(record);
       docinfo info;
 
