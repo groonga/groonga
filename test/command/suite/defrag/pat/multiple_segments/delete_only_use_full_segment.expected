@@ -28,7 +28,7 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 12800064,
+      "total_size": 12800016,
       "max_total_size": 4294967294
     },
     "value": {
