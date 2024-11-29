@@ -1,0 +1,43 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create --table Users --name immediate --type Bool
+
+# Keys of 4 bytes or lower are stored immediately.
+load --table Users
+[
+{"_key":"James", "immediate":false},
+{"_key":"Jason", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"John", "immediate":true},
+{"_key":"Joseph", "immediate":false}
+]
+
+# There is no fragmentation, so `total_size` is the same after defragmentation.
+object_inspect Users
+defrag
+object_inspect Users
+
+select Users
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"HogePiyo", "immediate":false},
+{"_key":"Foo", "immediate":true},
+{"_key":"Groonga", "immediate":false}
+]
+
+# `total_size` should increase.
+object_inspect Users
+
+select Users
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"FooFoo"}
+]
+
+# Test the record that was the end of the key buffer and the record that was added.
+select Users --filter '_key == "Groonga"'
+select Users --filter '_key == "FooFoo"'

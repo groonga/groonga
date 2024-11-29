@@ -1,0 +1,38 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create --table Users --name immediate --type Bool
+
+# Keys of 4 bytes or lower are stored immediately.
+load --table Users
+[
+{"_key":"James", "immediate":false},
+{"_key":"Jason", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"John", "immediate":true},
+{"_key":"Joseph", "immediate":false}
+]
+
+# immediate:true
+delete Users Jeff
+# immediate:false
+delete Users James
+
+# After defrag, total_size should be reduced.
+object_inspect Users
+defrag
+object_inspect Users
+
+select Users
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"James", "immediate":false},
+{"_key":"Jeff", "immediate":true},
+{"_key":"Joy", "immediate":true}
+]
+
+# `total_size` should increase.
+object_inspect Users
+
+select Users

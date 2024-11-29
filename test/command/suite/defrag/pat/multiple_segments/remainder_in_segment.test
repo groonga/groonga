@@ -1,0 +1,41 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+### Test when the segment is not stored in full.
+
+# About data to load.
+# 4,194,304 bytes per segment.
+# 12 bytes per key.
+# 4,194,304 / 12 = 349,525 with a remainder of 4.
+# This is data that has a remainder in one segment.
+
+#@timeout 120
+#@disable-logging
+#@generate-series 1 349525 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Jeff"},
+{"_key":"John"}
+]
+#@generate-series 349526 500000 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Joi"},
+{"_key":"Jay"}
+]
+#@enable-logging
+#@timeout default
+
+# Delete data in multiple segments so that fragmentation occurs in multiple segments.
+delete Users --filter '_key == "User00000100"'
+delete Users --filter '_key == "User00300000"'
+
+object_inspect Users
+defrag
+object_inspect Users
+
+# Last record of the first segment.
+select Users --filter '_key == "User00349526"'
+# First record of the next segment.
+select Users --filter '_key == "User00349527"'

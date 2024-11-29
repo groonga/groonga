@@ -1,0 +1,39 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+#@timeout 120
+#@disable-logging
+#@generate-series 0 10000 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Jeff"},
+{"_key":"John"}
+]
+#@generate-series 10000 800000 Users '{"_key" => "User%08d" % i}'
+# The following two data are immediate:true.
+load --table Users
+[
+{"_key":"Joi"},
+{"_key":"Jay"}
+]
+#@enable-logging
+#@timeout default
+
+delete Users --filter '_id > 100 && _id < 199'
+delete Users --filter '_id > 699990 && _id < 700000'
+
+object_inspect Users
+defrag
+object_inspect Users
+select Users --filter '_id == 200'
+select Users --filter '_id == 700000'
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"FooFoo"}
+]
+
+# Test the record that was the end of the key buffer and the record that was added.
+select Users --filter '_key == "User00800000"'
+select Users --filter '_key == "FooFoo"'

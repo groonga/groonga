@@ -1,0 +1,24 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create --table Users --name immediate --type Bool
+
+# Keys of 4 bytes or lower are stored immediately.
+load --table Users
+[
+{"_key":"James", "immediate":false},
+{"_key":"Jason-TEST", "immediate":false},
+{"_key":"Jennifer", "immediate":false},
+{"_key":"John", "immediate":true}
+]
+
+# immediate:false
+delete Users James
+
+# "Jason-Jason" area is overlapped.
+# before: |James|Jason-TEST|..|
+# after : |Jason-TEST|..|
+
+object_inspect Users
+defrag
+object_inspect Users
+
+select Users

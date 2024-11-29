@@ -24,6 +24,7 @@
 #include "grn_util.h"
 #include "grn_normalizer.h"
 #include "grn_wal.h"
+#include "grn_portability.h"
 
 #include <limits.h>
 #include <math.h>
@@ -6227,9 +6228,96 @@ grn_pat_warm(grn_ctx *ctx, grn_pat *pat)
   return grn_io_warm(ctx, pat->io);
 }
 
+typedef struct {
+  grn_ctx *ctx;
+  grn_pat *pat;
+} pat_node_compare_by_key_data;
+
+int
+grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
+{
+  grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
+  grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
+  pat_node *node1 = pat_get(ctx, pat, id1);
+  pat_node *node2 = pat_get(ctx, pat, id2);
+  if (node1->key > node2->key) {
+    return 1;
+  }
+  if (node1->key < node2->key) {
+    return -1;
+  }
+  return 0;
+}
+
+/* See test/command/suite/defrag/pat/README.md when you change this.
+ * You must update tests for this too. */
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
-  // todo
-  return 0;
+  int reduced_bytes = 0;
+
+  CRITICAL_SECTION_ENTER(pat->lock);
+  uint32_t n_records = grn_pat_size(ctx, pat);
+  if (n_records == 0) {
+    pat->header->curr_key = 0;
+    goto exit;
+  }
+
+  /* First, get the number of targets. */
+  size_t n_targets = 0;
+  GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
+  {
+    pat_node *node = pat_get(ctx, pat, id);
+    if (PAT_IMD(node)) {
+      continue;
+    }
+    n_targets++;
+  }
+  GRN_PAT_EACH_END(ctx, cursor);
+
+  /* Allocate only the necessary areas. */
+  grn_id *target_ids = GRN_MALLOC(sizeof(grn_id) * n_targets);
+  n_targets = 0;
+  GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
+  {
+    pat_node *node = pat_get(ctx, pat, id);
+    if (PAT_IMD(node)) {
+      continue;
+    }
+    target_ids[n_targets++] = id;
+  }
+  GRN_PAT_EACH_END(ctx, cursor);
+
+  /* Defragment from the head of the key segment. */
+  pat_node_compare_by_key_data data = {ctx, pat};
+  grn_qsort_r_grn_id(target_ids, n_targets, grn_pat_node_compare_by_key, &data);
+  uint32_t new_curr_key = 0;
+  for (size_t i = 0; i < n_targets; i++) {
+    pat_node *node = pat_get(ctx, pat, target_ids[i]);
+
+    /* Check if the key to be added can fit in the current segment. */
+    uint32_t key_length = PAT_LEN(node);
+    uint32_t new_end_segment =
+      (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
+    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
+      /* If it does not fit, update `new_curr_key` to add it to the next
+       * segment. */
+      new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
+    }
+
+    uint8_t *key_position = NULL;
+    KEY_AT(pat, node->key, key_position, 0);
+    uint8_t *new_key_position;
+    KEY_AT(pat, new_curr_key, new_key_position, 0);
+    grn_memmove(new_key_position, key_position, key_length);
+    node->key = new_curr_key;
+    new_curr_key += key_length;
+  }
+  GRN_FREE(target_ids);
+
+  reduced_bytes = pat->header->curr_key - new_curr_key;
+  pat->header->curr_key = new_curr_key;
+exit:
+  CRITICAL_SECTION_LEAVE(pat->lock);
+  return reduced_bytes;
 }
