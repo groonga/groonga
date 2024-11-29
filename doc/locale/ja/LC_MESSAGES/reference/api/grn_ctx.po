@@ -104,9 +104,3 @@ msgstr ""
 
 msgid "The output type of the context."
 msgstr ""
-
-msgid "Sets the new output type to the context. It is used by executing a command by :c:func:`grn_expr_exec()`. If you use :c:func:`grn_ctx_send()`, the new output type isn't used. :c:func:`grn_ctx_send()` sets output type from command line internally."
-msgstr ""
-
-msgid "The new output type."
-msgstr "新しい出力形式。"
