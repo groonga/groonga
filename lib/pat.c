@@ -24,6 +24,7 @@
 #include "grn_util.h"
 #include "grn_normalizer.h"
 #include "grn_wal.h"
+#include "grn_portability.h"
 
 #include <limits.h>
 #include <math.h>
@@ -6231,12 +6232,12 @@ typedef struct {
 } pat_node_compare_by_key_data;
 
 int
-grn_pat_node_compare_by_key(const void *id1, const void *id2, void *arg)
+grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
 {
   grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
   grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
-  pat_node *node1 = pat_get(ctx, pat, *((grn_id *)id1));
-  pat_node *node2 = pat_get(ctx, pat, *((grn_id *)id2));
+  pat_node *node1 = pat_get(ctx, pat, id1);
+  pat_node *node2 = pat_get(ctx, pat, id2);
   if (node1->key > node2->key) {
     return 1;
   }
@@ -6284,11 +6285,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   /* Defragment from the head of the key segment. */
   pat_node_compare_by_key_data data = {ctx, pat};
-  grn_qsort_r(target_ids,
-              n_targets,
-              sizeof(grn_id),
-              grn_pat_node_compare_by_key,
-              &data);
+  grn_qsort_r_grn_id(target_ids, n_targets, grn_pat_node_compare_by_key, &data);
   uint32_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     pat_node *node = pat_get(ctx, pat, target_ids[i]);
