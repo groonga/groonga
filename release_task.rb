@@ -15,7 +15,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-class BlogTask
+class ReleaseTask
   include Rake::DSL
 
   def initialize(package)
@@ -29,11 +29,13 @@ class BlogTask
   private
 
   def define_generate_announce_task
-    namespace :blog do
-      namespace :announce do
-        desc "Generate release announces from a release note"
-        task :generate do
-          puts "TODO: Generate release announce for #{@package}"
+    namespace :release do
+      namespace :blog do
+        namespace :announce do
+          desc "Generate release announces from a release note"
+          task :generate do
+            puts "TODO: Generate release announce for #{@package}"
+          end
         end
       end
     end
