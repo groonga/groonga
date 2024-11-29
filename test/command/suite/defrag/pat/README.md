@@ -15,8 +15,12 @@ A simple defragmentation test to check if the size has been reduced.
 
 ## Zero data
 
-* test/command/suite/defrag/pat/empty.test
-  * If there are zero data, `defrag` should exit normally
+If there are zero data, `defrag` should exit normally.
+
+* test/command/suite/defrag/pat/empty/after_creation.test
+  * Defragmentation on tables with no registration
+* test/command/suite/defrag/pat/empty/delete_all.test
+  * Defragmentation of a table with zero data after registering and deleting all data
 
 ## Key buffer overlaps in defragmentation
 

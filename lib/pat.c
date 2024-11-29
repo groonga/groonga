@@ -6255,6 +6255,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   CRITICAL_SECTION_ENTER(pat->lock);
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
+    pat->header->curr_key = 0;
     goto exit;
   }
 
