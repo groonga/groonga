@@ -6289,10 +6289,14 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   uint32_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     pat_node *node = pat_get(ctx, pat, target_ids[i]);
+
+    /* Check if the key to be added can fit in the current segment. */
     uint32_t key_length = PAT_LEN(node);
     uint32_t new_end_segment =
       (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
     if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
+      /* If it does not fit, update `new_curr_key` to add it to the next
+       * segment. */
       new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
     }
 
