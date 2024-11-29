@@ -48,3 +48,9 @@ Test if data is successfully added after defragmentation.
 Defragmentation should succeed if the key buffer is no longer in `_id` order because `_id` is reused.
 
 * test/command/suite/defrag/pat/reuse_id.test
+
+## No fragmentation
+
+Defragmentation on a table with no fragmentation finishes successfully.
+
+* test/command/suite/defrag/pat/no_fragmentation.test
