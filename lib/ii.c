@@ -3678,7 +3678,6 @@ typedef struct {
   grn_log_level log_level;
   const char *tag;
   grn_ii *ii;
-  buffer *buffer;
   const uint8_t *chunk;
   buffer_term *term;
   uint16_t nth_term;
@@ -4023,7 +4022,6 @@ merge_dump_source(grn_ctx *ctx,
   data.log_level = log_level;
   data.tag = "[ii][merge][source]";
   data.ii = ii;
-  data.buffer = buffer;
   data.chunk = chunk;
   data.term = NULL;
   data.nth_term = 0;
