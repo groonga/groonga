@@ -16,9 +16,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <algorithm>
 #include "grn.h"
 #include "grn_portability.h"
+
+#include <algorithm>
 
 extern "C" {
 
@@ -26,17 +27,15 @@ extern "C" {
 void
 grn_qsort_r_grn_id(grn_id *base,
                    size_t n_members,
-                   int (*compare)(const grn_id, const grn_id, void *),
+                   int (*compare)(const grn_id id1,
+                                  const grn_id id2,
+                                  void *arg),
                    void *arg)
 {
-  if (compare) {
-    std::sort(base,
-              base + n_members,
-              [compare, arg](const grn_id id1, const grn_id id2) {
-                return compare(id1, id2, arg) < 0;
-              });
-  } else {
-    std::sort(base, base + n_members);
-  }
+  std::sort(base,
+            base + n_members,
+            [&compare, &arg](const grn_id id1, const grn_id id2) {
+              return compare(id1, id2, arg) < 0;
+            });
 }
 }

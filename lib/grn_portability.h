@@ -23,7 +23,9 @@ extern "C" {
 void
 grn_qsort_r_grn_id(grn_id *base,
                    size_t n_members,
-                   int (*compare)(const grn_id, const grn_id, void *),
+                   int (*compare)(const grn_id id1,
+                                  const grn_id id2,
+                                  void *arg),
                    void *arg);
 
 #ifdef __cplusplus
