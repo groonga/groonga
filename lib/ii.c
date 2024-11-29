@@ -10064,7 +10064,7 @@ typedef struct {
   uint32_t n_phrase_groups;
   phrase_group *phrase_groups;
   uint32_t n_phrases;
-  token_info *token_info;
+  token_info *current_token_info;
   btr *bt;
   int max_interval;
   int additional_last_interval;
@@ -12800,16 +12800,19 @@ grn_ii_select_cursor_set_per_occurrence_mode(grn_ctx *ctx,
 static inline bool
 grn_ii_select_skip_pos(grn_ctx *ctx, grn_ii_select_data *data, int32_t pos)
 {
-  if (token_info_skip_pos(ctx, data->token_info, data->rid, data->sid, pos) !=
-      GRN_SUCCESS) {
+  if (token_info_skip_pos(ctx,
+                          data->current_token_info,
+                          data->rid,
+                          data->sid,
+                          pos) != GRN_SUCCESS) {
     return false;
   }
-  if (data->token_info->p->rid != data->rid ||
-      data->token_info->p->sid != data->sid) {
+  if (data->current_token_info->p->rid != data->rid ||
+      data->current_token_info->p->sid != data->sid) {
     if (!(data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
           data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT)) {
-      data->next_rid = data->token_info->p->rid;
-      data->next_sid = data->token_info->p->sid;
+      data->next_rid = data->current_token_info->p->rid;
+      data->next_sid = data->current_token_info->p->sid;
     }
     return false;
   }
@@ -12845,38 +12848,41 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
       n_tokens_in_same_pos = 0;
       start_pos++;
     }
-    data->token_info = *tip;
-    if (data->token_info->phrase_id != phrase_id) {
+    data->current_token_info = *tip;
+    if (data->current_token_info->phrase_id != phrase_id) {
       continue;
     }
-    if (data->token_info->must_last) {
-      must_last_ti = data->token_info;
+    if (data->current_token_info->must_last) {
+      must_last_ti = data->current_token_info;
     }
     if (!grn_ii_select_skip_pos(ctx, data, start_pos)) {
       return false;
     }
-    if (data->token_info->pos == start_pos &&
-        data->token_info->n_tokens_in_phrase >= start_n_tokens_in_phrase) {
+    if (data->current_token_info->pos == start_pos &&
+        data->current_token_info->n_tokens_in_phrase >=
+          start_n_tokens_in_phrase) {
       n_tokens_in_same_pos++;
     } else {
       n_tokens_in_same_pos = 1;
-      if (data->token_info->pos > start_pos) {
+      if (data->current_token_info->pos > start_pos) {
         start_n_tokens_in_phrase = 0;
         ti_last = tip;
       }
-      start_pos = data->token_info->pos;
+      start_pos = data->current_token_info->pos;
     }
-    if (n_tokens_in_same_pos == data->token_info->n_used_tokens_in_phrase &&
-        data->token_info->n_tokens_in_phrase >= start_n_tokens_in_phrase) {
+    if (n_tokens_in_same_pos ==
+          data->current_token_info->n_used_tokens_in_phrase &&
+        data->current_token_info->n_tokens_in_phrase >=
+          start_n_tokens_in_phrase) {
       if (must_last_ti) {
-        data->token_info = must_last_ti;
+        data->current_token_info = must_last_ti;
       }
       P_NOTE("%s: found: record:%u phrase:%u/%u\n",
              __func__,
              data->rid,
-             data->token_info->phrase_id,
-             data->token_info->phrase_group_id);
-      P_TI(ctx, data->token_info);
+             data->current_token_info->phrase_id,
+             data->current_token_info->phrase_group_id);
+      P_TI(ctx, data->current_token_info);
       return true;
     }
   }
@@ -12889,15 +12895,15 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        int32_t start_pos,
                                        uint32_t start_n_tokens_in_phrase)
 {
-  uint32_t phrase_group_id = data->token_info->phrase_group_id;
+  uint32_t phrase_group_id = data->current_token_info->phrase_group_id;
   phrase_group *group = &(data->phrase_groups[phrase_group_id]);
   bool skipped = false;
   token_info *min_before = group->btree->min;
   while (true) {
-    data->token_info = group->btree->min;
+    data->current_token_info = group->btree->min;
     if (grn_ii_select_data_find_phrase(ctx,
                                        data,
-                                       data->token_info->phrase_id,
+                                       data->current_token_info->phrase_id,
                                        start_pos,
                                        start_n_tokens_in_phrase)) {
       skipped = true;
@@ -13162,15 +13168,17 @@ grn_ii_select_cursor_next_prepare(grn_ctx *ctx, grn_ii_select_cursor *cursor)
     data->next_rid = data->rid;
     data->next_sid = data->sid + 1;
     for (i = 1; i < n; i++) {
-      data->token_info = data->token_infos[i];
-      if (token_info_skip(ctx, data->token_info, data->rid, data->sid) !=
-          GRN_SUCCESS) {
+      data->current_token_info = data->token_infos[i];
+      if (token_info_skip(ctx,
+                          data->current_token_info,
+                          data->rid,
+                          data->sid) != GRN_SUCCESS) {
         return false;
       }
-      if (data->token_info->p->rid != data->rid ||
-          data->token_info->p->sid != data->sid) {
-        data->next_rid = data->token_info->p->rid;
-        data->next_sid = data->token_info->p->sid;
+      if (data->current_token_info->p->rid != data->rid ||
+          data->current_token_info->p->sid != data->sid) {
+        data->next_rid = data->current_token_info->p->rid;
+        data->next_sid = data->current_token_info->p->sid;
         break;
       }
     }
@@ -13248,7 +13256,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         break;
       }
       /* TODO: Can we update data->pos to reduce needless search? */
-      bt_push(data->bt, data->token_info);
+      bt_push(data->bt, data->current_token_info);
     }
   } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
              data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
@@ -13266,7 +13274,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                            data->pos,
                                            0)) {
           have_phrase = true;
-          bt_push(group->btree, data->token_info);
+          bt_push(group->btree, data->current_token_info);
           /* TODO: Can we update data->pos to reduce needless search? */
         }
       }
@@ -13289,7 +13297,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
   }
 
   for (;;) {
-    data->token_info = data->bt->min;
+    data->current_token_info = data->bt->min;
     token_info *min_token_info = data->bt->min;
     token_info *max_token_info = data->bt->max;
     int32_t min = min_token_info->pos;
@@ -13321,7 +13329,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
         data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
-      interval -= data->token_info->n_tokens_in_phrase;
+      interval -= data->current_token_info->n_tokens_in_phrase;
     }
     P_NOTE("%s record:%u interval:%d min:%d max:%d\n",
            __func__,
@@ -13384,7 +13392,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
           data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
         if (!grn_ii_select_data_find_phrase(ctx,
                                             data,
-                                            data->token_info->phrase_id,
+                                            data->current_token_info->phrase_id,
                                             next_pos,
                                             0)) {
           break;
@@ -13405,7 +13413,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         int32_t next_pos = min + 1;
         if (!grn_ii_select_data_find_phrase(ctx,
                                             data,
-                                            data->token_info->phrase_id,
+                                            data->current_token_info->phrase_id,
                                             next_pos,
                                             0)) {
           break;
@@ -13457,26 +13465,26 @@ grn_ii_select_cursor_next_find(grn_ctx *ctx,
     if (tip == tie) {
       tip = tis;
     }
-    data->token_info = *tip;
+    data->current_token_info = *tip;
     if (!grn_ii_select_skip_pos(ctx, data, data->pos)) {
       break;
     }
-    if (data->token_info->pos == (int32_t)(data->pos)) {
+    if (data->current_token_info->pos == (int32_t)(data->pos)) {
       if (count == 0) {
         data->start_pos = data->pos;
       }
-      score += data->token_info->p->weight +
-               data->token_info->cursors->bins[0]->weight;
+      score += data->current_token_info->p->weight +
+               data->current_token_info->cursors->bins[0]->weight;
       count++;
-      if ((int32_t)(data->token_info->p->pos) > data->end_pos) {
-        data->end_pos = data->token_info->p->pos;
+      if ((int32_t)(data->current_token_info->p->pos) > data->end_pos) {
+        data->end_pos = data->current_token_info->p->pos;
       }
     } else {
-      score = data->token_info->p->weight +
-              data->token_info->cursors->bins[0]->weight;
+      score = data->current_token_info->p->weight +
+              data->current_token_info->cursors->bins[0]->weight;
       count = 1;
-      data->start_pos = data->pos = data->token_info->pos;
-      data->end_pos = data->token_info->p->pos;
+      data->start_pos = data->pos = data->current_token_info->pos;
+      data->end_pos = data->current_token_info->p->pos;
       if (data->n_occurrences == 0 && data->score_func) {
         GRN_BULK_REWIND(&(data->record.terms));
         GRN_BULK_REWIND(&(data->record.term_weights));
@@ -13487,17 +13495,17 @@ grn_ii_select_cursor_next_find(grn_ctx *ctx,
     if (data->n_occurrences == 0 && data->score_func) {
       GRN_RECORD_PUT(ctx,
                      &(data->record.terms),
-                     data->token_info->cursors->bins[0]->id);
+                     data->current_token_info->cursors->bins[0]->id);
       GRN_UINT32_PUT(ctx,
                      &(data->record.term_weights),
-                     data->token_info->p->weight +
-                       data->token_info->cursors->bins[0]->weight);
-      data->record.n_candidates += data->token_info->size;
-      data->record.n_tokens += data->token_info->ntoken;
+                     data->current_token_info->p->weight +
+                       data->current_token_info->cursors->bins[0]->weight);
+      data->record.n_candidates += data->current_token_info->size;
+      data->record.n_tokens += data->current_token_info->ntoken;
     }
     if (count == data->n_token_infos) {
-      if ((int32_t)(data->token_info->p->pos) > data->end_pos) {
-        data->end_pos = data->token_info->p->pos;
+      if ((int32_t)(data->current_token_info->p->pos) > data->end_pos) {
+        data->end_pos = data->current_token_info->p->pos;
       }
       data->total_score += score;
       score = 0;
