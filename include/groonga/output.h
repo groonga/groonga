@@ -242,15 +242,15 @@ grn_ctx_output_table_records(grn_ctx *ctx,
 GRN_API grn_content_type
 grn_ctx_get_output_type(grn_ctx *ctx);
 /**
- * \brief Set the output type for the context when executing commands.
+ * \brief Set the output type for the context when executing a command.
  *
- * The output type determines the format of the result when executing commands
+ * The output type determines the format of the result when executing a command
  * using \ref grn_expr_exec. If you use \ref grn_ctx_send, the new output type
  * isn't used because \ref grn_ctx_send sets the output type internally based on
  * the command.
  *
  * \note Normally, you don't need to call this function unless you need to
- * change the output type explicitly when executing commands using \ref
+ * change the output type explicitly when executing a command using \ref
  * grn_expr_exec.
  *
  * \param ctx The context object.
