@@ -31,11 +31,9 @@ class ReleaseTask
   def define_generate_announce_task
     namespace :release do
       namespace :blog do
-        namespace :announce do
-          desc "Generate release announces from a release note"
-          task :generate do
-            puts "TODO: Generate release announce for #{@package}"
-          end
+        desc "Generate release announce posts from a release note"
+        task :generate do
+          puts "TODO: Generate release announce posts for #{@package}"
         end
       end
     end
