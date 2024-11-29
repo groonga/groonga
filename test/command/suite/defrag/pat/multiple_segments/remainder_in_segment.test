@@ -27,6 +27,7 @@ load --table Users
 #@enable-logging
 #@timeout default
 
+# Delete data in multiple segments so that fragmentation occurs in multiple segments.
 delete Users --filter '_id > 100 && _id < 199'
 delete Users --filter '_id > 699990 && _id < 700000'
 

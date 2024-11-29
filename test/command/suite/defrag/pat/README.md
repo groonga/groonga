@@ -6,12 +6,10 @@ Common: Defragmentation should reduce `total_size`.
 
 A simple defragmentation test to check if the size has been reduced.
 
-* test/command/suite/defrag/pat/delete_only.test
-  * Test reduction with less data
-* test/command/suite/defrag/pat/multiple_segments/delete_only_remainder_in_segment.test
+* test/command/suite/defrag/pat/multiple_segments/remainder_in_segment.test
   * Test with big data using multiple segments
-  * Test using the full area per segment
-* test/command/suite/defrag/pat/multiple_segments/delete_only_use_full_segment.test
+  * Test using the not full area per segment
+* test/command/suite/defrag/pat/multiple_segments/use_full_segment.test
   * Test with big data using multiple segments
   * Test using the full area per segment
 
@@ -36,9 +34,9 @@ after : |Jason-TEST|..|
 
 Test if data is successfully added after defragmentation.
 
-* test/command/suite/defrag/pat/delete_and_load.test
+* test/command/suite/defrag/pat/after_load.test
   * Test reduction with less data
-* test/command/suite/defrag/pat/multiple_segments/delete_and_load.test
+* test/command/suite/defrag/pat/multiple_segments/after_load.test
   * Test with big data using multiple segments
 
 ## `_id` reused
