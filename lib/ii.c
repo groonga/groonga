@@ -4191,7 +4191,7 @@ grn_merging_data_add_dest_chunk(grn_ctx *ctx,
 }
 
 typedef struct {
-  buffer *buffer;
+  buffer *buf;
   const uint8_t *data;
   docinfo id;
   uint16_t next_position;
@@ -4293,7 +4293,7 @@ merger_report_error(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &term);
   merge_dump_source(ctx,
                     data->ii,
-                    buffer_data->buffer,
+                    buffer_data->buf,
                     chunk_data->data_start,
                     GRN_LOG_CRIT);
 }
@@ -4453,7 +4453,7 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
   } else {
     docinfo last_id = {buffer_data->id.rid, buffer_data->id.sid, 0, 0, 0};
     buffer_rec *record =
-      BUFFER_REC_AT(buffer_data->buffer, buffer_data->next_position);
+      BUFFER_REC_AT(buffer_data->buf, buffer_data->next_position);
     buffer_data->data = GRN_NEXT_ADDR(record);
     GRN_B_DEC(buffer_data->id.rid, buffer_data->data);
     if ((data->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
@@ -5109,7 +5109,7 @@ buffer_merge_internal(grn_ctx *ctx,
     data.ii = ii;
     data.term_id = bt->tid;
     data.merging_data = merging_data;
-    buffer_data->buffer = sb;
+    buffer_data->buf = sb;
     chunk_data->data_start = sc;
 
     if (bt->pos_in_buffer == 0) {
@@ -5865,7 +5865,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
 
     data.ii = ii;
     data.term_id = bt->tid;
-    data.source.buffer.buffer = sb;
+    data.source.buffer.buf = sb;
     data.source.buffer.next_position = bt->pos_in_buffer;
     chunk_data->data_start = sc;
     merger_get_next_buffer(ctx, &data);
