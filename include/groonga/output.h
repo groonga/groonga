@@ -254,14 +254,7 @@ grn_ctx_get_output_type(grn_ctx *ctx);
  * grn_expr_exec.
  *
  * \param ctx The context object.
- * \param type The new output type to set. It can be one of the followings:
- *             - \ref GRN_CONTENT_NONE
- *             - \ref GRN_CONTENT_TSV
- *             - \ref GRN_CONTENT_JSON
- *             - \ref GRN_CONTENT_XML
- *             - \ref GRN_CONTENT_MSGPACK
- *             - \ref GRN_CONTENT_GROONGA_COMMAND_LIST
- *             - \ref GRN_CONTENT_APACHE_ARROW
+ * \param type The new output type to set.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  *         For example, \ref GRN_INVALID_ARGUMENT is returned if `type` is
