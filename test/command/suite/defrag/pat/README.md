@@ -50,6 +50,12 @@ Test if data is successfully added after defragmentation.
 * test/command/suite/defrag/pat/multiple_segments/after_load.test
   * Test with big data using multiple segments
 
+## Defragment a few times
+
+Defragmentation should succeed no matter how many times it is run.
+
+* test/command/suite/defrag/pat/repeat_load_defrag_delete.test
+
 ## `_id` reused
 
 Defragmentation should succeed if the key buffer is no longer in `_id` order because `_id` is reused.
