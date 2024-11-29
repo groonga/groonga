@@ -17,6 +17,7 @@ delete Users Jeff
 # immediate:false
 delete Users James
 
+# After defrag, total_size should be reduced.
 object_inspect Users
 defrag
 object_inspect Users
@@ -30,5 +31,8 @@ load --table Users
 {"_key":"Jeff", "immediate":true},
 {"_key":"Joy", "immediate":true}
 ]
+
+# `total_size` should increase.
+object_inspect Users
 
 select Users
