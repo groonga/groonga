@@ -683,7 +683,8 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 
   /*
   if (size) {
-    int m, es = size - 1;
+    int es = size - 1;
+    grn_bit_scan_rev_result m;
     GRN_BIT_SCAN_REV(es, m);
     m++;
     new_histogram[m]++;
@@ -719,7 +720,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     return ctx->rc;
   } else {
     uint32_t *vp;
-    int m, aligned_size;
+    grn_bit_scan_rev_result m;
     if (size > (1 << GRN_II_W_LEAST_CHUNK)) {
       int es = size - 1;
       GRN_BIT_SCAN_REV(es, m);
@@ -727,7 +728,6 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     } else {
       m = GRN_II_W_LEAST_CHUNK;
     }
-    aligned_size = 1 << (m - GRN_II_W_LEAST_CHUNK);
     grn_ii_header_common *header = ii->header.common;
     if (header->ngarbages[m - GRN_II_W_LEAST_CHUNK] > N_GARBAGES_TH) {
       uint32_t *gseg;
@@ -824,7 +824,8 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
 {
   /*
   if (size) {
-    int m, es = size - 1;
+    int es = size - 1;
+    grn_bit_scan_rev_result m;
     GRN_BIT_SCAN_REV(es, m);
     m++;
     free_histogram[m]++;
@@ -832,7 +833,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
   */
   grn_io_win iw, iw_;
   grn_ii_ginfo *ginfo;
-  uint32_t seg, m, *gseg;
+  uint32_t seg, *gseg;
   seg = offset >> GRN_II_N_CHUNK_VARIATION;
   if (size > S_CHUNK) {
     int n = (size + S_CHUNK - 1) >> GRN_II_W_CHUNK;
@@ -841,6 +842,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
     }
     return GRN_SUCCESS;
   }
+  grn_bit_scan_rev_result m;
   if (size > (1 << GRN_II_W_LEAST_CHUNK)) {
     int es = size - 1;
     GRN_BIT_SCAN_REV(es, m);
@@ -2499,7 +2501,7 @@ grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
     for (i = 0; i < UNIT_SIZE; i++) {
       unit[i] = values[i];
       if (unit[i]) {
-        uint32_t w;
+        grn_bit_scan_rev_result w;
         GRN_BIT_SCAN_REV(unit[i], w);
         freq[w + 1]++;
       } else {
@@ -2517,7 +2519,7 @@ grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
     for (i = 0; i < n_values; i++) {
       unit[i] = values[i];
       if (unit[i]) {
-        uint32_t w;
+        grn_bit_scan_rev_result w;
         GRN_BIT_SCAN_REV(unit[i], w);
         freq[w + 1]++;
       } else {
@@ -7877,10 +7879,11 @@ chunk_is_reused(
   grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c, uint32_t offset, uint32_t size)
 {
   if (*c->ppseg != c->buffer_pseg) {
-    uint32_t i, m, gseg;
+    uint32_t i, gseg;
     if (size > S_CHUNK) {
       return 1;
     }
+    grn_bit_scan_rev_result m;
     if (size > (1 << GRN_II_W_LEAST_CHUNK)) {
       int es = size - 1;
       GRN_BIT_SCAN_REV(es, m);
@@ -10715,7 +10718,7 @@ token_candidate_last_node(grn_ctx *ctx,
                           uint32_t candidate,
                           int offset)
 {
-  int i;
+  grn_bit_scan_rev_result i;
   GRN_BIT_SCAN_REV(candidate, i);
   return data->nodes + i + offset;
 }
@@ -10726,7 +10729,7 @@ token_candidate_score(grn_ctx *ctx,
                       uint32_t candidate,
                       int offset)
 {
-  int i, last;
+  grn_bit_scan_rev_result i, last;
   uint64_t score = 0;
   GRN_BIT_SCAN_REV(candidate, last);
   for (i = 0; i <= last; i++) {
@@ -10807,9 +10810,9 @@ static inline grn_rc
 token_candidate_build(grn_ctx *ctx, token_candidate_data *data, int offset)
 {
   grn_rc rc = GRN_END_OF_DATA;
-  int last = 0;
+  grn_bit_scan_rev_result last = 0;
   GRN_BIT_SCAN_REV(data->selected_candidate, last);
-  int i;
+  grn_bit_scan_rev_result i;
   for (i = 1; i <= last; i++) {
     if (data->selected_candidate & (1 << i)) {
       token_info *ti;

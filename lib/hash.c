@@ -34,7 +34,7 @@
 inline static int
 grn_tiny_array_get_block_id(grn_id id)
 {
-  int most_significant_one_bit_offset;
+  grn_bit_scan_rev_result most_significant_one_bit_offset;
   GRN_BIT_SCAN_REV(id, most_significant_one_bit_offset);
   return most_significant_one_bit_offset >> GRN_TINY_ARRAY_FACTOR;
 }

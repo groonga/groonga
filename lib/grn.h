@@ -418,6 +418,7 @@ typedef int grn_cond;
  */
 #  define GRN_ATOMIC_ADD_EX(p, i, r) \
   __asm__ __volatile__ ("lock xaddl %0, %1" : "=r"(r), "+m"(*p) : "0"(i))
+typedef uint32_t grn_bit_scan_rev_result;
 /*
  * GRN_BIT_SCAN_REV() finds the most significant 1 bit of `v'. Then, `r' is set
  * to the index of the found bit. Note that `v' must not be 0.
@@ -434,6 +435,7 @@ typedef int grn_cond;
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   __asm__ __volatile__ ("\n1:\n\tlwarx %0, 0, %1\n\tadd %0, %0, %2\n\tstwcx. %0, 0, %1\n\tbne- 1b\n\tsub %0, %0, %2" : "=&r" (r) : "r" (p), "r" (i) : "cc", "memory")
 /* todo */
+typedef uint32_t grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # elif (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
@@ -441,15 +443,18 @@ typedef int grn_cond;
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   (r = atomic_add_32_nv(p, i) - i)
 /* todo */
+typedef uint32_t grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # elif defined(__ATOMIC_SEQ_CST) /* GCC atomic builtins */
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   (r = __atomic_fetch_add(p, i, __ATOMIC_SEQ_CST))
+typedef uint32_t grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # else /* ATOMIC ADD */
 /* todo */
+typedef uint32_t grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # endif /* ATOMIC ADD */
@@ -500,6 +505,7 @@ typedef int grn_cond;
 /* clang-format on */
 
 /* todo */
+typedef unsigned long grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v, r)                                               \
     do {                                                                       \
       if (!BitScanReverse(&r, v)) {                                            \
@@ -518,6 +524,7 @@ typedef int grn_cond;
 #    define GRN_SET_64BIT(p, v)        (void)atomic_swap_64(p, v)
 #  endif /* ATOMIC ADD */
 /* todo */
+typedef uint32_t grn_bit_scan_rev_result;
 #  define GRN_BIT_SCAN_REV(v, r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v, r) GRN_BIT_SCAN_REV(v, r)
 

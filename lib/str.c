@@ -49,8 +49,8 @@ grn_str_charlen_utf8(grn_ctx *ctx,
     return 0;
   }
   if (*str & 0x80) {
-    int i;
-    int len;
+    grn_bit_scan_rev_result i;
+    grn_bit_scan_rev_result len;
     GRN_BIT_SCAN_REV(~(((uint32_t)*str) << 24), len);
     len = 31 - len;
     if ((unsigned int)(len - 2) >= 3) { /* (len == 1 || len >= 5) */

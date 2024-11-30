@@ -2118,7 +2118,7 @@ grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
 static uint32_t
 grn_ja_compute_chunk_msb(uint32_t element_size)
 {
-  uint32_t chunk_msb;
+  grn_bit_scan_rev_result chunk_msb;
   uint32_t ensure_one_small_chunk_element_size = element_size - 1;
   GRN_BIT_SCAN_REV(ensure_one_small_chunk_element_size, chunk_msb);
   chunk_msb++;
