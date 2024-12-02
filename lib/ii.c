@@ -112,7 +112,7 @@ static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
 static bool grn_ii_dump_index_source_on_merge = false;
 
-extern "C" void
+void
 grn_ii_init_from_env(void)
 {
   {
@@ -259,13 +259,13 @@ grn_ii_init_from_env(void)
   }
 }
 
-extern "C" void
+void
 grn_ii_cursor_set_min_enable_set(bool enable)
 {
   grn_ii_cursor_set_min_enable = enable;
 }
 
-extern "C" bool
+bool
 grn_ii_cursor_set_min_enable_get(void)
 {
   return grn_ii_cursor_set_min_enable;
@@ -369,8 +369,9 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
     if (!pseg) {
       uint32_t i;
       uint32_t pmax = 0;
+      char *used;
       const uint32_t max_segment = ii->seg->header->max_segment;
-      auto used = static_cast<char *>(GRN_CALLOC(max_segment));
+      used = GRN_CALLOC(max_segment);
       if (!used) {
         return max_segment;
       }
@@ -730,13 +731,13 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     }
     grn_ii_header_common *header = ii->header.common;
     if (header->ngarbages[m - GRN_II_W_LEAST_CHUNK] > N_GARBAGES_TH) {
+      grn_ii_ginfo *ginfo;
       uint32_t *gseg;
       grn_io_win iw, iw_;
       iw_.addr = NULL;
       gseg = &header->garbages[m - GRN_II_W_LEAST_CHUNK];
       while (*gseg != GRN_II_PSEG_NOT_ASSIGNED) {
-        auto ginfo = static_cast<grn_ii_ginfo *>(
-          WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR));
+        ginfo = WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
         // GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
         if (!ginfo) {
           if (iw_.addr) {
@@ -853,8 +854,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
   gseg = &ii->header.common->garbages[m - GRN_II_W_LEAST_CHUNK];
   iw_.addr = NULL;
   while (*gseg != GRN_II_PSEG_NOT_ASSIGNED) {
-    ginfo = static_cast<grn_ii_ginfo *>(
-      WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR));
+    ginfo = WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
     // GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
     if (!ginfo) {
       if (iw_.addr) {
@@ -879,8 +879,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
       }
       return rc;
     }
-    ginfo = static_cast<grn_ii_ginfo *>(
-      WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR));
+    ginfo = WIN_MAP(ctx, ii->chunk, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
     /*
     uint32_t i = 0;
     while (HEADER_CHUNK_AT(ii, i)) {
@@ -934,8 +933,7 @@ datavec_reset(
     if (dv[0].data) {
       GRN_FREE(dv[0].data);
     }
-    if (!(dv[0].data = static_cast<uint32_t *>(
-            GRN_MALLOC(totalsize * sizeof(uint32_t))))) {
+    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
       MERR("[ii][data-vector][reset] failed to allocate data: "
            "length:<%u>, "
            "unit-size:<%" GRN_FMT_SIZE ">, "
@@ -961,8 +959,7 @@ datavec_init(
   if (totalsize == 0) {
     memset(dv, 0, sizeof(datavec) * (ii->n_elements + 1));
   } else {
-    if (!(dv[0].data = static_cast<uint32_t *>(
-            GRN_MALLOC(totalsize * sizeof(uint32_t))))) {
+    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
       MERR("[ii][data-vector][init] failed to allocate data: "
            "length:<%u>, "
            "unit-size:<%" GRN_FMT_SIZE ">, "
@@ -2672,7 +2669,7 @@ grn_encv(grn_ctx *ctx,
   if (!(df = dv[0].data_size)) {
     return 0;
   }
-  grn_codec_data codec_data = {};
+  grn_codec_data codec_data = {0};
   codec_data.ii = ii;
   codec_data.term_id = term_id;
   uint32_t use_p_for_enc_flags = 0;
@@ -2787,7 +2784,7 @@ grn_decv(grn_ctx *ctx,
     dv[0].data_size = 0;
     return 0;
   }
-  grn_codec_data codec_data = {};
+  grn_codec_data codec_data = {0};
   codec_data.ii = ii;
   codec_data.term_id = term_id;
   codec_data.offset = 0;
@@ -2805,8 +2802,7 @@ grn_decv(grn_ctx *ctx,
         GRN_FREE(dv[0].data);
         dv[0].data = NULL;
       }
-      if (!(rp =
-              static_cast<uint32_t *>(GRN_MALLOC(size * sizeof(uint32_t))))) {
+      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
@@ -2881,8 +2877,7 @@ grn_decv(grn_ctx *ctx,
         GRN_FREE(dv[0].data);
         dv[0].data = NULL;
       }
-      if (!(rp =
-              static_cast<uint32_t *>(GRN_MALLOC(size * sizeof(uint32_t))))) {
+      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
@@ -2953,13 +2948,12 @@ grn_decv(grn_ctx *ctx,
   return rp - dv[0].data;
 }
 
-extern "C" int
+int
 grn_b_enc(grn_ctx *ctx, uint32_t *data, uint32_t data_size, uint8_t **res)
 {
   uint8_t *rp;
   uint32_t *dp, i;
-  *res = rp =
-    static_cast<uint8_t *>(GRN_MALLOC(data_size * sizeof(uint32_t) * 2));
+  *res = rp = GRN_MALLOC(data_size * sizeof(uint32_t) * 2);
   GRN_B_ENC(data_size, rp);
   for (i = data_size, dp = data; i; i--, dp++) {
     GRN_B_ENC(*dp, rp);
@@ -2967,13 +2961,13 @@ grn_b_enc(grn_ctx *ctx, uint32_t *data, uint32_t data_size, uint8_t **res)
   return rp - *res;
 }
 
-extern "C" int
+int
 grn_b_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t **res)
 {
   uint32_t i, *rp, orig_size;
   uint8_t *dp = data;
   GRN_B_DEC(orig_size, dp);
-  *res = rp = static_cast<uint32_t *>(GRN_MALLOC(orig_size * sizeof(uint32_t)));
+  *res = rp = GRN_MALLOC(orig_size * sizeof(uint32_t));
   for (i = orig_size; i; i--, rp++) {
     GRN_B_DEC(*rp, dp);
   }
@@ -3088,7 +3082,7 @@ buffer_open(
   const uint32_t lseg = grn_ii_pos_lseg(ii, pos);
   const uint32_t pseg = grn_ii_get_buffer_pseg_inline(ii, lseg);
   if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
-    auto p = static_cast<byte *>(grn_io_seg_ref(ctx, ii->seg, pseg));
+    byte *p = grn_io_seg_ref(ctx, ii->seg, pseg);
     if (!p) {
       return GRN_II_PSEG_NOT_ASSIGNED;
     }
@@ -3450,7 +3444,7 @@ array_at(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     return NULL;
   }
-  auto p = static_cast<byte *>(grn_io_seg_ref(ctx, ii->seg, pseg));
+  byte *p = grn_io_seg_ref(ctx, ii->seg, pseg);
   if (!p) {
     return NULL;
   }
@@ -3475,7 +3469,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
       ii->header.common->amax = seg + 1;
     }
   }
-  p = static_cast<byte *>(grn_io_seg_ref(ctx, ii->seg, pseg));
+  p = grn_io_seg_ref(ctx, ii->seg, pseg);
   if (!p) {
     return NULL;
   }
@@ -3491,11 +3485,11 @@ array_unref(grn_ctx *ctx, grn_ii *ii, uint32_t id)
 
 /* updspec */
 
-extern "C" grn_ii_updspec *
+grn_ii_updspec *
 grn_ii_updspec_open(grn_ctx *ctx, uint32_t rid, uint32_t sid)
 {
-  auto u = static_cast<grn_ii_updspec *>(GRN_CALLOC(sizeof(grn_ii_updspec)));
-  if (!u) {
+  grn_ii_updspec *u;
+  if (!(u = GRN_CALLOC(sizeof(grn_ii_updspec)))) {
     return NULL;
   }
   u->rid = rid;
@@ -3509,15 +3503,15 @@ grn_ii_updspec_open(grn_ctx *ctx, uint32_t rid, uint32_t sid)
   return u;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_updspec_add(grn_ctx *ctx, grn_ii_updspec *u, int pos, int32_t weight)
 {
+  struct _grn_ii_pos *p;
   u->atf++;
   if (u->tf >= GRN_II_MAX_TF) {
     return GRN_SUCCESS;
   }
-  auto p = static_cast<_grn_ii_pos *>(GRN_CALLOC(sizeof(struct _grn_ii_pos)));
-  if (!p) {
+  if (!(p = GRN_CALLOC(sizeof(struct _grn_ii_pos)))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   u->weight += weight;
@@ -3533,7 +3527,7 @@ grn_ii_updspec_add(grn_ctx *ctx, grn_ii_updspec *u, int pos, int32_t weight)
   return GRN_SUCCESS;
 }
 
-extern "C" int
+int
 grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b)
 {
   struct _grn_ii_pos *pa, *pb;
@@ -3563,7 +3557,7 @@ grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b)
   return 0;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_updspec_close(grn_ctx *ctx, grn_ii_updspec *u)
 {
   struct _grn_ii_pos *p = u->pos, *q;
@@ -3580,6 +3574,7 @@ static inline uint8_t *
 encode_rec(
   grn_ctx *ctx, grn_ii *ii, grn_ii_updspec *u, unsigned int *size, int deletep)
 {
+  uint8_t *br, *p;
   struct _grn_ii_pos *pp;
   uint32_t lpos, tf, weight;
   if (deletep) {
@@ -3589,11 +3584,10 @@ encode_rec(
     tf = u->tf;
     weight = u->weight;
   }
-  auto br = static_cast<uint8_t *>(GRN_MALLOC((tf + 4) * 5));
-  if (!br) {
+  if (!(br = GRN_MALLOC((tf + 4) * 5))) {
     return NULL;
   }
-  auto p = br;
+  p = br;
   GRN_B_ENC(u->rid, p);
   if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_ENC(u->sid, p);
@@ -3674,7 +3668,7 @@ typedef struct {
   uint32_t flags;
 } docinfo;
 
-static docinfo null_docinfo = {};
+static docinfo null_docinfo = {0};
 
 typedef struct {
   uint32_t segno;
@@ -3948,13 +3942,14 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
       }
       {
         grn_io_win iw;
-        auto sub_chunk = static_cast<uint8_t *>(WIN_MAP(ctx,
-                                                        data->ii->chunk,
-                                                        &iw,
-                                                        info.segno,
-                                                        0,
-                                                        info.size,
-                                                        GRN_IO_RDONLY));
+        uint8_t *sub_chunk;
+        sub_chunk = WIN_MAP(ctx,
+                            data->ii->chunk,
+                            &iw,
+                            info.segno,
+                            0,
+                            info.size,
+                            GRN_IO_RDONLY);
         if (!sub_chunk) {
           GRN_LOG(ctx,
                   data->log_level,
@@ -4613,14 +4608,13 @@ static grn_rc
 chunk_flush(
   grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t encsize)
 {
+  uint8_t *dc;
   uint32_t dcn;
   grn_io_win dw;
   if (encsize) {
     chunk_new(ctx, ii, &dcn, encsize);
     if (ctx->rc == GRN_SUCCESS) {
-      auto dc = static_cast<uint8_t *>(
-        WIN_MAP(ctx, ii->chunk, &dw, dcn, 0, encsize, GRN_IO_WRONLY));
-      if (dc) {
+      if ((dc = WIN_MAP(ctx, ii->chunk, &dw, dcn, 0, encsize, GRN_IO_WRONLY))) {
         grn_memcpy(dc, enc, encsize);
         grn_io_win_unmap(ctx, &dw);
         cinfo->segno = dcn;
@@ -4662,8 +4656,8 @@ chunk_merge(grn_ctx *ctx,
   uint32_t segno = cinfo->segno;
   uint32_t size = cinfo->size;
   uint32_t ndf = 0;
-  auto scp = static_cast<const uint8_t *>(
-    WIN_MAP(ctx, ii->chunk, &sw, segno, 0, size, GRN_IO_RDONLY));
+  const uint8_t *scp =
+    WIN_MAP(ctx, ii->chunk, &sw, segno, 0, size, GRN_IO_RDONLY);
   datavec rdv[MAX_N_ELEMENTS + 1];
   size_t bufsize = S_SEGMENT * ii->n_elements;
 
@@ -4848,7 +4842,7 @@ chunk_merge(grn_ctx *ctx,
     if (encsize_estimated == 0) {
       chunk_flush(ctx, ii, cinfo, NULL, 0);
     } else {
-      auto enc = static_cast<uint8_t *>(GRN_MALLOC(encsize_estimated));
+      uint8_t *enc = GRN_MALLOC(encsize_estimated);
       if (!enc) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
@@ -4999,7 +4993,7 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
   while (required_size > (new_dc_size - dc_used_size)) {
     new_dc_size *= 2;
   }
-  auto new_dc = static_cast<uint8_t *>(GRN_REALLOC(*dc, new_dc_size));
+  uint8_t *new_dc = GRN_REALLOC(*dc, new_dc_size);
   if (new_dc) {
     GRN_DEFINE_NAME(ii);
     GRN_LOG(ctx,
@@ -5045,6 +5039,7 @@ buffer_merge_internal(grn_ctx *ctx,
                       grn_merging_data *merging_data)
 {
   buffer_term *bt;
+  uint8_t *dc = NULL;
   uint8_t *dcp = NULL;
   datavec dv[MAX_N_ELEMENTS + 1];
   datavec rdv[MAX_N_ELEMENTS + 1];
@@ -5081,7 +5076,7 @@ buffer_merge_internal(grn_ctx *ctx,
   }
 
   size_t dc_size = (sb->header.chunk_size + S_SEGMENT) * 2;
-  auto dc = static_cast<uint8_t *>(GRN_MALLOC(dc_size));
+  dc = GRN_MALLOC(dc_size);
   if (!dc) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
@@ -5099,7 +5094,7 @@ buffer_merge_internal(grn_ctx *ctx,
   dcp = dc;
 
   for (bt = db->terms; n; n--, bt++) {
-    merger_data data = {};
+    merger_data data = {0};
     merger_buffer_data *buffer_data = &(data.source.buffer);
     merger_chunk_data *chunk_data = &(data.source.chunk);
     int32_t balance = 0;
@@ -5615,7 +5610,7 @@ static inline grn_rc
 buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw;
-  buffer *sb;
+  buffer *sb, *db = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
   if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_DEFINE_NAME(ii);
@@ -5666,17 +5661,17 @@ buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
     return ctx->rc;
   }
   {
-    auto db = static_cast<buffer *>(grn_io_seg_ref(ctx, ii->seg, ds));
+    db = grn_io_seg_ref(ctx, ii->seg, ds);
     if (db) {
       const uint8_t *sc = NULL;
       if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
-          (sc = static_cast<const uint8_t *>(WIN_MAP(ctx,
-                                                     ii->chunk,
-                                                     &sw,
-                                                     scn,
-                                                     0,
-                                                     sb->header.chunk_size,
-                                                     GRN_IO_RDONLY)))) {
+          (sc = WIN_MAP(ctx,
+                        ii->chunk,
+                        &sw,
+                        scn,
+                        0,
+                        sb->header.chunk_size,
+                        GRN_IO_RDONLY))) {
         uint16_t n = sb->header.nterms;
         memset(db, 0, S_SEGMENT);
         grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
@@ -5785,7 +5780,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   return rc;
 }
 
-extern "C" void
+void
 grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
 {
   grn_io_win sw;
@@ -5821,13 +5816,13 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
     GRN_OUTPUT_CSTR("void chunk size");
     GRN_OUTPUT_INT64(sb->header.chunk_size);
   } else {
-    if ((sc = static_cast<uint8_t *>(WIN_MAP(ctx,
-                                             ii->chunk,
-                                             &sw,
-                                             scn,
-                                             0,
-                                             sb->header.chunk_size,
-                                             GRN_IO_RDONLY)))) {
+    if ((sc = WIN_MAP(ctx,
+                      ii->chunk,
+                      &sw,
+                      scn,
+                      0,
+                      sb->header.chunk_size,
+                      GRN_IO_RDONLY))) {
       GRN_OUTPUT_CSTR("chunk size");
       GRN_OUTPUT_INT64(sb->header.chunk_size);
     } else {
@@ -5846,7 +5841,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
     uint32_t nchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
-    merger_data data = {};
+    merger_data data = {0};
     merger_chunk_data *chunk_data = &(data.source.chunk);
 
     if (!bt->tid && !bt->pos_in_buffer && !bt->size_in_buffer) {
@@ -6017,8 +6012,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
   uint16_t i, n, *nt;
   buffer_term *bt;
   uint32_t s, th = (sb->header.chunk_size + sb->header.nterms) >> 1;
-  auto ts =
-    static_cast<term_sort *>(GRN_MALLOC(sb->header.nterms * sizeof(term_sort)));
+  term_sort *ts = GRN_MALLOC(sb->header.nterms * sizeof(term_sort));
   if (!ts) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -6119,19 +6113,19 @@ buffer_split_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
          grn_ii_pos_pack(ii, lseg, 0),
          ii->seg->header->max_segment);
   } else {
-    db0 = static_cast<buffer *>(grn_io_seg_ref(ctx, ii->seg, dps0));
+    db0 = grn_io_seg_ref(ctx, ii->seg, dps0);
     if (db0) {
-      db1 = static_cast<buffer *>(grn_io_seg_ref(ctx, ii->seg, dps1));
+      db1 = grn_io_seg_ref(ctx, ii->seg, dps1);
       if (db1) {
         const uint8_t *sc = NULL;
         if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
-            (sc = static_cast<const uint8_t *>(WIN_MAP(ctx,
-                                                       ii->chunk,
-                                                       &sw,
-                                                       scn,
-                                                       0,
-                                                       sb->header.chunk_size,
-                                                       GRN_IO_RDONLY)))) {
+            (sc = WIN_MAP(ctx,
+                          ii->chunk,
+                          &sw,
+                          scn,
+                          0,
+                          sb->header.chunk_size,
+                          GRN_IO_RDONLY))) {
           term_split(ctx, ii->lexicon, sb, db0, db1);
           uint8_t *dc0 = NULL;
           grn_merging_data merging_data;
@@ -6721,7 +6715,7 @@ _grn_ii_create(
     grn_io_remove(ctx, path);
     return NULL;
   }
-  header = static_cast<grn_ii_header_common *>(grn_io_header(seg));
+  header = grn_io_header(seg);
   grn_io_set_type(seg, GRN_COLUMN_INDEX);
   for (i = 0; i < GRN_II_MAX_LSEG; i++) {
     header->ainfo[i] = GRN_II_PSEG_NOT_ASSIGNED;
@@ -6759,11 +6753,11 @@ _grn_ii_create(
   return ii;
 }
 
-extern "C" grn_ii *
+grn_ii *
 grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
 {
-  auto ii = static_cast<grn_ii *>(GRN_CALLOC(sizeof(grn_ii)));
-  if (!ii) {
+  grn_ii *ii = NULL;
+  if (!(ii = GRN_CALLOC(sizeof(grn_ii)))) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
@@ -6774,7 +6768,7 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   return ii;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_remove(grn_ctx *ctx, const char *path)
 {
   grn_rc rc;
@@ -6795,7 +6789,7 @@ exit:
   return rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
@@ -6836,10 +6830,11 @@ exit:
   return rc;
 }
 
-extern "C" grn_ii *
+grn_ii *
 grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
 {
   grn_io *seg, *chunk;
+  grn_ii *ii;
   char path2[PATH_MAX];
   grn_ii_header_common *header;
   uint32_t io_type;
@@ -6869,7 +6864,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     grn_io_close(ctx, seg);
     return NULL;
   }
-  header = static_cast<grn_ii_header_common *>(grn_io_header(seg));
+  header = grn_io_header(seg);
   io_type = grn_io_get_type(seg);
   if (io_type != GRN_COLUMN_INDEX) {
     ERR(GRN_INVALID_FORMAT,
@@ -6880,8 +6875,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     grn_io_close(ctx, chunk);
     return NULL;
   }
-  auto ii = static_cast<grn_ii *>(GRN_CALLOC(sizeof(grn_ii)));
-  if (!ii) {
+  if (!(ii = GRN_CALLOC(sizeof(grn_ii)))) {
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;
@@ -6907,7 +6901,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   return ii;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_close(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -6945,7 +6939,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   return rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size)
 {
   grn_rc rc;
@@ -6965,7 +6959,7 @@ grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size)
   return GRN_SUCCESS;
 }
 
-extern "C" grn_column_flags
+grn_column_flags
 grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii)
 {
   if (!ii) {
@@ -6975,7 +6969,7 @@ grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii)
   return ii->header.common->flags;
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii)
 {
   if (!ii) {
@@ -6985,7 +6979,7 @@ grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii)
   return ii->n_elements;
 }
 
-extern "C" grn_obj *
+grn_obj *
 grn_ii_get_lexicon(grn_ctx *ctx, grn_ii *ii)
 {
   if (!ii) {
@@ -6995,7 +6989,7 @@ grn_ii_get_lexicon(grn_ctx *ctx, grn_ii *ii)
   return ii->lexicon;
 }
 
-extern "C" void
+void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {
   int64_t threshold = ii->chunk->max_map_seg / 2;
@@ -7011,7 +7005,7 @@ grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
   }
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_flush(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
@@ -7028,7 +7022,7 @@ grn_ii_flush(grn_ctx *ctx, grn_ii *ii)
   return rc;
 }
 
-extern "C" size_t
+size_t
 grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii)
 {
   size_t usage;
@@ -7039,7 +7033,7 @@ grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii)
   return usage;
 }
 
-extern "C" void
+void
 grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible)
 {
   if (is_visible) {
@@ -7528,7 +7522,7 @@ exit:
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_update_one(
   grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
@@ -7769,7 +7763,7 @@ exit:
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_delete_one(
   grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
@@ -7894,8 +7888,8 @@ chunk_is_reused(
     gseg = ii->header.common->garbages[m - GRN_II_W_LEAST_CHUNK];
     while (gseg != GRN_II_PSEG_NOT_ASSIGNED) {
       grn_io_win iw;
-      auto ginfo = static_cast<grn_ii_ginfo *>(
-        WIN_MAP(ctx, ii->chunk, &iw, gseg, 0, S_GARBAGE, GRN_IO_RDWR));
+      grn_ii_ginfo *ginfo =
+        WIN_MAP(ctx, ii->chunk, &iw, gseg, 0, S_GARBAGE, GRN_IO_RDWR);
       if (!ginfo) {
         break;
       }
@@ -7920,7 +7914,7 @@ chunk_is_reused(
      (((c1)->post->sid == (c2)->post->sid) &&                                  \
       ((c1)->post->pos > (c2)->post->pos)))))
 
-extern "C" grn_ii_cursor *
+grn_ii_cursor *
 grn_ii_cursor_open(grn_ctx *ctx,
                    grn_ii *ii,
                    grn_id tid,
@@ -7939,8 +7933,7 @@ grn_ii_cursor_open(grn_ctx *ctx,
     if (!(pos = a[0])) {
       goto exit;
     }
-    c = static_cast<grn_ii_cursor *>(GRN_CALLOC(sizeof(grn_ii_cursor)));
-    if (!c) {
+    if (!(c = GRN_CALLOC(sizeof(grn_ii_cursor)))) {
       goto exit;
     }
     c->ctx = ctx;
@@ -7982,13 +7975,13 @@ grn_ii_cursor_open(grn_ctx *ctx,
       c->ppseg = grn_ii_get_buffer_pseg_address_inline(ii, lseg);
       if (bt->size_in_chunk &&
           (chunk = c->buf->header.chunk) != GRN_II_PSEG_NOT_ASSIGNED) {
-        if (!(c->cp = static_cast<uint8_t *>(WIN_MAP(ctx,
-                                                     ii->chunk,
-                                                     &c->iw,
-                                                     chunk,
-                                                     bt->pos_in_chunk,
-                                                     bt->size_in_chunk,
-                                                     GRN_IO_RDONLY)))) {
+        if (!(c->cp = WIN_MAP(ctx,
+                              ii->chunk,
+                              &c->iw,
+                              chunk,
+                              bt->pos_in_chunk,
+                              bt->size_in_chunk,
+                              GRN_IO_RDONLY))) {
           buffer_close(ctx, ii, c->buffer_pseg);
           GRN_FREE(c);
           c = NULL;
@@ -8043,7 +8036,7 @@ exit:
   return c;
 }
 
-extern "C" grn_ii *
+grn_ii *
 grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor)
 {
   return cursor->ii;
@@ -8065,7 +8058,7 @@ grn_ii_cursor_resolve_scale(grn_ctx *ctx,
   }
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_cursor_set_scale(grn_ctx *ctx, grn_ii_cursor *cursor, float scale)
 {
   cursor->scale = scale;
@@ -8077,7 +8070,7 @@ grn_ii_cursor_set_scale(grn_ctx *ctx, grn_ii_cursor *cursor, float scale)
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_cursor_set_scales(grn_ctx *ctx,
                          grn_ii_cursor *cursor,
                          float *scales,
@@ -8316,14 +8309,13 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                 uint8_t *cp;
                 grn_io_win iw;
                 uint32_t size = c->cinfo[c->curr_chunk].size;
-                if (size && (cp = static_cast<uint8_t *>(
-                               WIN_MAP(ctx,
-                                       c->ii->chunk,
-                                       &iw,
-                                       c->cinfo[c->curr_chunk].segno,
-                                       0,
-                                       size,
-                                       GRN_IO_RDONLY)))) {
+                if (size && (cp = WIN_MAP(ctx,
+                                          c->ii->chunk,
+                                          &iw,
+                                          c->cinfo[c->curr_chunk].segno,
+                                          0,
+                                          size,
+                                          GRN_IO_RDONLY))) {
                   int decoded_size;
                   decoded_size = grn_decv(ctx, c->ii, c->id, cp, size, c->rdv);
                   grn_io_win_unmap(ctx, &iw);
@@ -8604,14 +8596,14 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
   return c->post;
 }
 
-extern "C" grn_posting *
+grn_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
   grn_ii_cursor_next_options options = {/* .include_garbage = */ false};
   return grn_ii_cursor_next_internal(ctx, c, &options);
 }
 
-extern "C" grn_posting *
+grn_posting *
 grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
 {
   uint32_t gap;
@@ -8674,7 +8666,7 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
   return c->post;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c)
 {
   if (!c) {
@@ -8694,7 +8686,7 @@ grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c)
   return GRN_SUCCESS;
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 {
   uint32_t res, pos, *a;
@@ -8729,7 +8721,7 @@ grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
  * have deleted tokens. One record may use multiple buffers. (To be
  * confirmed.) So the estimated size may not match the number of
  * records. */
-extern "C" uint32_t
+uint32_t
 grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 {
   uint32_t res, pos, *a;
@@ -8759,7 +8751,7 @@ grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
   return res;
 }
 
-extern "C" int
+int
 grn_ii_entry_info(grn_ctx *ctx,
                   grn_ii *ii,
                   grn_id tid,
@@ -8808,31 +8800,31 @@ grn_ii_entry_info(grn_ctx *ctx,
   return 4;
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_get_array_pseg(grn_ii *ii, uint32_t lseg)
 {
   return grn_ii_get_array_pseg_inline(ii, lseg);
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_get_buffer_pseg(grn_ii *ii, uint32_t lseg)
 {
   return grn_ii_get_buffer_pseg_inline(ii, lseg);
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_n_logical_segments(grn_ii *ii)
 {
   return grn_ii_n_logical_segments_inline(ii);
 }
 
-extern "C" const char *
+const char *
 grn_ii_path(grn_ii *ii)
 {
   return grn_io_path(ii->seg);
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_max_section(grn_ii *ii)
 {
   return ii->header.common->smax;
@@ -8848,7 +8840,7 @@ typedef struct {
   grn_ii_cursor **bins;
 } cursor_heap;
 
-extern "C" void
+void
 grn_inspect_cursor_heap(grn_ctx *ctx, grn_obj *buffer, cursor_heap *heap)
 {
   grn_text_printf(ctx,
@@ -8869,12 +8861,11 @@ grn_inspect_cursor_heap(grn_ctx *ctx, grn_obj *buffer, cursor_heap *heap)
 static inline cursor_heap *
 cursor_heap_open(grn_ctx *ctx, int max)
 {
-  auto h = static_cast<cursor_heap *>(GRN_CALLOC(sizeof(cursor_heap)));
+  cursor_heap *h = GRN_CALLOC(sizeof(cursor_heap));
   if (!h) {
     return NULL;
   }
-  h->bins =
-    static_cast<grn_ii_cursor **>(GRN_MALLOC(sizeof(grn_ii_cursor *) * max));
+  h->bins = GRN_MALLOC(sizeof(grn_ii_cursor *) * max);
   if (!h->bins) {
     GRN_FREE(h);
     return NULL;
@@ -8897,8 +8888,7 @@ cursor_heap_push(grn_ctx *ctx,
   grn_ii_cursor *c, *c2;
   if (h->n_entries >= h->n_bins) {
     int max = h->n_bins * 2;
-    auto bins = static_cast<grn_ii_cursor **>(
-      GRN_REALLOC(h->bins, sizeof(grn_ii_cursor *) * max));
+    grn_ii_cursor **bins = GRN_REALLOC(h->bins, sizeof(grn_ii_cursor *) * max);
     GRN_LOG(ctx, GRN_LOG_DEBUG, "expanded cursor_heap to %d,%p", max, bins);
     if (!bins) {
       return GRN_NO_MEMORY_AVAILABLE;
@@ -9855,7 +9845,7 @@ exit:
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_column_update(grn_ctx *ctx,
                      grn_ii *ii,
                      grn_id rid,
@@ -9940,7 +9930,7 @@ typedef struct {
   bool must_last;
 } token_info;
 
-extern "C" void
+void
 grn_inspect_token_info(grn_ctx *ctx, grn_obj *buffer, token_info *info)
 {
   grn_text_printf(ctx, buffer, "#<token_info:\n");
@@ -9981,7 +9971,7 @@ grn_inspect_token_info(grn_ctx *ctx, grn_obj *buffer, token_info *info)
   grn_text_printf(ctx, buffer, ">");
 }
 
-extern "C" void
+void
 grn_p_token_info(grn_ctx *ctx, token_info *info)
 {
   grn_obj inspected;
@@ -9991,7 +9981,7 @@ grn_p_token_info(grn_ctx *ctx, token_info *info)
   GRN_OBJ_FIN(ctx, &inspected);
 }
 
-extern "C" void
+void
 grn_inspect_token_infos(grn_ctx *ctx,
                         grn_obj *buffer,
                         token_info **infos,
@@ -10007,7 +9997,7 @@ grn_inspect_token_infos(grn_ctx *ctx,
   }
 }
 
-extern "C" void
+void
 grn_p_token_infos(grn_ctx *ctx, token_info **infos, uint32_t n)
 {
   grn_obj inspected;
@@ -10246,12 +10236,12 @@ token_info_open(grn_ctx *ctx,
 {
   uint32_t s = 0;
   grn_hash *h;
+  token_info *ti;
   grn_id *tp;
   if (tid == GRN_ID_NIL && !key) {
     return NULL;
   }
-  auto ti = static_cast<token_info *>(GRN_CALLOC(sizeof(token_info)));
-  if (!ti) {
+  if (!(ti = GRN_CALLOC(sizeof(token_info)))) {
     return NULL;
   }
   ti->cursors = NULL;
@@ -10585,8 +10575,8 @@ token_candidate_init(grn_ctx *ctx,
 {
   data->select_data = select_data;
   size_t size = TOKEN_CANDIDATE_NODE_SIZE;
-  data->nodes = static_cast<token_candidate_node *>(
-    GRN_MALLOC(TOKEN_CANDIDATE_NODE_SIZE * sizeof(token_candidate_node)));
+  data->nodes =
+    GRN_MALLOC(TOKEN_CANDIDATE_NODE_SIZE * sizeof(token_candidate_node));
   if (!data->nodes) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -10625,10 +10615,10 @@ token_candidate_init(grn_ctx *ctx,
 
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     if ((size_t)(curr - top) >= size) {
-      auto nodes = static_cast<token_candidate_node *>(
+      token_candidate_node *nodes =
         GRN_REALLOC(data->nodes,
                     (curr - top + TOKEN_CANDIDATE_NODE_SIZE) *
-                      sizeof(token_candidate_node)));
+                      sizeof(token_candidate_node));
       if (!nodes) {
         GRN_FREE(data->nodes);
         data->nodes = NULL;
@@ -10665,8 +10655,7 @@ token_candidate_queue_init(grn_ctx *ctx, token_candidate_queue *q)
   q->rear = 0;
   q->size = TOKEN_CANDIDATE_QUEUE_SIZE;
 
-  q->candidates = static_cast<uint32_t *>(
-    GRN_MALLOC(TOKEN_CANDIDATE_QUEUE_SIZE * sizeof(uint32_t)));
+  q->candidates = GRN_MALLOC(TOKEN_CANDIDATE_QUEUE_SIZE * sizeof(uint32_t));
   if (!q->candidates) {
     q->size = 0;
     return GRN_NO_MEMORY_AVAILABLE;
@@ -10680,9 +10669,9 @@ token_candidate_enqueue(grn_ctx *ctx,
                         uint32_t candidate)
 {
   if (q->rear >= q->size) {
-    if (!(q->candidates = static_cast<uint32_t *>(GRN_REALLOC(
-            q->candidates,
-            (q->rear + TOKEN_CANDIDATE_QUEUE_SIZE) * sizeof(uint32_t))))) {
+    if (!(q->candidates = GRN_REALLOC(q->candidates,
+                                      (q->rear + TOKEN_CANDIDATE_QUEUE_SIZE) *
+                                        sizeof(uint32_t)))) {
       q->size = 0;
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -10757,13 +10746,13 @@ token_candidate_select(grn_ctx *ctx,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  uint32_t candidate;
-  uint64_t max_score = 0;
-  uint32_t min_n_nodes = 0;
   rc = token_candidate_enqueue(ctx, &q, 1);
   if (rc != GRN_SUCCESS) {
     goto exit;
   }
+  uint32_t candidate;
+  uint64_t max_score = 0;
+  uint32_t min_n_nodes = 0;
   while (token_candidate_dequeue(ctx, &q, &candidate) != GRN_END_OF_DATA) {
     token_candidate_node *candidate_last_node =
       token_candidate_last_node(ctx, data, candidate, offset);
@@ -10822,21 +10811,20 @@ token_candidate_build(grn_ctx *ctx, token_candidate_data *data, int offset)
         ti = token_info_open(ctx,
                              data->select_data,
                              node->tid,
-                             reinterpret_cast<const char *>(node->source_token),
+                             node->source_token,
                              node->source_token_size,
                              node->pos,
                              EX_NONE);
         break;
       case GRN_TOKEN_CURSOR_DONE:
         if (node->tid != GRN_ID_NIL) {
-          ti =
-            token_info_open(ctx,
-                            data->select_data,
-                            node->tid,
-                            reinterpret_cast<const char *>(node->source_token),
-                            node->source_token_size,
-                            node->pos,
-                            node->ef & EX_PREFIX);
+          ti = token_info_open(ctx,
+                               data->select_data,
+                               node->tid,
+                               (const char *)(node->source_token),
+                               node->source_token_size,
+                               node->pos,
+                               node->ef & EX_PREFIX);
           break;
         } /* else fallthru */
       default:
@@ -10954,7 +10942,7 @@ token_info_build_phrase(grn_ctx *ctx,
       goto exit;
     }
     token = grn_token_cursor_get_token(ctx, token_cursor);
-    const unsigned char *key = NULL;
+    const char *key = NULL;
     uint32_t size = 0;
     if (tid == GRN_ID_NIL) {
       key = token_cursor->orig;
@@ -10974,20 +10962,14 @@ token_info_build_phrase(grn_ctx *ctx,
       ti = token_info_open(ctx,
                            data,
                            tid,
-                           reinterpret_cast<const char *>(key),
+                           key,
                            size,
                            token_cursor->pos,
                            ef & EX_SUFFIX);
       break;
     case GRN_TOKEN_CURSOR_DONE:
     case GRN_TOKEN_CURSOR_NOT_FOUND:
-      ti = token_info_open(ctx,
-                           data,
-                           tid,
-                           reinterpret_cast<const char *>(key),
-                           size,
-                           0,
-                           ef);
+      ti = token_info_open(ctx, data, tid, key, size, 0, ef);
       break;
     case GRN_TOKEN_CURSOR_DONE_SKIP:
       data->only_skip_token = true;
@@ -11009,7 +10991,7 @@ token_info_build_phrase(grn_ctx *ctx,
       grn_token *token;
       tid = grn_token_cursor_next(ctx, token_cursor);
       token = grn_token_cursor_get_token(ctx, token_cursor);
-      const unsigned char *key = NULL;
+      const char *key = NULL;
       uint32_t size = 0;
       if (tid == GRN_ID_NIL) {
         key = token_cursor->curr;
@@ -11031,7 +11013,7 @@ token_info_build_phrase(grn_ctx *ctx,
         ti = token_info_open(ctx,
                              data,
                              tid,
-                             reinterpret_cast<const char *>(key),
+                             key,
                              size,
                              token_cursor->pos,
                              EX_NONE);
@@ -11040,7 +11022,7 @@ token_info_build_phrase(grn_ctx *ctx,
         ti = token_info_open(ctx,
                              data,
                              tid,
-                             reinterpret_cast<const char *>(key),
+                             key,
                              size,
                              token_cursor->pos,
                              ef & EX_PREFIX);
@@ -11121,7 +11103,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
   data->token_infos[data->n_token_infos++] = ti;
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     tid = grn_token_cursor_next(ctx, token_cursor);
-    const unsigned char *key = NULL;
+    const char *key = NULL;
     uint32_t key_size = 0;
     if (tid == GRN_ID_NIL) {
       key = token_cursor->curr;
@@ -11141,7 +11123,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
       ti = token_info_open(ctx,
                            data,
                            tid,
-                           reinterpret_cast<const char *>(key),
+                           key,
                            key_size,
                            token_cursor->pos,
                            EX_FUZZY);
@@ -11544,11 +11526,10 @@ bt_zap(btr *bt)
 static inline btr *
 bt_open(grn_ctx *ctx, int size)
 {
-  auto bt = static_cast<btr *>(GRN_CALLOC(sizeof(btr)));
+  btr *bt = GRN_CALLOC(sizeof(btr));
   if (bt) {
     bt_zap(bt);
-    bt->nodes = static_cast<btr_node *>(GRN_MALLOC(sizeof(btr_node) * size));
-    if (!bt->nodes) {
+    if (!(bt->nodes = GRN_MALLOC(sizeof(btr_node) * size))) {
       GRN_FREE(bt);
       bt = NULL;
     }
@@ -11761,7 +11742,7 @@ grn_rset_add_record(grn_ctx *ctx,
  * example, we can stop min ID search when we find an ID that is less
  * than grn_table_size(ctx, grn_ctx_at(ctx,
  * result_set->header.domain))/100. */
-extern "C" grn_id
+grn_id
 grn_result_set_get_min_id(grn_ctx *ctx, grn_hash *result_set)
 {
   GRN_API_ENTER;
@@ -11785,7 +11766,7 @@ grn_result_set_get_min_id(grn_ctx *ctx, grn_hash *result_set)
   GRN_API_RETURN(min_id);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_record(grn_ctx *ctx,
                           grn_hash *result_set,
                           grn_posting *posting,
@@ -11800,7 +11781,7 @@ grn_result_set_add_record(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_table(grn_ctx *ctx,
                          grn_hash *result_set,
                          grn_obj *table,
@@ -11818,7 +11799,7 @@ grn_result_set_add_table(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_table_cursor(grn_ctx *ctx,
                                 grn_hash *result_set,
                                 grn_table_cursor *cursor,
@@ -11850,7 +11831,7 @@ grn_result_set_add_table_cursor(grn_ctx *ctx,
   if (op == GRN_OP_OR || op == GRN_OP_AND) {
     rc = grn_hash_add_table_cursor(ctx, result_set, cursor, score, op);
   } else {
-    grn_rset_posinfo posinfo = {};
+    grn_rset_posinfo posinfo = {0};
     while ((posinfo.rid = grn_table_cursor_next(ctx, cursor))) {
       grn_rset_add_record(ctx, result_set, &posinfo, score, op);
       if (ctx->rc != GRN_SUCCESS) {
@@ -11862,7 +11843,7 @@ grn_result_set_add_table_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_index_cursor(grn_ctx *ctx,
                                 grn_hash *result_set,
                                 grn_obj *cursor,
@@ -11922,7 +11903,7 @@ grn_result_set_add_index_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_ii_cursor(grn_ctx *ctx,
                              grn_hash *result_set,
                              grn_ii_cursor *cursor,
@@ -11981,7 +11962,7 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_add_ii_select_cursor(grn_ctx *ctx,
                                     grn_hash *result_set,
                                     grn_ii_select_cursor *cursor,
@@ -12030,7 +12011,7 @@ grn_result_set_add_ii_select_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_result_set_copy(grn_ctx *ctx,
                     grn_hash *result_set,
                     grn_hash *output_result_set)
@@ -12057,8 +12038,8 @@ grn_result_set_copy(grn_ctx *ctx,
         break;
       }
     }
-    grn_rset_recinfo *ri = static_cast<grn_rset_recinfo *>(value);
-    grn_rset_recinfo *output_ri = static_cast<grn_rset_recinfo *>(output_value);
+    grn_rset_recinfo *ri = value;
+    grn_rset_recinfo *output_ri = output_value;
     grn_memcpy(output_ri, ri, (output_result_set)->value_size);
     output_ri->score = 0;
   }
@@ -12077,14 +12058,14 @@ res_add(grn_ctx *ctx,
   grn_rset_add_record(ctx, s, pi, score, op);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos, grn_hash *s, grn_operator op)
 {
   grn_rset_add_record(ctx, s, (grn_rset_posinfo *)(pos), pos->weight, op);
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_posting_add_float(grn_ctx *ctx,
                          grn_posting *pos,
                          grn_hash *s,
@@ -12225,8 +12206,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
     return false;
   }
 
-  data->token_infos = static_cast<token_info **>(
-    GRN_MALLOC(sizeof(token_info *) * data->query_len * 2));
+  data->token_infos = GRN_MALLOC(sizeof(token_info *) * data->query_len * 2);
   if (!data->token_infos) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -12264,8 +12244,8 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
 
   if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
       data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
-    data->phrase_groups = static_cast<phrase_group *>(
-      GRN_MALLOC(sizeof(phrase_group) * data->n_phrase_groups));
+    data->phrase_groups =
+      GRN_MALLOC(sizeof(phrase_group) * data->n_phrase_groups);
     if (!data->phrase_groups) {
       return false;
     }
@@ -12572,7 +12552,7 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
   return rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_similar_search(grn_ctx *ctx,
                       grn_ii *ii,
                       const char *string,
@@ -12694,7 +12674,7 @@ grn_ii_term_extract_internal(grn_ctx *ctx, grn_ii_select_data *data)
   return rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_term_extract(grn_ctx *ctx,
                     grn_ii *ii,
                     const char *string,
@@ -12758,8 +12738,7 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
     return NULL;
   }
 
-  auto cursor = static_cast<grn_ii_select_cursor *>(
-    GRN_CALLOC(sizeof(grn_ii_select_cursor)));
+  grn_ii_select_cursor *cursor = GRN_CALLOC(sizeof(grn_ii_select_cursor));
   if (!cursor) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -13542,7 +13521,7 @@ grn_ii_select_cursor_next_find(grn_ctx *ctx,
   return true;
 }
 
-extern "C" grn_ii_select_cursor_posting *
+grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx, grn_ii_select_cursor *cursor)
 {
   const char *tag = "[ii][select][cursor][next]";
@@ -13676,7 +13655,7 @@ grn_ii_select_cursor_unshift(grn_ctx *ctx,
   cursor->have_unshifted_posting = true;
 }
 
-extern "C" grn_ii *
+grn_ii *
 grn_ii_select_cursor_get_ii(grn_ctx *ctx, grn_ii_select_cursor *cursor)
 {
   return cursor->data.ii;
@@ -13905,10 +13884,10 @@ grn_ii_select_regexp(grn_ctx *ctx,
       grn_ii_select(ctx, ii, parsed_string, parsed_string_len, s, op, optarg);
   } else {
     unsigned int i;
+    grn_ii_select_regexp_chunk *chunks;
     bool have_error = false;
 
-    auto chunks = static_cast<grn_ii_select_regexp_chunk *>(
-      GRN_CALLOC(sizeof(grn_ii_select_regexp_chunk) * n_parsed_strings));
+    chunks = GRN_CALLOC(sizeof(grn_ii_select_regexp_chunk) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
       const char *parsed_string;
       unsigned int parsed_string_len;
@@ -14073,7 +14052,7 @@ typedef struct {
   double score;
 } grn_ii_quorum_match_record_data;
 
-extern "C" grn_rc
+grn_rc
 grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
 {
   size_t record_key_size;
@@ -14257,7 +14236,7 @@ grn_ii_select_sequential_search_reference_should_use(grn_ctx *ctx,
 
   {
     int i;
-    auto source_ids = static_cast<grn_id *>(DB_OBJ(data->ii)->source);
+    grn_id *source_ids = DB_OBJ(data->ii)->source;
 
     for (i = 0; i < n_sources; i++) {
       grn_id source_id = source_ids[i];
@@ -14318,7 +14297,7 @@ grn_ii_select_sequential_search_reference(grn_ctx *ctx,
 {
   const grn_id query_id = data->token_infos[0]->cursors[0].bins[0]->id;
   const grn_id lexicon_id = DB_OBJ(data->ii->lexicon)->id;
-  auto source_ids = static_cast<grn_id *>(DB_OBJ(data->ii)->source);
+  grn_id *source_ids = DB_OBJ(data->ii)->source;
   const size_t n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
   size_t i;
   for (i = 0; i < n_sources; i++) {
@@ -14416,7 +14395,7 @@ grn_ii_select_sequential_search_text_should_use(grn_ctx *ctx,
 
   {
     size_t i;
-    auto source_ids = static_cast<grn_id *>(DB_OBJ(data->ii)->source);
+    grn_id *source_ids = DB_OBJ(data->ii)->source;
 
     for (i = 0; i < n_sources; i++) {
       grn_id source_id = source_ids[i];
@@ -14487,7 +14466,7 @@ grn_ii_select_sequential_search_text_body(grn_ctx *ctx,
 {
   grn_obj buffer;
   GRN_TEXT_INIT(&buffer, 0);
-  auto source_ids = static_cast<grn_id *>(DB_OBJ(data->ii)->source);
+  grn_id *source_ids = DB_OBJ(data->ii)->source;
   const size_t n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
   size_t i;
   for (i = 0; i < n_sources; i++) {
@@ -14521,13 +14500,11 @@ grn_ii_select_sequential_search_text_body(grn_ctx *ctx,
                                 &normalized_value,
                                 &normalized_value_length,
                                 NULL);
-      const OnigUChar *onig_value =
-        reinterpret_cast<const OnigUChar *>(normalized_value);
       position = onig_search(regex,
-                             onig_value,
-                             onig_value + normalized_value_length,
-                             onig_value,
-                             onig_value + normalized_value_length,
+                             normalized_value,
+                             normalized_value + normalized_value_length,
+                             normalized_value,
+                             normalized_value + normalized_value_length,
                              NULL,
                              0);
       if (position != ONIG_MISMATCH) {
@@ -14614,7 +14591,7 @@ grn_ii_select_sequential_search(grn_ctx *ctx, grn_ii_select_data *data)
   return false;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_select(grn_ctx *ctx,
               grn_ii *ii,
               const char *string,
@@ -14876,7 +14853,7 @@ grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx,
   return size;
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_estimate_size_for_query(grn_ctx *ctx,
                                grn_ii *ii,
                                const char *query,
@@ -14939,7 +14916,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx,
   return (uint32_t)estimated_size;
 }
 
-extern "C" uint32_t
+uint32_t
 grn_ii_estimate_size_for_lexicon_cursor(grn_ctx *ctx,
                                         grn_ii *ii,
                                         grn_table_cursor *lexicon_cursor)
@@ -14956,7 +14933,7 @@ grn_ii_estimate_size_for_lexicon_cursor(grn_ctx *ctx,
   return estimated_size;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_sel(grn_ctx *ctx,
            grn_ii *ii,
            const char *string,
@@ -15122,7 +15099,7 @@ exit:
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_select_by_id(
   grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *result_set, grn_operator op)
 {
@@ -15131,7 +15108,7 @@ grn_ii_select_by_id(
   GRN_API_RETURN(rc);
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
 {
   int rep = 0;
@@ -15149,7 +15126,7 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
   return ctx->rc;
 }
 
-extern "C" void
+void
 grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
 {
   if (op == GRN_OP_AND &&
@@ -15172,7 +15149,7 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
   }
 }
 
-extern "C" void
+void
 grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
 {
   grn_obj key_buf;
@@ -15219,7 +15196,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
   GRN_TEXT_PUTS(ctx, buf, "\n    ]\n  >");
 }
 
-extern "C" void
+void
 grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 {
   grn_table_cursor *tc;
@@ -16034,10 +16011,11 @@ grn_ii_builder_chunk_reserve_enc_buf(grn_ctx *ctx,
     (chunk->n + 4) * sizeof(uint32_t) + n_cinfos * sizeof(chunk_info);
   if (chunk->enc_size < rich_size) {
     size_t size = chunk->enc_size ? chunk->enc_size * 2 : 1;
+    uint8_t *buf;
     while (size < rich_size) {
       size *= 2;
     }
-    auto buf = static_cast<uint8_t *>(GRN_REALLOC(chunk->enc_buf, size));
+    buf = GRN_REALLOC(chunk->enc_buf, size);
     if (!buf) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to allocate memory for encoding: size = %" GRN_FMT_SIZE,
@@ -16149,7 +16127,7 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
   chunk->enc_offset = p - chunk->enc_buf;
 
   /* Encode a body. */
-  grn_codec_data data = {};
+  grn_codec_data data = {0};
   data.ii = chunk->ii;
   data.term_id = chunk->tid;
   data.values = chunk->rid_buf;
@@ -18228,7 +18206,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
   return GRN_SUCCESS;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 {
   grn_rc rc, rc_close;
@@ -18250,7 +18228,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
   return rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii)
 {
   if (GRN_CTX_GET_WAL_ROLE(ctx) != GRN_WAL_ROLE_PRIMARY) {
@@ -18275,7 +18253,7 @@ grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii)
   return ctx->rc;
 }
 
-extern "C" grn_rc
+grn_rc
 grn_ii_warm(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc = grn_io_warm(ctx, ii->seg);

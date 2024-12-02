@@ -113,6 +113,7 @@ libgroonga_c_sources =				\
 	hash.c					\
 	highlighter.c				\
 	id.c					\
+	ii.c					\
 	index_column.c				\
 	index_cursor.c				\
 	io.c					\
