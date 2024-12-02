@@ -72,12 +72,3 @@ Reference
    :param ctx: The context object.
    :param table_buffer: The output buffer to store tables.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
-.. c:function:: grn_content_type grn_ctx_get_output_type(grn_ctx *ctx)
-
-   Gets the current output type of the context.
-
-   Normally, this function isn't needed.
-
-   :param ctx: The context object.
-   :return: The output type of the context.
