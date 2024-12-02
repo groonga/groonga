@@ -955,7 +955,7 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
     rc = grn_pat_wal_add_entry_defrag_key(ctx, data, &used);
     break;
   case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY:
-    usage = "defrag curr_key";
+    usage = "defrag current key";
     rc = grn_pat_wal_add_entry_defrag_current_key(ctx, data, &used);
     break;
   default:
