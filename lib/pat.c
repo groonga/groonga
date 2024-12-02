@@ -6305,12 +6305,16 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
       new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
     }
 
-    uint8_t *key_position = NULL;
-    KEY_AT(pat, node->key, key_position, 0);
-    uint8_t *new_key_position;
-    KEY_AT(pat, new_curr_key, new_key_position, 0);
-    grn_memmove(new_key_position, key_position, key_length);
-    node->key = new_curr_key;
+    /* If the position is the same, do not copy because the same key is already
+     * there. */
+    if (node->key != new_curr_key) {
+      uint8_t *key_position = NULL;
+      KEY_AT(pat, node->key, key_position, 0);
+      uint8_t *new_key_position;
+      KEY_AT(pat, new_curr_key, new_key_position, 0);
+      grn_memmove(new_key_position, key_position, key_length);
+      node->key = new_curr_key;
+    }
     new_curr_key += key_length;
   }
   GRN_FREE(target_ids);
