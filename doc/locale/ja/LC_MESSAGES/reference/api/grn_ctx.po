@@ -65,12 +65,3 @@ msgstr ""
 
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
 msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "Gets the current output type of the context."
-msgstr "コンテキストの出力形式を取得します。"
-
-msgid "Normally, this function isn't needed."
-msgstr ""
-
-msgid "The output type of the context."
-msgstr ""

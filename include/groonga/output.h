@@ -239,6 +239,18 @@ grn_ctx_output_table_records(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj_format *format);
 
+/**
+ * \brief Get the current output type of the context.
+ *
+ * \note Normally, you don't need to call this function unless you need to
+ *       check the output type explicitly.
+ *
+ * \param ctx The context object.
+ *
+ * \return Return the output type of the context, which is one of the values
+ *         defined in \ref grn_content_type. Return \ref GRN_CONTENT_NONE if the
+ *         context is invalid.
+ */
 GRN_API grn_content_type
 grn_ctx_get_output_type(grn_ctx *ctx);
 /**
