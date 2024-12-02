@@ -698,6 +698,24 @@ grn_pat_wal_add_entry_delete_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_END);
 }
 
+static grn_rc
+grn_pat_wal_add_entry_defrag(grn_ctx *ctx,
+                             grn_pat_wal_add_entry_data *data,
+                             grn_pat_wal_add_entry_used *used)
+{
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           true,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_END);
+}
+
 static void
 grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
                                      grn_pat_wal_add_entry_data *data,
@@ -889,6 +907,10 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
   case GRN_WAL_EVENT_DELETE_ENTRY:
     usage = "deleting entry";
     rc = grn_pat_wal_add_entry_delete_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DEFRAG:
+    usage = "defrag";
+    rc = grn_pat_wal_add_entry_defrag(ctx, data, &used);
     break;
   default:
     usage = "not implemented event";
@@ -6144,6 +6166,15 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   grn_pat_del_internal(ctx, pat, &data);
 }
 
+static void
+grn_pat_wal_recover_defrag(grn_ctx *ctx,
+                           grn_pat *pat,
+                           grn_wal_reader_entry *entry,
+                           const char *wal_error_tag)
+{
+  grn_pat_defrag_internal(ctx, pat);
+}
+
 grn_rc
 grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
 {
@@ -6195,6 +6226,9 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
         break;
       case GRN_WAL_EVENT_DELETE_ENTRY:
         grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DEFRAG:
+        grn_pat_wal_recover_defrag(ctx, pat, &entry, wal_error_tag);
         break;
       default:
         grn_wal_set_recover_error(ctx,
@@ -6252,7 +6286,7 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too. */
 int
-grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
+grn_pat_defrag_internal(grn_ctx *ctx, grn_pat *pat)
 {
   int reduced_bytes = 0;
 
@@ -6323,5 +6357,17 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat->header->curr_key = new_curr_key;
 exit:
   CRITICAL_SECTION_LEAVE(pat->lock);
+  return reduced_bytes;
+}
+
+int
+grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
+{
+  int reduced_bytes = grn_pat_defrag_internal(ctx, pat);
+  grn_pat_wal_add_entry_data wal_data = {0};
+  wal_data.event = GRN_WAL_EVENT_DEFRAG;
+  wal_data.pat = pat;
+  wal_data.tag = "[pat][defrag]";
+  grn_pat_wal_add_entry(ctx, &wal_data);
   return reduced_bytes;
 }
