@@ -1,0 +1,12 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "abc"},
+{"content": "a b c"}
+]
+[[0,0.0,0.0],2]
+select Memos --filter '(content @~ "") == true'
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","Text"]]]]]
