@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 13.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-11-04 06:19+0900\n"
+"PO-Revision-Date: 2024-12-02 17:17+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,110 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.1.0 - 2024-11-05"
-msgstr "14.1.0リリース - 2024-11-05"
+msgid "Release 14.1.1 - 2024-12-03"
+msgstr "14.1.1リリース - 2024-12-03"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Stopped vendoring RapidJSON"
+msgstr "RapidJSONの同梱を終了"
+
+msgid "[GH-1462](https://github.com/groonga/groonga/issues/1462)"
+msgstr ""
+
+msgid "We added support for simdjson in 14.0.7. We don't need to vendor RapidJSON anymore. RapidJSON has a file that uses the JSON license. It's not a free software license / open source license. So we wanted to unvendor RapidJSON."
+msgstr "14.0.7でsimdjsonをサポートしました。これによりRapidJSONを同梱する必要がなくなりました。RapidJSONにはJSONライセンスのファイルが含まれていました。JSONライセンスはフリーソフトウェアライセンス・オープンソースライセンスではありません。そのため、RapidJSONの同梱をやめたかったのです。"
+
+msgid "Note that RapidJSON is still supported. You can still use RapidJSON by installing RapidJSON separately. But we recommend that you use simdjson not RapidJSON."
+msgstr "RapidJSONはまだサポートしています。別途RapidJSONをインストールすることで引き続きRapidJSONを使うことができます。しかし、RapidJSONよりsimdjsonを使うことをオススメします。"
+
+msgid "Made llama.cpp initialization lazy"
+msgstr "llama.cppの初期化処理を遅延化"
+
+msgid "[GH-2078](https://github.com/groonga/groonga/issues/2078)"
+msgstr ""
+
+msgid "llama.cpp requires recent SIMD features. If we always initialize llama.cpp, users who use old CPU and don't use llama.cpp related features can't use the official Groonga packages. So we made llama.cpp initialization lazy. Users who use llama.cpp related features still need recent CPU but users who don't use llama.cpp related features can use old CPU as usual."
+msgstr "llama.cppは最近のSIMD機能を必要とします。llama.cppを常に初期化すると、古いCPUを使っていて、かつ、llama.cppの機能を使っていないユーザーが公式のGroongaパッケージを使えません。そのため、llama.cppの初期化を遅延させることにしました。llama.cpp関連の機能を使っているユーザーは引き続き最近のCPUが必要ですが、llama.cpp関連の機能を使っていないユーザーはこれまで通り古いCPUを使えます。"
+
+msgid "`NormalizerNFKC`: Added support for mixing `unify_middle_dot` and `remove_symbol`"
+msgstr "`NormalizerNFKC`: `unify_middle_dot`と`remove_symbol`を同時使用をサポート"
+
+msgid "[GH-1538](https://github.com/groonga/groonga/issues/1538)"
+msgstr ""
+
+msgid "`NormalizerNFKC` family normalizers such as {doc}`/reference/normalizers/normalizer_nfkc150` can mix {ref}`normalizer-nfkc150-unify-middle-dot` and {ref}`normalizer-nfkc150-remove-symbol` options."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc150`のような`NormalizerNFKC`関連のノーマライザーで{ref}`normalizer-nfkc150-unify-middle-dot`オプションと{ref}`normalizer-nfkc150-remove-symbol`オプションを一緒に使えるようになりました。"
+
+msgid "{doc}`/reference/commands/defrag`: Added support for {ref}`table-pat-key`"
+msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`をサポート"
+
+msgid "A {ref}`table-pat-key` table couldn't reuse spaces that are used by removed keys. They're still not be reusable automatically, but we can reuse them by executing {doc}`/reference/commands/defrag` explicitly since this release."
+msgstr "{ref}`table-pat-key`テーブルはサウk除されたキーの領域を再利用できませんでした。この領域は引き続き自動では再利用されませんが、このリリースからは明示的に{doc}`/reference/commands/defrag`を実行することで再利用できるようになりました。"
+
+msgid "{doc}`/reference/commands/load`: Improved error handling"
+msgstr "{doc}`/reference/commands/load`: エラー処理を改良"
+
+msgid "If there are any critical errors in {doc}`/reference/commands/load`, we will not wait for more data. Clients may stop sending more data in the case."
+msgstr "{doc}`/reference/commands/load`中にクリティカルなエラーが発生したときは後続のデータを待たないようにしました。このようなケースではクライアントは後続のデータを送らないかもしれません。"
+
+msgid "{doc}`/reference/executables/groonga`: Added `context_id` log flag"
+msgstr "{doc}`/reference/executables/groonga`: `context_id`ログフラグを追加"
+
+msgid "It's useful when you use {ref}`query-log` too. In {ref}`query-log`, the context ID is recorded. If we have the context ID in {ref}`process-log` and {ref}`query-log`, we can associate these logs easily."
+msgstr "{ref}`query-log`も使っている場合に便利です。{ref}`query-log`ではコンテキストIDが記録されています。{ref}`process-log`と{ref}`query-log`の中にコンテキストIDが記録されていると、これらのログをより簡単に紐付けられるようになります。"
+
+msgid "{doc}`/reference/executables/groonga`: Improved error handling"
+msgstr "{doc}`/reference/executables/groonga`: エラー処理を改良"
+
+msgid "{doc}`/reference/command/request_timeout` uses lock internally. It may be failed in some cases. We added some error checks for the case."
+msgstr "{doc}`/reference/command/request_timeout` 内部的にロックしています。場合によっては失敗することがあります。このようなケースを想定していくつかエラーチェックを追加しました。"
+
+msgid "{ref}`table-pat-key`: Improved key space efficiency"
+msgstr "{ref}`table-pat-key`: キー領域を効率化"
+
+msgid "[GH-2104](https://github.com/groonga/groonga/issues/2104)"
+msgstr ""
+
+msgid "There was a case that wastes key space. Now, we can use key space as efficiency as possible."
+msgstr "キー領域を無駄使いするケースがありました。このケースを改良して、できるだけ効率よくキー領域を使えるようにしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "`grn_pat_size()`: Fixed a bug that `0` may not be returned on error"
+msgstr "`grn_pat_size()`: エラー時に`0`を返さない問題を修正"
+
+msgid "[GH-2097](https://github.com/groonga/groonga/issues/2097)"
+msgstr ""
+
+msgid "If the given `pat` is `NULL`, it returns `-22`. But it should have returned `0` with error `ctx->rc`."
+msgstr "指定された`pat`が`NULL`の場合、`-22`を返していました。しかし、エラーの場合は`0`を返して、`ctx->rc`にエラー情報を設定するべきでした。"
+
+msgid "Now, Groonga uses the expected behavior."
+msgstr "Groongaが期待した挙動をするようになりました。"
+
+msgid "{doc}`/reference/regular_expression`: Fixed a bug with an empty pattern"
+msgstr "{doc}`/reference/regular_expression`: 空のパターンのときの問題を修正"
+
+msgid "[GH-2121](https://github.com/groonga/groonga/issues/2121)"
+msgstr ""
+
+msgid "If the given pattern is an empty string, there were some problems:"
+msgstr "指定されたパターンが空文字列の場合、いくつかも問題がありました。"
+
+msgid "If there is an index for regular expression, Groonga was crashed."
+msgstr "正規表現用のインデックスがある場合、Groongaがクラッシュしていました。"
+
+msgid "If there is not an index for regular expression, Groonga returns all records."
+msgstr "正規表現用のインデックスがない場合、Groongaはすべてのレコードを返していました。"
+
+msgid "Now, Groonga returns an empty result for an empty pattern."
+msgstr "空のパターンのときは空の結果を返すようにしました。"
+
+msgid "Release 14.1.0 - 2024-11-05"
+msgstr "14.1.0リリース - 2024-11-05"
 
 msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"llama.cpp\"]` entry"
 msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"llama.cpp\"]`エントリーを追加"
@@ -79,9 +178,6 @@ msgstr "たとえば、他のカラムの値のエンべディングを生成す
 
 msgid "You can {doc}`/reference/commands/load` only the text to be searched while simultaneously storing the embedding with this feature."
 msgstr "この機能により、検索対象のテキストを{doc}`/reference/commands/load`するだけで、同時に対応するエンべディングも保存できます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/server/gqtp`] Fixed a bug that wrong return code is returned"
 msgstr "[{doc}`/server/gqtp`] 間違ったリターンコードが返される問題を修正"
