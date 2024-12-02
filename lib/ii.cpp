@@ -8607,7 +8607,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
 extern "C" grn_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
-  grn_ii_cursor_next_options options = {.include_garbage = false};
+  grn_ii_cursor_next_options options = {/* .include_garbage = */ false};
   return grn_ii_cursor_next_internal(ctx, c, &options);
 }
 
@@ -15175,7 +15175,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
   char key[GRN_TABLE_MAX_KEY_SIZE];
   int key_size;
   int i = 0;
-  grn_ii_cursor_next_options options = {.include_garbage = true};
+  grn_ii_cursor_next_options options = {/* .include_garbage = */ true};
 
   GRN_TEXT_PUTS(ctx, buf, "  #<");
   key_size =
