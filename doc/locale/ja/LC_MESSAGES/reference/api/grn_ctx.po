@@ -27,36 +27,6 @@ msgstr ""
 msgid "Summary"
 msgstr "概要"
 
-msgid ":c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx` keeps the current information such as:"
-msgstr ":c:type:`grn_ctx` は最も重要なオブジェクトです。:c:type:`grn_ctx` はその時点の情報を保持します:"
-
-msgid "The last occurred error."
-msgstr "最後に発生したエラー。"
-
-msgid "The current encoding."
-msgstr "その時点のエンコーディング。"
-
-msgid "The default thresholds. (e.g. :ref:`select-match-escalation-threshold`)"
-msgstr "デフォルトの閾値。（例: :ref:`select-match-escalation-threshold`）"
-
-msgid "The default command version. (See :doc:`/reference/command/command_version`)"
-msgstr "デフォルトのコマンドバージョン。（ :doc:`/reference/command/command_version` ）を参照のこと。"
-
-msgid ":c:type:`grn_ctx` provides platform features such as:"
-msgstr ":c:type:`grn_ctx` は基盤となる機能を提供します:"
-
-msgid "Memory management."
-msgstr "メモリ管理機能"
-
-msgid "Logging."
-msgstr "ロギング機能"
-
-msgid "Most APIs receive :c:type:`grn_ctx` as the first argument."
-msgstr "ほとんどのAPIは :c:type:`grn_ctx` を最初の引数にとります。"
-
-msgid "You can't use the same :c:type:`grn_ctx` from two or more threads. You need to create a :c:type:`grn_ctx` for a thread. You can use two or more :c:type:`grn_ctx` in a thread but it is not needed for usual use-case."
-msgstr "同じ :c:type:`grn_ctx` を二つ以上のスレッドからは扱えません。:c:type:`grn_ctx` はスレッドごとに作成する必要があります。一つのスレッドでは :c:type:`grn_ctx` を二つ以上扱えますが、通常はその必要はありません。"
-
 msgid "Example"
 msgstr "例"
 
