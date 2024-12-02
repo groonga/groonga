@@ -1,11 +1,6 @@
 name: Build document
 on:
   push:
-    branches:
-      - main
-      - 'maintenance/**'
-    tags:
-      - '*'
     paths:
       - 'Rakefile'
       - 'doc/Doxyfile'
