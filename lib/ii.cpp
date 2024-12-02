@@ -13869,6 +13869,10 @@ grn_ii_select_regexp(grn_ctx *ctx,
   grn_obj parsed_n_following_characters;
   unsigned int n_parsed_strings;
 
+  if (string_len == 0) {
+    return GRN_SUCCESS;
+  }
+
   GRN_TEXT_INIT(&parsed_strings, GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&parsed_n_following_characters, GRN_OBJ_VECTOR);
   rc = grn_ii_parse_regexp_query(ctx,
