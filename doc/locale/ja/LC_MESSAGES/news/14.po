@@ -57,7 +57,7 @@ msgid "{doc}`/reference/commands/defrag`: Added support for {ref}`table-pat-key`
 msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`をサポート"
 
 msgid "A {ref}`table-pat-key` table couldn't reuse spaces that are used by removed keys. They're still not be reusable automatically, but we can reuse them by executing {doc}`/reference/commands/defrag` explicitly since this release."
-msgstr "{ref}`table-pat-key`テーブルはサウk除されたキーの領域を再利用できませんでした。この領域は引き続き自動では再利用されませんが、このリリースからは明示的に{doc}`/reference/commands/defrag`を実行することで再利用できるようになりました。"
+msgstr "{ref}`table-pat-key`テーブルは削除されたキーの領域を再利用できませんでした。この領域は引き続き自動では再利用されませんが、このリリースからは明示的に{doc}`/reference/commands/defrag`を実行することで再利用できるようになりました。"
 
 msgid "{doc}`/reference/commands/load`: Improved error handling"
 msgstr "{doc}`/reference/commands/load`: エラー処理を改良"
