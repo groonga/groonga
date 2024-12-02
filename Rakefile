@@ -294,7 +294,7 @@ namespace :release do
   end
 end
 
-release_task = ReleaseTask.new("Groonga")
+release_task = ReleaseTask.new("groonga", version, env_var("GROONGA_ORG_DIR"))
 release_task.define
 
 namespace :nfkc do

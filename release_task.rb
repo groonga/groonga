@@ -18,8 +18,10 @@
 class ReleaseTask
   include Rake::DSL
 
-  def initialize(package)
+  def initialize(package, version, doc_path)
     @package = package
+    @version = version
+    @doc_path = doc_path
   end
 
   def define
@@ -33,8 +35,25 @@ class ReleaseTask
       namespace :blog do
         desc "Generate release announce posts from a release note"
         task :generate do
-          puts "TODO: Generate release announce posts for #{@package}"
+          blog_posts
         end
+      end
+    end
+  end
+
+  def file_name
+    "#{Time.now.strftime("%F")}-#{@package}-#{@version}.md"
+  end
+
+  def post(language, package, version)
+    # TODO: Write blog post
+    "#{language}, #{package}, #{version}"
+  end
+
+  def blog_posts
+    ["ja", "en"].each do |language|
+      File.open("#{@doc_path}/#{language}/_posts/#{file_name}", "w") do |blog_post|
+        blog_post.write(post(language, @package, @version))
       end
     end
   end
