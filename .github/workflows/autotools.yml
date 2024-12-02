@@ -1,11 +1,6 @@
 name: Autotools
 on:
   push:
-    branches:
-      - main
-      - 'maintenance/**'
-    tags:
-      - '*'
     paths:
       - '**/Makefile.am'
       - '.github/workflows/autotools.yml'

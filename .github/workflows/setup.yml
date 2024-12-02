@@ -1,11 +1,6 @@
 name: Setup
 on:
   push:
-    branches:
-      - main
-      - 'maintenance/**'
-    tags:
-      - '*'
     paths:
       - '**/*.cmake'
       - '**/*.cmake.in'
