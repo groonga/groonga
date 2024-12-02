@@ -6397,8 +6397,12 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
 
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_UNKNOWN_ERROR;
+    }
     grn_wal_set_recover_error(ctx,
-                              GRN_NO_MEMORY_AVAILABLE,
+                              rc,
                               (grn_obj *)pat,
                               entry,
                               wal_error_tag,
