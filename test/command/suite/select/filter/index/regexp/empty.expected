@@ -2,7 +2,7 @@ table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
-table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos content
 [[0,0.0,0.0],true]
