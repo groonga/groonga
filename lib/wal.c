@@ -89,6 +89,12 @@ grn_wal_event_to_string(grn_wal_event event)
   case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
     string = "delete-info-phase3";
     break;
+  case GRN_WAL_EVENT_DEFRAG_KEY :
+    string = "defrag-key";
+    break;
+  case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY :
+    string = "defrag-current-key";
+    break;
   }
   return string;
 }

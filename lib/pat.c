@@ -698,6 +698,66 @@ grn_pat_wal_add_entry_delete_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_END);
 }
 
+static grn_rc
+grn_pat_wal_add_entry_defrag_key(grn_ctx *ctx,
+                                 grn_pat_wal_add_entry_data *data,
+                                 grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key = true;
+  used->key_size = true;
+  used->key_offset = true;
+  const void *key = data->key;
+  size_t key_size = data->key_size;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           key,
+                           key_size,
+
+                           GRN_WAL_KEY_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_offset,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
+                                         grn_pat_wal_add_entry_data *data,
+                                         grn_pat_wal_add_entry_used *used)
+{
+  used->key_offset = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_offset,
+
+                           GRN_WAL_KEY_END);
+}
+
 static void
 grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
                                      grn_pat_wal_add_entry_data *data,
@@ -889,6 +949,14 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
   case GRN_WAL_EVENT_DELETE_ENTRY:
     usage = "deleting entry";
     rc = grn_pat_wal_add_entry_delete_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DEFRAG_KEY:
+    usage = "defrag key";
+    rc = grn_pat_wal_add_entry_defrag_key(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY:
+    usage = "defrag curr_key";
+    rc = grn_pat_wal_add_entry_defrag_current_key(ctx, data, &used);
     break;
   default:
     usage = "not implemented event";
@@ -5833,18 +5901,34 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
   return 0;
 }
 
+static inline void
+pat_key_move(grn_ctx *ctx,
+             grn_pat *pat,
+             pat_node *node,
+             uint8_t *key,
+             uint32_t key_size,
+             uint32_t new_curr_key)
+{
+  uint8_t *new_key_position;
+  KEY_AT(pat, new_curr_key, new_key_position, 0);
+  grn_memmove(new_key_position, key, key_size);
+  node->key = new_curr_key;
+}
+
+static inline void
+pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint32_t new_curr_key)
+{
+  pat->header->curr_key = new_curr_key;
+}
+
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too. */
-int
-grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
+uint32_t
+grn_pat_key_defrag(grn_ctx *ctx, grn_pat *pat)
 {
-  int reduced_bytes = 0;
-
-  CRITICAL_SECTION_ENTER(pat->lock);
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
-    pat->header->curr_key = 0;
-    goto exit;
+    return 0;
   }
 
   /* First, get the number of targets. */
@@ -5877,7 +5961,8 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_qsort_r_grn_id(target_ids, n_targets, grn_pat_node_compare_by_key, &data);
   uint32_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
-    pat_node *node = pat_get(ctx, pat, target_ids[i]);
+    grn_id record_id = target_ids[i];
+    pat_node *node = pat_get(ctx, pat, record_id);
 
     /* Check if the key to be added can fit in the current segment. */
     uint32_t key_length = PAT_LEN(node);
@@ -5894,18 +5979,39 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     if (node->key != new_curr_key) {
       uint8_t *key_position;
       KEY_AT(pat, node->key, key_position, 0);
-      uint8_t *new_key_position;
-      KEY_AT(pat, new_curr_key, new_key_position, 0);
-      grn_memmove(new_key_position, key_position, key_length);
-      node->key = new_curr_key;
+      pat_key_move(ctx, pat, node, key_position, key_length, new_curr_key);
+
+      grn_pat_wal_add_entry_data wal_data = {0};
+      wal_data.event = GRN_WAL_EVENT_DEFRAG_KEY;
+      wal_data.pat = pat;
+      wal_data.record_id = record_id;
+      wal_data.key = key_position;
+      wal_data.key_size = key_length;
+      wal_data.key_offset = new_curr_key;
+      wal_data.tag = "[pat][defrag key]";
+      grn_pat_wal_add_entry(ctx, &wal_data);
     }
     new_curr_key += key_length;
   }
   GRN_FREE(target_ids);
 
-  reduced_bytes = pat->header->curr_key - new_curr_key;
-  pat->header->curr_key = new_curr_key;
-exit:
+  return new_curr_key;
+}
+
+int
+grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
+{
+  CRITICAL_SECTION_ENTER(pat->lock);
+  uint32_t new_curr_key = grn_pat_key_defrag(ctx, pat);
+  int reduced_bytes = pat->header->curr_key - new_curr_key;
+  pat_update_curr_key(ctx, pat, new_curr_key);
+
+  grn_pat_wal_add_entry_data wal_data = {0};
+  wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
+  wal_data.pat = pat;
+  wal_data.key_offset = new_curr_key;
+  wal_data.tag = "[pat][defrag curr_key]";
+  grn_pat_wal_add_entry(ctx, &wal_data);
   CRITICAL_SECTION_LEAVE(pat->lock);
   return reduced_bytes;
 }
@@ -6242,6 +6348,40 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   grn_pat_del_internal(ctx, pat, &data);
 }
 
+static void
+grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
+                               grn_pat *pat,
+                               grn_wal_reader_entry *entry,
+                               const char *wal_error_tag)
+{
+
+  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  pat_key_move(ctx,
+               pat,
+               node,
+               (uint8_t *)entry->key.content.binary.data,
+               entry->key.content.binary.size,
+               entry->key_offset);
+}
+
+static void
+grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
+                                       grn_pat *pat,
+                                       grn_wal_reader_entry *entry,
+                                       const char *wal_error_tag)
+{
+  pat_update_curr_key(ctx, pat, entry->key_offset);
+}
+
 grn_rc
 grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
 {
@@ -6293,6 +6433,12 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
         break;
       case GRN_WAL_EVENT_DELETE_ENTRY:
         grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DEFRAG_KEY:
+        grn_pat_wal_recover_defrag_key(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY:
+        grn_pat_wal_recover_defrag_current_key(ctx, pat, &entry, wal_error_tag);
         break;
       default:
         grn_wal_set_recover_error(ctx,
