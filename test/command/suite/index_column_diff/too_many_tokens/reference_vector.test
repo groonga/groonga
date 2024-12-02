@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create Tags TABLE_HASH_KEY ShortText
 
 table_create Memos TABLE_NO_KEY
@@ -5,7 +8,7 @@ column_create Memos tags COLUMN_VECTOR Tags
 
 column_create Tags memos_tags COLUMN_INDEX|WITH_POSITION Memos tags
 
-#@timeout 120
+#@timeout 60
 #@disable-logging
 #@generate-series 1 1 Memos '{"tags" => ["tag"] * (0x1ffff + 1)}'
 #@enable-logging

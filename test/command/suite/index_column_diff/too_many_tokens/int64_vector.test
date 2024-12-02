@@ -1,10 +1,13 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create PostingLists TABLE_NO_KEY
 column_create PostingLists deltas COLUMN_VECTOR Int64
 
 table_create Deltas TABLE_PAT_KEY Int64
 column_create Deltas index COLUMN_INDEX|WITH_POSITION PostingLists deltas
 
-#@timeout 120
+#@timeout 60
 #@disable-logging
 #@generate-series 1 1 PostingLists '{"deltas" => [1] * (0x1ffff + 1)}'
 #@enable-logging
