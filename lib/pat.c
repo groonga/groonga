@@ -5905,14 +5905,14 @@ static inline void
 pat_key_move(grn_ctx *ctx,
              grn_pat *pat,
              pat_node *node,
+             uint32_t new_position,
              uint8_t *key,
-             uint32_t key_size,
-             uint32_t new_curr_key)
+             uint32_t key_size)
 {
-  uint8_t *new_key_position;
-  KEY_AT(pat, new_curr_key, new_key_position, 0);
-  grn_memmove(new_key_position, key, key_size);
-  node->key = new_curr_key;
+  uint8_t *new_key_address;
+  KEY_AT(pat, new_position, new_key_address, 0);
+  grn_memmove(new_key_address, key, key_size);
+  node->key = new_position;
 }
 
 static inline void
@@ -5921,14 +5921,87 @@ pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint32_t new_curr_key)
   pat->header->curr_key = new_curr_key;
 }
 
+typedef void (*pat_key_defrag_each_callback)(
+  grn_ctx *ctx, pat_node *node, grn_pat_wal_add_entry_data *wal_data);
+
+static inline void
+pat_key_defrag_callback(grn_ctx *ctx,
+                        pat_node *node,
+                        grn_pat_wal_add_entry_data *wal_data)
+{
+  pat_key_move(ctx,
+               wal_data->pat,
+               node,
+               wal_data->key_offset,
+               (uint8_t *)wal_data->key,
+               wal_data->key_size);
+}
+
+static inline void
+pat_key_defrag_wal_add_entry_callback(grn_ctx *ctx,
+                                      pat_node *node,
+                                      grn_pat_wal_add_entry_data *wal_data)
+{
+  grn_pat_wal_add_entry(ctx, wal_data);
+}
+
+static inline uint32_t
+pat_key_defrag_each(grn_ctx *ctx,
+                    grn_pat *pat,
+                    grn_id *target_ids,
+                    size_t n_targets,
+                    pat_key_defrag_each_callback callback)
+{
+  uint32_t new_curr_key = 0;
+  for (size_t i = 0; i < n_targets; i++) {
+    grn_id record_id = target_ids[i];
+    pat_node *node = pat_get(ctx, pat, record_id);
+
+    /* Check if the key to be added can fit in the current segment. */
+    uint32_t key_length = PAT_LEN(node);
+    uint32_t new_end_segment =
+      (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
+    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
+      /* If it does not fit, update `new_curr_key` to add it to the next
+       * segment. */
+      new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
+    }
+
+    /* If the position is the same, do not copy because the same key is already
+     * there. */
+    if (node->key != new_curr_key) {
+      uint8_t *key_address;
+      KEY_AT(pat, node->key, key_address, 0);
+
+      grn_pat_wal_add_entry_data wal_data = {0};
+      wal_data.event = GRN_WAL_EVENT_DEFRAG_KEY;
+      wal_data.pat = pat;
+      wal_data.record_id = record_id;
+      wal_data.key = key_address;
+      wal_data.key_size = key_length;
+      wal_data.key_offset = new_curr_key;
+      wal_data.tag = "[pat][defrag][key]";
+
+      callback(ctx, node, &wal_data);
+    }
+    new_curr_key += key_length;
+  }
+  return new_curr_key;
+}
+
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too. */
-uint32_t
-grn_pat_key_defrag(grn_ctx *ctx, grn_pat *pat)
+int
+grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
+  int reduced_bytes = 0;
+
+  CRITICAL_SECTION_ENTER(pat->lock);
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
-    return 0;
+    reduced_bytes = pat->header->curr_key;
+    pat->header->curr_key = 0;
+    goto exit;
   }
 
   /* First, get the number of targets. */
@@ -5959,59 +6032,26 @@ grn_pat_key_defrag(grn_ctx *ctx, grn_pat *pat)
   /* Defragment from the head of the key segment. */
   pat_node_compare_by_key_data data = {ctx, pat};
   grn_qsort_r_grn_id(target_ids, n_targets, grn_pat_node_compare_by_key, &data);
-  uint32_t new_curr_key = 0;
-  for (size_t i = 0; i < n_targets; i++) {
-    grn_id record_id = target_ids[i];
-    pat_node *node = pat_get(ctx, pat, record_id);
 
-    /* Check if the key to be added can fit in the current segment. */
-    uint32_t key_length = PAT_LEN(node);
-    uint32_t new_end_segment =
-      (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
-    if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
-      /* If it does not fit, update `new_curr_key` to add it to the next
-       * segment. */
-      new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
-    }
-
-    /* If the position is the same, do not copy because the same key is already
-     * there. */
-    if (node->key != new_curr_key) {
-      uint8_t *key_position;
-      KEY_AT(pat, node->key, key_position, 0);
-      pat_key_move(ctx, pat, node, key_position, key_length, new_curr_key);
-
-      grn_pat_wal_add_entry_data wal_data = {0};
-      wal_data.event = GRN_WAL_EVENT_DEFRAG_KEY;
-      wal_data.pat = pat;
-      wal_data.record_id = record_id;
-      wal_data.key = key_position;
-      wal_data.key_size = key_length;
-      wal_data.key_offset = new_curr_key;
-      wal_data.tag = "[pat][defrag key]";
-      grn_pat_wal_add_entry(ctx, &wal_data);
-    }
-    new_curr_key += key_length;
-  }
-  GRN_FREE(target_ids);
-
-  return new_curr_key;
-}
-
-int
-grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
-{
-  CRITICAL_SECTION_ENTER(pat->lock);
-  uint32_t new_curr_key = grn_pat_key_defrag(ctx, pat);
-  int reduced_bytes = pat->header->curr_key - new_curr_key;
-  pat_update_curr_key(ctx, pat, new_curr_key);
-
+  uint32_t new_curr_key =
+    pat_key_defrag_each(ctx,
+                        pat,
+                        target_ids,
+                        n_targets,
+                        pat_key_defrag_wal_add_entry_callback);
   grn_pat_wal_add_entry_data wal_data = {0};
   wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
   wal_data.pat = pat;
   wal_data.key_offset = new_curr_key;
-  wal_data.tag = "[pat][defrag curr_key]";
+  wal_data.tag = "[pat][defrag][current-key]";
   grn_pat_wal_add_entry(ctx, &wal_data);
+
+  pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
+  reduced_bytes = pat->header->curr_key - new_curr_key;
+  pat_update_curr_key(ctx, pat, new_curr_key);
+
+  GRN_FREE(target_ids);
+exit:
   CRITICAL_SECTION_LEAVE(pat->lock);
   return reduced_bytes;
 }
@@ -6368,9 +6408,9 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
   pat_key_move(ctx,
                pat,
                node,
+               entry->key_offset,
                (uint8_t *)entry->key.content.binary.data,
-               entry->key.content.binary.size,
-               entry->key_offset);
+               entry->key.content.binary.size);
 }
 
 static void
