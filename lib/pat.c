@@ -6308,7 +6308,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     /* If the position is the same, do not copy because the same key is already
      * there. */
     if (node->key != new_curr_key) {
-      uint8_t *key_position = NULL;
+      uint8_t *key_position;
       KEY_AT(pat, node->key, key_position, 0);
       uint8_t *new_key_position;
       KEY_AT(pat, new_curr_key, new_key_position, 0);
