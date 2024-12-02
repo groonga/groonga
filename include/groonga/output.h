@@ -248,7 +248,7 @@ grn_ctx_output_table_records(grn_ctx *ctx,
  * \param ctx The context object.
  *
  * \return Return the output type of the context, which is one of the values
- *         defined in \ref grn_content_type. Return \ref GRN_CONTENT_NONE If the
+ *         defined in \ref grn_content_type. Return \ref GRN_CONTENT_NONE if the
  *         context is invalid.
  */
 GRN_API grn_content_type
