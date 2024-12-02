@@ -2756,6 +2756,11 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
 
   pattern = e->codes[1].value;
+  if (GRN_TEXT_LEN(pattern) == 0) {
+    executor->data.simple_regexp.regex = NULL;
+    return;
+  }
+
   executor->data.simple_regexp.regex =
     grn_onigmo_new(ctx,
                    GRN_TEXT_VALUE(pattern),
