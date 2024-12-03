@@ -35,7 +35,7 @@ class ReleaseTask
       namespace :blog do
         desc "Generate release announce posts from a release note"
         task :generate do
-          blog_posts
+          write_blog_posts
         end
       end
     end
@@ -51,7 +51,7 @@ class ReleaseTask
     "#{language}, #{package}, #{version}"
   end
 
-  def blog_posts
+  def write_blog_posts
     ["ja", "en"].each do |language|
       File.open("#{@jekyll_path}/#{language}/_posts/#{post_name}", "w") do |blog_post|
         blog_post.write(post(language, @package, @version))
