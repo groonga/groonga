@@ -5992,7 +5992,7 @@ pat_key_defrag_each(grn_ctx *ctx,
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too.
  * If you're using a grn_pat in multi-thread/multi-process environment, you must
- * use grn_obj_defrag() not instead of using this function directly. */
+ * use grn_obj_defrag() instead of using this function directly. */
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
