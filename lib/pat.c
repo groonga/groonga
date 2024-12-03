@@ -6448,6 +6448,8 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
     if (defrag_key_entry.id < defrag_key_start_id) {
       continue;
     }
+    /* We don't validate here but event must be GRN_WAL_EVENT_DEFRAG_KEY or
+     * GRN_WAL_EVENT_DEFRAG_CURRENT_KEY. */
     if (defrag_key_entry.event != GRN_WAL_EVENT_DEFRAG_KEY) {
       if (defrag_key_entry.event == GRN_WAL_EVENT_DEFRAG_CURRENT_KEY) {
         defrag_current_key_id = defrag_key_entry.id;
