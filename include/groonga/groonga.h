@@ -928,7 +928,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  * int i;
  * int n_tables;
  *
- * // Initialize the tables_buffer as a pointer vector.
+ * // Initialize the tables buffer as a vector of `grn_obj *`.
  * GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
  *
  * // Retrieve all tables in the context.
