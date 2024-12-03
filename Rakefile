@@ -18,7 +18,6 @@
 
 require "open-uri"
 require "tmpdir"
-require_relative "release_task"
 
 def sh_capture_output(*command_line)
   IO.pipe do |read, write|
@@ -293,9 +292,6 @@ namespace :release do
     sh("git", "push", "origin", "v#{version}")
   end
 end
-
-release_task = ReleaseTask.new("Groonga")
-release_task.define
 
 namespace :nfkc do
   icu_version = ENV["ICU_VERSION"] || ""
