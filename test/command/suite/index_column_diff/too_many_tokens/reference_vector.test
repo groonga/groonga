@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create Tags TABLE_HASH_KEY ShortText
 
 table_create Memos TABLE_NO_KEY

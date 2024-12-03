@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create PostingLists TABLE_NO_KEY
 column_create PostingLists deltas COLUMN_VECTOR Int64
 
