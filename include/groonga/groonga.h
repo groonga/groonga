@@ -1005,6 +1005,16 @@ typedef enum {
   GRN_DB_TRIGRAM
 } grn_builtin_tokenizer;
 
+/**
+ * \brief Retrieve the object corresponding to the specified ID from the context
+ *        or the database that the context is using.
+ *
+ * \param ctx The context object.
+ * \param id The object ID to be retrieved.
+ *
+ * \return \ref grn_obj if the object that has the specified ID is found, `NULL`
+ *         otherwise.
+ */
 GRN_API grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id);
 /*
