@@ -18,10 +18,10 @@
 class ReleaseTask
   include Rake::DSL
 
-  def initialize(package, version, doc_path)
+  def initialize(package, version, jekyll_path)
     @package = package
     @version = version
-    @doc_path = doc_path
+    @jekyll_path = jekyll_path
   end
 
   def define
@@ -52,7 +52,7 @@ class ReleaseTask
 
   def blog_posts
     ["ja", "en"].each do |language|
-      File.open("#{@doc_path}/#{language}/_posts/#{file_name}", "w") do |blog_post|
+      File.open("#{@jekyll_path}/#{language}/_posts/#{file_name}", "w") do |blog_post|
         blog_post.write(post(language, @package, @version))
       end
     end
