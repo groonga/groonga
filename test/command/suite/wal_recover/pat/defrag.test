@@ -40,6 +40,11 @@ _database_close
 #@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
 _database_reopen
 
-select Data
-
 check --obj Data
+
+# Test for successfully loading after defragmentation recovery.
+load --table Data
+[
+{"_key": "5B>=: PGroonga"}
+]
+select Data

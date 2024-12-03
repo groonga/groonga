@@ -98,39 +98,6 @@ _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-select Data
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        2
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        2,
-        "4B<="
-      ],
-      [
-        3,
-        "5B>=: Normal"
-      ]
-    ]
-  ]
-]
 check --obj Data
 [
   [
@@ -153,5 +120,47 @@ check --obj Data
       "curr_del3": 0,
       "n_garbages": 1
     }
+  ]
+]
+load --table Data
+[
+{"_key": "5B>=: PGroonga"}
+]
+[[0,0.0,0.0],1]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "4B<="
+      ],
+      [
+        3,
+        "5B>=: Normal"
+      ],
+      [
+        4,
+        "5B>=: PGroonga"
+      ]
+    ]
   ]
 ]
