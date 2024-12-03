@@ -6394,7 +6394,6 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
                                grn_wal_reader_entry *entry,
                                const char *wal_error_tag)
 {
-
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {
     grn_rc rc = ctx->rc;
