@@ -34,8 +34,8 @@ msgstr "GNU/LinuxまたはUNIX"
 msgid "Execute `setup.sh` included in the source code."
 msgstr "ソースコードに含まれる`setup.sh`を実行してください。"
 
-msgid "If `groonga-14.1.0.tar.gz` is expanded, it is `groonga-14.1.0/setup.sh`."
-msgstr "`groonga-14.1.0.tar.gz`を展開した場合は`groonga-14.1.0/setup.sh`がそのスクリプトです。"
+msgid "If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`."
+msgstr "`groonga-14.1.1.tar.gz`を展開した場合は`groonga-14.1.1/setup.sh`がそのスクリプトです。"
 
 msgid "Example of command execution."
 msgstr "コマンド実行例"
@@ -67,7 +67,7 @@ msgstr "[packages.groonga.org](https://packages.groonga.org/source/groonga)か�
 msgid "Download the latest zipped source from packages.groonga.org."
 msgstr "最新のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/source/groonga/groonga-14.1.0.zip"
+msgid "https://packages.groonga.org/source/groonga/groonga-14.1.1.zip"
 msgstr ""
 
 msgid "Then extract it."

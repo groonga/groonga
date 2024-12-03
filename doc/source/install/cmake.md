@@ -10,12 +10,12 @@ Here is depended software for GNU/Linux, UNIX and Windows.
 
 Execute `setup.sh` included in the source code.
 
-If `groonga-14.1.0.tar.gz` is expanded, it is `groonga-14.1.0/setup.sh`.
+If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`.
 
 Example of command execution.
 
 ```console
-$ groonga-14.1.0/setup.sh
+$ groonga-14.1.1/setup.sh
 ```
 
 `setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023.
@@ -26,12 +26,12 @@ Install [Xcode](https://developer.apple.com/xcode/).
 
 Execute `setup.sh` included in the source code.
 
-If `groonga-14.1.0.tar.gz` is expanded, it is `groonga-14.1.0/setup.sh`.
+If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`.
 
 Example of command execution.
 
 ```console
-$ groonga-14.1.0/setup.sh
+$ groonga-14.1.1/setup.sh
 ```
 
 ### Windows
@@ -47,15 +47,15 @@ You can get the latest source from [packages.groonga.org](https://packages.groon
 ### GNU/Linux or UNIX
 
 ```console
-$ wget https://packages.groonga.org/source/groonga/groonga-14.1.0.tar.gz
-$ tar xvzf groonga-14.1.0.tar.gz
+$ wget https://packages.groonga.org/source/groonga/groonga-14.1.1.tar.gz
+$ tar xvzf groonga-14.1.1.tar.gz
 ```
 
 ### Windows
 
 Download the latest zipped source from packages.groonga.org.
 
-> - https://packages.groonga.org/source/groonga/groonga-14.1.0.zip
+> - https://packages.groonga.org/source/groonga/groonga-14.1.1.zip
 
 Then extract it.
 

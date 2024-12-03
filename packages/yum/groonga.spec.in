@@ -461,6 +461,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Dec 03 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.1.1-1
+- New upstream release.
+
 * Fri Nov 01 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.1.0-1
 - New upstream release.
 
