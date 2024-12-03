@@ -940,7 +940,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  * }
  *
  * // Calculate the number of tables retrieved.
- * n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
+ * n_tables = GRN_PTR_VECTOR_SIZE(&tables);
  * // Iterate over each table.
  * for (i = 0; i < n_tables; i++) {
  *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
