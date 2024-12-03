@@ -5933,7 +5933,7 @@ pat_key_defrag_callback(grn_ctx *ctx,
                wal_data->pat,
                node,
                wal_data->key_offset,
-               (uint8_t *)wal_data->key,
+               (uint8_t *)(wal_data->key),
                wal_data->key_size);
 }
 
@@ -6413,7 +6413,7 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
                pat,
                node,
                entry->key_offset,
-               (uint8_t *)entry->key.content.binary.data,
+               (uint8_t *)(entry->key.content.binary.data),
                entry->key.content.binary.size);
 }
 
@@ -6435,7 +6435,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
                               (grn_obj *)pat,
                               entry,
                               wal_error_tag,
-                              "failed wal reader open");
+                              "failed to open WAL reader");
     return;
   }
   uint64_t defrag_current_key_id = 0;
