@@ -950,7 +950,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  * // Free resources by unlinking each table.
  * for (i = 0; i < n_tables; i++) {
  *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
- *     grn_obj_unlink(ctx, table);
+ *     grn_obj_unref(ctx, table);
  * }
  * // Finalize the tables_buffer.
  * GRN_OBJ_FIN(ctx, &tables);
