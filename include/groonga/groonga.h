@@ -909,9 +909,9 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
 /**
  * \brief Retrieve all tables from the database context.
  *
- * \note Ensure that `tables_buffer` is properly initialized using
- *       \ref GRN_PTR_INIT with the \ref GRN_OBJ_VECTOR flag before invoking
- *       this function.
+ * \note Ensure that `tables_buffer` is properly initialized as a \ref
+ *       GRN_PVECTOR using \ref GRN_PTR_INIT with the \ref GRN_OBJ_VECTOR flag
+ *       before invoking this function.
  *
  * \attention After processing the tables, it is essential to release the
  *            allocated resources by unlinking each table object and finalizing
