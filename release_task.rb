@@ -41,7 +41,7 @@ class ReleaseTask
     end
   end
 
-  def file_name
+  def post_name
     "#{Time.now.strftime("%F")}-#{@package}-#{@version}.md"
   end
 
@@ -52,7 +52,7 @@ class ReleaseTask
 
   def blog_posts
     ["ja", "en"].each do |language|
-      File.open("#{@jekyll_path}/#{language}/_posts/#{file_name}", "w") do |blog_post|
+      File.open("#{@jekyll_path}/#{language}/_posts/#{post_name}", "w") do |blog_post|
         blog_post.write(post(language, @package, @version))
       end
     end
