@@ -14845,7 +14845,11 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
           }
           switch (target_object->header.type) {
           case GRN_TABLE_PAT_KEY:
-            r += grn_pat_defrag(ctx, (grn_pat *)target_object);
+            GRN_TABLE_LOCK_BEGIN(ctx, target_object)
+            {
+              r += grn_pat_defrag(ctx, (grn_pat *)target_object);
+            }
+            GRN_TABLE_LOCK_END(ctx);
             break;
           case GRN_COLUMN_VAR_SIZE:
             r += grn_ja_defrag(ctx, (grn_ja *)target_object, threshold);
@@ -14857,7 +14861,8 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
     }
     break;
   case GRN_TABLE_PAT_KEY:
-    r = grn_pat_defrag(ctx, (grn_pat *)obj);
+    GRN_TABLE_LOCK_BEGIN(ctx, obj) { r = grn_pat_defrag(ctx, (grn_pat *)obj); }
+    GRN_TABLE_LOCK_END(ctx);
     break;
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_DAT_KEY:
