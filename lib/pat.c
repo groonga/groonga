@@ -6438,7 +6438,6 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
                               "failed to open WAL reader");
     return;
   }
-  uint64_t defrag_current_key_id = 0;
   while (true) {
     grn_wal_reader_entry defrag_key_entry = {0};
     grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &defrag_key_entry);
@@ -6451,9 +6450,6 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
     /* We don't validate here but event must be GRN_WAL_EVENT_DEFRAG_KEY or
      * GRN_WAL_EVENT_DEFRAG_CURRENT_KEY. */
     if (defrag_key_entry.event != GRN_WAL_EVENT_DEFRAG_KEY) {
-      if (defrag_key_entry.event == GRN_WAL_EVENT_DEFRAG_CURRENT_KEY) {
-        defrag_current_key_id = defrag_key_entry.id;
-      }
       break;
     }
     grn_pat_wal_recover_defrag_key(ctx, pat, &defrag_key_entry, wal_error_tag);
@@ -6462,16 +6458,6 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
     }
   }
   grn_wal_reader_close(ctx, reader);
-  if (entry->id != defrag_current_key_id) {
-    grn_wal_set_recover_error(
-      ctx,
-      GRN_UNKNOWN_ERROR,
-      (grn_obj *)pat,
-      entry,
-      wal_error_tag,
-      "wal_id in GRN_WAL_EVENT_DEFRAG_CURRENT_KEY does not match");
-    return;
-  }
   pat_update_curr_key(ctx, pat, entry->key_offset);
 }
 
