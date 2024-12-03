@@ -6457,11 +6457,11 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
       break;
     }
     grn_pat_wal_recover_defrag_key(ctx, pat, &defrag_key_entry, wal_error_tag);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
   }
   grn_wal_reader_close(ctx, reader);
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
   if (entry->id != defrag_current_key_id) {
     grn_wal_set_recover_error(
       ctx,
