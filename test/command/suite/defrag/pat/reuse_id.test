@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 
 #@timeout 60
