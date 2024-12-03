@@ -931,7 +931,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  * // Initialize the tables buffer as a vector of `grn_obj *`.
  * GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
  *
- * // Retrieve all tables in the context.
+ * // Retrieve all tables in database that the context is using.
  * rc = grn_ctx_get_all_tables(ctx, &tables);
  * if (rc != GRN_SUCCESS) {
  *     GRN_OBJ_FIN(ctx, &tables);
