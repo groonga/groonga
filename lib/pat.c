@@ -18,7 +18,6 @@
 
 #include "grn.h"
 #include "grn_ctx_impl.h"
-#include "grn_table.h"
 #include "grn_pat.h"
 #include "grn_obj.h"
 #include "grn_output.h"
@@ -5991,9 +5990,10 @@ pat_key_defrag_each(grn_ctx *ctx,
 }
 
 /* See test/command/suite/defrag/pat/README.md when you change this.
- * You must update tests for this too. */
+ * You must update tests for this too.
+ * Table locking is required when using this function. */
 int
-grn_pat_defrag_internal(grn_ctx *ctx, grn_pat *pat)
+grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
   int reduced_bytes = 0;
   uint32_t n_records = grn_pat_size(ctx, pat);
@@ -6050,18 +6050,6 @@ grn_pat_defrag_internal(grn_ctx *ctx, grn_pat *pat)
   pat_update_curr_key(ctx, pat, new_curr_key);
 
   GRN_FREE(target_ids);
-  return reduced_bytes;
-}
-
-int
-grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
-{
-  int reduced_bytes = 0;
-  GRN_TABLE_LOCK_BEGIN(ctx, (grn_obj *)pat)
-  {
-    reduced_bytes = grn_pat_defrag_internal(ctx, pat);
-  }
-  GRN_TABLE_LOCK_END(ctx);
   return reduced_bytes;
 }
 
