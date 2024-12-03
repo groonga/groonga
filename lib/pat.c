@@ -6421,8 +6421,55 @@ static void
 grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
                                        grn_pat *pat,
                                        grn_wal_reader_entry *entry,
+                                       uint64_t defrag_key_start_id,
+                                       const char *tag,
                                        const char *wal_error_tag)
 {
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)pat, tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+  if (!reader) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_UNKNOWN_ERROR,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed wal reader open");
+    return;
+  }
+  uint64_t defrag_current_key_id = 0;
+  while (true) {
+    grn_wal_reader_entry defrag_key_entry = {0};
+    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &defrag_key_entry);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    if (defrag_key_entry.id < defrag_key_start_id) {
+      continue;
+    }
+    if (defrag_key_entry.event != GRN_WAL_EVENT_DEFRAG_KEY) {
+      if (defrag_key_entry.event == GRN_WAL_EVENT_DEFRAG_CURRENT_KEY) {
+        defrag_current_key_id = defrag_key_entry.id;
+      }
+      break;
+    }
+    grn_pat_wal_recover_defrag_key(ctx, pat, &defrag_key_entry, wal_error_tag);
+  }
+  grn_wal_reader_close(ctx, reader);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+  if (entry->id != defrag_current_key_id) {
+    grn_wal_set_recover_error(
+      ctx,
+      GRN_UNKNOWN_ERROR,
+      (grn_obj *)pat,
+      entry,
+      wal_error_tag,
+      "wal_id in GRN_WAL_EVENT_DEFRAG_CURRENT_KEY does not match");
+    return;
+  }
   pat_update_curr_key(ctx, pat, entry->key_offset);
 }
 
@@ -6447,6 +6494,7 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
   }
 
   if (reader) {
+    uint64_t defrag_key_start_id = 0;
     while (true) {
       grn_wal_reader_entry entry = {0};
       grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
@@ -6479,10 +6527,25 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
         grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
         break;
       case GRN_WAL_EVENT_DEFRAG_KEY:
-        grn_pat_wal_recover_defrag_key(ctx, pat, &entry, wal_error_tag);
+        /* Defer until GRN_WAL_EVENT_DEFRAG_CURRENT_KEY is happen. */
+        if (defrag_key_start_id == 0) {
+          defrag_key_start_id = entry.id;
+        }
         break;
       case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY:
-        grn_pat_wal_recover_defrag_current_key(ctx, pat, &entry, wal_error_tag);
+        /* Other WAL entries must not be happen between
+         * GRN_WAL_EVENT_DEFRAG_KEY{1..N} and GRN_WAL_EVENT_DEFRAG_CURRENT_KEY
+         * but we don't validate it. WAL entries must be valid. If one or more
+         * GRN_WAL_EVENT_DEFRAG_KEY exist but GRN_WAL_EVENT_DEFRAG_CURRENT_KEY
+         * doesn't exist, the grn_pat_defrag() was crashed. In the case, the
+         * defrag event is ignored. Because the defrag wasn't executed. */
+        grn_pat_wal_recover_defrag_current_key(ctx,
+                                               pat,
+                                               &entry,
+                                               defrag_key_start_id,
+                                               tag,
+                                               wal_error_tag);
+        defrag_key_start_id = 0;
         break;
       default:
         grn_wal_set_recover_error(ctx,
@@ -6495,6 +6558,15 @@ grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
       }
       if (ctx->rc != GRN_SUCCESS) {
         break;
+      }
+      if (entry.event == GRN_WAL_EVENT_DEFRAG_KEY) {
+        /* Don't update wal_id and need_flush until
+         * GRN_WAL_EVENT_DEFRAG_CURRENT_KEY is happen. If
+         * GRN_WAL_EVENT_DEFRAG_CURRENT_KEY isn't happen, grn_pat_defrag() was
+         * crashed between writing GRN_WAL_EVENT_DEFRAG_KEY and
+         * GRN_WAL_EVENT_DEFRAG_CURRENT_KEY. In the case, we just ignore the
+         * defrag event. Because the defrag wasn't executed. */
+        continue;
       }
       pat->header->wal_id = entry.id;
       need_flush = true;
