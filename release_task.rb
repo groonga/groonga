@@ -46,7 +46,8 @@ class ReleaseTask
   end
 
   def post(language, package, version)
-    # TODO: Write blog post
+    # TODO: We will write blog post contents here.
+    # After writing contents, we will remove this comment.
     "#{language}, #{package}, #{version}"
   end
 
