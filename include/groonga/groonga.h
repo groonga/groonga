@@ -915,9 +915,9 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  *       before invoking this function.
  *
  * \attention After processing the tables, it is essential to release the
- *            allocated resources by unlinking each table object and finalizing
- *            the `tables_buffer` using \ref GRN_OBJ_FIN. Otherwise, memory
- *            leaks may occur.
+ *            allocated resources by un-referring each table object and
+ *            finalizing the `tables_buffer` using \ref GRN_OBJ_FIN. Otherwise,
+ *            memory leaks may occur.
  *
  * Here is an example of how to use \ref grn_ctx_get_all_tables to retrieve and
  * process all tables:
@@ -947,7 +947,8 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  *     // Use table.
  * }
  *
- * // Free resources by unlinking each table.
+ * // Free resources by un-referring each table when the reference count mode is
+ * // enabled.
  * for (i = 0; i < n_tables; i++) {
  *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
  *     grn_obj_unref(ctx, table);
