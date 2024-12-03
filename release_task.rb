@@ -45,7 +45,7 @@ class ReleaseTask
     "#{Time.now.strftime("%F")}-#{@package}-#{@version}.md"
   end
 
-  def post(language)
+  def post_content(language)
     # TODO: We will write blog post contents here.
     # After writing contents, we will remove this comment.
     "#{language}, #{@package}, #{@version}"
@@ -53,8 +53,8 @@ class ReleaseTask
 
   def write_blog_posts
     ["ja", "en"].each do |language|
-      File.open("#{@jekyll_path}/#{language}/_posts/#{post_name}", "w") do |blog_post|
-        blog_post.write(post(language))
+      File.open("#{@jekyll_path}/#{language}/_posts/#{post_name}", "w") do |post|
+        post.write(post_content(language))
       end
     end
   end
