@@ -906,6 +906,62 @@ GRN_API grn_obj *
 grn_ctx_db(grn_ctx *ctx);
 GRN_API grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
+/**
+ * \brief Retrieve all tables from the database that the context is using.
+ *
+ * \note Ensure that `tables_buffer` is properly initialized as a \ref
+ *       GRN_PVECTOR using \ref GRN_PTR_INIT with the \ref GRN_OBJ_VECTOR flag
+ *       before invoking this function.
+ *
+ * \attention After processing the tables, it is essential to release the
+ *            allocated resources by un-referring each table object and
+ *            finalizing the `tables_buffer` using \ref GRN_OBJ_FIN. Otherwise,
+ *            memory leaks may occur.
+ *
+ * Here is an example of how to use \ref grn_ctx_get_all_tables to retrieve and
+ * process all tables:
+ *
+ * ```c
+ * grn_rc rc;
+ * grn_obj tables;
+ * int i;
+ * int n_tables;
+ *
+ * // Initialize the tables buffer as a vector of `grn_obj *`.
+ * GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
+ *
+ * // Retrieve all tables in database that the context is using.
+ * rc = grn_ctx_get_all_tables(ctx, &tables);
+ * if (rc != GRN_SUCCESS) {
+ *     GRN_OBJ_FIN(ctx, &tables);
+ *     // Handle error appropriately.
+ *     return rc;
+ * }
+ *
+ * // Calculate the number of tables retrieved.
+ * n_tables = GRN_PTR_VECTOR_SIZE(&tables);
+ * // Iterate over each table.
+ * for (i = 0; i < n_tables; i++) {
+ *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
+ *     // Use table.
+ * }
+ *
+ * // Free resources by un-referring each table when the reference count mode is
+ * // enabled.
+ * for (i = 0; i < n_tables; i++) {
+ *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
+ *     grn_obj_unref(ctx, table);
+ * }
+ * // Finalize the tables buffer.
+ * GRN_OBJ_FIN(ctx, &tables);
+ * ```
+ *
+ * \param ctx The context object.
+ * \param tables_buffer The buffer to store the retrieved tables (must be
+ *                      prepared by the caller).
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_get_all_tables(grn_ctx *ctx, grn_obj *tables_buffer);
 GRN_API grn_rc
