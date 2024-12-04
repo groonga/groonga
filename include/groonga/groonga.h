@@ -907,8 +907,7 @@ grn_ctx_db(grn_ctx *ctx);
 GRN_API grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
 /**
- * \brief Retrieve all tables from the database the database that the context is
- *        using.
+ * \brief Retrieve all tables from the database that the context is using.
  *
  * \note Ensure that `tables_buffer` is properly initialized as a \ref
  *       GRN_PVECTOR using \ref GRN_PTR_INIT with the \ref GRN_OBJ_VECTOR flag
