@@ -19,8 +19,19 @@ case "${distribution}" in
 esac
 architecture=$(dpkg --print-architecture)
 
-wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
-apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+case "${distribution}-${code_name}" in
+  debian-bookworm|ubuntu-focal)
+    # Don't enable the Apache Arrow APT repository because some users
+    # such as Zulip don't want to enable the Apache Arrow APT
+    # repository for compatibility. We should keep mirroring Apache
+    # Arrow deb for these platforms.
+    :
+    ;;
+  *)
+    wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+    apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+    ;;
+esac
 
 wget \
   https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
