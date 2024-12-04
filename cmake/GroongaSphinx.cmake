@@ -74,7 +74,7 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
       COMMAND
         ${CMAKE_COMMAND} -E env DOCUMENT_VERSION=${GRN_VERSION}
         DOCUMENT_VERSION_FULL=${GRN_VERSION_FULL} LOCALE=${LOCALE}
-        ${SPHINX_BUILD} -j auto -D language=${LOCALE} -b ${BUILDER} -d
+        ${SPHINX_BUILD} --quiet -j auto -D language=${LOCALE} -b ${BUILDER} -d
         ${LOCALE}/doctrees/${BUILDER} ${SOURCE_DIR} ${LOCALE}/${BUILDER}
       COMMAND ${CMAKE_COMMAND} -E touch ${LOCALE}-${BUILDER}.time_stamp
       DEPENDS ${TARGET_SOURCES})
