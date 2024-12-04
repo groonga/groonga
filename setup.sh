@@ -48,9 +48,11 @@ function setup_with_apt () {
       package_names+=(
         ccache
         cmake
+        doxygen
         g++
         gcc
         gettext
+        graphviz
         libarrow-dev
         libedit-dev
         liblz4-dev
@@ -120,6 +122,8 @@ function setup_with_dnf () {
 
       package_names+=(
         ccache
+        doxygen
+        graphviz
         mecab-devel
         msgpack-devel
         simdjson-devel
