@@ -952,7 +952,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
  *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
  *     grn_obj_unref(ctx, table);
  * }
- * // Finalize the tables_buffer.
+ * // Finalize the tables buffer.
  * GRN_OBJ_FIN(ctx, &tables);
  * ```
  *
