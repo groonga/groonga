@@ -25,8 +25,3 @@ Reference
    :param name: 検索しようとするオブジェクトの名前。
    :param name_size: The number of bytes of name. If negative value is specified, name is assumed that NULL-terminated string.
 
-.. c:function:: grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id)
-
-   ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。idに一致するオブジェクトが存在しなければNULLを返す。
-
-   :param id: 検索しようとするオブジェクトのidを指定します。
