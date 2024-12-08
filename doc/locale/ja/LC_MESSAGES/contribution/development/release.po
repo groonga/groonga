@@ -145,49 +145,10 @@ msgstr ""
 msgid "これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。"
 msgstr ""
 
-msgid "cutterのソースコード取得"
+msgid "CMakeの実行"
 msgstr ""
 
-msgid "Groongaのリリース作業では、cutterに含まれるスクリプトを使用しています。"
-msgstr ""
-
-msgid "そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソースコードを以下のコマンドにて取得します。"
-msgstr ""
-
-msgid "これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。"
-msgstr ""
-
-msgid "configureスクリプトの生成"
-msgstr ""
-
-msgid "Groongaのソースコードをcloneした時点ではconfigureスクリプトが含まれておらず、そのままmakeコマンドにてビルドすることができません。"
-msgstr ""
-
-msgid "$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。"
-msgstr ""
-
-msgid "このコマンドの実行により、configureスクリプトが生成されます。"
-msgstr ""
-
-msgid "configureスクリプトの実行"
-msgstr ""
-
-msgid "Makefileを生成するためにconfigureスクリプトを実行します。"
-msgstr ""
-
-msgid "リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。"
-msgstr ""
-
-msgid "configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。"
-msgstr ""
-
-msgid "configureオプションである--with-cutter-source-pathにはcutterのソースをcloneした場所を指定します。"
-msgstr ""
-
-msgid "以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。"
-msgstr ""
-
-msgid "あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。"
+msgid "また、あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。"
 msgstr ""
 
 msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。"
@@ -205,7 +166,7 @@ msgstr ""
 msgid "変更点のまとめ"
 msgstr ""
 
-msgid "前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）にまとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
+msgid "前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news/*.md（英語）にまとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
 msgstr ""
 
 msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。"
@@ -229,13 +190,10 @@ msgstr ""
 msgid "内部的な変更(変数名の変更やらリファクタリング)"
 msgstr ""
 
-msgid "make update-latest-releaseの実行"
+msgid "rake release:version:updateの実行"
 msgstr ""
 
-msgid "make update-latest-releaseコマンドでは、OLD_RELEASEに前回のバージョンを、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
-msgstr ""
-
-msgid "13.0.6のリリースを行った際は以下のコマンドを実行しました。"
+msgid "``rake release:version:update`` コマンドでは、 ``OLD_RELEASE`` に前回のバージョンを、 ``GROONGA_ORG_DIR`` にGroongaのWebサイトのディレクトリーを、 ``NEW_RELEASE_DATE`` に次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
 msgid "これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。"
@@ -245,6 +203,9 @@ msgid "Ubuntu向けパッケージのビルド確認"
 msgstr ""
 
 msgid "Ubuntu向けのパッケージは、LaunchPadでビルドしています。 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。"
+msgstr ""
+
+msgid "``rake release:version:update`` の結果をリポジトリーにpush後にGitHub Actionsで生成されるソースアーカイブをダウンロードします。 ダウンロードしたソースアーカイブを ``$GROONGA_CLONE_DIR`` のトップに配置します。その後、以下のコマンドを実行してください。"
 msgstr ""
 
 msgid "各種テストの確認"
