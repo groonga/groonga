@@ -16,7 +16,7 @@ defragは、対象となるオブジェクト(データベースか可変長サ�
 
 .. versionadded:: 14.1.1
 
-    Supported patricia trie table. Defragmentation for patrician trie table resolves key fragmentation.
+    You can resolve key fragmentation of a patricia trie table.
 
 Syntax
 ------

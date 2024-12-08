@@ -30,8 +30,8 @@ msgstr ""
 msgid "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、オブジェクトのフラグメンテーショ ンを解消します。"
 msgstr ""
 
-msgid "Supported patricia trie table. Defragmentation for patrician trie table resolves key fragmentation."
-msgstr "パトリシアトライのテーブルをサポートしました。パトリシアトライのテーブルに対してデフラグをするとキーのフラグメンテーションを解消します。"
+msgid "You can resolve key fragmentation of a patricia trie table."
+msgstr "パトリシアトライのテーブルのキーのフラグメンテーションを解消します。"
 
 msgid "Syntax"
 msgstr "構文"
