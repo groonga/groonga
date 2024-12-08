@@ -28,7 +28,7 @@ grn_token_init_internal(grn_ctx *ctx, grn_token *token, bool deep)
   token->source_offset = 0;
   token->source_length = 0;
   token->source_first_character_length = 0;
-  token->have_overlap = GRN_FALSE;
+  token->have_overlap = false;
   grn_token_metadata_init(ctx, &(token->metadata));
   token->force_prefix_search = GRN_FALSE;
   token->position = 0;
@@ -261,19 +261,19 @@ exit:
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_bool
+bool
 grn_token_have_overlap(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
     ERR(GRN_INVALID_ARGUMENT, "[token][overlap][have] token must not be NULL");
-    GRN_API_RETURN(0);
+    GRN_API_RETURN(false);
   }
   GRN_API_RETURN(token->have_overlap);
 }
 
 grn_rc
-grn_token_set_overlap(grn_ctx *ctx, grn_token *token, grn_bool have_overlap)
+grn_token_set_overlap(grn_ctx *ctx, grn_token *token, bool have_overlap)
 {
   GRN_API_ENTER;
   if (!token) {
@@ -382,7 +382,7 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   token->source_offset = 0;
   token->source_length = 0;
   token->source_first_character_length = 0;
-  token->have_overlap = GRN_FALSE;
+  token->have_overlap = false;
   grn_token_metadata_reset(ctx, &(token->metadata));
   token->force_prefix_search = GRN_FALSE;
   token->position = 0;
