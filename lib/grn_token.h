@@ -37,11 +37,16 @@ struct _grn_token {
   float weight;
 };
 
-grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_init_deep(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_fin(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_reset(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
+grn_rc
+grn_token_init(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_init_deep(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_fin(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_reset(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
 
 #ifdef __cplusplus
 }
