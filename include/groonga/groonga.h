@@ -904,6 +904,17 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db);
  */
 GRN_API grn_obj *
 grn_ctx_db(grn_ctx *ctx);
+/**
+ * \brief Retrieve the object corresponding to the specified name from the
+ *        database that the context is using.
+ *
+ * \param ctx The context object.
+ * \param name The name of the object to be retrieved.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref grn_obj if the object that has the specified name is found,
+ *         `NULL` otherwise.
+ */
 GRN_API grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
 /**
