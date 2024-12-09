@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_ctx``"
 msgstr ""
 
@@ -33,11 +30,5 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。"
-msgstr ""
-
-msgid "検索しようとするオブジェクトの名前。"
-msgstr ""
-
-msgid "The number of bytes of name. If negative value is specified, name is assumed that NULL-terminated string."
-msgstr "名前のバイト数。負の値が指定された場合は、終端をNULL文字とした文字列として扱われる。"
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"
