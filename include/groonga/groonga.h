@@ -577,16 +577,14 @@ grn_unset_variable(const char *name, int name_size);
 /**
  * \brief Retrieve the current lock timeout.
  *
- * Groonga uses read lock-free mechanism. It allows multiple threads or
- * processes to perform read operations, even during write operations.
- * On the other hand, Groonga uses a locking mechanism specifically for managing
- * write operations on shared values. If a \ref grn_ctx instance attempts to
- * acquire a lock while another \ref grn_ctx instance is updating the same
- * resource. The lock acquisition will be retried until the lock is successfully
- * acquired or the specified timeout is reached.
+ * Groonga uses a read lock-free mechanism. It allows multiple threads or
+ * processes to perform read operations concurrently, even during write
+ * operations. Write operations, in contrast, require locking to ensure data
+ * consistency.
  *
- * During this process:
- * - The \ref grn_ctx waits for 1 millisecond before retrying.
+ * When performing write operations:
+ * - If acquiring a lock is not immediately available, it waits for 1
+ *   millisecond before retrying.
  * - The retries continue until the cumulative wait time reaches the lock
  *   timeout duration.
  * - If the lock cannot be acquired within the specified timeout duration, the
