@@ -574,6 +574,26 @@ grn_ctx_get_variable(grn_ctx *ctx, const char *name, int name_size);
 GRN_API grn_rc
 grn_unset_variable(const char *name, int name_size);
 
+/**
+ * \brief Retrieve the current lock timeout.
+ *
+ * Groonga uses a read lock-free mechanism. It allows multiple threads or
+ * processes to perform read operations concurrently, even during write
+ * operations. Write operations, in contrast, require locking to ensure data
+ * consistency.
+ *
+ * When performing write operations:
+ * - If acquiring a lock is not immediately available, it waits for 1
+ *   millisecond before retrying.
+ * - The retries continue until the cumulative wait time reaches the lock
+ *   timeout duration.
+ * - If the lock cannot be acquired within the specified timeout duration, the
+ *   operation fails.
+ *
+ * The default lock timeout is set to 900,000 milliseconds (15 minutes).
+ *
+ * \return The current lock timeout in milliseconds.
+ */
 GRN_API int
 grn_get_lock_timeout(void);
 GRN_API grn_rc
