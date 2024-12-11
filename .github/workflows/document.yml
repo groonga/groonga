@@ -3,14 +3,14 @@ on:
   push:
     paths:
       - 'Rakefile'
-      - 'doc/Doxyfile'
+      - 'doc/**'
       - 'include/**/*.h'
       - 'include/**/*.hpp'
       - '.github/workflows/document.yml'
   pull_request:
     paths:
       - 'Rakefile'
-      - 'doc/Doxyfile'
+      - 'doc/**'
       - 'include/**/*.h'
       - 'include/**/*.hpp'
       - '.github/workflows/document.yml'
