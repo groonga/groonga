@@ -602,9 +602,10 @@ grn_get_lock_timeout(void);
  * Special cases for the `timeout` parameter:
  * - **0**: If `timeout` is 0, Groonga will attempt to acquire the lock only
  *   once. If it fails, it will not retry and the operation will fail
- *   immediately.
- * - **Negative value**: A negative `timeout` indicates that Groonga will
- *   retry acquiring the lock forever without timeout.
+ *   immediately without waiting for the lock to be released.
+ * - **Negative value**: If `timeout` is negative value, Groonga will wait
+ *   forever for retrying to acquire the lock without any timeout until it
+ *   succeeds.
  *
  * The default lock timeout is 900,000 milliseconds (15 minutes).
  *
