@@ -5,7 +5,7 @@ Source: https://github.com/groonga/groonga/releases
 
 Files: *
 Copyright: 2009-2016 Brazil, Inc.
-License: LGPL-2.1
+License: LGPL-2.1+
 
 Files: debian/*
 Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
@@ -13,7 +13,7 @@ Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
 	   IWAI, Masaharu <iwaim.sub@gmail.com>
 	   SATOH Fumiyasu <fumiyas@osstech.co.jp>
 	   orangain <orangain@gmail.com>
-License: LGPL-2.1
+License: LGPL-2.1+
 
 Files: data/html/admin/assets/jquery-ui-1.12.1/*
 Copyright: jQuery Foundation and other contributors, https://jquery.org/
@@ -111,7 +111,7 @@ License: MIT
 
 Files: vendor/mruby/*
 Copyright: 2013-2016 Kouhei Sutou <kou@clear-code.com>
-License: LGPL-2.1
+License: LGPL-2.1+
 
 Files: vendor/mruby/mruby-compiler/core/parse.c
 Copyright: 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
@@ -159,7 +159,7 @@ License: BSD-3-clause
  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-License: LGPL-2.1
+License: LGPL-2.1+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
