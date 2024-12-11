@@ -596,6 +596,30 @@ grn_unset_variable(const char *name, int name_size);
  */
 GRN_API int
 grn_get_lock_timeout(void);
+/**
+ * \brief Set the lock timeout used during write operations.
+ *
+ * Special cases for the `timeout` parameter:
+ * - **0**: If `timeout` is 0, Groonga will attempt to acquire the lock only
+ *   once. If it fails, it will not retry and the operation will fail
+ *   immediately.
+ * - **Negative value**: A negative `timeout` indicates that Groonga will
+ *   retry acquiring the lock forever without timeout.
+ *
+ * The default lock timeout is 900,000 milliseconds (15 minutes).
+ *
+ * **Lock Timeout Configuration**:
+ *
+ * Lock timeout can be configured in two ways:
+ * - **Environment Variable**: Set `GRN_LOCK_TIMEOUT` before running the program
+ *   to specify a default lock timeout by milliseconds.
+ * - **API**: Use \ref grn_set_lock_timeout to override the environment variable
+ *   setting at runtime.
+ *
+ * \param timeout The new lock timeout in milliseconds.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_set_lock_timeout(int timeout);
 
