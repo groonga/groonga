@@ -612,10 +612,10 @@ grn_get_lock_timeout(void);
  * **Lock Timeout Configuration**:
  *
  * Lock timeout can be configured in two ways:
- * - **Environment Variable**: Set `GRN_LOCK_TIMEOUT` before running the program
- *   to specify a default lock timeout by milliseconds.
- * - **API**: Use \ref grn_set_lock_timeout to override the environment variable
- *   setting at runtime.
+ * - **CMake Option**: Use `-DGRN_LOCK_TIMEOUT=<milliseconds>` when configuring
+ *   the build with CMake to specify a default lock timeout by milliseconds.
+ * - **API**: Use \ref grn_set_lock_timeout to override the default setting at
+ *   runtime.
  *
  * \param timeout The new lock timeout in milliseconds.
  *
