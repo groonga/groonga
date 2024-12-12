@@ -1067,6 +1067,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/8.rst \
 	$(top_srcdir)/doc/source/news/9.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
+	$(top_srcdir)/doc/source/origin.md \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/alias.rst \
 	$(top_srcdir)/doc/source/reference/api.rst \
@@ -2397,6 +2398,7 @@ source_files_relative_from_doc_dir = \
 	source/news/8.rst \
 	source/news/9.rst \
 	source/news/senna.rst \
+	source/origin.md \
 	source/reference.rst \
 	source/reference/alias.rst \
 	source/reference/api.rst \
@@ -2715,6 +2717,7 @@ po_files = \
 	news/8.po \
 	news/9.po \
 	news/senna.po \
+	origin.po \
 	reference.po \
 	reference/alias.po \
 	reference/api.po \
@@ -3030,6 +3033,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.po \
 	LC_MESSAGES/news/9.po \
 	LC_MESSAGES/news/senna.po \
+	LC_MESSAGES/origin.po \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/reference/alias.po \
 	LC_MESSAGES/reference/api.po \
@@ -3345,6 +3349,7 @@ edit_po_files = \
 	news/8.edit \
 	news/9.edit \
 	news/senna.edit \
+	origin.edit \
 	reference.edit \
 	reference/alias.edit \
 	reference/api.edit \
@@ -3660,6 +3665,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.edit \
 	LC_MESSAGES/news/9.edit \
 	LC_MESSAGES/news/senna.edit \
+	LC_MESSAGES/origin.edit \
 	LC_MESSAGES/reference.edit \
 	LC_MESSAGES/reference/alias.edit \
 	LC_MESSAGES/reference/api.edit \
@@ -3975,6 +3981,7 @@ mo_files = \
 	news/8.mo \
 	news/9.mo \
 	news/senna.mo \
+	origin.mo \
 	reference.mo \
 	reference/alias.mo \
 	reference/api.mo \
@@ -4290,6 +4297,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.mo \
 	LC_MESSAGES/news/9.mo \
 	LC_MESSAGES/news/senna.mo \
+	LC_MESSAGES/origin.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/reference/alias.mo \
 	LC_MESSAGES/reference/api.mo \
@@ -4640,6 +4648,7 @@ html_files_relative_from_locale_dir = \
 	html/news/9.html \
 	html/news/senna.html \
 	html/objects.inv \
+	html/origin.html \
 	html/reference.html \
 	html/reference/alias.html \
 	html/reference/api.html \

@@ -1067,6 +1067,7 @@ set(GRN_DOC_SOURCES
     news/8.rst
     news/9.rst
     news/senna.rst
+    origin.md
     reference.rst
     reference/alias.rst
     reference/api.rst
@@ -1419,6 +1420,7 @@ set(GRN_DOC_HTML_FILES
     news/9.html
     news/senna.html
     objects.inv
+    origin.html
     reference.html
     reference/alias.html
     reference/api.html
