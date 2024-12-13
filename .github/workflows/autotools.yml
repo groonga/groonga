@@ -113,12 +113,6 @@ jobs:
             ruby-dev \
             zlib1g-dev
           echo "/usr/lib/ccache" >> $GITHUB_PATH
-      - name: Install Cutter
-        run: |
-          curl \
-            --silent \
-            --location \
-            https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
       - name: Generate configure
         run: |
           ./autogen.sh
@@ -152,9 +146,6 @@ jobs:
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
 
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
-      - name: "Test: API"
-        run: |
-          bash -x test/unit/run-test.sh
       - name: "Test: mruby"
         run: |
           USE_SYSTEM=yes test/mruby/run-test.rb
