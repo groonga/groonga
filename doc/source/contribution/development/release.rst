@@ -136,68 +136,16 @@ Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして�
 
 これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。
 
-cutterのソースコード取得
-------------------------
-
-Groongaのリリース作業では、cutterに含まれるスクリプトを使用しています。
-
-そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソースコードを以下のコマンドにて取得します。
+CMakeの実行
+-----------
 
 .. code-block:: console
 
-   $ git clone git@github.com:clear-code/cutter.git
+   $ mkdir -p build-dir/groonga
+   $ cmake -S $GROONGA_CLONE_DIR -B build-dir/groonga --preset=doc --fresh -DCMAKE_INSTALL_PREFIX="/tmp/local"
+   $ cmake --build build-dir/groonga
 
-これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。
-
-configureスクリプトの生成
--------------------------
-
-Groongaのソースコードをcloneした時点ではconfigureスクリプトが含まれておらず、そのままmakeコマンドにてビルドすることができません。
-
-$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。
-
-.. code-block:: console
-
-   $ sh autogen.sh
-
-このコマンドの実行により、configureスクリプトが生成されます。
-
-configureスクリプトの実行
--------------------------
-
-Makefileを生成するためにconfigureスクリプトを実行します。
-
-リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。
-
-.. code-block:: console
-
-   $ ./configure \
-         --prefix=/tmp/local \
-         --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-         --with-groonga-org-path=$HOME/work/groonga/groonga.org \
-         --enable-document \
-         --with-ruby \
-         --enable-mruby \
-         --with-cutter-source-path=$HOME/work/cutter/cutter
-
-configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
-
-configureオプションである--with-cutter-source-pathにはcutterのソースをcloneした場所を指定します。
-
-以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。
-
-.. code-block:: console
-
-   $ ./configure \
-         --prefix=/tmp/local \
-         --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-         --with-groonga-org-path=../groonga.org \
-         --enable-document \
-         --with-ruby \
-         --enable-mruby \
-         --with-cutter-source-path=../../cutter/cutter
-
-あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
+また、あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
 
 ログイン可能であるかの確認は以下のようにコマンドを実行して行います。
 
@@ -214,7 +162,7 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 変更点のまとめ
 --------------
 
-前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）にまとめます。
+前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news/*.md（英語）にまとめます。
 ここでまとめた内容についてはリリースアナウンスにも使用します。
 
 前回リリースからの変更履歴を参照するには以下のコマンドを実行します。
@@ -234,17 +182,15 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 
 * 内部的な変更(変数名の変更やらリファクタリング)
 
-make update-latest-releaseの実行
---------------------------------
+rake release:version:updateの実行
+---------------------------------
 
-make update-latest-releaseコマンドでは、OLD_RELEASEに前回のバージョンを、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
-
-13.0.6のリリースを行った際は以下のコマンドを実行しました。
+``rake release:version:update`` コマンドでは、 ``OLD_RELEASE`` に前回のバージョンを、 ``GROONGA_ORG_DIR`` にGroongaのWebサイトのディレクトリーを、 ``NEW_RELEASE_DATE`` に次回リリースの日付（未来の日付）を指定します。
 
 .. code-block:: console
 
    $ cd $GROONGA_CLONE_DIR
-   $ rake release:version:update OLD_RELEASE=13.0.5 GROONGA_ORG_DIR=/home/yasuhiro/Work/free-software/groonga.org OLD_RELEASE_DATE=2023-08-02 NEW_RELEASE_DATE=2023-08-31
+   $ rake release:version:update OLD_RELEASE=14.0.9 GROONGA_ORG_DIR=../groonga.org OLD_RELEASE_DATE=2024-09-27 NEW_RELEASE_DATE=2024-11-05
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
@@ -256,10 +202,12 @@ Ubuntu向けパッケージのビルド確認
 Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。
 
+``rake release:version:update`` の結果をリポジトリーにpush後にGitHub Actionsで生成されるソースアーカイブをダウンロードします。
+ダウンロードしたソースアーカイブを ``$GROONGA_CLONE_DIR`` のトップに配置します。その後、以下のコマンドを実行してください。
+
 .. code-block:: console
 
-   $ make dist
-   $ cd packages
+   $ cd $GROONGA_CLONE_DIR/packages
    $ rake ubuntu DPUT_CONFIGURATION_NAME=groonga-ppa-nightly DPUT_INCOMING="~groonga/ubuntu/nightly" LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 各種テストの確認
