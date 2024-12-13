@@ -309,3 +309,13 @@ jobs:
             --volume ${PWD}:/groonga:ro \
             ${TEST_DOCKER_IMAGE} \
             /groonga/packages/${TASK_NAMESPACE}/test.sh
+
+  release:
+    if: |
+      github.ref_type == 'tag'
+    needs: build
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
