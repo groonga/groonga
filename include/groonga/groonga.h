@@ -596,6 +596,31 @@ grn_unset_variable(const char *name, int name_size);
  */
 GRN_API int
 grn_get_lock_timeout(void);
+/**
+ * \brief Set the lock timeout used during write operations.
+ *
+ * Special cases for the `timeout` parameter:
+ * - **0**: If `timeout` is 0, Groonga will attempt to acquire the lock only
+ *   once. If it fails, it will not retry and the operation will fail
+ *   immediately without waiting for the lock to be released.
+ * - **Negative value**: If `timeout` is negative value, Groonga will wait
+ *   forever for retrying to acquire the lock without any timeout until it
+ *   succeeds.
+ *
+ * The default lock timeout is 900,000 milliseconds (15 minutes).
+ *
+ * **Lock Timeout Configuration**:
+ *
+ * Lock timeout can be configured in two ways:
+ * - **CMake Option**: Use `-DGRN_LOCK_TIMEOUT=<milliseconds>` when configuring
+ *   the build with CMake to specify a default lock timeout by milliseconds.
+ * - **API**: Use \ref grn_set_lock_timeout to override the default setting at
+ *   runtime.
+ *
+ * \param timeout The new lock timeout in milliseconds.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_set_lock_timeout(int timeout);
 
