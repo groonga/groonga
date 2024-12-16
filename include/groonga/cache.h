@@ -28,6 +28,52 @@ typedef struct _grn_cache grn_cache;
 GRN_API void grn_set_default_cache_base_path(const char *base_path);
 GRN_API const char *grn_get_default_cache_base_path(void);
 
+/**
+ * \brief Create a new cache object.
+ *
+ * Initializes a cache based on the current configuration or environment
+ * settings. The cache operates in either memory mode or persistent mode.
+ *
+ * **Cache Modes**:
+ *
+ * Memory Cache:
+ * - Each worker has an independent cache.
+ * - Suitable for single-worker setups.
+ *
+ * Persistent Cache:
+ * - Multiple workers share the same cache for `groonga-nginx` setups.
+ * - Slightly slower than memory cache due to filesystem I/O.
+ *
+ * **Cache Mode Configuration**:
+ *
+ * Cache mode can be configured in three ways:
+ *
+ * **Default Configuration**:
+ * - By default, `groonga_cache_base_path` is set to `off`, enabling memory-only
+ *   caching, which is used in `groonga-nginx` settings.
+ * - To use persistent caching, set `groonga_cache_base_path` to a valid path
+ *   (preferably on a memory file system like `/dev/shm`).
+ *
+ * **Environment Variable**:
+ *
+ * If `groonga_cache_base_path` is not set, the function checks the
+ * `GRN_CACHE_TYPE` environment variable.
+ * - If `GRN_CACHE_TYPE` is set to `persistent`, it enables persistent cache
+ *   mode without a specified base path.
+ * - If `GRN_CACHE_TYPE` is set to any other value or is unset, it uses
+ *   memory-only cache mode.
+ *
+ * **C API**:
+ *
+ * Use \ref grn_set_default_cache_base_path to override the configuration or
+ * environment settings at runtime.
+ *
+ * \param ctx The context object used for memory allocation and error handling.
+ *
+ * \return A newly created \ref grn_cache object on success, NULL on error. The
+ *         returned \ref grn_cache object must be freed by \ref grn_cache_close.
+ *         See ctx->rc for error details.
+ */
 GRN_API grn_cache *grn_cache_open(grn_ctx *ctx);
 GRN_API grn_cache *grn_persistent_cache_open(grn_ctx *ctx,
                                              const char *base_path);
