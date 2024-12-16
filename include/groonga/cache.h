@@ -41,18 +41,18 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * - Suitable for single-worker setups.
  *
  * Persistent Cache:
- * - Multiple workers share the same cache for `groonga-nginx` setups.
+ * - Multiple workers share the same cache.
  * - Slightly slower than memory cache due to filesystem I/O.
  *
  * **Cache Mode Configuration**:
  *
  * Cache mode can be configured in three ways:
  *
- * **Default Configuration**:
- * - By default, `groonga_cache_base_path` is set to `off`, enabling memory-only
- *   caching, which is used in `groonga-nginx` settings.
- * - To use persistent caching, set `groonga_cache_base_path` to a valid path
- *   (preferably on a memory file system like `/dev/shm`).
+ * **Server/Daemon Option**:
+ *
+ * When starting Groonga, use the `--cache-base-path` option to specify the
+ * cache base path. Setting this option to a valid path enables persistent
+ * cache mode.
  *
  * **Environment Variable**:
  *
