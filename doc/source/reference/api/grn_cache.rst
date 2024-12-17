@@ -57,18 +57,6 @@ Reference
    :c:func:`grn_cache_open()` and free the created object by
    :c:func:`grn_cache_close()`.
 
-.. c:function:: grn_cache *grn_cache_open(grn_ctx *ctx)
-
-   Creates a new cache object.
-
-   If memory allocation for the new cache object is failed, ``NULL``
-   is returned. Error information is stored into the ``ctx``.
-
-   :param ctx: The context.
-   :return: A newly allocated cache object on success, ``NULL``
-            otherwise. The returned cache object must be freed by
-            :c:func:`grn_cache_close()`.
-
 .. c:function:: grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache)
 
    Frees resourses of the ``cache``.
