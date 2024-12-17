@@ -16,40 +16,36 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create release page
         run: |
-          if gh release view "${{ inputs.tag }}" > /dev/null 2>&1; then
-            echo "Skip the creation step for Release ${{ inputs.tag }}."
-          else
-            (cd doc/source/news && \
-             ruby \
-               -e 'print("## Groonga "); \
-                   puts(ARGF.read.split(/^## Release /)[1]. \
-                          gsub(/^\(.+\)=$/, ""). \
-                          gsub(/{doc}`(.+?)`/) { \
-                            id = $1; \
-                            title = id.split("\/").last; \
-                            path = id.delete_prefix("/"); \
-                            url = "https://groonga.org/docs/#{path}.html"; \
-                            "[#{title}](#{url})"; \
-                          }. \
-                          gsub(/{ref}`(.+?)`/) {$1}.
-                          strip)' \
-               $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
-              release-note.md
-            echo "" >> release-note.md
-            echo "### Translations" >> release-note.md
-            echo "" >> release-note.md
-            tag=${{ inputs.tag }}
-            version=${tag#v}
-            major_version=${version%%.*}inputs.tag
-            version_hyphen=$(echo ${version} | tr . -)
-            echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
-            title="$(head -n1 release-note.md | sed -e 's/^## //')"
-            tail -n +2 release-note.md > release-note-without-version.md
-            gh release create ${{ inputs.tag }} \
-              --discussion-category Releases \
-              --notes-file release-note-without-version.md \
-              --title "${title}"
-          fi
+          (cd doc/source/news && \
+           ruby \
+             -e 'print("## Groonga "); \
+                 puts(ARGF.read.split(/^## Release /)[1]. \
+                        gsub(/^\(.+\)=$/, ""). \
+                        gsub(/{doc}`(.+?)`/) { \
+                          id = $1; \
+                          title = id.split("\/").last; \
+                          path = id.delete_prefix("/"); \
+                          url = "https://groonga.org/docs/#{path}.html"; \
+                          "[#{title}](#{url})"; \
+                        }. \
+                        gsub(/{ref}`(.+?)`/) {$1}.
+                        strip)' \
+             $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
+             release-note.md
+          echo "" >> release-note.md
+          echo "### Translations" >> release-note.md
+          echo "" >> release-note.md
+          tag=${{ inputs.tag }}
+          version=${tag#v}
+          major_version=${version%%.*}inputs.tag
+          version_hyphen=$(echo ${version} | tr . -)
+          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
+          title="$(head -n1 release-note.md | sed -e 's/^## //')"
+          tail -n +2 release-note.md > release-note-without-version.md
+          gh release create ${{ inputs.tag }} \
+            --discussion-category Releases \
+            --notes-file release-note-without-version.md \
+            --title "${title}" || :
         env:
           GH_TOKEN: ${{ secrets.token }}
     # todo: donwload uploaded artifacts from caller workflow and upload them to release page.
