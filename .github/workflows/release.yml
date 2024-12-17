@@ -19,8 +19,6 @@ jobs:
           if gh release view "${{ inputs.tag }}" > /dev/null 2>&1; then
             echo "Skip the creation step for Release ${{ inputs.tag }}."
           else
-            gh release create "${{ inputs.tag }}" \
-              --title "release-${{ inputs.tag }}"
             (cd doc/source/news && \
              ruby \
                -e 'print("## Groonga "); \
