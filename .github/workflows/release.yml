@@ -1,10 +1,17 @@
 name: Release
 on:
-  push:
-    tags:
-    - '*'
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
 jobs:
   page:
+    name: Release Page
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Create release page
@@ -28,16 +35,17 @@ jobs:
           echo "" >> release-note.md
           echo "### Translations" >> release-note.md
           echo "" >> release-note.md
-          version=${GITHUB_REF_NAME#v}
+          tag=${{ inputs.tag }}
+          version=${tag#v}
           major_version=${version%%.*}
           version_hyphen=$(echo ${version} | tr . -)
           echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
           title="$(head -n1 release-note.md | sed -e 's/^## //')"
           tail -n +2 release-note.md > release-note-without-version.md
-          gh release create ${GITHUB_REF_NAME} \
+          gh release create "${tag}" \
             --discussion-category Releases \
             --notes-file release-note-without-version.md \
-            --title "${title}"
+            --title "${title}" || :
         env:
-          GH_TOKEN: ${{ github.token }}
-
+          GH_TOKEN: ${{ secrets.token }}
+    # todo: donwload uploaded artifacts from caller workflow and upload them to release page.
