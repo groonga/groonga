@@ -5901,9 +5901,9 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
       need_convert = true;
     }
     if (is_weight_float32) {
-      need_convert = value_is_weight_bfloat16;
+      need_convert = need_convert || value_is_weight_bfloat16;
     } else if (is_weight_bfloat16) {
-      need_convert = !value_is_weight_bfloat16;
+      need_convert = need_convert || !value_is_weight_bfloat16;
     } else {
       need_convert = true;
     }
