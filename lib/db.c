@@ -2826,15 +2826,23 @@ delete_reference_records_in_index(grn_ctx *ctx,
           GRN_TEXT_INIT(&value, 0);
           grn_obj_get_value(ctx, source, posting->rid, &value);
           if (value.header.type == GRN_UVECTOR) {
-            int i, n_ids;
             GRN_RECORD_INIT(&new_value, GRN_OBJ_VECTOR, value.header.domain);
-            n_ids = GRN_BULK_VSIZE(&value) / sizeof(grn_id);
-            for (i = 0; i < n_ids; i++) {
-              grn_id reference_id = GRN_RECORD_VALUE_AT(&value, i);
+            if (grn_obj_is_weight_uvector(ctx, &value)) {
+              new_value.header.flags |= GRN_OBJ_WITH_WEIGHT;
+            }
+            uint32_t n = grn_uvector_size(ctx, &value);
+            uint32_t i;
+            for (i = 0; i < n; i++) {
+              float weight;
+              grn_id reference_id =
+                grn_uvector_get_element_record(ctx, &value, i, &weight);
               if (reference_id == data->id) {
                 continue;
               }
-              GRN_RECORD_PUT(ctx, &new_value, reference_id);
+              grn_uvector_add_element_record(ctx,
+                                             &new_value,
+                                             reference_id,
+                                             weight);
             }
           } else {
             unsigned int i, n_elements;

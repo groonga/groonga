@@ -1,0 +1,31 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tags": {"Groonga": 100, "Full text search": 2}},
+{"_key": "Rroonga", "tags": {"Groonga": 5, "Ruby": 100, "Library": 50}}
+]
+[[0,0.0,0.0],2]
+delete Tags Ruby
+[[0,0.0,0.0],true]
+dump
+table_create Memos TABLE_HASH_KEY ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+
+load --table Memos
+[
+["_key","tags"],
+["Groonga",{"Groonga":100,"Full text search":2}],
+["Rroonga",{"Groonga":5,"Library":50}]
+]
+
+column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
