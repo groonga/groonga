@@ -46,7 +46,7 @@ jobs:
             title="$(head -n1 release-note.md | sed -e 's/^## //')"
             tail -n +2 release-note.md > release-note-without-version.md
             gh release create ${{ inputs.tag }} \
-              z--discussion-category Releases \
+              --discussion-category Releases \
               --notes-file release-note-without-version.md \
               --title "${title}"
           fi
