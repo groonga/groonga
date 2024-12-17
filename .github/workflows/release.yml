@@ -31,7 +31,7 @@ jobs:
                         gsub(/{ref}`(.+?)`/) {$1}.
                         strip)' \
              $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
-             release-note.md
+            release-note.md
           echo "" >> release-note.md
           echo "### Translations" >> release-note.md
           echo "" >> release-note.md
