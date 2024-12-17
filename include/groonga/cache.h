@@ -56,8 +56,8 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  *
  * **Environment Variable**:
  *
- * If `groonga_cache_base_path` is not set, the function checks the
- * `GRN_CACHE_TYPE` environment variable.
+ * If the `--cache-base-path` option is not set when you start Groonga, the
+ * function checks the `GRN_CACHE_TYPE` environment variable.
  * - If `GRN_CACHE_TYPE` is set to `persistent`, it enables persistent cache
  *   mode without a specified base path.
  * - If `GRN_CACHE_TYPE` is set to any other value or is unset, it uses
