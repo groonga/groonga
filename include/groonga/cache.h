@@ -37,12 +37,12 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * **Cache Modes**:
  *
  * Memory Cache:
- * - Shared the same cache within the same process.
- * - Not shared across multiple processes.
+ * - The same cache is shared within the same process.
+ * - The same cache isn't shared across multiple processes.
  *
  * Persistent Cache:
- * - Shared the same cache across multiple processes.
- * - Slightly slower than memory cache due to filesystem I/O.
+ * - The same cache is shared across multiple processes.
+ * - Persistent cache is slightly slower than memory cache due to filesystem I/O.
  *
  * **Cache Mode Configuration**:
  *
