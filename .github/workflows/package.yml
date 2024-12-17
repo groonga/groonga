@@ -126,17 +126,6 @@ jobs:
             groonga-*.tar.gz
             groonga-*.zip
 
-      # Release
-      - name: Upload to release
-        if: |
-          github.ref_type == 'tag'
-        run: |
-          gh release upload ${GITHUB_REF_NAME} \
-            groonga-*.tar.gz \
-            groonga-*.zip
-        env:
-          GH_TOKEN: ${{ github.token }}
-
   build:
     name: Build
     needs: source
@@ -272,25 +261,13 @@ jobs:
           rake docker:push
 
       # Artifact
-      - uses: actions/upload-artifact@v4
-        with:
-          name: packages-${{ matrix.id }}
-          path: packages/${{ env.TASK_NAMESPACE }}/repositories/
-
-      # Release
       - name: Create assets
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
-      - name: Upload to release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          gh release upload ${GITHUB_REF_NAME} \
-            ${{ matrix.id }}.tar.gz
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.id }}.tar.gz
+          path: ${{ matrix.id }}.tar.gz
 
       # Test
       - name: Test

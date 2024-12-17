@@ -48,4 +48,16 @@ jobs:
             --title "${title}" || :
         env:
           GH_TOKEN: ${{ secrets.token }}
-    # todo: donwload uploaded artifacts from caller workflow and upload them to release page.
+      - name: Prepare for downloading release artifacts
+        run: |
+          mkdir -p artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      - name: Upload to release
+        run: |
+          for artifact in ./artifacts/*; do
+            gh release upload "${{ inputs.tag }}" "$(basename $artifact)"
+          done
+        env:
+          GH_TOKEN: ${{ secrets.token }}
