@@ -61,7 +61,7 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * - If `GRN_CACHE_TYPE` is set to `persistent`, it enables persistent cache
  *   mode without a specified base path.
  * - If `GRN_CACHE_TYPE` is set to any other value or is unset, it uses
- *   memory-only cache mode.
+ *   memory cache mode.
  *
  * **C API**:
  *
