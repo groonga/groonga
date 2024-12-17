@@ -70,9 +70,10 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  *
  * \param ctx The context object used for memory allocation and error handling.
  *
- * \return A newly created \ref grn_cache object on success, NULL on error. The
- *         returned \ref grn_cache object must be freed by \ref grn_cache_close.
- *         See ctx->rc for error details.
+ * \return A newly created \ref grn_cache object on success, `NULL` on error.
+ *         The returned \ref grn_cache object must be freed by
+ *         \ref grn_cache_close.
+ *         See `ctx->rc` for error details.
  */
 GRN_API grn_cache *grn_cache_open(grn_ctx *ctx);
 GRN_API grn_cache *grn_persistent_cache_open(grn_ctx *ctx,
