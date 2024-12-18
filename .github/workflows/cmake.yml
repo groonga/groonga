@@ -875,3 +875,13 @@ jobs:
             --timeout 360 `
             --use-http-chunked `
             test\command\suite
+
+  release:
+    if: |
+      github.ref_type == 'tag'
+    needs: windows-msvc
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
