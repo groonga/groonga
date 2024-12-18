@@ -598,22 +598,6 @@ AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
 GROONGA_MRUBY="${ac_pwd}/src/groonga-mruby"
 AC_SUBST(GROONGA_MRUBY)
 
-# check Cutter with GLib support if available
-REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
-REQUIRED_MINIMUM_CPPCUTTER_VERSION=1.2.0
-m4_ifdef([AC_CHECK_GCUTTER],
-         [AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)],
-         [cutter_use_cutter="no"])
-m4_ifdef([AC_CHECK_CPPCUTTER],
-         [AC_CHECK_CPPCUTTER(>= $REQUIRED_MINIMUM_CPPCUTTER_VERSION)],
-         [cutter_use_cppcutter="no"])
-
-AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
-AM_CONDITIONAL([WITH_CPPCUTTER], [test "$cutter_use_cppcutter" = "yes"])
-if test "$cutter_use_cutter" = "yes"; then
-  AC_DEFINE(GRN_WITH_CUTTER, 1, [Define to 1 if you use Cutter])
-fi
-
 # check for benchmark
 AC_ARG_ENABLE(benchmark,
   [AS_HELP_STRING([--disable-benchmark],
@@ -693,10 +677,6 @@ else
 fi
 AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
-
-AM_CONDITIONAL([WITH_UNIT_TEST],
-               [test "$cutter_use_cutter" = "yes" -o \
-                     "$ac_cv_ruby_available" = "yes"])
 
 AM_CONDITIONAL([WITH_COMMAND_TEST],
                [test "$ac_cv_ruby_available" = "yes"])
@@ -1396,21 +1376,6 @@ For OS X with Homebrew:
 fi
 
 # Check for misc.
-AC_ARG_WITH([cutter-source-path],
-            AS_HELP_STRING([--with-cutter-source-path=PATH],
-                           [Specify Cutter source path for
-                            groonga's release manager.]),
-                           [CUTTER_SOURCE_PATH="$withval"])
-case "$CUTTER_SOURCE_PATH" in
-  ""|/*)
-    : # do nothing
-    ;;
-  *)
-    CUTTER_SOURCE_PATH="\$(top_builddir)/${CUTTER_SOURCE_PATH}"
-    ;;
-esac
-AC_SUBST(CUTTER_SOURCE_PATH)
-
 AM_CONDITIONAL([DOCUMENT_AVAILABLE],
                [test "${document_available}" = "yes"])
 AC_MSG_CHECKING([whether document available])
@@ -1755,19 +1720,6 @@ AC_CONFIG_FILES([
   src/suggest/Makefile
   test/Makefile
   test/command/Makefile
-  test/unit/Makefile
-  test/unit/core/Makefile
-  test/unit/core/dat/Makefile
-  test/unit/fixtures/Makefile
-  test/unit/fixtures/geo/Makefile
-  test/unit/fixtures/inverted-index/Makefile
-  test/unit/fixtures/plugins/Makefile
-  test/unit/fixtures/story/Makefile
-  test/unit/fixtures/story/taiyaki/Makefile
-  test/unit/fixtures/stress/Makefile
-  test/unit/lib/Makefile
-  test/unit/story/Makefile
-  test/unit/util/Makefile
   tools/Makefile
   vendor/Makefile
   vendor/groonga-log/Makefile
@@ -1883,7 +1835,6 @@ echo "Tools:"
 echo "  Sphinx:                ${SPHINX_BUILD}"
 echo "  lemon:                 ${LEMON}"
 echo "  Ruby:                  ${RUBY}"
-echo "  Cutter:                ${CUTTER}"
 echo
 
 echo "For packages:"
