@@ -54,8 +54,14 @@ jobs:
           merge-multiple: true
       - name: Upload to release
         run: |
-          for artifact in ./artifacts/*; do
-            gh release upload "${{ inputs.tag }}" "$(basename $artifact)"
-          done
+          cd artifacts
+          gh release upload "${{ inputs.tag }}" \
+            groonga-*.tar.gz \
+            groonga-*.zip \
+            document-*.tar.gz \
+            *-amd64.tar.gz \
+            *-arm64.tar.gz \
+            *-x86_64.tar.gz \
+            *-aarch64.tar.gz \
         env:
           GH_TOKEN: ${{ secrets.token }}
