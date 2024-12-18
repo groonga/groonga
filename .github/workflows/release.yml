@@ -54,9 +54,7 @@ jobs:
           merge-multiple: true
       - name: Upload to release
         run: |
-          cat ./artifacts/*.artifact > names.artifact
-          artifact_list=$(paste -s -d' ' names.artifact)
           cd artifacts
-          gh release upload "${{ inputs.tag }}" ${artifact_list}
+          gh release upload "${{ inputs.tag }}" $(cat *.artifact)
         env:
           GH_TOKEN: ${{ secrets.token }}
