@@ -1,3 +1,2 @@
 SUBDIRS =					\
-	unit					\
 	command

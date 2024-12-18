@@ -7,23 +7,11 @@ set -u
 
 git submodule update --init --recursive
 
-if [ -n "${DOCKER}" ]; then
-  curl \
-    --silent \
-    --location \
-    https://raw.github.com/clear-code/cutter/HEAD/data/travis/setup.sh | sh
-  exit $?
-fi
-
 : ${ENABLE_MRUBY:=no}
 : ${ENABLE_DOCUMENT:=no}
 
 case "${TRAVIS_OS_NAME}" in
   linux)
-    curl \
-      --silent \
-      --location \
-      https://raw.github.com/clear-code/cutter/HEAD/data/travis/setup.sh | sh
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       sudo apt install -qq -y \
            python3-pip

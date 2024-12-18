@@ -1,4 +1,3 @@
-export CUTTER="@CUTTER@"
 export RUBY="@RUBY@"
 export GROONGA="@GROONGA@"
 export GROONGA_HTTPD="@GROONGA_HTTPD@"

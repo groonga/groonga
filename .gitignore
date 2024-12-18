@@ -127,12 +127,6 @@
 /test/command/test-suite.log
 /test/mruby/groonga.pc
 /test/mruby/rroonga.built
-/test/unit/Gemfile.lock
-/test/unit/lib/*-*.*.*/
-/test/unit/run-test.sh.log
-/test/unit/run-test.sh.trs
-/test/unit/test-suite.log
-/test/unit/tmp
 /tools/blosc-evaluate
 /tmp
 /tmp-doc/

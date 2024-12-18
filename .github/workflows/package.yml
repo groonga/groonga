@@ -91,7 +91,6 @@ jobs:
         run: |
           cd ..
           git clone --depth 1 https://github.com/groonga/groonga.org.git
-          git clone --depth 1 https://github.com/clear-code/cutter.git
       - name: Generate configure
         run: |
           ./autogen.sh
@@ -100,7 +99,6 @@ jobs:
           ./configure \
             --enable-document \
             --enable-mruby \
-            --with-cutter-source-path=../cutter \
             --with-groonga-org-path=../groonga.org \
             --with-ruby
       - name: Build archive
