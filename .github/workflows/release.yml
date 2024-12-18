@@ -54,14 +54,9 @@ jobs:
           merge-multiple: true
       - name: Upload to release
         run: |
+          cat ./artifacts/*.artifact > names.artifact
+          artifact_list=$(paste -s -d' ' names.artifact)
           cd artifacts
-          gh release upload "${{ inputs.tag }}" \
-            groonga-*.tar.gz \
-            groonga-*.zip \
-            document-*.tar.gz \
-            *-amd64.tar.gz \
-            *-arm64.tar.gz \
-            *-x86_64.tar.gz \
-            *-aarch64.tar.gz
+          gh release upload "${{ inputs.tag }}" ${artifact_list}
         env:
           GH_TOKEN: ${{ secrets.token }}

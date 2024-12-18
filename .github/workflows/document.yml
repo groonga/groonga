@@ -54,11 +54,16 @@ jobs:
           version=$(cat base_version)
           mv /tmp/groonga.org /tmp/document-${version}
           tar -czf document-${version}.tar.gz -C /tmp/ document-${version}
+          echo "document-${version}.tar.gz" >> "document-${version}.artifact"
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
           name: document
           path: document-*.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "document-${version}.artifact"
+          path: "document-${version}.artifact"
   release:
     if: |
       github.ref_type == 'tag'

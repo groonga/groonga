@@ -742,10 +742,17 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER}.zip" `
             "${Env:INSTALL_FOLDER}.zip"
+          Add-Content `
+            -Path "${{ env.INSTALL_FOLDER }}.artifact" `
+            -Value "${{ env.INSTALL_FOLDER }}.zip"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.INSTALL_FOLDER }}.artifact"
+          path: "${{ env.INSTALL_FOLDER }}.artifact"
       - name: Prepare artifacts with VC++ runtime
         run: |
           Set-PSDebug -Trace 2
@@ -812,10 +819,17 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip" `
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+          Add-Content `
+            -Path "${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.artifact" `
+            -Value "${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
           path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.artifact"
+          path: "${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.artifact"
 
       # Test
       - uses: ruby/setup-ruby@v1
