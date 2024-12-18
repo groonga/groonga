@@ -48,12 +48,10 @@ jobs:
             --title "${title}" || :
         env:
           GH_TOKEN: ${{ secrets.token }}
-      - name: Prepare for downloading release artifacts
-        run: |
-          mkdir -p artifacts
       - uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          path: artifacts
+          merge-multiple: true
       - name: Upload to release
         run: |
           for artifact in ./artifacts/*; do
