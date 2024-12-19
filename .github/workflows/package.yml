@@ -129,8 +129,8 @@ jobs:
             groonga-*.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: "release-groonga-${version}.txt"
-          path: "release-groonga-${version}.txt"
+          name: "release-groonga.txt"
+          path: "release-groonga-*.txt"
 
   build:
     name: Build
