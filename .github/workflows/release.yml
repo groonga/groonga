@@ -55,6 +55,6 @@ jobs:
       - name: Upload to release
         run: |
           cd artifacts
-          gh release upload "${{ inputs.tag }}" $(cat *.artifact)
+          gh release upload "${{ inputs.tag }}" $(cat release-*.artifact)
         env:
           GH_TOKEN: ${{ secrets.token }}

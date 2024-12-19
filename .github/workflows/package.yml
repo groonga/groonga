@@ -117,8 +117,8 @@ jobs:
           popd
           zip -r groonga-${version}.zip groonga-${version}
           rm -rf groonga-${version}
-          echo "groonga-${version}.tar.gz" >> "groonga-${version}.artifact"
-          echo "groonga-${version}.zip" >> "groonga-${version}.artifact"
+          echo "groonga-${version}.tar.gz" >> "release-groonga-${version}.artifact"
+          echo "groonga-${version}.zip" >> "release-groonga-${version}.artifact"
 
       # Artifact
       - uses: actions/upload-artifact@v4
@@ -129,8 +129,8 @@ jobs:
             groonga-*.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: "groonga-${version}.artifact"
-          path: "groonga-${version}.artifact"
+          name: "release-groonga-${version}.artifact"
+          path: "release-groonga-${version}.artifact"
 
   build:
     name: Build
@@ -270,15 +270,15 @@ jobs:
       - name: Create assets
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
-          echo "${{ matrix.id }}.tar.gz" >> "${{ matrix.id }}.artifact"
+          echo "${{ matrix.id }}.tar.gz" >> "release-${{ matrix.id }}.artifact"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.id }}.tar.gz
           path: ${{ matrix.id }}.tar.gz
       - uses: actions/upload-artifact@v4
         with:
-          name: "${{ matrix.id }}.artifact"
-          path: "${{ matrix.id }}.artifact"
+          name: "release-${{ matrix.id }}.artifact"
+          path: "release-${{ matrix.id }}.artifact"
 
       # Test
       - name: Test
