@@ -882,6 +882,7 @@ jobs:
   release:
     if: |
       github.ref_type == 'tag'
+    name: Release for Windows MSVC
     needs: windows-msvc
     uses: ./.github/workflows/release.yml
     with:

@@ -67,6 +67,7 @@ jobs:
   release:
     if: |
       github.ref_type == 'tag'
+    name: Release
     needs: build
     uses: ./.github/workflows/release.yml
     with:
