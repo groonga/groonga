@@ -226,6 +226,7 @@ jobs:
               TEST_DOCKER_IMAGE="arm64v8/${docker_os}:${version}"
             fi
           fi
+          echo "ARCHITECTURE=${architecture}" >> ${GITHUB_ENV}
           echo "TASK_NAMESPACE=${TASK_NAMESPACE}" >> ${GITHUB_ENV}
           echo "TARGET=${TARGET}" >> ${GITHUB_ENV}
           echo "APT_TARGETS=${TARGET}" >> ${GITHUB_ENV}
@@ -265,6 +266,10 @@ jobs:
           cd packages
           rake docker:pull || :
           rake ${TASK_NAMESPACE}:build BUILD_DIR=build
+          if [ "${TASK_NAMESPACE}" = "yum" ] && [ "${ARCHITECTURE}" != "x86_64" ]; then
+            # Remove SRPMs from non x86_64 artifacts
+            rm -rf ${TASK_NAMESPACE}/repositories/*/*/source
+          fi
       - name: Push the built Docker image
         continue-on-error: true
         run: |
