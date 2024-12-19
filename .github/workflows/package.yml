@@ -117,6 +117,8 @@ jobs:
           popd
           zip -r groonga-${version}.zip groonga-${version}
           rm -rf groonga-${version}
+          echo "groonga-${version}.tar.gz" >> "release-groonga-${version}.txt"
+          echo "groonga-${version}.zip" >> "release-groonga-${version}.txt"
 
       # Artifact
       - uses: actions/upload-artifact@v4
@@ -125,17 +127,10 @@ jobs:
           path: |
             groonga-*.tar.gz
             groonga-*.zip
-
-      # Release
-      - name: Upload to release
-        if: |
-          github.ref_type == 'tag'
-        run: |
-          gh release upload ${GITHUB_REF_NAME} \
-            groonga-*.tar.gz \
-            groonga-*.zip
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "release-groonga.txt"
+          path: "release-groonga-*.txt"
 
   build:
     name: Build
@@ -277,25 +272,18 @@ jobs:
           rake docker:push
 
       # Artifact
-      - uses: actions/upload-artifact@v4
-        with:
-          name: packages-${{ matrix.id }}
-          path: packages/${{ env.TASK_NAMESPACE }}/repositories/
-
-      # Release
       - name: Create assets
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
-      - name: Upload to release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          gh release upload ${GITHUB_REF_NAME} \
-            ${{ matrix.id }}.tar.gz
-        env:
-          GH_TOKEN: ${{ github.token }}
+          echo "${{ matrix.id }}.tar.gz" >> "release-${{ matrix.id }}.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.id }}.tar.gz
+          path: ${{ matrix.id }}.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "release-${{ matrix.id }}.txt"
+          path: "release-${{ matrix.id }}.txt"
 
       # Test
       - name: Test
@@ -318,6 +306,7 @@ jobs:
   release:
     if: |
       github.ref_type == 'tag'
+    name: Release
     needs: build
     uses: ./.github/workflows/release.yml
     with:
