@@ -744,7 +744,7 @@ jobs:
             "${Env:INSTALL_FOLDER}.zip"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.INSTALL_FOLDER }}
+          name: release-${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
       - name: Prepare artifacts with VC++ runtime
         run: |
@@ -814,19 +814,8 @@ jobs:
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
+          name: release-${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
           path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
-
-      # Release
-      - name: Upload the artifacts to release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          gh release upload ${Env:GITHUB_REF_NAME} `
-            "${Env:INSTALL_FOLDER}.zip" `
-            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       # Test
       - uses: ruby/setup-ruby@v1
@@ -875,3 +864,14 @@ jobs:
             --timeout 360 `
             --use-http-chunked `
             test\command\suite
+
+  release:
+    if: |
+      github.ref_type == 'tag'
+    name: Release for Windows MSVC
+    needs: windows-msvc
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}

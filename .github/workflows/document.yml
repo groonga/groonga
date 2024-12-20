@@ -57,18 +57,12 @@ jobs:
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
-          name: document
+          name: release-document
           path: document-*.tar.gz
-      # Release
-      - name: Upload to release
-        if: |
-          github.ref_type == 'tag'
-        run: gh release upload ${{ github.ref_name }} document-*.tar.gz
-        env:
-          GH_TOKEN: ${{ github.token }}
   release:
     if: |
       github.ref_type == 'tag'
+    name: Release
     needs: build
     uses: ./.github/workflows/release.yml
     with:
