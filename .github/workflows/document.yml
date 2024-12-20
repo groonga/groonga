@@ -57,7 +57,7 @@ jobs:
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
-          name: document
+          name: release-document
           path: document-*.tar.gz
   release:
     if: |

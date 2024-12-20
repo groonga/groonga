@@ -51,10 +51,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
+          pattern: release-*
           merge-multiple: true
       - name: Upload to release
         run: |
-          cd artifacts
-          gh release upload "${{ inputs.tag }}" $(cat release-*.txt)
+          gh release upload "${{ inputs.tag }}" artifacts/*
         env:
           GH_TOKEN: ${{ secrets.token }}

@@ -744,7 +744,7 @@ jobs:
             "${Env:INSTALL_FOLDER}.zip"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.INSTALL_FOLDER }}
+          name: release-${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
       - name: Prepare artifacts with VC++ runtime
         run: |
@@ -814,7 +814,7 @@ jobs:
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
+          name: release-${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
           path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
 
       # Test

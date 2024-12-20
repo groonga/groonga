@@ -121,7 +121,7 @@ jobs:
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
-          name: source
+          name: release-source
           path: |
             groonga-*.tar.gz
             groonga-*.zip
@@ -229,7 +229,7 @@ jobs:
             ruby
       - uses: actions/download-artifact@v4
         with:
-          name: source
+          name: release-source
       - name: Update version
         if: |
           !startsWith(github.ref, 'refs/tags/') &&
@@ -266,7 +266,7 @@ jobs:
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.id }}.tar.gz
+          name: release-${{ matrix.id }}.tar.gz
           path: ${{ matrix.id }}.tar.gz
 
       # Test
