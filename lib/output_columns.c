@@ -56,8 +56,8 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
                                grn_obj *offsets)
 {
   ptrdiff_t previous_comma_offset = -1;
-  grn_bool is_first_comma = GRN_TRUE;
-  grn_bool have_comma = GRN_FALSE;
+  bool is_first_comma = true;
+  bool have_comma = false;
   grn_expr *expr = (grn_expr *)output_columns;
   grn_expr_code *code;
   grn_expr_code *code_end = expr->codes + expr->codes_curr;
@@ -71,7 +71,7 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
       continue;
     }
 
-    have_comma = GRN_TRUE;
+    have_comma = true;
     if (is_first_comma) {
       unsigned int n_used_codes;
       ptrdiff_t code_end_offset;
@@ -81,7 +81,7 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
       GRN_UINT32_PUT(ctx, offsets, 0);
       GRN_UINT32_PUT(ctx, offsets, code_end_offset);
       code_start_offset = code_end_offset;
-      is_first_comma = GRN_FALSE;
+      is_first_comma = false;
     } else {
       code_start_offset = previous_comma_offset + 1;
     }
@@ -229,7 +229,7 @@ grn_output_columns_apply_add_records_key(grn_ctx *ctx,
 
   n_columns = GRN_BULK_VSIZE(columns) / sizeof(grn_obj *);
   {
-    grn_bool have_key = GRN_FALSE;
+    bool have_key = false;
     size_t i;
     for (i = 0; i < n_columns; i++) {
       grn_obj *column = GRN_PTR_VALUE_AT(columns, i);
@@ -249,7 +249,7 @@ grn_output_columns_apply_add_records_key(grn_ctx *ctx,
           goto exit;
         }
         key_offset = i;
-        have_key = GRN_TRUE;
+        have_key = true;
       }
     }
 
