@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 13.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-02 17:17+0900\n"
+"PO-Revision-Date: 2024-12-23 12:52+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,44 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.1.1 - 2024-12-03"
-msgstr "14.1.1リリース - 2024-12-03"
+msgid "Release 14.1.2 - 2024-12-24"
+msgstr "14.1.2リリース - 2024-12-24"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Relicensed to LGPL-2.1-or-later from LGPL-2.1-only"
+msgstr "LGPL-2.1-onlyからLGPL-2.1-or-laterにライセンスを変更"
+
+msgid "[GH-1774](https://github.com/groonga/groonga/issues/1774)"
+msgstr ""
+
+msgid "It improves GPL 3 or later compatibility."
+msgstr "これでGPL 3以降と一緒に使いやすくなります。"
+
+msgid "{doc}`/reference/commands/delete`: Added support for reference weight vector"
+msgstr "{doc}`/reference/commands/delete`: 参照重み付きベクターをサポート"
+
+msgid "If a reference column is indexed, `delete` can also delete the deleted reference value from the reference column. It works for a reference vector column but didn't work for a reference \"weight\" vector column."
+msgstr "参照されているカラムにインデックスがあると、`delete`は参照されているカラム内にある削除された参照されている値も一緒に削除します。参照ベクターカラムでもこの機能は動いていましたが、参照「重み付き」ベクターカラムでは動いていませんでした。"
+
+msgid "With this release, this also works for a reference \"weight\" vector column."
+msgstr "このリリースから参照「重み付き」ベクターカラムでも動くようになります。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "{doc}`/reference/columns/vector`: Fixed a bug that needed cast may not be done"
+msgstr "{doc}`/reference/columns/vector`: 必要なキャストが実行されないことがある問題を修正"
+
+msgid "Groonga casts a value automatically when it's needed."
+msgstr "Groongaは必要に応じて自動的に値をキャストします。"
+
+msgid "If a reference vector column uses 32-bit floating number weight and a new value is a no weight reference vector, Groonga must cast the new value. But it was not done."
+msgstr "参照ベクターカラムが32ビット浮動小数点数の重みを使っていて、新しい値が重みなし参照ベクターの場合、Groongaは新しい値をキャストしなければいけません。しかし、キャストしていませんでした。"
+
+msgid "Release 14.1.1 - 2024-12-03"
+msgstr "14.1.1リリース - 2024-12-03"
 
 msgid "Stopped vendoring RapidJSON"
 msgstr "RapidJSONの同梱を終了"
@@ -85,9 +118,6 @@ msgstr ""
 
 msgid "There was a case that wastes key space. Now, we can use key space as efficiency as possible."
 msgstr "キー領域を無駄使いするケースがありました。このケースを改良して、できるだけ効率よくキー領域を使えるようにしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "`grn_pat_size()`: Fixed a bug that `0` may not be returned on error"
 msgstr "`grn_pat_size()`: エラー時に`0`を返さない問題を修正"
