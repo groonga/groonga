@@ -1,5 +1,0 @@
-load --table Synonyms
-[
-{"_key":"たいやき",
- "words":"(たいやき OR たい焼 OR 鯛焼き)"}
-]
