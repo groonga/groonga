@@ -8,54 +8,55 @@ Here is depended software for GNU/Linux, UNIX and Windows.
 
 ### GNU/Linux or UNIX
 
-Execute `setup.sh` included in the source code.
-
-If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`.
+Execute `setup.sh` included in the source code. It exists in the
+top directory.
 
 Example of command execution.
 
 ```console
-$ groonga-14.1.1/setup.sh
+$ groonga-*/setup.sh
 ```
 
-`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon Linux 2023.
+`setup.sh` supports Debian GNU/Linux, Ubuntu, AlmaLinux, and Amazon
+Linux 2023.
 
 #### macOS
 
 Install [Xcode](https://developer.apple.com/xcode/).
 
-Execute `setup.sh` included in the source code.
-
-If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`.
+Execute `setup.sh` included in the source code. It exists in the
+top directory.
 
 Example of command execution.
 
 ```console
-$ groonga-14.1.1/setup.sh
+$ groonga-*/setup.sh
 ```
 
 ### Windows
 
-> - [Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
+Install the followings software:
 
-> - [CMake](http://www.cmake.org/)
+- [Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
+- [CMake](http://www.cmake.org/)
 
 ## Download source
 
-You can get the latest source from [packages.groonga.org](https://packages.groonga.org/source/groonga).
+You can download the latest source archive from packages.groonga.org:
+https://packages.groonga.org/source/groonga/groonga-latest.tar.gz
 
 ### GNU/Linux or UNIX
 
 ```console
-$ wget https://packages.groonga.org/source/groonga/groonga-14.1.1.tar.gz
-$ tar xvzf groonga-14.1.1.tar.gz
+$ wget https://packages.groonga.org/source/groonga/groonga-latest.tar.gz
+$ tar xvf groonga-latest.tar.gz
 ```
 
 ### Windows
 
-Download the latest zipped source from packages.groonga.org.
-
-> - https://packages.groonga.org/source/groonga/groonga-14.1.1.zip
+You can download the latest zipped source archive from
+packages.groonga.org:
+https://packages.groonga.org/source/groonga/groonga-latest.zip
 
 Then extract it.
 
@@ -63,7 +64,8 @@ Then extract it.
 
 ## Run `cmake`
 
-You need to generate build files such as `Makefile` for your environment.
+You need to generate build files such as `build.ninja` for your
+environment.
 
 You can custom your build configuration by passing options to `cmake`.
 
@@ -76,20 +78,22 @@ $ cmake -S <Groonga source code directory path> -B <Build directory path> --pres
 - `-S` option
 
   - Specify the path of the Groonga source code directory
-
   - Specify the directory from which you downloaded and extracted the files
 
 - `-B` option
-
   - Specify the directory to be used for build
-
   - Specify a build-only directory outside of Groonga's source code directory
 
 (cmake-presets)=
 
 ### CMake presets
 
-Using CMake version 3.21.0 or higher, some presets for various build configurations are provided. We have provided a combination of frequently used CMake options, so you can basically use this presets. Use CMake options only if you want to make custom settings. You can get a list of the available presets using `cmake --list-presets` .
+Using CMake version 3.21.0 or higher, some presets for various build
+configurations are provided. We have provided a combination of
+frequently used CMake options, so you can basically use this
+presets. Use CMake options only if you want to make custom
+settings. You can get a list of the available presets using `cmake
+--list-presets` .
 
 ```console
 $ cmake --list-presets
@@ -118,7 +122,8 @@ Specify a generator.
 
 The default is depending on the system.
 
-You can check the default generator and available generators by `cmake --help`.
+You can check the default generator and available generators by `cmake
+--help`.
 
 ```console
 $ cmake --help
@@ -148,8 +153,9 @@ Here is an example how to specify `Unix Makefiles` on GNU/Linux or UNIX.
 $ cmake . -G "Unix Makefiles"
 ```
 
-Here is an example how to specify `Visual Studio 17 2022 x64` as a generator on Windows.
-You can specify a target platform name (architecture) with the `-A` option.
+Here is an example how to specify `Visual Studio 17 2022 x64` as a
+generator on Windows. You can specify a target platform name
+(architecture) with the `-A` option.
 
 ```pwsh-session
 > cmake . -G "Visual Studio 17 2022" -A x64
@@ -159,15 +165,18 @@ You can specify a target platform name (architecture) with the `-A` option.
 
 Specify a directory to install Groonga.
 
-The default is depending on the system, e.g. `/usr/local` or `C:/Program Files/groonga`.
+The default is depending on the system, e.g. `/usr/local` or
+`C:/Program Files/groonga`.
 
-Here is an example how to specify `/tmp/local/` as an install directory on GNU/Linux or UNIX.
+Here is an example how to specify `/tmp/local/` as an install
+directory on GNU/Linux or UNIX.
 
 ```console
 $ cmake . -DCMAKE_INSTALL_PREFIX="/tmp/local/"
 ```
 
-Here is an example how to specify `C:\Groonga` as an install directory on Windows.
+Here is an example how to specify `C:\Groonga` as an install directory
+on Windows.
 
 ```pwsh-session
 > cmake . -DCMAKE_INSTALL_PREFIX="C:\Groonga"
@@ -177,13 +186,15 @@ Here is an example how to specify `C:\Groonga` as an install directory on Window
 
 Enables mruby support.
 
-You can use the {doc}`/reference/sharding` plugin and {doc}`/reference/commands/ruby_eval`
-with the mruby support.
+You can use the {doc}`/reference/sharding` plugin and
+{doc}`/reference/commands/ruby_eval` with the mruby support.
 
 The default is `OFF`.
 
-Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must
-install some required libraries. See the [mruby compile guide](https://github.com/mruby/mruby/blob/master/doc/guides/compile.md)
+Groonga builds bundled mruby if the mruby support is enabled. In order
+to build mruby, you must install some required libraries. See the
+[mruby compile
+guide](https://github.com/mruby/mruby/blob/master/doc/guides/compile.md)
 for more details.
 
 Here is an example how to enable the mruby support.
@@ -192,28 +203,20 @@ Here is an example how to enable the mruby support.
 $ cmake . -DGRN_WITH_MRUBY=ON
 ```
 
-#### `-DGRN_WITH_DEBUG`
-
-Enables debug options for C/C++ compiler. It's useful for debugging on debugger such as GDB and LLDB.
-
-The default is `OFF`.
-
-Here is an example how to enable debug options.
-
-```console
-$ cmake . -DGRN_WITH_DEBUG=ON
-```
-
 #### `-DGRN_WITH_APACHE_ARROW`
 
 Enables Apache Arrow support.
 
-In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in {ref}`select-n-workers`
-and {doc}`/reference/functions/query_parallel_or` with the Apache Arrow support.
+In addition to using Apache Arrow IPC streaming format output, you can
+also use multithreading processing that is used in
+{ref}`select-n-workers` and
+{doc}`/reference/functions/query_parallel_or` with the Apache Arrow
+support.
 
 The default is `OFF`.
 
-You can install Apache Arrow following to [the official installation procedure](https://arrow.apache.org/install/).
+You can install Apache Arrow following to [the official installation
+procedure](https://arrow.apache.org/install/).
 
 Here is an example how to enable the Apache Arrow support.
 
@@ -223,7 +226,8 @@ $ cmake . -DGRN_WITH_APACHE_ARROW=ON
 
 ```{note}
 
-If you install Apache Arrow manually, you need to use the {ref}`cmake-options-cmake-prefix-path` option.
+If you install Apache Arrow manually, you need to use the
+{ref}`cmake-options-cmake-prefix-path` option.
 
 ```
 
@@ -233,20 +237,26 @@ If you install Apache Arrow manually, you need to use the {ref}`cmake-options-cm
 
 Adds search paths for `.cmake` files.
 
-You can specify multiple path separating them with `:` on GNU/Linux or UNIX, `;` on Windows.
+You can specify multiple path separating them with `:` on GNU/Linux or
+UNIX, `;` on Windows.
 
-In case of using libraries installed via a package manager, you do not need to specify this
-parameter. It is because `.cmake` files for those libraries are in the default search paths of CMake.
+In case of using libraries installed via a package manager, you do not
+need to specify this parameter. It is because `.cmake` files for those
+libraries are in the default search paths of CMake.
 
-In case of using libraries installed in non-system directories such as `/usr`, you need to specify `.cmake` file paths of those libraries by this parameter.
+In case of using libraries installed in non-system directories such as
+`/usr`, you need to specify `.cmake` file paths of those libraries by
+this parameter.
 
-Here is an example how to specify a `.cmake` file path for `/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake` on GNU/Linux or UNIX.
+Here is an example how to specify a `.cmake` file path for
+`/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake` on GNU/Linux or UNIX.
 
 ```console
 $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local"
 ```
 
-Here is an example how to specify a `.cmake` file path for `C:\arrow\lib\cmake\Arrow\ArrowConfig.cmake` on Windows.
+Here is an example how to specify a `.cmake` file path for
+`C:\arrow\lib\cmake\Arrow\ArrowConfig.cmake` on Windows.
 
 ```pwsh-session
 > cmake . -DCMAKE_PREFIX_PATH="C:\arrow"
@@ -269,15 +279,18 @@ $ sudo cmake --install -B <Build directory path>
 
 ### Windows
 
-Here is how it is to do it when Visual Studio is specified as the generator, like `-G "Visual Studio 17 2022"` .
+Here is how it is to do it when Visual Studio is specified as the
+generator, like `-G "Visual Studio 17 2022"` .
 
 You can use Visual Studio or `cmake --build`.
 
-Here is a command line to build and install Groonga by `cmake --build`.
+Here is a command line to build and install Groonga by `cmake
+--build`.
 
 ```pwsh-session
 > cmake --build . --config Release
 > cmake --build . --config Release --target Install
 ```
 
-You should specify `--config Debug` instead of `--config Release` when debugging.
+You should specify `--config Debug` instead of `--config Release` when
+debugging.

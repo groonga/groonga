@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 12.0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-09-02 03:00+0900\n"
+"PO-Revision-Date: 2024-12-24 11:40+0900\n"
 "Language-Team: none\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,8 @@ msgstr "以下は、GNU/Linux、UNIX、Windows向けの必要なソフトウェ�
 msgid "GNU/Linux or UNIX"
 msgstr "GNU/LinuxまたはUNIX"
 
-msgid "Execute `setup.sh` included in the source code."
-msgstr "ソースコードに含まれる`setup.sh`を実行してください。"
-
-msgid "If `groonga-14.1.1.tar.gz` is expanded, it is `groonga-14.1.1/setup.sh`."
-msgstr "`groonga-14.1.1.tar.gz`を展開した場合は`groonga-14.1.1/setup.sh`がそのスクリプトです。"
+msgid "Execute `setup.sh` included in the source code. It exists in the top directory."
+msgstr "ソースコードに含まれる`setup.sh`を実行してください。トップディレクトリーにあります。"
 
 msgid "Example of command execution."
 msgstr "コマンド実行例"
@@ -52,6 +49,9 @@ msgstr "[Xcode](https://developer.apple.com/xcode/)をインストールして�
 msgid "Windows"
 msgstr ""
 
+msgid "Install the followings software:"
+msgstr "次のソフトウェアをインストールします。"
+
 msgid "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)"
 msgstr "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/ja/vs/community/)"
 
@@ -61,14 +61,11 @@ msgstr ""
 msgid "Download source"
 msgstr "ソースコードのダウンロード"
 
-msgid "You can get the latest source from [packages.groonga.org](https://packages.groonga.org/source/groonga)."
-msgstr "[packages.groonga.org](https://packages.groonga.org/source/groonga)から最新のソースコードをダウンロードできます。"
+msgid "You can download the latest source archive from packages.groonga.org: https://packages.groonga.org/source/groonga/groonga-latest.tar.gz"
+msgstr "最新のソースアーカイブをpackages.groonga.orgからダウンロードできます： https://packages.groonga.org/source/groonga/groonga-latest.tar.gz"
 
-msgid "Download the latest zipped source from packages.groonga.org."
-msgstr "最新のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
-
-msgid "https://packages.groonga.org/source/groonga/groonga-14.1.1.zip"
-msgstr ""
+msgid "You can download the latest zipped source archive from packages.groonga.org: https://packages.groonga.org/source/groonga/groonga-latest.zip"
+msgstr "最新のzip形式のソースアーカイブをpackages.groonga.orgからダウンロードできます： https://packages.groonga.org/source/groonga/groonga-latest.zip"
 
 msgid "Then extract it."
 msgstr "その後、アーカイブを展開します。"
@@ -76,8 +73,8 @@ msgstr "その後、アーカイブを展開します。"
 msgid "Run `cmake`"
 msgstr "`cmake` を実行"
 
-msgid "You need to generate build files such as `Makefile` for your environment."
-msgstr "`Makefile` のような、あなたの環境用のビルド用ファイルを作る必要があります。"
+msgid "You need to generate build files such as `build.ninja` for your environment."
+msgstr "ビルド環境にあった`build.ninja`のようなビルドファイルを生成する必要があります。"
 
 msgid "You can custom your build configuration by passing options to `cmake`."
 msgstr "`cmake` へオプションを渡してビルドパラメーターをカスタマイズできます。"
@@ -165,15 +162,6 @@ msgstr "mrubyサポートが有効な場合、Groongaは同梱しているmruby�
 
 msgid "Here is an example how to enable the mruby support."
 msgstr "以下はmrubyサポートを有効にする例です。"
-
-msgid "`-DGRN_WITH_DEBUG`"
-msgstr ""
-
-msgid "Enables debug options for C/C++ compiler. It's useful for debugging on debugger such as GDB and LLDB."
-msgstr "C/C++コンパイラーのデバッグオプションを有効にします。GDBやLLDBなどのデバッガーでデバッグするときに便利です。"
-
-msgid "Here is an example how to enable debug options."
-msgstr "以下はデバッグオプションを有効にする例です。"
 
 msgid "`-DGRN_WITH_APACHE_ARROW`"
 msgstr ""
