@@ -66,62 +66,6 @@ def git_user_email
   sh_capture_output("git", "config", "--get", "user.email").chomp
 end
 
-def release_version_update(package,
-                           old_version,
-                           old_release_date,
-                           new_version,
-                           new_release_date,
-                           *files)
-  name = ENV["DEBFULLNAME"] || ENV["NAME"] || git_user_name
-  email = ENV["DEBEMAIL"] || ENV["EMAIL"] || git_user_email
-  files.each do |file|
-    content = replaced_content = File.read(file)
-    case file
-    when /\.spec(?:\.in)?\z/
-      date = Time.parse(new_release_date).strftime("%a %b %d %Y")
-      if content !~ /#{Regexp.escape(new_version)}/
-        replaced_content = content.sub(/^(%changelog\n)/, <<-ENTRY)
-%changelog
-* #{date} #{name} <#{email}> - #{new_version}-1
-- new upstream release.
-
-        ENTRY
-      end
-      replaced_content = replaced_content.sub(/^(Release:\s+)\d+/,
-                                              "\\11")
-    when /debian[^\/]*\/changelog\z/
-      date = Time.parse(new_release_date).rfc2822
-      if content !~ /#{Regexp.escape(new_version)}/
-        replaced_content = content.sub(/\A/, <<-ENTRY)
-#{package} (#{new_version}-1) unstable; urgency=low
-
-  * New upstream release.
-
- -- #{name} <#{email}>  #{date}
-
-        ENTRY
-      end
-    else
-      [[old_version, new_version],
-       [old_release_date, new_release_date]].each do |old, new|
-        replaced_content = replaced_content.gsub(/#{Regexp.escape(old)}/, new)
-        if /\./ =~ old
-          old_underscore = old.gsub(/\./, "-")
-          new_underscore = new.gsub(/\./, "-")
-          replaced_content =
-            replaced_content.gsub(/#{Regexp.escape(old_underscore)}/,
-                                  new_underscore)
-        end
-      end
-    end
-    next if replaced_content == content
-
-    File.open(file, "w") do |output|
-      output.print(replaced_content)
-    end
-  end
-end
-
 version = File.read(File.join(__dir__, "base_version"))
 
 namespace :dev do
@@ -194,20 +138,7 @@ namespace :release do
   namespace :version do
     desc "Update versions for a new release"
     task :update do
-      old_release = env_var("OLD_RELEASE")
-      old_release_date = env_var("OLD_RELEASE_DATE")
       new_release_date = env_var("NEW_RELEASE_DATE")
-      groonga_org_path = env_var("GROONGA_ORG_DIR")
-      release_version_update("groonga",
-                             old_release,
-                             old_release_date,
-                             version,
-                             new_release_date,
-                             "doc/source/install.rst",
-                             *Dir.glob("doc/source/install/*.md"),
-                             *Dir.glob("doc/source/install/*.rst"),
-                             *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
-                             File.join(groonga_org_path, "_config.yml"))
       cd("packages") do
         ruby("-S",
              "rake",
@@ -216,23 +147,12 @@ namespace :release do
       end
       sh("git",
          "add",
-         "doc/source/install.rst",
-         *Dir.glob("doc/source/install/*.md"),
-         *Dir.glob("doc/source/install/*.rst"),
-         *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
          "packages/debian/changelog",
          "packages/yum/groonga.spec.in")
       sh("git",
          "commit",
          "-m",
-         "doc package: update version info to #{version} (#{new_release_date})")
-      cd(groonga_org_path) do
-        sh("git", "add", "_config.yml")
-        sh("git",
-           "commit",
-           "-m",
-           "#{version} (#{new_release_date}) has been released!!!")
-      end
+         "package: update version info to #{version} (#{new_release_date})")
     end
   end
 
