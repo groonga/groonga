@@ -1375,7 +1375,6 @@ For OS X with Homebrew:
   fi
 fi
 
-# Check for misc.
 AM_CONDITIONAL([DOCUMENT_AVAILABLE],
                [test "${document_available}" = "yes"])
 AC_MSG_CHECKING([whether document available])
