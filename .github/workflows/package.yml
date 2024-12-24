@@ -271,7 +271,7 @@ jobs:
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ matrix.id }}.tar.gz
+          name: packages-${{ matrix.id }}
           path: ${{ matrix.id }}.tar.gz
 
       # Test
@@ -292,11 +292,52 @@ jobs:
             ${TEST_DOCKER_IMAGE} \
             /groonga/packages/${TASK_NAMESPACE}/test.sh
 
+  prepare-for-release:
+    name: Prepare for release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: packages
+          pattern: packages-*
+      - name: Group by distribution and version
+        run: |
+          set -x
+          for packages_path in packages/*; do
+            # packages/packages-debian-bookworm-amd64 ->
+            # debian-bookworm
+            os=$(echo ${packages_path} | \
+                   grep -E -o '(almalinux|amazon-linux|debian|ubuntu)-[^-]+')
+
+            mkdir -p release/${os}/
+            # packages/packages-debian-bookworm-amd64/debian-bookworm-amd64.tar.gz:
+            #   packages/apt/repositories/debian/... ->
+            #   release/debian-bookworm/debian/...
+            tar xf ${packages_path}/*.tar.gz \
+              -C release/${os}/ \
+              --strip-components 3
+          done
+          for release_os_path in release/*; do
+            # release/debian-bookworm ->
+            # debian-bookworm
+            os=$(basename ${release_os_path})
+
+            # release/debian-bookworm/debian/... ->
+            # debian-bookworm/debian/...
+            tar czf ${os}.tar.gz -C $(dirname ${release_os_path}) ${os}
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-packages
+          path: "*.tar.gz"
+
   release:
     if: |
       github.ref_type == 'tag'
     name: Release
-    needs: build
+    needs: prepare-for-release
     uses: ./.github/workflows/release.yml
     with:
       tag: ${{ github.ref_name }}
