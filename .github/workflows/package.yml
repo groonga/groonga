@@ -133,12 +133,8 @@ jobs:
         id:
           - debian-bookworm-amd64
           - debian-bookworm-arm64
-          # simdjson removed from testing:
-          # https://github.com/groonga/groonga/pull/1871
-          #
-          # We can enable this again when simdjson is added to testing again.
-          # - debian-trixie-amd64
-          # - debian-trixie-arm64
+          - debian-trixie-amd64
+          - debian-trixie-arm64
           - ubuntu-focal-amd64
           - ubuntu-focal-arm64
           - ubuntu-jammy-amd64
@@ -158,8 +154,8 @@ jobs:
         include:
           - id: debian-bookworm-arm64
             timeout-minutes: 60
-          # - id: debian-trixie-arm64
-          #   timeout-minutes: 120
+          - id: debian-trixie-arm64
+            timeout-minutes: 120
           - id: ubuntu-focal-arm64
             timeout-minutes: 60
           - id: ubuntu-jammy-arm64
