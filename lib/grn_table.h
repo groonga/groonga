@@ -56,13 +56,13 @@ grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 
 #define GRN_TABLE_LOCK_BEGIN(ctx, table) do {                           \
   grn_io *io_ = grn_obj_get_io(ctx, table);                             \
-  grn_bool locked_ = GRN_FALSE;                                         \
-  grn_bool can_run_ = GRN_TRUE;                                         \
+  bool locked_ = false;                                                 \
+  bool can_run_ = true;                                                 \
   if (io_ && !(io_->flags & GRN_IO_TEMPORARY)) {                        \
     if (grn_io_lock(ctx, io_, grn_lock_timeout) == GRN_SUCCESS) {       \
-      locked_ = GRN_TRUE;                                               \
+      locked_ = true;                                                   \
     } else {                                                            \
-      can_run_ = GRN_FALSE;                                             \
+      can_run_ = false;                                                 \
     }                                                                   \
   }                                                                     \
   if (can_run_) {
@@ -71,7 +71,7 @@ grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
   if (locked_) {                                \
     grn_io_unlock(ctx, io_);                    \
   }                                             \
-} while (GRN_FALSE)
+} while (false)
 
 #ifdef __cplusplus
 }
