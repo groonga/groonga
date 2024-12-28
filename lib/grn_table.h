@@ -25,9 +25,8 @@
 extern "C" {
 #endif
 
-double grn_table_get_score(grn_ctx *ctx,
-                           grn_obj *table,
-                           grn_id id);
+double
+grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id);
 
 grn_obj *
 grn_table_create_with_max_n_subrecs(grn_ctx *ctx,
@@ -54,24 +53,26 @@ grn_table_find_reference_object_raw(grn_ctx *ctx, grn_id table_id);
 grn_hash *
 grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 
-#define GRN_TABLE_LOCK_BEGIN(ctx, table) do {                           \
-  grn_io *io_ = grn_obj_get_io(ctx, table);                             \
-  bool locked_ = false;                                                 \
-  bool can_run_ = true;                                                 \
-  if (io_ && !(io_->flags & GRN_IO_TEMPORARY)) {                        \
-    if (grn_io_lock(ctx, io_, grn_lock_timeout) == GRN_SUCCESS) {       \
-      locked_ = true;                                                   \
-    } else {                                                            \
-      can_run_ = false;                                                 \
-    }                                                                   \
-  }                                                                     \
-  if (can_run_) {
-#define GRN_TABLE_LOCK_END(ctx)                 \
-  }                                             \
-  if (locked_) {                                \
-    grn_io_unlock(ctx, io_);                    \
-  }                                             \
-} while (false)
+#define GRN_TABLE_LOCK_BEGIN(ctx, table)                                       \
+  do {                                                                         \
+    grn_io *io_ = grn_obj_get_io(ctx, table);                                  \
+    bool locked_ = false;                                                      \
+    bool can_run_ = true;                                                      \
+    if (io_ && !(io_->flags & GRN_IO_TEMPORARY)) {                             \
+      if (grn_io_lock(ctx, io_, grn_lock_timeout) == GRN_SUCCESS) {            \
+        locked_ = true;                                                        \
+      } else {                                                                 \
+        can_run_ = false;                                                      \
+      }                                                                        \
+    }                                                                          \
+    if (can_run_) {
+#define GRN_TABLE_LOCK_END(ctx)                                                \
+  }                                                                            \
+  if (locked_) {                                                               \
+    grn_io_unlock(ctx, io_);                                                   \
+  }                                                                            \
+  }                                                                            \
+  while (false)
 
 #ifdef __cplusplus
 }
