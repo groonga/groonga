@@ -214,6 +214,10 @@ set(GRN_RELATIVE_PLUGINS_DIR
     "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/plugins")
 set(GRN_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_PLUGINS_DIR}")
 set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
+set(GRN_RELATIVE_GGML_BACKENDS_DIR
+    "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/ggml")
+set(GRN_GGML_BACKENDS_DIR
+    "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_GGML_BACKENDS_DIR}")
 set(GRN_DLL_FILENAME "libgroonga${CMAKE_SHARED_LIBRARY_SUFFIX}")
 set(GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE
     "${GRN_CONFIG_DIR}/synonyms.tsv")
@@ -1506,9 +1510,9 @@ else()
   set(GRN_WITH_H3 FALSE)
 endif()
 
-set(GRN_LLAMA_CPP_BUNDLED_VERSION "b3861")
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b4397")
 set(GRN_LLAMA_CPP_BUNDLED_SHA256
-    "53fe4caa810979a1b9ab92cd0d6d3f2fc34337b507f4e0e8a7c9bd106a47413c")
+    "51e5ac9b5c18756cf46ebc0659dcd57542800dc6582bbdf737dee064aaebfa34")
 set(GRN_WITH_LLAMA_CPP
     "auto"
     CACHE STRING "Use llama.cpp for LLM.")
@@ -1548,20 +1552,43 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         URL ${LLAMA_CPP_SOURCE_URL}
         URL_HASH "SHA256=${GRN_LLAMA_CPP_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
+      set(BUILD_SHARED_LIBS ON)
+      set(BUILD_STATIC_LIBS OFF)
+      set(GGML_BACKEND_DL ON)
+      set(GGML_CPU_ALL_VARIANTS ON)
+      set(GGML_LLAMAFILE ON)
       set(LLAMA_ALL_WARNINGS OFF)
       fetchcontent_makeavailable(llama_cpp)
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY ${llama_cpp_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                                 TRUE)
       endif()
+      set_target_properties(llama PROPERTIES OUTPUT_NAME "groonga-llama")
+      set_target_properties(ggml-base PROPERTIES OUTPUT_NAME
+                                                 "groonga-ggml-base")
+      set_target_properties(ggml PROPERTIES OUTPUT_NAME "groonga-ggml")
+      # If llama.cpp set version, we can remove this.
+      set_target_properties(llama PROPERTIES VERSION "0.0.0" SOVERSION "0")
+      set_target_properties(ggml-base PROPERTIES VERSION "0.0.0" SOVERSION "0")
+      set_target_properties(ggml PROPERTIES VERSION "0.0.0" SOVERSION "0")
       install(
         FILES "${llama_cpp_SOURCE_DIR}/AUTHORS"
               "${llama_cpp_SOURCE_DIR}/LICENSE"
               "${llama_cpp_SOURCE_DIR}/README.md"
         DESTINATION "${GRN_DATA_DIR}/llama.cpp")
+      install(TARGETS llama ggml-base ggml PUBLIC_HEADER EXCLUDE_FROM_ALL)
+      foreach(GGML_BACKEND
+              ggml-cpu-sandybridge ggml-cpu-haswell ggml-cpu-skylakex
+              ggml-cpu-icelake ggml-cpu-alderlake ggml-cpu-sapphirerapids)
+        install(TARGETS ${GGML_BACKEND}
+                LIBRARY DESTINATION "${GRN_RELATIVE_GGML_BACKENDS_DIR}")
+      endforeach()
     endfunction()
     grn_build_llama_cpp()
     target_link_libraries(grn_dependencies INTERFACE llama)
+    add_library(Groonga::ggml-base ALIAS ggml-base)
+    add_library(Groonga::ggml ALIAS ggml)
+    add_library(Groonga::llama ALIAS llama)
     set(GRN_WITH_LLAMA_CPP_BUNDLED TRUE)
     message(STATUS "llama.cpp: bundled")
   else()

@@ -335,6 +335,7 @@ exit 0
 %doc README.md COPYING
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
+%dir %{_libdir}/groonga/ggml/
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/functions
 %dir %{_libdir}/groonga/plugins/tokenizers
@@ -351,6 +352,7 @@ exit 0
 %dir %{_libdir}/groonga/scripts/ruby/initialize
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
+%{_libdir}/groonga/ggml/*.so
 %{_libdir}/groonga/plugins/functions/index_column.so
 %{_libdir}/groonga/plugins/functions/language_model.so
 %{_libdir}/groonga/plugins/functions/math.so

@@ -41,6 +41,9 @@ fi
 
 . "${build_top_dir}/config.sh"
 
+GRN_GGML_BACKENDS_DIR="$build_top_dir/bin"
+export GRN_GGML_BACKENDS_DIR
+
 GRN_PLUGINS_DIR="$source_top_dir/plugins"
 GRN_PLUGINS_PATH="$build_top_dir/plugins"
 export GRN_PLUGINS_DIR

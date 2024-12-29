@@ -1,5 +1,7 @@
 usr/lib/*/libgroonga*.so.*
+usr/lib/*/groonga/ggml/*
 usr/lib/*/groonga/plugins/functions/index_column.*
+usr/lib/*/groonga/plugins/functions/language_model.*
 usr/lib/*/groonga/plugins/functions/math.*
 usr/lib/*/groonga/plugins/functions/number.*
 usr/lib/*/groonga/plugins/functions/string.*

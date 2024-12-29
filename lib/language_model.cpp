@@ -22,6 +22,7 @@
 #include "groonga/smart_obj.hpp"
 
 #ifdef GRN_WITH_LLAMA_CPP
+#  include <ggml-backend.h>
 #  include <llama.h>
 #endif
 
@@ -92,11 +93,15 @@ namespace grn {
     } // namespace
 #endif
 
+    static char ggml_backends_dir[GRN_ENV_BUFFER_SIZE];
     static char language_models_dir[GRN_ENV_BUFFER_SIZE];
 
     void
     init_from_env(void)
     {
+      grn_getenv("GRN_GGML_BACKENDS_DIR",
+                 ggml_backends_dir,
+                 GRN_ENV_BUFFER_SIZE);
       grn_getenv("GRN_LANGUAGE_MODELS_DIR",
                  language_models_dir,
                  GRN_ENV_BUFFER_SIZE);
@@ -142,10 +147,47 @@ namespace grn {
     static std::once_flag initialize_once;
 
     namespace {
+#  ifdef _WIN32
+      const char *
+      get_default_ggml_backends_dir(void)
+      {
+        static char *windows_ggml_backends_dir = nullptr;
+        static char windows_ggml_backends_dir_buffer[PATH_MAX];
+        if (!windows_ggml_backends_dir) {
+          auto base_dir = grn_windows_base_dir();
+          auto base_dir_length = strlen(base_dir);
+          grn_strcpy(windows_ggml_backends_dir_buffer, PATH_MAX, base_dir);
+          grn_strcat(windows_ggml_backends_dir_buffer, PATH_MAX, "/");
+          grn_strcat(windows_ggml_backends_dir_buffer,
+                     PATH_MAX,
+                     GRN_RELATIVE_GGML_BACKENDS_DIR);
+          windows_ggml_backends_dir = windows_ggml_backends_dir_buffer;
+        }
+        return windows_ggml_backends_dir;
+      }
+#  else
+      const char *
+      get_default_ggml_backends_dir(void)
+      {
+        return GRN_GGML_BACKENDS_DIR;
+      }
+#  endif
+
+      const char *
+      get_ggml_backends_dir(void)
+      {
+        if (ggml_backends_dir[0]) {
+          return ggml_backends_dir;
+        } else {
+          return get_default_ggml_backends_dir();
+        }
+      }
+
       void
       init_external_libraries(void)
       {
         llama_log_set(log_callback, &grn_gctx);
+        ggml_backend_load_all_from_path(get_ggml_backends_dir());
         llama_backend_init();
         initialized = true;
       }
