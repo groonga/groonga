@@ -93,7 +93,7 @@ bool grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat);
 grn_rc grn_dat_clean(grn_ctx *ctx, grn_dat *dat);
 grn_rc grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat);
 
-grn_bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
+bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
 
 size_t grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
 

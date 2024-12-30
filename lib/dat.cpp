@@ -1824,22 +1824,22 @@ grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat)
   return rc;
 }
 
-grn_bool
+bool
 grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat)
 {
   if (!dat->io) {
-    return GRN_FALSE;
+    return false;
   }
 
   {
     CriticalSection critical_section(&dat->lock);
 
     if (grn_io_is_corrupt(ctx, dat->io)) {
-      return GRN_TRUE;
+      return true;
     }
 
     if (dat->header->file_id == 0) {
-      return GRN_FALSE;
+      return false;
     }
 
     char trie_path[PATH_MAX];
@@ -1850,11 +1850,11 @@ grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat)
     if (::stat(trie_path, &stat) != 0) {
       SERR("[dat][corrupt] used path doesn't exist: <%s>",
            trie_path);
-      return GRN_TRUE;
+      return true;
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 size_t
