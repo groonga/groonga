@@ -205,7 +205,7 @@ Munin plugins for Groonga
 
 %build
 %cmake \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DCMAKE_INSTALL_SYSCONFDIR:PATH=%{_sysconfdir} \
   -DGRN_FOR_RHEL=ON \
   -DGRN_WITH_APACHE_ARROW=ON \
