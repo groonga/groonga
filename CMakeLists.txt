@@ -1577,10 +1577,21 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
               "${llama_cpp_SOURCE_DIR}/README.md"
         DESTINATION "${GRN_DATA_DIR}/llama.cpp")
       install(TARGETS llama ggml-base ggml PUBLIC_HEADER EXCLUDE_FROM_ALL)
-      foreach(GGML_BACKEND
-              ggml-cpu-sandybridge ggml-cpu-haswell ggml-cpu-skylakex
-              ggml-cpu-icelake ggml-cpu-alderlake ggml-cpu-sapphirerapids)
-        install(TARGETS ${GGML_BACKEND}
+      get_property(
+        GGML_TARGETS
+        DIRECTORY ${llama_cpp_SOURCE_DIR}/ggml/src
+        PROPERTY BUILDSYSTEM_TARGETS)
+      foreach(GGML_TARGET ${GGML_TARGETS})
+        if(GGML_TARGET STREQUAL "ggml")
+          continue()
+        endif()
+        if(GGML_TARGET STREQUAL "ggml-base")
+          continue()
+        endif()
+        if(GGML_TARGET MATCHES "-feats$")
+          continue()
+        endif()
+        install(TARGETS ${GGML_TARGET}
                 LIBRARY DESTINATION "${GRN_RELATIVE_GGML_BACKENDS_DIR}")
       endforeach()
     endfunction()
