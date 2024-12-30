@@ -338,10 +338,10 @@ exit 0
 %dir %{_libdir}/groonga/ggml/
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/functions
-%dir %{_libdir}/groonga/plugins/tokenizers
-%dir %{_libdir}/groonga/plugins/token_filters
 %dir %{_libdir}/groonga/plugins/ruby
 %dir %{_libdir}/groonga/plugins/sharding
+%dir %{_libdir}/groonga/plugins/token_filters
+%dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_libdir}/groonga/scripts
 %dir %{_libdir}/groonga/scripts/ruby
 %dir %{_libdir}/groonga/scripts/ruby/command_line
@@ -353,6 +353,7 @@ exit 0
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/ggml/*.so
+%{_libdir}/groonga/plugins/*.rb
 %{_libdir}/groonga/plugins/functions/index_column.so
 %{_libdir}/groonga/plugins/functions/language_model.so
 %{_libdir}/groonga/plugins/functions/math.so
@@ -361,10 +362,9 @@ exit 0
 %{_libdir}/groonga/plugins/functions/time.so
 %{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
-%{_libdir}/groonga/plugins/token_filters/stop_word.so
 %{_libdir}/groonga/plugins/ruby/*.rb
-%{_libdir}/groonga/plugins/*.rb
 %{_libdir}/groonga/plugins/sharding/*.rb
+%{_libdir}/groonga/plugins/token_filters/stop_word.so
 %{_libdir}/groonga/scripts/ruby/*.rb
 %{_libdir}/groonga/scripts/ruby/command_line/*.rb
 %{_libdir}/groonga/scripts/ruby/context/*.rb
