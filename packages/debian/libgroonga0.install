@@ -22,3 +22,15 @@ usr/lib/*/groonga/plugins/sharding.rb
 usr/lib/*/groonga/plugins/sharding/*
 usr/lib/*/groonga/plugins/token_filters/stop_word*
 usr/lib/*/libgroonga*.so.*
+usr/share/groonga/COPYING
+usr/share/groonga/README.md
+usr/share/groonga/c-blosc2/*
+# llama.cpp/ doesn't exist with Ubuntu 20.04 becuase CMake is old.
+# We can split this when we drop support for Ubuntu 20.04.
+#
+# usr/share/groonga/groonga-log/*
+# usr/share/groonga/llama.cpp/*
+usr/share/groonga/[gl]*/*
+usr/share/groonga/mruby/*
+usr/share/groonga/onigmo/*
+usr/share/groonga/xsimd/*
