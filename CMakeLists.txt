@@ -1597,6 +1597,15 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         set_property(DIRECTORY ${llama_cpp_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
                                                                 TRUE)
       endif()
+      # We need additional library for std::filesystem with old GCC/Clang.
+      # We can remove this workaround when we drop support for AlmaLinux 8.
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
+                                                  VERSION_LESS "9")
+        target_link_libraries(ggml PRIVATE "stdc++fs")
+      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+             AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8")
+        target_link_libraries(ggml PRIVATE "c++fs")
+      endif()
       set_target_properties(llama PROPERTIES OUTPUT_NAME "groonga-llama")
       set_target_properties(ggml-base PROPERTIES OUTPUT_NAME
                                                  "groonga-ggml-base")
