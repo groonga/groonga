@@ -166,7 +166,7 @@ msgstr ""
 msgid "変更点のまとめ"
 msgstr ""
 
-msgid "前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news/*.md（英語）にまとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
+msgid "前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news/\\*.md（英語）にまとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
 msgstr ""
 
 msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。"
