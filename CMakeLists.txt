@@ -1587,8 +1587,8 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         endif()
       endif()
       if(NOT GGML_CPU_ALL_VARIANTS)
-	# We need to disable GGML_NATIVE without GGML_CPU_ALL_VARIANTS.
-	set(GGML_NATIVE OFF)
+        # We need to disable GGML_NATIVE without GGML_CPU_ALL_VARIANTS.
+        set(GGML_NATIVE OFF)
       endif()
       set(GGML_LLAMAFILE ON)
       set(LLAMA_ALL_WARNINGS OFF)
