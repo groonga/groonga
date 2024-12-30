@@ -1,4 +1,4 @@
-usr/lib/*/libgroonga*.so.*
+etc/groonga/synonyms.tsv
 usr/lib/*/groonga/ggml/*
 usr/lib/*/groonga/plugins/functions/index_column.*
 usr/lib/*/groonga/plugins/functions/language_model.*
@@ -8,9 +8,9 @@ usr/lib/*/groonga/plugins/functions/string.*
 usr/lib/*/groonga/plugins/functions/time.*
 usr/lib/*/groonga/plugins/functions/vector.*
 usr/lib/*/groonga/plugins/query_expanders/*
-usr/lib/*/groonga/plugins/token_filters/stop_word*
 usr/lib/*/groonga/plugins/ruby/*
 usr/lib/*/groonga/plugins/sharding.rb
 usr/lib/*/groonga/plugins/sharding/*
+usr/lib/*/groonga/plugins/token_filters/stop_word*
 usr/lib/*/groonga/scripts/*
-etc/groonga/synonyms.tsv
+usr/lib/*/libgroonga*.so.*
