@@ -1556,6 +1556,36 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
       set(BUILD_STATIC_LIBS OFF)
       set(GGML_BACKEND_DL ON)
       set(GGML_CPU_ALL_VARIANTS ON)
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        # GCC 11.5 or later is needed for "-mavxvnni" and so on
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.5")
+          set(GGML_CPU_ALL_VARIANTS OFF)
+        endif()
+        # binutils 2.36 or later is needed for "vpdpbusd"
+        enable_language(ASM)
+        if(CMAKE_ASM_COMPILER_ID STREQUAL "GNU")
+          execute_process(
+            COMMAND
+              ${CMAKE_COMMAND} -E env
+              # Force to use English
+              LC_MESSAGES=C ${CMAKE_ASM_COMPILER}
+              # Force to use C
+              -xc
+              # Only compile
+              -c
+              # Empty input
+              /dev/null
+              # Pass --version to assembler
+              -Wa,--version
+            OUTPUT_VARIABLE ASM_VERSION_FULL)
+          string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" ASM_VERSION
+                       "${ASM_VERSION_FULL}")
+          message(STATUS "GNU Assembler version: ${ASM_VERSION}")
+          if(ASM_VERSION VERSION_LESS "2.36")
+            set(GGML_CPU_ALL_VARIANTS OFF)
+          endif()
+        endif()
+      endif()
       set(GGML_LLAMAFILE ON)
       set(LLAMA_ALL_WARNINGS OFF)
       fetchcontent_makeavailable(llama_cpp)
