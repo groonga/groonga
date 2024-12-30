@@ -1,7 +1,16 @@
 etc/groonga/synonyms.tsv
-usr/lib/*/groonga/ggml/*
-usr/lib/*/groonga/plugins/functions/index_column.*
-usr/lib/*/groonga/plugins/functions/language_model.*
+# ggml/ doesn't exist with Ubuntu 20.04 becuase CMake is old.
+# We can split this when we drop support for Ubuntu 20.04.
+#
+# usr/lib/*/groonga/ggml/*
+# usr/lib/*/groonga/scripts/*
+usr/lib/*/groonga/[gs]*/*
+# language_model.* doesn't exist with Ubuntu 20.04 becuase CMake is old.
+# We can split this when we drop support for Ubuntu 20.04.
+#
+# usr/lib/*/groonga/plugins/functions/index_column.*
+# usr/lib/*/groonga/plugins/functions/language_model.*
+usr/lib/*/groonga/plugins/functions/[il]*.*
 usr/lib/*/groonga/plugins/functions/math.*
 usr/lib/*/groonga/plugins/functions/number.*
 usr/lib/*/groonga/plugins/functions/string.*
@@ -12,5 +21,4 @@ usr/lib/*/groonga/plugins/ruby/*
 usr/lib/*/groonga/plugins/sharding.rb
 usr/lib/*/groonga/plugins/sharding/*
 usr/lib/*/groonga/plugins/token_filters/stop_word*
-usr/lib/*/groonga/scripts/*
 usr/lib/*/libgroonga*.so.*
