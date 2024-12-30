@@ -153,7 +153,7 @@ grn_dat_init(grn_ctx *ctx, grn_dat *dat)
   grn_table_modules_init(ctx, &(dat->token_filters));
   GRN_PTR_INIT(&(dat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
-  dat->is_dirty = GRN_FALSE;
+  dat->is_dirty = false;
 }
 
 static void
@@ -1764,7 +1764,7 @@ grn_dat_dirty(grn_ctx *ctx, grn_dat *dat)
     CriticalSection critical_section(&dat->lock);
     if (!dat->is_dirty) {
       uint32_t n_dirty_opens;
-      dat->is_dirty = GRN_TRUE;
+      dat->is_dirty = true;
       GRN_ATOMIC_ADD_EX(&(dat->header->n_dirty_opens), 1, n_dirty_opens);
       rc = grn_io_flush(ctx, dat->io);
     }
@@ -1796,7 +1796,7 @@ grn_dat_clean(grn_ctx *ctx, grn_dat *dat)
     CriticalSection critical_section(&dat->lock);
     if (dat->is_dirty) {
       uint32_t n_dirty_opens;
-      dat->is_dirty = GRN_FALSE;
+      dat->is_dirty = false;
       GRN_ATOMIC_ADD_EX(&(dat->header->n_dirty_opens), -1, n_dirty_opens);
       rc = grn_io_flush(ctx, dat->io);
     }
@@ -1816,7 +1816,7 @@ grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat)
 
   {
     CriticalSection critical_section(&dat->lock);
-    dat->is_dirty = GRN_FALSE;
+    dat->is_dirty = false;
     dat->header->n_dirty_opens = 0;
     rc = grn_io_flush(ctx, dat->io);
   }

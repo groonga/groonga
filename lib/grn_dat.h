@@ -41,7 +41,7 @@ struct _grn_dat {
   /* For backward compatibility */
   grn_obj token_filter_procs;
   grn_critical_section lock;
-  grn_bool is_dirty;
+  bool is_dirty;
 };
 
 struct grn_dat_header {
