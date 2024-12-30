@@ -47,8 +47,10 @@ if(NOT EXISTS "${GRN_DOC_PRE_BUILD_STAMP}")
   find_program(DOXYGEN doxygen REQUIRED)
   add_custom_target(
     doc_c_api ALL
-    COMMAND OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/en/html/reference
-            ${DOXYGEN} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+    COMMAND
+      ${CMAKE_COMMAND} -E env
+      OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/en/html/reference ${DOXYGEN}
+      ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
     DEPENDS doc_en_html
     VERBATIM)
