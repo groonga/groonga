@@ -63,42 +63,58 @@ struct _grn_dat_cursor {
   grn_id curr_rec;
 };
 
-GRN_API grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_id
+grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
 /*
   Currently, grn_dat_truncate() is available if the grn_dat object is
   associated with a file.
  */
-GRN_API grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc
+grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
 
-GRN_API const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                                 uint32_t *key_size);
-GRN_API grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
-GRN_API grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
+GRN_API const char *
+_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size);
+GRN_API grn_id
+grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
+GRN_API grn_id
+grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
 
-GRN_API grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc
+grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
 
 /*
   Currently, grn_dat_repair() is available if the grn_dat object is associated
   with a file.
  */
-GRN_API grn_rc grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc
+grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
 
-GRN_API grn_rc grn_dat_flush(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc
+grn_dat_flush(grn_ctx *ctx, grn_dat *dat);
 
-bool grn_dat_is_changing(grn_ctx *ctx, grn_dat *dat);
+bool
+grn_dat_is_changing(grn_ctx *ctx, grn_dat *dat);
 
-grn_rc grn_dat_dirty(grn_ctx *ctx, grn_dat *dat);
-bool grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat);
-grn_rc grn_dat_clean(grn_ctx *ctx, grn_dat *dat);
-grn_rc grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat);
+grn_rc
+grn_dat_dirty(grn_ctx *ctx, grn_dat *dat);
+bool
+grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat);
+grn_rc
+grn_dat_clean(grn_ctx *ctx, grn_dat *dat);
+grn_rc
+grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat);
 
-bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
+bool
+grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
 
-size_t grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
+size_t
+grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
 
-grn_rc grn_dat_wal_recover(grn_ctx *ctx, grn_dat *dat);
-grn_rc grn_dat_warm(grn_ctx *ctx, grn_dat *dat);
+grn_rc
+grn_dat_wal_recover(grn_ctx *ctx, grn_dat *dat);
+grn_rc
+grn_dat_warm(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }
