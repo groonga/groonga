@@ -160,13 +160,13 @@ GRN_API bool
 grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_vector_accessor(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj);
@@ -176,9 +176,9 @@ GRN_API grn_bool
 grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj);

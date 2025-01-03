@@ -16548,7 +16548,7 @@ grn_db_unmap(grn_ctx *ctx, grn_obj *db)
 static grn_rc
 grn_ctx_get_all_objects(grn_ctx *ctx,
                         grn_obj *objects_buffer,
-                        grn_bool (*predicate)(grn_ctx *ctx, grn_obj *object))
+                        bool (*predicate)(grn_ctx *ctx, grn_obj *object))
 {
   grn_obj *db;
   grn_table_cursor *cursor;

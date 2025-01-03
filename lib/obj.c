@@ -952,43 +952,43 @@ grn_obj_is_vector_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-grn_bool
+bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_TYPE;
 }
 
-grn_bool
+bool
 grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_type(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return GRN_TYPE_IS_TEXT_FAMILY(grn_obj_id(ctx, obj));
 }
 
-grn_bool
+bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_PROC;
 }
 
-grn_bool
+bool
 grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
@@ -1045,26 +1045,26 @@ grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->callbacks.function.applier != NULL;
 }
 
-grn_bool
+bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
   return proc->type == GRN_PROC_NORMALIZER;
 }
 
-grn_bool
+bool
 grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
