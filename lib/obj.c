@@ -995,39 +995,39 @@ grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->type == GRN_PROC_TOKENIZER;
 }
 
-grn_bool
+bool
 grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
   return proc->type == GRN_PROC_FUNCTION;
 }
 
-grn_bool
+bool
 grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_function_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
   return proc->callbacks.function.selector != NULL;
 }
 
-grn_bool
+bool
 grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_selector_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
@@ -1071,26 +1071,26 @@ grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->type == GRN_PROC_TOKEN_FILTER;
 }
 
-grn_bool
+bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
   return proc->type == GRN_PROC_SCORER;
 }
 
-grn_bool
+bool
 grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
 
   if (!grn_obj_is_proc(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   proc = (grn_proc *)obj;
@@ -1110,11 +1110,11 @@ grn_obj_is_aggregator_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->type == GRN_PROC_AGGREGATOR;
 }
 
-grn_bool
+bool
 grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_EXPR;
@@ -1470,11 +1470,11 @@ grn_obj_type_is_column(uint8_t type)
   }
 }
 
-grn_bool
+bool
 grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
 {
   if (!name) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (name_len < 0) {

@@ -168,11 +168,11 @@ GRN_API bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj);
@@ -180,13 +180,13 @@ GRN_API bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_aggregator_proc(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_visible(grn_ctx *ctx, grn_obj *obj);
@@ -219,7 +219,7 @@ grn_obj_type_is_table(uint8_t type);
 GRN_API bool
 grn_obj_type_is_column(uint8_t type);
 
-GRN_API grn_bool
+GRN_API bool
 grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len);
 
 bool
