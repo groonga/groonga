@@ -31,7 +31,7 @@ GRN_API const char *grn_get_default_cache_base_path(void);
 /**
  * \brief Create a new cache object.
  *
- * Initializes a cache based on the current configuration or environment
+ * It initializes a cache based on the current configuration or environment
  * settings. The cache operates in either memory mode or persistent mode.
  *
  * **Cache Modes**:
