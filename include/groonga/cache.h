@@ -34,7 +34,7 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * It initializes a cache based on the current configuration or environment
  * settings. The cache operates in either memory mode or persistent mode.
  *
- * **Cache Modes**:
+ * ## Cache Modes
  *
  * Memory Cache:
  * - The same cache is shared within the same process.
@@ -44,17 +44,17 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * - The same cache is shared across multiple processes.
  * - Persistent cache is slightly slower than memory cache due to filesystem I/O.
  *
- * **Cache Mode Configuration**:
+ * ## Cache Mode Configuration
  *
  * Cache mode can be configured in three ways:
  *
- * **Server/Daemon Option**:
+ * ### Server/Daemon Option
  *
  * When starting Groonga, use the `--cache-base-path` option to specify the
  * cache base path. Setting this option to a valid path enables persistent
  * cache mode.
  *
- * **Environment Variable**:
+ * ### Environment Variable
  *
  * If the `--cache-base-path` option is not set when you start Groonga, the
  * function checks the `GRN_CACHE_TYPE` environment variable.
@@ -63,7 +63,7 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  * - If `GRN_CACHE_TYPE` is set to any other value or is unset, it uses
  *   memory cache mode.
  *
- * **C API**:
+ * ### C API
  *
  * Use \ref grn_set_default_cache_base_path to override the configuration or
  * environment settings at runtime.
