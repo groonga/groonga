@@ -5990,6 +5990,13 @@ pat_key_defrag_each(grn_ctx *ctx,
   return new_curr_key;
 }
 
+static inline void
+pat_clear_garbages(grn_pat *pat)
+{
+  memset(pat->header->garbages, 0, sizeof(grn_id) * (GRN_PAT_MAX_KEY_SIZE + 1));
+  pat->header->n_garbages = 0;
+}
+
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too.
  * If you're using a grn_pat in multi-thread/multi-process environment, you must
@@ -6001,7 +6008,8 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
     reduced_bytes = pat->header->curr_key;
-    pat->header->curr_key = 0;
+    pat_update_curr_key(ctx, pat, 0);
+    pat_clear_garbages(pat);
     return reduced_bytes;
   }
 
@@ -6050,6 +6058,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
   reduced_bytes = pat->header->curr_key - new_curr_key;
   pat_update_curr_key(ctx, pat, new_curr_key);
+  pat_clear_garbages(pat);
 
   GRN_FREE(target_ids);
   return reduced_bytes;
@@ -6457,6 +6466,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
   }
   grn_wal_reader_close(ctx, reader);
   pat_update_curr_key(ctx, pat, entry->key_offset);
+  pat_clear_garbages(pat);
 }
 
 grn_rc
