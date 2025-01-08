@@ -189,7 +189,7 @@ module CommandRunner
           rescue SystemCallError
           end
         end
-        error_output = @error_output_log_path.read
+        error_output = @error_output_log_path.read.encode("UTF-8", "locale")
         Result.new("", error_output)
       end
     end
@@ -201,8 +201,8 @@ module CommandRunner
       :err => @error_output_log_path.to_s,
     }
     succeeded = system(*command_line, options)
-    output = @output_log_path.read.encode("UTF-8", "filesystem")
-    error_output = @error_output_log_path.read.encode("UTF-8", "filesystem")
+    output = @output_log_path.read.encode("UTF-8", "locale")
+    error_output = @error_output_log_path.read.encode("UTF-8", "locale")
     unless succeeded
       message = <<-MESSAGE.chomp
 failed to run: #{command_line.join(" ").encode("UTF-8")}
