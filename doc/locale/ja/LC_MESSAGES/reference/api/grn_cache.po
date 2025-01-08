@@ -54,20 +54,11 @@ msgstr "リファレンス"
 msgid "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()`."
 msgstr "``grn_cache`` は詳細を公開していないオブジェクトです。 :c:func:`grn_cache_open()` で作成し、 :c:func:`grn_cache_close()` で解放できます。"
 
-msgid "Creates a new cache object."
-msgstr "新規にキャッシュオブジェクトを作成します。"
-
-msgid "If memory allocation for the new cache object is failed, ``NULL`` is returned. Error information is stored into the ``ctx``."
-msgstr "新しいキャッシュオブジェクト作成のためのメモリ割り当てに失敗した場合、 ``NULL`` を返します。エラー情報は ``ctx`` に格納されます。"
+msgid "Frees resourses of the ``cache``."
+msgstr "``cache`` のリソースを解放。"
 
 msgid "The context."
 msgstr "その時点のコンテキスト。"
-
-msgid "A newly allocated cache object on success, ``NULL`` otherwise. The returned cache object must be freed by :c:func:`grn_cache_close()`."
-msgstr "新しいキャッシュオブジェクトの作成に成功した場合は ``NULL`` 以外の値を返します。このキャッシュオブジェクトは :c:func:`grn_cache_close()` で解放されなければなりません。"
-
-msgid "Frees resourses of the ``cache``."
-msgstr "``cache`` のリソースを解放。"
 
 msgid "The cache object to be freed."
 msgstr "キャッシュオブジェクトを解放する。"
