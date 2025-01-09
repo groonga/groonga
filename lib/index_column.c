@@ -909,6 +909,9 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     if (with_position) {
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
           posting_list->need_cursor_next = false;
@@ -961,6 +964,9 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     } else {
       grn_posting *posting;
       while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
         const grn_index_column_diff_compared compared =
           grn_index_column_diff_compare_posting(ctx, data, posting);
         GRN_LOG(ctx,
@@ -1210,14 +1216,16 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
   }
   GRN_TABLE_EACH_END(ctx, cursor);
 
-  GRN_HASH_EACH_BEGIN(ctx, data->posting_lists, cursor, id)
-  {
-    void *value;
-    grn_hash_cursor_get_value(ctx, cursor, &value);
-    grn_index_column_diff_posting_list *posting_list = value;
-    grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_HASH_EACH_BEGIN(ctx, data->posting_lists, cursor, id)
+      {
+        void *value;
+        grn_hash_cursor_get_value(ctx, cursor, &value);
+        grn_index_column_diff_posting_list *posting_list = value;
+        grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
+      }
+    GRN_HASH_EACH_END(ctx, cursor);
   }
-  GRN_HASH_EACH_END(ctx, cursor);
   grn_hash_close(ctx, data->posting_lists);
 }
 
