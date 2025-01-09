@@ -5994,7 +5994,6 @@ static inline void
 pat_clear_garbages(grn_pat *pat)
 {
   memset(pat->header->garbages, 0, sizeof(grn_id) * (GRN_PAT_MAX_KEY_SIZE + 1));
-  pat->header->n_garbages = 0;
 }
 
 /* See test/command/suite/defrag/pat/README.md when you change this.

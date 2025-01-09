@@ -90,7 +90,7 @@ check --obj Data
       "curr_del": 1,
       "curr_del2": 0,
       "curr_del3": 0,
-      "n_garbages": 0
+      "n_garbages": 1
     }
   ]
 ]
@@ -118,7 +118,7 @@ check --obj Data
       "curr_del": 1,
       "curr_del2": 0,
       "curr_del3": 0,
-      "n_garbages": 0
+      "n_garbages": 1
     }
   ]
 ]
