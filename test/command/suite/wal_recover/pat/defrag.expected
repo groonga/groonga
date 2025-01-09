@@ -87,10 +87,10 @@ check --obj Data
       "n_entries": 2,
       "curr_rec": 3,
       "curr_key": 12,
-      "curr_del": 1,
+      "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
-      "n_garbages": 1
+      "n_garbages": 0
     }
   ]
 ]
@@ -115,10 +115,10 @@ check --obj Data
       "n_entries": 2,
       "curr_rec": 3,
       "curr_key": 12,
-      "curr_del": 1,
+      "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
-      "n_garbages": 1
+      "n_garbages": 0
     }
   ]
 ]

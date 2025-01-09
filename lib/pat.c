@@ -5990,10 +5990,39 @@ pat_key_defrag_each(grn_ctx *ctx,
   return new_curr_key;
 }
 
+static inline grn_rc
+scan_delinfos_and_phase2(grn_ctx *ctx, grn_pat *pat)
+{
+  for (uint32_t di_index = 0; di_index < GRN_PAT_NDELINFOS; di_index++) {
+    grn_pat_delinfo *delete_info = &(pat->header->delinfos[di_index]);
+    if (delete_info->stat != DL_PHASE1) {
+      continue;
+    }
+
+    grn_pat_wal_add_entry_data wal_data = {0};
+    wal_data.tag = "[pat][defrag][delinfos][phase2]";
+    wal_data.pat = pat;
+    wal_data.delete_info_index = di_index;
+    grn_rc rc = delinfo_turn_2(ctx, pat, &wal_data, di_index);
+    if (rc != GRN_SUCCESS) {
+      ERR(rc, "%s: failed %d", wal_data.tag, delete_info->ld);
+      return rc;
+    }
+    delinfo_turn_2_post(ctx, pat);
+  }
+  return GRN_SUCCESS;
+}
+
+/* Clear to avoid reuse of unexpected nodes. */
 static inline void
 pat_clear_garbages(grn_pat *pat)
 {
-  memset(pat->header->garbages, 0, sizeof(grn_id) * (GRN_PAT_MAX_KEY_SIZE + 1));
+  memset(pat->header->garbages, 0, sizeof(pat->header->garbages));
+  memset(pat->header->delinfos, 0, sizeof(pat->header->delinfos));
+  pat->header->curr_del = 0;
+  pat->header->curr_del2 = 0;
+  pat->header->curr_del3 = 0;
+  pat->header->n_garbages = 0;
 }
 
 /* See test/command/suite/defrag/pat/README.md when you change this.
@@ -6003,6 +6032,13 @@ pat_clear_garbages(grn_pat *pat)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
+  // Clear grn_pat_header::delinfos and grn_pat_header::garbages after
+  // defragmentation. Execute delinfo_turn_2() on the data remaining in
+  // grn_pat_header::delinfos before clearing.
+  if (scan_delinfos_and_phase2(ctx, pat)) {
+    return 0;
+  }
+
   int reduced_bytes = 0;
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
