@@ -1218,12 +1218,12 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
 
   if (ctx->rc == GRN_SUCCESS) {
     GRN_HASH_EACH_BEGIN(ctx, data->posting_lists, cursor, id)
-      {
-        void *value;
-        grn_hash_cursor_get_value(ctx, cursor, &value);
-        grn_index_column_diff_posting_list *posting_list = value;
-        grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
-      }
+    {
+      void *value;
+      grn_hash_cursor_get_value(ctx, cursor, &value);
+      grn_index_column_diff_posting_list *posting_list = value;
+      grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
+    }
     GRN_HASH_EACH_END(ctx, cursor);
   }
   grn_hash_close(ctx, data->posting_lists);
