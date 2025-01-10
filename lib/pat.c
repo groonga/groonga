@@ -6038,7 +6038,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
    *
    * Since grn_pat_header::delinfos and grn_pat_header::garbages are cleared
    * after defragmentation, exercise of delinfo_turn_3() is not needed. */
-  if (scan_delinfos_and_phase2(ctx, pat)) {
+  if (scan_delinfos_and_phase2(ctx, pat) != GRN_SUCCESS) {
     return 0;
   }
 
