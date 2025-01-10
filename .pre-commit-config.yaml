@@ -120,7 +120,7 @@ repos:
           ?lib/grn_vector\.h|
           ?lib/h3\.c|
           ?lib/highlighter\.c|
-          ?lib/ii\.c|
+          ?lib/ii\.cpp|
           ?lib/index_column\.c|
           ?lib/language_model\.cpp|
           ?lib/load\.c|

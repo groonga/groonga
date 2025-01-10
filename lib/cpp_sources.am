@@ -15,6 +15,7 @@ libgroonga_cpp_source =				\
 	grn_distance_instantiation.hpp		\
 	grn_language_model.hpp			\
 	grn_task_executor.hpp			\
+	ii.cpp					\
 	language_model.cpp			\
 	portability.cpp				\
 	token_column.cpp			\
