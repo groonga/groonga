@@ -6032,9 +6032,12 @@ pat_clear_garbages(grn_pat *pat)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
-  // Clear grn_pat_header::delinfos and grn_pat_header::garbages after
-  // defragmentation. Execute delinfo_turn_2() on the data remaining in
-  // grn_pat_header::delinfos before clearing.
+  /* Clear grn_pat_header::delinfos and grn_pat_header::garbages after
+   * defragmentation. Execute delinfo_turn_2() on the data remaining in
+   * grn_pat_header::delinfos before clearing.
+   *
+   * Since grn_pat_header::delinfos and grn_pat_header::garbages are cleared
+   * after defragmentation, exercise of delinfo_turn_3() is not needed. */
   if (scan_delinfos_and_phase2(ctx, pat)) {
     return 0;
   }
