@@ -2,8 +2,54 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
 delete Users --filter '_id > 1'
 [[0,0.0,0.0],true]
-delete Users --filter '_id > 1000'
-[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"XXXX001"},
+{"_key":"XXXX002"},
+{"_key":"XXXX9999"}
+]
+[[0,0.0,0.0],3]
+select Users --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "User001"
+      ],
+      [
+        45,
+        "XXXX001"
+      ],
+      [
+        44,
+        "XXXX002"
+      ],
+      [
+        301,
+        "XXXX9999"
+      ]
+    ]
+  ]
+]
 object_inspect Users
 [
   [
@@ -28,13 +74,13 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 8684,
+      "total_size": 2108,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 746,
+    "n_records": 4,
     "disk_usage": 0
   }
 ]
@@ -64,17 +110,17 @@ object_inspect Users
         },
         "size": 4096
       },
-      "total_size": 5112,
+      "total_size": 29,
       "max_total_size": 4294967294
     },
     "value": {
       "type": null
     },
-    "n_records": 746,
+    "n_records": 4,
     "disk_usage": 0
   }
 ]
-select Users --filter '_id >= 2 && _id <= 4'
+select Users --sort_keys _key
 [
   [
     0,
@@ -84,7 +130,7 @@ select Users --filter '_id >= 2 && _id <= 4'
   [
     [
       [
-        3
+        4
       ],
       [
         [
@@ -97,16 +143,20 @@ select Users --filter '_id >= 2 && _id <= 4'
         ]
       ],
       [
-        2,
-        "User9"
+        1,
+        "User001"
       ],
       [
-        3,
-        "User8"
+        45,
+        "XXXX001"
       ],
       [
-        4,
-        "User7"
+        44,
+        "XXXX002"
+      ],
+      [
+        301,
+        "XXXX9999"
       ]
     ]
   ]

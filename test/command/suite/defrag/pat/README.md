@@ -58,7 +58,7 @@ Defragmentation should succeed no matter how many times it is run.
 
 ## `_id` reused
 
-Defragmentation should succeed if the key buffer is no longer in `_id` order because `_id` is reused.
+Defragmentation should succeed even if the `_id` is reused.
 
 * test/command/suite/defrag/pat/reuse_id.test
 
