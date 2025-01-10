@@ -130,6 +130,12 @@ if(GRN_WITH_ONIGMO)
     )
 
   set(ONIGMO_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # st_hash_type::hash doesn't have prototype of arguments.
+    # It's not supported in C23.
+    # TODO: We should fix Onigmo.
+    string(APPEND ONIGMO_C_COMPILE_FLAGS " -Wno-deprecated-non-prototype")
+  endif()
 
   add_library(onigmo STATIC ${ONIGMO_SOURCES})
   set_source_files_properties(${ONIGMO_SOURCES}
