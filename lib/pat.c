@@ -6032,6 +6032,7 @@ pat_clear_garbages(grn_ctx *ctx, grn_pat *pat)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
+  int reduced_bytes = 0;
   /* Clear grn_pat_header::delinfos and grn_pat_header::garbages after
    * defragmentation. Execute delinfo_turn_2() on the data remaining in
    * grn_pat_header::delinfos before clearing.
@@ -6039,10 +6040,9 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
    * Since grn_pat_header::delinfos and grn_pat_header::garbages are cleared
    * after defragmentation, exercise of delinfo_turn_3() is not needed. */
   if (scan_delinfos_and_phase2(ctx, pat) != GRN_SUCCESS) {
-    return 0;
+    return reduced_bytes;
   }
 
-  int reduced_bytes = 0;
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
     reduced_bytes = pat->header->curr_key;
