@@ -6015,7 +6015,7 @@ scan_delinfos_and_phase2(grn_ctx *ctx, grn_pat *pat)
 
 /* Clear to avoid reuse of unexpected nodes. */
 static inline void
-pat_clear_garbages(grn_pat *pat)
+pat_clear_garbages(grn_ctx *ctx, grn_pat *pat)
 {
   memset(pat->header->garbages, 0, sizeof(pat->header->garbages));
   memset(pat->header->delinfos, 0, sizeof(pat->header->delinfos));
@@ -6047,7 +6047,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   if (n_records == 0) {
     reduced_bytes = pat->header->curr_key;
     pat_update_curr_key(ctx, pat, 0);
-    pat_clear_garbages(pat);
+    pat_clear_garbages(ctx, pat);
     return reduced_bytes;
   }
 
@@ -6096,7 +6096,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
   reduced_bytes = pat->header->curr_key - new_curr_key;
   pat_update_curr_key(ctx, pat, new_curr_key);
-  pat_clear_garbages(pat);
+  pat_clear_garbages(ctx, pat);
 
   GRN_FREE(target_ids);
   return reduced_bytes;
@@ -6504,7 +6504,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
   }
   grn_wal_reader_close(ctx, reader);
   pat_update_curr_key(ctx, pat, entry->key_offset);
-  pat_clear_garbages(pat);
+  pat_clear_garbages(ctx, pat);
 }
 
 grn_rc
