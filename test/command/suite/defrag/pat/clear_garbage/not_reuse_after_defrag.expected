@@ -1,0 +1,108 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+delete Users --filter true
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 260,
+      "curr_key": 4160,
+      "curr_del": 4,
+      "curr_del2": 132,
+      "curr_del3": 5,
+      "n_garbages": 260
+    }
+  ]
+]
+defrag
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 260,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]
+load --table Users
+[
+{"_key":"XXXX000000000001"},
+{"_key":"XXXX000000000002"},
+{"_key":"XXXX99"}
+]
+[[0,0.0,0.0],3]
+select Users --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        261,
+        "XXXX000000000001"
+      ],
+      [
+        262,
+        "XXXX000000000002"
+      ],
+      [
+        263,
+        "XXXX99"
+      ]
+    ]
+  ]
+]
+dump Users
+table_create Users TABLE_PAT_KEY ShortText
+
+load --table Users
+[
+["_key"],
+["XXXX000000000001"],
+["XXXX000000000002"],
+["XXXX99"]
+]

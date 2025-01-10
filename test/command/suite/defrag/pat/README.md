@@ -71,3 +71,14 @@ Reuse is a form of reusing a node that has already been deleted.
 Defragmentation on a table with no fragmentation finishes successfully.
 
 * test/command/suite/defrag/pat/no_fragmentation.test
+
+## The garbage is cleared after defragmentation
+
+To avoid the incorrect reuse of the node, the garbage is cleared during defragmentation.
+Test whether the garbage was successfully cleared after defragmentation
+and whether it can be reused successfully after defragmentation.
+
+* test/command/suite/defrag/pat/clear_garbage/not_reuse_after_defrag.test
+  * After defragmentation, there is no garbage and no reuse
+* test/command/suite/defrag/pat/clear_garbage/reuse_after_defrag.test
+  * Even after defragmentation, deleting more than 256 nodes occurs reuse

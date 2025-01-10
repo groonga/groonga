@@ -1,0 +1,29 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+# Test that the node is not reused when added after defragmentation.
+
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+# Reuse will not occur unless more than 256 are deleted.
+#@disable-logging
+#@generate-series 1 260 Users '{"_key" => "User%012d" % i}'
+#@enable-logging
+delete Users --filter true
+
+check Users
+defrag
+check Users
+
+# `_id` is not reused and is loaded as expected.
+# `_id` is not reused, but is generated from a new `_id` of 261.
+load --table Users
+[
+{"_key":"XXXX000000000001"},
+{"_key":"XXXX000000000002"},
+{"_key":"XXXX99"}
+]
+select Users --sort_keys _key
+
+# `dump` should still be normal after defragmentation (after clearing garbage).
+dump Users

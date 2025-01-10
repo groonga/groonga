@@ -1,0 +1,34 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+
+#@disable-logging
+#@generate-series 1 260 Users '{"_key" => "A-User%04d" % i}'
+#@enable-logging
+delete Users --filter true
+
+check Users
+defrag
+check Users
+
+# Reuse targets were reset because defragmentation was done.
+# It is reused by adding and deleting again.
+#@disable-logging
+#@generate-series 1 260 Users '{"_key" => "A-User%04d" % i}'
+#@enable-logging
+delete Users --filter true
+
+# `_id = 261` is reused.
+# (Reuse is only if the key length is the same as that of the deleted node.)
+load --table Users
+[
+{"_key":"D-User0001"},
+{"_key":"D-User0002"},
+{"_key":"D-User99"}
+]
+check Users
+select Users --sort_keys _key
+
+# `dump` should still be normal after defragmentation (after clearing garbage).
+dump Users
