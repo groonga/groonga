@@ -62,6 +62,10 @@ Defragmentation should succeed even if the `_id` is reused.
 
 * test/command/suite/defrag/pat/reuse_id.test
 
+FYI:
+Reuse is a form of reusing a node that has already been deleted.
+`_id` and key storage for that node is reuse as it is, so the key storage is in `_id` order.
+
 ## No fragmentation
 
 Defragmentation on a table with no fragmentation finishes successfully.
