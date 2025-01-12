@@ -1,0 +1,22 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create Users secret COLUMN_SCALAR ShortText
+
+# The 'secret' column stores large strings over 65536B, whicha are `SEQUENTIAL`
+# elements and stored in `SEQUENTIAL` segments. These segments will be
+# defragmentation targets.
+#@disable-logging
+#@generate-series 1 4 Users '{"_key" => "user-no-#{i}", "secret" => "#{"x" * (2 ** 20)}"}'
+#@enable-logging
+
+delete Users --filter '_id == 2'
+
+# After defragmentation, the total size of the PAT keys should decrease.
+# Additionally, defragmentation logs for the variable-size column should be
+# displayed.
+object_inspect Users
+defrag Users
+object_inspect Users
+check Users
