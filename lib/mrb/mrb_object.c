@@ -322,7 +322,7 @@ object_check_corrupt(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
-  grn_bool is_corrupt;
+  bool is_corrupt;
 
   object = DATA_PTR(self);
   is_corrupt = grn_obj_is_corrupt(ctx, object);
