@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1840,20 +1840,12 @@ grn_loader_parse_columns(grn_ctx *ctx,
   return ctx->rc;
 }
 
-static grn_com_addr *addr;
-
 void
 grn_load_internal(grn_ctx *ctx, grn_load_input *input)
 {
   grn_loader *loader = &ctx->impl->loader;
 
   loader->emit_level = input->emit_level;
-  if (ctx->impl->edge) {
-    grn_edge *edge = grn_edges_add_communicator(ctx, addr);
-    grn_obj *msg = grn_msg_open(ctx, edge->com, &ctx->impl->edge->send_old);
-    /* build msg */
-    grn_edge_dispatch(ctx, edge, msg);
-  }
   if (input->table.length > 0) {
     grn_ctx_loader_clear(ctx);
     loader->input_type = input->type;

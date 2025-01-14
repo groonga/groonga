@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -453,7 +453,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #endif
   ctx->impl->output.arrow_stream_writer = NULL;
   grn_timeval_now(ctx, &ctx->impl->tv);
-  ctx->impl->edge = NULL;
 #ifdef GRN_WITH_APACHE_ARROW
   ctx->impl->arrow_stream_loader = NULL;
 #endif
