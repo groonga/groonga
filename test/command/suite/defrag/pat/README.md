@@ -78,7 +78,34 @@ To avoid the incorrect reuse of the node, the garbage is cleared during defragme
 Test whether the garbage was successfully cleared after defragmentation
 and whether it can be reused successfully after defragmentation.
 
-* test/command/suite/defrag/pat/clear_garbage/not_reuse_after_defrag.test
+### With node reuse before defragmentation
+
+All records in the target table are deleted and empty.
+
+* test/command/suite/defrag/pat/clear_garbage/reuse_before_defrag/emtpy/not_reuse_after_defrag.test
   * After defragmentation, there is no garbage and no reuse
-* test/command/suite/defrag/pat/clear_garbage/reuse_after_defrag.test
+* test/command/suite/defrag/pat/clear_garbage/reuse_before_defrag/emtpy/reuse_after_defrag.test
+  * Even after defragmentation, deleting more than 256 nodes occurs reuse
+
+A few records remain.
+
+* test/command/suite/defrag/pat/clear_garbage/reuse_before_defrag/not_reuse_after_defrag.test
+  * After defragmentation, there is no garbage and no reuse
+* test/command/suite/defrag/pat/clear_garbage/reuse_before_defrag/reuse_after_defrag.test
+  * Even after defragmentation, deleting more than 256 nodes occurs reuse
+
+### Without node reuse before defragmentation
+
+All records in the target table are deleted and empty.
+
+* test/command/suite/defrag/pat/clear_garbage/no_reuse_before_defrag/emtpy/not_reuse_after_defrag.test
+  * After defragmentation, there is no garbage and no reuse
+* test/command/suite/defrag/pat/clear_garbage/no_reuse_before_defrag/emtpy/reuse_after_defrag.test
+  * Even after defragmentation, deleting more than 256 nodes occurs reuse
+
+A few records remain.
+
+* test/command/suite/defrag/pat/clear_garbage/no_reuse_before_defrag/not_reuse_after_defrag.test
+  * After defragmentation, there is no garbage and no reuse
+* test/command/suite/defrag/pat/clear_garbage/no_reuse_before_defrag/reuse_after_defrag.test
   * Even after defragmentation, deleting more than 256 nodes occurs reuse

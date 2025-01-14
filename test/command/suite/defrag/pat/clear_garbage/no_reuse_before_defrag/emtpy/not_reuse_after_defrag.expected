@@ -1,5 +1,7 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
+column_create --table Users --name immediate --type Bool
+[[0,0.0,0.0],true]
 delete Users --filter true
 [[0,0.0,0.0],true]
 check Users
@@ -17,12 +19,12 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 0,
-      "curr_rec": 260,
-      "curr_key": 2600,
-      "curr_del": 4,
-      "curr_del2": 132,
-      "curr_del3": 5,
-      "n_garbages": 260
+      "curr_rec": 60,
+      "curr_key": 480,
+      "curr_del": 60,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 60
     }
   ]
 ]
@@ -43,7 +45,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 0,
-      "curr_rec": 260,
+      "curr_rec": 60,
       "curr_key": 0,
       "curr_del": 0,
       "curr_del2": 0,
@@ -52,39 +54,13 @@ check Users
     }
   ]
 ]
-delete Users --filter true
-[[0,0.0,0.0],true]
 load --table Users
 [
-{"_key":"D-User0001"},
-{"_key":"D-User0002"},
-{"_key":"D-User99"}
+{"_key":"XXXX000000000001", "immediate":false},
+{"_key":"XXXX000000000002", "immediate":false},
+{"_key":"X99", "immediate":true}
 ]
 [[0,0.0,0.0],3]
-check Users
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    {
-      "flags": "0000C001",
-      "key size": 4096,
-      "value_size": 0,
-      "tokenizer": 0,
-      "normalizer": 0,
-      "n_entries": 3,
-      "curr_rec": 521,
-      "curr_key": 2608,
-      "curr_del": 4,
-      "curr_del2": 132,
-      "curr_del3": 5,
-      "n_garbages": 258
-    }
-  ]
-]
 select Users --sort_keys _key
 [
   [
@@ -105,30 +81,38 @@ select Users --sort_keys _key
         [
           "_key",
           "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
         ]
       ],
       [
-        265,
-        "D-User0001"
+        63,
+        "X99",
+        true
       ],
       [
-        264,
-        "D-User0002"
+        61,
+        "XXXX000000000001",
+        false
       ],
       [
-        521,
-        "D-User99"
+        62,
+        "XXXX000000000002",
+        false
       ]
     ]
   ]
 ]
 dump Users
 table_create Users TABLE_PAT_KEY ShortText
+column_create Users immediate COLUMN_SCALAR Bool
 
 load --table Users
 [
-["_key"],
-["D-User0001"],
-["D-User0002"],
-["D-User99"]
+["_key","immediate"],
+["X99",true],
+["XXXX000000000001",false],
+["XXXX000000000002",false]
 ]
