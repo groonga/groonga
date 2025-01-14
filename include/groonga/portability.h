@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2017  Brazil
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -193,7 +193,9 @@
 
 #ifdef WIN32
 #  define grn_getpid() _getpid()
-#else /* WIN32 */
+#elif defined(__wasi__)
+#  define grn_getpid() 1
+#else
 #  define grn_getpid() getpid()
 #endif /* WIN32 */
 
