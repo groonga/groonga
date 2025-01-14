@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2022-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2022-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,10 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_sources.am GROONGA_SOURCES)
 add_executable(groonga ${GROONGA_SOURCES})
 set_source_files_properties(${GROONGA_SOURCES}
                             PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-target_link_libraries(groonga libgroonga Threads::Threads)
+target_link_libraries(groonga libgroonga)
+if(NOT WASI)
+  target_link_libraries(groonga Threads::Threads)
+endif()
 if(GRN_WITH_LIBEDIT)
   target_link_libraries(groonga Groonga::libedit)
 endif()
@@ -59,6 +62,8 @@ if(NOT WIN32)
   set_source_files_properties(${GRNSLAP_SOURCES}
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   target_link_libraries(grnslap libgroonga)
-  target_link_libraries(grnslap Threads::Threads)
+  if(NOT WASI)
+    target_link_libraries(grnslap Threads::Threads)
+  endif()
   # install(TARGETS grnslap DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
