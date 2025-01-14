@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1736732696720,
+  "lastUpdate": 1736834358844,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "abe@clear-code.com",
-            "name": "Abe Tomoaki",
-            "username": "abetomo"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "3a217eab8f0edf07548eecee62f64bb7d75b3fc4",
-          "message": "clang-format: add include/groonga/output.h (#1762)",
-          "timestamp": "2024-04-18T09:33:56+09:00",
-          "tree_id": "d22d3c7e9aab2ef40945f4383dc925df7fb30683",
-          "url": "https://github.com/groonga/groonga/commit/3a217eab8f0edf07548eecee62f64bb7d75b3fc4"
-        },
-        "date": 1713400810916,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.38075072999993154,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.019203999999999874 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.2705140250000113,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.013421000000000322 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.01615860699996574,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00034099999999970265 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015237861999935376,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00046099999999982266 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.377144396999995,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00026299999999987445 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.24541902999999365,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006412999999999974 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.14120269000005692,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006889999999999924 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.017522036999935153,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002136000000000582 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.016510052000000996,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001831999999999251 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.05625987600001281,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00731800000000013 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.05245304999994005,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008661999999999559 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.018174572000134503,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019290000000004026 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.0176596230000996,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0020290000000005026 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.024691305000033026,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0015720000000001288 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "otegami@clear-code.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64f25820db0dc92e8cc735a52a9323db1705ecba",
+          "message": "test command-line: use locale encoding for Japanese file paths on Windows (#2172)\n\n## Issue\r\n\r\nWhen running `grndb` tests in a Windows environment, encoding file paths\r\ncontaining Japanese characters failed in the test logs. It caused tests\r\nto\r\nfail.\r\n\r\n## Cause\r\n\r\nThis issue occurred because file paths encoded in CP932 were\r\nmisinterpreted as\r\nUTF-8 and then converted to UTF-8. The root of the problem lies in the\r\nchange of\r\nRuby's behavior. From Ruby 3.0, `Encoding.find(\"filesystem\")` now\r\nreturns\r\n\"UTF-8\" instead of the expected CP932 on Windows. Previously, `grndb`\r\nwould have\r\ntreated CP932 data correctly, converting them from CP932(`\"filesystem\"`)\r\nto\r\nUTF-8 without issues by Ruby. With the change, the conversion was\r\nincorrectly\r\nattempting to interpret CP932 data as UTF-8(`\"filesystem\"`), which led\r\nto\r\nfailures.\r\n\r\n### Note\r\n\r\n- `grndb` outputs results using the encoding specified by the system\r\nlocale.\r\n- On Windows, the locale typically uses CP932, meaning `grndb` outputs\r\n  CP932-encoded data.\r\n- A change in Ruby 3.0 altered how `\"filesystem\"` encoding is resolved.\r\n- see\r\nhttps://github.com/ruby/ruby/commit/5b98b2ce39ed979aec614365a2dc3e1c30052bca\r\n\r\n## Solution\r\n\r\nWe modified the `CommandRunner's run_command_(sync|interactive)` to use\r\nthe locale encoding (`\"locale\"`)\r\ninstead of relying on `\"filesystem\"` encoding. This ensures that reading\r\nand\r\nencoding operations correctly handle CP932-encoded paths on Windows,\r\nconverting\r\nthem properly to UTF-8.",
+          "timestamp": "2025-01-14T14:55:21+09:00",
+          "tree_id": "9fe87fef5ec76c210d38cf6f966b98cc9cc73618",
+          "url": "https://github.com/groonga/groonga/commit/64f25820db0dc92e8cc735a52a9323db1705ecba"
+        },
+        "date": 1736834355221,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.400539207999941,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.02439799999999992 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2666283270000349,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01476499999999975 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.016940859999976965,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003999999999998449 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.017183674999898813,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00035900000000016474 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4776061300000265,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00034099999999970265 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24719304600006353,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009214999999999557 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13697497700007943,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007099000000000105 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01662444499999083,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018289999999998585 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017488129000014396,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018499999999998795 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.07045572300000913,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.010734999999999481 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06971728699994628,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0082380000000003 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018639241000016682,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015670000000003736 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.026360331000034876,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0026719999999989807 s\nthreads: undefined"
           }
         ]
       }
