@@ -54,7 +54,7 @@ check Users
     }
   ]
 ]
-delete Users --filter '_key != "11" && _key != "B-User0003"'
+delete Users --filter '_key != "41" && _key != "B-User0003"'
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -85,12 +85,12 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 8,
-      "curr_rec": 580,
+      "curr_rec": 581,
       "curr_key": 2618,
-      "curr_del": 7,
-      "curr_del2": 135,
-      "curr_del3": 8,
-      "n_garbages": 514
+      "curr_del": 8,
+      "curr_del2": 136,
+      "curr_del3": 9,
+      "n_garbages": 515
     }
   ]
 ]
@@ -121,42 +121,42 @@ select Users --sort_keys _key
         ]
       ],
       [
-        70,
-        "11",
+        71,
+        "41",
         true
       ],
       [
-        322,
+        323,
         "B-User0003",
         false
       ],
       [
-        324,
+        325,
         "C-User0001",
         false
       ],
       [
-        323,
+        324,
         "C-User0002",
         false
       ],
       [
-        580,
+        581,
         "C-User99",
         false
       ],
       [
-        158,
+        129,
         "C01",
         true
       ],
       [
-        157,
+        128,
         "C02",
         true
       ],
       [
-        156,
+        127,
         "CC01",
         true
       ]
@@ -170,7 +170,7 @@ column_create Users immediate COLUMN_SCALAR Bool
 load --table Users
 [
 ["_key","immediate"],
-["11",true],
+["41",true],
 ["B-User0003",false],
 ["C-User0001",false],
 ["C-User0002",false],

@@ -19,10 +19,10 @@ check Users
 # Reuse targets were reset because defragmentation was done.
 # It is reused by adding and deleting again.
 #@disable-logging
-#@generate-series 1 260 Users '{"_key" => "%d" % i, "immediate" => true}'
+#@generate-series 31 290 Users '{"_key" => "%d" % i, "immediate" => true}'
 #@generate-series 1 260 Users '{"_key" => "B-User%04d" % i, "immediate" => false}'
 #@enable-logging
-delete Users --filter '_key != "11" && _key != "B-User0003"'
+delete Users --filter '_key != "41" && _key != "B-User0003"'
 
 # The node is reused.
 # "C-User0001" and "C-Users-0002" are registered in the reused node.
