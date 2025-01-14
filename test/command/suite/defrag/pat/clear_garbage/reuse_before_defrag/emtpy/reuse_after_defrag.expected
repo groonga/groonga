@@ -4,6 +4,14 @@ column_create --table Users --name immediate --type Bool
 [[0,0.0,0.0],true]
 delete Users --filter true
 [[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"A-User9999", "immediate":false},
+{"_key":"A99", "immediate":true}
+]
+[[0,0.0,0.0],2]
+delete Users --filter true
+[[0,0.0,0.0],true]
 check Users
 [
   [
@@ -19,12 +27,12 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 0,
-      "curr_rec": 260,
-      "curr_key": 1300,
-      "curr_del": 4,
-      "curr_del2": 132,
-      "curr_del3": 5,
-      "n_garbages": 260
+      "curr_rec": 520,
+      "curr_key": 2600,
+      "curr_del": 10,
+      "curr_del2": 138,
+      "curr_del3": 11,
+      "n_garbages": 520
     }
   ]
 ]
@@ -45,7 +53,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 0,
-      "curr_rec": 260,
+      "curr_rec": 520,
       "curr_key": 0,
       "curr_del": 0,
       "curr_del2": 0,
@@ -85,7 +93,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 6,
-      "curr_rec": 781,
+      "curr_rec": 1041,
       "curr_key": 2608,
       "curr_del": 8,
       "curr_del2": 136,
@@ -121,32 +129,32 @@ select Users --sort_keys _key
         ]
       ],
       [
-        525,
+        785,
         "C-User0001",
         false
       ],
       [
-        524,
+        784,
         "C-User0002",
         false
       ],
       [
-        781,
+        1041,
         "C-User99",
         false
       ],
       [
-        359,
+        619,
         "C01",
         true
       ],
       [
-        358,
+        618,
         "C02",
         true
       ],
       [
-        357,
+        617,
         "CC01",
         true
       ]

@@ -2,8 +2,14 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
 column_create --table Users --name immediate --type Bool
 [[0,0.0,0.0],true]
-delete Users --filter '_key != "10" && _key != "A-User0002"'
+delete Users --filter true
 [[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"A-User9999", "immediate":false},
+{"_key":"A99", "immediate":true}
+]
+[[0,0.0,0.0],2]
 check Users
 [
   [
@@ -19,12 +25,12 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 2,
-      "curr_rec": 260,
-      "curr_key": 1300,
-      "curr_del": 2,
-      "curr_del2": 130,
-      "curr_del3": 3,
-      "n_garbages": 258
+      "curr_rec": 520,
+      "curr_key": 2600,
+      "curr_del": 8,
+      "curr_del2": 136,
+      "curr_del3": 9,
+      "n_garbages": 518
     }
   ]
 ]
@@ -45,7 +51,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 2,
-      "curr_rec": 260,
+      "curr_rec": 520,
       "curr_key": 10,
       "curr_del": 0,
       "curr_del2": 0,
@@ -91,42 +97,42 @@ select Users --sort_keys _key
         ]
       ],
       [
-        10,
-        "10",
-        true
-      ],
-      [
-        132,
-        "A-User0002",
+        265,
+        "A-User9999",
         false
       ],
       [
-        261,
+        99,
+        "A99",
+        true
+      ],
+      [
+        521,
         "C-User0001",
         false
       ],
       [
-        262,
+        522,
         "C-User0002",
         false
       ],
       [
-        263,
+        523,
         "C-User99",
         false
       ],
       [
-        264,
+        524,
         "C01",
         true
       ],
       [
-        265,
+        525,
         "C02",
         true
       ],
       [
-        266,
+        526,
         "CC01",
         true
       ]
@@ -140,8 +146,8 @@ column_create Users immediate COLUMN_SCALAR Bool
 load --table Users
 [
 ["_key","immediate"],
-["10",true],
-["A-User0002",false],
+["A-User9999",false],
+["A99",true],
 ["C-User0001",false],
 ["C-User0002",false],
 ["C-User99",false],

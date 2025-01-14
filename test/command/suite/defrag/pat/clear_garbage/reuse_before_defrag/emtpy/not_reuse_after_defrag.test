@@ -6,9 +6,16 @@ column_create --table Users --name immediate --type Bool
 
 # Reuse occurs when more than 256 nodes are deleted.
 #@disable-logging
-#@generate-series 1 130 Users '{"_key" => "%d" % i, "immediate" => true}'
-#@generate-series 1 130 Users '{"_key" => "User%012d" % i, "immediate" => false}'
+#@generate-series 1 260 Users '{"_key" => "%d" % i, "immediate" => true}'
+#@generate-series 1 260 Users '{"_key" => "A-User%04d" % i, "immediate" => false}'
 #@enable-logging
+delete Users --filter true
+# Add reuse nodes.
+load --table Users
+[
+{"_key":"A-User9999", "immediate":false},
+{"_key":"A99", "immediate":true}
+]
 delete Users --filter true
 
 check Users
@@ -17,7 +24,7 @@ check Users
 
 # Test that the node is not reused when added after defragmentation.
 # `_id` is not reused and is loaded as expected.
-# `_id` is not reused, but is generated from a new `_id` of 261.
+# `_id` is not reused, but is generated from a new `_id` of 521.
 load --table Users
 [
 {"_key":"XXXX000000000001", "immediate":false},
