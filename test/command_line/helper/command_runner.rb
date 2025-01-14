@@ -219,7 +219,7 @@ failed to run: #{command_line.join(" ").encode("UTF-8")}
   end
 
   def read_log(log_path)
-    return "" unless File.exist?(log_path)
-    File.read(@log_path).encode("UTF-8", "locale")
+    return "" unless log_path.exist?
+    log_path.read.encode("UTF-8", "locale")
   end
 end
