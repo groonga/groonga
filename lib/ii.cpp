@@ -16181,7 +16181,7 @@ namespace grn::ii {
   struct Builder {
     Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
       : ctx_(ctx),
-        ii(ii)
+        ii_(ii)
     {
       progress_needed = (grn_ctx_get_progress_callback(ctx) != NULL);
       if (progress_needed) {
@@ -16333,7 +16333,7 @@ namespace grn::ii {
       progress_needed; /* Whether progress callback is needed for performance */
     grn_progress progress; /* Progress information */
 
-    grn_ii *ii;                      /* Building inverted index */
+    grn_ii *ii_;                     /* Building inverted index */
     grn_ii_builder_options options_; /* Options */
 
     grn_obj *src_table;          /* Source table */
@@ -16383,12 +16383,12 @@ static grn_rc
 grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_table_flags flags;
-  grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
-  grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii->lexicon)->range);
+  grn_obj *domain = grn_ctx_at(ctx, builder->ii_->lexicon->header.domain);
+  grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii_->lexicon)->range);
   grn_rc rc;
 
   rc = grn_table_get_info(ctx,
-                          builder->ii->lexicon,
+                          builder->ii_->lexicon,
                           &flags,
                           NULL,
                           NULL,
@@ -16409,7 +16409,7 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
     grn_obj tokenizer;
     GRN_TEXT_INIT(&tokenizer, 0);
     grn_table_get_default_tokenizer_string(ctx,
-                                           builder->ii->lexicon,
+                                           builder->ii_->lexicon,
                                            &tokenizer);
     if (GRN_TEXT_LEN(&tokenizer) > 0) {
       builder->have_tokenizer = true;
@@ -16423,7 +16423,7 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc == GRN_SUCCESS) {
     grn_obj normalizers;
     GRN_TEXT_INIT(&normalizers, 0);
-    grn_table_get_normalizers_string(ctx, builder->ii->lexicon, &normalizers);
+    grn_table_get_normalizers_string(ctx, builder->ii_->lexicon, &normalizers);
     if (GRN_TEXT_LEN(&normalizers) > 0) {
       builder->have_normalizers = true;
       rc = grn_obj_set_info(ctx,
@@ -16437,7 +16437,7 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
     grn_obj token_filters;
     GRN_TEXT_INIT(&token_filters, 0);
     grn_table_get_token_filters_string(ctx,
-                                       builder->ii->lexicon,
+                                       builder->ii_->lexicon,
                                        &token_filters);
     if (GRN_TEXT_LEN(&token_filters) > 0) {
       rc = grn_obj_set_info(ctx,
@@ -16559,7 +16559,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
 
   /* Append sentinels. */
   if (term->rid != GRN_ID_NIL) {
-    if (builder->ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+    if (builder->ii_->header.common->flags & GRN_OBJ_WITH_POSITION) {
       rc = grn_ii_builder_term_append(ctx, term, 0);
     } else {
       rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
@@ -16594,12 +16594,12 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       return ctx->rc;
     }
     /* Don't normalize key. */
-    switch (builder->ii->lexicon->header.type) {
+    switch (builder->ii_->lexicon->header.type) {
     case GRN_TABLE_PAT_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon)
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
       {
         global_tid = grn_pat_add(ctx,
-                                 (grn_pat *)(builder->ii->lexicon),
+                                 (grn_pat *)(builder->ii_->lexicon),
                                  key,
                                  key_size,
                                  NULL,
@@ -16608,10 +16608,10 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       GRN_TABLE_LOCK_END(ctx);
       break;
     case GRN_TABLE_DAT_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon)
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
       {
         global_tid = grn_dat_add(ctx,
-                                 (grn_dat *)(builder->ii->lexicon),
+                                 (grn_dat *)(builder->ii_->lexicon),
                                  key,
                                  key_size,
                                  NULL,
@@ -16620,10 +16620,10 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       GRN_TABLE_LOCK_END(ctx);
       break;
     case GRN_TABLE_HASH_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon)
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
       {
         global_tid = grn_hash_add(ctx,
-                                  (grn_hash *)(builder->ii->lexicon),
+                                  (grn_hash *)(builder->ii_->lexicon),
                                   key,
                                   key_size,
                                   NULL,
@@ -16728,7 +16728,7 @@ grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
                PATH_MAX,
                PATH_MAX,
                "%sXXXXXX",
-               grn_io_path(builder->ii->seg));
+               grn_io_path(builder->ii_->seg));
   builder->fd = grn_mkstemp(builder->path);
   if (builder->fd == -1) {
     SERR("failed to create a temporary file: path = \"%s\"", builder->path);
@@ -16855,7 +16855,7 @@ grn_ii_builder_append_token(grn_ctx *ctx,
                             uint32_t pos)
 {
   grn_rc rc;
-  uint32_t ii_flags = builder->ii->header.common->flags;
+  uint32_t ii_flags = builder->ii_->header.common->flags;
   grn_ii_builder_term *term;
   rc = grn_ii_builder_get_term(ctx, builder, tid, &term);
   if (rc != GRN_SUCCESS) {
@@ -16937,7 +16937,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
                              grn_obj *tokens)
 {
   grn_ii_builder_start_value(ctx, builder, rid, sid);
-  grn_obj *src_lexicon = builder->ii->lexicon;
+  grn_obj *src_lexicon = builder->ii_->lexicon;
   size_t n_tokens = grn_uvector_size(ctx, tokens);
   size_t i;
   for (i = 0; i < n_tokens; i++) {
@@ -17166,10 +17166,10 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
       uint32_t key_size;
       const char *key;
       if (builder->get_key_optimizable) {
-        key = _grn_table_key(ctx, builder->ii->lexicon, id, &key_size);
+        key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
       } else {
         GRN_BULK_REWIND(&key_buffer);
-        grn_table_get_key2(ctx, builder->ii->lexicon, id, &key_buffer);
+        grn_table_get_key2(ctx, builder->ii_->lexicon, id, &key_buffer);
         key = GRN_BULK_HEAD(&key_buffer);
         key_size = GRN_BULK_VSIZE(&key_buffer);
       }
@@ -17182,7 +17182,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                     0,
                                     key,
                                     key_size,
-                                    builder->ii->lexicon->header.domain,
+                                    builder->ii_->lexicon->header.domain,
                                     true);
       GRN_OBJ_FIN(ctx, &key_buffer);
       return rc;
@@ -17212,10 +17212,10 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
           uint32_t key_size;
           const char *key;
           if (builder->get_key_optimizable) {
-            key = _grn_table_key(ctx, builder->ii->lexicon, id, &key_size);
+            key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
           } else {
             GRN_BULK_REWIND(&key_buffer);
-            grn_table_get_key2(ctx, builder->ii->lexicon, id, &key_buffer);
+            grn_table_get_key2(ctx, builder->ii_->lexicon, id, &key_buffer);
             key = GRN_BULK_HEAD(&key_buffer);
             key_size = GRN_BULK_VSIZE(&key_buffer);
           }
@@ -17227,7 +17227,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
                                            (uint32_t)weight,
                                            key,
                                            key_size,
-                                           builder->ii->lexicon->header.domain,
+                                           builder->ii_->lexicon->header.domain,
                                            true);
           if (rc != GRN_SUCCESS) {
             break;
@@ -17271,7 +17271,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
         if (sec->length == 0) {
           continue;
         }
-        if ((builder->ii->header.common->flags & GRN_OBJ_WITH_SECTION) &&
+        if ((builder->ii_->header.common->flags & GRN_OBJ_WITH_SECTION) &&
             builder->have_tokenizer) {
           sid = i + 1;
         }
@@ -17415,12 +17415,12 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 static grn_rc
 grn_ii_builder_set_src_table(grn_ctx *ctx, grn::ii::Builder *builder)
 {
-  builder->src_table = grn_ctx_at(ctx, DB_OBJ(builder->ii)->range);
+  builder->src_table = grn_ctx_at(ctx, DB_OBJ(builder->ii_)->range);
   if (!builder->src_table) {
     if (ctx->rc == GRN_SUCCESS) {
       ERR(GRN_INVALID_ARGUMENT,
           "source table is null: range = %d",
-          DB_OBJ(builder->ii)->range);
+          DB_OBJ(builder->ii_)->range);
     }
     return ctx->rc;
   }
@@ -17489,13 +17489,13 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   size_t i;
   grn_id *source;
-  builder->n_srcs = builder->ii->obj.source_size / sizeof(grn_id);
-  source = (grn_id *)builder->ii->obj.source;
+  builder->n_srcs = builder->ii_->obj.source_size / sizeof(grn_id);
+  source = (grn_id *)builder->ii_->obj.source;
   if (!source || !builder->n_srcs) {
     ERR(GRN_INVALID_ARGUMENT,
         "source is not available: source = %p, source_size = %u",
-        builder->ii->obj.source,
-        builder->ii->obj.source_size);
+        builder->ii_->obj.source,
+        builder->ii_->obj.source_size);
     return ctx->rc;
   }
   builder->srcs = GRN_MALLOCN(grn_obj *, builder->n_srcs);
@@ -17527,7 +17527,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
       for (j = 0; j < n_token_columns; j++) {
         grn_obj *token_column = GRN_PTR_VALUE_AT(&token_columns, j);
         if (!builder->src_token_columns[i] &&
-            DB_OBJ(token_column)->range == DB_OBJ(builder->ii->lexicon)->id) {
+            DB_OBJ(token_column)->range == DB_OBJ(builder->ii_->lexicon)->id) {
           builder->src_token_columns[i] = token_column;
         } else {
           grn_obj_unref(ctx, token_column);
@@ -17682,12 +17682,12 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
     if (sid >= 0x800) {
       return GRN_SUCCESS;
     }
-    a = array_get(ctx, builder->ii, chunk->tid);
+    a = array_get(ctx, builder->ii_, chunk->tid);
     if (!a) {
       grn_obj token;
-      GRN_DEFINE_NAME(builder->ii);
+      GRN_DEFINE_NAME(builder->ii_);
       GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
+      grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -17704,12 +17704,12 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
     }
     a[0] = POS_EMBED_RID_SID(rid, sid);
   } else {
-    a = array_get(ctx, builder->ii, chunk->tid);
+    a = array_get(ctx, builder->ii_, chunk->tid);
     if (!a) {
       grn_obj token;
-      GRN_DEFINE_NAME(builder->ii);
+      GRN_DEFINE_NAME(builder->ii_);
       GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
+      grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -17730,7 +17730,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
     pos = chunk->pos_buf[0];
   }
   a[1] = pos;
-  array_unref(ctx, builder->ii, chunk->tid);
+  array_unref(ctx, builder->ii_, chunk->tid);
   *packed = true;
 
   grn_ii_builder_chunk_clear(ctx, chunk);
@@ -17778,7 +17778,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
   in = chunk->enc_buf;
   in_size = chunk->enc_offset;
 
-  rc = chunk_new(ctx, builder->ii, &chunk_id, chunk->enc_offset);
+  rc = chunk_new(ctx, builder->ii_, &chunk_id, chunk->enc_offset);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -17787,7 +17787,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
   seg_id = chunk_id >> GRN_II_N_CHUNK_VARIATION;
   seg_offset = (chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1))
                << GRN_II_W_LEAST_CHUNK;
-  seg = grn_io_seg_ref(ctx, builder->ii->chunk, seg_id);
+  seg = grn_io_seg_ref(ctx, builder->ii_->chunk, seg_id);
   if (!seg) {
     if (ctx->rc == GRN_SUCCESS) {
       ERR(GRN_UNKNOWN_ERROR,
@@ -17806,12 +17806,12 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
     in += seg_rest;
     in_size -= seg_rest;
   }
-  grn_io_seg_unref(ctx, builder->ii->chunk, seg_id);
+  grn_io_seg_unref(ctx, builder->ii_->chunk, seg_id);
 
   /* Copy to the next segments. */
   while (in_size) {
     seg_id++;
-    seg = grn_io_seg_ref(ctx, builder->ii->chunk, seg_id);
+    seg = grn_io_seg_ref(ctx, builder->ii_->chunk, seg_id);
     if (!seg) {
       if (ctx->rc == GRN_SUCCESS) {
         ERR(GRN_UNKNOWN_ERROR,
@@ -17829,7 +17829,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
       in += S_CHUNK;
       in_size -= S_CHUNK;
     }
-    grn_io_seg_unref(ctx, builder->ii->chunk, seg_id);
+    grn_io_seg_unref(ctx, builder->ii_->chunk, seg_id);
   }
 
   /* Append a cinfo. */
@@ -17855,7 +17855,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
   grn_rc rc;
   uint64_t value;
   uint32_t rid = GRN_ID_NIL, last_sid = 0;
-  uint32_t ii_flags = builder->ii->header.common->flags;
+  uint32_t ii_flags = builder->ii_->header.common->flags;
   grn_ii_builder_chunk *chunk = &builder->chunk;
 
   for (;;) {
@@ -17885,9 +17885,9 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
         if (chunk->n >= threshold) {
           if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
             grn_obj token;
-            GRN_DEFINE_NAME(builder->ii);
+            GRN_DEFINE_NAME(builder->ii_);
             GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
+            grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
             GRN_LOG(ctx,
                     GRN_LOG_DEBUG,
                     "[ii][builder][read-to-chunk] flush"
@@ -18046,9 +18046,9 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
 
   if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
     grn_obj token;
-    GRN_DEFINE_NAME(builder->ii);
+    GRN_DEFINE_NAME(builder->ii_);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
+    grn_ii_get_term(ctx, builder->ii_, builder->chunk.tid, &token);
     GRN_LOG(ctx,
             GRN_LOG_DEBUG,
             "[ii][builder][register][chunks] "
@@ -18075,12 +18075,12 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
              builder->chunk.enc_offset);
   builder->buf.chunk_offset += builder->chunk.enc_offset;
 
-  a = array_get(ctx, builder->ii, builder->chunk.tid);
+  a = array_get(ctx, builder->ii_, builder->chunk.tid);
   if (!a) {
     grn_obj token;
-    GRN_DEFINE_NAME(builder->ii);
+    GRN_DEFINE_NAME(builder->ii_);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
+    grn_ii_get_term(ctx, builder->ii_, builder->chunk.tid, &token);
     MERR("[ii][builder][register][chunks] "
          "failed to allocate an array in segment: "
          "<%.*s>: "
@@ -18091,15 +18091,15 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
          (int)GRN_TEXT_LEN(&token),
          GRN_TEXT_VALUE(&token),
          builder->chunk.tid,
-         builder->ii->seg->header->max_segment);
+         builder->ii_->seg->header->max_segment);
     GRN_OBJ_FIN(ctx, &token);
     return ctx->rc;
   }
-  a[0] = grn_ii_pos_pack(builder->ii,
+  a[0] = grn_ii_pos_pack(builder->ii_,
                          builder->buf.buf_id,
                          POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
   a[1] = builder->df;
-  array_unref(ctx, builder->ii, builder->chunk.tid);
+  array_unref(ctx, builder->ii_, builder->chunk.tid);
 
   builder->buf.buf->header.nterms++;
   builder->n_cinfos = 0;
@@ -18113,7 +18113,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
   if (builder->progress_needed) {
     builder->progress.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
     builder->progress.value.index.n_target_terms =
-      grn_table_size(ctx, builder->ii->lexicon);
+      grn_table_size(ctx, builder->ii_->lexicon);
     grn_ctx_call_progress_callback(ctx, &(builder->progress));
   }
 
@@ -18131,7 +18131,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
   }
 
   cursor = grn_table_cursor_open(ctx,
-                                 builder->ii->lexicon,
+                                 builder->ii_->lexicon,
                                  NULL,
                                  0,
                                  NULL,
