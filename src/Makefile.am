@@ -4,6 +4,7 @@ SUBDIRS =					\
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
 bin_PROGRAMS = groonga
+noinst_PROGRAMS =
 if WITH_MRUBY
 bin_PROGRAMS += grndb
 noinst_PROGRAMS += groonga-mruby
