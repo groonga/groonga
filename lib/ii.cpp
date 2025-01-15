@@ -16225,7 +16225,7 @@ namespace grn::ii {
       terms_ = nullptr;
       n_terms_ = 0;
       max_n_terms_ = 0;
-      terms_size = 0;
+      terms_size_ = 0;
 
       path[0] = '\0';
       fd = -1;
@@ -16440,7 +16440,7 @@ namespace grn::ii {
     grn_ii_builder_term *terms_; /* Terms (to be freed) */
     uint32_t n_terms_;           /* Number of distinct terms */
     uint32_t max_n_terms_;       /* Maximum number of distinct terms */
-    uint32_t terms_size;         /* Buffer size of terms */
+    uint32_t terms_size_;        /* Buffer size of terms */
 
     /* A temporary file to save blocks. */
     char path[PATH_MAX]; /* File path */
@@ -16477,10 +16477,10 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
 
   if (n_terms > builder->max_n_terms_) {
     uint32_t i;
-    if (n_terms > builder->terms_size) {
+    if (n_terms > builder->terms_size_) {
       /* Resize builder->terms_ for new terms. */
       size_t n_bytes;
-      uint32_t terms_size = builder->terms_size ? builder->terms_size * 2 : 1;
+      uint32_t terms_size = builder->terms_size_ ? builder->terms_size_ * 2 : 1;
       grn_ii_builder_term *terms;
       while (terms_size < n_terms) {
         terms_size *= 2;
@@ -16494,7 +16494,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
         return ctx->rc;
       }
       builder->terms_ = terms;
-      builder->terms_size = terms_size;
+      builder->terms_size_ = terms_size;
     }
     /* Initialize new terms. */
     for (i = builder->max_n_terms_; i < n_terms; i++) {
