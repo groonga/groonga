@@ -6039,6 +6039,11 @@ grn_pat_defrag_clear_delinfos(grn_ctx *ctx, grn_pat *pat, grn_id active_max_id)
 int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
+  grn_pat_wal_add_entry_data wal_data = {0};
+  wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
+  wal_data.pat = pat;
+  wal_data.tag = "[pat][defrag][current-key]";
+
   int reduced_bytes = 0;
   /* We will clear grn_pat_header::delinfos and grn_pat_header::garbages after
    * defragmentation. Execute delinfo_turn_2() on the data remaining in
@@ -6052,10 +6057,15 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
-    // FIXME: Write WAL.
+    uint32_t new_curr_key = 0;
+    grn_id active_max_id = 0;
+    wal_data.key_offset = new_curr_key;
+    wal_data.record_id = active_max_id;
+    grn_pat_wal_add_entry(ctx, &wal_data);
+
     reduced_bytes = pat->header->curr_key;
-    pat_update_curr_key(ctx, pat, 0);
-    grn_pat_defrag_clear_delinfos(ctx, pat, 0);
+    pat_update_curr_key(ctx, pat, new_curr_key);
+    grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
     return reduced_bytes;
   }
 
@@ -6098,12 +6108,8 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
                         target_ids,
                         n_targets,
                         pat_key_defrag_wal_add_entry_callback);
-  grn_pat_wal_add_entry_data wal_data = {0};
-  wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
-  wal_data.pat = pat;
   wal_data.record_id = active_max_id;
   wal_data.key_offset = new_curr_key;
-  wal_data.tag = "[pat][defrag][current-key]";
   grn_pat_wal_add_entry(ctx, &wal_data);
 
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
