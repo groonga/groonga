@@ -16230,7 +16230,7 @@ namespace grn::ii {
       path[0] = '\0';
       fd = -1;
       file_buf = nullptr;
-      file_buf_offset = 0;
+      file_buf_offset_ = 0;
 
       blocks = nullptr;
       n_blocks = 0;
@@ -16473,15 +16473,15 @@ namespace grn::ii {
     grn_rc
     flush_file_buf()
     {
-      if (file_buf_offset) {
-        auto size = grn_write(fd, file_buf, file_buf_offset);
-        if (static_cast<uint64_t>(size) != file_buf_offset) {
+      if (file_buf_offset_) {
+        auto size = grn_write(fd, file_buf, file_buf_offset_);
+        if (static_cast<uint64_t>(size) != file_buf_offset_) {
           auto ctx = ctx_;
           SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
-               file_buf_offset,
+               file_buf_offset_,
                static_cast<int64_t>(size));
         }
-        file_buf_offset = 0;
+        file_buf_offset_ = 0;
       }
       return GRN_SUCCESS;
     }
@@ -16520,7 +16520,7 @@ namespace grn::ii {
     char path[PATH_MAX]; /* File path */
     int fd;              /* File descriptor (to be closed) */
     uint8_t *file_buf;   /* File buffer for buffered output (to be freed) */
-    uint32_t file_buf_offset; /* File buffer write offset */
+    uint32_t file_buf_offset_; /* File buffer write offset */
 
     grn_ii_builder_block *blocks; /* Blocks (to be freed) */
     uint32_t n_blocks;            /* Number of blocks */
@@ -16634,7 +16634,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       return ctx->rc;
     }
 
-    rest = builder->options_.file_buf_size - builder->file_buf_offset;
+    rest = builder->options_.file_buf_size - builder->file_buf_offset_;
     if (rest < 10) {
       rc = builder->flush_file_buf();
       if (rc != GRN_SUCCESS) {
@@ -16642,14 +16642,14 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       }
     }
     value = global_tid;
-    p = builder->file_buf + builder->file_buf_offset;
+    p = builder->file_buf + builder->file_buf_offset_;
     if (value < 1U << 5) {
       p[0] = (uint8_t)value;
-      builder->file_buf_offset++;
+      builder->file_buf_offset_++;
     } else if (value < 1U << 13) {
       p[0] = (uint8_t)((value & 0x1f) | (1 << 5));
       p[1] = (uint8_t)(value >> 5);
-      builder->file_buf_offset += 2;
+      builder->file_buf_offset_ += 2;
     } else {
       uint8_t i, n;
       if (value < 1U << 21) {
@@ -16665,7 +16665,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
         p[i] = (uint8_t)value;
         value >>= 8;
       }
-      builder->file_buf_offset += n;
+      builder->file_buf_offset_ += n;
     }
   }
 
@@ -16684,21 +16684,21 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
            (int64_t)size);
     }
   } else {
-    uint32_t rest = builder->options_.file_buf_size - builder->file_buf_offset;
+    uint32_t rest = builder->options_.file_buf_size - builder->file_buf_offset_;
     if (term->offset <= rest) {
-      grn_memcpy(builder->file_buf + builder->file_buf_offset,
+      grn_memcpy(builder->file_buf + builder->file_buf_offset_,
                  term_buf,
                  term->offset);
-      builder->file_buf_offset += term->offset;
+      builder->file_buf_offset_ += term->offset;
     } else {
-      grn_memcpy(builder->file_buf + builder->file_buf_offset, term_buf, rest);
-      builder->file_buf_offset += rest;
+      grn_memcpy(builder->file_buf + builder->file_buf_offset_, term_buf, rest);
+      builder->file_buf_offset_ += rest;
       rc = builder->flush_file_buf();
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      builder->file_buf_offset = term->offset - rest;
-      grn_memcpy(builder->file_buf, term_buf + rest, builder->file_buf_offset);
+      builder->file_buf_offset_ = term->offset - rest;
+      grn_memcpy(builder->file_buf, term_buf + rest, builder->file_buf_offset_);
     }
   }
   grn_ii_builder_term_reinit(ctx, term);
