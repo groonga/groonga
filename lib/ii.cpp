@@ -16229,7 +16229,7 @@ namespace grn::ii {
 
       path[0] = '\0';
       fd_ = -1;
-      file_buf = nullptr;
+      file_buf_ = nullptr;
       file_buf_offset_ = 0;
 
       blocks = nullptr;
@@ -16266,9 +16266,9 @@ namespace grn::ii {
         auto ctx = ctx_;
         GRN_FREE(blocks);
       }
-      if (file_buf) {
+      if (file_buf_) {
         auto ctx = ctx_;
-        GRN_FREE(file_buf);
+        GRN_FREE(file_buf_);
       }
       if (fd_ != -1) {
         grn_close(fd_);
@@ -16474,7 +16474,7 @@ namespace grn::ii {
     flush_file_buf()
     {
       if (file_buf_offset_) {
-        auto size = grn_write(fd_, file_buf, file_buf_offset_);
+        auto size = grn_write(fd_, file_buf_, file_buf_offset_);
         if (static_cast<uint64_t>(size) != file_buf_offset_) {
           auto ctx = ctx_;
           SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
@@ -16519,7 +16519,7 @@ namespace grn::ii {
     /* A temporary file to save blocks. */
     char path[PATH_MAX]; /* File path */
     int fd_;             /* File descriptor (to be closed) */
-    uint8_t *file_buf;   /* File buffer for buffered output (to be freed) */
+    uint8_t *file_buf_;  /* File buffer for buffered output (to be freed) */
     uint32_t file_buf_offset_; /* File buffer write offset */
 
     grn_ii_builder_block *blocks; /* Blocks (to be freed) */
@@ -16642,7 +16642,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       }
     }
     value = global_tid;
-    p = builder->file_buf + builder->file_buf_offset_;
+    p = builder->file_buf_ + builder->file_buf_offset_;
     if (value < 1U << 5) {
       p[0] = (uint8_t)value;
       builder->file_buf_offset_++;
@@ -16686,19 +16686,23 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
   } else {
     uint32_t rest = builder->options_.file_buf_size - builder->file_buf_offset_;
     if (term->offset <= rest) {
-      grn_memcpy(builder->file_buf + builder->file_buf_offset_,
+      grn_memcpy(builder->file_buf_ + builder->file_buf_offset_,
                  term_buf,
                  term->offset);
       builder->file_buf_offset_ += term->offset;
     } else {
-      grn_memcpy(builder->file_buf + builder->file_buf_offset_, term_buf, rest);
+      grn_memcpy(builder->file_buf_ + builder->file_buf_offset_,
+                 term_buf,
+                 rest);
       builder->file_buf_offset_ += rest;
       rc = builder->flush_file_buf();
       if (rc != GRN_SUCCESS) {
         return rc;
       }
       builder->file_buf_offset_ = term->offset - rest;
-      grn_memcpy(builder->file_buf, term_buf + rest, builder->file_buf_offset_);
+      grn_memcpy(builder->file_buf_,
+                 term_buf + rest,
+                 builder->file_buf_offset_);
     }
   }
   grn_ii_builder_term_reinit(ctx, term);
@@ -16722,8 +16726,8 @@ grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
     SERR("failed to create a temporary file: path = \"%s\"", builder->path);
     return ctx->rc;
   }
-  builder->file_buf = (uint8_t *)GRN_MALLOC(builder->options_.file_buf_size);
-  if (!builder->file_buf) {
+  builder->file_buf_ = (uint8_t *)GRN_MALLOC(builder->options_.file_buf_size);
+  if (!builder->file_buf_) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "failed to allocate memory for buffered output: size = %u",
         builder->options_.file_buf_size);
