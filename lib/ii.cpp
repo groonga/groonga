@@ -16228,7 +16228,7 @@ namespace grn::ii {
       terms_size_ = 0;
 
       path[0] = '\0';
-      fd = -1;
+      fd_ = -1;
       file_buf = nullptr;
       file_buf_offset_ = 0;
 
@@ -16270,8 +16270,8 @@ namespace grn::ii {
         auto ctx = ctx_;
         GRN_FREE(file_buf);
       }
-      if (fd != -1) {
-        grn_close(fd);
+      if (fd_ != -1) {
+        grn_close(fd_);
         if (grn_unlink(path) == 0) {
           GRN_LOG(ctx_,
                   GRN_LOG_INFO,
@@ -16474,7 +16474,7 @@ namespace grn::ii {
     flush_file_buf()
     {
       if (file_buf_offset_) {
-        auto size = grn_write(fd, file_buf, file_buf_offset_);
+        auto size = grn_write(fd_, file_buf, file_buf_offset_);
         if (static_cast<uint64_t>(size) != file_buf_offset_) {
           auto ctx = ctx_;
           SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
@@ -16518,7 +16518,7 @@ namespace grn::ii {
 
     /* A temporary file to save blocks. */
     char path[PATH_MAX]; /* File path */
-    int fd;              /* File descriptor (to be closed) */
+    int fd_;             /* File descriptor (to be closed) */
     uint8_t *file_buf;   /* File buffer for buffered output (to be freed) */
     uint32_t file_buf_offset_; /* File buffer write offset */
 
@@ -16677,7 +16677,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    size = grn_write(builder->fd, term_buf, term->offset);
+    size = grn_write(builder->fd_, term_buf, term->offset);
     if ((uint64_t)size != term->offset) {
       SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
            term->offset,
@@ -16717,8 +16717,8 @@ grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
                PATH_MAX,
                "%sXXXXXX",
                grn_io_path(builder->ii_->seg));
-  builder->fd = grn_mkstemp(builder->path);
-  if (builder->fd == -1) {
+  builder->fd_ = grn_mkstemp(builder->path);
+  if (builder->fd_ == -1) {
     SERR("failed to create a temporary file: path = \"%s\"", builder->path);
     return ctx->rc;
   }
@@ -16737,7 +16737,7 @@ static grn_rc
 grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_ii_builder_block *block;
-  uint64_t file_offset = grn_lseek(builder->fd, 0, SEEK_CUR);
+  uint64_t file_offset = grn_lseek(builder->fd_, 0, SEEK_CUR);
   if (file_offset == (uint64_t)-1) {
     SERR("failed to get file offset");
     return ctx->rc;
@@ -16784,7 +16784,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     /* Do nothing if there are no output data. */
     return GRN_SUCCESS;
   }
-  if (builder->fd == -1) {
+  if (builder->fd_ == -1) {
     rc = grn_ii_builder_create_file(ctx, builder);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -17598,7 +17598,7 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
   block->end = block->buf + buf_rest;
 
   /* Read the next data. */
-  file_offset = grn_lseek(builder->fd, block->offset, SEEK_SET);
+  file_offset = grn_lseek(builder->fd_, block->offset, SEEK_SET);
   if (file_offset != block->offset) {
     SERR("failed to seek file: expected = %" GRN_FMT_INT64U
          ", actual = %" GRN_FMT_INT64D,
@@ -17610,7 +17610,7 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
   if (block->rest < buf_rest) {
     buf_rest = block->rest;
   }
-  size = grn_read(builder->fd, block->end, buf_rest);
+  size = grn_read(builder->fd_, block->end, buf_rest);
   if (size <= 0) {
     SERR("failed to read data: expected = %u, actual = %" GRN_FMT_INT64D,
          buf_rest,
