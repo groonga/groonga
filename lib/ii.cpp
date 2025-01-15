@@ -16222,7 +16222,7 @@ namespace grn::ii {
       sid = 0;
       pos = 0;
 
-      terms = nullptr;
+      terms_ = nullptr;
       n_terms = 0;
       max_n_terms = 0;
       terms_size = 0;
@@ -16314,18 +16314,18 @@ namespace grn::ii {
     void
     finalize_terms()
     {
-      if (!terms) {
+      if (!terms_) {
         return;
       }
 
       uint32_t i;
       for (i = 0; i < max_n_terms; i++) {
-        grn_ii_builder_term_fin(ctx_, &(terms[i]));
+        grn_ii_builder_term_fin(ctx_, &(terms_[i]));
       }
       auto ctx = ctx_;
-      GRN_FREE(terms);
+      GRN_FREE(terms_);
       /* To avoid double finalization. */
-      terms = nullptr;
+      terms_ = nullptr;
     }
 
     // creates a block lexicon.
@@ -16437,10 +16437,10 @@ namespace grn::ii {
     uint32_t sid; /* Section ID */
     uint32_t pos; /* Position */
 
-    grn_ii_builder_term *terms; /* Terms (to be freed) */
-    uint32_t n_terms;           /* Number of distinct terms */
-    uint32_t max_n_terms;       /* Maximum number of distinct terms */
-    uint32_t terms_size;        /* Buffer size of terms */
+    grn_ii_builder_term *terms_; /* Terms (to be freed) */
+    uint32_t n_terms;            /* Number of distinct terms */
+    uint32_t max_n_terms;        /* Maximum number of distinct terms */
+    uint32_t terms_size;         /* Buffer size of terms */
 
     /* A temporary file to save blocks. */
     char path[PATH_MAX]; /* File path */
@@ -16478,7 +16478,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
   if (n_terms > builder->max_n_terms) {
     uint32_t i;
     if (n_terms > builder->terms_size) {
-      /* Resize builder->terms for new terms. */
+      /* Resize builder->terms_ for new terms. */
       size_t n_bytes;
       uint32_t terms_size = builder->terms_size ? builder->terms_size * 2 : 1;
       grn_ii_builder_term *terms;
@@ -16486,19 +16486,19 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
         terms_size *= 2;
       }
       n_bytes = terms_size * sizeof(grn_ii_builder_term);
-      terms = (grn_ii_builder_term *)GRN_REALLOC(builder->terms, n_bytes);
+      terms = (grn_ii_builder_term *)GRN_REALLOC(builder->terms_, n_bytes);
       if (!terms) {
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "failed to allocate memory for terms: n_bytes = %" GRN_FMT_SIZE,
             n_bytes);
         return ctx->rc;
       }
-      builder->terms = terms;
+      builder->terms_ = terms;
       builder->terms_size = terms_size;
     }
     /* Initialize new terms. */
     for (i = builder->max_n_terms; i < n_terms; i++) {
-      grn_ii_builder_term_init(ctx, &builder->terms[i]);
+      grn_ii_builder_term_init(ctx, &builder->terms_[i]);
     }
     builder->max_n_terms = n_terms;
   }
@@ -16522,7 +16522,7 @@ grn_ii_builder_get_term(grn_ctx *ctx,
       return rc;
     }
   }
-  *term = &builder->terms[tid - 1];
+  *term = &builder->terms_[tid - 1];
   return GRN_SUCCESS;
 }
 
@@ -16575,7 +16575,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
     uint8_t *p;
     uint32_t rest, value;
     grn_rc rc;
-    grn_id local_tid = term - builder->terms + 1;
+    grn_id local_tid = term - builder->terms_ + 1;
     grn_id global_tid = GRN_ID_NIL;
     key_size = grn_table_get_key(ctx,
                                  builder->lexicon,
@@ -16813,7 +16813,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     if (tid == GRN_ID_NIL) {
       break;
     }
-    rc = grn_ii_builder_flush_term(ctx, builder, &builder->terms[tid - 1]);
+    rc = grn_ii_builder_flush_term(ctx, builder, &builder->terms_[tid - 1]);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
