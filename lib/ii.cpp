@@ -16328,6 +16328,90 @@ namespace grn::ii {
       terms = nullptr;
     }
 
+    // creates a block lexicon.
+    grn_rc
+    create_lexicon()
+    {
+      grn_table_flags flags;
+      grn_obj *domain = grn_ctx_at(ctx_, ii_->lexicon->header.domain);
+      grn_obj *range = grn_ctx_at(ctx_, DB_OBJ(ii_->lexicon)->range);
+
+      auto rc = grn_table_get_info(ctx_,
+                                   ii_->lexicon,
+                                   &flags,
+                                   nullptr,
+                                   nullptr,
+                                   nullptr,
+                                   nullptr);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      flags &= ~GRN_OBJ_PERSISTENT;
+      lexicon =
+        grn_table_create(ctx_, nullptr, 0, nullptr, flags, domain, range);
+      if (!lexicon) {
+        if (ctx_->rc == GRN_SUCCESS) {
+          auto ctx = ctx_;
+          ERR(GRN_UNKNOWN_ERROR, "[index] failed to create a block lexicon");
+        }
+        return ctx_->rc;
+      }
+      {
+        grn_obj tokenizer;
+        GRN_TEXT_INIT(&tokenizer, 0);
+        grn_table_get_default_tokenizer_string(ctx_, ii_->lexicon, &tokenizer);
+        if (GRN_TEXT_LEN(&tokenizer) > 0) {
+          have_tokenizer = true;
+          rc = grn_obj_set_info(ctx_,
+                                lexicon,
+                                GRN_INFO_DEFAULT_TOKENIZER,
+                                &tokenizer);
+        }
+        GRN_OBJ_FIN(ctx_, &tokenizer);
+      }
+      if (rc == GRN_SUCCESS) {
+        grn_obj normalizers;
+        GRN_TEXT_INIT(&normalizers, 0);
+        grn_table_get_normalizers_string(ctx_, ii_->lexicon, &normalizers);
+        if (GRN_TEXT_LEN(&normalizers) > 0) {
+          have_normalizers = true;
+          rc =
+            grn_obj_set_info(ctx_, lexicon, GRN_INFO_NORMALIZERS, &normalizers);
+        }
+        GRN_OBJ_FIN(ctx_, &normalizers);
+      }
+      if (rc == GRN_SUCCESS) {
+        grn_obj token_filters;
+        GRN_TEXT_INIT(&token_filters, 0);
+        grn_table_get_token_filters_string(ctx_, ii_->lexicon, &token_filters);
+        if (GRN_TEXT_LEN(&token_filters) > 0) {
+          rc = grn_obj_set_info(ctx_,
+                                lexicon,
+                                GRN_INFO_TOKEN_FILTERS,
+                                &token_filters);
+        }
+        GRN_OBJ_FIN(ctx_, &token_filters);
+      }
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
+        auto lexicon_pat = reinterpret_cast<grn_pat *>(lexicon);
+        get_key_optimizable = !grn_pat_is_key_encoded(ctx_, lexicon_pat);
+        if (options_.lexicon_cache_size) {
+          rc = grn_pat_cache_enable(ctx_,
+                                    lexicon_pat,
+                                    options_.lexicon_cache_size);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+      } else {
+        get_key_optimizable = true;
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16377,95 +16461,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_create_lexicon creates a block lexicon. */
-static grn_rc
-grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_table_flags flags;
-  grn_obj *domain = grn_ctx_at(ctx, builder->ii_->lexicon->header.domain);
-  grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii_->lexicon)->range);
-  grn_rc rc;
-
-  rc = grn_table_get_info(ctx,
-                          builder->ii_->lexicon,
-                          &flags,
-                          NULL,
-                          NULL,
-                          NULL,
-                          NULL);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  flags &= ~GRN_OBJ_PERSISTENT;
-  builder->lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
-  if (!builder->lexicon) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR, "[index] failed to create a block lexicon");
-    }
-    return ctx->rc;
-  }
-  {
-    grn_obj tokenizer;
-    GRN_TEXT_INIT(&tokenizer, 0);
-    grn_table_get_default_tokenizer_string(ctx,
-                                           builder->ii_->lexicon,
-                                           &tokenizer);
-    if (GRN_TEXT_LEN(&tokenizer) > 0) {
-      builder->have_tokenizer = true;
-      rc = grn_obj_set_info(ctx,
-                            builder->lexicon,
-                            GRN_INFO_DEFAULT_TOKENIZER,
-                            &tokenizer);
-    }
-    GRN_OBJ_FIN(ctx, &tokenizer);
-  }
-  if (rc == GRN_SUCCESS) {
-    grn_obj normalizers;
-    GRN_TEXT_INIT(&normalizers, 0);
-    grn_table_get_normalizers_string(ctx, builder->ii_->lexicon, &normalizers);
-    if (GRN_TEXT_LEN(&normalizers) > 0) {
-      builder->have_normalizers = true;
-      rc = grn_obj_set_info(ctx,
-                            builder->lexicon,
-                            GRN_INFO_NORMALIZERS,
-                            &normalizers);
-    }
-    GRN_OBJ_FIN(ctx, &normalizers);
-  }
-  if (rc == GRN_SUCCESS) {
-    grn_obj token_filters;
-    GRN_TEXT_INIT(&token_filters, 0);
-    grn_table_get_token_filters_string(ctx,
-                                       builder->ii_->lexicon,
-                                       &token_filters);
-    if (GRN_TEXT_LEN(&token_filters) > 0) {
-      rc = grn_obj_set_info(ctx,
-                            builder->lexicon,
-                            GRN_INFO_TOKEN_FILTERS,
-                            &token_filters);
-    }
-    GRN_OBJ_FIN(ctx, &token_filters);
-  }
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
-    builder->get_key_optimizable =
-      !grn_pat_is_key_encoded(ctx, (grn_pat *)(builder->lexicon));
-    if (builder->options_.lexicon_cache_size) {
-      rc = grn_pat_cache_enable(ctx,
-                                (grn_pat *)builder->lexicon,
-                                builder->options_.lexicon_cache_size);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-    }
-  } else {
-    builder->get_key_optimizable = true;
-  }
-  return GRN_SUCCESS;
-}
 
 /*
  * grn_ii_builder_extend_terms extends a buffer for terms in order to make
@@ -17559,7 +17554,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
     return ctx->rc;
   }
   /* Create a block lexicon. */
-  rc = grn_ii_builder_create_lexicon(ctx, builder);
+  rc = builder->create_lexicon();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
