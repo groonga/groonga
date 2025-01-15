@@ -741,6 +741,8 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
                                          grn_pat_wal_add_entry_data *data,
                                          grn_pat_wal_add_entry_used *used)
 {
+  // `record_id` is the max grn_id alive at the time of defragmentation.
+  used->record_id = true;
   used->key_offset = true;
   return grn_wal_add_entry(ctx,
                            (grn_obj *)(data->pat),
@@ -751,6 +753,10 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
                            GRN_WAL_KEY_EVENT,
                            GRN_WAL_VALUE_EVENT,
                            data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
 
                            GRN_WAL_KEY_KEY_OFFSET,
                            GRN_WAL_VALUE_UINT32,
@@ -5990,6 +5996,42 @@ pat_key_defrag_each(grn_ctx *ctx,
   return new_curr_key;
 }
 
+static inline grn_rc
+delinfos_turn_2_force(grn_ctx *ctx, grn_pat *pat)
+{
+  for (uint32_t di_index = 0; di_index < GRN_PAT_NDELINFOS; di_index++) {
+    grn_pat_delinfo *delete_info = &(pat->header->delinfos[di_index]);
+    if (delete_info->stat != DL_PHASE1) {
+      continue;
+    }
+
+    grn_pat_wal_add_entry_data wal_data = {0};
+    wal_data.tag = "[pat][defrag][delinfos][phase2]";
+    wal_data.pat = pat;
+    wal_data.delete_info_index = di_index;
+    grn_rc rc = delinfo_turn_2(ctx, pat, &wal_data, di_index);
+    if (rc != GRN_SUCCESS) {
+      ERR(rc, "%s: failed %d", wal_data.tag, delete_info->ld);
+      return rc;
+    }
+    delinfo_turn_2_post(ctx, pat);
+  }
+  return GRN_SUCCESS;
+}
+
+/* Clear to avoid reuse of unexpected nodes. */
+static inline void
+grn_pat_defrag_clear_delinfos(grn_ctx *ctx, grn_pat *pat, grn_id active_max_id)
+{
+  memset(pat->header->garbages, 0, sizeof(pat->header->garbages));
+  memset(pat->header->delinfos, 0, sizeof(pat->header->delinfos));
+  pat->header->curr_rec = active_max_id;
+  pat->header->curr_del = 0;
+  pat->header->curr_del2 = 0;
+  pat->header->curr_del3 = 0;
+  pat->header->n_garbages = 0;
+}
+
 /* See test/command/suite/defrag/pat/README.md when you change this.
  * You must update tests for this too.
  * If you're using a grn_pat in multi-thread/multi-process environment, you must
@@ -5998,18 +6040,34 @@ int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
   int reduced_bytes = 0;
+  /* We will clear grn_pat_header::delinfos and grn_pat_header::garbages after
+   * defragmentation. Execute delinfo_turn_2() on the data remaining in
+   * grn_pat_header::delinfos before clearing.
+   *
+   * Since grn_pat_header::delinfos and grn_pat_header::garbages are cleared
+   * after defragmentation, exercise of delinfo_turn_3() is not needed. */
+  if (delinfos_turn_2_force(ctx, pat) != GRN_SUCCESS) {
+    return reduced_bytes;
+  }
+
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
+    // FIXME: Write WAL.
     reduced_bytes = pat->header->curr_key;
-    pat->header->curr_key = 0;
+    pat_update_curr_key(ctx, pat, 0);
+    grn_pat_defrag_clear_delinfos(ctx, pat, 0);
     return reduced_bytes;
   }
 
   /* First, get the number of targets. */
   size_t n_targets = 0;
+  grn_id active_max_id = GRN_ID_NIL;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
     pat_node *node = pat_get(ctx, pat, id);
+    if (active_max_id < id) {
+      active_max_id = id;
+    }
     if (PAT_IMD(node)) {
       continue;
     }
@@ -6043,6 +6101,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_pat_wal_add_entry_data wal_data = {0};
   wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
   wal_data.pat = pat;
+  wal_data.record_id = active_max_id;
   wal_data.key_offset = new_curr_key;
   wal_data.tag = "[pat][defrag][current-key]";
   grn_pat_wal_add_entry(ctx, &wal_data);
@@ -6050,6 +6109,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
   reduced_bytes = pat->header->curr_key - new_curr_key;
   pat_update_curr_key(ctx, pat, new_curr_key);
+  grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
 
   GRN_FREE(target_ids);
   return reduced_bytes;
@@ -6457,6 +6517,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
   }
   grn_wal_reader_close(ctx, reader);
   pat_update_curr_key(ctx, pat, entry->key_offset);
+  grn_pat_defrag_clear_delinfos(ctx, pat, entry->record_id);
 }
 
 grn_rc

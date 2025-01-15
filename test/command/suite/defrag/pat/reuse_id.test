@@ -5,21 +5,24 @@ table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 
 #@timeout 60
 #@disable-logging
-#@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
+#@generate-series 1 300 Users '{"_key" => "User%03d" % i}'
 #@enable-logging
 #@timeout default
 delete Users --filter '_id > 1'
 
-#@timeout 60
-#@disable-logging
-#@generate-series 0 1000 Users '{"_key" => "User%d" % i}'
-#@enable-logging
-#@timeout default
-delete Users --filter '_id > 1000'
+load --table Users
+[
+{"_key":"XXXX001"},
+{"_key":"XXXX002"},
+{"_key":"XXXX9999"}
+]
 
+# "XXXX001" and "XXXX002" are reuse of `_id`.
+select Users --sort_keys _key
+
+# Defragmentation should succeed even in the state of reuse.
 object_inspect Users
 defrag
 object_inspect Users
 
-# `_id` 2~4 deleted by `delete Users --filter '_id > 1'` are reused.
-select Users --filter '_id >= 2 && _id <= 4'
+select Users --sort_keys _key
