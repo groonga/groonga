@@ -51,7 +51,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 2,
-      "curr_rec": 520,
+      "curr_rec": 265,
       "curr_key": 10,
       "curr_del": 0,
       "curr_del2": 0,
@@ -91,7 +91,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 8,
-      "curr_rec": 1041,
+      "curr_rec": 786,
       "curr_key": 2618,
       "curr_del": 8,
       "curr_del2": 136,
@@ -127,27 +127,27 @@ select Users --sort_keys _key
         ]
       ],
       [
-        531,
+        276,
         "11",
         true
       ],
       [
-        783,
+        528,
         "B-User0003",
         false
       ],
       [
-        785,
+        530,
         "C-User0001",
         false
       ],
       [
-        784,
+        529,
         "C-User0002",
         false
       ],
       [
-        1041,
+        786,
         "C-User99",
         false
       ],
@@ -157,12 +157,12 @@ select Users --sort_keys _key
         true
       ],
       [
-        619,
+        364,
         "C02",
         true
       ],
       [
-        618,
+        363,
         "CC01",
         true
       ]

@@ -53,7 +53,7 @@ check Users
       "tokenizer": 0,
       "normalizer": 0,
       "n_entries": 0,
-      "curr_rec": 520,
+      "curr_rec": 0,
       "curr_key": 0,
       "curr_del": 0,
       "curr_del2": 0,
@@ -96,17 +96,17 @@ select Users --sort_keys _key
         ]
       ],
       [
-        521,
+        1,
         "B-User0001",
         false
       ],
       [
-        522,
+        2,
         "B-User0002",
         false
       ],
       [
-        523,
+        3,
         "B99",
         true
       ]

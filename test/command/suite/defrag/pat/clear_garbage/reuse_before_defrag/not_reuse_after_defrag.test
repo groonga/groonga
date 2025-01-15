@@ -23,7 +23,7 @@ check Users
 
 # Test that the node is not reused when added after defragmentation.
 # `_id` is not reused and is loaded as expected.
-# `_id` is not reused, but is generated from a new `_id` of 521.
+# `_id` is not reused, but is generated from a new `_id` of 266.
 load --table Users
 [
 {"_key":"C-User0001", "immediate":false},

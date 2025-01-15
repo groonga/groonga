@@ -741,6 +741,8 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
                                          grn_pat_wal_add_entry_data *data,
                                          grn_pat_wal_add_entry_used *used)
 {
+  // `record_id` is the max grn_id alive at the time of defragmentation.
+  used->record_id = true;
   used->key_offset = true;
   return grn_wal_add_entry(ctx,
                            (grn_obj *)(data->pat),
@@ -751,6 +753,10 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
                            GRN_WAL_KEY_EVENT,
                            GRN_WAL_VALUE_EVENT,
                            data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
 
                            GRN_WAL_KEY_KEY_OFFSET,
                            GRN_WAL_VALUE_UINT32,
@@ -6015,10 +6021,11 @@ delinfos_turn_2_force(grn_ctx *ctx, grn_pat *pat)
 
 /* Clear to avoid reuse of unexpected nodes. */
 static inline void
-grn_pat_defrag_clear_delinfos(grn_ctx *ctx, grn_pat *pat)
+grn_pat_defrag_clear_delinfos(grn_ctx *ctx, grn_pat *pat, grn_id active_max_id)
 {
   memset(pat->header->garbages, 0, sizeof(pat->header->garbages));
   memset(pat->header->delinfos, 0, sizeof(pat->header->delinfos));
+  pat->header->curr_rec = active_max_id;
   pat->header->curr_del = 0;
   pat->header->curr_del2 = 0;
   pat->header->curr_del3 = 0;
@@ -6048,15 +6055,19 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     // FIXME: Write WAL.
     reduced_bytes = pat->header->curr_key;
     pat_update_curr_key(ctx, pat, 0);
-    grn_pat_defrag_clear_delinfos(ctx, pat);
+    grn_pat_defrag_clear_delinfos(ctx, pat, 0);
     return reduced_bytes;
   }
 
   /* First, get the number of targets. */
   size_t n_targets = 0;
+  grn_id active_max_id = GRN_ID_NIL;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
     pat_node *node = pat_get(ctx, pat, id);
+    if (active_max_id < id) {
+      active_max_id = id;
+    }
     if (PAT_IMD(node)) {
       continue;
     }
@@ -6090,6 +6101,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_pat_wal_add_entry_data wal_data = {0};
   wal_data.event = GRN_WAL_EVENT_DEFRAG_CURRENT_KEY;
   wal_data.pat = pat;
+  wal_data.record_id = active_max_id;
   wal_data.key_offset = new_curr_key;
   wal_data.tag = "[pat][defrag][current-key]";
   grn_pat_wal_add_entry(ctx, &wal_data);
@@ -6097,7 +6109,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
   reduced_bytes = pat->header->curr_key - new_curr_key;
   pat_update_curr_key(ctx, pat, new_curr_key);
-  grn_pat_defrag_clear_delinfos(ctx, pat);
+  grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
 
   GRN_FREE(target_ids);
   return reduced_bytes;
@@ -6505,7 +6517,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
   }
   grn_wal_reader_close(ctx, reader);
   pat_update_curr_key(ctx, pat, entry->key_offset);
-  grn_pat_defrag_clear_delinfos(ctx, pat);
+  grn_pat_defrag_clear_delinfos(ctx, pat, entry->record_id);
 }
 
 grn_rc
