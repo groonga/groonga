@@ -16179,7 +16179,7 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 
 namespace grn::ii {
   struct Builder {
-    Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options_arg)
+    Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
       : ctx_(ctx),
         ii(ii)
     {
@@ -16194,16 +16194,16 @@ namespace grn::ii {
         grn_ctx_call_progress_callback(ctx, &progress);
       }
 
-      if (options_arg) {
-        options = *options_arg;
+      if (options) {
+        options_ = *options;
       } else {
-        options = grn_ii_builder_default_options;
+        options_ = grn_ii_builder_default_options;
       }
 
       if (grn_ii_builder_block_threshold_force > 0) {
-        options.block_threshold = grn_ii_builder_block_threshold_force;
+        options_.block_threshold = grn_ii_builder_block_threshold_force;
       }
-      grn_ii_builder_options_fix(&options);
+      grn_ii_builder_options_fix(&options_);
 
       src_table = nullptr;
       srcs = nullptr;
@@ -16333,8 +16333,8 @@ namespace grn::ii {
       progress_needed; /* Whether progress callback is needed for performance */
     grn_progress progress; /* Progress information */
 
-    grn_ii *ii;                     /* Building inverted index */
-    grn_ii_builder_options options; /* Options */
+    grn_ii *ii;                      /* Building inverted index */
+    grn_ii_builder_options options_; /* Options */
 
     grn_obj *src_table;          /* Source table */
     grn_obj **srcs;              /* Source columns (to be freed) */
@@ -16453,10 +16453,10 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
     builder->get_key_optimizable =
       !grn_pat_is_key_encoded(ctx, (grn_pat *)(builder->lexicon));
-    if (builder->options.lexicon_cache_size) {
+    if (builder->options_.lexicon_cache_size) {
       rc = grn_pat_cache_enable(ctx,
                                 (grn_pat *)builder->lexicon,
-                                builder->options.lexicon_cache_size);
+                                builder->options_.lexicon_cache_size);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -16646,7 +16646,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
       return ctx->rc;
     }
 
-    rest = builder->options.file_buf_size - builder->file_buf_offset;
+    rest = builder->options_.file_buf_size - builder->file_buf_offset;
     if (rest < 10) {
       rc = grn_ii_builder_flush_file_buf(ctx, builder);
       if (rc != GRN_SUCCESS) {
@@ -16683,7 +16683,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
 
   /* Flush a term buffer. */
   term_buf = grn_ii_builder_term_get_buf(term);
-  if (term->offset > builder->options.file_buf_size) {
+  if (term->offset > builder->options_.file_buf_size) {
     ssize_t size;
     rc = grn_ii_builder_flush_file_buf(ctx, builder);
     if (rc != GRN_SUCCESS) {
@@ -16696,7 +16696,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
            (int64_t)size);
     }
   } else {
-    uint32_t rest = builder->options.file_buf_size - builder->file_buf_offset;
+    uint32_t rest = builder->options_.file_buf_size - builder->file_buf_offset;
     if (term->offset <= rest) {
       grn_memcpy(builder->file_buf + builder->file_buf_offset,
                  term_buf,
@@ -16734,11 +16734,11 @@ grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
     SERR("failed to create a temporary file: path = \"%s\"", builder->path);
     return ctx->rc;
   }
-  builder->file_buf = (uint8_t *)GRN_MALLOC(builder->options.file_buf_size);
+  builder->file_buf = (uint8_t *)GRN_MALLOC(builder->options_.file_buf_size);
   if (!builder->file_buf) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "failed to allocate memory for buffered output: size = %u",
-        builder->options.file_buf_size);
+        builder->options_.file_buf_size);
     return ctx->rc;
   }
   return GRN_SUCCESS;
@@ -17392,7 +17392,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
         }
       }
     }
-    if (rc == GRN_SUCCESS && builder->n >= builder->options.block_threshold) {
+    if (rc == GRN_SUCCESS && builder->n >= builder->options_.block_threshold) {
       rc = grn_ii_builder_flush_block(ctx, builder);
     }
     if (builder->progress_needed) {
@@ -17592,11 +17592,11 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
     return GRN_END_OF_DATA;
   }
   if (!block->buf) {
-    block->buf = (uint8_t *)GRN_MALLOC(builder->options.block_buf_size);
+    block->buf = (uint8_t *)GRN_MALLOC(builder->options_.block_buf_size);
     if (!block->buf) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to allocate memory for buffered input: size = %u",
-          builder->options.block_buf_size);
+          builder->options_.block_buf_size);
       return ctx->rc;
     }
   }
@@ -17618,7 +17618,7 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
          file_offset);
     return ctx->rc;
   }
-  buf_rest = builder->options.block_buf_size - buf_rest;
+  buf_rest = builder->options_.block_buf_size - buf_rest;
   if (block->rest < buf_rest) {
     buf_rest = block->rest;
   }
@@ -17878,10 +17878,10 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     /* Read record ID. */
     gap = (uint32_t)(value >> builder->sid_bits); /* In-block gap */
     if (gap) {
-      if (chunk->n >= builder->options.chunk_threshold) {
+      if (chunk->n >= builder->options_.chunk_threshold) {
         const double threshold_scale = 1 + log(builder->df + 1);
         const double threshold =
-          builder->options.chunk_threshold * threshold_scale;
+          builder->options_.chunk_threshold * threshold_scale;
         if (chunk->n >= threshold) {
           if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
             grn_obj token;
@@ -18019,7 +18019,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
     }
   }
   buf_tid = builder->buf.buf->header.nterms;
-  if (buf_tid >= builder->options.buffer_max_n_terms ||
+  if (buf_tid >= builder->options_.buffer_max_n_terms ||
       builder->buf.chunk_size - builder->buf.chunk_offset <
         builder->chunk.enc_offset) {
     rc = grn_ii_builder_buffer_flush(ctx, &builder->buf);
