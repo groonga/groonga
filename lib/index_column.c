@@ -583,20 +583,11 @@ grn_index_column_diff_posting_list_init(
 }
 
 static void
-grn_index_column_diff_posting_list_fin(
+grn_index_column_diff_posting_list_flush(
   grn_ctx *ctx,
   grn_index_column_diff_data *data,
   grn_index_column_diff_posting_list *posting_list)
 {
-  if (ctx->rc != GRN_SUCCESS) {
-    GRN_OBJ_FIN(ctx, &(posting_list->look_ahead));
-    GRN_OBJ_FIN(ctx, &(posting_list->remains));
-    GRN_OBJ_FIN(ctx, &(posting_list->missings));
-    grn_ii_cursor_close(ctx, posting_list->cursor);
-    posting_list->cursor = NULL;
-
-    return;
-  }
   grn_obj *remains = &(posting_list->remains);
   grn_obj *missings = &(posting_list->missings);
   {
@@ -606,7 +597,6 @@ grn_index_column_diff_posting_list_fin(
                    remains,
                    GRN_BULK_HEAD(look_ahead) + offset,
                    GRN_BULK_VSIZE(look_ahead) - offset);
-    GRN_OBJ_FIN(ctx, look_ahead);
   }
 
   grn_ii_cursor *cursor = posting_list->cursor;
@@ -636,8 +626,6 @@ grn_index_column_diff_posting_list_fin(
         }
       }
     }
-    grn_ii_cursor_close(ctx, cursor);
-    posting_list->cursor = NULL;
   }
 
   if (GRN_BULK_VSIZE(remains) > 0 || GRN_BULK_VSIZE(missings) > 0) {
@@ -659,8 +647,22 @@ grn_index_column_diff_posting_list_fin(
       }
     }
   }
-  GRN_OBJ_FIN(ctx, remains);
-  GRN_OBJ_FIN(ctx, missings);
+}
+
+static void
+grn_index_column_diff_posting_list_fin(
+  grn_ctx *ctx,
+  grn_index_column_diff_data *data,
+  grn_index_column_diff_posting_list *posting_list)
+{
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_index_column_diff_posting_list_flush(ctx, data, posting_list);
+  }
+  GRN_OBJ_FIN(ctx, &(posting_list->look_ahead));
+  GRN_OBJ_FIN(ctx, &(posting_list->remains));
+  GRN_OBJ_FIN(ctx, &(posting_list->missings));
+  grn_ii_cursor_close(ctx, posting_list->cursor);
+  posting_list->cursor = NULL;
 }
 
 static void
