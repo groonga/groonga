@@ -16454,6 +16454,21 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Gets a term associated with tid.
+    grn_rc
+    get_term(grn_id tid, grn_ii_builder_term **term)
+    {
+      uint32_t n_terms = tid;
+      if (n_terms > n_terms_) {
+        grn_rc rc = extend_terms(n_terms);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      *term = &(terms_[tid - 1]);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16503,24 +16518,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_get_term gets a term associated with tid. */
-static inline grn_rc
-grn_ii_builder_get_term(grn_ctx *ctx,
-                        grn::ii::Builder *builder,
-                        grn_id tid,
-                        grn_ii_builder_term **term)
-{
-  uint32_t n_terms = tid;
-  if (n_terms > builder->n_terms_) {
-    grn_rc rc = builder->extend_terms(n_terms);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  *term = &builder->terms_[tid - 1];
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_flush_file_buf flushes buffered data as a block. */
 static grn_rc
@@ -16848,7 +16845,7 @@ grn_ii_builder_append_token(grn_ctx *ctx,
   grn_rc rc;
   uint32_t ii_flags = builder->ii_->header.common->flags;
   grn_ii_builder_term *term;
-  rc = grn_ii_builder_get_term(ctx, builder, tid, &term);
+  rc = builder->get_term(tid, &term);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
