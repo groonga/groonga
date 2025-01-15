@@ -4,7 +4,6 @@ SUBDIRS =					\
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
 bin_PROGRAMS = groonga
-noinst_PROGRAMS = grnslap
 if WITH_MRUBY
 bin_PROGRAMS += grndb
 noinst_PROGRAMS += groonga-mruby
@@ -41,12 +40,6 @@ groonga_CFLAGS = $(AM_CFLAGS) $(LIBEDIT_CFLAGS)
 groonga_LDADD =					\
 	$(top_builddir)/lib/libgroonga.la	\
 	$(LIBEDIT_LIBS)				\
-	$(MESSAGE_PACK_LIBS)
-
-include grnslap_sources.am
-nodist_EXTRA_grnslap_SOURCES = $(NONEXISTENT_CXX_SOURCE)
-grnslap_LDADD =					\
-	$(top_builddir)/lib/libgroonga.la	\
 	$(MESSAGE_PACK_LIBS)
 
 include grndb_sources.am
