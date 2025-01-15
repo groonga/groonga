@@ -16223,7 +16223,7 @@ namespace grn::ii {
       pos = 0;
 
       terms_ = nullptr;
-      n_terms = 0;
+      n_terms_ = 0;
       max_n_terms = 0;
       terms_size = 0;
 
@@ -16438,7 +16438,7 @@ namespace grn::ii {
     uint32_t pos; /* Position */
 
     grn_ii_builder_term *terms_; /* Terms (to be freed) */
-    uint32_t n_terms;            /* Number of distinct terms */
+    uint32_t n_terms_;           /* Number of distinct terms */
     uint32_t max_n_terms;        /* Maximum number of distinct terms */
     uint32_t terms_size;         /* Buffer size of terms */
 
@@ -16471,7 +16471,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
                             grn::ii::Builder *builder,
                             uint32_t n_terms)
 {
-  if (n_terms <= builder->n_terms) {
+  if (n_terms <= builder->n_terms_) {
     return GRN_SUCCESS;
   }
 
@@ -16503,8 +16503,8 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
     builder->max_n_terms = n_terms;
   }
 
-  builder->n += n_terms - builder->n_terms;
-  builder->n_terms = n_terms;
+  builder->n += n_terms - builder->n_terms_;
+  builder->n_terms_ = n_terms;
   return GRN_SUCCESS;
 }
 
@@ -16516,7 +16516,7 @@ grn_ii_builder_get_term(grn_ctx *ctx,
                         grn_ii_builder_term **term)
 {
   uint32_t n_terms = tid;
-  if (n_terms > builder->n_terms) {
+  if (n_terms > builder->n_terms_) {
     grn_rc rc = grn_ii_builder_extend_terms(ctx, builder, n_terms);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -16834,7 +16834,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     return rc;
   }
   builder->rid = GRN_ID_NIL;
-  builder->n_terms = 0;
+  builder->n_terms_ = 0;
   builder->n = 0;
   return GRN_SUCCESS;
 }
