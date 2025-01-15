@@ -16469,6 +16469,23 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Flushes buffered data as a block.
+    grn_rc
+    flush_file_buf()
+    {
+      if (file_buf_offset) {
+        auto size = grn_write(fd, file_buf, file_buf_offset);
+        if (static_cast<uint64_t>(size) != file_buf_offset) {
+          auto ctx = ctx_;
+          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
+               file_buf_offset,
+               static_cast<int64_t>(size));
+        }
+        file_buf_offset = 0;
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16518,23 +16535,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_flush_file_buf flushes buffered data as a block. */
-static grn_rc
-grn_ii_builder_flush_file_buf(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  if (builder->file_buf_offset) {
-    ssize_t size =
-      grn_write(builder->fd, builder->file_buf, builder->file_buf_offset);
-    if ((uint64_t)size != builder->file_buf_offset) {
-      SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
-           builder->file_buf_offset,
-           (int64_t)size);
-    }
-    builder->file_buf_offset = 0;
-  }
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_flush_term flushes a term and clears it */
 static grn_rc
@@ -16636,7 +16636,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
 
     rest = builder->options_.file_buf_size - builder->file_buf_offset;
     if (rest < 10) {
-      rc = grn_ii_builder_flush_file_buf(ctx, builder);
+      rc = builder->flush_file_buf();
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -16673,7 +16673,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
   term_buf = grn_ii_builder_term_get_buf(term);
   if (term->offset > builder->options_.file_buf_size) {
     ssize_t size;
-    rc = grn_ii_builder_flush_file_buf(ctx, builder);
+    rc = builder->flush_file_buf();
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -16693,7 +16693,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
     } else {
       grn_memcpy(builder->file_buf + builder->file_buf_offset, term_buf, rest);
       builder->file_buf_offset += rest;
-      rc = grn_ii_builder_flush_file_buf(ctx, builder);
+      rc = builder->flush_file_buf();
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -16812,7 +16812,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     }
   }
   grn_table_cursor_close(ctx, cursor);
-  rc = grn_ii_builder_flush_file_buf(ctx, builder);
+  rc = builder->flush_file_buf();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
