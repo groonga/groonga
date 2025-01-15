@@ -16412,6 +16412,48 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Extends a buffer for terms in order to make terms[n_terms - 1]
+    // available.
+    grn_rc
+    extend_terms(uint32_t new_n_terms)
+    {
+      if (new_n_terms <= n_terms_) {
+        return GRN_SUCCESS;
+      }
+
+      if (new_n_terms > max_n_terms_) {
+        uint32_t i;
+        if (new_n_terms > terms_size_) {
+          /* Resize builder->terms_ for new terms. */
+          uint32_t new_terms_size = terms_size_ ? terms_size_ * 2 : 1;
+          while (new_terms_size < new_n_terms) {
+            new_terms_size *= 2;
+          }
+          auto ctx = ctx_;
+          auto new_n_bytes = new_terms_size * sizeof(grn_ii_builder_term);
+          auto new_terms = reinterpret_cast<grn_ii_builder_term *>(
+            GRN_REALLOC(terms_, new_n_bytes));
+          if (!new_terms) {
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "failed to allocate memory for terms: n_bytes = %" GRN_FMT_SIZE,
+                new_n_bytes);
+            return ctx->rc;
+          }
+          terms_ = new_terms;
+          terms_size_ = new_terms_size;
+        }
+        /* Initialize new terms. */
+        for (i = max_n_terms_; i < new_n_terms; i++) {
+          grn_ii_builder_term_init(ctx_, &(terms_[i]));
+        }
+        max_n_terms_ = new_n_terms;
+      }
+
+      n_ += new_n_terms - n_terms_;
+      n_terms_ = new_n_terms;
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16462,52 +16504,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/*
- * grn_ii_builder_extend_terms extends a buffer for terms in order to make
- * terms[n_terms - 1] available.
- */
-static grn_rc
-grn_ii_builder_extend_terms(grn_ctx *ctx,
-                            grn::ii::Builder *builder,
-                            uint32_t n_terms)
-{
-  if (n_terms <= builder->n_terms_) {
-    return GRN_SUCCESS;
-  }
-
-  if (n_terms > builder->max_n_terms_) {
-    uint32_t i;
-    if (n_terms > builder->terms_size_) {
-      /* Resize builder->terms_ for new terms. */
-      size_t n_bytes;
-      uint32_t terms_size = builder->terms_size_ ? builder->terms_size_ * 2 : 1;
-      grn_ii_builder_term *terms;
-      while (terms_size < n_terms) {
-        terms_size *= 2;
-      }
-      n_bytes = terms_size * sizeof(grn_ii_builder_term);
-      terms = (grn_ii_builder_term *)GRN_REALLOC(builder->terms_, n_bytes);
-      if (!terms) {
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "failed to allocate memory for terms: n_bytes = %" GRN_FMT_SIZE,
-            n_bytes);
-        return ctx->rc;
-      }
-      builder->terms_ = terms;
-      builder->terms_size_ = terms_size;
-    }
-    /* Initialize new terms. */
-    for (i = builder->max_n_terms_; i < n_terms; i++) {
-      grn_ii_builder_term_init(ctx, &builder->terms_[i]);
-    }
-    builder->max_n_terms_ = n_terms;
-  }
-
-  builder->n_ += n_terms - builder->n_terms_;
-  builder->n_terms_ = n_terms;
-  return GRN_SUCCESS;
-}
-
 /* grn_ii_builder_get_term gets a term associated with tid. */
 static inline grn_rc
 grn_ii_builder_get_term(grn_ctx *ctx,
@@ -16517,7 +16513,7 @@ grn_ii_builder_get_term(grn_ctx *ctx,
 {
   uint32_t n_terms = tid;
   if (n_terms > builder->n_terms_) {
-    grn_rc rc = grn_ii_builder_extend_terms(ctx, builder, n_terms);
+    grn_rc rc = builder->extend_terms(n_terms);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
