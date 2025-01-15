@@ -16179,6 +16179,156 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 
 namespace grn::ii {
   struct Builder {
+    Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options_arg)
+      : ctx_(ctx),
+        ii(ii)
+    {
+      progress_needed = (grn_ctx_get_progress_callback(ctx) != NULL);
+      if (progress_needed) {
+        progress.type = GRN_PROGRESS_INDEX;
+        progress.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
+        progress.value.index.n_target_records = 0;
+        progress.value.index.n_processed_records = 0;
+        progress.value.index.n_target_terms = 0;
+        progress.value.index.n_processed_terms = 0;
+        grn_ctx_call_progress_callback(ctx, &progress);
+      }
+
+      if (options_arg) {
+        options = *options_arg;
+      } else {
+        options = grn_ii_builder_default_options;
+      }
+
+      if (grn_ii_builder_block_threshold_force > 0) {
+        options.block_threshold = grn_ii_builder_block_threshold_force;
+      }
+      grn_ii_builder_options_fix(&options);
+
+      src_table = nullptr;
+      srcs = nullptr;
+      src_token_columns = nullptr;
+      n_srcs = 0;
+      sid_bits = 0;
+      sid_mask = 0;
+
+      lexicon = nullptr;
+      have_tokenizer = false;
+      have_normalizers = false;
+      get_key_optimizable = false;
+
+      n = 0;
+      rid = GRN_ID_NIL;
+      sid = 0;
+      pos = 0;
+
+      terms = nullptr;
+      n_terms = 0;
+      max_n_terms = 0;
+      terms_size = 0;
+
+      path[0] = '\0';
+      fd = -1;
+      file_buf = nullptr;
+      file_buf_offset = 0;
+
+      blocks = nullptr;
+      n_blocks = 0;
+      blocks_size = 0;
+
+      grn_ii_builder_buffer_init(ctx, &buf, ii);
+      grn_ii_builder_chunk_init(ctx, &chunk, ii);
+
+      df = 0;
+      cinfos = nullptr;
+      n_cinfos = 0;
+      cinfos_size = 0;
+    }
+
+    ~Builder()
+    {
+      if (progress_needed) {
+        progress.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
+        grn_ctx_call_progress_callback(ctx_, &progress);
+      }
+
+      if (cinfos) {
+        auto ctx = ctx_;
+        GRN_FREE(cinfos);
+      }
+      grn_ii_builder_chunk_fin(ctx_, &chunk);
+      grn_ii_builder_buffer_fin(ctx_, &buf);
+      if (blocks) {
+        uint32_t i;
+        for (i = 0; i < n_blocks; i++) {
+          grn_ii_builder_block_fin(ctx_, &(blocks[i]));
+        }
+        auto ctx = ctx_;
+        GRN_FREE(blocks);
+      }
+      if (file_buf) {
+        auto ctx = ctx_;
+        GRN_FREE(file_buf);
+      }
+      if (fd != -1) {
+        grn_close(fd);
+        if (grn_unlink(path) == 0) {
+          GRN_LOG(ctx_,
+                  GRN_LOG_INFO,
+                  "[ii][builder][fin] removed path: <%s>",
+                  path);
+        } else {
+          auto ctx = ctx_;
+          ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path);
+        }
+      }
+      finalize_terms();
+      if (lexicon) {
+        grn_obj_close(ctx_, lexicon);
+      }
+      if (srcs) {
+        uint32_t i;
+        for (i = 0; i < n_srcs; i++) {
+          grn_obj_unref(ctx_, srcs[i]);
+        }
+        auto ctx = ctx_;
+        GRN_FREE(srcs);
+      }
+      if (src_token_columns) {
+        uint32_t i;
+        for (i = 0; i < n_srcs; i++) {
+          grn_obj_unref(ctx_, src_token_columns[i]);
+        }
+        auto ctx = ctx_;
+        GRN_FREE(src_token_columns);
+      }
+      if (src_table) {
+        grn_obj_unref(ctx_, src_table);
+      }
+      if (progress_needed) {
+        progress.value.index.phase = GRN_PROGRESS_INDEX_DONE;
+        grn_ctx_call_progress_callback(ctx_, &progress);
+      }
+    }
+
+    void
+    finalize_terms()
+    {
+      if (!terms) {
+        return;
+      }
+
+      uint32_t i;
+      for (i = 0; i < max_n_terms; i++) {
+        grn_ii_builder_term_fin(ctx_, &(terms[i]));
+      }
+      auto ctx = ctx_;
+      GRN_FREE(terms);
+      /* To avoid double finalization. */
+      terms = nullptr;
+    }
+
+    grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
     grn_progress progress; /* Progress information */
@@ -16227,197 +16377,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/*
- * grn_ii_builder_init initializes a builder. Note that an initialized builder
- * must be finalized by grn_ii_builder_fin.
- */
-static grn_rc
-grn_ii_builder_init(grn_ctx *ctx,
-                    grn::ii::Builder *builder,
-                    grn_ii *ii,
-                    const grn_ii_builder_options *options)
-{
-  builder->progress_needed = (grn_ctx_get_progress_callback(ctx) != NULL);
-  if (builder->progress_needed) {
-    builder->progress.type = GRN_PROGRESS_INDEX;
-    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
-    builder->progress.value.index.n_target_records = 0;
-    builder->progress.value.index.n_processed_records = 0;
-    builder->progress.value.index.n_target_terms = 0;
-    builder->progress.value.index.n_processed_terms = 0;
-    grn_ctx_call_progress_callback(ctx, &(builder->progress));
-  }
-
-  builder->ii = ii;
-  builder->options = *options;
-  if (grn_ii_builder_block_threshold_force > 0) {
-    builder->options.block_threshold = grn_ii_builder_block_threshold_force;
-  }
-  grn_ii_builder_options_fix(&builder->options);
-
-  builder->src_table = NULL;
-  builder->srcs = NULL;
-  builder->src_token_columns = NULL;
-  builder->n_srcs = 0;
-  builder->sid_bits = 0;
-  builder->sid_mask = 0;
-
-  builder->lexicon = NULL;
-  builder->have_tokenizer = false;
-  builder->have_normalizers = false;
-  builder->get_key_optimizable = false;
-
-  builder->n = 0;
-  builder->rid = GRN_ID_NIL;
-  builder->sid = 0;
-  builder->pos = 0;
-
-  builder->terms = NULL;
-  builder->n_terms = 0;
-  builder->max_n_terms = 0;
-  builder->terms_size = 0;
-
-  builder->path[0] = '\0';
-  builder->fd = -1;
-  builder->file_buf = NULL;
-  builder->file_buf_offset = 0;
-
-  builder->blocks = NULL;
-  builder->n_blocks = 0;
-  builder->blocks_size = 0;
-
-  grn_ii_builder_buffer_init(ctx, &builder->buf, ii);
-  grn_ii_builder_chunk_init(ctx, &builder->chunk, ii);
-
-  builder->df = 0;
-  builder->cinfos = NULL;
-  builder->n_cinfos = 0;
-  builder->cinfos_size = 0;
-
-  return GRN_SUCCESS;
-}
-
-/* grn_ii_builder_fin_terms finalizes terms. */
-static void
-grn_ii_builder_fin_terms(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  if (builder->terms) {
-    uint32_t i;
-    for (i = 0; i < builder->max_n_terms; i++) {
-      grn_ii_builder_term_fin(ctx, &builder->terms[i]);
-    }
-    GRN_FREE(builder->terms);
-
-    /* To avoid double finalization. */
-    builder->terms = NULL;
-  }
-}
-
-/* grn_ii_builder_fin finalizes a builder. */
-static grn_rc
-grn_ii_builder_fin(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  if (builder->progress_needed) {
-    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
-    grn_ctx_call_progress_callback(ctx, &(builder->progress));
-  }
-
-  if (builder->cinfos) {
-    GRN_FREE(builder->cinfos);
-  }
-  grn_ii_builder_chunk_fin(ctx, &builder->chunk);
-  grn_ii_builder_buffer_fin(ctx, &builder->buf);
-  if (builder->blocks) {
-    uint32_t i;
-    for (i = 0; i < builder->n_blocks; i++) {
-      grn_ii_builder_block_fin(ctx, &builder->blocks[i]);
-    }
-    GRN_FREE(builder->blocks);
-  }
-  if (builder->file_buf) {
-    GRN_FREE(builder->file_buf);
-  }
-  if (builder->fd != -1) {
-    grn_close(builder->fd);
-    if (grn_unlink(builder->path) == 0) {
-      GRN_LOG(ctx,
-              GRN_LOG_INFO,
-              "[ii][builder][fin] removed path: <%s>",
-              builder->path);
-    } else {
-      ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>",
-                builder->path);
-    }
-  }
-  grn_ii_builder_fin_terms(ctx, builder);
-  if (builder->lexicon) {
-    grn_obj_close(ctx, builder->lexicon);
-  }
-  if (builder->srcs) {
-    uint32_t i;
-    for (i = 0; i < builder->n_srcs; i++) {
-      grn_obj_unref(ctx, builder->srcs[i]);
-    }
-    GRN_FREE(builder->srcs);
-  }
-  if (builder->src_token_columns) {
-    uint32_t i;
-    for (i = 0; i < builder->n_srcs; i++) {
-      grn_obj_unref(ctx, builder->src_token_columns[i]);
-    }
-    GRN_FREE(builder->src_token_columns);
-  }
-  if (builder->src_table) {
-    grn_obj_unref(ctx, builder->src_table);
-  }
-  return GRN_SUCCESS;
-}
-
-/*
- * grn_ii_builder_open creates a builder. Note that a builder must be closed by
- * grn_ii_builder_close.
- */
-static grn_rc
-grn_ii_builder_open(grn_ctx *ctx,
-                    grn_ii *ii,
-                    const grn_ii_builder_options *options,
-                    grn::ii::Builder **builder)
-{
-  grn_rc rc;
-  grn::ii::Builder *new_builder = GRN_MALLOCN(grn::ii::Builder, 1);
-  if (!new_builder) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  if (!options) {
-    options = &grn_ii_builder_default_options;
-  }
-  rc = grn_ii_builder_init(ctx, new_builder, ii, options);
-  if (rc != GRN_SUCCESS) {
-    GRN_FREE(new_builder);
-    return rc;
-  }
-  *builder = new_builder;
-  return GRN_SUCCESS;
-}
-
-/* grn_ii_builder_close closes a builder. */
-static grn_rc
-grn_ii_builder_close(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_rc rc;
-  if (!builder) {
-    ERR(GRN_INVALID_ARGUMENT, "builder is null");
-    return ctx->rc;
-  }
-  rc = grn_ii_builder_fin(ctx, builder);
-  if (builder->progress_needed) {
-    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_DONE;
-    grn_ctx_call_progress_callback(ctx, &(builder->progress));
-  }
-  GRN_FREE(builder);
-  return rc;
-}
 
 /* grn_ii_builder_create_lexicon creates a block lexicon. */
 static grn_rc
@@ -17612,7 +17571,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_ii_builder_fin_terms(ctx, builder);
+  builder->finalize_terms();
   return GRN_SUCCESS;
 }
 
@@ -18232,17 +18191,12 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
 extern "C" grn_rc
 grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 {
-  grn_rc rc, rc_close;
-  grn::ii::Builder *builder;
-  rc = grn_ii_builder_open(ctx, ii, options, &builder);
-  if (rc == GRN_SUCCESS) {
-    rc = grn_ii_builder_append_source(ctx, builder);
+  grn_rc rc = GRN_SUCCESS;
+  {
+    grn::ii::Builder builder(ctx, ii, options);
+    rc = grn_ii_builder_append_source(ctx, &builder);
     if (rc == GRN_SUCCESS) {
-      rc = grn_ii_builder_commit(ctx, builder);
-    }
-    rc_close = grn_ii_builder_close(ctx, builder);
-    if (rc == GRN_SUCCESS) {
-      rc = rc_close;
+      rc = grn_ii_builder_commit(ctx, &builder);
     }
   }
   if (rc != GRN_SUCCESS) {
