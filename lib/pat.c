@@ -6045,6 +6045,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
+    // FIXME: Write WAL.
     reduced_bytes = pat->header->curr_key;
     pat_update_curr_key(ctx, pat, 0);
     grn_pat_defrag_clear_delinfos(ctx, pat);
