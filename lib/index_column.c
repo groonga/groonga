@@ -588,6 +588,15 @@ grn_index_column_diff_posting_list_fin(
   grn_index_column_diff_data *data,
   grn_index_column_diff_posting_list *posting_list)
 {
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_OBJ_FIN(ctx, &(posting_list->look_ahead));
+    GRN_OBJ_FIN(ctx, &(posting_list->remains));
+    GRN_OBJ_FIN(ctx, &(posting_list->missings));
+    grn_ii_cursor_close(ctx, posting_list->cursor);
+    posting_list->cursor = NULL;
+
+    return;
+  }
   grn_obj *remains = &(posting_list->remains);
   grn_obj *missings = &(posting_list->missings);
   {
@@ -1216,16 +1225,15 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
   }
   GRN_TABLE_EACH_END(ctx, cursor);
 
-  if (ctx->rc == GRN_SUCCESS) {
-    GRN_HASH_EACH_BEGIN(ctx, data->posting_lists, cursor, id)
-    {
-      void *value;
-      grn_hash_cursor_get_value(ctx, cursor, &value);
-      grn_index_column_diff_posting_list *posting_list = value;
-      grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
-    }
-    GRN_HASH_EACH_END(ctx, cursor);
+  GRN_HASH_EACH_BEGIN(ctx, data->posting_lists, cursor, id)
+  {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    grn_index_column_diff_posting_list *posting_list = value;
+    grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
   }
+  GRN_HASH_EACH_END(ctx, cursor);
+
   grn_hash_close(ctx, data->posting_lists);
 }
 
