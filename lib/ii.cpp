@@ -16217,7 +16217,7 @@ namespace grn::ii {
       have_normalizers = false;
       get_key_optimizable = false;
 
-      n = 0;
+      n_ = 0;
       rid = GRN_ID_NIL;
       sid = 0;
       pos = 0;
@@ -16432,7 +16432,7 @@ namespace grn::ii {
     bool have_normalizers;    /* Whether lexicon has at least one normalizers */
     bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
-    uint32_t n;   /* Number of integers appended to the current block */
+    uint32_t n_;  /* Number of integers appended to the current block */
     grn_id rid;   /* Record ID */
     uint32_t sid; /* Section ID */
     uint32_t pos; /* Position */
@@ -16503,7 +16503,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
     builder->max_n_terms_ = n_terms;
   }
 
-  builder->n += n_terms - builder->n_terms_;
+  builder->n_ += n_terms - builder->n_terms_;
   builder->n_terms_ = n_terms;
   return GRN_SUCCESS;
 }
@@ -16787,7 +16787,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
   grn_rc rc;
   grn_table_cursor *cursor;
 
-  if (!builder->n) {
+  if (!builder->n_) {
     /* Do nothing if there are no output data. */
     return GRN_SUCCESS;
   }
@@ -16835,7 +16835,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
   }
   builder->rid = GRN_ID_NIL;
   builder->n_terms_ = 0;
-  builder->n = 0;
+  builder->n_ = 0;
   return GRN_SUCCESS;
 }
 
@@ -16865,14 +16865,14 @@ grn_ii_builder_append_token(grn_ctx *ctx,
         if (rc != GRN_SUCCESS) {
           return rc;
         }
-        builder->n++;
+        builder->n_++;
       } else {
         /* Append a frequency if positions are not available. */
         rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
-        builder->n++;
+        builder->n_++;
       }
     }
     rsid = ((uint64_t)(rid - term->rid) << builder->sid_bits) | (sid - 1);
@@ -16880,13 +16880,13 @@ grn_ii_builder_append_token(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    builder->n++;
+    builder->n_++;
     if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
       rc = grn_ii_builder_term_append(ctx, term, weight);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      builder->n++;
+      builder->n_++;
     }
     term->rid = rid;
     term->sid = sid;
@@ -16897,7 +16897,7 @@ grn_ii_builder_append_token(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    builder->n++;
+    builder->n_++;
     term->pos_or_freq = pos;
   } else {
     term->pos_or_freq++;
@@ -17387,7 +17387,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
         }
       }
     }
-    if (rc == GRN_SUCCESS && builder->n >= builder->options_.block_threshold) {
+    if (rc == GRN_SUCCESS && builder->n_ >= builder->options_.block_threshold) {
       rc = grn_ii_builder_flush_block(ctx, builder);
     }
     if (builder->progress_needed) {
