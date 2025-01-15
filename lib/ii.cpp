@@ -1,21 +1,19 @@
-/*
-  Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+// Copyright (C) 2009-2018  Brazil
+// Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "grn.h"
 
@@ -16179,54 +16177,56 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-typedef struct {
-  bool
-    progress_needed; /* Whether progress callback is needed for performance */
-  grn_progress progress; /* Progress information */
+namespace grn::ii {
+  struct Builder {
+    bool
+      progress_needed; /* Whether progress callback is needed for performance */
+    grn_progress progress; /* Progress information */
 
-  grn_ii *ii;                     /* Building inverted index */
-  grn_ii_builder_options options; /* Options */
+    grn_ii *ii;                     /* Building inverted index */
+    grn_ii_builder_options options; /* Options */
 
-  grn_obj *src_table;          /* Source table */
-  grn_obj **srcs;              /* Source columns (to be freed) */
-  grn_obj **src_token_columns; /* Source token columns (to be freed) */
-  uint32_t n_srcs;             /* Number of source columns */
-  uint8_t sid_bits;            /* Number of bits for section ID */
-  uint64_t sid_mask;           /* Mask bits for section ID */
+    grn_obj *src_table;          /* Source table */
+    grn_obj **srcs;              /* Source columns (to be freed) */
+    grn_obj **src_token_columns; /* Source token columns (to be freed) */
+    uint32_t n_srcs;             /* Number of source columns */
+    uint8_t sid_bits;            /* Number of bits for section ID */
+    uint64_t sid_mask;           /* Mask bits for section ID */
 
-  grn_obj *lexicon;         /* Block lexicon (to be closed) */
-  bool have_tokenizer;      /* Whether lexicon has tokenizer */
-  bool have_normalizers;    /* Whether lexicon has at least one normalizers */
-  bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
+    grn_obj *lexicon;         /* Block lexicon (to be closed) */
+    bool have_tokenizer;      /* Whether lexicon has tokenizer */
+    bool have_normalizers;    /* Whether lexicon has at least one normalizers */
+    bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
-  uint32_t n;   /* Number of integers appended to the current block */
-  grn_id rid;   /* Record ID */
-  uint32_t sid; /* Section ID */
-  uint32_t pos; /* Position */
+    uint32_t n;   /* Number of integers appended to the current block */
+    grn_id rid;   /* Record ID */
+    uint32_t sid; /* Section ID */
+    uint32_t pos; /* Position */
 
-  grn_ii_builder_term *terms; /* Terms (to be freed) */
-  uint32_t n_terms;           /* Number of distinct terms */
-  uint32_t max_n_terms;       /* Maximum number of distinct terms */
-  uint32_t terms_size;        /* Buffer size of terms */
+    grn_ii_builder_term *terms; /* Terms (to be freed) */
+    uint32_t n_terms;           /* Number of distinct terms */
+    uint32_t max_n_terms;       /* Maximum number of distinct terms */
+    uint32_t terms_size;        /* Buffer size of terms */
 
-  /* A temporary file to save blocks. */
-  char path[PATH_MAX];      /* File path */
-  int fd;                   /* File descriptor (to be closed) */
-  uint8_t *file_buf;        /* File buffer for buffered output (to be freed) */
-  uint32_t file_buf_offset; /* File buffer write offset */
+    /* A temporary file to save blocks. */
+    char path[PATH_MAX]; /* File path */
+    int fd;              /* File descriptor (to be closed) */
+    uint8_t *file_buf;   /* File buffer for buffered output (to be freed) */
+    uint32_t file_buf_offset; /* File buffer write offset */
 
-  grn_ii_builder_block *blocks; /* Blocks (to be freed) */
-  uint32_t n_blocks;            /* Number of blocks */
-  uint32_t blocks_size;         /* Buffer size of blocks */
+    grn_ii_builder_block *blocks; /* Blocks (to be freed) */
+    uint32_t n_blocks;            /* Number of blocks */
+    uint32_t blocks_size;         /* Buffer size of blocks */
 
-  grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
-  grn_ii_builder_chunk chunk; /* Chunk (to be finalized) */
+    grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
+    grn_ii_builder_chunk chunk; /* Chunk (to be finalized) */
 
-  uint32_t df;          /* Document frequency (number of sections) */
-  chunk_info *cinfos;   /* Chunk headers (to be freed) */
-  uint32_t n_cinfos;    /* Number of chunks */
-  uint32_t cinfos_size; /* Size of cinfos */
-} grn_ii_builder;
+    uint32_t df;          /* Document frequency (number of sections) */
+    chunk_info *cinfos;   /* Chunk headers (to be freed) */
+    uint32_t n_cinfos;    /* Number of chunks */
+    uint32_t cinfos_size; /* Size of cinfos */
+  };
+} // namespace grn::ii
 
 /*
  * grn_ii_builder_init initializes a builder. Note that an initialized builder
@@ -16234,7 +16234,7 @@ typedef struct {
  */
 static grn_rc
 grn_ii_builder_init(grn_ctx *ctx,
-                    grn_ii_builder *builder,
+                    grn::ii::Builder *builder,
                     grn_ii *ii,
                     const grn_ii_builder_options *options)
 {
@@ -16300,7 +16300,7 @@ grn_ii_builder_init(grn_ctx *ctx,
 
 /* grn_ii_builder_fin_terms finalizes terms. */
 static void
-grn_ii_builder_fin_terms(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_fin_terms(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   if (builder->terms) {
     uint32_t i;
@@ -16316,7 +16316,7 @@ grn_ii_builder_fin_terms(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_fin finalizes a builder. */
 static grn_rc
-grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_fin(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   if (builder->progress_needed) {
     builder->progress.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
@@ -16382,10 +16382,10 @@ static grn_rc
 grn_ii_builder_open(grn_ctx *ctx,
                     grn_ii *ii,
                     const grn_ii_builder_options *options,
-                    grn_ii_builder **builder)
+                    grn::ii::Builder **builder)
 {
   grn_rc rc;
-  grn_ii_builder *new_builder = GRN_MALLOCN(grn_ii_builder, 1);
+  grn::ii::Builder *new_builder = GRN_MALLOCN(grn::ii::Builder, 1);
   if (!new_builder) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -16403,7 +16403,7 @@ grn_ii_builder_open(grn_ctx *ctx,
 
 /* grn_ii_builder_close closes a builder. */
 static grn_rc
-grn_ii_builder_close(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_close(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc;
   if (!builder) {
@@ -16421,7 +16421,7 @@ grn_ii_builder_close(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_create_lexicon creates a block lexicon. */
 static grn_rc
-grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_create_lexicon(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_table_flags flags;
   grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
@@ -16514,7 +16514,7 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
  */
 static grn_rc
 grn_ii_builder_extend_terms(grn_ctx *ctx,
-                            grn_ii_builder *builder,
+                            grn::ii::Builder *builder,
                             uint32_t n_terms)
 {
   if (n_terms <= builder->n_terms) {
@@ -16557,7 +16557,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx,
 /* grn_ii_builder_get_term gets a term associated with tid. */
 static inline grn_rc
 grn_ii_builder_get_term(grn_ctx *ctx,
-                        grn_ii_builder *builder,
+                        grn::ii::Builder *builder,
                         grn_id tid,
                         grn_ii_builder_term **term)
 {
@@ -16574,7 +16574,7 @@ grn_ii_builder_get_term(grn_ctx *ctx,
 
 /* grn_ii_builder_flush_file_buf flushes buffered data as a block. */
 static grn_rc
-grn_ii_builder_flush_file_buf(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_flush_file_buf(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   if (builder->file_buf_offset) {
     ssize_t size =
@@ -16592,7 +16592,7 @@ grn_ii_builder_flush_file_buf(grn_ctx *ctx, grn_ii_builder *builder)
 /* grn_ii_builder_flush_term flushes a term and clears it */
 static grn_rc
 grn_ii_builder_flush_term(grn_ctx *ctx,
-                          grn_ii_builder *builder,
+                          grn::ii::Builder *builder,
                           grn_ii_builder_term *term)
 {
   grn_rc rc;
@@ -16763,7 +16763,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
  * buffered output.
  */
 static grn_rc
-grn_ii_builder_create_file(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_snprintf(builder->path,
                PATH_MAX,
@@ -16787,7 +16787,7 @@ grn_ii_builder_create_file(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_register_block registers a block. */
 static grn_rc
-grn_ii_builder_register_block(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_ii_builder_block *block;
   uint64_t file_offset = grn_lseek(builder->fd, 0, SEEK_CUR);
@@ -16828,7 +16828,7 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_flush_block flushes a block to a temporary file. */
 static grn_rc
-grn_ii_builder_flush_block(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc;
   grn_table_cursor *cursor;
@@ -16888,7 +16888,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn_ii_builder *builder)
 /* grn_ii_builder_append_token appends a token. */
 static grn_rc
 grn_ii_builder_append_token(grn_ctx *ctx,
-                            grn_ii_builder *builder,
+                            grn::ii::Builder *builder,
                             grn_id rid,
                             uint32_t sid,
                             uint32_t weight,
@@ -16953,7 +16953,7 @@ grn_ii_builder_append_token(grn_ctx *ctx,
 
 static void
 grn_ii_builder_start_value(grn_ctx *ctx,
-                           grn_ii_builder *builder,
+                           grn::ii::Builder *builder,
                            grn_id rid,
                            uint32_t sid)
 {
@@ -16972,7 +16972,7 @@ grn_ii_builder_start_value(grn_ctx *ctx,
 
 static grn_rc
 grn_ii_builder_append_tokens(grn_ctx *ctx,
-                             grn_ii_builder *builder,
+                             grn::ii::Builder *builder,
                              grn_id rid,
                              uint32_t sid,
                              grn_obj *tokens)
@@ -17049,7 +17049,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
  */
 static grn_rc
 grn_ii_builder_append_value(grn_ctx *ctx,
-                            grn_ii_builder *builder,
+                            grn::ii::Builder *builder,
                             grn_obj *src,
                             grn_id rid,
                             uint32_t sid,
@@ -17192,7 +17192,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
 /* grn_ii_builder_append_obj appends a BULK, UVECTOR or VECTOR object. */
 static grn_rc
 grn_ii_builder_append_obj(grn_ctx *ctx,
-                          grn_ii_builder *builder,
+                          grn::ii::Builder *builder,
                           grn_obj *src,
                           grn_id rid,
                           uint32_t sid,
@@ -17343,7 +17343,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
  * values.
  */
 static grn_rc
-grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   size_t i;
   grn_rc rc = GRN_SUCCESS;
@@ -17454,7 +17454,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_set_src_table sets a source table. */
 static grn_rc
-grn_ii_builder_set_src_table(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_set_src_table(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   builder->src_table = grn_ctx_at(ctx, DB_OBJ(builder->ii)->range);
   if (!builder->src_table) {
@@ -17470,7 +17470,7 @@ grn_ii_builder_set_src_table(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_set_sid_bits calculates sid_bits and sid_mask. */
 static grn_rc
-grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   /* Calculate the number of bits required to represent a section ID. */
   if (builder->n_srcs == 1 && builder->have_tokenizer &&
@@ -17526,7 +17526,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_set_srcs sets source columns. */
 static grn_rc
-grn_ii_builder_set_srcs(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   size_t i;
   grn_id *source;
@@ -17583,7 +17583,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn_ii_builder *builder)
 
 /* grn_ii_builder_append_source appends values in source columns. */
 static grn_rc
-grn_ii_builder_append_source(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc = grn_ii_builder_set_src_table(ctx, builder);
   if (rc != GRN_SUCCESS) {
@@ -17622,7 +17622,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn_ii_builder *builder)
  */
 static grn_rc
 grn_ii_builder_fill_block(grn_ctx *ctx,
-                          grn_ii_builder *builder,
+                          grn::ii::Builder *builder,
                           uint32_t block_id)
 {
   ssize_t size;
@@ -17679,7 +17679,7 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
 /* grn_ii_builder_read_from_block reads the next value from a block. */
 static grn_rc
 grn_ii_builder_read_from_block(grn_ctx *ctx,
-                               grn_ii_builder *builder,
+                               grn::ii::Builder *builder,
                                uint32_t block_id,
                                uint64_t *value)
 {
@@ -17699,7 +17699,7 @@ grn_ii_builder_read_from_block(grn_ctx *ctx,
 
 /* grn_ii_builder_pack_chunk tries to pack a chunk. */
 static grn_rc
-grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder, bool *packed)
+grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
 {
   grn_id rid;
   uint32_t sid, pos, *a;
@@ -17781,7 +17781,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder, bool *packed)
 /* grn_ii_builder_get_cinfo returns a new cinfo. */
 static grn_rc
 grn_ii_builder_get_cinfo(grn_ctx *ctx,
-                         grn_ii_builder *builder,
+                         grn::ii::Builder *builder,
                          chunk_info **cinfo)
 {
   if (builder->n_cinfos == builder->cinfos_size) {
@@ -17803,7 +17803,7 @@ grn_ii_builder_get_cinfo(grn_ctx *ctx,
 
 /* grn_ii_builder_flush_chunk flushes a chunk. */
 static grn_rc
-grn_ii_builder_flush_chunk(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc;
   chunk_info *cinfo = NULL;
@@ -17890,7 +17890,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn_ii_builder *builder)
 /* grn_ii_builder_read_to_chunk read values from a block to a chunk. */
 static grn_rc
 grn_ii_builder_read_to_chunk(grn_ctx *ctx,
-                             grn_ii_builder *builder,
+                             grn::ii::Builder *builder,
                              uint32_t block_id)
 {
   grn_rc rc;
@@ -18037,7 +18037,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
 
 /* grn_ii_builder_register_chunks registers chunks. */
 static grn_rc
-grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc;
   uint32_t buf_tid, *a;
@@ -18149,7 +18149,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
 }
 
 static grn_rc
-grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
+grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   if (builder->progress_needed) {
     builder->progress.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
@@ -18233,7 +18233,7 @@ extern "C" grn_rc
 grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 {
   grn_rc rc, rc_close;
-  grn_ii_builder *builder;
+  grn::ii::Builder *builder;
   rc = grn_ii_builder_open(ctx, ii, options, &builder);
   if (rc == GRN_SUCCESS) {
     rc = grn_ii_builder_append_source(ctx, builder);
