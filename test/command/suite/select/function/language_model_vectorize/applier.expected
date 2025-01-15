@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --columns[embeddings].stage output   --columns[embeddings].type Float32   --columns[embeddings].flags COLUMN_VECTOR   --columns[embeddings].value 'language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text)'   --output_columns 'text, vector_slice(embeddings, 0, 3)'
+select Data   --columns[embeddings].stage output   --columns[embeddings].type Float32   --columns[embeddings].flags COLUMN_VECTOR   --columns[embeddings].value 'language_model_vectorize("phi-4-q4", text)'   --output_columns 'text, vector_slice(embeddings, 0, 3)'
 [
   [
     0,
@@ -37,17 +37,17 @@ select Data   --columns[embeddings].stage output   --columns[embeddings].type Fl
       [
         "I am a king.",
         [
-          0.008547269,
-          0.006048318,
-          0.003951299
+          -0.009299132,
+          -0.007786971,
+          0.000646766
         ]
       ],
       [
         "I am a queen.",
         [
-          0.008066654,
-          0.004132145,
-          0.005748066
+          -0.01004994,
+          -0.003906214,
+          -0.001882675
         ]
       ]
     ]

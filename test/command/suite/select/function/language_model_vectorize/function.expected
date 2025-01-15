@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --output_columns '       text,       vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text),                    0,                    3)'
+select Data   --output_columns '       text,       vector_slice(language_model_vectorize("phi-4-q4", text),                    0,                    3)'
 [
   [
     0,
@@ -37,17 +37,17 @@ select Data   --output_columns '       text,       vector_slice(language_model_v
       [
         "I am a king.",
         [
-          0.008547269,
-          0.006048318,
-          0.003951299
+          -0.009299132,
+          -0.007786971,
+          0.000646766
         ]
       ],
       [
         "I am a queen.",
         [
-          0.007824666,
-          0.00421184,
-          0.00569254
+          -0.01004994,
+          -0.003906215,
+          -0.001882675
         ]
       ]
     ]

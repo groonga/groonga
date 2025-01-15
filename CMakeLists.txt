@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -1510,9 +1510,9 @@ else()
   set(GRN_WITH_H3 FALSE)
 endif()
 
-set(GRN_LLAMA_CPP_BUNDLED_VERSION "b4397")
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b4481")
 set(GRN_LLAMA_CPP_BUNDLED_SHA256
-    "51e5ac9b5c18756cf46ebc0659dcd57542800dc6582bbdf737dee064aaebfa34")
+    "ff090b375b2823ff8284ac22e17f0b710589254bedeff1930f5e8718d2b1baa6")
 set(GRN_WITH_LLAMA_CPP
     "auto"
     CACHE STRING "Use llama.cpp for LLM.")

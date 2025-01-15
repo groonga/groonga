@@ -1,20 +1,18 @@
-/*
-  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+// Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "grn_language_model.hpp"
 #include "grn_db.h"
@@ -283,7 +281,7 @@ namespace grn {
   public:
     Impl(llama_model *model) : model_(model) {}
 
-    ~Impl(void) { llama_free_model(model_); }
+    ~Impl(void) { llama_model_free(model_); }
 
     llama_model *
     get_raw()
@@ -325,7 +323,7 @@ namespace grn {
         llama_model *raw_model;
         {
           language_model::CaptureError capture(ctx_);
-          raw_model = llama_load_model_from_file(model_path.c_str(), params);
+          raw_model = llama_model_load_from_file(model_path.c_str(), params);
           if (!raw_model) {
             GRN_LM_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
@@ -339,7 +337,7 @@ namespace grn {
                 "[language-model-loader][load] encoder-decoder model isn't "
                 "supported yet: <%s>",
                 model_path.c_str());
-            llama_free_model(raw_model);
+            llama_model_free(raw_model);
             return nullptr;
           }
         }
@@ -378,7 +376,7 @@ namespace grn {
         model_(std::move(model)),
         llama_ctx_(llama_ctx),
         llama_model_(llama_get_model(llama_ctx_)),
-        n_dimentions_(llama_n_embd(llama_model_)),
+        n_dimentions_(llama_model_n_embd(llama_model_)),
         has_encoder_(llama_model_has_encoder(llama_model_)),
         has_decoder_(llama_model_has_decoder(llama_model_)),
         pooling_type_(llama_pooling_type(llama_ctx_))
@@ -521,7 +519,8 @@ namespace grn {
       if (tokens.capacity() < static_cast<size_t>(n_tokens)) {
         tokens.reserve(n_tokens);
       }
-      n_tokens = llama_tokenize(model,
+      auto vocab = llama_model_get_vocab(model);
+      n_tokens = llama_tokenize(vocab,
                                 text.data(),
                                 text.length(),
                                 tokens.data(),
@@ -531,7 +530,7 @@ namespace grn {
       if (n_tokens < 0) {
         // If guessed size isn't enough, use the real size.
         tokens.resize(-n_tokens);
-        llama_tokenize(model,
+        llama_tokenize(vocab,
                        text.data(),
                        text.length(),
                        tokens.data(),
@@ -656,6 +655,7 @@ namespace grn {
   {
 #ifdef GRN_WITH_LLAMA_CPP
     auto params = llama_context_default_params();
+    params.n_ctx = 0; // Use model's value
     params.embeddings = true;
     // We want document vector not token vectors. We want to use the
     // default pooling type in a model but it seems that most models
@@ -667,7 +667,7 @@ namespace grn {
       new LanguageModelInferencer::Impl(
         ctx,
         shared_from_this(),
-        llama_new_context_with_model(impl_->get_raw(), params)));
+        llama_init_from_model(impl_->get_raw(), params)));
 #else
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[language-model][make-inferencer] llama.cpp isn't enabled");

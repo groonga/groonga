@@ -19,6 +19,6 @@ load --table Data
 select Data \
   --output_columns ' \
       text, \
-      vector_slice(language_model_vectorize("mistral-7b-v0.1.Q4_K_M", text), \
+      vector_slice(language_model_vectorize("phi-4-q4", text), \
                    0, \
                    3)'
