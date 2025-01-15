@@ -919,7 +919,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
         if (ctx->rc != GRN_SUCCESS) {
-          break;
+          return;
         }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
@@ -974,7 +974,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
       grn_posting *posting;
       while ((posting = grn_ii_cursor_next(ctx, cursor))) {
         if (ctx->rc != GRN_SUCCESS) {
-          break;
+          return;
         }
         const grn_index_column_diff_compared compared =
           grn_index_column_diff_compare_posting(ctx, data, posting);
