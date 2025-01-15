@@ -6033,7 +6033,7 @@ int
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
   int reduced_bytes = 0;
-  /* Clear grn_pat_header::delinfos and grn_pat_header::garbages after
+  /* We will clear grn_pat_header::delinfos and grn_pat_header::garbages after
    * defragmentation. Execute delinfo_turn_2() on the data remaining in
    * grn_pat_header::delinfos before clearing.
    *
