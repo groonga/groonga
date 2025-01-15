@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerNFKC121("unify_latin_alphabet_with", true)' \
+  "İ" \
+  WITH_CHECKS|WITH_TYPES

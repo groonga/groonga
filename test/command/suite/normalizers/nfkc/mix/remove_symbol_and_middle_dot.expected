@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_middle_dot", true)'   "This ·ᐧ•∙ is ⋅⸱ middle ・･ dots"   WITH_TYPES
+normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_middle_dot", true,                   "version", "NFKC_VERSION")'   "This ·ᐧ•∙ is ⋅⸱ middle ・･ dots"   WITH_TYPES
 [
   [
     0,

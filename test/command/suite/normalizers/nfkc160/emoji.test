@@ -1,0 +1,1 @@
+normalize 'NormalizerNFKC("version", "16.0.0")' "©" WITH_TYPES

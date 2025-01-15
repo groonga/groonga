@@ -1,10 +1,9 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
-# TODO: "İ U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE" is broken with
-# NormalizerNFKC150 or older. It should be fixed with NormalizreNFKC160 or later.
-# We need to revisit how to write this test when we implement it.
-# See also: https://github.com/groonga/groonga/issues/1939
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+# "İ U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE" is broken with
+# NormalizerNFKC150 or older. Its tests exist in nkfcXXX/ instead of here.
 normalize \
-  'NormalizerNFKC("unify_latin_alphabet_with", true)' \
-  "ĨĩĪīĬĭĮįİı" \
+  'NormalizerNFKC("unify_latin_alphabet_with", true, \
+                  "version", "NFKC_VERSION")' \
+  "ĨĩĪīĬĭĮįı" \
   WITH_TYPES
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

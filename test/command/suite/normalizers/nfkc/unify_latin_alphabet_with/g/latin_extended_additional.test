@@ -1,6 +1,7 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
 normalize \
-  'NormalizerNFKC("unify_latin_alphabet_with", true)' \
+  'NormalizerNFKC("unify_latin_alphabet_with", true, \
+                  "version", "NFKC_VERSION")' \
   "Ḡḡ" \
   WITH_TYPES
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

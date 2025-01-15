@@ -1,2 +1,2 @@
-normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "Ďď"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true,                   "version", "NFKC_VERSION")'   "Ďď"   WITH_TYPES
 [[0,0.0,0.0],{"normalized":"dd","types":["alpha","alpha","null"],"checks":[]}]

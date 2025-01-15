@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_kana", true)'   "あイｳｪおざジたチなニぱピまミヽヾ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana", true,                   "version", "NFKC_VERSION")'   "あイｳｪおざジたチなニぱピまミヽヾ"   WITH_TYPES
 [
   [
     0,

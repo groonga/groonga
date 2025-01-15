@@ -1,0 +1,2 @@
+normalize   'NormalizerNFKC("version", "16.0.0")'   "İ"   WITH_CHECKS|WITH_TYPES
+[[0,0.0,0.0],{"normalized":"i","types":["alpha","null"],"checks":[2]}]

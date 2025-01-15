@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true)'   "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true,                   "version", "NFKC_VERSION")'   "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ"   WITH_TYPES
 [
   [
     0,

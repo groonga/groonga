@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("include_removed_source_location", false,                   "report_source_offset", true)'   "(　あ　　いうえお　)"   REMOVE_BLANK|WITH_CHECKS
+normalize   'NormalizerNFKC("include_removed_source_location", false,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "(　あ　　いうえお　)"   REMOVE_BLANK|WITH_CHECKS
 [
   [
     0,

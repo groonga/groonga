@@ -1,0 +1,21 @@
+normalize   'NormalizerNFKC100("unify_latin_alphabet_with", true)'   "İ"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "i̇",
+    "types": [
+      "alpha",
+      "others",
+      "null"
+    ],
+    "checks": [
+      2,
+      -1,
+      0
+    ]
+  }
+]

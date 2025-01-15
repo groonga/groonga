@@ -1,0 +1,2 @@
+normalize 'NormalizerNFKC("version", "16.0.0")' "©" WITH_TYPES
+[[0,0.0,0.0],{"normalized":"©","types":["emoji","null"],"checks":[]}]

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2016  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 */
 
 #include "grn.h"
+#include "grn_error.h"
 #include "grn_nfkc.h"
 #include <groonga/nfkc.h>
 
@@ -127,10 +128,128 @@ grn_nfkc150_normalize_options_init(grn_ctx *ctx,
                                   grn_nfkc150_compose);
 }
 
+void
+grn_nfkc160_normalize_options_init(grn_ctx *ctx,
+                                   grn_nfkc_normalize_options *options)
+{
+  grn_nfkc_normalize_options_init(ctx,
+                                  options,
+                                  grn_nfkc160_char_type,
+                                  grn_nfkc160_decompose,
+                                  grn_nfkc160_compose);
+}
+
+static const grn_nfkc_funcs grn_nfkc_funcs_null = {
+  NULL,
+  NULL,
+  NULL,
+};
+
+static const grn_nfkc_funcs grn_nfkc50_funcs = {
+  grn_nfkc50_char_type,
+  grn_nfkc50_decompose,
+  grn_nfkc50_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc100_funcs = {
+  grn_nfkc100_char_type,
+  grn_nfkc100_decompose,
+  grn_nfkc100_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc121_funcs = {
+  grn_nfkc121_char_type,
+  grn_nfkc121_decompose,
+  grn_nfkc121_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc130_funcs = {
+  grn_nfkc130_char_type,
+  grn_nfkc130_decompose,
+  grn_nfkc130_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc150_funcs = {
+  grn_nfkc150_char_type,
+  grn_nfkc150_decompose,
+  grn_nfkc150_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc160_funcs = {
+  grn_nfkc160_char_type,
+  grn_nfkc160_decompose,
+  grn_nfkc160_compose,
+};
+
+grn_nfkc_funcs
+grn_nfkc_version_option_process(grn_ctx *ctx,
+                                grn_obj *raw_options,
+                                unsigned int i,
+                                grn_raw_string *name_raw,
+                                const char *tag)
+{
+  const char *version;
+  grn_id domain;
+  unsigned int version_length =
+    grn_vector_get_element(ctx, raw_options, i, &version, NULL, &domain);
+  if (!grn_type_id_is_text_family(ctx, domain)) {
+    grn_obj value;
+    GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+    GRN_TEXT_SET(ctx, &value, version, version_length);
+    grn_obj inspected;
+    grn_inspect(ctx, &inspected, &value);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must be a text: <%.*s>",
+        tag,
+        (int)(name_raw->length),
+        name_raw->value,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_OBJ_FIN(ctx, &value);
+    return grn_nfkc_funcs_null;
+  }
+  if (version_length == 0) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must not be empty",
+        tag,
+        (int)(name_raw->length),
+        name_raw->value);
+    return grn_nfkc_funcs_null;
+  }
+  grn_raw_string version_raw;
+  version_raw.value = version;
+  version_raw.length = version_length;
+  if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
+    return grn_nfkc50_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
+    return grn_nfkc100_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
+    return grn_nfkc121_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
+    return grn_nfkc130_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "15.0.0")) {
+    return grn_nfkc150_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "16.0.0")) {
+    return grn_nfkc160_funcs;
+  } else {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", "
+        "\"13.0.0\", \"15.0.0\" or \"16.0.0\": <%.*s>",
+        tag,
+        (int)(name_raw->length),
+        name_raw->value,
+        (int)(version_raw.length),
+        version_raw.value);
+    return grn_nfkc_funcs_null;
+  }
+}
+
 grn_rc
 grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                  grn_nfkc_normalize_options *options,
-                                 grn_obj *raw_options)
+                                 grn_obj *raw_options,
+                                 const char *tag)
 {
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
@@ -309,6 +428,15 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->strip);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "version")) {
+      grn_nfkc_funcs funcs =
+        grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      options->char_type_func = funcs.char_type_func;
+      options->decompose_func = funcs.decompose_func;
+      options->compose_func = funcs.compose_func;
     }
   } GRN_OPTION_VALUES_EACH_END();
 

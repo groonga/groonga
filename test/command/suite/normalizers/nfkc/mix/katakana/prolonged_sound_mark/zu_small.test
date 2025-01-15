@@ -1,4 +1,4 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
 normalize \
   'NormalizerNFKC("unify_katakana_v_sounds", true, \
                   "unify_katakana_gu_small_sounds", true, \
@@ -10,7 +10,8 @@ normalize \
                   "unify_hyphen_and_prolonged_sound_mark", true, \
                   "unify_kana_hyphen", true, \
                   "unify_katakana_trailing_o", true, \
-                  "unify_middle_dot", true)' \
+                  "unify_middle_dot", true, \
+                  "version", "NFKC_VERSION")' \
   "ズァーズィーズーズェーズォー" \
   WITH_CHECKS|WITH_TYPES
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

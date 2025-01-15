@@ -1,0 +1,24 @@
+normalize   'NormalizerNFKC("version", "16.0.0")'   "㋿"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "令和",
+    "types": [
+      "kanji",
+      "kanji",
+      "null"
+    ],
+    "checks": [
+      3,
+      0,
+      0,
+      -1,
+      0,
+      0
+    ]
+  }
+]

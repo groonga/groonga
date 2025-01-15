@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,12 @@ typedef grn_char_type (*grn_nfkc_char_type_func)(const unsigned char *utf8);
 typedef const char *(*grn_nfkc_decompose_func)(const unsigned char *utf8);
 typedef const char *(*grn_nfkc_compose_func)(const unsigned char *prefix_utf8,
                                              const unsigned char *suffix_utf8);
+
+typedef struct {
+  grn_nfkc_char_type_func char_type_func;
+  grn_nfkc_decompose_func decompose_func;
+  grn_nfkc_compose_func compose_func;
+} grn_nfkc_funcs;
 
 typedef struct {
   grn_nfkc_char_type_func char_type_func;
@@ -97,6 +103,11 @@ const char *grn_nfkc150_decompose(const unsigned char *utf8);
 const char *grn_nfkc150_compose(const unsigned char *prefix_utf8,
                                 const unsigned char *suffix_utf8);
 
+GRN_API grn_char_type grn_nfkc160_char_type(const unsigned char *utf8);
+const char *grn_nfkc160_decompose(const unsigned char *utf8);
+const char *grn_nfkc160_compose(const unsigned char *prefix_utf8,
+                                const unsigned char *suffix_utf8);
+
 void grn_nfkc_normalize_options_init(grn_ctx *ctx,
                                      grn_nfkc_normalize_options *options,
                                      grn_nfkc_char_type_func char_type_func,
@@ -110,9 +121,18 @@ void grn_nfkc130_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 void grn_nfkc150_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
+void grn_nfkc160_normalize_options_init(grn_ctx *ctx,
+                                        grn_nfkc_normalize_options *options);
+grn_nfkc_funcs
+grn_nfkc_version_option_process(grn_ctx *ctx,
+                                grn_obj *raw_options,
+                                unsigned int i,
+                                grn_raw_string *name_raw,
+                                const char *tag);
 grn_rc grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options,
-                                        grn_obj *raw_options);
+                                        grn_obj *raw_options,
+                                        const char *tag);
 void grn_nfkc_normalize_options_fin(grn_ctx *ctx,
                                     grn_nfkc_normalize_options *options);
 

@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_kana_hyphen", true,                   "report_source_offset", true)'   "ナ-ニ-ヌ-ネ-ノ-"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana_hyphen", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "ナ-ニ-ヌ-ネ-ノ-"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,

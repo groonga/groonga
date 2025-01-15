@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_middle_dot", true,                   "version", "NFKC_VERSION")'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
 [
   [
     0,

@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_to_katakana", true,                   "report_source_offset", true)'   "ざじずぜぞ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_to_katakana", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "ざじずぜぞ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,

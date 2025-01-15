@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -4605,19 +4605,20 @@ nfkc100_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc100]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc100] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc100_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -4668,19 +4669,20 @@ nfkc121_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc121]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc121] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc121_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -4731,19 +4733,20 @@ nfkc130_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc130]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc130] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc130_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -4794,19 +4797,20 @@ nfkc150_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc150]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc150] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc150_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -4841,6 +4845,70 @@ nfkc150_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   } else {
     grn_nfkc150_normalize_options_init(ctx, &options_raw);
+    options = &options_raw;
+  }
+
+  grn_nfkc_normalize(ctx, string, options);
+  if (!table) {
+    grn_nfkc_normalize_options_fin(ctx, options);
+  }
+  return NULL;
+}
+
+static void *
+nfkc_open_options(grn_ctx *ctx,
+                  grn_obj *normalizer,
+                  grn_obj *raw_options,
+                  void *user_data)
+{
+  const char *tag = "[normalizer][nfkc]";
+  grn_nfkc_normalize_options *options;
+
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  grn_nfkc160_normalize_options_init(ctx, options);
+
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
+
+  return options;
+}
+
+static void
+nfkc_close_options(grn_ctx *ctx, void *data)
+{
+  grn_nfkc_normalize_options *options = data;
+  grn_nfkc_normalize_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static grn_obj *
+nfkc_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *string = args[0];
+  grn_obj *table;
+  grn_nfkc_normalize_options *options;
+  grn_nfkc_normalize_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  nfkc_open_options,
+                                                  nfkc_close_options,
+                                                  NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    grn_nfkc160_normalize_options_init(ctx, &options_raw);
     options = &options_raw;
   }
 
@@ -5186,68 +5254,6 @@ table_options_close(grn_ctx *ctx, void *data)
   GRN_FREE(options);
 }
 
-static grn_get_char_type_func
-unicode_version_option_process(grn_ctx *ctx,
-                               grn_obj *raw_options,
-                               unsigned int i,
-                               grn_raw_string *name_raw,
-                               const char *tag)
-{
-  const char *version;
-  grn_id domain;
-  unsigned int version_length =
-    grn_vector_get_element(ctx, raw_options, i, &version, NULL, &domain);
-  if (!grn_type_id_is_text_family(ctx, domain)) {
-    grn_obj value;
-    GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
-    GRN_TEXT_SET(ctx, &value, version, version_length);
-    grn_obj inspected;
-    grn_inspect(ctx, &inspected, &value);
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must be a text: <%.*s>",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value,
-        (int)GRN_TEXT_LEN(&inspected),
-        GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    GRN_OBJ_FIN(ctx, &value);
-    return NULL;
-  }
-  if (version_length == 0) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must not be empty",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value);
-    return NULL;
-  }
-  grn_raw_string version_raw;
-  version_raw.value = version;
-  version_raw.length = version_length;
-  if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
-    return grn_nfkc_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
-    return grn_nfkc100_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
-    return grn_nfkc121_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
-    return grn_nfkc130_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "15.0.0")) {
-    return grn_nfkc150_char_type;
-  } else {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", "
-        "\"13.0.0\" or \"15.0.0\": <%.*s>",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value,
-        (int)(version_raw.length),
-        version_raw.value);
-    return NULL;
-  }
-}
-
 static void *
 table_options_open(grn_ctx *ctx,
                    grn_obj *normalizer,
@@ -5374,11 +5380,12 @@ table_options_open(grn_ctx *ctx,
       }
       GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
-      options->get_char_type =
-        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
+      grn_nfkc_funcs funcs =
+        grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      options->get_char_type = funcs.char_type_func;
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
       options->report_source_offset =
         grn_vector_get_element_bool(ctx,
@@ -5709,7 +5716,7 @@ table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 typedef struct {
   bool remove_tag;
   bool expand_character_reference;
-  grn_get_char_type_func get_char_type;
+  grn_nfkc_char_type_func get_char_type;
   bool report_source_offset;
 } html_options;
 
@@ -5769,11 +5776,12 @@ html_options_open(grn_ctx *ctx,
                                     i,
                                     options->expand_character_reference);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
-      options->get_char_type =
-        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
+      grn_nfkc_funcs funcs =
+        grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      options->get_char_type = funcs.char_type_func;
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
       options->report_source_offset =
         grn_vector_get_element_bool(ctx,
@@ -6128,6 +6136,7 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   const char *normalizer_nfkc121_name = "NormalizerNFKC121";
   const char *normalizer_nfkc130_name = "NormalizerNFKC130";
   const char *normalizer_nfkc150_name = "NormalizerNFKC150";
+  const char *normalizer_nfkc_name = "NormalizerNFKC";
 
   grn_normalizer_register(ctx,
                           GRN_NORMALIZER_AUTO_NAME,
@@ -6167,12 +6176,14 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
                           NULL,
                           nfkc150_next,
                           NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc_name, -1, NULL, nfkc_next, NULL);
 #else  /* GRN_WITH_NFKC */
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc100_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc121_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc130_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc150_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc_name, -1, NULL, NULL, NULL);
 #endif /* GRN_WITH_NFKC */
 
   grn_normalizer_register(ctx, "NormalizerTable", -1, NULL, table_next, NULL);

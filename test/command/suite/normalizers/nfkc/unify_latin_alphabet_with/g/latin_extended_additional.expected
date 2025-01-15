@@ -1,2 +1,2 @@
-normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "Ḡḡ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true,                   "version", "NFKC_VERSION")'   "Ḡḡ"   WITH_TYPES
 [[0,0.0,0.0],{"normalized":"gg","types":["alpha","alpha","null"],"checks":[]}]

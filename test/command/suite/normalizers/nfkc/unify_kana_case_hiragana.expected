@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_kana_case", true)'   "ぁあぃいぅうぇえぉおっつゃやゅゆょよゎわゕかゖけ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana_case", true,                   "version", "NFKC_VERSION")'   "ぁあぃいぅうぇえぉおっつゃやゅゆょよゎわゕかゖけ"   WITH_TYPES
 [
   [
     0,

@@ -1,7 +1,8 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
 normalize \
   'NormalizerNFKC("remove_symbol", true, \
-                  "unify_middle_dot", true)' \
+                  "unify_middle_dot", true, \
+                  "version", "NFKC_VERSION")' \
   "This ·ᐧ•∙ is ⋅⸱ middle ・･ dots" \
   WITH_TYPES
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

@@ -1,7 +1,8 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
 normalize \
   'NormalizerNFKC("unify_to_romaji", true, \
-                  "report_source_offset", true)' \
+                  "report_source_offset", true, \
+                  "version", "NFKC_VERSION")' \
   "ザジズゼゾジャジュジョ" \
   WITH_CHECKS|WITH_TYPES
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

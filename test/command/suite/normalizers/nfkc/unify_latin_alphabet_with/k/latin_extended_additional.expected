@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ḰḱḲḳḴḵ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true,                   "version", "NFKC_VERSION")'   "ḰḱḲḳḴḵ"   WITH_TYPES
 [
   [
     0,

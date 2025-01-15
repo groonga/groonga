@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("report_source_offset", true)'   "( あ  い　う　　えお )"   REMOVE_BLANK|WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("report_source_offset", true,                   "version", "NFKC_VERSION")'   "( あ  い　う　　えお )"   REMOVE_BLANK|WITH_CHECKS|WITH_TYPES
 [
   [
     0,

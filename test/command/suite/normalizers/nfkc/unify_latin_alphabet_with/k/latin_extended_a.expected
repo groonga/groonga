@@ -1,2 +1,2 @@
-normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "Ķķ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_latin_alphabet_with", true,                   "version", "NFKC_VERSION")'   "Ķķ"   WITH_TYPES
 [[0,0.0,0.0],{"normalized":"kk","types":["alpha","alpha","null"],"checks":[]}]

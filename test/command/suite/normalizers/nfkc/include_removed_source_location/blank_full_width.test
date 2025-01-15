@@ -1,7 +1,8 @@
-#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
 normalize \
   'NormalizerNFKC("include_removed_source_location", false, \
-                  "report_source_offset", true)' \
+                  "report_source_offset", true, \
+                  "version", "NFKC_VERSION")' \
   "(　あ　　いうえお　)" \
   REMOVE_BLANK|WITH_CHECKS
-#@remove-substitution /NormalizerNFKC(\d*)/
+#@remove-substitution /"version",\s"(?:.+?)"/

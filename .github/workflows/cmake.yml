@@ -218,7 +218,7 @@ jobs:
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
-          NFKC: "121"
+          NFKC: "12.1.0"
       - name: "Test: stdio: NFKC130"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
@@ -229,7 +229,7 @@ jobs:
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
-          NFKC: "130"
+          NFKC: "13.0.0"
       - name: "Test: stdio: NFKC150"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
@@ -240,7 +240,18 @@ jobs:
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
-          NFKC: "150"
+          NFKC: "15.0.0"
+      - name: "Test: stdio: NFKC: 16.0.0"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
+        env:
+          NFKC: "16.0.0"
       - name: "Test: stdio: n_workers"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
