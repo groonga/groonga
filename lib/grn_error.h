@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2013-2016  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -402,6 +402,12 @@ grn_error_set(grn_ctx *ctx,
 
 #else /* WIN32 */
 
+#  ifdef ESHUTDOWN
+#    define GRN_ESHUTDOWN ESHUTDOWN
+#  else                        /* e.g. __wasi__ */
+#    define GRN_ESHUTDOWN 9999 /* unused errno value */
+#  endif
+
 #  define SERR(...)                                                            \
     do {                                                                       \
       grn_rc rc;                                                               \
@@ -523,7 +529,7 @@ grn_error_set(grn_ctx *ctx,
       case EPROTONOSUPPORT:                                                    \
         rc = GRN_OPERATION_NOT_SUPPORTED;                                      \
         break;                                                                 \
-      case ESHUTDOWN:                                                          \
+      case GRN_ESHUTDOWN:                                                      \
         rc = GRN_SOCKET_IS_ALREADY_SHUTDOWNED;                                 \
         break;                                                                 \
       case ETIMEDOUT:                                                          \
