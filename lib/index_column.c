@@ -1233,7 +1233,6 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
     grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
   }
   GRN_HASH_EACH_END(ctx, cursor);
-
   grn_hash_close(ctx, data->posting_lists);
 }
 
