@@ -16895,72 +16895,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/* grn_ii_builder_append_token appends a token. */
-static grn_rc
-grn_ii_builder_append_token(grn_ctx *ctx,
-                            grn::ii::Builder *builder,
-                            grn_id rid,
-                            uint32_t sid,
-                            uint32_t weight,
-                            grn_id tid,
-                            uint32_t pos)
-{
-  grn_rc rc;
-  uint32_t ii_flags = builder->ii_->header.common->flags;
-  grn_ii_builder_term *term;
-  rc = builder->get_term(tid, &term);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  if (rid != term->rid || sid != term->sid) {
-    uint64_t rsid;
-    if (term->rid != GRN_ID_NIL) {
-      if (ii_flags & GRN_OBJ_WITH_POSITION) {
-        /* Append the end of positions. */
-        rc = grn_ii_builder_term_append(ctx, term, 0);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-        builder->n_++;
-      } else {
-        /* Append a frequency if positions are not available. */
-        rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-        builder->n_++;
-      }
-    }
-    rsid = ((uint64_t)(rid - term->rid) << builder->sid_bits_) | (sid - 1);
-    rc = grn_ii_builder_term_append(ctx, term, rsid);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    builder->n_++;
-    if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
-      rc = grn_ii_builder_term_append(ctx, term, weight);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      builder->n_++;
-    }
-    term->rid = rid;
-    term->sid = sid;
-    term->pos_or_freq = 0;
-  }
-  if (ii_flags & GRN_OBJ_WITH_POSITION) {
-    rc = grn_ii_builder_term_append(ctx, term, pos - term->pos_or_freq);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    builder->n_++;
-    term->pos_or_freq = pos;
-  } else {
-    term->pos_or_freq++;
-  }
-  return GRN_SUCCESS;
-}
-
 static void
 grn_ii_builder_start_value(grn_ctx *ctx,
                            grn::ii::Builder *builder,
@@ -17039,13 +16973,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
       return ctx->rc;
     }
     uint32_t pos = builder->pos + i;
-    grn_rc rc = grn_ii_builder_append_token(ctx,
-                                            builder,
-                                            rid,
-                                            sid,
-                                            (uint32_t)weight,
-                                            tid,
-                                            pos);
+    grn_rc rc = builder->append_token(rid, sid, (uint32_t)weight, tid, pos);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -17151,8 +17079,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       if (tid != GRN_ID_NIL) {
         grn_rc rc;
         pos = builder->pos;
-        rc =
-          grn_ii_builder_append_token(ctx, builder, rid, sid, weight, tid, pos);
+        rc = builder->append_token(rid, sid, weight, tid, pos);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
@@ -17179,13 +17106,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
         if (tid != GRN_ID_NIL) {
           grn_rc rc;
           pos = builder->pos + cursor->pos;
-          rc = grn_ii_builder_append_token(ctx,
-                                           builder,
-                                           rid,
-                                           sid,
-                                           weight,
-                                           tid,
-                                           pos);
+          rc = builder->append_token(rid, sid, weight, tid, pos);
           if (rc != GRN_SUCCESS) {
             break;
           }
