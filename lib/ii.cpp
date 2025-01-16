@@ -16218,7 +16218,7 @@ namespace grn::ii {
       get_key_optimizable = false;
 
       n_ = 0;
-      rid = GRN_ID_NIL;
+      rid_ = GRN_ID_NIL;
       sid = 0;
       pos = 0;
 
@@ -16746,7 +16746,7 @@ namespace grn::ii {
     bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
     uint32_t n_;  /* Number of integers appended to the current block */
-    grn_id rid;   /* Record ID */
+    grn_id rid_;  /* Record ID */
     uint32_t sid; /* Section ID */
     uint32_t pos; /* Position */
 
@@ -16828,7 +16828,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  builder->rid = GRN_ID_NIL;
+  builder->rid_ = GRN_ID_NIL;
   builder->n_terms_ = 0;
   builder->n_ = 0;
   return GRN_SUCCESS;
@@ -16906,8 +16906,8 @@ grn_ii_builder_start_value(grn_ctx *ctx,
                            grn_id rid,
                            uint32_t sid)
 {
-  if (rid != builder->rid) {
-    builder->rid = rid;
+  if (rid != builder->rid_) {
+    builder->rid_ = rid;
     builder->sid = sid;
     builder->pos = 1;
   } else if (sid != builder->sid) {
