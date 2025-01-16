@@ -16684,6 +16684,47 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Registers a block.
+    grn_rc
+    register_block()
+    {
+      uint64_t file_offset = grn_lseek(fd_, 0, SEEK_CUR);
+      if (file_offset == static_cast<uint64_t>(-1)) {
+        auto ctx = ctx_;
+        SERR("failed to get file offset");
+        return ctx->rc;
+      }
+      if (n_blocks_ >= blocks_size_) {
+        uint32_t new_blocks_size = 1;
+        while (new_blocks_size <= n_blocks_) {
+          new_blocks_size *= 2;
+        }
+        auto ctx = ctx_;
+        auto n_bytes = new_blocks_size * sizeof(grn_ii_builder_block);
+        auto new_blocks = reinterpret_cast<grn_ii_builder_block *>(
+          GRN_REALLOC(blocks_, n_bytes));
+        if (!new_blocks) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "failed to allocate memory for block: n_bytes = %" GRN_FMT_SIZE,
+              n_bytes);
+          return ctx->rc;
+        }
+        blocks_ = new_blocks;
+        blocks_size_ = new_blocks_size;
+      }
+      auto block = &(blocks_[n_blocks_]);
+      grn_ii_builder_block_init(ctx_, block);
+      if (n_blocks_ == 0) {
+        block->offset = 0;
+      } else {
+        auto prev_block = &(blocks_[n_blocks_ - 1]);
+        block->offset = prev_block->offset + prev_block->rest;
+      }
+      block->rest = static_cast<uint32_t>(file_offset - block->offset);
+      n_blocks_++;
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16734,48 +16775,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/* grn_ii_builder_register_block registers a block. */
-static grn_rc
-grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_ii_builder_block *block;
-  uint64_t file_offset = grn_lseek(builder->fd_, 0, SEEK_CUR);
-  if (file_offset == (uint64_t)-1) {
-    SERR("failed to get file offset");
-    return ctx->rc;
-  }
-  if (builder->n_blocks_ >= builder->blocks_size_) {
-    size_t n_bytes;
-    uint32_t blocks_size = 1;
-    grn_ii_builder_block *blocks;
-    while (blocks_size <= builder->n_blocks_) {
-      blocks_size *= 2;
-    }
-    n_bytes = blocks_size * sizeof(grn_ii_builder_block);
-    blocks = (grn_ii_builder_block *)GRN_REALLOC(builder->blocks_, n_bytes);
-    if (!blocks) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to allocate memory for block: n_bytes = %" GRN_FMT_SIZE,
-          n_bytes);
-      return ctx->rc;
-    }
-    builder->blocks_ = blocks;
-    builder->blocks_size_ = blocks_size;
-  }
-  block = &builder->blocks_[builder->n_blocks_];
-  grn_ii_builder_block_init(ctx, block);
-  if (!builder->n_blocks_) {
-    block->offset = 0;
-  } else {
-    grn_ii_builder_block *prev_block =
-      &builder->blocks_[builder->n_blocks_ - 1];
-    block->offset = prev_block->offset + prev_block->rest;
-  }
-  block->rest = (uint32_t)(file_offset - block->offset);
-  builder->n_blocks_++;
-  return GRN_SUCCESS;
-}
-
 /* grn_ii_builder_flush_block flushes a block to a temporary file. */
 static grn_rc
 grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
@@ -16821,7 +16820,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
   }
 
   /* Register a block and clear the current data. */
-  rc = grn_ii_builder_register_block(ctx, builder);
+  rc = builder->register_block();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
