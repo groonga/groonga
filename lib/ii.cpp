@@ -16234,7 +16234,7 @@ namespace grn::ii {
 
       blocks = nullptr;
       n_blocks_ = 0;
-      blocks_size = 0;
+      blocks_size_ = 0;
 
       grn_ii_builder_buffer_init(ctx, &buf, ii);
       grn_ii_builder_chunk_init(ctx, &chunk, ii);
@@ -16722,7 +16722,7 @@ namespace grn::ii {
 
     grn_ii_builder_block *blocks; /* Blocks (to be freed) */
     uint32_t n_blocks_;           /* Number of blocks */
-    uint32_t blocks_size;         /* Buffer size of blocks */
+    uint32_t blocks_size_;        /* Buffer size of blocks */
 
     grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
     grn_ii_builder_chunk chunk; /* Chunk (to be finalized) */
@@ -16744,7 +16744,7 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
     SERR("failed to get file offset");
     return ctx->rc;
   }
-  if (builder->n_blocks_ >= builder->blocks_size) {
+  if (builder->n_blocks_ >= builder->blocks_size_) {
     size_t n_bytes;
     uint32_t blocks_size = 1;
     grn_ii_builder_block *blocks;
@@ -16760,7 +16760,7 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
       return ctx->rc;
     }
     builder->blocks = blocks;
-    builder->blocks_size = blocks_size;
+    builder->blocks_size_ = blocks_size;
   }
   block = &builder->blocks[builder->n_blocks_];
   grn_ii_builder_block_init(ctx, block);
