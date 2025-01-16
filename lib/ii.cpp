@@ -16209,7 +16209,7 @@ namespace grn::ii {
       srcs = nullptr;
       src_token_columns = nullptr;
       n_srcs = 0;
-      sid_bits = 0;
+      sid_bits_ = 0;
       sid_mask = 0;
 
       lexicon_ = nullptr;
@@ -16793,7 +16793,7 @@ namespace grn::ii {
     grn_obj **srcs;              /* Source columns (to be freed) */
     grn_obj **src_token_columns; /* Source token columns (to be freed) */
     uint32_t n_srcs;             /* Number of source columns */
-    uint8_t sid_bits;            /* Number of bits for section ID */
+    uint8_t sid_bits_;           /* Number of bits for section ID */
     uint64_t sid_mask;           /* Mask bits for section ID */
 
     grn_obj *lexicon_;        /* Block lexicon (to be closed) */
@@ -16867,7 +16867,7 @@ grn_ii_builder_append_token(grn_ctx *ctx,
         builder->n_++;
       }
     }
-    rsid = ((uint64_t)(rid - term->rid) << builder->sid_bits) | (sid - 1);
+    rsid = ((uint64_t)(rid - term->rid) << builder->sid_bits_) | (sid - 1);
     rc = grn_ii_builder_term_append(ctx, term, rsid);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -17456,16 +17456,16 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
     }
     GRN_OBJ_FIN(ctx, &obj);
     grn_table_cursor_close(ctx, cursor);
-    while (((uint32_t)1 << builder->sid_bits) < max_elems) {
-      builder->sid_bits++;
+    while (((uint32_t)1 << builder->sid_bits_) < max_elems) {
+      builder->sid_bits_++;
     }
   }
-  if (builder->sid_bits == 0) {
-    while (((uint32_t)1 << builder->sid_bits) < builder->n_srcs) {
-      builder->sid_bits++;
+  if (builder->sid_bits_ == 0) {
+    while (((uint32_t)1 << builder->sid_bits_) < builder->n_srcs) {
+      builder->sid_bits_++;
     }
   }
-  builder->sid_mask = ((uint64_t)1 << builder->sid_bits) - 1;
+  builder->sid_mask = ((uint64_t)1 << builder->sid_bits_) - 1;
   return GRN_SUCCESS;
 }
 
@@ -17862,7 +17862,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     }
 
     /* Read record ID. */
-    gap = (uint32_t)(value >> builder->sid_bits); /* In-block gap */
+    gap = (uint32_t)(value >> builder->sid_bits_); /* In-block gap */
     if (gap) {
       if (chunk->n >= builder->options_.chunk_threshold) {
         const double threshold_scale = 1 + log(builder->df + 1);
