@@ -16488,7 +16488,7 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
-    /* Flushes a term and clears it */
+    // Flushes a term and clears it
     grn_rc
     flush_term(grn_ii_builder_term *term)
     {
@@ -16657,6 +16657,33 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Creates a temporary file and allocates memory for buffered
+    // output.
+    grn_rc
+    create_file()
+    {
+      auto ctx = ctx_;
+      grn_snprintf(path_,
+                   PATH_MAX,
+                   PATH_MAX,
+                   "%sXXXXXX",
+                   grn_io_path(ii_->seg));
+      fd_ = grn_mkstemp(path_);
+      if (fd_ == -1) {
+        SERR("failed to create a temporary file: path = \"%s\"", path_);
+        return ctx->rc;
+      }
+      file_buf_ =
+        reinterpret_cast<uint8_t *>(GRN_MALLOC(options_.file_buf_size));
+      if (!file_buf_) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "failed to allocate memory for buffered output: size = %u",
+            options_.file_buf_size);
+        return ctx->rc;
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16706,33 +16733,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/*
- * grn_ii_builder_create_file creates a temporary file and allocates memory for
- * buffered output.
- */
-static grn_rc
-grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_snprintf(builder->path_,
-               PATH_MAX,
-               PATH_MAX,
-               "%sXXXXXX",
-               grn_io_path(builder->ii_->seg));
-  builder->fd_ = grn_mkstemp(builder->path_);
-  if (builder->fd_ == -1) {
-    SERR("failed to create a temporary file: path = \"%s\"", builder->path_);
-    return ctx->rc;
-  }
-  builder->file_buf_ = (uint8_t *)GRN_MALLOC(builder->options_.file_buf_size);
-  if (!builder->file_buf_) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "failed to allocate memory for buffered output: size = %u",
-        builder->options_.file_buf_size);
-    return ctx->rc;
-  }
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_register_block registers a block. */
 static grn_rc
@@ -16787,7 +16787,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     return GRN_SUCCESS;
   }
   if (builder->fd_ == -1) {
-    rc = grn_ii_builder_create_file(ctx, builder);
+    rc = builder->create_file();
     if (rc != GRN_SUCCESS) {
       return rc;
     }
