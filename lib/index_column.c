@@ -606,8 +606,14 @@ grn_index_column_diff_posting_list_flush(
     if (with_position) {
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
+          if (posting == NULL) {
+            return;
+          }
           posting_list->need_cursor_next = false;
           GRN_UINT32_PUT(ctx, remains, posting->rid);
           if (with_section) {
@@ -620,6 +626,9 @@ grn_index_column_diff_posting_list_flush(
     } else {
       grn_posting *posting;
       while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         GRN_UINT32_PUT(ctx, remains, posting->rid);
         if (with_section) {
           GRN_UINT32_PUT(ctx, remains, posting->sid);
