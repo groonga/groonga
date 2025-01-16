@@ -4,8 +4,8 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 column_create Users secret COLUMN_SCALAR ShortText
 
-# The 'secret' column stores large strings over 65536B, whicha are `SEQUENTIAL`
-# elements and stored in `SEQUENTIAL` segments. These segments will be
+# The 'secret' column stores large strings over 65536B, which are `SEQUENTIAL`
+# elements and are stored in `SEQUENTIAL` segments. These segments will be
 # defragmentation targets.
 #@disable-logging
 #@generate-series 1 4 Users '{"_key" => "user-no-#{i}", "secret" => "#{"x" * (2 ** 20)}"}'
