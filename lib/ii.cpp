@@ -16233,7 +16233,7 @@ namespace grn::ii {
       file_buf_offset_ = 0;
 
       blocks = nullptr;
-      n_blocks = 0;
+      n_blocks_ = 0;
       blocks_size = 0;
 
       grn_ii_builder_buffer_init(ctx, &buf, ii);
@@ -16260,7 +16260,7 @@ namespace grn::ii {
       grn_ii_builder_buffer_fin(ctx_, &buf);
       if (blocks) {
         uint32_t i;
-        for (i = 0; i < n_blocks; i++) {
+        for (i = 0; i < n_blocks_; i++) {
           grn_ii_builder_block_fin(ctx_, &(blocks[i]));
         }
         auto ctx = ctx_;
@@ -16721,7 +16721,7 @@ namespace grn::ii {
     uint32_t file_buf_offset_; /* File buffer write offset */
 
     grn_ii_builder_block *blocks; /* Blocks (to be freed) */
-    uint32_t n_blocks;            /* Number of blocks */
+    uint32_t n_blocks_;           /* Number of blocks */
     uint32_t blocks_size;         /* Buffer size of blocks */
 
     grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
@@ -16744,11 +16744,11 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
     SERR("failed to get file offset");
     return ctx->rc;
   }
-  if (builder->n_blocks >= builder->blocks_size) {
+  if (builder->n_blocks_ >= builder->blocks_size) {
     size_t n_bytes;
     uint32_t blocks_size = 1;
     grn_ii_builder_block *blocks;
-    while (blocks_size <= builder->n_blocks) {
+    while (blocks_size <= builder->n_blocks_) {
       blocks_size *= 2;
     }
     n_bytes = blocks_size * sizeof(grn_ii_builder_block);
@@ -16762,16 +16762,16 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
     builder->blocks = blocks;
     builder->blocks_size = blocks_size;
   }
-  block = &builder->blocks[builder->n_blocks];
+  block = &builder->blocks[builder->n_blocks_];
   grn_ii_builder_block_init(ctx, block);
-  if (!builder->n_blocks) {
+  if (!builder->n_blocks_) {
     block->offset = 0;
   } else {
-    grn_ii_builder_block *prev_block = &builder->blocks[builder->n_blocks - 1];
+    grn_ii_builder_block *prev_block = &builder->blocks[builder->n_blocks_ - 1];
     block->offset = prev_block->offset + prev_block->rest;
   }
   block->rest = (uint32_t)(file_offset - block->offset);
-  builder->n_blocks++;
+  builder->n_blocks_++;
   return GRN_SUCCESS;
 }
 
@@ -18110,7 +18110,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
   grn_rc rc;
   grn_table_cursor *cursor;
 
-  for (i = 0; i < builder->n_blocks; i++) {
+  for (i = 0; i < builder->n_blocks_; i++) {
     uint64_t value;
     rc = grn_ii_builder_read_from_block(ctx, builder, i, &value);
     if (rc != GRN_SUCCESS) {
@@ -18136,7 +18136,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     builder->chunk.tid = tid;
     builder->chunk.rid = GRN_ID_NIL;
     builder->df = 0;
-    for (i = 0; i < builder->n_blocks; i++) {
+    for (i = 0; i < builder->n_blocks_; i++) {
       if (tid == builder->blocks[i].tid) {
         rc = grn_ii_builder_read_to_chunk(ctx, builder, i);
         if (rc != GRN_SUCCESS) {
