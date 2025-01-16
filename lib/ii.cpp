@@ -16725,6 +16725,62 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Flushes a block to a temporary file.
+    grn_rc
+    flush_block()
+    {
+      if (n_ == 0) {
+        /* Do nothing if there are no output data. */
+        return GRN_SUCCESS;
+      }
+      if (fd_ == -1) {
+        auto rc = create_file();
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+
+      /* Flush terms into a temporary file. */
+      auto cursor = grn_table_cursor_open(ctx_,
+                                          lexicon_,
+                                          nullptr,
+                                          0,
+                                          nullptr,
+                                          0,
+                                          0,
+                                          -1,
+                                          GRN_CURSOR_BY_KEY);
+      for (;;) {
+        grn_id tid = grn_table_cursor_next(ctx_, cursor);
+        if (tid == GRN_ID_NIL) {
+          break;
+        }
+        auto rc = flush_term(&(terms_[tid - 1]));
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      grn_table_cursor_close(ctx_, cursor);
+      auto rc = flush_file_buf();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+
+      /* Register a block and clear the current data. */
+      rc = register_block();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      rc = grn_table_truncate(ctx_, lexicon_);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      rid_ = GRN_ID_NIL;
+      n_terms_ = 0;
+      n_ = 0;
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16774,65 +16830,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_flush_block flushes a block to a temporary file. */
-static grn_rc
-grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_rc rc;
-  grn_table_cursor *cursor;
-
-  if (!builder->n_) {
-    /* Do nothing if there are no output data. */
-    return GRN_SUCCESS;
-  }
-  if (builder->fd_ == -1) {
-    rc = builder->create_file();
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-
-  /* Flush terms into a temporary file. */
-  cursor = grn_table_cursor_open(ctx,
-                                 builder->lexicon_,
-                                 NULL,
-                                 0,
-                                 NULL,
-                                 0,
-                                 0,
-                                 -1,
-                                 GRN_CURSOR_BY_KEY);
-  for (;;) {
-    grn_id tid = grn_table_cursor_next(ctx, cursor);
-    if (tid == GRN_ID_NIL) {
-      break;
-    }
-    rc = builder->flush_term(&builder->terms_[tid - 1]);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  grn_table_cursor_close(ctx, cursor);
-  rc = builder->flush_file_buf();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  /* Register a block and clear the current data. */
-  rc = builder->register_block();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = grn_table_truncate(ctx, builder->lexicon_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  builder->rid_ = GRN_ID_NIL;
-  builder->n_terms_ = 0;
-  builder->n_ = 0;
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_append_token appends a token. */
 static grn_rc
@@ -17382,7 +17379,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
       }
     }
     if (rc == GRN_SUCCESS && builder->n_ >= builder->options_.block_threshold) {
-      rc = grn_ii_builder_flush_block(ctx, builder);
+      rc = builder->flush_block();
     }
     if (builder->progress_needed) {
       builder->progress.value.index.n_processed_records++;
@@ -17390,7 +17387,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
     }
   }
   if (rc == GRN_SUCCESS) {
-    rc = grn_ii_builder_flush_block(ctx, builder);
+    rc = builder->flush_block();
   }
   for (i = 0; i < builder->n_srcs; i++) {
     GRN_OBJ_FIN(ctx, &objs[i]);
