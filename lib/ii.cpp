@@ -16488,6 +16488,175 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    /* Flushes a term and clears it */
+    grn_rc
+    flush_term(grn_ii_builder_term *term)
+    {
+      /* Append sentinels. */
+      if (term->rid != GRN_ID_NIL) {
+        grn_rc rc;
+        if (ii_->header.common->flags & GRN_OBJ_WITH_POSITION) {
+
+          rc = grn_ii_builder_term_append(ctx_, term, 0);
+        } else {
+          rc = grn_ii_builder_term_append(ctx_, term, term->pos_or_freq);
+        }
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      {
+        auto rc = grn_ii_builder_term_append(ctx_, term, 0);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+
+      {
+        /* Put the global term ID. */
+        int key_size;
+        char key[GRN_TABLE_MAX_KEY_SIZE];
+        uint8_t *p;
+        uint32_t rest, value;
+        grn_id local_tid = term - terms_ + 1;
+        grn_id global_tid = GRN_ID_NIL;
+        key_size = grn_table_get_key(ctx_,
+                                     lexicon_,
+                                     local_tid,
+                                     key,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+        if (!key_size) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_UNKNOWN_ERROR, "failed to get key: tid = %u", local_tid);
+          }
+          return ctx_->rc;
+        }
+        /* Don't normalize key. */
+        switch (ii_->lexicon->header.type) {
+        case GRN_TABLE_PAT_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid = grn_pat_add(ctx_,
+                                     reinterpret_cast<grn_pat *>(ii_->lexicon),
+                                     key,
+                                     key_size,
+                                     nullptr,
+                                     nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        case GRN_TABLE_DAT_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid = grn_dat_add(ctx_,
+                                     reinterpret_cast<grn_dat *>(ii_->lexicon),
+                                     key,
+                                     key_size,
+                                     nullptr,
+                                     nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        case GRN_TABLE_HASH_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid =
+              grn_hash_add(ctx_,
+                           reinterpret_cast<grn_hash *>(ii_->lexicon),
+                           key,
+                           key_size,
+                           nullptr,
+                           nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        default:
+          global_tid = GRN_ID_NIL;
+          break;
+        }
+        if (global_tid == GRN_ID_NIL) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_UNKNOWN_ERROR,
+                "failed to get global term ID: tid = %u, key = \"%.*s\"",
+                local_tid,
+                key_size,
+                key);
+          }
+          return ctx_->rc;
+        }
+
+        rest = options_.file_buf_size - file_buf_offset_;
+        if (rest < 10) {
+          auto rc = flush_file_buf();
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+        value = global_tid;
+        p = file_buf_ + file_buf_offset_;
+        if (value < 1U << 5) {
+          p[0] = static_cast<uint8_t>(value);
+          file_buf_offset_++;
+        } else if (value < 1U << 13) {
+          p[0] = static_cast<uint8_t>((value & 0x1f) | (1 << 5));
+          p[1] = static_cast<uint8_t>(value >> 5);
+          file_buf_offset_ += 2;
+        } else {
+          uint8_t i, n;
+          if (value < 1U << 21) {
+            n = 3;
+          } else if (value < 1U << 29) {
+            n = 4;
+          } else {
+            n = 5;
+          }
+          p[0] = static_cast<uint8_t>(value & 0x1f) | ((n - 1) << 5);
+          value >>= 5;
+          for (i = 1; i < n; i++) {
+            p[i] = static_cast<uint8_t>(value);
+            value >>= 8;
+          }
+          file_buf_offset_ += n;
+        }
+      }
+
+      /* Flush a term buffer. */
+      auto term_buf = grn_ii_builder_term_get_buf(term);
+      if (term->offset > options_.file_buf_size) {
+        ssize_t size;
+        auto rc = flush_file_buf();
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        size = grn_write(fd_, term_buf, term->offset);
+        if (static_cast<uint64_t>(size) != term->offset) {
+          auto ctx = ctx_;
+          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
+               term->offset,
+               static_cast<int64_t>(size));
+        }
+      } else {
+        uint32_t rest = options_.file_buf_size - file_buf_offset_;
+        if (term->offset <= rest) {
+          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, term->offset);
+          file_buf_offset_ += term->offset;
+        } else {
+          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, rest);
+          file_buf_offset_ += rest;
+          auto rc = flush_file_buf();
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          file_buf_offset_ = term->offset - rest;
+          grn_memcpy(file_buf_, term_buf + rest, file_buf_offset_);
+        }
+      }
+      grn_ii_builder_term_reinit(ctx_, term);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16537,179 +16706,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_flush_term flushes a term and clears it */
-static grn_rc
-grn_ii_builder_flush_term(grn_ctx *ctx,
-                          grn::ii::Builder *builder,
-                          grn_ii_builder_term *term)
-{
-  grn_rc rc;
-  uint8_t *term_buf;
-
-  /* Append sentinels. */
-  if (term->rid != GRN_ID_NIL) {
-    if (builder->ii_->header.common->flags & GRN_OBJ_WITH_POSITION) {
-      rc = grn_ii_builder_term_append(ctx, term, 0);
-    } else {
-      rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
-    }
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  rc = grn_ii_builder_term_append(ctx, term, 0);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  {
-    /* Put the global term ID. */
-    int key_size;
-    char key[GRN_TABLE_MAX_KEY_SIZE];
-    uint8_t *p;
-    uint32_t rest, value;
-    grn_rc rc;
-    grn_id local_tid = term - builder->terms_ + 1;
-    grn_id global_tid = GRN_ID_NIL;
-    key_size = grn_table_get_key(ctx,
-                                 builder->lexicon_,
-                                 local_tid,
-                                 key,
-                                 GRN_TABLE_MAX_KEY_SIZE);
-    if (!key_size) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_UNKNOWN_ERROR, "failed to get key: tid = %u", local_tid);
-      }
-      return ctx->rc;
-    }
-    /* Don't normalize key. */
-    switch (builder->ii_->lexicon->header.type) {
-    case GRN_TABLE_PAT_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
-      {
-        global_tid = grn_pat_add(ctx,
-                                 (grn_pat *)(builder->ii_->lexicon),
-                                 key,
-                                 key_size,
-                                 NULL,
-                                 NULL);
-      }
-      GRN_TABLE_LOCK_END(ctx);
-      break;
-    case GRN_TABLE_DAT_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
-      {
-        global_tid = grn_dat_add(ctx,
-                                 (grn_dat *)(builder->ii_->lexicon),
-                                 key,
-                                 key_size,
-                                 NULL,
-                                 NULL);
-      }
-      GRN_TABLE_LOCK_END(ctx);
-      break;
-    case GRN_TABLE_HASH_KEY:
-      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii_->lexicon)
-      {
-        global_tid = grn_hash_add(ctx,
-                                  (grn_hash *)(builder->ii_->lexicon),
-                                  key,
-                                  key_size,
-                                  NULL,
-                                  NULL);
-      }
-      GRN_TABLE_LOCK_END(ctx);
-      break;
-    default:
-      global_tid = GRN_ID_NIL;
-      break;
-    }
-    if (global_tid == GRN_ID_NIL) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_UNKNOWN_ERROR,
-            "failed to get global term ID: tid = %u, key = \"%.*s\"",
-            local_tid,
-            key_size,
-            key);
-      }
-      return ctx->rc;
-    }
-
-    rest = builder->options_.file_buf_size - builder->file_buf_offset_;
-    if (rest < 10) {
-      rc = builder->flush_file_buf();
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-    }
-    value = global_tid;
-    p = builder->file_buf_ + builder->file_buf_offset_;
-    if (value < 1U << 5) {
-      p[0] = (uint8_t)value;
-      builder->file_buf_offset_++;
-    } else if (value < 1U << 13) {
-      p[0] = (uint8_t)((value & 0x1f) | (1 << 5));
-      p[1] = (uint8_t)(value >> 5);
-      builder->file_buf_offset_ += 2;
-    } else {
-      uint8_t i, n;
-      if (value < 1U << 21) {
-        n = 3;
-      } else if (value < 1U << 29) {
-        n = 4;
-      } else {
-        n = 5;
-      }
-      p[0] = (uint8_t)(value & 0x1f) | ((n - 1) << 5);
-      value >>= 5;
-      for (i = 1; i < n; i++) {
-        p[i] = (uint8_t)value;
-        value >>= 8;
-      }
-      builder->file_buf_offset_ += n;
-    }
-  }
-
-  /* Flush a term buffer. */
-  term_buf = grn_ii_builder_term_get_buf(term);
-  if (term->offset > builder->options_.file_buf_size) {
-    ssize_t size;
-    rc = builder->flush_file_buf();
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    size = grn_write(builder->fd_, term_buf, term->offset);
-    if ((uint64_t)size != term->offset) {
-      SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
-           term->offset,
-           (int64_t)size);
-    }
-  } else {
-    uint32_t rest = builder->options_.file_buf_size - builder->file_buf_offset_;
-    if (term->offset <= rest) {
-      grn_memcpy(builder->file_buf_ + builder->file_buf_offset_,
-                 term_buf,
-                 term->offset);
-      builder->file_buf_offset_ += term->offset;
-    } else {
-      grn_memcpy(builder->file_buf_ + builder->file_buf_offset_,
-                 term_buf,
-                 rest);
-      builder->file_buf_offset_ += rest;
-      rc = builder->flush_file_buf();
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      builder->file_buf_offset_ = term->offset - rest;
-      grn_memcpy(builder->file_buf_,
-                 term_buf + rest,
-                 builder->file_buf_offset_);
-    }
-  }
-  grn_ii_builder_term_reinit(ctx, term);
-  return GRN_SUCCESS;
-}
 
 /*
  * grn_ii_builder_create_file creates a temporary file and allocates memory for
@@ -16812,7 +16808,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
     if (tid == GRN_ID_NIL) {
       break;
     }
-    rc = grn_ii_builder_flush_term(ctx, builder, &builder->terms_[tid - 1]);
+    rc = builder->flush_term(&builder->terms_[tid - 1]);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
