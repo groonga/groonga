@@ -16781,6 +16781,70 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Appends a token.
+    grn_rc
+    append_token(
+      grn_id rid, uint32_t sid, uint32_t weight, grn_id tid, uint32_t pos)
+    {
+      uint32_t ii_flags = ii_->header.common->flags;
+      grn_ii_builder_term *term;
+      {
+        auto rc = get_term(tid, &term);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      if (rid != term->rid || sid != term->sid) {
+        uint64_t rsid;
+        if (term->rid != GRN_ID_NIL) {
+          if (ii_flags & GRN_OBJ_WITH_POSITION) {
+            /* Append the end of positions. */
+            auto rc = grn_ii_builder_term_append(ctx_, term, 0);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+            n_++;
+          } else {
+            /* Append a frequency if positions are not available. */
+            auto rc = grn_ii_builder_term_append(ctx_, term, term->pos_or_freq);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+            n_++;
+          }
+        }
+        rsid =
+          (static_cast<uint64_t>(rid - term->rid) << sid_bits_) | (sid - 1);
+        auto rc = grn_ii_builder_term_append(ctx_, term, rsid);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        n_++;
+        if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
+          auto rc = grn_ii_builder_term_append(ctx_, term, weight);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          n_++;
+        }
+        term->rid = rid;
+        term->sid = sid;
+        term->pos_or_freq = 0;
+      }
+      if (ii_flags & GRN_OBJ_WITH_POSITION) {
+        auto rc =
+          grn_ii_builder_term_append(ctx_, term, pos - term->pos_or_freq);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        n_++;
+        term->pos_or_freq = pos;
+      } else {
+        term->pos_or_freq++;
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
