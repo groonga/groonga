@@ -16227,7 +16227,7 @@ namespace grn::ii {
       max_n_terms_ = 0;
       terms_size_ = 0;
 
-      path[0] = '\0';
+      path_[0] = '\0';
       fd_ = -1;
       file_buf_ = nullptr;
       file_buf_offset_ = 0;
@@ -16272,14 +16272,14 @@ namespace grn::ii {
       }
       if (fd_ != -1) {
         grn_close(fd_);
-        if (grn_unlink(path) == 0) {
+        if (grn_unlink(path_) == 0) {
           GRN_LOG(ctx_,
                   GRN_LOG_INFO,
                   "[ii][builder][fin] removed path: <%s>",
-                  path);
+                  path_);
         } else {
           auto ctx = ctx_;
-          ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path);
+          ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path_);
         }
       }
       finalize_terms();
@@ -16688,9 +16688,9 @@ namespace grn::ii {
     uint32_t terms_size_;        /* Buffer size of terms */
 
     /* A temporary file to save blocks. */
-    char path[PATH_MAX]; /* File path */
-    int fd_;             /* File descriptor (to be closed) */
-    uint8_t *file_buf_;  /* File buffer for buffered output (to be freed) */
+    char path_[PATH_MAX]; /* File path */
+    int fd_;              /* File descriptor (to be closed) */
+    uint8_t *file_buf_;   /* File buffer for buffered output (to be freed) */
     uint32_t file_buf_offset_; /* File buffer write offset */
 
     grn_ii_builder_block *blocks; /* Blocks (to be freed) */
@@ -16714,14 +16714,14 @@ namespace grn::ii {
 static grn_rc
 grn_ii_builder_create_file(grn_ctx *ctx, grn::ii::Builder *builder)
 {
-  grn_snprintf(builder->path,
+  grn_snprintf(builder->path_,
                PATH_MAX,
                PATH_MAX,
                "%sXXXXXX",
                grn_io_path(builder->ii_->seg));
-  builder->fd_ = grn_mkstemp(builder->path);
+  builder->fd_ = grn_mkstemp(builder->path_);
   if (builder->fd_ == -1) {
-    SERR("failed to create a temporary file: path = \"%s\"", builder->path);
+    SERR("failed to create a temporary file: path = \"%s\"", builder->path_);
     return ctx->rc;
   }
   builder->file_buf_ = (uint8_t *)GRN_MALLOC(builder->options_.file_buf_size);
