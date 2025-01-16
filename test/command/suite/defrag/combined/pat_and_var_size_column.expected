@@ -4,77 +4,33 @@ column_create Users secret COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 delete Users --filter '_id == 2'
 [[0,0.0,0.0],true]
-object_inspect Users
+check Users
 [
   [
     0,
     0.0,
     0.0
   ],
-  {
-    "id": 256,
-    "name": "Users",
-    "type": {
-      "id": 49,
-      "name": "table:pat_key"
-    },
-    "key": {
-      "type": {
-        "id": 14,
-        "name": "ShortText",
-        "type": {
-          "id": 32,
-          "name": "type"
-        },
-        "size": 4096
-      },
-      "total_size": 36,
-      "max_total_size": 4294967294
-    },
-    "value": {
-      "type": null
-    },
-    "n_records": 3,
-    "disk_usage": 0
-  }
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 3,
+      "curr_rec": 4,
+      "curr_key": 36,
+      "curr_del": 1,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 1
+    }
+  ]
 ]
 defrag Users
 [[0,0.0,0.0],true]
 #|w| segment_infos[1] = 2097160 after defrag
-object_inspect Users
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "id": 256,
-    "name": "Users",
-    "type": {
-      "id": 49,
-      "name": "table:pat_key"
-    },
-    "key": {
-      "type": {
-        "id": 14,
-        "name": "ShortText",
-        "type": {
-          "id": 32,
-          "name": "type"
-        },
-        "size": 4096
-      },
-      "total_size": 27,
-      "max_total_size": 4294967294
-    },
-    "value": {
-      "type": null
-    },
-    "n_records": 3,
-    "disk_usage": 0
-  }
-]
 check Users
 [
   [
@@ -92,10 +48,10 @@ check Users
       "n_entries": 3,
       "curr_rec": 4,
       "curr_key": 27,
-      "curr_del": 1,
+      "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
-      "n_garbages": 1
+      "n_garbages": 0
     }
   ]
 ]

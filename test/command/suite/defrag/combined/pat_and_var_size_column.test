@@ -13,10 +13,9 @@ column_create Users secret COLUMN_SCALAR ShortText
 
 delete Users --filter '_id == 2'
 
-# After defragmentation, the total size of the PAT keys should decrease.
+# After defragmentation, the `curr_key` of the PAT keys should decrease.
 # Additionally, defragmentation logs for the variable-size column should be
 # displayed.
-object_inspect Users
+check Users
 defrag Users
-object_inspect Users
 check Users
