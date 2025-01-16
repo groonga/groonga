@@ -16212,7 +16212,7 @@ namespace grn::ii {
       sid_bits = 0;
       sid_mask = 0;
 
-      lexicon = nullptr;
+      lexicon_ = nullptr;
       have_tokenizer = false;
       have_normalizers = false;
       get_key_optimizable = false;
@@ -16283,8 +16283,8 @@ namespace grn::ii {
         }
       }
       finalize_terms();
-      if (lexicon) {
-        grn_obj_close(ctx_, lexicon);
+      if (lexicon_) {
+        grn_obj_close(ctx_, lexicon_);
       }
       if (srcs) {
         uint32_t i;
@@ -16347,9 +16347,9 @@ namespace grn::ii {
         return rc;
       }
       flags &= ~GRN_OBJ_PERSISTENT;
-      lexicon =
+      lexicon_ =
         grn_table_create(ctx_, nullptr, 0, nullptr, flags, domain, range);
-      if (!lexicon) {
+      if (!lexicon_) {
         if (ctx_->rc == GRN_SUCCESS) {
           auto ctx = ctx_;
           ERR(GRN_UNKNOWN_ERROR, "[index] failed to create a block lexicon");
@@ -16363,7 +16363,7 @@ namespace grn::ii {
         if (GRN_TEXT_LEN(&tokenizer) > 0) {
           have_tokenizer = true;
           rc = grn_obj_set_info(ctx_,
-                                lexicon,
+                                lexicon_,
                                 GRN_INFO_DEFAULT_TOKENIZER,
                                 &tokenizer);
         }
@@ -16375,8 +16375,10 @@ namespace grn::ii {
         grn_table_get_normalizers_string(ctx_, ii_->lexicon, &normalizers);
         if (GRN_TEXT_LEN(&normalizers) > 0) {
           have_normalizers = true;
-          rc =
-            grn_obj_set_info(ctx_, lexicon, GRN_INFO_NORMALIZERS, &normalizers);
+          rc = grn_obj_set_info(ctx_,
+                                lexicon_,
+                                GRN_INFO_NORMALIZERS,
+                                &normalizers);
         }
         GRN_OBJ_FIN(ctx_, &normalizers);
       }
@@ -16386,7 +16388,7 @@ namespace grn::ii {
         grn_table_get_token_filters_string(ctx_, ii_->lexicon, &token_filters);
         if (GRN_TEXT_LEN(&token_filters) > 0) {
           rc = grn_obj_set_info(ctx_,
-                                lexicon,
+                                lexicon_,
                                 GRN_INFO_TOKEN_FILTERS,
                                 &token_filters);
         }
@@ -16396,7 +16398,7 @@ namespace grn::ii {
         return rc;
       }
       if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
-        auto lexicon_pat = reinterpret_cast<grn_pat *>(lexicon);
+        auto lexicon_pat = reinterpret_cast<grn_pat *>(lexicon_);
         get_key_optimizable = !grn_pat_is_key_encoded(ctx_, lexicon_pat);
         if (options_.lexicon_cache_size) {
           rc = grn_pat_cache_enable(ctx_,
@@ -16501,7 +16503,7 @@ namespace grn::ii {
     uint8_t sid_bits;            /* Number of bits for section ID */
     uint64_t sid_mask;           /* Mask bits for section ID */
 
-    grn_obj *lexicon;         /* Block lexicon (to be closed) */
+    grn_obj *lexicon_;        /* Block lexicon (to be closed) */
     bool have_tokenizer;      /* Whether lexicon has tokenizer */
     bool have_normalizers;    /* Whether lexicon has at least one normalizers */
     bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
@@ -16571,7 +16573,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx,
     grn_id local_tid = term - builder->terms_ + 1;
     grn_id global_tid = GRN_ID_NIL;
     key_size = grn_table_get_key(ctx,
-                                 builder->lexicon,
+                                 builder->lexicon_,
                                  local_tid,
                                  key,
                                  GRN_TABLE_MAX_KEY_SIZE);
@@ -16797,7 +16799,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
 
   /* Flush terms into a temporary file. */
   cursor = grn_table_cursor_open(ctx,
-                                 builder->lexicon,
+                                 builder->lexicon_,
                                  NULL,
                                  0,
                                  NULL,
@@ -16826,7 +16828,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_table_truncate(ctx, builder->lexicon);
+  rc = grn_table_truncate(ctx, builder->lexicon_);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -16940,10 +16942,10 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
     const char *token_value =
       _grn_table_key(ctx, src_lexicon, src_tid, &token_value_size);
 
-    switch (builder->lexicon->header.type) {
+    switch (builder->lexicon_->header.type) {
     case GRN_TABLE_PAT_KEY:
       tid = grn_pat_add(ctx,
-                        (grn_pat *)builder->lexicon,
+                        reinterpret_cast<grn_pat *>(builder->lexicon_),
                         token_value,
                         token_value_size,
                         NULL,
@@ -16951,7 +16953,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
       break;
     case GRN_TABLE_DAT_KEY:
       tid = grn_dat_add(ctx,
-                        (grn_dat *)builder->lexicon,
+                        reinterpret_cast<grn_dat *>(builder->lexicon_),
                         token_value,
                         token_value_size,
                         NULL,
@@ -16959,7 +16961,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
       break;
     case GRN_TABLE_HASH_KEY:
       tid = grn_hash_add(ctx,
-                         (grn_hash *)builder->lexicon,
+                         reinterpret_cast<grn_hash *>(builder->lexicon_),
                          token_value,
                          token_value_size,
                          NULL,
@@ -17019,7 +17021,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       grn_id tid;
       uint32_t max_key_size = 0;
       bool too_large_key = false;
-      switch (builder->lexicon->header.type) {
+      switch (builder->lexicon_->header.type) {
       case GRN_TABLE_PAT_KEY:
         if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {
           tid = GRN_ID_NIL;
@@ -17027,7 +17029,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
           too_large_key = true;
         } else {
           tid = grn_pat_add(ctx,
-                            (grn_pat *)builder->lexicon,
+                            reinterpret_cast<grn_pat *>(builder->lexicon_),
                             value,
                             value_size,
                             NULL,
@@ -17041,7 +17043,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
           too_large_key = true;
         } else {
           tid = grn_dat_add(ctx,
-                            (grn_dat *)builder->lexicon,
+                            reinterpret_cast<grn_dat *>(builder->lexicon_),
                             value,
                             value_size,
                             NULL,
@@ -17049,17 +17051,16 @@ grn_ii_builder_append_value(grn_ctx *ctx,
         }
         break;
       case GRN_TABLE_HASH_KEY:
-        if (value_size >= ((grn_hash *)builder->lexicon)->key_size) {
-          tid = GRN_ID_NIL;
-          max_key_size = ((grn_hash *)builder->lexicon)->key_size;
-          too_large_key = true;
-        } else {
-          tid = grn_hash_add(ctx,
-                             (grn_hash *)builder->lexicon,
-                             value,
-                             value_size,
-                             NULL,
-                             NULL);
+        {
+          auto lexicon_hash = reinterpret_cast<grn_hash *>(builder->lexicon_);
+          if (value_size >= lexicon_hash->key_size) {
+            tid = GRN_ID_NIL;
+            max_key_size = lexicon_hash->key_size;
+            too_large_key = true;
+          } else {
+            tid =
+              grn_hash_add(ctx, lexicon_hash, value, value_size, NULL, NULL);
+          }
         }
         break;
       case GRN_TABLE_NO_KEY:
@@ -17101,7 +17102,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       }
     } else {
       cursor = grn_token_cursor_open(ctx,
-                                     builder->lexicon,
+                                     builder->lexicon_,
                                      value,
                                      value_size,
                                      GRN_TOKEN_ADD,
