@@ -16232,7 +16232,7 @@ namespace grn::ii {
       file_buf_ = nullptr;
       file_buf_offset_ = 0;
 
-      blocks = nullptr;
+      blocks_ = nullptr;
       n_blocks_ = 0;
       blocks_size_ = 0;
 
@@ -16258,13 +16258,13 @@ namespace grn::ii {
       }
       grn_ii_builder_chunk_fin(ctx_, &chunk);
       grn_ii_builder_buffer_fin(ctx_, &buf);
-      if (blocks) {
+      if (blocks_) {
         uint32_t i;
         for (i = 0; i < n_blocks_; i++) {
-          grn_ii_builder_block_fin(ctx_, &(blocks[i]));
+          grn_ii_builder_block_fin(ctx_, &(blocks_[i]));
         }
         auto ctx = ctx_;
-        GRN_FREE(blocks);
+        GRN_FREE(blocks_);
       }
       if (file_buf_) {
         auto ctx = ctx_;
@@ -16720,9 +16720,9 @@ namespace grn::ii {
     uint8_t *file_buf_;   /* File buffer for buffered output (to be freed) */
     uint32_t file_buf_offset_; /* File buffer write offset */
 
-    grn_ii_builder_block *blocks; /* Blocks (to be freed) */
-    uint32_t n_blocks_;           /* Number of blocks */
-    uint32_t blocks_size_;        /* Buffer size of blocks */
+    grn_ii_builder_block *blocks_; /* Blocks (to be freed) */
+    uint32_t n_blocks_;            /* Number of blocks */
+    uint32_t blocks_size_;         /* Buffer size of blocks */
 
     grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
     grn_ii_builder_chunk chunk; /* Chunk (to be finalized) */
@@ -16752,22 +16752,23 @@ grn_ii_builder_register_block(grn_ctx *ctx, grn::ii::Builder *builder)
       blocks_size *= 2;
     }
     n_bytes = blocks_size * sizeof(grn_ii_builder_block);
-    blocks = (grn_ii_builder_block *)GRN_REALLOC(builder->blocks, n_bytes);
+    blocks = (grn_ii_builder_block *)GRN_REALLOC(builder->blocks_, n_bytes);
     if (!blocks) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to allocate memory for block: n_bytes = %" GRN_FMT_SIZE,
           n_bytes);
       return ctx->rc;
     }
-    builder->blocks = blocks;
+    builder->blocks_ = blocks;
     builder->blocks_size_ = blocks_size;
   }
-  block = &builder->blocks[builder->n_blocks_];
+  block = &builder->blocks_[builder->n_blocks_];
   grn_ii_builder_block_init(ctx, block);
   if (!builder->n_blocks_) {
     block->offset = 0;
   } else {
-    grn_ii_builder_block *prev_block = &builder->blocks[builder->n_blocks_ - 1];
+    grn_ii_builder_block *prev_block =
+      &builder->blocks_[builder->n_blocks_ - 1];
     block->offset = prev_block->offset + prev_block->rest;
   }
   block->rest = (uint32_t)(file_offset - block->offset);
@@ -17576,7 +17577,7 @@ grn_ii_builder_fill_block(grn_ctx *ctx,
   ssize_t size;
   uint32_t buf_rest;
   uint64_t file_offset;
-  grn_ii_builder_block *block = &builder->blocks[block_id];
+  grn_ii_builder_block *block = &builder->blocks_[block_id];
   if (!block->rest) {
     return GRN_END_OF_DATA;
   }
@@ -17631,7 +17632,7 @@ grn_ii_builder_read_from_block(grn_ctx *ctx,
                                uint32_t block_id,
                                uint64_t *value)
 {
-  grn_ii_builder_block *block = &builder->blocks[block_id];
+  grn_ii_builder_block *block = &builder->blocks_[block_id];
   grn_rc rc = grn_ii_builder_block_next(ctx, block, value);
   if (rc == GRN_SUCCESS) {
     return GRN_SUCCESS;
@@ -17974,9 +17975,9 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
   }
   rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
   if (rc == GRN_SUCCESS) {
-    builder->blocks[block_id].tid = (grn_id)value;
+    builder->blocks_[block_id].tid = (grn_id)value;
   } else if (rc == GRN_END_OF_DATA) {
-    builder->blocks[block_id].tid = GRN_ID_NIL;
+    builder->blocks_[block_id].tid = GRN_ID_NIL;
   } else {
     return rc;
   }
@@ -18116,7 +18117,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    builder->blocks[i].tid = (grn_id)value;
+    builder->blocks_[i].tid = (grn_id)value;
   }
 
   cursor = grn_table_cursor_open(ctx,
@@ -18137,7 +18138,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     builder->chunk.rid = GRN_ID_NIL;
     builder->df = 0;
     for (i = 0; i < builder->n_blocks_; i++) {
-      if (tid == builder->blocks[i].tid) {
+      if (tid == builder->blocks_[i].tid) {
         rc = grn_ii_builder_read_to_chunk(ctx, builder, i);
         if (rc != GRN_SUCCESS) {
           return rc;
