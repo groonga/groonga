@@ -661,8 +661,10 @@ grn_index_column_diff_posting_list_fin(
   GRN_OBJ_FIN(ctx, &(posting_list->look_ahead));
   GRN_OBJ_FIN(ctx, &(posting_list->remains));
   GRN_OBJ_FIN(ctx, &(posting_list->missings));
-  grn_ii_cursor_close(ctx, posting_list->cursor);
-  posting_list->cursor = NULL;
+  if (posting_list->cursor) {
+    grn_ii_cursor_close(ctx, posting_list->cursor);
+    posting_list->cursor = NULL;
+  }
 }
 
 static void
