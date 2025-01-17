@@ -611,7 +611,7 @@ grn_index_column_diff_posting_list_flush(
         }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
-          if (posting == NULL) {
+          if (ctx->rc != GRN_SUCCESS) {
             return;
           }
           posting_list->need_cursor_next = false;
@@ -936,7 +936,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
         }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
-          if (posting == NULL) {
+          if (ctx->rc != GRN_SUCCESS) {
             return;
           }
           posting_list->need_cursor_next = false;
