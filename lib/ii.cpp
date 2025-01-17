@@ -16927,6 +16927,143 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Appends a value. Note that values must be appended in ascending
+    // rid and sid order.
+    grn_rc
+    append_value(grn_obj *src,
+                 grn_id rid,
+                 uint32_t sid,
+                 uint32_t weight,
+                 const char *value,
+                 uint32_t value_size,
+                 grn_id value_domain,
+                 bool force_as_is)
+    {
+      uint32_t pos = 0;
+      grn_token_cursor *cursor;
+      start_value(rid, sid);
+      if (value_size) {
+        if (force_as_is || (!have_tokenizer_ && !have_normalizers_)) {
+          grn_id tid;
+          uint32_t max_key_size = 0;
+          bool too_large_key = false;
+          switch (lexicon_->header.type) {
+          case GRN_TABLE_PAT_KEY:
+            if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {
+              tid = GRN_ID_NIL;
+              max_key_size = GRN_TABLE_MAX_KEY_SIZE;
+              too_large_key = true;
+            } else {
+              tid = grn_pat_add(ctx_,
+                                reinterpret_cast<grn_pat *>(lexicon_),
+                                value,
+                                value_size,
+                                NULL,
+                                NULL);
+            }
+            break;
+          case GRN_TABLE_DAT_KEY:
+            if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {
+              tid = GRN_ID_NIL;
+              max_key_size = GRN_TABLE_MAX_KEY_SIZE;
+              too_large_key = true;
+            } else {
+              tid = grn_dat_add(ctx_,
+                                reinterpret_cast<grn_dat *>(lexicon_),
+                                value,
+                                value_size,
+                                NULL,
+                                NULL);
+            }
+            break;
+          case GRN_TABLE_HASH_KEY:
+            {
+              auto lexicon_hash = reinterpret_cast<grn_hash *>(lexicon_);
+              if (value_size >= lexicon_hash->key_size) {
+                tid = GRN_ID_NIL;
+                max_key_size = lexicon_hash->key_size;
+                too_large_key = true;
+              } else {
+                tid = grn_hash_add(ctx_,
+                                   lexicon_hash,
+                                   value,
+                                   value_size,
+                                   NULL,
+                                   NULL);
+              }
+            }
+            break;
+          case GRN_TABLE_NO_KEY:
+            tid = *reinterpret_cast<const grn_id *>(value);
+            break;
+          default:
+            tid = GRN_ID_NIL;
+            break;
+          }
+          if (too_large_key) {
+            auto ctx = ctx_;
+            GRN_DEFINE_NAME(src);
+            grn_obj record;
+            GRN_RECORD_INIT(&record, 0, DB_OBJ(src_table_)->id);
+            GRN_RECORD_SET(ctx, &record, rid);
+            grn_obj inspected_record;
+            GRN_TEXT_INIT(&inspected_record, 0);
+            grn_inspect(ctx, &inspected_record, &record);
+            GRN_LOG(ctx,
+                    GRN_LOG_WARNING,
+                    "[ii][builder][append-value][%.*s] ignore too long token. "
+                    "Token must be less than or equal to %u: <%u>: %.*s",
+                    name_size,
+                    name,
+                    max_key_size,
+                    value_size,
+                    (int)GRN_TEXT_LEN(&inspected_record),
+                    GRN_TEXT_VALUE(&inspected_record));
+            GRN_OBJ_FIN(ctx, &inspected_record);
+            GRN_OBJ_FIN(ctx, &record);
+          }
+          if (tid != GRN_ID_NIL) {
+            pos = pos_;
+            auto rc = append_token(rid, sid, weight, tid, pos);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+          }
+        } else {
+          cursor = grn_token_cursor_open(ctx_,
+                                         lexicon_,
+                                         value,
+                                         value_size,
+                                         GRN_TOKEN_ADD,
+                                         0);
+          if (!cursor) {
+            if (ctx_->rc == GRN_SUCCESS) {
+              auto ctx = ctx_;
+              ERR(GRN_UNKNOWN_ERROR,
+                  "grn_token_cursor_open failed: value = <%.*s>",
+                  value_size,
+                  value);
+            }
+            return ctx_->rc;
+          }
+          grn_token_cursor_set_query_domain(ctx_, cursor, value_domain);
+          while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
+            grn_id tid = grn_token_cursor_next(ctx_, cursor);
+            if (tid != GRN_ID_NIL) {
+              pos = pos_ + cursor->pos;
+              auto rc = append_token(rid, sid, weight, tid, pos);
+              if (rc != GRN_SUCCESS) {
+                break;
+              }
+            }
+          }
+          grn_token_cursor_close(ctx_, cursor);
+        }
+      }
+      pos_ = pos + 1;
+      return ctx_->rc;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16977,144 +17114,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/*
- * grn_ii_builder_append_value appends a value. Note that values must be
- * appended in ascending rid and sid order.
- */
-static grn_rc
-grn_ii_builder_append_value(grn_ctx *ctx,
-                            grn::ii::Builder *builder,
-                            grn_obj *src,
-                            grn_id rid,
-                            uint32_t sid,
-                            uint32_t weight,
-                            const char *value,
-                            uint32_t value_size,
-                            grn_id value_domain,
-                            bool force_as_is)
-{
-  uint32_t pos = 0;
-  grn_token_cursor *cursor;
-  builder->start_value(rid, sid);
-  if (value_size) {
-    if (force_as_is ||
-        (!builder->have_tokenizer_ && !builder->have_normalizers_)) {
-      grn_id tid;
-      uint32_t max_key_size = 0;
-      bool too_large_key = false;
-      switch (builder->lexicon_->header.type) {
-      case GRN_TABLE_PAT_KEY:
-        if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {
-          tid = GRN_ID_NIL;
-          max_key_size = GRN_TABLE_MAX_KEY_SIZE;
-          too_large_key = true;
-        } else {
-          tid = grn_pat_add(ctx,
-                            reinterpret_cast<grn_pat *>(builder->lexicon_),
-                            value,
-                            value_size,
-                            NULL,
-                            NULL);
-        }
-        break;
-      case GRN_TABLE_DAT_KEY:
-        if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {
-          tid = GRN_ID_NIL;
-          max_key_size = GRN_TABLE_MAX_KEY_SIZE;
-          too_large_key = true;
-        } else {
-          tid = grn_dat_add(ctx,
-                            reinterpret_cast<grn_dat *>(builder->lexicon_),
-                            value,
-                            value_size,
-                            NULL,
-                            NULL);
-        }
-        break;
-      case GRN_TABLE_HASH_KEY:
-        {
-          auto lexicon_hash = reinterpret_cast<grn_hash *>(builder->lexicon_);
-          if (value_size >= lexicon_hash->key_size) {
-            tid = GRN_ID_NIL;
-            max_key_size = lexicon_hash->key_size;
-            too_large_key = true;
-          } else {
-            tid =
-              grn_hash_add(ctx, lexicon_hash, value, value_size, NULL, NULL);
-          }
-        }
-        break;
-      case GRN_TABLE_NO_KEY:
-        tid = *(grn_id *)value;
-        break;
-      default:
-        tid = GRN_ID_NIL;
-        break;
-      }
-      if (too_large_key) {
-        GRN_DEFINE_NAME(src);
-        grn_obj record;
-        GRN_RECORD_INIT(&record, 0, DB_OBJ(builder->src_table_)->id);
-        GRN_RECORD_SET(ctx, &record, rid);
-        grn_obj inspected_record;
-        GRN_TEXT_INIT(&inspected_record, 0);
-        grn_inspect(ctx, &inspected_record, &record);
-        GRN_LOG(ctx,
-                GRN_LOG_WARNING,
-                "[ii][builder][append-value][%.*s] ignore too long token. "
-                "Token must be less than or equal to %u: <%u>: %.*s",
-                name_size,
-                name,
-                max_key_size,
-                value_size,
-                (int)GRN_TEXT_LEN(&inspected_record),
-                GRN_TEXT_VALUE(&inspected_record));
-        GRN_OBJ_FIN(ctx, &inspected_record);
-        GRN_OBJ_FIN(ctx, &record);
-      }
-      if (tid != GRN_ID_NIL) {
-        grn_rc rc;
-        pos = builder->pos_;
-        rc = builder->append_token(rid, sid, weight, tid, pos);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-    } else {
-      cursor = grn_token_cursor_open(ctx,
-                                     builder->lexicon_,
-                                     value,
-                                     value_size,
-                                     GRN_TOKEN_ADD,
-                                     0);
-      if (!cursor) {
-        if (ctx->rc == GRN_SUCCESS) {
-          ERR(GRN_UNKNOWN_ERROR,
-              "grn_token_cursor_open failed: value = <%.*s>",
-              value_size,
-              value);
-        }
-        return ctx->rc;
-      }
-      grn_token_cursor_set_query_domain(ctx, cursor, value_domain);
-      while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
-        grn_id tid = grn_token_cursor_next(ctx, cursor);
-        if (tid != GRN_ID_NIL) {
-          grn_rc rc;
-          pos = builder->pos_ + cursor->pos;
-          rc = builder->append_token(rid, sid, weight, tid, pos);
-          if (rc != GRN_SUCCESS) {
-            break;
-          }
-        }
-      }
-      grn_token_cursor_close(ctx, cursor);
-    }
-  }
-  builder->pos_ = pos + 1;
-  return ctx->rc;
-}
-
 /* grn_ii_builder_append_obj appends a BULK, UVECTOR or VECTOR object. */
 static grn_rc
 grn_ii_builder_append_obj(grn_ctx *ctx,
@@ -17140,30 +17139,25 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
         key = GRN_BULK_HEAD(&key_buffer);
         key_size = GRN_BULK_VSIZE(&key_buffer);
       }
-      grn_rc rc =
-        grn_ii_builder_append_value(ctx,
-                                    builder,
-                                    src,
-                                    rid,
-                                    sid,
-                                    0,
-                                    key,
-                                    key_size,
-                                    builder->ii_->lexicon->header.domain,
-                                    true);
+      grn_rc rc = builder->append_value(src,
+                                        rid,
+                                        sid,
+                                        0,
+                                        key,
+                                        key_size,
+                                        builder->ii_->lexicon->header.domain,
+                                        true);
       GRN_OBJ_FIN(ctx, &key_buffer);
       return rc;
     } else {
-      return grn_ii_builder_append_value(ctx,
-                                         builder,
-                                         src,
-                                         rid,
-                                         sid,
-                                         0,
-                                         GRN_TEXT_VALUE(obj),
-                                         GRN_TEXT_LEN(obj),
-                                         obj->header.domain,
-                                         false);
+      return builder->append_value(src,
+                                   rid,
+                                   sid,
+                                   0,
+                                   GRN_TEXT_VALUE(obj),
+                                   GRN_TEXT_LEN(obj),
+                                   obj->header.domain,
+                                   false);
     }
   case GRN_UVECTOR:
     {
@@ -17186,16 +17180,14 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
             key = GRN_BULK_HEAD(&key_buffer);
             key_size = GRN_BULK_VSIZE(&key_buffer);
           }
-          rc = grn_ii_builder_append_value(ctx,
-                                           builder,
-                                           src,
-                                           rid,
-                                           sid,
-                                           (uint32_t)weight,
-                                           key,
-                                           key_size,
-                                           builder->ii_->lexicon->header.domain,
-                                           true);
+          rc = builder->append_value(src,
+                                     rid,
+                                     sid,
+                                     (uint32_t)weight,
+                                     key,
+                                     key_size,
+                                     builder->ii_->lexicon->header.domain,
+                                     true);
           if (rc != GRN_SUCCESS) {
             break;
           }
@@ -17205,16 +17197,14 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
         const char *p = GRN_BULK_HEAD(obj);
         uint32_t value_size = grn_uvector_element_size(ctx, obj);
         for (i = 0; i < n_values; i++) {
-          rc = grn_ii_builder_append_value(ctx,
-                                           builder,
-                                           src,
-                                           rid,
-                                           sid,
-                                           0,
-                                           p,
-                                           value_size,
-                                           obj->header.domain,
-                                           false);
+          rc = builder->append_value(src,
+                                     rid,
+                                     sid,
+                                     0,
+                                     p,
+                                     value_size,
+                                     obj->header.domain,
+                                     false);
           if (rc != GRN_SUCCESS) {
             break;
           }
@@ -17242,16 +17232,14 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
             builder->have_tokenizer_) {
           sid = i + 1;
         }
-        rc = grn_ii_builder_append_value(ctx,
-                                         builder,
-                                         src,
-                                         rid,
-                                         sid,
-                                         (uint32_t)(sec->weight),
-                                         head + sec->offset,
-                                         sec->length,
-                                         sec->domain,
-                                         false);
+        rc = builder->append_value(src,
+                                   rid,
+                                   sid,
+                                   (uint32_t)(sec->weight),
+                                   head + sec->offset,
+                                   sec->length,
+                                   sec->domain,
+                                   false);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
