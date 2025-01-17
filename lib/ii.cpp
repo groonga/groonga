@@ -16845,6 +16845,22 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    void
+    start_value(grn_id rid, uint32_t sid)
+    {
+      if (rid != rid_) {
+        rid_ = rid;
+        sid_ = sid;
+        pos_ = 1;
+      } else if (sid != sid_) {
+        sid_ = sid;
+        pos_ = 1;
+      } else if (have_tokenizer) {
+        /* Insert a space between values. */
+        pos_++;
+      }
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16895,25 +16911,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-static void
-grn_ii_builder_start_value(grn_ctx *ctx,
-                           grn::ii::Builder *builder,
-                           grn_id rid,
-                           uint32_t sid)
-{
-  if (rid != builder->rid_) {
-    builder->rid_ = rid;
-    builder->sid_ = sid;
-    builder->pos_ = 1;
-  } else if (sid != builder->sid_) {
-    builder->sid_ = sid;
-    builder->pos_ = 1;
-  } else if (builder->have_tokenizer) {
-    /* Insert a space between values. */
-    builder->pos_++;
-  }
-}
-
 static grn_rc
 grn_ii_builder_append_tokens(grn_ctx *ctx,
                              grn::ii::Builder *builder,
@@ -16921,7 +16918,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
                              uint32_t sid,
                              grn_obj *tokens)
 {
-  grn_ii_builder_start_value(ctx, builder, rid, sid);
+  builder->start_value(rid, sid);
   grn_obj *src_lexicon = builder->ii_->lexicon;
   size_t n_tokens = grn_uvector_size(ctx, tokens);
   size_t i;
@@ -16999,7 +16996,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
 {
   uint32_t pos = 0;
   grn_token_cursor *cursor;
-  grn_ii_builder_start_value(ctx, builder, rid, sid);
+  builder->start_value(rid, sid);
   if (value_size) {
     if (force_as_is ||
         (!builder->have_tokenizer && !builder->have_normalizers)) {
