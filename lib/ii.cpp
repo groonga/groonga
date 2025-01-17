@@ -16220,7 +16220,7 @@ namespace grn::ii {
       n_ = 0;
       rid_ = GRN_ID_NIL;
       sid_ = 0;
-      pos = 0;
+      pos_ = 0;
 
       terms_ = nullptr;
       n_terms_ = 0;
@@ -16868,7 +16868,7 @@ namespace grn::ii {
     uint32_t n_;   /* Number of integers appended to the current block */
     grn_id rid_;   /* Record ID */
     uint32_t sid_; /* Section ID */
-    uint32_t pos;  /* Position */
+    uint32_t pos_; /* Position */
 
     grn_ii_builder_term *terms_; /* Terms (to be freed) */
     uint32_t n_terms_;           /* Number of distinct terms */
@@ -16904,13 +16904,13 @@ grn_ii_builder_start_value(grn_ctx *ctx,
   if (rid != builder->rid_) {
     builder->rid_ = rid;
     builder->sid_ = sid;
-    builder->pos = 1;
+    builder->pos_ = 1;
   } else if (sid != builder->sid_) {
     builder->sid_ = sid;
-    builder->pos = 1;
+    builder->pos_ = 1;
   } else if (builder->have_tokenizer) {
     /* Insert a space between values. */
-    builder->pos++;
+    builder->pos_++;
   }
 }
 
@@ -16972,7 +16972,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
           token_value);
       return ctx->rc;
     }
-    uint32_t pos = builder->pos + i;
+    uint32_t pos = builder->pos_ + i;
     grn_rc rc = builder->append_token(rid, sid, (uint32_t)weight, tid, pos);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -17078,7 +17078,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       }
       if (tid != GRN_ID_NIL) {
         grn_rc rc;
-        pos = builder->pos;
+        pos = builder->pos_;
         rc = builder->append_token(rid, sid, weight, tid, pos);
         if (rc != GRN_SUCCESS) {
           return rc;
@@ -17105,7 +17105,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
         grn_id tid = grn_token_cursor_next(ctx, cursor);
         if (tid != GRN_ID_NIL) {
           grn_rc rc;
-          pos = builder->pos + cursor->pos;
+          pos = builder->pos_ + cursor->pos;
           rc = builder->append_token(rid, sid, weight, tid, pos);
           if (rc != GRN_SUCCESS) {
             break;
@@ -17115,7 +17115,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       grn_token_cursor_close(ctx, cursor);
     }
   }
-  builder->pos = pos + 1;
+  builder->pos_ = pos + 1;
   return ctx->rc;
 }
 
