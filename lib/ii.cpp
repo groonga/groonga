@@ -17327,6 +17327,65 @@ namespace grn::ii {
       }
       return GRN_SUCCESS;
     }
+
+    // Calculates sid_bits_ and sid_mask_.
+    grn_rc
+    set_sid_bits()
+    {
+      /* Calculate the number of bits required to represent a section ID. */
+      if (n_srcs_ == 1 && have_tokenizer_ &&
+          (srcs_[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
+        /* If the source column is a vector column and the index has a
+         * tokenizer, the maximum sid equals to the maximum number of
+         * elements. */
+        size_t max_elems = 0;
+        grn_table_cursor *cursor;
+        grn_obj obj;
+        cursor = grn_table_cursor_open(ctx_,
+                                       src_table_,
+                                       NULL,
+                                       0,
+                                       NULL,
+                                       0,
+                                       0,
+                                       -1,
+                                       GRN_CURSOR_BY_ID);
+        if (!cursor) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
+          }
+          return ctx_->rc;
+        }
+        GRN_TEXT_INIT(&obj, 0);
+        for (;;) {
+          grn_id rid = grn_table_cursor_next(ctx_, cursor);
+          if (rid == GRN_ID_NIL) {
+            break;
+          }
+          GRN_BULK_REWIND(&obj);
+          if (!grn_obj_get_value(ctx_, srcs_[0], rid, &obj)) {
+            continue;
+          }
+          if (obj.u.v.n_sections > max_elems) {
+            max_elems = obj.u.v.n_sections;
+          }
+        }
+        GRN_OBJ_FIN(ctx_, &obj);
+        grn_table_cursor_close(ctx_, cursor);
+        while ((static_cast<uint32_t>(1) << sid_bits_) < max_elems) {
+          sid_bits_++;
+        }
+      }
+      if (sid_bits_ == 0) {
+        while ((static_cast<uint32_t>(1) << sid_bits_) < n_srcs_) {
+          sid_bits_++;
+        }
+      }
+      sid_mask_ = (static_cast<uint64_t>(1) << sid_bits_) - 1;
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -17376,62 +17435,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_set_sid_bits calculates sid_bits and sid_mask. */
-static grn_rc
-grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  /* Calculate the number of bits required to represent a section ID. */
-  if (builder->n_srcs_ == 1 && builder->have_tokenizer_ &&
-      (builder->srcs_[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
-    /* If the source column is a vector column and the index has a tokenizer, */
-    /* the maximum sid equals to the maximum number of elements. */
-    size_t max_elems = 0;
-    grn_table_cursor *cursor;
-    grn_obj obj;
-    cursor = grn_table_cursor_open(ctx,
-                                   builder->src_table_,
-                                   NULL,
-                                   0,
-                                   NULL,
-                                   0,
-                                   0,
-                                   -1,
-                                   GRN_CURSOR_BY_ID);
-    if (!cursor) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
-      }
-      return ctx->rc;
-    }
-    GRN_TEXT_INIT(&obj, 0);
-    for (;;) {
-      grn_id rid = grn_table_cursor_next(ctx, cursor);
-      if (rid == GRN_ID_NIL) {
-        break;
-      }
-      GRN_BULK_REWIND(&obj);
-      if (!grn_obj_get_value(ctx, builder->srcs_[0], rid, &obj)) {
-        continue;
-      }
-      if (obj.u.v.n_sections > max_elems) {
-        max_elems = obj.u.v.n_sections;
-      }
-    }
-    GRN_OBJ_FIN(ctx, &obj);
-    grn_table_cursor_close(ctx, cursor);
-    while (((uint32_t)1 << builder->sid_bits_) < max_elems) {
-      builder->sid_bits_++;
-    }
-  }
-  if (builder->sid_bits_ == 0) {
-    while (((uint32_t)1 << builder->sid_bits_) < builder->n_srcs_) {
-      builder->sid_bits_++;
-    }
-  }
-  builder->sid_mask_ = ((uint64_t)1 << builder->sid_bits_) - 1;
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_set_srcs sets source columns. */
 static grn_rc
@@ -17487,7 +17490,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
     }
     GRN_OBJ_FIN(ctx, &token_columns);
   }
-  return grn_ii_builder_set_sid_bits(ctx, builder);
+  return builder->set_sid_bits();
 }
 
 /* grn_ii_builder_append_source appends values in source columns. */
