@@ -16207,7 +16207,7 @@ namespace grn::ii {
 
       src_table_ = nullptr;
       srcs_ = nullptr;
-      src_token_columns = nullptr;
+      src_token_columns_ = nullptr;
       n_srcs_ = 0;
       sid_bits_ = 0;
       sid_mask = 0;
@@ -16294,13 +16294,13 @@ namespace grn::ii {
         auto ctx = ctx_;
         GRN_FREE(srcs_);
       }
-      if (src_token_columns) {
+      if (src_token_columns_) {
         uint32_t i;
         for (i = 0; i < n_srcs_; i++) {
-          grn_obj_unref(ctx_, src_token_columns[i]);
+          grn_obj_unref(ctx_, src_token_columns_[i]);
         }
         auto ctx = ctx_;
-        GRN_FREE(src_token_columns);
+        GRN_FREE(src_token_columns_);
       }
       if (src_table_) {
         grn_obj_unref(ctx_, src_table_);
@@ -17208,12 +17208,12 @@ namespace grn::ii {
     grn_ii *ii_;                     /* Building inverted index */
     grn_ii_builder_options options_; /* Options */
 
-    grn_obj *src_table_;         /* Source table */
-    grn_obj **srcs_;             /* Source columns (to be freed) */
-    grn_obj **src_token_columns; /* Source token columns (to be freed) */
-    uint32_t n_srcs_;            /* Number of source columns */
-    uint8_t sid_bits_;           /* Number of bits for section ID */
-    uint64_t sid_mask;           /* Mask bits for section ID */
+    grn_obj *src_table_;          /* Source table */
+    grn_obj **srcs_;              /* Source columns (to be freed) */
+    grn_obj **src_token_columns_; /* Source token columns (to be freed) */
+    uint32_t n_srcs_;             /* Number of source columns */
+    uint8_t sid_bits_;            /* Number of bits for section ID */
+    uint64_t sid_mask;            /* Mask bits for section ID */
 
     grn_obj *lexicon_;      /* Block lexicon (to be closed) */
     bool have_tokenizer_;   /* Whether lexicon has tokenizer */
@@ -17301,7 +17301,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
     for (i = 0; i < builder->n_srcs_; i++) {
       grn_obj *obj = &objs[i];
       grn_obj *src = builder->srcs_[i];
-      grn_obj *token_column = builder->src_token_columns[i];
+      grn_obj *token_column = builder->src_token_columns_[i];
       if (token_column) {
         rc = grn_obj_reinit_for(ctx, obj, token_column);
         if (rc == GRN_SUCCESS) {
@@ -17464,24 +17464,24 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
       return ctx->rc;
     }
   }
-  builder->src_token_columns = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
-  if (!builder->src_token_columns) {
+  builder->src_token_columns_ = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
+  if (!builder->src_token_columns_) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   {
     grn_obj token_columns;
     GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
     for (i = 0; i < builder->n_srcs_; i++) {
-      builder->src_token_columns[i] = NULL;
+      builder->src_token_columns_[i] = NULL;
       grn_obj *src = builder->srcs_[i];
       grn_column_get_all_token_columns(ctx, src, &token_columns);
       size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
       size_t j;
       for (j = 0; j < n_token_columns; j++) {
         grn_obj *token_column = GRN_PTR_VALUE_AT(&token_columns, j);
-        if (!builder->src_token_columns[i] &&
+        if (!builder->src_token_columns_[i] &&
             DB_OBJ(token_column)->range == DB_OBJ(builder->ii_->lexicon)->id) {
-          builder->src_token_columns[i] = token_column;
+          builder->src_token_columns_[i] = token_column;
         } else {
           grn_obj_unref(ctx, token_column);
         }
