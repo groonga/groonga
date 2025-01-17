@@ -16213,7 +16213,7 @@ namespace grn::ii {
       sid_mask = 0;
 
       lexicon_ = nullptr;
-      have_tokenizer = false;
+      have_tokenizer_ = false;
       have_normalizers = false;
       get_key_optimizable = false;
 
@@ -16361,7 +16361,7 @@ namespace grn::ii {
         GRN_TEXT_INIT(&tokenizer, 0);
         grn_table_get_default_tokenizer_string(ctx_, ii_->lexicon, &tokenizer);
         if (GRN_TEXT_LEN(&tokenizer) > 0) {
-          have_tokenizer = true;
+          have_tokenizer_ = true;
           rc = grn_obj_set_info(ctx_,
                                 lexicon_,
                                 GRN_INFO_DEFAULT_TOKENIZER,
@@ -16855,7 +16855,7 @@ namespace grn::ii {
       } else if (sid != sid_) {
         sid_ = sid;
         pos_ = 1;
-      } else if (have_tokenizer) {
+      } else if (have_tokenizer_) {
         /* Insert a space between values. */
         pos_++;
       }
@@ -16877,7 +16877,7 @@ namespace grn::ii {
     uint64_t sid_mask;           /* Mask bits for section ID */
 
     grn_obj *lexicon_;        /* Block lexicon (to be closed) */
-    bool have_tokenizer;      /* Whether lexicon has tokenizer */
+    bool have_tokenizer_;     /* Whether lexicon has tokenizer */
     bool have_normalizers;    /* Whether lexicon has at least one normalizers */
     bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
@@ -16999,7 +16999,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
   builder->start_value(rid, sid);
   if (value_size) {
     if (force_as_is ||
-        (!builder->have_tokenizer && !builder->have_normalizers)) {
+        (!builder->have_tokenizer_ && !builder->have_normalizers)) {
       grn_id tid;
       uint32_t max_key_size = 0;
       bool too_large_key = false;
@@ -17240,7 +17240,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
           continue;
         }
         if ((builder->ii_->header.common->flags & GRN_OBJ_WITH_SECTION) &&
-            builder->have_tokenizer) {
+            builder->have_tokenizer_) {
           sid = i + 1;
         }
         rc = grn_ii_builder_append_value(ctx,
@@ -17400,7 +17400,7 @@ static grn_rc
 grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   /* Calculate the number of bits required to represent a section ID. */
-  if (builder->n_srcs == 1 && builder->have_tokenizer &&
+  if (builder->n_srcs == 1 && builder->have_tokenizer_ &&
       (builder->srcs[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
     /* If the source column is a vector column and the index has a tokenizer, */
     /* the maximum sid equals to the maximum number of elements. */
