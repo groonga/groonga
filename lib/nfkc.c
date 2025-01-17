@@ -192,6 +192,20 @@ grn_nfkc_version_option_process(grn_ctx *ctx,
   grn_id domain;
   unsigned int version_length =
     grn_vector_get_element(ctx, raw_options, i, &version, NULL, &domain);
+  /*
+   * If you pass an empty like `NormalizerNFKC("version", "")`,
+   * `raw_options` is ["version"].
+   * (Normal `raw_options` are like ["version", "16.0.0"].)
+   * Therefore, if empty, it is an "offset out of range" error.
+   */
+  if (ctx->rc != GRN_SUCCESS) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must not be empty",
+        tag,
+        (int)(name_raw->length),
+        name_raw->value);
+    return grn_nfkc_funcs_null;
+  }
   if (!grn_type_id_is_text_family(ctx, domain)) {
     grn_obj value;
     GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
@@ -208,14 +222,6 @@ grn_nfkc_version_option_process(grn_ctx *ctx,
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
     GRN_OBJ_FIN(ctx, &value);
-    return grn_nfkc_funcs_null;
-  }
-  if (version_length == 0) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must not be empty",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value);
     return grn_nfkc_funcs_null;
   }
   grn_raw_string version_raw;
