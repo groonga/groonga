@@ -16206,7 +16206,7 @@ namespace grn::ii {
       grn_ii_builder_options_fix(&options_);
 
       src_table_ = nullptr;
-      srcs = nullptr;
+      srcs_ = nullptr;
       src_token_columns = nullptr;
       n_srcs_ = 0;
       sid_bits_ = 0;
@@ -16286,13 +16286,13 @@ namespace grn::ii {
       if (lexicon_) {
         grn_obj_close(ctx_, lexicon_);
       }
-      if (srcs) {
+      if (srcs_) {
         uint32_t i;
         for (i = 0; i < n_srcs_; i++) {
-          grn_obj_unref(ctx_, srcs[i]);
+          grn_obj_unref(ctx_, srcs_[i]);
         }
         auto ctx = ctx_;
-        GRN_FREE(srcs);
+        GRN_FREE(srcs_);
       }
       if (src_token_columns) {
         uint32_t i;
@@ -17209,7 +17209,7 @@ namespace grn::ii {
     grn_ii_builder_options options_; /* Options */
 
     grn_obj *src_table_;         /* Source table */
-    grn_obj **srcs;              /* Source columns (to be freed) */
+    grn_obj **srcs_;             /* Source columns (to be freed) */
     grn_obj **src_token_columns; /* Source token columns (to be freed) */
     uint32_t n_srcs_;            /* Number of source columns */
     uint8_t sid_bits_;           /* Number of bits for section ID */
@@ -17300,7 +17300,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
     }
     for (i = 0; i < builder->n_srcs_; i++) {
       grn_obj *obj = &objs[i];
-      grn_obj *src = builder->srcs[i];
+      grn_obj *src = builder->srcs_[i];
       grn_obj *token_column = builder->src_token_columns[i];
       if (token_column) {
         rc = grn_obj_reinit_for(ctx, obj, token_column);
@@ -17386,7 +17386,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   /* Calculate the number of bits required to represent a section ID. */
   if (builder->n_srcs_ == 1 && builder->have_tokenizer_ &&
-      (builder->srcs[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
+      (builder->srcs_[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
     /* If the source column is a vector column and the index has a tokenizer, */
     /* the maximum sid equals to the maximum number of elements. */
     size_t max_elems = 0;
@@ -17414,7 +17414,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
         break;
       }
       GRN_BULK_REWIND(&obj);
-      if (!grn_obj_get_value(ctx, builder->srcs[0], rid, &obj)) {
+      if (!grn_obj_get_value(ctx, builder->srcs_[0], rid, &obj)) {
         continue;
       }
       if (obj.u.v.n_sections > max_elems) {
@@ -17451,13 +17451,13 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
         builder->ii_->obj.source_size);
     return ctx->rc;
   }
-  builder->srcs = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
-  if (!builder->srcs) {
+  builder->srcs_ = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
+  if (!builder->srcs_) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   for (i = 0; i < builder->n_srcs_; i++) {
-    builder->srcs[i] = grn_ctx_at(ctx, source[i]);
-    if (!builder->srcs[i]) {
+    builder->srcs_[i] = grn_ctx_at(ctx, source[i]);
+    if (!builder->srcs_[i]) {
       if (ctx->rc == GRN_SUCCESS) {
         ERR(GRN_OBJECT_CORRUPT, "source not found: id = %d", source[i]);
       }
@@ -17473,7 +17473,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
     GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
     for (i = 0; i < builder->n_srcs_; i++) {
       builder->src_token_columns[i] = NULL;
-      grn_obj *src = builder->srcs[i];
+      grn_obj *src = builder->srcs_[i];
       grn_column_get_all_token_columns(ctx, src, &token_columns);
       size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
       size_t j;
