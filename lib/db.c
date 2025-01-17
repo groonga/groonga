@@ -14872,7 +14872,7 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
   case GRN_TABLE_PAT_KEY:
     GRN_TABLE_LOCK_BEGIN(ctx, obj) { r = grn_pat_defrag(ctx, (grn_pat *)obj); }
     GRN_TABLE_LOCK_END(ctx);
-    break;
+    /* FALLTHROUGH */
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
