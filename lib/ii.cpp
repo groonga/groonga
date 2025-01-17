@@ -16205,7 +16205,7 @@ namespace grn::ii {
       }
       grn_ii_builder_options_fix(&options_);
 
-      src_table = nullptr;
+      src_table_ = nullptr;
       srcs = nullptr;
       src_token_columns = nullptr;
       n_srcs = 0;
@@ -16302,8 +16302,8 @@ namespace grn::ii {
         auto ctx = ctx_;
         GRN_FREE(src_token_columns);
       }
-      if (src_table) {
-        grn_obj_unref(ctx_, src_table);
+      if (src_table_) {
+        grn_obj_unref(ctx_, src_table_);
       }
       if (progress_needed) {
         progress.value.index.phase = GRN_PROGRESS_INDEX_DONE;
@@ -16935,7 +16935,7 @@ namespace grn::ii {
     grn_ii *ii_;                     /* Building inverted index */
     grn_ii_builder_options options_; /* Options */
 
-    grn_obj *src_table;          /* Source table */
+    grn_obj *src_table_;         /* Source table */
     grn_obj **srcs;              /* Source columns (to be freed) */
     grn_obj **src_token_columns; /* Source token columns (to be freed) */
     uint32_t n_srcs;             /* Number of source columns */
@@ -17054,7 +17054,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
       if (too_large_key) {
         GRN_DEFINE_NAME(src);
         grn_obj record;
-        GRN_RECORD_INIT(&record, 0, DB_OBJ(builder->src_table)->id);
+        GRN_RECORD_INIT(&record, 0, DB_OBJ(builder->src_table_)->id);
         GRN_RECORD_SET(ctx, &record, rid);
         grn_obj inspected_record;
         GRN_TEXT_INIT(&inspected_record, 0);
@@ -17287,7 +17287,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 
   /* Create a cursor to get records in the ID order. */
   cursor = grn_table_cursor_open(ctx,
-                                 builder->src_table,
+                                 builder->src_table_,
                                  NULL,
                                  0,
                                  NULL,
@@ -17382,8 +17382,8 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 static grn_rc
 grn_ii_builder_set_src_table(grn_ctx *ctx, grn::ii::Builder *builder)
 {
-  builder->src_table = grn_ctx_at(ctx, DB_OBJ(builder->ii_)->range);
-  if (!builder->src_table) {
+  builder->src_table_ = grn_ctx_at(ctx, DB_OBJ(builder->ii_)->range);
+  if (!builder->src_table_) {
     if (ctx->rc == GRN_SUCCESS) {
       ERR(GRN_INVALID_ARGUMENT,
           "source table is null: range = %d",
@@ -17407,7 +17407,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
     grn_table_cursor *cursor;
     grn_obj obj;
     cursor = grn_table_cursor_open(ctx,
-                                   builder->src_table,
+                                   builder->src_table_,
                                    NULL,
                                    0,
                                    NULL,
@@ -17515,7 +17515,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  unsigned int n_records = grn_table_size(ctx, builder->src_table);
+  unsigned int n_records = grn_table_size(ctx, builder->src_table_);
   if (builder->progress_needed) {
     builder->progress.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
     builder->progress.value.index.n_target_records = n_records;
