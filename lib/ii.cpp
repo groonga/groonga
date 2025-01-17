@@ -17064,6 +17064,142 @@ namespace grn::ii {
       return ctx_->rc;
     }
 
+    // Appends a BULK, UVECTOR or VECTOR object.
+    grn_rc
+    append_obj(grn_obj *src, grn_id rid, uint32_t sid, grn_obj *obj)
+    {
+      switch (obj->header.type) {
+      case GRN_BULK:
+        if (grn_id_maybe_table(ctx_, obj->header.domain)) {
+          grn_id id = GRN_RECORD_VALUE(obj);
+          grn_obj key_buffer;
+          GRN_VOID_INIT(&key_buffer);
+          uint32_t key_size;
+          const char *key;
+          if (get_key_optimizable_) {
+            key = _grn_table_key(ctx_, ii_->lexicon, id, &key_size);
+          } else {
+            GRN_BULK_REWIND(&key_buffer);
+            grn_table_get_key2(ctx_, ii_->lexicon, id, &key_buffer);
+            key = GRN_BULK_HEAD(&key_buffer);
+            key_size = GRN_BULK_VSIZE(&key_buffer);
+          }
+          grn_rc rc = append_value(src,
+                                   rid,
+                                   sid,
+                                   0,
+                                   key,
+                                   key_size,
+                                   ii_->lexicon->header.domain,
+                                   true);
+          GRN_OBJ_FIN(ctx_, &key_buffer);
+          return rc;
+        } else {
+          return append_value(src,
+                              rid,
+                              sid,
+                              0,
+                              GRN_TEXT_VALUE(obj),
+                              GRN_TEXT_LEN(obj),
+                              obj->header.domain,
+                              false);
+        }
+      case GRN_UVECTOR:
+        {
+          grn_rc rc = GRN_SUCCESS;
+          uint32_t i, n_values = grn_uvector_size(ctx_, obj);
+          if (grn_id_maybe_table(ctx_, obj->header.domain)) {
+            grn_obj key_buffer;
+            GRN_VOID_INIT(&key_buffer);
+            for (i = 0; i < n_values; i++) {
+              grn_id id;
+              float weight;
+              id = grn_uvector_get_element_record(ctx_, obj, i, &weight);
+              uint32_t key_size;
+              const char *key;
+              if (get_key_optimizable_) {
+                key = _grn_table_key(ctx_, ii_->lexicon, id, &key_size);
+              } else {
+                GRN_BULK_REWIND(&key_buffer);
+                grn_table_get_key2(ctx_, ii_->lexicon, id, &key_buffer);
+                key = GRN_BULK_HEAD(&key_buffer);
+                key_size = GRN_BULK_VSIZE(&key_buffer);
+              }
+              rc = append_value(src,
+                                rid,
+                                sid,
+                                (uint32_t)weight,
+                                key,
+                                key_size,
+                                ii_->lexicon->header.domain,
+                                true);
+              if (rc != GRN_SUCCESS) {
+                break;
+              }
+            }
+            GRN_OBJ_FIN(ctx_, &key_buffer);
+          } else {
+            const char *p = GRN_BULK_HEAD(obj);
+            uint32_t value_size = grn_uvector_element_size(ctx_, obj);
+            for (i = 0; i < n_values; i++) {
+              rc = append_value(src,
+                                rid,
+                                sid,
+                                0,
+                                p,
+                                value_size,
+                                obj->header.domain,
+                                false);
+              if (rc != GRN_SUCCESS) {
+                break;
+              }
+              p += value_size;
+            }
+          }
+          return rc;
+        }
+      case GRN_VECTOR:
+        if (obj->u.v.body) {
+          /*
+           * Note that the following sections and n_sections don't correspond to
+           * source columns.
+           */
+          int i, n_secs = obj->u.v.n_sections;
+          grn_section *secs = obj->u.v.sections;
+          const char *head = GRN_BULK_HEAD(obj->u.v.body);
+          for (i = 0; i < n_secs; i++) {
+            grn_rc rc;
+            grn_section *sec = &secs[i];
+            if (sec->length == 0) {
+              continue;
+            }
+            if ((ii_->header.common->flags & GRN_OBJ_WITH_SECTION) &&
+                have_tokenizer_) {
+              sid = i + 1;
+            }
+            rc = append_value(src,
+                              rid,
+                              sid,
+                              (uint32_t)(sec->weight),
+                              head + sec->offset,
+                              sec->length,
+                              sec->domain,
+                              false);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+          }
+        }
+        return GRN_SUCCESS;
+      default:
+        {
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT, "[index] invalid object assigned as value");
+          return ctx->rc;
+        }
+      }
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -17113,144 +17249,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_append_obj appends a BULK, UVECTOR or VECTOR object. */
-static grn_rc
-grn_ii_builder_append_obj(grn_ctx *ctx,
-                          grn::ii::Builder *builder,
-                          grn_obj *src,
-                          grn_id rid,
-                          uint32_t sid,
-                          grn_obj *obj)
-{
-  switch (obj->header.type) {
-  case GRN_BULK:
-    if (grn_id_maybe_table(ctx, obj->header.domain)) {
-      grn_id id = GRN_RECORD_VALUE(obj);
-      grn_obj key_buffer;
-      GRN_VOID_INIT(&key_buffer);
-      uint32_t key_size;
-      const char *key;
-      if (builder->get_key_optimizable_) {
-        key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
-      } else {
-        GRN_BULK_REWIND(&key_buffer);
-        grn_table_get_key2(ctx, builder->ii_->lexicon, id, &key_buffer);
-        key = GRN_BULK_HEAD(&key_buffer);
-        key_size = GRN_BULK_VSIZE(&key_buffer);
-      }
-      grn_rc rc = builder->append_value(src,
-                                        rid,
-                                        sid,
-                                        0,
-                                        key,
-                                        key_size,
-                                        builder->ii_->lexicon->header.domain,
-                                        true);
-      GRN_OBJ_FIN(ctx, &key_buffer);
-      return rc;
-    } else {
-      return builder->append_value(src,
-                                   rid,
-                                   sid,
-                                   0,
-                                   GRN_TEXT_VALUE(obj),
-                                   GRN_TEXT_LEN(obj),
-                                   obj->header.domain,
-                                   false);
-    }
-  case GRN_UVECTOR:
-    {
-      grn_rc rc = GRN_SUCCESS;
-      uint32_t i, n_values = grn_uvector_size(ctx, obj);
-      if (grn_id_maybe_table(ctx, obj->header.domain)) {
-        grn_obj key_buffer;
-        GRN_VOID_INIT(&key_buffer);
-        for (i = 0; i < n_values; i++) {
-          grn_id id;
-          float weight;
-          id = grn_uvector_get_element_record(ctx, obj, i, &weight);
-          uint32_t key_size;
-          const char *key;
-          if (builder->get_key_optimizable_) {
-            key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
-          } else {
-            GRN_BULK_REWIND(&key_buffer);
-            grn_table_get_key2(ctx, builder->ii_->lexicon, id, &key_buffer);
-            key = GRN_BULK_HEAD(&key_buffer);
-            key_size = GRN_BULK_VSIZE(&key_buffer);
-          }
-          rc = builder->append_value(src,
-                                     rid,
-                                     sid,
-                                     (uint32_t)weight,
-                                     key,
-                                     key_size,
-                                     builder->ii_->lexicon->header.domain,
-                                     true);
-          if (rc != GRN_SUCCESS) {
-            break;
-          }
-        }
-        GRN_OBJ_FIN(ctx, &key_buffer);
-      } else {
-        const char *p = GRN_BULK_HEAD(obj);
-        uint32_t value_size = grn_uvector_element_size(ctx, obj);
-        for (i = 0; i < n_values; i++) {
-          rc = builder->append_value(src,
-                                     rid,
-                                     sid,
-                                     0,
-                                     p,
-                                     value_size,
-                                     obj->header.domain,
-                                     false);
-          if (rc != GRN_SUCCESS) {
-            break;
-          }
-          p += value_size;
-        }
-      }
-      return rc;
-    }
-  case GRN_VECTOR:
-    if (obj->u.v.body) {
-      /*
-       * Note that the following sections and n_sections don't correspond to
-       * source columns.
-       */
-      int i, n_secs = obj->u.v.n_sections;
-      grn_section *secs = obj->u.v.sections;
-      const char *head = GRN_BULK_HEAD(obj->u.v.body);
-      for (i = 0; i < n_secs; i++) {
-        grn_rc rc;
-        grn_section *sec = &secs[i];
-        if (sec->length == 0) {
-          continue;
-        }
-        if ((builder->ii_->header.common->flags & GRN_OBJ_WITH_SECTION) &&
-            builder->have_tokenizer_) {
-          sid = i + 1;
-        }
-        rc = builder->append_value(src,
-                                   rid,
-                                   sid,
-                                   (uint32_t)(sec->weight),
-                                   head + sec->offset,
-                                   sec->length,
-                                   sec->domain,
-                                   false);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-    }
-    return GRN_SUCCESS;
-  default:
-    ERR(GRN_INVALID_ARGUMENT, "[index] invalid object assigned as value");
-    return ctx->rc;
-  }
-}
 
 /*
  * grn_ii_builder_append_srcs reads values from source columns and appends the
@@ -17342,7 +17340,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
           }
           if (rc == GRN_SUCCESS) {
             uint32_t sid = (uint32_t)(i + 1);
-            rc = grn_ii_builder_append_obj(ctx, builder, src, rid, sid, obj);
+            rc = builder->append_obj(src, rid, sid, obj);
           }
         }
       }
