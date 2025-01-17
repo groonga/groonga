@@ -16210,7 +16210,7 @@ namespace grn::ii {
       src_token_columns_ = nullptr;
       n_srcs_ = 0;
       sid_bits_ = 0;
-      sid_mask = 0;
+      sid_mask_ = 0;
 
       lexicon_ = nullptr;
       have_tokenizer_ = false;
@@ -17340,7 +17340,7 @@ namespace grn::ii {
     grn_obj **src_token_columns_; /* Source token columns (to be freed) */
     uint32_t n_srcs_;             /* Number of source columns */
     uint8_t sid_bits_;            /* Number of bits for section ID */
-    uint64_t sid_mask;            /* Mask bits for section ID */
+    uint64_t sid_mask_;           /* Mask bits for section ID */
 
     grn_obj *lexicon_;      /* Block lexicon (to be closed) */
     bool have_tokenizer_;   /* Whether lexicon has tokenizer */
@@ -17429,7 +17429,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn::ii::Builder *builder)
       builder->sid_bits_++;
     }
   }
-  builder->sid_mask = ((uint64_t)1 << builder->sid_bits_) - 1;
+  builder->sid_mask_ = ((uint64_t)1 << builder->sid_bits_) - 1;
   return GRN_SUCCESS;
 }
 
@@ -17874,7 +17874,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
 
     /* Read section ID. */
     if (ii_flags & GRN_OBJ_WITH_SECTION) {
-      uint32_t sid = (uint32_t)((value & builder->sid_mask) + 1);
+      uint32_t sid = (uint32_t)((value & builder->sid_mask_) + 1);
       chunk->sid_buf[chunk->offset] = sid - last_sid - 1;
       chunk->n++;
       last_sid = sid;
