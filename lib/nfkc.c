@@ -197,6 +197,7 @@ grn_nfkc_version_option_process(grn_ctx *ctx,
     GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
     GRN_TEXT_SET(ctx, &value, version, version_length);
     grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, &value);
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] must be a text: <%.*s>",
