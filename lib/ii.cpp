@@ -17200,6 +17200,117 @@ namespace grn::ii {
       }
     }
 
+    // Reads values from source columns and appends the values.
+    grn_rc
+    append_srcs()
+    {
+      auto ctx = ctx_;
+
+      /* Allocate memory for objects to store source values. */
+      auto objs = GRN_MALLOCN(grn_obj, n_srcs_);
+      if (!objs) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "failed to allocate memory for objs: n_srcs = %u",
+            n_srcs_);
+        return ctx->rc;
+      }
+
+      /* Create a cursor to get records in the ID order. */
+      auto cursor = grn_table_cursor_open(ctx,
+                                          src_table_,
+                                          NULL,
+                                          0,
+                                          NULL,
+                                          0,
+                                          0,
+                                          -1,
+                                          GRN_CURSOR_BY_ID);
+      if (!cursor) {
+        if (ctx->rc == GRN_SUCCESS) {
+          ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
+        }
+        GRN_FREE(objs);
+        return ctx->rc;
+      }
+
+      /* Read source values and append it. */
+      for (size_t i = 0; i < n_srcs_; i++) {
+        GRN_TEXT_INIT(&objs[i], 0);
+      }
+      grn_rc rc = GRN_SUCCESS;
+      while (rc == GRN_SUCCESS) {
+        grn_id rid = grn_table_cursor_next(ctx, cursor);
+        if (rid == GRN_ID_NIL) {
+          break;
+        }
+        for (size_t i = 0; i < n_srcs_; i++) {
+          grn_obj *obj = &objs[i];
+          grn_obj *src = srcs_[i];
+          grn_obj *token_column = src_token_columns_[i];
+          if (token_column) {
+            rc = grn_obj_reinit_for(ctx, obj, token_column);
+            if (rc == GRN_SUCCESS) {
+              if (!grn_obj_get_value(ctx, token_column, rid, obj)) {
+                if (ctx->rc == GRN_SUCCESS) {
+                  ERR(GRN_UNKNOWN_ERROR, "failed to get tokens: rid = %u", rid);
+                }
+                rc = ctx->rc;
+              }
+              if (rc == GRN_SUCCESS) {
+                auto sid = static_cast<uint32_t>(i + 1);
+                rc = append_tokens(rid, sid, obj);
+              }
+            }
+          } else {
+            rc = grn_obj_reinit_for(ctx, obj, src);
+            if (rc == GRN_SUCCESS) {
+              if (GRN_OBJ_TABLEP(src)) {
+                int len = grn_table_get_key2(ctx, src, rid, obj);
+                if (len <= 0) {
+                  if (ctx->rc == GRN_SUCCESS) {
+                    ERR(GRN_UNKNOWN_ERROR,
+                        "failed to get key: rid = %u, len = %d",
+                        rid,
+                        len);
+                  }
+                  rc = ctx->rc;
+                }
+              } else {
+                if (!grn_obj_get_value(ctx, src, rid, obj)) {
+                  if (ctx->rc == GRN_SUCCESS) {
+                    ERR(GRN_UNKNOWN_ERROR,
+                        "failed to get value: rid = %u",
+                        rid);
+                  }
+                  rc = ctx->rc;
+                }
+              }
+              if (rc == GRN_SUCCESS) {
+                auto sid = static_cast<uint32_t>(i + 1);
+                rc = append_obj(src, rid, sid, obj);
+              }
+            }
+          }
+        }
+        if (rc == GRN_SUCCESS && n_ >= options_.block_threshold) {
+          rc = flush_block();
+        }
+        if (progress_needed) {
+          progress.value.index.n_processed_records++;
+          grn_ctx_call_progress_callback(ctx, &progress);
+        }
+      }
+      if (rc == GRN_SUCCESS) {
+        rc = flush_block();
+      }
+      for (size_t i = 0; i < n_srcs_; i++) {
+        GRN_OBJ_FIN(ctx, &objs[i]);
+      }
+      grn_table_cursor_close(ctx, cursor);
+      GRN_FREE(objs);
+      return rc;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -17249,120 +17360,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/*
- * grn_ii_builder_append_srcs reads values from source columns and appends the
- * values.
- */
-static grn_rc
-grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  size_t i;
-  grn_rc rc = GRN_SUCCESS;
-  grn_obj *objs;
-  grn_table_cursor *cursor;
-
-  /* Allocate memory for objects to store source values. */
-  objs = GRN_MALLOCN(grn_obj, builder->n_srcs_);
-  if (!objs) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "failed to allocate memory for objs: n_srcs = %u",
-        builder->n_srcs_);
-    return ctx->rc;
-  }
-
-  /* Create a cursor to get records in the ID order. */
-  cursor = grn_table_cursor_open(ctx,
-                                 builder->src_table_,
-                                 NULL,
-                                 0,
-                                 NULL,
-                                 0,
-                                 0,
-                                 -1,
-                                 GRN_CURSOR_BY_ID);
-  if (!cursor) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
-    }
-    GRN_FREE(objs);
-    return ctx->rc;
-  }
-
-  /* Read source values and append it. */
-  for (i = 0; i < builder->n_srcs_; i++) {
-    GRN_TEXT_INIT(&objs[i], 0);
-  }
-  while (rc == GRN_SUCCESS) {
-    grn_id rid = grn_table_cursor_next(ctx, cursor);
-    if (rid == GRN_ID_NIL) {
-      break;
-    }
-    for (i = 0; i < builder->n_srcs_; i++) {
-      grn_obj *obj = &objs[i];
-      grn_obj *src = builder->srcs_[i];
-      grn_obj *token_column = builder->src_token_columns_[i];
-      if (token_column) {
-        rc = grn_obj_reinit_for(ctx, obj, token_column);
-        if (rc == GRN_SUCCESS) {
-          if (!grn_obj_get_value(ctx, token_column, rid, obj)) {
-            if (ctx->rc == GRN_SUCCESS) {
-              ERR(GRN_UNKNOWN_ERROR, "failed to get tokens: rid = %u", rid);
-            }
-            rc = ctx->rc;
-          }
-          if (rc == GRN_SUCCESS) {
-            uint32_t sid = (uint32_t)(i + 1);
-            rc = builder->append_tokens(rid, sid, obj);
-          }
-        }
-      } else {
-        rc = grn_obj_reinit_for(ctx, obj, src);
-        if (rc == GRN_SUCCESS) {
-          if (GRN_OBJ_TABLEP(src)) {
-            int len = grn_table_get_key2(ctx, src, rid, obj);
-            if (len <= 0) {
-              if (ctx->rc == GRN_SUCCESS) {
-                ERR(GRN_UNKNOWN_ERROR,
-                    "failed to get key: rid = %u, len = %d",
-                    rid,
-                    len);
-              }
-              rc = ctx->rc;
-            }
-          } else {
-            if (!grn_obj_get_value(ctx, src, rid, obj)) {
-              if (ctx->rc == GRN_SUCCESS) {
-                ERR(GRN_UNKNOWN_ERROR, "failed to get value: rid = %u", rid);
-              }
-              rc = ctx->rc;
-            }
-          }
-          if (rc == GRN_SUCCESS) {
-            uint32_t sid = (uint32_t)(i + 1);
-            rc = builder->append_obj(src, rid, sid, obj);
-          }
-        }
-      }
-    }
-    if (rc == GRN_SUCCESS && builder->n_ >= builder->options_.block_threshold) {
-      rc = builder->flush_block();
-    }
-    if (builder->progress_needed) {
-      builder->progress.value.index.n_processed_records++;
-      grn_ctx_call_progress_callback(ctx, &(builder->progress));
-    }
-  }
-  if (rc == GRN_SUCCESS) {
-    rc = builder->flush_block();
-  }
-  for (i = 0; i < builder->n_srcs_; i++) {
-    GRN_OBJ_FIN(ctx, &objs[i]);
-  }
-  grn_table_cursor_close(ctx, cursor);
-  GRN_FREE(objs);
-  return rc;
-}
 
 /* grn_ii_builder_set_src_table sets a source table. */
 static grn_rc
@@ -17520,7 +17517,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ii_builder_append_srcs(ctx, builder);
+  rc = builder->append_srcs();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
