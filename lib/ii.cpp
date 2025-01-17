@@ -16214,7 +16214,7 @@ namespace grn::ii {
 
       lexicon_ = nullptr;
       have_tokenizer_ = false;
-      have_normalizers = false;
+      have_normalizers_ = false;
       get_key_optimizable = false;
 
       n_ = 0;
@@ -16374,7 +16374,7 @@ namespace grn::ii {
         GRN_TEXT_INIT(&normalizers, 0);
         grn_table_get_normalizers_string(ctx_, ii_->lexicon, &normalizers);
         if (GRN_TEXT_LEN(&normalizers) > 0) {
-          have_normalizers = true;
+          have_normalizers_ = true;
           rc = grn_obj_set_info(ctx_,
                                 lexicon_,
                                 GRN_INFO_NORMALIZERS,
@@ -16944,7 +16944,7 @@ namespace grn::ii {
 
     grn_obj *lexicon_;        /* Block lexicon (to be closed) */
     bool have_tokenizer_;     /* Whether lexicon has tokenizer */
-    bool have_normalizers;    /* Whether lexicon has at least one normalizers */
+    bool have_normalizers_;   /* Whether lexicon has at least one normalizers */
     bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
     uint32_t n_;   /* Number of integers appended to the current block */
@@ -16998,7 +16998,7 @@ grn_ii_builder_append_value(grn_ctx *ctx,
   builder->start_value(rid, sid);
   if (value_size) {
     if (force_as_is ||
-        (!builder->have_tokenizer_ && !builder->have_normalizers)) {
+        (!builder->have_tokenizer_ && !builder->have_normalizers_)) {
       grn_id tid;
       uint32_t max_key_size = 0;
       bool too_large_key = false;
