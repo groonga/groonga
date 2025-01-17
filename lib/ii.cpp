@@ -17311,6 +17311,22 @@ namespace grn::ii {
       return rc;
     }
 
+    // Sets a source table. */
+    grn_rc
+    set_src_table()
+    {
+      src_table_ = grn_ctx_at(ctx_, DB_OBJ(ii_)->range);
+      if (!src_table_) {
+        if (ctx_->rc == GRN_SUCCESS) {
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT,
+              "source table is null: range = %d",
+              DB_OBJ(ii_)->range);
+        }
+        return ctx_->rc;
+      }
+      return GRN_SUCCESS;
+    }
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -17360,22 +17376,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_set_src_table sets a source table. */
-static grn_rc
-grn_ii_builder_set_src_table(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  builder->src_table_ = grn_ctx_at(ctx, DB_OBJ(builder->ii_)->range);
-  if (!builder->src_table_) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "source table is null: range = %d",
-          DB_OBJ(builder->ii_)->range);
-    }
-    return ctx->rc;
-  }
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_set_sid_bits calculates sid_bits and sid_mask. */
 static grn_rc
@@ -17494,7 +17494,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
 static grn_rc
 grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
 {
-  grn_rc rc = grn_ii_builder_set_src_table(ctx, builder);
+  grn_rc rc = builder->set_src_table();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
