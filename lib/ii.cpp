@@ -16185,13 +16185,13 @@ namespace grn::ii {
     {
       progress_needed_ = (grn_ctx_get_progress_callback(ctx_) != nullptr);
       if (progress_needed_) {
-        progress.type = GRN_PROGRESS_INDEX;
-        progress.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
-        progress.value.index.n_target_records = 0;
-        progress.value.index.n_processed_records = 0;
-        progress.value.index.n_target_terms = 0;
-        progress.value.index.n_processed_terms = 0;
-        grn_ctx_call_progress_callback(ctx, &progress);
+        progress_.type = GRN_PROGRESS_INDEX;
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
+        progress_.value.index.n_target_records = 0;
+        progress_.value.index.n_processed_records = 0;
+        progress_.value.index.n_target_terms = 0;
+        progress_.value.index.n_processed_terms = 0;
+        grn_ctx_call_progress_callback(ctx, &progress_);
       }
 
       if (options) {
@@ -16248,8 +16248,8 @@ namespace grn::ii {
     ~Builder()
     {
       if (progress_needed_) {
-        progress.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
-        grn_ctx_call_progress_callback(ctx_, &progress);
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
       }
 
       if (cinfos) {
@@ -16306,8 +16306,8 @@ namespace grn::ii {
         grn_obj_unref(ctx_, src_table_);
       }
       if (progress_needed_) {
-        progress.value.index.phase = GRN_PROGRESS_INDEX_DONE;
-        grn_ctx_call_progress_callback(ctx_, &progress);
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_DONE;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
       }
     }
 
@@ -17296,8 +17296,8 @@ namespace grn::ii {
           rc = flush_block();
         }
         if (progress_needed_) {
-          progress.value.index.n_processed_records++;
-          grn_ctx_call_progress_callback(ctx, &progress);
+          progress_.value.index.n_processed_records++;
+          grn_ctx_call_progress_callback(ctx, &progress_);
         }
       }
       if (rc == GRN_SUCCESS) {
@@ -17449,9 +17449,9 @@ namespace grn::ii {
     }
 
     grn_ctx *ctx_;
-    bool progress_needed_; /* Whether progress callback is needed for
-                              performance */
-    grn_progress progress; /* Progress information */
+    bool progress_needed_;  /* Whether progress callback is needed for
+                               performance */
+    grn_progress progress_; /* Progress information */
 
     grn_ii *ii_;                     /* Building inverted index */
     grn_ii_builder_options options_; /* Options */
@@ -17508,9 +17508,9 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
   }
   unsigned int n_records = grn_table_size(ctx, builder->src_table_);
   if (builder->progress_needed_) {
-    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
-    builder->progress.value.index.n_target_records = n_records;
-    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+    builder->progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
+    builder->progress_.value.index.n_target_records = n_records;
+    grn_ctx_call_progress_callback(ctx, &(builder->progress_));
   }
   if (n_records == 0) {
     /* Nothing to do because there are no values. */
@@ -18069,10 +18069,10 @@ static grn_rc
 grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   if (builder->progress_needed_) {
-    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
-    builder->progress.value.index.n_target_terms =
+    builder->progress_.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
+    builder->progress_.value.index.n_target_terms =
       grn_table_size(ctx, builder->ii_->lexicon);
-    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+    grn_ctx_call_progress_callback(ctx, &(builder->progress_));
   }
 
   uint32_t i;
@@ -18132,8 +18132,8 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
       return rc;
     }
     if (builder->progress_needed_) {
-      builder->progress.value.index.n_processed_terms++;
-      grn_ctx_call_progress_callback(ctx, &(builder->progress));
+      builder->progress_.value.index.n_processed_terms++;
+      grn_ctx_call_progress_callback(ctx, &(builder->progress_));
     }
   }
   grn_table_cursor_close(ctx, cursor);
