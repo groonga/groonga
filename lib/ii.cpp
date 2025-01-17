@@ -16861,6 +16861,72 @@ namespace grn::ii {
       }
     }
 
+    grn_rc
+    append_tokens(grn_id rid, uint32_t sid, grn_obj *tokens)
+    {
+      start_value(rid, sid);
+      grn_obj *src_lexicon = ii_->lexicon;
+      size_t n_tokens = grn_uvector_size(ctx_, tokens);
+      size_t i;
+      for (i = 0; i < n_tokens; i++) {
+        float weight;
+        grn_id tid;
+        grn_id src_tid =
+          grn_uvector_get_element_record(ctx_, tokens, i, &weight);
+        uint32_t token_value_size;
+        const char *token_value =
+          _grn_table_key(ctx_, src_lexicon, src_tid, &token_value_size);
+
+        switch (lexicon_->header.type) {
+        case GRN_TABLE_PAT_KEY:
+          tid = grn_pat_add(ctx_,
+                            reinterpret_cast<grn_pat *>(lexicon_),
+                            token_value,
+                            token_value_size,
+                            NULL,
+                            NULL);
+          break;
+        case GRN_TABLE_DAT_KEY:
+          tid = grn_dat_add(ctx_,
+                            reinterpret_cast<grn_dat *>(lexicon_),
+                            token_value,
+                            token_value_size,
+                            NULL,
+                            NULL);
+          break;
+        case GRN_TABLE_HASH_KEY:
+          tid = grn_hash_add(ctx_,
+                             reinterpret_cast<grn_hash *>(lexicon_),
+                             token_value,
+                             token_value_size,
+                             NULL,
+                             NULL);
+          break;
+        default:
+          /* This case must not be happen. */
+          tid = GRN_ID_NIL;
+          break;
+        }
+
+        if (tid == GRN_ID_NIL) {
+          /* TODO: Token value may not be a string. */
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT,
+              "[ii][builder][append-tokens] failed to add a token: <%.*s>",
+              static_cast<int>(token_value_size),
+              token_value);
+          return ctx->rc;
+        }
+        uint32_t pos = pos_ + i;
+        grn_rc rc =
+          append_token(rid, sid, static_cast<uint32_t>(weight), tid, pos);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -16910,73 +16976,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-static grn_rc
-grn_ii_builder_append_tokens(grn_ctx *ctx,
-                             grn::ii::Builder *builder,
-                             grn_id rid,
-                             uint32_t sid,
-                             grn_obj *tokens)
-{
-  builder->start_value(rid, sid);
-  grn_obj *src_lexicon = builder->ii_->lexicon;
-  size_t n_tokens = grn_uvector_size(ctx, tokens);
-  size_t i;
-  for (i = 0; i < n_tokens; i++) {
-    float weight;
-    grn_id tid;
-    grn_id src_tid = grn_uvector_get_element_record(ctx, tokens, i, &weight);
-    uint32_t token_value_size;
-    const char *token_value =
-      _grn_table_key(ctx, src_lexicon, src_tid, &token_value_size);
-
-    switch (builder->lexicon_->header.type) {
-    case GRN_TABLE_PAT_KEY:
-      tid = grn_pat_add(ctx,
-                        reinterpret_cast<grn_pat *>(builder->lexicon_),
-                        token_value,
-                        token_value_size,
-                        NULL,
-                        NULL);
-      break;
-    case GRN_TABLE_DAT_KEY:
-      tid = grn_dat_add(ctx,
-                        reinterpret_cast<grn_dat *>(builder->lexicon_),
-                        token_value,
-                        token_value_size,
-                        NULL,
-                        NULL);
-      break;
-    case GRN_TABLE_HASH_KEY:
-      tid = grn_hash_add(ctx,
-                         reinterpret_cast<grn_hash *>(builder->lexicon_),
-                         token_value,
-                         token_value_size,
-                         NULL,
-                         NULL);
-      break;
-    default:
-      /* This case must not be happen. */
-      tid = GRN_ID_NIL;
-      break;
-    }
-
-    if (tid == GRN_ID_NIL) {
-      /* TODO: Token value may not be a string. */
-      ERR(GRN_INVALID_ARGUMENT,
-          "[ii][builder][append-tokens] failed to add a token: <%.*s>",
-          (int)token_value_size,
-          token_value);
-      return ctx->rc;
-    }
-    uint32_t pos = builder->pos_ + i;
-    grn_rc rc = builder->append_token(rid, sid, (uint32_t)weight, tid, pos);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  return GRN_SUCCESS;
-}
 
 /*
  * grn_ii_builder_append_value appends a value. Note that values must be
@@ -17328,7 +17327,7 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
           }
           if (rc == GRN_SUCCESS) {
             uint32_t sid = (uint32_t)(i + 1);
-            rc = grn_ii_builder_append_tokens(ctx, builder, rid, sid, obj);
+            rc = builder->append_tokens(rid, sid, obj);
           }
         }
       } else {
