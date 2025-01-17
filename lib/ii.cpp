@@ -17386,6 +17386,68 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Sets source columns.
+    grn_rc
+    set_srcs()
+    {
+      n_srcs_ = ii_->obj.source_size / sizeof(grn_id);
+      auto source = static_cast<grn_id *>(ii_->obj.source);
+      if (!source || n_srcs_ == 0) {
+        auto ctx = ctx_;
+        ERR(GRN_INVALID_ARGUMENT,
+            "source is not available: source = %p, source_size = %u",
+            ii_->obj.source,
+            ii_->obj.source_size);
+        return ctx->rc;
+      }
+      {
+        auto ctx = ctx_;
+        srcs_ = GRN_MALLOCN(grn_obj *, n_srcs_);
+      }
+      if (!srcs_) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      for (size_t i = 0; i < n_srcs_; i++) {
+        srcs_[i] = grn_ctx_at(ctx_, source[i]);
+        if (!srcs_[i]) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_OBJECT_CORRUPT, "source not found: id = %d", source[i]);
+          }
+          return ctx_->rc;
+        }
+      }
+      {
+        auto ctx = ctx_;
+        src_token_columns_ = GRN_MALLOCN(grn_obj *, n_srcs_);
+      }
+      if (!src_token_columns_) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      {
+        grn_obj token_columns;
+        GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+        for (size_t i = 0; i < n_srcs_; i++) {
+          src_token_columns_[i] = nullptr;
+          auto src = srcs_[i];
+          grn_column_get_all_token_columns(ctx_, src, &token_columns);
+          size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
+          for (size_t j = 0; j < n_token_columns; j++) {
+            grn_obj *token_column = GRN_PTR_VALUE_AT(&token_columns, j);
+            if (!src_token_columns_[i] &&
+                DB_OBJ(token_column)->range == DB_OBJ(ii_->lexicon)->id) {
+              src_token_columns_[i] = token_column;
+            } else {
+              grn_obj_unref(ctx_, token_column);
+            }
+          }
+          GRN_BULK_REWIND(&token_columns);
+        }
+        GRN_OBJ_FIN(ctx_, &token_columns);
+      }
+      return set_sid_bits();
+    }
+
     grn_ctx *ctx_;
     bool
       progress_needed; /* Whether progress callback is needed for performance */
@@ -17436,63 +17498,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/* grn_ii_builder_set_srcs sets source columns. */
-static grn_rc
-grn_ii_builder_set_srcs(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  size_t i;
-  grn_id *source;
-  builder->n_srcs_ = builder->ii_->obj.source_size / sizeof(grn_id);
-  source = (grn_id *)builder->ii_->obj.source;
-  if (!source || !builder->n_srcs_) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "source is not available: source = %p, source_size = %u",
-        builder->ii_->obj.source,
-        builder->ii_->obj.source_size);
-    return ctx->rc;
-  }
-  builder->srcs_ = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
-  if (!builder->srcs_) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  for (i = 0; i < builder->n_srcs_; i++) {
-    builder->srcs_[i] = grn_ctx_at(ctx, source[i]);
-    if (!builder->srcs_[i]) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_OBJECT_CORRUPT, "source not found: id = %d", source[i]);
-      }
-      return ctx->rc;
-    }
-  }
-  builder->src_token_columns_ = GRN_MALLOCN(grn_obj *, builder->n_srcs_);
-  if (!builder->src_token_columns_) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  {
-    grn_obj token_columns;
-    GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    for (i = 0; i < builder->n_srcs_; i++) {
-      builder->src_token_columns_[i] = NULL;
-      grn_obj *src = builder->srcs_[i];
-      grn_column_get_all_token_columns(ctx, src, &token_columns);
-      size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
-      size_t j;
-      for (j = 0; j < n_token_columns; j++) {
-        grn_obj *token_column = GRN_PTR_VALUE_AT(&token_columns, j);
-        if (!builder->src_token_columns_[i] &&
-            DB_OBJ(token_column)->range == DB_OBJ(builder->ii_->lexicon)->id) {
-          builder->src_token_columns_[i] = token_column;
-        } else {
-          grn_obj_unref(ctx, token_column);
-        }
-      }
-      GRN_BULK_REWIND(&token_columns);
-    }
-    GRN_OBJ_FIN(ctx, &token_columns);
-  }
-  return builder->set_sid_bits();
-}
-
 /* grn_ii_builder_append_source appends values in source columns. */
 static grn_rc
 grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
@@ -17516,7 +17521,7 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ii_builder_set_srcs(ctx, builder);
+  rc = builder->set_srcs();
   if (rc != GRN_SUCCESS) {
     return rc;
   }
