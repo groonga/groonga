@@ -385,13 +385,11 @@ grn_table_cache_module_options(grn_ctx *ctx,
                                         module->proc,
                                         &raw_options,
                                         data->user_data);
-      if (ctx->rc == GRN_SUCCESS) {
-        grn_table_module_set_options_without_lock(ctx,
-                                                  module,
-                                                  options,
-                                                  revision,
-                                                  data->close_options_func);
-      }
+      grn_table_module_set_options_without_lock(ctx,
+                                                module,
+                                                options,
+                                                revision,
+                                                data->close_options_func);
     }
   }
   CRITICAL_SECTION_LEAVE(module->lock);
