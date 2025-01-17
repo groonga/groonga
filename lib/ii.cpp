@@ -16215,7 +16215,7 @@ namespace grn::ii {
       lexicon_ = nullptr;
       have_tokenizer_ = false;
       have_normalizers_ = false;
-      get_key_optimizable = false;
+      get_key_optimizable_ = false;
 
       n_ = 0;
       rid_ = GRN_ID_NIL;
@@ -16399,7 +16399,7 @@ namespace grn::ii {
       }
       if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
         auto lexicon_pat = reinterpret_cast<grn_pat *>(lexicon_);
-        get_key_optimizable = !grn_pat_is_key_encoded(ctx_, lexicon_pat);
+        get_key_optimizable_ = !grn_pat_is_key_encoded(ctx_, lexicon_pat);
         if (options_.lexicon_cache_size) {
           rc = grn_pat_cache_enable(ctx_,
                                     lexicon_pat,
@@ -16409,7 +16409,7 @@ namespace grn::ii {
           }
         }
       } else {
-        get_key_optimizable = true;
+        get_key_optimizable_ = true;
       }
       return GRN_SUCCESS;
     }
@@ -17079,10 +17079,10 @@ namespace grn::ii {
     uint8_t sid_bits_;           /* Number of bits for section ID */
     uint64_t sid_mask;           /* Mask bits for section ID */
 
-    grn_obj *lexicon_;        /* Block lexicon (to be closed) */
-    bool have_tokenizer_;     /* Whether lexicon has tokenizer */
-    bool have_normalizers_;   /* Whether lexicon has at least one normalizers */
-    bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
+    grn_obj *lexicon_;      /* Block lexicon (to be closed) */
+    bool have_tokenizer_;   /* Whether lexicon has tokenizer */
+    bool have_normalizers_; /* Whether lexicon has at least one normalizers */
+    bool get_key_optimizable_; /* Whether grn_table_get_key() is optimizable */
 
     uint32_t n_;   /* Number of integers appended to the current block */
     grn_id rid_;   /* Record ID */
@@ -17131,7 +17131,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
       GRN_VOID_INIT(&key_buffer);
       uint32_t key_size;
       const char *key;
-      if (builder->get_key_optimizable) {
+      if (builder->get_key_optimizable_) {
         key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
       } else {
         GRN_BULK_REWIND(&key_buffer);
@@ -17172,7 +17172,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx,
           id = grn_uvector_get_element_record(ctx, obj, i, &weight);
           uint32_t key_size;
           const char *key;
-          if (builder->get_key_optimizable) {
+          if (builder->get_key_optimizable_) {
             key = _grn_table_key(ctx, builder->ii_->lexicon, id, &key_size);
           } else {
             GRN_BULK_REWIND(&key_buffer);
