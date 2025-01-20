@@ -76,17 +76,11 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                               size_t value_size,
                               grn_id value_domain)
 {
-  switch (value_domain) {
-    case GRN_DB_SHORT_TEXT :
-    case GRN_DB_TEXT :
-    case GRN_DB_LONG_TEXT :
-      /* Set the empty string as it is instead of nil. */
-      break;
-    default :
-      if (value_size == 0) {
-        msgpack_pack_nil(packer);
-        return ctx->rc;
-      }
+  /* If the length is 0, if text, set to an empty string.
+   * Otherwise, set nil. */
+  if (value_size == 0 && !grn_type_id_is_text_family(ctx, value_domain)) {
+    msgpack_pack_nil(packer);
+    return ctx->rc;
   }
 
   switch (value_domain) {
