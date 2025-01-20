@@ -583,7 +583,7 @@ grn_index_column_diff_posting_list_init(
 }
 
 static void
-grn_index_column_diff_posting_list_fin(
+grn_index_column_diff_posting_list_flush(
   grn_ctx *ctx,
   grn_index_column_diff_data *data,
   grn_index_column_diff_posting_list *posting_list)
@@ -597,7 +597,6 @@ grn_index_column_diff_posting_list_fin(
                    remains,
                    GRN_BULK_HEAD(look_ahead) + offset,
                    GRN_BULK_VSIZE(look_ahead) - offset);
-    GRN_OBJ_FIN(ctx, look_ahead);
   }
 
   grn_ii_cursor *cursor = posting_list->cursor;
@@ -607,8 +606,14 @@ grn_index_column_diff_posting_list_fin(
     if (with_position) {
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
+          if (ctx->rc != GRN_SUCCESS) {
+            return;
+          }
           posting_list->need_cursor_next = false;
           GRN_UINT32_PUT(ctx, remains, posting->rid);
           if (with_section) {
@@ -621,14 +626,15 @@ grn_index_column_diff_posting_list_fin(
     } else {
       grn_posting *posting;
       while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         GRN_UINT32_PUT(ctx, remains, posting->rid);
         if (with_section) {
           GRN_UINT32_PUT(ctx, remains, posting->sid);
         }
       }
     }
-    grn_ii_cursor_close(ctx, cursor);
-    posting_list->cursor = NULL;
   }
 
   if (GRN_BULK_VSIZE(remains) > 0 || GRN_BULK_VSIZE(missings) > 0) {
@@ -650,8 +656,24 @@ grn_index_column_diff_posting_list_fin(
       }
     }
   }
-  GRN_OBJ_FIN(ctx, remains);
-  GRN_OBJ_FIN(ctx, missings);
+}
+
+static void
+grn_index_column_diff_posting_list_fin(
+  grn_ctx *ctx,
+  grn_index_column_diff_data *data,
+  grn_index_column_diff_posting_list *posting_list)
+{
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_index_column_diff_posting_list_flush(ctx, data, posting_list);
+  }
+  GRN_OBJ_FIN(ctx, &(posting_list->remains));
+  GRN_OBJ_FIN(ctx, &(posting_list->missings));
+  GRN_OBJ_FIN(ctx, &(posting_list->look_ahead));
+  if (posting_list->cursor) {
+    grn_ii_cursor_close(ctx, posting_list->cursor);
+    posting_list->cursor = NULL;
+  }
 }
 
 static void
@@ -909,8 +931,14 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     if (with_position) {
       while (!posting_list->need_cursor_next ||
              grn_ii_cursor_next(ctx, cursor)) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         grn_posting *posting;
         while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
+          if (ctx->rc != GRN_SUCCESS) {
+            return;
+          }
           posting_list->need_cursor_next = false;
           const grn_index_column_diff_compared compared =
             grn_index_column_diff_compare_posting(ctx, data, posting);
@@ -961,6 +989,9 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     } else {
       grn_posting *posting;
       while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
         const grn_index_column_diff_compared compared =
           grn_index_column_diff_compare_posting(ctx, data, posting);
         GRN_LOG(ctx,
