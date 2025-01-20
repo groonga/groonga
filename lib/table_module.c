@@ -391,6 +391,8 @@ grn_table_cache_module_options(grn_ctx *ctx,
                                                   options,
                                                   revision,
                                                   data->close_options_func);
+      } else if (options) {
+        data->close_options_func(ctx, options);
       }
     }
   }
