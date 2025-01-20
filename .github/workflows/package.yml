@@ -133,12 +133,8 @@ jobs:
         id:
           - debian-bookworm-amd64
           - debian-bookworm-arm64
-          # simdjson removed from testing:
-          # https://github.com/groonga/groonga/pull/1871
-          #
-          # We can enable this again when simdjson is added to testing again.
-          # - debian-trixie-amd64
-          # - debian-trixie-arm64
+          - debian-trixie-amd64
+          - debian-trixie-arm64
           - ubuntu-focal-amd64
           - ubuntu-focal-arm64
           - ubuntu-jammy-amd64
@@ -150,33 +146,16 @@ jobs:
           - almalinux-9-x86_64
           - almalinux-9-aarch64
           - amazon-linux-2023-x86_64
-          # This is too slow.
-          #
-          # We can enable this again when GitHub Actions arm runner is
-          # available.
-          # - amazon-linux-2023-aarch64
-        include:
-          - id: debian-bookworm-arm64
-            timeout-minutes: 60
-          # - id: debian-trixie-arm64
-          #   timeout-minutes: 120
-          - id: ubuntu-focal-arm64
-            timeout-minutes: 60
-          - id: ubuntu-jammy-arm64
-            timeout-minutes: 60
-          - id: ubuntu-noble-arm64
-            timeout-minutes: 120
-          - id: almalinux-8-aarch64
-            timeout-minutes: 60
-          - id: almalinux-9-aarch64
-            timeout-minutes: 120
-          # - id: amazon-linux-2023-aarch64
-          #   timeout-minutes: 120
+          - amazon-linux-2023-aarch64
     env:
       APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
-    # We can't use ubuntu-24.04 to build arm64 binary with QEMU.
-    # libc-bin is crashed.
-    runs-on: ubuntu-22.04
+    # condition && true-case || false-case
+    # ==
+    # condition ? true-case : false-case
+    runs-on: >-
+      ${{ (contains(matrix.id, 'arm64') ||
+           contains(matrix.id, 'aarch64')) && 'ubuntu-24.04-arm' ||
+                                              'ubuntu-latest' }}
     timeout-minutes: ${{ matrix.timeout-minutes || 30 }}
     steps:
       - uses: actions/checkout@v4
@@ -226,7 +205,6 @@ jobs:
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             devscripts \
-            qemu-user-static \
             ruby
       - uses: actions/download-artifact@v4
         with:
