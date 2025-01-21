@@ -17996,6 +17996,83 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    grn_rc
+    commit()
+    {
+      if (progress_needed_) {
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
+        progress_.value.index.n_target_terms =
+          grn_table_size(ctx_, ii_->lexicon);
+        grn_ctx_call_progress_callback(ctx_, &progress_);
+      }
+
+      for (uint32_t i = 0; i < n_blocks_; i++) {
+        uint64_t value;
+        auto rc = read_from_block(i, &value);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        blocks_[i].tid = static_cast<grn_id>(value);
+      }
+
+      auto cursor = grn_table_cursor_open(ctx_,
+                                          ii_->lexicon,
+                                          nullptr,
+                                          0,
+                                          nullptr,
+                                          0,
+                                          0,
+                                          -1,
+                                          GRN_CURSOR_BY_KEY);
+      for (;;) {
+        grn_id tid = grn_table_cursor_next(ctx_, cursor);
+        if (tid == GRN_ID_NIL) {
+          break;
+        }
+        chunk_.tid = tid;
+        chunk_.rid = GRN_ID_NIL;
+        df_ = 0;
+        for (uint32_t i = 0; i < n_blocks_; i++) {
+          if (tid == blocks_[i].tid) {
+            auto rc = read_to_chunk(i);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+          }
+        }
+        if (chunk_.n == 0) {
+          /* This term does not appear. */
+          continue;
+        }
+        if (n_cinfos_ == 0) {
+          bool packed;
+          auto rc = pack_chunk(&packed);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          if (packed) {
+            continue;
+          }
+        }
+        auto rc = register_chunks();
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        if (progress_needed_) {
+          progress_.value.index.n_processed_terms++;
+          grn_ctx_call_progress_callback(ctx_, &progress_);
+        }
+      }
+      grn_table_cursor_close(ctx_, cursor);
+      if (grn_ii_builder_buffer_is_assigned(ctx_, &buf_)) {
+        auto rc = grn_ii_builder_buffer_flush(ctx_, &buf_);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -18046,87 +18123,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-static grn_rc
-grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  if (builder->progress_needed_) {
-    builder->progress_.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
-    builder->progress_.value.index.n_target_terms =
-      grn_table_size(ctx, builder->ii_->lexicon);
-    grn_ctx_call_progress_callback(ctx, &(builder->progress_));
-  }
-
-  uint32_t i;
-  grn_rc rc;
-  grn_table_cursor *cursor;
-
-  for (i = 0; i < builder->n_blocks_; i++) {
-    uint64_t value;
-    rc = builder->read_from_block(i, &value);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    builder->blocks_[i].tid = (grn_id)value;
-  }
-
-  cursor = grn_table_cursor_open(ctx,
-                                 builder->ii_->lexicon,
-                                 NULL,
-                                 0,
-                                 NULL,
-                                 0,
-                                 0,
-                                 -1,
-                                 GRN_CURSOR_BY_KEY);
-  for (;;) {
-    grn_id tid = grn_table_cursor_next(ctx, cursor);
-    if (tid == GRN_ID_NIL) {
-      break;
-    }
-    builder->chunk_.tid = tid;
-    builder->chunk_.rid = GRN_ID_NIL;
-    builder->df_ = 0;
-    for (i = 0; i < builder->n_blocks_; i++) {
-      if (tid == builder->blocks_[i].tid) {
-        rc = builder->read_to_chunk(i);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-    }
-    if (builder->chunk_.n == 0) {
-      /* This term does not appear. */
-      continue;
-    }
-    if (builder->n_cinfos_ == 0) {
-      bool packed;
-      rc = builder->pack_chunk(&packed);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      if (packed) {
-        continue;
-      }
-    }
-    rc = builder->register_chunks();
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    if (builder->progress_needed_) {
-      builder->progress_.value.index.n_processed_terms++;
-      grn_ctx_call_progress_callback(ctx, &(builder->progress_));
-    }
-  }
-  grn_table_cursor_close(ctx, cursor);
-  if (grn_ii_builder_buffer_is_assigned(ctx, &builder->buf_)) {
-    rc = grn_ii_builder_buffer_flush(ctx, &builder->buf_);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  return GRN_SUCCESS;
-}
-
 extern "C" grn_rc
 grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 {
@@ -18135,11 +18131,11 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
     grn::ii::Builder builder(ctx, ii, options);
     rc = builder.append_source();
     if (rc == GRN_SUCCESS) {
-      rc = grn_ii_builder_commit(ctx, &builder);
+      rc = builder.commit();
     }
   }
   if (rc != GRN_SUCCESS) {
-    grn_obj_flush(ctx, (grn_obj *)ii);
+    grn_obj_flush(ctx, reinterpret_cast<grn_obj *>(ii));
   }
   return rc;
 }
