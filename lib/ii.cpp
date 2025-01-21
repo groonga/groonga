@@ -17662,6 +17662,89 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Flushes a chunk.
+    grn_rc
+    flush_chunk()
+    {
+      auto rc = grn_ii_builder_chunk_encode(ctx_, &chunk_, NULL, 0);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      uint8_t *in = chunk_.enc_buf;
+      uint32_t in_size = chunk_.enc_offset;
+
+      uint32_t chunk_id;
+      rc = chunk_new(ctx_, ii_, &chunk_id, chunk_.enc_offset);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+
+      /* Copy to the first segment. */
+      uint32_t seg_id = chunk_id >> GRN_II_N_CHUNK_VARIATION;
+      uint32_t seg_offset = (chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1))
+                            << GRN_II_W_LEAST_CHUNK;
+      void *seg = grn_io_seg_ref(ctx_, ii_->chunk, seg_id);
+      if (!seg) {
+        if (ctx_->rc == GRN_SUCCESS) {
+          auto ctx = ctx_;
+          ERR(GRN_UNKNOWN_ERROR,
+              "failed access chunk segment: chunk_id = %u, seg_id = %u",
+              chunk_id,
+              seg_id);
+        }
+        return ctx_->rc;
+      }
+      uint32_t seg_rest = S_CHUNK - seg_offset;
+      if (in_size <= seg_rest) {
+        grn_memcpy(static_cast<uint8_t *>(seg) + seg_offset, in, in_size);
+        in_size = 0;
+      } else {
+        grn_memcpy(static_cast<uint8_t *>(seg) + seg_offset, in, seg_rest);
+        in += seg_rest;
+        in_size -= seg_rest;
+      }
+      grn_io_seg_unref(ctx_, ii_->chunk, seg_id);
+
+      /* Copy to the next segments. */
+      while (in_size) {
+        seg_id++;
+        seg = grn_io_seg_ref(ctx_, ii_->chunk, seg_id);
+        if (!seg) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_UNKNOWN_ERROR,
+                "failed access chunk segment: chunk_id = %u, seg_id = %u",
+                chunk_id,
+                seg_id);
+          }
+          return ctx_->rc;
+        }
+        if (in_size <= S_CHUNK) {
+          grn_memcpy(seg, in, in_size);
+          in_size = 0;
+        } else {
+          grn_memcpy(seg, in, S_CHUNK);
+          in += S_CHUNK;
+          in_size -= S_CHUNK;
+        }
+        grn_io_seg_unref(ctx_, ii_->chunk, seg_id);
+      }
+
+      /* Append a cinfo. */
+      chunk_info *cinfo = nullptr;
+      rc = get_cinfo(&cinfo);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      cinfo->segno = chunk_id;
+      cinfo->size = chunk_.enc_offset;
+      cinfo->dgap = chunk_.rid_gap;
+
+      buf_.ii->header.common->total_chunk_size += chunk_.enc_offset;
+      grn_ii_builder_chunk_clear(ctx_, &chunk_);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17711,92 +17794,6 @@ namespace grn::ii {
     uint32_t cinfos_size_; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_flush_chunk flushes a chunk. */
-static grn_rc
-grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_rc rc;
-  chunk_info *cinfo = NULL;
-  grn_ii_builder_chunk *chunk = &builder->chunk_;
-  void *seg;
-  uint8_t *in;
-  uint32_t in_size, chunk_id, seg_id, seg_offset, seg_rest;
-
-  rc = grn_ii_builder_chunk_encode(ctx, chunk, NULL, 0);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  in = chunk->enc_buf;
-  in_size = chunk->enc_offset;
-
-  rc = chunk_new(ctx, builder->ii_, &chunk_id, chunk->enc_offset);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  /* Copy to the first segment. */
-  seg_id = chunk_id >> GRN_II_N_CHUNK_VARIATION;
-  seg_offset = (chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1))
-               << GRN_II_W_LEAST_CHUNK;
-  seg = grn_io_seg_ref(ctx, builder->ii_->chunk, seg_id);
-  if (!seg) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR,
-          "failed access chunk segment: chunk_id = %u, seg_id = %u",
-          chunk_id,
-          seg_id);
-    }
-    return ctx->rc;
-  }
-  seg_rest = S_CHUNK - seg_offset;
-  if (in_size <= seg_rest) {
-    grn_memcpy((uint8_t *)seg + seg_offset, in, in_size);
-    in_size = 0;
-  } else {
-    grn_memcpy((uint8_t *)seg + seg_offset, in, seg_rest);
-    in += seg_rest;
-    in_size -= seg_rest;
-  }
-  grn_io_seg_unref(ctx, builder->ii_->chunk, seg_id);
-
-  /* Copy to the next segments. */
-  while (in_size) {
-    seg_id++;
-    seg = grn_io_seg_ref(ctx, builder->ii_->chunk, seg_id);
-    if (!seg) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_UNKNOWN_ERROR,
-            "failed access chunk segment: chunk_id = %u, seg_id = %u",
-            chunk_id,
-            seg_id);
-      }
-      return ctx->rc;
-    }
-    if (in_size <= S_CHUNK) {
-      grn_memcpy(seg, in, in_size);
-      in_size = 0;
-    } else {
-      grn_memcpy(seg, in, S_CHUNK);
-      in += S_CHUNK;
-      in_size -= S_CHUNK;
-    }
-    grn_io_seg_unref(ctx, builder->ii_->chunk, seg_id);
-  }
-
-  /* Append a cinfo. */
-  rc = builder->get_cinfo(&cinfo);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  cinfo->segno = chunk_id;
-  cinfo->size = chunk->enc_offset;
-  cinfo->dgap = chunk->rid_gap;
-
-  builder->buf_.ii->header.common->total_chunk_size += chunk->enc_offset;
-  grn_ii_builder_chunk_clear(ctx, chunk);
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_read_to_chunk read values from a block to a chunk. */
 static grn_rc
@@ -17858,7 +17855,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
                     threshold);
             GRN_OBJ_FIN(ctx, &token);
           }
-          rc = grn_ii_builder_flush_chunk(ctx, builder);
+          rc = builder->flush_chunk();
           if (rc != GRN_SUCCESS) {
             return rc;
           }
