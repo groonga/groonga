@@ -17893,6 +17893,109 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Registers chunks.
+    grn_rc
+    register_chunks()
+    {
+      auto rc = grn_ii_builder_chunk_encode(ctx_, &chunk_, cinfos_, n_cinfos_);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+
+      if (!grn_ii_builder_buffer_is_assigned(ctx_, &buf_)) {
+        rc = grn_ii_builder_buffer_assign(ctx_, &buf_, chunk_.enc_offset);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      uint32_t buf_tid = buf_.buf->header.nterms;
+      if (buf_tid >= options_.buffer_max_n_terms ||
+          buf_.chunk_size - buf_.chunk_offset < chunk_.enc_offset) {
+        rc = grn_ii_builder_buffer_flush(ctx_, &buf_);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        rc = grn_ii_builder_buffer_assign(ctx_, &buf_, chunk_.enc_offset);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        buf_tid = 0;
+      }
+      buffer_term *buf_term = &(buf_.buf->terms[buf_tid]);
+      buf_term->tid = chunk_.tid;
+      if (n_cinfos_ > 0) {
+        buf_term->tid |= CHUNK_SPLIT;
+      }
+      buf_term->size_in_buffer = 0;
+      buf_term->pos_in_buffer = 0;
+      buf_term->size_in_chunk = chunk_.enc_offset;
+      buf_term->pos_in_chunk = buf_.chunk_offset;
+
+      if (grn_logger_pass(ctx_, GRN_LOG_DEBUG)) {
+        auto ctx = ctx_;
+        GRN_DEFINE_NAME(ii_);
+        grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
+        grn_ii_get_term(ctx, ii_, chunk_.tid, &token);
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "[ii][builder][register][chunks] "
+                "<%.*s>: "
+                "<%.*s>(%u): "
+                "n_chunks=<%u> "
+                "chunk=<%u>/<%u>(%u)/(%u) "
+                "encoded_chunk_size=<%" GRN_FMT_SIZE ">",
+                name_size,
+                name,
+                static_cast<int>(GRN_TEXT_LEN(&token)),
+                GRN_TEXT_VALUE(&token),
+                chunk_.tid,
+                n_cinfos_,
+                buf_.chunk_offset,
+                buf_.chunk_size,
+                buf_.chunk_size - buf_.chunk_offset,
+                buf_.ii->chunk->header->segment_size,
+                chunk_.enc_offset);
+        GRN_OBJ_FIN(ctx, &token);
+      }
+      grn_memcpy(buf_.chunk + buf_.chunk_offset,
+                 chunk_.enc_buf,
+                 chunk_.enc_offset);
+      buf_.chunk_offset += chunk_.enc_offset;
+
+      uint32_t *a = array_get(ctx_, ii_, chunk_.tid);
+      if (!a) {
+        auto ctx = ctx_;
+        GRN_DEFINE_NAME(ii_);
+        grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
+        grn_ii_get_term(ctx_, ii_, chunk_.tid, &token);
+        MERR("[ii][builder][register][chunks] "
+             "failed to allocate an array in segment: "
+             "<%.*s>: "
+             "<%.*s>(%u): "
+             "max_n_segments=<%u>",
+             name_size,
+             name,
+             static_cast<int>(GRN_TEXT_LEN(&token)),
+             GRN_TEXT_VALUE(&token),
+             chunk_.tid,
+             ii_->seg->header->max_segment);
+        GRN_OBJ_FIN(ctx, &token);
+        return ctx->rc;
+      }
+      a[0] = grn_ii_pos_pack(ii_,
+                             buf_.buf_id,
+                             POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
+      a[1] = df_;
+      array_unref(ctx_, ii_, chunk_.tid);
+
+      buf_.buf->header.nterms++;
+      n_cinfos_ = 0;
+      grn_ii_builder_chunk_clear(ctx_, &chunk_);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17942,119 +18045,6 @@ namespace grn::ii {
     uint32_t cinfos_size_; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_register_chunks registers chunks. */
-static grn_rc
-grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_rc rc;
-  uint32_t buf_tid, *a;
-  buffer_term *buf_term;
-
-  rc = grn_ii_builder_chunk_encode(ctx,
-                                   &builder->chunk_,
-                                   builder->cinfos_,
-                                   builder->n_cinfos_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  if (!grn_ii_builder_buffer_is_assigned(ctx, &builder->buf_)) {
-    rc = grn_ii_builder_buffer_assign(ctx,
-                                      &builder->buf_,
-                                      builder->chunk_.enc_offset);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  buf_tid = builder->buf_.buf->header.nterms;
-  if (buf_tid >= builder->options_.buffer_max_n_terms ||
-      builder->buf_.chunk_size - builder->buf_.chunk_offset <
-        builder->chunk_.enc_offset) {
-    rc = grn_ii_builder_buffer_flush(ctx, &builder->buf_);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    rc = grn_ii_builder_buffer_assign(ctx,
-                                      &builder->buf_,
-                                      builder->chunk_.enc_offset);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    buf_tid = 0;
-  }
-  buf_term = &builder->buf_.buf->terms[buf_tid];
-  buf_term->tid = builder->chunk_.tid;
-  if (builder->n_cinfos_ > 0) {
-    buf_term->tid |= CHUNK_SPLIT;
-  }
-  buf_term->size_in_buffer = 0;
-  buf_term->pos_in_buffer = 0;
-  buf_term->size_in_chunk = builder->chunk_.enc_offset;
-  buf_term->pos_in_chunk = builder->buf_.chunk_offset;
-
-  if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-    grn_obj token;
-    GRN_DEFINE_NAME(builder->ii_);
-    GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii_, builder->chunk_.tid, &token);
-    GRN_LOG(ctx,
-            GRN_LOG_DEBUG,
-            "[ii][builder][register][chunks] "
-            "<%.*s>: "
-            "<%.*s>(%u): "
-            "n_chunks=<%u> "
-            "chunk=<%u>/<%u>(%u)/(%u) "
-            "encoded_chunk_size=<%" GRN_FMT_SIZE ">",
-            name_size,
-            name,
-            (int)GRN_TEXT_LEN(&token),
-            GRN_TEXT_VALUE(&token),
-            builder->chunk_.tid,
-            builder->n_cinfos_,
-            builder->buf_.chunk_offset,
-            builder->buf_.chunk_size,
-            builder->buf_.chunk_size - builder->buf_.chunk_offset,
-            builder->buf_.ii->chunk->header->segment_size,
-            builder->chunk_.enc_offset);
-    GRN_OBJ_FIN(ctx, &token);
-  }
-  grn_memcpy(builder->buf_.chunk + builder->buf_.chunk_offset,
-             builder->chunk_.enc_buf,
-             builder->chunk_.enc_offset);
-  builder->buf_.chunk_offset += builder->chunk_.enc_offset;
-
-  a = array_get(ctx, builder->ii_, builder->chunk_.tid);
-  if (!a) {
-    grn_obj token;
-    GRN_DEFINE_NAME(builder->ii_);
-    GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii_, builder->chunk_.tid, &token);
-    MERR("[ii][builder][register][chunks] "
-         "failed to allocate an array in segment: "
-         "<%.*s>: "
-         "<%.*s>(%u): "
-         "max_n_segments=<%u>",
-         name_size,
-         name,
-         (int)GRN_TEXT_LEN(&token),
-         GRN_TEXT_VALUE(&token),
-         builder->chunk_.tid,
-         builder->ii_->seg->header->max_segment);
-    GRN_OBJ_FIN(ctx, &token);
-    return ctx->rc;
-  }
-  a[0] = grn_ii_pos_pack(builder->ii_,
-                         builder->buf_.buf_id,
-                         POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
-  a[1] = builder->df_;
-  array_unref(ctx, builder->ii_, builder->chunk_.tid);
-
-  builder->buf_.buf->header.nterms++;
-  builder->n_cinfos_ = 0;
-  grn_ii_builder_chunk_clear(ctx, &builder->chunk_);
-  return GRN_SUCCESS;
-}
 
 static grn_rc
 grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
@@ -18118,7 +18108,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
         continue;
       }
     }
-    rc = grn_ii_builder_register_chunks(ctx, builder);
+    rc = builder->register_chunks();
     if (rc != GRN_SUCCESS) {
       return rc;
     }
