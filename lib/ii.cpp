@@ -17483,6 +17483,63 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Reads the next data from a temporary file and fill a block
+    // buffer.
+    grn_rc
+    fill_block(uint32_t block_id)
+    {
+      grn_ii_builder_block *block = &(blocks_[block_id]);
+      if (!block->rest) {
+        return GRN_END_OF_DATA;
+      }
+      if (!block->buf) {
+        auto ctx = ctx_;
+        block->buf =
+          reinterpret_cast<uint8_t *>(GRN_MALLOC(options_.block_buf_size));
+        if (!block->buf) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "failed to allocate memory for buffered input: size = %u",
+              options_.block_buf_size);
+          return ctx->rc;
+        }
+      }
+
+      /* Move the remaining data to the head. */
+      uint32_t buf_rest = block->end - block->cur;
+      if (buf_rest) {
+        grn_memmove(block->buf, block->cur, buf_rest);
+      }
+      block->cur = block->buf;
+      block->end = block->buf + buf_rest;
+
+      /* Read the next data. */
+      uint64_t file_offset = grn_lseek(fd_, block->offset, SEEK_SET);
+      if (file_offset != block->offset) {
+        auto ctx = ctx_;
+        SERR("failed to seek file: expected = %" GRN_FMT_INT64U
+             ", actual = %" GRN_FMT_INT64D,
+             block->offset,
+             file_offset);
+        return ctx->rc;
+      }
+      buf_rest = options_.block_buf_size - buf_rest;
+      if (block->rest < buf_rest) {
+        buf_rest = block->rest;
+      }
+      ssize_t size = grn_read(fd_, block->end, buf_rest);
+      if (size <= 0) {
+        auto ctx = ctx_;
+        SERR("failed to read data: expected = %u, actual = %" GRN_FMT_INT64D,
+             buf_rest,
+             static_cast<int64_t>(size));
+        return ctx->rc;
+      }
+      block->offset += size;
+      block->rest -= size;
+      block->end += size;
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17533,66 +17590,6 @@ namespace grn::ii {
   };
 } // namespace grn::ii
 
-/*
- * grn_ii_builder_fill_block reads the next data from a temporary file and fill
- * a block buffer.
- */
-static grn_rc
-grn_ii_builder_fill_block(grn_ctx *ctx,
-                          grn::ii::Builder *builder,
-                          uint32_t block_id)
-{
-  ssize_t size;
-  uint32_t buf_rest;
-  uint64_t file_offset;
-  grn_ii_builder_block *block = &builder->blocks_[block_id];
-  if (!block->rest) {
-    return GRN_END_OF_DATA;
-  }
-  if (!block->buf) {
-    block->buf = (uint8_t *)GRN_MALLOC(builder->options_.block_buf_size);
-    if (!block->buf) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to allocate memory for buffered input: size = %u",
-          builder->options_.block_buf_size);
-      return ctx->rc;
-    }
-  }
-
-  /* Move the remaining data to the head. */
-  buf_rest = block->end - block->cur;
-  if (buf_rest) {
-    grn_memmove(block->buf, block->cur, buf_rest);
-  }
-  block->cur = block->buf;
-  block->end = block->buf + buf_rest;
-
-  /* Read the next data. */
-  file_offset = grn_lseek(builder->fd_, block->offset, SEEK_SET);
-  if (file_offset != block->offset) {
-    SERR("failed to seek file: expected = %" GRN_FMT_INT64U
-         ", actual = %" GRN_FMT_INT64D,
-         block->offset,
-         file_offset);
-    return ctx->rc;
-  }
-  buf_rest = builder->options_.block_buf_size - buf_rest;
-  if (block->rest < buf_rest) {
-    buf_rest = block->rest;
-  }
-  size = grn_read(builder->fd_, block->end, buf_rest);
-  if (size <= 0) {
-    SERR("failed to read data: expected = %u, actual = %" GRN_FMT_INT64D,
-         buf_rest,
-         (int64_t)size);
-    return ctx->rc;
-  }
-  block->offset += size;
-  block->rest -= size;
-  block->end += size;
-  return GRN_SUCCESS;
-}
-
 /* grn_ii_builder_read_from_block reads the next value from a block. */
 static grn_rc
 grn_ii_builder_read_from_block(grn_ctx *ctx,
@@ -17605,7 +17602,7 @@ grn_ii_builder_read_from_block(grn_ctx *ctx,
   if (rc == GRN_SUCCESS) {
     return GRN_SUCCESS;
   } else if (rc == GRN_END_OF_DATA) {
-    rc = grn_ii_builder_fill_block(ctx, builder, block_id);
+    rc = builder->fill_block(block_id);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
