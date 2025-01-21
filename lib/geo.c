@@ -3002,15 +3002,15 @@ double
 grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
-  grn_bool point1_initialized = GRN_FALSE;
-  grn_bool point2_initialized = GRN_FALSE;
+  bool point1_initialized = false;
+  bool point2_initialized = false;
   grn_obj point1_, point2_;
   grn_id domain1 = point1->header.domain;
   grn_id domain2 = point2->header.domain;
   if (domain1 == GRN_DB_TOKYO_GEO_POINT || domain1 == GRN_DB_WGS84_GEO_POINT) {
     if (domain1 != domain2) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain1);
-      point2_initialized = GRN_TRUE;
+      point2_initialized = true;
       if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
         goto exit;
       }
@@ -3019,7 +3019,7 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
   } else if (domain2 == GRN_DB_TOKYO_GEO_POINT ||
              domain2 == GRN_DB_WGS84_GEO_POINT) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, domain2);
-    point1_initialized = GRN_TRUE;
+    point1_initialized = true;
     if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) {
       goto exit;
     }
@@ -3027,14 +3027,14 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
   } else if ((GRN_DB_SHORT_TEXT <= domain1 && domain1 <= GRN_DB_LONG_TEXT) &&
              (GRN_DB_SHORT_TEXT <= domain2 && domain2 <= GRN_DB_LONG_TEXT)) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
-    point1_initialized = GRN_TRUE;
+    point1_initialized = true;
     if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) {
       goto exit;
     }
     point1 = &point1_;
 
     GRN_OBJ_INIT(&point2_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
-    point2_initialized = GRN_TRUE;
+    point2_initialized = true;
     if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
       goto exit;
     }
@@ -3059,13 +3059,13 @@ double
 grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
-  grn_bool point2_initialized = GRN_FALSE;
+  bool point2_initialized = false;
   grn_obj point2_;
   grn_id domain = point1->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
-      point2_initialized = GRN_TRUE;
+      point2_initialized = true;
       if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
         goto exit;
       }
@@ -3088,13 +3088,13 @@ double
 grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
-  grn_bool point2_initialized = GRN_FALSE;
+  bool point2_initialized = false;
   grn_obj point2_;
   grn_id domain = point1->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
-      point2_initialized = GRN_TRUE;
+      point2_initialized = true;
       if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
         goto exit;
       }
