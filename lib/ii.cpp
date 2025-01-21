@@ -16237,7 +16237,7 @@ namespace grn::ii {
       blocks_size_ = 0;
 
       grn_ii_builder_buffer_init(ctx, &buf, ii);
-      grn_ii_builder_chunk_init(ctx, &chunk, ii);
+      grn_ii_builder_chunk_init(ctx, &chunk_, ii);
 
       df = 0;
       cinfos = nullptr;
@@ -16256,7 +16256,7 @@ namespace grn::ii {
         auto ctx = ctx_;
         GRN_FREE(cinfos);
       }
-      grn_ii_builder_chunk_fin(ctx_, &chunk);
+      grn_ii_builder_chunk_fin(ctx_, &chunk_);
       grn_ii_builder_buffer_fin(ctx_, &buf);
       if (blocks_) {
         uint32_t i;
@@ -17598,8 +17598,8 @@ namespace grn::ii {
     uint32_t n_blocks_;            /* Number of blocks */
     uint32_t blocks_size_;         /* Buffer size of blocks */
 
-    grn_ii_builder_buffer buf;  /* Buffer (to be finalized) */
-    grn_ii_builder_chunk chunk; /* Chunk (to be finalized) */
+    grn_ii_builder_buffer buf;   /* Buffer (to be finalized) */
+    grn_ii_builder_chunk chunk_; /* Chunk (to be finalized) */
 
     uint32_t df;          /* Document frequency (number of sections) */
     chunk_info *cinfos;   /* Chunk headers (to be freed) */
@@ -17614,7 +17614,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
 {
   grn_id rid;
   uint32_t sid, pos, *a;
-  grn_ii_builder_chunk *chunk = &builder->chunk;
+  grn_ii_builder_chunk *chunk = &builder->chunk_;
   *packed = false;
   if (chunk->offset != 1) { /* df != 1 */
     return GRN_SUCCESS;
@@ -17718,7 +17718,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
 {
   grn_rc rc;
   chunk_info *cinfo = NULL;
-  grn_ii_builder_chunk *chunk = &builder->chunk;
+  grn_ii_builder_chunk *chunk = &builder->chunk_;
   void *seg;
   uint8_t *in;
   uint32_t in_size, chunk_id, seg_id, seg_offset, seg_rest;
@@ -17808,7 +17808,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
   uint64_t value;
   uint32_t rid = GRN_ID_NIL, last_sid = 0;
   uint32_t ii_flags = builder->ii_->header.common->flags;
-  grn_ii_builder_chunk *chunk = &builder->chunk;
+  grn_ii_builder_chunk *chunk = &builder->chunk_;
 
   for (;;) {
     uint32_t gap, freq;
@@ -17906,7 +17906,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
         if (!value) {
           break;
         }
-        if (builder->chunk.pos_offset == builder->chunk.pos_size) {
+        if (builder->chunk_.pos_offset == builder->chunk_.pos_size) {
           rc = grn_ii_builder_chunk_extend_pos_buf(ctx, chunk);
           if (rc != GRN_SUCCESS) {
             return rc;
@@ -17955,7 +17955,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
   buffer_term *buf_term;
 
   rc = grn_ii_builder_chunk_encode(ctx,
-                                   &builder->chunk,
+                                   &builder->chunk_,
                                    builder->cinfos,
                                    builder->n_cinfos);
   if (rc != GRN_SUCCESS) {
@@ -17965,7 +17965,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
   if (!grn_ii_builder_buffer_is_assigned(ctx, &builder->buf)) {
     rc = grn_ii_builder_buffer_assign(ctx,
                                       &builder->buf,
-                                      builder->chunk.enc_offset);
+                                      builder->chunk_.enc_offset);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -17973,34 +17973,34 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
   buf_tid = builder->buf.buf->header.nterms;
   if (buf_tid >= builder->options_.buffer_max_n_terms ||
       builder->buf.chunk_size - builder->buf.chunk_offset <
-        builder->chunk.enc_offset) {
+        builder->chunk_.enc_offset) {
     rc = grn_ii_builder_buffer_flush(ctx, &builder->buf);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
     rc = grn_ii_builder_buffer_assign(ctx,
                                       &builder->buf,
-                                      builder->chunk.enc_offset);
+                                      builder->chunk_.enc_offset);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
     buf_tid = 0;
   }
   buf_term = &builder->buf.buf->terms[buf_tid];
-  buf_term->tid = builder->chunk.tid;
+  buf_term->tid = builder->chunk_.tid;
   if (builder->n_cinfos > 0) {
     buf_term->tid |= CHUNK_SPLIT;
   }
   buf_term->size_in_buffer = 0;
   buf_term->pos_in_buffer = 0;
-  buf_term->size_in_chunk = builder->chunk.enc_offset;
+  buf_term->size_in_chunk = builder->chunk_.enc_offset;
   buf_term->pos_in_chunk = builder->buf.chunk_offset;
 
   if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
     grn_obj token;
     GRN_DEFINE_NAME(builder->ii_);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii_, builder->chunk.tid, &token);
+    grn_ii_get_term(ctx, builder->ii_, builder->chunk_.tid, &token);
     GRN_LOG(ctx,
             GRN_LOG_DEBUG,
             "[ii][builder][register][chunks] "
@@ -18013,26 +18013,26 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
             name,
             (int)GRN_TEXT_LEN(&token),
             GRN_TEXT_VALUE(&token),
-            builder->chunk.tid,
+            builder->chunk_.tid,
             builder->n_cinfos,
             builder->buf.chunk_offset,
             builder->buf.chunk_size,
             builder->buf.chunk_size - builder->buf.chunk_offset,
             builder->buf.ii->chunk->header->segment_size,
-            builder->chunk.enc_offset);
+            builder->chunk_.enc_offset);
     GRN_OBJ_FIN(ctx, &token);
   }
   grn_memcpy(builder->buf.chunk + builder->buf.chunk_offset,
-             builder->chunk.enc_buf,
-             builder->chunk.enc_offset);
-  builder->buf.chunk_offset += builder->chunk.enc_offset;
+             builder->chunk_.enc_buf,
+             builder->chunk_.enc_offset);
+  builder->buf.chunk_offset += builder->chunk_.enc_offset;
 
-  a = array_get(ctx, builder->ii_, builder->chunk.tid);
+  a = array_get(ctx, builder->ii_, builder->chunk_.tid);
   if (!a) {
     grn_obj token;
     GRN_DEFINE_NAME(builder->ii_);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_term(ctx, builder->ii_, builder->chunk.tid, &token);
+    grn_ii_get_term(ctx, builder->ii_, builder->chunk_.tid, &token);
     MERR("[ii][builder][register][chunks] "
          "failed to allocate an array in segment: "
          "<%.*s>: "
@@ -18042,7 +18042,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
          name,
          (int)GRN_TEXT_LEN(&token),
          GRN_TEXT_VALUE(&token),
-         builder->chunk.tid,
+         builder->chunk_.tid,
          builder->ii_->seg->header->max_segment);
     GRN_OBJ_FIN(ctx, &token);
     return ctx->rc;
@@ -18051,11 +18051,11 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
                          builder->buf.buf_id,
                          POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
   a[1] = builder->df;
-  array_unref(ctx, builder->ii_, builder->chunk.tid);
+  array_unref(ctx, builder->ii_, builder->chunk_.tid);
 
   builder->buf.buf->header.nterms++;
   builder->n_cinfos = 0;
-  grn_ii_builder_chunk_clear(ctx, &builder->chunk);
+  grn_ii_builder_chunk_clear(ctx, &builder->chunk_);
   return GRN_SUCCESS;
 }
 
@@ -18096,8 +18096,8 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     if (tid == GRN_ID_NIL) {
       break;
     }
-    builder->chunk.tid = tid;
-    builder->chunk.rid = GRN_ID_NIL;
+    builder->chunk_.tid = tid;
+    builder->chunk_.rid = GRN_ID_NIL;
     builder->df = 0;
     for (i = 0; i < builder->n_blocks_; i++) {
       if (tid == builder->blocks_[i].tid) {
@@ -18107,7 +18107,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
         }
       }
     }
-    if (builder->chunk.n == 0) {
+    if (builder->chunk_.n == 0) {
       /* This term does not appear. */
       continue;
     }
