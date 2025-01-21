@@ -17540,6 +17540,24 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Reads the next value from a block.
+    grn_rc
+    read_from_block(uint32_t block_id, uint64_t *value)
+    {
+      grn_ii_builder_block *block = &(blocks_[block_id]);
+      grn_rc rc = grn_ii_builder_block_next(ctx_, block, value);
+      if (rc == GRN_SUCCESS) {
+        return GRN_SUCCESS;
+      } else if (rc == GRN_END_OF_DATA) {
+        rc = fill_block(block_id);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        return grn_ii_builder_block_next(ctx_, block, value);
+      }
+      return rc;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17589,27 +17607,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_read_from_block reads the next value from a block. */
-static grn_rc
-grn_ii_builder_read_from_block(grn_ctx *ctx,
-                               grn::ii::Builder *builder,
-                               uint32_t block_id,
-                               uint64_t *value)
-{
-  grn_ii_builder_block *block = &builder->blocks_[block_id];
-  grn_rc rc = grn_ii_builder_block_next(ctx, block, value);
-  if (rc == GRN_SUCCESS) {
-    return GRN_SUCCESS;
-  } else if (rc == GRN_END_OF_DATA) {
-    rc = builder->fill_block(block_id);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    return grn_ii_builder_block_next(ctx, block, value);
-  }
-  return rc;
-}
 
 /* grn_ii_builder_pack_chunk tries to pack a chunk. */
 static grn_rc
@@ -17816,7 +17813,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
   for (;;) {
     uint32_t gap, freq;
     uint64_t value;
-    rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
+    rc = builder->read_from_block(block_id, &value);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -17888,7 +17885,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     /* Read weight. */
     if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
       uint32_t weight;
-      rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
+      rc = builder->read_from_block(block_id, &value);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -17902,7 +17899,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
       uint32_t pos = -1;
       freq = 0;
       for (;;) {
-        rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
+        rc = builder->read_from_block(block_id, &value);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
@@ -17928,7 +17925,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
         freq++;
       }
     } else {
-      rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
+      rc = builder->read_from_block(block_id, &value);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -17938,7 +17935,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     chunk->n++;
     chunk->offset++;
   }
-  rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
+  rc = builder->read_from_block(block_id, &value);
   if (rc == GRN_SUCCESS) {
     builder->blocks_[block_id].tid = (grn_id)value;
   } else if (rc == GRN_END_OF_DATA) {
@@ -18078,7 +18075,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
 
   for (i = 0; i < builder->n_blocks_; i++) {
     uint64_t value;
-    rc = grn_ii_builder_read_from_block(ctx, builder, i, &value);
+    rc = builder->read_from_block(i, &value);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
