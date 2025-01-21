@@ -16242,7 +16242,7 @@ namespace grn::ii {
       df = 0;
       cinfos = nullptr;
       n_cinfos_ = 0;
-      cinfos_size = 0;
+      cinfos_size_ = 0;
     }
 
     ~Builder()
@@ -17682,10 +17682,10 @@ namespace grn::ii {
     grn_ii_builder_buffer buf_;  /* Buffer (to be finalized) */
     grn_ii_builder_chunk chunk_; /* Chunk (to be finalized) */
 
-    uint32_t df;          /* Document frequency (number of sections) */
-    chunk_info *cinfos;   /* Chunk headers (to be freed) */
-    uint32_t n_cinfos_;   /* Number of chunks */
-    uint32_t cinfos_size; /* Size of cinfos */
+    uint32_t df;           /* Document frequency (number of sections) */
+    chunk_info *cinfos;    /* Chunk headers (to be freed) */
+    uint32_t n_cinfos_;    /* Number of chunks */
+    uint32_t cinfos_size_; /* Size of cinfos */
   };
 } // namespace grn::ii
 
@@ -17695,8 +17695,8 @@ grn_ii_builder_get_cinfo(grn_ctx *ctx,
                          grn::ii::Builder *builder,
                          chunk_info **cinfo)
 {
-  if (builder->n_cinfos_ == builder->cinfos_size) {
-    uint32_t size = builder->cinfos_size ? (builder->cinfos_size * 2) : 1;
+  if (builder->n_cinfos_ == builder->cinfos_size_) {
+    uint32_t size = builder->cinfos_size_ ? (builder->cinfos_size_ * 2) : 1;
     size_t n_bytes = size * sizeof(chunk_info);
     chunk_info *cinfos = (chunk_info *)GRN_REALLOC(builder->cinfos, n_bytes);
     if (!cinfos) {
@@ -17706,7 +17706,7 @@ grn_ii_builder_get_cinfo(grn_ctx *ctx,
       return ctx->rc;
     }
     builder->cinfos = cinfos;
-    builder->cinfos_size = size;
+    builder->cinfos_size_ = size;
   }
   *cinfo = &builder->cinfos[builder->n_cinfos_++];
   return GRN_SUCCESS;
