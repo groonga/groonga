@@ -47,6 +47,8 @@
 #include "grn_selector.h"
 #include "grn_wal.h"
 
+#include <vector>
+
 #ifdef GRN_SUPPORT_REGEXP
 #  define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
 #endif
@@ -16178,157 +16180,235 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 }
 
 namespace grn::ii {
-  struct Builder {
-    Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
+  // Builds a block from multiple records. You can build a block by
+  // calling flush() after you append multiple records by
+  // append_record().
+  class BlockBuilder {
+  public:
+    BlockBuilder(grn_ctx *ctx,
+                 grn_ii *ii,
+                 const grn_ii_builder_options *options,
+                 grn_obj *src_table,
+                 grn_obj **srcs,
+                 grn_obj **src_token_columns,
+                 uint32_t n_srcs,
+                 uint8_t sid_bits)
       : ctx_(ctx),
-        ii_(ii)
+        ii_(ii),
+        options_(options),
+        lexicon_(nullptr),
+        have_tokenizer_(false),
+        have_normalizers_(false),
+        get_key_optimizable_(false),
+        n_(0),
+        rid_(GRN_ID_NIL),
+        sid_(0),
+        pos_(0),
+        terms_(nullptr),
+        n_terms_(0),
+        max_n_terms_(0),
+        terms_size_(0),
+        src_table_(src_table),
+        srcs_(srcs),
+        src_token_columns_(src_token_columns),
+        n_srcs_(n_srcs),
+        sid_bits_(sid_bits),
+        values_(n_srcs)
     {
-      progress_needed_ = (grn_ctx_get_progress_callback(ctx_) != nullptr);
-      if (progress_needed_) {
-        progress_.type = GRN_PROGRESS_INDEX;
-        progress_.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
-        progress_.value.index.n_target_records = 0;
-        progress_.value.index.n_processed_records = 0;
-        progress_.value.index.n_target_terms = 0;
-        progress_.value.index.n_processed_terms = 0;
-        grn_ctx_call_progress_callback(ctx, &progress_);
+      for (uint32_t i = 0; i < n_srcs_; i++) {
+        GRN_VOID_INIT(&values_[i]);
       }
-
-      if (options) {
-        options_ = *options;
-      } else {
-        options_ = grn_ii_builder_default_options;
-      }
-
-      if (grn_ii_builder_block_threshold_force > 0) {
-        options_.block_threshold = grn_ii_builder_block_threshold_force;
-      }
-      grn_ii_builder_options_fix(&options_);
-
-      src_table_ = nullptr;
-      srcs_ = nullptr;
-      src_token_columns_ = nullptr;
-      n_srcs_ = 0;
-      sid_bits_ = 0;
-      sid_mask_ = 0;
-
-      lexicon_ = nullptr;
-      have_tokenizer_ = false;
-      have_normalizers_ = false;
-      get_key_optimizable_ = false;
-
-      n_ = 0;
-      rid_ = GRN_ID_NIL;
-      sid_ = 0;
-      pos_ = 0;
-
-      terms_ = nullptr;
-      n_terms_ = 0;
-      max_n_terms_ = 0;
-      terms_size_ = 0;
-
-      path_[0] = '\0';
-      fd_ = -1;
-      file_buf_ = nullptr;
-      file_buf_offset_ = 0;
-
-      blocks_ = nullptr;
-      n_blocks_ = 0;
-      blocks_size_ = 0;
-
-      grn_ii_builder_buffer_init(ctx, &buf_, ii);
-      grn_ii_builder_chunk_init(ctx, &chunk_, ii);
-
-      df_ = 0;
-      cinfos_ = nullptr;
-      n_cinfos_ = 0;
-      cinfos_size_ = 0;
     }
 
-    ~Builder()
+    ~BlockBuilder()
     {
-      if (progress_needed_) {
-        progress_.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
-        grn_ctx_call_progress_callback(ctx_, &progress_);
+      for (uint32_t i = 0; i < n_srcs_; i++) {
+        GRN_OBJ_FIN(ctx_, &values_[i]);
       }
-
-      if (cinfos_) {
-        auto ctx = ctx_;
-        GRN_FREE(cinfos_);
-      }
-      grn_ii_builder_chunk_fin(ctx_, &chunk_);
-      grn_ii_builder_buffer_fin(ctx_, &buf_);
-      if (blocks_) {
-        uint32_t i;
-        for (i = 0; i < n_blocks_; i++) {
-          grn_ii_builder_block_fin(ctx_, &(blocks_[i]));
-        }
-        auto ctx = ctx_;
-        GRN_FREE(blocks_);
-      }
-      if (file_buf_) {
-        auto ctx = ctx_;
-        GRN_FREE(file_buf_);
-      }
-      if (fd_ != -1) {
-        grn_close(fd_);
-        if (grn_unlink(path_) == 0) {
-          GRN_LOG(ctx_,
-                  GRN_LOG_INFO,
-                  "[ii][builder][fin] removed path: <%s>",
-                  path_);
-        } else {
-          auto ctx = ctx_;
-          ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path_);
-        }
-      }
-      finalize_terms();
       if (lexicon_) {
         grn_obj_close(ctx_, lexicon_);
       }
-      if (srcs_) {
-        uint32_t i;
-        for (i = 0; i < n_srcs_; i++) {
-          grn_obj_unref(ctx_, srcs_[i]);
-        }
-        auto ctx = ctx_;
-        GRN_FREE(srcs_);
-      }
-      if (src_token_columns_) {
-        uint32_t i;
-        for (i = 0; i < n_srcs_; i++) {
-          grn_obj_unref(ctx_, src_token_columns_[i]);
-        }
-        auto ctx = ctx_;
-        GRN_FREE(src_token_columns_);
-      }
-      if (src_table_) {
-        grn_obj_unref(ctx_, src_table_);
-      }
-      if (progress_needed_) {
-        progress_.value.index.phase = GRN_PROGRESS_INDEX_DONE;
-        grn_ctx_call_progress_callback(ctx_, &progress_);
-      }
+      finalize_terms();
     }
 
-    void
-    finalize_terms()
+    // Prepares this builder.
+    //
+    // This must be called once before you call append_record().
+    grn_rc
+    prepare()
     {
-      if (!terms_) {
-        return;
+      auto rc = create_lexicon();
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
-
-      uint32_t i;
-      for (i = 0; i < max_n_terms_; i++) {
-        grn_ii_builder_term_fin(ctx_, &(terms_[i]));
-      }
-      auto ctx = ctx_;
-      GRN_FREE(terms_);
-      /* To avoid double finalization. */
-      terms_ = nullptr;
+      return GRN_SUCCESS;
     }
 
-    // creates a block lexicon.
+    // Appends a record.
+    //
+    // `rid` must be ordered by ascending. The following is valid:
+    //
+    //    block_builder.append_record(1);
+    //    block_builder.append_record(2);
+    //    block_builder.append_record(3);
+    //
+    // But the following is invalid:
+    //
+    //    block_builder.append_record(1);
+    //    block_builder.append_record(3);
+    //    block_builder.append_record(2); // 2 is smaller than 3
+    grn_rc
+    append_record(grn_id rid)
+    {
+      for (size_t i = 0; i < n_srcs_; i++) {
+        grn_obj *value = &values_[i];
+        grn_obj *src = srcs_[i];
+        grn_obj *token_column = src_token_columns_[i];
+        if (token_column) {
+          auto rc = grn_obj_reinit_for(ctx_, value, token_column);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          if (!grn_obj_get_value(ctx_, token_column, rid, value)) {
+            if (ctx_->rc == GRN_SUCCESS) {
+              auto ctx = ctx_;
+              ERR(GRN_UNKNOWN_ERROR, "failed to get tokens: rid = %u", rid);
+            }
+            return ctx_->rc;
+          }
+          auto sid = static_cast<uint32_t>(i + 1);
+          rc = append_tokens(rid, sid, value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        } else {
+          auto rc = grn_obj_reinit_for(ctx_, value, src);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          if (GRN_OBJ_TABLEP(src)) {
+            auto len = grn_table_get_key2(ctx_, src, rid, value);
+            if (len <= 0) {
+              if (ctx_->rc == GRN_SUCCESS) {
+                auto ctx = ctx_;
+                ERR(GRN_UNKNOWN_ERROR,
+                    "failed to get key: rid = %u, len = %d",
+                    rid,
+                    len);
+              }
+              return ctx_->rc;
+            }
+          } else {
+            if (!grn_obj_get_value(ctx_, src, rid, value)) {
+              if (ctx_->rc == GRN_SUCCESS) {
+                auto ctx = ctx_;
+                ERR(GRN_UNKNOWN_ERROR, "failed to get value: rid = %u", rid);
+              }
+              return ctx_->rc;
+            }
+          }
+          auto sid = static_cast<uint32_t>(i + 1);
+          rc = append_obj(src, rid, sid, value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+      }
+      return GRN_SUCCESS;
+    }
+
+    // Whether we need to flush this block.
+    bool
+    need_flush()
+    {
+      return n_ >= options_->block_threshold;
+    }
+
+    // Number of integers appended to the current block.
+    uint32_t
+    n()
+    {
+      return n_;
+    }
+
+    // Flushes all terms in this block.
+    template <typename FlushTerm>
+    grn_rc
+    flush(FlushTerm &&flush_term)
+    {
+      if (n_ == 0) {
+        /* Do nothing if there are no output data. */
+        return GRN_SUCCESS;
+      }
+
+      /* Flush terms. */
+      auto cursor = grn_table_cursor_open(ctx_,
+                                          lexicon_,
+                                          nullptr,
+                                          0,
+                                          nullptr,
+                                          0,
+                                          0,
+                                          -1,
+                                          GRN_CURSOR_BY_KEY);
+      for (;;) {
+        grn_id tid = grn_table_cursor_next(ctx_, cursor);
+        if (tid == GRN_ID_NIL) {
+          break;
+        }
+        auto rc = flush_term(&(terms_[tid - 1]), lexicon_, tid);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      grn_table_cursor_close(ctx_, cursor);
+
+      /* Clear the current data. */
+      auto rc = grn_table_truncate(ctx_, lexicon_);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      rid_ = GRN_ID_NIL;
+      n_terms_ = 0;
+      n_ = 0;
+      return GRN_SUCCESS;
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_ii *ii_;
+    const grn_ii_builder_options *options_;
+
+    grn_obj *lexicon_;      /* Block lexicon (to be closed) */
+    bool have_tokenizer_;   /* Whether lexicon has tokenizer */
+    bool have_normalizers_; /* Whether lexicon has at least one normalizers */
+    bool get_key_optimizable_; /* Whether grn_table_get_key() is optimizable */
+
+    uint32_t n_;   /* Number of integers appended to the current block */
+    grn_id rid_;   /* Record ID */
+    uint32_t sid_; /* Section ID */
+    uint32_t pos_; /* Position */
+
+    grn_ii_builder_term *terms_; /* Terms (to be freed) */
+    uint32_t n_terms_;           /* Number of distinct terms */
+    uint32_t max_n_terms_;       /* Maximum number of distinct terms */
+    uint32_t terms_size_;        /* Buffer size of terms */
+
+    grn_obj *src_table_; /* Source table */
+    // Source columns. This refers source columns in Builder. So this
+    // should not be freed.
+    grn_obj **srcs_;
+    // Source token columns. This refers source token columns in
+    // Builder. So this should not be freed.
+    grn_obj **src_token_columns_;
+    uint32_t n_srcs_;  /* Number of source columns */
+    uint8_t sid_bits_; /* Number of bits for section ID */
+
+    // Buffers for source column values. We use one grn_obj per column
+    // to reuse effectively.
+    std::vector<grn_obj> values_;
+
+    // Creates a block lexicon.
     grn_rc
     create_lexicon()
     {
@@ -16400,10 +16480,10 @@ namespace grn::ii {
       if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
         auto lexicon_pat = reinterpret_cast<grn_pat *>(lexicon_);
         get_key_optimizable_ = !grn_pat_is_key_encoded(ctx_, lexicon_pat);
-        if (options_.lexicon_cache_size) {
+        if (options_->lexicon_cache_size) {
           rc = grn_pat_cache_enable(ctx_,
                                     lexicon_pat,
-                                    options_.lexicon_cache_size);
+                                    options_->lexicon_cache_size);
           if (rc != GRN_SUCCESS) {
             return rc;
           }
@@ -16412,6 +16492,23 @@ namespace grn::ii {
         get_key_optimizable_ = true;
       }
       return GRN_SUCCESS;
+    }
+
+    void
+    finalize_terms()
+    {
+      if (!terms_) {
+        return;
+      }
+
+      uint32_t i;
+      for (i = 0; i < max_n_terms_; i++) {
+        grn_ii_builder_term_fin(ctx_, &(terms_[i]));
+      }
+      auto ctx = ctx_;
+      GRN_FREE(terms_);
+      /* To avoid double finalization. */
+      terms_ = nullptr;
     }
 
     // Extends a buffer for terms in order to make terms[n_terms - 1]
@@ -16433,7 +16530,7 @@ namespace grn::ii {
           }
           auto ctx = ctx_;
           auto new_n_bytes = new_terms_size * sizeof(grn_ii_builder_term);
-          auto new_terms = reinterpret_cast<grn_ii_builder_term *>(
+          auto new_terms = static_cast<grn_ii_builder_term *>(
             GRN_REALLOC(terms_, new_n_bytes));
           if (!new_terms) {
             ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -16468,316 +16565,6 @@ namespace grn::ii {
         }
       }
       *term = &(terms_[tid - 1]);
-      return GRN_SUCCESS;
-    }
-
-    // Flushes buffered data as a block.
-    grn_rc
-    flush_file_buf()
-    {
-      if (file_buf_offset_) {
-        auto size = grn_write(fd_, file_buf_, file_buf_offset_);
-        if (static_cast<uint64_t>(size) != file_buf_offset_) {
-          auto ctx = ctx_;
-          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
-               file_buf_offset_,
-               static_cast<int64_t>(size));
-        }
-        file_buf_offset_ = 0;
-      }
-      return GRN_SUCCESS;
-    }
-
-    // Flushes a term and clears it
-    grn_rc
-    flush_term(grn_ii_builder_term *term)
-    {
-      /* Append sentinels. */
-      if (term->rid != GRN_ID_NIL) {
-        grn_rc rc;
-        if (ii_->header.common->flags & GRN_OBJ_WITH_POSITION) {
-
-          rc = grn_ii_builder_term_append(ctx_, term, 0);
-        } else {
-          rc = grn_ii_builder_term_append(ctx_, term, term->pos_or_freq);
-        }
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-      {
-        auto rc = grn_ii_builder_term_append(ctx_, term, 0);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-
-      {
-        /* Put the global term ID. */
-        int key_size;
-        char key[GRN_TABLE_MAX_KEY_SIZE];
-        uint8_t *p;
-        uint32_t rest, value;
-        grn_id local_tid = term - terms_ + 1;
-        grn_id global_tid = GRN_ID_NIL;
-        key_size = grn_table_get_key(ctx_,
-                                     lexicon_,
-                                     local_tid,
-                                     key,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-        if (!key_size) {
-          if (ctx_->rc == GRN_SUCCESS) {
-            auto ctx = ctx_;
-            ERR(GRN_UNKNOWN_ERROR, "failed to get key: tid = %u", local_tid);
-          }
-          return ctx_->rc;
-        }
-        /* Don't normalize key. */
-        switch (ii_->lexicon->header.type) {
-        case GRN_TABLE_PAT_KEY:
-          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
-          {
-            global_tid = grn_pat_add(ctx_,
-                                     reinterpret_cast<grn_pat *>(ii_->lexicon),
-                                     key,
-                                     key_size,
-                                     nullptr,
-                                     nullptr);
-          }
-          GRN_TABLE_LOCK_END(ctx_);
-          break;
-        case GRN_TABLE_DAT_KEY:
-          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
-          {
-            global_tid = grn_dat_add(ctx_,
-                                     reinterpret_cast<grn_dat *>(ii_->lexicon),
-                                     key,
-                                     key_size,
-                                     nullptr,
-                                     nullptr);
-          }
-          GRN_TABLE_LOCK_END(ctx_);
-          break;
-        case GRN_TABLE_HASH_KEY:
-          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
-          {
-            global_tid =
-              grn_hash_add(ctx_,
-                           reinterpret_cast<grn_hash *>(ii_->lexicon),
-                           key,
-                           key_size,
-                           nullptr,
-                           nullptr);
-          }
-          GRN_TABLE_LOCK_END(ctx_);
-          break;
-        default:
-          global_tid = GRN_ID_NIL;
-          break;
-        }
-        if (global_tid == GRN_ID_NIL) {
-          if (ctx_->rc == GRN_SUCCESS) {
-            auto ctx = ctx_;
-            ERR(GRN_UNKNOWN_ERROR,
-                "failed to get global term ID: tid = %u, key = \"%.*s\"",
-                local_tid,
-                key_size,
-                key);
-          }
-          return ctx_->rc;
-        }
-
-        rest = options_.file_buf_size - file_buf_offset_;
-        if (rest < 10) {
-          auto rc = flush_file_buf();
-          if (rc != GRN_SUCCESS) {
-            return rc;
-          }
-        }
-        value = global_tid;
-        p = file_buf_ + file_buf_offset_;
-        if (value < 1U << 5) {
-          p[0] = static_cast<uint8_t>(value);
-          file_buf_offset_++;
-        } else if (value < 1U << 13) {
-          p[0] = static_cast<uint8_t>((value & 0x1f) | (1 << 5));
-          p[1] = static_cast<uint8_t>(value >> 5);
-          file_buf_offset_ += 2;
-        } else {
-          uint8_t i, n;
-          if (value < 1U << 21) {
-            n = 3;
-          } else if (value < 1U << 29) {
-            n = 4;
-          } else {
-            n = 5;
-          }
-          p[0] = static_cast<uint8_t>(value & 0x1f) | ((n - 1) << 5);
-          value >>= 5;
-          for (i = 1; i < n; i++) {
-            p[i] = static_cast<uint8_t>(value);
-            value >>= 8;
-          }
-          file_buf_offset_ += n;
-        }
-      }
-
-      /* Flush a term buffer. */
-      auto term_buf = grn_ii_builder_term_get_buf(term);
-      if (term->offset > options_.file_buf_size) {
-        ssize_t size;
-        auto rc = flush_file_buf();
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-        size = grn_write(fd_, term_buf, term->offset);
-        if (static_cast<uint64_t>(size) != term->offset) {
-          auto ctx = ctx_;
-          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
-               term->offset,
-               static_cast<int64_t>(size));
-        }
-      } else {
-        uint32_t rest = options_.file_buf_size - file_buf_offset_;
-        if (term->offset <= rest) {
-          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, term->offset);
-          file_buf_offset_ += term->offset;
-        } else {
-          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, rest);
-          file_buf_offset_ += rest;
-          auto rc = flush_file_buf();
-          if (rc != GRN_SUCCESS) {
-            return rc;
-          }
-          file_buf_offset_ = term->offset - rest;
-          grn_memcpy(file_buf_, term_buf + rest, file_buf_offset_);
-        }
-      }
-      grn_ii_builder_term_reinit(ctx_, term);
-      return GRN_SUCCESS;
-    }
-
-    // Creates a temporary file and allocates memory for buffered
-    // output.
-    grn_rc
-    create_file()
-    {
-      auto ctx = ctx_;
-      grn_snprintf(path_,
-                   PATH_MAX,
-                   PATH_MAX,
-                   "%sXXXXXX",
-                   grn_io_path(ii_->seg));
-      fd_ = grn_mkstemp(path_);
-      if (fd_ == -1) {
-        SERR("failed to create a temporary file: path = \"%s\"", path_);
-        return ctx->rc;
-      }
-      file_buf_ =
-        reinterpret_cast<uint8_t *>(GRN_MALLOC(options_.file_buf_size));
-      if (!file_buf_) {
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "failed to allocate memory for buffered output: size = %u",
-            options_.file_buf_size);
-        return ctx->rc;
-      }
-      return GRN_SUCCESS;
-    }
-
-    // Registers a block.
-    grn_rc
-    register_block()
-    {
-      uint64_t file_offset = grn_lseek(fd_, 0, SEEK_CUR);
-      if (file_offset == static_cast<uint64_t>(-1)) {
-        auto ctx = ctx_;
-        SERR("failed to get file offset");
-        return ctx->rc;
-      }
-      if (n_blocks_ >= blocks_size_) {
-        uint32_t new_blocks_size = 1;
-        while (new_blocks_size <= n_blocks_) {
-          new_blocks_size *= 2;
-        }
-        auto ctx = ctx_;
-        auto n_bytes = new_blocks_size * sizeof(grn_ii_builder_block);
-        auto new_blocks = reinterpret_cast<grn_ii_builder_block *>(
-          GRN_REALLOC(blocks_, n_bytes));
-        if (!new_blocks) {
-          ERR(GRN_NO_MEMORY_AVAILABLE,
-              "failed to allocate memory for block: n_bytes = %" GRN_FMT_SIZE,
-              n_bytes);
-          return ctx->rc;
-        }
-        blocks_ = new_blocks;
-        blocks_size_ = new_blocks_size;
-      }
-      auto block = &(blocks_[n_blocks_]);
-      grn_ii_builder_block_init(ctx_, block);
-      if (n_blocks_ == 0) {
-        block->offset = 0;
-      } else {
-        auto prev_block = &(blocks_[n_blocks_ - 1]);
-        block->offset = prev_block->offset + prev_block->rest;
-      }
-      block->rest = static_cast<uint32_t>(file_offset - block->offset);
-      n_blocks_++;
-      return GRN_SUCCESS;
-    }
-
-    // Flushes a block to a temporary file.
-    grn_rc
-    flush_block()
-    {
-      if (n_ == 0) {
-        /* Do nothing if there are no output data. */
-        return GRN_SUCCESS;
-      }
-      if (fd_ == -1) {
-        auto rc = create_file();
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-
-      /* Flush terms into a temporary file. */
-      auto cursor = grn_table_cursor_open(ctx_,
-                                          lexicon_,
-                                          nullptr,
-                                          0,
-                                          nullptr,
-                                          0,
-                                          0,
-                                          -1,
-                                          GRN_CURSOR_BY_KEY);
-      for (;;) {
-        grn_id tid = grn_table_cursor_next(ctx_, cursor);
-        if (tid == GRN_ID_NIL) {
-          break;
-        }
-        auto rc = flush_term(&(terms_[tid - 1]));
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-      grn_table_cursor_close(ctx_, cursor);
-      auto rc = flush_file_buf();
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-
-      /* Register a block and clear the current data. */
-      rc = register_block();
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      rc = grn_table_truncate(ctx_, lexicon_);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      rid_ = GRN_ID_NIL;
-      n_terms_ = 0;
-      n_ = 0;
       return GRN_SUCCESS;
     }
 
@@ -17199,21 +16986,395 @@ namespace grn::ii {
         }
       }
     }
+  };
+
+  struct Builder {
+    Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
+      : ctx_(ctx),
+        ii_(ii)
+    {
+      progress_needed_ = (grn_ctx_get_progress_callback(ctx_) != nullptr);
+      if (progress_needed_) {
+        progress_.type = GRN_PROGRESS_INDEX;
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
+        progress_.value.index.n_target_records = 0;
+        progress_.value.index.n_processed_records = 0;
+        progress_.value.index.n_target_terms = 0;
+        progress_.value.index.n_processed_terms = 0;
+        grn_ctx_call_progress_callback(ctx, &progress_);
+      }
+
+      if (options) {
+        options_ = *options;
+      } else {
+        options_ = grn_ii_builder_default_options;
+      }
+
+      if (grn_ii_builder_block_threshold_force > 0) {
+        options_.block_threshold = grn_ii_builder_block_threshold_force;
+      }
+      grn_ii_builder_options_fix(&options_);
+
+      src_table_ = nullptr;
+      srcs_ = nullptr;
+      src_token_columns_ = nullptr;
+      n_srcs_ = 0;
+      sid_bits_ = 0;
+      sid_mask_ = 0;
+
+      path_[0] = '\0';
+      fd_ = -1;
+      file_buf_ = nullptr;
+      file_buf_offset_ = 0;
+
+      blocks_ = nullptr;
+      n_blocks_ = 0;
+      blocks_size_ = 0;
+
+      grn_ii_builder_buffer_init(ctx, &buf_, ii);
+      grn_ii_builder_chunk_init(ctx, &chunk_, ii);
+
+      df_ = 0;
+      cinfos_ = nullptr;
+      n_cinfos_ = 0;
+      cinfos_size_ = 0;
+    }
+
+    ~Builder()
+    {
+      if (progress_needed_) {
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
+      }
+
+      if (cinfos_) {
+        auto ctx = ctx_;
+        GRN_FREE(cinfos_);
+      }
+      grn_ii_builder_chunk_fin(ctx_, &chunk_);
+      grn_ii_builder_buffer_fin(ctx_, &buf_);
+      if (blocks_) {
+        uint32_t i;
+        for (i = 0; i < n_blocks_; i++) {
+          grn_ii_builder_block_fin(ctx_, &(blocks_[i]));
+        }
+        auto ctx = ctx_;
+        GRN_FREE(blocks_);
+      }
+      if (file_buf_) {
+        auto ctx = ctx_;
+        GRN_FREE(file_buf_);
+      }
+      if (fd_ != -1) {
+        grn_close(fd_);
+        if (grn_unlink(path_) == 0) {
+          GRN_LOG(ctx_,
+                  GRN_LOG_INFO,
+                  "[ii][builder][fin] removed path: <%s>",
+                  path_);
+        } else {
+          auto ctx = ctx_;
+          ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path_);
+        }
+      }
+      if (srcs_) {
+        uint32_t i;
+        for (i = 0; i < n_srcs_; i++) {
+          grn_obj_unref(ctx_, srcs_[i]);
+        }
+        auto ctx = ctx_;
+        GRN_FREE(srcs_);
+      }
+      if (src_token_columns_) {
+        uint32_t i;
+        for (i = 0; i < n_srcs_; i++) {
+          grn_obj_unref(ctx_, src_token_columns_[i]);
+        }
+        auto ctx = ctx_;
+        GRN_FREE(src_token_columns_);
+      }
+      if (src_table_) {
+        grn_obj_unref(ctx_, src_table_);
+      }
+      if (progress_needed_) {
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_DONE;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
+      }
+    }
+
+    // Flushes buffered data as a block.
+    grn_rc
+    flush_file_buf()
+    {
+      if (file_buf_offset_) {
+        auto size = grn_write(fd_, file_buf_, file_buf_offset_);
+        if (static_cast<uint64_t>(size) != file_buf_offset_) {
+          auto ctx = ctx_;
+          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
+               file_buf_offset_,
+               static_cast<int64_t>(size));
+        }
+        file_buf_offset_ = 0;
+      }
+      return GRN_SUCCESS;
+    }
+
+    // Creates a temporary file and allocates memory for buffered
+    // output.
+    grn_rc
+    create_file()
+    {
+      auto ctx = ctx_;
+      grn_snprintf(path_,
+                   PATH_MAX,
+                   PATH_MAX,
+                   "%sXXXXXX",
+                   grn_io_path(ii_->seg));
+      fd_ = grn_mkstemp(path_);
+      if (fd_ == -1) {
+        SERR("failed to create a temporary file: path = \"%s\"", path_);
+        return ctx->rc;
+      }
+      file_buf_ =
+        reinterpret_cast<uint8_t *>(GRN_MALLOC(options_.file_buf_size));
+      if (!file_buf_) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "failed to allocate memory for buffered output: size = %u",
+            options_.file_buf_size);
+        return ctx->rc;
+      }
+      return GRN_SUCCESS;
+    }
+
+    // Flushes a term and clears it
+    grn_rc
+    flush_term(grn_ii_builder_term *term,
+               grn_obj *local_lexicon,
+               grn_id local_tid)
+    {
+      /* Append sentinels. */
+      if (term->rid != GRN_ID_NIL) {
+        grn_rc rc;
+        if (ii_->header.common->flags & GRN_OBJ_WITH_POSITION) {
+
+          rc = grn_ii_builder_term_append(ctx_, term, 0);
+        } else {
+          rc = grn_ii_builder_term_append(ctx_, term, term->pos_or_freq);
+        }
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      {
+        auto rc = grn_ii_builder_term_append(ctx_, term, 0);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+
+      {
+        /* Put the global term ID. */
+        int key_size;
+        char key[GRN_TABLE_MAX_KEY_SIZE];
+        uint8_t *p;
+        uint32_t rest, value;
+        grn_id global_tid = GRN_ID_NIL;
+        key_size = grn_table_get_key(ctx_,
+                                     local_lexicon,
+                                     local_tid,
+                                     key,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+        if (!key_size) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_UNKNOWN_ERROR, "failed to get key: tid = %u", local_tid);
+          }
+          return ctx_->rc;
+        }
+        /* Don't normalize key. */
+        switch (ii_->lexicon->header.type) {
+        case GRN_TABLE_PAT_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid = grn_pat_add(ctx_,
+                                     reinterpret_cast<grn_pat *>(ii_->lexicon),
+                                     key,
+                                     key_size,
+                                     nullptr,
+                                     nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        case GRN_TABLE_DAT_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid = grn_dat_add(ctx_,
+                                     reinterpret_cast<grn_dat *>(ii_->lexicon),
+                                     key,
+                                     key_size,
+                                     nullptr,
+                                     nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        case GRN_TABLE_HASH_KEY:
+          GRN_TABLE_LOCK_BEGIN(ctx_, ii_->lexicon)
+          {
+            global_tid =
+              grn_hash_add(ctx_,
+                           reinterpret_cast<grn_hash *>(ii_->lexicon),
+                           key,
+                           key_size,
+                           nullptr,
+                           nullptr);
+          }
+          GRN_TABLE_LOCK_END(ctx_);
+          break;
+        default:
+          global_tid = GRN_ID_NIL;
+          break;
+        }
+        if (global_tid == GRN_ID_NIL) {
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto ctx = ctx_;
+            ERR(GRN_UNKNOWN_ERROR,
+                "failed to get global term ID: tid = %u, key = \"%.*s\"",
+                local_tid,
+                key_size,
+                key);
+          }
+          return ctx_->rc;
+        }
+
+        rest = options_.file_buf_size - file_buf_offset_;
+        if (rest < 10) {
+          auto rc = flush_file_buf();
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+        value = global_tid;
+        p = file_buf_ + file_buf_offset_;
+        if (value < 1U << 5) {
+          p[0] = static_cast<uint8_t>(value);
+          file_buf_offset_++;
+        } else if (value < 1U << 13) {
+          p[0] = static_cast<uint8_t>((value & 0x1f) | (1 << 5));
+          p[1] = static_cast<uint8_t>(value >> 5);
+          file_buf_offset_ += 2;
+        } else {
+          uint8_t i, n;
+          if (value < 1U << 21) {
+            n = 3;
+          } else if (value < 1U << 29) {
+            n = 4;
+          } else {
+            n = 5;
+          }
+          p[0] = static_cast<uint8_t>(value & 0x1f) | ((n - 1) << 5);
+          value >>= 5;
+          for (i = 1; i < n; i++) {
+            p[i] = static_cast<uint8_t>(value);
+            value >>= 8;
+          }
+          file_buf_offset_ += n;
+        }
+      }
+
+      /* Flush a term buffer. */
+      auto term_buf = grn_ii_builder_term_get_buf(term);
+      if (term->offset > options_.file_buf_size) {
+        ssize_t size;
+        auto rc = flush_file_buf();
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        size = grn_write(fd_, term_buf, term->offset);
+        if (static_cast<uint64_t>(size) != term->offset) {
+          auto ctx = ctx_;
+          SERR("failed to write data: expected = %u, actual = %" GRN_FMT_INT64D,
+               term->offset,
+               static_cast<int64_t>(size));
+        }
+      } else {
+        uint32_t rest = options_.file_buf_size - file_buf_offset_;
+        if (term->offset <= rest) {
+          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, term->offset);
+          file_buf_offset_ += term->offset;
+        } else {
+          grn_memcpy(file_buf_ + file_buf_offset_, term_buf, rest);
+          file_buf_offset_ += rest;
+          auto rc = flush_file_buf();
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          file_buf_offset_ = term->offset - rest;
+          grn_memcpy(file_buf_, term_buf + rest, file_buf_offset_);
+        }
+      }
+      grn_ii_builder_term_reinit(ctx_, term);
+      return GRN_SUCCESS;
+    }
+
+    // Registers a block.
+    grn_rc
+    register_block()
+    {
+      uint64_t file_offset = grn_lseek(fd_, 0, SEEK_CUR);
+      if (file_offset == static_cast<uint64_t>(-1)) {
+        auto ctx = ctx_;
+        SERR("failed to get file offset");
+        return ctx->rc;
+      }
+      if (n_blocks_ >= blocks_size_) {
+        uint32_t new_blocks_size = 1;
+        while (new_blocks_size <= n_blocks_) {
+          new_blocks_size *= 2;
+        }
+        auto ctx = ctx_;
+        auto n_bytes = new_blocks_size * sizeof(grn_ii_builder_block);
+        auto new_blocks = reinterpret_cast<grn_ii_builder_block *>(
+          GRN_REALLOC(blocks_, n_bytes));
+        if (!new_blocks) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "failed to allocate memory for block: n_bytes = %" GRN_FMT_SIZE,
+              n_bytes);
+          return ctx->rc;
+        }
+        blocks_ = new_blocks;
+        blocks_size_ = new_blocks_size;
+      }
+      auto block = &(blocks_[n_blocks_]);
+      grn_ii_builder_block_init(ctx_, block);
+      if (n_blocks_ == 0) {
+        block->offset = 0;
+      } else {
+        auto prev_block = &(blocks_[n_blocks_ - 1]);
+        block->offset = prev_block->offset + prev_block->rest;
+      }
+      block->rest = static_cast<uint32_t>(file_offset - block->offset);
+      n_blocks_++;
+      return GRN_SUCCESS;
+    }
 
     // Reads values from source columns and appends the values.
     grn_rc
     append_srcs()
     {
-      auto ctx = ctx_;
-
-      /* Allocate memory for objects to store source values. */
-      auto objs = GRN_MALLOCN(grn_obj, n_srcs_);
-      if (!objs) {
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "failed to allocate memory for objs: n_srcs = %u",
-            n_srcs_);
-        return ctx->rc;
+      BlockBuilder block_builder(ctx_,
+                                 ii_,
+                                 &options_,
+                                 src_table_,
+                                 srcs_,
+                                 src_token_columns_,
+                                 n_srcs_,
+                                 sid_bits_);
+      auto rc = block_builder.prepare();
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
+
+      auto ctx = ctx_;
 
       /* Create a cursor to get records in the ID order. */
       auto cursor = grn_table_cursor_open(ctx,
@@ -17229,89 +17390,54 @@ namespace grn::ii {
         if (ctx->rc == GRN_SUCCESS) {
           ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
         }
-        GRN_FREE(objs);
         return ctx->rc;
       }
 
+      // Flushes a block to a temporary file.
+      auto flush = [&]() -> grn_rc {
+        auto rc = block_builder.flush(
+          [&](grn_ii_builder_term *term, grn_obj *lexicon, grn_id tid) {
+            if (fd_ == -1) {
+              auto rc = create_file();
+              if (rc != GRN_SUCCESS) {
+                return rc;
+              }
+            }
+            return flush_term(term, lexicon, tid);
+          });
+        if (rc == GRN_SUCCESS) {
+          rc = flush_file_buf();
+        }
+        if (rc == GRN_SUCCESS) {
+          // Register a block in a temporary file.
+          rc = register_block();
+        }
+        return rc;
+      };
+
       /* Read source values and append it. */
-      for (size_t i = 0; i < n_srcs_; i++) {
-        GRN_TEXT_INIT(&objs[i], 0);
-      }
-      grn_rc rc = GRN_SUCCESS;
       while (rc == GRN_SUCCESS) {
         grn_id rid = grn_table_cursor_next(ctx, cursor);
         if (rid == GRN_ID_NIL) {
           break;
         }
-        for (size_t i = 0; i < n_srcs_; i++) {
-          grn_obj *obj = &objs[i];
-          grn_obj *src = srcs_[i];
-          grn_obj *token_column = src_token_columns_[i];
-          if (token_column) {
-            rc = grn_obj_reinit_for(ctx, obj, token_column);
-            if (rc == GRN_SUCCESS) {
-              if (!grn_obj_get_value(ctx, token_column, rid, obj)) {
-                if (ctx->rc == GRN_SUCCESS) {
-                  ERR(GRN_UNKNOWN_ERROR, "failed to get tokens: rid = %u", rid);
-                }
-                rc = ctx->rc;
-              }
-              if (rc == GRN_SUCCESS) {
-                auto sid = static_cast<uint32_t>(i + 1);
-                rc = append_tokens(rid, sid, obj);
-              }
-            }
-          } else {
-            rc = grn_obj_reinit_for(ctx, obj, src);
-            if (rc == GRN_SUCCESS) {
-              if (GRN_OBJ_TABLEP(src)) {
-                int len = grn_table_get_key2(ctx, src, rid, obj);
-                if (len <= 0) {
-                  if (ctx->rc == GRN_SUCCESS) {
-                    ERR(GRN_UNKNOWN_ERROR,
-                        "failed to get key: rid = %u, len = %d",
-                        rid,
-                        len);
-                  }
-                  rc = ctx->rc;
-                }
-              } else {
-                if (!grn_obj_get_value(ctx, src, rid, obj)) {
-                  if (ctx->rc == GRN_SUCCESS) {
-                    ERR(GRN_UNKNOWN_ERROR,
-                        "failed to get value: rid = %u",
-                        rid);
-                  }
-                  rc = ctx->rc;
-                }
-              }
-              if (rc == GRN_SUCCESS) {
-                auto sid = static_cast<uint32_t>(i + 1);
-                rc = append_obj(src, rid, sid, obj);
-              }
-            }
-          }
-        }
-        if (rc == GRN_SUCCESS && n_ >= options_.block_threshold) {
-          rc = flush_block();
+        rc = block_builder.append_record(rid);
+        if (rc == GRN_SUCCESS && block_builder.need_flush()) {
+          rc = flush();
         }
         if (progress_needed_) {
           progress_.value.index.n_processed_records++;
           grn_ctx_call_progress_callback(ctx, &progress_);
         }
       }
-      if (rc == GRN_SUCCESS) {
-        rc = flush_block();
-      }
-      for (size_t i = 0; i < n_srcs_; i++) {
-        GRN_OBJ_FIN(ctx, &objs[i]);
+      if (rc == GRN_SUCCESS && block_builder.n() > 0) {
+        rc = flush();
       }
       grn_table_cursor_close(ctx, cursor);
-      GRN_FREE(objs);
       return rc;
     }
 
-    // Sets a source table. */
+    // Sets a source table.
     grn_rc
     set_src_table()
     {
@@ -17333,7 +17459,7 @@ namespace grn::ii {
     set_sid_bits()
     {
       /* Calculate the number of bits required to represent a section ID. */
-      if (n_srcs_ == 1 && have_tokenizer_ &&
+      if (n_srcs_ == 1 && grn_table_have_tokenizer(ctx_, ii_->lexicon) &&
           (srcs_[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
         /* If the source column is a vector column and the index has a
          * tokenizer, the maximum sid equals to the maximum number of
@@ -17466,11 +17592,6 @@ namespace grn::ii {
         /* Nothing to do because there are no values. */
         return ctx_->rc;
       }
-      /* Create a block lexicon. */
-      rc = create_lexicon();
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
       rc = set_srcs();
       if (rc != GRN_SUCCESS) {
         return rc;
@@ -17479,7 +17600,6 @@ namespace grn::ii {
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      finalize_terms();
       return GRN_SUCCESS;
     }
 
@@ -18087,21 +18207,6 @@ namespace grn::ii {
     uint32_t n_srcs_;             /* Number of source columns */
     uint8_t sid_bits_;            /* Number of bits for section ID */
     uint64_t sid_mask_;           /* Mask bits for section ID */
-
-    grn_obj *lexicon_;      /* Block lexicon (to be closed) */
-    bool have_tokenizer_;   /* Whether lexicon has tokenizer */
-    bool have_normalizers_; /* Whether lexicon has at least one normalizers */
-    bool get_key_optimizable_; /* Whether grn_table_get_key() is optimizable */
-
-    uint32_t n_;   /* Number of integers appended to the current block */
-    grn_id rid_;   /* Record ID */
-    uint32_t sid_; /* Section ID */
-    uint32_t pos_; /* Position */
-
-    grn_ii_builder_term *terms_; /* Terms (to be freed) */
-    uint32_t n_terms_;           /* Number of distinct terms */
-    uint32_t max_n_terms_;       /* Maximum number of distinct terms */
-    uint32_t terms_size_;        /* Buffer size of terms */
 
     /* A temporary file to save blocks. */
     char path_[PATH_MAX]; /* File path */
