@@ -16240,7 +16240,7 @@ namespace grn::ii {
       grn_ii_builder_chunk_init(ctx, &chunk_, ii);
 
       df = 0;
-      cinfos = nullptr;
+      cinfos_ = nullptr;
       n_cinfos_ = 0;
       cinfos_size_ = 0;
     }
@@ -16252,9 +16252,9 @@ namespace grn::ii {
         grn_ctx_call_progress_callback(ctx_, &progress_);
       }
 
-      if (cinfos) {
+      if (cinfos_) {
         auto ctx = ctx_;
-        GRN_FREE(cinfos);
+        GRN_FREE(cinfos_);
       }
       grn_ii_builder_chunk_fin(ctx_, &chunk_);
       grn_ii_builder_buffer_fin(ctx_, &buf_);
@@ -17683,7 +17683,7 @@ namespace grn::ii {
     grn_ii_builder_chunk chunk_; /* Chunk (to be finalized) */
 
     uint32_t df;           /* Document frequency (number of sections) */
-    chunk_info *cinfos;    /* Chunk headers (to be freed) */
+    chunk_info *cinfos_;   /* Chunk headers (to be freed) */
     uint32_t n_cinfos_;    /* Number of chunks */
     uint32_t cinfos_size_; /* Size of cinfos */
   };
@@ -17698,17 +17698,17 @@ grn_ii_builder_get_cinfo(grn_ctx *ctx,
   if (builder->n_cinfos_ == builder->cinfos_size_) {
     uint32_t size = builder->cinfos_size_ ? (builder->cinfos_size_ * 2) : 1;
     size_t n_bytes = size * sizeof(chunk_info);
-    chunk_info *cinfos = (chunk_info *)GRN_REALLOC(builder->cinfos, n_bytes);
+    chunk_info *cinfos = (chunk_info *)GRN_REALLOC(builder->cinfos_, n_bytes);
     if (!cinfos) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to allocate memory for cinfos: n_bytes = %" GRN_FMT_SIZE,
           n_bytes);
       return ctx->rc;
     }
-    builder->cinfos = cinfos;
+    builder->cinfos_ = cinfos;
     builder->cinfos_size_ = size;
   }
-  *cinfo = &builder->cinfos[builder->n_cinfos_++];
+  *cinfo = &builder->cinfos_[builder->n_cinfos_++];
   return GRN_SUCCESS;
 }
 
@@ -17956,7 +17956,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
 
   rc = grn_ii_builder_chunk_encode(ctx,
                                    &builder->chunk_,
-                                   builder->cinfos,
+                                   builder->cinfos_,
                                    builder->n_cinfos_);
   if (rc != GRN_SUCCESS) {
     return rc;
