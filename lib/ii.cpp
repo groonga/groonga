@@ -17639,6 +17639,29 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Returns a new cinfo.
+    grn_rc
+    get_cinfo(chunk_info **cinfo)
+    {
+      if (n_cinfos_ == cinfos_size_) {
+        uint32_t size = (cinfos_size_ > 0) ? (cinfos_size_ * 2) : 1;
+        size_t n_bytes = size * sizeof(chunk_info);
+        auto ctx = ctx_;
+        auto cinfos =
+          reinterpret_cast<chunk_info *>(GRN_REALLOC(cinfos_, n_bytes));
+        if (!cinfos) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "failed to allocate memory for cinfos: n_bytes = %" GRN_FMT_SIZE,
+              n_bytes);
+          return ctx->rc;
+        }
+        cinfos_ = cinfos;
+        cinfos_size_ = size;
+      }
+      *cinfo = &(cinfos_[n_cinfos_++]);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17688,29 +17711,6 @@ namespace grn::ii {
     uint32_t cinfos_size_; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_get_cinfo returns a new cinfo. */
-static grn_rc
-grn_ii_builder_get_cinfo(grn_ctx *ctx,
-                         grn::ii::Builder *builder,
-                         chunk_info **cinfo)
-{
-  if (builder->n_cinfos_ == builder->cinfos_size_) {
-    uint32_t size = builder->cinfos_size_ ? (builder->cinfos_size_ * 2) : 1;
-    size_t n_bytes = size * sizeof(chunk_info);
-    chunk_info *cinfos = (chunk_info *)GRN_REALLOC(builder->cinfos_, n_bytes);
-    if (!cinfos) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to allocate memory for cinfos: n_bytes = %" GRN_FMT_SIZE,
-          n_bytes);
-      return ctx->rc;
-    }
-    builder->cinfos_ = cinfos;
-    builder->cinfos_size_ = size;
-  }
-  *cinfo = &builder->cinfos_[builder->n_cinfos_++];
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_flush_chunk flushes a chunk. */
 static grn_rc
@@ -17785,7 +17785,7 @@ grn_ii_builder_flush_chunk(grn_ctx *ctx, grn::ii::Builder *builder)
   }
 
   /* Append a cinfo. */
-  rc = grn_ii_builder_get_cinfo(ctx, builder, &cinfo);
+  rc = builder->get_cinfo(&cinfo);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
