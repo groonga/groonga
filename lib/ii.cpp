@@ -17745,6 +17745,154 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
+    // Reads values from a block to a chunk.
+    grn_rc
+    read_to_chunk(uint32_t block_id)
+    {
+      const uint32_t ii_flags = ii_->header.common->flags;
+
+      uint32_t rid = GRN_ID_NIL;
+      uint32_t last_sid = 0;
+      for (;;) {
+        uint64_t value;
+        auto rc = read_from_block(block_id, &value);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        if (!value) {
+          break;
+        }
+        if (chunk_.offset == chunk_.size) {
+          rc = grn_ii_builder_chunk_extend_bufs(ctx_, &chunk_, ii_flags);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+
+        /* Read record ID. */
+        uint32_t gap =
+          static_cast<uint32_t>(value >> sid_bits_); /* In-block gap */
+        uint32_t freq;
+        if (gap) {
+          if (chunk_.n >= options_.chunk_threshold) {
+            const double threshold_scale = 1 + log(df_ + 1);
+            const double threshold = options_.chunk_threshold * threshold_scale;
+            if (chunk_.n >= threshold) {
+              if (grn_logger_pass(ctx_, GRN_LOG_DEBUG)) {
+                auto ctx = ctx_;
+                GRN_DEFINE_NAME(ii_);
+                grn_obj token;
+                GRN_TEXT_INIT(&token, 0);
+                grn_ii_get_term(ctx_, ii_, chunk_.tid, &token);
+                GRN_LOG(ctx_,
+                        GRN_LOG_DEBUG,
+                        "[ii][builder][read-to-chunk] flush"
+                        "<%.*s>: "
+                        "<%.*s>(%u): "
+                        "n=<%u> "
+                        "df=<%u> "
+                        "threshold=<%.1f>",
+                        name_size,
+                        name,
+                        static_cast<int>(GRN_TEXT_LEN(&token)),
+                        GRN_TEXT_VALUE(&token),
+                        chunk_.tid,
+                        chunk_.n,
+                        df_,
+                        threshold);
+                GRN_OBJ_FIN(ctx, &token);
+              }
+              rc = flush_chunk();
+              if (rc != GRN_SUCCESS) {
+                return rc;
+              }
+            }
+          }
+          last_sid = 0;
+        }
+        rid += gap;
+        gap = rid - chunk_.rid; /* Global gap */
+        chunk_.rid_buf[chunk_.offset] = (chunk_.offset > 0) ? gap : rid;
+        chunk_.n++;
+        chunk_.rid = rid;
+        chunk_.rid_gap += gap;
+        df_++;
+
+        /* Read section ID. */
+        if (ii_flags & GRN_OBJ_WITH_SECTION) {
+          auto sid = static_cast<uint32_t>((value & sid_mask_) + 1);
+          chunk_.sid_buf[chunk_.offset] = sid - last_sid - 1;
+          chunk_.n++;
+          last_sid = sid;
+        }
+
+        /* Read weight. */
+        if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
+          uint32_t weight;
+          rc = read_from_block(block_id, &value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          weight = static_cast<uint32_t>(value);
+          chunk_.weight_buf[chunk_.offset] = weight;
+          chunk_.n++;
+        }
+
+        /* Read positions or a frequency. */
+        if (ii_flags & GRN_OBJ_WITH_POSITION) {
+          uint32_t pos = -1;
+          freq = 0;
+          for (;;) {
+            rc = read_from_block(block_id, &value);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+            if (!value) {
+              break;
+            }
+            if (chunk_.pos_offset == chunk_.pos_size) {
+              rc = grn_ii_builder_chunk_extend_pos_buf(ctx_, &chunk_);
+              if (rc != GRN_SUCCESS) {
+                return rc;
+              }
+            }
+            if (pos == static_cast<uint32_t>(-1)) {
+              chunk_.pos_buf[chunk_.pos_offset] =
+                static_cast<uint32_t>(value - 1);
+              chunk_.pos_sum += value - 1;
+            } else {
+              chunk_.pos_buf[chunk_.pos_offset] = static_cast<uint32_t>(value);
+              chunk_.pos_sum += value;
+            }
+            chunk_.n++;
+            pos += static_cast<uint32_t>(value);
+            chunk_.pos_offset++;
+            freq++;
+          }
+        } else {
+          rc = read_from_block(block_id, &value);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          freq = static_cast<uint32_t>(value);
+        }
+        chunk_.freq_buf[chunk_.offset] = freq - 1;
+        chunk_.n++;
+        chunk_.offset++;
+      }
+
+      uint64_t value;
+      auto rc = read_from_block(block_id, &value);
+      if (rc == GRN_SUCCESS) {
+        blocks_[block_id].tid = static_cast<grn_id>(value);
+      } else if (rc == GRN_END_OF_DATA) {
+        blocks_[block_id].tid = GRN_ID_NIL;
+      } else {
+        return rc;
+      }
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17794,154 +17942,6 @@ namespace grn::ii {
     uint32_t cinfos_size_; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_read_to_chunk read values from a block to a chunk. */
-static grn_rc
-grn_ii_builder_read_to_chunk(grn_ctx *ctx,
-                             grn::ii::Builder *builder,
-                             uint32_t block_id)
-{
-  grn_rc rc;
-  uint64_t value;
-  uint32_t rid = GRN_ID_NIL, last_sid = 0;
-  uint32_t ii_flags = builder->ii_->header.common->flags;
-  grn_ii_builder_chunk *chunk = &builder->chunk_;
-
-  for (;;) {
-    uint32_t gap, freq;
-    uint64_t value;
-    rc = builder->read_from_block(block_id, &value);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    if (!value) {
-      break;
-    }
-    if (chunk->offset == chunk->size) {
-      rc = grn_ii_builder_chunk_extend_bufs(ctx, chunk, ii_flags);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-    }
-
-    /* Read record ID. */
-    gap = (uint32_t)(value >> builder->sid_bits_); /* In-block gap */
-    if (gap) {
-      if (chunk->n >= builder->options_.chunk_threshold) {
-        const double threshold_scale = 1 + log(builder->df_ + 1);
-        const double threshold =
-          builder->options_.chunk_threshold * threshold_scale;
-        if (chunk->n >= threshold) {
-          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-            grn_obj token;
-            GRN_DEFINE_NAME(builder->ii_);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
-            GRN_LOG(ctx,
-                    GRN_LOG_DEBUG,
-                    "[ii][builder][read-to-chunk] flush"
-                    "<%.*s>: "
-                    "<%.*s>(%u): "
-                    "n=<%u> "
-                    "df=<%u> "
-                    "threshold=<%.1f>",
-                    name_size,
-                    name,
-                    (int)GRN_TEXT_LEN(&token),
-                    GRN_TEXT_VALUE(&token),
-                    chunk->tid,
-                    chunk->n,
-                    builder->df_,
-                    threshold);
-            GRN_OBJ_FIN(ctx, &token);
-          }
-          rc = builder->flush_chunk();
-          if (rc != GRN_SUCCESS) {
-            return rc;
-          }
-        }
-      }
-      last_sid = 0;
-    }
-    rid += gap;
-    gap = rid - chunk->rid; /* Global gap */
-    chunk->rid_buf[chunk->offset] = chunk->offset ? gap : rid;
-    chunk->n++;
-    chunk->rid = rid;
-    chunk->rid_gap += gap;
-    builder->df_++;
-
-    /* Read section ID. */
-    if (ii_flags & GRN_OBJ_WITH_SECTION) {
-      uint32_t sid = (uint32_t)((value & builder->sid_mask_) + 1);
-      chunk->sid_buf[chunk->offset] = sid - last_sid - 1;
-      chunk->n++;
-      last_sid = sid;
-    }
-
-    /* Read weight. */
-    if (ii_flags & GRN_OBJ_WITH_WEIGHT) {
-      uint32_t weight;
-      rc = builder->read_from_block(block_id, &value);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      weight = (uint32_t)value;
-      chunk->weight_buf[chunk->offset] = weight;
-      chunk->n++;
-    }
-
-    /* Read positions or a frequency. */
-    if (ii_flags & GRN_OBJ_WITH_POSITION) {
-      uint32_t pos = -1;
-      freq = 0;
-      for (;;) {
-        rc = builder->read_from_block(block_id, &value);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-        if (!value) {
-          break;
-        }
-        if (builder->chunk_.pos_offset == builder->chunk_.pos_size) {
-          rc = grn_ii_builder_chunk_extend_pos_buf(ctx, chunk);
-          if (rc != GRN_SUCCESS) {
-            return rc;
-          }
-        }
-        if (pos == (uint32_t)-1) {
-          chunk->pos_buf[chunk->pos_offset] = (uint32_t)(value - 1);
-          chunk->pos_sum += value - 1;
-        } else {
-          chunk->pos_buf[chunk->pos_offset] = (uint32_t)value;
-          chunk->pos_sum += value;
-        }
-        chunk->n++;
-        pos += (uint32_t)value;
-        chunk->pos_offset++;
-        freq++;
-      }
-    } else {
-      rc = builder->read_from_block(block_id, &value);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      freq = (uint32_t)value;
-    }
-    chunk->freq_buf[chunk->offset] = freq - 1;
-    chunk->n++;
-    chunk->offset++;
-  }
-  rc = builder->read_from_block(block_id, &value);
-  if (rc == GRN_SUCCESS) {
-    builder->blocks_[block_id].tid = (grn_id)value;
-  } else if (rc == GRN_END_OF_DATA) {
-    builder->blocks_[block_id].tid = GRN_ID_NIL;
-  } else {
-    return rc;
-  }
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_register_chunks registers chunks. */
 static grn_rc
@@ -18098,7 +18098,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     builder->df_ = 0;
     for (i = 0; i < builder->n_blocks_; i++) {
       if (tid == builder->blocks_[i].tid) {
-        rc = grn_ii_builder_read_to_chunk(ctx, builder, i);
+        rc = builder->read_to_chunk(i);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
