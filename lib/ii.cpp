@@ -17448,6 +17448,41 @@ namespace grn::ii {
       return set_sid_bits();
     }
 
+    // Appends values in source columns.
+    grn_rc
+    append_source()
+    {
+      auto rc = set_src_table();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      unsigned int n_records = grn_table_size(ctx_, src_table_);
+      if (progress_needed_) {
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
+        progress_.value.index.n_target_records = n_records;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
+      }
+      if (n_records == 0) {
+        /* Nothing to do because there are no values. */
+        return ctx_->rc;
+      }
+      /* Create a block lexicon. */
+      rc = create_lexicon();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      rc = set_srcs();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      rc = append_srcs();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      finalize_terms();
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17497,41 +17532,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_append_source appends values in source columns. */
-static grn_rc
-grn_ii_builder_append_source(grn_ctx *ctx, grn::ii::Builder *builder)
-{
-  grn_rc rc = builder->set_src_table();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  unsigned int n_records = grn_table_size(ctx, builder->src_table_);
-  if (builder->progress_needed_) {
-    builder->progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
-    builder->progress_.value.index.n_target_records = n_records;
-    grn_ctx_call_progress_callback(ctx, &(builder->progress_));
-  }
-  if (n_records == 0) {
-    /* Nothing to do because there are no values. */
-    return ctx->rc;
-  }
-  /* Create a block lexicon. */
-  rc = builder->create_lexicon();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = builder->set_srcs();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = builder->append_srcs();
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  builder->finalize_terms();
-  return GRN_SUCCESS;
-}
 
 /*
  * grn_ii_builder_fill_block reads the next data from a temporary file and fill
@@ -18152,7 +18152,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
   grn_rc rc = GRN_SUCCESS;
   {
     grn::ii::Builder builder(ctx, ii, options);
-    rc = grn_ii_builder_append_source(ctx, &builder);
+    rc = builder.append_source();
     if (rc == GRN_SUCCESS) {
       rc = grn_ii_builder_commit(ctx, &builder);
     }
