@@ -16239,7 +16239,7 @@ namespace grn::ii {
       grn_ii_builder_buffer_init(ctx, &buf_, ii);
       grn_ii_builder_chunk_init(ctx, &chunk_, ii);
 
-      df = 0;
+      df_ = 0;
       cinfos_ = nullptr;
       n_cinfos_ = 0;
       cinfos_size_ = 0;
@@ -17788,7 +17788,7 @@ namespace grn::ii {
     grn_ii_builder_buffer buf_;  /* Buffer (to be finalized) */
     grn_ii_builder_chunk chunk_; /* Chunk (to be finalized) */
 
-    uint32_t df;           /* Document frequency (number of sections) */
+    uint32_t df_;          /* Document frequency (number of sections) */
     chunk_info *cinfos_;   /* Chunk headers (to be freed) */
     uint32_t n_cinfos_;    /* Number of chunks */
     uint32_t cinfos_size_; /* Size of cinfos */
@@ -17828,7 +17828,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     gap = (uint32_t)(value >> builder->sid_bits_); /* In-block gap */
     if (gap) {
       if (chunk->n >= builder->options_.chunk_threshold) {
-        const double threshold_scale = 1 + log(builder->df + 1);
+        const double threshold_scale = 1 + log(builder->df_ + 1);
         const double threshold =
           builder->options_.chunk_threshold * threshold_scale;
         if (chunk->n >= threshold) {
@@ -17851,7 +17851,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
                     GRN_TEXT_VALUE(&token),
                     chunk->tid,
                     chunk->n,
-                    builder->df,
+                    builder->df_,
                     threshold);
             GRN_OBJ_FIN(ctx, &token);
           }
@@ -17869,7 +17869,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     chunk->n++;
     chunk->rid = rid;
     chunk->rid_gap += gap;
-    builder->df++;
+    builder->df_++;
 
     /* Read section ID. */
     if (ii_flags & GRN_OBJ_WITH_SECTION) {
@@ -18047,7 +18047,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn::ii::Builder *builder)
   a[0] = grn_ii_pos_pack(builder->ii_,
                          builder->buf_.buf_id,
                          POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
-  a[1] = builder->df;
+  a[1] = builder->df_;
   array_unref(ctx, builder->ii_, builder->chunk_.tid);
 
   builder->buf_.buf->header.nterms++;
@@ -18095,7 +18095,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     }
     builder->chunk_.tid = tid;
     builder->chunk_.rid = GRN_ID_NIL;
-    builder->df = 0;
+    builder->df_ = 0;
     for (i = 0; i < builder->n_blocks_; i++) {
       if (tid == builder->blocks_[i].tid) {
         rc = grn_ii_builder_read_to_chunk(ctx, builder, i);
