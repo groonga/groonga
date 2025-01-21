@@ -76,7 +76,9 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                               size_t value_size,
                               grn_id value_domain)
 {
-  if (value_size == 0) {
+  /* If the length is 0 and the given value is a text, set to an empty string.
+   * Otherwise, set nil. */
+  if (value_size == 0 && !grn_type_id_is_text_family(ctx, value_domain)) {
     msgpack_pack_nil(packer);
     return ctx->rc;
   }
