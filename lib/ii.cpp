@@ -17558,6 +17558,87 @@ namespace grn::ii {
       return rc;
     }
 
+    // Tries to pack a chunk.
+    grn_rc
+    pack_chunk(bool *packed)
+    {
+      *packed = false;
+      if (chunk_.offset != 1) { /* df != 1 */
+        return GRN_SUCCESS;
+      }
+      if (chunk_.weight_buf && chunk_.weight_buf[0]) { /* weight != 0 */
+        return GRN_SUCCESS;
+      }
+      if (chunk_.freq_buf[0] != 0) { /* freq != 1 */
+        return GRN_SUCCESS;
+      }
+      grn_id rid = chunk_.rid_buf[0];
+      uint32_t *a = nullptr;
+      if (chunk_.sid_buf) {
+        if (rid >= 0x100000) {
+          return GRN_SUCCESS;
+        }
+        uint32_t sid = chunk_.sid_buf[0] + 1;
+        if (sid >= 0x800) {
+          return GRN_SUCCESS;
+        }
+        a = array_get(ctx_, ii_, chunk_.tid);
+        if (!a) {
+          auto ctx = ctx_;
+          GRN_DEFINE_NAME(ii_);
+          grn_obj token;
+          GRN_TEXT_INIT(&token, 0);
+          grn_ii_get_term(ctx, ii_, chunk_.tid, &token);
+          MERR("[ii][builder][chunk][pack] failed to allocate an array: "
+               "<%.*s>: "
+               "<%.*s>(%u): "
+               "(%u:%u)",
+               name_size,
+               name,
+               static_cast<int>(GRN_TEXT_LEN(&token)),
+               GRN_TEXT_VALUE(&token),
+               chunk_.tid,
+               rid,
+               sid);
+          GRN_OBJ_FIN(ctx, &token);
+          return ctx->rc;
+        }
+        a[0] = POS_EMBED_RID_SID(rid, sid);
+      } else {
+        a = array_get(ctx_, ii_, chunk_.tid);
+        if (!a) {
+          auto ctx = ctx_;
+          GRN_DEFINE_NAME(ii_);
+          grn_obj token;
+          GRN_TEXT_INIT(&token, 0);
+          grn_ii_get_term(ctx, ii_, chunk_.tid, &token);
+          MERR("[ii][builder][chunk][pack] failed to allocate an array: "
+               "<%.*s>: "
+               "<%.*s>(%u): "
+               "(%u)",
+               name_size,
+               name,
+               static_cast<int>(GRN_TEXT_LEN(&token)),
+               GRN_TEXT_VALUE(&token),
+               chunk_.tid,
+               rid);
+          GRN_OBJ_FIN(ctx, &token);
+          return ctx->rc;
+        }
+        a[0] = POS_EMBED_RID(rid);
+      }
+      uint32_t pos = 0;
+      if (chunk_.pos_buf) {
+        pos = chunk_.pos_buf[0];
+      }
+      a[1] = pos;
+      array_unref(ctx_, ii_, chunk_.tid);
+      *packed = true;
+
+      grn_ii_builder_chunk_clear(ctx_, &chunk_);
+      return GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     bool progress_needed_;  /* Whether progress callback is needed for
                                performance */
@@ -17607,87 +17688,6 @@ namespace grn::ii {
     uint32_t cinfos_size; /* Size of cinfos */
   };
 } // namespace grn::ii
-
-/* grn_ii_builder_pack_chunk tries to pack a chunk. */
-static grn_rc
-grn_ii_builder_pack_chunk(grn_ctx *ctx, grn::ii::Builder *builder, bool *packed)
-{
-  grn_id rid;
-  uint32_t sid, pos, *a;
-  grn_ii_builder_chunk *chunk = &builder->chunk_;
-  *packed = false;
-  if (chunk->offset != 1) { /* df != 1 */
-    return GRN_SUCCESS;
-  }
-  if (chunk->weight_buf && chunk->weight_buf[0]) { /* weight != 0 */
-    return GRN_SUCCESS;
-  }
-  if (chunk->freq_buf[0] != 0) { /* freq != 1 */
-    return GRN_SUCCESS;
-  }
-  rid = chunk->rid_buf[0];
-  if (chunk->sid_buf) {
-    if (rid >= 0x100000) {
-      return GRN_SUCCESS;
-    }
-    sid = chunk->sid_buf[0] + 1;
-    if (sid >= 0x800) {
-      return GRN_SUCCESS;
-    }
-    a = array_get(ctx, builder->ii_, chunk->tid);
-    if (!a) {
-      grn_obj token;
-      GRN_DEFINE_NAME(builder->ii_);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
-      MERR("[ii][builder][chunk][pack] failed to allocate an array: "
-           "<%.*s>: "
-           "<%.*s>(%u): "
-           "(%u:%u)",
-           name_size,
-           name,
-           (int)GRN_TEXT_LEN(&token),
-           GRN_TEXT_VALUE(&token),
-           chunk->tid,
-           rid,
-           sid);
-      GRN_OBJ_FIN(ctx, &token);
-      return ctx->rc;
-    }
-    a[0] = POS_EMBED_RID_SID(rid, sid);
-  } else {
-    a = array_get(ctx, builder->ii_, chunk->tid);
-    if (!a) {
-      grn_obj token;
-      GRN_DEFINE_NAME(builder->ii_);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_term(ctx, builder->ii_, chunk->tid, &token);
-      MERR("[ii][builder][chunk][pack] failed to allocate an array: "
-           "<%.*s>: "
-           "<%.*s>(%u): "
-           "(%u)",
-           name_size,
-           name,
-           (int)GRN_TEXT_LEN(&token),
-           GRN_TEXT_VALUE(&token),
-           chunk->tid,
-           rid);
-      GRN_OBJ_FIN(ctx, &token);
-      return ctx->rc;
-    }
-    a[0] = POS_EMBED_RID(rid);
-  }
-  pos = 0;
-  if (chunk->pos_buf) {
-    pos = chunk->pos_buf[0];
-  }
-  a[1] = pos;
-  array_unref(ctx, builder->ii_, chunk->tid);
-  *packed = true;
-
-  grn_ii_builder_chunk_clear(ctx, chunk);
-  return GRN_SUCCESS;
-}
 
 /* grn_ii_builder_get_cinfo returns a new cinfo. */
 static grn_rc
@@ -18113,7 +18113,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn::ii::Builder *builder)
     }
     if (builder->n_cinfos == 0) {
       bool packed;
-      rc = grn_ii_builder_pack_chunk(ctx, builder, &packed);
+      rc = builder->pack_chunk(&packed);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
