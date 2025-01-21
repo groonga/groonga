@@ -23,47 +23,47 @@
 
 #ifdef GRN_WITH_MESSAGE_PACK
 
-# include <groonga/msgpack.h>
+#  include <groonga/msgpack.h>
 
 const char *
 grn_msgpack_object_type_to_string(msgpack_object_type type)
 {
   const char *string = "unknown";
   switch (type) {
-  case MSGPACK_OBJECT_NIL :
+  case MSGPACK_OBJECT_NIL:
     string = "nil";
     break;
-  case MSGPACK_OBJECT_BOOLEAN :
+  case MSGPACK_OBJECT_BOOLEAN:
     string = "boolean";
     break;
-  case MSGPACK_OBJECT_POSITIVE_INTEGER :
+  case MSGPACK_OBJECT_POSITIVE_INTEGER:
     string = "positive-integer";
     break;
-  case MSGPACK_OBJECT_NEGATIVE_INTEGER :
+  case MSGPACK_OBJECT_NEGATIVE_INTEGER:
     string = "negative-integer";
     break;
-  case MSGPACK_OBJECT_FLOAT32 :
+  case MSGPACK_OBJECT_FLOAT32:
     string = "float32";
     break;
-  case MSGPACK_OBJECT_FLOAT64 :
+  case MSGPACK_OBJECT_FLOAT64:
     string = "float64";
     break;
-  case MSGPACK_OBJECT_STR :
+  case MSGPACK_OBJECT_STR:
     string = "string";
     break;
-  case MSGPACK_OBJECT_ARRAY :
+  case MSGPACK_OBJECT_ARRAY:
     string = "array";
     break;
-  case MSGPACK_OBJECT_MAP :
+  case MSGPACK_OBJECT_MAP:
     string = "map";
     break;
-  case MSGPACK_OBJECT_BIN :
+  case MSGPACK_OBJECT_BIN:
     string = "binary";
     break;
-  case MSGPACK_OBJECT_EXT :
+  case MSGPACK_OBJECT_EXT:
     string = "extension";
     break;
-  default :
+  default:
     break;
   }
   return string;
@@ -84,65 +84,65 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
   }
 
   switch (value_domain) {
-  case GRN_DB_VOID :
+  case GRN_DB_VOID:
     msgpack_pack_nil(packer);
     break;
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     if (*((bool *)value)) {
       msgpack_pack_true(packer);
     } else {
       msgpack_pack_false(packer);
     }
     break;
-  case GRN_DB_INT8 :
+  case GRN_DB_INT8:
     msgpack_pack_int8(packer, *((int8_t *)(value)));
     break;
-  case GRN_DB_UINT8 :
+  case GRN_DB_UINT8:
     msgpack_pack_uint8(packer, *((uint8_t *)(value)));
     break;
-  case GRN_DB_INT16 :
+  case GRN_DB_INT16:
     msgpack_pack_int16(packer, *((int16_t *)(value)));
     break;
-  case GRN_DB_UINT16 :
+  case GRN_DB_UINT16:
     msgpack_pack_uint16(packer, *((uint16_t *)(value)));
     break;
-  case GRN_DB_INT32 :
+  case GRN_DB_INT32:
     msgpack_pack_int32(packer, *((int32_t *)(value)));
     break;
-  case GRN_DB_UINT32 :
+  case GRN_DB_UINT32:
     msgpack_pack_uint32(packer, *((uint32_t *)(value)));
     break;
-  case GRN_DB_INT64 :
+  case GRN_DB_INT64:
     msgpack_pack_int64(packer, *((int64_t *)(value)));
     break;
-  case GRN_DB_UINT64 :
+  case GRN_DB_UINT64:
     msgpack_pack_uint64(packer, *((uint64_t *)(value)));
     break;
-  case GRN_DB_FLOAT32 :
+  case GRN_DB_FLOAT32:
     msgpack_pack_float(packer, *((float *)(value)));
     break;
-  case GRN_DB_FLOAT :
+  case GRN_DB_FLOAT:
     msgpack_pack_double(packer, *((double *)(value)));
     break;
-  case GRN_DB_TIME :
-# if MSGPACK_VERSION_MAJOR < 1
+  case GRN_DB_TIME:
+#  if MSGPACK_VERSION_MAJOR < 1
     {
       double time_value = (*((int64_t *)value) / GRN_TIME_USEC_PER_SEC_F);
       msgpack_pack_double(packer, time_value);
     }
-# else /* MSGPACK_VERSION_MAJOR < 1 */
+#  else  /* MSGPACK_VERSION_MAJOR < 1 */
     /* TODO: Use timestamp time in spec. */
     msgpack_pack_ext(packer, sizeof(int64_t), GRN_MSGPACK_OBJECT_EXT_TIME);
     msgpack_pack_ext_body(packer, value, sizeof(int64_t));
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
+#  endif /* MSGPACK_VERSION_MAJOR < 1 */
     break;
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
     msgpack_pack_str(packer, value_size);
     msgpack_pack_str_body(packer, value, value_size);
     break;
-  default :
+  default:
     {
       char domain_name[GRN_TABLE_MAX_KEY_SIZE];
       int domain_name_size;
@@ -154,7 +154,8 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                                            sizeof(domain_name));
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
           "[msgpack][pack] unsupported type: <%.*s>",
-          domain_name_size, domain_name);
+          domain_name_size,
+          domain_name);
     }
     break;
   }
@@ -163,9 +164,7 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
 }
 
 grn_rc
-grn_msgpack_pack_internal(grn_ctx *ctx,
-                          msgpack_packer *packer,
-                          grn_obj *value)
+grn_msgpack_pack_internal(grn_ctx *ctx, msgpack_packer *packer, grn_obj *value)
 {
   if (value) {
     return grn_msgpack_pack_raw_internal(ctx,
@@ -174,11 +173,7 @@ grn_msgpack_pack_internal(grn_ctx *ctx,
                                          GRN_BULK_VSIZE(value),
                                          value->header.domain);
   } else {
-    return grn_msgpack_pack_raw_internal(ctx,
-                                         packer,
-                                         NULL,
-                                         0,
-                                         GRN_DB_VOID);
+    return grn_msgpack_pack_raw_internal(ctx, packer, NULL, 0, GRN_DB_VOID);
   }
 }
 
@@ -196,7 +191,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
 
     element = &(array->ptr[i]);
     switch (element->type) {
-    case MSGPACK_OBJECT_BOOLEAN :
+    case MSGPACK_OBJECT_BOOLEAN:
       {
         bool value = element->via.boolean;
         grn_vector_add_element(ctx,
@@ -207,7 +202,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                                GRN_DB_BOOL);
       }
       break;
-    case MSGPACK_OBJECT_POSITIVE_INTEGER :
+    case MSGPACK_OBJECT_POSITIVE_INTEGER:
       grn_vector_add_element(ctx,
                              vector,
                              (const char *)&(element->via.i64),
@@ -215,7 +210,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_INT64);
       break;
-    case MSGPACK_OBJECT_NEGATIVE_INTEGER :
+    case MSGPACK_OBJECT_NEGATIVE_INTEGER:
       grn_vector_add_element(ctx,
                              vector,
                              (const char *)&(element->via.u64),
@@ -223,8 +218,8 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_UINT64);
       break;
-#ifdef MSGPACK_HAVE_FLOAT32
-    case MSGPACK_OBJECT_FLOAT32 :
+#  ifdef MSGPACK_HAVE_FLOAT32
+    case MSGPACK_OBJECT_FLOAT32:
       {
         float value = (float)MSGPACK_OBJECT_FLOAT32_VALUE(element);
         grn_vector_add_element(ctx,
@@ -235,16 +230,17 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                                GRN_DB_FLOAT32);
       }
       break;
-#endif
-    case MSGPACK_OBJECT_FLOAT64 :
-      grn_vector_add_element(ctx,
-                             vector,
-                             (const char *)&(MSGPACK_OBJECT_FLOAT64_VALUE(element)),
-                             sizeof(double),
-                             0,
-                             GRN_DB_FLOAT);
+#  endif
+    case MSGPACK_OBJECT_FLOAT64:
+      grn_vector_add_element(
+        ctx,
+        vector,
+        (const char *)&(MSGPACK_OBJECT_FLOAT64_VALUE(element)),
+        sizeof(double),
+        0,
+        GRN_DB_FLOAT);
       break;
-    case MSGPACK_OBJECT_STR :
+    case MSGPACK_OBJECT_STR:
       grn_vector_add_element(ctx,
                              vector,
                              MSGPACK_OBJECT_STR_PTR(element),
@@ -252,8 +248,8 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_TEXT);
       break;
-# if MSGPACK_VERSION_MAJOR >= 1
-    case MSGPACK_OBJECT_EXT :
+#  if MSGPACK_VERSION_MAJOR >= 1
+    case MSGPACK_OBJECT_EXT:
       if (element->via.ext.type == GRN_MSGPACK_OBJECT_EXT_TIME) {
         grn_vector_add_element(ctx,
                                vector,
@@ -267,8 +263,8 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
             element->via.ext.type);
       }
       break;
-# endif /* MSGPACK_VERSION_MAJOR >= 1 */
-    default :
+#  endif /* MSGPACK_VERSION_MAJOR >= 1 */
+    default:
       ERR(GRN_INVALID_ARGUMENT,
           "[msgpack] unexpected element type: <%#x>",
           element->type);
@@ -279,10 +275,9 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
   return ctx->rc;
 }
 
-# if MSGPACK_VERSION_MAJOR >= 1
+#  if MSGPACK_VERSION_MAJOR >= 1
 int64_t
-grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
-                                     msgpack_object_ext *ext)
+grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx, msgpack_object_ext *ext)
 {
   if (ext->type == GRN_MSGPACK_OBJECT_EXT_TIME) {
     return *(int64_t *)(ext->ptr);
@@ -294,7 +289,7 @@ grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
     return 0;
   }
 }
-# endif /* MSGPACK_VERSION_MAJOR >= 1 */
+#  endif /* MSGPACK_VERSION_MAJOR >= 1 */
 
 grn_rc
 grn_msgpack_pack_raw(grn_ctx *ctx,
@@ -309,9 +304,7 @@ grn_msgpack_pack_raw(grn_ctx *ctx,
 }
 
 grn_rc
-grn_msgpack_pack(grn_ctx *ctx,
-                 msgpack_packer *packer,
-                 grn_obj *value)
+grn_msgpack_pack(grn_ctx *ctx, msgpack_packer *packer, grn_obj *value)
 {
   GRN_API_ENTER;
   grn_msgpack_pack_internal(ctx, packer, value);
@@ -328,15 +321,14 @@ grn_msgpack_unpack_array(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-# if MSGPACK_VERSION_MAJOR >= 1
+#  if MSGPACK_VERSION_MAJOR >= 1
 int64_t
-grn_msgpack_unpack_ext_time(grn_ctx *ctx,
-                            msgpack_object_ext *ext)
+grn_msgpack_unpack_ext_time(grn_ctx *ctx, msgpack_object_ext *ext)
 {
   int64_t time;
   GRN_API_ENTER;
   time = grn_msgpack_unpack_ext_time_internal(ctx, ext);
   GRN_API_RETURN(time);
 }
-# endif /* MSGPACK_VERSION_MAJOR >= 1 */
-#endif /* GRN_WITH_MESSAGE_PACK */
+#  endif /* MSGPACK_VERSION_MAJOR >= 1 */
+#endif   /* GRN_WITH_MESSAGE_PACK */
