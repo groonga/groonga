@@ -125,13 +125,14 @@ repos:
           ?lib/index_column\.c|
           ?lib/language_model\.cpp|
           ?lib/load\.c|
-          ?lib/normalizer\.c|
           ?lib/mrb/mrb_bulk\.c|
           ?lib/mrb/mrb_bulk\.h|
           ?lib/mrb/mrb_ctx\.c|
           ?lib/mrb/mrb_error\.c|
           ?lib/mrb/mrb_expr\.c|
           ?lib/mrb/mrb_object\.c|
+          ?lib/nfkc\.c|
+          ?lib/normalizer\.c|
           ?lib/obj\.c|
           ?lib/operator\.c|
           ?lib/output\.c|

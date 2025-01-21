@@ -252,7 +252,8 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                  grn_obj *raw_options,
                                  const char *tag)
 {
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -278,10 +279,8 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     i,
                                     options->unify_latin_alphabet_with);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
-      options->unify_kana = grn_vector_get_element_bool(ctx,
-                                                        raw_options,
-                                                        i,
-                                                        options->unify_kana);
+      options->unify_kana =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->unify_kana);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana_case")) {
       options->unify_kana_case =
         grn_vector_get_element_bool(ctx,
@@ -296,10 +295,8 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     i,
                                     options->unify_kana_voiced_sound_mark);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_hyphen")) {
-      options->unify_hyphen = grn_vector_get_element_bool(ctx,
-                                                          raw_options,
-                                                          i,
-                                                          options->unify_hyphen);
+      options->unify_hyphen =
+        grn_vector_get_element_bool(ctx, raw_options, i, options->unify_hyphen);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
                                             "unify_prolonged_sound_mark")) {
       options->unify_prolonged_sound_mark =
@@ -307,62 +304,72 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_prolonged_sound_mark);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "unify_hyphen_and_prolonged_sound_mark")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(
+                 name_raw,
+                 "unify_hyphen_and_prolonged_sound_mark")) {
       options->unify_hyphen_and_prolonged_sound_mark =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_hyphen_and_prolonged_sound_mark);
+        grn_vector_get_element_bool(
+          ctx,
+          raw_options,
+          i,
+          options->unify_hyphen_and_prolonged_sound_mark);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_middle_dot")) {
       options->unify_middle_dot =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_middle_dot);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_v_sounds")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_v_sounds")) {
       options->unify_katakana_v_sounds =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_v_sounds);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_bu_sound")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_bu_sound")) {
       options->unify_katakana_bu_sound =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_bu_sound);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_du_small_sounds")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_du_small_sounds")) {
       options->unify_katakana_du_small_sounds =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_du_small_sounds);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_du_sound")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_du_sound")) {
       options->unify_katakana_du_sound =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_du_sound);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_zu_small_sounds")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_zu_small_sounds")) {
       options->unify_katakana_zu_small_sounds =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_zu_small_sounds);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_wo_sound")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_wo_sound")) {
       options->unify_katakana_wo_sound =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_wo_sound);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_di_sound")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_di_sound")) {
       options->unify_katakana_di_sound =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_di_sound);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_gu_small_sounds")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_gu_small_sounds")) {
       options->unify_katakana_gu_small_sounds =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
@@ -374,13 +381,16 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_kana_hyphen);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana_prolonged_sound_mark")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(
+                 name_raw,
+                 "unify_kana_prolonged_sound_mark")) {
       options->unify_kana_prolonged_sound_mark =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
                                     options->unify_kana_prolonged_sound_mark);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_trailing_o")) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_katakana_trailing_o")) {
       options->unify_katakana_trailing_o =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
@@ -400,10 +410,7 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     options->unify_to_katakana);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank")) {
       options->remove_blank =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->remove_blank);
+        grn_vector_get_element_bool(ctx, raw_options, i, options->remove_blank);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank_force")) {
       options->remove_blank_force =
         grn_vector_get_element_bool(ctx,
@@ -425,10 +432,7 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     options->remove_symbol);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "strip")) {
       options->strip =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->strip);
+        grn_vector_get_element_bool(ctx, raw_options, i, options->strip);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "version")) {
       grn_nfkc_funcs funcs =
         grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
@@ -439,7 +443,8 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
       options->decompose_func = funcs.decompose_func;
       options->compose_func = funcs.compose_func;
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   return ctx->rc;
 }
