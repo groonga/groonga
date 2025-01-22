@@ -4,7 +4,7 @@ load --table Words
 [
 {"_key": "groonga"},
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],1]
 select Words --filter '_key *T ""'
 [
   [
