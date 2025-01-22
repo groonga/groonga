@@ -12419,7 +12419,7 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
   grn_hash *h;
   grn_token_cursor *token_cursor;
   if (data->query_len == 0) {
-    return ctx->rc;
+    return GRN_SUCCESS;
   }
   if (!data->lexicon || !data->query || !data->query_len || !data->result_set ||
       !data->optarg) {
@@ -12613,7 +12613,7 @@ grn_ii_term_extract_internal(grn_ctx *ctx, grn_ii_select_data *data)
   int skip, rep, policy;
   grn_rc rc = GRN_SUCCESS;
   if (data->query_len == 0) {
-    return ctx->rc;
+    return GRN_SUCCESS;
   }
   if (!data->ii || !data->query || !data->query_len || !data->result_set ||
       !data->optarg) {
