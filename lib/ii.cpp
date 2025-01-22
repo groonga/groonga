@@ -14659,16 +14659,33 @@ grn_ii_select(grn_ctx *ctx,
   data->op = op;
   grn_ii_select_data_init(ctx, data, optarg);
   if (data->mode == GRN_OP_SIMILAR) {
-    return grn_ii_similar_search_internal(ctx, data);
+    ctx->rc = grn_ii_similar_search_internal(ctx, data);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    return ctx->rc;
   }
   if (data->mode == GRN_OP_TERM_EXTRACT) {
-    return grn_ii_term_extract_internal(ctx, data);
+    ctx->rc = grn_ii_term_extract_internal(ctx, data);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    return ctx->rc;
   }
   if (data->mode == GRN_OP_REGEXP) {
-    return grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
+    ctx->rc =
+      grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    return ctx->rc;
   }
   if (data->mode == GRN_OP_QUORUM) {
-    return grn_ii_quorum_match(ctx, ii, data);
+    ctx->rc = grn_ii_quorum_match(ctx, ii, data);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    return ctx->rc;
   }
   /* todo : support subrec
   rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit ==
