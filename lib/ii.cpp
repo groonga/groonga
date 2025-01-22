@@ -14673,8 +14673,7 @@ grn_ii_select(grn_ctx *ctx,
     return ctx->rc;
   }
   if (data->mode == GRN_OP_REGEXP) {
-    ctx->rc =
-      grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
+    ctx->rc = grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
