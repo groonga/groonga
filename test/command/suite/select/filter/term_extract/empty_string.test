@@ -3,5 +3,4 @@ load --table Words
 [
 {"_key": "groonga"},
 ]
-
 select Words --filter '_key *T ""'
