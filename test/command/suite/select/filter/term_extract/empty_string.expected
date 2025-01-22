@@ -6,27 +6,4 @@ load --table Words
 ]
 [[0,0.0,0.0],1]
 select Words --filter '_key *T ""'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        0
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
