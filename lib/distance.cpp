@@ -196,7 +196,7 @@ namespace {
               continue;
             }
             auto distance_raw = distance_func(task_ctx, &input, literal);
-            if (ctx->rc != GRN_SUCCESS) {
+            if (task_ctx->rc != GRN_SUCCESS) {
               continue;
             }
             GRN_FLOAT_SET(task_ctx, &output, distance_raw);
@@ -205,7 +205,7 @@ namespace {
                               id,
                               &output,
                               GRN_OBJ_SET);
-            if (ctx->rc != GRN_SUCCESS) {
+            if (task_ctx->rc != GRN_SUCCESS) {
               continue;
             }
           }
