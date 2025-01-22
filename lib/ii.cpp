@@ -16324,11 +16324,11 @@ namespace grn::ii {
       return n_ >= options_->block_threshold;
     }
 
-    // Number of integers appended to the current block.
-    uint32_t
-    n()
+    // Whether there are any data in this block.
+    bool
+    have_data()
     {
-      return n_;
+      return n_ > 0;
     }
 
     // Flushes all terms in this block.
@@ -17430,7 +17430,7 @@ namespace grn::ii {
           grn_ctx_call_progress_callback(ctx, &progress_);
         }
       }
-      if (rc == GRN_SUCCESS && block_builder.n() > 0) {
+      if (rc == GRN_SUCCESS && block_builder.have_data()) {
         rc = flush();
       }
       grn_table_cursor_close(ctx, cursor);
