@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -185,6 +185,10 @@ grn_content_type
 grn_proc_option_value_content_type(grn_ctx *ctx,
                                    grn_obj *option,
                                    grn_content_type default_value);
+grn_log_level
+grn_proc_option_value_log_level(grn_ctx *ctx,
+                                grn_obj *option,
+                                grn_log_level default_value);
 bool
 grn_proc_get_value_bool(grn_ctx *ctx,
                         grn_obj *value,

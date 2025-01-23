@@ -1495,6 +1495,19 @@ grn_plugin_proc_get_var_content_type(grn_ctx *ctx,
   return grn_proc_option_value_content_type(ctx, var, default_value);
 }
 
+grn_log_level
+grn_plugin_proc_get_var_log_level(grn_ctx *ctx,
+                                  grn_user_data *user_data,
+                                  const char *name,
+                                  int name_size,
+                                  grn_log_level default_value)
+{
+  grn_obj *var;
+
+  var = grn_plugin_proc_get_var(ctx, user_data, name, name_size);
+  return grn_proc_option_value_log_level(ctx, var, default_value);
+}
+
 grn_obj *
 grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
                                   grn_user_data *user_data,

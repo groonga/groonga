@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -1509,6 +1509,27 @@ grn_proc_option_value_content_type(grn_ctx *ctx,
   }
 
   return grn_content_type_parse(ctx, option, default_value);
+}
+
+grn_log_level
+grn_proc_option_value_log_level(grn_ctx *ctx,
+                                grn_obj *option,
+                                grn_log_level default_value)
+{
+  if (!option) {
+    return default_value;
+  }
+
+  grn_obj value;
+  GRN_TEXT_INIT(&value, 0);
+  GRN_TEXT_SET(ctx, &value, GRN_TEXT_VALUE(option), GRN_TEXT_LEN(option));
+  GRN_TEXT_PUTC(ctx, &value, '\0');
+  grn_log_level level = default_value;
+  if (!grn_log_level_parse(GRN_TEXT_VALUE(&value), &level)) {
+    level = default_value;
+  }
+  GRN_OBJ_FIN(ctx, &value);
+  return level;
 }
 
 bool

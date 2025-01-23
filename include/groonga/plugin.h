@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2017  Brazil
-  Copyright (C) 2022-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -222,6 +222,33 @@ grn_plugin_proc_get_var_content_type(grn_ctx *ctx,
                                      const char *name,
                                      int name_size,
                                      grn_content_type default_value);
+/**
+ * \brief Get the specified command argument value as \ref grn_log_level.
+ *
+ * \param ctx The context object.
+ * \param user_data The data passed to the command.
+ * \param name The argument name.
+ * \param name_size The size of name in bytes. If `name` is a NUL terminated
+ *                  string, you can use `-1` to compute this automatically.
+ * \param default_value The default value that is used when the named argument
+ *        isn't specified.
+ *
+ * \return If a user specified a log level, it's returned.
+ *
+ *         If a user didn't specify a log level, `default_value` is
+ *         returned.
+ *
+ *         If a user specified an invalid log level, `default_value`
+ *         is returned.
+ *
+ * \since 14.1.3
+ */
+GRN_API grn_log_level
+grn_plugin_proc_get_var_log_level(grn_ctx *ctx,
+                                  grn_user_data *user_data,
+                                  const char *name,
+                                  int name_size,
+                                  grn_log_level default_value);
 
 GRN_API grn_obj *
 grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
