@@ -39,6 +39,7 @@ repos:
           ?include/groonga/hash\.h|
           ?include/groonga/highlighter\.h|
           ?include/groonga/ii\.h|
+          ?include/groonga/index_column\.h|
           ?include/groonga/language_model\.h|
           ?include/groonga/obj\.h|
           ?include/groonga/operator\.h|

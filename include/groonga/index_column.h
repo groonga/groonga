@@ -19,16 +19,16 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API grn_rc grn_index_column_diff(grn_ctx *ctx,
-                                     grn_obj *index_column,
-                                     grn_obj **diff);
-GRN_API bool grn_index_column_is_usable(grn_ctx *ctx,
-                                        grn_obj *index_column,
-                                        grn_operator op);
+GRN_API grn_rc
+grn_index_column_diff(grn_ctx *ctx, grn_obj *index_column, grn_obj **diff);
+GRN_API bool
+grn_index_column_is_usable(grn_ctx *ctx,
+                           grn_obj *index_column,
+                           grn_operator op);
 
 #ifdef __cplusplus
 }
