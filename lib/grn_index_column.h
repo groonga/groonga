@@ -21,14 +21,18 @@
 
 #include "grn_db.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-void grn_index_column_init_from_env(void);
-grn_rc grn_index_column_build(grn_ctx *ctx, grn_obj *index_column);
-grn_rc grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column);
-grn_obj *grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column);
+void
+grn_index_column_init_from_env(void);
+grn_rc
+grn_index_column_build(grn_ctx *ctx, grn_obj *index_column);
+grn_rc
+grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column);
+grn_obj *
+grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column);
 
 #ifdef __cplusplus
 }

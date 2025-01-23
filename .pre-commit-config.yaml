@@ -96,6 +96,7 @@ repos:
           ?lib/grn_geo\.h|
           ?lib/grn_generated_column\.h|
           ?lib/grn_ii\.h|
+          ?lib/grn_index_column\.h|
           ?lib/grn_io\.h|
           ?lib/grn_language_model\.hpp|
           ?lib/grn_load\.h|
