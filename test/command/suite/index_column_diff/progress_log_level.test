@@ -1,0 +1,19 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC
+column_create Terms data_index COLUMN_INDEX|WITH_POSITION \
+  Data value
+
+#@timeout 120
+#@disable-logging
+#@generate-series 1 20001 Data '{"value" => "Hello #{i}"}'
+#@enable-logging
+#@timeout default
+
+index_column_diff Terms data_index --progress_log_level error

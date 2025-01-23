@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2015  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -248,6 +248,74 @@ grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column)
   GRN_API_RETURN(ctx->rc);
 }
 
+static const grn_log_level grn_index_column_diff_progress_log_level_default =
+  GRN_LOG_DEBUG;
+
+grn_rc
+grn_index_column_diff_options_init(grn_ctx *ctx,
+                                   grn_index_column_diff_options *options)
+{
+  options->progress_log_level =
+    grn_index_column_diff_progress_log_level_default;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_index_column_diff_options_fin(grn_ctx *ctx,
+                                  grn_index_column_diff_options *options)
+{
+  return GRN_SUCCESS;
+}
+
+grn_index_column_diff_options *
+grn_index_column_diff_options_open(grn_ctx *ctx)
+{
+  GRN_API_ENTER;
+  grn_index_column_diff_options *options =
+    GRN_MALLOC(sizeof(grn_index_column_diff_options));
+  if (!options) {
+    GRN_API_RETURN(NULL);
+  }
+  grn_rc rc = grn_index_column_diff_options_init(ctx, options);
+  if (rc != GRN_SUCCESS) {
+    GRN_FREE(options);
+    GRN_API_RETURN(NULL);
+  }
+  GRN_API_RETURN(options);
+}
+
+grn_rc
+grn_index_column_diff_options_close(grn_ctx *ctx,
+                                    grn_index_column_diff_options *options)
+{
+  GRN_API_ENTER;
+  grn_rc rc = GRN_SUCCESS;
+  if (options) {
+    rc = grn_index_column_diff_options_fin(ctx, options);
+    GRN_FREE(options);
+  }
+  GRN_API_RETURN(rc);
+}
+
+grn_log_level
+grn_index_column_diff_options_get_progress_log_level(
+  grn_ctx *ctx, grn_index_column_diff_options *options)
+{
+  if (options) {
+    return options->progress_log_level;
+  } else {
+    return grn_index_column_diff_progress_log_level_default;
+  }
+}
+
+grn_rc
+grn_index_column_diff_options_set_progress_log_level(
+  grn_ctx *ctx, grn_index_column_diff_options *options, grn_log_level level)
+{
+  options->progress_log_level = level;
+  return GRN_SUCCESS;
+}
+
 typedef enum {
   GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS,
   GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
@@ -288,6 +356,7 @@ typedef struct {
 } grn_index_column_diff_posting_list;
 
 typedef struct {
+  grn_index_column_diff_options *options;
   grn_obj *lexicon;
   grn_ii *ii;
   struct {
@@ -326,8 +395,11 @@ typedef struct {
 } grn_index_column_diff_data;
 
 static void
-grn_index_column_diff_data_init(grn_ctx *ctx, grn_index_column_diff_data *data)
+grn_index_column_diff_data_init(grn_ctx *ctx,
+                                grn_index_column_diff_data *data,
+                                grn_index_column_diff_options *options)
 {
+  data->options = options;
   GRN_PTR_INIT(&(data->source_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_VOID_INIT(&(data->buffers.value));
   GRN_UINT32_INIT(&(data->buffers.postings), GRN_OBJ_VECTOR);
@@ -372,7 +444,8 @@ grn_index_column_diff_init_progress(grn_ctx *ctx,
   data->progress.n_records = grn_table_size(ctx, data->source_table);
   data->progress.i = 0;
   data->progress.interval = 10000;
-  data->progress.log_level = GRN_LOG_DEBUG;
+  data->progress.log_level =
+    grn_index_column_diff_options_get_progress_log_level(ctx, data->options);
   double n_records_digits = ceil(log10(data->progress.n_records + 1));
   data->progress.n_records_digits = (int)n_records_digits;
   grn_timeval_now(ctx, &(data->progress.start_time));
@@ -1253,13 +1326,16 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
 }
 
 grn_rc
-grn_index_column_diff(grn_ctx *ctx, grn_obj *index_column, grn_obj **diff)
+grn_index_column_diff_full(grn_ctx *ctx,
+                           grn_obj *index_column,
+                           grn_index_column_diff_options *options,
+                           grn_obj **diff)
 {
   grn_index_column_diff_data data = {0};
 
   GRN_API_ENTER;
 
-  grn_index_column_diff_data_init(ctx, &data);
+  grn_index_column_diff_data_init(ctx, &data, options);
   if (ctx->rc != GRN_SUCCESS) {
     GRN_API_RETURN(ctx->rc);
   }
@@ -1408,6 +1484,12 @@ exit:
   grn_index_column_diff_data_fin(ctx, &data);
 
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_index_column_diff(grn_ctx *ctx, grn_obj *index_column, grn_obj **diff)
+{
+  return grn_index_column_diff_full(ctx, index_column, NULL, diff);
 }
 
 grn_obj *

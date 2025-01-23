@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2015-2016  Brazil
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,17 @@ grn_rc
 grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column);
 grn_obj *
 grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column);
+
+struct grn_index_column_diff_options {
+  grn_log_level progress_log_level;
+};
+
+grn_rc
+grn_index_column_diff_options_init(grn_ctx *ctx,
+                                   grn_index_column_diff_options *options);
+grn_rc
+grn_index_column_diff_options_fin(grn_ctx *ctx,
+                                  grn_index_column_diff_options *options);
 
 #ifdef __cplusplus
 }
