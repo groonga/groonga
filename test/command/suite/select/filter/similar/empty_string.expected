@@ -41,4 +41,3 @@ select Documents --filter 'content *S ""' --output_columns '_key, _score, conten
     ]
   ]
 ]
-#|e| grn_ii_select on grn_ii_sel() failed!
