@@ -29,6 +29,7 @@
 #  include <share.h>
 #endif /* WIN32 */
 
+#include "grn_ctx.hpp"
 #include "grn_ii.h"
 #include "grn_ii_select_cursor.h"
 #include "grn_ctx_impl.h"
@@ -47,6 +48,10 @@
 #include "grn_selector.h"
 #include "grn_wal.h"
 
+#include <condition_variable>
+#include <map>
+#include <memory>
+#include <mutex>
 #include <vector>
 
 #ifdef GRN_SUPPORT_REGEXP
@@ -16219,7 +16224,8 @@ namespace grn::ii {
         src_token_columns_(src_token_columns),
         n_srcs_(n_srcs),
         sid_bits_(sid_bits),
-        values_(n_srcs)
+        values_(n_srcs),
+        n_processed_records_(0)
     {
       for (uint32_t i = 0; i < n_srcs_; i++) {
         GRN_VOID_INIT(&values_[i]);
@@ -16235,6 +16241,13 @@ namespace grn::ii {
         grn_obj_close(ctx_, lexicon_);
       }
       finalize_terms();
+    }
+
+    // Changes grn_ctx to reuse this builder with child grn_ctx.
+    void
+    set_ctx(grn_ctx *ctx)
+    {
+      ctx_ = ctx;
     }
 
     // Prepares this builder.
@@ -16320,6 +16333,7 @@ namespace grn::ii {
           }
         }
       }
+      ++n_processed_records_;
       return GRN_SUCCESS;
     }
 
@@ -16335,6 +16349,13 @@ namespace grn::ii {
     have_data()
     {
       return n_ > 0;
+    }
+
+    // Number of processed records in this block.
+    size_t
+    n_processed_records()
+    {
+      return n_processed_records_;
     }
 
     // Flushes all terms in this block.
@@ -16377,6 +16398,7 @@ namespace grn::ii {
       rid_ = GRN_ID_NIL;
       n_terms_ = 0;
       n_ = 0;
+      n_processed_records_ = 0;
       return GRN_SUCCESS;
     }
 
@@ -16413,6 +16435,8 @@ namespace grn::ii {
     // Buffers for source column values. We use one grn_obj per column
     // to reuse effectively.
     std::vector<grn_obj> values_;
+
+    size_t n_processed_records_; /* Number of processed records */
 
     // Creates a block lexicon.
     grn_rc
@@ -16994,6 +17018,82 @@ namespace grn::ii {
     }
   };
 
+  // This is for easy to reuse BlockBuilder.
+  class BlockBuilderPool {
+  public:
+    BlockBuilderPool(grn_ii *ii,
+                     const grn_ii_builder_options *options,
+                     grn_obj *src_table,
+                     grn_obj **srcs,
+                     grn_obj **src_token_columns,
+                     uint32_t n_srcs,
+                     uint8_t sid_bits)
+      : mutex_(),
+        builders_(),
+        ii_(ii),
+        options_(options),
+        src_table_(src_table),
+        srcs_(srcs),
+        src_token_columns_(src_token_columns),
+        n_srcs_(n_srcs),
+        sid_bits_(sid_bits)
+    {
+    }
+
+    ~BlockBuilderPool() = default;
+
+    // Returns a pooled BlockBuilder if there is any free BlockBuilder
+    // in this pool. If there is no BlockBuilder in this pool, this
+    // creates a new BlockBuilder and returns it.
+    std::unique_ptr<BlockBuilder>
+    pull(grn_ctx *ctx)
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+
+      if (!builders_.empty()) {
+        auto builder = std::move(builders_.back());
+        builders_.pop_back();
+        builder->set_ctx(ctx);
+        return builder;
+      }
+
+      auto builder = std::make_unique<BlockBuilder>(ctx,
+                                                    ii_,
+                                                    options_,
+                                                    src_table_,
+                                                    srcs_,
+                                                    src_token_columns_,
+                                                    n_srcs_,
+                                                    sid_bits_);
+      auto rc = builder->prepare();
+      if (rc != GRN_SUCCESS) {
+        return nullptr;
+      }
+      return builder;
+    }
+
+    // Makes the given BlockBuilder reusable in this pool.
+    void
+    release(std::unique_ptr<BlockBuilder> builder)
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      builders_.push_back(std::move(builder));
+    }
+
+  private:
+    std::mutex mutex_;
+    std::vector<std::unique_ptr<BlockBuilder>> builders_;
+
+    // Pass through to BlockBuiler.
+    grn_ii *ii_;
+    const grn_ii_builder_options *options_;
+    grn_obj *src_table_;
+    grn_obj **srcs_;
+    grn_obj **src_token_columns_;
+    uint32_t n_srcs_;
+    uint8_t sid_bits_;
+  };
+
   struct Builder {
     Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
       : ctx_(ctx),
@@ -17022,6 +17122,7 @@ namespace grn::ii {
       grn_ii_builder_options_fix(&options_);
 
       src_table_ = nullptr;
+      n_records_ = 0;
       srcs_ = nullptr;
       src_token_columns_ = nullptr;
       n_srcs_ = 0;
@@ -17363,9 +17464,136 @@ namespace grn::ii {
       return GRN_SUCCESS;
     }
 
-    // Reads values from source columns and appends the values.
+    // Flushes a block to a temporary file.
     grn_rc
-    append_srcs()
+    flush_block_builder(BlockBuilder *block_builder)
+    {
+      auto rc = block_builder->flush(
+        [&](grn_ii_builder_term *term, grn_obj *lexicon, grn_id tid) {
+          if (fd_ == -1) {
+            auto rc = create_file();
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+          }
+          return flush_term(term, lexicon, tid);
+        });
+      if (rc == GRN_SUCCESS) {
+        rc = flush_file_buf();
+      }
+      if (rc == GRN_SUCCESS) {
+        // Register a block in a temporary file.
+        rc = register_block();
+      }
+      return rc;
+    }
+
+    // Reads values from source columns and appends the values in parallel.
+    grn_rc
+    append_srcs_parallel(grn::TaskExecutor *executor, size_t n_records_per_task)
+    {
+      BlockBuilderPool pool(ii_,
+                            &options_,
+                            src_table_,
+                            srcs_,
+                            src_token_columns_,
+                            n_srcs_,
+                            sid_bits_);
+      std::mutex mutex;
+      std::condition_variable cv;
+      std::map<int, std::unique_ptr<BlockBuilder>> processed_block_builders;
+      auto limit = static_cast<int>(n_records_per_task);
+      for (int offset = 0; offset < static_cast<int>(n_records_);
+           offset += limit) {
+        auto execute = [&, offset, limit]() {
+          auto child_ctx = grn_ctx_pull_child(ctx_);
+          grn::ChildCtxReleaser releaser(ctx_, child_ctx);
+          auto block_builder = pool.pull(child_ctx);
+          if (!block_builder) {
+            return false;
+          }
+          grn_rc rc = GRN_SUCCESS;
+          auto cursor = grn_table_cursor_open(child_ctx,
+                                              src_table_,
+                                              nullptr,
+                                              0,
+                                              nullptr,
+                                              0,
+                                              offset,
+                                              limit,
+                                              GRN_CURSOR_BY_ID);
+          if (cursor) {
+            while (true) {
+              auto rid = grn_table_cursor_next(child_ctx, cursor);
+              if (rid == GRN_ID_NIL) {
+                break;
+              }
+              rc = block_builder->append_record(rid);
+              if (rc != GRN_SUCCESS) {
+                break;
+              }
+            }
+            grn_table_cursor_close(child_ctx, cursor);
+          }
+          {
+            std::lock_guard<std::mutex> lock(mutex);
+            processed_block_builders.insert(
+              std::make_pair(offset, std::move(block_builder)));
+          }
+          cv.notify_one();
+          return rc == GRN_SUCCESS;
+        };
+        if (!executor->execute(offset,
+                               execute,
+                               "[index][builder][append_src][parallel]")) {
+          executor->wait_all();
+          return ctx_->rc;
+        }
+      }
+
+      for (int offset = 0; offset < static_cast<int>(n_records_);
+           offset += limit) {
+        std::unique_ptr<BlockBuilder> block_builder;
+        {
+          std::unique_lock<std::mutex> lock(mutex);
+          cv.wait(lock, [&] {
+            return ctx_->rc != GRN_SUCCESS ||
+                   processed_block_builders.find(offset) !=
+                     processed_block_builders.end();
+          });
+          if (ctx_->rc == GRN_SUCCESS) {
+            auto iter = processed_block_builders.find(offset);
+            block_builder = std::move(iter->second);
+            processed_block_builders.erase(iter);
+          }
+        }
+        if (ctx_->rc != GRN_SUCCESS) {
+          break;
+        }
+        if (!block_builder) {
+          break;
+        }
+        block_builder->set_ctx(ctx_);
+        auto n_processed_records = block_builder->n_processed_records();
+        if (block_builder->have_data()) {
+          auto rc = flush_block_builder(block_builder.get());
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        pool.release(std::move(block_builder));
+        if (progress_needed_) {
+          progress_.value.index.n_processed_records += n_processed_records;
+          grn_ctx_call_progress_callback(ctx_, &progress_);
+        }
+      }
+      executor->wait_all();
+      return ctx_->rc;
+    }
+
+    // Reads values from source columns and appends the values in sequential.
+    grn_rc
+    append_srcs_sequential()
     {
       BlockBuilder block_builder(ctx_,
                                  ii_,
@@ -17380,67 +17608,57 @@ namespace grn::ii {
         return rc;
       }
 
-      auto ctx = ctx_;
-
       /* Create a cursor to get records in the ID order. */
-      auto cursor = grn_table_cursor_open(ctx,
-                                          src_table_,
-                                          NULL,
-                                          0,
-                                          NULL,
-                                          0,
-                                          0,
-                                          -1,
-                                          GRN_CURSOR_BY_ID);
-      if (!cursor) {
-        if (ctx->rc == GRN_SUCCESS) {
-          ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
-        }
-        return ctx->rc;
-      }
-
-      // Flushes a block to a temporary file.
-      auto flush = [&]() -> grn_rc {
-        auto rc = block_builder.flush(
-          [&](grn_ii_builder_term *term, grn_obj *lexicon, grn_id tid) {
-            if (fd_ == -1) {
-              auto rc = create_file();
-              if (rc != GRN_SUCCESS) {
-                return rc;
-              }
-            }
-            return flush_term(term, lexicon, tid);
-          });
-        if (rc == GRN_SUCCESS) {
-          rc = flush_file_buf();
-        }
-        if (rc == GRN_SUCCESS) {
-          // Register a block in a temporary file.
-          rc = register_block();
-        }
-        return rc;
-      };
-
-      /* Read source values and append it. */
-      while (rc == GRN_SUCCESS) {
-        grn_id rid = grn_table_cursor_next(ctx, cursor);
-        if (rid == GRN_ID_NIL) {
-          break;
-        }
+      GRN_TABLE_EACH_BEGIN_FLAGS(ctx_,
+                                 src_table_,
+                                 cursor,
+                                 rid,
+                                 GRN_CURSOR_BY_ID)
+      {
+        /* Read source values and append it. */
         rc = block_builder.append_record(rid);
         if (rc == GRN_SUCCESS && block_builder.need_flush()) {
-          rc = flush();
+          rc = flush_block_builder(&block_builder);
+        }
+        if (rc != GRN_SUCCESS) {
+          break;
         }
         if (progress_needed_) {
           progress_.value.index.n_processed_records++;
-          grn_ctx_call_progress_callback(ctx, &progress_);
+          grn_ctx_call_progress_callback(ctx_, &progress_);
         }
       }
+      GRN_TABLE_EACH_END(ctx_, cursor);
       if (rc == GRN_SUCCESS && block_builder.have_data()) {
-        rc = flush();
+        rc = flush_block_builder(&block_builder);
       }
-      grn_table_cursor_close(ctx, cursor);
       return rc;
+    }
+
+    // Reads values from source columns and appends the values.
+    grn_rc
+    append_srcs()
+    {
+      auto task_executor = grn_ctx_get_task_executor(ctx_);
+      if (!task_executor->is_parallel()) {
+        return append_srcs_sequential();
+      }
+
+      // This is a heuristic rule. We may want to revisit this.
+      const size_t n_postings_per_source = 1024; // No reason.
+      const size_t max_n_records_per_task =
+        options_.block_threshold / (n_postings_per_source * n_srcs_);
+      const size_t max_n_records_per_worker =
+        n_records_ / task_executor->get_n_workers();
+      const size_t min_n_records_per_task = 10240; // No reason.
+      const size_t n_records_per_task =
+        std::max(std::min(max_n_records_per_task, max_n_records_per_worker),
+                 min_n_records_per_task);
+      if (n_records_ < n_records_per_task) {
+        return append_srcs_sequential();
+      } else {
+        return append_srcs_parallel(task_executor, n_records_per_task);
+      }
     }
 
     // Sets a source table.
@@ -17457,6 +17675,7 @@ namespace grn::ii {
         }
         return ctx_->rc;
       }
+      n_records_ = grn_table_size(ctx_, src_table_);
       return GRN_SUCCESS;
     }
 
@@ -17588,13 +17807,12 @@ namespace grn::ii {
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      unsigned int n_records = grn_table_size(ctx_, src_table_);
       if (progress_needed_) {
         progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
-        progress_.value.index.n_target_records = n_records;
+        progress_.value.index.n_target_records = n_records_;
         grn_ctx_call_progress_callback(ctx_, &progress_);
       }
-      if (n_records == 0) {
+      if (n_records_ == 0) {
         /* Nothing to do because there are no values. */
         return ctx_->rc;
       }
@@ -18208,6 +18426,7 @@ namespace grn::ii {
     grn_ii_builder_options options_; /* Options */
 
     grn_obj *src_table_;          /* Source table */
+    unsigned int n_records_;      /* Number of records in source table */
     grn_obj **srcs_;              /* Source columns (to be freed) */
     grn_obj **src_token_columns_; /* Source token columns (to be freed) */
     uint32_t n_srcs_;             /* Number of source columns */
