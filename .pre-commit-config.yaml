@@ -140,6 +140,7 @@ repos:
           ?lib/operator\.c|
           ?lib/output\.c|
           ?lib/pat\.c|
+          ?lib/plugin\.c|
           ?lib/portability\.cpp|
           ?lib/proc/proc_column\.c|
           ?lib/proc/proc_distance\.c|

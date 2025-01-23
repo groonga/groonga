@@ -29,14 +29,14 @@
 
 #include <sys/stat.h>
 #ifdef HAVE_DIRENT_H
-# include <dirent.h>
+#  include <dirent.h>
 #endif /* HAVE_DIRENT_H */
 
 #ifndef S_ISREG
-# ifdef _S_IFREG
-#  define S_ISREG(mode) (mode & _S_IFREG)
-# endif /* _S_IFREG */
-#endif /* !S_ISREG */
+#  ifdef _S_IFREG
+#    define S_ISREG(mode) (mode & _S_IFREG)
+#  endif /* _S_IFREG */
+#endif   /* !S_ISREG */
 
 #include "grn_db.h"
 #include "grn_plugin.h"
@@ -44,7 +44,7 @@
 #include "grn_util.h"
 
 #ifdef GRN_WITH_MRUBY
-# include <mruby.h>
+#  include <mruby.h>
 #endif /* GRN_WITH_MRUBY */
 
 static grn_hash *grn_plugins = NULL;
@@ -52,22 +52,24 @@ static grn_critical_section grn_plugins_lock;
 static grn_ctx grn_plugins_ctx;
 static grn_obj grn_plugins_path;
 
-#define GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) do {                \
-  unsigned int i_;                                                      \
-  const unsigned int n_dirs_ = grn_vector_size(&grn_plugins_ctx,        \
-                                               &grn_plugins_path);      \
-  for (i_ = 0; i_ < n_dirs_; i_++) {                                    \
-    const char *dir = NULL;                                             \
-    unsigned int dir_length;                                            \
-    dir_length = grn_vector_get_element(&grn_plugins_ctx,               \
-                                        &grn_plugins_path,              \
-                                        i_,                             \
-                                        &dir,                           \
-                                        NULL,                           \
-                                        NULL);
-#define GRN_PLUGINS_DIR_EACH_END()                                      \
-  }                                                                     \
-} while (GRN_FALSE)
+#define GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length)                            \
+  do {                                                                         \
+    unsigned int i_;                                                           \
+    const unsigned int n_dirs_ =                                               \
+      grn_vector_size(&grn_plugins_ctx, &grn_plugins_path);                    \
+    for (i_ = 0; i_ < n_dirs_; i_++) {                                         \
+      const char *dir = NULL;                                                  \
+      unsigned int dir_length;                                                 \
+      dir_length = grn_vector_get_element(&grn_plugins_ctx,                    \
+                                          &grn_plugins_path,                   \
+                                          i_,                                  \
+                                          &dir,                                \
+                                          NULL,                                \
+                                          NULL);
+#define GRN_PLUGINS_DIR_EACH_END()                                             \
+  }                                                                            \
+  }                                                                            \
+  while (GRN_FALSE)
 
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
@@ -96,12 +98,8 @@ static char grn_plugins_dir_env[GRN_ENV_BUFFER_SIZE];
 void
 grn_plugin_init_from_env(void)
 {
-  grn_getenv("GRN_PLUGINS_PATH",
-             grn_plugins_path_env,
-             GRN_ENV_BUFFER_SIZE);
-  grn_getenv("GRN_PLUGINS_DIR",
-             grn_plugins_dir_env,
-             GRN_ENV_BUFFER_SIZE);
+  grn_getenv("GRN_PLUGINS_PATH", grn_plugins_path_env, GRN_ENV_BUFFER_SIZE);
+  grn_getenv("GRN_PLUGINS_DIR", grn_plugins_dir_env, GRN_ENV_BUFFER_SIZE);
 }
 
 static int
@@ -124,7 +122,8 @@ grn_plugin_reference(grn_ctx *ctx, const char *filename)
   grn_plugin **plugin = NULL;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
+  id = grn_hash_get(&grn_plugins_ctx,
+                    grn_plugins,
                     filename,
                     (unsigned int)GRN_PLUGIN_KEY_SIZE(filename),
                     (void **)&plugin);
@@ -156,7 +155,8 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   }
 
   path = plugin->path;
-  GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
+  GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length)
+  {
     if (strncmp(dir, path, dir_length) == 0) {
       const char *plugin_name = path + dir_length;
       while (plugin_name[0] == '/') {
@@ -165,7 +165,8 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
       /* TODO: remove suffix too? */
       return plugin_name;
     }
-  } GRN_PLUGINS_DIR_EACH_END();
+  }
+  GRN_PLUGINS_DIR_EACH_END();
 
   return path;
 }
@@ -211,8 +212,12 @@ grn_plugin_call_register_mrb(grn_ctx *ctx, grn_id id, grn_plugin *plugin)
 
   {
     int added;
-    grn_hash_add(ctx, ctx->impl->mrb.registered_plugins,
-                 &id, sizeof(grn_id), NULL, &added);
+    grn_hash_add(ctx,
+                 ctx->impl->mrb.registered_plugins,
+                 &id,
+                 sizeof(grn_id),
+                 NULL,
+                 &added);
     if (!added) {
       return ctx->rc;
     }
@@ -223,16 +228,17 @@ grn_plugin_call_register_mrb(grn_ctx *ctx, grn_id id, grn_plugin *plugin)
   {
     const char *utf8_path;
     mrb_value mrb_path;
-    utf8_path =
-      grn_encoding_convert_to_utf8_from_locale(ctx,
-                                               ctx->impl->plugin_path,
-                                               -1,
-                                               NULL);
+    utf8_path = grn_encoding_convert_to_utf8_from_locale(ctx,
+                                                         ctx->impl->plugin_path,
+                                                         -1,
+                                                         NULL);
     mrb_path = mrb_str_new_cstr(mrb, utf8_path);
     grn_encoding_converted_free(ctx, utf8_path);
-    mrb_funcall(mrb, mrb_obj_value(plugin_loader_class),
+    mrb_funcall(mrb,
+                mrb_obj_value(plugin_loader_class),
                 "load_file",
-                1, mrb_path);
+                1,
+                mrb_path);
   }
   mrb_gc_arena_restore(mrb, arena_index);
   return ctx->rc;
@@ -285,20 +291,21 @@ grn_plugin_call_fin(grn_ctx *ctx, grn_id id)
 }
 
 static grn_rc
-grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
-                      grn_dl dl, grn_id id, const char *path)
+grn_plugin_initialize(
+  grn_ctx *ctx, grn_plugin *plugin, grn_dl dl, grn_id id, const char *path)
 {
   plugin->dl = dl;
 
-#define GET_SYMBOL(type) do {                                           \
-  grn_dl_clear_error();                                                 \
-  plugin->type ## _func = grn_dl_sym(dl, GRN_PLUGIN_FUNC_PREFIX #type); \
-  if (!plugin->type ## _func) {                                         \
-    const char *label;                                                  \
-    label = grn_dl_sym_error_label();                                   \
-    SERR("%s", label);                                                  \
-  }                                                                     \
-} while (0)
+#define GET_SYMBOL(type)                                                       \
+  do {                                                                         \
+    grn_dl_clear_error();                                                      \
+    plugin->type##_func = grn_dl_sym(dl, GRN_PLUGIN_FUNC_PREFIX #type);        \
+    if (!plugin->type##_func) {                                                \
+      const char *label;                                                       \
+      label = grn_dl_sym_error_label();                                        \
+      SERR("%s", label);                                                       \
+    }                                                                          \
+  } while (0)
 
   GET_SYMBOL(init);
   GET_SYMBOL(register);
@@ -311,9 +318,12 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
         "init func (%s) %sfound, "
         "register func (%s) %sfound and "
         "fin func (%s) %sfound",
-        GRN_PLUGIN_FUNC_PREFIX "init", plugin->init_func ? "" : "not ",
-        GRN_PLUGIN_FUNC_PREFIX "register", plugin->register_func ? "" : "not ",
-        GRN_PLUGIN_FUNC_PREFIX "fin", plugin->fin_func ? "" : "not ");
+        GRN_PLUGIN_FUNC_PREFIX "init",
+        plugin->init_func ? "" : "not ",
+        GRN_PLUGIN_FUNC_PREFIX "register",
+        plugin->register_func ? "" : "not ",
+        GRN_PLUGIN_FUNC_PREFIX "fin",
+        plugin->fin_func ? "" : "not ");
   }
 
   if (!ctx->rc) {
@@ -343,8 +353,12 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
     return GRN_ID_NIL;
   }
 
-  id = grn_hash_add(plugins_ctx, grn_plugins, filename, filename_size,
-                    (void **)&plugin, NULL);
+  id = grn_hash_add(plugins_ctx,
+                    grn_plugins,
+                    filename,
+                    filename_size,
+                    (void **)&plugin,
+                    NULL);
   if (!id) {
     return id;
   }
@@ -381,7 +395,10 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   filename_size = (unsigned int)GRN_PLUGIN_KEY_SIZE(filename);
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  if ((id = grn_hash_get(plugins_ctx, grn_plugins, filename, filename_size,
+  if ((id = grn_hash_get(plugins_ctx,
+                         grn_plugins,
+                         filename,
+                         filename_size,
                          (void **)&plugin))) {
     (*plugin)->refcount++;
     goto exit;
@@ -401,8 +418,12 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
 #endif /* GRN_WITH_MRUBY */
 
   if ((dl = grn_dl_open(filename))) {
-    if ((id = grn_hash_add(plugins_ctx, grn_plugins, filename, filename_size,
-                           (void **)&plugin, NULL))) {
+    if ((id = grn_hash_add(plugins_ctx,
+                           grn_plugins,
+                           filename,
+                           filename_size,
+                           (void **)&plugin,
+                           NULL))) {
       {
         grn_ctx *ctx = plugins_ctx;
         *plugin = GRN_CALLOC(sizeof(grn_plugin));
@@ -525,7 +546,7 @@ grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
 {
   /* TODO */
 }
-#else /* WIN32 */
+#else  /* WIN32 */
 static void
 grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
 {
@@ -579,7 +600,7 @@ grn_plugin_get_default_system_plugins_dir(void)
   return windows_plugins_dir;
 }
 
-#else /* WIN32 */
+#else  /* WIN32 */
 static const char *
 grn_plugin_get_default_system_plugins_dir(void)
 {
@@ -603,8 +624,10 @@ grn_plugins_init(void)
   CRITICAL_SECTION_INIT(grn_plugins_lock);
   grn_ctx_init(&grn_plugins_ctx, 0);
   GRN_TEXT_INIT(&grn_plugins_path, GRN_OBJ_VECTOR);
-  grn_plugins = grn_hash_create(&grn_plugins_ctx, NULL,
-                                PATH_MAX, sizeof(grn_plugin *),
+  grn_plugins = grn_hash_create(&grn_plugins_ctx,
+                                NULL,
+                                PATH_MAX,
+                                sizeof(grn_plugin *),
                                 GRN_OBJ_KEY_VAR_SIZE);
   if (!grn_plugins) {
     GRN_OBJ_FIN(&grn_plugins_ctx, &grn_plugins_path);
@@ -632,7 +655,9 @@ grn_rc
 grn_plugins_fin(void)
 {
   grn_rc rc;
-  if (!grn_plugins) { return GRN_INVALID_ARGUMENT; }
+  if (!grn_plugins) {
+    return GRN_INVALID_ARGUMENT;
+  }
   GRN_HASH_EACH(&grn_plugins_ctx, grn_plugins, id, NULL, NULL, NULL, {
     grn_plugin_close(&grn_plugins_ctx, id);
   });
@@ -717,7 +742,8 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
   if (mrb_path_len >= PATH_MAX) {
     ERR(GRN_FILENAME_TOO_LONG,
         "too long plugin path: <%s%s>",
-        path, mrb_suffix);
+        path,
+        mrb_suffix);
     return NULL;
   }
 
@@ -725,7 +751,7 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
   grn_strcat(mrb_path, PATH_MAX, mrb_suffix);
   return grn_plugin_find_path_raw(ctx, mrb_path);
 }
-#else /* GRN_WITH_MRUBY */
+#else  /* GRN_WITH_MRUBY */
 static char *
 grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
 {
@@ -743,9 +769,7 @@ grn_plugin_find_path_so(grn_ctx *ctx, const char *path, size_t path_len)
   so_suffix = grn_plugin_get_suffix();
   so_path_len = path_len + strlen(so_suffix);
   if (so_path_len >= PATH_MAX) {
-    ERR(GRN_FILENAME_TOO_LONG,
-        "too long plugin path: <%s%s>",
-        path, so_suffix);
+    ERR(GRN_FILENAME_TOO_LONG, "too long plugin path: <%s%s>", path, so_suffix);
     return NULL;
   }
 
@@ -769,15 +793,15 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
   }
 
   so_suffix = grn_plugin_get_suffix();
-  libs_so_path_len =
-    (size_t)(base_name - path) +
-    strlen(libs_path) +
-    strlen(base_name) +
-    strlen(so_suffix);
+  libs_so_path_len = (size_t)(base_name - path) + strlen(libs_path) +
+                     strlen(base_name) + strlen(so_suffix);
   if (libs_so_path_len >= PATH_MAX) {
     ERR(GRN_FILENAME_TOO_LONG,
         "too long plugin path: <%.*s/.libs%s%s>",
-        (int)(base_name - path), path, base_name, so_suffix);
+        (int)(base_name - path),
+        path,
+        base_name,
+        so_suffix);
     return NULL;
   }
 
@@ -826,7 +850,7 @@ grn_plugin_find_path_one(grn_ctx *ctx, const char *path)
     goto exit;
   }
 
-exit :
+exit:
   return found_path;
 }
 
@@ -841,8 +865,7 @@ grn_plugin_find_path_is_absolute_path(grn_ctx *ctx, const char *name)
   /* Windows */
   if ((('a' <= name[0] && name[0] <= 'z') ||
        ('A' <= name[0] && name[0] <= 'Z')) &&
-      name[1] == ':' &&
-      name[2] == '/') {
+      name[1] == ':' && name[2] == '/') {
     return true;
   }
 
@@ -859,7 +882,8 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   if (grn_plugin_find_path_is_absolute_path(ctx, name)) {
     found_path = grn_plugin_find_path_one(ctx, name);
   } else {
-    GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
+    GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length)
+    {
       char dir_last_char;
       char path[PATH_MAX];
       size_t name_length, max_name_length;
@@ -875,10 +899,13 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
       name_length = strlen(name);
       max_name_length = PATH_MAX - strlen(path) - 1;
       if (name_length > max_name_length) {
-        ERR(GRN_INVALID_ARGUMENT, "plugin name is too long: %" GRN_FMT_SIZE
-            " (max: %" GRN_FMT_SIZE ") <%s%s>",
-            name_length, max_name_length,
-            path, name);
+        ERR(GRN_INVALID_ARGUMENT,
+            "plugin name is too long: %" GRN_FMT_SIZE " (max: %" GRN_FMT_SIZE
+            ") <%s%s>",
+            name_length,
+            max_name_length,
+            path,
+            name);
         break;
       }
       grn_strcat(path, PATH_MAX, name);
@@ -890,20 +917,23 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
-    } GRN_PLUGINS_DIR_EACH_END();
+    }
+    GRN_PLUGINS_DIR_EACH_END();
   }
 
   GRN_API_RETURN(found_path);
 }
 
 static void
-grn_plugin_set_name_resolve_error(grn_ctx *ctx, const char *name,
+grn_plugin_set_name_resolve_error(grn_ctx *ctx,
+                                  const char *name,
                                   const char *tag)
 {
   if (name[0] == '/') {
     ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
         "%s cannot find plugin file: <%s>",
-        tag, name);
+        tag,
+        name);
   } else {
     const char *grn_encoding_plugins_dir;
     size_t grn_encoding_plugins_dir_length;
@@ -970,8 +1000,10 @@ grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  plugin_id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
-                           path, (uint32_t)GRN_PLUGIN_KEY_SIZE(path),
+  plugin_id = grn_hash_get(&grn_plugins_ctx,
+                           grn_plugins,
+                           path,
+                           (uint32_t)GRN_PLUGIN_KEY_SIZE(path),
                            NULL);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
 
@@ -983,10 +1015,8 @@ grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
     grn_table_cursor *cursor;
     grn_id id;
 
-    cursor = grn_table_cursor_open(ctx, db,
-                                   NULL, 0,
-                                   NULL, 0,
-                                   0, -1, GRN_CURSOR_BY_ID);
+    cursor =
+      grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
     if (!cursor) {
       GRN_API_RETURN(ctx->rc);
     }
@@ -1072,8 +1102,12 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
     grn_id id;
     int added;
     id = DB_OBJ(proc)->id;
-    grn_hash_add(ctx, ctx->impl->mrb.checked_procs,
-                 &id, sizeof(grn_id), NULL, &added);
+    grn_hash_add(ctx,
+                 ctx->impl->mrb.checked_procs,
+                 &id,
+                 sizeof(grn_id),
+                 NULL,
+                 &added);
     if (!added) {
       return;
     }
@@ -1104,9 +1138,12 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     is_close_opened_object_mode = true;
   }
 
-  processed_paths = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, 0,
-                                    GRN_OBJ_TABLE_HASH_KEY |
-                                    GRN_OBJ_KEY_VAR_SIZE);
+  processed_paths =
+    grn_hash_create(ctx,
+                    NULL,
+                    GRN_TABLE_MAX_KEY_SIZE,
+                    0,
+                    GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_VAR_SIZE);
   if (!processed_paths) {
     GRN_API_RETURN(ctx->rc);
   }
@@ -1115,8 +1152,12 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
   native_plugin_suffix = grn_plugin_get_suffix();
   ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
 
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             grn_ctx_db(ctx),
+                             cursor,
+                             id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING)
+  {
     void *name;
     int name_size;
     grn_obj *object;
@@ -1151,16 +1192,18 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
       goto next_loop;
     }
 
-    processed_path_id = grn_hash_get(ctx, processed_paths,
-                                     path, (uint32_t)strlen(path),
-                                     NULL);
+    processed_path_id =
+      grn_hash_get(ctx, processed_paths, path, (uint32_t)strlen(path), NULL);
     if (processed_path_id != GRN_ID_NIL) {
       goto next_loop;
     }
 
-    grn_hash_add(ctx, processed_paths,
-                 path, (uint32_t)strlen(path),
-                 NULL, NULL);
+    grn_hash_add(ctx,
+                 processed_paths,
+                 path,
+                 (uint32_t)strlen(path),
+                 NULL,
+                 NULL);
 
     {
       const char *relative_path;
@@ -1194,16 +1237,20 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
                         ruby_plugin_suffix) == 0) {
         name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
       }
-      grn_vector_add_element(ctx, names,
-                             name, (uint32_t)strlen(name),
-                             0, GRN_DB_TEXT);
+      grn_vector_add_element(ctx,
+                             names,
+                             name,
+                             (uint32_t)strlen(name),
+                             0,
+                             GRN_DB_TEXT);
     }
 
-  next_loop :
+  next_loop:
     if (is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+  GRN_TABLE_EACH_END(ctx, cursor);
 
   grn_hash_close(ctx, processed_paths);
 
@@ -1211,37 +1258,46 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
 }
 
 void *
-grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file, int line,
-                  const char *func)
+grn_plugin_malloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   return grn_malloc(ctx, size, file, line, func);
 }
 
 void *
-grn_plugin_calloc(grn_ctx *ctx, size_t size, const char *file, int line,
-                  const char *func)
+grn_plugin_calloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   return grn_calloc(ctx, size, file, line, func);
 }
 
 void *
-grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
-                   const char *file, int line, const char *func)
+grn_plugin_realloc(grn_ctx *ctx,
+                   void *ptr,
+                   size_t size,
+                   const char *file,
+                   int line,
+                   const char *func)
 {
   return grn_realloc(ctx, ptr, size, file, line, func);
 }
 
 void
-grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file, int line,
-                const char *func)
+grn_plugin_free(
+  grn_ctx *ctx, void *ptr, const char *file, int line, const char *func)
 {
   grn_free(ctx, ptr, file, line, func);
 }
 
 void
-grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
-                     const char *file, int line, const char *func,
-                     const char *format, ...)
+grn_plugin_set_error(grn_ctx *ctx,
+                     grn_log_level level,
+                     grn_rc error_code,
+                     const char *file,
+                     int line,
+                     const char *func,
+                     const char *format,
+                     ...)
 {
   char old_error_message[GRN_CTX_MSGSIZE];
 
@@ -1304,8 +1360,8 @@ struct _grn_plugin_mutex {
 grn_plugin_mutex *
 grn_plugin_mutex_open(grn_ctx *ctx)
 {
-  grn_plugin_mutex * const mutex =
-      GRN_PLUGIN_MALLOC(ctx, sizeof(grn_plugin_mutex));
+  grn_plugin_mutex *const mutex =
+    GRN_PLUGIN_MALLOC(ctx, sizeof(grn_plugin_mutex));
   if (mutex != NULL) {
     CRITICAL_SECTION_INIT(mutex->critical_section);
   }
@@ -1350,8 +1406,10 @@ grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex)
 }
 
 grn_obj *
-grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                      grn_id domain, unsigned char flags)
+grn_plugin_proc_alloc(grn_ctx *ctx,
+                      grn_user_data *user_data,
+                      grn_id domain,
+                      unsigned char flags)
 {
   return grn_proc_alloc(ctx, user_data, domain, flags);
 }
@@ -1363,8 +1421,10 @@ grn_plugin_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data)
 }
 
 grn_obj *
-grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
-                        const char *name, int name_size)
+grn_plugin_proc_get_var(grn_ctx *ctx,
+                        grn_user_data *user_data,
+                        const char *name,
+                        int name_size)
 {
   name_size = compute_name_size(name, name_size);
   return grn_proc_get_var(ctx, user_data, name, (unsigned int)name_size);
@@ -1436,7 +1496,8 @@ grn_plugin_proc_get_var_content_type(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
+grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
+                                  grn_user_data *user_data,
                                   unsigned int offset)
 {
   return grn_proc_get_var_by_offset(ctx, user_data, offset);
@@ -1462,7 +1523,7 @@ grn_plugin_windows_base_dir(void)
 {
 #ifdef WIN32
   return grn_windows_base_dir();
-#else /* WIN32 */
+#else  /* WIN32 */
   return NULL;
 #endif /* WIN32 */
 }
@@ -1471,8 +1532,10 @@ grn_plugin_windows_base_dir(void)
   grn_plugin_charlen() takes the length of a string, unlike grn_charlen_().
  */
 int
-grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
-                   unsigned int str_length, grn_encoding encoding)
+grn_plugin_charlen(grn_ctx *ctx,
+                   const char *str_ptr,
+                   unsigned int str_length,
+                   grn_encoding encoding)
 {
   return grn_charlen_(ctx, str_ptr, str_ptr + str_length, encoding);
 }
@@ -1481,40 +1544,42 @@ grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
   grn_plugin_isspace() takes the length of a string, unlike grn_isspace().
  */
 int
-grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
-                   unsigned int str_length, grn_encoding encoding)
+grn_plugin_isspace(grn_ctx *ctx,
+                   const char *str_ptr,
+                   unsigned int str_length,
+                   grn_encoding encoding)
 {
   if ((str_ptr == NULL) || (str_length == 0)) {
     return 0;
   }
   switch ((unsigned char)str_ptr[0]) {
-  case ' ' :
-  case '\f' :
-  case '\n' :
-  case '\r' :
-  case '\t' :
-  case '\v' :
+  case ' ':
+  case '\f':
+  case '\n':
+  case '\r':
+  case '\t':
+  case '\v':
     return 1;
-  case 0x81 :
+  case 0x81:
     if ((encoding == GRN_ENC_SJIS) && (str_length >= 2) &&
         ((unsigned char)str_ptr[1] == 0x40)) {
       return 2;
     }
     break;
-  case 0xA1 :
+  case 0xA1:
     if ((encoding == GRN_ENC_EUC_JP) && (str_length >= 2) &&
         ((unsigned char)str_ptr[1] == 0xA1)) {
       return 2;
     }
     break;
-  case 0xE3 :
+  case 0xE3:
     if ((encoding == GRN_ENC_UTF8) && (str_length >= 3) &&
         ((unsigned char)str_ptr[1] == 0x80) &&
         ((unsigned char)str_ptr[2] == 0x80)) {
       return 3;
     }
     break;
-  default :
+  default:
     break;
   }
   return 0;
@@ -1542,11 +1607,17 @@ grn_plugin_command_create(grn_ctx *ctx,
 {
   grn_obj *proc;
   name_size = compute_name_size(name, name_size);
-  proc = grn_proc_create(ctx, name, name_size, GRN_PROC_COMMAND,
-                         func, NULL, NULL, n_vars, vars);
+  proc = grn_proc_create(ctx,
+                         name,
+                         name_size,
+                         GRN_PROC_COMMAND,
+                         func,
+                         NULL,
+                         NULL,
+                         n_vars,
+                         vars);
   return proc;
 }
-
 
 bool
 grn_plugin_proc_get_value_bool(grn_ctx *ctx,
