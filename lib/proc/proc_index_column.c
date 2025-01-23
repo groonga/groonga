@@ -44,17 +44,18 @@ index_column_data_init(grn_ctx *ctx, index_column_data *data)
   data->table_name.value =
     grn_plugin_proc_get_var_string(ctx,
                                    data->user_data,
-                                   "table", -1,
+                                   "table",
+                                   -1,
                                    &(data->table_name.length));
   data->column_name.value =
     grn_plugin_proc_get_var_string(ctx,
                                    data->user_data,
-                                   "name", -1,
+                                   "name",
+                                   -1,
                                    &(data->column_name.length));
 
-  data->table = grn_ctx_get(ctx,
-                            data->table_name.value,
-                            (int)(data->table_name.length));
+  data->table =
+    grn_ctx_get(ctx, data->table_name.value, (int)(data->table_name.length));
   if (!data->table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -180,7 +181,8 @@ index_column_diff_output(grn_ctx *ctx,
   GRN_UINT32_INIT(&missings, GRN_OBJ_VECTOR);
   grn_ctx_output_array_open(ctx, "diffs", (int)grn_table_size(ctx, diff));
   {
-    GRN_TABLE_EACH_BEGIN(ctx, diff, cursor, id) {
+    GRN_TABLE_EACH_BEGIN(ctx, diff, cursor, id)
+    {
       grn_ctx_output_map_open(ctx, "diff", 3);
       {
         grn_ctx_output_cstr(ctx, "token");
@@ -221,7 +223,8 @@ index_column_diff_output(grn_ctx *ctx,
                                           "missings");
       }
       grn_ctx_output_map_close(ctx);
-    } GRN_TABLE_EACH_END(ctx, cursor);
+    }
+    GRN_TABLE_EACH_END(ctx, cursor);
   }
   grn_ctx_output_array_close(ctx);
   GRN_OBJ_FIN(ctx, &missings);
@@ -268,7 +271,7 @@ command_index_column_diff(grn_ctx *ctx,
                            data.table,
                            grn_column_get_flags(ctx, data.column));
 
-exit :
+exit:
   index_column_data_fin(ctx, &data);
 
   if (diff) {
@@ -287,7 +290,8 @@ grn_proc_init_index_column_diff(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "name", -1);
   grn_plugin_command_create(ctx,
-                            "index_column_diff", -1,
+                            "index_column_diff",
+                            -1,
                             command_index_column_diff,
                             n_vars,
                             vars);
