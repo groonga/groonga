@@ -517,7 +517,7 @@ grn_index_column_diff_progress(grn_ctx *ctx, grn_index_column_diff_data *data)
       ((double)(previous_time->tv_sec) +
        previous_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
     double throughput;
-    if (current_interval_seconds == 0.0) {
+    if (grn_float_is_zero(current_interval_seconds)) {
       throughput = interval;
     } else {
       throughput = interval / current_interval_seconds;
