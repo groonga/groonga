@@ -3716,6 +3716,10 @@ _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
     *key_size = 0;
     return NULL;
   }
+  if (id == GRN_ID_NIL) {
+    *key_size = 0;
+    return NULL;
+  }
   PAT_AT(pat, id, node);
   if (!node) {
     *key_size = 0;
