@@ -19,6 +19,7 @@
 
 #include "grn_index_column.h"
 #include "grn_ii.h"
+#include "grn_float.h"
 #include "grn_hash.h"
 
 #include <string.h>
