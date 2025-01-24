@@ -477,19 +477,8 @@ grn_index_column_diff_format_memory(grn_ctx *ctx,
                                     uint64_t usage,
                                     const char **unit)
 {
-  if (usage < 1024) {
-    *unit = "B";
-    return (double)usage;
-  } else if (usage < (1024 * 1024)) {
-    *unit = "KiB";
-    return (double)usage / 1024.0;
-  } else if (usage < (1024 * 1024 * 1024)) {
-    *unit = "MiB";
-    return (double)usage / 1024.0 / 1024.0;
-  } else {
-    *unit = "GiB";
-    return (double)usage / 1024.0 / 1024.0 / 1024.0;
-  }
+  *unit = "MiB";
+  return (double)usage / 1024.0 / 1024.0;
 }
 
 static void
