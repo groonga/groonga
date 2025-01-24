@@ -16759,7 +16759,9 @@ namespace grn::ii {
       uint32_t pos = 0;
       grn_token_cursor *cursor;
       start_value(rid, sid);
-      if (value_size) {
+      if (value_size == 0) {
+        pos = pos_;
+      } else {
         if (force_as_is || (!have_tokenizer_ && !have_normalizers_)) {
           grn_id tid;
           uint32_t max_key_size = 0;
@@ -16932,9 +16934,12 @@ namespace grn::ii {
               grn_id id;
               float weight;
               id = grn_uvector_get_element_record(ctx_, obj, i, &weight);
-              uint32_t key_size;
-              const char *key;
-              if (get_key_optimizable_) {
+              const char *key = nullptr;
+              uint32_t key_size = 0;
+              if (id == GRN_ID_NIL) {
+                key = nullptr;
+                key_size = 0;
+              } else if (get_key_optimizable_) {
                 key = _grn_table_key(ctx_, ii_->lexicon, id, &key_size);
               } else {
                 GRN_BULK_REWIND(&key_buffer);
