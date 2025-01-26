@@ -19,6 +19,7 @@
 
 #include "grn_index_column.h"
 #include "grn_ii.h"
+#include "grn_float.h"
 #include "grn_hash.h"
 
 #include <string.h>
@@ -516,7 +517,12 @@ grn_index_column_diff_progress(grn_ctx *ctx, grn_index_column_diff_data *data)
        current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
       ((double)(previous_time->tv_sec) +
        previous_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
-    const double throughput = interval / current_interval_seconds;
+    double throughput;
+    if (grn_float_is_zero(current_interval_seconds)) {
+      throughput = interval;
+    } else {
+      throughput = interval / current_interval_seconds;
+    }
     const double remained_seconds =
       elapsed_seconds + ((n_records - i) / throughput);
     const char *elapsed_unit = NULL;
