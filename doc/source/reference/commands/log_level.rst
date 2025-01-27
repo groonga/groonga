@@ -27,7 +27,7 @@ Parameters
 .. _log-level-level:
 
 ``level``
-"""""""""
+^^^^^^^^^
 
 Specify log level with a character or string which means log level.
 
