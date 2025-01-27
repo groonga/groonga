@@ -1242,6 +1242,7 @@ set(GRN_DOC_SOURCES
     reference/log.rst
     reference/normalizers.rst
     reference/normalizers/normalizer_auto.rst
+    reference/normalizers/normalizer_nfkc.rst
     reference/normalizers/normalizer_nfkc100.rst
     reference/normalizers/normalizer_nfkc121.rst
     reference/normalizers/normalizer_nfkc130.rst
@@ -1594,6 +1595,7 @@ set(GRN_DOC_HTML_FILES
     reference/log.html
     reference/normalizers.html
     reference/normalizers/normalizer_auto.html
+    reference/normalizers/normalizer_nfkc.html
     reference/normalizers/normalizer_nfkc100.html
     reference/normalizers/normalizer_nfkc121.html
     reference/normalizers/normalizer_nfkc130.html

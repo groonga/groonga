@@ -1242,6 +1242,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_auto.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc121.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc130.rst \
@@ -2573,6 +2574,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
 	source/reference/normalizers/normalizer_auto.rst \
+	source/reference/normalizers/normalizer_nfkc.rst \
 	source/reference/normalizers/normalizer_nfkc100.rst \
 	source/reference/normalizers/normalizer_nfkc121.rst \
 	source/reference/normalizers/normalizer_nfkc130.rst \
@@ -2891,6 +2893,7 @@ po_files = \
 	reference/log.po \
 	reference/normalizers.po \
 	reference/normalizers/normalizer_auto.po \
+	reference/normalizers/normalizer_nfkc.po \
 	reference/normalizers/normalizer_nfkc100.po \
 	reference/normalizers/normalizer_nfkc121.po \
 	reference/normalizers/normalizer_nfkc130.po \
@@ -3207,6 +3210,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/log.po \
 	LC_MESSAGES/reference/normalizers.po \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.po \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.po \
@@ -3523,6 +3527,7 @@ edit_po_files = \
 	reference/log.edit \
 	reference/normalizers.edit \
 	reference/normalizers/normalizer_auto.edit \
+	reference/normalizers/normalizer_nfkc.edit \
 	reference/normalizers/normalizer_nfkc100.edit \
 	reference/normalizers/normalizer_nfkc121.edit \
 	reference/normalizers/normalizer_nfkc130.edit \
@@ -3839,6 +3844,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/log.edit \
 	LC_MESSAGES/reference/normalizers.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.edit \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.edit \
@@ -4155,6 +4161,7 @@ mo_files = \
 	reference/log.mo \
 	reference/normalizers.mo \
 	reference/normalizers/normalizer_auto.mo \
+	reference/normalizers/normalizer_nfkc.mo \
 	reference/normalizers/normalizer_nfkc100.mo \
 	reference/normalizers/normalizer_nfkc121.mo \
 	reference/normalizers/normalizer_nfkc130.mo \
@@ -4471,6 +4478,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/log.mo \
 	LC_MESSAGES/reference/normalizers.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.mo \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.mo \
@@ -4822,6 +4830,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/log.html \
 	html/reference/normalizers.html \
 	html/reference/normalizers/normalizer_auto.html \
+	html/reference/normalizers/normalizer_nfkc.html \
 	html/reference/normalizers/normalizer_nfkc100.html \
 	html/reference/normalizers/normalizer_nfkc121.html \
 	html/reference/normalizers/normalizer_nfkc130.html \
