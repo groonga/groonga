@@ -86,6 +86,13 @@ construction:
 .. include:: ../example/reference/indexing-offline-index-construction.log
 .. column_create Lexicon tweet COLUMN_INDEX|WITH_POSITION Tweets content
 
+.. tip::
+
+   We can create an index in parallel by adding
+   ``--n_workers -1``. For example::
+
+     column_create Lexicon tweet COLUMN_INDEX|WITH_POSITION Tweets content --n_workers -1
+
 We search with index. We get a matched record:
 
 .. groonga-command
