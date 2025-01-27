@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 13.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-23 12:52+0900\n"
+"PO-Revision-Date: 2025-01-27 17:53+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,152 @@ msgstr ""
 msgid "News - 14 series"
 msgstr "お知らせ - 14系"
 
-msgid "Release 14.1.2 - 2024-12-24"
-msgstr "14.1.2リリース - 2024-12-24"
+msgid "Release 14.1.3 - 2025-01-29"
+msgstr "14.1.3リリース - 2025-01-27"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "{ref}`offline-index-construction`: Added support for parallel execution"
+msgstr "{ref}`offline-index-construction`: 並列実行をサポート"
+
+msgid "If you have many CPU cores, you can improve {ref}`offline-index-construction` performance. You can use it by `column_create ... COLUMN_INDEX ... --n_workers -1`."
+msgstr "たくさんのCPUコアがある場合、{ref}`offline-index-construction`を高速化できます。この機能は `column_create ... COLUMN_INDEX ... --n_workers -1` とすることで使うことができます。"
+
+msgid "In general, {ref}`offline-index-construction` will be 2-10x faster by this."
+msgstr "多くの場合、これを使うことで{ref}`offline-index-construction`速度は2-10倍高速になります。"
+
+msgid "{doc}`/reference/functions/language_model_vectorize`: Added support for Phi-4"
+msgstr "{doc}`/reference/functions/language_model_vectorize`: Phi-4をサポート"
+
+msgid "You can use [Phi-4](https://huggingface.co/microsoft/phi-4) as a language model. Note that Phi-4 isn't designing for generating embeddings."
+msgstr "言語モデルとして[Phi-4](https://huggingface.co/microsoft/phi-4)を使うことができます。Phi-4はエンべディング生成用に設計されていないことに注意してください。"
+
+msgid "Added `NormalizerNFKC`"
+msgstr "`NormalizerNFKC`を追加"
+
+msgid "It's similar to existing `NormalizerNFKC*` such as {doc}`/reference/normalizers/normalizer_nfkc150`. But it's more generic than `NormalizerNFKC*`."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc150`のような既存の`NormalizerNFKC*`としています。しかし、`NormalizerNFKC*`より汎用的です。"
+
+msgid "`NormalizerNFKC` accepts `version` argument to change used Unicode version. For example, `NormalizerNFKC(\"version\", \"15.0.0\")` equals to `NormalizerNFKC150`."
+msgstr "`NormalizerNFKC`は使用するUnicodeのバージョンを`version`引数で指定できます。たとえば、`NormalizerNFKC(\"version\", \"15.0.0\")`と`NormalizerNFKC150`は等価です。"
+
+msgid "`NormalizerNFKC*` are deprecated by it. You should use `NormalizerNFKC` for newly written applications."
+msgstr "`NormalizerNFKC`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは`NormalizerNFKC`を使うべきです。"
+
+msgid "`NormalizerNFKC` uses Unicode 16.0.0 by default."
+msgstr "`NormalizerNFKC`はデフォルトでUnicode 16.0.0を使います。"
+
+msgid "Added `TokenFilterNFKC`"
+msgstr "`TokenFilterNFKC`を追加"
+
+msgid "It's similar to existing `TokenFilterNFKC*` such as {doc}`/reference/token_filters/token_filter_nfkc150`. But it's based on `NormalizerNFKC`. So you can specify Unicode version as `version`."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc150`のような既存の`TokenFilterNFKC*`と似ています。しかし、`NormalizerNFKC`を使います。そのため、Unicodeのバージョンを`version`で指定できます。"
+
+msgid "`TokenFilterNFKC*` are deprecated by it. You should use `TokenFilterNFKC` for newly written applications."
+msgstr "`TokenFilterNFKC`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは`TokenFilterNFKC`を使うべきです。"
+
+msgid "`TokenFilterNFKC` uses Unicode 16.0.0 by default."
+msgstr "`TokenFilterNFKC`はデフォルトでUnicode 16.0.0を使います。"
+
+msgid "{doc}`/install/amazon_linux`: Added support for Amazon Linux 2023 aarch64"
+msgstr "{doc}`/install/amazon_linux`: Amazon Linux 2023 aarch64をサポート"
+
+msgid "See {doc}`/install/amazon_linux` how to install."
+msgstr "インストール方法は{doc}`/install/amazon_linux`を参照してください。"
+
+msgid "{doc}`/reference/commands/index_column_diff`: Added support for changing log level for progress logs"
+msgstr "{doc}`/reference/commands/index_column_diff`: プログレスログの変更をサポート"
+
+msgid "It's useful to see only progress logs without other debug logs."
+msgstr "他のデバッグログなしでプログレスログだけを見たい場合に有用です。"
+
+msgid "See {ref}`index-column-diff-progress-log-level` for details."
+msgstr "詳細は{ref}`index-column-diff-progress-log-level`を参照してください。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that deb/rpm packages can't be used on machines that don't have AVX"
+msgstr "AVXがないマシン上でdeb/rpmパッケージを使えなかった問題を修正"
+
+msgid "pgroonga/pgroonga#642"
+msgstr ""
+
+msgid "Groonga uses llama.cpp to use language models. llama.cpp uses SIMD for fast processing."
+msgstr "Groongaは言語モデルを使うためにllama.cppを使っています。llama.cppは高速処理のためにSIMDを使っています。"
+
+msgid "We defer llama.cpp initialization that needs SIMD. So you can use Groonga on machines that don't have AVX if you don't use language model related features such as {doc}`/reference/functions/language_model_vectorize`."
+msgstr "SIMDがllama.cppの初期化処理を遅延するようにしました。そのため、{doc}`/reference/functions/language_model_vectorize`のように言語モデル関連の機能を使わない場合はAVXがないマシンでもGroongaを使うことができます。"
+
+msgid "Reported by Yuki Shira."
+msgstr "しらゆきさんが報告しました。"
+
+msgid "{ref}`table-pat-key`: Fixed a bug that existing key may be broken after {doc}`/reference/commands/defrag`"
+msgstr "{ref}`table-pat-key`: {doc}`/reference/commands/defrag`後に既存のキーが壊れるかもしれない問題を修正"
+
+msgid "If you have some garbage nodes in {ref}`table-pat-key` and {doc}`/reference/commands/defrag` it, new added keys to the {ref}`table-pat-key` might override existing keys."
+msgstr "{ref}`table-pat-key`内にゴミノードが残った状態で{doc}`/reference/commands/defrag`をすると、この{ref}`table-pat-key`に追加したキーが既存のキーを上書きしてしまうかもしれませんでした。"
+
+msgid "This bug exists since {ref}`release-14-1-1`."
+msgstr "このバグは{ref}`release-14-1-1`から存在していました。"
+
+msgid "{ref}`table-pat-key`: Fixed a bug that some WALs are missing for {doc}`/reference/commands/defrag`"
+msgstr "{ref}`table-pat-key`: {doc}`/reference/commands/defrag`時にいくつかのWALが抜けていた問題を修正"
+
+msgid "This release added some missing WALs on {doc}`/reference/commands/defrag`. If some WALs are missing, we may not be able to recover a crash in {doc}`/reference/commands/defrag`."
+msgstr "{doc}`/reference/commands/defrag`中にいくつか漏れていたWALを追加しました。WALが漏れていると、{doc}`/reference/commands/defrag`中にクラッシュした場合に復旧できないことがあります。"
+
+msgid "{doc}`/reference/commands/defrag`: Fixed a bug that columns of {ref}`table-pat-key` aren't processed"
+msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`のカラムが処理されない問題を修正"
+
+msgid "GH-2168"
+msgstr ""
+
+msgid "`defrag pat` should process `pat` and its columns. But it processes only `pat` since {ref}`release-14-1-1`. It's a regression bug."
+msgstr "`defrag pat`は`pat`とそのカラムを処理するべきです。しかし、{ref}`release-14-1-1`から`pat`しか処理しなくなっていました。これはリグレッションバグです。"
+
+msgid "{doc}`/reference/columns/index`: Fixed an {ref}`offline-index-construction` bug"
+msgstr "{doc}`/reference/columns/index`: {ref}`offline-index-construction`の問題を修正"
+
+msgid "It happened when:"
+msgstr "次の場合に発生していました。"
+
+msgid "Source is a {ref}`reference-vector-column`"
+msgstr "ソースが{ref}`reference-vector-column`"
+
+msgid "Source has a `GRN_ID_NIL` element (an element that refers nothing) between `1..-2` position"
+msgstr "ソースが`1..-2`の位置に`GRN_ID_NIL`な要素（なにも参照していない要素）を持つ"
+
+msgid "Index column has `WITH_POSITION` flag"
+msgstr "インデックスカラムに`WITH_POSITION`フラグを指定している"
+
+msgid "Offline index construction always uses wrong position for elements after the `GRN_ID_NIL` element."
+msgstr "静的なインデックス構築では、`GRN_ID_NIL`要素の後のすべての要素で間違った位置情報を使っていました。"
+
+msgid "Offline index construction may use wrong index key. It depends on an uninitialized memory."
+msgstr "静的なインデックス構築では、間違ったインデックスキーを使うことがありました。これが発生するかどうかは未初期化のメモリーの内容に依存します。"
+
+msgid "{ref}`table-hash-key`: Fixed a bug that garbage entry may not be reused"
+msgstr "{ref}`table-hash-key`: ゴミエントリーが再利用されないかもしれない問題を修正"
+
+msgid "It happened when a {ref}`table-hash-key` is rehashed with garbage. Garbage is increased by deleting records."
+msgstr "ゴミエントリーがある状態で{ref}`table-hash-key`をリハッシュすると発生します。レコードを削除するとゴミエントリーが増えます。"
+
+msgid "If rehash is done with garbage, the garbage is never reused after the rehash. A {ref}`table-pat-key` may large even when it has only a few valid records."
+msgstr "ゴミエントリーがあるときにリハッシュされると、リハッシュ後はそのゴミエントリーが再利用されなくなります。すこしの有効なレコードしかないときでも{ref}`table-hash-key`が巨大になってしまう可能性があります。"
+
+msgid "This bug exists since {ref}`release-10-1-1`."
+msgstr "この問題は{ref}`release-10-1-1`から存在していました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Yuki Shira"
+msgstr "しらゆきさん"
+
+msgid "Release 14.1.2 - 2024-12-24"
+msgstr "14.1.2リリース - 2024-12-24"
 
 msgid "Relicensed to LGPL-2.1-or-later from LGPL-2.1-only"
 msgstr "LGPL-2.1-onlyからLGPL-2.1-or-laterにライセンスを変更"
@@ -40,9 +181,6 @@ msgstr "参照されているカラムにインデックスがあると、`delet
 
 msgid "With this release, this also works for a reference \"weight\" vector column."
 msgstr "このリリースから参照「重み付き」ベクターカラムでも動くようになります。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "{doc}`/reference/columns/vector`: Fixed a bug that needed cast may not be done"
 msgstr "{doc}`/reference/columns/vector`: 必要なキャストが実行されないことがある問題を修正"
@@ -274,9 +412,6 @@ msgstr "Amazon Linux 2023版のGroongaではTokenMecabが使えません。Amazo
 
 msgid "Fixed a crash bug when we specified `pgroonga.log_type` on PGroonga for Windows."
 msgstr "Windows版のPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "takoyaki-nyokki"
 msgstr "takoyaki-nyokkiさん"
