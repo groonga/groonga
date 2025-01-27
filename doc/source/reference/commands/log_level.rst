@@ -24,44 +24,47 @@ Usage
 Parameters
 ----------
 
+.. _log-level-level:
+
 ``level``
+"""""""""
 
-  Specify log level with a character or string which means log level.
+Specify log level with a character or string which means log level.
 
-  .. list-table::
-     :header-rows: 1
+.. list-table::
+   :header-rows: 1
 
-     * - Value
-       - Alias
-     * - ``E``
-       - ``emerge`` or ``emergency``
-     * - ``A``
-       - ``alert``
-     * - ``C``
-       - ``crit`` or ``critical``
-     * - ``e``
-       - ``error``
-     * - ``w``
-       - ``warn`` or ``warning``
-     * - ``n``
-       - ``notice``
-     * - ``i``
-       - ``info``
-     * - ``d``
-       - ``debug``
-     * - ``-``
-       - ``dump``
+   * - Value
+     - Alias
+   * - ``E``
+     - ``emerge`` or ``emergency``
+   * - ``A``
+     - ``alert``
+   * - ``C``
+     - ``crit`` or ``critical``
+   * - ``e``
+     - ``error``
+   * - ``w``
+     - ``warn`` or ``warning``
+   * - ``n``
+     - ``notice``
+   * - ``i``
+     - ``info``
+   * - ``d``
+     - ``debug``
+   * - ``-``
+     - ``dump``
 
-  Example::
+Example::
 
-       emergency
-       alert
-       critical
-       error
-       warning
-       notice
-       info
-       debug
+  emergency
+  alert
+  critical
+  error
+  warning
+  notice
+  info
+  debug
 
 Return value
 ------------

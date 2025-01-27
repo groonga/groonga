@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-03 18:18+0900\n"
+"PO-Revision-Date: 2025-01-27 16:12+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -36,8 +36,8 @@ msgstr "このコマンドは、対象のインデックスのサイズによっ
 msgid "Syntax"
 msgstr "構文"
 
-msgid "This command takes two parameters. All parameters are required::"
-msgstr "このコマンドの引数は2つで必須です。::"
+msgid "Here is the syntax of this command::"
+msgstr "このコマンドの構文は次の通りです。::"
 
 msgid "Usage"
 msgstr "使い方"
@@ -62,6 +62,24 @@ msgstr ""
 
 msgid "Specifies the name of check target of the index column."
 msgstr "チェック対象のインデックスカラムの名前を指定します。"
+
+msgid "``progress_log_level``"
+msgstr ""
+
+msgid "Specifies the log level of progress logs."
+msgstr "プログレスログのログレベルを指定します。"
+
+msgid "The default log level is ``debug``. So you need to log all debug logs to see progress logs."
+msgstr "デフォルトのログレベルは ``debug`` です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。"
+
+msgid "If you use ``notice`` as a log level, you can see progress logs without other debug logs. See :ref:`log-level-level` for available log levels."
+msgstr "ログレベルに ``notice`` を使うと、他のデバッグログなしでプログレスログを確認できます。指定可能なログレベルは :ref:`log-level-level` を参照してください。"
+
+msgid "The default is ``debug``."
+msgstr "デフォルトは ``debug`` です。"
+
+msgid "Example::"
+msgstr "例::"
 
 msgid "Return value"
 msgstr "戻り値"

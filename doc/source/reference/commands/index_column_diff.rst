@@ -30,10 +30,11 @@ This command useful in this case.
 Syntax
 ------
 
-This command takes two parameters.
-All parameters are required::
+Here is the syntax of this command::
 
-  index_column_diff table name
+  index_column_diff table
+                    name
+                    [progress_log_level=debug]
 
 Usage
 -----
@@ -79,6 +80,28 @@ Specifies the name of a table include check target of the index column.
 """"""""
 
 Specifies the name of check target of the index column.
+
+.. _index-column-diff-progress-log-level:
+
+``progress_log_level``
+""""""""""""""""""""""
+
+.. versionadded:: 14.1.3
+
+Specifies the log level of progress logs.
+
+The default log level is ``debug``. So you need to log all debug logs
+to see progress logs.
+
+If you use ``notice`` as a log level, you can see progress logs
+without other debug logs. See :ref:`log-level-level` for available log
+levels.
+
+The default is ``debug``.
+
+Example::
+
+  index_column_diff Terms data_index --progress_log_level notice
 
 Return value
 ------------
