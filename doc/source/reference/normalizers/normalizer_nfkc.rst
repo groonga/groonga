@@ -6,7 +6,7 @@
 .. _normalizer-nfkc:
 
 ``NormalizerNFKC``
-=====================
+==================
 
 Summary
 -------
