@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-27 16:34+0900\n"
+"PO-Revision-Date: 2025-01-27 16:49+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -36,11 +36,20 @@ msgstr "プロセスログのフォーマットは以下の通りです。::"
 msgid "Some multi-process based applications such as :doc:`/reference/executables/groonga-httpd` and `PGroonga <https://pgroonga.github.io/>`_ use the following format::"
 msgstr ":doc:`/reference/executables/groonga-httpd` や `PGroonga <https://pgroonga.github.io/ja/>`_ といったマルチプロセスベースのアプリケーションでのフォーマットは以下の通りです。::"
 
+msgid "You can also show context ID that is also used in :ref:`query-log`. If you also show context ID, you can associate related logs in :ref:`process-log` and :ref:`query-log` easily::"
+msgstr ":ref:`query-log` でも使われているコンテキストIDを出力することもできます。コンテキストIDも表示すると、 :ref:`process-log` と :ref:`query-log` の中にある関連するログを簡単に関連付けることができます。::"
+
+msgid "See :option:`groonga --log-flags` how to show PID, context ID and so on."
+msgstr "PIDやコンテキストIDなどを表示する方法は :option:`groonga --log-flags` を参照してください。"
+
 msgid "Example::"
 msgstr "実行例::"
 
 msgid "Example with PID::"
 msgstr "実行例（PIDを含む場合）::"
+
+msgid "Example with PID and context ID::"
+msgstr "実行例（PIDとコンテキストIDを含む）::"
 
 msgid "``TIME_STAMP``"
 msgstr ""
@@ -174,11 +183,11 @@ msgstr "クエリーログはデフォルトでは無効になっています。
 msgid "Query log uses the following formats::"
 msgstr "クエリーログのフォーマットは次の通りです。::"
 
-msgid "``ID``"
+msgid "``CONTEXT_ID``"
 msgstr ""
 
-msgid "ID of a thread. Groonga process creates threads to process requests concurrently. Each thread outputs some logs for a request. This ID can be used to extract a log sequence by a thread."
-msgstr "スレッドのID。Groongaプロセスは並列に複数のリクエストを処理するためにスレッドを作ります。各スレッドは1つのリクエストにつき複数のログを出力します。このIDを使うとスレッド毎の一連のログを抽出できます。"
+msgid "ID of a context. Groonga process creates contexts to process requests concurrently. Each context outputs some logs for a request. This ID can be used to extract a log sequence by a context."
+msgstr "コンテキストのID。Groongaプロセスは並列に複数のリクエストを処理するためにコンテキストを作ります。各コンテキストは1つのリクエストにつき複数のログを出力します。このIDを使うとコンテキスト毎の一連のログを抽出できます。"
 
 msgid "``QUERY_STATUS``"
 msgstr ""

@@ -31,6 +31,14 @@ Some multi-process based applications such as
 
   #{TIME_STAMP}|#{L}|#{PID}: #{MESSAGE}
 
+You can also show context ID that is also used in :ref:`query-log`. If
+you also show context ID, you can associate related logs in
+:ref:`process-log` and :ref:`query-log` easily::
+
+  #{TIME_STAMP}|#{L}|#{PID}|#{CONTEXT_ID}: #{MESSAGE}
+
+See :option:`groonga --log-flags` how to show PID, context ID and so
+on.
 
 Example::
 
@@ -41,6 +49,12 @@ Example with PID::
 
   2011-07-05 08:35:09.276421|n|1129: grn_init
   2011-07-05 08:35:09.276553|n|1129: RLIMIT_NOFILE(4096,4096)
+
+Example with PID and context ID::
+
+  2025-01-27 16:39:40.709869|n|3901936|0x55788b59dbe0: grn_init: <14.0.9-27-gd6cd635>
+  2025-01-27 16:39:40.710013|n|3901936|0x55788b59dbe0: vm.overcommit_memory kernel parameter should be 1: <0>: See INFO level log to resolve this
+  2025-01-27 16:39:42.052517|n|3901936|0x55788b59dbe0: grn_fin (0)
 
 ``TIME_STAMP``
 ^^^^^^^^^^^^^^
@@ -139,9 +153,9 @@ Format
 Query log uses the following formats::
 
   #{TIME_STAMP}|#{MESSAGE}
-  #{TIME_STAMP}|#{ID}|#{QUERY_STATUS}#{QUERY}
-  #{TIME_STAMP}|#{ID}|#{QUERY_STATUS}#{ELAPSED_TIME} #{PROGRESS}
-  #{TIME_STAMP}|#{ID}|#{QUERY_STATUS}#{ELAPSED_TIME} #{RETURN_CODE}
+  #{TIME_STAMP}|#{CONTEXT_ID}|#{QUERY_STATUS}#{QUERY}
+  #{TIME_STAMP}|#{CONTEXT_ID}|#{QUERY_STATUS}#{ELAPSED_TIME} #{PROGRESS}
+  #{TIME_STAMP}|#{CONTEXT_ID}|#{QUERY_STATUS}#{ELAPSED_TIME} #{RETURN_CODE}
 
 Example::
 
@@ -183,13 +197,12 @@ Example::
 
   2011-07-05 06:25:18.345734
 
-``ID``
-^^^^^^
+``CONTEXT_ID``
+^^^^^^^^^^^^^^
 
-ID of a thread. Groonga process creates threads to process
-requests concurrently. Each thread outputs some logs for a
-request. This ID can be used to extract a log sequence by
-a thread.
+ID of a context. Groonga process creates contexts to process requests
+concurrently. Each context outputs some logs for a request. This ID can
+be used to extract a log sequence by a context.
 
 Example::
 
