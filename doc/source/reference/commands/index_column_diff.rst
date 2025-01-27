@@ -72,19 +72,19 @@ Parameters
 This section describes all parameters.
 
 ``table``
-"""""""""
+^^^^^^^^^
 
 Specifies the name of a table include check target of the index column.
 
 ``name``
-""""""""
+^^^^^^^^
 
 Specifies the name of check target of the index column.
 
 .. _index-column-diff-progress-log-level:
 
 ``progress_log_level``
-""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 14.1.3
 
@@ -150,21 +150,21 @@ is supposing to remain in a index has been deleted from the index.
   [[0,0.0,0.0],[]]
 
 ``TOKEN_ID``
-""""""""""""
+^^^^^^^^^^^^
 
 ``TOKEN_ID`` is id of a broken token.
 
 ``TOKEN_VALUE``
-"""""""""""""""
+^^^^^^^^^^^^^^^
 
 ``TOKEN_VALUE`` is value of a broken token.
 
 ``RECORD_ID``
-"""""""""""""
+^^^^^^^^^^^^^
 
 ``RECORD_ID`` is id of a record include a broken token.
 
 ``POSITION``
-""""""""""""
+^^^^^^^^^^^^
 
 ``POSITION`` is appearing position of a broken token.
