@@ -1296,6 +1296,7 @@ set(GRN_DOC_SOURCES
     reference/tables.rst
     reference/token_filter/summary.rst
     reference/token_filters.rst
+    reference/token_filters/token_filter_nfkc.rst
     reference/token_filters/token_filter_nfkc100.rst
     reference/token_filters/token_filter_nfkc150.rst
     reference/token_filters/token_filter_stem.rst
@@ -1675,6 +1676,7 @@ set(GRN_DOC_HTML_FILES
     reference/tables.html
     reference/token_filter/summary.html
     reference/token_filters.html
+    reference/token_filters/token_filter_nfkc.html
     reference/token_filters/token_filter_nfkc100.html
     reference/token_filters/token_filter_nfkc150.html
     reference/token_filters/token_filter_stem.html

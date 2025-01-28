@@ -331,6 +331,8 @@ Use ``unify_to_katakana`` with other options
 
 For example, using ``unify_to_katakana`` and ``unify_katakana_v_sounds`` together, you can search "バイオリン", "ヴァイオリン", "ばいおりん" and "ゔぁいおりん" with "ばいおりん".
 
+.. _normalizer-nfkc-parameters:
+
 Parameters
 ----------
 

@@ -1296,6 +1296,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/token_filter/summary.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
+	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc150.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
@@ -2655,6 +2656,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tables.rst \
 	source/reference/token_filter/summary.rst \
 	source/reference/token_filters.rst \
+	source/reference/token_filters/token_filter_nfkc.rst \
 	source/reference/token_filters/token_filter_nfkc100.rst \
 	source/reference/token_filters/token_filter_nfkc150.rst \
 	source/reference/token_filters/token_filter_stem.rst \
@@ -3000,6 +3002,7 @@ po_files = \
 	reference/tables.po \
 	reference/token_filter/summary.po \
 	reference/token_filters.po \
+	reference/token_filters/token_filter_nfkc.po \
 	reference/token_filters/token_filter_nfkc100.po \
 	reference/token_filters/token_filter_nfkc150.po \
 	reference/token_filters/token_filter_stem.po \
@@ -3344,6 +3347,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.po \
 	LC_MESSAGES/reference/token_filter/summary.po \
 	LC_MESSAGES/reference/token_filters.po \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.po \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.po \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.po \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.po \
@@ -3688,6 +3692,7 @@ edit_po_files = \
 	reference/tables.edit \
 	reference/token_filter/summary.edit \
 	reference/token_filters.edit \
+	reference/token_filters/token_filter_nfkc.edit \
 	reference/token_filters/token_filter_nfkc100.edit \
 	reference/token_filters/token_filter_nfkc150.edit \
 	reference/token_filters/token_filter_stem.edit \
@@ -4032,6 +4037,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.edit \
 	LC_MESSAGES/reference/token_filter/summary.edit \
 	LC_MESSAGES/reference/token_filters.edit \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.edit \
@@ -4376,6 +4382,7 @@ mo_files = \
 	reference/tables.mo \
 	reference/token_filter/summary.mo \
 	reference/token_filters.mo \
+	reference/token_filters/token_filter_nfkc.mo \
 	reference/token_filters/token_filter_nfkc100.mo \
 	reference/token_filters/token_filter_nfkc150.mo \
 	reference/token_filters/token_filter_stem.mo \
@@ -4720,6 +4727,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.mo \
 	LC_MESSAGES/reference/token_filter/summary.mo \
 	LC_MESSAGES/reference/token_filters.mo \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.mo \
@@ -5099,6 +5107,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tables.html \
 	html/reference/token_filter/summary.html \
 	html/reference/token_filters.html \
+	html/reference/token_filters/token_filter_nfkc.html \
 	html/reference/token_filters/token_filter_nfkc100.html \
 	html/reference/token_filters/token_filter_nfkc150.html \
 	html/reference/token_filters/token_filter_stem.html \
