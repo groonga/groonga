@@ -226,25 +226,52 @@ msgstr "このオプションで、Unicodeのバージョンを指定します�
 msgid "Here are the available versions."
 msgstr "利用可能なバージョンは以下の通りです。"
 
-msgid "\"16.0.0\""
+msgid "Unicode version"
+msgstr "Unicodeバージョン"
+
+msgid "Format"
+msgstr "フォーマット"
+
+msgid "Default value"
+msgstr "デフォルト値"
+
+msgid "16.0.0"
 msgstr ""
 
-msgid "Default value when not specified"
-msgstr "バージョンを指定しなかったときのデフォルト値"
-
-msgid "\"15.0.0\""
+msgid "``\"16.0.0\"``"
 msgstr ""
 
-msgid "\"13.0.0\""
+msgid "o"
 msgstr ""
 
-msgid "\"12.1.0\""
+msgid "15.0.0"
 msgstr ""
 
-msgid "\"10.0.0\""
+msgid "``\"15.0.0\"``"
 msgstr ""
 
-msgid "\"5.0.0\""
+msgid "13.0.0"
+msgstr ""
+
+msgid "``\"13.0.0\"``"
+msgstr ""
+
+msgid "12.1.0"
+msgstr ""
+
+msgid "``\"12.1.0\"``"
+msgstr ""
+
+msgid "10.0.0"
+msgstr ""
+
+msgid "``\"10.0.0\"``"
+msgstr ""
+
+msgid "5.0.0"
+msgstr ""
+
+msgid "``\"5.0.0\"``"
 msgstr ""
 
 msgid "``unify_kana``"

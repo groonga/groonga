@@ -341,19 +341,30 @@ This option specifies the Unicode version.
 
 Here are the available versions.
 
-* "16.0.0"
+.. list-table::
+   :header-rows: 1
 
-  * Default value when not specified
-
-* "15.0.0"
-
-* "13.0.0"
-
-* "12.1.0"
-
-* "10.0.0"
-
-* "5.0.0"
+   * - Unicode version
+     - Format
+     - Default value
+   * - 16.0.0
+     - ``"16.0.0"``
+     - o
+   * - 15.0.0
+     - ``"15.0.0"``
+     -
+   * - 13.0.0
+     - ``"13.0.0"``
+     -
+   * - 12.1.0
+     - ``"12.1.0"``
+     -
+   * - 10.0.0
+     - ``"10.0.0"``
+     -
+   * - 5.0.0
+     - ``"5.0.0"``
+     -
 
 .. _normalizer-nfkc-unify-kana:
 
