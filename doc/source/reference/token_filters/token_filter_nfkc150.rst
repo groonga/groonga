@@ -6,6 +6,12 @@
 ``TokenFilterNFKC150``
 ======================
 
+.. deprecated:: 14.1.3
+
+   Use :doc:`./token_filter_nfkc` instead.
+
+   ``TokenFilterNFKC150`` and ``TokenFilterNFKC("version", "15.0.0")`` are equal.
+
 Summary
 -------
 
@@ -53,7 +59,7 @@ Usage
 -----
 
 Simple usage
-------------
+^^^^^^^^^^^^
 
 Here is an example of ``TokenFilterNFKC150``. ``TokenFilterNFKC150`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0.
 
@@ -144,7 +150,7 @@ This option enables normalize hiragana and katakana to romaji as below.
 .. tokenize TokenDelimit "アァイィウゥエェオォ" --token_filters  'TokenFilterNFKC150("unify_to_romaji", true)'
 
 Advanced usage
---------------
+^^^^^^^^^^^^^^
 
 You can output all input string as hiragana with cimbining ``TokenFilterNFKC150`` with ``use_reading`` option of ``TokenMecab`` as below.
 

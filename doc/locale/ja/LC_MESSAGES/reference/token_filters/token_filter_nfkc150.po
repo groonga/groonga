@@ -22,6 +22,12 @@ msgstr ""
 msgid "``TokenFilterNFKC150``"
 msgstr ""
 
+msgid "Use :doc:`./token_filter_nfkc` instead."
+msgstr "代わりに :doc:`./token_filter_nfkc` をご利用ください。"
+
+msgid "``TokenFilterNFKC150`` and ``TokenFilterNFKC(\"version\", \"15.0.0\")`` are equal."
+msgstr "``TokenFilterNFKC150`` は ``TokenFilterNFKC(\"version\", \"15.0.0\")`` と同じです。"
+
 msgid "Summary"
 msgstr "概要"
 
