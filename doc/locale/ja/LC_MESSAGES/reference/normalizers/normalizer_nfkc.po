@@ -31,7 +31,7 @@ msgstr "``NormalizerNFKC`` はUnicode NFKC（Normalization Form Compatibility Co
 msgid "The Unicode version can be specified by option."
 msgstr "Unicodeのバージョンはオプションで指定することができます。"
 
-msgid "In addition to Unicode version, this normalizer has ohter options that can change behavior by specifying options."
+msgid "In addition to Unicode version, this normalizer has ohter options that can change behavior."
 msgstr "また、このノーマライザーにはUnicodeバージョン以外にもオプションがあり、それらのオプションを指定することで動作を変更できます。"
 
 msgid "Syntax"

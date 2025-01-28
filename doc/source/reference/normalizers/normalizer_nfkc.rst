@@ -17,7 +17,7 @@ Summary
 
 The Unicode version can be specified by option.
 
-In addition to Unicode version, this normalizer has ohter options that can change behavior by specifying options.
+In addition to Unicode version, this normalizer has ohter options that can change behavior.
 
 Syntax
 ------
