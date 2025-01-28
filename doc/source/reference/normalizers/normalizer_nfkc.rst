@@ -346,10 +346,10 @@ Here are the available versions.
 
    * - Unicode version
      - Value
-     - Default value
+     - Note
    * - 16.0.0
      - ``"16.0.0"``
-     - o
+     - This is the default value.
    * - 15.0.0
      - ``"15.0.0"``
      -

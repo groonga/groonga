@@ -232,8 +232,8 @@ msgstr "Unicodeバージョン"
 msgid "Value"
 msgstr "指定する値"
 
-msgid "Default value"
-msgstr "デフォルト値"
+msgid "Note"
+msgstr "備考"
 
 msgid "16.0.0"
 msgstr ""
@@ -241,8 +241,8 @@ msgstr ""
 msgid "``\"16.0.0\"``"
 msgstr ""
 
-msgid "o"
-msgstr ""
+msgid "This is the default value."
+msgstr "デフォルト値"
 
 msgid "15.0.0"
 msgstr ""
