@@ -21,11 +21,20 @@ msgstr "実行例::"
 msgid "``NormalizerNFKC51``"
 msgstr ""
 
+msgid "Use :doc:`./normalizer_nfkc` instead."
+msgstr "代わりに :doc:`./normalizer_nfkc` をご利用ください。"
+
+msgid "``NormalizerNFKC51`` and ``NormalizerNFKC(\"version\", \"5.0.0\")`` are equal."
+msgstr "``NormalizerNFKC51`` は ``NormalizerNFKC(\"version\", \"5.0.0\")`` と同じです。"
+
+msgid "It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0."
+msgstr "``NormalizerNFKC51`` という名前ですが、Unicode 5.0用です。"
+
 msgid "Summary"
 msgstr "概要"
 
-msgid "``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 5.1. It supports only UTF-8 encoding."
-msgstr "``NormalizerNFKC51`` はUnicode 5.1用のUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。UTF-8エンコーディングのみをサポートしています。"
+msgid "``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 5.0. It supports only UTF-8 encoding."
+msgstr "``NormalizerNFKC50`` はUnicode 5.0用のUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。UTF-8エンコーディングのみをサポートしています。"
 
 msgid "Normally you don't need to use ``NormalizerNFKC51`` explicitly. You can use ``NormalizerAuto`` instead."
 msgstr "通常、 ``NormalizerNFKC51`` を明示的に使う必要はありません。代わりに ``NormalizerAuto`` を使ってください。"
