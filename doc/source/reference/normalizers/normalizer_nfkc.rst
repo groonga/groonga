@@ -352,19 +352,19 @@ Here are the available versions.
      - This is the default value.
    * - 15.0.0
      - ``"15.0.0"``
-     -
+     - Same as :doc:`./normalizer_nfkc150`
    * - 13.0.0
      - ``"13.0.0"``
-     -
+     - Same as :doc:`./normalizer_nfkc130`
    * - 12.1.0
      - ``"12.1.0"``
-     -
+     - Same as :doc:`./normalizer_nfkc121`
    * - 10.0.0
      - ``"10.0.0"``
-     -
+     - Same as :doc:`./normalizer_nfkc100`
    * - 5.0.0
      - ``"5.0.0"``
-     -
+     - Same as :doc:`./normalizer_nfkc51` (It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0)
 
 .. _normalizer-nfkc-unify-kana:
 

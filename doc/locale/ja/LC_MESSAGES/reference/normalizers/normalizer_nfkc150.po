@@ -22,6 +22,12 @@ msgstr ""
 msgid "``NormalizerNFKC150``"
 msgstr ""
 
+msgid "Use :doc:`./normalizer_nfkc` instead."
+msgstr "代わりに :doc:`./normalizer_nfkc` をご利用ください。"
+
+msgid "``NormalizerNFKC150`` and ``NormalizerNFKC(\"version\", \"15.0.0\")`` are equal."
+msgstr "``NormalizerNFKC150`` は ``NormalizerNFKC(\"version\", \"15.0.0\")`` と同じです。"
+
 msgid "Summary"
 msgstr "概要"
 

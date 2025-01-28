@@ -250,11 +250,17 @@ msgstr ""
 msgid "``\"15.0.0\"``"
 msgstr ""
 
+msgid "Same as :doc:`./normalizer_nfkc150`"
+msgstr ":doc:`./normalizer_nfkc150` と同じ"
+
 msgid "13.0.0"
 msgstr ""
 
 msgid "``\"13.0.0\"``"
 msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc130`"
+msgstr ":doc:`./normalizer_nfkc130` と同じ"
 
 msgid "12.1.0"
 msgstr ""
@@ -262,17 +268,26 @@ msgstr ""
 msgid "``\"12.1.0\"``"
 msgstr ""
 
+msgid "Same as :doc:`./normalizer_nfkc121`"
+msgstr ":doc:`./normalizer_nfkc121` と同じ"
+
 msgid "10.0.0"
 msgstr ""
 
 msgid "``\"10.0.0\"``"
 msgstr ""
 
+msgid "Same as :doc:`./normalizer_nfkc100`"
+msgstr ":doc:`./normalizer_nfkc100` と同じ"
+
 msgid "5.0.0"
 msgstr ""
 
 msgid "``\"5.0.0\"``"
 msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc51` (It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0)"
+msgstr ":doc:`./normalizer_nfkc51` と同じ（``NormalizerNFKC51`` という名前ですが Unicode5.0用）"
 
 msgid "``unify_kana``"
 msgstr ""

@@ -8,6 +8,12 @@
 ``NormalizerNFKC130``
 =====================
 
+.. deprecated:: 14.1.3
+
+   Use :doc:`./normalizer_nfkc` instead.
+
+   ``NormalizerNFKC130`` and ``NormalizerNFKC("version", "13.0.0")`` are equal.
+
 Summary
 -------
 
