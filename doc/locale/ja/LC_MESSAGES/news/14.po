@@ -38,32 +38,32 @@ msgstr "{doc}`/reference/functions/language_model_vectorize`: Phi-4をサポー�
 msgid "You can use [Phi-4](https://huggingface.co/microsoft/phi-4) as a language model. Note that Phi-4 isn't designing for generating embeddings."
 msgstr "言語モデルとして[Phi-4](https://huggingface.co/microsoft/phi-4)を使うことができます。Phi-4はエンべディング生成用に設計されていないことに注意してください。"
 
-msgid "Added `NormalizerNFKC`"
-msgstr "`NormalizerNFKC`を追加"
+msgid "Added {doc}`/reference/normalizers/normalizer_nfkc`"
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`を追加"
 
 msgid "It's similar to existing `NormalizerNFKC*` such as {doc}`/reference/normalizers/normalizer_nfkc150`. But it's more generic than `NormalizerNFKC*`."
 msgstr "{doc}`/reference/normalizers/normalizer_nfkc150`のような既存の`NormalizerNFKC*`としています。しかし、`NormalizerNFKC*`より汎用的です。"
 
-msgid "`NormalizerNFKC` accepts `version` argument to change used Unicode version. For example, `NormalizerNFKC(\"version\", \"15.0.0\")` equals to `NormalizerNFKC150`."
-msgstr "`NormalizerNFKC`は使用するUnicodeのバージョンを`version`引数で指定できます。たとえば、`NormalizerNFKC(\"version\", \"15.0.0\")`と`NormalizerNFKC150`は等価です。"
+msgid "{doc}`/reference/normalizers/normalizer_nfkc` accepts {ref}`normalizer-nfkc-version` argument to change used Unicode version. For example, `NormalizerNFKC(\"version\", \"15.0.0\")` equals to `NormalizerNFKC150`."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`は使用するUnicodeのバージョンを{ref}`normalizer-nfkc-version`引数で指定できます。たとえば、`NormalizerNFKC(\"version\", \"15.0.0\")`と`NormalizerNFKC150`は等価です。"
 
-msgid "`NormalizerNFKC*` are deprecated by it. You should use `NormalizerNFKC` for newly written applications."
-msgstr "`NormalizerNFKC`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは`NormalizerNFKC`を使うべきです。"
+msgid "`NormalizerNFKC*` are deprecated by {doc}`/reference/normalizers/normalizer_nfkc`. You should use {doc}`/reference/normalizers/normalizer_nfkc` for newly written applications."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/normalizers/normalizer_nfkc`を使うべきです。"
 
-msgid "`NormalizerNFKC` uses Unicode 16.0.0 by default."
-msgstr "`NormalizerNFKC`はデフォルトでUnicode 16.0.0を使います。"
+msgid "{doc}`/reference/normalizers/normalizer_nfkc` uses Unicode 16.0.0 by default."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`はデフォルトでUnicode 16.0.0を使います。"
 
-msgid "Added `TokenFilterNFKC`"
-msgstr "`TokenFilterNFKC`を追加"
+msgid "Added {doc}`/reference/token_filters/token_filter_nfkc`"
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`を追加"
 
-msgid "It's similar to existing `TokenFilterNFKC*` such as {doc}`/reference/token_filters/token_filter_nfkc150`. But it's based on `NormalizerNFKC`. So you can specify Unicode version as `version`."
-msgstr "{doc}`/reference/token_filters/token_filter_nfkc150`のような既存の`TokenFilterNFKC*`と似ています。しかし、`NormalizerNFKC`を使います。そのため、Unicodeのバージョンを`version`で指定できます。"
+msgid "It's similar to existing `TokenFilterNFKC*` such as {doc}`/reference/token_filters/token_filter_nfkc150`. But it's based on {doc}`/reference/normalizers/normalizer_nfkc`. So you can specify Unicode version as {ref}`normalizer-nfkc-version`."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc150`のような既存の`TokenFilterNFKC*`と似ています。しかし、{doc}`/reference/normalizers/normalizer_nfkc`を使います。そのため、Unicodeのバージョンを{ref}`normalizer-nfkc-version`で指定できます。"
 
-msgid "`TokenFilterNFKC*` are deprecated by it. You should use `TokenFilterNFKC` for newly written applications."
-msgstr "`TokenFilterNFKC`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは`TokenFilterNFKC`を使うべきです。"
+msgid "`TokenFilterNFKC*` are deprecated by {doc}`/reference/token_filters/token_filter_nfkc`. You should use {doc}`/reference/token_filters/token_filter_nfkc` for newly written applications."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/token_filters/token_filter_nfkc`を使うべきです。"
 
-msgid "`TokenFilterNFKC` uses Unicode 16.0.0 by default."
-msgstr "`TokenFilterNFKC`はデフォルトでUnicode 16.0.0を使います。"
+msgid "{doc}`/reference/token_filters/token_filter_nfkc` uses Unicode 16.0.0 by default."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`はデフォルトでUnicode 16.0.0を使います。"
 
 msgid "{doc}`/install/amazon_linux`: Added support for Amazon Linux 2023 aarch64"
 msgstr "{doc}`/install/amazon_linux`: Amazon Linux 2023 aarch64をサポート"
