@@ -56,6 +56,9 @@ msgstr "正規化自体は :ref:`normalizer-nfkc` と同じなので、いくつ
 msgid "Here is an example of ``TokenFilterNFKC``. ``TokenFilterNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
 msgstr "以下は、 ``TokenFilterNFKC`` の使用例です。 ``TokenFilterNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
+msgid "Here is an example of :ref:`normalizer-nfkc-version` option. You can specify the Unicode version for this option."
+msgstr "以下は :ref:`normalizer-nfkc-version` オプションの使用例です。Unicodeのバージョンを指定できます。"
+
 msgid "Here is an example of :ref:`normalizer-nfkc-unify-kana` option."
 msgstr "以下は :ref:`normalizer-nfkc-unify-kana` オプションの使用例です。"
 
