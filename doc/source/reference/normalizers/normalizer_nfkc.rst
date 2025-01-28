@@ -11,7 +11,7 @@
 Summary
 -------
 
-.. versionadded:: 13.0.0
+.. versionadded:: 14.1.3
 
 ``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0.
 
@@ -73,16 +73,6 @@ Specify option::
   NormalizerNFKC("unify_kana_hyphen", true)
 
   NormalizerNFKC("unify_latin_alphabet_with", true)
-
-.. versionadded:: 14.0.7
-
-  :ref:`normalizer-nfkc-unify-latin-alphabet-with` is added.
-
-.. versionadded:: 13.0.1
-
-  :ref:`normalizer-nfkc-unify-kana-prolonged-sound-mark` is added.
-
-  :ref:`normalizer-nfkc-unify-kana-hyphen` is added.
 
 Specify multiple options::
 
@@ -480,16 +470,12 @@ This option removes symbols (e.g. #, !, ", &, %, ...) from the string that the t
 ``unify_katakana_gu_small_sounds``
 """"""""""""""""""""""""""""""""""
 
-.. versionadded:: 13.0.0
-
 This option enables to normalize "グァグィグェグォ" to "ガギゲゴ".
 
 .. _normalizer-nfkc-unify-katakana-di-sound:
 
 ``unify_katakana_di_sound``
 """""""""""""""""""""""""""
-
-.. versionadded:: 13.0.0
 
 This option enables to normalize "ヂ" to "ジ".
 
@@ -498,16 +484,12 @@ This option enables to normalize "ヂ" to "ジ".
 ``unify_katakana_wo_sound``
 """""""""""""""""""""""""""
 
-.. versionadded:: 13.0.0
-
 This option enables to normalize "ヲ" to "オ".
 
 .. _normalizer-nfkc-unify-katakana-zu-small-sounds:
 
 ``unify_katakana_zu_small_sounds``
 """"""""""""""""""""""""""""""""""
-
-.. versionadded:: 13.0.0
 
 This option enables to normalize "ズァズィズェズォ" to "ザジゼゾ".
 
@@ -516,16 +498,12 @@ This option enables to normalize "ズァズィズェズォ" to "ザジゼゾ".
 ``unify_katakana_du_sound``
 """""""""""""""""""""""""""
 
-.. versionadded:: 13.0.0
-
 This option enables to normalize "ヅ" to "ズ".
 
 .. _normalizer-nfkc-unify-katakana-trailing-o:
 
 ``unify_katakana_trailing_o``
 """""""""""""""""""""""""""""
-
-.. versionadded:: 13.0.0
 
 This option enables to normalize "オ" to "ウ"
 when the vowel in the previous letter is "オ".
@@ -553,16 +531,12 @@ when the vowel in the previous letter is "オ".
 ``unify_katakana_du_small_sounds``
 """"""""""""""""""""""""""""""""""
 
-.. versionadded:: 13.0.0
-
 This option enables to normalize "ヅァヅィヅェヅォ" to "ザジゼゾ".
 
 .. _normalizer-nfkc-unify-kana-prolonged-sound-mark:
 
 ``unify_kana_prolonged_sound_mark``
 """""""""""""""""""""""""""""""""""
-
-.. versionadded:: 13.0.1
 
 This option enables to normalize "ー" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) 
 to a vowel of a previous kana letter.
@@ -620,8 +594,6 @@ And a previous kana letter is "ン" , "ー" is normalized to "ン".
 ``unify_kana_hyphen``
 """""""""""""""""""""
 
-.. versionadded:: 13.0.1
-
 This option enables to normalize "-" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter.
 
 If a previous kana letter is "ん" , "-" is normalized to "ん",
@@ -676,8 +648,6 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
 
 ``unify_latin_alphabet_with``
 """""""""""""""""""""""""""""
-
-.. versionadded:: 14.0.7
 
 This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
 
