@@ -96,6 +96,13 @@ Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC`` normalizes text by 
 .. include:: ../../example/reference/normalizers/normalizer-nfkc.rst
 .. normalize NormalizerNFKC "©" WITH_TYPES
 
+Here is an example of :ref:`normalizer-nfkc-version` option.
+You can specify the Unicode version for this option.
+
+.. groonga-command
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-version.rst
+.. normalize 'NormalizerNFKC("version", "16.0.0")' "©" WITH_TYPES
+
 Here is an example of :ref:`normalizer-nfkc-unify-kana` option.
 
 This option enables that same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below.
