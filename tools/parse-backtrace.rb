@@ -196,7 +196,7 @@ Signed-By: /usr/share/keyrings/pgdg.gpg
   run_command("apt", "install", "-y", "-V", *packages)
 end
 
-def prepare_system_ubuntu_22(options)
+def prepare_system_ubuntu(options)
   run_command("apt", "update")
   run_command("apt", "install", "-y", "-V", "software-properties-common")
   run_command("add-apt-repository", "-y", "universe")
@@ -221,17 +221,15 @@ def prepare_system_ubuntu_22(options)
   if options.pgroonga_version and options.postgresql_version
     run_command("apt", "install", "-y", "-V", "wget")
     run_command({"DEBIAN_FRONTEND" => "noninteractive"}, "apt", "install", "-y", "-V", "tzdata")
-    run_command("wget", "https://www.postgresql.org/media/keys/ACCC4CF8.asc")
-    run_command("gpg",
-                "--no-default-keyring",
-                "--keyring", "/usr/share/keyrings/pgdg.gpg",
-                "--import", "ACCC4CF8.asc")
+    run_command("wget",
+                "--output-document=/usr/share/keyrings/pgdg.asc",
+                "https://www.postgresql.org/media/keys/ACCC4CF8.asc")
     File.write("/etc/apt/sources.list.d/pgdg.sources", <<-SOURCES)
 Types: deb
 URIs: http://apt.postgresql.org/pub/repos/apt
 Suites: jammy-pgdg
 Components: main
-Signed-By: /usr/share/keyrings/pgdg.gpg
+Signed-By: /usr/share/keyrings/pgdg.asc
     SOURCES
     run_command("apt", "update")
 
@@ -262,8 +260,8 @@ def prepare_system(system_version, options)
     prepare_system_amazon_2(options)
   when "debian-11"
     prepare_system_debian_11(options)
-  when "ubuntu-22.04"
-    prepare_system_ubuntu_22(options)
+  when "ubuntu-22.04", "ubuntu-24.04"
+    prepare_system_ubuntu(options)
   else
     raise "unsupported system: #{system_version}"
   end
