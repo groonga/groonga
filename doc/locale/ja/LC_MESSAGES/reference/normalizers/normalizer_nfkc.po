@@ -229,8 +229,8 @@ msgstr "利用可能なバージョンは以下の通りです。"
 msgid "Unicode version"
 msgstr "Unicodeバージョン"
 
-msgid "Format"
-msgstr "フォーマット"
+msgid "Value"
+msgstr "指定する値"
 
 msgid "Default value"
 msgstr "デフォルト値"

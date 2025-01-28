@@ -345,7 +345,7 @@ Here are the available versions.
    :header-rows: 1
 
    * - Unicode version
-     - Format
+     - Value
      - Default value
    * - 16.0.0
      - ``"16.0.0"``
