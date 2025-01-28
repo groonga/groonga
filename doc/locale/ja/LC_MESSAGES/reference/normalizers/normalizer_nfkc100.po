@@ -34,7 +34,7 @@ msgid "Syntax"
 msgstr "構文"
 
 msgid "``NormalizerNFKC100`` has optional parameter."
-msgstr "``TokenFilterNFKC100`` は省略可能な引数があります。"
+msgstr "``NormalizerNFKC100`` は省略可能な引数があります。"
 
 msgid "No options::"
 msgstr "オプションなし::"
