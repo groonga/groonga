@@ -61,6 +61,9 @@ msgstr "簡単な使い方"
 msgid "Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
 msgstr "以下は、 ``NormalizerNFKC`` の使用例です。 ``NormalizerNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
+msgid "Here is an example of :ref:`normalizer-nfkc-version` option. You can specify the Unicode version for this option."
+msgstr "以下は :ref:`normalizer-nfkc-version` オプションの使用例です。Unicodeのバージョンを指定できます。"
+
 msgid "Here is an example of :ref:`normalizer-nfkc-unify-kana` option."
 msgstr "以下は :ref:`normalizer-nfkc-unify-kana` オプションの使用例です。"
 

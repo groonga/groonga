@@ -640,6 +640,33 @@ set(GRN_DOC_SOURCES
     example/reference/normalizers/example-load.log
     example/reference/normalizers/example-table-create.log
     example/reference/normalizers/normalizer-auto.log
+    example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.rst
+    example/reference/normalizers/normalizer-nfkc-remove-symbol.rst
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.rst
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen.rst
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.rst
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.rst
+    example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.rst
+    example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.rst
+    example/reference/normalizers/normalizer-nfkc-unify-kana.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.rst
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.rst
+    example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.rst
+    example/reference/normalizers/normalizer-nfkc-unify-middle-dot.rst
+    example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.rst
+    example/reference/normalizers/normalizer-nfkc-unify-to-katakana.rst
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.rst
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji.rst
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.rst
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.rst
+    example/reference/normalizers/normalizer-nfkc-version.rst
+    example/reference/normalizers/normalizer-nfkc.rst
     example/reference/normalizers/normalizer-nfkc100-katakana-gu-small-sounds.log
     example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log
     example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log
@@ -1386,6 +1413,33 @@ set(GRN_DOC_HTML_FILES
     contribution/report.html
     development.html
     development/travis-ci.html
+    example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.html
+    example/reference/normalizers/normalizer-nfkc-remove-symbol.html
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.html
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen.html
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.html
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.html
+    example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.html
+    example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.html
+    example/reference/normalizers/normalizer-nfkc-unify-kana.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.html
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.html
+    example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.html
+    example/reference/normalizers/normalizer-nfkc-unify-middle-dot.html
+    example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.html
+    example/reference/normalizers/normalizer-nfkc-unify-to-katakana.html
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.html
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji.html
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.html
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.html
+    example/reference/normalizers/normalizer-nfkc-version.html
+    example/reference/normalizers/normalizer-nfkc.html
     genindex.html
     index.html
     install.html
