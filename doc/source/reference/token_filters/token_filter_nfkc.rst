@@ -42,7 +42,7 @@ Usage
 -----
 
 Simple usage
-------------
+^^^^^^^^^^^^
 
 Normalization is the same as in :ref:`normalizer-nfkc`, so here are a few examples of how to use the options.
 
@@ -76,7 +76,7 @@ This option enables normalize hiragana and katakana to romaji as below.
 .. tokenize TokenDelimit "アァイィウゥエェオォ" --token_filters  'TokenFilterNFKC("unify_to_romaji", true)'
 
 Advanced usage
---------------
+^^^^^^^^^^^^^^
 
 You can output all input string as hiragana with cimbining ``TokenFilterNFKC`` with ``use_reading`` option of ``TokenMecab`` as below.
 
