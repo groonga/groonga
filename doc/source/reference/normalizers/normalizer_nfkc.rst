@@ -93,7 +93,7 @@ Simple usage
 Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition).
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc.rst
 .. normalize NormalizerNFKC "©" WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-kana` option.
@@ -101,7 +101,7 @@ Here is an example of :ref:`normalizer-nfkc-unify-kana` option.
 This option enables that same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-kana.rst
 .. normalize   'NormalizerNFKC("unify_kana", true)'   "あイｳｪおヽヾ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-kana-case` option.
@@ -109,11 +109,11 @@ Here is an example of :ref:`normalizer-nfkc-unify-kana-case` option.
 This option enables that large and small versions of same letters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-case-hiragana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.rst
 .. normalize   'NormalizerNFKC("unify_kana_case", true)'   "ぁあぃいぅうぇえぉおゃやゅゆょよゎわゕかゖけ"   WITH_TYPES
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-case-katakana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.rst
 .. normalize   'NormalizerNFKC("unify_kana_case", true)'   "ァアィイゥウェエォオャヤュユョヨヮワヵカヶケ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-kana-voiced-sound-mark` option.
@@ -122,32 +122,32 @@ This option enables that letters with/without voiced sound mark and semi voiced 
 
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-voiced-sound-mark-hiragana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.rst
 .. normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true)'   "かがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどはばぱひびぴふぶぷへべぺほぼぽ"   WITH_TYPES
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-voiced-sound-mark-katakana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.rst
 .. normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true)'   "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-hyphen` option.
 This option enables normalize hyphen to "-" (U+002D HYPHEN-MINUS) as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-hyphen.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-hyphen.rst
 .. normalize   'NormalizerNFKC("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋−"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-prolonged-sound-mark` option.
 This option enables normalize prolonged sound to "-" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.rst
 .. normalize   'NormalizerNFKC("unify_prolonged_sound_mark", true)'   "ー—―─━ｰ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark` option.
 This option enables normalize hyphen and prolonged sound to "-" (U+002D HYPHEN-MINUS) as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-hyphen-and-prolonged-sound-mark.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.rst
 .. normalize   'NormalizerNFKC("unify_hyphen_and_prolonged_sound_mark", true)'   "-˗֊‐‑‒–⁃⁻₋− ﹣－ ー—―─━ｰ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-middle-dot` option.
@@ -156,91 +156,91 @@ This option enables normalize middle dot to "·" (U+00B7 MIDDLE DOT) as below.
 You can use it with :ref:`normalizer-nfkc-remove-symbol` to remove all characters like middle dot.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-middle-dot.rst
 .. normalize   'NormalizerNFKC("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-v-sounds` option.
 This option enables normalize "ヴァヴィヴヴェヴォ" to "バビブベボ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.rst
 .. normalize   'NormalizerNFKC("unify_katakana_v_sounds", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-bu-sounds` option.
 This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-bu-sounds.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.rst
 .. normalize   'NormalizerNFKC("unify_katakana_bu_sound", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-to-katakana` option.
 This option normalizes hiragana to katakana.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-to-katakana.rst
 .. normalize   'NormalizerNFKC("unify_to_katakana", true)'   "ゔぁゔぃゔゔぇゔぉ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-to-romaji` option.
 This option enables normalize hiragana and katakana to romaji as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-to-romaji.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-to-romaji.rst
 .. normalize   'NormalizerNFKC("unify_to_romaji", true)'   "アァイィウゥエェオォ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-remove-symbol` option.
 This option removes symbols (e.g. #, !, ", &, %, ...) as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-remove-symbol.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-remove-symbol.rst
 .. normalize   'NormalizerNFKC("remove_symbol", true)'   "#This & is %% a pen."   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-gu-small-sounds` option.
 This option enables to normalize "グァグィグェグォ" to "ガギゲゴ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-katakana-gu-small-sounds.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.rst
 .. normalize   'NormalizerNFKC("unify_katakana_gu_small_sounds", true)'   "グァグィグェグォ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-di-sound` option.
 This option enables to normalize "ヂ" to "ジ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-di-sound.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.rst
 .. normalize   'NormalizerNFKC("unify_katakana_di_sound", true)'   "ヂ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-wo-sound` option.
 This option enables to normalize "ヲ" to "オ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.rst
 .. normalize   'NormalizerNFKC("unify_katakana_wo_sound", true)'   "ヲ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-zu-small-sounds` option.
 This option enables to normalize "ズァズィズェズォ" to "ザジゼゾ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.rst
 .. normalize   'NormalizerNFKC("unify_katakana_zu_small_sounds", true)'   "ズァズィズェズォ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-du-sound` option.
 This option enables to normalize "ヅ" to "ズ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-du-sound.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.rst
 .. normalize   'NormalizerNFKC("unify_katakana_du_sound", true)'   "ヅ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-trailing-o` option.
 This option enables to normalize "オ" to "ウ" when the vowel in the previous letter is "オ" as below.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-trailing-o.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.rst
 .. normalize   'NormalizerNFKC("unify_katakana_trailing_o", true)'   "オオコオソオトオノオ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-katakana-du-small-sounds` option.
 This option enables to normalize "ヅァヅィヅェヅォ" to "ザジゼゾ".
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-du-small-sounds.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.rst
 .. normalize   'NormalizerNFKC("unify_katakana_du_small_sounds", true)'   "ヅァヅィヅェヅォ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-kana-prolonged-sound-mark` option.
@@ -251,7 +251,7 @@ If a previous kana letter is "ん" , "ー" is normalized to "ん",
 And a previous kana letter is "ン" , "ー" is normalized to "ン".
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-prolonged-sound-mark.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.rst
 .. normalize   'NormalizerNFKC("unify_kana_prolonged_sound_mark", true)'   "カーキークーケーコー"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-kana-hyphen` option.
@@ -261,7 +261,7 @@ If a previous kana letter is "ん" , "-" is normalized to "ん",
 And a previous kana letter is "ン" , "-" is normalized to "ン".
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-hyphen.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.rst
 .. normalize   'NormalizerNFKC("unify_kana_hyphen", true)'   "カ-キ-ク-ケ-コ-"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc-unify-latin-alphabet-with` option.
@@ -270,7 +270,7 @@ This option enables that alphabets with diacritical mark and alphabets without d
 However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.rst
 .. normalize   'NormalizerNFKC("unify_latin_alphabet_with", true)'   "ngoằn"   WITH_TYPES
 
 Advanced usage
@@ -287,7 +287,7 @@ First of all, you extract reading of a noun with excluding non-independent word 
 Next, you normalize reading of the noun that extracted with ``unify_to_romaji`` option of ``NormalizerNFKC``.
 
 .. groonga-command
-.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log
+.. include:: ../../example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.rst
 .. tokenize 'TokenMecab("target_class", "-名詞/非自立", "target_class", "-名詞/接尾/人名", "target_class", "名詞", "include_reading", true)' '彼の名前は山田さんのはずです。'
 .. normalize   'NormalizerNFKC("unify_to_romaji", true)'   "カレ"   WITH_TYPES
 .. normalize   'NormalizerNFKC("unify_to_romaji", true)'   "ナマエ"   WITH_TYPES
