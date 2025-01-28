@@ -13,9 +13,11 @@ Summary
 
 .. versionadded:: 14.1.3
 
-``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0.
+``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition).
 
-This normalizer can change behavior by specifying options.
+The Unicode version can be specified by option.
+
+In addition to Unicode version, this normalizer has ohter options that can change behavior by specifying options.
 
 Syntax
 ------
@@ -26,9 +28,11 @@ No options::
 
   NormalizerNFKC
 
-``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0.
+``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition).
 
 Specify option::
+
+  NormalizerNFKC("version", "16.0.0")
 
   NormalizerNFKC("unify_kana", true)
 
@@ -76,7 +80,7 @@ Specify option::
 
 Specify multiple options::
 
-  NormalizerNFKC("unify_to_romaji", true, "unify_kana_case", true, "unify_hyphen_and_prolonged_sound_mark", true)
+  NormalizerNFKC("version", "16.0.0", "unify_to_romaji", true, "unify_kana_case", true, "unify_hyphen_and_prolonged_sound_mark", true)
 
 ``NormalizerNFKC`` also specify multiple options as above. You can also specify mingle multiple options except above example.
 
@@ -86,7 +90,7 @@ Usage
 Simple usage
 ^^^^^^^^^^^^
 
-Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC150`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0.
+Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition).
 
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150.log
@@ -327,6 +331,29 @@ Optional parameter
 ^^^^^^^^^^^^^^^^^^
 
 There are optional parameters as below.
+
+.. _normalizer-nfkc-version:
+
+``version``
+"""""""""""
+
+This option specifies the Unicode version.
+
+Here are the available versions.
+
+* "16.0.0"
+
+  * Default value when not specified
+
+* "15.0.0"
+
+* "13.0.0"
+
+* "12.1.0"
+
+* "10.0.0"
+
+* "5.0.0"
 
 .. _normalizer-nfkc-unify-kana:
 

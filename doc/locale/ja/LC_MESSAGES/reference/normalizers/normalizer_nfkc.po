@@ -25,17 +25,20 @@ msgstr ""
 msgid "Summary"
 msgstr "概要"
 
-msgid "``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0."
-msgstr "``NormalizerNFKC`` はUnicode 15.0用のUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+msgid "``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "``NormalizerNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
-msgid "This normalizer can change behavior by specifying options."
-msgstr "このノーマライザーはオプションを指定することで、動作を変更できます。"
+msgid "The Unicode version can be specified by option."
+msgstr "Unicodeのバージョンはオプションで指定することができます。"
+
+msgid "In addition to Unicode version, this normalizer has ohter options that can change behavior by specifying options."
+msgstr "また、このノーマライザーにはUnicodeバージョン以外にもオプションがあり、それらのオプションを指定することで動作を変更できます。"
 
 msgid "Syntax"
 msgstr "構文"
 
 msgid "``NormalizerNFKC`` has optional parameter."
-msgstr "``TokenFilterNFKC150`` は省略可能な引数があります。"
+msgstr "``NormalizerNFKC`` は省略可能な引数があります。"
 
 msgid "No options::"
 msgstr "オプションなし::"
@@ -55,8 +58,8 @@ msgstr "使い方"
 msgid "Simple usage"
 msgstr "簡単な使い方"
 
-msgid "Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC150`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 15.0."
-msgstr "以下は、 ``NormalizerNFKC`` の使用例です。 ``NormalizerNFKC150`` はUnicode 15.0用のUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+msgid "Here is an example of ``NormalizerNFKC``. ``NormalizerNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "以下は、 ``NormalizerNFKC`` の使用例です。 ``NormalizerNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
 msgid "Here is an example of :ref:`normalizer-nfkc-unify-kana` option."
 msgstr "以下は :ref:`normalizer-nfkc-unify-kana` オプションの使用例です。"
@@ -213,6 +216,36 @@ msgstr "省略可能引数"
 
 msgid "There are optional parameters as below."
 msgstr "省略可能な引数は以下の通りです。"
+
+msgid "``version``"
+msgstr ""
+
+msgid "This option specifies the Unicode version."
+msgstr "このオプションで、Unicodeのバージョンを指定します。"
+
+msgid "Here are the available versions."
+msgstr "利用可能なバージョンは以下の通りです。"
+
+msgid "\"16.0.0\""
+msgstr ""
+
+msgid "Default value when not specified"
+msgstr "バージョンを指定しなかったときのデフォルト値"
+
+msgid "\"15.0.0\""
+msgstr ""
+
+msgid "\"13.0.0\""
+msgstr ""
+
+msgid "\"12.1.0\""
+msgstr ""
+
+msgid "\"10.0.0\""
+msgstr ""
+
+msgid "\"5.0.0\""
+msgstr ""
 
 msgid "``unify_kana``"
 msgstr ""
