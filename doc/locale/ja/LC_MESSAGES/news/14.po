@@ -48,7 +48,7 @@ msgid "{doc}`/reference/normalizers/normalizer_nfkc` accepts {ref}`normalizer-nf
 msgstr "{doc}`/reference/normalizers/normalizer_nfkc`は使用するUnicodeのバージョンを{ref}`normalizer-nfkc-version`引数で指定できます。たとえば、`NormalizerNFKC(\"version\", \"15.0.0\")`と`NormalizerNFKC150`は等価です。"
 
 msgid "`NormalizerNFKC*` are deprecated by it. You should use {doc}`/reference/normalizers/normalizer_nfkc` for newly written applications."
-msgstr "{doc}`/reference/normalizers/normalizer_nfkc`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/normalizers/normalizer_nfkc`を使うべきです。"
+msgstr "`NormalizerNFKC`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/normalizers/normalizer_nfkc`を使うべきです。"
 
 msgid "{doc}`/reference/normalizers/normalizer_nfkc` uses Unicode 16.0.0 by default."
 msgstr "{doc}`/reference/normalizers/normalizer_nfkc`はデフォルトでUnicode 16.0.0を使います。"
@@ -60,7 +60,7 @@ msgid "It's similar to existing `TokenFilterNFKC*` such as {doc}`/reference/toke
 msgstr "{doc}`/reference/token_filters/token_filter_nfkc150`のような既存の`TokenFilterNFKC*`と似ています。しかし、{doc}`/reference/normalizers/normalizer_nfkc`を使います。そのため、Unicodeのバージョンを{ref}`normalizer-nfkc-version`で指定できます。"
 
 msgid "`TokenFilterNFKC*` are deprecated by it. You should use {doc}`/reference/token_filters/token_filter_nfkc` for newly written applications."
-msgstr "{doc}`/reference/token_filters/token_filter_nfkc`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/token_filters/token_filter_nfkc`を使うべきです。"
+msgstr "`TokenFilterNFKC`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/token_filters/token_filter_nfkc`を使うべきです。"
 
 msgid "{doc}`/reference/token_filters/token_filter_nfkc` uses Unicode 16.0.0 by default."
 msgstr "{doc}`/reference/token_filters/token_filter_nfkc`はデフォルトでUnicode 16.0.0を使います。"
