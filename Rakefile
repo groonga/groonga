@@ -153,6 +153,7 @@ namespace :release do
          "commit",
          "-m",
          "package: update version info to #{version} (#{new_release_date})")
+      sh("git", "push")
     end
   end
 
