@@ -463,6 +463,9 @@ exit 0
 %endif
 
 %changelog
+* Wed Jan 29 2025 Abe Tomoaki <abe@clear-code.com> - 14.1.3-1
+- New upstream release.
+
 * Tue Dec 24 2024 Sutou Kouhei <kou@clear-code.com> - 14.1.2-1
 - New upstream release.
 
