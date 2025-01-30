@@ -2130,10 +2130,10 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   return true;
 }
 
-typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx,
-                                            grn_posting *posting,
-                                            double distance,
-                                            void *user_data);
+typedef bool (*grn_geo_cursor_callback)(grn_ctx *ctx,
+                                        grn_posting *posting,
+                                        double distance,
+                                        void *user_data);
 
 static void
 grn_geo_cursor_each(grn_ctx *ctx,
@@ -2212,17 +2212,16 @@ grn_geo_cursor_each(grn_ctx *ctx,
 
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
         if (cursor->offset == 0) {
-          grn_bool keep_each;
           double distance = 0.0;
           if (cursor->need_distance) {
             distance = grn_geo_distance_rectangle_raw(ctx,
                                                       &(cursor->center),
                                                       &(cursor->current));
           }
-          keep_each = callback(ctx, posting, distance, user_data);
+          bool keep_each = callback(ctx, posting, distance, user_data);
           if (cursor->rest > 0) {
             if (--(cursor->rest) == 0) {
-              keep_each = GRN_FALSE;
+              keep_each = false;
             }
           }
           if (!keep_each) {
@@ -2240,7 +2239,7 @@ grn_geo_cursor_each(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 grn_geo_cursor_next_callback(grn_ctx *ctx,
                              grn_posting *posting,
                              double distance,
@@ -2248,7 +2247,7 @@ grn_geo_cursor_next_callback(grn_ctx *ctx,
 {
   grn_posting **return_posting = user_data;
   *return_posting = posting;
-  return GRN_FALSE;
+  return false;
 }
 
 grn_posting *
@@ -2293,7 +2292,7 @@ typedef struct {
   grn_operator op;
 } grn_geo_select_in_rectangle_data;
 
-static grn_bool
+static bool
 grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
                                      grn_posting *posting,
                                      double distance,
