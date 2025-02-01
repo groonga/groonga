@@ -1148,7 +1148,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
             GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
             GRN_TEXT_SET(ctx, &buf, p + 1, r - p - 2); /* should be quoted */
             k->key = grn_obj_open(ctx, GRN_BULK, 0, domain);
-            grn_obj_cast(ctx, &buf, k->key, GRN_FALSE);
+            grn_obj_cast(ctx, &buf, k->key, false);
             GRN_OBJ_FIN(ctx, &buf);
           }
           k->flags |= GRN_TABLE_SORT_GEO;

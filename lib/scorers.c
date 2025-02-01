@@ -76,7 +76,7 @@ scorer_tf_at_most(grn_ctx *ctx, grn_scorer_matched_record *record)
   } else {
     grn_obj casted_max_raw;
     GRN_FLOAT_INIT(&casted_max_raw, 0);
-    if (grn_obj_cast(ctx, max_raw, &casted_max_raw, GRN_FALSE) != GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, max_raw, &casted_max_raw, false) != GRN_SUCCESS) {
       GRN_OBJ_FIN(ctx, &casted_max_raw);
       return tf;
     } else {

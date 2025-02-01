@@ -753,7 +753,7 @@ namespace {
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT:
       grn_obj_reinit(ctx, res, res_domain, 0);
-      if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, y, res, false)) {
         ERR(GRN_INVALID_ARGUMENT,
             "not a numerical format: <%.*s>",
             (int)GRN_TEXT_LEN(y),
@@ -1552,7 +1552,7 @@ grn_expr_exec_get_member_table(
   } else {
     grn_obj casted_key;
     GRN_OBJ_INIT(&casted_key, GRN_BULK, 0, table->header.domain);
-    if (grn_obj_cast(ctx, key, &casted_key, GRN_FALSE) == GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, key, &casted_key, false) == GRN_SUCCESS) {
       id = grn_table_get(ctx,
                          table,
                          GRN_BULK_HEAD(&casted_key),
@@ -3587,11 +3587,11 @@ grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
   constant_buffer = &(executor->data.simple_condition_ra.constant_buffer);
   if (grn_obj_is_reference_column(ctx, target)) {
     GRN_OBJ_INIT(constant_buffer, GRN_BULK, 0, constant->header.domain);
-    grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+    grn_obj_cast(ctx, constant, constant_buffer, false);
   } else {
     GRN_VOID_INIT(constant_buffer);
     grn_obj_reinit_for(ctx, constant_buffer, target);
-    grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+    grn_obj_cast(ctx, constant, constant_buffer, false);
   }
 }
 
@@ -3655,7 +3655,7 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
     grn_rc rc;
     GRN_VOID_INIT(&constant_buffer);
     grn_obj_reinit_for(ctx, &constant_buffer, target->value);
-    rc = grn_obj_cast(ctx, constant->value, &constant_buffer, GRN_FALSE);
+    rc = grn_obj_cast(ctx, constant->value, &constant_buffer, false);
     GRN_OBJ_FIN(ctx, &constant_buffer);
     if (rc != GRN_SUCCESS) {
       return GRN_FALSE;
@@ -3750,7 +3750,7 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
   constant_buffer = &(executor->data.simple_condition.constant_buffer);
   GRN_VOID_INIT(constant_buffer);
   grn_obj_reinit_for(ctx, constant_buffer, target);
-  rc = grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  rc = grn_obj_cast(ctx, constant, constant_buffer, false);
   if (rc != GRN_SUCCESS) {
     grn_obj *type;
 
