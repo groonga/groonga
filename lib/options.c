@@ -160,7 +160,7 @@ grn_options_clear_lock(grn_ctx *ctx, grn_options *options)
   return grn_obj_clear_lock(ctx, (grn_obj *)(options->values));
 }
 
-grn_bool
+bool
 grn_options_is_corrupt(grn_ctx *ctx, grn_options *options)
 {
   return grn_obj_is_corrupt(ctx, (grn_obj *)(options->values));

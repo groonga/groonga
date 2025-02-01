@@ -225,7 +225,7 @@ grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len);
 bool
 grn_obj_is_empty(grn_ctx *ctx, grn_obj *obj, grn_id id);
 
-GRN_API grn_bool
+GRN_API bool
 grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj);
 GRN_API size_t
 grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj);

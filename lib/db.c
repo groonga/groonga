@@ -1179,7 +1179,7 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
   grn_obj_touch(ctx, s, NULL);
 }
 
-grn_bool
+bool
 grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 {
   bool is_corrupt = false;
@@ -1188,7 +1188,7 @@ grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 
   if (!obj) {
     ERR(GRN_INVALID_ARGUMENT, "[object][corrupt] object must not be NULL");
-    GRN_API_RETURN(GRN_FALSE);
+    GRN_API_RETURN(false);
   }
 
   switch (obj->header.type) {

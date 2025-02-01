@@ -38,7 +38,7 @@ grn_rc grn_options_remove(grn_ctx *ctx, const char *path);
 
 grn_bool grn_options_is_locked(grn_ctx *ctx, grn_options *options);
 grn_rc grn_options_clear_lock(grn_ctx *ctx, grn_options *options);
-grn_bool grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
+bool grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
 grn_rc grn_options_flush(grn_ctx *ctx, grn_options *options);
 
 grn_rc grn_options_set(grn_ctx *ctx,
