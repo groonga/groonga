@@ -102,6 +102,7 @@ repos:
           ?lib/grn_load\.h|
           ?lib/grn_mrb\.h|
           ?lib/grn_obj\.h|
+          ?lib/grn_options\.h|
           ?lib/grn_output\.h|
           ?lib/grn_pat\.h|
           ?lib/grn_portability\.h|
