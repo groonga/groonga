@@ -27,42 +27,47 @@ extern "C" {
 
 typedef struct _grn_options grn_options;
 
-grn_options *grn_options_create(grn_ctx *ctx,
-                                const char *path,
-                                const char *context_tag);
-grn_options *grn_options_open(grn_ctx *ctx,
-                              const char *path,
-                              const char *context_tag);
-grn_rc grn_options_close(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_remove(grn_ctx *ctx, const char *path);
+grn_options *
+grn_options_create(grn_ctx *ctx, const char *path, const char *context_tag);
+grn_options *
+grn_options_open(grn_ctx *ctx, const char *path, const char *context_tag);
+grn_rc
+grn_options_close(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_remove(grn_ctx *ctx, const char *path);
 
-grn_bool grn_options_is_locked(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_clear_lock(grn_ctx *ctx, grn_options *options);
-bool grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_flush(grn_ctx *ctx, grn_options *options);
+grn_bool
+grn_options_is_locked(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_clear_lock(grn_ctx *ctx, grn_options *options);
+bool
+grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_flush(grn_ctx *ctx, grn_options *options);
 
-grn_rc grn_options_set(grn_ctx *ctx,
-                       grn_options *options,
-                       grn_id id,
-                       const char *name,
-                       int name_length,
-                       grn_obj *values);
-grn_option_revision grn_options_get(grn_ctx *ctx,
-                                    grn_options *options,
-                                    grn_id id,
-                                    const char *name,
-                                    int name_length,
-                                    grn_option_revision revision,
-                                    grn_obj *values);
-grn_rc grn_options_clear(grn_ctx *ctx,
-                         grn_options *options,
-                         grn_id id);
+grn_rc
+grn_options_set(grn_ctx *ctx,
+                grn_options *options,
+                grn_id id,
+                const char *name,
+                int name_length,
+                grn_obj *values);
+grn_option_revision
+grn_options_get(grn_ctx *ctx,
+                grn_options *options,
+                grn_id id,
+                const char *name,
+                int name_length,
+                grn_option_revision revision,
+                grn_obj *values);
+grn_rc
+grn_options_clear(grn_ctx *ctx, grn_options *options, grn_id id);
 
-grn_rc grn_options_wal_recover(grn_ctx *ctx,
-                               grn_options *options);
+grn_rc
+grn_options_wal_recover(grn_ctx *ctx, grn_options *options);
 
-grn_rc grn_options_warm(grn_ctx *ctx,
-                        grn_options *options);
+grn_rc
+grn_options_warm(grn_ctx *ctx, grn_options *options);
 
 #ifdef __cplusplus
 }
