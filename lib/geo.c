@@ -877,7 +877,7 @@ grn_geo_resolve_approximate_type(grn_ctx *ctx,
   grn_obj approximate_type;
 
   GRN_TEXT_INIT(&approximate_type, 0);
-  rc = grn_obj_cast(ctx, type_name, &approximate_type, GRN_FALSE);
+  rc = grn_obj_cast(ctx, type_name, &approximate_type, false);
   if (rc == GRN_SUCCESS) {
     const char *name;
     size_t size;
@@ -1056,7 +1056,7 @@ grn_geo_select_in_circle(grn_ctx *ctx,
 
   if (center_point->header.domain != domain) {
     GRN_OBJ_INIT(&center_point_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, center_point, &center_point_, GRN_FALSE)) {
+    if (grn_obj_cast(ctx, center_point, &center_point_, false)) {
       goto exit;
     }
     center_point = &center_point_;
@@ -1115,7 +1115,7 @@ grn_geo_select_in_circle(grn_ctx *ctx,
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
     GRN_OBJ_INIT(&point_on_circle_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, distance, &point_on_circle_, GRN_FALSE)) {
+    if (grn_obj_cast(ctx, distance, &point_on_circle_, false)) {
       goto exit;
     }
     point_on_circle = &point_on_circle_;
@@ -1334,7 +1334,7 @@ in_rectangle_data_fill(grn_ctx *ctx,
     if (grn_obj_cast(ctx,
                      top_left_point,
                      &(data->top_left_point_buffer),
-                     GRN_FALSE)) {
+                     false)) {
       ERR(GRN_INVALID_ARGUMENT,
           "%s: failed to cast to %s: <%.*s>",
           process_name,
@@ -1352,7 +1352,7 @@ in_rectangle_data_fill(grn_ctx *ctx,
     if (grn_obj_cast(ctx,
                      bottom_right_point,
                      &(data->bottom_right_point_buffer),
-                     GRN_FALSE)) {
+                     false)) {
       ERR(GRN_INVALID_ARGUMENT,
           "%s: failed to cast to %s: <%.*s>",
           process_name,
@@ -2496,7 +2496,7 @@ grn_geo_in_circle(grn_ctx *ctx,
     double d;
     if (center->header.domain != domain) {
       GRN_OBJ_INIT(&center_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, center, &center_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, center, &center_, false)) {
         goto exit;
       }
       center = &center_;
@@ -2536,7 +2536,7 @@ grn_geo_in_circle(grn_ctx *ctx,
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT:
       GRN_OBJ_INIT(&radius_or_point_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, radius_or_point, &radius_or_point_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, radius_or_point, &radius_or_point_, false)) {
         goto exit;
       }
       radius_or_point = &radius_or_point_;
@@ -2604,14 +2604,14 @@ grn_geo_in_rectangle(grn_ctx *ctx,
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
     if (top_left->header.domain != domain) {
       GRN_OBJ_INIT(&top_left_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, top_left, &top_left_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, top_left, &top_left_, false)) {
         goto exit;
       }
       top_left = &top_left_;
     }
     if (bottom_right->header.domain != domain) {
       GRN_OBJ_INIT(&bottom_right_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, bottom_right, &bottom_right_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, bottom_right, &bottom_right_, false)) {
         goto exit;
       }
       bottom_right = &bottom_right_;
@@ -3010,7 +3010,7 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (domain1 != domain2) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain1);
       point2_initialized = true;
-      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, point2, &point2_, false)) {
         goto exit;
       }
       point2 = &point2_;
@@ -3019,7 +3019,7 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
              domain2 == GRN_DB_WGS84_GEO_POINT) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, domain2);
     point1_initialized = true;
-    if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) {
+    if (grn_obj_cast(ctx, point1, &point1_, false)) {
       goto exit;
     }
     point1 = &point1_;
@@ -3027,14 +3027,14 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
              (GRN_DB_SHORT_TEXT <= domain2 && domain2 <= GRN_DB_LONG_TEXT)) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
     point1_initialized = true;
-    if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) {
+    if (grn_obj_cast(ctx, point1, &point1_, false)) {
       goto exit;
     }
     point1 = &point1_;
 
     GRN_OBJ_INIT(&point2_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
     point2_initialized = true;
-    if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
+    if (grn_obj_cast(ctx, point2, &point2_, false)) {
       goto exit;
     }
     point2 = &point2_;
@@ -3065,7 +3065,7 @@ grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       point2_initialized = true;
-      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, point2, &point2_, false)) {
         goto exit;
       }
       point2 = &point2_;
@@ -3094,7 +3094,7 @@ grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       point2_initialized = true;
-      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) {
+      if (grn_obj_cast(ctx, point2, &point2_, false)) {
         goto exit;
       }
       point2 = &point2_;
