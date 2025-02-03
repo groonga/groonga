@@ -2323,7 +2323,7 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
     grn_rc rc;
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
-    if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
+    if ((rc = grn_obj_cast(ctx, key, &buf, true))) {
       grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
       ERR_CAST(table, domain, key);
     } else {
@@ -2353,7 +2353,7 @@ grn_table_add_by_key(grn_ctx *ctx,
     grn_rc rc;
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
-    if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
+    if ((rc = grn_obj_cast(ctx, key, &buf, true))) {
       grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
       ERR_CAST(table, domain, key);
     } else {
@@ -4506,7 +4506,7 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
   }
   if (need_cast) {
     GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
-    rc = grn_obj_cast(ctx, query, &casted_query, GRN_FALSE);
+    rc = grn_obj_cast(ctx, query, &casted_query, false);
     if (rc == GRN_SUCCESS) {
       key = GRN_BULK_HEAD(&casted_query);
       key_len = GRN_BULK_VSIZE(&casted_query);
@@ -6982,7 +6982,7 @@ grn_accessor_set_value(
               } else {
                 grn_obj buf;
                 GRN_FLOAT_INIT(&buf, 0);
-                grn_obj_cast(ctx, value, &buf, GRN_FALSE);
+                grn_obj_cast(ctx, value, &buf, false);
                 ri->score = GRN_FLOAT_VALUE(&buf);
                 GRN_OBJ_FIN(ctx, &buf);
               }
@@ -7040,7 +7040,7 @@ grn_accessor_set_value(
           } else {
             grn_obj value_float;
             GRN_FLOAT_INIT(&value_float, 0);
-            if (!grn_obj_cast(ctx, value, &value_float, GRN_FALSE)) {
+            if (!grn_obj_cast(ctx, value, &value_float, false)) {
               grn_rset_recinfo_set_mean(ctx,
                                         ri,
                                         a->obj,
@@ -7206,7 +7206,7 @@ grn_obj_set_value_table_pat_key(
 
   if (range != value->header.domain) {
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-    if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, value, &buf, true) == GRN_SUCCESS) {
       v = GRN_BULK_HEAD(&buf);
     }
   }
@@ -7236,7 +7236,7 @@ grn_obj_set_value_table_hash_key(
 
   if (range != value->header.domain) {
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-    if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, value, &buf, true) == GRN_SUCCESS) {
       v = GRN_BULK_HEAD(&buf);
     }
   }
@@ -7266,7 +7266,7 @@ grn_obj_set_value_table_no_key(
 
   if (range != value->header.domain) {
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-    if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, value, &buf, true) == GRN_SUCCESS) {
       v = GRN_BULK_HEAD(&buf);
     }
   }
