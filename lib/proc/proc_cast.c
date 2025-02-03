@@ -60,9 +60,9 @@ func_cast_loose(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     return NULL;
   }
 
-  rc = grn_obj_cast(ctx, value, casted_value, GRN_FALSE);
+  rc = grn_obj_cast(ctx, value, casted_value, false);
   if (rc != GRN_SUCCESS) {
-    rc = grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
+    rc = grn_obj_cast(ctx, default_value, casted_value, false);
     if (rc != GRN_SUCCESS) {
       char type_name[GRN_TABLE_MAX_KEY_SIZE];
       int type_name_size;

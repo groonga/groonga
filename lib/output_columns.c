@@ -291,7 +291,7 @@ grn_output_columns_apply_add_records_key(grn_ctx *ctx,
       }
 
       GRN_BULK_REWIND(&target_key_buffer);
-      cast_rc = grn_obj_cast(ctx, value, &target_key_buffer, GRN_FALSE);
+      cast_rc = grn_obj_cast(ctx, value, &target_key_buffer, false);
       if (cast_rc != GRN_SUCCESS) {
         continue;
       }

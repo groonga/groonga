@@ -3560,7 +3560,7 @@ grn_select_apply_adjuster_execute_ensure_factor(grn_ctx *ctx,
     grn_obj int32_object;
     int factor;
     GRN_INT32_INIT(&int32_object, 0);
-    rc = grn_obj_cast(ctx, factor_object, &int32_object, GRN_FALSE);
+    rc = grn_obj_cast(ctx, factor_object, &int32_object, false);
     if (rc == GRN_SUCCESS) {
       factor = GRN_INT32_VALUE(&int32_object);
     } else {

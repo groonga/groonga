@@ -1074,7 +1074,7 @@ grn_expr_append_obj_resolve_const(grn_ctx *ctx, grn_obj *obj, grn_id to_domain)
   grn_obj dest;
 
   GRN_OBJ_INIT(&dest, GRN_BULK, 0, to_domain);
-  if (!grn_obj_cast(ctx, obj, &dest, GRN_FALSE)) {
+  if (!grn_obj_cast(ctx, obj, &dest, false)) {
     grn_obj_reinit(ctx, obj, to_domain, 0);
     grn_bulk_write(ctx, obj, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
   }
@@ -2297,7 +2297,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
       float weight = 1.0;
       grn_obj weight_buffer;
       GRN_FLOAT32_INIT(&weight_buffer, 0);
-      if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, GRN_FALSE)) {
+      if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, false)) {
         weight = GRN_FLOAT32_VALUE(&weight_buffer);
       }
       grn_obj_unlink(ctx, &weight_buffer);
