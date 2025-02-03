@@ -441,8 +441,7 @@ grn_operator_to_exec_func(grn_operator op)
           {                                                                    \
             grn_obj time_value_;                                               \
             GRN_TIME_INIT(&time_value_, 0);                                    \
-            if (grn_obj_cast(ctx, y, &time_value_, GRN_FALSE) ==               \
-                GRN_SUCCESS) {                                                 \
+            if (grn_obj_cast(ctx, y, &time_value_, false) == GRN_SUCCESS) {    \
               r = (x_ == GRN_TIME_VALUE(&time_value_));                        \
             } else {                                                           \
               r = GRN_FALSE;                                                   \
@@ -560,7 +559,7 @@ grn_operator_to_exec_func(grn_operator op)
         grn_obj dest;                                                          \
         if (x->header.domain < y->header.domain) {                             \
           GRN_OBJ_INIT(&dest, GRN_BULK, 0, y->header.domain);                  \
-          if (!grn_obj_cast(ctx, x, &dest, GRN_FALSE)) {                       \
+          if (!grn_obj_cast(ctx, x, &dest, false)) {                           \
             r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(y) &&                 \
                  !memcmp(GRN_BULK_HEAD(&dest),                                 \
                          GRN_BULK_HEAD(y),                                     \
@@ -570,7 +569,7 @@ grn_operator_to_exec_func(grn_operator op)
           }                                                                    \
         } else {                                                               \
           GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);                  \
-          if (!grn_obj_cast(ctx, y, &dest, GRN_FALSE)) {                       \
+          if (!grn_obj_cast(ctx, y, &dest, false)) {                           \
             r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(x) &&                 \
                  !memcmp(GRN_BULK_HEAD(&dest),                                 \
                          GRN_BULK_HEAD(x),                                     \
@@ -849,7 +848,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       {                                                                        \
         grn_obj y_;                                                            \
         GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);                      \
-        if (grn_obj_cast(ctx, y, &y_, GRN_FALSE)) {                            \
+        if (grn_obj_cast(ctx, y, &y_, false)) {                                \
           r = GRN_FALSE;                                                       \
         } else {                                                               \
           DO_COMPARE_SCALAR_SUB_NUMERIC_SIGNED(&y_, op);                       \
@@ -872,7 +871,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       {                                                                        \
         grn_obj y_;                                                            \
         GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);                      \
-        if (grn_obj_cast(ctx, y, &y_, GRN_FALSE)) {                            \
+        if (grn_obj_cast(ctx, y, &y_, false)) {                                \
           r = GRN_FALSE;                                                       \
         } else {                                                               \
           DO_COMPARE_SCALAR_SUB_NUMERIC_UNSIGNED(&y_, op);                     \
@@ -1032,8 +1031,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
           {                                                                    \
             grn_obj time_value_;                                               \
             GRN_TIME_INIT(&time_value_, 0);                                    \
-            if (grn_obj_cast(ctx, y, &time_value_, GRN_FALSE) ==               \
-                GRN_SUCCESS) {                                                 \
+            if (grn_obj_cast(ctx, y, &time_value_, false) == GRN_SUCCESS) {    \
               r = (x_ op GRN_TIME_VALUE(&time_value_));                        \
             } else {                                                           \
               r = GRN_FALSE;                                                   \
