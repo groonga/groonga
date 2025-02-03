@@ -1562,7 +1562,7 @@ _grn_pat_create(grn_ctx *ctx,
   } else {
     header->normalizer = GRN_ID_NIL;
   }
-  header->truncated = GRN_FALSE;
+  header->truncated = false;
   GRN_TEXT_INIT(&(pat->token_filters), 0);
   GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->io = io;
@@ -1816,7 +1816,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   value_size = pat->value_size;
   flags = pat->obj.header.flags;
   if (path) {
-    pat->header->truncated = GRN_TRUE;
+    pat->header->truncated = true;
   }
   if ((rc = grn_io_close(ctx, pat->io))) {
     goto exit;

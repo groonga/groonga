@@ -73,7 +73,7 @@ struct grn_pat_header {
   uint32_t curr_del3;
   uint32_t n_garbages;
   grn_id normalizer;
-  uint32_t truncated;
+  bool truncated;
   uint32_t n_dirty_opens;
   uint64_t wal_id;
   uint32_t reserved[1000];
