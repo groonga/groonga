@@ -686,14 +686,14 @@ jobs:
         run: |
           $LATEST_RELEASE_INFO = Invoke-RestMethod "https://api.github.com/repos/apache/arrow/releases/latest"
           # e.g. "apache-arrow-19.0.0"
-          $APACHE_ARROW_VERSION = $LATEST_RELEASE_INFO.tag_name
-          # "apache-arrow-19.0.0" -> "19.0.0"
-          $ARROW_VERSION = $APACHE_ARROW_VERSION -replace '^apache-', ''
-          $DOWNLOAD_URL = "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${APACHE_ARROW_VERSION}.tar.gz?action=download"
-          Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "${APACHE_ARROW_VERSION}.tar.gz"
+          $LATEST_TAG_NAME = $LATEST_RELEASE_INFO.tag_name
+          # "apache-arrow-19.0.0" -> "arrow-19.0.0"
+          $ARROW_VERSION = $LATEST_TAG_NAME -replace '^apache-', ''
+          $DOWNLOAD_URL = "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${LATEST_TAG_NAME}.tar.gz?action=download"
+          Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "${LATEST_TAG_NAME}.tar.gz"
           mkdir apache-arrow
-          tar -xzf "${APACHE_ARROW_VERSION}.tar.gz" --strip-components=1 -C apache-arrow
-          Remove-Item "${APACHE_ARROW_VERSION}.tar.gz"
+          tar -xzf "${LATEST_TAG_NAME}.tar.gz" --strip-components=1 -C apache-arrow
+          Remove-Item "${LATEST_TAG_NAME}.tar.gz"
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
