@@ -8,6 +8,7 @@
 ## Summary
 
 ```{versionadded} 14.1.3
+
 ```
 
 `NormalizerNFKC` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition).
