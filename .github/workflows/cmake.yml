@@ -689,7 +689,7 @@ jobs:
           $APACHE_ARROW_VERSION = $LATEST_RELEASE_INFO.tag_name
           # "apache-arrow-19.0.0" -> "19.0.0"
           $ARROW_VERSION = $APACHE_ARROW_VERSION -replace '^apache-', ''
-          $DOWNLOAD_URL = "https://dlcdn.apache.org/arrow/${ARROW_VERSION}/${APACHE_ARROW_VERSION}.tar.gz"
+          $DOWNLOAD_URL = "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${APACHE_ARROW_VERSION}.tar.gz?action=download"
           Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "${APACHE_ARROW_VERSION}.tar.gz"
           mkdir apache-arrow
           tar -xzf "${APACHE_ARROW_VERSION}.tar.gz" --strip-components=1 -C apache-arrow
