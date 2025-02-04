@@ -2407,6 +2407,10 @@ chop(grn_ctx *ctx,
         int64_t v = *(int64_t *)(key);                                         \
         v ^= ((v >> 63) | (1ULL << 63));                                       \
         grn_hton((keybuf), &v, (size));                                        \
+      } else if ((size) == sizeof(int32_t)) {                                  \
+        int32_t v = *(int32_t *)(key);                                         \
+        v ^= ((v >> 31) | (1ULL << 31));                                       \
+        grn_hton((keybuf), &v, (size));                                        \
       }                                                                        \
       break;                                                                   \
     }                                                                          \
@@ -2433,6 +2437,11 @@ chop(grn_ctx *ctx,
         grn_hton(&v, (key), (size));                                           \
         *((int64_t *)(keybuf)) =                                               \
           v ^ ((((int64_t)(v ^ (1ULL << 63))) >> 63) | (1ULL << 63));          \
+      } else if ((size) == sizeof(int32_t)) {                                  \
+        int32_t v;                                                             \
+        grn_hton(&v, (key), (size));                                           \
+        *((int32_t *)(keybuf)) =                                               \
+          v ^ ((((int32_t)(v ^ (1ULL << 31))) >> 31) | (1ULL << 31));          \
       }                                                                        \
       break;                                                                   \
     }                                                                          \
