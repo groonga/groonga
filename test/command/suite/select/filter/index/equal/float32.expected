@@ -1,6 +1,6 @@
 table_create Values TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Values number COLUMN_SCALAR Float3232
+column_create Values number COLUMN_SCALAR Float32
 [[0,0.0,0.0],true]
 table_create Numbers TABLE_PAT_KEY Float32
 [[0,0.0,0.0],true]
