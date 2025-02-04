@@ -19,8 +19,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def detect_target_apache_arrow_version
-    release_url = "https://api.github.com/repos/apache/arrow/releases/latest"
-    latest_tag_name = JSON.parse(URI.open(release_url).read)["tag_name"]
+    latest_release_url = "https://api.github.com/repos/apache/arrow/releases/latest"
+    latest_tag_name = JSON.parse(URI.open(latest_release_url).read)["tag_name"]
     latest_tag_name[/\Aapache-arrow-([\d.]+)\z/, 1]
   end
 
