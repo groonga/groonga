@@ -19,12 +19,13 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def detect_target_apache_arrow_version
-    cmake_yml = File.join(__dir__,
-                          "..",
-                          ".github",
-                          "workflows",
-                          "cmake.yml")
-    File.read(cmake_yml)[/ref: apache-arrow-([\d.]+)/, 1]
+    latest_release_url = "https://api.github.com/repos/apache/arrow/releases/latest"
+    # e.g: apache-arrow-19.0.0
+    latest_tag_name = URI.open(latest_release_url) do |latest_release|
+      JSON.parse(latest_release.read)["tag_name"]
+    end
+    # apache-arrow-19.0.0 -> 19.0.0
+    latest_tag_name[/\Aapache-arrow-([\d.]+)\z/, 1]
   end
 
   def detect_target_apache_arrow_so_version
