@@ -682,7 +682,7 @@ jobs:
           Get-Command ccache
           (Get-Command ccache).Source
           ccache --show-stats --verbose --version
-      - name: Download Apache Arrow latest source archive and verify via PGP
+      - name: Download Apache Arrow latest source archive
         run: |
           $LATEST_RELEASE_INFO = Invoke-RestMethod "https://api.github.com/repos/apache/arrow/releases/latest"
           # e.g. "apache-arrow-19.0.0"
