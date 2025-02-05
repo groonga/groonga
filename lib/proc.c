@@ -4334,9 +4334,8 @@ func_in_values(grn_ctx *ctx,
   target_value = args[0];
   for (i = 1; i < nargs; i++) {
     grn_obj *value = args[i];
-    grn_bool result;
 
-    result = grn_operator_exec_equal(ctx, target_value, value);
+    bool result = grn_operator_exec_equal(ctx, target_value, value);
     if (ctx->rc) {
       break;
     }
