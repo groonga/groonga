@@ -684,12 +684,14 @@ jobs:
           ccache --show-stats --verbose --version
       - name: Download Apache Arrow latest source archive
         run: |
-          $LATEST_RELEASE_INFO = Invoke-RestMethod "https://api.github.com/repos/apache/arrow/releases/latest"
+          $LATEST_RELEASE_INFO = `
+            Invoke-RestMethod "https://api.github.com/repos/apache/arrow/releases/latest"
           # e.g. "apache-arrow-19.0.0"
           $LATEST_TAG_NAME = $LATEST_RELEASE_INFO.tag_name
           # "apache-arrow-19.0.0" -> "arrow-19.0.0"
           $ARROW_VERSION = $LATEST_TAG_NAME -replace '^apache-', ''
-          $DOWNLOAD_URL = "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${LATEST_TAG_NAME}.tar.gz?action=download"
+          $DOWNLOAD_URL = `
+            "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${LATEST_TAG_NAME}.tar.gz?action=download"
           Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "${LATEST_TAG_NAME}.tar.gz"
           mkdir apache-arrow
           tar -xzf "${LATEST_TAG_NAME}.tar.gz" --strip-components=1 -C apache-arrow
