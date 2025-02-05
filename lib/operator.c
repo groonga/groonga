@@ -584,29 +584,29 @@ grn_operator_to_exec_func(grn_operator op)
     }                                                                          \
   } while (0)
 
-static grn_bool
+static bool
 exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
   switch (x->header.type) {
   case GRN_BULK:
     if (y->header.type == GRN_BULK) {
-      grn_bool is_equal = GRN_FALSE;
+      bool is_equal = false;
       DO_EQ(x, y, is_equal);
       return is_equal;
     } else {
-      return GRN_FALSE;
+      return false;
     }
     break;
   case GRN_VECTOR:
     if (y->header.type == GRN_VECTOR) {
-      grn_bool is_equal = GRN_TRUE;
+      bool is_equal = true;
       unsigned int x_size = grn_vector_size(ctx, x);
       unsigned int y_size = grn_vector_size(ctx, y);
       unsigned int i;
       grn_obj x_element;
       grn_obj y_element;
       if (x_size != y_size) {
-        return GRN_FALSE;
+        return false;
       }
       GRN_VOID_INIT(&x_element);
       GRN_VOID_INIT(&y_element);
@@ -625,7 +625,7 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         y_size =
           grn_vector_get_element(ctx, y, i, &y_value, &y_weight, &y_domain);
         if (x_weight != y_weight) {
-          is_equal = GRN_FALSE;
+          is_equal = false;
           break;
         }
         grn_obj_reinit(ctx, &x_element, x_domain, 0);
@@ -641,12 +641,12 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       GRN_OBJ_FIN(ctx, &y_element);
       return is_equal;
     } else {
-      return GRN_FALSE;
+      return false;
     }
     break;
   case GRN_UVECTOR:
     if (y->header.type == GRN_UVECTOR) {
-      grn_bool is_equal = GRN_TRUE;
+      bool is_equal = true;
       unsigned int x_size = grn_vector_size(ctx, x);
       unsigned int y_size = grn_vector_size(ctx, y);
       unsigned int i;
@@ -655,7 +655,7 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       unsigned int x_element_size = grn_uvector_element_size(ctx, x);
       unsigned int y_element_size = grn_uvector_element_size(ctx, y);
       if (x_size != y_size) {
-        return GRN_FALSE;
+        return false;
       }
       GRN_OBJ_INIT(&x_element,
                    GRN_BULK,
@@ -682,7 +682,7 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       GRN_OBJ_FIN(ctx, &y_element);
       return is_equal;
     } else if (y->header.type == GRN_VECTOR) {
-      grn_bool is_equal = GRN_TRUE;
+      bool is_equal = true;
       unsigned int x_size = grn_vector_size(ctx, x);
       unsigned int y_size = grn_vector_size(ctx, y);
       unsigned int i;
@@ -690,7 +690,7 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       grn_obj y_element;
       unsigned int x_element_size = grn_uvector_element_size(ctx, x);
       if (x_size != y_size) {
-        return GRN_FALSE;
+        return false;
       }
       GRN_OBJ_INIT(&x_element,
                    GRN_BULK,
@@ -723,11 +723,11 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       GRN_OBJ_FIN(ctx, &y_element);
       return is_equal;
     } else {
-      return GRN_FALSE;
+      return false;
     }
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
