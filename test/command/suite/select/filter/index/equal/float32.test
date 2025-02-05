@@ -1,3 +1,6 @@
+# Equal for floating point number may not be portable.
+# If this test is fragile on some environments, we'll remove this test.
+
 table_create Values TABLE_NO_KEY
 column_create Values number COLUMN_SCALAR Float32
 
