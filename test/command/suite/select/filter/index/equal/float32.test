@@ -1,0 +1,19 @@
+# Equal for floating point number may not be portable.
+# If this test is fragile on some environments, we'll remove this test.
+
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_SCALAR Float32
+
+table_create Numbers TABLE_PAT_KEY Float32
+column_create Numbers values_number COLUMN_INDEX Values number
+
+load --table Values
+[
+{"number": 1.1},
+{"number": 3.1},
+{"number": -1.1}
+]
+
+select Values \
+  --filter 'number == -1.1' \
+  --output_columns 'number'
