@@ -804,12 +804,12 @@ set(GRN_DOC_SOURCES
     example/reference/suggest/correction/select.log
     example/reference/suggest/suggest/select.log
     example/reference/token_filters/example-table-create.log
-    example/reference/token_filters/nfkc-unify-hyphen.rst
-    example/reference/token_filters/nfkc-unify-kana.rst
-    example/reference/token_filters/nfkc-unify-to-romaji.rst
-    example/reference/token_filters/nfkc-version.rst
-    example/reference/token_filters/nfkc-with-token-mecab.rst
-    example/reference/token_filters/nfkc.rst
+    example/reference/token_filters/nfkc-unify-hyphen.md
+    example/reference/token_filters/nfkc-unify-kana.md
+    example/reference/token_filters/nfkc-unify-to-romaji.md
+    example/reference/token_filters/nfkc-version.md
+    example/reference/token_filters/nfkc-with-token-mecab.md
+    example/reference/token_filters/nfkc.md
     example/reference/token_filters/nfkc100-hiragana-and-kanji.log
     example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log
     example/reference/token_filters/nfkc100-unify-hyphen.log
@@ -1302,7 +1302,7 @@ set(GRN_DOC_SOURCES
     reference/tables.rst
     reference/token_filter/summary.rst
     reference/token_filters.rst
-    reference/token_filters/token_filter_nfkc.rst
+    reference/token_filters/token_filter_nfkc.md
     reference/token_filters/token_filter_nfkc100.rst
     reference/token_filters/token_filter_nfkc150.rst
     reference/token_filters/token_filter_stem.rst
@@ -1420,12 +1420,6 @@ set(GRN_DOC_HTML_FILES
     contribution/report.html
     development.html
     development/travis-ci.html
-    example/reference/token_filters/nfkc-unify-hyphen.html
-    example/reference/token_filters/nfkc-unify-kana.html
-    example/reference/token_filters/nfkc-unify-to-romaji.html
-    example/reference/token_filters/nfkc-version.html
-    example/reference/token_filters/nfkc-with-token-mecab.html
-    example/reference/token_filters/nfkc.html
     genindex.html
     index.html
     install.html
