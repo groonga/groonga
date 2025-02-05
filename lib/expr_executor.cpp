@@ -2211,11 +2211,10 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       break;
     case GRN_OP_LESS:
       {
-        grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         CHECK(pop2alloc1(ctx, data, x, y, data.res));
-        r = grn_operator_exec_less(ctx, x, y);
+        bool r = grn_operator_exec_less(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
       }
@@ -2235,11 +2234,10 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       break;
     case GRN_OP_LESS_EQUAL:
       {
-        grn_bool r;
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         CHECK(pop2alloc1(ctx, data, x, y, data.res));
-        r = grn_operator_exec_less_equal(ctx, x, y);
+        bool r = grn_operator_exec_less_equal(ctx, x, y);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, r);
       }
