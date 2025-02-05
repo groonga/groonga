@@ -693,7 +693,7 @@ jobs:
           $DOWNLOAD_URL = `
             "https://www.apache.org/dyn/closer.lua/arrow/${ARROW_VERSION}/${LATEST_RELEASE_TAG}.tar.gz?action=download"
           Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "${LATEST_RELEASE_TAG}.tar.gz"
-          mkdir apache-arrow
+          New-Item -ItemType Directory -Path "apache-arrow"
           tar -xzf "${LATEST_RELEASE_TAG}.tar.gz" --strip-components=1 -C apache-arrow
           Remove-Item "${LATEST_RELEASE_TAG}.tar.gz"
       - name: Set version
