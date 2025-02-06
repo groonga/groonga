@@ -26,6 +26,7 @@ repos:
           ?include/groonga/bulk\.hpp|
           ?include/groonga/cast\.h|
           ?include/groonga/column\.h|
+          ?include/groonga/command\.h|
           ?include/groonga/command_arguments\.hpp|
           ?include/groonga/dat\.h|
           ?include/groonga/db\.h|
