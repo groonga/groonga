@@ -1201,10 +1201,10 @@ grn_operator_exec_greater_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   GRN_API_RETURN(r);
 }
 
-static grn_bool
+static bool
 exec_match_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *query)
 {
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
   unsigned int i, size;
   grn_obj element;
   unsigned int element_size;
@@ -1219,7 +1219,7 @@ exec_match_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *query)
                    GRN_BULK_HEAD(uvector) + (element_size * i),
                    element_size);
     if (grn_operator_exec_equal(ctx, &element, query)) {
-      matched = GRN_TRUE;
+      matched = true;
       break;
     }
   }
@@ -1228,10 +1228,10 @@ exec_match_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *query)
   return matched;
 }
 
-static grn_bool
+static bool
 exec_match_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
 {
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
   unsigned int i, size;
   grn_obj element;
 
@@ -1247,7 +1247,7 @@ exec_match_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
     grn_obj_reinit(ctx, &element, domain_id, 0);
     grn_bulk_write(ctx, &element, content, content_size);
     if (grn_operator_exec_equal(ctx, &element, query)) {
-      matched = GRN_TRUE;
+      matched = true;
       break;
     }
   }
@@ -1283,7 +1283,7 @@ exec_prefix_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
 }
 
 #ifdef GRN_SUPPORT_REGEXP
-static grn_bool
+static bool
 regexp_is_match(grn_ctx *ctx,
                 OnigRegex regex,
                 const char *target,
@@ -1302,7 +1302,7 @@ regexp_is_match(grn_ctx *ctx,
 }
 #endif /* GRN_SUPPORT_REGEXP */
 
-static grn_bool
+static bool
 string_have_sub_text(grn_ctx *ctx,
                      const char *text,
                      unsigned int text_len,
@@ -1318,7 +1318,7 @@ string_have_sub_text(grn_ctx *ctx,
   return grn_raw_string_have_sub_string(ctx, &string, &sub_string);
 }
 
-static grn_bool
+static bool
 string_have_prefix(grn_ctx *ctx,
                    const char *target,
                    unsigned int target_len,
@@ -1328,7 +1328,7 @@ string_have_prefix(grn_ctx *ctx,
   return (target_len >= prefix_len && strncmp(target, prefix, prefix_len) == 0);
 }
 
-static grn_bool
+static bool
 string_match_regexp(grn_ctx *ctx,
                     const char *target,
                     unsigned int target_len,
@@ -1337,7 +1337,6 @@ string_match_regexp(grn_ctx *ctx,
 {
 #ifdef GRN_SUPPORT_REGEXP
   OnigRegex regex;
-  grn_bool matched;
 
   regex = grn_onigmo_new(ctx,
                          pattern,
@@ -1346,14 +1345,14 @@ string_match_regexp(grn_ctx *ctx,
                          GRN_ONIGMO_SYNTAX_DEFAULT,
                          "[operator]");
   if (!regex) {
-    return GRN_FALSE;
+    return false;
   }
 
-  matched = regexp_is_match(ctx, regex, target, target_len);
+  bool matched = regexp_is_match(ctx, regex, target, target_len);
   onig_free(regex);
   return matched;
 #else  /* GRN_SUPPORT_REGEXP */
-  return GRN_FALSE;
+  return false;
 #endif /* GRN_SUPPORT_REGEXP */
 }
 
