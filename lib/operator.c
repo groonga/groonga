@@ -1567,10 +1567,10 @@ exec_text_operator_bulk_bulk(grn_ctx *ctx,
   }
 }
 
-grn_bool
+bool
 grn_operator_exec_match(grn_ctx *ctx, grn_obj *target, grn_obj *sub_text)
 {
-  grn_bool matched;
+  bool matched;
   GRN_API_ENTER;
   switch (target->header.type) {
   case GRN_UVECTOR:
