@@ -88,7 +88,7 @@ This feature requires that Apache Arrow is enabled in Groonga.
 
 It depends on package provider whether Apache Arrow is enabled or not.
 
-To check whether Apache Arrow is enabled, you can use {doc}`/reference/commands/status` command that show the result of  `apache_arrow` is `true` or not.
+To check whether Apache Arrow is enabled, you can use {doc}`/reference/commands/status` command that show the result of `apache_arrow` is `true` or not.
 
 ### For use as a daemon process
 
@@ -107,6 +107,6 @@ When specifying greater than `2`, the degree of parallelism can be higher than t
 
 ## Parallel execution support
 
-* {ref}`offline-index-construction`
-* {doc}`/reference/commands/load`
-* {ref}`select <select-n-workers>`
+- {ref}`offline-index-construction`
+- {doc}`/reference/commands/load`
+- {ref}`select <select-n-workers>`
