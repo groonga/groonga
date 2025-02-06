@@ -33,7 +33,7 @@ struct _grn_token {
   uint32_t source_first_character_length;
   bool have_overlap;
   grn_obj metadata;
-  grn_bool force_prefix_search;
+  bool force_prefix_search;
   uint32_t position;
   float weight;
 };

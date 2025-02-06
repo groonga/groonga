@@ -478,7 +478,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       }
 #undef SKIP_FLAGS
       if (status & GRN_TOKEN_FORCE_PREFIX) {
-        grn_token_set_force_prefix_search(ctx, current_token, GRN_TRUE);
+        grn_token_set_force_prefix_search(ctx, current_token, true);
       }
       if (token_cursor->curr_size == 0) {
         continue;
@@ -502,7 +502,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
           }
         } else {
           if (status & GRN_TOKEN_REACH_END) {
-            grn_token_set_force_prefix_search(ctx, current_token, GRN_TRUE);
+            grn_token_set_force_prefix_search(ctx, current_token, true);
           }
         }
       }

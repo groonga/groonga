@@ -173,9 +173,7 @@ grn_token_get_metadata(grn_ctx *ctx, grn_token *token);
 GRN_API bool
 grn_token_get_force_prefix_search(grn_ctx *ctx, grn_token *token);
 GRN_API grn_rc
-grn_token_set_force_prefix_search(grn_ctx *ctx,
-                                  grn_token *token,
-                                  grn_bool force);
+grn_token_set_force_prefix_search(grn_ctx *ctx, grn_token *token, bool force);
 GRN_API uint32_t
 grn_token_get_position(grn_ctx *ctx, grn_token *token);
 GRN_API grn_rc

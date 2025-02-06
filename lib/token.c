@@ -31,7 +31,7 @@ grn_token_init_internal(grn_ctx *ctx, grn_token *token, bool deep)
   token->source_first_character_length = 0;
   token->have_overlap = false;
   grn_token_metadata_init(ctx, &(token->metadata));
-  token->force_prefix_search = GRN_FALSE;
+  token->force_prefix_search = false;
   token->position = 0;
   token->weight = 0;
   GRN_API_RETURN(ctx->rc);
@@ -310,9 +310,7 @@ grn_token_get_force_prefix_search(grn_ctx *ctx, grn_token *token)
 }
 
 grn_rc
-grn_token_set_force_prefix_search(grn_ctx *ctx,
-                                  grn_token *token,
-                                  grn_bool force)
+grn_token_set_force_prefix_search(grn_ctx *ctx, grn_token *token, bool force)
 {
   GRN_API_ENTER;
   if (!token) {
@@ -385,7 +383,7 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   token->source_first_character_length = 0;
   token->have_overlap = false;
   grn_token_metadata_reset(ctx, &(token->metadata));
-  token->force_prefix_search = GRN_FALSE;
+  token->force_prefix_search = false;
   token->position = 0;
   token->weight = 0.0;
 exit:
