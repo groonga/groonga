@@ -2579,7 +2579,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *target = NULL;
         grn_obj *pattern = NULL;
-        grn_bool matched;
+        bool matched;
         CHECK(pop1(ctx, data, pattern));
         CHECK(pop1(ctx, data, target));
         with_spsave(ctx, data, [&]() {

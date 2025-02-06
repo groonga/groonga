@@ -1763,10 +1763,10 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 #endif /* GRN_SUPPORT_REGEXP */
 }
 
-grn_bool
+bool
 grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
 {
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
   GRN_API_ENTER;
   switch (target->header.type) {
   case GRN_UVECTOR:
@@ -1779,7 +1779,7 @@ grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
     matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_REGEXP, target, pattern);
     break;
   default:
-    matched = GRN_FALSE;
+    matched = false;
     break;
   }
   GRN_API_RETURN(matched);
