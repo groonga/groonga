@@ -14,35 +14,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Execution example::"
+msgid "Execution example:"
 msgstr ""
 
-msgid "``TokenFilterNFKC``"
+msgid "`TokenFilterNFKC`"
 msgstr ""
 
 msgid "Summary"
 msgstr ""
 
-msgid "This token filter can use the same option by :ref:`normalizer-nfkc`. This token filter is used to normalize after tokenizing. Because, if you normalize before tokenizing with ``TokenMecab`` , the meaning of a token may be lost."
-msgstr "このトークンフィルターは、 :ref:`normalizer-nfkc` と同じオプションを使えます。 ``TokenMecab`` を使ってトークナイズする前にノーマライズをすると、トークンの意味が失われることがあるため、このトークンフィルターは、トークナイズ後にノーマライズするために使用します。"
+msgid "This token filter can use the same option by {ref}`normalizer-nfkc`. This token filter is used to normalize after tokenizing. Because, if you normalize before tokenizing with `TokenMecab` , the meaning of a token may be lost."
+msgstr "このトークンフィルターは、 {ref}`normalizer-nfkc` と同じオプションを使えます。 `TokenMecab` を使ってトークナイズする前にノーマライズをすると、トークンの意味が失われることがあるため、このトークンフィルターは、トークナイズ後にノーマライズするために使用します。"
 
 msgid "Syntax"
 msgstr "構文"
 
-msgid "``TokenFilterNFKC`` has optional parameter."
-msgstr "``TokenFilterNFKC`` は省略可能な引数があります。"
+msgid "`TokenFilterNFKC` has optional parameter."
+msgstr "`TokenFilterNFKC` は省略可能な引数があります。"
 
-msgid "No options::"
-msgstr "オプションなし::"
+msgid "No options:"
+msgstr "オプションなし:"
 
-msgid "``TokenFilterNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
-msgstr "``TokenFilterNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+msgid "`TokenFilterNFKC` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "`TokenFilterNFKC` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
-msgid "Example of option specification::"
-msgstr "オプション指定例::"
+msgid "Example of option specification:"
+msgstr "オプション指定例:"
 
-msgid "Other options available same as :ref:`normalizer-nfkc`."
-msgstr "他にも :ref:`normalizer-nfkc` と同じオプションが利用できます。"
+msgid "Other options available same as {ref}`normalizer-nfkc`."
+msgstr "他にも {ref}`normalizer-nfkc` と同じオプションが利用できます。"
 
 msgid "Usage"
 msgstr "使い方"
@@ -50,35 +50,35 @@ msgstr "使い方"
 msgid "Simple usage"
 msgstr "簡単な使い方"
 
-msgid "Normalization is the same as in :ref:`normalizer-nfkc`, so here are a few examples of how to use the options."
-msgstr "正規化自体は :ref:`normalizer-nfkc` と同じなので、いくつかオプションの使い方を紹介します。"
+msgid "Normalization is the same as in {ref}`normalizer-nfkc`, so here are a few examples of how to use the options."
+msgstr "正規化自体は {ref}`normalizer-nfkc` と同じなので、いくつかオプションの使い方を紹介します。"
 
-msgid "Here is an example of ``TokenFilterNFKC``. ``TokenFilterNFKC`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
-msgstr "以下は、 ``TokenFilterNFKC`` の使用例です。 ``TokenFilterNFKC`` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+msgid "Here is an example of `TokenFilterNFKC`. `TokenFilterNFKC` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "以下は、 `TokenFilterNFKC` の使用例です。 `TokenFilterNFKC` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
 
-msgid "Here is an example of :ref:`normalizer-nfkc-version` option. You can specify the Unicode version for this option."
-msgstr "以下は :ref:`normalizer-nfkc-version` オプションの使用例です。Unicodeのバージョンを指定できます。"
+msgid "Here is an example of {ref}`normalizer-nfkc-version` option. You can specify the Unicode version for this option."
+msgstr "以下は {ref}`normalizer-nfkc-version` オプションの使用例です。Unicodeのバージョンを指定できます。"
 
-msgid "Here is an example of :ref:`normalizer-nfkc-unify-kana` option."
-msgstr "以下は :ref:`normalizer-nfkc-unify-kana` オプションの使用例です。"
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana` option."
+msgstr "以下は {ref}`normalizer-nfkc-unify-kana` オプションの使用例です。"
 
 msgid "This option enables that same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below."
 msgstr "このオプションは、以下のように同じ音となる全角ひらがな、全角カタカナ、半角カタカナの文字を同一視します。"
 
-msgid "Here is an example of :ref:`normalizer-nfkc-unify-hyphen` option. This option enables normalize hyphen to \"-\" (U+002D HYPHEN-MINUS) as below."
-msgstr "以下は、 :ref:`normalizer-nfkc-unify-hyphen` オプションの使用例です。このオプションは、以下のように、ハイフンを\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-hyphen` option. This option enables normalize hyphen to \"-\" (U+002D HYPHEN-MINUS) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-hyphen` オプションの使用例です。このオプションは、以下のように、ハイフンを\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
 
-msgid "Here is an example of :ref:`normalizer-nfkc-unify-to-romaji` option. This option enables normalize hiragana and katakana to romaji as below."
-msgstr "以下は、 :ref:`normalizer-nfkc-unify-to-romaji` オプションの使用例です。このオプションは、以下のように、ひらがなとカタカナをローマ字に正規化します。"
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-to-romaji` option. This option enables normalize hiragana and katakana to romaji as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-to-romaji` オプションの使用例です。このオプションは、以下のように、ひらがなとカタカナをローマ字に正規化します。"
 
 msgid "Advanced usage"
 msgstr "高度な使い方"
 
-msgid "You can output all input string as hiragana with cimbining ``TokenFilterNFKC`` with ``use_reading`` option of ``TokenMecab`` as below."
-msgstr "``TokenFilterNFKC`` と ``TokenMecab`` の ``use_reading`` オプションを組み合わせることで、入力文字列を全てひらがなとして出力できます。"
+msgid "You can output all input string as hiragana with cimbining `TokenFilterNFKC` with `use_reading` option of `TokenMecab` as below."
+msgstr "`TokenFilterNFKC` と `TokenMecab` の `use_reading` オプションを組み合わせることで、入力文字列を全てひらがなとして出力できます。"
 
 msgid "Parameters"
 msgstr "引数"
 
-msgid "See :ref:`normalizer-nfkc-parameters` in ``NormalizerNFKC`` for details."
-msgstr "``NormalizerNFKC`` の :ref:`normalizer-nfkc-parameters` をご覧ください。"
+msgid "See {ref}`normalizer-nfkc-parameters` in `NormalizerNFKC` for details."
+msgstr "`NormalizerNFKC` の {ref}`normalizer-nfkc-parameters` をご覧ください。"

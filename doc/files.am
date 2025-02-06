@@ -804,12 +804,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/suggest/correction/select.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/suggest/select.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/example-table-create.log \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-hyphen.rst \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-kana.rst \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-to-romaji.rst \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-version.rst \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-with-token-mecab.rst \
-	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc.rst \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-hyphen.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-kana.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-to-romaji.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-version.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-with-token-mecab.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc.md \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen.log \
@@ -1302,7 +1302,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/token_filter/summary.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
-	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc.rst \
+	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc.md \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc150.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
@@ -2170,12 +2170,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/suggest/correction/select.log \
 	source/example/reference/suggest/suggest/select.log \
 	source/example/reference/token_filters/example-table-create.log \
-	source/example/reference/token_filters/nfkc-unify-hyphen.rst \
-	source/example/reference/token_filters/nfkc-unify-kana.rst \
-	source/example/reference/token_filters/nfkc-unify-to-romaji.rst \
-	source/example/reference/token_filters/nfkc-version.rst \
-	source/example/reference/token_filters/nfkc-with-token-mecab.rst \
-	source/example/reference/token_filters/nfkc.rst \
+	source/example/reference/token_filters/nfkc-unify-hyphen.md \
+	source/example/reference/token_filters/nfkc-unify-kana.md \
+	source/example/reference/token_filters/nfkc-unify-to-romaji.md \
+	source/example/reference/token_filters/nfkc-version.md \
+	source/example/reference/token_filters/nfkc-with-token-mecab.md \
+	source/example/reference/token_filters/nfkc.md \
 	source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
 	source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	source/example/reference/token_filters/nfkc100-unify-hyphen.log \
@@ -2668,7 +2668,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tables.rst \
 	source/reference/token_filter/summary.rst \
 	source/reference/token_filters.rst \
-	source/reference/token_filters/token_filter_nfkc.rst \
+	source/reference/token_filters/token_filter_nfkc.md \
 	source/reference/token_filters/token_filter_nfkc100.rst \
 	source/reference/token_filters/token_filter_nfkc150.rst \
 	source/reference/token_filters/token_filter_stem.rst \
@@ -2754,12 +2754,6 @@ po_files = \
 	contribution/report.po \
 	development.po \
 	development/travis-ci.po \
-	example/reference/token_filters/nfkc-unify-hyphen.po \
-	example/reference/token_filters/nfkc-unify-kana.po \
-	example/reference/token_filters/nfkc-unify-to-romaji.po \
-	example/reference/token_filters/nfkc-version.po \
-	example/reference/token_filters/nfkc-with-token-mecab.po \
-	example/reference/token_filters/nfkc.po \
 	index.po \
 	install.po \
 	install/almalinux.po \
@@ -3078,12 +3072,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/contribution/report.po \
 	LC_MESSAGES/development.po \
 	LC_MESSAGES/development/travis-ci.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-hyphen.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-kana.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-to-romaji.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc-version.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc-with-token-mecab.po \
-	LC_MESSAGES/example/reference/token_filters/nfkc.po \
 	LC_MESSAGES/index.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/install/almalinux.po \
@@ -3402,12 +3390,6 @@ edit_po_files = \
 	contribution/report.edit \
 	development.edit \
 	development/travis-ci.edit \
-	example/reference/token_filters/nfkc-unify-hyphen.edit \
-	example/reference/token_filters/nfkc-unify-kana.edit \
-	example/reference/token_filters/nfkc-unify-to-romaji.edit \
-	example/reference/token_filters/nfkc-version.edit \
-	example/reference/token_filters/nfkc-with-token-mecab.edit \
-	example/reference/token_filters/nfkc.edit \
 	index.edit \
 	install.edit \
 	install/almalinux.edit \
@@ -3726,12 +3708,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/contribution/report.edit \
 	LC_MESSAGES/development.edit \
 	LC_MESSAGES/development/travis-ci.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-hyphen.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-kana.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-to-romaji.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc-version.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc-with-token-mecab.edit \
-	LC_MESSAGES/example/reference/token_filters/nfkc.edit \
 	LC_MESSAGES/index.edit \
 	LC_MESSAGES/install.edit \
 	LC_MESSAGES/install/almalinux.edit \
@@ -4050,12 +4026,6 @@ mo_files = \
 	contribution/report.mo \
 	development.mo \
 	development/travis-ci.mo \
-	example/reference/token_filters/nfkc-unify-hyphen.mo \
-	example/reference/token_filters/nfkc-unify-kana.mo \
-	example/reference/token_filters/nfkc-unify-to-romaji.mo \
-	example/reference/token_filters/nfkc-version.mo \
-	example/reference/token_filters/nfkc-with-token-mecab.mo \
-	example/reference/token_filters/nfkc.mo \
 	index.mo \
 	install.mo \
 	install/almalinux.mo \
@@ -4374,12 +4344,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/contribution/report.mo \
 	LC_MESSAGES/development.mo \
 	LC_MESSAGES/development/travis-ci.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-hyphen.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-kana.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc-unify-to-romaji.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc-version.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc-with-token-mecab.mo \
-	LC_MESSAGES/example/reference/token_filters/nfkc.mo \
 	LC_MESSAGES/index.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/install/almalinux.mo \
@@ -4731,12 +4695,6 @@ html_files_relative_from_locale_dir = \
 	html/contribution/report.html \
 	html/development.html \
 	html/development/travis-ci.html \
-	html/example/reference/token_filters/nfkc-unify-hyphen.html \
-	html/example/reference/token_filters/nfkc-unify-kana.html \
-	html/example/reference/token_filters/nfkc-unify-to-romaji.html \
-	html/example/reference/token_filters/nfkc-version.html \
-	html/example/reference/token_filters/nfkc-with-token-mecab.html \
-	html/example/reference/token_filters/nfkc.html \
 	html/genindex.html \
 	html/index.html \
 	html/install.html \
