@@ -148,7 +148,7 @@ grn_options_remove(grn_ctx *ctx, const char *path)
   return grn_ja_remove(ctx, options_path);
 }
 
-grn_bool
+bool
 grn_options_is_locked(grn_ctx *ctx, grn_options *options)
 {
   return grn_obj_is_locked(ctx, (grn_obj *)(options->values));
@@ -232,7 +232,7 @@ grn_options_set(grn_ctx *ctx,
       if (object->type == MSGPACK_OBJECT_MAP) {
         msgpack_object_map *map = &(object->via.map);
         uint32_t i;
-        grn_bool have_same_key = GRN_FALSE;
+        bool have_same_key = false;
         uint32_t same_key_index = 0;
 
         for (i = 0; i < map->size; i++) {
@@ -241,7 +241,7 @@ grn_options_set(grn_ctx *ctx,
           if (key->type == MSGPACK_OBJECT_STR &&
               MSGPACK_OBJECT_STR_SIZE(key) == (size_t)name_length &&
               memcmp(name, MSGPACK_OBJECT_STR_PTR(key), (size_t)name_length) == 0) {
-            have_same_key = GRN_TRUE;
+            have_same_key = true;
             same_key_index = i;
             break;
           }
@@ -318,7 +318,7 @@ grn_options_get(grn_ctx *ctx,
                 grn_obj *value)
 {
 #ifdef GRN_WITH_MESSAGE_PACK
-  grn_bool found = GRN_FALSE;
+  bool found = false;
   grn_io_win iw;
   void *raw_value;
   uint32_t length;
@@ -361,7 +361,7 @@ grn_options_get(grn_ctx *ctx,
             grn_msgpack_unpack_array_internal(ctx,
                                               &(kv->val.via.array),
                                               value);
-            found = GRN_TRUE;
+            found = true;
           }
           break;
         }
