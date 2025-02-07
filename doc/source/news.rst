@@ -8,6 +8,7 @@ News
 .. toctree::
    :maxdepth: 2
 
+   news/15
    news/14
    news/13
    news/12

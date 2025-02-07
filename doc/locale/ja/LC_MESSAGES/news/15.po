@@ -1,0 +1,36 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2025 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 15.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-07 15:00+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 15 series"
+msgstr "お知らせ - 15系"
+
+msgid "Release 15.0.0 - 2025-02-09"
+msgstr "15.0.0リリース - 2025-02-09"
+
+msgid "This is our annual major release! This release doesn't have any backward incompatible changes! So you can upgrade Groonga without migrating your existing databases. You can still use your existing databases as-is."
+msgstr "毎年恒例の肉の日メジャーリリースです！このリリースには後方互換性が壊れる変更はありません！既存のデータベースを移行せずにGroongaをアップグレードできます。既存のデータベースをそのまま使い続けることができます。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "{ref}`table-pat-key`: Added support for {ref}`builtin-type-float32` as key type"
+msgstr "{ref}`table-pat-key`: キーの型として{ref}`builtin-type-float32`をサポート"
+
+msgid "[GH-2211](https://github.com/groonga/groonga/issues/2211)"
+msgstr ""
+
+msgid "{ref}`table-pat-key` encodes/decodes numeric keys for fast search internally. So {ref}`table-pat-key` must know how to encode/decode keys. {ref}`table-pat-key` didn't know how to encode/decode {ref}`builtin-type-float32` before this release. Now, {ref}`table-pat-key` can encode/decode {ref}`builtin-type-float32`. So you can use {ref}`builtin-type-float32` as a {ref}`table-pat-key` key type like other numeric types such as {ref}`builtin-type-int32` and {ref}`builtin-type-float` now."
+msgstr "{ref}`table-pat-key`は高速な検索のために内部では数値キーをエンコード・デコードしています。そのため、{ref}`table-pat-key`はキーをどのようにエンコード・デコードするかを知らなければいけません。{ref}`table-pat-key`はこのリリースまでは{ref}`builtin-type-float32`をどのようにエンコード・デコードすればよいかを知りませんでした。今回のリリースから、{ref}`table-pat-key`は{ref}`builtin-type-float32`をエンコード・デコードできるようになりました。そのため、{ref}`builtin-type-float32`を他の{ref}`builtin-type-int32`や{ref}`builtin-type-float`のような数値型のように{ref}`table-pat-key`のキーとして使えるようになりました。"

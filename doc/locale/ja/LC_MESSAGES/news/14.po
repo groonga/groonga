@@ -116,7 +116,7 @@ msgstr "{doc}`/reference/commands/defrag`中にいくつか漏れていたWALを
 msgid "{doc}`/reference/commands/defrag`: Fixed a bug that columns of {ref}`table-pat-key` aren't processed"
 msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`のカラムが処理されない問題を修正"
 
-msgid "GH-2168"
+msgid "[GH-2168](https://github.com/groonga/groonga/issues/2168)"
 msgstr ""
 
 msgid "`defrag pat` should process `pat` and its columns. But it processes only `pat` since {ref}`release-14-1-1`. It's a regression bug."
