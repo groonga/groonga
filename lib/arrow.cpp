@@ -1473,7 +1473,7 @@ namespace grnarrow {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
         ARROW_RETURN_NOT_OK(
-          builder.Append(*(reinterpret_cast<const grn_bool *>(data))));
+          builder.Append(*(reinterpret_cast<const bool *>(data))));
       }
       return builder.Finish(array);
     }
