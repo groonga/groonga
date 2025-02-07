@@ -3296,7 +3296,7 @@ grn_proc_select_format_init(grn_ctx *ctx,
   return ctx->rc == GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_proc_select_format_fin(grn_ctx *ctx, grn_obj_format *format)
 {
   grn_obj_format_fin(ctx, format);
@@ -3304,7 +3304,7 @@ grn_proc_select_format_fin(grn_ctx *ctx, grn_obj_format *format)
   return ctx->rc == GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     grn_obj_format *format,
                                     grn_obj *res,
@@ -3316,8 +3316,6 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     grn_obj *condition,
                                     uint32_t n_additional_elements)
 {
-  grn_bool succeeded;
-
   if (!grn_proc_select_format_init(ctx,
                                    format,
                                    res,
@@ -3329,11 +3327,11 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
                                    condition)) {
     GRN_OUTPUT_RESULT_SET_OPEN(res, NULL, 0);
     GRN_OUTPUT_RESULT_SET_CLOSE(res, NULL);
-    return GRN_FALSE;
+    return false;
   }
 
   GRN_OUTPUT_RESULT_SET_OPEN(res, format, n_additional_elements);
-  succeeded = (ctx->rc == GRN_SUCCESS);
+  bool succeeded = (ctx->rc == GRN_SUCCESS);
   if (!succeeded) {
     GRN_OUTPUT_RESULT_SET_CLOSE(res, format);
     grn_proc_select_format_fin(ctx, format);
@@ -3342,7 +3340,7 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
   return succeeded;
 }
 
-grn_bool
+bool
 grn_proc_select_output_columns_close(grn_ctx *ctx,
                                      grn_obj_format *format,
                                      grn_obj *result_set)
@@ -3352,7 +3350,7 @@ grn_proc_select_output_columns_close(grn_ctx *ctx,
   return grn_proc_select_format_fin(ctx, format);
 }
 
-grn_bool
+bool
 grn_proc_select_output_columns(grn_ctx *ctx,
                                grn_obj *res,
                                int n_hits,
@@ -3375,7 +3373,7 @@ grn_proc_select_output_columns(grn_ctx *ctx,
                                            columns_len,
                                            condition,
                                            n_additional_elements)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_proc_select_output_columns_close(ctx, &format, res);
@@ -3415,7 +3413,7 @@ grn_select_output_columns_open(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static grn_bool
+static bool
 grn_select_output_columns(grn_ctx *ctx,
                           grn_select_data *data,
                           grn_obj *res,
@@ -3440,7 +3438,7 @@ grn_select_output_columns(grn_ctx *ctx,
                                       columns_len,
                                       condition,
                                       n_additional_elements)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_proc_select_output_columns_close(ctx, &format, res);
@@ -4073,7 +4071,7 @@ grn_select_output_match_open(grn_ctx *ctx,
   return succeeded;
 }
 
-static grn_bool
+static bool
 grn_select_output_match_close(grn_ctx *ctx,
                               grn_select_data *data,
                               grn_obj_format *format)
@@ -4312,14 +4310,14 @@ grn_select_output_drilldowns(grn_ctx *ctx,
   return succeeded;
 }
 
-static grn_bool
+static bool
 grn_select_output_slices(grn_ctx *ctx, grn_select_data *data)
 {
-  grn_bool succeeded = GRN_TRUE;
+  bool succeeded = true;
   unsigned int n_available_results = 0;
 
   if (data->slices.empty()) {
-    return GRN_TRUE;
+    return true;
   }
 
   data->output.formatter->slices_label(ctx, data);

@@ -263,7 +263,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
                             const char *text,
                             const char *end);
 
-grn_bool
+bool
 grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     grn_obj_format *format,
                                     grn_obj *result_set,
@@ -274,11 +274,11 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     unsigned int columns_len,
                                     grn_obj *condition,
                                     uint32_t n_additional_elements);
-grn_bool
+bool
 grn_proc_select_output_columns_close(grn_ctx *ctx,
                                      grn_obj_format *format,
                                      grn_obj *result_set);
-grn_bool
+bool
 grn_proc_select_output_columns(grn_ctx *ctx,
                                grn_obj *res,
                                int n_hits,
