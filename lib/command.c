@@ -69,11 +69,11 @@ grn_command_input_add(grn_ctx *ctx,
                       grn_command_input *input,
                       const char *name,
                       int name_size,
-                      grn_bool *added)
+                      bool *added)
 {
   grn_obj *argument = NULL;
-  /* TODO: Use grn_bool */
-  int internal_added = GRN_FALSE;
+  /* TODO: Use bool */
+  int internal_added = false;
 
   GRN_API_ENTER;
 

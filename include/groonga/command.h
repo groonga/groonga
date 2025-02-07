@@ -36,7 +36,7 @@ grn_command_input_add(grn_ctx *ctx,
                       grn_command_input *input,
                       const char *name,
                       int name_size,
-                      grn_bool *added);
+                      bool *added);
 GRN_PLUGIN_EXPORT grn_obj *
 grn_command_input_get(grn_ctx *ctx,
                       grn_command_input *input,
