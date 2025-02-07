@@ -23,7 +23,7 @@ msgstr "並列実行"
 msgid "Summary"
 msgstr "概要"
 
-msgid "Groonga executes serially by default. However, by specifying in the option you can execute in parallel."
+msgid "Groonga executes serially by default. However, by specifying the option you can execute in parallel."
 msgstr "Groongaはデフォルトでは逐次的に実行しますが、オプションで並列数を指定することで並列実行することもできます。"
 
 msgid "The next section shows you how to set up for parallel execution. Please read the notes before using this option."
@@ -50,7 +50,7 @@ msgstr "デフォルト値を設定する"
 msgid "If you set a default value, you do not need to specify it for each Groonga command. The default value is used for all Groonga commands."
 msgstr "デフォルト値を設定するとGroongaコマンドごとに指定する必要はありません。すべてのGroongaコマンドでデフォルト値が利用されます。"
 
-msgid "Specified by `--default-n-workers` option of `groonga` execution file"
+msgid "Specified by `--default-n-workers` option of `groonga` executable file"
 msgstr "`groonga`実行ファイルの`--default-n-workers`オプションで指定する"
 
 msgid "Specified by environment variable `GRN_N_WORKERS_DEFAULT`"
@@ -89,7 +89,7 @@ msgstr "CPUのコア数以下のスレッドで並列実行します。"
 msgid "Check the settings"
 msgstr "設定の確認"
 
-msgid "You can check it by the value of `n_workers` and `default_n_workers` in the status {doc}`/reference/commands/status` command."
+msgid "You can check it by the value of `n_workers` and `default_n_workers` in the {doc}`/reference/commands/status` command."
 msgstr "{doc}`/reference/commands/status`コマンドの`n_workers`と`default_n_workers`の値で確認できます。"
 
 msgid "`n_workers` is per Groonga command value. `default_n_workers` is the default value."
@@ -116,8 +116,8 @@ msgstr "常駐プロセスで利用する場合"
 msgid "For example, consider using {doc}`/reference/executables/groonga-server-http` on a system with 6 CPUs."
 msgstr "たとえば、CPUが6個のシステムで{doc}`/reference/executables/groonga-server-http` を使うケースを考えます。"
 
-msgid "{doc}`/reference/executables/groonga-server-http` allocates 1 thread (= 1CPU) for each request."
-msgstr "{doc}`/reference/executables/groonga-server-http`は各リクエストごとに1スレッド（= 1CPU）を割り当てて処理します。"
+msgid "{doc}`/reference/executables/groonga-server-http` allocates 1 thread (= 1 CPU) for each request."
+msgstr "{doc}`/reference/executables/groonga-server-http`は各リクエストごとに1スレッド（= 1 CPU）を割り当てて処理します。"
 
 msgid "When the average number of concurrent connections is 6, there are no free CPU resources because 6 CPUs are already in use. All the CPU is used to process each request."
 msgstr "平均同時接続数が6のとき、CPUを既に6つ使用しているのでCPUのリソースに空きはありません。各リクエストを処理するためにすべてのCPUが使われているからです。"

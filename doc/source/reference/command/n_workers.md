@@ -6,7 +6,7 @@
 ## Summary
 
 Groonga executes serially by default.
-However, by specifying in the option you can execute in parallel.
+However, by specifying the option you can execute in parallel.
 
 The next section shows you how to set up for parallel execution.
 Please read the notes before using this option.
@@ -33,7 +33,7 @@ load --table Data --n_workers -1
 If you set a default value, you do not need to specify it for each Groonga command.
 The default value is used for all Groonga commands.
 
-#### Specified by `--default-n-workers` option of `groonga` execution file
+#### Specified by `--default-n-workers` option of `groonga` executable file
 
 Execution example:
 
@@ -70,7 +70,7 @@ If you specify `-1` or `2` or more, it will execute in parallel.
 
 ## Check the settings
 
-You can check it by the value of `n_workers` and `default_n_workers` in the status {doc}`/reference/commands/status` command.
+You can check it by the value of `n_workers` and `default_n_workers` in the {doc}`/reference/commands/status` command.
 
 <!-- groonga-command -->
 
@@ -94,7 +94,7 @@ To check whether Apache Arrow is enabled, you can use {doc}`/reference/commands/
 
 For example, consider using {doc}`/reference/executables/groonga-server-http` on a system with 6 CPUs.
 
-{doc}`/reference/executables/groonga-server-http` allocates 1 thread (= 1CPU) for each request.
+{doc}`/reference/executables/groonga-server-http` allocates 1 thread (= 1 CPU) for each request.
 
 When the average number of concurrent connections is 6, there are no free CPU resources because 6 CPUs are already in use.
 All the CPU is used to process each request.
