@@ -2787,7 +2787,7 @@ get_number_in_grn_uvector(grn_ctx *ctx,
 #define GET_UVECTOR_ELEMENT_AS(type)                                           \
   do {                                                                         \
     GRN_##type##_SET(ctx, buf, GRN_##type##_VALUE_AT(uvector, offset));        \
-  } while (GRN_FALSE)
+  } while (false)
   switch (uvector->header.domain) {
   case GRN_DB_BOOL:
     GET_UVECTOR_ELEMENT_AS(BOOL);
@@ -3159,7 +3159,7 @@ func_all_records(grn_ctx *ctx,
 {
   grn_obj *true_value;
   if ((true_value = GRN_PROC_ALLOC(GRN_DB_BOOL, 0))) {
-    GRN_BOOL_SET(ctx, true_value, GRN_TRUE);
+    GRN_BOOL_SET(ctx, true_value, true);
   }
   return true_value;
 }
@@ -3973,7 +3973,7 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (!found) {
     return NULL;
   }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+  GRN_BOOL_SET(ctx, found, false);
 
   grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
   if (!condition) {
@@ -4006,7 +4006,7 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_RECORD_SET(ctx, between_variable, GRN_RECORD_VALUE(variable));
   result = grn_expr_exec(ctx, between_expr, 0);
   if (grn_obj_is_true(ctx, result)) {
-    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+    GRN_BOOL_SET(ctx, found, true);
   }
 
   grn_obj_unlink(ctx, between_expr);
@@ -4322,7 +4322,7 @@ func_in_values(grn_ctx *ctx,
   if (!found) {
     return NULL;
   }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+  GRN_BOOL_SET(ctx, found, false);
 
   if (nargs < 1) {
     ERR(GRN_INVALID_ARGUMENT,
@@ -4341,7 +4341,7 @@ func_in_values(grn_ctx *ctx,
     }
 
     if (result) {
-      GRN_BOOL_SET(ctx, found, GRN_TRUE);
+      GRN_BOOL_SET(ctx, found, true);
       break;
     }
   }
@@ -5045,7 +5045,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           "[io_flush] unknown target: <%.*s>",
           (int)target_name.length,
           target_name.value);
-      GRN_OUTPUT_BOOL(GRN_FALSE);
+      GRN_OUTPUT_BOOL(false);
       return NULL;
     }
   } else {
@@ -5096,7 +5096,7 @@ proc_database_unmap(grn_ctx *ctx,
     ERR(GRN_OPERATION_NOT_PERMITTED,
         "[database_unmap] the max number of threads must be 1: <%u>",
         current_limit);
-    GRN_OUTPUT_BOOL(GRN_FALSE);
+    GRN_OUTPUT_BOOL(false);
     return NULL;
   }
 
@@ -5123,7 +5123,7 @@ proc_reindex(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           "[reindex] nonexistent target: <%.*s>",
           (int)GRN_TEXT_LEN(target_name),
           GRN_TEXT_VALUE(target_name));
-      GRN_OUTPUT_BOOL(GRN_FALSE);
+      GRN_OUTPUT_BOOL(false);
       return NULL;
     }
   }
