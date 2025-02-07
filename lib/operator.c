@@ -1356,7 +1356,7 @@ string_match_regexp(grn_ctx *ctx,
 #endif /* GRN_SUPPORT_REGEXP */
 }
 
-static grn_bool
+static bool
 exec_text_operator(grn_ctx *ctx,
                    grn_operator op,
                    const char *target,
@@ -1364,10 +1364,10 @@ exec_text_operator(grn_ctx *ctx,
                    const char *query,
                    unsigned int query_len)
 {
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
 
   if (target_len == 0 || query_len == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (op) {
@@ -1381,14 +1381,14 @@ exec_text_operator(grn_ctx *ctx,
     matched = string_match_regexp(ctx, target, target_len, query, query_len);
     break;
   default:
-    matched = GRN_FALSE;
+    matched = false;
     break;
   }
 
   return matched;
 }
 
-static grn_bool
+static bool
 exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
                                      grn_operator op,
                                      const char *target,
@@ -1403,10 +1403,10 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
   const char *norm_query_raw;
   unsigned int norm_target_raw_length_in_bytes;
   unsigned int norm_query_raw_length_in_bytes;
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
 
   if (target_len == 0 || query_len == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
@@ -1446,7 +1446,7 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
   return matched;
 }
 
-static grn_bool
+static bool
 exec_text_operator_record_text(grn_ctx *ctx,
                                grn_operator op,
                                grn_obj *record,
@@ -1456,14 +1456,14 @@ exec_text_operator_record_text(grn_ctx *ctx,
   grn_obj *normalizer;
   char record_key[GRN_TABLE_MAX_KEY_SIZE];
   int record_key_len;
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
 
   if (table->header.domain != GRN_DB_SHORT_TEXT) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (GRN_TEXT_LEN(query) == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   record_key_len = grn_table_get_key(ctx,
@@ -1514,7 +1514,7 @@ exec_text_operator_record_text(grn_ctx *ctx,
   return matched;
 }
 
-static grn_bool
+static bool
 exec_text_operator_text_text(grn_ctx *ctx,
                              grn_operator op,
                              grn_obj *target,
@@ -1528,7 +1528,7 @@ exec_text_operator_text_text(grn_ctx *ctx,
                                               GRN_TEXT_LEN(query));
 }
 
-static grn_bool
+static bool
 exec_text_operator_bulk_bulk(grn_ctx *ctx,
                              grn_operator op,
                              grn_obj *target,
@@ -1546,7 +1546,7 @@ exec_text_operator_bulk_bulk(grn_ctx *ctx,
     default:
       break;
     }
-    return GRN_FALSE;
+    return false;
   default:
     {
       grn_obj *domain;
@@ -1562,7 +1562,7 @@ exec_text_operator_bulk_bulk(grn_ctx *ctx,
         }
       }
     }
-    return GRN_FALSE;
+    return false;
   }
 }
 
