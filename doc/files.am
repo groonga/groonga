@@ -48,6 +48,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_normal.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_weight.log \
+	$(top_srcdir)/doc/source/example/reference/command/n_workers/status.md \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_type.log \
@@ -1138,6 +1139,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/columns/vector.rst \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
+	$(top_srcdir)/doc/source/reference/command/n_workers.md \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
 	$(top_srcdir)/doc/source/reference/command/output_trace_log.md \
 	$(top_srcdir)/doc/source/reference/command/pretty_print.rst \
@@ -1414,6 +1416,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/columns/vector/usage_query_weight.log \
 	source/example/reference/columns/vector/usage_query_weight_normal.log \
 	source/example/reference/columns/vector/usage_query_weight_weight.log \
+	source/example/reference/command/n_workers/status.md \
 	source/example/reference/commands/cache_limit/get.log \
 	source/example/reference/commands/cache_limit/set.log \
 	source/example/reference/commands/column_copy/change_column_type.log \
@@ -2504,6 +2507,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/columns/vector.rst \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
+	source/reference/command/n_workers.md \
 	source/reference/command/output_format.rst \
 	source/reference/command/output_trace_log.md \
 	source/reference/command/pretty_print.rst \
@@ -2825,6 +2829,7 @@ po_files = \
 	reference/columns/vector.po \
 	reference/command.po \
 	reference/command/command_version.po \
+	reference/command/n_workers.po \
 	reference/command/output_format.po \
 	reference/command/output_trace_log.po \
 	reference/command/pretty_print.po \
@@ -3143,6 +3148,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.po \
 	LC_MESSAGES/reference/command.po \
 	LC_MESSAGES/reference/command/command_version.po \
+	LC_MESSAGES/reference/command/n_workers.po \
 	LC_MESSAGES/reference/command/output_format.po \
 	LC_MESSAGES/reference/command/output_trace_log.po \
 	LC_MESSAGES/reference/command/pretty_print.po \
@@ -3461,6 +3467,7 @@ edit_po_files = \
 	reference/columns/vector.edit \
 	reference/command.edit \
 	reference/command/command_version.edit \
+	reference/command/n_workers.edit \
 	reference/command/output_format.edit \
 	reference/command/output_trace_log.edit \
 	reference/command/pretty_print.edit \
@@ -3779,6 +3786,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.edit \
 	LC_MESSAGES/reference/command.edit \
 	LC_MESSAGES/reference/command/command_version.edit \
+	LC_MESSAGES/reference/command/n_workers.edit \
 	LC_MESSAGES/reference/command/output_format.edit \
 	LC_MESSAGES/reference/command/output_trace_log.edit \
 	LC_MESSAGES/reference/command/pretty_print.edit \
@@ -4097,6 +4105,7 @@ mo_files = \
 	reference/columns/vector.mo \
 	reference/command.mo \
 	reference/command/command_version.mo \
+	reference/command/n_workers.mo \
 	reference/command/output_format.mo \
 	reference/command/output_trace_log.mo \
 	reference/command/pretty_print.mo \
@@ -4415,6 +4424,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.mo \
 	LC_MESSAGES/reference/command.mo \
 	LC_MESSAGES/reference/command/command_version.mo \
+	LC_MESSAGES/reference/command/n_workers.mo \
 	LC_MESSAGES/reference/command/output_format.mo \
 	LC_MESSAGES/reference/command/output_trace_log.mo \
 	LC_MESSAGES/reference/command/pretty_print.mo \
@@ -4768,6 +4778,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/columns/vector.html \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
+	html/reference/command/n_workers.html \
 	html/reference/command/output_format.html \
 	html/reference/command/output_trace_log.html \
 	html/reference/command/pretty_print.html \

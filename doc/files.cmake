@@ -48,6 +48,7 @@ set(GRN_DOC_SOURCES
     example/reference/columns/vector/usage_query_weight.log
     example/reference/columns/vector/usage_query_weight_normal.log
     example/reference/columns/vector/usage_query_weight_weight.log
+    example/reference/command/n_workers/status.md
     example/reference/commands/cache_limit/get.log
     example/reference/commands/cache_limit/set.log
     example/reference/commands/column_copy/change_column_type.log
@@ -1138,6 +1139,7 @@ set(GRN_DOC_SOURCES
     reference/columns/vector.rst
     reference/command.rst
     reference/command/command_version.rst
+    reference/command/n_workers.md
     reference/command/output_format.rst
     reference/command/output_trace_log.md
     reference/command/pretty_print.rst
@@ -1493,6 +1495,7 @@ set(GRN_DOC_HTML_FILES
     reference/columns/vector.html
     reference/command.html
     reference/command/command_version.html
+    reference/command/n_workers.html
     reference/command/output_format.html
     reference/command/output_trace_log.html
     reference/command/pretty_print.html
