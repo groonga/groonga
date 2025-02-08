@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-typedef grn_bool
+typedef bool
 grn_operator_exec_func(grn_ctx *ctx, grn_obj *x, grn_obj *y);
 
 GRN_API const char *

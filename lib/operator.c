@@ -308,7 +308,7 @@ grn_operator_to_exec_func(grn_operator op)
       }                                                                        \
       break;                                                                   \
     default:                                                                   \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     }                                                                          \
   } while (0)
@@ -359,7 +359,7 @@ grn_operator_to_exec_func(grn_operator op)
       }                                                                        \
       break;                                                                   \
     default:                                                                   \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     }                                                                          \
   } while (0)
@@ -368,7 +368,7 @@ grn_operator_to_exec_func(grn_operator op)
   do {                                                                         \
     switch (x->header.domain) {                                                \
     case GRN_DB_VOID:                                                          \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     case GRN_DB_INT8:                                                          \
       {                                                                        \
@@ -444,13 +444,13 @@ grn_operator_to_exec_func(grn_operator op)
             if (grn_obj_cast(ctx, y, &time_value_, false) == GRN_SUCCESS) {    \
               r = (x_ == GRN_TIME_VALUE(&time_value_));                        \
             } else {                                                           \
-              r = GRN_FALSE;                                                   \
+              r = false;                                                       \
             }                                                                  \
             GRN_OBJ_FIN(ctx, &time_value_);                                    \
           }                                                                    \
           break;                                                               \
         default:                                                               \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
           break;                                                               \
         }                                                                      \
       }                                                                        \
@@ -494,7 +494,7 @@ grn_operator_to_exec_func(grn_operator op)
           }                                                                    \
           break;                                                               \
         default:                                                               \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
           break;                                                               \
         }                                                                      \
       }                                                                        \
@@ -532,7 +532,7 @@ grn_operator_to_exec_func(grn_operator op)
           }                                                                    \
           break;                                                               \
         default:                                                               \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
           break;                                                               \
         }                                                                      \
       }                                                                        \
@@ -565,7 +565,7 @@ grn_operator_to_exec_func(grn_operator op)
                          GRN_BULK_HEAD(y),                                     \
                          GRN_BULK_VSIZE(y)));                                  \
           } else {                                                             \
-            r = GRN_FALSE;                                                     \
+            r = false;                                                         \
           }                                                                    \
         } else {                                                               \
           GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);                  \
@@ -575,7 +575,7 @@ grn_operator_to_exec_func(grn_operator op)
                          GRN_BULK_HEAD(x),                                     \
                          GRN_BULK_VSIZE(x)));                                  \
           } else {                                                             \
-            r = GRN_FALSE;                                                     \
+            r = false;                                                         \
           }                                                                    \
         }                                                                      \
         GRN_OBJ_FIN(ctx, &dest);                                               \
@@ -789,7 +789,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       r = (x_ op GRN_FLOAT_VALUE(y));                                          \
       break;                                                                   \
     default:                                                                   \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     }                                                                          \
   } while (0)
@@ -834,7 +834,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       r = (x_ op GRN_FLOAT_VALUE(y));                                          \
       break;                                                                   \
     default:                                                                   \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     }                                                                          \
   } while (0)
@@ -849,7 +849,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         grn_obj y_;                                                            \
         GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);                      \
         if (grn_obj_cast(ctx, y, &y_, false)) {                                \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
         } else {                                                               \
           DO_COMPARE_SCALAR_SUB_NUMERIC_SIGNED(&y_, op);                       \
         }                                                                      \
@@ -872,7 +872,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         grn_obj y_;                                                            \
         GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);                      \
         if (grn_obj_cast(ctx, y, &y_, false)) {                                \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
         } else {                                                               \
           DO_COMPARE_SCALAR_SUB_NUMERIC_UNSIGNED(&y_, op);                     \
         }                                                                      \
@@ -906,13 +906,13 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
             DO_COMPARE_SCALAR_SUB_BUILTIN_SIGNED(op);                          \
             y = y_original;                                                    \
           } else {                                                             \
-            r = GRN_FALSE;                                                     \
+            r = false;                                                         \
           }                                                                    \
           GRN_OBJ_FIN(ctx, &y_key);                                            \
         }                                                                      \
         break;                                                                 \
       default:                                                                 \
-        r = GRN_FALSE;                                                         \
+        r = false;                                                             \
         break;                                                                 \
       }                                                                        \
       grn_obj_unlink(ctx, y_table);                                            \
@@ -942,13 +942,13 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
             DO_COMPARE_SCALAR_SUB_BUILTIN_UNSIGNED(op);                        \
             y = y_original;                                                    \
           } else {                                                             \
-            r = GRN_FALSE;                                                     \
+            r = false;                                                         \
           }                                                                    \
           GRN_OBJ_FIN(ctx, &y_key);                                            \
         }                                                                      \
         break;                                                                 \
       default:                                                                 \
-        r = GRN_FALSE;                                                         \
+        r = false;                                                             \
         break;                                                                 \
       }                                                                        \
       grn_obj_unlink(ctx, y_table);                                            \
@@ -1034,13 +1034,13 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
             if (grn_obj_cast(ctx, y, &time_value_, false) == GRN_SUCCESS) {    \
               r = (x_ op GRN_TIME_VALUE(&time_value_));                        \
             } else {                                                           \
-              r = GRN_FALSE;                                                   \
+              r = false;                                                       \
             }                                                                  \
             GRN_OBJ_FIN(ctx, &time_value_);                                    \
           }                                                                    \
           break;                                                               \
         default:                                                               \
-          r = GRN_FALSE;                                                       \
+          r = false;                                                           \
           break;                                                               \
         }                                                                      \
       }                                                                        \
@@ -1093,7 +1093,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       }                                                                        \
       break;                                                                   \
     default:                                                                   \
-      r = GRN_FALSE;                                                           \
+      r = false;                                                               \
       break;                                                                   \
     }                                                                          \
   } while (0)
@@ -1119,13 +1119,13 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
             DO_COMPARE_SCALAR_BUILTIN((&x_key), y, r, op);                     \
             x = x_original;                                                    \
           } else {                                                             \
-            r = GRN_FALSE;                                                     \
+            r = false;                                                         \
           }                                                                    \
           GRN_OBJ_FIN(ctx, &x_key);                                            \
         }                                                                      \
         break;                                                                 \
       default:                                                                 \
-        r = GRN_FALSE;                                                         \
+        r = false;                                                             \
         break;                                                                 \
       }                                                                        \
       grn_obj_unlink(ctx, x_table);                                            \
@@ -1158,7 +1158,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       GRN_OBJ_FIN(ctx, &element_buffer);                                       \
     } else {                                                                   \
       if (GRN_BULK_VSIZE(x) == 0 || GRN_BULK_VSIZE(y) == 0) {                  \
-        r = GRN_FALSE;                                                         \
+        r = false;                                                             \
       } else {                                                                 \
         DO_COMPARE_SCALAR(x, y, r, op);                                        \
       }                                                                        \
