@@ -15480,21 +15480,21 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx,
   return true;
 }
 
-static grn_bool
+static bool
 grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
                                                   grn_accessor *accessor,
                                                   grn_operator op)
 {
   if (accessor->next) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (accessor->action != GRN_ACCESSOR_GET_KEY) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (!grn_obj_is_table(ctx, accessor->obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (op) {
@@ -15506,9 +15506,9 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
     switch (accessor->obj->header.type) {
     case GRN_TABLE_PAT_KEY:
     case GRN_TABLE_DAT_KEY:
-      return GRN_TRUE;
+      return true;
     default:
-      return GRN_FALSE;
+      return false;
     }
   case GRN_OP_SUFFIX:
     return (accessor->obj->header.type == GRN_TABLE_PAT_KEY &&
@@ -15519,9 +15519,9 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
     case GRN_TABLE_HASH_KEY:
     case GRN_TABLE_PAT_KEY:
     case GRN_TABLE_DAT_KEY:
-      return GRN_TRUE;
+      return true;
     default:
-      return GRN_FALSE;
+      return false;
     }
   case GRN_OP_FUZZY:
     return (accessor->obj->header.type == GRN_TABLE_PAT_KEY);
@@ -15534,7 +15534,7 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
       return false;
     }
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
