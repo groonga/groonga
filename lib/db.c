@@ -8927,7 +8927,7 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   return rc;
 }
 
-static grn_bool
+static bool
 grn_obj_set_info_is_funcall_call_bulk(grn_ctx *ctx, grn_obj *bulk)
 {
   const char *current;
@@ -8940,17 +8940,17 @@ grn_obj_set_info_is_funcall_call_bulk(grn_ctx *ctx, grn_obj *bulk)
 
     char_length = grn_charlen(ctx, current, end);
     if (char_length != 1) {
-      return GRN_TRUE;
+      return true;
     }
 
     if (current[0] == '(') {
-      return GRN_TRUE;
+      return true;
     }
 
     current += char_length;
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 static grn_rc
@@ -15066,7 +15066,7 @@ report_hook_has_dangling_reference_error(grn_ctx *ctx,
       reference_id);
 }
 
-static grn_bool
+static bool
 is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
@@ -16405,7 +16405,7 @@ grn_db_recover_index_column(grn_ctx *ctx, grn_obj *index_column)
   grn_index_column_rebuild(ctx, index_column);
 }
 
-static grn_bool
+static bool
 grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
 {
   void *key;
@@ -16413,7 +16413,7 @@ grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
   int name_size;
 
   if (id < GRN_N_RESERVED_TYPES) {
-    return GRN_TRUE;
+    return true;
   }
 
   name_size = grn_table_cursor_get_key(ctx, cursor, &key);
@@ -16425,12 +16425,12 @@ grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
   if (NAME_EQUAL("inspect")) {
     /* Just for compatibility. It's needed for users who used
        Groonga master at between 2016-02-03 and 2016-02-26. */
-    return GRN_TRUE;
+    return true;
   }
 
 #undef NAME_EQUAL
 
-  return GRN_FALSE;
+  return false;
 }
 
 grn_rc
