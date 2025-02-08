@@ -15462,7 +15462,7 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx,
 
   if (a->next) {
     int specified_section;
-    grn_bool is_invalid_section;
+    bool is_invalid_section;
     if (a->next->next) {
       return false;
     }
@@ -15821,7 +15821,7 @@ grn_column_get_all_index_data_accessor_index_column(grn_ctx *ctx,
 
   if (a->next) {
     int specified_section;
-    grn_bool is_invalid_section;
+    bool is_invalid_section;
     if (a->next->next) {
       return 0;
     }
@@ -15855,7 +15855,7 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
 
   while (a) {
     grn_hook *hooks;
-    grn_bool found = GRN_FALSE;
+    bool found = false;
     grn_hook_entry entry = (grn_hook_entry)-1;
 
     if (a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
@@ -15901,7 +15901,7 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
         continue;
       }
 
-      found = GRN_TRUE;
+      found = true;
       if (!a->next) {
         int section = 0;
 
@@ -16438,7 +16438,7 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
 {
   grn_table_cursor *cursor;
   grn_id id;
-  grn_bool is_close_opened_object_mode;
+  bool is_close_opened_object_mode;
 
   GRN_API_ENTER;
 
