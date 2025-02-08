@@ -374,15 +374,15 @@ typedef enum {
 
 /*
   meshes should have
-    86 >= spaces when include_base_point_hash == GRN_FALSE,
-    87 >= spaces when include_base_point_hash == GRN_TRUE.
+    86 >= spaces when include_base_point_hash == false,
+    87 >= spaces when include_base_point_hash == true.
 */
 static int
 grn_geo_get_meshes_for_circle(grn_ctx *ctx,
                               grn_geo_point *base_point,
                               double d_far,
                               uint8_t diff_bit,
-                              int include_base_point_mesh,
+                              bool include_base_point_mesh,
                               mesh_entry *meshes)
 {
   double d;
@@ -584,7 +584,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx,
                                            base_point,
                                            d_far,
                                            diff_bit,
-                                           GRN_FALSE,
+                                           false,
                                            meshes);
 
   ep = entries + n_entries;
@@ -1166,12 +1166,8 @@ grn_geo_select_in_circle(grn_ctx *ctx,
     if ((diff_bit % 2) == 1) {
       diff_bit--;
     }
-    n_meshes = grn_geo_get_meshes_for_circle(ctx,
-                                             center,
-                                             d_far,
-                                             diff_bit,
-                                             GRN_TRUE,
-                                             meshes);
+    n_meshes =
+      grn_geo_get_meshes_for_circle(ctx, center, d_far, diff_bit, true, meshes);
     while (n_meshes--) {
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(ctx,
