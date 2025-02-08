@@ -3155,7 +3155,7 @@ grn_weight_bulk_get(grn_ctx *ctx, grn_obj *bulk)
 
 static scan_info **
 grn_scan_info_build_full(
-  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, grn_bool record_exist)
+  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, bool record_exist)
 {
   grn_obj *var;
   scan_stat stat;
@@ -3669,7 +3669,7 @@ grn_scan_info_build_simple_value(grn_ctx *ctx,
                                  grn_obj *expr,
                                  int *n,
                                  grn_operator logical_op,
-                                 grn_bool record_exist)
+                                 bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
   scan_info **sis;
@@ -3701,7 +3701,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
                                      grn_obj *expr,
                                      int *n,
                                      grn_operator logical_op,
-                                     grn_bool record_exist)
+                                     bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
   grn_expr_code *target;
@@ -3789,7 +3789,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
                                           grn_obj *expr,
                                           int *n,
                                           grn_operator logical_op,
-                                          grn_bool record_exist)
+                                          bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
   scan_info **sis = NULL;
@@ -3956,7 +3956,7 @@ grn_scan_info_build_simple(grn_ctx *ctx,
                            grn_obj *expr,
                            int *n,
                            grn_operator logical_op,
-                           grn_bool record_exist)
+                           bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
 
@@ -3985,7 +3985,7 @@ grn_scan_info_build_simple(grn_ctx *ctx,
 
 scan_info **
 grn_scan_info_build(
-  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, grn_bool record_exist)
+  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, bool record_exist)
 {
   scan_info **sis;
 
@@ -7342,7 +7342,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
   int i, n;
   scan_info **sis, *si;
   GRN_API_ENTER;
-  if ((sis = grn_scan_info_build(ctx, expr, &n, GRN_OP_OR, GRN_FALSE))) {
+  if ((sis = grn_scan_info_build(ctx, expr, &n, GRN_OP_OR, false))) {
     int butp = 0, nparens = 0, npbut = 0;
     grn_obj but_stack;
     GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);

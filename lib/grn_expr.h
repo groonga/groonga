@@ -96,7 +96,7 @@ grn_expr_set_query_options(grn_ctx *ctx, grn_obj *expr, grn_obj *query_options);
 
 scan_info **
 grn_scan_info_build(
-  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, grn_bool record_exist);
+  grn_ctx *ctx, grn_obj *expr, int *n, grn_operator op, bool record_exist);
 
 scan_info *
 grn_scan_info_open(grn_ctx *ctx, int start);
