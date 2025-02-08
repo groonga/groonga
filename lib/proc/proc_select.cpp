@@ -4803,7 +4803,7 @@ namespace {
     grn_obj *outbuf = ctx->impl->output.buf;
     grn::TextBulk cache_key(ctx);
     long long int original_match_escalation_threshold = 0;
-    grn_bool original_force_match_escalation = GRN_FALSE;
+    bool original_force_match_escalation = false;
     grn_cache *cache_obj = grn_cache_current_get(ctx);
 
     if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
@@ -4854,11 +4854,11 @@ namespace {
     }
     if (data->match_escalation.length > 0) {
       if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "auto")) {
-        grn_ctx_set_force_match_escalation(ctx, GRN_FALSE);
+        grn_ctx_set_force_match_escalation(ctx, false);
       } else if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "yes")) {
-        grn_ctx_set_force_match_escalation(ctx, GRN_TRUE);
+        grn_ctx_set_force_match_escalation(ctx, true);
       } else if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "no")) {
-        grn_ctx_set_force_match_escalation(ctx, GRN_FALSE);
+        grn_ctx_set_force_match_escalation(ctx, false);
         grn_ctx_set_match_escalation_threshold(ctx, -1);
       }
     }

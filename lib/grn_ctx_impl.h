@@ -167,7 +167,7 @@ struct _grn_ctx_impl {
 
   /* match escalation portion */
   int64_t match_escalation_threshold;
-  grn_bool force_match_escalation;
+  bool force_match_escalation;
 
   /* lifetime portion */
   grn_proc_func *finalizer;

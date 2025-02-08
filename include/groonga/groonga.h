@@ -520,10 +520,10 @@ grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
  */
 GRN_API grn_rc
 grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, int64_t threshold);
-GRN_API grn_bool
+GRN_API bool
 grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc
-grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
+grn_ctx_set_force_match_escalation(grn_ctx *ctx, bool force);
 GRN_API int32_t
 grn_ctx_get_n_workers(grn_ctx *ctx);
 GRN_API grn_rc
