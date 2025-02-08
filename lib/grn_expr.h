@@ -82,9 +82,9 @@ typedef enum {
 } scan_stat;
 
 typedef struct _grn_scan_info scan_info;
-typedef grn_bool (*grn_scan_info_each_arg_callback)(grn_ctx *ctx,
-                                                    grn_obj *obj,
-                                                    void *user_data);
+typedef bool (*grn_scan_info_each_arg_callback)(grn_ctx *ctx,
+                                                grn_obj *obj,
+                                                void *user_data);
 
 void
 grn_expr_init_from_env(void);
@@ -166,7 +166,7 @@ int
 grn_scan_info_get_quorum_threshold(scan_info *si);
 void
 grn_scan_info_set_quorum_threshold(scan_info *si, int quorum_threshold);
-grn_bool
+bool
 grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg);
 grn_obj *
 grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
@@ -187,7 +187,7 @@ grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
 grn_rc
 grn_ctx_expand_stack(grn_ctx *ctx);
 
-grn_bool
+bool
 grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr);
 grn_obj *
 grn_expr_simple_function_call_get_function(grn_ctx *ctx, grn_obj *expr);
@@ -196,7 +196,7 @@ grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
                                             grn_obj *expr,
                                             grn_obj *arguments);
 
-grn_bool
+bool
 grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr);
 unsigned int
 grn_expr_module_list_get_n_modules(grn_ctx *ctx, grn_obj *expr);

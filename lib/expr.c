@@ -2503,7 +2503,7 @@ grn_scan_info_set_quorum_threshold(scan_info *si, int quorum_threshold)
   si->quorum_threshold = quorum_threshold;
 }
 
-grn_bool
+bool
 grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg)
 {
   if (si->nargs >= si->max_nargs) {
@@ -2512,13 +2512,13 @@ grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg)
     if (si->args == si->initial_args) {
       args = GRN_MALLOCN(grn_obj *, max_nargs);
       if (args == NULL) {
-        return GRN_FALSE;
+        return false;
       }
       grn_memcpy(args, si->args, sizeof(grn_obj *) * si->nargs);
     } else {
       args = (grn_obj **)GRN_REALLOC(si->args, sizeof(grn_obj *) * max_nargs);
       if (args == NULL) {
-        return GRN_FALSE;
+        return false;
       }
     }
     si->args = args;
@@ -2526,7 +2526,7 @@ grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg)
   }
 
   si->args[si->nargs++] = arg;
-  return GRN_TRUE;
+  return true;
 }
 
 grn_obj *
@@ -7680,7 +7680,7 @@ grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr)
   GRN_API_RETURN(size);
 }
 
-grn_bool
+bool
 grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -7688,7 +7688,7 @@ grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr)
   grn_expr_code *codes_end = codes + e->codes_curr;
 
   if (codes == codes_end) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (; codes < codes_end; codes++) {
@@ -7697,15 +7697,15 @@ grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr)
       break;
     case GRN_OP_CALL:
       if (codes + 1 != codes_end) {
-        return GRN_FALSE;
+        return false;
       }
       break;
     default:
-      return GRN_FALSE;
+      return false;
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 grn_obj *
@@ -7745,7 +7745,7 @@ grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -7753,7 +7753,7 @@ grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
   grn_expr_code *codes_end = codes + e->codes_curr;
 
   if (codes == codes_end) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (; codes < codes_end; codes++) {
@@ -7765,11 +7765,11 @@ grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_COMMA:
       break;
     default:
-      return GRN_FALSE;
+      return false;
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 unsigned int
