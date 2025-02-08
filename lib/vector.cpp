@@ -72,7 +72,7 @@ namespace grn {
     if (length > 0) {
       switch (domain) {
       case GRN_DB_BOOL:
-        value = *reinterpret_cast<const grn_bool *>(raw_value);
+        value = *reinterpret_cast<const bool *>(raw_value);
         break;
       case GRN_DB_INT8:
         value =
