@@ -8417,7 +8417,7 @@ grn_generator_unpack(grn_ctx *ctx, grn_obj *spec_vector, uint32_t index)
   return generator;
 }
 
-static grn_bool
+static bool
 grn_obj_encoded_spec_equal(grn_ctx *ctx,
                            grn_obj *encoded_spec1,
                            grn_obj *encoded_spec2)
@@ -8425,16 +8425,16 @@ grn_obj_encoded_spec_equal(grn_ctx *ctx,
   unsigned int i, n_elements;
 
   if (encoded_spec1->header.type != GRN_VECTOR) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (encoded_spec1->header.type != encoded_spec2->header.type) {
-    return GRN_FALSE;
+    return false;
   }
 
   n_elements = grn_vector_size(ctx, encoded_spec1);
   if (grn_vector_size(ctx, encoded_spec2) != n_elements) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (i = 0; i < n_elements; i++) {
@@ -8460,20 +8460,20 @@ grn_obj_encoded_spec_equal(grn_ctx *ctx,
                                            &weight2,
                                            &domain2);
     if (content_size1 != content_size2) {
-      return GRN_FALSE;
+      return false;
     }
     if (memcmp(content1, content2, content_size1) != 0) {
-      return GRN_FALSE;
+      return false;
     }
     if (weight1 != weight2) {
-      return GRN_FALSE;
+      return false;
     }
     if (domain1 != domain2) {
-      return GRN_FALSE;
+      return false;
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 void
@@ -8482,7 +8482,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_db *s;
   grn_obj v, *b;
   grn_obj_spec spec;
-  grn_bool need_update = GRN_TRUE;
+  bool need_update = true;
 
   if (obj->id & GRN_OBJ_TMP_OBJECT) {
     return;
