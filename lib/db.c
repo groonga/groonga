@@ -962,7 +962,7 @@ grn_alias_resolve(grn_ctx *ctx,
                   const char *name,
                   int name_size,
                   grn_obj *alias_name_buffer,
-                  grn_bool get_object)
+                  bool get_object)
 {
   grn_db *db;
   grn_obj *alias_table = NULL;
@@ -974,7 +974,7 @@ grn_alias_resolve(grn_ctx *ctx,
     name_size = strlen(name);
   }
 
-  while (GRN_TRUE) {
+  while (true) {
     if (get_object) {
       grn_id id;
 
@@ -1047,7 +1047,7 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
     grn_obj alias_name_buffer;
 
     GRN_TEXT_INIT(&alias_name_buffer, 0);
-    obj = grn_alias_resolve(ctx, name, name_size, &alias_name_buffer, GRN_TRUE);
+    obj = grn_alias_resolve(ctx, name, name_size, &alias_name_buffer, true);
     GRN_OBJ_FIN(ctx, &alias_name_buffer);
   }
   GRN_API_RETURN(obj);
@@ -5373,7 +5373,7 @@ grn_obj_column_(grn_ctx *ctx,
                                    buf,
                                    len + name_size,
                                    &alias_name_buffer,
-                                   GRN_TRUE);
+                                   true);
         if (!column && GRN_TEXT_LEN(&alias_name_buffer) > 0) {
           const size_t delimiter_len = 1;
           const size_t table_name_len = len - delimiter_len;
@@ -6003,14 +6003,14 @@ grn_obj_get_accessor(grn_ctx *ctx,
                      uint32_t name_size)
 {
   grn_accessor *res = NULL, **rp = NULL, **rp0 = NULL;
-  grn_bool is_chained = GRN_FALSE;
+  bool is_chained = false;
   bool obj_is_referred = false;
   if (!obj) {
     return NULL;
   }
   GRN_API_ENTER;
   if (obj->header.type == GRN_ACCESSOR) {
-    is_chained = GRN_TRUE;
+    is_chained = true;
     for (rp0 = (grn_accessor **)&obj; *rp0; rp0 = &(*rp0)->next) {
       res = *rp0;
     }
@@ -7630,7 +7630,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     break;
   case GRN_TABLE_HASH_KEY:
     {
-      grn_bool processed = GRN_FALSE;
+      bool processed = false;
       grn_obj_ensure_bulk(ctx, value);
       value->header.domain = grn_obj_get_range(ctx, obj);
       if (id) {
@@ -7641,7 +7641,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
             grn_id subrec_id;
             if (grn_table_get_subrecs(ctx, obj, id, &subrec_id, NULL, 1) == 1) {
               GRN_RECORD_PUT(ctx, value, subrec_id);
-              processed = GRN_TRUE;
+              processed = true;
             }
           }
           grn_obj_unref(ctx, domain);
