@@ -1609,11 +1609,11 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
   GRN_API_RETURN(matched);
 }
 
-static grn_bool
+static bool
 exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
 {
 #ifdef GRN_SUPPORT_REGEXP
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
   unsigned int i, size;
   OnigRegex regex;
   grn_obj *domain;
@@ -1622,7 +1622,7 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
 
   size = grn_uvector_size(ctx, uvector);
   if (size == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   regex = grn_onigmo_new(ctx,
@@ -1632,13 +1632,13 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
                          GRN_ONIGMO_SYNTAX_DEFAULT,
                          "[operator]");
   if (!regex) {
-    return GRN_FALSE;
+    return false;
   }
 
   domain = grn_ctx_at(ctx, uvector->header.domain);
   if (!domain) {
     onig_free(regex);
-    return GRN_FALSE;
+    return false;
   }
 
   grn_table_get_info(ctx, domain, NULL, NULL, NULL, &normalizer, NULL);
@@ -1691,22 +1691,22 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
 
   return matched;
 #else  /* GRN_SUPPORT_REGEXP */
-  return GRN_FALSE;
+  return false;
 #endif /* GRN_SUPPORT_REGEXP */
 }
 
-static grn_bool
+static bool
 exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 {
 #ifdef GRN_SUPPORT_REGEXP
   grn_obj *normalizer = NULL;
-  grn_bool matched = GRN_FALSE;
+  bool matched = false;
   unsigned int i, size;
   OnigRegex regex;
 
   size = grn_vector_size(ctx, vector);
   if (size == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   regex = grn_onigmo_new(ctx,
@@ -1716,7 +1716,7 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
                          GRN_ONIGMO_SYNTAX_DEFAULT,
                          "[operator]");
   if (!regex) {
-    return GRN_FALSE;
+    return false;
   }
 
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
@@ -1758,7 +1758,7 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 
   return matched;
 #else  /* GRN_SUPPORT_REGEXP */
-  return GRN_FALSE;
+  return false;
 #endif /* GRN_SUPPORT_REGEXP */
 }
 
