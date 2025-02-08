@@ -61,7 +61,7 @@ grn_select_apply_dynamic_columns(grn_ctx *ctx,
                                  const char *log_tag_prefix,
                                  const char *query_log_tag_prefix);
 
-static grn_bool
+static bool
 grn_select_apply_adjuster(grn_ctx *ctx,
                           SelectExecutor *data,
                           grn_raw_string *adjuster_string,
@@ -2584,7 +2584,7 @@ dynamic_columns_tsort_body(grn_ctx *ctx,
                            grn_obj *ids,
                            const char *log_tag_prefix)
 {
-  grn_bool succeeded = GRN_TRUE;
+  bool succeeded = true;
 
   GRN_HASH_EACH_BEGIN(ctx, dynamic_columns, cursor, id)
   {
@@ -3655,7 +3655,7 @@ grn_select_apply_adjuster_execute(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 grn_select_apply_adjuster(grn_ctx *ctx,
                           grn_select_data *data,
                           grn_raw_string *adjuster_string,
@@ -3669,7 +3669,7 @@ grn_select_apply_adjuster(grn_ctx *ctx,
   grn_rc rc;
 
   if (adjuster_string->length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx, target, adjuster, record);
@@ -3680,7 +3680,7 @@ grn_select_apply_adjuster(grn_ctx *ctx,
                      "failed to create expression: %s",
                      log_tag_prefix,
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
   rc = grn_expr_parse(ctx,
@@ -3699,7 +3699,7 @@ grn_select_apply_adjuster(grn_ctx *ctx,
                      "failed to parse: %s",
                      log_tag_prefix,
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
   data->cacheable *= ((grn_expr *)adjuster)->cacheable;
@@ -3714,7 +3714,7 @@ grn_select_apply_adjuster(grn_ctx *ctx,
                 query_log_tag_prefix ? query_log_tag_prefix : "",
                 grn_table_size(ctx, result));
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_bool
@@ -4906,8 +4906,6 @@ namespace {
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE, ":", "select(%d)", nhits);
 
       {
-        grn_bool succeeded;
-
         /* For select results */
         data->output.n_elements = 1;
 
@@ -4943,7 +4941,7 @@ namespace {
           goto exit;
         }
 
-        succeeded = grn_select_output(ctx, data);
+        bool succeeded = grn_select_output(ctx, data);
         if (!succeeded) {
           goto exit;
         }
