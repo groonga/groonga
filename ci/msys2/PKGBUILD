@@ -28,6 +28,7 @@ makedepends=("git"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-rapidjson"
              "${MINGW_PACKAGE_PREFIX}-ruby"
+             "${MINGW_PACKAGE_PREFIX}-simdjson"
              "${MINGW_PACKAGE_PREFIX}-xsimd")
 sha256sums=('SKIP')
 validpgpkeys=('2701F317CFCCCB975CADE9C2624CF77434839225') # Groonga Key <packages@groonga.org>
