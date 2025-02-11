@@ -1913,7 +1913,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   grn_memcpy(entry,
              &(area->entries[area->current_entry--]),
              sizeof(grn_geo_cursor_entry));
-  while (GRN_TRUE) {
+  while (true) {
     grn_geo_cursor_entry next_entry0, next_entry1;
     bool pushed = false;
 
@@ -2159,7 +2159,7 @@ grn_geo_cursor_each(grn_ctx *ctx,
   top_left = &(cursor->top_left);
   bottom_right = &(cursor->bottom_right);
 
-  while (GRN_TRUE) {
+  while (true) {
     if (!pat_cursor) {
       grn_geo_cursor_entry entry;
       grn_geo_point entry_base;
