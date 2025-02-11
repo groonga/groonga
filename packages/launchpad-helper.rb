@@ -33,7 +33,6 @@ module LaunchpadHelper
 
   def ubuntu_targets_default
     [
-      ["focal", "20.04"],
       ["jammy", "22.04"],
       ["noble", "24.04"],
     ]

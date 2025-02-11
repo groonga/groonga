@@ -20,7 +20,7 @@ esac
 architecture=$(dpkg --print-architecture)
 
 case "${distribution}-${code_name}" in
-  debian-bookworm|ubuntu-focal)
+  debian-bookworm)
     # Don't enable the Apache Arrow APT repository because some users
     # such as Zulip don't want to enable the Apache Arrow APT
     # repository for compatibility. We should keep mirroring Apache
