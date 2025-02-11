@@ -3268,7 +3268,7 @@ grn_proc_expr_query_flags_parse(grn_ctx *ctx,
   return flags;
 }
 
-grn_bool
+bool
 grn_proc_select_format_init(grn_ctx *ctx,
                             grn_obj_format *format,
                             grn_obj *result_set,
@@ -3288,7 +3288,7 @@ grn_proc_select_format_init(grn_ctx *ctx,
     grn_obj_format_set_columns(ctx, format, result_set, columns, columns_len);
   if (rc != GRN_SUCCESS) {
     grn_obj_format_fin(ctx, format);
-    return GRN_FALSE;
+    return false;
   }
 
   grn_select_expression_set_condition(ctx, format->expression, condition);
@@ -3444,17 +3444,17 @@ grn_select_output_columns(grn_ctx *ctx,
   return grn_proc_select_output_columns_close(ctx, &format, res);
 }
 
-static grn_bool
+static bool
 grn_select_apply_initial_columns(grn_ctx *ctx, grn_select_data *data)
 {
   if (!data->dynamic_columns.initial) {
-    return GRN_TRUE;
+    return true;
   }
 
   data->tables.initial =
     grn_select_create_all_selected_result_table(ctx, data->tables.target);
   if (!data->tables.initial) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_select_apply_dynamic_columns(ctx,
@@ -3469,7 +3469,7 @@ grn_select_apply_initial_columns(grn_ctx *ctx, grn_select_data *data)
   return ctx->rc == GRN_SUCCESS;
 }
 
-static grn_bool
+static bool
 grn_select_filter(grn_ctx *ctx, grn_select_data *data)
 {
   if (!grn_filter_execute(ctx,
@@ -3479,7 +3479,7 @@ grn_select_filter(grn_ctx *ctx, grn_select_data *data)
                           &(data->dynamic_columns),
                           "[select]",
                           "")) {
-    return GRN_FALSE;
+    return false;
   }
 
   data->tables.result = data->filter.filtered;
@@ -3496,7 +3496,7 @@ grn_select_filter(grn_ctx *ctx, grn_select_data *data)
     }
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_bool
