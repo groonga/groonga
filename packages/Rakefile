@@ -61,10 +61,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
-  def apt_prepare_debian_control(control_in, target)
-    control_in
-  end
-
   def yum_targets_default
     [
       "almalinux-8",
