@@ -43,11 +43,9 @@ apt install -V -y \
   ${repositories_dir}/${distribution}/pool/${code_name}/${component}/*/*/*_{${architecture},all}.deb
 
 groonga --version
-if [ "${distribution}" != "ubuntu" ]; then
-  if ! groonga --version | grep -q apache-arrow; then
-    echo "Apache Arrow isn't enabled"
-    exit 1
-  fi
+if ! groonga --version | grep -q apache-arrow; then
+  echo "Apache Arrow isn't enabled"
+  exit 1
 fi
 
 # There are some problems for running arm64 tests:
