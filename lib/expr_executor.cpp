@@ -2962,7 +2962,7 @@ grn_expr_executor_init_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
   grn_obj_reinit_for(ctx, value_buffer, target);
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
@@ -2971,7 +2971,7 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
   grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
@@ -2979,20 +2979,20 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
   operator_code = &(e->codes[2]);
 
   if (operator_code->op != GRN_OP_MATCH) {
-    return GRN_FALSE;
+    return false;
   }
   if (operator_code->nargs != 2) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!target->value) {
-    return GRN_FALSE;
+    return false;
   }
   if (!(grn_obj_is_key_accessor(ctx, target->value) ||
         grn_obj_is_text_family_scalar_column(ctx, target->value))) {
@@ -3000,10 +3000,10 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
   }
 
   if (sub_text->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (sub_text->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!grn_obj_is_text_family_bulk(ctx, sub_text->value)) {
     return false;
@@ -3011,13 +3011,13 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
 
 #ifdef GRN_SUPPORT_REGEXP
   if (!grn_onigmo_is_valid_encoding(ctx)) {
-    return GRN_FALSE;
+    return false;
   }
 #endif
 
   grn_expr_executor_init_simple_match(ctx, executor);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static bool
