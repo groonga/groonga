@@ -135,8 +135,6 @@ jobs:
           - debian-bookworm-arm64
           - debian-trixie-amd64
           - debian-trixie-arm64
-          - ubuntu-focal-amd64
-          - ubuntu-focal-arm64
           - ubuntu-jammy-amd64
           - ubuntu-jammy-arm64
           - ubuntu-noble-amd64
