@@ -16,14 +16,10 @@
 * GROONGA_DIR=$HOME/work/groonga
 * GROONGA_CLONE_DIR=$HOME/work/groonga/groonga.clean
 * GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org
-* CUTTER_DIR=$HOME/work/cutter
-* CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter
 * APACHE_ARROW_REPOSITORY=$HOME/work/apache/arrow
-* PACKAGES_GROONGA_ORG_REPOSITORY=$HOME/work/groonga/packages.groonga.org
 
 最初の1回だけ行う手順
 **********************
-
 
 ビルド環境の準備
 ----------------
@@ -36,12 +32,6 @@
 .. code-block:: console
 
    $ sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf bison
-
-また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して最新のSphinxをインストールするようにして下さい。
-
-.. code-block:: console
-
-   $ pip3 install --upgrade sphinx
 
 また、rubyのrakeパッケージを以下のコマンドによりインストールします。
 
@@ -106,7 +96,6 @@ Groongaのリリース作業ではリリース専用の環境下(コンパイル
 
 そのため、以降の説明では$GROONGA_DIR以下のディレクトリにリリース用の作業ディレクトリ(groonga.clean)としてソースコードをcloneしたものとして説明します。
 
-
 毎回のリリースで行う手順
 ************************
 
@@ -126,32 +115,25 @@ Groongaのウェブサイトの取得
 
 GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジトリを置いています。
 
-リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
-
-Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。
+リリース作業では後述するコマンド( ``rake release:version:update`` )でタグをプッシュしてCIが動き出すトリガーとします。
 
 .. code-block:: console
 
-   $ git clone git@github.com:groonga/groonga.org.git
+   $ git clone git@github.com:groonga/groonga.org.git ${GROONGA_ORG_PATH}
 
 これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。
 
-CMakeの実行
------------
+Apache Arrowリポジトリの取得
+----------------------------
+
+Apache Arrowのウェブサイトのソースも取得します。Apache ArrowのRakeタスクを利用するためです。
 
 .. code-block:: console
 
-   $ mkdir -p build-dir/groonga
-   $ cmake -S $GROONGA_CLONE_DIR -B build-dir/groonga --preset=doc --fresh -DCMAKE_INSTALL_PREFIX="/tmp/local"
-   $ cmake --build build-dir/groonga
+   $ git clone https://github.com/apache/arrow.git ${APACHE_ARROW_REPOSITORY}
 
-また、あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
-
-ログイン可能であるかの確認は以下のようにコマンドを実行して行います。
-
-.. code-block:: console
-
-   $ ssh packages@packages.groonga.org
+事前確認
+--------
 
 Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-nightly` の手順で不安定版のリポジトリにアップロードするように指定します。
 
@@ -182,24 +164,46 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 
 * 内部的な変更(変数名の変更やらリファクタリング)
 
-rake release:version:updateの実行
----------------------------------
+``rake release`` の実行
+-----------------------
 
-``rake release:version:update`` コマンドでは、 ``OLD_RELEASE`` に前回のバージョンを、 ``GROONGA_ORG_DIR`` にGroongaのWebサイトのディレクトリーを、 ``NEW_RELEASE_DATE`` に次回リリースの日付（未来の日付）を指定します。
+``rake release`` コマンドでは、 ``NEW_RELEASE_DATE`` にリリースの日付（≒ 実行日）を指定します。
 
 .. code-block:: console
 
-   $ cd $GROONGA_CLONE_DIR
-   $ rake release:version:update OLD_RELEASE=14.0.9 GROONGA_ORG_DIR=../groonga.org OLD_RELEASE_DATE=2024-09-27 NEW_RELEASE_DATE=2024-11-05
+   $ cd ${GROONGA_CLONE_DIR}
+   $ rake release NEW_RELEASE_DATE=$(date +%Y-%m-%d)
 
-これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
+``release`` タスクは次の3つのタスクを実行します。
+
+1. ``release:version:update``
+
+   - RPMパッケージのspecファイルのバージョン表記などを更新します。
+
+2. ``release:tag``
+
+   - リリース用のタグを打ちます。
+
+   - これによりタグがプッシュされ自動リリースが動き出します。
+
+3. ``dev:version:bump``
+
+   - 次のリリースに向けてバージョンを更新します。
+
+補足: ``dev:version:bump`` タスク
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``rake dev:version:bump NEW_VERSION=x.x.x`` のようにバージョンを指定して更新できます。
+
+.. note::
+   base_versionはtar.gzなどのリリース用のファイル名で使用します。
 
 .. _build-for-ubuntu-nightly:
 
 Ubuntu向けパッケージのビルド確認
 --------------------------------
 
-Ubuntu向けのパッケージは、LaunchPadでビルドしています。
+Ubuntu向けのパッケージは、Launchpadでビルドしています。
 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。
 
 ``rake release:version:update`` の結果をリポジトリーにpush後にGitHub Actionsで生成されるソースアーカイブをダウンロードします。
@@ -217,65 +221,9 @@ Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 タグを設定してから問題が発覚すると、再度リリースすることになってしまうので、タグを設定する前に問題がないか確認します。
 
 * `GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow%3APackage>`_
-* `LaunchPad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_
+* `Launchpad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_
 
 テストやパッケージの作成に失敗していたら、原因を特定して修正します。
-
-リリースタグの設定
-------------------
-
-リリース用のタグを打つには以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ rake release:tag
-
-リリース用アーカイブファイルの作成とアップロード
-------------------------------------------------
-
-Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。
-生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
-
-タグを設定すると、GitHub Actionsで自動生成されます。
-GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。
-
-.. code-block:: console
-
-   $ cd packages
-   $ rake source GITHUB_ACCESS_TOKEN=...
-
-これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz
-にダウンロードし packages.groonga.org へアップロードします。
-
-パッケージのビルドとアップロード
---------------------------------
-
-パッケージングは以下の3種類を対象に行います。
-Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成されます。
-
-* Debian系(.deb)
-* Red Hat系(.rpm)
-* Windows系(.exe,.zip)
-
-Debian系パッケージのビルドとアップロード
-----------------------------------------
-
-タグを設定すると、GitHub Actionsで自動生成されます。
-
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。
-
-.. code-block:: console
-
-   $ cd packages
-   $ rake apt
-
-この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ rake apt
-
-上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
 Ubuntu用パッケージのアップロード
 --------------------------------
@@ -302,40 +250,6 @@ Ubuntu用パッケージの公開の取り消し
 
 LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある「View package details」リンクの先で「Delete packages」リンクを辿ると、アップロード済みパッケージを削除できます。
 例；[不安定版リポジトリのパッケージの削除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-packages)。
-
-
-Red Hat系パッケージのビルドとアップロード
------------------------------------------
-
-タグを設定すると、GitHub Actionsで自動生成されます。
-
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。
-
-.. code-block:: console
-
-   $ cd packages
-   $ rake yum
-
-この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ rake yum
-
-上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
-
-Windows用パッケージのビルドとアップロード
------------------------------------------
-
-タグを設定すると、GitHub Actionsで自動生成されます。
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。
-
-.. code-block:: console
-
-   $ cd packages
-   $ rake windows
-
-packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。
 
 WindowsのMSYS2用パッケージのアップロード
 ----------------------------------------
@@ -384,6 +298,16 @@ forkしたリポジトリにて、pushされたブランチのGitHub Actionsが�
   https://github.com/msys2/MINGW-packages/pull/14320
 
 プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。
+
+ドキュメントの更新
+------------------
+
+``groonga.org`` リポジトリにて次のタスクを実行します。そうすることでタグがプッシュされCIにてドキュメントが更新されます。
+
+.. code-block:: console
+
+   $ cd ${GROONGA_ORG_PATH}
+   $ rake release:version:update
 
 Dockerイメージの更新
 --------------------
@@ -441,70 +365,6 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
 
 後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
 
-BloGroonga(ブログ)の更新
-------------------------
-
-https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されているリリース案内を作成します。
-
-基本的にはリリースアナウンスの内容をそのまま記載します。
-
-cloneしたWebサイトのソースに対して以下のファイルを新規追加します。
-
-* groonga.org/en/_post/(リリース日)-release.md
-* groonga.org/ja/_post/(リリース日)-release.md
-
-
-編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパーサー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
-インストールするには以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ sudo gem install jekyll jekyll-paginate RedCloth rdiscount therubyracer
-
-jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。
-
-.. code-block:: console
-
-   $ jekyll serve --watch
-
-あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。
-
-.. note::
-   記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定します。
-
-   .. code-block:: markdown
-    
-      ---
-      layout: post.en
-      title: Groonga 2.0.5 has been released
-      published: false
-      ---
-
-
-ドキュメントのアップロード
---------------------------
-
-doc/source以下のドキュメントを更新、翻訳まで完了している状態で、ドキュメントのアップロード作業を行います。
-
-そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ cmake -S . -B ../groonga.doc --preset=doc --fresh
-   $ rake release:document:update BUILD_DIR=../groonga.doc GROONGA_ORG_DIR=../groonga.org
-
-これで、 ``groonga.org`` の ``docs/`` と ``ja/docs`` 以下に更新したドキュメントがコピーされます。
-
-生成されているドキュメントに問題のないことを確認できたら、コミット、pushして ``groonga.org`` へと反映します。
-
-また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。
-
-.. code-block:: console
-
-    groonga_version: x.x.x
-    groonga_release_date: xxxx-xx-xx
-
-
 Homebrewの更新
 --------------
 
@@ -553,30 +413,8 @@ Groongaグループのメンバーになると、個人のアカウントでは�
 
 以上でリリース作業は終了です。
 
-リリース後にやること
---------------------
-
-リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。
-
-* Groonga のbase_versionの更新
-
-Groonga バージョン更新
-~~~~~~~~~~~~~~~~~~~~~~
-
-$GROONGA_CLONE_DIRにて以下のコマンドを実行します。
-
-.. code-block:: console
-
-   $ rake dev:version:bump NEW_VERSION=x.x.x
-
-これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。
-
-.. note::
-   base_versionはtar.gzなどのリリース用のファイル名で使用します。
-
 パッケージの署名用のパスフレーズを知りたい
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 パッケージの署名に必要な秘密鍵のパスフレーズについては
 リリース担当者向けの秘密鍵を復号したテキストの1行目に記載してあります。
-

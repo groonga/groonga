@@ -43,16 +43,7 @@ msgstr ""
 msgid "GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org"
 msgstr ""
 
-msgid "CUTTER_DIR=$HOME/work/cutter"
-msgstr ""
-
-msgid "CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter"
-msgstr ""
-
 msgid "APACHE_ARROW_REPOSITORY=$HOME/work/apache/arrow"
-msgstr ""
-
-msgid "PACKAGES_GROONGA_ORG_REPOSITORY=$HOME/work/groonga/packages.groonga.org"
 msgstr ""
 
 msgid "最初の1回だけ行う手順"
@@ -65,9 +56,6 @@ msgid "以下にGroongaのリリース作業を行うために事前にインス
 msgstr ""
 
 msgid "なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。"
-msgstr ""
-
-msgid "また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して最新のSphinxをインストールするようにして下さい。"
 msgstr ""
 
 msgid "また、rubyのrakeパッケージを以下のコマンドによりインストールします。"
@@ -136,22 +124,19 @@ msgstr ""
 msgid "GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジトリを置いています。"
 msgstr ""
 
-msgid "リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。"
-msgstr ""
-
-msgid "Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。"
+msgid "リリース作業では後述するコマンド( ``rake release:version:update`` )でタグをプッシュしてCIが動き出すトリガーとします。"
 msgstr ""
 
 msgid "これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。"
 msgstr ""
 
-msgid "CMakeの実行"
+msgid "Apache Arrowリポジトリの取得"
 msgstr ""
 
-msgid "また、あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。"
+msgid "Apache Arrowのウェブサイトのソースも取得します。Apache ArrowのRakeタスクを利用するためです。"
 msgstr ""
 
-msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。"
+msgid "事前確認"
 msgstr ""
 
 msgid "Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-nightly` の手順で不安定版のリポジトリにアップロードするように指定します。"
@@ -190,19 +175,49 @@ msgstr ""
 msgid "内部的な変更(変数名の変更やらリファクタリング)"
 msgstr ""
 
-msgid "rake release:version:updateの実行"
+msgid "``rake release`` の実行"
 msgstr ""
 
-msgid "``rake release:version:update`` コマンドでは、 ``OLD_RELEASE`` に前回のバージョンを、 ``GROONGA_ORG_DIR`` にGroongaのWebサイトのディレクトリーを、 ``NEW_RELEASE_DATE`` に次回リリースの日付（未来の日付）を指定します。"
+msgid "``rake release`` コマンドでは、 ``NEW_RELEASE_DATE`` にリリースの日付（≒ 実行日）を指定します。"
 msgstr ""
 
-msgid "これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。"
+msgid "``release`` タスクは次の3つのタスクを実行します。"
+msgstr ""
+
+msgid "``release:version:update``"
+msgstr ""
+
+msgid "RPMパッケージのspecファイルのバージョン表記などを更新します。"
+msgstr ""
+
+msgid "``release:tag``"
+msgstr ""
+
+msgid "リリース用のタグを打ちます。"
+msgstr ""
+
+msgid "これによりタグがプッシュされ自動リリースが動き出します。"
+msgstr ""
+
+msgid "``dev:version:bump``"
+msgstr ""
+
+msgid "次のリリースに向けてバージョンを更新します。"
+msgstr ""
+
+msgid "補足: ``dev:version:bump`` タスク"
+msgstr ""
+
+msgid "``rake dev:version:bump NEW_VERSION=x.x.x`` のようにバージョンを指定して更新できます。"
+msgstr ""
+
+msgid "base_versionはtar.gzなどのリリース用のファイル名で使用します。"
 msgstr ""
 
 msgid "Ubuntu向けパッケージのビルド確認"
 msgstr ""
 
-msgid "Ubuntu向けのパッケージは、LaunchPadでビルドしています。 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。"
+msgid "Ubuntu向けのパッケージは、Launchpadでビルドしています。 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。"
 msgstr ""
 
 msgid "``rake release:version:update`` の結果をリポジトリーにpush後にGitHub Actionsで生成されるソースアーカイブをダウンロードします。 ダウンロードしたソースアーカイブを ``$GROONGA_CLONE_DIR`` のトップに配置します。その後、以下のコマンドを実行してください。"
@@ -217,58 +232,10 @@ msgstr ""
 msgid "`GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow%3APackage>`_"
 msgstr ""
 
-msgid "`LaunchPad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_"
+msgid "`Launchpad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_"
 msgstr ""
 
 msgid "テストやパッケージの作成に失敗していたら、原因を特定して修正します。"
-msgstr ""
-
-msgid "リリースタグの設定"
-msgstr ""
-
-msgid "リリース用のタグを打つには以下のコマンドを実行します。"
-msgstr ""
-
-msgid "リリース用アーカイブファイルの作成とアップロード"
-msgstr ""
-
-msgid "Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。 生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。"
-msgstr ""
-
-msgid "タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。"
-msgstr ""
-
-msgid "これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz にダウンロードし packages.groonga.org へアップロードします。"
-msgstr ""
-
-msgid "パッケージのビルドとアップロード"
-msgstr ""
-
-msgid "パッケージングは以下の3種類を対象に行います。 Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成されます。"
-msgstr ""
-
-msgid "Debian系(.deb)"
-msgstr ""
-
-msgid "Red Hat系(.rpm)"
-msgstr ""
-
-msgid "Windows系(.exe,.zip)"
-msgstr ""
-
-msgid "Debian系パッケージのビルドとアップロード"
-msgstr ""
-
-msgid "タグを設定すると、GitHub Actionsで自動生成されます。"
-msgstr ""
-
-msgid "GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。"
-msgstr ""
-
-msgid "この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。"
-msgstr ""
-
-msgid "上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。"
 msgstr ""
 
 msgid "Ubuntu用パッケージのアップロード"
@@ -290,21 +257,6 @@ msgid "Ubuntu用パッケージの公開の取り消し"
 msgstr ""
 
 msgid "LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある「View package details」リンクの先で「Delete packages」リンクを辿ると、アップロード済みパッケージを削除できます。 例；[不安定版リポジトリのパッケージの削除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-packages)。"
-msgstr ""
-
-msgid "Red Hat系パッケージのビルドとアップロード"
-msgstr ""
-
-msgid "この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。"
-msgstr ""
-
-msgid "Windows用パッケージのビルドとアップロード"
-msgstr ""
-
-msgid "タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。"
-msgstr ""
-
-msgid "packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。"
 msgstr ""
 
 msgid "WindowsのMSYS2用パッケージのアップロード"
@@ -362,6 +314,12 @@ msgid "https://github.com/msys2/MINGW-packages/pull/14320"
 msgstr ""
 
 msgid "プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。"
+msgstr ""
+
+msgid "ドキュメントの更新"
+msgstr ""
+
+msgid "``groonga.org`` リポジトリにて次のタスクを実行します。そうすることでタグがプッシュされCIにてドキュメントが更新されます。"
 msgstr ""
 
 msgid "Dockerイメージの更新"
@@ -430,54 +388,6 @@ msgstr ""
 msgid "後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。"
 msgstr ""
 
-msgid "BloGroonga(ブログ)の更新"
-msgstr ""
-
-msgid "https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されているリリース案内を作成します。"
-msgstr ""
-
-msgid "基本的にはリリースアナウンスの内容をそのまま記載します。"
-msgstr ""
-
-msgid "cloneしたWebサイトのソースに対して以下のファイルを新規追加します。"
-msgstr ""
-
-msgid "groonga.org/en/_post/(リリース日)-release.md"
-msgstr ""
-
-msgid "groonga.org/ja/_post/(リリース日)-release.md"
-msgstr ""
-
-msgid "編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパーサー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。 インストールするには以下のコマンドを実行します。"
-msgstr ""
-
-msgid "jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。"
-msgstr ""
-
-msgid "あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。"
-msgstr ""
-
-msgid "記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定します。"
-msgstr ""
-
-msgid "ドキュメントのアップロード"
-msgstr ""
-
-msgid "doc/source以下のドキュメントを更新、翻訳まで完了している状態で、ドキュメントのアップロード作業を行います。"
-msgstr ""
-
-msgid "そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。"
-msgstr ""
-
-msgid "これで、 ``groonga.org`` の ``docs/`` と ``ja/docs`` 以下に更新したドキュメントがコピーされます。"
-msgstr ""
-
-msgid "生成されているドキュメントに問題のないことを確認できたら、コミット、pushして ``groonga.org`` へと反映します。"
-msgstr ""
-
-msgid "また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。"
-msgstr ""
-
 msgid "Homebrewの更新"
 msgstr ""
 
@@ -539,27 +449,6 @@ msgid "Groongaグループのメンバーになると、個人のアカウント
 msgstr ""
 
 msgid "以上でリリース作業は終了です。"
-msgstr ""
-
-msgid "リリース後にやること"
-msgstr ""
-
-msgid "リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。"
-msgstr ""
-
-msgid "Groonga のbase_versionの更新"
-msgstr ""
-
-msgid "Groonga バージョン更新"
-msgstr ""
-
-msgid "$GROONGA_CLONE_DIRにて以下のコマンドを実行します。"
-msgstr ""
-
-msgid "これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。"
-msgstr ""
-
-msgid "base_versionはtar.gzなどのリリース用のファイル名で使用します。"
 msgstr ""
 
 msgid "パッケージの署名用のパスフレーズを知りたい"
