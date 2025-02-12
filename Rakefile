@@ -19,6 +19,8 @@
 require "open-uri"
 require "tmpdir"
 
+BASE_VERSION = File.read(File.join(__dir__, "base_version"))
+
 def sh_capture_output(*command_line)
   IO.pipe do |read, write|
     output = nil
@@ -37,7 +39,7 @@ def package
 end
 
 def version
-  ENV["VERSION"] || File.read("base_version")
+  ENV["VERSION"] || BASE_VERSION
 end
 
 def base_name
@@ -65,8 +67,6 @@ end
 def git_user_email
   sh_capture_output("git", "config", "--get", "user.email").chomp
 end
-
-version = File.read(File.join(__dir__, "base_version"))
 
 namespace :dev do
   namespace :version do
