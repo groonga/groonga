@@ -126,7 +126,7 @@ GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジト
 Apache Arrowリポジトリの取得
 ----------------------------
 
-Apache Arrowのウェブサイトのソースも取得します。Apache ArrowのRakeタスクを利用するためです。
+Apache Arrowのソースも取得します。Apache ArrowのRakeタスクを利用するためです。
 
 .. code-block:: console
 
@@ -178,7 +178,7 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 
 1. ``release:version:update``
 
-   - RPMパッケージのspecファイルのバージョン表記などを更新します。
+   - RPMパッケージのspecファイルに新しいバージョンのチェンジログを追記したりなどします。
 
 2. ``release:tag``
 

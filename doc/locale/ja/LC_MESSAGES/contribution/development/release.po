@@ -133,7 +133,7 @@ msgstr ""
 msgid "Apache Arrowリポジトリの取得"
 msgstr ""
 
-msgid "Apache Arrowのウェブサイトのソースも取得します。Apache ArrowのRakeタスクを利用するためです。"
+msgid "Apache Arrowのソースも取得します。Apache ArrowのRakeタスクを利用するためです。"
 msgstr ""
 
 msgid "事前確認"
@@ -187,7 +187,7 @@ msgstr ""
 msgid "``release:version:update``"
 msgstr ""
 
-msgid "RPMパッケージのspecファイルのバージョン表記などを更新します。"
+msgid "RPMパッケージのspecファイルに新しいバージョンのチェンジログを追記したりなどします。"
 msgstr ""
 
 msgid "``release:tag``"
