@@ -222,6 +222,13 @@ namespace :release do
   end
 end
 
+desc "Run release tasks"
+task :release do
+  Rake::Task["release:version:update"].invoke
+  Rake::Task["release:tag"].invoke
+  Rake::Task["dev:version:bump"].invoke
+end
+
 namespace :nfkc do
   icu_version = ENV["ICU_VERSION"] || ""
   icu_version_hyphen = icu_version.gsub(".", "-")
