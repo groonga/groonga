@@ -52,7 +52,7 @@ msgstr "サポートしているUbuntuのバージョンは次の通りです。
 msgid "22.04 LTS Jammy Jellyfish"
 msgstr ""
 
-msgid "23.04 Lunar Lobster"
+msgid "24.04 LTS Noble Numbat"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga:"
