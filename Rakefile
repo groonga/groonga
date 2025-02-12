@@ -72,7 +72,7 @@ namespace :dev do
   namespace :version do
     desc "Bump version for new development"
     task :bump do
-      File.write("base_version", env_var("NEW_VERSION"))
+      File.write("base_version", env_var("NEW_VERSION", version.succ))
     end
   end
 
