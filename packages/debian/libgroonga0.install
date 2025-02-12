@@ -1,6 +1,5 @@
 etc/groonga/synonyms.tsv
 usr/lib/*/groonga/ggml/*
-usr/lib/*/groonga/scripts/*
 usr/lib/*/groonga/plugins/functions/index_column.*
 usr/lib/*/groonga/plugins/functions/language_model.*
 usr/lib/*/groonga/plugins/functions/math.*
@@ -13,6 +12,7 @@ usr/lib/*/groonga/plugins/ruby/*
 usr/lib/*/groonga/plugins/sharding.rb
 usr/lib/*/groonga/plugins/sharding/*
 usr/lib/*/groonga/plugins/token_filters/stop_word*
+usr/lib/*/groonga/scripts/*
 usr/lib/*/libgroonga*.so.*
 usr/share/groonga/COPYING
 usr/share/groonga/README.md
