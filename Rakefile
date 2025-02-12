@@ -72,7 +72,11 @@ namespace :dev do
   namespace :version do
     desc "Bump version for new development"
     task :bump do
-      File.write("base_version", env_var("NEW_VERSION", version.succ))
+      next_version = env_var("NEW_VERSION", version.succ)
+      File.write("base_version", next_version)
+      sh("git", "add", "base_version")
+      sh("git", "commit", "-m", "Start #{next_version}")
+      sh("git", "push")
     end
   end
 
@@ -213,6 +217,13 @@ namespace :release do
     sh("git", "push", "origin", "v#{version}")
   end
 end
+
+desc "Release"
+task release: [
+  "release:version:update",
+  "release:tag",
+  "dev:version:bump"
+]
 
 namespace :nfkc do
   icu_version = ENV["ICU_VERSION"] || ""
