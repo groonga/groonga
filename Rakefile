@@ -73,13 +73,8 @@ namespace :dev do
     desc "Bump version for new development"
     task :bump do
       File.write("base_version", env_var("NEW_VERSION", version.succ))
-      sh("git",
-         "add",
-         "base_version")
-      sh("git",
-         "commit",
-         "-m",
-         "Start #{version}")
+      sh("git", "add", "base_version")
+      sh("git", "commit", "-m", "Start #{version}")
       sh("git", "push")
     end
   end
@@ -222,12 +217,12 @@ namespace :release do
   end
 end
 
-desc "Run release tasks"
-task :release do
-  Rake::Task["release:version:update"].invoke
-  Rake::Task["release:tag"].invoke
-  Rake::Task["dev:version:bump"].invoke
-end
+desc "Release"
+task release: [
+  "release:version:update",
+  "release:tag",
+  "dev:version:bump"
+]
 
 namespace :nfkc do
   icu_version = ENV["ICU_VERSION"] || ""
