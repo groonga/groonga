@@ -72,8 +72,8 @@ namespace :dev do
   namespace :version do
     desc "Bump version for new development"
     task :bump do
-      next_version = version.succ
-      File.write("base_version", env_var("NEW_VERSION", next_version))
+      next_version = env_var("NEW_VERSION", version.succ)
+      File.write("base_version", next_version)
       sh("git", "add", "base_version")
       sh("git", "commit", "-m", "Start #{next_version}")
       sh("git", "push")
