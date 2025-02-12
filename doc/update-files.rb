@@ -74,6 +74,7 @@ File.open(File.join(source_dir, "files.am"), "w") do |output|
     Find.find("html") do |path|
       next unless File.file?(path)
       next if path == "html/.buildinfo"
+      next if path == "html/.buildinfo.bak"
       html_files << path
     end
     html_files.sort!
@@ -110,6 +111,7 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
       path = path.delete_prefix("./")
       next unless File.file?(path)
       next if path == ".buildinfo"
+      next if path == ".buildinfo.bak"
       html_files << path
     end
     html_files.sort!
