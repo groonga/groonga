@@ -73,15 +73,15 @@ namespace :dev do
     desc "Bump version for new development"
     task :bump do
       File.write("base_version", env_var("NEW_VERSION", version.succ))
+      sh("git",
+         "add",
+         "base_version")
+      sh("git",
+         "commit",
+         "-m",
+         "Start #{version}")
+      sh("git", "push")
     end
-    sh("git",
-       "add",
-       "base_version")
-    sh("git",
-       "commit",
-       "-m",
-       "Start #{version}")
-    sh("git", "push")
   end
 
   namespace :mruby do
