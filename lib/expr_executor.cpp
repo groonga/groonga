@@ -2120,12 +2120,12 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        grn_bool is_true;
+        bool is_true = false;
         CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (!grn_obj_is_true(ctx, x) || grn_obj_is_true(ctx, y)) {
-          is_true = GRN_FALSE;
+          is_true = false;
         } else {
-          is_true = GRN_TRUE;
+          is_true = true;
         }
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, is_true);
@@ -2180,7 +2180,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        grn_bool matched;
+        bool matched = false;
         CHECK(pop1(ctx, data, y));
         CHECK(pop1(ctx, data, x));
         with_spsave(ctx, data, [&]() {
@@ -2196,13 +2196,13 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
       {
         grn_obj *x = NULL;
         grn_obj *y = NULL;
-        grn_bool matched = GRN_FALSE;
+        bool matched = false;
         CHECK(pop2alloc1(ctx, data, x, y, data.res));
         if (GRN_TEXT_LEN(x) >= GRN_TEXT_LEN(y) &&
             !memcmp(GRN_TEXT_VALUE(x) + GRN_TEXT_LEN(x) - GRN_TEXT_LEN(y),
                     GRN_TEXT_VALUE(y),
                     GRN_TEXT_LEN(y))) {
-          matched = GRN_TRUE;
+          matched = true;
         }
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
         GRN_BOOL_SET(ctx, data.res, matched);
@@ -2552,7 +2552,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_NOT:
       {
         grn_obj *value = NULL;
-        grn_bool value_boolean;
+        bool value_boolean = false;
         CHECK(pop1alloc1(ctx, data, value, data.res));
         GRN_OBJ_IS_TRUE(ctx, value, value_boolean);
         grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
