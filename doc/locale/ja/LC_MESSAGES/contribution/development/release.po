@@ -391,18 +391,6 @@ msgstr ""
 msgid "上記URLを参照するとわかるようにソースアーカイブのurlとsha1チェックサムを更新します。"
 msgstr ""
 
-msgid "リリースアナウンス"
-msgstr ""
-
-msgid "作成したリリースアナウンスをメーリングリストへと流します。"
-msgstr ""
-
-msgid "groonga-dev groonga-dev@lists.osdn.me"
-msgstr ""
-
-msgid "Groonga-talk groonga-talk@lists.sourceforge.net"
-msgstr ""
-
 msgid "Twitterでリリースアナウンスをする"
 msgstr ""
 
