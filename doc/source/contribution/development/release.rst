@@ -343,14 +343,6 @@ Groonga 3.0.6のときは以下のように更新してpull requestを送りま�
 
 上記URLを参照するとわかるようにソースアーカイブのurlとsha1チェックサムを更新します。
 
-リリースアナウンス
-------------------
-
-作成したリリースアナウンスをメーリングリストへと流します。
-
-* groonga-dev groonga-dev@lists.osdn.me
-* Groonga-talk groonga-talk@lists.sourceforge.net
-
 Twitterでリリースアナウンスをする
 ---------------------------------
 
