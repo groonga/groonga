@@ -3499,18 +3499,18 @@ grn_select_filter(grn_ctx *ctx, grn_select_data *data)
   return true;
 }
 
-static grn_bool
+static bool
 grn_select_apply_filtered_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
 {
   if (!data->dynamic_columns.filtered) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (data->tables.result == data->tables.initial) {
     data->tables.result =
       grn_select_create_all_selected_result_table(ctx, data->tables.initial);
     if (!data->tables.result) {
-      return GRN_FALSE;
+      return false;
     }
   }
 
@@ -3717,7 +3717,7 @@ grn_select_apply_adjuster(grn_ctx *ctx,
   return true;
 }
 
-static grn_bool
+static bool
 grn_select_apply_scorer(grn_ctx *ctx, grn_select_data *data)
 {
   grn_obj *scorer;
@@ -3725,7 +3725,7 @@ grn_select_apply_scorer(grn_ctx *ctx, grn_select_data *data)
   grn_rc rc = GRN_SUCCESS;
 
   if (data->scorer.length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, scorer, record);
@@ -3735,7 +3735,7 @@ grn_select_apply_scorer(grn_ctx *ctx, grn_select_data *data)
                      "[select][scorer] "
                      "failed to create expression: %s",
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
   rc = grn_expr_parse(ctx,
@@ -3753,7 +3753,7 @@ grn_select_apply_scorer(grn_ctx *ctx, grn_select_data *data)
                      "[select][scorer] "
                      "failed to parse: %s",
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
   data->cacheable *= ((grn_expr *)scorer)->cacheable;
@@ -4005,11 +4005,11 @@ exit:
   return ctx->rc == GRN_SUCCESS;
 }
 
-static grn_bool
+static bool
 grn_select_apply_output_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
 {
   if (!data->dynamic_columns.output) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (!data->tables.sorted) {
@@ -4018,7 +4018,7 @@ grn_select_apply_output_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
                                                   data,
                                                   data->tables.result);
     if (!data->tables.sorted) {
-      return GRN_FALSE;
+      return false;
     }
   }
 
