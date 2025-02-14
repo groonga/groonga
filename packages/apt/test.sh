@@ -57,13 +57,6 @@ fi
 mkdir -p /test
 cd /test
 cp -a /groonga/test/command ./
-if [ "${architecture}" = "arm64" ]; then
-  # Float32 value format is different.
-  rm command/suite/tokenizers/document_vector_bm25/alphabet.test
-  rm command/suite/tokenizers/document_vector_bm25/reindex.test
-  rm command/suite/tokenizers/document_vector_bm25/token_column.test
-  rm command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon.test
-fi
 
 apt install -V -y \
   gcc \
