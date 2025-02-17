@@ -3379,7 +3379,7 @@ grn_proc_select_output_columns(grn_ctx *ctx,
   return grn_proc_select_output_columns_close(ctx, &format, res);
 }
 
-static grn_bool
+static bool
 grn_select_output_columns_open(grn_ctx *ctx,
                                grn_select_data *data,
                                grn_obj_format *format,
@@ -3402,7 +3402,7 @@ grn_select_output_columns_open(grn_ctx *ctx,
                                            columns_len,
                                            condition,
                                            n_additional_elements)) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (format->expression) {
@@ -3410,7 +3410,7 @@ grn_select_output_columns_open(grn_ctx *ctx,
     data->taintable += ((grn_expr *)format->expression)->taintable;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static bool
@@ -4034,13 +4034,13 @@ grn_select_apply_output_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
   return ctx->rc == GRN_SUCCESS;
 }
 
-static grn_bool
+static bool
 grn_select_output_match_open(grn_ctx *ctx,
                              grn_select_data *data,
                              grn_obj_format *format,
                              uint32_t n_additional_elements)
 {
-  grn_bool succeeded = GRN_TRUE;
+  bool succeeded = true;
   int offset;
   grn_obj *output_table;
 
@@ -4087,7 +4087,7 @@ grn_select_output_match_close(grn_ctx *ctx,
   return grn_proc_select_output_columns_close(ctx, format, output_table);
 }
 
-static grn_bool
+static bool
 grn_select_output_match(grn_ctx *ctx, grn_select_data *data)
 {
   grn_obj_format format;
@@ -4097,7 +4097,7 @@ grn_select_output_match(grn_ctx *ctx, grn_select_data *data)
                                     data,
                                     &format,
                                     n_additional_elements)) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_select_output_match_close(ctx, data, &format);
@@ -4487,7 +4487,7 @@ grn_select_data_output_drilldowns(grn_ctx *ctx, grn_select_data *data)
                                       "");
 }
 
-static grn_bool
+static bool
 grn_select_output(grn_ctx *ctx, grn_select_data *data)
 {
   bool succeeded = true;
@@ -4521,7 +4521,7 @@ grn_select_output(grn_ctx *ctx, grn_select_data *data)
         succeeded = grn_select_data_output_drilldowns(ctx, data);
       }
       if (!grn_select_output_match_close(ctx, data, &format)) {
-        succeeded = GRN_FALSE;
+        succeeded = false;
       }
     }
   }
