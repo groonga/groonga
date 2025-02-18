@@ -3358,7 +3358,7 @@ grn_expr_executor_fin_simple_proc(grn_ctx *ctx, grn_expr_executor *executor)
   grn_expr_executor_data_simple_proc_fin(ctx, executor, data);
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
                                                grn_expr_executor *executor)
 {
@@ -3368,14 +3368,14 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   grn_expr_code *operator_code;
   grn_id target_range;
   grn_id constant_range;
-  grn_bool constant_value_is_int = GRN_TRUE;
+  bool constant_value_is_int = true;
   int64_t constant_value_int = 0;
   uint64_t constant_value_uint = 0;
-  grn_bool constant_always_over = GRN_FALSE;
-  grn_bool constant_always_under = GRN_FALSE;
+  bool constant_always_over = false;
+  bool constant_always_under = false;
 
   if (e->codes_curr != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
@@ -3391,50 +3391,50 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   case GRN_OP_GREATER_EQUAL:
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
   if (operator_code->nargs != 2) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->value->header.type != GRN_COLUMN_FIX_SIZE) {
-    return GRN_FALSE;
+    return false;
   }
 
   target_range = grn_obj_get_range(ctx, target->value);
   if (!(GRN_DB_INT8 <= target_range && target_range <= GRN_DB_UINT64)) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (constant->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (constant->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!constant->value) {
-    return GRN_FALSE;
+    return false;
   }
   if (constant->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
+    return false;
   }
   constant_range = constant->value->header.domain;
   if (!(GRN_DB_INT8 <= constant_range && constant_range <= GRN_DB_UINT64)) {
-    return GRN_FALSE;
+    return false;
   }
 
 #define CASE_INT(N)                                                            \
-  GRN_DB_INT##N : constant_value_is_int = GRN_TRUE;                            \
+  GRN_DB_INT##N : constant_value_is_int = true;                                \
   constant_value_int = GRN_INT##N##_VALUE(constant->value);                    \
   break
 #define CASE_UINT(N)                                                           \
-  GRN_DB_UINT##N : constant_value_is_int = GRN_FALSE;                          \
+  GRN_DB_UINT##N : constant_value_is_int = false;                              \
   constant_value_uint = GRN_UINT##N##_VALUE(constant->value);                  \
   break
 
@@ -3442,7 +3442,7 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   case CASE_INT(8); case CASE_UINT(8); case CASE_INT(16); case CASE_UINT(16);
     case CASE_INT(32); case CASE_UINT(32); case CASE_INT(64);
     case CASE_UINT(64); default:
-    return GRN_FALSE;
+    return false;
   }
 
 #undef CASE_INT
@@ -3452,15 +3452,15 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   GRN_DB_INT##N : if (constant_value_is_int)                                   \
   {                                                                            \
     if (constant_value_int > INT##N##_MAX) {                                   \
-      constant_always_over = GRN_TRUE;                                         \
+      constant_always_over = true;                                             \
     } else if (constant_value_int < INT##N##_MIN) {                            \
-      constant_always_under = GRN_TRUE;                                        \
+      constant_always_under = true;                                            \
     }                                                                          \
   }                                                                            \
   else                                                                         \
   {                                                                            \
     if (constant_value_uint > INT##N##_MAX) {                                  \
-      constant_always_over = GRN_TRUE;                                         \
+      constant_always_over = true;                                             \
     }                                                                          \
   }                                                                            \
   break
@@ -3470,13 +3470,13 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
     if (constant_value_int > UINT##N##_MAX) {                                  \
       constant_always_over = GRN_TRUE;                                         \
     } else if (constant_value_int < 0) {                                       \
-      constant_always_under = GRN_TRUE;                                        \
+      constant_always_under = true;                                            \
     }                                                                          \
   }                                                                            \
   else                                                                         \
   {                                                                            \
     if (constant_value_uint > UINT##N##_MAX) {                                 \
-      constant_always_over = GRN_TRUE;                                         \
+      constant_always_over = true;                                             \
     }                                                                          \
   }                                                                            \
   break
@@ -3486,28 +3486,28 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
     case CASE_INT(32); case CASE_UINT(32); case CASE_INT(64);
     case GRN_DB_UINT64:
     if (constant_value_is_int && constant_value_int < 0) {
-      constant_always_under = GRN_TRUE;
+      constant_always_under = true;
     }
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
 
   if (!constant_always_over && !constant_always_under) {
-    return GRN_FALSE;
+    return false;
   }
 
   {
-    grn_bool result;
+    bool result;
     grn_obj *result_buffer =
       &(executor->data.simple_condition_constant.result_buffer);
 
     switch (operator_code->op) {
     case GRN_OP_EQUAL:
-      result = GRN_FALSE;
+      result = false;
       break;
     case GRN_OP_NOT_EQUAL:
-      result = GRN_TRUE;
+      result = true;
       break;
     case GRN_OP_LESS:
     case GRN_OP_LESS_EQUAL:
@@ -3518,13 +3518,13 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
       result = constant_always_under;
       break;
     default:
-      return GRN_FALSE;
+      return false;
     }
 
     GRN_BOOL_INIT(result_buffer, 0);
     GRN_BOOL_SET(ctx, result_buffer, result);
 
-    return GRN_TRUE;
+    return true;
   }
 }
 
