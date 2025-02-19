@@ -26,7 +26,7 @@ msgstr "改良"
 msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 20.04 (Focal Fossa)"
 msgstr "[{doc}`/install/ubuntu`] Ubuntu 20.04 (Focal Fossa) のサポート終了"
 
-msgid "We dropped support for for Ubuntu 20.04 because it reached EOL at May 2025."
+msgid "Ubuntu 20.04 will reach EOL in May 2025, so support for it has been dropped starting with this release."
 msgstr "Ubuntu 20.04は2025年5月にサポート終了（EOL）となるため、今回のリリースからサポートを終了しました。"
 
 msgid "Release 15.0.0 - 2025-02-09"
