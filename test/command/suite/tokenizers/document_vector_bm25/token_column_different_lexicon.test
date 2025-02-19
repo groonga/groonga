@@ -1,4 +1,4 @@
-#@require-cpu !arm64
+#@require-cpu x86_64
 #@require-os !Darwin
 
 table_create Memos TABLE_NO_KEY
