@@ -16205,7 +16205,8 @@ namespace grn::ii {
   // append_record().
   class BlockBuilder {
   public:
-    BlockBuilder(grn_ctx *ctx,
+    BlockBuilder(grn_ctx *parent_ctx,
+                 grn_ctx *ctx,
                  grn_ii *ii,
                  const grn_ii_builder_options *options,
                  grn_obj *src_table,
@@ -16213,7 +16214,8 @@ namespace grn::ii {
                  grn_obj **src_token_columns,
                  uint32_t n_srcs,
                  uint8_t sid_bits)
-      : ctx_(ctx),
+      : parent_ctx_(parent_ctx),
+        ctx_(ctx),
         ii_(ii),
         options_(options),
         lexicon_(nullptr),
@@ -16250,13 +16252,9 @@ namespace grn::ii {
         grn_obj_close(ctx_, lexicon_);
       }
       finalize_terms();
-    }
-
-    // Changes grn_ctx to reuse this builder with child grn_ctx.
-    void
-    set_ctx(grn_ctx *ctx)
-    {
-      ctx_ = ctx;
+      if (parent_ctx_) {
+        grn_ctx_release_child(parent_ctx_, ctx_);
+      }
     }
 
     // Prepares this builder.
@@ -16412,6 +16410,7 @@ namespace grn::ii {
     }
 
   private:
+    grn_ctx *parent_ctx_;
     grn_ctx *ctx_;
     grn_ii *ii_;
     const grn_ii_builder_options *options_;
@@ -17032,82 +17031,6 @@ namespace grn::ii {
     }
   };
 
-  // This is for easy to reuse BlockBuilder.
-  class BlockBuilderPool {
-  public:
-    BlockBuilderPool(grn_ii *ii,
-                     const grn_ii_builder_options *options,
-                     grn_obj *src_table,
-                     grn_obj **srcs,
-                     grn_obj **src_token_columns,
-                     uint32_t n_srcs,
-                     uint8_t sid_bits)
-      : mutex_(),
-        builders_(),
-        ii_(ii),
-        options_(options),
-        src_table_(src_table),
-        srcs_(srcs),
-        src_token_columns_(src_token_columns),
-        n_srcs_(n_srcs),
-        sid_bits_(sid_bits)
-    {
-    }
-
-    ~BlockBuilderPool() = default;
-
-    // Returns a pooled BlockBuilder if there is any free BlockBuilder
-    // in this pool. If there is no BlockBuilder in this pool, this
-    // creates a new BlockBuilder and returns it.
-    std::unique_ptr<BlockBuilder>
-    pull(grn_ctx *ctx)
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-
-      if (!builders_.empty()) {
-        auto builder = std::move(builders_.back());
-        builders_.pop_back();
-        builder->set_ctx(ctx);
-        return builder;
-      }
-
-      auto builder = std::make_unique<BlockBuilder>(ctx,
-                                                    ii_,
-                                                    options_,
-                                                    src_table_,
-                                                    srcs_,
-                                                    src_token_columns_,
-                                                    n_srcs_,
-                                                    sid_bits_);
-      auto rc = builder->prepare();
-      if (rc != GRN_SUCCESS) {
-        return nullptr;
-      }
-      return builder;
-    }
-
-    // Makes the given BlockBuilder reusable in this pool.
-    void
-    release(std::unique_ptr<BlockBuilder> builder)
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-      builders_.push_back(std::move(builder));
-    }
-
-  private:
-    std::mutex mutex_;
-    std::vector<std::unique_ptr<BlockBuilder>> builders_;
-
-    // Pass through to BlockBuiler.
-    grn_ii *ii_;
-    const grn_ii_builder_options *options_;
-    grn_obj *src_table_;
-    grn_obj **srcs_;
-    grn_obj **src_token_columns_;
-    uint32_t n_srcs_;
-    uint8_t sid_bits_;
-  };
-
   struct Builder {
     Builder(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
       : ctx_(ctx),
@@ -17506,13 +17429,6 @@ namespace grn::ii {
     grn_rc
     append_srcs_parallel(grn::TaskExecutor *executor, size_t n_records_per_task)
     {
-      BlockBuilderPool pool(ii_,
-                            &options_,
-                            src_table_,
-                            srcs_,
-                            src_token_columns_,
-                            n_srcs_,
-                            sid_bits_);
       std::mutex mutex;
       std::condition_variable cv;
       std::map<int, std::unique_ptr<BlockBuilder>> processed_block_builders;
@@ -17521,12 +17437,20 @@ namespace grn::ii {
            offset += limit) {
         auto execute = [&, offset, limit]() {
           auto child_ctx = grn_ctx_pull_child(ctx_);
-          grn::ChildCtxReleaser releaser(ctx_, child_ctx);
-          auto block_builder = pool.pull(child_ctx);
-          if (!block_builder) {
+          auto block_builder =
+            std::make_unique<BlockBuilder>(ctx_,
+                                           child_ctx,
+                                           ii_,
+                                           &options_,
+                                           src_table_,
+                                           srcs_,
+                                           src_token_columns_,
+                                           n_srcs_,
+                                           sid_bits_);
+          auto rc = block_builder->prepare();
+          if (rc != GRN_SUCCESS) {
             return false;
           }
-          grn_rc rc = GRN_SUCCESS;
           auto cursor = grn_table_cursor_open(child_ctx,
                                               src_table_,
                                               nullptr,
@@ -17587,7 +17511,6 @@ namespace grn::ii {
         if (!block_builder) {
           break;
         }
-        block_builder->set_ctx(ctx_);
         auto n_processed_records = block_builder->n_processed_records();
         if (block_builder->have_data()) {
           auto rc = flush_block_builder(block_builder.get());
@@ -17595,7 +17518,6 @@ namespace grn::ii {
             break;
           }
         }
-        pool.release(std::move(block_builder));
         if (progress_needed_) {
           progress_.value.index.n_processed_records += n_processed_records;
           grn_ctx_call_progress_callback(ctx_, &progress_);
@@ -17609,7 +17531,8 @@ namespace grn::ii {
     grn_rc
     append_srcs_sequential()
     {
-      BlockBuilder block_builder(ctx_,
+      BlockBuilder block_builder(nullptr,
+                                 ctx_,
                                  ii_,
                                  &options_,
                                  src_table_,
