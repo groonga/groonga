@@ -3772,7 +3772,7 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
@@ -3781,7 +3781,7 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_expr_executor *executor)
   grn_expr_code *operator_code;
 
   if (e->codes_curr != 3) {
-    return GRN_FALSE;
+    return false;
   }
 
   target = &(e->codes[0]);
@@ -3797,38 +3797,38 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_expr_executor *executor)
   case GRN_OP_GREATER_EQUAL:
     break;
   default:
-    return GRN_FALSE;
+    return false;
   }
   if (operator_code->nargs != 2) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
+    return false;
   }
   if (target->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!grn_obj_is_scalar_column(ctx, target->value)) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (constant->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (constant->nargs != 1) {
-    return GRN_FALSE;
+    return false;
   }
   if (!constant->value) {
-    return GRN_FALSE;
+    return false;
   }
   if (constant->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_expr_executor_init_simple_condition(ctx, executor);
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
