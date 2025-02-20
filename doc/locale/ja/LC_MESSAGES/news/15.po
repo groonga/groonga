@@ -17,14 +17,23 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.0.1 - 2025-02-20"
+msgstr "15.0.1リリース - 2025-02-20"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 20.04 (Focal Fossa)"
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 20.04 (Focal Fossa) のサポート終了"
+
+msgid "Ubuntu 20.04 will reach EOL in May 2025, so support for it has been dropped starting with this release."
+msgstr "Ubuntu 20.04は2025年5月にサポート終了（EOL）となるため、今回のリリースからサポートを終了しました。"
+
 msgid "Release 15.0.0 - 2025-02-09"
 msgstr "15.0.0リリース - 2025-02-09"
 
 msgid "This is our annual major release! This release doesn't have any backward incompatible changes! So you can upgrade Groonga without migrating your existing databases. You can still use your existing databases as-is."
 msgstr "毎年恒例の肉の日メジャーリリースです！このリリースには後方互換性が壊れる変更はありません！既存のデータベースを移行せずにGroongaをアップグレードできます。既存のデータベースをそのまま使い続けることができます。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "{ref}`table-pat-key`: Added support for {ref}`builtin-type-float32` as key type"
 msgstr "{ref}`table-pat-key`: キーの型として{ref}`builtin-type-float32`をサポート"
