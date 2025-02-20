@@ -1481,7 +1481,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
 #define GET_UVECTOR_ELEMENT_AS(type)                                           \
   do {                                                                         \
     GRN_##type##_SET(ctx, result, GRN_##type##_VALUE_AT(&values, i));          \
-  } while (GRN_FALSE)
+  } while (false)
       switch (values.header.domain) {
       case GRN_DB_BOOL:
         GET_UVECTOR_ELEMENT_AS(BOOL);
@@ -2085,7 +2085,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           }
         } else {
           grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
-          GRN_BOOL_SET(ctx, data.res, GRN_FALSE);
+          GRN_BOOL_SET(ctx, data.res, false);
         }
       }
       data.code++;
@@ -2111,7 +2111,7 @@ expr_exec_internal(grn_ctx *ctx, grn_obj *expr)
           }
         } else {
           grn_obj_reinit(ctx, data.res, GRN_DB_BOOL, 0);
-          GRN_BOOL_SET(ctx, data.res, GRN_FALSE);
+          GRN_BOOL_SET(ctx, data.res, false);
         }
       }
       data.code++;
@@ -2748,7 +2748,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx, grn_expr_executor *executor)
   grn_obj *pattern;
 
   GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+  GRN_BOOL_SET(ctx, result_buffer, false);
 
   pattern = e->codes[1].value;
   if (GRN_TEXT_LEN(pattern) == 0) {
@@ -2862,7 +2862,7 @@ grn_expr_executor_exec_simple_regexp(grn_ctx *ctx,
   grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
 
   if (ctx->rc) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
     return result_buffer;
   }
 
@@ -2928,7 +2928,7 @@ grn_expr_executor_init_simple_match(grn_ctx *ctx, grn_expr_executor *executor)
   grn_obj *sub_text;
 
   GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+  GRN_BOOL_SET(ctx, result_buffer, false);
 
   executor->data.simple_match.normalizer =
     grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
@@ -3071,7 +3071,7 @@ grn_expr_executor_exec_simple_match(grn_ctx *ctx,
   grn_obj *result_buffer = &(executor->data.simple_match.result_buffer);
 
   if (ctx->rc != GRN_SUCCESS) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
     return result_buffer;
   }
 
@@ -3468,7 +3468,7 @@ grn_expr_executor_is_simple_condition_constant(grn_ctx *ctx,
   GRN_DB_UINT##N : if (constant_value_is_int)                                  \
   {                                                                            \
     if (constant_value_int > UINT##N##_MAX) {                                  \
-      constant_always_over = GRN_TRUE;                                         \
+      constant_always_over = true;                                             \
     } else if (constant_value_int < 0) {                                       \
       constant_always_under = true;                                            \
     }                                                                          \
@@ -3563,7 +3563,7 @@ grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
 
   result_buffer = &(executor->data.simple_condition_ra.result_buffer);
   GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+  GRN_BOOL_SET(ctx, result_buffer, false);
 
   value_buffer = &(executor->data.simple_condition_ra.value_buffer);
   GRN_VOID_INIT(value_buffer);
@@ -3672,7 +3672,7 @@ grn_expr_executor_exec_simple_condition_ra(grn_ctx *ctx,
     &(executor->data.simple_condition_ra.constant_buffer);
 
   if (ctx->rc) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
     return result_buffer;
   }
 
@@ -3693,9 +3693,9 @@ grn_expr_executor_exec_simple_condition_ra(grn_ctx *ctx,
   if (executor->data.simple_condition_ra.exec(ctx,
                                               value_buffer,
                                               constant_buffer)) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_TRUE);
+    GRN_BOOL_SET(ctx, result_buffer, true);
   } else {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
   }
   return result_buffer;
 }
@@ -3729,11 +3729,11 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
   constant = e->codes[1].value;
   op = e->codes[2].op;
 
-  executor->data.simple_condition.need_exec = GRN_TRUE;
+  executor->data.simple_condition.need_exec = true;
 
   result_buffer = &(executor->data.simple_condition.result_buffer);
   GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+  GRN_BOOL_SET(ctx, result_buffer, false);
 
   value_buffer = &(executor->data.simple_condition.value_buffer);
   GRN_VOID_INIT(value_buffer);
@@ -3751,7 +3751,7 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
     type = grn_ctx_at(ctx, constant_buffer->header.domain);
     if (grn_obj_is_table(ctx, type)) {
       GRN_BOOL_SET(ctx, result_buffer, (op == GRN_OP_NOT_EQUAL));
-      executor->data.simple_condition.need_exec = GRN_FALSE;
+      executor->data.simple_condition.need_exec = false;
     } else {
       int type_name_size;
       char type_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -3843,7 +3843,7 @@ grn_expr_executor_exec_simple_condition(grn_ctx *ctx,
   grn_obj *constant_buffer = &(executor->data.simple_condition.constant_buffer);
 
   if (ctx->rc) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
     return result_buffer;
   }
 
@@ -3858,9 +3858,9 @@ grn_expr_executor_exec_simple_condition(grn_ctx *ctx,
   if (executor->data.simple_condition.exec(ctx,
                                            value_buffer,
                                            constant_buffer)) {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_TRUE);
+    GRN_BOOL_SET(ctx, result_buffer, true);
   } else {
-    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    GRN_BOOL_SET(ctx, result_buffer, false);
   }
   return result_buffer;
 }
