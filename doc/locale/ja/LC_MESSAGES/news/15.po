@@ -39,7 +39,7 @@ msgid "{doc}`/reference/normalizers`, {doc}`/reference/tokenizers`, and/or {doc}
 msgstr "{doc}`/reference/normalizers`、 {doc}`/reference/tokenizers`、 {doc}`/reference/token_filters` のオプションを使っている。"
 
 msgid "If {doc}`/reference/normalizers/normalizer_table` is used and this happens, the offline index construction is failed. Because {doc}`/reference/normalizers/normalizer_table` has a required parameter. If options are ignored, the required parameter is missing."
-msgstr "{doc}`/reference/normalizers/normalizer_table` を使っていてこの問題が発生した場合、静的なインデックス構築は失敗します。 {doc}`/reference/normalizers/normalizer_table` は必須パラメータを持っていますが、オプションが無視されると必須パラメータが失われてしまうためです。"
+msgstr "{doc}`/reference/normalizers/normalizer_table` を使っていてこの問題が発生した場合、静的なインデックス構築は失敗します。 {doc}`/reference/normalizers/normalizer_table` には必須の引数がありますが、オプションが無視されると必須の引数が指定されていないことになるためです。"
 
 msgid "Release 15.0.1 - 2025-02-20"
 msgstr "15.0.1リリース - 2025-02-20"
