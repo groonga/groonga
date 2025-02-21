@@ -30,7 +30,7 @@ msgid "Groonga may ignore options of {doc}`/reference/normalizers`, {doc}`/refer
 msgstr "静的なインデックス構築を並列で実行しているときにGroongaが{doc}`/reference/normalizers`、{doc}`/reference/tokenizers`、{doc}`/reference/token_filters`のオプションを無視することがある問題を修正しました。"
 
 msgid "This issue may occur when:"
-msgstr "次の場合に発生することがあります:"
+msgstr "次の場合に発生することがあります。"
 
 msgid "Offline index construction is executed in parallel."
 msgstr "静的なインデックス構築を並列実行する。"
