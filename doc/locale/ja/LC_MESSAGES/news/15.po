@@ -23,8 +23,8 @@ msgstr "15.0.2リリース - 2025-02-21"
 msgid "Fixes"
 msgstr "修正"
 
-msgid "{doc}`/reference/columns/index`: Fixed an {ref}`offline-index-construction` bug"
-msgstr "{doc}`/reference/columns/index`: {ref}`offline-index-construction` の問題を修正"
+msgid "{ref}`offline-index-construction`: Fixed a bug that options may be ignored in parallel construction"
+msgstr "{ref}`offline-index-construction`: 並列構築でオプションを無視することがある問題を修正しました。"
 
 msgid "Groonga may ignore options of {doc}`/reference/normalizers`, {doc}`/reference/tokenizers` and/or {doc}`/reference/token_filters` in the target index when offline index construction is executed in parallel."
 msgstr "静的なインデックス構築を並列で実行しているときにGroongaが{doc}`/reference/normalizers`、{doc}`/reference/tokenizers`、{doc}`/reference/token_filters`のオプションを無視することがある問題を修正しました。"
@@ -35,8 +35,8 @@ msgstr "次の場合に発生することがあります:"
 msgid "Offline index construction is executed in parallel."
 msgstr "静的なインデックス構築を並列実行する。"
 
-msgid "Normalizer, Tokenizer, or TokenFilter options are used."
-msgstr "ノーマライザー、トークナイザー、トークンフィルターのオプションを使っている。"
+msgid "{doc}`/reference/normalizers`, {doc}`/reference/tokenizers`, and/or {doc}`/reference/token_filters` options are used."
+msgstr "{doc}`/reference/normalizers`、 {doc}`/reference/tokenizers`、 {doc}`/reference/token_filters` のオプションを使っている。"
 
 msgid "If {doc}`/reference/normalizers/normalizer_table` is used and this happens, the offline index construction is failed. Because {doc}`/reference/normalizers/normalizer_table` has a required parameter. If options are ignored, the required parameter is missing."
 msgstr "{doc}`/reference/normalizers/normalizer_table` を使っていてこの問題が発生した場合、静的なインデックス構築は失敗します。 {doc}`/reference/normalizers/normalizer_table` は必須パラメータを持っていますが、オプションが無視されると必須パラメータが失われてしまうためです。"
