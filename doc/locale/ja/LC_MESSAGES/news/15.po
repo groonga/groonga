@@ -24,7 +24,7 @@ msgid "Fixes"
 msgstr "修正"
 
 msgid "{ref}`offline-index-construction`: Fixed a bug that options may be ignored in parallel construction"
-msgstr "{ref}`offline-index-construction`: 並列構築でオプションを無視することがある問題を修正しました。"
+msgstr "{ref}`offline-index-construction`: 並列に構築するとオプションを無視することがある問題を修正"
 
 msgid "Groonga may ignore options of {doc}`/reference/normalizers`, {doc}`/reference/tokenizers` and/or {doc}`/reference/token_filters` in the target index when offline index construction is executed in parallel."
 msgstr "静的なインデックス構築を並列で実行しているときにGroongaが{doc}`/reference/normalizers`、{doc}`/reference/tokenizers`、{doc}`/reference/token_filters`のオプションを無視することがある問題を修正しました。"
