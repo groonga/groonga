@@ -17,6 +17,30 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.0.2 - 2025-02-21"
+msgstr "15.0.2リリース - 2025-02-21"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "{doc}`/reference/columns/index`: Fixed an {ref}`offline-index-construction` bug"
+msgstr "{doc}`/reference/columns/index`: {ref}`offline-index-construction` の問題を修正"
+
+msgid "Groonga may ingnore normalizer/tokenizer/tokenfilter options of target index when offline index construction execute parallel"
+msgstr "静的なインデックス構築を並列で実行しているときにGroongaがノーマライザー/トークナイザー/トークンフィルターのオプションを無視することがある問題を修正しました。"
+
+msgid "If happend when:"
+msgstr "次の場合に発生していました。"
+
+msgid "Execute offline index construction with parallel"
+msgstr "静的なインデックス構築を並列実行する"
+
+msgid "Use Normalizer/Tokenizer/TokenFilter options"
+msgstr "ノーマライザー/トークナイザー/トークンフィルターのオプションを使っている"
+
+msgid "However, if we use NormalizerTable, offline index construction occurs error by this issue."
+msgstr "ただし、NormalizerTableを使っている場合は、この問題によって静的なインデックス構築がエラーになります。"
+
 msgid "Release 15.0.1 - 2025-02-20"
 msgstr "15.0.1リリース - 2025-02-20"
 
