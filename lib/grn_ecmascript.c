@@ -2964,7 +2964,7 @@ static YYACTIONTYPE yy_reduce(
       grn_expr_take_obj(ctx, expr, column);
     } else {
       grn_expr *e = (grn_expr *)expr;
-      grn_bool have_column;
+      bool have_column;
       int i;
 
       have_column = (e->codes_curr > 0);
