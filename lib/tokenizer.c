@@ -108,7 +108,7 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     return;
   }
 
-  query->need_normalize = GRN_FALSE;
+  query->need_normalize = false;
 
   if (query->normalized_query) {
     grn_obj_close(ctx, query->normalized_query);
@@ -183,7 +183,7 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->source_id = GRN_ID_NIL;
   query->index_column = NULL;
 
-  query->need_normalize = GRN_TRUE;
+  query->need_normalize = true;
   query->need_delimiter_check = GRN_TRUE;
 
   query->options = NULL;
@@ -291,7 +291,7 @@ grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
   GRN_API_ENTER;
   if (query->normalize_flags != normalize_flags) {
     query->normalize_flags = normalize_flags;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -378,7 +378,7 @@ grn_tokenizer_query_set_data(grn_ctx *ctx,
   query->size = size;
   query->ptr = query->data;
   query->domain = domain;
-  query->need_normalize = GRN_TRUE;
+  query->need_normalize = true;
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -414,7 +414,7 @@ grn_tokenizer_query_set_flags(grn_ctx *ctx,
   GRN_API_ENTER;
   if (query->flags != flags) {
     query->flags = flags;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -444,7 +444,7 @@ grn_tokenizer_query_set_mode(grn_ctx *ctx,
   if (query->tokenize_mode != mode) {
     query->tokenize_mode = mode;
     query->token_mode = query->tokenize_mode;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -476,7 +476,7 @@ grn_tokenizer_query_set_lexicon(grn_ctx *ctx,
     } else {
       query->encoding = ctx->encoding;
     }
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
 
   GRN_API_RETURN(ctx->rc);

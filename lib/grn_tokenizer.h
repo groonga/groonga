@@ -49,7 +49,7 @@ typedef struct _grn_tokenizer_query {
   grn_id source_id;
   grn_obj *index_column;
   uint32_t normalize_flags;
-  grn_bool need_normalize;
+  bool need_normalize;
   grn_bool need_delimiter_check;
 
   grn_obj *options;
