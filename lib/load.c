@@ -1437,13 +1437,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, size_t str_len)
         case 't':
           if (GRN_TEXT_LEN(loader->last) == 4 && !memcmp(v, "true", 4)) {
             loader->last->header.domain = GRN_DB_BOOL;
-            GRN_BOOL_SET(ctx, loader->last, GRN_TRUE);
+            GRN_BOOL_SET(ctx, loader->last, true);
           }
           break;
         case 'f':
           if (GRN_TEXT_LEN(loader->last) == 5 && !memcmp(v, "false", 5)) {
             loader->last->header.domain = GRN_DB_BOOL;
-            GRN_BOOL_SET(ctx, loader->last, GRN_FALSE);
+            GRN_BOOL_SET(ctx, loader->last, false);
           }
           break;
         default:
