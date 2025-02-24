@@ -35,9 +35,9 @@ typedef struct grn_load_input_ {
   grn_raw_string values;
   grn_raw_string if_exists;
   grn_raw_string each;
-  grn_bool output_ids;
-  grn_bool output_errors;
-  grn_bool lock_table;
+  bool output_ids;
+  bool output_errors;
+  bool lock_table;
   uint32_t emit_level;
 } grn_load_input;
 
@@ -101,9 +101,9 @@ typedef struct {
     const char *file;
     const char *func;
   } error;
-  grn_bool output_ids;
-  grn_bool output_errors;
-  grn_bool lock_table;
+  bool output_ids;
+  bool output_errors;
+  bool lock_table;
 } grn_loader;
 
 typedef struct {

@@ -259,8 +259,8 @@ grn_loader_init(grn_loader *loader)
   loader->error.line = 0;
   loader->error.file = NULL;
   loader->error.func = NULL;
-  loader->output_ids = GRN_FALSE;
-  loader->output_errors = GRN_FALSE;
+  loader->output_ids = false;
+  loader->output_errors = false;
 }
 
 void

@@ -1983,9 +1983,9 @@ grn_load(grn_ctx *ctx,
     input.if_exists.length = ifexists_len;
     input.each.value = each;
     input.each.length = each_len;
-    input.output_ids = GRN_FALSE;
-    input.output_errors = GRN_FALSE;
-    input.lock_table = GRN_FALSE;
+    input.output_ids = false;
+    input.output_errors = false;
+    input.lock_table = false;
     input.emit_level = 1;
     grn_load_internal(ctx, &input);
   }
