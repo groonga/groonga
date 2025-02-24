@@ -2066,7 +2066,7 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
   GRN_API_RETURN(ctx->rc);
 }
 
-static int
+static bool
 comment_command_p(const char *command, unsigned int length)
 {
   const char *p, *e;
@@ -2075,15 +2075,15 @@ comment_command_p(const char *command, unsigned int length)
   for (p = command; p < e; p++) {
     switch (*p) {
     case '#':
-      return GRN_TRUE;
+      return true;
     case ' ':
     case '\t':
       break;
     default:
-      return GRN_FALSE;
+      return false;
     }
   }
-  return GRN_FALSE;
+  return false;
 }
 
 unsigned int
