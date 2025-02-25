@@ -67,13 +67,3 @@ jobs:
         with:
           name: release-document
           path: document-*.tar.gz
-  release:
-    if: |
-      github.ref_type == 'tag'
-    name: Release
-    needs: build
-    uses: ./.github/workflows/release.yml
-    with:
-      tag: ${{ github.ref_name }}
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}

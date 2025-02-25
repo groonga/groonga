@@ -308,14 +308,3 @@ jobs:
         with:
           name: release-linux-packages
           path: "*.tar.gz"
-
-  release:
-    if: |
-      github.ref_type == 'tag'
-    name: Release
-    needs: prepare-for-release
-    uses: ./.github/workflows/release.yml
-    with:
-      tag: ${{ github.ref_name }}
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
