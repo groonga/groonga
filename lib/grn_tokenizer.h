@@ -37,7 +37,7 @@ typedef struct _grn_tokenizer_query {
   uint32_t size;
   grn_encoding encoding;
   uint32_t flags;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   /* Deprecated since 4.0.8. Use tokenize_mode instead. */
   grn_token_mode token_mode;
   grn_tokenize_mode tokenize_mode;

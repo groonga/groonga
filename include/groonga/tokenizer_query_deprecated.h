@@ -39,7 +39,7 @@ struct _grn_tokenizer_query_deprecated {
   unsigned int length;
   grn_encoding encoding;
   unsigned int flags;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   /* Deprecated since 4.0.8. Use tokenize_mode instead. */
   grn_token_mode token_mode;
   grn_tokenize_mode tokenize_mode;

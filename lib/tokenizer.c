@@ -52,18 +52,18 @@ grn_tokenizer_isspace(grn_ctx *ctx,
   return grn_plugin_isspace(ctx, str_ptr, str_length, encoding);
 }
 
-grn_bool
+bool
 grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                                      const char *str_ptr,
                                      unsigned int str_length,
                                      grn_encoding encoding)
 {
   if (encoding != GRN_ENC_UTF8) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (str_length != GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) {
-    return GRN_FALSE;
+    return false;
   }
 
   return memcmp(str_ptr,
@@ -71,7 +71,7 @@ grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                 GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) == 0;
 }
 
-grn_bool
+bool
 grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                        const char *str_ptr,
                                        unsigned int str_length,
@@ -82,11 +82,11 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
   const char *end = str_ptr + str_length;
 
   if (encoding != GRN_ENC_UTF8) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (str_length == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   while ((char_length = grn_charlen_(ctx, current, end, encoding)) > 0) {
@@ -94,11 +94,11 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                              current,
                                              (unsigned int)char_length,
                                              encoding)) {
-      return GRN_TRUE;
+      return true;
     }
     current += char_length;
   }
-  return GRN_FALSE;
+  return false;
 }
 
 static void
@@ -120,7 +120,7 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
                                              (int)(query->normalize_flags),
                                              query->encoding);
   if (!query->normalized_query) {
-    query->have_tokenized_delimiter = GRN_FALSE;
+    query->have_tokenized_delimiter = false;
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKENIZER_ERROR,
                      "[tokenizer][normalize] failed to open normalized string: "
@@ -161,7 +161,7 @@ grn_tokenizer_query_ensure_have_tokenized_delimiter(grn_ctx *ctx,
                                              normalized_string_length,
                                              query->encoding);
   } else {
-    query->have_tokenized_delimiter = GRN_FALSE;
+    query->have_tokenized_delimiter = false;
   }
 }
 
@@ -426,7 +426,7 @@ grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
   GRN_API_RETURN(query->flags);
 }
 
-grn_bool
+bool
 grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
                                              grn_tokenizer_query *query)
 {

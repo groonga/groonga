@@ -66,7 +66,7 @@ grn_tokenizer_isspace(grn_ctx *ctx,
   character in the string specified by `str_ptr' and `str_length' the
   special tokenized delimiter character or not.
  */
-grn_bool
+bool
 grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                                      const char *str_ptr,
                                      unsigned int str_length,
@@ -77,7 +77,7 @@ grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
   the special delimiter character in the string specified by `str_ptr'
   and `str_length' the special tokenized delimiter character or not.
  */
-GRN_PLUGIN_EXPORT grn_bool
+GRN_PLUGIN_EXPORT bool
 grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                        const char *str_ptr,
                                        unsigned int str_length,
@@ -150,7 +150,7 @@ grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query);
 GRN_PLUGIN_EXPORT uint32_t
 grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query);
 
-GRN_PLUGIN_EXPORT grn_bool
+GRN_PLUGIN_EXPORT bool
 grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
                                              grn_tokenizer_query *query);
 
