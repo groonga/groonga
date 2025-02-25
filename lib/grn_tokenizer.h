@@ -50,7 +50,7 @@ typedef struct _grn_tokenizer_query {
   grn_obj *index_column;
   uint32_t normalize_flags;
   bool need_normalize;
-  grn_bool need_delimiter_check;
+  bool need_delimiter_check;
 
   grn_obj *options;
 

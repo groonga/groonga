@@ -131,7 +131,7 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     return;
   }
 
-  query->need_delimiter_check = GRN_TRUE;
+  query->need_delimiter_check = true;
 }
 
 static void
@@ -144,7 +144,7 @@ grn_tokenizer_query_ensure_have_tokenized_delimiter(grn_ctx *ctx,
     return;
   }
 
-  query->need_delimiter_check = GRN_FALSE;
+  query->need_delimiter_check = false;
 
   if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
     const char *normalized_string;
@@ -184,7 +184,7 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->index_column = NULL;
 
   query->need_normalize = true;
-  query->need_delimiter_check = GRN_TRUE;
+  query->need_delimiter_check = true;
 
   query->options = NULL;
 
