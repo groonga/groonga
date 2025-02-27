@@ -65,7 +65,7 @@ typedef struct _BenchmarkData
   grn_ctx context;
   grn_obj *database;
   guint n_records;
-  grn_bool use_mruby;
+  bool use_mruby;
   const gchar *command;
 } BenchmarkData;
 
@@ -229,35 +229,35 @@ main(int argc, gchar **argv)
     REGISTER(data_small_with_mruby,
              1000,
              500, 600,
-             GRN_TRUE);
+             true);
     REGISTER(data_small_without_mruby,
              1000,
              500, 600,
-             GRN_FALSE);
+             false);
     REGISTER(data_medium_with_mruby,
              10000,
              5000, 5100,
-             GRN_TRUE);
+             true);
     REGISTER(data_medium_without_mruby,
              10000,
              5000, 5100,
-             GRN_FALSE);
+             false);
     REGISTER(data_large_with_mruby,
              100000,
              50000, 50100,
-             GRN_TRUE);
+             true);
     REGISTER(data_large_without_mruby,
              100000,
              50000, 50100,
-             GRN_FALSE);
+             false);
     REGISTER(data_very_large_with_mruby,
              1000000,
              500000, 500100,
-             GRN_TRUE);
+             true);
     REGISTER(data_very_large_without_mruby,
              1000000,
              500000, 500100,
-             GRN_FALSE);
+             false);
 
 #undef REGISTER
 

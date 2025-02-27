@@ -107,8 +107,8 @@ bench_setup_points(gpointer user_data,
 
   data->start_point = grn_obj_open(data->context, GRN_BULK, 0, wgs84_or_tgs);
   data->end_point = grn_obj_open(data->context, GRN_BULK, 0, wgs84_or_tgs);
-  grn_obj_cast(data->context, &start_point_text, data->start_point, GRN_FALSE);
-  grn_obj_cast(data->context, &end_point_text, data->end_point, GRN_FALSE);
+  grn_obj_cast(data->context, &start_point_text, data->start_point, false);
+  grn_obj_cast(data->context, &end_point_text, data->end_point, false);
   grn_ctx_push(data->context, data->start_point);
   grn_ctx_push(data->context, data->end_point);
 
