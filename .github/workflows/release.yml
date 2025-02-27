@@ -1,20 +1,44 @@
 name: Release
 on:
-  workflow_call:
-    inputs:
-      tag:
-        required: true
-        type: string
-    secrets:
-      token:
-        required: true
+  push:
+    tags:
+      - "*"
 jobs:
-  page:
-    name: Release Page
+  publish:
+    name: Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - name: Create release page
+      - name: Download artifacts
+        run: |
+          workflows=(cmake.yml document.yml package.yml)
+          for workflow in "${workflows[@]}"; do
+            run_id=""
+            while true; do
+              echo "Waiting for run to start ${workflow}..."
+              run_id=$(gh run list \
+                         --branch ${GITHUB_REF_NAME} \
+                         --jq '.[].databaseId' \
+                         --json databaseId \
+                         --limit 1 \
+                         --workflow ${workflow})
+              if [ -n "${run_id}" ]; then
+                break
+              fi
+              sleep 300
+            done
+            gh run watch \
+              --exit-status \
+              --interval 300 \
+              ${run_id}
+            gh run download ${run_id} \
+              --dir release-artifacts \
+              --pattern "release-*"
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Extract release note
         run: |
           (cd doc/source/news && \
            ruby \
@@ -35,26 +59,18 @@ jobs:
           echo "" >> release-note.md
           echo "### Translations" >> release-note.md
           echo "" >> release-note.md
-          tag=${{ inputs.tag }}
-          version=${tag#v}
+          version=${GITHUB_REF_NAME#v}
           major_version=${version%%.*}
           version_hyphen=$(echo ${version} | tr . -)
           echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
+      - name: Publish release page
+        run: |
           title="$(head -n1 release-note.md | sed -e 's/^## //')"
           tail -n +2 release-note.md > release-note-without-version.md
-          gh release create "${tag}" \
+          gh release create "${GITHUB_REF_NAME}" \
             --discussion-category Releases \
             --notes-file release-note-without-version.md \
-            --title "${title}" || :
+            --title "${title}" \
+            release-artifacts/*/*
         env:
-          GH_TOKEN: ${{ secrets.token }}
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          pattern: release-*
-          merge-multiple: true
-      - name: Upload to release
-        run: |
-          gh release upload "${{ inputs.tag }}" artifacts/*
-        env:
-          GH_TOKEN: ${{ secrets.token }}
+          GH_TOKEN: ${{ github.token }}
