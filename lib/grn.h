@@ -352,8 +352,8 @@ typedef int grn_cond;
         SERR("MUTEX_LOCK");                                                    \
       }                                                                        \
       grn_nanosleep(1000000);                                                  \
-    } while (GRN_TRUE);                                                        \
-  } while (GRN_FALSE)
+    } while (true);                                                            \
+  } while (false)
 
 /* format string for printf */
 #ifdef WIN32

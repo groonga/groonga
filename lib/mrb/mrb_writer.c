@@ -44,11 +44,11 @@ writer_write(mrb_state *mrb, mrb_value self)
     if (mrb_nil_p(target)) {
       GRN_OUTPUT_NULL();
     } else {
-      GRN_OUTPUT_BOOL(GRN_FALSE);
+      GRN_OUTPUT_BOOL(false);
     }
     break;
   case MRB_TT_TRUE :
-    GRN_OUTPUT_BOOL(GRN_TRUE);
+    GRN_OUTPUT_BOOL(true);
     break;
   case MRB_TT_INTEGER :
     GRN_OUTPUT_INT64(mrb_integer(target));

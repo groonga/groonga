@@ -230,7 +230,7 @@ func_in_records_next(grn_ctx *ctx,
   if (!found) {
     return NULL;
   }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+  GRN_BOOL_SET(ctx, found, false);
 
   if (!data) {
     return found;
@@ -307,7 +307,7 @@ func_in_records_next(grn_ctx *ctx,
                                          data->search_result,
                                          GRN_OP_OR);
   if (grn_table_size(ctx, data->search_result) > 0) {
-    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+    GRN_BOOL_SET(ctx, found, true);
 
     GRN_TABLE_EACH_BEGIN(ctx, data->search_result, cursor, id) {
       grn_table_cursor_delete(ctx, cursor);

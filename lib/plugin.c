@@ -69,7 +69,7 @@ static grn_obj grn_plugins_path;
 #define GRN_PLUGINS_DIR_EACH_END()                                             \
   }                                                                            \
   }                                                                            \
-  while (GRN_FALSE)
+  while (false)
 
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>

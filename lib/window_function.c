@@ -546,7 +546,7 @@ grn_window_is_sorted(grn_ctx *ctx, grn_window *window)
 
   if (!window) {
     ERR(GRN_INVALID_ARGUMENT, "[window][is-sorted] window is NULL");
-    GRN_API_RETURN(GRN_FALSE);
+    GRN_API_RETURN(false);
   }
 
   GRN_API_RETURN(window->is_sorted);

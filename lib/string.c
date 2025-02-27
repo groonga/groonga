@@ -37,7 +37,7 @@ grn_char_type_to_string(grn_char_type type)
     } else {                                            \
       string = type_string;                             \
     }                                                   \
-  } while (GRN_FALSE)
+  } while (false)
 
   switch (GRN_CHAR_TYPE(type)) {
   case GRN_CHAR_NULL :
