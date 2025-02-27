@@ -54,7 +54,7 @@ typedef void * grn_option_revision;
 
 #define GRN_OPTION_VALUES_EACH_END()            \
   }                                             \
-} while (GRN_FALSE)
+} while (false)
 
 #ifdef __cplusplus
 }
