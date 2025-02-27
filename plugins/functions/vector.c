@@ -139,7 +139,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     grn_rc rc;
 
     GRN_INT32_INIT(&buffer, 0);
-    rc = grn_obj_cast(ctx, from_raw, &buffer, GRN_FALSE);
+    rc = grn_obj_cast(ctx, from_raw, &buffer, false);
     if (rc == GRN_SUCCESS) {
       from = GRN_INT32_VALUE(&buffer);
     }
@@ -182,7 +182,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
       grn_rc rc;
 
       GRN_INT32_INIT(&buffer, 0);
-      rc = grn_obj_cast(ctx, length_raw, &buffer, GRN_FALSE);
+      rc = grn_obj_cast(ctx, length_raw, &buffer, false);
       if (rc == GRN_SUCCESS) {
         length = GRN_INT32_VALUE(&buffer);
       }
@@ -283,7 +283,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
                                  slice,                                 \
                                  GRN_ ## type ## _VALUE_AT(target, i)); \
           }                                                             \
-        } while (GRN_FALSE)
+        } while (false)
         switch (target->header.domain) {
         case GRN_DB_BOOL :
           PUT_SLICE_VALUES(BOOL);
@@ -441,7 +441,7 @@ func_vector_find_uvector_number(grn_ctx *ctx,
     query_number = query;
   } else {
     GRN_VALUE_FIX_SIZE_INIT(&query_number_raw, 0, target->header.domain);
-    if (grn_obj_cast(ctx, query, &query_number_raw, GRN_FALSE) != GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, query, &query_number_raw, false) != GRN_SUCCESS) {
       GRN_OBJ_FIN(ctx, &query_number_raw);
       return NULL;
     }
@@ -528,7 +528,7 @@ func_vector_find_uvector_record(grn_ctx *ctx,
   } else {
     grn_obj query_id_raw;
     GRN_RECORD_INIT(&query_id_raw, 0, target->header.domain);
-    if (grn_obj_cast(ctx, query, &query_id_raw, GRN_FALSE) != GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, query, &query_id_raw, false) != GRN_SUCCESS) {
       GRN_OBJ_FIN(ctx, &query_id_raw);
       return NULL;
     }

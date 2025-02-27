@@ -160,7 +160,7 @@ caller_index_info_init(grn_ctx *ctx,
 
     caller_index_info->term_table = grn_ctx_at(ctx, variable->header.domain);
     caller_index_info->term_id = GRN_RECORD_VALUE(variable);
-    while (GRN_TRUE) {
+    while (true) {
       grn_obj *key_type;
 
       key_type = grn_ctx_at(ctx, caller_index_info->term_table->header.domain);
