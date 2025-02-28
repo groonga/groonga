@@ -375,16 +375,16 @@ can be evaluated by index.
      - Index ready
    * - ``^``
      - The beginning of line
-     - o
+     - \-
    * - ``$``
      - The end of line
-     - x
+     - \-
    * - ``\A``
      - The beginning of text
-     - o
+     - ✓
    * - ``\z``
      - The end of text
-     - x
+     - ✓
 
 Here is an example that uses ``\z``.
 
