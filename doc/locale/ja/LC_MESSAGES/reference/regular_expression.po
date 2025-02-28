@@ -324,7 +324,7 @@ msgstr "インデックスを使えるか"
 msgid "The beginning of line"
 msgstr "行頭"
 
-msgid "x"
+msgid "\\-"
 msgstr ""
 
 msgid "The end of line"
@@ -336,7 +336,7 @@ msgstr ""
 msgid "The beginning of text"
 msgstr "テキストの先頭"
 
-msgid "o"
+msgid "✓"
 msgstr ""
 
 msgid "``\\z``"
