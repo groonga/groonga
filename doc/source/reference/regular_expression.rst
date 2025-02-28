@@ -375,7 +375,7 @@ can be evaluated by index.
      - Index ready
    * - ``^``
      - The beginning of line
-     - o
+     - x
    * - ``$``
      - The end of line
      - x
@@ -384,7 +384,7 @@ can be evaluated by index.
      - o
    * - ``\z``
      - The end of text
-     - x
+     - o
 
 Here is an example that uses ``\z``.
 
