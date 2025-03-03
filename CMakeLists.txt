@@ -626,7 +626,11 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
   if(Groongazstd_FOUND)
     set(GRN_WITH_ZSTD TRUE)
     message(STATUS "Zstandard: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
     function(grn_build_zstd)
       set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_BUNDLED_VERSION}.tar.gz")
       set(ZSTD_SOURCE_LOCAL_PATH
@@ -696,7 +700,11 @@ if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
   if(simdjson_FOUND)
     set(GRN_WITH_SIMDJSON TRUE)
     message(STATUS "simdjson: (system)")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
     function(grn_build_simdjson)
       set(SIMDJSON_SOURCE_BASE_NAME
           "simdjson-${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
@@ -990,7 +998,11 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
               DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
     endif()
     message(STATUS "MessagePack: (system)")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
     function(grn_build_message_pack)
       set(MESSAGE_PACK_SOURCE_BASE_NAME
           "msgpack-c-${GRN_MESSAGE_PACK_BUNDLED_VERSION}.tar.gz")
@@ -1244,7 +1256,10 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
     set(GRN_WITH_BLOSC TRUE)
     target_link_libraries(grn_dependencies INTERFACE Blosc2::blosc2_shared)
     message(STATUS "Blosc: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
     # We need to use function to create a variable scope
     function(grn_build_blosc)
       set(BLOSC_SOURCE_BASE_NAME "c-blosc2-${GRN_BLOSC_BUNDLED_VERSION}.tar.gz")
@@ -1351,7 +1366,10 @@ if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
     set(GRN_WITH_XSIMD TRUE)
     target_link_libraries(grn_dependencies INTERFACE xsimd)
     message(STATUS "xsimd: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
     # We need to use function to create a variable scope
     function(grn_build_xsimd)
       set(XSIMD_SOURCE_BASE_NAME "xsimd-${GRN_XSIMD_BUNDLED_VERSION}.tar.gz")
@@ -1461,7 +1479,10 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
     set(GRN_WITH_H3 TRUE)
     target_link_libraries(grn_dependencies INTERFACE h3::h3)
     message(STATUS "H3: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
     # We need to use function to create a variable scope
     function(grn_build_h3)
       set(H3_SOURCE_BASE_NAME "h3-${GRN_H3_BUNDLED_VERSION}.tar.gz")
@@ -1533,7 +1554,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
     set(GRN_WITH_LLAMA_CPP TRUE)
     target_link_libraries(grn_dependencies INTERFACE llama)
     message(STATUS "llama.cpp: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
     # We need to use function to create a variable scope
     function(grn_build_llama_cpp)
       set(LLAMA_CPP_SOURCE_BASE_NAME
@@ -1683,7 +1707,10 @@ if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
     set(GRN_WITH_USEARCH TRUE)
     target_link_libraries(grn_dependencies INTERFACE usearch::usearch)
     message(STATUS "usearch: system")
-  else()
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
     # We need to use function to create a variable scope
     function(grn_build_usearch)
       set(USEARCH_SOURCE_BASE_NAME
