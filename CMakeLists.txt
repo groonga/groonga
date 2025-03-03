@@ -1596,6 +1596,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
         string(APPEND CMAKE_C_FLAGS " /wd4244")
         string(APPEND CMAKE_CXX_FLAGS " /wd4244")
+        # 'var' : conversion from 'size_t' to 'type', possible loss of data
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+        string(APPEND CMAKE_C_FLAGS " /wd4267")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4267")
       endif()
       set(BUILD_SHARED_LIBS ON)
       set(BUILD_STATIC_LIBS OFF)
