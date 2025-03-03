@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1740981214451,
+  "lastUpdate": 1740981714717,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "watson1978@gmail.com",
-            "name": "Watson",
-            "username": "Watson1978"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "d04128d8d8a127a25e9df66d2b52794a44eb43d9",
-          "message": "cmake libedit: enable libedit feature if found the library (#1852)\n\nGitHub: GH-1844\r\n\r\nIf libedit is present in the system,\r\nthis PR will link the libedit library to groonga\r\nso that the Groonga's REPL can use the libedit feature.\r\n\r\n---------\r\n\r\nCo-authored-by: Horimoto Yasuhiro <horimoto@clear-code.com>",
-          "timestamp": "2024-08-06T10:15:34+09:00",
-          "tree_id": "17a1faf3df1705d4a39afbee37a45023d23bc29d",
-          "url": "https://github.com/groonga/groonga/commit/d04128d8d8a127a25e9df66d2b52794a44eb43d9"
-        },
-        "date": 1722907310782,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3753569939999579,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.019701000000000135 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.2833817219999446,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.02021600000000018 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.016551536999941163,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003690000000000637 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.01555904100001726,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00037099999999978817 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.5080795920000014,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00032299999999998996 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.24247964999989335,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007421000000000205 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.1379495269999893,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007008999999999599 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.01768569800003661,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001827000000000023 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.01683589200001734,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0017769999999996955 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.05413675699998066,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007262999999999964 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.05408248599997023,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007707999999999854 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.01757034300004534,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019070000000001863 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.027238083999918672,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019259999999996225 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017642029999990427,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0016829999999997958 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "1627b453bb13b8f467249984e43cf3d45452488f",
+          "message": "cmake msvc h3: ignore warnings\n\npossible loss of data:\n\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\coordijk.c(73,10): warning C4244: '=': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\coordijk.c(74,10): warning C4244: '=': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\coordijk.c(133,25): warning C4244: '=': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\coordijk.c(137,25): warning C4244: '=': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\h3Index.c(322,29): warning C4244: 'initializing': conversion from 'const int64_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\localij.c(633,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\localij.c(634,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\localij.c(635,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]\n\nsigned integral constant overflow:\n\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-src\\src\\h3lib\\lib\\coordijk.c(236,13): warning C4307: '+': signed integral constant overflow [C:\\Buildbot\\amd64-windows\\build\\_deps\\h3-build\\h3.vcxproj]",
+          "timestamp": "2025-03-03T14:22:10+09:00",
+          "tree_id": "4edffaf5e1b3bbed777b183d359b7ae8fe7cf6f9",
+          "url": "https://github.com/groonga/groonga/commit/1627b453bb13b8f467249984e43cf3d45452488f"
+        },
+        "date": 1740981709888,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.4158014639999692,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.026157000000000125 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.31242357500002527,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.019856000000000595 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.017784459000040442,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004160000000001107 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.017098715999964043,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00038599999999955337 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.8811893800000234,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0003869999999999152 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.29091720999997506,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01164100000000004 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15211881799996263,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.011466999999999977 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.02320008599991752,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002365999999999896 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.022581688000002487,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002001999999999865 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.07216041099997028,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.009591000000000183 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.08386514200003603,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.010390999999999984 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.020919475000027887,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0027680000000002147 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.04393955900002311,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005198999999999621 s\nthreads: undefined"
           }
         ]
       }
