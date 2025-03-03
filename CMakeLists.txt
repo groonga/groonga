@@ -1491,6 +1491,12 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
         URL ${H3_SOURCE_URL}
         URL_HASH "SHA256=${GRN_H3_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
+      if(MSVC)
+        # 'operation' : different 'modifier' qualifiers
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4090
+        string(APPEND CMAKE_C_FLAGS " /wd4090")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4090")
+      endif()
       set(BUILD_BENCHMARKS OFF)
       set(BUILD_FILTERS OFF)
       set(BUILD_FUZZERS OFF)
