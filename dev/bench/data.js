@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1740987908175,
+  "lastUpdate": 1740989485952,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "abe@clear-code.com",
-            "name": "Abe Tomoaki",
-            "username": "abetomo"
-          },
-          "committer": {
-            "email": "abe@clear-code.com",
-            "name": "Abe Tomoaki",
-            "username": "abetomo"
-          },
-          "distinct": true,
-          "id": "6c76c912e8058b6f6d3da9e62b5d64fd0cd2c2c1",
-          "message": "Use bool instead of grn_bool in ctx.cpp\n\nGH-1638\n\nThis is part of the task of replacing grn_bool with bool.",
-          "timestamp": "2024-08-12T11:59:16+09:00",
-          "tree_id": "c5489fd6e3412661e81e02445f65e0396db791d6",
-          "url": "https://github.com/groonga/groonga/commit/6c76c912e8058b6f6d3da9e62b5d64fd0cd2c2c1"
-        },
-        "date": 1723432283494,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3597626559999867,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.01625299999999988 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.29017702499987763,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.020370999999999584 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.016274551000037718,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00037399999999987443 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015490140000053998,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00037099999999992694 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.4221570010000164,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00027299999999999547 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.23825480000004973,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006544999999999926 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.1422913639999024,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007595000000000088 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.01671695999999656,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002058999999999922 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.017266515000073923,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0021260000000000723 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.05704549900002576,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007762000000000158 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.05572498599997289,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008164999999998881 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.017745371999978943,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002011999999999986 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.027280403999895952,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0018679999999995367 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.018326723000029688,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0016370000000000273 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "61d4dbb28134c184b9d1e17494db3d397ae082a7",
+          "message": "cmake msvc: ignore shift warning\n\n    C:\\Buildbot\\amd64-windows\\build\\extra\\groonga\\lib\\hash.c(49,27): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?) [C:\\Buildbot\\amd64-windows\\build\\storage\\mroonga\\groonga\\lib\\libgroonga.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\extra\\groonga\\lib\\hash.c(60,25): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?) [C:\\Buildbot\\amd64-windows\\build\\storage\\mroonga\\groonga\\lib\\libgroonga.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\extra\\groonga\\lib\\hash.c(186,27): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?) [C:\\Buildbot\\amd64-windows\\build\\storage\\mroonga\\groonga\\lib\\libgroonga.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\extra\\groonga\\lib\\hash.c(198,25): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?) [C:\\Buildbot\\amd64-windows\\build\\storage\\mroonga\\groonga\\lib\\libgroonga.vcxproj]",
+          "timestamp": "2025-03-03T17:06:35+09:00",
+          "tree_id": "ad74b3eb62ccaf68eb3cb1781f666875be28c91e",
+          "url": "https://github.com/groonga/groonga/commit/61d4dbb28134c184b9d1e17494db3d397ae082a7"
+        },
+        "date": 1740989481501,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36118459400006486,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.019735999999999823 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.25917428900004325,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014782000000000295 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015915949999964596,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00041400000000002546 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.01538321499998574,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00034999999999996145 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.552390652999975,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00015399999999993197 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2275256040001068,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008181999999999856 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13490159100007304,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006882000000000027 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017493414999933066,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0017320000000006497 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016801994000104514,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016149999999999776 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.059690332999991824,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00749699999999999 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06457781399996065,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008334000000000508 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.019242336999923282,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0023079999999999767 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.026481815000067854,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001597999999999683 s\nthreads: undefined"
           }
         ]
       }
