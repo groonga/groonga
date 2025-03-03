@@ -378,7 +378,21 @@ endif()
 
 option(GRN_WARN_CONVERSION "Enable -Wconversion" OFF)
 if(GRN_WARN_CONVERSION)
-  check_build_flag("-Wconversion")
+  if(GRN_C_COMPILER_GNU_LIKE)
+    check_build_flag("-Wconversion")
+  elseif(MSVC)
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    string(APPEND GRN_C_COMPILE_FLAGS " /w34267")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /w34267")
+  endif()
+else()
+  if(MSVC)
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    string(APPEND GRN_C_COMPILE_FLAGS " /wd4267")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4267")
+  endif()
 endif()
 
 option(GRN_ALLOW_WARNING "allow warning." ON)
