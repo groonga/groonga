@@ -1608,6 +1608,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
         string(APPEND CMAKE_C_FLAGS " /wd4267")
         string(APPEND CMAKE_CXX_FLAGS " /wd4267")
+        # deprecated symbols
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
+        string(APPEND CMAKE_C_FLAGS " /wd4996")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4996")
       endif()
       set(BUILD_SHARED_LIBS ON)
       set(BUILD_STATIC_LIBS OFF)
