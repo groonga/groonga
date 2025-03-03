@@ -1566,6 +1566,16 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         URL ${LLAMA_CPP_SOURCE_URL}
         URL_HASH "SHA256=${GRN_LLAMA_CPP_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
+      if(MSVC)
+        # 'identifier' : macro redefinition
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4005
+        string(APPEND CMAKE_C_FLAGS " /wd4005")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4005")
+        # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+        # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+        string(APPEND CMAKE_C_FLAGS " /wd4244")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4244")
+      endif()
       set(BUILD_SHARED_LIBS ON)
       set(BUILD_STATIC_LIBS OFF)
       set(GGML_BACKEND_DL ON)
