@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1740981714717,
+  "lastUpdate": 1740983479255,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "watson1978@gmail.com",
-            "name": "Watson",
-            "username": "Watson1978"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "a1290490b938a1c18ba009c51474f0f5a6fd2cb9",
-          "message": "groonga: add --default-n-workers option (#1857)\n\nGitHub: fix GH-1747\r\n\r\nThis PR will add `--default-n-workers` as a groonga launch option.\r\n\r\nExample:\r\n```\r\n$ groonga --default-n-workers=3\r\n> status\r\n[\r\n  [\r\n    0,\r\n    1722925811.067726,\r\n    0.0007288455963134766\r\n  ],\r\n  {\r\n    \"alloc_count\": 412,\r\n    \"starttime\": 1722925808,\r\n    \"start_time\": 1722925808,\r\n    \"uptime\": 3,\r\n    \"version\": \"14.0.6-25-gd030603\",\r\n    \"n_queries\": 0,\r\n    \"cache_hit_rate\": 0.0,\r\n    \"command_version\": 1,\r\n    \"default_command_version\": 1,\r\n    \"max_command_version\": 3,\r\n    \"n_jobs\": 0,\r\n    \"features\": {\r\n      \"nfkc\": true,\r\n      \"mecab\": true,\r\n      \"message_pack\": true,\r\n      \"mruby\": false,\r\n      \"onigmo\": true,\r\n      \"zlib\": true,\r\n      \"lz4\": true,\r\n      \"zstandard\": true,\r\n      \"kqueue\": false,\r\n      \"epoll\": true,\r\n      \"poll\": false,\r\n      \"rapidjson\": false,\r\n      \"apache_arrow\": false,\r\n      \"xxhash\": true,\r\n      \"blosc\": false,\r\n      \"bfloat16\": true,\r\n      \"h3\": true,\r\n      \"simdjson\": true,\r\n      \"back_trace\": true,\r\n      \"reference_count\": false\r\n    },\r\n    \"memory_map_size\": 86855680,\r\n    \"n_workers\": 3,\r\n    \"default_n_workers\": 3\r\n  }\r\n]\r\n```\r\n\r\n---------\r\n\r\nCo-authored-by: Sutou Kouhei <kou@cozmixng.org>",
-          "timestamp": "2024-08-07T05:20:58+09:00",
-          "tree_id": "cb2047dd9b003fe688d2baf9af1313346c9549f0",
-          "url": "https://github.com/groonga/groonga/commit/a1290490b938a1c18ba009c51474f0f5a6fd2cb9"
-        },
-        "date": 1722976797423,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3875200480000558,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.022490999999999872 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.25999900500005424,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.014536000000000188 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.015190299999858325,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0004220000000001445 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015657888999953684,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.000384000000000162 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.6845832370000835,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00038800000000005497 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.24203715599992393,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008611000000000021 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13618695699994987,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008539000000000074 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.0179239400000597,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0022469999999998602 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.017609399999969355,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0023270000000000235 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.05752074400015772,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008092999999999767 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.055569748000039,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.009574999999999778 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.019185967000112214,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002724000000000143 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.017865274000087084,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0020609999999998685 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.04393955900002311,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.005198999999999621 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "distinct": true,
+          "id": "5c37c57229b96da3ef8b92eea8a518c8a937eca2",
+          "message": "cmake msvc llama-cpp: ignore deprecated symbol warning\n\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,31): warning C4996: 'std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,10): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,60): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::wstring_convert': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(77,21): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::from_bytes': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,31): warning C4996: 'std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,10): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,60): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::wstring_convert': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(82,21): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::to_bytes': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,31): warning C4996: 'std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,10): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(76,60): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::wstring_convert': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(77,21): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::from_bytes': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,31): warning C4996: 'std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,10): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(81,60): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::wstring_convert': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml-backend-reg.cpp(82,21): warning C4996: 'std::wstring_convert<std::codecvt_utf8_utf16<wchar_t,1114111,(std::codecvt_mode)0>,wchar_t,std::allocator<wchar_t>,std::allocator<char>>::to_bytes': warning STL4017: std::wbuffer_convert, std::wstring_convert, and the <codecvt> header (containing std::codecvt_mode, std::codecvt_utf8, std::codecvt_utf16, and std::codecvt_utf8_utf16) are deprecated in C++17. (The std::codecvt class template is NOT deprecated.) The C++ Standard doesn't provide equivalent non-deprecated functionality; consider using MultiByteToWideChar() and WideCharToMultiByte() from <Windows.h> instead. You can define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning. [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml.vcxproj]",
+          "timestamp": "2025-03-03T14:42:31+09:00",
+          "tree_id": "3d4b951c44c60edb6933b17aa2b9d3605cefd85b",
+          "url": "https://github.com/groonga/groonga/commit/5c37c57229b96da3ef8b92eea8a518c8a937eca2"
+        },
+        "date": 1740983474057,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36832255000001624,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.020278999999999825 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2766448440002023,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01843699999999962 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.01641959300002327,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003759999999997099 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015185003999931723,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00034500000000026176 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.5615865789999361,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0003609999999998892 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.22719126900005904,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006915999999999908 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1310718250000491,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005877999999999689 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01624496400006592,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001541999999999849 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016590249999808293,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016459999999996755 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06182517400020515,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007067000000000184 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06132182900000771,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007371000000000266 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01746441199986748,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015850000000010023 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.02639489400007733,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015039999999997278 s\nthreads: undefined"
           }
         ]
       }
