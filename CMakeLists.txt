@@ -379,6 +379,10 @@ elseif(MSVC)
   # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
   string(APPEND GRN_C_COMPILE_FLAGS " /wd4244")
   string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4244")
+  # 'operator': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+  # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4334
+  string(APPEND GRN_C_COMPILE_FLAGS " /wd4334")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4334")
 endif()
 
 option(GRN_WARN_CONVERSION "Enable -Wconversion" OFF)
