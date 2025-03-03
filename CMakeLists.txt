@@ -1514,6 +1514,14 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4090
         string(APPEND CMAKE_C_FLAGS " /wd4090")
         string(APPEND CMAKE_CXX_FLAGS " /wd4090")
+        # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+        # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+        string(APPEND CMAKE_C_FLAGS " /wd4244")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4244")
+        # 'operator' : signed integral constant overflow
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4307
+        string(APPEND CMAKE_C_FLAGS " /wd4307")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4307")
       endif()
       set(BUILD_BENCHMARKS OFF)
       set(BUILD_FILTERS OFF)
