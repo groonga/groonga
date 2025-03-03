@@ -1600,6 +1600,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4005
         string(APPEND CMAKE_C_FLAGS " /wd4005")
         string(APPEND CMAKE_CXX_FLAGS " /wd4005")
+        # 'identifier': unreferenced local variable
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4101
+        string(APPEND CMAKE_C_FLAGS " /wd4101")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4101")
         # 'argument' : conversion from 'type1' to 'type2', possible loss of data
         # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
         string(APPEND CMAKE_C_FLAGS " /wd4244")
@@ -1608,6 +1612,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
         string(APPEND CMAKE_C_FLAGS " /wd4267")
         string(APPEND CMAKE_CXX_FLAGS " /wd4267")
+        # 'conversion': truncation from 'type1' to 'type2'
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
+        string(APPEND CMAKE_C_FLAGS " /wd4305")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4305")
         # deprecated symbols
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
         string(APPEND CMAKE_C_FLAGS " /wd4996")
