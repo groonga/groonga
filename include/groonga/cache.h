@@ -45,7 +45,7 @@ grn_get_default_cache_base_path(void);
  * Persistent Cache:
  * - The same cache is shared across multiple processes.
  * - Persistent cache is slightly slower than memory cache due to filesystem
- * I/O.
+ *   I/O.
  *
  * ## Cache Mode Configuration
  *
