@@ -18,15 +18,17 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
 typedef struct _grn_cache grn_cache;
 
-GRN_API void grn_set_default_cache_base_path(const char *base_path);
-GRN_API const char *grn_get_default_cache_base_path(void);
+GRN_API void
+grn_set_default_cache_base_path(const char *base_path);
+GRN_API const char *
+grn_get_default_cache_base_path(void);
 
 /**
  * \brief Create a new cache object.
@@ -42,7 +44,8 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  *
  * Persistent Cache:
  * - The same cache is shared across multiple processes.
- * - Persistent cache is slightly slower than memory cache due to filesystem I/O.
+ * - Persistent cache is slightly slower than memory cache due to filesystem
+ * I/O.
  *
  * ## Cache Mode Configuration
  *
@@ -75,21 +78,25 @@ GRN_API const char *grn_get_default_cache_base_path(void);
  *         \ref grn_cache_close.
  *         See `ctx->rc` for error details.
  */
-GRN_API grn_cache *grn_cache_open(grn_ctx *ctx);
-GRN_API grn_cache *grn_persistent_cache_open(grn_ctx *ctx,
-                                             const char *base_path);
-GRN_API grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache);
+GRN_API grn_cache *
+grn_cache_open(grn_ctx *ctx);
+GRN_API grn_cache *
+grn_persistent_cache_open(grn_ctx *ctx, const char *base_path);
+GRN_API grn_rc
+grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 
-GRN_API grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
-GRN_API grn_cache *grn_cache_current_get(grn_ctx *ctx);
+GRN_API grn_rc
+grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
+GRN_API grn_cache *
+grn_cache_current_get(grn_ctx *ctx);
 
-GRN_API grn_rc grn_cache_default_reopen(void);
+GRN_API grn_rc
+grn_cache_default_reopen(void);
 
-GRN_API grn_rc grn_cache_set_max_n_entries(grn_ctx *ctx,
-                                           grn_cache *cache,
-                                           unsigned int n);
-GRN_API unsigned int grn_cache_get_max_n_entries(grn_ctx *ctx,
-                                                 grn_cache *cache);
+GRN_API grn_rc
+grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n);
+GRN_API unsigned int
+grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache);
 
 #ifdef __cplusplus
 }
