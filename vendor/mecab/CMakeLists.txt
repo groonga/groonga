@@ -128,6 +128,9 @@ if(GRN_WITH_BUNDLED_MECAB)
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
     string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4996")
+    # 'storage-class-keyword' is no longer a supported storage class
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/c5033
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd5033")
   endif()
 
   add_definitions("-DPACKAGE=\"mecab\"")
