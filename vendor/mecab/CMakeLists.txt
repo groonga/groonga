@@ -104,34 +104,30 @@ if(GRN_WITH_BUNDLED_MECAB)
 
   set(MECAB_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
   if(GRN_C_COMPILER_GNU_LIKE)
-    set(MECAB_CXX_COMPILE_FLAGS
-      "${MECAB_CXX_COMPILE_FLAGS} -Wno-type-limits")
-    set(MECAB_CXX_COMPILE_FLAGS
-      "${MECAB_CXX_COMPILE_FLAGS} -Wno-float-equal")
-    set(MECAB_CXX_COMPILE_FLAGS
-      "${MECAB_CXX_COMPILE_FLAGS} -Wno-ignored-qualifiers")
-    set(MECAB_CXX_COMPILE_FLAGS
-      "${MECAB_CXX_COMPILE_FLAGS} -Wno-unused-function")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " -Wno-type-limits")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " -Wno-float-equal")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " -Wno-ignored-qualifiers")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " -Wno-unused-function")
   elseif(MSVC)
     # unary minus operator applied to unsigned type, result still unsigned
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4146")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4146")
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4244")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4244")
     # 'var' : conversion from 'size_t' to 'type', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4267")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4267")
     # 'context' : truncation from 'type1' to 'type2'
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4305")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4305")
     # 'function' : destructor never returns, potential memory leak
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4722
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4722")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4722")
     # Your code uses a function, class member, variable, or typedef
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
-    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4996")
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd4996")
   endif()
 
   add_definitions("-DPACKAGE=\"mecab\"")
