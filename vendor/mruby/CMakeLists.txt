@@ -1,5 +1,5 @@
 # Copyright (C) 2013-2018  Brazil
-# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -114,28 +114,24 @@ if(GRN_WITH_MRUBY)
 
   set(MRUBY_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_C_COMPILER_GNU_LIKE)
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-float-equal")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-missing-field-initializers")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-sign-compare")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-bad-function-cast")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-float-equal")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-missing-field-initializers")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-sign-compare")
   elseif(MSVC)
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4018")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4018")
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4244")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4244")
     # 'var' : conversion from 'size_t' to 'type', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4267")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4267")
     # Your code uses a function, class member, variable, or typedef
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4996")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4996")
   endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
