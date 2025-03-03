@@ -122,12 +122,18 @@ if(GRN_WITH_MRUBY)
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
     string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4018")
+    # formal parameter 'number' different from declaration
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4028
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4028")
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
     string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4244")
     # 'var' : conversion from 'size_t' to 'type', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
     string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4267")
+    # 'function' : inconsistent DLL linkage
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4273
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4273")
     # Your code uses a function, class member, variable, or typedef
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
