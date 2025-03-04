@@ -19,23 +19,26 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API uint32_t grn_thread_get_limit(void);
-GRN_API void grn_thread_set_limit(uint32_t new_limit);
+GRN_API uint32_t
+grn_thread_get_limit(void);
+GRN_API void
+grn_thread_set_limit(uint32_t new_limit);
 
-GRN_API uint32_t grn_thread_get_limit_with_ctx(grn_ctx *ctx);
-GRN_API void grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit);
-
+GRN_API uint32_t
+grn_thread_get_limit_with_ctx(grn_ctx *ctx);
+GRN_API void
+grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit);
 
 typedef uint32_t (*grn_thread_get_limit_func)(void *data);
-GRN_API void grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
-                                           void *data);
+GRN_API void
+grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data);
 typedef void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data);
-GRN_API void grn_thread_set_set_limit_func(grn_thread_set_limit_func func,
-                                           void *data);
+GRN_API void
+grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data);
 
 typedef uint32_t (*grn_thread_get_limit_with_ctx_func)(grn_ctx *ctx,
                                                        void *data);
@@ -45,8 +48,9 @@ grn_thread_set_get_limit_with_ctx_func(grn_thread_get_limit_with_ctx_func func,
 typedef void (*grn_thread_set_limit_with_ctx_func)(grn_ctx *ctx,
                                                    uint32_t new_limit,
                                                    void *data);
-GRN_API void grn_thread_set_set_limit_with_ctx_func(grn_thread_set_limit_with_ctx_func func,
-                                                    void *data);
+GRN_API void
+grn_thread_set_set_limit_with_ctx_func(grn_thread_set_limit_with_ctx_func func,
+                                       void *data);
 
 GRN_API grn_rc
 grn_thread_dump(grn_ctx *ctx);
