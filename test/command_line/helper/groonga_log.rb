@@ -232,7 +232,7 @@ module GroongaLog
   end
 
   def normalized_groonga_log_content
-    normalize_groonga_log(groonga_log_content).encode("locale")
+    normalize_groonga_log(groonga_log_content)
   end
 
   private
