@@ -82,6 +82,14 @@ GRN_API grn_cache *
 grn_cache_open(grn_ctx *ctx);
 GRN_API grn_cache *
 grn_persistent_cache_open(grn_ctx *ctx, const char *base_path);
+/**
+ * \brief Free resourses of the `cache`.
+ *
+ * \param ctx The context object.
+ * \param cache The cache object to be freed.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 

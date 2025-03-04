@@ -57,14 +57,6 @@ Reference
    :c:func:`grn_cache_open()` and free the created object by
    :c:func:`grn_cache_close()`.
 
-.. c:function:: grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache)
-
-   Frees resourses of the ``cache``.
-
-   :param ctx: The context.
-   :param cache: The cache object to be freed.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise.
-
 .. c:function:: grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache)
 
    Sets the cache object that is used in
