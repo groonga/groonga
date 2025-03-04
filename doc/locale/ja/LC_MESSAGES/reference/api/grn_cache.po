@@ -54,23 +54,17 @@ msgstr "リファレンス"
 msgid "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()`."
 msgstr "``grn_cache`` は詳細を公開していないオブジェクトです。 :c:func:`grn_cache_open()` で作成し、 :c:func:`grn_cache_close()` で解放できます。"
 
-msgid "Frees resourses of the ``cache``."
-msgstr "``cache`` のリソースを解放。"
+msgid "Sets the cache object that is used in :doc:`/reference/commands/select` command."
+msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを設定します。"
 
 msgid "The context."
 msgstr "その時点のコンテキスト。"
 
-msgid "The cache object to be freed."
-msgstr "キャッシュオブジェクトを解放する。"
+msgid "The cache object that is used in :doc:`/reference/commands/select` command."
+msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。"
 
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise."
 msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "Sets the cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを設定します。"
-
-msgid "The cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。"
 
 msgid "Gets the cache object that is used in :doc:`/reference/commands/select` command."
 msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを取得します。"
