@@ -80,12 +80,3 @@ msgstr "変更するキャッシュオブジェクト。"
 
 msgid "The new max number of entries of the cache object."
 msgstr "キャッシュオブジェクトの新しい最大エントリ数。"
-
-msgid "Gets the max number of entries of the cache object."
-msgstr "キャッシュオブジェクトのエントリの最大数を取得します。"
-
-msgid "The target cache object."
-msgstr "ターゲットキャッシュオブジェクト。"
-
-msgid "The max number of entries of the cache object."
-msgstr "キャッシュオブジェクトの最大エントリ数。"
