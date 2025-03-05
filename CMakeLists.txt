@@ -387,9 +387,6 @@ elseif(MSVC)
   # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4334
   string(APPEND GRN_C_COMPILE_FLAGS " /wd4334")
   string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4334")
-
-  string(APPEND GRN_C_COMPILE_FLAGS " /we4146")
-  string(APPEND GRN_CXX_COMPILE_FLAGS " /we4146")
 endif()
 
 option(GRN_WARN_CONVERSION "Enable -Wconversion" OFF)
