@@ -23,8 +23,24 @@
 extern "C" {
 #endif
 
+/**
+ * \brief Get the max number of threads.
+ *
+ * If \ref grn_thread_get_limit_func isn't set by
+ * \ref grn_thread_set_get_limit_func, it always returns `0`.
+ *
+ * \return The max number of threads or `0`.
+ */
 GRN_API uint32_t
 grn_thread_get_limit(void);
+/**
+ * \brief Set the max number of threads.
+ *
+ * If \ref grn_thread_set_limit_func isn't set by
+ * \ref grn_thread_set_set_limit_func, it does nothing.
+ *
+ * \param new_limit The new max number of threads.
+ */
 GRN_API void
 grn_thread_set_limit(uint32_t new_limit);
 

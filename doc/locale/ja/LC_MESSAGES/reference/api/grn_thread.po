@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "戻り値"
-msgstr ""
-
 msgid "パラメータ"
 msgstr ""
 
@@ -50,24 +47,6 @@ msgstr "最大スレッド数を返す関数の型です。"
 
 msgid "It's the type of function that sets the max number of threads."
 msgstr "最大スレッド数を設定する関数の型です。"
-
-msgid "It returns the max number of threads."
-msgstr "最大スレッド数を返します。"
-
-msgid "If :c:type:`grn_thread_get_limit_func` isn't set by :c:func:`grn_thread_set_get_limit_func()`, it always returns ``0``."
-msgstr ":c:func:`grn_thread_set_get_limit_func()` で :c:type:`grn_thread_get_limit_func` を設定していない場合は、常に ``0`` を返します。"
-
-msgid "The max number of threads or ``0``."
-msgstr "最大スレッド数または ``0`` 。"
-
-msgid "It sets the max number of threads."
-msgstr "最大スレッド数を設定します。"
-
-msgid "If :c:type:`grn_thread_set_limit_func` isn't set by :c:func:`grn_thread_set_set_limit_func()`, it does nothing."
-msgstr ":c:func:`grn_thread_set_set_limit_func()` で :c:type:`grn_thread_set_limit_func` を設定していない場合はなにもしません。"
-
-msgid "The new max number of threads."
-msgstr "新しい最大スレッド数。"
 
 msgid "It sets the custom function that returns the max number of threads."
 msgstr "最大スレッド数を返すカスタム関数を設定します。"

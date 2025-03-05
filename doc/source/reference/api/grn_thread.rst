@@ -78,24 +78,6 @@ Reference
 
    It's the type of function that sets the max number of threads.
 
-.. c:function:: uint32_t grn_thread_get_limit(void)
-
-   It returns the max number of threads.
-
-   If :c:type:`grn_thread_get_limit_func` isn't set by
-   :c:func:`grn_thread_set_get_limit_func()`, it always returns ``0``.
-
-   :return: The max number of threads or ``0``.
-
-.. c:function:: void_t grn_thread_set_limit(uint32_t new_limit)
-
-   It sets the max number of threads.
-
-   If :c:type:`grn_thread_set_limit_func` isn't set by
-   :c:func:`grn_thread_set_set_limit_func()`, it does nothing.
-
-   :param new_limit: The new max number of threads.
-
 .. c:function:: void grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data)
 
    It sets the custom function that returns the max number of threads.
