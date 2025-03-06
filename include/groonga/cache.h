@@ -103,6 +103,14 @@ grn_cache_default_reopen(void);
 
 GRN_API grn_rc
 grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n);
+/**
+ * \brief Retrieve the maximum number of entries in the \ref grn_cache object.
+ *
+ * \param ctx The context object.
+ * \param cache The cache object whose maximum entry count is to be retrieved.
+ *
+ * \return The maximum number of entries for \ref grn_cache object.
+ */
 GRN_API unsigned int
 grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache);
 

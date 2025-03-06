@@ -84,11 +84,3 @@ Reference
    :param cache: The cache object to be changed.
    :param n: The new max number of entries of the cache object.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise.
-
-.. c:function:: unsigned int grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache)
-
-   Gets the max number of entries of the cache object.
-
-   :param ctx: The context.
-   :param cache: The target cache object.
-   :return: The max number of entries of the cache object.
