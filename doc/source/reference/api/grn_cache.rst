@@ -75,12 +75,3 @@ Reference
    :param ctx: The context.
    :return: The cache object that is used in
             :doc:`/reference/commands/select` command. It may be ``NULL``.
-
-.. c:function:: grn_rc grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n)
-
-   Sets the max number of entries of the cache object.
-
-   :param ctx: The context.
-   :param cache: The cache object to be changed.
-   :param n: The new max number of entries of the cache object.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise.

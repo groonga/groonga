@@ -71,12 +71,3 @@ msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッ�
 
 msgid "The cache object that is used in :doc:`/reference/commands/select` command. It may be ``NULL``."
 msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。 ``NULL`` のこともあります。"
-
-msgid "Sets the max number of entries of the cache object."
-msgstr "キャッシュオブジェクトのエントリの最大数を設定します。"
-
-msgid "The cache object to be changed."
-msgstr "変更するキャッシュオブジェクト。"
-
-msgid "The new max number of entries of the cache object."
-msgstr "キャッシュオブジェクトの新しい最大エントリ数。"
