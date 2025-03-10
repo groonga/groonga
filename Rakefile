@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #
-# Copyright (C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "date"
 require "open-uri"
 require "tmpdir"
 
@@ -142,7 +143,7 @@ namespace :release do
   namespace :version do
     desc "Update versions for a new release"
     task :update do
-      new_release_date = env_var("NEW_RELEASE_DATE")
+      new_release_date = env_var("NEW_RELEASE_DATE", Date.today.iso8601)
       cd("packages") do
         ruby("-S",
              "rake",

@@ -126,28 +126,30 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 ``rake release`` の実行
 -----------------------
 
-``rake release`` コマンドでは、 ``NEW_RELEASE_DATE`` にリリースの日付（≒ 実行日）を指定します。
+Run ``rake release`` to release a new version:
 
 .. code-block:: console
 
    $ cd ${GROONGA_CLONE_DIR}
-   $ rake release NEW_RELEASE_DATE=$(date +%Y-%m-%d)
+   $ rake release
 
 ``release`` タスクは次の3つのタスクを実行します。
 
 1. ``release:version:update``
 
-   - RPMパッケージのspecファイルに新しいバージョンのチェンジログを追記したりなどします。
+   RPMパッケージのspecファイルに新しいバージョンのチェンジログを追記したりなどします。
+
+   You can change release date by ``NEW_RELEASE_DATE``.
 
 2. ``release:tag``
 
-   - リリース用のタグを打ちます。
+   リリース用のタグを打ちます。
 
-   - これによりタグがプッシュされ自動リリースが動き出します。
+   これによりタグがプッシュされ自動リリースが動き出します。
 
 3. ``dev:version:bump``
 
-   - 次のリリースに向けてバージョンを更新します。
+   次のリリースに向けてバージョンを更新します。
 
 補足: ``dev:version:bump`` タスク
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
