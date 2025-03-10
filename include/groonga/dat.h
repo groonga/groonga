@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -156,6 +156,23 @@ grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c);
       grn_dat_cursor_close(ctx, _sc);                                          \
     }                                                                          \
   } while (0)
+
+#define GRN_DAT_EACH_BEGIN(ctx, dat, cursor, id)                               \
+  do {                                                                         \
+    if ((dat) && grn_dat_size((ctx), (dat)) > 0) {                             \
+      grn_dat_cursor *cursor =                                                 \
+        grn_dat_cursor_open((ctx), (dat), NULL, 0, NULL, 0, 0, -1, 0);         \
+      if (cursor) {                                                            \
+        grn_id id;                                                             \
+        while ((id = grn_dat_cursor_next((ctx), (cursor))) != GRN_ID_NIL) {
+
+#define GRN_DAT_EACH_END(ctx, cursor)                                          \
+  }                                                                            \
+  grn_dat_cursor_close((ctx), (cursor));                                       \
+  }                                                                            \
+  }                                                                            \
+  }                                                                            \
+  while (false)
 
 #ifdef __cplusplus
 }
