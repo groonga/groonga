@@ -79,7 +79,9 @@ jobs:
         run: |
           cp release-artifacts/release-source/groonga-*.tar.gz ./
           sudo apt update
-          sudo apt install -y gpg
+          sudo apt install -y \
+            devscripts \
+            gpg
       - uses: actions/checkout@v4
         with:
           path: apache-arrow
