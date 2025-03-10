@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 15.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-07 15:00+0900\n"
+"PO-Revision-Date: 2025-03-10 15:23+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,6 +16,21 @@ msgstr ""
 
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
+
+msgid "Release 15.0.3 - 2025-03-10"
+msgstr "15.0.3リリース - 2025-03-10"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "{ref}`offline-index-construction`: Added support for parallel construction with {ref}`table-hash-key` lexicon"
+msgstr "{ref}`offline-index-construction`: 語彙表が{ref}`table-hash-key`の場合でも並列構築をサポート"
+
+msgid "Parallel offline index construction iterates sorted terms internally. {ref}`table-pat-key` and {ref}`table-pat-key` can do it effectively because they are based on tree. But {ref}`table-hash-key` can't do it effectively because it's not based on tree. So we didn't support parallel offline index construction with {ref}`table-hash-key` lexicon."
+msgstr "並列静的インデックス構築は内部的にすべての単語をソートして処理しています。{ref}`table-pat-key`と{ref}`table-pat-key`は効率よくこの処理をできます。なぜなら、これらはツリーベースだからです。しかし、{ref}`table-hash-key`は効率よくこの処理をすることができません。なぜならツリーベースではないからです。そのため、語彙表が{ref}`table-hash-key`の場合は並列静的インデックス構築をサポートしていませんでした。"
+
+msgid "This release adds support for parallel offline index construction with {ref}`table-hash-key` lexicon. It sort terms in a normal way. So it's not so effective. Parallel offline index construction with {ref}`table-hash-key` lexicon will be slower than {ref}`table-pat-key`/{ref}`table-dat-key`. But it may be faster than sequential offline index construction with {ref}`table-hash-key` lexicon."
+msgstr "このリリースでは語彙表が{ref}`table-hash-key`の場合でも並列静的インデックス構築を使えるようにしました。これは通常の方法で単語をソートしています。そのため、それほど効率的ではありません。語彙表が{ref}`table-hash-key`の場合の並列静的インデックス構築は語彙表が{ref}`table-pat-key`または{ref}`table-dat-key`の場合より遅いでしょう。しかし、語彙表が{ref}`table-hash-key`で直列に静的インデックス構築をするよりも速い可能性があります。"
 
 msgid "Release 15.0.2 - 2025-02-21"
 msgstr "15.0.2リリース - 2025-02-21"
@@ -43,9 +58,6 @@ msgstr "{doc}`/reference/normalizers/normalizer_table` を使っていてこの�
 
 msgid "Release 15.0.1 - 2025-02-20"
 msgstr "15.0.1リリース - 2025-02-20"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 20.04 (Focal Fossa)"
 msgstr "[{doc}`/install/ubuntu`] Ubuntu 20.04 (Focal Fossa) のサポート終了"
