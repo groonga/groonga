@@ -16200,6 +16200,90 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 }
 
 namespace grn::ii {
+  template <typename Each>
+  grn_rc
+  table_each_by_key(grn_ctx *ctx, grn_obj *table, Each &&each)
+  {
+    switch (table->header.type) {
+    case GRN_TABLE_HASH_KEY:
+      {
+        auto hash = reinterpret_cast<grn_hash *>(table);
+        if (grn_hash_size(ctx, hash) == 0) {
+          return GRN_SUCCESS;
+        }
+
+        // grn_hash can't use GRN_CURSOR_BY_KEY. So we sort by key
+        // manually. This will not be an ignorable overhead but it's
+        // an easy implementation for now. We may use an offline index
+        // construction algorithm that doesn't rely on
+        // GRN_CURSOR_BY_KEY in a future but we haven't done it.
+        auto sorted = grn_array_create(ctx, nullptr, sizeof(grn_id), 0);
+        if (!sorted) {
+          return ctx->rc;
+        }
+        grn_table_sort_optarg arg = {
+          GRN_TABLE_SORT_ASC | GRN_TABLE_SORT_BY_KEY,
+          nullptr,
+          nullptr,
+          nullptr,
+          0,
+        };
+        grn_hash_sort(ctx, hash, -1, sorted, &arg);
+        grn_rc rc = GRN_SUCCESS;
+        GRN_ARRAY_EACH_BEGIN(ctx, sorted, cursor, GRN_ID_NIL, GRN_ID_MAX, id)
+        {
+          grn_id hash_id = GRN_ID_NIL;
+          auto value_size =
+            grn_array_get_value(ctx,
+                                sorted,
+                                id,
+                                reinterpret_cast<void *>(&hash_id));
+          if (value_size == 0) {
+            continue;
+          }
+          rc = each(hash_id);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        GRN_ARRAY_EACH_END(ctx, cursor);
+        grn_array_close(ctx, sorted);
+        return rc;
+      }
+    case GRN_TABLE_PAT_KEY:
+      {
+        auto pat = reinterpret_cast<grn_pat *>(table);
+        grn_rc rc = GRN_SUCCESS;
+        GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
+        {
+          rc = each(id);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        GRN_PAT_EACH_END(ctx, cursor);
+        return rc;
+      }
+    case GRN_TABLE_DAT_KEY:
+      {
+        auto dat = reinterpret_cast<grn_dat *>(table);
+        grn_rc rc = GRN_SUCCESS;
+        GRN_DAT_EACH_BEGIN(ctx, dat, cursor, id)
+        {
+          rc = each(id);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        GRN_DAT_EACH_END(ctx, cursor);
+        return rc;
+      }
+    default:
+      // must not happen
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+
   // Builds a block from multiple records. You can build a block by
   // calling flush() after you append multiple records by
   // append_record().
@@ -16375,30 +16459,21 @@ namespace grn::ii {
         return GRN_SUCCESS;
       }
 
-      /* Flush terms. */
-      auto cursor = grn_table_cursor_open(ctx_,
-                                          lexicon_,
-                                          nullptr,
-                                          0,
-                                          nullptr,
-                                          0,
-                                          0,
-                                          -1,
-                                          GRN_CURSOR_BY_KEY);
-      for (;;) {
-        grn_id tid = grn_table_cursor_next(ctx_, cursor);
-        if (tid == GRN_ID_NIL) {
-          break;
-        }
-        auto rc = flush_term(&(terms_[tid - 1]), lexicon_, tid);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-      grn_table_cursor_close(ctx_, cursor);
+      // Flush terms.
+      //
+      // This assumes that both of each block builder (here) and
+      // reader (see Builder::commit()) use the same order to write
+      // built blocks and read the written blocks. This is implemented
+      // by sorting by key (term) in both of local lexicons and the
+      // global lexicon (ii_->lexicon). Sorting by key is efficient
+      // with grn_pat and grn_dat but not with grn_hash. So we may
+      // change this algorithm later.
+      auto rc = table_each_by_key(ctx_, lexicon_, [&](grn_id tid) {
+        return flush_term(&(terms_[tid - 1]), lexicon_, tid);
+      });
 
       /* Clear the current data. */
-      auto rc = grn_table_truncate(ctx_, lexicon_);
+      rc = grn_table_truncate(ctx_, lexicon_);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -18296,20 +18371,8 @@ namespace grn::ii {
         blocks_[i].tid = static_cast<grn_id>(value);
       }
 
-      auto cursor = grn_table_cursor_open(ctx_,
-                                          ii_->lexicon,
-                                          nullptr,
-                                          0,
-                                          nullptr,
-                                          0,
-                                          0,
-                                          -1,
-                                          GRN_CURSOR_BY_KEY);
-      for (;;) {
-        grn_id tid = grn_table_cursor_next(ctx_, cursor);
-        if (tid == GRN_ID_NIL) {
-          break;
-        }
+      // See also the comment in BlockBuilder::flush().
+      auto rc = table_each_by_key(ctx_, ii_->lexicon, [&](grn_id tid) {
         chunk_.tid = tid;
         chunk_.rid = GRN_ID_NIL;
         df_ = 0;
@@ -18323,7 +18386,7 @@ namespace grn::ii {
         }
         if (chunk_.n == 0) {
           /* This term does not appear. */
-          continue;
+          return GRN_SUCCESS;
         }
         if (n_cinfos_ == 0) {
           bool packed;
@@ -18332,7 +18395,7 @@ namespace grn::ii {
             return rc;
           }
           if (packed) {
-            continue;
+            return GRN_SUCCESS;
           }
         }
         auto rc = register_chunks();
@@ -18343,10 +18406,13 @@ namespace grn::ii {
           progress_.value.index.n_processed_terms++;
           grn_ctx_call_progress_callback(ctx_, &progress_);
         }
+        return GRN_SUCCESS;
+      });
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
-      grn_table_cursor_close(ctx_, cursor);
       if (grn_ii_builder_buffer_is_assigned(ctx_, &buf_)) {
-        auto rc = grn_ii_builder_buffer_flush(ctx_, &buf_);
+        rc = grn_ii_builder_buffer_flush(ctx_, &buf_);
         if (rc != GRN_SUCCESS) {
           return rc;
         }

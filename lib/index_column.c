@@ -181,6 +181,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
                      NULL,
                      NULL);
   switch (lexicon_flags & GRN_OBJ_TABLE_TYPE_MASK) {
+  case GRN_OBJ_TABLE_HASH_KEY:
   case GRN_OBJ_TABLE_PAT_KEY:
   case GRN_OBJ_TABLE_DAT_KEY:
     use_grn_ii_build = true;

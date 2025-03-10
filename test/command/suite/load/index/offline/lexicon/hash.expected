@@ -1,0 +1,10 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value1 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_HASH_KEY ShortText   --default_tokenizer TokenNgram   --normalizers NormalizerNFKC
+[[0,0.0,0.0],true]
+column_create Terms data_values COLUMN_INDEX|WITH_POSITION   Data value1 --n_workers -1
+[[0,0.0,0.0],true]
+index_column_diff Terms data_values
+[[0,0.0,0.0],[]]
