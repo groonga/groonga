@@ -209,7 +209,7 @@ jobs:
           name: release-source
       - name: Update version
         if: |
-          !startsWith(github.ref, 'refs/tags/') &&
+          github.ref_type != 'tag' &&
           !startsWith(github.ref, 'refs/heads/maintenance/')
         run: |
           cd packages
