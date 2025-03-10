@@ -16806,7 +16806,7 @@ namespace grn::ii {
           case GRN_TABLE_HASH_KEY:
             {
               auto lexicon_hash = reinterpret_cast<grn_hash *>(lexicon_);
-              if (value_size >= lexicon_hash->key_size) {
+              if (value_size > lexicon_hash->key_size) {
                 tid = GRN_ID_NIL;
                 max_key_size = lexicon_hash->key_size;
                 too_large_key = true;
