@@ -210,7 +210,7 @@ jobs:
       - name: Update version
         if: |
           github.ref_type != 'tag' &&
-          !startsWith(github.ref, 'refs/heads/maintenance/')
+          !startsWith(github.ref_name, 'maintenance/')
         run: |
           cd packages
           rake version:update RELEASE_DATE=$(date +%Y-%m-%d)
