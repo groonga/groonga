@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -175,16 +175,16 @@ grn_pat_cursor_delete(grn_ctx *ctx,
 
 #define GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)                               \
   do {                                                                         \
-    if (pat && grn_pat_size(ctx, pat) > 0) {                                   \
+    if ((pat) && grn_pat_size((ctx), (pat)) > 0) {                             \
       grn_pat_cursor *cursor =                                                 \
-        grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0);             \
+        grn_pat_cursor_open((ctx), (pat), NULL, 0, NULL, 0, 0, -1, 0);         \
       if (cursor) {                                                            \
         grn_id id;                                                             \
-        while ((id = grn_pat_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        while ((id = grn_pat_cursor_next((ctx), (cursor))) != GRN_ID_NIL) {
 
 #define GRN_PAT_EACH_END(ctx, cursor)                                          \
   }                                                                            \
-  grn_pat_cursor_close(ctx, cursor);                                           \
+  grn_pat_cursor_close((ctx), (cursor));                                       \
   }                                                                            \
   }                                                                            \
   }                                                                            \
