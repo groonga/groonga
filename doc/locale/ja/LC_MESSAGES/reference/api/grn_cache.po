@@ -65,9 +65,3 @@ msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッ�
 
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise."
 msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "Gets the cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを取得します。"
-
-msgid "The cache object that is used in :doc:`/reference/commands/select` command. It may be ``NULL``."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。 ``NULL`` のこともあります。"

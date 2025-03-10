@@ -95,6 +95,21 @@ grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 
 GRN_API grn_rc
 grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
+/**
+ * \brief Retrieve the current \ref grn_cache object used in the select command.
+ *
+ * \note For more details about the select command, please see
+ * \htmlonly
+ *   <a href="https://groonga.org/docs/reference/commands/select.html">
+ *     Groonga command select documentation
+ *   </a>.
+ * \endhtmlonly
+ *
+ * \param ctx The context object.
+ *
+ * \return The \ref grn_cache object used in the select command on success,
+ *         `NULL` on error.
+ */
 GRN_API grn_cache *
 grn_cache_current_get(grn_ctx *ctx);
 
