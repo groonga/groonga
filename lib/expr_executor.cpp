@@ -1019,8 +1019,13 @@ namespace {
     case GRN_DB_UINT32:
       {
         auto x_ = GRN_UINT32_VALUE(x);
-        CHECK(numeric_arithmetic_binary_operation_dispatch<
-              uint32_t>(ctx, op, x_, y, res, GRN_DB_UINT32));
+        if (op == GRN_OP_SLASH) {
+          CHECK(numeric_arithmetic_binary_operation_dispatch<
+                int64_t>(ctx, op, x_, y, res, GRN_DB_INT64));
+        } else {
+          CHECK(numeric_arithmetic_binary_operation_dispatch<
+                uint32_t>(ctx, op, x_, y, res, GRN_DB_UINT32));
+        }
       }
       break;
     case GRN_DB_INT64:
@@ -1050,8 +1055,13 @@ namespace {
     case GRN_DB_UINT64:
       {
         auto x_ = GRN_UINT64_VALUE(x);
-        CHECK(numeric_arithmetic_binary_operation_dispatch<
-              uint64_t>(ctx, op, x_, y, res, GRN_DB_UINT64));
+        if (op == GRN_OP_SLASH) {
+          CHECK(numeric_arithmetic_binary_operation_dispatch<
+                int64_t>(ctx, op, x_, y, res, GRN_DB_INT64));
+        } else {
+          CHECK(numeric_arithmetic_binary_operation_dispatch<
+                uint64_t>(ctx, op, x_, y, res, GRN_DB_UINT64));
+        }
       }
       break;
     case GRN_DB_FLOAT32:
