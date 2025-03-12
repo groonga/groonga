@@ -105,7 +105,7 @@ grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
  *
  * \return The \ref grn_cache object is associated with the database in the
  *         select command context. If there is no specific cache, it returns
- *         the current cache which might be NULL.
+ *         the current cache which might be `NULL`.
  */
 GRN_API grn_cache *
 grn_cache_current_get(grn_ctx *ctx);
