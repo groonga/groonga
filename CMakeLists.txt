@@ -375,10 +375,13 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-implicit-fallthrough")
 elseif(MSVC)
-  # unary minus operator applied to unsigned type, result still unsigned
-  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
-  string(APPEND GRN_C_COMPILE_FLAGS " /wd4146")
-  string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4146")
+  # # unary minus operator applied to unsigned type, result still unsigned
+  # # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
+  # string(APPEND GRN_C_COMPILE_FLAGS " /wd4146")
+  # string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4146")
+  # debug
+  string(APPEND GRN_C_COMPILE_FLAGS " /we4146")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " /we4146")
   # 'argument' : conversion from 'type1' to 'type2', possible loss of data
   # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
   string(APPEND GRN_C_COMPILE_FLAGS " /wd4244")
