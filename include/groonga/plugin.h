@@ -152,6 +152,16 @@ grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 
 typedef struct _grn_plugin_mutex grn_plugin_mutex;
 
+/**
+ * \brief Create a new object of \ref grn_plugin_mutex.
+ *
+ * Memory for the new object is obtained with \ref GRN_PLUGIN_MALLOC.
+ *
+ * \param ctx The context object.
+ *
+ * \return A newly created \ref grn_plugin_mutex object on success, `NULL` on
+ *         sufficient memory is not available.
+ */
 GRN_API grn_plugin_mutex *
 grn_plugin_mutex_open(grn_ctx *ctx);
 
