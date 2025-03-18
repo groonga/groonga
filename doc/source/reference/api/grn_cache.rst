@@ -56,13 +56,3 @@ Reference
    It is an opaque cache object. You can create a ``grn_cache`` by
    :c:func:`grn_cache_open()` and free the created object by
    :c:func:`grn_cache_close()`.
-
-.. c:function:: grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache)
-
-   Sets the cache object that is used in
-   :doc:`/reference/commands/select` command.
-
-   :param ctx: The context.
-   :param cache: The cache object that is used in
-                 :doc:`/reference/commands/select` command.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise.
