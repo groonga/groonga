@@ -66,12 +66,3 @@ Reference
    :param cache: The cache object that is used in
                  :doc:`/reference/commands/select` command.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise.
-
-.. c:function:: grn_cache *grn_cache_current_get(grn_ctx *ctx)
-
-   Gets the cache object that is used in
-   :doc:`/reference/commands/select` command.
-
-   :param ctx: The context.
-   :return: The cache object that is used in
-            :doc:`/reference/commands/select` command. It may be ``NULL``.

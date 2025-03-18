@@ -95,6 +95,15 @@ grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 
 GRN_API grn_rc
 grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
+/**
+ * \brief Retrieve the current \ref grn_cache object.
+ *
+ * \param ctx The context object.
+ *
+ * \return The \ref grn_cache object is associated with the database that the
+ *         context is using. If there is no specific cache, it returns the
+ *         current cache which might be NULL.
+ */
 GRN_API grn_cache *
 grn_cache_current_get(grn_ctx *ctx);
 
