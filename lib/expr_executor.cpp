@@ -320,7 +320,7 @@ namespace {
                                                     grn_obj *result)
   {
     // y == -1
-    if (grn::numeric::is_zero(std::abs(y + 1))) {
+    if (grn::numeric::is_zero(y + 1)) {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
@@ -339,7 +339,7 @@ namespace {
                                                     grn_obj *result)
   {
     // y == -1
-    if (grn::numeric::is_zero(std::abs(y + 1))) {
+    if (grn::numeric::is_zero(y + 1)) {
       grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
