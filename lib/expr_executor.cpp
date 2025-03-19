@@ -252,8 +252,16 @@ namespace {
     }
   }
 
+  /* To avoid the following warning, which occur in uint32_t and uint64_t.
+   *
+   * warning C4146: unary minus operator applied to unsigned type, result still
+   * unsigned
+   */
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<std::is_signed_v<Y> && std::is_integral_v<Y>, bool>
+  std::enable_if_t<!(std::is_same_v<X, uint32_t> ||
+                     std::is_same_v<X, uint64_t>) &&
+                     std::is_signed_v<Y> && std::is_integral_v<Y>,
+                   bool>
   numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
                                                     X x,
                                                     Y y,
@@ -261,6 +269,25 @@ namespace {
   {
     if (y == -1) {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
+    } else {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    }
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, uint32_t> ||
+                    std::is_same_v<X, uint64_t>) &&
+                     std::is_signed_v<Y> && std::is_integral_v<Y>,
+                   bool>
+  numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
+                                                    X x,
+                                                    Y y,
+                                                    grn_obj *result)
+  {
+    if (y == -1) {
+      grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
+      grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     }
@@ -286,8 +313,8 @@ namespace {
                                                     grn_obj *result)
   {
     // y == -1
-    if (grn::numeric::is_zero(std::abs(y + 1))) {
-      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(-x));
+    if (grn::numeric::is_zero(y + 1)) {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, -static_cast<RESULT_TYPE>(x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     }
