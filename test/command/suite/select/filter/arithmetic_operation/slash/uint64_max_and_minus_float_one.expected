@@ -31,7 +31,7 @@ select Values   --output_columns 'value, value / -1.0'
       ],
       [
         18446744073709551615,
-        1.0
+        -1.844674407370955e+19
       ]
     ]
   ]
