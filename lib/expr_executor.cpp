@@ -286,6 +286,7 @@ namespace {
                                                     grn_obj *result)
   {
     if (y == -1) {
+      grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
       grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
@@ -1019,13 +1020,8 @@ namespace {
     case GRN_DB_UINT32:
       {
         auto x_ = GRN_UINT32_VALUE(x);
-        if (op == GRN_OP_SLASH) {
-          CHECK(numeric_arithmetic_binary_operation_dispatch<
-                int64_t>(ctx, op, x_, y, res, GRN_DB_INT64));
-        } else {
-          CHECK(numeric_arithmetic_binary_operation_dispatch<
-                uint32_t>(ctx, op, x_, y, res, GRN_DB_UINT32));
-        }
+        CHECK(numeric_arithmetic_binary_operation_dispatch<
+              uint32_t>(ctx, op, x_, y, res, GRN_DB_UINT32));
       }
       break;
     case GRN_DB_INT64:
@@ -1055,13 +1051,8 @@ namespace {
     case GRN_DB_UINT64:
       {
         auto x_ = GRN_UINT64_VALUE(x);
-        if (op == GRN_OP_SLASH) {
-          CHECK(numeric_arithmetic_binary_operation_dispatch<
-                int64_t>(ctx, op, x_, y, res, GRN_DB_INT64));
-        } else {
-          CHECK(numeric_arithmetic_binary_operation_dispatch<
-                uint64_t>(ctx, op, x_, y, res, GRN_DB_UINT64));
-        }
+        CHECK(numeric_arithmetic_binary_operation_dispatch<
+              uint64_t>(ctx, op, x_, y, res, GRN_DB_UINT64));
       }
       break;
     case GRN_DB_FLOAT32:
