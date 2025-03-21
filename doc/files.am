@@ -1066,6 +1066,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-indexing.svg \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.png \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.svg \
+	$(top_srcdir)/doc/source/images/zulip-icon-128x128.png \
 	$(top_srcdir)/doc/source/index.rst \
 	$(top_srcdir)/doc/source/install.rst \
 	$(top_srcdir)/doc/source/install/almalinux.rst \
@@ -2435,6 +2436,7 @@ source_files_relative_from_doc_dir = \
 	source/images/reference/tokenizers/used-when-indexing.svg \
 	source/images/reference/tokenizers/used-when-searching.png \
 	source/images/reference/tokenizers/used-when-searching.svg \
+	source/images/zulip-icon-128x128.png \
 	source/index.rst \
 	source/install.rst \
 	source/install/almalinux.rst \
