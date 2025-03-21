@@ -14,10 +14,7 @@ Here are shortcut links:
 
 ## Community
 
-  * [@groonga on Twitter](https://twitter.com/groonga/)
-  * [Groonga page on Facebook](https://www.facebook.com/groonga)
-  * [Mailing list on SourceForge.net](http://lists.sourceforge.net/mailman/listinfo/groonga-talk)
-  * [Chat room on Gitter](https://gitter.im/groonga/public)
+See our Community page: https://groonga.org/docs/community.html
 
 ## Bundled software
 
