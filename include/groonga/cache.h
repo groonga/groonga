@@ -99,7 +99,7 @@ grn_cache_close(grn_ctx *ctx, grn_cache *cache);
  * \param ctx The context object.
  * \param cache The new current cache object.
  *
- * \return \ref GRN_SUCCESS on success.
+ * \return \ref GRN_SUCCESS always.
  */
 GRN_API grn_rc
 grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
