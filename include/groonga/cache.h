@@ -26,8 +26,8 @@ extern "C" {
 /**
  * \brief Cache object.
  *
- *        You can create a new cache object using \ref grn_cache_open, and free
- *        it using \ref grn_cache_close.
+ * You can create a new cache object using \ref grn_cache_open, and free it
+ * using \ref grn_cache_close.
  */
 typedef struct _grn_cache grn_cache;
 
