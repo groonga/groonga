@@ -93,6 +93,14 @@ grn_persistent_cache_open(grn_ctx *ctx, const char *base_path);
 GRN_API grn_rc
 grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 
+/**
+ * \brief Set the current \ref grn_cache object.
+ *
+ * \param ctx The context object.
+ * \param cache The new current cache object.
+ *
+ * \return \ref GRN_SUCCESS always.
+ */
 GRN_API grn_rc
 grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
 /**
