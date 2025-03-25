@@ -51,8 +51,5 @@ Here is an example that change the current cache object.
 Reference
 ---------
 
-.. c:type:: grn_cache
-
-   It is an opaque cache object. You can create a ``grn_cache`` by
-   :c:func:`grn_cache_open()` and free the created object by
-   :c:func:`grn_cache_close()`.
+.. note::
+   We are currently switching to automatic generation using Doxygen.

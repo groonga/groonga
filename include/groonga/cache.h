@@ -23,6 +23,12 @@ extern "C" {
 #endif
 
 #define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
+/**
+ * \brief Cache object.
+ *
+ * You can create a new cache object using \ref grn_cache_open, and free it
+ * using \ref grn_cache_close.
+ */
 typedef struct _grn_cache grn_cache;
 
 GRN_API void
