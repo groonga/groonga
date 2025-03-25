@@ -27,7 +27,7 @@ We're using `Zulip's sponsorship for open source projects <https://zulip.com/for
 
 .. [#zulip-license]
    Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors
-   (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_\)
+   (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_)
 
    Zulip is distributed under the `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_.
    Zulip logo used on this page are also distributed under the same license.
