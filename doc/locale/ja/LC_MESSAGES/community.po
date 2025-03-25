@@ -37,11 +37,17 @@ msgstr "謝辞"
 msgid "We're using `Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_."
 msgstr "`Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_ を利用しています。"
 
-msgid "|inline-zulip-logo| `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication."
-msgstr "|inline-zulip-logo| `Zulip <https://zulip.com/>`_ は、チームでの効率的なコミュニケーションをサポートするチャットアプリです。"
+msgid "|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication."
+msgstr "|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ は、チームでの効率的なコミュニケーションをサポートするチャットアプリです。"
 
 msgid "inline-zulip-logo"
 msgstr ""
+
+msgid "Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_\\)"
+msgstr ""
+
+msgid "Zulip is distributed under the `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_. Zulip logo used on this page are also distributed under the same license."
+msgstr "Zulipは `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_ に基づいて配布されています。このページにあるZulipのロゴも同様です。"
 
 msgid "X (Twitter)"
 msgstr ""

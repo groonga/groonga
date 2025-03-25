@@ -19,11 +19,18 @@ Thanks
 
 We're using `Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_.
 
-|inline-zulip-logo| `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication.
+|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication.
 
 .. |inline-zulip-logo| image:: /images/zulip-icon-128x128.png
    :height: 2em
    :target: https://zulip.com/
+
+.. [#zulip-license]
+   Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors
+   (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_\)
+
+   Zulip is distributed under the `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_.
+   Zulip logo used on this page are also distributed under the same license.
 
 X (Twitter)
 -----------
