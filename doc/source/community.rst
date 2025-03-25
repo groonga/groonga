@@ -10,7 +10,7 @@ We welcome you to join our community.
 Chat room
 ---------
 
-There are chat rooms for discussion about Groonga on Zulip.
+There is a chat room for discussion about Groonga on Zulip.
 
 https://groonga.zulipchat.com/
 

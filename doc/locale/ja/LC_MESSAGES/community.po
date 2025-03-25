@@ -25,7 +25,7 @@ msgstr "Groongaに関する情報を共有するための場所がいくつか�
 msgid "Chat room"
 msgstr "チャットルーム"
 
-msgid "There are chat rooms for discussion about Groonga on Zulip."
+msgid "There is a chat room for discussion about Groonga on Zulip."
 msgstr "Groongaに関する話題を扱うチャットルームがあります。"
 
 msgid "https://groonga.zulipchat.com/"
