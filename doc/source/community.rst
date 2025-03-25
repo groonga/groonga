@@ -7,30 +7,33 @@ Community
 There are some places for sharing Groonga information.
 We welcome you to join our community.
 
-Mailing List
-------------
-
-There are mailing lists for discussion about Groonga.
-
-For English speakers
-  `groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/listinfo/groonga-talk>`_
-
-For Japanese speakers
-  `groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-dev>`_
-
 Chat room
 ---------
 
-There are chat rooms for discussion about Groonga.
+There is a chat room for discussion about Groonga on Zulip.
 
-For English speakers
-  `groonga/en chat room on Gitter <https://gitter.im/groonga/en>`_
+https://groonga.zulipchat.com/
 
-For Japanese speakers
-  `groonga/ja chat room on Gitter <https://gitter.im/groonga/ja>`_
+Thanks
+^^^^^^
 
-Twitter
--------
+We're using `Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_.
+
+|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication.
+
+.. |inline-zulip-logo| image:: /images/zulip-icon-128x128.png
+   :height: 2em
+   :target: https://zulip.com/
+
+.. [#zulip-license]
+   Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors
+   (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_)
+
+   Zulip is distributed under the `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_.
+   Zulip logo used on this page are also distributed under the same license.
+
+X (Twitter)
+-----------
 
 `@groonga <https://twitter.com/groonga/>`_ tweets Groonga related
 information.

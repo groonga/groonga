@@ -22,37 +22,34 @@ msgstr "コミュニティ"
 msgid "There are some places for sharing Groonga information. We welcome you to join our community."
 msgstr "Groongaに関する情報を共有するための場所がいくつかあります。あなたの参加をお待ちしています！"
 
-msgid "Mailing List"
-msgstr "メーリングリスト"
-
-msgid "There are mailing lists for discussion about Groonga."
-msgstr "Groongaに関する話題を扱うメーリングリストがあります。"
-
-msgid "For English speakers"
-msgstr "英語"
-
-msgid "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/listinfo/groonga-talk>`_"
-msgstr ""
-
-msgid "For Japanese speakers"
-msgstr "日本語"
-
-msgid "`groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-dev>`_"
-msgstr ""
-
 msgid "Chat room"
 msgstr "チャットルーム"
 
-msgid "There are chat rooms for discussion about Groonga."
+msgid "There is a chat room for discussion about Groonga on Zulip."
 msgstr "Groongaに関する話題を扱うチャットルームがあります。"
 
-msgid "`groonga/en chat room on Gitter <https://gitter.im/groonga/en>`_"
-msgstr "`Gitterにあるgroonga/enチャットルーム <https://gitter.im/groonga/en>`_"
+msgid "https://groonga.zulipchat.com/"
+msgstr ""
 
-msgid "`groonga/ja chat room on Gitter <https://gitter.im/groonga/ja>`_"
-msgstr "`Gitterにあるgroonga/jaチャットルーム <https://gitter.im/groonga/ja>`_"
+msgid "Thanks"
+msgstr "謝辞"
 
-msgid "Twitter"
+msgid "We're using `Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_."
+msgstr "`Zulip's sponsorship for open source projects <https://zulip.com/for/open-source/>`_ を利用しています。"
+
+msgid "|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ is an organized team chat app designed for efficient communication."
+msgstr "|inline-zulip-logo| [#zulip-license]_ `Zulip <https://zulip.com/>`_ は、チームでの効率的なコミュニケーションをサポートするチャットアプリです。"
+
+msgid "inline-zulip-logo"
+msgstr ""
+
+msgid "Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors (`NOTICE <https://github.com/zulip/zulip/blob/c1c9a2e8ee9373fb224764a2bce46f6c8f92225e/NOTICE>`_)"
+msgstr ""
+
+msgid "Zulip is distributed under the `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_. Zulip logo used on this page are also distributed under the same license."
+msgstr "Zulipは `Apache 2.0 license <https://github.com/zulip/zulip/blob/main/LICENSE>`_ に基づいて配布されています。このページにあるZulipのロゴも同様です。"
+
+msgid "X (Twitter)"
 msgstr ""
 
 msgid "`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related information."

@@ -1066,6 +1066,7 @@ set(GRN_DOC_SOURCES
     images/reference/tokenizers/used-when-indexing.svg
     images/reference/tokenizers/used-when-searching.png
     images/reference/tokenizers/used-when-searching.svg
+    images/zulip-icon-128x128.png
     index.rst
     install.rst
     install/almalinux.rst
@@ -1448,6 +1449,7 @@ set(GRN_DOC_HTML_FILES
     news/12.html
     news/13.html
     news/14.html
+    news/15.html
     news/2.html
     news/3.html
     news/4.html
