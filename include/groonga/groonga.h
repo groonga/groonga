@@ -222,26 +222,26 @@ grn_log_level_parse(const char *string, grn_log_level *level);
 /** \brief The input/output content format. */
 typedef enum {
   /**
-   * Output is in no specific format. This means that either no output is
-   * produced or the output remains in its original format.
+   * The content is in no specific format. This means that either no content is
+   * produced or the content remains in its original format.
    */
   GRN_CONTENT_NONE = 0,
-  /** Output is in a tab-separated values (TSV) format. */
+  /** The content is in a tab-separated values (TSV) format. */
   GRN_CONTENT_TSV,
-  /** Output is in JSON format. */
+  /** The content is in JSON format. */
   GRN_CONTENT_JSON,
-  /** Output is in XML format. */
+  /** The content is in XML format. */
   GRN_CONTENT_XML,
   /**
-   * Output is in MessagePack format. This requires that MessagePack is
+   * The content is in MessagePack format. This requires that MessagePack is
    * available during Groonga's build process. Without it, this type cannot be
    * used.
    */
   GRN_CONTENT_MSGPACK,
-  /** Output is a list of Groonga commands. */
+  /** The content is a list of Groonga commands. */
   GRN_CONTENT_GROONGA_COMMAND_LIST,
   /**
-   * Output is in Apache Arrow format. This requires that Apache Arrow is
+   * The content is in Apache Arrow format. This requires that Apache Arrow is
    * available during Groonga's build process. Without it, this type cannot be
    * used.
    */
