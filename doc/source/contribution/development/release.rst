@@ -268,7 +268,7 @@ forkしたリポジトリにて、pushされたブランチのGitHub Actionsが�
 .. code-block:: console
 
    $ cd ${GROONGA_ORG_PATH}
-   $ rake release:version:update
+   $ rake release
 
 Dockerイメージの更新
 --------------------
