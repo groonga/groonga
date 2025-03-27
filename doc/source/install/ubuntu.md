@@ -28,6 +28,13 @@ sudo apt update
 
 ### PPA (Personal Package Archive)
 
+```{note}
+The PPA will be deprecated. We strongly recommend using our Groonga APT
+repository(packages.groonga.org) because packages from that repository are built
+with Apache Arrow enabled. This configuration unlocks extra features, such as
+parallel offline index building.
+```
+
 The Groonga APT repository for Ubuntu uses PPA (Personal Package
 Archive) on Launchpad. You can install Groonga by APT from the PPA.
 
