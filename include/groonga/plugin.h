@@ -159,7 +159,7 @@ typedef struct _grn_plugin_mutex grn_plugin_mutex;
  *
  * \param ctx The context object.
  *
- * \return A newly created \ref grn_plugin_mutex object on success, `NULL` on
+ * \return A newly created \ref grn_plugin_mutex object on success, `NULL` if
  *         sufficient memory is not available.
  */
 GRN_API grn_plugin_mutex *
