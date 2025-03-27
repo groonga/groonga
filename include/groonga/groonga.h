@@ -242,7 +242,7 @@ typedef enum {
   GRN_CONTENT_GROONGA_COMMAND_LIST,
   /**
    * The content is in Apache Arrow format, specifically using the only IPC
-   * Streaming format, although Apache Arrow supports two IPC formats which are
+   * Streaming Format, although Apache Arrow supports two IPC Formats which are
    * the IPC Streaming Format and the IPC File Format. This requires that Apache
    * Arrow is available during Groonga's build process. Without it, this type
    * cannot be used.
