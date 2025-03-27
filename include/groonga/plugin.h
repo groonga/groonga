@@ -161,6 +161,8 @@ typedef struct _grn_plugin_mutex grn_plugin_mutex;
  *
  * \return A newly created \ref grn_plugin_mutex object on success, `NULL` if
  *         sufficient memory is not available.
+ *         The returned \ref grn_plugin_mutex object must be freed by
+ *         \ref grn_plugin_mutex_close.
  *         See `ctx->rc` (\ref grn_ctx::rc) for error details.
  */
 GRN_API grn_plugin_mutex *
