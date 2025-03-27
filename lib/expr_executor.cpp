@@ -252,16 +252,17 @@ namespace {
     }
   }
 
-  /* To avoid the following warning, which occur in uint32_t and uint64_t.
+  /* To avoid the following warning, which occur in uintN_t.
    *
    * warning C4146: unary minus operator applied to unsigned type, result still
    * unsigned
    */
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<!(std::is_same_v<X, uint32_t> ||
-                     std::is_same_v<X, uint64_t>) &&
-                     std::is_signed_v<Y> && std::is_integral_v<Y>,
-                   bool>
+  std::enable_if_t<
+    !(std::is_same_v<X, uint8_t> || std::is_same_v<X, uint16_t> ||
+      std::is_same_v<X, uint32_t> || std::is_same_v<X, uint64_t>) &&
+      std::is_signed_v<Y> && std::is_integral_v<Y>,
+    bool>
   numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
                                                     X x,
                                                     Y y,
@@ -276,7 +277,8 @@ namespace {
   }
 
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<(std::is_same_v<X, uint32_t> ||
+  std::enable_if_t<(std::is_same_v<X, uint8_t> || std::is_same_v<X, uint16_t> ||
+                    std::is_same_v<X, uint32_t> ||
                     std::is_same_v<X, uint64_t>) &&
                      std::is_signed_v<Y> && std::is_integral_v<Y>,
                    bool>
