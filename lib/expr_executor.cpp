@@ -260,8 +260,8 @@ namespace {
    * - uint8_t -> int16_t
    * - uint16_t -> int32_t
    * - uint32_t -> int64_t
-   * - uint64_t -> int64_t (When X does not over INT64_MAX)
-   * - uint64_t -> double (When X over INT64_MAX)
+   * - uint64_t -> int64_t (When X does not over INT64_MAX + 1)
+   * - uint64_t -> double (When X over INT64_MAX + 1)
    */
   template <typename RESULT_TYPE, typename X, typename Y>
   std::enable_if_t<
@@ -346,7 +346,11 @@ namespace {
                                                     grn_obj *result)
   {
     if (y == -1) {
-      if (x > INT64_MAX) {
+      /* int64_t max: 9223372036854775807
+       * int64_t min: -9223372036854775808
+       * uint64_t's 9223372036854775808 as int64_t's -9223372036854775808
+       */
+      if (x > static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1) {
         grn_obj_reinit(ctx, result, GRN_DB_FLOAT, 0);
         grn::bulk::set<double>(ctx, result, -static_cast<double>(x));
       } else {
