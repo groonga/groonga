@@ -4,7 +4,7 @@ column_create Values value COLUMN_SCALAR UInt64
 [[0,0.0,0.0],true]
 load --table Values
 [
-{"value": 18446744073709551615}
+{"value": 9223372036854775808}
 ]
 [[0,0.0,0.0],1]
 select Values   --output_columns 'value, value / -1'
@@ -30,8 +30,8 @@ select Values   --output_columns 'value, value / -1'
         ]
       ],
       [
-        18446744073709551615,
-        1
+        9223372036854775808,
+        -9223372036854775808
       ]
     ]
   ]
