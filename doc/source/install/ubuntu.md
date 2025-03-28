@@ -11,7 +11,7 @@ size data.
 
 ## Register Groonga APT repository
 
-### APT Repository(packages.groonga.org)
+### APT Repository (packages.groonga.org)
 
 Groonga packages are distributed via our Groonga APT repository at
 https://packages.groonga.org.
@@ -30,7 +30,7 @@ sudo apt update
 
 ```{note}
 The PPA will be deprecated. We strongly recommend using our Groonga APT
-repository(packages.groonga.org) because packages from that repository are built
+repository (packages.groonga.org) because packages from that repository are built
 with Apache Arrow enabled. This configuration unlocks extra features, such as
 parallel offline index building.
 ```
