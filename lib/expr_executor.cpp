@@ -350,9 +350,16 @@ namespace {
        * int64_t min: -9223372036854775808
        * uint64_t's 9223372036854775808 as int64_t's -9223372036854775808
        */
-      if (x > static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1) {
+      auto threshold =
+        static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1;
+      if (x > threshold) {
         grn_obj_reinit(ctx, result, GRN_DB_FLOAT, 0);
         grn::bulk::set<double>(ctx, result, -static_cast<double>(x));
+      } else if (x == threshold) {
+        grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
+        grn::bulk::set<int64_t>(ctx,
+                                result,
+                                std::numeric_limits<int64_t>::min());
       } else {
         grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
         grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
