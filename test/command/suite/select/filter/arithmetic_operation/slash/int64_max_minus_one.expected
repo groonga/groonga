@@ -1,13 +1,13 @@
 table_create Values TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Values value COLUMN_SCALAR UInt64
+column_create Values value COLUMN_SCALAR Int64
 [[0,0.0,0.0],true]
 load --table Values
 [
 {"value": 9223372036854775807}
 ]
 [[0,0.0,0.0],1]
-select Values   --output_columns 'value, value / -1.0'
+select Values   --output_columns 'value, value / -1'
 [
   [
     0,
@@ -22,16 +22,16 @@ select Values   --output_columns 'value, value / -1.0'
       [
         [
           "value",
-          "UInt64"
+          "Int64"
         ],
         [
           "value",
-          "UInt64"
+          "Int64"
         ]
       ],
       [
         9223372036854775807,
-        -9.223372036854776e+18
+        -9223372036854775807
       ]
     ]
   ]

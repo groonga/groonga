@@ -260,9 +260,7 @@ namespace {
    * - uint8_t -> int16_t
    * - uint16_t -> int32_t
    * - uint32_t -> int64_t
-   * - uint64_t -> int64_t
-   *   - Since the max value of uint16_t over int64_t, no more than
-   *     9223372036854775807 can be expressed.
+   * - uint64_t -> double
    */
   template <typename RESULT_TYPE, typename X, typename Y>
   std::enable_if_t<
@@ -320,9 +318,8 @@ namespace {
   }
 
   template <typename RESULT_TYPE, typename X, typename Y>
-  std::enable_if_t<(std::is_same_v<X, uint32_t> ||
-                    std::is_same_v<X, uint64_t>) &&
-                     std::is_signed_v<Y> && std::is_integral_v<Y>,
+  std::enable_if_t<(std::is_same_v<X, uint32_t>) && std::is_signed_v<Y> &&
+                     std::is_integral_v<Y>,
                    bool>
   numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
                                                     X x,
@@ -332,6 +329,24 @@ namespace {
     if (y == -1) {
       grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
       grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
+    } else {
+      grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
+    }
+    return true;
+  }
+
+  template <typename RESULT_TYPE, typename X, typename Y>
+  std::enable_if_t<(std::is_same_v<X, uint64_t>) && std::is_signed_v<Y> &&
+                     std::is_integral_v<Y>,
+                   bool>
+  numeric_arithmetic_binary_operation_execute_slash(grn_ctx *ctx,
+                                                    X x,
+                                                    Y y,
+                                                    grn_obj *result)
+  {
+    if (y == -1) {
+      grn_obj_reinit(ctx, result, GRN_DB_FLOAT, 0);
+      grn::bulk::set<double>(ctx, result, -static_cast<double>(x));
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     }
