@@ -1076,6 +1076,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
+	$(top_srcdir)/doc/source/install/migrate_from_ppa.md \
 	$(top_srcdir)/doc/source/install/others.rst \
 	$(top_srcdir)/doc/source/install/server-use.md \
 	$(top_srcdir)/doc/source/install/server-use.rst \
@@ -2446,6 +2447,7 @@ source_files_relative_from_doc_dir = \
 	source/install/debian.rst \
 	source/install/docker.rst \
 	source/install/mac_os_x.rst \
+	source/install/migrate_from_ppa.md \
 	source/install/others.rst \
 	source/install/server-use.md \
 	source/install/server-use.rst \
@@ -2771,6 +2773,7 @@ po_files = \
 	install/debian.po \
 	install/docker.po \
 	install/mac_os_x.po \
+	install/migrate_from_ppa.po \
 	install/others.po \
 	install/ubuntu.po \
 	install/windows.po \
@@ -3091,6 +3094,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/debian.po \
 	LC_MESSAGES/install/docker.po \
 	LC_MESSAGES/install/mac_os_x.po \
+	LC_MESSAGES/install/migrate_from_ppa.po \
 	LC_MESSAGES/install/others.po \
 	LC_MESSAGES/install/ubuntu.po \
 	LC_MESSAGES/install/windows.po \
@@ -3411,6 +3415,7 @@ edit_po_files = \
 	install/debian.edit \
 	install/docker.edit \
 	install/mac_os_x.edit \
+	install/migrate_from_ppa.edit \
 	install/others.edit \
 	install/ubuntu.edit \
 	install/windows.edit \
@@ -3731,6 +3736,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/debian.edit \
 	LC_MESSAGES/install/docker.edit \
 	LC_MESSAGES/install/mac_os_x.edit \
+	LC_MESSAGES/install/migrate_from_ppa.edit \
 	LC_MESSAGES/install/others.edit \
 	LC_MESSAGES/install/ubuntu.edit \
 	LC_MESSAGES/install/windows.edit \
@@ -4051,6 +4057,7 @@ mo_files = \
 	install/debian.mo \
 	install/docker.mo \
 	install/mac_os_x.mo \
+	install/migrate_from_ppa.mo \
 	install/others.mo \
 	install/ubuntu.mo \
 	install/windows.mo \
@@ -4371,6 +4378,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/debian.mo \
 	LC_MESSAGES/install/docker.mo \
 	LC_MESSAGES/install/mac_os_x.mo \
+	LC_MESSAGES/install/migrate_from_ppa.mo \
 	LC_MESSAGES/install/others.mo \
 	LC_MESSAGES/install/ubuntu.mo \
 	LC_MESSAGES/install/windows.mo \
@@ -4725,6 +4733,7 @@ html_files_relative_from_locale_dir = \
 	html/install/debian.html \
 	html/install/docker.html \
 	html/install/mac_os_x.html \
+	html/install/migrate_from_ppa.html \
 	html/install/others.html \
 	html/install/ubuntu.html \
 	html/install/windows.html \

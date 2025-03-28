@@ -18,6 +18,7 @@ size data.
 
    install/windows
    install/mac_os_x
+   install/migrate_from_ppa
    install/debian
    install/ubuntu
    install/almalinux
