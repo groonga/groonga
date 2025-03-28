@@ -50,13 +50,13 @@ msgid "Groonga packages are distributed via our Groonga APT repository at https:
 msgstr "Groongaパッケージは、Groonga APTリポジトリー（https://packages.groonga.org）にて配布されています。"
 
 msgid "Install `groonga-apt-source` to enable Groonga APT repository."
-msgstr "`groonga-apt-source`をインストールすることで、Groonga APTリポジトリを登録できます。"
+msgstr "`groonga-apt-source`をインストールすることで、Groonga APTリポジトリーを登録できます。"
 
 msgid "PPA (Personal Package Archive)"
 msgstr "PPA（Personal Package Archive）"
 
 msgid "The PPA will be deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building."
-msgstr "PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリ（packages.groonga.org）の利用を強くお勧めします。なぜなら、Groonga APTリポジトリではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。"
+msgstr "PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリー（packages.groonga.org）の利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。"
 
 msgid "The Groonga APT repository for Ubuntu uses PPA (Personal Package Archive) on Launchpad. You can install Groonga by APT from the PPA."
 msgstr "Ubuntu用のGroongaのAPTリポジトリーはLaunchpad上のPPA（Personal Package Archive）を使っています。このPPAからAPTでGroongaをインストールできます。"
