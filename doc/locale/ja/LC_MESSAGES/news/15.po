@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 15.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-03-10 15:23+0900\n"
+"PO-Revision-Date: 2025-03-28 11:48+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,26 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.0.3 - 2025-03-10"
-msgstr "15.0.3リリース - 2025-03-10"
+msgid "Release 15.0.4 - 2025-03-29"
+msgstr "15.0.4リリース - 2025-03-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Clarified `X / -1` and `X / -1.0` semantics"
+msgstr "`X / -1`と`X / -1.0`のセマンティクスを明確にした"
+
+msgid "In many languages, `X / -1` and `X / -1.0` return `-X`. But Groonga may not return `-X` when `X` is unsigned integer."
+msgstr "多くの言語では`X / -1`と`X / -1.0`は`-X`を返します。しかし、Groongaは`X`が非負性数のときは`-X`を返さないことがありました。"
+
+msgid "`X / -1` and `X / -1.0` always return `-X` from this release."
+msgstr "このリリースからは`X / -1`と`X / -1.0`は常に`-X`を返します。"
+
+msgid "This is a backward incompatible change but we assume that no user depends on this behavior."
+msgstr "これは後方非互換な変更ですが、この挙動に依存しているユーザーはいないはずです。"
+
+msgid "Release 15.0.3 - 2025-03-10"
+msgstr "15.0.3リリース - 2025-03-10"
 
 msgid "{ref}`offline-index-construction`: Added support for parallel construction with {ref}`table-hash-key` lexicon"
 msgstr "{ref}`offline-index-construction`: 語彙表が{ref}`table-hash-key`の場合でも並列構築をサポート"
