@@ -131,6 +131,9 @@ if(GRN_WITH_BUNDLED_MECAB)
     # 'storage-class-keyword' is no longer a supported storage class
     # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/c5033
     string(APPEND MECAB_CXX_COMPILE_FLAGS " /wd5033")
+
+    # Disable /permissive- specified by MariaDB.
+    string(APPEND MECAB_CXX_COMPILE_FLAGS " /permissive")
   endif()
 
   add_definitions("-DPACKAGE=\"mecab\"")
