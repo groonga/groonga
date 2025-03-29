@@ -1076,6 +1076,7 @@ set(GRN_DOC_SOURCES
     install/debian.rst
     install/docker.rst
     install/mac_os_x.rst
+    install/migrate_from_ppa.md
     install/others.rst
     install/server-use.md
     install/server-use.rst
@@ -1434,6 +1435,7 @@ set(GRN_DOC_HTML_FILES
     install/debian.html
     install/docker.html
     install/mac_os_x.html
+    install/migrate_from_ppa.html
     install/others.html
     install/ubuntu.html
     install/windows.html
