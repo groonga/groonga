@@ -187,14 +187,21 @@ namespace :release do
     end
   end
 
-  desc "Tag"
-  task :tag do
+  def latest_release_note
     latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
       File.basename(a).to_f - File.basename(b).to_f
     end
-    latest_release_note = File.read(latest_news).split(/^## /)[1]
+    File.read(latest_news).split(/^## /)[1]
+  end
+
+  def release_note_written?
     latest_release_note_version = latest_release_note.lines.first[/[\d.]+/]
-    if latest_release_note_version != version
+    latest_release_note_version == version
+  end
+
+  desc "Tag"
+  task :tag do
+    unless release_note_written?
       raise "release note isn't written"
     end
 
@@ -216,6 +223,58 @@ namespace :release do
        "-m",
        "Groonga #{version}!!!")
     sh("git", "push", "origin", "v#{version}")
+  end
+
+  namespace :announce do
+    def base_url
+      "https://groonga.org"
+    end
+
+    def release_note_url(lang)
+      major_version = version.split('.')[0]
+      path = "/docs/news/#{major_version}.html#release-#{version.gsub(/\./, '-')}"
+      if lang == :ja
+        base_url + "/ja" + path
+      else
+        base_url + "/" + path
+      end
+    end
+
+    desc "Announce to Facebook"
+    task :facebook do
+      def feed_url
+        # TODO: Use correct feeed URL
+        #"https://graph.facebook.com/v22.0/"
+      end
+
+      def announce(lang)
+        if lang == :ja
+          <<ANN
+Groonga v#{version} をリリースしました!!!
+
+主な変更点はリリースノート( #{release_note_url(lang)} )をご確認ください。
+ANN
+        else
+          <<ANN
+Groonga v#{version} has been released!!!
+
+For the information on the changes in this release, please see the Release Note( #{release_note_url(lang)} ).
+ANN
+        end
+      end
+
+      unless release_note_written?
+        raise "release note isn't written"
+      end
+
+      for lang in [:ja, :en]
+# TODO: Use access token
+#        sh("curl",
+#           "-X", "POST", feed_url,
+#           "-H", "Content-Type: application/json",
+#           "-d", "{\"message\":\"#{announce(lang)}\"}")
+      end
+    end
   end
 end
 
