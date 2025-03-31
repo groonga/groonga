@@ -1,0 +1,75 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2025 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 15.0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-04-01 14:54+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Migration from PPA (Personal Package Archive) to Groonga APT Repository (packages.groonga.org)"
+msgstr "PPA（Personal Package Archive）から Groonga APTリポジトリー（packages.groonga.org）への移行\""
+
+msgid "This document guides you through the migration from the deprecated PPA (Personal Package Archive) to our new Groonga APT Repository (packages.groonga.org)."
+msgstr "このドキュメントは、廃止予定のPPA（Personal Package Archive）から新しい Groonga APTリポジトリー（packages.groonga.org）への移行手順を案内します。"
+
+msgid "By switching to the APT Repository, you'll receive packages built with Apache Arrow enabled. Which unlocks extra features such as parallel offline index building. We strongly recommend you to migrate to enjoy these enhancements."
+msgstr "APTリポジトリーに切り替えることで、Apache Arrowが有効化されたパッケージを利用できるようになり、並列オフラインインデックス構築などの追加機能が利用可能になります。これらの機能を活用するためにも、移行することを強くお勧めします。"
+
+msgid "If you are currently using the old PPA (ppa:groonga/ppa), please follow the steps below to switch to the new package source."
+msgstr "もし現在、PPA（ppa:groonga/ppa）を使用している場合は、次の手順に従って新しいパッケージソースに切り替えてください。"
+
+msgid "Configure the Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの設定"
+
+msgid "Register Groonga APT Repository (packages.groonga.org)"
+msgstr "Groonga APTリポジトリー（packages.groonga.org）の登録"
+
+msgid "To register the Groonga APT repository, install the `groonga-apt-source package` as follows."
+msgstr "Groonga APTリポジトリーを登録するには、次の手順で`groonga-apt-source`パッケージをインストールしてください。"
+
+msgid "Remove the Existing Package Source"
+msgstr "既存のパッケージソースの削除"
+
+msgid "Remove the old Groonga PPA (ppa:groonga/ppa):"
+msgstr "Groonga PPA（ppa:groonga/ppa）を削除するには、次のコマンドを実行してください。"
+
+msgid "After these steps, your package source is now switched from PPA (ppa:groonga/ppa) to APT Repository (packages.groonga.org)."
+msgstr "ここまでの手順を完了すると、パッケージソースをPPA（ppa:groonga/ppa）からAPTリポジトリー（packages.groonga.org）に移行完了です。"
+
+msgid "Package Installation"
+msgstr "パッケージのインストール"
+
+msgid "There are two approaches depending on your needs."
+msgstr "ニーズに応じて、パッケージをインストールしてください。方法は2通りあります。"
+
+msgid "Option 1: Use Groonga APT Repository to Install the Next Package Version (Recommended)"
+msgstr "オプション 1: 次のパッケージバージョンからGroonga APTリポジトリーを利用してインストールする (オススメ)"
+
+msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you install Groonga via APT, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
+msgstr "次のパッケージバージョンをインストールする際に、Groonga APTリポジトリーを使用することを強くお勧めします。APT経由でパッケージをインストールすると、バージョンを明示的に指定することなく、次のパッケージバージョンをGroonga APTリポジトリーから自動的にインストールできます。最もシンプルな方法なので、こちらをオススメします。"
+
+msgid "For example, install groonga package:"
+msgstr "例えば、`groonga`パッケージの場合は、次のようにインストールします。"
+
+msgid "Option 2: Use Groonga APT Repository to Install the Existing Package Version"
+msgstr "オプション 2: 既存パッケージバージョンをGroonga APTリポジトリーを利用してインストールする"
+
+msgid "If you wish to continue using the same package version as before, you must install the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the PPA and the Groonga APT repository differ, and the PPA package takes precedence."
+msgstr "現在の利用している同じバージョンのパッケージを使い続けたい場合は、バージョンを指定してインストールする必要があります。これは、バージョンが一致していても、PPAとGroonga APTリポジトリーではパッケージの命名規則が異なるため、PPAのパッケージが優先されてインストールされてしまう問題を防ぐためです。"
+
+msgid "If the package has dependencies, you must also need to install  dependent packages by specifying the version."
+msgstr "パッケージに依存関係がある場合は、依存パッケージもバージョンを指定してインストールする必要があります。"
+
+msgid "For example, install a specific version of groonga package:"
+msgstr "例えば、`groonga`パッケージの特定バージョンを指定する場合は、次のようにインストールします。"
+
+msgid "This command forces the installation of a specific package version from the new repository. In this case, it's Groonga APT repository."
+msgstr "このコマンドは、Groonga APTリポジトリーから特定のパッケージバージョン（この例では15.0.4-1）を強制的にインストールします。"

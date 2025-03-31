@@ -1082,6 +1082,7 @@ set(GRN_DOC_SOURCES
     install/ubuntu.md
     install/windows.rst
     limitations.rst
+    migrate_from_ppa.md
     news.rst
     news/0.rst
     news/1.0.rst
@@ -1438,6 +1439,7 @@ set(GRN_DOC_HTML_FILES
     install/ubuntu.html
     install/windows.html
     limitations.html
+    migrate_from_ppa.html
     news.html
     news/0.html
     news/1.0.html
