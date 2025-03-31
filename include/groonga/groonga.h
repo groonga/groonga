@@ -219,13 +219,34 @@ grn_log_level_parse(const char *string, grn_log_level *level);
    GRN_QUERY_LOG_SCORE)
 #define GRN_QUERY_LOG_DEFAULT GRN_QUERY_LOG_ALL
 
+/** \brief The input/output content format. */
 typedef enum {
+  /**
+   * The content is in no specific format. This means that either no content is
+   * produced or the content remains in its original format.
+   */
   GRN_CONTENT_NONE = 0,
+  /** The content is in a tab-separated values (TSV) format. */
   GRN_CONTENT_TSV,
+  /** The content is in JSON format. */
   GRN_CONTENT_JSON,
+  /** The content is in XML format. */
   GRN_CONTENT_XML,
+  /**
+   * The content is in MessagePack format. This requires that MessagePack is
+   * available during Groonga's build process. Without it, this type cannot be
+   * used.
+   */
   GRN_CONTENT_MSGPACK,
+  /** The content is a list of Groonga commands. */
   GRN_CONTENT_GROONGA_COMMAND_LIST,
+  /**
+   * The content is in Apache Arrow format, specifically using the only IPC
+   * Streaming Format, although Apache Arrow supports two IPC Formats which are
+   * the IPC Streaming Format and the IPC File Format. This requires that Apache
+   * Arrow is available during Groonga's build process. Without it, this type
+   * cannot be used.
+   */
   GRN_CONTENT_APACHE_ARROW
 } grn_content_type;
 
