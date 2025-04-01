@@ -48,51 +48,6 @@ Reference
 
 .. c:function:: grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 
-.. c:function:: grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
-
-   Extracts keywords from ``expr`` and stores to
-   ``keywords``. Keywords in ``keywords`` are owned by ``expr``. Don't
-   unlink them. Each keyword is ``GRN_BULK`` and its domain is
-   ``GRN_DB_TEXT``.
-
-   ``keywords`` must be ``GRN_PVECTOR``.
-
-   Here is an example code::
-
-      grn_obj keywords;
-      GRN_PTR_INIT(&keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      grn_expr_get_keywords(ctx, expr, &keywords);
-      {
-        int i, n_keywords;
-        n_keywords = GRN_BULK_VSIZE(&keywords) / sizeof(grn_obj *);
-        for (i = 0; i < n_keywords; i++) {
-          grn_obj *keyword = GRN_PTR_VALUE_AT(&keywords, i);
-          const char *keyword_content;
-          int keyword_size;
-          keyword_content = GRN_TEXT_VALUE(keyword);
-          keyword_size = GRN_TEXT_LEN(keyword);
-          /*
-            Use keyword_content and keyword_size.
-            You don't need to unlink keyword.
-            keyword is owned by expr.
-          */
-        }
-      }
-      GRN_OBJ_FIN(ctx, &keywords);
-
-
-   :param ctx: The context that creates the ``expr``.
-   :param expr: The expression to be extracted.
-   :param keywords: The container to store extracted keywords.
-                    It must be ``GRN_PVECTOR``.
-
-                    Each extracted keyword is ``GRN_BULK`` and its
-                    domain is ``GRN_DB_TEXT``.
-
-                    Extracted keywords are owned by ``expr``. Don't
-                    unlink them.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
 .. c:function:: grn_rc grn_expr_syntax_escape(grn_ctx *ctx, const char *string, int string_size, const char *target_characters, char escape_character, grn_obj *escaped_string)
 
    Escapes ``target_characters`` in ``string`` by ``escape_character``.

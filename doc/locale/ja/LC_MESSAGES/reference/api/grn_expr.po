@@ -54,36 +54,6 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Extracts keywords from ``expr`` and stores to ``keywords``. Keywords in ``keywords`` are owned by ``expr``. Don't unlink them. Each keyword is ``GRN_BULK`` and its domain is ``GRN_DB_TEXT``."
-msgstr ""
-
-msgid "``keywords`` must be ``GRN_PVECTOR``."
-msgstr ""
-
-msgid "Here is an example code::"
-msgstr "以下はスキーマの例です。"
-
-msgid "The context that creates the ``expr``."
-msgstr ""
-
-msgid "The expression to be extracted."
-msgstr ""
-
-msgid "The container to store extracted keywords. It must be ``GRN_PVECTOR``.  Each extracted keyword is ``GRN_BULK`` and its domain is ``GRN_DB_TEXT``.  Extracted keywords are owned by ``expr``. Don't unlink them."
-msgstr ""
-
-msgid "The container to store extracted keywords. It must be ``GRN_PVECTOR``."
-msgstr ""
-
-msgid "Each extracted keyword is ``GRN_BULK`` and its domain is ``GRN_DB_TEXT``."
-msgstr ""
-
-msgid "Extracted keywords are owned by ``expr``. Don't unlink them."
-msgstr ""
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
 msgid "Escapes ``target_characters`` in ``string`` by ``escape_character``."
 msgstr "``string`` 中の ``target_characters`` を ``escape_character`` でエスケープします。"
 
@@ -104,6 +74,9 @@ msgstr "``target_characters`` の文字をエスケープする文字です。�
 
 msgid "The output of escaped ``string``. It should be text typed bulk."
 msgstr "エスケープされた ``string`` の出力先です。テキスト型のbulkでなければいけません。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
 msgstr ":doc:`/reference/grn_expr/query_syntax` にある特別な文字をエスケープします。"

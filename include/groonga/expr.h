@@ -96,6 +96,38 @@ grn_expr_append_const_float(
 GRN_API grn_rc
 grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
 
+/**
+ * \brief Extract keywords from an expression.
+ *
+ * For example usage:
+ * ```c
+ *  grn_obj keywords;
+ *  GRN_PTR_INIT(&keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
+ *  // You don't need to unlink keyword because it is owned by \p expr.
+ *  grn_expr_get_keywords(ctx, expr, &keywords);
+ *  {
+ *    int i, n_keywords;
+ *    n_keywords = GRN_BULK_VSIZE(&keywords) / sizeof(grn_obj *);
+ *    for (i = 0; i < n_keywords; i++) {
+ *      grn_obj *keyword = GRN_PTR_VALUE_AT(&keywords, i);
+ *      const char *keyword_content;
+ *      int keyword_size;
+ *      keyword_content = GRN_TEXT_VALUE(keyword);
+ *      keyword_size = GRN_TEXT_LEN(keyword);
+ *      // Use keyword_content and keyword_size.
+ *    }
+ *  }
+ *  GRN_OBJ_FIN(ctx, &keywords);
+ * ```
+ *
+ * \param ctx The context object.
+ * \param expr The expression object from which keywords will be extracted.
+ * \param keywords The keywords container (typically a \ref GRN_PVECTOR) where
+ *                 the extracted keywords will be stored.The extracted keywords
+ *                 are owned by \p expr and should not be unlinked.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
 
