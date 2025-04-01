@@ -27,7 +27,7 @@ msgid "Clarified `X / -1` and `X / -1.0` semantics"
 msgstr "`X / -1`と`X / -1.0`のセマンティクスを明確にした"
 
 msgid "In many languages, `X / -1` and `X / -1.0` return `-X`. But Groonga may not return `-X` when `X` is unsigned integer."
-msgstr "多くの言語では`X / -1`と`X / -1.0`は`-X`を返します。しかし、Groongaは`X`が非負性数のときは`-X`を返さないことがありました。"
+msgstr "多くの言語では`X / -1`と`X / -1.0`は`-X`を返します。しかし、Groongaは`X`が非負整数のときは`-X`を返さないことがありました。"
 
 msgid "`X / -1` and `X / -1.0` always return `-X` from this release."
 msgstr "このリリースからは`X / -1`と`X / -1.0`は常に`-X`を返します。"
