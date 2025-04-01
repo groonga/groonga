@@ -30,7 +30,7 @@ sudo apt update
 Remove the old Groonga PPA (ppa:groonga/ppa):
 
 ```bash
-sudo add-apt-repository -y -V--remove ppa:groonga/ppa
+sudo add-apt-repository -y --remove ppa:groonga/ppa
 sudo apt update
 ```
 
