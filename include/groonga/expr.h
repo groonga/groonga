@@ -102,18 +102,21 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
  * For example usage:
  * ```c
  *  grn_obj keywords;
- *  GRN_PTR_INIT(&keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
+ *  GRN_TEXT_INIT(&keywords, GRN_OBJ_VECTOR);
  *  // You don't need to unlink keyword because it is owned by expr.
  *  grn_expr_get_keywords(ctx, expr, &keywords);
  *  {
  *    size_t i, n_keywords;
- *    n_keywords = GRN_PTR_VECTOR_SIZE(&keywords);
+ *    n_keywords = grn_vector_size(ctx, &keywords);
  *    for (i = 0; i < n_keywords; i++) {
- *      grn_obj *keyword = GRN_PTR_VALUE_AT(&keywords, i);
  *      const char *keyword_content;
  *      size_t keyword_size;
- *      keyword_content = GRN_TEXT_VALUE(keyword);
- *      keyword_size = GRN_TEXT_LEN(keyword);
+ *      keyword_size = grn_vector_get_element(ctx,
+ *                                            &keywords,
+ *                                            i,
+ *                                            &keyword_content,
+ *                                            NULL,
+ *                                            NULL);
  *      // Use keyword_content and keyword_size.
  *    }
  *  }
@@ -122,11 +125,10 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
  *
  * \param ctx The context object.
  * \param expr The expression object from which keywords will be extracted.
- * \param keywords The keywords container (typically a \ref GRN_PVECTOR) where
- *                 the extracted keywords will be stored. Each extracted keyword
- *                 is a \ref GRN_BULK whose domain is \ref GRN_DB_TEXT. The
- *                 extracted keywords are owned by \p expr and should not be
- *                 unlinked.
+ * \param keywords The keywords container where the extracted keywords will be
+ *                 be stored. Each extracted keyword is a \ref GRN_BULK whose
+ *                 domain is \ref GRN_DB_TEXT. The extracted keywords are owned
+ *                 by \p expr and should not be unlinked.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
