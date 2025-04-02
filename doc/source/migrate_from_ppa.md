@@ -77,10 +77,12 @@ packages by specifying the version.
 For example, install a specific version of groonga package:
 
 ```bash
-sudo apt install -y -V --allow-downgrades libgroonga0=15.0.4-1
-sudo apt install -y -V groonga-bin=15.0.4-1
-sudo apt install -y -V --allow-downgradesg roonga-doc=15.0.4-1
-sudo apt install -y -V groonga=15.0.4-1
+sudo apt install -y -V --allow-downgrades \
+  libgroonga0=15.0.4-1 \
+  groonga-bin=15.0.4-1 \
+  groonga-doc=15.0.4-1 \
+  groonga-plugin-suggest=15.0.4-1 \
+  groonga=15.0.4-1
 ```
 
 This command forces the installation of a specific package version from the new
