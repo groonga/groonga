@@ -65,7 +65,7 @@ msgstr "オプション 2: 既存パッケージバージョンをGroonga APTリ
 msgid "If you wish to continue using the same package version as before, you must install the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the PPA and the Groonga APT repository differ, and the PPA package takes precedence."
 msgstr "現在の利用している同じバージョンのパッケージを使い続けたい場合は、バージョンを指定してインストールする必要があります。これは、バージョンが一致していても、PPAとGroonga APTリポジトリーではパッケージの命名規則が異なるため、PPAのパッケージが優先されてインストールされてしまう問題を防ぐためです。"
 
-msgid "If the package has dependencies, you must also need to install  dependent packages by specifying the version."
+msgid "If the package has dependencies, you also need to install dependent packages by specifying the version."
 msgstr "パッケージに依存関係がある場合は、依存パッケージもバージョンを指定してインストールする必要があります。"
 
 msgid "For example, install a specific version of `groonga-bin` package:"

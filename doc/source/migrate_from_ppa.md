@@ -70,8 +70,8 @@ sudo apt install package-name=version
 ```
 
 ```{note}
-If the package has dependencies, you must also need to install  dependent
-packages by specifying the version.
+If the package has dependencies, you also need to install dependent packages by
+specifying the version.
 ```
 
 For example, install a specific version of `groonga-bin` package:
