@@ -123,8 +123,10 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
  * \param ctx The context object.
  * \param expr The expression object from which keywords will be extracted.
  * \param keywords The keywords container (typically a \ref GRN_PVECTOR) where
- *                 the extracted keywords will be stored. The extracted keywords
- *                 are owned by \p expr and should not be unlinked.
+ *                 the extracted keywords will be stored. Each extracted keyword
+ *                 is a \ref GRN_BULK whose domain is \ref GRN_DB_TEXT. The
+ *                 extracted keywords are owned by \p expr and should not be
+ *                 unlinked.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
