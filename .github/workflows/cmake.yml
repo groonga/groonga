@@ -711,6 +711,9 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DBoost_SOURCE=BUNDLED
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%
+          # -DCMAKE_POLICY_VERSION_MINIMUM=3.5:
+          # Not needed after Apache Arrow 20.0.0 is released.
+          set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_UNITY_BUILD=ON
           cmake %CMAKE_ARGS% || (type ..\apache-arrow-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\apache-arrow-build || exit /B
