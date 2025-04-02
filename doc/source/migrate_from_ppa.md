@@ -1,15 +1,15 @@
 :orphan:
 
-# Migration from PPA (Personal Package Archive) to Groonga APT Repository (packages.groonga.org)
+# Migration from Groonga PPA (Personal Package Archive) to Groonga APT Repository (packages.groonga.org)
 
-This document guides you through the migration from the deprecated PPA (Personal
-Package Archive) to our new Groonga APT Repository (packages.groonga.org).
+This document guides you through the migration from the deprecated Groonga PPA
+(ppa:groonga/ppa) to our new Groonga APT Repository (packages.groonga.org).
 
 By switching to the APT Repository, you'll receive packages built with Apache
 Arrow enabled. Which unlocks extra features such as parallel offline index
 building. We strongly recommend you to migrate to enjoy these enhancements.
 
-If you are currently using the old PPA (ppa:groonga/ppa), please follow the
+If you are currently using the Groonga PPA (ppa:groonga/ppa), please follow the
 steps below to switch to the new package source.
 
 ## Configure the Groonga APT Repository
@@ -34,8 +34,8 @@ sudo add-apt-repository -y --remove ppa:groonga/ppa
 sudo apt update
 ```
 
-After these steps, your package source is now switched from PPA
-(ppa:groonga/ppa) to APT Repository (packages.groonga.org).
+After these steps, your package source is now switched from Groonga PPA
+(ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org).
 
 ## Package Installation
 
@@ -62,8 +62,9 @@ sudo apt install groonga-bin
 
 If you wish to continue using the same package version as before, you must
 install the package by specifying the version. This is important because even if
-the version numbers match, the package's naming conventions between the PPA and
-the Groonga APT repository differ, and the PPA package takes precedence.
+the version numbers match, the package's naming conventions between the Groonga
+PPA and the Groonga APT repository differ, and the Groonga PPA package takes
+precedence.
 
 ```bash
 sudo apt install package-name=version
