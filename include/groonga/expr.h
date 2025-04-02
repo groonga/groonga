@@ -106,12 +106,12 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
  *  // You don't need to unlink keyword because it is owned by \p expr.
  *  grn_expr_get_keywords(ctx, expr, &keywords);
  *  {
- *    int i, n_keywords;
- *    n_keywords = GRN_BULK_VSIZE(&keywords) / sizeof(grn_obj *);
+ *    size_t i, n_keywords;
+ *    n_keywords = GRN_PTR_VECTOR_SIZE(&keywords);
  *    for (i = 0; i < n_keywords; i++) {
  *      grn_obj *keyword = GRN_PTR_VALUE_AT(&keywords, i);
  *      const char *keyword_content;
- *      int keyword_size;
+ *      size_t keyword_size;
  *      keyword_content = GRN_TEXT_VALUE(keyword);
  *      keyword_size = GRN_TEXT_LEN(keyword);
  *      // Use keyword_content and keyword_size.
