@@ -103,7 +103,7 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
  * ```c
  *  grn_obj keywords;
  *  GRN_PTR_INIT(&keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
- *  // You don't need to unlink keyword because it is owned by \p expr.
+ *  // You don't need to unlink keyword because it is owned by expr.
  *  grn_expr_get_keywords(ctx, expr, &keywords);
  *  {
  *    size_t i, n_keywords;
