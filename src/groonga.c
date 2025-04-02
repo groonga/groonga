@@ -3691,7 +3691,7 @@ get_core_number(void)
  *
  * Format: name[=value]
  * - Preceding/trailing white-spaces of each line are removed.
- * - White-spaces aroung '=' are removed.
+ * - White-spaces around '=' are removed.
  * - name does not allow white-spaces.
  */
 #define CONFIG_FILE_BUF_SIZE         4096
@@ -4101,7 +4101,7 @@ show_usage(FILE *output)
     "      --file <path>:          read commands from specified file\n"
     "      --input-fd <FD>:        read commands from specified file "
     "descriptor\n"
-    "                              --file has a prioriry over --input-fd\n"
+    "                              --file has a priority over --input-fd\n"
     "      --output-fd <FD>:       output response to specified file "
     "descriptor\n"
     "  -p, --port <port number>:   specify server port number (client mode "
