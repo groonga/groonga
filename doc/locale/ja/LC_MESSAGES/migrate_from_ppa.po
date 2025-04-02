@@ -56,8 +56,8 @@ msgstr "オプション 1: 次のパッケージバージョンからGroonga APT
 msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you install Groonga via APT, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
 msgstr "次のパッケージバージョンをインストールする際に、Groonga APTリポジトリーを使用することを強くお勧めします。APT経由でパッケージをインストールすると、バージョンを明示的に指定することなく、次のパッケージバージョンをGroonga APTリポジトリーから自動的にインストールできます。最もシンプルな方法なので、こちらをオススメします。"
 
-msgid "For example, install groonga package:"
-msgstr "例えば、`groonga`パッケージの場合は、次のようにインストールします。"
+msgid "For example, install `groonga-bin` package:"
+msgstr "例えば、`groonga-bin`パッケージの場合は、次のようにインストールします。"
 
 msgid "Option 2: Use Groonga APT Repository to Install the Existing Package Version"
 msgstr "オプション 2: 既存パッケージバージョンをGroonga APTリポジトリーを利用してインストールする"
@@ -68,8 +68,8 @@ msgstr "現在の利用している同じバージョンのパッケージを使
 msgid "If the package has dependencies, you must also need to install  dependent packages by specifying the version."
 msgstr "パッケージに依存関係がある場合は、依存パッケージもバージョンを指定してインストールする必要があります。"
 
-msgid "For example, install a specific version of groonga package:"
-msgstr "例えば、`groonga`パッケージの特定バージョンを指定する場合は、次のようにインストールします。"
+msgid "For example, install a specific version of `groonga-bin` package:"
+msgstr "例えば、`groonga-bin`パッケージの特定バージョンを指定する場合は、次のようにインストールします。"
 
 msgid "This command forces the installation of a specific package version from the new repository. In this case, it's Groonga APT repository."
 msgstr "このコマンドは、Groonga APTリポジトリーから特定のパッケージバージョン（この例では15.0.4-1）を強制的にインストールします。"

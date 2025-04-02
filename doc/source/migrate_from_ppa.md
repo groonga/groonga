@@ -52,10 +52,10 @@ follows. This option is simpler and is recommended for most users:
 sudo apt install package-name
 ```
 
-For example, install groonga package:
+For example, install `groonga-bin` package:
 
 ```bash
-sudo apt install groonga
+sudo apt install groonga-bin
 ```
 
 ### Option 2: Use Groonga APT Repository to Install the Existing Package Version
@@ -74,16 +74,13 @@ If the package has dependencies, you must also need to install  dependent
 packages by specifying the version.
 ```
 
-For example, install a specific version of groonga package:
+For example, install a specific version of `groonga-bin` package:
 
 ```bash
 version=$(dpkg-query -W -f='${Version}' libgroonga0 | sed 's/\.ubuntu.*$//') && \
 sudo apt install -y -V --allow-downgrades \
   libgroonga0=$version \
-  groonga-bin=$version \
-  groonga-doc=$version \
-  groonga-plugin-suggest=$version \
-  groonga=$version
+  groonga-bin=$version
 ```
 
 This command forces the installation of a specific package version from the new
