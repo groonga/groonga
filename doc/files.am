@@ -1082,7 +1082,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/ubuntu.md \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
-	$(top_srcdir)/doc/source/migrate_from_ppa.md \
 	$(top_srcdir)/doc/source/news.rst \
 	$(top_srcdir)/doc/source/news/0.rst \
 	$(top_srcdir)/doc/source/news/1.0.rst \
@@ -2453,7 +2452,6 @@ source_files_relative_from_doc_dir = \
 	source/install/ubuntu.md \
 	source/install/windows.rst \
 	source/limitations.rst \
-	source/migrate_from_ppa.md \
 	source/news.rst \
 	source/news/0.rst \
 	source/news/1.0.rst \
@@ -2777,7 +2775,6 @@ po_files = \
 	install/ubuntu.po \
 	install/windows.po \
 	limitations.po \
-	migrate_from_ppa.po \
 	news.po \
 	news/0.po \
 	news/1.0.po \
@@ -3098,7 +3095,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/ubuntu.po \
 	LC_MESSAGES/install/windows.po \
 	LC_MESSAGES/limitations.po \
-	LC_MESSAGES/migrate_from_ppa.po \
 	LC_MESSAGES/news.po \
 	LC_MESSAGES/news/0.po \
 	LC_MESSAGES/news/1.0.po \
@@ -3419,7 +3415,6 @@ edit_po_files = \
 	install/ubuntu.edit \
 	install/windows.edit \
 	limitations.edit \
-	migrate_from_ppa.edit \
 	news.edit \
 	news/0.edit \
 	news/1.0.edit \
@@ -3740,7 +3735,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/ubuntu.edit \
 	LC_MESSAGES/install/windows.edit \
 	LC_MESSAGES/limitations.edit \
-	LC_MESSAGES/migrate_from_ppa.edit \
 	LC_MESSAGES/news.edit \
 	LC_MESSAGES/news/0.edit \
 	LC_MESSAGES/news/1.0.edit \
@@ -4061,7 +4055,6 @@ mo_files = \
 	install/ubuntu.mo \
 	install/windows.mo \
 	limitations.mo \
-	migrate_from_ppa.mo \
 	news.mo \
 	news/0.mo \
 	news/1.0.mo \
@@ -4382,7 +4375,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/ubuntu.mo \
 	LC_MESSAGES/install/windows.mo \
 	LC_MESSAGES/limitations.mo \
-	LC_MESSAGES/migrate_from_ppa.mo \
 	LC_MESSAGES/news.mo \
 	LC_MESSAGES/news/0.mo \
 	LC_MESSAGES/news/1.0.mo \
@@ -4737,7 +4729,6 @@ html_files_relative_from_locale_dir = \
 	html/install/ubuntu.html \
 	html/install/windows.html \
 	html/limitations.html \
-	html/migrate_from_ppa.html \
 	html/news.html \
 	html/news/0.html \
 	html/news/1.0.html \
