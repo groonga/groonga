@@ -17,7 +17,7 @@ steps below to switch to the new package source.
 
 ### Register Groonga APT Repository
 
-To register the Groonga APT repository, install the `groonga-apt-source package`
+To register the Groonga APT Repository, install the `groonga-apt-source package`
 as follows.
 
 ```bash
@@ -64,7 +64,7 @@ sudo apt install groonga-bin
 If you wish to continue using the same package version as before, you must
 install the package by specifying the version. This is important because even if
 the version numbers match, the package's naming conventions between the Groonga
-PPA and the Groonga APT repository differ, and the Groonga PPA package takes
+PPA and the Groonga APT Repository differ, and the Groonga PPA package takes
 precedence.
 
 ```bash
@@ -86,4 +86,4 @@ sudo apt install -y -V --allow-downgrades \
 ```
 
 This command forces the installation of a specific package version from the new
-repository. In this case, it's Groonga APT repository.
+repository. In this case, it's Groonga APT Repository.

@@ -29,7 +29,10 @@ msgstr "もし現在、Groonga PPAを使用している場合は、次の手順�
 msgid "Configure the Groonga APT Repository"
 msgstr "Groonga APTリポジトリーの設定"
 
-msgid "To register the Groonga APT repository, install the `groonga-apt-source package` as follows."
+msgid "Register Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの設定"
+
+msgid "To register the Groonga APT Repository, install the `groonga-apt-source package` as follows."
 msgstr "Groonga APTリポジトリーを登録するには、次の手順で`groonga-apt-source`パッケージをインストールしてください。"
 
 msgid "Remove the Existing Package Source"
@@ -59,7 +62,7 @@ msgstr "例えば、`groonga-bin`パッケージの場合は、次のように�
 msgid "Option 2: Use Groonga APT Repository to Install the Existing Package Version"
 msgstr "オプション 2: 既存パッケージバージョンをGroonga APTリポジトリーを利用してインストールする"
 
-msgid "If you wish to continue using the same package version as before, you must install the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the Groonga PPA and the Groonga APT repository differ, and the Groonga PPA package takes precedence."
+msgid "If you wish to continue using the same package version as before, you must install the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the Groonga PPA and the Groonga APT Repository differ, and the Groonga PPA package takes precedence."
 msgstr "現在の利用している同じバージョンのパッケージを使い続けたい場合は、バージョンを指定してインストールする必要があります。これは、バージョンが一致していても、Groonga PPAとGroonga APTリポジトリーではパッケージの命名規則が異なるため、Groonga PPAのパッケージが優先されてインストールされてしまう問題を防ぐためです。"
 
 msgid "If the package has dependencies, you also need to install dependent packages by specifying the version."
@@ -68,5 +71,5 @@ msgstr "パッケージに依存関係がある場合は、依存パッケージ
 msgid "For example, install a specific version of `groonga-bin` package:"
 msgstr "例えば、`groonga-bin`パッケージの特定バージョンを指定する場合は、次のようにインストールします。"
 
-msgid "This command forces the installation of a specific package version from the new repository. In this case, it's Groonga APT repository."
+msgid "This command forces the installation of a specific package version from the new repository. In this case, it's Groonga APT Repository."
 msgstr "このコマンドは、Groonga APTリポジトリーから特定のパッケージバージョンを強制的にインストールします。"
