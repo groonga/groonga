@@ -159,52 +159,52 @@ sudo apt update
 After these steps, your package source is now switched from Groonga PPA to
 Groonga APT Repository.
 
-### Package Installation
+### Upgrade Package
 
 There are two approaches depending on your needs.
 
-#### Option 1: Use Groonga APT Repository to Install the Next Package Version (Recommended)
+#### Option 1: Use Groonga APT Repository to upgrade the Next Package Version (Recommended)
 
 Starting with the next package version, we strongly recommend using the Groonga
-APT Repository. When you install Groonga via `apt`, you will automatically receive
+APT Repository. When you upgrade Groonga via `apt`, you will automatically receive
 the next package version without having to specify a version explicitly as
 follows. This option is simpler and is recommended for most users:
 
 ```bash
-sudo apt install package-name
+sudo apt upgrade package-name
 ```
 
-For example, install `groonga-bin` package:
+For example, upgrade `groonga-bin` package:
 
 ```bash
-sudo apt install groonga-bin
+sudo apt upgrade groonga-bin
 ```
 
-#### Option 2: Use Groonga APT Repository to Install the Existing Package Version
+#### Option 2: Use Groonga APT Repository to upgrade the Existing Package Version
 
 If you wish to continue using the same package version as before, you must
-install the package by specifying the version. This is important because even if
+upgrade the package by specifying the version. This is important because even if
 the version numbers match, the package's naming conventions between the Groonga
 PPA and the Groonga APT Repository differ, and the Groonga PPA package takes
 precedence.
 
 ```bash
-sudo apt install package-name=version
+sudo apt upgrade package-name=version
 ```
 
 ```{note}
-If the package has dependencies, you also need to install dependent packages by
+If the package has dependencies, you also need to upgrade dependent packages by
 specifying the version.
 ```
 
-For example, install a specific version of `groonga-bin` package:
+For example, upgrade a specific version of `groonga-bin` package:
 
 ```bash
 version=$(dpkg-query -W -f='${Version}' libgroonga0 | sed 's/\.ubuntu.*$//') && \
-sudo apt install -y -V --allow-downgrades \
+sudo apt upgrade -y -V --allow-downgrades \
   libgroonga0=$version \
   groonga-bin=$version
 ```
 
-This command forces the installation of a specific package version from the new
+This command forces the upgrade to a specific package version from the new
 repository. In this case, it's Groonga APT Repository.
