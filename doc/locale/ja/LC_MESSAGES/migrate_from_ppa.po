@@ -53,8 +53,8 @@ msgstr "ニーズに応じて、パッケージをインストールしてくだ
 msgid "Option 1: Use Groonga APT Repository to Install the Next Package Version (Recommended)"
 msgstr "オプション 1: 次のパッケージバージョンからGroonga APTリポジトリーを利用してインストールする (オススメ)"
 
-msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you install Groonga via APT, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
-msgstr "次のパッケージバージョンをインストールする際に、Groonga APTリポジトリーを使用することを強くお勧めします。APT経由でパッケージをインストールすると、バージョンを明示的に指定することなく、次のパッケージバージョンをGroonga APTリポジトリーから自動的にインストールできます。最もシンプルな方法なので、こちらをオススメします。"
+msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you install Groonga via `apt`, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
+msgstr "次のパッケージバージョンをインストールする際に、Groonga APTリポジトリーを使用することを強くお勧めします。`apt`経由でパッケージをインストールすると、バージョンを明示的に指定することなく、次のパッケージバージョンをGroonga APTリポジトリーから自動的にインストールできます。最もシンプルな方法なので、こちらをオススメします。"
 
 msgid "For example, install `groonga-bin` package:"
 msgstr "例えば、`groonga-bin`パッケージの場合は、次のようにインストールします。"

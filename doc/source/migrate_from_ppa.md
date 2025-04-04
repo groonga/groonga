@@ -45,7 +45,7 @@ There are two approaches depending on your needs.
 ### Option 1: Use Groonga APT Repository to Install the Next Package Version (Recommended)
 
 Starting with the next package version, we strongly recommend using the Groonga
-APT Repository. When you install Groonga via APT, you will automatically receive
+APT Repository. When you install Groonga via `apt`, you will automatically receive
 the next package version without having to specify a version explicitly as
 follows. This option is simpler and is recommended for most users:
 
