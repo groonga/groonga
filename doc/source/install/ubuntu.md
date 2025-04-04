@@ -163,7 +163,7 @@ Groonga APT Repository.
 
 There are two approaches depending on your needs.
 
-#### Option 1: Use Groonga APT Repository to upgrade the Next Package Version (Recommended)
+#### Option 1: Use Groonga APT Repository from the Next Release (Recommended)
 
 Starting with the next package version, we strongly recommend using the Groonga
 APT Repository. When you upgrade Groonga via `apt`, you will automatically receive
@@ -180,13 +180,14 @@ For example, upgrade `groonga-bin` package:
 sudo apt upgrade groonga-bin
 ```
 
-#### Option 2: Use Groonga APT Repository to upgrade the Existing Package Version
+#### Option 2: Use Groonga APT Repository Immediately Without Waiting for Next Release
 
-If you wish to continue using the same package version as before, you must
-upgrade the package by specifying the version. This is important because even if
-the version numbers match, the package's naming conventions between the Groonga
-PPA and the Groonga APT Repository differ, and the Groonga PPA package takes
-precedence.
+If you wish to upgrade immediately without waiting for the next official release,
+you can force an upgrade to a specific package version in the Groonga APT
+Repository. In this case, you must upgrade the package by specifying the version.
+This is important because even if the version numbers match, the package's
+naming conventions between the Groonga PPA and the Groonga APT Repository differ,
+and the Groonga PPA package takes precedence.
 
 ```bash
 sudo apt upgrade package-name=version
