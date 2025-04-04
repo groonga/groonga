@@ -1,20 +1,21 @@
 :orphan:
 
-# Migration from Groonga PPA (Personal Package Archive) to Groonga APT Repository (packages.groonga.org)
+# Migration from Groonga PPA (ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org)
 
 This document guides you through the migration from the deprecated Groonga PPA
-(ppa:groonga/ppa) to our new Groonga APT Repository (packages.groonga.org).
+(Personal Package Archive, ppa:groonga/ppa) to our new Groonga APT Repository
+(packages.groonga.org).
 
-By switching to the APT Repository, you'll receive packages built with Apache
-Arrow enabled. Which unlocks extra features such as parallel offline index
-building. We strongly recommend you to migrate to enjoy these enhancements.
+By switching to the Groonga APT Repository, you'll receive packages built with
+Apache Arrow enabled. Which unlocks extra features such as parallel offline
+index building. We strongly recommend you to migrate to enjoy these enhancements.
 
-If you are currently using the Groonga PPA (ppa:groonga/ppa), please follow the
+If you are currently using the Groonga PPA, please follow the
 steps below to switch to the new package source.
 
 ## Configure the Groonga APT Repository
 
-### Register Groonga APT Repository (packages.groonga.org)
+### Register Groonga APT Repository
 
 To register the Groonga APT repository, install the `groonga-apt-source package`
 as follows.
@@ -27,15 +28,15 @@ sudo apt update
 
 ### Remove the Existing Package Source
 
-Remove the old Groonga PPA (ppa:groonga/ppa):
+Remove the old Groonga PPA:
 
 ```bash
 sudo add-apt-repository -y --remove ppa:groonga/ppa
 sudo apt update
 ```
 
-After these steps, your package source is now switched from Groonga PPA
-(ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org).
+After these steps, your package source is now switched from Groonga PPA to
+Groonga APT Repository.
 
 ## Package Installation
 
