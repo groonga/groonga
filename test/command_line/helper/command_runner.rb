@@ -220,6 +220,11 @@ failed to run: #{command_line.join(" ").encode("UTF-8")}
 
   def read_log(log_path)
     return "" unless log_path.exist?
-    log_path.read.encode("UTF-8", "locale")
+    if windows?
+      # For Windows, Windows-31J is required to be specified to be converted.
+      log_path.read.encode("UTF-8", "Windows-31J")
+    else
+      log_path.read.encode("UTF-8", "locale")
+    end
   end
 end
