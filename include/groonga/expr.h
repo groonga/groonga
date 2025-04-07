@@ -134,6 +134,27 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
 GRN_API grn_rc
 grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
 
+/**
+ * \brief Escape target characters in a query by a specified escape character.
+ *
+ * \param ctx The context object. Its encoding must match that of the input
+ *            \p query.
+ * \param query The input query to be escaped.
+ * \param query_size The byte size of \p query. A value of -1 indicates that
+ *                   the query is NULL terminated.
+ * \param target_characters A NULL terminated string containing the characters
+ *                          to be escaped. For example, "+-><~*()\"\\:" is used
+ *                          for query syntax.
+ * \param escape_character The character to use for escaping characters found
+ *                         in \p target_characters. For example, "\\"
+ *                         (backslash) is used.
+ * \param escaped_query The buffer where the escaped query is stored.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *
+ * \see
+ * https://groonga.org/docs/reference/grn_expr/query_syntax.html
+ */
 GRN_API grn_rc
 grn_expr_syntax_escape(grn_ctx *ctx,
                        const char *query,
