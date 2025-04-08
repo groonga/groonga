@@ -120,3 +120,60 @@ msgstr "ソースからビルドする方法は開発者向けの内容になっ
 
 msgid "See {doc}`/install/cmake` ."
 msgstr "詳細は {doc}`/install/cmake` を参照してください。"
+
+msgid "Migration from Groonga PPA (ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org)"
+msgstr "Groonga PPA（ppa:groonga/ppa）から Groonga APTリポジトリー（packages.groonga.org）への移行"
+
+msgid "This section guides you through the migration from the deprecated Groonga PPA (Personal Package Archive, ppa:groonga/ppa) to our new Groonga APT Repository (packages.groonga.org)."
+msgstr "このセクションでは、廃止予定のGroonga PPA（Personal Package Archive, ppa:groonga/ppa）から新しい Groonga APTリポジトリー（packages.groonga.org）への移行手順を案内します。"
+
+msgid "By switching to the Groonga APT Repository, you'll receive packages built with Apache Arrow enabled. Which unlocks extra features such as parallel offline index building. We strongly recommend you to migrate to enjoy these enhancements."
+msgstr "Groonga APTリポジトリーに切り替えることで、Apache Arrowが有効化されたパッケージを利用できるようになり、並列オフラインインデックス構築などの追加機能が利用可能になります。これらの機能を活用するためにも、移行することを強くお勧めします。"
+
+msgid "If you are currently using the Groonga PPA, please follow the steps below to switch to the new package source."
+msgstr "もし現在、Groonga PPAを使用している場合は、次の手順に従って新しいパッケージソースに切り替えてください。"
+
+msgid "Configure the Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの設定"
+
+msgid "Register Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの登録"
+
+msgid "To register the Groonga APT Repository, install the `groonga-apt-source` package as follows."
+msgstr "Groonga APTリポジトリーを登録するには、次の手順で`groonga-apt-source`パッケージをインストールしてください。"
+
+msgid "Remove the Existing Package Source"
+msgstr "既存のパッケージソースの削除"
+
+msgid "Remove the old Groonga PPA:"
+msgstr "Groonga PPAを削除するには、次のコマンドを実行してください。"
+
+msgid "After these steps, your package source is now switched from Groonga PPA to Groonga APT Repository."
+msgstr "ここまでの手順を完了すると、パッケージソースをGroonga PPAからGroonga APTリポジトリーに移行完了です。"
+
+msgid "Upgrade Package"
+msgstr "パッケージをアップグレード"
+
+msgid "There are two approaches depending on your needs."
+msgstr "ニーズに応じて、パッケージをアップグレードしてください。方法は2通りあります。"
+
+msgid "Option 1: Use Groonga APT Repository from the Next Release (Recommended)"
+msgstr "オプション 1: 次のリリースからGroonga APTリポジトリーを利用する"
+
+msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you upgrade Groonga via `apt`, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
+msgstr "次のリリースパッケージバージョンへアップグレードする時から、Groonga APTリポジトリーを使用することを強くお勧めします。`apt`経由でパッケージをアップグレードすると、バージョンを明示的に指定することなく、次のパッケージバージョンにGroonga APTリポジトリーを利用して自動的にアップグレードできます。最もシンプルな方法なので、こちらをオススメします。"
+
+msgid "Option 2: Use Groonga APT Repository Immediately Without Waiting for Next Release"
+msgstr "オプション 2: 次のリリースを待たずにGroonga APTリポジトリーを利用する"
+
+msgid "If you wish to upgrade immediately without waiting for the next official release, you can force an upgrade to a specific package version in the Groonga APT Repository. In this case, you must upgrade the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the Groonga PPA and the Groonga APT Repository differ, and the Groonga PPA package takes precedence."
+msgstr "もし次のリリースを待たずに即座にアップグレードしたい場合は、Groonga APTリポジトリーの特定のパッケージバージョンへ強制的にアップグレードできます。ただしこの場合は、パッケージバージョンを指定してアップグレードする必要があります。これは、バージョンが一致していても、Groonga PPAとGroonga APTリポジトリーではパッケージの命名規則が異なるため、Groonga PPAのパッケージが優先されてアップグレードされてしまう問題を防ぐためです。"
+
+msgid "If the package has dependencies, you also need to upgrade dependent packages by specifying the version."
+msgstr "パッケージに依存関係がある場合は、依存パッケージもバージョンを指定してアップグレードする必要があります。"
+
+msgid "For example, upgrade a specific version of `groonga-bin` package:"
+msgstr "例えば、`groonga-bin`パッケージの特定バージョンを指定する場合は、次のようにアップグレードします。"
+
+msgid "This command forces the upgrade to a specific package version from the new repository. In this case, it's Groonga APT Repository."
+msgstr "このコマンドは、Groonga APTリポジトリーの特定のパッケージバージョンへ強制的にアップグレードします。"
