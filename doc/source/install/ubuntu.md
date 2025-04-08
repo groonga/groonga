@@ -171,13 +171,7 @@ the next package version without having to specify a version explicitly as
 follows. This option is simpler and is recommended for most users:
 
 ```bash
-sudo apt upgrade package-name
-```
-
-For example, upgrade `groonga-bin` package:
-
-```bash
-sudo apt upgrade groonga-bin
+sudo apt upgrade
 ```
 
 #### Option 2: Use Groonga APT Repository Immediately Without Waiting for Next Release
