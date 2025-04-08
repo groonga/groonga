@@ -176,4 +176,4 @@ msgid "For example, upgrade a specific version of `groonga-bin` package:"
 msgstr "例えば、`groonga-bin`パッケージの特定バージョンを指定する場合は、次のようにアップグレードします。"
 
 msgid "This command forces the upgrade to a specific package version from the new repository. In this case, it's Groonga APT Repository."
-msgstr "このコマンドは、Groonga APTリポジトリーから特定のパッケージバージョンを強制的にアップグレードします。"
+msgstr "このコマンドは、Groonga APTリポジトリーの特定のパッケージバージョンへ強制的にアップグレードします。"
