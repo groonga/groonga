@@ -138,7 +138,7 @@ steps below to switch to the new package source.
 
 #### Register Groonga APT Repository
 
-To register the Groonga APT Repository, install the `groonga-apt-source package`
+To register the Groonga APT Repository, install the `groonga-apt-source` package
 as follows.
 
 ```bash

@@ -139,7 +139,7 @@ msgstr "Groonga APTリポジトリーの設定"
 msgid "Register Groonga APT Repository"
 msgstr "Groonga APTリポジトリーの登録"
 
-msgid "To register the Groonga APT Repository, install the `groonga-apt-source package` as follows."
+msgid "To register the Groonga APT Repository, install the `groonga-apt-source` package as follows."
 msgstr "Groonga APTリポジトリーを登録するには、次の手順で`groonga-apt-source`パッケージをインストールしてください。"
 
 msgid "Remove the Existing Package Source"
