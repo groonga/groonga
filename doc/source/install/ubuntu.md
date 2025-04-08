@@ -153,7 +153,6 @@ Remove the old Groonga PPA:
 
 ```bash
 sudo add-apt-repository -y --remove ppa:groonga/ppa
-sudo apt update
 ```
 
 After these steps, your package source is now switched from Groonga PPA to
