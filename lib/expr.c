@@ -7547,29 +7547,29 @@ grn_expr_snip(grn_ctx *ctx,
 
 grn_rc
 grn_expr_syntax_escape(grn_ctx *ctx,
-                       const char *string,
-                       int string_size,
+                       const char *query,
+                       int query_size,
                        const char *target_characters,
                        char escape_character,
-                       grn_obj *escaped_string)
+                       grn_obj *escaped_query)
 {
   grn_rc rc = GRN_SUCCESS;
-  const char *current, *string_end;
+  const char *current, *query_end;
 
-  if (!string) {
+  if (!query) {
     return GRN_INVALID_ARGUMENT;
   }
 
   GRN_API_ENTER;
-  if (string_size < 0) {
-    string_size = strlen(string);
+  if (query_size < 0) {
+    query_size = strlen(query);
   }
-  string_end = string + string_size;
+  query_end = query + query_size;
 
-  current = string;
-  while (current < string_end) {
+  current = query;
+  while (current < query_end) {
     unsigned int char_size;
-    char_size = grn_charlen(ctx, current, string_end);
+    char_size = grn_charlen(ctx, current, query_end);
     switch (char_size) {
     case 0:
       /* string includes malformed multibyte character. */
@@ -7577,13 +7577,13 @@ grn_expr_syntax_escape(grn_ctx *ctx,
       break;
     case 1:
       if (strchr(target_characters, *current)) {
-        GRN_TEXT_PUTC(ctx, escaped_string, escape_character);
+        GRN_TEXT_PUTC(ctx, escaped_query, escape_character);
       }
-      GRN_TEXT_PUT(ctx, escaped_string, current, char_size);
+      GRN_TEXT_PUT(ctx, escaped_query, current, char_size);
       current += char_size;
       break;
     default:
-      GRN_TEXT_PUT(ctx, escaped_string, current, char_size);
+      GRN_TEXT_PUT(ctx, escaped_query, current, char_size);
       current += char_size;
       break;
     }
