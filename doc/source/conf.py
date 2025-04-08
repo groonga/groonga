@@ -91,6 +91,25 @@ myst_enable_extensions = [
   "tasklist",
 ]
 
+# Workaround to suppress warnings for missing cross-reference targets when using
+# internal page links with the MyST parser although we specified the
+# myst_heading_anchors option.
+#
+# When linking to sections within the same document, MyST may generate warnings
+# such as:
+#
+#   WARNING: 'myst' cross-reference target not found: 'link' [myst.xref_missing]
+#
+# This warning occurs because MyST parser could not refer to the heading targets
+# when generating the targets in building steps. Despite the warning, the link
+# targets are correctly rendered in the final documentation.
+#
+# If the behavior of MyST or our handling of anchor generation changes in the
+# future, this workaround may need to be revisited.
+suppress_warnings = [
+  "myst.xref_missing"
+]
+
 # The encoding of source files.
 #source_encoding = 'utf-8'
 

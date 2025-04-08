@@ -11,7 +11,7 @@ size data.
 
 ## Register Groonga APT repository
 
-### APT Repository (packages.groonga.org)
+### Groonga APT Repository (packages.groonga.org)
 
 Groonga packages are distributed via our Groonga APT repository at
 https://packages.groonga.org.
@@ -26,35 +26,15 @@ sudo apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --sh
 sudo apt update
 ```
 
-### PPA (Personal Package Archive)
+### Deprecated Groonga PPA (Personal Package Archive)
 
 ```{note}
-The PPA will be deprecated. We strongly recommend using our Groonga APT
+The PPA is deprecated. We strongly recommend using our Groonga APT
 repository (packages.groonga.org) because packages from that repository are built
 with Apache Arrow enabled. This configuration unlocks extra features, such as
 parallel offline index building.
-```
-
-The Groonga APT repository for Ubuntu uses PPA (Personal Package
-Archive) on Launchpad. You can install Groonga by APT from the PPA.
-
-Here are supported Ubuntu versions:
-
-- 22.04 LTS Jammy Jellyfish
-- 24.04 LTS Noble Numbat
-
-Enable the universe repository to install Groonga:
-
-```bash
-sudo apt -V -y install software-properties-common
-sudo add-apt-repository -y universe
-```
-
-Add the `ppa:groonga/ppa` PPA to your system:
-
-```bash
-sudo add-apt-repository -y ppa:groonga/ppa
-sudo apt update
+If you are currently using the Groonga PPA, please see [Migration from Groonga
+PPA to Groonga APT Repository](#migration-from-groonga-ppa-ppa-groonga-ppa-to-groonga-apt-repository-packages-groonga-org).
 ```
 
 ## `groonga` package
