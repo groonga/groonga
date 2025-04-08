@@ -15480,7 +15480,7 @@ grn_ii_builder_options_fix(grn_ii_builder_options *options)
 }
 
 #define GRN_II_BUILDER_TERM_INPLACE_SIZE                                       \
-  (sizeof(grn_ii_builder_term) - (uintptr_t)&((grn_ii_builder_term *)0)->dummy)
+  (sizeof(grn_ii_builder_term) - offsetof(grn_ii_builder_term, dummy))
 
 typedef struct {
   grn_id rid;   /* Last record ID */
