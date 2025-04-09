@@ -53,10 +53,10 @@ msgid "Install `groonga-apt-source` to enable Groonga APT repository."
 msgstr "`groonga-apt-source`をインストールすることで、Groonga APTリポジトリーを登録できます。"
 
 msgid "Deprecated Groonga PPA (Personal Package Archive)"
-msgstr "非推奨なPPA（Personal Package Archive）"
+msgstr "非推奨なGroonga PPA（Personal Package Archive）"
 
-msgid "The PPA is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see {ref}`migrate-from-ppa-to-apt-repository`."
-msgstr "Groonga PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、{ref}`migrate-from-ppa-to-apt-repository`を確認してください。"
+msgid "The Grppmga PPA (Personal Package Archive, ppa:groonga/ppa) is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see {ref}`migrate-from-ppa-to-apt-repository`."
+msgstr "Groonga PPA（Personal Package Archive, ppa:groonga/ppa）は非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、{ref}`migrate-from-ppa-to-apt-repository`を確認してください。"
 
 msgid "`groonga` package"
 msgstr "`groonga`パッケージ"

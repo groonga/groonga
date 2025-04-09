@@ -29,10 +29,10 @@ sudo apt update
 ### Deprecated Groonga PPA (Personal Package Archive)
 
 ```{note}
-The PPA is deprecated. We strongly recommend using our Groonga APT
-repository (packages.groonga.org) because packages from that repository are built
-with Apache Arrow enabled. This configuration unlocks extra features, such as
-parallel offline index building.
+The Grppmga PPA (Personal Package Archive, ppa:groonga/ppa) is deprecated. We
+strongly recommend using our Groonga APT repository (packages.groonga.org)
+because packages from that repository are built with Apache Arrow enabled. This
+configuration unlocks extra features, such as parallel offline index building.
 If you are currently using the Groonga PPA, please see
 {ref}`migrate-from-ppa-to-apt-repository`.
 ```
