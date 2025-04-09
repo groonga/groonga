@@ -43,8 +43,8 @@ msgstr "32-bit用と64-bit用のパッケージを配布していますが、サ
 msgid "Register Groonga APT repository"
 msgstr "GroongaのAPTリポジトリー登録"
 
-msgid "APT Repository (packages.groonga.org)"
-msgstr "APTリポジトリー（packages.groonga.org）"
+msgid "Groonga APT Repository (packages.groonga.org)"
+msgstr "Groonga APTリポジトリー（packages.groonga.org）"
 
 msgid "Groonga packages are distributed via our Groonga APT repository at https://packages.groonga.org."
 msgstr "Groongaパッケージは、Groonga APTリポジトリー（https://packages.groonga.org）にて配布されています。"
@@ -52,29 +52,11 @@ msgstr "Groongaパッケージは、Groonga APTリポジトリー（https://pack
 msgid "Install `groonga-apt-source` to enable Groonga APT repository."
 msgstr "`groonga-apt-source`をインストールすることで、Groonga APTリポジトリーを登録できます。"
 
-msgid "PPA (Personal Package Archive)"
-msgstr "PPA（Personal Package Archive）"
+msgid "Deprecated Groonga PPA (Personal Package Archive)"
+msgstr "非推奨なGroonga PPA（Personal Package Archive）"
 
-msgid "The PPA will be deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building."
-msgstr "PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリー（packages.groonga.org）の利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。"
-
-msgid "The Groonga APT repository for Ubuntu uses PPA (Personal Package Archive) on Launchpad. You can install Groonga by APT from the PPA."
-msgstr "Ubuntu用のGroongaのAPTリポジトリーはLaunchpad上のPPA（Personal Package Archive）を使っています。このPPAからAPTでGroongaをインストールできます。"
-
-msgid "Here are supported Ubuntu versions:"
-msgstr "サポートしているUbuntuのバージョンは次の通りです。"
-
-msgid "22.04 LTS Jammy Jellyfish"
-msgstr ""
-
-msgid "24.04 LTS Noble Numbat"
-msgstr ""
-
-msgid "Enable the universe repository to install Groonga:"
-msgstr "Groongaをインストールするためにuniverseリポジトリを有効にしてください。"
-
-msgid "Add the `ppa:groonga/ppa` PPA to your system:"
-msgstr "`ppa:groonga/ppa` PPAをシステムに登録します。"
+msgid "The Grppmga PPA (Personal Package Archive, ppa:groonga/ppa) is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see {ref}`migrate-from-ppa-to-apt-repository`."
+msgstr "Groonga PPA（Personal Package Archive, ppa:groonga/ppa）は非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、{ref}`migrate-from-ppa-to-apt-repository`を確認してください。"
 
 msgid "`groonga` package"
 msgstr "`groonga`パッケージ"
