@@ -33,8 +33,8 @@ The PPA is deprecated. We strongly recommend using our Groonga APT
 repository (packages.groonga.org) because packages from that repository are built
 with Apache Arrow enabled. This configuration unlocks extra features, such as
 parallel offline index building.
-If you are currently using the Groonga PPA, please see [Migration from Groonga
-PPA to Groonga APT Repository](#migration-from-groonga-ppa-ppa-groonga-ppa-to-groonga-apt-repository-packages-groonga-org).
+If you are currently using the Groonga PPA, please see
+{ref}`migrate-from-ppa-to-apt-repository`.
 ```
 
 ## `groonga` package
@@ -100,6 +100,8 @@ sudo apt -V -y install groonga-normalizer-mysql
 Build from source is for developers.
 
 See {doc}`/install/cmake` .
+
+(migrate-from-ppa-to-apt-repository)=
 
 ## Migration from Groonga PPA (ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org)
 

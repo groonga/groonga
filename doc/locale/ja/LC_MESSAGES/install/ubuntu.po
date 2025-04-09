@@ -55,8 +55,8 @@ msgstr "`groonga-apt-source`をインストールすることで、Groonga APT�
 msgid "Deprecated Groonga PPA (Personal Package Archive)"
 msgstr "非推奨なPPA（Personal Package Archive）"
 
-msgid "The PPA is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see [Migration from Groonga PPA to Groonga APT Repository](#migration-from-groonga-ppa-ppa-groonga-ppa-to-groonga-apt-repository-packages-groonga-org)."
-msgstr "Groonga PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、[Groonga PPAからGroonga APTリポジトリーへの移行](#migration-from-groonga-ppa-ppa-groonga-ppa-to-groonga-apt-repository-packages-groonga-org)を確認してください。"
+msgid "The PPA is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see {ref}`migrate-from-ppa-to-apt-repository`."
+msgstr "Groonga PPAは非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、{ref}`migrate-from-ppa-to-apt-repository`を確認してください。"
 
 msgid "`groonga` package"
 msgstr "`groonga`パッケージ"
