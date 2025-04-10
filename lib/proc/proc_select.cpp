@@ -4627,6 +4627,9 @@ grn_select_output_slice_label_v3(grn_ctx *ctx,
                                  grn_select_data *data,
                                  Slice *slice)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
