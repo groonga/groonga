@@ -141,8 +141,8 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
  *            \p query.
  * \param query The input query to be escaped.
  * \param query_size The byte size of \p query. A value of -1 indicates that
- *                   the query is NULL terminated.
- * \param target_characters A NULL terminated string containing the characters
+ *                   the query is null-terminated.
+ * \param target_characters A null-terminated string containing the characters
  *                          to be escaped. For example, "+-><~*()\"\\:" is used
  *                          for query syntax.
  * \param escape_character The character to use for escaping characters found
