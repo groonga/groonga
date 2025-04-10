@@ -4602,6 +4602,9 @@ static grn_select_output_formatter grn_select_output_formatter_v1 = {
 static void
 grn_select_output_slices_label_v3(grn_ctx *ctx, grn_select_data *data)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
   GRN_OUTPUT_CSTR("slices");
 }
 
@@ -4624,12 +4627,20 @@ grn_select_output_slice_label_v3(grn_ctx *ctx,
                                  grn_select_data *data,
                                  Slice *slice)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    ctx->impl->output.arrow_metadata_data_type = "slice";
+    ctx->impl->output.arrow_metadata_label = slice->label;
+    return;
+  }
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
 static void
 grn_select_output_drilldowns_label_v3(grn_ctx *ctx, grn_select_data *data)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
   GRN_OUTPUT_CSTR("drilldowns");
 }
 
@@ -4652,6 +4663,11 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    ctx->impl->output.arrow_metadata_data_type = "drilldown";
+    ctx->impl->output.arrow_metadata_label = drilldown->label;
+    return;
+  }
   GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 }
 

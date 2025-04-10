@@ -1,0 +1,58 @@
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-20 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-21 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].sort_keys 'date'   --slices[groonga].output_columns '_key, date'   --command_version 3   --output_type apache-arrow
+return_code: int32
+start_time: timestamp[ns]
+elapsed_time: double
+error_message: string
+error_file: string
+error_line: uint32
+error_function: string
+error_input_file: string
+error_input_line: int32
+error_input_command: string
+-- metadata --
+GROONGA:data_type: metadata
+	return_code	               start_time	elapsed_time	error_message	error_file	error_line	error_function	error_input_file	error_input_line	error_input_command
+	    (int32)	              (timestamp)	    (double)	       (utf8)	    (utf8)	  (uint32)	        (utf8)	          (utf8)	         (int32)	             (utf8)
+0	          0	1970-01-01T09:00:00+09:00	    0.000000	       (null)	    (null)	    (null)	        (null)	          (null)	          (null)	             (null)
+========================================
+_id: uint32
+_key: string
+date: timestamp[ns]
+tag: dictionary<values=string, indices=int32, ordered=0>
+-- metadata --
+GROONGA:n_hits: 4
+	     _id	  _key	                     date	         tag
+	(uint32)	(utf8)	              (timestamp)	(dictionary)
+0	       1	Groonga is fast!	2016-05-19T12:00:00+09:00	Groonga     
+1	       2	Mroonga is fast!	2016-05-19T12:00:01+09:00	Mroonga     
+2	       3	Groonga sticker!	2016-05-20T12:00:02+09:00	Groonga     
+3	       4	Rroonga is fast!	2016-05-21T12:00:03+09:00	Rroonga     
+========================================
+_key: string
+date: timestamp[ns]
+-- metadata --
+GROONGA:data_type: slice
+GROONGA:label: groonga
+GROONGA:n_hits: 2
+	  _key	                     date
+	(utf8)	              (timestamp)
+0	Groonga is fast!	2016-05-19T12:00:00+09:00
+1	Groonga sticker!	2016-05-20T12:00:02+09:00
