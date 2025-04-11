@@ -54,30 +54,6 @@ msgstr "TODO..."
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Escapes ``target_characters`` in ``string`` by ``escape_character``."
-msgstr "``string`` 中の ``target_characters`` を ``escape_character`` でエスケープします。"
-
-msgid "Its encoding must be the same encoding of ``string``. It is used for allocating buffer for ``escaped_string``."
-msgstr "エンコーディングは ``string`` と同じでなければいけません。 ``escaped_string`` 用のバッファを確保するために使います。"
-
-msgid "String expression representation."
-msgstr "文字列式表現"
-
-msgid "The byte size of ``string``. ``-1`` means ``string`` is NULL terminated string."
-msgstr "``string`` のバイトサイズです。 ``-1`` を指定した場合は ``string`` がNULL終端文字列であるという意味になります。"
-
-msgid "NULL terminated escape target characters. For example, ``\"+-><~*()\\\"\\\\:\"`` is ``target_characters`` for :doc:`/reference/grn_expr/query_syntax`."
-msgstr "NULL終端されたエスケープ対象文字。たとえば、 :doc:`/reference/grn_expr/query_syntax` 用の ``target_characters`` は ``\"+-><~*()\\\"\\\\:\"`` になります。"
-
-msgid "The character to use escape a character in ``target_characters``. For example, ``\\\\`` (backslash) is ``escaped_character`` for :doc:`/reference/grn_expr/query_syntax`."
-msgstr "``target_characters`` の文字をエスケープする文字です。たとえば、 :doc:`/reference/grn_expr/query_syntax` 用の ``escaped_character`` は ``\\\\`` （バックスラッシュ）になります。"
-
-msgid "The output of escaped ``string``. It should be text typed bulk."
-msgstr "エスケープされた ``string`` の出力先です。テキスト型のbulkでなければいけません。"
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
 msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
 msgstr ":doc:`/reference/grn_expr/query_syntax` にある特別な文字をエスケープします。"
 
@@ -92,3 +68,6 @@ msgstr "``query`` のバイトサイズです。 ``-1`` を指定した場合は
 
 msgid "The output of escaped ``query``. It should be text typed bulk."
 msgstr "エスケープされた ``query`` の出力。テキスト型用のbulkを返す。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
