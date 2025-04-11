@@ -102,15 +102,20 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             lsb-release \
             wget
+          # Use released version for now. Apache Arrow (RC) APT
+          # repository has some problems for now:
+          # https://github.com/apache/arrow/issues/46083
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
           # Always use RC version to detect Apache Arrow related
           # problems as fast as possible. Released Apache Arrow is
           # tested in package related jobs.
-          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo sed \
-            -i"" \
-            -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
-            /etc/apt/sources.list.d/apache-arrow.sources
+          # wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          # sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          # sudo sed \
+          #   -i"" \
+          #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
+          #   /etc/apt/sources.list.d/apache-arrow.sources
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
