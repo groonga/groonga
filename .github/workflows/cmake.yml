@@ -77,12 +77,16 @@ jobs:
             mruby: "OFF"
           - cc: clang
             cxx: clang++
+          - cc: clang
+            cxx: clang++
+            ubsan: "ON"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
+      GRN_WITH_UBSAN: ${{ matrix.ubsan }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -152,7 +156,8 @@ jobs:
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
             -DGRN_WITH_BLOSC=auto \
-            -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON}
+            -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON} \
+            -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF}
       - name: Build
         run: |
           ninja -C ../groonga.build
@@ -164,6 +169,11 @@ jobs:
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
           echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+          if [ "${{ matrix.ubsan }}" == "ON" ] ; then
+            CLANG_VER=$(clang -dumpversion | cut -d. -f1)
+            CLANG_LIBRARY_PATH="/usr/lib/clang/${CLANG_VER}/lib/linux"
+            echo "LD_LIBRARY_PATH=${CLANG_LIBRARY_PATH}:${env.LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          fi
           echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
