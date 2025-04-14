@@ -1660,6 +1660,8 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
       set(BUILD_SHARED_LIBS ON)
       set(BUILD_STATIC_LIBS OFF)
       set(GGML_BACKEND_DL ON)
+      string(SUBSTRING "${GRN_LLAMA_CPP_BUNDLED_VERSION}" 1 -1
+                       GGML_BUILD_NUMBER)
       set(GGML_CPU_ALL_VARIANTS ON)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         # GCC 11.5 or later is needed for "-mavxvnni" and so on
