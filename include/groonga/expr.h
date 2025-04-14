@@ -137,6 +137,9 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
 /**
  * \brief Escape target characters in a query by a specified escape character.
  *
+ * \note For general query syntax escaping, it is recommended to use
+ *       \ref grn_expr_syntax_escape_query instead.
+ *
  * \param ctx The context object. Its encoding must match that of the input
  *            \p query.
  * \param query The input query to be escaped.
@@ -151,9 +154,6 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
  * \param escaped_query The buffer where the escaped query is stored.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
- *
- * \see
- * https://groonga.org/docs/reference/grn_expr/query_syntax.html
  */
 GRN_API grn_rc
 grn_expr_syntax_escape(grn_ctx *ctx,
@@ -162,6 +162,21 @@ grn_expr_syntax_escape(grn_ctx *ctx,
                        const char *target_characters,
                        char escape_character,
                        grn_obj *escaped_query);
+/**
+ * \brief Escape special characters in a query.
+ *
+ * \param ctx The context object. Its encoding must match that of the input
+ *            \p query. It is used for allocating buffer for \p escaped_query.
+ * \param query The input query to be escaped.
+ * \param query_size The byte size of \p query. A value of -1 indicates that
+ *                   the query is null-terminated.
+ * \param escaped_query The buffer where the escaped query is stored.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *
+ * \see
+ * https://groonga.org/docs/reference/grn_expr/query_syntax.html
+ */
 GRN_API grn_rc
 grn_expr_syntax_escape_query(grn_ctx *ctx,
                              const char *query,

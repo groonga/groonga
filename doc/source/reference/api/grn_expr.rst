@@ -48,21 +48,6 @@ Reference
 
 .. c:function:: grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 
-.. c:function:: grn_rc grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size, grn_obj *escaped_query)
-
-   Escapes special characters in
-   :doc:`/reference/grn_expr/query_syntax`.
-
-   :param ctx: Its encoding must be the same encoding of ``query``.
-               It is used for allocating buffer for ``escaped_query``.
-   :param query: String expression representation in
-                 :doc:`/reference/grn_expr/query_syntax`.
-   :param query_size: The byte size of ``query``. ``-1`` means ``query``
-                      is NULL terminated string.
-   :param escaped_query: The output of escaped ``query``. It should be
-                         text typed bulk.
-   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
-
 .. c:function:: grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 
 .. c:function:: grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
