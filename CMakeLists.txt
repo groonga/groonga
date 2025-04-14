@@ -1648,6 +1648,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
         string(APPEND CMAKE_C_FLAGS " /wd4305")
         string(APPEND CMAKE_CXX_FLAGS " /wd4305")
+        # 'operation' : unsafe mix of type 'type' and type 'type' in operation
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4805
+        string(APPEND CMAKE_C_FLAGS " /wd4805")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4805")
         # deprecated symbols
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
         string(APPEND CMAKE_C_FLAGS " /wd4996")
