@@ -168,11 +168,12 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
-          if [ "${{ matrix.ubsan }}" == "ON" ] ; then
+          if [ "${{ matrix.ubsan }}" == "ON" ]; then
             CLANG_VER=$(clang -dumpversion | cut -d. -f1)
             CLANG_LIBRARY_PATH="/usr/lib/clang/${CLANG_VER}/lib/linux"
-            echo "LD_LIBRARY_PATH=${CLANG_LIBRARY_PATH}:${env.LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+            echo "LD_LIBRARY_PATH=$PWD/install/lib:${CLANG_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          else
+            echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
           fi
           echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
