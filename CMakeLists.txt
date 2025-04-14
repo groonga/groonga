@@ -521,6 +521,30 @@ option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
 option(GRN_WITH_MEMORY_DEBUG "use debug memory management" OFF)
 
+option(GRN_WITH_UBSAN "Enable Undefined Behavior Sanitizer (UBSAN) checking"
+       OFF)
+if(GRN_WITH_UBSAN)
+  if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    set(GRN_UBSAN_FLAGS "-fsanitize=undefined -fno-sanitize=alignment")
+    string(APPEND CMAKE_C_FLAGS " ${GRN_UBSAN_FLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS " ${GRN_UBSAN_FLAGS}")
+    message(STATUS "UBSAN flags: ${GRN_UBSAN_FLAGS}")
+    execute_process(
+      COMMAND ${CMAKE_C_COMPILER}
+              -print-file-name=libclang_rt.ubsan_standalone-x86_64.so
+      OUTPUT_VARIABLE GRN_UBSAN_LIB_PATH
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(GRN_UBSAN_LIB_PATH)
+      string(APPEND CMAKE_EXE_LINKER_FLAGS " ${GRN_UBSAN_LIB_PATH}")
+      message(STATUS "Found UBSAN runtime library: ${GRN_UBSAN_LIB_PATH}")
+    else()
+      message(FATAL_ERROR "No UBSAN runtime library found")
+    endif()
+  else()
+    message(FATAL_ERROR "UBSAN support is available only for Clang")
+  endif()
+endif()
+
 if(WIN32)
   target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
   target_link_libraries(grn_dependencies INTERFACE psapi.lib)
