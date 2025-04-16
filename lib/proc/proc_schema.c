@@ -302,7 +302,7 @@ command_schema_output_tokenizers(grn_ctx *ctx, grn_schema_data *data)
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
@@ -371,7 +371,7 @@ command_schema_output_normalizers(grn_ctx *ctx, grn_schema_data *data)
     } else {
       /* XXX: this clause is executed when MeCab normalizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
@@ -440,7 +440,7 @@ command_schema_output_token_filters(grn_ctx *ctx, grn_schema_data *data)
     } else {
       /* XXX: this clause is executed when MeCab normalizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
@@ -1391,7 +1391,7 @@ command_schema_output_tables(grn_ctx *ctx, grn_schema_data *data)
     if (!object) {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       goto next_loop;

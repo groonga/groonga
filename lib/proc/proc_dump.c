@@ -161,7 +161,7 @@ dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
     if (!object) {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       goto next_loop;
@@ -986,7 +986,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
@@ -1037,7 +1037,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
@@ -1192,7 +1192,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
     if (!table) {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       goto next_loop;
@@ -1247,7 +1247,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     if (!object) {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
-         We should return error mesage about it and error exit status
+         We should return error message about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       goto next_loop;
