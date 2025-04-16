@@ -2038,6 +2038,7 @@ namespace grnarrow {
     add_metadata(const char *key, const char *value)
     {
       metadata_.Append(key, value);
+      // It is named AddMetadata(), but it "set" metadata, not "add" it.
       auto status = schema_builder_.AddMetadata(metadata_);
       if (!status.ok()) {
         std::stringstream context;
