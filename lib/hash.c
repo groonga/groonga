@@ -2596,7 +2596,7 @@ grn_hash_wal_add_entry_set_value(grn_ctx *ctx,
 }
 
 static void
-grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
+grn_hash_wal_add_entry_format_details(grn_ctx *ctx,
                                       grn_hash_wal_add_entry_data *data,
                                       grn_hash_wal_add_entry_used *used,
                                       grn_obj *details)
@@ -2727,7 +2727,7 @@ grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
   if (rc != GRN_SUCCESS) {
     grn_obj details;
     GRN_TEXT_INIT(&details, 0);
-    grn_hash_wal_add_entry_format_deatils(ctx, data, &used, &details);
+    grn_hash_wal_add_entry_format_details(ctx, data, &used, &details);
     grn_obj_set_error(ctx,
                       (grn_obj *)(data->hash),
                       rc,
