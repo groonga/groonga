@@ -766,7 +766,7 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
 }
 
 static void
-grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
+grn_pat_wal_add_entry_format_details(grn_ctx *ctx,
                                      grn_pat_wal_add_entry_data *data,
                                      grn_pat_wal_add_entry_used *used,
                                      grn_obj *details)
@@ -974,7 +974,7 @@ grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
   if (rc != GRN_SUCCESS) {
     grn_obj details;
     GRN_TEXT_INIT(&details, 0);
-    grn_pat_wal_add_entry_format_deatils(ctx, data, &used, &details);
+    grn_pat_wal_add_entry_format_details(ctx, data, &used, &details);
     grn_obj_set_error(ctx,
                       (grn_obj *)(data->pat),
                       rc,
