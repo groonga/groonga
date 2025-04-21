@@ -2039,6 +2039,8 @@ namespace grnarrow {
     {
       metadata_.Append(key, value);
       // It is named AddMetadata(), but it "set" metadata, not "add" it.
+      // This behavior may be changed.
+      // See also: https://github.com/apache/arrow/issues/46146
       auto status = schema_builder_.AddMetadata(metadata_);
       if (!status.ok()) {
         std::stringstream context;
