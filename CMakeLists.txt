@@ -524,6 +524,12 @@ option(GRN_WITH_MEMORY_DEBUG "use debug memory management" OFF)
 option(GRN_WITH_UBSAN "Enable Undefined Behavior Sanitizer (UBSAN) checking"
        OFF)
 if(GRN_WITH_UBSAN)
+  # UBSAN support requires Clang.
+  # GCC does not currently support `-fno-sanitize=alignment`, which is needed to
+  # suppress alignment-related sanitizer errors. Enabling UBSAN with GCC without
+  # this flag produces excessive misalignment errors. Once GCC adds support for
+  # `-fno-sanitize=alignment`, we can consider enabling UBSAN for GCC here as
+  # well.
   if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     set(GRN_UBSAN_FLAGS "-fsanitize=undefined -fno-sanitize=alignment,vptr")
     string(APPEND CMAKE_C_FLAGS " ${GRN_UBSAN_FLAGS}")
