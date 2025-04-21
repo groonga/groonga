@@ -194,7 +194,7 @@ jobs:
           key: red-datasets-ubuntu
       - name: "Test: command line"
         if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
-        continue-on-error: true
+        continue-on-error: ${{ matrix.ubsan == 'ON' }}
         run: |
           test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
       - name: "Test: mruby"
@@ -202,7 +202,7 @@ jobs:
         run: |
           USE_SYSTEM=yes test/mruby/run-test.rb
       - name: "Test: stdio"
-        continue-on-error: true
+        continue-on-error: ${{ matrix.ubsan == 'ON' }}
         run: |
           grntest \
             --base-dir test/command \
