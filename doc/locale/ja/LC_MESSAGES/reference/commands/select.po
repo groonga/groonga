@@ -1132,7 +1132,7 @@ msgid "You can specify how long edit distance is accepted based on the target qu
 msgstr "対象のクエリーをもとに許容する編集距離を指定できます。多くの場合、 :ref:`select-fuzzy-max-distance` よりもこの引数の方が適切です。"
 
 msgid "In general, long edit distance for short query isn't suitable. Because it will increase noisy results. For example, ``hye`` with edit distance ``3`` accepts the following terms:"
-msgstr "一般的に、短いクエリーに立ちして長い編集距離を許容することは適切ではありません。なぜなら、不適切な結果を増やすからです。たとえば、 ``hye`` と編集距離 ``3`` では次の単語を許容します。"
+msgstr "一般的に、短いクエリーに対して長い編集距離を許容することは適切ではありません。なぜなら、不適切な結果を増やすからです。たとえば、 ``hye`` と編集距離 ``3`` では次の単語を許容します。"
 
 msgid "``hey`` (preferable result)"
 msgstr "``hey`` （適切な結果）"
