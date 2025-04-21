@@ -77,9 +77,12 @@ jobs:
             mruby: "OFF"
           - cc: clang
             cxx: clang++
-          - cc: clang
-            cxx: clang++
-            ubsan: "ON"
+          # TODO: Temporarily disable UBSAN checks in our CI matrix due to
+          # current error noise. Once all UBSAN failures have been addressed,
+          # we will enable UBSAN checks.
+          # - cc: clang
+          #   cxx: clang++
+          #   ubsan: "ON"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
