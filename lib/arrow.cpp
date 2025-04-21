@@ -2012,6 +2012,7 @@ namespace grnarrow {
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
       : ctx_(ctx),
         output_(ctx, bulk),
+        metadata_(),
         schema_builder_(),
         schema_(),
         writer_(),
@@ -2036,9 +2037,11 @@ namespace grnarrow {
     void
     add_metadata(const char *key, const char *value)
     {
-      arrow::KeyValueMetadata metadata;
-      metadata.Append(key, value);
-      auto status = schema_builder_.AddMetadata(metadata);
+      metadata_.Append(key, value);
+      // It is named AddMetadata(), but it "set" metadata, not "add" it.
+      // This behavior may be changed.
+      // See also: https://github.com/apache/arrow/issues/46146
+      auto status = schema_builder_.AddMetadata(metadata_);
       if (!status.ok()) {
         std::stringstream context;
         check(ctx_,
@@ -2526,6 +2529,7 @@ namespace grnarrow {
   private:
     grn_ctx *ctx_;
     BulkOutputStream output_;
+    arrow::KeyValueMetadata metadata_;
     arrow::SchemaBuilder schema_builder_;
     std::shared_ptr<arrow::Schema> schema_;
     std::shared_ptr<arrow::ipc::RecordBatchWriter> writer_;
