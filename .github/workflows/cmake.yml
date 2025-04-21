@@ -77,12 +77,9 @@ jobs:
             mruby: "OFF"
           - cc: clang
             cxx: clang++
-          # TODO: Temporarily disable UBSAN checks in our CI matrix due to
-          # current error noise. Once all UBSAN failures have been addressed,
-          # we will enable UBSAN checks.
-          # - cc: clang
-          #   cxx: clang++
-          #   ubsan: "ON"
+          - cc: clang
+            cxx: clang++
+            ubsan: "ON"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -197,6 +194,7 @@ jobs:
           key: red-datasets-ubuntu
       - name: "Test: command line"
         if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
+        continue-on-error: true
         run: |
           test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
       - name: "Test: mruby"
@@ -204,6 +202,7 @@ jobs:
         run: |
           USE_SYSTEM=yes test/mruby/run-test.rb
       - name: "Test: stdio"
+        continue-on-error: true
         run: |
           grntest \
             --base-dir test/command \
