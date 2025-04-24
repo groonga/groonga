@@ -64,30 +64,21 @@ output_tokens_only_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
-
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
-    grn_ctx_output_map_open(ctx, "TOKEN", (int)n_elements);
+    char value[GRN_TABLE_MAX_KEY_SIZE];
+    int value_size;
+    value_size =
+      grn_table_get_key(ctx, lexicon, token->id, value, GRN_TABLE_MAX_KEY_SIZE);
 
-    grn_ctx_output_cstr(ctx, "value");
-    {
-      char value[GRN_TABLE_MAX_KEY_SIZE];
-      int value_size;
-      value_size = grn_table_get_key(ctx,
-                                     lexicon,
-                                     token->id,
-                                     value,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-      grn_obj key;
-      GRN_OBJ_INIT(&key,
-                   GRN_BULK,
-                   GRN_OBJ_DO_SHALLOW_COPY,
-                   lexicon->header.domain);
-      GRN_TEXT_SET(ctx, &key, value, value_size);
-      grn_ctx_output_obj(ctx, &key, NULL);
-      GRN_OBJ_FIN(ctx, &key);
-    }
-    grn_ctx_output_map_close(ctx);
+    grn_obj key;
+    GRN_OBJ_INIT(&key,
+                 GRN_BULK,
+                 GRN_OBJ_DO_SHALLOW_COPY,
+                 lexicon->header.domain);
+    GRN_TEXT_SET(ctx, &key, value, value_size);
+    grn_ctx_output_obj(ctx, &key, NULL);
+    GRN_OBJ_FIN(ctx, &key);
   }
   grn_ctx_output_array_close(ctx);
 }
