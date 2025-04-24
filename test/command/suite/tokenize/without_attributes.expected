@@ -6,19 +6,19 @@ tokenize   --tokenizer TokenMecab   --string 'Groongaはオープンソースの
     0.0
   ],
   [
-    "value": "Groonga",
-    "value": "は",
-    "value": "オープン",
-    "value": "ソース",
-    "value": "の",
-    "value": "カラム",
-    "value": "ストア",
-    "value": "機能",
-    "value": "付き",
-    "value": "全文",
-    "value": "検索",
-    "value": "エンジン",
-    "value": "です",
-    "value": "。"
+    { "value": "Groonga" },
+    { "value": "は" },
+    { "value": "オープン" },
+    { "value": "ソース" },
+    { "value": "の" },
+    { "value": "カラム" },
+    { "value": "ストア" },
+    { "value": "機能" },
+    { "value": "付き" },
+    { "value": "全文" },
+    { "value": "検索" },
+    { "value": "エンジン" },
+    { "value": "です" },
+    { "value": "。" }
   ]
 ]
