@@ -446,7 +446,7 @@ command_tokenize(grn_ctx *ctx,
   grn_obj *flags_raw;
   grn_obj *mode_raw;
   grn_raw_string token_filters_raw;
-  grn_raw_string attributes_raw;
+  grn_raw_string output_only_tokens_raw;
 
 #define GET_VALUE(name)                                                        \
   name##_raw.value = grn_plugin_proc_get_var_string(ctx,                       \
@@ -461,7 +461,7 @@ command_tokenize(grn_ctx *ctx,
   flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", strlen("flags"));
   mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(token_filters);
-  GET_VALUE(attributes);
+  GET_VALUE(output_only_tokens);
 
 #undef GET_VALUE
 
@@ -516,8 +516,8 @@ command_tokenize(grn_ctx *ctx,
           GRN_BULK_REWIND(&tokens);
           tokenize(ctx, lexicon, &string_raw, mode, flags, &tokens);
         }
-        if (GRN_RAW_STRING_EQUAL_CSTRING(attributes_raw, "no")) {
           output_tokens_only_tokens(ctx, &tokens, lexicon);
+        if (GRN_RAW_STRING_EQUAL_CSTRING(output_only_tokens_raw, "yes")) {
         } else {
           output_tokens(ctx, &tokens, lexicon, NULL);
         }
@@ -543,6 +543,6 @@ grn_proc_init_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "token_filters", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[6]), "attributes", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[6]), "output_only_tokens", -1);
   grn_plugin_command_create(ctx, "tokenize", -1, command_tokenize, 7, vars);
 }

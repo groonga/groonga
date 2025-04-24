@@ -1,4 +1,4 @@
-tokenize   --tokenizer TokenMecab   --string 'Groongaはオープンソースのカラムストア機能付き全文検索エンジンです。'   --attributes no
+tokenize   --tokenizer TokenMecab   --string 'Groongaはオープンソースのカラムストア機能付き全文検索エンジンです。'   --output_only_tokens yes
 [
   [
     0,
