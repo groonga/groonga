@@ -500,7 +500,7 @@ command_tokenize(grn_ctx *ctx,
 void
 grn_proc_init_tokenize(grn_ctx *ctx)
 {
-  grn_expr_var vars[6];
+  grn_expr_var vars[7];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "tokenizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
@@ -508,5 +508,6 @@ grn_proc_init_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "token_filters", -1);
-  grn_plugin_command_create(ctx, "tokenize", -1, command_tokenize, 6, vars);
+  grn_plugin_expr_var_init(ctx, &(vars[6]), "attributes", -1);
+  grn_plugin_command_create(ctx, "tokenize", -1, command_tokenize, 7, vars);
 }
