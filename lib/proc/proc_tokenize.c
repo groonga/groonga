@@ -57,17 +57,15 @@ fin_tokens(grn_ctx *ctx, grn_obj *tokens)
 static void
 output_only_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 {
-  size_t i, n_tokens;
-  n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
+  size_t i;
+  size_t n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
 
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
-    tokenize_token *token;
-    token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    tokenize_token *token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
     char value[GRN_TABLE_MAX_KEY_SIZE];
-    int value_size;
-    value_size =
+    int value_size =
       grn_table_get_key(ctx, lexicon, token->id, value, GRN_TABLE_MAX_KEY_SIZE);
 
     grn_obj key;
