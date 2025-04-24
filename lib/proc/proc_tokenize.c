@@ -57,9 +57,8 @@ fin_tokens(grn_ctx *ctx, grn_obj *tokens)
 static void
 output_only_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 {
-  size_t i, n_tokens, n_elements;
+  size_t i, n_tokens;
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
-  n_elements = 1;
 
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
