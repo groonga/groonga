@@ -187,7 +187,7 @@ if(GRN_WITH_MESSAGE_PACK)
     target_link_libraries(libgroonga INTERFACE Groonga::msgpackc)
   endif()
 endif()
-if(GRN_WITH_LLAMA_CPP)
+if(GRN_WITH_LLAMA_CPP_BUNDLED)
   target_link_libraries(libgroonga
                         INTERFACE "$<BUILD_INTERFACE:Groonga::llama>")
   target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:Groonga::ggml>")
