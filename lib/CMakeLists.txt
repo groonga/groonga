@@ -188,11 +188,14 @@ if(GRN_WITH_MESSAGE_PACK)
   endif()
 endif()
 if(GRN_WITH_LLAMA_CPP)
-  target_link_libraries(libgroonga
-                        INTERFACE "$<BUILD_INTERFACE:Groonga::llama>")
-  target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:Groonga::ggml>")
-  target_link_libraries(libgroonga
-                        INTERFACE "$<BUILD_INTERFACE:Groonga::ggml-base>")
+  if(GRN_WITH_LLAMA_CPP_BUNDLED)
+    target_link_libraries(libgroonga
+                          INTERFACE "$<BUILD_INTERFACE:Groonga::llama>")
+    target_link_libraries(libgroonga
+                          INTERFACE "$<BUILD_INTERFACE:Groonga::ggml>")
+    target_link_libraries(libgroonga
+                          INTERFACE "$<BUILD_INTERFACE:Groonga::ggml-base>")
+  endif()
 endif()
 if(NOT WASI)
   target_link_libraries(libgroonga PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
