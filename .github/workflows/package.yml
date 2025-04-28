@@ -133,14 +133,8 @@ jobs:
         id:
           - debian-bookworm-amd64
           - debian-bookworm-arm64
-          # Temporarily disable because of Apache Arrow depedencies' mismatch.
-          # Apache Arrow currently depends on libre2-11-absl20230802, which is
-          # not available in Debian trixie. Trixie now provides libre2-11
-          # version 20240702-3.
-          # We will re-enable once Apache Arrow is rebuilt (expected release in
-          # April).
-          # - debian-trixie-amd64
-          # - debian-trixie-arm64
+          - debian-trixie-amd64
+          - debian-trixie-arm64
           - ubuntu-jammy-amd64
           - ubuntu-jammy-arm64
           - ubuntu-noble-amd64
