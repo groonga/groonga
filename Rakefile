@@ -238,7 +238,7 @@ namespace :release do
     latest_release_url =
       "https://groonga.org/docs/news/#{File.basename(latest_news, ".*")}.html"
     latest_release_announce = <<-ANNOUNCE.gsub(/\n+/, " ").strip
-Groonga #{version} has been released!(#{latest_release_date})
+Groonga #{version} (#{latest_release_date}) has been released!
 #{latest_release_summary}
 See: #{latest_release_url}#{latest_release_anchor}
     ANNOUNCE
