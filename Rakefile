@@ -221,7 +221,7 @@ namespace :release do
   desc "Post release announces"
   task :announce do
     latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
-      File.basename(a).to_f - File.basename(b).to_f
+      File.basename(a).to_i - File.basename(b).to_i
     end
     latest_release_note = File.read(latest_news).split(/^## /)[1]
     latest_release_note_version = latest_release_note.lines.first[/[\d.]+/]
