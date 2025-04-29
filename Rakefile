@@ -229,7 +229,7 @@ namespace :release do
       raise "release note isn't written"
     end
     latest_release_summary =
-      latest_release_note[/^### Summary\s*(.+?)(?=^###|\z)/m, 1]
+      latest_release_note[/^[^\n]+\n\n(.+?)(?=\n###|\z)/m, 1]
     unless latest_release_summary
       raise "release summary isn't written"
     end
