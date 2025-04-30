@@ -230,9 +230,9 @@ namespace :release do
     if latest_release_note_version != version
       raise "release note isn't written"
     end
-    latest_release_summary =
-      latest_release_note_content.split(/^### /, 2)[0].gsub(/\A.*\n/, "").strip
-    unless latest_release_summary
+    latest_release_note_summary =
+      latest_release_note_content.split(/^### /, 2)[0].strip
+    unless latest_release_note_summary
       raise "release summary isn't written"
     end
     latest_release_date = latest_release_note_title[/\d{4}-\d{2}-\d{2}/]
@@ -241,7 +241,7 @@ namespace :release do
       "https://groonga.org/docs/news/#{File.basename(latest_news, ".*")}.html"
     latest_release_announce = <<-ANNOUNCE.gsub(/\n+/, " ").strip
 Groonga #{version} (#{latest_release_date}) has been released!
-#{latest_release_summary}
+#{latest_release_note_summary}
 See: #{latest_release_url}#{latest_release_anchor}
     ANNOUNCE
   end
