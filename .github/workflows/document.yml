@@ -49,7 +49,6 @@ jobs:
         run: |
           ./setup.sh
           pip install -r doc/requirements.txt
-          bundle install
           (cd doc && bundle install)
       - name: Build document
         run: |

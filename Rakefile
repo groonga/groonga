@@ -19,7 +19,6 @@
 require "date"
 require "open-uri"
 require "tmpdir"
-require "x"
 
 BASE_VERSION = File.read(File.join(__dir__, "base_version"))
 
@@ -221,6 +220,8 @@ namespace :release do
 
   desc "Post release announces"
   task :announce do
+    require "x"
+
     latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
       File.basename(a).to_i - File.basename(b).to_i
     end
