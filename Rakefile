@@ -254,7 +254,7 @@ See: #{latest_release_url}#{latest_release_anchor}
       access_token_secret: ENV["X_ACCESS_TOKEN_SECRET"]
     }
     x_client = X::Client.new(**x_credentials)
-    tweet_body = { test: latest_release_announce }
+    tweet_body = { text: latest_release_announce }
     x_client.post("tweets", tweet_body.to_json)
   end
 end
