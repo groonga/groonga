@@ -224,16 +224,18 @@ namespace :release do
       File.basename(a).to_i - File.basename(b).to_i
     end
     latest_release_note = File.read(latest_news).split(/^## /)[1]
-    latest_release_note_version = latest_release_note.lines.first[/[\d.]+/]
+    latest_release_note_title = latest_release_note.lines.first
+    latest_release_note_content = latest_release_note.lines[1..-1].join
+    latest_release_note_version = latest_release_note_title[/[\d.]+/]
     if latest_release_note_version != version
       raise "release note isn't written"
     end
     latest_release_summary =
-      latest_release_note.split(/^### /, 2)[0].gsub(/\A.*\n/, "").strip
+      latest_release_note_content.split(/^### /, 2)[0].gsub(/\A.*\n/, "").strip
     unless latest_release_summary
       raise "release summary isn't written"
     end
-    latest_release_date = latest_release_note.lines.first[/\d{4}-\d{2}-\d{2}/]
+    latest_release_date = latest_release_note_title[/\d{4}-\d{2}-\d{2}/]
     latest_release_anchor = "#release-#{version.gsub(".", "-")}"
     latest_release_url =
       "https://groonga.org/docs/news/#{File.basename(latest_news, ".*")}.html"
