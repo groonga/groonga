@@ -19,6 +19,7 @@
 require "date"
 require "open-uri"
 require "tmpdir"
+require "x"
 
 BASE_VERSION = File.read(File.join(__dir__, "base_version"))
 
@@ -244,6 +245,16 @@ Groonga #{version} (#{latest_release_date}) has been released!
 #{latest_release_note_summary}
 See: #{latest_release_url}#{latest_release_anchor}
     ANNOUNCE
+
+    x_credentials = {
+      api_key: ENV["X_API_KEY"],
+      api_key_secret: ENV["X_API_KEY_SECRET"],
+      access_token: ENV["X_ACCESS_TOKEN"],
+      access_token_secret: ENV["X_ACCESS_TOKEN_SECRET"]
+    }
+    x_client = X::Client.new(**x_credentials)
+    tweet_body = { test: latest_release_announce }
+    x_client.post("tweets", tweet_body.to_json)
   end
 end
 

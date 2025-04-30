@@ -96,3 +96,15 @@ jobs:
           echo "${LAUNCHPAD_DEPLOY_KEY}" | gpg --import
           echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
           rake -C packages ubuntu
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+      - name: Post Announcement
+        run: |
+          bundle install
+          VERSION=${GITHUB_REF_NAME#v} rake release:announce
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}

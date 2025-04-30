@@ -163,6 +163,7 @@
 /vendor/xxHash-*
 /vendor/zstd-*
 CMakeFiles
+Gemfile.lock
 Makefile
 Makefile.in
 cmake_install.cmake
