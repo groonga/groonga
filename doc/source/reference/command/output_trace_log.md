@@ -59,7 +59,7 @@ You can specify JSON output format explicitly like the followings:
 Command line style:
 
 ```text
-select ... --output_trace_log yes --command_version 3 --output_format json
+select ... --output_trace_log yes --command_version 3 --output_type json
 ```
 
 URI style:
@@ -71,7 +71,7 @@ URI style:
 or
 
 ```text
-/d/select?...&output_trace_log=yes&command_version=3&output_format=json
+/d/select?...&output_trace_log=yes&command_version=3&output_type=json
 ```
 
 Here is an output structure for JSON output format:
@@ -177,7 +177,7 @@ followings:
 Command line style:
 
 ```text
-select ... --output_trace_log yes --command_version 3 --output_format apache-arrow
+select ... --output_trace_log yes --command_version 3 --output_type apache-arrow
 ```
 
 URI style:
@@ -189,7 +189,7 @@ URI style:
 or
 
 ```text
-/d/select?...&output_trace_log=yes&command_version=3&output_format=apache-arrow
+/d/select?...&output_trace_log=yes&command_version=3&output_type=apache-arrow
 ```
 
 Here is an output structure for Apache Arrow output format:
