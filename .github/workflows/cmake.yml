@@ -855,28 +855,10 @@ jobs:
       # Test
       - uses: ruby/setup-ruby@v1
         with:
-          # We can't use "ruby" here because json-stream still uses
-          # Fixnum that is removed in recent Ruby. :<
-          #
-          # We can use "ruby" here when we remove json-stream
-          # dependency from groonga-command-parser.
-          ruby-version: "3.1"
-      - name: Update MSYS2
-        run: |
-          ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
-          taskkill /F /FI "MODULES eq msys-2.0.dll"
-          ridk exec pacman --sync --refresh
-      - name: Update GCC
-        run: |
-          ridk exec pacman --sync --noconfirm mingw-w64-ucrt-x86_64-gcc
+          ruby-version: ruby
       - name: Install test dependencies
         run: |
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
-          ridk exec pacman `
-            --sync `
-            --noconfirm `
-            mingw-w64-ucrt-x86_64-arrow `
-            mingw-w64-ucrt-x86_64-xsimd
           gem install `
             grntest `
             pkg-config `
