@@ -370,6 +370,12 @@ namespace {
         grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
         grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
       }
+    } else if (y < -1) {
+      /* `y` is less than -2 because `std::is_integral_v`.
+       * Therefore, `x / y` is never smaller than the minimum value of int64_t.
+       */
+      grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
+      grn::bulk::set<int64_t>(ctx, result, static_cast<double>(x) / y);
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     }
