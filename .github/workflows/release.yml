@@ -102,7 +102,6 @@ jobs:
           bundler-cache: true
       - name: Post Announcement
         run: |
-          bundle install
           VERSION=${GITHUB_REF_NAME#v} rake release:announce
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
