@@ -60,7 +60,7 @@ output_tokens_simple(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
   size_t i;
   size_t n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
 
-  grn_ctx_output_array_open(ctx, "TOKEN_VALUES", (int)n_tokens);
+  grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   grn_obj key;
   GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, lexicon->header.domain);
   tokenize_token *tokenize_tokens = (tokenize_token *)GRN_BULK_HEAD(tokens);
