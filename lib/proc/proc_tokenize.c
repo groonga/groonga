@@ -55,7 +55,7 @@ fin_tokens(grn_ctx *ctx, grn_obj *tokens)
 }
 
 static void
-output_simple_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
+output_tokens_simple(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 {
   size_t i;
   size_t n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
@@ -511,7 +511,7 @@ command_tokenize(grn_ctx *ctx,
           tokenize(ctx, lexicon, &string_raw, mode, flags, &tokens);
         }
         if (GRN_RAW_STRING_EQUAL_CSTRING(output_style_raw, "simple")) {
-          output_simple_tokens(ctx, &tokens, lexicon);
+          output_tokens_simple(ctx, &tokens, lexicon);
         } else {
           output_tokens(ctx, &tokens, lexicon, NULL);
         }
