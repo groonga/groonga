@@ -63,8 +63,9 @@ output_tokens_simple(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
   grn_ctx_output_array_open(ctx, "TOKEN_VALUES", (int)n_tokens);
   grn_obj key;
   GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, lexicon->header.domain);
+  tokenize_token *tokenize_tokens = (tokenize_token *)GRN_BULK_HEAD(tokens);
   for (i = 0; i < n_tokens; i++) {
-    tokenize_token *token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    tokenize_token *token = tokenize_tokens + i;
 
     char value[GRN_TABLE_MAX_KEY_SIZE];
     int value_size =
