@@ -120,8 +120,8 @@ msgstr "``TABLE_PAT_KEY`` なテーブルであっても、切り詰められた
 msgid "The buffer object which is object name will be stored."
 msgstr "オブジェクト名が設定されるオブジェクト"
 
-msgid "``buffer`` object which is name of object is set. If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymouse: ID)`` is set to buffer."
-msgstr "オブジェクトの名前が設定される ``buffer`` オブジェクト。指定したオブジェクトが無効な値であれば ``(nil)`` が設定され、内部で使用しているオブジェクトであれば ``(anonymouse: ID)`` が設定されます。"
+msgid "``buffer`` object which is name of object is set. If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymous: ID)`` is set to buffer."
+msgstr "オブジェクトの名前が設定される ``buffer`` オブジェクト。指定したオブジェクトが無効な値であれば ``(nil)`` が設定され、内部で使用しているオブジェクトであれば ``(anonymous: ID)`` が設定されます。"
 
 msgid "Specified object name is printed like this::"
 msgstr "調査対象のオブジェクト名は次のように表示されます::"
