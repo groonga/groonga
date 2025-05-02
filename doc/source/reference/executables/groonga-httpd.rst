@@ -216,7 +216,7 @@ and prepend ``/d/`` to the processed request URI. By the path
 conversion, users can use custom path prefix and Groonga can always
 uses ``/d/command?parameter1=value1&...`` form.
 
-Nomally, this directive isn't needed. It is needed for per command
+Normally, this directive isn't needed. It is needed for per command
 configuration.
 
 Here is an example configuration to add authorization to
@@ -275,7 +275,7 @@ Examples::
 
 Syntax::
 
-  groonga_log_level none | emergency | alert | ciritical | error | warning | notice | info | debug | dump;
+  groonga_log_level none | emergency | alert | critical | error | warning | notice | info | debug | dump;
 
 Default
   ``notice``

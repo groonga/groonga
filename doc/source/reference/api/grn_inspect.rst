@@ -137,7 +137,7 @@ Reference
    :param buffer: The buffer object which is object name will be stored.
    :param obj: The inspect target object.
    :return: ``buffer`` object which is name of object is set.
-            If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymouse: ID)`` is set to buffer.
+            If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymous: ID)`` is set to buffer.
 
    .. code-block:: c
 

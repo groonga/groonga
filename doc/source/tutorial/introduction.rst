@@ -267,7 +267,7 @@ Sort a search result
 
 A :doc:`/reference/commands/select` command sorts its result when used with a ``sort_keys`` parameter.
 
-A ``sort_keys`` parameter specifies a column as a sorting creteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter.
+A ``sort_keys`` parameter specifies a column as a sorting criteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter.
 
 The following example shows records in the Site table in reverse order.
 

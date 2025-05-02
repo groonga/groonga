@@ -54,7 +54,7 @@ Improvements
 * [:doc:`/reference/commands/load`] Improve error message.
 
   * Response of ``load`` command includes error message also.
-  * If we faile data load, Groonga output error detail of ``load`` command by this Improvement.
+  * If we fail data load, Groonga output error detail of ``load`` command by this Improvement.
 
 * [httpd] Updated bundled nginx to 1.17.7.
 
@@ -250,7 +250,7 @@ Fixes
 
 * [geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]
 
-* [:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]
+* [:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GitHub#1024][Patched by yagisumi]
 
 Thanks
 ^^^^^^
@@ -569,7 +569,7 @@ Release 9.0.1 - 2019-03-29
 Improvements
 ^^^^^^^^^^^^
 
-* Added support to acccept null for vector value.
+* Added support to accept null for vector value.
 
   * You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value "null"`
 
@@ -591,7 +591,7 @@ Improvements
 
 * [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
 
-* [:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log.
+* [:doc:`/reference/commands/load`] Added support to display a table of load destination in a query log.
 
   * A name of table of load destination display as string in ``[]`` as below.
 
@@ -615,7 +615,7 @@ Fixes
   * In such a case, an empty vector ``[]`` is returned instead of ``null``.
 
 * Fixed a warning about possibility of counting threads overflow.
-  In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]
+  In real world, it doesn't affect user because enormous number of threads is not used. [GitHub#904]
 
 * Fixed build error on macOS [GitHub#909] [Reported by shiro615]
 
@@ -680,7 +680,7 @@ Improvements
 
 * [:doc:`/reference/commands/dump`] Added support for dumping binary data.
 
-* [:doc:`/reference/commands/select`] Added support for similer search against index column.
+* [:doc:`/reference/commands/select`] Added support for similar search against index column.
 
   * If you have used multi column index, you can similar search against all source columns by this feature.
 

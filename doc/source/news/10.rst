@@ -925,7 +925,7 @@ Improvements
         --drilldowns[tag.n_likes].keys tag,n_likes \
         --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
 
-    * Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large,
+    * Because the drilldown packets specifying all keys for drilldown. So, if each the size of drilldown key is large,
       the size of the packed drilldown keys is larger than 4KiB.
 
   * This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ .
@@ -1080,7 +1080,7 @@ Fixes
 
   * ``_score`` may be broken with full text search.
   * The records that couldn't hit might hit.
-  * Please refer to the following URL for the details about occurrence conditionin of this bug.
+  * Please refer to the following URL for the details about occurrence conditions of this bug.
 
     * https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index
 
@@ -2265,7 +2265,7 @@ Improvements
     * This API is only used on the reference count mode (The reference count mode is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.).
 
       * It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode.
-      * We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode.
+      * We useful it when we need only call ``grn_obj_unlink()`` on the reference count mode.
       * Because as the following example, we don't write condition that whether the reference count mode or not.
 
         * The example if we don't use ``grn_obj_unref()``.
@@ -2286,7 +2286,7 @@ Improvements
   * ``grn_get_version_minor(void)``
   * ``grn_get_version_micro(void)``
 
-    * They return Groonga's major, minor, and micor version numbers as a ``uint32_t``.
+    * They return Groonga's major, minor, and micro version numbers as a ``uint32_t``.
 
   * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
   * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``

@@ -340,7 +340,7 @@ Specifies a normalizer that is used to normalize key.
 You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.
 
-See :doc:`/reference/normalizers` for all normalizsers.
+See :doc:`/reference/normalizers` for all normalizers.
 
 The default value is none.
 

@@ -18,7 +18,7 @@ provides ID search and key search.
 Characteristics
 ---------------
 
-Here is a chracteristic table of all tables in Groonga. (``TABLE_``
+Here is a characteristic table of all tables in Groonga. (``TABLE_``
 prefix is omitted in the table.)
 
 .. list-table:: Characteristics of all tables

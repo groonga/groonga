@@ -241,7 +241,7 @@ Improvements
 
 * [:doc:`/reference/commands/io_flush`] Supported locking of a database during a ``io_flush``.
 
-  * Because Groonga had a problem taht is a crash when deleteing a table of a target of a ``io_flush`` during execution of a ``io_flush``.
+  * Because Groonga had a problem taht is a crash when deleting a table of a target of a ``io_flush`` during execution of a ``io_flush``.
 
 * [:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``.
 
@@ -352,7 +352,7 @@ Improvements
   If the current result is enough filtered, sequential search is faster than index search.
   If the current result has only 1% records of all records in a table and less than 1000 records, sequential search is used even when index search is available.
 
-  Cullently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``.
+  Currently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``.
 
   When a key of a table that has columns specified by the filter is ``ShortText``, you must set ``NormalizerAuto`` to normalizer of the table to apply this optimization.
 

@@ -8,15 +8,15 @@ NAME
 
 groonga-suggest-create-dataset - Defines schema for a suggestion dataset
 
-SYNOPSTIS
----------
+SYNOPSIS
+--------
 
 ::
 
  groonga-suggest-create-dataset [options] DATABASE DATASET
 
-DESCTIPION
-----------
+DESCRIPTION
+-----------
 
 groonga-suggest-create-dataset creates a dataset for :doc:`/reference/suggest`. A database has many datasets. This command just defines schema for a suggestion dataset.
 
