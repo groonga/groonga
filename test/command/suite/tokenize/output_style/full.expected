@@ -1,0 +1,94 @@
+tokenize   --tokenizer TokenMecab   --string 'Groongaはオープンソースのカラムストア機能付き全文検索エンジンです。'   --output_style full
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "Groonga",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "は",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "オープン",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "ソース",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "の",
+      "position": 4,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "カラム",
+      "position": 5,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "ストア",
+      "position": 6,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "機能",
+      "position": 7,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "付き",
+      "position": 8,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "全文",
+      "position": 9,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "検索",
+      "position": 10,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "エンジン",
+      "position": 11,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "です",
+      "position": 12,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "。",
+      "position": 13,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

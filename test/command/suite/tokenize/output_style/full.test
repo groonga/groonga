@@ -1,0 +1,6 @@
+#@require-feature mecab
+
+tokenize \
+  --tokenizer TokenMecab \
+  --string 'Groongaはオープンソースのカラムストア機能付き全文検索エンジンです。' \
+  --output_style full
