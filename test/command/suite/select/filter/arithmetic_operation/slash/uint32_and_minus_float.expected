@@ -1,0 +1,38 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value": 4294967295}
+]
+[[0,0.0,0.0],1]
+select Values   --output_columns 'value, value / -29.0'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "value",
+          "UInt32"
+        ],
+        [
+          "value",
+          "UInt32"
+        ]
+      ],
+      [
+        4294967295,
+        -1.481023205172414e+8
+      ]
+    ]
+  ]
+]

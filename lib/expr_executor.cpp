@@ -336,6 +336,9 @@ namespace {
     if (y == -1) {
       grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
       grn::bulk::set<int64_t>(ctx, result, -static_cast<int64_t>(x));
+    } else if (y < -1) {
+      grn_obj_reinit(ctx, result, GRN_DB_INT64, 0);
+      grn::bulk::set<int64_t>(ctx, result, static_cast<int64_t>(x) / y);
     } else {
       grn::bulk::set<RESULT_TYPE>(ctx, result, static_cast<RESULT_TYPE>(x / y));
     }
