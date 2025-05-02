@@ -2157,7 +2157,7 @@ $.effects.animateClass = function( value, duration, easing, callback ) {
 				} );
 			} );
 
-			// This is guarnteed to be there if you use jQuery.speed()
+			// This is guaranteed to be there if you use jQuery.speed()
 			// it also handles dequeuing the next anim...
 			o.complete.call( animated[ 0 ] );
 		} );
@@ -6334,7 +6334,7 @@ var widgetsControlgroup = $.widget( "ui.controlgroup", {
 			}
 
 			// We assume everything is in the middle to start because we can't determine
-			// first / last elements until all enhancments are done.
+			// first / last elements until all enhancements are done.
 			if ( that[ "_" + widget + "Options" ] ) {
 				options = that[ "_" + widget + "Options" ]( "middle" );
 			} else {
@@ -6502,7 +6502,7 @@ var widgetsControlgroup = $.widget( "ui.controlgroup", {
 
 		if ( children.length ) {
 
-			// We do this last because we need to make sure all enhancment is done
+			// We do this last because we need to make sure all enhancement is done
 			// before determining first and last
 			$.each( [ "first", "last" ], function( index, value ) {
 				var instance = children[ value ]().data( "ui-controlgroup-data" );
@@ -9474,7 +9474,7 @@ var widgetsMouse = $.widget( "ui.mouse", {
 		return this.mouseDelayMet;
 	},
 
-	// These are placeholder methods, to be overriden by extending plugin
+	// These are placeholder methods, to be overridden by extending plugin
 	_mouseStart: function( /* event */ ) {},
 	_mouseDrag: function( /* event */ ) {},
 	_mouseStop: function( /* event */ ) {},
@@ -10449,7 +10449,7 @@ $.ui.plugin.add( "draggable", "connectToSortable", {
 					sortable._trigger( "out", event, sortable._uiHash( sortable ) );
 					sortable._mouseStop( event, true );
 
-					// Restore sortable behaviors that were modfied
+					// Restore sortable behaviors that were modified
 					// when the draggable entered the sortable area (#9481)
 					sortable.options.revert = sortable.options._revert;
 					sortable.options.helper = sortable.options._helper;
@@ -12207,7 +12207,7 @@ $.widget( "ui.dialog", {
 			that._trigger( "focus" );
 		} );
 
-		// Track the dialog immediately upon openening in case a focus event
+		// Track the dialog immediately upon opening in case a focus event
 		// somehow occurs outside of the dialog before an element inside the
 		// dialog is focused (#10152)
 		this._makeFocusTarget();
@@ -13953,7 +13953,7 @@ var widgetsSelectmenu = $.widget( "ui.selectmenu", [ $.ui.formResetMixin, {
 				focus: function( event, ui ) {
 					var item = ui.item.data( "ui-selectmenu-item" );
 
-					// Prevent inital focus from firing and check if its a newly focused item
+					// Prevent initial focus from firing and check if its a newly focused item
 					if ( that.focusIndex != null && item.index !== that.focusIndex ) {
 						that._trigger( "focus", event, { item: item } );
 						if ( !that.isOpen ) {
@@ -17887,7 +17887,7 @@ $.widget( "ui.tabs", {
 				// tab is already loading
 				tab.hasClass( "ui-tabs-loading" ) ||
 
-				// can't switch durning an animation
+				// can't switch during an animation
 				this.running ||
 
 				// click on active header, but not collapsible
