@@ -100,7 +100,7 @@ msgstr "このリリースでは ``table_list`` や ``column_list`` コマンド
 msgid "This release has supported ``--normalizer`` option, but there is side effect for this feature. If you open old version of groonga database at least once, you can not open its database by old version of groonga."
 msgstr "このリリースでは ``--normalizer`` オプションをサポートしましたが、副作用があり、一度でも古いバージョンのデータベースを新しいバージョンのgroongaで開くと、古いバージョンのgroongaではデータベースを開けなくなります。"
 
-msgid "There is also another backward incompatible change agaist plugin API for tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. This API change affects developer of tokenizer plugin."
+msgid "There is also another backward incompatible change against plugin API for tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. This API change affects developer of tokenizer plugin."
 msgstr "もうひとつトークナイザプラグインAPIに関する非互換な変更があります。 ``grn_tokenizer_query_open`` APIの引数が変更されました。このAPIの変更はトークナイザプラグインの開発者に影響があります。"
 
 msgid "[doc] Added documentation about :ref:`nested-index-search`."
@@ -148,7 +148,7 @@ msgstr "Shimomura Tatsuyaさん"
 msgid "Release 2.0.9 - 2012-11-29"
 msgstr "2.0.9リリース - 2012-11-29"
 
-msgid "Supported to calculate the value of distance accross border in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]"
+msgid "Supported to calculate the value of distance across border in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]"
 msgstr "``geo_distance`` 関数の近似方法として ``rectangle`` を指定したときに境界をまたいでも距離の算出できるようにした。 [#1534]"
 
 msgid "[doc] Added the :doc:`/spec/gqtp` specification."
@@ -163,7 +163,7 @@ msgstr "[実験的] キーワードとその周辺のテキストを抽出する
 msgid "Supported to report error reason when error occured during reading table record."
 msgstr "テーブルのレコードを出力している際に発生したエラーを表示するようにした。"
 
-msgid "Supported to search with keyword by nested index notation ( concatinate multiple indexed column name with dot character ) if there is a relationship between multiple table with index."
+msgid "Supported to search with keyword by nested index notation ( concatenate multiple indexed column name with dot character ) if there is a relationship between multiple table with index."
 msgstr "複数のテーブルで関連したインデックスが設定されていれば、ネストしたインデックス (複数のカラムインデックス名を ``.`` で連結して指定)に対してキーワードで検索できるようにした。"
 
 msgid "Supported to log \"[tokenizer][mecab]\" tag when using ``TokenMecab`` tokenizer."
@@ -592,7 +592,7 @@ msgstr "[munin] groonga_dist Muninプラグインが複数のファイルを使�
 msgid "Started using Travis CI."
 msgstr "Travis CIを使うようにした。"
 
-msgid "[yum] Changed RPM package name that provides yum repository from groonga-repository to groonga-release to follow RPM package name convension such as centos-release and fedora-release."
+msgid "[yum] Changed RPM package name that provides yum repository from groonga-repository to groonga-release to follow RPM package name convention such as centos-release and fedora-release."
 msgstr "[yum] groongaのyumリポジトリを提供するRPMパッケージ名をgroonga-repositoryからgroonga-releaseへと変更。これは、centos-releaseやfedora-releaseといったRPMパッケージの命名規則とあわせるためである。"
 
 msgid "[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
@@ -634,7 +634,7 @@ msgstr "[rpm][fedora] libeditをサポート。[#1325] [IWAI, Masaharuさんが�
 msgid "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
 msgstr "[rpm] zlibおよびLZOをサポート。[#1324] [IWAI, Masaharuさんがパッチ提供]"
 
-msgid "[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket is listened. It means that groonga server is ready when groonga server is daemonized. [#1326]"
+msgid "[groonga] Improved daemonized timing. Groonga server daemonizes after socket is listened. It means that groonga server is ready when groonga server is daemonized. [#1326]"
 msgstr "[groonga] デーモン化のタイミングを改善。groongaサーバーはソケットがlisten状態になった後にデーモン化するようになった。これによりgroongaサーバーがデーモン化した時点で接続を受け付けられる状態になっている。 [#1326]"
 
 msgid "[admin] Supported suggest in groonga administration page."
@@ -676,13 +676,13 @@ msgstr "[rpm] 必要のないログを削除。 [#1328] [IWAI, Masaharuさんが
 msgid "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, Masaharu]"
 msgstr "[deb][rpm] curlへの依存関係を追加。 [GitHub#12] [IWAI, Masaharuさんがパッチ提供]"
 
-msgid "[rpm] Removed needleess ruby package dependency from groonga package. [#1330] [Suggested by IWAI, Masaharu]"
+msgid "[rpm] Removed needless ruby package dependency from groonga package. [#1330] [Suggested by IWAI, Masaharu]"
 msgstr "[rpm] groongaパッケージから必要のないrubyパッケージへの依存関係を削除。 [#1330] [IWAI, Masaharuさんが提案]"
 
 msgid "[deb] Added missing default values to groonga-server's configuration file."
 msgstr "[deb] groonga-serverの設定ファイルに未設定だったデフォルト値を追加。"
 
-msgid "Fixed a crash bug that is caused when searching with updaging very large inverted index. [#1329]"
+msgid "Fixed a crash bug that is caused when searching with updating very large inverted index. [#1329]"
 msgstr "非常に大きな転置インデックスを更新しながら検索するとクラッシュする不具合を修正。 [#1329]"
 
 msgid "Fixed a bug that strings are compared as characters instead of byte string. [#1340] [Reported by Shinya Kawaji]"

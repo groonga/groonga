@@ -31,8 +31,8 @@ msgstr "設定"
 msgid "Travis CI is running on 64-bit Ubuntu 14.04 LTS Server Edition. (See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  You can use apt-line for Ubuntu 14.04 LTS provided by Groonga project to install Groonga on Travis CI."
 msgstr "Travis CIは64-bit版のUbuntu 14.04 LTS サーバ版を使っています。（ `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_ 参照。）Travis CIにGroongaをインストールするために、Groongaプロジェクトが提供しているUbuntu 14.04 LTS用のapt-lineを使えます。"
 
-msgid "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: Conifugration your Travis CI build with .travis.yml <http://about.travis-ci.org/docs/user/build-configuration/>`_.) You can use ``before_install`` hook or ``install`` hook. You should use ``before_install`` if your software uses a language that is supported by Travis CI such as Ruby. You should use ``install`` otherwise."
-msgstr "``.travis.yml`` でビルド方法を変更することができます。（ `Travis CI: Conifugration your Travis CI build with .travis.yml <http://about.travis-ci.org/docs/user/build-configuration/>`_ 参照。） ``before_install`` フックまたは ``install`` フックを使います。もし、Travis CIがサポートしている言語（例えばRuby）を使ったソフトウェアの場合は ``before_install`` を使います。そうでない場合は ``install`` を使います。"
+msgid "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: Configuration your Travis CI build with .travis.yml <http://about.travis-ci.org/docs/user/build-configuration/>`_.) You can use ``before_install`` hook or ``install`` hook. You should use ``before_install`` if your software uses a language that is supported by Travis CI such as Ruby. You should use ``install`` otherwise."
+msgstr "``.travis.yml`` でビルド方法を変更することができます。（ `Travis CI: Configuration your Travis CI build with .travis.yml <http://about.travis-ci.org/docs/user/build-configuration/>`_ 参照。） ``before_install`` フックまたは ``install`` フックを使います。もし、Travis CIがサポートしている言語（例えばRuby）を使ったソフトウェアの場合は ``before_install`` を使います。そうでない場合は ``install`` を使います。"
 
 msgid "Add the following ``sudo`` and ``before_install`` configuration to ``.travis.yml``::"
 msgstr "以下の ``sudo`` と ``before_install`` の設定を ``.travis.yml`` に加えます::"

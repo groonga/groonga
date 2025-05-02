@@ -291,7 +291,7 @@ msgstr "インデックス対象データの種類数と小さなインデック
 msgid "The number of kinds of index target data"
 msgstr "インデックス対象のデータの種類数"
 
-msgid "The number of hanleable records"
+msgid "The number of handleable records"
 msgstr "処理できるレコード数"
 
 msgid "1"
@@ -819,7 +819,7 @@ msgstr "次に、 ``UInt8`` の ``[5, 5, 5, 5, 5]`` のように同じ値が連�
 msgid "There would be a case to be able to increase the compression rate by combining ``COMPRESS_FILTER_SHUFFLE`` even though calculating increments would not have same value in continuance, or increments are too large."
 msgstr "ただ、差分を計算しても同じ値が連続しなかったり、差分自体が大きい値になる場合でも、 ``COMPRESS_FILTER_SHUFFLE`` を合わせて使うことで圧縮率を向上させられるケースもあります。"
 
-msgid "For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data would not have values in continuance, and increments are large."
+msgid "For example, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data would not have values in continuance, and increments are large."
 msgstr "例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。このデータでは同じ値は連続しませんし、差分自体も大きい値です。"
 
 msgid "But applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be different. And it will be explained in following. First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below."

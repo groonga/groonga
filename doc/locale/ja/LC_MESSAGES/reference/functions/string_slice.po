@@ -42,7 +42,7 @@ msgstr "この関数を有効にするには、以下のコマンドで ``functi
 msgid "Syntax"
 msgstr "構文"
 
-msgid "``string_slice`` requires two to four parameters. The required parametars are depending on the extraction method."
+msgid "``string_slice`` requires two to four parameters. The required parameters are depending on the extraction method."
 msgstr "``string_slice`` は2つから4つの引数を指定できます。抽出方法によって指定可能な引数が変わります。"
 
 msgid "``options`` uses the following format. All of key-value pairs are optional::"

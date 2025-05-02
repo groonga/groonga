@@ -357,7 +357,7 @@ msgstr "キーを正規化するために使うノーマライザーを指定し
 msgid "You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because ``TABLE_NO_KEY`` doesn't support key."
 msgstr "``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と ``normalizer`` を一緒に指定することはできません。"
 
-msgid "See :doc:`/reference/normalizers` for all normalizsers."
+msgid "See :doc:`/reference/normalizers` for all normalizers."
 msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
 
 msgid "``token_filters``"

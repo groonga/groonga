@@ -49,7 +49,7 @@ msgstr "修正"
 msgid "Fixed mismatch between error code and error message when ``strerror()`` is failed. There was a case that Groonga shows incorrect error code as syscall error."
 msgstr "エラー発生時のエラーコードとエラーメッセージが ``strerror()`` を呼んで失敗したときに一致しない不具合を修正しました。このせいで、syscallエラーとして不適切なエラーコードを表示することがありました。"
 
-msgid "Fixed to show errno in error message when unknow error is occurred."
+msgid "Fixed to show errno in error message when unknown error is occurred."
 msgstr "未定義エラーが発生したときにエラーメッセージにエラーコード(errno)を表示するようにしました。"
 
 msgid "[windows] Fixed to return proper error code."
@@ -700,7 +700,7 @@ msgstr ":ref:`weight-vector-column` をサポートしました。重みつき�
 msgid "Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian Wiedenroth]"
 msgstr "SunOSでビルドに必要なMIN/MAXの定義がなかったので追加しました。[GitHub#154] [Sebastian Wiedenrothさんがパッチ提供]"
 
-msgid "Improved recycling garbage data. It suppress to increse database size."
+msgid "Improved recycling garbage data. It suppress to increase database size."
 msgstr "使われなくなった領域を再利用するように改善しました。これによりデータべースの肥大化を抑制します。"
 
 msgid "[doc] Added documentation about GET parameters for :doc:`/reference/executables/groonga-suggest-httpd`."
