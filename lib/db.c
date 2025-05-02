@@ -1506,7 +1506,7 @@ calc_rec_size(grn_table_flags flags,
       break;
     }
     *value_size =
-      (uintptr_t)GRN_RSET_SUBRECS_NTH((((grn_rset_recinfo *)0)->subrecs),
+      (uintptr_t)GRN_RSET_SUBRECS_NTH(offsetof(grn_rset_recinfo, subrecs),
                                       *subrec_size,
                                       max_n_subrecs);
   } else {
