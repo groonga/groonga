@@ -426,6 +426,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/tokenize/normalizer_none.log
     example/reference/commands/tokenize/normalizer_use.log
     example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log
+    example/reference/commands/tokenize/output_style/full.log
+    example/reference/commands/tokenize/output_style/simple.log
     example/reference/commands/tokenize/simple_example.log
     example/reference/commands/tokenize/string_include_spaces.log
     example/reference/commands/tokenize/tokenizer_token_trigram.log

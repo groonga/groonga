@@ -180,6 +180,33 @@ msgstr "トークンフィルターを指定します。 ``tokenize`` コマン�
 msgid "See :doc:`/reference/token_filters` about token filters."
 msgstr "トークンフィルターについては :doc:`/reference/token_filters` を参照してください。"
 
+msgid "``output_style``"
+msgstr ""
+
+msgid "Specifies the output style of the ``tokenize`` command."
+msgstr "``tokenize`` コマンドの出力スタイルを指定します。"
+
+msgid "Style"
+msgstr "出力スタイル"
+
+msgid "``full``"
+msgstr ""
+
+msgid "Preserves the existing behavior. Returns an array of objects with full token attributes (value, position, flags, etc.) as usual."
+msgstr "既存の出力スタイルで、トークンとその属性情報（value, position, flags, など）を出力します。"
+
+msgid "``simple``"
+msgstr ""
+
+msgid "Shows only the token values for readability. Returns an array of tokens like ``[\"We\", \"are\", …]``."
+msgstr "可読性のためにトークンのみを出力します。例えば ``[\"We\", \"are\", …]`` のようにトークンのリストを出力します。"
+
+msgid "Here is an example with ``full`` (default) output sytle."
+msgstr "以下は ``full`` （デフォルト）出力スタイルの例です。"
+
+msgid "And here is the same command with ``simple`` output style."
+msgstr "以下は同じコマンドを ``simple`` 出力スタイルで実行した例です。"
+
 msgid "Return value"
 msgstr "戻り値"
 
