@@ -29,7 +29,7 @@ cmake \
 cmake --build build
 cmake --install build
 set +x
-echo "::endgroup"
+echo "::endgroup::"
 
 echo "::group::Test"
 set -x
@@ -45,4 +45,4 @@ grntest \
   --reporter=mark \
   test/suite
 set +x
-echo "::endgroup"
+echo "::endgroup::"
