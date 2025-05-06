@@ -728,10 +728,6 @@ jobs:
           cmake --build ..\apache-arrow-build || exit /B
           cmake --install ..\apache-arrow-build || exit /B
           ccache --show-stats --verbose --version
-        env:
-          # CMAKE_POLICY_VERSION_MINIMUM=3.5:
-          # Not needed after Apache Arrow 20.0.0 is released.
-          CMAKE_POLICY_VERSION_MINIMUM: 3.5
       - name: Install Groonga
         shell: cmd
         run: |
