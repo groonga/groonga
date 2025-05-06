@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download artifacts
         timeout-minutes: 60
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           workflows=(cmake.yml document.yml package.yml)
           for workflow in "${workflows[@]}"; do
@@ -37,8 +39,6 @@ jobs:
               --dir release-artifacts \
               --pattern "release-*"
           done
-        env:
-          GH_TOKEN: ${{ github.token }}
       - name: Extract release note
         run: |
           (cd doc/source/news && \
@@ -65,6 +65,8 @@ jobs:
           version_hyphen=$(echo ${version} | tr . -)
           echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
       - name: Publish release page
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           title="$(head -n1 release-note.md | sed -e 's/^## //')"
           tail -n +2 release-note.md > release-note-without-version.md
@@ -73,8 +75,6 @@ jobs:
             --notes-file release-note-without-version.md \
             --title "${title}" \
             release-artifacts/*/*
-        env:
-          GH_TOKEN: ${{ github.token }}
       - name: Prepare for Launchpad publishing
         run: |
           cp release-artifacts/release-source/groonga-*.tar.gz ./
@@ -101,10 +101,10 @@ jobs:
           ruby-version: ruby
           bundler-cache: true
       - name: Post Announcement
-        run: |
-          VERSION=${GITHUB_REF_NAME#v} rake release:announce
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          VERSION=${GITHUB_REF_NAME#v} rake release:announce
