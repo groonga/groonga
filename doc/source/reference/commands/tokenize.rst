@@ -26,6 +26,7 @@ optional::
            [flags=NONE]
            [mode=ADD]
            [token_filters=NONE]
+           [output_style=full]
 
 Usage
 -----
@@ -209,6 +210,39 @@ Specifies the token filter names. ``tokenize`` command uses the
 tokenizer that is named ``token_filters``.
 
 See :doc:`/reference/token_filters` about token filters.
+
+.. _tokenize-output-style:
+
+``output_style``
+""""""""""""""""
+
+.. versionadded:: 15.0.7
+
+Specifies the output style of the ``tokenize`` command.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Style
+     - Description
+   * - ``full``
+     - This is the default output style. Returns an array of objects with full
+       token attributes (value, position, flags, etc.) as usual.
+   * - ``simple``
+     - Shows only the token values for readability. Returns an array of
+       tokens like ``["We", "are", …]``.
+
+Here is an example with ``full`` (default) output sytle.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/output_style/full.log
+.. tokenize TokenNgram "Fulltext Search" --output_style full
+
+And here is the same command with ``simple`` output style.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/output_style/simple.log
+.. tokenize TokenNgram "Fulltext Search" --output_style simple
 
 .. _tokenize-return-value:
 
