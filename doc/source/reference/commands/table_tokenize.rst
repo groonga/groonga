@@ -24,6 +24,7 @@ optional::
                  [flags=NONE]
                  [mode=GET]
                  [index_column=null]
+                 [output_style=full]
 
 Usage
 -----
@@ -103,6 +104,15 @@ Specifies an index column.
 Return value includes ``estimated_size`` of the index.
 
 The ``estimated_size`` is useful for checking estimated frequency of tokens.
+
+``output_style``
+""""""""""""""""
+
+.. versionadded:: 15.0.7
+
+Specifies the output style of the ``table_tokenize`` command.
+
+See :ref:`tokenize-output-style` option in :doc:`/reference/commands/tokenize` about details.
 
 Return value
 ------------
