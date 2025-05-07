@@ -211,7 +211,7 @@ tokenizer that is named ``token_filters``.
 
 See :doc:`/reference/token_filters` about token filters.
 
-.. _tokenize-return-value:
+.. _tokenize-output-style:
 
 ``output_style``
 """"""""""""""""
@@ -243,6 +243,8 @@ And here is the same command with ``simple`` output style.
 .. groonga-command
 .. include:: ../../example/reference/commands/tokenize/output_style/simple.log
 .. tokenize TokenNgram "Fulltext Search" --output_style simple
+
+.. _tokenize-return-value:
 
 Return value
 ------------
