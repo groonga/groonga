@@ -26,7 +26,7 @@ Syntax
 
 ``value`` : Specify the target of a cast.
 
-``default_value`` : Speficy the value of setting when failed a cast.
+``default_value`` : Specify the value of setting when failed a cast.
 
 Usage
 -----

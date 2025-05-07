@@ -22,7 +22,7 @@ Syntax
 
   TokenFilterStem
 
-  TokenFilterStem("algorithm", "steming_algorithm")
+  TokenFilterStem("algorithm", "stemming_algorithm")
 
 Usage
 -----
@@ -52,7 +52,7 @@ All of ``develop``, ``developing``, ``developed`` and ``develops``
 tokens are stemmed as ``develop``. So we can find ``develop``,
 ``developing`` and ``developed`` by ``develops`` query.
 
-You can specify steming algorithm except English with ``algorithm`` option as below.
+You can specify stemming algorithm except English with ``algorithm`` option as below.
 
 .. groonga-command
 .. database: token_filters_stem
@@ -84,14 +84,14 @@ There is a optional parameters ``algorithm``.
 ``algorithm``
 """""""""""""
 
-Specify a steming algorithm.
+Specify a stemming algorithm.
 
-Steming algorithm is extract the stem. It is prepared for each language.
+Stemming algorithm is extract the stem. It is prepared for each language.
 
-You can extract the stem of each language by changing steming algorithm.
+You can extract the stem of each language by changing stemming algorithm.
 For example, if you want extract the stem of the French, you specify French to ``algorithm`` option.
 
-Here are support steming algorithm::
+Here are support stemming algorithm::
 
   French
   Spanish

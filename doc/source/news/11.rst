@@ -159,7 +159,7 @@ Improvements
 * [:doc:`/reference/commands/select`] Added support for near phrase product search.
 
   This feature is a shortcut of ``'*NP"..." OR *NP"..." OR ...'``.
-  For example, we can use ``*NPP`` instead of the expression that execute mulitiple
+  For example, we can use ``*NPP`` instead of the expression that execute multiple
   ``*NP`` with ``query`` as below.
 
   .. code-block::
@@ -765,7 +765,7 @@ Fixes
 ^^^^^
 
 * Fixed a bug that Groonga doesn't return a response when an error occurred
-  in command (e.g. sytax error in filter).
+  in command (e.g. syntax error in filter).
 
   * This bug only occurs when we use ``--output_type apache-arrow``.
 
@@ -969,7 +969,7 @@ Improvements
   We can dump WAL by the following tools, but currently, users doesn't need to use them.
 
     * [:doc:`/reference/executables/grndb`] ``dump-wal`` command.
-    * ``dump-wal.rb`` scritp.
+    * ``dump-wal.rb`` script.
 
 * [:doc:`/reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
 
@@ -1026,7 +1026,7 @@ Improvements
 
 * [:doc:`/reference/normalizers`] Added support for multiple normalizers.
 
-  We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release.
+  We can specify multiple normalizers by ``--normalizers`` option when we create a table since this release.
   If we can also specify them by  ``--normalizer`` existing option because of compatibility.
 
   We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4.
@@ -1576,7 +1576,7 @@ Improvements
   In other words, we can use customized normalizer.
 
   For example, we define that "S" normalize to "5" in the following example.
-  The ``Substitutions`` table is for nromalize.
+  The ``Substitutions`` table is for normalize.
 
     .. code-block::
 
@@ -1739,7 +1739,7 @@ Improvements
          }
        }
 
-  We can do the same by also useing :ref:`select-adjuster` .
+  We can do the same by also using :ref:`select-adjuster` .
   If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement.
 
   We can also describe filter condition as below by using ``query()``.
@@ -2753,7 +2753,7 @@ Improvements
 
   * We can search source table after filtering by using ``index_column.except_source_column``.
     For example, we specify ``comments.content`` when searching in the following example.
-    In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
+    In this case, at first, this query execute full text search from ``content`` column of ``Comments`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
 
     .. code-block::
 

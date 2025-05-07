@@ -188,7 +188,7 @@ Release 5.1.0 - 2015-11-29
 Improvements
 ^^^^^^^^^^^^
 
-* [patiricia trie] Added an error check for the max total key
+* [patricia trie] Added an error check for the max total key
   size. See :doc:`/limitations` about the max total key size.
 
 * [:doc:`/reference/executables/grndb`] Added a check for broken
@@ -968,7 +968,7 @@ Improvements
   because index column may refer reference columns.
 * [:doc:`/reference/commands/dump`] Don't dump records of lexicon.
 * [:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again.
-* [:doc:`/reference/commands/dump`] Used offline index construnction.
+* [:doc:`/reference/commands/dump`] Used offline index construction.
 * Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Increased max cache key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Improved performance for nested index search.
@@ -1034,7 +1034,7 @@ Improvements
 
 * Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]
 * [logical_range_filter] Disabled range index by default. It's enabled
-  when you set the enviromnent variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
+  when you set the environment variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
   to ``yes``.
 
 Fixes

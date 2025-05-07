@@ -432,13 +432,13 @@ Improvements
   Here is about specifying ``GRN_SLOW_LOG_THRESHOLD``.
 
   * ``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number.
-  * A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``.
+  * A log with debug level would be output if the processing time takes longer than specified time with ``GRN_SLOW_LOG_THRESHOLD``.
 
-  Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`.
+  Setting for log level would be controlled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`.
 
   What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose.
   For an example, we can use following setting to check which records are taking longer time for ``load``.
-  For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``.
+  For this, we specify the value based on necessary time per 1 record calculated with  total number and time of ``load``.
 
   Necessary time to process `load` would be checked in :ref:`query-log`.
 
@@ -707,7 +707,7 @@ Improvements
 
   We changed to not use results out of ``escalate()``.
   
-  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
+  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determine the first threshold, which was inconvenient.
 
   Here is a example for the previous ``escalate()``.
 

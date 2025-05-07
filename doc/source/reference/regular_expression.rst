@@ -35,7 +35,7 @@ that can be evaluated by index are described later.
    normalizer normalizes all alphabets to lower case. ``groonga``
    matches to both ``Groonga`` and ``groonga``.
 
-   Why is match target text normalizered? It's for increasing index
+   Why is match target text normalized? It's for increasing index
    search-able patterns. If Groonga doesn't normalize match target
    text, you need to write complex regular expression such as
    ``[Dd][Ii][Ss][Kk]`` and ``(?i)disk`` for case-insensitive match.

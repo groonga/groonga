@@ -33,7 +33,7 @@ Usage
 
  [true]
 
-Lotate log files with `log_reopen`
+Rotate log files with `log_reopen`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Rename target log files such as mv command.
