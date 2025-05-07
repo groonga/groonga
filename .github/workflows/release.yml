@@ -1,8 +1,15 @@
 name: Release
 on:
   push:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'doc/source/news/*'
     tags:
       - "*"
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'doc/source/news/*'
 jobs:
   publish:
     name: Publish
@@ -11,7 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download artifacts
+        if: |
+          github.ref_type == 'tag'
         timeout-minutes: 60
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           workflows=(cmake.yml document.yml package.yml)
           for workflow in "${workflows[@]}"; do
@@ -37,10 +48,12 @@ jobs:
               --dir release-artifacts \
               --pattern "release-*"
           done
+      - name: Generate release note
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Extract release note
         run: |
+          latest_news_md=$(cd doc/source/news && \
+                             ls *.md | sort --human-numeric-sort | tail -n1)
           (cd doc/source/news && \
            ruby \
              -e 'print("## Groonga "); \
@@ -55,16 +68,41 @@ jobs:
                         }. \
                         gsub(/{ref}`(.+?)`/) {$1}.
                         strip)' \
-             $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
-            release-note.md
-          echo "" >> release-note.md
-          echo "### Translations" >> release-note.md
-          echo "" >> release-note.md
-          version=${GITHUB_REF_NAME#v}
+             ${latest_news_md}) | \
+            tee release-note.md
+
+          previous_tag=$(gh release list \
+                           --jq '.[].tagName' \
+                           --json tagName \
+                           --limit 1)
+
+          echo | tee -a release-note.md
+          echo "### Contributors" | tee -a release-note.md
+          echo | tee -a release-note.md
+          command_line="git shortlog -sn ${previous_tag}.."
+          echo '```console' | tee -a release-note.md
+          echo "\$ ${command_line}" | tee -a release-note.md
+          ${command_line} | tee -a release-note.md
+          echo '```' | tee -a release-note.md
+
+          echo | tee -a release-note.md
+          echo "### Translations" | tee -a release-note.md
+          echo | tee -a release-note.md
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            version=${GITHUB_REF_NAME#v}
+          else
+            version=$(head -n1 release-note.md | \
+                        grep -E -o '[0-9]+\.[0-9]+\.[0-9]+')
+          fi
           major_version=${version%%.*}
           version_hyphen=$(echo ${version} | tr . -)
-          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
+          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" | \
+            tee -a release-note.md
       - name: Publish release page
+        if: |
+          github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           title="$(head -n1 release-note.md | sed -e 's/^## //')"
           tail -n +2 release-note.md > release-note-without-version.md
@@ -73,9 +111,9 @@ jobs:
             --notes-file release-note-without-version.md \
             --title "${title}" \
             release-artifacts/*/*
-        env:
-          GH_TOKEN: ${{ github.token }}
       - name: Prepare for Launchpad publishing
+        if: |
+          github.ref_type == 'tag'
         run: |
           cp release-artifacts/release-source/groonga-*.tar.gz ./
           sudo apt update
@@ -84,10 +122,14 @@ jobs:
             debhelper \
             devscripts
       - uses: actions/checkout@v4
+        if: |
+          github.ref_type == 'tag'
         with:
           path: apache-arrow
           repository: apache/arrow
       - name: Publish to Launchpad
+        if: |
+          github.ref_type == 'tag'
         env:
           APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
           LAUNCHPAD_DEPLOY_KEY: ${{ secrets.LAUNCHPAD_DEPLOY_KEY }}
@@ -97,14 +139,18 @@ jobs:
           echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
           rake -C packages ubuntu
       - uses: ruby/setup-ruby@v1
+        if: |
+          github.ref_type == 'tag'
         with:
           ruby-version: ruby
           bundler-cache: true
       - name: Post Announcement
-        run: |
-          VERSION=${GITHUB_REF_NAME#v} rake release:announce
+        if: |
+          github.ref_type == 'tag'
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          VERSION=${GITHUB_REF_NAME#v} rake release:announce
