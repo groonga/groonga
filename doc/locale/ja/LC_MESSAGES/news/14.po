@@ -254,7 +254,7 @@ msgstr "{ref}`table-pat-key`: キー領域を効率化"
 msgid "[GH-2104](https://github.com/groonga/groonga/issues/2104)"
 msgstr ""
 
-msgid "There was a case that wastes key space. Now, we can use key space as efficiency as possible."
+msgid "There was a case that wastes key space. Now, we can use key space as efficiently as possible."
 msgstr "キー領域を無駄使いするケースがありました。このケースを改良して、できるだけ効率よくキー領域を使えるようにしました。"
 
 msgid "`grn_pat_size()`: Fixed a bug that `0` may not be returned on error"
@@ -584,7 +584,7 @@ msgstr "一般的には、ヒット数が0件になってしまうのは嬉し�
 msgid "We don't want to match a keyword that is registered as stopword. Therefore, we set `-1` to `match_escalation_threshold` in the above example. We expect that Groonga doesn't return records in the above example because of escalation disable and search keyword(`and`) is registered as stopword. However, If this problem occur, Groonga returns match record. Because if we use `query_parallel_or()`, `match_escalation_threshold` doesn't work."
 msgstr "ストップワードとして登録したキーワードではマッチしてほしくありません。そのため、上記の例では、`match_escalation_threshold`に`-1`を設定しています。エスカレーションが無効でかつ、ストップワードに検索キーワード（`and`）が登録されているため、上記の例では、Groongaは何もレコードを返さないことが期待値です。しかし、この問題が発生すると、Groongaはマッチしたレコードを返却してしまいます。`query_parallel_or()`を使うと、`match_escalation_threshold`が効かないためです。"
 
-msgid "Fixed a bug that full-text search againt a reference column of a vector didn't work."
+msgid "Fixed a bug that full-text search against a reference column of a vector didn't work."
 msgstr "参照ベクターカラムに対する全文検索が動作しない問題を修正しました。"
 
 msgid "This problem has occured Groonga v14.0.0 or later. This problem has effect if we execute full-text search against a reference column of a vector."
@@ -725,10 +725,10 @@ msgstr "例えば、以下のようなケースでこの問題は発生します
 msgid "[{doc}`/install/ubuntu`] We become able to provide package for Ubuntu again."
 msgstr "[{doc}`/install/ubuntu`] Ubuntu向けパッケージを提供できるようになりました。"
 
-msgid "We don't provide packages for Ubuntu in Groonga version 14.0.0. Because we fail makeing Groonga package for Ubuntu by problrm of build environment for Ubuntu package."
+msgid "We don't provide packages for Ubuntu in Groonga version 14.0.0. Because we fail making Groonga package for Ubuntu by problem of build environment for Ubuntu package."
 msgstr "Groonga 14.0.0では、GroongaのUbuntu向けパッケージを提供していませんでした。Ubuntu向けパッケージのビルド環境の問題で、パッケージを作るのに失敗したためです。"
 
-msgid "We fixed problrm of build environment for Ubuntu package in 14.0.1. So, we can provide packages for Ubuntu again since this release."
+msgid "We fixed problem of build environment for Ubuntu package in 14.0.1. So, we can provide packages for Ubuntu again since this release."
 msgstr "14.0.1でこの問題を修正したので、今回のリリースからGroongaのUbuntu向けパッケージを提供できるようになりました。"
 
 msgid "Fixed build error when we build from source by using [`clang`](https://clang.llvm.org/). [GitHub#1738][Reported by windymelt]"
@@ -767,7 +767,7 @@ msgstr "これらの関数と`limit N`を使うことで、ベクトル的に距
 msgid "These functions calculate distance in the `output` stage."
 msgstr "これらの関数は、`output`ステージで距離を計算します。"
 
-msgid "However, we don't optimaize these functions yet."
+msgid "However, we don't optimize these functions yet."
 msgstr "ただ、これらの関数はまだ最適化できていません。"
 
 msgid "`distance_cosine()`: Calculate cosine similarity."

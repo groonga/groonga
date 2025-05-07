@@ -184,13 +184,13 @@ msgstr "``GRN_SLOW_LOG_THRESHOLD`` については以下のとおりです。"
 msgid "``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数を指定することで、1秒よりも短い時間も指定できます。"
 
-msgid "A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``."
+msgid "A log with debug level would be output if the processing time takes longer than specified time with ``GRN_SLOW_LOG_THRESHOLD``."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログが出力されます。"
 
-msgid "Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."
+msgid "Setting for log level would be controlled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."
 msgstr "ログレベルの設定は :option:`log-level <groonga --log-level>` オプションまたは :doc:`/reference/commands/log_level` コマンドで変更可能です。"
 
-msgid "What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose. For an example, we can use following setting to check which records are taking longer time for ``load``. For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``."
+msgid "What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose. For an example, we can use following setting to check which records are taking longer time for ``load``. For this, we specify the value based on necessary time per 1 record calculated with  total number and time of ``load``."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` にどのような値を指定すべきかは環境や調べたい内容に依存します。例えば、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。こうすることで、平均よりも ``load`` に時間がかかっているレコードを調べることができます。"
 
 msgid "Necessary time to process `load` would be checked in :ref:`query-log`."
@@ -352,7 +352,7 @@ msgstr "``escalate()`` 関数（実験的）の仕様を使いやすいように
 msgid "We changed to not use results out of ``escalate()``."
 msgstr "``escalate()`` の外部の結果セットを使用しないように変更しました。"
 
-msgid "In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient."
+msgid "In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determine the first threshold, which was inconvenient."
 msgstr "前回の仕様では、ユーザーはどのくらいの結果が ``escalate()`` に渡されるのか推測して最初のしきい値を決める必要があり、不便でした。"
 
 msgid "Here is a example for the previous ``escalate()``."

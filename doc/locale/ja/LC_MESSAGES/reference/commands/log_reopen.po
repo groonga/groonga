@@ -39,7 +39,7 @@ msgstr "このコマンドに引数はありません::"
 msgid "Usage"
 msgstr "使い方"
 
-msgid "Lotate log files with `log_reopen`"
+msgid "Rotate log files with `log_reopen`"
 msgstr "``log_reopen`` でログローテートを実施する"
 
 msgid "Rename target log files such as mv command. (Log content is still written into moved log files)"

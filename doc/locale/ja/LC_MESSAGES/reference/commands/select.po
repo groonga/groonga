@@ -603,7 +603,7 @@ msgstr "1つのデータカラム用のインデックスカラム"
 msgid "index column for multiple data column"
 msgstr "複数のデータカラム用のインデックスカラム"
 
-msgid "If you use index column for one data column, index column which corresponds to data column is paired. Thus, ``TERMS_TABLE.INDEX_COLUMN`` should be specified. On the otherhand, if you use index column for multiple data column, all data column is searched by default. If you want to use specific multiple index column to search specific data column, Specify index column with data column name such as ``TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN``. See example use case :ref:`full-text-search-with-specific-index-name` for details."
+msgid "If you use index column for one data column, index column which corresponds to data column is paired. Thus, ``TERMS_TABLE.INDEX_COLUMN`` should be specified. On the other hand, if you use index column for multiple data column, all data column is searched by default. If you want to use specific multiple index column to search specific data column, Specify index column with data column name such as ``TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN``. See example use case :ref:`full-text-search-with-specific-index-name` for details."
 msgstr "1つのデータカラム用のインデックスカラムを使う場合、データカラムに対応したインデックスカラムを指定します。つまり、 ``TERMS_TABLE.INDEX_COLUMN`` を指定するということです。一方で複数のデータカラムに対するインデックスカラムを使う場合、デフォルトではすべてのデータカラムが検索されます。もし特定のインデックスを使い、特定のデータカラムのみを検索したいなら、インデックスカラム名にデータカラム名を付与します。例えば、 ``TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN`` といった具合にです。詳しい例は :ref:`full-text-search-with-specific-index-name` を参照してください。"
 
 msgid "``query``"

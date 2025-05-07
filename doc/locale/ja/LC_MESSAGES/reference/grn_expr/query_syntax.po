@@ -135,7 +135,7 @@ msgstr "構文は ``column:@keyword`` です。"
 msgid "It's similar to ``full text search condition`` but it doesn't require the default match columns. You need to specify match column for the full text search condition by ``column:`` instead of ``--match_columns`` option of :doc:`/reference/commands/select`."
 msgstr "これは ``全文検索条件`` と似ていますが、デフォルトのマッチカラムは必要ありません。全文検索用のマッチカラムは :doc:`/reference/commands/select` の ``--match_columns`` オプションではなく ``column:`` で指定します。"
 
-msgid "This condtional expression is useful when you want to use two or more full text search against different columns. The default match columns specified by ``--match_columns`` option can't be specified multiple times. You need to specify the second match column by this conditional expression."
+msgid "This conditional expression is useful when you want to use two or more full text search against different columns. The default match columns specified by ``--match_columns`` option can't be specified multiple times. You need to specify the second match column by this conditional expression."
 msgstr "この条件式は異なったカラムに対して複数の全文検索をしたい場合に便利です。 ``--match_columns`` オプションで指定するデフォルトのマッチカラムは複数回指定することができません。2つめのマッチカラムを指定するためにはこの条件式を使う必要があります。"
 
 msgid "The different between ``full text search condition`` and ``full text search condition (with explicit match column)`` is whether advanced match columns are supported or not. ``Full text search condition`` supports advanced match columns but ``full text search condition (with explicit match column)`` isn't supported. Advanced match columns has the following features:"
@@ -549,7 +549,7 @@ msgstr "クエリー構文における代入式にはいくつか制限があり
 msgid "There is only one syntax for assignment expression. It's ``column:=value``."
 msgstr "代入式の構文は1つだけです。 ``column:=value`` となります。"
 
-msgid "``value`` is assigend to ``column``. ``value`` is always processed as string in query syntax. ``value`` is casted to the type of ``column`` automatically. It causes some limitations. For example, you cannot use boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You need to use empty string for ``false`` but query syntax doesn't support ``column:=`` syntax."
+msgid "``value`` is assigned to ``column``. ``value`` is always processed as string in query syntax. ``value`` is casted to the type of ``column`` automatically. It causes some limitations. For example, you cannot use boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You need to use empty string for ``false`` but query syntax doesn't support ``column:=`` syntax."
 msgstr "``value`` は ``column`` に代入されます。 ``value`` は常にクエリー構文では文字列として扱われます。 ``value`` は ``column`` の型へと自動的にキャストされます。 キャストにはいくつか制限があります。例えば ``true`` や ``false`` といった真偽値のリテラルを ``Bool`` 型のカラムに使用することができません。 ``false`` については空文字列を使う必要がありますが、クエリー構文は ``column:=`` 構文をサポートしていません。"
 
 msgid "See :doc:`/reference/cast` about cast."

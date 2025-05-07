@@ -304,7 +304,7 @@ msgstr "Groongaのテーブルのキーサイズの最大は4KiBですが、複�
 msgid "For example, if the total size for ``tag`` key and ``n_like`` key is lager than 4KiB in the following case, the drilldown had failed."
 msgstr "例えば、以下のケースで、 ``tag`` キーと ``n_like`` キーのトータルサイズが4KiB以上だった場合、ドリルダウンは失敗します。"
 
-msgid "Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large, the size of the packed drilldown keys is larger than 4KiB."
+msgid "Because the drilldown packets specifying all keys for drilldown. So, if each the size of drilldown key is large, the size of the packed drilldown keys is larger than 4KiB."
 msgstr "ドリルダウンは指定されている全てのキーを連結しているためです。そのため、ドリルダウンのキーそれぞれが大きい場合は、ドリルダウンのキーを連結したサイズが4KiB以上になります。"
 
 msgid "This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ ."
@@ -496,7 +496,7 @@ msgstr "``_score`` の値が壊れることがあります。"
 msgid "The records that couldn't hit might hit."
 msgstr "ヒットしないはずのレコードがヒットすることがあります。"
 
-msgid "Please refer to the following URL for the details about occurrence conditionin of this bug."
+msgid "Please refer to the following URL for the details about occurrence conditions of this bug."
 msgstr "この問題の発生条件については、以下のURLを参照してください。"
 
 msgid "https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index"
@@ -1208,7 +1208,7 @@ msgstr "このAPIは参照カウントモードのときのみ使用します。
 msgid "It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode."
 msgstr "このAPIは、参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出します。参照カウントモード以外の時は、何もしません。"
 
-msgid "We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode."
+msgid "We useful it when we need only call ``grn_obj_unlink()`` on the reference count mode."
 msgstr "参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出す必要がある時に便利です。"
 
 msgid "Because as the following example, we don't write condition that whether the reference count mode or not."
@@ -1229,7 +1229,7 @@ msgstr ""
 msgid "``grn_get_version_micro(void)``"
 msgstr " ``grn_get_version_micro(void)`` "
 
-msgid "They return Groonga's major, minor, and micor version numbers as a ``uint32_t``."
+msgid "They return Groonga's major, minor, and micro version numbers as a ``uint32_t``."
 msgstr "``uint32_t`` としてGroongaのメジャー、マイナー、マイクロバージョンを返します。"
 
 msgid "``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``"
