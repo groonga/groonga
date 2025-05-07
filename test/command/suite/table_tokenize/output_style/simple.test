@@ -1,0 +1,5 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerAuto
+
+table_tokenize Terms "aBcDe 123" --mode ADD --output_style simple

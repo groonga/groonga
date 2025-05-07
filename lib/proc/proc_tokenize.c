@@ -307,6 +307,7 @@ command_table_tokenize(grn_ctx *ctx,
   grn_obj *flags_raw;
   grn_obj *mode_raw;
   grn_raw_string index_column_raw;
+  grn_raw_string output_style_raw;
 
 #define GET_VALUE(name)                                                        \
   name##_raw.value = grn_plugin_proc_get_var_string(ctx,                       \
@@ -320,6 +321,7 @@ command_table_tokenize(grn_ctx *ctx,
   flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", strlen("flags"));
   mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(index_column);
+  GET_VALUE(output_style);
 
 #undef GET_VALUE
 
@@ -394,7 +396,11 @@ command_table_tokenize(grn_ctx *ctx,
                                          "[table_tokenize][mode]");
       if (ctx->rc == GRN_SUCCESS) {
         tokenize(ctx, lexicon, &string_raw, mode, flags, &tokens);
-        output_tokens(ctx, &tokens, lexicon, index_column);
+        if (GRN_RAW_STRING_EQUAL_CSTRING(output_style_raw, "simple")) {
+          output_tokens_simple(ctx, &tokens, lexicon);
+        } else {
+          output_tokens(ctx, &tokens, lexicon, index_column);
+        }
       }
       fin_tokens(ctx, &tokens);
     }
@@ -413,18 +419,19 @@ command_table_tokenize(grn_ctx *ctx,
 void
 grn_proc_init_table_tokenize(grn_ctx *ctx)
 {
-  grn_expr_var vars[5];
+  grn_expr_var vars[6];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[3]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "index_column", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[5]), "output_style", -1);
   grn_plugin_command_create(ctx,
                             "table_tokenize",
                             -1,
                             command_table_tokenize,
-                            5,
+                            6,
                             vars);
 }
 
