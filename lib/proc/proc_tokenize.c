@@ -416,10 +416,12 @@ command_table_tokenize(grn_ctx *ctx,
   return NULL;
 }
 
+#define TABLE_TOKENIZE_N_ARGS 6
+
 void
 grn_proc_init_table_tokenize(grn_ctx *ctx)
 {
-  grn_expr_var vars[6];
+  grn_expr_var vars[TABLE_TOKENIZE_N_ARGS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
@@ -431,7 +433,7 @@ grn_proc_init_table_tokenize(grn_ctx *ctx)
                             "table_tokenize",
                             -1,
                             command_table_tokenize,
-                            6,
+                            TABLE_TOKENIZE_N_ARGS,
                             vars);
 }
 
@@ -534,10 +536,12 @@ command_tokenize(grn_ctx *ctx,
   return NULL;
 }
 
+#define TOKENIZE_N_ARGS 7
+
 void
 grn_proc_init_tokenize(grn_ctx *ctx)
 {
-  grn_expr_var vars[7];
+  grn_expr_var vars[TOKENIZE_N_ARGS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "tokenizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
@@ -546,5 +550,10 @@ grn_proc_init_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[4]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "token_filters", -1);
   grn_plugin_expr_var_init(ctx, &(vars[6]), "output_style", -1);
-  grn_plugin_command_create(ctx, "tokenize", -1, command_tokenize, 7, vars);
+  grn_plugin_command_create(ctx,
+                            "tokenize",
+                            -1,
+                            command_tokenize,
+                            TOKENIZE_N_ARGS,
+                            vars);
 }
