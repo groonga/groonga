@@ -226,7 +226,7 @@ Specifies the output style of the ``tokenize`` command.
    * - Style
      - Description
    * - ``full``
-     - Preserves the existing behavior. Returns an array of objects with full
+     - This is the default output style. Returns an array of objects with full
        token attributes (value, position, flags, etc.) as usual.
    * - ``simple``
      - Shows only the token values for readability. Returns an array of

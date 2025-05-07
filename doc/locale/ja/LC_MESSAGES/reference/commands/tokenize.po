@@ -192,8 +192,8 @@ msgstr "出力スタイル"
 msgid "``full``"
 msgstr ""
 
-msgid "Preserves the existing behavior. Returns an array of objects with full token attributes (value, position, flags, etc.) as usual."
-msgstr "既存の出力スタイルで、トークンとその属性情報（value, position, flags, など）を出力します。"
+msgid "This is the default output style. Returns an array of objects with full token attributes (value, position, flags, etc.) as usual."
+msgstr "デフォルトの出力スタイルです。トークンとその属性情報（value, position, flags, など）を出力します。"
 
 msgid "``simple``"
 msgstr ""
