@@ -108,7 +108,7 @@ The ``estimated_size`` is useful for checking estimated frequency of tokens.
 ``output_style``
 """"""""""""""""
 
-.. versionadded:: 15.0.7
+.. versionadded:: 15.0.8
 
 Specifies the output style of the ``table_tokenize`` command.
 
