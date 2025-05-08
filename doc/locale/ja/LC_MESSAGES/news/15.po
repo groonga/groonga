@@ -42,10 +42,10 @@ msgid "Previously, only dividing `X` by `-1`/`1.0` returns `-X` for unsigned int
 msgstr "これまでは、符号なし整数`X`を`-1`または`-1.0`で割った場合のみ`-X`を返すようにしていました。今回のリリース以降は任意の負の値で割った際にも数学的に期待される負の結果を返すようになります。"
 
 msgid "Before: `X / -2` might not return `-(X / 2)`."
-msgstr "変更前： `X / -2`は必ずしも`-(X / 2)`を返すとは限らなかった"
+msgstr "変更前： `X / -2`は必ずしも`-(X / 2)`を返すとは限りませんでした。"
 
 msgid "After: `X / -2` always returns `-(X / 2)`."
-msgstr "変更後： `X / -2`は常に`-(X / 2)`を返すようになる"
+msgstr "変更後： `X / -2`は常に`-(X / 2)`を返すようになります。"
 
 msgid "This is a backward incompatible change but we assume that no user depends on this behavior."
 msgstr "これは後方非互換な変更ですが、この挙動に依存しているユーザーはいないはずです。"
