@@ -17,6 +17,8 @@ jobs:
     environment: release
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Download artifacts
         if: |
           github.ref_type == 'tag'
@@ -52,6 +54,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -opipefail
+
           latest_news_md=$(cd doc/source/news && \
                              ls *.md | sort --human-numeric-sort | tail -n1)
           (cd doc/source/news && \
