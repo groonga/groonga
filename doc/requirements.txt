@@ -19,3 +19,6 @@ Sphinx
 myst-parser[linkify]
 pydata_sphinx_theme
 sphinx-markdown-builder
+
+# Document build fails when snowballstemmer 3.0.0 or later is installed.
+snowballstemmer==2.2.0
