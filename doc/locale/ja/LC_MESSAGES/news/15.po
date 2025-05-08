@@ -17,11 +17,41 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.0.4 - 2025-03-29"
-msgstr "15.0.4リリース - 2025-03-29"
+msgid "Release 15.0.8 - 2025-05-08"
+msgstr "15.0.8リリース - 2025-05-08"
+
+msgid "This release adds the tokenizer's option to make token inspection simpler and improves negative-division semantics for unsigned integer."
+msgstr "このリリースでは、トークナイザのオプションを追加してトークンの確認を簡単にするとともに、符号なし整数を負の数で除算したときのセマンティクスを改善しました。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`: Added {ref}`tokenize-output-style` option"
+msgstr "{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`: {ref}`tokenize-output-style`オプションの追加"
+
+msgid "This {ref}`tokenize-output-style` option to the {doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize` command makes it easier to focus on the tokens when you don’t need the full attribute set."
+msgstr "{ref}`tokenize-output-style`オプションを{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`コマンドに追加しました。これにより、トークンの属性情報を表示する必要がない場合に、トークン情報のみを表示できます。"
+
+msgid "Here is example of using {ref}`tokenize-output-style` option."
+msgstr "以下は {ref}`tokenize-output-style`オプション使用例です。"
+
+msgid "Clarified `X / negative value` semantics"
+msgstr "`X / 負の整数`のセマンティクスを明確にした"
+
+msgid "Previously, only dividing `X` by `-1`/`1.0` returns `-X` for unsigned integers. From this release, dividing by any negative value will yield the mathematically expected negative result as follows."
+msgstr "これまでは、符号なし整数`X`を`-1`または`-1.0`で割った場合のみ`-X`を返すようにしていました。今回のリリース以降は任意の負の整数で割った際にも数学的に期待される負の結果を返すようになります。"
+
+msgid "Before: `X / -2` might not return `-(X / 2)`."
+msgstr "変更前： `X / -2`は必ずしも`-(X / 2)`を返すとは限りませんでした。"
+
+msgid "After: `X / -2` always returns `-(X / 2)`."
+msgstr "変更後： `X / -2`は常に`-(X / 2)`を返すようになります。"
+
+msgid "This is a backward incompatible change but we assume that no user depends on this behavior."
+msgstr "これは後方非互換な変更ですが、この挙動に依存しているユーザーはいないはずです。"
+
+msgid "Release 15.0.4 - 2025-03-29"
+msgstr "15.0.4リリース - 2025-03-29"
 
 msgid "Clarified `X / -1` and `X / -1.0` semantics"
 msgstr "`X / -1`と`X / -1.0`のセマンティクスを明確にした"
@@ -31,9 +61,6 @@ msgstr "多くの言語では`X / -1`と`X / -1.0`は`-X`を返します。し�
 
 msgid "`X / -1` and `X / -1.0` always return `-X` from this release."
 msgstr "このリリースからは`X / -1`と`X / -1.0`は常に`-X`を返します。"
-
-msgid "This is a backward incompatible change but we assume that no user depends on this behavior."
-msgstr "これは後方非互換な変更ですが、この挙動に依存しているユーザーはいないはずです。"
 
 msgid "Release 15.0.3 - 2025-03-10"
 msgstr "15.0.3リリース - 2025-03-10"
