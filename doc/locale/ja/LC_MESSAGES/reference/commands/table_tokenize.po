@@ -114,6 +114,15 @@ msgstr "戻り値にインデックスの ``estimated_size`` が含まれます�
 msgid "The ``estimated_size`` is useful for checking estimated frequency of tokens."
 msgstr "``estimated_size`` はトークンの概算の出現頻度を調べるのに便利です。"
 
+msgid "``output_style``"
+msgstr ""
+
+msgid "Specifies the output style of the ``table_tokenize`` command."
+msgstr "``table_tokenize`` コマンドの出力スタイルを指定します。"
+
+msgid "See :ref:`tokenize-output-style` option in :doc:`/reference/commands/tokenize` about details."
+msgstr "詳細は、 :doc:`/reference/commands/tokenize` の :ref:`tokenize-output-style` オプションを参照してください。"
+
 msgid "Return value"
 msgstr "戻り値"
 
