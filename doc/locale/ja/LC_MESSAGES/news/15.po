@@ -17,8 +17,8 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.0.7 - 2025-05-08"
-msgstr "15.0.7リリース - 2025-05-08"
+msgid "Release 15.0.8 - 2025-05-08"
+msgstr "15.0.8リリース - 2025-05-08"
 
 msgid "This release adds the tokenizer's option to make token inspection simpler and improves negative-division semantics for unsigned integer."
 msgstr "このリリースでは、トークナイザのオプションを追加してトークンの確認を簡単にするとともに、符号なし整数を負の数で除算したときのセマンティクスを改善しました。"
