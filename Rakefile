@@ -229,7 +229,7 @@ namespace :release do
     latest_release_note_title = latest_release_note.lines.first
     latest_release_note_content = latest_release_note.lines[1..-1].join
     latest_release_note_version = latest_release_note_title[/[\d.]+/]
-    if latest_release_note_version != version
+    if !ENV["DRY_RUN"] && (latest_release_note_version != version)
       raise "release note isn't written"
     end
     latest_release_note_summary =
@@ -246,16 +246,19 @@ Groonga #{version} (#{latest_release_date}) has been released!
 #{latest_release_note_summary}
 See: #{latest_release_url}#{latest_release_anchor}
     ANNOUNCE
+    puts latest_release_announce
 
-    x_credentials = {
-      api_key: ENV["X_API_KEY"],
-      api_key_secret: ENV["X_API_KEY_SECRET"],
-      access_token: ENV["X_ACCESS_TOKEN"],
-      access_token_secret: ENV["X_ACCESS_TOKEN_SECRET"]
-    }
-    x_client = X::Client.new(**x_credentials)
-    tweet_body = { text: latest_release_announce }
-    x_client.post("tweets", tweet_body.to_json)
+    unless ENV["DRY_RUN"]
+      x_credentials = {
+        api_key: ENV["X_API_KEY"],
+        api_key_secret: ENV["X_API_KEY_SECRET"],
+        access_token: ENV["X_ACCESS_TOKEN"],
+        access_token_secret: ENV["X_ACCESS_TOKEN_SECRET"]
+      }
+      x_client = X::Client.new(**x_credentials)
+      tweet_body = { text: latest_release_announce }
+      x_client.post("tweets", tweet_body.to_json)
+    end
   end
 end
 

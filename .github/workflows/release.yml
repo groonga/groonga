@@ -139,15 +139,12 @@ jobs:
           echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
           rake -C packages ubuntu
       - uses: ruby/setup-ruby@v1
-        if: |
-          github.ref_type == 'tag'
         with:
           ruby-version: ruby
           bundler-cache: true
       - name: Post Announcement
-        if: |
-          github.ref_type == 'tag'
         env:
+          DRY_RUN: ${{ github.ref_type != 'tag' }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
