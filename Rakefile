@@ -62,7 +62,7 @@ def env_var(name, default=nil)
 end
 
 def dry_run?
-  env_var("DRY_RUN", default="true") == "true"
+  env_var("DRY_RUN", "false") == "true"
 end
 
 def git_user_name
