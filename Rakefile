@@ -61,6 +61,10 @@ def env_var(name, default=nil)
   value
 end
 
+def dry_run?
+  env_var("DRY_RUN", default="true") == "true"
+end
+
 def git_user_name
   sh_capture_output("git", "config", "--get", "user.name").chomp
 end
@@ -229,7 +233,7 @@ namespace :release do
     latest_release_note_title = latest_release_note.lines.first
     latest_release_note_content = latest_release_note.lines[1..-1].join
     latest_release_note_version = latest_release_note_title[/[\d.]+/]
-    if !ENV["DRY_RUN"] && (latest_release_note_version != version)
+    if !dry_run? && (latest_release_note_version != version)
       raise "release note isn't written"
     end
     latest_release_note_summary =
@@ -255,7 +259,7 @@ See: #{latest_release_url}#{latest_release_anchor}
     }
     x_client = X::Client.new(**x_credentials)
     tweet_body = { text: latest_release_announce }
-    if ENV["DRY_RUN"]
+    if dry_run?
       puts tweet_body
     else
       x_client.post("tweets", tweet_body.to_json)
