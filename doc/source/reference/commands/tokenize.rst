@@ -216,7 +216,7 @@ See :doc:`/reference/token_filters` about token filters.
 ``output_style``
 """"""""""""""""
 
-.. versionadded:: 15.0.8
+.. versionadded:: 15.0.9
 
 Specifies the output style of the ``tokenize`` command.
 
