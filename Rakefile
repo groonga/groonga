@@ -233,8 +233,8 @@ namespace :release do
     latest_release_note_title = latest_release_note.lines.first
     latest_release_note_content = latest_release_note.lines[1..-1].join
     latest_release_note_version = latest_release_note_title[/[\d.]+/]
-    if !dry_run? && (latest_release_note_version != version)
-      raise "release note isn't written"
+    if latest_release_note_version != version
+      raise "release note isn't written" unless dry_run?
     end
     latest_release_note_summary =
       latest_release_note_content.split(/^### /, 2)[0].strip
