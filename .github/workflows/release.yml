@@ -54,7 +54,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -opipefail
+          set -o pipefail
 
           latest_news_md=$(cd doc/source/news && \
                              ls *.md | sort --human-numeric-sort | tail -n1)
