@@ -115,14 +115,19 @@ jobs:
           popd
           zip -r groonga-${version}.zip groonga-${version}
           rm -rf groonga-${version}
+      - name: Generate chechsum
+        run: |
+          version=$(cat base_version)
+          sha256sum groonga-${version}.tar.gz > groonga-${version}.tar.gz.sha256
+          sha256sum groonga-${version}.zip > groonga-${version}.zip.sha256
 
       # Artifact
       - uses: actions/upload-artifact@v4
         with:
           name: release-source
           path: |
-            groonga-*.tar.gz
-            groonga-*.zip
+            groonga-*.tar.gz*
+            groonga-*.zip*
 
   build:
     name: Build
