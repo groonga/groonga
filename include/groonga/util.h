@@ -23,6 +23,29 @@
 extern "C" {
 #endif
 
+/**
+ * \brief Inspect specified object and produce a textual representation.
+ *
+ * \since 4.0.8
+ *
+ * \note If \p obj is a \ref GRN_TABLE_PAT_KEY table, all keys are shown. To
+ *       limit output on \ref GRN_TABLE_PAT_KEY tables, use
+ *       \ref grn_inspect_limited instead.
+ *
+ * For example usage:
+ * ```c
+ *  grn_obj inspected;
+ *  GRN_TEXT_INIT(&inspected, 0);
+ *  grn_inspect(ctx, &inspected, obj);
+ *  printf("%.*s\n", (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+ * ```
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the inspected text will be stored.
+ * \param obj The target object to inspect.
+ *
+ * \return The inspected object in text.
+ */
 GRN_API grn_obj *
 grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 GRN_API grn_obj *

@@ -78,8 +78,8 @@ msgstr "リファレンス"
 msgid "Inspect specified target ``obj`` object."
 msgstr "指定した ``obj`` オブジェクトを調査します。"
 
-msgid "A table is specified and it's table type is ``TABLE_PAT_KEY``, all keys are shown. If you do not want to this behavior, use :c:func:`grn_inspect_limited` instead."
-msgstr "``TABLE_PAT_KEY`` なテーブルが指定された場合、すべてのキーが表示されます。この挙動が望ましくない場合、 :c:func:`grn_inspect_limited` をかわりに使ってください。"
+msgid "``indent`` is only added if inspected text contains newline (inspected text must be multiple lines)."
+msgstr "``indent`` は調査した内容が改行を含む場合に追加されます。(調査した内容のテキストは複数行で構成されている必要があります)"
 
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
@@ -90,20 +90,14 @@ msgstr "調査した内容が保存されるオブジェクト"
 msgid "The inspect target object."
 msgstr "対象のオブジェクト"
 
-msgid "``buffer`` object which is inspected text is set."
-msgstr "調査した内容が設定される ``buffer`` オブジェクト"
-
-msgid "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
-msgstr "もし ``obj`` が ``TABLE_PAT_KEY`` なテーブルであれば、次のように表示されます::"
-
-msgid "``indent`` is only added if inspected text contains newline (inspected text must be multiple lines)."
-msgstr "``indent`` は調査した内容が改行を含む場合に追加されます。(調査した内容のテキストは複数行で構成されている必要があります)"
-
 msgid "The pre-pended indentation text."
 msgstr "先頭に挿入されるインデント"
 
 msgid "``buffer`` object which is inspected text is set with indent."
 msgstr "調査した内容がインデントとともに設定される ``buffer`` オブジェクト"
+
+msgid "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
+msgstr "もし ``obj`` が ``TABLE_PAT_KEY`` なテーブルであれば、次のように表示されます::"
 
 msgid "If inspected text is too long, it will be truncated."
 msgstr "調査した内容が長い場合、切り詰められます。"
