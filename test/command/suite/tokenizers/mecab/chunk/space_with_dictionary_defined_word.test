@@ -1,0 +1,5 @@
+#@require-feature mecab
+
+tokenize \
+  'TokenMecab' \
+  '聞き 糺せん'

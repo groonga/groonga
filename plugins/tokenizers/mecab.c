@@ -389,7 +389,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   }
 
   if (GRN_TEXT_LEN(&(tokenizer->buf)) > 0) {
-    GRN_TEXT_PUTS(ctx, &(tokenizer->buf), " ");
+    GRN_TEXT_PUTS(ctx, &(tokenizer->buf), "\t");
   }
 
   tokenized_chunk_length = strlen(tokenized_chunk);
@@ -506,7 +506,7 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 {
   mecab_model_t *mecab_model;
   int argc = 0;
-  const char *argv[4];
+  const char *argv[5];
   const char *tag;
 
   bool need_default_output =
@@ -520,7 +520,8 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 
   argv[argc++] = "Groonga";
   if (!need_default_output) {
-    argv[argc++] = "-Owakati";
+    argv[argc++] = "-F%m\t";
+    argv[argc++] = "-E\n";
   }
 #ifdef GRN_WITH_BUNDLED_MECAB
   argv[argc++] = "--rcfile";
@@ -1063,6 +1064,34 @@ mecab_next_default_format(grn_ctx *ctx,
   }
 }
 
+int
+mecab_wakati_delimiter(const char *str, grn_encoding encoding)
+{
+  const unsigned char *s = (const unsigned char *)str;
+  switch (s[0]) {
+  case '\t':
+    return 1;
+  case 0x81:
+    if (encoding == GRN_ENC_SJIS && s[1] == 0x40) {
+      return 2;
+    }
+    break;
+  case 0xA1:
+    if (encoding == GRN_ENC_EUC_JP && s[1] == 0xA1) {
+      return 2;
+    }
+    break;
+  case 0xE3:
+    if (encoding == GRN_ENC_UTF8 && s[1] == 0x80 && s[2] == 0x80) {
+      return 3;
+    }
+    break;
+  default:
+    break;
+  }
+  return 0;
+}
+
 static void
 mecab_next_wakati_format(grn_ctx *ctx,
                          grn_mecab_tokenizer *tokenizer,
@@ -1077,7 +1106,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
   for (r = p; r < e; r += cl) {
     int space_len;
 
-    space_len = grn_isspace(r, encoding);
+    space_len = mecab_wakati_delimiter(r, encoding);
     if (space_len > 0 && r == p) {
       cl = space_len;
       p = r + cl;
@@ -1091,7 +1120,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
 
     if (space_len > 0) {
       const char *q = r + space_len;
-      while (q < e && (space_len = grn_isspace(q, encoding))) {
+      while (q < e && (space_len = mecab_wakati_delimiter(q, encoding))) {
         q += space_len;
       }
       tokenizer->next = q;
