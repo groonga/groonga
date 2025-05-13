@@ -1,0 +1,6 @@
+#@require-feature mecab
+
+tokenize \
+  'TokenMecab("internal_delimiter", \
+              "tab")' \
+  '聞き 糺せん'

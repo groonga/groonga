@@ -69,6 +69,7 @@ typedef struct {
   bool use_reading;
   bool use_base_form;
   grn_obj target_classes;
+  grn_obj internal_delimiter;
 } grn_mecab_tokenizer_options;
 
 typedef struct {
@@ -171,6 +172,7 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
   options->use_reading = false;
   options->use_base_form = false;
   GRN_TEXT_INIT(&(options->target_classes), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(options->internal_delimiter), 0);
 }
 
 static bool
@@ -288,6 +290,24 @@ mecab_tokenizer_options_open(grn_ctx *ctx,
                                0,
                                GRN_DB_TEXT);
       }
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "internal_delimiter")) {
+      const char *internal_delimiter = NULL;
+      unsigned int internal_delimiter_length;
+      grn_id domain;
+
+      internal_delimiter_length = grn_vector_get_element(ctx,
+                                                         raw_options,
+                                                         i,
+                                                         &internal_delimiter,
+                                                         NULL,
+                                                         &domain);
+      if (grn_type_id_is_text_family(ctx, domain) &&
+          internal_delimiter_length > 0) {
+        GRN_TEXT_PUT(ctx,
+                     &(options->internal_delimiter),
+                     internal_delimiter,
+                     internal_delimiter_length);
+      }
     }
   }
   GRN_OPTION_VALUES_EACH_END();
@@ -300,6 +320,7 @@ mecab_tokenizer_options_close(grn_ctx *ctx, void *data)
 {
   grn_mecab_tokenizer_options *options = data;
   GRN_OBJ_FIN(ctx, &(options->target_classes));
+  GRN_OBJ_FIN(ctx, &(options->internal_delimiter));
   GRN_PLUGIN_FREE(ctx, options);
 }
 
@@ -506,7 +527,7 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 {
   mecab_model_t *mecab_model;
   int argc = 0;
-  const char *argv[4];
+  const char *argv[5];
   const char *tag;
 
   bool need_default_output =
@@ -520,7 +541,12 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 
   argv[argc++] = "Groonga";
   if (!need_default_output) {
-    argv[argc++] = "-Owakati";
+    if (GRN_TEXT_EQUAL_CSTRING(&(options->internal_delimiter), "tab")) {
+      argv[argc++] = "-F%m\t";
+      argv[argc++] = "-E\n";
+    } else {
+      argv[argc++] = "-Owakati";
+    }
   }
 #ifdef GRN_WITH_BUNDLED_MECAB
   argv[argc++] = "--rcfile";
@@ -1063,6 +1089,20 @@ mecab_next_default_format(grn_ctx *ctx,
   }
 }
 
+static int
+mecab_next_wakati_delimiter(grn_ctx *ctx,
+                            grn_mecab_tokenizer *tokenizer,
+                            const char *str,
+                            grn_encoding encoding)
+{
+  if (GRN_TEXT_EQUAL_CSTRING(&(tokenizer->options->internal_delimiter),
+                             "tab")) {
+    return grn_istab(str);
+  } else {
+    return grn_isspace(str, encoding);
+  }
+}
+
 static void
 mecab_next_wakati_format(grn_ctx *ctx,
                          grn_mecab_tokenizer *tokenizer,
@@ -1077,7 +1117,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
   for (r = p; r < e; r += cl) {
     int space_len;
 
-    space_len = grn_isspace(r, encoding);
+    space_len = mecab_next_wakati_delimiter(ctx, tokenizer, r, encoding);
     if (space_len > 0 && r == p) {
       cl = space_len;
       p = r + cl;
@@ -1091,7 +1131,9 @@ mecab_next_wakati_format(grn_ctx *ctx,
 
     if (space_len > 0) {
       const char *q = r + space_len;
-      while (q < e && (space_len = grn_isspace(q, encoding))) {
+      while (q < e &&
+             (space_len =
+                mecab_next_wakati_delimiter(ctx, tokenizer, q, encoding))) {
         q += space_len;
       }
       tokenizer->next = q;

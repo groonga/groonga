@@ -53,6 +53,8 @@ grn_str_len(grn_ctx *ctx,
 #define GRN_STR_CTYPE(c)   (c & 0x7f)
 
 GRN_API int
+grn_istab(const char *str);
+GRN_API int
 grn_isspace(const char *s, grn_encoding encoding);
 int8_t
 grn_atoi8(const char *nptr, const char *end, const char **rest);
