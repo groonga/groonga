@@ -54,11 +54,17 @@ export GRN_RUBY_SCRIPTS_DIR
 
 case `uname` in
   Linux|*BSD)
+    # llama-cpp
+    LD_LIBRARY_PATH="$build_top_dir/bin:$LD_LIBRARY_PATH"
+    # libgroonga
     LD_LIBRARY_PATH="$build_top_dir/lib/.libs:$LD_LIBRARY_PATH"
     LD_LIBRARY_PATH="$build_top_dir/lib:$LD_LIBRARY_PATH"
     export LD_LIBRARY_PATH
     ;;
   Darwin)
+    # llama-cpp
+    DYLD_LIBRARY_PATH="$build_top_dir/bin:$DYLD_LIBRARY_PATH"
+    # libgroonga
     DYLD_LIBRARY_PATH="$build_top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
     DYLD_LIBRARY_PATH="$build_top_dir/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH
@@ -68,83 +74,99 @@ case `uname` in
     ;;
 esac
 
-if test -z "$RUBY"; then
-  exit 1
-fi
+if grntest --version > /dev/null 2>&1; then
+  grntest=(grntest)
+else
+  if test -z "$RUBY"; then
+    exit 1
+  fi
 
-if ! type bundle 2>&1 > /dev/null; then
-  $RUBY -S gem install bundler
-fi
+  if ! type bundle > /dev/null 2>&1; then
+    $RUBY -S gem install bundler
+  fi
 
-grntest_dir="$SOURCE_DIR/grntest"
-if ! test -d "$grntest_dir"; then
-  grntest_dir="$BUILD_DIR/grntest"
-  git clone --depth 1 https://github.com/groonga/grntest.git "$grntest_dir"
-  (cd "$grntest_dir" && bundle install)
-fi
-(cd "$grntest_dir";
- if [ "Gemfile" -nt "Gemfile.lock" ]; then
-   $RUBY -S bundle update
- fi)
+  grntest_dir="$SOURCE_DIR/grntest"
+  if ! test -d "$grntest_dir"; then
+    grntest_dir="$BUILD_DIR/grntest"
+    git clone --depth 1 https://github.com/groonga/grntest.git "$grntest_dir"
+    (cd "$grntest_dir" && bundle install)
+  fi
+  (cd "$grntest_dir";
+   if [ "Gemfile" -nt "Gemfile.lock" ]; then
+     $RUBY -S bundle update
+   fi)
 
-groonga_command_dir="$SOURCE_DIR/groonga-command"
-if ! test -d "$groonga_command_dir"; then
-  groonga_command_dir="$BUILD_DIR/groonga-command"
-fi
-if ! test -d "$groonga_command_dir"; then
-  git clone --depth 1 \
-      https://github.com/groonga/groonga-command.git \
-      "$groonga_command_dir"
-fi
+  groonga_command_dir="$SOURCE_DIR/groonga-command"
+  if ! test -d "$groonga_command_dir"; then
+    groonga_command_dir="$BUILD_DIR/groonga-command"
+  fi
+  if ! test -d "$groonga_command_dir"; then
+    git clone --depth 1 \
+        https://github.com/groonga/groonga-command.git \
+        "$groonga_command_dir"
+  fi
 
-groonga_command_parser_dir="$SOURCE_DIR/groonga-command-parser"
-if ! test -d "$groonga_command_parser_dir"; then
-  groonga_command_parser_dir="$BUILD_DIR/groonga-command-parser"
-fi
-if ! test -d "$groonga_command_parser_dir"; then
-  git clone --depth 1 \
-      https://github.com/groonga/groonga-command-parser.git \
-      "$groonga_command_parser_dir"
-fi
+  groonga_command_parser_dir="$SOURCE_DIR/groonga-command-parser"
+  if ! test -d "$groonga_command_parser_dir"; then
+    groonga_command_parser_dir="$BUILD_DIR/groonga-command-parser"
+  fi
+  if ! test -d "$groonga_command_parser_dir"; then
+    git clone --depth 1 \
+        https://github.com/groonga/groonga-command-parser.git \
+        "$groonga_command_parser_dir"
+  fi
 
-gqtp_dir="$SOURCE_DIR/gqtp"
-if ! test -d "$gqtp_dir"; then
-  gqtp_dir="$BUILD_DIR/gqtp"
-fi
-if ! test -d "$gqtp_dir"; then
-  git clone --depth 1 \
-      https://github.com/ranguba/gqtp.git \
-      "$gqtp_dir"
-fi
+  gqtp_dir="$SOURCE_DIR/gqtp"
+  if ! test -d "$gqtp_dir"; then
+    gqtp_dir="$BUILD_DIR/gqtp"
+  fi
+  if ! test -d "$gqtp_dir"; then
+    git clone --depth 1 \
+        https://github.com/ranguba/gqtp.git \
+        "$gqtp_dir"
+  fi
 
-groonga_client_dir="$SOURCE_DIR/groonga-client"
-if ! test -d "$groonga_client_dir"; then
-  groonga_client_dir="$BUILD_DIR/groonga-client"
-fi
-if ! test -d "$groonga_client_dir"; then
-  git clone --depth 1 \
-      https://github.com/ranguba/groonga-client.git \
-      "$groonga_client_dir"
-fi
+  groonga_client_dir="$SOURCE_DIR/groonga-client"
+  if ! test -d "$groonga_client_dir"; then
+    groonga_client_dir="$BUILD_DIR/groonga-client"
+  fi
+  if ! test -d "$groonga_client_dir"; then
+    git clone --depth 1 \
+        https://github.com/ranguba/groonga-client.git \
+        "$groonga_client_dir"
+  fi
 
-groonga_log_dir="$SOURCE_DIR/groonga-log"
-if ! test -d "$groonga_log_dir"; then
-  groonga_log_dir="$BUILD_DIR/groonga-log"
-fi
-if ! test -d "$groonga_log_dir"; then
-  git clone --depth 1 \
-      https://github.com/groonga/groonga-log.git \
-      "$groonga_log_dir"
-fi
+  groonga_log_dir="$SOURCE_DIR/groonga-log"
+  if ! test -d "$groonga_log_dir"; then
+    groonga_log_dir="$BUILD_DIR/groonga-log"
+  fi
+  if ! test -d "$groonga_log_dir"; then
+    git clone --depth 1 \
+        https://github.com/groonga/groonga-log.git \
+        "$groonga_log_dir"
+  fi
 
-groonga_query_log_dir="$SOURCE_DIR/groonga-query-log"
-if ! test -d "$groonga_query_log_dir"; then
-  groonga_query_log_dir="$BUILD_DIR/groonga-query-log"
-fi
-if ! test -d "$groonga_query_log_dir"; then
-  git clone --depth 1 \
-      https://github.com/groonga/groonga-query-log.git \
-      "$groonga_query_log_dir"
+  groonga_query_log_dir="$SOURCE_DIR/groonga-query-log"
+  if ! test -d "$groonga_query_log_dir"; then
+    groonga_query_log_dir="$BUILD_DIR/groonga-query-log"
+  fi
+  if ! test -d "$groonga_query_log_dir"; then
+    git clone --depth 1 \
+        https://github.com/groonga/groonga-query-log.git \
+        "$groonga_query_log_dir"
+  fi
+
+  grntest=(
+    $RUBY
+    -I "$grntest_dir/lib"
+    -I "$groonga_command_dir/lib"
+    -I "$groonga_command_parser_dir/lib"
+    -I "$gqtp_dir/lib"
+    -I "$groonga_client_dir/lib"
+    -I "$groonga_log_dir/lib"
+    -I "$groonga_query_log_dir/lib"
+    "$grntest_dir/bin/grntest"
+  )
 fi
 
 have_targets="false"
@@ -220,15 +242,7 @@ done
 
 export TZ=Asia/Tokyo
 
-$RUBY \
-  -I "$grntest_dir/lib" \
-  -I "$groonga_command_dir/lib" \
-  -I "$groonga_command_parser_dir/lib" \
-  -I "$gqtp_dir/lib" \
-  -I "$groonga_client_dir/lib" \
-  -I "$groonga_log_dir/lib" \
-  -I "$groonga_query_log_dir/lib" \
-  "$grntest_dir/bin/grntest" \
+"${grntest[@]}" \
   --groonga "$GROONGA" \
   --groonga-httpd "$GROONGA_HTTPD" \
   --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
