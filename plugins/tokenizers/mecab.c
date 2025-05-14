@@ -1077,6 +1077,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
 {
   grn_encoding encoding = tokenizer->query->encoding;
   int cl;
+  bool is_leading_space = true;
   const char *p = tokenizer->next, *r;
   const char *e = tokenizer->end;
   grn_tokenizer_status status;
@@ -1084,7 +1085,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
   for (r = p; r < e; r += cl) {
     int space_len;
 
-    space_len = mecab_wakati_delimiter(r);
+    space_len = grn_isspace(r, encoding);
     if (space_len > 0 && r == p) {
       cl = space_len;
       p = r + cl;
@@ -1098,12 +1099,21 @@ mecab_next_wakati_format(grn_ctx *ctx,
 
     if (space_len > 0) {
       const char *q = r + space_len;
-      while (q < e && (space_len = mecab_wakati_delimiter(q))) {
+      if (mecab_wakati_delimiter(r)) {
+        tokenizer->next = q;
+        is_leading_space = true;
+        break;
+      }
+      while (q < e && !mecab_wakati_delimiter(q) &&
+             (space_len = grn_isspace(q, encoding))) {
         q += space_len;
       }
-      tokenizer->next = q;
-      break;
+      if (is_leading_space) {
+        tokenizer->next = q;
+        break;
+      }
     }
+    is_leading_space = false;
   }
 
   if (r == e || tokenizer->next == e) {
