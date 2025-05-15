@@ -207,8 +207,8 @@ msgstr "2番目の式はグループ化しています。この式は ``n_likes 
 msgid "Function call"
 msgstr "関数呼び出し"
 
-msgid "Its syntax is ``name(arugment1, argument2, ...)``."
-msgstr "構文は ``name(arugment1, argument2, ...)`` です。"
+msgid "Its syntax is ``name(argument1, argument2, ...)``."
+msgstr "構文は ``name(argument1, argument2, ...)`` です。"
 
 msgid "``name(argument1, argument2, ...)`` calls a function that is named ``name`` with arguments ``argument1``, ``argument2`` and ``...``."
 msgstr "``name(argument1, argument2, ...)`` は ``name`` という関数を引数 ``argument1``, ``argument2``, ``...`` で呼び出します。"
