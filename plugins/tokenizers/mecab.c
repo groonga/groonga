@@ -1077,7 +1077,6 @@ mecab_next_wakati_format(grn_ctx *ctx,
 {
   grn_encoding encoding = tokenizer->query->encoding;
   int cl;
-  bool is_leading_space = true;
   const char *p = tokenizer->next, *r;
   const char *e = tokenizer->end;
   grn_tokenizer_status status;
@@ -1097,29 +1096,10 @@ mecab_next_wakati_format(grn_ctx *ctx,
       break;
     }
 
-    if (space_len > 0) {
-      const char *q = r + space_len;
-      if (mecab_wakati_delimiter(r)) {
-        tokenizer->next = q;
-        break;
-      }
-      int skipped_space_len;
-      while (q < e && !mecab_wakati_delimiter(q) &&
-             (skipped_space_len = grn_isspace(q, encoding))) {
-        q += skipped_space_len;
-      }
-      // Skip leading spaces
-      if (is_leading_space) {
-        tokenizer->next = q;
-        break;
-      }
-      // Skip trailing spaces
-      if (mecab_wakati_delimiter(q)) {
-        tokenizer->next = r;
-        break;
-      }
+    if ((mecab_wakati_delimiter(r))) {
+      tokenizer->next = r + space_len;
+      break;
     }
-    is_leading_space = false;
   }
 
   if (r == e || tokenizer->next == e) {
