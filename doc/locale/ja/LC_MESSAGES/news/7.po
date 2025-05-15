@@ -298,7 +298,7 @@ msgstr "``grn_proc_is_stable()`` を追加。"
 msgid "Note that if you add a new function that may return different result with the same argument, you must call ``grn_proc_is_stable(ctx, proc, GRN_FALSE)``.  If you don't call it, select result with the function call is cached and is wrong result for multiple requests."
 msgstr "呼び出しごとに結果が異なる関数を新規に追加する場合、``grn_proc_is_stable(ctx, proc, GRN_FALSE)`` を呼ばなければなりません。もし呼ばなかった場合には、検索結果がキャッシュされるので、期待と異なり誤った結果を返します。"
 
-msgid "[windows] Fixed to clean up file handle correctly on failure when ``database_unmap`` is executed. There is a case that critical section is not initialized when request is canceled before executing ``database_unmap``. In such a case, it caused a crach bug."
+msgid "[windows] Fixed to clean up file handle correctly on failure when ``database_unmap`` is executed. There is a case that critical section is not initialized when request is canceled before executing ``database_unmap``. In such a case, it caused a crash bug."
 msgstr "[windows] ``database_unmap`` が実行される前のファイルハンドルのエラー処理を適切に行うようにしました。``database_unmap`` 実行前にリクエストがキャンセルされた場合、排他制御部分が未初期化となる場合がありました。その場合、クラッシュしていました。"
 
 msgid "[:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer names. It should be ``TokenBigramIgnoreBlankSplitSymbolAlpha`` and ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``."

@@ -437,7 +437,7 @@ Improvements
 * Started using Travis CI.
 * [yum] Changed RPM package name that provides yum repository from
   groonga-repository to groonga-release to follow RPM package name
-  convension such as centos-release and fedora-release.
+  convention such as centos-release and fedora-release.
 
 Fixes
 ^^^^^
@@ -483,7 +483,7 @@ Improvements
 * [pkg-config] Removed needless MessagePack dependency.
 * [rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]
 * [rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]
-* [groonga] Improved daemoinzed timing. Groonga server daemonizes
+* [groonga] Improved daemonized timing. Groonga server daemonizes
   after socket is listened. It means that groonga server is ready when
   groonga server is daemonized. [#1326]
 * [admin] Supported suggest in groonga administration page.

@@ -364,7 +364,7 @@ msgstr ""
 msgid "[:doc:`/reference/commands/io_flush`] Supported locking of a database during a ``io_flush``."
 msgstr "[:doc:`/reference/commands/io_flush`] ``io_flush`` 中のデータベースのロックをサポートしました。"
 
-msgid "Because Groonga had a problem taht is a crash when deleteing a table of a target of a ``io_flush`` during execution of a ``io_flush``."
+msgid "Because Groonga had a problem taht is a crash when deleting a table of a target of a ``io_flush`` during execution of a ``io_flush``."
 msgstr "``io_flush`` 実行中に ``io_flush`` 対象のテーブルを削除するとGroongaがクラッシュする問題があったためです。"
 
 msgid "[:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``."
@@ -493,7 +493,7 @@ msgstr "[optimizer] オプティマイザをプラグインから組み込みの
 msgid "Enable sequential search for enough filtered case by default. If the current result is enough filtered, sequential search is faster than index search. If the current result has only 1% records of all records in a table and less than 1000 records, sequential search is used even when index search is available."
 msgstr "充分に絞り込み済みの場合において、初期状態でシーケンシャルサーチを行うようにしました。現在の結果が充分に少数である場合、シーケンシャルサーチはインデックス検索よりも高速です。現在の結果がテーブル内の全レコードの1%で1000件未満の場合、インデックス検索可能な場合であってもシーケンシャルサーチが使われます。"
 
-msgid "Cullently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``."
+msgid "Currently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``."
 msgstr "現在、この最適化は、 ``==`` と ``>`` と ``<`` と ``>=`` と ``<=`` を使った検索時に適用されます。"
 
 msgid "When a key of a table that has columns specified by the filter is ``ShortText``, you must set ``NormalizerAuto`` to normalizer of the table to apply this optimization."
