@@ -40,7 +40,7 @@ msgid "Groonga 2.0.9 or earlier doesn't have ``--normalizer`` option in ``table_
 msgstr "Groonga 2.0.9以前には ``table_create`` に ``--normalizer`` オプションはありません。代わりに ``KEY_NORMALIZE`` フラグを使っていました。"
 
 msgid "You can open an old database by Groonga 2.1.0 or later. An old database means that the database is created by Groonga 2.0.9 or earlier. But you cannot open the opened old database by Groonga 2.0.9 or earlier. Once you open the old database by Groonga 2.1.0 or later, ``KEY_NORMALIZE`` flag information in the old database is converted to normalizer information. So Groonga 2.0.9 or earlier cannot find ``KEY_NORMALIZE`` flag information in the opened old database."
-msgstr "Groonga 2.1.0以降で古いデータベースを開くことができます。ここでいう古いデータベースとはGroonga 2.0.9以前で作ったデータベースということです。しかし、一度新しいGroongaで開いたデータベースを2.0.9以前のGroongaで開くことはできません。一度 Groonga 2.1.0以降のGroongaでデータベースを開くと、 ``KEY_NORMALIZE`` フラグ情報がノーマライザー情報に変換されます。そのため、2.0.9以前のGroongaは、一度Groonga 2.1.0以降で開いたデータベース内から ``KEY_NROMALIZE`` フラグの情報を見つけることができません。"
+msgstr "Groonga 2.1.0以降で古いデータベースを開くことができます。ここでいう古いデータベースとはGroonga 2.0.9以前で作ったデータベースということです。しかし、一度新しいGroongaで開いたデータベースを2.0.9以前のGroongaで開くことはできません。一度 Groonga 2.1.0以降のGroongaでデータベースを開くと、 ``KEY_NORMALIZE`` フラグ情報がノーマライザー情報に変換されます。そのため、2.0.9以前のGroongaは、一度Groonga 2.1.0以降で開いたデータベース内から ``KEY_NORMALIZE`` フラグの情報を見つけることができません。"
 
 msgid "Keys of a table that has a normalizer module are normalized:"
 msgstr "ノーマライザーモジュールを持っているテーブルのキーは正規化されます。"

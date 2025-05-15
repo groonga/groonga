@@ -39,7 +39,7 @@ msgstr "いくつかの場合では、正規表現を使ったパターンマッ
 msgid "Groonga normalizes match target text by :ref:`normalizer-auto` normalizer when Groonga doesn't use index for regular expression search. It means that regular expression that has upper case such as ``Groonga`` never match. Because :ref:`normalizer-auto` normalizer normalizes all alphabets to lower case. ``groonga`` matches to both ``Groonga`` and ``groonga``."
 msgstr "Groongaは正規表現検索にインデックスを使わないときは、 :ref:`normalizer-auto` ノーマライザーでマッチ対象のテキストを正規化します。これは、 ``Groonga`` というような大文字を使った正規表現は必ずマッチに失敗するということです。なぜなら、 :ref:`normalizer-auto` ノーマライザーはすべてのアルファベットを小文字に正規化するからです。 ``groonga`` は ``Groonga`` にも ``groonga`` にも両方にマッチします。"
 
-msgid "Why is match target text normalizered? It's for increasing index search-able patterns. If Groonga doesn't normalize match target text, you need to write complex regular expression such as ``[Dd][Ii][Ss][Kk]`` and ``(?i)disk`` for case-insensitive match. Groonga can't use index against complex regular expression."
+msgid "Why is match target text normalized? It's for increasing index search-able patterns. If Groonga doesn't normalize match target text, you need to write complex regular expression such as ``[Dd][Ii][Ss][Kk]`` and ``(?i)disk`` for case-insensitive match. Groonga can't use index against complex regular expression."
 msgstr "なぜマッチ対象のテキストを正規化するのでしょうか？それは、インデックスを使って検索できるパターンを増やすためです。もし、Groongaがマッチ対象のテキストを正規化しなかった場合、大文字小文字を区別しないマッチをするために、 ``[Dd][Ii][Ss][Kk]`` や ``(?i)disk`` のような複雑な正規表現を書く必要があります。Groongaは複雑な正規表現に対してインデックスを使うことができません。"
 
 msgid "If you write ``disk`` regular expression for case-insensitive match, Groonga can search the pattern with index. It's fast."

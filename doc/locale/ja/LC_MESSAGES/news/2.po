@@ -676,7 +676,7 @@ msgstr "[rpm] 必要のないログを削除。 [#1328] [IWAI, Masaharuさんが
 msgid "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, Masaharu]"
 msgstr "[deb][rpm] curlへの依存関係を追加。 [GitHub#12] [IWAI, Masaharuさんがパッチ提供]"
 
-msgid "[rpm] Removed needleess ruby package dependency from groonga package. [#1330] [Suggested by IWAI, Masaharu]"
+msgid "[rpm] Removed needless ruby package dependency from groonga package. [#1330] [Suggested by IWAI, Masaharu]"
 msgstr "[rpm] groongaパッケージから必要のないrubyパッケージへの依存関係を削除。 [#1330] [IWAI, Masaharuさんが提案]"
 
 msgid "[deb] Added missing default values to groonga-server's configuration file."
