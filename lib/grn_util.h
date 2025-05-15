@@ -37,7 +37,7 @@ grn_rc grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
 
 /*
  * grn_mkstemp generates a unique filename from path_template, creates a
- * file with permissions 0600 and returns a open file desciptor for the file.
+ * file with permissions 0600 and returns a open file descriptor for the file.
  * The last 6 bytes of path_template must be "XXXXXX" and these are replaced
  * with a string that makes the filename unique.
  */
