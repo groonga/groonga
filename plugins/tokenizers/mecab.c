@@ -1064,12 +1064,6 @@ mecab_next_default_format(grn_ctx *ctx,
   }
 }
 
-static int
-mecab_wakati_delimiter(const char *str)
-{
-  return str[0] == '\n' ? 1 : 0;
-}
-
 static void
 mecab_next_wakati_format(grn_ctx *ctx,
                          grn_mecab_tokenizer *tokenizer,
@@ -1096,7 +1090,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
       break;
     }
 
-    if ((mecab_wakati_delimiter(r))) {
+    if ((grn_isnewline(r))) {
       tokenizer->next = r + space_len;
       break;
     }
