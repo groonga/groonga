@@ -496,7 +496,7 @@ msgstr "``_score`` の値が壊れることがあります。"
 msgid "The records that couldn't hit might hit."
 msgstr "ヒットしないはずのレコードがヒットすることがあります。"
 
-msgid "Please refer to the following URL for the details about occurrence conditionin of this bug."
+msgid "Please refer to the following URL for the details about occurrence conditioning of this bug."
 msgstr "この問題の発生条件については、以下のURLを参照してください。"
 
 msgid "https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index"

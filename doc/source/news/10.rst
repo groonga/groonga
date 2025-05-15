@@ -1080,7 +1080,7 @@ Fixes
 
   * ``_score`` may be broken with full text search.
   * The records that couldn't hit might hit.
-  * Please refer to the following URL for the details about occurrence conditionin of this bug.
+  * Please refer to the following URL for the details about occurrence conditioning of this bug.
 
     * https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index
 
