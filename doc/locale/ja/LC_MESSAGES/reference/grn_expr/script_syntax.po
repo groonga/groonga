@@ -24,7 +24,7 @@ msgstr "スクリプト構文"
 msgid "Script syntax is a syntax to specify complex search condition. It is similar to ECMAScript. For example, ``_key == \"book\"`` means that groonga searches records that ``_key`` value is ``\"book\"``. All values are string in :doc:`query_syntax` but its own type in script syntax. For example, ``\"book\"`` is string, ``1`` is integer, ``TokenBigram`` is the object whose name is ``TokenBigram`` and so on."
 msgstr "スクリプト構文は複雑な検索条件を指定するための構文です。この構文はECMAScriptに似ています。例えば、 ``_key == \"book\"`` は ``_key`` の値が ``\"book\"`` のレコードを検索するという意味です。 :doc:`query_syntax` ではすべての値は文字列でしたが、スクリプト構文では値に型があります。例えば、 ``\"book\"`` は文字列で ``1`` は整数で、 ``TokenBigram`` は ``TokenBigram`` という名前のオブジェクトです。"
 
-msgid "Script syntax doesn't support full ECMAScript syntax. For example, script syntax doesn't support statement such as ``if`` control statement, ``for`` iteration statement and variable definition statement. Function definion is not supported too. But script syntax addes the original additional operators.  They are described after ECMAScript syntax is described."
+msgid "Script syntax doesn't support full ECMAScript syntax. For example, script syntax doesn't support statement such as ``if`` control statement, ``for`` iteration statement and variable definition statement. Function definion is not supported too. But script syntax adds the original additional operators.  They are described after ECMAScript syntax is described."
 msgstr "スクリプト構文はECMAScriptの構文と完全に互換性があるわけではありません。例えば、 ``if`` 制御文や ``for`` 繰り返し文や変数定義文といった文をサポートしていません。関数定義もサポートしていません。しかし、独自の演算子を追加しています。独自の演算子はECMAScriptの構文を説明した後に説明します。"
 
 msgid "Security"

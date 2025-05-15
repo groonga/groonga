@@ -993,7 +993,7 @@ assignment.
 
 There is only one syntax for assignment expression. It's ``column:=value``.
 
-``value`` is assigend to ``column``. ``value`` is always processed as
+``value`` is assigned to ``column``. ``value`` is always processed as
 string in query syntax. ``value`` is casted to the type of ``column``
 automatically. It causes some limitations. For example, you cannot use
 boolean literal such as ``true`` and ``false`` for ``Bool`` type

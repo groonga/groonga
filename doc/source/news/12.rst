@@ -438,7 +438,7 @@ Improvements
 
   What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose.
   For an example, we can use following setting to check which records are taking longer time for ``load``.
-  For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``.
+  For this, we specify the value based on necesarry time per 1 record calculated with  total number and time of ``load``.
 
   Necessary time to process `load` would be checked in :ref:`query-log`.
 

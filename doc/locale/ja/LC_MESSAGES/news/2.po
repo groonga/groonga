@@ -100,7 +100,7 @@ msgstr "このリリースでは ``table_list`` や ``column_list`` コマンド
 msgid "This release has supported ``--normalizer`` option, but there is side effect for this feature. If you open old version of groonga database at least once, you can not open its database by old version of groonga."
 msgstr "このリリースでは ``--normalizer`` オプションをサポートしましたが、副作用があり、一度でも古いバージョンのデータベースを新しいバージョンのgroongaで開くと、古いバージョンのgroongaではデータベースを開けなくなります。"
 
-msgid "There is also another backward incompatible change agaist plugin API for tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. This API change affects developer of tokenizer plugin."
+msgid "There is also another backward incompatible change against plugin API for tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. This API change affects developer of tokenizer plugin."
 msgstr "もうひとつトークナイザプラグインAPIに関する非互換な変更があります。 ``grn_tokenizer_query_open`` APIの引数が変更されました。このAPIの変更はトークナイザプラグインの開発者に影響があります。"
 
 msgid "[doc] Added documentation about :ref:`nested-index-search`."
@@ -148,7 +148,7 @@ msgstr "Shimomura Tatsuyaさん"
 msgid "Release 2.0.9 - 2012-11-29"
 msgstr "2.0.9リリース - 2012-11-29"
 
-msgid "Supported to calculate the value of distance accross border in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]"
+msgid "Supported to calculate the value of distance across border in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]"
 msgstr "``geo_distance`` 関数の近似方法として ``rectangle`` を指定したときに境界をまたいでも距離の算出できるようにした。 [#1534]"
 
 msgid "[doc] Added the :doc:`/spec/gqtp` specification."
@@ -163,7 +163,7 @@ msgstr "[実験的] キーワードとその周辺のテキストを抽出する
 msgid "Supported to report error reason when error occured during reading table record."
 msgstr "テーブルのレコードを出力している際に発生したエラーを表示するようにした。"
 
-msgid "Supported to search with keyword by nested index notation ( concatinate multiple indexed column name with dot character ) if there is a relationship between multiple table with index."
+msgid "Supported to search with keyword by nested index notation ( concatenate multiple indexed column name with dot character ) if there is a relationship between multiple table with index."
 msgstr "複数のテーブルで関連したインデックスが設定されていれば、ネストしたインデックス (複数のカラムインデックス名を ``.`` で連結して指定)に対してキーワードで検索できるようにした。"
 
 msgid "Supported to log \"[tokenizer][mecab]\" tag when using ``TokenMecab`` tokenizer."
