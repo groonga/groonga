@@ -20,7 +20,7 @@ This `escalate` function is similar to the existing match escalation mechanism b
 Match escalation is auto loose search.
 If the number of matched records is equal or less than the threshold specified by ``match_escalation_threshold``, loose search is done automatically. It's match escalation.
 
-Please refer to :doc:`/spec/search` about the search storategy escalation.
+Please refer to :doc:`/spec/search` about the search strategy escalation.
 
 ``match_escalation_threshold`` is ``select``'s argument. In addition, the default value of ``match_escalation_threshold`` is `0`.
 Please refer to :doc:`/reference/commands/select` about ``match_escalation_threshold``.

@@ -739,7 +739,7 @@ msgstr "このようにして、``--load_values`` で指定したカラムの値
 msgid "[:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``."
 msgstr "[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--load_columns`` 、 ``--load_values`` を追加しました。 "
 
-msgid "[:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log."
+msgid "[:doc:`/reference/commands/load`] Added support to display a table of load destination in a query log."
 msgstr "[:doc:`/reference/commands/load`] ロード先のテーブルをクエリーログに表示するようにしました。"
 
 msgid "A name of table of load destination display as string in ``[]`` as below."

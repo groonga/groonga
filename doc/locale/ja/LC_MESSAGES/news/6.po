@@ -223,7 +223,7 @@ msgstr "トークンとそのIDをエラー時にログに記録するように�
 msgid "[:doc:`/reference/tables`] Updated description about the max record ID."
 msgstr "[:doc:`/reference/tables`] レコードIDの最大値の記述を更新しました。"
 
-msgid "[mruby] Suppported to convert time of ``mrb_value`` to ``grn_bulk``. [GitHub:#607] [Patch by Naoya Murakami]"
+msgid "[mruby] Supported to convert time of ``mrb_value`` to ``grn_bulk``. [GitHub:#607] [Patch by Naoya Murakami]"
 msgstr "[mruby] ``time`` の値を保持する ``mrb_value`` を ``grn_bulk`` へ変換できるようにしました。 [GitHub:#607] [村上さんがパッチ提供]"
 
 msgid "[ubuntu] Supported Ubuntu 16.10 (Yakkety Yak)"

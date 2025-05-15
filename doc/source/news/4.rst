@@ -38,7 +38,7 @@ Fixes
 * Fixed mismatch between error code and error message when
   ``strerror()`` is failed. There was a case that Groonga shows
   incorrect error code as syscall error.
-* Fixed to show errno in error message when unknow error is occurred.
+* Fixed to show errno in error message when unknown error is occurred.
 * [windows] Fixed to return proper error code.
 * Fixed a bug that there is only one section for multi-column index for
   :ref:`select-match-columns`, it doesn't return correct search results.
