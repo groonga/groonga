@@ -304,7 +304,7 @@ msgstr "Groongaのテーブルのキーサイズの最大は4KiBですが、複�
 msgid "For example, if the total size for ``tag`` key and ``n_like`` key is lager than 4KiB in the following case, the drilldown had failed."
 msgstr "例えば、以下のケースで、 ``tag`` キーと ``n_like`` キーのトータルサイズが4KiB以上だった場合、ドリルダウンは失敗します。"
 
-msgid "Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large, the size of the packed drilldown keys is larger than 4KiB."
+msgid "Because the drilldown packs specifying all keys for drilldown. So, if each the size of drilldown key is large, the size of the packed drilldown keys is larger than 4KiB."
 msgstr "ドリルダウンは指定されている全てのキーを連結しているためです。そのため、ドリルダウンのキーそれぞれが大きい場合は、ドリルダウンのキーを連結したサイズが4KiB以上になります。"
 
 msgid "This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ ."

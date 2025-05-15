@@ -642,7 +642,7 @@ msgstr "そのため、 ``1 ^ 3`` という式が評価されてから ``_score`
 msgid "Original operators"
 msgstr "独自の演算子"
 
-msgid "Script syntax adds the original binary opearators to ECMAScript syntax. They operate search specific operations. They are starts with ``@`` or ``*``."
+msgid "Script syntax adds the original binary operators to ECMAScript syntax. They operate search specific operations. They are starts with ``@`` or ``*``."
 msgstr "スクリプト構文はECMAScriptの構文に独自の二項演算子を追加しています。これらは検索に特化した操作をします。演算子の最初の文字は ``@`` または ``*`` です。"
 
 msgid "Match operator"

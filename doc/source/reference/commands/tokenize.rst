@@ -125,7 +125,7 @@ Here is an example that uses normalizer.
 Continuous alphabets are tokenized as one token. For example,
 ``fulltext`` is a token.
 
-If you want to tokenize by two characters with noramlizer, use
+If you want to tokenize by two characters with normalizer, use
 ``TokenBigramSplitSymbolAlpha``.
 
 .. groonga-command

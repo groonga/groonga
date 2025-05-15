@@ -49,7 +49,7 @@ However, it can be also used in ``--output_columns`` in
 ``highlight_full`` requires :doc:`/reference/command/command_version` 2
 or later.
 
-The following example uses HTML escape and normalzier is ``NormalizeAuto``.
+The following example uses HTML escape and normalizer is ``NormalizeAuto``.
 It specifies the tags ``<span class="keyword1">`` and ``</span>`` of the
 keyword ``groonga``, and the tags ``<span class="keyword2">`` and ``</span>``
 of the keyword ``mysql``.

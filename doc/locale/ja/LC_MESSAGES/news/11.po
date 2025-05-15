@@ -394,7 +394,7 @@ msgstr "11.0.5リリース - 2021-07-29"
 msgid "[:doc:`/reference/normalizers`] Added support for multiple normalizers."
 msgstr "[:doc:`/reference/normalizers`] ノーマライザーを複数指定できるようになりました。"
 
-msgid "We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release. If we can also specify them by  ``--normalizer`` existing option because of compatibility."
+msgid "We can specify multiple normalizers by ``--normalizers`` option when we create a table since this release. If we can also specify them by  ``--normalizer`` existing option because of compatibility."
 msgstr "テーブル作成時に ``--normalizers`` オプションを使うことで、複数のノーマライザーを指定できます。互換性のため、既存の ``--normalizer`` を使っても複数のノーマライザーを指定できます。"
 
 msgid "We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4. We can more flexibly behavior of the normalizer by combining ``NormalizerTable`` with existing normalizer."
@@ -529,7 +529,7 @@ msgstr "[Normalizer] カスタマイズされたノーマライザーを使え�
 msgid "We define a table for normalize to use this feature. We can normalize with use that table. In other words, we can use customized normalizer."
 msgstr "この機能を使うためにノーマライズ用のテーブルを定義し、このテーブルを使ってノーマライズします。つまり、カスタマイズされたノーマライザーを使うことができます。"
 
-msgid "For example, we define that \"S\" normalize to \"5\" in the following example. The ``Substitutions`` table is for nromalize."
+msgid "For example, we define that \"S\" normalize to \"5\" in the following example. The ``Substitutions`` table is for normalize."
 msgstr "例えば、以下の例では、 \"S\" を \"5\" に正規化するよう定義しています。``Substitutions`` テーブルが正規化用のテーブルです。"
 
 msgid "For example, we can define to the table easy to false recognize words when we input a handwritten data. By this, we can normalize incorrect data to correct data."

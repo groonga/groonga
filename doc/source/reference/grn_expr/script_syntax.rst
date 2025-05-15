@@ -860,7 +860,7 @@ So the expression ``1 ^ 3`` is evaluated and stored to ``_score`` column as the 
 Original operators
 ------------------
 
-Script syntax adds the original binary opearators to ECMAScript
+Script syntax adds the original binary operators to ECMAScript
 syntax. They operate search specific operations. They are starts with
 ``@`` or ``*``.
 

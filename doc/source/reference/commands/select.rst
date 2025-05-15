@@ -693,7 +693,7 @@ Here is a use case how to specify index column.
 
 If you use index column for one data column, index column which
 corresponds to data column is paired. Thus,
-``TERMS_TABLE.INDEX_COLUMN`` should be specified. On the otherhand, if
+``TERMS_TABLE.INDEX_COLUMN`` should be specified. On the other hand, if
 you use index column for multiple data column, all data column is
 searched by default. If you want to use specific multiple index column
 to search specific data column, Specify index column with data column

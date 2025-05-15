@@ -111,7 +111,7 @@ msgstr "以下はノーマライザーを使う例です。"
 msgid "Continuous alphabets are tokenized as one token. For example, ``fulltext`` is a token."
 msgstr "連続するアルファベットが1つのトークンにトークナイズされています。例えば、 ``fulltext`` で1つのトークンになっています。"
 
-msgid "If you want to tokenize by two characters with noramlizer, use ``TokenBigramSplitSymbolAlpha``."
+msgid "If you want to tokenize by two characters with normalizer, use ``TokenBigramSplitSymbolAlpha``."
 msgstr "ノーマライザーを使いながら2文字でトークナイズしたい場合は ``TokenBigramSplitSymbolAlpha`` を使って下さい。"
 
 msgid "All alphabets are tokenized by two characters. And they are normalized to lower case characters. For example, ``fu`` is a token."

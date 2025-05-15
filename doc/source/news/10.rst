@@ -925,7 +925,7 @@ Improvements
         --drilldowns[tag.n_likes].keys tag,n_likes \
         --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
 
-    * Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large,
+    * Because the drilldown packs specifying all keys for drilldown. So, if each the size of drilldown key is large,
       the size of the packed drilldown keys is larger than 4KiB.
 
   * This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ .

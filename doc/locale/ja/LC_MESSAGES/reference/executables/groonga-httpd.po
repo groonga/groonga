@@ -156,7 +156,7 @@ msgstr "``location`` の名前と同じ値。"
 msgid "Specifies the base path in URI. Groonga uses ``/d/command?parameter1=value1&...`` path to run ``command``. The form of path in used in groonga-httpd but groonga-httpd also supports ``/other-prefix/command?parameter1=value1&...`` form. To support the form, groonga-httpd removes the base path from the head of request URI and prepend ``/d/`` to the processed request URI. By the path conversion, users can use custom path prefix and Groonga can always uses ``/d/command?parameter1=value1&...`` form."
 msgstr "URIのベースパスを指定します。Groongaは ``command`` を実行するために ``/d/command?parameter1=value1&...`` というパスを使います。groonga-httpdでもこのパスの形式を使いますが、groonga-httpdは  ``/other-prefix/command?parameter1=value1&...`` というように ``/d/`` ではなく別のプレフィックスを使った形式もサポートしています。この別の形式もサポートするために、groonga-httpdはリクエストURIの先頭からベースパスを削除し、先頭に ``/d/`` を追加します。このパスの変換をすることにより、ユーザーはプレフィックスをカスタムできるようになりますが、Groongaは常に ``/d/command?parameter1=value1&...`` という形式で処理できます。"
 
-msgid "Nomally, this directive isn't needed. It is needed for per command configuration."
+msgid "Normally, this directive isn't needed. It is needed for per command configuration."
 msgstr "通常、このディレクティブを使う必要はありません。このディレクティブはコマンド毎に設定をしたい場合に使います。"
 
 msgid "Here is an example configuration to add authorization to :doc:`/reference/commands/shutdown` command::"
