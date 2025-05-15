@@ -765,7 +765,7 @@ Fixes
 ^^^^^
 
 * Fixed a bug that Groonga doesn't return a response when an error occurred
-  in command (e.g. sytax error in filter).
+  in command (e.g. syntax error in filter).
 
   * This bug only occurs when we use ``--output_type apache-arrow``.
 
@@ -1739,7 +1739,7 @@ Improvements
          }
        }
 
-  We can do the same by also useing :ref:`select-adjuster` .
+  We can do the same by also using :ref:`select-adjuster` .
   If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement.
 
   We can also describe filter condition as below by using ``query()``.

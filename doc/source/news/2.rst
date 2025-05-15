@@ -514,7 +514,7 @@ Fixes
   [#1330] [Suggested by IWAI, Masaharu]
 * [deb] Added missing default values to groonga-server's
   configuration file.
-* Fixed a crash bug that is caused when searching with updaging very large
+* Fixed a crash bug that is caused when searching with updating very large
   inverted index. [#1329]
 * Fixed a bug that strings are compared as characters instead of byte string.
   [#1340] [Reported by Shinya Kawaji]
