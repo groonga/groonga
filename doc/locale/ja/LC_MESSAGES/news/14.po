@@ -584,7 +584,7 @@ msgstr "一般的には、ヒット数が0件になってしまうのは嬉し�
 msgid "We don't want to match a keyword that is registered as stopword. Therefore, we set `-1` to `match_escalation_threshold` in the above example. We expect that Groonga doesn't return records in the above example because of escalation disable and search keyword(`and`) is registered as stopword. However, If this problem occur, Groonga returns match record. Because if we use `query_parallel_or()`, `match_escalation_threshold` doesn't work."
 msgstr "ストップワードとして登録したキーワードではマッチしてほしくありません。そのため、上記の例では、`match_escalation_threshold`に`-1`を設定しています。エスカレーションが無効でかつ、ストップワードに検索キーワード（`and`）が登録されているため、上記の例では、Groongaは何もレコードを返さないことが期待値です。しかし、この問題が発生すると、Groongaはマッチしたレコードを返却してしまいます。`query_parallel_or()`を使うと、`match_escalation_threshold`が効かないためです。"
 
-msgid "Fixed a bug that full-text search againt a reference column of a vector didn't work."
+msgid "Fixed a bug that full-text search against a reference column of a vector didn't work."
 msgstr "参照ベクターカラムに対する全文検索が動作しない問題を修正しました。"
 
 msgid "This problem has occured Groonga v14.0.0 or later. This problem has effect if we execute full-text search against a reference column of a vector."

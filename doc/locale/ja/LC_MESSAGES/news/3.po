@@ -337,7 +337,7 @@ msgstr "[httpd] ``groonga_log_level`` ディレクティブをサポートしま
 msgid "[httpd] Supported customizing cache limit as ``groonga_cache_limit`` directive."
 msgstr "[httpd] ``groonga_cache_limit`` ディレクティブをサポートしました。"
 
-msgid "Fixed a bug that error in expression may cause stack overflow. This change avoids that groonga crashes suddenly as a result of error accumlation."
+msgid "Fixed a bug that error in expression may cause stack overflow. This change avoids that groonga crashes suddenly as a result of error accumulation."
 msgstr "式のエラーによってスタックオーバーフローを引き起す可能性のある不具合を修正しました。この変更はエラーが積み重なって突然groongaがクラッシュするのを防ぎます。"
 
 msgid "Fixed a crash bug that offline index construction for vector column which has orphan reference causes."

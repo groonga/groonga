@@ -13,8 +13,8 @@ and ``less than condition expression`` with set operations such as
 search records. You can also use advanced searches such as similar
 search and near search by grn_expr. You can also use flexible full
 text search. For example, you can control hit scores for specified
-words and improve recall by re-searching with high-recall algolithm
-dinamically. To determine whether re-searching or not, the number of
+words and improve recall by re-searching with high-recall algorithm
+dynamically. To determine whether re-searching or not, the number of
 matched rescords is used.
 
 There are three ways to create grn_expr:

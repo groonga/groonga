@@ -243,7 +243,7 @@ Fixes
 ^^^^^
 
 * Fixed a bug that error in expression may cause stack overflow.
-  This change avoids that groonga crashes suddenly as a result of error accumlation.
+  This change avoids that groonga crashes suddenly as a result of error accumulation.
 * Fixed a crash bug that offline index construction for vector column which has
   orphan reference causes.
 * Fixed a bug that groonga doesn't exit on error while daemon mode starts.

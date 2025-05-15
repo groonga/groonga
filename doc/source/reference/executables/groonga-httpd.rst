@@ -275,7 +275,7 @@ Examples::
 
 Syntax::
 
-  groonga_log_level none | emergency | alert | ciritical | error | warning | notice | info | debug | dump;
+  groonga_log_level none | emergency | alert | critical | error | warning | notice | info | debug | dump;
 
 Default
   ``notice``

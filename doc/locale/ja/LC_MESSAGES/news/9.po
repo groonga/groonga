@@ -706,7 +706,7 @@ msgstr "HashidaTKSさん"
 msgid "Release 9.0.1 - 2019-03-29"
 msgstr "9.0.1リリース - 2019-03-29"
 
-msgid "Added support to acccept null for vector value."
+msgid "Added support to accept null for vector value."
 msgstr "ベクターの値にnullが使えるようになりました。"
 
 msgid "You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value \"null\"`"

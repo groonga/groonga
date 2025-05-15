@@ -17,7 +17,7 @@ Script syntax doesn't support full ECMAScript syntax. For example,
 script syntax doesn't support statement such as ``if`` control
 statement, ``for`` iteration statement and variable definition
 statement. Function definion is not supported too. But script syntax
-addes the original additional operators.  They are described after
+adds the original additional operators.  They are described after
 ECMAScript syntax is described.
 
 .. _script-syntax-security:

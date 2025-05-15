@@ -569,7 +569,7 @@ Release 9.0.1 - 2019-03-29
 Improvements
 ^^^^^^^^^^^^
 
-* Added support to acccept null for vector value.
+* Added support to accept null for vector value.
 
   * You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value "null"`
 

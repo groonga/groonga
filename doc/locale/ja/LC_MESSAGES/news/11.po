@@ -880,7 +880,7 @@ msgstr "今までは、 出力値に ``index_column.xxx`` のように指定す�
 msgid "[:doc:`/reference/commands/select`] Added support for specifying index column directly as a part of nested index."
 msgstr "[:doc:`/reference/commands/select`] ネストされたインデックスの一部として直接インデックスカラムを指定できるようになりました。"
 
-msgid "We can search source table after filtering by using ``index_column.except_source_column``. For example, we specify ``comments.content`` when searching in the following example. In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table."
+msgid "We can search source table after filtering by using ``index_column.except_source_column``. For example, we specify ``comments.content`` when searching in the following example. In this case, at first, this query execute full text search from ``content`` column of ``Comments`` table, then fetch the records of Articles table which refers to already searched records of Comments table."
 msgstr "``index_column.except_source_column`` を使ってフィルター後にソーステーブルを検索できます。例えば、以下の例では、検索時に ``comments.content`` を指定しています。この場合、最初に、このクエリは ``Comments`` テーブルの ``content`` カラムを全文検索し、次に ``Comments`` テーブルを検索した結果のレコードを参照する ``Articles`` テーブルのレコードを取得します。"
 
 msgid "[:doc:`/reference/commands/load`] Added support for loading reference vector with inline object literal."
