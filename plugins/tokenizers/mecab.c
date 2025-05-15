@@ -1109,10 +1109,12 @@ mecab_next_wakati_format(grn_ctx *ctx,
              (skipped_space_len = grn_isspace(q, encoding))) {
         q += skipped_space_len;
       }
+      // Skip leading spaces
       if (is_leading_space) {
         tokenizer->next = q;
         break;
       }
+      // Skip trailing spaces
       if (mecab_wakati_delimiter(q)) {
         tokenizer->next = r;
         break;
