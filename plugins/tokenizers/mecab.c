@@ -1104,12 +1104,17 @@ mecab_next_wakati_format(grn_ctx *ctx,
         is_leading_space = true;
         break;
       }
+      int trailing_space_len;
       while (q < e && !mecab_wakati_delimiter(q) &&
-             (space_len = grn_isspace(q, encoding))) {
-        q += space_len;
+             (trailing_space_len = grn_isspace(q, encoding))) {
+        q += trailing_space_len;
       }
       if (is_leading_space) {
         tokenizer->next = q;
+        break;
+      }
+      if (mecab_wakati_delimiter(q)) {
+        tokenizer->next = r;
         break;
       }
     }
