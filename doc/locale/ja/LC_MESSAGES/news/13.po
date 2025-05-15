@@ -505,7 +505,7 @@ msgstr "以下は、 `unify_kana_hyphen` オプションの使用例です。"
 msgid "[{ref}`query-syntax-near-search-condition`][{ref}`script-syntax-near-search-operator`] Added a new option `${MIN_INTERVAL}` for near-search family."
 msgstr "[{ref}`query-syntax-near-search-condition`][{ref}`script-syntax-near-search-operator`] 各近傍検索に `${MIN_INTERVAL}` オプションを追加しました。"
 
-msgid "We can now specifiy the minimum interval between phrases (words) with `${MIN_INTERVAL}`. The interval between phrases (words) must be at least this value."
+msgid "We can now specify the minimum interval between phrases (words) with `${MIN_INTERVAL}`. The interval between phrases (words) must be at least this value."
 msgstr "`${MIN_INTERVAL}` でフレーズ間（単語間）の最低距離を指定できるようになりました。フレーズ間（単語間）の距離は、最低でもこの値以上である必要があります。"
 
 msgid "Here are new syntax:"

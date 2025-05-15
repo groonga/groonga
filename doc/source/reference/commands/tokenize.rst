@@ -168,7 +168,7 @@ tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter.
 Tokenized delimiter is special character that indicates token
 border. It is ``U+FFFE``. The character is not assigned any
 character. It means that the character is not appeared in normal
-string. So the character is good character for this puropose. If
+string. So the character is good character for this purpose. If
 ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is
 treated as already tokenized string. Tokenizer just tokenizes by
 tokenized delimiter.
