@@ -300,7 +300,7 @@ Here is a simple example:
 
 The expression uses :doc:`/reference/functions/edit_distance`. It
 matches records that ``_key`` column value is similar to
-``"Groonga"``. Similality of ``"Groonga"`` is computed as edit
+``"Groonga"``. Similarity of ``"Groonga"`` is computed as edit
 distance. If edit distance is less than or equal to 1, the value is
 treated as similar. In this case, ``"Groonga"`` and ``"Mroonga"`` are
 treated as similar.

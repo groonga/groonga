@@ -1208,7 +1208,7 @@ msgstr "このAPIは参照カウントモードのときのみ使用します。
 msgid "It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode."
 msgstr "このAPIは、参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出します。参照カウントモード以外の時は、何もしません。"
 
-msgid "We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode."
+msgid "We useful it when we need only call ``grn_obj_unlink()`` on the reference count mode."
 msgstr "参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出す必要がある時に便利です。"
 
 msgid "Because as the following example, we don't write condition that whether the reference count mode or not."

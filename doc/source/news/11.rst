@@ -969,7 +969,7 @@ Improvements
   We can dump WAL by the following tools, but currently, users doesn't need to use them.
 
     * [:doc:`/reference/executables/grndb`] ``dump-wal`` command.
-    * ``dump-wal.rb`` scritp.
+    * ``dump-wal.rb`` script.
 
 * [:doc:`/reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
 

@@ -196,7 +196,7 @@ msgstr "Yutaro SHIMAMURAさん"
 msgid "Release 5.1.0 - 2015-11-29"
 msgstr "5.1.0リリース - 2015-11-29"
 
-msgid "[patiricia trie] Added an error check for the max total key size. See :doc:`/limitations` about the max total key size."
+msgid "[patricia trie] Added an error check for the max total key size. See :doc:`/limitations` about the max total key size."
 msgstr "[パトリシアトライ] 最大総キーサイズのチェックを追加しました。最大総キーサイズについては :doc:`/limitations` を参照してください。"
 
 msgid "[:doc:`/reference/executables/grndb`] Added a check for broken object. The check can detect a case that the object can't be opened."
