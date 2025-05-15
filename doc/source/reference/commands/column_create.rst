@@ -491,7 +491,7 @@ number of handleable records:
    :header-rows: 1
 
    * - The number of kinds of index target data
-     - The number of hanleable records
+     - The number of handleable records
    * - 1
      - 16779234
    * - 2
@@ -1375,7 +1375,7 @@ Here are available flags:
        calculating increments would not have same value in
        continuance, or increments are too large.
 
-       For exapmle, ``[4526677, 4592401, 4658217, 4723879]`` in
+       For example, ``[4526677, 4592401, 4658217, 4723879]`` in
        ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after
        only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data
        would not have values in continuance, and increments are large.

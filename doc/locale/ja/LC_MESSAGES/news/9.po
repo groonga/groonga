@@ -97,7 +97,7 @@ msgstr "[:doc:`/reference/commands/load`] エラーメッセージを改善し�
 msgid "Response of ``load`` command includes error message also."
 msgstr "``load`` コマンドのレスポンスにエラーメッセージも含むようにしました。"
 
-msgid "If we faile data load, Groonga output error detail of ``load`` command by this Improvement."
+msgid "If we fail data load, Groonga output error detail of ``load`` command by this Improvement."
 msgstr "この変更によって、データのロードに失敗した場合、 ``load`` コマンドのエラーの詳細を出力します。"
 
 msgid "[httpd] Updated bundled nginx to 1.17.7."
@@ -313,7 +313,7 @@ msgstr "[:doc:`/reference/commands/select`] ネストされた等価演算を使
 msgid "[geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]"
 msgstr "[geo_distance_location_rectangle] ``load`` のフォーマットが誤っている例を修正しました。 [GitHub#1023] [yagisumiさんがパッチ提供]"
 
-msgid "[:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]"
+msgid "[:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GitHub#1024][Patched by yagisumi]"
 msgstr "[:doc:`/tutorial/micro_blog`] 検索結果が誤っている例を修正しました。[GitHub#1024][yagisumiさんがパッチ提供]"
 
 msgid "Release 9.0.5 - 2019-07-30"
@@ -769,7 +769,7 @@ msgstr "[:doc:`/reference/functions/snippet_html`] 一致しない場合、空�
 msgid "In such a case, an empty vector ``[]`` is returned instead of ``null``."
 msgstr "そのような場合、 ``null`` の代わりに空のベクター ``[]`` が返されます。"
 
-msgid "Fixed a warning about possibility of counting threads overflow. In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]"
+msgid "Fixed a warning about possibility of counting threads overflow. In real world, it doesn't affect user because enormous number of threads is not used. [GitHub#904]"
 msgstr "スレッドカウントがオーバフローする可能性についての警告を修正しました。実運用では、膨大な数のスレッドが使用されていないため、ユーザーに影響はありません。[GitHub#904]"
 
 msgid "Fixed build error on macOS [GitHub#909] [Reported by shiro615]"
