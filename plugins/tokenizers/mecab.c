@@ -1101,7 +1101,6 @@ mecab_next_wakati_format(grn_ctx *ctx,
       const char *q = r + space_len;
       if (mecab_wakati_delimiter(r)) {
         tokenizer->next = q;
-        is_leading_space = true;
         break;
       }
       int skipped_space_len;
