@@ -707,7 +707,7 @@ Improvements
 
   We changed to not use results out of ``escalate()``.
   
-  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
+  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determine the first threshold, which was incovenient.
 
   Here is a example for the previous ``escalate()``.
 
