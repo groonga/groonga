@@ -1515,12 +1515,6 @@ grn_str_len(grn_ctx *ctx,
 }
 
 int
-grn_isnewline(const char *str)
-{
-  return str[0] == '\n' ? 1 : 0;
-}
-
-int
 grn_isspace(const char *str, grn_encoding encoding)
 {
   const unsigned char *s = (const unsigned char *)str;
