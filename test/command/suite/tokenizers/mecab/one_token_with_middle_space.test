@@ -1,3 +1,4 @@
+#@require-env MECAB_DIC
 #@require-feature mecab
 
 tokenize \
