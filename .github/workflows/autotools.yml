@@ -159,6 +159,7 @@ jobs:
           test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
       - name: "Test: stdio"
         run: |
+          MEACAB_DIC=naist-jdic \
           grntest \
             --base-dir test/command \
             --n-retries=2 \

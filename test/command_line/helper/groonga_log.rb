@@ -210,7 +210,7 @@ module GroongaLog
         end
         message = normalize_groonga_log_message(message)
         case message
-        when /\A \[tokenizer\]\[mecab\]\[create\]\[wakati\]/
+        when /\A \[tokenizer\]\[mecab\]\[create\]\[newline\]/
           # Ignore
           next
         end

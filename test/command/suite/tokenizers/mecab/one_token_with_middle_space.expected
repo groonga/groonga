@@ -1,0 +1,16 @@
+tokenize   'TokenMecab'   '聞き 糺せん'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "聞き 糺せん",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
