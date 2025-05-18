@@ -1064,12 +1064,6 @@ mecab_next_default_format(grn_ctx *ctx,
   }
 }
 
-static bool
-mecab_next_newline_delimiter(const char *str)
-{
-  return str[0] == '\n';
-}
-
 static void
 mecab_next_newline_format(grn_ctx *ctx,
                           grn_mecab_tokenizer *tokenizer,
@@ -1096,8 +1090,8 @@ mecab_next_newline_format(grn_ctx *ctx,
       break;
     }
 
-    if ((mecab_next_newline_delimiter(r))) {
-      tokenizer->next = r + space_len;
+    if (cl == 1 && r[0] == '\n') {
+      tokenizer->next = r + cl;
       break;
     }
   }
