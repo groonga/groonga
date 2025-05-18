@@ -73,7 +73,7 @@ if groonga --version | grep -q apache-arrow; then
 fi
 
 export TZ=Asia/Tokyo
-export MEACAB_DIC=naist-jdic
+export MECAB_DICTIONARY_NAIST_JDIC=YES
 
 grntest_options=()
 grntest_options+=(--base-directory=command)
