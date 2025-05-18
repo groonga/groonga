@@ -700,7 +700,7 @@ msgstr ":ref:`weight-vector-column` をサポートしました。重みつき�
 msgid "Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian Wiedenroth]"
 msgstr "SunOSでビルドに必要なMIN/MAXの定義がなかったので追加しました。[GitHub#154] [Sebastian Wiedenrothさんがパッチ提供]"
 
-msgid "Improved recycling garbage data. It suppress to increse database size."
+msgid "Improved recycling garbage data. It suppress to increase database size."
 msgstr "使われなくなった領域を再利用するように改善しました。これによりデータべースの肥大化を抑制します。"
 
 msgid "[doc] Added documentation about GET parameters for :doc:`/reference/executables/groonga-suggest-httpd`."

@@ -159,7 +159,7 @@ Improvements
 * [:doc:`/reference/commands/select`] Added support for near phrase product search.
 
   This feature is a shortcut of ``'*NP"..." OR *NP"..." OR ...'``.
-  For example, we can use ``*NPP`` instead of the expression that execute mulitiple
+  For example, we can use ``*NPP`` instead of the expression that execute multiple
   ``*NP`` with ``query`` as below.
 
   .. code-block::

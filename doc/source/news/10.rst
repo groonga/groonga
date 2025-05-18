@@ -2286,7 +2286,7 @@ Improvements
   * ``grn_get_version_minor(void)``
   * ``grn_get_version_micro(void)``
 
-    * They return Groonga's major, minor, and micor version numbers as a ``uint32_t``.
+    * They return Groonga's major, minor, and micro version numbers as a ``uint32_t``.
 
   * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
   * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``

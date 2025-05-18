@@ -116,7 +116,7 @@ How to extract learning data
 ----------------------------
 
 The learning data is stored into ``item_DATASET`` and ``pair_DATASET`` tables.
-By using select command for such tables, you can all extract learing data.
+By using select command for such tables, you can all extract learning data.
 
 Here is the query to extract all learning data::
 

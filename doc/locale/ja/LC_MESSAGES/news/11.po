@@ -106,7 +106,7 @@ msgstr "11.1.1リリース - 2021-12-29"
 msgid "[:doc:`/reference/commands/select`] Added support for near phrase product search."
 msgstr "[:doc:`/reference/commands/select`] 組み合わせフレーズ近傍検索をサポートしました。"
 
-msgid "This feature is a shortcut of ``'*NP\"...\" OR *NP\"...\" OR ...'``. For example, we can use ``*NPP`` instead of the expression that execute mulitiple ``*NP`` with ``query`` as below."
+msgid "This feature is a shortcut of ``'*NP\"...\" OR *NP\"...\" OR ...'``. For example, we can use ``*NPP`` instead of the expression that execute multiple ``*NP`` with ``query`` as below."
 msgstr "この機能は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` の短縮形です。例えば、以下のように、 ``query`` を使って ``*NP`` を複数実行する式のかわりに ``*NPP`` を使えます。"
 
 msgid "We can be written as ``*NPP\"(a b) (1 2 3) (x y z)\"`` the above expression by this feature. In addition, ``*NPP\"(a b) (1 2 3) (x y z)\"`` is faster than ``'*NP\"...\" OR *NP\"...\" OR ...'``."
