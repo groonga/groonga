@@ -682,7 +682,7 @@ msgstr "[rpm] groongaパッケージから必要のないrubyパッケージへ�
 msgid "[deb] Added missing default values to groonga-server's configuration file."
 msgstr "[deb] groonga-serverの設定ファイルに未設定だったデフォルト値を追加。"
 
-msgid "Fixed a crash bug that is caused when searching with updaging very large inverted index. [#1329]"
+msgid "Fixed a crash bug that is caused when searching with updating very large inverted index. [#1329]"
 msgstr "非常に大きな転置インデックスを更新しながら検索するとクラッシュする不具合を修正。 [#1329]"
 
 msgid "Fixed a bug that strings are compared as characters instead of byte string. [#1340] [Reported by Shinya Kawaji]"

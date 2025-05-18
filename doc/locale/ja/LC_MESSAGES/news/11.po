@@ -238,7 +238,7 @@ msgstr "[:doc:`/install/almalinux`] AlmaLinux 8 向けのパッケージをサ�
 msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri)."
 msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri)をサポートしました。"
 
-msgid "Fixed a bug that Groonga doesn't return a response when an error occurred in command (e.g. sytax error in filter)."
+msgid "Fixed a bug that Groonga doesn't return a response when an error occurred in command (e.g. syntax error in filter)."
 msgstr "Groongaがコマンドエラー(例えば、filterのシンタックスエラー)発生時に応答を返さない問題を修正しました。"
 
 msgid "This bug only occurs when we use ``--output_type apache-arrow``."
@@ -604,7 +604,7 @@ msgstr "また、 ``*~${score_quantity}`` とすることで、スコアーの�
 msgid "In particular, the following query adjust the score of match records by the following condition(``'content @ \"Groonga\" *~2.5 content @ \"Mroonga\")'`` )."
 msgstr "具体的には、 以下の条件( ``'content @ \"Groonga\" *~2.5 content @ \"MySQL\"'`` ) にマッチしたレコードのスコアーを調整します。"
 
-msgid "We can do the same by also useing :ref:`select-adjuster` . If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement."
+msgid "We can do the same by also using :ref:`select-adjuster` . If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement."
 msgstr ":ref:`select-adjuster` を使っても同様のことができます。:ref:`select-adjuster` を使う場合、アプリケーション上で、 ``--filter`` 条件と ``--adjuster`` 条件を作る必要がありますが、この改良で、 ``--filter`` 条件のみを作成すればよくなりました。"
 
 msgid "We can also describe filter condition as below by using ``query()``."

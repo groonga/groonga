@@ -124,7 +124,7 @@ Custom command version
 Groonga has :doc:`/reference/command/command_version` mechanism. It is for
 upgrading groonga commands with backward compatibility.
 
-:doc:`groonga` can change the default command veresion by
+:doc:`groonga` can change the default command version by
 ``--default-command-version`` option. Here is a sample command line to
 use command version 2 as the default command version::
 

@@ -34,7 +34,7 @@ msgstr "これは、既存のマッチエスカレーションの仕組みと似
 msgid "Match escalation is auto loose search. If the number of matched records is equal or less than the threshold specified by ``match_escalation_threshold``, loose search is done automatically. It's match escalation."
 msgstr "マッチエスカレーションとは自動で条件のゆるい検索をする機能のことです。ヒット数が ``match_escalation_threshold`` で指定したしきい値よりも小さい時、自動で条件のゆるい検索をします。これがマッチエスカレーションです。"
 
-msgid "Please refer to :doc:`/spec/search` about the search storategy escalation."
+msgid "Please refer to :doc:`/spec/search` about the search strategy escalation."
 msgstr "検索方法のエスカレーションについては :doc:`/spec/search` を参照してください。"
 
 msgid "``match_escalation_threshold`` is ``select``'s argument. In addition, the default value of ``match_escalation_threshold`` is `0`. Please refer to :doc:`/reference/commands/select` about ``match_escalation_threshold``."

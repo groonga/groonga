@@ -336,7 +336,7 @@ Options
 
    Specifies threshold for query log rotation. Query log file is rotated when query log file size is larger than or equals to the threshold (default: 0; disabled).
 
-.. option:: -t, --max-threads <max threasd>
+.. option:: -t, --max-threads <max threads>
 
    最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)
 

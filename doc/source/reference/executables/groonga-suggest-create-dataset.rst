@@ -8,8 +8,8 @@ NAME
 
 groonga-suggest-create-dataset - Defines schema for a suggestion dataset
 
-SYNOPSTIS
----------
+SYNOPSIS
+--------
 
 ::
 
