@@ -241,7 +241,7 @@ Improvements
 
 * [:doc:`/reference/tables`] Updated description about the max record ID.
 
-* [mruby] Suppported to convert time of ``mrb_value`` to ``grn_bulk``.
+* [mruby] Supported to convert time of ``mrb_value`` to ``grn_bulk``.
   [GitHub:#607] [Patch by Naoya Murakami]
 
 * [ubuntu] Supported Ubuntu 16.10 (Yakkety Yak)

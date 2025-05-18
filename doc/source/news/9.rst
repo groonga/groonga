@@ -591,7 +591,7 @@ Improvements
 
 * [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
 
-* [:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log.
+* [:doc:`/reference/commands/load`] Added support to display a table of load destination in a query log.
 
   * A name of table of load destination display as string in ``[]`` as below.
 
