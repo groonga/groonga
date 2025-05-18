@@ -254,7 +254,7 @@ msgstr "{ref}`table-pat-key`: キー領域を効率化"
 msgid "[GH-2104](https://github.com/groonga/groonga/issues/2104)"
 msgstr ""
 
-msgid "There was a case that wastes key space. Now, we can use key space as efficiency as possible."
+msgid "There was a case that wastes key space. Now, we can use key space as efficiently as possible."
 msgstr "キー領域を無駄使いするケースがありました。このケースを改良して、できるだけ効率よくキー領域を使えるようにしました。"
 
 msgid "`grn_pat_size()`: Fixed a bug that `0` may not be returned on error"

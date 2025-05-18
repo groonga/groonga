@@ -62,7 +62,7 @@ The text are scanned by the keywords for tagging after they are normalized
 by ``NormalizerAuto`` normalizer.
 
 ``--query "groonga mysql"`` matches to the first record's body.
-``highight_full`` surrounds the keywords ``groonga`` contained in the text
+``highlight_full`` surrounds the keywords ``groonga`` contained in the text
 with ``<span class="keyword1">`` and ``</span>``, and the keywords ``mysql``
 contained in the text with with ``<span class="keyword2">`` and ``</span>``.
 

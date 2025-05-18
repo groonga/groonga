@@ -352,7 +352,7 @@ msgstr "``escalate()`` 関数（実験的）の仕様を使いやすいように
 msgid "We changed to not use results out of ``escalate()``."
 msgstr "``escalate()`` の外部の結果セットを使用しないように変更しました。"
 
-msgid "In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient."
+msgid "In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determine the first threshold, which was incovenient."
 msgstr "前回の仕様では、ユーザーはどのくらいの結果が ``escalate()`` に渡されるのか推測して最初のしきい値を決める必要があり、不便でした。"
 
 msgid "Here is a example for the previous ``escalate()``."

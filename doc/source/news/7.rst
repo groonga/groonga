@@ -793,7 +793,7 @@ Fixes
   temporary database.
 
 * Fixed a problem that dynamically updated index size was increased
-  for natural language since Grooonga 6.1.4.
+  for natural language since Groonga 6.1.4.
 
 * [:doc:`/reference/commands/select`] Fixed a bug that "A && B.C @ X"
   may not return records that should be matched.
