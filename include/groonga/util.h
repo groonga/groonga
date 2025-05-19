@@ -32,11 +32,11 @@ extern "C" {
  *
  * For example usage:
  * ```c
- *  grn_obj inspected;
- *  GRN_TEXT_INIT(&inspected, 0);
- *  grn_inspect(ctx, &inspected, obj);
- *  printf("%.*s\n", (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
- *  GRN_OBJ_FIN(ctx, &inspected);
+ * grn_obj inspected;
+ * GRN_TEXT_INIT(&inspected, 0);
+ * grn_inspect(ctx, &inspected, obj);
+ * printf("%.*s\n", (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+ * GRN_OBJ_FIN(ctx, &inspected);
  * ```
  *
  * \param ctx The context object.
