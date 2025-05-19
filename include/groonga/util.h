@@ -26,8 +26,6 @@ extern "C" {
 /**
  * \brief Inspect specified object and produce a textual representation.
  *
- * \since 0.7.0
- *
  * \note If \p obj is a \ref GRN_TABLE_PAT_KEY table, all keys are shown. To
  *       limit output on \ref GRN_TABLE_PAT_KEY tables, use
  *       \ref grn_inspect_limited instead.
