@@ -78,32 +78,17 @@ msgstr "リファレンス"
 msgid "Inspect specified target ``obj`` object."
 msgstr "指定した ``obj`` オブジェクトを調査します。"
 
-msgid "``indent`` is only added if inspected text contains newline (inspected text must be multiple lines)."
-msgstr "``indent`` は調査した内容が改行を含む場合に追加されます。(調査した内容のテキストは複数行で構成されている必要があります)"
+msgid "If inspected text is too long, it will be truncated."
+msgstr "調査した内容が長い場合、切り詰められます。"
 
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
-msgid "The buffer object which is inspected text will be stored."
-msgstr "調査した内容が保存されるオブジェクト"
+msgid "The buffer object which is inspected(truncated) text will be stored."
+msgstr "調査した内容が(切り詰められて)設定されるオブジェクト"
 
 msgid "The inspect target object."
 msgstr "対象のオブジェクト"
-
-msgid "The pre-pended indentation text."
-msgstr "先頭に挿入されるインデント"
-
-msgid "``buffer`` object which is inspected text is set with indent."
-msgstr "調査した内容がインデントとともに設定される ``buffer`` オブジェクト"
-
-msgid "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
-msgstr "もし ``obj`` が ``TABLE_PAT_KEY`` なテーブルであれば、次のように表示されます::"
-
-msgid "If inspected text is too long, it will be truncated."
-msgstr "調査した内容が長い場合、切り詰められます。"
-
-msgid "The buffer object which is inspected(truncated) text will be stored."
-msgstr "調査した内容が(切り詰められて)設定されるオブジェクト"
 
 msgid "``buffer`` object which is object detail is set. If inspected text is longer than 64 characters, inspected text is truncated to it. Otherwise, inspected text will not be truncated."
 msgstr "オブジェクトの詳細が設定される ``buffer`` オブジェクト。調査した内容が64文字よりも長い場合には、その内容は切り詰められます。そうでない場合調査した内容がそのまま設定されます。"

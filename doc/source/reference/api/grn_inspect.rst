@@ -40,37 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_indented(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj, const char *indent)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-
-   .. note:: ``indent`` is only added if inspected text contains newline (inspected text must be multiple lines).
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is inspected text will be stored.
-   :param obj: The inspect target object.
-   :param indent: The pre-pended indentation text.
-   :return: ``buffer`` object which is inspected text is set with indent.
-
-   .. code-block:: c
-
-      grn_obj buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      grn_inspect_indented(&context, &buffer, obj, "***");
-      printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   If obj is ``TABLE_PAT_KEY`` table, it prints like the following::
-
-     ***#<table:pat Users key:ShortText value:(nil) size:7 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:["a", "b", "c", "d", "e", "f", "g"] subrec:none nodes:{
-     ***4{0,5,0}
-     ***  L:2{0,6,0}
-     ***    L:1{0,7,0}
-     ***      L:0{0,0,0}
-     ***      R:1{0,7,0}("a")[01100001]
-     ...
-
 .. c:function:: grn_obj *grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 
    .. versionadded:: 7.0.0
