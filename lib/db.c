@@ -1274,7 +1274,7 @@ grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
   if (name_size == 0) {
     return GRN_SUCCESS;
   }
-  if (name == NULL || (name_size > 0 && *name == GRN_DB_PSEUDO_COLUMN_PREFIX)) {
+  if (!name || *name == GRN_DB_PSEUDO_COLUMN_PREFIX) {
     return GRN_INVALID_ARGUMENT;
   }
   const char *name_end = name + name_size;
