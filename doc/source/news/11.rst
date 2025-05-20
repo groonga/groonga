@@ -2753,7 +2753,7 @@ Improvements
 
   * We can search source table after filtering by using ``index_column.except_source_column``.
     For example, we specify ``comments.content`` when searching in the following example.
-    In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
+    In this case, at first, this query execute full text search from ``content`` column of ``Comments`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
 
     .. code-block::
 

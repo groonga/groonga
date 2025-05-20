@@ -67,7 +67,7 @@ msgstr "実際に前と同じ例で検索してみましょう。結果は上の
 msgid "There may be a question that \"which is the better solution for indexing.\" It depends on the case."
 msgstr "\"インデックスはどちらがよい方法なのか\"と疑問に思うかもしれません。それは場合によります。"
 
-msgid "Indexes for each column - The update performance tends to be better than multiple colum index because there is enough buffer for updating. On the other hand, the efficiency of disk usage is not so good."
+msgid "Indexes for each column - The update performance tends to be better than multiple column index because there is enough buffer for updating. On the other hand, the efficiency of disk usage is not so good."
 msgstr "カラムごとのインデックス - マルチカラムインデックスよりも更新性能が良い傾向があります。一方、ディスク使用効率はあまり良くありません。"
 
 msgid "Indexes for multiple column - It saves disk usage because it shares common buffer. On the other hand, the update performance is not so good."

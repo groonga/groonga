@@ -190,7 +190,7 @@ msgstr "``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がか
 msgid "Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."
 msgstr "ログレベルの設定は :option:`log-level <groonga --log-level>` オプションまたは :doc:`/reference/commands/log_level` コマンドで変更可能です。"
 
-msgid "What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose. For an example, we can use following setting to check which records are taking longer time for ``load``. For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``."
+msgid "What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose. For an example, we can use following setting to check which records are taking longer time for ``load``. For this, we specify the value based on necesarry time per 1 record calculated with  total number and time of ``load``."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` にどのような値を指定すべきかは環境や調べたい内容に依存します。例えば、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。こうすることで、平均よりも ``load`` に時間がかかっているレコードを調べることができます。"
 
 msgid "Necessary time to process `load` would be checked in :ref:`query-log`."

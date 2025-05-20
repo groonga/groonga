@@ -30,7 +30,7 @@ msgstr "``TABLE_NO_KEY`` 以外のすべてのテーブルは高速なキー→I
 msgid "Characteristics"
 msgstr "特徴"
 
-msgid "Here is a chracteristic table of all tables in Groonga. (``TABLE_`` prefix is omitted in the table.)"
+msgid "Here is a characteristic table of all tables in Groonga. (``TABLE_`` prefix is omitted in the table.)"
 msgstr "以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` プレフィックスは省略しています。）"
 
 msgid "Characteristics of all tables"

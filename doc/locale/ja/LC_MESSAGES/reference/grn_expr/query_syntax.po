@@ -549,7 +549,7 @@ msgstr "クエリー構文における代入式にはいくつか制限があり
 msgid "There is only one syntax for assignment expression. It's ``column:=value``."
 msgstr "代入式の構文は1つだけです。 ``column:=value`` となります。"
 
-msgid "``value`` is assigend to ``column``. ``value`` is always processed as string in query syntax. ``value`` is casted to the type of ``column`` automatically. It causes some limitations. For example, you cannot use boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You need to use empty string for ``false`` but query syntax doesn't support ``column:=`` syntax."
+msgid "``value`` is assigned to ``column``. ``value`` is always processed as string in query syntax. ``value`` is casted to the type of ``column`` automatically. It causes some limitations. For example, you cannot use boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You need to use empty string for ``false`` but query syntax doesn't support ``column:=`` syntax."
 msgstr "``value`` は ``column`` に代入されます。 ``value`` は常にクエリー構文では文字列として扱われます。 ``value`` は ``column`` の型へと自動的にキャストされます。 キャストにはいくつか制限があります。例えば ``true`` や ``false`` といった真偽値のリテラルを ``Bool`` 型のカラムに使用することができません。 ``false`` については空文字列を使う必要がありますが、クエリー構文は ``column:=`` 構文をサポートしていません。"
 
 msgid "See :doc:`/reference/cast` about cast."
