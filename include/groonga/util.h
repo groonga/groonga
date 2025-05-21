@@ -75,6 +75,18 @@ grn_inspect_indent(grn_ctx *ctx,
  * GRN_OBJ_FIN(ctx, &inspected);
  * ```
  *
+ * If \p obj is \ref GRN_TABLE_PAT_KEY table, it prints like the following.
+ * ```
+ * ***#<table:pat Users key:ShortText value:(nil) size:7 columns:[] \
+ *      default_tokenizer:(nil) normalizer:(nil) \
+ *      keys:["a", "b", "c", "d", "e", "f", "g"] subrec:none nodes:{
+ * ***4{0,5,0}
+ * ***  L:2{0,6,0}
+ * ***    L:1{0,7,0}
+ * ***      L:0{0,0,0}
+ * ***      R:1{0,7,0}("a")[01100001]
+ * ```
+ *
  * \param ctx     The context object.
  * \param buffer  The buffer where the indented inspected text will be stored.
  * \param obj     The target object to inspect.
