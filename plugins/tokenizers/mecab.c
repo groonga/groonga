@@ -48,7 +48,7 @@ typedef struct {
 static const char *grn_mecab_lattice_variable_name = "TokenMecab.lattice";
 
 static grn_mecab mecab_default;
-static grn_mecab mecab_wakati;
+static grn_mecab mecab_newline;
 
 static bool grn_mecab_chunked_tokenize_enabled = false;
 static int32_t grn_mecab_chunk_size_threshold = 8192;
@@ -389,7 +389,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   }
 
   if (GRN_TEXT_LEN(&(tokenizer->buf)) > 0) {
-    GRN_TEXT_PUTS(ctx, &(tokenizer->buf), " ");
+    GRN_TEXT_PUTS(ctx, &(tokenizer->buf), "\n");
   }
 
   tokenized_chunk_length = strlen(tokenized_chunk);
@@ -506,7 +506,7 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
 {
   mecab_model_t *mecab_model;
   int argc = 0;
-  const char *argv[4];
+  const char *argv[5];
   const char *tag;
 
   bool need_default_output =
@@ -515,12 +515,13 @@ mecab_model_create(grn_ctx *ctx, grn_mecab_tokenizer_options *options)
   if (need_default_output) {
     tag = "[default]";
   } else {
-    tag = "[wakati]";
+    tag = "[newline]";
   }
 
   argv[argc++] = "Groonga";
   if (!need_default_output) {
-    argv[argc++] = "-Owakati";
+    argv[argc++] = "-F%m\n";
+    argv[argc++] = "-E\n";
   }
 #ifdef GRN_WITH_BUNDLED_MECAB
   argv[argc++] = "--rcfile";
@@ -650,7 +651,7 @@ mecab_init_mecab(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
   if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
     tokenizer->mecab = &mecab_default;
   } else {
-    tokenizer->mecab = &mecab_wakati;
+    tokenizer->mecab = &mecab_newline;
   }
 
   if (!tokenizer->mecab->mecab) {
@@ -1064,9 +1065,9 @@ mecab_next_default_format(grn_ctx *ctx,
 }
 
 static void
-mecab_next_wakati_format(grn_ctx *ctx,
-                         grn_mecab_tokenizer *tokenizer,
-                         grn_token *token)
+mecab_next_newline_format(grn_ctx *ctx,
+                          grn_mecab_tokenizer *tokenizer,
+                          grn_token *token)
 {
   grn_encoding encoding = tokenizer->query->encoding;
   int cl;
@@ -1089,12 +1090,8 @@ mecab_next_wakati_format(grn_ctx *ctx,
       break;
     }
 
-    if (space_len > 0) {
-      const char *q = r + space_len;
-      while (q < e && (space_len = grn_isspace(q, encoding))) {
-        q += space_len;
-      }
-      tokenizer->next = q;
+    if (cl == 1 && r[0] == '\n') {
+      tokenizer->next = r + cl;
       break;
     }
   }
@@ -1292,7 +1289,7 @@ mecab_next(grn_ctx *ctx,
                                                          tokenizer->options)) {
     mecab_next_default_format(ctx, tokenizer, token);
   } else {
-    mecab_next_wakati_format(ctx, tokenizer, token);
+    mecab_next_newline_format(ctx, tokenizer, token);
   }
 }
 
@@ -1376,7 +1373,7 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   }
 
   grn_mecab_init(ctx, &mecab_default, "[default]");
-  grn_mecab_init(ctx, &mecab_wakati, "[wakati]");
+  grn_mecab_init(ctx, &mecab_newline, "[newline]");
   if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
@@ -1384,7 +1381,7 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   check_mecab_dictionary_encoding(ctx);
   if (ctx->rc != GRN_SUCCESS) {
     grn_mecab_fin(ctx, &mecab_default);
-    grn_mecab_fin(ctx, &mecab_wakati);
+    grn_mecab_fin(ctx, &mecab_newline);
   }
 
   return ctx->rc;
@@ -1423,7 +1420,7 @@ GRN_PLUGIN_FIN(grn_ctx *ctx)
   grn_unset_variable(grn_mecab_lattice_variable_name, -1);
 
   grn_mecab_fin(ctx, &mecab_default);
-  grn_mecab_fin(ctx, &mecab_wakati);
+  grn_mecab_fin(ctx, &mecab_newline);
 
   return GRN_SUCCESS;
 }

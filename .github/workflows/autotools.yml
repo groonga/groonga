@@ -159,6 +159,9 @@ jobs:
           test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
       - name: "Test: stdio"
         run: |
+          # Test only checks presence of MECAB_DICTIONARY_NAIST_JDIC. So the
+          # actual value is ignored.
+          MECAB_DICTIONARY_NAIST_JDIC=YES \
           grntest \
             --base-dir test/command \
             --n-retries=2 \
