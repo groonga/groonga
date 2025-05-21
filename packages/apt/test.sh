@@ -73,6 +73,8 @@ if groonga --version | grep -q apache-arrow; then
 fi
 
 export TZ=Asia/Tokyo
+# Test only checks presence of MECAB_DICTIONARY_NAIST_JDIC. So the actual value
+# is ignored.
 export MECAB_DICTIONARY_NAIST_JDIC=YES
 
 grntest_options=()
