@@ -187,7 +187,7 @@ msgstr "``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位
 msgid "A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログが出力されます。"
 
-msgid "Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."
+msgid "Setting for log level would be controlled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."
 msgstr "ログレベルの設定は :option:`log-level <groonga --log-level>` オプションまたは :doc:`/reference/commands/log_level` コマンドで変更可能です。"
 
 msgid "What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose. For an example, we can use following setting to check which records are taking longer time for ``load``. For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``."

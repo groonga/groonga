@@ -592,7 +592,7 @@ msgstr "[munin] groonga_dist Muninプラグインが複数のファイルを使�
 msgid "Started using Travis CI."
 msgstr "Travis CIを使うようにした。"
 
-msgid "[yum] Changed RPM package name that provides yum repository from groonga-repository to groonga-release to follow RPM package name convension such as centos-release and fedora-release."
+msgid "[yum] Changed RPM package name that provides yum repository from groonga-repository to groonga-release to follow RPM package name convention such as centos-release and fedora-release."
 msgstr "[yum] groongaのyumリポジトリを提供するRPMパッケージ名をgroonga-repositoryからgroonga-releaseへと変更。これは、centos-releaseやfedora-releaseといったRPMパッケージの命名規則とあわせるためである。"
 
 msgid "[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
@@ -634,7 +634,7 @@ msgstr "[rpm][fedora] libeditをサポート。[#1325] [IWAI, Masaharuさんが�
 msgid "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
 msgstr "[rpm] zlibおよびLZOをサポート。[#1324] [IWAI, Masaharuさんがパッチ提供]"
 
-msgid "[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket is listened. It means that groonga server is ready when groonga server is daemonized. [#1326]"
+msgid "[groonga] Improved daemonized timing. Groonga server daemonizes after socket is listened. It means that groonga server is ready when groonga server is daemonized. [#1326]"
 msgstr "[groonga] デーモン化のタイミングを改善。groongaサーバーはソケットがlisten状態になった後にデーモン化するようになった。これによりgroongaサーバーがデーモン化した時点で接続を受け付けられる状態になっている。 [#1326]"
 
 msgid "[admin] Supported suggest in groonga administration page."

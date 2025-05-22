@@ -968,7 +968,7 @@ Improvements
   because index column may refer reference columns.
 * [:doc:`/reference/commands/dump`] Don't dump records of lexicon.
 * [:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again.
-* [:doc:`/reference/commands/dump`] Used offline index construnction.
+* [:doc:`/reference/commands/dump`] Used offline index construction.
 * Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Increased max cache key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Improved performance for nested index search.

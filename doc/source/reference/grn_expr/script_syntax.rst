@@ -285,7 +285,7 @@ matched.
 Function call
 -------------
 
-Its syntax is ``name(arugment1, argument2, ...)``.
+Its syntax is ``name(argument1, argument2, ...)``.
 
 ``name(argument1, argument2, ...)`` calls a function that is named
 ``name`` with arguments ``argument1``, ``argument2`` and ``...``.

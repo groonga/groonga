@@ -22,7 +22,7 @@ use apt-line for Ubuntu 14.04 LTS provided by Groonga project to install
 Groonga on Travis CI.
 
 You can custom build lifecycle by ``.travis.yml``. (See `Travis CI:
-Conifugration your Travis CI build with .travis.yml
+Configuration your Travis CI build with .travis.yml
 <http://about.travis-ci.org/docs/user/build-configuration/>`_.) You
 can use ``before_install`` hook or ``install`` hook. You should use
 ``before_install`` if your software uses a language that is supported

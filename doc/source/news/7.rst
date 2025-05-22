@@ -320,7 +320,7 @@ Fixes
 * [windows] Fixed to clean up file handle correctly on failure when
   ``database_unmap`` is executed. There is a case that critical
   section is not initialized when request is canceled before executing
-  ``database_unmap``. In such a case, it caused a crach bug.
+  ``database_unmap``. In such a case, it caused a crash bug.
 
 * [:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer
   names. It should be ``TokenBigramIgnoreBlankSplitSymbolAlpha`` and

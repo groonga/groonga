@@ -67,7 +67,7 @@ msgstr ""
 msgid "Access log path"
 msgstr "アクセスログ"
 
-msgid "/var/log/groonga/httpd/acccess.log"
+msgid "/var/log/groonga/httpd/access.log"
 msgstr ""
 
 msgid "Error log path"

@@ -1045,7 +1045,7 @@ msgstr "[:doc:`/reference/commands/dump`] 語彙表のレコードをダンプ�
 msgid "[:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again."
 msgstr "[:doc:`/reference/commands/dump`] 再度 ``TABLE_NO_KEY`` のときに ``_id`` を表示するようにしました。"
 
-msgid "[:doc:`/reference/commands/dump`] Used offline index construnction."
+msgid "[:doc:`/reference/commands/dump`] Used offline index construction."
 msgstr "[:doc:`/reference/commands/dump`] オフラインインデックス構築するようにしました。"
 
 msgid "Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte)."

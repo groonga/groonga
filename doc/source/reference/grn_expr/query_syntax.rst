@@ -196,7 +196,7 @@ the default match columns. You need to specify match column for the
 full text search condition by ``column:`` instead of
 ``--match_columns`` option of :doc:`/reference/commands/select`.
 
-This condtional expression is useful when you want to use two or more
+This conditional expression is useful when you want to use two or more
 full text search against different columns. The default match columns
 specified by ``--match_columns`` option can't be specified multiple
 times. You need to specify the second match column by this conditional
