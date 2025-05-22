@@ -41,7 +41,7 @@ Preconfigured setting:
 +====================+=======================================+
 | Port number        | 10041                                 |
 +--------------------+---------------------------------------+
-| Access log path    | /var/log/groonga/httpd/acccess.log    |
+| Access log path    | /var/log/groonga/httpd/access.log     |
 +--------------------+---------------------------------------+
 | Error log path     | /var/log/groonga/http-query.log       |
 +--------------------+---------------------------------------+

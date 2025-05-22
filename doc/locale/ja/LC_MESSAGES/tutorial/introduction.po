@@ -274,7 +274,7 @@ msgstr "検索結果の並べ替え"
 msgid "A :doc:`/reference/commands/select` command sorts its result when used with a ``sort_keys`` parameter."
 msgstr ":doc:`/reference/commands/select` コマンドに ``sort_keys`` 引数を渡すことにより、検索結果を並べ替えることができます。"
 
-msgid "A ``sort_keys`` parameter specifies a column as a sorting creteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter."
+msgid "A ``sort_keys`` parameter specifies a column as a sorting criteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter."
 msgstr "``sort_keys`` 引数には、整列の基準として用いるカラムを指定します。検索結果は指定したカラムの値が昇順になるように並べ替えられます。 ``sort_keys`` 引数の中でカラム名の前にハイフン（-）を付けることにより、降順に並べ替えることもできます。"
 
 msgid "The following example shows records in the Site table in reverse order."
