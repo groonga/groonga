@@ -87,10 +87,10 @@ grn_inspect_indent(grn_ctx *ctx,
  * ***      R:1{0,7,0}("a")[01100001]
  * ```
  *
- * \param ctx     The context object.
- * \param buffer  The buffer where the indented inspected text will be stored.
- * \param obj     The target object to inspect.
- * \param indent  The indentation string to prepend to each line of output.
+ * \param ctx The context object.
+ * \param buffer The buffer where the indented inspected text will be stored.
+ * \param obj The target object to inspect.
+ * \param indent The indentation string to prepend to each line of output.
  *
  * \return The indented inspected object in text.
  */
