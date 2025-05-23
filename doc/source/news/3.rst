@@ -18,7 +18,7 @@ Improvements
 * Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, the value of
   this configuration is 'no'. This change affects reducing the size of Groonga database.
 * Supported multiple indexes including a nested index and multiple keywords query.
-  This change improves missing search results isssue when narrowing down by multiple keywords query.
+  This change improves missing search results issue when narrowing down by multiple keywords query.
 * Added API to customize normalizer for snippet.
 
 Fixes
@@ -141,7 +141,7 @@ Improvements
 * [httpd] Supported multiple buffered body of POST request.
   The load command caused timeout in such a case. [GitHub #120] [Patch by Motoi Washida]
 * [gqtp] Supported error message. The body is changed to return
-  raw text insted of double quoted text. This is incompatible changes.
+  raw text instead of double quoted text. This is incompatible changes.
 * [http] Supported "400 Bad request" for invalid argument error.
 * [doc] Added examples for :doc:`/reference/suggest/completion`
 * Supported Ubuntu 13.10 (Saucy Salamander).
