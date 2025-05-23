@@ -24,8 +24,19 @@ services:
       dockerfile: alpine.dockerfile
       args:
         ALPINE_LINUX_VERSION: "3.20"
+    shm_size: 512mb
     volumes:
       - .:/source:delegated
     command:
       /source/dockerfiles/run.sh
 
+  arch-linux:
+    image: ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-arch-linux
+    build:
+      cache_from:
+        - ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-arch-linux
+      context: dockerfiles
+      dockerfile: arch-linux.dockerfile
+    shm_size: 512mb
+    volumes:
+      - .:/source:delegated

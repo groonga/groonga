@@ -1,4 +1,4 @@
-# Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,56 +14,29 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-ARG ALPINE_LINUX_VERSION
-FROM alpine:${ALPINE_LINUX_VERSION}
+FROM archlinux
 
 RUN \
-  apk --no-cache add \
-    bash \
-    bison \
-    blosc-dev \
-    bsd-compat-headers \
-    ca-certificates \
+  pacman --sync --noconfirm --refresh --sysupgrade && \
+  pacman --sync --noconfirm \
+    binutils \
     ccache \
-    cmake \
-    curl \
-    g++ \
+    debugedit \
+    # mecab-git must have this but it doesn't have it.
+    # So we install this in base environment.
+    diffutils \
+    fakeroot \
+    # mecab-git must have this but it doesn't have it.
+    # So we install this in base environment.
     gcc \
-    gdb \
     git \
-    libedit-dev \
-    libevent-dev \
-    libstemmer-dev \
-    lz4-dev \
+    # mecab-git must have this but it doesn't have it.
+    # So we install this in base environment.
     make \
-    msgpack-c-dev \
-    musl-dev \
-    openssl-dev \
-    pkgconf \
-    rapidjson-dev \
-    ruby-dev \
-    samurai \
-    # simdjson-dev \
-    sudo \
-    tzdata \
-    xsimd-dev \
-    xxhash-dev \
-    zeromq-dev \
-    zlib-dev \
-    zstd-dev && \
-    update-ca-certificates
+    sudo
 
 RUN \
-  gem install \
-    bundler \
-    grntest \
-    groonga-client \
-    pkg-config \
-    rake
-
-RUN \
-  password=$(base64 /dev/random | head -c16) && \
-  (echo ${password}; echo ${password}) | adduser groonga
+  useradd --user-group --create-home groonga
 
 RUN \
   echo "groonga ALL=(ALL:ALL) NOPASSWD:ALL" | \
@@ -71,3 +44,5 @@ RUN \
 
 USER groonga
 WORKDIR /home/groonga
+
+CMD /source/ci/arch-linux/build.sh
