@@ -52,8 +52,8 @@ msgstr "以下の例では、 HTMLエスケープを使い、 ノーマライザ
 msgid "The text are scanned by the keywords for tagging after they are normalized by ``NormalizerAuto`` normalizer."
 msgstr "テキストは、 ``NormalizerAuto`` ノーマライザーによって正規化された後にタグ付けのためにスキャンされます。"
 
-msgid "``--query \"groonga mysql\"`` matches to the first record's body. ``highight`` surrounds the keywords ``groonga`` contained in the text with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` contained in the text with ``<span class=\"keyword2\">`` and ``</span>``."
-msgstr "``--query \"groonga mysql\"`` は最初のレコードにマッチします。``highight`` は、キーワード ``groonga`` を含むテキストを ``<span class=\"keyword1\">`` と ``</span>`` で囲い、キーワード ``mysql`` を含むテキストを ``<span class=\"keyword2\">`` と ``</span>`` で囲います。"
+msgid "``--query \"groonga mysql\"`` matches to the first record's body. ``highlight`` surrounds the keywords ``groonga`` contained in the text with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` contained in the text with ``<span class=\"keyword2\">`` and ``</span>``."
+msgstr "``--query \"groonga mysql\"`` は最初のレコードにマッチします。``highlight`` は、キーワード ``groonga`` を含むテキストを ``<span class=\"keyword1\">`` と ``</span>`` で囲い、キーワード ``mysql`` を含むテキストを ``<span class=\"keyword2\">`` と ``</span>`` で囲います。"
 
 msgid "Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``."
 msgstr "``<`` や ``>`` のような特殊文字は ``&lt;`` や ``&gt;`` としてエスケープされます。 "

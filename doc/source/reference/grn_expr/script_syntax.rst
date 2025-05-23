@@ -155,7 +155,7 @@ a literal for ``Say "Hello!".`` string.
 
 String encoding must be the same as encoding of database. The default
 encoding is UTF-8. It can be changed by ``--with-default-encoding``
-configure option, ``--encodiong`` :doc:`/reference/executables/groonga` option
+configure option, ``--encoding`` :doc:`/reference/executables/groonga` option
 and so on.
 
 .. _script-syntax-literal-boolean:
@@ -290,7 +290,7 @@ Its syntax is ``name(argument1, argument2, ...)``.
 ``name(argument1, argument2, ...)`` calls a function that is named
 ``name`` with arguments ``argument1``, ``argument2`` and ``...``.
 
-See :doc:`/reference/function` for available functin list.
+See :doc:`/reference/function` for available function list.
 
 Here is a simple example:
 
@@ -1559,7 +1559,7 @@ Here is a simple example:
 .. ]
 .. select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
 
-The expression extrcts terms that included in document ``Groonga is
+The expression extracts terms that included in document ``Groonga is
 the successor project to Senna.``. In this case, ``NormalizerAuto``
 normalizer is specified to ``Words``. So ``Groonga`` can be extracted
 even if it is loaded as ``groonga`` into ``Words``. All of extracted

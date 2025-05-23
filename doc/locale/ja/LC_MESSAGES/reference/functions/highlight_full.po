@@ -51,7 +51,7 @@ msgstr "以下の例はHTMLエスケープを使用し、ノーマライザー�
 msgid "The text are scanned by the keywords for tagging after they are normalized by ``NormalizerAuto`` normalizer."
 msgstr "キーワードとテキストは ``NormalizerAuto`` ノーマライザーで正規化されてタグ付けのためにスキャンされます。"
 
-msgid "``--query \"groonga mysql\"`` matches to the first record's body. ``highight_full`` surrounds the keywords ``groonga`` contained in the text with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and ``</span>``."
+msgid "``--query \"groonga mysql\"`` matches to the first record's body. ``highlight_full`` surrounds the keywords ``groonga`` contained in the text with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and ``</span>``."
 msgstr "``--query \"groonga mysql\"`` は最初のレコードにマッチします。 ``highlight_full`` は、テキスト中に含まれるキーワード ``groonga`` を ``<span class=\"keyword1\">`` と ``</span>`` で囲み、 キーワード ``mysql`` を ``<span class=\"keyword2\">`` と ``</span>`` で囲みます。"
 
 msgid "Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``."

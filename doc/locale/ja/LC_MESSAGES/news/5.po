@@ -1156,7 +1156,7 @@ msgstr "5.0.1のバグフィックスリリースです。"
 msgid "Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]"
 msgstr "MessagePack 1.0.1をサポート。 [畑ケさんが報告]"
 
-msgid "[logical_range_filter] Disabled range index by default. It's enabled when you set the enviromnent variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` to ``yes``."
+msgid "[logical_range_filter] Disabled range index by default. It's enabled when you set the environment variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` to ``yes``."
 msgstr "[logical_range_filter] 範囲検索をデフォルトで無効にした。 環境変数 ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` に ``yes`` を設定すれば有効になる。"
 
 msgid "Fixed a regression bug that JSONP doesn't work. It was introduced in Groonga 4.1.1."
