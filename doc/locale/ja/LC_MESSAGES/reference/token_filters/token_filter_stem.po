@@ -45,7 +45,7 @@ msgstr "以下は ``TokenFilterStem`` トークンフィルターを使う例で
 msgid "All of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``. So we can find ``develop``, ``developing`` and ``developed`` by ``develops`` query."
 msgstr "``develop`` も ``developing`` も ``developed`` も ``develops`` も、すべてステミングすると ``develop`` になります。そのため、 ``develops`` というクエリーで ``develop`` も ``developing`` も ``developed`` も検索できます。"
 
-msgid "You can specify steming algorithm except English with ``algorithm`` option as below."
+msgid "You can specify stemming algorithm except English with ``algorithm`` option as below."
 msgstr "以下のように ``algorithm`` オプションを使って、英語以外のステミングアルゴリズムを指定できます。"
 
 msgid "Parameters"
@@ -60,14 +60,14 @@ msgstr "省略可能な引数として ``algorithm`` があります。"
 msgid "``algorithm``"
 msgstr ""
 
-msgid "Specify a steming algorithm."
+msgid "Specify a stemming algorithm."
 msgstr "ステミングアルゴリズムを指定します。"
 
-msgid "Steming algorithm is extract the stem. It is prepared for each language."
+msgid "Stemming algorithm is extract the stem. It is prepared for each language."
 msgstr "ステミングアルゴリズムとは、語幹を抽出するもので、各言語用に用意されています。"
 
-msgid "You can extract the stem of each language by changing steming algorithm. For example, if you want extract the stem of the French, you specify French to ``algorithm`` option."
+msgid "You can extract the stem of each language by changing stemming algorithm. For example, if you want extract the stem of the French, you specify French to ``algorithm`` option."
 msgstr "ステミングアルゴリズムを切り替えることに寄って、各言語の語幹を抽出できます。例えば、フランス語の語幹を抽出したい場合は、 ``algorithm`` オプションに French を指定します。"
 
-msgid "Here are support steming algorithm::"
+msgid "Here are support stemming algorithm::"
 msgstr "サポートしているステミングアルゴリズムは以下の通りです::"

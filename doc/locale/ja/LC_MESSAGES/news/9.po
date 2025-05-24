@@ -847,7 +847,7 @@ msgstr "既存のテーブルのカラムの値を使ってトークンを抽出
 msgid "[:doc:`/reference/commands/dump`] Added support for dumping binary data."
 msgstr "[:doc:`/reference/commands/dump`] バイナリデータのダンプに対応しました。"
 
-msgid "[:doc:`/reference/commands/select`] Added support for similer search against index column."
+msgid "[:doc:`/reference/commands/select`] Added support for similar search against index column."
 msgstr "[:doc:`/reference/commands/select`] インデックスカラムに対する類似文書検索をサポートしました。"
 
 msgid "If you have used multi column index, you can similar search against all source columns by this feature."

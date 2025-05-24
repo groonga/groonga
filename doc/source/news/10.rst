@@ -2265,7 +2265,7 @@ Improvements
     * This API is only used on the reference count mode (The reference count mode is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.).
 
       * It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode.
-      * We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode.
+      * We useful it when we need only call ``grn_obj_unlink()`` on the reference count mode.
       * Because as the following example, we don't write condition that whether the reference count mode or not.
 
         * The example if we don't use ``grn_obj_unref()``.

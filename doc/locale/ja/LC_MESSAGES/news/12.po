@@ -184,7 +184,7 @@ msgstr "``GRN_SLOW_LOG_THRESHOLD`` については以下のとおりです。"
 msgid "``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数を指定することで、1秒よりも短い時間も指定できます。"
 
-msgid "A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``."
+msgid "A log with debug level would be output if the processing time takes longer than specified time with ``GRN_SLOW_LOG_THRESHOLD``."
 msgstr "``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログが出力されます。"
 
 msgid "Setting for log level would be controlled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`."

@@ -331,7 +331,7 @@ Fixes
   In the previous versions, there is a case that empty file keeps
   remain on error.
 
-  Here is the senario to reproduce:
+  Here is the scenario to reproduce:
 
     1. creating new file by grn_fileinfo_open succeeds
     2. mapping file by DO_MAP() is failed
