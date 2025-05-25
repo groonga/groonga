@@ -1,0 +1,12 @@
+table_create ProductNames TABLE_PAT_KEY ShortText
+table_create Products TABLE_PAT_KEY ShortText
+
+load --table Products
+[
+  {"_key": "PGroonga"},
+  {"_key": "Groonga"}
+]
+
+column_create ProductNames products_key COLUMN_INDEX Products _key
+
+select Products --match_columns _key --query "Groonga"
