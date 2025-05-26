@@ -1229,7 +1229,7 @@ msgstr ""
 msgid "``grn_get_version_micro(void)``"
 msgstr " ``grn_get_version_micro(void)`` "
 
-msgid "They return Groonga's major, minor, and micor version numbers as a ``uint32_t``."
+msgid "They return Groonga's major, minor, and micro version numbers as a ``uint32_t``."
 msgstr "``uint32_t`` としてGroongaのメジャー、マイナー、マイクロバージョンを返します。"
 
 msgid "``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``"

@@ -37,7 +37,7 @@ msgstr "[doc] ロックタイムアウトについての説明を追加しまし
 msgid "Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, the value of this configuration is 'no'. This change affects reducing the size of Groonga database."
 msgstr "``GRN_JA_SKIP_SAME_VALUE_PUT`` をデフォルトで有効にしました。以前のバージョンまでは、この設定は 'no' となっていました。この変更により、Groongaのデータベースのサイズの増加を抑制できます。"
 
-msgid "Supported multiple indexes including a nested index and multiple keywords query. This change improves missing search results isssue when narrowing down by multiple keywords query."
+msgid "Supported multiple indexes including a nested index and multiple keywords query. This change improves missing search results issue when narrowing down by multiple keywords query."
 msgstr "ネストしたインデックスと複数のキーワードを含むクエリに対するインデックスを使えるようにしました。この変更で複数のキーワードで絞り込んだときに検索結果が欠落していた問題が改善します。"
 
 msgid "Added API to customize normalizer for snippet."
@@ -214,7 +214,7 @@ msgstr "[実験的] \"ruby_load\" コマンドを追加しました。"
 msgid "[httpd] Supported multiple buffered body of POST request. The load command caused timeout in such a case. [GitHub #120] [Patch by Motoi Washida]"
 msgstr "[httpd] メッセージボディが複数バッファリングされているPOSTリクエストをサポートしました。そのような場合にこれまではタイムアウトしていました。 [GitHub#120] [鷲田さんがパッチを提供]"
 
-msgid "[gqtp] Supported error message. The body is changed to return raw text insted of double quoted text. This is incompatible changes."
+msgid "[gqtp] Supported error message. The body is changed to return raw text instead of double quoted text. This is incompatible changes."
 msgstr "[gqtp] エラーメッセージをサポートしました。メッセージボディとしてテキストを二重引用符で囲むことなく返します。これは非互換な変更です。"
 
 msgid "[http] Supported \"400 Bad request\" for invalid argument error."

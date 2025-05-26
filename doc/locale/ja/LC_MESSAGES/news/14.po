@@ -725,7 +725,7 @@ msgstr "例えば、以下のようなケースでこの問題は発生します
 msgid "[{doc}`/install/ubuntu`] We become able to provide package for Ubuntu again."
 msgstr "[{doc}`/install/ubuntu`] Ubuntu向けパッケージを提供できるようになりました。"
 
-msgid "We don't provide packages for Ubuntu in Groonga version 14.0.0. Because we fail makeing Groonga package for Ubuntu by problrm of build environment for Ubuntu package."
+msgid "We don't provide packages for Ubuntu in Groonga version 14.0.0. Because we fail making Groonga package for Ubuntu by problrm of build environment for Ubuntu package."
 msgstr "Groonga 14.0.0では、GroongaのUbuntu向けパッケージを提供していませんでした。Ubuntu向けパッケージのビルド環境の問題で、パッケージを作るのに失敗したためです。"
 
 msgid "We fixed problrm of build environment for Ubuntu package in 14.0.1. So, we can provide packages for Ubuntu again since this release."
