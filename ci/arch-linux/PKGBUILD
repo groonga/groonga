@@ -41,7 +41,7 @@ source=(
   "https://github.com/groonga/groonga/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.gz.asc"
 )
 sha512sums=(
-  "f29a6e88401cdb90437164a22f6f1e8467dd6ab9c1738be71933be9cb97a46c6"
+  "4aaeaaad801bf10626643434dc1eaacc86452876fcd33b0ad4e2e3c6d032ab5bfdf9fae108ce06bd93f7a94b8b2895a4ad5d38aaec4d8cdc52ec7ff96dfccff4"
   "SKIP"
 )
 validpgpkeys=(2701F317CFCCCB975CADE9C2624CF77434839225)
