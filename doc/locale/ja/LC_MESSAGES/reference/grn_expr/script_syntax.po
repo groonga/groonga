@@ -105,8 +105,8 @@ msgstr "文字列"
 msgid "String literal is ``\"...\"``. You need to escape ``\"`` in literal by prepending ``\\\\'' such as ``\\\"``. For example, ``\"Say \\\"Hello!\\\".\"`` is a literal for ``Say \"Hello!\".`` string."
 msgstr "文字列リテラルは ``\"...\"`` です。リテラル中の ``\"`` は ``\\\"`` というように ``\\`` を前につけてエスケープします。例えば、 ``\"Say \\\"Hello!\\\".\"`` は ``Say \"Hello!\".`` という文字列のリテラルです。"
 
-msgid "String encoding must be the same as encoding of database. The default encoding is UTF-8. It can be changed by ``--with-default-encoding`` configure option, ``--encodiong`` :doc:`/reference/executables/groonga` option and so on."
-msgstr "文字列エンコーディングはデータベースのエンコーディングと合わせなければいけません。デフォルトのエンコーディングはUTF-8です。これは configure の ``--with-default-encoding`` オプションや :doc:`/reference/executables/groonga` の ``--encodiong`` などで変更できます。"
+msgid "String encoding must be the same as encoding of database. The default encoding is UTF-8. It can be changed by ``--with-default-encoding`` configure option, ``--encoding`` :doc:`/reference/executables/groonga` option and so on."
+msgstr "文字列エンコーディングはデータベースのエンコーディングと合わせなければいけません。デフォルトのエンコーディングはUTF-8です。これは configure の ``--with-default-encoding`` オプションや :doc:`/reference/executables/groonga` の ``--encoding`` などで変更できます。"
 
 msgid "Boolean"
 msgstr "真偽値"
@@ -213,7 +213,7 @@ msgstr "構文は ``name(argument1, argument2, ...)`` です。"
 msgid "``name(argument1, argument2, ...)`` calls a function that is named ``name`` with arguments ``argument1``, ``argument2`` and ``...``."
 msgstr "``name(argument1, argument2, ...)`` は ``name`` という関数を引数 ``argument1``, ``argument2``, ``...`` で呼び出します。"
 
-msgid "See :doc:`/reference/function` for available functin list."
+msgid "See :doc:`/reference/function` for available function list."
 msgstr "利用可能な関数の一覧は :doc:`/reference/function` を参照してください。"
 
 msgid "The expression uses :doc:`/reference/functions/edit_distance`. It matches records that ``_key`` column value is similar to ``\"Groonga\"``. Similality of ``\"Groonga\"`` is computed as edit distance. If edit distance is less than or equal to 1, the value is treated as similar. In this case, ``\"Groonga\"`` and ``\"Mroonga\"`` are treated as similar."
@@ -930,7 +930,7 @@ msgstr "この演算子は ``document`` から単語を抽出します。単語�
 msgid "Note that the table must be patricia trie (``TABLE_PAT_KEY``) or double array trie (``TABLE_DAT_KEY``). You can't use hash table (``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) because they don't support longest common prefix search. Longest common prefix search is used to implement the operator."
 msgstr "テーブルはパトリシアトライ（ ``TABLE_PAT_KEY`` ）またはダブル配列トライ（ ``TABLE_DAT_KEY`` ）でなければいけません。ハッシュテーブル（ ``TABLE_HASH_KEY`` ）や配列（ ``TABLE_NO_KEY`` ）は最長共通接頭辞検索（Longest Common Prefix Search）できないため使えません。この演算子は最長共通接頭辞検索を使っています。"
 
-msgid "The expression extrcts terms that included in document ``Groonga is the successor project to Senna.``. In this case, ``NormalizerAuto`` normalizer is specified to ``Words``. So ``Groonga`` can be extracted even if it is loaded as ``groonga`` into ``Words``. All of extracted terms are also normalized."
+msgid "The expression extracts terms that included in document ``Groonga is the successor project to Senna.``. In this case, ``NormalizerAuto`` normalizer is specified to ``Words``. So ``Groonga`` can be extracted even if it is loaded as ``groonga`` into ``Words``. All of extracted terms are also normalized."
 msgstr "この式は文書 ``Groonga is the successor project to Senna.`` に含まれている単語を抽出します。今回は ``Words`` に ``NormalizerAuto`` ノーマライザーが指定されています。そのため、 ``Words`` には ``groonga`` とロードしていますが ``Groonga`` も抽出できています。また、すべてての抽出された単語も正規化されています。"
 
 msgid "Regular expression operator"

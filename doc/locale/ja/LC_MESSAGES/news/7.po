@@ -706,7 +706,7 @@ msgstr "[:doc:`/reference/commands/select`] ``drilldown_filter`` のドキュメ
 msgid "[:doc:`/reference/commands/lock_clear`] Fixed a crash bug against temporary database."
 msgstr "[:doc:`/reference/commands/lock_clear`] テンポラリデータベースに対して実行するとクラッシュする不具合を修正しました。"
 
-msgid "Fixed a problem that dynamically updated index size was increased for natural language since Grooonga 6.1.4."
+msgid "Fixed a problem that dynamically updated index size was increased for natural language since Groonga 6.1.4."
 msgstr "自然言語に対する動的インデックス更新でインデックスサイズが肥大化する問題を修正しました。Groonga 6.1.4から発生していました。"
 
 msgid "[:doc:`/reference/commands/select`] Fixed a bug that \"A && B.C @ X\" may not return records that should be matched."

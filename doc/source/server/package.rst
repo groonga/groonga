@@ -14,7 +14,7 @@ There are three packages for server use.
 * ``groonga-server-gqtp`` (:doc:`/spec/gqtp` based server package)
 
 There is the reason why groonga supports not only GQTP but also two HTTP server
-packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is desined to reduce overheads
+packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is designed to reduce overheads
 and improve performance. But, GQTP is less support of client library than HTTP protocol does.
 As HTTP is matured protocol, you can take advantage of existing tool and there are many client
 library (See `related projects <https://groonga.org/related-projects.html>`_ for details).
