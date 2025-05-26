@@ -118,8 +118,10 @@ jobs:
       - name: Generate chechsum
         run: |
           version=$(cat base_version)
-          sha256sum groonga-${version}.tar.gz > groonga-${version}.tar.gz.sha256
-          sha256sum groonga-${version}.zip > groonga-${version}.zip.sha256
+          for sha in sha256 sha512; do
+            ${sha}sum groonga-${version}.tar.gz > groonga-${version}.tar.gz.${sha}
+            ${sha}sum groonga-${version}.zip > groonga-${version}.zip.${sha}
+          done
 
       # Artifact
       - uses: actions/upload-artifact@v4
