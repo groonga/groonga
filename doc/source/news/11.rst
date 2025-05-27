@@ -1026,7 +1026,7 @@ Improvements
 
 * [:doc:`/reference/normalizers`] Added support for multiple normalizers.
 
-  We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release.
+  We can specify multiple normalizers by ``--normalizers`` option when we create a table since this release.
   If we can also specify them by  ``--normalizer`` existing option because of compatibility.
 
   We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4.
@@ -1576,7 +1576,7 @@ Improvements
   In other words, we can use customized normalizer.
 
   For example, we define that "S" normalize to "5" in the following example.
-  The ``Substitutions`` table is for nromalize.
+  The ``Substitutions`` table is for normalize.
 
     .. code-block::
 

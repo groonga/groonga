@@ -767,7 +767,7 @@ msgstr "これらの関数と`limit N`を使うことで、ベクトル的に距
 msgid "These functions calculate distance in the `output` stage."
 msgstr "これらの関数は、`output`ステージで距離を計算します。"
 
-msgid "However, we don't optimaize these functions yet."
+msgid "However, we don't optimize these functions yet."
 msgstr "ただ、これらの関数はまだ最適化できていません。"
 
 msgid "`distance_cosine()`: Calculate cosine similarity."
