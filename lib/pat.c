@@ -52,7 +52,6 @@ typedef enum {
 } pat_node_direction;
 
 typedef struct {
-  grn_id lr[2];
   /*
     lr[0]: the left node.
     lr[1]: the right node.
@@ -67,12 +66,12 @@ typedef struct {
     The first node (PAT_AT(pat, GRN_ID_NIL, node)) has only
     the right node and the node is the start point.
    */
-  uint32_t key;
+  grn_id lr[2];
   /*
     PAT_IMD(node) == 0: key bytes offset in memory map.
     PAT_IMD(node) == 1: the key bytes.
    */
-  uint16_t check;
+  uint32_t key;
   /*
     nth byte: 12, nth bit: 3, terminated: 1
 
@@ -85,8 +84,9 @@ typedef struct {
     terminated: (check & 0b1)
     terminated == 1: key is terminated.
    */
-  uint16_t bits;
+  uint16_t check;
   /* length: 13, immediate: 1, deleting: 1 */
+  uint16_t bits;
 } pat_node;
 
 #define PAT_DELETING  (1 << 1)
