@@ -32,12 +32,6 @@ msgstr "{doc}`/reference/tokenizers/token_mecab`: スペースを含むユーザ
 msgid "Previously, {ref}`token-mecab` internally treated MeCab’s `-Owakati` mode output as space-delimited tokens, causing user-defined dictionary entries containing spaces (e.g., \"search engine\") to be split into separate tokens like \"search\" and \"engine\". This release updates {ref}`token-mecab` to use MeCab's `-F%m\\n` newline-delimited output, ensuring that entries with embedded spaces remain as single tokens."
 msgstr "従来、{ref}`token-mecab`はMeCabの`-Owakati`モードの出力をスペース区切りのトークンとして扱っていたため、ユーザー辞書にスペースを含むエントリ（例: \"search engine\"）が \"search\"と\"engine\"のように分割されてしまっていました。本リリースでは、MeCabの`-F%m`オプションを使用して改行区切りでトークンを出力し、その出力を改行区切りのトークンとして扱うように{ref}`token-mecab`を変更しました。その結果、スペースを含むエントリも単一のトークンとして扱われるようになりました。"
 
-msgid "Added support for Arch Linux package"
-msgstr "Arch Linuxパッケージをサポート"
-
-msgid "We provided the package of Arch Linux. This is provided via the Arch User Repository and delivers the latest Groonga release to Arch Linux users."
-msgstr "Arch User Repositoryを通じてArch Linux向けパッケージを提供開始しました。これにより、Arch Linuxユーザーは最新のGroongaを利用できるようになります。"
-
 msgid "Release 15.0.9 - 2025-05-08"
 msgstr "15.0.9リリース - 2025-05-08"
 
