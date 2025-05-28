@@ -20,8 +20,8 @@ msgstr "お知らせ - 15系"
 msgid "Release 15.1.1 - 2025-05-29"
 msgstr "15.1.1リリース - 2025-05-29"
 
-msgid "This release updates TokenMecab to preserve user-defined entries with spaces as single tokens and adds an Arch Linux package."
-msgstr "このリリースでは、TokenMecabでユーザー定義辞書に登録されたスペースを含むエントリを単一トークンとして保持できるようにする変更とArch Linuxパッケージのサポートを追加しました。"
+msgid "This release updates TokenMecab to preserve user-defined entries with spaces as single tokens."
+msgstr "このリリースでは、TokenMecabでユーザー定義辞書に登録されたスペースを含むエントリを単一トークンとして保持できるようにする変更をおこないました。"
 
 msgid "Improvements"
 msgstr "改良"
