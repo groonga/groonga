@@ -216,7 +216,7 @@ msgstr "``name(argument1, argument2, ...)`` は ``name`` という関数を引�
 msgid "See :doc:`/reference/function` for available functin list."
 msgstr "利用可能な関数の一覧は :doc:`/reference/function` を参照してください。"
 
-msgid "The expression uses :doc:`/reference/functions/edit_distance`. It matches records that ``_key`` column value is similar to ``\"Groonga\"``. Similality of ``\"Groonga\"`` is computed as edit distance. If edit distance is less than or equal to 1, the value is treated as similar. In this case, ``\"Groonga\"`` and ``\"Mroonga\"`` are treated as similar."
+msgid "The expression uses :doc:`/reference/functions/edit_distance`. It matches records that ``_key`` column value is similar to ``\"Groonga\"``. Similarity of ``\"Groonga\"`` is computed as edit distance. If edit distance is less than or equal to 1, the value is treated as similar. In this case, ``\"Groonga\"`` and ``\"Mroonga\"`` are treated as similar."
 msgstr "この式は :doc:`/reference/functions/edit_distance` を使っています。この式は ``_key`` カラムの値が ``\"Groonga\"`` に似ているレコードにマッチします。 ``\"Groonga\"`` との類似度は編集距離で計算します。編集距離が1文字以下なら似ているとします。この場合は ``\"Groonga\"`` と ``\"Mroonga\"`` が似ている値です。"
 
 msgid "Basic operators"
