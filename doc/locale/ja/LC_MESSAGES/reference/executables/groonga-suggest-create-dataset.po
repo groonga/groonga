@@ -24,7 +24,7 @@ msgstr "名前"
 msgid "groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
 msgstr ""
 
-msgid "SYNOPSTIS"
+msgid "SYNOPSIS"
 msgstr ""
 
 msgid "DESCRIPTION"
