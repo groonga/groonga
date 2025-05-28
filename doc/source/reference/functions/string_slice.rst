@@ -25,7 +25,7 @@ To enable this function, register ``functions/string`` plugin by following the c
 Syntax
 ------
 
-``string_slice`` requires two to four parameters. The required parametars are depending on the extraction method.
+``string_slice`` requires two to four parameters. The required parameters are depending on the extraction method.
 
 Extraction by position
 ^^^^^^^^^^^^^^^^^^^^^^

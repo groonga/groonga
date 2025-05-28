@@ -432,7 +432,7 @@ Improvements
   Here is about specifying ``GRN_SLOW_LOG_THRESHOLD``.
 
   * ``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number.
-  * A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``.
+  * A log with debug level would be output if the processing time takes longer than specified time with ``GRN_SLOW_LOG_THRESHOLD``.
 
   Setting for log level would be controlled with :option:`log-level <groonga --log-level>` or :doc:`/reference/commands/log_level`.
 

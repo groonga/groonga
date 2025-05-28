@@ -355,7 +355,7 @@ msgstr "この機能が有効な時、GroongaはWAL(ログ先行書き込み)を
 msgid "[:doc:`/reference/executables/grndb`] ``dump-wal`` command."
 msgstr "[:doc:`/reference/executables/grndb`] ``dump-wal`` コマンド"
 
-msgid "``dump-wal.rb`` scritp."
+msgid "``dump-wal.rb`` script."
 msgstr "``dump-wal.rb`` スクリプト"
 
 msgid "[:doc:`/reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]"

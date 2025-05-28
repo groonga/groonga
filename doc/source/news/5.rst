@@ -188,7 +188,7 @@ Release 5.1.0 - 2015-11-29
 Improvements
 ^^^^^^^^^^^^
 
-* [patiricia trie] Added an error check for the max total key
+* [patricia trie] Added an error check for the max total key
   size. See :doc:`/limitations` about the max total key size.
 
 * [:doc:`/reference/executables/grndb`] Added a check for broken

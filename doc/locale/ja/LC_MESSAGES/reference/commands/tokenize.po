@@ -147,7 +147,7 @@ msgstr "トークナイズ済み区切り文字を有効にします。トーク
 msgid "Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``."
 msgstr "以下は ``ENABLE_TOKENIZED_DELIMITER`` を使った例です。"
 
-msgid "``TokenDelimit`` tokenizer is one of tokenized delimiter supported tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. Tokenized delimiter is special character that indicates token border. It is ``U+FFFE``. The character is not assigned any character. It means that the character is not appeared in normal string. So the character is good character for this puropose. If ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is treated as already tokenized string. Tokenizer just tokenizes by tokenized delimiter."
+msgid "``TokenDelimit`` tokenizer is one of tokenized delimiter supported tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. Tokenized delimiter is special character that indicates token border. It is ``U+FFFE``. The character is not assigned any character. It means that the character is not appeared in normal string. So the character is good character for this purpose. If ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is treated as already tokenized string. Tokenizer just tokenizes by tokenized delimiter."
 msgstr "``TokenDelimit`` トークナイザーはトークナイズ済み区切り文字をサポートしているトークナイザーの1つです。 ``ENABLE_TOKENIZED_DELIMITER`` でトークナイズ済み区切り文字を有効に出来ます。トークナイズ済み区切り文字はトークンの区切りを表す特別な文字です。この文字は ``U+FFFE`` です。この文字コードはどの文字にも割り当てられていません。つまり、通常の文字列にはこの文字は現れません。よって、トークンの区切りを表すという目的には適切な文字です。 ``ENABLE_TOKENIZED_DELIMITER`` が有効のときは、対象文字列はすでにトークナイズ済みであると扱われます。トークナイザーは単にトークナイズ済み区切り文字で区切ってトークナイズします。"
 
 msgid "``mode``"
