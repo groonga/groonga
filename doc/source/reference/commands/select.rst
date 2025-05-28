@@ -534,7 +534,7 @@ with suitable dictionary.)
 
 Here is an example to use typo tolerance search with Japanese
 text. ``--default_tokenizer TokenMecab`` for ``JapaneseTerms`` is
-important. ``JapaneseTerms`` is a lexicon for this case::
+important. ``JapaneseTerms`` is a lexicon for this case.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/usage_typo_tolerance_japanese.log
