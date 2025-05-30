@@ -133,7 +133,7 @@ grn_inspect_indented(grn_ctx *ctx,
  * \param buffer The buffer where the truncated inspected text will be stored.
  * \param obj The target object to inspect.
  *
- * \return The truncated inspected object in text
+ * \return The truncated inspected object in text.
  */
 GRN_API grn_obj *
 grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
