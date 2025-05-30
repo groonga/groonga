@@ -40,31 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
-
-   .. versionadded:: 7.0.0
-
-   Inspect specified target ``obj`` object.
-
-   .. note:: If inspected text is too long, it will be truncated.
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is inspected(truncated) text will be stored.
-   :param obj: The inspect target object.
-   :return: ``buffer`` object which is object detail is set.
-            If inspected text is longer than 64 characters, inspected text is truncated to it. Otherwise, inspected text will not be truncated.
-
-   .. code-block:: c
-
-      grn_obj buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      grn_inspect(&context, &buffer, obj);
-      printf("#=> %.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   Even though if obj is ``TABLE_PAT_KEY`` table, it prints truncated result like the following::
-
-     #<table:pat Users key:ShortText value:(nil) size:7 columns:[] de...(502)
-
 .. c:function:: grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 
    .. versionadded:: 4.0.8

@@ -99,6 +99,42 @@ grn_inspect_indented(grn_ctx *ctx,
                      grn_obj *buffer,
                      grn_obj *obj,
                      const char *indent);
+/**
+ * \brief Inspect specified object and produce a length-limited textual
+ *        representation.
+ *
+ * \since 7.0.0
+ *
+ * This function inspects \p obj into \p buffer, but if the full representation
+ * exceeds half of \c GRN_CTX_MSGSIZE, the output is truncated to that length,
+ * and "...(original length)" is appended to indicate the total size.
+ *
+ * \note If the inspected text length is greater than \c GRN_CTX_MSGSIZE/2,
+ *       it will be truncated otherwise it is copied in full.
+ *
+ * For example usage:
+ * ```c
+ * grn_obj inspected;
+ * GRN_TEXT_INIT(&inspected, 0);
+ * grn_inspect_limited(ctx, &inspected, obj);
+ * printf("#=> %.*s\n",
+ *        (int)GRN_TEXT_LEN(&inspected),
+ *        GRN_TEXT_VALUE(&inspected));
+ * GRN_OBJ_FIN(ctx, &buffer);
+ * ```
+ *
+ * If \p obj is \ref GRN_TABLE_PAT_KEY table, it prints truncated result as
+ * follows.
+ * ```
+ * #<table:pat Users key:ShortText value:(nil) size:7 columns:[] de...(502)
+ * ```
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the truncated inspected text will be stored.
+ * \param obj The target object to inspect.
+ *
+ * \return The truncated inspected object in text
+ */
 GRN_API grn_obj *
 grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 GRN_API grn_obj *
