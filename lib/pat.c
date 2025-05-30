@@ -1,6 +1,7 @@
 /*
   Copyright (C) 2009-2018  Brazil
   Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2025  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -91,6 +92,12 @@ typedef struct {
 
 #define PAT_DELETING  (1 << 1)
 #define PAT_IMMEDIATE (1 << 2)
+
+static inline bool
+pat_key_is_large_total_key_size(grn_pat *pat)
+{
+  return (pat->header->flags & GRN_OBJ_KEY_LARGE) == GRN_OBJ_KEY_LARGE;
+}
 
 static inline bool
 pat_key_is_embeddable(uint32_t key_size)
