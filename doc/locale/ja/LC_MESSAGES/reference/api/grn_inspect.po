@@ -78,26 +78,14 @@ msgstr "リファレンス"
 msgid "Inspect specified target ``obj`` object."
 msgstr "指定した ``obj`` オブジェクトを調査します。"
 
-msgid "If inspected text is too long, it will be truncated."
-msgstr "調査した内容が長い場合、切り詰められます。"
-
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
-msgid "The buffer object which is inspected(truncated) text will be stored."
-msgstr "調査した内容が(切り詰められて)設定されるオブジェクト"
+msgid "The buffer object which is object name will be stored."
+msgstr "オブジェクト名が設定されるオブジェクト"
 
 msgid "The inspect target object."
 msgstr "対象のオブジェクト"
-
-msgid "``buffer`` object which is object detail is set. If inspected text is longer than 64 characters, inspected text is truncated to it. Otherwise, inspected text will not be truncated."
-msgstr "オブジェクトの詳細が設定される ``buffer`` オブジェクト。調査した内容が64文字よりも長い場合には、その内容は切り詰められます。そうでない場合調査した内容がそのまま設定されます。"
-
-msgid "Even though if obj is ``TABLE_PAT_KEY`` table, it prints truncated result like the following::"
-msgstr "``TABLE_PAT_KEY`` なテーブルであっても、切り詰められた内容は次のように表示されます::"
-
-msgid "The buffer object which is object name will be stored."
-msgstr "オブジェクト名が設定されるオブジェクト"
 
 msgid "``buffer`` object which is name of object is set. If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymous: ID)`` is set to buffer."
 msgstr "オブジェクトの名前が設定される ``buffer`` オブジェクト。指定したオブジェクトが無効な値であれば ``(nil)`` が設定され、内部で使用しているオブジェクトであれば ``(anonymous: ID)`` が設定されます。"
