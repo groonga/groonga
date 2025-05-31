@@ -1,0 +1,46 @@
+table_create ProductNames TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Products TABLE_DAT_KEY ProductNames
+[[0,0.0,0.0],true]
+load --table Products
+[
+  {"_key": "PGroonga"},
+  {"_key": "Groonga"}
+]
+[[0,0.0,0.0],2]
+column_create ProductNames products_key COLUMN_INDEX Products _key
+[[0,0.0,0.0],true]
+select Products --match_columns _key --query "Groonga"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "products_key",
+          "Products"
+        ]
+      ],
+      [
+        2,
+        "Groonga",
+        1
+      ]
+    ]
+  ]
+]

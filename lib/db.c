@@ -15518,6 +15518,7 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
             (accessor->obj->header.flags & GRN_OBJ_KEY_WITH_SIS));
   case GRN_OP_EQUAL:
   case GRN_OP_NOT_EQUAL:
+  case GRN_OP_MATCH:
     switch (accessor->obj->header.type) {
     case GRN_TABLE_HASH_KEY:
     case GRN_TABLE_PAT_KEY:
