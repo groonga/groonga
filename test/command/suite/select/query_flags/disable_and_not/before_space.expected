@@ -1,11 +1,17 @@
-table_create Users TABLE_PAT_KEY ShortText
+table_create Names TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("n", 2)'
+[[0,0.0,0.0],true]
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key": "alice"},
-{"_key": "bob"},
-{"_key": "c-ab"}
+{"name": "alice"},
+{"name": "bob"},
+{"name": "c-ab"}
 ]
 [[0,0.0,0.0],3]
-select Users   --match_columns "_key"   --query "b -a"   --query_flags "DISABLE_AND_NOT"
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"c-ab"]]]]
+column_create Names user_name COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+select Users   --match_columns "name"   --query "b -a"   --query_flags "DISABLE_AND_NOT"
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","ShortText"]],[3,"c-ab"]]]]

@@ -1,13 +1,19 @@
-table_create Users TABLE_PAT_KEY ShortText
+table_create Names TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("n", 2)'
+
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
 
 load --table Users
 [
-{"_key": "alice"},
-{"_key": "alan"},
-{"_key": "ba*"}
+{"name": "alice"},
+{"name": "alan"},
+{"name": "ba*"}
 ]
 
+column_create Names user_name COLUMN_INDEX Users name
+
 select Users \
-  --match_columns "_key" \
+  --match_columns "name" \
   --query "a*" \
   --query_flags "DISABLE_PREFIX_SEARCH"
