@@ -17,8 +17,8 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.1.1 - 2025-05-30"
-msgstr "15.1.1リリース - 2025-05-30"
+msgid "Release 15.1.1 - 2025-06-01"
+msgstr "15.1.1リリース - 2025-06-01"
 
 msgid "This release updates TokenMecab to preserve user-defined entries with spaces as single tokens."
 msgstr "このリリースでは、TokenMecabがスペースを含むユーザー定義エントリを単一トークンとして保持できるようにする変更をおこないました。"
