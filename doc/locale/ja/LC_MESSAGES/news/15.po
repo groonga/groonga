@@ -39,7 +39,7 @@ msgid "Fixed many typos in documentation"
 msgstr "ドキュメント内の複数の誤記を修正"
 
 msgid "[GH-2332](https://github.com/groonga/groonga/pull/2332), [GH-2333](https://github.com/groonga/groonga/pull/2333), [GH-2334](https://github.com/groonga/groonga/pull/2334), [GH-2335](https://github.com/groonga/groonga/pull/2335), [GH-2336](https://github.com/groonga/groonga/pull/2336), [GH-2337](https://github.com/groonga/groonga/pull/2337), [GH-2338](https://github.com/groonga/groonga/pull/2338)"
-msgstr ""
+msgstr "[GH-2332](https://github.com/groonga/groonga/pull/2332)、[GH-2333](https://github.com/groonga/groonga/pull/2333)、[GH-2334](https://github.com/groonga/groonga/pull/2334)、[GH-2335](https://github.com/groonga/groonga/pull/2335)、[GH-2336](https://github.com/groonga/groonga/pull/2336)、[GH-2337](https://github.com/groonga/groonga/pull/2337)、[GH-2338](https://github.com/groonga/groonga/pull/2338)"
 
 msgid "Patched by Vasilii Lakhin."
 msgstr "Vasilii Lakhinさんがパッチ提供。"
