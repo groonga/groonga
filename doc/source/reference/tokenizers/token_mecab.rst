@@ -3,6 +3,8 @@
 .. groonga-command
 .. database: tokenizers_mecab
 
+.. _token-mecab:
+
 ``TokenMecab``
 ================
 
