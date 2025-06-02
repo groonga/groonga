@@ -29,8 +29,23 @@ msgstr "改良"
 msgid "{doc}`/reference/tokenizers/token_mecab`: Fix unintended splitting of user-defined entries with spaces"
 msgstr "{doc}`/reference/tokenizers/token_mecab`: スペースを含むユーザー定義エントリの意図しないトークン分割を修正"
 
-msgid "Previously, {ref}`token-mecab` split user-defined entries containing spaces (e.g., \"search engine\") into separate tokens (\"search\" and \"engine\"). This release fixes this issue, so entries with embedded spaces are now preserved and handled as single tokens like \"search engine\"."
+msgid "Previously, {ref}`token-mecab` split user-defined entries containing spaces (e.g., \"search engine\") into separate tokens (\"search\" and \"engine\"). This release fixes this issue, so entries with embedded spaces are now preserved and handled as single tokens like \"search engine\" as follows."
 msgstr "従来、{ref}`token-mecab`はスペースを含むユーザー定義エントリ（例: \"search engine\"）を\"search\"や\"engine\"のように別々のトークンとして分割していました。本リリースではこの問題を修正し、スペースを含むエントリを\"search engine\"のように単一のトークンとしてトークナイズできるように修正しました。"
+
+msgid "Fixes"
+msgstr ""
+
+msgid "Fixed wide ranging typos across documentation"
+msgstr "ドキュメント全体にわたる幅広いタイポを修正"
+
+msgid "Corrected typos through a series of PRs, each addressing words beginning with specific letter ranges (e.g., \"A–C\", \"D–F\" etc.)."
+msgstr "タイポ対象を特定の文字範囲（例：\"A~C\", \"D~F\"）ごとに分割して複数のPRで修正しました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Vasilii Lakhin"
+msgstr ""
 
 msgid "Release 15.0.9 - 2025-05-08"
 msgstr "15.0.9リリース - 2025-05-08"
@@ -88,9 +103,6 @@ msgstr "このリリースでは語彙表が{ref}`table-hash-key`の場合でも
 
 msgid "Release 15.0.2 - 2025-02-21"
 msgstr "15.0.2リリース - 2025-02-21"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "{ref}`offline-index-construction`: Fixed a bug that options may be ignored in parallel construction"
 msgstr "{ref}`offline-index-construction`: 並列に構築するとオプションを無視することがある問題を修正"
