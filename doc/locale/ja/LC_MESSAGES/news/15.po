@@ -33,7 +33,7 @@ msgid "Previously, {ref}`token-mecab` split user-defined entries containing spac
 msgstr "従来、{ref}`token-mecab`はスペースを含むユーザー定義エントリ（例: \"search engine\"）を\"search\"や\"engine\"のように別々のトークンとして分割していました。本リリースではこの問題を修正し、スペースを含むエントリを\"search engine\"のように単一のトークンとしてトークナイズできるように修正しました。"
 
 msgid "Fixes"
-msgstr ""
+msgstr "修正"
 
 msgid "Fixed wide ranging typos across documentation"
 msgstr "ドキュメント全体にわたる幅広いタイポを修正"
