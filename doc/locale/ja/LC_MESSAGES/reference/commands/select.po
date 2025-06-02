@@ -513,7 +513,6 @@ msgstr "タイプミスを許容した検索をするためには正しい単語
 msgid "Here is an example to use typo tolerance search with Japanese text. ``--default_tokenizer TokenMecab`` for ``JapaneseTerms`` is important. ``JapaneseTerms`` is a lexicon for this case."
 msgstr "以下は日本語テキストでタイプミスを許容した検索をする例です。 ``JapaneseTerms`` の ``--default_tokenizer TokenMecab`` が重要です。この例では ``JapaneseTerms`` が語彙表になります。"
 
-
 msgid "See :ref:`select-fuzzy-query-related-parameters` for details."
 msgstr "詳細は :ref:`select-fuzzy-query-related-parameters` を見てください。"
 
