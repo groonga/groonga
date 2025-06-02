@@ -35,11 +35,14 @@ msgstr "従来、{ref}`token-mecab`はスペースを含むユーザー定義エ
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed wide ranging typos across documentation"
-msgstr "ドキュメント全体にわたる幅広いタイポを修正"
+msgid "Fixed many typos in documentation"
+msgstr "ドキュメント内の複数の誤記を修正"
 
-msgid "Corrected typos through a series of PRs, each addressing words beginning with specific letter ranges (e.g., \"A–C\", \"D–F\" etc.)."
-msgstr "タイポ対象を特定の文字範囲（例：\"A~C\", \"D~F\"）ごとに分割して複数のPRで修正しました。"
+msgid "[GH-2332](https://github.com/groonga/groonga/pull/2332),  [GH-2333](https://github.com/groonga/groonga/pull/2333),  [GH-2334](https://github.com/groonga/groonga/pull/2334),  [GH-2335](https://github.com/groonga/groonga/pull/2335),  [GH-2336](https://github.com/groonga/groonga/pull/2336),  [GH-2337](https://github.com/groonga/groonga/pull/2337),  [GH-2338](https://github.com/groonga/groonga/pull/2338)"
+msgstr ""
+
+msgid "Patched by Vasilii Lakhin."
+msgstr "Vasilii Lakhinさんがパッチ提供。"
 
 msgid "Thanks"
 msgstr "感謝"
