@@ -144,6 +144,7 @@ jobs:
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
       - name: Install test dependencies
         run: |
+          sudo gem install rubygems-requirements-system
           sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
