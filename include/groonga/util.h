@@ -137,6 +137,38 @@ grn_inspect_indented(grn_ctx *ctx,
  */
 GRN_API grn_obj *
 grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+/**
+ * \brief Inspect specified object and return the name of the specified object.
+ *
+ * This function inspects the given \p obj and writes its name into \p buffer.
+ * If \p obj has a name, that name is copied into \p buffer.
+ * Otherwise:
+ * - If \p obj's id is a \ref GRN_ID_NIL, the `(nil)` is stored in \p buffer.
+ * - If \p obj exists but has no name, the `(anonymous:xx)` is stored.
+ *
+ * For example usage:
+ * ```c
+ * grn_obj name;
+ * GRN_TEXT_INIT(&name, 0);
+ * grn_inspect_name(ctx, &name, obj);
+ * printf("%.*s\n", (int)GRN_TEXT_LEN(&name),
+ *        GRN_TEXT_VALUE(&name));
+ * GRN_OBJ_FIN(ctx, &name);
+ * ```
+ *
+ * For example output:
+ * ```
+ * Users
+ * (nil)
+ * (anonymous:42)
+ * ```
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the inspected name will be stored.
+ * \param obj The target object whose name is to be inspected.
+ *
+ * \return The inspected object's name in text.
+ */
 GRN_API grn_obj *
 grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 GRN_API grn_obj *

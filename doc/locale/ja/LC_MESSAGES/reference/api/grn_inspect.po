@@ -81,18 +81,6 @@ msgstr "指定した ``obj`` オブジェクトを調査します。"
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
-msgid "The buffer object which is object name will be stored."
-msgstr "オブジェクト名が設定されるオブジェクト"
-
-msgid "The inspect target object."
-msgstr "対象のオブジェクト"
-
-msgid "``buffer`` object which is name of object is set. If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymous: ID)`` is set to buffer."
-msgstr "オブジェクトの名前が設定される ``buffer`` オブジェクト。指定したオブジェクトが無効な値であれば ``(nil)`` が設定され、内部で使用しているオブジェクトであれば ``(anonymous: ID)`` が設定されます。"
-
-msgid "Specified object name is printed like this::"
-msgstr "調査対象のオブジェクト名は次のように表示されます::"
-
 msgid "The buffer object which is encoding name will be stored."
 msgstr "エンコーディング名が設定されるオブジェクト"
 
@@ -131,6 +119,9 @@ msgstr "クエリーログのフラグは次のように表示されます::"
 
 msgid "Inspect specified target ``obj`` object. It prints inspected text."
 msgstr "指定した ``obj`` を調査し、その内容を出力します。"
+
+msgid "The inspect target object."
+msgstr "対象のオブジェクト"
 
 msgid "If obj is ``ShortText``, it prints like the following::"
 msgstr "オブジェクトが ``ShortText`` なら次のように表示されます::"

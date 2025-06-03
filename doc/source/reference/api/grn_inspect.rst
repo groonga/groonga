@@ -40,29 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is object name will be stored.
-   :param obj: The inspect target object.
-   :return: ``buffer`` object which is name of object is set.
-            If target object is nil, ``(nil)`` is set to buffer, if target object is internally used object, ``(anonymous: ID)`` is set to buffer.
-
-   .. code-block:: c
-
-      grn_obj buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      grn_inspect_name(&context, &buffer, obj);
-      printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   Specified object name is printed like this::
-
-     Users
-
 .. c:function:: grn_obj *grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding)
 
    .. versionadded:: 4.0.8
