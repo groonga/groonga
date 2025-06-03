@@ -138,14 +138,14 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
-          echo "$PWD/install/bin" >> ${GITHUB_PATH}
+          echo "${PWD}/install/bin" >> ${GITHUB_PATH}
       - name: Install test dependencies
         run: |
           sudo gem install rubygems-requirements-system
-          sudo env MAKEFLAGS=-j$(nproc) gem install \
+          sudo --preserve-env env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
             red-arrow \
