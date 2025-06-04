@@ -157,6 +157,7 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
  * ```
  *
  * For example output:
+ * Depending on \p obj, it will output one of the following lines:
  * ```
  * Users
  * (nil)
