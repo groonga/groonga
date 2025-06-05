@@ -72,6 +72,7 @@ if [ "${run_test}" = "yes" ]; then
   if [ ${os} != "amazon-linux" ]; then
     ${DNF} install -y redhat-rpm-config
   fi
+  gem install rubygems-requirements-system
   MAKEFLAGS=-j$(nproc) gem install grntest
 
   export TZ=Asia/Tokyo
