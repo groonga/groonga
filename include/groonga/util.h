@@ -143,8 +143,8 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
  * This function inspects the given \p obj and writes its name into \p buffer.
  * If \p obj has a name, that name is copied into \p buffer.
  * Otherwise:
- * - If \p obj's id is a \ref GRN_ID_NIL, the `(nil)` is stored in \p buffer.
- * - If \p obj exists but has no name, the `(anonymous:xx)` is stored.
+ * - If \p obj's ID is a \ref GRN_ID_NIL, the `(nil)` is stored in \p buffer.
+ * - If \p obj exists but has no name, the `(anonymous:ID)` is stored.
  *
  * For example usage:
  * ```c
