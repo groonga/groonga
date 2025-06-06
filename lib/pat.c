@@ -5269,7 +5269,7 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
 {
   pat_node *node;
   grn_obj key_buf;
-  bool is_large_mode = pat_key_is_large_total_key_size(pat);
+  bool is_large_mode = pat_is_key_large(pat);
 
   GRN_TEXT_PUTS(ctx, buf, "{");
   PAT_AT(pat, GRN_ID_NIL, node);
