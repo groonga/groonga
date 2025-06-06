@@ -172,6 +172,46 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
  */
 GRN_API grn_obj *
 grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+/**
+ * \brief Inspect the given encoding and produce its name.
+ *
+ * \since 4.0.8
+ *
+ * For example usage:
+ * ```c
+ * grn_obj encoding;
+ * GRN_TEXT_INIT(&encoding, 0);
+ * grn_inspect_encoding(ctx, &encoding, GRN_ENC_UTF8);
+ * printf("%.*s\n", (int)GRN_TEXT_LEN(&encoding), GRN_TEXT_VALUE(&encoding));
+ * GRN_OBJ_FIN(ctx, &encoding);
+ * ```
+ *
+ * For example output:
+ * Depending on \p encoding, it will output one of the following lines:
+ * ```
+ * default(UTF-8)
+ * none
+ * EUC-JP
+ * UTF-8
+ * Shift_JIS
+ * Latin-1
+ * KOI8-R
+ * unknown(encoding)
+ * ```
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the encoding name will be stored.
+ * \param encoding The encoding to inspect. Must be one of:
+ *                 - \ref GRN_ENC_DEFAULT
+ *                 - \ref GRN_ENC_NONE
+ *                 - \ref GRN_ENC_EUC_JP
+ *                 - \ref GRN_ENC_UTF8
+ *                 - \ref GRN_ENC_SJIS
+ *                 - \ref GRN_ENC_LATIN1
+ *                 - \ref GRN_ENC_KOI8R
+ *
+ * \return The inspected object's encoding name in text.
+ */
 GRN_API grn_obj *
 grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
 GRN_API grn_obj *
