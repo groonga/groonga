@@ -40,29 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is encoding name will be stored.
-   :param encoding: The inspect target encoding. encoding must be ``GRN_ENC_DEFAULT``, ``GRN_ENC_NONE``, ``GRN_ENC_EUC_JP``, ``GRN_ENC_UTF8``, ``GRN_ENC_SJIS``, ``GRN_ENC_LATIN1`` or ``GRN_ENC_KOI8R``
-   :return: ``buffer`` object which is encoding name is set.
-            If invalid ``encoding`` is given, ``(unknown: ENCODING)`` is set to ``buffer``.
-
-   .. code-block:: c
-
-      grn_obj buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      grn_inspect_encoding(&context, &buffer, GRN_ENC_UTF8);
-      printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   Specified encoding name is printed like the following::
-
-     UTF-8
-
 .. c:function:: grn_obj *grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type)
 
    .. versionadded:: 4.0.8
