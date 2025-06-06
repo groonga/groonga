@@ -89,6 +89,20 @@ typedef struct {
   uint16_t bits;
 } pat_node;
 
+/* This struct almost the same pat_node.
+   We only use this struct when we specify `KEY_LARGE`
+
+   This struct is different from pat_node only in that the size of key.
+   The size of pat_node.key is uint32_t.
+   The size of this struct is uint64_t.
+ */
+typedef struct {
+  grn_id lr[2];
+  uint64_t key;
+  uint16_t check;
+  uint16_t bits;
+} pat_node_large_key;
+
 #define PAT_DELETING  (1 << 1)
 #define PAT_IMMEDIATE (1 << 2)
 
