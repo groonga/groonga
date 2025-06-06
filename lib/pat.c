@@ -5274,7 +5274,7 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
   GRN_TEXT_PUTS(ctx, buf, "{");
   PAT_AT(pat, GRN_ID_NIL, node);
   if (is_large_mode) {
-    ; //TODO: implement if pat node have large key
+    ; // TODO: implement if pat node have large key
   } else {
     if (node->lr[1] != GRN_ID_NIL) {
       GRN_TEXT_PUTS(ctx, buf, "\n");
