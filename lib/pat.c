@@ -94,7 +94,7 @@ typedef struct {
 #define PAT_IMMEDIATE (1 << 2)
 
 static inline bool
-pat_key_is_large_total_key_size(grn_pat *pat)
+pat_is_key_large(grn_pat *pat)
 {
   return (pat->header->flags & GRN_OBJ_KEY_LARGE) == GRN_OBJ_KEY_LARGE;
 }
