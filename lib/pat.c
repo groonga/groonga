@@ -101,7 +101,7 @@ typedef struct {
   uint64_t key;
   uint16_t check;
   uint16_t bits;
-} pat_node_large_key;
+} pat_node_key_large;
 
 #define PAT_DELETING  (1 << 1)
 #define PAT_IMMEDIATE (1 << 2)
