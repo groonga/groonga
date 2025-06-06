@@ -68,7 +68,6 @@ struct grn_pat_header {
   uint32_t n_entries;
   uint32_t curr_rec;
   uint32_t curr_key;
-  uint64_t curr_key_large;
   uint32_t curr_del;
   uint32_t curr_del2;
   uint32_t curr_del3;
@@ -77,6 +76,7 @@ struct grn_pat_header {
   uint32_t truncated;
   uint32_t n_dirty_opens;
   uint64_t wal_id;
+  uint64_t curr_key_large;
   uint32_t reserved[998];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
