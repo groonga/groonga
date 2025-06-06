@@ -136,7 +136,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                      grn_fuzzy_search_optarg *args,
                      grn_hash *h);
 
-uint32_t
+uint64_t
 grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
 bool

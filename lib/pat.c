@@ -5831,10 +5831,14 @@ set_cursor_rk(grn_ctx *ctx,
   return ctx->rc;
 }
 
-uint32_t
+uint64_t
 grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat)
 {
-  return pat->header->curr_key;
+  if (pat_is_key_large(pat)) {
+    return pat->header->curr_key_large;
+  } else {
+    return pat->header->curr_key;
+  }
 }
 
 bool
