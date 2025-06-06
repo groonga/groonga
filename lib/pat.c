@@ -5269,15 +5269,20 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
 {
   pat_node *node;
   grn_obj key_buf;
+  bool is_large_mode = pat_key_is_large_total_key_size(pat);
 
   GRN_TEXT_PUTS(ctx, buf, "{");
   PAT_AT(pat, GRN_ID_NIL, node);
-  if (node->lr[1] != GRN_ID_NIL) {
-    GRN_TEXT_PUTS(ctx, buf, "\n");
-    GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
-    grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, 0, "", buf);
-    GRN_OBJ_FIN(ctx, &key_buf);
-    GRN_TEXT_PUTS(ctx, buf, "\n");
+  if (is_large_mode) {
+    ; //TODO: implement if pat node have large key
+  } else {
+    if (node->lr[1] != GRN_ID_NIL) {
+      GRN_TEXT_PUTS(ctx, buf, "\n");
+      GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
+      grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, 0, "", buf);
+      GRN_OBJ_FIN(ctx, &key_buf);
+      GRN_TEXT_PUTS(ctx, buf, "\n");
+    }
   }
   GRN_TEXT_PUTS(ctx, buf, "}");
 }
