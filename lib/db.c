@@ -1599,7 +1599,7 @@ grn_table_create_validate(grn_ctx *ctx,
   }
 
   if ((flags & GRN_OBJ_KEY_LARGE) && (table_type != GRN_OBJ_TABLE_HASH_KEY &&
-                                      table_type != GRN_OBJ_TABLE_PAT_KEY) ) {
+                                      table_type != GRN_OBJ_TABLE_PAT_KEY)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] "
         "large key support is available for TABLE_HASH_KEY and TABLE_PAT_KEY "
