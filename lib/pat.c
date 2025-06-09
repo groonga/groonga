@@ -5124,10 +5124,13 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   GRN_OUTPUT_INT64(h->n_entries);
   GRN_OUTPUT_CSTR("curr_rec");
   GRN_OUTPUT_INT64(h->curr_rec);
-  GRN_OUTPUT_CSTR("curr_key");
-  GRN_OUTPUT_INT64(h->curr_key);
-  GRN_OUTPUT_CSTR("curr_key_large");
-  GRN_OUTPUT_UINT64(h->curr_key_large);
+  if (!pat_is_key_large(pat)) {
+    GRN_OUTPUT_CSTR("curr_key");
+    GRN_OUTPUT_INT64(h->curr_key);
+  } else {
+    GRN_OUTPUT_CSTR("curr_key_large");
+    GRN_OUTPUT_UINT64(h->curr_key_large);
+  }
   GRN_OUTPUT_CSTR("curr_del");
   GRN_OUTPUT_INT64(h->curr_del);
   GRN_OUTPUT_CSTR("curr_del2");
