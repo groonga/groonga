@@ -1603,8 +1603,7 @@ grn_table_create_validate(grn_ctx *ctx,
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] "
         "large key support is available for TABLE_HASH_KEY and TABLE_PAT_KEY "
-        "key table: "
-        "<%.*s>(%s)",
+        "key table: <%.*s>(%s)",
         name_size,
         name,
         table_type_name);
