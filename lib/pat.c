@@ -1,6 +1,7 @@
 /*
   Copyright (C) 2009-2018  Brazil
   Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2025  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -91,6 +92,12 @@ typedef struct {
 
 #define PAT_DELETING  (1 << 1)
 #define PAT_IMMEDIATE (1 << 2)
+
+static inline bool
+pat_is_key_large(grn_pat *pat)
+{
+  return (pat->header->flags & GRN_OBJ_KEY_LARGE) == GRN_OBJ_KEY_LARGE;
+}
 
 static inline bool
 pat_key_is_embeddable(uint32_t key_size)
@@ -1548,6 +1555,7 @@ _grn_pat_create(grn_ctx *ctx,
   header->n_entries = 0;
   header->curr_rec = 0;
   header->curr_key = 0;
+  header->curr_key_large = 0;
   header->curr_del = 0;
   header->curr_del2 = 0;
   header->curr_del3 = 0;
@@ -5824,10 +5832,14 @@ set_cursor_rk(grn_ctx *ctx,
   return ctx->rc;
 }
 
-uint32_t
+uint64_t
 grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat)
 {
-  return pat->header->curr_key;
+  if (pat_is_key_large(pat)) {
+    return pat->header->curr_key_large;
+  } else {
+    return pat->header->curr_key;
+  }
 }
 
 bool
