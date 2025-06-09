@@ -62,7 +62,7 @@ on:
       - 'vendor/mruby/**'
   schedule:
     - cron: |
-        0 0 * * *
+        0 21 * * *
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
