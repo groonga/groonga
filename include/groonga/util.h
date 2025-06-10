@@ -214,6 +214,80 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
  */
 GRN_API grn_obj *
 grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
+/**
+ * \brief Inspect the given type and produce its name.
+ *
+ * \since 4.0.8
+ *
+ * For example usage:
+ * ```c
+ * grn_obj type_name;
+ * GRN_TEXT_INIT(&type_name, 0);
+ * grn_inspect_type(ctx, &type_name, obj->header.type);
+ * printf("#=> %.*s\n", (int)GRN_TEXT_LEN(&type_name),
+ * GRN_TEXT_VALUE(&type_name)); GRN_OBJ_FIN(ctx, &type_name);
+ * ```
+ *
+ * For example output:
+ * Depending on \p type, it will output one of the following lines:
+ *
+ * Table types:
+ * ```
+ * GRN_DB
+ * GRN_TABLE_DAT_KEY
+ * GRN_TABLE_HASH_KEY
+ * GRN_TABLE_NO_KEY
+ * GRN_TABLE_PAT_KEY
+ * ```
+ *
+ * Column types:
+ * ```
+ * GRN_COLUMN_FIX_SIZE
+ * GRN_COLUMN_INDEX
+ * GRN_COLUMN_VAR_SIZE
+ * ```
+ *
+ * Data container types:
+ * ```
+ * GRN_BULK
+ * GRN_PTR
+ * GRN_PVECTOR
+ * GRN_UVECTOR
+ * GRN_VECTOR
+ * ```
+ *
+ * Cursor types:
+ * ```
+ * GRN_CURSOR_COLUMN_GEO_INDEX
+ * GRN_CURSOR_COLUMN_INDEX
+ * GRN_CURSOR_TABLE_DAT_KEY
+ * GRN_CURSOR_TABLE_HASH_KEY
+ * GRN_CURSOR_TABLE_NO_KEY
+ * GRN_CURSOR_TABLE_PAT_KEY
+ * ```
+ *
+ * Other object types:
+ * ```
+ * GRN_ACCESSOR
+ * GRN_EXPR
+ * GRN_MSG
+ * GRN_PATSNIP
+ * GRN_PROC
+ * GRN_QUERY
+ * GRN_SNIP
+ * GRN_STRING
+ * GRN_TYPE
+ * GRN_VOID
+ * (unknown: 0x42)
+ * ```
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the type name will be stored.
+ * \param type The type to inspect. This is typically obtained from an object's
+ *             header.type field.
+ *
+ * \return The inspected object's type name in text.
+ */
 GRN_API grn_obj *
 grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
 GRN_API grn_obj *

@@ -81,17 +81,6 @@ msgstr "指定した ``obj`` オブジェクトを調査します。"
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
-msgid "The buffer object which is type name will be stored."
-msgstr "型の名前が設定されるオブジェクト"
-
-msgid "The inspect target type."
-msgstr "調査対象の型"
-
-msgid "``buffer`` object which is type name is set. If invalid ``type`` is given, ``(unknown: TYPE_IN_HEX)`` is set to ``buffer``."
-msgstr "型の名前が設定される ``buffer`` オブジェクト。正しくない ``type`` が渡された場合、 ``(unknown: TYPE_IN_HEX)`` が ``buffer`` に設定されます。"
-
-msgid "If obj is builtin type, type name is printed like the following::"
-msgstr "``obj`` が組込の型の場合、型の名前は次のように表示されます:"
 
 msgid "Inspect specified target ``flag``."
 msgstr "指定した ``flag`` を調査します。"

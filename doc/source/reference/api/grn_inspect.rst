@@ -40,29 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is type name will be stored.
-   :param type: The inspect target type.
-   :return: ``buffer`` object which is type name is set.
-            If invalid ``type`` is given, ``(unknown: TYPE_IN_HEX)`` is set to ``buffer``.
-
-   .. code-block:: c
-
-      grn_obj buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      grn_inspect_type(&context, &buffer, obj->header.type);
-      printf("#=> %.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   If obj is builtin type, type name is printed like the following::
-
-     GRN_TYPE
-
 .. c:function:: grn_obj *grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
 
    .. versionadded:: 7.0.4
