@@ -1,4 +1,4 @@
-table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+table_create --name Users --flags TABLE_PAT_KEY|KEY_LARGE --key_type ShortText
 [[0,0.0,0.0],true]
 check Users
 [
