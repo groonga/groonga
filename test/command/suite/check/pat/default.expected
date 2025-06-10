@@ -1,5 +1,10 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
 [[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"Alice"}
+]
+[[0,0.0,0.0],1]
 check Users
 [
   [
@@ -14,9 +19,9 @@ check Users
       "value_size": 0,
       "tokenizer": 0,
       "normalizer": 0,
-      "n_entries": 0,
-      "curr_rec": 0,
-      "curr_key": 0,
+      "n_entries": 1,
+      "curr_rec": 1,
+      "curr_key": 5,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,

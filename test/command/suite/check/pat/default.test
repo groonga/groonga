@@ -1,2 +1,6 @@
 table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+load --table Users
+[
+{"_key":"Alice"}
+]
 check Users
