@@ -633,6 +633,10 @@ jobs:
           - runs-on: windows-2022
             vc-toolset-version: 143
             vs-version: 2022
+          - runs-on: windows-2022
+            vc-toolset-version: 143
+            vs-version: 2022
+            memory-debug: "ON"
           - runs-on: windows-2019
             vc-toolset-version: 142
             vs-version: 2019
@@ -680,6 +684,9 @@ jobs:
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-${Env:VC_ARCHITECTURE}-vs${{ matrix.vs-version }}"
+          if ("${{ matrix.memory-debug }}" -eq "ON") {
+            $INSTALL_FOLDER += "-memory-debug"
+          }
           $INSTALL_FOLDER_WITH_VCRUNTIME = "${INSTALL_FOLDER}-with-vcruntime"
           $INSTALL_PARENT_FOLDER = "install"
           $INSTALL_PARENT_FOLDER_WITH_VCRUNTIME = `
@@ -774,6 +781,9 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGROONGA_NORMALIZER_MYSQL_DOC_DIR=share/groonga-normalizer-mysql
+          if "${{ matrix.memory-debug }}" == "ON" (
+            set CMAKE_ARGS=%CMAKE_ARGS% --preset=memory-debug
+          )
           cmake %CMAKE_ARGS% || (type ..\groonga-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\groonga-build || exit /B
           cmake --install ..\groonga-build || exit /B
@@ -879,9 +889,11 @@ jobs:
 
       # Test
       - uses: ruby/setup-ruby@v1
+        if: matrix.memory-debug != 'ON'
         with:
           ruby-version: ruby
       - name: Install test dependencies
+        if: matrix.memory-debug != 'ON'
         run: |
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
           gem install `
@@ -889,10 +901,12 @@ jobs:
             pkg-config `
             red-arrow
       - name: "Test: command line"
+        if: matrix.memory-debug != 'ON'
         run: |
           ruby test\command_line\run-test.rb `
             --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: "Test: HTTP: reference count: Apache Arrow: chunked"
+        if: matrix.memory-debug != 'ON'
         run: |
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
           grntest `
