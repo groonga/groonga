@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1749516046090,
+  "lastUpdate": 1749519790786,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "9ca60fbfa2e3436a06bc5419ca06a82b09cdc299",
-          "message": "packages: add support for Amazon Linux 2023 (#1949)\n\nGitHub: fix GH-1845\r\n\r\nAmazon Linux 2023 package doesn't have MeCab support because Amazon\r\nLinux 2023 doesn't provide MeCab package. Existing tests work without\r\nMeCab support. (Tests that need MeCab support are omitted.)\r\n\r\nAmazon Linux 2023 doesn't provide MessagePack packages but MessagePack\r\nsupport is enabled by using bundled MessagePack.\r\n\r\nAmazon Linux 2023 doesn't provide simdjson packages but simdjson support\r\nis enabled by using bundled simdjson.\r\n\r\nReported by Watson. Thanks!!!\r\n\r\nReported by takoyaki-nyokki. Thanks!!!",
-          "timestamp": "2024-09-10T08:40:12+09:00",
-          "tree_id": "83c30800c6b4ebb4cd6ea4f41c6a6827c67e9227",
-          "url": "https://github.com/groonga/groonga/commit/9ca60fbfa2e3436a06bc5419ca06a82b09cdc299"
-        },
-        "date": 1725925482807,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.36351562099997636,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.016847000000000154 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.2881184030000554,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.021112999999999937 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.01678934999995363,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00041499999999991544 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015480379999928573,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003719999999998169 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.3852556580000055,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00013299999999999423 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.24677575999999135,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0062980000000000536 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.14230476899990663,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006366999999999928 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.016642035999950622,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019330000000000735 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.017017992999967646,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0017979999999998275 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.056114847000003465,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007477999999999763 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.0542409650001332,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00815299999999991 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.017863994999913757,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019460000000007527 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.03007354600003964,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.005354000000000275 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017299033999904623,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0014940000000005504 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "horimoto@clear-code.com",
+            "name": "Horimoto Yasuhiro",
+            "username": "komainu8"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3991f5227f19b6f4ec14fdc0614c4757a09fdb94",
+          "message": "pat: allow use KEY_LARGE flag on TABLE_PAT_KEY (#2362)\n\nThis commit is part of the work to implement GH-2349.\n\nCurrently, we can only specify KEY_LARGE flag on TABLE_HASH_KEY table.\nWe can specify KEY_LARGE flag on TABLE_PAT_KEY table too by this commit.\n\nHowever, even if we specify KEY_LARGE flag on TABLE_PAT_KEY table,\nbehavior is not almost change currently.\nWe will implement the behavior of KEY_LARGE flag on TABLE_PAT_KEY in the\nother commit.\n\n---------\n\nCo-authored-by: Abe Tomoaki <abe@enzou.tokyo>",
+          "timestamp": "2025-06-10T10:37:29+09:00",
+          "tree_id": "c40b129c857a8047e12957e399ee2175d6f6d353",
+          "url": "https://github.com/groonga/groonga/commit/3991f5227f19b6f4ec14fdc0614c4757a09fdb94"
+        },
+        "date": 1749519785593,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.36890541699995083,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.019636000000000042 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2784297549999337,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017075000000000395 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015338608999911685,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00038200000000013223 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.023418730000003052,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003899999999996684 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.3756167540000206,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00015799999999999148 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.22579486400013593,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006099000000000007 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13397817799994982,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005759999999999849 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01660356600001478,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015479999999999938 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016790076000063436,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015639999999999266 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06120440000000826,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007012999999999547 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.061896092000040426,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007273000000000057 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.018025614000009682,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015689999999994875 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.023762250999880052,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016610000000005787 s\nthreads: undefined"
           }
         ]
       }
