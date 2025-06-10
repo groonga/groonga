@@ -81,18 +81,6 @@ msgstr "指定した ``obj`` オブジェクトを調査します。"
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
-msgid "The buffer object which is encoding name will be stored."
-msgstr "エンコーディング名が設定されるオブジェクト"
-
-msgid "The inspect target encoding. encoding must be ``GRN_ENC_DEFAULT``, ``GRN_ENC_NONE``, ``GRN_ENC_EUC_JP``, ``GRN_ENC_UTF8``, ``GRN_ENC_SJIS``, ``GRN_ENC_LATIN1`` or ``GRN_ENC_KOI8R``"
-msgstr "調査対象のエンコーディング。エンコーディングは ``GRN_ENC_DEFAULT``、 ``GRN_ENC_NONE``、 ``GRN_ENC_EUC_JP``、 ``GRN_ENC_UTF8``、 ``GRN_ENC_SJIS``、 ``GRN_ENC_LATIN1``、 ``GRN_ENC_KOI8R`` のいずれかでなければなりません。"
-
-msgid "``buffer`` object which is encoding name is set. If invalid ``encoding`` is given, ``(unknown: ENCODING)`` is set to ``buffer``."
-msgstr "エンコーディング名が設定される ``buffer`` オブジェクト。不正な ``encoding`` が渡された場合、 ``(unknown: ENCODING)`` が ``buffer`` に設定されます。"
-
-msgid "Specified encoding name is printed like the following::"
-msgstr "指定したエンコーディング名が次のように表示されます::"
-
 msgid "The buffer object which is type name will be stored."
 msgstr "型の名前が設定されるオブジェクト"
 
