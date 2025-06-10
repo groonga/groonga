@@ -5,7 +5,7 @@ load --table Users
 {"_key":"Alice"}
 ]
 [[0,0.0,0.0],1]
-check Users
+check --obj Users
 [
   [
     0,

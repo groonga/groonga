@@ -3,4 +3,4 @@ load --table Users
 [
 {"_key":"Alice"}
 ]
-check Users
+check --obj Users
