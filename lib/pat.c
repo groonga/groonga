@@ -1125,7 +1125,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
   } while (0)
 
 static inline void
-pat_add_curr_total_key_size(grn_pat *pat, uint32_t len)
+pat_increase_curr_key(grn_pat *pat, uint32_t len)
 {
   if (pat_is_key_large(pat)) {
     pat->header->curr_key_large += len;
@@ -1176,7 +1176,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     }
     grn_memcpy(dest, key, len);
   }
-  pat_add_curr_total_key_size(pat, len);
+  pat_increase_curr_key(pat, len);
   return res;
 }
 
