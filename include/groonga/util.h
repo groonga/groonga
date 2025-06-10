@@ -224,8 +224,10 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  * grn_obj type_name;
  * GRN_TEXT_INIT(&type_name, 0);
  * grn_inspect_type(ctx, &type_name, obj->header.type);
- * printf("#=> %.*s\n", (int)GRN_TEXT_LEN(&type_name),
- * GRN_TEXT_VALUE(&type_name)); GRN_OBJ_FIN(ctx, &type_name);
+ * printf("%.*s\n",
+ *        (int)GRN_TEXT_LEN(&type_name),
+ *        GRN_TEXT_VALUE(&type_name));
+ * GRN_OBJ_FIN(ctx, &type_name);
  * ```
  *
  * For example output:
