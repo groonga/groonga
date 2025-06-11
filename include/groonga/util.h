@@ -285,9 +285,9 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  *
  * \param ctx The context object.
  * \param buffer The buffer where the type name will be stored.
- * \param type The type to inspect. This is typically obtained from an object's
- *             header.type field.
- *
+ * \param type The type to inspect. This is typically obtained from an
+ *             \ref grn_obj_header::type.
+
  * \return The inspected object's type name in text.
  */
 GRN_API grn_obj *
