@@ -1321,9 +1321,9 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | 
-          |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------| 
-          | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   | 
+          | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 |
+          |--------|--------|  |--------|--------|  |--------|--------|  |--------|--------|
+          | 0x00   | 0x9a   |, | 0x00   | 0x99   |, | 0x00   | 0x19   |, | 0x3f   | 0x3f   |
 
        In case of the ``Float`` / ``Float32`` type data, please refer
        to explanations for
@@ -1390,7 +1390,7 @@ Here are available flags:
 
           | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 | 
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------| 
-          | 0x55   | 0x12   | 0x45   | 0x00   |, | 0x11   | 0x13   | 0x46   | 0x00   |, | 0x29   | 0x14   | 0x47   | 0x00   |, | 0xA7   | 0x14   | 0x48   | 0x00   | 
+          | 0x55   | 0x12   | 0x45   | 0x00   |, | 0x11   | 0x13   | 0x46   | 0x00   |, | 0x29   | 0x14   | 0x47   | 0x00   |, | 0xA7   | 0x14   | 0x48   | 0x00   |
 
        Applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be
        following byte columns.
@@ -1399,7 +1399,7 @@ Here are available flags:
 
           | Byte 0 | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 | Byte 3 |
           |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|
-          | 0x55   | 0x11   | 0x29   | 0xA7   |, | 0x12   | 0x13   | 0x14   | 0x14   |, | 0x45   | 0x46   | 0x47   | 0x48   |, | 0x00   | 0x00   | 0x00   | 0x00   | 
+          | 0x55   | 0x11   | 0x29   | 0xA7   |, | 0x12   | 0x13   | 0x14   | 0x14   |, | 0x45   | 0x46   | 0x47   | 0x48   |, | 0x00   | 0x00   | 0x00   | 0x00   |
 
        Pay attention to the data of ``Byte 1``, ``Byte 2``, and ``Byte
        3`` after the shuffling. The data increments of ``Byte 1`` are
@@ -1471,9 +1471,9 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 | 
-          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
-          | 0x00   | 0x00   | 0x00   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
+          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 |
+          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|
+          | 0x00   | 0x00   | 0x00   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   |
 
        Pay attention to the ``Byte 0``. You can find the value ``0``
        in continuance for ``Byte 0``. If
@@ -1483,9 +1483,9 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 | 
-          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
-          | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
+          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 |
+          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|
+          | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   |
 
        Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` to those
        data can be expected to increase the compression rate even if
@@ -1543,9 +1543,9 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 | 
-          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
-          | 0x00   | 0x00   | 0x00   |, | 0x00   | 0x00   | 0x00   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
+          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 |
+          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|
+          | 0x00   | 0x00   | 0x00   |, | 0x00   | 0x00   | 0x00   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   |
 
        Pay attention to the ``Byte 0`` and ``Byte 1``. You can find
        the value ``0`` in continuance for ``Byte 0`` and ``Byte1``.
@@ -1556,9 +1556,9 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 | 
-          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------| 
-          | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   | 
+          | Byte 0 | Byte 0 | Byte 0 |  | Byte 1 | Byte 1 | Byte 1 |  | Byte 2 | Byte 2 | Byte 2 |  | Byte 3 | Byte 3 | Byte 3 |
+          |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|  |--------|--------|--------|
+          | 0x00   | 0x48   | 0x9a   |, | 0x00   | 0xe1   | 0x99   |, | 0xa0   | 0x6a   | 0x91   |, | 0x3f   | 0x40   | 0x40   |
 
        Applying ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTE`` to those
        data can be expected to increase the compression rate even if
