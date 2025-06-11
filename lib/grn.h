@@ -197,6 +197,10 @@ typedef int grn_sock;
 #  define INT64_MAX (9223372036854775807)
 #endif /* INT64_MAX */
 
+#ifndef UINT64_MAX
+#  define UINT64_MAX (18446744073709551615)
+#endif /* UINT64_MAX */
+
 #ifndef INT64_MIN
 #  define INT64_MIN (-9223372036854775808)
 #endif /* INT64_MIN */
