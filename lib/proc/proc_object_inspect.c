@@ -112,7 +112,7 @@ command_object_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
     grn_ctx_output_cstr(ctx, "total_size");
     grn_ctx_output_uint64(ctx, grn_pat_total_key_size(ctx, pat));
     grn_ctx_output_cstr(ctx, "max_total_size");
-    grn_ctx_output_uint64(ctx, GRN_PAT_MAX_TOTAL_KEY_SIZE);
+    grn_ctx_output_uint64(ctx, grn_pat_max_total_key_size(ctx, pat));
   }
   grn_ctx_output_map_close(ctx);
 }

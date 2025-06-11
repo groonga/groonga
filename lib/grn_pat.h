@@ -30,6 +30,7 @@ extern "C" {
 
 #define GRN_PAT_MAX_KEY_SIZE       GRN_TABLE_MAX_KEY_SIZE
 #define GRN_PAT_MAX_TOTAL_KEY_SIZE (UINT32_MAX - 1)
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE_LARGE (UINT64_MAX - 1)
 
 struct _grn_pat {
   grn_db_obj obj;
@@ -138,6 +139,8 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
 
 uint64_t
 grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
+uint64_t
+grn_pat_max_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
 bool
 grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
