@@ -1124,17 +1124,17 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
     ptr = grn_io_array_at(ctx, pat->io, SEGMENT_KEY, pos, &flags);             \
   } while (0)
 
-static inline uint32_t
+static inline uint64_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
   //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
-  uint32_t res = pat->header->curr_key;
-  if (res < GRN_PAT_MAX_TOTAL_KEY_SIZE &&
-      len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
+  uint64_t res = grn_pat_total_key_size(ctx, pat);
+  if (res < grn_pat_max_total_key_size(ctx, pat) &&
+      len > grn_pat_max_total_key_size(ctx, pat) - res) {
     GRN_DEFINE_NAME(pat);
     ERR(GRN_NOT_ENOUGH_SPACE,
         "[pat][key][put] total key size is over: <%.*s>: "
-        "max=%u: current=%u: new key size=%u",
+        "max=%u: current=%lu: new key size=%u",
         name_size,
         name,
         GRN_PAT_MAX_TOTAL_KEY_SIZE,
@@ -1144,11 +1144,15 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   }
 
   /* Check if the key to be added can fit in the current segment. */
-  uint32_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
+  uint64_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
   if (res >> W_OF_KEY_IN_A_SEGMENT != end_segment) {
     /* If it does not fit, update `curr_key`(`res`) to add it to the next
      * segment. */
-    res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
+    if (pat_is_key_large(pat)) {
+      res = pat->header->curr_key_large = end_segment << W_OF_KEY_IN_A_SEGMENT;
+    } else {
+      res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
+    }
   }
   {
     uint8_t *dest;
@@ -1157,7 +1161,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
       GRN_DEFINE_NAME(pat);
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[pat][key][put] failed to allocate memory for new key: <%.*s>: "
-          "new offset:%u key size:%u",
+          "new offset:%lu key size:%u",
           name_size,
           name,
           res,
