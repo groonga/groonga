@@ -1528,12 +1528,12 @@ _grn_pat_create(grn_ctx *ctx,
     grn_io_array_spec array_spec[3];
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
-      /* Max total key size is
-         GRN_PAT_SEGMENT_SIZE(4MiB) * 0x100000(1024 * 1024) = 4TiB */
-      array_spec[SEGMENT_KEY].max_n_segments = 0x100000;
+      /* Max total key size is 1TiB
+         GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
+      array_spec[SEGMENT_KEY].max_n_segments = 0x40000;
     } else {
-      /* Max total key size is
-         GRN_PAT_SEGMENT_SIZE(4MiB) * 0x400(1024) = 4GiB */
+      /* Max total key size is 4GiB
+         GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
       array_spec[SEGMENT_KEY].max_n_segments = 0x400;
     }
     array_spec[SEGMENT_PAT].w_of_element = 4;
