@@ -5850,9 +5850,9 @@ uint64_t
 grn_pat_max_total_key_size(grn_ctx *ctx, grn_pat *pat)
 {
   if (pat_is_key_large(pat)) {
-    return (uint64_t)GRN_PAT_MAX_TOTAL_KEY_SIZE_LARGE;
+    return GRN_PAT_MAX_TOTAL_KEY_SIZE_LARGE;
   } else {
-    return (uint64_t)GRN_PAT_MAX_TOTAL_KEY_SIZE;
+    return GRN_PAT_MAX_TOTAL_KEY_SIZE;
   }
 }
 
