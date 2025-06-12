@@ -1532,11 +1532,11 @@ _grn_pat_create(grn_ctx *ctx,
     if (flags & GRN_OBJ_KEY_LARGE) {
       /* Max total key size is 1TiB
          GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
-      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_SEGMENTS_LARGE;
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
     } else {
       /* Max total key size is 4GiB
          GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
-      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_SEGMENTS_SMALL;
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_SMALL;
     }
     array_spec[SEGMENT_PAT].w_of_element = 4;
     array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
