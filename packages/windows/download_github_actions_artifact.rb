@@ -6,14 +6,15 @@ require "open-uri"
 require "octokit"
 
 if ARGV.size < 3 || ARGV.size > 4
-  $stderr.puts("Usage: #{$0} TAG OUTPUT_DIRECTORY TYPE [REPOSITORY]")
+  $stderr.puts("Usage: #{$0} TAG OUTPUT_DIRECTORY TYPE [OWNER]")
   $stderr.puts(" e.g.: #{$0} v9.0.6 files all")
-  $stderr.puts(" e.g.: #{$0} v9.0.6 files all groonga/groonga")
+  $stderr.puts(" e.g.: #{$0} v9.0.6 files all groonga")
   exit(false)
 end
 
-tag, output_directory, target_type, repository = ARGV
-repository ||= "groonga/groonga"
+tag, output_directory, target_type, owner = ARGV
+owner ||= "groonga"
+repository = "#{owner}/groonga"
 
 client = Octokit::Client.new
 client.access_token = ENV["GITHUB_ACCESS_TOKEN"]
