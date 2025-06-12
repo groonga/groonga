@@ -1527,7 +1527,7 @@ _grn_pat_create(grn_ctx *ctx,
   {
     grn_io_array_spec array_spec[3];
     array_spec[SEGMENT_KEY].w_of_element = 0;
-    if (pat_is_key_large(pat)) {
+    if (flags & GRN_OBJ_KEY_LARGE) {
       /* Max total key size is
          GRN_PAT_SEGMENT_SIZE(4MiB) * 0x100000(1024 * 1024) = 4TiB */
       array_spec[SEGMENT_KEY].max_n_segments = 0x100000;
