@@ -43,6 +43,8 @@
 #define SIS_MASK_IN_A_SEGMENT 0x7ffff
 #define SEG_NOT_ASSIGNED      0xffff
 #define GRN_PAT_MAX_SEGMENT   0x1000
+#define GRN_PAT_MAX_SEGMENTS_LARGE 0x40000
+#define GRN_PAT_MAX_SEGMENTS_SMALL 0x400
 #define GRN_PAT_MDELINFOS     (GRN_PAT_NDELINFOS - 1)
 
 #define GRN_PAT_BIN_KEY       0x70000
@@ -1531,11 +1533,11 @@ _grn_pat_create(grn_ctx *ctx,
     if (flags & GRN_OBJ_KEY_LARGE) {
       /* Max total key size is 1TiB
          GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
-      array_spec[SEGMENT_KEY].max_n_segments = 0x40000;
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_SEGMENTS_LARGE;
     } else {
       /* Max total key size is 4GiB
          GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
-      array_spec[SEGMENT_KEY].max_n_segments = 0x400;
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_SEGMENTS_SMALL;
     }
     array_spec[SEGMENT_PAT].w_of_element = 4;
     array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
