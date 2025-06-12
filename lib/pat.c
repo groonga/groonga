@@ -1529,7 +1529,6 @@ _grn_pat_create(grn_ctx *ctx,
   {
     grn_io_array_spec array_spec[3];
     array_spec[SEGMENT_KEY].w_of_element = 0;
-    // pat->header->flags is not set yet. So, we use flags directly
     if (flags & GRN_OBJ_KEY_LARGE) {
       /* Max total key size is 1TiB
          GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
