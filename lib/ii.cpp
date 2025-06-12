@@ -97,6 +97,7 @@
 
 #define CHUNK_SPLIT             0x80000000
 #define CHUNK_SPLIT_THRESHOLD   0x60000
+#define CHUNK_SPLIT_OFF(tid)    ((tid) & ~CHUNK_SPLIT)
 
 #define MAX_N_ELEMENTS          5
 
@@ -3793,7 +3794,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
             data->n_terms,
             (int)GRN_TEXT_LEN(&(data->inspected_term)),
             GRN_TEXT_VALUE(&(data->inspected_term)),
-            data->term->tid & GRN_ID_MAX,
+            CHUNK_SPLIT_OFF(data->term->tid),
             data->nth_chunk,
             data->n_chunks);
     return;
@@ -3801,7 +3802,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
 
   decoded_size = grn_decv(ctx,
                           data->ii,
-                          data->term->tid & GRN_ID_MAX,
+                          CHUNK_SPLIT_OFF(data->term->tid),
                           chunk_current,
                           chunk_end - chunk_current,
                           data->data_vector);
@@ -3816,7 +3817,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
             data->n_terms,
             (int)GRN_TEXT_LEN(&(data->inspected_term)),
             GRN_TEXT_VALUE(&(data->inspected_term)),
-            data->term->tid & GRN_ID_MAX,
+            CHUNK_SPLIT_OFF(data->term->tid),
             data->nth_chunk,
             data->n_chunks);
     return;
@@ -3904,7 +3905,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
             data->n_terms,
             (int)GRN_TEXT_LEN(&(data->inspected_term)),
             GRN_TEXT_VALUE(&(data->inspected_term)),
-            data->term->tid & GRN_ID_MAX,
+            CHUNK_SPLIT_OFF(data->term->tid),
             data->n_chunks);
 
     for (data->nth_chunk = 0; data->nth_chunk < data->n_chunks;
@@ -3922,7 +3923,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
                 data->n_terms,
                 (int)GRN_TEXT_LEN(&(data->inspected_term)),
                 GRN_TEXT_VALUE(&(data->inspected_term)),
-                data->term->tid & GRN_ID_MAX,
+                CHUNK_SPLIT_OFF(data->term->tid),
                 data->nth_chunk,
                 data->n_chunks);
         return;
@@ -3943,7 +3944,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
               data->n_terms,
               (int)GRN_TEXT_LEN(&(data->inspected_term)),
               GRN_TEXT_VALUE(&(data->inspected_term)),
-              data->term->tid & GRN_ID_MAX,
+              CHUNK_SPLIT_OFF(data->term->tid),
               data->nth_chunk,
               data->n_chunks,
               info.segno,
@@ -3973,7 +3974,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
                   data->n_terms,
                   (int)GRN_TEXT_LEN(&(data->inspected_term)),
                   GRN_TEXT_VALUE(&(data->inspected_term)),
-                  data->term->tid & GRN_ID_MAX,
+                  CHUNK_SPLIT_OFF(data->term->tid),
                   data->nth_chunk,
                   data->n_chunks);
           continue;
@@ -3996,7 +3997,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
               data->n_terms,
               (int)GRN_TEXT_LEN(&(data->inspected_term)),
               GRN_TEXT_VALUE(&(data->inspected_term)),
-              data->term->tid & GRN_ID_MAX,
+              CHUNK_SPLIT_OFF(data->term->tid),
               data->n_chunks);
       merge_dump_source_chunk_raw(ctx, data, chunk_current, chunk_end);
     }
@@ -4013,7 +4014,7 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
             data->n_terms,
             (int)GRN_TEXT_LEN(&(data->inspected_term)),
             GRN_TEXT_VALUE(&(data->inspected_term)),
-            data->term->tid & GRN_ID_MAX,
+            data->term->tid,
             data->n_chunks);
     merge_dump_source_chunk_raw(ctx, data, chunk_start, chunk_end);
   }
@@ -4076,7 +4077,7 @@ merge_dump_source(grn_ctx *ctx,
     GRN_BULK_REWIND(&(data.inspected_term));
     grn_ii_get_term(ctx,
                     ii,
-                    data.term->tid & GRN_ID_MAX,
+                    CHUNK_SPLIT_OFF(data.term->tid),
                     &(data.inspected_term));
     GRN_LOG(ctx,
             data.log_level,
@@ -4088,7 +4089,7 @@ merge_dump_source(grn_ctx *ctx,
             data.n_terms,
             (int)GRN_TEXT_LEN(&(data.inspected_term)),
             GRN_TEXT_VALUE(&(data.inspected_term)),
-            data.term->tid & GRN_ID_MAX,
+            CHUNK_SPLIT_OFF(data.term->tid),
             data.term->pos_in_chunk,
             data.term->size_in_chunk,
             data.term->pos_in_buffer,
@@ -4277,7 +4278,7 @@ merger_report_error(grn_ctx *ctx,
   grn_obj term;
   GRN_DEFINE_NAME(data->ii);
   GRN_TEXT_INIT(&term, 0);
-  grn_ii_get_term(ctx, data->ii, data->term_id & GRN_ID_MAX, &term);
+  grn_ii_get_term(ctx, data->ii, CHUNK_SPLIT_OFF(data->term_id), &term);
   if (posting1 && posting2) {
     CRIT(GRN_FILE_CORRUPT,
          "[ii][broken] %s: <%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
@@ -4286,7 +4287,7 @@ merger_report_error(grn_ctx *ctx,
          name,
          (int)GRN_TEXT_LEN(&term),
          GRN_TEXT_VALUE(&term),
-         data->term_id,
+         CHUNK_SPLIT_OFF(data->term_id),
          posting1->rid,
          posting1->sid,
          posting2->rid,
@@ -4299,7 +4300,7 @@ merger_report_error(grn_ctx *ctx,
          name,
          (int)GRN_TEXT_LEN(&term),
          GRN_TEXT_VALUE(&term),
-         data->term_id,
+         CHUNK_SPLIT_OFF(data->term_id),
          posting1->rid,
          posting1->sid);
   }
@@ -4395,7 +4396,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
           grn_obj term;
           GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
-          grn_ii_get_term(ctx, data->ii, data->term_id & GRN_ID_MAX, &term);
+          grn_ii_get_term(ctx, data->ii, CHUNK_SPLIT_OFF(data->term_id), &term);
           GRN_LOG(
             ctx,
             GRN_LOG_WARNING,
@@ -4406,7 +4407,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
             name,
             (int)GRN_TEXT_LEN(&term),
             GRN_TEXT_VALUE(&term),
-            data->term_id,
+            CHUNK_SPLIT_OFF(data->term_id),
             chunk_data->id.rid,
             chunk_data->id.sid,
             chunk_data->id.tf,
@@ -4418,7 +4419,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
           grn_obj term;
           GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
-          grn_ii_get_term(ctx, data->ii, data->term_id & GRN_ID_MAX, &term);
+          grn_ii_get_term(ctx, data->ii, CHUNK_SPLIT_OFF(data->term_id), &term);
           GRN_LOG(ctx,
                   GRN_LOG_WARNING,
                   "[ii][merge][put][chunk] "
@@ -4429,7 +4430,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                   name,
                   (int)GRN_TEXT_LEN(&term),
                   GRN_TEXT_VALUE(&term),
-                  data->term_id,
+                  CHUNK_SPLIT_OFF(data->term_id),
                   chunk_data->id.rid,
                   chunk_data->id.sid,
                   chunk_data->id.tf,
@@ -4519,7 +4520,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
           grn_obj term;
           GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
-          grn_ii_get_term(ctx, data->ii, data->term_id & GRN_ID_MAX, &term);
+          grn_ii_get_term(ctx, data->ii, CHUNK_SPLIT_OFF(data->term_id), &term);
           GRN_LOG(ctx,
                   GRN_LOG_WARNING,
                   "[ii][merge][put][buffer] "
@@ -4530,7 +4531,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
                   name,
                   (int)GRN_TEXT_LEN(&term),
                   GRN_TEXT_VALUE(&term),
-                  data->term_id,
+                  CHUNK_SPLIT_OFF(data->term_id),
                   buffer_data->id.rid,
                   buffer_data->id.sid,
                   buffer_data->id.tf,
@@ -4663,7 +4664,7 @@ chunk_merge(grn_ctx *ctx,
   merger_buffer_data *buffer_data = &(data->source.buffer);
   merger_chunk_data *chunk_data = &(data->source.chunk);
   grn_ii *ii = data->ii;
-  grn_id term_id = data->term_id & GRN_ID_MAX;
+  grn_id term_id = CHUNK_SPLIT_OFF(data->term_id);
   grn_io_win sw;
   uint32_t segno = cinfo->segno;
   uint32_t size = cinfo->size;
@@ -4686,7 +4687,7 @@ chunk_merge(grn_ctx *ctx,
          name,
          (int)GRN_TEXT_LEN(&term),
          GRN_TEXT_VALUE(&term),
-         data->term_id,
+         term_id,
          rid,
          segno,
          size);
@@ -4733,7 +4734,7 @@ chunk_merge(grn_ctx *ctx,
           name,
           (int)GRN_TEXT_LEN(&term),
           GRN_TEXT_VALUE(&term),
-          data->term_id,
+          term_id,
           rid,
           cinfo->size);
       GRN_OBJ_FIN(ctx, &term);
@@ -4757,7 +4758,7 @@ chunk_merge(grn_ctx *ctx,
         name,
         (int)GRN_TEXT_LEN(&term),
         GRN_TEXT_VALUE(&term),
-        data->term_id);
+        term_id);
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
@@ -4788,7 +4789,7 @@ chunk_merge(grn_ctx *ctx,
         name,
         (int)GRN_TEXT_LEN(&term),
         GRN_TEXT_VALUE(&term),
-        data->term_id);
+        term_id);
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
@@ -4811,7 +4812,7 @@ chunk_merge(grn_ctx *ctx,
         name,
         (int)GRN_TEXT_LEN(&term),
         GRN_TEXT_VALUE(&term),
-        data->term_id);
+        term_id);
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
@@ -4843,7 +4844,7 @@ chunk_merge(grn_ctx *ctx,
            name,
            (int)GRN_TEXT_LEN(&term),
            GRN_TEXT_VALUE(&term),
-           data->term_id,
+           term_id,
            rid,
            segno,
            size,
@@ -4871,7 +4872,7 @@ chunk_merge(grn_ctx *ctx,
              name,
              (int)GRN_TEXT_LEN(&term),
              GRN_TEXT_VALUE(&term),
-             data->term_id,
+             term_id,
              rid,
              segno,
              size,
@@ -4897,7 +4898,7 @@ chunk_merge(grn_ctx *ctx,
              name,
              (int)GRN_TEXT_LEN(&term),
              GRN_TEXT_VALUE(&term),
-             data->term_id,
+             term_id,
              rid,
              segno,
              size,
@@ -5130,7 +5131,7 @@ buffer_merge_internal(grn_ctx *ctx,
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
         GRN_LOG(ctx,
                 GRN_WARN,
                 "[ii][buffer][merge] invalid size for buffer term: "
@@ -5141,7 +5142,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                bt->tid,
+                CHUNK_SPLIT_OFF(bt->tid),
                 bt->size_in_buffer);
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
@@ -5182,7 +5183,7 @@ buffer_merge_internal(grn_ctx *ctx,
           grn_obj term;
           GRN_DEFINE_NAME(ii);
           GRN_TEXT_INIT(&term, 0);
-          grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+          grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
           MERR("[ii][buffer][merge] failed to allocate chunk info: "
                "<%.*s>: "
                "<%.*s>(%u): "
@@ -5194,7 +5195,7 @@ buffer_merge_internal(grn_ctx *ctx,
                name,
                (int)GRN_TEXT_LEN(&term),
                GRN_TEXT_VALUE(&term),
-               bt->tid,
+               CHUNK_SPLIT_OFF(bt->tid),
                seg,
                nchunks,
                unitsize,
@@ -5218,7 +5219,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 grn_obj term;
                 GRN_DEFINE_NAME(ii);
                 GRN_TEXT_INIT(&term, 0);
-                grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+                grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
                 ERR(ctx->rc,
                     "[ii][buffer][merge] failed to merge chunk: "
                     "<%.*s>: "
@@ -5229,7 +5230,7 @@ buffer_merge_internal(grn_ctx *ctx,
                     name,
                     (int)GRN_TEXT_LEN(&term),
                     GRN_TEXT_VALUE(&term),
-                    bt->tid,
+                    CHUNK_SPLIT_OFF(bt->tid),
                     i,
                     nchunks);
                 GRN_OBJ_FIN(ctx, &term);
@@ -5250,7 +5251,7 @@ buffer_merge_internal(grn_ctx *ctx,
         int decoded_size;
         decoded_size = grn_decv(ctx,
                                 ii,
-                                bt->tid & GRN_ID_MAX,
+                                CHUNK_SPLIT_OFF(bt->tid),
                                 chunk_data->data,
                                 chunk_data->data_end - chunk_data->data,
                                 rdv);
@@ -5263,7 +5264,7 @@ buffer_merge_internal(grn_ctx *ctx,
             grn_rc rc = ctx->rc;
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
             if (rc == GRN_SUCCESS) {
               rc = GRN_UNKNOWN_ERROR;
             }
@@ -5276,7 +5277,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                bt->tid,
+                CHUNK_SPLIT_OFF(bt->tid),
                 nvchunks);
             GRN_OBJ_FIN(ctx, &term);
           }
@@ -5293,7 +5294,7 @@ buffer_merge_internal(grn_ctx *ctx,
             grn_obj term;
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to reset data vector: "
                 "<%.*s>: "
@@ -5304,7 +5305,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                bt->tid,
+                CHUNK_SPLIT_OFF(bt->tid),
                 (size_t)(chunk_data->n_documents + S_SEGMENT),
                 size);
             GRN_OBJ_FIN(ctx, &term);
@@ -5345,7 +5346,7 @@ buffer_merge_internal(grn_ctx *ctx,
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, CHUNK_SPLIT_OFF(bt->tid), &term);
         ERR(ctx->rc,
             "[ii][buffer][merge] failed to merge chunk: "
             "<%.*s>: "
@@ -5354,7 +5355,7 @@ buffer_merge_internal(grn_ctx *ctx,
             name,
             (int)GRN_TEXT_LEN(&term),
             GRN_TEXT_VALUE(&term),
-            bt->tid);
+            CHUNK_SPLIT_OFF(bt->tid));
         GRN_OBJ_FIN(ctx, &term);
       }
       goto exit;
@@ -5362,7 +5363,7 @@ buffer_merge_internal(grn_ctx *ctx,
     {
       /* TODO: Is n_documents better? */
       uint32_t ndf = data.dest.record_id_gaps - dv[0].data;
-      grn_id tid = bt->tid & GRN_ID_MAX;
+      grn_id tid = CHUNK_SPLIT_OFF(bt->tid);
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
         /* TODO: warning */
@@ -5441,7 +5442,7 @@ buffer_merge_internal(grn_ctx *ctx,
             grn_obj term;
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, tid, &term);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to estimate encode buffer size: "
                 "<%.*s>: "
@@ -5450,7 +5451,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                bt->tid);
+                tid);
             GRN_OBJ_FIN(ctx, &term);
             buffer_merge_dump_datavec(ctx, ii, dv, rdv);
             if (cinfo) {
@@ -5481,7 +5482,7 @@ buffer_merge_internal(grn_ctx *ctx,
             grn_obj term;
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, tid, &term);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to encode: "
                 "<%.*s>: "
@@ -5491,7 +5492,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                bt->tid,
+                tid,
                 estimated_encsize);
             GRN_OBJ_FIN(ctx, &term);
             buffer_merge_dump_datavec(ctx, ii, dv, rdv);
@@ -5860,7 +5861,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
       continue;
     }
     GRN_OUTPUT_ARRAY_OPEN("TERM", -1);
-    tid = (bt->tid & GRN_ID_MAX);
+    tid = CHUNK_SPLIT_OFF(bt->tid);
     key_size =
       grn_table_get_key(ctx, ii->lexicon, tid, key, GRN_TABLE_MAX_KEY_SIZE);
     tid_ = grn_table_get(ctx, ii->lexicon, key, key_size);
@@ -6030,7 +6031,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
   }
   for (i = 0, n = sb->header.nterms, bt = sb->terms; n; bt++, n--) {
     if (bt->tid) {
-      grn_id tid = bt->tid & GRN_ID_MAX;
+      grn_id tid = CHUNK_SPLIT_OFF(bt->tid);
       ts[i].key = _grn_table_key(ctx, lexicon, tid, &ts[i].key_size);
       ts[i].bt = bt;
       i++;
@@ -6070,7 +6071,7 @@ array_update(grn_ctx *ctx, grn_ii *ii, uint32_t dls, buffer *db)
   uint32_t *a;
   for (n = db->header.nterms, bt = db->terms; n; n--, bt++) {
     if (bt->tid) {
-      grn_id tid = bt->tid & GRN_ID_MAX;
+      grn_id tid = CHUNK_SPLIT_OFF(bt->tid);
       if ((a = array_at(ctx, ii, tid))) {
         a[0] = grn_ii_pos_pack(ii, dls, loffset);
         array_unref(ctx, ii, tid);
