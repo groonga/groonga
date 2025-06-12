@@ -1229,7 +1229,7 @@ is equal to or more than ``10`` from ``Entries`` table.
    If Apache Arrow is disabled, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
    request to enable Apache Arrow to the package provider.
 
-:ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>` 
+:ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>`
 are executed in parallel when this parameter is specified ``-1`` or ``2`` or more.
 
 In a default setting, ``drilldown``, ``drilldowns`` and ``slices`` are executed in serial.
@@ -2920,7 +2920,7 @@ the table named as ``NestedDrilldownTags`` which has the column named as ``categ
 
 ``Tag`` drilldowns ``NestedDrilldownMemos`` by ``tag``.
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
-And then, ``Category`` drilldowns ``Tag`` by ``category``. 
+And then, ``Category`` drilldowns ``Tag`` by ``category``.
 Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
 
 .. _select-drilldowns-label-key-vector-expansions:
@@ -3005,7 +3005,7 @@ Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you fi
 
   * ``{A, B, C}``
 
-Those are all subsets for ``{A, B, C}``. 
+Those are all subsets for ``{A, B, C}``.
 Since the power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` is a power set for the vector.
 
 ``POWER_SET`` aggregates with each subset for ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``.
