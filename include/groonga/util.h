@@ -280,8 +280,13 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  * GRN_STRING
  * GRN_TYPE
  * GRN_VOID
+ * ```
+ *
+ * Unknown types:
+ * ```
  * (unknown: 0x42)
  * ```
+ * Where `0x42` is an example of the hexadecimal value for unknown types.
  *
  * \param ctx The context object.
  * \param buffer The buffer where the type name will be stored.
