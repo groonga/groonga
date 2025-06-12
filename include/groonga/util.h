@@ -235,7 +235,6 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  *
  * Table types:
  * ```
- * GRN_DB
  * GRN_TABLE_DAT_KEY
  * GRN_TABLE_HASH_KEY
  * GRN_TABLE_NO_KEY
@@ -271,6 +270,7 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  * Other object types:
  * ```
  * GRN_ACCESSOR
+ * GRN_DB
  * GRN_EXPR
  * GRN_MSG
  * GRN_PATSNIP
