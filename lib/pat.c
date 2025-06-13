@@ -32,20 +32,20 @@
 #include <math.h>
 #include <string.h>
 
-#define GRN_PAT_DELETED              (GRN_ID_MAX + 1)
+#define GRN_PAT_DELETED       (GRN_ID_MAX + 1)
 
-#define GRN_PAT_SEGMENT_SIZE         0x400000
-#define W_OF_KEY_IN_A_SEGMENT        22
-#define W_OF_PAT_IN_A_SEGMENT        18
-#define W_OF_SIS_IN_A_SEGMENT        19
-#define KEY_MASK_IN_A_SEGMENT        0x3fffff
-#define PAT_MASK_IN_A_SEGMENT        0x3ffff
-#define SIS_MASK_IN_A_SEGMENT        0x7ffff
-#define SEG_NOT_ASSIGNED             0xffff
-#define GRN_PAT_MAX_SEGMENT          0x1000
+#define GRN_PAT_SEGMENT_SIZE  0x400000
+#define W_OF_KEY_IN_A_SEGMENT 22
+#define W_OF_PAT_IN_A_SEGMENT 18
+#define W_OF_SIS_IN_A_SEGMENT 19
+#define KEY_MASK_IN_A_SEGMENT 0x3fffff
+#define PAT_MASK_IN_A_SEGMENT 0x3ffff
+#define SIS_MASK_IN_A_SEGMENT 0x7ffff
+#define SEG_NOT_ASSIGNED      0xffff
+#define GRN_PAT_MAX_SEGMENT   0x1000
 /* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB:
    GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
-#define GRN_PAT_MAX_N_SEGMENTS       0x400
+#define GRN_PAT_MAX_N_SEGMENTS 0x400
 /* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB:
    GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
 #define GRN_PAT_MAX_N_SEGMENTS_LARGE 0x40000
