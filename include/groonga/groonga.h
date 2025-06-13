@@ -1909,7 +1909,7 @@ grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj);
  *
  *         See `ctx->rc` for error details.
  */
-GRN_API int
+GRN_API uint64_t
 grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
 /**
