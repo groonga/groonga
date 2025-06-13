@@ -43,7 +43,7 @@
 #define SIS_MASK_IN_A_SEGMENT        0x7ffff
 #define SEG_NOT_ASSIGNED             0xffff
 #define GRN_PAT_MAX_SEGMENT          0x1000
-/* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB
+/* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB:
    GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
 #define GRN_PAT_MAX_N_SEGMENTS       0x400
 /* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB
