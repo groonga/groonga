@@ -155,6 +155,7 @@ repos:
           ?lib/proc/proc_object_inspect\.c|
           ?lib/proc/proc_object_list\.c|
           ?lib/proc/proc_query\.c|
+          ?lib/proc/proc_query_log_flags\.c|
           ?lib/proc/proc_schema\.c|
           ?lib/proc/proc_select\.cpp|
           ?lib/proc/proc_snippet\.c|
