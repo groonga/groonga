@@ -40,30 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: grn_obj *grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
-
-   .. versionadded:: 7.0.4
-
-   Inspect specified target ``flag``.
-
-   :param ctx: The context object
-   :param buffer: The buffer object which is flag name will be stored.
-   :param flags: The inspect target type.
-   :return: ``buffer`` object which is flag name is set.
-            If invalid ``flags`` is given, empty string is set to ``buffer``.
-
-   .. code-block:: c
-
-       grn_obj buffer;
-       GRN_TEXT_INIT(&buffer, 0);
-       int current_flags = grn_query_logger_get_flags(&context);
-       grn_inspect_query_log_flags(&context, &buffer, current_flags);
-       printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-
-   The query logger flags are printed like the following::
-
-     COMMAND|RESULT_CODE|DESTINATION|CACHE|SIZE|SCORE
-
 .. c:function:: void grn_p(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 4.0.8
