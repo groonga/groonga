@@ -1124,6 +1124,16 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
     ptr = grn_io_array_at(ctx, pat->io, SEGMENT_KEY, pos, &flags);             \
   } while (0)
 
+static inline void
+pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint64_t new_curr_key)
+{
+  if (pat_is_key_large(pat)) {
+    pat->header->curr_key_large = new_curr_key;
+  } else {
+    pat->header->curr_key = new_curr_key;
+  }
+}
+
 static inline uint64_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
@@ -5997,16 +6007,6 @@ pat_key_move(grn_ctx *ctx,
   KEY_AT(pat, new_position, new_key_address, 0);
   grn_memmove(new_key_address, key, key_size);
   node->key = new_position;
-}
-
-static inline void
-pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint64_t new_curr_key)
-{
-  if (pat_is_key_large(pat)) {
-    pat->header->curr_key_large = new_curr_key;
-  } else {
-    pat->header->curr_key = new_curr_key;
-  }
 }
 
 typedef void (*pat_key_defrag_each_callback)(
