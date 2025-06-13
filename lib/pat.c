@@ -1148,11 +1148,8 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   if (res >> W_OF_KEY_IN_A_SEGMENT != end_segment) {
     /* If it does not fit, update `curr_key`(`res`) to add it to the next
      * segment. */
-    if (pat_is_key_large(pat)) {
-      res = pat->header->curr_key_large = end_segment << W_OF_KEY_IN_A_SEGMENT;
-    } else {
-      res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
-    }
+    pat_update_curr_key(ctx, pat, end_segment << W_OF_KEY_IN_A_SEGMENT);
+    res = end_segment << W_OF_KEY_IN_A_SEGMENT;
   }
   {
     uint8_t *dest;
