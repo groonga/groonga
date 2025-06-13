@@ -5999,7 +5999,7 @@ static inline void
 pat_key_move(grn_ctx *ctx,
              grn_pat *pat,
              pat_node *node,
-             uint32_t new_position,
+             uint64_t new_position,
              uint8_t *key,
              uint32_t key_size)
 {
