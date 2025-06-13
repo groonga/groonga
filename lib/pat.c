@@ -43,9 +43,15 @@
 #define SIS_MASK_IN_A_SEGMENT 0x7ffff
 #define SEG_NOT_ASSIGNED      0xffff
 #define GRN_PAT_MAX_SEGMENT   0x1000
-#define GRN_PAT_MDELINFOS     (GRN_PAT_NDELINFOS - 1)
+/* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB:
+   GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
+#define GRN_PAT_MAX_N_SEGMENTS 0x400
+/* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB:
+   GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
+#define GRN_PAT_MAX_N_SEGMENTS_LARGE 0x40000
+#define GRN_PAT_MDELINFOS            (GRN_PAT_NDELINFOS - 1)
 
-#define GRN_PAT_BIN_KEY       0x70000
+#define GRN_PAT_BIN_KEY              0x70000
 
 typedef enum {
   DIRECTION_LEFT = 0,
@@ -1527,7 +1533,11 @@ _grn_pat_create(grn_ctx *ctx,
   {
     grn_io_array_spec array_spec[3];
     array_spec[SEGMENT_KEY].w_of_element = 0;
-    array_spec[SEGMENT_KEY].max_n_segments = 0x400;
+    if (flags & GRN_OBJ_KEY_LARGE) {
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
+    } else {
+      array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
+    }
     array_spec[SEGMENT_PAT].w_of_element = 4;
     array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
     array_spec[SEGMENT_SIS].w_of_element = w_of_element;
