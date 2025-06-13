@@ -96,7 +96,8 @@ typedef struct {
   uint16_t bits;
 } pat_node;
 
-/* This struct almost the same pat_node.
+/*
+   This struct is almost the same as `pat_node`.
    We only use this struct when we specify `KEY_LARGE`
    This struct is different from pat_node only in that the size of key.
    The size of pat_node.key is uint32_t.
