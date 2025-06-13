@@ -547,11 +547,11 @@ Here is an example that can store ``_id`` and ``timestamp`` that a result of ``l
 .. column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 .. table_create Logs_20150204 TABLE_HASH_KEY ShortText
 .. column_create Logs_20150204 timestamp COLUMN_SCALAR Time
-.. 
+..
 .. table_create Logs TABLE_HASH_KEY ShortText
 .. column_create Logs original_id COLUMN_SCALAR UInt32
 .. column_create Logs timestamp_text COLUMN_SCALAR ShortText
-.. 
+..
 .. load --table Logs_20150203
 .. [
 .. {
@@ -894,31 +894,31 @@ details.
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/window_function_for_over_shard.log
 .. plugin_register sharding
-.. 
+..
 .. table_create ItemLogs_20170415 TABLE_NO_KEY
 .. column_create ItemLogs_20170415 timestamp COLUMN_SCALAR Time
 .. column_create ItemLogs_20170415 price COLUMN_SCALAR UInt32
 .. column_create ItemLogs_20170415 n_likes COLUMN_SCALAR UInt32
-.. 
+..
 .. table_create ItemLogs_20170416 TABLE_NO_KEY
 .. column_create ItemLogs_20170416 timestamp COLUMN_SCALAR Time
 .. column_create ItemLogs_20170416 price COLUMN_SCALAR UInt32
 .. column_create ItemLogs_20170416 n_likes COLUMN_SCALAR UInt32
-.. 
+..
 .. load --table ItemLogs_20170415
 .. [
 .. {"timestamp": "2017/04/15 00:00:00", "n_likes": 2, "price": 100},
 .. {"timestamp": "2017/04/15 01:00:00", "n_likes": 1, "price": 100},
 .. {"timestamp": "2017/04/15 01:00:00", "n_likes": 2, "price": 200}
 .. ]
-.. 
+..
 .. load --table ItemLogs_20170416
 .. [
 .. {"timestamp": "2017/04/16 10:00:00", "n_likes": 1, "price": 200},
 .. {"timestamp": "2017/04/16 11:00:00", "n_likes": 2, "price": 300},
 .. {"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 300}
 .. ]
-.. 
+..
 .. logical_select ItemLogs \
 ..   --shard_key timestamp \
 ..   --columns[count].stage initial \
