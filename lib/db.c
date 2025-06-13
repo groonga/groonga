@@ -14840,10 +14840,10 @@ grn_obj_id(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(id);
 }
 
-int
+uint64_t
 grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
 {
-  int r = 0;
+  uint64_t r = 0;
   GRN_API_ENTER;
   switch (obj->header.type) {
   case GRN_DB:
