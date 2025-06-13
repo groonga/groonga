@@ -46,7 +46,7 @@
 /* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB:
    GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
 #define GRN_PAT_MAX_N_SEGMENTS       0x400
-/* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB
+/* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB:
    GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
 #define GRN_PAT_MAX_N_SEGMENTS_LARGE 0x40000
 #define GRN_PAT_MDELINFOS            (GRN_PAT_NDELINFOS - 1)
