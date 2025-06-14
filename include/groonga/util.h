@@ -297,6 +297,55 @@ grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
  */
 GRN_API grn_obj *
 grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
+/**
+ * \brief Inspect the given query log flags and produce their names.
+ *
+ * \since 7.0.4
+ *
+ * For example usage:
+ * ```c
+ * grn_obj flags;
+ * GRN_TEXT_INIT(&flags, 0);
+ * unsigned int current_flags = grn_query_logger_get_flags(ctx);
+ * grn_inspect_query_log_flags(ctx, &flags, current_flags);
+ * printf("%.*s\n",
+ *        (int)GRN_TEXT_LEN(&flags),
+ *        GRN_TEXT_VALUE(&flags));
+ * GRN_OBJ_FIN(ctx, &flags);
+ * ```
+ *
+ * For example output:
+ * Depending on \p flags, it will output one of the following:
+ * ```
+ * NONE
+ * CACHE
+ * COMMAND
+ * DESTINATION
+ * RESULT_CODE
+ * SCORE
+ * SIZE
+ * ```
+ *
+ * When multiple flags are set, they are displayed separated by "|".
+ * ```
+ * CACHE|COMMAND|DESTINATION|RESULT_CODE|SCORE|SIZE
+ * ```
+ *
+ * Available flags:
+ * - \ref GRN_QUERY_LOG_NONE
+ * - \ref GRN_QUERY_LOG_CACHE
+ * - \ref GRN_QUERY_LOG_COMMAND
+ * - \ref GRN_QUERY_LOG_DESTINATION
+ * - \ref GRN_QUERY_LOG_RESULT_CODE
+ * - \ref GRN_QUERY_LOG_SCORE
+ * - \ref GRN_QUERY_LOG_SIZE
+ *
+ * \param ctx The context object.
+ * \param buffer The buffer where the flag names will be stored.
+ * \param flags The query log flags to inspect.
+ *
+ * \return The names of the inspected query log flags as text.
+ */
 GRN_API grn_obj *
 grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags);
 GRN_API grn_obj *

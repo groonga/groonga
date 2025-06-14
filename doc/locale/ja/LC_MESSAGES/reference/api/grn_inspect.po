@@ -18,9 +18,6 @@ msgstr ""
 msgid "パラメータ"
 msgstr ""
 
-msgid "戻り値"
-msgstr ""
-
 msgid "``grn_inspect``"
 msgstr ""
 
@@ -75,27 +72,11 @@ msgstr "以下はオブジェクトを調査する例です。"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Inspect specified target ``obj`` object."
-msgstr "指定した ``obj`` オブジェクトを調査します。"
+msgid "Inspect specified target ``obj`` object. It prints inspected text."
+msgstr "指定した ``obj`` を調査し、その内容を出力します。"
 
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
-
-
-msgid "Inspect specified target ``flag``."
-msgstr "指定した ``flag`` を調査します。"
-
-msgid "The buffer object which is flag name will be stored."
-msgstr "フラグの名前が設定されるオブジェクト"
-
-msgid "``buffer`` object which is flag name is set. If invalid ``flags`` is given, empty string is set to ``buffer``."
-msgstr "フラグの名前が設定される ``buffer`` オブジェクト。不正な ``flags`` が与えられた場合、空の文字列が ``buffer`` に設定されます。"
-
-msgid "The query logger flags are printed like the following::"
-msgstr "クエリーログのフラグは次のように表示されます::"
-
-msgid "Inspect specified target ``obj`` object. It prints inspected text."
-msgstr "指定した ``obj`` を調査し、その内容を出力します。"
 
 msgid "The inspect target object."
 msgstr "対象のオブジェクト"
