@@ -344,7 +344,7 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
  * \param buffer The buffer where the flag names will be stored.
  * \param flags The query log flags to inspect.
  *
- * \return The inspected query log flags' names in text.
+ * \return The names of the inspected query log flags as text.
  */
 GRN_API grn_obj *
 grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags);
