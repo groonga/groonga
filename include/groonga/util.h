@@ -306,7 +306,7 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
  * ```c
  * grn_obj flags;
  * GRN_TEXT_INIT(&flags, 0);
- * int current_flags = grn_query_logger_get_flags(ctx);
+ * unsigned int current_flags = grn_query_logger_get_flags(ctx);
  * grn_inspect_query_log_flags(ctx, &flags, current_flags);
  * printf("%.*s\n",
  *        (int)GRN_TEXT_LEN(&flags),
