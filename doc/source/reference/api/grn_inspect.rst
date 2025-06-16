@@ -40,24 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: void grn_p(grn_ctx *ctx, grn_obj *obj)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-   It prints inspected text.
-
-   :param ctx: The context object
-   :param obj: The inspect target object.
-
-   .. code-block:: c
-
-      grn_p(&context, &buffer, obj);
-
-   If obj is ``ShortText``, it prints like the following::
-
-     #<type ShortText size:4096 type:var_size>
-
 .. c:function:: void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
 
    .. versionadded:: 4.0.8

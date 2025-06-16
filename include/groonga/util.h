@@ -355,6 +355,24 @@ grn_inspect_key(grn_ctx *ctx,
                 const void *key,
                 uint32_t key_size);
 
+/**
+ * \brief Print inspected text of the given object.
+ *
+ * \since 4.0.8
+ *
+ * For example usage:
+ * ```c
+ * grn_p(ctx, obj);
+ * ```
+ *
+ * If \p obj is a ShortText type, it prints output like:
+ * ```
+ * #<type ShortText size:4096 type:var_size>
+ * ```
+ *
+ * \param ctx The context object.
+ * \param obj The object to inspect and print.
+ */
 GRN_API void
 grn_p(grn_ctx *ctx, grn_obj *obj);
 GRN_API void

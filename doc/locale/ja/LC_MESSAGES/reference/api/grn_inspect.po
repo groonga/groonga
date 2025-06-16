@@ -72,20 +72,14 @@ msgstr "以下はオブジェクトを調査する例です。"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Inspect specified target ``obj`` object. It prints inspected text."
-msgstr "指定した ``obj`` を調査し、その内容を出力します。"
+msgid "Inspect specified target ``obj`` object. It prints inspected geo point text."
+msgstr "指定した ``obj`` を調査し、geo pointの内容を出力します。"
 
 msgid "The context object"
 msgstr "その時点のコンテキスト。"
 
 msgid "The inspect target object."
 msgstr "対象のオブジェクト"
-
-msgid "If obj is ``ShortText``, it prints like the following::"
-msgstr "オブジェクトが ``ShortText`` なら次のように表示されます::"
-
-msgid "Inspect specified target ``obj`` object. It prints inspected geo point text."
-msgstr "指定した ``obj`` を調査し、geo pointの内容を出力します。"
 
 msgid "If ``point`` indicates New York City, it prints like the following::"
 msgstr "もし ``point`` がニューヨークを示す場合、次のように表示されます::"
