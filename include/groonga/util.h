@@ -375,6 +375,34 @@ grn_inspect_key(grn_ctx *ctx,
  */
 GRN_API void
 grn_p(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Print inspected text of the given geo point.
+ *
+ * \since 4.0.8
+ *
+ * This function inspects the given \p point and prints the result directly to
+ * stdout. It internally creates a WGS84 geo point object from the provided
+ * \ref grn_geo_point structure and prints its inspected representation.
+ *
+ * For example usage:
+ * ```c
+ * grn_geo_point point;
+ * int latitude = ((40 * 60 * 60) + (42 * 60) + 46) * 1000;
+ * int longitude = ((-74 * 60 * 60) + (0 * 60) + 22) * 1000;
+ * GRN_WGS84_GEO_POINT_INIT(&point, 0);
+ * GRN_GEO_POINT_SET(ctx, &point, latitude, longitude);
+ * grn_p_geo_point(ctx, &point);
+ * ```
+ *
+ * If \p point indicates New York City, it prints output like:
+ * ```
+ * [(524290,18) ((0, 8, 44, 290),(0, 0, 0, 18)) \
+ *   [00000000 00000000 00000000 10000000 00000000 00000000 00000001 00001100]]
+ * ```
+ *
+ * \param ctx The context object.
+ * \param point The geo point to inspect and print.
+ */
 GRN_API void
 grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
 GRN_API void
