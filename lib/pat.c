@@ -6143,11 +6143,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     wal_data.record_id = active_max_id;
     grn_pat_wal_add_entry(ctx, &wal_data);
 
-    if (pat_is_key_large(pat)) {
-      reduced_bytes = pat->header->curr_key_large;
-    } else {
-      reduced_bytes = pat->header->curr_key;
-    }
+    reduced_bytes = grn_pat_total_key_size(ctx, pat);
     pat_update_curr_key(ctx, pat, new_curr_key);
     grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
     return reduced_bytes;
