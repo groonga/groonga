@@ -19,6 +19,7 @@ FROM archlinux
 RUN \
   pacman --sync --noconfirm --refresh --sysupgrade && \
   pacman --sync --noconfirm \
+    autoconf \
     binutils \
     ccache \
     debugedit \
