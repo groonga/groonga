@@ -36,7 +36,7 @@ msgid "How to manage language models"
 msgstr "言語モデルの管理方法"
 
 msgid "You need to put GGUF formatted language models to `${PREFIX}/share/groonga/language_models/`."
-msgstr "GGUFフォーマットの言語モデルと`${PREFIX}/share/groonga/language_models/`に配置する必要があります。"
+msgstr "GGUFフォーマットの言語モデルを`${PREFIX}/share/groonga/language_models/`に配置する必要があります。"
 
 msgid "For example: `/usr/local/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`"
 msgstr "例：`/usr/local/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`"
