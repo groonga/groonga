@@ -1905,8 +1905,8 @@ grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj);
  * \param threshold The threshold value used to guide the defragmentation
  *                  process.
  *
- * \return The total number of reduced bytes on which defragmentation was
- *         performed.
+ * \return The total number of reduced bytes or segments on which
+ *         defragmentation was performed.
  *
  *         See `ctx->rc` for error details.
  */
