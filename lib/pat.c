@@ -822,7 +822,10 @@ grn_pat_wal_add_entry_format_details(grn_ctx *ctx,
     grn_text_printf(ctx, details, "key-size:%u ", data->key_size);
   }
   if (used->key_offset) {
-    grn_text_printf(ctx, details, "key-offset:%lu ", data->key_offset);
+    grn_text_printf(ctx,
+                    details,
+                    "key-offset:%" GRN_FMT_INT64U " ",
+                    data->key_offset);
   }
   if (used->shared_key_offset) {
     grn_text_printf(ctx,
@@ -1144,7 +1147,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     GRN_DEFINE_NAME(pat);
     ERR(GRN_NOT_ENOUGH_SPACE,
         "[pat][key][put] total key size is over: <%.*s>: "
-        "max=%u: current=%lu: new key size=%u",
+        "max=%u: current=%" GRN_FMT_INT64U ": new key size=%u",
         name_size,
         name,
         GRN_PAT_MAX_TOTAL_KEY_SIZE,
@@ -1168,7 +1171,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
       GRN_DEFINE_NAME(pat);
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[pat][key][put] failed to allocate memory for new key: <%.*s>: "
-          "new offset:%lu key size:%u",
+          "new offset:%" GRN_FMT_INT64U " key size:%u",
           name_size,
           name,
           res,
