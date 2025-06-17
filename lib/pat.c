@@ -1180,11 +1180,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     }
     grn_memcpy(dest, key, len);
   }
-  if (pat_is_key_large(pat)) {
-    pat->header->curr_key_large += len;
-  } else {
-    pat->header->curr_key += len;
-  }
+  pat_update_curr_key(ctx, pat, grn_pat_total_key_size(ctx, pat) + len);
   return res;
 }
 
