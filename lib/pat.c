@@ -6217,11 +6217,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
                               const char *tag,
                               const char *wal_error_tag)
 {
-  if (pat_is_key_large(pat)) {
-    pat->header->curr_key_large = entry->key_offset;
-  } else {
-    pat->header->curr_key = (uint32_t)(entry->key_offset);
-  }
+  pat_update_curr_key(ctx, pat, entry->key_offset);
   pat->header->n_entries = entry->n_entries;
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {
