@@ -387,10 +387,8 @@ grn_p(grn_ctx *ctx, grn_obj *obj);
  * For example usage:
  * ```c
  * grn_geo_point point;
- * int latitude = ((40 * 60 * 60) + (42 * 60) + 46) * 1000;
- * int longitude = ((-74 * 60 * 60) + (0 * 60) + 22) * 1000;
- * GRN_WGS84_GEO_POINT_INIT(&point, 0);
- * GRN_GEO_POINT_SET(ctx, &point, latitude, longitude);
+ * point.latitude = ((40 * 60 * 60) + (42 * 60) + 46) * 1000;
+ * point.longitude = ((-74 * 60 * 60) + (0 * 60) + 22) * 1000;
  * grn_p_geo_point(ctx, &point);
  * ```
  *
