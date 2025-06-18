@@ -187,7 +187,7 @@ typedef struct {
   pat_node_direction record_direction;
   const uint8_t *key;
   uint32_t key_size;
-  uint32_t key_offset;
+  uint64_t key_offset;
   uint32_t shared_key_offset;
   bool is_shared;
   uint16_t check;
@@ -278,7 +278,7 @@ grn_pat_wal_add_entry_add_entry(grn_ctx *ctx,
                            key_size,
 
                            GRN_WAL_KEY_KEY_OFFSET,
-                           GRN_WAL_VALUE_UINT32,
+                           GRN_WAL_VALUE_UINT64,
                            data->key_offset,
 
                            GRN_WAL_KEY_CHECK,
@@ -762,7 +762,7 @@ grn_pat_wal_add_entry_defrag_key(grn_ctx *ctx,
                            key_size,
 
                            GRN_WAL_KEY_KEY_OFFSET,
-                           GRN_WAL_VALUE_UINT32,
+                           GRN_WAL_VALUE_UINT64,
                            data->key_offset,
 
                            GRN_WAL_KEY_END);
@@ -791,7 +791,7 @@ grn_pat_wal_add_entry_defrag_current_key(grn_ctx *ctx,
                            data->record_id,
 
                            GRN_WAL_KEY_KEY_OFFSET,
-                           GRN_WAL_VALUE_UINT32,
+                           GRN_WAL_VALUE_UINT64,
                            data->key_offset,
 
                            GRN_WAL_KEY_END);
@@ -822,7 +822,10 @@ grn_pat_wal_add_entry_format_details(grn_ctx *ctx,
     grn_text_printf(ctx, details, "key-size:%u ", data->key_size);
   }
   if (used->key_offset) {
-    grn_text_printf(ctx, details, "key-offset:%u ", data->key_offset);
+    grn_text_printf(ctx,
+                    details,
+                    "key-offset:%" GRN_FMT_INT64U " ",
+                    data->key_offset);
   }
   if (used->shared_key_offset) {
     grn_text_printf(ctx,
@@ -1124,17 +1127,27 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
     ptr = grn_io_array_at(ctx, pat->io, SEGMENT_KEY, pos, &flags);             \
   } while (0)
 
-static inline uint32_t
+static inline void
+pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint64_t new_curr_key)
+{
+  if (pat_is_key_large(pat)) {
+    pat->header->curr_key_large = new_curr_key;
+  } else {
+    pat->header->curr_key = new_curr_key;
+  }
+}
+
+static inline uint64_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
   //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
-  uint32_t res = pat->header->curr_key;
-  if (res < GRN_PAT_MAX_TOTAL_KEY_SIZE &&
-      len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
+  uint64_t res = grn_pat_total_key_size(ctx, pat);
+  if (res < grn_pat_max_total_key_size(ctx, pat) &&
+      len > grn_pat_max_total_key_size(ctx, pat) - res) {
     GRN_DEFINE_NAME(pat);
     ERR(GRN_NOT_ENOUGH_SPACE,
         "[pat][key][put] total key size is over: <%.*s>: "
-        "max=%u: current=%u: new key size=%u",
+        "max=%u: current=%" GRN_FMT_INT64U ": new key size=%u",
         name_size,
         name,
         GRN_PAT_MAX_TOTAL_KEY_SIZE,
@@ -1144,11 +1157,12 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   }
 
   /* Check if the key to be added can fit in the current segment. */
-  uint32_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
+  uint64_t end_segment = (res + len - 1) >> W_OF_KEY_IN_A_SEGMENT;
   if (res >> W_OF_KEY_IN_A_SEGMENT != end_segment) {
     /* If it does not fit, update `curr_key`(`res`) to add it to the next
      * segment. */
-    res = pat->header->curr_key = end_segment << W_OF_KEY_IN_A_SEGMENT;
+    res = end_segment << W_OF_KEY_IN_A_SEGMENT;
+    pat_update_curr_key(ctx, pat, res);
   }
   {
     uint8_t *dest;
@@ -1157,7 +1171,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
       GRN_DEFINE_NAME(pat);
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[pat][key][put] failed to allocate memory for new key: <%.*s>: "
-          "new offset:%u key size:%u",
+          "new offset:%" GRN_FMT_INT64U " key size:%u",
           name_size,
           name,
           res,
@@ -1166,7 +1180,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     }
     grn_memcpy(dest, key, len);
   }
-  pat->header->curr_key += len;
+  pat_update_curr_key(ctx, pat, grn_pat_total_key_size(ctx, pat) + len);
   return res;
 }
 
@@ -2257,7 +2271,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
     return data->found_id;
   }
 
-  data->wal_data.key_offset = pat->header->curr_key;
+  data->wal_data.key_offset = grn_pat_total_key_size(ctx, pat);
   pat_node *node = NULL;
   {
     uint32_t key_storage_size = pat_key_storage_size(key_size);
@@ -5980,7 +5994,7 @@ static inline void
 pat_key_move(grn_ctx *ctx,
              grn_pat *pat,
              pat_node *node,
-             uint32_t new_position,
+             uint64_t new_position,
              uint8_t *key,
              uint32_t key_size)
 {
@@ -5988,12 +6002,6 @@ pat_key_move(grn_ctx *ctx,
   KEY_AT(pat, new_position, new_key_address, 0);
   grn_memmove(new_key_address, key, key_size);
   node->key = new_position;
-}
-
-static inline void
-pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint32_t new_curr_key)
-{
-  pat->header->curr_key = new_curr_key;
 }
 
 typedef void (*pat_key_defrag_each_callback)(
@@ -6020,21 +6028,21 @@ pat_key_defrag_wal_add_entry_callback(grn_ctx *ctx,
   grn_pat_wal_add_entry(ctx, wal_data);
 }
 
-static inline uint32_t
+static inline uint64_t
 pat_key_defrag_each(grn_ctx *ctx,
                     grn_pat *pat,
                     grn_id *target_ids,
                     size_t n_targets,
                     pat_key_defrag_each_callback callback)
 {
-  uint32_t new_curr_key = 0;
+  uint64_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     grn_id record_id = target_ids[i];
     pat_node *node = pat_get(ctx, pat, record_id);
 
     /* Check if the key to be added can fit in the current segment. */
     uint32_t key_length = PAT_LEN(node);
-    uint32_t new_end_segment =
+    uint64_t new_end_segment =
       (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
     if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
       /* If it does not fit, update `new_curr_key` to add it to the next
@@ -6104,7 +6112,7 @@ grn_pat_defrag_clear_delinfos(grn_ctx *ctx, grn_pat *pat, grn_id active_max_id)
  * You must update tests for this too.
  * If you're using a grn_pat in multi-thread/multi-process environment, you must
  * use grn_obj_defrag() instead of using this function directly. */
-int
+uint64_t
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 {
   grn_pat_wal_add_entry_data wal_data = {0};
@@ -6112,7 +6120,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   wal_data.pat = pat;
   wal_data.tag = "[pat][defrag][current-key]";
 
-  int reduced_bytes = 0;
+  uint64_t reduced_bytes = 0;
   /* We will clear grn_pat_header::delinfos and grn_pat_header::garbages after
    * defragmentation. Execute delinfo_turn_2() on the data remaining in
    * grn_pat_header::delinfos before clearing.
@@ -6125,13 +6133,13 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   uint32_t n_records = grn_pat_size(ctx, pat);
   if (n_records == 0) {
-    uint32_t new_curr_key = 0;
+    uint64_t new_curr_key = 0;
     grn_id active_max_id = 0;
     wal_data.key_offset = new_curr_key;
     wal_data.record_id = active_max_id;
     grn_pat_wal_add_entry(ctx, &wal_data);
 
-    reduced_bytes = pat->header->curr_key;
+    reduced_bytes = grn_pat_total_key_size(ctx, pat);
     pat_update_curr_key(ctx, pat, new_curr_key);
     grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
     return reduced_bytes;
@@ -6170,7 +6178,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   pat_node_compare_by_key_data data = {ctx, pat};
   grn_qsort_r_grn_id(target_ids, n_targets, grn_pat_node_compare_by_key, &data);
 
-  uint32_t new_curr_key =
+  uint64_t new_curr_key =
     pat_key_defrag_each(ctx,
                         pat,
                         target_ids,
@@ -6181,7 +6189,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_pat_wal_add_entry(ctx, &wal_data);
 
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
-  reduced_bytes = pat->header->curr_key - new_curr_key;
+  reduced_bytes = grn_pat_total_key_size(ctx, pat) - new_curr_key;
   pat_update_curr_key(ctx, pat, new_curr_key);
   grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
 
@@ -6196,7 +6204,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
                               const char *tag,
                               const char *wal_error_tag)
 {
-  pat->header->curr_key = (uint32_t)(entry->key_offset);
+  pat_update_curr_key(ctx, pat, entry->key_offset);
   pat->header->n_entries = entry->n_entries;
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {

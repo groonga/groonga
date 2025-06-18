@@ -157,7 +157,7 @@ grn_rc
 grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat);
 grn_rc
 grn_pat_warm(grn_ctx *ctx, grn_pat *pat);
-int
+uint64_t
 grn_pat_defrag(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
