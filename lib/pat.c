@@ -1150,7 +1150,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
         "max=%u: current=%" GRN_FMT_INT64U ": new key size=%u",
         name_size,
         name,
-        GRN_PAT_MAX_TOTAL_KEY_SIZE,
+        grn_pat_max_total_key_size(ctx, pat),
         res,
         len);
     return 0;
