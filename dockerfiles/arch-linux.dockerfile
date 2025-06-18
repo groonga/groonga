@@ -19,6 +19,9 @@ FROM archlinux
 RUN \
   pacman --sync --noconfirm --refresh --sysupgrade && \
   pacman --sync --noconfirm \
+    # mecab-ipadic must have this but it doesn't have it.
+    # So we install this in base environment.
+    autoconf \
     binutils \
     ccache \
     debugedit \
