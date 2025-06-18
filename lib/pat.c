@@ -2271,11 +2271,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
     return data->found_id;
   }
 
-  if (pat_is_key_large(pat)) {
-    data->wal_data.key_offset = pat->header->curr_key_large;
-  } else {
-    data->wal_data.key_offset = pat->header->curr_key;
-  }
+  data->wal_data.key_offset = grn_pat_total_key_size(ctx, pat)
   pat_node *node = NULL;
   {
     uint32_t key_storage_size = pat_key_storage_size(key_size);
