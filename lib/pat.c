@@ -1128,12 +1128,14 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
   } while (0)
 
 static inline void
-pat_update_total_key_size(grn_ctx *ctx, grn_pat *pat, uint64_t new_curr_key)
+pat_update_total_key_size(grn_ctx *ctx,
+                          grn_pat *pat,
+                          uint64_t new_total_key_size)
 {
   if (pat_is_key_large(pat)) {
-    pat->header->curr_key_large = new_curr_key;
+    pat->header->curr_key_large = new_total_key_size;
   } else {
-    pat->header->curr_key = new_curr_key;
+    pat->header->curr_key = new_total_key_size;
   }
 }
 
