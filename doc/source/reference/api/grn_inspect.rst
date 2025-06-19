@@ -40,27 +40,5 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: void grn_p_ii_values(grn_ctx *ctx, grn_obj *obj)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-   It prints inspected index values.
-
-   :param ctx: The context object
-   :param obj: The inspect target object.
-
-   .. code-block:: c
-
-      grn_p_ii_values(&context, obj);
-
-   If ``obj`` is an index column, it prints like the following::
-
-     [
-       #<"!"
-         elements:[
-           {status:available, rid:1, sid:1, pos:0, tf:1, weight:0, rest:1},
-           {status:available, rid:2, sid:1, pos:0, tf:1, weight:0, rest:1}
-         ]
-       >,
-       ...
+.. note::
+   We are currently switching to automatic generation using Doxygen.
