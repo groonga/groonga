@@ -1147,7 +1147,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     GRN_DEFINE_NAME(pat);
     ERR(GRN_NOT_ENOUGH_SPACE,
         "[pat][key][put] total key size is over: <%.*s>: "
-        "max=%u: current=%" GRN_FMT_INT64U ": new key size=%u",
+        "max=%" GRN_FMT_INT64U ": current=%" GRN_FMT_INT64U ": new key size=%u",
         name_size,
         name,
         grn_pat_max_total_key_size(ctx, pat),
