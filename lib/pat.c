@@ -1128,12 +1128,14 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
   } while (0)
 
 static inline void
-pat_update_curr_key(grn_ctx *ctx, grn_pat *pat, uint64_t new_curr_key)
+pat_update_total_key_size(grn_ctx *ctx,
+                          grn_pat *pat,
+                          uint64_t new_total_key_size)
 {
   if (pat_is_key_large(pat)) {
-    pat->header->curr_key_large = new_curr_key;
+    pat->header->curr_key_large = new_total_key_size;
   } else {
-    pat->header->curr_key = new_curr_key;
+    pat->header->curr_key = new_total_key_size;
   }
 }
 
@@ -1162,7 +1164,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     /* If it does not fit, update `curr_key`(`res`) to add it to the next
      * segment. */
     res = end_segment << W_OF_KEY_IN_A_SEGMENT;
-    pat_update_curr_key(ctx, pat, res);
+    pat_update_total_key_size(ctx, pat, res);
   }
   {
     uint8_t *dest;
@@ -1180,7 +1182,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
     }
     grn_memcpy(dest, key, len);
   }
-  pat_update_curr_key(ctx, pat, grn_pat_total_key_size(ctx, pat) + len);
+  pat_update_total_key_size(ctx, pat, grn_pat_total_key_size(ctx, pat) + len);
   return res;
 }
 
@@ -6140,7 +6142,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
     grn_pat_wal_add_entry(ctx, &wal_data);
 
     reduced_bytes = grn_pat_total_key_size(ctx, pat);
-    pat_update_curr_key(ctx, pat, new_curr_key);
+    pat_update_total_key_size(ctx, pat, new_curr_key);
     grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
     return reduced_bytes;
   }
@@ -6190,7 +6192,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
 
   pat_key_defrag_each(ctx, pat, target_ids, n_targets, pat_key_defrag_callback);
   reduced_bytes = grn_pat_total_key_size(ctx, pat) - new_curr_key;
-  pat_update_curr_key(ctx, pat, new_curr_key);
+  pat_update_total_key_size(ctx, pat, new_curr_key);
   grn_pat_defrag_clear_delinfos(ctx, pat, active_max_id);
 
   GRN_FREE(target_ids);
@@ -6204,7 +6206,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
                               const char *tag,
                               const char *wal_error_tag)
 {
-  pat_update_curr_key(ctx, pat, entry->key_offset);
+  pat_update_total_key_size(ctx, pat, entry->key_offset);
   pat->header->n_entries = entry->n_entries;
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {
@@ -6598,7 +6600,7 @@ grn_pat_wal_recover_defrag_current_key(grn_ctx *ctx,
     }
   }
   grn_wal_reader_close(ctx, reader);
-  pat_update_curr_key(ctx, pat, entry->key_offset);
+  pat_update_total_key_size(ctx, pat, entry->key_offset);
   grn_pat_defrag_clear_delinfos(ctx, pat, entry->record_id);
 }
 
