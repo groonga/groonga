@@ -40,29 +40,6 @@ Here is an example which inspects specified target object.
 Reference
 ---------
 
-.. c:function:: void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
-
-   .. versionadded:: 4.0.8
-
-   Inspect specified target ``obj`` object.
-   It prints inspected geo point text.
-
-   :param ctx: The context object
-   :param point: The inspect target object.
-
-   .. code-block:: c
-
-      grn_obj point;
-      int latitude = ((40 * 60 * 60) + (42 * 60) + 46) * 1000;
-      int longitude = ((-74 * 60 * 60) + (0 * 60) + 22) * 1000;
-      GRN_WGS84_GEO_POINT_INIT(&point, 0);
-      GRN_GEO_POINT_SET(&context, &point, latitude, longitude);
-      grn_p_geo_point(&context, (grn_geo_point*)&point);
-
-   If ``point`` indicates New York City, it prints like the following::
-
-     [(524290,18) ((0, 8, 44, 290),(0, 0, 0, 18)) [00000000 00000000 00000000 10000000 00000000 00000000 00000001 00001100]]
-
 .. c:function:: void grn_p_ii_values(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 4.0.8
