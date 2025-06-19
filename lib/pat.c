@@ -112,7 +112,7 @@ typedef struct {
 
 typedef union {
   pat_node node;
-  pat_node_large large_node;
+  pat_node_large node_large;
 } pat_node_common;
 
 #define PAT_DELETING  (1 << 1)
