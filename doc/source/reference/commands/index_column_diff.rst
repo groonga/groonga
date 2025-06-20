@@ -127,8 +127,8 @@ execute as below::
       },
       "remains": [
         {
-	  "record_id": RECORD_ID
-	}
+          "record_id": RECORD_ID
+        }
       ],
       "missings": [
         {
