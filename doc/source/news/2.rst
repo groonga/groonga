@@ -171,7 +171,7 @@ Fixes
   on startup by groonga command. [#1532] [Patch by Akio Tajima]
 * [windows] Fixed a bug that data stored in column couldn't be read when total amount of data
   stored in column exceeds 128MB. [groonga-dev,01088] [Reported by ongaeshi]
-* Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*`` 
+* Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*``
   except ``Int32/Uint32`` returns invalid results.
 * Fixed a bug that deleting record can be found.
 * Fixed a bug that latin1 and koi8r normalizations could not process all string data

@@ -14,7 +14,7 @@ Improvements
   * This script name is copy-related-files.rb.
   * This script is useful if we want to extract specifying tables or columns from a huge database.
   * Related files of specific tables or columns may need for reproducing fault.
-  * If we difficult to offer a database whole, we can extract related files of target tables or columns by this tool. 
+  * If we difficult to offer a database whole, we can extract related files of target tables or columns by this tool.
 
 * [:doc:`/reference/commands/shutdown`] Accept ``/d/shutdown?mode=immediate`` immediately even when all threads are used.
 
@@ -389,7 +389,7 @@ Improvements
 
   * We can specify a scope of an inspection.
 
-* [:doc:`/reference/executables/grndb`] Added document about new option ``--since``    
+* [:doc:`/reference/executables/grndb`] Added document about new option ``--since``
 
 * Bundle RapidJSON
 

@@ -617,7 +617,7 @@ Improvements
   It shows more details about data which is failed to load.
 * Added ``adjuster`` option to select command.
   adjuster options accepts following syntax: INDEX_COLUMN @ STRING_LITERAL (* FACTOR).
-* Supported :ref:`weight-vector-column`. You need to specify 'COLUMN_VECTOR|WITH_WEIGHT' flags 
+* Supported :ref:`weight-vector-column`. You need to specify 'COLUMN_VECTOR|WITH_WEIGHT' flags
   to create weight vector column.
 * Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian Wiedenroth]
 * Improved recycling garbage data. It suppress to increase database size.

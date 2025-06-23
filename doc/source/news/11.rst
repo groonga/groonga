@@ -976,7 +976,7 @@ Improvements
   Groonga stores query cache to internally table.
   The maximum total size of keys of this table is 4GiB. Because this table is hash table.
   Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB.
-  In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache 
+  In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache
 
 Fixes
 ^^^^^
@@ -987,7 +987,7 @@ Fixes
   At this time, threads that wait for an opening object take locks, but these locks are not released.
   Therefore, these locks remain until Groonga's process is restarted in the above case, and a new thread can't also open the object all the time until Groonga's process is restarted.
 
-  However, this bug rarely happens. Because a time of a thread open the object is a very short time. 
+  However, this bug rarely happens. Because a time of a thread open the object is a very short time.
 
 * [:doc:`/reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``.
 

@@ -302,7 +302,7 @@ Improvements
   Studio.
 
 * [httpd] Updated bundled nginx to 1.11.4.
-  
+
 Fixes
 ^^^^^
 
@@ -573,7 +573,6 @@ Thanks
 * Soichiro Kiyokawa
 * IWAI, Masaharu
 * cafedomancer
-  
 
 .. _release-6-0-4:
 
@@ -858,7 +857,7 @@ Improvements
   raw JSON instead of parameter value::
 
     POST /d/load?table=XXX&request_id=x
-    
+
     load --table XXX --request_id x
     [
       ...
