@@ -1061,6 +1061,30 @@ grn_pat_wal_add_entry_data_set_record_direction(
     n = grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);                \
   } while (0)
 
+static inline pat_node_common *
+pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
+{
+  int flags = 0;
+  pat_node_common *n;
+
+  if (pat_is_key_large(pat)) {
+    pat_node_large *node =
+      (pat_node_large *)grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
+    if (!node) {
+      return NULL;
+    }
+    n->node_large = *node;
+  } else {
+    pat_node *node =
+      (pat_node *)grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
+    if (!node) {
+      return NULL;
+    }
+    n->node = *node;
+  }
+  return n;
+}
+
 static inline pat_node *
 pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
@@ -1704,7 +1728,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
 {
   grn_io *io;
   grn_pat *pat;
-  pat_node *node0;
+  pat_node_common *node0;
   struct grn_pat_header *header;
   uint32_t io_type;
   io = grn_io_open(ctx, path, GRN_IO_AUTO);
@@ -1756,7 +1780,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   grn_table_modules_init(ctx, &(pat->token_filters));
   GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->obj.header.flags = header->flags;
-  PAT_AT(pat, 0, node0);
+  node0 = pat_at(ctx, pat, 0);
   if (!node0) {
     ERR(GRN_INVALID_FORMAT,
         "[pat][open] failed to get the root node: <%s>",
