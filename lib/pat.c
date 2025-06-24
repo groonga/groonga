@@ -1065,24 +1065,7 @@ static inline pat_node_common *
 pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   int flags = 0;
-  pat_node_common *n;
-
-  if (pat_is_key_large(pat)) {
-    pat_node_large *node =
-      (pat_node_large *)grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
-    if (!node) {
-      return NULL;
-    }
-    n->node_large = *node;
-  } else {
-    pat_node *node =
-      (pat_node *)grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
-    if (!node) {
-      return NULL;
-    }
-    n->node = *node;
-  }
-  return n;
+  return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
 }
 
 static inline pat_node *
