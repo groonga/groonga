@@ -2382,7 +2382,7 @@ Improvements
 
 * [:doc:`/reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux.
 
-* [:doc:`/reference/log`] Outputted a path of closed file into a log of debug level on Windows.  
+* [:doc:`/reference/log`] Outputted a path of closed file into a log of debug level on Windows.
 
 * Added following API and macros
 
