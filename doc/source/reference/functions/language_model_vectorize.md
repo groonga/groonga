@@ -24,7 +24,7 @@ To enable this function, register `functions/language_model` plugin by
 the following command:
 
 ```shell
-plugin_register functions/vector
+plugin_register functions/language_model
 ```
 
 ## Syntax
