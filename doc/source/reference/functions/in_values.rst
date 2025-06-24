@@ -63,7 +63,7 @@ Currently, you can only specify ``too_many_index_match_ratio``. The type of this
 
 You can change the value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` with ``too_many_index_match_ratio``.
 The default value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is ``0.01``.
-``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether ``in_values`` use an index or not. 
+``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether ``in_values`` use an index or not.
 
 There is a case that sequential search is faster than index search when the number of narrowed down records is small enough in contrast to the number of expected records to narrow down by ``in_values`` with AND operation which use indexes.
 

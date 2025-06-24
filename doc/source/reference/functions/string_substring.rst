@@ -115,7 +115,7 @@ Specify the following key.
 
 ``default_value``
   Specify a string to be returned when a substring is an empty string except when specifying 0 for ``length``.
-  
+
   The default is an empty string.
 
 Return value
