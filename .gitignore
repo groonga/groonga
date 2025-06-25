@@ -159,6 +159,7 @@
 /vendor/rapidjson-*
 /vendor/simdjson-*
 /vendor/simsimd-*
+/vendor/usearch-*
 /vendor/xsimd-*
 /vendor/xxHash-*
 /vendor/zstd-*
