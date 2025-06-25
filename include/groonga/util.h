@@ -404,7 +404,7 @@ grn_p(grn_ctx *ctx, grn_obj *obj);
 GRN_API void
 grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
 /**
- * \brief Print inspected text of the given index values.
+ * \brief Print inspected text of the given index column values.
  *
  * \since 4.0.8
  *
