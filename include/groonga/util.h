@@ -410,7 +410,7 @@ grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
  *
  * For example usage:
  * ```c
- * grn_p_ii_values(ctx, index);
+ * grn_p_ii_values(ctx, index_column);
  * ```
  *
  * If \p obj is an index column, it prints output like:
