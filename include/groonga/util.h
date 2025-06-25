@@ -427,7 +427,7 @@ grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
  * ```
  *
  * \param ctx The context object.
- * \param obj The index to inspect and print.
+ * \param obj The index column to inspect and print.
  */
 GRN_API void
 grn_p_ii_values(grn_ctx *ctx, grn_obj *obj);
