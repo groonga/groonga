@@ -83,7 +83,7 @@ Advanced usage
 ``delimiter`` option can also specify multiple delimiters.
 
 For example, ``Hello, World`` is tokenized to ``Hello`` and ``World``.
-``,`` and `` `` are delimiters in below example.
+``","`` and ``" "`` are delimiters in below example.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log
