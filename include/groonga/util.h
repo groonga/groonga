@@ -403,6 +403,32 @@ grn_p(grn_ctx *ctx, grn_obj *obj);
  */
 GRN_API void
 grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
+/**
+ * \brief Print inspected text of the given index column values.
+ *
+ * \since 4.0.8
+ *
+ * For example usage:
+ * ```c
+ * grn_p_ii_values(ctx, index_column);
+ * ```
+ *
+ * If \p obj is an index column, it prints output like:
+ * ```
+ * [
+ *   #<"!"
+ *     elements:[
+ *       {status:available, rid:1, sid:1, pos:0, tf:1, weight:0, rest:1},
+ *       {status:available, rid:2, sid:1, pos:0, tf:1, weight:0, rest:1}
+ *     ]
+ *   >,
+ *   ...
+ # ]
+ * ```
+ *
+ * \param ctx The context object.
+ * \param obj The index column to inspect and print.
+ */
 GRN_API void
 grn_p_ii_values(grn_ctx *ctx, grn_obj *obj);
 
