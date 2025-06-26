@@ -2730,8 +2730,6 @@ grn_output_result_set_open_metadata(grn_ctx *ctx,
         "GROONGA:label",
         GRN_TEXT_VALUE(&label_buffer));
       GRN_OBJ_FIN(ctx, &label_buffer);
-      ctx->impl->output.arrow_metadata_data_type = NULL;
-      GRN_RAW_STRING_INIT(ctx->impl->output.arrow_metadata_label);
     }
   }
 
