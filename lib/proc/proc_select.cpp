@@ -4553,6 +4553,12 @@ grn_select_output_slice_label_v1(grn_ctx *ctx,
                                  grn_select_data *data,
                                  Slice *slice)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    ctx->impl->output.arrow_metadata_data_type = "slice";
+    ctx->impl->output.arrow_metadata_label = slice->label;
+    return;
+  }
+
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
@@ -4584,6 +4590,12 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    ctx->impl->output.arrow_metadata_data_type = "drilldown";
+    ctx->impl->output.arrow_metadata_label = drilldown->label;
+    return;
+  }
+
   if (data->drilldowns.is_labeled()) {
     GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   }
