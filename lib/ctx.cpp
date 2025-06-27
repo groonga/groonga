@@ -452,12 +452,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
                       grn_msgpack_buffer_write);
 #endif
   grn_timeval_now(ctx, &ctx->impl->tv);
-#ifdef GRN_WITH_APACHE_ARROW
   ctx->impl->output.arrow_stream_writer = NULL;
   ctx->impl->output.arrow_metadata_data_type = NULL;
   GRN_RAW_STRING_INIT(ctx->impl->output.arrow_metadata_label);
   ctx->impl->arrow_stream_loader = NULL;
-#endif
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 
@@ -854,13 +852,11 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->parallel.task_executor) {
     delete static_cast<grn::TaskExecutor *>(ctx->impl->parallel.task_executor);
   }
-#ifdef GRN_WITH_APACHE_ARROW
   if (ctx->impl->output.arrow_stream_writer) {
     grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
   }
   ctx->impl->output.arrow_metadata_data_type = NULL;
   GRN_RAW_STRING_INIT(ctx->impl->output.arrow_metadata_label);
-#endif
   GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
   GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
   rc = grn_obj_close(ctx, ctx->impl->output.buf);
