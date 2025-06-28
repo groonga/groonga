@@ -856,7 +856,8 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
   }
   ctx->impl->output.arrow_metadata_data_type = NULL;
-  GRN_RAW_STRING_INIT(ctx->impl->output.arrow_metadata_label);
+  ctx->impl->output.arrow_metadata_label.length = 0;
+  GRN_FREE((char *)(ctx->impl->output.arrow_metadata_label.value));
   GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
   GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
   rc = grn_obj_close(ctx, ctx->impl->output.buf);
