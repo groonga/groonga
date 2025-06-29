@@ -10,7 +10,7 @@ Also, saving column and reference process are going to be slower because enablin
 
 Regardless of setting ``COMPRESS_ZLIB`` , ``COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` , these filters use `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ as the compression alogolizm, thus make the column size smaller than the noncompressed column in most cases.
 
-Yet, there would be a case that some data would show sufficient work by only suetting ``COMPRESS_ZLIB`` , `COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` .
+Yet, there would be a case that some data would show sufficient work by only suetting ``COMPRESS_ZLIB`` , ``COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` .
 So it is advised to set suitable flags depending on the data.
 
 Note that ``COMPRESS_FILTER_SHUFFLE`` flag is ignored if Blosc support is invalid. Blosc support is valid in default in each packages.

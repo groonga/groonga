@@ -25,7 +25,7 @@ msgstr "主な原因"
 msgid "If we registered the plugin that we didn't install yet with ``plugin_register``."
 msgstr "まだインストールしていないプラグインを ``plugin_register`` で登録した場合。"
 
-msgid "For example, if we executed ``plugin_register normalizers/mysql`` on Groonga when we didn't install `` groonga-normalizer-mysql`` yet."
+msgid "For example, if we executed ``plugin_register normalizers/mysql`` on Groonga when we didn't install ``groonga-normalizer-mysql`` yet."
 msgstr "例えば、 ``groonga-normalizer-mysql`` をまだインストールしていないときに、Groonga上で ``plugin_register normalizers/mysql`` した場合です。"
 
 msgid "If we used ``TokenMecab`` when ``mecab`` didn't install yet."
