@@ -150,7 +150,7 @@ String
 ^^^^^^
 
 String literal is ``"..."``. You need to escape ``"`` in literal by
-prepending ``\\'' such as ``\"``. For example, ``"Say \"Hello!\"."`` is
+prepending ``\`` such as ``\"``. For example, ``"Say \"Hello!\"."`` is
 a literal for ``Say "Hello!".`` string.
 
 String encoding must be the same as encoding of database. The default
