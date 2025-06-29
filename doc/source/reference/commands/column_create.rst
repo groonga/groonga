@@ -1388,8 +1388,8 @@ Here are available flags:
 
        .. code-block::
 
-          | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 | 
-          |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------| 
+          | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |  | Byte 0 | Byte 1 | Byte 2 | Byte 3 |
+          |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|  |--------|--------|--------|--------|
           | 0x55   | 0x12   | 0x45   | 0x00   |, | 0x11   | 0x13   | 0x46   | 0x00   |, | 0x29   | 0x14   | 0x47   | 0x00   |, | 0xA7   | 0x14   | 0x48   | 0x00   |
 
        Applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be
