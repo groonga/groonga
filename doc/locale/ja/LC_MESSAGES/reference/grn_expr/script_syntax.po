@@ -102,7 +102,7 @@ msgstr "浮動小数点数リテラルは ``3.14`` のように、まず ``0`` �
 msgid "String"
 msgstr "文字列"
 
-msgid "String literal is ``\"...\"``. You need to escape ``\"`` in literal by prepending ``\\\\'' such as ``\\\"``. For example, ``\"Say \\\"Hello!\\\".\"`` is a literal for ``Say \"Hello!\".`` string."
+msgid "String literal is ``\"...\"``. You need to escape ``\"`` in literal by prepending ``\\`` such as ``\\\"``. For example, ``\"Say \\\"Hello!\\\".\"`` is a literal for ``Say \"Hello!\".`` string."
 msgstr "文字列リテラルは ``\"...\"`` です。リテラル中の ``\"`` は ``\\\"`` というように ``\\`` を前につけてエスケープします。例えば、 ``\"Say \\\"Hello!\\\".\"`` は ``Say \"Hello!\".`` という文字列のリテラルです。"
 
 msgid "String encoding must be the same as encoding of database. The default encoding is UTF-8. It can be changed by ``--with-default-encoding`` configure option, ``--encoding`` :doc:`/reference/executables/groonga` option and so on."
