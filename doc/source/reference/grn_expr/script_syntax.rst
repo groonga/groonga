@@ -1036,7 +1036,7 @@ Here is a simple example:
 
 The first expression matches records that contain ``I`` and ``fast``
 and the max interval of those words are in 10 words. So the record
-that its content is ``I started to use Groonga. It's very fast!`` is matched. 
+that its content is ``I started to use Groonga. It's very fast!`` is matched.
 The number of words between ``I`` and ``fast`` is 7.
 
 The second expression matches records that contain ``I`` and
