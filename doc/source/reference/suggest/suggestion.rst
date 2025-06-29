@@ -127,4 +127,3 @@ Without '--limit -1', you can't get all data.
 In pair table, the valid value of ``freq0``, ``freq1`` and ``freq2`` column must be larger than 0.
 
 Don't execute above query via HTTP request because enormous number of records are fetched.
- 
