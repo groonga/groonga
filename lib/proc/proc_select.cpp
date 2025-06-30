@@ -4591,15 +4591,15 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
-  if (!data->drilldowns.is_labeled()) {
-    return;
-  }
   if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
     grn_output_arrow_metadata(ctx,
                               "drilldown",
                               drilldown->label.value,
                               drilldown->label.length);
-  } else {
+    return;
+  }
+
+  if (data->drilldowns.is_labeled()) {
     GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   }
 }
