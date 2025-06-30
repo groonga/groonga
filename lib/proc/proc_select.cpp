@@ -4558,10 +4558,9 @@ grn_select_output_slice_label_v1(grn_ctx *ctx,
                               "slice",
                               slice->label.value,
                               slice->label.length);
-    return;
+  } else {
+    GRN_OUTPUT_STR(slice->label.value, slice->label.length);
   }
-
-  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
 static void
@@ -4600,9 +4599,9 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                               "drilldown",
                               drilldown->label.value,
                               drilldown->label.length);
-    return;
+  } else {
+    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   }
-  GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 }
 
 static grn_select_output_formatter grn_select_output_formatter_v1 = {
@@ -4648,9 +4647,9 @@ grn_select_output_slice_label_v3(grn_ctx *ctx,
                               "slice",
                               slice->label.value,
                               slice->label.length);
-    return;
+  } else {
+    GRN_OUTPUT_STR(slice->label.value, slice->label.length);
   }
-  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
 static void
@@ -4686,9 +4685,9 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
                               "drilldown",
                               drilldown->label.value,
                               drilldown->label.length);
-    return;
+  } else {
+    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   }
-  GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 }
 
 static grn_select_output_formatter grn_select_output_formatter_v3 = {
