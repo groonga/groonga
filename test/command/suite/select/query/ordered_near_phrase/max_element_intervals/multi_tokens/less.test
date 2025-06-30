@@ -9,11 +9,11 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "abc12345def12ghi"},
-{"content": "abc123456def12ghi"}
+{"content": "abc12345defghi12jklmnop"},
+{"content": "abc123456defghi12jklmnop"}
 ]
 
 select Entries \
   --match_columns content \
-  --query '*ONP-1,0,5"abc def ghi"' \
+  --query '*ONP-1,0,5"abc defghi jklmnop"' \
   --output_columns '_score, content'
