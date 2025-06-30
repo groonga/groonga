@@ -934,6 +934,12 @@ grn_output_arrow_metadata(grn_ctx *ctx,
                           const char *label,
                           size_t label_length)
 {
+  if (ctx->impl->output.arrow_metadata_label.value) {
+    GRN_FREE((char *)(ctx->impl->output.arrow_metadata_label.value));
+    ctx->impl->output.arrow_metadata_label.value = NULL;
+    ctx->impl->output.arrow_metadata_label.length = 0;
+  }
+
   ctx->impl->output.arrow_metadata_data_type = data_type;
   if (label && label_length > 0) {
     ctx->impl->output.arrow_metadata_label.value =

@@ -4560,6 +4560,7 @@ grn_select_output_slice_label_v1(grn_ctx *ctx,
                               slice->label.length);
     return;
   }
+
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
@@ -4599,9 +4600,9 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                               "drilldown",
                               drilldown->label.value,
                               drilldown->label.length);
-  } else {
-    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
+    return;
   }
+  GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 }
 
 static grn_select_output_formatter grn_select_output_formatter_v1 = {
