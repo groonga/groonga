@@ -13118,6 +13118,8 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     }
     uint32_t previous_phrase_id = data->token_infos[0]->phrase_id;
     int32_t previous_pos = data->token_infos[0]->pos;
+    int32_t previous_n_tokens_in_phrase =
+      data->token_infos[0]->n_tokens_in_phrase;
     for (i_token_info = 1, i_interval = 0;
          i_token_info < n_token_infos && i_interval < n_intervals;
          i_token_info++) {
@@ -13129,7 +13131,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = token_info->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
-      int32_t interval = pos - previous_pos - token_info->n_tokens_in_phrase;
+      int32_t interval = pos - previous_pos - previous_n_tokens_in_phrase;
       if (max_element_interval >= 0 && interval > max_element_interval) {
         return false;
       }
@@ -13137,6 +13139,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
         return false;
       }
       previous_pos = pos;
+      previous_n_tokens_in_phrase = token_info->n_tokens_in_phrase;
       i_interval++;
     }
     return true;
