@@ -4554,18 +4554,12 @@ grn_select_output_slice_label_v1(grn_ctx *ctx,
                                  Slice *slice)
 {
   if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
-    ctx->impl->output.arrow_metadata_data_type = "slice";
-    if (slice->label.length > 0) {
-      ctx->impl->output.arrow_metadata_label.value =
-        (const char *)GRN_MALLOC(slice->label.length);
-      grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
-                 slice->label.value,
-                 slice->label.length);
-      ctx->impl->output.arrow_metadata_label.length = slice->label.length;
-    }
+    grn_output_arrow_metadata(ctx,
+                              "slice",
+                              slice->label.value,
+                              slice->label.length);
     return;
   }
-
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
 
@@ -4597,20 +4591,15 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
-  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
-    ctx->impl->output.arrow_metadata_data_type = "drilldown";
-    if (drilldown->label.length > 0) {
-      ctx->impl->output.arrow_metadata_label.value =
-        (const char *)GRN_MALLOC(drilldown->label.length);
-      grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
-                 drilldown->label.value,
-                 drilldown->label.length);
-      ctx->impl->output.arrow_metadata_label.length = drilldown->label.length;
-    }
+  if (!data->drilldowns.is_labeled()) {
     return;
   }
-
-  if (data->drilldowns.is_labeled()) {
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
+    grn_output_arrow_metadata(ctx,
+                              "drilldown",
+                              drilldown->label.value,
+                              drilldown->label.length);
+  } else {
     GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   }
 }
@@ -4654,15 +4643,10 @@ grn_select_output_slice_label_v3(grn_ctx *ctx,
                                  Slice *slice)
 {
   if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
-    ctx->impl->output.arrow_metadata_data_type = "slice";
-    if (slice->label.length > 0) {
-      ctx->impl->output.arrow_metadata_label.value =
-        (const char *)GRN_MALLOC(slice->label.length);
-      grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
-                 slice->label.value,
-                 slice->label.length);
-      ctx->impl->output.arrow_metadata_label.length = slice->label.length;
-    }
+    grn_output_arrow_metadata(ctx,
+                              "slice",
+                              slice->label.value,
+                              slice->label.length);
     return;
   }
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
@@ -4697,15 +4681,10 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
                                      Drilldown *drilldown)
 {
   if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_APACHE_ARROW) {
-    ctx->impl->output.arrow_metadata_data_type = "drilldown";
-    if (drilldown->label.length > 0) {
-      ctx->impl->output.arrow_metadata_label.value =
-        (const char *)GRN_MALLOC(drilldown->label.length);
-      grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
-                 drilldown->label.value,
-                 drilldown->label.length);
-      ctx->impl->output.arrow_metadata_label.length = drilldown->label.length;
-    }
+    grn_output_arrow_metadata(ctx,
+                              "drilldown",
+                              drilldown->label.value,
+                              drilldown->label.length);
     return;
   }
   GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);

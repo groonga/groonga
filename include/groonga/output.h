@@ -277,6 +277,12 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type);
 GRN_API const char *
 grn_ctx_get_mime_type(grn_ctx *ctx);
 
+GRN_API void
+grn_output_arrow_metadata(grn_ctx *ctx,
+                          const char *data_type,
+                          const char *label,
+                          size_t label_length);
+
 /* obsolete */
 GRN_API grn_rc
 grn_text_otoj(grn_ctx *ctx,
