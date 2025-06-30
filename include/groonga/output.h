@@ -277,6 +277,15 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type);
 GRN_API const char *
 grn_ctx_get_mime_type(grn_ctx *ctx);
 
+GRN_API void
+grn_output_result_set_label(grn_ctx *ctx,
+                            grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *label,
+                            size_t label_length,
+                            const char *metadata_type,
+                            bool is_labeled);
+
 /* obsolete */
 GRN_API grn_rc
 grn_text_otoj(grn_ctx *ctx,

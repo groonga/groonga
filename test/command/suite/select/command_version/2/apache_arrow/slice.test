@@ -1,0 +1,28 @@
+#@require-apache-arrow
+#@require-interface http
+#@require-testee groonga
+
+# Test for test/command/suite/select/slices/command_version_3.test at output_type=apache-arrow
+
+plugin_register functions/time
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos date COLUMN_SCALAR Time
+column_create Memos tag COLUMN_SCALAR Tags
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-20 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-21 12:00:03", "tag": "Rroonga"}
+]
+
+select Memos \
+  --slices[groonga].filter 'tag == "Groonga"' \
+  --slices[groonga].sort_keys 'date' \
+  --slices[groonga].output_columns '_key, date' \
+  --command_version 2 \
+  --output_type apache-arrow

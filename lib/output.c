@@ -929,6 +929,81 @@ grn_output_bool(grn_ctx *ctx,
 }
 
 void
+grn_output_result_set_label(grn_ctx *ctx,
+                            grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *label,
+                            size_t label_length,
+                            const char *metadata_type,
+                            bool is_labeled)
+{
+  if (!label || label_length == 0) {
+    return;
+  }
+
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    if (ctx->impl->output.arrow_metadata_label.value) {
+      GRN_FREE((char *)(ctx->impl->output.arrow_metadata_label.value));
+      ctx->impl->output.arrow_metadata_label.value = NULL;
+      ctx->impl->output.arrow_metadata_label.length = 0;
+    }
+
+    ctx->impl->output.arrow_metadata_data_type = metadata_type;
+    if (label && label_length > 0) {
+      ctx->impl->output.arrow_metadata_label.value =
+        (const char *)GRN_MALLOC(label_length);
+      if (ctx->impl->output.arrow_metadata_label.value) {
+        grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
+                   label,
+                   label_length);
+        ctx->impl->output.arrow_metadata_label.length = label_length;
+      }
+    }
+  } else {
+    if (is_labeled) {
+      grn_output_str(ctx, outbuf, output_type, label, label_length);
+    }
+  }
+}
+
+void
+grn_output_arrow_stream_open_with_metadata(grn_ctx *ctx,
+                                           grn_obj *outbuf,
+                                           grn_content_type output_type)
+{
+  if (output_type != GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
+
+  if (ctx->impl->output.arrow_stream_writer) {
+    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+  }
+  ctx->impl->output.arrow_stream_writer =
+    grn_arrow_stream_writer_open(ctx, outbuf);
+
+  if (ctx->impl->output.arrow_metadata_data_type &&
+      ctx->impl->output.arrow_metadata_label.value) {
+    grn_obj label_buffer;
+    GRN_TEXT_INIT(&label_buffer, 0);
+    GRN_TEXT_SET(ctx,
+                 &label_buffer,
+                 ctx->impl->output.arrow_metadata_label.value,
+                 ctx->impl->output.arrow_metadata_label.length);
+    GRN_TEXT_PUTC(ctx, &label_buffer, '\0');
+    grn_arrow_stream_writer_add_metadata(
+      ctx,
+      ctx->impl->output.arrow_stream_writer,
+      "GROONGA:data_type",
+      ctx->impl->output.arrow_metadata_data_type);
+    grn_arrow_stream_writer_add_metadata(ctx,
+                                         ctx->impl->output.arrow_stream_writer,
+                                         "GROONGA:label",
+                                         GRN_TEXT_VALUE(&label_buffer));
+    GRN_OBJ_FIN(ctx, &label_buffer);
+  }
+}
+
+void
 grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
   put_delimiter(ctx, outbuf, output_type);
@@ -2704,13 +2779,7 @@ grn_output_result_set_open_metadata(grn_ctx *ctx,
                                     grn_obj_format *format,
                                     uint32_t n_additional_elements)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    if (ctx->impl->output.arrow_stream_writer) {
-      grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
-    }
-    ctx->impl->output.arrow_stream_writer =
-      grn_arrow_stream_writer_open(ctx, outbuf);
-  }
+  grn_output_arrow_stream_open_with_metadata(ctx, outbuf, output_type);
 
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_result_set_open_metadata_v1(ctx,
