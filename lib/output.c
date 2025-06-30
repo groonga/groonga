@@ -929,26 +929,39 @@ grn_output_bool(grn_ctx *ctx,
 }
 
 void
-grn_output_arrow_metadata(grn_ctx *ctx,
-                          const char *data_type,
-                          const char *label,
-                          size_t label_length)
+grn_output_result_set_label(grn_ctx *ctx,
+                            grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *label,
+                            size_t label_length,
+                            const char *metadata_type,
+                            bool is_labeled)
 {
-  if (ctx->impl->output.arrow_metadata_label.value) {
-    GRN_FREE((char *)(ctx->impl->output.arrow_metadata_label.value));
-    ctx->impl->output.arrow_metadata_label.value = NULL;
-    ctx->impl->output.arrow_metadata_label.length = 0;
+  if (!label || label_length == 0) {
+    return;
   }
 
-  ctx->impl->output.arrow_metadata_data_type = data_type;
-  if (label && label_length > 0) {
-    ctx->impl->output.arrow_metadata_label.value =
-      (const char *)GRN_MALLOC(label_length);
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
     if (ctx->impl->output.arrow_metadata_label.value) {
-      grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
-                 label,
-                 label_length);
-      ctx->impl->output.arrow_metadata_label.length = label_length;
+      GRN_FREE((char *)(ctx->impl->output.arrow_metadata_label.value));
+      ctx->impl->output.arrow_metadata_label.value = NULL;
+      ctx->impl->output.arrow_metadata_label.length = 0;
+    }
+
+    ctx->impl->output.arrow_metadata_data_type = metadata_type;
+    if (label && label_length > 0) {
+      ctx->impl->output.arrow_metadata_label.value =
+        (const char *)GRN_MALLOC(label_length);
+      if (ctx->impl->output.arrow_metadata_label.value) {
+        grn_memcpy((char *)(ctx->impl->output.arrow_metadata_label.value),
+                   label,
+                   label_length);
+        ctx->impl->output.arrow_metadata_label.length = label_length;
+      }
+    }
+  } else {
+    if (is_labeled) {
+      grn_output_str(ctx, outbuf, output_type, label, label_length);
     }
   }
 }
