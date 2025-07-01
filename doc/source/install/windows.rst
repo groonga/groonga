@@ -16,25 +16,14 @@ size data.
 zip
 ---
 
-For 32-bit environment, download x86 zip archive from
-packages.groonga.org:
-
-  * https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019-with-vcruntime.zip
-
-If we don't need Microsoft Visual C++ Runtime Library, we download from the following URL:
-
-  * https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019.zip
-
-Then extract it.
-
 For 64-bit environment, download x64 zip archive from
 packages.groonga.org:
 
-  * https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019-with-vcruntime.zip
+  * https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2022-with-vcruntime.zip
 
 If we don't need Microsoft Visual C++ Runtime Library, we download from the following URL:
 
-  * https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019.zip
+  * https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2022.zip
 
 Then extract it.
 
