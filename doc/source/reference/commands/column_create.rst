@@ -33,8 +33,8 @@ Most parameters are required::
                 flags
                 type
                 [source=null]
-		[path=null]
-		[generator=null]
+                [path=null]
+                [generator=null]
 
 Usage
 -----
