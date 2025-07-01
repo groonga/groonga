@@ -633,9 +633,6 @@ jobs:
           - runs-on: windows-2022
             vc-toolset-version: 143
             vs-version: 2022
-          - runs-on: windows-2019
-            vc-toolset-version: 142
-            vs-version: 2019
     env:
       VC_ARCHITECTURE: x64
     runs-on: ${{ matrix.runs-on }}
@@ -824,14 +821,6 @@ jobs:
 
           $VC_REDIST_VERSION = (Get-Content "${Env:VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
           $VC_REDIST_DIR = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.CRT"
-          # Workaround: This is only needed for the current
-          # windows-2019 runner. Should we use
-          # Microsoft.VCToolsVersion.default.txt instead of
-          # Microsoft.VCRedistVersion.default.txt?
-          if (-not (Test-Path "${VC_REDIST_DIR}")) {
-            $VC_REDIST_VERSION = "14.29.30133"
-            $VC_REDIST_DIR = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.CRT"
-          }
           $VC_REDIST_DIR_OPEN_MP = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.OpenMP"
           $VC_REDIST_VCRUNTIME = "${VC_REDIST_DIR}\vcruntime140.dll"
           $VC_REDIST_VCRUNTIME_1 = "${VC_REDIST_DIR}\vcruntime140_1.dll"
