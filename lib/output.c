@@ -4477,6 +4477,13 @@ grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format)
   if (format->expression) {
     GRN_OBJ_FIN(ctx, format->expression);
   }
+  if (format->flags & GRN_OBJ_FORMAT_WITH_METADATA) {
+    format->metadata_type = NULL;
+    if (format->metadata.value) {
+      GRN_FREE((char *)(format->metadata.value));
+      format->metadata.value = NULL;
+    }
+  }
 
   GRN_API_RETURN(ctx->rc);
 }
