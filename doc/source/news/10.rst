@@ -638,11 +638,11 @@ Improvements
 
     * ``TokenDocumentVectorTFIDF`` calculate a weight for token by using TF-IDF.
 
-	* Please refer to https://radimrehurek.com/gensim/models/tfidfmodel.html about TF-IDF.
+    * Please refer to https://radimrehurek.com/gensim/models/tfidfmodel.html about TF-IDF.
 
     * ``TokenDocumentVectorBM25`` calculate a weight for token by using Okapi BM25.
 
-	* Please refer to https://en.wikipedia.org/wiki/Okapi_BM25 about Okapi BM25.
+    * Please refer to https://en.wikipedia.org/wiki/Okapi_BM25 about Okapi BM25.
 
 * Improved performance when below case.
 
