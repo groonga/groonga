@@ -28,29 +28,20 @@ msgstr "32-bit用と64-bit用のパッケージを配布していますが、サ
 msgid "zip"
 msgstr ""
 
-msgid "For 32-bit environment, download x86 zip archive from packages.groonga.org:"
-msgstr "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
+msgid "For 64-bit environment, download x64 zip archive from packages.groonga.org:"
+msgstr "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019-with-vcruntime.zip"
+msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2022-with-vcruntime.zip"
 msgstr ""
 
 msgid "If we don't need Microsoft Visual C++ Runtime Library, we download from the following URL:"
 msgstr "Microsoft Visual C++ ランタイムライブラリーが不要な場合は、以下のURLからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019.zip"
+msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2022.zip"
 msgstr ""
 
 msgid "Then extract it."
 msgstr "その後、アーカイブを展開します。"
-
-msgid "For 64-bit environment, download x64 zip archive from packages.groonga.org:"
-msgstr "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
-
-msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019-with-vcruntime.zip"
-msgstr ""
-
-msgid "https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019.zip"
-msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
 msgstr "``bin`` フォルダーに :doc:`/reference/executables/groonga` があるのでそれを起動してください。"
