@@ -70,24 +70,9 @@ decreased.
 Reference
 ---------
 
-.. c:type:: uint32_t (*grn_thread_get_limit_func)(void *data)
-
-   It's the type of function that returns the max number of threads.
-
 .. c:type:: void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data)
 
    It's the type of function that sets the max number of threads.
-
-.. c:function:: void grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data)
-
-   It sets the custom function that returns the max number of threads.
-
-   ``data`` is passed to ``func`` when ``func`` is called from
-   :c:func:`grn_thread_get_limit()`.
-
-   :param func: The custom function that returns the max number of threads.
-   :param data: An user data to be passed to ``func`` when ``func``
-                is called.
 
 .. c:function:: void grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data)
 

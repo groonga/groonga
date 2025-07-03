@@ -49,7 +49,48 @@ grn_thread_get_limit_with_ctx(grn_ctx *ctx);
 GRN_API void
 grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit);
 
+/**
+ * \brief The type of function that returns the max number of threads.
+ *
+ * \since 5.0.7
+ *
+ * This is the function pointer type for custom functions that return the
+ * maximum number of threads. When set via \ref grn_thread_set_get_limit_func,
+ * this function will be called by \ref grn_thread_get_limit.
+ *
+ * \param data User data passed when the function was registered.
+ *
+ * \return The max number of threads.
+ */
 typedef uint32_t (*grn_thread_get_limit_func)(void *data);
+/**
+ * \brief Set the custom function that returns the max number of threads.
+ *
+ * \since 5.0.7
+ *
+ * This function sets a custom function that will be called when
+ * \ref grn_thread_get_limit is invoked. The custom function allows
+ * applications to dynamically control the thread limit.
+ *
+ * \p data is passed to \p func when \p func is called from
+ * \ref grn_thread_get_limit.
+ *
+ * For example usage:
+ * ```c
+ * static uint32_t
+ * my_get_thread_limit(void *data)
+ * {
+ *   uint32_t *max_threads = (uint32_t *)data;
+ *   return *max_threads;
+ * }
+ *
+ * uint32_t max_threads = 100;
+ * grn_thread_set_get_limit_func(my_get_thread_limit, &max_threads);
+ * ```
+ *
+ * \param func The custom function that returns the max number of threads.
+ * \param data User data to be passed to \p func when \p func is called.
+ */
 GRN_API void
 grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data);
 typedef void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data);

@@ -42,23 +42,8 @@ msgstr "以下は、 :doc:`/reference/executables/groonga` が実際に使って
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It's the type of function that returns the max number of threads."
-msgstr "最大スレッド数を返す関数の型です。"
-
 msgid "It's the type of function that sets the max number of threads."
 msgstr "最大スレッド数を設定する関数の型です。"
-
-msgid "It sets the custom function that returns the max number of threads."
-msgstr "最大スレッド数を返すカスタム関数を設定します。"
-
-msgid "``data`` is passed to ``func`` when ``func`` is called from :c:func:`grn_thread_get_limit()`."
-msgstr "``data`` は :c:func:`grn_thread_get_limit()` が ``func`` を呼ぶときに ``func`` に渡されます。"
-
-msgid "The custom function that returns the max number of threads."
-msgstr "最大スレッド数を返すカスタム関数。"
-
-msgid "An user data to be passed to ``func`` when ``func`` is called."
-msgstr "``func`` が呼ばれるときに ``func`` に渡されるユーザーのためのデータ。"
 
 msgid "It sets the custom function that sets the max number of threads."
 msgstr "最大スレッド数を設定するカスタム関数を設定します。"
@@ -68,3 +53,6 @@ msgstr "``data`` は :c:func:`grn_thread_set_limit()` が ``func`` を呼ぶと�
 
 msgid "The custom function that sets the max number of threads."
 msgstr "最大スレッド数を設定するカスタム関数。"
+
+msgid "An user data to be passed to ``func`` when ``func`` is called."
+msgstr "``func`` が呼ばれるときに ``func`` に渡されるユーザーのためのデータ。"
