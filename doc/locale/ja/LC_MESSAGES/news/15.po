@@ -17,23 +17,80 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.2 - 2025-07-07"
+msgstr "15.1.2リリース - 2025-07-07"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[Windows] Drop support for building with Visual Studio 2019"
+msgstr "[Windows] Visual Studio 2019 でのビルドをやめました"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`][{ref}`query-syntax-near-phrase-product-search-condition`][{ref}`script-syntax-near-phrase-product-search-operator`][{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`]: Fixed a bug that interval between phrases calculation"
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`][{ref}`query-syntax-near-phrase-product-search-condition`][{ref}`script-syntax-near-phrase-product-search-operator`][{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`]: フレーズ間の距離の計算の間違いを修正しました"
+
+msgid "This problem may occurs the following conditions."
+msgstr "この問題は、以下の条件で発生することがあります。"
+
+msgid "Use `*NP`, `*NPP`, or `*ONP` with `MAX_ELEMENT_INTERVAL` as below."
+msgstr "以下のように `*NP` や `*NPP`、 `*ONP` を `MAX_ELEMENT_INTERVAL` を指定して使う。"
+
+msgid "`*NP-1,0,12,11\"abc ef\"`"
+msgstr ""
+
+msgid "`*NPP-1,0,10,9\"(abc bcd) (ef)\"`"
+msgstr ""
+
+msgid "`*ONP-1,0,5|6 \"abc defghi jklmnop\"`"
+msgstr ""
+
+msgid "If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
+msgstr "`MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
+
+msgid "Please refer to the following links about usages and syntaxes of `*NP`, `*NPP`, or `*ONPP`."
+msgstr "`*NP` や `*NPP`、 `*ONPP` の構文や使い方については以下のリンクを参照してください。"
+
+msgid "[{ref}`query-syntax-near-phrase-search-condition`]"
+msgstr ""
+
+msgid "[{ref}`script-syntax-near-phrase-search-operator`]"
+msgstr ""
+
+msgid "[{ref}`query-syntax-near-phrase-product-search-condition`]"
+msgstr ""
+
+msgid "[{ref}`script-syntax-near-phrase-product-search-operator`]"
+msgstr ""
+
+msgid "[{ref}`query-syntax-ordered-near-phrase-search-condition`]"
+msgstr ""
+
+msgid "[{ref}`script-syntax-ordered-near-phrase-search-operator`]"
+msgstr ""
+
+msgid "If this problem occur as follows."
+msgstr "この問題が発生すると以下のようになります。"
+
+msgid "Groonga may return records shouldn't be a hit."
+msgstr "ヒットしないはずのレコードを返すことがあります。"
+
+msgid "Groonga may don't return records that should be hit."
+msgstr "ヒットするはずのレコードを返さないことがあります。"
+
 msgid "Release 15.1.1 - 2025-06-02"
 msgstr "15.1.1リリース - 2025-06-02"
 
 msgid "This release updates TokenMecab to preserve user-defined entries with spaces as single tokens."
 msgstr "このリリースでは、TokenMecabがスペースを含むユーザー定義エントリを単一トークンとして保持できるようにする変更をおこないました。"
 
-msgid "Improvements"
-msgstr "改良"
-
 msgid "{doc}`/reference/tokenizers/token_mecab`: Fix unintended splitting of user-defined entries with spaces"
 msgstr "{doc}`/reference/tokenizers/token_mecab`: スペースを含むユーザー定義エントリの意図しないトークン分割を修正"
 
 msgid "Previously, {ref}`token-mecab` split user-defined entries containing spaces (e.g., \"search engine\") into separate tokens (\"search\" and \"engine\"). This release fixes this issue, so entries with embedded spaces are now preserved and handled as single tokens like \"search engine\" as follows."
 msgstr "従来、{ref}`token-mecab`はスペースを含むユーザー定義エントリ（例: \"search engine\"）を\"search\"や\"engine\"のように別々のトークンとして分割していました。本リリースではこの問題を修正し、スペースを含むエントリを\"search engine\"のように単一のトークンとしてトークナイズできるように修正しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed many typos in documentation"
 msgstr "ドキュメント内の複数の誤記を修正"
