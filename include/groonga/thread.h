@@ -86,7 +86,6 @@ typedef uint32_t (*grn_thread_get_limit_func)(void *data);
  *
  * uint32_t max_threads = 100;
  * grn_thread_set_get_limit_func(my_get_thread_limit, &max_threads);
- * grn_init();
  * ```
  *
  * \param func The custom function that returns the max number of threads.
