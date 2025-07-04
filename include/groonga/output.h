@@ -38,6 +38,9 @@ typedef struct _grn_obj_format grn_obj_format;
    The "1024" value may be changed.
    Since 10.0.3 */
 #define GRN_OBJ_FORMAT_AUTO_FLUSH (0x01 << 6)
+/* Metadata fields for Apache Arrow output
+   Since 15.1.2 */
+#define GRN_OBJ_FORMAT_WITH_METADATA (0x01 << 7)
 
 struct _grn_obj_format {
   grn_obj columns;
@@ -51,6 +54,8 @@ struct _grn_obj_format {
   int hits_offset;
   uint32_t flags;
   grn_obj *expression;
+  const char *metadata_type;
+  grn_raw_string metadata;
 };
 
 GRN_API grn_rc
@@ -69,6 +74,10 @@ grn_output_range_normalize(grn_ctx *ctx, int size, int *offset, int *limit);
     (format)->hits_offset = (format_hits_offset);                              \
     (format)->flags = 0;                                                       \
     (format)->expression = NULL;                                               \
+    if ((format)->flags & GRN_OBJ_FORMAT_WITH_METADATA) {                      \
+      (format)->metadata_type = NULL;                                          \
+      GRN_RAW_STRING_INIT((format)->metadata);                                 \
+    }                                                                          \
   } while (0)
 
 /* Deprecated since 10.0.0. Use grn_obj_format_fin() instead. */
@@ -276,6 +285,15 @@ GRN_API grn_rc
 grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type);
 GRN_API const char *
 grn_ctx_get_mime_type(grn_ctx *ctx);
+
+GRN_API void
+grn_output_result_set_label(grn_ctx *ctx,
+                            grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *label,
+                            size_t label_length,
+                            const char *metadata_type,
+                            bool is_labeled);
 
 /* obsolete */
 GRN_API grn_rc
