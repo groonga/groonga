@@ -23,8 +23,17 @@ msgstr "15.1.2リリース - 2025-07-07"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[Windows] Drop support for building with Visual Studio 2019"
-msgstr "[Windows] Visual Studio 2019 でのビルドをやめました"
+msgid "[Windows] Drop support for Groonga package that is built with Visual Studio 2019"
+msgstr "[Windows] Visual Studio 2019 でビルドしたパッケージのサポートをやめました"
+
+msgid "We don't provide the following packages since this release."
+msgstr "このリリースから以下のパッケージは提供しなくなります。"
+
+msgid "groonga-xx.x.x-x64-vs2019.zip"
+msgstr ""
+
+msgid "groonga-xx.x.x-x64-vs2019-with-vcruntime.zip"
+msgstr ""
 
 msgid "Fixes"
 msgstr "修正"
