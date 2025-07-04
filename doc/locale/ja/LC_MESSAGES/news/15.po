@@ -29,14 +29,11 @@ msgstr "[Windows] Visual Studio 2019 でのビルドをやめました"
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`][{ref}`query-syntax-near-phrase-product-search-condition`][{ref}`script-syntax-near-phrase-product-search-operator`][{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`]: Fixed a bug that interval between phrases calculation"
-msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`][{ref}`query-syntax-near-phrase-product-search-condition`][{ref}`script-syntax-near-phrase-product-search-operator`][{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`]: フレーズ間の距離の計算の間違いを修正しました"
+msgid "[Near phrase search] Fixed a bug that interval between phrases calculation"
+msgstr "[近傍フレーズ検索] フレーズ間の距離の計算の間違いを修正しました"
 
-msgid "This problem may occurs the following conditions."
-msgstr "この問題は、以下の条件で発生することがあります。"
-
-msgid "Use `*NP`, `*NPP`, or `*ONP` with `MAX_ELEMENT_INTERVAL` as below."
-msgstr "以下のように `*NP` や `*NPP`、 `*ONP` を `MAX_ELEMENT_INTERVAL` を指定して使う。"
+msgid "This problem may occurs when we use `*NP`, `*NPP`, or `*ONP` with `MAX_ELEMENT_INTERVAL` as below."
+msgstr "この問題は、以下のように`*NP` や `*NPP`、 `*ONP` を `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。"
 
 msgid "`*NP-1,0,12,11\"abc ef\"`"
 msgstr ""
@@ -53,23 +50,23 @@ msgstr "`MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発�
 msgid "Please refer to the following links about usages and syntaxes of `*NP`, `*NPP`, or `*ONPP`."
 msgstr "`*NP` や `*NPP`、 `*ONPP` の構文や使い方については以下のリンクを参照してください。"
 
-msgid "[{ref}`query-syntax-near-phrase-search-condition`]"
-msgstr ""
+msgid "[`*NP` in query syntax] {ref}`query-syntax-near-phrase-search-condition`"
+msgstr "[`*NP` のクエリー構文] {ref}`query-syntax-near-phrase-search-condition`"
 
-msgid "[{ref}`script-syntax-near-phrase-search-operator`]"
-msgstr ""
+msgid "[`*NP` in script syntax] {ref}`script-syntax-near-phrase-search-operator`"
+msgstr "[`*NP` のスクリプト構文] {ref}`script-syntax-near-phrase-search-operator`"
 
-msgid "[{ref}`query-syntax-near-phrase-product-search-condition`]"
-msgstr ""
+msgid "[`*NPP` in query syntax] {ref}`query-syntax-near-phrase-product-search-condition`"
+msgstr "[`*NPP` のクエリー構文] {ref}`query-syntax-near-phrase-product-search-condition`"
 
-msgid "[{ref}`script-syntax-near-phrase-product-search-operator`]"
-msgstr ""
+msgid "[`*NPP` in script syntax] {ref}`script-syntax-near-phrase-product-search-operator`"
+msgstr "[`*NPP` のスクリプト構文] {ref}`script-syntax-near-phrase-product-search-operator`"
 
-msgid "[{ref}`query-syntax-ordered-near-phrase-search-condition`]"
-msgstr ""
+msgid "[`*ONPP` in query syntax] {ref}`query-syntax-ordered-near-phrase-search-condition`"
+msgstr "[`*ONPP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-search-condition`"
 
-msgid "[{ref}`script-syntax-ordered-near-phrase-search-operator`]"
-msgstr ""
+msgid "[`*ONPP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+msgstr "[`*ONPP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
 
 msgid "If this problem occur as follows."
 msgstr "この問題が発生すると以下のようになります。"
