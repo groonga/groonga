@@ -90,6 +90,11 @@ grn_obj_format_set_columns(grn_ctx *ctx,
                            const char *columns,
                            unsigned int columns_len);
 
+void
+grn_output_arrow_stream_open_with_metadata(grn_ctx *ctx,
+                                           grn_obj *outbuf,
+                                           grn_content_type output_type);
+
 #define GRN_OUTPUT_ARRAY_OPEN(name, nelements)                                 \
   (grn_ctx_output_array_open(ctx, name, nelements))
 #define GRN_OUTPUT_ARRAY_CLOSE() (grn_ctx_output_array_close(ctx))
