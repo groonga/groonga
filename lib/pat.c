@@ -3342,7 +3342,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     if (node) {
       id = pat_node_get_right(pat, node);
     } else {
-      return GRN_NO_MEMORY_AVAILABLE;
+      return ctx->rc;
     }
   }
   if (id == GRN_ID_NIL) {
