@@ -137,16 +137,13 @@ pat_key_storage_size(uint32_t key_size)
 }
 
 static inline grn_id
-pat_node_get_right(grn_pat *pat, pat_node_common *n)
+pat_node_get_right(grn_pat *pat, pat_node_common *node)
 {
-  if (n) {
-    if (pat_is_key_large(pat)) {
-      return n->node_large.lr[1];
-    } else {
-      return n->node.lr[1];
-    }
+  if (pat_is_key_large(pat)) {
+    return node->node_large.lr[1];
+  } else {
+    return node->node.lr[1];
   }
-  return GRN_ID_NIL;
 }
 
 #define PAT_DEL(x)     ((x)->bits & PAT_DELETING)
@@ -3342,7 +3339,11 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx, &data);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
-    id = pat_node_get_right(pat, node);
+    if (node) {
+      id = pat_node_get_right(pat, node);
+    } else {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
   }
   if (id == GRN_ID_NIL) {
     return GRN_END_OF_DATA;
