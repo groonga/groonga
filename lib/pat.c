@@ -1704,7 +1704,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
 {
   grn_io *io;
   grn_pat *pat;
-  pat_node *node0;
+  pat_node_common *node0;
   struct grn_pat_header *header;
   uint32_t io_type;
   io = grn_io_open(ctx, path, GRN_IO_AUTO);
