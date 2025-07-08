@@ -44,7 +44,7 @@ msgstr "[近傍フレーズ検索] フレーズ間の距離の計算の間違い
 msgid "This problem may occur when we use `*NP`, `*NPP`, or `*ONP` with `MAX_ELEMENT_INTERVAL` as below."
 msgstr "この問題は、以下のように`*NP` や `*NPP`、 `*ONP` を `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。"
 
-msgid "`*NP-1,0,12,11\"abc ef\"`"
+msgid "`*NP-1,0,12\"abc ef\"`"
 msgstr ""
 
 msgid "`*NPP-1,0,10,9\"(abc bcd) (ef)\"`"
@@ -56,8 +56,8 @@ msgstr ""
 msgid "If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
 msgstr "`MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
 
-msgid "Please refer to the following links about usage and syntax of `*NP`, `*NPP`, or `*ONPP`."
-msgstr "`*NP` や `*NPP`、 `*ONPP` の構文や使い方については以下のリンクを参照してください。"
+msgid "Please refer to the following links about usage and syntax of `*NP`, `*NPP`, or `*ONP`."
+msgstr "`*NP` や `*NPP`、 `*ONP` の構文や使い方については以下のリンクを参照してください。"
 
 msgid "[`*NP` in query syntax] {ref}`query-syntax-near-phrase-search-condition`"
 msgstr "[`*NP` のクエリー構文] {ref}`query-syntax-near-phrase-search-condition`"
@@ -71,11 +71,11 @@ msgstr "[`*NPP` のクエリー構文] {ref}`query-syntax-near-phrase-product-se
 msgid "[`*NPP` in script syntax] {ref}`script-syntax-near-phrase-product-search-operator`"
 msgstr "[`*NPP` のスクリプト構文] {ref}`script-syntax-near-phrase-product-search-operator`"
 
-msgid "[`*ONPP` in query syntax] {ref}`query-syntax-ordered-near-phrase-search-condition`"
-msgstr "[`*ONPP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-search-condition`"
+msgid "[`*ONP` in query syntax] {ref}`query-syntax-ordered-near-phrase-search-condition`"
+msgstr "[`*ONP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-search-condition`"
 
-msgid "[`*ONPP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
-msgstr "[`*ONPP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+msgid "[`*ONP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+msgstr "[`*ONP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
 
 msgid "If this problem occurs, the following things may happen."
 msgstr "この問題が発生すると、以下のようなことが起こる可能性があります。"
