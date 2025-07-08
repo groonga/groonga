@@ -3339,11 +3339,10 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx, &data);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
-    if (node) {
-      id = pat_node_get_right(pat, node);
-    } else {
+    if (!node) {
       return ctx->rc;
     }
+    id = pat_node_get_right(pat, node);
   }
   if (id == GRN_ID_NIL) {
     return GRN_END_OF_DATA;
