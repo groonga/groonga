@@ -3265,7 +3265,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                      grn_fuzzy_search_optarg *args,
                      grn_hash *h)
 {
-  pat_node *node;
+  pat_node_common *node;
   grn_id id;
   fuzzy_search_data data;
   uint32_t len, x, y, i;
@@ -3329,7 +3329,14 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx, &data);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
-    id = node->lr[1];
+    if (!node) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    if (pat_is_key_large(pat)) {
+      id = node->node_large.lr[1];
+    } else {
+      id = node->node.lr[1];
+    }
   }
   if (id == GRN_ID_NIL) {
     return GRN_END_OF_DATA;
