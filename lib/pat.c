@@ -3329,9 +3329,6 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx, &data);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
-    if (!node) {
-      return GRN_INVALID_ARGUMENT;
-    }
     if (pat_is_key_large(pat)) {
       id = node->node_large.lr[1];
     } else {
