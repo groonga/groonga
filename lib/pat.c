@@ -140,9 +140,9 @@ static inline grn_id
 pat_node_get_right(grn_pat *pat, pat_node_common *node)
 {
   if (pat_is_key_large(pat)) {
-    return node->node_large.lr[1];
+    return node->node_large.lr[DIRECTION_RIGHT];
   } else {
-    return node->node.lr[1];
+    return node->node.lr[DIRECTION_RIGHT];
   }
 }
 
@@ -150,9 +150,9 @@ static inline grn_id
 pat_node_get_left(grn_pat *pat, pat_node_common *node)
 {
   if (pat_is_key_large(pat)) {
-    return node->node_large.lr[0];
+    return node->node_large.lr[DIRECTION_LEFT];
   } else {
-    return node->node.lr[0];
+    return node->node.lr[DIRECTION_LEFT];
   }
 }
 
