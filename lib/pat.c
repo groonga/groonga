@@ -4383,13 +4383,13 @@ grn_pat_cursor_push(grn_ctx *ctx,
                     grn_pat *pat,
                     pat_node_common *node)
 {
-  uint16_t ch = pat_node_get_check(pat, node);
+  uint16_t check = pat_node_get_check(pat, node);
   if (order & GRN_CURSOR_DESCENDING) {
-    push(cursor, pat_node_get_left(pat, node), ch);
-    push(cursor, pat_node_get_right(pat, node), ch);
+    push(cursor, pat_node_get_left(pat, node), check);
+    push(cursor, pat_node_get_right(pat, node), check);
   } else {
-    push(cursor, pat_node_get_right(pat, node), ch);
-    push(cursor, pat_node_get_left(pat, node), ch);
+    push(cursor, pat_node_get_right(pat, node), check);
+    push(cursor, pat_node_get_left(pat, node), check);
   }
 }
 
