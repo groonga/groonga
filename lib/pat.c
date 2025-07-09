@@ -4377,10 +4377,11 @@ pop(grn_pat_cursor *c)
 }
 
 static inline void
-push_pat_cursor(grn_pat_cursor *cursor,
-                int order,
-                grn_pat *pat,
-                pat_node_common *node)
+grn_pat_cursor_push(grn_ctx *ctx,
+                    grn_pat_cursor *cursor,
+                    int order,
+                    grn_pat *pat,
+                    pat_node_common *node)
 {
   uint16_t ch = pat_chk(pat, node);
   if (order & GRN_CURSOR_DESCENDING) {
