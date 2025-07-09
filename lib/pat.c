@@ -161,7 +161,7 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
 #define PAT_CHK(x) ((x)->check)
 static inline uint16_t
-pat_chk(grn_pat *pat, pat_node_common *node)
+pat_node_get_check(grn_pat *pat, pat_node_common *node)
 {
   if (pat_is_key_large(pat)) {
     return node->node_large.check;
@@ -4383,7 +4383,7 @@ grn_pat_cursor_push(grn_ctx *ctx,
                     grn_pat *pat,
                     pat_node_common *node)
 {
-  uint16_t ch = pat_chk(pat, node);
+  uint16_t ch = pat_node_get_check(pat, node);
   if (order & GRN_CURSOR_DESCENDING) {
     push(cursor, pat_node_get_left(pat, node), ch);
     push(cursor, pat_node_get_right(pat, node), ch);
