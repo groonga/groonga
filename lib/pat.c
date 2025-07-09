@@ -156,10 +156,10 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
   }
 }
 
-#define PAT_DEL(x)     ((x)->bits & PAT_DELETING)
-#define PAT_IMD(x)     ((x)->bits & PAT_IMMEDIATE)
-#define PAT_LEN(x)     (uint32_t)(((x)->bits >> 3) + 1)
-#define PAT_CHK(x)     ((x)->check)
+#define PAT_DEL(x) ((x)->bits & PAT_DELETING)
+#define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
+#define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
+#define PAT_CHK(x) ((x)->check)
 static inline uint16_t
 pat_chk(grn_pat *pat, pat_node_common *node)
 {
