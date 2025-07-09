@@ -5072,7 +5072,7 @@ grn_pat_cursor_open(grn_ctx *ctx,
       if ((id = pat_node_get_right(pat, node))) {
         PAT_AT(pat, id, node);
         if (node) {
-          grn_pat_cursor_push(c, GRN_CURSOR_DESCENDING, pat, node);
+          grn_pat_cursor_push(ctx, c, GRN_CURSOR_DESCENDING, pat, node);
         }
       }
     }
@@ -5097,7 +5097,7 @@ grn_pat_cursor_open(grn_ctx *ctx,
       if ((id = pat_node_get_right(pat, node))) {
         PAT_AT(pat, id, node);
         if (node) {
-          grn_pat_cursor_push(c, GRN_CURSOR_ASCENDING, pat, node);
+          grn_pat_cursor_push(ctx, c, GRN_CURSOR_ASCENDING, pat, node);
         }
       }
     }
