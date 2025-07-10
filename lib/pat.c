@@ -159,6 +159,15 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
+static inline uint32_t
+pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    return (uint32_t)((node->node_large.bits >> 3) + 1);
+  } else {
+    return (uint32_t)((node->node.bits >> 3) + 1);
+  }
+}
 #define PAT_CHK(x) ((x)->check)
 static inline uint16_t
 pat_node_get_check(grn_pat *pat, pat_node_common *node)
@@ -5876,25 +5885,26 @@ search_push(grn_ctx *ctx,
       }
     }
   } else {
-    pat_node *pn;
+    pat_node_common *pn;
     PAT_AT(pat, id, pn);
     if (pn) {
-      int32_t ch = PAT_CHK(pn);
+      int32_t ch = pat_node_get_check(pat, pn);
       int32_t len = key_len * 16;
       if (c0 < ch) {
         if (flags & GRN_CURSOR_DESCENDING) {
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pn->lr[0], ch);
+            push(c, pat_node_get_left(pat, pn), ch);
           }
-          push(c, pn->lr[1], ch);
+          push(c, pat_node_get_right(pat, pn), ch);
         } else {
-          push(c, pn->lr[1], ch);
+          push(c, pat_node_get_right(pat, pn), ch);
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pn->lr[0], ch);
+            push(c, pat_node_get_left(pat, pn), ch);
           }
         }
       } else {
-        if (PAT_LEN(pn) * 16 > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
+        if (pat_node_get_key_length(pat, pn) * 16 > (uint32_t)len ||
+            !(flags & GRN_CURSOR_GT)) {
           push(c, id, ch);
         }
       }
