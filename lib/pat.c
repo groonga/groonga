@@ -5889,6 +5889,22 @@ search_push(grn_ctx *ctx,
     PAT_AT(pat, id, node);
     if (node) {
       int32_t ch = pat_node_get_check(pat, node);
+      // operation of "key_len * 16" is for comparing check and key_len.
+      //
+      // ch is pat_node.check or pat_node_large.check.
+      // check include "nth byte", "nth bit", "terminated".
+      // eg) check = 190
+      // 0b011111010000 000      0
+      //   ^nth byte    ^nth bit ^terminated
+      // if we want to extract nth byte from check, execute (check >> 4).
+      // So, if we want to compare nth byte and key_len, we need to compare the
+      // followng one of two.
+      //
+      // 1. Compare check and key_len:
+      // check == key_len * 16
+      //
+      // 2. Compare nth byte and key_len:
+      // (check >> 4) == key_len *16
       int32_t len = key_len * 16;
       if (c0 < ch) {
         if (flags & GRN_CURSOR_DESCENDING) {
