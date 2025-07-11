@@ -6559,7 +6559,7 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
                               "failed to refer parent node");
     return;
   }
-  pat_node *grandparent_node;
+  pat_node_common *grandparent_node;
   PAT_AT(pat, entry->grandparent_record_id, grandparent_node);
   if (!grandparent_node) {
     grn_wal_set_recover_error(ctx,
@@ -6583,11 +6583,25 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
       return;
     }
   }
-  pat_node *root_node;
+  pat_node_common *root_node;
   PAT_AT(pat, GRN_ID_NIL, root_node);
-  data.proot = &(root_node->lr[1]);
+  if (!root_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer root node");
+      return;
+  }
+  if (pat_is_key_large(pat)) {
+    data.proot = &(root_node->node_large.lr[DIRECTION_RIGHT]);
+    data.p0 = &(grandparent_node->node_large.lr[entry->parent_record_direction]);
+  } else {
+    data.proot = &(root_node->node.lr[DIRECTION_RIGHT]);
+    data.p0 = &(grandparent_node->node.lr[entry->parent_record_direction]);
+  }
   data.p = &(data.rn0->lr[entry->record_direction]);
-  data.p0 = &(grandparent_node->lr[entry->parent_record_direction]);
   data.n_garbages = entry->n_garbages;
   data.n_entries = entry->n_entries;
   grn_pat_del_internal(ctx, pat, &data);
