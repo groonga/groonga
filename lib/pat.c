@@ -5899,8 +5899,7 @@ search_push(grn_ctx *ctx,
       // 0b011111010000 000      0
       //   ^nth byte    ^nth bit ^terminated
       // if we want to extract nth byte from check, execute (check >> 4).
-      // So, if we want to compare nth byte and key_len, we need to compare the
-      // followng one of two.
+      // Therefore, to compare against key_len you can either:
       //
       // 1. Compare check and key_len:
       // check == key_len * 16
