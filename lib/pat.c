@@ -162,11 +162,13 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
 static inline uint32_t
 pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
 {
+  uint16_t bits;
   if (pat_is_key_large(pat)) {
-    return (uint32_t)((node->node_large.bits >> 3) + 1);
+    bits = node->node_large.bits;
   } else {
-    return (uint32_t)((node->node.bits >> 3) + 1);
+    bits = node->node.bits;
   }
+  return (uint32_t)((bits >> 3) + 1);
 }
 #define PAT_CHK(x) ((x)->check)
 static inline uint16_t
