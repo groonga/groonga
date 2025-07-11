@@ -195,5 +195,9 @@ repos:
           ?CMakePresets\.json|
           ?doc/source/.*\.md|
           )
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+    - id: codespell
 
 exclude: "^vendor/.*"
