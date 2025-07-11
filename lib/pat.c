@@ -5921,9 +5921,11 @@ set_cursor_rk(grn_ctx *ctx,
   }
   byte_len = rk_conv(key, key_len, keybuf, GRN_TABLE_MAX_KEY_SIZE, &state);
   PAT_AT(pat, 0, node);
-  id = pat_node_get_right(pat, node);
-  if ((id = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
-    search_push(ctx, pat, c, keybuf, byte_len, state, id, c0, flags);
+  if (node) {
+    id = pat_node_get_right(pat, node);
+    if ((id = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
+      search_push(ctx, pat, c, keybuf, byte_len, state, id, c0, flags);
+    }
   }
   return ctx->rc;
 }
