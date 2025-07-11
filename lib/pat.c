@@ -5885,25 +5885,25 @@ search_push(grn_ctx *ctx,
       }
     }
   } else {
-    pat_node_common *pn;
-    PAT_AT(pat, id, pn);
-    if (pn) {
-      int32_t ch = pat_node_get_check(pat, pn);
+    pat_node_common *node;
+    PAT_AT(pat, id, node);
+    if (node) {
+      int32_t ch = pat_node_get_check(pat, node);
       int32_t len = key_len * 16;
       if (c0 < ch) {
         if (flags & GRN_CURSOR_DESCENDING) {
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pat_node_get_left(pat, pn), ch);
+            push(c, pat_node_get_left(pat, node), ch);
           }
-          push(c, pat_node_get_right(pat, pn), ch);
+          push(c, pat_node_get_right(pat, node), ch);
         } else {
-          push(c, pat_node_get_right(pat, pn), ch);
+          push(c, pat_node_get_right(pat, node), ch);
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pat_node_get_left(pat, pn), ch);
+            push(c, pat_node_get_left(pat, node), ch);
           }
         }
       } else {
-        if (pat_node_get_key_length(pat, pn) * 16 > (uint32_t)len ||
+        if (pat_node_get_key_length(pat, node) * 16 > (uint32_t)len ||
             !(flags & GRN_CURSOR_GT)) {
           push(c, id, ch);
         }
