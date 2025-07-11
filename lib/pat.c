@@ -5912,19 +5912,20 @@ set_cursor_rk(grn_ctx *ctx,
 {
   grn_id id;
   uint8_t state;
-  pat_node *pn;
+  pat_node_common *node;
   int c0 = -1;
-  uint32_t len, byte_len;
+  uint32_t byte_len;
   uint8_t keybuf[GRN_TABLE_MAX_KEY_SIZE];
   if (flags & GRN_CURSOR_SIZE_BY_BIT) {
     return GRN_OPERATION_NOT_SUPPORTED;
   }
   byte_len = rk_conv(key, key_len, keybuf, GRN_TABLE_MAX_KEY_SIZE, &state);
-  len = byte_len * 16;
-  PAT_AT(pat, 0, pn);
-  id = pn->lr[1];
-  if ((id = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
-    search_push(ctx, pat, c, keybuf, byte_len, state, id, c0, flags);
+  PAT_AT(pat, 0, node);
+  if (node) {
+    id = pat_node_get_right(pat, node);
+    if ((id = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
+      search_push(ctx, pat, c, keybuf, byte_len, state, id, c0, flags);
+    }
   }
   return ctx->rc;
 }
