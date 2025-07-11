@@ -5906,7 +5906,7 @@ search_push(grn_ctx *ctx,
         }
       } else {
         if (PAT_CHECK_PACK(pat_node_get_key_length(pat, node), 0, false) >
-              check_max ||
+            (uint32_t)check_max ||
             !(flags & GRN_CURSOR_GT)) {
           push(c, id, check);
         }
