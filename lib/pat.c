@@ -5890,10 +5890,10 @@ search_push(grn_ctx *ctx,
     pat_node_common *node;
     PAT_AT(pat, id, node);
     if (node) {
-      int32_t ch = pat_node_get_check(pat, node);
+      int32_t check = pat_node_get_check(pat, node);
       // operation of "key_len * 16" is for comparing check and key_len.
       //
-      // ch is pat_node.check or pat_node_large.check.
+      // check is pat_node.check or pat_node_large.check.
       // check include "nth byte", "nth bit", "terminated".
       // eg) check = 190
       // 0b011111010000 000      0
@@ -5907,22 +5907,22 @@ search_push(grn_ctx *ctx,
       // 2. Compare nth byte and key_len:
       // (check >> 4) == key_len *16
       int32_t len = key_len * 16;
-      if (c0 < ch) {
+      if (c0 < check) {
         if (flags & GRN_CURSOR_DESCENDING) {
-          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pat_node_get_left(pat, node), ch);
+          if ((check > len - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, pat_node_get_left(pat, node), check);
           }
-          push(c, pat_node_get_right(pat, node), ch);
+          push(c, pat_node_get_right(pat, node), check);
         } else {
-          push(c, pat_node_get_right(pat, node), ch);
-          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pat_node_get_left(pat, node), ch);
+          push(c, pat_node_get_right(pat, node), check);
+          if ((check > len - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, pat_node_get_left(pat, node), check);
           }
         }
       } else {
         if (pat_node_get_key_length(pat, node) * 16 > (uint32_t)len ||
             !(flags & GRN_CURSOR_GT)) {
-          push(c, id, ch);
+          push(c, id, check);
         }
       }
     }
