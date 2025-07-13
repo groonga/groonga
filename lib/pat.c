@@ -6376,11 +6376,11 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_id active_max_id = GRN_ID_NIL;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node *node = pat_get(ctx, pat, id);
+    pat_node_common *node = pat_get(ctx, pat, id);
     if (active_max_id < id) {
       active_max_id = id;
     }
-    if (PAT_IMD(node)) {
+    if (pat_is_key_immediate(pat, node)) {
       continue;
     }
     n_targets++;
@@ -6392,8 +6392,8 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   n_targets = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node *node = pat_get(ctx, pat, id);
-    if (PAT_IMD(node)) {
+    pat_node_common *node = pat_get(ctx, pat, id);
+    if (pat_is_key_immediate(pat, node)) {
       continue;
     }
     target_ids[n_targets++] = id;
