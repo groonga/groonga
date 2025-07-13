@@ -6592,11 +6592,12 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
                               entry,
                               wal_error_tag,
                               "failed to refer root node");
-      return;
+    return;
   }
   if (pat_is_key_large(pat)) {
     data.proot = &(root_node->node_large.lr[DIRECTION_RIGHT]);
-    data.p0 = &(grandparent_node->node_large.lr[entry->parent_record_direction]);
+    data.p0 =
+      &(grandparent_node->node_large.lr[entry->parent_record_direction]);
   } else {
     data.proot = &(root_node->node.lr[DIRECTION_RIGHT]);
     data.p0 = &(grandparent_node->node.lr[entry->parent_record_direction]);
