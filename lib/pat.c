@@ -176,6 +176,18 @@ pat_node_get_left_address(grn_pat *pat, pat_node_common *node)
   }
 }
 
+static inline grn_id *
+pat_node_get_child_address(grn_pat *pat,
+                           pat_node_common *node,
+                           pat_node_direction direction)
+{
+  if (direction == DIRECTION_RIGHT) {
+    return pat_node_get_right_address(pat, node);
+  } else {
+    return pat_node_get_left_address(pat, node);
+  }
+}
+
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
@@ -6615,12 +6627,9 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
     return;
   }
   data.proot = pat_node_get_right_address(pat, root_node);
-  if (pat_is_key_large(pat)) {
-    data.p0 =
-      &(grandparent_node->node_large.lr[entry->parent_record_direction]);
-  } else {
-    data.p0 = &(grandparent_node->node.lr[entry->parent_record_direction]);
-  }
+  data.p0 = pat_node_get_child_address(pat,
+                                       grandparent_node,
+                                       entry->parent_record_direction);
   data.p = &(data.rn0->lr[entry->record_direction]);
   data.n_garbages = entry->n_garbages;
   data.n_entries = entry->n_entries;
