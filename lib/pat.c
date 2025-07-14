@@ -289,7 +289,16 @@ pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 #define PAT_LEN_SET(x, v)                                                      \
   ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
-#define PAT_CHK_SET(x, v)                ((x)->check = (v))
+#define PAT_CHK_SET(x, v) ((x)->check = (v))
+static inline void
+pat_node_set_check(grn_pat *pat, pat_node_common *node, uint16_t check)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.check = check;
+  } else {
+    node->node.check = check;
+  }
+}
 
 #define PAT_CHECK_BYTE_DIFFERENCES_SHIFT 4
 #define PAT_CHECK_BIT_DIFFERENCES_SHIFT  1
