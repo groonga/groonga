@@ -188,6 +188,16 @@ pat_node_get_child_address(grn_pat *pat,
   }
 }
 
+static inline void
+pat_node_set_right(grn_pat *pat, pat_node_common *node, grn_id id)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.lr[DIRECTION_RIGHT] = id;
+  } else {
+    node->node.lr[DIRECTION_RIGHT] = id;
+  }
+}
+
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
