@@ -6630,7 +6630,7 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   data.p0 = pat_node_get_child_address(pat,
                                        grandparent_node,
                                        entry->parent_record_direction);
-  data.p = &(data.rn0->lr[entry->record_direction]);
+  data.p = pat_node_get_child_address(pat, data.rn0, entry->record_direction);
   data.n_garbages = entry->n_garbages;
   data.n_entries = entry->n_entries;
   grn_pat_del_internal(ctx, pat, &data);
