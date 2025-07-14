@@ -199,5 +199,7 @@ repos:
     rev: v1.0.0
     hooks:
       - id: sphinx-lint
+        # Disable horizontal-tab to allow documentation of TSV output examples.
+        args: ["--disable", "horizontal-tab"]
 
 exclude: "^vendor/.*"
