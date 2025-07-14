@@ -264,7 +264,17 @@ pat_node_get_check(grn_pat *pat, pat_node_common *node)
     return node->node.check;
   }
 }
-#define PAT_DEL_ON(x)  ((x)->bits |= PAT_DELETING)
+#define PAT_DEL_ON(x) ((x)->bits |= PAT_DELETING)
+static inline void
+pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.bits |= PAT_DELETING;
+  } else {
+    node->node.bits |= PAT_DELETING;
+  }
+}
+
 #define PAT_IMD_ON(x)  ((x)->bits |= PAT_IMMEDIATE)
 #define PAT_DEL_OFF(x) ((x)->bits &= ~PAT_DELETING)
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
