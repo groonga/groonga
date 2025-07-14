@@ -6614,11 +6614,10 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
    *    grn_id root = pat_node_get_right(pat, root_node);
    *    data.proot = &root;
    *
-   * "&root" has address different "root_node->node_large.lr[DIRECTION_RIGHT]" or
-   * "root_node->node.lr[DIRECTION_RIGHT]".
-   * Terefore, "proot == p0" isn't satisfied even if the address of
-   * "root_node->node.lr[DIRECTION_RIGHT]" same as
-   * "grandparent_node->node.lr[entry->parent_record_direction]".
+   * "&root" has address different "root_node->node_large.lr[DIRECTION_RIGHT]"
+   * or "root_node->node.lr[DIRECTION_RIGHT]". Terefore, "proot == p0" isn't
+   * satisfied even if the address of "root_node->node.lr[DIRECTION_RIGHT]" same
+   * as "grandparent_node->node.lr[entry->parent_record_direction]".
    */
   if (pat_is_key_large(pat)) {
     data.proot = &(root_node->node_large.lr[DIRECTION_RIGHT]);
