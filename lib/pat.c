@@ -3801,7 +3801,7 @@ _grn_pat_del(grn_ctx *ctx,
   grn_id id = GRN_ID_NIL;
   grn_id id0 = GRN_ID_NIL;
   PAT_AT(pat, id, refer_node);
-  proot = p = &refer_node->lr[1];
+  proot = p = pat_node_get_right_address(pat, refer_node);
   wal_data.record_direction = DIRECTION_RIGHT;
   grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                   &wal_data,
