@@ -6594,6 +6594,32 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
                               "failed to refer root node");
     return;
   }
+  /*
+   * We don't use "pat_node_get_right()" to get "data.proot" value.
+   * Because "data.proot" is used compare pointer each other in
+   * "grn_pat_del_internal()" as below.
+   *
+   *    grn_id *proot = data->proot;
+   *    grn_id *p0 = data->p0;
+   *    .
+   *    .
+   *    .
+   *    if (proot == p0 && !rno->check) {
+   *      .
+   *      .
+   *      .
+   *    }
+   * So, we can't use the following description.
+   *
+   *    grn_id root = pat_node_get_right(pat, root_node);
+   *    data.proot = &root;
+   *
+   * "&root" has address different "root_node->node_large.lr[DIRECTION_RIGHT]" or
+   * "root_node->node.lr[DIRECTION_RIGHT]".
+   * Terefore, "proot == p0" isn't satisfied even if the address of
+   * "root_node->node.lr[DIRECTION_RIGHT]" same as
+   * "grandparent_node->node.lr[entry->parent_record_direction]".
+   */
   if (pat_is_key_large(pat)) {
     data.proot = &(root_node->node_large.lr[DIRECTION_RIGHT]);
     data.p0 =
