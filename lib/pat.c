@@ -3771,7 +3771,7 @@ _grn_pat_del(grn_ctx *ctx,
 {
   pat_node_common *refer_node, *refer_parent_node = NULL,
                                *refer_otherside_node = NULL;
-  int32_t c = -1, c0 = -1, ch;
+  int32_t c = -1, c0 = -1, check;
   int32_t len = key_size * 16;
   grn_id otherside, *proot, *p, *p0 = NULL;
 
@@ -3819,11 +3819,11 @@ _grn_pat_del(grn_ctx *ctx,
     if (!refer_node) {
       return GRN_FILE_CORRUPT;
     }
-    ch = PAT_CHK(refer_node);
-    if (len <= ch) {
+    check = pat_node_get_cehck(pat, refer_node);
+    if (len <= check) {
       return GRN_INVALID_ARGUMENT;
     }
-    if (c >= ch) {
+    if (c >= check) {
       /* Output node found. */
       const uint8_t *k = pat_node_get_key(ctx, pat, refer_node);
       if (!k) {
@@ -3837,7 +3837,7 @@ _grn_pat_del(grn_ctx *ctx,
     }
     c0 = c;
     p0 = p;
-    c = ch;
+    c = check;
     p = grn_pat_next_location(ctx, refer_node, key, c, len);
     grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                     &wal_data,
