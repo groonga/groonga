@@ -232,6 +232,16 @@ pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
   }
 }
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
+static inline bool
+pat_node_is_key_immediate(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    return node->node_large.bits & PAT_IMMEDIATE;
+  } else {
+    return node->node.bits & PAT_IMMEDIATE;
+  }
+}
+
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
 static inline uint32_t
 pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
