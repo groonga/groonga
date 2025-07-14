@@ -1350,6 +1350,26 @@ pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
   }
 }
 
+static inline uint8_t *
+_pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
+{
+  if (pat_node_is_key_immediate(pat, node)) {
+    if (pat_is_key_large(pat)) {
+      return (uint8_t *)&(node->node_large.key);
+    } else {
+      return (uint8_t *)&(node->node.key);
+    }
+  } else {
+    uint8_t *res;
+    if (pat_is_key_large(pat)) {
+      KEY_AT(pat, node->node_large.key, res, 0);
+    } else {
+      KEY_AT(pat, node->node.key, res, 0);
+    }
+    return res;
+  }
+}
+
 static inline grn_rc
 pat_node_set_key(
   grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, uint32_t len)
