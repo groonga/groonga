@@ -222,6 +222,15 @@ pat_node_set_child(grn_pat *pat,
 }
 
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
+static inline bool
+pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    return node->node_large.bits & PAT_DELETING;
+  } else {
+    return node->node.bits & PAT_DELETING;
+  }
+}
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
 static inline uint32_t
