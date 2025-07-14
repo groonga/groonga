@@ -3619,14 +3619,14 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
   grn_id id = data->id;
   uint16_t check = data->check;
   uint16_t check0 = data->check0;
-  pat_node *rn = data->rn;
-  pat_node *rn0 = data->rn0;
-  pat_node *rno = data->rno;
+  pat_node_common *refer_node = data->rn;
+  pat_node_common *refer_parent_node = data->rn0;
+  pat_node_common *refer_otherside_node = data->rno;
   grn_id otherside = data->otherside;
   grn_id *proot = data->proot;
   grn_id *p = data->p;
   grn_id *p0 = data->p0;
-  if (rn == rn0) {
+  if (refer_node == refer_parent_node) {
     /* The last transition (p) is a self-loop. */
     di->stat = DL_PHASE2;
     di->d = id;
