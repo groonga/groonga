@@ -207,6 +207,20 @@ pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
     node->node.lr[DIRECTION_LEFT] = id;
   }
 }
+
+static inline void
+pat_node_set_child(grn_pat *pat,
+                   pat_node_common *node,
+                   pat_node_direction direction,
+                   grn_id id)
+{
+  if (direction == DIRECTION_RIGHT) {
+    return pat_node_set_right(pat, node, id);
+  } else {
+    return pat_node_set_left(pat, node, id);
+  }
+}
+
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
