@@ -277,6 +277,15 @@ pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
 
 #define PAT_IMD_ON(x)  ((x)->bits |= PAT_IMMEDIATE)
 #define PAT_DEL_OFF(x) ((x)->bits &= ~PAT_DELETING)
+static inline void
+pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.bits &= ~PAT_DELETING;
+  } else {
+    node->node.bits &= ~PAT_DELETING;
+  }
+}
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 #define PAT_LEN_SET(x, v)                                                      \
   ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
