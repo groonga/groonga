@@ -3601,9 +3601,9 @@ typedef struct {
   grn_id id;
   uint16_t check;
   uint16_t check0;
-  pat_node *rn;
-  pat_node *rn0;
-  pat_node *rno;
+  pat_node_common *rn;
+  pat_node_common *rn0;
+  pat_node_common *rno;
   grn_id otherside;
   grn_id *proot;
   grn_id *p;
