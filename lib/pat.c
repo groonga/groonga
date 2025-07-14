@@ -159,6 +159,17 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
+static inline uint32_t
+pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
+{
+  uint16_t bits;
+  if (pat_is_key_large(pat)) {
+    bits = node->node_large.bits;
+  } else {
+    bits = node->node.bits;
+  }
+  return (uint32_t)((bits >> 3) + 1);
+}
 #define PAT_CHK(x) ((x)->check)
 static inline uint16_t
 pat_node_get_check(grn_pat *pat, pat_node_common *node)
@@ -5876,26 +5887,28 @@ search_push(grn_ctx *ctx,
       }
     }
   } else {
-    pat_node *pn;
-    PAT_AT(pat, id, pn);
-    if (pn) {
-      int32_t ch = PAT_CHK(pn);
-      int32_t len = key_len * 16;
-      if (c0 < ch) {
+    pat_node_common *node;
+    PAT_AT(pat, id, node);
+    if (node) {
+      int32_t check = pat_node_get_check(pat, node);
+      int32_t check_max = PAT_CHECK_PACK(key_len, 0, false);
+      if (c0 < check) {
         if (flags & GRN_CURSOR_DESCENDING) {
-          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pn->lr[0], ch);
+          if ((check > check_max - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, pat_node_get_left(pat, node), check);
           }
-          push(c, pn->lr[1], ch);
+          push(c, pat_node_get_right(pat, node), check);
         } else {
-          push(c, pn->lr[1], ch);
-          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, pn->lr[0], ch);
+          push(c, pat_node_get_right(pat, node), check);
+          if ((check > check_max - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, pat_node_get_left(pat, node), check);
           }
         }
       } else {
-        if (PAT_LEN(pn) * 16 > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
-          push(c, id, ch);
+        if (PAT_CHECK_PACK(pat_node_get_key_length(pat, node), 0, false) >
+              (uint32_t)check_max ||
+            !(flags & GRN_CURSOR_GT)) {
+          push(c, id, check);
         }
       }
     }
