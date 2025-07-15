@@ -3900,17 +3900,19 @@ _grn_pat_del(grn_ctx *ctx,
       !optarg->func(ctx, (grn_obj *)pat, id, optarg->func_arg)) {
     return GRN_SUCCESS;
   }
-  if (refer_parent_node->lr[0] == refer_parent_node->lr[1]) {
+  grn_id refer_parent_node_right = pat_node_get_right(pat, refer_parent_node);
+  grn_id refer_parent_node_left = pat_node_get_left(pat, refer_parent_node);
+  if (refer_parent_node_left == refer_parent_node_right) {
     GRN_LOG(
       ctx,
       GRN_LOG_DEBUG,
       "*p0 (%d), refer_parent_node->lr[0] == refer_parent_node->lr[1] (%d)",
       *p0,
-      refer_parent_node->lr[0]);
+      refer_parent_node_left);
     return GRN_FILE_CORRUPT;
   }
-  otherside = (refer_parent_node->lr[1] == id) ? refer_parent_node->lr[0]
-                                               : refer_parent_node->lr[1];
+  otherside = (refer_parent_node_right == id) ? refer_parent_node_left
+                                              : refer_parent_node_right;
   if (otherside) {
     PAT_AT(pat, otherside, refer_otherside_node);
     if (!refer_otherside_node) {
