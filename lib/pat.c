@@ -1459,6 +1459,26 @@ grn_pat_next_location(grn_ctx *ctx,
   }
 }
 
+static inline grn_id *
+_grn_pat_next_location(grn_ctx *ctx,
+                       grn_pat *pat,
+                       pat_node_common *node,
+                       const uint8_t *key,
+                       uint16_t check,
+                       uint16_t check_max)
+{
+  if (PAT_CHECK_IS_TERMINATED(check)) {
+    /* check + 1: delete terminated flag and increment bit differences */
+    if (check + 1 < check_max) {
+      return pat_node_get_right_address(pat, node);
+    } else {
+      return pat_node_get_left_address(pat, node);
+    }
+  } else {
+    return pat_node_get_child_address(pat, node, nth_bit(key, check));
+  }
+}
+
 static inline grn_pat_delinfo *
 delinfo_search(grn_pat *pat, grn_id id, uint32_t *index)
 {
@@ -3861,16 +3881,18 @@ _grn_pat_del(grn_ctx *ctx,
     previous_refer_parent_node_check = refer_parent_node_check;
     p0 = p;
     refer_parent_node_check = refer_node_check;
-    p = grn_pat_next_location(ctx,
-                              refer_node,
-                              key,
-                              refer_parent_node_check,
-                              check_max);
-    grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                    &wal_data,
-                                                    id,
-                                                    refer_node,
-                                                    p);
+    p = _grn_pat_next_location(ctx,
+                               pat,
+                               refer_node,
+                               key,
+                               refer_parent_node_check,
+                               check_max);
+    _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                     pat,
+                                                     &wal_data,
+                                                     id,
+                                                     refer_node,
+                                                     p);
     refer_parent_node = refer_node;
   }
   if (optarg && optarg->func &&
