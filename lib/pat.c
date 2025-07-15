@@ -3872,7 +3872,8 @@ _grn_pat_del(grn_ctx *ctx,
       if (!k) {
         return GRN_INVALID_ARGUMENT;
       }
-      if (key_size != PAT_LEN(refer_node) || memcmp(k, key, key_size)) {
+      if (key_size != pat_node_get_key_length(pat, refer_node) ||
+          memcmp(k, key, key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
       /* Given key found. */
@@ -3931,7 +3932,7 @@ _grn_pat_del(grn_ctx *ctx,
   wal_data.parent_check = previous_refer_parent_node_check;
   wal_data.otherside_record_id = otherside;
   if (refer_otherside_node) {
-    wal_data.otherside_check = PAT_CHK(refer_otherside_node);
+    wal_data.otherside_check = pat_node_get_check(pat, refer_otherside_node);
   }
   wal_data.left_record_id = refer_node->lr[0];
   wal_data.right_record_id = refer_node->lr[1];
