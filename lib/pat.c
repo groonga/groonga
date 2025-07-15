@@ -3773,7 +3773,7 @@ _grn_pat_del(grn_ctx *ctx,
                                *refer_otherside_node = NULL;
   int32_t refer_parent_node_check = -1, previous_refer_parent_node_check = -1,
           refer_node_check;
-  int32_t len = key_size * 16;
+  int32_t check_max = PAT_CHECK_PACK(key_size, 0, false);
   grn_id otherside, *proot, *p, *p0 = NULL;
 
   grn_pat_wal_add_entry_data wal_data = {0};
@@ -3822,7 +3822,7 @@ _grn_pat_del(grn_ctx *ctx,
       return GRN_FILE_CORRUPT;
     }
     refer_node_check = pat_node_get_cehck(pat, refer_node);
-    if (len <= refer_node_check) {
+    if (check_max <= refer_node_check) {
       return GRN_INVALID_ARGUMENT;
     }
     if (refer_parent_node_check >= refer_node_check) {
@@ -3840,8 +3840,11 @@ _grn_pat_del(grn_ctx *ctx,
     previous_refer_parent_node_check = refer_parent_node_check;
     p0 = p;
     refer_parent_node_check = refer_node_check;
-    p =
-      grn_pat_next_location(ctx, refer_node, key, refer_parent_node_check, len);
+    p = grn_pat_next_location(ctx,
+                              refer_node,
+                              key,
+                              refer_parent_node_check,
+                              check_max);
     grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                     &wal_data,
                                                     id,
