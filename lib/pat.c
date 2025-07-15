@@ -146,16 +146,6 @@ pat_node_get_right(grn_pat *pat, pat_node_common *node)
   }
 }
 
-static inline grn_id *
-pat_node_get_right_address(grn_pat *pat, pat_node_common *node)
-{
-  if (pat_is_key_large(pat)) {
-    return &(node->node_large.lr[DIRECTION_RIGHT]);
-  } else {
-    return &(node->node.lr[DIRECTION_RIGHT]);
-  }
-}
-
 static inline grn_id
 pat_node_get_left(grn_pat *pat, pat_node_common *node)
 {
@@ -167,45 +157,27 @@ pat_node_get_left(grn_pat *pat, pat_node_common *node)
 }
 
 static inline grn_id *
-pat_node_get_left_address(grn_pat *pat, pat_node_common *node)
-{
-  if (pat_is_key_large(pat)) {
-    return &(node->node_large.lr[DIRECTION_LEFT]);
-  } else {
-    return &(node->node.lr[DIRECTION_LEFT]);
-  }
-}
-
-static inline grn_id *
 pat_node_get_child_address(grn_pat *pat,
                            pat_node_common *node,
                            pat_node_direction direction)
 {
-  if (direction == DIRECTION_RIGHT) {
-    return pat_node_get_right_address(pat, node);
+  if (pat_is_key_large(pat)) {
+    return &(node->node_large.lr[direction]);
   } else {
-    return pat_node_get_left_address(pat, node);
+    return &(node->node.lr[direction]);
   }
 }
 
-static inline void
-pat_node_set_right(grn_pat *pat, pat_node_common *node, grn_id id)
+static inline grn_id *
+pat_node_get_right_address(grn_pat *pat, pat_node_common *node)
 {
-  if (pat_is_key_large(pat)) {
-    node->node_large.lr[DIRECTION_RIGHT] = id;
-  } else {
-    node->node.lr[DIRECTION_RIGHT] = id;
-  }
+  return pat_node_get_child_address(pat, node, DIRECTION_RIGHT);
 }
 
-static inline void
-pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
+static inline grn_id *
+pat_node_get_left_address(grn_pat *pat, pat_node_common *node)
 {
-  if (pat_is_key_large(pat)) {
-    node->node_large.lr[DIRECTION_LEFT] = id;
-  } else {
-    node->node.lr[DIRECTION_LEFT] = id;
-  }
+  return pat_node_get_child_address(pat, node, DIRECTION_LEFT);
 }
 
 static inline void
@@ -214,11 +186,23 @@ pat_node_set_child(grn_pat *pat,
                    pat_node_direction direction,
                    grn_id id)
 {
-  if (direction == DIRECTION_RIGHT) {
-    return pat_node_set_right(pat, node, id);
+  if (pat_is_key_large(pat)) {
+    node->node_large.lr[direction] = id;
   } else {
-    return pat_node_set_left(pat, node, id);
+    node->node.lr[direction] = id;
   }
+}
+
+static inline void
+pat_node_set_right(grn_pat *pat, pat_node_common *node, grn_id id)
+{
+  pat_node_set_child(pat, node, DIRECTION_RIGHT, id);
+}
+
+static inline void
+pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
+{
+  pat_node_set_child(pat, node, DIRECTION_LEFT, id);
 }
 
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
