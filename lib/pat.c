@@ -3771,7 +3771,8 @@ _grn_pat_del(grn_ctx *ctx,
 {
   pat_node_common *refer_node, *refer_parent_node = NULL,
                                *refer_otherside_node = NULL;
-  int32_t c = -1, c0 = -1, check;
+  int32_t refer_parent_node_check = -1, previous_refer_parent_node_check = -1,
+          refer_node_check;
   int32_t len = key_size * 16;
   grn_id otherside, *proot, *p, *p0 = NULL;
 
@@ -3794,9 +3795,10 @@ _grn_pat_del(grn_ctx *ctx,
    *
    * refer_node, refer_parent_node: the output node and its previous node.
    * refer_otherside_node: the other side of refer_node (the other destination
-   * of refer_parent_node). c, c0: checks of refer_parent_node and its previous
-   * node. p, p0: pointers to transitions (IDs) that refer to refer_node and
-   * refer_parent_node. id, id0: ID of p and p0.
+   * of refer_parent_node). refer_parent_node, previous_refer_parent_node_check:
+   * checks of refer_parent_node and its previous node. p, p0: pointers to
+   * transitions (IDs) that refer to refer_node and refer_parent_node. id, id0:
+   * ID of p and p0.
    */
   grn_id id = GRN_ID_NIL;
   grn_id id0 = GRN_ID_NIL;
@@ -3819,11 +3821,11 @@ _grn_pat_del(grn_ctx *ctx,
     if (!refer_node) {
       return GRN_FILE_CORRUPT;
     }
-    check = pat_node_get_cehck(pat, refer_node);
-    if (len <= check) {
+    refer_node_check = pat_node_get_cehck(pat, refer_node);
+    if (len <= refer_node_check) {
       return GRN_INVALID_ARGUMENT;
     }
-    if (c >= check) {
+    if (refer_parent_node_check >= refer_node_check) {
       /* Output node found. */
       const uint8_t *k = pat_node_get_key(ctx, pat, refer_node);
       if (!k) {
@@ -3835,10 +3837,11 @@ _grn_pat_del(grn_ctx *ctx,
       /* Given key found. */
       break;
     }
-    c0 = c;
+    previous_refer_parent_node_check = refer_parent_node_check;
     p0 = p;
-    c = check;
-    p = grn_pat_next_location(ctx, refer_node, key, c, len);
+    refer_parent_node_check = refer_node_check;
+    p =
+      grn_pat_next_location(ctx, refer_node, key, refer_parent_node_check, len);
     grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                     &wal_data,
                                                     id,
@@ -3878,8 +3881,8 @@ _grn_pat_del(grn_ctx *ctx,
 
   wal_data.event = GRN_WAL_EVENT_DELETE_ENTRY;
   wal_data.record_id = id;
-  wal_data.check = c;
-  wal_data.parent_check = c0;
+  wal_data.check = refer_parent_node_check;
+  wal_data.parent_check = previous_refer_parent_node_check;
   wal_data.otherside_record_id = otherside;
   if (refer_otherside_node) {
     wal_data.otherside_check = PAT_CHK(refer_otherside_node);
@@ -3897,8 +3900,8 @@ _grn_pat_del(grn_ctx *ctx,
   grn_pat_del_data data = {0};
   data.di = di;
   data.id = id;
-  data.check = c;
-  data.check0 = c0;
+  data.check = refer_parent_node_check;
+  data.check0 = previous_refer_parent_node_check;
   data.rn = refer_node;
   data.rn0 = refer_parent_node;
   data.rno = refer_otherside_node;
