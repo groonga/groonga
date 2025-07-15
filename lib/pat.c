@@ -3613,9 +3613,9 @@ typedef struct {
   grn_id id;
   uint16_t check;
   uint16_t check0;
-  pat_node_common *rn;
-  pat_node_common *rn0;
-  pat_node_common *rno;
+  pat_node_common *node;
+  pat_node_common *node_previous;
+  pat_node_common *node_otherside;
   grn_id otherside;
   grn_id *proot;
   grn_id *p;
@@ -3631,9 +3631,9 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
   grn_id id = data->id;
   uint16_t check = data->check;
   uint16_t check0 = data->check0;
-  pat_node_common *node = data->rn;
-  pat_node_common *node_previous = data->rn0;
-  pat_node_common *node_otherside = data->rno;
+  pat_node_common *node = data->node;
+  pat_node_common *node_previous = data->node_previous;
+  pat_node_common *node_otherside = data->node_otherside;
   grn_id otherside = data->otherside;
   grn_id *proot = data->proot;
   grn_id *p = data->p;
@@ -3915,9 +3915,9 @@ _grn_pat_del(grn_ctx *ctx,
   data.id = id;
   data.check = node_check;
   data.check0 = node_previous_check;
-  data.rn = node;
-  data.rn0 = node_previous;
-  data.rno = node_otherside;
+  data.node = node;
+  data.node_previous = node_previous;
+  data.node_otherside = node_otherside;
   data.otherside = otherside;
   data.proot = proot;
   data.p = p;
@@ -6708,8 +6708,8 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   data.id = entry->record_id;
   data.check = entry->check;
   data.check0 = entry->parent_check;
-  PAT_AT(pat, data.id, data.rn);
-  if (!data.rn) {
+  PAT_AT(pat, data.id, data.node);
+  if (!data.node) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
                               (grn_obj *)pat,
@@ -6718,8 +6718,8 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
                               "failed to refer node");
     return;
   }
-  PAT_AT(pat, entry->parent_record_id, data.rn0);
-  if (!data.rn0) {
+  PAT_AT(pat, entry->parent_record_id, data.node_previous);
+  if (!data.node_previous) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
                               (grn_obj *)pat,
@@ -6741,8 +6741,8 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   }
   data.otherside = entry->otherside_record_id;
   if (data.otherside != GRN_ID_NIL) {
-    PAT_AT(pat, data.otherside, data.rno);
-    if (!data.rno) {
+    PAT_AT(pat, data.otherside, data.node_otherside);
+    if (!data.node_otherside) {
       grn_wal_set_recover_error(ctx,
                                 GRN_NO_MEMORY_AVAILABLE,
                                 (grn_obj *)pat,
@@ -6767,7 +6767,9 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
   data.p0 = pat_node_get_child_address(pat,
                                        grandparent_node,
                                        entry->parent_record_direction);
-  data.p = pat_node_get_child_address(pat, data.rn0, entry->record_direction);
+  data.p = pat_node_get_child_address(pat,
+                                      data.node_previous,
+                                      entry->record_direction);
   data.n_garbages = entry->n_garbages;
   data.n_entries = entry->n_entries;
   grn_pat_del_internal(ctx, pat, &data);
