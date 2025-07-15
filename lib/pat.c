@@ -3793,8 +3793,8 @@ _grn_pat_del(grn_ctx *ctx,
              int shared,
              grn_table_delete_optarg *optarg)
 {
-  pat_node_common *node, *previous_node = NULL, *otherside_node = NULL;
-  int32_t node_check = -1, previous_node_check = -1, check;
+  pat_node_common *node, *node_previous = NULL, *node_otherside = NULL;
+  int32_t node_check = -1, node_previous_check = -1, check;
   int32_t check_max = PAT_CHECK_PACK(key_size, 0, false);
   grn_id otherside, *proot, *p, *p0 = NULL;
 
@@ -3815,11 +3815,11 @@ _grn_pat_del(grn_ctx *ctx,
    * Search a patricia tree for a given key.
    * If the key exists, get its output node.
    *
-   * node, previous_node: the output node and its previous node.
-   * otherside_node: the other side of node (the other destination
-   * of previous_node).
-   * node_check, previous_node_check: checks of node and its previous node.
-   * p, p0: pointers to transitions (IDs) that refer to node and previous_node.
+   * node, node_previous: the output node and its previous node.
+   * node_otherside: the other side of node (the other destination
+   * of node_previous).
+   * node_check, node_previous_check: checks of node and its previous node.
+   * p, p0: pointers to transitions (IDs) that refer to node and node_previous.
    * id, id0: ID of p and p0.
    */
   grn_id id = GRN_ID_NIL;
@@ -3861,7 +3861,7 @@ _grn_pat_del(grn_ctx *ctx,
       /* Given key found. */
       break;
     }
-    previous_node_check = node_check;
+    node_previous_check = node_check;
     p0 = p;
     node_check = check;
     p = _grn_pat_next_location(ctx, pat, node, key, node_check, check_max);
@@ -3871,27 +3871,27 @@ _grn_pat_del(grn_ctx *ctx,
                                                      id,
                                                      node,
                                                      p);
-    previous_node = node;
+    node_previous = node;
   }
   if (optarg && optarg->func &&
       !optarg->func(ctx, (grn_obj *)pat, id, optarg->func_arg)) {
     return GRN_SUCCESS;
   }
-  grn_id previous_node_right = pat_node_get_right(pat, previous_node);
-  grn_id previous_node_left = pat_node_get_left(pat, previous_node);
-  if (previous_node_left == previous_node_right) {
+  grn_id node_previous_right = pat_node_get_right(pat, node_previous);
+  grn_id node_previous_left = pat_node_get_left(pat, node_previous);
+  if (node_previous_left == node_previous_right) {
     GRN_LOG(ctx,
             GRN_LOG_DEBUG,
-            "*p0 (%d), previous_node->lr[0] == previous_node->lr[1] (%d)",
+            "*p0 (%d), node_previous->lr[0] == node_previous->lr[1] (%d)",
             *p0,
-            previous_node_left);
+            node_previous_left);
     return GRN_FILE_CORRUPT;
   }
   otherside =
-    (previous_node_right == id) ? previous_node_left : previous_node_right;
+    (node_previous_right == id) ? node_previous_left : node_previous_right;
   if (otherside) {
-    PAT_AT(pat, otherside, otherside_node);
-    if (!otherside_node) {
+    PAT_AT(pat, otherside, node_otherside);
+    if (!node_otherside) {
       return GRN_FILE_CORRUPT;
     }
   }
@@ -3907,10 +3907,10 @@ _grn_pat_del(grn_ctx *ctx,
   wal_data.event = GRN_WAL_EVENT_DELETE_ENTRY;
   wal_data.record_id = id;
   wal_data.check = node_check;
-  wal_data.parent_check = previous_node_check;
+  wal_data.parent_check = node_previous_check;
   wal_data.otherside_record_id = otherside;
-  if (otherside_node) {
-    wal_data.otherside_check = pat_node_get_check(pat, otherside_node);
+  if (node_otherside) {
+    wal_data.otherside_check = pat_node_get_check(pat, node_otherside);
   }
   wal_data.left_record_id = pat_node_get_left(pat, node);
   wal_data.right_record_id = pat_node_get_right(pat, node);
@@ -3926,10 +3926,10 @@ _grn_pat_del(grn_ctx *ctx,
   data.di = di;
   data.id = id;
   data.check = node_check;
-  data.check0 = previous_node_check;
+  data.check0 = node_previous_check;
   data.rn = node;
-  data.rn0 = previous_node;
-  data.rno = otherside_node;
+  data.rn0 = node_previous;
+  data.rno = node_otherside;
   data.otherside = otherside;
   data.proot = proot;
   data.p = p;
