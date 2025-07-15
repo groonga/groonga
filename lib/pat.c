@@ -1196,6 +1196,26 @@ grn_pat_wal_add_entry_data_set_record_direction(
   data->previous_record_id = *id_location;
 }
 
+static inline void
+_grn_pat_wal_add_entry_data_set_record_direction(
+  grn_ctx *ctx,
+  grn_pat *pat,
+  grn_pat_wal_add_entry_data *data,
+  grn_id parent_record_id,
+  pat_node_common *parent_node,
+  grn_id *id_location)
+{
+  data->grandparent_record_id = data->parent_record_id;
+  data->parent_record_direction = data->record_direction;
+  data->parent_record_id = parent_record_id;
+  if (id_location == pat_node_get_left_address(pat, parent_node)) {
+    data->record_direction = DIRECTION_LEFT;
+  } else {
+    data->record_direction = DIRECTION_RIGHT;
+  }
+  data->previous_record_id = *id_location;
+}
+
 /* bit operation */
 
 #define nth_bit(key, check)                                                    \
@@ -3805,11 +3825,12 @@ _grn_pat_del(grn_ctx *ctx,
   PAT_AT(pat, id, refer_node);
   proot = p = pat_node_get_right_address(pat, refer_node);
   wal_data.record_direction = DIRECTION_RIGHT;
-  grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                  &wal_data,
-                                                  id,
-                                                  refer_node,
-                                                  p);
+  _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                   pat,
+                                                   &wal_data,
+                                                   id,
+                                                   refer_node,
+                                                   p);
   for (;;) {
     grn_id next_id = *p;
     if (next_id == GRN_ID_NIL) {
