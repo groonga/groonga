@@ -3936,8 +3936,8 @@ _grn_pat_del(grn_ctx *ctx,
   if (refer_otherside_node) {
     wal_data.otherside_check = pat_node_get_check(pat, refer_otherside_node);
   }
-  wal_data.left_record_id = refer_node->lr[0];
-  wal_data.right_record_id = refer_node->lr[1];
+  wal_data.left_record_id = pat_node_get_left(pat, refer_node);
+  wal_data.right_record_id = pat_node_get_right(pat, refer_node);
   wal_data.n_garbages = pat->header->n_garbages + 1;
   wal_data.n_entries = pat->header->n_entries - 1;
   wal_data.delete_info_phase1_index = pat->header->curr_del;
