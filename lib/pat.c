@@ -193,18 +193,6 @@ pat_node_set_child(grn_pat *pat,
   }
 }
 
-static inline void
-pat_node_set_right(grn_pat *pat, pat_node_common *node, grn_id id)
-{
-  pat_node_set_child(pat, node, DIRECTION_RIGHT, id);
-}
-
-static inline void
-pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
-{
-  pat_node_set_child(pat, node, DIRECTION_LEFT, id);
-}
-
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 static inline bool
 pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
