@@ -3661,7 +3661,7 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
         const uint8_t *k = _pat_node_get_key(ctx, pat, node_otherside);
         int direction = k ? (*k >> 7) : 1;
         pat_node_set_child(pat, node_otherside, direction, otherside);
-        pat_node_set_child(pat, node_otherside, !direction, 0);
+        pat_node_set_child(pat, node_otherside, !direction, GRN_ID_NIL);
       }
     }
     *p0 = otherside;
@@ -3740,7 +3740,7 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
         const uint8_t *k = _pat_node_get_key(ctx, pat, node_otherside);
         int direction = k ? (*k >> 7) : 1;
         pat_node_set_child(pat, node_otherside, direction, otherside);
-        pat_node_set_child(pat, node_otherside, !direction, 0);
+        pat_node_set_child(pat, node_otherside, !direction, GRN_ID_NIL);
       }
     } else {
       if (otherside) {
@@ -3762,7 +3762,7 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
           const uint8_t *k = _pat_node_get_key(ctx, pat, node_otherside);
           int direction = k ? (*k >> 7) : 1;
           pat_node_set_child(pat, node_otherside, direction, otherside);
-          pat_node_set_child(pat, node_otherside, !direction, 0);
+          pat_node_set_child(pat, node_otherside, !direction, GRN_ID_NIL);
         }
       }
       *p0 = otherside;
