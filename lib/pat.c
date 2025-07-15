@@ -3862,13 +3862,13 @@ _grn_pat_del(grn_ctx *ctx,
     if (!refer_node) {
       return GRN_FILE_CORRUPT;
     }
-    refer_node_check = pat_node_get_cehck(pat, refer_node);
+    refer_node_check = pat_node_get_check(pat, refer_node);
     if (check_max <= refer_node_check) {
       return GRN_INVALID_ARGUMENT;
     }
     if (refer_parent_node_check >= refer_node_check) {
       /* Output node found. */
-      const uint8_t *k = pat_node_get_key(ctx, pat, refer_node);
+      const uint8_t *k = _pat_node_get_key(ctx, pat, refer_node);
       if (!k) {
         return GRN_INVALID_ARGUMENT;
       }
