@@ -1218,10 +1218,10 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 static inline pat_node_common *
 _pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
-  int flags = GRN_TABLE_ADD;
   if (id > GRN_ID_MAX) {
     return NULL;
   }
+  int flags = GRN_TABLE_ADD;
   return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
 }
 
