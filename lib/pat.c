@@ -2868,49 +2868,44 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 }
 
 static void
-get_transitive_closure(grn_ctx *ctx,
-                       grn_pat *pat,
-                       grn_hash *hash,
-                       pat_node_common *root_node)
+get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node *rn)
 {
   grn_id id;
-  pat_node_common *node;
-  id = pat_node_get_right(pat, root_node);
+  pat_node *node;
+  id = rn->lr[1];
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
-        get_transitive_closure(ctx, pat, hash, node);
+      if (PAT_CHK(node) > PAT_CHK(rn)) {
+        get_tc(ctx, pat, h, node);
       } else {
-        grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
+        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
-  id = pat_node_get_left(pat, root_node);
+  id = rn->lr[0];
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
-        get_transitive_closure(ctx, pat, hash, node);
+      if (PAT_CHK(node) > PAT_CHK(rn)) {
+        get_tc(ctx, pat, h, node);
       } else {
-        grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
+        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
 }
 
 grn_rc
-grn_pat_prefix_search(grn_ctx *ctx,
-                      grn_pat *pat,
-                      const void *key,
-                      uint32_t key_size,
-                      grn_hash *hash)
+grn_pat_prefix_search(
+  grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, grn_hash *h)
 {
-  int32_t node_previous_check = -1, node_check;
-  const uint8_t *node_root_key;
-  int32_t check_max = PAT_CHECK_PACK(key_size, 0, false);
+  int32_t c0 = -1, c;
+  const uint8_t *k;
+  int32_t len = key_size * 16;
+  grn_id r;
+  pat_node *rn;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -2918,38 +2913,31 @@ grn_pat_prefix_search(grn_ctx *ctx,
   if (key_size == 0) {
     return GRN_END_OF_DATA;
   }
-
   KEY_ENCODE(pat, keybuf, key, key_size);
-  pat_node_common *root_node;
-  PAT_AT(pat, GRN_ID_NIL, root_node);
-  grn_id right_node = pat_node_get_right(pat, root_node);
-  while (right_node) {
-    PAT_AT(pat, right_node, root_node);
-    if (!root_node) {
+  PAT_AT(pat, 0, rn);
+  r = rn->lr[1];
+  while (r) {
+    PAT_AT(pat, r, rn);
+    if (!rn) {
       return GRN_FILE_CORRUPT;
     }
-    node_check = pat_node_get_check(pat, root_node);
-    if (node_previous_check < node_check && node_check < check_max - 1) {
-      right_node = *_grn_pat_next_location(ctx,
-                                           pat,
-                                           root_node,
-                                           key,
-                                           node_check,
-                                           check_max);
-      node_previous_check = node_check;
+    c = PAT_CHK(rn);
+    if (c0 < c && c < len - 1) {
+      r = *grn_pat_next_location(ctx, rn, key, c, len);
+      c0 = c;
       continue;
     }
-    if (!(node_root_key = _pat_node_get_key(ctx, pat, root_node))) {
+    if (!(k = pat_node_get_key(ctx, pat, rn))) {
       break;
     }
-    if (pat_node_get_key_length(pat, root_node) < key_size) {
+    if (PAT_LEN(rn) < key_size) {
       break;
     }
-    if (!memcmp(node_root_key, key, key_size)) {
-      if (node_check >= check_max - 1) {
-        get_transitive_closure(ctx, pat, hash, root_node);
+    if (!memcmp(k, key, key_size)) {
+      if (c >= len - 1) {
+        get_tc(ctx, pat, h, rn);
       } else {
-        grn_hash_add(ctx, hash, &right_node, sizeof(grn_id), NULL, NULL);
+        grn_hash_add(ctx, h, &r, sizeof(grn_id), NULL, NULL);
       }
       return GRN_SUCCESS;
     }
