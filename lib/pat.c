@@ -3713,18 +3713,11 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
         di->stat = DL_PHASE1;
         di->ld = ddi->ld;
         di->d = id;
-        /*
-        PAT_DEL_OFF(node_previous);
-        ddi->d = r;
-        di->stat = DL_PHASE2;
-        di->d = *p0;
-        */
       } else {
         pat_node_set_deleting_on(pat, node_previous);
         di->stat = DL_PHASE1;
         di->ld = *p0;
         di->d = id;
-        // grn_log("pat_del d=%d ld=%d stat=%d", r, *p0, DL_PHASE1);
       }
     }
     if (*p0 == otherside) {
