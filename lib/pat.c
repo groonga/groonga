@@ -2868,26 +2868,26 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 }
 
 static void
-get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node *rn)
+get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node_common *rn)
 {
   grn_id id;
-  pat_node *node;
-  id = rn->lr[1];
+  pat_node_common *node;
+  id = pat_node_get_right(pat, rn);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (PAT_CHK(node) > PAT_CHK(rn)) {
+      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, rn)) {
         get_tc(ctx, pat, h, node);
       } else {
         grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
-  id = rn->lr[0];
+  id = pat_node_get_left(pat, rn);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (PAT_CHK(node) > PAT_CHK(rn)) {
+      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, rn)) {
         get_tc(ctx, pat, h, node);
       } else {
         grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
@@ -2904,7 +2904,7 @@ grn_pat_prefix_search(
   const uint8_t *k;
   int32_t len = key_size * 16;
   grn_id r;
-  pat_node *rn;
+  pat_node_common *rn;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
@@ -2915,22 +2915,22 @@ grn_pat_prefix_search(
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, rn);
-  r = rn->lr[1];
+  r = pat_node_get_right(pat, rn);
   while (r) {
     PAT_AT(pat, r, rn);
     if (!rn) {
       return GRN_FILE_CORRUPT;
     }
-    c = PAT_CHK(rn);
+    c = pat_node_get_check(pat, rn);
     if (c0 < c && c < len - 1) {
-      r = *grn_pat_next_location(ctx, rn, key, c, len);
+      r = *_grn_pat_next_location(ctx, pat, rn, key, c, len);
       c0 = c;
       continue;
     }
-    if (!(k = pat_node_get_key(ctx, pat, rn))) {
+    if (!(k = _pat_node_get_key(ctx, pat, rn))) {
       break;
     }
-    if (PAT_LEN(rn) < key_size) {
+    if (pat_node_get_key_length(pat, rn) < key_size) {
       break;
     }
     if (!memcmp(k, key, key_size)) {
