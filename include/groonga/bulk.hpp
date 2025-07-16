@@ -85,17 +85,17 @@ namespace grn {
       case GRN_DB_BOOL:
         return GRN_BOOL_VALUE(bulk);
       case GRN_DB_INT8:
-        return GRN_INT8_VALUE(bulk);
+        return static_cast<TYPE>(GRN_INT8_VALUE(bulk));
       case GRN_DB_UINT8:
-        return GRN_UINT8_VALUE(bulk);
+        return static_cast<TYPE>(GRN_UINT8_VALUE(bulk));
       case GRN_DB_INT16:
-        return GRN_INT16_VALUE(bulk);
+        return static_cast<TYPE>(GRN_INT16_VALUE(bulk));
       case GRN_DB_UINT16:
-        return GRN_UINT16_VALUE(bulk);
+        return static_cast<TYPE>(GRN_UINT16_VALUE(bulk));
       case GRN_DB_INT32:
-        return GRN_INT32_VALUE(bulk);
+        return static_cast<TYPE>(GRN_INT32_VALUE(bulk));
       case GRN_DB_UINT32:
-        return GRN_UINT32_VALUE(bulk);
+        return static_cast<TYPE>(GRN_UINT32_VALUE(bulk));
       case GRN_DB_INT64:
         return static_cast<TYPE>(GRN_INT64_VALUE(bulk));
       case GRN_DB_UINT64:
