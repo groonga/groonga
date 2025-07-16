@@ -1216,7 +1216,7 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 }
 
 static inline pat_node_common *
-_pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
+_pat_node_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   if (id > GRN_ID_MAX) {
     return NULL;
@@ -6243,8 +6243,8 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
   grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
   grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
 
-  pat_node_common *node1 = _pat_get(ctx, pat, id1);
-  pat_node_common *node2 = _pat_get(ctx, pat, id2);
+  pat_node_common *node1 = _pat_node_get(ctx, pat, id1);
+  pat_node_common *node2 = _pat_node_get(ctx, pat, id2);
   uint64_t node1_key_offset = pat_node_get_key_position(pat, node1);
   uint64_t node2_key_offset = pat_node_get_key_position(pat, node2);
 
@@ -6305,7 +6305,7 @@ pat_key_defrag_each(grn_ctx *ctx,
   uint64_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     grn_id record_id = target_ids[i];
-    pat_node_common *node = _pat_get(ctx, pat, record_id);
+    pat_node_common *node = _pat_node_get(ctx, pat, record_id);
 
     /* Check if the key to be added can fit in the current segment. */
     uint32_t key_length = pat_node_get_key_length(pat, node);
@@ -6418,7 +6418,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_id active_max_id = GRN_ID_NIL;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node_common *node = _pat_get(ctx, pat, id);
+    pat_node_common *node = _pat_node_get(ctx, pat, id);
     if (active_max_id < id) {
       active_max_id = id;
     }
@@ -6434,7 +6434,7 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   n_targets = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node_common *node = _pat_get(ctx, pat, id);
+    pat_node_common *node = _pat_node_get(ctx, pat, id);
     if (pat_node_is_key_immediate(pat, node)) {
       continue;
     }
@@ -6816,7 +6816,7 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
                                grn_wal_reader_entry *entry,
                                const char *wal_error_tag)
 {
-  pat_node_common *node = _pat_get(ctx, pat, entry->record_id);
+  pat_node_common *node = _pat_node_get(ctx, pat, entry->record_id);
   if (!node) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
