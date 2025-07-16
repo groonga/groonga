@@ -6757,12 +6757,12 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
     return;
   }
   data.proot = pat_node_get_right_address(pat, root_node);
-  data.p0 = pat_node_get_child_address(pat,
-                                       grandparent_node,
-                                       entry->parent_record_direction);
   data.p = pat_node_get_child_address(pat,
                                       data.node_previous,
                                       entry->record_direction);
+  data.p0 = pat_node_get_child_address(pat,
+                                       grandparent_node,
+                                       entry->parent_record_direction);
   data.n_garbages = entry->n_garbages;
   data.n_entries = entry->n_entries;
   grn_pat_del_internal(ctx, pat, &data);
