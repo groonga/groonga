@@ -1215,6 +1215,16 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
 }
 
+static inline pat_node_common *
+_pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
+{
+  int flags = GRN_TABLE_ADD;
+  if (id > GRN_ID_MAX) {
+    return NULL;
+  }
+  return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
+}
+
 /* sis operation */
 
 static inline sis_node *
@@ -1328,6 +1338,33 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   }
   pat_update_total_key_size(ctx, pat, grn_pat_total_key_size(ctx, pat) + len);
   return res;
+}
+
+static inline void
+pat_node_set_key_position(grn_pat *pat,
+                          pat_node_common *node,
+                          uint64_t position)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.key = position;
+  } else {
+    node->node.key = position;
+  }
+}
+
+/*
+ *  We must not call this function when pat_node_is_key_immediate() is true.
+ * If pat_node_is_key_immediate() is true, this function does not return the
+ * offset of key but the value of key durectly.
+ */
+static inline uint64_t
+pat_node_get_key_position(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    return node->node_large.key;
+  } else {
+    return node->node.key;
+  }
 }
 
 static inline uint8_t *
@@ -6205,12 +6242,16 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
 {
   grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
   grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
-  pat_node *node1 = pat_get(ctx, pat, id1);
-  pat_node *node2 = pat_get(ctx, pat, id2);
-  if (node1->key > node2->key) {
+
+  pat_node_common *node1 = _pat_get(ctx, pat, id1);
+  pat_node_common *node2 = _pat_get(ctx, pat, id2);
+  uint64_t node1_key_offset = pat_node_get_key_position(pat, node1);
+  uint64_t node2_key_offset = pat_node_get_key_position(pat, node2);
+
+  if (node1_key_offset > node2_key_offset) {
     return 1;
   }
-  if (node1->key < node2->key) {
+  if (node1_key_offset < node2_key_offset) {
     return -1;
   }
   return 0;
@@ -6219,7 +6260,7 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
 static inline void
 pat_key_move(grn_ctx *ctx,
              grn_pat *pat,
-             pat_node *node,
+             pat_node_common *node,
              uint64_t new_position,
              uint8_t *key,
              uint32_t key_size)
@@ -6227,15 +6268,15 @@ pat_key_move(grn_ctx *ctx,
   uint8_t *new_key_address;
   KEY_AT(pat, new_position, new_key_address, 0);
   grn_memmove(new_key_address, key, key_size);
-  node->key = new_position;
+  pat_node_set_key_position(pat, node, new_position);
 }
 
 typedef void (*pat_key_defrag_each_callback)(
-  grn_ctx *ctx, pat_node *node, grn_pat_wal_add_entry_data *wal_data);
+  grn_ctx *ctx, pat_node_common *node, grn_pat_wal_add_entry_data *wal_data);
 
 static inline void
 pat_key_defrag_callback(grn_ctx *ctx,
-                        pat_node *node,
+                        pat_node_common *node,
                         grn_pat_wal_add_entry_data *wal_data)
 {
   pat_key_move(ctx,
@@ -6248,7 +6289,7 @@ pat_key_defrag_callback(grn_ctx *ctx,
 
 static inline void
 pat_key_defrag_wal_add_entry_callback(grn_ctx *ctx,
-                                      pat_node *node,
+                                      pat_node_common *node,
                                       grn_pat_wal_add_entry_data *wal_data)
 {
   grn_pat_wal_add_entry(ctx, wal_data);
@@ -6264,10 +6305,10 @@ pat_key_defrag_each(grn_ctx *ctx,
   uint64_t new_curr_key = 0;
   for (size_t i = 0; i < n_targets; i++) {
     grn_id record_id = target_ids[i];
-    pat_node *node = pat_get(ctx, pat, record_id);
+    pat_node_common *node = _pat_get(ctx, pat, record_id);
 
     /* Check if the key to be added can fit in the current segment. */
-    uint32_t key_length = PAT_LEN(node);
+    uint32_t key_length = pat_node_get_key_length(pat, node);
     uint64_t new_end_segment =
       (new_curr_key + key_length - 1) >> W_OF_KEY_IN_A_SEGMENT;
     if (new_curr_key >> W_OF_KEY_IN_A_SEGMENT != new_end_segment) {
@@ -6278,9 +6319,10 @@ pat_key_defrag_each(grn_ctx *ctx,
 
     /* If the position is the same, do not copy because the same key is already
      * there. */
-    if (node->key != new_curr_key) {
+    uint64_t node_key_position = pat_node_get_key_position(pat, node);
+    if (node_key_position != new_curr_key) {
       uint8_t *key_address;
-      KEY_AT(pat, node->key, key_address, 0);
+      KEY_AT(pat, node_key_position, key_address, 0);
 
       grn_pat_wal_add_entry_data wal_data = {0};
       wal_data.event = GRN_WAL_EVENT_DEFRAG_KEY;
@@ -6376,11 +6418,11 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   grn_id active_max_id = GRN_ID_NIL;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node_common *node = pat_get(ctx, pat, id);
+    pat_node_common *node = _pat_get(ctx, pat, id);
     if (active_max_id < id) {
       active_max_id = id;
     }
-    if (pat_is_key_immediate(pat, node)) {
+    if (pat_node_is_key_immediate(pat, node)) {
       continue;
     }
     n_targets++;
@@ -6392,8 +6434,8 @@ grn_pat_defrag(grn_ctx *ctx, grn_pat *pat)
   n_targets = 0;
   GRN_PAT_EACH_BEGIN(ctx, pat, cursor, id)
   {
-    pat_node_common *node = pat_get(ctx, pat, id);
-    if (pat_is_key_immediate(pat, node)) {
+    pat_node_common *node = _pat_get(ctx, pat, id);
+    if (pat_node_is_key_immediate(pat, node)) {
       continue;
     }
     target_ids[n_targets++] = id;
@@ -6774,7 +6816,7 @@ grn_pat_wal_recover_defrag_key(grn_ctx *ctx,
                                grn_wal_reader_entry *entry,
                                const char *wal_error_tag)
 {
-  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  pat_node_common *node = _pat_get(ctx, pat, entry->record_id);
   if (!node) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
