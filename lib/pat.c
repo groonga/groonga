@@ -3643,8 +3643,8 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
     di->stat = DL_PHASE2;
     di->d = id;
     if (otherside) {
-      if (check0 < pat_node_get_check(pat, node_otherside) &&
-          pat_node_get_check(pat, node_otherside) <= check) {
+      uint16_t node_otherside_check = pat_node_get_check(pat, node_otherside);
+      if (check0 < node_otherside_check && node_otherside_check <= check) {
         /* To keep node_otherside as an output node, its check is set to
          * zero. */
         if (!delinfo_search(pat, otherside, NULL)) {
@@ -3737,8 +3737,8 @@ grn_pat_del_internal(grn_ctx *ctx, grn_pat *pat, grn_pat_del_data *data)
       }
     } else {
       if (otherside) {
-        if (check0 < pat_node_get_check(pat, node_otherside) &&
-            pat_node_get_check(pat, node_otherside) <= check) {
+        uint16_t node_otherside_check = pat_node_get_check(pat, node_otherside);
+        if (check0 < node_otherside_check && node_otherside_check <= check) {
           /* To keep node_otherside as an output node, its check is set to
            * zero. */
           if (!delinfo_search(pat, otherside, NULL)) {
