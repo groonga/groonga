@@ -1353,7 +1353,7 @@ pat_node_set_key_position(grn_pat *pat,
 }
 
 /*
- *  We must not call this function when pat_node_is_key_immediate() is true.
+ * We must not call this function when pat_node_is_key_immediate() is true.
  * If pat_node_is_key_immediate() is true, this function does not return the
  * offset of key but the value of key durectly.
  */
