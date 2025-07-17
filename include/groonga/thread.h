@@ -120,17 +120,25 @@ typedef void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data);
  *
  * For example usage:
  * ```c
- * static uint32_t max_n_threads;
+ * static uint32_t current_thread_limit = 0;
+ *
  * static void
  * my_set_thread_limit(uint32_t new_limit, void *data)
  * {
- *   if (max_n_threads > new_limit) {
- *     max_n_threads = new_limit;
+ *   uint32_t *max_n_threads = (uint32_t *)data;
+ *
+ *   if (new_limit <= *max_n_threads) {
+ *     current_thread_limit = new_limit;
+ *   } else {
+ *     current_thread_limit = *max_n_threads;
  *   }
  * }
  *
- * uint32_t new_max_threads = 100;
- * grn_thread_set_set_limit_func(my_set_thread_limit, &new_max_threads);
+ * uint32_t max_allowed_threads = 50;
+ * grn_thread_set_set_limit_func(my_set_thread_limit, &max_allowed_threads);
+ *
+ * grn_thread_set_limit(30);   // Sets to 30 (within allowed range)
+ * grn_thread_set_limit(100);  // Sets to 50 (capped at max allowed)
  * ```
  *
  * \param func The custom function that sets the max number of threads.
