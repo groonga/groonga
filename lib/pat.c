@@ -2908,26 +2908,28 @@ static void
 get_transitive_closure(grn_ctx *ctx,
                        grn_pat *pat,
                        grn_hash *hash,
-                       pat_node_common *root_node)
+                       pat_node_common *current_node)
 {
   grn_id id;
   pat_node_common *node;
-  id = pat_node_get_right(pat, root_node);
+  id = pat_node_get_right(pat, current_node);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
+      if (pat_node_get_check(pat, node) >
+          pat_node_get_check(pat, current_node)) {
         get_transitive_closure(ctx, pat, hash, node);
       } else {
         grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
-  id = pat_node_get_left(pat, root_node);
+  id = pat_node_get_left(pat, current_node);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
+      if (pat_node_get_check(pat, node) >
+          pat_node_get_check(pat, current_node)) {
         get_transitive_closure(ctx, pat, hash, node);
       } else {
         grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
