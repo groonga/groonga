@@ -732,9 +732,9 @@ else()
   set(GRN_WITH_ZSTD FALSE)
 endif()
 
-set(GRN_SIMDJSON_BUNDLED_VERSION "3.9.4")
+set(GRN_SIMDJSON_BUNDLED_VERSION "3.13.0")
 set(GRN_SIMDJSON_BUNDLED_SHA256
-    "9bf13be00fa1e1c5891a90dbc39b983e09972f0972a8956c20a9974cedfcca2f")
+    "07a1bb3587aac18fd6a10a83fe4ab09f1100ab39f0cb73baea1317826b9f9e0d")
 set(GRN_WITH_SIMDJSON
     "auto"
     CACHE STRING "Support JSON processing by simdjson.")
