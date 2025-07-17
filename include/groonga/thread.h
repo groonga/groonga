@@ -50,7 +50,7 @@ GRN_API void
 grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit);
 
 /**
- * \brief The type of function that returns the max number of threads.
+ * \brief The function pointer type that returns the max number of threads.
  *
  * \since 5.0.7
  *
@@ -94,7 +94,7 @@ typedef uint32_t (*grn_thread_get_limit_func)(void *data);
 GRN_API void
 grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data);
 /**
- * \brief The type of function that sets the max number of threads.
+ * \brief The function pointer type that sets the max number of threads.
  *
  * \since 5.0.7
  *
