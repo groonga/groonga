@@ -83,7 +83,7 @@ namespace grn {
     {
       switch (bulk->header.domain) {
       case GRN_DB_BOOL:
-        return GRN_BOOL_VALUE(bulk);
+        return static_cast<TYPE>(GRN_BOOL_VALUE(bulk));
       case GRN_DB_INT8:
         return static_cast<TYPE>(GRN_INT8_VALUE(bulk));
       case GRN_DB_UINT8:
