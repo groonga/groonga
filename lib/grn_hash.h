@@ -246,7 +246,7 @@ struct _grn_hash {
   // unsigned int subrec_size;
   // grn_rec_unit record_unit;
   // grn_rec_unit subrec_unit;
-  // uint8_t arrayp;
+  // uint8_t array;
   // grn_recordh *curr_rec;
   // grn_set_cursor *cursor;
   // int limit;

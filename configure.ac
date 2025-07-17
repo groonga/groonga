@@ -249,7 +249,7 @@ if test "$solaris" = "yes"; then
   AC_DEFINE(_XPG4_2, [1],
             [Define to 1 for msghdr.msg_control if you are on Solaris.])
   AC_DEFINE(__EXTENSIONS__, [1],
-            [Define to 1 for singal.h with _XPG4_2 if you are on Solaris.])
+            [Define to 1 for signal.h with _XPG4_2 if you are on Solaris.])
 fi
 
 # For debug
@@ -483,7 +483,7 @@ AC_MSG_RESULT([$enable_memory_debug])
 
 if test "x$enable_memory_debug" = "xyes"; then
   AC_DEFINE(GRN_WITH_MEMORY_DEBUG, [1],
-            [Define to 1 if you enable debuging memory management])
+            [Define to 1 if you enable debugging memory management])
 fi
 
 # epoll/kqueue/poll/select check
@@ -613,11 +613,11 @@ else
                              [benchmark_available="no"],
                              [gobject gthread])],
            [benchmark_available="no"])
-  AC_MSG_CHECKING(for benchmark availablity)
+  AC_MSG_CHECKING(for benchmark availability)
   AC_MSG_RESULT($ac_benchmark_available)
 fi
 if test "$benchmark_available" = "yes"; then
-  AC_DEFINE(GRN_WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
+  AC_DEFINE(GRN_WITH_BENCHMARK, 1, [Define to 1 if benchmark is available])
 fi
 AM_CONDITIONAL([WITH_BENCHMARK], [test "$benchmark_available" = "yes"])
 

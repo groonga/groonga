@@ -248,7 +248,7 @@ grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id);
 grn_rc
 grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr);
 
-/* grn_ja_reader_unref() frees refereces returned by grn_ja_reader_ref(). */
+/* grn_ja_reader_unref() frees references returned by grn_ja_reader_ref(). */
 grn_rc
 grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader);
 
