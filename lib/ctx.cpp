@@ -18,6 +18,7 @@
 */
 
 #include "grn.h"
+#include "grn_arrow.h"
 #include "grn_request_canceler.h"
 #include "grn_request_timer.h"
 #include "grn_tokenizers.h"
@@ -187,6 +188,7 @@ grn_init_external_libraries(void)
 #ifdef GRN_WITH_BLOSC
   blosc2_init();
 #endif
+  grn_arrow_init_external_libraries();
   grn_distance_init_external_libraries();
 }
 

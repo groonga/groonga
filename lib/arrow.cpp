@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@
 #  include <groonga/arrow.hpp>
 
 #  include <arrow/api.h>
+#  include <arrow/compute/api.h>
 #  include <arrow/io/api.h>
 #  include <arrow/ipc/api.h>
 
@@ -2846,6 +2847,20 @@ namespace grn {
 #endif /* GRN_WITH_APACHE_ARROW */
 
 extern "C" {
+void
+grn_arrow_init_external_libraries(void)
+{
+#ifdef GRN_WITH_APACHE_ARROW
+#  if ARROW_VERSION_MAJOR >= 21
+  auto status = arrow::compute::Initialize();
+  if (!status.ok()) {
+    // TODO: How to report this error? Logger isn't initialized at
+    // this time.
+  }
+#  endif
+#endif
+}
+
 grn_rc
 grn_arrow_load(grn_ctx *ctx, grn_obj *table, const char *path)
 {

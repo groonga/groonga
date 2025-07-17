@@ -19,20 +19,6 @@ case "${distribution}" in
 esac
 architecture=$(dpkg --print-architecture)
 
-case "${distribution}-${code_name}" in
-  debian-bookworm)
-    # Don't enable the Apache Arrow APT repository because some users
-    # such as Zulip don't want to enable the Apache Arrow APT
-    # repository for compatibility. We should keep mirroring Apache
-    # Arrow deb for these platforms.
-    :
-    ;;
-  *)
-    wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
-    apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
-    ;;
-esac
-
 wget \
   https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
 apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
@@ -67,6 +53,9 @@ gem install rubygems-requirements-system
 MAKEFLAGS=-j$(nproc) gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
+  wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+  apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+  apt update
   apt install -V -y \
     g++ \
     libre2-dev

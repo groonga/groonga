@@ -54,6 +54,7 @@ function setup_with_apt () {
         gcc
         gettext
         graphviz
+        libarrow-compute-dev
         libarrow-dev
         libedit-dev
         liblz4-dev
@@ -92,7 +93,7 @@ function setup_with_dnf () {
   esac
 
   package_names=(
-    arrow-devel
+    arrow-compute-devel
     cmake
     intltool
     libedit-devel

@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,10 +56,21 @@ namespace grnarrow {
   }
 
   template <typename... ARGS>
+  std::string
+  join_to_string(ARGS &&...args)
+  {
+#if ARROW_VERSION_MAJOR >= 21
+    return ::arrow::internal::JoinToString(std::forward<ARGS>(args)...);
+#else
+    return ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
+#endif
+  }
+
+  template <typename... ARGS>
   bool
   check(grn_ctx *ctx, const arrow::Status &status, ARGS &&...args)
   {
-    auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
+    auto context = join_to_string(std::forward<ARGS>(args)...);
     return check(ctx, status, context.c_str());
   }
 
@@ -67,7 +78,7 @@ namespace grnarrow {
   bool
   check(grn_ctx *ctx, arrow::Result<TYPE> &result, ARGS &&...args)
   {
-    auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
+    auto context = join_to_string(std::forward<ARGS>(args)...);
     return check(ctx, result.status(), context.c_str());
   }
 } // namespace grnarrow

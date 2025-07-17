@@ -28,6 +28,7 @@ RUN \
     debhelper \
     devscripts \
     lsb-release \
+    libarrow-compute-dev \
     libarrow-dev \
     libedit-dev \
     libevent-dev \

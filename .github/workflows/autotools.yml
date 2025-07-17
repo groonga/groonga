@@ -37,7 +37,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'setup.sh'
       - 'plugins/**/*.c'
@@ -98,6 +98,7 @@ jobs:
             clang \
             gdb \
             gettext \
+            libarrow-compute-dev \
             libarrow-dev \
             libedit-dev \
             libevent-dev \

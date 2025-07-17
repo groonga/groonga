@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void
+grn_arrow_init_external_libraries(void);
 
 typedef struct _grn_arrow_stream_loader grn_arrow_stream_loader;
 
