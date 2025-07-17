@@ -3193,27 +3193,27 @@ grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
   const uint8_t *k;
   int32_t len = data->prefix_match_size * 16;
   grn_id r;
-  pat_node *rn;
+  pat_node_common *node;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
 
   KEY_ENCODE(data->pat, keybuf, data->key, data->prefix_match_size);
-  PAT_AT(data->pat, 0, rn);
-  r = rn->lr[1];
+  PAT_AT(data->pat, GRN_ID_NIL, node);
+  r = pat_node_get_right(data->pat, node);
   while (r) {
-    PAT_AT(data->pat, r, rn);
-    if (!rn) {
+    PAT_AT(data->pat, r, node);
+    if (!node) {
       return GRN_ID_NIL;
     }
-    c = PAT_CHK(rn);
+    c = pat_node_get_check(data->pat, node);
     if (c0 < c && c < len - 1) {
-      r = *grn_pat_next_location(ctx, rn, data->key, c, len);
+      r = *_grn_pat_next_location(ctx, data->pat, node, data->key, c, len);
       c0 = c;
       continue;
     }
-    if (!(k = pat_node_get_key(ctx, data->pat, rn))) {
+    if (!(k = _pat_node_get_key(ctx, data->pat, node))) {
       break;
     }
-    if (PAT_LEN(rn) < data->prefix_match_size) {
+    if (pat_node_get_key_length(data->pat, node) < data->prefix_match_size) {
       break;
     }
     if (memcmp(k, data->key, data->prefix_match_size) == 0) {
@@ -3397,7 +3397,7 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                grn_id id,
                                int last_check)
 {
-  pat_node *node = NULL;
+  pat_node_common *node = NULL;
   int check;
   const char *k;
 
@@ -3405,9 +3405,9 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
   if (!node) {
     return;
   }
-  check = PAT_CHK(node);
-  uint32_t len = PAT_LEN(node);
-  k = pat_node_get_key(ctx, data->pat, node);
+  check = pat_node_get_check(data->pat, node);
+  uint32_t len = pat_node_get_key_length(data->pat, node);
+  k = _pat_node_get_key(ctx, data->pat, node);
 
   /* There are sub nodes. */
   if (check > last_check) {
@@ -3417,11 +3417,13 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
         return;
       }
     }
-    if (node->lr[0] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, data, node->lr[0], check);
+    grn_id node_left = pat_node_get_left(data->pat, node);
+    grn_id node_right = pat_node_get_right(data->pat, node);
+    if (node_left != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx, data, node_left, check);
     }
-    if (node->lr[1] != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, data, node->lr[1], check);
+    if (node_right != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx, data, node_right, check);
     }
   } else {
     if (data->prefix_match_size > 0) {
