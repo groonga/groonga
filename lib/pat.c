@@ -2907,30 +2907,30 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 static void
 get_transitive_closure(grn_ctx *ctx,
                        grn_pat *pat,
-                       grn_hash *h,
-                       pat_node_common *rn)
+                       grn_hash *hash,
+                       pat_node_common *root_node)
 {
   grn_id id;
   pat_node_common *node;
-  id = pat_node_get_right(pat, rn);
+  id = pat_node_get_right(pat, root_node);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, rn)) {
-        get_transitive_closure(ctx, pat, h, node);
+      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
+        get_transitive_closure(ctx, pat, hash, node);
       } else {
-        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
+        grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
-  id = pat_node_get_left(pat, rn);
+  id = pat_node_get_left(pat, root_node);
   if (id) {
     PAT_AT(pat, id, node);
     if (node) {
-      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, rn)) {
-        get_transitive_closure(ctx, pat, h, node);
+      if (pat_node_get_check(pat, node) > pat_node_get_check(pat, root_node)) {
+        get_transitive_closure(ctx, pat, hash, node);
       } else {
-        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
+        grn_hash_add(ctx, hash, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
