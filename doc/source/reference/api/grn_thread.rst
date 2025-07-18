@@ -70,18 +70,5 @@ decreased.
 Reference
 ---------
 
-.. c:type:: void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data)
-
-   It's the type of function that sets the max number of threads.
-
-.. c:function:: void grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data)
-
-   It sets the custom function that sets the max number of threads.
-
-   ``data`` is passed to ``func`` when ``func`` is called from
-   :c:func:`grn_thread_set_limit()`.
-
-   :param func: The custom function that sets the max number of threads.
-   :param data: An user data to be passed to ``func`` when ``func``
-                is called.
-
+.. note::
+   We are currently switching to automatic generation using Doxygen.
