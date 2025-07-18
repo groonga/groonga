@@ -5477,8 +5477,8 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
          pat_node_is_deleting(pat, node) ? "true" : "false",
          pat_node_is_key_immediate(pat, node) ? "true" : "false",
          pat_node_get_key_length(pat, node),
-         check >> PAT_CHECK_BYTE_DIFFERENCES_SHIFT,
-         (check >> PAT_CHECK_BIT_DIFFERENCES_SHIFT) & 0x7,
+         PAT_CHECK_BYTE_DIFFERENCES(check),
+         PAT_CHECK_BIT_DIFFERENCES(check),
          PAT_CHECK_IS_TERMINATED(check) ? "true" : "false",
          pat_node_get_key_length(pat, node),
          (char *)key);
