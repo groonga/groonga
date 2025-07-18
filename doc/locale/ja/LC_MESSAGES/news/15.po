@@ -17,11 +17,17 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.1.2 - 2025-07-07"
-msgstr "15.1.2リリース - 2025-07-07"
+msgid "Release 15.1.3 - 2025-07-18"
+msgstr "15.1.3リリース - 2025-07-18"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[Apache Arrow] Added support for Apache Arrow C++ 21.0.0"
+msgstr "[Apache Arrow] Apache Arrow C++ 21.0.0 をサポートしました"
+
+msgid "Release 15.1.2 - 2025-07-07"
+msgstr "15.1.2リリース - 2025-07-07"
 
 msgid "[Windows] Drop support for Groonga package that is built with Visual Studio 2019"
 msgstr "[Windows] Visual Studio 2019 でビルドしたパッケージのサポートをやめました"
