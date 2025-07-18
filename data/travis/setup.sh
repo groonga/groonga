@@ -24,12 +24,13 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
   sudo apt install -qq -y -V \
        lsb-release \
        wget
-  wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+  wget https://packages.apache.org/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   sudo apt install -qq -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
        ccache \
        cmake \
+       libarrow-compute-dev \
        libarrow-dev \
        libevent-dev \
        libmecab-dev \
@@ -57,19 +58,12 @@ else
   distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
   case $distribution in
     debian)
-      code_name=$(lsb_release --short --codename)
-      component=main
-      apt_url_base=https://packages.groonga.org
-      cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
-deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
-deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
-EOF
-      sudo apt-get update -qq
-      sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
+      wget https://packages.groonga.org/debian/groonga-apt-source-latest-$(lsb_release --codename --short).deb
+      sudo apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --short).deb
       ;;
     ubuntu)
-      sudo apt-get install -qq -y -V software-properties-common
-      sudo add-apt-repository -y ppa:groonga/ppa
+      wget https://packages.groonga.org/ubuntu/groonga-apt-source-latest-$(lsb_release --codename --short).deb
+      sudo apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --short).deb
       ;;
   esac
 
