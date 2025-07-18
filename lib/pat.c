@@ -3045,7 +3045,7 @@ grn_pat_lcp_search(grn_ctx *ctx,
                    const void *key,
                    uint32_t key_size)
 {
-  pat_node *rn;
+  pat_node_common *node;
   grn_id r, r2 = GRN_ID_NIL;
   int32_t len = key_size * 16;
   int32_t c0 = -1, c;
@@ -3058,20 +3058,21 @@ grn_pat_lcp_search(grn_ctx *ctx,
   if (!(pat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
     return GRN_ID_NIL;
   }
-  PAT_AT(pat, 0, rn);
-  for (r = rn->lr[1]; r;) {
-    PAT_AT(pat, r, rn);
-    if (!rn) {
+  PAT_AT(pat, GRN_ID_NIL, node);
+  for (r = pat_node_get_right(pat, node); r;) {
+    PAT_AT(pat, r, node);
+    if (!node) {
       break; /* corrupt? */
     }
-    c = PAT_CHK(rn);
+    c = pat_node_get_check(pat, node);
     if (c <= c0) {
-      if (PAT_LEN(rn) <= key_size) {
-        uint8_t *p = pat_node_get_key(ctx, pat, rn);
+      uint32_t key_length_node = pat_node_get_key_length(pat, node);
+      if (key_length_node <= key_size) {
+        uint8_t *p = _pat_node_get_key(ctx, pat, node);
         if (!p) {
           break;
         }
-        if (!memcmp(p, key, PAT_LEN(rn))) {
+        if (!memcmp(p, key, key_length_node)) {
           return r;
         }
       }
@@ -3082,21 +3083,24 @@ grn_pat_lcp_search(grn_ctx *ctx,
     }
     if (PAT_CHECK_IS_TERMINATED(c)) {
       uint8_t *p;
-      pat_node *rn0;
-      grn_id r0 = rn->lr[0];
-      PAT_AT(pat, r0, rn0);
-      if (!rn0) {
+      pat_node_common *node_previous;
+      grn_id node_left = pat_node_get_left(pat, node);
+      PAT_AT(pat, node_left, node_previous);
+      if (!node_previous) {
         break; /* corrupt? */
       }
-      p = pat_node_get_key(ctx, pat, rn0);
+      p = _pat_node_get_key(ctx, pat, node_previous);
       if (!p) {
         break;
       }
-      if (PAT_LEN(rn0) <= key_size && !memcmp(p, key, PAT_LEN(rn0))) {
-        r2 = r0;
+      uint32_t key_length_node_previous =
+        pat_node_get_key_length(pat, node_previous);
+      if (key_length_node_previous <= key_size &&
+          !memcmp(p, key, key_length_node_previous)) {
+        r2 = node_left;
       }
     }
-    r = *grn_pat_next_location(ctx, rn, key, c, len);
+    r = *_grn_pat_next_location(ctx, pat, node, key, c, len);
     c0 = c;
   }
   return r2;
