@@ -3417,13 +3417,13 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
         return;
       }
     }
-    grn_id node_left = pat_node_get_left(data->pat, node);
-    grn_id node_right = pat_node_get_right(data->pat, node);
-    if (node_left != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, data, node_left, check);
+    grn_id left_record_id = pat_node_get_left(data->pat, node);
+    grn_id right_record_id = pat_node_get_right(data->pat, node);
+    if (left_record_id != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx, data, left_record_id, check);
     }
-    if (node_right != GRN_ID_NIL) {
-      grn_pat_fuzzy_search_recursive(ctx, data, node_right, check);
+    if (right_record_id != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx, data, right_record_id, check);
     }
   } else {
     if (data->prefix_match_size > 0) {
