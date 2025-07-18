@@ -590,7 +590,13 @@ endif()
 option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
 if(GRN_WITH_APACHE_ARROW)
   find_package(Arrow REQUIRED)
-  target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
+  if(Arrow_VERSION VERSION_GREATER_EQUAL 21.0.0)
+    find_package(ArrowCompute REQUIRED)
+    target_link_libraries(grn_dependencies
+                          INTERFACE ArrowCompute::arrow_compute_shared)
+  else()
+    target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
+  endif()
 endif()
 
 set(GRN_WITH_ZLIB

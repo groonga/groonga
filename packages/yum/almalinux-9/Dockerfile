@@ -19,7 +19,7 @@ RUN \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
     ${SCL} \
-    arrow-devel-${APACHE_ARROW_VERSION} \
+    arrow-compute-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
     intltool \

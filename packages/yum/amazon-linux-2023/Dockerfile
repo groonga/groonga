@@ -11,7 +11,7 @@ RUN \
     https://apache.jfrog.io/artifactory/arrow/amazon-linux/$(cut -d: -f6 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    arrow-devel-${APACHE_ARROW_VERSION} \
+    arrow-compute-devel-${APACHE_ARROW_VERSION} \
     cmake \
     intltool \
     libedit-devel \
