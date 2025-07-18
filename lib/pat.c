@@ -298,7 +298,7 @@ enum {
 };
 
 void
-grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node);
+grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node);
 
 /* WAL operation */
 
@@ -5444,7 +5444,7 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 
 /* utilities */
 void
-grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
+grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
 {
   uint8_t *key = NULL;
 
@@ -5453,10 +5453,10 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
     return;
   }
 
-  if (PAT_IMD(node)) {
-    key = (uint8_t *)&(node->key);
+  if (pat_node_is_key_immediate(pat, node)) {
+    key = _pat_node_get_key(ctx, pat, node);
   } else {
-    KEY_AT(pat, node->key, key, 0);
+    KEY_AT(pat, pat_node_get_key_position(pat, node), key, 0);
   }
 
   printf("#<pat_node:%p "
@@ -5471,15 +5471,15 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
          "key:<%.*s>"
          ">\n",
          node,
-         node->lr[0],
-         node->lr[1],
-         PAT_DEL(node) ? "true" : "false",
-         PAT_IMD(node) ? "true" : "false",
-         PAT_LEN(node),
-         PAT_CHK(node) >> 4,
-         (PAT_CHK(node) >> 1) & 0x7,
-         (PAT_CHK(node) & 0x1) ? "true" : "false",
-         PAT_LEN(node),
+         pat_node_get_left(pat, node),
+         pat_node_get_right(pat, node),
+         pat_node_is_deleting(pat, node) ? "true" : "false",
+         pat_node_is_key_immediate(pat, node) ? "true" : "false",
+         pat_node_get_key_length(pat, node),
+         pat_node_get_check(pat, node) >> 4,
+         (pat_node_get_check(pat, node) >> 1) & 0x7,
+         (pat_node_get_check(pat, node) & 0x1) ? "true" : "false",
+         pat_node_get_key_length(pat, node),
          (char *)key);
 }
 
