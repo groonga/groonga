@@ -5459,6 +5459,7 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
     KEY_AT(pat, pat_node_get_key_position(pat, node), key, 0);
   }
 
+  uint16_t check = pat_node_get_check(pat, node);
   printf("#<pat_node:%p "
          "left:%u "
          "right:%u "
@@ -5476,9 +5477,9 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
          pat_node_is_deleting(pat, node) ? "true" : "false",
          pat_node_is_key_immediate(pat, node) ? "true" : "false",
          pat_node_get_key_length(pat, node),
-         pat_node_get_check(pat, node) >> 4,
-         (pat_node_get_check(pat, node) >> 1) & 0x7,
-         (pat_node_get_check(pat, node) & 0x1) ? "true" : "false",
+         check >> PAT_CHECK_BYTE_DIFFERENCES_SHIFT,
+         (check >> PAT_CHECK_BIT_DIFFERENCES_SHIFT) & 0x7,
+         PAT_CHECK_IS_TERMINATED(check) ? "true" : "false",
          pat_node_get_key_length(pat, node),
          (char *)key);
 }
