@@ -15,7 +15,7 @@ RUN \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    arrow-devel-${APACHE_ARROW_VERSION} \
+    arrow-compute-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
     gcc-c++ \

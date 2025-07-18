@@ -26,6 +26,7 @@ RUN \
     debhelper \
     devscripts \
     dh-apparmor \
+    libarrow-compute-dev \
     libarrow-dev \
     libedit-dev \
     libevent-dev \

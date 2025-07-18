@@ -47,7 +47,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'plugins/**/*.c'
       - 'plugins/**/*.cpp'
@@ -131,6 +131,7 @@ jobs:
             cmake \
             gdb \
             gettext \
+            libarrow-compute-dev \
             libarrow-dev \
             libedit-dev \
             libevent-dev \
@@ -722,8 +723,13 @@ jobs:
           ccache --show-stats --verbose --version
       - name: Download Apache Arrow latest source archive
         run: |
+          $headers = @{
+            "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
           $LATEST_RELEASE_INFO = `
-            Invoke-RestMethod "https://api.github.com/repos/apache/arrow/releases/latest"
+            Invoke-RestMethod `
+              -Uri "https://api.github.com/repos/apache/arrow/releases/latest" `
+              -Headers $headers
           # e.g. "apache-arrow-19.0.0"
           $LATEST_RELEASE_TAG = $LATEST_RELEASE_INFO.tag_name
           # "apache-arrow-19.0.0" -> "arrow-19.0.0"

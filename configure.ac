@@ -930,7 +930,7 @@ AC_ARG_ENABLE(apache-arrow,
 if test "x$enable_apache_arrow" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([APACHE_ARROW],
-                      [arrow >= 3.0.0],
+                      [arrow-compute >= 3.0.0],
                       [GRN_WITH_APACHE_ARROW=yes],
                       [GRN_WITH_APACHE_ARROW=no])
   ],

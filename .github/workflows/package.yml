@@ -43,7 +43,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'packages/**'
       - 'plugins/**/*.c'
@@ -236,6 +236,8 @@ jobs:
           key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd packages
           rake docker:pull || :

@@ -24,7 +24,7 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-BuildRequires:	arrow-devel >= @APACHE_ARROW_VERSION@
+BuildRequires:	arrow-compute-devel >= @APACHE_ARROW_VERSION@
 BuildRequires:	libedit-devel
 BuildRequires:	libstemmer-devel
 BuildRequires:	libzstd-devel
@@ -139,7 +139,7 @@ Documentation for Groonga
 Summary:	Libraries and header files for Groonga
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	arrow-devel >= @APACHE_ARROW_VERSION@
+Requires:	arrow-compute-devel >= @APACHE_ARROW_VERSION@
 %if ! %{is_amazon_linux}
 Requires:	msgpack-devel
 %endif
