@@ -56,17 +56,9 @@ else
   fi
 
   distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
-  case $distribution in
-    debian)
-      wget https://packages.groonga.org/debian/groonga-apt-source-latest-$(lsb_release --codename --short).deb
-      sudo apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --short).deb
-      ;;
-    ubuntu)
-      wget https://packages.groonga.org/ubuntu/groonga-apt-source-latest-$(lsb_release --codename --short).deb
-      sudo apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --short).deb
-      ;;
-  esac
-
+  codename=$(lsb_release --codename --short)
+  wget "https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${codename}.deb"
+  sudo apt install -y -V "./groonga-apt-source-latest-${codename}.deb"
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V groonga libgroonga-dev
 fi
