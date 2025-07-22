@@ -5509,11 +5509,11 @@ grn_pat_inspect_node(grn_ctx *ctx,
                      const char *prefix,
                      grn_obj *buf)
 {
-  pat_node *node = NULL;
+  pat_node_common *node = NULL;
   int i, c;
 
   PAT_AT(pat, id, node);
-  c = PAT_CHK(node);
+  c = pat_node_get_check(pat, node);
 
   for (i = 0; i < indent; i++) {
     GRN_TEXT_PUTC(ctx, buf, ' ');
@@ -5526,7 +5526,7 @@ grn_pat_inspect_node(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, buf, "\n");
     grn_pat_inspect_node(ctx,
                          pat,
-                         node->lr[0],
+                         pat_node_get_left(pat, node),
                          c,
                          key_buf,
                          indent + 2,
@@ -5535,7 +5535,7 @@ grn_pat_inspect_node(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, buf, "\n");
     grn_pat_inspect_node(ctx,
                          pat,
-                         node->lr[1],
+                         pat_node_get_right(pat, node),
                          c,
                          key_buf,
                          indent + 2,
@@ -5545,7 +5545,7 @@ grn_pat_inspect_node(grn_ctx *ctx,
     int key_size;
     uint8_t *key;
 
-    key_size = PAT_LEN(node);
+    key_size = pat_node_get_key_length(pat, node);
     GRN_BULK_REWIND(key_buf);
     grn_bulk_space(ctx, key_buf, key_size);
     grn_pat_get_key(ctx, pat, id, GRN_BULK_HEAD(key_buf), key_size);
@@ -5554,7 +5554,7 @@ grn_pat_inspect_node(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, buf, ")");
 
     GRN_TEXT_PUTS(ctx, buf, "[");
-    key = pat_node_get_key(ctx, pat, node);
+    key = _pat_node_get_key(ctx, pat, node);
     for (i = 0; i < key_size; i++) {
       int j;
       uint8_t byte = key[i];
