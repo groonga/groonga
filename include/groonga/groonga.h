@@ -187,7 +187,7 @@ typedef enum {
 #define GRN_COMMAND_VERSION_STABLE GRN_COMMAND_VERSION_1
 #define GRN_COMMAND_VERSION_MAX    GRN_COMMAND_VERSION_3
 
-typedef enum {
+typedef enum /* : unsigned char */ {
   GRN_LOG_NONE = 0,
   GRN_LOG_EMERG,
   GRN_LOG_ALERT,

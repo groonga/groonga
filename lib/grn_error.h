@@ -84,7 +84,7 @@ grn_error_setv(grn_ctx *ctx,
                const char *format,
                va_list args)
 {
-  ctx->errlvl = level;
+  ctx->errlvl = (unsigned char)level;
   if (ctx->rc != GRN_CANCEL) {
     ctx->rc = rc;
   }
