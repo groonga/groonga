@@ -13153,12 +13153,14 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       n = n_max_element_intervals + 1;
     }
     int32_t previous_pos = data->phrase_groups[0].btree->min->pos;
+    int32_t previous_n_tokens_in_phrase =
+      data->phrase_groups[0].btree->min->n_tokens_in_phrase;
     for (i = 1; i < n; i++) {
       token_info *min = data->phrase_groups[i].btree->min;
       int32_t pos = min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      int32_t interval = pos - previous_pos - min->n_tokens_in_phrase;
+      int32_t interval = pos - previous_pos - previous_n_tokens_in_phrase;
       if (max_element_interval >= 0 && interval > max_element_interval) {
         return false;
       }
@@ -13166,6 +13168,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
         return false;
       }
       previous_pos = pos;
+      previous_n_tokens_in_phrase = min->n_tokens_in_phrase;
     }
     return true;
   } else {
