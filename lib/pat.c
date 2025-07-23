@@ -280,12 +280,22 @@ pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
   }
 }
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
+static inline void
+pat_node_set_key_immediate_off(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.bits &= ~PAT_IMMEDIATE;
+  } else {
+    node->node.bits &= ~PAT_IMMEDIATE;
+  }
+}
+
 #define PAT_LEN_SET(x, v)                                                      \
   ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
 static inline void
 pat_node_set_key_length(grn_pat *pat,
                         pat_node_common *node,
-                        uint16_t key_length)
+                        uint32_t key_length)
 {
   if (pat_is_key_large(pat)) {
     node->node_large.bits =
@@ -1389,7 +1399,7 @@ pat_node_set_key_position(grn_pat *pat,
 /*
  * We must not call this function when pat_node_is_key_immediate() is true.
  * If pat_node_is_key_immediate() is true, this function does not return the
- * offset of key but the value of key durectly.
+ * offset of key but the value of key directly.
  */
 static inline uint64_t
 pat_node_get_key_position(grn_pat *pat, pat_node_common *node)
@@ -1398,6 +1408,28 @@ pat_node_get_key_position(grn_pat *pat, pat_node_common *node)
     return node->node_large.key;
   } else {
     return node->node.key;
+  }
+}
+
+static inline void
+pat_node_set_key_offset(grn_pat *pat,
+                        pat_node_common *node,
+                        uint64_t key_offset)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.key = key_offset;
+  } else {
+    node->node.key = (uint32_t)key_offset;
+  }
+}
+
+static inline uint64_t *
+pat_node_get_key_address(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    return &(node->node_large.key);
+  } else {
+    return (uint64_t *)&(node->node.key);
   }
 }
 
@@ -1449,6 +1481,30 @@ pat_node_set_key(
   } else {
     PAT_IMD_OFF(n);
     n->key = key_put(ctx, pat, key, len);
+    rc = ctx->rc;
+  }
+  return rc;
+}
+
+static inline grn_rc
+_pat_node_set_key(grn_ctx *ctx,
+                  grn_pat *pat,
+                  pat_node_common *node,
+                  const uint8_t *key,
+                  uint32_t len)
+{
+  grn_rc rc;
+  if (!key || !len) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  pat_node_set_key_length(pat, node, len);
+  if (pat_key_is_embeddable(len)) {
+    pat_node_set_key_immediate_on(pat, node);
+    grn_memcpy(pat_node_get_key_address(pat, node), key, len);
+    rc = GRN_SUCCESS;
+  } else {
+    pat_node_set_key_immediate_off(pat, node);
+    pat_node_set_key_offset(pat, node, key_put(ctx, pat, key, len));
     rc = ctx->rc;
   }
   return rc;
@@ -2398,6 +2454,34 @@ grn_pat_enable_node(grn_ctx *ctx,
 }
 
 static inline void
+_grn_pat_enable_node(grn_ctx *ctx,
+                     grn_pat *pat,
+                     pat_node_common *node,
+                     grn_id id,
+                     const uint8_t *key,
+                     uint16_t check,
+                     uint16_t check_max,
+                     grn_id *id_location)
+{
+  pat_node_set_check(pat, node, check);
+  pat_node_set_deleting_off(pat, node);
+  if (PAT_CHECK_IS_TERMINATED(check)
+        ?
+        /* check + 1:
+         * delete terminated flag and increment bit differences */
+        (check + 1 < check_max)
+        : nth_bit(key, check)) {
+    pat_node_set_right(pat, node, id);
+    pat_node_set_left(pat, node, *id_location);
+  } else {
+    pat_node_set_right(pat, node, *id_location);
+    pat_node_set_left(pat, node, id);
+  }
+  // smp_wmb();
+  *id_location = id;
+}
+
+static inline void
 grn_pat_reuse_shared_node(grn_ctx *ctx,
                           grn_pat *pat,
                           pat_node *node,
@@ -2500,6 +2584,40 @@ grn_pat_add_node(grn_ctx *ctx,
   pat->header->curr_rec = id;
   pat->header->n_entries++;
   grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  return GRN_SUCCESS;
+}
+
+static inline grn_rc
+_grn_pat_add_node(grn_ctx *ctx,
+                  grn_pat *pat,
+                  pat_node_common *node,
+                  grn_id id,
+                  const uint8_t *key,
+                  uint32_t key_size,
+                  uint16_t check,
+                  uint16_t check_max,
+                  grn_id *id_location,
+                  const char *tag)
+{
+  grn_rc rc = _pat_node_set_key(ctx, pat, node, key, key_size);
+  if (rc != GRN_SUCCESS) {
+    grn_obj inspected_key;
+    GRN_TEXT_INIT(&inspected_key, 0);
+    grn_inspect_key(ctx, &inspected_key, (grn_obj *)pat, key, key_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      rc,
+                      id,
+                      tag,
+                      "failed to set key: %.*s",
+                      (int)GRN_TEXT_LEN(&inspected_key),
+                      GRN_TEXT_VALUE(&inspected_key));
+    GRN_OBJ_FIN(ctx, &inspected_key);
+    return ctx->rc;
+  }
+  pat->header->curr_rec = id;
+  pat->header->n_entries++;
+  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
   return GRN_SUCCESS;
 }
 
@@ -6518,7 +6636,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
 {
   pat_update_total_key_size(ctx, pat, entry->key_offset);
   pat->header->n_entries = entry->n_entries;
-  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  pat_node_common *node = _pat_node_get(ctx, pat, entry->record_id);
   if (!node) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
@@ -6528,7 +6646,8 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
                               "failed to refer node");
     return;
   }
-  pat_node *parent_node = pat_get(ctx, pat, entry->parent_record_id);
+  pat_node_common *parent_node =
+    _pat_node_get(ctx, pat, entry->parent_record_id);
   if (!parent_node) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
@@ -6541,20 +6660,21 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
   if (ctx->rc != GRN_SUCCESS) {
     return;
   }
-  grn_id *id_location = &(parent_node->lr[entry->record_direction]);
+  grn_id *id_location =
+    pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
     (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
-  grn_pat_add_node(ctx,
-                   pat,
-                   node,
-                   entry->record_id,
-                   entry->key.content.binary.data,
-                   entry->key.content.binary.size,
-                   entry->check,
-                   check_max,
-                   id_location,
-                   tag);
+  _grn_pat_add_node(ctx,
+                    pat,
+                    node,
+                    entry->record_id,
+                    entry->key.content.binary.data,
+                    entry->key.content.binary.size,
+                    entry->check,
+                    check_max,
+                    id_location,
+                    tag);
 }
 
 static void
