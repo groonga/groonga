@@ -1493,7 +1493,6 @@ _pat_node_set_key(grn_ctx *ctx,
                   const uint8_t *key,
                   uint32_t len)
 {
-  grn_rc rc;
   if (!key || !len) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -1501,13 +1500,12 @@ _pat_node_set_key(grn_ctx *ctx,
   if (pat_key_is_embeddable(len)) {
     pat_node_set_key_immediate_on(pat, node);
     grn_memcpy(pat_node_get_key_address(pat, node), key, len);
-    rc = GRN_SUCCESS;
+    return GRN_SUCCESS;
   } else {
     pat_node_set_key_immediate_off(pat, node);
     pat_node_set_key_offset(pat, node, key_put(ctx, pat, key, len));
-    rc = ctx->rc;
+    return ctx->rc;
   }
-  return rc;
 }
 
 static inline void
