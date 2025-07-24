@@ -6096,7 +6096,7 @@ sub_search(grn_ctx *ctx,
            uint8_t *key,
            uint32_t key_len)
 {
-  pat_node *pn;
+  pat_node_common *pn;
   int32_t len = key_len * 16;
   if (!key_len) {
     return id;
@@ -6104,18 +6104,20 @@ sub_search(grn_ctx *ctx,
   PAT_AT(pat, id, pn);
   while (pn) {
     int32_t ch;
-    ch = PAT_CHK(pn);
+    ch = pat_node_get_check(pat, pn);
     if (*c0 < ch && ch < len - 1) {
       if (ch & 1) {
-        id = (ch + 1 < len) ? pn->lr[1] : pn->lr[0];
+        id = (ch + 1 < len) ? pat_node_get_right(pat, pn)
+                            : pat_node_get_left(pat, pn);
       } else {
-        id = pn->lr[nth_bit(key, ch)];
+        id = pat_node_get_child(pat, pn, nth_bit(key, ch));
       }
       *c0 = ch;
       PAT_AT(pat, id, pn);
     } else {
-      const uint8_t *k = pat_node_get_key(ctx, pat, pn);
-      return (k && key_len <= PAT_LEN(pn) && !memcmp(k, key, key_len))
+      const uint8_t *k = _pat_node_get_key(ctx, pat, pn);
+      return (k && key_len <= pat_node_get_key_length(pat, pn) &&
+              !memcmp(k, key, key_len))
                ? id
                : GRN_ID_NIL;
     }
