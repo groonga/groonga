@@ -193,6 +193,18 @@ pat_node_set_child(grn_pat *pat,
   }
 }
 
+static inline void
+pat_node_set_right(grn_pat *pat, pat_node_common *node, grn_id id)
+{
+  pat_node_set_child(pat, node, DIRECTION_RIGHT, id);
+}
+
+static inline void
+pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
+{
+  pat_node_set_child(pat, node, DIRECTION_LEFT, id);
+}
+
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 static inline bool
 pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
@@ -247,7 +259,16 @@ pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
   }
 }
 
-#define PAT_IMD_ON(x)  ((x)->bits |= PAT_IMMEDIATE)
+#define PAT_IMD_ON(x) ((x)->bits |= PAT_IMMEDIATE)
+static inline void
+pat_node_set_key_immediate_on(grn_pat *pat, pat_node_common *node)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.bits |= PAT_IMMEDIATE;
+  } else {
+    node->node.bits |= PAT_IMMEDIATE;
+  }
+}
 #define PAT_DEL_OFF(x) ((x)->bits &= ~PAT_DELETING)
 static inline void
 pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
@@ -261,6 +282,19 @@ pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 #define PAT_LEN_SET(x, v)                                                      \
   ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
+static inline void
+pat_node_set_key_length(grn_pat *pat,
+                        pat_node_common *node,
+                        uint16_t key_length)
+{
+  if (pat_is_key_large(pat)) {
+    node->node_large.bits =
+      (node->node_large.bits & ((1 << 3) - 1)) | ((key_length - 1) << 3);
+  } else {
+    node->node.bits =
+      (node->node.bits & ((1 << 3) - 1)) | ((key_length - 1) << 3);
+  }
+}
 #define PAT_CHK_SET(x, v) ((x)->check = (v))
 static inline void
 pat_node_set_check(grn_pat *pat, pat_node_common *node, uint16_t check)
@@ -1524,24 +1558,28 @@ delinfo_turn_1_post(grn_ctx *ctx, grn_pat *pat, uint32_t next_delete_info_index)
 }
 
 static inline grn_rc
-delinfo_turn_2_internal(
-  grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di, pat_node *ln, pat_node *dn)
+delinfo_turn_2_internal(grn_ctx *ctx,
+                        grn_pat *pat,
+                        grn_pat_delinfo *di,
+                        pat_node_common *ln,
+                        pat_node_common *dn)
 {
   grn_id d = di->d;
   grn_id *p = NULL;
-  PAT_DEL_OFF(ln);
-  PAT_DEL_OFF(dn);
+  pat_node_set_deleting_off(pat, ln);
+  pat_node_set_deleting_off(pat, dn);
   {
     grn_id *p0;
-    pat_node *rn;
+    pat_node_common *rn;
     int32_t c0 = -1, c;
-    int32_t check_max = PAT_CHECK_PACK(PAT_LEN(dn), 0, false);
-    const uint8_t *key = pat_node_get_key(ctx, pat, dn);
+    int32_t check_max =
+      PAT_CHECK_PACK(pat_node_get_key_length(pat, dn), 0, false);
+    const uint8_t *key = _pat_node_get_key(ctx, pat, dn);
     if (!key) {
       return GRN_INVALID_ARGUMENT;
     }
     PAT_AT(pat, 0, rn);
-    p0 = &rn->lr[1];
+    p0 = pat_node_get_right_address(pat, rn);
     for (;;) {
       grn_id r = *p0;
       if (!r) {
@@ -1555,18 +1593,18 @@ delinfo_turn_2_internal(
       if (!rn) {
         return GRN_FILE_CORRUPT;
       }
-      c = PAT_CHK(rn);
+      c = pat_node_get_check(pat, rn);
       if (c <= c0 || check_max <= c) {
         break;
       }
-      p0 = grn_pat_next_location(ctx, rn, key, c, check_max);
+      p0 = _grn_pat_next_location(ctx, pat, rn, key, c, check_max);
       c0 = c;
     }
   }
   if (p) {
-    PAT_CHK_SET(ln, PAT_CHK(dn));
-    ln->lr[1] = dn->lr[1];
-    ln->lr[0] = dn->lr[0];
+    pat_node_set_check(pat, ln, pat_node_get_check(pat, dn));
+    pat_node_set_right(pat, ln, pat_node_get_right(pat, dn));
+    pat_node_set_left(pat, ln, pat_node_get_left(pat, dn));
     *p = di->ld;
   } else {
     /* debug */
@@ -1607,7 +1645,7 @@ delinfo_turn_2(grn_ctx *ctx,
                uint32_t di_index)
 {
   grn_pat_delinfo *di = &pat->header->delinfos[di_index];
-  pat_node *ln, *dn;
+  pat_node_common *ln, *dn;
   // grn_log("delinfo_turn_2> di->d=%d di->ld=%d stat=%d", di->d, di->ld,
   // di->stat);
   if (di->stat != DL_PHASE1) {
@@ -1628,11 +1666,11 @@ delinfo_turn_2(grn_ctx *ctx,
   grn_pat_wal_add_entry_data wal_data = *base_wal_data;
   wal_data.event = GRN_WAL_EVENT_DELETE_INFO_PHASE2;
   wal_data.record_id = d;
-  wal_data.key_size = PAT_LEN(dn);
-  wal_data.check = PAT_CHK(dn);
+  wal_data.key_size = pat_node_get_key_length(pat, dn);
+  wal_data.check = pat_node_get_check(pat, dn);
   wal_data.parent_record_id = di->ld;
-  wal_data.left_record_id = dn->lr[0];
-  wal_data.right_record_id = dn->lr[1];
+  wal_data.left_record_id = pat_node_get_left(pat, dn);
+  wal_data.right_record_id = pat_node_get_right(pat, dn);
   wal_data.delete_info_phase2_index = di_index;
   if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
     return ctx->rc;
@@ -1651,15 +1689,18 @@ delinfo_turn_2_post(grn_ctx *ctx, grn_pat *pat)
 }
 
 static inline uint32_t
-delinfo_compute_storage_size(grn_ctx *ctx, grn_pat_delinfo *di, pat_node *dn)
+delinfo_compute_storage_size(grn_ctx *ctx,
+                             grn_pat *pat,
+                             grn_pat_delinfo *di,
+                             pat_node_common *dn)
 {
   if (di->shared) {
     return 0;
   } else {
-    if (PAT_IMD(dn)) {
+    if (pat_node_is_key_immediate(pat, dn)) {
       return 0;
     } else {
-      return PAT_LEN(dn);
+      return pat_node_get_key_length(pat, dn);
     }
   }
 }
@@ -1668,15 +1709,15 @@ static inline grn_rc
 delinfo_turn_3_internal(grn_ctx *ctx,
                         grn_pat *pat,
                         grn_pat_delinfo *di,
-                        pat_node *dn)
+                        pat_node_common *dn)
 {
   if (di->shared) {
-    PAT_IMD_ON(dn);
+    pat_node_set_key_immediate_on(pat, dn);
   }
   di->stat = DL_EMPTY;
   //  dn->lr[1] = GRN_PAT_DELETED;
-  uint32_t size = delinfo_compute_storage_size(ctx, di, dn);
-  dn->lr[0] = pat->header->garbages[size];
+  uint32_t size = delinfo_compute_storage_size(ctx, pat, di, dn);
+  pat_node_set_left(pat, dn, pat->header->garbages[size]);
   pat->header->garbages[size] = di->d;
   return GRN_SUCCESS;
 }
@@ -1688,7 +1729,7 @@ delinfo_turn_3(grn_ctx *ctx,
                uint32_t di_index)
 {
   grn_pat_delinfo *di = &pat->header->delinfos[di_index];
-  pat_node *dn;
+  pat_node_common *dn;
   if (di->stat != DL_PHASE2) {
     return GRN_SUCCESS;
   }
@@ -1696,7 +1737,7 @@ delinfo_turn_3(grn_ctx *ctx,
   if (!dn) {
     return GRN_INVALID_ARGUMENT;
   }
-  uint32_t size = delinfo_compute_storage_size(ctx, di, dn);
+  uint32_t size = delinfo_compute_storage_size(ctx, pat, di, dn);
   grn_pat_wal_add_entry_data wal_data = *base_wal_data;
   wal_data.event = GRN_WAL_EVENT_DELETE_INFO_PHASE3;
   wal_data.record_id = di->d;
@@ -6674,7 +6715,7 @@ grn_pat_wal_recover_delete_info_phase2(grn_ctx *ctx,
   grn_pat_delinfo *di = &(pat->header->delinfos[pat->header->curr_del2]);
   di->stat = DL_PHASE1;
   di->d = entry->record_id;
-  pat_node *node;
+  pat_node_common *node;
   PAT_AT(pat, di->d, node);
   if (!node) {
     grn_wal_set_recover_error(ctx,
@@ -6686,7 +6727,7 @@ grn_pat_wal_recover_delete_info_phase2(grn_ctx *ctx,
     return;
   }
   di->ld = entry->parent_record_id;
-  pat_node *parent_node;
+  pat_node_common *parent_node;
   PAT_AT(pat, di->ld, parent_node);
   if (!parent_node) {
     grn_wal_set_recover_error(ctx,
@@ -6697,10 +6738,10 @@ grn_pat_wal_recover_delete_info_phase2(grn_ctx *ctx,
                               "failed to refer parent node");
     return;
   }
-  PAT_LEN_SET(node, (uint16_t)(entry->key.content.uint64));
-  PAT_CHK_SET(node, entry->check);
-  node->lr[0] = entry->left_record_id;
-  node->lr[1] = entry->right_record_id;
+  pat_node_set_key_length(pat, node, (uint16_t)(entry->key.content.uint64));
+  pat_node_set_check(pat, node, entry->check);
+  pat_node_set_left(pat, node, entry->left_record_id);
+  pat_node_set_right(pat, node, entry->right_record_id);
   delinfo_turn_2_internal(ctx, pat, di, parent_node, node);
   delinfo_turn_2_post(ctx, pat);
 }
@@ -6715,7 +6756,7 @@ grn_pat_wal_recover_delete_info_phase3(grn_ctx *ctx,
   grn_pat_delinfo *di = &(pat->header->delinfos[pat->header->curr_del3]);
   di->stat = DL_PHASE2;
   di->d = entry->record_id;
-  pat_node *node;
+  pat_node_common *node;
   PAT_AT(pat, di->d, node);
   if (!node) {
     grn_wal_set_recover_error(ctx,
@@ -6727,7 +6768,7 @@ grn_pat_wal_recover_delete_info_phase3(grn_ctx *ctx,
     return;
   }
   di->shared = entry->is_shared;
-  uint32_t size = delinfo_compute_storage_size(ctx, di, node);
+  uint32_t size = delinfo_compute_storage_size(ctx, pat, di, node);
   pat->header->garbages[size] = entry->next_garbage_record_id;
   delinfo_turn_3_internal(ctx, pat, di, node);
   delinfo_turn_3_post(ctx, pat);
