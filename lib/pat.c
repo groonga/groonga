@@ -4883,19 +4883,19 @@ set_cursor_near(grn_ctx *ctx,
                 int flags)
 {
   grn_id id;
-  pat_node *node;
+  pat_node_common *node;
   const uint8_t *k;
   int32_t r, check = -1, ch;
   int32_t min = min_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, pat->key_size);
   PAT_AT(pat, 0, node);
-  for (id = node->lr[1]; id;) {
+  for (id = pat_node_get_right(pat, node); id;) {
     PAT_AT(pat, id, node);
     if (!node) {
       return GRN_FILE_CORRUPT;
     }
-    ch = PAT_CHK(node);
+    ch = pat_node_get_check(pat, node);
     if (ch <= check) {
       if (check >= min) {
         push(c, id, check);
@@ -4903,13 +4903,13 @@ set_cursor_near(grn_ctx *ctx,
       break;
     }
     if ((check += 2) < ch) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) {
+      if (!(k = _pat_node_get_key(ctx, pat, node))) {
         return GRN_FILE_CORRUPT;
       }
       if ((r = bitcmp(key, k, check >> 1, (ch - check) >> 1))) {
         if (ch >= min) {
-          push(c, node->lr[1], ch);
-          push(c, node->lr[0], ch);
+          push(c, pat_node_get_right(pat, node), ch);
+          push(c, pat_node_get_left(pat, node), ch);
         }
         break;
       }
@@ -4917,14 +4917,14 @@ set_cursor_near(grn_ctx *ctx,
     check = ch;
     if (nth_bit((uint8_t *)key, check)) {
       if (check >= min) {
-        push(c, node->lr[0], check);
+        push(c, pat_node_get_left(pat, node), check);
       }
-      id = node->lr[1];
+      id = pat_node_get_right(pat, node);
     } else {
       if (check >= min) {
-        push(c, node->lr[1], check);
+        push(c, pat_node_get_right(pat, node), check);
       }
-      id = node->lr[0];
+      id = pat_node_get_left(pat, node);
     }
   }
   return GRN_SUCCESS;
