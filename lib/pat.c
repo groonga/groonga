@@ -2475,7 +2475,6 @@ _grn_pat_enable_node(grn_ctx *ctx,
     pat_node_set_right(pat, node, *id_location);
     pat_node_set_left(pat, node, id);
   }
-  // smp_wmb();
   *id_location = id;
 }
 
