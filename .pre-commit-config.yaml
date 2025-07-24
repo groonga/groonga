@@ -195,5 +195,11 @@ repos:
           ?CMakePresets\.json|
           ?doc/source/.*\.md|
           )
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        # Disable horizontal-tab to allow documentation of TSV output examples.
+        args: ["--disable", "horizontal-tab"]
 
 exclude: "^vendor/.*"
