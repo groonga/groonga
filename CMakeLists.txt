@@ -381,13 +381,13 @@ elseif(MSVC)
   # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
   string(APPEND GRN_C_COMPILE_FLAGS " /w24146")
   string(APPEND GRN_CXX_COMPILE_FLAGS " /w24146")
+  # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+  string(APPEND GRN_C_COMPILE_FLAGS " /w14244")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " /w14244")
 
   # Disable warnings
 
-  # 'argument' : conversion from 'type1' to 'type2', possible loss of data
-  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
-  string(APPEND GRN_C_COMPILE_FLAGS " /wd4244")
-  string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4244")
   # 'operator': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
   # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4334
   string(APPEND GRN_C_COMPILE_FLAGS " /wd4334")
@@ -419,6 +419,14 @@ if(NOT GRN_ALLOW_WARNING)
     set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -Werror")
     set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} -Werror")
   elseif(MSVC)
+    # Disable warnings
+    # Temporary code.
+    # We would like to fix all C4244 warnings and will remove them when we are done.
+    # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+    string(APPEND GRN_C_COMPILE_FLAGS " /wd4244")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4244")
+
     set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} /WX")
     set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} /WX")
   endif()
