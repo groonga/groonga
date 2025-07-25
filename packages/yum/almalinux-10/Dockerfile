@@ -1,9 +1,6 @@
 ARG FROM=almalinux:10
 FROM ${FROM}
 
-ENV \
-  SCL=gcc-toolset-12
-
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -18,7 +15,6 @@ RUN \
   dnf config-manager --set-enabled crb && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    ${SCL} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
@@ -33,7 +29,6 @@ RUN \
     openssl-devel \
     pkgconfig \
     ruby \
-    simdjson-devel \
     tar \
     which \
     xxhash-devel \
