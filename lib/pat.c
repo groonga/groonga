@@ -3086,9 +3086,9 @@ grn_pat_lcp_search(grn_ctx *ctx,
                    const void *key,
                    uint32_t key_size)
 {
-  pat_node *rn;
+  pat_node_common *rn;
   grn_id r, r2 = GRN_ID_NIL;
-  int32_t len = key_size * 16;
+  int32_t len = PAT_CHECK_PACK(key_size, 0, false);
   int32_t c0 = -1, c;
   if (!pat || !key) {
     return GRN_ID_NIL;
@@ -3100,19 +3100,20 @@ grn_pat_lcp_search(grn_ctx *ctx,
     return GRN_ID_NIL;
   }
   PAT_AT(pat, 0, rn);
-  for (r = rn->lr[1]; r;) {
+  for (r = pat_node_get_right(pat, rn); r;) {
     PAT_AT(pat, r, rn);
     if (!rn) {
       break; /* corrupt? */
     }
-    c = PAT_CHK(rn);
+    c = pat_node_get_check(pat, rn);
     if (c <= c0) {
-      if (PAT_LEN(rn) <= key_size) {
-        uint8_t *p = pat_node_get_key(ctx, pat, rn);
+      uint32_t rn_key_length = pat_node_get_key_length(pat, rn);
+      if (rn_key_length <= key_size) {
+        uint8_t *p = _pat_node_get_key(ctx, pat, rn);
         if (!p) {
           break;
         }
-        if (!memcmp(p, key, PAT_LEN(rn))) {
+        if (!memcmp(p, key, rn_key_length)) {
           return r;
         }
       }
@@ -3123,21 +3124,22 @@ grn_pat_lcp_search(grn_ctx *ctx,
     }
     if (PAT_CHECK_IS_TERMINATED(c)) {
       uint8_t *p;
-      pat_node *rn0;
-      grn_id r0 = rn->lr[0];
+      pat_node_common *rn0;
+      grn_id r0 = pat_node_get_left(pat, rn);
       PAT_AT(pat, r0, rn0);
       if (!rn0) {
         break; /* corrupt? */
       }
-      p = pat_node_get_key(ctx, pat, rn0);
+      p = _pat_node_get_key(ctx, pat, rn0);
       if (!p) {
         break;
       }
-      if (PAT_LEN(rn0) <= key_size && !memcmp(p, key, PAT_LEN(rn0))) {
+      uint32_t rn0_key_length = pat_node_get_key_length(pat, rn0);
+      if (rn0_key_length <= key_size && !memcmp(p, key, rn0_key_length)) {
         r2 = r0;
       }
     }
-    r = *grn_pat_next_location(ctx, rn, key, c, len);
+    r = *_grn_pat_next_location(ctx, pat, rn, key, c, len);
     c0 = c;
   }
   return r2;
