@@ -66,7 +66,7 @@ if [ "${run_test}" = "yes" ]; then
       ;;
   esac
 
-  if [ "${os}-${version}-${arch}" == "almalinux-10-x86_64" ]; then
+  if [ "${os}-${version}" == "almalinux-10" ]; then
     # Float32 value format is different.
     rm command/suite/tokenizers/document_vector_bm25/alphabet.test
     rm command/suite/tokenizers/document_vector_bm25/reindex.test
