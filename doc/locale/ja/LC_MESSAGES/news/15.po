@@ -26,7 +26,7 @@ msgstr "今回のリリースでは、`*ONPP`演算子のフレーズ間の距�
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[Ordered near phrase search] Fixed a bug in the interval calculation between phrases"
+msgid "[Ordered near phrase product search] Fixed a bug in the interval calculation between phrases"
 msgstr "[順序付き近傍フレーズ直積検索] フレーズ間の距離の計算の間違いを修正しました"
 
 msgid "This problem may occur when we use `*ONPP` with `MAX_ELEMENT_INTERVAL` such as `*ONPP-1,0,10\"(abc bcd) (defg)\"`. If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
@@ -44,10 +44,10 @@ msgstr "[`*ONPP` のスクリプト構文] {ref}`script-syntax-ordered-near-phra
 msgid "If this problem occurs, the following things may happen."
 msgstr "この問題が発生すると、以下のようなことが起こる可能性があります。"
 
-msgid "Groonga may return records shouldn't be a hit."
+msgid "Groonga may return records that shouldn't be matched."
 msgstr "ヒットしないはずのレコードを返すことがあります。"
 
-msgid "Groonga may not return records that should be returned as hits."
+msgid "Groonga may not return records that should be matched."
 msgstr "ヒットするはずのレコードを返さないことがあります。"
 
 msgid "Release 15.1.3 - 2025-07-18"
@@ -112,6 +112,12 @@ msgstr "[`*ONP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-se
 
 msgid "[`*ONP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
 msgstr "[`*ONP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+
+msgid "Groonga may return records shouldn't be a hit."
+msgstr "ヒットしないはずのレコードを返すことがあります。"
+
+msgid "Groonga may not return records that should be returned as hits."
+msgstr "ヒットするはずのレコードを返さないことがあります。"
 
 msgid "Release 15.1.1 - 2025-06-02"
 msgstr "15.1.1リリース - 2025-06-02"
