@@ -4553,7 +4553,13 @@ grn_select_output_slice_label_v1(grn_ctx *ctx,
                                  grn_select_data *data,
                                  Slice *slice)
 {
-  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              slice->label.value,
+                              slice->label.length,
+                              "slice",
+                              true);
 }
 
 static void
@@ -4584,9 +4590,13 @@ grn_select_output_drilldown_label_v1(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
-  if (data->drilldowns.is_labeled()) {
-    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
-  }
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              drilldown->label.value,
+                              drilldown->label.length,
+                              "drilldown",
+                              data->drilldowns.is_labeled());
 }
 
 static grn_select_output_formatter grn_select_output_formatter_v1 = {
@@ -4602,7 +4612,13 @@ static grn_select_output_formatter grn_select_output_formatter_v1 = {
 static void
 grn_select_output_slices_label_v3(grn_ctx *ctx, grn_select_data *data)
 {
-  GRN_OUTPUT_CSTR("slices");
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              "slices",
+                              strlen("slices"),
+                              "slices",
+                              true);
 }
 
 static void
@@ -4624,13 +4640,25 @@ grn_select_output_slice_label_v3(grn_ctx *ctx,
                                  grn_select_data *data,
                                  Slice *slice)
 {
-  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              slice->label.value,
+                              slice->label.length,
+                              "slice",
+                              true);
 }
 
 static void
 grn_select_output_drilldowns_label_v3(grn_ctx *ctx, grn_select_data *data)
 {
-  GRN_OUTPUT_CSTR("drilldowns");
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              "drilldowns",
+                              strlen("drilldowns"),
+                              "drilldowns",
+                              true);
 }
 
 static void
@@ -4652,7 +4680,13 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
                                      grn_select_data *data,
                                      Drilldown *drilldown)
 {
-  GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
+  grn_output_result_set_label(ctx,
+                              ctx->impl->output.buf,
+                              grn_ctx_get_output_type(ctx),
+                              drilldown->label.value,
+                              drilldown->label.length,
+                              "drilldown",
+                              true);
 }
 
 static grn_select_output_formatter grn_select_output_formatter_v3 = {

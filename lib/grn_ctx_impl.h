@@ -148,6 +148,8 @@ struct _grn_ctx_impl {
     msgpack_packer msgpacker;
 #endif
     grn_arrow_stream_writer *arrow_stream_writer;
+    const char *arrow_metadata_data_type;
+    grn_raw_string arrow_metadata_label;
   } output;
 
   struct {
