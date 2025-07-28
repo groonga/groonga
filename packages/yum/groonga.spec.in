@@ -70,6 +70,8 @@ Requires:	libzstd
 Requires:	lz4
 %if ! %{is_amazon_linux}
 Requires:	msgpack
+%endif
+%if %{have_simdjson}
 Requires:	simdjson
 %endif
 Requires:	xxhash-libs
