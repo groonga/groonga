@@ -15,6 +15,7 @@ RUN \
   dnf config-manager --set-enabled crb && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
+    arrow-compute-devel-${APACHE_ARROW_VERSION} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
