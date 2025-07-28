@@ -20,6 +20,9 @@ msgstr "お知らせ - 15系"
 msgid "Release 15.1.4 - 2025-07-29"
 msgstr "15.1.4リリース - 2025-07-29"
 
+msgid "In this release, we fixed a bug in the interval calculation between phrases in `*ONPP` operator."
+msgstr "今回のリリースでは、`*ONPP`演算子のフレーズ間の距離の計算の間違いを修正しました。"
+
 msgid "Improvements"
 msgstr "改良"
 
