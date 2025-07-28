@@ -429,6 +429,9 @@ exit 0
 %doc groonga-doc/*
 %{_datadir}/groonga/README.md
 %{_datadir}/groonga/onigmo/*
+%if ! %{have_simdjson}
+%{_datadir}/groonga/simdjson/*
+%endif
 
 %files devel
 %defattr(-,root,root,-)
