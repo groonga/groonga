@@ -20,16 +20,16 @@ msgstr "お知らせ - 15系"
 msgid "Release 15.1.4 - 2025-07-29"
 msgstr "15.1.4リリース - 2025-07-29"
 
-msgid "Fixes"
-msgstr "修正"
+msgid "Improvements"
+msgstr "改良"
 
-msgid "[Ordered near phrase search] Fixed a bug that interval between phrases calculation"
+msgid "[Ordered near phrase search] Fixed a bug in the interval calculation between phrases"
 msgstr "[順序付き近傍フレーズ直積検索] フレーズ間の距離の計算の間違いを修正しました"
 
 msgid "This problem may occur when we use `*ONPP` with `MAX_ELEMENT_INTERVAL` such as `*ONPP-1,0,10\"(abc bcd) (defg)\"`. If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
 msgstr "この問題は、 `*ONPP-1,0,10\"(abc bcd) (defg)\"` のように `*ONPP` と `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。 `MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
 
-msgid "Please refer to the following links about usage and syntax of `*ONPP`."
+msgid "Please refer to the following links for usage and syntax of `*ONPP`."
 msgstr "`*ONPP` の構文や使い方については以下のリンクを参照してください。"
 
 msgid "[`*ONPP` in query syntax] {ref}`query-syntax-ordered-near-phrase-product-search-condition`"
@@ -50,9 +50,6 @@ msgstr "ヒットするはずのレコードを返さないことがあります
 msgid "Release 15.1.3 - 2025-07-18"
 msgstr "15.1.3リリース - 2025-07-18"
 
-msgid "Improvements"
-msgstr "改良"
-
 msgid "[Apache Arrow] Added support for Apache Arrow C++ 21.0.0"
 msgstr "[Apache Arrow] Apache Arrow C++ 21.0.0 をサポートしました"
 
@@ -70,6 +67,9 @@ msgstr ""
 
 msgid "groonga-xx.x.x-x64-vs2019-with-vcruntime.zip"
 msgstr ""
+
+msgid "Fixes"
+msgstr "修正"
 
 msgid "[Near phrase search] Fixed a bug that interval between phrases calculation"
 msgstr "[近傍フレーズ検索] フレーズ間の距離の計算の間違いを修正しました"
