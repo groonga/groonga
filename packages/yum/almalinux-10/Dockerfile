@@ -20,12 +20,12 @@ RUN \
     ccache \
     cmake \
     intltool \
-    mecab-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \
     libzstd-devel \
     lz4-devel \
+    mecab-devel \
     msgpack-devel \
     openssl-devel \
     pkgconfig \
