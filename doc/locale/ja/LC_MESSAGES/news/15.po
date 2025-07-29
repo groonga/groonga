@@ -17,11 +17,41 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.1.3 - 2025-07-18"
-msgstr "15.1.3リリース - 2025-07-18"
+msgid "Release 15.1.4 - 2025-07-29"
+msgstr "15.1.4リリース - 2025-07-29"
+
+msgid "In this release, we fixed a bug in the interval calculation between phrases in `*ONPP` operator."
+msgstr "今回のリリースでは、`*ONPP`演算子のフレーズ間の距離の計算の間違いを修正しました。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[Ordered near phrase product search] Fixed a bug in the interval calculation between phrases"
+msgstr "[順序付き近傍フレーズ直積検索] フレーズ間の距離の計算の間違いを修正しました"
+
+msgid "This problem may occur when we use `*ONPP` with `MAX_ELEMENT_INTERVAL` such as `*ONPP-1,0,10\"(abc bcd) (defg)\"`. If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
+msgstr "この問題は、 `*ONPP-1,0,10\"(abc bcd) (defg)\"` のように `*ONPP` と `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。 `MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
+
+msgid "Please refer to the following links for usage and syntax of `*ONPP`."
+msgstr "`*ONPP` の構文や使い方については以下のリンクを参照してください。"
+
+msgid "[`*ONPP` in query syntax] {ref}`query-syntax-ordered-near-phrase-product-search-condition`"
+msgstr "[`*ONPP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-product-search-condition`"
+
+msgid "[`*ONPP` in script syntax] {ref}`script-syntax-ordered-near-phrase-product-search-operator`"
+msgstr "[`*ONPP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-product-search-operator`"
+
+msgid "If this problem occurs, the following things may happen."
+msgstr "この問題が発生すると、以下のようなことが起こる可能性があります。"
+
+msgid "Groonga may return records that shouldn't be matched."
+msgstr "ヒットしないはずのレコードを返すことがあります。"
+
+msgid "Groonga may not return records that should be matched."
+msgstr "ヒットするはずのレコードを返さないことがあります。"
+
+msgid "Release 15.1.3 - 2025-07-18"
+msgstr "15.1.3リリース - 2025-07-18"
 
 msgid "[Apache Arrow] Added support for Apache Arrow C++ 21.0.0"
 msgstr "[Apache Arrow] Apache Arrow C++ 21.0.0 をサポートしました"
@@ -82,9 +112,6 @@ msgstr "[`*ONP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-se
 
 msgid "[`*ONP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
 msgstr "[`*ONP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
-
-msgid "If this problem occurs, the following things may happen."
-msgstr "この問題が発生すると、以下のようなことが起こる可能性があります。"
 
 msgid "Groonga may return records shouldn't be a hit."
 msgstr "ヒットしないはずのレコードを返すことがあります。"
