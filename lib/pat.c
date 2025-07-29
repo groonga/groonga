@@ -32,17 +32,18 @@
 #include <math.h>
 #include <string.h>
 
-#define GRN_PAT_DELETED       (GRN_ID_MAX + 1)
+#define GRN_PAT_DELETED             (GRN_ID_MAX + 1)
 
-#define GRN_PAT_SEGMENT_SIZE  0x400000
-#define W_OF_KEY_IN_A_SEGMENT 22
-#define W_OF_PAT_IN_A_SEGMENT 18
-#define W_OF_SIS_IN_A_SEGMENT 19
-#define KEY_MASK_IN_A_SEGMENT 0x3fffff
-#define PAT_MASK_IN_A_SEGMENT 0x3ffff
-#define SIS_MASK_IN_A_SEGMENT 0x7ffff
-#define SEG_NOT_ASSIGNED      0xffff
-#define GRN_PAT_MAX_SEGMENT   0x1000
+#define GRN_PAT_SEGMENT_SIZE        0x400000
+#define W_OF_KEY_IN_A_SEGMENT       22
+#define W_OF_PAT_IN_A_SEGMENT       18
+#define W_OF_PAT_IN_A_SEGMENT_LARGE 17
+#define W_OF_SIS_IN_A_SEGMENT       19
+#define KEY_MASK_IN_A_SEGMENT       0x3fffff
+#define PAT_MASK_IN_A_SEGMENT       0x3ffff
+#define SIS_MASK_IN_A_SEGMENT       0x7ffff
+#define SEG_NOT_ASSIGNED            0xffff
+#define GRN_PAT_MAX_SEGMENT         0x1000
 /* If we use GRN_PAT_MAX_N_SEGMENTS, max total key size is 4GiB:
    GRN_PAT_SEGMENT_SIZE * 0x400 = 4GiB */
 #define GRN_PAT_MAX_N_SEGMENTS 0x400
@@ -1886,11 +1887,15 @@ _grn_pat_create(grn_ctx *ctx,
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
+      array_spec[SEGMENT_PAT].w_of_element = 5;
+      array_spec[SEGMENT_PAT].max_n_segments =
+        1 << (30 - W_OF_PAT_IN_A_SEGMENT_LARGE);
     } else {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
+      array_spec[SEGMENT_PAT].w_of_element = 4;
+      array_spec[SEGMENT_PAT].max_n_segments = 1
+                                               << (30 - W_OF_PAT_IN_A_SEGMENT);
     }
-    array_spec[SEGMENT_PAT].w_of_element = 4;
-    array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
     array_spec[SEGMENT_SIS].w_of_element = w_of_element;
     array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx,
