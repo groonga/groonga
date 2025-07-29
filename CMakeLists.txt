@@ -1579,6 +1579,10 @@ if(NOT "${GRN_WITH_H3}" STREQUAL "no")
         # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4307
         string(APPEND CMAKE_C_FLAGS " /wd4307")
         string(APPEND CMAKE_CXX_FLAGS " /wd4307")
+      elseif(GRN_C_COMPILER_GNU_LIKE)
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+               " -Wno-declaration-after-statement")
       endif()
       set(BUILD_BENCHMARKS OFF)
       set(BUILD_FILTERS OFF)
