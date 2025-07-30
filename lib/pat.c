@@ -2500,7 +2500,7 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
 static inline void
 grn_pat_add_shared_node(grn_ctx *ctx,
                         grn_pat *pat,
-                        pat_node *node,
+                        pat_node_common *node,
                         grn_id id,
                         const uint8_t *key,
                         uint32_t key_size,
@@ -2508,24 +2508,6 @@ grn_pat_add_shared_node(grn_ctx *ctx,
                         uint16_t check,
                         uint16_t check_max,
                         grn_id *id_location)
-{
-  pat->header->curr_rec = id;
-  pat->header->n_entries++;
-  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
-  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
-}
-
-static inline void
-_grn_pat_add_shared_node(grn_ctx *ctx,
-                         grn_pat *pat,
-                         pat_node_common *node,
-                         grn_id id,
-                         const uint8_t *key,
-                         uint32_t key_size,
-                         uint32_t shared_key_offset,
-                         uint16_t check,
-                         uint16_t check_max,
-                         grn_id *id_location)
 {
   pat->header->curr_rec = id;
   pat->header->n_entries++;
@@ -2724,16 +2706,16 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             data->shared_key_offset);
           return GRN_ID_NIL;
         }
-        _grn_pat_add_shared_node(ctx,
-                                 pat,
-                                 node,
-                                 data->wal_data.record_id,
-                                 data->wal_data.key,
-                                 data->wal_data.key_size,
-                                 data->wal_data.shared_key_offset,
-                                 data->wal_data.check,
-                                 data->check_max,
-                                 data->last_id_location);
+        grn_pat_add_shared_node(ctx,
+                                pat,
+                                node,
+                                data->wal_data.record_id,
+                                data->wal_data.key,
+                                data->wal_data.key_size,
+                                data->wal_data.shared_key_offset,
+                                data->wal_data.check,
+                                data->check_max,
+                                data->last_id_location);
         pat->header->wal_id = data->wal_data.wal_id;
       }
     } else {
@@ -6726,16 +6708,16 @@ grn_pat_wal_recover_add_shared_entry(grn_ctx *ctx,
   *id_location = entry->previous_record_id;
   uint16_t check_max =
     (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
-  _grn_pat_add_shared_node(ctx,
-                           pat,
-                           node,
-                           entry->record_id,
-                           entry->key.content.binary.data,
-                           entry->key.content.binary.size,
-                           (uint32_t)(entry->shared_key_offset),
-                           entry->check,
-                           check_max,
-                           id_location);
+  grn_pat_add_shared_node(ctx,
+                          pat,
+                          node,
+                          entry->record_id,
+                          entry->key.content.binary.data,
+                          entry->key.content.binary.size,
+                          (uint32_t)(entry->shared_key_offset),
+                          entry->check,
+                          check_max,
+                          id_location);
 }
 
 static void
