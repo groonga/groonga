@@ -2257,16 +2257,17 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
   int32_t check_max = data->check_max;
 
   grn_id id = GRN_ID_NIL;
-  pat_node *node;
+  pat_node_common *node;
   PAT_AT(pat, id, node);
   grn_id *id_location_previous = NULL;
-  grn_id *id_location = &(node->lr[DIRECTION_RIGHT]);
+  grn_id *id_location = pat_node_get_right_address(pat, node);
   data->wal_data.record_direction = DIRECTION_RIGHT;
-  grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                  &(data->wal_data),
-                                                  id,
-                                                  node,
-                                                  id_location);
+  _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                   pat,
+                                                   &(data->wal_data),
+                                                   id,
+                                                   node,
+                                                   id_location);
   if (*id_location == GRN_ID_NIL) {
     data->last_id_location = id_location;
     data->wal_data.check = PAT_CHECK_PACK(key_size - 1, 7, false);
@@ -2276,14 +2277,14 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
   const uint8_t *found_key = NULL;
   uint32_t found_key_size = 0;
   grn_id id_previous = GRN_ID_NIL;
-  pat_node *node_previous = NULL;
+  pat_node_common *node_previous = NULL;
   int check_node = -1;
   int check_node_previous = -1;
   for (;;) {
     id_previous = id;
     id = *id_location;
     if (id == GRN_ID_NIL) {
-      found_key = pat_node_get_key(ctx, pat, node);
+      found_key = _pat_node_get_key(ctx, pat, node);
       if (!found_key) {
         grn_obj_set_error(ctx,
                           (grn_obj *)pat,
@@ -2293,7 +2294,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                           "failed to get key from node");
         return false;
       }
-      found_key_size = PAT_LEN(node);
+      found_key_size = pat_node_get_key_length(pat, node);
       break;
     }
     node_previous = node;
@@ -2307,19 +2308,21 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                         "failed to get node");
       return false;
     }
-    if (check_node < node->check && node->check < check_max) {
+    if (check_node < pat_node_get_check(pat, node) &&
+        pat_node_get_check(pat, node) < check_max) {
       check_node_previous = check_node;
-      check_node = node->check;
+      check_node = pat_node_get_check(pat, node);
       id_location_previous = id_location;
       id_location =
-        grn_pat_next_location(ctx, node, key, check_node, check_max);
-      grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                      &(data->wal_data),
-                                                      id,
-                                                      node,
-                                                      id_location);
+        _grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
+      _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                       pat,
+                                                       &(data->wal_data),
+                                                       id,
+                                                       node,
+                                                       id_location);
     } else {
-      found_key = pat_node_get_key(ctx, pat, node);
+      found_key = _pat_node_get_key(ctx, pat, node);
       if (!found_key) {
         grn_obj_set_error(ctx,
                           (grn_obj *)pat,
@@ -2331,11 +2334,11 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                           "node->check:%u "
                           "check_max:%u",
                           check_node,
-                          node->check,
+                          pat_node_get_check(pat, node),
                           check_max);
         return false;
       }
-      found_key_size = PAT_LEN(node);
+      found_key_size = pat_node_get_key_length(pat, node);
       if (key_size == found_key_size && memcmp(found_key, key, key_size) == 0) {
         if (pat->cache) {
           pat->cache[data->cache_id] = id;
@@ -2382,13 +2385,14 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
       } else {
         id = GRN_ID_NIL;
         PAT_AT(pat, id, node);
-        id_location = &(node->lr[DIRECTION_RIGHT]);
+        id_location = pat_node_get_right_address(pat, node);
         data->wal_data.parent_record_direction = DIRECTION_RIGHT;
-        grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                        &(data->wal_data),
-                                                        id,
-                                                        node,
-                                                        id_location);
+        _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                         pat,
+                                                         &(data->wal_data),
+                                                         id,
+                                                         node,
+                                                         id_location);
         while ((id = *id_location) != GRN_ID_NIL) {
           PAT_AT(pat, id, node);
           if (!node) {
@@ -2400,17 +2404,18 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                               "failed to get node to detect position");
             return false;
           }
-          check_node = PAT_CHK(node);
+          check_node = pat_node_get_check(pat, node);
           if (check < check_node) {
             break;
           }
           id_location =
-            grn_pat_next_location(ctx, node, key, check_node, check_max);
-          grn_pat_wal_add_entry_data_set_record_direction(ctx,
-                                                          &(data->wal_data),
-                                                          id,
-                                                          node,
-                                                          id_location);
+            _grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
+          _grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                           pat,
+                                                           &(data->wal_data),
+                                                           id,
+                                                           node,
+                                                           id_location);
         }
       }
     }
