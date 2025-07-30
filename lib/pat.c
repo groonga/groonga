@@ -2498,7 +2498,7 @@ _grn_pat_enable_node(grn_ctx *ctx,
 static inline void
 grn_pat_reuse_shared_node(grn_ctx *ctx,
                           grn_pat *pat,
-                          pat_node *node,
+                          pat_node_common *node,
                           grn_id id,
                           const uint8_t *key,
                           uint32_t key_size,
