@@ -2564,7 +2564,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
                    grn_id *id_location,
                    const char *tag)
 {
-  uint8_t key_buffer = _pat_node_get_key(ctx, pat, node);
+  uint8_t *key_buffer = _pat_node_get_key(ctx, pat, node);
   if (!key_buffer) {
     grn_obj_set_error(ctx,
                       (grn_obj *)pat,
