@@ -2686,7 +2686,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
   }
 
   data->wal_data.key_offset = grn_pat_total_key_size(ctx, pat);
-  pat_node *node = NULL;
+  pat_node_common *node = NULL;
   {
     uint32_t key_storage_size = pat_key_storage_size(key_size);
     if (data->shared_key_offset > 0 && key_storage_size > 0) {
@@ -2706,7 +2706,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             data->shared_key_offset);
           return GRN_ID_NIL;
         }
-        data->wal_data.next_garbage_record_id = node->lr[0];
+        data->wal_data.next_garbage_record_id = pat_node_get_left(pat, node);
         data->wal_data.n_garbages = pat->header->n_garbages;
         data->wal_data.n_entries = pat->header->n_entries;
         if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
@@ -2730,7 +2730,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
         if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
-        node = pat_get(ctx, pat, data->wal_data.record_id);
+        node = _pat_node_get(ctx, pat, data->wal_data.record_id);
         if (!node) {
           grn_obj_set_error(ctx,
                             (grn_obj *)pat,
@@ -2742,16 +2742,16 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             data->shared_key_offset);
           return GRN_ID_NIL;
         }
-        grn_pat_add_shared_node(ctx,
-                                pat,
-                                node,
-                                data->wal_data.record_id,
-                                data->wal_data.key,
-                                data->wal_data.key_size,
-                                data->wal_data.shared_key_offset,
-                                data->wal_data.check,
-                                data->check_max,
-                                data->last_id_location);
+        _grn_pat_add_shared_node(ctx,
+                                 pat,
+                                 node,
+                                 data->wal_data.record_id,
+                                 data->wal_data.key,
+                                 data->wal_data.key_size,
+                                 data->wal_data.shared_key_offset,
+                                 data->wal_data.check,
+                                 data->check_max,
+                                 data->last_id_location);
         pat->header->wal_id = data->wal_data.wal_id;
       }
     } else {
@@ -2770,7 +2770,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             "failed to get node from garbage");
           return GRN_ID_NIL;
         }
-        data->wal_data.next_garbage_record_id = node->lr[0];
+        data->wal_data.next_garbage_record_id = pat_node_get_left(pat, node);
         if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
@@ -2794,7 +2794,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
         if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
-        node = pat_get(ctx, pat, data->wal_data.record_id);
+        node = _pat_node_get(ctx, pat, data->wal_data.record_id);
         if (!node) {
           grn_obj_set_error(ctx,
                             (grn_obj *)pat,
@@ -2804,21 +2804,21 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             "failed to get node");
           return GRN_ID_NIL;
         }
-        if (grn_pat_add_node(ctx,
-                             pat,
-                             node,
-                             data->wal_data.record_id,
-                             data->wal_data.key,
-                             data->wal_data.key_size,
-                             data->wal_data.check,
-                             data->check_max,
-                             data->last_id_location,
-                             data->wal_data.tag) != GRN_SUCCESS) {
+        if (_grn_pat_add_node(ctx,
+                              pat,
+                              node,
+                              data->wal_data.record_id,
+                              data->wal_data.key,
+                              data->wal_data.key_size,
+                              data->wal_data.check,
+                              data->check_max,
+                              data->last_id_location,
+                              data->wal_data.tag) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
         pat->header->wal_id = data->wal_data.wal_id;
       }
-      data->shared_key_offset = node->key;
+      data->shared_key_offset = pat_node_get_key_position(pat, node);
     }
   }
   data->added = true;
