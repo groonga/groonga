@@ -2507,11 +2507,11 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
                           uint16_t check_max,
                           grn_id *id_location)
 {
-  pat->header->garbages[0] = node->lr[0];
+  pat->header->garbages[0] = pat_node_get_left(pat, node);
   pat->header->n_garbages--;
   pat->header->n_entries++;
-  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
-  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  _pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
+  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
 static inline void
