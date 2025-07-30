@@ -2552,7 +2552,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
 static inline grn_rc
 grn_pat_add_node(grn_ctx *ctx,
                  grn_pat *pat,
-                 pat_node *node,
+                 pat_node_common *node,
                  grn_id id,
                  const uint8_t *key,
                  uint32_t key_size,
@@ -2560,40 +2560,6 @@ grn_pat_add_node(grn_ctx *ctx,
                  uint16_t check_max,
                  grn_id *id_location,
                  const char *tag)
-{
-  grn_rc rc = pat_node_set_key(ctx, pat, node, key, key_size);
-  if (rc != GRN_SUCCESS) {
-    grn_obj inspected_key;
-    GRN_TEXT_INIT(&inspected_key, 0);
-    grn_inspect_key(ctx, &inspected_key, (grn_obj *)pat, key, key_size);
-    grn_obj_set_error(ctx,
-                      (grn_obj *)pat,
-                      rc,
-                      id,
-                      tag,
-                      "failed to set key: %.*s",
-                      (int)GRN_TEXT_LEN(&inspected_key),
-                      GRN_TEXT_VALUE(&inspected_key));
-    GRN_OBJ_FIN(ctx, &inspected_key);
-    return ctx->rc;
-  }
-  pat->header->curr_rec = id;
-  pat->header->n_entries++;
-  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
-  return GRN_SUCCESS;
-}
-
-static inline grn_rc
-_grn_pat_add_node(grn_ctx *ctx,
-                  grn_pat *pat,
-                  pat_node_common *node,
-                  grn_id id,
-                  const uint8_t *key,
-                  uint32_t key_size,
-                  uint16_t check,
-                  uint16_t check_max,
-                  grn_id *id_location,
-                  const char *tag)
 {
   grn_rc rc = _pat_node_set_key(ctx, pat, node, key, key_size);
   if (rc != GRN_SUCCESS) {
@@ -2768,16 +2734,16 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
                             "failed to get node");
           return GRN_ID_NIL;
         }
-        if (_grn_pat_add_node(ctx,
-                              pat,
-                              node,
-                              data->wal_data.record_id,
-                              data->wal_data.key,
-                              data->wal_data.key_size,
-                              data->wal_data.check,
-                              data->check_max,
-                              data->last_id_location,
-                              data->wal_data.tag) != GRN_SUCCESS) {
+        if (grn_pat_add_node(ctx,
+                             pat,
+                             node,
+                             data->wal_data.record_id,
+                             data->wal_data.key,
+                             data->wal_data.key_size,
+                             data->wal_data.check,
+                             data->check_max,
+                             data->last_id_location,
+                             data->wal_data.tag) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
         pat->header->wal_id = data->wal_data.wal_id;
@@ -6663,16 +6629,16 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
   *id_location = entry->previous_record_id;
   uint16_t check_max =
     (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
-  _grn_pat_add_node(ctx,
-                    pat,
-                    node,
-                    entry->record_id,
-                    entry->key.content.binary.data,
-                    entry->key.content.binary.size,
-                    entry->check,
-                    check_max,
-                    id_location,
-                    tag);
+  grn_pat_add_node(ctx,
+                   pat,
+                   node,
+                   entry->record_id,
+                   entry->key.content.binary.data,
+                   entry->key.content.binary.size,
+                   entry->check,
+                   check_max,
+                   id_location,
+                   tag);
 }
 
 static void
