@@ -6792,16 +6792,16 @@ grn_pat_wal_recover_reuse_entry(grn_ctx *ctx,
   *id_location = entry->previous_record_id;
   uint16_t check_max =
     (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
-  _grn_pat_reuse_node(ctx,
-                      pat,
-                      node,
-                      entry->record_id,
-                      entry->key.content.binary.data,
-                      entry->key.content.binary.size,
-                      entry->check,
-                      check_max,
-                      id_location,
-                      tag);
+  grn_pat_reuse_node(ctx,
+                     pat,
+                     node,
+                     entry->record_id,
+                     entry->key.content.binary.data,
+                     entry->key.content.binary.size,
+                     entry->check,
+                     check_max,
+                     id_location,
+                     tag);
 }
 
 static void
