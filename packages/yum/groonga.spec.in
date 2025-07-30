@@ -3,6 +3,10 @@
 %define _amzn %{?amzn:%{amzn}}%{!?amzn:0}
 %define is_amazon_linux (%{_amzn} != 0)
 
+%define _rhel %{?rhel:%{rhel}}%{!?rhel:0}
+
+%define have_simdjson (%{_rhel} < 10 && !%{is_amazon_linux})
+
 %if ! %{defined cmake}
 %define cmake %{cmake3}
 %endif
@@ -36,7 +40,7 @@ BuildRequires:	msgpack-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	ruby
-%if ! %{is_amazon_linux}
+%if %{have_simdjson}
 BuildRequires:	simdjson-devel
 %endif
 # Old xsimd-devel doesn't work. At least 9.0.0 or older don't work.
@@ -66,6 +70,8 @@ Requires:	libzstd
 Requires:	lz4
 %if ! %{is_amazon_linux}
 Requires:	msgpack
+%endif
+%if %{have_simdjson}
 Requires:	simdjson
 %endif
 Requires:	xxhash-libs
@@ -425,6 +431,9 @@ exit 0
 %doc groonga-doc/*
 %{_datadir}/groonga/README.md
 %{_datadir}/groonga/onigmo/*
+%if ! %{have_simdjson}
+%{_datadir}/groonga/simdjson/*
+%endif
 
 %files devel
 %defattr(-,root,root,-)
