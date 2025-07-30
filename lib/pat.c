@@ -4293,7 +4293,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
 {
   uint32_t len;
   uint8_t *key;
-  pat_node *node;
+  pat_node_common *node;
   if (!pat) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -4307,10 +4307,10 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   if (!node) {
     return 0;
   }
-  if (!(key = pat_node_get_key(ctx, pat, node))) {
+  if (!(key = _pat_node_get_key(ctx, pat, node))) {
     return 0;
   }
-  len = PAT_LEN(node);
+  len = pat_node_get_key_length(pat, node);
   if (KEY_NEEDS_CONVERT(pat, len)) {
     if (bulk->header.impl_flags & GRN_OBJ_REFER) {
       GRN_TEXT_INIT(bulk, 0);
@@ -4821,7 +4821,7 @@ grn_pat_cursor_next_by_id(grn_ctx *ctx, grn_pat_cursor *c)
 grn_id
 grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
 {
-  pat_node *node;
+  pat_node_common *node;
   grn_pat_cursor_entry *se;
   if (!c->rest) {
     return GRN_ID_NIL;
@@ -4837,14 +4837,14 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
       if (!node) {
         break;
       }
-      ch = PAT_CHK(node);
+      ch = pat_node_get_check(c->pat, node);
       if (ch > check) {
         if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
-          push(c, node->lr[0], ch);
-          id = node->lr[1];
+          push(c, pat_node_get_left(c->pat, node), ch);
+          id = pat_node_get_right(c->pat, node);
         } else {
-          push(c, node->lr[1], ch);
-          id = node->lr[0];
+          push(c, pat_node_get_right(c->pat, node), ch);
+          id = pat_node_get_left(c->pat, node);
         }
         check = ch;
         continue;
@@ -4854,7 +4854,7 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
         } else {
           if (!c->curr_rec && c->tail) {
             uint32_t lmin, lmax;
-            pat_node *nmin, *nmax;
+            pat_node_common *nmin, *nmax;
             const uint8_t *kmin, *kmax;
             if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
               PAT_AT(c->pat, c->tail, nmin);
@@ -4863,10 +4863,10 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
               PAT_AT(c->pat, id, nmin);
               PAT_AT(c->pat, c->tail, nmax);
             }
-            lmin = PAT_LEN(nmin);
-            lmax = PAT_LEN(nmax);
-            kmin = pat_node_get_key(ctx, c->pat, nmin);
-            kmax = pat_node_get_key(ctx, c->pat, nmax);
+            lmin = pat_node_get_key_length(c->pat, nmin);
+            lmax = pat_node_get_key_length(c->pat, nmax);
+            kmin = _pat_node_get_key(ctx, c->pat, nmin);
+            kmax = _pat_node_get_key(ctx, c->pat, nmax);
             if ((lmin < lmax) ? (memcmp(kmin, kmax, lmin) > 0)
                               : (memcmp(kmin, kmax, lmax) >= 0)) {
               c->sp = 0;
