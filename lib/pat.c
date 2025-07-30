@@ -2548,7 +2548,7 @@ _grn_pat_add_shared_node(grn_ctx *ctx,
 static inline grn_rc
 grn_pat_reuse_node(grn_ctx *ctx,
                    grn_pat *pat,
-                   pat_node *node,
+                   pat_node_common *node,
                    grn_id id,
                    const uint8_t *key,
                    uint32_t key_size,
@@ -2556,41 +2556,6 @@ grn_pat_reuse_node(grn_ctx *ctx,
                    uint16_t check_max,
                    grn_id *id_location,
                    const char *tag)
-{
-  uint8_t *key_buffer;
-  key_buffer = pat_node_get_key(ctx, pat, node);
-  if (!key_buffer) {
-    grn_obj_set_error(ctx,
-                      (grn_obj *)pat,
-                      GRN_FILE_CORRUPT,
-                      id,
-                      tag,
-                      "failed to get key from node: "
-                      "size:%u",
-                      key_size);
-    return ctx->rc;
-  }
-  uint32_t key_storage_size = pat_key_storage_size(key_size);
-  pat->header->garbages[key_storage_size] = node->lr[0];
-  PAT_LEN_SET(node, key_size);
-  grn_memcpy(key_buffer, key, key_size);
-  pat->header->n_garbages--;
-  pat->header->n_entries++;
-  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
-  return GRN_SUCCESS;
-}
-
-static inline grn_rc
-_grn_pat_reuse_node(grn_ctx *ctx,
-                    grn_pat *pat,
-                    pat_node_common *node,
-                    grn_id id,
-                    const uint8_t *key,
-                    uint32_t key_size,
-                    uint16_t check,
-                    uint16_t check_max,
-                    grn_id *id_location,
-                    const char *tag)
 {
   uint8_t *key_buffer;
   key_buffer = _pat_node_get_key(ctx, pat, node);
