@@ -6810,7 +6810,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
                                        grn_wal_reader_entry *entry,
                                        const char *wal_error_tag)
 {
-  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  pat_node_common *node = _pat_node_get(ctx, pat, entry->record_id);
   if (!node) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
@@ -6820,8 +6820,9 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
                               "failed to refer node");
     return;
   }
-  node->lr[0] = entry->next_garbage_record_id;
-  pat_node *parent_node = pat_get(ctx, pat, entry->parent_record_id);
+  pat_node_set_left(pat, node, entry->next_garbage_record_id);
+  pat_node_common *parent_node =
+    _pat_node_get(ctx, pat, entry->parent_record_id);
   if (!parent_node) {
     grn_wal_set_recover_error(ctx,
                               GRN_NO_MEMORY_AVAILABLE,
@@ -6831,7 +6832,8 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
                               "failed to refer parent node");
     return;
   }
-  grn_id *id_location = &(parent_node->lr[entry->record_direction]);
+  grn_id *id_location =
+    pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
     (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
