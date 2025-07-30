@@ -1898,11 +1898,13 @@ _grn_pat_create(grn_ctx *ctx,
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
+      array_spec[SEGMENT_PAT].w_of_element = 5;
+      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 5));
     } else {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
+      array_spec[SEGMENT_PAT].w_of_element = 4;
+      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
     }
-    array_spec[SEGMENT_PAT].w_of_element = 4;
-    array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
     array_spec[SEGMENT_SIS].w_of_element = w_of_element;
     array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx,
