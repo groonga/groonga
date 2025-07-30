@@ -94,45 +94,76 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          path: apache-arrow
+          repository: apache/arrow
       - name: Prepare ccache
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
-      - name: Cache ccache
+      - name: Cache Groonga ccache
         uses: actions/cache@v4
         with:
           path: ccache
-          key: cmake-ubuntu-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: cmake-ubuntu-${{ matrix.cc }}-ccache-
-      - name: Enable Apache Arrow repository
+          key: cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: |
+            cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-
+            cmake-ubuntu-groonga-ccache-
+      - name: Configure ccache for Apache Arrow
+        run: |
+          echo "CCACHE_DIR_ARROW=${PWD}/ccache-arrow" >> ${GITHUB_ENV}
+          echo "CMAKE_CXX_COMPILER_LAUNCHER_ARROW=ccache" >> ${GITHUB_ENV}
+      - name: Cache Apache Arrow ccache
+        uses: actions/cache@v4
+        with:
+          path: ccache-arrow
+          key: cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-${{ hashFiles('apache-arrow/cpp/src/**') }}
+          restore-keys: |
+            cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-
+            cmake-ubuntu-apache-arrow-ccache-
+      - name: Install dependecies for Apache Arrow
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            lsb-release \
-            wget
-          # Use released version for now. Apache Arrow (RC) APT
-          # repository has some problems for now:
-          # https://github.com/apache/arrow/issues/46083
-          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          # Always use RC version to detect Apache Arrow related
-          # problems as fast as possible. Released Apache Arrow is
-          # tested in package related jobs.
-          # wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          # sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          # sudo sed \
-          #   -i"" \
-          #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
-          #   /etc/apt/sources.list.d/apache-arrow.sources
+            build-essential \
+            ninja-build \
+            ccache \
+            cmake
+      - name: Configure Apache Arrow
+        env:
+          CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
+        run: |
+          cd apache-arrow
+          ccache --show-stats --verbose --version || :
+          cmake \
+            -B cpp.build \
+            -S cpp \
+            -GNinja \
+            --preset ninja-release \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER_ARROW}
+      - name: Build Apache Arrow
+        env:
+          CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
+        run: |
+          cd apache-arrow
+          cmake --build cpp.build
+          ccache --show-stats --verbose || true
+      - name: Install Apache Arrow
+        run: |
+          cd apache-arrow
+          cmake --install cpp.build
+      - name: Set environment variables for Apache Arrow
+        run: |
+          echo "LD_LIBRARY_PATH=${PWD}/apache-arrow/install/lib:${{ env.LD_LIBRARY_PATH }}" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/apache-arrow/install/lib/pkgconfig:${{ env.PKG_CONFIG_PATH }}" >> ${GITHUB_ENV}
+          echo "${PWD}/apache-arrow/install/bin" >> ${GITHUB_PATH}
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            ccache \
-            cmake \
             gdb \
             gettext \
-            libarrow-compute-dev \
-            libarrow-dev \
             libedit-dev \
             libevent-dev \
             libluajit-5.1-dev \
@@ -144,7 +175,6 @@ jobs:
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
-            ninja-build \
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
@@ -157,6 +187,7 @@ jobs:
             -GNinja \
             -DCMAKE_INSTALL_PREFIX=$PWD/install \
             -DCMAKE_BUILD_TYPE=Debug \
+            -DArrow_DIR=$PWD/apache-arrow/install/lib/cmake/Arrow \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
             -DGRN_WITH_BLOSC=auto \
@@ -172,8 +203,8 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${{ env.LD_LIBRARY_PATH }}" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${{ env.PKG_CONFIG_PATH }}" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
