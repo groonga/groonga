@@ -1492,21 +1492,9 @@ _pat_node_set_key(grn_ctx *ctx,
 static inline void
 pat_node_set_shared_key(grn_ctx *ctx,
                         grn_pat *pat,
-                        pat_node *node,
+                        pat_node_common *node,
                         uint32_t key_size,
                         uint32_t shared_key_offset)
-{
-  PAT_IMD_OFF(node);
-  PAT_LEN_SET(node, key_size);
-  node->key = shared_key_offset;
-}
-
-static inline void
-_pat_node_set_shared_key(grn_ctx *ctx,
-                         grn_pat *pat,
-                         pat_node_common *node,
-                         uint32_t key_size,
-                         uint32_t shared_key_offset)
 {
   pat_node_set_key_immediate_off(pat, node);
   pat_node_set_key_length(pat, node, key_size);
@@ -2493,7 +2481,7 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
   pat->header->garbages[0] = pat_node_get_left(pat, node);
   pat->header->n_garbages--;
   pat->header->n_entries++;
-  _pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
+  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
   _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
@@ -2511,7 +2499,7 @@ grn_pat_add_shared_node(grn_ctx *ctx,
 {
   pat->header->curr_rec = id;
   pat->header->n_entries++;
-  _pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
+  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
   _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
