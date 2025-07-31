@@ -2277,10 +2277,10 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                         "failed to get node");
       return false;
     }
-    if (check_node < pat_node_get_check(pat, node) &&
-        pat_node_get_check(pat, node) < check_max) {
+    uint16_t check_node_current = pat_node_get_check(pat, node);
+    if (check_node < check_node_current && check_node_current < check_max) {
       check_node_previous = check_node;
-      check_node = pat_node_get_check(pat, node);
+      check_node = check_node_current;
       id_location_previous = id_location;
       id_location =
         _grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
