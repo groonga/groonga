@@ -2414,40 +2414,12 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
 static inline void
 grn_pat_enable_node(grn_ctx *ctx,
                     grn_pat *pat,
-                    pat_node *node,
+                    pat_node_common *node,
                     grn_id id,
                     const uint8_t *key,
                     uint16_t check,
                     uint16_t check_max,
                     grn_id *id_location)
-{
-  PAT_CHK_SET(node, check);
-  PAT_DEL_OFF(node);
-  if (PAT_CHECK_IS_TERMINATED(check)
-        ?
-        /* check + 1:
-         * delete terminated flag and increment bit differences */
-        (check + 1 < check_max)
-        : nth_bit(key, check)) {
-    node->lr[DIRECTION_RIGHT] = id;
-    node->lr[DIRECTION_LEFT] = *id_location;
-  } else {
-    node->lr[DIRECTION_RIGHT] = *id_location;
-    node->lr[DIRECTION_LEFT] = id;
-  }
-  // smp_wmb();
-  *id_location = id;
-}
-
-static inline void
-_grn_pat_enable_node(grn_ctx *ctx,
-                     grn_pat *pat,
-                     pat_node_common *node,
-                     grn_id id,
-                     const uint8_t *key,
-                     uint16_t check,
-                     uint16_t check_max,
-                     grn_id *id_location)
 {
   pat_node_set_check(pat, node, check);
   pat_node_set_deleting_off(pat, node);
@@ -2482,7 +2454,7 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
   pat->header->n_garbages--;
   pat->header->n_entries++;
   pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
-  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
 static inline void
@@ -2500,7 +2472,7 @@ grn_pat_add_shared_node(grn_ctx *ctx,
   pat->header->curr_rec = id;
   pat->header->n_entries++;
   pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
-  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
 }
 
 static inline grn_rc
@@ -2533,7 +2505,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
   grn_memcpy(key_buffer, key, key_size);
   pat->header->n_garbages--;
   pat->header->n_entries++;
-  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
   return GRN_SUCCESS;
 }
 
@@ -2567,7 +2539,7 @@ grn_pat_add_node(grn_ctx *ctx,
   }
   pat->header->curr_rec = id;
   pat->header->n_entries++;
-  _grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
+  grn_pat_enable_node(ctx, pat, node, id, key, check, check_max, id_location);
   return GRN_SUCCESS;
 }
 
