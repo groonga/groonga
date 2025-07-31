@@ -2303,7 +2303,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                           "node->check:%u "
                           "check_max:%u",
                           check_node,
-                          pat_node_get_check(pat, node),
+                          check_node_current,
                           check_max);
         return false;
       }
