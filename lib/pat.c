@@ -2248,7 +2248,6 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
   const uint8_t *found_key = NULL;
   uint32_t found_key_size = 0;
   grn_id id_previous = GRN_ID_NIL;
-  pat_node_common *node_previous = NULL;
   int check_node = -1;
   int check_node_previous = -1;
   for (;;) {
@@ -2268,7 +2267,6 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
       found_key_size = pat_node_get_key_length(pat, node);
       break;
     }
-    node_previous = node;
     PAT_AT(pat, id, node);
     if (!node) {
       grn_obj_set_error(ctx,
