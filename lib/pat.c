@@ -4820,7 +4820,7 @@ set_cursor_prefix(grn_ctx *ctx,
   int32_t len;
   uint32_t byte_len;
   grn_id id;
-  pat_node *node;
+  pat_node_common *node;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (flags & GRN_CURSOR_SIZE_BY_BIT) {
     len = key_size * 2;
@@ -4831,22 +4831,22 @@ set_cursor_prefix(grn_ctx *ctx,
   }
   KEY_ENCODE(pat, keybuf, key, byte_len);
   PAT_AT(pat, 0, node);
-  id = node->lr[1];
+  id = pat_node_get_right(pat, node);
   while (id) {
     PAT_AT(pat, id, node);
     if (!node) {
       return GRN_FILE_CORRUPT;
     }
-    ch = PAT_CHK(node);
+    ch = pat_node_get_check(pat, node);
     if (c0 < ch && ch < len - 1) {
-      id = *grn_pat_next_location(ctx, node, key, ch, len);
+      id = *_grn_pat_next_location(ctx, pat, node, key, ch, len);
       c0 = ch;
       continue;
     }
-    if (!(k = pat_node_get_key(ctx, pat, node))) {
+    if (!(k = _pat_node_get_key(ctx, pat, node))) {
       break;
     }
-    if (PAT_LEN(node) < byte_len) {
+    if (pat_node_get_key_length(pat, node) < byte_len) {
       break;
     }
     if ((flags & GRN_CURSOR_SIZE_BY_BIT) ? !bitcmp(k, key, 0, key_size)
@@ -4854,17 +4854,19 @@ set_cursor_prefix(grn_ctx *ctx,
       if (c0 < ch) {
         if (flags & GRN_CURSOR_DESCENDING) {
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, node->lr[0], ch);
+            push(c, pat_node_get_left(pat, node), ch);
           }
-          push(c, node->lr[1], ch);
+          push(c, pat_node_get_right(pat, node), ch);
         } else {
-          push(c, node->lr[1], ch);
+          push(c, pat_node_get_right(pat, node), ch);
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-            push(c, node->lr[0], ch);
+            push(c, pat_node_get_left(pat, node), ch);
           }
         }
       } else {
-        if (PAT_LEN(node) * 16 > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
+        uint32_t check_max =
+          PAT_CHECK_PACK(pat_node_get_key_length(pat, node), 0, false);
+        if (check_max > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
           push(c, id, ch);
         }
       }
