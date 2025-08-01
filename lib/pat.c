@@ -1920,8 +1920,8 @@ _grn_pat_create(grn_ctx *ctx,
     grn_io_close(ctx, io);
     return NULL;
   }
-  pat_node_set_right(pat, node0, 0);
-  pat_node_set_left(pat, node0, 0);
+  pat_node_set_right(pat, node0, GRN_ID_NIL);
+  pat_node_set_left(pat, node0, GRN_ID_NIL);
   pat_node_set_key_offset(pat, node0, 0);
   return pat;
 }
