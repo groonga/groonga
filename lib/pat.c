@@ -1491,30 +1491,11 @@ enum {
 
 static inline grn_id *
 grn_pat_next_location(grn_ctx *ctx,
-                      pat_node *node,
+                      grn_pat *pat,
+                      pat_node_common *node,
                       const uint8_t *key,
                       uint16_t check,
                       uint16_t check_max)
-{
-  if (PAT_CHECK_IS_TERMINATED(check)) {
-    /* check + 1: delete terminated flag and increment bit differences */
-    if (check + 1 < check_max) {
-      return &(node->lr[DIRECTION_RIGHT]);
-    } else {
-      return &(node->lr[DIRECTION_LEFT]);
-    }
-  } else {
-    return &(node->lr[nth_bit(key, check)]);
-  }
-}
-
-static inline grn_id *
-_grn_pat_next_location(grn_ctx *ctx,
-                       grn_pat *pat,
-                       pat_node_common *node,
-                       const uint8_t *key,
-                       uint16_t check,
-                       uint16_t check_max)
 {
   if (PAT_CHECK_IS_TERMINATED(check)) {
     /* check + 1: delete terminated flag and increment bit differences */
@@ -1603,7 +1584,7 @@ delinfo_turn_2_internal(grn_ctx *ctx,
       if (c <= c0 || check_max <= c) {
         break;
       }
-      p0 = _grn_pat_next_location(ctx, pat, rn, key, c, check_max);
+      p0 = grn_pat_next_location(ctx, pat, rn, key, c, check_max);
       c0 = c;
     }
   }
@@ -2254,7 +2235,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
       check_node = check_node_current;
       id_location_previous = id_location;
       id_location =
-        _grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
+        grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
       grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                       pat,
                                                       &(data->wal_data),
@@ -2349,7 +2330,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
             break;
           }
           id_location =
-            _grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
+            grn_pat_next_location(ctx, pat, node, key, check_node, check_max);
           grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                           pat,
                                                           &(data->wal_data),
@@ -2893,22 +2874,23 @@ _grn_pat_get(
   grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
 {
   grn_id r;
-  pat_node *rn;
+  pat_node_common *rn;
   int32_t c0 = -1, c;
   int32_t len = key_size * 16;
   PAT_AT(pat, 0, rn);
-  for (r = rn->lr[1]; r;) {
+  for (r = pat_node_get_right(pat, rn); r;) {
     PAT_AT(pat, r, rn);
     if (!rn) {
       break; /* corrupt? */
     }
-    c = PAT_CHK(rn);
+    c = pat_node_get_check(pat, rn);
     if (len <= c) {
       break;
     }
     if (c <= c0) {
-      const uint8_t *k = pat_node_get_key(ctx, pat, rn);
-      if (k && key_size == PAT_LEN(rn) && !memcmp(k, key, key_size)) {
+      const uint8_t *k = _pat_node_get_key(ctx, pat, rn);
+      if (k && key_size == pat_node_get_key_length(pat, rn) &&
+          !memcmp(k, key, key_size)) {
         if (value) {
           byte *v = (byte *)sis_get(ctx, pat, r);
           if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
@@ -2921,7 +2903,7 @@ _grn_pat_get(
       }
       break;
     }
-    r = *grn_pat_next_location(ctx, rn, key, c, len);
+    r = *grn_pat_next_location(ctx, pat, rn, key, c, len);
     c0 = c;
   }
   return GRN_ID_NIL;
@@ -3011,7 +2993,7 @@ grn_pat_prefix_search(
     }
     c = pat_node_get_check(pat, rn);
     if (c0 < c && c < len - 1) {
-      r = *_grn_pat_next_location(ctx, pat, rn, key, c, len);
+      r = *grn_pat_next_location(ctx, pat, rn, key, c, len);
       c0 = c;
       continue;
     }
@@ -3149,7 +3131,7 @@ grn_pat_lcp_search(grn_ctx *ctx,
         r2 = r0;
       }
     }
-    r = *_grn_pat_next_location(ctx, pat, rn, key, c, len);
+    r = *grn_pat_next_location(ctx, pat, rn, key, c, len);
     c0 = c;
   }
   return r2;
@@ -3259,7 +3241,7 @@ grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
     }
     c = pat_node_get_check(data->pat, node);
     if (c0 < c && c < len - 1) {
-      r = *_grn_pat_next_location(ctx, data->pat, node, data->key, c, len);
+      r = *grn_pat_next_location(ctx, data->pat, node, data->key, c, len);
       c0 = c;
       continue;
     }
@@ -3937,7 +3919,7 @@ _grn_pat_del(grn_ctx *ctx,
     node_previous_check = node_check;
     p0 = p;
     node_check = check;
-    p = _grn_pat_next_location(ctx, pat, node, key, node_check, check_max);
+    p = grn_pat_next_location(ctx, pat, node, key, node_check, check_max);
     grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                     pat,
                                                     &wal_data,
@@ -4811,7 +4793,7 @@ set_cursor_prefix(grn_ctx *ctx,
     }
     ch = pat_node_get_check(pat, node);
     if (c0 < ch && ch < len - 1) {
-      id = *_grn_pat_next_location(ctx, pat, node, key, ch, len);
+      id = *grn_pat_next_location(ctx, pat, node, key, ch, len);
       c0 = ch;
       continue;
     }
