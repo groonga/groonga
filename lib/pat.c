@@ -4099,7 +4099,7 @@ grn_pat_size(grn_ctx *ctx, grn_pat *pat)
 const char *
 _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
 {
-  pat_node *node;
+  pat_node_common *node;
   uint8_t *key;
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     *key_size = 0;
@@ -4114,9 +4114,9 @@ _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
     *key_size = 0;
     return NULL;
   }
-  key = pat_node_get_key(ctx, pat, node);
+  key = _pat_node_get_key(ctx, pat, node);
   if (key) {
-    *key_size = PAT_LEN(node);
+    *key_size = pat_node_get_key_length(pat, node);
   } else {
     *key_size = 0;
   }
