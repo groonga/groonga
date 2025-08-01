@@ -121,7 +121,7 @@ jobs:
           restore-keys: |
             cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-
             cmake-ubuntu-apache-arrow-ccache-
-      - name: Install dependecies for Apache Arrow
+      - name: Install dependencies for Apache Arrow
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
