@@ -2555,11 +2555,12 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
   if (pat->cache) {
     data->cache_id = grn_pat_cache_compute_id(ctx, pat, key, key_size);
     if (pat->cache[data->cache_id] != GRN_ID_NIL) {
-      pat_node *node;
+      pat_node_common *node;
       PAT_AT(pat, pat->cache[data->cache_id], node);
       if (node) {
-        const uint8_t *k = pat_node_get_key(ctx, pat, node);
-        if (k && key_size == PAT_LEN(node) && memcmp(k, key, key_size) == 0) {
+        const uint8_t *k = _pat_node_get_key(ctx, pat, node);
+        if (k && key_size == pat_node_get_key_length(pat, node) &&
+            memcmp(k, key, key_size) == 0) {
           return pat->cache[data->cache_id];
         }
       }
