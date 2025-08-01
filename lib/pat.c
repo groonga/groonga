@@ -5011,25 +5011,25 @@ set_cursor_ascend(grn_ctx *ctx,
                   int flags)
 {
   grn_id id;
-  pat_node *node;
+  pat_node_common *node;
   const uint8_t *k;
   int32_t r, check = -1, ch, c2;
   int32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
-  for (id = node->lr[1]; id;) {
+  for (id = pat_node_get_right(pat, node); id;) {
     PAT_AT(pat, id, node);
     if (!node) {
       return GRN_FILE_CORRUPT;
     }
-    ch = PAT_CHK(node);
+    ch = pat_node_get_check(pat, node);
     if (ch <= check) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) {
+      if (!(k = _pat_node_get_key(ctx, pat, node))) {
         return GRN_FILE_CORRUPT;
       }
       {
-        uint32_t l = PAT_LEN(node);
+        uint32_t l = pat_node_get_key_length(pat, node);
         if (l == key_size) {
           if (flags & GRN_CURSOR_GT) {
             if (memcmp(key, k, l) < 0) {
@@ -5054,36 +5054,36 @@ set_cursor_ascend(grn_ctx *ctx,
     }
     c2 = len < ch ? len : ch;
     if ((check += 2) < c2) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) {
+      if (!(k = _pat_node_get_key(ctx, pat, node))) {
         return GRN_FILE_CORRUPT;
       }
       if ((r = bitcmp(key, k, check >> 1, ((c2 + 1) >> 1) - (check >> 1)))) {
         if (r < 0) {
-          push(c, node->lr[1], ch);
-          push(c, node->lr[0], ch);
+          push(c, pat_node_get_right(pat, node), ch);
+          push(c, pat_node_get_left(pat, node), ch);
         }
         break;
       }
     }
     check = ch;
     if (len <= check) {
-      push(c, node->lr[1], ch);
-      push(c, node->lr[0], ch);
+      push(c, pat_node_get_right(pat, node), ch);
+      push(c, pat_node_get_left(pat, node), ch);
       break;
     }
     if (PAT_CHECK_IS_TERMINATED(check)) {
       if (check + 1 < len) {
-        id = node->lr[1];
+        id = pat_node_get_right(pat, node);
       } else {
-        push(c, node->lr[1], check);
-        id = node->lr[0];
+        push(c, pat_node_get_right(pat, node), check);
+        id = pat_node_get_left(pat, node);
       }
     } else {
       if (nth_bit((uint8_t *)key, check)) {
-        id = node->lr[1];
+        id = pat_node_get_right(pat, node);
       } else {
-        push(c, node->lr[1], check);
-        id = node->lr[0];
+        push(c, pat_node_get_right(pat, node), check);
+        id = pat_node_get_left(pat, node);
       }
     }
   }
