@@ -4150,7 +4150,7 @@ grn_pat_get_key(
 {
   int len;
   uint8_t *key;
-  pat_node *node;
+  pat_node_common *node;
   if (!pat) {
     return 0;
   }
@@ -4164,10 +4164,10 @@ grn_pat_get_key(
   if (!node) {
     return 0;
   }
-  if (!(key = pat_node_get_key(ctx, pat, node))) {
+  if (!(key = _pat_node_get_key(ctx, pat, node))) {
     return 0;
   }
-  len = PAT_LEN(node);
+  len = pat_node_get_key_length(pat, node);
   if (keybuf && bufsize >= len) {
     if (KEY_NEEDS_CONVERT(pat, len)) {
       KEY_DEC(pat, keybuf, key, len);
