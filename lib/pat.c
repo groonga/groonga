@@ -152,7 +152,6 @@ pat_node_get_right(grn_pat *pat, pat_node_common *node)
 {
   return pat_node_get_child(pat, node, DIRECTION_RIGHT);
 }
-
 static inline grn_id
 pat_node_get_left(grn_pat *pat, pat_node_common *node)
 {
