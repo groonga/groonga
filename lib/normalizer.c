@@ -2317,7 +2317,12 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
-    if (before && data->options->unify_hyphen_and_prolonged_sound_mark) {
+    /* When both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` are
+     * enabled, the hyphen is handled as a symbol and has already been removed.
+     * Therefore, when `unify_hyphen_and_prolonged_sound_mark` is enabled and
+     * `remove_symbol` is disabled, the hyphen is unified. */
+    if (before && data->options->unify_hyphen_and_prolonged_sound_mark &&
+        !data->options->remove_symbol) {
       if (grn_nfkc_normalize_is_hyphen_family(unifying, unified_char_length) ||
           grn_nfkc_normalize_is_prolonged_sound_mark_family(
             unifying,
@@ -3586,8 +3591,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
 {
   grn_nfkc_normalize_context unify;
   bool need_swap = false;
-  /* If both `unify_middle_dot` and `remove_symbol` are enabled, unification is
-   * not necessary because the middle dot has already been removed. */
+  /* If both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` are
+   * enabled, unification is not necessary because the hyphen has already been
+   * removed. Same for `unify_middle_dot`.
+   */
+  bool unify_hyphen_and_prolonged_sound_mark =
+    (data->options->unify_hyphen_and_prolonged_sound_mark &&
+     !data->options->remove_symbol);
   bool unify_middle_dot =
     (data->options->unify_middle_dot && !data->options->remove_symbol);
 
@@ -3596,8 +3606,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         data->options->unify_kana_voiced_sound_mark ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
-        data->options->unify_hyphen_and_prolonged_sound_mark ||
-        unify_middle_dot || data->options->unify_katakana_v_sounds ||
+        unify_hyphen_and_prolonged_sound_mark || unify_middle_dot ||
+        data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
         data->options->unify_katakana_du_small_sounds ||
         data->options->unify_katakana_du_sound ||
@@ -3629,8 +3639,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
       data->options->unify_kana_voiced_sound_mark ||
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||
-      data->options->unify_hyphen_and_prolonged_sound_mark ||
-      unify_middle_dot || data->options->unify_to_katakana) {
+      unify_hyphen_and_prolonged_sound_mark || unify_middle_dot ||
+      data->options->unify_to_katakana) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify, true);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -3962,12 +3972,21 @@ grn_nfkc_normalize_remove_target_non_blank_character_p(
   if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
     return true;
   }
-  /* `unify_middle_dot` is `true` and the unified middle dot is handled as a
-   * symbol.
+
+  /* `unify_hyphen_and_prolonged_sound_mark` is `true` and the unified hyphen is
+   * handled as a symbol.
    *
    * The best implementation is to normalize and then remove the symbols.
    * However, at the time of this change, that way had a large impact, so this
    * is the implementation. */
+  if (data->options->unify_hyphen_and_prolonged_sound_mark &&
+      (grn_nfkc_normalize_is_hyphen_family(current, current_length) ||
+       grn_nfkc_normalize_is_prolonged_sound_mark_family(current,
+                                                         current_length))) {
+    return true;
+  }
+  /* If `unify_middle_dot` is `true`, middle dot is removed
+   * as in `unify_hyphen_and_prolonged_sound_mark`. */
   if (data->options->unify_middle_dot &&
       grn_nfkc_normalize_is_middle_dot_family(current, current_length)) {
     return true;
