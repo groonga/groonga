@@ -1439,32 +1439,11 @@ _pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
 }
 
 static inline grn_rc
-pat_node_set_key(
-  grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, uint32_t len)
-{
-  grn_rc rc;
-  if (!key || !len) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  PAT_LEN_SET(n, len);
-  if (pat_key_is_embeddable(len)) {
-    PAT_IMD_ON(n);
-    grn_memcpy(&n->key, key, len);
-    rc = GRN_SUCCESS;
-  } else {
-    PAT_IMD_OFF(n);
-    n->key = key_put(ctx, pat, key, len);
-    rc = ctx->rc;
-  }
-  return rc;
-}
-
-static inline grn_rc
-_pat_node_set_key(grn_ctx *ctx,
-                  grn_pat *pat,
-                  pat_node_common *node,
-                  const uint8_t *key,
-                  uint32_t len)
+pat_node_set_key(grn_ctx *ctx,
+                 grn_pat *pat,
+                 pat_node_common *node,
+                 const uint8_t *key,
+                 uint32_t len)
 {
   if (!key || !len) {
     return GRN_INVALID_ARGUMENT;
@@ -2511,7 +2490,7 @@ grn_pat_add_node(grn_ctx *ctx,
                  grn_id *id_location,
                  const char *tag)
 {
-  grn_rc rc = _pat_node_set_key(ctx, pat, node, key, key_size);
+  grn_rc rc = pat_node_set_key(ctx, pat, node, key, key_size);
   if (rc != GRN_SUCCESS) {
     grn_obj inspected_key;
     GRN_TEXT_INIT(&inspected_key, 0);
@@ -4362,7 +4341,7 @@ grn_pat_delete_with_sis(grn_ctx *ctx,
   }
   si = sis_at(ctx, pat, id);
   while (id) {
-    pat_node *rn;
+    pat_node_common *rn;
     uint32_t key_size;
     if ((si && si->children && si->children != id) ||
         (optarg && optarg->func &&
@@ -4370,7 +4349,7 @@ grn_pat_delete_with_sis(grn_ctx *ctx,
       break;
     }
     PAT_AT(pat, id, rn);
-    if (!(_key = (char *)pat_node_get_key(ctx, pat, rn))) {
+    if (!(_key = (char *)_pat_node_get_key(ctx, pat, rn))) {
       return 0;
     }
     if (_key == key) {
@@ -4379,7 +4358,7 @@ grn_pat_delete_with_sis(grn_ctx *ctx,
       key = _key;
       shared = 0;
     }
-    key_size = PAT_LEN(rn);
+    key_size = pat_node_get_key_length(pat, rn);
     if (key && key_size) {
       _grn_pat_del(ctx, pat, key, key_size, shared, NULL);
     }
@@ -4419,16 +4398,16 @@ grn_pat_delete_with_sis(grn_ctx *ctx,
         break;
       }
       {
-        pat_node *rn;
+        pat_node_common *rn;
         PAT_AT(pat, id, rn);
         if (!rn) {
           break;
         }
         if (shared_key_offset > 0) {
-          rn->key = shared_key_offset;
+          pat_node_set_key_offset(pat, rn, shared_key_offset);
         } else {
           pat_node_set_key(ctx, pat, rn, (uint8_t *)key, key_size);
-          shared_key_offset = rn->key;
+          shared_key_offset = pat_node_get_key_offset(pat, rn);
         }
       }
       {
