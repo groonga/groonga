@@ -6324,8 +6324,8 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
   grn_ctx *ctx = ((pat_node_compare_by_key_data *)arg)->ctx;
   grn_pat *pat = ((pat_node_compare_by_key_data *)arg)->pat;
 
-  pat_node_common *node1 = _pat_node_get(ctx, pat, id1);
-  pat_node_common *node2 = _pat_node_get(ctx, pat, id2);
+  pat_node_common *node1 = pat_node_get(ctx, pat, id1);
+  pat_node_common *node2 = pat_node_get(ctx, pat, id2);
   uint64_t node1_key_offset = pat_node_get_key_offset(pat, node1);
   uint64_t node2_key_offset = pat_node_get_key_offset(pat, node2);
 
