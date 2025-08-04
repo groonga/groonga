@@ -75,8 +75,8 @@ typedef struct {
    */
   grn_id lr[2];
   /*
-    PAT_IMD(node) == 0: key bytes offset in memory map.
-    PAT_IMD(node) == 1: the key bytes.
+    pat_node_is_key_immediate(pat, node) == 0: key bytes offset in memory map.
+    pat_node_is_key_immediate(pat, node) == 1: the key bytes.
    */
   uint32_t key;
   /*
@@ -207,7 +207,6 @@ pat_node_set_left(grn_pat *pat, pat_node_common *node, grn_id id)
   pat_node_set_child(pat, node, DIRECTION_LEFT, id);
 }
 
-#define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 static inline bool
 pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
 {
@@ -217,7 +216,6 @@ pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
     return node->node.bits & PAT_DELETING;
   }
 }
-#define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 static inline bool
 pat_node_is_key_immediate(grn_pat *pat, pat_node_common *node)
 {
@@ -228,7 +226,6 @@ pat_node_is_key_immediate(grn_pat *pat, pat_node_common *node)
   }
 }
 
-#define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
 static inline uint32_t
 pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
 {
@@ -240,7 +237,6 @@ pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
   }
   return (uint32_t)((bits >> 3) + 1);
 }
-#define PAT_CHK(x) ((x)->check)
 static inline uint16_t
 pat_node_get_check(grn_pat *pat, pat_node_common *node)
 {
@@ -250,7 +246,6 @@ pat_node_get_check(grn_pat *pat, pat_node_common *node)
     return node->node.check;
   }
 }
-#define PAT_DEL_ON(x) ((x)->bits |= PAT_DELETING)
 static inline void
 pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
 {
@@ -261,7 +256,6 @@ pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
   }
 }
 
-#define PAT_IMD_ON(x) ((x)->bits |= PAT_IMMEDIATE)
 static inline void
 pat_node_set_key_immediate_on(grn_pat *pat, pat_node_common *node)
 {
@@ -271,7 +265,6 @@ pat_node_set_key_immediate_on(grn_pat *pat, pat_node_common *node)
     node->node.bits |= PAT_IMMEDIATE;
   }
 }
-#define PAT_DEL_OFF(x) ((x)->bits &= ~PAT_DELETING)
 static inline void
 pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
 {
@@ -281,7 +274,6 @@ pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
     node->node.bits &= ~PAT_DELETING;
   }
 }
-#define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 static inline void
 pat_node_set_key_immediate_off(grn_pat *pat, pat_node_common *node)
 {
@@ -292,8 +284,6 @@ pat_node_set_key_immediate_off(grn_pat *pat, pat_node_common *node)
   }
 }
 
-#define PAT_LEN_SET(x, v)                                                      \
-  ((x)->bits = ((x)->bits & ((1 << 3) - 1)) | (((v) - 1) << 3))
 static inline void
 pat_node_set_key_length(grn_pat *pat,
                         pat_node_common *node,
@@ -307,7 +297,6 @@ pat_node_set_key_length(grn_pat *pat,
       (node->node.bits & ((1 << 3) - 1)) | ((key_length - 1) << 3);
   }
 }
-#define PAT_CHK_SET(x, v) ((x)->check = (v))
 static inline void
 pat_node_set_check(grn_pat *pat, pat_node_common *node, uint16_t check)
 {
