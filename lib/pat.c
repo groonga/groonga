@@ -1382,10 +1382,10 @@ pat_node_set_key_position(grn_pat *pat,
 /*
  * We must not call this function when pat_node_is_key_immediate() is true.
  * If pat_node_is_key_immediate() is true, this function does not return the
- * offset of key but the value of key directly.
+ * key offset but the value of the key directly.
  */
 static inline uint64_t
-pat_node_get_key_position(grn_pat *pat, pat_node_common *node)
+pat_node_get_key_offset(grn_pat *pat, pat_node_common *node)
 {
   if (pat_is_key_large(pat)) {
     return node->node_large.key;
@@ -2709,7 +2709,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
         }
         pat->header->wal_id = data->wal_data.wal_id;
       }
-      data->shared_key_offset = pat_node_get_key_position(pat, node);
+      data->shared_key_offset = pat_node_get_key_offset(pat, node);
     }
   }
   data->added = true;
@@ -5544,7 +5544,7 @@ grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node_common *node)
   if (pat_node_is_key_immediate(pat, node)) {
     key = _pat_node_get_key(ctx, pat, node);
   } else {
-    KEY_AT(pat, pat_node_get_key_position(pat, node), key, 0);
+    KEY_AT(pat, pat_node_get_key_offset(pat, node), key, 0);
   }
 
   uint16_t check = pat_node_get_check(pat, node);
@@ -6336,8 +6336,8 @@ grn_pat_node_compare_by_key(const grn_id id1, const grn_id id2, void *arg)
 
   pat_node_common *node1 = _pat_node_get(ctx, pat, id1);
   pat_node_common *node2 = _pat_node_get(ctx, pat, id2);
-  uint64_t node1_key_offset = pat_node_get_key_position(pat, node1);
-  uint64_t node2_key_offset = pat_node_get_key_position(pat, node2);
+  uint64_t node1_key_offset = pat_node_get_key_offset(pat, node1);
+  uint64_t node2_key_offset = pat_node_get_key_offset(pat, node2);
 
   if (node1_key_offset > node2_key_offset) {
     return 1;
@@ -6408,12 +6408,12 @@ pat_key_defrag_each(grn_ctx *ctx,
       new_curr_key = new_end_segment << W_OF_KEY_IN_A_SEGMENT;
     }
 
-    /* If the position is the same, do not copy because the same key is already
+    /* If the offset is the same, do not copy because the same key is already
      * there. */
-    uint64_t node_key_position = pat_node_get_key_position(pat, node);
-    if (node_key_position != new_curr_key) {
+    uint64_t node_key_offset = pat_node_get_key_offset(pat, node);
+    if (node_key_offset != new_curr_key) {
       uint8_t *key_address;
-      KEY_AT(pat, node_key_position, key_address, 0);
+      KEY_AT(pat, node_key_offset, key_address, 0);
 
       grn_pat_wal_add_entry_data wal_data = {0};
       wal_data.event = GRN_WAL_EVENT_DEFRAG_KEY;
