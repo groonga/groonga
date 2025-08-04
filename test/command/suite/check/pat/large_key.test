@@ -1,6 +1,6 @@
 table_create --name Users --flags TABLE_PAT_KEY|KEY_LARGE --key_type ShortText
 load --table Users
 [
-{"_key":"Alice"}
+{"_key":"Dartagnan"}
 ]
 check --obj Users
