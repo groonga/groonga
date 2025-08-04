@@ -201,10 +201,6 @@ typedef int grn_sock;
 #  define INT64_MIN (-9223372036854775808)
 #endif /* INT64_MIN */
 
-#ifndef UINT64_MAX
-#  define UINT64_MAX (18446744073709551615)
-#endif /* UINT64_MAX */
-
 #ifdef WIN32
 #  define grn_lseek(fd, offset, whence) _lseeki64(fd, offset, whence)
 #else /* WIN32 */
