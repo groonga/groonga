@@ -30,7 +30,7 @@ object_inspect --name Users
         "size": 4096
       },
       "total_size": 5,
-      "max_total_size": 18446744073709551614
+      "max_total_size": 1099511627775
     },
     "value": {
       "type": null
