@@ -75,7 +75,7 @@ typedef struct {
    */
   grn_id lr[2];
   /*
-    pat_node_is_key_immediate(pat, node) == 0: key bytes offset in memory map.
+    pat_node_is_key_immediate(pat, node) == false: key bytes offset in memory map.
     pat_node_is_key_immediate(pat, node) == 1: the key bytes.
    */
   uint32_t key;
