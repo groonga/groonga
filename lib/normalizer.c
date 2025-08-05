@@ -3593,8 +3593,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
   bool need_swap = false;
   /* If both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` are
    * enabled, unification is not necessary because the hyphen has already been
-   * removed. Same for `unify_middle_dot`.
-   */
+   * removed. Same for `unify_middle_dot`. */
   bool unify_hyphen_and_prolonged_sound_mark =
     (data->options->unify_hyphen_and_prolonged_sound_mark &&
      !data->options->remove_symbol);
