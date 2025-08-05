@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_hyphen_and_prolonged_sound_mark", true,                   "version", "NFKC_VERSION")'   "090ー1234ー5678"   WITH_TYPES
+normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_hyphen_and_prolonged_sound_mark", true,                   "version", "NFKC_VERSION")'   "telephone number-˗֊‐‑‒–⁃⁻₋−﹣－ー—―─━ｰ090ー1xxxー5xxx"   WITH_TYPES
 [
   [
     0,
@@ -6,19 +6,35 @@ normalize   'NormalizerNFKC("remove_symbol", true,                   "unify_hyph
     0.0
   ],
   {
-    "normalized": "09012345678",
+    "normalized": "telephone number0901xxx5xxx",
     "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
       "digit",
       "digit",
       "digit",
       "digit",
+      "alpha",
+      "alpha",
+      "alpha",
       "digit",
-      "digit",
-      "digit",
-      "digit",
-      "digit",
-      "digit",
-      "digit",
+      "alpha",
+      "alpha",
+      "alpha",
       "null"
     ],
     "checks": []
