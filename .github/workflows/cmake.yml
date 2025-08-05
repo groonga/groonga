@@ -77,15 +77,22 @@ jobs:
             cxx: g++
           - cc: gcc
             cxx: g++
+            apache-arrow: "main"
+          - cc: gcc
+            cxx: g++
             mruby: "OFF"
           - cc: clang
             cxx: clang++
+          - cc: clang
+            cxx: clang++
+            apache-arrow: "main"
           - cc: clang
             cxx: clang++
             ubsan: "ON"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
+      APACHE_ARROW: ${{ matrix.apache-arrow }}
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
@@ -110,10 +117,12 @@ jobs:
             cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-
             cmake-ubuntu-groonga-ccache-
       - name: Configure ccache for Apache Arrow
+        if: env.APACHE_ARROW == 'main'
         run: |
           echo "CCACHE_DIR_ARROW=${PWD}/ccache-arrow" >> ${GITHUB_ENV}
           echo "CMAKE_CXX_COMPILER_LAUNCHER_ARROW=ccache" >> ${GITHUB_ENV}
       - name: Cache Apache Arrow ccache
+        if: env.APACHE_ARROW == 'main'
         uses: actions/cache@v4
         with:
           path: ccache-arrow
@@ -130,6 +139,7 @@ jobs:
             ccache \
             cmake
       - name: Configure Apache Arrow
+        if: env.APACHE_ARROW == 'main'
         env:
           CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
         run: |
@@ -143,6 +153,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=$PWD/install \
             -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER_ARROW}
       - name: Build Apache Arrow
+        if: env.APACHE_ARROW == 'main'
         env:
           CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
         run: |
@@ -150,14 +161,44 @@ jobs:
           cmake --build cpp.build
           ccache --show-stats --verbose || true
       - name: Install Apache Arrow
+        if: env.APACHE_ARROW == 'main'
         run: |
           cd apache-arrow
           cmake --install cpp.build
       - name: Set environment variables for Apache Arrow
+        if: env.APACHE_ARROW == 'main'
         run: |
           echo "LD_LIBRARY_PATH=${PWD}/apache-arrow/install/lib:${{ env.LD_LIBRARY_PATH }}" >> ${GITHUB_ENV}
           echo "PKG_CONFIG_PATH=${PWD}/apache-arrow/install/lib/pkgconfig:${{ env.PKG_CONFIG_PATH }}" >> ${GITHUB_ENV}
           echo "${PWD}/apache-arrow/install/bin" >> ${GITHUB_PATH}
+      - name: Enable Apache Arrow repository
+        if: env.APACHE_ARROW != 'main'
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            lsb-release \
+            wget
+          # Use released version for now. Apache Arrow (RC) APT
+          # repository has some problems for now:
+          # https://github.com/apache/arrow/issues/46083
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          # Always use RC version to detect Apache Arrow related
+          # problems as fast as possible. Released Apache Arrow is
+          # tested in package related jobs.
+          # wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          # sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          # sudo sed \
+          #   -i"" \
+          #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
+          #   /etc/apt/sources.list.d/apache-arrow.sources
+      - name : Install Apache Arrow packages
+        if: env.APACHE_ARROW != 'main'
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            libarrow-compute-dev \
+            libarrow-dev \
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
