@@ -1777,6 +1777,24 @@ delinfo_new(grn_ctx *ctx,
 
 /* pat operation */
 
+static inline uint32_t
+pat_node_get_w_of_pat_entry(uint32_t flags)
+{
+  size_t node_size;
+  if (flags & GRN_OBJ_KEY_LARGE) {
+    node_size = sizeof(pat_node_large);
+  } else {
+    node_size = sizeof(pat_node);
+  }
+
+  uint32_t w_of_pat_entry;
+  for (w_of_pat_entry = 0; (size_t)(1 << w_of_pat_entry) < node_size;
+       w_of_pat_entry++) {
+    /* nop */
+  }
+  return w_of_pat_entry;
+}
+
 static inline grn_pat *
 _grn_pat_create(grn_ctx *ctx,
                 grn_pat *pat,
@@ -1801,16 +1819,15 @@ _grn_pat_create(grn_ctx *ctx,
   }
   {
     grn_io_array_spec array_spec[3];
+    uint32_t w_of_pat_entry = pat_node_get_w_of_pat_entry(flags);
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
-      array_spec[SEGMENT_PAT].w_of_element = 5;
-      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 5));
     } else {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
-      array_spec[SEGMENT_PAT].w_of_element = 4;
-      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
     }
+    array_spec[SEGMENT_PAT].w_of_element = w_of_pat_entry;
+    array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - w_of_pat_entry));
     array_spec[SEGMENT_SIS].w_of_element = w_of_element;
     array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx,
