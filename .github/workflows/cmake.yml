@@ -130,7 +130,7 @@ jobs:
           restore-keys: |
             cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-
             cmake-ubuntu-apache-arrow-ccache-
-      - name: Install dependecies for Apache Arrow
+      - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
@@ -199,7 +199,7 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             libarrow-compute-dev \
             libarrow-dev \
-      - name: Install packages
+      - name: Install packages for Groonga
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
