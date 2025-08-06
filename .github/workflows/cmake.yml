@@ -155,8 +155,8 @@ jobs:
       - name: Set environment variables for Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
-          echo "LD_LIBRARY_PATH=${PWD}/apache-arrow/install/lib:${{ env.LD_LIBRARY_PATH }}" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/apache-arrow/install/lib/pkgconfig:${{ env.PKG_CONFIG_PATH }}" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/apache-arrow/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/apache-arrow/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
           echo "${PWD}/apache-arrow/install/bin" >> ${GITHUB_PATH}
       - name: Enable Apache Arrow repository
         if: env.APACHE_ARROW != 'main'
@@ -235,8 +235,8 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${{ env.LD_LIBRARY_PATH }}" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${{ env.PKG_CONFIG_PATH }}" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
