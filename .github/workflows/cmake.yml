@@ -187,7 +187,7 @@ jobs:
           #   -i"" \
           #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
           #   /etc/apt/sources.list.d/apache-arrow.sources
-      - name : Install Apache Arrow packages
+      - name: Install Apache Arrow packages
         if: env.APACHE_ARROW != 'main'
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
