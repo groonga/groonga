@@ -222,18 +222,22 @@ jobs:
       - name: CMake
         run: |
           ccache --show-stats --verbose --version || :
+          CMAKE_ARGS=""
+          if [ "${APACHE_ARROW}" = "main" ]; then
+            CMAKE_ARGS="${CMAKE_ARGS} -DArrow_DIR=$PWD/apache-arrow/install/lib/cmake/Arrow"
+          fi
           cmake \
             -B ../groonga.build \
             -S . \
             -GNinja \
             -DCMAKE_INSTALL_PREFIX=$PWD/install \
             -DCMAKE_BUILD_TYPE=Debug \
-            -DArrow_DIR=$PWD/apache-arrow/install/lib/cmake/Arrow \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
             -DGRN_WITH_BLOSC=auto \
             -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON} \
-            -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF}
+            -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF} \
+            ${CMAKE_ARGS}
       - name: Build
         run: |
           ninja -C ../groonga.build
