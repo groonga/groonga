@@ -85,9 +85,6 @@ jobs:
             cxx: clang++
           - cc: clang
             cxx: clang++
-            apache-arrow: "main"
-          - cc: clang
-            cxx: clang++
             ubsan: "ON"
     runs-on: ubuntu-latest
     timeout-minutes: 90
