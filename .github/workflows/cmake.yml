@@ -820,6 +820,7 @@ jobs:
           name: release-${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
       - name: Prepare artifacts with VC++ runtime
+        if: matrix.warn_conversion == 'OFF'
         run: |
           Set-PSDebug -Trace 2
 
@@ -886,9 +887,11 @@ jobs:
 
       # Test
       - uses: ruby/setup-ruby@v1
+        if: matrix.warn_conversion == 'OFF'
         with:
           ruby-version: ruby
       - name: Install test dependencies
+        if: matrix.warn_conversion == 'OFF'
         run: |
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
           gem install `
@@ -896,10 +899,12 @@ jobs:
             pkg-config `
             red-arrow
       - name: "Test: command line"
+        if: matrix.warn_conversion == 'OFF'
         run: |
           ruby test\command_line\run-test.rb `
             --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: "Test: HTTP: reference count: Apache Arrow: chunked"
+        if: matrix.warn_conversion == 'OFF'
         run: |
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
           grntest `
