@@ -117,7 +117,6 @@ jobs:
         if: env.APACHE_ARROW == 'main'
         run: |
           echo "CCACHE_DIR_ARROW=${PWD}/ccache-arrow" >> ${GITHUB_ENV}
-          echo "CMAKE_CXX_COMPILER_LAUNCHER_ARROW=ccache" >> ${GITHUB_ENV}
       - name: Cache Apache Arrow ccache
         if: env.APACHE_ARROW == 'main'
         uses: actions/cache@v4
@@ -148,7 +147,6 @@ jobs:
             -GNinja \
             --preset ninja-release \
             -DCMAKE_INSTALL_PREFIX=$PWD/install \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER_ARROW}
       - name: Build Apache Arrow
         if: env.APACHE_ARROW == 'main'
         env:
