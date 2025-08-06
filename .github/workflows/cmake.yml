@@ -767,6 +767,7 @@ jobs:
           ccache --show-stats --verbose --version
       - name: Install Groonga
         shell: cmd
+        continue-on-error: ${{ matrix.warn_conversion == 'ON' }}
         run: |
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" %VC_ARCHITECTURE%
           set CMAKE_ARGS=-S .
@@ -774,6 +775,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -G "Ninja"
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=OFF
           set CMAKE_ARGS=%CMAKE_ARGS% "-DGRN_WARN_CONVERSION=${{ matrix.warn_conversion }}"
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=ON
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_BLOSC=auto
@@ -782,9 +784,6 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGROONGA_NORMALIZER_MYSQL_DOC_DIR=share/groonga-normalizer-mysql
-          if "${{ matrix.warn_conversion }}" == "OFF" (
-            set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=OFF
-          )
 
           cmake %CMAKE_ARGS% || (type ..\groonga-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\groonga-build || exit /B
