@@ -140,7 +140,7 @@ jobs:
             -S cpp \
             -GNinja \
             --preset ninja-release \
-            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_INSTALL_PREFIX=../install
       - name: Build Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
@@ -152,12 +152,10 @@ jobs:
         run: |
           cd apache-arrow
           cmake --install cpp.build
-      - name: Set environment variables for Apache Arrow
-        if: env.APACHE_ARROW == 'main'
+      - name: Set environment variables
         run: |
-          echo "LD_LIBRARY_PATH=${PWD}/apache-arrow/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/apache-arrow/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
-          echo "${PWD}/apache-arrow/install/bin" >> ${GITHUB_PATH}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
       - name: Enable Apache Arrow repository
         if: env.APACHE_ARROW != 'main'
         run: |
@@ -209,10 +207,6 @@ jobs:
       - name: CMake
         run: |
           ccache --show-stats --verbose --version || :
-          CMAKE_ARGS=""
-          if [ "${APACHE_ARROW}" = "main" ]; then
-            CMAKE_ARGS="${CMAKE_ARGS} -DArrow_DIR=$PWD/apache-arrow/install/lib/cmake/Arrow"
-          fi
           cmake \
             -B ../groonga.build \
             -S . \
@@ -223,8 +217,7 @@ jobs:
             -DGRN_WITH_APACHE_ARROW=ON \
             -DGRN_WITH_BLOSC=auto \
             -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON} \
-            -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF} \
-            ${CMAKE_ARGS}
+            -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF}
       - name: Build
         run: |
           ninja -C ../groonga.build
@@ -232,11 +225,9 @@ jobs:
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - name: Set environment variables
+      - name: Set environment variables for Groonga
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
