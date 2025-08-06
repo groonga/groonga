@@ -99,29 +99,22 @@ jobs:
         with:
           submodules: recursive
       - uses: actions/checkout@v4
+        if: env.APACHE_ARROW == 'main'
         with:
           path: apache-arrow
           repository: apache/arrow
       - name: Prepare ccache
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
-      - name: Cache Groonga ccache
+      - name: Cache ccache
         uses: actions/cache@v4
         with:
           path: ccache
-          key: cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**', 'apache-arrow/cpp/src/**') }}
           restore-keys: |
-            cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-
-            cmake-ubuntu-groonga-ccache-
-      - name: Cache Apache Arrow ccache
-        if: env.APACHE_ARROW == 'main'
-        uses: actions/cache@v4
-        with:
-          path: ccache-arrow
-          key: cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-${{ hashFiles('apache-arrow/cpp/src/**') }}
-          restore-keys: |
-            cmake-ubuntu-apache-arrow-${{ matrix.cc }}-ccache-
-            cmake-ubuntu-apache-arrow-ccache-
+            cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-
+            cmake-ubuntu-${{ matrix.cc }}-ccache-
+            cmake-ubuntu-ccache-
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
