@@ -1819,15 +1819,16 @@ _grn_pat_create(grn_ctx *ctx,
   }
   {
     grn_io_array_spec array_spec[3];
-    uint32_t w_of_pat_entry = pat_node_get_w_of_pat_entry(flags);
+    uint32_t segment_width_of_pat_entry = pat_node_get_w_of_pat_entry(flags);
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
     } else {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
     }
-    array_spec[SEGMENT_PAT].w_of_element = w_of_pat_entry;
-    array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - w_of_pat_entry));
+    array_spec[SEGMENT_PAT].w_of_element = segment_width_of_pat_entry;
+    array_spec[SEGMENT_PAT].max_n_segments =
+      1 << (30 - (22 - segment_width_of_pat_entry));
     array_spec[SEGMENT_SIS].w_of_element = w_of_element;
     array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx,
