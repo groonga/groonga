@@ -113,10 +113,6 @@ jobs:
           restore-keys: |
             cmake-ubuntu-groonga-${{ matrix.cc }}-ccache-
             cmake-ubuntu-groonga-ccache-
-      - name: Configure ccache for Apache Arrow
-        if: env.APACHE_ARROW == 'main'
-        run: |
-          echo "CCACHE_DIR_ARROW=${PWD}/ccache-arrow" >> ${GITHUB_ENV}
       - name: Cache Apache Arrow ccache
         if: env.APACHE_ARROW == 'main'
         uses: actions/cache@v4
@@ -136,8 +132,6 @@ jobs:
             cmake
       - name: Configure Apache Arrow
         if: env.APACHE_ARROW == 'main'
-        env:
-          CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
         run: |
           cd apache-arrow
           ccache --show-stats --verbose --version || :
@@ -149,8 +143,6 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=$PWD/install \
       - name: Build Apache Arrow
         if: env.APACHE_ARROW == 'main'
-        env:
-          CCACHE_DIR: ${{ env.CCACHE_DIR_ARROW }}
         run: |
           cd apache-arrow
           cmake --build cpp.build
