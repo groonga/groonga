@@ -1799,7 +1799,7 @@ _grn_pat_create(grn_ctx *ctx,
   grn_io *io;
   pat_node_common *node0;
   struct grn_pat_header *header;
-  uint32_t entry_size, w_of_element;
+  uint32_t entry_size;
   grn_encoding encoding = ctx->encoding;
   {
     grn_io_array_spec array_spec[3];
