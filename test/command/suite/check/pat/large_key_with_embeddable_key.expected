@@ -2,7 +2,7 @@ table_create --name Users --flags TABLE_PAT_KEY|KEY_LARGE --key_type ShortText
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key":"Dartagnan"}
+{"_key":"Nicholas"}
 ]
 [[0,0.0,0.0],1]
 check --obj Users
@@ -21,7 +21,7 @@ check --obj Users
       "normalizer": 0,
       "n_entries": 1,
       "curr_rec": 1,
-      "curr_key": 9,
+      "curr_key": 0,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,

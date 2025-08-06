@@ -2,7 +2,7 @@ table_create --name Users --flags TABLE_PAT_KEY|KEY_LARGE --key_type ShortText
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key": "Dartagnan"}
+{"_key": "Nicholas"}
 ]
 [[0,0.0,0.0],1]
 object_inspect --name Users
@@ -29,7 +29,7 @@ object_inspect --name Users
         },
         "size": 4096
       },
-      "total_size": 9,
+      "total_size": 0,
       "max_total_size": 1099511627775
     },
     "value": {

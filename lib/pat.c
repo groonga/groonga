@@ -129,15 +129,19 @@ pat_is_key_large(grn_pat *pat)
 }
 
 static inline bool
-pat_key_is_embeddable(uint32_t key_size)
+pat_key_is_embeddable(grn_pat *pat, uint32_t key_size)
 {
-  return key_size <= sizeof(uint32_t);
+  if (pat_is_key_large(pat)) {
+    return key_size <= sizeof(uint64_t);
+  } else {
+    return key_size <= sizeof(uint32_t);
+  }
 }
 
 static inline uint32_t
-pat_key_storage_size(uint32_t key_size)
+pat_key_storage_size(grn_pat *pat, uint32_t key_size)
 {
-  return pat_key_is_embeddable(key_size) ? 0 : key_size;
+  return pat_key_is_embeddable(pat, key_size) ? 0 : key_size;
 }
 
 static inline grn_id
@@ -1430,7 +1434,7 @@ pat_node_set_key(grn_ctx *ctx,
     return GRN_INVALID_ARGUMENT;
   }
   pat_node_set_key_length(pat, node, len);
-  if (pat_key_is_embeddable(len)) {
+  if (pat_key_is_embeddable(pat, len)) {
     pat_node_set_key_immediate_on(pat, node);
     grn_memcpy(pat_node_get_key_address(pat, node), key, len);
     return GRN_SUCCESS;
@@ -2430,7 +2434,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
                       key_size);
     return ctx->rc;
   }
-  uint32_t key_storage_size = pat_key_storage_size(key_size);
+  uint32_t key_storage_size = pat_key_storage_size(pat, key_size);
   pat->header->garbages[key_storage_size] = pat_node_get_left(pat, node);
   pat_node_set_key_length(pat, node, key_size);
   grn_memcpy(key_buffer, key, key_size);
@@ -2510,7 +2514,7 @@ grn_pat_add_internal(grn_ctx *ctx, grn_pat_add_data *data)
   data->wal_data.key_offset = grn_pat_total_key_size(ctx, pat);
   pat_node_common *node = NULL;
   {
-    uint32_t key_storage_size = pat_key_storage_size(key_size);
+    uint32_t key_storage_size = pat_key_storage_size(pat, key_size);
     if (data->shared_key_offset > 0 && key_storage_size > 0) {
       data->wal_data.shared_key_offset = data->shared_key_offset;
       if (pat->header->garbages[0] != GRN_ID_NIL) {
@@ -2910,7 +2914,7 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
     if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
-    uint32_t key_storage_size = pat_key_storage_size(key_size);
+    uint32_t key_storage_size = pat_key_storage_size(pat, key_size);
     if (!(r = pat->header->garbages[key_storage_size])) {
       r = pat->header->curr_rec + 1;
     }
