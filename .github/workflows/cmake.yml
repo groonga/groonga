@@ -140,8 +140,8 @@ jobs:
           cmake --install apache-arrow/cpp.build
       - name: Set environment variables
         run: |
-          echo "LD_LIBRARY_PATH=${PWD}/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig:${PKG_CONFIG_PATH}" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
       - name: Enable Apache Arrow repository
         if: env.APACHE_ARROW != 'main'
         run: |
