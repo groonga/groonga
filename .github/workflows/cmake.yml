@@ -112,7 +112,7 @@ jobs:
           path: ccache
           key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**', 'apache-arrow/cpp/src/**') }}
           restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-
-      - name: Install packages
+      - name: Install common build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
@@ -170,7 +170,7 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             libarrow-compute-dev \
             libarrow-dev \
-      - name: Install packages for Groonga
+      - name: Install Groonga build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
@@ -211,7 +211,7 @@ jobs:
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - name: Set environment variables for Groonga
+      - name: Set test environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
