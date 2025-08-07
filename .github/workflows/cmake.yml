@@ -123,7 +123,7 @@ jobs:
       - name: Configure Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
-          ccache --show-stats --verbose --version || :
+          ccache --show-stats --verbose --version
           cmake \
             -B apache-arrow/cpp.build \
             -S apache-arrow/cpp \
@@ -133,7 +133,7 @@ jobs:
         if: env.APACHE_ARROW == 'main'
         run: |
           cmake --build apache-arrow/cpp.build
-          ccache --show-stats --verbose || true
+          ccache --show-stats --verbose
       - name: Install Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
@@ -192,7 +192,7 @@ jobs:
             zlib1g-dev
       - name: CMake
         run: |
-          ccache --show-stats --verbose --version || :
+          ccache --show-stats --verbose --version
           cmake \
             -B ../groonga.build \
             -S . \
@@ -207,7 +207,7 @@ jobs:
       - name: Build
         run: |
           ninja -C ../groonga.build
-          ccache --show-stats --verbose --version || :
+          ccache --show-stats --verbose --version
       - name: Install
         run: |
           ninja -C ../groonga.build install
