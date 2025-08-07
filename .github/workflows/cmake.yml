@@ -127,8 +127,7 @@ jobs:
           cmake \
             -B apache-arrow/cpp.build \
             -S apache-arrow/cpp \
-            -GNinja \
-            --preset ninja-release \
+            --preset ninja-debug \
             -DCMAKE_INSTALL_PREFIX=$PWD/install
       - name: Build Apache Arrow
         if: env.APACHE_ARROW == 'main'
