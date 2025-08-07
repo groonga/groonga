@@ -114,7 +114,6 @@ jobs:
           restore-keys: |
             cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-
             cmake-ubuntu-${{ matrix.cc }}-ccache-
-            cmake-ubuntu-ccache-
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
