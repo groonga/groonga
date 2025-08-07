@@ -125,25 +125,22 @@ jobs:
       - name: Configure Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
-          cd apache-arrow
           ccache --show-stats --verbose --version || :
           cmake \
-            -B cpp.build \
-            -S cpp \
+            -B apache-arrow/cpp.build \
+            -S apache-arrow/cpp \
             -GNinja \
             --preset ninja-release \
-            -DCMAKE_INSTALL_PREFIX=../install
+            -DCMAKE_INSTALL_PREFIX=$PWD/install
       - name: Build Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
-          cd apache-arrow
-          cmake --build cpp.build
+          cmake --build apache-arrow/cpp.build
           ccache --show-stats --verbose || true
       - name: Install Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
-          cd apache-arrow
-          cmake --install cpp.build
+          cmake --install apache-arrow/cpp.build
       - name: Set environment variables
         run: |
           echo "LD_LIBRARY_PATH=${PWD}/install/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
