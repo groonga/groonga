@@ -111,10 +111,10 @@ jobs:
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             build-essential \
-            ninja-build \
             ccache \
             cmake \
-            libxsimd-dev
+            libxsimd-dev \
+            ninja-build
       - uses: actions/checkout@v4
         if: matrix.apache-arrow-main == 'yes'
         with:
