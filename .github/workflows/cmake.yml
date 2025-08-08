@@ -89,7 +89,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      APACHE_ARROW: ${{ matrix.apache-arrow }}
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
@@ -107,7 +106,7 @@ jobs:
             ccache \
             cmake
       - uses: actions/checkout@v4
-        if: env.APACHE_ARROW == 'main'
+        if: matrix.apache-arrow == 'main'
         with:
           path: apache-arrow
           repository: apache/arrow
@@ -121,7 +120,7 @@ jobs:
           key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**', 'apache-arrow/cpp/src/**') }}
           restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-
       - name: Configure Apache Arrow
-        if: env.APACHE_ARROW == 'main'
+        if: matrix.apache-arrow == 'main'
         run: |
           ccache --show-stats --verbose --version
           cmake \
@@ -130,12 +129,12 @@ jobs:
             --preset ninja-debug \
             -DCMAKE_INSTALL_PREFIX=$PWD/install
       - name: Build Apache Arrow
-        if: env.APACHE_ARROW == 'main'
+        if: matrix.apache-arrow == 'main'
         run: |
           cmake --build apache-arrow/cpp.build
           ccache --show-stats --verbose
       - name: Install Apache Arrow
-        if: env.APACHE_ARROW == 'main'
+        if: matrix.apache-arrow == 'main'
         run: |
           cmake --install apache-arrow/cpp.build
       - name: Set environment variables
@@ -143,7 +142,7 @@ jobs:
           echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
           echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
       - name: Enable Apache Arrow repository
-        if: env.APACHE_ARROW != 'main'
+        if: matrix.apache-arrow != 'main'
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
@@ -164,7 +163,7 @@ jobs:
           #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
           #   /etc/apt/sources.list.d/apache-arrow.sources
       - name: Install Apache Arrow packages
-        if: env.APACHE_ARROW != 'main'
+        if: matrix.apache-arrow != 'main'
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
