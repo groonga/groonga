@@ -98,6 +98,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Install common build dependencies
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            build-essential \
+            ninja-build \
+            ccache \
+            cmake
       - uses: actions/checkout@v4
         if: env.APACHE_ARROW == 'main'
         with:
@@ -112,14 +120,6 @@ jobs:
           path: ccache
           key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**', 'apache-arrow/cpp/src/**') }}
           restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow }}-ccache-
-      - name: Install common build dependencies
-        run: |
-          sudo apt update -o="APT::Acquire::Retries=3"
-          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            build-essential \
-            ninja-build \
-            ccache \
-            cmake
       - name: Configure Apache Arrow
         if: env.APACHE_ARROW == 'main'
         run: |
