@@ -77,6 +77,9 @@ jobs:
             cxx: g++
           - cc: gcc
             cxx: g++
+            apache-arrow-main: yes
+          - cc: gcc
+            cxx: g++
             mruby: "OFF"
           - cc: clang
             cxx: clang++
@@ -101,9 +104,47 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ccache
-          key: cmake-ubuntu-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: cmake-ubuntu-${{ matrix.cc }}-ccache-
+          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-
+      - name: Install common build dependencies
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            build-essential \
+            ccache \
+            cmake \
+            libxsimd-dev \
+            ninja-build
+      - uses: actions/checkout@v4
+        if: matrix.apache-arrow-main == 'yes'
+        with:
+          path: apache-arrow
+          repository: apache/arrow
+      - name: Configure Apache Arrow
+        if: matrix.apache-arrow-main == 'yes'
+        run: |
+          ccache --show-stats --verbose --version
+          cmake \
+            -B apache-arrow/cpp.build \
+            -S apache-arrow/cpp \
+            --preset ninja-debug-minimal \
+            -DARROW_COMPUTE=ON \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install
+      - name: Build Apache Arrow
+        if: matrix.apache-arrow-main == 'yes'
+        run: |
+          cmake --build apache-arrow/cpp.build
+          ccache --show-stats --verbose
+      - name: Install Apache Arrow
+        if: matrix.apache-arrow-main == 'yes'
+        run: |
+          cmake --install apache-arrow/cpp.build
+      - name: Set environment variables
+        run: |
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
       - name: Enable Apache Arrow repository
+        if: matrix.apache-arrow-main != 'yes'
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
@@ -123,16 +164,19 @@ jobs:
           #   -i"" \
           #   -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
           #   /etc/apt/sources.list.d/apache-arrow.sources
-      - name: Install packages
+      - name: Install Apache Arrow packages
+        if: matrix.apache-arrow-main != 'yes'
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            ccache \
-            cmake \
-            gdb \
-            gettext \
             libarrow-compute-dev \
             libarrow-dev \
+      - name: Install Groonga build dependencies
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            gdb \
+            gettext \
             libedit-dev \
             libevent-dev \
             libluajit-5.1-dev \
@@ -144,13 +188,12 @@ jobs:
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
-            ninja-build \
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
       - name: CMake
         run: |
-          ccache --show-stats --verbose --version || :
+          ccache --show-stats --verbose --version
           cmake \
             -B ../groonga.build \
             -S . \
@@ -165,15 +208,13 @@ jobs:
       - name: Build
         run: |
           ninja -C ../groonga.build
-          ccache --show-stats --verbose --version || :
+          ccache --show-stats --verbose --version
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - name: Set environment variables
+      - name: Set test environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
