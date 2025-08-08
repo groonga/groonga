@@ -126,7 +126,8 @@ jobs:
           cmake \
             -B apache-arrow/cpp.build \
             -S apache-arrow/cpp \
-            --preset ninja-debug \
+            --preset ninja-debug-minimal \
+            -DARROW_COMPUTE=ON \
             -DCMAKE_INSTALL_PREFIX=$PWD/install
       - name: Build Apache Arrow
         if: matrix.apache-arrow-main == 'yes'
