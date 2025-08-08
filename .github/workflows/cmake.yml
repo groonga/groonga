@@ -97,6 +97,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ccache
+          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-
       - name: Install common build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
@@ -110,15 +119,6 @@ jobs:
         with:
           path: apache-arrow
           repository: apache/arrow
-      - name: Prepare ccache
-        run: |
-          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
-      - name: Cache ccache
-        uses: actions/cache@v4
-        with:
-          path: ccache
-          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**', 'apache-arrow/cpp/src/**') }}
-          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-
       - name: Configure Apache Arrow
         if: matrix.apache-arrow-main == 'yes'
         run: |
