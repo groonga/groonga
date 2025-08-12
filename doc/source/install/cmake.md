@@ -273,8 +273,8 @@ Now, you can build Groonga.
 Here is a command line to build and install Groonga.
 
 ```console
-$ cmake --build -B <Build directory path>
-$ sudo cmake --install -B <Build directory path>
+$ cmake --build <Build directory path>
+$ sudo cmake --install <Build directory path>
 ```
 
 ### Windows
