@@ -1816,15 +1816,16 @@ _grn_pat_create(grn_ctx *ctx,
     array_spec[SEGMENT_PAT].w_of_element = needed_bits_of_pat_entry;
     array_spec[SEGMENT_PAT].max_n_segments =
       1 << (30 - (22 - needed_bits_of_pat_entry));
+    uint32_t sis_entry_size;
     if (flags & GRN_OBJ_KEY_WITH_SIS) {
-      entry_size = sizeof(sis_node) + value_size;
+      sis_entry_size = sizeof(sis_node) + value_size;
     } else {
-      entry_size = value_size;
+      sis_entry_size = value_size;
     }
-    needed_bits_of_pat_entry = compute_needed_bits(entry_size);
-    array_spec[SEGMENT_SIS].w_of_element = needed_bits_of_pat_entry;
+    uint32_t needed_bits_of_sis_entry = compute_needed_bits(sis_entry_size);
+    array_spec[SEGMENT_SIS].w_of_element = needed_bits_of_sis_entry;
     array_spec[SEGMENT_SIS].max_n_segments =
-      1 << (30 - (22 - needed_bits_of_pat_entry));
+      1 << (30 - (22 - needed_bits_of_sis_entry));
     io = grn_io_create_with_array(ctx,
                                   path,
                                   sizeof(struct grn_pat_header),
