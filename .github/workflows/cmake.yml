@@ -675,6 +675,11 @@ jobs:
           - runs-on: windows-2022
             vc-toolset-version: 143
             vs-version: 2022
+            warn_conversion: OFF
+          - runs-on: windows-2022
+            vc-toolset-version: 143
+            vs-version: 2022
+            warn_conversion: ON
     env:
       VC_ARCHITECTURE: x64
     runs-on: ${{ matrix.runs-on }}
@@ -803,6 +808,7 @@ jobs:
           ccache --show-stats --verbose --version
       - name: Install Groonga
         shell: cmd
+        continue-on-error: ${{ matrix.warn_conversion == 'ON' }}
         run: |
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" %VC_ARCHITECTURE%
           set CMAKE_ARGS=-S .
@@ -811,6 +817,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=OFF
+          set CMAKE_ARGS=%CMAKE_ARGS% "-DGRN_WARN_CONVERSION=${{ matrix.warn_conversion }}"
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=ON
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_BLOSC=auto
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_MRUBY=ON
@@ -823,6 +830,7 @@ jobs:
           cmake --install ..\groonga-build || exit /B
           ccache --show-stats --verbose --version
       - name: Install Groonga Admin
+        if: matrix.warn_conversion == 'OFF'
         run: |
           cd "${Env:FULL_INSTALL_FOLDER}\share\groonga\html"
           Move-Item admin admin.old
@@ -837,6 +845,7 @@ jobs:
 
       # Artifact
       - name: Compress the artifact without VC++ runtime
+        if: matrix.warn_conversion == 'OFF'
         run: |
           pushd "${Env:FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
@@ -847,10 +856,12 @@ jobs:
             "${Env:FULL_INSTALL_FOLDER}.zip" `
             "${Env:INSTALL_FOLDER}.zip"
       - uses: actions/upload-artifact@v4
+        if: matrix.warn_conversion == 'OFF'
         with:
           name: release-${{ env.INSTALL_FOLDER }}
           path: ${{ env.INSTALL_FOLDER }}.zip
       - name: Prepare artifacts with VC++ runtime
+        if: matrix.warn_conversion == 'OFF'
         run: |
           Set-PSDebug -Trace 2
 
@@ -899,6 +910,7 @@ jobs:
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             ${GROONGA_VC_REDIST_LICENSE_DIR}
       - name: Compress the artifact with VC++ runtime
+        if: matrix.warn_conversion == 'OFF'
         run: |
           pushd "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\.."
           Compress-Archive `
@@ -909,15 +921,18 @@ jobs:
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip" `
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
       - uses: actions/upload-artifact@v4
+        if: matrix.warn_conversion == 'OFF'
         with:
           name: release-${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
           path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
 
       # Test
       - uses: ruby/setup-ruby@v1
+        if: matrix.warn_conversion == 'OFF'
         with:
           ruby-version: ruby
       - name: Install test dependencies
+        if: matrix.warn_conversion == 'OFF'
         run: |
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
           gem install `
@@ -925,10 +940,12 @@ jobs:
             pkg-config `
             red-arrow
       - name: "Test: command line"
+        if: matrix.warn_conversion == 'OFF'
         run: |
           ruby test\command_line\run-test.rb `
             --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: "Test: HTTP: reference count: Apache Arrow: chunked"
+        if: matrix.warn_conversion == 'OFF'
         run: |
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
           grntest `
