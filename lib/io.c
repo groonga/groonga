@@ -1440,6 +1440,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
   if (!io) { return GRN_INVALID_ARGUMENT; }
   for (count = 0;; count++) {
     uint32_t lock;
+    if (!io) { return GRN_INVALID_ARGUMENT; }
     GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
     if (lock) {
       GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
