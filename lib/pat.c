@@ -1777,6 +1777,17 @@ delinfo_new(grn_ctx *ctx,
 
 /* pat operation */
 
+static inline uint32_t
+compute_needed_bits(uint32_t size_in_byte)
+{
+  uint32_t needed_bits;
+  for (needed_bits = 0; (size_t)(1 << needed_bits) < size_in_byte;
+       needed_bits++) {
+    /* nop */
+  }
+  return needed_bits;
+}
+
 static inline grn_pat *
 _grn_pat_create(grn_ctx *ctx,
                 grn_pat *pat,
@@ -1788,31 +1799,32 @@ _grn_pat_create(grn_ctx *ctx,
   grn_io *io;
   pat_node_common *node0;
   struct grn_pat_header *header;
-  uint32_t entry_size, w_of_element;
   grn_encoding encoding = ctx->encoding;
-  if (flags & GRN_OBJ_KEY_WITH_SIS) {
-    entry_size = sizeof(sis_node) + value_size;
-  } else {
-    entry_size = value_size;
-  }
-  for (w_of_element = 0; (uint32_t)(1 << w_of_element) < entry_size;
-       w_of_element++) {
-    /* nop */
-  }
   {
     grn_io_array_spec array_spec[3];
+    uint32_t pat_entry_size, needed_bits_of_pat_entry;
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
-      array_spec[SEGMENT_PAT].w_of_element = 5;
-      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 5));
+      pat_entry_size = sizeof(pat_node_large);
     } else {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS;
-      array_spec[SEGMENT_PAT].w_of_element = 4;
-      array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
+      pat_entry_size = sizeof(pat_node);
     }
-    array_spec[SEGMENT_SIS].w_of_element = w_of_element;
-    array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
+    needed_bits_of_pat_entry = compute_needed_bits(pat_entry_size);
+    array_spec[SEGMENT_PAT].w_of_element = needed_bits_of_pat_entry;
+    array_spec[SEGMENT_PAT].max_n_segments =
+      1 << (30 - (22 - needed_bits_of_pat_entry));
+    uint32_t sis_entry_size;
+    if (flags & GRN_OBJ_KEY_WITH_SIS) {
+      sis_entry_size = sizeof(sis_node) + value_size;
+    } else {
+      sis_entry_size = value_size;
+    }
+    uint32_t needed_bits_of_sis_entry = compute_needed_bits(sis_entry_size);
+    array_spec[SEGMENT_SIS].w_of_element = needed_bits_of_sis_entry;
+    array_spec[SEGMENT_SIS].max_n_segments =
+      1 << (30 - (22 - needed_bits_of_sis_entry));
     io = grn_io_create_with_array(ctx,
                                   path,
                                   sizeof(struct grn_pat_header),
