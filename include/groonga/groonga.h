@@ -52,12 +52,11 @@ typedef __bf16 grn_bfloat16;
 /**
  * \brief Means "does not exist"
  */
-#define GRN_ID_NIL        (0x00)
-#define GRN_ID_MAX        (0x3fffffff)
-#define GRN_ID_MAX_IN_BIT 30 /* log2(GRN_ID_MAX + 1) == 30 */
+#define GRN_ID_NIL (0x00)
+#define GRN_ID_MAX (0x3fffffff)
 
-#define GRN_TRUE          true
-#define GRN_FALSE         false
+#define GRN_TRUE   true
+#define GRN_FALSE  false
 
 typedef enum {
   /// Success (0)
