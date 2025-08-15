@@ -1799,11 +1799,10 @@ _grn_pat_create(grn_ctx *ctx,
   grn_io *io;
   pat_node_common *node0;
   struct grn_pat_header *header;
-  uint32_t pat_entry_size;
   grn_encoding encoding = ctx->encoding;
   {
     grn_io_array_spec array_spec[3];
-    uint32_t needed_bits_of_pat_entry;
+    uint32_t pat_entry_size, needed_bits_of_pat_entry;
     array_spec[SEGMENT_KEY].w_of_element = 0;
     if (flags & GRN_OBJ_KEY_LARGE) {
       array_spec[SEGMENT_KEY].max_n_segments = GRN_PAT_MAX_N_SEGMENTS_LARGE;
