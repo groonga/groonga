@@ -28,8 +28,7 @@
 extern "C" {
 #endif
 
-#define GRN_PAT_MAX_KEY_SIZE       GRN_TABLE_MAX_KEY_SIZE
-#define GRN_PAT_MAX_TOTAL_KEY_SIZE (UINT32_MAX - 1)
+#define GRN_PAT_MAX_KEY_SIZE GRN_TABLE_MAX_KEY_SIZE
 
 struct _grn_pat {
   grn_db_obj obj;

@@ -49,6 +49,7 @@
 /* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB:
    GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
 #define GRN_PAT_MAX_N_SEGMENTS_LARGE 0x40000
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE   (UINT32_MAX - 1)
 #define GRN_PAT_MAX_TOTAL_KEY_SIZE_LARGE                                       \
   ((uint64_t)GRN_PAT_SEGMENT_SIZE * (uint64_t)GRN_PAT_MAX_N_SEGMENTS_LARGE -   \
    1) // 1TiB - 1 (-1 is initial curr_key value)
