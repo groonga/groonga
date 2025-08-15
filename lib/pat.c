@@ -55,8 +55,6 @@
 #define GRN_PAT_MDELINFOS           (GRN_PAT_NDELINFOS - 1)
 
 #define GRN_PAT_BIN_KEY             0x70000
-
-#define GRN_ID_MAX_IN_BIT           30 /* log2(GRN_ID_MAX + 1) == 30 */
 #define GRN_PAT_SEGMENT_SIZE_IN_BIT 22 /* log2(GRN_PAT_SEGMENT_SIZE) == 22 */
 
 typedef enum {
