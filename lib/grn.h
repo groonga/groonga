@@ -755,4 +755,6 @@ grn_nanosleep(uint64_t nanoseconds);
 }
 #endif
 
+#define GRN_ID_MAX_IN_BIT 30 /* log2(GRN_ID_MAX + 1) == 30 */
+
 #include <groonga.h>

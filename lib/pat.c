@@ -49,12 +49,15 @@
 /* If we use GRN_PAT_MAX_N_SEGMENTS_LARGE, max total key size is 1TiB:
    GRN_PAT_SEGMENT_SIZE * 0x40000 = 1TiB */
 #define GRN_PAT_MAX_N_SEGMENTS_LARGE 0x40000
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE   (UINT32_MAX - 1)
 #define GRN_PAT_MAX_TOTAL_KEY_SIZE_LARGE                                       \
   ((uint64_t)GRN_PAT_SEGMENT_SIZE * (uint64_t)GRN_PAT_MAX_N_SEGMENTS_LARGE -   \
    1) // 1TiB - 1 (-1 is initial curr_key value)
-#define GRN_PAT_MDELINFOS (GRN_PAT_NDELINFOS - 1)
+#define GRN_PAT_MDELINFOS           (GRN_PAT_NDELINFOS - 1)
 
-#define GRN_PAT_BIN_KEY   0x70000
+#define GRN_PAT_BIN_KEY             0x70000
+
+#define GRN_PAT_SEGMENT_SIZE_IN_BIT 22 /* log2(GRN_PAT_SEGMENT_SIZE) == 22 */
 
 typedef enum {
   DIRECTION_LEFT = 0,
@@ -1814,7 +1817,8 @@ _grn_pat_create(grn_ctx *ctx,
     needed_bits_of_pat_entry = compute_needed_bits(pat_entry_size);
     array_spec[SEGMENT_PAT].w_of_element = needed_bits_of_pat_entry;
     array_spec[SEGMENT_PAT].max_n_segments =
-      1 << (30 - (22 - needed_bits_of_pat_entry));
+      1 << (GRN_ID_MAX_IN_BIT -
+            (GRN_PAT_SEGMENT_SIZE_IN_BIT - needed_bits_of_pat_entry));
     uint32_t sis_entry_size;
     if (flags & GRN_OBJ_KEY_WITH_SIS) {
       sis_entry_size = sizeof(sis_node) + value_size;
@@ -1824,7 +1828,8 @@ _grn_pat_create(grn_ctx *ctx,
     uint32_t needed_bits_of_sis_entry = compute_needed_bits(sis_entry_size);
     array_spec[SEGMENT_SIS].w_of_element = needed_bits_of_sis_entry;
     array_spec[SEGMENT_SIS].max_n_segments =
-      1 << (30 - (22 - needed_bits_of_sis_entry));
+      1 << (GRN_ID_MAX_IN_BIT -
+            (GRN_PAT_SEGMENT_SIZE_IN_BIT - needed_bits_of_sis_entry));
     io = grn_io_create_with_array(ctx,
                                   path,
                                   sizeof(struct grn_pat_header),
