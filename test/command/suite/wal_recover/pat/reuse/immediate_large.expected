@@ -1,0 +1,197 @@
+table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        256
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "5B>=:100"
+      ],
+      [
+        2,
+        "5B>=:101"
+      ],
+      [
+        3,
+        "5B>=:102"
+      ],
+      [
+        4,
+        "5B>=:103"
+      ],
+      [
+        5,
+        "5B>=:104"
+      ],
+      [
+        6,
+        "5B>=:105"
+      ],
+      [
+        7,
+        "5B>=:106"
+      ],
+      [
+        8,
+        "5B>=:107"
+      ],
+      [
+        9,
+        "5B>=:108"
+      ],
+      [
+        10,
+        "5B>=:109"
+      ]
+    ]
+  ]
+]
+io_flush
+[[0,0.0,0.0],true]
+delete Data --filter true
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+load --table Data
+[
+{"_key":"5B>=:101"},
+{"_key":"5B>=:102"}
+]
+[[0,0.0,0.0],2]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "5B>=:101"
+      ],
+      [
+        257,
+        "5B>=:102"
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0001C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 2,
+      "curr_rec": 257,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 128,
+      "curr_del3": 1,
+      "n_garbages": 255
+    }
+  ]
+]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "5B>=:101"
+      ],
+      [
+        257,
+        "5B>=:102"
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0001C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 2,
+      "curr_rec": 257,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 128,
+      "curr_del3": 1,
+      "n_garbages": 255
+    }
+  ]
+]
