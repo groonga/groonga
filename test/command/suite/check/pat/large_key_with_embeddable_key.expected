@@ -14,7 +14,7 @@ check --obj Users
   ],
   [
     {
-      "flags": "0000C801",
+      "flags": "0001C001",
       "key size": 4096,
       "value_size": 0,
       "tokenizer": 0,

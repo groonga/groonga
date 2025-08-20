@@ -18,7 +18,7 @@ check --obj Data
   ],
   [
     {
-      "flags": "0000C800",
+      "flags": "0001C000",
       "key_size": 4096,
       "value_size": 0,
       "tokenizer": 0,
@@ -50,7 +50,7 @@ check --obj Data
   ],
   [
     {
-      "flags": "0000C800",
+      "flags": "0001C000",
       "key_size": 4096,
       "value_size": 0,
       "tokenizer": 0,
