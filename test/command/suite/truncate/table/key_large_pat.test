@@ -1,0 +1,13 @@
+table_create Diaries TABLE_PAT_KEY|KEY_LARGE ShortText
+column_create Diaries content COLUMN_SCALAR Text
+
+load --table Diaries
+[
+{"_key": "2015-02-20", "content": "I tried Groonga."}
+]
+
+dump
+
+truncate Diaries
+
+dump
