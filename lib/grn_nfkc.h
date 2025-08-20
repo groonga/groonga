@@ -61,6 +61,7 @@ typedef struct {
   bool unify_kana_hyphen;
   bool unify_kana_prolonged_sound_mark;
   bool unify_katakana_trailing_o;
+  bool unify_iteration_mark;
   bool unify_to_romaji;
   bool unify_to_katakana;
   bool remove_blank;

@@ -1,0 +1,18 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "かゝみ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "かゝみ",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "null"
+    ],
+    "checks": []
+  }
+]
