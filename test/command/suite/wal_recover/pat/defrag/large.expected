@@ -2,12 +2,12 @@ table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
 [[0,0.0,0.0],true]
 load --table Data
 [
-{"_key": "5B>=: Groonga"},
-{"_key": "4B<="},
-{"_key": "5B>=: Normal"}
+{"_key": "9B>=: Groonga and Mroonga"},
+{"_key": "8B<="},
+{"_key": "9B>=: Key large normal"}
 ]
 [[0,0.0,0.0],3]
-delete Data "5B>=: Groonga"
+delete Data "9B>=: Groonga and Mroonga"
 [[0,0.0,0.0],true]
 io_flush
 [[0,0.0,0.0],true]
@@ -27,7 +27,7 @@ check --obj Data
       "normalizer": 0,
       "n_entries": 2,
       "curr_rec": 3,
-      "curr_key": 25,
+      "curr_key": 47,
       "curr_del": 1,
       "curr_del2": 0,
       "curr_del3": 0,
@@ -61,11 +61,11 @@ select Data
       ],
       [
         2,
-        "4B<="
+        "8B<="
       ],
       [
         3,
-        "5B>=: Normal"
+        "9B>=: Key large normal"
       ]
     ]
   ]
@@ -86,7 +86,7 @@ check --obj Data
       "normalizer": 0,
       "n_entries": 2,
       "curr_rec": 3,
-      "curr_key": 12,
+      "curr_key": 22,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
@@ -114,7 +114,7 @@ check --obj Data
       "normalizer": 0,
       "n_entries": 2,
       "curr_rec": 3,
-      "curr_key": 12,
+      "curr_key": 22,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
@@ -124,7 +124,7 @@ check --obj Data
 ]
 load --table Data
 [
-{"_key": "5B>=: PGroonga"}
+{"_key": "9B>=: PGroonga and Groonga"}
 ]
 [[0,0.0,0.0],1]
 select Data
@@ -151,15 +151,15 @@ select Data
       ],
       [
         2,
-        "4B<="
+        "8B<="
       ],
       [
         3,
-        "5B>=: Normal"
+        "9B>=: Key large normal"
       ],
       [
         4,
-        "5B>=: PGroonga"
+        "9B>=: PGroonga and Groonga"
       ]
     ]
   ]

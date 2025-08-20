@@ -19,7 +19,7 @@ io_flush
 
 load --table Data
 [
-{"_key": "4B<= :AA"}
+{"_key": "8B<= :AA"}
 ]
 
 select Data

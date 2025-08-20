@@ -4,11 +4,11 @@ io_flush
 [[0,0.0,0.0],true]
 load --table Data
 [
-{"_key": "4B<= :AA"}
+{"_key": "8B<= :AA"}
 ]
 [[0,0.0,0.0],1]
 select Data
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"4B<= :AA"]]]]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"8B<= :AA"]]]]
 check --obj Data
 [
   [
@@ -38,7 +38,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 select Data
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"4B<= :AA"]]]]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"8B<= :AA"]]]]
 check --obj Data
 [
   [

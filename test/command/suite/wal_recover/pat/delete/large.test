@@ -16,7 +16,7 @@ table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
 
 load --table Data
 [
-{"_key": "5B>=: Normal"}
+{"_key": "9B>=: Key large Normal"}
 ]
 
 io_flush

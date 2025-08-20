@@ -17,7 +17,7 @@ table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
 #@disable-logging
 # at least GRN_PAT_MDELINFOS (256) records are required to use delete
 # info phase3.
-#@generate-series 1 256 Data '{"_key" => "5B>=: AA#{i}"}'
+#@generate-series 1 256 Data '{"_key" => "9B>=: AA#{i}"}'
 #@enable-logging
 
 select Data
@@ -29,7 +29,7 @@ delete Data --filter true
 
 select Data
 
-#@generate-series 1 2 Data '{"_key" => "5B>=: AA#{i}"}'
+#@generate-series 1 2 Data '{"_key" => "9B>=: AA#{i}"}'
 
 select Data
 
