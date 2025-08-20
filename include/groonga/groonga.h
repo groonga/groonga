@@ -819,7 +819,7 @@ typedef uint32_t grn_column_flags;
 
 /* flags only for grn_table_flags */
 
-#define GRN_OBJ_KEY_LARGE (0x01 << 16)
+#define GRN_OBJ_KEY_LARGE (0x01 << 11)
 
 /* flags only for grn_column_flags */
 
