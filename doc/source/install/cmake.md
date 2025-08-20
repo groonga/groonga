@@ -294,3 +294,21 @@ Here is a command line to build and install Groonga by `cmake
 
 You should specify `--config Debug` instead of `--config Release` when
 debugging.
+
+### Options for use in the build
+
+#### Maximum number of concurrent processes
+
+You can specify the maximum number of concurrent processes using the environment variable `CMAKE_BUILD_PARALLEL_LEVEL` or `--parallel` option.
+
+Specifying this option helps to build efficiently by utilizing multi core CPUs.
+
+Command example for GNU/Linux or UNIX:
+
+```console
+$ CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) cmake --build <Build directory path>
+```
+
+```console
+$ cmake --build <Build directory path> --parallel $(nproc)
+```

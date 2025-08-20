@@ -222,3 +222,15 @@ msgstr "以下は `cmake --build` を使ってGroongaをビルド、インスト
 
 msgid "You should specify `--config Debug` instead of `--config Release` when debugging."
 msgstr "デバッグをする場合は、 `--config Release` の代わりに `--config Debug` を指定してください。"
+
+msgid "Options for use in the build"
+msgstr "ビルドのときに使えるオプション"
+
+msgid "Maximum number of concurrent processes"
+msgstr "同時に実行するプロセスの最大数"
+
+msgid "You can specify the maximum number of concurrent processes using the environment variable `CMAKE_BUILD_PARALLEL_LEVEL` or `--parallel` option."
+msgstr "環境変数 `CMAKE_BUILD_PARALLEL_LEVEL` か `--parallel` オプションを使って、同時に実行するプロセスの最大数を指定できます。"
+
+msgid "Specifying this option helps to build efficiently by utilizing multi core CPUs."
+msgstr "マルチコアCPUを活かして効率的にビルドすることができます。"
