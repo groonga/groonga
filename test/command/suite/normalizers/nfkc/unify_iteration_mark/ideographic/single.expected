@@ -1,0 +1,17 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "時々"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "時時",
+    "types": [
+      "kanji",
+      "kanji",
+      "null"
+    ],
+    "checks": []
+  }
+]
