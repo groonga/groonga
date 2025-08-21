@@ -74,6 +74,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_kana_hyphen = false;
   options->unify_kana_prolonged_sound_mark = false;
   options->unify_katakana_trailing_o = false;
+  options->unify_iteration_mark = false;
   options->unify_to_romaji = false;
   options->unify_to_katakana = false;
   options->remove_blank = false;
@@ -396,6 +397,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_trailing_o);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_iteration_mark")) {
+      options->unify_iteration_mark =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_iteration_mark);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_to_romaji")) {
       options->unify_to_romaji =
         grn_vector_get_element_bool(ctx,

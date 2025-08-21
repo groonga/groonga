@@ -3429,6 +3429,23 @@ grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
 }
 
 static const unsigned char *
+grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
+                                        const unsigned char *start,
+                                        const unsigned char *current,
+                                        const unsigned char *end,
+                                        size_t *n_used_bytes,
+                                        size_t *n_used_characters,
+                                        unsigned char *unified_buffer,
+                                        size_t *n_unified_bytes,
+                                        size_t *n_unified_characters,
+                                        void *user_data)
+{
+  /* TODO: Implement iteration mark (踊り字) expansion.
+   * For now, just return the current position unchanged. */
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_strip(grn_ctx *ctx,
                          const unsigned char *start,
                          const unsigned char *current,
@@ -3846,6 +3863,23 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
       grn_nfkc_normalize_unify_katakana_trailing_o,
       &need_trailing_check,
       "[unify][katakana-trailing-o]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = true;
+  }
+
+  if (data->options->unify_iteration_mark) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_iteration_mark,
+                                      NULL,
+                                      "[unify][iteration_mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
