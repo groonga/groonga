@@ -2120,7 +2120,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   }
   key_size = pat->key_size;
   value_size = pat->value_size;
-  flags = pat->obj.header.flags;
+  flags = pat->header->flags;
   if (path) {
     pat->header->truncated = true;
   }

@@ -2263,7 +2263,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   }
   key_size = hash->key_size;
   value_size = hash->value_size;
-  flags = hash->obj.header.flags;
+  flags = hash->header.common->flags;
 
   if (grn_hash_is_io_hash(hash)) {
     if (path) {
