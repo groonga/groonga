@@ -538,7 +538,7 @@ module Groonga
 
           suffixes = [
             "",
-            ".0000000"
+            ".0000000",
             ".001",
             ".conf",
             ".options",
