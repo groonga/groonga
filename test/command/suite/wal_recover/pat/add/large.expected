@@ -4,38 +4,11 @@ io_flush
 [[0,0.0,0.0],true]
 load --table Data
 [
-{"_key": "9B>=: Key large normal"}
+{"_key": "_key>= 9B"}
 ]
 [[0,0.0,0.0],1]
 select Data
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        1,
-        "9B>=: Key large normal"
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"_key>= 9B"]]]]
 check --obj Data
 [
   [
@@ -52,7 +25,7 @@ check --obj Data
       "normalizer": 0,
       "n_entries": 1,
       "curr_rec": 1,
-      "curr_key": 22,
+      "curr_key": 9,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,
@@ -65,34 +38,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 select Data
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        1,
-        "9B>=: Key large normal"
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"_key>= 9B"]]]]
 check --obj Data
 [
   [
@@ -109,7 +55,7 @@ check --obj Data
       "normalizer": 0,
       "n_entries": 1,
       "curr_rec": 1,
-      "curr_key": 22,
+      "curr_key": 9,
       "curr_del": 0,
       "curr_del2": 0,
       "curr_del3": 0,

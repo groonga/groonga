@@ -16,11 +16,11 @@ table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
 
 load --table Data
 [
-{"_key": "9B>=: Groonga and Mroonga"},
-{"_key": "8B<="},
-{"_key": "9B>=: Key large normal"}
+{"_key": "_key>= 9B"},
+{"_key": "_key<=8B"},
+{"_key": "_key >= 9B"}
 ]
-delete Data "9B>=: Groonga and Mroonga"
+delete Data "_key>= 9B"
 
 io_flush
 #@copy-path #{db_path}.0000100 #{db_path}.0000100.initial
@@ -29,7 +29,7 @@ check --obj Data
 
 defrag Data
 
-select Data
+select Data --sort_keys _id
 
 check --obj Data
 
@@ -45,6 +45,6 @@ check --obj Data
 # Test for successfully loading after defragmentation recovery.
 load --table Data
 [
-{"_key": "9B>=: PGroonga and Groonga"}
+{"_key": "_key>= 9B"}
 ]
-select Data
+select Data --sort_keys _id

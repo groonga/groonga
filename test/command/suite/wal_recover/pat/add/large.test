@@ -19,7 +19,7 @@ io_flush
 
 load --table Data
 [
-{"_key": "9B>=: Key large normal"}
+{"_key": "_key>= 9B"}
 ]
 
 select Data
