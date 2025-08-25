@@ -1,0 +1,197 @@
+table_create Data TABLE_PAT_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        256
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "_key >= 9B:100"
+      ],
+      [
+        2,
+        "_key >= 9B:101"
+      ],
+      [
+        3,
+        "_key >= 9B:102"
+      ],
+      [
+        4,
+        "_key >= 9B:103"
+      ],
+      [
+        5,
+        "_key >= 9B:104"
+      ],
+      [
+        6,
+        "_key >= 9B:105"
+      ],
+      [
+        7,
+        "_key >= 9B:106"
+      ],
+      [
+        8,
+        "_key >= 9B:107"
+      ],
+      [
+        9,
+        "_key >= 9B:108"
+      ],
+      [
+        10,
+        "_key >= 9B:109"
+      ]
+    ]
+  ]
+]
+io_flush
+[[0,0.0,0.0],true]
+delete Data --filter true
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+load --table Data
+[
+{"_key":"_key >= 9B:101"},
+{"_key":"_key >= 9B:102"}
+]
+[[0,0.0,0.0],2]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "_key >= 9B:101"
+      ],
+      [
+        257,
+        "_key >= 9B:102"
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0001C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 2,
+      "curr_rec": 257,
+      "curr_key": 3598,
+      "curr_del": 0,
+      "curr_del2": 128,
+      "curr_del3": 1,
+      "n_garbages": 255
+    }
+  ]
+]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "_key >= 9B:101"
+      ],
+      [
+        257,
+        "_key >= 9B:102"
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0001C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 2,
+      "curr_rec": 257,
+      "curr_key": 3598,
+      "curr_del": 0,
+      "curr_del2": 128,
+      "curr_del3": 1,
+      "n_garbages": 255
+    }
+  ]
+]
