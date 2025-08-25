@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -347,16 +347,12 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   DB_OBJ(&s->obj)->range = GRN_ID_NIL;
   /* prepare builtin classes and load builtin plugins. */
   if (path) {
-    {
-      char specs_path[PATH_MAX];
-      gen_pathname(path, specs_path, 0);
-      s->specs = grn_ja_create(ctx, specs_path, 65536, 0);
-      if (!s->specs) {
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "failed to create specs: <%s>",
-            specs_path);
-        goto exit;
-      }
+    char specs_path[PATH_MAX];
+    gen_pathname(path, specs_path, 0);
+    s->specs = grn_ja_create(ctx, specs_path, 65536, 0);
+    if (!s->specs) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "failed to create specs: <%s>", specs_path);
+      goto exit;
     }
   }
 
