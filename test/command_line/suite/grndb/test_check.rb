@@ -897,7 +897,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    ])
     end
 
-    def test_database_objects
+    def test_database_specs
       remove_groonga_log
       FileUtils.touch("#{@database_path}.0000000",
                       mtime: Time.now - (6 * @seconds_per_day))
@@ -925,7 +925,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    ])
     end
 
-    def test_database_specs
+    def test_database_keys_sub_file
       remove_groonga_log
       FileUtils.touch("#{@database_path}.001",
                       mtime: Time.now - (6 * @seconds_per_day))
