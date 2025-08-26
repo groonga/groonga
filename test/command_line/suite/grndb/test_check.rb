@@ -899,6 +899,34 @@ Empty file exists: <#{empty_file_path_no_object}>
 
     def test_database_specs
       remove_groonga_log
+      FileUtils.touch("#{@database_path}.0000000",
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-7d")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_database_keys_sub_file
+      remove_groonga_log
       FileUtils.touch("#{@database_path}.001",
                       mtime: Time.now - (6 * @seconds_per_day))
       adjust_start_time
