@@ -10,6 +10,28 @@ We distribute only 64-bit packages.
 
 .. include:: server-use.rst
 
+AlmaLinux 10
+------------
+
+Install
+
+.. code-block:: console
+
+   % sudo dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/10/apache-arrow-release-latest.rpm
+   % sudo dnf install -y https://packages.groonga.org/almalinux/10/groonga-release-latest.noarch.rpm
+   % sudo dnf install -y --enablerepo=epel --enablerepo=crb groonga
+
+If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo dnf install -y --enablerepo=epel groonga-tokenizer-mecab
+
+TODO:
+
+- Write here how to install groonga-normalizer-mysql package after groonga-normalizer-mysql released for AlmaLinux 10.
+
 AlmaLinux 9
 -----------
 

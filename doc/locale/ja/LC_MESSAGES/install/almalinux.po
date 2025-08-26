@@ -25,7 +25,7 @@ msgstr "このセクションではAlmaLinux OS上でGroonga関連のRPMパッ�
 msgid "We distribute only 64-bit packages."
 msgstr "64-bit用のパッケージのみ配布しています。"
 
-msgid "AlmaLinux 9"
+msgid "AlmaLinux 10"
 msgstr ""
 
 msgid "Install"
@@ -36,6 +36,15 @@ msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーと�
 
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+
+msgid "TODO:"
+msgstr ""
+
+msgid "Write here how to install groonga-normalizer-mysql package after groonga-normalizer-mysql released for AlmaLinux 10."
+msgstr "AlmaLinux 10用の groonga-normalizer-mysql パッケージがリリースされた後、 groonga-normalizer-mysql のインストール方法をここに書きます。"
+
+msgid "AlmaLinux 9"
+msgstr ""
 
 msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install groonga-normalizer-mysql package."
 msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッケージをインストールしてください。"
