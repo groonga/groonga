@@ -37,8 +37,8 @@ msgstr "キーに格納した値の合計サイズの上限値："
 msgid "4GiB by default."
 msgstr "デフォルトは4GiB。"
 
-msgid "1TiB by specifying ``KEY_LARGE`` flag to :ref:`table-create-flags`. ``KEY_LARGE`` can be used only with :ref:`table-hash-key`."
-msgstr ":ref:`table-create-flags` に ``KEY_LARGE`` フラグを指定すると1TiB。ただし、 ``KEY_LARGE`` は :ref:`table-hash-key` でしか使えない。"
+msgid "1TiB by specifying ``KEY_LARGE`` flag to :ref:`table-create-flags`. ``KEY_LARGE`` can be used with :ref:`table-hash-key` or :ref:`table-pat-key`. However, ``KEY_LARGE`` with ``TABLE_PAT_KEY`` supports version 15.1.5 or later."
+msgstr ":ref:`table-create-flags` に ``KEY_LARGE`` を指定すると1TiB。 ``KEY_LARGE`` は :ref:`table-hash-key` or :ref:`table-pat-key` で使える。 ただし、 ``TABLE_PAT_KEY`` に ``KEY_LARGE`` が使えるのは、 15.1.5 以降のバージョン。"
 
 msgid "The maximum number of records:"
 msgstr "最大レコード数："
