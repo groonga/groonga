@@ -96,7 +96,7 @@ The ``table_create`` command creates a table that is named ``Paths``
 and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many
 large keys.
 
-The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same wayx.
+The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same way.
 
 .. _table-create-lexicon:
 

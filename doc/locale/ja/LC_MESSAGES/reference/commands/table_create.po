@@ -99,7 +99,7 @@ msgstr "以下はたくさんの大きなキーを保存することができる
 msgid "The ``table_create`` command creates a table that is named ``Paths`` and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many large keys."
 msgstr "この ``table_create`` コマンドは、名前が ``Paths`` で ``TABLE_HASH_KEY`` 型のテーブルを作成します。 ``Paths`` テーブルはたくさんの大きなキーを保存できます。"
 
-msgid "The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same wayx."
+msgid "The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same way."
 msgstr "上記の例は、 ``TABLE_HASH_KEY`` のケースですが、テーブルが ``TABLE_PAT_KEY`` であっても、 ``TABLE_HASH_KEY`` と同様に ``KEY_LARGE`` フラグを設定できます。"
 
 msgid "Create lexicon"
