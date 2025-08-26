@@ -87,11 +87,11 @@ msgstr "大きなデータ保存用テーブルの作成"
 msgid "If you want to store many large keys, your table may not be able to store them. If total key data is larger than 4GiB, you can't store all key data into your table by default."
 msgstr "たくさんの大きなキーを保存したいとき、テーブルにすべてのキーを保存できないかもしれません。もし、総キーデータが4GiBより大きいなら、デフォルトではすべてのキーデータをテーブルに保存できません。"
 
+msgid "``TABLE_PAT_KEY`` also supports ``KEY_LARGE`` flag."
+msgstr "``TABLE_PAT_KEY`` も ``KEY_LARGE`` フラグをサポートしました。"
+
 msgid "You can expand the maximum total key size to 1TiB from 4GiB by ``KEY_LARGE`` flag. ``KEY_LARGE`` flag can be used with ``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY``. You can't use ``KEY_LARGE`` flag with ``TABLE_NO_KEY`` nor ``TABLE_DAT_KEY``."
 msgstr "``KEY_LARGE`` フラグを使うと4GiBから1TiBに最大総キーサイズを拡張できます。 ``KEY_LARGE`` フラグは ``TABLE_HASH_KEY`` と ``TABLE_PAT_KEY`` を使っているときに使えます。 ``KEY_LARGE`` フラグは ``TABLE_NO_KEY`` と ``TABLE_DAT_KEY`` と一緒に使えません。"
-
-msgid "However, ``TABLE_PAT_KEY`` supports ``KEY_LARGE`` since 15.1.5 or later. If you use 15.1.4 or earlier, ``KEY_LARGE`` flag can only use with ``TABLE_HASH_KEY``."
-msgstr "ただし、 ``TABLE_PAT_KEY`` が ``KEY_LARGE`` をサポートしているのは15.1.5以降です。 15.1.4以前のバージョンを使っている場合は、 ``KEY_LARGE`` は ``TABLE_HASH_KEY`` でのみ使えます。"
 
 msgid "Here is an example to create a table that can store many large keys:"
 msgstr "以下はたくさんの大きなキーを保存することができるテーブルを作る例です。"
@@ -99,8 +99,8 @@ msgstr "以下はたくさんの大きなキーを保存することができる
 msgid "The ``table_create`` command creates a table that is named ``Paths`` and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many large keys."
 msgstr "この ``table_create`` コマンドは、名前が ``Paths`` で ``TABLE_HASH_KEY`` 型のテーブルを作成します。 ``Paths`` テーブルはたくさんの大きなキーを保存できます。"
 
-msgid "The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same way since 15.1.5."
-msgstr "上記の例は、 ``TABLE_HASH_KEY`` のケースですが、テーブルが ``TABLE_PAT_KEY`` であっても、15.1.5以降なら、 ``TABLE_HASH_KEY`` と同様に ``KEY_LARGE`` フラグを設定できます。"
+msgid "The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same wayx."
+msgstr "上記の例は、 ``TABLE_HASH_KEY`` のケースですが、テーブルが ``TABLE_PAT_KEY`` であっても、 ``TABLE_HASH_KEY`` と同様に ``KEY_LARGE`` フラグを設定できます。"
 
 msgid "Create lexicon"
 msgstr "語彙表の作成"
@@ -287,9 +287,6 @@ msgstr "最大総キーサイズを4GiBから1TiBへ拡張します。 ``TABLE_H
 
 msgid "Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` option with ``NormalizerAuto`` instead."
 msgstr "Groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 ``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
-
-msgid "You can use ``KEY_LARGE`` flag with ``TABLE_PAT_KEY`` since 15.1.5. If you use 15.1.4 or earlier, you can only use ``KEY_LARGE`` with ``TABLE_HASH_KEY``."
-msgstr "15.1.5から ``KEY_LARGE`` フラグは ``TABLE_PAT_KEY`` と一緒に使えます。15.1.4以前のバージョンを使っている場合、 ``KEY_LARGE`` フラグは ``TABLE_HASH_KEY`` でしか使えません。"
 
 msgid "You must specify one of ``TABLE_${TYPE}`` flags. You can't specify two or more ``TABLE_${TYPE}`` flags. For example, ``TABLE_NO_KEY|TABLE_HASH_KEY`` is invalid."
 msgstr "``TABLE_${TYPE}`` フラグのどれか1つを指定します。 ``TABLE_${TYPE}`` フラグを2つ以上指定することはできません。例えば、 ``TABLE_NO_KEY|TABLE_HASH_KEY`` は不正な指定方法です。"
