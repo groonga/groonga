@@ -34,8 +34,8 @@ msgstr "インストール"
 msgid "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a tokenizer, install groonga-tokenizer-mecab package."
 msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいときは、groonga-tokenizer-mecabパッケージをインストールしてください。"
 
-msgid "Install groonga-tokenizer-mecab package::"
-msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+msgid "Install groonga-tokenizer-mecab package"
+msgstr "groonga-tokenizer-mecabパッケージのインストール"
 
 msgid "TODO:"
 msgstr ""
@@ -49,14 +49,11 @@ msgstr ""
 msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install groonga-normalizer-mysql package."
 msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッケージをインストールしてください。"
 
-msgid "Install groonga-normalizer-mysql package::"
-msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+msgid "Install groonga-normalizer-mysql package"
+msgstr "groonga-normalizer-mysqlパッケージのインストール"
 
 msgid "AlmaLinux 8"
 msgstr ""
-
-msgid "Install::"
-msgstr "インストール::"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
