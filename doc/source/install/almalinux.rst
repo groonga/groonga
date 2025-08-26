@@ -13,7 +13,7 @@ We distribute only 64-bit packages.
 AlmaLinux 10
 ------------
 
-Install
+Install:
 
 .. code-block:: console
 
@@ -24,7 +24,7 @@ Install
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
-Install groonga-tokenizer-mecab package
+Install groonga-tokenizer-mecab package:
 
 .. code-block:: console
 
@@ -37,7 +37,7 @@ TODO:
 AlmaLinux 9
 -----------
 
-Install
+Install:
 
 .. code-block:: console
 
@@ -48,7 +48,7 @@ Install
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
-Install groonga-tokenizer-mecab package
+Install groonga-tokenizer-mecab package:
 
 .. code-block:: console
 
@@ -58,7 +58,7 @@ There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
 If you want to use that one, install groonga-normalizer-mysql package.
 
-Install groonga-normalizer-mysql package
+Install groonga-normalizer-mysql package:
 
 .. code-block:: console
 
@@ -67,7 +67,7 @@ Install groonga-normalizer-mysql package
 AlmaLinux 8
 -----------
 
-Install
+Install:
 
 .. code-block:: console
 
@@ -77,7 +77,7 @@ Install
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
-Install groonga-tokenizer-mecab package
+Install groonga-tokenizer-mecab package:
 
 .. code-block:: console
 
@@ -87,7 +87,7 @@ There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
 If you want to use that one, install groonga-normalizer-mysql package.
 
-Install groonga-normalizer-mysql package
+Install groonga-normalizer-mysql package:
 
 .. code-block:: console
 
