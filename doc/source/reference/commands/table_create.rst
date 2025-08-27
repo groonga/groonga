@@ -77,10 +77,14 @@ If you want to store many large keys, your table may not be able to
 store them. If total key data is larger than 4GiB, you can't store all
 key data into your table by default.
 
+.. versionadded:: 15.1.5
+
+   ``TABLE_PAT_KEY`` also supports ``KEY_LARGE`` flag.
+
 You can expand the maximum total key size to 1TiB from 4GiB by
-``KEY_LARGE`` flag. ``KEY_LARGE`` flag can be used with only
-``TABLE_HASH_KEY``. You can't use ``KEY_LARGE`` flag with
-``TABLE_NO_KEY``, ``TABLE_PAT_KEY`` nor ``TABLE_DAT_KEY``.
+``KEY_LARGE`` flag. ``KEY_LARGE`` flag can be used with
+``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY``. You can't use ``KEY_LARGE`` flag with
+``TABLE_NO_KEY`` nor ``TABLE_DAT_KEY``.
 
 Here is an example to create a table that can store many large keys:
 
@@ -91,6 +95,8 @@ Here is an example to create a table that can store many large keys:
 The ``table_create`` command creates a table that is named ``Paths``
 and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many
 large keys.
+
+The above example is ``TABLE_HASH_KEY`` case even if a table is ``TABLE_PAT_KEY``, you can set ``KEY_LARGE`` flag in the same way.
 
 .. _table-create-lexicon:
 
@@ -251,7 +257,7 @@ Here are available flags:
      - Enable Semi Infinite String. Require ``TABLE_PAT_KEY``.
    * - ``KEY_LARGE``
      - Expand the maximum total key size to 1TiB from 4GiB. Require
-       ``TABLE_HASH_KEY``.
+       ``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY``.
 
 .. note::
    Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
