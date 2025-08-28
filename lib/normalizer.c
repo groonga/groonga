@@ -3446,14 +3446,14 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
 {
   grn_nfkc_normalize_iteration_mark_data *data = user_data;
   size_t previous_length = data->previous_length;
-  size_t char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
-  data->previous_length = char_length;
+  size_t current_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  data->previous_length = current_length;
 
-  *n_used_bytes = char_length;
+  *n_used_bytes = current_length;
   *n_used_characters = 1;
 
   /* U+309D HIRAGANA ITERATION MARK */
-  if (previous_length > 0 && char_length == 3 && current[0] == 0xe3 &&
+  if (previous_length > 0 && current_length == 3 && current[0] == 0xe3 &&
       current[1] == 0x82 && current[2] == 0x9d) {
     const unsigned char *previous = current - previous_length;
 
