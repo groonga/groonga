@@ -3428,6 +3428,48 @@ grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
                                     n_unified_characters);
 }
 
+typedef struct {
+  size_t previous_length;
+} grn_nfkc_normalize_iteration_mark_data;
+
+static const unsigned char *
+grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
+                                        const unsigned char *start,
+                                        const unsigned char *current,
+                                        const unsigned char *end,
+                                        size_t *n_used_bytes,
+                                        size_t *n_used_characters,
+                                        unsigned char *unified_buffer,
+                                        size_t *n_unified_bytes,
+                                        size_t *n_unified_characters,
+                                        void *user_data)
+{
+  grn_nfkc_normalize_iteration_mark_data *data = user_data;
+  size_t previous_length = data->previous_length;
+  size_t current_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  data->previous_length = current_length;
+
+  *n_used_bytes = current_length;
+  *n_used_characters = 1;
+
+  /* U+309D HIRAGANA ITERATION MARK */
+  if (previous_length > 0 && current_length == 3 && current[0] == 0xe3 &&
+      current[1] == 0x82 && current[2] == 0x9d) {
+    const unsigned char *previous = current - previous_length;
+
+    for (size_t i = 0; i < previous_length; i++) {
+      unified_buffer[(*n_unified_bytes)++] = previous[i];
+    }
+    (*n_unified_characters)++;
+    return unified_buffer;
+  }
+
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
 static const unsigned char *
 grn_nfkc_normalize_strip(grn_ctx *ctx,
                          const unsigned char *start,
@@ -3617,8 +3659,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         data->options->unify_kana_hyphen ||
         data->options->unify_kana_prolonged_sound_mark ||
         data->options->unify_katakana_trailing_o ||
-        data->options->unify_to_romaji || data->options->unify_to_katakana ||
-        data->options->strip)) {
+        data->options->unify_iteration_mark || data->options->unify_to_romaji ||
+        data->options->unify_to_katakana || data->options->strip)) {
     return;
   }
 
@@ -3846,6 +3888,25 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
       grn_nfkc_normalize_unify_katakana_trailing_o,
       &need_trailing_check,
       "[unify][katakana-trailing-o]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = true;
+  }
+
+  if (data->options->unify_iteration_mark) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_iteration_mark_data subdata;
+    subdata.previous_length = 0;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_iteration_mark,
+                                      &subdata,
+                                      "[unify][iteration-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
