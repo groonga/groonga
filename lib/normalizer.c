@@ -3459,13 +3459,11 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
       current[1] == 0x82 && current[2] == 0x9D) {
     const unsigned char *previous = current - previous_length;
 
-    if (previous >= start) {
-      for (size_t char_pos = 0; char_pos < previous_length; char_pos++) {
-        unified_buffer[(*n_unified_bytes)++] = previous[char_pos];
-      }
-      (*n_unified_characters)++;
-      return unified_buffer;
+    for (size_t char_pos = 0; char_pos < previous_length; char_pos++) {
+      unified_buffer[(*n_unified_bytes)++] = previous[char_pos];
     }
+    (*n_unified_characters)++;
+    return unified_buffer;
   }
 
   *n_unified_bytes = *n_used_bytes;
