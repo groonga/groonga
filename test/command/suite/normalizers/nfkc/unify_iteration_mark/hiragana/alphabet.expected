@@ -1,0 +1,33 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "Ahゝ, I understood."   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ahゝ, i understood.",
+    "types": [
+      "alpha",
+      "alpha",
+      "hiragana",
+      "symbol",
+      "others",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]

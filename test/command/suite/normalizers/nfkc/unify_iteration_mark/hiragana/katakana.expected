@@ -1,0 +1,25 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "私の家は、コゝです。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "私の家は、コゝです。",
+    "types": [
+      "kanji",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "symbol",
+      "katakana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]
