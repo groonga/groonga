@@ -3444,11 +3444,9 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
                                         size_t *n_unified_characters,
                                         void *user_data)
 {
-  size_t char_length;
   grn_nfkc_normalize_iteration_mark_data *data = user_data;
   size_t previous_length = data->previous_length;
-
-  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  size_t char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
   data->previous_length = char_length;
 
   *n_used_bytes = char_length;
