@@ -3455,18 +3455,16 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+309D HIRAGANA ITERATION MARK */
-  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
-      current[2] == 0x9D) {
-    if (previous_length > 0) {
-      const unsigned char *previous = current - previous_length;
+  if (previous_length > 0 && char_length == 3 && current[0] == 0xe3 &&
+      current[1] == 0x82 && current[2] == 0x9D) {
+    const unsigned char *previous = current - previous_length;
 
-      if (previous >= start) {
-        for (size_t char_pos = 0; char_pos < previous_length; char_pos++) {
-          unified_buffer[(*n_unified_bytes)++] = previous[char_pos];
-        }
-        (*n_unified_characters)++;
-        return unified_buffer;
+    if (previous >= start) {
+      for (size_t char_pos = 0; char_pos < previous_length; char_pos++) {
+        unified_buffer[(*n_unified_bytes)++] = previous[char_pos];
       }
+      (*n_unified_characters)++;
+      return unified_buffer;
     }
   }
 
