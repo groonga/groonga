@@ -3456,11 +3456,11 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
 
   /* U+309D HIRAGANA ITERATION MARK */
   if (previous_length > 0 && char_length == 3 && current[0] == 0xe3 &&
-      current[1] == 0x82 && current[2] == 0x9D) {
+      current[1] == 0x82 && current[2] == 0x9d) {
     const unsigned char *previous = current - previous_length;
 
-    for (size_t char_pos = 0; char_pos < previous_length; char_pos++) {
-      unified_buffer[(*n_unified_bytes)++] = previous[char_pos];
+    for (size_t i = 0; i < previous_length; i++) {
+      unified_buffer[(*n_unified_bytes)++] = previous[i];
     }
     (*n_unified_characters)++;
     return unified_buffer;
