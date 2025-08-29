@@ -1,0 +1,27 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "こゝで、一つづゝ分ける。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ここで、一つづつ分ける。",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]
