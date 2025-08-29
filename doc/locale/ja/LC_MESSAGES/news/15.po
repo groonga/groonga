@@ -27,13 +27,13 @@ msgid "Improvements"
 msgstr "改良"
 
 msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` flag for `TABLE_PAT_KEY`"
-msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポートしました"
+msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
 
 msgid "You can now use the `KEY_LARGE` flag with `TABLE_PAT_KEY` tables to expand the maximum total key size from 4GiB to 1TiB, similar to `TABLE_HASH_KEY` tables as below. This allows you to store more keys in total."
 msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブルでも `KEY_LARGE`フラグを使用して、最大合計キーサイズを4GiBから1TiBに拡張できるようになりました。これにより、より多くの種類のキーを保存できるようになります。"
 
 msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` combination"
-msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポートしました"
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポート"
 
 msgid "Previously, when both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` options were enabled together, These combination didn't work as expected because the hyphen characters were not properly treated as symbols to be removed."
 msgstr "以前は、`unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の両方のオプションを同時に有効にした場合、期待通りに動作していませんでした。なぜなら、ハイフン文字が削除されるシンボルとして適切に扱われていなかったためです。"
@@ -42,7 +42,7 @@ msgid "This release fixes this issue. So, hyphen characters are properly removed
 msgstr "このリリースでこの問題を修正し、両方のオプションが有効な場合に次のようにハイフン文字が取り除かれるようになりました。"
 
 msgid "[{doc}`/install/almalinux`] Added support for AlmaLinux 10"
-msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポートしました"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
 
 msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
 msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
@@ -50,8 +50,11 @@ msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/cmake`] Removed a unnecessary option [GH-2479][Patched by Tsutomu Katsube]"
-msgstr "[{doc}`/install/cmake`] 不要なオプションを削除しました [GH-2479][Patched by Tsutomu Katsube]"
+msgid "[{doc}`/install/cmake`] Fixed how to build/install"
+msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
+
+msgid "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
+msgstr "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
 
 msgid "The documentation included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
 msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに誤った`-B`オプションが記載されており、実際に実行した際にビルドエラーの原因となっていました。"
