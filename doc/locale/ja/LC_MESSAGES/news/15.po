@@ -56,6 +56,9 @@ msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
 msgid "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
 msgstr "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
 
+msgid "Patched by Tsutomu Katsube"
+msgstr "かつべさんがパッチ提供"
+
 msgid "The documentation included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
 msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに誤った`-B`オプションが記載されており、実際に実行した際にビルドエラーの原因となっていました。"
 
@@ -66,7 +69,7 @@ msgid "[{doc}`/reference/commands/table_create`] Fixed a bug where `KEY_LARGE` f
 msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正"
 
 msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
-msgstr "この問題により、`KEY_LARGE`フラグが設定された `TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
+msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
 
 msgid "Thanks"
 msgstr "感謝"
