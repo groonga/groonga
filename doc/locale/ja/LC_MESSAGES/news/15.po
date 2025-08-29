@@ -20,7 +20,7 @@ msgstr "お知らせ - 15系"
 msgid "Release 15.1.5 - 2025-08-29"
 msgstr "15.1.5リリース - 2025-08-29"
 
-msgid "In this release, we supported for `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
+msgid "In this release, we supported `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
 msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`フラグをサポートしました！"
 
 msgid "Improvements"
