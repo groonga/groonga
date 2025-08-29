@@ -30,7 +30,7 @@ msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` f
 msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
 
 msgid "You can now use the `KEY_LARGE` flag with `TABLE_PAT_KEY` tables to expand the maximum total key size from 4GiB to 1TiB, similar to `TABLE_HASH_KEY` tables as below. This allows you to store more keys in total."
-msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブルでも `KEY_LARGE`フラグを使用して、最大合計キーサイズを4GiBから1TiBに拡張できるようになりました。これにより、より多くの種類のキーを保存できるようになります。"
+msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブルでも `KEY_LARGE`フラグを使用して、最大合計キーサイズを4GiBから1TiBに拡張できるようになりました。これにより、より多くのキーを保存できるようになります。"
 
 msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` combination"
 msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポート"
