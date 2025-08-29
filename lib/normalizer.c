@@ -3457,13 +3457,16 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
       current[1] == 0x82 && current[2] == 0x9d) {
     const unsigned char *previous = current - previous_length;
     if (GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
-      unsigned char unvoiced[3];
+#  define N_HIRAGANA_BYTES 3
+      unsigned char unvoiced_buffer[N_HIRAGANA_BYTES];
       const unsigned char *unvoiced_char =
-        grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(previous, unvoiced);
-      for (size_t i = 0; i < sizeof(unvoiced); i++) {
+        grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(previous,
+                                                            unvoiced_buffer);
+      for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
         unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
       }
-      data->previous_length = previous_length;
+      data->previous_length = N_HIRAGANA_BYTES;
+#  undef N_HIRAGANA_BYTES
       (*n_unified_characters)++;
 
       return unified_buffer;
