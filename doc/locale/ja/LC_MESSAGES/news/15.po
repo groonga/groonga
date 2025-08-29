@@ -17,14 +17,71 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.5 - 2025-08-29"
+msgstr "15.1.5リリース - 2025-08-29"
+
+msgid "In this release, we supported `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
+msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`フラグをサポートしました！"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` flag for `TABLE_PAT_KEY`"
+msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
+
+msgid "You can now use the `KEY_LARGE` flag with `TABLE_PAT_KEY` tables to expand the maximum total key size from 4GiB to 1TiB, similar to `TABLE_HASH_KEY` tables as below. This allows you to store more keys in total."
+msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブルでも `KEY_LARGE`フラグを使用して、最大合計キーサイズを4GiBから1TiBに拡張できるようになりました。これにより、より多くのキーを保存できるようになります。"
+
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` combination"
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポート"
+
+msgid "Previously, when both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` options were enabled together, This combination didn't remove hyphen characters as expected because the hyphen characters were not properly treated as symbols to be removed."
+msgstr "以前は、`unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の両方のオプションを同時に有効にした場合、ハイフン記号が期待通りに削除されませんでした。なぜなら、ハイフン記号が削除されるシンボルとして適切に扱われていなかったためです。"
+
+msgid "This release fixes this issue. So, hyphen characters are properly removed from the normalized text as below."
+msgstr "このリリースでこの問題を修正し、両方のオプションが有効な場合に次のようにハイフン記号が取り除かれるようになりました。"
+
+msgid "[{doc}`/install/almalinux`] Added support for AlmaLinux 10"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
+
+msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
+msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/cmake`] Fixed how to build/install"
+msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
+
+msgid "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
+msgstr "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
+
+msgid "Patched by Tsutomu Katsube"
+msgstr "かつべさんがパッチ提供"
+
+msgid "The documentation included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
+msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに誤った`-B`オプションが記載されており、実際に実行した際にビルドエラーの原因となっていました。"
+
+msgid "The corrected commands are now:"
+msgstr "正しいコマンドは次のとおりです。"
+
+msgid "[{doc}`/reference/commands/table_create`] Fixed a bug where `KEY_LARGE` flag was lost after executing `truncate` command"
+msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正"
+
+msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
+msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Tsutomu Katsube"
+msgstr "かつべさん"
+
 msgid "Release 15.1.4 - 2025-07-29"
 msgstr "15.1.4リリース - 2025-07-29"
 
 msgid "In this release, we fixed a bug in the interval calculation between phrases in `*ONPP` operator."
 msgstr "今回のリリースでは、`*ONPP`演算子のフレーズ間の距離の計算の間違いを修正しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[Ordered near phrase product search] Fixed a bug in the interval calculation between phrases"
 msgstr "[順序付き近傍フレーズ直積検索] フレーズ間の距離の計算の間違いを修正しました"
@@ -52,9 +109,6 @@ msgstr "ヒットするはずのレコードを返さないことがあります
 
 msgid "Release 15.1.3 - 2025-07-18"
 msgstr "15.1.3リリース - 2025-07-18"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[Apache Arrow] Added support for Apache Arrow C++ 21.0.0"
 msgstr "[Apache Arrow] Apache Arrow C++ 21.0.0 をサポートしました"
@@ -139,9 +193,6 @@ msgstr "[GH-2332](https://github.com/groonga/groonga/pull/2332)、[GH-2333](http
 
 msgid "Patched by Vasilii Lakhin."
 msgstr "Vasilii Lakhinさんがパッチ提供。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Vasilii Lakhin"
 msgstr "Vasilii Lakhinさん"
