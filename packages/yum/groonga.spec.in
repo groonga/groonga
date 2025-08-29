@@ -472,6 +472,9 @@ exit 0
 %endif
 
 %changelog
+* Fri Aug 29 2025 Horimoto Yasuhiro <horimoto@clear-code.com> - 15.1.5-1
+- New upstream release.
+
 * Tue Jul 29 2025 Horimoto Yasuhiro <horimoto@clear-code.com> - 15.1.4-1
 - New upstream release.
 
