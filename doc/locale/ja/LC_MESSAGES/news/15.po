@@ -35,11 +35,11 @@ msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブル�
 msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` combination"
 msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポート"
 
-msgid "Previously, when both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` options were enabled together, This combination didn't work as expected because the hyphen characters were not properly treated as symbols to be removed."
-msgstr "以前は、`unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の両方のオプションを同時に有効にした場合、期待通りに動作していませんでした。なぜなら、ハイフン文字が削除されるシンボルとして適切に扱われていなかったためです。"
+msgid "Previously, when both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` options were enabled together, This combination didn't remove hyphen characters as expected because the hyphen characters were not properly treated as symbols to be removed."
+msgstr "以前は、`unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の両方のオプションを同時に有効にした場合、ハイフン記号が期待通りに削除されませんでした。なぜなら、ハイフン記号が削除されるシンボルとして適切に扱われていなかったためです。"
 
 msgid "This release fixes this issue. So, hyphen characters are properly removed from the normalized text as below."
-msgstr "このリリースでこの問題を修正し、両方のオプションが有効な場合に次のようにハイフン文字が取り除かれるようになりました。"
+msgstr "このリリースでこの問題を修正し、両方のオプションが有効な場合に次のようにハイフン記号が取り除かれるようになりました。"
 
 msgid "[{doc}`/install/almalinux`] Added support for AlmaLinux 10"
 msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
