@@ -148,6 +148,13 @@ namespace :release do
   namespace :version do
     desc "Update versions for a new release"
     task :update do
+      if version != BASE_VERSION
+        message = "You must NOT specify VERSION= for 'rake release'. "
+        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}'"
+        message += "before 'rake release'."
+        raise message
+      end
+
       new_release_date = env_var("NEW_RELEASE_DATE", Date.today.iso8601)
       cd("packages") do
         ruby("-S",
