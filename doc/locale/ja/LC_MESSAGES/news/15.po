@@ -50,14 +50,14 @@ msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/cmake`] Fixed incorrect CMake build and install commands [GH-2479][Patched by Tsutomu Katsube]"
-msgstr "[{doc}`/install/cmake`] 誤ったCMakeビルドとインストールコマンドを修正しました [GH-2479][Tsutomu Katsubeさんによるパッチ]"
+msgid "[{doc}`/install/cmake`] Removed a unnecessary option [GH-2479][Patched by Tsutomu Katsube]"
+msgstr "[{doc}`/install/cmake`] 不要なオプションを削除しました [GH-2479][Patched by Tsutomu Katsube]"
 
-msgid "The documentation previously included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
-msgstr "ドキュメントには以前、`cmake --build` と `cmake --install` コマンドに誤った `-B` オプションが含まれており、ビルドエラーの原因となっていました。"
+msgid "The documentation included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
+msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに誤った`-B`オプションが記載されており、実際に実行した際にビルドエラーの原因となっていました。"
 
 msgid "The corrected commands are now:"
-msgstr "修正されたコマンドは次のとおりです。"
+msgstr "正しいコマンドは次のとおりです。"
 
 msgid "[{doc}`/reference/commands/table_create`] Fixed a bug where `KEY_LARGE` flag was lost after executing `truncate` command"
 msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正しました。"
@@ -75,7 +75,7 @@ msgid "Thanks"
 msgstr "感謝"
 
 msgid "Tsutomu Katsube"
-msgstr "Tsutomu Katsube"
+msgstr "かつべさん"
 
 msgid "Release 15.1.4 - 2025-07-29"
 msgstr "15.1.4リリース - 2025-07-29"
