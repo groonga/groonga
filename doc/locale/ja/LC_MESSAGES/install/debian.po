@@ -58,7 +58,7 @@ msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 msgid "bookworm"
 msgstr ""
 
-msgid "bookworm's install procedure is same trixie's install procedure. Please refer :ref:`trixie`."
+msgid "On bookworm, follow the same installation procedure as trixie. See/Please refer :ref:`trixie`."
 msgstr "bookworm のインストール方法は、trixie のインストール方法と同じです。:ref:`trixie` を参照してください。"
 
 msgid "Build from source"
