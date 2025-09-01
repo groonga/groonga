@@ -1,4 +1,4 @@
-# Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ module GroongaLog
               "--log-level", level,
             ])
     standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
-    log = ""
+    log = +""
     standard_log_lines.each do |line|
       case remove_timestamp(line)
       when /\A\|n\| grn_init/,
@@ -177,7 +177,7 @@ module GroongaLog
   end
 
   def normalize_groonga_log(content)
-    normalized = ""
+    normalized = +""
     content.each_line do |line|
       case line.chomp
       when /\A
