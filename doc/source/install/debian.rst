@@ -11,7 +11,7 @@ Debian GNU/Linux. You can install them by ``apt``.
 trixie
 ------
 
-.. versionadded:: 15.1.5
+.. versionadded:: 13.0.8
 
 Install ``groonga-apt-source``::
 
