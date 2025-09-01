@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_iteration_mark", true)'   "Ahゝ, I understood."   WITH_TYPES
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "Ahゝ, I understood."   WITH_TYPES
 [
   [
     0,
