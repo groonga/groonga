@@ -6,10 +6,12 @@ Debian GNU/Linux
 This section describes how to install Groonga related deb packages on
 Debian GNU/Linux. You can install them by ``apt``.
 
-bookworm
---------
+.. _trixie:
 
-.. versionadded:: 13.0.2
+trixie
+------
+
+.. versionadded:: 13.0.8
 
 Install ``groonga-apt-source``::
 
@@ -57,6 +59,13 @@ If you want to use that one, install groonga-normalizer-mysql package.
 Install groonga-normalizer-mysql package::
 
   % sudo apt install -y -V groonga-normalizer-mysql
+
+bookworm
+--------
+
+.. versionadded:: 13.0.2
+
+On bookworm, follow the same installation procedure as trixie. See/Please refer :ref:`trixie`.
 
 Build from source
 -----------------

@@ -22,7 +22,7 @@ msgstr ""
 msgid "This section describes how to install Groonga related deb packages on Debian GNU/Linux. You can install them by ``apt``."
 msgstr "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストールする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "bookworm"
+msgid "trixie"
 msgstr ""
 
 msgid "Install ``groonga-apt-source``::"
@@ -54,6 +54,12 @@ msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして
 
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+
+msgid "bookworm"
+msgstr ""
+
+msgid "On bookworm, follow the same installation procedure as trixie. See/Please refer :ref:`trixie`."
+msgstr "bookworm のインストール方法は、trixie のインストール方法と同じです。:ref:`trixie` を参照してください。"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
