@@ -332,8 +332,17 @@ module Groonga
             next unless path.start_with?(basename)
 
             full_path = "#{dirname}/#{path}"
-            if File.stat(full_path).size.zero?
-              failed("Empty file exists: <#{full_path}>")
+            begin
+              if File.stat(full_path).size.zero?
+                failed("Empty file exists: <#{full_path}>")
+              end
+            rescue => error
+              message =
+                "Can't read file stat: <#{full_path}> " +
+                error.message +
+                "It may be broken <#{full_path}>'s metadata."
+              failed(message)
+              next
             end
           end
         end
