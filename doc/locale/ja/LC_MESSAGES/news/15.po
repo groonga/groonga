@@ -47,6 +47,12 @@ msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
 msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
 msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
 
+msgid "[{doc}`/install/debian`] Added support for Debian 13"
+msgstr "[{doc}`/install/debian`] Debian 13をサポート"
+
+msgid "Debian 13 packages are now available. You can install Groonga on Debian 13 using the standard package installation methods."
+msgstr "Debian 13用のパッケージが利用可能になりました。標準的なパッケージインストール方法でDebian 13にGroongaをインストールできます。"
+
 msgid "Fixes"
 msgstr "修正"
 
@@ -70,6 +76,15 @@ msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行�
 
 msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
 msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
+
+msgid "[{doc}`/reference/executables/grndb`] Fixed a bug that the database checked by `grndb check` command was not enought"
+msgstr "[{doc}`/reference/executables/grndb`] `grndb check` コマンドによるデータベースのチェックが不十分だった問題を修正"
+
+msgid "Because `grndb check` command did not check the part of database files."
+msgstr "`grndb check` コマンドが一部のデータベースファイルをチェックしていませんでした。"
+
+msgid "It's no problem with that tables and columns check by `grndb check` command."
+msgstr "`grndb check` コマンドによるテーブルとカラムのチェックについては問題ありません。"
 
 msgid "Thanks"
 msgstr "感謝"
