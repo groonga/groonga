@@ -22,9 +22,6 @@ msgstr ""
 msgid "This section describes how to install Groonga related deb packages on Debian GNU/Linux. You can install them by ``apt``."
 msgstr "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストールする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-bit package for server. You should use a 32-bit package just only for tests or development. You will encounter an out of memory error with a 32-bit package even if you just process medium size data."
-msgstr "32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用にだけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータでもメモリ不足エラーになることがあります。"
-
 msgid "bookworm"
 msgstr ""
 
