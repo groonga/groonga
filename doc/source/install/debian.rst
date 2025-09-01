@@ -65,8 +65,7 @@ bookworm
 
 .. versionadded:: 13.0.2
 
-bookworm's install procedure is same trixie's install procedure.
-Please refer :ref:`trixie`.
+On bookworm, follow the same installation procedure as trixie. See/Please refer :ref:`trixie`.
 
 Build from source
 -----------------
