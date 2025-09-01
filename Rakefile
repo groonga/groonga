@@ -150,7 +150,7 @@ namespace :release do
     task :update do
       if version != BASE_VERSION
         message = "You must NOT specify VERSION= for 'rake release'. "
-        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}'"
+        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}' "
         message += "before 'rake release'."
         raise message
       end
