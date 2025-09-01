@@ -5,6 +5,33 @@ module Groonga
     class Grndb
       include Loggable
 
+      module SafeStat
+        def file_mtime(path)
+          begin
+            stat = File.stat(path)
+          rescue SystemCallError => error
+            failed("Failed to get last modified time: <#{path}>",
+                   error.message)
+            Time.at(0)
+          else
+            stat.mtime
+          end
+        end
+
+        def file_empty?(path)
+          begin
+            stat = File.stat(path)
+          rescue SystemCallError => error
+            failed("Failed to get file size: <#{path}>",
+                   error.message)
+            true
+          else
+            stat.size.zero?
+          end
+        end
+      end
+      include SafeStat
+
       def initialize(argv)
         @program_path, *@arguments = argv
         @output = LocaleOutput.new($stderr)
@@ -135,8 +162,8 @@ module Groonga
         checker.since = since
         checker.database = database
         checker.log_paths = options[:groonga_log_path]
-        checker.on_failure = lambda do |message|
-          failed(message)
+        checker.on_failure = lambda do |*messages|
+          failed(*messages)
         end
 
         checker.check_log_paths
@@ -180,6 +207,7 @@ module Groonga
 
       class Checker
         include Loggable
+        include SafeStat
 
         attr_writer :program_path
         attr_writer :database_path
@@ -304,7 +332,7 @@ module Groonga
           end
 
           last_modified = @database.last_modified
-          if File.stat(@database.path).mtime > last_modified
+          if file_mtime(@database.path) > last_modified
             return
           end
 
@@ -313,7 +341,7 @@ module Groonga
               next if ID.builtin?(id)
               path = object_path(id)
               next unless File.exist?(path)
-              return if File.stat(path).mtime > last_modified
+              return if file_mtime(path) > last_modified
             end
           end
 
@@ -332,7 +360,7 @@ module Groonga
             next unless path.start_with?(basename)
 
             full_path = "#{dirname}/#{path}"
-            if File.stat(full_path).size.zero?
+            if file_empty?(full_path)
               failed("Empty file exists: <#{full_path}>")
             end
           end
@@ -546,7 +574,7 @@ module Groonga
           suffixes.each do |suffix|
             path = "#{@database.path}#{suffix}"
             next unless File.exist?(path)
-            return true if File.stat(path).mtime >= @since
+            return true if file_mtime(path) >= @since
           end
           false
         end
@@ -560,14 +588,14 @@ module Groonga
 
           target_path = object_path(id)
           return false unless File.exist?(target_path)
-          return true if File.stat(target_path).mtime >= @since
+          return true if file_mtime(target_path) >= @since
 
           dir_path = File.dirname(@database.path)
           Dir.open(dir_path) do |dir|
             dir.each do |path|
               full_path = File.join(dir_path, path)
               next unless full_path.start_with?(target_path)
-              return true if File.stat(full_path).mtime >= @since
+              return true if file_mtime(full_path) >= @since
             end
           end
           false
@@ -599,8 +627,8 @@ module Groonga
           yield(object)
         end
 
-        def failed(message)
-          @on_failure.call(message)
+        def failed(*messages)
+          @on_failure.call(*messages)
         end
 
         def failed_to_open(name)
@@ -614,6 +642,7 @@ module Groonga
 
       class Recoverer
         include Loggable
+        include SafeStat
 
         attr_writer :database
         attr_writer :force_truncate
@@ -723,7 +752,7 @@ module Groonga
             next unless path.start_with?(basename)
 
             full_path = "#{dirname}/#{path}"
-            next unless File.stat(full_path).size.zero?
+            next unless file_empty?(full_path)
 
             match_data =
               /\A#{Regexp.escape(basename)}\.([\da-fA-F]{7})/.match(path)
