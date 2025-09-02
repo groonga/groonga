@@ -316,7 +316,7 @@ end
 
 desc "Release"
 task release: [
-  ":release:version:validate",
+  "release:version:validate",
   "release:version:update",
   "release:tag",
   "dev:version:bump"
