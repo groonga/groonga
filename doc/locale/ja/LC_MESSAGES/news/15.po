@@ -23,7 +23,7 @@ msgstr "15.1.5リリース - 2025-08-29"
 msgid "In this release, we supported `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
 msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`フラグをサポートしました！"
 
-msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga has arleady used with Debian 13! Please try it!"
+msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga is already supported on Debian 13! Please try it!"
 msgstr "Debian 13 \"Trixie\" が2025-08-09にリリースされました。GroongaはすでにDebian 13で使えます！ ぜひ試してみてください！"
 
 msgid "Improvements"
@@ -77,8 +77,8 @@ msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HAS
 msgid "[{doc}`/reference/executables/grndb`] Fixed a bug that the database checked by `grndb check` command was not enough"
 msgstr "[{doc}`/reference/executables/grndb`] `grndb check` コマンドによるデータベースのチェックが不十分だった問題を修正"
 
-msgid "Because `grndb check` command did not check the part of database files."
-msgstr "`grndb check` コマンドが一部のデータベースファイルをチェックしていなかったためです。"
+msgid "The issue occurred because the `grndb check` command did not check part of the database files."
+msgstr "`grndb check` コマンドが一部のデータベースファイルをチェックしていませんでした。"
 
 msgid "However, `grndb cehck` returns correctly result of tables and columns check even if this modificationwasn't made. `grndb cehck` can check database correctly by this modification."
 msgstr "ただ、この修正が入る前でも `grndb check` によるテーブルとカラムのチェックは正しい結果を返します。 この修正によって、データベースのチェックも正しい結果を返せるようになります。"
