@@ -146,6 +146,16 @@ end
 
 namespace :release do
   namespace :version do
+    desc "Validate version for release"
+    task :validate do
+      if version != BASE_VERSION
+        message = "You must NOT specify VERSION= for 'rake release'. "
+        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}' "
+        message += "before 'rake release'."
+        raise message
+      end
+    end
+
     desc "Update versions for a new release"
     task :update do
       new_release_date = env_var("NEW_RELEASE_DATE", Date.today.iso8601)
@@ -164,16 +174,6 @@ namespace :release do
          "-m",
          "package: update version info to #{version} (#{new_release_date})")
       sh("git", "push")
-    end
-
-    desc "Validate version for release"
-    task :validate do
-      if version != BASE_VERSION
-        message = "You must NOT specify VERSION= for 'rake release'. "
-        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}' "
-        message += "before 'rake release'."
-        raise message
-      end
     end
   end
 
