@@ -74,7 +74,7 @@ msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行�
 msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
 msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
 
-msgid "[{doc}`/reference/executables/grndb`] Fixed a bug that the database checked by `grndb check` command was not enought"
+msgid "[{doc}`/reference/executables/grndb`] Fixed a bug that the database checked by `grndb check` command was not enough"
 msgstr "[{doc}`/reference/executables/grndb`] `grndb check` コマンドによるデータベースのチェックが不十分だった問題を修正"
 
 msgid "Because `grndb check` command did not check the part of database files."
