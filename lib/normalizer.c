@@ -1968,6 +1968,53 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
 }
 
 static inline const unsigned char *
+grn_nfkc_normalize_add_hiragana_voiced_sound_mark(
+  const unsigned char *utf8_char, unsigned char *voiced)
+{
+  if (utf8_char[0] == 0xe3) {
+    if ((utf8_char[1] == 0x81 &&
+         (0x8b <= utf8_char[2] && utf8_char[2] <= 0xa1))) {
+      /* U+304B HIRAGANA LETTER KA ..
+       * U+3061 HIRAGANA LETTER TI */
+      if (utf8_char[2] & 0x1) {
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return voiced;
+      }
+    } else if ((utf8_char[1] == 0x81 &&
+                (0xa4 <= utf8_char[2] && utf8_char[2] <= 0xa8))) {
+      /* U+3064 HIRAGANA LETTER TU ..
+       * U+3068 HIRAGANA LETTER TO */
+      if (!(utf8_char[2] & 0x1)) {
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return voiced;
+      }
+    } else if ((utf8_char[1] == 0x81 &&
+                (0xaf <= utf8_char[2] && utf8_char[2] <= 0xbd))) {
+      /* U+306F HIRAGANA LETTER HA ..
+       * U+307D HIRAGANA LETTER PO */
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 0xaf) % 3);
+      if (mod3 == 0) {
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return voiced;
+      } else if (mod3 == 2) {
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] - 1;
+        return voiced;
+      }
+    }
+  }
+
+  return utf8_char;
+}
+
+static inline const unsigned char *
 grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
@@ -3465,6 +3512,20 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
                                                           unvoiced_buffer);
     for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
       unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
+    }
+    data->previous_length = N_HIRAGANA_BYTES;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  } else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
+             current[2] == 0x9e && previous_length == N_HIRAGANA_BYTES &&
+             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
+    /* U+309E HIRAGANA VOICED ITERATION MARK */
+    unsigned char voiced_buffer[N_HIRAGANA_BYTES];
+    const unsigned char *voiced_char =
+      grn_nfkc_normalize_add_hiragana_voiced_sound_mark(previous,
+                                                        voiced_buffer);
+    for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
+      unified_buffer[(*n_unified_bytes)++] = voiced_char[i];
     }
     data->previous_length = N_HIRAGANA_BYTES;
     (*n_unified_characters)++;

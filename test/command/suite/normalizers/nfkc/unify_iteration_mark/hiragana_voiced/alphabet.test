@@ -1,0 +1,7 @@
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+normalize \
+  'NormalizerNFKC("unify_iteration_mark", true, \
+                  "version", "NFKC_VERSION")' \
+  "Ahゞ, I understood." \
+  WITH_TYPES
+#@remove-substitution /"version",\s"(?:.+?)"/
