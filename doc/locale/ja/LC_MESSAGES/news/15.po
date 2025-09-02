@@ -80,7 +80,7 @@ msgstr "[{doc}`/reference/executables/grndb`] `grndb check` コマンドによ�
 msgid "The issue occurred because the `grndb check` command did not check part of the database files."
 msgstr "`grndb check` コマンドが一部のデータベースファイルをチェックしていませんでした。"
 
-msgid "However, `grndb cehck` returns correctly result of tables and columns check even if this modificationwasn't made. `grndb cehck` can check database correctly by this modification."
+msgid "However, even without this modification, grndb check correctly returns the results of table and column checks. `grndb cehck` can check database correctly by this modification."
 msgstr "ただ、この修正が入る前でも `grndb check` によるテーブルとカラムのチェックは正しい結果を返します。 この修正によって、データベースのチェックも正しい結果を返せるようになります。"
 
 msgid "Thanks"
