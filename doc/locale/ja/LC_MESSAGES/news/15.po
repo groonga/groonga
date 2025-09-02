@@ -23,6 +23,9 @@ msgstr "15.1.5リリース - 2025-08-29"
 msgid "In this release, we supported `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
 msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`フラグをサポートしました！"
 
+msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga has arleady used with Debian 13! Please try it!"
+msgstr "Debian 13 \"Trixie\" が2025-08-09にリリースされました。GroongaはすでにDebian 13で使えます！ ぜひ試してみてください！"
+
 msgid "Improvements"
 msgstr "改良"
 
@@ -46,12 +49,6 @@ msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
 
 msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
 msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
-
-msgid "[{doc}`/install/debian`] Added support for Debian 13"
-msgstr "[{doc}`/install/debian`] Debian 13をサポート"
-
-msgid "Debian 13 packages are now available. You can install Groonga on Debian 13 using the standard package installation methods."
-msgstr "Debian 13用のパッケージが利用可能になりました。標準的なパッケージインストール方法でDebian 13にGroongaをインストールできます。"
 
 msgid "Fixes"
 msgstr "修正"
