@@ -3452,12 +3452,15 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
   *n_used_bytes = current_length;
   *n_used_characters = 1;
 
-  /* U+309D HIRAGANA ITERATION MARK */
-  if (previous_length > 0 && current_length == 3 && current[0] == 0xe3 &&
-      current[1] == 0x82 && current[2] == 0x9d) {
+  if (previous_length > 0) {
     const unsigned char *previous = current - previous_length;
-    if (GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
+
 #  define N_HIRAGANA_BYTES 3
+    if (current_length == N_HIRAGANA_BYTES && current[0] == 0xe3 &&
+        current[1] == 0x82 && current[2] == 0x9d &&
+        GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
+      /* U+309D HIRAGANA ITERATION MARK */
+
       unsigned char unvoiced_buffer[N_HIRAGANA_BYTES];
       const unsigned char *unvoiced_char =
         grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(previous,
@@ -3466,19 +3469,15 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
         unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
       }
       data->previous_length = N_HIRAGANA_BYTES;
-#  undef N_HIRAGANA_BYTES
       (*n_unified_characters)++;
-
       return unified_buffer;
     }
-  }
-
-  /* U+30FD KATAKANA ITERATION MARK */
-  if (previous_length > 0 && current_length == 3 && current[0] == 0xe3 &&
-      current[1] == 0x83 && current[2] == 0xbd) {
-    const unsigned char *previous = current - previous_length;
-    if (GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KATAKANA) {
+#  undef N_HIRAGANA_BYTES
 #  define N_KATAKANA_BYTES 3
+    else if (current_length == N_KATAKANA_BYTES && current[0] == 0xe3 &&
+             current[1] == 0x83 && current[2] == 0xbd &&
+             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KATAKANA) {
+      /* U+30FD KATAKANA ITERATION MARK */
       unsigned char unvoiced_buffer[N_KATAKANA_BYTES];
       const unsigned char *unvoiced_char =
         grn_nfkc_normalize_unify_katakana_voiced_sound_mark(previous,
@@ -3487,11 +3486,10 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
         unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
       }
       data->previous_length = N_KATAKANA_BYTES;
-#  undef N_KATAKANA_BYTES
       (*n_unified_characters)++;
-
       return unified_buffer;
     }
+#  undef N_KATAKANA_BYTES
   }
 
   *n_unified_bytes = *n_used_bytes;
