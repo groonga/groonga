@@ -68,8 +68,8 @@ msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに�
 msgid "The corrected commands are now:"
 msgstr "正しいコマンドは次のとおりです。"
 
-msgid "[{doc}`/reference/commands/table_create`] Fixed a bug where `KEY_LARGE` flag was lost after executing `truncate` command"
-msgstr "[{doc}`/reference/commands/table_create`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正"
+msgid "[{doc}`/reference/commands/truncate`] Fixed a bug where `KEY_LARGE` flag was lost after executing `truncate` command"
+msgstr "[{doc}`/reference/commands/truncate`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正"
 
 msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
 msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
