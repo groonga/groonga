@@ -157,7 +157,7 @@ namespace :release do
     end
 
     desc "Update versions for a new release"
-    task :update do
+    task update: :validate do
       new_release_date = env_var("NEW_RELEASE_DATE", Date.today.iso8601)
       cd("packages") do
         ruby("-S",
@@ -316,7 +316,6 @@ end
 
 desc "Release"
 task release: [
-  "release:version:validate",
   "release:version:update",
   "release:tag",
   "dev:version:bump"
