@@ -1,0 +1,34 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "赤ちゃんは、ぱぱと呼べずにぱゝと呼ぶ。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "赤ちゃんは、ぱぱと呼べずにぱはと呼ぶ。",
+    "types": [
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]

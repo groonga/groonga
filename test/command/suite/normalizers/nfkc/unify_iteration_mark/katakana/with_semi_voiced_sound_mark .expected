@@ -1,0 +1,36 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "私は、ビビンバをピヽンバと間違えて書いた。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "私は、ビビンバをピヒンバと間違えて書いた。",
+    "types": [
+      "kanji",
+      "hiragana",
+      "symbol",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "hiragana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "hiragana",
+      "kanji",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]
