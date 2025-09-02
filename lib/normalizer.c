@@ -3459,7 +3459,6 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
       current[2] == 0x9d && previous_length == N_HIRAGANA_BYTES &&
       GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
     /* U+309D HIRAGANA ITERATION MARK */
-
     unsigned char unvoiced_buffer[N_HIRAGANA_BYTES];
     const unsigned char *unvoiced_char =
       grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(previous,
