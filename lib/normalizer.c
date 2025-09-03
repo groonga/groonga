@@ -3489,8 +3489,7 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
   }
 #  undef N_KATAKANA_BYTES
   else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
-           current[2] == 0xbb &&
-           (previous_length == 3 || previous_length == 4) &&
+           current[2] == 0xbb && previous_length >= 3 &&
            GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
     /**
      * U+303B VERTICAL IDEOGRAPHIC ITERATION MARK
