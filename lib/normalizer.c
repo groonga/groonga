@@ -3488,30 +3488,18 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     return unified_buffer;
   }
 #  undef N_KATAKANA_BYTES
-#  define N_KANJI_BYTES 3
   else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
-           current[2] == 0xbb && previous_length == N_KANJI_BYTES &&
+           current[2] == 0xbb &&
+           (previous_length == 3 || previous_length == 4) &&
            GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
     /* U+303B VERTICAL IDEOGRAPHIC ITERATION MARK */
-    for (size_t i = 0; i < data->previous_length; i++) {
+    for (size_t i = 0; i < previous_length; i++) {
       unified_buffer[(*n_unified_bytes)++] = previous[i];
     }
-    data->previous_length = N_KANJI_BYTES;
-    (*n_unified_characters)++;
-    return unified_buffer;
-  } else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
-             current[2] == 0xbb &&
-             (previous_length == 3 || previous_length == 4) &&
-             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
-    /* U+303B VERTICAL IDEOGRAPHIC ITERATION MARK */
-    for (size_t i = 0; i < data->previous_length; i++) {
-      unified_buffer[(*n_unified_bytes)++] = previous[i];
-    }
-    data->previous_length = N_KANJI_BYTES;
+    data->previous_length = previous_length;
     (*n_unified_characters)++;
     return unified_buffer;
   }
-
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
 

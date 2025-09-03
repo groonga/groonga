@@ -1,0 +1,51 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "CJK Unified Ideographsである、𠀋〻もサポートする。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "cjk unified ideographsである、𠀋𠀋もサポートする。",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "kanji",
+      "kanji",
+      "hiragana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]
