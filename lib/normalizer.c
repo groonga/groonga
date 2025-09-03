@@ -3494,9 +3494,12 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     /**
      * U+303B VERTICAL IDEOGRAPHIC ITERATION MARK
      * For kanji iteration mark, we simply repeat the previous kanji character.
-     * This implementation only handles simple cases like U+5404 U+303B ->
-     * U+5404 U+5404. More complex patterns like U+90E8 U+5206 U+303B U+303B ->
-     * U+90E8 U+5206 U+90E8 U+5206 are not supported.
+     * This implementation only handles simple cases as follows.
+     * - U+5404 U+303B -> U+5404 U+5404
+     * - CJK Unified Ideograph-2000B U+303B ->
+     *     CJK Unified Ideograph-2000B CJK Unified Ideograph-2000B
+     * More complex patterns are not supported as follows.
+     * - U+90E8 U+5206 U+303B U+303B -> U+90E8 U+5206 U+90E8 U+5206
      */
     for (size_t i = 0; i < previous_length; i++) {
       unified_buffer[(*n_unified_bytes)++] = previous[i];
