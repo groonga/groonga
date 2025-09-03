@@ -3492,7 +3492,12 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
            current[2] == 0xbb &&
            (previous_length == 3 || previous_length == 4) &&
            GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
-    /* U+303B VERTICAL IDEOGRAPHIC ITERATION MARK */
+    /**
+     * U+303B VERTICAL IDEOGRAPHIC ITERATION MARK
+     * For kanji iteration mark, we simply repeat the previous kanji character.
+     * This implementation only handles simple cases like 各〻 -> 各各.
+     * More complex patterns like 部分〻〻 -> 部分部分 are not supported.
+     */
     for (size_t i = 0; i < previous_length; i++) {
       unified_buffer[(*n_unified_bytes)++] = previous[i];
     }
