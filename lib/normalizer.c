@@ -3505,6 +3505,7 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     (*n_unified_characters)++;
     return unified_buffer;
   }
+
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
 
