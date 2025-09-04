@@ -1968,8 +1968,8 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
 }
 
 static inline const unsigned char *
-grn_nfkc_normalize_add_hiragana_voiced_sound_mark(
-  const unsigned char *utf8_char, unsigned char *voiced)
+grn_nfkc_normalize_to_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
+                                                 unsigned char *voiced)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x81 &&
@@ -3522,8 +3522,7 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     /* U+309E HIRAGANA VOICED ITERATION MARK */
     unsigned char voiced_buffer[N_HIRAGANA_BYTES];
     const unsigned char *voiced_char =
-      grn_nfkc_normalize_add_hiragana_voiced_sound_mark(previous,
-                                                        voiced_buffer);
+      grn_nfkc_normalize_to_hiragana_voiced_sound_mark(previous, voiced_buffer);
     for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
       unified_buffer[(*n_unified_bytes)++] = voiced_char[i];
     }
