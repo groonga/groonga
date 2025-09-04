@@ -3488,6 +3488,41 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     return unified_buffer;
   }
 #  undef N_KATAKANA_BYTES
+  else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
+           current[2] == 0xbb && previous_length >= 3 &&
+           GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
+    /**
+     * U+303B VERTICAL IDEOGRAPHIC ITERATION MARK
+     * For kanji iteration mark, we simply repeat the previous kanji character.
+     * This implementation only handles simple cases as follows.
+     * - U+5404 U+303B -> U+5404 U+5404
+     *   ("CJK UNIFIED IDEOGRAPH-5404" "VERTICAL IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-5404" "CJK UNIFIED IDEOGRAPH-5404")
+     * - U+2000B U+303B -> U+2000B U+2000B
+     *   ("CJK UNIFIED IDEOGRAPH-2000B" "VERTICAL IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-2000B" "CJK UNIFIED IDEOGRAPH-2000B")
+     * More complex patterns are not supported as follows.
+     * - 2 or more characters are iterated:
+     *   U+90E8 U+5206 U+303B U+303B -> U+90E8 U+5206 U+90E8 U+5206
+     *   ("CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206"
+     *    "VERTICAL IDEOGRAPHIC ITERATION MARK"
+     *    "VERTICAL IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206"
+     *    "CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206")
+     * - The same character is iterated multiple times:
+     *   U+53E4 U+303B U+303B U+7C73 -> U+53E4 U+53E4 U+53E4 U+7C73
+     *   ("CJK UNIFIED IDEOGRAPH-53E4" "VERTICAL IDEOGRAPHIC ITERATION MARK"
+     *    "VERTICAL IDEOGRAPHIC ITERATION MARK" "CJK UNIFIED IDEOGRAPH-7C73" ->
+     *    "CJK UNIFIED IDEOGRAPH-53E4" "CJK UNIFIED IDEOGRAPH-53E4"
+     *    "CJK UNIFIED IDEOGRAPH-53E4" "CJK UNIFIED IDEOGRAPH-7C73")
+     */
+    for (size_t i = 0; i < previous_length; i++) {
+      unified_buffer[(*n_unified_bytes)++] = previous[i];
+    }
+    data->previous_length = previous_length;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  }
 
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
