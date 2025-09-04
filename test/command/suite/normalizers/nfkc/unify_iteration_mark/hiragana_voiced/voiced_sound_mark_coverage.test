@@ -1,0 +1,17 @@
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+normalize \
+  'NormalizerNFKC("unify_iteration_mark", true, \
+                  "version", "NFKC_VERSION")' \
+  "おゞかゞがゞきゞぎゞくゞぐゞけゞげゞこゞごゞさゞざゞしゞじゞすゞずゞせゞぜゞそゞぞゞたゞだゞちゞぢゞ" \
+  WITH_TYPES
+normalize \
+  'NormalizerNFKC("unify_iteration_mark", true, \
+                  "version", "NFKC_VERSION")' \
+  "っゞつゞづゞてゞでゞとゞどゞなゞ" \
+  WITH_TYPES
+normalize \
+  'NormalizerNFKC("unify_iteration_mark", true, \
+                  "version", "NFKC_VERSION")' \
+  "のゞはゞばゞぱゞひゞびゞぴゞふゞぶゞぷゞへゞべゞぺゞほゞぼゞぽゞまゞ" \
+  WITH_TYPES
+#@remove-substitution /"version",\s"(?:.+?)"/
