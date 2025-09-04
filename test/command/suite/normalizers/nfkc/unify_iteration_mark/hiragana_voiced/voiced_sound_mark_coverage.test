@@ -2,16 +2,6 @@
 normalize \
   'NormalizerNFKC("unify_iteration_mark", true, \
                   "version", "NFKC_VERSION")' \
-  "おゞかゞがゞきゞぎゞくゞぐゞけゞげゞこゞごゞさゞざゞしゞじゞすゞずゞせゞぜゞそゞぞゞたゞだゞちゞぢゞ" \
-  WITH_TYPES
-normalize \
-  'NormalizerNFKC("unify_iteration_mark", true, \
-                  "version", "NFKC_VERSION")' \
-  "っゞつゞづゞてゞでゞとゞどゞなゞ" \
-  WITH_TYPES
-normalize \
-  'NormalizerNFKC("unify_iteration_mark", true, \
-                  "version", "NFKC_VERSION")' \
-  "のゞはゞばゞぱゞひゞびゞぴゞふゞぶゞぷゞへゞべゞぺゞほゞぼゞぽゞまゞ" \
+  "おゞかゞがゞきゞぎゞくゞぐゞけゞげゞこゞごゞさゞざゞしゞじゞすゞずゞせゞぜゞそゞぞゞたゞだゞちゞぢゞっゞつゞづゞてゞでゞとゞどゞなゞのゞはゞばゞぱゞひゞびゞぴゞふゞぶゞぷゞへゞべゞぺゞほゞぼゞぽゞまゞ" \
   WITH_TYPES
 #@remove-substitution /"version",\s"(?:.+?)"/
