@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1756799302227,
+  "lastUpdate": 1756952957831,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "committer": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "distinct": true,
-          "id": "4df2ae774683f4feb00ed45a482fc818e4bf1b0a",
-          "message": "ja: add support for setting generator\n\nThis adds GRN_INFO_GENERATOR. We can set/get generator by\ngrn_obj_set_info()/grn_obj_get_info() with GRN_INFO_GENERATOR.\n\nThis saves \"generator\" as a string not a parsed grn_expr. It's stored\ninto \"spec\" like \"sources\".\n\nGRN_INFO_GENERATOR must be set after GRN_INFO_SOURCE. Because\nGRN_INFO_SOURCE triggers offline generation. GRN_INFO_GENERATOR is\nneeded for offline generation.",
-          "timestamp": "2024-10-18T22:59:33+09:00",
-          "tree_id": "cfb4c0bc84c6b6b0899f583ae4ec2d6fd43fad1c",
-          "url": "https://github.com/groonga/groonga/commit/4df2ae774683f4feb00ed45a482fc818e4bf1b0a"
-        },
-        "date": 1729267430856,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3641916180001772,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.01614800000000005 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.27828728900010447,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.018445000000000156 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.017466661000071326,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00035200000000015774 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.017619738000121288,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003900000000001125 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.5257933179999554,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00039899999999989944 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.2420359789999793,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007435999999999915 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13861147799980245,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006851000000000218 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.019018543000015597,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0019459999999999755 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.01982392699983393,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00242700000000029 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.059032829999978276,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.01094600000000065 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.052814571000112664,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008396000000000264 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.019903727000155413,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0021180000000000088 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.020184416999995847,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00215600000000038 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017045644999939213,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.001477000000000589 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "otegami@clear-code.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f59506225fc2fa69bd76dbaefb152ce26cd310ef",
+          "message": "NormalizerNFKC unify-iteration-mark: support U+6642 CJK UNIFIED IDEOGRAPH-6642 (#2514)\n\nGitHub: GH-2487\n    \nThis PR supports for the U+6642 CJK UNIFIED IDEOGRAPH-6642.\n    \nThis implementation handles:\n- U+6642 CJK UNIFIED IDEOGRAPH-6642\n  U+303B VERTICAL IDEOGRAPHIC ITERATION MARK ->\n  U+6642 CJK UNIFIED IDEOGRAPH-6642\n  U+6642 CJK UNIFIED IDEOGRAPH-6642 \n    \nOn the other hand, it doesn't handle the following cases:\n- 2 more characters are iterated:\n  U+90E8 CJK UNIFIED IDEOGRAPH-90E8\n  U+5206 CJK UNIFIED IDEOGRAPH-5206\n  U+303B VERTICAL IDEOGRAPHIC ITERATION MARK\n  U+303B VERTICAL IDEOGRAPHIC ITERATION MARK ->\n  U+90E8 CJK UNIFIED IDEOGRAPH-90E8\n  U+5206 CJK UNIFIED IDEOGRAPH-5206\n  U+90E8 CJK UNIFIED IDEOGRAPH-90E8\n  U+5206 CJK UNIFIED IDEOGRAPH-5206\n- The same character is iterated multiple times:\n  U+53E4 CJK UNIFIED IDEOGRAPH-53E4\n  U+303B VERTICAL IDEOGRAPHIC ITERATION MARK\n  U+303B VERTICAL IDEOGRAPHIC ITERATION MARK\n  U+7C73 CJK UNIFIED IDEOGRAPH-7C73 ->\n  U+53E4 CJK UNIFIED IDEOGRAPH-53E4\n  U+53E4 CJK UNIFIED IDEOGRAPH-53E4\n  U+53E4 CJK UNIFIED IDEOGRAPH-53E4\n  U+7C73 CJK UNIFIED IDEOGRAPH-7C73",
+          "timestamp": "2025-09-04T11:21:27+09:00",
+          "tree_id": "8ed3385e312fbda8004732c96cdf79d84c9eaa70",
+          "url": "https://github.com/groonga/groonga/commit/f59506225fc2fa69bd76dbaefb152ce26cd310ef"
+        },
+        "date": 1756952951854,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3601764179999236,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0151359999999999 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.27607416199987256,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014980999999999883 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015160702999992282,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003930000000000877 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015045609999958742,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003910000000000302 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4558254680000005,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00016600000000008275 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2407903640000768,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008867000000000028 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14184190499992155,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0066339999999997235 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01643535100004101,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015139999999998766 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01696345900001006,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015939999999999566 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06381296599994357,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005892000000000008 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.07125901399990653,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007525999999999505 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01764635800003589,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015799999999997483 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017161857000019154,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001462999999999659 s\nthreads: undefined"
           }
         ]
       }
