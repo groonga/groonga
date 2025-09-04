@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "おゞかゞがゞきゞぎゞくゞぐゞけゞげゞこゞごゞさゞざゞしゞじゞすゞずゞせゞぜゞそゞぞゞたゞだゞちゞぢゞ"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "おゞかゞがゞきゞぎゞくゞぐゞけゞげゞこゞごゞさゞざゞしゞじゞすゞずゞせゞぜゞそゞぞゞたゞだゞちゞぢゞっゞつゞづゞてゞでゞとゞどゞなゞのゞはゞばゞぱゞひゞびゞぴゞふゞぶゞぷゞへゞべゞぺゞほゞぼゞぽゞまゞ"   WITH_TYPES
 [
   [
     0,
@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "ver
     0.0
   ],
   {
-    "normalized": "おおかがががきぎぎぎくぐぐぐけげげげこごごごさざざざしじじじすずずずせぜぜぜそぞぞぞただだだちぢぢぢ",
+    "normalized": "おおかがががきぎぎぎくぐぐぐけげげげこごごごさざざざしじじじすずずずせぜぜぜそぞぞぞただだだちぢぢぢっっつづづづてでででとどどどななののはばばばぱばひびびびぴびふぶぶぶぷぶへべべべぺべほぼぼぼぽぼまま",
     "types": [
       "hiragana",
       "hiragana",
@@ -58,21 +58,6 @@ normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "ver
       "hiragana",
       "hiragana",
       "hiragana",
-      "null"
-    ],
-    "checks": []
-  }
-]
-normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "っゞつゞづゞてゞでゞとゞどゞなゞ"   WITH_TYPES
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "normalized": "っっつづづづてでででとどどどなな",
-    "types": [
       "hiragana",
       "hiragana",
       "hiragana",
@@ -89,21 +74,6 @@ normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "ver
       "hiragana",
       "hiragana",
       "hiragana",
-      "null"
-    ],
-    "checks": []
-  }
-]
-normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "のゞはゞばゞぱゞひゞびゞぴゞふゞぶゞぷゞへゞべゞぺゞほゞぼゞぽゞまゞ"   WITH_TYPES
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "normalized": "ののはばばばぱばひびびびぴびふぶぶぶぷぶへべべべぺべほぼぼぼぽぼまま",
-    "types": [
       "hiragana",
       "hiragana",
       "hiragana",
