@@ -146,8 +146,18 @@ end
 
 namespace :release do
   namespace :version do
+    desc "Validate version for release"
+    task :validate do
+      if version != BASE_VERSION
+        message = "You must NOT specify VERSION= for 'rake release'. "
+        message += "You must run 'rake dev:version:bump NEW_VERSION=#{version}' "
+        message += "before 'rake release'."
+        raise message
+      end
+    end
+
     desc "Update versions for a new release"
-    task :update do
+    task update: :validate do
       new_release_date = env_var("NEW_RELEASE_DATE", Date.today.iso8601)
       cd("packages") do
         ruby("-S",
@@ -193,7 +203,7 @@ namespace :release do
   end
 
   desc "Tag"
-  task :tag do
+  task tag: "version:validate" do
     latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
       File.basename(a).to_f - File.basename(b).to_f
     end
