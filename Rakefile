@@ -203,7 +203,7 @@ namespace :release do
   end
 
   desc "Tag"
-  task :tag do
+  task tag: "version:validate" do
     latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
       File.basename(a).to_f - File.basename(b).to_f
     end
