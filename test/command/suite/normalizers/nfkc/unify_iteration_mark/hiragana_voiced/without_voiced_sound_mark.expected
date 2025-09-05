@@ -1,0 +1,28 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "このお店は、ごゞから混む。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "このお店は、ごごから混む。",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "symbol",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]
