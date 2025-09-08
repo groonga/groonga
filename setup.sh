@@ -117,7 +117,7 @@ function setup_with_dnf () {
         8)
           ${SUDO} dnf config-manager --set-enabled powertools
           ;;
-        9)
+        *)
           ${SUDO} dnf config-manager --set-enabled crb
           ;;
       esac
