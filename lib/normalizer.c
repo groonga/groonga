@@ -1967,7 +1967,7 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
   return utf8_char;
 }
 
-static inline void
+static inline bool
 grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
 {
   if (utf8_char[0] == 0xe3 && utf8_char[1] == 0x81) {
@@ -1977,14 +1977,14 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
       if (utf8_char[2] & 0x1) {
         utf8_char[2] += 1;
       }
-      return;
+      return true;
     } else if (0xa4 <= utf8_char[2] && utf8_char[2] <= 0xa9) {
       /* U+3064 HIRAGANA LETTER TU ..
        * U+3069 HIRAGANA LETTER DO */
       if (!(utf8_char[2] & 0x1)) {
         utf8_char[2] += 1;
       }
-      return;
+      return true;
     } else if (0xaf <= utf8_char[2] && utf8_char[2] <= 0xbd) {
       /* U+306F HIRAGANA LETTER HA ..
        * U+307D HIRAGANA LETTER PO */
@@ -1992,22 +1992,18 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
       if (mod3 == 0) {
         /* Unvoiced -> add voiced mark */
         utf8_char[2] += 1;
-        return;
+        return true;
       } else if (mod3 == 2) {
         /* Semi-voiced -> change to voiced */
         utf8_char[2] -= 1;
-        return;
+        return true;
       } else {
         /* mod3 == 1 (already voiced) -> no change */
-        return;
+        return true;
       }
     }
   }
-
-  utf8_char[0] = 0xe3;
-  utf8_char[1] = 0x82;
-  utf8_char[2] = 0x9e;
-  return;
+  return false;
 }
 
 static inline const unsigned char *
@@ -3519,7 +3515,12 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
       unified_buffer[(*n_unified_bytes)++] = previous[i];
     }
-    grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unified_buffer);
+    if (!(grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
+          unified_buffer))) {
+      for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
+        unified_buffer[i] = current[i];
+      }
+    }
     data->previous_length = N_HIRAGANA_BYTES;
     (*n_unified_characters)++;
     return unified_buffer;
