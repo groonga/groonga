@@ -1993,11 +1993,7 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
         /* Unvoiced -> add voiced mark */
         utf8_char[2] += 1;
         return true;
-      } else if (mod3 == 2) {
-        /* Semi-voiced -> change to voiced */
-        utf8_char[2] -= 1;
-        return true;
-      } else {
+      } else if (mod3 == 1) {
         /* mod3 == 1 (already voiced) -> no change */
         return true;
       }

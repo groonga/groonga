@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "ver
     0.0
   ],
   {
-    "normalized": "はばばばぱばひびびびぴびふぶぶぶぷぶへべべべぺべほぼぼぼぽぼ",
+    "normalized": "はばばばぱゞひびびびぴゞふぶぶぶぷゞへべべべぺゞほぼぼぼぽゞ",
     "types": [
       "hiragana",
       "hiragana",
