@@ -1,0 +1,37 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "たゞだゞちゞぢゞっゞつゞづゞてゞでゞとゞどゞ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ただだだちぢぢぢっゞつづづづてでででとどどど",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "null"
+    ],
+    "checks": []
+  }
+]
