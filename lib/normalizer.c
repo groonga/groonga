@@ -1968,21 +1968,28 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
 }
 
 static inline bool
-grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
+grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
+  const unsigned char *utf8_char, unsigned char *voiced)
 {
   if (utf8_char[0] == 0xe3 && utf8_char[1] == 0x81) {
     if (0x8b <= utf8_char[2] && utf8_char[2] <= 0xa2) {
       /* U+304B HIRAGANA LETTER KA ..
        * U+3062 HIRAGANA LETTER DI */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
       if (utf8_char[2] & 0x1) {
-        utf8_char[2] += 1;
+        voiced[2] += 1;
       }
       return true;
     } else if (0xa4 <= utf8_char[2] && utf8_char[2] <= 0xa9) {
       /* U+3064 HIRAGANA LETTER TU ..
        * U+3069 HIRAGANA LETTER DO */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
       if (!(utf8_char[2] & 0x1)) {
-        utf8_char[2] += 1;
+        voiced[2] += 1;
       }
       return true;
     } else if (0xaf <= utf8_char[2] && utf8_char[2] <= 0xbd) {
@@ -1991,10 +1998,15 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(unsigned char *utf8_char)
       unsigned char mod3 = (unsigned char)((utf8_char[2] - 0xaf) % 3);
       if (mod3 == 0) {
         /* Unvoiced -> add voiced mark */
-        utf8_char[2] += 1;
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
         return true;
       } else if (mod3 == 1) {
         /* mod3 == 1 (already voiced) -> no change */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2];
         return true;
       }
     }
@@ -3508,18 +3520,16 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
              current[2] == 0x9e && previous_length == N_HIRAGANA_BYTES &&
              GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
     /* U+309E HIRAGANA VOICED ITERATION MARK */
-    for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
-      unified_buffer[(*n_unified_bytes)++] = previous[i];
-    }
-    if (!(grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
-          unified_buffer))) {
+    unsigned char voiced_buffer[N_HIRAGANA_BYTES];
+    if (grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(previous,
+                                                             voiced_buffer)) {
       for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
-        unified_buffer[i] = current[i];
+        unified_buffer[(*n_unified_bytes)++] = voiced_buffer[i];
       }
+      data->previous_length = N_HIRAGANA_BYTES;
+      (*n_unified_characters)++;
+      return unified_buffer;
     }
-    data->previous_length = N_HIRAGANA_BYTES;
-    (*n_unified_characters)++;
-    return unified_buffer;
   }
 #  undef N_HIRAGANA_BYTES
 #  define N_KATAKANA_BYTES 3
