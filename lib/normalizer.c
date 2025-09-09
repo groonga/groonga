@@ -1968,7 +1968,7 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
 }
 
 static inline bool
-grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
+grn_nfkc_normalize_process_hiragana_voiced_iteration_mark(
   const unsigned char *utf8_char, unsigned char *voiced)
 {
   if (utf8_char[0] == 0xe3 && utf8_char[1] == 0x81) {
@@ -3525,12 +3525,11 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
              current[2] == 0x9e && previous_length == N_HIRAGANA_BYTES &&
              GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
     /* U+309E HIRAGANA VOICED ITERATION MARK */
-    unsigned char voiced_buffer[N_HIRAGANA_BYTES];
-    if (grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(previous,
-                                                             voiced_buffer)) {
-      for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
-        unified_buffer[(*n_unified_bytes)++] = voiced_buffer[i];
-      }
+    const bool processed =
+      grn_nfkc_normalize_process_hiragana_voiced_iteration_mark(previous,
+                                                                unified_buffer);
+    if (processed) {
+      *n_unified_bytes += N_HIRAGANA_BYTES;
       data->previous_length = N_HIRAGANA_BYTES;
       (*n_unified_characters)++;
       return unified_buffer;
