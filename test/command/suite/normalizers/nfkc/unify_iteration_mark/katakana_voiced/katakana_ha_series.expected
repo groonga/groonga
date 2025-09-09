@@ -1,0 +1,45 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "ハヾバヾパヾヒヾビヾピヾフヾブヾプヾヘヾベヾペヾホヾボヾポヾ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ハバババパヾヒビビビピヾフブブブプヾヘベベベペヾホボボボポヾ",
+    "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "null"
+    ],
+    "checks": []
+  }
+]
