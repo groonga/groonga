@@ -28,7 +28,6 @@ module RepositoryHelper
     top_directory = File.join(__dir__, "..")
     [
       File.read(File.join(top_directory, "gpg_uid_rsa4096")).strip,
-      File.read(File.join(top_directory, "gpg_uid")).strip,
     ]
   end
 end
