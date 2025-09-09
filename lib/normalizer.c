@@ -1979,6 +1979,7 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
       voiced[1] = utf8_char[1];
       voiced[2] = utf8_char[2];
       if (utf8_char[2] & 0x1) {
+        /* Unvoiced -> add voiced mark */
         voiced[2] += 1;
       }
       return true;
@@ -1989,6 +1990,7 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
       voiced[1] = utf8_char[1];
       voiced[2] = utf8_char[2];
       if (!(utf8_char[2] & 0x1)) {
+        /* Unvoiced -> add voiced mark */
         voiced[2] += 1;
       }
       return true;
@@ -2003,11 +2005,14 @@ grn_nfkc_normalize_hiragana_ensure_voiced_sound_mark(
         voiced[2] = utf8_char[2] + 1;
         return true;
       } else if (mod3 == 1) {
-        /* mod3 == 1 (already voiced) -> no change */
+        /* Already voiced -> no change */
         voiced[0] = utf8_char[0];
         voiced[1] = utf8_char[1];
         voiced[2] = utf8_char[2];
         return true;
+      } else {
+        /* Semi-voiced -> not normalized to voiced */
+        return false;
       }
     }
   }
