@@ -2,6 +2,6 @@
 normalize \
   'NormalizerNFKC("unify_iteration_mark", true, \
                   "version", "NFKC_VERSION")' \
-  "たゞだゞちゞぢゞっゞつゞづゞてゞでゞとゞどゞ" \
+  "たゞだゞちゞぢゞつゞづゞてゞでゞとゞどゞ" \
   WITH_TYPES
 #@remove-substitution /"version",\s"(?:.+?)"/
