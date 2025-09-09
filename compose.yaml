@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,8 @@ services:
     build:
       cache_from:
         - ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-alpine-3.20
+      cache_to:
+        - type=inline
       context: dockerfiles
       dockerfile: alpine.dockerfile
       args:
@@ -35,6 +37,8 @@ services:
     build:
       cache_from:
         - ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-arch-linux
+      cache_to:
+        - type=inline
       context: dockerfiles
       dockerfile: arch-linux.dockerfile
     shm_size: 512mb
