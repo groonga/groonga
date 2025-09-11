@@ -1,0 +1,24 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "これは、たヾです。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "これは、たヾです。",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "hiragana",
+      "katakana",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]

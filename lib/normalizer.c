@@ -2068,6 +2068,69 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
 }
 
 static inline bool
+grn_nfkc_normalize_process_katakana_voiced_iteration_mark(
+  const unsigned char *utf8_char, unsigned char *voiced)
+{
+  if (utf8_char[0] == 0xe3) {
+    if (utf8_char[1] == 0x82 && utf8_char[2] == 0xBF) {
+      /* U+30BF KATAKANA LETTER TA =>
+       * U+30C0 KATAKANA LETTER DA */
+      voiced[0] = utf8_char[0];
+      voiced[1] = 0x83;
+      voiced[2] = 0x80;
+      return true;
+    } else if ((utf8_char[1] == 0x82 && 0xab <= utf8_char[2]) ||
+               (utf8_char[1] == 0x83 && utf8_char[2] <= 0x82)) {
+      /* U+30AB KATAKANA LETTER KA ..
+       * U+30C2 KATAKANA LETTER DI */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (utf8_char[2] & 0x1) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x84 <= utf8_char[2] && utf8_char[2] <= 0x89))) {
+      /* U+30C4 KATAKANA LETTER TU ..
+       * U+30C9 KATAKANA LETTER DO */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (!(utf8_char[2] & 0x1)) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x8F <= utf8_char[2] && utf8_char[2] <= 0x9d))) {
+      /* U+30D0 KATAKANA LETTER BA ..
+       * U+30DD KATAKANA LETTER PO */
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 2) % 3);
+      if (mod3 == 0) {
+        /* Unvoiced -> add voiced mark */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return true;
+      } else if (mod3 == 1) {
+        /* Already voiced -> no change */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2];
+        return true;
+      } else {
+        /* Semi-voiced -> not normalized to voiced */
+        return false;
+      }
+    }
+  }
+
+  return false;
+}
+
+static inline bool
 grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char, size_t length)
 {
   /* U+002D HYPHEN-MINUS */
@@ -3551,6 +3614,19 @@ grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
     data->previous_length = N_KATAKANA_BYTES;
     (*n_unified_characters)++;
     return unified_buffer;
+  } else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
+             current[2] == 0xbe && previous_length == N_KATAKANA_BYTES &&
+             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KATAKANA) {
+    /* U+30FE KATAKANA VOICED ITERATION MARK */
+    const bool processed =
+      grn_nfkc_normalize_process_katakana_voiced_iteration_mark(previous,
+                                                                unified_buffer);
+    if (processed) {
+      *n_unified_bytes += N_KATAKANA_BYTES;
+      data->previous_length = N_KATAKANA_BYTES;
+      (*n_unified_characters)++;
+      return unified_buffer;
+    }
   }
 #  undef N_KATAKANA_BYTES
   else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
