@@ -1641,12 +1641,6 @@ AC_ARG_WITH(launchpad-uploader-pgp-key,
             [LAUNCHPAD_UPLOADER_PGP_KEY=""])
 AC_SUBST(LAUNCHPAD_UPLOADER_PGP_KEY)
 
-GPG_UID=m4_include(gpg_uid)
-AC_SUBST(GPG_UID)
-
-GPG_UID_RSA4096=m4_include(gpg_uid_rsa4096)
-AC_SUBST(GPG_UID_RSA4096)
-
 pkgsysconfdir="\${sysconfdir}/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
 
@@ -1839,7 +1833,6 @@ echo
 echo "For packages:"
 echo "  rsync path:            ${RSYNC_PATH}"
 echo "  Launchpad PGP key:     ${LAUNCHPAD_UPLOADER_PGP_KEY}"
-echo "  GPG UID:               ${GPG_UID}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
