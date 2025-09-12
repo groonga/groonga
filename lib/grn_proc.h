@@ -55,6 +55,8 @@ grn_proc_init_column_remove(grn_ctx *ctx);
 void
 grn_proc_init_column_rename(grn_ctx *ctx);
 void
+grn_proc_init_command_list(grn_ctx *ctx);
+void
 grn_proc_init_config_get(grn_ctx *ctx);
 void
 grn_proc_init_config_set(grn_ctx *ctx);
