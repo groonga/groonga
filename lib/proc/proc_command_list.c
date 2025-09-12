@@ -35,7 +35,7 @@ command_command_list(grn_ctx *ctx,
   {
     if (id == GRN_DB_MECAB) {
       /* TokenMecab must not be a command. TokenMecab may exist as a
-       * dummy object for historically reason. */
+       * dummy object for historical reason. */
       continue;
     }
 
