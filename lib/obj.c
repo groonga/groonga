@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -993,6 +993,17 @@ grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
 
   proc = (grn_proc *)obj;
   return proc->type == GRN_PROC_TOKENIZER;
+}
+
+bool
+grn_obj_is_command_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_proc(ctx, obj)) {
+    return false;
+  }
+
+  grn_proc *proc = (grn_proc *)obj;
+  return proc->type == GRN_PROC_COMMAND;
 }
 
 bool
