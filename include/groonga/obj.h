@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -168,6 +168,8 @@ GRN_API bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_command_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
