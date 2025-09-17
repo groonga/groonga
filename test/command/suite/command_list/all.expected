@@ -1,0 +1,278 @@
+command_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "cache_limit": {
+      "id": 150,
+      "name": "cache_limit"
+    },
+    "check": {
+      "id": 153,
+      "name": "check"
+    },
+    "clearlock": {
+      "id": 143,
+      "name": "clearlock"
+    },
+    "column_copy": {
+      "id": 187,
+      "name": "column_copy"
+    },
+    "column_create": {
+      "id": 137,
+      "name": "column_create"
+    },
+    "column_create_similar": {
+      "id": 217,
+      "name": "column_create_similar"
+    },
+    "column_list": {
+      "id": 133,
+      "name": "column_list"
+    },
+    "column_remove": {
+      "id": 138,
+      "name": "column_remove"
+    },
+    "column_rename": {
+      "id": 139,
+      "name": "column_rename"
+    },
+    "command_list": {
+      "id": 225,
+      "name": "command_list"
+    },
+    "config_delete": {
+      "id": 193,
+      "name": "config_delete"
+    },
+    "config_get": {
+      "id": 191,
+      "name": "config_get"
+    },
+    "config_set": {
+      "id": 192,
+      "name": "config_set"
+    },
+    "database_unmap": {
+      "id": 186,
+      "name": "database_unmap"
+    },
+    "define_selector": {
+      "id": 128,
+      "name": "define_selector"
+    },
+    "defrag": {
+      "id": 145,
+      "name": "defrag"
+    },
+    "delete": {
+      "id": 149,
+      "name": "delete"
+    },
+    "dump": {
+      "id": 151,
+      "name": "dump"
+    },
+    "expr_missing": {
+      "id": 140,
+      "name": "expr_missing"
+    },
+    "index_column_diff": {
+      "id": 210,
+      "name": "index_column_diff"
+    },
+    "io_flush": {
+      "id": 183,
+      "name": "io_flush"
+    },
+    "load": {
+      "id": 130,
+      "name": "load"
+    },
+    "lock_acquire": {
+      "id": 194,
+      "name": "lock_acquire"
+    },
+    "lock_clear": {
+      "id": 144,
+      "name": "lock_clear"
+    },
+    "lock_release": {
+      "id": 195,
+      "name": "lock_release"
+    },
+    "log_level": {
+      "id": 146,
+      "name": "log_level"
+    },
+    "log_put": {
+      "id": 147,
+      "name": "log_put"
+    },
+    "log_reopen": {
+      "id": 148,
+      "name": "log_reopen"
+    },
+    "normalize": {
+      "id": 155,
+      "name": "normalize"
+    },
+    "normalizer_list": {
+      "id": 159,
+      "name": "normalizer_list"
+    },
+    "object_exist": {
+      "id": 184,
+      "name": "object_exist"
+    },
+    "object_inspect": {
+      "id": 196,
+      "name": "object_inspect"
+    },
+    "object_list": {
+      "id": 202,
+      "name": "object_list"
+    },
+    "object_remove": {
+      "id": 198,
+      "name": "object_remove"
+    },
+    "object_set_visibility": {
+      "id": 211,
+      "name": "object_set_visibility"
+    },
+    "object_warm": {
+      "id": 215,
+      "name": "object_warm"
+    },
+    "plugin_register": {
+      "id": 181,
+      "name": "plugin_register"
+    },
+    "plugin_unregister": {
+      "id": 182,
+      "name": "plugin_unregister"
+    },
+    "query_expand": {
+      "id": 201,
+      "name": "query_expand"
+    },
+    "query_log_flags_add": {
+      "id": 207,
+      "name": "query_log_flags_add"
+    },
+    "query_log_flags_get": {
+      "id": 205,
+      "name": "query_log_flags_get"
+    },
+    "query_log_flags_remove": {
+      "id": 208,
+      "name": "query_log_flags_remove"
+    },
+    "query_log_flags_set": {
+      "id": 206,
+      "name": "query_log_flags_set"
+    },
+    "quit": {
+      "id": 141,
+      "name": "quit"
+    },
+    "range_filter": {
+      "id": 179,
+      "name": "range_filter"
+    },
+    "reference_acquire": {
+      "id": 212,
+      "name": "reference_acquire"
+    },
+    "reference_release": {
+      "id": 213,
+      "name": "reference_release"
+    },
+    "register": {
+      "id": 152,
+      "name": "register"
+    },
+    "reindex": {
+      "id": 189,
+      "name": "reindex"
+    },
+    "request_cancel": {
+      "id": 180,
+      "name": "request_cancel"
+    },
+    "schema": {
+      "id": 188,
+      "name": "schema"
+    },
+    "select": {
+      "id": 129,
+      "name": "select"
+    },
+    "shutdown": {
+      "id": 142,
+      "name": "shutdown"
+    },
+    "sleep": {
+      "id": 220,
+      "name": "sleep"
+    },
+    "status": {
+      "id": 131,
+      "name": "status"
+    },
+    "table_copy": {
+      "id": 203,
+      "name": "table_copy"
+    },
+    "table_create": {
+      "id": 134,
+      "name": "table_create"
+    },
+    "table_create_similar": {
+      "id": 216,
+      "name": "table_create_similar"
+    },
+    "table_list": {
+      "id": 132,
+      "name": "table_list"
+    },
+    "table_remove": {
+      "id": 135,
+      "name": "table_remove"
+    },
+    "table_rename": {
+      "id": 136,
+      "name": "table_rename"
+    },
+    "table_tokenize": {
+      "id": 157,
+      "name": "table_tokenize"
+    },
+    "thread_dump": {
+      "id": 218,
+      "name": "thread_dump"
+    },
+    "thread_limit": {
+      "id": 185,
+      "name": "thread_limit"
+    },
+    "tokenize": {
+      "id": 156,
+      "name": "tokenize"
+    },
+    "tokenizer_list": {
+      "id": 158,
+      "name": "tokenizer_list"
+    },
+    "truncate": {
+      "id": 154,
+      "name": "truncate"
+    }
+  }
+]
