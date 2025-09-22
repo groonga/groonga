@@ -19,14 +19,8 @@ Install:
 
 .. include:: server-use.rst
 
-If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
-tokenizer, install groonga-tokenizer-mecab package.
-
-Install groonga-tokenizer-mecab package:
-
-.. code-block:: console
-
-   $ sudo dnf install -y groonga-tokenizer-mecab
+You can't install groonga-tokenizer-mecab package in Amazon Linux 2023.
+Because Amazon Linux 2023 doesn't provide `MeCab <https://taku910.github.io/mecab/>`_ package.
 
 There is a package that provides MySQL compatible normalizer as a
 Groonga plugin. If you want to use that one, install

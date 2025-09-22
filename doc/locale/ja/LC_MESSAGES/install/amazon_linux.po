@@ -28,11 +28,8 @@ msgstr ""
 msgid "Install:"
 msgstr "インストール:"
 
-msgid "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a tokenizer, install groonga-tokenizer-mecab package."
-msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいときは、groonga-tokenizer-mecabパッケージをインストールしてください。"
-
-msgid "Install groonga-tokenizer-mecab package:"
-msgstr "groonga-tokenizer-mecabパッケージのインストール:"
+msgid "You can't install groonga-tokenizer-mecab package in Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide `MeCab <https://taku910.github.io/mecab/>`_ package."
+msgstr "Amazon Linux 2023 では、groonga-tokenizer-mecabパッケージはインストールできません。 Amazon Linux 2023が、 `MeCab <https://taku910.github.io/mecab/>`_ パッケージを提供していないためです。"
 
 msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install groonga-normalizer-mysql package."
 msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>`_ パッケージをインストールしてください。"
