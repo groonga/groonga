@@ -37,6 +37,12 @@ msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーと�
 msgid "Install groonga-tokenizer-mecab package:"
 msgstr "groonga-tokenizer-mecabパッケージのインストール:"
 
+msgid "If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package."
+msgstr ":doc:`/reference/token_filters/token_filter_stem` を使いたいときは、groonga-token-filter-stemパッケージをインストールしてください。"
+
+msgid "Install groonga-token-filter-stem package:"
+msgstr "groonga-token-filter-stemパッケージのインストール:"
+
 msgid "TODO:"
 msgstr ""
 

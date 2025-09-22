@@ -30,6 +30,14 @@ Install groonga-tokenizer-mecab package:
 
    $ sudo dnf install -y --enablerepo=epel groonga-tokenizer-mecab
 
+If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package:
+
+.. code-block:: console
+
+   $ sudo dnf install -y groonga-token-filter-stem
+
 TODO:
 
 - Write here how to install groonga-normalizer-mysql package after groonga-normalizer-mysql released for AlmaLinux 10.
@@ -53,6 +61,14 @@ Install groonga-tokenizer-mecab package:
 .. code-block:: console
 
    $ sudo dnf install -y --enablerepo=epel groonga-tokenizer-mecab
+
+If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package:
+
+.. code-block:: console
+
+   $ sudo dnf install -y groonga-token-filter-stem
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
@@ -82,6 +98,14 @@ Install groonga-tokenizer-mecab package:
 .. code-block:: console
 
    $ sudo dnf install -y --enablerepo=epel groonga-tokenizer-mecab
+
+If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package:
+
+.. code-block:: console
+
+   $ sudo dnf install -y groonga-token-filter-stem
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
