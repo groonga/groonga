@@ -28,6 +28,14 @@ Install groonga-tokenizer-mecab package:
 
    $ sudo dnf install -y groonga-tokenizer-mecab
 
+If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package:
+
+.. code-block:: console
+
+   $ sudo dnf install -y groonga-token-filter-stem
+
 There is a package that provides MySQL compatible normalizer as a
 Groonga plugin. If you want to use that one, install
 groonga-normalizer-mysql package.
