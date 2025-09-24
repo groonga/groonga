@@ -17,6 +17,75 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.7 - 2025-09-29"
+msgstr "15.1.7リリース - 2025-09-29"
+
+msgid "In this release, we supported NormalizerNFKC's `unify_iteration_mark` option to normalize Japanese iteration marks (ゝ/ゞ/ヽ/ヾ; 々/〻 as single-char repeats) and fixed installation failure on AlmaLinux 10."
+msgstr "今回のリリースでは、`NormalizerNFKC`の`unify_iteration_mark`オプションをサポートしました。このオプションで日本語の踊り字を正規化できます。また、AlmaLinux 10でインストール失敗（GPG キー）していた問題を修正しました。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/executables/grndb`] Improved error handling for large files"
+msgstr "[{doc}`/reference/executables/grndb`] 大きなファイルに対するエラー処理を改善"
+
+msgid "Previously, `grndb` aborted when it encountered database files that exceeded filesystem stat limits. This release makes those errors non-fatal. `grndb` now logs an error for each problematic file but continues processing to completion."
+msgstr "これまで `grndb`は、ファイルシステムの`stat`コマンドの制限を超えるデータベースファイルに遭遇すると中断していました。今回のリリースではこれらのエラー発生時に中断せず、問題のある各ファイルをエラーログに出力しつつ、処理を最後まで継続するように改善しました。"
+
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for iteration marks with `unify_iteration_mark` option"
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_iteration_mark`オプションで踊り字をサポート"
+
+msgid "The `unify_iteration_mark` option now supports additional iteration mark characters. This option treats iteration marks as repeats of the immediately preceding character as below."
+msgstr "`unify_iteration_mark`オプションを利用することで、次の踊り字をサポートします。これらの踊り字は直前の1文字を繰り返すものとして扱われます。"
+
+msgid "Hiragana Iteration Mark ゝ (U+309D)"
+msgstr ""
+
+msgid "Hiragana Voiced Iteration Mark ゞ (U+309E)"
+msgstr ""
+
+msgid "Katakana Iteration Mark ヽ (U+30FD)"
+msgstr ""
+
+msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
+msgstr ""
+
+msgid "Ideographic Iteration Mark 々 (U+3005) - partial: single-character repetition only"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 部分対応：直前1文字のみ"
+
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - partial: single-character repetition only"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 部分対応：直前1文字のみ"
+
+msgid "Here is an example of using `unify_iteration_mark` option."
+msgstr "`unify_iteration_mark`オプションの使用例"
+
+msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
+msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」を以外のパターンは **非対応** です。"
+
+msgid "Examples:"
+msgstr "例"
+
+msgid "\"部分々々\" -> \"部分部分\""
+msgstr ""
+
+msgid "\"古々々米\" -> \"古古古米\""
+msgstr ""
+
+msgid "Added new command to list available commands"
+msgstr "利用可能なコマンド一覧を取得する新コマンドを追加"
+
+msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. This is useful for discovering available functionality and for tools that need to introspect Groonga's capabilities."
+msgstr "新しい`command_list`コマンドを追加しました。利用可能なGroongaコマンドの一覧を返します。Groongaの機能の把握をするのに便利です。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10 (GPG key)"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗（GPG キー）する問題を修正"
+
+msgid "Previously, installation could fail with a dnf GPG check error due to an outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
+msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーによりインストールが失敗していました。古いキーを削除してRSA4096キーのみを配布するようにしたため、現在は正常にインストールできます。"
+
 msgid "Release 15.1.5 - 2025-08-29"
 msgstr "15.1.5リリース - 2025-08-29"
 
@@ -25,9 +94,6 @@ msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`�
 
 msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga is already supported on Debian 13! Please try it!"
 msgstr "Debian 13 \"Trixie\" が2025-08-09にリリースされました。GroongaはすでにDebian 13で使えます！ ぜひ試してみてください！"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` flag for `TABLE_PAT_KEY`"
 msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
@@ -49,9 +115,6 @@ msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
 
 msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
 msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/cmake`] Fixed how to build/install"
 msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
