@@ -86,6 +86,12 @@ msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗�
 msgid "Previously, installation could fail with a dnf GPG check error due to an outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
 msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーによりインストールが失敗していました。古いキーを削除してRSA4096キーのみを配布するようにしたため、現在は正常にインストールできます。"
 
+msgid "If you installed an older `groonga-release` before, remove it once and reinstall the latest package so your system drops the old key:"
+msgstr "以前に古い`groonga-release`を導入している場合は、一度削除して最新版を入れ直すことで確実に古いキーを削除できます。"
+
+msgid "After reinstallation, `groonga-release` contains only the new key:"
+msgstr "再インストール後に、`groonga-release`に新しいキーのみが含まれていることを確認できます。"
+
 msgid "Release 15.1.5 - 2025-08-29"
 msgstr "15.1.5リリース - 2025-08-29"
 
