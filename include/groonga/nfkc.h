@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +26,7 @@ extern "C" {
 #endif
 
 GRN_API grn_char_type grn_nfkc_char_type(const unsigned char *utf8);
+GRN_API grn_char_type grn_nfkc_latest_char_type(const unsigned char *utf8);
 
 #ifdef __cplusplus
 }

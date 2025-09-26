@@ -1,0 +1,28 @@
+plugin_register token_filters/stem
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer 'NormalizerNFKC("version", "16.0.0")'   --token_filters 'TokenFilterStem("algorithm", "arabic")'
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+table_tokenize Terms "الكتاب مفيد" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "كتاب",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "مفيد",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

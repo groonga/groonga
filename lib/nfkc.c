@@ -30,6 +30,13 @@ grn_nfkc_char_type(const unsigned char *utf8)
   return grn_nfkc50_char_type(utf8);
 }
 
+grn_char_type
+grn_nfkc_latest_char_type(const unsigned char *utf8)
+{
+  /* This must be updated when we add the latest Unicode support. */
+  return grn_nfkc160_char_type(utf8);
+}
+
 const char *
 grn_nfkc_decompose(const unsigned char *utf8)
 {
