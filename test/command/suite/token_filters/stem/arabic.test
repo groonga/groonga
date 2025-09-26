@@ -1,0 +1,11 @@
+#@on-error omit
+plugin_register token_filters/stem
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer 'NormalizerNFKC("version", "16.0.0")' \
+  --token_filters 'TokenFilterStem("algorithm", "arabic")'
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+table_tokenize Terms "الكتاب مفيد" --mode ADD
