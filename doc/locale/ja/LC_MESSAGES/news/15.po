@@ -77,6 +77,21 @@ msgstr "利用可能なコマンド一覧を取得する新コマンドを追加
 msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. This is useful for discovering available functionality and for tools that need to introspect Groonga's capabilities."
 msgstr "新しい`command_list`コマンドを追加しました。利用可能なGroongaコマンドの一覧を返します。Groongaの機能の把握をするのに便利です。"
 
+msgid "[{doc}`/reference/token_filters/token_filter_stem`] Added support for non-ASCII alphabets"
+msgstr "[{doc}`/reference/token_filters/token_filter_stem`] 非ASCIIアルファベットのサポートを追加"
+
+msgid "[GH-2539](https://github.com/groonga/groonga/issues/2539)"
+msgstr ""
+
+msgid "Reported by Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさんが報告"
+
+msgid "Previously, the `TokenFilterStem` filter only worked with ASCII characters. Now it supports stemming for non-ASCII alphabets such as Arabic."
+msgstr "これまで`TokenFilterStem`フィルターは、ASCII文字にのみ対応していました。今回の変更により、アラビア語などの非ASCIIアルファベットでもステミングをサポートします。"
+
+msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
+msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
+
 msgid "Fixes"
 msgstr "修正"
 
@@ -91,6 +106,12 @@ msgstr "すでに古い`groonga-release`をインストール済みの場合は�
 
 msgid "After upgrading the package, `groonga-release` contains only the new key:"
 msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさん"
 
 msgid "Release 15.1.5 - 2025-08-29"
 msgstr "15.1.5リリース - 2025-08-29"
@@ -151,9 +172,6 @@ msgstr "`grndb check` コマンドが一部のデータベースファイルを�
 
 msgid "However, even without this modification, grndb check correctly returns the results of table and column checks. `grndb cehck` can check database correctly by this modification."
 msgstr "ただ、この修正が入る前でも `grndb check` によるテーブルとカラムのチェックは正しい結果を返します。 この修正によって、データベースのチェックも正しい結果を返せるようになります。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Tsutomu Katsube"
 msgstr "かつべさん"
