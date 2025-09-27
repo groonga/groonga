@@ -151,6 +151,9 @@ msgstr "以下は {ref}`normalizer-nfkc-unify-latin-alphabet-with` オプショ�
 msgid "However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters."
 msgstr "ただし、この機能は LATIN (SMALL|CAPITAL) LETTER X WITH XXX にのみフォーカスしています。 LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX はサポートしていません。"
 
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-iteration-mark` option. This option enables normalization of iteration marks by replacing them with the actual repeated character."
+msgstr "以下は {ref}`normalizer-nfkc-unify-iteration-mark` オプションの使用例です。このオプションは、踊り字を直前の文字に置き換えて正規化します。"
+
 msgid "Advanced usage"
 msgstr "高度な使い方"
 
@@ -552,6 +555,45 @@ msgstr ""
 
 msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
 msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "`unify_iteration_mark`"
+msgstr ""
+
+msgid "This option enables normalization of iteration marks by replacing them with the actual repeated character."
+msgstr "このオプションは、踊り字を直前の文字に置き換えて正規化します。"
+
+msgid "The following iteration marks are normalize."
+msgstr "正規化対象の踊り字は以下の通りです。"
+
+msgid "Hiragana Iteration Mark ゝ (U+309D)"
+msgstr ""
+
+msgid "Hiragana Voiced Iteration Mark ゞ (U+309E)"
+msgstr ""
+
+msgid "Katakana Iteration Mark ヽ (U+30FD)"
+msgstr ""
+
+msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
+msgstr ""
+
+msgid "Ideographic Iteration Mark 々 (U+3005) - partial: single-character repetition only"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 部分対応：直前の1文字のみを繰り返します"
+
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - partial: single-character repetition only"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 部分対応：直前の1文字のみを繰り返します"
+
+msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
+msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」以外のパターンは **非対応** です。"
+
+msgid "Examples:"
+msgstr "例"
+
+msgid "\"部分々々\" -> \"部分部分\""
+msgstr ""
+
+msgid "\"古々々米\" -> \"古古古米\""
+msgstr ""
 
 msgid "See also"
 msgstr "参考"
