@@ -77,6 +77,12 @@ NormalizerNFKC("unify_kana_prolonged_sound_mark", true)
 NormalizerNFKC("unify_kana_hyphen", true)
 
 NormalizerNFKC("unify_latin_alphabet_with", true)
+
+NormalizerNFKC("unify_iteration_mark", true)
+```
+
+```{versionadded} 15.1.6
+{ref}`normalizer-nfkc-unify-iteration-mark` is added.
 ```
 
 Specify multiple options:
@@ -398,6 +404,18 @@ However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It 
 normalize \
   'NormalizerNFKC("unify_latin_alphabet_with", true)' \
   "ngoằn" \
+  WITH_TYPES
+```
+
+Here is an example of {ref}`normalizer-nfkc-unify-iteration-mark` option.
+This option enables normalization of iteration marks by replacing them with the actual repeated character.
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md
+normalize \
+  'NormalizerNFKC("unify_iteration_mark", true)' \
+  "時々" \
   WITH_TYPES
 ```
 
@@ -806,6 +824,67 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
 This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
 
 However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
+
+(normalizer-nfkc-unify-iteration-mark)=
+
+#### `unify_iteration_mark`
+
+```{versionadded} 15.1.6
+
+```
+
+This option enables normalization of iteration marks by replacing them with the actual repeated character.
+
+The following iteration marks are normalize.
+
+- Hiragana Iteration Mark ゝ (U+309D)
+
+```
+こゝ -> ここ
+づゝ -> づつ
+```
+
+- Hiragana Voiced Iteration Mark ゞ (U+309E)
+
+```
+ぶゞ漬け -> ぶぶ漬け
+ふゞき -> ふぶき
+```
+
+- Katakana Iteration Mark ヽ (U+30FD)
+
+```
+バナヽ -> バナナ
+バヽナ -> バハナ
+```
+
+- Katakana Voiced Iteration Mark ヾ (U+30FE)
+
+```
+バヾ -> ババ
+フヾキ -> フブキ
+```
+
+- Ideographic Iteration Mark 々 (U+3005) - partial: single-character repetition only
+
+```
+時々 -> 時時
+```
+
+- Vertical Ideographic Iteration Mark 〻 (U+303B) - partial: single-character repetition only
+
+```
+各〻 -> 各各
+```
+
+```{note}
+For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character.
+Patterns beyond **repeat the previous one character** are **not** supported like the following cases.
+
+Examples:
+- "部分々々" -> "部分部分"
+- "古々々米" -> "古古古米"
+```
 
 ## See also
 

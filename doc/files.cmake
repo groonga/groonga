@@ -647,6 +647,7 @@ set(GRN_DOC_SOURCES
     example/reference/normalizers/normalizer-nfkc-remove-symbol.md
     example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md
     example/reference/normalizers/normalizer-nfkc-unify-hyphen.md
+    example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md
     example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md
     example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md
     example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md
