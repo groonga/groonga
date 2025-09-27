@@ -81,6 +81,10 @@ NormalizerNFKC("unify_latin_alphabet_with", true)
 NormalizerNFKC("unify_iteration_mark", true)
 ```
 
+```{versionadded} 15.1.6
+{ref}`normalizer-nfkc-unify-iteration-mark` is added.
+```
+
 Specify multiple options:
 
 ```
@@ -824,6 +828,10 @@ However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It 
 (normalizer-nfkc-unify-iteration-mark)=
 
 #### `unify_iteration_mark`
+
+```{versionadded} 15.1.6
+
+```
 
 This option enables normalization of iteration marks by replacing them with the actual repeated character.
 

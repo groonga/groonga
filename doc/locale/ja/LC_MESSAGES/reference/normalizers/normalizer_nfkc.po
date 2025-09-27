@@ -46,6 +46,9 @@ msgstr "オプションなし:"
 msgid "Specify option:"
 msgstr "オプション指定:"
 
+msgid "{ref}`normalizer-nfkc-unify-iteration-mark` is added."
+msgstr "{ref}`normalizer-nfkc-unify-iteration-mark`追加。"
+
 msgid "Specify multiple options:"
 msgstr "複数のオプション指定:"
 
