@@ -647,6 +647,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-remove-symbol.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-hyphen.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md \
@@ -2019,6 +2020,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-nfkc-remove-symbol.md \
 	source/example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md \
 	source/example/reference/normalizers/normalizer-nfkc-unify-hyphen.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md \
 	source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md \
 	source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md \
 	source/example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md \
