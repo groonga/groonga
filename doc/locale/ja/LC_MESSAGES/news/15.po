@@ -29,8 +29,8 @@ msgstr "改良"
 msgid "[{doc}`/reference/executables/grndb`] Improved error handling for large database files"
 msgstr "[{doc}`/reference/executables/grndb`] 大きなデータベースファイルに対するエラー処理を改善"
 
-msgid "Previously, `grndb` aborted when it encountered database files that exceeded filesystem stat limits (such as files larger than 2GB on Windows systems). This release makes those errors non-fatal. When `grndb` encounters such files in the Groonga database directory (the `db` file and its related `db.*` files), it now logs an error for each problematic file but continues processing to completion instead of aborting."
-msgstr "これまで、`grndb` はファイルシステムの`stat`上限（例：Windows環境で2GBを超えるファイル）を超えるデータベースファイルに遭遇すると異常終了する形で中断していました。今回のリリースでは、`grndb`がGroongaのデータベースディレクトリ（db本体および関連するdb.*ファイル）内でそのようなファイルに遭遇した場合、問題のある各ファイルについてエラーを記録しつつ、処理を中断せず最後まで継続するように改善しました。"
+msgid "Previously, `grndb` terminated abnormally when processing database files that exceeded the filesystem stat limit (such as files files larger than 2GB on Windows). In this release, when `grndb` processes such files in the Groonga database directory (the db file and related db.\\* files), it records an error for each problematic file and continues to completion without aborting."
+msgstr "これまで、`grndb`はファイルシステムのstat上限（例：Windows環境で2GBを超えるファイル）を超えるデータベースファイルを処理すると異常終了していました。今回のリリースでは、`grndb`がGroongaのデータベースディレクトリ（db本体および関連するdb.*ファイル）内でそのようなファイルを処理した場合、問題のある各ファイルについてエラーを記録しつつ、異常終了せず最後まで継続するように改善しました。"
 
 msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for iteration marks with `unify_iteration_mark` option"
 msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_iteration_mark`オプションで踊り字をサポート"
