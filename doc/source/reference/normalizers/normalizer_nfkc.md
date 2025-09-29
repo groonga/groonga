@@ -81,7 +81,7 @@ NormalizerNFKC("unify_latin_alphabet_with", true)
 NormalizerNFKC("unify_iteration_mark", true)
 ```
 
-```{versionadded} 15.1.6
+```{versionadded} 15.1.7
 {ref}`normalizer-nfkc-unify-iteration-mark` is added.
 ```
 
@@ -829,7 +829,7 @@ However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It 
 
 #### `unify_iteration_mark`
 
-```{versionadded} 15.1.6
+```{versionadded} 15.1.7
 
 ```
 
