@@ -86,8 +86,8 @@ msgstr ""
 msgid "Reported by Tsai, Xing Wei"
 msgstr "Tsai, Xing Weiさんが報告"
 
-msgid "Previously, the `TokenFilterStem` filter only worked with ASCII characters. Now it supports stemming for non-ASCII alphabets such as Arabic."
-msgstr "これまで`TokenFilterStem`フィルターは、ASCII文字にのみ対応していました。今回の変更により、アラビア語などの非ASCIIアルファベットでもステミングをサポートします。"
+msgid "Previously, the `TokenFilterStem` filter only worked with ASCII alphabets. Now it supports stemming for non-ASCII alphabets such as Arabic."
+msgstr "これまで`TokenFilterStem`フィルターは、ASCIIアルファベットのみに対応していました。今回の変更により、アラビア語などの非ASCIIアルファベットでもステミングをサポートします。"
 
 msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
 msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
