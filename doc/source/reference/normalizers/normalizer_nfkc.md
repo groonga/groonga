@@ -865,13 +865,13 @@ The following iteration marks are normalize.
 フヾキ -> フブキ
 ```
 
-- Ideographic Iteration Mark 々 (U+3005) - partial: single-character repetition only
+- Ideographic Iteration Mark 々 (U+3005) - limitation: only repeats the immediately preceding single character
 
 ```
 時々 -> 時時
 ```
 
-- Vertical Ideographic Iteration Mark 〻 (U+303B) - partial: single-character repetition only
+- Vertical Ideographic Iteration Mark 〻 (U+303B) - limitation: only repeats the immediately preceding single character
 
 ```
 各〻 -> 各各

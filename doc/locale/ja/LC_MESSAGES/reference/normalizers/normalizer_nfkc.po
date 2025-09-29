@@ -580,11 +580,11 @@ msgstr ""
 msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
 msgstr ""
 
-msgid "Ideographic Iteration Mark 々 (U+3005) - partial: single-character repetition only"
-msgstr "Ideographic Iteration Mark 々 (U+3005) - 部分対応：直前の1文字のみを繰り返します"
+msgid "Ideographic Iteration Mark 々 (U+3005) - limitation: only repeats the immediately preceding single character"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 制限：直前の単一文字の繰り返しのみサポート"
 
-msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - partial: single-character repetition only"
-msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 部分対応：直前の1文字のみを繰り返します"
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - limitation: only repeats the immediately preceding single character"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 制限：直前の単一文字の繰り返しのみサポート"
 
 msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
 msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」以外のパターンは **非対応** です。"
