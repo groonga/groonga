@@ -104,8 +104,8 @@ msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`d
 msgid "Who should upgrade?"
 msgstr "どのユーザーがアップグレードすべきですか？"
 
-msgid "We recommend all users who installed groonga-release **before 2025/09/24** to upgrade to the latest package as following step, regardless of distribution version. If you installed groonga-release on or **after 2025/09/24**, no action is required."
-msgstr "ディストリビューションに関わらず、2025/09/24より前にgroonga-releaseをインストールしたすべてのユーザーに対し、以下の手順で最新版へのアップグレードを推奨します。2025/09/24以降に groonga-releaseをインストールした場合は、対応は不要です。"
+msgid "Most users do not need to upgrade. Only users who installed groonga-release on AlmaLinux 10 **before 2025/09/24** need to upgrade to the latest package using the steps below. If you installed groonga-release on AlmaLinux 10 on or **after 2025/09/24**, no action is required."
+msgstr "ほとんどのユーザーはアップグレードの必要はありません。アップグレードの必要があるのは、AlmaLInux 10で**2025/09/24以前**にgroonga-releaseをインストールしたユーザーのみです。AlmaLinux 10でも**2025/09/24以降**にgroonga-releaseをインストールした場合は対応は不要です。"
 
 msgid "After upgrading the package, groonga-release contains only the new key:"
 msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
