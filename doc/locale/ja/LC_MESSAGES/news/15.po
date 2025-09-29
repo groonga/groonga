@@ -95,9 +95,6 @@ msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する�
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10 (GPG key)"
-msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗（GPG キー）する問題を修正"
-
 msgid "Previously, installation could fail with a dnf GPG check error due to the following outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
 msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーに失敗してインストールできない場合がありました。古いキーを削除し、RSA4096キーのみを配布するようにしたため、現在は期待どおりにインストールできます。"
 
