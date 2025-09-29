@@ -17,6 +17,105 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.7 - 2025-09-29"
+msgstr "15.1.7リリース - 2025-09-29"
+
+msgid "In this release, `NormalizerNFKC` can normalize Japanese iteration marks and fixed installation failure on AlmaLinux 10."
+msgstr "今回のリリースでは、`NormalizerNFKC`で日本語の踊り字を正規化できるようになりました。また、AlmaLinux 10でインストール失敗していた問題を修正しました。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/executables/grndb`] Improved error handling for large database files"
+msgstr "[{doc}`/reference/executables/grndb`] 大きなデータベースファイルに対するエラー処理を改善"
+
+msgid "Previously, `grndb` terminated abnormally when processing database files that exceeded the filesystem stat limit (such as files files larger than 2GB on Windows). In this release, when `grndb` processes such files in the Groonga database directory (the db file and related db.\\* files), it records an error for each problematic file and continues to completion without aborting."
+msgstr "これまで、`grndb`はファイルシステムのstat上限（例：Windows環境で2GBを超えるファイル）を超えるデータベースファイルを処理すると異常終了していました。今回のリリースでは、`grndb`がGroongaのデータベースディレクトリ（db本体および関連するdb.*ファイル）内でそのようなファイルを処理した場合、問題のある各ファイルについてエラーを記録しつつ、異常終了せず最後まで継続するように改善しました。"
+
+msgid "[{ref}`normalizer-nfkc-unify-iteration-mark`] Added support for iteration marks with `unify_iteration_mark` option"
+msgstr "[{ref}`normalizer-nfkc-unify-iteration-mark`] `unify_iteration_mark`オプションで踊り字をサポート"
+
+msgid "The `unify_iteration_mark` option now supports additional iteration mark characters. This option treats iteration marks as repeats of the immediately preceding character as below."
+msgstr "`unify_iteration_mark`オプションを利用することで、次の踊り字をサポートします。これらの踊り字は直前の1文字を繰り返すものとして扱われます。"
+
+msgid "Hiragana Iteration Mark ゝ (U+309D)"
+msgstr ""
+
+msgid "Hiragana Voiced Iteration Mark ゞ (U+309E)"
+msgstr ""
+
+msgid "Katakana Iteration Mark ヽ (U+30FD)"
+msgstr ""
+
+msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
+msgstr ""
+
+msgid "Ideographic Iteration Mark 々 (U+3005) - limitation: only repeats the immediately preceding single character"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 制限: 直前の単一文字の繰り返しのみサポート"
+
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - limitation: only repeats the immediately preceding single character"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 制限: 直前の単一文字の繰り返しのみサポート"
+
+msgid "Here is an example of using `unify_iteration_mark` option."
+msgstr "`unify_iteration_mark`オプションの使用例"
+
+msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
+msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」を以外のパターンは **非対応** です。"
+
+msgid "Examples:"
+msgstr "例"
+
+msgid "\"部分々々\" -> \"部分部分\""
+msgstr ""
+
+msgid "\"古々々米\" -> \"古古古米\""
+msgstr ""
+
+msgid "Added new command to list available commands"
+msgstr "利用可能なコマンド一覧を取得する新コマンドを追加"
+
+msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. Currently, this command returns only the command ID and name for each command. Using this command could enable automatic generation of client library APIs and help implement Groonga MCP (Model Context Protocol) servers. In future releases, we plan to expand the output to include command summaries, descriptions, and detailed argument information."
+msgstr "利用可能なGroongaの全コマンドを一覧で返す新しい`command_list`コマンドを追加しました。現時点では、各コマンドについてIDと名前のみを返します。このコマンドを利用することで、クライアントライブラリAPIの自動生成や、Groonga MCP（Model Context Protocol）サーバーの実装を支援できます。将来のリリースでは、コマンドの概要、説明、引数の詳細情報などを出力に含める予定です。"
+
+msgid "[{doc}`/reference/token_filters/token_filter_stem`] Added support for non-ASCII alphabets"
+msgstr "[{doc}`/reference/token_filters/token_filter_stem`] 非ASCIIアルファベットのサポートを追加"
+
+msgid "[GH-2539](https://github.com/groonga/groonga/issues/2539)"
+msgstr ""
+
+msgid "Reported by Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさんが報告"
+
+msgid "Previously, the `TokenFilterStem` filter only worked with ASCII alphabets. Now it supports stemming for non-ASCII alphabets such as Arabic."
+msgstr "これまで`TokenFilterStem`フィルターは、ASCIIアルファベットのみに対応していました。今回の変更により、アラビア語などの非ASCIIアルファベットでもステミングをサポートします。"
+
+msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
+msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗する問題を修正"
+
+msgid "Previously, installation could fail with a dnf GPG check error due to the following outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
+msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーに失敗してインストールできない場合がありました。古いキーを削除し、RSA4096キーのみを配布するようにしたため、現在は期待どおりにインストールできます。"
+
+msgid "Who should upgrade?"
+msgstr "どのユーザーがアップグレードすべきですか？"
+
+msgid "Most users do not need to upgrade. Only users who installed groonga-release on AlmaLinux 10 **before 2025/09/24** need to upgrade to the latest package using the steps below. If you installed groonga-release on AlmaLinux 10 on or **after 2025/09/24**, no action is required."
+msgstr "ほとんどのユーザーはアップグレードの必要はありません。アップグレードの必要があるのは、AlmaLinux 10で**2025/09/24以前**にgroonga-releaseをインストールしたユーザーのみです。AlmaLinux 10でも**2025/09/24以降**にgroonga-releaseをインストールした場合は対応は不要です。"
+
+msgid "After upgrading the package, groonga-release contains only the new key:"
+msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさん"
+
 msgid "Release 15.1.5 - 2025-08-29"
 msgstr "15.1.5リリース - 2025-08-29"
 
@@ -25,9 +124,6 @@ msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`�
 
 msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga is already supported on Debian 13! Please try it!"
 msgstr "Debian 13 \"Trixie\" が2025-08-09にリリースされました。GroongaはすでにDebian 13で使えます！ ぜひ試してみてください！"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` flag for `TABLE_PAT_KEY`"
 msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
@@ -49,9 +145,6 @@ msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
 
 msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
 msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/cmake`] Fixed how to build/install"
 msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
@@ -82,9 +175,6 @@ msgstr "`grndb check` コマンドが一部のデータベースファイルを�
 
 msgid "However, even without this modification, grndb check correctly returns the results of table and column checks. `grndb cehck` can check database correctly by this modification."
 msgstr "ただ、この修正が入る前でも `grndb check` によるテーブルとカラムのチェックは正しい結果を返します。 この修正によって、データベースのチェックも正しい結果を返せるようになります。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Tsutomu Katsube"
 msgstr "かつべさん"
