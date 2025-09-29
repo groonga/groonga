@@ -98,13 +98,16 @@ msgstr "修正"
 msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10 (GPG key)"
 msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗（GPG キー）する問題を修正"
 
-msgid "Previously, installation could fail with a dnf GPG check error due to an outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
-msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーによりインストールが失敗していました。古いキーを削除してRSA4096キーのみを配布するようにしたため、現在は正常にインストールできます。"
+msgid "Previously, installation could fail with a dnf GPG check error due to the following outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
+msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーに失敗してインストールできない場合がありました。古いキーを削除し、RSA4096キーのみを配布するようにしたため、現在は期待どおりにインストールできます。"
 
-msgid "If you have already installed an older `groonga-release`, please upgrade it to the latest version to remove the old key:"
-msgstr "すでに古い`groonga-release`をインストール済みの場合は、古いキーを取り除くために最新版へアップグレードしてください。"
+msgid "Who should upgrade?"
+msgstr "どのユーザーがアップグレードすべきですか？"
 
-msgid "After upgrading the package, `groonga-release` contains only the new key:"
+msgid "We recommend all users who installed groonga-release **before 2025/09/24** to upgrade to the latest package as following step, regardless of distribution version. If you installed groonga-release on or **after 2025/09/24**, no action is required."
+msgstr "ディストリビューションに関わらず、2025/09/24より前にgroonga-releaseをインストールしたすべてのユーザーに対し、以下の手順で最新版へのアップグレードを推奨します。2025/09/24以降に groonga-releaseをインストールした場合は、対応は不要です。"
+
+msgid "After upgrading the package, groonga-release contains only the new key:"
 msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
 
 msgid "Thanks"
