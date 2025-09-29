@@ -2,7 +2,7 @@
 
 pkgname=groonga
 pkgdesc="An open-source fulltext search engine and column store."
-pkgver=15.1.5
+pkgver=15.1.7
 pkgrel=1
 arch=('i686' 'x86_64')
 url="https://groonga.org/"
@@ -41,7 +41,7 @@ source=(
   "https://github.com/groonga/groonga/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.gz.asc"
 )
 sha512sums=(
-  "70f0d4c087d9826dd3161054ce1b529240c0797769a3ee99486b9cad4b294ead3fda99ded4a21c5a042106808f7566a38dd4cd911eec96c7066b28f65dc8b752"
+  "ded60e2736fd4b4d44046525041101978b47896ec5c0619ea3d10a7042e6cc6fdd544c0dd0e7006ca9f384fc2198ce32659eb446b1b8ee5a6bb4e8ad8f9f5b87"
   "SKIP"
 )
 validpgpkeys=(2701F317CFCCCB975CADE9C2624CF77434839225)
