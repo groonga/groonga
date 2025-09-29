@@ -21,7 +21,7 @@ msgid "Release 15.1.7 - 2025-09-29"
 msgstr "15.1.7リリース - 2025-09-29"
 
 msgid "In this release, `NormalizerNFKC` can normalize Japanese iteration marks and fixed installation failure on AlmaLinux 10."
-msgstr "今回のリリースでは、`NormalizerNFKC`で日本語の踊り字を正規化できるようになりました。また、AlmaLinux 10でインストール失敗（GPG キー）していた問題を修正しました。"
+msgstr "今回のリリースでは、`NormalizerNFKC`で日本語の踊り字を正規化できるようになりました。また、AlmaLinux 10でインストール失敗していた問題を修正しました。"
 
 msgid "Improvements"
 msgstr "改良"
