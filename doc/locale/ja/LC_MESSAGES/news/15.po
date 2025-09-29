@@ -74,8 +74,8 @@ msgstr ""
 msgid "Added new command to list available commands"
 msgstr "利用可能なコマンド一覧を取得する新コマンドを追加"
 
-msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. This is useful for discovering available functionality and for tools that need to introspect Groonga's capabilities."
-msgstr "新しい`command_list`コマンドを追加しました。利用可能なGroongaコマンドの一覧を返します。Groongaの機能の把握をするのに便利です。"
+msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. Currently, this command returns only the command ID and name for each command. This introspection API could enable automatic generation of client library APIs and help implement Groonga MCP (Model Context Protocol) servers. In future releases, we plan to expand the output to include command summaries, descriptions, and detailed argument information."
+msgstr "利用可能なGroongaの全コマンドを一覧で返す新しい`command_list`コマンドを追加しました。現時点では、各コマンドについてIDと名前のみを返します。このイントロスペクションAPIにより、クライアントライブラリAPIの自動生成や、Groonga MCP（Model Context Protocol）サーバーの実装を支援できます。将来のリリースでは、コマンドの概要、説明、引数の詳細情報などを出力に含める予定です。"
 
 msgid "[{doc}`/reference/token_filters/token_filter_stem`] Added support for non-ASCII alphabets"
 msgstr "[{doc}`/reference/token_filters/token_filter_stem`] 非ASCIIアルファベットのサポートを追加"
