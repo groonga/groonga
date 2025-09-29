@@ -32,8 +32,8 @@ msgstr "[{doc}`/reference/executables/grndb`] 大きなデータベースファ�
 msgid "Previously, `grndb` terminated abnormally when processing database files that exceeded the filesystem stat limit (such as files files larger than 2GB on Windows). In this release, when `grndb` processes such files in the Groonga database directory (the db file and related db.\\* files), it records an error for each problematic file and continues to completion without aborting."
 msgstr "これまで、`grndb`はファイルシステムのstat上限（例：Windows環境で2GBを超えるファイル）を超えるデータベースファイルを処理すると異常終了していました。今回のリリースでは、`grndb`がGroongaのデータベースディレクトリ（db本体および関連するdb.*ファイル）内でそのようなファイルを処理した場合、問題のある各ファイルについてエラーを記録しつつ、異常終了せず最後まで継続するように改善しました。"
 
-msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for iteration marks with `unify_iteration_mark` option"
-msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_iteration_mark`オプションで踊り字をサポート"
+msgid "[{ref}`normalizer-nfkc-unify-iteration-mark`] Added support for iteration marks with `unify_iteration_mark` option"
+msgstr "[{ref}`normalizer-nfkc-unify-iteration-mark`] `unify_iteration_mark`オプションで踊り字をサポート"
 
 msgid "The `unify_iteration_mark` option now supports additional iteration mark characters. This option treats iteration marks as repeats of the immediately preceding character as below."
 msgstr "`unify_iteration_mark`オプションを利用することで、次の踊り字をサポートします。これらの踊り字は直前の1文字を繰り返すものとして扱われます。"
