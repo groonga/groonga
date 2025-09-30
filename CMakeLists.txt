@@ -1869,8 +1869,13 @@ else()
   set(GRN_WITH_USEARCH FALSE)
 endif()
 
+if(WIN32)
+  set(GRN_WITH_CURL_DEFAULT "no")
+else()
+  set(GRN_WITH_CURL_DEFAULT "auto")
+endif()
 set(GRN_WITH_CURL
-    "auto"
+    ${GRN_WITH_CURL_DEFAULT}
     CACHE STRING "Use curl as HTTP client backend.")
 if(NOT "${GRN_WITH_CURL}" STREQUAL "no")
   if("${GRN_WITH_CURL}" STREQUAL "system")
