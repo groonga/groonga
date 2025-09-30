@@ -22,6 +22,7 @@ RUN \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
+    curl-devel \
     intltool \
     mecab-devel \
     libedit-devel \

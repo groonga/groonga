@@ -891,6 +891,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_COLUMN_FIX_SIZE         (0x40)
 #define GRN_COLUMN_VAR_SIZE         (0x41)
 #define GRN_COLUMN_INDEX            (0x48)
+#define GRN_HTTP_CLIENT             (0x50)
 
 typedef struct _grn_section {
   uint32_t offset;

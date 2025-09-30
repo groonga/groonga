@@ -29,6 +29,7 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	arrow-compute-devel >= @APACHE_ARROW_VERSION@
+BuildRequires:	curl-devel
 BuildRequires:	libedit-devel
 BuildRequires:	libstemmer-devel
 BuildRequires:	libzstd-devel

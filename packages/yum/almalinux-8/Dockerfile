@@ -18,6 +18,7 @@ RUN \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
+    curl-devel \
     gcc-c++ \
     intltool \
     libedit-devel \
