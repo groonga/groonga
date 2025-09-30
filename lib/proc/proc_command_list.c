@@ -78,13 +78,35 @@ command_command_list(grn_ctx *ctx,
 
     grn_ctx_output_str(ctx, name, name_size);
 
-    grn_ctx_output_map_open(ctx, "command", 2);
+    grn_ctx_output_map_open(ctx, "command", 3);
 
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint32(ctx, command_id);
 
     grn_ctx_output_cstr(ctx, "name");
     grn_ctx_output_str(ctx, name, name_size);
+
+    grn_ctx_output_cstr(ctx, "arguments");
+    {
+      unsigned int n_vars;
+      grn_hash *vars = grn_expr_get_vars(ctx, command, &n_vars);
+      grn_ctx_output_array_open(ctx, "arguments", n_vars);
+      GRN_HASH_EACH_BEGIN(ctx, vars, cursor, id)
+      {
+        grn_ctx_output_map_open(ctx, "argument", 1);
+        {
+          void *key;
+          int key_size = grn_hash_cursor_get_key(ctx, cursor, &key);
+          grn_ctx_output_cstr(ctx, "name");
+          grn_ctx_output_str(ctx, key, key_size);
+
+          /* TODO: Output more information. */
+        }
+        grn_ctx_output_map_close(ctx);
+      }
+      GRN_HASH_EACH_END(ctx, cursor);
+      grn_ctx_output_array_close(ctx);
+    }
 
     /* TODO: Output more information. */
 

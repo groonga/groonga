@@ -8,271 +8,1012 @@ command_list
   {
     "cache_limit": {
       "id": 150,
-      "name": "cache_limit"
+      "name": "cache_limit",
+      "arguments": [
+        {
+          "name": "max"
+        }
+      ]
     },
     "check": {
       "id": 153,
-      "name": "check"
+      "name": "check",
+      "arguments": [
+        {
+          "name": "obj"
+        }
+      ]
     },
     "clearlock": {
       "id": 143,
-      "name": "clearlock"
+      "name": "clearlock",
+      "arguments": [
+        {
+          "name": "target_name"
+        }
+      ]
     },
     "column_copy": {
       "id": 187,
-      "name": "column_copy"
+      "name": "column_copy",
+      "arguments": [
+        {
+          "name": "from_table"
+        },
+        {
+          "name": "from_name"
+        },
+        {
+          "name": "to_table"
+        },
+        {
+          "name": "to_name"
+        }
+      ]
     },
     "column_create": {
       "id": 137,
-      "name": "column_create"
+      "name": "column_create",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "name"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "type"
+        },
+        {
+          "name": "source"
+        },
+        {
+          "name": "path"
+        },
+        {
+          "name": "generator"
+        }
+      ]
     },
     "column_create_similar": {
       "id": 217,
-      "name": "column_create_similar"
+      "name": "column_create_similar",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "name"
+        },
+        {
+          "name": "base_column"
+        }
+      ]
     },
     "column_list": {
       "id": 133,
-      "name": "column_list"
+      "name": "column_list",
+      "arguments": [
+        {
+          "name": "table"
+        }
+      ]
     },
     "column_remove": {
       "id": 138,
-      "name": "column_remove"
+      "name": "column_remove",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "name"
+        }
+      ]
     },
     "column_rename": {
       "id": 139,
-      "name": "column_rename"
+      "name": "column_rename",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "name"
+        },
+        {
+          "name": "new_name"
+        }
+      ]
     },
     "command_list": {
       "id": 225,
-      "name": "command_list"
+      "name": "command_list",
+      "arguments": []
     },
     "config_delete": {
       "id": 193,
-      "name": "config_delete"
+      "name": "config_delete",
+      "arguments": [
+        {
+          "name": "key"
+        }
+      ]
     },
     "config_get": {
       "id": 191,
-      "name": "config_get"
+      "name": "config_get",
+      "arguments": [
+        {
+          "name": "key"
+        }
+      ]
     },
     "config_set": {
       "id": 192,
-      "name": "config_set"
+      "name": "config_set",
+      "arguments": [
+        {
+          "name": "key"
+        },
+        {
+          "name": "value"
+        }
+      ]
     },
     "database_unmap": {
       "id": 186,
-      "name": "database_unmap"
+      "name": "database_unmap",
+      "arguments": []
     },
     "define_selector": {
       "id": 128,
-      "name": "define_selector"
+      "name": "define_selector",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "table"
+        },
+        {
+          "name": "match_columns"
+        },
+        {
+          "name": "query"
+        },
+        {
+          "name": "filter"
+        },
+        {
+          "name": "scorer"
+        },
+        {
+          "name": "sortby"
+        },
+        {
+          "name": "output_columns"
+        },
+        {
+          "name": "offset"
+        },
+        {
+          "name": "limit"
+        },
+        {
+          "name": "drilldown"
+        },
+        {
+          "name": "drilldown_sortby"
+        },
+        {
+          "name": "drilldown_output_columns"
+        },
+        {
+          "name": "drilldown_offset"
+        },
+        {
+          "name": "drilldown_limit"
+        },
+        {
+          "name": "cache"
+        },
+        {
+          "name": "match_escalation_threshold"
+        },
+        {
+          "name": "query_expansion"
+        },
+        {
+          "name": "query_flags"
+        },
+        {
+          "name": "query_expander"
+        },
+        {
+          "name": "adjuster"
+        },
+        {
+          "name": "drilldown_calc_types"
+        },
+        {
+          "name": "drilldown_calc_target"
+        },
+        {
+          "name": "drilldown_filter"
+        },
+        {
+          "name": "sort_keys"
+        },
+        {
+          "name": "drilldown_sort_keys"
+        },
+        {
+          "name": "drilldown_adjuster"
+        },
+        {
+          "name": "match_escalation"
+        },
+        {
+          "name": "load_table"
+        },
+        {
+          "name": "load_columns"
+        },
+        {
+          "name": "load_values"
+        },
+        {
+          "name": "post_filter"
+        },
+        {
+          "name": "query_options"
+        },
+        {
+          "name": "drilldown_max_n_target_records"
+        }
+      ]
     },
     "defrag": {
       "id": 145,
-      "name": "defrag"
+      "name": "defrag",
+      "arguments": [
+        {
+          "name": "target_name"
+        },
+        {
+          "name": "threshold"
+        }
+      ]
     },
     "delete": {
       "id": 149,
-      "name": "delete"
+      "name": "delete",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "key"
+        },
+        {
+          "name": "id"
+        },
+        {
+          "name": "filter"
+        }
+      ]
     },
     "dump": {
       "id": 151,
-      "name": "dump"
+      "name": "dump",
+      "arguments": [
+        {
+          "name": "tables"
+        },
+        {
+          "name": "dump_plugins"
+        },
+        {
+          "name": "dump_schema"
+        },
+        {
+          "name": "dump_records"
+        },
+        {
+          "name": "dump_indexes"
+        },
+        {
+          "name": "dump_configs"
+        },
+        {
+          "name": "sort_hash_table"
+        },
+        {
+          "name": "dump_paths"
+        }
+      ]
     },
     "expr_missing": {
       "id": 140,
-      "name": "expr_missing"
+      "name": "expr_missing",
+      "arguments": [
+        {
+          "name": "path"
+        }
+      ]
     },
     "index_column_diff": {
       "id": 210,
-      "name": "index_column_diff"
+      "name": "index_column_diff",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "name"
+        },
+        {
+          "name": "progress_log_level"
+        }
+      ]
     },
     "io_flush": {
       "id": 183,
-      "name": "io_flush"
+      "name": "io_flush",
+      "arguments": [
+        {
+          "name": "target_name"
+        },
+        {
+          "name": "recursive"
+        },
+        {
+          "name": "only_opened"
+        }
+      ]
     },
     "load": {
       "id": 130,
-      "name": "load"
+      "name": "load",
+      "arguments": [
+        {
+          "name": "values"
+        },
+        {
+          "name": "table"
+        },
+        {
+          "name": "columns"
+        },
+        {
+          "name": "ifexists"
+        },
+        {
+          "name": "input_type"
+        },
+        {
+          "name": "each"
+        },
+        {
+          "name": "output_ids"
+        },
+        {
+          "name": "output_errors"
+        },
+        {
+          "name": "lock_table"
+        }
+      ]
     },
     "lock_acquire": {
       "id": 194,
-      "name": "lock_acquire"
+      "name": "lock_acquire",
+      "arguments": [
+        {
+          "name": "target_name"
+        }
+      ]
     },
     "lock_clear": {
       "id": 144,
-      "name": "lock_clear"
+      "name": "lock_clear",
+      "arguments": [
+        {
+          "name": "target_name"
+        }
+      ]
     },
     "lock_release": {
       "id": 195,
-      "name": "lock_release"
+      "name": "lock_release",
+      "arguments": [
+        {
+          "name": "target_name"
+        }
+      ]
     },
     "log_level": {
       "id": 146,
-      "name": "log_level"
+      "name": "log_level",
+      "arguments": [
+        {
+          "name": "level"
+        }
+      ]
     },
     "log_put": {
       "id": 147,
-      "name": "log_put"
+      "name": "log_put",
+      "arguments": [
+        {
+          "name": "level"
+        },
+        {
+          "name": "message"
+        }
+      ]
     },
     "log_reopen": {
       "id": 148,
-      "name": "log_reopen"
+      "name": "log_reopen",
+      "arguments": []
     },
     "normalize": {
       "id": 155,
-      "name": "normalize"
+      "name": "normalize",
+      "arguments": [
+        {
+          "name": "normalizer"
+        },
+        {
+          "name": "string"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "normalizers"
+        }
+      ]
     },
     "normalizer_list": {
       "id": 159,
-      "name": "normalizer_list"
+      "name": "normalizer_list",
+      "arguments": []
     },
     "object_exist": {
       "id": 184,
-      "name": "object_exist"
+      "name": "object_exist",
+      "arguments": [
+        {
+          "name": "name"
+        }
+      ]
     },
     "object_inspect": {
       "id": 196,
-      "name": "object_inspect"
+      "name": "object_inspect",
+      "arguments": [
+        {
+          "name": "name"
+        }
+      ]
     },
     "object_list": {
       "id": 202,
-      "name": "object_list"
+      "name": "object_list",
+      "arguments": []
     },
     "object_remove": {
       "id": 198,
-      "name": "object_remove"
+      "name": "object_remove",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "force"
+        }
+      ]
     },
     "object_set_visibility": {
       "id": 211,
-      "name": "object_set_visibility"
+      "name": "object_set_visibility",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "visible"
+        }
+      ]
     },
     "object_warm": {
       "id": 215,
-      "name": "object_warm"
+      "name": "object_warm",
+      "arguments": [
+        {
+          "name": "name"
+        }
+      ]
     },
     "plugin_register": {
       "id": 181,
-      "name": "plugin_register"
+      "name": "plugin_register",
+      "arguments": [
+        {
+          "name": "name"
+        }
+      ]
     },
     "plugin_unregister": {
       "id": 182,
-      "name": "plugin_unregister"
+      "name": "plugin_unregister",
+      "arguments": [
+        {
+          "name": "name"
+        }
+      ]
     },
     "query_expand": {
       "id": 201,
-      "name": "query_expand"
+      "name": "query_expand",
+      "arguments": [
+        {
+          "name": "expander"
+        },
+        {
+          "name": "query"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "term_column"
+        },
+        {
+          "name": "expanded_term_column"
+        }
+      ]
     },
     "query_log_flags_add": {
       "id": 207,
-      "name": "query_log_flags_add"
+      "name": "query_log_flags_add",
+      "arguments": [
+        {
+          "name": "flags"
+        }
+      ]
     },
     "query_log_flags_get": {
       "id": 205,
-      "name": "query_log_flags_get"
+      "name": "query_log_flags_get",
+      "arguments": []
     },
     "query_log_flags_remove": {
       "id": 208,
-      "name": "query_log_flags_remove"
+      "name": "query_log_flags_remove",
+      "arguments": [
+        {
+          "name": "flags"
+        }
+      ]
     },
     "query_log_flags_set": {
       "id": 206,
-      "name": "query_log_flags_set"
+      "name": "query_log_flags_set",
+      "arguments": [
+        {
+          "name": "flags"
+        }
+      ]
     },
     "quit": {
       "id": 141,
-      "name": "quit"
+      "name": "quit",
+      "arguments": []
     },
     "range_filter": {
       "id": 179,
-      "name": "range_filter"
+      "name": "range_filter",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "column"
+        },
+        {
+          "name": "min"
+        },
+        {
+          "name": "min_border"
+        },
+        {
+          "name": "max"
+        },
+        {
+          "name": "max_border"
+        },
+        {
+          "name": "offset"
+        },
+        {
+          "name": "limit"
+        },
+        {
+          "name": "filter"
+        },
+        {
+          "name": "output_columns"
+        }
+      ]
     },
     "reference_acquire": {
       "id": 212,
-      "name": "reference_acquire"
+      "name": "reference_acquire",
+      "arguments": [
+        {
+          "name": "target_name"
+        },
+        {
+          "name": "recursive"
+        },
+        {
+          "name": "auto_release_count"
+        }
+      ]
     },
     "reference_release": {
       "id": 213,
-      "name": "reference_release"
+      "name": "reference_release",
+      "arguments": [
+        {
+          "name": "target_name"
+        },
+        {
+          "name": "recursive"
+        }
+      ]
     },
     "register": {
       "id": 152,
-      "name": "register"
+      "name": "register",
+      "arguments": [
+        {
+          "name": "path"
+        }
+      ]
     },
     "reindex": {
       "id": 189,
-      "name": "reindex"
+      "name": "reindex",
+      "arguments": [
+        {
+          "name": "target_name"
+        }
+      ]
     },
     "request_cancel": {
       "id": 180,
-      "name": "request_cancel"
+      "name": "request_cancel",
+      "arguments": [
+        {
+          "name": "id"
+        }
+      ]
     },
     "schema": {
       "id": 188,
-      "name": "schema"
+      "name": "schema",
+      "arguments": []
     },
     "select": {
       "id": 129,
-      "name": "select"
+      "name": "select",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "match_columns"
+        },
+        {
+          "name": "query"
+        },
+        {
+          "name": "filter"
+        },
+        {
+          "name": "scorer"
+        },
+        {
+          "name": "sortby"
+        },
+        {
+          "name": "output_columns"
+        },
+        {
+          "name": "offset"
+        },
+        {
+          "name": "limit"
+        },
+        {
+          "name": "drilldown"
+        },
+        {
+          "name": "drilldown_sortby"
+        },
+        {
+          "name": "drilldown_output_columns"
+        },
+        {
+          "name": "drilldown_offset"
+        },
+        {
+          "name": "drilldown_limit"
+        },
+        {
+          "name": "cache"
+        },
+        {
+          "name": "match_escalation_threshold"
+        },
+        {
+          "name": "query_expansion"
+        },
+        {
+          "name": "query_flags"
+        },
+        {
+          "name": "query_expander"
+        },
+        {
+          "name": "adjuster"
+        },
+        {
+          "name": "drilldown_calc_types"
+        },
+        {
+          "name": "drilldown_calc_target"
+        },
+        {
+          "name": "drilldown_filter"
+        },
+        {
+          "name": "sort_keys"
+        },
+        {
+          "name": "drilldown_sort_keys"
+        },
+        {
+          "name": "drilldown_adjuster"
+        },
+        {
+          "name": "match_escalation"
+        },
+        {
+          "name": "load_table"
+        },
+        {
+          "name": "load_columns"
+        },
+        {
+          "name": "load_values"
+        },
+        {
+          "name": "post_filter"
+        },
+        {
+          "name": "query_options"
+        },
+        {
+          "name": "drilldown_max_n_target_records"
+        }
+      ]
     },
     "shutdown": {
       "id": 142,
-      "name": "shutdown"
+      "name": "shutdown",
+      "arguments": [
+        {
+          "name": "mode"
+        }
+      ]
     },
     "sleep": {
       "id": 220,
-      "name": "sleep"
+      "name": "sleep",
+      "arguments": [
+        {
+          "name": "second"
+        }
+      ]
     },
     "status": {
       "id": 131,
-      "name": "status"
+      "name": "status",
+      "arguments": []
     },
     "table_copy": {
       "id": 203,
-      "name": "table_copy"
+      "name": "table_copy",
+      "arguments": [
+        {
+          "name": "from_name"
+        },
+        {
+          "name": "to_name"
+        }
+      ]
     },
     "table_create": {
       "id": 134,
-      "name": "table_create"
+      "name": "table_create",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "key_type"
+        },
+        {
+          "name": "value_type"
+        },
+        {
+          "name": "default_tokenizer"
+        },
+        {
+          "name": "normalizer"
+        },
+        {
+          "name": "token_filters"
+        },
+        {
+          "name": "path"
+        },
+        {
+          "name": "normalizers"
+        }
+      ]
     },
     "table_create_similar": {
       "id": 216,
-      "name": "table_create_similar"
+      "name": "table_create_similar",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "base_table"
+        }
+      ]
     },
     "table_list": {
       "id": 132,
-      "name": "table_list"
+      "name": "table_list",
+      "arguments": [
+        {
+          "name": "prefix"
+        }
+      ]
     },
     "table_remove": {
       "id": 135,
-      "name": "table_remove"
+      "name": "table_remove",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "dependent"
+        },
+        {
+          "name": "ensure"
+        }
+      ]
     },
     "table_rename": {
       "id": 136,
-      "name": "table_rename"
+      "name": "table_rename",
+      "arguments": [
+        {
+          "name": "name"
+        },
+        {
+          "name": "new_name"
+        }
+      ]
     },
     "table_tokenize": {
       "id": 157,
-      "name": "table_tokenize"
+      "name": "table_tokenize",
+      "arguments": [
+        {
+          "name": "table"
+        },
+        {
+          "name": "string"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "mode"
+        },
+        {
+          "name": "index_column"
+        },
+        {
+          "name": "output_style"
+        }
+      ]
     },
     "thread_dump": {
       "id": 218,
-      "name": "thread_dump"
+      "name": "thread_dump",
+      "arguments": []
     },
     "thread_limit": {
       "id": 185,
-      "name": "thread_limit"
+      "name": "thread_limit",
+      "arguments": [
+        {
+          "name": "max"
+        }
+      ]
     },
     "tokenize": {
       "id": 156,
-      "name": "tokenize"
+      "name": "tokenize",
+      "arguments": [
+        {
+          "name": "tokenizer"
+        },
+        {
+          "name": "string"
+        },
+        {
+          "name": "normalizer"
+        },
+        {
+          "name": "flags"
+        },
+        {
+          "name": "mode"
+        },
+        {
+          "name": "token_filters"
+        },
+        {
+          "name": "output_style"
+        }
+      ]
     },
     "tokenizer_list": {
       "id": 158,
-      "name": "tokenizer_list"
+      "name": "tokenizer_list",
+      "arguments": []
     },
     "truncate": {
       "id": 154,
-      "name": "truncate"
+      "name": "truncate",
+      "arguments": [
+        {
+          "name": "target_name"
+        },
+        {
+          "name": "table"
+        }
+      ]
     }
   }
 ]
