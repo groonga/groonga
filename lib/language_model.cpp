@@ -747,7 +747,7 @@ namespace grn {
 
       return ensure_model(model_file_name);
 #else
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s simdjson isn't enabled", TAG)
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s simdjson isn't enabled", TAG);
       return false;
 #endif
     }
