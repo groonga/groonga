@@ -731,9 +731,8 @@ namespace grn {
       auto manifest = std::move(manifest_result.value());
       simdjson::ondemand::parser parser;
       auto doc = parser.iterate(manifest);
-      std::string model_file_name;
-      if (doc["ggufFile"]["rfilename"].get_string(model_file_name) !=
-          simdjson::SUCCESS) {
+      auto model_file_name_result = doc["ggufFile"]["rfilename"].get_string();
+      if (model_file_name_result.error() != simdjson::SUCCESS) {
         // TODO: add support multi modal projects ("mmprojFile.rfilename")
         ERR(GRN_INVALID_ARGUMENT,
             "%s GGUF file can't be detected: <%s>: <%s>: <%.*s>",
@@ -744,6 +743,7 @@ namespace grn {
             manifest.data());
         return false;
       }
+      auto model_file_name = model_file_name_result.value();
 
       return ensure_model(model_file_name);
 #else
@@ -785,9 +785,9 @@ namespace grn {
     }
 
     std::string
-    build_model_path(const std::string &model_file_name)
+    build_model_path(std::string_view model_file_name)
     {
-      std::string safe_model_file_name = model_file_name;
+      std::string safe_model_file_name = std::string(model_file_name);
       std::replace(safe_model_file_name.begin(),
                    safe_model_file_name.end(),
                    '/',
@@ -803,10 +803,10 @@ namespace grn {
     }
 
     std::string
-    build_model_url(const std::string &model_file_name)
+    build_model_url(std::string_view model_file_name)
     {
       return endpoint_url_ + std::string(hf_repo_) + "/resolve/main/" +
-             model_file_name;
+             std::string(model_file_name);
     }
 
     bool
@@ -854,7 +854,7 @@ namespace grn {
     }
 
     bool
-    ensure_model(const std::string &model_file_name)
+    ensure_model(std::string_view model_file_name)
     {
       model_path_ = build_model_path(model_file_name);
       if (grn_path_exist(model_path_.data())) {
