@@ -87,6 +87,7 @@ Install:
 
 .. code-block:: console
 
+   $ sudo dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/8/apache-arrow-release-latest.rpm
    $ sudo dnf install -y https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm
    $ sudo dnf install -y --enablerepo=epel --enablerepo=powertools groonga
 
