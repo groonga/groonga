@@ -27,6 +27,7 @@
 #include "grn_db.h"
 #include "grn_obj.h"
 #include "grn_hash.h"
+#include "grn_http_client.h"
 #include "grn_pat.h"
 #include "grn_dat.h"
 #include "grn_ii.h"
@@ -13374,6 +13375,11 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   case GRN_HIGHLIGHTER:
     {
       grn_rc rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
+      GRN_API_RETURN(rc);
+    }
+  case GRN_HTTP_CLIENT:
+    {
+      grn_rc rc = grn_http_client_close(ctx, (grn_http_client *)obj);
       GRN_API_RETURN(rc);
     }
   case GRN_CURSOR_TABLE_PAT_KEY:
