@@ -51,6 +51,7 @@ libgroonga_c_sources =				\
 	grn_geo.h				\
 	grn_group.h				\
 	grn_hash.h				\
+	grn_http_client.h			\
 	grn_ii.h				\
 	grn_ii_select_cursor.h			\
 	grn_index_column.h			\
@@ -112,6 +113,7 @@ libgroonga_c_sources =				\
 	h3.c					\
 	hash.c					\
 	highlighter.c				\
+	http_client.c				\
 	id.c					\
 	index_column.c				\
 	index_cursor.c				\

@@ -28,6 +28,7 @@ RUN \
     dh-apparmor \
     libarrow-compute-dev \
     libarrow-dev \
+    libcurl4-openssl-dev \
     libedit-dev \
     libevent-dev \
     liblz4-dev \

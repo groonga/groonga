@@ -1869,6 +1869,31 @@ else()
   set(GRN_WITH_USEARCH FALSE)
 endif()
 
+if(WIN32)
+  set(GRN_WITH_CURL_DEFAULT "no")
+else()
+  set(GRN_WITH_CURL_DEFAULT "auto")
+endif()
+set(GRN_WITH_CURL
+    ${GRN_WITH_CURL_DEFAULT}
+    CACHE STRING "Use curl as HTTP client backend.")
+if(NOT "${GRN_WITH_CURL}" STREQUAL "no")
+  if("${GRN_WITH_CURL}" STREQUAL "system")
+    find_package(CURL REQUIRED)
+  else()
+    find_package(CURL)
+  endif()
+  if(CURL_FOUND)
+    set(GRN_WITH_CURL TRUE)
+    target_link_libraries(grn_dependencies INTERFACE CURL::libcurl)
+    message(STATUS "curl: system")
+  else()
+    set(GRN_WITH_CURL FALSE)
+  endif()
+else()
+  set(GRN_WITH_CURL FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"

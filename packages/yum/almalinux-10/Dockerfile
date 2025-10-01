@@ -19,6 +19,7 @@ RUN \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
+    curl-devel \
     intltool \
     libedit-devel \
     libevent-devel \

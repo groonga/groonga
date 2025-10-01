@@ -13,6 +13,7 @@ RUN \
   dnf install -y ${quiet} \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
     cmake \
+    curl-devel \
     intltool \
     libedit-devel \
     libevent-devel \
