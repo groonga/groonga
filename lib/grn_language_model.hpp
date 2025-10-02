@@ -28,9 +28,9 @@
 namespace grn {
   namespace language_model {
     void
-    init_from_env(void);
+    init_from_env();
     void
-    fin_external_libraries(void);
+    fin_external_libraries();
   } // namespace language_model
 
   class LanguageModelInferencer;
@@ -55,7 +55,7 @@ namespace grn {
     LanguageModelLoader(grn_ctx *ctx) : ctx_(ctx) {}
 
     std::shared_ptr<LanguageModel>
-    load(void);
+    load();
 
     std::string model_path;
     int32_t n_gpu_layers = 0;

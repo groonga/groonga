@@ -14,17 +14,27 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
-#include "grn_language_model.hpp"
 #include "grn_db.h"
+#include "grn_http_client.h"
+#include "grn_language_model.hpp"
+#include "grn_util.h"
 
-#include "groonga/smart_obj.hpp"
+#include <groonga/smart_obj.hpp>
 
 #ifdef GRN_WITH_LLAMA_CPP
 #  include <ggml-backend.h>
 #  include <llama.h>
 #endif
 
+#ifdef GRN_WITH_SIMDJSON
+#  include <simdjson.h>
+#endif
+
+#include <algorithm>
+#include <cerrno>
 #include <cmath>
+#include <cstring>
+#include <fstream>
 #include <functional>
 #include <map>
 #include <mutex>
@@ -95,7 +105,7 @@ namespace grn {
     static char language_models_dir[GRN_ENV_BUFFER_SIZE];
 
     void
-    init_from_env(void)
+    init_from_env()
     {
       grn_getenv("GRN_GGML_BACKENDS_DIR",
                  ggml_backends_dir,
@@ -147,7 +157,7 @@ namespace grn {
     namespace {
 #  ifdef _WIN32
       const char *
-      get_default_ggml_backends_dir(void)
+      get_default_ggml_backends_dir()
       {
         static char *windows_ggml_backends_dir = nullptr;
         static char windows_ggml_backends_dir_buffer[PATH_MAX];
@@ -165,14 +175,14 @@ namespace grn {
       }
 #  else
       const char *
-      get_default_ggml_backends_dir(void)
+      get_default_ggml_backends_dir()
       {
         return GRN_GGML_BACKENDS_DIR;
       }
 #  endif
 
       const char *
-      get_ggml_backends_dir(void)
+      get_ggml_backends_dir()
       {
         if (ggml_backends_dir[0]) {
           return ggml_backends_dir;
@@ -182,7 +192,7 @@ namespace grn {
       }
 
       void
-      init_external_libraries(void)
+      init_external_libraries()
       {
         llama_log_set(log_callback, &grn_gctx);
         ggml_backend_load_all_from_path(get_ggml_backends_dir());
@@ -191,7 +201,7 @@ namespace grn {
       }
 
       void
-      ensure_init_external_libraries(void)
+      ensure_init_external_libraries()
       {
         std::call_once(initialize_once, init_external_libraries);
       }
@@ -199,14 +209,14 @@ namespace grn {
 #else
     namespace {
       void
-      ensure_init_external_libraries(void)
+      ensure_init_external_libraries()
       {
       }
     } // namespace
 #endif
 
     void
-    fin_external_libraries(void)
+    fin_external_libraries()
     {
 #ifdef GRN_WITH_LLAMA_CPP
       if (!initialized) return;
@@ -223,7 +233,7 @@ namespace grn {
     static char windows_language_models_dir_buffer[PATH_MAX];
     namespace {
       const char *
-      default_system_language_models_dir(void)
+      default_system_language_models_dir()
       {
         if (!windows_language_models_dir) {
           const char *base_dir;
@@ -243,7 +253,7 @@ namespace grn {
 #  else
     namespace {
       const char *
-      default_system_language_models_dir(void)
+      default_system_language_models_dir()
       {
         return GRN_LANGUAGE_MODELS_DIR;
       }
@@ -251,7 +261,7 @@ namespace grn {
 #  endif
 
     const char *
-    system_language_models_dir(void)
+    system_language_models_dir()
     {
       if (language_models_dir[0]) {
         return language_models_dir;
@@ -268,7 +278,7 @@ namespace grn {
         llama_log_set(log_callback, ctx);
       }
 
-      ~CaptureError(void) { llama_log_set(log_callback, &grn_gctx); }
+      ~CaptureError() { llama_log_set(log_callback, &grn_gctx); }
 
     private:
       std::lock_guard<std::mutex> lock_;
@@ -281,7 +291,7 @@ namespace grn {
   public:
     Impl(llama_model *model) : model_(model) {}
 
-    ~Impl(void) { llama_model_free(model_); }
+    ~Impl() { llama_model_free(model_); }
 
     llama_model *
     get_raw()
@@ -299,7 +309,7 @@ namespace grn {
   LanguageModel::~LanguageModel() = default;
 
   std::shared_ptr<LanguageModel>
-  LanguageModelLoader::load(void)
+  LanguageModelLoader::load()
   {
     auto ctx = ctx_;
 
@@ -674,6 +684,205 @@ namespace grn {
     return nullptr;
 #endif
   }
+
+  class LanguageModelDownloader {
+  public:
+    LanguageModelDownloader(grn_ctx *ctx,
+                            std::string_view hf_repo,
+                            std::string_view tag)
+      : ctx_(ctx),
+        hf_repo_(hf_repo),
+        tag_(tag),
+        client_(grn_http_client_open(ctx_)),
+        db_path_(grn_obj_path(ctx, grn_ctx_db(ctx_))),
+        manifest_path_(build_manifest_path()),
+        endpoint_url_("https://huggingface.co/"),
+        model_path_()
+    {
+      // We need to use "llama-cpp" as User-Agent to get "ggufFile"
+      // information by manifest API.
+      grn_http_client_set_user_agent(ctx_, client_, "llama-cpp");
+      // We may need to set "Accept:" explicitly in the future.
+      // grn_http_client_add_header(ctx_, client_, "Accept: application/json");
+    }
+
+    ~LanguageModelDownloader() { grn_http_client_close(ctx_, client_); }
+
+    bool
+    download()
+    {
+      auto ctx = ctx_;
+#ifdef GRN_WITH_SIMDJSON
+      if (!ensure_manifest()) {
+        return false;
+      }
+
+      auto manifest_result = simdjson::padded_string::load(manifest_path_);
+      if (manifest_result.error() != simdjson::SUCCESS) {
+        // TODO: Convert simdjson::error_code to grn_rc
+        ERR(GRN_UNKNOWN_ERROR,
+            "%s can't read manifest: <%s>: <%s>: <%s>",
+            TAG,
+            hf_repo_.data(),
+            tag_.data(),
+            simdjson::error_message(manifest_result.error()));
+        return false;
+      }
+      auto manifest = std::move(manifest_result.value());
+      simdjson::ondemand::parser parser;
+      auto doc = parser.iterate(manifest);
+      auto model_file_name_result = doc["ggufFile"]["rfilename"].get_string();
+      if (model_file_name_result.error() != simdjson::SUCCESS) {
+        // TODO: add support multi modal projects ("mmprojFile.rfilename")
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s GGUF file can't be detected: <%s>: <%s>: <%.*s>",
+            TAG,
+            hf_repo_.data(),
+            tag_.data(),
+            static_cast<int>(manifest.size()),
+            manifest.data());
+        return false;
+      }
+      auto model_file_name = model_file_name_result.value();
+
+      return ensure_model(model_file_name);
+#else
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s simdjson isn't enabled", TAG);
+      return false;
+#endif
+    }
+
+    const std::string &
+    model_path()
+    {
+      return model_path_;
+    }
+
+  private:
+    static constexpr const char *TAG = "[language-model-downloader]";
+
+    grn_ctx *ctx_;
+    std::string_view hf_repo_;
+    std::string_view tag_;
+    grn_http_client *client_;
+    std::string db_path_;
+    std::string manifest_path_;
+    std::string endpoint_url_;
+    std::string model_path_;
+
+    std::string
+    build_path_prefix()
+    {
+      std::string safe_hf_repo = std::string(hf_repo_);
+      std::replace(safe_hf_repo.begin(), safe_hf_repo.end(), '/', '_');
+      return db_path_ + ".lm." + safe_hf_repo + "_" + std::string(tag_);
+    }
+
+    std::string
+    build_manifest_path()
+    {
+      return build_path_prefix() + ".manifest";
+    }
+
+    std::string
+    build_model_path(std::string_view model_file_name)
+    {
+      std::string safe_model_file_name = std::string(model_file_name);
+      std::replace(safe_model_file_name.begin(),
+                   safe_model_file_name.end(),
+                   '/',
+                   '_');
+      return build_path_prefix() + ".model." + safe_model_file_name;
+    }
+
+    std::string
+    build_manifest_url()
+    {
+      return endpoint_url_ + "v2/" + std::string(hf_repo_) + "/manifests/" +
+             std::string(tag_);
+    }
+
+    std::string
+    build_model_url(std::string_view model_file_name)
+    {
+      return endpoint_url_ + std::string(hf_repo_) + "/resolve/main/" +
+             std::string(model_file_name);
+    }
+
+    bool
+    ensure_manifest()
+    {
+      if (grn_path_exist(manifest_path_.data())) {
+        return true;
+      }
+
+      auto url = build_manifest_url();
+      grn_http_client_set_url(ctx_, client_, url.data());
+      if (grn_http_client_download(ctx_, client_) != GRN_SUCCESS) {
+        return false;
+      }
+      auto manifest = grn_http_client_get_output(ctx_, client_);
+      auto tmp_manifest_path = manifest_path_ + ".tmp";
+      {
+        std::ofstream tmp_manifest;
+        tmp_manifest.open(tmp_manifest_path,
+                          std::ios_base::binary | std::ios_base::trunc);
+        if (!tmp_manifest) {
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s failed to save manifest: <%s>: <%s>: <%s>",
+              TAG,
+              url.data(),
+              tmp_manifest_path.data(),
+              std::strerror(errno));
+          return false;
+        }
+        tmp_manifest.write(GRN_TEXT_VALUE(manifest), GRN_TEXT_LEN(manifest));
+      }
+      if (rename(tmp_manifest_path.data(), manifest_path_.data()) != 0) {
+        auto ctx = ctx_;
+        SERR("%s failed to rename downloaded manifest: <%s>: <%s> -> <%s>",
+             TAG,
+             url.data(),
+             tmp_manifest_path.data(),
+             manifest_path_.data());
+        grn_io_remove_if_exist(ctx_, tmp_manifest_path.data());
+        grn_io_remove_if_exist(ctx_, manifest_path_.data());
+        return false;
+      }
+      return true;
+    }
+
+    bool
+    ensure_model(std::string_view model_file_name)
+    {
+      model_path_ = build_model_path(model_file_name);
+      if (grn_path_exist(model_path_.data())) {
+        return true;
+      }
+
+      auto url = build_model_url(model_file_name);
+      grn_http_client_set_url(ctx_, client_, url.data());
+      auto tmp_model_path = model_path_ + ".tmp";
+      grn_http_client_set_output_path(ctx_, client_, tmp_model_path.data());
+      if (grn_http_client_download(ctx_, client_) != GRN_SUCCESS) {
+        grn_io_remove_if_exist(ctx_, tmp_model_path.data());
+        return false;
+      }
+      if (rename(tmp_model_path.data(), model_path_.data()) != 0) {
+        auto ctx = ctx_;
+        SERR("%s failed to rename downloaded manifest: <%s>: <%s> -> <%s>",
+             TAG,
+             url.data(),
+             tmp_model_path.data(),
+             manifest_path_.data());
+        grn_io_remove_if_exist(ctx_, tmp_model_path.data());
+        grn_io_remove_if_exist(ctx_, model_path_.data());
+        return false;
+      }
+      return true;
+    }
+  };
 }; // namespace grn
 
 extern "C" {
@@ -731,11 +940,32 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
     loader->loader.model_path = std::string(model, model_length);
   }
   if (!loader->loader.model_path.empty()) {
-    if (loader->loader.model_path[0] != '/') {
-      std::string model_path =
-        grn::language_model::system_language_models_dir();
-      model_path += "/" + loader->loader.model_path + ".gguf";
-      loader->loader.model_path = std::move(model_path);
+    const std::string_view hf_url_prefix(
+      "hf:///"); // TODO: Add support for custom endpoint
+    // TODO: We can use starts_with() with C++20.
+    if (loader->loader.model_path.substr(0, hf_url_prefix.size()) ==
+        hf_url_prefix) {
+      auto hf_repo = loader->loader.model_path.substr(hf_url_prefix.size());
+      auto tag_separator_position = hf_repo.find("#");
+      std::string_view tag("latest");
+      if (tag_separator_position != std::string_view::npos) {
+        auto specified_tag = hf_repo.substr(tag_separator_position + 1);
+        if (!specified_tag.empty()) {
+          tag = specified_tag;
+        }
+      }
+      grn::LanguageModelDownloader downloader(ctx, hf_repo, tag);
+      if (!downloader.download()) {
+        GRN_API_RETURN(ctx->rc);
+      }
+      loader->loader.model_path = downloader.model_path();
+    } else {
+      if (loader->loader.model_path[0] != '/') {
+        std::string model_path =
+          grn::language_model::system_language_models_dir();
+        model_path += "/" + loader->loader.model_path + ".gguf";
+        loader->loader.model_path = std::move(model_path);
+      }
     }
   }
 #else
