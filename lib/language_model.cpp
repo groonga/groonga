@@ -575,7 +575,10 @@ namespace grn {
     bool
     vectorize_batch(llama_batch &batch)
     {
-      llama_kv_self_clear(llama_ctx_);
+      auto memory = llama_get_memory(llama_ctx_);
+      if (memory) {
+        llama_memory_clear(memory, true);
+      }
 
       if (has_encoder_ && !has_decoder_) {
         // encoder-only model
