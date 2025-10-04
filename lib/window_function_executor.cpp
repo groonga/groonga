@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,14 +23,6 @@
 # include "grn_arrow.hpp"
 # include <groonga/arrow.hpp>
 # include <arrow/compute/api.h>
-# if ARROW_VERSION_MAJOR >= 10
-#  define GRN_MAKE_UNIQUE std::make_unique
-using string_view = std::string_view;
-# else
-#  include <arrow/util/make_unique.h>
-#  define GRN_MAKE_UNIQUE arrow::internal::make_unique
-using string_view = arrow::util::string_view;
-# endif
 #endif
 
 extern "C" {
@@ -684,7 +676,7 @@ namespace {
         const auto& sort_key = sort_keys[i];
         GRN_PTR_PUT(ctx_, &(executor_->context.key_columns), sort_key.key);
         if (builders.size() < n_sort_keys) {
-          builders.push_back(GRN_MAKE_UNIQUE<grn::arrow::ArrayBuilder>(ctx));
+          builders.push_back(std::make_unique<grn::arrow::ArrayBuilder>(ctx));
           grn::TextBulk name(ctx);
           grn_obj_to_script_syntax(ctx, sort_key.key, *name);
           arrow_sort_keys_.emplace_back(
@@ -707,11 +699,7 @@ namespace {
                              " failed to add ",
                              type_name,
                              " key values: <",
-#if ARROW_VERSION_MAJOR >= 7
                              arrow_sort_keys_[i].target.ToString(),
-#else
-                             arrow_sort_keys_[i].name,
-#endif
                              ">")) {
           return false;
         }
@@ -738,21 +726,13 @@ namespace {
                              " failed to build ",
                              type_name,
                              " key array: <",
-#if ARROW_VERSION_MAJOR >= 7
                              arrow_sort_key.target.ToString(),
-#else
-                             arrow_sort_key.name,
-#endif
                              ">")) {
           return false;
         }
         auto array = *array_result;
         arrays.push_back(array);
-#if ARROW_VERSION_MAJOR >= 7
         auto field_name = *(arrow_sort_key.target.name());
-#else
-        auto field_name = arrow_sort_key.name;
-#endif
         fields.push_back(::arrow::field(field_name,
                                         array->type(),
                                         false));
@@ -762,7 +742,7 @@ namespace {
 
     grn_ctx *ctx_;
     grn_window_function_executor *executor_;
-    string_view executor_tag_;
+    std::string_view executor_tag_;
     const char *tag_;
     std::vector<std::unique_ptr<grn::arrow::ArrayBuilder>> sort_keys_builders_;
     std::vector<std::unique_ptr<grn::arrow::ArrayBuilder>> group_keys_builders_;
