@@ -39,12 +39,6 @@
 #  include <map>
 #  include <sstream>
 
-#  if ARROW_VERSION_MAJOR >= 10
-using string_view = std::string_view;
-#  else
-using string_view = arrow::util::string_view;
-#  endif
-
 namespace grnarrow {
   grn_rc
   status_to_rc(const arrow::Status &status)
@@ -1720,16 +1714,16 @@ namespace grnarrow {
       return closed_;
     }
 
-    string_view
+    std::string_view
     peek(int64_t nbytes)
     {
       const int64_t bytes_available =
         std::min(nbytes, static_cast<int64_t>(buffer_.size() - offset_));
-      return string_view(buffer_.data() + offset_,
-                         static_cast<size_t>(bytes_available));
+      return std::string_view(buffer_.data() + offset_,
+                              static_cast<size_t>(bytes_available));
     }
 
-    arrow::Result<string_view>
+    arrow::Result<std::string_view>
     Peek(int64_t nbytes) override
     {
       return peek(nbytes);
@@ -2168,19 +2162,12 @@ namespace grnarrow {
       }
       writer_ = *writer_result;
 
-#  if ARROW_VERSION_MAJOR >= 9
       auto record_batch_builder_result =
         arrow::RecordBatchBuilder::Make(schema_, arrow::default_memory_pool());
       if (record_batch_builder_result.ok()) {
         record_batch_builder_.swap(*record_batch_builder_result);
       }
       auto status = record_batch_builder_result.status();
-#  else
-      auto status =
-        arrow::RecordBatchBuilder::Make(schema_,
-                                        arrow::default_memory_pool(),
-                                        &record_batch_builder_);
-#  endif
       check(ctx_,
             status,
             tag_ + "[write-schema] failed to create record batch builder");
@@ -2229,7 +2216,7 @@ namespace grnarrow {
       check(ctx_,
             status,
             add_column_error_message(context, "text")
-              << "<" << string_view(value, value_length) << ">");
+              << "<" << std::string_view(value, value_length) << ">");
     }
 
     void
@@ -2245,7 +2232,7 @@ namespace grnarrow {
       check(ctx_,
             status,
             add_column_error_message(context, "text-dictionary")
-              << "<" << string_view(value, value_length) << ">");
+              << "<" << std::string_view(value, value_length) << ">");
     }
 
     void
@@ -2405,7 +2392,7 @@ namespace grnarrow {
       }
       auto column_builder =
         fetch_current_column_builder<arrow::StringDictionaryBuilder>();
-      auto status = column_builder->Append(string_view(key, key_size));
+      auto status = column_builder->Append(std::string_view(key, key_size));
       if (status.ok()) {
         return;
       }
@@ -2413,13 +2400,13 @@ namespace grnarrow {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx_, &inspected, record);
-      check(
-        ctx_,
-        status,
-        add_column_error_message(context, "record")
-          << "<"
-          << string_view(GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected))
-          << ">");
+      check(ctx_,
+            status,
+            add_column_error_message(context, "record")
+              << "<"
+              << std::string_view(GRN_TEXT_VALUE(&inspected),
+                                  GRN_TEXT_LEN(&inspected))
+              << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
@@ -2443,7 +2430,7 @@ namespace grnarrow {
             char key[GRN_TABLE_MAX_KEY_SIZE];
             auto key_size =
               grn_table_get_key(ctx_, domain, record_id, key, sizeof(key));
-            status = value_builder->Append(string_view(key, key_size));
+            status = value_builder->Append(std::string_view(key, key_size));
             if (!status.ok()) {
               break;
             }
@@ -2469,13 +2456,13 @@ namespace grnarrow {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx_, &inspected, uvector);
-      check(
-        ctx_,
-        status,
-        add_column_error_message(context, "uvector")
-          << "<"
-          << string_view(GRN_TEXT_VALUE(&inspected), GRN_TEXT_LEN(&inspected))
-          << ">");
+      check(ctx_,
+            status,
+            add_column_error_message(context, "uvector")
+              << "<"
+              << std::string_view(GRN_TEXT_VALUE(&inspected),
+                                  GRN_TEXT_LEN(&inspected))
+              << ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
 
@@ -2503,15 +2490,11 @@ namespace grnarrow {
       }
 
       std::shared_ptr<arrow::RecordBatch> record_batch;
-#  if ARROW_VERSION_MAJOR >= 9
       auto record_batch_result = record_batch_builder_->Flush();
       if (record_batch_result.ok()) {
         record_batch = *record_batch_result;
       }
       auto status = record_batch_result.status();
-#  else
-      auto status = record_batch_builder_->Flush(&record_batch);
-#  endif
       if (check(ctx_, status, tag_ + "[flush] failed to flush record batch")) {
         status = writer_->WriteRecordBatch(*record_batch);
         check(ctx_,
