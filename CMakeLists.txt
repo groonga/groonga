@@ -1757,7 +1757,9 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
             endif()
           endif()
         elseif(GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
-          # GCC 13 or later is needed for "-march=armv9.2-a" and so on.
+          # GCC 14 or later is needed for "-march=...+sme".
+          #
+          # https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers
           if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
             set(GGML_CPU_ALL_VARIANTS OFF)
           endif()
