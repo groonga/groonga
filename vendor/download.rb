@@ -42,6 +42,7 @@ def git_clone_archive(url, tag, archive_path)
 end
 
 all_targets = [
+  "base64",
   "blosc",
   "croaring",
   "h3",
@@ -63,6 +64,11 @@ end
 cmakelists = File.read(File.join(__dir__, "..", "CMakeLists.txt"))
 targets.each do |target|
   case target
+  when "base64"
+    version = cmakelists[/set\(GRN_BASE64_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/aklomp/base64/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "base64-#{version}.tar.gz")
   when "blosc"
     version = cmakelists[/set\(GRN_BLOSC_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/Blosc/c-blosc2/archive/refs/tags/"
