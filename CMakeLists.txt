@@ -1692,6 +1692,12 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         string(APPEND CMAKE_C_FLAGS " /wd4996")
         string(APPEND CMAKE_CXX_FLAGS " /wd4996")
       elseif(GRN_C_COMPILER_GNU_LIKE)
+        # This is for old Clang...?
+        #
+        # https://github.com/ggml-org/llama.cpp/issues/15374 will not
+        # be fixed.
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-absolute-value")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO " -Wno-absolute-value")
         string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
         string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
                " -Wno-declaration-after-statement")
