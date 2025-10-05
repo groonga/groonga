@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,8 @@ GRN_API bool
 grn_type_id_is_float_family(grn_ctx *ctx, grn_id id);
 GRN_API bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id);
+GRN_API bool
+grn_type_id_is_binary_family(grn_ctx *ctx, grn_id id);
 GRN_API bool
 grn_type_id_is_compatible(grn_ctx *ctx, grn_id id1, grn_id id2);
 GRN_API size_t

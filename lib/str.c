@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3309,6 +3309,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       } else {
         GRN_TEXT_PUTS(ctx, bulk, "\"\"");
       }
+      break;
+    case GRN_DB_SHORT_BINARY:
+    case GRN_DB_BINARY:
+    case GRN_DB_LONG_BINARY:
+      GRN_TEXT_PUTC(ctx, bulk, '"');
+      grn_obj_cast(ctx, obj, bulk, false);
+      GRN_TEXT_PUTC(ctx, bulk, '"');
       break;
     default:
       if (format) {

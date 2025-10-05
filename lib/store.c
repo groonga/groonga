@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -5483,6 +5483,9 @@ grn_ja_cast_value_scalar(
   default:
     if (grn_type_id_is_text_family(ctx, range_id) &&
         grn_type_id_is_text_family(ctx, value->header.domain)) {
+      /* do nothing */
+    } else if (grn_type_id_is_binary_family(ctx, range_id) &&
+               grn_type_id_is_binary_family(ctx, value->header.domain)) {
       /* do nothing */
     } else {
       if (range_id != value->header.domain) {

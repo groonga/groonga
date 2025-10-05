@@ -312,6 +312,54 @@ object_list
       "path": null,
       "size": 2
     },
+    "ShortBinary": {
+      "id": 21,
+      "name": "ShortBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 4096
+    },
+    "Binary": {
+      "id": 22,
+      "name": "Binary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 65536
+    },
+    "LongBinary": {
+      "id": 23,
+      "name": "LongBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -890,6 +890,56 @@ grn_output_cstr(grn_ctx *ctx,
 }
 
 void
+grn_output_binary(grn_ctx *ctx,
+                  grn_obj *outbuf,
+                  grn_content_type output_type,
+                  const uint8_t *value,
+                  size_t value_len)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  grn_obj bulk;
+  GRN_BINARY_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_BINARY_SET(ctx, &bulk, value, value_len);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTC(ctx, outbuf, '"');
+    grn_obj_cast(ctx, &bulk, outbuf, false);
+    GRN_TEXT_PUTC(ctx, outbuf, '"');
+    break;
+  case GRN_CONTENT_TSV:
+    grn_obj_cast(ctx, outbuf, &bulk, false);
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<BINARY>");
+    grn_obj_cast(ctx, outbuf, &bulk, false);
+    GRN_TEXT_PUTS(ctx, outbuf, "</BINARY>");
+    break;
+  case GRN_CONTENT_MSGPACK:
+#ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_pack_bin(&ctx->impl->output.msgpacker, value_len);
+    msgpack_pack_bin_body(&ctx->impl->output.msgpacker, value, value_len);
+#endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST:
+    grn_obj_cast(ctx, outbuf, &bulk, false);
+    break;
+  case GRN_CONTENT_APACHE_ARROW:
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_binary(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value,
+        value_len);
+    }
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  GRN_OBJ_FIN(ctx, &bulk);
+  INCR_LENGTH;
+}
+
+void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,
                 grn_content_type output_type,
@@ -1596,6 +1646,15 @@ grn_output_bulk(grn_ctx *ctx,
       outbuf,
       output_type,
       GRN_BULK_VSIZE(bulk) ? (grn_geo_point *)GRN_BULK_HEAD(bulk) : NULL);
+    break;
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    grn_output_binary(ctx,
+                      outbuf,
+                      output_type,
+                      GRN_BINARY_VALUE(bulk),
+                      GRN_BINARY_LEN(bulk));
     break;
   default:
     if (format) {

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,12 @@ grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id)
     return "Float32";
   case GRN_DB_BFLOAT16:
     return "BFloat16";
+  case GRN_DB_SHORT_BINARY:
+    return "ShortBinary";
+  case GRN_DB_BINARY:
+    return "Binary";
+  case GRN_DB_LONG_BINARY:
+    return "LongBinary";
   default:
     return "not a builtin type";
   }
@@ -98,6 +104,12 @@ bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
 {
   return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;
+}
+
+bool
+grn_type_id_is_binary_family(grn_ctx *ctx, grn_id id)
+{
+  return GRN_DB_SHORT_BINARY <= id && id <= GRN_DB_LONG_BINARY;
 }
 
 bool
@@ -156,6 +168,12 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
   case GRN_DB_TOKYO_GEO_POINT:
   case GRN_DB_WGS84_GEO_POINT:
     return sizeof(grn_geo_point);
+  case GRN_DB_SHORT_BINARY:
+    return GRN_TYPE_SHORT_BINARY_SIZE;
+  case GRN_DB_BINARY:
+    return GRN_TYPE_BINARY_SIZE;
+  case GRN_DB_LONG_BINARY:
+    return GRN_TYPE_LONG_BINARY_SIZE;
   default:
     {
       GRN_API_ENTER;

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,14 @@
 #include "grn_str.h"
 
 #include <groonga/bulk.hpp>
+
+#ifdef GRN_WITH_BASE64
+#  include <libbase64.h>
+
+#  include <cmath>
+#elif defined(GRN_WITH_APACHE_ARROW)
+#  include <arrow/util/base64.h>
+#endif
 
 #if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
 #  include "grn_db.h"
@@ -2217,6 +2225,35 @@ namespace {
   } while (0)
 
 static grn_rc
+grn_caster_cast_text_to_bulk_binary(grn_ctx *ctx, grn_caster *caster)
+{
+#ifdef GRN_WITH_BASE64
+  grn_rc rc = grn_bulk_reserve(
+    ctx,
+    caster->dest,
+    static_cast<size_t>(std::ceil(GRN_TEXT_LEN(caster->src) * (3.0 / 4.0))));
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  size_t written_size = 0;
+  base64_decode(GRN_TEXT_VALUE(caster->src),
+                GRN_TEXT_LEN(caster->src),
+                GRN_BULK_CURR(caster->dest),
+                &written_size,
+                0);
+  GRN_BULK_INCR_LEN(caster->dest, written_size);
+  return rc;
+#elif defined(GRN_WITH_APACHE_ARROW)
+  auto decoded = arrow::util::base64_decode(
+    std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+  GRN_BINARY_PUT(ctx, caster->dest, decoded.data(), decoded.size());
+  return GRN_SUCCESS;
+#else
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+#endif
+}
+
+static grn_rc
 grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -2392,6 +2429,11 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
       }
     }
     break;
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    rc = grn_caster_cast_text_to_bulk_binary(ctx, caster);
+    break;
   default:
     rc = grn_caster_cast_to_record(ctx, caster);
     break;
@@ -2409,6 +2451,78 @@ grn_caster_cast_text(grn_ctx *ctx, grn_caster *caster)
     break;
   case GRN_UVECTOR:
     rc = grn_caster_cast_text_to_uvector(ctx, caster);
+    break;
+  default:
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_binary_to_bulk_text(grn_ctx *ctx, grn_caster *caster)
+{
+#ifdef GRN_WITH_BASE64
+  grn_rc rc = grn_bulk_reserve(
+    ctx,
+    caster->dest,
+    static_cast<size_t>(std::ceil(GRN_TEXT_LEN(caster->src) * (4.0 / 3.0))));
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  size_t written_size = 0;
+  base64_encode(reinterpret_cast<const char *>(GRN_BINARY_VALUE(caster->src)),
+                GRN_BINARY_LEN(caster->src),
+                GRN_BULK_CURR(caster->dest),
+                &written_size,
+                0);
+  GRN_BULK_INCR_LEN(caster->dest, written_size);
+  return rc;
+#elif defined(GRN_WITH_APACHE_ARROW)
+  auto encoded = arrow::util::base64_encode(
+    std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+  GRN_TEXT_PUT(ctx, caster->dest, encoded.data(), encoded.size());
+  return GRN_SUCCESS;
+#else
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+#endif
+}
+
+static grn_rc
+grn_caster_cast_binary_to_bulk(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.domain) {
+  case GRN_DB_BOOL:
+    GRN_BOOL_SET(ctx, caster->dest, GRN_BINARY_LEN(caster->src) > 0);
+    break;
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    rc = grn_caster_cast_binary_to_bulk_text(ctx, caster);
+    break;
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    GRN_BINARY_PUT(ctx,
+                   caster->dest,
+                   GRN_BINARY_VALUE(caster->src),
+                   GRN_BINARY_LEN(caster->src));
+    break;
+  default:
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_binary(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.type) {
+  case GRN_BULK:
+    rc = grn_caster_cast_binary_to_bulk(ctx, caster);
     break;
   default:
     rc = GRN_INVALID_ARGUMENT;
@@ -2773,6 +2887,11 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
         GRN_GEO_POINT_SET(ctx, caster->dest, wgs84_latitude, wgs84_longitude);
       }
     }
+    break;
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    rc = grn_caster_cast_binary(ctx, caster);
     break;
   case GRN_VOID:
     rc = grn_obj_reinit(ctx,

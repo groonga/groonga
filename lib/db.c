@@ -13991,6 +13991,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags)
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT:
+    case GRN_DB_SHORT_BINARY:
+    case GRN_DB_BINARY:
+    case GRN_DB_LONG_BINARY:
       if (flags & GRN_OBJ_VECTOR) {
         if (obj->header.type != GRN_VECTOR) {
           grn_bulk_fin(ctx, obj);
@@ -15010,6 +15013,22 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_TYPE_BFLOAT16_FLAGS,
                 GRN_TYPE_BFLOAT16_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_BFLOAT16) {
+    return GRN_FILE_CORRUPT;
+  }
+  obj = deftype(ctx,
+                "ShortBinary",
+                GRN_OBJ_KEY_VAR_SIZE,
+                GRN_TYPE_SHORT_BINARY_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORT_BINARY) {
+    return GRN_FILE_CORRUPT;
+  }
+  obj = deftype(ctx, "Binary", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_BINARY_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_BINARY) {
+    return GRN_FILE_CORRUPT;
+  }
+  obj =
+    deftype(ctx, "LongBinary", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_LONG_BINARY_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_BINARY) {
     return GRN_FILE_CORRUPT;
   }
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_MECAB; id++) {
