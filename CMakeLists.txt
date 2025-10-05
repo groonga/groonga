@@ -1760,7 +1760,7 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
           # GCC 14 or later is needed for "-march=...+sme".
           #
           # https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers
-          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
+          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
             set(GGML_CPU_ALL_VARIANTS OFF)
           endif()
         else()
