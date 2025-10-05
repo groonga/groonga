@@ -59,4 +59,5 @@ git config user.email "github-actions[bot]@users.noreply.github.com"
 if [ "$(git diff --cached)" != "" ]; then
   git commit -m "Prepare"
   git push origin "$(git branch --show-current)"
+  git fetch
 fi
