@@ -1894,6 +1894,72 @@ else()
   set(GRN_WITH_CURL FALSE)
 endif()
 
+set(GRN_BASE64_BUNDLED_VERSION "0.5.2")
+set(GRN_BASE64_BUNDLED_SHA256
+    "723a0f9f4cf44cf79e97bcc315ec8f85e52eb104c8882942c3f2fba95acc080d")
+set(GRN_WITH_BASE64
+    "auto"
+    CACHE STRING "Use aklomp/base64 for ShortBinary/Binary/LargeBinary.")
+set(GRN_WITH_BASE64_BUNDLED FALSE)
+if(NOT "${GRN_WITH_BASE64}" STREQUAL "no")
+  if("${GRN_WITH_BASE64}" STREQUAL "bundled")
+    set(base64_FOUND FALSE)
+  else()
+    if("${GRN_WITH_BASE64}" STREQUAL "system")
+      find_package(base64 REQUIRED)
+    else()
+      find_package(base64)
+    endif()
+  endif()
+  if(base64_FOUND)
+    set(GRN_WITH_BASE64 TRUE)
+    target_link_libraries(grn_dependencies INTERFACE aklomp::base64)
+    message(STATUS "base64: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_base64)
+      set(BASE64_SOURCE_BASE_NAME
+          "base64-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+      set(BASE64_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BASE64_SOURCE_BASE_NAME}")
+      if(EXISTS ${BASE64_SOURCE_LOCAL_PATH})
+        set(BASE64_SOURCE_URL ${BASE64_SOURCE_LOCAL_PATH})
+      else()
+        set(BASE64_SOURCE_URL
+            "https://github.com/aklomp/base64/archive/refs/tags")
+        string(APPEND BASE64_SOURCE_URL
+               "/v${GRN_BASE64_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        base64
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${BASE64_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_BASE64_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(BASE64_WERROR OFF)
+      fetchcontent_makeavailable(base64)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${base64_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                             TRUE)
+      endif()
+      install(FILES "${base64_SOURCE_DIR}/LICENSE"
+                    "${base64_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/base64")
+    endfunction()
+    grn_build_base64()
+    target_link_libraries(grn_dependencies INTERFACE base64)
+    set(GRN_WITH_BASE64_BUNDLED TRUE)
+    message(STATUS "base64: bundled")
+  else()
+    set(GRN_WITH_BASE64 FALSE)
+  endif()
+else()
+  set(GRN_WITH_BASE64 FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"

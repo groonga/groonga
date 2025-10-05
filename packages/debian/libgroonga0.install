@@ -16,6 +16,7 @@ usr/lib/*/groonga/scripts/*
 usr/lib/*/libgroonga*.so.*
 usr/share/groonga/COPYING
 usr/share/groonga/README.md
+usr/share/groonga/base64/*
 usr/share/groonga/c-blosc2/*
 usr/share/groonga/groonga-log/*
 usr/share/groonga/llama.cpp/*

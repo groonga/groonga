@@ -382,6 +382,7 @@ exit 0
 %{_libdir}/groonga/scripts/ruby/logger/*.rb
 %{_libdir}/groonga/scripts/ruby/query_logger/*.rb
 %{_datadir}/groonga/COPYING
+%{_datadir}/groonga/base64/
 %{_datadir}/groonga/c-blosc2/
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
