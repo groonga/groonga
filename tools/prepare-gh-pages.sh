@@ -8,7 +8,7 @@ else
   git worktree add site -B gh-pages origin/gh-pages
 fi
 
-cd site
+pushd site
 
 mkdir -p _layouts
 cat <<HTML > _layouts/skelton.html
@@ -61,3 +61,7 @@ if [ "$(git diff --cached)" != "" ]; then
   git push origin "$(git branch --show-current)"
   git fetch
 fi
+
+popd
+
+git worktree remove site
