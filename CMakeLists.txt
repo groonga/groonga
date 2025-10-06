@@ -280,14 +280,19 @@ set(GRN_C_FLAGS_AVX512 "")
 set(GRN_C_FLAGS_NEON64 "")
 if(MSVC)
   if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+    set(GRN_SYSTEM_PROCESSOR "x86_64")
     set(GRN_C_FLAGS_AVX "/arch:AVX")
     set(GRN_C_FLAGS_AVX2 "/arch:AVX2")
     set(GRN_C_FLAGS_AVX512 "/arch:AVX512")
   elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+    set(GRN_SYSTEM_PROCESSOR "arm64")
     set(GRN_C_FLAGS_NEON64 "/arch:armv8.0")
+  else()
+    set(GRN_SYSTEM_PROCESSOR "unknown")
   endif()
 else()
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+    set(GRN_SYSTEM_PROCESSOR "x86_64")
     check_c_compiler_flag("-mavx" GRN_HAVE_AVX_FLAG)
     if(GRN_HAVE_AVX_FLAG)
       set(GRN_C_FLAGS_AVX "-mavx")
@@ -317,10 +322,13 @@ else()
       string(APPEND GRN_C_FLAGS_AVX512 " -mavx512vpopcntdq")
     endif()
   elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64)$")
+    set(GRN_SYSTEM_PROCESSOR "arm64")
     check_c_compiler_flag("-march=armv8-a" GRN_HAVE_ARCH_ARMV8_A_FLAG)
     if(GRN_HAVE_ARCH_ARMV8_A_FLAG)
       set(GRN_C_FLAGS_NEON64 "-march=armv8-a")
     endif()
+  else()
+    set(GRN_SYSTEM_PROCESSOR "unknown")
   endif()
 endif()
 
@@ -1617,9 +1625,9 @@ else()
   set(GRN_WITH_H3 FALSE)
 endif()
 
-set(GRN_LLAMA_CPP_BUNDLED_VERSION "b5129")
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b6673")
 set(GRN_LLAMA_CPP_BUNDLED_SHA256
-    "62c9c700ed578cd96ca7e00d7e809d7ca8d31ac76ca0487307906cf3870074b7")
+    "a70da5d3170839e48c35a4e078fb09ab4d2b50b40aab70391e12218bc8a8c9c5")
 set(GRN_WITH_LLAMA_CPP
     "auto"
     CACHE STRING "Use llama.cpp for LLM.")
@@ -1692,6 +1700,14 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         string(APPEND CMAKE_C_FLAGS " /wd4996")
         string(APPEND CMAKE_CXX_FLAGS " /wd4996")
       elseif(GRN_C_COMPILER_GNU_LIKE)
+        if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+          # This is for old Clang...?
+          #
+          # https://github.com/ggml-org/llama.cpp/issues/15374 will not
+          # be fixed.
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-absolute-value")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-absolute-value")
+        endif()
         string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
         string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
                " -Wno-declaration-after-statement")
@@ -1711,33 +1727,44 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
                        GGML_BUILD_NUMBER)
       set(GGML_CPU_ALL_VARIANTS ON)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        # GCC 11.5 or later is needed for "-mavxvnni" and so on
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.5")
-          set(GGML_CPU_ALL_VARIANTS OFF)
-        endif()
-        # binutils 2.36 or later is needed for "vpdpbusd"
-        enable_language(ASM)
-        if(CMAKE_ASM_COMPILER_ID STREQUAL "GNU")
-          execute_process(
-            COMMAND
-              ${CMAKE_COMMAND} -E env
-              # Force to use English
-              LC_MESSAGES=C ${CMAKE_ASM_COMPILER}
-              # Force to use C
-              -xc
-              # Only compile
-              -c
-              # Empty input
-              /dev/null
-              # Pass --version to assembler
-              -Wa,--version
-            OUTPUT_VARIABLE ASM_VERSION_FULL)
-          string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" ASM_VERSION
-                       "${ASM_VERSION_FULL}")
-          message(STATUS "GNU Assembler version: ${ASM_VERSION}")
-          if(ASM_VERSION VERSION_LESS "2.36")
+        if(GRN_SYSTEM_PROCESSOR STREQUAL "x86_64")
+          # GCC 11.5 or later is needed for "-mavxvnni" and so on
+          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.5")
             set(GGML_CPU_ALL_VARIANTS OFF)
           endif()
+          # binutils 2.36 or later is needed for "vpdpbusd"
+          enable_language(ASM)
+          if(CMAKE_ASM_COMPILER_ID STREQUAL "GNU")
+            execute_process(
+              COMMAND
+                ${CMAKE_COMMAND} -E env
+                # Force to use English
+                LC_MESSAGES=C ${CMAKE_ASM_COMPILER}
+                # Force to use C
+                -xc
+                # Only compile
+                -c
+                # Empty input
+                /dev/null
+                # Pass --version to assembler
+                -Wa,--version
+              OUTPUT_VARIABLE ASM_VERSION_FULL)
+            string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" ASM_VERSION
+                         "${ASM_VERSION_FULL}")
+            message(STATUS "GNU Assembler version: ${ASM_VERSION}")
+            if(ASM_VERSION VERSION_LESS "2.36")
+              set(GGML_CPU_ALL_VARIANTS OFF)
+            endif()
+          endif()
+        elseif(GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
+          # GCC 14 or later is needed for "-march=...+sme".
+          #
+          # https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers
+          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
+            set(GGML_CPU_ALL_VARIANTS OFF)
+          endif()
+        else()
+          set(GGML_CPU_ALL_VARIANTS OFF)
         endif()
       endif()
       if(NOT GGML_CPU_ALL_VARIANTS)
