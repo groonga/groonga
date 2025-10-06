@@ -41,6 +41,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
       - 'vendor/mruby/**'
   pull_request:
     paths:
@@ -67,6 +68,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
       - 'vendor/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -214,6 +216,10 @@ jobs:
             benchmark-http-apache-arrow.json | \
               jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
                 tee benchmark.json
+      - name: Prepare gh-pages branch
+        if: github.event_name == 'push'
+        run: |
+          tools/prepare-gh-pages.sh
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
