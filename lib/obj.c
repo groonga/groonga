@@ -176,7 +176,17 @@ grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
     return false;
   }
 
-  return GRN_TYPE_IS_TEXT_FAMILY(obj->header.domain);
+  return grn_type_id_is_text_family(ctx, obj->header.domain);
+}
+
+bool
+grn_obj_is_binary_family_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_bulk(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_binary_family(ctx, obj->header.domain);
 }
 
 bool
@@ -217,6 +227,16 @@ grn_obj_is_text_family_vector(grn_ctx *ctx, grn_obj *obj)
   }
 
   return grn_type_id_is_text_family(ctx, obj->header.domain);
+}
+
+bool
+grn_obj_is_binary_family_vector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_vector(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_binary_family(ctx, obj->header.domain);
 }
 
 bool
@@ -507,6 +527,16 @@ grn_obj_is_text_family_scalar_column(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_binary_family_scalar_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_scalar_column(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_binary_family(ctx, grn_obj_get_range(ctx, obj));
+}
+
+bool
 grn_obj_is_number_family_scalar_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_scalar_column(ctx, obj)) {
@@ -536,6 +566,16 @@ grn_obj_is_text_family_vector_column(grn_ctx *ctx, grn_obj *obj)
   }
 
   return grn_type_id_is_text_family(ctx, grn_obj_get_range(ctx, obj));
+}
+
+bool
+grn_obj_is_binary_family_vector_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_vector_column(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_binary_family(ctx, grn_obj_get_range(ctx, obj));
 }
 
 bool
@@ -897,6 +937,40 @@ grn_obj_is_text_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_binary_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return false;
+  }
+
+  accessor = (grn_accessor *)obj;
+  while (accessor->next) {
+    accessor = accessor->next;
+  }
+
+  switch (accessor->action) {
+  case GRN_ACCESSOR_GET_ID:
+  case GRN_ACCESSOR_GET_SCORE:
+  case GRN_ACCESSOR_GET_NSUBRECS:
+  case GRN_ACCESSOR_GET_MAX:
+  case GRN_ACCESSOR_GET_MIN:
+  case GRN_ACCESSOR_GET_SUM:
+  case GRN_ACCESSOR_GET_AVG:
+  case GRN_ACCESSOR_GET_MEAN:
+    return false;
+  case GRN_ACCESSOR_GET_VALUE:
+    return grn_type_id_is_binary_family(ctx,
+                                        grn_obj_get_range(ctx, accessor->obj));
+  case GRN_ACCESSOR_GET_COLUMN_VALUE:
+    return grn_obj_is_binary_family_scalar_column(ctx, accessor->obj);
+  default:
+    return false;
+  }
+}
+
+bool
 grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
@@ -969,7 +1043,17 @@ grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
     return false;
   }
 
-  return GRN_TYPE_IS_TEXT_FAMILY(grn_obj_id(ctx, obj));
+  return grn_type_id_is_text_family(ctx, grn_obj_id(ctx, obj));
+}
+
+bool
+grn_obj_is_binary_family_type(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_type(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_binary_family(ctx, grn_obj_id(ctx, obj));
 }
 
 bool

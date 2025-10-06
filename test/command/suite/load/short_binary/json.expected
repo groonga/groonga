@@ -1,0 +1,47 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortBinary
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"content": "AAECAw=="}
+]
+[[0,0.0,0.0],1]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortBinary"
+        ]
+      ],
+      [
+        1,
+        "AAECAw=="
+      ]
+    ]
+  ]
+]
+dump
+table_create Data TABLE_NO_KEY
+column_create Data content COLUMN_SCALAR ShortBinary
+
+load --table Data
+[
+["_id","content"],
+[1,"AAECAw=="]
+]

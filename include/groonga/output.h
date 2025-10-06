@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -166,6 +166,12 @@ grn_output_str(grn_ctx *ctx,
                grn_content_type output_type,
                const char *value,
                size_t value_len);
+GRN_API void
+grn_output_binary(grn_ctx *ctx,
+                  grn_obj *outbuf,
+                  grn_content_type output_type,
+                  const uint8_t *value,
+                  size_t value_len);
 GRN_API void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,

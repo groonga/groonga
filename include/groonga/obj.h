@@ -52,6 +52,8 @@ grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
+grn_obj_is_binary_family_bulk(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
 grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_maybe_record_bulk(grn_ctx *ctx, grn_obj *obj);
@@ -59,6 +61,8 @@ GRN_API bool
 grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_vector(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_binary_family_vector(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_number_family_vector(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
@@ -94,6 +98,8 @@ grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
+grn_obj_is_binary_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
 grn_obj_is_number_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
 /**
  * \brief Check whether the specified object is a vector column or not.
@@ -107,6 +113,8 @@ GRN_API bool
 grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_vector_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_binary_family_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
@@ -157,6 +165,8 @@ grn_obj_is_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
+grn_obj_is_binary_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
 grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_vector_accessor(grn_ctx *ctx, grn_obj *obj);
@@ -164,6 +174,8 @@ GRN_API bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_binary_family_type(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool

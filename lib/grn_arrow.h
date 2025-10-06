@@ -91,6 +91,11 @@ grn_arrow_stream_writer_add_column_text_dictionary(
   const char *value,
   size_t value_length);
 grn_rc
+grn_arrow_stream_writer_add_column_binary(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          const uint8_t *value,
+                                          size_t value_length);
+grn_rc
 grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         int8_t value);

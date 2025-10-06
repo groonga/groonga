@@ -1,0 +1,12 @@
+table_create Data TABLE_NO_KEY
+column_create Data content COLUMN_SCALAR ShortBinary
+
+# "AAECAw==" == base64_encode("\x00\x01\x02\x02")
+load --table Data
+[
+{"content": "AAECAw=="}
+]
+
+select Data
+
+dump

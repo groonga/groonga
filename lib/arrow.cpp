@@ -35,6 +35,7 @@
 #  include <arrow/compute/api.h>
 #  include <arrow/io/api.h>
 #  include <arrow/ipc/api.h>
+#  include <arrow/util/base64.h>
 
 #  include <map>
 #  include <sstream>
@@ -196,6 +197,10 @@ namespace grnarrow {
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT:
       return arrow::utf8();
+    case GRN_DB_SHORT_BINARY:
+    case GRN_DB_BINARY:
+    case GRN_DB_LONG_BINARY:
+      return arrow::binary();
     default:
       return nullptr;
     }
@@ -660,6 +665,16 @@ namespace grnarrow {
     }
 
     arrow::Status
+    Visit(const arrow::BinaryArray &array) override
+    {
+      return load_value([&]() {
+        const auto value = array.GetView(index_);
+        grn_obj_reinit(ctx_, &buffer_, GRN_DB_BINARY, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_BINARY_SET(ctx_, &buffer_, value.data(), value.size());
+      });
+    }
+
+    arrow::Status
     Visit(const arrow::Date64Array &array) override
     {
       return load_value([&]() {
@@ -1041,6 +1056,12 @@ namespace grnarrow {
     }
 
     arrow::Status
+    Visit(const arrow::BinaryArray &array) override
+    {
+      return set_values(array);
+    }
+
+    arrow::Status
     Visit(const arrow::Date64Array &array) override
     {
       return set_values(array);
@@ -1110,6 +1131,9 @@ namespace grnarrow {
         break;
       case arrow::Type::STRING:
         *type_id = GRN_DB_TEXT;
+        break;
+      case arrow::Type::BINARY:
+        *type_id = GRN_DB_BINARY;
         break;
       case arrow::Type::DATE64:
         *type_id = GRN_DB_TIME;
@@ -1441,6 +1465,11 @@ namespace grnarrow {
         case GRN_DB_LONG_TEXT:
           status = build_utf8_array(ids, grn_column, &column);
           break;
+        case GRN_DB_SHORT_BINARY:
+        case GRN_DB_BINARY:
+        case GRN_DB_LONG_BINARY:
+          status = build_binary_array(ids, grn_column, &column);
+          break;
         default:
           status = arrow::Status::NotImplemented(
             "[arrow][dumper] not supported type: TODO");
@@ -1645,6 +1674,20 @@ namespace grnarrow {
     build_utf8_array(std::vector<grn_id> &ids,
                      grn_obj *grn_column,
                      std::shared_ptr<arrow::Array> *array)
+    {
+      arrow::StringBuilder builder(arrow::default_memory_pool());
+      for (auto id : ids) {
+        uint32_t size;
+        auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
+        ARROW_RETURN_NOT_OK(builder.Append(data, size));
+      }
+      return builder.Finish(array);
+    }
+
+    arrow::Status
+    build_binary_array(std::vector<grn_id> &ids,
+                       grn_obj *grn_column,
+                       std::shared_ptr<arrow::Array> *array)
     {
       arrow::StringBuilder builder(arrow::default_memory_pool());
       for (auto id : ids) {
@@ -2236,6 +2279,26 @@ namespace grnarrow {
     }
 
     void
+    add_column_binary(const uint8_t *value, size_t value_length)
+    {
+      auto column_builder =
+        fetch_current_column_builder<arrow::BinaryBuilder>();
+      auto status = column_builder->Append(value, value_length);
+      if (status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            add_column_error_message(context, "binary")
+              << "<"
+              << arrow::util::base64_encode(
+                   std::string_view(reinterpret_cast<const char *>(value),
+                                    value_length))
+              << ">");
+    }
+
+    void
     add_column_int8(int8_t value)
     {
       auto column_builder = fetch_current_column_builder<arrow::Int8Builder>();
@@ -2625,6 +2688,7 @@ namespace grn {
         VISIT(::arrow::FloatType)
         VISIT(::arrow::DoubleType)
         VISIT(::arrow::StringType)
+        VISIT(::arrow::BinaryType)
         VISIT(::arrow::TimestampType)
 
 #  undef VISIT
@@ -2650,6 +2714,20 @@ namespace grn {
         Append(const ::arrow::StringType &type)
         {
           using Builder = ::arrow::StringBuilder;
+          auto builder = static_cast<Builder *>(builder_);
+          grn_id id;
+          while ((id = grn_table_cursor_next(ctx_, cursor_)) != GRN_ID_NIL) {
+            uint32_t size;
+            auto raw_data = grn_obj_get_value_(ctx_, column_, id, &size);
+            ARROW_RETURN_NOT_OK(builder->Append(raw_data, size));
+          }
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status
+        Append(const ::arrow::BinaryType &type)
+        {
+          using Builder = ::arrow::BinaryBuilder;
           auto builder = static_cast<Builder *>(builder_);
           grn_id id;
           while ((id = grn_table_cursor_next(ctx_, cursor_)) != GRN_ID_NIL) {
@@ -2801,6 +2879,14 @@ namespace grn {
 
         ::arrow::Status
         Visit(const ::arrow::StringArray &array)
+        {
+          auto raw_value = array.GetView(index_);
+          grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status
+        Visit(const ::arrow::BinaryArray &array)
         {
           auto raw_value = array.GetView(index_);
           grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
@@ -3215,6 +3301,23 @@ grn_arrow_stream_writer_add_column_text_dictionary(
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][text-dictionary] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_binary(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          const uint8_t *value,
+                                          size_t value_length)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_binary(value, value_length);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][binary] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
