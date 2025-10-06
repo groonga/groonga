@@ -170,7 +170,8 @@ grn_h3_index_init(grn_ctx *ctx, grn_tokenizer_query *query)
   if (!tokenizer) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer][h3] failed to allocate tokenizer");
+                     "%s failed to allocate tokenizer",
+                     grn_h3_index_tag);
     return NULL;
   }
 
