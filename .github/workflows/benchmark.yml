@@ -41,6 +41,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
       - 'vendor/mruby/**'
   pull_request:
     paths:
@@ -67,6 +68,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
       - 'vendor/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
