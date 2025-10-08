@@ -1966,6 +1966,11 @@ if(NOT "${GRN_WITH_BASE64}" STREQUAL "no")
         URL ${BASE64_SOURCE_URL}
         URL_HASH "SHA256=${GRN_BASE64_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
+      if(GRN_C_COMPILER_GNU_LIKE)
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+               " -Wno-declaration-after-statement")
+      endif()
       set(BASE64_WERROR OFF)
       fetchcontent_makeavailable(base64)
       if(CMAKE_VERSION VERSION_LESS 3.28)
