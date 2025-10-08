@@ -107,7 +107,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def github_repository
-    "groonga/groonga"
+    ENV["GITHUB_REPOSITORY"] || "groonga/groonga"
   end
 
   def github_actions_workflow_file_name(target_namespace, target)
