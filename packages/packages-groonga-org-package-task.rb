@@ -68,6 +68,32 @@ class PackagesGroongaOrgPackageTask < PackageTask
     super
   end
 
+  def yum_build(console: false)
+    super
+    manage_srpm_paths_for_compatibility
+  end
+
+  def manage_srpm_paths_for_compatibility
+    repositories_dir = "#{yum_dir}/repositories"
+
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+
+      # Backward compatibility: only rename for existing distributions that
+      # still expect the legacy SRPM structure.
+      # Legacy (<= AlmaLinux 10): source/SRPMS
+      # New    (>= AlmaLinux 11): Source/Packages (no rename needed)
+      next if distribution != "almalinux"
+      repo_base = "#{repositories_dir}/#{distribution}/#{version}"
+      old_path = "#{repo_base}/source/SRPMS"
+      new_path = "#{repo_base}/Source/Packages"
+      next rm_rf(File.dirname(new_path)) if architecture == "aarch64"
+      mkdir_p(File.dirname(old_path))
+      mv(new_path, old_path)
+      rm_rf(File.dirname(new_path))
+    end
+  end
+
   def enable_source?
     true
   end
