@@ -3620,147 +3620,6 @@ grn_ja_element_info(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-#define COMPRESSED_VALUE_META_FLAG(meta) ((meta) & 0xf000000000000000)
-#define COMPRESSED_VALUE_META_FLAG_RAW   0x1000000000000000
-#define COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(meta)                           \
-  ((meta) & 0x0fffffffffffffff)
-
-#define COMPRESS_THRESHOLD_BYTE        256
-#define COMPRESS_PACKED_VALUE_SIZE_MAX 257
-/* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
-
-#if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) || defined(GRN_WITH_ZSTD)
-#  define GRN_WITH_COMPRESSED
-#endif
-
-#ifdef GRN_WITH_COMPRESSED
-static void *
-grn_ja_ref_packed(grn_ctx *ctx,
-                  grn_io_win *iw,
-                  uint32_t *value_len,
-                  void *raw_value,
-                  uint32_t raw_value_len,
-                  void **compressed_value,
-                  uint32_t *compressed_value_len,
-                  uint32_t *uncompressed_value_len)
-{
-  uint64_t compressed_value_meta;
-
-  compressed_value_meta = *((uint64_t *)raw_value);
-  *compressed_value = (void *)(((uint64_t *)raw_value) + 1);
-  *compressed_value_len = raw_value_len - sizeof(uint64_t);
-
-  *uncompressed_value_len =
-    (uint32_t)COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
-  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
-  case COMPRESSED_VALUE_META_FLAG_RAW:
-    iw->uncompressed_value = NULL;
-    *value_len = *uncompressed_value_len;
-    return *compressed_value;
-  default:
-    return NULL;
-  }
-}
-
-static grn_rc
-grn_ja_put_packed(grn_ctx *ctx,
-                  grn_ja *ja,
-                  grn_id id,
-                  void *value,
-                  uint32_t value_len,
-                  int flags,
-                  uint64_t *cas)
-{
-  char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
-  uint32_t packed_value_len;
-  uint64_t packed_value_meta;
-
-  packed_value_len = value_len + sizeof(uint64_t);
-  packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
-  *((uint64_t *)packed_value) = packed_value_meta;
-  grn_memcpy(((uint64_t *)packed_value) + 1, value, value_len);
-  return grn_ja_put_raw(ctx,
-                        ja,
-                        id,
-                        packed_value,
-                        packed_value_len,
-                        flags,
-                        cas);
-}
-
-static grn_rc
-grn_ja_putv_packed(grn_ctx *ctx,
-                   grn_ja *ja,
-                   grn_id id,
-                   grn_obj *header,
-                   grn_obj *body,
-                   grn_obj *footer)
-{
-  grn_rc rc;
-  grn_io_win iw;
-  grn_ja_einfo einfo;
-  uint64_t packed_value_meta;
-  const size_t meta_size = sizeof(uint64_t);
-  const size_t header_size = GRN_BULK_VSIZE(header);
-  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
-  const size_t footer_size = GRN_BULK_VSIZE(footer);
-  const size_t size = header_size + body_size + footer_size;
-
-  packed_value_meta = size | COMPRESSED_VALUE_META_FLAG_RAW;
-
-  rc = grn_ja_alloc(ctx, ja, id, meta_size + size, &einfo, &iw);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  *((uint64_t *)iw.addr) = packed_value_meta;
-  grn_memcpy(((char *)iw.addr) + meta_size, GRN_BULK_HEAD(header), header_size);
-  if (body_size > 0) {
-    grn_memcpy((char *)iw.addr + meta_size + header_size,
-               GRN_BULK_HEAD(body),
-               body_size);
-  }
-  if (footer_size > 0) {
-    grn_memcpy((char *)iw.addr + meta_size + header_size + body_size,
-               GRN_BULK_HEAD(footer),
-               footer_size);
-  }
-  grn_io_win_unmap(ctx, &iw);
-  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
-
-  return rc;
-}
-
-static grn_rc
-grn_ja_putv_compressed(grn_ctx *ctx,
-                       grn_ja *ja,
-                       grn_id id,
-                       void *compressed,
-                       size_t compressed_size,
-                       size_t uncompressed_size)
-{
-  grn_rc rc;
-  grn_io_win iw;
-  grn_ja_einfo einfo;
-  uint64_t compressed_meta;
-  const size_t meta_size = sizeof(uint64_t);
-  const size_t size = meta_size + compressed_size;
-
-  compressed_meta = uncompressed_size;
-
-  rc = grn_ja_alloc(ctx, ja, id, size, &einfo, &iw);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  *((uint64_t *)iw.addr) = compressed_meta;
-  grn_memcpy(((char *)iw.addr) + meta_size, compressed, compressed_size);
-  grn_io_win_unmap(ctx, &iw);
-  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
-
-  return rc;
-}
-
 static void
 grn_ja_compress_error(grn_ctx *ctx,
                       grn_ja *ja,
@@ -3790,459 +3649,76 @@ grn_ja_compress_error(grn_ctx *ctx,
       detail ? detail : "",
       detail ? ">" : "");
 }
-#endif /* GRN_WITH_COMPRESSED */
 
-#ifdef GRN_WITH_ZLIB
-#  include <zlib.h>
-
-static const char *
-grn_zrc_to_string(int zrc)
+static inline void
+grn_ja_set_compression_type(grn_ctx *ctx,
+                            grn_ja *ja,
+                            grn_compression_type *type)
 {
-  switch (zrc) {
-  case Z_OK:
-    return "OK";
-  case Z_STREAM_END:
-    return "Stream is end";
-  case Z_NEED_DICT:
-    return "Need dictionary";
-  case Z_ERRNO:
-    return "See errno";
-  case Z_STREAM_ERROR:
-    return "Stream error";
-  case Z_DATA_ERROR:
-    return "Data error";
-  case Z_MEM_ERROR:
-    return "Memory error";
-  case Z_BUF_ERROR:
-    return "Buffer error";
-  case Z_VERSION_ERROR:
-    return "Version error";
-  default:
-    return "Unknown";
-  }
-}
+  *type = GRN_COMPRESSION_TYPE_NONE;
 
-static void *
-grn_ja_ref_zlib(
-  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
-{
-  z_stream zstream;
-  void *raw_value;
-  uint32_t raw_value_len;
-  void *zvalue;
-  uint32_t zvalue_len;
-  void *unpacked_value;
-  uint32_t uncompressed_value_len;
-  int zrc;
-
-  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  unpacked_value = grn_ja_ref_packed(ctx,
-                                     iw,
-                                     value_len,
-                                     raw_value,
-                                     raw_value_len,
-                                     &zvalue,
-                                     &zvalue_len,
-                                     &uncompressed_value_len);
-  if (unpacked_value) {
-    return unpacked_value;
-  }
-
-  zstream.next_in = (Bytef *)zvalue;
-  zstream.avail_in = zvalue_len;
-  zstream.zalloc = Z_NULL;
-  zstream.zfree = Z_NULL;
-  zrc = inflateInit2(&zstream, 15 /* windowBits */);
-  if (zrc != Z_OK) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to decompress: initialize",
-                          grn_zrc_to_string(zrc));
-    return NULL;
-  }
-  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
-    inflateEnd(&zstream);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to decompress: allocate buffer",
-                          NULL);
-    return NULL;
-  }
-  zstream.next_out = (Bytef *)iw->uncompressed_value;
-  zstream.avail_out = uncompressed_value_len;
-  zrc = inflate(&zstream, Z_FINISH);
-  if (zrc != Z_STREAM_END) {
-    inflateEnd(&zstream);
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to decompress: finish",
-                          grn_zrc_to_string(zrc));
-    return NULL;
-  }
-  *value_len = zstream.total_out;
-  zrc = inflateEnd(&zstream);
-  if (zrc != Z_OK) {
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to decompress: end",
-                          grn_zrc_to_string(zrc));
-    return NULL;
-  }
-  return iw->uncompressed_value;
-}
-#endif /* GRN_WITH_ZLIB */
-
-#ifdef GRN_WITH_LZ4
-#  include <lz4.h>
-
-#  if (LZ4_VERSION_MAJOR == 1 && LZ4_VERSION_MINOR < 6)
-#    define LZ4_compress_default(source, dest, source_size, max_dest_size)     \
-      LZ4_compress((source), (dest), (source_size))
-#  endif
-
-static void *
-grn_ja_ref_lz4(
-  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
-{
-  void *raw_value;
-  uint32_t raw_value_len;
-  void *lz4_value;
-  uint32_t lz4_value_len;
-  void *unpacked_value;
-  uint32_t uncompressed_value_len;
-
-  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  unpacked_value = grn_ja_ref_packed(ctx,
-                                     iw,
-                                     value_len,
-                                     raw_value,
-                                     raw_value_len,
-                                     &lz4_value,
-                                     &lz4_value_len,
-                                     &uncompressed_value_len);
-  if (unpacked_value) {
-    return unpacked_value;
-  }
-
-  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-  if (LZ4_decompress_safe((const char *)(lz4_value),
-                          (char *)(iw->uncompressed_value),
-                          lz4_value_len,
-                          uncompressed_value_len) < 0) {
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_LZ4_ERROR,
-                          "[lz4] failed to decompress",
-                          NULL);
-    return NULL;
-  }
-  *value_len = uncompressed_value_len;
-  return iw->uncompressed_value;
-}
-#endif /* GRN_WITH_LZ4 */
-
-#ifdef GRN_WITH_ZSTD
-#  include <zstd.h>
-
-static void *
-grn_ja_ref_zstd(
-  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
-{
-  void *raw_value;
-  uint32_t raw_value_len;
-  void *zstd_value;
-  uint32_t zstd_value_len;
-  void *unpacked_value;
-  uint32_t uncompressed_value_len;
-  size_t written_len;
-
-  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  unpacked_value = grn_ja_ref_packed(ctx,
-                                     iw,
-                                     value_len,
-                                     raw_value,
-                                     raw_value_len,
-                                     &zstd_value,
-                                     &zstd_value_len,
-                                     &uncompressed_value_len);
-  if (unpacked_value) {
-    return unpacked_value;
-  }
-
-  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  written_len = ZSTD_decompress((char *)(iw->uncompressed_value),
-                                uncompressed_value_len,
-                                zstd_value,
-                                zstd_value_len);
-  if (ZSTD_isError(written_len)) {
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZSTD_ERROR,
-                          "[zstd] failed to decompress",
-                          ZSTD_getErrorName(written_len));
-    return NULL;
-  }
-  *value_len = uncompressed_value_len;
-  return iw->uncompressed_value;
-}
-#endif /* GRN_WITH_ZSTD */
-
-#ifdef GRN_WITH_BLOSC
-#  include <blosc2.h>
-#  include <blosc2/filters-registry.h>
-
-#  define GRN_BLOSC_META_HEADER "header"
-#  define GRN_BLOSC_META_FOOTER "footer"
-
-static bool
-grn_ja_ref_blosc_copy_meta(grn_ctx *ctx,
-                           grn_ja *ja,
-                           grn_id id,
-                           blosc2_schunk *schunk,
-                           uint8_t **destination,
-                           int32_t *destination_size,
-                           const char *name)
-{
-  int i = 0;
-  for (i = 0; i < schunk->nmetalayers; i++) {
-    blosc2_metalayer *metalayer = schunk->metalayers[i];
-    if (strcmp(metalayer->name, name) == 0) {
-      if (metalayer->content_len > *destination_size) {
-        grn_obj message;
-        GRN_TEXT_INIT(&message, 0);
-        grn_text_printf(ctx, &message, "[blosc] %s is too large", name);
-        GRN_TEXT_PUTC(ctx, &message, '\0');
-        grn_ja_compress_error(ctx,
-                              ja,
-                              id,
-                              GRN_BLOSC_ERROR,
-                              GRN_TEXT_VALUE(&message),
-                              NULL);
-        GRN_OBJ_FIN(ctx, &message);
-        return false;
-      }
-      memcpy(*destination, metalayer->content, metalayer->content_len);
-      *destination += metalayer->content_len;
-      *destination_size -= metalayer->content_len;
-      break;
-    }
-  }
-  return true;
-}
-
-static void *
-grn_ja_ref_blosc(
-  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
-{
-  void *raw_value;
-  uint32_t raw_value_len;
-  void *blosc_value;
-  uint32_t blosc_value_len;
-  void *unpacked_value;
-  uint32_t uncompressed_value_len;
-
-  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  unpacked_value = grn_ja_ref_packed(ctx,
-                                     iw,
-                                     value_len,
-                                     raw_value,
-                                     raw_value_len,
-                                     &blosc_value,
-                                     &blosc_value_len,
-                                     &uncompressed_value_len);
-  if (unpacked_value) {
-    return unpacked_value;
-  }
-
-  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-
-  blosc2_schunk *schunk =
-    blosc2_schunk_from_buffer(blosc_value, blosc_value_len, false);
-  if (!schunk) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to load super chunk",
-                          NULL);
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-  uint8_t *destination = iw->uncompressed_value;
-  int32_t destination_size = uncompressed_value_len;
-  if (!grn_ja_ref_blosc_copy_meta(ctx,
-                                  ja,
-                                  id,
-                                  schunk,
-                                  &destination,
-                                  &destination_size,
-                                  GRN_BLOSC_META_HEADER)) {
-    blosc2_schunk_free(schunk);
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-  {
-    int64_t i;
-    for (i = 0; i < schunk->nchunks; i++) {
-      int decompressed_size = blosc2_schunk_decompress_chunk(schunk,
-                                                             i,
-                                                             destination,
-                                                             destination_size);
-      if (decompressed_size <= 0) {
-        grn_obj message;
-        GRN_TEXT_INIT(&message, 0);
-        grn_text_printf(ctx,
-                        &message,
-                        "[blosc] failed to decode a chunk: %" GRN_FMT_INT64D,
-                        i);
-        GRN_TEXT_PUTC(ctx, &message, '\0');
-        grn_ja_compress_error(ctx,
-                              ja,
-                              id,
-                              GRN_BLOSC_ERROR,
-                              GRN_TEXT_VALUE(&message),
-                              print_error(decompressed_size));
-        GRN_OBJ_FIN(ctx, &message);
-        blosc2_schunk_free(schunk);
-        GRN_FREE(iw->uncompressed_value);
-        iw->uncompressed_value = NULL;
-        *value_len = 0;
-        return NULL;
-      }
-      destination += decompressed_size;
-      destination_size -= decompressed_size;
-    }
-  }
-  if (!grn_ja_ref_blosc_copy_meta(ctx,
-                                  ja,
-                                  id,
-                                  schunk,
-                                  &destination,
-                                  &destination_size,
-                                  GRN_BLOSC_META_FOOTER)) {
-    blosc2_schunk_free(schunk);
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-  blosc2_schunk_free(schunk);
-  if (destination_size != 0) {
-    grn_obj detail;
-    GRN_TEXT_INIT(&detail, 0);
-    grn_text_printf(ctx,
-                    &detail,
-                    "expected:%u actual:%d",
-                    uncompressed_value_len,
-                    destination_size);
-    GRN_TEXT_PUTC(ctx, &detail, '\0');
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] decompressed size isn't match",
-                          GRN_TEXT_VALUE(&detail));
-    GRN_OBJ_FIN(ctx, &detail);
-    GRN_FREE(iw->uncompressed_value);
-    iw->uncompressed_value = NULL;
-    *value_len = 0;
-    return NULL;
-  }
-  *value_len = uncompressed_value_len;
-  return iw->uncompressed_value;
-}
-#endif
-
-void *
-grn_ja_ref(
-  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
-{
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
       (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
        GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
        GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
-    return grn_ja_ref_blosc(ctx, ja, id, iw, value_len);
+    *type = GRN_COMPRESSION_TYPE_BLOSC;
+    return;
   }
 #endif
   switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_ref_zlib(ctx, ja, id, iw, value_len);
+    *type = GRN_COMPRESSION_TYPE_ZLIB;
+    return;
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
   case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_ref_lz4(ctx, ja, id, iw, value_len);
+    *type = GRN_COMPRESSION_TYPE_LZ4;
+    return;
 #endif /* GRN_WITH_LZ4 */
 #ifdef GRN_WITH_ZSTD
   case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_ref_zstd(ctx, ja, id, iw, value_len);
+    *type = GRN_COMPRESSION_TYPE_ZSTD;
+    return;
 #endif /* GRN_WITH_ZSTD */
   default:
-    return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
+    return;
+  }
+}
+
+void *
+grn_ja_ref(
+  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
+{
+  grn_decompress_data data = {0};
+  data.raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &(data.raw_value_len));
+
+  if (data.raw_value_len == 0) {
+    *value_len = 0;
+    return NULL;
+  }
+
+  grn_ja_set_compression_type(ctx, ja, &(data.type));
+  if (data.type == GRN_COMPRESSION_TYPE_NONE) {
+    *value_len = data.raw_value_len;
+    return data.raw_value;
+  } else {
+    grn_compressor_decompress(ctx, &data);
+    if (ctx->rc != GRN_SUCCESS) {
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_ja_compress_error(ctx, ja, id, ctx->rc, message, NULL);
+      return 0;
+    }
+    if (data.unpacked_value) {
+      *value_len = data.unpacked_value_len;
+      return data.unpacked_value;
+    } else {
+      *value_len = data.decompressed_value_len;
+      iw->uncompressed_value = data.decompressed_value;
+      return iw->uncompressed_value;
+    }
   }
 }
 
@@ -4314,976 +3790,6 @@ exit:
   return value;
 }
 
-#ifdef GRN_WITH_ZLIB
-static inline grn_rc
-grn_ja_put_zlib(grn_ctx *ctx,
-                grn_ja *ja,
-                grn_id id,
-                void *value,
-                uint32_t value_len,
-                int flags,
-                uint64_t *cas)
-{
-  grn_rc rc;
-  z_stream zstream;
-  void *zvalue;
-  int zvalue_len;
-  int zrc;
-
-  if (value_len == 0) {
-    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  zstream.next_in = value;
-  zstream.avail_in = value_len;
-  zstream.zalloc = Z_NULL;
-  zstream.zfree = Z_NULL;
-  zrc = deflateInit2(&zstream,
-                     Z_DEFAULT_COMPRESSION,
-                     Z_DEFLATED,
-                     15 /* windowBits */,
-                     8 /* memLevel */,
-                     Z_DEFAULT_STRATEGY);
-  if (zrc != Z_OK) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to compress: initialize",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-  zvalue_len = deflateBound(&zstream, value_len);
-  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof(uint64_t)))) {
-    deflateEnd(&zstream);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to allocate compress buffer",
-                          NULL);
-    return ctx->rc;
-  }
-  zstream.next_out = (Bytef *)(((uint64_t *)zvalue) + 1);
-  zstream.avail_out = zvalue_len;
-  zrc = deflate(&zstream, Z_FINISH);
-  if (zrc != Z_STREAM_END) {
-    deflateEnd(&zstream);
-    GRN_FREE(zvalue);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to compress: finish",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-  zvalue_len = zstream.total_out;
-  zrc = deflateEnd(&zstream);
-  if (zrc != Z_OK) {
-    GRN_FREE(zvalue);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to compress: end",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-  *(uint64_t *)zvalue = value_len;
-  rc = grn_ja_put_raw(ctx,
-                      ja,
-                      id,
-                      zvalue,
-                      zvalue_len + sizeof(uint64_t),
-                      flags,
-                      cas);
-  GRN_FREE(zvalue);
-  return rc;
-}
-
-static inline grn_rc
-grn_ja_putv_zlib(grn_ctx *ctx,
-                 grn_ja *ja,
-                 grn_id id,
-                 grn_obj *raw_value,
-                 grn_obj *header,
-                 grn_obj *body,
-                 grn_obj *footer)
-{
-  grn_rc rc;
-  const size_t header_size = GRN_BULK_VSIZE(header);
-  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
-  const size_t footer_size = GRN_BULK_VSIZE(footer);
-  const size_t size = header_size + body_size + footer_size;
-  z_stream zstream;
-  Bytef *zvalue = NULL;
-  int zwindow_bits = 15;
-  int zmem_level = 8;
-  int zrc;
-
-  if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
-  }
-
-  zstream.zalloc = Z_NULL;
-  zstream.zfree = Z_NULL;
-  zrc = deflateInit2(&zstream,
-                     Z_DEFAULT_COMPRESSION,
-                     Z_DEFLATED,
-                     zwindow_bits,
-                     zmem_level,
-                     Z_DEFAULT_STRATEGY);
-  if (zrc != Z_OK) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to initialize compressor",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-
-  zstream.avail_out = deflateBound(&zstream, size);
-  zvalue = GRN_MALLOC(zstream.avail_out);
-  zstream.next_out = zvalue;
-  if (!zstream.next_out) {
-    deflateEnd(&zstream);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to allocate compress buffer",
-                          NULL);
-    return ctx->rc;
-  }
-
-  zstream.next_in = GRN_BULK_HEAD(header);
-  zstream.avail_in = header_size;
-  zrc = deflate(&zstream, Z_NO_FLUSH);
-  if (zrc != Z_OK) {
-    GRN_FREE(zvalue);
-    deflateEnd(&zstream);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to compress header",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-
-  if (body_size > 0) {
-    zstream.next_in = GRN_BULK_HEAD(body);
-    zstream.avail_in = body_size;
-    zrc = deflate(&zstream, Z_NO_FLUSH);
-    if (zrc != Z_OK) {
-      GRN_FREE(zvalue);
-      deflateEnd(&zstream);
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZLIB_ERROR,
-                            "[zlib] failed to compress body",
-                            grn_zrc_to_string(zrc));
-      return ctx->rc;
-    }
-  }
-
-  if (footer_size > 0) {
-    zstream.next_in = GRN_BULK_HEAD(footer);
-    zstream.avail_in = footer_size;
-    zrc = deflate(&zstream, Z_NO_FLUSH);
-    if (zrc != Z_OK) {
-      GRN_FREE(zvalue);
-      deflateEnd(&zstream);
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZLIB_ERROR,
-                            "[zlib] failed to compress footer",
-                            grn_zrc_to_string(zrc));
-      return ctx->rc;
-    }
-  }
-
-  zrc = deflate(&zstream, Z_FINISH);
-  if (zrc != Z_STREAM_END) {
-    GRN_FREE(zvalue);
-    deflateEnd(&zstream);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to finish compression",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-
-  rc = grn_ja_putv_compressed(ctx, ja, id, zvalue, zstream.total_out, size);
-
-  GRN_FREE(zvalue);
-  zrc = deflateEnd(&zstream);
-  if (zrc != Z_OK) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZLIB_ERROR,
-                          "[zlib] failed to free compressor",
-                          grn_zrc_to_string(zrc));
-    return ctx->rc;
-  }
-
-  return rc;
-}
-#endif /* GRN_WITH_ZLIB */
-
-#ifdef GRN_WITH_LZ4
-static inline grn_rc
-grn_ja_put_lz4(grn_ctx *ctx,
-               grn_ja *ja,
-               grn_id id,
-               void *value,
-               uint32_t value_len,
-               int flags,
-               uint64_t *cas)
-{
-  grn_rc rc;
-  void *packed_value;
-  int packed_value_len_max;
-  int packed_value_len_real;
-  char *lz4_value;
-  int lz4_value_len_max;
-  int lz4_value_len_real;
-
-  if (value_len == 0) {
-    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  if (value_len > (uint32_t)LZ4_MAX_INPUT_SIZE) {
-    uint64_t packed_value_meta;
-
-    packed_value_len_real = value_len + sizeof(uint64_t);
-    packed_value = GRN_MALLOC(packed_value_len_real);
-    if (!packed_value) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_LZ4_ERROR,
-                            "[lz4] failed to allocate packed buffer",
-                            NULL);
-      return ctx->rc;
-    }
-    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
-    *((uint64_t *)packed_value) = packed_value_meta;
-    grn_memcpy(((uint64_t *)packed_value) + 1, value, value_len);
-    rc = grn_ja_put_raw(ctx,
-                        ja,
-                        id,
-                        packed_value,
-                        packed_value_len_real,
-                        flags,
-                        cas);
-    GRN_FREE(packed_value);
-    return rc;
-  }
-
-  lz4_value_len_max = LZ4_compressBound(value_len);
-  packed_value_len_max = lz4_value_len_max + sizeof(uint64_t);
-  if (!(packed_value = GRN_MALLOC(packed_value_len_max))) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_LZ4_ERROR,
-                          "[lz4] failed to allocate compress buffer",
-                          NULL);
-    return ctx->rc;
-  }
-  lz4_value = (char *)((uint64_t *)packed_value + 1);
-  lz4_value_len_real = LZ4_compress_default((const char *)value,
-                                            lz4_value,
-                                            value_len,
-                                            lz4_value_len_max);
-  if (lz4_value_len_real <= 0) {
-    GRN_FREE(packed_value);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_LZ4_ERROR,
-                          "[lz4] failed to compress",
-                          NULL);
-    return ctx->rc;
-  }
-  *(uint64_t *)packed_value = value_len;
-  packed_value_len_real = lz4_value_len_real + sizeof(uint64_t);
-  rc = grn_ja_put_raw(ctx,
-                      ja,
-                      id,
-                      packed_value,
-                      packed_value_len_real,
-                      flags,
-                      cas);
-  GRN_FREE(packed_value);
-  return rc;
-}
-
-static inline grn_rc
-grn_ja_putv_lz4(grn_ctx *ctx,
-                grn_ja *ja,
-                grn_id id,
-                grn_obj *raw_value,
-                grn_obj *header,
-                grn_obj *body,
-                grn_obj *footer)
-{
-  grn_rc rc;
-  const size_t header_size = GRN_BULK_VSIZE(header);
-  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
-  const size_t footer_size = GRN_BULK_VSIZE(footer);
-  const size_t size = header_size + body_size + footer_size;
-  grn_obj buffer;
-  char *lz4_value;
-  int lz4_value_len_max;
-  int lz4_value_len_real;
-
-  if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
-  }
-
-  if (size > (uint32_t)LZ4_MAX_INPUT_SIZE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
-  }
-
-  GRN_TEXT_INIT(&buffer, 0);
-  GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(header), header_size);
-  if (body_size > 0) GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(body), body_size);
-  if (footer_size > 0)
-    GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(footer), footer_size);
-
-  lz4_value_len_max = LZ4_compressBound(size);
-  if (!(lz4_value = GRN_MALLOC(lz4_value_len_max))) {
-    GRN_OBJ_FIN(ctx, &buffer);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_LZ4_ERROR,
-                          "[lz4] failed to allocate compress buffer",
-                          NULL);
-    return ctx->rc;
-  }
-
-  lz4_value_len_real = LZ4_compress_default(GRN_TEXT_VALUE(&buffer),
-                                            lz4_value,
-                                            GRN_TEXT_LEN(&buffer),
-                                            lz4_value_len_max);
-  if (lz4_value_len_real <= 0) {
-    GRN_OBJ_FIN(ctx, &buffer);
-    GRN_FREE(lz4_value);
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_LZ4_ERROR,
-                          "[lz4] failed to compress",
-                          NULL);
-    return ctx->rc;
-  }
-
-  rc = grn_ja_putv_compressed(ctx, ja, id, lz4_value, lz4_value_len_real, size);
-
-  GRN_OBJ_FIN(ctx, &buffer);
-  GRN_FREE(lz4_value);
-
-  return rc;
-}
-#endif /* GRN_WITH_LZ4 */
-
-#ifdef GRN_WITH_ZSTD
-static inline grn_rc
-grn_ja_put_zstd(grn_ctx *ctx,
-                grn_ja *ja,
-                grn_id id,
-                void *value,
-                uint32_t value_len,
-                int flags,
-                uint64_t *cas)
-{
-  grn_rc rc;
-  void *packed_value;
-  int packed_value_len_max;
-  int packed_value_len_real;
-  void *zstd_value;
-  int zstd_value_len_max;
-  int zstd_value_len_real;
-  int zstd_compression_level = 3;
-
-  if (value_len == 0) {
-    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  zstd_value_len_max = ZSTD_compressBound(value_len);
-  packed_value_len_max = zstd_value_len_max + sizeof(uint64_t);
-  if (!(packed_value = GRN_MALLOC(packed_value_len_max))) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZSTD_ERROR,
-                          "[zstd] failed to allocate compress buffer",
-                          NULL);
-    return ctx->rc;
-  }
-  zstd_value = ((uint64_t *)packed_value) + 1;
-  zstd_value_len_real = ZSTD_compress(zstd_value,
-                                      zstd_value_len_max,
-                                      value,
-                                      value_len,
-                                      zstd_compression_level);
-  if (ZSTD_isError(zstd_value_len_real)) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_ZSTD_ERROR,
-                          "[zstd] failed to compress",
-                          ZSTD_getErrorName(zstd_value_len_real));
-    return ctx->rc;
-  }
-  *(uint64_t *)packed_value = value_len;
-  packed_value_len_real = zstd_value_len_real + sizeof(uint64_t);
-  rc = grn_ja_put_raw(ctx,
-                      ja,
-                      id,
-                      packed_value,
-                      packed_value_len_real,
-                      flags,
-                      cas);
-  GRN_FREE(packed_value);
-  return rc;
-}
-
-static inline grn_rc
-grn_ja_putv_zstd(grn_ctx *ctx,
-                 grn_ja *ja,
-                 grn_id id,
-                 grn_obj *raw_value,
-                 grn_obj *header,
-                 grn_obj *body,
-                 grn_obj *footer)
-{
-  grn_rc rc;
-  const size_t header_size = GRN_BULK_VSIZE(header);
-  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
-  const size_t footer_size = GRN_BULK_VSIZE(footer);
-  const size_t size = header_size + body_size + footer_size;
-  int zstd_compression_level = 3;
-#  if ZSTD_VERSION_MAJOR < 1
-  grn_obj all_value;
-  void *zstd_value = NULL;
-
-  GRN_TEXT_INIT(&all_value, 0);
-#  else  /* ZSTD_VERSION_MAJOR < 1 */
-  ZSTD_CStream *zstd_stream = NULL;
-  ZSTD_outBuffer zstd_output;
-
-  zstd_output.dst = NULL;
-  zstd_output.pos = 0;
-#  endif /* ZSTD_VERSION_MAJOR < 1 */
-
-  if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
-  }
-
-#  if ZSTD_VERSION_MAJOR < 1
-  {
-    int zstd_value_len_max;
-    int zstd_value_len_real;
-
-    zstd_value_len_max = ZSTD_compressBound(size);
-    zstd_value = GRN_MALLOC(zstd_value_len_max);
-    if (!zstd_value) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to allocate compress buffer",
-                            NULL);
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(header), header_size);
-    if (body_size > 0) {
-      GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(body), body_size);
-    }
-    GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(footer), footer_size);
-    zstd_value_len_real = ZSTD_compress(zstd_value,
-                                        zstd_value_len_max,
-                                        GRN_TEXT_VALUE(&all_value),
-                                        size,
-                                        zstd_compression_level);
-    if (ZSTD_isError(zstd_value_len_real)) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to compress",
-                            ZSTD_getErrorName(zstd_value_len_real));
-      rc = ctx->rc;
-      goto exit;
-    }
-    rc = grn_ja_putv_compressed(ctx,
-                                ja,
-                                id,
-                                zstd_value,
-                                zstd_value_len_real,
-                                size);
-  }
-#  else  /* ZSTD_VERSION_MAJOR < 1 */
-  {
-    ZSTD_inBuffer zstd_input;
-    size_t zstd_result;
-
-    zstd_stream = ZSTD_createCStream();
-    if (!zstd_stream) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to allocate stream compressor",
-                            NULL);
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    zstd_result = ZSTD_initCStream(zstd_stream, zstd_compression_level);
-    if (ZSTD_isError(zstd_result)) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to initialize stream compressor",
-                            ZSTD_getErrorName(zstd_result));
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    zstd_output.size = ZSTD_compressBound(size);
-    zstd_output.dst = GRN_MALLOC(zstd_output.size);
-    if (!zstd_output.dst) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to allocate compress buffer",
-                            NULL);
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    zstd_input.src = GRN_BULK_HEAD(header);
-    zstd_input.size = header_size;
-    zstd_input.pos = 0;
-    zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
-    if (ZSTD_isError(zstd_result)) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to compress header",
-                            ZSTD_getErrorName(zstd_result));
-      rc = ctx->rc;
-      goto exit;
-    }
-    if (body_size > 0) {
-      zstd_input.src = GRN_BULK_HEAD(body);
-      zstd_input.size = body_size;
-      zstd_input.pos = 0;
-      zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
-      if (ZSTD_isError(zstd_result)) {
-        grn_ja_compress_error(ctx,
-                              ja,
-                              id,
-                              GRN_ZSTD_ERROR,
-                              "[zstd] failed to compress body",
-                              ZSTD_getErrorName(zstd_result));
-        rc = ctx->rc;
-        goto exit;
-      }
-    }
-    if (footer_size > 0) {
-      zstd_input.src = GRN_BULK_HEAD(footer);
-      zstd_input.size = footer_size;
-      zstd_input.pos = 0;
-      zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
-      if (ZSTD_isError(zstd_result)) {
-        grn_ja_compress_error(ctx,
-                              ja,
-                              id,
-                              GRN_ZSTD_ERROR,
-                              "[zstd] failed to compress footer",
-                              ZSTD_getErrorName(zstd_result));
-        rc = ctx->rc;
-        goto exit;
-      }
-    }
-
-    zstd_result = ZSTD_endStream(zstd_stream, &zstd_output);
-    if (ZSTD_isError(zstd_result)) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to finish stream compression",
-                            ZSTD_getErrorName(zstd_result));
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    if (zstd_result > 0) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_ZSTD_ERROR,
-                            "[zstd] failed to finish stream compression "
-                            "because some data remain buffer",
-                            ZSTD_getErrorName(zstd_result));
-      rc = ctx->rc;
-      goto exit;
-    }
-
-    rc = grn_ja_putv_compressed(ctx,
-                                ja,
-                                id,
-                                zstd_output.dst,
-                                zstd_output.pos,
-                                size);
-  }
-#  endif /* ZSTD_VERSION_MAJOR < 1 */
-
-exit:
-#  if ZSTD_VERSION_MAJOR < 1
-  GRN_OBJ_FIN(ctx, &all_value);
-  if (zstd_value) {
-    GRN_FREE(zstd_value);
-  }
-#  else  /* ZSTD_VERSION_MAJOR < 1 */
-  if (zstd_stream) {
-    ZSTD_freeCStream(zstd_stream);
-  }
-  if (zstd_output.dst) {
-    GRN_FREE(zstd_output.dst);
-  }
-#  endif /* ZSTD_VERSION_MAJOR < 1 */
-
-  return rc;
-}
-#endif /* GRN_WITH_ZSTD */
-
-#ifdef GRN_WITH_BLOSC
-static inline blosc2_schunk *
-grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
-                               grn_ja *ja,
-                               grn_id id,
-                               size_t n_elements,
-                               blosc2_cparams *cparams,
-                               blosc2_storage *storage)
-{
-  *cparams = BLOSC2_CPARAMS_DEFAULTS;
-  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#  ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    cparams->compcode = BLOSC_ZLIB;
-    break;
-#  endif
-#  ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    cparams->compcode = BLOSC_LZ4;
-    break;
-#  endif
-#  ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    cparams->compcode = BLOSC_ZSTD;
-    break;
-#  endif
-  default:
-    break;
-  }
-  grn_id range_id = ja->obj.range;
-  if (grn_type_id_is_text_family(ctx, range_id)) {
-    cparams->typesize = sizeof(char);
-  } else {
-    cparams->typesize = grn_type_id_size(ctx, range_id);
-    if (ja->header->flags & GRN_OBJ_WITH_WEIGHT) {
-      if (ja->header->flags & GRN_OBJ_WEIGHT_BFLOAT16) {
-#  ifdef GRN_HAVE_BFLOAT16
-        cparams->typesize += sizeof(grn_bfloat16);
-#  else
-        cparams->typesize += sizeof(float);
-#  endif
-      } else if (ja->header->flags & GRN_OBJ_WEIGHT_FLOAT32) {
-        cparams->typesize += sizeof(float);
-      } else {
-        cparams->typesize += sizeof(double);
-      }
-    }
-  }
-  size_t current_filter_id = BLOSC2_MAX_FILTERS - 1;
-  cparams->filters[current_filter_id] = BLOSC_NOFILTER;
-  if (n_elements > 1) {
-    if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
-      cparams->filters[current_filter_id] = BLOSC_FILTER_BYTEDELTA;
-      cparams->filters_meta[current_filter_id] = cparams->typesize;
-      current_filter_id--;
-    }
-    if (cparams->typesize > (int32_t)sizeof(char)) {
-      if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
-        cparams->filters[current_filter_id] = BLOSC_SHUFFLE;
-        current_filter_id--;
-      }
-    }
-    if (range_id == GRN_DB_FLOAT || range_id == GRN_DB_FLOAT32) {
-      if (ja->header->flags &
-          GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES) {
-        cparams->filters[current_filter_id] = BLOSC_TRUNC_PREC;
-        cparams->filters_meta[current_filter_id] = -16;
-        current_filter_id--;
-      } else if (ja->header->flags &
-                 GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE) {
-        cparams->filters[current_filter_id] = BLOSC_TRUNC_PREC;
-        cparams->filters_meta[current_filter_id] = -8;
-        current_filter_id--;
-      }
-    }
-  }
-
-  *storage = BLOSC2_STORAGE_DEFAULTS;
-  storage->contiguous = true;
-  storage->cparams = cparams;
-
-  return blosc2_schunk_new(storage);
-}
-
-static inline grn_rc
-grn_ja_put_blosc(grn_ctx *ctx,
-                 grn_ja *ja,
-                 grn_id id,
-                 void *value,
-                 uint32_t value_len,
-                 int flags,
-                 uint64_t *cas)
-{
-  if (value_len == 0) {
-    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
-  }
-
-  size_t n_elements;
-  if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-    size_t element_size = grn_type_id_size(ctx, ja->obj.range);
-    if (ja->header->flags & GRN_OBJ_WITH_WEIGHT) {
-      if (ja->header->flags & GRN_OBJ_WEIGHT_BFLOAT16) {
-#  ifdef GRN_HAVE_BFLOAT16
-        element_size += sizeof(grn_bfloat16);
-#  else
-        element_size += sizeof(float);
-#  endif
-      } else if (ja->header->flags & GRN_OBJ_WEIGHT_FLOAT32) {
-        element_size += sizeof(float);
-      } else {
-        element_size += sizeof(double);
-      }
-    }
-    n_elements = value_len / element_size;
-  } else {
-    n_elements = 1;
-  }
-  blosc2_cparams cparams;
-  blosc2_storage storage;
-  blosc2_schunk *schunk =
-    grn_ja_put_blosc_create_schunk(ctx, ja, id, n_elements, &cparams, &storage);
-  int64_t n_chunks = blosc2_schunk_append_buffer(schunk, value, value_len);
-  if (n_chunks < 0) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to compress",
-                          print_error(n_chunks));
-    blosc2_schunk_free(schunk);
-    return ctx->rc;
-  }
-  uint8_t *compressed_data = NULL;
-  bool need_free = false;
-  int64_t compressed_data_size =
-    blosc2_schunk_to_buffer(schunk, &compressed_data, &need_free);
-  if (compressed_data_size < 0) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to serialize compressed value",
-                          print_error(compressed_data_size));
-    blosc2_schunk_free(schunk);
-    return ctx->rc;
-  }
-  uint32_t packed_value_size = sizeof(uint64_t) + compressed_data_size;
-  void *packed_value = GRN_MALLOC(packed_value_size);
-  if (!packed_value) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to allocate packed value buffer",
-                          NULL);
-    if (need_free) {
-      free(compressed_data);
-    }
-    blosc2_schunk_free(schunk);
-    return ctx->rc;
-  }
-  *(uint64_t *)packed_value = value_len;
-  grn_memcpy(((uint64_t *)packed_value) + 1,
-             compressed_data,
-             compressed_data_size);
-  if (need_free) {
-    free(compressed_data);
-  }
-  blosc2_schunk_free(schunk);
-  grn_rc rc =
-    grn_ja_put_raw(ctx, ja, id, packed_value, packed_value_size, flags, cas);
-  GRN_FREE(packed_value);
-  return rc;
-}
-
-static inline grn_rc
-grn_ja_putv_blosc(grn_ctx *ctx,
-                  grn_ja *ja,
-                  grn_id id,
-                  grn_obj *raw_value,
-                  grn_obj *header,
-                  grn_obj *body,
-                  grn_obj *footer)
-{
-  const size_t header_size = GRN_BULK_VSIZE(header);
-  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
-  const size_t footer_size = GRN_BULK_VSIZE(footer);
-  const size_t size = header_size + body_size + footer_size;
-
-  if (size == 0) {
-    return grn_ja_put_raw(ctx, ja, id, NULL, 0, GRN_OBJ_SET, NULL);
-  }
-
-  if (size < COMPRESS_THRESHOLD_BYTE) {
-    grn_obj value;
-    GRN_TEXT_INIT(&value, 0);
-    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(header), GRN_TEXT_LEN(header));
-    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(footer), GRN_TEXT_LEN(footer));
-    grn_rc rc = grn_ja_put_packed(ctx,
-                                  ja,
-                                  id,
-                                  GRN_TEXT_VALUE(&value),
-                                  GRN_TEXT_LEN(&value),
-                                  GRN_OBJ_SET,
-                                  NULL);
-    GRN_OBJ_FIN(ctx, &value);
-    return rc;
-  }
-
-  blosc2_cparams cparams;
-  blosc2_storage storage;
-  blosc2_schunk *schunk =
-    grn_ja_put_blosc_create_schunk(ctx,
-                                   ja,
-                                   id,
-                                   grn_vector_size(ctx, raw_value),
-                                   &cparams,
-                                   &storage);
-  int meta_index = blosc2_meta_add(schunk,
-                                   GRN_BLOSC_META_HEADER,
-                                   GRN_BULK_HEAD(header),
-                                   header_size);
-  if (meta_index < 0) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to set header",
-                          print_error(meta_index));
-    blosc2_schunk_free(schunk);
-    return ctx->rc;
-  }
-  if (footer_size > 0) {
-    meta_index = blosc2_meta_add(schunk,
-                                 GRN_BLOSC_META_FOOTER,
-                                 GRN_BULK_HEAD(footer),
-                                 footer_size);
-    if (meta_index < 0) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_BLOSC_ERROR,
-                            "[blosc] failed to set footer",
-                            print_error(meta_index));
-      blosc2_schunk_free(schunk);
-      return ctx->rc;
-    }
-  }
-  if (body_size > 0) {
-    int64_t n_chunks =
-      blosc2_schunk_append_buffer(schunk, GRN_BULK_HEAD(body), body_size);
-    if (n_chunks < 0) {
-      grn_ja_compress_error(ctx,
-                            ja,
-                            id,
-                            GRN_BLOSC_ERROR,
-                            "[blosc] failed to compress body",
-                            print_error(n_chunks));
-      blosc2_schunk_free(schunk);
-      return ctx->rc;
-    }
-  }
-  uint8_t *compressed_data = NULL;
-  bool need_free = false;
-  int64_t compressed_data_size =
-    blosc2_schunk_to_buffer(schunk, &compressed_data, &need_free);
-  if (compressed_data_size < 0) {
-    grn_ja_compress_error(ctx,
-                          ja,
-                          id,
-                          GRN_BLOSC_ERROR,
-                          "[blosc] failed to serialize compressed vector",
-                          print_error(compressed_data_size));
-    blosc2_schunk_free(schunk);
-    return ctx->rc;
-  }
-  grn_rc rc = grn_ja_putv_compressed(ctx,
-                                     ja,
-                                     id,
-                                     compressed_data,
-                                     compressed_data_size,
-                                     size);
-  if (need_free) {
-    free(compressed_data);
-  }
-  blosc2_schunk_free(schunk);
-  return rc;
-}
-#endif
-
 grn_rc
 grn_ja_put(grn_ctx *ctx,
            grn_ja *ja,
@@ -5293,29 +3799,71 @@ grn_ja_put(grn_ctx *ctx,
            int flags,
            uint64_t *cas)
 {
-#ifdef GRN_WITH_BLOSC
-  if (ja->header->flags &
-      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
-    return grn_ja_put_blosc(ctx, ja, id, value, value_len, flags, cas);
-  }
-#endif
-  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags, cas);
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_put_lz4(ctx, ja, id, value, value_len, flags, cas);
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_put_zstd(ctx, ja, id, value, value_len, flags, cas);
-#endif /* GRN_WITH_ZSTD */
-  default:
+  if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  grn_compress_data data = {0};
+  data.body = value;
+  data.body_len = value_len;
+
+  grn_ja_set_compression_type(ctx, ja, &(data.type));
+  if (data.type == GRN_COMPRESSION_TYPE_NONE) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  } else {
+    if (data.type == GRN_COMPRESSION_TYPE_BLOSC) {
+      if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+          GRN_OBJ_COLUMN_VECTOR) {
+        size_t element_size = grn_type_id_size(ctx, ja->obj.range);
+        if (ja->header->flags & GRN_OBJ_WITH_WEIGHT) {
+          if (ja->header->flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+#ifdef GRN_HAVE_BFLOAT16
+            element_size += sizeof(grn_bfloat16);
+#else
+            element_size += sizeof(float);
+#endif
+          } else if (ja->header->flags & GRN_OBJ_WEIGHT_FLOAT32) {
+            element_size += sizeof(float);
+          } else {
+            element_size += sizeof(double);
+          }
+        }
+        data.body_n_elements = value_len / element_size;
+      } else {
+        data.body_n_elements = 1;
+      }
+      data.body_column_flags = ja->header->flags;
+      data.body_range = ja->obj.range;
+    }
+
+    grn_compressor_compress(ctx, &data);
+    if (ctx->rc != GRN_SUCCESS) {
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_ja_compress_error(ctx, ja, id, ctx->rc, message, NULL);
+      return ctx->rc;
+    }
+    if (data.packed_value_len > 0) {
+      grn_rc rc = grn_ja_put_raw(ctx,
+                                 ja,
+                                 id,
+                                 data.packed_value,
+                                 data.packed_value_len,
+                                 flags,
+                                 cas);
+      GRN_FREE(data.packed_value);
+      return rc;
+    } else {
+      grn_rc rc = grn_ja_put_raw(ctx,
+                                 ja,
+                                 id,
+                                 data.compressed_value,
+                                 data.compressed_value_len,
+                                 flags,
+                                 cas);
+      GRN_FREE(data.compressed_value);
+      return rc;
+    }
   }
 }
 
@@ -5328,29 +3876,60 @@ grn_ja_putv_internal(grn_ctx *ctx,
                      grn_obj *body,
                      grn_obj *footer)
 {
-#ifdef GRN_WITH_BLOSC
-  if (ja->header->flags &
-      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
-    return grn_ja_putv_blosc(ctx, ja, id, raw_value, header, body, footer);
+  grn_compress_data data = {0};
+  data.header = header ? GRN_TEXT_VALUE(header) : NULL;
+  data.header_len = header ? GRN_TEXT_LEN(header) : 0;
+  data.body = body ? GRN_TEXT_VALUE(body) : NULL;
+  data.body_len = body ? GRN_TEXT_LEN(body) : 0;
+  data.footer = footer ? GRN_TEXT_VALUE(footer) : NULL;
+  data.footer_len = footer ? GRN_TEXT_LEN(footer) : 0;
+
+  if (data.header_len == 0 && data.body_len == 0 && data.footer_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, NULL, 0, GRN_OBJ_SET, NULL);
   }
-#endif
-  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_putv_zlib(ctx, ja, id, raw_value, header, body, footer);
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_putv_lz4(ctx, ja, id, raw_value, header, body, footer);
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_putv_zstd(ctx, ja, id, raw_value, header, body, footer);
-#endif /* GRN_WITH_ZSTD */
-  default:
+
+  grn_ja_set_compression_type(ctx, ja, &(data.type));
+  if (data.type == GRN_COMPRESSION_TYPE_NONE) {
     return grn_ja_putv_raw(ctx, ja, id, raw_value, header, body, footer);
+  } else {
+    if (data.type == GRN_COMPRESSION_TYPE_BLOSC) {
+      data.body_n_elements = grn_vector_size(ctx, raw_value);
+      data.body_column_flags = ja->header->flags;
+      data.body_range = ja->obj.range;
+    }
+
+    grn_compressor_compress(ctx, &data);
+    if (ctx->rc != GRN_SUCCESS) {
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_ja_compress_error(ctx, ja, id, ctx->rc, message, NULL);
+      return ctx->rc;
+    }
+
+    grn_io_win iw;
+    grn_ja_einfo einfo;
+    void *value;
+    uint32_t value_len;
+    if (data.packed_value_len > 0) {
+      value = data.packed_value;
+      value_len = data.packed_value_len;
+    } else {
+      value = data.compressed_value;
+      value_len = data.compressed_value_len;
+    }
+    grn_rc rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw);
+    if (rc != GRN_SUCCESS) {
+      GRN_FREE(value);
+      return rc;
+    }
+
+    grn_memcpy(iw.addr, value, value_len);
+    grn_io_win_unmap(ctx, &iw);
+    rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+
+    GRN_FREE(value);
+
+    return rc;
   }
 }
 
@@ -7676,22 +6255,9 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
   reader->body_seg_addr = NULL;
   reader->packed_buf = NULL;
   reader->packed_buf_size = 0;
-#ifdef GRN_WITH_ZLIB
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
-    z_stream *new_stream = GRN_CALLOC(sizeof(z_stream));
-    if (!new_stream) {
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-    new_stream->zalloc = NULL;
-    new_stream->zfree = NULL;
-    new_stream->opaque = NULL;
-    if (inflateInit2(new_stream, 15) != Z_OK) {
-      GRN_FREE(new_stream);
-      return GRN_ZLIB_ERROR;
-    }
-    reader->stream = new_stream;
-  }
-#endif /* GRN_WITH_ZLIB */
+  grn_ja_set_compression_type(ctx, ja, &(reader->compression_type));
+  /* TODO */
+  /* reader->compressor = grn_compressor_open(ctx, compression_type); */
   return GRN_SUCCESS;
 }
 
@@ -7712,16 +6278,8 @@ grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
   if (reader->packed_buf) {
     GRN_FREE(reader->packed_buf);
   }
-#ifdef GRN_WITH_ZLIB
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
-    if (reader->stream) {
-      if (inflateEnd((z_stream *)reader->stream) != Z_OK) {
-        rc = GRN_UNKNOWN_ERROR;
-      }
-      GRN_FREE(reader->stream);
-    }
-  }
-#endif /* GRN_WITH_ZLIB */
+  /* TODO */
+  /* grn_compressor_close(ctx, reader->compressor); */
   return rc;
 }
 
@@ -7750,59 +6308,8 @@ grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
   return rc;
 }
 
-#ifdef GRN_WITH_COMPRESSED
-/* grn_ja_reader_seek_compressed() prepares to access a compressed value. */
-static grn_rc
-grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
-{
-  grn_ja_einfo *einfo;
-  void *seg_addr;
-  uint32_t seg_id =
-    reader->ja->header->element_segs[id >> JA_W_EINFO_IN_A_SEGMENT];
-  if (seg_id == JA_ELEMENT_SEG_VOID) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (seg_id != reader->einfo_seg_id) {
-    seg_addr = grn_io_seg_ref(ctx, reader->ja->io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    if (reader->einfo_seg_id != JA_ELEMENT_SEG_VOID) {
-      grn_io_seg_unref(ctx, reader->ja->io, reader->einfo_seg_id);
-    }
-    reader->einfo_seg_id = seg_id;
-    reader->einfo_seg_addr = seg_addr;
-  }
-  einfo = (grn_ja_einfo *)reader->einfo_seg_addr;
-  einfo += id & JA_M_EINFO_IN_A_SEGMENT;
-  reader->einfo = einfo;
-  /* ETINY_P(einfo) is always false because the original size needs 8 bytes. */
-  if (EHUGE_P(einfo)) {
-    EHUGE_DEC(einfo, seg_id, reader->packed_size);
-    reader->body_seg_offset = 0;
-  } else {
-    EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->packed_size);
-  }
-  if (seg_id != reader->body_seg_id) {
-    seg_addr = grn_io_seg_ref(ctx, reader->ja->io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    if (reader->body_seg_addr) {
-      grn_io_seg_unref(ctx, reader->ja->io, reader->body_seg_id);
-    }
-    reader->body_seg_id = seg_id;
-    reader->body_seg_addr = seg_addr;
-  }
-  seg_addr = (char *)reader->body_seg_addr + reader->body_seg_offset;
-  reader->value_size = (uint32_t)*(uint64_t *)seg_addr;
-  return GRN_SUCCESS;
-}
-#endif /* GRN_WITH_COMPRESSED */
-
-/* grn_ja_reader_seek_raw() prepares to access a value. */
-static grn_rc
-grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+grn_rc
+grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
   grn_ja_einfo *einfo;
   void *seg_addr;
@@ -7829,43 +6336,44 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
     ETINY_DEC(einfo, reader->value_size);
     reader->ref_avail = false;
   } else {
-    if (EHUGE_P(einfo)) {
-      EHUGE_DEC(einfo, seg_id, reader->value_size);
-      reader->ref_avail = false;
-    } else {
-      EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->value_size);
-      reader->ref_avail = true;
-    }
-    if (reader->body_seg_addr) {
-      if (seg_id != reader->body_seg_id) {
-        grn_io_seg_unref(ctx, reader->ja->io, reader->body_seg_id);
-        reader->body_seg_addr = NULL;
+    if (reader->compression_type == GRN_COMPRESSION_TYPE_NONE) {
+      if (EHUGE_P(einfo)) {
+        EHUGE_DEC(einfo, seg_id, reader->value_size);
+        reader->ref_avail = false;
+      } else {
+        EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->value_size);
+        reader->ref_avail = true;
       }
+      if (reader->body_seg_addr) {
+        if (seg_id != reader->body_seg_id) {
+          grn_io_seg_unref(ctx, reader->ja->io, reader->body_seg_id);
+          reader->body_seg_addr = NULL;
+        }
+      }
+      reader->body_seg_id = seg_id;
+    } else {
+      if (EHUGE_P(einfo)) {
+        EHUGE_DEC(einfo, seg_id, reader->packed_size);
+        reader->body_seg_offset = 0;
+      } else {
+        EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->packed_size);
+      }
+      if (seg_id != reader->body_seg_id) {
+        seg_addr = grn_io_seg_ref(ctx, reader->ja->io, seg_id);
+        if (!seg_addr) {
+          return GRN_UNKNOWN_ERROR;
+        }
+        if (reader->body_seg_addr) {
+          grn_io_seg_unref(ctx, reader->ja->io, reader->body_seg_id);
+        }
+        reader->body_seg_id = seg_id;
+        reader->body_seg_addr = seg_addr;
+      }
+      seg_addr = ((char *)(reader->body_seg_addr)) + reader->body_seg_offset;
+      reader->value_size = (uint32_t)(*((uint64_t *)seg_addr));
     }
-    reader->body_seg_id = seg_id;
   }
   return GRN_SUCCESS;
-}
-
-grn_rc
-grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
-{
-  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_reader_seek_compressed(ctx, reader, id);
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_reader_seek_compressed(ctx, reader, id);
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_reader_seek_compressed(ctx, reader, id);
-#endif /* GRN_WITH_ZSTD */
-  default:
-    return grn_ja_reader_seek_raw(ctx, reader, id);
-  }
 }
 
 grn_rc
@@ -7916,236 +6424,44 @@ grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader)
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
 
-#ifdef GRN_WITH_ZLIB
-/* grn_ja_reader_read_zlib() reads a value compressed with zlib. */
-static grn_rc
-grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
-{
-  uLong dest_size = reader->value_size;
-  z_stream *stream = (z_stream *)reader->stream;
-  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
-  if (EHUGE_P(einfo)) {
-    /* TODO: Use z_stream to avoid copy. */
-    grn_io *io = reader->ja->io;
-    void *seg_addr;
-    char *packed_ptr;
-    uint32_t size, seg_id;
-    if (reader->packed_size > reader->packed_buf_size) {
-      void *new_buf = GRN_REALLOC(reader->packed_buf, reader->packed_size);
-      if (!new_buf) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      reader->packed_buf = new_buf;
-      reader->packed_buf_size = reader->packed_size;
-    }
-    packed_ptr = (char *)reader->packed_buf;
-    grn_memcpy(packed_ptr,
-               (char *)reader->body_seg_addr + sizeof(uint64_t),
-               io->header->segment_size - sizeof(uint64_t));
-    packed_ptr += io->header->segment_size - sizeof(uint64_t);
-    size = reader->packed_size - (io->header->segment_size - sizeof(uint64_t));
-    seg_id = reader->body_seg_id + 1;
-    while (size > io->header->segment_size) {
-      seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-      if (!seg_addr) {
-        return GRN_UNKNOWN_ERROR;
-      }
-      grn_memcpy(packed_ptr, seg_addr, io->header->segment_size);
-      grn_io_seg_unref(ctx, io, seg_id);
-      seg_id++;
-      size -= io->header->segment_size;
-      packed_ptr += io->header->segment_size;
-    }
-    seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    grn_memcpy(packed_ptr, seg_addr, size);
-    grn_io_seg_unref(ctx, io, seg_id);
-    seg_id++;
-    if (uncompress((Bytef *)buf,
-                   &dest_size,
-                   (Bytef *)reader->packed_buf,
-                   reader->packed_size - sizeof(uint64_t)) != Z_OK) {
-      return GRN_ZLIB_ERROR;
-    }
-    if (dest_size != reader->value_size) {
-      return GRN_ZLIB_ERROR;
-    }
-  } else {
-    char *packed_addr = (char *)reader->body_seg_addr;
-    packed_addr += reader->body_seg_offset + sizeof(uint64_t);
-    if (inflateReset(stream) != Z_OK) {
-      return GRN_ZLIB_ERROR;
-    }
-    stream->next_in = (Bytef *)packed_addr;
-    stream->avail_in = reader->packed_size - sizeof(uint64_t);
-    stream->next_out = (Bytef *)buf;
-    stream->avail_out = dest_size;
-    if ((inflate(stream, Z_FINISH) != Z_STREAM_END) || stream->avail_out) {
-      return GRN_ZLIB_ERROR;
-    }
-  }
-  return GRN_SUCCESS;
-}
-#endif /* GRN_WITH_ZLIB */
-
-#ifdef GRN_WITH_LZ4
-/* grn_ja_reader_read_lz4() reads a value compressed with LZ4. */
-static grn_rc
-grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
-{
-  int src_size, dest_size;
-  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
-  if (EHUGE_P(einfo)) {
-    grn_io *io = reader->ja->io;
-    void *seg_addr;
-    char *packed_ptr;
-    uint32_t size, seg_id;
-    if (reader->packed_size > reader->packed_buf_size) {
-      void *new_buf = GRN_REALLOC(reader->packed_buf, reader->packed_size);
-      if (!new_buf) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      reader->packed_buf = new_buf;
-      reader->packed_buf_size = reader->packed_size;
-    }
-    packed_ptr = (char *)reader->packed_buf;
-    grn_memcpy(packed_ptr,
-               (char *)reader->body_seg_addr + sizeof(uint64_t),
-               io->header->segment_size - sizeof(uint64_t));
-    packed_ptr += io->header->segment_size - sizeof(uint64_t);
-    size = reader->packed_size - (io->header->segment_size - sizeof(uint64_t));
-    seg_id = reader->body_seg_id + 1;
-    while (size > io->header->segment_size) {
-      seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-      if (!seg_addr) {
-        return GRN_UNKNOWN_ERROR;
-      }
-      grn_memcpy(packed_ptr, seg_addr, io->header->segment_size);
-      grn_io_seg_unref(ctx, io, seg_id);
-      seg_id++;
-      size -= io->header->segment_size;
-      packed_ptr += io->header->segment_size;
-    }
-    seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    grn_memcpy(packed_ptr, seg_addr, size);
-    grn_io_seg_unref(ctx, io, seg_id);
-    seg_id++;
-    src_size = (int)(reader->packed_size - sizeof(uint64_t));
-    dest_size = LZ4_decompress_safe(reader->packed_buf,
-                                    buf,
-                                    src_size,
-                                    (int)reader->value_size);
-  } else {
-    char *packed_addr = (char *)reader->body_seg_addr;
-    packed_addr += reader->body_seg_offset + sizeof(uint64_t);
-    src_size = (int)(reader->packed_size - sizeof(uint64_t));
-    dest_size =
-      LZ4_decompress_safe(packed_addr, buf, src_size, (int)reader->value_size);
-  }
-  if ((uint32_t)dest_size != reader->value_size) {
-    return GRN_LZ4_ERROR;
-  }
-  return GRN_SUCCESS;
-}
-#endif /* GRN_WITH_LZ4 */
-
-#ifdef GRN_WITH_ZSTD
-/* grn_ja_reader_read_zstd() reads a value compressed with Zstandard. */
-static grn_rc
-grn_ja_reader_read_zstd(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
-{
-  int src_size, dest_size;
-  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
-  if (EHUGE_P(einfo)) {
-    grn_io *io = reader->ja->io;
-    void *seg_addr;
-    char *packed_ptr;
-    uint32_t size, seg_id;
-    if (reader->packed_size > reader->packed_buf_size) {
-      void *new_buf = GRN_REALLOC(reader->packed_buf, reader->packed_size);
-      if (!new_buf) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      reader->packed_buf = new_buf;
-      reader->packed_buf_size = reader->packed_size;
-    }
-    packed_ptr = (char *)reader->packed_buf;
-    grn_memcpy(packed_ptr,
-               (char *)reader->body_seg_addr + sizeof(uint64_t),
-               io->header->segment_size - sizeof(uint64_t));
-    packed_ptr += io->header->segment_size - sizeof(uint64_t);
-    size = reader->packed_size - (io->header->segment_size - sizeof(uint64_t));
-    seg_id = reader->body_seg_id + 1;
-    while (size > io->header->segment_size) {
-      seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-      if (!seg_addr) {
-        return GRN_UNKNOWN_ERROR;
-      }
-      grn_memcpy(packed_ptr, seg_addr, io->header->segment_size);
-      grn_io_seg_unref(ctx, io, seg_id);
-      seg_id++;
-      size -= io->header->segment_size;
-      packed_ptr += io->header->segment_size;
-    }
-    seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    grn_memcpy(packed_ptr, seg_addr, size);
-    grn_io_seg_unref(ctx, io, seg_id);
-    seg_id++;
-    src_size = (int)(reader->packed_size - sizeof(uint64_t));
-    dest_size =
-      ZSTD_decompress(reader->packed_buf, reader->value_size, buf, src_size);
-  } else {
-    char *packed_addr = (char *)reader->body_seg_addr;
-    packed_addr += reader->body_seg_offset + sizeof(uint64_t);
-    src_size = (int)(reader->packed_size - sizeof(uint64_t));
-    dest_size = ZSTD_decompress(packed_addr, reader->value_size, buf, src_size);
-  }
-  if ((uint32_t)dest_size != reader->value_size) {
-    return GRN_ZSTD_ERROR;
-  }
-  return GRN_SUCCESS;
-}
-#endif /* GRN_WITH_ZSTD */
-
-/* grn_ja_reader_read_raw() reads a value. */
-static grn_rc
-grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+/* grn_ja_reader_read() reads a value. */
+grn_rc
+grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
   grn_io *io = reader->ja->io;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
   if (ETINY_P(einfo)) {
     grn_memcpy(buf, einfo, reader->value_size);
   } else if (EHUGE_P(einfo)) {
-    char *buf_ptr = (char *)buf;
-    void *seg_addr;
-    uint32_t seg_id = reader->body_seg_id;
-    uint32_t size = reader->value_size;
-    while (size > io->header->segment_size) {
+    if (reader->compression_type == GRN_COMPRESSION_TYPE_NONE) {
+      char *buf_ptr = (char *)buf;
+      void *seg_addr;
+      uint32_t seg_id = reader->body_seg_id;
+      uint32_t size = reader->value_size;
+      while (size > io->header->segment_size) {
+        seg_addr = grn_io_seg_ref(ctx, io, seg_id);
+        if (!seg_addr) {
+          return GRN_UNKNOWN_ERROR;
+        }
+        grn_memcpy(buf_ptr, seg_addr, io->header->segment_size);
+        grn_io_seg_unref(ctx, io, seg_id);
+        seg_id++;
+        size -= io->header->segment_size;
+        buf_ptr += io->header->segment_size;
+      }
       seg_addr = grn_io_seg_ref(ctx, io, seg_id);
       if (!seg_addr) {
         return GRN_UNKNOWN_ERROR;
       }
-      grn_memcpy(buf_ptr, seg_addr, io->header->segment_size);
+      grn_memcpy(buf_ptr, seg_addr, size);
       grn_io_seg_unref(ctx, io, seg_id);
       seg_id++;
-      size -= io->header->segment_size;
-      buf_ptr += io->header->segment_size;
+    } else {
+      /* TODO: Implement streamed decompression by grn_compressor. */
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "[ja][reader][read] compressed column isn't supported yet");
+      return ctx->rc;
     }
-    seg_addr = grn_io_seg_ref(ctx, io, seg_id);
-    if (!seg_addr) {
-      return GRN_UNKNOWN_ERROR;
-    }
-    grn_memcpy(buf_ptr, seg_addr, size);
-    grn_io_seg_unref(ctx, io, seg_id);
-    seg_id++;
   } else {
     if (!reader->body_seg_addr) {
       reader->body_seg_addr = grn_io_seg_ref(ctx, io, reader->body_seg_id);
@@ -8153,72 +6469,44 @@ grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
         return GRN_UNKNOWN_ERROR;
       }
     }
-    grn_memcpy(buf,
-               (char *)reader->body_seg_addr + reader->body_seg_offset,
-               reader->value_size);
+    if (reader->compression_type == GRN_COMPRESSION_TYPE_NONE) {
+      grn_memcpy(buf,
+                 (char *)reader->body_seg_addr + reader->body_seg_offset,
+                 reader->value_size);
+    } else {
+      grn_decompress_data data = {0};
+      data.type = reader->compression_type;
+      data.raw_value = (char *)(reader->body_seg_addr);
+      data.raw_value_len = reader->packed_size;
+      /* TODO: Use reader->compressor. */
+      grn_rc rc = grn_compressor_decompress(ctx, &data);
+      if (rc != GRN_SUCCESS) {
+        /* TODO: Wrap error with reader information. */
+        return rc;
+      }
+      /* TODO: Avoid copy. */
+      if (data.unpacked_value_len > 0) {
+        grn_memcpy(buf, data.unpacked_value, data.unpacked_value_len);
+      } else {
+        grn_memcpy(buf, data.decompressed_value, data.decompressed_value_len);
+        GRN_FREE(data.decompressed_value);
+      }
+    }
   }
   return GRN_SUCCESS;
 }
 
+/* grn_ja_reader_pread() reads a part of a value. */
 grn_rc
-grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+grn_ja_reader_pread(
+  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
 {
-  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_reader_read_zlib(ctx, reader, buf);
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_reader_read_lz4(ctx, reader, buf);
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_reader_read_zstd(ctx, reader, buf);
-#endif /* GRN_WITH_ZSTD */
-  default:
-    return grn_ja_reader_read_raw(ctx, reader, buf);
+  if (reader->compression_type != GRN_COMPRESSION_TYPE_NONE) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[ja][reader][pread] compressed column isn't supported.");
+    return ctx->rc;
   }
-}
 
-#ifdef GRN_WITH_ZLIB
-/* grn_ja_reader_pread_zlib() reads a part of a value compressed with zlib. */
-static grn_rc
-grn_ja_reader_pread_zlib(
-  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
-{
-  /* TODO: To be supported? */
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
-}
-#endif /* GRN_WITH_ZLIB */
-
-#ifdef GRN_WITH_LZ4
-/* grn_ja_reader_pread_lz4() reads a part of a value compressed with LZ4. */
-static grn_rc
-grn_ja_reader_pread_lz4(
-  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
-{
-  /* TODO: To be supported? */
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
-}
-#endif /* GRN_WITH_LZ4 */
-
-#ifdef GRN_WITH_ZSTD
-/* grn_ja_reader_pread_zstd() reads a part of a value compressed with ZSTD. */
-static grn_rc
-grn_ja_reader_pread_zstd(
-  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
-{
-  /* TODO: To be supported? */
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
-}
-#endif /* GRN_WITH_ZSTD */
-
-/* grn_ja_reader_pread_raw() reads a part of a value. */
-static grn_rc
-grn_ja_reader_pread_raw(
-  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
-{
   grn_io *io = reader->ja->io;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
   if ((offset >= reader->value_size) || !size) {
@@ -8276,26 +6564,4 @@ grn_ja_reader_pread_raw(
     grn_memcpy(buf, (char *)reader->body_seg_addr + offset, size);
   }
   return GRN_SUCCESS;
-}
-
-grn_rc
-grn_ja_reader_pread(
-  grn_ctx *ctx, grn_ja_reader *reader, size_t offset, size_t size, void *buf)
-{
-  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    return grn_ja_reader_pread_zlib(ctx, reader, offset, size, buf);
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    return grn_ja_reader_pread_lz4(ctx, reader, offset, size, buf);
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    return grn_ja_reader_pread_zstd(ctx, reader, offset, size, buf);
-#endif /* GRN_WITH_ZSTD */
-  default:
-    return grn_ja_reader_pread_raw(ctx, reader, offset, size, buf);
-  }
 }

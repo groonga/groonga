@@ -7,6 +7,7 @@ libgroonga_c_sources =				\
 	column.c				\
 	com.c					\
 	command.c				\
+	compressor.c				\
 	config.c				\
 	ctx_impl_lua.c				\
 	ctx_impl_mrb.c				\
@@ -32,6 +33,7 @@ libgroonga_c_sources =				\
 	grn_cast.h				\
 	grn_column.h				\
 	grn_com.h				\
+	grn_compressor.h			\
 	grn_config.h				\
 	grn_ctx.h				\
 	grn_ctx_impl.h				\
