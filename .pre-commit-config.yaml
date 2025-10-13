@@ -66,6 +66,7 @@ repos:
           ?lib/cast\.cpp|
           ?lib/com\.c|
           ?lib/command_arguments\.cpp|
+          ?lib/compressor\.c|
           ?lib/ctx\.cpp|
           ?lib/ctx_impl_mrb\.c|
           ?lib/db\.c|
@@ -84,6 +85,7 @@ repos:
           ?lib/grn_applier\.h|
           ?lib/grn_arrow\.h|
           ?lib/grn_bulk\.h|
+          ?lib/grn_compressor\.h|
           ?lib/grn_ctx\.hpp|
           ?lib/grn_ctx\.h|
           ?lib/grn_ctx_impl\.h|

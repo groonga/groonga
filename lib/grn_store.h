@@ -20,6 +20,7 @@
 #pragma once
 
 #include "grn.h"
+#include "grn_compressor.h"
 #include "grn_ctx.h"
 #include "grn_hash.h"
 #include "grn_io.h"
@@ -209,7 +210,8 @@ typedef struct {
   uint32_t packed_size;      /* Compressed size of the current value. */
   void *packed_buf;          /* Buffer for decompression. */
   uint32_t packed_buf_size;  /* Size of the buffer for decompression. */
-  void *stream;              /* Stream of a compression library. */
+  grn_compression_type compression_type; /* How to compressed. */
+  void *compressor; /* TODO: Implement grn_compressor_{open,close}() */
 } grn_ja_reader;
 
 /*
