@@ -51,7 +51,7 @@
  *
  * Metadata:
  * * Upper 32bit is flags
- * * Lower 32bit is data size in byte of the original data
+ * * Lower 32bit is data length in byte of the original data
  *
  * Available flags:
  *
@@ -63,20 +63,19 @@
  * data.
  */
 
-#define COMPRESSED_VALUE_SIZE(data_size)     (sizeof(uint64_t) + (data_size))
+#define COMPRESSED_VALUE_LEN(data_len)       (sizeof(uint64_t) + (data_len))
 #define COMPRESSED_VALUE_GET_METADATA(value) (*((uint64_t *)(value)))
 #define COMPRESSED_VALUE_SET_METADATA(value, metadata)                         \
   *((uint64_t *)(value)) = (metadata)
-#define COMPRESSED_VALUE_GET_DATA(value) ((void *)(((uint64_t *)(value)) + 1))
-#define COMPRESSED_VALUE_GET_DATA_SIZE(value_size)                             \
-  (value_size - sizeof(uint64_t))
+#define COMPRESSED_VALUE_GET_DATA(value)         ((void *)(((uint64_t *)(value)) + 1))
+#define COMPRESSED_VALUE_GET_DATA_LEN(value_len) (value_len - sizeof(uint64_t))
 
-#define COMPRESSED_VALUE_METADATA_PACK(original_size, flags)                   \
-  ((original_size) | (flags))
+#define COMPRESSED_VALUE_METADATA_PACK(original_len, flags)                    \
+  ((original_len) | (flags))
 #define COMPRESSED_VALUE_METADATA_FLAG(metadata)                               \
   ((metadata) & 0xf000000000000000)
 #define COMPRESSED_VALUE_METADATA_FLAG_RAW 0x1000000000000000
-#define COMPRESSED_VALUE_METADATA_ORIGINAL_SIZE(metadata)                      \
+#define COMPRESSED_VALUE_METADATA_ORIGINAL_LEN(metadata)                       \
   ((metadata) & 0x0fffffffffffffff)
 
 #define COMPRESS_THRESHOLD_BYTE 256
@@ -89,7 +88,7 @@ static inline grn_rc
 grn_compressor_pack(grn_ctx *ctx, grn_compress_data *data)
 {
   uint64_t input_len = data->header_len + data->body_len + data->footer_len;
-  data->packed_value_len = COMPRESSED_VALUE_SIZE(input_len);
+  data->packed_value_len = COMPRESSED_VALUE_LEN(input_len);
   uint64_t packed_value_metadata =
     COMPRESSED_VALUE_METADATA_PACK(input_len,
                                    COMPRESSED_VALUE_METADATA_FLAG_RAW);
@@ -126,11 +125,10 @@ grn_compressor_unpack(grn_ctx *ctx, grn_decompress_data *data)
     COMPRESSED_VALUE_GET_METADATA(data->raw_value);
   data->compressed_value = COMPRESSED_VALUE_GET_DATA(data->raw_value);
   data->compressed_value_len =
-    COMPRESSED_VALUE_GET_DATA_SIZE(data->raw_value_len);
+    COMPRESSED_VALUE_GET_DATA_LEN(data->raw_value_len);
 
   data->decompressed_value_len =
-    (uint32_t)COMPRESSED_VALUE_METADATA_ORIGINAL_SIZE(
-      compressed_value_metadata);
+    (uint32_t)COMPRESSED_VALUE_METADATA_ORIGINAL_LEN(compressed_value_metadata);
   if (COMPRESSED_VALUE_METADATA_FLAG(compressed_value_metadata) &
       COMPRESSED_VALUE_METADATA_FLAG_RAW) {
     data->unpacked_value = data->compressed_value;
@@ -194,7 +192,7 @@ grn_compressor_compress_zlib(grn_ctx *ctx, grn_compress_data *data)
 
   uint64_t input_len = data->header_len + data->body_len + data->footer_len;
   zstream.avail_out = deflateBound(&zstream, input_len);
-  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_SIZE(zstream.avail_out));
+  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(zstream.avail_out));
   if (!data->compressed_value) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -272,7 +270,7 @@ grn_compressor_compress_zlib(grn_ctx *ctx, grn_compress_data *data)
       return ctx->rc;
     }
   }
-  data->compressed_value_len = COMPRESSED_VALUE_SIZE(zstream.total_out);
+  data->compressed_value_len = COMPRESSED_VALUE_LEN(zstream.total_out);
 
   zrc = deflateEnd(&zstream);
   if (zrc != Z_OK) {
@@ -342,7 +340,7 @@ grn_compressor_compress_lz4(grn_ctx *ctx, grn_compress_data *data)
 
   size_t input_len = data->header_len + data->body_len + data->footer_len;
   if (input_len > (size_t)LZ4_MAX_INPUT_SIZE) {
-    data->packed_value = GRN_MALLOC(COMPRESSED_VALUE_SIZE(input_len));
+    data->packed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(input_len));
     if (!data->packed_value) {
       char message[GRN_CTX_MSGSIZE];
       grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -359,7 +357,7 @@ grn_compressor_compress_lz4(grn_ctx *ctx, grn_compress_data *data)
   }
 
   int lz4_value_len_max = LZ4_compressBound((int)input_len);
-  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_SIZE(lz4_value_len_max));
+  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(lz4_value_len_max));
   if (!data->compressed_value) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -397,7 +395,7 @@ grn_compressor_compress_lz4(grn_ctx *ctx, grn_compress_data *data)
     data->compressed_value = NULL;
     return ctx->rc;
   }
-  data->compressed_value_len = COMPRESSED_VALUE_SIZE(lz4_value_len_real);
+  data->compressed_value_len = COMPRESSED_VALUE_LEN(lz4_value_len_real);
 
   return ctx->rc;
 }
@@ -446,8 +444,7 @@ grn_compressor_compress_zstd(grn_ctx *ctx, grn_compress_data *data)
 
   size_t input_len = data->header_len + data->body_len + data->footer_len;
   size_t zstd_value_len_max = ZSTD_compressBound(input_len);
-  data->compressed_value =
-    GRN_MALLOC(COMPRESSED_VALUE_SIZE(zstd_value_len_max));
+  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(zstd_value_len_max));
   if (!data->compressed_value) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -476,7 +473,7 @@ grn_compressor_compress_zstd(grn_ctx *ctx, grn_compress_data *data)
       data->compressed_value = NULL;
       return ctx->rc;
     }
-    data->compressed_value_len = COMPRESSED_VALUE_SIZE(zstd_value_len_real);
+    data->compressed_value_len = COMPRESSED_VALUE_LEN(zstd_value_len_real);
   } else {
     ZSTD_outBuffer zstd_output = {0};
     zstd_output.dst = zstd_value;
@@ -557,7 +554,7 @@ grn_compressor_compress_zstd(grn_ctx *ctx, grn_compress_data *data)
         return ctx->rc;
       }
     }
-    data->compressed_value_len = COMPRESSED_VALUE_SIZE(zstd_output.pos);
+    data->compressed_value_len = COMPRESSED_VALUE_LEN(zstd_output.pos);
   }
   ZSTD_freeCCtx(zstd_cctx);
 
@@ -736,7 +733,7 @@ grn_compressor_compress_blosc(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  data->compressed_value_len = COMPRESSED_VALUE_SIZE(blosc_value_len);
+  data->compressed_value_len = COMPRESSED_VALUE_LEN(blosc_value_len);
   data->compressed_value = GRN_MALLOC(data->compressed_value_len);
   if (!data->compressed_value) {
     ERR(GRN_BLOSC_ERROR, "%s allocate packed value buffer", tag);
@@ -765,7 +762,7 @@ static inline bool
 grn_compressor_decompress_blosc_copy_meta(grn_ctx *ctx,
                                           blosc2_schunk *schunk,
                                           uint8_t **destination,
-                                          int32_t *destination_size,
+                                          int32_t *destination_len,
                                           const char *name,
                                           const char *tag)
 {
@@ -773,18 +770,18 @@ grn_compressor_decompress_blosc_copy_meta(grn_ctx *ctx,
   for (i = 0; i < schunk->nmetalayers; i++) {
     blosc2_metalayer *metalayer = schunk->metalayers[i];
     if (strcmp(metalayer->name, name) == 0) {
-      if (metalayer->content_len > *destination_size) {
+      if (metalayer->content_len > *destination_len) {
         ERR(GRN_BLOSC_ERROR,
             "%s %s is too large: %d > %d",
             tag,
             name,
             metalayer->content_len,
-            *destination_size);
+            *destination_len);
         return false;
       }
       memcpy(*destination, metalayer->content, metalayer->content_len);
       *destination += metalayer->content_len;
-      *destination_size -= metalayer->content_len;
+      *destination_len -= metalayer->content_len;
       break;
     }
   }
@@ -816,11 +813,11 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
   uint8_t *destination = data->decompressed_value;
-  int32_t destination_size = data->decompressed_value_len;
+  int32_t destination_len = data->decompressed_value_len;
   if (!grn_compressor_decompress_blosc_copy_meta(ctx,
                                                  schunk,
                                                  &destination,
-                                                 &destination_size,
+                                                 &destination_len,
                                                  GRN_BLOSC_META_HEADER,
                                                  tag)) {
     blosc2_schunk_free(schunk);
@@ -832,30 +829,28 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
   {
     int64_t i;
     for (i = 0; i < schunk->nchunks; i++) {
-      int decompressed_size = blosc2_schunk_decompress_chunk(schunk,
-                                                             i,
-                                                             destination,
-                                                             destination_size);
-      if (decompressed_size <= 0) {
+      int decompressed_len =
+        blosc2_schunk_decompress_chunk(schunk, i, destination, destination_len);
+      if (decompressed_len <= 0) {
         ERR(GRN_BLOSC_ERROR,
             "%s failed to decode a chunk: %" GRN_FMT_INT64D ": %s",
             tag,
             i,
-            print_error(decompressed_size));
+            print_error(decompressed_len));
         blosc2_schunk_free(schunk);
         GRN_FREE(data->decompressed_value);
         data->decompressed_value = NULL;
         data->decompressed_value_len = 0;
         return ctx->rc;
       }
-      destination += decompressed_size;
-      destination_size -= decompressed_size;
+      destination += decompressed_len;
+      destination_len -= decompressed_len;
     }
   }
   if (!grn_compressor_decompress_blosc_copy_meta(ctx,
                                                  schunk,
                                                  &destination,
-                                                 &destination_size,
+                                                 &destination_len,
                                                  GRN_BLOSC_META_FOOTER,
                                                  tag)) {
     blosc2_schunk_free(schunk);
@@ -865,12 +860,12 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
   blosc2_schunk_free(schunk);
-  if (destination_size != 0) {
+  if (destination_len != 0) {
     ERR(GRN_BLOSC_ERROR,
         "%s decompressed size isn't match: expected:%u actual:%d",
         tag,
         data->decompressed_value_len,
-        destination_size);
+        destination_len);
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
@@ -886,7 +881,7 @@ grn_compressor_compress(grn_ctx *ctx, grn_compress_data *data)
 {
   size_t input_len = data->header_len + data->body_len + data->footer_len;
   if (input_len < COMPRESS_THRESHOLD_BYTE) {
-    data->packed_value = GRN_MALLOC(COMPRESSED_VALUE_SIZE(input_len));
+    data->packed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(input_len));
     if (!data->packed_value) {
       char message[GRN_CTX_MSGSIZE];
       grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
