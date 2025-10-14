@@ -94,7 +94,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
            "almalinux-9",
            "almalinux-10",
            "amazon-linux-2023"
-        next if architecture == "aarch64"
+        next unless yum_primary_architecture?(architecture)
         distribution_path = "#{repositories_path}/#{distribution}/#{version}"
         old_path = "#{distribution_path}/source/SRPMS"
         new_path = "#{distribution_path}/Source/Packages"
@@ -102,7 +102,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         mv(new_path, old_path)
         rm_rf(File.dirname(new_path))
       else
-        next
+        # Use latest SRPM path for other distributions Source/Packages/*.src.rpm
       end
     end
   end
@@ -111,11 +111,15 @@ class PackagesGroongaOrgPackageTask < PackageTask
     repositories_path = "#{yum_dir}/repositories"
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
-      next if architecture != "aarch64"
+      next if yum_primary_architecture?(architecture)
       srpm_path =
         "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
       rm_rf(File.dirname(srpm_path))
     end
+  end
+
+  def yum_primary_architecture?(architecture)
+    architecture.nil?
   end
 
   def enable_source?
