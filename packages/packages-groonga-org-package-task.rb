@@ -71,7 +71,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def yum_build(console: false)
     super
     keep_srpm_paths_for_compatibility
-    remove_srpm_from_arm_achitectures
+    remove_srpm_from_arm_architectures
   end
 
   def keep_srpm_paths_for_compatibility
@@ -107,7 +107,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
-  def remove_srpm_from_arm_achitectures
+  def remove_srpm_from_arm_architectures
     repositories_path = "#{yum_dir}/repositories"
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
