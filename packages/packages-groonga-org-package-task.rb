@@ -70,52 +70,51 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def yum_build(console: false)
     super
-    manage_srpm_paths
+    keep_srpm_paths_for_compatibility
+    remove_srpm_from_arm_architectures
   end
 
-  def manage_srpm_paths
+  def keep_srpm_paths_for_compatibility
     repositories_path = "#{yum_dir}/repositories"
 
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
-      # Remove SRPM for aarch64 architectures (all distributions)
-      if architecture == "aarch64"
-        remove_srpm(repositories_path, distribution, version)
+
+      # Rename SRPM directory only for the following distributions
+      # to keep backward compatibility:
+      #
+      # * AlmaLinux 8
+      # * AlmaLinux 9
+      # * AlmaLinux 10
+      # * Amazon Linux 2023
+      #
+      # They keep using source/SRPMS/*.src.rpm for SRPM path.
+      case "#{distribution}-#{version}"
+      when "almalinux-8",
+           "almalinux-9",
+           "almalinux-10",
+           "amazon-linux-2023"
+        next if architecture == "aarch64"
+        description_path = "#{repositories_path}/#{distribution}/#{version}"
+        old_path = "#{description_path}/source/SRPMS"
+        new_path = "#{description_path}/Source/Packages"
+        mkdir_p(File.dirname(old_path))
+        mv(new_path, old_path)
+        rm_rf(File.dirname(new_path))
+      else
         next
       end
-      keep_srpm_paths_for_compatibility(repositories_path, distribution, version)
     end
   end
 
-  def remove_srpm(repositories_path, distribution, version)
-    srpm_path =
-      "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
-    rm_rf(File.dirname(srpm_path))
-  end
-
-  def keep_srpm_paths_for_compatibility(repositories_path, distribution, version)
-    # Rename SRPM directory only for the following distributions
-    # to keep backward compatibility:
-    #
-    # * AlmaLinux 8
-    # * AlmaLinux 9
-    # * AlmaLinux 10
-    # * Amazon Linux 2023
-    #
-    # They keep using source/SRPMS/*.src.rpm for SRPM path.
-    case "#{distribution}-#{version}"
-    when "almalinux-8",
-          "almalinux-9",
-          "almalinux-10",
-          "amazon-linux-2023"
-      description_path = "#{repositories_path}/#{distribution}/#{version}"
-      old_path = "#{description_path}/source/SRPMS"
-      new_path = "#{description_path}/Source/Packages"
-      mkdir_p(File.dirname(old_path))
-      mv(new_path, old_path)
-      rm_rf(File.dirname(new_path))
-    else
-      # Use latest SRPM path for other distributions Source/Packages/*.src.rpm
+  def remove_srpm_from_arm_architectures
+    repositories_path = "#{yum_dir}/repositories"
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+      next if architecture != "aarch64"
+      srpm_path =
+        "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
+      rm_rf(File.dirname(srpm_path))
     end
   end
 
