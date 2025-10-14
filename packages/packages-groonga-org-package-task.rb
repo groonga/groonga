@@ -95,9 +95,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
            "almalinux-10",
            "amazon-linux-2023"
         next if architecture == "aarch64"
-        description_path = "#{repositories_path}/#{distribution}/#{version}"
-        old_path = "#{description_path}/source/SRPMS"
-        new_path = "#{description_path}/Source/Packages"
+        distribution_path = "#{repositories_path}/#{distribution}/#{version}"
+        old_path = "#{distribution_path}/source/SRPMS"
+        new_path = "#{distribution_path}/Source/Packages"
         mkdir_p(File.dirname(old_path))
         mv(new_path, old_path)
         rm_rf(File.dirname(new_path))
