@@ -70,11 +70,11 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def yum_build(console: false)
     super
-    manage_srpm_paths_for_compatibility
+    keep_srpm_paths_for_compatibility
     remove_srpm_from_arm_achitectures
   end
 
-  def manage_srpm_paths_for_compatibility
+  def keep_srpm_paths_for_compatibility
     repositories_path = "#{yum_dir}/repositories"
 
     yum_targets.each do |target|
