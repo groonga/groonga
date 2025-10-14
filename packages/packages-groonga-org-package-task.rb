@@ -75,7 +75,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def manage_srpm_paths_for_compatibility
-    repositories_dir = "#{yum_dir}/repositories"
+    repositories_path = "#{yum_dir}/repositories"
 
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
@@ -95,9 +95,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
            "almalinux-10",
            "amazon-linux-2023"
         next if architecture == "aarch64"
-        repo_base = "#{repositories_dir}/#{distribution}/#{version}"
-        old_path = "#{repo_base}/source/SRPMS"
-        new_path = "#{repo_base}/Source/Packages"
+        description_path = "#{repositories_path}/#{distribution}/#{version}"
+        old_path = "#{description_path}/source/SRPMS"
+        new_path = "#{description_path}/Source/Packages"
         mkdir_p(File.dirname(old_path))
         mv(new_path, old_path)
         rm_rf(File.dirname(new_path))
@@ -108,10 +108,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def remove_srpm_from_arm_achitectures
+    repositories_path = "#{yum_dir}/repositories"
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
       next if architecture != "aarch64"
-      repositories_path = "#{yum_dir}/repositories"
       srpm_path =
         "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
       rm_rf(File.dirname(srpm_path))
