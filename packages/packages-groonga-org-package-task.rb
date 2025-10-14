@@ -79,18 +79,30 @@ class PackagesGroongaOrgPackageTask < PackageTask
     yum_targets.each do |target|
       distribution, version, architecture = split_target(target)
 
-      # Backward compatibility: only rename for existing distributions that
-      # still expect the legacy SRPM structure.
-      # Legacy (<= AlmaLinux 10): source/SRPMS
-      # New    (>= AlmaLinux 11): Source/Packages (no rename needed)
-      next if distribution != "almalinux"
-      repo_base = "#{repositories_dir}/#{distribution}/#{version}"
-      old_path = "#{repo_base}/source/SRPMS"
-      new_path = "#{repo_base}/Source/Packages"
-      next rm_rf(File.dirname(new_path)) if architecture == "aarch64"
-      mkdir_p(File.dirname(old_path))
-      mv(new_path, old_path)
-      rm_rf(File.dirname(new_path))
+      # Rename SRPM directory only for the following distributions
+      # to keep backward compatibility:
+      #
+      # * AlmaLinux 8
+      # * AlmaLinux 9
+      # * AlmaLinux 10
+      # * Amazon Linux 2023
+      #
+      # They keep using source/SRPMS/*.src.rpm for SRPM path.
+      case "#{distribution}-#{version}"
+      when "almalinux-8",
+           "almalinux-9",
+           "almalinux-10",
+           "amazon-linux-2023"
+        repo_base = "#{repositories_dir}/#{distribution}/#{version}"
+        old_path = "#{repo_base}/source/SRPMS"
+        new_path = "#{repo_base}/Source/Packages"
+        next rm_rf(File.dirname(new_path)) if architecture == "aarch64"
+        mkdir_p(File.dirname(old_path))
+        mv(new_path, old_path)
+        rm_rf(File.dirname(new_path))
+      else
+        next
+      end
     end
   end
 
