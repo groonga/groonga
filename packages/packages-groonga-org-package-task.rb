@@ -102,7 +102,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         mv(new_path, backward_compatible_path)
         rm_rf(File.dirname(new_path))
       else
-        # Use SRPM path as-is for other distributions Source/Packages/*.src.rpm
+        # Use SRPM path as-is for other distributions: Source/Packages/*.src.rpm
       end
     end
   end
