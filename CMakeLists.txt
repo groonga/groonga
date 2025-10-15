@@ -1711,6 +1711,16 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
         string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
                " -Wno-declaration-after-statement")
+        # TODO: Remove this suppression if upstream PR is merged.
+        # https://github.com/ggml-org/llama.cpp/pull/16573
+        if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+          string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-ignored-qualifiers")
+          string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO " -Wno-ignored-qualifiers")
+        else()
+          string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-discarded-qualifiers")
+          string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+                 " -Wno-discarded-qualifiers")
+        endif()
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-frame-larger-than")
         string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-frame-larger-than")
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-non-virtual-dtor")
