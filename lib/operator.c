@@ -205,7 +205,7 @@ static const char *operator_script_syntaxes[] = {
 const char *
 grn_operator_to_string(grn_operator op)
 {
-  if (op >= 0 && op <= GRN_OP_LAST) {
+  if (op <= GRN_OP_LAST) {
     return operator_names[op];
   } else {
     return "unknown";
@@ -215,7 +215,7 @@ grn_operator_to_string(grn_operator op)
 const char *
 grn_operator_to_script_syntax(grn_operator op)
 {
-  if (op >= 0 && op <= GRN_OP_LAST) {
+  if (op <= GRN_OP_LAST) {
     return operator_script_syntaxes[op];
   } else {
     return "unknown";
