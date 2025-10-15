@@ -68,6 +68,60 @@ class PackagesGroongaOrgPackageTask < PackageTask
     super
   end
 
+  def yum_build(console: false)
+    super
+    yum_keep_srpm_paths_for_compatibility
+    yum_remove_srpm_from_non_primary_architectures
+  end
+
+  def yum_keep_srpm_paths_for_compatibility
+    repositories_path = "#{yum_dir}/repositories"
+
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+
+      # Rename SRPM directory only for the following distributions
+      # to keep backward compatibility:
+      #
+      # * AlmaLinux 8
+      # * AlmaLinux 9
+      # * AlmaLinux 10
+      # * Amazon Linux 2023
+      #
+      # They keep using source/SRPMS/*.src.rpm for SRPM path.
+      case "#{distribution}-#{version}"
+      when "almalinux-8",
+           "almalinux-9",
+           "almalinux-10",
+           "amazon-linux-2023"
+        next unless yum_primary_architecture?(architecture)
+        distribution_path = "#{repositories_path}/#{distribution}/#{version}"
+        backward_compatible_path = "#{distribution_path}/source/SRPMS"
+        new_path = "#{distribution_path}/Source/Packages"
+        mkdir_p(File.dirname(backward_compatible_path))
+        mv(new_path, backward_compatible_path)
+        rm_rf(File.dirname(new_path))
+      else
+        # Use SRPM path as-is for other distributions: Source/Packages/*.src.rpm
+      end
+    end
+  end
+
+  def yum_remove_srpm_from_non_primary_architectures
+    repositories_path = "#{yum_dir}/repositories"
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+      next if yum_primary_architecture?(architecture)
+      srpm_path =
+        "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
+      rm_rf(File.dirname(srpm_path))
+    end
+  end
+
+  def yum_primary_architecture?(architecture)
+    architecture.nil?
+  end
+
   def enable_source?
     true
   end
