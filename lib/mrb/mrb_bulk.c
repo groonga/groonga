@@ -192,15 +192,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       uint32_t value;
       value = GRN_UINT32_VALUE(bulk);
-#  if UINT32_MAX > MRB_INT_MAX
-      if (value <= MRB_INT_MAX) {
-        mrb_value_ = mrb_int_value(mrb, value);
-      } else {
-        mrb_value_ = mrb_float_value(mrb, value);
-      }
-#  else
       mrb_value_ = mrb_int_value(mrb, value);
-#  endif
     }
     break;
   case GRN_DB_INT64:
