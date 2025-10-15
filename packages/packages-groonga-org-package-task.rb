@@ -96,10 +96,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
            "amazon-linux-2023"
         next unless yum_primary_architecture?(architecture)
         distribution_path = "#{repositories_path}/#{distribution}/#{version}"
-        old_path = "#{distribution_path}/source/SRPMS"
+        backward_compatible_path = "#{distribution_path}/source/SRPMS"
         new_path = "#{distribution_path}/Source/Packages"
-        mkdir_p(File.dirname(old_path))
-        mv(new_path, old_path)
+        mkdir_p(File.dirname(backward_compatible_path))
+        mv(new_path, backward_compatible_path)
         rm_rf(File.dirname(new_path))
       else
         # Use latest SRPM path for other distributions Source/Packages/*.src.rpm
