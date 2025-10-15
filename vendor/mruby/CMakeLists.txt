@@ -118,6 +118,7 @@ if(GRN_WITH_MRUBY)
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-float-equal")
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-missing-field-initializers")
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-sign-compare")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-type-limits")
   elseif(MSVC)
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
