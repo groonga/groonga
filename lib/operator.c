@@ -202,10 +202,21 @@ static const char *operator_script_syntaxes[] = {
 
 #define GRN_OP_LAST GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT
 
+static inline bool
+grn_operator_is_valid(grn_operator op)
+{
+  /* We can't assume grn_operator is signed or unsigned. If
+   * grn_operator is unsigned, "op >= 0" may cause a warning. But "op
+   * >= 0" is needed when grn_operator is signed. We can suppress the
+   * warning with unsigned by "(int)op >= 0" and keep the check for
+   * signed. */
+  return (int)op >= 0 && op <= GRN_OP_LAST;
+}
+
 const char *
 grn_operator_to_string(grn_operator op)
 {
-  if (op <= GRN_OP_LAST) {
+  if (grn_operator_is_valid(op)) {
     return operator_names[op];
   } else {
     return "unknown";
@@ -215,7 +226,7 @@ grn_operator_to_string(grn_operator op)
 const char *
 grn_operator_to_script_syntax(grn_operator op)
 {
-  if (op <= GRN_OP_LAST) {
+  if (grn_operator_is_valid(op)) {
     return operator_script_syntaxes[op];
   } else {
     return "unknown";
