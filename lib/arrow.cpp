@@ -286,7 +286,7 @@ namespace grnarrow {
     ~RecordAddVisitor() { GRN_OBJ_FIN(ctx_, &bulk_); }
 
     arrow::Status
-    Visit(const arrow::BooleanArray &array)
+    Visit(const arrow::BooleanArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_BOOL, 0);
       return add_records(array, [&](int64_t i) {
@@ -296,7 +296,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::Int8Array &array)
+    Visit(const arrow::Int8Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT8, 0);
       return add_records(array, [&](int64_t i) {
@@ -306,7 +306,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::UInt8Array &array)
+    Visit(const arrow::UInt8Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT8, 0);
       return add_records(array, [&](int64_t i) {
@@ -316,7 +316,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::Int16Array &array)
+    Visit(const arrow::Int16Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT16, 0);
       return add_records(array, [&](int64_t i) {
@@ -326,7 +326,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::UInt16Array &array)
+    Visit(const arrow::UInt16Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT16, 0);
       return add_records(array, [&](int64_t i) {
@@ -336,7 +336,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::Int32Array &array)
+    Visit(const arrow::Int32Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT32, 0);
       return add_records(array, [&](int64_t i) {
@@ -346,7 +346,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::UInt32Array &array)
+    Visit(const arrow::UInt32Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT32, 0);
       return add_records(array, [&](int64_t i) {
@@ -356,7 +356,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::Int64Array &array)
+    Visit(const arrow::Int64Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_INT64, 0);
       return add_records(array, [&](int64_t i) {
@@ -366,7 +366,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::UInt64Array &array)
+    Visit(const arrow::UInt64Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_UINT64, 0);
       return add_records(array, [&](int64_t i) {
@@ -376,7 +376,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::HalfFloatArray &array)
+    Visit(const arrow::HalfFloatArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
       return add_records(array, [&](int64_t i) {
@@ -386,7 +386,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::FloatArray &array)
+    Visit(const arrow::FloatArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
       return add_records(array, [&](int64_t i) {
@@ -396,7 +396,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::DoubleArray &array)
+    Visit(const arrow::DoubleArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT, 0);
       return add_records(array, [&](int64_t i) {
@@ -406,7 +406,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::StringArray &array)
+    Visit(const arrow::StringArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TEXT, GRN_OBJ_DO_SHALLOW_COPY);
       return add_records(array, [&](int64_t i) {
@@ -416,7 +416,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::Date64Array &array)
+    Visit(const arrow::Date64Array &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TIME, 0);
       return add_records(array, [&](int64_t i) {
@@ -426,7 +426,7 @@ namespace grnarrow {
     }
 
     arrow::Status
-    Visit(const arrow::TimestampArray &array)
+    Visit(const arrow::TimestampArray &array) override
     {
       grn_obj_reinit(ctx_, &bulk_, GRN_DB_TIME, 0);
       const auto &arrow_timestamp_type =
@@ -2802,70 +2802,70 @@ namespace grn {
         }
 
         ::arrow::Status
-        Visit(const ::arrow::BooleanArray &array)
+        Visit(const ::arrow::BooleanArray &array) override
         {
           GRN_BOOL_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::Int8Array &array)
+        Visit(const ::arrow::Int8Array &array) override
         {
           GRN_INT8_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::UInt8Array &array)
+        Visit(const ::arrow::UInt8Array &array) override
         {
           GRN_UINT8_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::Int16Array &array)
+        Visit(const ::arrow::Int16Array &array) override
         {
           GRN_INT16_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::UInt16Array &array)
+        Visit(const ::arrow::UInt16Array &array) override
         {
           GRN_UINT16_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::Int32Array &array)
+        Visit(const ::arrow::Int32Array &array) override
         {
           GRN_INT32_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::UInt32Array &array)
+        Visit(const ::arrow::UInt32Array &array) override
         {
           GRN_UINT32_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::Int64Array &array)
+        Visit(const ::arrow::Int64Array &array) override
         {
           GRN_INT64_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::UInt64Array &array)
+        Visit(const ::arrow::UInt64Array &array) override
         {
           GRN_UINT64_PUT(ctx_, value_, array.Value(index_));
           return ::arrow::Status::OK();
         }
 
         ::arrow::Status
-        Visit(const ::arrow::TimestampArray &array)
+        Visit(const ::arrow::TimestampArray &array) override
         {
           const auto &arrow_timestamp_type =
             std::static_pointer_cast<::arrow::TimestampType>(array.type());
@@ -2878,7 +2878,7 @@ namespace grn {
         }
 
         ::arrow::Status
-        Visit(const ::arrow::StringArray &array)
+        Visit(const ::arrow::StringArray &array) override
         {
           auto raw_value = array.GetView(index_);
           grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
@@ -2886,7 +2886,7 @@ namespace grn {
         }
 
         ::arrow::Status
-        Visit(const ::arrow::BinaryArray &array)
+        Visit(const ::arrow::BinaryArray &array) override
         {
           auto raw_value = array.GetView(index_);
           grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());

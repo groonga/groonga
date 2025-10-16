@@ -381,6 +381,7 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_cflag("-Wno-declaration-after-statement")
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
+  check_build_flag("-Wsuggest-override")
   check_build_flag("-Wno-implicit-fallthrough")
 elseif(MSVC)
   # Enable warnings
