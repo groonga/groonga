@@ -382,6 +382,7 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-implicit-fallthrough")
+  check_cflag("-Wno-frame-larger-than")
 elseif(MSVC)
   # Enable warnings
 
