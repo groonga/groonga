@@ -47,6 +47,9 @@ msgstr "`language_model_vectorize`には必須の引数が2つあります。"
 msgid "`mode_name` is the name of language mode to be used. It's associated with file name. If `${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf` exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by removing directory and `.gguf` extension."
 msgstr "`mode_name`は使用する言語モデルの名前です。この名前はファイル名と紐付いています。もし`${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`が存在している場合、この言語モデルは`mistral-7b-v0.1.Q4_K_M`という名前で参照できます。この名前はディレクトリー部分と`.gguf`拡張子を削除することで計算できます。"
 
+msgid "You can also specify a Hugging Face URI for `model_name`."
+msgstr "`model_name`にはHugging FaceのURIも指定できます。"
+
 msgid "`text` is the input text."
 msgstr "`text`は入力テキストです。"
 
@@ -91,6 +94,21 @@ msgstr "必須の引数が2つあります。"
 
 msgid "`model_name`"
 msgstr ""
+
+msgid "You can specify a Hugging Face URI for `model_name`."
+msgstr "`model_name`にはHugging FaceのURIが指定できます。"
+
+msgid "When you specify a Hugging Face URI, the model will be automatically downloaded."
+msgstr "Hugging FaceのURIが指定されるとモデルを自動でダウンロードします。"
+
+msgid "The model is downloaded to the directory where the Groonga database files are located."
+msgstr "モデルはGroongaのデータベースファイルが置いてあるディレクトリにダウンロードされます。"
+
+msgid "Example of URI: `hf:///groonga/bge-m3-Q4_K_M-GGUF` for `https://huggingface.co/groonga/bge-m3-Q4_K_M-GGUF`."
+msgstr "URIの例: `https://huggingface.co/groonga/bge-m3-Q4_K_M-GGUF` のモデルを指定したいときは `hf:///groonga/bge-m3-Q4_K_M-GGUF` を指定します。"
+
+msgid "Example of function execution:"
+msgstr "関数の実行例:"
 
 msgid "`text`"
 msgstr ""
