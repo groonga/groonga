@@ -1726,6 +1726,10 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
                " -Wno-declaration-after-statement")
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-frame-larger-than")
         string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-frame-larger-than")
+        # TODO: Remove this suppression if upstream PR is merged.
+        # https://github.com/ggml-org/llama.cpp/pull/16614
+        string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-missing-braces")
+        string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-missing-braces")
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-non-virtual-dtor")
         string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-non-virtual-dtor")
         string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-unused-function")
