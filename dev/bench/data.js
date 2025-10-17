@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1760582713913,
+  "lastUpdate": 1760665012638,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "otegami@clear-code.com",
-            "name": "takuya kodama",
-            "username": "otegami"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "12dd02b4fdb6f7adbb338b3a859b363d93ff067d",
-          "message": "doc: update the generated file list by Shpinx v8.1.3 (#2027)\n\nThis change fixed the following CI error because the generated file list\r\nhas been changed from Sphinx 8.1.3.\r\n\r\n```\r\ncp: cannot stat './html/_static/styles/bootstrap.css': No such file or directory\r\n```\r\nref:\r\nhttps://github.com/groonga/groonga/actions/runs/11470920955/job/31920976581#step:9:18973\r\n\r\n## How we updated the file list\r\n\r\nWe have updated the following commands.\r\n\r\n```console\r\n$ rm -rf ../groonga.doc && cmake -S . -B ../groonga.doc --preset=doc && cmake --build ../groonga.doc\r\n$ ninja doc_update_files -C ../groonga.doc\r\n```",
-          "timestamp": "2024-10-23T11:10:02+09:00",
-          "tree_id": "61b53135c4161052c562a2b4b672b1b15cea14c8",
-          "url": "https://github.com/groonga/groonga/commit/12dd02b4fdb6f7adbb338b3a859b363d93ff067d"
-        },
-        "date": 1729649738718,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3671846630001028,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.016216000000000133 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.28768744200004903,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.022093999999999822 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.015725348999978905,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003540000000003818 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015182293000009395,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003580000000003858 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.523973495000007,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.0001489999999998992 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.24630433200002244,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007856999999999975 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13521394299993972,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007663999999999907 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.018757687000061196,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0029449999999999754 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.01763494099992613,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0022839999999999527 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.061048847000051865,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.011165000000000286 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.05790297499987673,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.011077999999999838 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.020643873999972584,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.005003000000000313 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.027253964999943037,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002060999999999924 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.02591158200004884,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0014829999999999288 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "a.s.takuya1026@gmail.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "613163664f29adab925a5580a8a420801ece0700",
+          "message": "cmake: enable `-Wsuggest-override` warning and fix comparison (#2564)\n\n## Issue\n\nWe got the following error when we built Groonga with MariaDB.\n\n```\n2040-/home/buildbot/extra/groonga/lib/dat/dat.hpp:211:21: error: 'grn::dat::ErrorCode grn::dat::Error<T>::code() const [with grn::dat::ErrorCode T = grn::dat::SIZE_ERROR]' can be marked override [-Werror=suggest-override]\n2041-  211 |   virtual ErrorCode code() const throw() {\n2042-      |                     ^~~~\n```\n\n### Hot to reproduce\n\n```\nrm -rf ../groonga.build\ncmake \\\n  -S . \\\n  -B ../groonga.build \\\n  --preset=debug-maximum \\\n  -DCMAKE_INSTALL_PREFIX=/tmp/local \\\n  -DCMAKE_CXX_FLAGS=\"-Werror=suggest-override\" && \\\ncmake --build ../groonga.build\n...\n/home/otegami/work/c/groonga/lib/dat/dat.hpp:190:23: error: ‘virtual const char* grn::dat::Exception::what() const’ can be marked override [-Werror=suggest-override]\n  190 |   virtual const char *what() const throw() {\n      |                       ^~~~\n...\n```\n\n## Causes\n\nIn MariaDB's build environment, compiler warnings are promoted to\nerrors.\nAs a result, any `-Wsuggest-override` diagnostics fail the build.\n\n## Solution\n\nThis PR adds the `override` keyword to all virtual methods that override\nbase class methods.",
+          "timestamp": "2025-10-17T10:30:56+09:00",
+          "tree_id": "83c899dea0d0afc05e8618c64d0dc1f43e52fb2f",
+          "url": "https://github.com/groonga/groonga/commit/613163664f29adab925a5580a8a420801ece0700"
+        },
+        "date": 1760665011888,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3734686889998784,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.017338999999999855 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2873446639998747,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.018178999999999834 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.014867300999981126,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0003340000000000287 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015109749000089323,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00034600000000001296 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.404815754000083,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00017200000000003324 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.24868506300026638,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0065269999999998385 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.14136073699989993,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005022999999999805 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01640316200007419,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014410000000000256 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01678195800013782,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014660000000004392 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06805411699986053,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0075029999999998015 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.07011052100006054,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007258999999999377 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017279031000157374,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016339999999995247 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017346616999816433,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001617000000000035 s\nthreads: undefined"
           }
         ]
       }
