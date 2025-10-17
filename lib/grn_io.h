@@ -61,9 +61,9 @@ typedef struct {
   void *addr;
   uint32_t diff;
   int32_t cached;
-#ifdef WIN32
+#ifdef _WIN32
   HANDLE fmo;
-#endif /* WIN32 */
+#endif
   void *uncompressed_value;
 } grn_io_win;
 
@@ -71,10 +71,24 @@ typedef struct {
   void *map;
   uint32_t nref;
   uint32_t count;
-#ifdef WIN32
+#ifdef _WIN32
   HANDLE fmo;
-#endif /* WIN32 */
+#endif
 } grn_io_mapinfo;
+
+static inline void
+grn_io_mapinfo_init(grn_io_mapinfo *info)
+{
+  info->map = NULL;
+  info->nref = 0;
+  info->count = 0;
+#ifdef _WIN32
+  /* We don't use INVALID_HANDLE_VALUE here because
+   * CreateFileMapping() returns NULL not INVALID_HANDLE_VALUE on
+   * error. */
+  info->fmo = NULL;
+#endif
+}
 
 typedef struct _grn_io_array_info grn_io_array_info;
 
