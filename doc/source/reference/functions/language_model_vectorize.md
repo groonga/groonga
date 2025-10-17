@@ -41,6 +41,12 @@ with file name. If
 exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by
 removing directory and `.gguf` extension.
 
+```{versionadded} 15.1.8
+
+You can also specify a Hugging Face URI for `model_name`.
+
+```
+
 `text` is the input text.
 
 ## Requirements
@@ -134,6 +140,24 @@ with file name. If
 `${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`
 exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by
 removing directory and `.gguf` extension.
+
+````{versionadded} 15.1.8
+
+You can specify a Hugging Face URI for `model_name`.
+
+When you specify a Hugging Face URI, the model will be automatically downloaded.
+
+The model is downloaded to the directory where the Groonga database files are located.
+
+Example of URI: `hf:///groonga/bge-m3-Q4_K_M-GGUF` for `https://huggingface.co/groonga/bge-m3-Q4_K_M-GGUF`.
+
+Example of function execution:
+
+```
+language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", content)
+```
+
+````
 
 ### `text`
 
