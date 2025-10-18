@@ -16304,9 +16304,8 @@ namespace grn::ii {
                  grn_ii *ii,
                  const grn_ii_builder_options *options,
                  grn_obj *src_table,
-                 grn_obj **srcs,
+                 grn_obj *srcs,
                  grn_obj **src_token_columns,
-                 uint32_t n_srcs,
                  uint8_t sid_bits)
       : parent_ctx_(parent_ctx),
         ctx_(ctx),
@@ -16327,19 +16326,20 @@ namespace grn::ii {
         src_table_(src_table),
         srcs_(srcs),
         src_token_columns_(src_token_columns),
-        n_srcs_(n_srcs),
         sid_bits_(sid_bits),
-        values_(n_srcs),
+        values_(GRN_PTR_VECTOR_SIZE(srcs_)),
         n_processed_records_(0)
     {
-      for (uint32_t i = 0; i < n_srcs_; i++) {
+      const size_t n = GRN_PTR_VECTOR_SIZE(srcs_);
+      for (size_t i = 0; i < n; i++) {
         GRN_VOID_INIT(&values_[i]);
       }
     }
 
     ~BlockBuilder()
     {
-      for (uint32_t i = 0; i < n_srcs_; i++) {
+      const size_t n = GRN_PTR_VECTOR_SIZE(srcs_);
+      for (size_t i = 0; i < n; i++) {
         GRN_OBJ_FIN(ctx_, &values_[i]);
       }
       if (lexicon_) {
@@ -16380,9 +16380,10 @@ namespace grn::ii {
     grn_rc
     append_record(grn_id rid)
     {
-      for (size_t i = 0; i < n_srcs_; i++) {
+      const size_t n = GRN_PTR_VECTOR_SIZE(srcs_);
+      for (size_t i = 0; i < n; i++) {
         grn_obj *value = &values_[i];
-        grn_obj *src = srcs_[i];
+        grn_obj *src = GRN_PTR_VALUE_AT(srcs_, i);
         grn_obj *token_column = src_token_columns_[i];
         if (token_column) {
           auto rc = grn_obj_reinit_for(ctx_, value, token_column);
@@ -16518,11 +16519,10 @@ namespace grn::ii {
     grn_obj *src_table_; /* Source table */
     // Source columns. This refers source columns in Builder. So this
     // should not be freed.
-    grn_obj **srcs_;
+    grn_obj *srcs_;
     // Source token columns. This refers source token columns in
     // Builder. So this should not be freed.
     grn_obj **src_token_columns_;
-    uint32_t n_srcs_;  /* Number of source columns */
     uint8_t sid_bits_; /* Number of bits for section ID */
 
     // Buffers for source column values. We use one grn_obj per column
@@ -17145,9 +17145,8 @@ namespace grn::ii {
 
       src_table_ = nullptr;
       n_records_ = 0;
-      srcs_ = nullptr;
+      GRN_PTR_INIT(&srcs_, GRN_OBJ_VECTOR, GRN_ID_NIL);
       src_token_columns_ = nullptr;
-      n_srcs_ = 0;
       sid_bits_ = 0;
       sid_mask_ = 0;
 
@@ -17206,17 +17205,17 @@ namespace grn::ii {
           ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>", path_);
         }
       }
-      if (srcs_) {
+      const uint32_t n_srcs = GRN_PTR_VECTOR_SIZE(&srcs_);
+      if (n_srcs > 0) {
         uint32_t i;
-        for (i = 0; i < n_srcs_; i++) {
-          grn_obj_unref(ctx_, srcs_[i]);
+        for (i = 0; i < n_srcs; i++) {
+          grn_obj_unref(ctx_, GRN_PTR_VALUE_AT(&srcs_, i));
         }
-        auto ctx = ctx_;
-        GRN_FREE(srcs_);
       }
+      GRN_OBJ_FIN(ctx_, &srcs_);
       if (src_token_columns_) {
         uint32_t i;
-        for (i = 0; i < n_srcs_; i++) {
+        for (i = 0; i < n_srcs; i++) {
           grn_obj_unref(ctx_, src_token_columns_[i]);
         }
         auto ctx = ctx_;
@@ -17528,9 +17527,8 @@ namespace grn::ii {
                                            ii_,
                                            &options_,
                                            src_table_,
-                                           srcs_,
+                                           &srcs_,
                                            src_token_columns_,
-                                           n_srcs_,
                                            sid_bits_);
           auto rc = block_builder->prepare();
           if (rc != GRN_SUCCESS) {
@@ -17621,9 +17619,8 @@ namespace grn::ii {
                                  ii_,
                                  &options_,
                                  src_table_,
-                                 srcs_,
+                                 &srcs_,
                                  src_token_columns_,
-                                 n_srcs_,
                                  sid_bits_);
       auto rc = block_builder.prepare();
       if (rc != GRN_SUCCESS) {
@@ -17669,7 +17666,8 @@ namespace grn::ii {
       // This is a heuristic rule. We may want to revisit this.
       const size_t n_postings_per_source = 1024; // No reason.
       const size_t max_n_records_per_task =
-        options_.block_threshold / (n_postings_per_source * n_srcs_);
+        options_.block_threshold /
+        (n_postings_per_source * GRN_PTR_VECTOR_SIZE(&srcs_));
       const size_t max_n_records_per_worker =
         n_records_ / task_executor->get_n_workers();
       const size_t min_n_records_per_task = 10240; // No reason.
@@ -17706,8 +17704,10 @@ namespace grn::ii {
     set_sid_bits()
     {
       /* Calculate the number of bits required to represent a section ID. */
-      if (n_srcs_ == 1 && grn_table_have_tokenizer(ctx_, ii_->lexicon) &&
-          (srcs_[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
+      if (GRN_PTR_VECTOR_SIZE(&srcs_) == 1 &&
+          grn_table_have_tokenizer(ctx_, ii_->lexicon) &&
+          (GRN_PTR_VALUE_AT(&srcs_, 0)->header.flags & GRN_OBJ_COLUMN_VECTOR) !=
+            0) {
         /* If the source column is a vector column and the index has a
          * tokenizer, the maximum sid equals to the maximum number of
          * elements. */
@@ -17737,7 +17737,10 @@ namespace grn::ii {
             break;
           }
           GRN_BULK_REWIND(&obj);
-          if (!grn_obj_get_value(ctx_, srcs_[0], rid, &obj)) {
+          if (!grn_obj_get_value(ctx_,
+                                 GRN_PTR_VALUE_AT(&srcs_, 0),
+                                 rid,
+                                 &obj)) {
             continue;
           }
           if (obj.u.v.n_sections > max_elems) {
@@ -17751,7 +17754,8 @@ namespace grn::ii {
         }
       }
       if (sid_bits_ == 0) {
-        while ((static_cast<uint32_t>(1) << sid_bits_) < n_srcs_) {
+        const uint32_t n_srcs = GRN_PTR_VECTOR_SIZE(&srcs_);
+        while ((static_cast<uint32_t>(1) << sid_bits_) < n_srcs) {
           sid_bits_++;
         }
       }
@@ -17763,9 +17767,9 @@ namespace grn::ii {
     grn_rc
     set_srcs()
     {
-      n_srcs_ = ii_->obj.source_size / sizeof(grn_id);
+      uint32_t n_srcs = ii_->obj.source_size / sizeof(grn_id);
       auto source = static_cast<grn_id *>(ii_->obj.source);
-      if (!source || n_srcs_ == 0) {
+      if (!source || n_srcs == 0) {
         auto ctx = ctx_;
         ERR(GRN_INVALID_ARGUMENT,
             "source is not available: source = %p, source_size = %u",
@@ -17773,26 +17777,20 @@ namespace grn::ii {
             ii_->obj.source_size);
         return ctx->rc;
       }
-      {
-        auto ctx = ctx_;
-        srcs_ = GRN_MALLOCN(grn_obj *, n_srcs_);
-      }
-      if (!srcs_) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      for (size_t i = 0; i < n_srcs_; i++) {
-        srcs_[i] = grn_ctx_at(ctx_, source[i]);
-        if (!srcs_[i]) {
+      for (size_t i = 0; i < n_srcs; i++) {
+        grn_obj *src = grn_ctx_at(ctx_, source[i]);
+        if (!src) {
           if (ctx_->rc == GRN_SUCCESS) {
             auto ctx = ctx_;
             ERR(GRN_OBJECT_CORRUPT, "source not found: id = %d", source[i]);
           }
           return ctx_->rc;
         }
+        GRN_PTR_PUT(ctx_, &srcs_, src);
       }
       {
         auto ctx = ctx_;
-        src_token_columns_ = GRN_MALLOCN(grn_obj *, n_srcs_);
+        src_token_columns_ = GRN_MALLOCN(grn_obj *, n_srcs);
       }
       if (!src_token_columns_) {
         return GRN_NO_MEMORY_AVAILABLE;
@@ -17800,9 +17798,9 @@ namespace grn::ii {
       {
         grn_obj token_columns;
         GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-        for (size_t i = 0; i < n_srcs_; i++) {
+        for (size_t i = 0; i < n_srcs; i++) {
           src_token_columns_[i] = nullptr;
-          auto src = srcs_[i];
+          auto src = GRN_PTR_VALUE_AT(&srcs_, i);
           grn_column_get_all_token_columns(ctx_, src, &token_columns);
           size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
           for (size_t j = 0; j < n_token_columns; j++) {
@@ -18440,9 +18438,8 @@ namespace grn::ii {
 
     grn_obj *src_table_;          /* Source table */
     unsigned int n_records_;      /* Number of records in source table */
-    grn_obj **srcs_;              /* Source columns (to be freed) */
+    grn_obj srcs_;                /* Source columns (to be freed) */
     grn_obj **src_token_columns_; /* Source token columns (to be freed) */
-    uint32_t n_srcs_;             /* Number of source columns */
     uint8_t sid_bits_;            /* Number of bits for section ID */
     uint64_t sid_mask_;           /* Mask bits for section ID */
 
