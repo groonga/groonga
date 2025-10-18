@@ -126,6 +126,7 @@ repos:
           ?lib/grn_token_cursor\.h|
           ?lib/grn_tokenizer\.h|
           ?lib/grn_tokenizers\.h|
+          ?lib/grn_util\.h|
           ?lib/grn_vector\.h|
           ?lib/h3\.c|
           ?lib/highlighter\.c|
