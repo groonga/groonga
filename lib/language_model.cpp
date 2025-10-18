@@ -103,6 +103,7 @@ namespace grn {
 
     static char ggml_backends_dir[GRN_ENV_BUFFER_SIZE];
     static char language_models_dir[GRN_ENV_BUFFER_SIZE];
+    static char language_model_download_cache_dir[GRN_ENV_BUFFER_SIZE];
 
     void
     init_from_env()
@@ -112,6 +113,9 @@ namespace grn {
                  GRN_ENV_BUFFER_SIZE);
       grn_getenv("GRN_LANGUAGE_MODELS_DIR",
                  language_models_dir,
+                 GRN_ENV_BUFFER_SIZE);
+      grn_getenv("GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR",
+                 language_model_download_cache_dir,
                  GRN_ENV_BUFFER_SIZE);
     }
 
@@ -773,12 +777,40 @@ namespace grn {
     std::string endpoint_url_;
     std::string model_path_;
 
+    bool
+    enable_cache()
+    {
+      return language_model::language_model_download_cache_dir[0] != '\0';
+    }
+
     std::string
-    build_path_prefix()
+    build_base_path()
     {
       std::string safe_hf_repo = std::string(hf_repo_);
       std::replace(safe_hf_repo.begin(), safe_hf_repo.end(), '/', '_');
-      return db_path_ + ".lm." + safe_hf_repo + "_" + std::string(tag_);
+      return std::string("lm.") + safe_hf_repo + "_" + std::string(tag_);
+    }
+
+    std::string
+    build_cache_path_prefix()
+    {
+      std::string cache_dir(language_model::language_model_download_cache_dir);
+      if (cache_dir.back() == '/') {
+        cache_dir.pop_back();
+      }
+      return cache_dir + "/" + build_base_path();
+    }
+
+    std::string
+    build_path_prefix()
+    {
+      return db_path_ + "." + build_base_path();
+    }
+
+    std::string
+    build_cache_manifest_path()
+    {
+      return build_cache_path_prefix() + ".manifest";
     }
 
     std::string
@@ -788,14 +820,27 @@ namespace grn {
     }
 
     std::string
-    build_model_path(std::string_view model_file_name)
+    build_model_base_path(std::string_view model_file_name)
     {
       std::string safe_model_file_name = std::string(model_file_name);
       std::replace(safe_model_file_name.begin(),
                    safe_model_file_name.end(),
                    '/',
                    '_');
-      return build_path_prefix() + ".model." + safe_model_file_name;
+      return std::string("model.") + safe_model_file_name;
+    }
+
+    std::string
+    build_cache_model_path(std::string_view model_file_name)
+    {
+      return build_cache_path_prefix() + "." +
+             build_model_base_path(model_file_name);
+    }
+
+    std::string
+    build_model_path(std::string_view model_file_name)
+    {
+      return build_path_prefix() + "." + build_model_base_path(model_file_name);
     }
 
     std::string
@@ -817,6 +862,17 @@ namespace grn {
     {
       if (grn_path_exist(manifest_path_.data())) {
         return true;
+      }
+
+      std::string cache_manifest_path;
+      if (enable_cache()) {
+        cache_manifest_path = build_cache_manifest_path();
+        if (grn_path_exist(cache_manifest_path.data()) &&
+            grn_path_copy(ctx_,
+                          cache_manifest_path.data(),
+                          manifest_path_.data()) == GRN_SUCCESS) {
+          return true;
+        }
       }
 
       auto url = build_manifest_url();
@@ -849,10 +905,19 @@ namespace grn {
              url.data(),
              tmp_manifest_path.data(),
              manifest_path_.data());
-        grn_io_remove_if_exist(ctx_, tmp_manifest_path.data());
-        grn_io_remove_if_exist(ctx_, manifest_path_.data());
+        if (grn_path_exist(tmp_manifest_path.data())) {
+          grn_unlink(tmp_manifest_path.data());
+        }
+        if (grn_path_exist(manifest_path_.data())) {
+          grn_unlink(manifest_path_.data());
+        }
         return false;
       }
+
+      if (enable_cache()) {
+        grn_path_copy(ctx_, manifest_path_.data(), cache_manifest_path.data());
+      }
+
       return true;
     }
 
@@ -862,6 +927,16 @@ namespace grn {
       model_path_ = build_model_path(model_file_name);
       if (grn_path_exist(model_path_.data())) {
         return true;
+      }
+
+      std::string cache_model_path;
+      if (enable_cache()) {
+        cache_model_path = build_cache_model_path(model_file_name);
+        if (grn_path_exist(cache_model_path.data()) &&
+            grn_path_copy(ctx_, cache_model_path.data(), model_path_.data()) ==
+              GRN_SUCCESS) {
+          return true;
+        }
       }
 
       auto url = build_model_url(model_file_name);
@@ -883,6 +958,11 @@ namespace grn {
         grn_io_remove_if_exist(ctx_, model_path_.data());
         return false;
       }
+
+      if (enable_cache()) {
+        grn_path_copy(ctx_, model_path_.data(), cache_model_path.data());
+      }
+
       return true;
     }
   };
