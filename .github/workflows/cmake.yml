@@ -97,15 +97,25 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - name: Prepare ccache
+      - name: Prepare cache
         run: |
-          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+          cache_dir="${PWD}/cache"
+          ccache_dir="${cache_dir}/ccache"
+          mkdir -p "${ccache_dir}"
+          echo "CCACHE_DIR=${ccache_dir}" >> ${GITHUB_ENV}
+          if [ "${CC}" = "gcc" ] && \
+             [ -z "${{ matrix.apache-arrow-main }}" ] && \
+             [ -z "${GRN_WITH_MRUBY}" ]; then
+            download_cache_dir="${cache_dir}/language-models"
+            mkdir -p "${download_cache_dir}"
+            echo "GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR=${download_cache_dir}" >> ${GITHUB_ENV}
+          fi
       - name: Cache ccache
         uses: actions/cache@v4
         with:
-          path: ccache
-          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-ccache-
+          path: cache
+          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-ccache-
       - name: Install common build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"

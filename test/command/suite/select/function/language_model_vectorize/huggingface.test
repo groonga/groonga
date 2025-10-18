@@ -1,5 +1,4 @@
-#@omit Need language mode management feature
-
+#@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
 #@require-feature llama.cpp
 
 plugin_register functions/language_model
@@ -19,6 +18,4 @@ load --table Data
 select Data \
   --output_columns ' \
       text, \
-      vector_slice(language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text), \
-                   0, \
-                   3)'
+      vector_size(language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text))'
