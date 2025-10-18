@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1755,6 +1755,86 @@ grn_path_exist(const char *path)
 {
   struct stat status;
   return stat(path, &status) == 0;
+}
+
+grn_rc
+grn_path_copy(grn_ctx *ctx,
+              const char *source_path,
+              const char *destination_path)
+{
+  const char *tag = "[path][copy]";
+
+  GRN_API_ENTER;
+
+  int source_fd;
+  grn_open(source_fd, source_path, O_RDONLY | GRN_OPEN_FLAG_BINARY);
+  if (source_fd == -1) {
+    SERR("%s failed to open source path: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  int destination_fd;
+  grn_open(destination_fd,
+           destination_path,
+           O_WRONLY | O_CREAT | O_EXCL | GRN_OPEN_FLAG_BINARY);
+  if (destination_fd == -1) {
+    SERR("%s failed to open destination path: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    grn_close(source_fd);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  char buffer[4096];
+  while (true) {
+    ssize_t read_bytes = grn_read(source_fd, buffer, sizeof(buffer));
+    if (read_bytes == -1) {
+      SERR("%s failed to read from source: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+
+    if (read_bytes == 0) {
+      break;
+    }
+
+    ssize_t written_bytes = grn_write(destination_fd, buffer, read_bytes);
+    if (written_bytes == -1) {
+      SERR("%s failed to write to destination: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+
+    if (written_bytes != read_bytes) {
+      SERR("%s couldn't write to destination: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+  }
+
+  grn_close(source_fd);
+  grn_close(destination_fd);
+
+  GRN_API_RETURN(ctx->rc);
 }
 
 /* todo : refine */

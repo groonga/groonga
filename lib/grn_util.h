@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2010-2018 Brazil
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,6 +50,10 @@ int
 grn_mkstemp(char *path_template);
 bool
 grn_path_exist(const char *path);
+grn_rc
+grn_path_copy(grn_ctx *ctx,
+              const char *source_path,
+              const char *destination_path);
 
 int
 grn_tokenize(const char *str,
