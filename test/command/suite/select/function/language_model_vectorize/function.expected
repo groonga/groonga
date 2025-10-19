@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --output_columns '       text,       vector_slice(language_model_vectorize("phi-4-q4", text),                    0,                    3)'
+select Data   --output_columns '       text,       vector_size(language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text))'
 [
   [
     0,
@@ -30,26 +30,21 @@ select Data   --output_columns '       text,       vector_slice(language_model_v
           "ShortText"
         ],
         [
-          "vector_slice",
+          "vector_size",
           null
         ]
       ],
       [
         "I am a king.",
-        [
-          -0.009299132,
-          -0.007786971,
-          0.000646766
-        ]
+        1024
       ],
       [
         "I am a queen.",
-        [
-          -0.01004994,
-          -0.003906215,
-          -0.001882675
-        ]
+        1024
       ]
     ]
   ]
 ]
+#|w| load: model vocab missing newline token, using special_pad_id instead
+#|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+#|w| llama_init_from_model: model default pooling_type is [2], but [-1] was specified

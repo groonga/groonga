@@ -293,7 +293,17 @@ namespace grn {
   class LanguageModel::Impl {
 #ifdef GRN_WITH_LLAMA_CPP
   public:
-    Impl(llama_model *model) : model_(model) {}
+    Impl(llama_model *model)
+      : model_(model),
+        default_pooling_type_(LLAMA_POOLING_TYPE_NONE)
+    {
+      auto params = llama_context_default_params();
+      params.n_ctx = 0;
+      params.embeddings = true;
+      auto llama_ctx = llama_init_from_model(model_, params);
+      default_pooling_type_ = llama_pooling_type(llama_ctx);
+      llama_free(llama_ctx);
+    }
 
     ~Impl() { llama_model_free(model_); }
 
@@ -303,8 +313,15 @@ namespace grn {
       return model_;
     }
 
+    enum llama_pooling_type
+    default_pooling_type()
+    {
+      return default_pooling_type_;
+    }
+
   private:
     llama_model *model_;
+    enum llama_pooling_type default_pooling_type_;
 #endif
   };
 
@@ -385,19 +402,32 @@ namespace grn {
 #ifdef GRN_WITH_LLAMA_CPP
     Impl(grn_ctx *ctx,
          std::shared_ptr<LanguageModel> model,
-         llama_context *llama_ctx)
+         llama_model *model_raw,
+         enum llama_pooling_type default_pooling_type)
       : ctx_(ctx),
         model_(std::move(model)),
-        llama_ctx_(llama_ctx),
-        llama_model_(llama_get_model(llama_ctx_)),
+        llama_ctx_(nullptr),
+        llama_model_(model_raw),
         n_dimentions_(llama_model_n_embd(llama_model_)),
         has_encoder_(llama_model_has_encoder(llama_model_)),
         has_decoder_(llama_model_has_decoder(llama_model_)),
-        pooling_type_(llama_pooling_type(llama_ctx_))
+        // We want document vector not token vectors. We want to use the
+        // default pooling type in a model but it seems that most models
+        // don't provide the default pooling type (LLAMA_POOLING_TYPE_NONE
+        // is used). If LLAMA_POOLING_TYPE_NONE is used, token vectors are
+        // generated. So we force to use LLAMA_POOLING_TYPE_MEAN here.
+        pooling_type_(default_pooling_type == LLAMA_POOLING_TYPE_NONE
+                        ? LLAMA_POOLING_TYPE_MEAN
+                        : default_pooling_type)
     {
     }
 
-    ~Impl() { llama_free(llama_ctx_); }
+    ~Impl()
+    {
+      if (llama_ctx_) {
+        llama_free(llama_ctx_);
+      }
+    }
 #endif
 
     void
@@ -413,7 +443,7 @@ namespace grn {
       const llama_seq_id sequence_id = 0;
       add_tokens(batch, tokens, sequence_id);
 
-      if (!vectorize_batch(batch)) {
+      if (!vectorize_batch(batch, sequence_id + 1)) {
         return;
       }
 
@@ -445,10 +475,10 @@ namespace grn {
       grn::UniqueObj smart_embeddings(ctx_, &embeddings);
 
       auto flush_batch = [&]() {
-        if (!vectorize_batch(batch)) {
+        const auto n_targets = target_ids.size();
+        if (!vectorize_batch(batch, n_targets)) {
           return false;
         }
-        const auto n_targets = target_ids.size();
         for (size_t i = 0; i < n_targets; ++i) {
           const auto sequence_id = static_cast<llama_seq_id>(i);
           GRN_BULK_REWIND(&embeddings);
@@ -516,7 +546,7 @@ namespace grn {
 #ifdef GRN_WITH_LLAMA_CPP
     std::shared_ptr<LanguageModel> model_;
     llama_context *llama_ctx_;
-    const llama_model *llama_model_;
+    llama_model *llama_model_;
     const int32_t n_dimentions_;
     const bool has_encoder_;
     const bool has_decoder_;
@@ -525,7 +555,6 @@ namespace grn {
     void
     tokenize(std::string_view text, std::vector<llama_token> &tokens)
     {
-      auto model = llama_get_model(llama_ctx_);
       constexpr auto add_special = true;
       constexpr auto parse_special = false;
       // Guess enough size
@@ -533,7 +562,7 @@ namespace grn {
       if (tokens.capacity() < static_cast<size_t>(n_tokens)) {
         tokens.reserve(n_tokens);
       }
-      auto vocab = llama_model_get_vocab(model);
+      auto vocab = llama_model_get_vocab(llama_model_);
       n_tokens = llama_tokenize(vocab,
                                 text.data(),
                                 text.length(),
@@ -577,11 +606,23 @@ namespace grn {
     }
 
     bool
-    vectorize_batch(llama_batch &batch)
+    vectorize_batch(llama_batch &batch, uint32_t max_n_sequences)
     {
-      auto memory = llama_get_memory(llama_ctx_);
-      if (memory) {
-        llama_memory_clear(memory, true);
+      if (llama_ctx_ && llama_n_seq_max(llama_ctx_) == max_n_sequences) {
+        auto memory = llama_get_memory(llama_ctx_);
+        if (memory) {
+          llama_memory_clear(memory, true);
+        }
+      } else {
+        if (llama_ctx_) {
+          llama_free(llama_ctx_);
+        }
+        auto params = llama_context_default_params();
+        params.n_ctx = llama_model_n_ctx_train(llama_model_) * max_n_sequences;
+        params.embeddings = true;
+        params.n_seq_max = max_n_sequences;
+        params.pooling_type = pooling_type_;
+        llama_ctx_ = llama_init_from_model(llama_model_, params);
       }
 
       if (has_encoder_ && !has_decoder_) {
@@ -671,20 +712,11 @@ namespace grn {
   LanguageModel::make_inferencer(grn_ctx *ctx)
   {
 #ifdef GRN_WITH_LLAMA_CPP
-    auto params = llama_context_default_params();
-    params.n_ctx = 0; // Use model's value
-    params.embeddings = true;
-    // We want document vector not token vectors. We want to use the
-    // default pooling type in a model but it seems that most models
-    // don't provide the default pooling type (LLAMA_POOLING_TYPE_NONE
-    // is used). If LLAMA_POOLING_TYPE_NONE is used, token vectors are
-    // generated. So we force to use LLAMA_POOLING_TYPE_MEAN here.
-    params.pooling_type = LLAMA_POOLING_TYPE_MEAN;
     return std::make_unique<LanguageModelInferencer>(
-      new LanguageModelInferencer::Impl(
-        ctx,
-        shared_from_this(),
-        llama_init_from_model(impl_->get_raw(), params)));
+      new LanguageModelInferencer::Impl(ctx,
+                                        shared_from_this(),
+                                        impl_->get_raw(),
+                                        impl_->default_pooling_type()));
 #else
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[language-model][make-inferencer] llama.cpp isn't enabled");

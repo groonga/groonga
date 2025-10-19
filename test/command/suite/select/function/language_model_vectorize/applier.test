@@ -1,5 +1,4 @@
-#@omit Need language mode management feature
-
+#@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
 #@require-feature llama.cpp
 
 plugin_register functions/language_model
@@ -20,5 +19,5 @@ select Data \
   --columns[embeddings].stage output \
   --columns[embeddings].type Float32 \
   --columns[embeddings].flags COLUMN_VECTOR \
-  --columns[embeddings].value 'language_model_vectorize("phi-4-q4", text)' \
-  --output_columns 'text, vector_slice(embeddings, 0, 3)'
+  --columns[embeddings].value 'language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text)' \
+  --output_columns 'text, vector_size(embeddings)'
