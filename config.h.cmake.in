@@ -100,6 +100,7 @@
 #cmakedefine GRN_WITH_KYTEA
 #cmakedefine GRN_WITH_LIBEDIT
 #cmakedefine GRN_WITH_LLAMA_CPP
+#cmakedefine GRN_WITH_LLAMA_CPP_BUNDLED
 #cmakedefine GRN_WITH_LZ4
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK

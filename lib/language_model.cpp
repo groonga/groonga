@@ -159,7 +159,8 @@ namespace grn {
     static std::once_flag initialize_once;
 
     namespace {
-#  ifdef _WIN32
+#  ifdef GRN_WITH_LLAMA_CPP_BUNDLED
+#    ifdef _WIN32
       const char *
       get_default_ggml_backends_dir()
       {
@@ -177,13 +178,13 @@ namespace grn {
         }
         return windows_ggml_backends_dir;
       }
-#  else
+#    else
       const char *
       get_default_ggml_backends_dir()
       {
         return GRN_GGML_BACKENDS_DIR;
       }
-#  endif
+#    endif
 
       const char *
       get_ggml_backends_dir()
@@ -194,12 +195,15 @@ namespace grn {
           return get_default_ggml_backends_dir();
         }
       }
+#  endif
 
       void
       init_external_libraries()
       {
         llama_log_set(log_callback, &grn_gctx);
+#  ifdef GRN_WITH_LLAMA_CPP_BUNDLED
         ggml_backend_load_all_from_path(get_ggml_backends_dir());
+#  endif
         llama_backend_init();
         initialized = true;
       }
