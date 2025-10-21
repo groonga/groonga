@@ -201,35 +201,70 @@ grn_language_model_inferencer_vectorize_applier(
   grn_applier_data *data);
 
 /**
- * \brief Vectorize texts and output embeddings set to file descriptor
- *        in batch.
+ * \brief Vectorize texts and output embeddings set to `Float32` \ref
+ *        GRN_UVECTOR or vector column in batch.
  *
  * In other words, compute embeddings set of texts. This is efficient
  * than calling grn_language_model_inferencer_vectorize() multiple
  * times.
  *
- * You can use `mmap()` to read the result embeddings set without
- * allocating memory for all embeddings set.
+ * You can use \ref grn_memory_map to write and read the result
+ * embeddings set without allocating memory for all embeddings set:
+ *
+ * ```c
+ * uint32_t n_dimensions = 256;
+ * uint32_t n_records = 1000;
+ * size_t embeddings_set_size = n_dimensions * n_records;
+ * grn_memory_map *embeddings_set_map =
+ *   grn_memory_map_open(ctx,
+ *                       "/tmp/embeddings",
+ *                       GRN_MEMORY_MAP_READ | GRN_MEMORY_MAP_WRITE,
+ *                       0,
+ *                       embeddings_set_size);
+ * float *embeddings_set_raw =
+ *   grn_memory_map_get_address(ctx, embeddings_set_map);
+ * grn_obj embeddings_set;
+ * GRN_FLOAT32_INIT(&embeddings_set, GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+ * GRN_BINARY_SET_REF(&embeddings_set, embeddings_set_raw, embeddings_set_size);
+ * GRN_BULK_REWIND(&embeddings_set);
+ * grn_table_cursor *cursor =
+ *   grn_table_cursor_open(ctx,
+ *                         source_table,
+ *                         NULL, 0,
+ *                         NULL, 0,
+ *                         0, -1, GRN_CURSOR_BY_ID);
+ * if (cursor) {
+ *   grn_language_model_inferencer_vectorize_in_batch(ctx,
+ *                                                    inferencer,
+ *                                                    cursor,
+ *                                                    source_column,
+ *                                                    &embeddings_set);
+ *   grn_table_cursor_close(ctx, cursor);
+ * }
+ * // Use &embedding_set
+ * GRN_OBJ_FIN(ctx, &embedding_set);
+ * grn_memory_map_close(ctx, embeddings_set_map);
+ * ```
  *
  * \param ctx The context object.
  * \param inferencer The inferencer.
  * \param cursor The cursor that returns target record IDs.
  * \param input_column The text family column or accessor. Caller must be
  *                     ensure it. This function doesn't validate it.
- * \param output_vectors The generated embeddings set. This must be a
- *                       vector of `Float32`. Output order is same as
- *                       IDs returned by the `cursor`.
+ * \param output The generated embeddings set. This must be a
+ *               `Float32` vector or `Float32` vector column. Output
+ *               order is same as IDs returned by the `cursor`.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
  *         error.
  */
 GRN_API grn_rc
-grn_language_model_inferencer_vectorize_in_batch_raw(
+grn_language_model_inferencer_vectorize_in_batch(
   grn_ctx *ctx,
   grn_language_model_inferencer *inferencer,
   grn_table_cursor *cursor,
   grn_obj *input_column,
-  grn_obj *output_vectors);
+  grn_obj *output);
 
 #ifdef __cplusplus
 }
