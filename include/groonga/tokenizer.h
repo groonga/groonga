@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -175,6 +175,121 @@ grn_tokenizer_query_get_index_column(grn_ctx *ctx, grn_tokenizer_query *query);
 GRN_PLUGIN_EXPORT grn_obj *
 grn_tokenizer_query_get_options(grn_ctx *ctx, grn_tokenizer_query *query);
 
+/**
+ * \brief This is an opaque data to pass build data to a tokenizer from
+ *        Groonga.
+ *
+ * This is used for \ref grn_tokenizer_build_fun.
+ *
+ * \see grn_tokenizer_set_build_func
+ *
+ * \since 15.1.8
+ */
+typedef struct grn_tokenizer_build_data grn_tokenizer_build_data;
+
+/**
+ * \brief Return the build target table.
+ *
+ * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * it.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_build_data_get_source_table(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data);
+
+/**
+ * \brief Return the build target columns as \ref GRN_PVECTOR.
+ *
+ * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * it.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_build_data_get_source_columns(grn_ctx *ctx,
+                                            grn_tokenizer_build_data *data);
+
+/**
+ * \brief Return the lexicon for this tokenizer.
+ *
+ * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * it.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_build_data_get_lexicon(grn_ctx *ctx,
+                                     grn_tokenizer_build_data *data);
+
+/**
+ * \brief Return the index column for this tokenizer.
+ *
+ * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * it.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_build_data_get_index_column(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data);
+
+/**
+ * \brief A tokenizer must call this when it starts processing a new
+ *        record.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_start_record(grn_ctx *ctx,
+                                      grn_tokenizer_build_data *data,
+                                      grn_id rid);
+
+/**
+ * \brief A tokenizer must call this when it starts processing a new
+ *        section.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_start_section(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t sid);
+
+/**
+ * \brief A tokenizer must call this when it appends tokens to the
+ *        current record and section.
+ *
+ * This can't be called multiple times for a pair of record and section.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_append_tokens(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       grn_obj *tokens);
+
+/**
+ * \brief A tokenizer must call this when it finishes processing a
+ *        section.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_finish_section(grn_ctx *ctx,
+                                        grn_tokenizer_build_data *data);
+
+/**
+ * \brief A tokenizer must call this when it finishes processing a
+ *        record.
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_finish_record(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data);
+
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object
   stores a token to be returned and it must be maintained until a request for
@@ -343,6 +458,21 @@ grn_tokenizer_register(grn_ctx *ctx,
 GRN_PLUGIN_EXPORT grn_obj *
 grn_tokenizer_create(grn_ctx *ctx, const char *name, int name_length);
 
+/**
+ * \brief A function to build an index column by this tokenizer.
+ *
+ * \param data Data to be built.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error. `ctx->rc` must be updated too by \ref
+ *         GRN_PLUGIN_ERROR on error.
+ *
+ * \see grn_tokenizer_set_build_func.
+ *
+ * \since 15.1.8
+ */
+typedef grn_rc
+grn_tokenizer_build_func(grn_ctx *ctx, grn_tokenizer_build_data *data);
 typedef void *
 grn_tokenizer_init_func(grn_ctx *ctx, grn_tokenizer_query *query);
 typedef void
@@ -353,6 +483,20 @@ grn_tokenizer_next_func(grn_ctx *ctx,
 typedef void
 grn_tokenizer_fin_func(grn_ctx *ctx, void *user_data);
 
+/**
+ * \brief Set build function for this tokenizer.
+ *
+ * The given `build` is called only once when an index column that
+ * uses this tokenizer is created.
+ *
+ * \see grn_tokenizer_build_func
+ *
+ * \since 15.1.8
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_set_build_func(grn_ctx *ctx,
+                             grn_obj *tokenizer,
+                             grn_tokenizer_build_func *build);
 GRN_PLUGIN_EXPORT grn_rc
 grn_tokenizer_set_init_func(grn_ctx *ctx,
                             grn_obj *tokenizer,

@@ -16449,8 +16449,7 @@ namespace grn::ii {
           }
         }
       }
-      ++n_processed_records_;
-      return GRN_SUCCESS;
+      return finish_record();
     }
 
     // Whether we need to flush this block.
@@ -16506,6 +16505,79 @@ namespace grn::ii {
       n_terms_ = 0;
       n_ = 0;
       n_processed_records_ = 0;
+      return GRN_SUCCESS;
+    }
+
+    grn_rc
+    append_tokens(grn_id rid, uint32_t sid, grn_obj *tokens)
+    {
+      start_value(rid, sid);
+      grn_obj *src_lexicon = ii_->lexicon;
+      size_t n_tokens = grn_uvector_size(ctx_, tokens);
+      size_t i;
+      for (i = 0; i < n_tokens; i++) {
+        float weight;
+        grn_id tid;
+        grn_id src_tid =
+          grn_uvector_get_element_record(ctx_, tokens, i, &weight);
+        uint32_t token_value_size;
+        const char *token_value =
+          _grn_table_key(ctx_, src_lexicon, src_tid, &token_value_size);
+
+        switch (lexicon_->header.type) {
+        case GRN_TABLE_PAT_KEY:
+          tid = grn_pat_add(ctx_,
+                            reinterpret_cast<grn_pat *>(lexicon_),
+                            token_value,
+                            token_value_size,
+                            NULL,
+                            NULL);
+          break;
+        case GRN_TABLE_DAT_KEY:
+          tid = grn_dat_add(ctx_,
+                            reinterpret_cast<grn_dat *>(lexicon_),
+                            token_value,
+                            token_value_size,
+                            NULL,
+                            NULL);
+          break;
+        case GRN_TABLE_HASH_KEY:
+          tid = grn_hash_add(ctx_,
+                             reinterpret_cast<grn_hash *>(lexicon_),
+                             token_value,
+                             token_value_size,
+                             NULL,
+                             NULL);
+          break;
+        default:
+          /* This case must not be happen. */
+          tid = GRN_ID_NIL;
+          break;
+        }
+
+        if (tid == GRN_ID_NIL) {
+          /* TODO: Token value may not be a string. */
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT,
+              "[ii][builder][append-tokens] failed to add a token: <%.*s>",
+              static_cast<int>(token_value_size),
+              token_value);
+          return ctx->rc;
+        }
+        uint32_t pos = pos_ + i;
+        grn_rc rc =
+          append_token(rid, sid, static_cast<uint32_t>(weight), tid, pos);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    }
+
+    grn_rc
+    finish_record()
+    {
+      ++n_processed_records_;
       return GRN_SUCCESS;
     }
 
@@ -16783,72 +16855,6 @@ namespace grn::ii {
         /* Insert a space between values. */
         pos_++;
       }
-    }
-
-    grn_rc
-    append_tokens(grn_id rid, uint32_t sid, grn_obj *tokens)
-    {
-      start_value(rid, sid);
-      grn_obj *src_lexicon = ii_->lexicon;
-      size_t n_tokens = grn_uvector_size(ctx_, tokens);
-      size_t i;
-      for (i = 0; i < n_tokens; i++) {
-        float weight;
-        grn_id tid;
-        grn_id src_tid =
-          grn_uvector_get_element_record(ctx_, tokens, i, &weight);
-        uint32_t token_value_size;
-        const char *token_value =
-          _grn_table_key(ctx_, src_lexicon, src_tid, &token_value_size);
-
-        switch (lexicon_->header.type) {
-        case GRN_TABLE_PAT_KEY:
-          tid = grn_pat_add(ctx_,
-                            reinterpret_cast<grn_pat *>(lexicon_),
-                            token_value,
-                            token_value_size,
-                            NULL,
-                            NULL);
-          break;
-        case GRN_TABLE_DAT_KEY:
-          tid = grn_dat_add(ctx_,
-                            reinterpret_cast<grn_dat *>(lexicon_),
-                            token_value,
-                            token_value_size,
-                            NULL,
-                            NULL);
-          break;
-        case GRN_TABLE_HASH_KEY:
-          tid = grn_hash_add(ctx_,
-                             reinterpret_cast<grn_hash *>(lexicon_),
-                             token_value,
-                             token_value_size,
-                             NULL,
-                             NULL);
-          break;
-        default:
-          /* This case must not be happen. */
-          tid = GRN_ID_NIL;
-          break;
-        }
-
-        if (tid == GRN_ID_NIL) {
-          /* TODO: Token value may not be a string. */
-          auto ctx = ctx_;
-          ERR(GRN_INVALID_ARGUMENT,
-              "[ii][builder][append-tokens] failed to add a token: <%.*s>",
-              static_cast<int>(token_value_size),
-              token_value);
-          return ctx->rc;
-        }
-        uint32_t pos = pos_ + i;
-        grn_rc rc =
-          append_token(rid, sid, static_cast<uint32_t>(weight), tid, pos);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-      return GRN_SUCCESS;
     }
 
     // Appends a value. Note that values must be appended in ascending
@@ -17668,10 +17674,105 @@ namespace grn::ii {
       return rc;
     }
 
+    grn_rc
+    build(grn_obj *tokenizer)
+    {
+      grn_tokenizer_build_data data;
+      data.source_table = src_table_;
+      data.source_columns = &srcs_;
+      data.lexicon = ii_->lexicon;
+      data.index_column = reinterpret_cast<grn_obj *>(ii_);
+      BlockBuilder block_builder(nullptr,
+                                 ctx_,
+                                 ii_,
+                                 &options_,
+                                 src_table_,
+                                 &srcs_,
+                                 src_token_columns_,
+                                 sid_bits_);
+      auto rc = block_builder.prepare();
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+      struct UserData {
+        Builder *builder;
+        BlockBuilder *block_builder;
+        grn_id current_rid;
+        uint32_t current_sid;
+      } user_data;
+      user_data.builder = this;
+      user_data.block_builder = &block_builder;
+      user_data.current_rid = GRN_ID_NIL;
+      user_data.current_sid = 0;
+      data.start_record_func = [](grn_ctx *ctx,
+                                  grn_tokenizer_build_data *data,
+                                  grn_id rid,
+                                  void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        user_data_->current_rid = rid;
+        return GRN_SUCCESS;
+      };
+      data.start_section_func = [](grn_ctx *ctx,
+                                   grn_tokenizer_build_data *data,
+                                   uint32_t sid,
+                                   void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        user_data_->current_sid = sid;
+        return GRN_SUCCESS;
+      };
+      data.append_tokens_func = [](grn_ctx *ctx,
+                                   grn_tokenizer_build_data *data,
+                                   grn_obj *tokens,
+                                   void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        return user_data_->block_builder->append_tokens(user_data_->current_rid,
+                                                        user_data_->current_sid,
+                                                        tokens);
+      };
+      data.finish_section_func = [](grn_ctx *ctx,
+                                    grn_tokenizer_build_data *data,
+                                    void *user_data) { return GRN_SUCCESS; };
+      data.finish_record_func = [](grn_ctx *ctx,
+                                   grn_tokenizer_build_data *data,
+                                   void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        user_data_->block_builder->finish_record();
+        if (user_data_->block_builder->need_flush()) {
+          auto rc =
+            user_data_->builder->flush_block_builder(user_data_->block_builder);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+        if (user_data_->builder->progress_needed_) {
+          user_data_->builder->progress_.value.index.n_processed_records++;
+          grn_ctx_call_progress_callback(ctx,
+                                         &(user_data_->builder->progress_));
+        }
+        return GRN_SUCCESS;
+      };
+      data.user_data = &user_data;
+      rc = grn_tokenizer_build(ctx_, tokenizer, &data);
+      if (rc == GRN_SUCCESS && block_builder.have_data()) {
+        rc = flush_block_builder(&block_builder);
+      }
+      return rc;
+    }
+
     // Reads values from source columns and appends the values.
     grn_rc
     append_srcs()
     {
+      if (grn_table_have_tokenizer(ctx_, ii_->lexicon)) {
+        auto tokenizer = grn_obj_get_info(ctx_,
+                                          ii_->lexicon,
+                                          GRN_INFO_DEFAULT_TOKENIZER,
+                                          nullptr);
+        if (grn_tokenizer_have_build_func(ctx_, tokenizer)) {
+          return build(tokenizer);
+        }
+      }
+
       auto task_executor = grn_ctx_get_task_executor(ctx_);
       if (!task_executor->is_parallel()) {
         return append_srcs_sequential();
