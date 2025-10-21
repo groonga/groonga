@@ -39,9 +39,8 @@
 #include <map>
 #include <mutex>
 
-#define GRN_LM_ERROR(ctx_, default_rc, message)                                \
+#define GRN_LM_ERROR(default_rc, message)                                      \
   do {                                                                         \
-    grn_ctx *ctx = (ctx_);                                                     \
     grn_rc rc = ctx->rc == GRN_SUCCESS ? (default_rc) : ctx->rc;               \
     char errbuf[GRN_CTX_MSGSIZE];                                              \
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);                          \
@@ -360,8 +359,7 @@ namespace grn {
           language_model::CaptureError capture(ctx_);
           raw_model = llama_model_load_from_file(model_path.c_str(), params);
           if (!raw_model) {
-            GRN_LM_ERROR(ctx_,
-                         GRN_INVALID_ARGUMENT,
+            GRN_LM_ERROR(GRN_INVALID_ARGUMENT,
                          "[language-model-loader][load] failed to load model");
             return nullptr;
           }
@@ -404,12 +402,10 @@ namespace grn {
 #endif
   public:
 #ifdef GRN_WITH_LLAMA_CPP
-    Impl(grn_ctx *ctx,
-         std::shared_ptr<LanguageModel> model,
+    Impl(std::shared_ptr<LanguageModel> model,
          llama_model *model_raw,
          enum llama_pooling_type default_pooling_type)
-      : ctx_(ctx),
-        model_(std::move(model)),
+      : model_(std::move(model)),
         llama_ctx_(nullptr),
         llama_model_(model_raw),
         n_dimensions_(llama_model_n_embd(llama_model_)),
@@ -435,10 +431,10 @@ namespace grn {
 #endif
 
     void
-    vectorize(std::string_view text, grn_obj *output_vector)
+    vectorize(grn_ctx *ctx, std::string_view text, grn_obj *output_vector)
     {
 #ifdef GRN_WITH_LLAMA_CPP
-      language_model::CaptureError capture(ctx_);
+      language_model::CaptureError capture(ctx);
 
       std::vector<llama_token> tokens;
       tokenize(text, tokens);
@@ -447,27 +443,27 @@ namespace grn {
       const llama_seq_id sequence_id = 0;
       add_tokens(batch, tokens, sequence_id);
 
-      if (!vectorize_batch(batch, sequence_id + 1)) {
+      if (!vectorize_batch(ctx, batch, sequence_id + 1)) {
         return;
       }
 
-      if (!store_embeddings(batch, sequence_id, output_vector)) {
+      if (!store_embeddings(ctx, batch, sequence_id, output_vector)) {
         return;
       }
 #else
-      auto ctx = ctx_;
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
           "[language-model-inferencer][vectorize] llama.cpp isn't enabled");
 #endif
     }
 
     void
-    vectorize_in_batch(grn_table_cursor *cursor,
+    vectorize_in_batch(grn_ctx *ctx,
+                       grn_table_cursor *cursor,
                        grn_obj *input_column,
                        grn_obj *output_column)
     {
 #ifdef GRN_WITH_LLAMA_CPP
-      language_model::CaptureError capture(ctx_);
+      language_model::CaptureError capture(ctx);
 
       std::vector<grn_id> target_ids;
       int32_t max_n_tokens = 2048;
@@ -476,21 +472,21 @@ namespace grn {
 
       grn_obj embeddings;
       GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
-      grn::UniqueObj smart_embeddings(ctx_, &embeddings);
+      grn::UniqueObj smart_embeddings(ctx, &embeddings);
 
       auto flush_batch = [&]() {
         const auto n_targets = target_ids.size();
-        if (!vectorize_batch(batch, n_targets)) {
+        if (!vectorize_batch(ctx, batch, n_targets)) {
           return false;
         }
         for (size_t i = 0; i < n_targets; ++i) {
           const auto sequence_id = static_cast<llama_seq_id>(i);
           GRN_BULK_REWIND(&embeddings);
-          if (!store_embeddings(batch, sequence_id, &embeddings)) {
+          if (!store_embeddings(ctx, batch, sequence_id, &embeddings)) {
             return false;
           }
           const auto target_id = target_ids[i];
-          grn_obj_set_value(ctx_,
+          grn_obj_set_value(ctx,
                             output_column,
                             target_id,
                             &embeddings,
@@ -503,9 +499,9 @@ namespace grn {
 
       std::vector<llama_token> tokens;
       grn_id id;
-      while ((id = grn_table_cursor_next(ctx_, cursor)) != GRN_ID_NIL) {
+      while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
         uint32_t input_size = 0;
-        auto input = grn_obj_get_value_(ctx_, input_column, id, &input_size);
+        auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
         tokenize(input, tokens);
         const auto n_tokens = static_cast<int32_t>(tokens.size());
         if (n_tokens == 0) {
@@ -539,14 +535,12 @@ namespace grn {
         }
       }
 #else
-      auto ctx = ctx_;
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
           "[language-model-inferencer][vectorize] llama.cpp isn't enabled");
 #endif
     }
 
   private:
-    grn_ctx *ctx_;
 #ifdef GRN_WITH_LLAMA_CPP
     std::shared_ptr<LanguageModel> model_;
     llama_context *llama_ctx_;
@@ -610,7 +604,7 @@ namespace grn {
     }
 
     bool
-    vectorize_batch(llama_batch &batch, uint32_t max_n_sequences)
+    vectorize_batch(grn_ctx *ctx, llama_batch &batch, uint32_t max_n_sequences)
     {
       if (llama_ctx_ && llama_n_seq_max(llama_ctx_) == max_n_sequences) {
         auto memory = llama_get_memory(llama_ctx_);
@@ -633,7 +627,6 @@ namespace grn {
         // encoder-only model
         if (llama_encode(llama_ctx_, batch) < 0) {
           GRN_LM_ERROR(
-            ctx_,
             GRN_UNKNOWN_ERROR,
             "[language-model-inferencer][vectorize-batch] failed to encode");
           return false;
@@ -642,14 +635,12 @@ namespace grn {
         // decoder-only model
         if (llama_decode(llama_ctx_, batch) < 0) {
           GRN_LM_ERROR(
-            ctx_,
             GRN_UNKNOWN_ERROR,
             "[language-model-inferencer][vectorize-batch] failed to decode");
           return false;
         }
       } else {
         GRN_LM_ERROR(
-          ctx_,
           GRN_FUNCTION_NOT_IMPLEMENTED,
           "[language-model-inferencer][vectorize-batch] "
           "model that has both of encoder and docoder isn't supported yet");
@@ -660,15 +651,15 @@ namespace grn {
     }
 
     bool
-    store_embeddings(llama_batch &batch,
+    store_embeddings(grn_ctx *ctx,
+                     llama_batch &batch,
                      llama_seq_id id,
                      grn_obj *output_vector)
     {
       // pooling_type_ must not be LLAMA_POOLING_TYPE_NONE.
       auto raw_embeddings = llama_get_embeddings_seq(llama_ctx_, id);
       if (!raw_embeddings) {
-        GRN_LM_ERROR(ctx_,
-                     GRN_UNKNOWN_ERROR,
+        GRN_LM_ERROR(GRN_UNKNOWN_ERROR,
                      "[language-model-inferencer][store-embeddings] "
                      "failed to get embeddings");
         return false;
@@ -683,7 +674,7 @@ namespace grn {
       const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
       for (int i = 0; i < n_dimensions_; ++i) {
         auto normalized_value = raw_embeddings[i] * normalize;
-        GRN_FLOAT32_PUT(ctx_, output_vector, normalized_value);
+        GRN_FLOAT32_PUT(ctx, output_vector, normalized_value);
       }
       return true;
     }
@@ -698,18 +689,20 @@ namespace grn {
   LanguageModelInferencer::~LanguageModelInferencer() = default;
 
   void
-  LanguageModelInferencer::vectorize(std::string_view text,
+  LanguageModelInferencer::vectorize(grn_ctx *ctx,
+                                     std::string_view text,
                                      grn_obj *output_vector)
   {
-    return impl_->vectorize(text, output_vector);
+    return impl_->vectorize(ctx, text, output_vector);
   }
 
   void
-  LanguageModelInferencer::vectorize_in_batch(grn_table_cursor *cursor,
+  LanguageModelInferencer::vectorize_in_batch(grn_ctx *ctx,
+                                              grn_table_cursor *cursor,
                                               grn_obj *input_column,
                                               grn_obj *output_column)
   {
-    return impl_->vectorize_in_batch(cursor, input_column, output_column);
+    return impl_->vectorize_in_batch(ctx, cursor, input_column, output_column);
   }
 
   std::unique_ptr<LanguageModelInferencer>
@@ -717,8 +710,7 @@ namespace grn {
   {
 #ifdef GRN_WITH_LLAMA_CPP
     return std::make_unique<LanguageModelInferencer>(
-      new LanguageModelInferencer::Impl(ctx,
-                                        shared_from_this(),
+      new LanguageModelInferencer::Impl(shared_from_this(),
                                         impl_->get_raw(),
                                         impl_->default_pooling_type()));
 #else
@@ -1192,7 +1184,8 @@ grn_language_model_inferencer_vectorize(
     text_length = static_cast<int64_t>(strlen(text));
   }
   if (text_length > 0) {
-    inferencer->inferencer->vectorize(std::string_view(text, text_length),
+    inferencer->inferencer->vectorize(ctx,
+                                      std::string_view(text, text_length),
                                       output_vector);
   }
   GRN_API_RETURN(ctx->rc);
@@ -1229,7 +1222,8 @@ grn_language_model_inferencer_vectorize_applier(
   auto cursor =
     grn_table_cursor_open(ctx, table, nullptr, 0, nullptr, 0, 0, -1, 0);
   if (cursor) {
-    inferencer->inferencer->vectorize_in_batch(cursor,
+    inferencer->inferencer->vectorize_in_batch(ctx,
+                                               cursor,
                                                input_column,
                                                output_column);
     grn_table_cursor_close(ctx, cursor);
