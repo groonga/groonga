@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -110,3 +110,56 @@ grn_tokenizer_query_set_options(grn_ctx *ctx,
 #endif
 
 #include <groonga/tokenizer.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+bool
+grn_tokenizer_have_build_func(grn_ctx *ctx, grn_obj *tokenizer);
+
+typedef grn_rc
+grn_tokenizer_build_start_record_func(grn_ctx *ctx,
+                                      grn_tokenizer_build_data *data,
+                                      grn_id rid,
+                                      void *user_data);
+typedef grn_rc
+grn_tokenizer_build_start_section_func(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t sid,
+                                       void *user_data);
+typedef grn_rc
+grn_tokenizer_build_append_tokens_func(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       grn_obj *tokens,
+                                       void *user_data);
+typedef grn_rc
+grn_tokenizer_build_finish_section_func(grn_ctx *ctx,
+                                        grn_tokenizer_build_data *data,
+                                        void *user_data);
+typedef grn_rc
+grn_tokenizer_build_finish_record_func(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       void *user_data);
+
+struct grn_tokenizer_build_data {
+  grn_obj *source_table;
+  grn_obj *source_columns;
+  grn_obj *lexicon;
+  grn_obj *index_column;
+  grn_tokenizer_build_start_record_func *start_record_func;
+  grn_tokenizer_build_start_section_func *start_section_func;
+  grn_tokenizer_build_append_tokens_func *append_tokens_func;
+  grn_tokenizer_build_finish_section_func *finish_section_func;
+  grn_tokenizer_build_finish_record_func *finish_record_func;
+  void *user_data;
+};
+
+grn_rc
+grn_tokenizer_build(grn_ctx *ctx,
+                    grn_obj *tokenizer,
+                    grn_tokenizer_build_data *data);
+
+#ifdef __cplusplus
+}
+#endif

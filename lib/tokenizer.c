@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -748,6 +748,22 @@ grn_tokenizer_create(grn_ctx *ctx, const char *name, int name_length)
 }
 
 grn_rc
+grn_tokenizer_set_build_func(grn_ctx *ctx,
+                             grn_obj *tokenizer,
+                             grn_tokenizer_build_func *build)
+{
+  GRN_API_ENTER;
+  if (tokenizer) {
+    ((grn_proc *)tokenizer)->callbacks.tokenizer.build = build;
+  } else {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[tokenizer][build][set] tokenizer is NULL");
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_tokenizer_set_init_func(grn_ctx *ctx,
                             grn_obj *tokenizer,
                             grn_tokenizer_init_func *init)
@@ -793,4 +809,84 @@ grn_tokenizer_set_fin_func(grn_ctx *ctx,
                      "[tokenizer][fin][set] tokenizer is NULL");
   }
   GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_tokenizer_have_build_func(grn_ctx *ctx, grn_obj *tokenizer)
+{
+  return ((grn_proc *)tokenizer)->callbacks.tokenizer.build;
+}
+
+grn_rc
+grn_tokenizer_build(grn_ctx *ctx,
+                    grn_obj *tokenizer,
+                    grn_tokenizer_build_data *data)
+{
+  return ((grn_proc *)tokenizer)->callbacks.tokenizer.build(ctx, data);
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_source_table(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data)
+{
+  return data->source_table;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_source_columns(grn_ctx *ctx,
+                                            grn_tokenizer_build_data *data)
+{
+  return data->source_columns;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_lexicon(grn_ctx *ctx,
+                                     grn_tokenizer_build_data *data)
+{
+  return data->lexicon;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_index_column(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data)
+{
+  return data->index_column;
+}
+
+grn_rc
+grn_tokenizer_build_data_start_record(grn_ctx *ctx,
+                                      grn_tokenizer_build_data *data,
+                                      grn_id rid)
+{
+  return data->start_record_func(ctx, data, rid, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_section(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t sid)
+{
+  return data->start_section_func(ctx, data, sid, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_append_tokens(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       grn_obj *tokens)
+{
+  return data->append_tokens_func(ctx, data, tokens, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_finish_section(grn_ctx *ctx,
+                                        grn_tokenizer_build_data *data)
+{
+  return data->finish_section_func(ctx, data, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_finish_record(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data)
+{
+  return data->finish_record_func(ctx, data, data->user_data);
 }
