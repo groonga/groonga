@@ -31,6 +31,7 @@ groonga_include_HEADERS =			\
 	index_column.h				\
 	language_model.h			\
 	memory.h				\
+	memory_map.h				\
 	msgpack.h				\
 	obj.h					\
 	operator.h				\
