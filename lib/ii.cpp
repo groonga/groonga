@@ -9115,6 +9115,13 @@ grn_vector2updspecs(grn_ctx *ctx,
   grn_hash *h = (grn_hash *)out;
   grn_obj *lexicon = ii->lexicon;
   if (in->u.v.body) {
+    grn_obj *source_column = nullptr;
+    auto n_sources = DB_OBJ(ii)->source_size / sizeof(grn_id);
+    if (n_sources > 0 && section > 0) {
+      auto source_ids = static_cast<grn_id *>(DB_OBJ(ii)->source);
+      auto source_id = source_ids[section - 1];
+      source_column = grn_ctx_at(ctx, source_id);
+    }
     bool have_tokenizer = grn_table_have_tokenizer(ctx, lexicon);
     const char *head = GRN_BULK_HEAD(in->u.v.body);
     int32_t i;
@@ -9127,8 +9134,12 @@ grn_vector2updspecs(grn_ctx *ctx,
                                                              v->length,
                                                              mode,
                                                              token_flags))) {
+        grn_token_cursor_set_source_id(ctx, token_cursor, rid);
         if (v->domain != GRN_ID_NIL) {
           grn_token_cursor_set_query_domain(ctx, token_cursor, v->domain);
+        }
+        if (source_column) {
+          grn_token_cursor_set_source_column(ctx, token_cursor, source_column);
         }
         while (!token_cursor->status) {
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
@@ -9182,6 +9193,9 @@ grn_vector2updspecs(grn_ctx *ctx,
         }
         grn_token_cursor_close(ctx, token_cursor);
       }
+    }
+    if (source_column) {
+      grn_obj_unref(ctx, source_column);
     }
   }
   return ctx->rc;
