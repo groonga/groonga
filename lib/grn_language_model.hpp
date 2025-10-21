@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,8 @@ namespace grn {
 
     std::unique_ptr<LanguageModelInferencer>
     make_inferencer(grn_ctx *ctx);
+    uint32_t
+    get_n_embedding_dimensions(grn_ctx *ctx);
 
   private:
     std::unique_ptr<Impl> impl_;

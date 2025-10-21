@@ -728,6 +728,18 @@ namespace grn {
 #endif
   }
 
+  uint32_t
+  LanguageModel::get_n_embedding_dimensions(grn_ctx *ctx)
+  {
+#ifdef GRN_WITH_LLAMA_CPP
+    return llama_model_n_embd(impl_->get_raw());
+#else
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[language-model][get-n-embedding-dimensions] llama.cpp isn't enabled");
+    return 0;
+#endif
+  }
+
   class LanguageModelDownloader {
   public:
     LanguageModelDownloader(grn_ctx *ctx,
@@ -1110,6 +1122,15 @@ grn_language_model_loader_load(grn_ctx *ctx, grn_language_model_loader *loader)
     GRN_API_RETURN(NULL);
   }
   GRN_API_RETURN(model);
+}
+
+uint32_t
+grn_language_model_get_n_embedding_dimensions(grn_ctx *ctx,
+                                              grn_language_model *model)
+{
+  GRN_API_ENTER;
+  uint32_t n_dimensions = model->model->get_n_embedding_dimensions(ctx);
+  GRN_API_RETURN(n_dimensions);
 }
 
 grn_rc
