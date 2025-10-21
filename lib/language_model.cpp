@@ -408,7 +408,7 @@ namespace grn {
         model_(std::move(model)),
         llama_ctx_(nullptr),
         llama_model_(model_raw),
-        n_dimentions_(llama_model_n_embd(llama_model_)),
+        n_dimensions_(llama_model_n_embd(llama_model_)),
         has_encoder_(llama_model_has_encoder(llama_model_)),
         has_decoder_(llama_model_has_decoder(llama_model_)),
         // We want document vector not token vectors. We want to use the
@@ -547,7 +547,7 @@ namespace grn {
     std::shared_ptr<LanguageModel> model_;
     llama_context *llama_ctx_;
     llama_model *llama_model_;
-    const int32_t n_dimentions_;
+    const int32_t n_dimensions_;
     const bool has_encoder_;
     const bool has_decoder_;
     const enum llama_pooling_type pooling_type_;
@@ -672,12 +672,12 @@ namespace grn {
 
       // TODO: grn::distance::compute_l2_norm()
       float square_sum = 0.0;
-      for (int32_t i = 0; i < n_dimentions_; ++i) {
+      for (int32_t i = 0; i < n_dimensions_; ++i) {
         square_sum += raw_embeddings[i] * raw_embeddings[i];
       }
       auto magnitude = std::sqrt(square_sum);
       const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
-      for (int i = 0; i < n_dimentions_; ++i) {
+      for (int i = 0; i < n_dimensions_; ++i) {
         auto normalized_value = raw_embeddings[i] * normalize;
         GRN_FLOAT32_PUT(ctx_, output_vector, normalized_value);
       }
