@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,7 @@ grn_ii_posting_add(grn_ctx *ctx,
                    grn_posting *pos,
                    grn_hash *s,
                    grn_operator op);
-/* Deprecated since 10.0.3. Use grn_rset_add_records() instead. */
+/* Deprecated since 10.0.3. Use grn_result_set_add_record() instead. */
 GRN_API grn_rc
 grn_ii_posting_add_float(grn_ctx *ctx,
                          grn_posting *pos,
