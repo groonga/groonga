@@ -73,6 +73,11 @@ namespace grn {
     ~LanguageModelInferencer();
 
     /// \brief Generate an embedding for a record
+    ///
+    /// \param ctx A \ref grn_ctx.
+    /// \param text The text to be vectorized.
+    /// \param output_vector It must be an Float32 vector. This
+    ///                      function doesn't validate it.
     void
     vectorize(grn_ctx *ctx, std::string_view text, grn_obj *output_vector);
 
@@ -84,13 +89,17 @@ namespace grn {
     /// \param input_column It must be an text-family scalar
     ///                     column. This function doesn't validate it.
 
-    /// \param output_column It must be an Float32 vector column. This
-    ///                      function doesn't validate it.
+    /// \param output It must be a `Float32` vector column or a
+    ///               `Float32` vector. This function doesn't validate
+    ///               it.
+    ///
+    ///               If it's a `Float32` vector, output order is same
+    ///               as IDs returned by the `cursor`.
     void
     vectorize_in_batch(grn_ctx *ctx,
                        grn_table_cursor *cursor,
                        grn_obj *input_column,
-                       grn_obj *output_column);
+                       grn_obj *output);
 
   private:
     std::unique_ptr<Impl> impl_;

@@ -458,11 +458,12 @@ namespace grn {
 #endif
     }
 
+    template <typename Output>
     void
     vectorize_in_batch(grn_ctx *ctx,
                        grn_table_cursor *cursor,
                        grn_obj *input_column,
-                       grn_obj *output_column)
+                       Output output)
     {
       const char *tag = "[language-model-inferencer][vectorize-in-batch]";
 #ifdef GRN_WITH_LLAMA_CPP
@@ -488,11 +489,7 @@ namespace grn {
             return false;
           }
           const auto target_id = target_ids[i];
-          grn_obj_set_value(ctx,
-                            output_column,
-                            target_id,
-                            &embeddings,
-                            GRN_OBJ_SET);
+          output(ctx, target_id, &embeddings);
         }
         target_ids.clear();
         batch.n_tokens = 0;
@@ -749,9 +746,28 @@ namespace grn {
   LanguageModelInferencer::vectorize_in_batch(grn_ctx *ctx,
                                               grn_table_cursor *cursor,
                                               grn_obj *input_column,
-                                              grn_obj *output_column)
+                                              grn_obj *output)
   {
-    return impl_->vectorize_in_batch(ctx, cursor, input_column, output_column);
+    if (grn_obj_is_column(ctx, output)) {
+      return impl_->vectorize_in_batch(
+        ctx,
+        cursor,
+        input_column,
+        [&](grn_ctx *ctx, grn_id id, grn_obj *embeddings) {
+          grn_obj_set_value(ctx, output, id, embeddings, GRN_OBJ_SET);
+        });
+    } else {
+      return impl_->vectorize_in_batch(
+        ctx,
+        cursor,
+        input_column,
+        [&](grn_ctx *ctx, grn_id id, grn_obj *embeddings) {
+          grn_bulk_write(ctx,
+                         output,
+                         GRN_BULK_HEAD(embeddings),
+                         GRN_BULK_VSIZE(embeddings));
+        });
+    }
   }
 
   std::unique_ptr<LanguageModelInferencer>
@@ -1271,12 +1287,35 @@ grn_language_model_inferencer_vectorize_applier(
   auto cursor =
     grn_table_cursor_open(ctx, table, nullptr, 0, nullptr, 0, 0, -1, 0);
   if (cursor) {
-    inferencer->inferencer->vectorize_in_batch(ctx,
-                                               cursor,
-                                               input_column,
-                                               output_column);
+    grn_language_model_inferencer_vectorize_in_batch(ctx,
+                                                     inferencer,
+                                                     cursor,
+                                                     input_column,
+                                                     output_column);
     grn_table_cursor_close(ctx, cursor);
   }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_language_model_inferencer_vectorize_in_batch(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  grn_table_cursor *cursor,
+  grn_obj *input_column,
+  grn_obj *output)
+{
+  GRN_API_ENTER;
+  if (!inferencer) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[language-model-inferencer][vectorize-in-batch] "
+        "inferencer must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  inferencer->inferencer->vectorize_in_batch(ctx,
+                                             cursor,
+                                             input_column,
+                                             output);
   GRN_API_RETURN(ctx->rc);
 }
 }
