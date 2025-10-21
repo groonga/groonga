@@ -179,7 +179,7 @@ grn_tokenizer_query_get_options(grn_ctx *ctx, grn_tokenizer_query *query);
  * \brief This is an opaque data to pass build data to a tokenizer from
  *        Groonga.
  *
- * This is used for \ref grn_tokenizer_build_fun.
+ * This is used for \ref grn_tokenizer_build_func.
  *
  * \see grn_tokenizer_set_build_func
  *
