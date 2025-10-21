@@ -27,12 +27,13 @@ RUN \
     cmake \
     debhelper \
     devscripts \
-    lsb-release \
     libarrow-compute-dev \
     libarrow-dev \
+    libblas-dev \
     libcurl4-openssl-dev \
     libedit-dev \
     libevent-dev \
+    liblapack-dev \
     liblz4-dev \
     libmecab-dev \
     libmsgpack-dev \
@@ -43,6 +44,7 @@ RUN \
     libxxhash-dev \
     libzmq3-dev \
     libzstd-dev \
+    lsb-release \
     ninja-build \
     pkg-config \
     rapidjson-dev \

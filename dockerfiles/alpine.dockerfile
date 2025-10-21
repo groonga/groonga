@@ -21,6 +21,7 @@ RUN \
   apk --no-cache add \
     bash \
     bison \
+    blas-dev \
     blosc-dev \
     bsd-compat-headers \
     ca-certificates \
@@ -31,6 +32,7 @@ RUN \
     gcc \
     gdb \
     git \
+    lapack-dev \
     libedit-dev \
     libevent-dev \
     libstemmer-dev \

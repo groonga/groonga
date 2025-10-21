@@ -1,4 +1,4 @@
-# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -91,38 +91,9 @@ jobs:
           path: ccache
           key: benchmark-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: benchmark-linux-ccache-
-      - name: Enable Apache Arrow repository
-        run: |
-          sudo apt update -o="APT::Acquire::Retries=3"
-          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            lsb-release \
-            wget
-          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
       - name: Install packages
         run: |
-          sudo apt update -o="APT::Acquire::Retries=3"
-          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-            ccache \
-            cmake \
-            gdb \
-            gettext \
-            libarrow-compute-dev \
-            libarrow-dev \
-            libedit-dev \
-            libevent-dev \
-            libluajit-5.1-dev \
-            liblz4-dev \
-            libmecab-dev \
-            libmsgpack-dev \
-            libstemmer-dev \
-            libxxhash-dev \
-            libzstd-dev \
-            mecab-naist-jdic \
-            ninja-build \
-            rapidjson-dev \
-            ruby-dev \
-            zlib1g-dev
+          ./setup.sh
       - name: CMake
         run: |
           ccache --show-stats --verbose --version || :
