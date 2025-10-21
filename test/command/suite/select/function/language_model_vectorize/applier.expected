@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --columns[embeddings].stage output   --columns[embeddings].type Float32   --columns[embeddings].flags COLUMN_VECTOR   --columns[embeddings].value 'language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text)'   --output_columns 'text, vector_size(embeddings)'
+select Data   --columns[embeddings].stage output   --columns[embeddings].type Float32   --columns[embeddings].flags COLUMN_VECTOR   --columns[embeddings].value 'language_model_vectorize("hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", text)'   --output_columns 'text, vector_size(embeddings)'
 [
   [
     0,
@@ -36,15 +36,14 @@ select Data   --columns[embeddings].stage output   --columns[embeddings].type Fl
       ],
       [
         "I am a king.",
-        1024
+        384
       ],
       [
         "I am a queen.",
-        1024
+        384
       ]
     ]
   ]
 ]
-#|w| load: model vocab missing newline token, using special_pad_id instead
 #|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
-#|w| llama_init_from_model: model default pooling_type is [2], but [-1] was specified
+#|w| llama_init_from_model: model default pooling_type is [1], but [-1] was specified

@@ -19,5 +19,5 @@ select Data \
   --columns[embeddings].stage output \
   --columns[embeddings].type Float32 \
   --columns[embeddings].flags COLUMN_VECTOR \
-  --columns[embeddings].value 'language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text)' \
+  --columns[embeddings].value 'language_model_vectorize("hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", text)' \
   --output_columns 'text, vector_size(embeddings)'
