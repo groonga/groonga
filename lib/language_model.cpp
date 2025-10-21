@@ -349,7 +349,6 @@ namespace grn {
       [this]() -> std::shared_ptr<LanguageModel> {
         auto ctx = ctx_;
         auto params = llama_model_default_params();
-        params.n_gpu_layers = n_gpu_layers;
         params.progress_callback = [](float progress, void *ctx) {
           return true;
         };
