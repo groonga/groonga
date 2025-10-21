@@ -9102,6 +9102,7 @@ static grn_rc
 grn_vector2updspecs(grn_ctx *ctx,
                     grn_ii *ii,
                     grn_id rid,
+                    unsigned int original_section,
                     unsigned int section,
                     grn_obj *in,
                     grn_obj *out,
@@ -9117,9 +9118,9 @@ grn_vector2updspecs(grn_ctx *ctx,
   if (in->u.v.body) {
     grn_obj *source_column = nullptr;
     auto n_sources = DB_OBJ(ii)->source_size / sizeof(grn_id);
-    if (n_sources > 0 && section > 0) {
+    if (n_sources > 0 && original_section > 0) {
       auto source_ids = static_cast<grn_id *>(DB_OBJ(ii)->source);
-      auto source_id = source_ids[section - 1];
+      auto source_id = source_ids[original_section - 1];
       source_column = grn_ctx_at(ctx, source_id);
     }
     bool have_tokenizer = grn_table_have_tokenizer(ctx, lexicon);
@@ -9401,6 +9402,7 @@ static inline grn_rc
 grn_ii_column_update_internal(grn_ctx *ctx,
                               grn_ii *ii,
                               grn_id rid,
+                              unsigned int original_section,
                               unsigned int section,
                               grn_obj *oldvalue,
                               grn_obj *newvalue,
@@ -9492,13 +9494,14 @@ grn_ii_column_update_internal(grn_ctx *ctx,
             GRN_TEXT_SET_REF(&new_elem, value, size);
             new_p = &new_elem;
           }
-          rc = grn_ii_column_update(ctx,
-                                    ii,
-                                    rid,
-                                    section + i,
-                                    old_p,
-                                    new_p,
-                                    posting);
+          rc = grn_ii_column_update_internal(ctx,
+                                             ii,
+                                             rid,
+                                             original_section,
+                                             section + i,
+                                             old_p,
+                                             new_p,
+                                             posting);
           if (rc != GRN_SUCCESS) {
             break;
           }
@@ -9562,6 +9565,7 @@ grn_ii_column_update_internal(grn_ctx *ctx,
           grn_vector2updspecs(ctx,
                               ii,
                               rid,
+                              original_section,
                               section,
                               new_value_before,
                               new_value,
@@ -9733,6 +9737,7 @@ grn_ii_column_update_internal(grn_ctx *ctx,
           grn_vector2updspecs(ctx,
                               ii,
                               rid,
+                              original_section,
                               section,
                               old_value_keep,
                               old_value,
@@ -9889,6 +9894,7 @@ grn_ii_column_update(grn_ctx *ctx,
   grn_rc rc = grn_ii_column_update_internal(ctx,
                                             ii,
                                             rid,
+                                            section,
                                             section,
                                             oldvalue,
                                             newvalue,
