@@ -123,6 +123,7 @@ libgroonga_c_sources =				\
 	load.c					\
 	logger.c				\
 	memory.c				\
+	memory_map.c				\
 	mrb.c					\
 	msgpack.c				\
 	nfkc.c					\

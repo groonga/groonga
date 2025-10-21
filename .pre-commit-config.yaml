@@ -43,6 +43,7 @@ repos:
           ?include/groonga/ii\.h|
           ?include/groonga/index_column\.h|
           ?include/groonga/language_model\.h|
+          ?include/groonga/memory_map\.h|
           ?include/groonga/obj\.h|
           ?include/groonga/operator\.h|
           ?include/groonga/output\.h|
@@ -135,6 +136,7 @@ repos:
           ?lib/index_column\.c|
           ?lib/language_model\.cpp|
           ?lib/load\.c|
+          ?lib/memory_map\.c|
           ?lib/mrb/mrb_bulk\.c|
           ?lib/mrb/mrb_bulk\.h|
           ?lib/mrb/mrb_ctx\.c|

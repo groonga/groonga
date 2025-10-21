@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2014-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,7 @@
 #include "groonga/index_column.h"
 #include "groonga/language_model.h"
 #include "groonga/memory.h"
+#include "groonga/memory_map.h"
 #include "groonga/obj.h"
 #include "groonga/operator.h"
 #include "groonga/option.h"
