@@ -58,7 +58,6 @@ namespace grn {
     load();
 
     std::string model_path;
-    int32_t n_gpu_layers = 0;
 
   private:
     grn_ctx *ctx_;
