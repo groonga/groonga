@@ -75,9 +75,11 @@ namespace grn {
 
     /// \brief Generate an embedding for a record
     void
-    vectorize(std::string_view text, grn_obj *output_vector);
+    vectorize(grn_ctx *ctx, std::string_view text, grn_obj *output_vector);
+
     /// \brief Generate embeddings for multiple records in batch
     ///
+    /// \param ctx A \ref grn_ctx.
     /// \param cursor It must be a valid \ref grn_table_cursor.
     ///               This function doesn't validate it.
     /// \param input_column It must be an text-family scalar
@@ -86,7 +88,8 @@ namespace grn {
     /// \param output_column It must be an Float32 vector column. This
     ///                      function doesn't validate it.
     void
-    vectorize_in_batch(grn_table_cursor *cursor,
+    vectorize_in_batch(grn_ctx *ctx,
+                       grn_table_cursor *cursor,
                        grn_obj *input_column,
                        grn_obj *output_column);
 
