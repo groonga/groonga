@@ -18,4 +18,4 @@ load --table Data
 select Data \
   --output_columns ' \
       text, \
-      vector_size(language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", text))'
+      vector_size(language_model_vectorize("hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", text))'
