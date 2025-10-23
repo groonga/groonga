@@ -1,5 +1,3 @@
-#@omit "TODO: This doesn't work on GitHub Actions"
-
 #@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
 #@require-feature llama.cpp
 
