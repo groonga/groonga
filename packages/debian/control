@@ -9,6 +9,8 @@ Build-Depends:
   libcurl4-openssl-dev,
   libedit-dev,
   libevent-dev,
+# Ubuntu 24.04 doesn't provide this...
+#  libfaiss-dev,
   liblz4-dev,
   libmecab-dev,
   libmsgpack-dev,
@@ -147,6 +149,22 @@ Description: H3 related plugin for Groonga
  .
  This package provides TokenH3Index by tokenizers/h3_index and
  h3_*() functions by functions/h3.
+
+Package: groonga-plugin-language-model
+Section: libs
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libgroonga0 (= ${binary:Version})
+Description: Language model related plugin for Groonga
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides TokenLanguageModel and language_model_knn() by
+ language_model/knn.
+ .
+ This package provides langauge_model_vectorize() by functions/language_model.
 
 Package: groonga-token-filter-stem
 Section: libs
