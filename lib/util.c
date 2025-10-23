@@ -1799,6 +1799,7 @@ grn_path_copy(grn_ctx *ctx,
          destination_path);
     grn_close(source_fd);
     grn_close(destination_fd);
+    grn_unlink(destination_path);
     GRN_API_RETURN(ctx->rc);
   }
 #endif
