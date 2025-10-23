@@ -322,7 +322,8 @@ namespace {
                                                     sizeof(float) *
                                                       options->centroids.size(),
                                                     nullptr);
-    options->centroid_searcher.ntotal = options->centroids.size();
+    options->centroid_searcher.ntotal =
+      options->centroids.size() / options->n_dimensions;
 
     options->random_rotation_matrix.d_in = options->n_dimensions;
     options->random_rotation_matrix.d_out = options->n_dimensions;
