@@ -95,6 +95,7 @@
 #cmakedefine GRN_WITH_BENCHMARK
 #cmakedefine GRN_WITH_BLOSC
 #cmakedefine GRN_WITH_CURL
+#cmakedefine GRN_WITH_FAISS
 #cmakedefine GRN_WITH_H3
 #cmakedefine GRN_WITH_H3_BUNDLED
 #cmakedefine GRN_WITH_KYTEA

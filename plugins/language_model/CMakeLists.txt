@@ -1,4 +1,3 @@
-# Copyright (C) 2012-2016  Brazil
 # Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -15,18 +14,25 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(functions)
-add_subdirectory(language_model)
-add_subdirectory(query_expanders)
-add_subdirectory(ruby)
-add_subdirectory(sharding)
-add_subdirectory(suggest)
-add_subdirectory(token_filters)
-add_subdirectory(tokenizers)
+set(LANGUAGE_MODEL_DIR "${GRN_RELATIVE_PLUGINS_DIR}/language_model")
 
-if(NOT GRN_EMBED)
-  if(GRN_WITH_MRUBY)
-    read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ruby_scripts.am RUBY_SCRIPTS)
-    install(FILES ${RUBY_SCRIPTS} DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}")
+if(GRN_WITH_FAISS)
+  set(KNN_SOURCES knn.cpp)
+  set_source_files_properties(
+    ${KNN_SOURCES} PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(knn STATIC ${KNN_SOURCES})
+    set_target_properties(knn PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(knn MODULE ${KNN_SOURCES})
+    set_target_properties(knn PROPERTIES PREFIX "" OUTPUT_NAME "knn")
+    install(TARGETS knn DESTINATION "${LANGUAGE_MODEL_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:knn
+        DESTINATION "${LANGUAGE_MODEL_DIR}"
+        OPTIONAL)
+    endif()
   endif()
+  target_link_libraries(knn libgroonga faiss)
 endif()

@@ -45,6 +45,7 @@ all_targets = [
   "base64",
   "blosc",
   "croaring",
+  "faiss",
   "h3",
   "llama.cpp",
   "message-pack",
@@ -81,6 +82,11 @@ targets.each do |target|
     download(url, "CRoaring-#{version}.tar.gz") do
       FileUtils.rm_rf("benchmarks/realdata/")
     end
+  when "faiss"
+    version = cmakelists[/set\(GRN_FAISS_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/facebookresearch/faiss/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "faiss-#{version}.tar.gz")
   when "h3"
     version = cmakelists[/set\(GRN_H3_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/uber/h3/archive/refs/tags/"

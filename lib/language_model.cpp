@@ -1312,10 +1312,7 @@ grn_language_model_inferencer_vectorize_in_batch(
         "inferencer must not be NULL");
     GRN_API_RETURN(ctx->rc);
   }
-  inferencer->inferencer->vectorize_in_batch(ctx,
-                                             cursor,
-                                             input_column,
-                                             output);
+  inferencer->inferencer->vectorize_in_batch(ctx, cursor, input_column, output);
   GRN_API_RETURN(ctx->rc);
 }
 }

@@ -9,8 +9,10 @@ url="https://groonga.org/"
 license=('LGPL2.1-or-later')
 depends=(
   arrow
+  blas
   blosc2
   gcc
+  lapack
   libedit
   libevent
   libstemmer

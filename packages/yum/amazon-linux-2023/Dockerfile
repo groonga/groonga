@@ -12,9 +12,11 @@ RUN \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
+    blas-devel \
     cmake \
     curl-devel \
     intltool \
+    lapack-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \

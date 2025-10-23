@@ -187,10 +187,13 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             gdb \
             gettext \
+            libblas-dev \
             libedit-dev \
             libevent-dev \
+            liblapack-dev \
             libluajit-5.1-dev \
             liblz4-dev \
+            libomp-$(clang --version | grep -o '[0-9]*' | head -1)-dev \
             libmecab-dev \
             libmsgpack-dev \
             libsimdjson-dev \

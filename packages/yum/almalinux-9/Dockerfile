@@ -20,11 +20,13 @@ RUN \
   dnf install -y ${quiet} \
     ${SCL} \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
+    blas-devel \
     ccache \
     cmake \
     curl-devel \
     intltool \
     mecab-devel \
+    lapack-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \

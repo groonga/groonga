@@ -7,6 +7,8 @@
 
 %define have_simdjson (%{_rhel} < 10 && !%{is_amazon_linux})
 
+%define enable_language_model_knn (%{_rhel} >= 9 && !%{is_amazon_linux})
+
 %if ! %{defined cmake}
 %define cmake %{cmake3}
 %endif
@@ -29,6 +31,10 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	arrow-compute-devel >= @APACHE_ARROW_VERSION@
+%if %{enable_language_model_knn}
+BuildRequires:	blas-devel
+BuildRequires:	lapack-devel
+%endif
 BuildRequires:	curl-devel
 BuildRequires:	libedit-devel
 BuildRequires:	libstemmer-devel
@@ -180,10 +186,23 @@ Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description plugin-h3
-H# plugin for Groonga.
+H3 plugin for Groonga.
 
 This provides TokenH3Index by tokenizers/h3_index and
 h3_*() functions by functions/h3.
+
+%package plugin-language-model
+Summary:	Language model plugin for Groonga
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description plugin-language-model
+Language model plugin for Groonga.
+
+This provides TokenLanguageModel and language_model_knn() by
+language_model/knn.
+
+This provides language_model_vectorize() by functions/language_model.
 
 %package plugin-suggest
 Summary:	Suggest plugin for Groonga
@@ -218,6 +237,9 @@ Munin plugins for Groonga
   -DGRN_WITH_APACHE_ARROW=ON \
   -DGRN_WITH_BLOSC=bundled \
   -DGRN_WITH_DOC=ON \
+%if ! %{enable_language_model_knn}
+  -DGRN_WITH_FAISS=no \
+%endif
   -DGRN_WITH_EXAMPLES=ON \
 %if ! %{is_amazon_linux}
   -DGRN_WITH_MECAB=ON \
@@ -362,7 +384,6 @@ exit 0
 %{_libdir}/groonga/ggml/*.so
 %{_libdir}/groonga/plugins/*.rb
 %{_libdir}/groonga/plugins/functions/index_column.so
-%{_libdir}/groonga/plugins/functions/language_model.so
 %{_libdir}/groonga/plugins/functions/math.so
 %{_libdir}/groonga/plugins/functions/number.so
 %{_libdir}/groonga/plugins/functions/string.so
@@ -449,6 +470,14 @@ exit 0
 %{_libdir}/groonga/plugins/functions/h3.so
 %{_libdir}/groonga/plugins/tokenizers/h3_index.so
 %{_datadir}/groonga/h3/
+
+%files plugin-language-model
+%defattr(-,root,root,-)
+%{_libdir}/groonga/plugins/functions/language_model.so
+%if %{enable_language_model_knn}
+%{_libdir}/groonga/plugins/language_model/*.so
+%{_datadir}/groonga/faiss/
+%endif
 
 %files plugin-suggest
 %defattr(-,root,root,-)

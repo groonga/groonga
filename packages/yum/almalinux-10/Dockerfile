@@ -17,10 +17,12 @@ RUN \
   dnf install -y ${quiet} \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
     arrow-devel-${APACHE_ARROW_VERSION} \
+    blas-devel \
     ccache \
     cmake \
     curl-devel \
     intltool \
+    lapack-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \

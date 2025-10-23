@@ -1913,6 +1913,108 @@ else()
   set(GRN_WITH_USEARCH FALSE)
 endif()
 
+set(GRN_FAISS_BUNDLED_VERSION "1.12.0")
+set(GRN_FAISS_BUNDLED_SHA256
+    "561376d1a44771bf1230fabeef9c81643468009b45a585382cf38d3a7a94990a")
+set(GRN_WITH_FAISS
+    "auto"
+    CACHE STRING "Use Faiss for ANN search.")
+set(GRN_WITH_FAISS_BUNDLED FALSE)
+if(NOT "${GRN_WITH_FAISS}" STREQUAL "no")
+  if("${GRN_WITH_FAISS}" STREQUAL "bundled")
+    set(faiss_FOUND FALSE)
+  else()
+    # 1.12.0 or later is required
+    if("${GRN_WITH_FAISS}" STREQUAL "system")
+      find_package(faiss REQUIRED)
+    else()
+      find_package(faiss)
+    endif()
+  endif()
+  if(faiss_FOUND)
+    if(UNIQ AND NOT APPLE)
+      find_package(OpenMP REQUIRED)
+    endif()
+    set(GRN_WITH_FAISS TRUE)
+    message(STATUS "faiss: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    find_package(OpenMP)
+    find_package(BLAS)
+    find_package(LAPACK)
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24
+       AND NOT WIN32
+       AND OpenMP_FOUND
+       AND BLAS_FOUND
+       AND LAPACK_FOUND)
+      # We need to use function to create a variable scope
+      function(grn_build_faiss)
+        list(APPEND CMAKE_MESSAGE_INDENT "Faiss: ")
+        set(GRN_FAISS_SOURCE_BASE_NAME
+            "faiss-${GRN_FAISS_BUNDLED_VERSION}.tar.gz")
+        set(GRN_FAISS_SOURCE_LOCAL_PATH
+            "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${GRN_FAISS_SOURCE_BASE_NAME}")
+        set(GRN_FAISS_FETCH_CONTENT_SOURCE)
+        if(EXISTS ${FAISS_SOURCE_LOCAL_PATH})
+          list(APPEND GRN_FAISS_FETCH_CONTENT_SOURCE URL
+               ${GRN_FAISS_SOURCE_LOCAL_PATH} URL_HASH
+               "SHA256=${GRN_FAISS_BUNDLED_SHA256}")
+        else()
+          list(APPEND GRN_FAISS_FETCH_CONTENT_SOURCE GIT_REPOSITORY
+               "https://github.com/facebookresearch/faiss.git" GIT_TAG
+               "v${GRN_FAISS_BUNDLED_VERSION}")
+        endif()
+        fetchcontent_declare(faiss ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+                                   ${GRN_FAISS_FETCH_CONTENT_SOURCE})
+        grn_prepare_fetchcontent()
+        if(GRN_C_COMPILER_GNU_LIKE)
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-ignored-attributes")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                 " -Wno-ignored-attributes")
+          # We can remove -Wno-psabi with 1.12.1 or later.
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-psabi")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-psabi")
+          if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-switch-unreachable")
+            string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                   " -Wno-switch-unreachable")
+          endif()
+        endif()
+        set(FAISS_ENABLE_EXTRAS OFF)
+        set(FAISS_ENABLE_GPU OFF)
+        set(FAISS_ENABLE_PYTHON OFF)
+        fetchcontent_makeavailable(faiss)
+        if(CMAKE_VERSION VERSION_LESS 3.28)
+          set_property(DIRECTORY ${faiss_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                              TRUE)
+        endif()
+        install(FILES "${faiss_SOURCE_DIR}/LICENSE"
+                      "${faiss_SOURCE_DIR}/README.md"
+                DESTINATION "${GRN_DATA_DIR}/faiss")
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+      endfunction()
+      grn_build_faiss()
+      set(GRN_WITH_FAISS TRUE)
+      set(GRN_WITH_FAISS_BUNDLED TRUE)
+      message(STATUS "Faiss: bundled")
+    else()
+      if("${GRN_WITH_FAISS}" STREQUAL "bundled")
+        message(
+          FATAL_ERROR
+            "CMake >= 3.24, not Windows, OpenMP, BLAS and LAPACK are required for bundled Faiss"
+        )
+      endif()
+      set(GRN_WITH_FAISS FALSE)
+    endif()
+  else()
+    set(GRN_WITH_FAISS FALSE)
+  endif()
+else()
+  set(GRN_WITH_FAISS FALSE)
+endif()
+
 if(WIN32)
   set(GRN_WITH_CURL_DEFAULT "no")
 else()

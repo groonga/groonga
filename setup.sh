@@ -53,10 +53,13 @@ function setup_with_apt () {
         g++
         gcc
         gettext
+        git
         graphviz
         libarrow-compute-dev
         libarrow-dev
+        libblas-dev
         libedit-dev
+        liblapack-dev
         liblz4-dev
         libmecab-dev
         libmsgpack-dev
@@ -119,6 +122,10 @@ function setup_with_dnf () {
           ;;
         *)
           ${SUDO} dnf config-manager --set-enabled crb
+          package_names+=(
+            blas-devel
+            lapack-devel
+          )
           ;;
       esac
 

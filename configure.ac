@@ -1703,6 +1703,7 @@ AC_CONFIG_FILES([
   packages/Makefile
   plugins/Makefile
   plugins/functions/Makefile
+  plugins/language_model/Makefile
   plugins/query_expanders/Makefile
   plugins/ruby/Makefile
   plugins/sharding/Makefile

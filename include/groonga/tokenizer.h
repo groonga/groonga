@@ -190,7 +190,7 @@ typedef struct grn_tokenizer_build_data grn_tokenizer_build_data;
 /**
  * \brief Return the build target table.
  *
- * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * This is owned by \ref grn_tokenizer_build_data. You must not free
  * it.
  *
  * \since 15.1.8
@@ -202,7 +202,7 @@ grn_tokenizer_build_data_get_source_table(grn_ctx *ctx,
 /**
  * \brief Return the build target columns as \ref GRN_PVECTOR.
  *
- * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * This is owned by \ref grn_tokenizer_build_data. You must not free
  * it.
  *
  * \since 15.1.8
@@ -214,7 +214,7 @@ grn_tokenizer_build_data_get_source_columns(grn_ctx *ctx,
 /**
  * \brief Return the lexicon for this tokenizer.
  *
- * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * This is owned by \ref grn_tokenizer_build_data. You must not free
  * it.
  *
  * \since 15.1.8
@@ -226,7 +226,7 @@ grn_tokenizer_build_data_get_lexicon(grn_ctx *ctx,
 /**
  * \brief Return the index column for this tokenizer.
  *
- * This is owned by \ref grn_tokenzier_build_data. You must not free
+ * This is owned by \ref grn_tokenizer_build_data. You must not free
  * it.
  *
  * \since 15.1.8
