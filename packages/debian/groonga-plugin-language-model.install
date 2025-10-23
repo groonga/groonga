@@ -1,0 +1,3 @@
+usr/lib/*/groonga/plugins/functions/language_model.*
+usr/lib/*/groonga/plugins/language_model/
+usr/share/groonga/faiss/

@@ -57,9 +57,7 @@ function setup_with_apt () {
         graphviz
         libarrow-compute-dev
         libarrow-dev
-        libblas-dev
         libedit-dev
-        liblapack-dev
         liblz4-dev
         libmecab-dev
         libmsgpack-dev
@@ -73,6 +71,11 @@ function setup_with_apt () {
         rapidjson-dev
         zlib1g-dev
       )
+      if [ "${distribution}-${code_name}" != "ubuntu-noble" ]; then
+        package_names+=(
+          libfaiss-dev
+        )
+      fi
       ;;
   esac
 

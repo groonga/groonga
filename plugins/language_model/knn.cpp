@@ -26,7 +26,28 @@
 #include <faiss/Clustering.h>
 #include <faiss/IndexFlat.h>
 #include <faiss/VectorTransform.h>
-#include <faiss/impl/RaBitQuantizer.h>
+
+#define FAISS_VERSION_OR_LATER(major, minor, micro)                            \
+  (FAISS_VERSION_MAJOR > (major) ||                                            \
+   (FAISS_VERSION_MAJOR == (major) && FAISS_VERSION_MINOR > (minor)) ||        \
+   (FAISS_VERSION_MAJOR == (major) && FAISS_VERSION_MINOR == (minor) &&        \
+    FAISS_VERSION_MICRO >= (micro)))
+
+#if FAISS_VERSION_OR_LATER(1, 7, 3)
+#  define GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
+#endif
+
+#if !FAISS_VERSION_OR_LATER(1, 7, 4)
+namespace faiss {
+  using idx_t = Index::idx_t;
+};
+#endif
+
+#if FAISS_VERSION_OR_LATER(1, 11, 0)
+#  define GRN_FAISS_HAVE_RABITQ
+#  define GRN_FAISS_HAVE_MAYBE_OWNED_VECTOR
+#  include <faiss/impl/RaBitQuantizer.h>
+#endif
 
 #include <algorithm>
 #include <cinttypes>
@@ -46,6 +67,7 @@ namespace {
   const int SEED = 29;
 
   enum class Quantizer {
+    NONE,
     RABITQ,
   };
 
@@ -65,10 +87,13 @@ namespace {
     std::vector<grn_id> centroid_index_to_record_id;
     faiss::IndexFlatIP centroid_searcher;
 
-    /* For RaBitQ */
+    /* For Quantization */
     grn_obj *code_column;
+#ifdef GRN_FAISS_HAVE_RABITQ
+    /* For RaBitQ */
     faiss::RandomRotationMatrix random_rotation_matrix; /* P in RaBitQ */
     faiss::RaBitQuantizer rabitq;
+#endif
   };
 
   void
@@ -77,7 +102,11 @@ namespace {
     new (&options->model_name) std::string;
     new (&options->code_column_name) std::string;
     options->n_clusters = 0;
+#ifdef GRN_FAISS_HAVE_RABITQ
     options->quantizer = Quantizer::RABITQ;
+#else
+    options->quantizer = Quantizer::NONE;
+#endif
 
     options->model = nullptr;
     options->inferencer = nullptr;
@@ -87,8 +116,10 @@ namespace {
     new (&options->centroid_searcher) faiss::IndexFlatIP;
 
     options->code_column = nullptr;
+#ifdef GRN_FAISS_HAVE_RABITQ
     new (&options->random_rotation_matrix) faiss::RandomRotationMatrix;
     new (&options->rabitq) faiss::RaBitQuantizer;
+#endif
   }
 
   void
@@ -109,8 +140,10 @@ namespace {
     // }
     options->code_column_name.~basic_string();
 
+#ifdef GRN_FAISS_HAVE_RABITQ
     options->rabitq.~RaBitQuantizer();
     options->random_rotation_matrix.~RandomRotationMatrix();
+#endif
 
     options->centroid_searcher.~IndexFlatIP();
     options->centroid_index_to_record_id.~vector();
@@ -145,7 +178,11 @@ namespace {
     tokenizer->query = query;
     GRN_FLOAT32_INIT(&(tokenizer->embeddings), GRN_OBJ_VECTOR);
     GRN_FLOAT32_INIT(&(tokenizer->transformed_embeddings), GRN_OBJ_VECTOR);
-    GRN_SHORT_BINARY_INIT(&(tokenizer->code), 0);
+    if (options->quantizer == Quantizer::NONE) {
+      GRN_SHORT_BINARY_INIT(&(tokenizer->code), GRN_OBJ_DO_SHALLOW_COPY);
+    } else {
+      GRN_SHORT_BINARY_INIT(&(tokenizer->code), 0);
+    }
 
     return tokenizer;
   }
@@ -212,7 +249,7 @@ namespace {
                                         i,
                                         options->n_clusters);
       } else if (name_raw == "quantizer") {
-        // TODO: RaBitQ is only supported for now
+        // TODO: RaBitQ and no quantization are only supported for now
       } else if (name_raw == "code_column") {
         const char *raw_value = nullptr;
         grn_id domain = GRN_ID_NIL;
@@ -296,6 +333,10 @@ namespace {
     options->n_dimensions =
       grn_language_model_get_n_embedding_dimensions(ctx, options->model);
     options->centroid_searcher.d = options->n_dimensions;
+    options->centroid_searcher.metric_type =
+      faiss::MetricType::METRIC_INNER_PRODUCT;
+    options->centroid_searcher.code_size =
+      sizeof(float) * options->n_dimensions;
     options->n_clusters = grn_table_size(ctx, data->lexicon);
     if (options->n_clusters > 0) {
       options->centroids.resize(options->n_dimensions * options->n_clusters);
@@ -317,14 +358,23 @@ namespace {
       }
       GRN_TABLE_EACH_END(ctx, cursor);
     }
+#ifdef GRN_FAISS_HAVE_MAYBE_OWNED_VECTOR
     options->centroid_searcher.codes =
       faiss::MaybeOwnedVector<uint8_t>::create_view(options->centroids.data(),
                                                     sizeof(float) *
                                                       options->centroids.size(),
                                                     nullptr);
+#else
+    options->centroid_searcher.codes.resize(sizeof(float) *
+                                            options->centroids.size());
+    memcpy(options->centroid_searcher.codes.data(),
+           options->centroids.data(),
+           options->centroid_searcher.codes.size());
+#endif
     options->centroid_searcher.ntotal =
       options->centroids.size() / options->n_dimensions;
 
+#ifdef GRN_FAISS_HAVE_RABITQ
     options->random_rotation_matrix.d_in = options->n_dimensions;
     options->random_rotation_matrix.d_out = options->n_dimensions;
     options->random_rotation_matrix.init(SEED);
@@ -334,6 +384,7 @@ namespace {
     options->rabitq =
       faiss::RaBitQuantizer(options->n_dimensions,
                             faiss::MetricType::METRIC_INNER_PRODUCT);
+#endif
 
     return options;
   }
@@ -354,6 +405,7 @@ namespace {
         embeddings_set_path_(),
         embeddings_set_map_(nullptr),
         embeddings_set_(),
+        embeddings_set_raw_(),
         transformed_embeddings_set_raw_(nullptr)
     {
       GRN_FLOAT32_INIT(&embeddings_set_,
@@ -398,6 +450,7 @@ namespace {
     std::string embeddings_set_path_;
     grn_memory_map *embeddings_set_map_;
     grn_obj embeddings_set_;
+    float *embeddings_set_raw_;
     float *transformed_embeddings_set_raw_;
 
     bool
@@ -468,12 +521,12 @@ namespace {
         // The former part is for raw embeddings set and
         // the latter part is for transformed embeddings set.
         embeddings_set_size * 2);
-      auto embeddings_set_raw = static_cast<float *>(
+      embeddings_set_raw_ = static_cast<float *>(
         grn_memory_map_get_address(ctx_, embeddings_set_map_));
       transformed_embeddings_set_raw_ =
-        embeddings_set_raw + (embeddings_set_size / sizeof(float));
+        embeddings_set_raw_ + (embeddings_set_size / sizeof(float));
       GRN_BINARY_SET_REF(&embeddings_set_,
-                         embeddings_set_raw,
+                         embeddings_set_raw_,
                          embeddings_set_size);
       GRN_BULK_REWIND(&embeddings_set_);
       grn_language_model_inferencer_vectorize_in_batch(ctx_,
@@ -498,13 +551,19 @@ namespace {
         return false;
       }
 
-      options_->random_rotation_matrix.apply_noalloc(
-        n_source_records_,
-        embeddings_set_raw,
-        transformed_embeddings_set_raw_);
-      clustering.train(n_source_records_,
-                       transformed_embeddings_set_raw_,
-                       index);
+      if (options_->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+        options_->random_rotation_matrix.apply_noalloc(
+          n_source_records_,
+          embeddings_set_raw_,
+          transformed_embeddings_set_raw_);
+        clustering.train(n_source_records_,
+                         transformed_embeddings_set_raw_,
+                         index);
+#endif
+      } else {
+        clustering.train(n_source_records_, embeddings_set_raw_, index);
+      }
       size_t n_centroids = clustering.k;
       options_->centroid_index_to_record_id.reserve(n_centroids);
       for (size_t i = 0; i < n_centroids; ++i) {
@@ -517,11 +576,19 @@ namespace {
         options_->centroid_index_to_record_id.push_back(id);
       }
       options_->centroids = std::move(clustering.centroids);
+#ifdef GRN_FAISS_HAVE_MAYBE_OWNED_VECTOR
       options_->centroid_searcher.codes =
         faiss::MaybeOwnedVector<uint8_t>::create_view(
           options_->centroids.data(),
           sizeof(float) * options_->centroids.size(),
           nullptr);
+#else
+      options_->centroid_searcher.codes.resize(sizeof(float) *
+                                               options_->centroids.size());
+      memcpy(options_->centroid_searcher.codes.data(),
+             options_->centroids.data(),
+             options_->centroid_searcher.codes.size());
+#endif
       options_->centroid_searcher.ntotal = n_centroids;
 
       return true;
@@ -533,8 +600,14 @@ namespace {
       grn_obj tokens;
       GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, grn_obj_id(ctx_, lexicon_));
       grn_obj code;
-      GRN_SHORT_BINARY_INIT(&code, 0);
-      grn_bulk_space(ctx_, &code, options_->rabitq.code_size);
+      if (options_->quantizer == Quantizer::NONE) {
+        GRN_SHORT_BINARY_INIT(&code, GRN_OBJ_DO_SHALLOW_COPY);
+      } else if (options_->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+        GRN_SHORT_BINARY_INIT(&code, 0);
+        grn_bulk_space(ctx_, &code, options_->rabitq.code_size);
+#endif
+      }
       size_t i = 0;
       GRN_TABLE_EACH_BEGIN_FLAGS(ctx_,
                                  source_table_,
@@ -546,18 +619,32 @@ namespace {
         grn_tokenizer_build_data_start_section(ctx_, data_, 1);
 
         GRN_BULK_REWIND(&tokens);
-        const float *transformed_embeddings =
-          transformed_embeddings_set_raw_ + (options_->n_dimensions * i);
+        const float *target_embeddings = nullptr;
+        if (options_->quantizer == Quantizer::RABITQ) {
+          target_embeddings =
+            transformed_embeddings_set_raw_ + (options_->n_dimensions * i);
+        } else {
+          target_embeddings =
+            embeddings_set_raw_ + (options_->n_dimensions * i);
+        }
         float distances[1];
         faiss::idx_t indexes[1];
-        index.search(1, transformed_embeddings, 1, distances, indexes);
-        const float *centroid =
-          options_->centroids.data() + (options_->n_dimensions * indexes[0]);
-        options_->rabitq.compute_codes_core(
-          transformed_embeddings,
-          reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&code)),
-          1,
-          centroid);
+        index.search(1, target_embeddings, 1, distances, indexes);
+        if (options_->quantizer == Quantizer::NONE) {
+          GRN_BINARY_SET_REF(&code,
+                             target_embeddings,
+                             sizeof(float) * options_->n_dimensions);
+        } else if (options_->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+          const float *centroid =
+            options_->centroids.data() + (options_->n_dimensions * indexes[0]);
+          options_->rabitq.compute_codes_core(
+            target_embeddings,
+            reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&code)),
+            1,
+            centroid);
+#endif
+        }
         grn_obj_set_value(ctx_, options_->code_column, id, &code, GRN_OBJ_SET);
         grn_id centroid_id = options_->centroid_index_to_record_id[indexes[0]];
         grn_uvector_add_element_record(ctx_, &tokens, centroid_id, 0.0);
@@ -652,20 +739,28 @@ namespace {
 
     auto embeddings =
       reinterpret_cast<const float *>(GRN_BULK_HEAD(&(tokenizer->embeddings)));
-    grn_bulk_space(ctx,
-                   &(tokenizer->transformed_embeddings),
-                   GRN_BULK_VSIZE(&(tokenizer->embeddings)));
-    auto transformed_embeddings = reinterpret_cast<float *>(
-      GRN_BULK_HEAD(&(tokenizer->transformed_embeddings)));
-    tokenizer->options->random_rotation_matrix.apply_noalloc(
-      1,
-      embeddings,
-      transformed_embeddings);
+    const float *target_embeddings = nullptr;
+    if (tokenizer->options->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+      grn_bulk_space(ctx,
+                     &(tokenizer->transformed_embeddings),
+                     GRN_BULK_VSIZE(&(tokenizer->embeddings)));
+      auto transformed_embeddings = reinterpret_cast<float *>(
+        GRN_BULK_HEAD(&(tokenizer->transformed_embeddings)));
+      tokenizer->options->random_rotation_matrix.apply_noalloc(
+        1,
+        embeddings,
+        transformed_embeddings);
+      target_embeddings = transformed_embeddings;
+#endif
+    } else {
+      target_embeddings = embeddings;
+    }
     size_t k = 1;
     float distances[1];
     faiss::idx_t indexes[1];
     tokenizer->options->centroid_searcher.search(1,
-                                                 transformed_embeddings,
+                                                 target_embeddings,
                                                  k,
                                                  distances,
                                                  indexes);
@@ -678,14 +773,22 @@ namespace {
     grn_token_set_domain(ctx, token, GRN_DB_SHORT_BINARY);
     grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
     if (grn_tokenizer_query_get_mode(ctx, query) == GRN_TOKENIZE_ADD) {
-      grn_bulk_space(ctx,
-                     &(tokenizer->code),
-                     tokenizer->options->rabitq.code_size);
-      tokenizer->options->rabitq.compute_codes_core(
-        transformed_embeddings,
-        reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&(tokenizer->code))),
-        1,
-        centroid);
+      if (tokenizer->options->quantizer == Quantizer::NONE) {
+        GRN_BINARY_SET_REF(&(tokenizer->code),
+                           target_embeddings,
+                           sizeof(float) * tokenizer->options->n_dimensions);
+      } else if (tokenizer->options->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+        grn_bulk_space(ctx,
+                       &(tokenizer->code),
+                       tokenizer->options->rabitq.code_size);
+        tokenizer->options->rabitq.compute_codes_core(
+          target_embeddings,
+          reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&(tokenizer->code))),
+          1,
+          centroid);
+#endif
+      }
       grn_id source_id = grn_tokenizer_query_get_source_id(ctx, query);
       grn_obj_set_value(ctx,
                         tokenizer->options->code_column,
@@ -749,13 +852,20 @@ namespace {
       reinterpret_cast<const float *>(GRN_BULK_HEAD(&embeddings));
     grn_obj transformed_embeddings;
     GRN_FLOAT32_INIT(&transformed_embeddings, GRN_OBJ_VECTOR);
-    grn_bulk_space(ctx, &transformed_embeddings, GRN_BULK_VSIZE(&embeddings));
-    auto raw_transformed_embeddings =
-      reinterpret_cast<float *>(GRN_BULK_HEAD(&transformed_embeddings));
-    options->random_rotation_matrix.apply_noalloc(1,
-                                                  raw_embeddings,
-                                                  raw_transformed_embeddings);
-    GRN_OBJ_FIN(ctx, &embeddings);
+    const float *raw_target_embeddings = nullptr;
+    if (options->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+      grn_bulk_space(ctx, &transformed_embeddings, GRN_BULK_VSIZE(&embeddings));
+      auto raw_transformed_embeddings =
+        reinterpret_cast<float *>(GRN_BULK_HEAD(&transformed_embeddings));
+      options->random_rotation_matrix.apply_noalloc(1,
+                                                    raw_embeddings,
+                                                    raw_transformed_embeddings);
+      raw_target_embeddings = raw_transformed_embeddings;
+#endif
+    } else {
+      raw_target_embeddings = raw_embeddings;
+    }
 
     auto n_probes = std::min(
       static_cast<uint32_t>(10),
@@ -763,7 +873,7 @@ namespace {
     std::vector<float> centroid_distances(n_probes);
     std::vector<faiss::idx_t> centroid_indexes(n_probes, -1);
     options->centroid_searcher.search(1,
-                                      raw_transformed_embeddings,
+                                      raw_target_embeddings,
                                       n_probes,
                                       centroid_distances.data(),
                                       centroid_indexes.data());
@@ -788,13 +898,35 @@ namespace {
         continue;
       }
 
-      const float *centroid =
-        options->centroids.data() + (options->n_dimensions * centroid_index);
-      uint8_t n_scalar_quantization_bits = 8;
-      auto distance_computer =
-        options->rabitq.get_distance_computer(n_scalar_quantization_bits,
-                                              centroid);
-      distance_computer->set_query(raw_transformed_embeddings);
+      // TODO: Bulk distance computation for performance.
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
+      faiss::FlatCodesDistanceComputer *distance_computer = nullptr;
+      if (options->quantizer == Quantizer::NONE) {
+        distance_computer =
+          options->centroid_searcher.get_FlatCodesDistanceComputer();
+      } else if (options->quantizer == Quantizer::RABITQ) {
+#  ifdef GRN_FAISS_HAVE_RABITQ
+        uint8_t n_scalar_quantization_bits = 8;
+        const float *centroid =
+          options->centroids.data() + (options->n_dimensions * centroid_index);
+        distance_computer =
+          options->rabitq.get_distance_computer(n_scalar_quantization_bits,
+                                                centroid);
+#  endif
+      }
+      distance_computer->set_query(raw_target_embeddings);
+#else
+      grn_obj target_embeddings;
+      GRN_FLOAT32_INIT(&target_embeddings,
+                       GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_SET_REF(&target_embeddings,
+                       raw_target_embeddings,
+                       sizeof(float) * options->n_dimensions);
+      grn_obj candidate_embeddings;
+      GRN_FLOAT32_INIT(&candidate_embeddings,
+                       GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+#endif
+
       grn_obj code;
       GRN_VOID_INIT(&code);
       while (true) {
@@ -808,15 +940,30 @@ namespace {
 
         GRN_BULK_REWIND(&code);
         grn_obj_get_value(ctx, options->code_column, source_record_id, &code);
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
         auto distance = distance_computer->distance_to_code(
           reinterpret_cast<const uint8_t *>(GRN_BULK_HEAD(&code)));
+#else
+        GRN_TEXT_SET_REF(&candidate_embeddings,
+                         GRN_BULK_HEAD(&code),
+                         GRN_BULK_VSIZE(&code));
+        auto distance = 1 - grn_distance_inner_product(ctx,
+                                                       &target_embeddings,
+                                                       &candidate_embeddings);
+#endif
         candidates.emplace_back(source_record_id, distance);
       }
       GRN_OBJ_FIN(ctx, &code);
-      grn_ii_cursor_close(ctx, cursor);
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
       delete distance_computer;
+#else
+      GRN_OBJ_FIN(ctx, &target_embeddings);
+      GRN_OBJ_FIN(ctx, &candidate_embeddings);
+#endif
+      grn_ii_cursor_close(ctx, cursor);
     }
 
+    GRN_OBJ_FIN(ctx, &embeddings);
     GRN_OBJ_FIN(ctx, &transformed_embeddings);
 
     auto k = std::min(static_cast<size_t>(GRN_UINT32_VALUE(args[3])),
@@ -826,7 +973,7 @@ namespace {
       candidates.begin() + k,
       candidates.end(),
       [](const std::pair<grn_id, float> &a, const std::pair<grn_id, float> &b) {
-        return a.second > b.second;
+        return b.second > a.second;
       });
 
     auto posting = grn_posting_open(ctx);

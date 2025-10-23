@@ -179,6 +179,8 @@ jobs:
       - name: Install Groonga build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
+          # Use libfaiss-dev instead of libblas-dev, liblapack-dev and
+          # libmop-dev once Ubuntu 26.04 is released.
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             gdb \
             gettext \
@@ -188,9 +190,9 @@ jobs:
             liblapack-dev \
             libluajit-5.1-dev \
             liblz4-dev \
-            libomp-$(clang --version | grep -o '[0-9]*' | head -1)-dev \
             libmecab-dev \
             libmsgpack-dev \
+            libomp-$(clang --version | grep -o '[0-9]*' | head -1)-dev \
             libsimdjson-dev \
             libstemmer-dev \
             libxxhash-dev \
