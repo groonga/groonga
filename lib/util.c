@@ -35,6 +35,8 @@
 #ifdef WIN32
 #  include <io.h>
 #  include <share.h>
+#else /* WIN32 */
+#  include <sys/file.h>
 #endif /* WIN32 */
 
 grn_obj *
@@ -1789,6 +1791,19 @@ grn_path_copy(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
+#ifndef _WIN32
+  if (flock(destination_fd, LOCK_EX) == -1) {
+    SERR("%s failed to lock destination file: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    grn_close(source_fd);
+    grn_close(destination_fd);
+    grn_unlink(destination_path);
+    GRN_API_RETURN(ctx->rc);
+  }
+#endif
+
   char buffer[4096];
   while (true) {
     ssize_t read_bytes = grn_read(source_fd, buffer, sizeof(buffer));
@@ -1830,6 +1845,10 @@ grn_path_copy(grn_ctx *ctx,
       GRN_API_RETURN(ctx->rc);
     }
   }
+
+#ifndef _WIN32
+  flock(destination_fd, LOCK_UN);
+#endif
 
   grn_close(source_fd);
   grn_close(destination_fd);
