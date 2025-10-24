@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1685,6 +1685,21 @@ grn_expr_append_const_int32(
   if ((res = grn_expr_alloc_const(ctx, expr))) {
     GRN_INT32_INIT(res, 0);
     GRN_INT32_SET(ctx, res, value);
+    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
+  }
+  grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
+  GRN_API_RETURN(res);
+}
+
+grn_obj *
+grn_expr_append_const_uint32(
+  grn_ctx *ctx, grn_obj *expr, uint32_t value, grn_operator op, int nargs)
+{
+  grn_obj *res = NULL;
+  GRN_API_ENTER;
+  if ((res = grn_expr_alloc_const(ctx, expr))) {
+    GRN_UINT32_INIT(res, 0);
+    GRN_UINT32_SET(ctx, res, value);
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
   }
   grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
