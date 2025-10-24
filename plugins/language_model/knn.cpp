@@ -821,12 +821,24 @@ namespace {
   {
     const char *tag = "language_model_knn():";
 
-    if (n_args != 4) {
+    if (!(n_args == 3 || n_args == 4)) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s wrong number of arguments (%d for 4)",
+                       "%s wrong number of arguments (%d for 3..4)",
                        tag,
                        n_args);
+      return ctx->rc;
+    }
+
+    grn_obj *query = args[2];
+    uint32_t n_probes = 10;
+    uint32_t k = 10;
+    if (n_args == 4 && args[3]->header.type == GRN_TABLE_HASH_KEY) {
+      // TODO: Parse options by grn_proc_options_parse()
+    }
+
+    if (GRN_TEXT_LEN(query) == 0) {
+      grn_ii_resolve_sel_and(ctx, reinterpret_cast<grn_hash *>(res), op);
       return ctx->rc;
     }
 
@@ -845,8 +857,8 @@ namespace {
     GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
     grn_language_model_inferencer_vectorize(ctx,
                                             options->inferencer,
-                                            GRN_TEXT_VALUE(args[2]),
-                                            GRN_TEXT_LEN(args[2]),
+                                            GRN_TEXT_VALUE(query),
+                                            GRN_TEXT_LEN(query),
                                             &embeddings);
     auto raw_embeddings =
       reinterpret_cast<const float *>(GRN_BULK_HEAD(&embeddings));
@@ -867,9 +879,9 @@ namespace {
       raw_target_embeddings = raw_embeddings;
     }
 
-    auto n_probes = std::min(
-      static_cast<uint32_t>(10),
-      static_cast<uint32_t>(options->centroids.size() / options->n_dimensions));
+    n_probes =
+      std::min(n_probes,
+               static_cast<uint32_t>(options->centroid_searcher.ntotal));
     std::vector<float> centroid_distances(n_probes);
     std::vector<faiss::idx_t> centroid_indexes(n_probes, -1);
     options->centroid_searcher.search(1,
@@ -966,8 +978,7 @@ namespace {
     GRN_OBJ_FIN(ctx, &embeddings);
     GRN_OBJ_FIN(ctx, &transformed_embeddings);
 
-    auto k = std::min(static_cast<size_t>(GRN_UINT32_VALUE(args[3])),
-                      candidates.size());
+    k = std::min(k, static_cast<uint32_t>(candidates.size()));
     std::partial_sort(
       candidates.begin(),
       candidates.begin() + k,
