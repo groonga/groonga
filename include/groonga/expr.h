@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -84,6 +84,9 @@ grn_expr_append_const_int(
 GRN_API grn_obj *
 grn_expr_append_const_int32(
   grn_ctx *ctx, grn_obj *expr, int32_t value, grn_operator op, int nargs);
+GRN_API grn_obj *
+grn_expr_append_const_uint32(
+  grn_ctx *ctx, grn_obj *expr, uint32_t value, grn_operator op, int nargs);
 GRN_API grn_obj *
 grn_expr_append_const_bool(
   grn_ctx *ctx, grn_obj *expr, bool value, grn_operator op, int nargs);
