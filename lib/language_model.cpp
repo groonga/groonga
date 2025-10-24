@@ -478,11 +478,11 @@ namespace grn {
       grn::UniqueObj smart_embeddings(ctx, &embeddings);
 
       auto flush_batch = [&]() {
-        const auto n_targets = target_ids.size();
-        if (!vectorize_batch(ctx, batch, n_targets)) {
+        const auto n_sequences = target_ids.size();
+        if (!vectorize_batch(ctx, batch, n_sequences)) {
           return false;
         }
-        for (size_t i = 0; i < n_targets; ++i) {
+        for (size_t i = 0; i < n_sequences; ++i) {
           const auto sequence_id = static_cast<llama_seq_id>(i);
           GRN_BULK_REWIND(&embeddings);
           if (!store_embeddings(ctx, batch, sequence_id, &embeddings)) {
@@ -497,6 +497,24 @@ namespace grn {
       };
 
       std::vector<llama_token> tokens;
+
+      auto batch_is_full = [&]() {
+        auto n_tokens = static_cast<uint32_t>(tokens.size());
+        auto next_n_tokens = batch.n_tokens + n_tokens;
+        if (next_n_tokens > max_n_tokens_) {
+          return true;
+        }
+
+        auto n_sequences = static_cast<uint32_t>(target_ids.size());
+        if (n_sequences == 0) {
+          return false;
+        }
+
+        auto actual_next_n_tokens =
+          normalize_n_tokens(next_n_tokens, n_sequences);
+        return actual_next_n_tokens < max_n_tokens_;
+      };
+
       grn_id id;
       while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
         uint32_t input_size = 0;
@@ -506,8 +524,7 @@ namespace grn {
         if (n_tokens == 0) {
           continue;
         }
-        const auto batch_is_full = (batch.n_tokens + n_tokens > max_n_tokens_);
-        if (batch_is_full) {
+        if (batch_is_full()) {
           if (batch.n_tokens > 0) {
             if (!flush_batch()) {
               return;
@@ -646,6 +663,16 @@ namespace grn {
       batch.n_tokens += n_tokens;
     }
 
+    // n_tokens must be multiple of n_sequences.
+    uint32_t
+    normalize_n_tokens(uint32_t n_tokens, uint32_t n_sequences)
+    {
+      if (n_tokens < GGML_KQ_MASK_PAD) {
+        n_tokens = GGML_KQ_MASK_PAD;
+      }
+      return ((n_tokens + (n_sequences - 1)) / n_sequences) * n_sequences;
+    }
+
     bool
     vectorize_batch(grn_ctx *ctx, llama_batch &batch, uint32_t max_n_sequences)
     {
@@ -662,8 +689,8 @@ namespace grn {
         auto params = llama_context_default_params();
         params.n_ctx = llama_model_n_ctx_train(llama_model_) * max_n_sequences;
         params.embeddings = true;
-        params.n_batch = max_n_tokens_;
-        params.n_ubatch = max_n_tokens_;
+        params.n_batch = normalize_n_tokens(batch.n_tokens, max_n_sequences);
+        params.n_ubatch = params.n_batch;
         params.n_seq_max = max_n_sequences;
         params.pooling_type = pooling_type_;
         llama_ctx_ = llama_init_from_model(llama_model_, params);
