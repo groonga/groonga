@@ -44,8 +44,8 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
   code_name=$(lsb_release --codename --short)
   if [ "${distribution}-${code_name}" = "ubuntu-noble" ]; then
     sudo apt-get install -qq -y -V \
-      blas-devel \
-      lapack-devel
+      libblas-dev \
+      liblapack-dev
   else
     sudo apt-get install -qq -y -V libfaiss-dev
   fi
