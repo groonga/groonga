@@ -8088,6 +8088,34 @@ grn_obj_get_info(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_INFO_SUPPORT_LLAMA_CPP:
+      if (!valuebuf &&
+          !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[support-llama-cpp] failed to allocate value buffer",
+            tag);
+        goto exit;
+      }
+#ifdef GRN_WITH_LLAMA_CPP
+      GRN_BOOL_PUT(ctx, valuebuf, true);
+#else
+      GRN_BOOL_PUT(ctx, valuebuf, false);
+#endif
+      break;
+    case GRN_INFO_SUPPORT_FAISS:
+      if (!valuebuf &&
+          !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[support-faiss] failed to allocate value buffer",
+            tag);
+        goto exit;
+      }
+#ifdef GRN_WITH_FAISS
+      GRN_BOOL_PUT(ctx, valuebuf, true);
+#else
+      GRN_BOOL_PUT(ctx, valuebuf, false);
+#endif
+      break;
     default:
       /* todo */
       break;
