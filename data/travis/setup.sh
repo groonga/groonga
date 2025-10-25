@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -36,9 +36,19 @@ if [ "$GROONGA_MAIN" = "yes" ]; then
        libmecab-dev \
        libmsgpack-dev \
        libstemmer-dev \
+       lsb-release \
        mecab-naist-jdic \
        ninja-build \
        pkg-config
+  distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
+  code_name=$(lsb_release --codename --short)
+  if [ "${distribution}-${code_name}" = "ubuntu-noble" ]; then
+    sudo apt-get install -qq -y -V \
+      blas-devel \
+      lapack-devel
+  else
+    sudo apt-get install -qq -y -V libfaiss-dev
+  fi
   git clone --recursive --depth 1 --branch main https://github.com/groonga/groonga.git
   touch groonga/lib/grn_ecmascript.c
   cmake \
