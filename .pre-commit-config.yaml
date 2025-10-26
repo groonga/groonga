@@ -22,6 +22,7 @@ repos:
         files: >-
           (
           ?benchmark/bench-distance\.c|
+          ?include/groonga/accessor\.h|
           ?include/groonga/applier\.h|
           ?include/groonga/bulk\.hpp|
           ?include/groonga/cache\.h|
