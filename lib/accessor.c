@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2018  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,27 @@ grn_accessor_copy(grn_ctx *ctx, grn_obj *accessor)
     }
   }
   return (grn_obj *)new_accessor;
+}
+
+grn_accessor_action
+grn_accessor_get_action(grn_ctx *ctx, grn_obj *accessor)
+{
+  grn_accessor *a = (grn_accessor *)accessor;
+  return a->action;
+}
+
+grn_obj *
+grn_accessor_get_obj(grn_ctx *ctx, grn_obj *accessor)
+{
+  grn_accessor *a = (grn_accessor *)accessor;
+  return a->obj;
+}
+
+grn_obj *
+grn_accessor_get_next(grn_ctx *ctx, grn_obj *accessor)
+{
+  grn_accessor *a = (grn_accessor *)accessor;
+  return (grn_obj *)(a->next);
 }
 
 static grn_rc
