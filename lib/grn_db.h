@@ -530,24 +530,6 @@ struct _grn_accessor {
   uint32_t reference_count;
 };
 
-typedef enum {
-  GRN_ACCESSOR_VOID = 0,
-  GRN_ACCESSOR_GET_ID,
-  GRN_ACCESSOR_GET_KEY,
-  GRN_ACCESSOR_GET_VALUE,
-  GRN_ACCESSOR_GET_SCORE,
-  GRN_ACCESSOR_GET_NSUBRECS,
-  GRN_ACCESSOR_GET_MAX,
-  GRN_ACCESSOR_GET_MIN,
-  GRN_ACCESSOR_GET_SUM,
-  GRN_ACCESSOR_GET_AVG,
-  GRN_ACCESSOR_GET_MEAN,
-  GRN_ACCESSOR_GET_COLUMN_VALUE,
-  GRN_ACCESSOR_GET_DB_OBJ,
-  GRN_ACCESSOR_LOOKUP,
-  GRN_ACCESSOR_FUNCALL
-} grn_accessor_action;
-
 GRN_API const char *
 grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
 void
