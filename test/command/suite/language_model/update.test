@@ -26,6 +26,5 @@ load --table Data
 ]
 
 select Data \
-  --filter 'language_model_knn(text, "pet", 10)' \
-  --sort_keys -_score \
+  --filter 'language_model_knn(text, "pet")' \
   --output_columns text

@@ -23,7 +23,7 @@ load --table Data
 {"text": "I am a dog."}
 ]
 [[0,0.0,0.0],1]
-select Data   --filter 'language_model_knn(text, "pet", 10)'   --sort_keys -_score   --output_columns text
+select Data   --filter 'language_model_knn(text, "pet")'   --output_columns text
 [
   [
     0,
