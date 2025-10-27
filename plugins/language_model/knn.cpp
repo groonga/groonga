@@ -984,7 +984,7 @@ namespace {
       candidates.begin() + k,
       candidates.end(),
       [](const std::pair<grn_id, float> &a, const std::pair<grn_id, float> &b) {
-        return b.second > a.second;
+        return a.second > b.second;
       });
 
     auto posting = grn_posting_open(ctx);

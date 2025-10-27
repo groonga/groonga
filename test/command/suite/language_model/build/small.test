@@ -22,11 +22,9 @@ table_create RaBitQ TABLE_HASH_KEY ShortBinary \
 column_create RaBitQ data_text COLUMN_INDEX Data text
 
 select Data \
-  --filter 'language_model_knn(text, "male child", 10)' \
-  --sort_keys -_score \
+  --filter 'language_model_knn(text, "male child")' \
   --output_columns text
 
 select Data \
-  --filter 'language_model_knn(text, "fruit", 10)' \
-  --sort_keys -_score \
+  --filter 'language_model_knn(text, "fruit")' \
   --output_columns text

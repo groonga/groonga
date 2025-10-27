@@ -19,7 +19,7 @@ column_create RaBitQ data_text COLUMN_INDEX Data text
 [[0,0.0,0.0],true]
 #|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
 #|w| llama_init_from_model: model default pooling_type is [1], but [-1] was specified
-select Data   --filter 'language_model_knn(text, "male child", 10)'   --sort_keys -_score   --output_columns text
+select Data   --filter 'language_model_knn(text, "male child")'   --output_columns text
 [
   [
     0,
@@ -49,7 +49,7 @@ select Data   --filter 'language_model_knn(text, "male child", 10)'   --sort_key
     ]
   ]
 ]
-select Data   --filter 'language_model_knn(text, "fruit", 10)'   --sort_keys -_score   --output_columns text
+select Data   --filter 'language_model_knn(text, "fruit")'   --output_columns text
 [
   [
     0,
