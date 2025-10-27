@@ -124,7 +124,7 @@ jobs:
           done
 
       # Artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: release-source
           path: |
@@ -252,7 +252,7 @@ jobs:
       - name: Create assets
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: packages-${{ matrix.id }}
           path: ${{ matrix.id }}.tar.gz
@@ -311,7 +311,7 @@ jobs:
             # debian-bookworm/debian/...
             tar czf ${os}.tar.gz -C $(dirname ${release_os_path}) ${os}
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: release-linux-packages
           path: "*.tar.gz"

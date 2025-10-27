@@ -63,7 +63,7 @@ jobs:
           mv /tmp/groonga.org /tmp/document-${version}
           tar -czf document-${version}.tar.gz -C /tmp/ document-${version}
       # Artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: release-document
           path: document-*.tar.gz
