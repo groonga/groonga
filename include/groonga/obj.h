@@ -190,6 +190,20 @@ GRN_API bool
 grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Return whether `obj` is a function that has a sorter callback
+ *        or not.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ *
+ * \return `true` if `obj` is a function that has a sorter callback,
+ *         `false` otherwise.
+ *
+ * Since: 15.1.8
+ */
+GRN_API bool
+grn_obj_is_sorter_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool

@@ -438,6 +438,7 @@ struct _grn_proc {
       grn_operator selector_op;
       bool is_stable;
       grn_applier_func *applier;
+      grn_sorter_func *sorter;
     } function;
     struct {
       grn_command_run_func *run;

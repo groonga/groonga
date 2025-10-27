@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "grn_output_columns.h"
 #include "grn_pat.h"
 #include "grn_sort.h"
+#include "grn_sorter.h"
 #include "grn_util.h"
 
 #include <stdio.h>
@@ -1067,24 +1068,48 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     }
     goto exit;
   }
-  if (n_keys == 1 && !GRN_ACCESSORP(keys->key)) {
-    grn_obj *index = 0;
-    int n_indexes = grn_column_index(ctx,
-                                     keys->key,
-                                     GRN_OP_LESS,
-                                     &index,
-                                     1,
-                                     NULL);
-    if (n_indexes > 0) {
-      n_sorted_records = grn_table_sort_index(ctx,
-                                              table,
-                                              index,
-                                              offset,
-                                              limit,
-                                              result,
-                                              keys,
-                                              n_keys);
-      grn_obj_unref(ctx, index);
+  if (n_keys == 1) {
+    grn_obj *first_key = keys[0].key;
+    grn_sorter_data data;
+    bool have_sorter = grn_sorter_data_init(ctx,
+                                            &data,
+                                            table,
+                                            (size_t)offset,
+                                            (size_t)limit,
+                                            keys,
+                                            n_keys,
+                                            result);
+    bool processed = false;
+    if (have_sorter) {
+      if (grn_sorter_data_run(ctx, &data) == GRN_SUCCESS) {
+        n_sorted_records = grn_table_size(ctx, result);
+      } else {
+        n_sorted_records = 0;
+      }
+      processed = true;
+    } else if (!GRN_ACCESSORP(first_key)) {
+      grn_obj *index = 0;
+      int n_indexes = grn_column_index(ctx,
+                                       first_key,
+                                       GRN_OP_LESS,
+                                       &index,
+                                       1,
+                                       NULL);
+      if (n_indexes > 0) {
+        n_sorted_records = grn_table_sort_index(ctx,
+                                                table,
+                                                index,
+                                                offset,
+                                                limit,
+                                                result,
+                                                keys,
+                                                n_keys);
+        grn_obj_unref(ctx, index);
+        processed = true;
+      }
+    }
+    grn_sorter_data_fin(ctx, &data);
+    if (processed) {
       goto exit;
     }
   }

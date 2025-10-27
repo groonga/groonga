@@ -89,6 +89,7 @@ libgroonga_c_sources =				\
 	grn_slow_log.h				\
 	grn_snip.h				\
 	grn_sort.h				\
+	grn_sorter.h				\
 	grn_store.h				\
 	grn_str.h				\
 	grn_string.h				\
@@ -158,6 +159,7 @@ libgroonga_c_sources =				\
 	slow_log.c				\
 	snip.c					\
 	sort.c					\
+	sorter.c				\
 	store.c					\
 	str.c					\
 	string.c				\

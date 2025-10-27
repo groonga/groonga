@@ -340,6 +340,17 @@ grn_proc_set_applier(grn_ctx *ctx, grn_obj *proc, grn_applier_func applier)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_proc_set_sorter(grn_ctx *ctx, grn_obj *proc, grn_sorter_func sorter)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  proc_->callbacks.function.sorter = sorter;
+  return GRN_SUCCESS;
+}
+
 /* grn_expr */
 
 grn_obj *
