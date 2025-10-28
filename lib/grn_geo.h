@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -175,6 +176,8 @@ grn_geo_distance(grn_ctx *ctx,
                  grn_obj *point1,
                  grn_obj *point2,
                  grn_geo_approximate_type type);
+grn_rc
+grn_geo_distance_sorter(grn_ctx *ctx, grn_sorter_data *data);
 GRN_API double
 grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
 GRN_API double

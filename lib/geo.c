@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2991,6 +2991,63 @@ grn_geo_distance(grn_ctx *ctx,
     break;
   }
   return d;
+}
+
+grn_rc
+grn_geo_distance_sorter(grn_ctx *ctx, grn_sorter_data *data)
+{
+  const char *tag = "geo_distance():";
+
+  size_t n_args;
+  grn_obj **args = grn_sorter_data_get_args(ctx, data, &n_args);
+  if (!(n_args == 2)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s wrong number of arguments (%u for 2)",
+        tag,
+        (uint32_t)n_args);
+    return ctx->rc;
+  }
+
+  grn_obj *table = grn_sorter_data_get_table(ctx, data);
+  size_t offset = grn_sorter_data_get_offset(ctx, data);
+  size_t limit = grn_sorter_data_get_limit(ctx, data);
+  grn_obj *result = grn_sorter_data_get_result(ctx, data);
+
+  grn_obj *column = args[0];
+  grn_obj *point = args[1];
+
+  grn_id column_range = grn_obj_get_range(ctx, column);
+  if (!(column_range == GRN_DB_TOKYO_GEO_POINT ||
+        column_range == GRN_DB_WGS84_GEO_POINT)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s 1st argument's type must be TokyoGeoPoint or WGS84GeoPoint: %s(%u)",
+        tag,
+        grn_type_id_to_string_builtin(ctx, column_range),
+        column_range);
+    return ctx->rc;
+  }
+
+  grn_obj casted_point;
+  GRN_VALUE_FIX_SIZE_INIT(&casted_point, 0, column_range);
+  grn_rc rc = grn_obj_cast(ctx, point, &casted_point, false);
+  if (rc != GRN_SUCCESS) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, point);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s 2nd argument must's %s: <%.*s>",
+        tag,
+        grn_type_id_to_string_builtin(ctx, column_range),
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_OBJ_FIN(ctx, &casted_point);
+    return ctx->rc;
+  }
+
+  grn_geo_table_sort(ctx, table, offset, limit, result, column, &casted_point);
+  GRN_OBJ_FIN(ctx, &casted_point);
+  return ctx->rc;
 }
 
 double

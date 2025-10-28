@@ -1054,20 +1054,6 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     ERR(rc, "%s grn_output_range_normalize failed", tag);
     goto exit;
   }
-  if (keys->flags & GRN_TABLE_SORT_GEO) {
-    if (n_keys == 2) {
-      n_sorted_records = grn_geo_table_sort(ctx,
-                                            table,
-                                            offset,
-                                            limit,
-                                            result,
-                                            keys[0].key,
-                                            keys[1].key);
-    } else {
-      n_sorted_records = 0;
-    }
-    goto exit;
-  }
   if (n_keys == 1) {
     grn_obj *first_key = keys[0].key;
     grn_sorter_data data;
@@ -1129,72 +1115,6 @@ exit :
   GRN_API_RETURN(n_sorted_records);
 }
 
-static grn_table_sort_key *
-grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_size,
-                                grn_obj *table, unsigned int *nkeys)
-{
-  const char **tokbuf;
-  const char *p = str, *pe = str + str_size;
-  grn_table_sort_key *keys = NULL, *k = NULL;
-  while ((*p++ != '(')) { if (p == pe) { return NULL; } }
-  str = p;
-  while ((*p != ')')) { if (++p == pe) { return NULL; } }
-  str_size = (unsigned int)(p - str);
-  p = str;
-  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    grn_id domain = GRN_ID_NIL;
-    int i;
-    int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
-    if ((keys = GRN_MALLOCN(grn_table_sort_key, (size_t)n))) {
-      k = keys;
-      for (i = 0; i < n; i++) {
-        const char *r = tokbuf[i];
-        while (p < r && (' ' == *p || ',' == *p)) { p++; }
-        if (p < r) {
-          k->flags = GRN_TABLE_SORT_ASC;
-          k->offset = 0;
-          if (*p == '+') {
-            p++;
-          } else if (*p == '-') {
-            k->flags = GRN_TABLE_SORT_DESC;
-            p++;
-          }
-          if (k == keys) {
-            if (!(k->key = grn_obj_column(ctx, table, p, (uint32_t)(r - p)))) {
-              GRN_LOG(ctx, GRN_WARN,
-                      "[table-sort-key][geo] "
-                      "ignore invalid sort key: <%.*s>(<%.*s>)",
-                      (int)(tokbuf[i] - p), p, str_size, str);
-              continue;
-            }
-            domain = grn_obj_get_range(ctx, k->key);
-          } else {
-            grn_obj buf;
-            GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
-            GRN_TEXT_SET(ctx, &buf, p + 1, r - p - 2); /* should be quoted */
-            k->key = grn_obj_open(ctx, GRN_BULK, 0, domain);
-            grn_obj_cast(ctx, &buf, k->key, false);
-            GRN_OBJ_FIN(ctx, &buf);
-          }
-          k->flags |= GRN_TABLE_SORT_GEO;
-          k++;
-        }
-        p = r;
-      }
-    }
-    /* The cast is just for suppressing wrong Visual C++ warning. */
-    GRN_FREE((void *)tokbuf);
-  }
-  if (!ctx->rc && k - keys > 0) {
-    *nkeys = (unsigned int)(k - keys);
-  } else {
-    grn_table_sort_key_close(ctx, keys, (uint32_t)(k - keys));
-    *nkeys = 0;
-    keys = NULL;
-  }
-  return keys;
-}
-
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size,
                             grn_obj *table, uint32_t *nkeys)
@@ -1207,9 +1127,6 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
     return NULL;
   }
 
-  if ((keys = grn_table_sort_key_from_str_geo(ctx, str, str_size, table, nkeys))) {
-    return keys;
-  }
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i;
     int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
@@ -1321,7 +1238,6 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
     GRN_API_RETURN(keys);
   }
 
-  /* printf("\nparse: <%.*s>\n", raw_keys_length, raw_keys); */
   grn_obj offsets;
   GRN_UINT32_INIT(&offsets, GRN_OBJ_VECTOR);
   grn_obj *keys_expression = NULL;
@@ -1348,50 +1264,6 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
   }
 
   size_t n_offsets = GRN_UINT32_VECTOR_SIZE(&offsets) / 2;
-  if (n_offsets == 1) {
-    grn_expr *expr = (grn_expr *)keys_expression;
-    uint32_t code_start_offset = GRN_UINT32_VALUE_AT(&offsets, 0);
-    uint32_t code_end_offset = GRN_UINT32_VALUE_AT(&offsets, 1);
-    size_t n_codes = code_end_offset - code_start_offset;
-    grn_table_sort_flags flags = GRN_TABLE_SORT_ASC;
-    if (n_codes == 5 &&
-        expr->codes[code_start_offset].op == GRN_OP_PUSH &&
-        expr->codes[code_start_offset].modify == 3 &&
-        expr->codes[code_end_offset - 1].op == GRN_OP_MINUS) {
-      flags = GRN_TABLE_SORT_DESC;
-      n_codes--;
-      code_end_offset--;
-    }
-    if (n_codes == 4 &&
-        expr->codes[code_start_offset].op == GRN_OP_PUSH &&
-        expr->codes[code_start_offset].modify == 3 &&
-        expr->codes[code_end_offset - 1].op == GRN_OP_CALL &&
-        expr->codes[code_start_offset].value ==
-        grn_ctx_get(ctx, "geo_distance", -1)) {
-      keys = GRN_MALLOCN(grn_table_sort_key, 2);
-      if (!keys) {
-        goto exit;
-      }
-      keys[0].flags = flags | GRN_TABLE_SORT_GEO;
-      keys[0].key = expr->codes[code_start_offset + 1].value;
-      if (grn_obj_is_accessor(ctx, keys[0].key)) {
-        keys[0].key = grn_accessor_copy(ctx, keys[0].key);
-      } else {
-        grn_obj_refer(ctx, keys[0].key);
-      }
-      keys[1].flags = GRN_TABLE_SORT_GEO;
-      keys[1].key = grn_obj_open(ctx,
-                                 GRN_BULK,
-                                 0,
-                                 grn_obj_get_range(ctx, keys[0].key));
-      grn_obj_cast(ctx,
-                   expr->codes[code_start_offset + 2].value,
-                   keys[1].key,
-                   false);
-      *n_keys = 2;
-      goto exit;
-    }
-  }
   keys = GRN_MALLOCN(grn_table_sort_key, n_offsets);
   if (!keys) {
     goto exit;
