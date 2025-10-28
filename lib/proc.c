@@ -5424,15 +5424,18 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_MATCH);
   }
 
-  grn_proc_create(ctx,
-                  "geo_distance",
-                  -1,
-                  GRN_PROC_FUNCTION,
-                  func_geo_distance,
-                  NULL,
-                  NULL,
-                  0,
-                  NULL);
+  {
+    grn_obj *geo_distance = grn_proc_create(ctx,
+                                            "geo_distance",
+                                            -1,
+                                            GRN_PROC_FUNCTION,
+                                            func_geo_distance,
+                                            NULL,
+                                            NULL,
+                                            0,
+                                            NULL);
+    grn_proc_set_sorter(ctx, geo_distance, grn_geo_distance_sorter);
+  }
 
   /* deprecated. */
   grn_proc_create(ctx,
