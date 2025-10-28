@@ -48,9 +48,10 @@ groonga_include_HEADERS =			\
 	request_canceler.h			\
 	request_timer.h				\
 	result_set.h				\
-	selector.h				\
 	scorer.h				\
+	selector.h				\
 	smart_obj.hpp				\
+	sorter.h				\
 	string.h				\
 	table.h					\
 	table_module.h				\

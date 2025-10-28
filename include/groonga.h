@@ -66,6 +66,7 @@
 #include "groonga/request_timer.h"
 #include "groonga/result_set.h"
 #include "groonga/selector.h"
+#include "groonga/sorter.h"
 #include "groonga/string.h"
 #include "groonga/table.h"
 #include "groonga/table_module.h"

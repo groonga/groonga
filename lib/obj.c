@@ -1141,6 +1141,17 @@ grn_obj_is_applier_proc(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_sorter_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_function_proc(ctx, obj)) {
+    return false;
+  }
+
+  grn_proc *proc = (grn_proc *)obj;
+  return proc->callbacks.function.sorter != NULL;
+}
+
+bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
