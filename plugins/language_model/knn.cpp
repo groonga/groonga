@@ -52,6 +52,7 @@ namespace faiss {
 #include <algorithm>
 #include <cinttypes>
 #include <cmath>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -810,6 +811,217 @@ namespace {
     tokenizer_close(ctx, tokenizer);
   }
 
+  struct Candidate {
+    grn_id record_id = GRN_ID_NIL;
+    float similarity = 0.0;
+
+    Candidate(grn_id record_id, float similarity)
+      : record_id(record_id),
+        similarity(similarity)
+    {
+    }
+  };
+
+  class Searcher {
+  public:
+    Searcher(grn_ctx *ctx,
+             grn_obj *table,
+             grn_obj *index,
+             std::string_view query,
+             uint32_t n_probes,
+             uint32_t k)
+      : ctx_(ctx),
+        table_(table),
+        index_(index),
+        query_(query),
+        n_probes_(n_probes),
+        k_(k),
+        query_embeddings_(),
+        transformed_query_embeddings_(),
+        code_()
+    {
+      GRN_FLOAT32_INIT(&query_embeddings_, GRN_OBJ_VECTOR);
+      GRN_FLOAT32_INIT(&transformed_query_embeddings_, GRN_OBJ_VECTOR);
+      GRN_VOID_INIT(&code_);
+    }
+
+    ~Searcher()
+    {
+      GRN_OBJ_FIN(ctx_, &query_embeddings_);
+      GRN_OBJ_FIN(ctx_, &transformed_query_embeddings_);
+      GRN_OBJ_FIN(ctx_, &code_);
+    }
+
+    template <typename Filter>
+    std::optional<std::vector<Candidate>>
+    search(Filter filter, bool ascending)
+    {
+      auto lexicon = grn_ctx_at(ctx_, index_->header.domain);
+      OpenOptionsData open_options_data;
+      open_options_data.lexicon = lexicon;
+      open_options_data.source_table = table_;
+      auto options = static_cast<Options *>(
+        grn_table_cache_default_tokenizer_options(ctx_,
+                                                  lexicon,
+                                                  open_options,
+                                                  close_options,
+                                                  &open_options_data));
+
+      grn_language_model_inferencer_vectorize(ctx_,
+                                              options->inferencer,
+                                              query_.data(),
+                                              query_.size(),
+                                              &query_embeddings_);
+      auto raw_query_embeddings =
+        reinterpret_cast<const float *>(GRN_BULK_HEAD(&query_embeddings_));
+      const float *raw_target_embeddings = nullptr;
+      if (options->quantizer == Quantizer::RABITQ) {
+#ifdef GRN_FAISS_HAVE_RABITQ
+        grn_bulk_space(ctx_,
+                       &transformed_query_embeddings_,
+                       GRN_BULK_VSIZE(&query_embeddings_));
+        auto raw_transformed_query_embeddings = reinterpret_cast<float *>(
+          GRN_BULK_HEAD(&transformed_query_embeddings_));
+        options->random_rotation_matrix.apply_noalloc(
+          1,
+          raw_query_embeddings,
+          raw_transformed_query_embeddings);
+        raw_target_embeddings = raw_transformed_query_embeddings;
+#endif
+      } else {
+        raw_target_embeddings = raw_query_embeddings;
+      }
+
+      auto n_probes =
+        std::min(n_probes_,
+                 static_cast<uint32_t>(options->centroid_searcher.ntotal));
+      std::vector<float> centroid_distances(n_probes);
+      std::vector<faiss::idx_t> centroid_indexes(n_probes, -1);
+      options->centroid_searcher.search(1,
+                                        raw_target_embeddings,
+                                        n_probes,
+                                        centroid_distances.data(),
+                                        centroid_indexes.data());
+
+      std::vector<Candidate> candidates;
+      for (auto centroid_index : centroid_indexes) {
+        if (centroid_index == -1) {
+          break;
+        }
+
+        auto lexicon_record_id =
+          options->centroid_index_to_record_id[centroid_index];
+        auto ii = reinterpret_cast<grn_ii *>(index_);
+        auto cursor = grn_ii_cursor_open(ctx_,
+                                         ii,
+                                         lexicon_record_id,
+                                         GRN_ID_NIL,
+                                         GRN_ID_MAX,
+                                         0,
+                                         0);
+        if (!cursor) {
+          continue;
+        }
+
+        // TODO: Bulk similarity computation for performance.
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
+        faiss::FlatCodesDistanceComputer *distance_computer = nullptr;
+        if (options->quantizer == Quantizer::NONE) {
+          distance_computer =
+            options->centroid_searcher.get_FlatCodesDistanceComputer();
+        } else if (options->quantizer == Quantizer::RABITQ) {
+#  ifdef GRN_FAISS_HAVE_RABITQ
+          uint8_t n_scalar_quantization_bits = 8;
+          const float *centroid = options->centroids.data() +
+                                  (options->n_dimensions * centroid_index);
+          distance_computer =
+            options->rabitq.get_distance_computer(n_scalar_quantization_bits,
+                                                  centroid);
+#  endif
+        }
+        distance_computer->set_query(raw_target_embeddings);
+#else
+        grn_obj target_embeddings;
+        GRN_FLOAT32_INIT(&target_embeddings,
+                         GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET_REF(&target_embeddings,
+                         raw_target_embeddings,
+                         sizeof(float) * options->n_dimensions);
+        grn_obj candidate_embeddings;
+        GRN_FLOAT32_INIT(&candidate_embeddings,
+                         GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+#endif
+
+        while (true) {
+          auto posting = grn_ii_cursor_next(ctx_, cursor);
+          if (!posting) {
+            break;
+          }
+          auto source_record_id = posting->rid;
+
+          if (!filter(source_record_id)) {
+            continue;
+          }
+
+          GRN_BULK_REWIND(&code_);
+          grn_obj_get_value(ctx_,
+                            options->code_column,
+                            source_record_id,
+                            &code_);
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
+          auto similarity = distance_computer->distance_to_code(
+            reinterpret_cast<const uint8_t *>(GRN_BULK_HEAD(&code_)));
+#else
+          GRN_TEXT_SET_REF(&candidate_embeddings,
+                           GRN_BULK_HEAD(&code_),
+                           GRN_BULK_VSIZE(&code_));
+          auto similarity =
+            1 - grn_distance_inner_product(ctx_,
+                                           &target_embeddings,
+                                           &candidate_embeddings);
+#endif
+          candidates.emplace_back(source_record_id, similarity);
+        }
+#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
+        delete distance_computer;
+#else
+        GRN_OBJ_FIN(ctx_, &target_embeddings);
+        GRN_OBJ_FIN(ctx_, &candidate_embeddings);
+#endif
+        grn_ii_cursor_close(ctx_, cursor);
+      }
+
+      auto k = std::min(k_, static_cast<uint32_t>(candidates.size()));
+      if (ascending) {
+        std::partial_sort(candidates.begin(),
+                          candidates.begin() + k,
+                          candidates.end(),
+                          [](const Candidate &a, const Candidate &b) {
+                            return b.similarity > a.similarity;
+                          });
+      } else {
+        std::partial_sort(candidates.begin(),
+                          candidates.begin() + k,
+                          candidates.end(),
+                          [](const Candidate &a, const Candidate &b) {
+                            return a.similarity > b.similarity;
+                          });
+      }
+      return candidates;
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_obj *table_;
+    grn_obj *index_;
+    std::string_view query_;
+    uint32_t n_probes_;
+    uint32_t k_;
+    grn_obj query_embeddings_;
+    grn_obj transformed_query_embeddings_;
+    grn_obj code_;
+  };
+
   grn_rc
   language_model_knn_selector(grn_ctx *ctx,
                               grn_obj *table,
@@ -822,11 +1034,12 @@ namespace {
     const char *tag = "language_model_knn():";
 
     if (!(n_args == 3 || n_args == 4)) {
+      /* args[0] is function. */
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s wrong number of arguments (%d for 3..4)",
+                       "%s wrong number of arguments (%d for 2..3)",
                        tag,
-                       n_args);
+                       n_args - 1);
       return ctx->rc;
     }
 
@@ -842,158 +1055,38 @@ namespace {
       return ctx->rc;
     }
 
-    auto lexicon = grn_ctx_at(ctx, index->header.domain);
-    OpenOptionsData open_options_data;
-    open_options_data.lexicon = lexicon;
-    open_options_data.source_table = table;
-    auto options = static_cast<Options *>(
-      grn_table_cache_default_tokenizer_options(ctx,
-                                                lexicon,
-                                                open_options,
-                                                close_options,
-                                                &open_options_data));
-
-    grn_obj embeddings;
-    GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
-    grn_language_model_inferencer_vectorize(ctx,
-                                            options->inferencer,
-                                            GRN_TEXT_VALUE(query),
-                                            GRN_TEXT_LEN(query),
-                                            &embeddings);
-    auto raw_embeddings =
-      reinterpret_cast<const float *>(GRN_BULK_HEAD(&embeddings));
-    grn_obj transformed_embeddings;
-    GRN_FLOAT32_INIT(&transformed_embeddings, GRN_OBJ_VECTOR);
-    const float *raw_target_embeddings = nullptr;
-    if (options->quantizer == Quantizer::RABITQ) {
-#ifdef GRN_FAISS_HAVE_RABITQ
-      grn_bulk_space(ctx, &transformed_embeddings, GRN_BULK_VSIZE(&embeddings));
-      auto raw_transformed_embeddings =
-        reinterpret_cast<float *>(GRN_BULK_HEAD(&transformed_embeddings));
-      options->random_rotation_matrix.apply_noalloc(1,
-                                                    raw_embeddings,
-                                                    raw_transformed_embeddings);
-      raw_target_embeddings = raw_transformed_embeddings;
-#endif
+    Searcher searcher(
+      ctx,
+      table,
+      index,
+      std::string_view{GRN_TEXT_VALUE(query), GRN_TEXT_LEN(query)},
+      n_probes,
+      k);
+    const bool ascending = false;
+    std::optional<std::vector<Candidate>> maybe_candidates;
+    if (op == GRN_OP_AND) {
+      maybe_candidates = searcher.search(
+        [&](grn_id id) {
+          return grn_table_get(ctx, res, &id, sizeof(grn_id)) != GRN_ID_NIL;
+        },
+        ascending);
     } else {
-      raw_target_embeddings = raw_embeddings;
+      maybe_candidates =
+        searcher.search([](grn_id id) { return true; }, ascending);
+    }
+    if (!maybe_candidates) {
+      return ctx->rc;
     }
 
-    n_probes =
-      std::min(n_probes,
-               static_cast<uint32_t>(options->centroid_searcher.ntotal));
-    std::vector<float> centroid_distances(n_probes);
-    std::vector<faiss::idx_t> centroid_indexes(n_probes, -1);
-    options->centroid_searcher.search(1,
-                                      raw_target_embeddings,
-                                      n_probes,
-                                      centroid_distances.data(),
-                                      centroid_indexes.data());
-
-    std::vector<std::pair<grn_id, float>> candidates;
-    for (auto centroid_index : centroid_indexes) {
-      if (centroid_index == -1) {
-        break;
-      }
-
-      auto lexicon_record_id =
-        options->centroid_index_to_record_id[centroid_index];
-      auto ii = reinterpret_cast<grn_ii *>(index);
-      auto cursor = grn_ii_cursor_open(ctx,
-                                       ii,
-                                       lexicon_record_id,
-                                       GRN_ID_NIL,
-                                       GRN_ID_MAX,
-                                       0,
-                                       0);
-      if (!cursor) {
-        continue;
-      }
-
-      // TODO: Bulk distance computation for performance.
-#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
-      faiss::FlatCodesDistanceComputer *distance_computer = nullptr;
-      if (options->quantizer == Quantizer::NONE) {
-        distance_computer =
-          options->centroid_searcher.get_FlatCodesDistanceComputer();
-      } else if (options->quantizer == Quantizer::RABITQ) {
-#  ifdef GRN_FAISS_HAVE_RABITQ
-        uint8_t n_scalar_quantization_bits = 8;
-        const float *centroid =
-          options->centroids.data() + (options->n_dimensions * centroid_index);
-        distance_computer =
-          options->rabitq.get_distance_computer(n_scalar_quantization_bits,
-                                                centroid);
-#  endif
-      }
-      distance_computer->set_query(raw_target_embeddings);
-#else
-      grn_obj target_embeddings;
-      GRN_FLOAT32_INIT(&target_embeddings,
-                       GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
-      GRN_TEXT_SET_REF(&target_embeddings,
-                       raw_target_embeddings,
-                       sizeof(float) * options->n_dimensions);
-      grn_obj candidate_embeddings;
-      GRN_FLOAT32_INIT(&candidate_embeddings,
-                       GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
-#endif
-
-      grn_obj code;
-      GRN_VOID_INIT(&code);
-      while (true) {
-        auto posting = grn_ii_cursor_next(ctx, cursor);
-        if (!posting) {
-          break;
-        }
-        auto source_record_id = posting->rid;
-
-        // TODO: Skip nonexistent record when op == GRN_OP_AND
-
-        GRN_BULK_REWIND(&code);
-        grn_obj_get_value(ctx, options->code_column, source_record_id, &code);
-#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
-        auto distance = distance_computer->distance_to_code(
-          reinterpret_cast<const uint8_t *>(GRN_BULK_HEAD(&code)));
-#else
-        GRN_TEXT_SET_REF(&candidate_embeddings,
-                         GRN_BULK_HEAD(&code),
-                         GRN_BULK_VSIZE(&code));
-        auto distance = 1 - grn_distance_inner_product(ctx,
-                                                       &target_embeddings,
-                                                       &candidate_embeddings);
-#endif
-        candidates.emplace_back(source_record_id, distance);
-      }
-      GRN_OBJ_FIN(ctx, &code);
-#ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
-      delete distance_computer;
-#else
-      GRN_OBJ_FIN(ctx, &target_embeddings);
-      GRN_OBJ_FIN(ctx, &candidate_embeddings);
-#endif
-      grn_ii_cursor_close(ctx, cursor);
-    }
-
-    GRN_OBJ_FIN(ctx, &embeddings);
-    GRN_OBJ_FIN(ctx, &transformed_embeddings);
-
+    auto candidates = *maybe_candidates;
     k = std::min(k, static_cast<uint32_t>(candidates.size()));
-    std::partial_sort(
-      candidates.begin(),
-      candidates.begin() + k,
-      candidates.end(),
-      [](const std::pair<grn_id, float> &a, const std::pair<grn_id, float> &b) {
-        return a.second > b.second;
-      });
-
     auto posting = grn_posting_open(ctx);
     posting->sid = 0;
     posting->pos = 0;
     for (size_t i = 0; i < k; ++i) {
       const auto &candidate = candidates[i];
-      posting->rid = candidate.first;
-      grn_posting_set_weight_float(ctx, posting, candidate.second);
+      posting->rid = candidate.record_id;
+      grn_posting_set_weight_float(ctx, posting, candidate.similarity);
       grn_result_set_add_record(ctx,
                                 reinterpret_cast<grn_hash *>(res),
                                 posting,
@@ -1001,6 +1094,155 @@ namespace {
     }
     grn_ii_resolve_sel_and(ctx, reinterpret_cast<grn_hash *>(res), op);
     grn_posting_close(ctx, posting);
+
+    return ctx->rc;
+  }
+
+  grn_rc
+  language_model_knn_sorter(grn_ctx *ctx, grn_sorter_data *data)
+  {
+    const char *tag = "language_model_knn():";
+
+    size_t n_args;
+    grn_obj **args = grn_sorter_data_get_args(ctx, data, &n_args);
+    if (!(n_args == 2 || n_args == 3)) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s wrong number of arguments (%u for 2..3)",
+                       tag,
+                       static_cast<uint32_t>(n_args));
+      return ctx->rc;
+    }
+
+    grn_obj *table = grn_sorter_data_get_table(ctx, data);
+    size_t offset = grn_sorter_data_get_offset(ctx, data);
+    size_t limit = grn_sorter_data_get_limit(ctx, data);
+    grn_obj *result = grn_sorter_data_get_result(ctx, data);
+    bool ascending = grn_sorter_data_is_ascending(ctx, data);
+
+    grn_obj *target = args[0];
+    grn_obj *query = args[1];
+    uint32_t n_probes = 10;
+    uint32_t k = offset + limit;
+    if (n_args == 3 && args[2]->header.type == GRN_TABLE_HASH_KEY) {
+      // TODO: Parse options by grn_proc_options_parse()
+    }
+
+    if (grn_obj_is_column(ctx, target)) {
+      grn_index_datum index_data;
+      unsigned int n_indexes =
+        grn_column_find_index_data(ctx, target, GRN_OP_SIMILAR, &index_data, 1);
+      if (n_indexes == 0) {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, target);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s no index: <%.*s>",
+                         tag,
+                         static_cast<int>(GRN_TEXT_LEN(&inspected)),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return ctx->rc;
+      }
+
+      Searcher searcher(
+        ctx,
+        table,
+        index_data.index,
+        std::string_view(GRN_TEXT_VALUE(query), GRN_TEXT_LEN(query)),
+        n_probes,
+        k);
+      auto maybe_candidates =
+        searcher.search([](grn_id id) { return true; }, ascending);
+      if (!maybe_candidates) return ctx->rc;
+
+      auto candidates = *maybe_candidates;
+      for (size_t i = offset; i < k; ++i) {
+        const auto &candidate = candidates[i];
+        void *value;
+        auto id =
+          grn_array_add(ctx, reinterpret_cast<grn_array *>(result), &value);
+        if (id == GRN_ID_NIL) {
+          break;
+        }
+        auto sorted_id = static_cast<grn_id *>(value);
+        *sorted_id = candidate.record_id;
+      }
+    } else if (grn_obj_is_accessor(ctx, target)) {
+      /* Filtered result set. */
+      std::vector<grn_obj *> accessor_stack;
+      grn_obj *leaf_target = target;
+      while (true) {
+        grn_obj *next_target = grn_accessor_get_next(ctx, leaf_target);
+        if (!next_target) {
+          leaf_target = grn_accessor_get_obj(ctx, leaf_target);
+          break;
+        }
+        accessor_stack.push_back(leaf_target);
+        leaf_target = next_target;
+      }
+
+      grn_index_datum index_data;
+      unsigned int n_indexes = grn_column_find_index_data(ctx,
+                                                          leaf_target,
+                                                          GRN_OP_SIMILAR,
+                                                          &index_data,
+                                                          1);
+      if (n_indexes == 0) {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, target);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s no index: <%.*s>",
+                         tag,
+                         static_cast<int>(GRN_TEXT_LEN(&inspected)),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return ctx->rc;
+      }
+
+      auto resolve_id = [&](grn_id id) -> grn_id {
+        for (auto i = accessor_stack.size(); i > 0; --i) {
+          auto accessor = accessor_stack[i - 1];
+          auto obj = grn_accessor_get_obj(ctx, accessor);
+          auto next_id = grn_table_get(ctx, obj, &id, sizeof(grn_id));
+          if (next_id == GRN_ID_NIL) {
+            return GRN_ID_NIL;
+          }
+          id = next_id;
+        }
+        return id;
+      };
+
+      grn_obj *leaf_table = grn_ctx_at(ctx, leaf_target->header.domain);
+      Searcher searcher(
+        ctx,
+        leaf_table,
+        index_data.index,
+        std::string_view(GRN_TEXT_VALUE(query), GRN_TEXT_LEN(query)),
+        n_probes,
+        k);
+      grn_obj_unref(ctx, leaf_table);
+      auto maybe_candidates =
+        searcher.search([&](grn_id id) { return resolve_id(id) != GRN_ID_NIL; },
+                        ascending);
+      if (!maybe_candidates) return ctx->rc;
+
+      auto candidates = *maybe_candidates;
+      for (size_t i = offset; i < k; ++i) {
+        const auto &candidate = candidates[i];
+        void *value;
+        auto id =
+          grn_array_add(ctx, reinterpret_cast<grn_array *>(result), &value);
+        if (id == GRN_ID_NIL) {
+          break;
+        }
+        auto sorted_id = static_cast<grn_id *>(value);
+        *sorted_id = resolve_id(candidate.record_id);
+      }
+    }
 
     return ctx->rc;
   }
@@ -1038,6 +1280,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                                     nullptr);
     grn_proc_set_selector(ctx, proc, language_model_knn_selector);
     grn_proc_set_selector_operator(ctx, proc, GRN_OP_SIMILAR);
+    grn_proc_set_sorter(ctx, proc, language_model_knn_sorter);
   }
   return ctx->rc;
 }
