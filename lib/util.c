@@ -1779,14 +1779,20 @@ grn_path_copy(grn_ctx *ctx,
   }
 
   int destination_fd;
+  errno = 0;
   grn_open(destination_fd,
            destination_path,
            O_WRONLY | O_CREAT | O_EXCL | GRN_OPEN_FLAG_BINARY);
   if (destination_fd == -1) {
-    SERR("%s failed to open destination path: <%s> -> <%s>",
-         tag,
-         source_path,
-         destination_path);
+    if (errno == EEXIST) {
+      /* If the file already exists, it will succeed without overwriting it. */
+      ctx->rc = GRN_SUCCESS;
+    } else {
+      SERR("%s failed to open destination path: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+    }
     grn_close(source_fd);
     GRN_API_RETURN(ctx->rc);
   }
