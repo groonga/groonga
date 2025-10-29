@@ -11,9 +11,9 @@ column_create Data rabitq_code COLUMN_SCALAR ShortBinary
 
 load --table Data
 [
+{"text": "Groonga is a full text search engine."},
 {"text": "I am a boy."},
-{"text": "This is an apple."},
-{"text": "Groonga is a full text search engine."}
+{"text": "This is an apple."}
 ]
 
 table_create RaBitQ TABLE_HASH_KEY ShortBinary \
@@ -24,9 +24,11 @@ table_create RaBitQ TABLE_HASH_KEY ShortBinary \
 column_create RaBitQ data_text COLUMN_INDEX Data text
 
 select Data \
-  --filter 'language_model_knn(text, "male child")' \
+  --filter '_id > 1' \
+  --sort_keys '-language_model_knn(text, "male child")' \
   --output_columns text
 
 select Data \
-  --filter 'language_model_knn(text, "fruit")' \
+  --filter '_id > 1' \
+  --sort_keys '-language_model_knn(text, "fruit")' \
   --output_columns text
