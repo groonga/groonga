@@ -690,6 +690,14 @@ namespace {
 
     auto lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
     auto source_column = grn_tokenizer_query_get_source_column(ctx, query);
+    if (!source_column) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_TOKENIZER_ERROR,
+                       "%s source column not found. Note: This tokenizer does "
+                       "not support 'tokenize' command.",
+                       TAG);
+      return nullptr;
+    }
     auto source_table = grn_ctx_at(ctx, source_column->header.domain);
     OpenOptionsData open_options_data;
     open_options_data.lexicon = lexicon;
