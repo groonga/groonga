@@ -4068,6 +4068,9 @@ show_version(void)
 #ifdef GRN_WITH_LLAMA_CPP
   printf(",llama.cpp");
 #endif
+#ifdef GRN_WITH_FAISS
+  printf(",faiss");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS
