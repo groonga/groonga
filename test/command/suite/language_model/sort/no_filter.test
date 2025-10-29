@@ -1,9 +1,9 @@
-# #@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
-# #@require-feature llama.cpp
+#@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
+#@require-feature llama.cpp
 
-# #@on-error omit
+#@on-error omit
 plugin_register language_model/knn
-# #@on-error default
+#@on-error default
 
 table_create Data TABLE_NO_KEY
 column_create Data text COLUMN_SCALAR ShortText
@@ -19,8 +19,8 @@ load --table Data
 table_create RaBitQ TABLE_HASH_KEY ShortBinary \
   --default_tokenizer 'TokenLanguageModel("model", "hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", \
                                           "code_column", "rabitq_code")'
+# This is for waiting for downloading model.
 #@timeout 300
-#@read-timeout 300
 column_create RaBitQ data_text COLUMN_INDEX Data text
 
 select Data \
