@@ -199,7 +199,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description plugin-language-model
 Language model plugin for Groonga.
 
-This provides TokenLanguageModel and language_model_knn() by
+This provides TokenLanguageModelKNN and language_model_knn() by
 language_model/knn.
 
 This provides language_model_vectorize() by functions/language_model.

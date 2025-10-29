@@ -1259,7 +1259,7 @@ grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   {
-    grn_obj *tokenizer = grn_tokenizer_create(ctx, "TokenLanguageModel", -1);
+    grn_obj *tokenizer = grn_tokenizer_create(ctx, "TokenLanguageModelKNN", -1);
     if (tokenizer) {
       grn_tokenizer_set_build_func(ctx, tokenizer, build);
       grn_tokenizer_set_init_func(ctx, tokenizer, init);
