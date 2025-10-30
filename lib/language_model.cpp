@@ -398,6 +398,355 @@ namespace grn {
         }
       }
     };
+
+#  ifdef GRN_WITH_LLAMA_CPP
+    class Vectorizer {
+    public:
+      Vectorizer(llama_model *model_raw,
+                 enum llama_pooling_type default_pooling_type)
+        : llama_ctx_(nullptr),
+          llama_model_(model_raw),
+          n_dimensions_(llama_model_n_embd(llama_model_)),
+          has_encoder_(llama_model_has_encoder(llama_model_)),
+          has_decoder_(llama_model_has_decoder(llama_model_)),
+          // We want document vector not token vectors. We want to use the
+          // default pooling type in a model but it seems that most models
+          // don't provide the default pooling type (LLAMA_POOLING_TYPE_NONE
+          // is used). If LLAMA_POOLING_TYPE_NONE is used, token vectors are
+          // generated. So we force to use LLAMA_POOLING_TYPE_MEAN here.
+          pooling_type_(default_pooling_type == LLAMA_POOLING_TYPE_NONE
+                          ? LLAMA_POOLING_TYPE_MEAN
+                          : default_pooling_type),
+          max_n_tokens_limit_(llama_model_n_ctx_train(llama_model_)),
+          max_n_tokens_(llama_context_default_params().n_ubatch)
+      {
+      }
+
+      ~Vectorizer()
+      {
+        if (llama_ctx_) {
+          llama_free(llama_ctx_);
+        }
+      }
+
+      void
+      vectorize(grn_ctx *ctx,
+                std::string_view text,
+                grn_obj *output_vector,
+                const char *tag)
+      {
+        language_model::CaptureError capture(ctx);
+
+        std::vector<llama_token> tokens;
+        tokenize(text, tokens);
+        adjust_max_n_tokens(ctx, GRN_ID_NIL, tokens, tag);
+        auto batch = llama_batch_init(tokens.size(), 0, 1);
+        BatchReleaser batch_releaser(&batch);
+        const llama_seq_id sequence_id = 0;
+        add_tokens(batch, tokens, sequence_id);
+
+        if (!vectorize_batch(ctx, batch, sequence_id + 1)) {
+          return;
+        }
+
+        if (!store_embeddings(ctx, batch, sequence_id, output_vector)) {
+          return;
+        }
+      }
+
+      template <typename Output>
+      void
+      vectorize_in_batch(grn_ctx *ctx,
+                         grn_table_cursor *cursor,
+                         grn_obj *input_column,
+                         Output output,
+                         const char *tag)
+      {
+        language_model::CaptureError capture(ctx);
+
+        std::vector<grn_id> target_ids;
+        auto batch = llama_batch_init(max_n_tokens_, 0, 1);
+        BatchReleaser batch_releaser(&batch);
+
+        grn_obj embeddings;
+        GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
+        grn::UniqueObj smart_embeddings(ctx, &embeddings);
+
+        auto flush_batch = [&]() {
+          const auto n_sequences = target_ids.size();
+          if (!vectorize_batch(ctx, batch, n_sequences)) {
+            return false;
+          }
+          for (size_t i = 0; i < n_sequences; ++i) {
+            const auto sequence_id = static_cast<llama_seq_id>(i);
+            GRN_BULK_REWIND(&embeddings);
+            if (!store_embeddings(ctx, batch, sequence_id, &embeddings)) {
+              return false;
+            }
+            const auto target_id = target_ids[i];
+            output(ctx, target_id, &embeddings);
+          }
+          target_ids.clear();
+          batch.n_tokens = 0;
+          return true;
+        };
+
+        std::vector<llama_token> tokens;
+
+        auto batch_is_full = [&]() {
+          auto n_tokens = static_cast<uint32_t>(tokens.size());
+          auto next_n_tokens = batch.n_tokens + n_tokens;
+          if (next_n_tokens > max_n_tokens_) {
+            return true;
+          }
+
+          auto n_sequences = static_cast<uint32_t>(target_ids.size());
+          if (n_sequences == 0) {
+            return false;
+          }
+
+          auto actual_next_n_tokens =
+            normalize_n_tokens(next_n_tokens, n_sequences);
+          return actual_next_n_tokens < max_n_tokens_;
+        };
+
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+          uint32_t input_size = 0;
+          auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
+          tokenize(input, tokens);
+          auto n_tokens = static_cast<uint32_t>(tokens.size());
+          if (n_tokens == 0) {
+            continue;
+          }
+          if (batch_is_full()) {
+            if (batch.n_tokens > 0) {
+              if (!flush_batch()) {
+                return;
+              }
+            }
+            if (adjust_max_n_tokens(ctx, id, tokens, tag)) {
+              llama_batch_free(batch);
+              batch_releaser.batch_ = nullptr;
+              batch = llama_batch_init(max_n_tokens_, 0, 1);
+              batch_releaser.batch_ = &batch;
+            }
+            n_tokens = static_cast<uint32_t>(tokens.size());
+          }
+          add_tokens(batch, tokens, target_ids.size());
+          target_ids.push_back(id);
+        }
+        if (target_ids.size() > 0) {
+          if (!flush_batch()) {
+            return;
+          }
+        }
+      }
+
+    private:
+      llama_context *llama_ctx_;
+      llama_model *llama_model_;
+      const int32_t n_dimensions_;
+      const bool has_encoder_;
+      const bool has_decoder_;
+      const enum llama_pooling_type pooling_type_;
+      const uint32_t max_n_tokens_limit_;
+      uint32_t max_n_tokens_;
+
+      void
+      tokenize(std::string_view text, std::vector<llama_token> &tokens)
+      {
+        constexpr auto add_special = true;
+        constexpr auto parse_special = false;
+        // Guess enough size
+        int n_tokens = text.length() + 2 * add_special;
+        if (tokens.capacity() < static_cast<size_t>(n_tokens)) {
+          tokens.reserve(n_tokens);
+        }
+        auto vocab = llama_model_get_vocab(llama_model_);
+        n_tokens = llama_tokenize(vocab,
+                                  text.data(),
+                                  text.length(),
+                                  tokens.data(),
+                                  tokens.size(),
+                                  add_special,
+                                  parse_special);
+        if (n_tokens < 0) {
+          // If guessed size isn't enough, use the real size.
+          tokens.resize(-n_tokens);
+          llama_tokenize(vocab,
+                         text.data(),
+                         text.length(),
+                         tokens.data(),
+                         tokens.size(),
+                         add_special,
+                         parse_special);
+        } else {
+          tokens.resize(n_tokens);
+        }
+      }
+
+      // Return true when max_n_tokens_ is updated.
+      bool
+      adjust_max_n_tokens(grn_ctx *ctx,
+                          grn_id id,
+                          std::vector<llama_token> &tokens,
+                          const char *tag)
+      {
+        auto n_tokens = static_cast<uint32_t>(tokens.size());
+        bool max_n_tokens_updated = false;
+        if (n_tokens == 0) {
+          return max_n_tokens_updated;
+        }
+
+        if (max_n_tokens_ != max_n_tokens_limit_) {
+          while (max_n_tokens_ < n_tokens) {
+            max_n_tokens_ *= 2;
+          }
+          if (max_n_tokens_ > max_n_tokens_limit_) {
+            max_n_tokens_ = max_n_tokens_limit_;
+          }
+          max_n_tokens_updated = true;
+        }
+
+        if (n_tokens > max_n_tokens_) {
+          // TODO: Should we split instead of truncating?
+          if (id == GRN_ID_NIL) {
+            GRN_LOG(ctx,
+                    GRN_LOG_WARNING,
+                    "%s truncating too many tokens: %u > %u",
+                    tag,
+                    n_tokens,
+                    max_n_tokens_);
+          } else {
+            GRN_LOG(ctx,
+                    GRN_LOG_WARNING,
+                    "%s[%u] truncating too many tokens: %u > %u",
+                    tag,
+                    id,
+                    n_tokens,
+                    max_n_tokens_);
+          }
+          tokens.resize(max_n_tokens_);
+        }
+
+        return max_n_tokens_updated;
+      }
+
+      void
+      add_tokens(llama_batch &batch,
+                 const std::vector<llama_token> &tokens,
+                 llama_seq_id sequence_id)
+      {
+        const auto offset = batch.n_tokens;
+        const auto n_tokens = static_cast<int32_t>(tokens.size());
+        memcpy(batch.token + offset,
+               tokens.data(),
+               sizeof(llama_token) * n_tokens);
+        for (int32_t i = 0; i < n_tokens; ++i) {
+          const auto offset_i = offset + i;
+          batch.pos[offset_i] = i;
+          batch.n_seq_id[offset_i] = 1;
+          batch.seq_id[offset_i][0] = sequence_id;
+          batch.logits[offset_i] = true;
+        }
+        batch.n_tokens += n_tokens;
+      }
+
+      // n_tokens must be multiple of n_sequences.
+      uint32_t
+      normalize_n_tokens(uint32_t n_tokens, uint32_t n_sequences)
+      {
+        if (n_tokens < GGML_KQ_MASK_PAD) {
+          n_tokens = GGML_KQ_MASK_PAD;
+        }
+        return ((n_tokens + (n_sequences - 1)) / n_sequences) * n_sequences;
+      }
+
+      bool
+      vectorize_batch(grn_ctx *ctx,
+                      llama_batch &batch,
+                      uint32_t max_n_sequences)
+      {
+        if (llama_ctx_ && llama_n_ubatch(llama_ctx_) == max_n_tokens_ &&
+            llama_n_seq_max(llama_ctx_) == max_n_sequences) {
+          auto memory = llama_get_memory(llama_ctx_);
+          if (memory) {
+            llama_memory_clear(memory, true);
+          }
+        } else {
+          if (llama_ctx_) {
+            llama_free(llama_ctx_);
+          }
+          auto params = llama_context_default_params();
+          params.n_ctx =
+            llama_model_n_ctx_train(llama_model_) * max_n_sequences;
+          params.embeddings = true;
+          params.n_batch = normalize_n_tokens(batch.n_tokens, max_n_sequences);
+          params.n_ubatch = params.n_batch;
+          params.n_seq_max = max_n_sequences;
+          params.pooling_type = pooling_type_;
+          llama_ctx_ = llama_init_from_model(llama_model_, params);
+        }
+
+        if (has_encoder_ && !has_decoder_) {
+          // encoder-only model
+          if (llama_encode(llama_ctx_, batch) < 0) {
+            GRN_LM_ERROR(
+              GRN_UNKNOWN_ERROR,
+              "[language-model-inferencer][vectorize-batch] failed to encode");
+            return false;
+          }
+        } else if (!has_encoder_ && has_decoder_) {
+          // decoder-only model
+          if (llama_decode(llama_ctx_, batch) < 0) {
+            GRN_LM_ERROR(
+              GRN_UNKNOWN_ERROR,
+              "[language-model-inferencer][vectorize-batch] failed to decode");
+            return false;
+          }
+        } else {
+          GRN_LM_ERROR(
+            GRN_FUNCTION_NOT_IMPLEMENTED,
+            "[language-model-inferencer][vectorize-batch] "
+            "model that has both of encoder and docoder isn't supported yet");
+          return false;
+        }
+
+        return true;
+      }
+
+      bool
+      store_embeddings(grn_ctx *ctx,
+                       llama_batch &batch,
+                       llama_seq_id id,
+                       grn_obj *output_vector)
+      {
+        // pooling_type_ must not be LLAMA_POOLING_TYPE_NONE.
+        auto raw_embeddings = llama_get_embeddings_seq(llama_ctx_, id);
+        if (!raw_embeddings) {
+          GRN_LM_ERROR(GRN_UNKNOWN_ERROR,
+                       "[language-model-inferencer][store-embeddings] "
+                       "failed to get embeddings");
+          return false;
+        }
+
+        // TODO: grn::distance::compute_l2_norm()
+        float square_sum = 0.0;
+        for (int32_t i = 0; i < n_dimensions_; ++i) {
+          square_sum += raw_embeddings[i] * raw_embeddings[i];
+        }
+        auto magnitude = std::sqrt(square_sum);
+        const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
+        for (int i = 0; i < n_dimensions_; ++i) {
+          auto normalized_value = raw_embeddings[i] * normalize;
+          GRN_FLOAT32_PUT(ctx, output_vector, normalized_value);
+        }
+        return true;
+      }
+    };
+#  endif
+
 #endif
   public:
 #ifdef GRN_WITH_LLAMA_CPP
@@ -405,30 +754,13 @@ namespace grn {
          llama_model *model_raw,
          enum llama_pooling_type default_pooling_type)
       : model_(std::move(model)),
-        llama_ctx_(nullptr),
         llama_model_(model_raw),
-        n_dimensions_(llama_model_n_embd(llama_model_)),
-        has_encoder_(llama_model_has_encoder(llama_model_)),
-        has_decoder_(llama_model_has_decoder(llama_model_)),
-        // We want document vector not token vectors. We want to use the
-        // default pooling type in a model but it seems that most models
-        // don't provide the default pooling type (LLAMA_POOLING_TYPE_NONE
-        // is used). If LLAMA_POOLING_TYPE_NONE is used, token vectors are
-        // generated. So we force to use LLAMA_POOLING_TYPE_MEAN here.
-        pooling_type_(default_pooling_type == LLAMA_POOLING_TYPE_NONE
-                        ? LLAMA_POOLING_TYPE_MEAN
-                        : default_pooling_type),
-        max_n_tokens_limit_(llama_model_n_ctx_train(llama_model_)),
-        max_n_tokens_(llama_context_default_params().n_ubatch)
+        default_pooling_type_(default_pooling_type),
+        vectorizer_(llama_model_, default_pooling_type_)
     {
     }
 
-    ~Impl()
-    {
-      if (llama_ctx_) {
-        llama_free(llama_ctx_);
-      }
-    }
+    ~Impl() {}
 #endif
 
     void
@@ -436,23 +768,7 @@ namespace grn {
     {
       const char *tag = "[language-model-inferencer][vectorize]";
 #ifdef GRN_WITH_LLAMA_CPP
-      language_model::CaptureError capture(ctx);
-
-      std::vector<llama_token> tokens;
-      tokenize(text, tokens);
-      adjust_max_n_tokens(ctx, GRN_ID_NIL, tokens, tag);
-      auto batch = llama_batch_init(tokens.size(), 0, 1);
-      BatchReleaser batch_releaser(&batch);
-      const llama_seq_id sequence_id = 0;
-      add_tokens(batch, tokens, sequence_id);
-
-      if (!vectorize_batch(ctx, batch, sequence_id + 1)) {
-        return;
-      }
-
-      if (!store_embeddings(ctx, batch, sequence_id, output_vector)) {
-        return;
-      }
+      vectorizer_.vectorize(ctx, text, output_vector, tag);
 #else
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s llama.cpp isn't enabled", tag);
 #endif
@@ -467,85 +783,7 @@ namespace grn {
     {
       const char *tag = "[language-model-inferencer][vectorize-in-batch]";
 #ifdef GRN_WITH_LLAMA_CPP
-      language_model::CaptureError capture(ctx);
-
-      std::vector<grn_id> target_ids;
-      auto batch = llama_batch_init(max_n_tokens_, 0, 1);
-      BatchReleaser batch_releaser(&batch);
-
-      grn_obj embeddings;
-      GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
-      grn::UniqueObj smart_embeddings(ctx, &embeddings);
-
-      auto flush_batch = [&]() {
-        const auto n_sequences = target_ids.size();
-        if (!vectorize_batch(ctx, batch, n_sequences)) {
-          return false;
-        }
-        for (size_t i = 0; i < n_sequences; ++i) {
-          const auto sequence_id = static_cast<llama_seq_id>(i);
-          GRN_BULK_REWIND(&embeddings);
-          if (!store_embeddings(ctx, batch, sequence_id, &embeddings)) {
-            return false;
-          }
-          const auto target_id = target_ids[i];
-          output(ctx, target_id, &embeddings);
-        }
-        target_ids.clear();
-        batch.n_tokens = 0;
-        return true;
-      };
-
-      std::vector<llama_token> tokens;
-
-      auto batch_is_full = [&]() {
-        auto n_tokens = static_cast<uint32_t>(tokens.size());
-        auto next_n_tokens = batch.n_tokens + n_tokens;
-        if (next_n_tokens > max_n_tokens_) {
-          return true;
-        }
-
-        auto n_sequences = static_cast<uint32_t>(target_ids.size());
-        if (n_sequences == 0) {
-          return false;
-        }
-
-        auto actual_next_n_tokens =
-          normalize_n_tokens(next_n_tokens, n_sequences);
-        return actual_next_n_tokens < max_n_tokens_;
-      };
-
-      grn_id id;
-      while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-        uint32_t input_size = 0;
-        auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
-        tokenize(input, tokens);
-        auto n_tokens = static_cast<uint32_t>(tokens.size());
-        if (n_tokens == 0) {
-          continue;
-        }
-        if (batch_is_full()) {
-          if (batch.n_tokens > 0) {
-            if (!flush_batch()) {
-              return;
-            }
-          }
-          if (adjust_max_n_tokens(ctx, id, tokens, tag)) {
-            llama_batch_free(batch);
-            batch_releaser.batch_ = nullptr;
-            batch = llama_batch_init(max_n_tokens_, 0, 1);
-            batch_releaser.batch_ = &batch;
-          }
-          n_tokens = static_cast<uint32_t>(tokens.size());
-        }
-        add_tokens(batch, tokens, target_ids.size());
-        target_ids.push_back(id);
-      }
-      if (target_ids.size() > 0) {
-        if (!flush_batch()) {
-          return;
-        }
-      }
+      vectorizer_.vectorize_in_batch(ctx, cursor, input_column, output, tag);
 #else
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s llama.cpp isn't enabled", tag);
 #endif
@@ -554,203 +792,9 @@ namespace grn {
   private:
 #ifdef GRN_WITH_LLAMA_CPP
     std::shared_ptr<LanguageModel> model_;
-    llama_context *llama_ctx_;
     llama_model *llama_model_;
-    const int32_t n_dimensions_;
-    const bool has_encoder_;
-    const bool has_decoder_;
-    const enum llama_pooling_type pooling_type_;
-    const uint32_t max_n_tokens_limit_;
-    uint32_t max_n_tokens_;
-
-    // Return true when max_n_tokens_ is updated.
-    bool
-    adjust_max_n_tokens(grn_ctx *ctx,
-                        grn_id id,
-                        std::vector<llama_token> &tokens,
-                        const char *tag)
-    {
-      auto n_tokens = static_cast<uint32_t>(tokens.size());
-      bool max_n_tokens_updated = false;
-      if (n_tokens == 0) {
-        return max_n_tokens_updated;
-      }
-
-      if (max_n_tokens_ != max_n_tokens_limit_) {
-        while (max_n_tokens_ < n_tokens) {
-          max_n_tokens_ *= 2;
-        }
-        if (max_n_tokens_ > max_n_tokens_limit_) {
-          max_n_tokens_ = max_n_tokens_limit_;
-        }
-        max_n_tokens_updated = true;
-      }
-
-      if (n_tokens > max_n_tokens_) {
-        // TODO: Should we split instead of truncating?
-        if (id == GRN_ID_NIL) {
-          GRN_LOG(ctx,
-                  GRN_LOG_WARNING,
-                  "%s truncating too many tokens: %u > %u",
-                  tag,
-                  n_tokens,
-                  max_n_tokens_);
-        } else {
-          GRN_LOG(ctx,
-                  GRN_LOG_WARNING,
-                  "%s[%u] truncating too many tokens: %u > %u",
-                  tag,
-                  id,
-                  n_tokens,
-                  max_n_tokens_);
-        }
-        tokens.resize(max_n_tokens_);
-      }
-
-      return max_n_tokens_updated;
-    }
-
-    void
-    tokenize(std::string_view text, std::vector<llama_token> &tokens)
-    {
-      constexpr auto add_special = true;
-      constexpr auto parse_special = false;
-      // Guess enough size
-      int n_tokens = text.length() + 2 * add_special;
-      if (tokens.capacity() < static_cast<size_t>(n_tokens)) {
-        tokens.reserve(n_tokens);
-      }
-      auto vocab = llama_model_get_vocab(llama_model_);
-      n_tokens = llama_tokenize(vocab,
-                                text.data(),
-                                text.length(),
-                                tokens.data(),
-                                tokens.size(),
-                                add_special,
-                                parse_special);
-      if (n_tokens < 0) {
-        // If guessed size isn't enough, use the real size.
-        tokens.resize(-n_tokens);
-        llama_tokenize(vocab,
-                       text.data(),
-                       text.length(),
-                       tokens.data(),
-                       tokens.size(),
-                       add_special,
-                       parse_special);
-      } else {
-        tokens.resize(n_tokens);
-      }
-    }
-
-    void
-    add_tokens(llama_batch &batch,
-               const std::vector<llama_token> &tokens,
-               llama_seq_id sequence_id)
-    {
-      const auto offset = batch.n_tokens;
-      const auto n_tokens = static_cast<int32_t>(tokens.size());
-      memcpy(batch.token + offset,
-             tokens.data(),
-             sizeof(llama_token) * n_tokens);
-      for (int32_t i = 0; i < n_tokens; ++i) {
-        const auto offset_i = offset + i;
-        batch.pos[offset_i] = i;
-        batch.n_seq_id[offset_i] = 1;
-        batch.seq_id[offset_i][0] = sequence_id;
-        batch.logits[offset_i] = true;
-      }
-      batch.n_tokens += n_tokens;
-    }
-
-    // n_tokens must be multiple of n_sequences.
-    uint32_t
-    normalize_n_tokens(uint32_t n_tokens, uint32_t n_sequences)
-    {
-      if (n_tokens < GGML_KQ_MASK_PAD) {
-        n_tokens = GGML_KQ_MASK_PAD;
-      }
-      return ((n_tokens + (n_sequences - 1)) / n_sequences) * n_sequences;
-    }
-
-    bool
-    vectorize_batch(grn_ctx *ctx, llama_batch &batch, uint32_t max_n_sequences)
-    {
-      if (llama_ctx_ && llama_n_ubatch(llama_ctx_) == max_n_tokens_ &&
-          llama_n_seq_max(llama_ctx_) == max_n_sequences) {
-        auto memory = llama_get_memory(llama_ctx_);
-        if (memory) {
-          llama_memory_clear(memory, true);
-        }
-      } else {
-        if (llama_ctx_) {
-          llama_free(llama_ctx_);
-        }
-        auto params = llama_context_default_params();
-        params.n_ctx = llama_model_n_ctx_train(llama_model_) * max_n_sequences;
-        params.embeddings = true;
-        params.n_batch = normalize_n_tokens(batch.n_tokens, max_n_sequences);
-        params.n_ubatch = params.n_batch;
-        params.n_seq_max = max_n_sequences;
-        params.pooling_type = pooling_type_;
-        llama_ctx_ = llama_init_from_model(llama_model_, params);
-      }
-
-      if (has_encoder_ && !has_decoder_) {
-        // encoder-only model
-        if (llama_encode(llama_ctx_, batch) < 0) {
-          GRN_LM_ERROR(
-            GRN_UNKNOWN_ERROR,
-            "[language-model-inferencer][vectorize-batch] failed to encode");
-          return false;
-        }
-      } else if (!has_encoder_ && has_decoder_) {
-        // decoder-only model
-        if (llama_decode(llama_ctx_, batch) < 0) {
-          GRN_LM_ERROR(
-            GRN_UNKNOWN_ERROR,
-            "[language-model-inferencer][vectorize-batch] failed to decode");
-          return false;
-        }
-      } else {
-        GRN_LM_ERROR(
-          GRN_FUNCTION_NOT_IMPLEMENTED,
-          "[language-model-inferencer][vectorize-batch] "
-          "model that has both of encoder and docoder isn't supported yet");
-        return false;
-      }
-
-      return true;
-    }
-
-    bool
-    store_embeddings(grn_ctx *ctx,
-                     llama_batch &batch,
-                     llama_seq_id id,
-                     grn_obj *output_vector)
-    {
-      // pooling_type_ must not be LLAMA_POOLING_TYPE_NONE.
-      auto raw_embeddings = llama_get_embeddings_seq(llama_ctx_, id);
-      if (!raw_embeddings) {
-        GRN_LM_ERROR(GRN_UNKNOWN_ERROR,
-                     "[language-model-inferencer][store-embeddings] "
-                     "failed to get embeddings");
-        return false;
-      }
-
-      // TODO: grn::distance::compute_l2_norm()
-      float square_sum = 0.0;
-      for (int32_t i = 0; i < n_dimensions_; ++i) {
-        square_sum += raw_embeddings[i] * raw_embeddings[i];
-      }
-      auto magnitude = std::sqrt(square_sum);
-      const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
-      for (int i = 0; i < n_dimensions_; ++i) {
-        auto normalized_value = raw_embeddings[i] * normalize;
-        GRN_FLOAT32_PUT(ctx, output_vector, normalized_value);
-      }
-      return true;
-    }
+    enum llama_pooling_type default_pooling_type_;
+    Vectorizer vectorizer_;
 #endif
   };
 
