@@ -50,7 +50,7 @@ msgstr "{doc}`/reference/tokenizers/token_language_model_knn`トークナイザ�
 msgid "Here is an example of semantic search."
 msgstr "セマンティックサーチをしている例は次のとおりです。"
 
-msgid "The important feature is that it searches using text, just like keyword search. Internally, Groonga performs embedded search to enable semantic search."
+msgid "The important feature is that it searches using text, just like keyword search. Internally, Groonga performs embedding search to enable semantic search."
 msgstr "キーワード検索と同様にテキストで検索しているところがポイントです。内部的にはGroongaがエンベディング検索をしてセマンティックサーチを実現しています。"
 
 msgid "Users do not need to create embeddings and search using them. You can do semantic search with text, just like keyword search."
