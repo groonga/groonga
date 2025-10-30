@@ -17,7 +17,7 @@
 FROM archlinux
 
 RUN \
-  pacman -Syyu --noconfirm \
+  pacman --sync --refresh --refresh --upgrade --noconfirm \
     # mecab-ipadic must have this but it doesn't have it.
     # So we install this in base environment.
     autoconf \
