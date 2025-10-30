@@ -18,7 +18,6 @@ table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer 'TokenLangu
 column_create RaBitQ data_text COLUMN_INDEX Data text
 [[0,0.0,0.0],true]
 #|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
-#|w| llama_init_from_model: model default pooling_type is [1], but [-1] was specified
 select Data   --filter 'language_model_knn(text, "male child")'   --output_columns text
 [
   [
