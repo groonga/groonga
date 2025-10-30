@@ -163,6 +163,45 @@ String of 2,147,483,647 or less bytes. (default: "")
 
 度分秒形式からミリ秒形式への変換方法や :doc:`/reference/commands/load` コマンドにおける指定方法はTokyoGeoPointと同じです。
 
+.. _builtin-type-short-binary:
+
+``ShortBinary``
+^^^^^^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 4,095 or less bytes. (default: "")
+
+.. _builtin-type-binary:
+
+``Binary``
+^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 65,535 or less bytes. (default: "")
+
+.. _builtin-type-long-binary:
+
+``LongBinary``
+^^^^^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 2,147,483,647 or less bytes. (default: "")
+
 Limitations about types
 -----------------------
 
