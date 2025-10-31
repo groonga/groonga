@@ -149,7 +149,7 @@ There are two required parameters.
 
 ## Return value
 
-This function is worked as a selector. It means that this function can be executable effectively.
+This function works as a selector. It means that this function executes effectively.
 
 ## See also
 
