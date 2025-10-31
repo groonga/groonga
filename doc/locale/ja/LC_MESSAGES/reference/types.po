@@ -171,6 +171,27 @@ msgstr ""
 msgid "度分秒形式からミリ秒形式への変換方法や :doc:`/reference/commands/load` コマンドにおける指定方法はTokyoGeoPointと同じです。"
 msgstr ""
 
+msgid "``ShortBinary``"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Binary of 4,095 or less bytes. (default: \"\")"
+msgstr "4,095バイト以下のバイナリを表します。（デフォルト値: \"\"）"
+
+msgid "``Binary``"
+msgstr ""
+
+msgid "Binary of 65,535 or less bytes. (default: \"\")"
+msgstr "65,535バイト以下のバイナリを表します。（デフォルト値: \"\"）"
+
+msgid "``LongBinary``"
+msgstr ""
+
+msgid "Binary of 2,147,483,647 or less bytes. (default: \"\")"
+msgstr "2,147,483,647バイト以下のバイナリを表します。（デフォルト値: \"\"）"
+
 msgid "Limitations about types"
 msgstr "型に関する制限事項"
 
