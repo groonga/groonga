@@ -13,9 +13,9 @@ This is an experimental feature. Currently, this feature is still not stable.
 
 ## Summary
 
-`language_model_knn` is a function for search using embeddings.
+`language_model_knn` is a function for semantic search.
 
-Search uses the k-Nearest Neighbors (KNN) algorithm.
+Semantic search uses the k-Nearest Neighbors (k-NN) algorithm.
 
 You must use it with {doc}`../tokenizers/token_language_model_knn`.
 
@@ -89,7 +89,7 @@ You need to store embedding information for each record. Here is how to create t
 column_create Memos embedding_code COLUMN_SCALAR ShortBinary
 ```
 
-Create an index for embedding search.
+Create an index for semantic search.
 
 Specify {doc}`../tokenizers/token_language_model_knn` as the tokenizer.
 The tokenizer's arguments are `model` and `code_column`.
@@ -106,11 +106,11 @@ table_create Centroids TABLE_HASH_KEY ShortBinary \
 column_create Centroids data_content COLUMN_INDEX Memos content
 ```
 
-This enables embedding search.
+This enables semantic search.
 When you `load` data into `Memos.content`, Groonga automatically generates embeddings.
 Users do not need to generate embeddings.
 
-Here is an example of embedding search:
+Here is an example of semantic search:
 
 <!-- groonga-command -->
 
