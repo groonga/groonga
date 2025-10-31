@@ -482,6 +482,13 @@ set(GRN_DOC_SOURCES
     example/reference/functions/in_values/usage_options.log
     example/reference/functions/in_values/usage_setup_data.log
     example/reference/functions/in_values/usage_setup_schema.log
+    example/reference/functions/language_model_knn/column_create.md
+    example/reference/functions/language_model_knn/filter.md
+    example/reference/functions/language_model_knn/index_column_create.md
+    example/reference/functions/language_model_knn/sort_keys.md
+    example/reference/functions/language_model_knn/usage_register.md
+    example/reference/functions/language_model_knn/usage_setup_data.md
+    example/reference/functions/language_model_knn/usage_setup_schema.md
     example/reference/functions/language_model_vectorize/usage_register.md
     example/reference/functions/language_model_vectorize/usage_rerank.md
     example/reference/functions/language_model_vectorize/usage_setup_data.md
@@ -849,6 +856,12 @@ set(GRN_DOC_SOURCES
     example/reference/token_filters/stem.log
     example/reference/token_filters/stop-word-columns-option.log
     example/reference/token_filters/stop_word.log
+    example/reference/tokenizers/language_model_knn/column_create.md
+    example/reference/tokenizers/language_model_knn/index_column_create.md
+    example/reference/tokenizers/language_model_knn/select.md
+    example/reference/tokenizers/language_model_knn/usage_register.md
+    example/reference/tokenizers/language_model_knn/usage_setup_data.md
+    example/reference/tokenizers/language_model_knn/usage_setup_schema.md
     example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log
     example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log
     example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log
@@ -1248,6 +1261,7 @@ set(GRN_DOC_SOURCES
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
+    reference/functions/language_model_knn.md
     reference/functions/language_model_vectorize.md
     reference/functions/math_abs.rst
     reference/functions/now.rst
@@ -1326,6 +1340,7 @@ set(GRN_DOC_SOURCES
     reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst
     reference/tokenizers/token_delimit.rst
     reference/tokenizers/token_delimit_null.rst
+    reference/tokenizers/token_language_model_knn.md
     reference/tokenizers/token_mecab.rst
     reference/tokenizers/token_ngram.rst
     reference/tokenizers/token_pattern.rst
@@ -1604,6 +1619,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
+    reference/functions/language_model_knn.html
     reference/functions/language_model_vectorize.html
     reference/functions/math_abs.html
     reference/functions/now.html
@@ -1681,6 +1697,7 @@ set(GRN_DOC_HTML_FILES
     reference/tokenizers/token_bigram_split_symbol_alpha_digit.html
     reference/tokenizers/token_delimit.html
     reference/tokenizers/token_delimit_null.html
+    reference/tokenizers/token_language_model_knn.html
     reference/tokenizers/token_mecab.html
     reference/tokenizers/token_ngram.html
     reference/tokenizers/token_pattern.html

@@ -1,0 +1,120 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2025 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 15.1.8\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-10-31 12:18+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`language_model_knn`"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`language_model_knn` is a function for semantic search."
+msgstr "`language_model_knn`はセマンティックサーチ用の関数です。"
+
+msgid "Semantic search uses the k-Nearest Neighbors (k-NN) algorithm."
+msgstr "セマンティックサーチはk近傍法（k-Nearest Neighbors）を使います。"
+
+msgid "You must use it with {doc}`../tokenizers/token_language_model_knn`."
+msgstr "{doc}`../tokenizers/token_language_model_knn`と合わせて使う必要があります。"
+
+msgid "It can be used as a condition for `--filter` and as a sort key for `--sort_keys`."
+msgstr "`--filter`の条件と`--sort_keys`のソートキーとして使えます。"
+
+msgid "To enable this function, register `language_model/knn` plugin by the following command:"
+msgstr "この関数を有効にするには次のコマンドで`language_model/knn`プラグインを有効にしてください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`language_model_knn` requires two parameters:"
+msgstr "`language_model_knn`には必須の引数が2つあります。"
+
+msgid "`column` is the search target column. It must be a column with an index."
+msgstr "`column`は検索対象のカラムです。インデックスを設定したカラムでなければなりません。"
+
+msgid "`query` is a search query."
+msgstr "`query`は検索クエリです。"
+
+msgid "Requirements"
+msgstr "必要条件"
+
+msgid "You need Faiss enabled Groonga. The official packages enable it."
+msgstr "Faissを有効にしたGroongaが必要です。公式パッケージでは有効になっています。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You need to register `language_model/knn` plugin at first:"
+msgstr "最初に`language_model/knn`プラグインを登録する必要があります。"
+
+msgid "Here is a schema definition and sample data."
+msgstr "スキーマ定義とサンプルデータは次のとおりです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ："
+
+msgid "Sample data:"
+msgstr "サンプルデータ："
+
+msgid "You need to store embedding information for each record. Here is how to create that column."
+msgstr "各レコードごとにエンべディングの情報を保存しておく必要があります。そのカラムの作成は次のとおりです。"
+
+msgid "Create an index for semantic search."
+msgstr "セマンティックサーチ用のインデックスを作成します。"
+
+msgid "Specify {doc}`../tokenizers/token_language_model_knn` as the tokenizer. The tokenizer's arguments are `model` and `code_column`. Specify the model to use for `model`, and specify the column to store the generated embedding information for `code_column`."
+msgstr "トークナイザーには{doc}`../tokenizers/token_language_model_knn`を指定します。トークナイザーの引数は`model`と`code_column`です。`model`には利用するモデルを指定し、`code_column`には生成したエンベディングの情報を保存するカラムを指定します。"
+
+msgid "This enables semantic search. When you `load` data into `Memos.content`, Groonga automatically generates embeddings. Users do not need to generate embeddings."
+msgstr "これでセマンティックサーチができるようになります。`Memos.content`にデータを`load`するとGroongaが自動でエンべディングを生成します。ユーザがエンべディングを生成する必要はありません。"
+
+msgid "Here is an example of semantic search:"
+msgstr "以下はセマンティックサーチをする例です。"
+
+msgid "`language_model_knn` function can also be used as a sort key. Specify `language_model_knn` for `--sort_keys`. Since you likely need to fetch results in descending order of similarity, you add a `-` prefix to fetch them in descending order."
+msgstr "`language_model_knn` 関数はソートのキーとしても利用できます。`--sort_keys`に`language_model_knn`を指定します。類似度の高い順に結果を取得したいので、先頭に`-`を付けて降順で取得しています。"
+
+msgid "Here is an example of filtering by `_id` and then sorting by similarity:"
+msgstr "`_id`で絞り込んだ後に、類似度でソートする例は次のとおりです。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "There are two required parameters."
+msgstr "必須の引数が2つあります。"
+
+msgid "`column`"
+msgstr ""
+
+msgid "`query`"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "This function works as a selector. It means that this function executes effectively."
+msgstr "この関数はセレクターとして動きます。つまり、効率的に実行できるということです。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`../tokenizers/token_language_model_knn`"
+msgstr ""

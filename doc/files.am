@@ -482,6 +482,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/column_create.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/filter.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/index_column_create.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/sort_keys.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_register.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_rerank.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
@@ -849,6 +856,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop-word-columns-option.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop_word.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/column_create.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/index_column_create.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/select.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
@@ -1248,6 +1261,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/language_model_knn.md \
 	$(top_srcdir)/doc/source/reference/functions/language_model_vectorize.md \
 	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
@@ -1326,6 +1340,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit_null.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_language_model_knn.md \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_ngram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_pattern.rst \
@@ -1855,6 +1870,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/language_model_knn/column_create.md \
+	source/example/reference/functions/language_model_knn/filter.md \
+	source/example/reference/functions/language_model_knn/index_column_create.md \
+	source/example/reference/functions/language_model_knn/sort_keys.md \
+	source/example/reference/functions/language_model_knn/usage_register.md \
+	source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	source/example/reference/functions/language_model_knn/usage_setup_schema.md \
 	source/example/reference/functions/language_model_vectorize/usage_register.md \
 	source/example/reference/functions/language_model_vectorize/usage_rerank.md \
 	source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
@@ -2222,6 +2244,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/token_filters/stem.log \
 	source/example/reference/token_filters/stop-word-columns-option.log \
 	source/example/reference/token_filters/stop_word.log \
+	source/example/reference/tokenizers/language_model_knn/column_create.md \
+	source/example/reference/tokenizers/language_model_knn/index_column_create.md \
+	source/example/reference/tokenizers/language_model_knn/select.md \
+	source/example/reference/tokenizers/language_model_knn/usage_register.md \
+	source/example/reference/tokenizers/language_model_knn/usage_setup_data.md \
+	source/example/reference/tokenizers/language_model_knn/usage_setup_schema.md \
 	source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
 	source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
 	source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
@@ -2621,6 +2649,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/language_model_knn.md \
 	source/reference/functions/language_model_vectorize.md \
 	source/reference/functions/math_abs.rst \
 	source/reference/functions/now.rst \
@@ -2699,6 +2728,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	source/reference/tokenizers/token_delimit.rst \
 	source/reference/tokenizers/token_delimit_null.rst \
+	source/reference/tokenizers/token_language_model_knn.md \
 	source/reference/tokenizers/token_mecab.rst \
 	source/reference/tokenizers/token_ngram.rst \
 	source/reference/tokenizers/token_pattern.rst \
@@ -2943,6 +2973,7 @@ po_files = \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
+	reference/functions/language_model_knn.po \
 	reference/functions/language_model_vectorize.po \
 	reference/functions/math_abs.po \
 	reference/functions/now.po \
@@ -3020,6 +3051,7 @@ po_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.po \
 	reference/tokenizers/token_delimit.po \
 	reference/tokenizers/token_delimit_null.po \
+	reference/tokenizers/token_language_model_knn.po \
 	reference/tokenizers/token_mecab.po \
 	reference/tokenizers/token_ngram.po \
 	reference/tokenizers/token_pattern.po \
@@ -3263,6 +3295,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
+	LC_MESSAGES/reference/functions/language_model_knn.po \
 	LC_MESSAGES/reference/functions/language_model_vectorize.po \
 	LC_MESSAGES/reference/functions/math_abs.po \
 	LC_MESSAGES/reference/functions/now.po \
@@ -3340,6 +3373,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.po \
 	LC_MESSAGES/reference/tokenizers/token_delimit.po \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.po \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.po \
 	LC_MESSAGES/reference/tokenizers/token_mecab.po \
 	LC_MESSAGES/reference/tokenizers/token_ngram.po \
 	LC_MESSAGES/reference/tokenizers/token_pattern.po \
@@ -3583,6 +3617,7 @@ edit_po_files = \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
+	reference/functions/language_model_knn.edit \
 	reference/functions/language_model_vectorize.edit \
 	reference/functions/math_abs.edit \
 	reference/functions/now.edit \
@@ -3660,6 +3695,7 @@ edit_po_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.edit \
 	reference/tokenizers/token_delimit.edit \
 	reference/tokenizers/token_delimit_null.edit \
+	reference/tokenizers/token_language_model_knn.edit \
 	reference/tokenizers/token_mecab.edit \
 	reference/tokenizers/token_ngram.edit \
 	reference/tokenizers/token_pattern.edit \
@@ -3903,6 +3939,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
+	LC_MESSAGES/reference/functions/language_model_knn.edit \
 	LC_MESSAGES/reference/functions/language_model_vectorize.edit \
 	LC_MESSAGES/reference/functions/math_abs.edit \
 	LC_MESSAGES/reference/functions/now.edit \
@@ -3980,6 +4017,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.edit \
 	LC_MESSAGES/reference/tokenizers/token_delimit.edit \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.edit \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.edit \
 	LC_MESSAGES/reference/tokenizers/token_mecab.edit \
 	LC_MESSAGES/reference/tokenizers/token_ngram.edit \
 	LC_MESSAGES/reference/tokenizers/token_pattern.edit \
@@ -4223,6 +4261,7 @@ mo_files = \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
+	reference/functions/language_model_knn.mo \
 	reference/functions/language_model_vectorize.mo \
 	reference/functions/math_abs.mo \
 	reference/functions/now.mo \
@@ -4300,6 +4339,7 @@ mo_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.mo \
 	reference/tokenizers/token_delimit.mo \
 	reference/tokenizers/token_delimit_null.mo \
+	reference/tokenizers/token_language_model_knn.mo \
 	reference/tokenizers/token_mecab.mo \
 	reference/tokenizers/token_ngram.mo \
 	reference/tokenizers/token_pattern.mo \
@@ -4543,6 +4583,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
+	LC_MESSAGES/reference/functions/language_model_knn.mo \
 	LC_MESSAGES/reference/functions/language_model_vectorize.mo \
 	LC_MESSAGES/reference/functions/math_abs.mo \
 	LC_MESSAGES/reference/functions/now.mo \
@@ -4620,6 +4661,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.mo \
 	LC_MESSAGES/reference/tokenizers/token_delimit.mo \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.mo \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.mo \
 	LC_MESSAGES/reference/tokenizers/token_mecab.mo \
 	LC_MESSAGES/reference/tokenizers/token_ngram.mo \
 	LC_MESSAGES/reference/tokenizers/token_pattern.mo \
@@ -4898,6 +4940,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/language_model_knn.html \
 	html/reference/functions/language_model_vectorize.html \
 	html/reference/functions/math_abs.html \
 	html/reference/functions/now.html \
@@ -4975,6 +5018,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tokenizers/token_bigram_split_symbol_alpha_digit.html \
 	html/reference/tokenizers/token_delimit.html \
 	html/reference/tokenizers/token_delimit_null.html \
+	html/reference/tokenizers/token_language_model_knn.html \
 	html/reference/tokenizers/token_mecab.html \
 	html/reference/tokenizers/token_ngram.html \
 	html/reference/tokenizers/token_pattern.html \
