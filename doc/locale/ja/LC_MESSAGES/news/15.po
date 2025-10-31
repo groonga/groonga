@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 15.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-03-28 11:48+0900\n"
+"PO-Revision-Date: 2025-10-31 13:57+0900\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,14 +17,71 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.8 - 2025-10-31"
+msgstr "15.1.8リリース - 2025-10-31"
+
+msgid "In this release, semantic search is supported."
+msgstr "今回のリリースでは、セマンティックサーチができるようになりました。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"faiss\"]` entry"
+msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"faiss\"]`エントリーを追加"
+
+msgid "The `.[\"features\"]` entry shows whether each feature is enabled or not like the following:"
+msgstr "`.[\"features\"]`エントリーは次のように各機能が有効かどうかを示しています。"
+
+msgid "This release added `faiss` to the `.[\"features\"]` entry:"
+msgstr "このリリースは`.[\"features\"]`エントリーに`faiss`を追加しました。"
+
+msgid "You can use `.[\"features\"][\"faiss\"]` to know whether [Faiss](https://github.com/facebookresearch/faiss) is enabled or not."
+msgstr "[Faiss](https://github.com/facebookresearch/faiss)が有効になっているかどうかを確認するために`.[\"features\"][\"faiss\"]`を使うことができます。"
+
+msgid "You need the Faiss support to use semantic search described next."
+msgstr "次で紹介するセマンティックサーチを使うためにはFaissサポートが必要です。"
+
+msgid "Supported semantic search"
+msgstr "セマンティックサーチが使えるようになりました。"
+
+msgid "This feature is still experimental and unstable."
+msgstr "この機能はまだ実験的で安定していません。"
+
+msgid "Added {doc}`/reference/tokenizers/token_language_model_knn` tokenizer and {doc}`/reference/functions/language_model_knn` function. Using these together you can do semantic search."
+msgstr "{doc}`/reference/tokenizers/token_language_model_knn`トークナイザーと、{doc}`/reference/functions/language_model_knn`関数を追加しました。これらを合わせて使うことでセマンティックサーチができます。"
+
+msgid "Here is an example of semantic search."
+msgstr "セマンティックサーチをしている例は次のとおりです。"
+
+msgid "The important feature is that it searches using text, just like keyword search. Internally, Groonga creates embedding automatically and use it for semantic search."
+msgstr "キーワード検索と同様にテキストで検索しているところがポイントです。内部的にはGroongaがエンベディングを生成し、それを使ってセマンティックサーチを実現しています。"
+
+msgid "Users do not need to create embeddings and search using them. You can do semantic search with text, just like keyword search."
+msgstr "ユーザーが自分でエンべディングを作成し、それを使って検索する必要はありません。キーワード検索と同じようにテキストで検索できます。"
+
+msgid "We omitted examples, but the same works when loading text for search. Simply load text into Groonga as before, and you can do semantic search. Users don't need to create embeddings and load them. This is because Groonga automatically generates embeddings as well."
+msgstr "具体例の記載は割愛しましたが、これは検索対象のテキストをロードするときも同様です。これまでと同じようにテキストをGroongaにロードするだけで、セマンティックサーチができるようになります。ユーザーがエンべディングを作成し、それをロードする必要はありません。Groongaが自動でエンベディングの生成も行うためです。"
+
+msgid "For details on setting up indexes and more, see the pages for {doc}`/reference/tokenizers/token_language_model_knn` tokenizer and {doc}`/reference/functions/language_model_knn` function."
+msgstr "インデックスの設定方法など、詳しくは{doc}`/reference/tokenizers/token_language_model_knn`トークナイザーと、{doc}`/reference/functions/language_model_knn`関数のページをご覧ください。"
+
+msgid "[{doc}`/reference/functions/language_model_vectorize`] Added support for auto download from Hugging Face"
+msgstr "[{doc}`/reference/functions/language_model_vectorize`] 言語モデルの自動ダウンロードをサポート"
+
+msgid "Specifying a Hugging Face URI in `model_name` will automatically download the language model. The model is downloaded during the first execution and located in the Groonga database directory. Subsequent executions use the local model files."
+msgstr "次のように`model_name`にHugging Face URIを指定すると自動でモデルのダウンロードをします。初回の実行にダウンロードをして、Groongaのデータベースディレクトリに配置します。その後の実行ではローカルのモデルを利用します。"
+
+msgid "Using this feature is useful because Groonga handles the download and placement."
+msgstr "この機能を活用するとGroongaがダウンロードと配置をやってくれるので便利です。"
+
+msgid "[{doc}`/reference/types`] Add `ShortBinary`, `Binary` and `LargeBinary`"
+msgstr "[{doc}`/reference/types`] `ShortBinary`、`Binary`、`LargeBinary`を追加"
+
 msgid "Release 15.1.7 - 2025-09-29"
 msgstr "15.1.7リリース - 2025-09-29"
 
 msgid "In this release, `NormalizerNFKC` can normalize Japanese iteration marks and fixed installation failure on AlmaLinux 10."
 msgstr "今回のリリースでは、`NormalizerNFKC`で日本語の踊り字を正規化できるようになりました。また、AlmaLinux 10でインストール失敗していた問題を修正しました。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/executables/grndb`] Improved error handling for large database files"
 msgstr "[{doc}`/reference/executables/grndb`] 大きなデータベースファイルに対するエラー処理を改善"
