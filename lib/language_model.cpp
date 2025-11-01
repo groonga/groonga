@@ -457,7 +457,7 @@ namespace grn {
               return;
             }
 
-            if (!pool_embeddings(ctx, batch, sequence_id, i, tag)) {
+            if (!pool_embedding(ctx, batch, sequence_id, i, tag)) {
               return;
             }
 
@@ -465,7 +465,7 @@ namespace grn {
             offset += size;
           }
 
-          normalize_embeddings(
+          normalize_embedding(
             pooling_buffer_.data(),
             [&](int32_t dimension, float normalized_value) {
               GRN_FLOAT32_PUT(ctx, output_vector, normalized_value);
@@ -478,7 +478,7 @@ namespace grn {
             return;
           }
 
-          if (!store_embeddings(ctx, batch, sequence_id, output_vector, tag)) {
+          if (!store_embedding(ctx, batch, sequence_id, output_vector, tag)) {
             return;
           }
         }
@@ -504,9 +504,9 @@ namespace grn {
         auto batch = llama_batch_init(max_n_tokens_, 0, 1);
         BatchReleaser batch_releaser(&batch);
 
-        grn_obj embeddings;
-        GRN_FLOAT32_INIT(&embeddings, GRN_OBJ_VECTOR);
-        grn::UniqueObj smart_embeddings(ctx, &embeddings);
+        grn_obj embedding;
+        GRN_FLOAT32_INIT(&embedding, GRN_OBJ_VECTOR);
+        grn::UniqueObj smart_embedding(ctx, &embedding);
 
         auto flush_batch = [&]() {
           const auto n_sequences = targets.size();
@@ -517,31 +517,27 @@ namespace grn {
             const auto &target = targets[i];
             const auto sequence_id = static_cast<llama_seq_id>(i);
             if (target.n_chunks == 1) {
-              GRN_BULK_REWIND(&embeddings);
-              if (!store_embeddings(ctx,
-                                    batch,
-                                    sequence_id,
-                                    &embeddings,
-                                    tag)) {
+              GRN_BULK_REWIND(&embedding);
+              if (!store_embedding(ctx, batch, sequence_id, &embedding, tag)) {
                 return false;
               }
-              output(ctx, target.id, &embeddings);
+              output(ctx, target.id, &embedding);
             } else {
-              if (!pool_embeddings(ctx,
-                                   batch,
-                                   sequence_id,
-                                   target.current_chunk_index,
-                                   tag)) {
+              if (!pool_embedding(ctx,
+                                  batch,
+                                  sequence_id,
+                                  target.current_chunk_index,
+                                  tag)) {
                 return false;
               }
               if (target.current_chunk_index == target.n_chunks - 1) {
-                GRN_BULK_REWIND(&embeddings);
-                normalize_embeddings(
+                GRN_BULK_REWIND(&embedding);
+                normalize_embedding(
                   pooling_buffer_.data(),
                   [&](int32_t dimension, float normalized_value) {
-                    GRN_FLOAT32_PUT(ctx, &embeddings, normalized_value);
+                    GRN_FLOAT32_PUT(ctx, &embedding, normalized_value);
                   });
-                output(ctx, target.id, &embeddings);
+                output(ctx, target.id, &embedding);
               }
             }
           }
@@ -768,52 +764,52 @@ namespace grn {
       }
 
       const float *
-      get_embeddings(grn_ctx *ctx,
-                     llama_batch &batch,
-                     llama_seq_id id,
-                     const char *tag)
+      get_embedding(grn_ctx *ctx,
+                    llama_batch &batch,
+                    llama_seq_id id,
+                    const char *tag)
       {
         // pooling_type_ must not be LLAMA_POOLING_TYPE_NONE.
-        auto raw_embeddings = llama_get_embeddings_seq(llama_ctx_, id);
-        if (!raw_embeddings) {
+        auto raw_embedding = llama_get_embeddings_seq(llama_ctx_, id);
+        if (!raw_embedding) {
           std::string message(tag);
-          message += " failed to get embeddings";
+          message += " failed to get embedding";
           GRN_LM_ERROR(GRN_UNKNOWN_ERROR, message.data());
           return nullptr;
         }
-        return raw_embeddings;
+        return raw_embedding;
       }
 
       template <typename Output>
       void
-      normalize_embeddings(const float *raw_embeddings, Output output)
+      normalize_embedding(const float *raw_embedding, Output output)
       {
         // TODO: grn::distance::compute_l2_norm()
         float square_sum = 0.0;
         for (int32_t dimension = 0; dimension < n_dimensions_; ++dimension) {
-          square_sum += raw_embeddings[dimension] * raw_embeddings[dimension];
+          square_sum += raw_embedding[dimension] * raw_embedding[dimension];
         }
         auto magnitude = std::sqrt(square_sum);
         const float normalize = magnitude > 0.0 ? 1.0 / magnitude : 0.0f;
         for (int32_t dimension = 0; dimension < n_dimensions_; ++dimension) {
-          auto normalized_value = raw_embeddings[dimension] * normalize;
+          auto normalized_value = raw_embedding[dimension] * normalize;
           output(dimension, normalized_value);
         }
       }
 
       bool
-      pool_embeddings(grn_ctx *ctx,
-                      llama_batch &batch,
-                      llama_seq_id id,
-                      size_t n_pooled_embeddings,
-                      const char *tag)
+      pool_embedding(grn_ctx *ctx,
+                     llama_batch &batch,
+                     llama_seq_id id,
+                     size_t n_pooled_embeddings,
+                     const char *tag)
       {
-        auto raw_embeddings = get_embeddings(ctx, batch, id, tag);
-        if (!raw_embeddings) {
+        auto raw_embedding = get_embedding(ctx, batch, id, tag);
+        if (!raw_embedding) {
           return false;
         }
         for (int32_t dimension = 0; dimension < n_dimensions_; ++dimension) {
-          // Use average pooling to generate document embeddings from
+          // Use average pooling to generate document embedding from
           // split embeddings. This is a SWEM-aver like approach.
           //
           // See also: Baseline Needs More Love: On Simple
@@ -824,10 +820,10 @@ namespace grn {
           // computation. For example, merging averages, using Kahan
           // summation algorithm and so on.
           if (n_pooled_embeddings == 0) {
-            pooling_buffer_[dimension] = raw_embeddings[dimension];
+            pooling_buffer_[dimension] = raw_embedding[dimension];
           } else {
             pooling_buffer_[dimension] +=
-              (raw_embeddings[dimension] - pooling_buffer_[dimension]) /
+              (raw_embedding[dimension] - pooling_buffer_[dimension]) /
               (n_pooled_embeddings + 1);
           }
         }
@@ -835,20 +831,20 @@ namespace grn {
       }
 
       bool
-      store_embeddings(grn_ctx *ctx,
-                       llama_batch &batch,
-                       llama_seq_id id,
-                       grn_obj *output_vector,
-                       const char *tag)
+      store_embedding(grn_ctx *ctx,
+                      llama_batch &batch,
+                      llama_seq_id id,
+                      grn_obj *output_vector,
+                      const char *tag)
       {
-        auto raw_embeddings = get_embeddings(ctx, batch, id, tag);
-        if (!raw_embeddings) {
+        auto raw_embedding = get_embedding(ctx, batch, id, tag);
+        if (!raw_embedding) {
           return false;
         }
         auto output = [&](int32_t dimension, float normalized_value) {
           GRN_FLOAT32_PUT(ctx, output_vector, normalized_value);
         };
-        normalize_embeddings(raw_embeddings, output);
+        normalize_embedding(raw_embedding, output);
         return true;
       }
     };
@@ -931,19 +927,19 @@ namespace grn {
         ctx,
         cursor,
         input_column,
-        [&](grn_ctx *ctx, grn_id id, grn_obj *embeddings) {
-          grn_obj_set_value(ctx, output, id, embeddings, GRN_OBJ_SET);
+        [&](grn_ctx *ctx, grn_id id, grn_obj *embedding) {
+          grn_obj_set_value(ctx, output, id, embedding, GRN_OBJ_SET);
         });
     } else {
       return impl_->vectorize_in_batch(
         ctx,
         cursor,
         input_column,
-        [&](grn_ctx *ctx, grn_id id, grn_obj *embeddings) {
+        [&](grn_ctx *ctx, grn_id id, grn_obj *embedding) {
           grn_bulk_write(ctx,
                          output,
-                         GRN_BULK_HEAD(embeddings),
-                         GRN_BULK_VSIZE(embeddings));
+                         GRN_BULK_HEAD(embedding),
+                         GRN_BULK_VSIZE(embedding));
         });
     }
   }
