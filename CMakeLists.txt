@@ -2067,7 +2067,7 @@ if(NOT "${GRN_WITH_BASE64}" STREQUAL "no")
     # We need to use function to create a variable scope
     function(grn_build_base64)
       set(BASE64_SOURCE_BASE_NAME
-          "base64-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+          "base64-${GRN_BASE64_BUNDLED_VERSION}.tar.gz")
       set(BASE64_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BASE64_SOURCE_BASE_NAME}")
       if(EXISTS ${BASE64_SOURCE_LOCAL_PATH})
