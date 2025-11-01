@@ -15,6 +15,9 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 	dh $@ --without=autoreconf
 
 override_dh_auto_configure:
+	if [ "$${DEB_EMULATE_LAUNCHPAD_ENVIRONMENT}" = "yes" ]; then	\
+	  echo > /etc/resolv.conf;					\
+	fi
 	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
 	  GRN_WITH_APACHE_ARROW=ON;				\
 	else							\
