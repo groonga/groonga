@@ -55,12 +55,26 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def docker_run_options(os, architecture)
+    if os.start_with?("ubuntu-")
+      [
+        "--env", "DEB_EMULATE_LAUNCHPAD_ENVIRONMENT=yes",
+      ]
+    else
+      []
+    end
+  end
+
   def apt_targets_default
     [
       "debian-bookworm",
       "debian-bookworm-arm64",
       "debian-trixie",
       "debian-trixie-arm64",
+      "ubuntu-jammy",
+      "ubuntu-jammy-arm64",
+      "ubuntu-noble",
+      "ubuntu-noble-arm64",
     ]
   end
 
