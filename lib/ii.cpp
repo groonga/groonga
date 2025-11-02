@@ -17592,7 +17592,7 @@ namespace grn::ii {
         };
         if (!executor->execute(offset,
                                execute,
-                               "[index][builder][append_src][parallel]")) {
+                               "[index][builder][append-src][parallel]")) {
           executor->wait_all();
           return ctx_->rc;
         }
