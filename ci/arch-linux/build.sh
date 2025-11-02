@@ -18,6 +18,12 @@
 
 set -eux
 
+echo "::group::Update repository"
+set -x
+sudo pacman --sync --refresh --refresh --sysupgrade --noconfirm
+set +x
+echo "::endgroup::"
+
 echo "::group::Prepare"
 set -x
 cp /source/groonga-*.tar.gz ./
