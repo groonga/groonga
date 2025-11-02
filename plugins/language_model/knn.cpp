@@ -157,8 +157,8 @@ namespace {
     grn_obj *source_table;
     Options *options;
     std::string_view query;
-    grn_obj embeddings;
-    grn_obj transformed_embeddings;
+    grn_obj embedding;
+    grn_obj transformed_embedding;
     grn_obj code;
   };
 
@@ -177,8 +177,8 @@ namespace {
 
     tokenizer->options = options;
     tokenizer->query = query;
-    GRN_FLOAT32_INIT(&(tokenizer->embeddings), GRN_OBJ_VECTOR);
-    GRN_FLOAT32_INIT(&(tokenizer->transformed_embeddings), GRN_OBJ_VECTOR);
+    GRN_FLOAT32_INIT(&(tokenizer->embedding), GRN_OBJ_VECTOR);
+    GRN_FLOAT32_INIT(&(tokenizer->transformed_embedding), GRN_OBJ_VECTOR);
     if (options->quantizer == Quantizer::NONE) {
       GRN_SHORT_BINARY_INIT(&(tokenizer->code), GRN_OBJ_DO_SHALLOW_COPY);
     } else {
@@ -191,8 +191,8 @@ namespace {
   void
   tokenizer_close(grn_ctx *ctx, Tokenizer *tokenizer)
   {
-    GRN_OBJ_FIN(ctx, &(tokenizer->embeddings));
-    GRN_OBJ_FIN(ctx, &(tokenizer->transformed_embeddings));
+    GRN_OBJ_FIN(ctx, &(tokenizer->embedding));
+    GRN_OBJ_FIN(ctx, &(tokenizer->transformed_embedding));
     GRN_OBJ_FIN(ctx, &(tokenizer->code));
     GRN_PLUGIN_FREE(ctx, tokenizer);
   }
@@ -403,22 +403,21 @@ namespace {
         source_column_(GRN_PTR_VALUE_AT(source_columns_, 0)),
         index_column_(grn_tokenizer_build_data_get_index_column(ctx_, data_)),
         options_(nullptr),
-        embeddings_set_path_(),
-        embeddings_set_map_(nullptr),
-        embeddings_set_(),
-        embeddings_set_raw_(),
-        transformed_embeddings_set_raw_(nullptr)
+        embeddings_path_(),
+        embeddings_map_(nullptr),
+        embeddings_(),
+        embeddings_raw_(),
+        transformed_embeddings_raw_(nullptr)
     {
-      GRN_FLOAT32_INIT(&embeddings_set_,
-                       GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_FLOAT32_INIT(&embeddings_, GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
     }
 
     ~Builder()
     {
-      GRN_OBJ_FIN(ctx_, &embeddings_set_);
-      if (embeddings_set_map_) {
-        grn_memory_map_close(ctx_, embeddings_set_map_);
-        grn_unlink(embeddings_set_path_.data());
+      GRN_OBJ_FIN(ctx_, &embeddings_);
+      if (embeddings_map_) {
+        grn_memory_map_close(ctx_, embeddings_map_);
+        grn_unlink(embeddings_path_.data());
       }
     }
 
@@ -448,11 +447,11 @@ namespace {
     grn_obj *source_column_;
     grn_obj *index_column_;
     Options *options_;
-    std::string embeddings_set_path_;
-    grn_memory_map *embeddings_set_map_;
-    grn_obj embeddings_set_;
-    float *embeddings_set_raw_;
-    float *transformed_embeddings_set_raw_;
+    std::string embeddings_path_;
+    grn_memory_map *embeddings_map_;
+    grn_obj embeddings_;
+    float *embeddings_raw_;
+    float *transformed_embeddings_raw_;
 
     bool
     prepare_options()
@@ -510,45 +509,42 @@ namespace {
 
       faiss::Clustering clustering(options_->n_dimensions,
                                    options_->n_clusters);
-      embeddings_set_path_ = grn_obj_path(ctx_, index_column_);
-      embeddings_set_path_ += ".embeddings_set";
-      size_t embeddings_set_size =
+      embeddings_path_ = grn_obj_path(ctx_, index_column_);
+      embeddings_path_ += ".embeddings";
+      size_t embeddings_size =
         sizeof(float) * options_->n_dimensions * n_source_records_;
-      embeddings_set_map_ = grn_memory_map_open(
-        ctx_,
-        embeddings_set_path_.data(),
-        GRN_MEMORY_MAP_READ | GRN_MEMORY_MAP_WRITE,
-        0,
-        // The former part is for raw embeddings set and
-        // the latter part is for transformed embeddings set.
-        embeddings_set_size * 2);
-      embeddings_set_raw_ = static_cast<float *>(
-        grn_memory_map_get_address(ctx_, embeddings_set_map_));
-      transformed_embeddings_set_raw_ =
-        embeddings_set_raw_ + (embeddings_set_size / sizeof(float));
-      GRN_BINARY_SET_REF(&embeddings_set_,
-                         embeddings_set_raw_,
-                         embeddings_set_size);
-      GRN_BULK_REWIND(&embeddings_set_);
+      embeddings_map_ =
+        grn_memory_map_open(ctx_,
+                            embeddings_path_.data(),
+                            GRN_MEMORY_MAP_READ | GRN_MEMORY_MAP_WRITE,
+                            0,
+                            // The former part is for raw embeddings and
+                            // the latter part is for transformed embeddings.
+                            embeddings_size * 2);
+      embeddings_raw_ =
+        static_cast<float *>(grn_memory_map_get_address(ctx_, embeddings_map_));
+      transformed_embeddings_raw_ =
+        embeddings_raw_ + (embeddings_size / sizeof(float));
+      GRN_BINARY_SET_REF(&embeddings_, embeddings_raw_, embeddings_size);
+      GRN_BULK_REWIND(&embeddings_);
       grn_language_model_inferencer_vectorize_in_batch(ctx_,
                                                        options_->inferencer,
                                                        cursor,
                                                        source_column_,
-                                                       &embeddings_set_);
+                                                       &embeddings_);
       grn_table_cursor_close(ctx_, cursor);
 
-      if (GRN_BULK_VSIZE(&embeddings_set_) != embeddings_set_size) {
-        GRN_PLUGIN_ERROR(
-          ctx_,
-          GRN_UNKNOWN_ERROR,
-          "%s failed to generate "
-          "float[%u] * %u (%" PRIu64 " bytes) embeddings: "
-          "%" PRIu64 " bytes are only generated",
-          TOKENIZER_TAG,
-          options_->n_dimensions,
-          n_source_records_,
-          static_cast<uint64_t>(embeddings_set_size),
-          static_cast<uint64_t>(GRN_BULK_VSIZE(&embeddings_set_)));
+      if (GRN_BULK_VSIZE(&embeddings_) != embeddings_size) {
+        GRN_PLUGIN_ERROR(ctx_,
+                         GRN_UNKNOWN_ERROR,
+                         "%s failed to generate "
+                         "float[%u] * %u (%" PRIu64 " bytes) embeddings: "
+                         "%" PRIu64 " bytes are only generated",
+                         TOKENIZER_TAG,
+                         options_->n_dimensions,
+                         n_source_records_,
+                         static_cast<uint64_t>(embeddings_size),
+                         static_cast<uint64_t>(GRN_BULK_VSIZE(&embeddings_)));
         return false;
       }
 
@@ -556,14 +552,12 @@ namespace {
 #ifdef GRN_FAISS_HAVE_RABITQ
         options_->random_rotation_matrix.apply_noalloc(
           n_source_records_,
-          embeddings_set_raw_,
-          transformed_embeddings_set_raw_);
-        clustering.train(n_source_records_,
-                         transformed_embeddings_set_raw_,
-                         index);
+          embeddings_raw_,
+          transformed_embeddings_raw_);
+        clustering.train(n_source_records_, transformed_embeddings_raw_, index);
 #endif
       } else {
-        clustering.train(n_source_records_, embeddings_set_raw_, index);
+        clustering.train(n_source_records_, embeddings_raw_, index);
       }
       size_t n_centroids = clustering.k;
       options_->centroid_index_to_record_id.reserve(n_centroids);
@@ -620,27 +614,26 @@ namespace {
         grn_tokenizer_build_data_start_section(ctx_, data_, 1);
 
         GRN_BULK_REWIND(&tokens);
-        const float *target_embeddings = nullptr;
+        const float *target_embedding = nullptr;
         if (options_->quantizer == Quantizer::RABITQ) {
-          target_embeddings =
-            transformed_embeddings_set_raw_ + (options_->n_dimensions * i);
+          target_embedding =
+            transformed_embeddings_raw_ + (options_->n_dimensions * i);
         } else {
-          target_embeddings =
-            embeddings_set_raw_ + (options_->n_dimensions * i);
+          target_embedding = embeddings_raw_ + (options_->n_dimensions * i);
         }
         float distances[1];
         faiss::idx_t indexes[1];
-        index.search(1, target_embeddings, 1, distances, indexes);
+        index.search(1, target_embedding, 1, distances, indexes);
         if (options_->quantizer == Quantizer::NONE) {
           GRN_BINARY_SET_REF(&code,
-                             target_embeddings,
+                             target_embedding,
                              sizeof(float) * options_->n_dimensions);
         } else if (options_->quantizer == Quantizer::RABITQ) {
 #ifdef GRN_FAISS_HAVE_RABITQ
           const float *centroid =
             options_->centroids.data() + (options_->n_dimensions * indexes[0]);
           options_->rabitq.compute_codes_core(
-            target_embeddings,
+            target_embedding,
             reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&code)),
             1,
             centroid);
@@ -727,7 +720,7 @@ namespace {
                                             tokenizer->options->inferencer,
                                             tokenizer->query.data(),
                                             tokenizer->query.size(),
-                                            &(tokenizer->embeddings));
+                                            &(tokenizer->embedding));
     if (ctx->rc != GRN_SUCCESS) {
       GRN_PLUGIN_ERROR(ctx,
                        ctx->rc,
@@ -738,30 +731,30 @@ namespace {
       return;
     }
 
-    auto embeddings =
-      reinterpret_cast<const float *>(GRN_BULK_HEAD(&(tokenizer->embeddings)));
-    const float *target_embeddings = nullptr;
+    auto embedding =
+      reinterpret_cast<const float *>(GRN_BULK_HEAD(&(tokenizer->embedding)));
+    const float *target_embedding = nullptr;
     if (tokenizer->options->quantizer == Quantizer::RABITQ) {
 #ifdef GRN_FAISS_HAVE_RABITQ
       grn_bulk_space(ctx,
-                     &(tokenizer->transformed_embeddings),
-                     GRN_BULK_VSIZE(&(tokenizer->embeddings)));
-      auto transformed_embeddings = reinterpret_cast<float *>(
-        GRN_BULK_HEAD(&(tokenizer->transformed_embeddings)));
+                     &(tokenizer->transformed_embedding),
+                     GRN_BULK_VSIZE(&(tokenizer->embedding)));
+      auto transformed_embedding = reinterpret_cast<float *>(
+        GRN_BULK_HEAD(&(tokenizer->transformed_embedding)));
       tokenizer->options->random_rotation_matrix.apply_noalloc(
         1,
-        embeddings,
-        transformed_embeddings);
-      target_embeddings = transformed_embeddings;
+        embedding,
+        transformed_embedding);
+      target_embedding = transformed_embedding;
 #endif
     } else {
-      target_embeddings = embeddings;
+      target_embedding = embedding;
     }
     size_t k = 1;
     float distances[1];
     faiss::idx_t indexes[1];
     tokenizer->options->centroid_searcher.search(1,
-                                                 target_embeddings,
+                                                 target_embedding,
                                                  k,
                                                  distances,
                                                  indexes);
@@ -776,7 +769,7 @@ namespace {
     if (grn_tokenizer_query_get_mode(ctx, query) == GRN_TOKENIZE_ADD) {
       if (tokenizer->options->quantizer == Quantizer::NONE) {
         GRN_BINARY_SET_REF(&(tokenizer->code),
-                           target_embeddings,
+                           target_embedding,
                            sizeof(float) * tokenizer->options->n_dimensions);
       } else if (tokenizer->options->quantizer == Quantizer::RABITQ) {
 #ifdef GRN_FAISS_HAVE_RABITQ
@@ -784,7 +777,7 @@ namespace {
                        &(tokenizer->code),
                        tokenizer->options->rabitq.code_size);
         tokenizer->options->rabitq.compute_codes_core(
-          target_embeddings,
+          target_embedding,
           reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&(tokenizer->code))),
           1,
           centroid);
@@ -836,19 +829,19 @@ namespace {
         query_(query),
         n_probes_(n_probes),
         k_(k),
-        query_embeddings_(),
-        transformed_query_embeddings_(),
+        query_embedding_(),
+        transformed_query_embedding_(),
         code_()
     {
-      GRN_FLOAT32_INIT(&query_embeddings_, GRN_OBJ_VECTOR);
-      GRN_FLOAT32_INIT(&transformed_query_embeddings_, GRN_OBJ_VECTOR);
+      GRN_FLOAT32_INIT(&query_embedding_, GRN_OBJ_VECTOR);
+      GRN_FLOAT32_INIT(&transformed_query_embedding_, GRN_OBJ_VECTOR);
       GRN_VOID_INIT(&code_);
     }
 
     ~Searcher()
     {
-      GRN_OBJ_FIN(ctx_, &query_embeddings_);
-      GRN_OBJ_FIN(ctx_, &transformed_query_embeddings_);
+      GRN_OBJ_FIN(ctx_, &query_embedding_);
+      GRN_OBJ_FIN(ctx_, &transformed_query_embedding_);
       GRN_OBJ_FIN(ctx_, &code_);
     }
 
@@ -871,25 +864,25 @@ namespace {
                                               options->inferencer,
                                               query_.data(),
                                               query_.size(),
-                                              &query_embeddings_);
-      auto raw_query_embeddings =
-        reinterpret_cast<const float *>(GRN_BULK_HEAD(&query_embeddings_));
-      const float *raw_target_embeddings = nullptr;
+                                              &query_embedding_);
+      auto raw_query_embedding =
+        reinterpret_cast<const float *>(GRN_BULK_HEAD(&query_embedding_));
+      const float *raw_target_embedding = nullptr;
       if (options->quantizer == Quantizer::RABITQ) {
 #ifdef GRN_FAISS_HAVE_RABITQ
         grn_bulk_space(ctx_,
-                       &transformed_query_embeddings_,
-                       GRN_BULK_VSIZE(&query_embeddings_));
-        auto raw_transformed_query_embeddings = reinterpret_cast<float *>(
-          GRN_BULK_HEAD(&transformed_query_embeddings_));
+                       &transformed_query_embedding_,
+                       GRN_BULK_VSIZE(&query_embedding_));
+        auto raw_transformed_query_embedding = reinterpret_cast<float *>(
+          GRN_BULK_HEAD(&transformed_query_embedding_));
         options->random_rotation_matrix.apply_noalloc(
           1,
-          raw_query_embeddings,
-          raw_transformed_query_embeddings);
-        raw_target_embeddings = raw_transformed_query_embeddings;
+          raw_query_embedding,
+          raw_transformed_query_embedding);
+        raw_target_embedding = raw_transformed_query_embedding;
 #endif
       } else {
-        raw_target_embeddings = raw_query_embeddings;
+        raw_target_embedding = raw_query_embedding;
       }
 
       auto n_probes =
@@ -898,7 +891,7 @@ namespace {
       std::vector<float> centroid_distances(n_probes);
       std::vector<faiss::idx_t> centroid_indexes(n_probes, -1);
       options->centroid_searcher.search(1,
-                                        raw_target_embeddings,
+                                        raw_target_embedding,
                                         n_probes,
                                         centroid_distances.data(),
                                         centroid_indexes.data());
@@ -939,16 +932,16 @@ namespace {
                                                   centroid);
 #  endif
         }
-        distance_computer->set_query(raw_target_embeddings);
+        distance_computer->set_query(raw_target_embedding);
 #else
-        grn_obj target_embeddings;
-        GRN_FLOAT32_INIT(&target_embeddings,
+        grn_obj target_embedding;
+        GRN_FLOAT32_INIT(&target_embedding,
                          GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_TEXT_SET_REF(&target_embeddings,
-                         raw_target_embeddings,
+        GRN_TEXT_SET_REF(&target_embedding,
+                         raw_target_embedding,
                          sizeof(float) * options->n_dimensions);
-        grn_obj candidate_embeddings;
-        GRN_FLOAT32_INIT(&candidate_embeddings,
+        grn_obj candidate_embedding;
+        GRN_FLOAT32_INIT(&candidate_embedding,
                          GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
 #endif
 
@@ -972,21 +965,21 @@ namespace {
           auto similarity = distance_computer->distance_to_code(
             reinterpret_cast<const uint8_t *>(GRN_BULK_HEAD(&code_)));
 #else
-          GRN_TEXT_SET_REF(&candidate_embeddings,
+          GRN_TEXT_SET_REF(&candidate_embedding,
                            GRN_BULK_HEAD(&code_),
                            GRN_BULK_VSIZE(&code_));
           auto similarity =
             1 - grn_distance_inner_product(ctx_,
-                                           &target_embeddings,
-                                           &candidate_embeddings);
+                                           &target_embedding,
+                                           &candidate_embedding);
 #endif
           candidates.emplace_back(source_record_id, similarity);
         }
 #ifdef GRN_FAISS_HAVE_FLAT_CODES_DISTANCE_COMPUTER
         delete distance_computer;
 #else
-        GRN_OBJ_FIN(ctx_, &target_embeddings);
-        GRN_OBJ_FIN(ctx_, &candidate_embeddings);
+        GRN_OBJ_FIN(ctx_, &target_embedding);
+        GRN_OBJ_FIN(ctx_, &candidate_embedding);
 #endif
         grn_ii_cursor_close(ctx_, cursor);
       }
@@ -1017,8 +1010,8 @@ namespace {
     std::string_view query_;
     uint32_t n_probes_;
     uint32_t k_;
-    grn_obj query_embeddings_;
-    grn_obj transformed_query_embeddings_;
+    grn_obj query_embedding_;
+    grn_obj transformed_query_embedding_;
     grn_obj code_;
   };
 
