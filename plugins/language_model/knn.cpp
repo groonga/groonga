@@ -78,6 +78,8 @@ namespace {
     uint32_t n_clusters;
     Quantizer quantizer;
     std::string code_column_name;
+    std::string passage_prefix;
+    std::string query_prefix;
 
     /* Others are cached data for performance. */
 
@@ -102,6 +104,8 @@ namespace {
   {
     new (&options->model_name) std::string;
     new (&options->code_column_name) std::string;
+    new (&options->passage_prefix) std::string;
+    new (&options->query_prefix) std::string;
     options->n_clusters = 0;
 #ifdef GRN_FAISS_HAVE_RABITQ
     options->quantizer = Quantizer::RABITQ;
@@ -140,6 +144,9 @@ namespace {
     //   grn_obj_unref(ctx, options->code_column);
     // }
     options->code_column_name.~basic_string();
+
+    options->passage_prefix.~basic_string();
+    options->query_prefix.~basic_string();
 
 #ifdef GRN_FAISS_HAVE_RABITQ
     options->rabitq.~RaBitQuantizer();
@@ -227,11 +234,8 @@ namespace {
       return nullptr;
     }
 
-    options_init(ctx, options);
-    GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
-    {
-      std::string_view name_raw(name, name_length);
-      if (name_raw == "model") {
+    auto set_string =
+      [&](std::string &target, grn_obj *raw_options, unsigned int i) {
         const char *raw_value = nullptr;
         grn_id domain = GRN_ID_NIL;
         auto length = grn_vector_get_element(ctx,
@@ -241,8 +245,17 @@ namespace {
                                              nullptr,
                                              &domain);
         if (grn_type_id_is_text_family(ctx, domain)) {
-          options->model_name = std::string(raw_value, length);
+          target = std::string(raw_value, length);
         }
+      };
+
+    options_init(ctx, options);
+    GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+    {
+      std::string_view name_raw(name, name_length);
+
+      if (name_raw == "model") {
+        set_string(options->model_name, raw_options, i);
       } else if (name_raw == "n_clusters") {
         options->n_clusters =
           grn_vector_get_element_uint32(ctx,
@@ -252,17 +265,11 @@ namespace {
       } else if (name_raw == "quantizer") {
         // TODO: RaBitQ and no quantization are only supported for now
       } else if (name_raw == "code_column") {
-        const char *raw_value = nullptr;
-        grn_id domain = GRN_ID_NIL;
-        auto length = grn_vector_get_element(ctx,
-                                             raw_options,
-                                             i,
-                                             &raw_value,
-                                             nullptr,
-                                             &domain);
-        if (grn_type_id_is_text_family(ctx, domain)) {
-          options->code_column_name = std::string(raw_value, length);
-        }
+        set_string(options->code_column_name, raw_options, i);
+      } else if (name_raw == "passage_prefix") {
+        set_string(options->passage_prefix, raw_options, i);
+      } else if (name_raw == "query_prefix") {
+        set_string(options->query_prefix, raw_options, i);
       }
     }
     GRN_OPTION_VALUES_EACH_END();
@@ -329,6 +336,13 @@ namespace {
                        message.data());
       close_options(ctx, options);
       return nullptr;
+    }
+    if (!options->passage_prefix.empty()) {
+      grn_language_model_inferencer_set_input_column_value_prefix(
+        ctx,
+        options->inferencer,
+        options->passage_prefix.data(),
+        static_cast<int64_t>(options->passage_prefix.size()));
     }
 
     options->n_dimensions =
@@ -716,11 +730,21 @@ namespace {
   {
     auto tokenizer = static_cast<Tokenizer *>(user_data);
 
-    grn_language_model_inferencer_vectorize(ctx,
-                                            tokenizer->options->inferencer,
-                                            tokenizer->query.data(),
-                                            tokenizer->query.size(),
-                                            &(tokenizer->embedding));
+    if (tokenizer->options->passage_prefix.empty()) {
+      grn_language_model_inferencer_vectorize(ctx,
+                                              tokenizer->options->inferencer,
+                                              tokenizer->query.data(),
+                                              tokenizer->query.size(),
+                                              &(tokenizer->embedding));
+    } else {
+      auto prefixed_query = tokenizer->options->passage_prefix;
+      prefixed_query.append(tokenizer->query);
+      grn_language_model_inferencer_vectorize(ctx,
+                                              tokenizer->options->inferencer,
+                                              prefixed_query.data(),
+                                              prefixed_query.size(),
+                                              &(tokenizer->embedding));
+    }
     if (ctx->rc != GRN_SUCCESS) {
       GRN_PLUGIN_ERROR(ctx,
                        ctx->rc,
@@ -860,11 +884,21 @@ namespace {
                                                   close_options,
                                                   &open_options_data));
 
-      grn_language_model_inferencer_vectorize(ctx_,
-                                              options->inferencer,
-                                              query_.data(),
-                                              query_.size(),
-                                              &query_embedding_);
+      if (options->query_prefix.empty()) {
+        grn_language_model_inferencer_vectorize(ctx_,
+                                                options->inferencer,
+                                                query_.data(),
+                                                query_.size(),
+                                                &query_embedding_);
+      } else {
+        auto prefixed_query = options->query_prefix;
+        prefixed_query.append(query_);
+        grn_language_model_inferencer_vectorize(ctx_,
+                                                options->inferencer,
+                                                prefixed_query.data(),
+                                                prefixed_query.size(),
+                                                &query_embedding_);
+      }
       auto raw_query_embedding =
         reinterpret_cast<const float *>(GRN_BULK_HEAD(&query_embedding_));
       const float *raw_target_embedding = nullptr;

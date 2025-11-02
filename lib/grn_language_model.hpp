@@ -72,6 +72,15 @@ namespace grn {
     LanguageModelInferencer(Impl *impl);
     ~LanguageModelInferencer();
 
+    /// \brief Prepend `prefix` to all values of `input_column` in
+    ///        \ref vectorize_in_batch.
+    ///
+    /// \param prefix The prefix for all values of `input_column.
+    ///
+    /// \since 15.1.9
+    void
+    set_input_column_value_prefix(std::string prefix);
+
     /// \brief Generate an embedding for a record
     ///
     /// \param ctx A \ref grn_ctx.
