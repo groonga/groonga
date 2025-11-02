@@ -14,6 +14,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
+#include "grn_ctx.hpp"
 #include "grn_db.h"
 #include "grn_http_client.h"
 #include "grn_language_model.hpp"
@@ -33,6 +34,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cmath>
+#include <condition_variable>
 #include <cstring>
 #include <fstream>
 #include <functional>
@@ -436,8 +438,6 @@ namespace grn {
                 grn_obj *output_vector,
                 const char *tag)
       {
-        language_model::CaptureError capture(ctx);
-
         std::vector<llama_token> tokens;
         tokenize(text, tokens);
         auto n_tokens = static_cast<uint32_t>(tokens.size());
@@ -484,16 +484,14 @@ namespace grn {
         }
       }
 
-      template <typename Output>
+      template <typename IDProducer, typename Output>
       void
       vectorize_in_batch(grn_ctx *ctx,
-                         grn_table_cursor *cursor,
+                         IDProducer id_producer,
                          grn_obj *input_column,
                          Output output,
                          const char *tag)
       {
-        language_model::CaptureError capture(ctx);
-
         struct Target {
           grn_id id;
           size_t current_chunk_index;
@@ -565,7 +563,7 @@ namespace grn {
         };
 
         grn_id id;
-        while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        while ((id = id_producer()) != GRN_ID_NIL) {
           uint32_t input_size = 0;
           auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
           tokenize(input, tokens);
@@ -605,6 +603,46 @@ namespace grn {
             return;
           }
         }
+      }
+
+      template <typename Output>
+      void
+      vectorize_in_batch(grn_ctx *ctx,
+                         grn_table_cursor *cursor,
+                         grn_obj *input_column,
+                         Output output,
+                         const char *tag)
+      {
+        vectorize_in_batch(
+          ctx,
+          [&]() { return grn_table_cursor_next(ctx, cursor); },
+          input_column,
+          output,
+          tag);
+      }
+
+      template <typename Output>
+      void
+      vectorize_in_batch(grn_ctx *ctx,
+                         const std::vector<grn_id> &ids,
+                         grn_obj *input_column,
+                         Output output,
+                         const char *tag)
+      {
+        size_t i = 0;
+        vectorize_in_batch(
+          ctx,
+          [&]() {
+            grn_id id = GRN_ID_NIL;
+            if (i < ids.size()) {
+              id = ids[i];
+            }
+            ++i;
+            return id;
+          },
+          input_column,
+          output,
+          tag);
       }
 
     private:
@@ -871,6 +909,7 @@ namespace grn {
     {
       const char *tag = "[language-model-inferencer][vectorize]";
 #ifdef GRN_WITH_LLAMA_CPP
+      language_model::CaptureError capture(ctx);
       vectorizer_.vectorize(ctx, text, output_vector, tag);
 #else
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s llama.cpp isn't enabled", tag);
@@ -886,7 +925,129 @@ namespace grn {
     {
       const char *tag = "[language-model-inferencer][vectorize-in-batch]";
 #ifdef GRN_WITH_LLAMA_CPP
-      vectorizer_.vectorize_in_batch(ctx, cursor, input_column, output, tag);
+      language_model::CaptureError capture(ctx);
+
+      auto task_executor = grn_ctx_get_task_executor(ctx);
+      if (!task_executor->is_parallel()) {
+        vectorizer_.vectorize_in_batch(ctx, cursor, input_column, output, tag);
+        return;
+      }
+
+      auto parallel_tag = std::string(tag) + "[parallel]";
+
+      size_t n_records_per_task = 100; // No reason
+      std::mutex mutex;
+      std::condition_variable cv;
+      uintptr_t task_id = 0;
+      struct ProcessedTask {
+        ProcessedTask(grn_ctx *ctx) : ctx_(ctx), ids(), embeddings() {}
+        ~ProcessedTask()
+        {
+          for (auto &embedding : embeddings) {
+            GRN_OBJ_FIN(ctx_, &embedding);
+          }
+        }
+        grn_ctx *ctx_;
+        std::vector<grn_id> ids;
+        std::vector<grn_obj> embeddings;
+      };
+      std::map<uintptr_t, std::unique_ptr<ProcessedTask>> processed_tasks;
+
+      auto execute = [&](uintptr_t task_id, std::vector<grn_id> target_ids) {
+        auto child_ctx = grn_ctx_pull_child(ctx);
+        grn::ChildCtxReleaser child_ctx_releaser(ctx, child_ctx);
+        Vectorizer vectorizer(llama_model_, default_pooling_type_);
+        auto processed_task = std::make_unique<ProcessedTask>(ctx);
+        std::vector<std::vector<float>> embeddings;
+        vectorizer.vectorize_in_batch(
+          child_ctx,
+          std::move(target_ids),
+          input_column,
+          [&](grn_ctx *output_ctx, grn_id id, grn_obj *embedding) {
+            processed_task->ids.push_back(id);
+            processed_task->embeddings.emplace_back();
+            auto &processed_embedding = processed_task->embeddings.back();
+            GRN_FLOAT32_INIT(&processed_embedding, GRN_OBJ_VECTOR);
+            grn_bulk_write(output_ctx,
+                           &processed_embedding,
+                           GRN_BULK_HEAD(embedding),
+                           GRN_BULK_VSIZE(embedding));
+          },
+          parallel_tag.data());
+        if (child_ctx->rc != GRN_SUCCESS) {
+          return false;
+        }
+        {
+          std::lock_guard<std::mutex> lock(mutex);
+          processed_tasks.insert(
+            std::make_pair(task_id, std::move(processed_task)));
+        }
+        cv.notify_one();
+        return child_ctx->rc == GRN_SUCCESS;
+      };
+
+      std::vector<grn_id> target_ids;
+      auto flush_task = [&]() {
+        if (!task_executor->execute(
+              task_id,
+              [&, task_id, target_ids]() {
+                return execute(task_id, std::move(target_ids));
+              },
+              tag)) {
+          task_executor->wait_all();
+          return false;
+        }
+        ++task_id;
+        target_ids.clear();
+        return true;
+      };
+      while (true) {
+        auto id = grn_table_cursor_next(ctx, cursor);
+        if (id == GRN_ID_NIL) {
+          if (!target_ids.empty()) {
+            if (!flush_task()) {
+              return;
+            }
+          }
+          break;
+        }
+        target_ids.push_back(id);
+        if (target_ids.size() == n_records_per_task) {
+          if (!flush_task()) {
+            return;
+          }
+        }
+      }
+
+      for (uintptr_t current_task_id = 0; current_task_id < task_id;
+           ++current_task_id) {
+        std::unique_ptr<ProcessedTask> processed_task;
+        {
+          std::unique_lock<std::mutex> lock(mutex);
+          cv.wait(lock, [&] {
+            return ctx->rc != GRN_SUCCESS ||
+                   processed_tasks.find(current_task_id) !=
+                     processed_tasks.end();
+          });
+          if (ctx->rc == GRN_SUCCESS) {
+            auto iter = processed_tasks.find(current_task_id);
+            processed_task = std::move(iter->second);
+            processed_tasks.erase(iter);
+          }
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
+        if (!processed_task) {
+          break;
+        }
+        for (size_t i = 0; i < processed_task->ids.size(); ++i) {
+          auto id = processed_task->ids[i];
+          auto embedding = &(processed_task->embeddings[i]);
+          output(ctx, id, embedding);
+        }
+      }
+      task_executor->wait_all();
 #else
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s llama.cpp isn't enabled", tag);
 #endif
