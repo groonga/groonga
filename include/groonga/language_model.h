@@ -150,6 +150,30 @@ grn_language_model_open_inferencer(grn_ctx *ctx, grn_language_model *model);
 GRN_API grn_rc
 grn_language_model_inferencer_close(grn_ctx *ctx,
                                     grn_language_model_inferencer *inferencer);
+
+/**
+ * \brief Prepend `prefix` to all values of `input_column` in \ref
+ *        grn_language_model_inferencer_vectorize_in_batch and \ref
+ *        grn_language_model_inferencer_vectorize_applier.
+ *
+ * \param ctx The context object.
+ * \param inferencer The inferencer.
+ * \param prefix The prefix.
+ * \param prefix_length The byte size of `prefix`. You can use `-1` if
+ *                      `prefix` is a `\0`-terminated string.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ *
+ * \since 15.1.9
+ */
+GRN_API grn_rc
+grn_language_model_inferencer_set_input_column_value_prefix(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  const char *prefix,
+  int64_t prefix_length);
+
 /**
  * \brief Vectorize a text.
  *

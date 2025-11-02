@@ -489,6 +489,7 @@ namespace grn {
       vectorize_in_batch(grn_ctx *ctx,
                          IDProducer id_producer,
                          grn_obj *input_column,
+                         std::string_view prefix,
                          Output output,
                          const char *tag)
       {
@@ -566,7 +567,13 @@ namespace grn {
         while ((id = id_producer()) != GRN_ID_NIL) {
           uint32_t input_size = 0;
           auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
-          tokenize(input, tokens);
+          if (prefix.empty()) {
+            tokenize(input, tokens);
+          } else {
+            auto prefixed_input = std::string(prefix);
+            prefixed_input.append(input, input_size);
+            tokenize(prefixed_input, tokens);
+          }
           auto n_tokens = static_cast<uint32_t>(tokens.size());
           if (n_tokens == 0) {
             continue;
@@ -610,6 +617,7 @@ namespace grn {
       vectorize_in_batch(grn_ctx *ctx,
                          grn_table_cursor *cursor,
                          grn_obj *input_column,
+                         std::string_view prefix,
                          Output output,
                          const char *tag)
       {
@@ -617,6 +625,7 @@ namespace grn {
           ctx,
           [&]() { return grn_table_cursor_next(ctx, cursor); },
           input_column,
+          prefix,
           output,
           tag);
       }
@@ -626,6 +635,7 @@ namespace grn {
       vectorize_in_batch(grn_ctx *ctx,
                          const std::vector<grn_id> &ids,
                          grn_obj *input_column,
+                         std::string_view prefix,
                          Output output,
                          const char *tag)
       {
@@ -641,6 +651,7 @@ namespace grn {
             return id;
           },
           input_column,
+          prefix,
           output,
           tag);
       }
@@ -897,12 +908,19 @@ namespace grn {
       : model_(std::move(model)),
         llama_model_(model_raw),
         default_pooling_type_(default_pooling_type),
-        vectorizer_(llama_model_, default_pooling_type_)
+        vectorizer_(llama_model_, default_pooling_type_),
+        input_column_value_prefix_()
     {
     }
 
     ~Impl() {}
 #endif
+
+    void
+    set_input_column_value_prefix(std::string prefix)
+    {
+      input_column_value_prefix_ = std::move(prefix);
+    }
 
     void
     vectorize(grn_ctx *ctx, std::string_view text, grn_obj *output_vector)
@@ -929,7 +947,12 @@ namespace grn {
 
       auto task_executor = grn_ctx_get_task_executor(ctx);
       if (!task_executor->is_parallel()) {
-        vectorizer_.vectorize_in_batch(ctx, cursor, input_column, output, tag);
+        vectorizer_.vectorize_in_batch(ctx,
+                                       cursor,
+                                       input_column,
+                                       input_column_value_prefix_,
+                                       output,
+                                       tag);
         return;
       }
 
@@ -963,6 +986,7 @@ namespace grn {
           child_ctx,
           std::move(target_ids),
           input_column,
+          input_column_value_prefix_,
           [&](grn_ctx *output_ctx, grn_id id, grn_obj *embedding) {
             processed_task->ids.push_back(id);
             processed_task->embeddings.emplace_back();
@@ -1060,6 +1084,7 @@ namespace grn {
     enum llama_pooling_type default_pooling_type_;
     Vectorizer vectorizer_;
 #endif
+    std::string input_column_value_prefix_;
   };
 
   LanguageModelInferencer::LanguageModelInferencer(Impl *impl)
@@ -1068,6 +1093,12 @@ namespace grn {
   }
 
   LanguageModelInferencer::~LanguageModelInferencer() = default;
+
+  void
+  LanguageModelInferencer::set_input_column_value_prefix(std::string prefix)
+  {
+    impl_->set_input_column_value_prefix(std::move(prefix));
+  }
 
   void
   LanguageModelInferencer::vectorize(grn_ctx *ctx,
@@ -1558,6 +1589,29 @@ grn_language_model_inferencer_close(grn_ctx *ctx,
 {
   delete inferencer;
   return GRN_SUCCESS;
+}
+
+grn_rc
+grn_language_model_inferencer_set_input_column_value_prefix(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  const char *prefix,
+  int64_t prefix_length)
+{
+  GRN_API_ENTER;
+  if (!inferencer) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[language-model-inferencer][input-column-value-prefix][set] "
+        "inferencer must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  if (prefix_length < 0) {
+    inferencer->inferencer->set_input_column_value_prefix(prefix);
+  } else {
+    inferencer->inferencer->set_input_column_value_prefix(
+      std::string(prefix, prefix_length));
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
