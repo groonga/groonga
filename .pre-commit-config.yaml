@@ -114,6 +114,7 @@ repos:
           ?lib/grn_pat\.h|
           ?lib/grn_portability\.h|
           ?lib/grn_proc\.h|
+          ?lib/grn_progress_logger\.h|
           ?lib/grn_request_canceler\.h|
           ?lib/grn_request_timer\.h|
           ?lib/grn_scan_info\.h|
@@ -168,6 +169,7 @@ repos:
           ?lib/proc/proc_snippet\.c|
           ?lib/proc/proc_tokenize\.c|
           ?lib/proc\.c|
+          ?lib/progress_logger\.c|
           ?lib/selector\.c|
           ?lib/snip\.c|
           ?lib/store\.c|
