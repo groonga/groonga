@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #include "../grn_ctx.h"
 #include "../grn_db.h"
+#include "../grn_progress_logger.h"
 #include "../grn_str.h"
 
 #include <groonga/plugin.h>
@@ -184,6 +185,105 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
+typedef struct ProgressCallbackData {
+  grn_obj common_tag;
+  grn_obj load_tag;
+  grn_obj commit_tag;
+  grn_log_level log_level;
+  grn_progress_logger logger;
+  grn_progress_index_phase current_phase;
+} ProgressCallbackData;
+
+static void
+progress_callback_data_init(grn_ctx *ctx, ProgressCallbackData *data)
+{
+  GRN_VOID_INIT(&(data->common_tag));
+  GRN_VOID_INIT(&(data->load_tag));
+  GRN_VOID_INIT(&(data->commit_tag));
+  data->log_level = GRN_LOG_DEBUG;
+  memset(&(data->logger), 0, sizeof(grn_progress_logger));
+  data->current_phase = GRN_PROGRESS_INDEX_INVALID;
+}
+
+static void
+progress_callback_data_fin(grn_ctx *ctx, ProgressCallbackData *data)
+{
+  grn_progress_logger_fin(ctx, &(data->logger));
+  GRN_OBJ_FIN(ctx, &(data->common_tag));
+  GRN_OBJ_FIN(ctx, &(data->load_tag));
+  GRN_OBJ_FIN(ctx, &(data->commit_tag));
+}
+
+static void
+progress_callback(grn_ctx *ctx, grn_progress *progress, void *user_data)
+{
+  if (grn_progress_get_type(ctx, progress) != GRN_PROGRESS_INDEX) {
+    return;
+  }
+
+  ProgressCallbackData *data = user_data;
+  grn_progress_index_phase phase = grn_progress_index_get_phase(ctx, progress);
+  if (data->current_phase != phase) {
+    grn_progress_logger_fin(ctx, &(data->logger));
+    data->current_phase = phase;
+    switch (phase) {
+    case GRN_PROGRESS_INDEX_INITIALIZE:
+      GRN_LOG(ctx,
+              data->log_level,
+              "%s[initialize]",
+              GRN_TEXT_VALUE(&(data->common_tag)));
+      break;
+    case GRN_PROGRESS_INDEX_LOAD:
+      grn_progress_logger_init(
+        ctx,
+        &(data->logger),
+        GRN_TEXT_VALUE(&(data->load_tag)),
+        "records",
+        grn_progress_index_get_n_target_records(ctx, progress));
+      data->logger.log_level = data->log_level;
+      break;
+    case GRN_PROGRESS_INDEX_COMMIT:
+      grn_progress_logger_init(
+        ctx,
+        &(data->logger),
+        GRN_TEXT_VALUE(&(data->commit_tag)),
+        "terms",
+        grn_progress_index_get_n_target_terms(ctx, progress));
+      data->logger.log_level = data->log_level;
+      break;
+    case GRN_PROGRESS_INDEX_FINALIZE:
+      GRN_LOG(ctx,
+              data->log_level,
+              "%s[finalize]",
+              GRN_TEXT_VALUE(&(data->common_tag)));
+      break;
+    case GRN_PROGRESS_INDEX_DONE:
+      GRN_LOG(ctx,
+              data->log_level,
+              "%s[done]",
+              GRN_TEXT_VALUE(&(data->common_tag)));
+      break;
+    default:
+      break;
+    }
+  } else {
+    switch (phase) {
+    case GRN_PROGRESS_INDEX_LOAD:
+      data->logger.n_processed_targets =
+        grn_progress_index_get_n_processed_records(ctx, progress);
+      grn_progress_logger_log(ctx, &(data->logger));
+      break;
+    case GRN_PROGRESS_INDEX_COMMIT:
+      data->logger.n_processed_targets =
+        grn_progress_index_get_n_processed_terms(ctx, progress);
+      grn_progress_logger_log(ctx, &(data->logger));
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 static grn_obj *
 command_column_create(grn_ctx *ctx,
                       int nargs,
@@ -191,6 +291,9 @@ command_column_create(grn_ctx *ctx,
                       grn_user_data *user_data)
 {
   bool succeeded = true;
+  bool use_progress_callback = (!grn_ctx_get_progress_callback(ctx));
+  ProgressCallbackData progress_callback_data;
+  progress_callback_data_init(ctx, &progress_callback_data);
   grn_obj *table;
   grn_obj *column;
   grn_obj *table_raw;
@@ -210,6 +313,12 @@ command_column_create(grn_ctx *ctx,
   source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
   path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
   generator = grn_plugin_proc_get_var(ctx, user_data, "generator", -1);
+  progress_callback_data.log_level =
+    grn_plugin_proc_get_var_log_level(ctx,
+                                      user_data,
+                                      "progress_log_level",
+                                      -1,
+                                      progress_callback_data.log_level);
 
   table =
     grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
@@ -278,6 +387,33 @@ command_column_create(grn_ctx *ctx,
     goto exit;
   }
 
+  GRN_OBJ_FIN(ctx, &(progress_callback_data.common_tag));
+  GRN_OBJ_FIN(ctx, &(progress_callback_data.load_tag));
+  GRN_OBJ_FIN(ctx, &(progress_callback_data.commit_tag));
+  GRN_TEXT_INIT(&(progress_callback_data.common_tag), 0);
+  GRN_TEXT_INIT(&(progress_callback_data.load_tag), 0);
+  GRN_TEXT_INIT(&(progress_callback_data.commit_tag), 0);
+  grn_text_printf(ctx,
+                  &(progress_callback_data.common_tag),
+                  "[column][create][progress][%.*s.%.*s]",
+                  (int)GRN_TEXT_LEN(table_raw),
+                  GRN_TEXT_VALUE(table_raw),
+                  (int)(GRN_TEXT_LEN(name)),
+                  GRN_TEXT_VALUE(name));
+  GRN_TEXT_PUTC(ctx, &(progress_callback_data.common_tag), '\0');
+  grn_text_printf(ctx,
+                  &(progress_callback_data.load_tag),
+                  "%s[load]",
+                  GRN_TEXT_VALUE(&(progress_callback_data.common_tag)));
+  GRN_TEXT_PUTC(ctx, &(progress_callback_data.load_tag), '\0');
+  grn_text_printf(ctx,
+                  &(progress_callback_data.commit_tag),
+                  "%s[commit]",
+                  GRN_TEXT_VALUE(&(progress_callback_data.common_tag)));
+  GRN_TEXT_PUTC(ctx, &(progress_callback_data.commit_tag), '\0');
+  grn_ctx_set_progress_callback(ctx,
+                                progress_callback,
+                                &progress_callback_data);
   if (GRN_TEXT_LEN(generator) > 0) {
     grn_obj_set_info(ctx, column, GRN_INFO_GENERATOR, generator);
     if (ctx->rc != GRN_SUCCESS) {
@@ -328,6 +464,10 @@ exit:
   if (type) {
     grn_obj_unlink(ctx, type);
   }
+  if (use_progress_callback) {
+    grn_ctx_set_progress_callback(ctx, NULL, NULL);
+  }
+  progress_callback_data_fin(ctx, &progress_callback_data);
 
   return NULL;
 }
@@ -335,20 +475,22 @@ exit:
 void
 grn_proc_init_column_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[7];
+  grn_expr_var vars[8];
+  unsigned int n_vars = 0;
 
-  grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[3]), "type", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[4]), "source", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[5]), "path", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[6]), "generator", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "table", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "flags", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "type", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "source", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "path", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "generator", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "progress_log_level", -1);
   grn_plugin_command_create(ctx,
                             "column_create",
                             -1,
                             command_column_create,
-                            7,
+                            n_vars,
                             vars);
 }
 
