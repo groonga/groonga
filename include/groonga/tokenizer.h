@@ -461,6 +461,7 @@ grn_tokenizer_create(grn_ctx *ctx, const char *name, int name_length);
 /**
  * \brief A function to build an index column by this tokenizer.
  *
+ * \param ctx The context object.
  * \param data Data to be built.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
