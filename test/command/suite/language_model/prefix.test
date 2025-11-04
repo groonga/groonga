@@ -16,10 +16,11 @@ load --table Data
 ]
 
 table_create RaBitQ TABLE_HASH_KEY ShortBinary \
-  --default_tokenizer 'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
-                                             "code_column", "rabitq_code", \
-                                             "passage_prefix", "passage: ", \
-                                             "query_prefix", "query: ")'
+  --default_tokenizer \
+    'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                           "code_column", "rabitq_code", \
+                           "passage_prefix", "passage: ", \
+                           "query_prefix", "query: ")'
 # This is for waiting for downloading model.
 #@timeout 300
 column_create RaBitQ data_text COLUMN_INDEX Data text
