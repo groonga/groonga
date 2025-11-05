@@ -56,7 +56,7 @@ msgstr "修正"
 msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that is provided for PPA(Personal Package Archive) again"
 msgstr "[{doc}`/install/ubuntu`] PPA(Personal Package Archive)で提供しているUbuntu向けのパッケージを再度提供"
 
-msgid "We couldn't provide packages for Ubuntu that is provided for PPA(Personal Package Archive) in Groonga 15.1.8 caused by building failure in Lunchpad. In this relase, we provide packages for Ubuntu again by resolving issue for building failure"
+msgid "We couldn't provide packages for Ubuntu that is provided for PPA(Personal Package Archive) in Groonga 15.1.8 caused by building failure in Lunchpad. In this release, we provide packages for Ubuntu again by resolving issue for building failure"
 msgstr "Lunchpadでのビルド失敗が原因で、Groonga 15.1.8ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
 
 msgid "Release 15.1.8 - 2025-10-31"
