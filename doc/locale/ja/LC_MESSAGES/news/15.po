@@ -32,8 +32,8 @@ msgstr "ベクトル化の並列処理をサポート"
 msgid "We can execute parallel vectorization in {doc}`/reference/functions/language_model_knn`, {doc}`/reference/tokenizers/token_language_model_knn`, and {doc}`/reference/functions/language_model_vectorize`."
 msgstr "{doc}`/reference/functions/language_model_knn` や {doc}`/reference/tokenizers/token_language_model_knn` や {doc}`/reference/functions/language_model_vectorize` で並列にベクトル化できるようになりました。"
 
-msgid "However, if we set `--n-default-workers=-1`, Groonga executes in parallel using up to as many threads as the number of CPU cores. However, `--n-default-workers=-1` will not be optimal because it's based on the number of CPUs."
-msgstr "ただし、`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行しますが、`--n-default-workers=-1`はCPU数をベースにするため最適ではありません。"
+msgid "If we set `--n-default-workers=-1`, Groonga executes in parallel using up to as many threads as the number of CPU cores; however, this setting will not be optimal because it's based on the number of CPUs."
+msgstr "`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行します。ただ、この設定はCPU数をベースにするため最適ではありません。"
 
 msgid "We must check GPU usage not CPU usage for the optimal number of workers."
 msgstr "最適なワーカー数にするにはCPU使用率ではなく、GPU使用率を確認する必要があります。"
@@ -41,7 +41,7 @@ msgstr "最適なワーカー数にするにはCPU使用率ではなく、GPU使
 msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added support for prefix"
 msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] プレフィックスをサポート"
 
-msgid "Some models such as multilingual-e5 require prefix for search target texts and query texts. This improvement adds support for these cases."
+msgid "Some models such as multilingual-e5 require a prefix for search target texts and query texts. This improvement adds support for these cases."
 msgstr "multilingual-e5 のようないくつかのモデルは、検索対象のテキストや検索クエリーのテキストにプレフィックスを要求します。この改良はこれらのケースをサポートします。"
 
 msgid "`passage_prefix` is the prefix for search target text."
