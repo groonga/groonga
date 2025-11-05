@@ -17,14 +17,56 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.1.9 - 2025-11-05"
+msgstr "15.1.9リリース - 2025-11-05"
+
+msgid "In this release, we added support for parallel vectorization."
+msgstr "今回のリリースでは、ベクトル化の並列処理をサポートしました。"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Added support for parallel vectorization"
+msgstr "ベクトル化の並列処理をサポート"
+
+msgid "We can execute parallel vectorization in {doc}`/reference/functions/language_model_knn`, {doc}`/reference/tokenizers/token_language_model_knn`, and {doc}`/reference/functions/language_model_vectorize`."
+msgstr "{doc}`/reference/functions/language_model_knn` や {doc}`/reference/tokenizers/token_language_model_knn` や {doc}`/reference/functions/language_model_vectorize` で並列にベクトル化できるようになりました。"
+
+msgid "If we set `--n-default-workers=-1`, Groonga executes in parallel using up to as many threads as the number of CPU cores; however, this setting will not be optimal because it's based on the number of CPUs."
+msgstr "`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行します。ただ、この設定はCPU数をベースにするため最適ではありません。"
+
+msgid "We must check GPU usage not CPU usage for the optimal number of workers."
+msgstr "最適なワーカー数にするにはCPU使用率ではなく、GPU使用率を確認する必要があります。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added support for prefix"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] プレフィックスをサポート"
+
+msgid "Some models such as multilingual-e5 require a prefix for search target texts and query texts. This improvement adds support for these cases."
+msgstr "multilingual-e5 のようないくつかのモデルは、検索対象のテキストや検索クエリーのテキストにプレフィックスを要求します。この改良はこれらのケースをサポートします。"
+
+msgid "`passage_prefix` is the prefix for search target text."
+msgstr "`passage_prefix`は、検索対象のテキストのプレフィックスです。"
+
+msgid "`query_prefix` is the prefix for query text."
+msgstr "`query_prefix`は、検索クエリーのテキストのプレフィックスです。"
+
+msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
+msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA(Personal Package Archive) again"
+msgstr "[{doc}`/install/ubuntu`] PPA(Personal Package Archive)で提供しているUbuntu向けのパッケージを再度提供"
+
+msgid "We couldn't provide packages for Ubuntu that are provided for PPA (Personal Package Archive) in Groonga 15.1.8 due to a build failure in Launchpad. In this release, we provide packages for Ubuntu again by resolving the issue causing the build failure."
+msgstr "Launchpadでのビルド失敗が原因で、Groonga 15.1.8ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
+
 msgid "Release 15.1.8 - 2025-10-31"
 msgstr "15.1.8リリース - 2025-10-31"
 
 msgid "In this release, semantic search is supported."
 msgstr "今回のリリースでは、セマンティックサーチができるようになりました。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"faiss\"]` entry"
 msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"faiss\"]`エントリーを追加"
@@ -148,9 +190,6 @@ msgstr "これまで`TokenFilterStem`フィルターは、ASCIIアルファベ�
 
 msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
 msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10"
 msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗する問題を修正"
