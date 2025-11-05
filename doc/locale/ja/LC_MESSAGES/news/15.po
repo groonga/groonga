@@ -32,7 +32,7 @@ msgstr "ベクトル化の並列処理をサポート"
 msgid "We can execute parallel vectorization in {doc}`/reference/functions/language_model_knn`, {doc}`/reference/tokenizers/token_language_model_knn`, and {doc}`/reference/functions/language_model_vectorize`."
 msgstr "{doc}`/reference/functions/language_model_knn` や {doc}`/reference/tokenizers/token_language_model_knn` や {doc}`/reference/functions/language_model_vectorize` で並列にベクトル化できるようになりました。"
 
-msgid "However, if we set `--n-default-workers=-1`, Groonga executes in parallel with the threads of at most the number of CPU cores. However, `--n-default-workers=-1` will not be optimal because it's based on the number of CPUs."
+msgid "However, if we set `--n-default-workers=-1`, Groonga executes in parallel using up to as many threads as the number of CPU cores. However, `--n-default-workers=-1` will not be optimal because it's based on the number of CPUs."
 msgstr "ただし、`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行しますが、`--n-default-workers=-1`はCPU数をベースにするため最適ではありません。"
 
 msgid "We must check GPU usage not CPU usage for the optimal number of workers."
@@ -44,8 +44,11 @@ msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] プレフィッ�
 msgid "Some models such as multilingual-e5 require prefix for search target texts and query texts. This improvement adds support for these cases."
 msgstr "multilingual-e5 のようないくつかのモデルは、検索対象のテキストや検索クエリーのテキストにプレフィックスを要求します。この改良はこれらのケースをサポートします。"
 
-msgid "`passage_prefix` is for prefix for search target text. `query_prefix` is for prefix for query text."
-msgstr "`passage_prefix`は検索対象のテキストのプレフィックスです。`query_prefix`は検索クエリーのテキストのプレフィックスです。"
+msgid "`passage_prefix` is for prefix for search target text."
+msgstr "`passage_prefix`は検索対象のテキストのプレフィックスです。"
+
+msgid "`query_prefix` is for prefix for query text."
+msgstr "`query_prefix`は検索クエリーのテキストのプレフィックスです。"
 
 msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
 msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
