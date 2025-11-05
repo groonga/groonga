@@ -17,8 +17,8 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.1.9 - 2025-11-04"
-msgstr "15.1.9リリース - 2025-11-04"
+msgid "Release 15.1.9 - 2025-11-05"
+msgstr "15.1.9リリース - 2025-11-05"
 
 msgid "In this release, we added support for parallel vectorization."
 msgstr "今回のリリースでは、ベクトル化の並列処理をサポートしました。"
