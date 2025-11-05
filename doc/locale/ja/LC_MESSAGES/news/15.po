@@ -20,17 +20,20 @@ msgstr "お知らせ - 15系"
 msgid "Release 15.1.9 - 2025-11-04"
 msgstr "15.1.9リリース - 2025-11-04"
 
-msgid "In this release, we can provide pacakges for Ubuntu again."
-msgstr "このリリースでは、Ubuntu向けパッケージを再度提供できるようになりました。"
+msgid "In this release, we added support for parallel vectorization."
+msgstr "今回のリリースでは、ベクトル化の並列処理をサポートしました。"
 
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[{doc}`/reference/functions/language_model_vectorize`] Added support for parallel vectorization"
-msgstr "[{doc}`/reference/functions/language_model_vectorize`] エンベディングの並列処理をサポート"
+msgid "Added support for parallel vectorization"
+msgstr "ベクトル化の並列処理をサポート"
 
-msgid "If we set `--n-default-workers=-1`, Groonga execute in parallel with the threads of at most the number of CPU cores. However, `--n-default-workers=-1` will not be optimal because it's based on the number of CPUs."
-msgstr "`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行しますが、`--n-default-workers=-1`はCPU数をベースにするため最適ではありません。"
+msgid "We can execute parallel vectorization in {doc}`/reference/functions/language_model_vectorize`, {doc}`/reference/tokenizers/token_language_model_knn`, and {doc}`/reference/functions/language_model_vectorize`."
+msgstr "{doc}`/reference/functions/language_model_vectorize` や {doc}`/reference/tokenizers/token_language_model_knn` や {doc}`/reference/functions/language_model_vectorize` で並列にベクトル化できるようになりました。"
+
+msgid "However, if we set `--n-default-workers=-1`, Groonga execute in parallel with the threads of at most the number of CPU cores. However, `--n-default-workers=-1` will not be optimal because it's based on the number of CPUs."
+msgstr "ただし、`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行しますが、`--n-default-workers=-1`はCPU数をベースにするため最適ではありません。"
 
 msgid "We must check GPU usage not CPU usage for the optimal number of workers."
 msgstr "最適なワーカー数にするにはCPU使用率ではなく、GPU使用率を確認する必要があります。"
@@ -50,11 +53,11 @@ msgstr "例えば以下のように、検索対象のテキストのプレフィ
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/ubuntu`] Provided pacakges again"
-msgstr "[{doc}`/install/ubuntu`] パッケージを再度提供"
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that is provided for PPA(Personal Package Archive) again"
+msgstr "[{doc}`/install/ubuntu`] PPA(Personal Package Archive)で提供しているUbuntu向けのパッケージを再度提供"
 
-msgid "We couldn't provide packages for Ubuntu in Groonga 15.1.8 caused by building failure in Lunchpad. In this relase, we provide packages for Ubuntu again by resolving issue for building failure"
-msgstr "Lunchpadでのビルド失敗が原因で、Groonga 15.1.8ではUbuntu向けパッケージを提供できていませんでした。今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
+msgid "We couldn't provide packages for Ubuntu that is provided for PPA(Personal Package Archive) in Groonga 15.1.8 caused by building failure in Lunchpad. In this relase, we provide packages for Ubuntu again by resolving issue for building failure"
+msgstr "Lunchpadでのビルド失敗が原因で、Groonga 15.1.8ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
 
 msgid "Release 15.1.8 - 2025-10-31"
 msgstr "15.1.8リリース - 2025-10-31"
