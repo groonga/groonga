@@ -47,8 +47,8 @@ msgstr "multilingual-e5 のようないくつかのモデルは、検索対象�
 msgid "`passage_prefix` is for prefix for search target text. `query_prefix` is for prefix for query text."
 msgstr "`passage_prefix`は検索対象のテキストのプレフィックスです。`query_prefix`は検索クエリーのテキストのプレフィックスです。"
 
-msgid "For example, we can set `\"passage: ` prefix in search target text and `query: ` prefix in query text as below."
-msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`\"passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
+msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
+msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
 
 msgid "Fixes"
 msgstr "修正"
