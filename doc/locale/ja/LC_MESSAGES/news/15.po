@@ -44,11 +44,11 @@ msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] プレフィッ�
 msgid "Some models such as multilingual-e5 require prefix for search target texts and query texts. This improvement adds support for these cases."
 msgstr "multilingual-e5 のようないくつかのモデルは、検索対象のテキストや検索クエリーのテキストにプレフィックスを要求します。この改良はこれらのケースをサポートします。"
 
-msgid "`passage_prefix` is for prefix for search target text."
-msgstr "`passage_prefix`は検索対象のテキストのプレフィックスです。"
+msgid "`passage_prefix` is the prefix for search target text."
+msgstr "`passage_prefix`は、検索対象のテキストのプレフィックスです。"
 
-msgid "`query_prefix` is for prefix for query text."
-msgstr "`query_prefix`は検索クエリーのテキストのプレフィックスです。"
+msgid "`query_prefix` is the prefix for query text."
+msgstr "`query_prefix`は、検索クエリーのテキストのプレフィックスです。"
 
 msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
 msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
@@ -56,10 +56,10 @@ msgstr "例えば以下のように、検索対象のテキストのプレフィ
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that is provided for PPA(Personal Package Archive) again"
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA(Personal Package Archive) again"
 msgstr "[{doc}`/install/ubuntu`] PPA(Personal Package Archive)で提供しているUbuntu向けのパッケージを再度提供"
 
-msgid "We couldn't provide packages for Ubuntu that is provided for PPA(Personal Package Archive) in Groonga 15.1.8 caused by building failure in Lunchpad. In this release, we provide packages for Ubuntu again by resolving issue for building failure."
+msgid "We couldn't provide packages for Ubuntu that are provided for PPA (Personal Package Archive) in Groonga 15.1.8 due to a build failure in Launchpad. In this release, we provide packages for Ubuntu again by resolving the issue causing the build failure."
 msgstr "Lunchpadでのビルド失敗が原因で、Groonga 15.1.8ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
 
 msgid "Release 15.1.8 - 2025-10-31"
