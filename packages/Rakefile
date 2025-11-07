@@ -56,18 +56,14 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def docker_run_options(os, architecture)
+    options = []
     if os.start_with?("ubuntu-")
-      [
-        "--env", "DEB_EMULATE_LAUNCHPAD_ENVIRONMENT=yes",
-      ]
-    else
-      []
+      options.concat( ["--env", "DEB_EMULATE_LAUNCHPAD_ENVIRONMENT=yes"])
     end
     if os == "ubuntu-22.04"
-      [
-        "--env", "CAN_BUILD_LIBFAISS=no",
-      ]
+      options.concat(["--env", "CAN_BUILD_LIBFAISS=no"])
     end
+    options
   end
 
   def apt_targets_default
