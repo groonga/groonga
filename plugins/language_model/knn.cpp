@@ -1109,7 +1109,19 @@ namespace {
     uint32_t n_probes = 10;
     uint32_t k = 10;
     if (n_args == 4 && args[3]->header.type == GRN_TABLE_HASH_KEY) {
-      // TODO: Parse options by grn_proc_options_parse()
+      grn_rc rc = grn_proc_options_parse(ctx,
+                                         args[3],
+                                         tag,
+                                         "k",
+                                         GRN_PROC_OPTION_VALUE_UINT32,
+                                         &k,
+                                         NULL);
+      if (rc != GRN_SUCCESS) {
+        return ctx->rc;
+      }
+      if (k == 0) {
+        return GRN_SUCCESS;
+      }
     }
 
     if (GRN_TEXT_LEN(query) == 0) {
