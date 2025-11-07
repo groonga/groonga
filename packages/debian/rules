@@ -20,7 +20,8 @@ override_dh_auto_configure:
 	fi
 	if [ "$${CAN_BUILD_LIBFAISS}" = "no" ]; then			\
 	  GRN_WITH_FAISS=OFF;						\
-	fi	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
+	fi
+	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
 	  GRN_WITH_APACHE_ARROW=ON;				\
 	else							\
 	  GRN_WITH_APACHE_ARROW=OFF;				\
