@@ -60,7 +60,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     if os.start_with?("ubuntu-")
       options.concat( ["--env", "DEB_EMULATE_LAUNCHPAD_ENVIRONMENT=yes"])
     end
-    if os == "ubuntu-22.04"
+    if os == "ubuntu-jammy"
       options.concat(["--env", "CAN_BUILD_LIBFAISS=no"])
     end
     options
