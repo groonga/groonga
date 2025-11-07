@@ -63,6 +63,11 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     else
       []
     end
+    if os == "ubuntu-22.04"
+      [
+        "--env", "CAN_BUILD_LIBFAISS=no",
+      ]
+    end
   end
 
   def apt_targets_default

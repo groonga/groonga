@@ -18,7 +18,9 @@ override_dh_auto_configure:
 	if [ "$${DEB_EMULATE_LAUNCHPAD_ENVIRONMENT}" = "yes" ]; then	\
 	  echo > /etc/resolv.conf;					\
 	fi
-	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
+	if [ "$${CAN_BUILD_LIBFAISS}" = "no" ]; then			\
+	  GRN_WITH_FAISS=OFF;						\
+	fi	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
 	  GRN_WITH_APACHE_ARROW=ON;				\
 	else							\
 	  GRN_WITH_APACHE_ARROW=OFF;				\
@@ -32,6 +34,7 @@ override_dh_auto_configure:
 	  -DGRN_WITH_BLOSC=bundled				\
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
+	  -DGRN_WITH_FAISS=$${GRN_WITH_FAISS}			\
 	  -DGRN_WITH_MRUBY=ON					\
 	  -DGRN_WITH_MUNIN_PLUGINS=ON                           \
 	  -DGRN_WITH_SIMDJSON=auto
