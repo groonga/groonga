@@ -78,6 +78,25 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def apt_prepare_debian_control_faiss(control, target)
+    if target.start_with?("ubuntu-noble")
+      use_bundled_faiss = ""
+      use_system_faiss = "#"
+    else
+      use_bundled_faiss = "#"
+      use_system_faiss = ""
+    end
+    control.
+      gsub(/@USE_BUNDLED_FAISS@/, use_bundled_faiss).
+      gsub(/@USE_SYSTEM_FAISS@/, use_system_faiss)
+  end
+
+  def apt_prepare_debian_control(control_in, target)
+    control = control_in.dup
+    control = apt_prepare_debian_control_faiss(control, target)
+    control
+  end
+
   def yum_targets_default
     [
       "almalinux-8",

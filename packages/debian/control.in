@@ -6,11 +6,12 @@ Uploaders: HAYASHI Kentaro <hayashi@clear-code.com>
 Build-Depends:
   cmake,
   debhelper (>= 12),
+@USE_BUNDLED_FAISS@  libblas-dev,
   libcurl4-openssl-dev,
   libedit-dev,
   libevent-dev,
-# Ubuntu 24.04 doesn't provide this...
-#  libfaiss-dev,
+@USE_SYSTEM_FAISS@  libfaiss-dev,
+@USE_BUNDLED_FAISS@  liblapack-dev,
   liblz4-dev,
   libmecab-dev,
   libmsgpack-dev,
