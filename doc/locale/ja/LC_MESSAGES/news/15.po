@@ -17,6 +17,24 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.2.0 - 2025-11-10"
+msgstr "15.2.0リリース - 2025-11-10"
+
+msgid "In this release, we provide packages for Ubuntu that are provided for PPA (Personal Package Archive) again by resolving the issue causing the build failure."
+msgstr "このリリースでは、ビルドに失敗する問題を解決しPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを再度提供しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA (Personal Package Archive) again"
+msgstr "[{doc}`/install/ubuntu`] PPA (Personal Package Archive) で提供しているUbuntu向けのパッケージを再度提供"
+
+msgid "We couldn't provide packages for Ubuntu that are provided for PPA (Personal Package Archive) in Groonga 15.1.8 and 15.1.9 due to a build failure in Launchpad."
+msgstr "Launchpadでのビルド失敗が原因で、Groonga 15.1.8と15.1.9ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。"
+
+msgid "In this release, we provide packages for Ubuntu again by resolving the issue causing the build failure."
+msgstr "今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
+
 msgid "Release 15.1.9 - 2025-11-05"
 msgstr "15.1.9リリース - 2025-11-05"
 
@@ -181,9 +199,6 @@ msgstr "これまで`TokenFilterStem`フィルターは、ASCIIアルファベ�
 
 msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
 msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10"
 msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗する問題を修正"
