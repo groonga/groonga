@@ -37,7 +37,7 @@ select Data   --filter 'language_model_knn(text, "male child", { "k" : -1 })'   
   [
     [
       [
-        11
+        10
       ],
       [
         [

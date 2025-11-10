@@ -66,6 +66,7 @@ namespace faiss {
 namespace {
   const char *TAG = "[language-model][knn]";
   const int SEED = 29;
+  const uint32_t SELECTOR_K = 10;
 
   enum class Quantizer {
     NONE,
@@ -1107,7 +1108,7 @@ namespace {
 
     grn_obj *query = args[2];
     uint32_t n_probes = 10;
-    uint32_t k = 10;
+    uint32_t k = SELECTOR_K;
     if (n_args == 4 && args[3]->header.type == GRN_TABLE_HASH_KEY) {
       grn_rc rc = grn_proc_options_parse(ctx,
                                          args[3],
@@ -1121,6 +1122,10 @@ namespace {
       }
       if (k == 0) {
         return GRN_SUCCESS;
+      }
+      if (k >= UINT32_MAX) {
+        /* Invalid value (e.g., negative), so set to default value. */
+        k = SELECTOR_K;
       }
     }
 
