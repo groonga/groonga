@@ -26,8 +26,8 @@ msgstr "このリリースでは、ビルドに失敗する問題を解決しPPA
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA(Personal Package Archive) again"
-msgstr "[{doc}`/install/ubuntu`] PPA(Personal Package Archive)で提供しているUbuntu向けのパッケージを再度提供"
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA (Personal Package Archive) again"
+msgstr "[{doc}`/install/ubuntu`] PPA (Personal Package Archive) で提供しているUbuntu向けのパッケージを再度提供"
 
 msgid "We couldn't provide packages for Ubuntu that are provided for PPA (Personal Package Archive) in Groonga 15.1.8 and 15.1.9 due to a build failure in Launchpad."
 msgstr "Launchpadでのビルド失敗が原因で、Groonga 15.1.8と15.1.9ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。"
