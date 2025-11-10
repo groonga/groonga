@@ -10,9 +10,17 @@ load --table Data
 [
 {"text": "I am a boy."},
 {"text": "This is an apple."},
-{"text": "Groonga is a full text search engine."}
+{"text": "Groonga is a full text search engine."},
+{"text": "This is an orange."},
+{"text": "This is a banana."},
+{"text": "This is a tomato."},
+{"text": "This is a carrot."},
+{"text": "This is a cucumber."},
+{"text": "This is a pepper."},
+{"text": "This is a potato."},
+{"text": "This is a onion."}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],11]
 table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer 'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                                              "code_column", "rabitq_code")'
 [[0,0.0,0.0],true]
 column_create RaBitQ data_text COLUMN_INDEX Data text
@@ -29,7 +37,7 @@ select Data   --filter 'language_model_knn(text, "male child", { "k" : -1 })'   
   [
     [
       [
-        3
+        11
       ],
       [
         [
@@ -41,10 +49,31 @@ select Data   --filter 'language_model_knn(text, "male child", { "k" : -1 })'   
         "I am a boy."
       ],
       [
+        "This is a cucumber."
+      ],
+      [
+        "This is a pepper."
+      ],
+      [
+        "This is an orange."
+      ],
+      [
+        "This is a potato."
+      ],
+      [
+        "This is a carrot."
+      ],
+      [
+        "This is a banana."
+      ],
+      [
         "This is an apple."
       ],
       [
-        "Groonga is a full text search engine."
+        "This is a tomato."
+      ],
+      [
+        "This is a onion."
       ]
     ]
   ]
