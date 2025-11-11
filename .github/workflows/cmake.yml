@@ -545,9 +545,9 @@ jobs:
               --interface=http \
               test/command/suite
 
-  windows-mingw:
-    name: Windows MinGW
-    runs-on: windows-latest
+  windows-msys2:
+    name: Windows MSYS2
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -555,8 +555,13 @@ jobs:
         include:
           - msystem: MINGW64
             package-prefix: mingw-w64-x86_64
+            runner: windows-latest
           - msystem: UCRT64
             package-prefix: mingw-w64-ucrt-x86_64
+            runner: windows-latest
+          - msystem: CLANGARM64
+            package-prefix: mingw-w64-clang-aarch64
+            runner: windows-11-arm
     steps:
       - uses: actions/checkout@v5
         with:
@@ -594,10 +599,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ccache
-          key: cmake-windows-mingw-${{ matrix.msystem }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: cmake-windows-mingw-${{ matrix.msystem }}-ccache-
+          key: cmake-windows-msys2-${{ matrix.msystem }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-windows-msys2-${{ matrix.msystem }}-ccache-
       - name: Build
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           set -ex
           version=$(cat base_version)
@@ -616,6 +622,7 @@ jobs:
           ccache --show-stats --verbose --version || :
       - name: Install
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           set -ex
           cd ci/msys2
@@ -638,6 +645,7 @@ jobs:
           Set-TimeZone -Id "Tokyo Standard Time"
       - name: Install test dependencies
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           # "fiddle" is for ensuring using the installed system libffi
           MAKEFLAGS=-j$(nproc) gem install \
@@ -648,6 +656,7 @@ jobs:
           ruby -e "require 'arrow'"
       - name: Prepare setup-extpp.rb
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           cat <<RUBY > setup-extpp.rb
           ["extpp"].each do |gem|
@@ -660,10 +669,12 @@ jobs:
           RUBY
       - name: "Test: command line"
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           ruby test/command_line/run-test.rb
       - name: "Test: stdio"
         shell: msys2 {0}
+        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           ruby \
             -r./setup-extpp \
