@@ -1783,6 +1783,13 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
         else()
           set(GGML_CPU_ALL_VARIANTS OFF)
         endif()
+      elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        # GGML_CPU_ALL_VARIANTS doesn't support Windows ARM64 yet
+        #
+        # https://github.com/ggml-org/llama.cpp/blob/master/.github/workflows/release.yml#L288
+        if(WIN32 AND GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
+          set(GGML_CPU_ALL_VARIANTS OFF)
+        endif()
       endif()
       if(NOT GGML_CPU_ALL_VARIANTS)
         # We need to disable GGML_NATIVE without GGML_CPU_ALL_VARIANTS.
