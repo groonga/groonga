@@ -7,11 +7,12 @@ pkgver=
 pkgrel=1
 pkgdesc="An opensource fulltext search engine (mingw-w64)"
 arch=('any')
-mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url="https://groonga.org/"
 license=('LGPL2')
 options=('strip' 'staticlibs')
-source=(${_realname}-${pkgver}.tar.gz)
+source=(${_realname}-${pkgver}.tar.gz
+        001-aarch64.patch)
 depends=("${MINGW_PACKAGE_PREFIX}-arrow"
          "${MINGW_PACKAGE_PREFIX}-blosc2"
          "${MINGW_PACKAGE_PREFIX}-lz4"
@@ -29,8 +30,26 @@ makedepends=("git"
              "${MINGW_PACKAGE_PREFIX}-rapidjson"
              "${MINGW_PACKAGE_PREFIX}-ruby"
              "${MINGW_PACKAGE_PREFIX}-xsimd")
-sha256sums=('SKIP')
+sha256sums=('SKIP'
+            'SKIP')
 validpgpkeys=('2701F317CFCCCB975CADE9C2624CF77434839225') # Groonga Key <packages@groonga.org>
+
+apply_patch_with_msg() {
+  for _patch in "$@"
+  do
+    msg2 "Applying ${_patch}"
+    patch -Nbp1 -i "${srcdir}/${_patch}"
+  done
+}
+
+prepare() {
+  cd "${_realname}-${pkgver}"
+
+  # TODO: Remove this patch after updating mruby to a version that supports Windows ARM64
+  # This issue has already been resolved upstream: https://github.com/mruby/mruby/issues/6637
+  apply_patch_with_msg \
+    001-aarch64.patch
+}
 
 build() {
   [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
