@@ -1743,7 +1743,12 @@ if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
       string(SUBSTRING "${GRN_LLAMA_CPP_BUNDLED_VERSION}" 1 -1
                        GGML_BUILD_NUMBER)
       set(GGML_CPU_ALL_VARIANTS ON)
-      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      if(WIN32 AND GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
+        # GGML_CPU_ALL_VARIANTS doesn't support Windows ARM64 yet
+        #
+        # https://github.com/ggml-org/llama.cpp/blob/master/.github/workflows/release.yml#L288
+        set(GGML_CPU_ALL_VARIANTS OFF)
+      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         if(GRN_SYSTEM_PROCESSOR STREQUAL "x86_64")
           # GCC 11.5 or later is needed for "-mavxvnni" and so on
           if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.5")
