@@ -18,6 +18,7 @@
 #include "grn_db.h"
 #include "grn_http_client.h"
 #include "grn_language_model.hpp"
+#include "grn_progress.h"
 #include "grn_util.h"
 
 #include <groonga/smart_obj.hpp>
@@ -909,7 +910,9 @@ namespace grn {
         llama_model_(model_raw),
         default_pooling_type_(default_pooling_type),
         vectorizer_(llama_model_, default_pooling_type_),
-        input_column_value_prefix_()
+        input_column_value_prefix_(),
+        progress_callback_(nullptr),
+        progress_callback_user_data_(nullptr)
     {
     }
 
@@ -920,6 +923,13 @@ namespace grn {
     set_input_column_value_prefix(std::string prefix)
     {
       input_column_value_prefix_ = std::move(prefix);
+    }
+
+    void
+    set_progress_callback(grn_progress_callback_func callback, void *user_data)
+    {
+      progress_callback_ = callback;
+      progress_callback_user_data_ = user_data;
     }
 
     void
@@ -945,14 +955,32 @@ namespace grn {
 #ifdef GRN_WITH_LLAMA_CPP
       language_model::CaptureError capture(ctx);
 
+      grn_progress progress;
+      progress.type = GRN_PROGRESS_LANGUAGE_MODEL_INFERENCER;
+
       auto task_executor = grn_ctx_get_task_executor(ctx);
       if (!task_executor->is_parallel()) {
-        vectorizer_.vectorize_in_batch(ctx,
-                                       cursor,
-                                       input_column,
-                                       input_column_value_prefix_,
-                                       output,
-                                       tag);
+        if (progress_callback_) {
+          progress.value.language_model_inferencer.n_processed_records = 1;
+          auto output_with_progress =
+            [&](grn_ctx *ctx, grn_id id, grn_obj *embedding) {
+              output(ctx, id, embedding);
+              progress_callback_(ctx, &progress, progress_callback_user_data_);
+            };
+          vectorizer_.vectorize_in_batch(ctx,
+                                         cursor,
+                                         input_column,
+                                         input_column_value_prefix_,
+                                         output_with_progress,
+                                         tag);
+        } else {
+          vectorizer_.vectorize_in_batch(ctx,
+                                         cursor,
+                                         input_column,
+                                         input_column_value_prefix_,
+                                         output,
+                                         tag);
+        }
         return;
       }
 
@@ -1070,6 +1098,11 @@ namespace grn {
           auto embedding = &(processed_task->embeddings[i]);
           output(ctx, id, embedding);
         }
+        if (progress_callback_) {
+          progress.value.language_model_inferencer.n_processed_records =
+            processed_task->ids.size();
+          progress_callback_(ctx, &progress, progress_callback_user_data_);
+        }
       }
       task_executor->wait_all();
 #else
@@ -1085,6 +1118,8 @@ namespace grn {
     Vectorizer vectorizer_;
 #endif
     std::string input_column_value_prefix_;
+    grn_progress_callback_func progress_callback_;
+    void *progress_callback_user_data_;
   };
 
   LanguageModelInferencer::LanguageModelInferencer(Impl *impl)
@@ -1098,6 +1133,13 @@ namespace grn {
   LanguageModelInferencer::set_input_column_value_prefix(std::string prefix)
   {
     impl_->set_input_column_value_prefix(std::move(prefix));
+  }
+
+  void
+  LanguageModelInferencer::set_progress_callback(
+    grn_progress_callback_func callback, void *user_data)
+  {
+    impl_->set_progress_callback(callback, user_data);
   }
 
   void
@@ -1611,6 +1653,24 @@ grn_language_model_inferencer_set_input_column_value_prefix(
     inferencer->inferencer->set_input_column_value_prefix(
       std::string(prefix, prefix_length));
   }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_language_model_inferencer_set_progress_callback(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  grn_progress_callback_func callback,
+  void *user_data)
+{
+  GRN_API_ENTER;
+  if (!inferencer) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[language-model-inferencer][progress-callback][set] "
+        "inferencer must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  inferencer->inferencer->set_progress_callback(callback, user_data);
   GRN_API_RETURN(ctx->rc);
 }
 

@@ -119,6 +119,26 @@ bool
 grn_tokenizer_have_build_func(grn_ctx *ctx, grn_obj *tokenizer);
 
 typedef grn_rc
+grn_tokenizer_build_processed_n_records_func(grn_ctx *ctx,
+                                             grn_tokenizer_build_data *data,
+                                             uint32_t n_records,
+                                             void *user_data);
+typedef grn_rc
+grn_tokenizer_build_start_vectorize_func(grn_ctx *ctx,
+                                         grn_tokenizer_build_data *data,
+                                         uint32_t n_total_records,
+                                         void *user_data);
+typedef grn_rc
+grn_tokenizer_build_start_cluster_func(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t n_total_records,
+                                       void *user_data);
+typedef grn_rc
+grn_tokenizer_build_start_load_func(grn_ctx *ctx,
+                                    grn_tokenizer_build_data *data,
+                                    uint32_t n_total_records,
+                                    void *user_data);
+typedef grn_rc
 grn_tokenizer_build_start_record_func(grn_ctx *ctx,
                                       grn_tokenizer_build_data *data,
                                       grn_id rid,
@@ -147,6 +167,10 @@ struct grn_tokenizer_build_data {
   grn_obj *source_columns;
   grn_obj *lexicon;
   grn_obj *index_column;
+  grn_tokenizer_build_processed_n_records_func *processed_n_records_func;
+  grn_tokenizer_build_start_vectorize_func *start_vectorize_func;
+  grn_tokenizer_build_start_cluster_func *start_cluster_func;
+  grn_tokenizer_build_start_load_func *start_load_func;
   grn_tokenizer_build_start_record_func *start_record_func;
   grn_tokenizer_build_start_section_func *start_section_func;
   grn_tokenizer_build_append_tokens_func *append_tokens_func;

@@ -187,6 +187,8 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
 
 typedef struct ProgressCallbackData {
   grn_obj common_tag;
+  grn_obj vectorize_tag;
+  grn_obj cluster_tag;
   grn_obj load_tag;
   grn_obj commit_tag;
   grn_log_level log_level;
@@ -198,6 +200,8 @@ static void
 progress_callback_data_init(grn_ctx *ctx, ProgressCallbackData *data)
 {
   GRN_VOID_INIT(&(data->common_tag));
+  GRN_VOID_INIT(&(data->vectorize_tag));
+  GRN_VOID_INIT(&(data->cluster_tag));
   GRN_VOID_INIT(&(data->load_tag));
   GRN_VOID_INIT(&(data->commit_tag));
   data->log_level = GRN_LOG_DEBUG;
@@ -210,6 +214,8 @@ progress_callback_data_fin(grn_ctx *ctx, ProgressCallbackData *data)
 {
   grn_progress_logger_fin(ctx, &(data->logger));
   GRN_OBJ_FIN(ctx, &(data->common_tag));
+  GRN_OBJ_FIN(ctx, &(data->vectorize_tag));
+  GRN_OBJ_FIN(ctx, &(data->cluster_tag));
   GRN_OBJ_FIN(ctx, &(data->load_tag));
   GRN_OBJ_FIN(ctx, &(data->commit_tag));
 }
@@ -232,6 +238,24 @@ progress_callback(grn_ctx *ctx, grn_progress *progress, void *user_data)
               data->log_level,
               "%s[initialize]",
               GRN_TEXT_VALUE(&(data->common_tag)));
+      break;
+    case GRN_PROGRESS_INDEX_VECTORIZE:
+      grn_progress_logger_init(
+        ctx,
+        &(data->logger),
+        GRN_TEXT_VALUE(&(data->vectorize_tag)),
+        "records",
+        grn_progress_index_get_n_target_records(ctx, progress));
+      data->logger.log_level = data->log_level;
+      break;
+    case GRN_PROGRESS_INDEX_CLUSTER:
+      grn_progress_logger_init(
+        ctx,
+        &(data->logger),
+        GRN_TEXT_VALUE(&(data->cluster_tag)),
+        "records",
+        grn_progress_index_get_n_target_records(ctx, progress));
+      data->logger.log_level = data->log_level;
       break;
     case GRN_PROGRESS_INDEX_LOAD:
       grn_progress_logger_init(
@@ -268,6 +292,8 @@ progress_callback(grn_ctx *ctx, grn_progress *progress, void *user_data)
     }
   } else {
     switch (phase) {
+    case GRN_PROGRESS_INDEX_VECTORIZE:
+    case GRN_PROGRESS_INDEX_CLUSTER:
     case GRN_PROGRESS_INDEX_LOAD:
       data->logger.n_processed_targets =
         grn_progress_index_get_n_processed_records(ctx, progress);
@@ -388,9 +414,13 @@ command_column_create(grn_ctx *ctx,
   }
 
   GRN_OBJ_FIN(ctx, &(progress_callback_data.common_tag));
+  GRN_OBJ_FIN(ctx, &(progress_callback_data.vectorize_tag));
+  GRN_OBJ_FIN(ctx, &(progress_callback_data.cluster_tag));
   GRN_OBJ_FIN(ctx, &(progress_callback_data.load_tag));
   GRN_OBJ_FIN(ctx, &(progress_callback_data.commit_tag));
   GRN_TEXT_INIT(&(progress_callback_data.common_tag), 0);
+  GRN_TEXT_INIT(&(progress_callback_data.vectorize_tag), 0);
+  GRN_TEXT_INIT(&(progress_callback_data.cluster_tag), 0);
   GRN_TEXT_INIT(&(progress_callback_data.load_tag), 0);
   GRN_TEXT_INIT(&(progress_callback_data.commit_tag), 0);
   grn_text_printf(ctx,
@@ -401,6 +431,16 @@ command_column_create(grn_ctx *ctx,
                   (int)(GRN_TEXT_LEN(name)),
                   GRN_TEXT_VALUE(name));
   GRN_TEXT_PUTC(ctx, &(progress_callback_data.common_tag), '\0');
+  grn_text_printf(ctx,
+                  &(progress_callback_data.vectorize_tag),
+                  "%s[vectorize]",
+                  GRN_TEXT_VALUE(&(progress_callback_data.common_tag)));
+  GRN_TEXT_PUTC(ctx, &(progress_callback_data.vectorize_tag), '\0');
+  grn_text_printf(ctx,
+                  &(progress_callback_data.cluster_tag),
+                  "%s[cluster]",
+                  GRN_TEXT_VALUE(&(progress_callback_data.common_tag)));
+  GRN_TEXT_PUTC(ctx, &(progress_callback_data.cluster_tag), '\0');
   grn_text_printf(ctx,
                   &(progress_callback_data.load_tag),
                   "%s[load]",

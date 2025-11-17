@@ -68,3 +68,12 @@ grn_progress_index_get_n_processed_terms(grn_ctx *ctx, grn_progress *progress)
   }
   return progress->value.index.n_processed_terms;
 }
+
+uint32_t
+grn_progress_language_model_inferencer_get_n_processed_records(grn_ctx *ctx, grn_progress *progress)
+{
+  if (progress->type != GRN_PROGRESS_LANGUAGE_MODEL_INFERENCER) {
+    return 0;
+  }
+  return progress->value.language_model_inferencer.n_processed_records;
+}

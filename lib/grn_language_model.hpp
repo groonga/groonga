@@ -81,6 +81,17 @@ namespace grn {
     void
     set_input_column_value_prefix(std::string prefix);
 
+    /// \brief Set progress callback that is called on each batch
+    ///        vectorization is completed.
+    ///
+    /// \param callback The callback.
+    /// \param user_data The data that is passed to the `callback` when
+    ///                  `callback` is called.
+    ///
+    /// \since 15.2.1
+    void
+    set_progress_callback(grn_progress_callback_func callback, void *user_data);
+
     /// \brief Generate an embedding for a record
     ///
     /// \param ctx A \ref grn_ctx.

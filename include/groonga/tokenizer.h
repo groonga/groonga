@@ -236,6 +236,66 @@ grn_tokenizer_build_data_get_index_column(grn_ctx *ctx,
                                           grn_tokenizer_build_data *data);
 
 /**
+ * \brief A tokenizer may call this when it processed one or more
+ *        records. This is only for progress report.
+ *
+ * \param ctx The context object.
+ * \param data The tokenizer build data.
+ * \param n_records The number of processed records.
+ *
+ * \since 15.2.1
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_processed_n_records(grn_ctx *ctx,
+                                             grn_tokenizer_build_data *data,
+                                             uint32_t n_records);
+
+/**
+ * \brief A tokenizer must call this when it starts vectorizing. This
+ *        is only for progress report.
+ *
+ * \param ctx The context object.
+ * \param data The tokenizer build data.
+ * \param n_total_records The number of records to be vectorized.
+ *
+ * \since 15.2.1
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_start_vectorize(grn_ctx *ctx,
+                                         grn_tokenizer_build_data *data,
+                                         uint32_t n_total_records);
+
+/**
+ * \brief A tokenizer must call this when it starts clustering. This
+ *        is only for progress report.
+ *
+ * \param ctx The context object.
+ * \param data The tokenizer build data.
+ * \param n_total_records The number of records to be clustered.
+ *
+ * \since 15.2.1
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_start_cluster(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t n_total_records);
+
+/**
+ * \brief A tokenizer must call this when it starts loading. This is
+ *        only for progress report.
+ *
+ * \param ctx The context object.
+ * \param data The tokenizer build data.
+ * \param n_total_records The number of records to be loaded.
+ *
+ * \since 15.2.1
+ */
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_build_data_start_load(grn_ctx *ctx,
+                                    grn_tokenizer_build_data *data,
+                                    uint32_t n_total_records);
+
+/**
  * \brief A tokenizer must call this when it starts processing a new
  *        record.
  *

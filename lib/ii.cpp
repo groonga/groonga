@@ -17705,11 +17705,66 @@ namespace grn::ii {
         BlockBuilder *block_builder;
         grn_id current_rid;
         uint32_t current_sid;
+        bool progress_needed;
+        grn_progress *progress;
       } user_data;
       user_data.builder = this;
       user_data.block_builder = &block_builder;
       user_data.current_rid = GRN_ID_NIL;
       user_data.current_sid = 0;
+      user_data.progress_needed = progress_needed_;
+      user_data.progress = &progress_;
+      data.processed_n_records_func = [](grn_ctx *ctx,
+                                         grn_tokenizer_build_data *data,
+                                         uint32_t n_records,
+                                         void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        if (user_data_->progress_needed) {
+          user_data_->progress->value.index.n_processed_records += n_records;
+          grn_ctx_call_progress_callback(ctx, user_data_->progress);
+        }
+        return GRN_SUCCESS;
+      };
+      data.start_vectorize_func = [](grn_ctx *ctx,
+                                     grn_tokenizer_build_data *data,
+                                     uint32_t n_total_records,
+                                     void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        if (user_data_->progress_needed) {
+          user_data_->progress->value.index.phase =
+            GRN_PROGRESS_INDEX_VECTORIZE;
+          user_data_->progress->value.index.n_target_records = n_total_records;
+          user_data_->progress->value.index.n_processed_records = 0;
+          grn_ctx_call_progress_callback(ctx, user_data_->progress);
+        }
+        return GRN_SUCCESS;
+      };
+      data.start_cluster_func = [](grn_ctx *ctx,
+                                   grn_tokenizer_build_data *data,
+                                   uint32_t n_total_records,
+                                   void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        if (user_data_->progress_needed) {
+          user_data_->progress->value.index.phase = GRN_PROGRESS_INDEX_CLUSTER;
+          user_data_->progress->value.index.n_target_records = n_total_records;
+          user_data_->progress->value.index.n_processed_records = 0;
+          grn_ctx_call_progress_callback(ctx, user_data_->progress);
+        }
+        return GRN_SUCCESS;
+      };
+      data.start_load_func = [](grn_ctx *ctx,
+                                grn_tokenizer_build_data *data,
+                                uint32_t n_total_records,
+                                void *user_data) {
+        auto user_data_ = static_cast<UserData *>(user_data);
+        if (user_data_->progress_needed) {
+          user_data_->progress->value.index.phase = GRN_PROGRESS_INDEX_LOAD;
+          user_data_->progress->value.index.n_target_records = n_total_records;
+          user_data_->progress->value.index.n_processed_records = 0;
+          grn_ctx_call_progress_callback(ctx, user_data_->progress);
+        }
+        return GRN_SUCCESS;
+      };
       data.start_record_func = [](grn_ctx *ctx,
                                   grn_tokenizer_build_data *data,
                                   grn_id rid,
@@ -17777,6 +17832,13 @@ namespace grn::ii {
         if (grn_tokenizer_have_build_func(ctx_, tokenizer)) {
           return build(tokenizer);
         }
+      }
+
+      if (progress_needed_) {
+        progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
+        progress_.value.index.n_target_records = n_records_;
+        progress_.value.index.n_processed_records = 0;
+        grn_ctx_call_progress_callback(ctx_, &progress_);
       }
 
       auto task_executor = grn_ctx_get_task_executor(ctx_);
@@ -17947,11 +18009,6 @@ namespace grn::ii {
       auto rc = set_src_table();
       if (rc != GRN_SUCCESS) {
         return rc;
-      }
-      if (progress_needed_) {
-        progress_.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
-        progress_.value.index.n_target_records = n_records_;
-        grn_ctx_call_progress_callback(ctx_, &progress_);
       }
       if (n_records_ == 0) {
         /* Nothing to do because there are no values. */
