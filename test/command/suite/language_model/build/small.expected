@@ -13,10 +13,11 @@ load --table Data
 {"text": "Groonga is a full text search engine."}
 ]
 [[0,0.0,0.0],3]
-table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer 'TokenLanguageModelKNN("model", "hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF",                                              "code_column", "rabitq_code")'
+table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer     'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                            "code_column", "rabitq_code",                            "passage_prefix", "passage: ",                            "query_prefix", "query: ")'
 [[0,0.0,0.0],true]
 column_create RaBitQ data_text COLUMN_INDEX Data text
 [[0,0.0,0.0],true]
+#|w| load: model vocab missing newline token, using special_pad_id instead
 #|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
 select Data   --filter 'language_model_knn(text, "male child")'   --output_columns text
 [
@@ -48,7 +49,7 @@ select Data   --filter 'language_model_knn(text, "male child")'   --output_colum
     ]
   ]
 ]
-select Data   --filter 'language_model_knn(text, "fruit")'   --output_columns text
+select Data   --filter 'language_model_knn(text, "I like fruit")'   --output_columns text
 [
   [
     0,

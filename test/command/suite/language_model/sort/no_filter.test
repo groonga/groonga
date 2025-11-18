@@ -17,8 +17,11 @@ load --table Data
 ]
 
 table_create RaBitQ TABLE_HASH_KEY ShortBinary \
-  --default_tokenizer 'TokenLanguageModelKNN("model", "hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", \
-                                             "code_column", "rabitq_code")'
+  --default_tokenizer \
+    'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                           "code_column", "rabitq_code", \
+                           "passage_prefix", "passage: ", \
+                           "query_prefix", "query: ")'
 # This is for waiting for downloading model.
 #@timeout 300
 column_create RaBitQ data_text COLUMN_INDEX Data text
@@ -28,5 +31,5 @@ select Data \
   --output_columns text
 
 select Data \
-  --sort_keys '-language_model_knn(text, "fruit")' \
+  --sort_keys '-language_model_knn(text, "I like fruit")' \
   --output_columns text

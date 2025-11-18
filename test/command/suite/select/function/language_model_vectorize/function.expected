@@ -12,7 +12,7 @@ load --table Data
 {"text": "I am a queen."}
 ]
 [[0,0.0,0.0],2]
-select Data   --output_columns '       text,       vector_size(language_model_vectorize("hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF", text))'
+select Data   --output_columns '       text,       vector_size(language_model_vectorize("hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", "passage: " + text))'
 [
   [
     0,
@@ -36,13 +36,14 @@ select Data   --output_columns '       text,       vector_size(language_model_ve
       ],
       [
         "I am a king.",
-        384
+        768
       ],
       [
         "I am a queen.",
-        384
+        768
       ]
     ]
   ]
 ]
+#|w| load: model vocab missing newline token, using special_pad_id instead
 #|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
