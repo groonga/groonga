@@ -1107,9 +1107,9 @@ namespace {
 
     grn_obj *query = args[2];
     uint32_t n_probes = 10;
-    int32_t arg_k = 10;
     uint32_t k = 10;
     if (n_args == 4 && args[3]->header.type == GRN_TABLE_HASH_KEY) {
+      int32_t arg_k = -1;
       grn_rc rc = grn_proc_options_parse(ctx,
                                          args[3],
                                          tag,
@@ -1125,10 +1125,11 @@ namespace {
       } else if (arg_k > 0) {
         k = static_cast<uint32_t>(arg_k);
       } else {
-        k = grn_table_size(ctx, table);
-        if (k + arg_k <= 0) {
+        int32_t new_k = grn_table_size(ctx, table) + arg_k + 1;
+        if (new_k <= 0) {
           return GRN_SUCCESS;
         }
+        k = static_cast<uint32_t>(new_k);
       }
     }
 
@@ -1161,12 +1162,7 @@ namespace {
     }
 
     auto candidates = *maybe_candidates;
-    if (arg_k > 0) {
-      k = std::min(k, static_cast<uint32_t>(candidates.size()));
-    } else {
-      k = static_cast<uint32_t>(
-        std::max(0, static_cast<int32_t>(candidates.size() + arg_k + 1)));
-    }
+    k = std::min(k, static_cast<uint32_t>(candidates.size()));
     auto posting = grn_posting_open(ctx);
     posting->sid = 0;
     posting->pos = 0;
