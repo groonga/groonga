@@ -34,6 +34,9 @@ struct _grn_progress {
       uint32_t n_target_terms;
       uint32_t n_processed_terms;
     } index;
+    struct {
+      uint32_t n_processed_records;
+    } language_model_inferencer;
   } value;
 };
 

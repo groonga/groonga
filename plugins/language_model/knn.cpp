@@ -521,8 +521,7 @@ namespace {
         return false;
       }
 
-      faiss::Clustering clustering(options_->n_dimensions,
-                                   options_->n_clusters);
+      grn_tokenizer_build_data_start_vectorize(ctx_, data_, n_source_records_);
       embeddings_path_ = grn_obj_path(ctx_, index_column_);
       embeddings_path_ += ".embeddings";
       size_t embeddings_size =
@@ -541,11 +540,43 @@ namespace {
         embeddings_raw_ + (embeddings_size / sizeof(float));
       GRN_BINARY_SET_REF(&embeddings_, embeddings_raw_, embeddings_size);
       GRN_BULK_REWIND(&embeddings_);
-      grn_language_model_inferencer_vectorize_in_batch(ctx_,
-                                                       options_->inferencer,
-                                                       cursor,
-                                                       source_column_,
-                                                       &embeddings_);
+      {
+        bool need_progress = grn_ctx_get_progress_callback(ctx_);
+        struct UserData {
+          grn_tokenizer_build_data *data;
+        } user_data;
+        user_data.data = data_;
+        auto progress_callback =
+          [](grn_ctx *ctx, grn_progress *progress, void *user_data) {
+            auto user_data_ = static_cast<UserData *>(user_data);
+            auto n_processed_records =
+              grn_progress_language_model_inferencer_get_n_processed_records(
+                ctx,
+                progress);
+            grn_tokenizer_build_data_processed_n_records(ctx,
+                                                         user_data_->data,
+                                                         n_processed_records);
+          };
+        if (need_progress) {
+          grn_language_model_inferencer_set_progress_callback(
+            ctx_,
+            options_->inferencer,
+            progress_callback,
+            &user_data);
+        }
+        grn_language_model_inferencer_vectorize_in_batch(ctx_,
+                                                         options_->inferencer,
+                                                         cursor,
+                                                         source_column_,
+                                                         &embeddings_);
+        if (need_progress) {
+          grn_language_model_inferencer_set_progress_callback(
+            ctx_,
+            options_->inferencer,
+            nullptr,
+            nullptr);
+        }
+      }
       grn_table_cursor_close(ctx_, cursor);
 
       if (GRN_BULK_VSIZE(&embeddings_) != embeddings_size) {
@@ -562,6 +593,9 @@ namespace {
         return false;
       }
 
+      grn_tokenizer_build_data_start_cluster(ctx_, data_, n_source_records_);
+      size_t n_centroids = options_->n_clusters;
+      faiss::Clustering clustering(options_->n_dimensions, n_centroids);
       if (options_->quantizer == Quantizer::RABITQ) {
 #ifdef GRN_FAISS_HAVE_RABITQ
         options_->random_rotation_matrix.apply_noalloc(
@@ -573,7 +607,6 @@ namespace {
       } else {
         clustering.train(n_source_records_, embeddings_raw_, index);
       }
-      size_t n_centroids = clustering.k;
       options_->centroid_index_to_record_id.reserve(n_centroids);
       for (size_t i = 0; i < n_centroids; ++i) {
         grn_id id = grn_table_add(ctx_,
@@ -599,6 +632,7 @@ namespace {
              options_->centroid_searcher.codes.size());
 #endif
       options_->centroid_searcher.ntotal = n_centroids;
+      grn_tokenizer_build_data_processed_n_records(ctx_, data_, n_centroids);
 
       return true;
     }
@@ -617,6 +651,7 @@ namespace {
         grn_bulk_space(ctx_, &code, options_->rabitq.code_size);
 #endif
       }
+      grn_tokenizer_build_data_start_load(ctx_, data_, n_source_records_);
       size_t i = 0;
       GRN_TABLE_EACH_BEGIN_FLAGS(ctx_,
                                  source_table_,

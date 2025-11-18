@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <groonga/progress.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -173,6 +175,28 @@ grn_language_model_inferencer_set_input_column_value_prefix(
   grn_language_model_inferencer *inferencer,
   const char *prefix,
   int64_t prefix_length);
+
+/**
+ * \brief Set progress callback that is called on each batch
+ *        vectorization is completed.
+ *
+ * \param ctx The context object.
+ * \param inferencer The inferencer.
+ * \param callback The callback.
+ * \param user_data The data that is passed to the `callback` when
+ *                  `callback` is called.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ *
+ * \since 15.2.1
+ */
+GRN_API grn_rc
+grn_language_model_inferencer_set_progress_callback(
+  grn_ctx *ctx,
+  grn_language_model_inferencer *inferencer,
+  grn_progress_callback_func callback,
+  void *user_data);
 
 /**
  * \brief Vectorize a text.

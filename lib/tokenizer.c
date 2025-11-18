@@ -854,6 +854,41 @@ grn_tokenizer_build_data_get_index_column(grn_ctx *ctx,
 }
 
 grn_rc
+grn_tokenizer_build_data_processed_n_records(grn_ctx *ctx,
+                                             grn_tokenizer_build_data *data,
+                                             uint32_t n_records)
+{
+  return data->processed_n_records_func(ctx, data, n_records, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_vectorize(grn_ctx *ctx,
+                                         grn_tokenizer_build_data *data,
+                                         uint32_t n_total_records)
+{
+  return data->start_vectorize_func(ctx,
+                                    data,
+                                    n_total_records,
+                                    data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_cluster(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t n_total_records)
+{
+  return data->start_cluster_func(ctx, data, n_total_records, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_load(grn_ctx *ctx,
+                                    grn_tokenizer_build_data *data,
+                                    uint32_t n_total_records)
+{
+  return data->start_load_func(ctx, data, n_total_records, data->user_data);
+}
+
+grn_rc
 grn_tokenizer_build_data_start_record(grn_ctx *ctx,
                                       grn_tokenizer_build_data *data,
                                       grn_id rid)
