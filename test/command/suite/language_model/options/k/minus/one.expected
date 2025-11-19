@@ -21,7 +21,7 @@ load --table Data
 {"text": "This is a onion."}
 ]
 [[0,0.0,0.0],11]
-table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer 'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                                              "code_column", "rabitq_code")'
+table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer     'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                            "code_column", "rabitq_code",                            "passage_prefix", "passage: ",                            "query_prefix", "query: ")'
 [[0,0.0,0.0],true]
 column_create RaBitQ data_text COLUMN_INDEX Data text
 [[0,0.0,0.0],true]
@@ -49,28 +49,28 @@ select Data   --filter 'language_model_knn(text, "male child", { "k" : -1 })'   
         "I am a boy."
       ],
       [
-        "This is a cucumber."
-      ],
-      [
         "This is a pepper."
       ],
       [
-        "This is an orange."
-      ],
-      [
-        "This is a potato."
+        "This is a cucumber."
       ],
       [
         "This is a carrot."
       ],
       [
-        "This is a banana."
+        "This is a potato."
       ],
       [
         "This is an apple."
       ],
       [
+        "This is a banana."
+      ],
+      [
         "This is a tomato."
+      ],
+      [
+        "This is an orange."
       ],
       [
         "This is a onion."
