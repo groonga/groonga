@@ -1,0 +1,48 @@
+plugin_register language_model/knn
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Data rabitq_code COLUMN_SCALAR ShortBinary
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"text": "I am a boy."},
+{"text": "This is an apple."},
+{"text": "Groonga is a full text search engine."}
+]
+[[0,0.0,0.0],3]
+table_create RaBitQ TABLE_HASH_KEY ShortBinary   --default_tokenizer     'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                            "code_column", "rabitq_code",                            "passage_prefix", "passage: ",                            "query_prefix", "query: ")'
+[[0,0.0,0.0],true]
+column_create RaBitQ data_text COLUMN_INDEX Data text
+[[0,0.0,0.0],true]
+#|w| load: model vocab missing newline token, using special_pad_id instead
+#|w| load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+select Data   --filter 'language_model_knn(text, "male child", { "k" : 2 })'   --output_columns text
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "text",
+          "ShortText"
+        ]
+      ],
+      [
+        "I am a boy."
+      ],
+      [
+        "This is an apple."
+      ]
+    ]
+  ]
+]
