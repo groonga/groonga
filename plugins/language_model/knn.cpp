@@ -75,6 +75,7 @@ namespace {
   struct Options {
     /* Input */
     std::string model_name;
+    std::string centroid_column_name;
     uint32_t n_clusters;
     Quantizer quantizer;
     std::string code_column_name;
@@ -90,7 +91,10 @@ namespace {
     std::vector<grn_id> centroid_index_to_record_id;
     faiss::IndexFlatIP centroid_searcher;
 
-    /* For Quantization */
+    /* For clustering */
+    grn_obj *centroid_column;
+
+    /* For quantization */
     grn_obj *code_column;
 #ifdef GRN_FAISS_HAVE_RABITQ
     /* For RaBitQ */
@@ -103,6 +107,7 @@ namespace {
   options_init(grn_ctx *ctx, Options *options)
   {
     new (&options->model_name) std::string;
+    new (&options->centroid_column_name) std::string;
     new (&options->code_column_name) std::string;
     new (&options->passage_prefix) std::string;
     new (&options->query_prefix) std::string;
@@ -119,6 +124,8 @@ namespace {
     new (&options->centroids) std::vector<float>;
     new (&options->centroid_index_to_record_id) std::vector<grn_id>;
     new (&options->centroid_searcher) faiss::IndexFlatIP;
+
+    options->centroid_column = nullptr;
 
     options->code_column = nullptr;
 #ifdef GRN_FAISS_HAVE_RABITQ
@@ -139,10 +146,14 @@ namespace {
     options->model_name.~basic_string();
 
     // This may not work when this options is closed by grn_fin()
-    // because code_column may be alread closed.
+    // because centroid_column/code_column may be alread closed.
+    // if (options->centroid_column) {
+    //   grn_obj_unref(ctx, options->centroid_column);
+    // }
     // if (options->code_column) {
     //   grn_obj_unref(ctx, options->code_column);
     // }
+    options->centroid_column_name.~basic_string();
     options->code_column_name.~basic_string();
 
     options->passage_prefix.~basic_string();
@@ -262,6 +273,8 @@ namespace {
                                         raw_options,
                                         i,
                                         options->n_clusters);
+      } else if (name_raw == "centroid_column") {
+        set_string(options->centroid_column_name, raw_options, i);
       } else if (name_raw == "quantizer") {
         // TODO: RaBitQ and no quantization are only supported for now
       } else if (name_raw == "code_column") {
@@ -283,6 +296,81 @@ namespace {
       return nullptr;
     }
 
+    if (options->centroid_column_name.empty()) {
+      options->centroid_column = nullptr;
+    } else {
+      options->centroid_column =
+        grn_obj_column(ctx,
+                       data->lexicon,
+                       options->centroid_column_name.data(),
+                       options->centroid_column_name.size());
+      if (!options->centroid_column) {
+        char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+        int lexicon_name_size =
+          grn_obj_name(ctx, data->lexicon, lexicon_name, sizeof(lexicon_name));
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s couldn't find centroid column: <%.*s.%s>",
+                         TOKENIZER_TAG,
+                         lexicon_name_size,
+                         lexicon_name,
+                         options->centroid_column_name.data());
+        close_options(ctx, options);
+        return nullptr;
+      }
+      grn_id range = grn_obj_get_range(ctx, options->centroid_column);
+      bool is_vector = grn_obj_is_vector_column(ctx, options->centroid_column);
+      if (range != GRN_DB_FLOAT32 || !is_vector) {
+        char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+        int lexicon_name_size =
+          grn_obj_name(ctx, data->lexicon, lexicon_name, sizeof(lexicon_name));
+        const char *column_type = nullptr;
+        if (is_vector) {
+          column_type = "VECTOR";
+        } else if (grn_obj_is_index_column(ctx, options->centroid_column)) {
+          column_type = "INDEX";
+        } else {
+          column_type = "SCALAR";
+        }
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s centroid column must be Float32 vector: "
+                         "<%.*s.%s>: <%s>: <%s>",
+                         TOKENIZER_TAG,
+                         lexicon_name_size,
+                         lexicon_name,
+                         options->centroid_column_name.data(),
+                         grn_type_id_to_string_builtin(ctx, range),
+                         column_type);
+        close_options(ctx, options);
+        return nullptr;
+      }
+      if (data->lexicon->header.domain != GRN_DB_UINT32) {
+        char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+        int lexicon_name_size =
+          grn_obj_name(ctx, data->lexicon, lexicon_name, sizeof(lexicon_name));
+        char lexicon_type_name[GRN_TABLE_MAX_KEY_SIZE];
+        int lexicon_type_name_size =
+          grn_table_get_key(ctx,
+                            grn_ctx_db(ctx),
+                            data->lexicon->header.domain,
+                            lexicon_type_name,
+                            sizeof(lexicon_type_name));
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s lexicon key type must be UInt32 "
+                         "with centroid column: <%.*s.%s>: <%.*s>",
+                         TOKENIZER_TAG,
+                         lexicon_name_size,
+                         lexicon_name,
+                         options->centroid_column_name.data(),
+                         lexicon_type_name_size,
+                         lexicon_type_name);
+        close_options(ctx, options);
+        return nullptr;
+      }
+    }
+
     if (options->code_column_name.empty()) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
@@ -291,7 +379,6 @@ namespace {
       close_options(ctx, options);
       return nullptr;
     }
-
     options->code_column = grn_obj_column(ctx,
                                           data->source_table,
                                           options->code_column_name.data(),
@@ -299,7 +386,7 @@ namespace {
     if (!options->code_column) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s couldn't find code_column: <%s>",
+                       "%s couldn't find code column: <%s>",
                        TOKENIZER_TAG,
                        options->code_column_name.data());
       close_options(ctx, options);
@@ -357,21 +444,49 @@ namespace {
       options->centroids.resize(options->n_dimensions * options->n_clusters);
       options->centroid_index_to_record_id.resize(options->n_clusters);
       size_t i = 0;
-      GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
-                                 data->lexicon,
-                                 cursor,
-                                 id,
-                                 GRN_CURSOR_BY_ID)
-      {
-        void *key;
-        auto key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-        memcpy(options->centroids.data() + (options->n_dimensions * i),
-               key,
-               key_size);
-        options->centroid_index_to_record_id[i] = id;
-        ++i;
+      if (options->centroid_column) {
+        grn_obj centroid;
+        GRN_FLOAT32_INIT(&centroid, GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                                   data->lexicon,
+                                   cursor,
+                                   id,
+                                   GRN_CURSOR_BY_ID)
+        {
+          // This is for avoiding needless copy but this is tricky...
+          GRN_TEXT_SET_REF(&centroid,
+                           options->centroids.data() +
+                             (options->n_dimensions * i),
+                           0);
+          // The above 0 length and this sets rest
+          // size. grn_obj_get_value() copies a column value without
+          // changing GRN_BULK_HEAD(&centroid) if &centroid has enough
+          // rest size.
+          centroid.u.b.tail =
+            centroid.u.b.head + (sizeof(float) * options->n_dimensions);
+          grn_obj_get_value(ctx, options->centroid_column, id, &centroid);
+          options->centroid_index_to_record_id[i] = id;
+          ++i;
+        }
+        GRN_TABLE_EACH_END(ctx, cursor);
+        GRN_OBJ_FIN(ctx, &centroid);
+      } else {
+        GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                                   data->lexicon,
+                                   cursor,
+                                   id,
+                                   GRN_CURSOR_BY_ID)
+        {
+          void *key;
+          auto key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+          memcpy(options->centroids.data() + (options->n_dimensions * i),
+                 key,
+                 key_size);
+          options->centroid_index_to_record_id[i] = id;
+          ++i;
+        }
+        GRN_TABLE_EACH_END(ctx, cursor);
       }
-      GRN_TABLE_EACH_END(ctx, cursor);
     }
 #ifdef GRN_FAISS_HAVE_MAYBE_OWNED_VECTOR
     options->centroid_searcher.codes =
@@ -495,6 +610,7 @@ namespace {
         }
       }
 
+      // Generate embeddings
       auto cursor = grn_table_cursor_open(ctx_,
                                           source_table_,
                                           nullptr,
@@ -593,6 +709,7 @@ namespace {
         return false;
       }
 
+      // Compute clusters
       grn_tokenizer_build_data_start_cluster(ctx_, data_, n_source_records_);
       size_t n_centroids = options_->n_clusters;
       faiss::Clustering clustering(options_->n_dimensions, n_centroids);
@@ -608,14 +725,35 @@ namespace {
         clustering.train(n_source_records_, embeddings_raw_, index);
       }
       options_->centroid_index_to_record_id.reserve(n_centroids);
-      for (size_t i = 0; i < n_centroids; ++i) {
-        grn_id id = grn_table_add(ctx_,
-                                  lexicon_,
-                                  clustering.centroids.data() +
-                                    (options_->n_dimensions * i),
-                                  sizeof(float) * options_->n_dimensions,
-                                  nullptr);
-        options_->centroid_index_to_record_id.push_back(id);
+      if (options_->centroid_column) {
+        grn_obj centroid;
+        GRN_FLOAT32_INIT(&centroid, GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY);
+        for (size_t i = 0; i < n_centroids; ++i) {
+          uint32_t key = i;
+          grn_id id =
+            grn_table_add(ctx_, lexicon_, &key, sizeof(uint32_t), nullptr);
+          GRN_TEXT_SET_REF(&centroid,
+                           clustering.centroids.data() +
+                             (options_->n_dimensions * i),
+                           sizeof(float) * options_->n_dimensions);
+          grn_obj_set_value(ctx_,
+                            options_->centroid_column,
+                            id,
+                            &centroid,
+                            GRN_OBJ_SET);
+          options_->centroid_index_to_record_id.push_back(id);
+        }
+        GRN_OBJ_FIN(ctx_, &centroid);
+      } else {
+        for (size_t i = 0; i < n_centroids; ++i) {
+          grn_id id = grn_table_add(ctx_,
+                                    lexicon_,
+                                    clustering.centroids.data() +
+                                      (options_->n_dimensions * i),
+                                    sizeof(float) * options_->n_dimensions,
+                                    nullptr);
+          options_->centroid_index_to_record_id.push_back(id);
+        }
       }
       options_->centroids = std::move(clustering.centroids);
 #ifdef GRN_FAISS_HAVE_MAYBE_OWNED_VECTOR
