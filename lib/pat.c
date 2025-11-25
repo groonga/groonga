@@ -1483,7 +1483,7 @@ grn_pat_next_location(grn_ctx *ctx,
                       pat_node_common *node,
                       const uint8_t *key,
                       uint16_t check,
-                      uint16_t check_max)
+                      int32_t check_max)
 {
   if (PAT_CHECK_IS_TERMINATED(check)) {
     /* check + 1: delete terminated flag and increment bit differences */
@@ -2255,7 +2255,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                           "failed to get key from node: "
                           "check_node:%d "
                           "node->check:%u "
-                          "check_max:%u",
+                          "check_max:%d",
                           check_node,
                           check_node_current,
                           check_max);
@@ -2351,7 +2351,7 @@ grn_pat_add_internal_find(grn_ctx *ctx, grn_pat_add_data *data)
                       data->wal_data.tag,
                       "BUG: computed check is too large: "
                       "check:%u "
-                      "check_max:%u "
+                      "check_max:%d "
                       "key_size:%u",
                       check,
                       check_max,
@@ -2370,7 +2370,7 @@ grn_pat_enable_node(grn_ctx *ctx,
                     grn_id id,
                     const uint8_t *key,
                     uint16_t check,
-                    uint16_t check_max,
+                    int32_t check_max,
                     grn_id *id_location)
 {
   pat_node_set_check(pat, node, check);
@@ -2399,7 +2399,7 @@ grn_pat_reuse_shared_node(grn_ctx *ctx,
                           uint32_t key_size,
                           uint32_t shared_key_offset,
                           uint16_t check,
-                          uint16_t check_max,
+                          int32_t check_max,
                           grn_id *id_location)
 {
   pat->header->garbages[0] = pat_node_get_left(pat, node);
@@ -2418,7 +2418,7 @@ grn_pat_add_shared_node(grn_ctx *ctx,
                         uint32_t key_size,
                         uint32_t shared_key_offset,
                         uint16_t check,
-                        uint16_t check_max,
+                        int32_t check_max,
                         grn_id *id_location)
 {
   pat->header->curr_rec = id;
@@ -2435,7 +2435,7 @@ grn_pat_reuse_node(grn_ctx *ctx,
                    const uint8_t *key,
                    uint32_t key_size,
                    uint16_t check,
-                   uint16_t check_max,
+                   int32_t check_max,
                    grn_id *id_location,
                    const char *tag)
 {
@@ -2469,7 +2469,7 @@ grn_pat_add_node(grn_ctx *ctx,
                  const uint8_t *key,
                  uint32_t key_size,
                  uint16_t check,
-                 uint16_t check_max,
+                 int32_t check_max,
                  grn_id *id_location,
                  const char *tag)
 {
@@ -4820,9 +4820,9 @@ set_cursor_prefix(grn_ctx *ctx,
           }
         }
       } else {
-        uint32_t check_max =
+        int32_t check_max =
           PAT_CHECK_PACK(pat_node_get_key_length(pat, node), 0, false);
-        if (check_max > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
+        if (check_max > len || !(flags & GRN_CURSOR_GT)) {
           push(c, id, ch);
         }
       }
@@ -6545,8 +6545,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
   grn_id *id_location =
     pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
-  uint16_t check_max =
-    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  int32_t check_max = PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_node(ctx,
                    pat,
                    node,
@@ -6590,8 +6589,7 @@ grn_pat_wal_recover_add_shared_entry(grn_ctx *ctx,
   grn_id *id_location =
     pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
-  uint16_t check_max =
-    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  int32_t check_max = PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_shared_node(ctx,
                           pat,
                           node,
@@ -6638,8 +6636,7 @@ grn_pat_wal_recover_reuse_entry(grn_ctx *ctx,
   grn_id *id_location =
     pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
-  uint16_t check_max =
-    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  int32_t check_max = PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_reuse_node(ctx,
                      pat,
                      node,
@@ -6683,8 +6680,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
   grn_id *id_location =
     pat_node_get_child_address(pat, parent_node, entry->record_direction);
   *id_location = entry->previous_record_id;
-  uint16_t check_max =
-    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  int32_t check_max = PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   pat->header->n_garbages = entry->n_garbages;
   pat->header->n_entries = entry->n_entries;
   grn_pat_reuse_shared_node(ctx,
