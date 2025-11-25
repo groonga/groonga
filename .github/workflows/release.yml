@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Download artifacts
@@ -125,7 +125,7 @@ jobs:
             build-essential \
             debhelper \
             devscripts
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: |
           github.ref_type == 'tag'
         with:
