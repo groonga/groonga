@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1764070739808,
+  "lastUpdate": 1764114348760,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "committer": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "distinct": true,
-          "id": "9ef983d23f07eeb83d844778918ca65455330465",
-          "message": "cmake: fix scope of internal dependencies",
-          "timestamp": "2024-11-21T16:54:01+09:00",
-          "tree_id": "3604cc0d2bfe5c060d5e06ff5f2822966014a9f4",
-          "url": "https://github.com/groonga/groonga/commit/9ef983d23f07eeb83d844778918ca65455330465"
-        },
-        "date": 1732177134806,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.3758505290000471,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.019603999999999955 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.27105050200009373,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.015353000000000006 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.015346774000022378,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0004959999999999964 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015344468999899163,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0003889999999999727 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.3830943300000058,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.0002569999999998962 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.23638212499997735,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007234000000000157 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13059579600007964,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0063689999999997915 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.017209050000019488,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001999000000000112 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.017133386999944378,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0018089999999996997 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.06514085399993519,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007491000000000275 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.0664712039999813,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008329000000000308 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.017390245000001414,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001995000000000441 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.017591060999961883,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002197999999999811 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.01764333299999521,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0015570000000001138 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "otegami@clear-code.com",
+            "name": "takuya kodama",
+            "username": "otegami"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "781d243cc905cedb770a39f6cab072d3daa28662",
+          "message": "windows: fix compilation errors on ARM64 (#2653)\n\n## Issue\n\nCompilation fails on ARM64 Windows CI with the following error:\n\n```\nlib/windows.c:408:4: error: \"Intel x86, Intel Itanium and x64 are only supported architectures\"\n  408 | #  error \"Intel x86, Intel Itanium and x64 are only supported architectures\"\n      |    ^\n1 error generated.\n```\n\n## Cause\n\nThe stack walking code in `lib/windows.c` only supports Intel x86, Intel\nItanium, and x64 architectures. ARM64 architecture was not recognized.\n\n## Solution\n\nAdd support for the `_M_ARM64` compiler macro and\nconfigure the StackWalk64 API with ARM64-specific\nregisters. msys2 packages use the same approach:\n\n- `Pc` (Program Counter)\n- `Fp` (Frame Pointer)\n- `Sp` (Stack Pointer)\n\nref:\nhttps://github.com/msys2/MINGW-packages/blob/master/mingw-w64-groonga/001-aarch64.patch\nref:\nhttps://developer.arm.com/documentation/102374/0103/Registers-in-AArch64---other-registers\nref:\nhttps://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-arm64_nt_context\n\nAlso update the error message to include ARM64 in the list of supported\narchitectures.",
+          "timestamp": "2025-11-26T08:39:58+09:00",
+          "tree_id": "cb2336fef21ac872c485e81d07d4ee512a129255",
+          "url": "https://github.com/groonga/groonga/commit/781d243cc905cedb770a39f6cab072d3daa28662"
+        },
+        "date": 1764114347623,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3432103259999053,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015551000000000065 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.26574463400004333,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.014206000000000024 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015589950999981284,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00036500000000017074 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015063696000083837,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0004129999999999967 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.5718177640000022,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.000202000000000091 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.22255853400008618,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00769499999999998 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.1315737609999701,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006179000000000157 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.01666470100008155,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015140000000004594 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.017182659000070544,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016589999999999105 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06133460299992066,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007391999999999857 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06577044400000887,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00848499999999977 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.017615083000066534,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0019339999999996305 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.01834751100000176,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016089999999999716 s\nthreads: undefined"
           }
         ]
       }
