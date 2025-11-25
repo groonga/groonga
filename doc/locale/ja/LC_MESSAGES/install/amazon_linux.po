@@ -28,11 +28,8 @@ msgstr ""
 msgid "Install:"
 msgstr "インストール:"
 
-msgid "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a tokenizer, install groonga-tokenizer-mecab package."
-msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいときは、groonga-tokenizer-mecabパッケージをインストールしてください。"
-
-msgid "Install groonga-tokenizer-mecab package:"
-msgstr "groonga-tokenizer-mecabパッケージのインストール:"
+msgid "You can't install groonga-tokenizer-mecab package in Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide `MeCab <https://taku910.github.io/mecab/>`_ package."
+msgstr "Amazon Linux 2023 では、groonga-tokenizer-mecabパッケージはインストールできません。 Amazon Linux 2023が、 `MeCab <https://taku910.github.io/mecab/>`_ パッケージを提供していないためです。"
 
 msgid "If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package."
 msgstr ":doc:`/reference/token_filters/token_filter_stem` を使いたいときは、groonga-token-filter-stemパッケージをインストールしてください。"
