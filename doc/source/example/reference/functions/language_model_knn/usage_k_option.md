@@ -17,7 +17,7 @@ select Memos \
 #       ],
 #       [
 #         [
-#           "text",
+#           "content",
 #           "ShortText"
 #         ]
 #       ],
@@ -49,7 +49,7 @@ select Memos \
 #         "This is an orange."
 #       ],
 #       [
-#         "This is a onion."
+#         "This is an onion."
 #       ]
 #     ]
 #   ]

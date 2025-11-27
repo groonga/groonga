@@ -156,7 +156,7 @@ There are two required parameters.
 Specify the number of records to return.
 If you don't set this option, the upper limit of the number of records to return is `10`.
 
-You can specify negative value. It means that the number of matched records + `k` + 1.
+You can specify a negative value. It means that the number of matched records + `k` + 1.
 For example, `"{ "k" : -1 }"` outputs all records. It’s a very useful value to show all records.
 
 Here is a simple negative `k` value usage example.
@@ -168,17 +168,17 @@ Sample data:
 ```{include} ../../example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
 load --table Memos
 [
-{"text": "I am a boy."},
-{"text": "This is an apple."},
-{"text": "Groonga is a full text search engine."},
-{"text": "This is an orange."},
-{"text": "This is a banana."},
-{"text": "This is a tomato."},
-{"text": "This is a carrot."},
-{"text": "This is a cucumber."},
-{"text": "This is a pepper."},
-{"text": "This is a potato."},
-{"text": "This is a onion."}
+{"content": "I am a boy."},
+{"content": "This is an apple."},
+{"content": "Groonga is a full text search engine."},
+{"content": "This is an orange."},
+{"content": "This is a banana."},
+{"content": "This is a tomato."},
+{"content": "This is a carrot."},
+{"content": "This is a cucumber."},
+{"content": "This is a pepper."},
+{"content": "This is a potato."},
+{"content": "This is an onion."}
 ]
 ```
 

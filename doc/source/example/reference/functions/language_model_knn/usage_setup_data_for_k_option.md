@@ -3,17 +3,17 @@ Execution example:
 ```shell
 load --table Memos
 [
-{"text": "I am a boy."},
-{"text": "This is an apple."},
-{"text": "Groonga is a full text search engine."},
-{"text": "This is an orange."},
-{"text": "This is a banana."},
-{"text": "This is a tomato."},
-{"text": "This is a carrot."},
-{"text": "This is a cucumber."},
-{"text": "This is a pepper."},
-{"text": "This is a potato."},
-{"text": "This is a onion."}
+{"content": "I am a boy."},
+{"content": "This is an apple."},
+{"content": "Groonga is a full text search engine."},
+{"content": "This is an orange."},
+{"content": "This is a banana."},
+{"content": "This is a tomato."},
+{"content": "This is a carrot."},
+{"content": "This is a cucumber."},
+{"content": "This is a pepper."},
+{"content": "This is a potato."},
+{"content": "This is an onion."}
 ]
 # [[0,1337566253.89858,0.000355720520019531],11]
 ```
