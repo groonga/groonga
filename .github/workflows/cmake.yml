@@ -584,6 +584,9 @@ jobs:
             git
             msys2-devel
             pactoys
+            ${{ matrix.package-prefix }}-gobject-introspection
+            ${{ matrix.package-prefix }}-glib2
+            ${{ matrix.package-prefix }}-pkgconf
       - name: Prepare
         shell: msys2 {0}
         run: |
