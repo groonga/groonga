@@ -147,6 +147,40 @@ There are two required parameters.
 
 `query` is a search query.
 
+### `k`
+
+```{versionadded} 15.2.1
+
+```
+
+Specify the number of records to return.
+If you don't set this option, the upper limit of the number of records to return is `10`.
+
+If you set to `-n` in this option, the upper limit of the number of records to return is the number of records in the target table - (n-1).
+
+For example, if you want to receive records that the number of records in the target table, you should set `k` is `-1` as below.
+
+Sample data:
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
+load --table Memos
+[
+{"content": "I am a boy."},
+{"content": "This is an apple."},
+{"content": "Groonga is a full text search engine."}
+]
+```
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/functions/language_model_knn/usage_k_option.md
+select Data \
+  --filter 'language_model_knn(text, "male child", { "k" : -1 })' \
+  --output_columns text
+```
+
 ## Return value
 
 This function works as a selector. It means that this function executes effectively.

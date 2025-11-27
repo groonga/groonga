@@ -107,6 +107,18 @@ msgstr ""
 msgid "`query`"
 msgstr ""
 
+msgid "`k`"
+msgstr ""
+
+msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of records to return is `10`."
+msgstr "返すレコード数を指定します。このオプションを設定しない場合、返すレコード数の上限は`10`になります。"
+
+msgid "If you set to `-n` in this option, the upper limit of the number of records to return is the number of records in the target table - (n-1)."
+msgstr "このオプションに`-n`を設定すると返すレコード数の上限は、対象のテーブルのレコード数 - (n-1)になります。"
+
+msgid "For example, if you want to receive records that the number of records in the target table, you should set `k` is `-1` as below."
+msgstr "例えば、対象のテーブルのレコード数を受け取りたい場合は、以下のように`k`を`-1`に設定します。"
+
 msgid "Return value"
 msgstr "戻り値"
 
