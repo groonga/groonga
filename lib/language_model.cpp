@@ -307,8 +307,10 @@ namespace grn {
       params.n_ctx = 0;
       params.embeddings = true;
       auto llama_ctx = llama_init_from_model(model_, params);
-      default_pooling_type_ = llama_pooling_type(llama_ctx);
-      llama_free(llama_ctx);
+      if (llama_ctx) {
+        default_pooling_type_ = llama_pooling_type(llama_ctx);
+        llama_free(llama_ctx);
+      }
     }
 
     ~Impl() { llama_model_free(model_); }
@@ -784,6 +786,9 @@ namespace grn {
           params.n_seq_max = max_n_sequences;
           params.pooling_type = pooling_type_;
           llama_ctx_ = llama_init_from_model(llama_model_, params);
+          if (!llama_ctx_) {
+            return false;
+          }
         }
 
         if (has_encoder_ && !has_decoder_) {
