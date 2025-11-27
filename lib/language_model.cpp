@@ -356,10 +356,10 @@ namespace grn {
           return true;
         };
 
-        llama_model *raw_model;
         {
           language_model::CaptureError capture(ctx_);
-          raw_model = llama_model_load_from_file(model_path.c_str(), params);
+          auto raw_model =
+            llama_model_load_from_file(model_path.c_str(), params);
           if (!raw_model) {
             GRN_LM_ERROR(GRN_INVALID_ARGUMENT,
                          "[language-model-loader][load] failed to load model");
@@ -375,10 +375,10 @@ namespace grn {
             llama_model_free(raw_model);
             return nullptr;
           }
-        }
 
-        return std::make_shared<LanguageModel>(
-          new LanguageModel::Impl(raw_model));
+          return std::make_shared<LanguageModel>(
+            new LanguageModel::Impl(raw_model));
+        }
       });
     return model;
 #else
