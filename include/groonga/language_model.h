@@ -84,6 +84,35 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
                                     grn_language_model_loader *loader,
                                     const char *model,
                                     int64_t model_length);
+
+/**
+ * \brief The default N GPU layers to use in language model. In
+ *        general, we use GPU as much as possible by default.
+ *
+ * This value is same as `n_gpu_layers` of
+ * `llama_model_default_params()`.
+ *
+ * \since 15.2.1
+ */
+#define GRN_LANGUAGE_MODEL_LOADER_N_GPU_LAYERS_DEFAULT 999
+
+/**
+ * \brief Set the number of GPU layers to use.
+ *
+ * You can disable GPU by specifying `0` as `n_gpu_layers`.
+ *
+ * \param ctx The context object.
+ * \param loader The loader.
+ * \param n_gpu_layers The number of GPU layers to use.
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ *
+ * \since 15.2.1
+ */
+GRN_API grn_rc
+grn_language_model_loader_set_n_gpu_layers(grn_ctx *ctx,
+                                           grn_language_model_loader *loader,
+                                           int32_t n_gpu_layers);
 /**
  * \brief Load a language model.
  *

@@ -122,24 +122,35 @@ namespace grn {
     }
 
 #ifdef GRN_WITH_LLAMA_CPP
+    struct ModelCacheKey {
+      std::string path;
+      int32_t n_gpu_layers;
+    };
+
+    bool
+    operator<(const ModelCacheKey &a, const ModelCacheKey &b)
+    {
+      return std::tie(a.path, a.n_gpu_layers) <
+             std::tie(b.path, b.n_gpu_layers);
+    }
+
     struct ModelCache {
-    public:
       ModelCache() = default;
       ~ModelCache() = default;
 
       std::shared_ptr<LanguageModel>
-      get(const std::string &path,
+      get(const ModelCacheKey &key,
           std::function<std::shared_ptr<LanguageModel>()> load)
       {
         std::lock_guard<std::mutex> lock(mutex_);
-        auto it = models_.find(path);
+        auto it = models_.find(key);
         if (it != models_.end()) {
           return it->second;
         }
 
         auto model = load();
         if (model) {
-          models_[path] = model;
+          models_[key] = model;
         }
         return model;
       }
@@ -151,7 +162,7 @@ namespace grn {
       }
 
     private:
-      std::map<std::string, std::shared_ptr<LanguageModel>> models_;
+      std::map<ModelCacheKey, std::shared_ptr<LanguageModel>> models_;
       std::mutex mutex_;
     };
 
@@ -350,10 +361,11 @@ namespace grn {
     }
 
     auto model = language_model::model_cache.get(
-      model_path,
+      language_model::ModelCacheKey{model_path, n_gpu_layers},
       [this]() -> std::shared_ptr<LanguageModel> {
         auto ctx = ctx_;
         auto params = llama_model_default_params();
+        params.n_gpu_layers = n_gpu_layers;
         params.progress_callback = [](float progress, void *ctx) {
           return true;
         };
@@ -1572,6 +1584,25 @@ grn_language_model_loader_set_model(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[language-model-loader][set-model] llama.cpp isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_language_model_loader_set_n_gpu_layers(grn_ctx *ctx,
+                                           grn_language_model_loader *loader,
+                                           int32_t n_gpu_layers)
+{
+  const char *tag = "[language-model-loader][set-n-gpu-layers]";
+  GRN_API_ENTER;
+  if (!loader) {
+    ERR(GRN_INVALID_ARGUMENT, "%s loader must not be NULL", tag);
+    GRN_API_RETURN(ctx->rc);
+  }
+#ifdef GRN_WITH_LLAMA_CPP
+  loader->loader.n_gpu_layers = n_gpu_layers;
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s llama.cpp isn't enabled", tag);
 #endif
   GRN_API_RETURN(ctx->rc);
 }

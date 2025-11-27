@@ -75,6 +75,7 @@ namespace {
   struct Options {
     /* Input */
     std::string model_name;
+    int32_t n_gpu_layers;
     std::string centroid_column_name;
     uint32_t n_clusters;
     Quantizer quantizer;
@@ -107,6 +108,7 @@ namespace {
   options_init(grn_ctx *ctx, Options *options)
   {
     new (&options->model_name) std::string;
+    options->n_gpu_layers = GRN_LANGUAGE_MODEL_LOADER_N_GPU_LAYERS_DEFAULT;
     new (&options->centroid_column_name) std::string;
     new (&options->code_column_name) std::string;
     new (&options->passage_prefix) std::string;
@@ -267,6 +269,12 @@ namespace {
 
       if (name_raw == "model") {
         set_string(options->model_name, raw_options, i);
+      } else if (name_raw == "n_gpu_layers") {
+        options->n_gpu_layers =
+          grn_vector_get_element_int32(ctx,
+                                       raw_options,
+                                       i,
+                                       options->n_gpu_layers);
       } else if (name_raw == "n_clusters") {
         options->n_clusters =
           grn_vector_get_element_uint32(ctx,
@@ -398,6 +406,9 @@ namespace {
                                         loader,
                                         options->model_name.data(),
                                         options->model_name.size());
+    grn_language_model_loader_set_n_gpu_layers(ctx,
+                                               loader,
+                                               options->n_gpu_layers);
     options->model = grn_language_model_loader_load(ctx, loader);
     grn_language_model_loader_close(ctx, loader);
     if (!options->model) {

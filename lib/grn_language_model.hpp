@@ -60,6 +60,7 @@ namespace grn {
     load();
 
     std::string model_path;
+    int32_t n_gpu_layers = GRN_LANGUAGE_MODEL_LOADER_N_GPU_LAYERS_DEFAULT;
 
   private:
     grn_ctx *ctx_;
