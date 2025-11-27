@@ -156,9 +156,10 @@ There are two required parameters.
 Specify the number of records to return.
 If you don't set this option, the upper limit of the number of records to return is `10`.
 
-If you set to `-n` in this option, the upper limit of the number of records to return is the number of records in the target table - (n-1).
+You can specify negative value. It means that the number of matched records + `k` + 1.
+For example, `"{ "k" : -1 }"` outputs all records. It’s very useful value to show all records.
 
-For example, if you want to receive records that the number of records in the target table, you should set `k` is `-1` as below.
+Here is a simple negative `k` value usage example.
 
 Sample data:
 
@@ -167,18 +168,26 @@ Sample data:
 ```{include} ../../example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
 load --table Memos
 [
-{"content": "I am a boy."},
-{"content": "This is an apple."},
-{"content": "Groonga is a full text search engine."}
+{"text": "I am a boy."},
+{"text": "This is an apple."},
+{"text": "Groonga is a full text search engine."},
+{"text": "This is an orange."},
+{"text": "This is a banana."},
+{"text": "This is a tomato."},
+{"text": "This is a carrot."},
+{"text": "This is a cucumber."},
+{"text": "This is a pepper."},
+{"text": "This is a potato."},
+{"text": "This is a onion."}
 ]
 ```
 
 <!-- groonga-command -->
 
 ```{include} ../../example/reference/functions/language_model_knn/usage_k_option.md
-select Data \
+select Memos \
   --filter 'language_model_knn(text, "male child", { "k" : -1 })' \
-  --output_columns text
+  --output_columns content
 ```
 
 ## Return value
