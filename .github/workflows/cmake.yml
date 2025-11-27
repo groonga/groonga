@@ -570,6 +570,10 @@ jobs:
         with:
           repository: msys2/MINGW-packages
           path: ci/msys2/MINGW-packages
+      # TODO: Remove gobject-introspection, glib2, and pkgconf packages
+      #       after these gems are released:
+      #       - gobject-introspection
+      #       - glib2
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
@@ -584,6 +588,8 @@ jobs:
             git
             msys2-devel
             pactoys
+            ${{ matrix.package-prefix }}-gobject-introspection
+            ${{ matrix.package-prefix }}-glib2
       - name: Prepare
         shell: msys2 {0}
         run: |
