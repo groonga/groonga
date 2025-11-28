@@ -122,6 +122,15 @@ msgstr "インデックスとして利用するクラスタ数を指定します
 msgid "Usually, no specification is necessary."
 msgstr "通常は指定の必要はありません。"
 
+msgid "`n_gpu_layers`"
+msgstr ""
+
+msgid "Specify the number of GPU layers to use in language model. If not specified, Groonga use GPU as much as possible."
+msgstr "言語モデルが利用するGPUレイヤー数を指定します。省略すると、可能な限りのGPUを使用します。"
+
+msgid "You can disable GPU by setting `0` into `n_gpu_layers`."
+msgstr "`n_gpu_layers`の`0`を設定することで、GPUを無効にすることができます。"
+
 msgid "See also"
 msgstr "参考"
 

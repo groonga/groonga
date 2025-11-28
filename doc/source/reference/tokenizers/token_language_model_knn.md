@@ -146,6 +146,19 @@ If not specified, an appropriate value will be set automatically.
 
 Usually, no specification is necessary.
 
+#### `n_gpu_layers`
+
+```{versionadded} 15.2.1
+
+```
+
+Specify the number of GPU layers to use in language model.
+If not specified, Groonga use GPU as much as possible.
+
+Usually, no specification is necessary.
+
+You can disable GPU by setting `0` into `n_gpu_layers`.
+
 ## See also
 
 - {doc}`../language_model`
