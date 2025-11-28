@@ -144,7 +144,20 @@ Create a column in the table storing the searchable text and specify its column 
 Specify the number of clusters to use as indexes.
 If not specified, an appropriate value will be set automatically.
 
-Usually, no specification is necessary.
+In most cases, you don't need to set this option explicitly.
+
+#### `n_gpu_layers`
+
+```{versionadded} 15.2.1
+
+```
+
+Specify the number of GPU layers to use for language model.
+If not specified, Groonga uses GPU as much as possible.
+
+In most cases, you don't need to set this option explicitly.
+
+To disable GPU usage, set `n_gpu_layers` to 0.
 
 ## See also
 
