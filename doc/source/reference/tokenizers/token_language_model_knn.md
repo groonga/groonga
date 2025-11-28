@@ -153,7 +153,7 @@ Usually, no specification is necessary.
 ```
 
 Specify the number of GPU layers to use for language model.
-If not specified, Groonga use GPU as much as possible.
+If not specified, Groonga uses GPU as much as possible.
 
 Usually, no specification is necessary.
 
