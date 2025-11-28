@@ -147,6 +147,49 @@ There are two required parameters.
 
 `query` is a search query.
 
+### `k`
+
+```{versionadded} 15.2.1
+
+```
+
+Specify the number of records to return.
+If you don't set this option, the upper limit of the number of records to return is `10`.
+
+You can specify a negative value. It means that the number of **matched records + `k` + 1**.
+For example, `"{ "k" : -1 }"` outputs all records. It’s a very useful value to show all records.
+
+Here is a simple negative `k` value usage example.
+
+Sample data:
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
+load --table Memos
+[
+{"content": "I am a boy."},
+{"content": "This is an apple."},
+{"content": "Groonga is a full text search engine."},
+{"content": "This is an orange."},
+{"content": "This is a banana."},
+{"content": "This is a tomato."},
+{"content": "This is a carrot."},
+{"content": "This is a cucumber."},
+{"content": "This is a pepper."},
+{"content": "This is a potato."},
+{"content": "This is an onion."}
+]
+```
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/functions/language_model_knn/usage_k_option.md
+select Memos \
+  --filter 'language_model_knn(text, "male child", { "k" : -1 })' \
+  --output_columns content
+```
+
 ## Return value
 
 This function works as a selector. It means that this function executes effectively.

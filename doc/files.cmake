@@ -486,8 +486,10 @@ set(GRN_DOC_SOURCES
     example/reference/functions/language_model_knn/filter.md
     example/reference/functions/language_model_knn/index_column_create.md
     example/reference/functions/language_model_knn/sort_keys.md
+    example/reference/functions/language_model_knn/usage_k_option.md
     example/reference/functions/language_model_knn/usage_register.md
     example/reference/functions/language_model_knn/usage_setup_data.md
+    example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
     example/reference/functions/language_model_knn/usage_setup_schema.md
     example/reference/functions/language_model_vectorize/usage_register.md
     example/reference/functions/language_model_vectorize/usage_rerank.md
