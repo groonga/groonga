@@ -144,7 +144,7 @@ Create a column in the table storing the searchable text and specify its column 
 Specify the number of clusters to use as indexes.
 If not specified, an appropriate value will be set automatically.
 
-Usually, no specification is necessary.
+In most cases, you don't need to set this option explicitly.
 
 #### `n_gpu_layers`
 
