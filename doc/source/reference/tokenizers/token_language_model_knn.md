@@ -157,7 +157,7 @@ If not specified, Groonga uses GPU as much as possible.
 
 In most cases, you don't need to set this option explicitly
 
-You can disable GPU by setting `0` into `n_gpu_layers`.
+To disable GPU usage, set `n_gpu_layers` to 0.
 
 ## See also
 
