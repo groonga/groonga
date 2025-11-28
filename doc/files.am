@@ -486,8 +486,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/filter.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/index_column_create.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/sort_keys.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_k_option.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_register.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_register.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_rerank.md \
@@ -1874,8 +1876,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/language_model_knn/filter.md \
 	source/example/reference/functions/language_model_knn/index_column_create.md \
 	source/example/reference/functions/language_model_knn/sort_keys.md \
+	source/example/reference/functions/language_model_knn/usage_k_option.md \
 	source/example/reference/functions/language_model_knn/usage_register.md \
 	source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	source/example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md \
 	source/example/reference/functions/language_model_knn/usage_setup_schema.md \
 	source/example/reference/functions/language_model_vectorize/usage_register.md \
 	source/example/reference/functions/language_model_vectorize/usage_rerank.md \
