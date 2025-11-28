@@ -31,10 +31,21 @@ plugin_register language_model/knn
 TokenLanguageModelKNN("model", "hf:///path/to", "code_column", "column_name")
 ```
 
-`TokenLanguageModelKNN` has one optional parameter.
+`TokenLanguageModelKNN` has optional parameter:
 
 ```
-TokenLanguageModelKNN("model", "hf:///path/to", "code_column", "column_name", "n_clusters", N_CLUSTERS)
+TokenLanguageModelKNN("model", "hf:///path/to", \
+                      "code_column", "column_name", \
+                      "n_clusters", N_CLUSTERS)
+
+TokenLanguageModelKNN("model", "hf:///path/to", \
+                      "code_column", "column_name", \
+                      "passage_prefix", "passage: ", \
+                      "query_prefix", "query: ")
+```
+
+```{versionadded} 15.1.9
+{ref}`tokenizer-language-model-knn-passage-prefix` and {ref}`tokenizer-language-model-knn-query-prefix` are added.
 ```
 
 ## Usage
@@ -119,6 +130,8 @@ Users do not operate on this `embedding_code`. Groonga uses it internally for se
 
 ### Required parameters
 
+(tokenizer-language-model-knn-model)=
+
 #### `model`
 
 Specify the language model to use.
@@ -131,6 +144,8 @@ Example of URI: `hf:///groonga/all-MiniLM-L6-v2-Q4_K_M-GGUF` for `https://huggin
 
 See also {doc}`../language_model` for language model.
 
+(tokenizer-language-model-knn-code-column)=
+
 #### `code_column`
 
 Specify the column for storing the embedding.
@@ -138,6 +153,41 @@ Specify the column for storing the embedding.
 Create a column in the table storing the searchable text and specify its column name.
 
 ### Optional parameter
+
+(tokenizer-language-model-knn-passage-prefix)=
+
+#### `passage_prefix`
+
+```{versionadded} 15.1.9
+
+```
+
+Some models such as multilingual-e5 require prefix used for search-target texts and query texts.
+
+`passage_prefix` specifies the prefix for search target text.
+
+For example, you can set `passage: ` prefix in search target text and `query: ` prefix in query text as below.
+
+```
+TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                      "code_column", "embedding_code", \
+                      "passage_prefix", "passage: ", \
+                      "query_prefix", "query: ")
+```
+
+(tokenizer-language-model-knn-query-prefix)=
+
+#### `query_prefix`
+
+```{versionadded} 15.1.9
+
+```
+
+Some models such as multilingual-e5 require prefix used for search-target texts and query texts.
+
+`query_prefix` specifies the prefix for query text.
+
+(tokenizer-language-model-knn-n-clusters)=
 
 #### `n_clusters`
 
