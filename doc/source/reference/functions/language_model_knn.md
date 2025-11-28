@@ -156,7 +156,7 @@ There are two required parameters.
 Specify the number of records to return.
 If you don't set this option, the upper limit of the number of records to return is `10`.
 
-You can specify a negative value. It means that the number of matched records + `k` + 1.
+You can specify a negative value. It means that the number of **matched records + `k` + 1**.
 For example, `"{ "k" : -1 }"` outputs all records. It’s a very useful value to show all records.
 
 Here is a simple negative `k` value usage example.
