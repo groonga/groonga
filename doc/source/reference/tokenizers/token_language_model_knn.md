@@ -36,9 +36,12 @@ TokenLanguageModelKNN("model", "hf:///path/to", "code_column", "column_name")
 ```
 TokenLanguageModelKNN("model", "hf:///path/to", \
                       "code_column", "column_name", \
-                      "passage_prefix", "passage: ", \
-                      "query_prefix", "query: ", \
                       "n_clusters", N_CLUSTERS)
+
+TokenLanguageModelKNN("model", "hf:///path/to", \
+                      "code_column", "column_name", \
+                      "passage_prefix", "passage: ", \
+                      "query_prefix", "query: ")
 ```
 
 ```{versionadded} 15.1.9
@@ -159,11 +162,11 @@ Create a column in the table storing the searchable text and specify its column 
 
 ```
 
-Some models such as multilingual-e5 require prefix for search target texts and query texts.
+Some models such as multilingual-e5 require prefix used for search-target texts and query texts.
 
-`passage_prefix` is for prefix for search target text.
+`passage_prefix` specifies the prefix for search target text.
 
-For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below.
+For example, you can set `passage: ` prefix in search target text and `query: ` prefix in query text as below.
 
 ```
 TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
@@ -180,9 +183,9 @@ TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",
 
 ```
 
-Some models such as multilingual-e5 require prefix for search target texts and query texts.
+Some models such as multilingual-e5 require prefix used for search-target texts and query texts.
 
-`query_prefix` is for prefix for query text.
+`query_prefix` specifies the prefix for query text.
 
 (tokenizer-language-model-knn-n-clusters)=
 
