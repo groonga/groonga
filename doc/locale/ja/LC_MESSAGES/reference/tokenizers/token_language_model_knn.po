@@ -41,8 +41,11 @@ msgstr "構文"
 msgid "`TokenLanguageModelKNN` requires two parameters:"
 msgstr "`TokenLanguageModelKNN`には必須の引数が2つあります。"
 
-msgid "`TokenLanguageModelKNN` has one optional parameter."
-msgstr "省略可能なオプションは1つあります。"
+msgid "`TokenLanguageModelKNN` has optional parameter:"
+msgstr "`TokenLanguageModelKNN`には省略可能なオプションがあります。"
+
+msgid "{ref}`tokenizer-language-model-knn-passage-prefix` and {ref}`tokenizer-language-model-knn-query-prefix` are added."
+msgstr "{ref}`tokenizer-language-model-knn-passage-prefix`と{ref}`tokenizer-language-model-knn-query-prefix`を追加。"
 
 msgid "Usage"
 msgstr "使い方"
@@ -112,6 +115,24 @@ msgstr "検索対象のテキストを保存しているテーブルにカラム
 
 msgid "Optional parameter"
 msgstr "省略可能引数"
+
+msgid "`passage_prefix`"
+msgstr ""
+
+msgid "Some models such as multilingual-e5 require prefix for search target texts and query texts."
+msgstr "multilingual-e5のような一部のモデルでは、検索対象テキストや検索クエリにプレフィックスが必要です。"
+
+msgid "`passage_prefix` is for prefix for search target text."
+msgstr "`passage_prefix`は、検索対象テキストのプレフィックスを指定するために使います。"
+
+msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
+msgstr "検索対象テキストにプレフィックスとして`passage: `を、検索クエリクエリには`query: `を設定する例は次のとおりです。"
+
+msgid "`query_prefix`"
+msgstr ""
+
+msgid "`query_prefix` is for prefix for query text."
+msgstr "`query_prefix`は、検索クエリのプレフィックスを指定するために使います。"
 
 msgid "`n_clusters`"
 msgstr ""
