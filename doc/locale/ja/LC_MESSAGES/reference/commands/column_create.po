@@ -1140,7 +1140,7 @@ msgstr "また、このフラグを有効にすることで追加の処理が入
 msgid "Regardless of setting ``COMPRESS_ZLIB`` , ``COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` , these filters use `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ as the compression alogolizm, thus make the column size smaller than the noncompressed column in most cases."
 msgstr "なお、 ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定しない場合は `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、このフラグを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。"
 
-msgid "Yet, there would be a case that some data would show sufficient work by only suetting ``COMPRESS_ZLIB`` , `COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` . So it is advised to set suitable flags depending on the data."
+msgid "Yet, there would be a case that some data would show sufficient work by only suetting ``COMPRESS_ZLIB`` , ``COMPRESS_LZ4`` , ``COMPRESS_ZSTD`` . So it is advised to set suitable flags depending on the data."
 msgstr "しかし、データによってはこのフラグを有効にせずに単に ``COMPRESS_ZLIB`` / ``COMPRESS_LZ4`` / ``COMPRESS_ZSTD`` を指定するだけで十分であることもあるため、実際のデータにあわせて適切にフラグを設定するようにしてください。"
 
 msgid "Note that ``COMPRESS_FILTER_SHUFFLE`` flag is ignored if Blosc support is invalid. Blosc support is valid in default in each packages. However, We need to valid Blosc support explicitly when we build Groonga from source. Please refer :doc:`/install/others` when we build Groonga from source."
