@@ -1101,6 +1101,27 @@ msgstr ":doc:`../grn_expr/script_syntax` の生成式を指定します。この
 msgid "This option is useful if you want to generate a column value from other column value automatically."
 msgstr "他のカラムの値からカラムの値を自動で生成したい場合にこのオプションは有用です。"
 
+msgid "``progress_log_level``"
+msgstr ""
+
+msgid "Specifies the log level of progress logs."
+msgstr "プログレスログのログレベルを指定します。"
+
+msgid "You can see the progress log during :ref:`offline-index-construction` ."
+msgstr "プログレスログは :ref:`静的インデックス構築 <offline-index-construction>` のときに出力されます。"
+
+msgid "The default log level is ``debug``. So you need to log all debug logs to see progress logs."
+msgstr "デフォルトのログレベルは ``debug`` です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。"
+
+msgid "If you use ``notice`` as a log level, you can see progress logs without other debug logs. See :ref:`log-level-level` for available log levels."
+msgstr "ログレベルに ``notice`` を使うと、他のデバッグログなしでプログレスログを確認できます。指定可能なログレベルは :ref:`log-level-level` を参照してください。"
+
+msgid "The default is ``debug``."
+msgstr "デフォルトは ``debug`` です。"
+
+msgid "Example::"
+msgstr "例::"
+
 msgid "Return value"
 msgstr "戻り値"
 
