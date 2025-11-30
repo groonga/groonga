@@ -143,7 +143,7 @@ msgstr ""
 msgid "This option is for large embeddings with more than 1025 dimensions (more than 4100 bytes). Groonga table keys must be 4 KiB or smaller. Embeddings larger than 4 KiB cannot be stored as keys."
 msgstr "このオプションは、1025次元（4100バイト）以上の大きなエンベディング向けです。Groongaのテーブルキーは4KiB以下でなければなりません。4KiBを超えるエンベディングはキーとして保存できません。"
 
-msgid "You can use this option to store large embeddings in column values instead of table keys."
+msgid "You can use this option to store large embeddings in a column instead of in the table key."
 msgstr "このオプションを使うと、大きなエンベディングをテーブルのキーではなく指定したカラムに保存します。"
 
 msgid "Specify the column for storing embeddings and add it to the table for the index."

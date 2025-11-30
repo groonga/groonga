@@ -206,7 +206,7 @@ Some models such as multilingual-e5 require prefix used for search-target texts 
 This option is for large embeddings with more than 1025 dimensions (more than 4100 bytes).
 Groonga table keys must be 4 KiB or smaller. Embeddings larger than 4 KiB cannot be stored as keys.
 
-You can use this option to store large embeddings in column values instead of table keys.
+You can use this option to store large embeddings in a column instead of in the table key.
 
 Execution example:
 
