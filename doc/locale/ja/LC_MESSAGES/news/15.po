@@ -30,7 +30,7 @@ msgid "You can view the progress log during offline index construction."
 msgstr "プログレスログは静的インデックス構築のときに出力されます。"
 
 msgid "The default log level is `debug`. This means you must enable debug level logging to view progress logs. If you set the log level to `notice`, you can view progress logs without other debug logs."
-msgstr "デフォルトのログレベルは ``debug`` です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。ログレベルに ``notice`` を使うと、他のデバッグログなしでプログレスログを確認できます。"
+msgstr "デフォルトのログレベルは`debug`です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。ログレベルに`notice`を使うと、他のデバッグログなしでプログレスログを確認できます。"
 
 msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `centroid_column` option"
 msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] `centroid_column`オプションをサポート"
@@ -56,7 +56,7 @@ msgstr "`n_gpu_layers`に`0`を設定することで、GPUを無効にするこ�
 msgid "[{doc}`/reference/functions/language_model_knn`] Added `k` option"
 msgstr "[{doc}`/reference/functions/language_model_knn`] `k`オプションをサポート"
 
-msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of records to return is `10`."
+msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of returned records is `10`."
 msgstr "返すレコード数を指定します。このオプションを設定しない場合、返すレコード数の上限は`10`になります。"
 
 msgid "You can specify a negative value. It means that the number of \"matched records + `k` + 1\". For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
@@ -65,11 +65,11 @@ msgstr "負の値を指定することもできます。負の値の場合は、
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a bug that occurs overflow in the key of `TABLE_PAT_KEY` tables."
-msgstr "`TABLE_PAT_KEY`テーブルのキーでオーバーフローが発生する問題を修正しました。"
+msgid "Fixed a bug that causes overflow in the key of `TABLE_PAT_KEY` tables."
+msgstr "`TABLE_PAT_KEY`テーブルのキーでオーバーフローを引き起こす問題を修正しました。"
 
-msgid "This issue is found in PGroonga by [pgroonga/pgroonga#910](https://github.com/pgroonga/pgroonga/issues/901). If you execute offline index construction against the column has large size value(the value such as the size of token is 4096 bytes after tokenize), the index may be broken."
-msgstr "この問題は、PGroognaの[pgroonga/pgroonga#910](https://github.com/pgroonga/pgroonga/issues/901)で発見されたものです。サイズの大きな値（トークナイズ後のトークンが4096byteになるような値）を持つカラムに対して静的インデックス構築を行った場合、インデックスが破損する可能性があります。"
+msgid "This issue is found in PGroonga by [pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901). If you execute offline index construction against a column that has a large size value (When the size of a token is 4096 bytes after tokenization), the index may be broken."
+msgstr "この問題は、PGroongaの[pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901)で発見されたものです。サイズの大きな値（トークナイズ後のトークンが4096byteになるような値）を持つカラムに対して静的インデックス構築を行った場合、インデックスが破損する可能性があります。"
 
 msgid "Reported by lilydjwg."
 msgstr "lilydjwgさんの報告。"
