@@ -1904,12 +1904,12 @@ The default value is none.
 
 Specifies the log level of progress logs.
 
-You can see the progress log during :ref:`offline-index-construction` .
+You can view the progress log during :ref:`offline-index-construction` .
 
-The default log level is ``debug``. So you need to log all debug logs
-to see progress logs.
+The default log level is ``debug``.
+This means you must enable debug level logging to view progress logs.
 
-If you use ``notice`` as a log level, you can see progress logs
+If you set the log level to ``notice``, you can view progress logs
 without other debug logs. See :ref:`log-level-level` for available log
 levels.
 
