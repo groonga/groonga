@@ -29,7 +29,7 @@ msgstr "[{doc}`/reference/commands/column_create`] インデックス構築の�
 msgid "You can view the progress log during offline index construction."
 msgstr "プログレスログは静的インデックス構築のときに出力されます。"
 
-msgid "The default log level is ``debug``. This means you must enable debug level logging to view progress logs. If you set the log level to ``notice``, you can view progress logs without other debug logs."
+msgid "The default log level is `debug`. This means you must enable debug level logging to view progress logs. If you set the log level to `notice`, you can view progress logs without other debug logs."
 msgstr "デフォルトのログレベルは ``debug`` です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。ログレベルに ``notice`` を使うと、他のデバッグログなしでプログレスログを確認できます。"
 
 msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `centroid_column` option"
