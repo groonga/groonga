@@ -42,10 +42,18 @@ TokenLanguageModelKNN("model", "hf:///path/to", \
                       "code_column", "column_name", \
                       "passage_prefix", "passage: ", \
                       "query_prefix", "query: ")
+
+TokenLanguageModelKNN("model", "hf:///path/to", \
+                      "code_column", "column_name", \
+                      "centroid_column", "centroid_column_name")
 ```
 
 ```{versionadded} 15.1.9
 {ref}`tokenizer-language-model-knn-passage-prefix` and {ref}`tokenizer-language-model-knn-query-prefix` are added.
+```
+
+```{versionadded} 15.2.1
+{ref}`tokenizer-language-model-knn-centroid-column` is added.
 ```
 
 ## Usage
@@ -186,6 +194,36 @@ TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",
 Some models such as multilingual-e5 require prefix used for search-target texts and query texts.
 
 `query_prefix` specifies the prefix for query text.
+
+(tokenizer-language-model-knn-centroid-column)=
+
+#### `centroid_column`
+
+```{versionadded} 15.2.1
+
+```
+
+This option is for large embeddings with more than 1025 dimensions (more than 4100 bytes).
+Groonga table keys must be 4 KiB or smaller. Embeddings larger than 4 KiB cannot be stored as keys.
+
+You can use this option to store large embeddings in a column instead of in the table key.
+
+Execution example:
+
+```
+table_create LargeCentroids TABLE_HASH_KEY UInt32 \
+  --default_tokenizer \
+      'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                             "centroid_column", "centroid", \
+                             "code_column", "embedding_code", \
+                             "passage_prefix", "passage: ", \
+                             "query_prefix", "query: ")'
+
+column_create LargeCentroids centroid COLUMN_VECTOR Float32
+column_create LargeCentroids data_content COLUMN_INDEX Memos content
+```
+
+Specify the column for storing embeddings and add it to the table for the index.
 
 (tokenizer-language-model-knn-n-clusters)=
 
