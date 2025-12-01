@@ -17,14 +17,74 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.2.1 - 2025-12-01"
+msgstr "15.2.1リリース - 2025-12-01"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/column_create`] Added support for progress log of index construction"
+msgstr "[{doc}`/reference/commands/column_create`] インデックス構築のプログレスログをサポート"
+
+msgid "You can view the progress log during offline index construction."
+msgstr "プログレスログは静的インデックス構築のときに出力されます。"
+
+msgid "The default log level is `debug`. This means you must enable debug level logging to view progress logs. If you set the log level to `notice`, you can view progress logs without other debug logs."
+msgstr "デフォルトのログレベルは`debug`です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。ログレベルに`notice`を使うと、他のデバッグログなしでプログレスログを確認できます。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `centroid_column` option"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] `centroid_column`オプションをサポート"
+
+msgid "This option is for large embeddings with more than 1025 dimensions (more than 4100 bytes). Groonga table keys must be 4 KiB or smaller. Embeddings larger than 4 KiB cannot be stored as keys."
+msgstr "このオプションは、1025次元（4100バイト）以上の大きなエンベディング向けです。Groongaのテーブルキーは4KiB以下でなければなりません。4KiBを超えるエンベディングはキーとして保存できません。"
+
+msgid "You can use this option to store large embeddings in a column instead of in the table key. Specify the column for storing embeddings and add it to the table for the index as below."
+msgstr "このオプションを使うと、大きなエンベディングをテーブルのキーではなく指定したカラムに保存します。以下のように、エンべディングを保存するためのカラムを指定し、インデックス用のテーブルにそれを追加します。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `n_gpu_layers` option"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] `n_gpu_layers`オプションをサポート"
+
+msgid "Specify the number of GPU layers to use for language model. If not specified, Groonga uses GPU as much as possible."
+msgstr "言語モデルが利用するGPUレイヤー数を指定します。省略すると、可能な限りのGPUを使用します。"
+
+msgid "In most cases, you don't need to set this option explicitly."
+msgstr "多くの場合、明示的にこのオプションを設定する必要はありません。"
+
+msgid "To disable GPU usage, set `n_gpu_layers` to 0."
+msgstr "`n_gpu_layers`に`0`を設定することで、GPUを無効にすることができます。"
+
+msgid "[{doc}`/reference/functions/language_model_knn`] Added `k` option"
+msgstr "[{doc}`/reference/functions/language_model_knn`] `k`オプションをサポート"
+
+msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of returned records is `10`."
+msgstr "返すレコード数を指定します。このオプションを設定しない場合、返すレコード数の上限は`10`になります。"
+
+msgid "You can specify a negative value. It means: (number of matched records) + `k` + 1. For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
+msgstr "負の値を指定することもできます。負の値の場合は、最大で\"マッチしたレコード数 + k + 1\"件のレコードを出力するという意味になります。例えば、`\"{ \"k\" : -1 }\"`はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that causes overflow in the key of `TABLE_PAT_KEY` tables."
+msgstr "`TABLE_PAT_KEY`テーブルのキーでオーバーフローを引き起こす問題を修正しました。"
+
+msgid "This issue is found in PGroonga by [pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901). If you execute offline index construction against a column that has a large size value (When the size of a token is 4096 bytes after tokenization), the index may be broken."
+msgstr "この問題は、PGroongaの[pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901)で発見されたものです。サイズの大きな値（トークナイズ後のトークンが4096byteになるような値）を持つカラムに対して静的インデックス構築を行った場合、インデックスが破損する可能性があります。"
+
+msgid "Reported by lilydjwg."
+msgstr "lilydjwgさんの報告。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "lilydjwg"
+msgstr "lilydjwgさん"
+
 msgid "Release 15.2.0 - 2025-11-10"
 msgstr "15.2.0リリース - 2025-11-10"
 
 msgid "In this release, we provide packages for Ubuntu that are provided for PPA (Personal Package Archive) again by resolving the issue causing the build failure."
 msgstr "このリリースでは、ビルドに失敗する問題を解決しPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを再度提供しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA (Personal Package Archive) again"
 msgstr "[{doc}`/install/ubuntu`] PPA (Personal Package Archive) で提供しているUbuntu向けのパッケージを再度提供"
@@ -40,9 +100,6 @@ msgstr "15.1.9リリース - 2025-11-05"
 
 msgid "In this release, we added support for parallel vectorization."
 msgstr "今回のリリースでは、ベクトル化の並列処理をサポートしました。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "Added support for parallel vectorization"
 msgstr "ベクトル化の並列処理をサポート"
@@ -214,9 +271,6 @@ msgstr "ほとんどのユーザーはアップグレードの必要はありま
 
 msgid "After upgrading the package, groonga-release contains only the new key:"
 msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Tsai, Xing Wei"
 msgstr "Tsai, Xing Weiさん"
