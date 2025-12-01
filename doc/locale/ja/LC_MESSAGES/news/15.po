@@ -51,7 +51,7 @@ msgid "In most cases, you don't need to set this option explicitly."
 msgstr "多くの場合、明示的にこのオプションを設定する必要はありません。"
 
 msgid "To disable GPU usage, set `n_gpu_layers` to 0."
-msgstr "`n_gpu_layers`の`0`を設定することで、GPUを無効にすることができます。"
+msgstr "`n_gpu_layers`に`0`を設定することで、GPUを無効にすることができます。"
 
 msgid "[{doc}`/reference/functions/language_model_knn`] Added `k` option"
 msgstr "[{doc}`/reference/functions/language_model_knn`] `k`オプションをサポート"
