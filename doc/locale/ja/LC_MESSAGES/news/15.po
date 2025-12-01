@@ -59,7 +59,7 @@ msgstr "[{doc}`/reference/functions/language_model_knn`] `k`オプションを�
 msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of returned records is `10`."
 msgstr "返すレコード数を指定します。このオプションを設定しない場合、返すレコード数の上限は`10`になります。"
 
-msgid "You can specify a negative value. It means that the number of \"matched records + `k` + 1\". For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
+msgid "You can specify a negative value. It means: (number of matched records) + `k` + 1. For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
 msgstr "負の値を指定することもできます。負の値の場合は、最大で\"マッチしたレコード数 + k + 1\"件のレコードを出力するという意味になります。例えば、`\"{ \"k\" : -1 }\"`はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
 
 msgid "Fixes"
