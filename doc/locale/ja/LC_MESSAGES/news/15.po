@@ -65,11 +65,14 @@ msgstr "負の値を指定することもできます。負の値の場合は、
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a bug that check_max is overflowed with 4096 bytes key"
+msgid "Fixed a bug that the index build by offline index construction may be broken with 4096 bytes key"
+msgstr "4096byteのキーがある時に、オフラインインデックス構築で構築したインデックスが破損する可能性がある問題を修正"
+
+msgid "Fix: [pgroonga/pgroonga#910](https://github.com/pgroonga/pgroonga/issues/901)"
 msgstr ""
 
-msgid "[GH-901](https://github.com/pgroonga/pgroonga/issues/901)"
-msgstr "[GH-901](https://github.com/groonga/groonga/issues/901)"
+msgid "If you execute offline index construction against the column has large size value(the value such as the size of token is 4096 bytes after tokenize), the index may be broken."
+msgstr "サイズの大きな値（トークナイズ後のトークンが4096byteになるような値）を持つカラムに対して静的インデックス構築を行った場合、インデックスが破損する可能性があります。"
 
 msgid "Reported by lilydjwg."
 msgstr "lilydjwgさんの報告。"
