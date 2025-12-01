@@ -35,6 +35,7 @@ Most parameters are required::
                 [source=null]
                 [path=null]
                 [generator=null]
+                [progress_log_level=debug]
 
 Usage
 -----
@@ -1893,6 +1894,36 @@ other column value automatically.
 The default value is none.
 
 .. seealso:: :ref:`column-create-generated-column`
+
+.. _column-create-progress-log-level:
+
+``progress_log_level``
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 15.2.1
+
+Specifies the log level of progress logs.
+
+You can view the progress log during :ref:`offline-index-construction` .
+
+The default log level is ``debug``.
+This means you must enable debug level logging to view progress logs.
+
+If you set the log level to ``notice``, you can view progress logs
+without other debug logs. See :ref:`log-level-level` for available log
+levels.
+
+The default is ``debug``.
+
+Example::
+
+  column_create \
+    --table Ages \
+    --name people_age_index \
+    --flags COLUMN_INDEX \
+    --type People \
+    --source age \
+    --progress_log_level notice
 
 Return value
 ------------
