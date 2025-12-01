@@ -125,8 +125,8 @@ msgstr "次のように`model_name`にHugging Face URIを指定すると自動�
 msgid "Using this feature is useful because Groonga handles the download and placement."
 msgstr "この機能を活用するとGroongaがダウンロードと配置をやってくれるので便利です。"
 
-msgid "[{doc}`/reference/types`] Add `ShortBinary`, `Binary` and `LargeBinary`"
-msgstr "[{doc}`/reference/types`] `ShortBinary`、`Binary`、`LargeBinary`を追加"
+msgid "[{doc}`/reference/types`] Add `ShortBinary`, `Binary` and `LongBinary`"
+msgstr "[{doc}`/reference/types`] `ShortBinary`、`Binary`、`LongBinary`を追加"
 
 msgid "Release 15.1.7 - 2025-09-29"
 msgstr "15.1.7リリース - 2025-09-29"
