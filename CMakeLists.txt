@@ -1131,6 +1131,80 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+set(GRN_OPENZL_BUNDLED_VERSION "0.1.0")
+set(GRN_OPENZL_BUNDLED_SHA256
+    "3278546dcdbae3aef3887f07b435ebe0aa9f6943a5ac74cf9b7baeefe6526c2e")
+set(GRN_WITH_OPENZL
+    "auto"
+    CACHE STRING "Support data compression by OpenZL.")
+if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
+  if("${GRN_WITH_OPENZL}" STREQUAL "bundled")
+    set(Groongaopenzl_FOUND FALSE)
+  else()
+    if("${GRN_WITH_OPENZL}" STREQUAL "system")
+      find_package(Groongaopenzl REQUIRED)
+    else()
+      find_package(Groongaopenzl)
+    endif()
+  endif()
+  if(Groongaopenzl_FOUND)
+    set(GRN_WITH_OPENZL TRUE)
+    message(STATUS "OpenZL: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_openzl)
+      set(OPENZL_ALLOW_INTROSPECTION OFF)
+      set(OPENZL_SOURCE_BASE_NAME
+          "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+      set(OPENZL_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
+      if(EXISTS ${OPENZL_SOURCE_LOCAL_PATH})
+        set(OPENZL_SOURCE_URL ${OPENZL_SOURCE_LOCAL_PATH})
+      else()
+        set(OPENZL_SOURCE_URL
+            "https://github.com/facebook/openzl/archive/refs/tags/")
+        string(APPEND OPENZL_SOURCE_URL
+               "v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        openzl
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${OPENZL_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(openzl)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        message("${openzl_SOURCE_DIR}/build/cmake")
+        set_property(DIRECTORY "${openzl_SOURCE_DIR}"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      set(OPENZL_INCLUDE_DIR
+          "${openzl_SOURCE_DIR}/lib"
+          PARENT_SCOPE)
+      add_library(libopenzl_headers INTERFACE)
+      target_include_directories(
+        libopenzl_headers SYSTEM
+        INTERFACE "$<BUILD_INTERFACE:${openzl_SOURCE_DIR}/lib>")
+      target_link_libraries(grn_dependencies INTERFACE libopenzl_headers)
+      install(FILES "${openzl_SOURCE_DIR}/CHANGELOG"
+                    "${openzl_SOURCE_DIR}/LICENSE"
+                    "${openzl_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/openzl")
+    endfunction()
+    grn_build_openzl()
+    set(GRN_OPENZL_TARGET openzl)
+    set(GRN_WITH_BUNDLED_OPENZL TRUE)
+    set(GRN_WITH_OPENZL TRUE)
+    message(STATUS "OpenZL: (bundled)")
+  endif()
+  target_link_libraries(grn_dependencies INTERFACE ${GRN_OPENZL_TARGET})
+else()
+  set(GRN_WITH_OPENZL FALSE)
+endif()
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_xxhash_version"
      GRN_BUNDLED_XXHASH_VERSION)
 string(STRIP "${GRN_BUNDLED_XXHASH_VERSION}" GRN_BUNDLED_XXHASH_VERSION)

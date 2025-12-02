@@ -108,6 +108,7 @@
 #cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
 #cmakedefine GRN_WITH_ONIGMO
+#cmakedefine GRN_WITH_OPENZL
 #cmakedefine GRN_WITH_RAPIDJSON
 #cmakedefine GRN_WITH_ROARING_BITMAPS
 #cmakedefine GRN_WITH_SIMDJSON

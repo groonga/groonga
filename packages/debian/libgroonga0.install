@@ -21,4 +21,5 @@ usr/share/groonga/groonga-log/*
 usr/share/groonga/llama.cpp/*
 usr/share/groonga/mruby/*
 usr/share/groonga/onigmo/*
+usr/share/groonga/openzl/*
 usr/share/groonga/xsimd/*
