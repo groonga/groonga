@@ -603,7 +603,6 @@ jobs:
           restore-keys: cmake-windows-msys2-${{ matrix.msystem }}-ccache-
       - name: Build
         shell: msys2 {0}
-        continue-on-error: ${{ matrix.msystem == 'CLANGARM64' }}
         run: |
           set -ex
           version=$(cat base_version)
@@ -621,7 +620,6 @@ jobs:
               --syncdeps
           ccache --show-stats --verbose --version || :
       - name: Install
-        if: matrix.msystem != 'CLANGARM64'
         shell: msys2 {0}
         run: |
           set -ex
@@ -635,7 +633,6 @@ jobs:
 
       # Artifact
       - uses: actions/upload-artifact@v5
-        if: matrix.msystem != 'CLANGARM64'
         with:
           name: ${{ matrix.msystem }}
           path: "*.pkg.tar.*"
@@ -645,9 +642,9 @@ jobs:
         run: |
           Set-TimeZone -Id "Tokyo Standard Time"
       - name: Install test dependencies
-        if: matrix.msystem != 'CLANGARM64'
         shell: msys2 {0}
         run: |
+          gem install rubygems-requirements-system
           # "fiddle" is for ensuring using the installed system libffi
           MAKEFLAGS=-j$(nproc) gem install \
             fiddle \
@@ -656,7 +653,6 @@ jobs:
             red-arrow
           ruby -e "require 'arrow'"
       - name: Prepare setup-extpp.rb
-        if: matrix.msystem != 'CLANGARM64'
         shell: msys2 {0}
         run: |
           cat <<RUBY > setup-extpp.rb
@@ -669,12 +665,10 @@ jobs:
           end
           RUBY
       - name: "Test: command line"
-        if: matrix.msystem != 'CLANGARM64'
         shell: msys2 {0}
         run: |
           ruby test/command_line/run-test.rb
       - name: "Test: stdio"
-        if: matrix.msystem != 'CLANGARM64'
         shell: msys2 {0}
         run: |
           ruby \
