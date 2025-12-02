@@ -409,6 +409,7 @@ exit 0
 %{_datadir}/groonga/html/
 %{_datadir}/groonga/llama.cpp/
 %{_datadir}/groonga/mruby/
+%{_datadir}/groonga/openzl/
 %if %{is_amazon_linux}
 %{_datadir}/groonga/msgpack-c/
 %{_datadir}/groonga/simdjson/
