@@ -49,6 +49,7 @@ all_targets = [
   "h3",
   "llama.cpp",
   "message-pack",
+  "openzl",
   "simdjson",
   "simsimd",
   "usearch",
@@ -103,6 +104,11 @@ targets.each do |target|
     url << "c-#{version}/"
     url << "msgpack-c-#{version}.tar.gz"
     download(url, "msgpack-c-#{version}.tar.gz")
+  when "openzl"
+    version = cmakelists[/set\(GRN_OPENZL_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/facebook/openzl/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "openzl-#{version}.tar.gz")
   when "simdjson"
     version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/simdjson/simdjson/archive/refs/tags/"
