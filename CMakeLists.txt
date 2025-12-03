@@ -1157,8 +1157,7 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
     # We need to use function to create a variable scope
     function(grn_build_openzl)
       set(OPENZL_ALLOW_INTROSPECTION OFF)
-      set(OPENZL_SOURCE_BASE_NAME
-          "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+      set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
       set(OPENZL_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
       if(EXISTS ${OPENZL_SOURCE_LOCAL_PATH})
@@ -1166,8 +1165,7 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
       else()
         set(OPENZL_SOURCE_URL
             "https://github.com/facebook/openzl/archive/refs/tags/")
-        string(APPEND OPENZL_SOURCE_URL
-               "v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+        string(APPEND OPENZL_SOURCE_URL "v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
       endif()
       fetchcontent_declare(
         openzl
@@ -1178,8 +1176,8 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
       fetchcontent_makeavailable(openzl)
       if(CMAKE_VERSION VERSION_LESS 3.28)
         message("${openzl_SOURCE_DIR}/build/cmake")
-        set_property(DIRECTORY "${openzl_SOURCE_DIR}"
-                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+        set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
+                                                               TRUE)
       endif()
       set(OPENZL_INCLUDE_DIR
           "${openzl_SOURCE_DIR}/lib"
@@ -1189,10 +1187,10 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
         libopenzl_headers SYSTEM
         INTERFACE "$<BUILD_INTERFACE:${openzl_SOURCE_DIR}/lib>")
       target_link_libraries(grn_dependencies INTERFACE libopenzl_headers)
-      install(FILES "${openzl_SOURCE_DIR}/CHANGELOG"
-                    "${openzl_SOURCE_DIR}/LICENSE"
-                    "${openzl_SOURCE_DIR}/README.md"
-              DESTINATION "${GRN_DATA_DIR}/openzl")
+      install(
+        FILES "${openzl_SOURCE_DIR}/CHANGELOG" "${openzl_SOURCE_DIR}/LICENSE"
+              "${openzl_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/openzl")
     endfunction()
     grn_build_openzl()
     set(GRN_OPENZL_TARGET openzl)
