@@ -47,4 +47,5 @@ if(NOT Groongaopenzl_FOUND)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Groongaopenzl REQUIRED_VARS Groongaopenzl_FOUND)
+find_package_handle_standard_args(Groongaopenzl
+                                  REQUIRED_VARS Groongaopenzl_FOUND)
