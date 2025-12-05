@@ -1156,7 +1156,6 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
 
     # We need to use function to create a variable scope
     function(grn_build_openzl)
-      set(OPENZL_ALLOW_INTROSPECTION OFF)
       set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
       set(OPENZL_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
