@@ -21,14 +21,14 @@ require "test-unit"
 module ParsedJSON
   # Format:
   #
-  # +-----+---------+--------+
-  # | TAG | BUFFERS | FOOTER |
-  # +-----+---------+--------+
+  # +-----+---------+----------------+--------------+
+  # | TAG | BUFFERS | BUFFER_OFFSETS | USED_BUFFERS |
+  # +-----+---------+----------------+--------------+
   #
   # TAG: The tag (described later) of the target JSON.
   #
   # BUFFERS: It contains the following buffers. They can be accessed
-  #          by offsets in the FOOTER:
+  #          by offsets in the BUFFER_OFFSETS
   #   * OBJECT values buffer
   #   * OBJECT offsets buffer
   #   * ARRAY values buffer
@@ -39,19 +39,42 @@ module ParsedJSON
   #   * INTEGER(int64) values buffer
   #   * DOUBLE values buffer
   #
-  # FOOTER: 36 bytes (sizeof(uint32) * 9 buffers).
-  #   It contains the following offsets:
-  #     * OBJECT values buffer offset: uint32
-  #     * OBJECT offsets buffer offset: uint32
-  #     * ARRAY values buffer offset: uint32
-  #     * ARRAY offsets buffer offset: uint32
-  #     * STRING values buffer offset: uint32
-  #     * STRING offsets buffer offset: uint32
-  #     * INTEGER(int32) values buffer offset: uint32
-  #     * INTEGER(int64) values buffer offset: uint32
-  #     * DOUBLE values buffer offset: uint32
+  # USED_BUFFERS: 8 byte flags
+  #   * 0b00000001: OBJECT values/offsets buffers are used
+  #   * 0b00000010: ARRAY values/offsets buffers are used
+  #   * 0b00000100: STRING values/offsets buffers are used
+  #   * 0b00001000: INT32 values buffer is used
+  #   * 0b00010000: INT64 values buffer is used
+  #   * 0b00100000: DOUBLE values buffer is used
+  #
+  # BUFFER_OFFSETS:
+  #   It contains the following offsets in this order:
+  #     * If USED_BUFFERS has 0b00000001:
+  #       * OBJECT values buffer offset: uint32
+  #       * OBJECT offsets buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000010:
+  #       * ARRAY values buffer offset: uint32
+  #       * ARRAY offsets buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000100:
+  #       * STRING values buffer offset: uint32
+  #       * STRING offsets buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00001000:
+  #       * INTEGER(int32) values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00010000:
+  #       * INTEGER(int64) values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00100000:
+  #       * DOUBLE values buffer offset: uint32
 
-  FOOTER_SIZE = 4 * 9 # sizeof(uint32) * 9 buffers
+  module UsedBuffer
+    SIZE = 1 # sizeof(uint8_t)
+
+    OBJECT = 0b00000001
+    ARRAY  = 0b00000010
+    STRING = 0b00000100
+    INT32  = 0b00001000
+    INT64  = 0b00010000
+    DOUBLE = 0b00100000
+  end
 
   module Type
     OBJECT   = 0
@@ -232,24 +255,56 @@ class ParsedJSONWriter
 
   def write
     write_value(@output, @target)
-    footer = +"".b
+    used_buffers = 0
+    buffer_offsets = +"".b
     offset = @output.bytesize
-    [
-      @object_values,
-      @object_offsets,
-      @array_values,
-      @array_offsets,
-      @string_values,
-      @string_offsets,
-      @int32_values,
-      @int64_values,
-      @double_values,
-    ].each do |values|
-      @output << values
-      footer << [offset].pack("L")
-      offset += values.bytesize
+    unless @object_values.empty?
+      used_buffers |= UsedBuffer::OBJECT
+      @output << @object_values
+      buffer_offsets << [offset].pack("L")
+      offset += @object_values.bytesize
+      @output << @object_offsets
+      buffer_offsets << [offset].pack("L")
+      offset += @object_offsets.bytesize
     end
-    @output << footer
+    unless @array_values.empty?
+      used_buffers |= UsedBuffer::ARRAY
+      @output << @array_values
+      buffer_offsets << [offset].pack("L")
+      offset += @array_values.bytesize
+      @output << @array_offsets
+      buffer_offsets << [offset].pack("L")
+      offset += @array_offsets.bytesize
+    end
+    unless @string_values.empty?
+      used_buffers |= UsedBuffer::STRING
+      @output << @string_values
+      buffer_offsets << [offset].pack("L")
+      offset += @string_values.bytesize
+      @output << @string_offsets
+      buffer_offsets << [offset].pack("L")
+      offset += @string_offsets.bytesize
+    end
+    unless @int32_values.empty?
+      used_buffers |= UsedBuffer::INT32
+      @output << @int32_values
+      buffer_offsets << [offset].pack("L")
+      offset += @int32_values.bytesize
+    end
+    unless @int64_values.empty?
+      used_buffers |= UsedBuffer::INT64
+      @output << @int64_values
+      buffer_offsets << [offset].pack("L")
+      offset += @int64_values.bytesize
+    end
+    unless @double_values.empty?
+      used_buffers |= UsedBuffer::DOUBLE
+      @output << @double_values
+      buffer_offsets << [offset].pack("L")
+      offset += @double_values.bytesize
+    end
+    @output << buffer_offsets
+    @output << [used_buffers].pack("C")
   end
 
   private
@@ -384,44 +439,76 @@ class ParsedJSONReader
   end
 
   def read
-    footer_offset = @input.bytesize - FOOTER_SIZE
+    used_buffers_offset = @input.bytesize - UsedBuffer::SIZE
+    used_buffers = @input.unpack1("C", offset: used_buffers_offset)
 
-    values_offset_offset = footer_offset
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @object_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    values_offset_offset = used_buffers_offset
+    if (used_buffers & UsedBuffer::OBJECT) != 0
+      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    end
+    if (used_buffers & UsedBuffer::ARRAY) != 0
+      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    end
+    if (used_buffers & UsedBuffer::STRING) != 0
+      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    end
+    if (used_buffers & UsedBuffer::INT32) != 0
+      values_offset_offset -= 4 # sizeof(uint32_t)
+    end
+    if (used_buffers & UsedBuffer::INT64) != 0
+      values_offset_offset -= 4 # sizeof(uint32_t)
+    end
+    if (used_buffers & UsedBuffer::DOUBLE) != 0
+      values_offset_offset -= 4 # sizeof(uint32_t)
+    end
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @object_offsets_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    if (used_buffers & UsedBuffer::OBJECT) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @object_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @array_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @object_offsets_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @array_offsets_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    if (used_buffers & UsedBuffer::ARRAY) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @array_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @string_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @array_offsets_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @string_offsets_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    if (used_buffers & UsedBuffer::STRING) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @string_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @int32_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @string_offsets_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @int64_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    if (used_buffers & UsedBuffer::INT32) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @int32_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
 
-    values_offset = @input.unpack1("L", offset: values_offset_offset)
-    @double_values_offset = values_offset
-    values_offset_offset += 4 # sizeof(uint32_t)
+    if (used_buffers & UsedBuffer::INT64) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @int64_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
+
+    if (used_buffers & UsedBuffer::DOUBLE) != 0
+      values_offset = @input.unpack1("L", offset: values_offset_offset)
+      @double_values_offset = values_offset
+      values_offset_offset += 4 # sizeof(uint32_t)
+    end
 
     read_value(0)
   end
