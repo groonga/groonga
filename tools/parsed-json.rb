@@ -232,8 +232,8 @@ class ParsedJSONWriter
 
   def write
     write_value(@output, @target)
+    footer = +"".b
     offset = @output.bytesize
-    footer = [offset].pack("L")
     [
       @object_values,
       @object_offsets,
@@ -246,8 +246,8 @@ class ParsedJSONWriter
       @double_values,
     ].each do |values|
       @output << values
-      offset += values.bytesize
       footer << [offset].pack("L")
+      offset += values.bytesize
     end
     @output << footer
   end
