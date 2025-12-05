@@ -1174,6 +1174,16 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
         URL_HASH "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
       fetchcontent_makeavailable(openzl)
+      if(GRN_C_COMPILER_GNU_LIKE)
+        if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+          set(GRN_OPENZL_SUPPRESS_WARNINGS -Wno-conversion
+                                           -Wno-format-nonliteral)
+          target_compile_options(
+            openzl
+            PRIVATE $<$<COMPILE_LANGUAGE:C>:${GRN_OPENZL_SUPPRESS_WARNINGS}>
+                    $<$<COMPILE_LANGUAGE:CXX>:${GRN_OPENZL_SUPPRESS_WARNINGS}>)
+        endif()
+      endif()
       if(CMAKE_VERSION VERSION_LESS 3.28)
         message("${openzl_SOURCE_DIR}/build/cmake")
         set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
