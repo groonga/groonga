@@ -219,15 +219,15 @@ class ParsedJSONWriter
   def initialize(output, target)
     @output = output
     @target = target
-    @object_values = +""
-    @object_offsets = [0].pack("L")
-    @array_values = +""
-    @array_offsets = [0].pack("L")
-    @string_values = +""
-    @string_offsets = [0].pack("L")
-    @int32_values = +""
-    @int64_values = +""
-    @double_values = +""
+    @object_values = +"".b
+    @object_offsets = [0].pack("L").b
+    @array_values = +"".b
+    @array_offsets = [0].pack("L").b
+    @string_values = +"".b
+    @string_offsets = [0].pack("L").b
+    @int32_values = +"".b
+    @int64_values = +"".b
+    @double_values = +"".b
   end
 
   def write
@@ -288,7 +288,7 @@ class ParsedJSONWriter
 
   def append_string(string)
     offset = @string_offsets.bytesize - 4 # sizeof(uint32_t)
-    @string_values << string
+    @string_values.append_as_bytes(string)
     last_string_offset = @string_offsets.unpack1("L", offset: offset)
     @string_offsets << [last_string_offset + string.bytesize].pack("L")
     offset
