@@ -1149,6 +1149,7 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
   endif()
   if(Groongaopenzl_FOUND)
     set(GRN_WITH_OPENZL TRUE)
+    target_link_libraries(grn_dependencies INTERFACE ${GRN_OPENZL_TARGET})
     message(STATUS "OpenZL: system")
   elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
     # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
@@ -1184,30 +1185,22 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
         endif()
       endif()
       if(CMAKE_VERSION VERSION_LESS 3.28)
-        message("${openzl_SOURCE_DIR}/build/cmake")
         set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
                                                                TRUE)
       endif()
-      set(OPENZL_INCLUDE_DIR
-          "${openzl_SOURCE_DIR}/lib"
-          PARENT_SCOPE)
-      add_library(libopenzl_headers INTERFACE)
-      target_include_directories(
-        libopenzl_headers SYSTEM
-        INTERFACE "$<BUILD_INTERFACE:${openzl_SOURCE_DIR}/lib>")
-      target_link_libraries(grn_dependencies INTERFACE libopenzl_headers)
       install(
         FILES "${openzl_SOURCE_DIR}/CHANGELOG" "${openzl_SOURCE_DIR}/LICENSE"
               "${openzl_SOURCE_DIR}/README.md"
         DESTINATION "${GRN_DATA_DIR}/openzl")
     endfunction()
     grn_build_openzl()
-    set(GRN_OPENZL_TARGET openzl)
+    target_link_libraries(grn_dependencies INTERFACE openzl)
     set(GRN_WITH_BUNDLED_OPENZL TRUE)
     set(GRN_WITH_OPENZL TRUE)
     message(STATUS "OpenZL: (bundled)")
+  else()
+    set(GRN_WITH_OPENZL FALSE)
   endif()
-  target_link_libraries(grn_dependencies INTERFACE ${GRN_OPENZL_TARGET})
 else()
   set(GRN_WITH_OPENZL FALSE)
 endif()
