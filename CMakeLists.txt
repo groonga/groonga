@@ -1151,10 +1151,14 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
     set(GRN_WITH_OPENZL TRUE)
     target_link_libraries(grn_dependencies INTERFACE ${GRN_OPENZL_TARGET})
     message(STATUS "OpenZL: system")
-  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED AND CMAKE_VERSION
+                                                 VERSION_GREATER_EQUAL "3.24")
     # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
     # access but deb uses it...
-
+    #
+    # CMake >= 3.24 is required because OpenZL uses DOWNLOAD_EXTRACT_TIMESTAMP
+    # and OVERRIDE_FIND_PACKAGE option internally.
+    #
     # We need to use function to create a variable scope
     function(grn_build_openzl)
       set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
