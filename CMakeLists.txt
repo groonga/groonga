@@ -1160,18 +1160,21 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
       set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
       set(OPENZL_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
+      set(GRN_OPENZL_FETCH_CONTENT_SOURCE)
       if(EXISTS ${OPENZL_SOURCE_LOCAL_PATH})
-        set(OPENZL_SOURCE_URL ${OPENZL_SOURCE_LOCAL_PATH})
+        list(APPEND GRN_OPENZL_FETCH_CONTENT_SOURCE URL
+             ${OPENZL_SOURCE_LOCAL_PATH})
       else()
-        set(OPENZL_SOURCE_URL
-            "https://github.com/facebook/openzl/archive/refs/tags/")
-        string(APPEND OPENZL_SOURCE_URL "v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+        list(
+          APPEND
+          GRN_OPENZL_FETCH_CONTENT_SOURCE
+          URL
+          "https://github.com/facebook/openzl/archive/refs/tags/v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz"
+          URL_HASH
+          "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
       endif()
-      fetchcontent_declare(
-        openzl
-        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
-        URL ${OPENZL_SOURCE_URL}
-        URL_HASH "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
+      fetchcontent_declare(openzl ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+                                  ${GRN_OPENZL_FETCH_CONTENT_SOURCE})
       grn_prepare_fetchcontent()
       fetchcontent_makeavailable(openzl)
       if(GRN_C_COMPILER_GNU_LIKE)
