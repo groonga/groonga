@@ -271,6 +271,7 @@ rm -rf $RPM_BUILD_ROOT/usr/lib/libh3* || :
 
 mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/groonga/openzl/
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/groonga
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/groonga/db
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/groonga
