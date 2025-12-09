@@ -1131,6 +1131,92 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+set(GRN_OPENZL_BUNDLED_VERSION "0.1.0")
+set(GRN_OPENZL_BUNDLED_SHA256
+    "3278546dcdbae3aef3887f07b435ebe0aa9f6943a5ac74cf9b7baeefe6526c2e")
+set(GRN_WITH_OPENZL
+    "auto"
+    CACHE STRING "Support data compression by OpenZL.")
+if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
+  if("${GRN_WITH_OPENZL}" STREQUAL "bundled")
+    set(openzl_FOUND FALSE)
+  else()
+    if("${GRN_WITH_OPENZL}" STREQUAL "system")
+      find_package(openzl REQUIRED)
+    else()
+      find_package(openzl)
+    endif()
+  endif()
+  if(openzl_FOUND)
+    set(GRN_WITH_OPENZL TRUE)
+    target_link_libraries(grn_dependencies INTERFACE OpenZL::openzl)
+    message(STATUS "OpenZL: system")
+  elseif(
+    NOT FETCHCONTENT_FULLY_DISCONNECTED
+    AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.24"
+    AND NOT MSVC)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+    #
+    # CMake >= 3.24 is required because OpenZL uses DOWNLOAD_EXTRACT_TIMESTAMP
+    # and OVERRIDE_FIND_PACKAGE option internally.
+    #
+    # MSVC is not supported yet because OpenZL always builds its bundled zstd
+    # via add_subdirectory(), which conflicts with Groonga's bundled zstd build.
+    #
+    # We need to use function to create a variable scope
+    function(grn_build_openzl)
+      set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+      set(OPENZL_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
+      set(GRN_OPENZL_FETCH_CONTENT_SOURCE)
+      if(EXISTS ${OPENZL_SOURCE_LOCAL_PATH})
+        list(APPEND GRN_OPENZL_FETCH_CONTENT_SOURCE URL
+             ${OPENZL_SOURCE_LOCAL_PATH})
+      else()
+        list(
+          APPEND
+          GRN_OPENZL_FETCH_CONTENT_SOURCE
+          URL
+          "https://github.com/facebook/openzl/archive/refs/tags/v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz"
+          URL_HASH
+          "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
+      endif()
+      fetchcontent_declare(openzl ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+                                  ${GRN_OPENZL_FETCH_CONTENT_SOURCE})
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(openzl)
+      if(GRN_C_COMPILER_GNU_LIKE)
+        if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+          set(GRN_OPENZL_SUPPRESS_WARNINGS -Wno-conversion
+                                           -Wno-format-nonliteral)
+          target_compile_options(
+            openzl
+            PRIVATE $<$<COMPILE_LANGUAGE:C>:${GRN_OPENZL_SUPPRESS_WARNINGS}>
+                    $<$<COMPILE_LANGUAGE:CXX>:${GRN_OPENZL_SUPPRESS_WARNINGS}>)
+        endif()
+      endif()
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
+                                                               TRUE)
+      endif()
+      install(
+        FILES "${openzl_SOURCE_DIR}/CHANGELOG" "${openzl_SOURCE_DIR}/LICENSE"
+              "${openzl_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/openzl")
+    endfunction()
+    grn_build_openzl()
+    target_link_libraries(grn_dependencies INTERFACE openzl)
+    set(GRN_WITH_BUNDLED_OPENZL TRUE)
+    set(GRN_WITH_OPENZL TRUE)
+    message(STATUS "OpenZL: (bundled)")
+  else()
+    set(GRN_WITH_OPENZL FALSE)
+  endif()
+else()
+  set(GRN_WITH_OPENZL FALSE)
+endif()
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_xxhash_version"
      GRN_BUNDLED_XXHASH_VERSION)
 string(STRIP "${GRN_BUNDLED_XXHASH_VERSION}" GRN_BUNDLED_XXHASH_VERSION)

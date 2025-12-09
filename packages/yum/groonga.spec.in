@@ -411,6 +411,11 @@ exit 0
 %{_datadir}/groonga/mruby/
 %if %{is_amazon_linux}
 %{_datadir}/groonga/msgpack-c/
+%endif
+%if ! %{is_amazon_linux}
+%{_datadir}/groonga/openzl/
+%endif
+%if %{is_amazon_linux}
 %{_datadir}/groonga/simdjson/
 %endif
 %{_datadir}/groonga/xsimd/

@@ -47,5 +47,6 @@ override_dh_auto_install:
 	install -m 0644 debian/groonga-munin-plugins.conf \
 	  debian/tmp/etc/munin/plugin-conf.d/groonga
 	install -d debian/tmp/usr/share/groonga/faiss/
+	install -d debian/tmp/usr/share/groonga/openzl/
 	mv debian/tmp/usr/share/doc/groonga/ \
 	  debian/tmp/usr/share/doc/groonga-doc/

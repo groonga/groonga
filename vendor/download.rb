@@ -49,6 +49,7 @@ all_targets = [
   "h3",
   "llama.cpp",
   "message-pack",
+  "openzl",
   "simdjson",
   "simsimd",
   "usearch",
@@ -103,6 +104,23 @@ targets.each do |target|
     url << "c-#{version}/"
     url << "msgpack-c-#{version}.tar.gz"
     download(url, "msgpack-c-#{version}.tar.gz")
+  when "openzl"
+    version = cmakelists[/set\(GRN_OPENZL_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/facebook/openzl/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "openzl-#{version}.tar.gz") do
+      # TODO: Remove this when OpenZL supports system zstd
+      # https://github.com/facebook/openzl/issues/105
+      openzl_deps = File.read("build/cmake/openzl-deps.cmake")
+      zstd_version = openzl_deps[/set\(ZSTD_VERSION "(.+)"\)/, 1]
+      zstd_url = "https://github.com/facebook/zstd/releases/download/"
+      zstd_url << "v#{zstd_version}/zstd-#{zstd_version}.tar.gz"
+      download(zstd_url, "zstd-#{zstd_version}.tar.gz")
+      FileUtils.mkdir_p("deps/zstd")
+      system("tar", "xf", "zstd-#{zstd_version}.tar.gz", "-C", "deps/zstd",
+             "--strip-components=1")
+      FileUtils.rm("zstd-#{zstd_version}.tar.gz")
+    end
   when "simdjson"
     version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/simdjson/simdjson/archive/refs/tags/"
