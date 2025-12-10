@@ -1,0 +1,6 @@
+#@require-feature openzl
+
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR|COMPRESS_OPENZL Text
+
+schema

@@ -4071,6 +4071,9 @@ show_version(void)
 #ifdef GRN_WITH_FAISS
   printf(",faiss");
 #endif
+#ifdef GRN_WITH_OPENZL
+  printf(",openzl");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS

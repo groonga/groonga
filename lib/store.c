@@ -3682,6 +3682,11 @@ grn_ja_set_compression_type(grn_ctx *ctx,
     *type = GRN_COMPRESSION_TYPE_ZSTD;
     return;
 #endif /* GRN_WITH_ZSTD */
+#ifdef GRN_WITH_OPENZL
+  case GRN_OBJ_COMPRESS_OPENZL:
+    *type = GRN_COMPRESSION_TYPE_OPENZL;
+    return;
+#endif /* GRN_WITH_OPENZL */
   default:
     return;
   }

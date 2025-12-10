@@ -42,6 +42,10 @@
 #  define GRN_BLOSC_META_FOOTER "footer"
 #endif
 
+#ifdef GRN_WITH_OPENZL
+#  include <openzl/openzl.h>
+#endif
+
 /*
  * Compressed value uses the following format:
  *
@@ -876,6 +880,24 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
 }
 #endif
 
+#ifdef GRN_WITH_OPENZL
+static inline grn_rc
+grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
+{
+  const char *tag = "[compressor][compress][openzl]";
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s not implemented yet", tag);
+  return ctx->rc;
+}
+
+static inline grn_rc
+grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
+{
+  const char *tag = "[compressor][decompress][openzl]";
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s not implemented yet", tag);
+  return ctx->rc;
+}
+#endif /* GRN_WITH_OPENZL */
+
 grn_rc
 grn_compressor_compress(grn_ctx *ctx, grn_compress_data *data)
 {
@@ -898,6 +920,9 @@ grn_compressor_compress(grn_ctx *ctx, grn_compress_data *data)
         break;
       case GRN_COMPRESSION_TYPE_BLOSC:
         rc = GRN_BLOSC_ERROR;
+        break;
+      case GRN_COMPRESSION_TYPE_OPENZL:
+        rc = GRN_OPENZL_ERROR;
         break;
       default:
         rc = ctx->rc == GRN_SUCCESS ? GRN_UNKNOWN_ERROR : ctx->rc;
@@ -935,6 +960,10 @@ grn_compressor_compress(grn_ctx *ctx, grn_compress_data *data)
   case GRN_COMPRESSION_TYPE_BLOSC:
     return grn_compressor_compress_blosc(ctx, data);
 #endif
+#ifdef GRN_WITH_OPENZL
+  case GRN_COMPRESSION_TYPE_OPENZL:
+    return grn_compressor_compress_openzl(ctx, data);
+#endif /* GRN_WITH_OPENZL */
   default:
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[compressor][compress] unsupported type: %d",
@@ -971,6 +1000,10 @@ grn_compressor_decompress(grn_ctx *ctx, grn_decompress_data *data)
   case GRN_COMPRESSION_TYPE_BLOSC:
     return grn_compressor_decompress_blosc(ctx, data);
 #endif
+#ifdef GRN_WITH_OPENZL
+  case GRN_COMPRESSION_TYPE_OPENZL:
+    return grn_compressor_decompress_openzl(ctx, data);
+#endif /* GRN_WITH_OPENZL */
   default:
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[compressor][decompress] unsupported type: %d",

@@ -119,6 +119,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   case GRN_OBJ_COMPRESS_ZSTD:
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZSTD");
     break;
+  case GRN_OBJ_COMPRESS_OPENZL:
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_OPENZL");
+    break;
   }
   switch (flags & GRN_OBJ_MISSING_MASK) {
   case GRN_OBJ_MISSING_ADD:

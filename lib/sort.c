@@ -734,6 +734,7 @@ is_compressed_column(grn_ctx *ctx, grn_obj *obj)
   case GRN_OBJ_COMPRESS_ZLIB :
   case GRN_OBJ_COMPRESS_LZ4 :
   case GRN_OBJ_COMPRESS_ZSTD :
+  case GRN_OBJ_COMPRESS_OPENZL :
     return true;
   default :
     return false;
