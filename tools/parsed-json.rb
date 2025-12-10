@@ -19,6 +19,11 @@
 require "test-unit"
 
 module ParsedJSON
+  UINT8_SIZE = 1
+  UINT16_SIZE = 2
+  UINT32_SIZE = 4
+  UINT64_SIZE = 8
+
   # Format:
   #
   # +-----+---------+----------------+--------------+
@@ -29,51 +34,77 @@ module ParsedJSON
   #
   # BUFFERS: It contains the following buffers. They can be accessed
   #          by offsets in the BUFFER_OFFSETS
-  #   * OBJECT values buffer
+  #   * TAG 32 bits buffer
+  #   * OBJECT 16 bits values buffer
+  #   * OBJECT 32 bits values buffer
   #   * OBJECT offsets buffer
-  #   * ARRAY values buffer
+  #   * ARRAY 16 bits values buffer
+  #   * ARRAY 32 bits values buffer
   #   * ARRAY offsets buffer
   #   * STRING values buffer
   #   * STRING offsets buffer
+  #   * INTEGER(int16) values buffer
   #   * INTEGER(int32) values buffer
   #   * INTEGER(int64) values buffer
   #   * DOUBLE values buffer
   #
-  # USED_BUFFERS: 8 byte flags
-  #   * 0b00000001: OBJECT values/offsets buffers are used
-  #   * 0b00000010: ARRAY values/offsets buffers are used
-  #   * 0b00000100: STRING values/offsets buffers are used
-  #   * 0b00001000: INT32 values buffer is used
-  #   * 0b00010000: INT64 values buffer is used
-  #   * 0b00100000: DOUBLE values buffer is used
+  # USED_BUFFERS: 2 bytes flags
+  #   * 0b00000000_00000001: TAG 32 bits buffer is used
+  #   * 0b00000000_00000010: OBJECT 16 bits values buffer is used
+  #   * 0b00000000_00000100: OBJECT 32 bits values buffer is used
+  #   * 0b00000000_00001000: OBJECT offsets buffer is used
+  #   * 0b00000000_00010000: ARRAY 16 bits values buffer is used
+  #   * 0b00000000_00100000: ARRAY 32 bits values buffer is used
+  #   * 0b00000000_01000000: ARRAY offsets buffer is used
+  #   * 0b00000000_10000000: STRING values/offsets buffers are used
+  #   * 0b00000001_00000000: INT16 values buffer is used
+  #   * 0b00000010_00000000: INT32 values buffer is used
+  #   * 0b00000100_00000000: INT64 values buffer is used
+  #   * 0b00001000_00000000: DOUBLE values buffer is used
   #
   # BUFFER_OFFSETS:
   #   It contains the following offsets in this order:
-  #     * If USED_BUFFERS has 0b00000001:
-  #       * OBJECT values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00000001:
+  #       * TAG 32 bits buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00000010:
+  #       * OBJECT 16 bits values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00000100:
+  #       * OBJECT 32 bits values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00001000:
   #       * OBJECT offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000010:
-  #       * ARRAY values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00010000:
+  #       * ARRAY 16 bits values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_00100000:
+  #       * ARRAY 32 bits values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000000_01000000:
   #       * ARRAY offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000100:
+  #     * If USED_BUFFERS has 0b00000000_10000000:
   #       * STRING values buffer offset: uint32
   #       * STRING offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00001000:
+  #     * If USED_BUFFERS has 0b00000001_00000000:
+  #       * INTEGER(int16) values buffer offset: uint32
+  #     * If USED_BUFFERS has 0b00000010_00000000:
   #       * INTEGER(int32) values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00010000:
+  #     * If USED_BUFFERS has 0b00000100_00000000:
   #       * INTEGER(int64) values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00100000:
+  #     * If USED_BUFFERS has 0b00001000_00000000:
   #       * DOUBLE values buffer offset: uint32
 
   module UsedBuffer
-    SIZE = 1 # sizeof(uint8_t)
+    SIZE = UINT16_SIZE
 
-    OBJECT = 0b00000001
-    ARRAY  = 0b00000010
-    STRING = 0b00000100
-    INT32  = 0b00001000
-    INT64  = 0b00010000
-    DOUBLE = 0b00100000
+    TAG32           = 0b00000000_00000001
+    OBJECT_VALUE16  = 0b00000000_00000010
+    OBJECT_VALUE32  = 0b00000000_00000100
+    OBJECT_OFFSET   = 0b00000000_00001000
+    ARRAY_VALUE16   = 0b00000000_00010000
+    ARRAY_VALUE32   = 0b00000000_00100000
+    ARRAY_OFFSET    = 0b00000000_01000000
+    STRING          = 0b00000000_10000000
+    INT16           = 0b00000001_00000000
+    INT32           = 0b00000010_00000000
+    INT64           = 0b00000100_00000000
+    DOUBLE          = 0b00001000_00000000
   end
 
   module Type
@@ -105,11 +136,13 @@ module ParsedJSON
     end
   end
 
-  # tag: 32 bits: DDDDDDDD DDDDDDD DDDDDDDD MMMMETTT
+  # TAG: 16 bits: DDDDDDDD MMMMETTT
+  # TAG: 32 bits: DDDDDDDD DDDDDDD DDDDDDDD MMMMETTT
   #
   # TTT: Type
   # E: Embedded or not (1: embedded, 0: not embedded)
   # MMMM: Metadata
+  # DDDDDDDD: Data:
   # DDDDDDDD DDDDDDDD DDDDDDDD: Data:
   #   OBJECT:
   #     Offset in object values.
@@ -128,11 +161,19 @@ module ParsedJSON
   #       MMMM is 0000.
   #   INTEGER:
   #     MMMM shows the byte width.
-  #     If E is 1:
-  #       (-2^15) - (2^27-1): Itself. We can't embed int32 negative numbers.
+  #     If TAG is 16 bits:
+  #       If E is 1:
+  #         -(2^7) - (2^7-1): Itself. We can embed only int32 values.
+  #       Else:
+  #         -(2^15) - (2^15-1): Offset in int16 values.
+  #         -(2^31) - (2^31-1): Offset in int32 values.
+  #         -(2^63) - (2^63-1): Offset in int64 values.
   #     Else:
-  #       (-2^31) - (2^31-1): Offset in int32 values.
-  #       (-2^63) - (2^63-1): Offset in int64 values.
+  #       If E is 1:
+  #         -(2^15) - (2^27-1): Itself. We can't embed int32 negative numbers.
+  #       Else:
+  #         -(2^31) - (2^31-1): Offset in int32 values.
+  #         -(2^63) - (2^63-1): Offset in int64 values.
   #   DOUBLE:  Offset in double values. E is always 0.
   #   CONSTANT: Always 0. E is always 1.
   #     true:  MMMM is 0000
@@ -160,6 +201,7 @@ module ParsedJSON
   #   * OBJECT
   #   * ARRAY
   #   * STRING
+  #   * INTEGER(int16)
   #   * INTEGER(int32)
   #   * INTEGER(int64)
   #   * DOUBLE
@@ -167,8 +209,14 @@ module ParsedJSON
   # OBJECT:
   #   Written in breadth-first order for nested objects.
   #
-  #   OBJECT uses 2 buffers:
-  #     * Values buffer:
+  #   OBJECT uses 2 or 3 buffers:
+  #     * 16 bits values buffer:
+  #         members.each do |key, value|
+  #           buffer << key.tag
+  #           buffer << value.tag
+  #         end
+  #     * Optional 32 bits values buffer. 32 bits values buffer must exist
+  #       after 16 bits values buffer:
   #         members.each do |key, value|
   #           buffer << key.tag
   #           buffer << value.tag
@@ -189,8 +237,13 @@ module ParsedJSON
   # ARRAY
   #   Written in breadth-first order for nested arrays.
   #
-  #   ARRAY uses 2 buffers:
-  #     * Values buffer:
+  #   ARRAY uses 2 or 3buffers:
+  #     * 16 bits values buffer:
+  #         elements.each do |element|
+  #           buffer << element.tag
+  #         end
+  #     * Optional 32 bits values buffer. 32 bits values buffer must exist
+  #       after 16 bits values buffer:
   #         elements.each do |element|
   #           buffer << element.tag
   #         end
@@ -223,6 +276,10 @@ module ParsedJSON
   #       * values[offsets[N]..(offsets[N - 1] - offsets[N])]:
   #         The Nth string.
   #
+  # INTEGER(int16)
+  #   INTEGER(int16) uses 1 buffer:
+  #     * Values buffer: int16 itself in the native endian.
+  #
   # INTEGER(int32)
   #   INTEGER(int32) uses 1 buffer:
   #     * Values buffer: int32 itself in the native endian.
@@ -239,39 +296,92 @@ end
 class ParsedJSONWriter
   include ParsedJSON
 
+  class TagWriter
+    include ParsedJSON
+
+    attr_reader :buffer
+    attr_reader :size16
+    attr_reader :size32
+    def initialize(buffer)
+      @buffer = buffer
+      @size16 = 0
+      @size32 = 0
+    end
+
+    def write(type, is_embedded, metadata, data)
+      tag = pack_tag(type, is_embedded, metadata, data)
+      offset = @buffer.bytesize
+      if @size32 > 0 or data > 255
+        tag_size = 32
+        @buffer << [tag].pack("L")
+        @size32 += UINT32_SIZE
+      else
+        tag_size = 16
+        @buffer << [tag].pack("S")
+        @size16 += UINT16_SIZE
+      end
+    end
+  end
+
   def initialize(output, target)
     @output = output
     @target = target
+    @tag_writer = TagWriter.new(@output)
     @object_values = +"".b
+    @object_values_writer = TagWriter.new(@object_values)
+    @object_offset_size = 1
     @object_offsets = [0].pack("L").b
     @array_values = +"".b
+    @array_values_writer = TagWriter.new(@array_values)
     @array_offsets = [0].pack("L").b
     @string_values = +"".b
     @string_offsets = [0].pack("L").b
+    @int16_values = +"".b
     @int32_values = +"".b
     @int64_values = +"".b
     @double_values = +"".b
   end
 
   def write
-    write_value(@output, @target)
+    write_value(@tag_writer, @target)
     used_buffers = 0
     buffer_offsets = +"".b
-    offset = @output.bytesize
-    unless @object_values.empty?
-      used_buffers |= UsedBuffer::OBJECT
+    offset = @tag_writer.size16
+    if @tag_writer.size32 > 0
+      used_buffers |= UsedBuffer::TAG32
+      buffer_offsets << [@tag_writer.size32].pack("L")
+      offset += @tag_writer.size32
+    end
+    if @object_values_writer.size16 > 0
+      used_buffers |= UsedBuffer::OBJECT_VALUE16
       @output << @object_values
       buffer_offsets << [offset].pack("L")
-      offset += @object_values.bytesize
+      offset += @object_values_writer.size16
+    end
+    if @object_values_writer.size32 > 0
+      used_buffers |= UsedBuffer::OBJECT_VALUE32
+      buffer_offsets << [offset].pack("L")
+      offset += @object_values_writer.size32
+    end
+    unless @object_values.empty?
+      used_buffers |= UsedBuffer::OBJECT_OFFSET
       @output << @object_offsets
       buffer_offsets << [offset].pack("L")
       offset += @object_offsets.bytesize
     end
-    unless @array_values.empty?
-      used_buffers |= UsedBuffer::ARRAY
+    if @array_values_writer.size16 > 0
+      used_buffers |= UsedBuffer::ARRAY_VALUE16
       @output << @array_values
       buffer_offsets << [offset].pack("L")
-      offset += @array_values.bytesize
+      offset += @array_values_writer.size16
+    end
+    if @array_values_writer.size32 > 0
+      used_buffers |= UsedBuffer::ARRAY_VALUE32
+      buffer_offsets << [offset].pack("L")
+      offset += @array_values_writer.size32
+    end
+    unless @array_values.empty?
+      used_buffers |= UsedBuffer::ARRAY_OFFSET
       @output << @array_offsets
       buffer_offsets << [offset].pack("L")
       offset += @array_offsets.bytesize
@@ -284,6 +394,12 @@ class ParsedJSONWriter
       @output << @string_offsets
       buffer_offsets << [offset].pack("L")
       offset += @string_offsets.bytesize
+    end
+    unless @int16_values.empty?
+      used_buffers |= UsedBuffer::INT16
+      @output << @int16_values
+      buffer_offsets << [offset].pack("L")
+      offset += @int16_values.bytesize
     end
     unless @int32_values.empty?
       used_buffers |= UsedBuffer::INT32
@@ -304,48 +420,54 @@ class ParsedJSONWriter
       offset += @double_values.bytesize
     end
     @output << buffer_offsets
-    @output << [used_buffers].pack("C")
+    @output << [used_buffers].pack("S")
   end
 
   private
-  def append_container(output, target)
+  def write_container(tag_writer, target)
     targets = [target]
-    outputs = [output]
+    tag_writers = [tag_writer]
     until targets.empty?
       target = targets.shift
-      output = outputs.shift
+      tag_writer = tag_writers.shift
       case target
       when Hash
-        offset = @object_offsets.bytesize - 4 # sizeof(uint32_t)
+        offset = @object_offsets.bytesize - UINT32_SIZE
         last_object_offset = @object_offsets.unpack1("L", offset: offset)
         @object_offsets << [last_object_offset + target.size].pack("L")
-        write_tag(output, pack_tag(Type::OBJECT, false, 0, offset))
+        tag_writer.write(Type::OBJECT, false, 0, offset)
         target.each do |name, value|
           targets << name
-          outputs << @object_values
+          tag_writers << @object_values_writer
           targets << value
-          outputs << @object_values
+          tag_writers << @object_values_writer
         end
       when Array
-        offset = @array_offsets.bytesize - 4 # sizeof(uint32_t)
+        offset = @array_offsets.bytesize - UINT32_SIZE
         last_array_offset = @array_offsets.unpack1("L", offset: offset)
         @array_offsets << [last_array_offset + target.size].pack("L")
-        write_tag(output, pack_tag(Type::ARRAY, false, 0, offset))
+        tag_writer.write(Type::ARRAY, false, 0, offset)
         target.each do |value|
           targets << value
-          outputs << @array_values
+          tag_writers << @array_values_writer
         end
       else
-        write_value(output, target)
+        write_value(tag_writer, target)
       end
     end
   end
 
   def append_string(string)
-    offset = @string_offsets.bytesize - 4 # sizeof(uint32_t)
+    offset = @string_offsets.bytesize - UINT32_SIZE
     @string_values.append_as_bytes(string)
     last_string_offset = @string_offsets.unpack1("L", offset: offset)
     @string_offsets << [last_string_offset + string.bytesize].pack("L")
+    offset
+  end
+
+  def append_int16(int16)
+    offset = @int16_values.bytesize
+    @int16_values << [int16].pack("s")
     offset
   end
 
@@ -367,26 +489,27 @@ class ParsedJSONWriter
     offset
   end
 
-  def write_tag(output, tag)
-    output << [tag].pack("L")
-  end
-
-  def write_value(output, value)
+  def write_value(tag_writer, value)
     case value
     when Hash # object
-      append_container(output, value)
+      write_container(tag_writer, value)
     when Array
-      append_container(output, value)
+      write_container(tag_writer, value)
     when String
-      if value.bytesize <= 3
+      if tag_writer.size32 > 3
+        max_embeddable_size = 3
+      else
+        max_embeddable_size = 1
+      end
+      if value.bytesize <= max_embeddable_size
         data = 0
         value.unpack("C*").each_with_index do |character, i|
-          data |= (character << (8 * (2 - i)))
+          data |= character << (max_embeddable_size - 1 - i)
         end
-        write_tag(output, pack_tag(Type::STRING, true, value.bytesize, data))
+        tag_writer.write(Type::STRING, true, value.bytesize, data)
       else
         offset = append_string(value)
-        write_tag(output, pack_tag(Type::STRING, false, 0, offset))
+        tag_writer.write(Type::STRING, false, 0, offset)
       end
     when Integer
       if -(2 ** 7) <= value and value <= (2 ** 7 - 1)
@@ -399,32 +522,40 @@ class ParsedJSONWriter
         n_bytes = 4
       else
         offset = append_double(value.to_f)
-        write_tag(output, pack_tag(Type::DOUBLE, false, 0, offset))
+        tag_writer.write(Type::DOUBLE, false, 0, offset)
         return
       end
 
-      if -(2 ** 15) <= value and value <= (2 ** 23 - 1)
-        write_tag(output, pack_tag(Type::INTEGER, true, n_bytes, value))
+      is_tag32 = (tag_writer.size32 > 0)
+      if is_tag32
+        is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
       else
-        if n_bytes == 3
+        is_embeddable = (n_bytes == 1)
+      end
+      if is_embeddable
+        if not is_tag32 and value < 0
+          value += 256
+        end
+        tag_writer.write(Type::INTEGER, true, n_bytes, value)
+      else
+        if n_bytes == 2
+          offset = append_int16(value)
+        elsif n_bytes == 3
           offset = append_int32(value)
         else
           offset = append_int64(value)
         end
-        write_tag(output, pack_tag(Type::INTEGER, false, n_bytes, offset))
+        tag_writer.write(Type::INTEGER, false, n_bytes, offset)
       end
     when Float
       offset = append_double(value)
-      write_tag(output, pack_tag(Type::DOUBLE, false, 0, offset))
+      tag_writer.write(Type::DOUBLE, false, 0, offset)
     when true
-      write_tag(output,
-                pack_tag(Type::CONSTANT, true, Metadata::Constant::TRUE, 0))
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::TRUE, 0)
     when false
-      write_tag(output,
-                pack_tag(Type::CONSTANT, true, Metadata::Constant::FALSE, 0))
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::FALSE, 0)
     when nil
-      write_tag(output,
-                pack_tag(Type::CONSTANT, true, Metadata::Constant::NULL, 0))
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::NULL, 0)
     else
       raise "Unknown value: #{value.inspect}"
     end
@@ -440,90 +571,160 @@ class ParsedJSONReader
 
   def read
     used_buffers_offset = @input.bytesize - UsedBuffer::SIZE
-    used_buffers = @input.unpack1("C", offset: used_buffers_offset)
+    @used_buffers = @input.unpack1("S", offset: used_buffers_offset)
 
-    values_offset_offset = used_buffers_offset
-    if (used_buffers & UsedBuffer::OBJECT) != 0
-      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    n_buffer_offsets = 0
+    if buffer_used?(UsedBuffer::TAG32)
+      n_buffer_offsets += 1
     end
-    if (used_buffers & UsedBuffer::ARRAY) != 0
-      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    if buffer_used?(UsedBuffer::OBJECT_VALUE16)
+      n_buffer_offsets += 1
     end
-    if (used_buffers & UsedBuffer::STRING) != 0
-      values_offset_offset -= 8 # sizeof(uint32_t) * 2
+    if buffer_used?(UsedBuffer::OBJECT_VALUE32)
+      n_buffer_offsets += 1
     end
-    if (used_buffers & UsedBuffer::INT32) != 0
-      values_offset_offset -= 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::OBJECT_OFFSET)
+      n_buffer_offsets += 1
     end
-    if (used_buffers & UsedBuffer::INT64) != 0
-      values_offset_offset -= 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::ARRAY_VALUE16)
+      n_buffer_offsets += 1
     end
-    if (used_buffers & UsedBuffer::DOUBLE) != 0
-      values_offset_offset -= 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::ARRAY_VALUE32)
+      n_buffer_offsets += 1
     end
-
-    if (used_buffers & UsedBuffer::OBJECT) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @object_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
-
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @object_offsets_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::ARRAY_OFFSET)
+      n_buffer_offsets += 1
     end
-
-    if (used_buffers & UsedBuffer::ARRAY) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @array_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
-
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @array_offsets_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::STRING)
+      n_buffer_offsets += 2
+    end
+    if buffer_used?(UsedBuffer::INT16)
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::INT32)
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::INT64)
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::DOUBLE)
+      n_buffer_offsets += 1
     end
 
-    if (used_buffers & UsedBuffer::STRING) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @string_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
-
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @string_offsets_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    buffer_offsets_offset =
+      used_buffers_offset - (UINT32_SIZE * n_buffer_offsets)
+    buffer_offsets = @input.unpack("L#{n_buffer_offsets}",
+                                   offset: buffer_offsets_offset)
+    @tag16_ranges = []
+    buffer_offsets << used_buffers_offset
+    i = 0
+    @tag16_ranges << (0...buffer_offsets[i])
+    if buffer_used?(UsedBuffer::TAG32)
+      @tag32_offset = buffer_offsets[i]
+      i += 1
+    else
+      @tag32_offset = 0
     end
-
-    if (used_buffers & UsedBuffer::INT32) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @int32_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::OBJECT_VALUE16)
+      @object16_values_offset = buffer_offsets[i]
+      @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
+      @n_object16_values =
+        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
+      i += 1
+    else
+      @object16_values_offset = 0
+      @n_object16_values = 0
     end
-
-    if (used_buffers & UsedBuffer::INT64) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @int64_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::OBJECT_VALUE32)
+      @object32_values_offset = buffer_offsets[i]
+      i += 1
+    else
+      @object32_values_offset = 0
     end
-
-    if (used_buffers & UsedBuffer::DOUBLE) != 0
-      values_offset = @input.unpack1("L", offset: values_offset_offset)
-      @double_values_offset = values_offset
-      values_offset_offset += 4 # sizeof(uint32_t)
+    if buffer_used?(UsedBuffer::OBJECT_OFFSET)
+      @object_offsets_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::ARRAY_VALUE16)
+      @array16_values_offset = buffer_offsets[i]
+      @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
+      @n_array16_values =
+        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
+      i += 1
+    else
+      @array16_values_offset = 0
+      @n_array16_values = 0
+    end
+    if buffer_used?(UsedBuffer::ARRAY_VALUE32)
+      @array32_values_offset = buffer_offsets[i]
+      i += 1
+    else
+      @array32_values_offset = 0
+    end
+    if buffer_used?(UsedBuffer::ARRAY_OFFSET)
+      @array_offsets_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::STRING)
+      @string_values_offset = buffer_offsets[i]
+      i += 1
+      @string_offsets_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::INT16)
+      @int16_values_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::INT32)
+      @int32_values_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::INT64)
+      @int64_values_offset = buffer_offsets[i]
+      i += 1
+    end
+    if buffer_used?(UsedBuffer::DOUBLE)
+      @double_values_offset = buffer_offsets[i]
+      i += 1
     end
 
     read_value(0)
   end
 
   private
+  def buffer_used?(flag)
+    (@used_buffers & flag) == flag
+  end
+
   def read_object(values_offset)
     offsets_offset = @object_offsets_offset + values_offset
     start, next_start = @input.unpack("L2", offset: offsets_offset)
+    n_skip_values = start * 2
     n_members = next_start - start
+    if n_skip_values < @n_object16_values
+      base_values_offset = @object16_values_offset
+      base_values_offset += n_skip_values * UINT16_SIZE
+    else
+      base_values_offset = @object32_values_offset
+      base_values_offset += (n_skip_values - @n_object16_values) * UINT32_SIZE
+    end
     object = {}
+    offset = base_values_offset
     n_members.times do |i|
-      # 8 = sizeof(uint32_t) + sizeof(uint32_t)
-      base_offset = @object_values_offset + ((start + i) * 8)
-      name = read_value(base_offset)
-      value = read_value(base_offset + 4) # sizeof(uint32_t)
+      name = read_value(offset)
+      if n_skip_values + (i * 2) < @n_object16_values
+        member_size = UINT16_SIZE
+      else
+        member_size = UINT32_SIZE
+      end
+      offset += member_size
+      value = read_value(offset)
+      if n_skip_values + (i * 2) + 1 < @n_object16_values
+        member_size = UINT16_SIZE
+      else
+        member_size = UINT32_SIZE
+      end
+      offset += member_size
       object[name] = value
     end
     object
@@ -533,16 +734,37 @@ class ParsedJSONReader
     offsets_offset = @array_offsets_offset + values_offset
     start, next_start = @input.unpack("L2", offset: offsets_offset)
     n_elements = next_start - start
+    if start < @n_array16_values
+      element_size = UINT16_SIZE
+      base_values_offset = @array16_values_offset
+      base_values_offset += start * element_size
+    else
+      element_size = UINT32_SIZE
+      base_values_offset = @array32_values_offset
+      base_values_offset += (start - @n_array16_values) * element_size
+    end
+    offset = base_values_offset
     n_elements.times.collect do |i|
-      read_value(@array_values_offset + ((start + i) * 4)) # sizeof(uint32_t)
+      if start + i < @n_array16_values
+        element_size = UINT16_SIZE
+      else
+        element_size = UINT32_SIZE
+      end
+      value = read_value(offset)
+      offset += element_size
+      value
     end
   end
 
   def read_string(is_embedded, length, data)
     if is_embedded
       bytes = []
-      length.times do |i|
-        bytes << ((data >> (16 - (8 * i))) & 0b11111111)
+      if length == 1
+        bytes = [data]
+      else
+        length.times do |i|
+          bytes << ((data >> (16 - (8 * i))) & 0b11111111)
+        end
       end
       bytes.pack("C*")
     else
@@ -553,9 +775,9 @@ class ParsedJSONReader
     end
   end
 
-  def read_integer(is_embedded, byte_width, data)
+  def read_integer(is_embedded, n_bytes, data)
     if is_embedded
-      case byte_width
+      case n_bytes
       when 1
         [(data & 0xff)].pack("C").unpack1("c")
       when 2
@@ -566,7 +788,9 @@ class ParsedJSONReader
       end
     else
       values_offset = data
-      if byte_width == 3
+      if n_bytes == 2
+        @input.unpack1("s", offset: @int16_values_offset + data)
+      elsif n_bytes == 3
         @input.unpack1("l", offset: @int32_values_offset + data)
       else
         @input.unpack1("q", offset: @int64_values_offset + data)
@@ -579,7 +803,13 @@ class ParsedJSONReader
   end
 
   def read_value(offset)
-    tag = @input.unpack1("L", offset: offset)
+    if @tag16_ranges.any? {|range| range.cover?(offset)}
+      tag_size = 16
+      tag = @input.unpack1("S", offset: offset)
+    else
+      tag_size = 32
+      tag = @input.unpack1("L", offset: offset)
+    end
     type, is_embedded, metadata, data = unpack_tag(tag)
     if type == Type::CONSTANT
       case metadata
@@ -754,6 +984,10 @@ class TestParsedJSON < Test::Unit::TestCase
                      ])
   end
 
+  def test_array_long
+    assert_roundtrip((0..257).to_a)
+  end
+
   def test_object
     assert_roundtrip({
                        "string" => "world",
@@ -783,5 +1017,13 @@ class TestParsedJSON < Test::Unit::TestCase
                        },
                        "true" => true,
                      })
+  end
+
+  def test_object_long
+    object = {}
+    75.times do |i|
+      object[i.to_s] = i
+    end
+    assert_roundtrip(object)
   end
 end
