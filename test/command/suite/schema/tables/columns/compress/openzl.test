@@ -1,3 +1,4 @@
+#@require-feature mecab
 #@require-feature openzl
 
 table_create Logs TABLE_NO_KEY
