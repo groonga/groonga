@@ -53,15 +53,15 @@ if(GRN_C_COMPILER_GNU_LIKE)
     SOURCE distance.cpp
     APPEND_STRING
     PROPERTY COMPILE_FLAGS " -Wno-unknown-pragmas -Wno-float-equal")
-  if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    # TODO: Remove this when OpenZL fixes duplicate typedef definitions
-    # in their headers.
-    # ref: https://github.com/facebook/openzl/pull/293
-    set_property(
-      SOURCE compressor.c
-      APPEND_STRING
-      PROPERTY COMPILE_FLAGS " -Wno-typedef-redefinition")
-  endif()
+endif()
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  # TODO: Remove this when OpenZL fixes duplicate typedef definitions
+  # in their headers.
+  # ref: https://github.com/facebook/openzl/pull/293
+  set_property(
+    SOURCE compressor.c
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " -Wno-typedef-redefinition")
 endif()
 if(GRN_WITH_XSIMD)
   if(GRN_WITH_SIMD_AVX)
