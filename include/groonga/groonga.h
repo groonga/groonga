@@ -148,6 +148,7 @@ typedef enum {
   GRN_ZSTD_ERROR = -79,
   GRN_CONNECTION_RESET = -80,
   GRN_BLOSC_ERROR = -81,
+  GRN_OPENZL_ERROR = -82,
 } grn_rc;
 
 GRN_API grn_rc
@@ -757,6 +758,13 @@ typedef uint32_t grn_column_flags;
  * Indicates that the objects are compressed using Zstandard.
  */
 #define GRN_OBJ_COMPRESS_ZSTD (0x03 << 4)
+/**
+ * OpenZL compression.
+ * Indicates that the objects are compressed using OpenZL.
+ *
+ * \since 15.2.2
+ */
+#define GRN_OBJ_COMPRESS_OPENZL (0x04 << 4)
 
 /**
  * Enable section information.

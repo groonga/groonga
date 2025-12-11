@@ -727,7 +727,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_CSTR("features");
   {
-    const int n_features = 21;
+    const int n_features = 22;
     GRN_OUTPUT_MAP_OPEN("features", n_features);
 
     GRN_OUTPUT_CSTR("nfkc");
@@ -865,6 +865,13 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     GRN_OUTPUT_CSTR("faiss");
 #ifdef GRN_WITH_FAISS
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("openzl");
+#ifdef GRN_WITH_OPENZL
     GRN_OUTPUT_BOOL(true);
 #else
     GRN_OUTPUT_BOOL(false);

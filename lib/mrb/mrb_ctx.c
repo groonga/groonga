@@ -1126,6 +1126,15 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
                  utf8_error_message,
                  ctx->rc);
     break;
+  case GRN_OPENZL_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "OpenZLError");
+    grn_snprintf(message,
+                 MESSAGE_SIZE,
+                 MESSAGE_SIZE,
+                 "OpenZL error: <%s>(%d)",
+                 utf8_error_message,
+                 ctx->rc);
+    break;
   }
 
   if (!error_class) {

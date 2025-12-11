@@ -54,6 +54,15 @@ if(GRN_C_COMPILER_GNU_LIKE)
     APPEND_STRING
     PROPERTY COMPILE_FLAGS " -Wno-unknown-pragmas -Wno-float-equal")
 endif()
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  # TODO: Remove this when OpenZL fixes duplicate typedef definitions
+  # in their headers.
+  # ref: https://github.com/facebook/openzl/pull/293
+  set_property(
+    SOURCE compressor.c
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " -Wno-typedef-redefinition")
+endif()
 if(GRN_WITH_XSIMD)
   if(GRN_WITH_SIMD_AVX)
     list(APPEND LIBGROONGA_CPP_SOURCES distance_avx.cpp)

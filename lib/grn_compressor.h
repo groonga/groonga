@@ -27,6 +27,7 @@ typedef enum grn_compression_type {
   GRN_COMPRESSION_TYPE_LZ4,
   GRN_COMPRESSION_TYPE_ZSTD,
   GRN_COMPRESSION_TYPE_BLOSC,
+  GRN_COMPRESSION_TYPE_OPENZL,
 } grn_compression_type;
 
 typedef struct grn_compress_data {
