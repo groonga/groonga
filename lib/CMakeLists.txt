@@ -55,7 +55,8 @@ if(GRN_C_COMPILER_GNU_LIKE)
     PROPERTY COMPILE_FLAGS " -Wno-unknown-pragmas -Wno-float-equal")
   if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     # TODO: Remove this when OpenZL fixes duplicate typedef definitions
-    # in their headers (zl_opaque_types.h and other headers).
+    # in their headers.
+    # ref: https://github.com/facebook/openzl/pull/293
     set_property(
       SOURCE compressor.c
       APPEND_STRING
