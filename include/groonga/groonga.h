@@ -761,6 +761,8 @@ typedef uint32_t grn_column_flags;
 /**
  * OpenZL compression.
  * Indicates that the objects are compressed using OpenZL.
+ *
+ * \since 15.2.2
  */
 #define GRN_OBJ_COMPRESS_OPENZL (0x04 << 4)
 
