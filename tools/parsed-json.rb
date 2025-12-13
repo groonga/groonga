@@ -91,22 +91,25 @@ module ParsedJSON
   #       * DOUBLE values buffer offset: uint32
 
   module UsedBuffer
-    SIZE = UINT16_SIZE
+    SIZE = UINT32_SIZE
 
-    TAG32           = 0b00000000_00000001
-    OBJECT_VALUE16  = 0b00000000_00000010
-    OBJECT_VALUE32  = 0b00000000_00000100
-    OBJECT_OFFSET8  = 0b00000000_00001000
-    OBJECT_OFFSET16 = 0b00000000_00010000
-    OBJECT_OFFSET32 = 0b00000000_00100000
-    ARRAY_VALUE16   = 0b00000000_01000000
-    ARRAY_VALUE32   = 0b00000000_10000000
-    ARRAY_OFFSET    = 0b00000001_00000000
-    STRING          = 0b00000010_00000000
-    INT16           = 0b00000100_00000000
-    INT32           = 0b00001000_00000000
-    INT64           = 0b00010000_00000000
-    DOUBLE          = 0b00100000_00000000
+    TAG32           = 0b00000000_00000000_00000000_00000001
+    OBJECT_VALUE16  = 0b00000000_00000000_00000000_00000010
+    OBJECT_VALUE32  = 0b00000000_00000000_00000000_00000100
+    OBJECT_OFFSET8  = 0b00000000_00000000_00000000_00001000
+    OBJECT_OFFSET16 = 0b00000000_00000000_00000000_00010000
+    OBJECT_OFFSET32 = 0b00000000_00000000_00000000_00100000
+    ARRAY_VALUE16   = 0b00000000_00000000_00000000_01000000
+    ARRAY_VALUE32   = 0b00000000_00000000_00000000_10000000
+    ARRAY_OFFSET    = 0b00000000_00000000_00000001_00000000
+    STRING          = 0b00000000_00000000_00000010_00000000
+    STRING_OFFSET8  = 0b00000000_00000000_00000100_00000000
+    STRING_OFFSET16 = 0b00000000_00000000_00001000_00000000
+    STRING_OFFSET32 = 0b00000000_00000000_00010000_00000000
+    INT16           = 0b00000000_00000000_00100000_00000000
+    INT32           = 0b00000000_00000000_01000000_00000000
+    INT64           = 0b00000000_00000000_10000000_00000000
+    DOUBLE          = 0b00000000_00000001_00000000_00000000
   end
 
   module Type
@@ -223,16 +226,18 @@ module ParsedJSON
   #           buffer << key.tag
   #           buffer << value.tag
   #         end
-  #     * Offsets buffer:
-  #       * uint32_t
+  #     * Offsets buffers:
+  #       * uint8_t (N: 0..255)
+  #       * uint16_t (N: 256..65535)
+  #       * uint32_t (N: 65536..)
   #       * [
-  #           0,
-  #           0 + N_MEMBERS_OF_1ST_OBJECT,
-  #           0 + N_MEMBERS_OF_1ST_OBJECT + N_MEMBERS_OF_2ND_OBJECT,
+  #           N_MEMBERS_OF_1ST_OBJECT,
+  #           N_MEMBERS_OF_1ST_OBJECT + N_MEMBERS_OF_2ND_OBJECT,
   #           ...,
   #         ]
   #       * offsets[N - 1] - offsets[N]:
   #         The number of members of the Nth object.
+  #         If N == 0, offsets[N - 1] is processed as 0.
   #       * values[offsets[N]..(offsets[N - 1] - offsets[N])]:
   #         The members of the Nth object.
   #
@@ -265,16 +270,18 @@ module ParsedJSON
   # STRING
   #   STRING uses 2 buffers:
   #     * Values buffer: String itself.
-  #     * Offsets buffer:
-  #       * uint32_t
+  #     * Offsets buffers:
+  #       * uint8_t (N: 0..255)
+  #       * uint16_t (N: 256..65535)
+  #       * uint32_t (N: 65536..)
   #       * [
-  #           0,
-  #           0 + BYTE_SIZE_OF_1ST_STRING,
-  #           0 + BYTE_SIZE_OF_1ST_STRING + BYTE_SIZE_OF_2ND_STRING,
+  #           BYTE_SIZE_OF_1ST_STRING,
+  #           BYTE_SIZE_OF_1ST_STRING + BYTE_SIZE_OF_2ND_STRING,
   #           ...,
   #         ]
   #       * offsets[N - 1] - offsets[N]:
   #         The byte size of the Nth string.
+  #         If N == 0, offsets[N - 1] is processed as 0.
   #       * values[offsets[N]..(offsets[N - 1] - offsets[N])]:
   #         The Nth string.
   #
@@ -372,7 +379,8 @@ class ParsedJSONWriter
     @array_values_writer = TagWriter.new(:array, @array_values)
     @array_offsets = [0].pack("L").b
     @string_values = +"".b
-    @string_offsets = [0].pack("L").b
+    @string_offsets = +"".b
+    @string_offsets_writer = OffsetWriter.new(@string_offsets)
     @int16_values = +"".b
     @int32_values = +"".b
     @int64_values = +"".b
@@ -441,8 +449,21 @@ class ParsedJSONWriter
       buffer_offsets << [offset].pack("L")
       offset += @string_values.bytesize
       @output << @string_offsets
-      buffer_offsets << [offset].pack("L")
-      offset += @string_offsets.bytesize
+      if @string_offsets_writer.size8 > 0
+        used_buffers |= UsedBuffer::STRING_OFFSET8
+        buffer_offsets << [offset].pack("L")
+        offset += @string_offsets_writer.size8
+      end
+      if @string_offsets_writer.size16 > 0
+        used_buffers |= UsedBuffer::STRING_OFFSET16
+        buffer_offsets << [offset].pack("L")
+        offset += @string_offsets_writer.size16
+      end
+      if @string_offsets_writer.size32 > 0
+        used_buffers |= UsedBuffer::STRING_OFFSET32
+        buffer_offsets << [offset].pack("L")
+        offset += @string_offsets_writer.size32
+      end
     end
     unless @int16_values.empty?
       used_buffers |= UsedBuffer::INT16
@@ -469,7 +490,7 @@ class ParsedJSONWriter
       offset += @double_values.bytesize
     end
     @output << buffer_offsets
-    @output << [used_buffers].pack("S")
+    @output << [used_buffers].pack("L")
   end
 
   private
@@ -505,11 +526,8 @@ class ParsedJSONWriter
   end
 
   def append_string(string)
-    offset = @string_offsets.bytesize - UINT32_SIZE
     @string_values.append_as_bytes(string)
-    last_string_offset = @string_offsets.unpack1("L", offset: offset)
-    @string_offsets << [last_string_offset + string.bytesize].pack("L")
-    offset
+    @string_offsets_writer.write(string.bytesize)
   end
 
   def append_int16(int16)
@@ -543,7 +561,7 @@ class ParsedJSONWriter
     when Array
       write_container(tag_writer, value)
     when String
-      if tag_writer.size32 > 3
+      if tag_writer.size32 > 0
         max_embeddable_size = 3
       else
         max_embeddable_size = 1
@@ -612,13 +630,89 @@ end
 class ParsedJSONReader
   include ParsedJSON
 
+  class VariableSizeOffsetResolver
+    include ParsedJSON
+
+    def initialize(input,
+                   offset8_offsets_offset,
+                   n_offset8_offsets,
+                   offset16_offsets_offset,
+                   n_offset16_offsets,
+                   offset32_offsets_offset,
+                   n_offset32_offsets)
+      @input = input
+      @offset8_offsets_offset = offset8_offsets_offset
+      @n_offset8_offsets = n_offset8_offsets
+      @offset16_offsets_offset = offset16_offsets_offset
+      @n_offset16_offsets = n_offset16_offsets
+      @offset32_offsets_offset = offset32_offsets_offset
+      @n_offset32_offsets = n_offset32_offsets
+    end
+
+    def resolve(i)
+      if i < @n_offset8_offsets
+        offsets_offset = @offset8_offsets_offset + i
+        if i == 0
+          start = 0
+          next_start = @input.unpack1("C", offset: offsets_offset)
+        else
+          start, next_start = @input.unpack("C2",
+                                            offset: offsets_offset - UINT8_SIZE)
+        end
+      elsif i < @n_offset8_offsets + @n_offset16_offsets
+        offsets_offset =
+          @offset16_offsets_offset +
+          ((i - @n_offset8_offsets) * UINT16_SIZE)
+        if i == 0
+          start = 0
+          next_start = @input.unpack1("S", offset: offsets_offset)
+        elsif i == @n_offset8_offsets
+          last_offset8_offset =
+            @offset8_offsets_offset + (@n_offset8_offsets - 1) * UINT8_SIZE
+          start = @input.unpack1("C", offset: last_offset8_offset)
+          next_start = @input.unpack1("S", offset: offsets_offset)
+        else
+          start, next_start = @input.unpack("S2",
+                                            offset: offsets_offset - UINT16_SIZE)
+        end
+      else
+        offsets_offset =
+          @offset32_offsets_offset +
+          ((i - @n_offset8_offsets - @n_offset16_offsets) * UINT32_SIZE)
+        if i == 0
+          start = 0
+          next_start = @input.unpack1("L", offset: offsets_offset)
+        elsif i == @n_offset8_offsets + @n_offset16_offsets
+          if @n_offset16_offsets == 0
+            if @n_offset8_offsets == 0
+              start = 0
+            else
+              last_offset8_offset =
+                @offset8_offsets_offset + ((@n_offset8_offsets - 1) * UINT8_SIZE)
+              start = @input.unpack1("C", offset: last_offset8_offset)
+            end
+          else
+            last_offset16_offset =
+              @offset16_offsets_offset + ((@n_offset16_offsets - 1) * UINT16_SIZE)
+            start = @input.unpack1("S", offset: last_offset16_offset)
+          end
+          next_start = @input.unpack1("L", offset: offsets_offset)
+        else
+          start, next_start = @input.unpack("L2",
+                                            offset: offsets_offset - UINT32_SIZE)
+        end
+      end
+      [start, next_start]
+    end
+  end
+
   def initialize(input)
     @input = input
   end
 
   def read
     used_buffers_offset = @input.bytesize - UsedBuffer::SIZE
-    @used_buffers = @input.unpack1("S", offset: used_buffers_offset)
+    @used_buffers = @input.unpack1("L", offset: used_buffers_offset)
 
     n_buffer_offsets = 0
     if buffer_used?(UsedBuffer::TAG32)
@@ -649,7 +743,16 @@ class ParsedJSONReader
       n_buffer_offsets += 1
     end
     if buffer_used?(UsedBuffer::STRING)
-      n_buffer_offsets += 2
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::STRING_OFFSET8)
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::STRING_OFFSET16)
+      n_buffer_offsets += 1
+    end
+    if buffer_used?(UsedBuffer::STRING_OFFSET32)
+      n_buffer_offsets += 1
     end
     if buffer_used?(UsedBuffer::INT16)
       n_buffer_offsets += 1
@@ -695,32 +798,40 @@ class ParsedJSONReader
       @object32_values_offset = 0
     end
     if buffer_used?(UsedBuffer::OBJECT_OFFSET8)
-      @object8_offsets_offset = buffer_offsets[i]
-      @n_object8_offsets =
+      object8_offsets_offset = buffer_offsets[i]
+      n_object8_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT8_SIZE
       i += 1
     else
-      @object8_offsets_offset = 0
-      @n_object8_offsets = 0
+      object8_offsets_offset = 0
+      n_object8_offsets = 0
     end
     if buffer_used?(UsedBuffer::OBJECT_OFFSET16)
-      @object16_offsets_offset = buffer_offsets[i]
-      @n_object16_offsets =
+      object16_offsets_offset = buffer_offsets[i]
+      n_object16_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
       i += 1
     else
-      @object16_offsets_offset = 0
-      @n_object16_offsets = 0
+      object16_offsets_offset = 0
+      n_object16_offsets = 0
     end
     if buffer_used?(UsedBuffer::OBJECT_OFFSET32)
-      @object32_offsets_offset = buffer_offsets[i]
-      @n_object32_offsets =
+      object32_offsets_offset = buffer_offsets[i]
+      n_object32_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT32_SIZE
       i += 1
     else
-      @object32_offsets_offset = 0
-      @n_object32_offsets = 0
+      object32_offsets_offset = 0
+      n_object32_offsets = 0
     end
+    @object_offset_resolver =
+      VariableSizeOffsetResolver.new(@input,
+                                     object8_offsets_offset,
+                                     n_object8_offsets,
+                                     object16_offsets_offset,
+                                     n_object16_offsets,
+                                     object32_offsets_offset,
+                                     n_object32_offsets)
     if buffer_used?(UsedBuffer::ARRAY_VALUE16)
       @array16_values_offset = buffer_offsets[i]
       @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
@@ -744,9 +855,42 @@ class ParsedJSONReader
     if buffer_used?(UsedBuffer::STRING)
       @string_values_offset = buffer_offsets[i]
       i += 1
-      @string_offsets_offset = buffer_offsets[i]
-      i += 1
     end
+    if buffer_used?(UsedBuffer::STRING_OFFSET8)
+      string8_offsets_offset = buffer_offsets[i]
+      n_string8_offsets =
+        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT8_SIZE
+      i += 1
+    else
+      string8_offsets_offset = 0
+      n_string8_offsets = 0
+    end
+    if buffer_used?(UsedBuffer::STRING_OFFSET16)
+      string16_offsets_offset = buffer_offsets[i]
+      n_string16_offsets =
+        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
+      i += 1
+    else
+      string16_offsets_offset = 0
+      n_string16_offsets = 0
+    end
+    if buffer_used?(UsedBuffer::STRING_OFFSET32)
+      string32_offsets_offset = buffer_offsets[i]
+      n_string32_offsets =
+        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT32_SIZE
+      i += 1
+    else
+      string32_offsets_offset = 0
+      n_string32_offsets = 0
+    end
+    @string_offset_resolver =
+      VariableSizeOffsetResolver.new(@input,
+                                     string8_offsets_offset,
+                                     n_string8_offsets,
+                                     string16_offsets_offset,
+                                     n_string16_offsets,
+                                     string32_offsets_offset,
+                                     n_string32_offsets)
     if buffer_used?(UsedBuffer::INT16)
       @int16_values_offset = buffer_offsets[i]
       i += 1
@@ -773,54 +917,7 @@ class ParsedJSONReader
   end
 
   def read_object(i_value)
-    if i_value < @n_object8_offsets
-      offsets_offset = @object8_offsets_offset + i_value
-      if i_value == 0
-        start = 0
-        next_start = @input.unpack1("C", offset: offsets_offset)
-      else
-        start, next_start = @input.unpack("C2",
-                                          offset: offsets_offset - UINT8_SIZE)
-      end
-    elsif i_value < @n_object8_offsets + @n_object16_offsets
-      offsets_offset =
-        @object16_offsets_offset +
-        ((i_value - @n_object8_offsets) * UINT16_SIZE)
-      if i_value == 0
-        start = 0
-        next_start = @input.unpack1("S", offset: offsets_offset)
-      elsif i_value == @n_object8_offsets
-        last_offset8_offset =
-          @object8_offsets_offset + (@n_object8_offsets - 1) * UINT8_SIZE
-        start = @input.unpack1("C", offset: last_offset8_offset)
-        next_start = @input.unpack1("S", offset: offsets_offset)
-      else
-        start, next_start = @input.unpack("S2",
-                                          offset: offsets_offset - UINT16_SIZE)
-      end
-    else
-      offsets_offset =
-        @object32_offsets_offset +
-        ((i_value - @n_object8_offsets - @n_object16_offsets) * UINT32_SIZE)
-      if i_value == 0
-        start = 0
-        next_start = @input.unpack1("L", offset: offsets_offset)
-      elsif i_value == @n_object8_offsets + @n_object16_offsets
-        if @n_object16_offsets == 0
-          last_offset8_offset =
-            @object8_offsets_offset + (@n_object8_offsets * UINT8_SIZE)
-          start = @input.unpack1("C", offset: last_offset8_offset)
-        else
-          last_offset16_offset =
-            @object16_offsets_offset + ((@n_object16_offsets - 1) * UINT16_SIZE)
-          start = @input.unpack1("S", offset: last_offset16_offset)
-        end
-        next_start = @input.unpack1("L", offset: offsets_offset)
-      else
-        start, next_start = @input.unpack("L2",
-                                          offset: offsets_offset - UINT32_SIZE)
-      end
-    end
+    start, next_start = @object_offset_resolver.resolve(i_value)
     n_skip_values = start * 2
     n_members = next_start - start
     if n_skip_values < @n_object16_values
@@ -886,9 +983,8 @@ class ParsedJSONReader
       end
       bytes.pack("C*")
     else
-      values_offset = data
-      offsets_offset = @string_offsets_offset + values_offset
-      start, next_start = @input.unpack("L2", offset: offsets_offset)
+      i = data
+      start, next_start = @string_offset_resolver.resolve(i)
       @input[@string_values_offset + start, next_start - start]
     end
   end
@@ -1065,12 +1161,41 @@ class TestParsedJSON < Test::Unit::TestCase
     assert_roundtrip("hello")
   end
 
-  def test_string_embed
-    assert_roundtrip("abc")
+  def test_string_embed_tag16
+    assert_roundtrip("a")
+  end
+
+  def test_string_embed_tag32
+    elements = ["abc"] * 258
+    assert_roundtrip(elements)
   end
 
   def test_string_embed_empty
     assert_roundtrip("")
+  end
+
+  def test_string_offset8_offset16
+    assert_roundtrip(["a" * 255, "abcde"])
+  end
+
+  def test_string_offset8_offset16_offset32
+    assert_roundtrip(["a" * 255, "a" * (65535 - 255), "abcde"])
+  end
+
+  def test_string_offset8_offset32
+    assert_roundtrip(["a" * 255, "a" * 65535, "abcde"])
+  end
+
+  def test_string_offset16_offset32
+    assert_roundtrip(["a" * 65535, "abcde"])
+  end
+
+  def test_string_offset16
+    assert_roundtrip(["a" * 256, "abcde"])
+  end
+
+  def test_string_offset32
+    assert_roundtrip(["a" * 65536, "abcde"])
   end
 
   def test_array
