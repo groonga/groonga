@@ -26,9 +26,9 @@ module ParsedJSON
 
   # Format:
   #
-  # +-----+---------+----------------+--------------+
-  # | TAG | BUFFERS | BUFFER_OFFSETS | USED_BUFFERS |
-  # +-----+---------+----------------+--------------+
+  # +-----+---------+----------------+-------+
+  # | TAG | BUFFERS | BUFFER_OFFSETS | FLAGS |
+  # +-----+---------+----------------+-------+
   #
   # TAG: The tag (described later) of the target JSON.
   #
@@ -37,60 +37,97 @@ module ParsedJSON
   #   * TAG 32 bits buffer
   #   * OBJECT 16 bits values buffer
   #   * OBJECT 32 bits values buffer
-  #   * OBJECT offsets buffer
+  #   * OBJECT 8 bits offsets buffer
+  #   * OBJECT 16 bits offsets buffer
+  #   * OBJECT 32 bits offsets buffer
   #   * ARRAY 16 bits values buffer
   #   * ARRAY 32 bits values buffer
   #   * ARRAY offsets buffer
   #   * STRING values buffer
-  #   * STRING offsets buffer
+  #   * STRING 8 bits offsets buffer
+  #   * STRING 16 bits offsets buffer
+  #   * STRING 32 bits offsets buffer
   #   * INTEGER(int16) values buffer
   #   * INTEGER(int32) values buffer
   #   * INTEGER(int64) values buffer
   #   * DOUBLE values buffer
   #
-  # USED_BUFFERS: 2 bytes flags
-  #   * 0b00000000_00000001: TAG 32 bits buffer is used
-  #   * 0b00000000_00000010: OBJECT 16 bits values buffer is used
-  #   * 0b00000000_00000100: OBJECT 32 bits values buffer is used
-  #   * 0b00000000_00001000: OBJECT offsets buffer is used
-  #   * 0b00000000_00010000: ARRAY 16 bits values buffer is used
-  #   * 0b00000000_00100000: ARRAY 32 bits values buffer is used
-  #   * 0b00000000_01000000: ARRAY offsets buffer is used
-  #   * 0b00000000_10000000: STRING values/offsets buffers are used
-  #   * 0b00000001_00000000: INT16 values buffer is used
-  #   * 0b00000010_00000000: INT32 values buffer is used
-  #   * 0b00000100_00000000: INT64 values buffer is used
-  #   * 0b00001000_00000000: DOUBLE values buffer is used
+  # FLAGS: 4 bytes flags
+  #   * 0b00000000_00000000_00000000_00000001:
+  #     * TAG32: TAG 32 bits buffer is used
+  #   * 0b00000000_00000000_00000000_00000010:
+  #     * OBJECT_VALUE16: OBJECT 16 bits values buffer is used
+  #   * 0b00000000_00000000_00000000_00000100:
+  #     * OBJECT_VALUE32: OBJECT 32 bits values buffer is used
+  #   * 0b00000000_00000000_00000000_00001000:
+  #     * OBJECT_OFFSET8: OBJECT 8 bits offsets buffer is used
+  #   * 0b00000000_00000000_00000000_00010000:
+  #     * OBJECT_OFFSET16: OBJECT 16 bits offsets buffer is used
+  #   * 0b00000000_00000000_00000000_00100000:
+  #     * OBJECT_OFFSET32: OBJECT 32 bits offsets buffer is used
+  #   * 0b00000000_00000000_00000000_01000000:
+  #     * ARRAY_VALUE16: ARRAY 16 bits values buffer is used
+  #   * 0b00000000_00000000_00000000_10000000:
+  #     * ARRAY_VALUE32: ARRAY 32 bits values buffer is used
+  #   * 0b00000000_00000000_00000001_00000000:
+  #     * ARRAY_OFFSET: ARRAY offsets buffer is used
+  #   * 0b00000000_00000000_00000010_00000000:
+  #     * STRING_VALUE: STRING values/offsets buffers are used
+  #   * 0b00000000_00000000_00000100_00000000:
+  #     * STRING_OFFSET8: STRING 8 bits offsets buffer is used
+  #   * 0b00000000_00000000_00001000_00000000:
+  #     * STRING_OFFSET16: STRING 16 bits offsets buffer is used
+  #   * 0b00000000_00000000_00010000_00000000:
+  #     * STRING_OFFSET32: STRING 32 bits offsets buffer is used
+  #   * 0b00000000_00000000_00100000_00000000:
+  #     * INT16: INT16 values buffer is used
+  #   * 0b00000000_00000000_01000010_00000000:
+  #     * INT32: INT32 values buffer is used
+  #   * 0b00000000_00000000_10000000_00000000:
+  #     * INT64: INT64 values buffer is used
+  #   * 0b00000000_00000001_00000000_00000000:
+  #     * DOUBLE: DOUBLE values buffer is used
+  #   * 0b00000000_00000010_00000000_00000000:
+  #     * OFFSET32: BUFFER_OFFSETS uses 32 bits
   #
-  # BUFFER_OFFSETS:
+  # BUFFER_OFFSETS: 32 bits if FLAGS has OFFSET32, 16 bits otherwise
   #   It contains the following offsets in this order:
-  #     * If USED_BUFFERS has 0b00000000_00000001:
-  #       * TAG 32 bits buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_00000010:
-  #       * OBJECT 16 bits values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_00000100:
-  #       * OBJECT 32 bits values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_00001000:
-  #       * OBJECT offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_00010000:
-  #       * ARRAY 16 bits values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_00100000:
-  #       * ARRAY 32 bits values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_01000000:
-  #       * ARRAY offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000000_10000000:
-  #       * STRING values buffer offset: uint32
-  #       * STRING offsets buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000001_00000000:
-  #       * INTEGER(int16) values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000010_00000000:
-  #       * INTEGER(int32) values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00000100_00000000:
-  #       * INTEGER(int64) values buffer offset: uint32
-  #     * If USED_BUFFERS has 0b00001000_00000000:
-  #       * DOUBLE values buffer offset: uint32
+  #     * If FLAGS has TAG32:
+  #       * TAG 32 bits buffer offset
+  #     * If FLAGS has OBJECT_VALUE16:
+  #       * OBJECT 16 bits values buffer offset
+  #     * If FLAGS has OBJECT_VALUE32:
+  #       * OBJECT 32 bits values buffer offset
+  #     * If FLAGS has OBJECT_OFFSET8:
+  #       * OBJECT 8 bits offsets buffer offset
+  #     * If FLAGS has OBJECT_OFFSET16:
+  #       * OBJECT 16 bits offsets buffer offset
+  #     * If FLAGS has OBJECT_OFFSET32:
+  #       * OBJECT 32 bits offsets buffer offset
+  #     * If FLAGS has ARRAY_VALUE16:
+  #       * ARRAY 16 bits values buffer offset
+  #     * If FLAGS has ARRAY_VALUE32:
+  #       * ARRAY 32 bits values buffer offset
+  #     * If FLAGS has ARRAY_OFFSET:
+  #       * ARRAY offsets buffer offset
+  #     * If FLAGS has STRING_VALUE:
+  #       * STRING values buffer offset
+  #     * If FLAGS has STRING_OFFSET8:
+  #       * STRING 8 bits offsets buffer offset
+  #     * If FLAGS has STRING_OFFSET16:
+  #       * STRING 16 bits offsets buffer offset
+  #     * If FLAGS has STRING_OFFSET32:
+  #       * STRING 32 bits offsets buffer offset
+  #     * If FLAGS has INT16:
+  #       * INTEGER(int16) values buffer offset
+  #     * If FLAGS has INT32:
+  #       * INTEGER(int32) values buffer offset
+  #     * If FLAGS has INT64:
+  #       * INTEGER(int64) values buffer offset
+  #     * If FLAGS has DOUBLE:
+  #       * DOUBLE values buffer offset
 
-  module UsedBuffer
+  module Flags
     SIZE = UINT32_SIZE
 
     TAG32           = 0b00000000_00000000_00000000_00000001
@@ -102,7 +139,7 @@ module ParsedJSON
     ARRAY_VALUE16   = 0b00000000_00000000_00000000_01000000
     ARRAY_VALUE32   = 0b00000000_00000000_00000000_10000000
     ARRAY_OFFSET    = 0b00000000_00000000_00000001_00000000
-    STRING          = 0b00000000_00000000_00000010_00000000
+    STRING_VALUE    = 0b00000000_00000000_00000010_00000000
     STRING_OFFSET8  = 0b00000000_00000000_00000100_00000000
     STRING_OFFSET16 = 0b00000000_00000000_00001000_00000000
     STRING_OFFSET32 = 0b00000000_00000000_00010000_00000000
@@ -110,6 +147,7 @@ module ParsedJSON
     INT32           = 0b00000000_00000000_01000000_00000000
     INT64           = 0b00000000_00000000_10000000_00000000
     DOUBLE          = 0b00000000_00000001_00000000_00000000
+    OFFSET32        = 0b00000000_00000010_00000000_00000000
   end
 
   module Type
@@ -389,108 +427,114 @@ class ParsedJSONWriter
 
   def write
     write_value(@tag_writer, @target)
-    used_buffers = 0
-    buffer_offsets = +"".b
+    flags = 0
+    buffer_offsets = []
     offset = @tag_writer.size16
     if @tag_writer.size32 > 0
-      used_buffers |= UsedBuffer::TAG32
-      buffer_offsets << [@tag_writer.size32].pack("L")
+      flags |= Flags::TAG32
+      buffer_offsets << @tag_writer.size32
       offset += @tag_writer.size32
     end
     if @object_values_writer.size16 > 0
-      used_buffers |= UsedBuffer::OBJECT_VALUE16
+      flags |= Flags::OBJECT_VALUE16
       @output << @object_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @object_values_writer.size16
     end
     if @object_values_writer.size32 > 0
-      used_buffers |= UsedBuffer::OBJECT_VALUE32
-      buffer_offsets << [offset].pack("L")
+      flags |= Flags::OBJECT_VALUE32
+      buffer_offsets << offset
       offset += @object_values_writer.size32
     end
     unless @object_offsets.empty?
       @output << @object_offsets
     end
     if @object_offsets_writer.size8 > 0
-      used_buffers |= UsedBuffer::OBJECT_OFFSET8
-      buffer_offsets << [offset].pack("L")
+      flags |= Flags::OBJECT_OFFSET8
+      buffer_offsets << offset
       offset += @object_offsets_writer.size8
     end
     if @object_offsets_writer.size16 > 0
-      used_buffers |= UsedBuffer::OBJECT_OFFSET16
-      buffer_offsets << [offset].pack("L")
+      flags |= Flags::OBJECT_OFFSET16
+      buffer_offsets << offset
       offset += @object_offsets_writer.size16
     end
     if @object_offsets_writer.size32 > 0
-      used_buffers |= UsedBuffer::OBJECT_OFFSET32
-      buffer_offsets << [offset].pack("L")
+      flags |= Flags::OBJECT_OFFSET32
+      buffer_offsets << offset
       offset += @object_offsets_writer.size32
     end
     if @array_values_writer.size16 > 0
-      used_buffers |= UsedBuffer::ARRAY_VALUE16
+      flags |= Flags::ARRAY_VALUE16
       @output << @array_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @array_values_writer.size16
     end
     if @array_values_writer.size32 > 0
-      used_buffers |= UsedBuffer::ARRAY_VALUE32
-      buffer_offsets << [offset].pack("L")
+      flags |= Flags::ARRAY_VALUE32
+      buffer_offsets << offset
       offset += @array_values_writer.size32
     end
     unless @array_values.empty?
-      used_buffers |= UsedBuffer::ARRAY_OFFSET
+      flags |= Flags::ARRAY_OFFSET
       @output << @array_offsets
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @array_offsets.bytesize
     end
     unless @string_values.empty?
-      used_buffers |= UsedBuffer::STRING
+      flags |= Flags::STRING_VALUE
       @output << @string_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @string_values.bytesize
       @output << @string_offsets
       if @string_offsets_writer.size8 > 0
-        used_buffers |= UsedBuffer::STRING_OFFSET8
-        buffer_offsets << [offset].pack("L")
+        flags |= Flags::STRING_OFFSET8
+        buffer_offsets << offset
         offset += @string_offsets_writer.size8
       end
       if @string_offsets_writer.size16 > 0
-        used_buffers |= UsedBuffer::STRING_OFFSET16
-        buffer_offsets << [offset].pack("L")
+        flags |= Flags::STRING_OFFSET16
+        buffer_offsets << offset
         offset += @string_offsets_writer.size16
       end
       if @string_offsets_writer.size32 > 0
-        used_buffers |= UsedBuffer::STRING_OFFSET32
-        buffer_offsets << [offset].pack("L")
+        flags |= Flags::STRING_OFFSET32
+        buffer_offsets << offset
         offset += @string_offsets_writer.size32
       end
     end
     unless @int16_values.empty?
-      used_buffers |= UsedBuffer::INT16
+      flags |= Flags::INT16
       @output << @int16_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @int16_values.bytesize
     end
     unless @int32_values.empty?
-      used_buffers |= UsedBuffer::INT32
+      flags |= Flags::INT32
       @output << @int32_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @int32_values.bytesize
     end
     unless @int64_values.empty?
-      used_buffers |= UsedBuffer::INT64
+      flags |= Flags::INT64
       @output << @int64_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @int64_values.bytesize
     end
     unless @double_values.empty?
-      used_buffers |= UsedBuffer::DOUBLE
+      flags |= Flags::DOUBLE
       @output << @double_values
-      buffer_offsets << [offset].pack("L")
+      buffer_offsets << offset
       offset += @double_values.bytesize
     end
-    @output << buffer_offsets
-    @output << [used_buffers].pack("L")
+    if not buffer_offsets.empty? and buffer_offsets.last > 65535
+      flags |= Flags::OFFSET32
+      @output << buffer_offsets.pack("L*")
+    else
+      p [:x, buffer_offsets.last, "%032b" % flags]
+      @output << buffer_offsets.pack("S*")
+    end
+    @output << [flags].pack("L")
   end
 
   private
@@ -711,77 +755,84 @@ class ParsedJSONReader
   end
 
   def read
-    used_buffers_offset = @input.bytesize - UsedBuffer::SIZE
-    @used_buffers = @input.unpack1("L", offset: used_buffers_offset)
+    flags_offset = @input.bytesize - Flags::SIZE
+    @flags = @input.unpack1("L", offset: flags_offset)
 
     n_buffer_offsets = 0
-    if buffer_used?(UsedBuffer::TAG32)
+    if flagged?(Flags::TAG32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::OBJECT_VALUE16)
+    if flagged?(Flags::OBJECT_VALUE16)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::OBJECT_VALUE32)
+    if flagged?(Flags::OBJECT_VALUE32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET8)
+    if flagged?(Flags::OBJECT_OFFSET8)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET16)
+    if flagged?(Flags::OBJECT_OFFSET16)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET32)
+    if flagged?(Flags::OBJECT_OFFSET32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::ARRAY_VALUE16)
+    if flagged?(Flags::ARRAY_VALUE16)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::ARRAY_VALUE32)
+    if flagged?(Flags::ARRAY_VALUE32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::ARRAY_OFFSET)
+    if flagged?(Flags::ARRAY_OFFSET)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::STRING)
+    if flagged?(Flags::STRING_VALUE)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET8)
+    if flagged?(Flags::STRING_OFFSET8)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET16)
+    if flagged?(Flags::STRING_OFFSET16)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET32)
+    if flagged?(Flags::STRING_OFFSET32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::INT16)
+    if flagged?(Flags::INT16)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::INT32)
+    if flagged?(Flags::INT32)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::INT64)
+    if flagged?(Flags::INT64)
       n_buffer_offsets += 1
     end
-    if buffer_used?(UsedBuffer::DOUBLE)
+    if flagged?(Flags::DOUBLE)
       n_buffer_offsets += 1
     end
 
-    buffer_offsets_offset =
-      used_buffers_offset - (UINT32_SIZE * n_buffer_offsets)
-    buffer_offsets = @input.unpack("L#{n_buffer_offsets}",
-                                   offset: buffer_offsets_offset)
+    if flagged?(Flags::OFFSET32)
+      buffer_offsets_offset =
+        flags_offset - (UINT32_SIZE * n_buffer_offsets)
+      buffer_offsets = @input.unpack("L#{n_buffer_offsets}",
+                                     offset: buffer_offsets_offset)
+    else
+      buffer_offsets_offset =
+        flags_offset - (UINT16_SIZE * n_buffer_offsets)
+      buffer_offsets = @input.unpack("S#{n_buffer_offsets}",
+                                     offset: buffer_offsets_offset)
+    end
     @tag16_ranges = []
-    buffer_offsets << used_buffers_offset
+    buffer_offsets << flags_offset
     i = 0
     @tag16_ranges << (0...buffer_offsets[i])
-    if buffer_used?(UsedBuffer::TAG32)
+    if flagged?(Flags::TAG32)
       @tag32_offset = buffer_offsets[i]
       i += 1
     else
       @tag32_offset = 0
     end
-    if buffer_used?(UsedBuffer::OBJECT_VALUE16)
+    if flagged?(Flags::OBJECT_VALUE16)
       @object16_values_offset = buffer_offsets[i]
       @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
       @n_object16_values =
@@ -791,13 +842,13 @@ class ParsedJSONReader
       @object16_values_offset = 0
       @n_object16_values = 0
     end
-    if buffer_used?(UsedBuffer::OBJECT_VALUE32)
+    if flagged?(Flags::OBJECT_VALUE32)
       @object32_values_offset = buffer_offsets[i]
       i += 1
     else
       @object32_values_offset = 0
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET8)
+    if flagged?(Flags::OBJECT_OFFSET8)
       object8_offsets_offset = buffer_offsets[i]
       n_object8_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT8_SIZE
@@ -806,7 +857,7 @@ class ParsedJSONReader
       object8_offsets_offset = 0
       n_object8_offsets = 0
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET16)
+    if flagged?(Flags::OBJECT_OFFSET16)
       object16_offsets_offset = buffer_offsets[i]
       n_object16_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
@@ -815,7 +866,7 @@ class ParsedJSONReader
       object16_offsets_offset = 0
       n_object16_offsets = 0
     end
-    if buffer_used?(UsedBuffer::OBJECT_OFFSET32)
+    if flagged?(Flags::OBJECT_OFFSET32)
       object32_offsets_offset = buffer_offsets[i]
       n_object32_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT32_SIZE
@@ -832,7 +883,7 @@ class ParsedJSONReader
                                      n_object16_offsets,
                                      object32_offsets_offset,
                                      n_object32_offsets)
-    if buffer_used?(UsedBuffer::ARRAY_VALUE16)
+    if flagged?(Flags::ARRAY_VALUE16)
       @array16_values_offset = buffer_offsets[i]
       @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
       @n_array16_values =
@@ -842,21 +893,21 @@ class ParsedJSONReader
       @array16_values_offset = 0
       @n_array16_values = 0
     end
-    if buffer_used?(UsedBuffer::ARRAY_VALUE32)
+    if flagged?(Flags::ARRAY_VALUE32)
       @array32_values_offset = buffer_offsets[i]
       i += 1
     else
       @array32_values_offset = 0
     end
-    if buffer_used?(UsedBuffer::ARRAY_OFFSET)
+    if flagged?(Flags::ARRAY_OFFSET)
       @array_offsets_offset = buffer_offsets[i]
       i += 1
     end
-    if buffer_used?(UsedBuffer::STRING)
+    if flagged?(Flags::STRING_VALUE)
       @string_values_offset = buffer_offsets[i]
       i += 1
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET8)
+    if flagged?(Flags::STRING_OFFSET8)
       string8_offsets_offset = buffer_offsets[i]
       n_string8_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT8_SIZE
@@ -865,7 +916,7 @@ class ParsedJSONReader
       string8_offsets_offset = 0
       n_string8_offsets = 0
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET16)
+    if flagged?(Flags::STRING_OFFSET16)
       string16_offsets_offset = buffer_offsets[i]
       n_string16_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
@@ -874,7 +925,7 @@ class ParsedJSONReader
       string16_offsets_offset = 0
       n_string16_offsets = 0
     end
-    if buffer_used?(UsedBuffer::STRING_OFFSET32)
+    if flagged?(Flags::STRING_OFFSET32)
       string32_offsets_offset = buffer_offsets[i]
       n_string32_offsets =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT32_SIZE
@@ -891,19 +942,19 @@ class ParsedJSONReader
                                      n_string16_offsets,
                                      string32_offsets_offset,
                                      n_string32_offsets)
-    if buffer_used?(UsedBuffer::INT16)
+    if flagged?(Flags::INT16)
       @int16_values_offset = buffer_offsets[i]
       i += 1
     end
-    if buffer_used?(UsedBuffer::INT32)
+    if flagged?(Flags::INT32)
       @int32_values_offset = buffer_offsets[i]
       i += 1
     end
-    if buffer_used?(UsedBuffer::INT64)
+    if flagged?(Flags::INT64)
       @int64_values_offset = buffer_offsets[i]
       i += 1
     end
-    if buffer_used?(UsedBuffer::DOUBLE)
+    if flagged?(Flags::DOUBLE)
       @double_values_offset = buffer_offsets[i]
       i += 1
     end
@@ -912,8 +963,8 @@ class ParsedJSONReader
   end
 
   private
-  def buffer_used?(flag)
-    (@used_buffers & flag) == flag
+  def flagged?(flag)
+    (@flags & flag) == flag
   end
 
   def read_object(i_value)
@@ -1330,3 +1381,5 @@ class TestParsedJSON < Test::Unit::TestCase
     assert_roundtrip(objects)
   end
 end
+
+Test::Unit::AutoRunner.need_auto_run = false
