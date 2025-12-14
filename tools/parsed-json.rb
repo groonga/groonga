@@ -140,26 +140,26 @@ module ParsedJSON
   module Flags
     SIZE = UINT32_SIZE
 
-    TAG32           = 0b00000000_00000000_00000000_00000001
-    OBJECT_VALUE16  = 0b00000000_00000000_00000000_00000010
-    OBJECT_VALUE32  = 0b00000000_00000000_00000000_00000100
-    OBJECT_POSITION8    = 0b00000000_00000000_00000000_00001000
-    OBJECT_POSITION16   = 0b00000000_00000000_00000000_00010000
-    OBJECT_POSITION32   = 0b00000000_00000000_00000000_00100000
-    ARRAY_VALUE16   = 0b00000000_00000000_00000000_01000000
-    ARRAY_VALUE32   = 0b00000000_00000000_00000000_10000000
-    ARRAY_POSITION8     = 0b00000000_00000000_00000001_00000000
-    ARRAY_POSITION16    = 0b00000000_00000000_00000010_00000000
-    ARRAY_POSITION32    = 0b00000000_00000000_00000100_00000000
-    STRING_VALUE    = 0b00000000_00000000_00001000_00000000
-    STRING_POSITION8    = 0b00000000_00000000_00010000_00000000
-    STRING_POSITION16   = 0b00000000_00000000_00100000_00000000
-    STRING_POSITION32   = 0b00000000_00000000_01000000_00000000
-    INT16           = 0b00000000_00000000_10000000_00000000
-    INT32           = 0b00000000_00000001_00000000_00000000
-    INT64           = 0b00000000_00000010_00000000_00000000
-    DOUBLE          = 0b00000000_00000100_00000000_00000000
-    OFFSET32        = 0b00000000_00001000_00000000_00000000
+    TAG32             = 0b00000000_00000000_00000000_00000001
+    OBJECT_VALUE16    = 0b00000000_00000000_00000000_00000010
+    OBJECT_VALUE32    = 0b00000000_00000000_00000000_00000100
+    OBJECT_POSITION8  = 0b00000000_00000000_00000000_00001000
+    OBJECT_POSITION16 = 0b00000000_00000000_00000000_00010000
+    OBJECT_POSITION32 = 0b00000000_00000000_00000000_00100000
+    ARRAY_VALUE16     = 0b00000000_00000000_00000000_01000000
+    ARRAY_VALUE32     = 0b00000000_00000000_00000000_10000000
+    ARRAY_POSITION8   = 0b00000000_00000000_00000001_00000000
+    ARRAY_POSITION16  = 0b00000000_00000000_00000010_00000000
+    ARRAY_POSITION32  = 0b00000000_00000000_00000100_00000000
+    STRING_VALUE      = 0b00000000_00000000_00001000_00000000
+    STRING_POSITION8  = 0b00000000_00000000_00010000_00000000
+    STRING_POSITION16 = 0b00000000_00000000_00100000_00000000
+    STRING_POSITION32 = 0b00000000_00000000_01000000_00000000
+    INT16             = 0b00000000_00000000_10000000_00000000
+    INT32             = 0b00000000_00000001_00000000_00000000
+    INT64             = 0b00000000_00000010_00000000_00000000
+    DOUBLE            = 0b00000000_00000100_00000000_00000000
+    OFFSET32          = 0b00000000_00001000_00000000_00000000
   end
 
   module Type
@@ -178,10 +178,24 @@ module ParsedJSON
   end
 
   module Metadata
+    module Double
+      NAN               = 0b0000
+      POSITIVE_INFINITY = 0b0001
+      NEGATIVE_INFINITY = 0b0010
+      POSITIVE_ZERO     = 0b0100
+      NEGATIVE_ZERO     = 0b1000
+
+      class << self
+        def resolve_value(value)
+          constants.find {|name| const_get(name) == value}
+        end
+      end
+    end
+
     module Constant
-      TRUE = 0
-      FALSE = 1
-      NULL = 2
+      TRUE  = 0b0000
+      FALSE = 0b0001
+      NULL  = 0b0010
 
       class << self
         def resolve_value(value)
@@ -229,7 +243,15 @@ module ParsedJSON
   #       Else:
   #         -(2^31) - (2^31-1): Index in int32 values.
   #         -(2^63) - (2^63-1): Index in int64 values.
-  #   DOUBLE:  Index in double values. E is always 0.
+  #   DOUBLE:
+  #     If E is 1: (FYI: JSON doesn't permit Infinity and NaN...)
+  #       NaN:       MMMM is 0000
+  #       +Infinity: MMMM is 0001
+  #       -Infinity: MMMM is 0010
+  #       +0.0:      MMMM is 0100
+  #       -0.0:      MMMM is 1000
+  #     Else:
+  #       Index in double values.
   #   CONSTANT: Always 0. E is always 1.
   #     true:  MMMM is 0000
   #     false: MMMM is 0001
@@ -594,33 +616,97 @@ class ParsedJSONWriter
     end
   end
 
-  def append_string(string)
-    @string_values.append_as_bytes(string)
-    @string_positions_writer.write(string.bytesize)
+  def write_string(tag_writer, value)
+    if tag_writer.size32 > 0
+      max_embeddable_size = 3
+    else
+      max_embeddable_size = 1
+    end
+    if value.bytesize <= max_embeddable_size
+      data = 0
+      value.unpack("C*").each.with_index do |character, i|
+        data |= character << (8 * i)
+      end
+      tag_writer.write(Type::STRING, true, value.bytesize, data)
+    else
+      @string_values.append_as_bytes(value)
+      index = @string_positions_writer.write(value.bytesize)
+      tag_writer.write(Type::STRING, false, 0, index)
+    end
   end
 
-  def append_int16(int16)
-    offset = @int16_values.bytesize
-    @int16_values << [int16].pack("s")
-    offset
+  def write_integer(tag_writer, value)
+    if -(2 ** 7) <= value and value <= (2 ** 7 - 1)
+      n_bytes = 1
+    elsif -(2 ** 15) <= value and value <= (2 ** 15 - 1)
+      n_bytes = 2
+    elsif -(2 ** 31) <= value and value <= (2 ** 31 - 1)
+      n_bytes = 3
+    elsif -(2 ** 63) <= value and value <= (2 ** 63 - 1)
+      n_bytes = 4
+    else
+      write_double(tag_writer, value.to_f)
+      return
+    end
+
+    is_tag32 = (tag_writer.size32 > 0)
+    if is_tag32
+      is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
+    else
+      is_embeddable = (n_bytes == 1)
+    end
+    if is_embeddable
+      if not is_tag32 and value < 0
+        value += 256
+      end
+      tag_writer.write(Type::INTEGER, true, n_bytes, value)
+    else
+      if n_bytes == 2
+        offset = @int16_values.bytesize
+        @int16_values << [value].pack("s")
+      elsif n_bytes == 3
+        offset = @int32_values.bytesize
+        @int32_values << [value].pack("l")
+      else
+        offset = @int64_values.bytesize
+        @int64_values << [value].pack("q")
+      end
+      tag_writer.write(Type::INTEGER, false, n_bytes, offset)
+    end
   end
 
-  def append_int32(int32)
-    offset = @int32_values.bytesize
-    @int32_values << [int32].pack("l")
-    offset
-  end
-
-  def append_int64(int64)
-    offset = @int64_values.bytesize
-    @int64_values << [int64].pack("q")
-    offset
-  end
-
-  def append_double(double)
-    offset = @double_values.bytesize
-    @double_values << [double].pack("d")
-    offset
+  def write_double(tag_writer, value)
+    if value.nan?
+      tag_writer.write(Type::DOUBLE, true, Metadata::Double::NAN, 0)
+    elsif value.infinite?
+      if value.positive?
+        tag_writer.write(Type::DOUBLE,
+                         true,
+                         Metadata::Double::POSITIVE_INFINITY,
+                         0)
+      else
+        tag_writer.write(Type::DOUBLE,
+                         true,
+                         Metadata::Double::NEGATIVE_INFINITY,
+                         0)
+      end
+    elsif value.zero?
+      if value.positive?
+        tag_writer.write(Type::DOUBLE,
+                         true,
+                         Metadata::Double::POSITIVE_ZERO,
+                         0)
+      else
+        tag_writer.write(Type::DOUBLE,
+                         true,
+                         Metadata::Double::NEGATIVE_ZERO,
+                         0)
+      end
+    else
+      offset = @double_values.bytesize
+      @double_values << [value].pack("d")
+      tag_writer.write(Type::DOUBLE, false, 0, offset)
+    end
   end
 
   def write_value(tag_writer, value)
@@ -630,60 +716,11 @@ class ParsedJSONWriter
     when Array
       write_container(tag_writer, value)
     when String
-      if tag_writer.size32 > 0
-        max_embeddable_size = 3
-      else
-        max_embeddable_size = 1
-      end
-      if value.bytesize <= max_embeddable_size
-        data = 0
-        value.unpack("C*").each.with_index do |character, i|
-          data |= character << (8 * i)
-        end
-        tag_writer.write(Type::STRING, true, value.bytesize, data)
-      else
-        offset = append_string(value)
-        tag_writer.write(Type::STRING, false, 0, offset)
-      end
+      write_string(tag_writer, value)
     when Integer
-      if -(2 ** 7) <= value and value <= (2 ** 7 - 1)
-        n_bytes = 1
-      elsif -(2 ** 15) <= value and value <= (2 ** 15 - 1)
-        n_bytes = 2
-      elsif -(2 ** 31) <= value and value <= (2 ** 31 - 1)
-        n_bytes = 3
-      elsif -(2 ** 63) <= value and value <= (2 ** 63 - 1)
-        n_bytes = 4
-      else
-        offset = append_double(value.to_f)
-        tag_writer.write(Type::DOUBLE, false, 0, offset)
-        return
-      end
-
-      is_tag32 = (tag_writer.size32 > 0)
-      if is_tag32
-        is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
-      else
-        is_embeddable = (n_bytes == 1)
-      end
-      if is_embeddable
-        if not is_tag32 and value < 0
-          value += 256
-        end
-        tag_writer.write(Type::INTEGER, true, n_bytes, value)
-      else
-        if n_bytes == 2
-          offset = append_int16(value)
-        elsif n_bytes == 3
-          offset = append_int32(value)
-        else
-          offset = append_int64(value)
-        end
-        tag_writer.write(Type::INTEGER, false, n_bytes, offset)
-      end
+      write_integer(tag_writer, value)
     when Float
-      offset = append_double(value)
-      tag_writer.write(Type::DOUBLE, false, 0, offset)
+      write_double(tag_writer, value)
     when true
       tag_writer.write(Type::CONSTANT, true, Metadata::Constant::TRUE, 0)
     when false
@@ -1063,8 +1100,23 @@ class ParsedJSONReader
     end
   end
 
-  def read_double(values_offset)
-    @input.unpack1("d", offset: @double_values_offset + values_offset)
+  def read_double(is_embedded, metadata, data)
+    if is_embedded
+      case metadata
+      when Metadata::Double::NAN
+        Float::NAN
+      when Metadata::Double::POSITIVE_INFINITY
+        Float::INFINITY
+      when Metadata::Double::NEGATIVE_INFINITY
+        -Float::INFINITY
+      when Metadata::Double::POSITIVE_ZERO
+        0.0
+      when Metadata::Double::NEGATIVE_ZERO
+        -0.0
+      end
+    else
+      @input.unpack1("d", offset: @double_values_offset + data)
+    end
   end
 
   def read_value(offset)
@@ -1099,7 +1151,7 @@ class ParsedJSONReader
     when Type::INTEGER
       read_integer(is_embedded, metadata, data)
     when Type::DOUBLE
-      read_double(data)
+      read_double(is_embedded, metadata, data)
     else
       raise "Unknown type: #{type.inspect}"
     end
@@ -1206,6 +1258,14 @@ class TestParsedJSON < Test::Unit::TestCase
 
   def test_double_infinity_negative
     assert_roundtrip(-Float::INFINITY)
+  end
+
+  def test_double_zero_positive
+    assert_roundtrip(0.0)
+  end
+
+  def test_double_zero_negative
+    assert_roundtrip(-0.0)
   end
 
   def test_string
