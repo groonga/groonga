@@ -26,11 +26,93 @@ module ParsedJSON
 
   # Format:
   #
-  # +-----+---------+----------------+-------+
-  # | TAG | BUFFERS | BUFFER_OFFSETS | FLAGS |
-  # +-----+---------+----------------+-------+
+  # +------------------+-------+---------+----------------+
+  # | ROOT_TAG(OBJECT) | FLAGS | BUFFERS | BUFFER_OFFSETS |
+  # +------------------+-------+---------+----------------+
   #
-  # TAG: The tag (described later) of the target JSON.
+  # +-----------------+-------+---------+----------------+
+  # | ROOT_TAG(ARRAY) | FLAGS | BUFFERS | BUFFER_OFFSETS |
+  # +-----------------+-------+---------+----------------+
+  #
+  # +------------------+-------+
+  # | ROOT_TAG(STRING) | VALUE |
+  # +------------------+-------+
+  #
+  # +-------------------+-------+
+  # | ROOT_TAG(INTEGER) | VALUE |
+  # +-------------------+-------+
+  #
+  # +------------------+-------+
+  # | ROOT_TAG(DOUBLE) | VALUE |
+  # +------------------+-------+
+  #
+  # +--------------------+
+  # | ROOT_TAG(CONSTANT) |
+  # +--------------------+
+  #
+  # ROOT_TAG: 8 bits: MMMMETTT: TAG - the Data part
+  #   See TAG for MMMMETTT details.
+  #
+  #   If TTT is OBJECT or ARRAY, from 2nd byte to 4th byte is FLAGS
+  #   (big endian). BUFFERS has data and BUFFERS_OFFSETS shows offset
+  #   of each buffer in BUFFERS. Index of OBJECT/ARRAY is always 0.
+  #
+  #   If TTT is STRING, from 2 byte to the end is the root string. The
+  #   length information isn't provided. User must know the total
+  #   parsed JSON data size.
+  #
+  #   If TTT is INTEGER:
+  #     If MMMM is 1, from 2 byte to 3 byte is the root int8 value.
+  #     If MMMM is 2, from 2 byte to 4 byte is the root int16 value.
+  #     If MMMM is 4, from 2 byte to 5 byte is the root int32 value.
+  #     If MMMM is 8, from 2 byte to 9 byte is the root int64 value.
+  #
+  #   If TTT is DOUBLE:
+  #     If E is 1, MMMM represents the value. See TAG for the details.
+  #     If E is 0, from 2 byte to 9 byte is the root double value.
+  #
+  #   If TTT is CONSTANT, MMMM represents the value. See TAG for the
+  #   details.
+  #
+  # FLAGS: 3 bytes (big endian): Flags
+  #   * 0b00000000_00000000_00000001:
+  #     * OBJECT_VALUE16: OBJECT 16 bits values buffer is used
+  #   * 0b00000000_00000000_00000010:
+  #     * OBJECT_VALUE32: OBJECT 32 bits values buffer is used
+  #   * 0b00000000_00000000_00000100:
+  #     * OBJECT_POSITION8: OBJECT 8 bits positions buffer is used
+  #   * 0b00000000_00000000_00001000:
+  #     * OBJECT_POSITION16: OBJECT 16 bits positions buffer is used
+  #   * 0b00000000_00000000_00010000:
+  #     * OBJECT_POSITION32: OBJECT 32 bits positions buffer is used
+  #   * 0b00000000_00000000_00100000:
+  #     * ARRAY_VALUE16: ARRAY 16 bits values buffer is used
+  #   * 0b00000000_00000000_01000000:
+  #     * ARRAY_VALUE32: ARRAY 32 bits values buffer is used
+  #   * 0b00000000_00000000_10000000:
+  #     * ARRAY_POSITION8: ARRAY 8 bits positions buffer is used
+  #   * 0b00000000_00000001_00000000:
+  #     * ARRAY_POSITION16: ARRAY 16 bits positions buffer is used
+  #   * 0b00000000_00000010_00000000:
+  #     * ARRAY_POSITION32: ARRAY 32 bits positions buffer is used
+  #   * 0b00000000_00000100_00000000:
+  #     * STRING_VALUE: STRING values buffer is used
+  #   * 0b00000000_00001000_00000000:
+  #     * STRING_POSITION8: STRING 8 bits positions buffer is used
+  #   * 0b00000000_00010000_00000000:
+  #     * STRING_POSITION16: STRING 16 bits positions buffer is used
+  #   * 0b00000000_00100000_00000000:
+  #     * STRING_POSITION32: STRING 32 bits positions buffer is used
+  #   * 0b00000000_01000000_00000000:
+  #     * INT16: INT16 values buffer is used
+  #   * 0b00000000_10000010_00000000:
+  #     * INT32: INT32 values buffer is used
+  #   * 0b00000001_00000000_00000000:
+  #     * INT64: INT64 values buffer is used
+  #   * 0b00000010_00000000_00000000:
+  #     * DOUBLE: DOUBLE values buffer is used
+  #   * 0b00000100_00000000_00000000:
+  #     * OFFSET32: BUFFER_OFFSETS uses 32 bits
   #
   # BUFFERS: It contains the following buffers. They can be accessed
   #          by offsets in the BUFFER_OFFSETS.
@@ -53,48 +135,6 @@ module ParsedJSON
   #   * INTEGER(int32) values buffer
   #   * INTEGER(int64) values buffer
   #   * DOUBLE values buffer
-  #
-  # FLAGS: 4 bytes flags
-  #   * 0b00000000_00000000_00000000_00000001:
-  #     * TAG32: TAG 32 bits buffer is used
-  #   * 0b00000000_00000000_00000000_00000010:
-  #     * OBJECT_VALUE16: OBJECT 16 bits values buffer is used
-  #   * 0b00000000_00000000_00000000_00000100:
-  #     * OBJECT_VALUE32: OBJECT 32 bits values buffer is used
-  #   * 0b00000000_00000000_00000000_00001000:
-  #     * OBJECT_POSITION8: OBJECT 8 bits positions buffer is used
-  #   * 0b00000000_00000000_00000000_00010000:
-  #     * OBJECT_POSITION16: OBJECT 16 bits positions buffer is used
-  #   * 0b00000000_00000000_00000000_00100000:
-  #     * OBJECT_POSITION32: OBJECT 32 bits positions buffer is used
-  #   * 0b00000000_00000000_00000000_01000000:
-  #     * ARRAY_VALUE16: ARRAY 16 bits values buffer is used
-  #   * 0b00000000_00000000_00000000_10000000:
-  #     * ARRAY_VALUE32: ARRAY 32 bits values buffer is used
-  #   * 0b00000000_00000000_00000001_00000000:
-  #     * ARRAY_POSITION8: ARRAY 8 bits positions buffer is used
-  #   * 0b00000000_00000000_00000010_00000000:
-  #     * ARRAY_POSITION16: ARRAY 16 bits positions buffer is used
-  #   * 0b00000000_00000000_00000100_00000000:
-  #     * ARRAY_POSITION32: ARRAY 32 bits positions buffer is used
-  #   * 0b00000000_00000000_00001000_00000000:
-  #     * STRING_VALUE: STRING values buffer is used
-  #   * 0b00000000_00000000_00010000_00000000:
-  #     * STRING_POSITION8: STRING 8 bits positions buffer is used
-  #   * 0b00000000_00000000_00100000_00000000:
-  #     * STRING_POSITION16: STRING 16 bits positions buffer is used
-  #   * 0b00000000_00000000_01000000_00000000:
-  #     * STRING_POSITION32: STRING 32 bits positions buffer is used
-  #   * 0b00000000_00000000_10000000_00000000:
-  #     * INT16: INT16 values buffer is used
-  #   * 0b00000000_00000001_00000010_00000000:
-  #     * INT32: INT32 values buffer is used
-  #   * 0b00000000_00000010_00000000_00000000:
-  #     * INT64: INT64 values buffer is used
-  #   * 0b00000000_00000100_00000000_00000000:
-  #     * DOUBLE: DOUBLE values buffer is used
-  #   * 0b00000000_00001000_00000000_00000000:
-  #     * OFFSET32: BUFFER_OFFSETS uses 32 bits
   #
   # BUFFER_OFFSETS: 32 bits if FLAGS has OFFSET32, 16 bits otherwise
   #   It contains the following offsets in this order:
@@ -137,29 +177,28 @@ module ParsedJSON
   #     * If FLAGS has DOUBLE:
   #       * DOUBLE values buffer offset
 
-  module Flags
-    SIZE = UINT32_SIZE
+  ROOT_TAG_SIZE = UINT8_SIZE
 
-    TAG32             = 0b00000000_00000000_00000000_00000001
-    OBJECT_VALUE16    = 0b00000000_00000000_00000000_00000010
-    OBJECT_VALUE32    = 0b00000000_00000000_00000000_00000100
-    OBJECT_POSITION8  = 0b00000000_00000000_00000000_00001000
-    OBJECT_POSITION16 = 0b00000000_00000000_00000000_00010000
-    OBJECT_POSITION32 = 0b00000000_00000000_00000000_00100000
-    ARRAY_VALUE16     = 0b00000000_00000000_00000000_01000000
-    ARRAY_VALUE32     = 0b00000000_00000000_00000000_10000000
-    ARRAY_POSITION8   = 0b00000000_00000000_00000001_00000000
-    ARRAY_POSITION16  = 0b00000000_00000000_00000010_00000000
-    ARRAY_POSITION32  = 0b00000000_00000000_00000100_00000000
-    STRING_VALUE      = 0b00000000_00000000_00001000_00000000
-    STRING_POSITION8  = 0b00000000_00000000_00010000_00000000
-    STRING_POSITION16 = 0b00000000_00000000_00100000_00000000
-    STRING_POSITION32 = 0b00000000_00000000_01000000_00000000
-    INT16             = 0b00000000_00000000_10000000_00000000
-    INT32             = 0b00000000_00000001_00000000_00000000
-    INT64             = 0b00000000_00000010_00000000_00000000
-    DOUBLE            = 0b00000000_00000100_00000000_00000000
-    OFFSET32          = 0b00000000_00001000_00000000_00000000
+  module Flags
+    OBJECT_VALUE16    = 0b00000000_00000000_00000001
+    OBJECT_VALUE32    = 0b00000000_00000000_00000010
+    OBJECT_POSITION8  = 0b00000000_00000000_00000100
+    OBJECT_POSITION16 = 0b00000000_00000000_00001000
+    OBJECT_POSITION32 = 0b00000000_00000000_00010000
+    ARRAY_VALUE16     = 0b00000000_00000000_00100000
+    ARRAY_VALUE32     = 0b00000000_00000000_01000000
+    ARRAY_POSITION8   = 0b00000000_00000000_10000000
+    ARRAY_POSITION16  = 0b00000000_00000001_00000000
+    ARRAY_POSITION32  = 0b00000000_00000010_00000000
+    STRING_VALUE      = 0b00000000_00000100_00000000
+    STRING_POSITION8  = 0b00000000_00001000_00000000
+    STRING_POSITION16 = 0b00000000_00010000_00000000
+    STRING_POSITION32 = 0b00000000_00100000_00000000
+    INT16             = 0b00000000_01000000_00000000
+    INT32             = 0b00000000_10000000_00000000
+    INT64             = 0b00000001_00000000_00000000
+    DOUBLE            = 0b00000010_00000000_00000000
+    OFFSET32          = 0b00000100_00000000_00000000
   end
 
   module Type
@@ -405,6 +444,22 @@ class ParsedJSONWriter
     end
   end
 
+  class RootTagWriter
+    include ParsedJSON
+
+    def initialize(buffer)
+      @buffer = buffer
+    end
+
+    def write(type, is_embedded, metadata, data)
+      unless data.zero?
+        raise "Root tag's data must be zero: #{data.inspect}"
+      end
+      root_tag = pack_tag(type, is_embedded, metadata, 0)
+      @buffer << [root_tag].pack("C")
+    end
+  end
+
   class PositionWriter
     include ParsedJSON
 
@@ -445,7 +500,7 @@ class ParsedJSONWriter
   def initialize(output, target)
     @output = output
     @target = target
-    @tag_writer = TagWriter.new(:tag, @output)
+    @root_tag_writer = RootTagWriter.new(@output)
     @object_values = +"".b
     @object_values_writer = TagWriter.new(:object, @object_values)
     @object_positions = +"".b
@@ -464,130 +519,34 @@ class ParsedJSONWriter
   end
 
   def write
-    write_value(@tag_writer, @target)
-    flags = 0
-    buffer_offsets = []
-    offset = @tag_writer.size16
-    if @tag_writer.size32 > 0
-      flags |= Flags::TAG32
-      buffer_offsets << @tag_writer.size32
-      offset += @tag_writer.size32
-    end
-    if @object_values_writer.size16 > 0
-      flags |= Flags::OBJECT_VALUE16
-      @output << @object_values
-      buffer_offsets << offset
-      offset += @object_values_writer.size16
-    end
-    if @object_values_writer.size32 > 0
-      flags |= Flags::OBJECT_VALUE32
-      buffer_offsets << offset
-      offset += @object_values_writer.size32
-    end
-    unless @object_positions.empty?
-      @output << @object_positions
-    end
-    if @object_positions_writer.size8 > 0
-      flags |= Flags::OBJECT_POSITION8
-      buffer_offsets << offset
-      offset += @object_positions_writer.size8
-    end
-    if @object_positions_writer.size16 > 0
-      flags |= Flags::OBJECT_POSITION16
-      buffer_offsets << offset
-      offset += @object_positions_writer.size16
-    end
-    if @object_positions_writer.size32 > 0
-      flags |= Flags::OBJECT_POSITION32
-      buffer_offsets << offset
-      offset += @object_positions_writer.size32
-    end
-    if @array_values_writer.size16 > 0
-      flags |= Flags::ARRAY_VALUE16
-      @output << @array_values
-      buffer_offsets << offset
-      offset += @array_values_writer.size16
-    end
-    if @array_values_writer.size32 > 0
-      flags |= Flags::ARRAY_VALUE32
-      buffer_offsets << offset
-      offset += @array_values_writer.size32
-    end
-    unless @array_positions.empty?
-      @output << @array_positions
-    end
-    if @array_positions_writer.size8 > 0
-      flags |= Flags::ARRAY_POSITION8
-      buffer_offsets << offset
-      offset += @array_positions_writer.size8
-    end
-    if @array_positions_writer.size16 > 0
-      flags |= Flags::ARRAY_POSITION16
-      buffer_offsets << offset
-      offset += @array_positions_writer.size16
-    end
-    if @array_positions_writer.size32 > 0
-      flags |= Flags::ARRAY_POSITION32
-      buffer_offsets << offset
-      offset += @array_positions_writer.size32
-    end
-    unless @string_values.empty?
-      flags |= Flags::STRING_VALUE
-      @output << @string_values
-      buffer_offsets << offset
-      offset += @string_values.bytesize
-      @output << @string_positions
-      if @string_positions_writer.size8 > 0
-        flags |= Flags::STRING_POSITION8
-        buffer_offsets << offset
-        offset += @string_positions_writer.size8
-      end
-      if @string_positions_writer.size16 > 0
-        flags |= Flags::STRING_POSITION16
-        buffer_offsets << offset
-        offset += @string_positions_writer.size16
-      end
-      if @string_positions_writer.size32 > 0
-        flags |= Flags::STRING_POSITION32
-        buffer_offsets << offset
-        offset += @string_positions_writer.size32
-      end
-    end
-    unless @int16_values.empty?
-      flags |= Flags::INT16
-      @output << @int16_values
-      buffer_offsets << offset
-      offset += @int16_values.bytesize
-    end
-    unless @int32_values.empty?
-      flags |= Flags::INT32
-      @output << @int32_values
-      buffer_offsets << offset
-      offset += @int32_values.bytesize
-    end
-    unless @int64_values.empty?
-      flags |= Flags::INT64
-      @output << @int64_values
-      buffer_offsets << offset
-      offset += @int64_values.bytesize
-    end
-    unless @double_values.empty?
-      flags |= Flags::DOUBLE
-      @output << @double_values
-      buffer_offsets << offset
-      offset += @double_values.bytesize
-    end
-    if not buffer_offsets.empty? and buffer_offsets.last > 65535
-      flags |= Flags::OFFSET32
-      @output << buffer_offsets.pack("L*")
-    else
-      @output << buffer_offsets.pack("S*")
-    end
-    @output << [flags].pack("L")
+    write_value(@root_tag_writer, @target, true)
   end
 
   private
-  def write_container(tag_writer, target)
+  def write_value(tag_writer, value, is_root)
+    case value
+    when Hash # object
+      write_container(tag_writer, value, is_root)
+    when Array
+      write_container(tag_writer, value, is_root)
+    when String
+      write_string(tag_writer, value, is_root)
+    when Integer
+      write_integer(tag_writer, value, is_root)
+    when Float
+      write_double(tag_writer, value, is_root)
+    when true
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::TRUE, 0)
+    when false
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::FALSE, 0)
+    when nil
+      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::NULL, 0)
+    else
+      raise "Unknown value: #{value.inspect}"
+    end
+  end
+
+  def write_container(tag_writer, target, is_root)
     targets = [target]
     tag_writers = [tag_writer]
     until targets.empty?
@@ -611,49 +570,212 @@ class ParsedJSONWriter
           tag_writers << @array_values_writer
         end
       else
-        write_value(tag_writer, target)
+        write_value(tag_writer, target, false)
       end
+    end
+    if is_root
+      write_footer
     end
   end
 
-  def write_string(tag_writer, value)
-    if tag_writer.size32 > 0
-      max_embeddable_size = 3
-    else
-      max_embeddable_size = 1
+  def append_tag_buffer_offsets(flags,
+                                offset,
+                                buffer_offsets,
+                                tag_writer,
+                                flag16,
+                                flag32)
+    if tag_writer.size16 > 0
+      flags |= flag16
+      buffer_offsets << offset
+      offset += tag_writer.size16
     end
-    if value.bytesize <= max_embeddable_size
+    if tag_writer.size32 > 0
+      flags |= flag32
+      buffer_offsets << offset
+      offset += tag_writer.size32
+    end
+    [flags, offset]
+  end
+
+  def append_position_buffer_offsets(flags,
+                                     offset,
+                                     buffer_offsets,
+                                     position_writer,
+                                     flag8,
+                                     flag16,
+                                     flag32)
+    if position_writer.size8 > 0
+      flags |= flag8
+      buffer_offsets << offset
+      offset += position_writer.size8
+    end
+    if position_writer.size16 > 0
+      flags |= flag16
+      buffer_offsets << offset
+      offset += position_writer.size16
+    end
+    if position_writer.size32 > 0
+      flags |= flag32
+      buffer_offsets << offset
+      offset += position_writer.size32
+    end
+    [flags, offset]
+  end
+
+  def write_footer
+    flags = 0
+    offset = UINT32_SIZE
+    outputs = []
+    buffer_offsets = []
+
+    unless @object_values.empty?
+      outputs << @object_values
+      flags, offset = append_tag_buffer_offsets(flags,
+                                                offset,
+                                                buffer_offsets,
+                                                @object_values_writer,
+                                                Flags::OBJECT_VALUE16,
+                                                Flags::OBJECT_VALUE32)
+    end
+    unless @object_positions.empty?
+      outputs << @object_positions
+      flags, offset = append_position_buffer_offsets(flags,
+                                                     offset,
+                                                     buffer_offsets,
+                                                     @object_positions_writer,
+                                                     Flags::OBJECT_POSITION8,
+                                                     Flags::OBJECT_POSITION16,
+                                                     Flags::OBJECT_POSITION32)
+    end
+    unless @array_values.empty?
+      outputs << @array_values
+      flags, offset = append_tag_buffer_offsets(flags,
+                                                offset,
+                                                buffer_offsets,
+                                                @array_values_writer,
+                                                Flags::ARRAY_VALUE16,
+                                                Flags::ARRAY_VALUE32)
+    end
+    unless @array_positions.empty?
+      outputs << @array_positions
+      flags, offset = append_position_buffer_offsets(flags,
+                                                     offset,
+                                                     buffer_offsets,
+                                                     @array_positions_writer,
+                                                     Flags::ARRAY_POSITION8,
+                                                     Flags::ARRAY_POSITION16,
+                                                     Flags::ARRAY_POSITION32)
+    end
+    unless @string_values.empty?
+      flags |= Flags::STRING_VALUE
+      outputs << @string_values
+      buffer_offsets << offset
+      offset += @string_values.bytesize
+      outputs << @string_positions
+      flags, offset = append_position_buffer_offsets(flags,
+                                                     offset,
+                                                     buffer_offsets,
+                                                     @string_positions_writer,
+                                                     Flags::STRING_POSITION8,
+                                                     Flags::STRING_POSITION16,
+                                                     Flags::STRING_POSITION32)
+    end
+    unless @int16_values.empty?
+      flags |= Flags::INT16
+      outputs << @int16_values
+      buffer_offsets << offset
+      offset += @int16_values.bytesize
+    end
+    unless @int32_values.empty?
+      flags |= Flags::INT32
+      outputs << @int32_values
+      buffer_offsets << offset
+      offset += @int32_values.bytesize
+    end
+    unless @int64_values.empty?
+      flags |= Flags::INT64
+      outputs << @int64_values
+      buffer_offsets << offset
+      offset += @int64_values.bytesize
+    end
+    unless @double_values.empty?
+      flags |= Flags::DOUBLE
+      outputs << @double_values
+      buffer_offsets << offset
+      offset += @double_values.bytesize
+    end
+    if not buffer_offsets.empty? and buffer_offsets.last > 65535
+      flags |= Flags::OFFSET32
+      outputs << buffer_offsets.pack("L*")
+    else
+      outputs << buffer_offsets.pack("S*")
+    end
+    @output << [flags >> 16, (flags >> 8) & (0xff), flags & 0xff].pack("C3")
+    outputs.each do |output|
+      @output << output
+    end
+  end
+
+  def write_string(tag_writer, value, is_root)
+    if is_root
+      is_embedded = false
+    else
+      if tag_writer.size32 > 0
+        max_embeddable_size = 3
+      else
+        max_embeddable_size = 1
+      end
+      is_embeddable = value.bytesize <= max_embeddable_size
+    end
+    if is_embeddable
       data = 0
       value.unpack("C*").each.with_index do |character, i|
         data |= character << (8 * i)
       end
       tag_writer.write(Type::STRING, true, value.bytesize, data)
     else
-      @string_values.append_as_bytes(value)
-      index = @string_positions_writer.write(value.bytesize)
+      if is_root
+        output = @output
+        index = 0
+      else
+        output = @string_values
+        index = @string_positions_writer.write(value.bytesize)
+      end
       tag_writer.write(Type::STRING, false, 0, index)
+      output.append_as_bytes(value)
     end
   end
 
-  def write_integer(tag_writer, value)
+  def detect_integer_n_bytes(value)
     if -(2 ** 7) <= value and value <= (2 ** 7 - 1)
-      n_bytes = 1
+      1
     elsif -(2 ** 15) <= value and value <= (2 ** 15 - 1)
-      n_bytes = 2
+      2
     elsif -(2 ** 31) <= value and value <= (2 ** 31 - 1)
-      n_bytes = 3
+      3
     elsif -(2 ** 63) <= value and value <= (2 ** 63 - 1)
-      n_bytes = 4
+      4
     else
-      write_double(tag_writer, value.to_f)
+      nil
+    end
+  end
+
+  def write_integer(tag_writer, value, is_root)
+    n_bytes = detect_integer_n_bytes(value)
+    if n_bytes.nil?
+      write_double(tag_writer, value.to_f, is_root)
       return
     end
 
-    is_tag32 = (tag_writer.size32 > 0)
-    if is_tag32
-      is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
+    if is_root
+      is_embedded = false
     else
-      is_embeddable = (n_bytes == 1)
+      is_tag32 = (tag_writer.size32 > 0)
+      if is_tag32
+        is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
+      else
+        is_embeddable = (n_bytes == 1)
+      end
     end
     if is_embeddable
       if not is_tag32 and value < 0
@@ -661,21 +783,31 @@ class ParsedJSONWriter
       end
       tag_writer.write(Type::INTEGER, true, n_bytes, value)
     else
-      if n_bytes == 2
-        offset = @int16_values.bytesize
-        @int16_values << [value].pack("s")
-      elsif n_bytes == 3
-        offset = @int32_values.bytesize
-        @int32_values << [value].pack("l")
+      if is_root
+        output = @output
+        offset = 0
       else
-        offset = @int64_values.bytesize
-        @int64_values << [value].pack("q")
+        if n_bytes == 2
+          output = @int16_values
+        elsif n_bytes == 3
+          output = @int32_values
+        else
+          output = @int64_values
+        end
+        offset = output.bytesize
       end
       tag_writer.write(Type::INTEGER, false, n_bytes, offset)
+      if n_bytes == 2
+        output << [value].pack("s")
+      elsif n_bytes == 2
+        output << [value].pack("l")
+      else
+        output << [value].pack("q")
+      end
     end
   end
 
-  def write_double(tag_writer, value)
+  def write_double(tag_writer, value, is_root)
     if value.nan?
       tag_writer.write(Type::DOUBLE, true, Metadata::Double::NAN, 0)
     elsif value.infinite?
@@ -703,32 +835,15 @@ class ParsedJSONWriter
                          0)
       end
     else
-      offset = @double_values.bytesize
-      @double_values << [value].pack("d")
+      if is_root
+        output = @output
+        offset = 0
+      else
+        output = @double_values
+        offset = output.bytesize
+      end
       tag_writer.write(Type::DOUBLE, false, 0, offset)
-    end
-  end
-
-  def write_value(tag_writer, value)
-    case value
-    when Hash # object
-      write_container(tag_writer, value)
-    when Array
-      write_container(tag_writer, value)
-    when String
-      write_string(tag_writer, value)
-    when Integer
-      write_integer(tag_writer, value)
-    when Float
-      write_double(tag_writer, value)
-    when true
-      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::TRUE, 0)
-    when false
-      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::FALSE, 0)
-    when nil
-      tag_writer.write(Type::CONSTANT, true, Metadata::Constant::NULL, 0)
-    else
-      raise "Unknown value: #{value.inspect}"
+      output << [value].pack("d")
     end
   end
 end
@@ -804,13 +919,56 @@ class ParsedJSONReader
   end
 
   def read
-    flags_offset = @input.bytesize - Flags::SIZE
-    @flags = @input.unpack1("L", offset: flags_offset)
+    root_tag = @input.unpack1("C")
+    read_value(root_tag, true)
+  end
+
+  private
+  def read_value(tag, is_root)
+    type, is_embedded, metadata, data = unpack_tag(tag)
+    if type == Type::CONSTANT
+      case metadata
+      when Metadata::Constant::TRUE
+        return true
+      when Metadata::Constant::FALSE
+        return false
+      when Metadata::Constant::NULL
+        return nil
+      else
+        raise "Unknown constant metadata: #{metadata.inspect}"
+      end
+    end
+
+    if is_root
+      case type
+      when Type::OBJECT, Type::ARRAY
+        read_footer
+      end
+    end
+
+    case type
+    when Type::OBJECT
+      read_object(data, is_root)
+    when Type::ARRAY
+      read_array(data, is_root)
+    when Type::STRING
+      read_string(is_embedded, metadata, data, is_root)
+    when Type::INTEGER
+      read_integer(is_embedded, metadata, data, is_root)
+    when Type::DOUBLE
+      read_double(is_embedded, metadata, data, is_root)
+    else
+      raise "Unknown type: #{type.inspect}"
+    end
+  end
+
+  def read_footer
+    @flags = 0
+    @input.unpack("C3", offset: UINT8_SIZE).each_with_index do |flag, i|
+      @flags |= (flag << (8 * (2 - i)))
+    end
 
     n_buffer_offsets = 0
-    if flagged?(Flags::TAG32)
-      n_buffer_offsets += 1
-    end
     if flagged?(Flags::OBJECT_VALUE16)
       n_buffer_offsets += 1
     end
@@ -868,28 +1026,19 @@ class ParsedJSONReader
 
     if flagged?(Flags::OFFSET32)
       buffer_offsets_offset =
-        flags_offset - (UINT32_SIZE * n_buffer_offsets)
+        @input.bytesize - (UINT32_SIZE * n_buffer_offsets)
       buffer_offsets = @input.unpack("L#{n_buffer_offsets}",
                                      offset: buffer_offsets_offset)
     else
       buffer_offsets_offset =
-        flags_offset - (UINT16_SIZE * n_buffer_offsets)
+        @input.bytesize - (UINT16_SIZE * n_buffer_offsets)
       buffer_offsets = @input.unpack("S#{n_buffer_offsets}",
                                      offset: buffer_offsets_offset)
     end
-    @tag16_ranges = []
-    buffer_offsets << flags_offset
+    buffer_offsets << @input.bytesize
     i = 0
-    @tag16_ranges << (0...buffer_offsets[i])
-    if flagged?(Flags::TAG32)
-      @tag32_offset = buffer_offsets[i]
-      i += 1
-    else
-      @tag32_offset = 0
-    end
     if flagged?(Flags::OBJECT_VALUE16)
       @object16_values_offset = buffer_offsets[i]
-      @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
       @n_object16_values =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
       i += 1
@@ -911,7 +1060,6 @@ class ParsedJSONReader
                                              i)
     if flagged?(Flags::ARRAY_VALUE16)
       @array16_values_offset = buffer_offsets[i]
-      @tag16_ranges << (buffer_offsets[i]...buffer_offsets[i + 1])
       @n_array16_values =
         (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
       i += 1
@@ -957,11 +1105,8 @@ class ParsedJSONReader
       @double_values_offset = buffer_offsets[i]
       i += 1
     end
-
-    read_value(0)
   end
 
-  private
   def flagged?(flag)
     (@flags & flag) == flag
   end
@@ -1003,7 +1148,7 @@ class ParsedJSONReader
     [i, resolver]
   end
 
-  def read_object(index)
+  def read_object(index, is_root)
     start, next_start = @object_position_resolver.resolve(index)
     n_skip_values = start * 2 # 1 member has key and value
     n_members = next_start - start
@@ -1017,26 +1162,31 @@ class ParsedJSONReader
     object = {}
     offset = base_values_offset
     n_members.times do |i|
-      name = read_value(offset)
       if n_skip_values + (i * 2) < @n_object16_values
         member_size = UINT16_SIZE
+        tag = @input.unpack1("S", offset: offset)
       else
         member_size = UINT32_SIZE
+        tag = @input.unpack1("L", offset: offset)
       end
+      name = read_value(tag, false)
       offset += member_size
-      value = read_value(offset)
+
       if n_skip_values + (i * 2) + 1 < @n_object16_values
         member_size = UINT16_SIZE
+        tag = @input.unpack1("S", offset: offset)
       else
         member_size = UINT32_SIZE
+        tag = @input.unpack1("L", offset: offset)
       end
+      value = read_value(tag, false)
       offset += member_size
       object[name] = value
     end
     object
   end
 
-  def read_array(index)
+  def read_array(index, is_root)
     start, next_start = @array_position_resolver.resolve(index)
     n_elements = next_start - start
     if start < @n_array16_values
@@ -1052,16 +1202,18 @@ class ParsedJSONReader
     n_elements.times.collect do |i|
       if start + i < @n_array16_values
         element_size = UINT16_SIZE
+        tag = @input.unpack1("S", offset: offset)
       else
         element_size = UINT32_SIZE
+        tag = @input.unpack1("L", offset: offset)
       end
-      value = read_value(offset)
+      value = read_value(tag, false)
       offset += element_size
       value
     end
   end
 
-  def read_string(is_embedded, length, data)
+  def read_string(is_embedded, length, data, is_root)
     if is_embedded
       bytes = []
       length.times do |i|
@@ -1069,15 +1221,19 @@ class ParsedJSONReader
       end
       string = bytes.pack("C*")
     else
-      index = data
-      start, next_start = @string_position_resolver.resolve(index)
-      string = @input[@string_values_offset + start, next_start - start]
+      if is_root
+        string = @input[ROOT_TAG_SIZE..-1]
+      else
+        index = data
+        start, next_start = @string_position_resolver.resolve(index)
+        string = @input[@string_values_offset + start, next_start - start]
+      end
     end
     string.force_encoding("UTF-8")
     string
   end
 
-  def read_integer(is_embedded, n_bytes, data)
+  def read_integer(is_embedded, n_bytes, data, is_root)
     if is_embedded
       case n_bytes
       when 1
@@ -1089,18 +1245,30 @@ class ParsedJSONReader
         data & 0xffffff
       end
     else
-      values_offset = data
-      if n_bytes == 2
-        @input.unpack1("s", offset: @int16_values_offset + data)
-      elsif n_bytes == 3
-        @input.unpack1("l", offset: @int32_values_offset + data)
+      if is_root
+        if n_bytes == 1
+          @input.unpack1("c", offset: ROOT_TAG_SIZE)
+        elsif n_bytes == 2
+          @input.unpack1("s", offset: ROOT_TAG_SIZE)
+        elsif n_bytes == 3
+          @input.unpack1("l", offset: ROOT_TAG_SIZE)
+        else
+          @input.unpack1("q", offset: ROOT_TAG_SIZE)
+        end
       else
-        @input.unpack1("q", offset: @int64_values_offset + data)
+        values_offset = data
+        if n_bytes == 2
+          @input.unpack1("s", offset: @int16_values_offset + data)
+        elsif n_bytes == 3
+          @input.unpack1("l", offset: @int32_values_offset + data)
+        else
+          @input.unpack1("q", offset: @int64_values_offset + data)
+        end
       end
     end
   end
 
-  def read_double(is_embedded, metadata, data)
+  def read_double(is_embedded, metadata, data, is_root)
     if is_embedded
       case metadata
       when Metadata::Double::NAN
@@ -1115,45 +1283,11 @@ class ParsedJSONReader
         -0.0
       end
     else
-      @input.unpack1("d", offset: @double_values_offset + data)
-    end
-  end
-
-  def read_value(offset)
-    if @tag16_ranges.any? {|range| range.cover?(offset)}
-      tag_size = 16
-      tag = @input.unpack1("S", offset: offset)
-    else
-      tag_size = 32
-      tag = @input.unpack1("L", offset: offset)
-    end
-    type, is_embedded, metadata, data = unpack_tag(tag)
-    if type == Type::CONSTANT
-      case metadata
-      when Metadata::Constant::TRUE
-        return true
-      when Metadata::Constant::FALSE
-        return false
-      when Metadata::Constant::NULL
-        return nil
+      if is_root
+        @input.unpack1("d", offset: ROOT_TAG_SIZE)
       else
-        raise "Unknown constant metadata: #{metadata.inspect}"
+        @input.unpack1("d", offset: @double_values_offset + data)
       end
-    end
-
-    case type
-    when Type::OBJECT
-      read_object(data)
-    when Type::ARRAY
-      read_array(data)
-    when Type::STRING
-      read_string(is_embedded, metadata, data)
-    when Type::INTEGER
-      read_integer(is_embedded, metadata, data)
-    when Type::DOUBLE
-      read_double(is_embedded, metadata, data)
-    else
-      raise "Unknown type: #{type.inspect}"
     end
   end
 end
