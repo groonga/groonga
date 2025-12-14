@@ -851,6 +851,28 @@ end
 class ParsedJSONReader
   include ParsedJSON
 
+  class VariableSizeTagResolver
+    include ParsedJSON
+
+    def initialize(input, offset16, n16, offset32, n32)
+      @input = input
+      @offset16 = offset16
+      @n16 = n16
+      @offset32 = offset32
+      @n32 = n32
+    end
+
+    def resolve(i)
+      if i < @n16
+        offset = @offset16 + i * UINT16_SIZE
+        @input.unpack1("S", offset: offset)
+      else
+        offset = @offset32 + (i - @n16) * UINT32_SIZE
+        @input.unpack1("L", offset: offset)
+      end
+    end
+  end
+
   class VariableSizePositionResolver
     include ParsedJSON
 
@@ -1037,42 +1059,22 @@ class ParsedJSONReader
     end
     buffer_offsets << @input.bytesize
     i = 0
-    if flagged?(Flags::OBJECT_VALUE16)
-      @object16_values_offset = buffer_offsets[i]
-      @n_object16_values =
-        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
-      i += 1
-    else
-      @object16_values_offset = 0
-      @n_object16_values = 0
-    end
-    if flagged?(Flags::OBJECT_VALUE32)
-      @object32_values_offset = buffer_offsets[i]
-      i += 1
-    else
-      @object32_values_offset = 0
-    end
+    i, @object_tag_resolver =
+      create_variable_size_tag_resolver(Flags::OBJECT_VALUE16,
+                                        Flags::OBJECT_VALUE32,
+                                        buffer_offsets,
+                                        i)
     i, @object_position_resolver =
       create_variable_size_position_resolver(Flags::OBJECT_POSITION8,
                                              Flags::OBJECT_POSITION16,
                                              Flags::OBJECT_POSITION32,
                                              buffer_offsets,
                                              i)
-    if flagged?(Flags::ARRAY_VALUE16)
-      @array16_values_offset = buffer_offsets[i]
-      @n_array16_values =
-        (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
-      i += 1
-    else
-      @array16_values_offset = 0
-      @n_array16_values = 0
-    end
-    if flagged?(Flags::ARRAY_VALUE32)
-      @array32_values_offset = buffer_offsets[i]
-      i += 1
-    else
-      @array32_values_offset = 0
-    end
+    i, @array_tag_resolver =
+      create_variable_size_tag_resolver(Flags::ARRAY_VALUE16,
+                                        Flags::ARRAY_VALUE32,
+                                        buffer_offsets,
+                                        i)
     i, @array_position_resolver =
       create_variable_size_position_resolver(Flags::ARRAY_POSITION8,
                                              Flags::ARRAY_POSITION16,
@@ -1111,6 +1113,32 @@ class ParsedJSONReader
     (@flags & flag) == flag
   end
 
+  def create_variable_size_tag_resolver(flag16,
+                                        flag32,
+                                        buffer_offsets,
+                                        i)
+    if flagged?(flag16)
+      offset16 = buffer_offsets[i]
+      n16 = (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
+      i += 1
+    else
+      offset16 = 0
+      n16 = 0
+    end
+    if flagged?(flag32)
+      offset32 = buffer_offsets[i]
+      n32 = (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT32_SIZE
+      i += 1
+    else
+      offset32 = 0
+      n32 = 0
+    end
+    resolver = VariableSizeTagResolver.new(@input,
+                                           offset16, n16,
+                                           offset32, n32)
+    [i, resolver]
+  end
+
   def create_variable_size_position_resolver(flag8,
                                              flag16,
                                              flag32,
@@ -1140,47 +1168,21 @@ class ParsedJSONReader
       offset32 = 0
       n_32 = 0
     end
-    resolver =
-      VariableSizePositionResolver.new(@input,
-                                       offset8, n8,
-                                       offset16, n16,
-                                       offset32, n32)
+    resolver = VariableSizePositionResolver.new(@input,
+                                                offset8, n8,
+                                                offset16, n16,
+                                                offset32, n32)
     [i, resolver]
   end
 
   def read_object(index, is_root)
     start, next_start = @object_position_resolver.resolve(index)
-    n_skip_values = start * 2 # 1 member has key and value
-    n_members = next_start - start
-    if n_skip_values < @n_object16_values
-      base_values_offset = @object16_values_offset
-      base_values_offset += n_skip_values * UINT16_SIZE
-    else
-      base_values_offset = @object32_values_offset
-      base_values_offset += (n_skip_values - @n_object16_values) * UINT32_SIZE
-    end
     object = {}
-    offset = base_values_offset
-    n_members.times do |i|
-      if n_skip_values + (i * 2) < @n_object16_values
-        member_size = UINT16_SIZE
-        tag = @input.unpack1("S", offset: offset)
-      else
-        member_size = UINT32_SIZE
-        tag = @input.unpack1("L", offset: offset)
-      end
+    start.step(next_start - 1) do |i|
+      tag = @object_tag_resolver.resolve(i * 2)
       name = read_value(tag, false)
-      offset += member_size
-
-      if n_skip_values + (i * 2) + 1 < @n_object16_values
-        member_size = UINT16_SIZE
-        tag = @input.unpack1("S", offset: offset)
-      else
-        member_size = UINT32_SIZE
-        tag = @input.unpack1("L", offset: offset)
-      end
+      tag = @object_tag_resolver.resolve(i * 2 + 1)
       value = read_value(tag, false)
-      offset += member_size
       object[name] = value
     end
     object
@@ -1188,28 +1190,9 @@ class ParsedJSONReader
 
   def read_array(index, is_root)
     start, next_start = @array_position_resolver.resolve(index)
-    n_elements = next_start - start
-    if start < @n_array16_values
-      element_size = UINT16_SIZE
-      base_values_offset = @array16_values_offset
-      base_values_offset += start * element_size
-    else
-      element_size = UINT32_SIZE
-      base_values_offset = @array32_values_offset
-      base_values_offset += (start - @n_array16_values) * element_size
-    end
-    offset = base_values_offset
-    n_elements.times.collect do |i|
-      if start + i < @n_array16_values
-        element_size = UINT16_SIZE
-        tag = @input.unpack1("S", offset: offset)
-      else
-        element_size = UINT32_SIZE
-        tag = @input.unpack1("L", offset: offset)
-      end
-      value = read_value(tag, false)
-      offset += element_size
-      value
+    start.step(next_start - 1).collect do |i|
+      tag = @array_tag_resolver.resolve(i)
+      read_value(tag, false)
     end
   end
 
