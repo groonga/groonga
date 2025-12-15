@@ -30,6 +30,7 @@ extern "C" {
 #define GRN_TYPE_SHORT_BINARY_SIZE GRN_TABLE_MAX_KEY_SIZE
 #define GRN_TYPE_BINARY_SIZE (1U << 16)
 #define GRN_TYPE_LONG_BINARY_SIZE (1U << 31)
+#define GRN_TYPE_JSON_SIZE (1U << 31)
 
 grn_obj *
 grn_type_create_internal(grn_ctx *ctx,
