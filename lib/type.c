@@ -69,6 +69,8 @@ grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id)
     return "Binary";
   case GRN_DB_LONG_BINARY:
     return "LongBinary";
+  case GRN_DB_JSON:
+    return "JSON";
   default:
     return "not a builtin type";
   }
@@ -77,7 +79,7 @@ grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id)
 bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
-  return id >= GRN_DB_OBJECT && id <= GRN_DB_BFLOAT16;
+  return id >= GRN_DB_OBJECT && id <= GRN_DB_JSON;
 }
 
 bool
@@ -174,6 +176,8 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
     return GRN_TYPE_BINARY_SIZE;
   case GRN_DB_LONG_BINARY:
     return GRN_TYPE_LONG_BINARY_SIZE;
+  case GRN_DB_JSON:
+    return GRN_TYPE_JSON_SIZE;
   default:
     {
       GRN_API_ENTER;

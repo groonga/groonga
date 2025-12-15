@@ -380,6 +380,22 @@ object_list
       "path": null,
       "size": 2147483648
     },
+    "JSON": {
+      "id": 24,
+      "name": "JSON",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",

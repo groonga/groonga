@@ -1084,6 +1084,7 @@ typedef enum {
   GRN_DB_SHORT_BINARY,
   GRN_DB_BINARY,
   GRN_DB_LONG_BINARY,
+  GRN_DB_JSON,
 } grn_builtin_type;
 
 typedef enum {

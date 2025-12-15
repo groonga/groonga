@@ -23,6 +23,13 @@ schema
         "can_be_key_type": true,
         "can_be_value_type": true
       },
+      "Binary": {
+        "id": 22,
+        "name": "Binary",
+        "size": 65536,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
       "Bool": {
         "id": 3,
         "name": "Bool",
@@ -72,6 +79,20 @@ schema
         "can_be_key_type": true,
         "can_be_value_type": true
       },
+      "JSON": {
+        "id": 24,
+        "name": "JSON",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "LongBinary": {
+        "id": 23,
+        "name": "LongBinary",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
       "LongText": {
         "id": 16,
         "name": "LongText",
@@ -85,6 +106,13 @@ schema
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
+      },
+      "ShortBinary": {
+        "id": 21,
+        "name": "ShortBinary",
+        "size": 4096,
+        "can_be_key_type": true,
+        "can_be_value_type": false
       },
       "ShortText": {
         "id": 14,

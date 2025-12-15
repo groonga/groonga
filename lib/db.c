@@ -15059,6 +15059,10 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_BINARY) {
     return GRN_FILE_CORRUPT;
   }
+  obj = deftype(ctx, "JSON", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_JSON_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_JSON) {
+    return GRN_FILE_CORRUPT;
+  }
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_MECAB; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
