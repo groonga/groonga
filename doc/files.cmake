@@ -20,7 +20,7 @@ set(GRN_DOC_SOURCES
     contribution/development/repository.rst
     contribution/development/test.rst
     contribution/documentation.rst
-    contribution/documentation/c-api.rst
+    contribution/documentation/c-api.md
     contribution/documentation/i18n.rst
     contribution/documentation/introduction.md
     contribution/report.rst
