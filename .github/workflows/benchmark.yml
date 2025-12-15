@@ -86,7 +86,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ccache
           key: benchmark-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -124,7 +124,7 @@ jobs:
             pkg-config \
             red-arrow \
             rroonga
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: |
             ~/.cache/red-datasets
