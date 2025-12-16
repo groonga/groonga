@@ -444,7 +444,7 @@ jobs:
         continue-on-error: true
         run: |
           docker compose push ${{ matrix.target }}
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: matrix.target == 'arch-linux'
         with:
           name: arch-linux
@@ -632,7 +632,7 @@ jobs:
           cp -a *.pkg.tar.* ../../
 
       # Artifact
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.msystem }}
           path: "*.pkg.tar.*"
@@ -871,7 +871,7 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER}.zip" `
             "${Env:INSTALL_FOLDER}.zip"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: matrix.warn_conversion == 'OFF'
         with:
           name: release-${{ env.INSTALL_FOLDER }}
@@ -936,7 +936,7 @@ jobs:
           Copy-Item `
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip" `
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: matrix.warn_conversion == 'OFF'
         with:
           name: release-${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
