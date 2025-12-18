@@ -2254,6 +2254,21 @@ grn_caster_cast_text_to_bulk_binary(grn_ctx *ctx, grn_caster *caster)
 }
 
 static grn_rc
+grn_caster_cast_text_to_bulk_json(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_json_parser *parser =
+    grn_json_parser_open(ctx, caster->src, caster->dest);
+  if (!parser) {
+    return ctx->rc;
+  }
+
+  grn_rc rc = grn_json_parser_parse(ctx, parser);
+  grn_json_parser_close(ctx, parser);
+
+  return rc;
+}
+
+static grn_rc
 grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -2434,6 +2449,9 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
   case GRN_DB_LONG_BINARY:
     rc = grn_caster_cast_text_to_bulk_binary(ctx, caster);
     break;
+  case GRN_DB_JSON:
+    rc = grn_caster_cast_text_to_bulk_json(ctx, caster);
+    break;
   default:
     rc = grn_caster_cast_to_record(ctx, caster);
     break;
@@ -2523,6 +2541,45 @@ grn_caster_cast_binary(grn_ctx *ctx, grn_caster *caster)
   switch (caster->dest->header.type) {
   case GRN_BULK:
     rc = grn_caster_cast_binary_to_bulk(ctx, caster);
+    break;
+  default:
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_json_to_bulk_text(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_json_to_string(ctx, caster->src, caster->dest);
+  return ctx->rc;
+}
+
+static grn_rc
+grn_caster_cast_json_to_bulk(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    rc = grn_caster_cast_json_to_bulk_text(ctx, caster);
+    break;
+  default:
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_json(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.type) {
+  case GRN_BULK:
+    rc = grn_caster_cast_json_to_bulk(ctx, caster);
     break;
   default:
     rc = GRN_INVALID_ARGUMENT;
@@ -2892,6 +2949,9 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
   case GRN_DB_BINARY:
   case GRN_DB_LONG_BINARY:
     rc = grn_caster_cast_binary(ctx, caster);
+    break;
+  case GRN_DB_JSON:
+    rc = grn_caster_cast_json(ctx, caster);
     break;
   case GRN_VOID:
     rc = grn_obj_reinit(ctx,

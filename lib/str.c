@@ -3317,6 +3317,12 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_obj_cast(ctx, obj, bulk, false);
       GRN_TEXT_PUTC(ctx, bulk, '"');
       break;
+    case GRN_DB_JSON:
+      GRN_TEXT_PUTC(ctx, bulk, '"');
+      /* TODO: Escape " */
+      grn_json_to_string(ctx, obj, bulk);
+      GRN_TEXT_PUTC(ctx, bulk, '"');
+      break;
     default:
       if (format) {
         size_t j;

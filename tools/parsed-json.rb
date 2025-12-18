@@ -470,7 +470,6 @@ class ParsedJSONWriter
 
     def write(type, is_embedded, metadata, data)
       tag = pack_tag(type, is_embedded, metadata, data)
-      offset = @buffer.bytesize
       if @size32 > 0 or data > 255
         @buffer << [tag].pack("L")
         @size32 += UINT32_SIZE

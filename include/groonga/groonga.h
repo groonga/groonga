@@ -2815,6 +2815,28 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_BINARY_VALUE(obj) ((const uint8_t *)GRN_BULK_HEAD(obj))
 #define GRN_BINARY_LEN(obj)   GRN_BULK_VSIZE(obj)
 
+#define GRN_JSON_INIT(obj, flags)                                              \
+  GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_JSON)
+#define GRN_JSON_SET_REF(obj, data, len)                                       \
+  do {                                                                         \
+    (obj)->u.b.head = (char *)(data);                                          \
+    (obj)->u.b.curr = (char *)(data) + (len);                                  \
+  } while (0)
+#define GRN_JSON_SET(ctx, obj, data, len)                                      \
+  do {                                                                         \
+    if ((obj)->header.impl_flags & GRN_OBJ_REFER) {                            \
+      GRN_JSON_SET_REF((obj), (data), (len));                                  \
+    } else {                                                                   \
+      grn_bulk_write_from((ctx),                                               \
+                          (obj),                                               \
+                          (const char *)(data),                                \
+                          0,                                                   \
+                          (unsigned int)(len));                                \
+    }                                                                          \
+  } while (0)
+#define GRN_JSON_VALUE(obj) ((const uint8_t *)GRN_BULK_HEAD(obj))
+#define GRN_JSON_LEN(obj)   GRN_BULK_VSIZE(obj)
+
 #define GRN_BOOL_INIT(obj, flags)                                              \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BOOL)
 #define GRN_INT8_INIT(obj, flags)                                              \

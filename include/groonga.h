@@ -50,6 +50,7 @@
 #include "groonga/id.h"
 #include "groonga/ii.h"
 #include "groonga/index_column.h"
+#include "groonga/json.h"
 #include "groonga/language_model.h"
 #include "groonga/memory.h"
 #include "groonga/memory_map.h"

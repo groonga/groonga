@@ -173,6 +173,12 @@ grn_output_binary(grn_ctx *ctx,
                   const uint8_t *value,
                   size_t value_len);
 GRN_API void
+grn_output_json(grn_ctx *ctx,
+                grn_obj *outbuf,
+                grn_content_type output_type,
+                const uint8_t *value,
+                size_t value_len);
+GRN_API void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,
                 grn_content_type output_type,
