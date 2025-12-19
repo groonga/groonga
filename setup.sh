@@ -71,6 +71,11 @@ function setup_with_apt () {
         rapidjson-dev
         zlib1g-dev
       )
+      if [ "${distribution}-${code_name}" != "ubuntu-jammy" ]; then
+        package_names+=(
+          doxygen-awesome-css
+        )
+      fi
       if [ "${distribution}-${code_name}" != "ubuntu-noble" ]; then
         package_names+=(
           libfaiss-dev
