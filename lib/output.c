@@ -940,6 +940,49 @@ grn_output_binary(grn_ctx *ctx,
 }
 
 void
+grn_output_json(grn_ctx *ctx,
+                grn_obj *outbuf,
+                grn_content_type output_type,
+                const uint8_t *value,
+                size_t value_len)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  grn_obj bulk;
+  GRN_JSON_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_JSON_SET(ctx, &bulk, value, value_len);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    /* TODO: pretty output */
+    grn_json_to_string(ctx, &bulk, outbuf);
+    break;
+  case GRN_CONTENT_TSV:
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[output][json] TSV output isn't supported");
+    break;
+  case GRN_CONTENT_XML:
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[output][json] XML output isn't supported");
+    break;
+  case GRN_CONTENT_MSGPACK:
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[output][json] MessagePack output isn't supported");
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST:
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[output][json] Groonga command list output isn't supported");
+    break;
+  case GRN_CONTENT_APACHE_ARROW:
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[output][json] Apache Arrow  output isn't supported");
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  GRN_OBJ_FIN(ctx, &bulk);
+  INCR_LENGTH;
+}
+
+void
 grn_output_bool(grn_ctx *ctx,
                 grn_obj *outbuf,
                 grn_content_type output_type,
@@ -1655,6 +1698,13 @@ grn_output_bulk(grn_ctx *ctx,
                       output_type,
                       GRN_BINARY_VALUE(bulk),
                       GRN_BINARY_LEN(bulk));
+    break;
+  case GRN_DB_JSON:
+    grn_output_json(ctx,
+                    outbuf,
+                    output_type,
+                    GRN_JSON_VALUE(bulk),
+                    GRN_JSON_LEN(bulk));
     break;
   default:
     if (format) {
