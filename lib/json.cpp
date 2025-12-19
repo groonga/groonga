@@ -19,6 +19,8 @@
 #include "grn_ctx.h"
 
 #ifdef GRN_WITH_SIMDJSON
+#  include <cmath>
+#  include <limits>
 #  include <string>
 
 #  include <simdjson.h>
@@ -30,11 +32,16 @@ namespace {
     kArray = 1,
     kString = 2,
     kInteger = 3,
-    kDouble = 4,
+    kFloat = 4,
     kConstant = 5,
   };
 
   namespace metadata {
+    enum class Float {
+      kPositiveZero = 0,
+      kNegativeZero = 1,
+    };
+
     enum class Constant {
       kTrue = 0,
       kFalse = 1,
@@ -131,19 +138,22 @@ namespace {
       }
 
       simdjson::ondemand::parser parser;
-      auto document = parser.iterate(GRN_TEXT_VALUE(input_),
-                                     GRN_TEXT_LEN(input_),
-                                     GRN_BULK_WSIZE(input_));
-      if (document.error() != simdjson::SUCCESS) {
+      simdjson::ondemand::document document;
+      auto error_code = parser
+                          .iterate(GRN_TEXT_VALUE(input_),
+                                   GRN_TEXT_LEN(input_),
+                                   GRN_BULK_WSIZE(input_))
+                          .get(document);
+      if (error_code != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s failed to parse: %s",
             tag,
-            simdjson::error_message(document.error()));
+            simdjson::error_message(error_code));
         return;
       }
 
       json_type type;
-      auto error_code = document.type().get(type);
+      error_code = document.type().get(type);
       if (error_code != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s failed to get root value type: %s",
@@ -159,8 +169,10 @@ namespace {
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s object isn't supported yet", tag);
         return;
       case json_type::number:
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s number isn't supported yet", tag);
-        return;
+        if (!parse_number(root_tag_writer_, document)) {
+          return;
+        }
+        break;
       case json_type::string:
         if (!parse_string(root_tag_writer_, document)) {
           return;
@@ -177,10 +189,7 @@ namespace {
         }
         break;
       default:
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get root value: %s",
-            tag,
-            simdjson::error_message(document.error()));
+        ERR(GRN_INVALID_ARGUMENT, "%s failed to get root value", tag);
         return;
       }
     }
@@ -191,9 +200,131 @@ namespace {
     grn_obj *output_;
     RootTagWriter root_tag_writer_;
 
-    template <typename Container>
     bool
-    parse_string(RootTagWriter &root_tag_writer, Container &container)
+    parse_double(RootTagWriter &root_tag_writer,
+                 simdjson::ondemand::document &container)
+    {
+      auto ctx = ctx_;
+      const char *tag = "[json-parser][parse][double]";
+
+      double value;
+      auto error_code = container.get_double().get(value);
+      if (error_code != simdjson::SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to get floating-point number: %s",
+            tag,
+            simdjson::error_message(error_code));
+        return false;
+      }
+      if (std::fpclassify(value) == FP_ZERO) {
+        uint8_t metadata =
+          std::signbit(value)
+            ? static_cast<uint8_t>(metadata::Float::kNegativeZero)
+            : static_cast<uint8_t>(metadata::Float::kPositiveZero);
+        root_tag_writer.write(Type::kFloat, true, metadata, 0);
+      } else {
+        root_tag_writer.write(Type::kFloat, false, 0, 0);
+        GRN_FLOAT_PUT(ctx_, output_, value);
+      }
+      return true;
+    }
+
+    bool
+    parse_int64(RootTagWriter &root_tag_writer,
+                simdjson::ondemand::document &container)
+    {
+      auto ctx = ctx_;
+      const char *tag = "[json-parser][parse][int64]";
+
+      int64_t value;
+      auto error_code = container.get_int64().get(value);
+      if (error_code != simdjson::SUCCESS) {
+#  ifndef BIGINT_NUMBER
+        return parse_double(root_tag_writer, container);
+#  endif
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to get int64 number: %s",
+            tag,
+            simdjson::error_message(error_code));
+        return false;
+      }
+      uint8_t n_bytes;
+      if (std::numeric_limits<int8_t>::min() <= value &&
+          value <= std::numeric_limits<int8_t>::max()) {
+        n_bytes = 1;
+      } else if (std::numeric_limits<int16_t>::min() <= value &&
+                 value <= std::numeric_limits<int16_t>::max()) {
+        n_bytes = 2;
+      } else if (std::numeric_limits<int32_t>::min() <= value &&
+                 value <= std::numeric_limits<int32_t>::max()) {
+        n_bytes = 4;
+      } else {
+        n_bytes = 8;
+      }
+      root_tag_writer.write(Type::kInteger, false, n_bytes, 0);
+      if (n_bytes == 1) {
+        GRN_INT8_PUT(ctx_, output_, value);
+      } else if (n_bytes == 2) {
+        GRN_INT16_PUT(ctx_, output_, value);
+      } else if (n_bytes == 4) {
+        GRN_INT32_PUT(ctx_, output_, value);
+      } else {
+        GRN_INT64_PUT(ctx_, output_, value);
+      }
+      return true;
+    }
+
+    bool
+    parse_number(RootTagWriter &root_tag_writer,
+                 simdjson::ondemand::document &container)
+    {
+      using number_type = simdjson::ondemand::number_type;
+      const char *tag = "[json-parser][parse][number]";
+      auto ctx = ctx_;
+
+      number_type type;
+      auto error_code = container.get_number_type().get(type);
+      if (error_code != simdjson::SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to get number type: %s",
+            tag,
+            simdjson::error_message(error_code));
+        return false;
+      }
+
+      switch (type) {
+      case number_type::floating_point_number:
+#  ifdef BIGINT_NUMBER
+      case number_type::big_integer: // simdjson 3.7.1 or later has this.
+#  endif
+        return parse_double(root_tag_writer, container);
+        break;
+      case number_type::unsigned_integer:
+        // simdjson < 3.1.0 detects -9223372036854775808 as unsigned
+        // integer: https://github.com/simdjson/simdjson/pull/1819
+        if constexpr (simdjson::SIMDJSON_VERSION_MAJOR < 3 ||
+                      (simdjson::SIMDJSON_VERSION_MAJOR == 3 &&
+                       simdjson::SIMDJSON_VERSION_MINOR < 1)) {
+          // Try parsing this as an int64 value. parse_int64() falls
+          // back to parse_double() when this is not an int64 value.
+          return parse_int64(root_tag_writer, container);
+        }
+        return parse_double(root_tag_writer, container);
+        break;
+      case number_type::signed_integer:
+        return parse_int64(root_tag_writer, container);
+      default:
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s unsupported number type: %d",
+            tag,
+            static_cast<int32_t>(type));
+        return false;
+      }
+    }
+
+    bool
+    parse_string(RootTagWriter &root_tag_writer,
+                 simdjson::ondemand::document &container)
     {
       const char *tag = "[json-parser][parse][string]";
       auto ctx = ctx_;
@@ -244,13 +375,19 @@ namespace {
       auto ctx = ctx_;
 
       bool is_null;
-      auto error_code = container.is_null().get(is_null);
-      if (error_code != simdjson::SUCCESS) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get value: %s",
-            tag,
-            simdjson::error_message(error_code));
-        return false;
+      if constexpr (simdjson::SIMDJSON_VERSION_MAJOR >= 4 ||
+                    (simdjson::SIMDJSON_VERSION_MAJOR == 3 &&
+                     simdjson::SIMDJSON_VERSION_MINOR >= 1)) {
+        auto error_code = container.is_null().get(is_null);
+        if (error_code != simdjson::SUCCESS) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s failed to determine null: %s",
+              tag,
+              simdjson::error_message(error_code));
+          return false;
+        }
+      } else {
+        is_null = container.is_null();
       }
       uint8_t metadata = static_cast<uint8_t>(metadata::Constant::kNull);
       tag_writer.write(Type::kConstant, true, metadata, 0);
@@ -296,13 +433,18 @@ namespace {
       }
       if (current_offset_ == 0) {
         auto root_tag = unpack_tag(GRN_JSON_VALUE(json_)[current_offset_]);
+        current_offset_ += sizeof(uint8_t);
         switch (root_tag.type) {
+        case Type::kInteger:
+          return next_integer(root_tag, true);
+          break;
+        case Type::kFloat:
+          return next_float(root_tag, true);
+          break;
         case Type::kString:
-          current_offset_ += sizeof(uint8_t);
           return next_string(root_tag, true);
           break;
         case Type::kConstant:
-          current_offset_ += sizeof(uint8_t);
           return next_constant(root_tag);
           break;
         default:
@@ -356,10 +498,108 @@ namespace {
     {
       Tag tag;
       tag.type = static_cast<Type>(raw_tag & 0b111);
-      tag.is_embedded = (raw_tag & (0b10000));
+      tag.is_embedded = (raw_tag & (0b1000));
       tag.metadata = ((raw_tag >> 4) & (0b00001111));
       tag.data = (raw_tag >> 8);
       return tag;
+    }
+
+    grn_rc
+    next_float(const Tag &tag, bool is_root)
+    {
+      auto ctx = ctx_;
+      static const char *log_tag = "[json-reader][next][float]";
+
+      if (tag.is_embedded) {
+        switch (static_cast<metadata::Float>(tag.metadata)) {
+        case metadata::Float::kPositiveZero:
+          GRN_FLOAT_SET(ctx_, &float_value_, 0.0);
+          break;
+        case metadata::Float::kNegativeZero:
+          GRN_FLOAT_SET(ctx_, &float_value_, -0.0);
+          break;
+        default:
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s unknown embedded float: %u",
+              log_tag,
+              tag.metadata);
+          return ctx->rc;
+        }
+        current_type_ = GRN_JSON_VALUE_FLOAT;
+        current_value_ = &float_value_;
+        current_size_ = 0;
+      } else {
+        if (is_root) {
+          size_t size = GRN_JSON_LEN(json_) - current_offset_;
+          if (size != sizeof(double)) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "%s data size mismatch: expected:%" GRN_FMT_SIZE
+                " actual:%" GRN_FMT_SIZE,
+                log_tag,
+                sizeof(double),
+                size);
+            return ctx->rc;
+          }
+          double value = reinterpret_cast<const double *>(
+            GRN_JSON_VALUE(json_) + current_offset_)[0];
+          current_type_ = GRN_JSON_VALUE_FLOAT;
+          GRN_FLOAT_SET(ctx_, &float_value_, value);
+          current_value_ = &float_value_;
+          current_size_ = 0;
+          current_offset_ += size;
+        } else {
+          ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+              "%s root value is only supported",
+              log_tag);
+          return ctx->rc;
+        }
+      }
+      return ctx->rc;
+    }
+
+    grn_rc
+    next_integer(const Tag &tag, bool is_root)
+    {
+      auto ctx = ctx_;
+      static const char *log_tag = "[json-reader][next][integer]";
+
+      if (is_root) {
+        uint8_t n_bytes = tag.metadata;
+        size_t size = GRN_JSON_LEN(json_) - current_offset_;
+        if (size != n_bytes) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s data size mismatch: expected:%u actual:%" GRN_FMT_SIZE,
+              log_tag,
+              n_bytes,
+              size);
+          return ctx->rc;
+        }
+        int64_t value;
+        if (n_bytes == 1) {
+          value = reinterpret_cast<const int8_t *>(GRN_JSON_VALUE(json_) +
+                                                   current_offset_)[0];
+        } else if (n_bytes == 2) {
+          value = reinterpret_cast<const int16_t *>(GRN_JSON_VALUE(json_) +
+                                                    current_offset_)[0];
+        } else if (n_bytes == 4) {
+          value = reinterpret_cast<const int32_t *>(GRN_JSON_VALUE(json_) +
+                                                    current_offset_)[0];
+        } else {
+          value = reinterpret_cast<const int64_t *>(GRN_JSON_VALUE(json_) +
+                                                    current_offset_)[0];
+        }
+        current_type_ = GRN_JSON_VALUE_INT64;
+        GRN_INT64_SET(ctx_, &int64_value_, value);
+        current_value_ = &int64_value_;
+        current_size_ = 0;
+        current_offset_ += size;
+      } else {
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+            "%s root value is only supported",
+            log_tag);
+        return ctx->rc;
+      }
+      return ctx->rc;
     }
 
     grn_rc
