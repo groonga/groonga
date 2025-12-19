@@ -968,11 +968,20 @@ namespace {
                                                  indexes);
     const float *centroid = tokenizer->options->centroids.data() +
                             (tokenizer->options->n_dimensions * indexes[0]);
-    grn_token_set_data(ctx,
-                       token,
-                       reinterpret_cast<const char *>(centroid),
-                       sizeof(float) * tokenizer->options->n_dimensions);
-    grn_token_set_domain(ctx, token, GRN_DB_SHORT_BINARY);
+    if (tokenizer->options->centroid_column) {
+      grn_id centroid_id = indexes[0];
+      grn_token_set_data(ctx,
+                         token,
+                         reinterpret_cast<const char *>(&centroid_id),
+                         sizeof(grn_id));
+      grn_token_set_domain(ctx, token, GRN_DB_UINT32);
+    } else {
+      grn_token_set_data(ctx,
+                         token,
+                         reinterpret_cast<const char *>(centroid),
+                         sizeof(float) * tokenizer->options->n_dimensions);
+      grn_token_set_domain(ctx, token, GRN_DB_SHORT_BINARY);
+    }
     grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
     if (grn_tokenizer_query_get_mode(ctx, query) == GRN_TOKENIZE_ADD) {
       if (tokenizer->options->quantizer == Quantizer::NONE) {
