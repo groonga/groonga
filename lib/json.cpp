@@ -24,14 +24,13 @@
 #  include <simdjson.h>
 #endif
 
-
 namespace {
   enum class Type {
-    kObject   = 0,
-    kArray    = 1,
-    kString   = 2,
-    kInteger  = 3,
-    kDouble   = 4,
+    kObject = 0,
+    kArray = 1,
+    kString = 2,
+    kInteger = 3,
+    kDouble = 4,
     kConstant = 5,
   };
 
@@ -41,7 +40,7 @@ namespace {
       kFalse = 1,
       kNull = 2,
     };
-  }
+  } // namespace metadata
 
   struct Tag {
     Type type;
@@ -52,7 +51,8 @@ namespace {
 
 #ifdef GRN_WITH_SIMDJSON
   uint32_t
-  pack_tag(Type type, bool is_embedded, uint8_t metadata, uint32_t data) {
+  pack_tag(Type type, bool is_embedded, uint8_t metadata, uint32_t data)
+  {
     uint32_t tag = static_cast<uint32_t>(type);
     if (is_embedded) {
       tag |= (1 << 3);
@@ -62,26 +62,22 @@ namespace {
     return tag;
   }
 
-  struct BaseTagWriter {
-    virtual ~BaseTagWriter() = default;
-    virtual void write(Type type, bool is_embedded, uint8_t metadata, uint32_t data) = 0;
-  };
-
-  struct TagWriter : public BaseTagWriter {
+  struct TagWriter {
     grn_ctx *ctx_;
     grn_obj buffer;
     uint32_t size16;
     uint32_t size32;
 
-    TagWriter(grn_ctx *ctx) : ctx_(ctx), buffer(), size16(0), size32(0) {
+    TagWriter(grn_ctx *ctx) : ctx_(ctx), buffer(), size16(0), size32(0)
+    {
       GRN_BINARY_INIT(&buffer, 0);
     }
 
-    ~TagWriter() {
-      GRN_OBJ_FIN(ctx_, &buffer);
-    }
+    ~TagWriter() { GRN_OBJ_FIN(ctx_, &buffer); }
 
-    void write(Type type, bool is_embedded, uint8_t metadata, uint32_t data) override {
+    void
+    write(Type type, bool is_embedded, uint8_t metadata, uint32_t data)
+    {
       auto tag = pack_tag(type, is_embedded, metadata, data);
       if (size32 > 0 || data > 255) {
         GRN_UINT32_PUT(ctx_, &buffer, tag);
@@ -93,36 +89,39 @@ namespace {
     }
   };
 
-  struct RootTagWriter : public BaseTagWriter  {
+  struct RootTagWriter {
     grn_ctx *ctx_;
-    grn_obj buffer;
+    grn_obj *buffer_;
 
-    RootTagWriter(grn_ctx *ctx) : ctx_(ctx), buffer() {
-      GRN_BINARY_INIT(&buffer, 0);
-    }
+    RootTagWriter(grn_ctx *ctx, grn_obj *buffer) : ctx_(ctx), buffer_(buffer) {}
 
-    ~RootTagWriter() {
-      GRN_OBJ_FIN(ctx_, &buffer);
-    }
+    ~RootTagWriter() = default;
 
-    void write(Type type, bool is_embedded, uint8_t metadata, uint32_t data) override {
+    void
+    write(Type type, bool is_embedded, uint8_t metadata, uint32_t data)
+    {
       assert(data == 0); // Root tag's data must be zero
       auto tag = pack_tag(type, is_embedded, metadata, 0);
-      GRN_UINT8_PUT(ctx_, &buffer, tag);
+      GRN_UINT8_PUT(ctx_, buffer_, tag);
     }
   };
 
   class JSONParser {
   public:
-    JSONParser(grn_ctx *ctx,
-               grn_obj *input,
-               grn_obj *output) : ctx_(ctx), input_(input), output_(output), root_tag_writer_(ctx_) {
+    JSONParser(grn_ctx *ctx, grn_obj *input, grn_obj *output)
+      : ctx_(ctx),
+        input_(input),
+        output_(output),
+        root_tag_writer_(ctx_, output)
+    {
     }
 
     ~JSONParser() = default;
 
-    void parse() {
-      using json_type = simdjson::fallback::ondemand::json_type;
+    void
+    parse()
+    {
+      using json_type = simdjson::ondemand::json_type;
       const char *tag = "[json-parser][parse]";
       auto ctx = ctx_;
 
@@ -138,7 +137,8 @@ namespace {
       if (document.error() != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s failed to parse: %s",
-            tag, simdjson::error_message(document.error()));
+            tag,
+            simdjson::error_message(document.error()));
         return;
       }
 
@@ -146,7 +146,9 @@ namespace {
       auto error_code = document.type().get(type);
       if (error_code != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get root value type: %s", tag, simdjson::error_message(error_code));
+            "%s failed to get root value type: %s",
+            tag,
+            simdjson::error_message(error_code));
         return;
       }
       switch (type) {
@@ -160,8 +162,10 @@ namespace {
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s number isn't supported yet", tag);
         return;
       case json_type::string:
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s string isn't supported yet", tag);
-        return;
+        if (!parse_string(root_tag_writer_, document)) {
+          return;
+        }
+        break;
       case json_type::boolean:
         if (!parse_boolean(root_tag_writer_, document)) {
           return;
@@ -174,13 +178,11 @@ namespace {
         break;
       default:
         ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get root value: %s", tag, simdjson::error_message(document.error()));
+            "%s failed to get root value: %s",
+            tag,
+            simdjson::error_message(document.error()));
         return;
       }
-
-      grn_bulk_write(ctx_, output_,
-                     GRN_BULK_HEAD(&(root_tag_writer_.buffer)),
-                     GRN_BULK_VSIZE(&(root_tag_writer_.buffer)));
     }
 
   private:
@@ -189,8 +191,31 @@ namespace {
     grn_obj *output_;
     RootTagWriter root_tag_writer_;
 
+    template <typename Container>
+    bool
+    parse_string(RootTagWriter &root_tag_writer, Container &container)
+    {
+      const char *tag = "[json-parser][parse][string]";
+      auto ctx = ctx_;
+
+      std::string_view value;
+      auto error_code = container.get_string().get(value);
+      if (error_code != simdjson::SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to get value: %s",
+            tag,
+            simdjson::error_message(error_code));
+        return false;
+      }
+
+      root_tag_writer.write(Type::kString, false, 0, 0);
+      GRN_TEXT_PUT(ctx_, output_, value.data(), value.size());
+      return true;
+    }
+
     template <typename TagWriter, typename Container>
-    bool parse_boolean(TagWriter& tag_writer, Container& container)
+    bool
+    parse_boolean(TagWriter &tag_writer, Container &container)
     {
       const char *tag = "[json-parser][parse][boolean]";
       auto ctx = ctx_;
@@ -199,18 +224,21 @@ namespace {
       auto error_code = container.get_bool().get(value);
       if (error_code != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get value: %s", tag, simdjson::error_message(error_code));
+            "%s failed to get value: %s",
+            tag,
+            simdjson::error_message(error_code));
         return false;
       }
-      uint8_t metadata = value ?
-        static_cast<uint8_t>(metadata::Constant::kTrue) :
-        static_cast<uint8_t>(metadata::Constant::kFalse);
+      uint8_t metadata = value
+                           ? static_cast<uint8_t>(metadata::Constant::kTrue)
+                           : static_cast<uint8_t>(metadata::Constant::kFalse);
       tag_writer.write(Type::kConstant, true, metadata, 0);
       return true;
     }
 
     template <typename TagWriter, typename Container>
-    bool parse_null(TagWriter& tag_writer, Container& container)
+    bool
+    parse_null(TagWriter &tag_writer, Container &container)
     {
       const char *tag = "[json-parser][parse][null]";
       auto ctx = ctx_;
@@ -219,7 +247,9 @@ namespace {
       auto error_code = container.is_null().get(is_null);
       if (error_code != simdjson::SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s failed to get value: %s", tag, simdjson::error_message(error_code));
+            "%s failed to get value: %s",
+            tag,
+            simdjson::error_message(error_code));
         return false;
       }
       uint8_t metadata = static_cast<uint8_t>(metadata::Constant::kNull);
@@ -231,22 +261,33 @@ namespace {
 
   class JSONReader {
   public:
-    JSONReader(grn_ctx *ctx,
-               grn_obj *json) : ctx_(ctx), json_(json), current_offset_(0), current_type_(GRN_JSON_VALUE_UNKNOWN), current_value_(nullptr), current_size_(0) {
+    JSONReader(grn_ctx *ctx, grn_obj *json)
+      : ctx_(ctx),
+        json_(json),
+        current_offset_(0),
+        current_type_(GRN_JSON_VALUE_UNKNOWN),
+        current_value_(nullptr),
+        current_size_(0)
+    {
       GRN_VOID_INIT(&null_value_);
       GRN_BOOL_INIT(&bool_value_, 0);
       GRN_INT64_INIT(&int64_value_, 0);
       GRN_FLOAT_INIT(&float_value_, 0);
+      GRN_TEXT_INIT(&string_value_, GRN_OBJ_DO_SHALLOW_COPY);
     }
 
-    ~JSONReader() {
+    ~JSONReader()
+    {
       GRN_OBJ_FIN(ctx_, &null_value_);
       GRN_OBJ_FIN(ctx_, &bool_value_);
       GRN_OBJ_FIN(ctx_, &int64_value_);
       GRN_OBJ_FIN(ctx_, &float_value_);
+      GRN_OBJ_FIN(ctx_, &string_value_);
     };
 
-    grn_rc next() {
+    grn_rc
+    next()
+    {
       static const char *tag = "[json-reader][next]";
       auto ctx = ctx_;
 
@@ -255,54 +296,45 @@ namespace {
       }
       if (current_offset_ == 0) {
         auto root_tag = unpack_tag(GRN_JSON_VALUE(json_)[current_offset_]);
-        if (root_tag.type == Type::kConstant) {
+        switch (root_tag.type) {
+        case Type::kString:
           current_offset_ += sizeof(uint8_t);
-          current_size_ = 0;
-          auto constant_metadata = static_cast<metadata::Constant>(root_tag.metadata);
-          switch (constant_metadata) {
-          case metadata::Constant::kTrue:
-            current_type_ = GRN_JSON_VALUE_TRUE;
-            GRN_BOOL_SET(ctx_, &bool_value_, true);
-            current_value_ = &bool_value_;
-            current_size_ = 0;
-            break;
-          case metadata::Constant::kFalse:
-            current_type_ = GRN_JSON_VALUE_FALSE;
-            GRN_BOOL_SET(ctx_, &bool_value_, false);
-            current_value_ = &bool_value_;
-            current_size_ = 0;
-            break;
-          case metadata::Constant::kNull:
-            current_type_ = GRN_JSON_VALUE_NULL;
-            current_value_ = &null_value_;
-            break;
-          default:
-            ERR(GRN_INVALID_ARGUMENT,
-                "%s invalid constant metadata: %u", tag, root_tag.metadata);
-            return ctx->rc;
-          }
-        } else {
+          return next_string(root_tag, true);
+          break;
+        case Type::kConstant:
+          current_offset_ += sizeof(uint8_t);
+          return next_constant(root_tag);
+          break;
+        default:
           ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-              "%s unsupported root value type", tag);
+              "%s unsupported root value type",
+              tag);
           return ctx->rc;
         }
       } else {
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-            "%s root value is only supported", tag);
+            "%s root value is only supported",
+            tag);
         return ctx->rc;
       }
       return ctx->rc;
     }
 
-    grn_json_value_type type() {
+    grn_json_value_type
+    type()
+    {
       return current_type_;
     }
 
-    grn_obj *value() {
+    grn_obj *
+    value()
+    {
       return current_value_;
     }
 
-    size_t size() {
+    size_t
+    size()
+    {
       return current_size_;
     }
 
@@ -317,8 +349,11 @@ namespace {
     grn_obj bool_value_;
     grn_obj int64_value_;
     grn_obj float_value_;
+    grn_obj string_value_;
 
-    Tag unpack_tag(uint32_t raw_tag) {
+    Tag
+    unpack_tag(uint32_t raw_tag)
+    {
       Tag tag;
       tag.type = static_cast<Type>(raw_tag & 0b111);
       tag.is_embedded = (raw_tag & (0b10000));
@@ -326,15 +361,81 @@ namespace {
       tag.data = (raw_tag >> 8);
       return tag;
     }
+
+    grn_rc
+    next_string(const Tag &tag, bool is_root)
+    {
+      auto ctx = ctx_;
+      static const char *log_tag = "[json-reader][next][string]";
+
+      if (is_root) {
+        size_t size = GRN_JSON_LEN(json_) - current_offset_;
+        current_type_ = GRN_JSON_VALUE_STRING;
+        GRN_TEXT_SET(ctx_,
+                     &string_value_,
+                     GRN_JSON_VALUE(json_) + current_offset_,
+                     size);
+        current_value_ = &string_value_;
+        current_size_ = 0;
+        current_offset_ += size;
+      } else {
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+            "%s root value is only supported",
+            log_tag);
+        return ctx->rc;
+      }
+      return ctx->rc;
+    }
+
+    grn_rc
+    next_constant(const Tag &tag)
+    {
+      auto ctx = ctx_;
+      static const char *log_tag = "[json-reader][next][constant]";
+
+      current_size_ = 0;
+      auto constant_metadata = static_cast<metadata::Constant>(tag.metadata);
+      switch (constant_metadata) {
+      case metadata::Constant::kTrue:
+        current_type_ = GRN_JSON_VALUE_TRUE;
+        GRN_BOOL_SET(ctx_, &bool_value_, true);
+        current_value_ = &bool_value_;
+        current_size_ = 0;
+        break;
+      case metadata::Constant::kFalse:
+        current_type_ = GRN_JSON_VALUE_FALSE;
+        GRN_BOOL_SET(ctx_, &bool_value_, false);
+        current_value_ = &bool_value_;
+        current_size_ = 0;
+        break;
+      case metadata::Constant::kNull:
+        current_type_ = GRN_JSON_VALUE_NULL;
+        current_value_ = &null_value_;
+        break;
+      default:
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid constant metadata: %u",
+            log_tag,
+            tag.metadata);
+        return ctx->rc;
+      }
+      return ctx->rc;
+    }
   };
 
   class JSONStringifier {
   public:
-    JSONStringifier(grn_ctx *ctx, grn_obj *json, grn_obj *buffer) : ctx_(ctx), json_(json), buffer_(buffer) {
+    JSONStringifier(grn_ctx *ctx, grn_obj *json, grn_obj *buffer)
+      : ctx_(ctx),
+        json_(json),
+        buffer_(buffer)
+    {
     }
     ~JSONStringifier() = default;
 
-    void stringify() {
+    void
+    stringify()
+    {
       JSONReader reader(ctx_, json_);
       while (true) {
         if (!stringify_value(reader)) {
@@ -343,12 +444,14 @@ namespace {
       }
     }
 
-    private:
+  private:
     grn_ctx *ctx_;
     grn_obj *json_;
     grn_obj *buffer_;
 
-    bool stringify_value(JSONReader &reader) {
+    bool
+    stringify_value(JSONReader &reader)
+    {
       const char *tag = "[json][to-string]";
 
       auto rc = reader.next();
@@ -374,50 +477,53 @@ namespace {
       case GRN_JSON_VALUE_FLOAT:
         grn_text_otoj(ctx_, buffer_, reader.value(), nullptr);
         return true;
+      case GRN_JSON_VALUE_STRING:
+        grn_text_otoj(ctx_, buffer_, reader.value(), nullptr);
+        return true;
       case GRN_JSON_VALUE_ARRAY:
-      {
-        GRN_TEXT_PUTS(ctx_, buffer_, "[");
-        size_t n = reader.size();
-        for (size_t i = 0; i < n; ++i) {
-          if (i != 0) {
-            GRN_TEXT_PUTS(ctx_, buffer_, ",");
+        {
+          GRN_TEXT_PUTS(ctx_, buffer_, "[");
+          size_t n = reader.size();
+          for (size_t i = 0; i < n; ++i) {
+            if (i != 0) {
+              GRN_TEXT_PUTS(ctx_, buffer_, ",");
+            }
+            if (!stringify_value(reader)) {
+              return false;
+            }
           }
-          if (!stringify_value(reader)) {
-            return false;
-          }
+          GRN_TEXT_PUTS(ctx_, buffer_, "]");
+          return true;
         }
-        GRN_TEXT_PUTS(ctx_, buffer_, "]");
-        return true;
-      }
       case GRN_JSON_VALUE_OBJECT:
-      {
-        GRN_TEXT_PUTS(ctx_, buffer_, "{");
-        size_t n = reader.size();
-        for (size_t i = 0; i < n; ++i) {
-          if (i != 0) {
-            GRN_TEXT_PUTS(ctx_, buffer_, ",");
+        {
+          GRN_TEXT_PUTS(ctx_, buffer_, "{");
+          size_t n = reader.size();
+          for (size_t i = 0; i < n; ++i) {
+            if (i != 0) {
+              GRN_TEXT_PUTS(ctx_, buffer_, ",");
+            }
+            if (!stringify_value(reader)) {
+              return false;
+            }
+            GRN_TEXT_PUTS(ctx_, buffer_, ":");
+            if (!stringify_value(reader)) {
+              return false;
+            }
           }
-          if (!stringify_value(reader)) {
-            return false;
-          }
-          GRN_TEXT_PUTS(ctx_, buffer_, ":");
-          if (!stringify_value(reader)) {
-            return false;
-          }
+          GRN_TEXT_PUTS(ctx_, buffer_, "}");
+          return true;
         }
-        GRN_TEXT_PUTS(ctx_, buffer_, "}");
-        return true;
-      }
       default:
-      {
-        auto ctx = ctx_;
-        ERR(GRN_INVALID_ARGUMENT, "%s invalid JSON", tag);
-        return false;
-      }
+        {
+          auto ctx = ctx_;
+          ERR(GRN_INVALID_ARGUMENT, "%s invalid JSON", tag);
+          return false;
+        }
       }
     }
   };
-}
+} // namespace
 
 extern "C" {
 struct _grn_json_parser {
@@ -426,12 +532,10 @@ struct _grn_json_parser {
 #else
   void *parser;
 #endif
-  };
+};
 
 grn_json_parser *
-grn_json_parser_open(grn_ctx *ctx,
-                     grn_obj *input,
-                     grn_obj *output)
+grn_json_parser_open(grn_ctx *ctx, grn_obj *input, grn_obj *output)
 {
   GRN_API_ENTER;
   grn_json_parser *parser = nullptr;
@@ -479,11 +583,11 @@ struct _grn_json_reader {
 };
 
 grn_json_reader *
-grn_json_reader_open(grn_ctx *ctx,
-                     grn_obj *json)
+grn_json_reader_open(grn_ctx *ctx, grn_obj *json)
 {
   GRN_API_ENTER;
-  auto reader = static_cast<grn_json_reader *>(GRN_MALLOC(sizeof(grn_json_reader)));
+  auto reader =
+    static_cast<grn_json_reader *>(GRN_MALLOC(sizeof(grn_json_reader)));
   if (!reader) {
     GRN_API_RETURN(nullptr);
   }

@@ -119,6 +119,7 @@ typedef enum {
   GRN_JSON_VALUE_TRUE,
   GRN_JSON_VALUE_INT64,
   GRN_JSON_VALUE_FLOAT,
+  GRN_JSON_VALUE_STRING,
   GRN_JSON_VALUE_ARRAY,
   GRN_JSON_VALUE_OBJECT,
 } grn_json_value_type;
@@ -179,6 +180,9 @@ grn_json_reader_next(grn_ctx *ctx, grn_json_reader *reader);
  *         If the current value is a floating-point number, \ref
  *         GRN_JSON_VALUE_FLOAT.
  *
+ *         If the current value is a string, \ref
+ *         GRN_JSON_VALUE_STRING.
+ *
  *         If the current value is an array, \ref
  *         GRN_JSON_VALUE_ARRAY.
  *
@@ -212,6 +216,8 @@ grn_json_reader_get_type(grn_ctx *ctx, grn_json_reader *reader);
  *
  *         If the current value is a floating-point number, \ref
  *         GRN_DB_FLOAT bulk.
+ *
+ *         If the current value is a string, \ref GRN_DB_TEXT bulk.
  *
  *         Otherwise, `NULL`. You can get array elements and object
  *         members by calling \ref grn_json_reader_next.
@@ -251,9 +257,7 @@ grn_json_reader_get_size(grn_ctx *ctx, grn_json_reader *reader);
  * \since 15.2.2
  */
 GRN_API grn_rc
-grn_json_to_string(grn_ctx *ctx,
-                   grn_obj *json,
-                   grn_obj *buffer);
+grn_json_to_string(grn_ctx *ctx, grn_obj *json, grn_obj *buffer);
 
 #ifdef __cplusplus
 }

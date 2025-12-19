@@ -3319,8 +3319,25 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     case GRN_DB_JSON:
       GRN_TEXT_PUTC(ctx, bulk, '"');
-      /* TODO: Escape " */
-      grn_json_to_string(ctx, obj, bulk);
+      {
+        grn_obj json_text;
+        GRN_TEXT_INIT(&json_text, 0);
+        grn_json_to_string(ctx, obj, &json_text);
+        const char *start = GRN_TEXT_VALUE(&json_text);
+        const char *end = start + GRN_TEXT_LEN(&json_text);
+        while (start < end) {
+          int length = grn_charlen(ctx, start, end);
+          if (length == 0) {
+            break;
+          }
+          if (length == 1 && start[0] == '"') {
+            GRN_TEXT_PUTC(ctx, bulk, '\\');
+          }
+          GRN_TEXT_PUT(ctx, bulk, start, length);
+          start += length;
+        }
+        GRN_OBJ_FIN(ctx, &json_text);
+      }
       GRN_TEXT_PUTC(ctx, bulk, '"');
       break;
     default:

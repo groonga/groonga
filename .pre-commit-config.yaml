@@ -43,6 +43,7 @@ repos:
           ?include/groonga/highlighter\.h|
           ?include/groonga/ii\.h|
           ?include/groonga/index_column\.h|
+          ?include/groonga/json\.h|
           ?include/groonga/language_model\.h|
           ?include/groonga/memory_map\.h|
           ?include/groonga/obj\.h|
@@ -136,6 +137,7 @@ repos:
           ?lib/ii\.cpp|
           ?lib/io\.c|
           ?lib/index_column\.c|
+          ?lib/json\.cpp|
           ?lib/language_model\.cpp|
           ?lib/load\.c|
           ?lib/memory_map\.c|
