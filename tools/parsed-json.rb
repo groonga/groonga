@@ -239,11 +239,11 @@ module ParsedJSON
 
   module Metadata
     module Double
-      NAN               = 0b0000
-      POSITIVE_INFINITY = 0b0001
-      NEGATIVE_INFINITY = 0b0010
-      POSITIVE_ZERO     = 0b0100
-      NEGATIVE_ZERO     = 0b1000
+      POSITIVE_ZERO     = 0
+      NEGATIVE_ZERO     = 1
+      NAN               = 2
+      POSITIVE_INFINITY = 3
+      NEGATIVE_INFINITY = 4
 
       class << self
         def resolve_value(value)
@@ -305,11 +305,11 @@ module ParsedJSON
   #         -(2^63) - (2^63-1): Index in int64 values.
   #   DOUBLE:
   #     If E is 1: (FYI: JSON doesn't permit Infinity and NaN...)
-  #       NaN:       MMMM is 0000
-  #       +Infinity: MMMM is 0001
-  #       -Infinity: MMMM is 0010
-  #       +0.0:      MMMM is 0100
-  #       -0.0:      MMMM is 1000
+  #       +0.0:      MMMM is 0000
+  #       -0.0:      MMMM is 0001
+  #       NaN:       MMMM is 0010
+  #       +Infinity: MMMM is 0011
+  #       -Infinity: MMMM is 0100
   #     Else:
   #       Index in double values.
   #   CONSTANT: Always 0. E is always 1.
