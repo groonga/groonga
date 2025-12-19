@@ -49,16 +49,19 @@ if(NOT EXISTS "${GRN_DOC_PRE_BUILD_STAMP}")
             HINTS /usr/share/doxygen-awesome-css)
   if(DOXYGEN_AWESOME_CSS_DIR)
     message(STATUS "Found doxygen-awesome-css: ${DOXYGEN_AWESOME_CSS_DIR}")
+    set(DOXYGEN_HTML_HEADER "doc/header.html")
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET
+        "${DOXYGEN_AWESOME_CSS_DIR}/doxygen-awesome.css")
+    set(DOXYGEN_HTML_EXTRA_FILES
+        "${DOXYGEN_AWESOME_CSS_DIR}/doxygen-awesome-darkmode-toggle.js \
+         ${DOXYGEN_AWESOME_CSS_DIR}/doxygen-awesome-fragment-copy-button.js \
+         ${DOXYGEN_AWESOME_CSS_DIR}/doxygen-awesome-interactive-toc.js \
+         ${DOXYGEN_AWESOME_CSS_DIR}/doxygen-awesome-paragraph-link.js")
   else()
-    message(STATUS "doxygen-awesome-css not found, downloading...")
-    include(FetchContent)
-    fetchcontent_declare(
-      doxygen-awesome-css
-      URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/heads/main.zip
-    )
-    fetchcontent_makeavailable(doxygen-awesome-css)
-    fetchcontent_getproperties(doxygen-awesome-css
-                               SOURCE_DIR DOXYGEN_AWESOME_CSS_DIR)
+    message(STATUS "doxygen-awesome-css not found, using default Doxygen theme")
+    set(DOXYGEN_HTML_HEADER "")
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET "")
+    set(DOXYGEN_HTML_EXTRA_FILES "")
   endif()
   set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/en/html/reference)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
