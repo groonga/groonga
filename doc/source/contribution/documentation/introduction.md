@@ -118,10 +118,27 @@ For example, if you have edited this {doc}`introduction` page, you can preview i
 ## Send patch
 
 You can submit your patch to the Groonga repository on GitHub via a pull request.
-Feel free to send a pull request by following two steps.
+Feel free to send a pull request by following these steps.
 
+- Enable preview on your fork (optional)
 - Prepare your pull request
 - Submit your pull request
+
+### Enable preview on your fork (optional)
+
+You can enable preview on your fork by the following:
+
+1. Enable GitHub Pages on your fork:
+   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`
+   - Select "GitHub Actions" as "Source"
+2. Accept publishing GitHub Pages from all branches on your fork:
+   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`
+   - Select the "github-pages" environment
+   - Change the default "Deployment branches and tags" rule:
+     - Press the "Edit" button
+     - Change the "Name pattern" to `*` from `main`
+
+You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` .
 
 ### Prepare your pull request
 
@@ -144,22 +161,6 @@ Follow these steps:
 2. Click the `Compare & pull request` button
 3. Make sure your changes are reflected
 4. Click the `Create Pull Request` button and send your pull request
-
-### Pull request and preview
-
-You can enable preview on your fork by the following:
-
-1. Enable GitHub Pages on your fork:
-   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`
-   - Select "GitHub Actions" as "Source"
-2. Accept publishing GitHub Pages from all branches on your fork:
-   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`
-   - Select the "github-pages" environment
-   - Change the default "Deployment branches and tags" rule:
-     - Press the "Edit" button
-     - Change the "Name pattern" to `*` from `main`
-
-You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` .
 
 ## Optional: Translate documentation
 
