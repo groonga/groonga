@@ -1,0 +1,84 @@
+name: Document Preview
+on:
+  push:
+    branches:
+      - '**'
+      - '!dependabot/**'
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document-preview.yml'
+      - 'Rakefile'
+      - 'cmake/**'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+  pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document-preview.yml'
+      - 'Rakefile'
+      - 'cmake/**'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v5
+        with:
+          path: ccache
+          key: document-preview-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: document-preview-linux-ccache-
+      - name: Install dependencies
+        run: |
+          ./setup.sh
+          pip install -r doc/requirements.txt
+          (cd doc && bundle install)
+      - name: Build document
+        run: |
+          ccache --show-stats --verbose --version || :
+          cmake -S . -B /tmp/groonga.build --preset=doc
+          mkdir -p /tmp/groonga.org/ja
+          rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
+          ccache --show-stats --verbose --version || :
+      - name: Upload
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: /tmp/groonga.org/
+  deploy:
+    name: Deploy
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref_name == 'main' || github.repository != 'groonga/groonga')
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
