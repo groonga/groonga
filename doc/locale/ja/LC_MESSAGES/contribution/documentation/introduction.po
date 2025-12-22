@@ -109,14 +109,50 @@ msgstr "生成されたファイルをWebブラウザで開き、変更を確認
 msgid "Send patch"
 msgstr "パッチを送る"
 
-msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
+msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following these steps."
 msgstr "GitHub上のGroongaリポジトリに対してプルリクエストを通じてパッチを送ることができます。次の手順で、気軽にプルリクエストを作ってみましょう。"
+
+msgid "Enable preview on your fork (optional)"
+msgstr "フォーク先リポジトリでプレビューを有効にする（任意）"
 
 msgid "Prepare your pull request"
 msgstr "プルリクエストの準備をする"
 
 msgid "Submit your pull request"
 msgstr "プルリクエストを送る"
+
+msgid "You can enable preview on your fork by following the steps below before pushing your commits:"
+msgstr "コミットをプッシュする前に、次の手順を実行することでフォークしたリポジトリ上でプレビューを有効にできます。"
+
+msgid "Enable GitHub Pages on your fork:"
+msgstr "フォークしたリポジトリで GitHub Pages を有効にする。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`を開く"
+
+msgid "Select \"GitHub Actions\" as \"Source\""
+msgstr "\"Source\"に\"GitHub Actions\"を選択する"
+
+msgid "Accept publishing GitHub Pages from all branches on your fork:"
+msgstr "フォークしたリポジトリのすべてのブランチからGitHub Pagesの公開を許可する。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`を開く"
+
+msgid "Select the \"github-pages\" environment"
+msgstr "\"github-pages\"環境を選択する"
+
+msgid "Change the default \"Deployment branches and tags\" rule:"
+msgstr "デフォルトの\"Deployment branches and tags\"ルールを変更する"
+
+msgid "Press the \"Edit\" button"
+msgstr "\"Edit\"ボタンを押す"
+
+msgid "Change the \"Name pattern\" to `*` from `main`"
+msgstr "\"Name pattern\"を`main`から`*`に変更する"
+
+msgid "You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` after pushing your changes."
+msgstr "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`にアクセスすると、変更内容をプレビューできます。"
 
 msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
 msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"

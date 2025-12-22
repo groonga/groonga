@@ -57,6 +57,10 @@ jobs:
           mkdir -p /tmp/groonga.org/ja
           rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
           ccache --show-stats --verbose --version || :
+      - name: Upload
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: /tmp/groonga.org/docs/
       - name: Create archive
         run: |
           version=$(cat base_version)
@@ -67,3 +71,19 @@ jobs:
         with:
           name: release-document
           path: document-*.tar.gz
+  deploy:
+    name: Deploy
+    if: >-
+      github.event_name == 'push' && github.repository != 'groonga/groonga'
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
