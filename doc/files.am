@@ -20,7 +20,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/development/repository.rst \
 	$(top_srcdir)/doc/source/contribution/development/test.rst \
 	$(top_srcdir)/doc/source/contribution/documentation.rst \
-	$(top_srcdir)/doc/source/contribution/documentation/c-api.rst \
+	$(top_srcdir)/doc/source/contribution/documentation/c-api.md \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.rst \
 	$(top_srcdir)/doc/source/contribution/documentation/introduction.md \
 	$(top_srcdir)/doc/source/contribution/report.rst \
@@ -1410,7 +1410,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution/development/repository.rst \
 	source/contribution/development/test.rst \
 	source/contribution/documentation.rst \
-	source/contribution/documentation/c-api.rst \
+	source/contribution/documentation/c-api.md \
 	source/contribution/documentation/i18n.rst \
 	source/contribution/documentation/introduction.md \
 	source/contribution/report.rst \
