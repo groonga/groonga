@@ -57,10 +57,16 @@ jobs:
           mkdir -p /tmp/groonga.org/ja
           rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
           ccache --show-stats --verbose --version || :
+      - name: Prepare for GitHub Pages
+        run: |
+          mkdir -p /tmp/github-pages
+          cp -r /tmp/groonga.org/docs/* /tmp/github-pages/
+          mkdir -p /tmp/github-pages/ja
+          cp -r /tmp/groonga.org/ja/docs/* /tmp/github-pages/ja/
       - name: Upload
         uses: actions/upload-pages-artifact@v4
         with:
-          path: /tmp/groonga.org/docs/
+          path: /tmp/github-pages/
       - name: Create archive
         run: |
           version=$(cat base_version)
