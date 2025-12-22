@@ -42,7 +42,8 @@ jobs:
           fork_repository=${FORK_REPOSITORY#*/}
           cat <<COMMENT > body.md
           Preview:
-            English: https://${fork_owner}.github.io/${fork_repository}
+            English: https://${fork_owner}.github.io/${fork_repository}/
+            Japanese: https://${fork_owner}.github.io/${fork_repository}/ja/
             C-API: https://${fork_owner}.github.io/${fork_repository}/reference/api/
 
           See ${configure_url} how to configure preview on fork.
