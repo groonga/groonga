@@ -1,0 +1,52 @@
+name: Preview comment
+on:
+  pull_request_target:
+    types:
+      - opened
+    branches:
+      - '**'
+      - '!dependabot/**'
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document.yml'
+      - '.github/workflows/preview-comment.yml'
+      - 'Rakefile'
+      - 'cmake/**'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  post:
+    name: Post
+    if:
+      github.event.pull_request.base.repo.full_name == 'groonga/groonga'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # We must not checkout fork repository and execute any scripts
+      # in fork repository. It has security risks.
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}
+          FORK_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          configure_url="https://groonga.org/docs/contribution/documentation/introduction.html#send-patch"
+          fork_owner=${FORK_REPOSITORY%/*}
+          fork_repository=${FORK_REPOSITORY#*/}
+          cat <<COMMENT > body.md
+          Preview:
+            English: https://${fork_owner}.github.io/${fork_repository}
+            C-API: https://${fork_owner}.github.io/${fork_repository}/reference/api/
+
+          See ${configure_url} how to configure preview on fork.
+          COMMENT
+          gh pr comment ${PR_NUMBER} \
+            --body-file body.md \
+            --repo ${PR_REPOSITORY}
