@@ -136,6 +136,42 @@ msgstr "変更がすべて反映されているかを確認します"
 msgid "Click the `Create Pull Request` button and send your pull request"
 msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
 
+msgid "Pull request and preview"
+msgstr "プルリクエストとプレビュー"
+
+msgid "You can enable preview on your fork by the following:"
+msgstr "次の手順を実行することで、フォークしたリポジトリ上でプレビューを有効にできます。"
+
+msgid "Enable GitHub Pages on your fork:"
+msgstr "フォークしたリポジトリで GitHub Pages を有効にする。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`を開く"
+
+msgid "Select \"GitHub Actions\" as \"Source\""
+msgstr "\"Source\"に\"GitHub Actions\"を選択する"
+
+msgid "Accept publishing GitHub Pages from all branches on your fork:"
+msgstr "フォークしたリポジトリのすべてのブランチからGitHub Pagesの公開を許可する。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`を開く"
+
+msgid "Select the \"github-pages\" environment"
+msgstr "\"github-pages\"環境を選択する"
+
+msgid "Change the default \"Deployment branches and tags\" rule:"
+msgstr "デフォルトの\"Deployment branches and tags\"ルールを変更する"
+
+msgid "Press the \"Edit\" button"
+msgstr "\"Edit\"ボタンを押す"
+
+msgid "Change the \"Name pattern\" to `*` from `main`"
+msgstr "\"Name pattern\"を`main`から`*`に変更する"
+
+msgid "You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` ."
+msgstr "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`にアクセスすると、変更内容をプレビューできます。"
+
 msgid "Optional: Translate documentation"
 msgstr "任意: ドキュメントを翻訳する"
 

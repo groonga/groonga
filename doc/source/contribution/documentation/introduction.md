@@ -145,6 +145,22 @@ Follow these steps:
 3. Make sure your changes are reflected
 4. Click the `Create Pull Request` button and send your pull request
 
+### Pull request and preview
+
+You can enable preview on your fork by the following:
+
+1. Enable GitHub Pages on your fork:
+   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`
+   - Select "GitHub Actions" as "Source"
+2. Accept publishing GitHub Pages from all branches on your fork:
+   - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`
+   - Select the "github-pages" environment
+   - Change the default "Deployment branches and tags" rule:
+     - Press the "Edit" button
+     - Change the "Name pattern" to `*` from `main`
+
+You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` .
+
 ## Optional: Translate documentation
 
 This is an optional step.
