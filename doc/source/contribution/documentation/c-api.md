@@ -5,7 +5,7 @@ The C API documentation is auto-generated from header files using
 You can view the generated documentation at
 [C API Reference](https://groonga.org/docs/reference/api/index.html).
 
-## How to contribute
+## How to write
 
 To contribute to the C API documentation, add Doxygen-style comments
 to the header files in `include/groonga/`.
@@ -25,7 +25,7 @@ Example:
 GRN_API grn_rc grn_function(grn_ctx *ctx, int arg);
 ```
 
-### Generate and preview
+## How to preview
 
 For instructions on how to generate documentation and preview it,
 see {doc}`introduction`.

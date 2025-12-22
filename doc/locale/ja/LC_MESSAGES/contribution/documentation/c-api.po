@@ -22,8 +22,8 @@ msgstr ""
 msgid "The C API documentation is auto-generated from header files using [Doxygen](https://www.doxygen.nl/). You can view the generated documentation at [C API Reference](https://groonga.org/docs/reference/api/index.html)."
 msgstr "C APIのドキュメントは、ヘッダーファイルから[Doxygen](https://www.doxygen.nl/)を用いて自動生成しています。生成されたドキュメントは[C API Reference](https://groonga.org/docs/reference/api/index.html)で確認できます。"
 
-msgid "How to contribute"
-msgstr "ドキュメントに貢献する"
+msgid "How to write"
+msgstr "書き方"
 
 msgid "To contribute to the C API documentation, add Doxygen-style comments to the header files in `include/groonga/`."
 msgstr "C API のドキュメントに貢献するには、`include/groonga/`配下のヘッダーファイルにDoxygen形式のコメントを追加してください。"
@@ -31,8 +31,8 @@ msgstr "C API のドキュメントに貢献するには、`include/groonga/`配
 msgid "Example:"
 msgstr "例："
 
-msgid "Generate and preview"
-msgstr "ドキュメント生成とプレビュー"
+msgid "How to preview"
+msgstr "プレビュー方法"
 
 msgid "For instructions on how to generate documentation and preview it, see {doc}`introduction`."
 msgstr "ドキュメントの生成方法およびプレビュー方法については、{doc}`introduction`を参照してください。"
