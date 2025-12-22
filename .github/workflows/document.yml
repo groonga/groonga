@@ -60,7 +60,7 @@ jobs:
       - name: Upload
         uses: actions/upload-pages-artifact@v4
         with:
-          path: /tmp/groonga.org/
+          path: /tmp/groonga.org/docs/
       - name: Create archive
         run: |
           version=$(cat base_version)
