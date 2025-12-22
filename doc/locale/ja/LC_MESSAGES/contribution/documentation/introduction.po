@@ -109,8 +109,11 @@ msgstr "生成されたファイルをWebブラウザで開き、変更を確認
 msgid "Send patch"
 msgstr "パッチを送る"
 
-msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following two steps."
+msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following these steps."
 msgstr "GitHub上のGroongaリポジトリに対してプルリクエストを通じてパッチを送ることができます。次の手順で、気軽にプルリクエストを作ってみましょう。"
+
+msgid "Enable preview on your fork (optional)"
+msgstr "フォーク先リポジトリでプレビューを有効にする（任意）"
 
 msgid "Prepare your pull request"
 msgstr "プルリクエストの準備をする"
@@ -118,29 +121,8 @@ msgstr "プルリクエストの準備をする"
 msgid "Submit your pull request"
 msgstr "プルリクエストを送る"
 
-msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
-msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
-
-msgid "Now you're ready to submit a pull request to the upstream Groonga repository. Follow these steps:"
-msgstr "これで、アップストリームのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従い実際にプルリクエストを送ってみましょう。"
-
-msgid "Go to your fork repository on GitHub"
-msgstr "GitHubで自分のフォークリポジトリにアクセスします"
-
-msgid "Click the `Compare & pull request` button"
-msgstr "`Compare & pull request`ボタンをクリックします"
-
-msgid "Make sure your changes are reflected"
-msgstr "変更がすべて反映されているかを確認します"
-
-msgid "Click the `Create Pull Request` button and send your pull request"
-msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
-
-msgid "Pull request and preview"
-msgstr "プルリクエストとプレビュー"
-
-msgid "You can enable preview on your fork by the following:"
-msgstr "次の手順を実行することで、フォークしたリポジトリ上でプレビューを有効にできます。"
+msgid "You can enable preview on your fork by following the steps below before pushing your commits:"
+msgstr "コミットをプッシュする前に、次の手順を実行することでフォークしたリポジトリ上でプレビューを有効にできます。"
 
 msgid "Enable GitHub Pages on your fork:"
 msgstr "フォークしたリポジトリで GitHub Pages を有効にする。"
@@ -169,8 +151,26 @@ msgstr "\"Edit\"ボタンを押す"
 msgid "Change the \"Name pattern\" to `*` from `main`"
 msgstr "\"Name pattern\"を`main`から`*`に変更する"
 
-msgid "You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` ."
+msgid "You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` after pushing your changes."
 msgstr "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`にアクセスすると、変更内容をプレビューできます。"
+
+msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
+msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
+
+msgid "Now you're ready to submit a pull request to the upstream Groonga repository. Follow these steps:"
+msgstr "これで、アップストリームのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従い実際にプルリクエストを送ってみましょう。"
+
+msgid "Go to your fork repository on GitHub"
+msgstr "GitHubで自分のフォークリポジトリにアクセスします"
+
+msgid "Click the `Compare & pull request` button"
+msgstr "`Compare & pull request`ボタンをクリックします"
+
+msgid "Make sure your changes are reflected"
+msgstr "変更がすべて反映されているかを確認します"
+
+msgid "Click the `Create Pull Request` button and send your pull request"
+msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
 
 msgid "Optional: Translate documentation"
 msgstr "任意: ドキュメントを翻訳する"

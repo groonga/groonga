@@ -126,7 +126,7 @@ Feel free to send a pull request by following these steps.
 
 ### Enable preview on your fork (optional)
 
-You can enable preview on your fork by the following:
+You can enable preview on your fork by following the steps below before pushing your commits:
 
 1. Enable GitHub Pages on your fork:
    - Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`
@@ -138,7 +138,8 @@ You can enable preview on your fork by the following:
      - Press the "Edit" button
      - Change the "Name pattern" to `*` from `main`
 
-You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` .
+You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`
+after pushing your changes.
 
 ### Prepare your pull request
 
