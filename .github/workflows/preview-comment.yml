@@ -11,7 +11,7 @@ on:
       - '**/*.cmake.in'
       - '**/CMakeLists.txt'
       - '.github/workflows/document.yml'
-      - '.github/workflows/preview-document.yml'
+      - '.github/workflows/preview-comment.yml'
       - 'Rakefile'
       - 'cmake/**'
       - 'doc/**'
