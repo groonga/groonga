@@ -17,41 +17,44 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.2.2 - 2025-12-24"
-msgstr "15.2.2リリース - 2025-12-24"
-
-msgid "Improvements"
-msgstr "改良"
-
-msgid "Bundled OpenZL(experimental)"
-msgstr "OpenZLをバンドル（実験的）"
-
-msgid "This feature is still experimental and unstable. We must not use this feature in production."
-msgstr "この機能はまだ実験的で安定していません。この機能は、実運用環境では使わないでください。"
-
-msgid "[OpenZL](https://openzl.org/) is a compression framework. it provides high compression ratios and high speed."
-msgstr "[OpenZL](https://openzl.org/)は高い圧縮率と速度を提供する圧縮フレームワークです。"
-
-msgid "We can specify `COMPRESS_OPENZL` in `column_create`, but if we specify `COMPRESS_OPENZL`, it doesn't work yet. Because we don't implement for feature of compress and decompress."
-msgstr "`column_create`に`COMPRESS_OPENZL`を指定することができますが、`COMPRESS_OPENZL`は、まだ圧縮や解凍の機能を実装していないため、これを指定しても何もしません。"
-
-msgid "Added support JSON type(experimental)"
-msgstr "JSON型をサポート（実験的）"
-
-msgid "We can `load` and `dump` against some data types. However, we don't implement other futures yet."
-msgstr "いくつかのデータ型に対して、`load`と`dump`ができますが、その他の機能はまだ実装していません。"
+msgid "Release 15.2.2 - 2025-12-25"
+msgstr "15.2.2リリース - 2025-12-25"
 
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a bug that Groonga couldn't find records that added after index construction when `centroid_column` was used"
+msgid "Fixed a bug that Groonga couldn't find records that were added after index construction when `centroid_column` was used"
 msgstr "`centroid_column`を使った時に、インデックス構築の後に追加したレコードが見つからない問題を修正しました。"
 
 msgid "If this bug occurs, Groonga doesn't return records that added as below."
 msgstr "このバグが発生すると、以下のようにGroongaは追加したレコードを返しません。"
 
+msgid "Experimental features"
+msgstr "実験的な機能"
+
+msgid "These features is still experimental and unstable. We must not use this feature in production."
+msgstr "これらの機能はまだ実験的で安定していません。この機能は、実運用環境では使わないでください。"
+
+msgid "Bundled OpenZL"
+msgstr "OpenZLをバンドル"
+
+msgid "[OpenZL](https://openzl.org/) is a compression framework. It provides high compression ratios and high speed."
+msgstr "[OpenZL](https://openzl.org/)は高い圧縮率と速度を提供する圧縮フレームワークです。"
+
+msgid "We can specify `COMPRESS_OPENZL` in `column_create`, but if we specify `COMPRESS_OPENZL`, it doesn't work yet. Because we haven't implemented the feature for compression and decompression."
+msgstr "`column_create`に`COMPRESS_OPENZL`を指定することができますが、まだ圧縮や解凍の機能を実装していないため、これを指定しても何もしません。"
+
+msgid "Added support JSON type"
+msgstr "JSON型をサポート"
+
+msgid "We can `load` and `dump` against some data types. However, we don't implement other features yet."
+msgstr "いくつかのデータ型に対して、`load`と`dump`ができますが、その他の機能はまだ実装していません。"
+
 msgid "Release 15.2.1 - 2025-12-02"
 msgstr "15.2.1リリース - 2025-12-02"
+
+msgid "Improvements"
+msgstr "改良"
 
 msgid "[{doc}`/reference/commands/column_create`] Added support for progress log of index construction"
 msgstr "[{doc}`/reference/commands/column_create`] インデックス構築のプログレスログをサポート"
