@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,12 @@
 
 #ifdef GRN_WITH_XSIMD
 #  include <xsimd/xsimd.hpp>
+#endif
+
+#if defined(GRN_WITH_XSIMD) && XSIMD_VERSION_MAJOR < 14
+namespace xsimd {
+  using common = generic;
+}
 #endif
 
 namespace grn {
@@ -114,7 +120,7 @@ namespace grn {
 #  undef GRN_INSTANTIATION_XSIMD_ARCH
 
 #  define GRN_INSTANTIATION_SIMSIMD_ARCH serial
-#  define GRN_INSTANTIATION_XSIMD_ARCH   xsimd::generic
+#  define GRN_INSTANTIATION_XSIMD_ARCH   xsimd::common
 #  include "grn_distance_instantiation.hpp"
 #  undef GRN_INSTANTIATION_SIMSIMD_ARCH
 #  undef GRN_INSTANTIATION_XSIMD_ARCH
@@ -148,7 +154,7 @@ namespace grn {
 #    ifdef GRN_WITH_SIMD_NEON64
           xsimd::neon64,
 #    endif
-          xsimd::generic>>(l2_norm{});
+          xsimd::common>>(l2_norm{});
         return dispatched(vector_raw, n_elements);
       }
 #  endif
@@ -186,7 +192,7 @@ namespace grn {
 #    ifdef GRN_WITH_SIMD_NEON64
           xsimd::neon64,
 #    endif
-          xsimd::generic>>(difference_l1_norm{});
+          xsimd::common>>(difference_l1_norm{});
         return dispatched(vector_raw1, vector_raw2, n_elements);
       }
 #  endif
@@ -247,7 +253,7 @@ namespace grn {
 #    ifdef GRN_WITH_SIMD_NEON64
           xsimd::neon64,
 #    endif
-          xsimd::generic>>(difference_l2_norm_squared{});
+          xsimd::common>>(difference_l2_norm_squared{});
         return dispatched(vector_raw1, vector_raw2, n_elements);
       }
 #  endif
@@ -308,7 +314,7 @@ namespace grn {
 #    ifdef GRN_WITH_SIMD_NEON64
           xsimd::neon64,
 #    endif
-          xsimd::generic>>(inner_product{});
+          xsimd::common>>(inner_product{});
         return dispatched(vector_raw1, vector_raw2, n_elements);
       }
 #  endif
@@ -368,7 +374,7 @@ namespace grn {
 #    ifdef GRN_WITH_SIMD_NEON64
           xsimd::neon64,
 #    endif
-          xsimd::generic>>(cosine{});
+          xsimd::common>>(cosine{});
         return dispatched(vector_raw1, vector_raw2, n_elements);
       }
 #  endif

@@ -1510,9 +1510,9 @@ else()
   set(GRN_WITH_BLOSC FALSE)
 endif()
 
-set(GRN_XSIMD_BUNDLED_VERSION "13.2.0")
+set(GRN_XSIMD_BUNDLED_VERSION "14.0.0")
 set(GRN_XSIMD_BUNDLED_SHA256
-    "edd8cd3d548c185adc70321c53c36df41abe64c1fe2c67bc6d93c3ecda82447a")
+    "17de0236954955c10c09d6938d4c5f3a3b92d31be5dadd1d5d09fc1b15490dce")
 set(GRN_WITH_XSIMD
     "auto"
     CACHE STRING "Support SIMD by xsimd.")

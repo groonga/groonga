@@ -78,7 +78,7 @@ repos:
           ?lib/distance_avx\.cpp|
           ?lib/distance_avx2\.cpp|
           ?lib/distance_avx512\.cpp|
-          ?lib/distance_generic\.cpp|
+          ?lib/distance_common\.cpp|
           ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
