@@ -138,8 +138,11 @@ You can enable preview on your fork by following the steps below before pushing 
      - Press the "Edit" button
      - Change the "Name pattern" to `*` from `main`
 
-You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`
-after pushing your changes.
+You can preview your changes at the following URLs after pushing your changes:
+
+- `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/`
+- `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/ja/`
+- `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/reference/api/`
 
 ### Prepare your pull request
 
