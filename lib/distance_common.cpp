@@ -103,7 +103,7 @@ namespace grn {
 } // namespace grn
 
 #define GRN_INSTANTIATION_SIMSIMD_ARCH serial
-#define GRN_INSTANTIATION_XSIMD_ARCH   xsimd::generic
+#define GRN_INSTANTIATION_XSIMD_ARCH   xsimd::common
 #include "grn_distance_instantiation.hpp"
 #undef GRN_INSTANTIATION_SIMSIMD_ARCH
 #undef GRN_INSTANTIATION_XSIMD_ARCH

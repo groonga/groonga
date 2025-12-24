@@ -92,10 +92,10 @@ if(GRN_WITH_XSIMD)
       APPEND_STRING
       PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_NEON64}")
   endif()
-  list(APPEND LIBGROONGA_CPP_SOURCES distance_generic.cpp)
+  list(APPEND LIBGROONGA_CPP_SOURCES distance_common.cpp)
   if(GRN_C_COMPILER_GNU_LIKE)
     set_property(
-      SOURCE distance_generic.cpp
+      SOURCE distance_common.cpp
       APPEND_STRING
       PROPERTY COMPILE_FLAGS " -Wno-float-equal")
   endif()
