@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"PO-Revision-Date: 2025-12-24 11:01+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -151,8 +151,17 @@ msgstr "\"Edit\"ボタンを押す"
 msgid "Change the \"Name pattern\" to `*` from `main`"
 msgstr "\"Name pattern\"を`main`から`*`に変更する"
 
-msgid "You can preview your changes at `https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}` after pushing your changes."
-msgstr "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/{ja/docs/,docs/}`にアクセスすると、変更内容をプレビューできます。"
+msgid "You can preview your changes at the following URLs after pushing your changes:"
+msgstr "変更をpushしたあと、次のURLで変更内容をプレビューできます。"
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/`"
+msgstr ""
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/ja/`"
+msgstr ""
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/reference/api/`"
+msgstr ""
 
 msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
 msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
