@@ -17,6 +17,39 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.2.2 - 2025-12-25"
+msgstr "15.2.2リリース - 2025-12-25"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that Groonga couldn't find records that were added after index construction when `centroid_column` was used"
+msgstr "`centroid_column`を使った時に、インデックス構築の後に追加したレコードが見つからない問題を修正しました。"
+
+msgid "If this bug occurs, Groonga doesn't return records that added as below."
+msgstr "このバグが発生すると、以下のようにGroongaは追加したレコードを返しません。"
+
+msgid "Experimental features"
+msgstr "実験的な機能"
+
+msgid "These features are still experimental and unstable. We must not use these features in production."
+msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、実運用環境では使わないでください。"
+
+msgid "Bundled OpenZL"
+msgstr "OpenZLをバンドル"
+
+msgid "[OpenZL](https://openzl.org/) is a compression framework. It provides high compression ratios and high speed."
+msgstr "[OpenZL](https://openzl.org/)は高い圧縮率と速度を提供する圧縮フレームワークです。"
+
+msgid "We can specify `COMPRESS_OPENZL` in `column_create`, but if we specify `COMPRESS_OPENZL`, it doesn't work yet. Because we haven't implemented the feature for compression and decompression."
+msgstr "`column_create`に`COMPRESS_OPENZL`を指定することができますが、まだ圧縮や解凍の機能を実装していないため、これを指定しても何もしません。"
+
+msgid "Added support for JSON type"
+msgstr "JSON型をサポート"
+
+msgid "We can `load` and `dump` against some data types. However, we don't implement other features yet."
+msgstr "いくつかのデータ型に対して、`load`と`dump`ができますが、その他の機能はまだ実装していません。"
+
 msgid "Release 15.2.1 - 2025-12-02"
 msgstr "15.2.1リリース - 2025-12-02"
 
@@ -61,9 +94,6 @@ msgstr "返すレコード数を指定します。このオプションを設定
 
 msgid "You can specify a negative value. It means: (number of matched records) + `k` + 1. For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
 msgstr "負の値を指定することもできます。負の値の場合は、最大で\"マッチしたレコード数 + k + 1\"件のレコードを出力するという意味になります。例えば、`\"{ \"k\" : -1 }\"`はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a bug that causes overflow in the key of `TABLE_PAT_KEY` tables."
 msgstr "`TABLE_PAT_KEY`テーブルのキーでオーバーフローを引き起こす問題を修正しました。"
