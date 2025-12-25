@@ -32,8 +32,8 @@ msgstr "このバグが発生すると、以下のようにGroongaは追加し�
 msgid "Experimental features"
 msgstr "実験的な機能"
 
-msgid "These features is still experimental and unstable. We must not use this feature in production."
-msgstr "これらの機能はまだ実験的で安定していません。この機能は、実運用環境では使わないでください。"
+msgid "These features are still experimental and unstable. We must not use these features in production."
+msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、実運用環境では使わないでください。"
 
 msgid "Bundled OpenZL"
 msgstr "OpenZLをバンドル"
@@ -44,7 +44,7 @@ msgstr "[OpenZL](https://openzl.org/)は高い圧縮率と速度を提供する�
 msgid "We can specify `COMPRESS_OPENZL` in `column_create`, but if we specify `COMPRESS_OPENZL`, it doesn't work yet. Because we haven't implemented the feature for compression and decompression."
 msgstr "`column_create`に`COMPRESS_OPENZL`を指定することができますが、まだ圧縮や解凍の機能を実装していないため、これを指定しても何もしません。"
 
-msgid "Added support JSON type"
+msgid "Added support for JSON type"
 msgstr "JSON型をサポート"
 
 msgid "We can `load` and `dump` against some data types. However, we don't implement other features yet."
