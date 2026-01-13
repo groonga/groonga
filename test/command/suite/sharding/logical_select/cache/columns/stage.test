@@ -1,0 +1,48 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+plugin_register functions/number
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 item COLUMN_SCALAR ShortText
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 item COLUMN_SCALAR ShortText
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "item": "Book", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "item": "Pencil", "price": 100}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "item": "Note", "price": 520},
+{"timestamp": "2017/03/16 11:00:00", "item": "Pen", "price": 510},
+{"timestamp": "2017/03/16 11:00:00", "item": "Box", "price": 500}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --columns[content].stage initial \
+  --columns[content].type ShortText \
+  --columns[content].flags COLUMN_SCALAR \
+  --columns[content].value 'highlight_html(item)' \
+  --match_columns item \
+  --output_columns content \
+  --query "Book"
+
+logical_select Logs \
+  --shard_key timestamp \
+  --columns[content].stage filtered \
+  --columns[content].type ShortText \
+  --columns[content].flags COLUMN_SCALAR \
+  --columns[content].value 'highlight_html(item)' \
+  --match_columns item \
+  --output_columns content \
+  --query "Book"
