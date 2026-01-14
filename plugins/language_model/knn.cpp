@@ -180,6 +180,8 @@ namespace {
     grn_obj embedding;
     grn_obj transformed_embedding;
     grn_obj code;
+    // We need to keep token data until the next next() is called.
+    uint32_t current_centroid_id;
   };
 
   Tokenizer *
@@ -969,11 +971,13 @@ namespace {
     const float *centroid = tokenizer->options->centroids.data() +
                             (tokenizer->options->n_dimensions * indexes[0]);
     if (tokenizer->options->centroid_column) {
-      grn_id centroid_id = indexes[0];
-      grn_token_set_data(ctx,
-                         token,
-                         reinterpret_cast<const char *>(&centroid_id),
-                         sizeof(grn_id));
+      // We need to keep token data until the next next() is
+      // called. If we use a local variable here, token data is
+      // invalid after this block.
+      tokenizer->current_centroid_id = indexes[0];
+      auto key =
+        reinterpret_cast<const char *>(&(tokenizer->current_centroid_id));
+      grn_token_set_data(ctx, token, key, sizeof(uint32_t));
       grn_token_set_domain(ctx, token, GRN_DB_UINT32);
     } else {
       grn_token_set_data(ctx,
