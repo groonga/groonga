@@ -31,6 +31,7 @@ table_create RaBitQ TABLE_HASH_KEY ShortBinary \
                            "passage_prefix", "passage: ", \
                            "query_prefix", "query: ")'
 # This is for waiting for downloading model.
+#@sleep 3
 #@timeout 300
 column_create RaBitQ data_text COLUMN_INDEX Data text
 
