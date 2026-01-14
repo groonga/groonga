@@ -32,6 +32,7 @@ table_create RaBitQ TABLE_HASH_KEY ShortBinary \
                            "query_prefix", "query: ")'
 # This is for waiting for downloading model.
 #@timeout 300
+#@read-timeout 300
 column_create RaBitQ data_text COLUMN_INDEX Data text
 
 select Data \
