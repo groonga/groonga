@@ -46,6 +46,7 @@ module GroongaLog
     unless messages.empty?
       messages.each_line do |message|
         next if message.chomp.empty?
+        next if windows? && message.start_with?("|-|")
         log << "1970-01-01 00:00:00.000000#{message}"
       end
     end
