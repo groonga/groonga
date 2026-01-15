@@ -39,30 +39,25 @@ class TestGrnDBCheck < GroongaTestCase
 
     remove_groonga_log
     result = grndb("check", "--log-level", "dump")
-    messages = <<-MESSAGES
+    assert_equal([
+                   "",
+                   "",
+                   expected_groonga_log("dump", <<-MESSAGES),
 |i| Checking database: <#{@database_path}>
 |i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
 |i| Database is not locked: <#{@database_path}>
 |i| Database is not corrupted: <#{@database_path}>
 |i| Database is not dirty: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
-|-| [io][open] <#{table_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : "|-| [io][open] <#{table_path}>"}
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
-|-| [io][close] <#{table_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{column_path}>" : ""}
-|-| [io][open] <#{column_path}>
+|#{windows? ? "d" : "-"}| [io][close] <#{table_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{column_path}>" : "|-| [io][open] <#{column_path}>"}
 |i| [Data.text] Column is not locked
 |i| [Data.text] Column is not corrupted
-|-| [io][close] <#{column_path}>
+|#{windows? ? "d" : "-"}| [io][close] <#{column_path}>
 |i| Checked database: <#{@database_path}>
-    MESSAGES
-    # On Windows, there is no output for the dump log level (logs starting with `|-|`).
-    messages = messages.gsub(/^\|-\| .+/, "") if windows?
-    assert_equal([
-                   "",
-                   "",
-                   expected_groonga_log("dump", messages),
+                   MESSAGES
                  ],
                  [
                    result.output,
