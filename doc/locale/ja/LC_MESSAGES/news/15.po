@@ -17,8 +17,8 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
-msgid "Release 15.2.2 - 2025-12-25"
-msgstr "15.2.2リリース - 2025-12-25"
+msgid "Release 15.2.3 - 2026-01-15"
+msgstr "15.2.3リリース - 2026-01-15"
 
 msgid "Fixes"
 msgstr "修正"
@@ -33,7 +33,7 @@ msgid "Experimental features"
 msgstr "実験的な機能"
 
 msgid "These features are still experimental and unstable. We must not use these features in production."
-msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、実運用環境では使わないでください。"
+msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、絶対に実運用環境では使わないでください。"
 
 msgid "Bundled OpenZL"
 msgstr "OpenZLをバンドル"
