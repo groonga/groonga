@@ -34,6 +34,7 @@ class TestGrnDBCheck < GroongaTestCase
   sub_test_case "normal" do
     def test_log_level_info
       groonga("table_create", "Data", "TABLE_NO_KEY")
+      groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")
       _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
       remove_groonga_log
@@ -50,6 +51,8 @@ class TestGrnDBCheck < GroongaTestCase
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
+|i| [Data.text] Column is not locked
+|i| [Data.text] Column is not corrupted
 |i| Checked database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -64,6 +67,7 @@ class TestGrnDBCheck < GroongaTestCase
       omit("There is no dump log level on Windows.") if windows?
 
       groonga("table_create", "Data", "TABLE_NO_KEY")
+      groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")
       _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
       remove_groonga_log
@@ -85,6 +89,10 @@ class TestGrnDBCheck < GroongaTestCase
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
 |-| [io][close] <#{@database_path}.0000100>
+|-| [io][open] <#{@database_path}.0000101>
+|i| [Data.text] Column is not locked
+|i| [Data.text] Column is not corrupted
+|-| [io][close] <#{@database_path}.0000101>
 |i| Checked database: <#{@database_path}>
 |-| [io][close] <#{@database_path}>
 |-| [io][close] <#{@database_path}.0000000>
