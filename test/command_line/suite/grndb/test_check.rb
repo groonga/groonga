@@ -38,14 +38,7 @@ class TestGrnDBCheck < GroongaTestCase
 
     remove_groonga_log
     result = grndb("check", "--log-level", "dump")
-    assert_equal([
-                   "",
-                   "",
-                   expected_groonga_log("dump", <<-MESSAGES),
-|-| [io][open] <#{@database_path}>
-|-| [io][open] <#{@database_path}.0000000>
-|-| [io][open] <#{@database_path}.conf>
-|-| [io][open] <#{@database_path}.options>
+    messages = <<-MESSAGES
 |i| Checking database: <#{@database_path}>
 |i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
 |i| Database is not locked: <#{@database_path}>
@@ -61,11 +54,12 @@ class TestGrnDBCheck < GroongaTestCase
 |i| [Data.text] Column is not corrupted
 |-| [io][close] <#{@database_path}.0000101>
 |i| Checked database: <#{@database_path}>
-|-| [io][close] <#{@database_path}>
-|-| [io][close] <#{@database_path}.0000000>
-|-| [io][close] <#{@database_path}.conf>
-|-| [io][close] <#{@database_path}.options>
-                   MESSAGES
+    MESSAGES
+    messages = messages.gsub(/^\|-\| .+/, "") if windows?
+    assert_equal([
+                   "",
+                   "",
+                   expected_groonga_log("dump", messages),
                  ],
                  [
                    result.output,
