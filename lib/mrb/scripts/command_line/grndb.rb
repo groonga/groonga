@@ -618,13 +618,15 @@ module Groonga
 
           return unless target_id?(id)
 
-          object = @context[name]
-          if object.nil?
-            failed_to_open(name)
-            return
-          end
+          @context.with_temporary_open_space(true) do
+            object = @context[name]
+            if object.nil?
+              failed_to_open(name)
+              return
+            end
 
-          yield(object)
+            yield(object)
+          end
         end
 
         def failed(*messages)

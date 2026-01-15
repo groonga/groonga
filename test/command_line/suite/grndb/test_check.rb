@@ -31,16 +31,17 @@ class TestGrnDBCheck < GroongaTestCase
     end
   end
 
-  def test_normal
-    groonga("table_create", "Data", "TABLE_NO_KEY")
-    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+  sub_test_case "normal" do
+    def test_log_level_info
+      groonga("table_create", "Data", "TABLE_NO_KEY")
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
-    remove_groonga_log
-    result = grndb("check", "--log-level", "info")
-    assert_equal([
-                   "",
-                   "",
-                   expected_groonga_log("info", <<-MESSAGES),
+      remove_groonga_log
+      result = grndb("check", "--log-level", "info")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
 |i| Checking database: <#{@database_path}>
 |i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
 |i| Database is not locked: <#{@database_path}>
@@ -50,13 +51,53 @@ class TestGrnDBCheck < GroongaTestCase
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
 |i| Checked database: <#{@database_path}>
-                   MESSAGES
-                 ],
-                 [
-                   result.output,
-                   result.error_output,
-                   normalized_groonga_log_content,
-                 ])
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_log_level_dump
+      omit("There is no dump log level on Windows.") if windows?
+
+      groonga("table_create", "Data", "TABLE_NO_KEY")
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+
+      remove_groonga_log
+      result = grndb("check", "--log-level", "dump")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("debug", <<-MESSAGES),
+|-| [io][open] <#{@database_path}>
+|-| [io][open] <#{@database_path}.0000000>
+|-| [io][open] <#{@database_path}.conf>
+|-| [io][open] <#{@database_path}.options>
+|i| Checking database: <#{@database_path}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|-| [io][open] <#{@database_path}.0000100>
+|i| [Data] Table is not locked
+|i| [Data] Table is not corrupted
+|-| [io][close] <#{@database_path}.0000100>
+|i| Checked database: <#{@database_path}>
+|-| [io][close] <#{@database_path}>
+|-| [io][close] <#{@database_path}.0000000>
+|-| [io][close] <#{@database_path}.conf>
+|-| [io][close] <#{@database_path}.options>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
   end
 
   def test_orphan_inspect
