@@ -33,22 +33,29 @@ class TestGrnDBCheck < GroongaTestCase
 
   def test_normal
     groonga("table_create", "Data", "TABLE_NO_KEY")
-    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")
+    _id, _name, table_path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    _id, _name, column_path, *_ = JSON.parse(groonga("column_list", "Data").output)[1][1]
 
     remove_groonga_log
-    result = grndb("check", "--log-level", "info")
+    result = grndb("check", "--log-level", "dump")
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log("dump", <<-MESSAGES),
 |i| Checking database: <#{@database_path}>
 |i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
 |i| Database is not locked: <#{@database_path}>
 |i| Database is not corrupted: <#{@database_path}>
 |i| Database is not dirty: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : "|-| [io][open] <#{table_path}>"}
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
+|#{windows? ? "d" : "-"}| [io][close] <#{table_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{column_path}>" : "|-| [io][open] <#{column_path}>"}
+|i| [Data.text] Column is not locked
+|i| [Data.text] Column is not corrupted
+|#{windows? ? "d" : "-"}| [io][close] <#{column_path}>
 |i| Checked database: <#{@database_path}>
                    MESSAGES
                  ],
