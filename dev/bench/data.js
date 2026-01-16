@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768460288527,
+  "lastUpdate": 1768525570716,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "otegami@clear-code.com",
-            "name": "takuya kodama",
-            "username": "otegami"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "e6682aa29090d58d445a344422bfd9ba8636259f",
-          "message": "ci package ubuntu focal: add missing Threads::Threads dependencies (#2105)\n\nCI failed because `groonga-suggest-learner` & `groonga-suggest-httpd`\r\ncouldn't be linked to `libpthread.so.0` like the followings.\r\n\r\n- `groonga-suggest-learner`\r\n\r\n```\r\n...\r\n[400/416] : && /usr/bin/cc -g -O2 -fdebug-prefix-map=/build/groonga-14.1.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -O2 -g -DNDEBUG  -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now src/suggest/CMakeFiles/groonga-suggest-learner.dir/groonga_suggest_learner.c.o  -o src/suggest/groonga-suggest-learner  -Wl,-rpath,/build/groonga-14.1.1/obj-x86_64-linux-gnu/lib:  src/suggest/libgroonga-suggest-util.a  lib/libgroonga.so.0.0.0  /usr/lib/x86_64-linux-gnu/libmsgpackc.so  /usr/lib/x86_64-linux-gnu/libevent.so  /usr/lib/x86_64-linux-gnu/libzmq.so && :\r\nFAILED: src/suggest/groonga-suggest-learner \r\n: && /usr/bin/cc -g -O2 -fdebug-prefix-map=/build/groonga-14.1.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -O2 -g -DNDEBUG  -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now src/suggest/CMakeFiles/groonga-suggest-learner.dir/groonga_suggest_learner.c.o  -o src/suggest/groonga-suggest-learner  -Wl,-rpath,/build/groonga-14.1.1/obj-x86_64-linux-gnu/lib:  src/suggest/libgroonga-suggest-util.a  lib/libgroonga.so.0.0.0  /usr/lib/x86_64-linux-gnu/libmsgpackc.so  /usr/lib/x86_64-linux-gnu/libevent.so  /usr/lib/x86_64-linux-gnu/libzmq.so && :\r\n/usr/bin/ld: src/suggest/CMakeFiles/groonga-suggest-learner.dir/groonga_suggest_learner.c.o: undefined reference to symbol 'pthread_join@@GLIBC_2.2.5'\r\n/usr/bin/ld: /lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO missing from command line\r\ncollect2: error: ld returned 1 exit status\r\n...\r\n```\r\n\r\n- groonga-suggest-httpd\r\n\r\n```\r\n...\r\n[403/416] : && /usr/bin/cc -g -O2 -fdebug-prefix-map=/build/groonga-14.1.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -O2 -g -DNDEBUG  -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now src/suggest/CMakeFiles/groonga-suggest-httpd.dir/groonga_suggest_httpd.c.o  -o src/suggest/groonga-suggest-httpd  -Wl,-rpath,/build/groonga-14.1.1/obj-x86_64-linux-gnu/lib:  src/suggest/libgroonga-suggest-util.a  lib/libgroonga.so.0.0.0  /usr/lib/x86_64-linux-gnu/libmsgpackc.so  /usr/lib/x86_64-linux-gnu/libevent.so  /usr/lib/x86_64-linux-gnu/libzmq.so && :\r\nFAILED: src/suggest/groonga-suggest-httpd \r\n: && /usr/bin/cc -g -O2 -fdebug-prefix-map=/build/groonga-14.1.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -O2 -g -DNDEBUG  -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now src/suggest/CMakeFiles/groonga-suggest-httpd.dir/groonga_suggest_httpd.c.o  -o src/suggest/groonga-suggest-httpd  -Wl,-rpath,/build/groonga-14.1.1/obj-x86_64-linux-gnu/lib:  src/suggest/libgroonga-suggest-util.a  lib/libgroonga.so.0.0.0  /usr/lib/x86_64-linux-gnu/libmsgpackc.so  /usr/lib/x86_64-linux-gnu/libevent.so  /usr/lib/x86_64-linux-gnu/libzmq.so && :\r\n/usr/bin/ld: src/suggest/CMakeFiles/groonga-suggest-httpd.dir/groonga_suggest_httpd.c.o: undefined reference to symbol 'pthread_join@@GLIBC_2.2.5'\r\n/usr/bin/ld: /lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO missing from command line\r\ncollect2: error: ld returned 1 exit status\r\n...\r\n```\r\n\r\nSo we added Threads::Threads to the dependencies.",
-          "timestamp": "2024-11-28T08:34:32+09:00",
-          "tree_id": "b54bc178cb17edbc01d2ddae894cb7fad6f07fc7",
-          "url": "https://github.com/groonga/groonga/commit/e6682aa29090d58d445a344422bfd9ba8636259f"
-        },
-        "date": 1732750890663,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.359857234999879,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.019468999999999875 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.28900985900003207,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.02241600000000013 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.016525939000018752,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00039100000000025226 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015495466000004399,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00037699999999962763 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.5110173760000407,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00033099999999999796 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.23128405300019494,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007683000000000106 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13089809400025842,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00957399999999975 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.017849151000064012,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0025570000000000315 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.01817074100017635,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0022569999999999535 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.06382223599973713,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008438000000000168 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.06906483199986724,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.010182999999999665 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.018091442000127245,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0020880000000000343 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.028666226000041206,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0027780000000001692 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.027368327999965913,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0018310000000005822 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f881a9e9d41338523bc55ab8c31f6d19810b724e",
+          "message": "grndb check: close the object after each check (#2713)\n\nLike recover, close the object when processing is complete.\nRelated: GitHub GH-1234",
+          "timestamp": "2026-01-16T09:59:38+09:00",
+          "tree_id": "de8c9f17671e5ac7a99bee9a32e8d3d31b2c21c7",
+          "url": "https://github.com/groonga/groonga/commit/f881a9e9d41338523bc55ab8c31f6d19810b724e"
+        },
+        "date": 1768525569689,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3667869039999232,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.01874700000000007 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2944356869999183,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.020845999999999892 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.015370632999974987,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00037799999999998946 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015043552999998155,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00031500000000006523 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.387505319000013,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00015700000000001824 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2280076800001325,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007227000000000039 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13442658699995036,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005220999999999976 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.017050438000069335,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014880000000001559 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.016328189000034854,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015659999999996232 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.062914448000015,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00738899999999966 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.06086079400000699,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007309000000000149 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.01633670500007156,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0014790000000002301 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.017140034999954423,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0015780000000001349 s\nthreads: undefined"
           }
         ]
       }
