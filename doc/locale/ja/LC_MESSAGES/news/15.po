@@ -17,6 +17,24 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.2.4 - 2026-01-29"
+msgstr "15.2.4リリース - 2026-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/executables/grndb`] Added support for closing used object immediately in `grndb check`."
+msgstr "[{doc}`/reference/executables/grndb`] `grndb check` で使用したオブジェクトを即時閉じるように改良"
+
+msgid "We can reduce memory usage by this."
+msgstr "これにより、メモリ消費を抑制できます。"
+
+msgid "We used to leave used object opened on memory. We needed to many memory if we checked a large database by using `grndb check`. Therefore, `ghrndb check` is not practical on low-memory environment because of it takes a long time to complete check."
+msgstr "今までは、使用したオブジェクトをメモリー上に開いたままにしていました。大きなデータベースをチェックする際に多くのメモリーを必要とします。そのため、メモリーの少ない環境では`grndb check`の完了に長い時間がかかり実用的ではありませんでした。"
+
+msgid "We can complate `grndb check` within a realistic time even if we use low-memory environment by this modification."
+msgstr "今回の変更によって、メモリーの少ない環境でも、現実的な時間で`grndb check`が完了するようになります。"
+
 msgid "Release 15.2.3 - 2026-01-15"
 msgstr "15.2.3リリース - 2026-01-15"
 
@@ -52,9 +70,6 @@ msgstr "いくつかのデータ型に対して、`load`と`dump`ができます
 
 msgid "Release 15.2.1 - 2025-12-02"
 msgstr "15.2.1リリース - 2025-12-02"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/reference/commands/column_create`] Added support for progress log of index construction"
 msgstr "[{doc}`/reference/commands/column_create`] インデックス構築のプログレスログをサポート"
