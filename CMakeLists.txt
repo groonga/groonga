@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,11 @@ string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
+
+# https://cmake.org/cmake/help/latest/policy/CMP0077.html
+#
+# option() honors normal variables.
+cmake_policy(SET CMP0077 NEW)
 
 # https://cmake.org/cmake/help/latest/policy/CMP0135.html
 #
@@ -1101,9 +1106,7 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
         URL ${MESSAGE_PACK_SOURCE_URL}
         URL_HASH "SHA256=${GRN_MESSAGE_PACK_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
-      set(MSGPACK_BUILD_EXAMPLES
-          OFF
-          CACHE BOOL "" FORCE)
+      set(MSGPACK_BUILD_EXAMPLES OFF)
       fetchcontent_makeavailable(msgpack-c)
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY "${msgpack-c_SOURCE_DIR}"
