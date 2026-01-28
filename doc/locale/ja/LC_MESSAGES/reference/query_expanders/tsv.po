@@ -133,4 +133,4 @@ msgid "See also"
 msgstr "参考"
 
 msgid ":ref:`select-query-expansion`"
-msgstr "詳細については :ref:`select-query-expander` を参照してください。"
+msgstr "詳細については :ref:`select-query-expansion` を参照してください。"
