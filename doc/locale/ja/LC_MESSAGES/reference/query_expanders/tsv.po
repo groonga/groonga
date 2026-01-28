@@ -132,5 +132,5 @@ msgstr "同義語を再読み込みするにはgroongaを再起動する必要�
 msgid "See also"
 msgstr "参考"
 
-msgid ":ref:`select-query-expansion`"
-msgstr "詳細については :ref:`select-query-expansion` を参照してください。"
+msgid ":ref:`select-query-expander`"
+msgstr "詳細については :ref:`select-query-expander` を参照してください。"
