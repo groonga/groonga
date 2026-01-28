@@ -1484,7 +1484,7 @@ This operator does ordered near phrase product search. Ordered near
 phrase product search is similar to
 :ref:`script-syntax-near-phrase-product-search-operator` but ordered
 near phrase product search checks phrases order like
-:ref:`script-syntax-ordered-near-phrase-search-operator`. For example,
+:ref:`query-syntax-ordered-near-phrase-search-condition`. For example,
 ``column *ONPP "(a b c) (d e)"`` matches ``a 1 d`` but doesn't match
 ``d 1 a``. Because the latter uses different order.
 

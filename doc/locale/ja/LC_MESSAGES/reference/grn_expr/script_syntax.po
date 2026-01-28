@@ -900,7 +900,7 @@ msgstr "最大距離や最後の追加距離といった :ref:`script-syntax-nea
 msgid "Ordered near phrase product search operator"
 msgstr "順序付き近傍フレーズ直積検索演算子"
 
-msgid "This operator does ordered near phrase product search. Ordered near phrase product search is similar to :ref:`script-syntax-near-phrase-product-search-operator` but ordered near phrase product search checks phrases order like :ref:`script-syntax-ordered-near-phrase-search-operator`. For example, ``column *ONPP \"(a b c) (d e)\"`` matches ``a 1 d`` but doesn't match ``d 1 a``. Because the latter uses different order."
+msgid "This operator does ordered near phrase product search. Ordered near phrase product search is similar to :ref:`script-syntax-near-phrase-product-search-operator` but ordered near phrase product search checks phrases order like :ref:`query-syntax-ordered-near-phrase-search-condition`. For example, ``column *ONPP \"(a b c) (d e)\"`` matches ``a 1 d`` but doesn't match ``d 1 a``. Because the latter uses different order."
 msgstr "この演算子は順序付き近傍フレーズ直積検索をします。順序付き近傍フレーズ直積検索は :ref:`script-syntax-near-phrase-product-search-operator` と似ていますが、順序付き近傍フレーズ直積検索は :ref:`query-syntax-ordered-near-phrase-search-condition` のようにフレーズの順序をチェックします。たとえば、 ``column *ONPP \"(a b c) (d e)\"`` は ``a 1 d`` にマッチしますが、 ``d 1 a`` にはマッチしません。なぜなら後者は順序が違うからです。"
 
 msgid "Similar search operator"

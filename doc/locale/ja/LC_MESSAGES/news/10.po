@@ -744,7 +744,7 @@ msgid "We came to be able to calculate sum or arithmetic mean every different mu
 msgstr "以下のように、一回の ``drilldown`` で異なるグループ毎に和と算術平均を計算できるようになりました。"
 
 msgid "[:doc:`/reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode."
-msgstr "[:doc:`/reference/executables/groonga-httpd`] スタンドアローンモードで、 ``--pid-path`` をサポートしました。"
+msgstr "[:doc:`/reference/executables/groonga`] スタンドアローンモードで、 ``--pid-path`` をサポートしました。"
 
 msgid "Because ``--pid-path`` had been ignored in standalone mode in before version."
 msgstr "以前のバージョンのスタンドアローンモードでは、 ``--pid-path`` は無視されていました。"
