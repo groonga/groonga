@@ -29,10 +29,10 @@ msgstr "[{doc}`/reference/executables/grndb`] `grndb check` で使用したオ�
 msgid "We can reduce memory usage by this."
 msgstr "これにより、メモリ消費を抑制できます。"
 
-msgid "We used to leave used object opened on memory. We needed to many memory if we checked a large database by using `grndb check`. Therefore, `ghrndb check` is not practical on low-memory environment because of it takes a long time to complete check."
+msgid "We used to leave used object opened on memory. We needed too much memory if we checked a large database by using `grndb check`. Therefore, `grndb check` is not practical on low-memory environment because it takes a long time to complete check."
 msgstr "今までは、使用したオブジェクトをメモリー上に開いたままにしていました。大きなデータベースをチェックする際に多くのメモリーを必要とします。そのため、メモリーの少ない環境では`grndb check`の完了に長い時間がかかり実用的ではありませんでした。"
 
-msgid "We can complate `grndb check` within a realistic time even if we use low-memory environment by this modification."
+msgid "We can complete `grndb check` within a realistic time even if we use low-memory environment by this modification."
 msgstr "今回の変更によって、メモリーの少ない環境でも、現実的な時間で`grndb check`が完了するようになります。"
 
 msgid "Release 15.2.3 - 2026-01-15"
