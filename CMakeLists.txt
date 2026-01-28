@@ -1062,6 +1062,8 @@ set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
 set(GRN_WITH_MESSAGE_PACK
     "auto"
     CACHE STRING "use MessagePack for suggestion, WAL and so on")
+option(GRN_BUNDLED_MESSAGE_PACK_SHARED
+       "Build bundled MessagePack as a shared library and install it" OFF)
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "bundled")
     set(Groongamsgpackc_FOUND FALSE)
@@ -1100,15 +1102,29 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
         string(APPEND MESSAGE_PACK_SOURCE_URL
                "/${MESSAGE_PACK_SOURCE_BASE_NAME}")
       endif()
+      set(FETCH_CONTENT_OPTIONS ${GRN_FETCH_CONTENT_COMMON_OPTIONS})
+      if(GRN_BUNDLED_MESSAGE_PACK_SHARED)
+        list(FIND FETCH_CONTENT_OPTIONS EXCLUDE_FROM_ALL EXCLUDE_FROM_ALL_INDEX)
+        if(NOT EXCLUDE_FROM_ALL_INDEX EQUAL -1)
+          # Remove EXCLUDE_FROM_ALL itself.
+          list(REMOVE_AT FETCH_CONTENT_OPTIONS ${EXCLUDE_FROM_ALL_INDEX})
+          # Remove EXCLUDE_FROM_ALL value (TRUE).
+          list(REMOVE_AT FETCH_CONTENT_OPTIONS ${EXCLUDE_FROM_ALL_INDEX})
+        endif()
+      endif()
       fetchcontent_declare(
         msgpack-c
-        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        ${FETCH_CONTENT_OPTIONS}
         URL ${MESSAGE_PACK_SOURCE_URL}
         URL_HASH "SHA256=${GRN_MESSAGE_PACK_BUNDLED_SHA256}")
       grn_prepare_fetchcontent()
+      if(GRN_BUNDLED_MESSAGE_PACK_SHARED)
+        set(BUILD_SHARED_LIBS ON)
+      endif()
       set(MSGPACK_BUILD_EXAMPLES OFF)
       fetchcontent_makeavailable(msgpack-c)
-      if(CMAKE_VERSION VERSION_LESS 3.28)
+      if(CMAKE_VERSION VERSION_LESS 3.28 AND NOT
+                                             GRN_BUNDLED_MESSAGE_PACK_SHARED)
         set_property(DIRECTORY "${msgpack-c_SOURCE_DIR}"
                      PROPERTY EXCLUDE_FROM_ALL TRUE)
       endif()
