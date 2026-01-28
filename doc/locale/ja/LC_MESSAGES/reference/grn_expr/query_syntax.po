@@ -97,7 +97,7 @@ msgid "``Full text search condition`` specifies a full text search condition aga
 msgstr "``全文検索条件`` はデフォルトのマッチカラムに対して全文検索するという条件を指定します。マッチカラムとは全文検索対象のカラムのことです。"
 
 msgid "You should specify the default match columns for full text search. They can be specified by ``--match_columns`` option of :doc:`/reference/commands/select`. If you don't specify the default match columns, this conditional expression fails."
-msgstr "全文検索に使うデフォルトのマッチカラムを指定する必要があります。マッチカラムは :doc:`/reference//commands/select` の ``--match_columns`` オプションで指定します。デフォルトのマッチカラムを指定していない場合、この条件式は失敗します。"
+msgstr "全文検索に使うデフォルトのマッチカラムを指定する必要があります。マッチカラムは :doc:`/reference/commands/select` の ``--match_columns`` オプションで指定します。デフォルトのマッチカラムを指定していない場合、この条件式は失敗します。"
 
 msgid "This conditional expression does full text search with ``keyword``. ``keyword`` should not contain any spaces. If ``keyword`` contains a space such as ``search keyword``, it means two full text search conditions; ``search`` and ``keyword``. If you want to specifies a keyword that contains one or more spaces, you can use ``phrase search condition`` that is described below."
 msgstr "この条件式は ``keyword`` で全文検索をします。 ``keyword`` には空白を含めることはできません。 ``search keyword`` というように空白を含んでいる場合は、 ``search`` と ``keyword`` という2つの全文検索条件を指定したことになります。もし、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を使ってください。"

@@ -149,7 +149,7 @@ msgstr "{ref}`table-hash-key`: ゴミエントリーが再利用されないか�
 msgid "It happened when a {ref}`table-hash-key` is rehashed with garbage. Garbage is increased by deleting records."
 msgstr "ゴミエントリーがある状態で{ref}`table-hash-key`をリハッシュすると発生します。レコードを削除するとゴミエントリーが増えます。"
 
-msgid "If rehash is done with garbage, the garbage is never reused after the rehash. A {ref}`table-pat-key` may large even when it has only a few valid records."
+msgid "If rehash is done with garbage, the garbage is never reused after the rehash. A {ref}`table-hash-key` may large even when it has only a few valid records."
 msgstr "ゴミエントリーがあるときにリハッシュされると、リハッシュ後はそのゴミエントリーが再利用されなくなります。すこしの有効なレコードしかないときでも{ref}`table-hash-key`が巨大になってしまう可能性があります。"
 
 msgid "This bug exists since {ref}`release-10-1-1`."

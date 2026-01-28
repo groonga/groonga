@@ -245,7 +245,7 @@ msgid "Supported vector column for drilldown."
 msgstr "ドリルダウンでベクター型のカラムをサポートしました。"
 
 msgid "[deb] Changed ``groonga-httpd`` as default HTTP server package. ``groonga-server-http`` is deprecated. Note that :doc:`/reference/executables/groonga-server-http` functionality itself is still exists in Groonga. If you just want to use simple HTTP server in traditional way, specify proper arguments by command line for :doc:`/reference/executables/groonga`."
-msgstr "[deb] デフォルトのHTTPサーバーパッケージを ``groonga-httpd`` にしました。 ``groonga-server-http`` は非推奨です。ただし、 :doc:`/reference/executables/groonga` のHTTPサーバー機能自体はまだ使えます。もし従来のような簡易HTTPサーバーを使いたいなら、適宜引数を :doc:`/reference/executables/groonga` へとコマンドライン経由で渡します。"
+msgstr "[deb] デフォルトのHTTPサーバーパッケージを ``groonga-httpd`` にしました。 ``groonga-server-http`` は非推奨です。ただし、 :doc:`/reference/executables/groonga-server-http` のHTTPサーバー機能自体はまだ使えます。もし従来のような簡易HTTPサーバーを使いたいなら、適宜引数を :doc:`/reference/executables/groonga` へとコマンドライン経由で渡します。"
 
 msgid "Added configuration file for Windows CI on AppVeyor. [groonga-dev,02970,02981] [Patch by Hiroshi Hatake]"
 msgstr "WindowsのCI環境であるAppVeyor向けの設定ファイルを追加しました。 [groonga-dev,02970,02981] [畑ケさんがパッチ提供]"
