@@ -944,12 +944,12 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
                                 COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
 
-  ZL_Report compress = ZL_CCtx_compress(zl_cctx,
-                                        zl_value,
-                                        zl_value_len_max,
-                                        data->body,
-                                        data->body_len);
-  if (grn_zl_is_error(ctx, tag, compress)) {
+  ZL_Report compressed = ZL_CCtx_compress(zl_cctx,
+                                          zl_value,
+                                          zl_value_len_max,
+                                          data->body,
+                                          data->body_len);
+  if (grn_zl_is_error(ctx, tag, compressed)) {
     data->compressed_value = NULL;
     goto exit;
   }
