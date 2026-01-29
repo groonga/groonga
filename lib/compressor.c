@@ -922,6 +922,10 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         message);
     goto exit;
   }
+  void *zl_value = COMPRESSED_VALUE_GET_DATA(data->compressed_value);
+  COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
+                                COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
+
   ZL_Report set_parameter = ZL_Compressor_setParameter(zl_compressor,
                                                        ZL_CParam_formatVersion,
                                                        ZL_MAX_FORMAT_VERSION);
@@ -940,9 +944,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     data->compressed_value = NULL;
     goto exit;
   }
-  void *zl_value = COMPRESSED_VALUE_GET_DATA(data->compressed_value);
-  COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
-                                COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
 
   ZL_Report compressed = ZL_CCtx_compress(zl_cctx,
                                           zl_value,
@@ -953,7 +954,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     data->compressed_value = NULL;
     goto exit;
   }
-
 exit:
   ZL_Compressor_free(zl_compressor);
   ZL_CCtx_free(zl_cctx);
