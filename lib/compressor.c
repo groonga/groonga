@@ -922,10 +922,9 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         message);
     goto exit;
   }
-  ZL_Report set_parameter =
-    ZL_Compressor_setParameter(zl_compressor,
-                               ZL_CParam_formatVersion,
-                               ZL_MAX_FORMAT_VERSION);
+  ZL_Report set_parameter = ZL_Compressor_setParameter(zl_compressor,
+                                                       ZL_CParam_formatVersion,
+                                                       ZL_MAX_FORMAT_VERSION);
   if (grn_zl_is_error(ctx, tag, set_parameter)) {
     goto exit;
   }
@@ -961,7 +960,28 @@ static inline grn_rc
 grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
 {
   const char *tag = "[compressor][decompress][openzl]";
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s not implemented yet", tag);
+  data->decompressed_value = GRN_MALLOC(data->decompressed_value_len);
+  if (!data->decompressed_value) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate buffer: %s", tag, message);
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
+  ZL_DCtx *zl_dctx = ZL_DCtx_create();
+  ZL_Report zl_decompress = ZL_DCtx_decompress(zl_dctx,
+                                               data->decompressed_value,
+                                               data->decompressed_value_len,
+                                               data->compressed_value,
+                                               data->compressed_value_len);
+  if (grn_zl_is_error(ctx, tag, zl_decompress)) {
+    GRN_FREE(data->decompressed_value);
+    data->decompressed_value = NULL;
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
   return ctx->rc;
 }
 #endif /* GRN_WITH_OPENZL */
