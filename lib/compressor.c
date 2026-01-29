@@ -926,15 +926,18 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
                                                        ZL_CParam_formatVersion,
                                                        ZL_MAX_FORMAT_VERSION);
   if (grn_zl_is_error(ctx, tag, set_parameter)) {
+    data->compressed_value = NULL;
     goto exit;
   }
   ZL_Report select_starting_graph_id =
     ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
   if (grn_zl_is_error(ctx, tag, select_starting_graph_id)) {
+    data->compressed_value = NULL;
     goto exit;
   }
   ZL_Report ref_compressor = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
   if (grn_zl_is_error(ctx, tag, ref_compressor)) {
+    data->compressed_value = NULL;
     goto exit;
   }
   void *zl_value = COMPRESSED_VALUE_GET_DATA(data->compressed_value);
@@ -947,6 +950,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
                                         data->body,
                                         data->body_len);
   if (grn_zl_is_error(ctx, tag, compress)) {
+    data->compressed_value = NULL;
     goto exit;
   }
 
