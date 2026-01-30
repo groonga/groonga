@@ -1154,7 +1154,8 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
   elseif(
     NOT FETCHCONTENT_FULLY_DISCONNECTED
     AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.24"
-    AND NOT MSVC)
+    AND NOT MSVC
+    AND NOT MINGW)
     # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
     # access but deb uses it...
     #
