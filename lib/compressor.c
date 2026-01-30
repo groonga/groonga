@@ -881,11 +881,89 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
 #endif
 
 #ifdef GRN_WITH_OPENZL
+static inline bool
+grn_zl_is_error(grn_ctx *ctx, const char *tag, ZL_Report zl_report)
+{
+  bool is_error = false;
+  if (ZL_isError(zl_report)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to set compressor's parameter: %s",
+        tag,
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    is_error = true;
+  }
+  return is_error;
+}
+
 static inline grn_rc
 grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
 {
   const char *tag = "[compressor][compress][openzl]";
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s not implemented yet", tag);
+  ZL_CCtx *zl_cctx = ZL_CCtx_create();
+  if (!zl_cctx) {
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate compress context", tag);
+    return ctx->rc;
+  }
+  ZL_Compressor *zl_compressor = ZL_Compressor_create();
+  if (!zl_compressor) {
+    ERR(GRN_OPENZL_ERROR, "%s failed to create compressor", tag);
+    return ctx->rc;
+  }
+
+  bool need_free_compressed_value = false;
+  const size_t input_len = data->header_len + data->body_len + data->footer_len;
+  const size_t zl_value_len_max = ZL_compressBound(input_len);
+  data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(zl_value_len_max));
+  if (!data->compressed_value) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to allocate compress buffer: %s",
+        tag,
+        message);
+    goto exit;
+  }
+  void *zl_value = COMPRESSED_VALUE_GET_DATA(data->compressed_value);
+  COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
+                                COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
+
+  ZL_Report set_parameter = ZL_Compressor_setParameter(zl_compressor,
+                                                       ZL_CParam_formatVersion,
+                                                       ZL_MAX_FORMAT_VERSION);
+  if (grn_zl_is_error(ctx, tag, set_parameter)) {
+    need_free_compressed_value = true;
+    goto exit;
+  }
+  ZL_Report select_starting_graph_id =
+    ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
+  if (grn_zl_is_error(ctx, tag, select_starting_graph_id)) {
+    need_free_compressed_value = true;
+    goto exit;
+  }
+  ZL_Report ref_compressor = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
+  if (grn_zl_is_error(ctx, tag, ref_compressor)) {
+    need_free_compressed_value = true;
+    goto exit;
+  }
+
+  ZL_Report compressed = ZL_CCtx_compress(zl_cctx,
+                                          zl_value,
+                                          zl_value_len_max,
+                                          data->body,
+                                          data->body_len);
+  if (grn_zl_is_error(ctx, tag, compressed)) {
+    need_free_compressed_value = true;
+    goto exit;
+  }
+  size_t zl_compressed_size = ZL_validResult(compressed);
+  data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
+exit:
+  if (need_free_compressed_value) {
+    GRN_FREE(data->compressed_value);
+    data->compressed_value = NULL;
+  }
+  ZL_Compressor_free(zl_compressor);
+  ZL_CCtx_free(zl_cctx);
   return ctx->rc;
 }
 
@@ -893,7 +971,28 @@ static inline grn_rc
 grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
 {
   const char *tag = "[compressor][decompress][openzl]";
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s not implemented yet", tag);
+  data->decompressed_value = GRN_MALLOC(data->decompressed_value_len);
+  if (!data->decompressed_value) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate buffer: %s", tag, message);
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
+  ZL_DCtx *zl_dctx = ZL_DCtx_create();
+  ZL_Report zl_decompress = ZL_DCtx_decompress(zl_dctx,
+                                               data->decompressed_value,
+                                               data->decompressed_value_len,
+                                               data->compressed_value,
+                                               data->compressed_value_len);
+  if (grn_zl_is_error(ctx, tag, zl_decompress)) {
+    GRN_FREE(data->decompressed_value);
+    data->decompressed_value = NULL;
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
   return ctx->rc;
 }
 #endif /* GRN_WITH_OPENZL */
