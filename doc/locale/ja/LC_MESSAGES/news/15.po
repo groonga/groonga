@@ -17,6 +17,27 @@ msgstr ""
 msgid "News - 15 series"
 msgstr "お知らせ - 15系"
 
+msgid "Release 15.2.5 - 2026-01-30"
+msgstr "15.2.5リリース - 2026-01-30"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a compatibility bug with the `ShortBinary`, `Binary`, `LongBinary`, and `JSON` types"
+msgstr "`ShortBinary`、`Binary`、`LongBinary`、`JSON`型の互換性バグを修正しました。"
+
+msgid "Fixed a bug that prevented the `ShortBinary`, `Binary`, and `LongBinary` types added in {ref}`release-15-1-8`, and the `JSON` type added in {ref}`release-15-2-3`, from working correctly in databases created before those versions."
+msgstr "{ref}`release-15-1-8`で`ShortBinary`、`Binary`、`LongBinary`型が、{ref}`release-15-2-3`で`JSON`型が追加されましたが、そのバージョン以前に作成したデータベースでそれらの型が使えなかった不具合を修正しました。"
+
+msgid "Additionally, a bug that caused Groonga databases created with versions before {ref}`release-15-2-1` to crash when opened in {ref}`release-15-2-3` or later, when the {doc}`/reference/commands/schema` command was executed, has been fixed."
+msgstr "また{ref}`release-15-2-1`以前のGroongaで作ったデータベースを、{ref}`release-15-2-3`以降のGroongaで開き、{doc}`/reference/commands/schema` コマンドを実行するとクラッシュする不具合も修正しました。"
+
+msgid "When upgrading from Groonga versions before 15.2.1, please upgrade to version 15.2.5 or later."
+msgstr "15.2.1以前のGroongaを使っている環境でバージョンアップをする場合は、15.2.5以降のバージョンにバージョンアップするようにしてください。"
+
+msgid "You can resolve this issue by upgrading to version 15.2.5, even if you have already upgraded to versions 15.2.3 or 15.2.4."
+msgstr "既に15.2.3, 15.2.4へバージョンアップしている場合であっても、15.2.5へバージョンアップすることで、この問題を修正できます。"
+
 msgid "Release 15.2.4 - 2026-01-29"
 msgstr "15.2.4リリース - 2026-01-29"
 
@@ -37,9 +58,6 @@ msgstr "今回の変更によって、メモリーの少ない環境でも、現
 
 msgid "Release 15.2.3 - 2026-01-15"
 msgstr "15.2.3リリース - 2026-01-15"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a bug that Groonga couldn't find records that were added after index construction when `centroid_column` was used"
 msgstr "`centroid_column`を使った時に、インデックス構築の後に追加したレコードが見つからない問題を修正しました。"
