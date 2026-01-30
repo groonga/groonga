@@ -452,7 +452,7 @@ grn_db_open_ensure_float32(grn_ctx *ctx, grn_db *db)
 {
   return grn_db_open_ensure_type(ctx,
                                  db,
-                                 GRN_DB_FLAOT32,
+                                 GRN_DB_FLOAT32,
                                  GRN_TYPE_FLOAT32_NAME,
                                  GRN_TYPE_FLOAT32_NAME_LEN,
                                  GRN_TYPE_FLOAT32_FLAGS,
