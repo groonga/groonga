@@ -416,6 +416,32 @@ exit:
   GRN_API_RETURN(NULL);
 }
 
+static bool
+grn_db_open_ensure_type(grn_ctx *ctx,
+                        grn_db *db,
+                        grn_id id,
+                        const char *name,
+                        unsigned int name_size,
+                        grn_obj_flags flags,
+                        unsigned int size)
+{
+  if (grn_table_get(ctx, db->keys, name, name_size) == id) {
+    return false;
+  }
+
+  if (db->keys->header.type != GRN_TABLE_DAT_KEY) {
+    return false;
+  }
+
+  if (grn_table_update_by_id(ctx, db->keys, id, name, name_size) !=
+      GRN_SUCCESS) {
+    return false;
+  }
+
+  grn_obj *type = grn_type_create_internal(ctx, id, flags, size);
+  return type != NULL;
+}
+
 #define GRN_TYPE_FLOAT32_NAME     "Float32"
 #define GRN_TYPE_FLOAT32_NAME_LEN (sizeof(GRN_TYPE_FLOAT32_NAME) - 1)
 #define GRN_TYPE_FLOAT32_FLAGS    GRN_OBJ_KEY_FLOAT
@@ -424,30 +450,13 @@ exit:
 static bool
 grn_db_open_ensure_float32(grn_ctx *ctx, grn_db *db)
 {
-  if (grn_table_get(ctx,
-                    db->keys,
-                    GRN_TYPE_FLOAT32_NAME,
-                    GRN_TYPE_FLOAT32_NAME_LEN) == GRN_DB_FLOAT32) {
-    return false;
-  }
-
-  if (db->keys->header.type != GRN_TABLE_DAT_KEY) {
-    return false;
-  }
-
-  if (grn_table_update_by_id(ctx,
-                             db->keys,
-                             GRN_DB_FLOAT32,
-                             GRN_TYPE_FLOAT32_NAME,
-                             GRN_TYPE_FLOAT32_NAME_LEN) != GRN_SUCCESS) {
-    return false;
-  }
-
-  grn_obj *float32 = grn_type_create_internal(ctx,
-                                              GRN_DB_FLOAT32,
-                                              GRN_TYPE_FLOAT32_FLAGS,
-                                              GRN_TYPE_FLOAT32_SIZE);
-  return float32 != NULL;
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_FLOAT32,
+                                 GRN_TYPE_FLOAT32_NAME,
+                                 GRN_TYPE_FLOAT32_NAME_LEN,
+                                 GRN_TYPE_FLOAT32_FLAGS,
+                                 GRN_TYPE_FLOAT32_SIZE);
 }
 
 #define GRN_TYPE_BFLOAT16_NAME     "BFloat16"
@@ -462,30 +471,77 @@ grn_db_open_ensure_float32(grn_ctx *ctx, grn_db *db)
 static bool
 grn_db_open_ensure_bfloat16(grn_ctx *ctx, grn_db *db)
 {
-  if (grn_table_get(ctx,
-                    db->keys,
-                    GRN_TYPE_BFLOAT16_NAME,
-                    GRN_TYPE_BFLOAT16_NAME_LEN) == GRN_DB_BFLOAT16) {
-    return false;
-  }
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_BFLOAT16,
+                                 GRN_TYPE_BFLOAT16_NAME,
+                                 GRN_TYPE_BFLOAT16_NAME_LEN,
+                                 GRN_TYPE_BFLOAT16_FLAGS,
+                                 GRN_TYPE_BFLOAT16_SIZE);
+}
 
-  if (db->keys->header.type != GRN_TABLE_DAT_KEY) {
-    return false;
-  }
+#define GRN_TYPE_SHORT_BINARY_NAME     "ShortBinary"
+#define GRN_TYPE_SHORT_BINARY_NAME_LEN (sizeof(GRN_TYPE_SHORT_BINARY_NAME) - 1)
+#define GRN_TYPE_SHORT_BINARY_FLAGS    GRN_OBJ_KEY_VAR_SIZE
 
-  if (grn_table_update_by_id(ctx,
-                             db->keys,
-                             GRN_DB_BFLOAT16,
-                             GRN_TYPE_BFLOAT16_NAME,
-                             GRN_TYPE_BFLOAT16_NAME_LEN) != GRN_SUCCESS) {
-    return false;
-  }
+static bool
+grn_db_open_ensure_short_binary(grn_ctx *ctx, grn_db *db)
+{
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_SHORT_BINARY,
+                                 GRN_TYPE_SHORT_BINARY_NAME,
+                                 GRN_TYPE_SHORT_BINARY_NAME_LEN,
+                                 GRN_TYPE_SHORT_BINARY_FLAGS,
+                                 GRN_TYPE_SHORT_BINARY_SIZE);
+}
 
-  grn_obj *bfloat16 = grn_type_create_internal(ctx,
-                                               GRN_DB_BFLOAT16,
-                                               GRN_TYPE_BFLOAT16_FLAGS,
-                                               GRN_TYPE_BFLOAT16_SIZE);
-  return bfloat16 != NULL;
+#define GRN_TYPE_BINARY_NAME     "Binary"
+#define GRN_TYPE_BINARY_NAME_LEN (sizeof(GRN_TYPE_BINARY_NAME) - 1)
+#define GRN_TYPE_BINARY_FLAGS    GRN_OBJ_KEY_VAR_SIZE
+
+static bool
+grn_db_open_ensure_binary(grn_ctx *ctx, grn_db *db)
+{
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_BINARY,
+                                 GRN_TYPE_BINARY_NAME,
+                                 GRN_TYPE_BINARY_NAME_LEN,
+                                 GRN_TYPE_BINARY_FLAGS,
+                                 GRN_TYPE_BINARY_SIZE);
+}
+
+#define GRN_TYPE_LONG_BINARY_NAME     "LongBinary"
+#define GRN_TYPE_LONG_BINARY_NAME_LEN (sizeof(GRN_TYPE_LONG_BINARY_NAME) - 1)
+#define GRN_TYPE_LONG_BINARY_FLAGS    GRN_OBJ_KEY_VAR_SIZE
+
+static bool
+grn_db_open_ensure_long_binary(grn_ctx *ctx, grn_db *db)
+{
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_LONG_BINARY,
+                                 GRN_TYPE_LONG_BINARY_NAME,
+                                 GRN_TYPE_LONG_BINARY_NAME_LEN,
+                                 GRN_TYPE_LONG_BINARY_FLAGS,
+                                 GRN_TYPE_LONG_BINARY_SIZE);
+}
+
+#define GRN_TYPE_JSON_NAME     "JSON"
+#define GRN_TYPE_JSON_NAME_LEN (sizeof(GRN_TYPE_JSON_NAME) - 1)
+#define GRN_TYPE_JSON_FLAGS    GRN_OBJ_KEY_VAR_SIZE
+
+static bool
+grn_db_open_ensure_json(grn_ctx *ctx, grn_db *db)
+{
+  return grn_db_open_ensure_type(ctx,
+                                 db,
+                                 GRN_DB_JSON,
+                                 GRN_TYPE_JSON_NAME,
+                                 GRN_TYPE_JSON_NAME_LEN,
+                                 GRN_TYPE_JSON_FLAGS,
+                                 GRN_TYPE_JSON_SIZE);
 }
 
 grn_obj *
@@ -585,6 +641,18 @@ grn_db_open(grn_ctx *ctx, const char *path)
       need_flush = true;
     }
     if (grn_db_open_ensure_bfloat16(ctx, s)) {
+      need_flush = true;
+    }
+    if (grn_db_open_ensure_short_binary(ctx, s)) {
+      need_flush = true;
+    }
+    if (grn_db_open_ensure_binary(ctx, s)) {
+      need_flush = true;
+    }
+    if (grn_db_open_ensure_long_binary(ctx, s)) {
+      need_flush = true;
+    }
+    if (grn_db_open_ensure_json(ctx, s)) {
       need_flush = true;
     }
 #ifdef GRN_WITH_MECAB
@@ -15044,22 +15112,28 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     return GRN_FILE_CORRUPT;
   }
   obj = deftype(ctx,
-                "ShortBinary",
-                GRN_OBJ_KEY_VAR_SIZE,
+                GRN_TYPE_SHORT_BINARY_NAME,
+                GRN_TYPE_SHORT_BINARY_FLAGS,
                 GRN_TYPE_SHORT_BINARY_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORT_BINARY) {
     return GRN_FILE_CORRUPT;
   }
-  obj = deftype(ctx, "Binary", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_BINARY_SIZE);
+  obj = deftype(ctx,
+                GRN_TYPE_BINARY_NAME,
+                GRN_TYPE_BINARY_FLAGS,
+                GRN_TYPE_BINARY_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_BINARY) {
     return GRN_FILE_CORRUPT;
   }
-  obj =
-    deftype(ctx, "LongBinary", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_LONG_BINARY_SIZE);
+  obj = deftype(ctx,
+                GRN_TYPE_LONG_BINARY_NAME,
+                GRN_TYPE_LONG_BINARY_FLAGS,
+                GRN_TYPE_LONG_BINARY_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_BINARY) {
     return GRN_FILE_CORRUPT;
   }
-  obj = deftype(ctx, "JSON", GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_JSON_SIZE);
+  obj =
+    deftype(ctx, GRN_TYPE_JSON_NAME, GRN_TYPE_JSON_FLAGS, GRN_TYPE_JSON_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_JSON) {
     return GRN_FILE_CORRUPT;
   }
