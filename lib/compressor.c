@@ -910,6 +910,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
+  bool need_free_compressed_value = false;
   const size_t input_len = data->header_len + data->body_len + data->footer_len;
   const size_t zl_value_len_max = ZL_compressBound(input_len);
   data->compressed_value = GRN_MALLOC(COMPRESSED_VALUE_LEN(zl_value_len_max));
@@ -929,7 +930,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   ZL_Report set_parameter = ZL_Compressor_setParameter(zl_compressor,
                                                        ZL_CParam_formatVersion,
                                                        ZL_MAX_FORMAT_VERSION);
-  bool need_free_compressed_value = false;
   if (grn_zl_is_error(ctx, tag, set_parameter)) {
     need_free_compressed_value = true;
     goto exit;
