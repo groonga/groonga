@@ -3,5 +3,3 @@ column_create Memos content COLUMN_SCALAR|COMPRESS_OPENZL Text
 
 column_list Memos
 
-
-
