@@ -980,18 +980,33 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
+  bool need_free_decompressed_value = false;
+  bool need_free_decompressed_context = false;
   ZL_DCtx *zl_dctx = ZL_DCtx_create();
+  if (!zl_dctx) {
+    need_free_decompressed_value = true;
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate decompress context", tag);
+    goto exit;
+  }
   ZL_Report zl_decompress = ZL_DCtx_decompress(zl_dctx,
                                                data->decompressed_value,
                                                data->decompressed_value_len,
                                                data->compressed_value,
                                                data->compressed_value_len);
   if (grn_zl_is_error(ctx, tag, zl_decompress)) {
+    need_free_decompressed_value = true;
+    need_free_decompressed_context = true;
+    goto exit;
+  }
+
+exit:
+  if (need_free_decompressed_context) {
     ZL_DCtx_free(zl_dctx);
+  }
+  if (need_free_decompressed_value) {
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
-    return ctx->rc;
   }
 
   return ctx->rc;
