@@ -987,6 +987,7 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
                                                data->compressed_value,
                                                data->compressed_value_len);
   if (grn_zl_is_error(ctx, tag, zl_decompress)) {
+    ZL_DCtx_free(zl_dctx);
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
