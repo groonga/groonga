@@ -914,14 +914,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   }
 
   void *zl_value = COMPRESSED_VALUE_GET_DATA(data->compressed_value);
-  if (!zl_value) {
-    ERR(GRN_OPENZL_ERROR, "%s failed to get data", tag);
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
-  }
   COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
                                 COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
 
