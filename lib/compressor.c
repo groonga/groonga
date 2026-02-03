@@ -935,7 +935,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   zl_report = ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
   if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
-        "%s failed to select starting graph id: %s",
+        "%s failed to select starting graph ID: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
