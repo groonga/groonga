@@ -965,7 +965,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
                                data->body_len);
   if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
-        "%s failed to comressed values: %s",
+        "%s failed to compress body: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
