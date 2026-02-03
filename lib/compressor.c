@@ -917,14 +917,14 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   COMPRESSED_VALUE_SET_METADATA(data->compressed_value,
                                 COMPRESSED_VALUE_METADATA_PACK(input_len, 0));
 
-  ZL_Report set_parameter = ZL_Compressor_setParameter(zl_compressor,
-                                                       ZL_CParam_formatVersion,
-                                                       ZL_MAX_FORMAT_VERSION);
-  if (ZL_isError(set_parameter)) {
+  ZL_Report zl_report = ZL_Compressor_setParameter(zl_compressor,
+                                                   ZL_CParam_formatVersion,
+                                                   ZL_MAX_FORMAT_VERSION);
+  if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to set compressor parameter: %s",
         tag,
-        ZL_ErrorCode_toString(ZL_errorCode(set_parameter)));
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
     ZL_Compressor_free(zl_compressor);
@@ -932,13 +932,12 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  ZL_Report select_starting_graph_id =
-    ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
-  if (ZL_isError(select_starting_graph_id)) {
+  zl_report = ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
+  if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to select starting graph id: %s",
         tag,
-        ZL_ErrorCode_toString(ZL_errorCode(select_starting_graph_id)));
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
     ZL_Compressor_free(zl_compressor);
@@ -946,12 +945,12 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  ZL_Report ref_compressor = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
-  if (ZL_isError(ref_compressor)) {
+  zl_report = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
+  if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to reference compressor: %s",
         tag,
-        ZL_ErrorCode_toString(ZL_errorCode(ref_compressor)));
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
     ZL_Compressor_free(zl_compressor);
@@ -959,23 +958,23 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  ZL_Report compressed = ZL_CCtx_compress(zl_cctx,
-                                          zl_value,
-                                          zl_value_len_max,
-                                          data->body,
-                                          data->body_len);
-  if (ZL_isError(compressed)) {
+  zl_report = ZL_CCtx_compress(zl_cctx,
+                               zl_value,
+                               zl_value_len_max,
+                               data->body,
+                               data->body_len);
+  if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to comressed values: %s",
         tag,
-        ZL_ErrorCode_toString(ZL_errorCode(compressed)));
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
   }
-  size_t zl_compressed_size = ZL_validResult(compressed);
+  size_t zl_compressed_size = ZL_validResult(zl_report);
   data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 
   return ctx->rc;
