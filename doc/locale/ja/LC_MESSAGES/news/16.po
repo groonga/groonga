@@ -1,0 +1,33 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 15.2.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-02-05 16:42+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 16 series"
+msgstr "お知らせ - 16系"
+
+msgid "Release 16.0.0 - 2026-02-09"
+msgstr "16.0.0リリース - 2026-02-09"
+
+msgid "This is our annual major release! This release doesn't have any backward incompatible changes! So you can upgrade Groonga without migrating your existing databases. You can still use your existing databases as-is."
+msgstr "毎年恒例の肉の日メジャーリリースです！このリリースには後方互換性が壊れる変更はありません！既存のデータベースを移行せずにGroongaをアップグレードできます。既存のデータベースをそのまま使い続けることができます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that causes overflow in the key of `TABLE_DAT_KEY` tables"
+msgstr "`TABLE_DAT_KEY`のテーブルでキーでオーバーフローを引き起こす問題を修正"
+
+msgid "If you set a value of 4096 byte against a column, a `TABLE_DAT_KEY` table may be broken."
+msgstr "4096byteのキーをセットすると、`TABLE_DAT_KEY`のテーブルが壊れることがあります。"

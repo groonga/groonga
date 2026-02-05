@@ -1112,6 +1112,7 @@ set(GRN_DOC_SOURCES
     news/13.md
     news/14.md
     news/15.md
+    news/16.md
     news/2.rst
     news/3.rst
     news/4.rst
@@ -1470,6 +1471,7 @@ set(GRN_DOC_HTML_FILES
     news/13.html
     news/14.html
     news/15.html
+    news/16.html
     news/2.html
     news/3.html
     news/4.html
