@@ -977,6 +977,8 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   size_t zl_compressed_size = ZL_validResult(zl_report);
   data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 
+  ZL_Compressor_free(zl_compressor);
+  ZL_CCtx_free(zl_cctx);
   return ctx->rc;
 }
 
@@ -1018,6 +1020,7 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
+  ZL_DCtx_free(zl_dctx);
   return ctx->rc;
 }
 #endif /* GRN_WITH_OPENZL */
