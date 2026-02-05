@@ -958,24 +958,32 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  zl_report = ZL_CCtx_compress(zl_cctx,
-                               zl_value,
-                               zl_value_len_max,
-                               data->body,
-                               data->body_len);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to compress body: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
+  if (data->header_len == 0 && data->footer_len == 0) {
+    zl_report = ZL_CCtx_compress(zl_cctx,
+                                 zl_value,
+                                 zl_value_len_max,
+                                 data->body,
+                                 data->body_len);
+    if (ZL_isError(zl_report)) {
+      ERR(GRN_OPENZL_ERROR,
+          "%s failed to compress body: %s",
+          tag,
+          ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+      GRN_FREE(data->compressed_value);
+      data->compressed_value = NULL;
+      ZL_Compressor_free(zl_compressor);
+      ZL_CCtx_free(zl_cctx);
+      return ctx->rc;
+    }
+    size_t zl_compressed_size = ZL_validResult(zl_report);
+    data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
+  } else {
+    /*
+     * We don't implements comresstion of header, body, and footer yet.
+     * So, if header or footer exists, we don't compress data currently.
+     */
+    data->compressed_value_len = 0;
   }
-  size_t zl_compressed_size = ZL_validResult(zl_report);
-  data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 
   ZL_Compressor_free(zl_compressor);
   ZL_CCtx_free(zl_cctx);
@@ -985,6 +993,10 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
 static inline grn_rc
 grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
 {
+  if (data->compressed_value_len == 0) {
+    return ctx->rc;
+  }
+
   const char *tag = "[compressor][decompress][openzl]";
   data->decompressed_value = GRN_MALLOC(data->decompressed_value_len);
   if (!data->decompressed_value) {
