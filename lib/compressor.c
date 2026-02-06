@@ -958,32 +958,41 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
+  size_t n_input_elements = 0;
+  const ZL_TypedRef *inputs[1] = {0};
   if (data->header_len == 0 && data->footer_len == 0) {
-    zl_report = ZL_CCtx_compress(zl_cctx,
-                                 zl_value,
-                                 zl_value_len_max,
-                                 data->body,
-                                 data->body_len);
-    if (ZL_isError(zl_report)) {
-      ERR(GRN_OPENZL_ERROR,
-          "%s failed to compress body: %s",
-          tag,
-          ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-      GRN_FREE(data->compressed_value);
-      data->compressed_value = NULL;
-      ZL_Compressor_free(zl_compressor);
-      ZL_CCtx_free(zl_cctx);
-      return ctx->rc;
-    }
-    size_t zl_compressed_size = ZL_validResult(zl_report);
-    data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
+    inputs[0] = ZL_TypedRef_createSerial(data->body, data->body_len);
+    n_input_elements++;
   } else {
     /*
      * We don't implements comresstion of header, body, and footer yet.
      * So, if header or footer exists, we don't compress data currently.
      */
-    data->compressed_value_len = 0;
+    data->compressed_value_len == 0;
+    GRN_FREE(data->compressed_value);
+    data->compressed_value = NULL;
+    ZL_Compressor_free(zl_compressor);
+    ZL_CCtx_free(zl_cctx);
+    return ctx->rc;
   }
+  zl_report = ZL_CCtx_compressMultiTypedRef(zl_cctx,
+                                            zl_value,
+                                            zl_value_len_max,
+                                            inputs,
+                                            n_input_elements);
+  if (ZL_isError(zl_report)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to compress body: %s",
+        tag,
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    GRN_FREE(data->compressed_value);
+    data->compressed_value = NULL;
+    ZL_Compressor_free(zl_compressor);
+    ZL_CCtx_free(zl_cctx);
+    return ctx->rc;
+  }
+  size_t zl_compressed_size = ZL_validResult(zl_report);
+  data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 
   ZL_Compressor_free(zl_compressor);
   ZL_CCtx_free(zl_cctx);
@@ -1007,32 +1016,47 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
+  ZL_TypedBuffer *outputs[1] = {ZL_TypedBuffer_create()};
+  if (!outputs) {
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate output buffer", tag);
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
   ZL_DCtx *zl_dctx = ZL_DCtx_create();
   if (!zl_dctx) {
     ERR(GRN_OPENZL_ERROR, "%s failed to allocate decompress context", tag);
+    ZL_TypedBuffer_free(outputs[0]);
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
     return ctx->rc;
   }
-  ZL_Report zl_decompress = ZL_DCtx_decompress(zl_dctx,
-                                               data->decompressed_value,
-                                               data->decompressed_value_len,
-                                               data->compressed_value,
-                                               data->compressed_value_len);
+  ZL_Report zl_decompress =
+    ZL_DCtx_decompressMultiTBuffer(zl_dctx,
+                                   outputs,
+                                   1,
+                                   data->compressed_value,
+                                   data->compressed_value_len);
   if (ZL_isError(zl_decompress)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to decompress: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_decompress)));
     ZL_DCtx_free(zl_dctx);
+    ZL_TypedBuffer_free(outputs[0]);
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
     return ctx->rc;
   }
 
+  memcpy(data->decompressed_value,
+         ZL_TypedBuffer_rPtr(outputs[0]),
+         data->decompressed_value_len);
+
   ZL_DCtx_free(zl_dctx);
+  ZL_TypedBuffer_free(outputs[0]);
   return ctx->rc;
 }
 #endif /* GRN_WITH_OPENZL */
