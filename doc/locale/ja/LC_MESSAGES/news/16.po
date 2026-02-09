@@ -29,5 +29,5 @@ msgstr "修正"
 msgid "Fixed a bug that causes overflow in the key of `TABLE_DAT_KEY` tables"
 msgstr "`TABLE_DAT_KEY`のテーブルでキーでオーバーフローを引き起こす問題を修正"
 
-msgid "If you set a value of 4096 byte against a column, a `TABLE_DAT_KEY` table may be broken."
+msgid "If you set a value of 4096 byte against a key, a `TABLE_DAT_KEY` table may be broken."
 msgstr "4096byteのキーをセットすると、`TABLE_DAT_KEY`のテーブルが壊れることがあります。"
