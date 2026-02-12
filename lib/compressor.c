@@ -1017,7 +1017,7 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
   }
 
   ZL_TypedBuffer *outputs[1] = {ZL_TypedBuffer_create()};
-  if (!outputs[1]) {
+  if (!outputs[0]) {
     ERR(GRN_OPENZL_ERROR, "%s failed to allocate output buffer", tag);
     data->decompressed_value_len = 0;
     return ctx->rc;
