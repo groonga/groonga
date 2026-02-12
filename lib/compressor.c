@@ -962,7 +962,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   }
 
   size_t n_input_elements = 0;
-  const ZL_TypedRef *inputs[1] = {0};
+  ZL_TypedRef *inputs[1] = {0};
   if (data->header_len == 0 && data->footer_len == 0) {
     inputs[0] = ZL_TypedRef_createSerial(data->body, data->body_len);
     n_input_elements++;
@@ -979,10 +979,20 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
   }
+  /*
+   * The input object is the same for both ZL_CCtx_compressMultiTypedRef()
+   * and ZL_TypedRef_free(). However, the two functions expect different
+   * types (const vs. non-const), so the same variable cannot be used
+   * directly for both.
+   *
+   * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
+   * only when calling ZL_CCtx_compressMultiTypedRef().
+   */
+  const ZL_TypedRef *inputs_temporary = inputs[0];
   zl_report = ZL_CCtx_compressMultiTypedRef(zl_cctx,
                                             zl_value,
                                             zl_value_len_max,
-                                            inputs,
+                                            &inputs_temporary,
                                             n_input_elements);
   if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
