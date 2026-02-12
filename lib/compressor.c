@@ -927,6 +927,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
+    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
@@ -940,6 +941,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
+    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
@@ -953,6 +955,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
+    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
@@ -971,6 +974,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     data->compressed_value_len = 0;
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
+    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
@@ -985,8 +989,10 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
         "%s failed to compress body: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    ZL_TypedRef_free(inputs[0]);
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
+    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
@@ -994,6 +1000,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   size_t zl_compressed_size = ZL_validResult(zl_report);
   data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 
+  ZL_TypedRef_free(inputs[0]);
   ZL_Compressor_free(zl_compressor);
   ZL_CCtx_free(zl_cctx);
   return ctx->rc;
