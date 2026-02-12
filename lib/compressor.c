@@ -965,6 +965,15 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
   ZL_TypedRef *inputs[1] = {0};
   if (data->header_len == 0 && data->footer_len == 0) {
     inputs[0] = ZL_TypedRef_createSerial(data->body, data->body_len);
+    if (!inputs[0]) {
+      ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer", tag);
+      GRN_FREE(data->compressed_value);
+      data->compressed_value = NULL;
+      data->compressed_value_len = 0;
+      ZL_Compressor_free(zl_compressor);
+      ZL_CCtx_free(zl_cctx);
+      return ctx->rc;
+    }
     n_input_elements++;
   } else {
     /*
