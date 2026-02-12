@@ -980,6 +980,9 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
      * We don't implements comresstion of header, body, and footer yet.
      * So, if header or footer exists, we don't compress data currently.
      */
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "%s compress of vector columns is not implemented yet",
+        tag);
     GRN_FREE(data->compressed_value);
     data->compressed_value = NULL;
     data->compressed_value_len = 0;
