@@ -1030,10 +1030,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
 static inline grn_rc
 grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
 {
-  if (data->compressed_value_len == 0) {
-    return ctx->rc;
-  }
-
   const char *tag = "[compressor][decompress][openzl]";
   data->decompressed_value = GRN_MALLOC(data->decompressed_value_len);
   if (!data->decompressed_value) {
