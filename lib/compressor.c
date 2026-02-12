@@ -1081,6 +1081,22 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
+  size_t decompressed_size = ZL_TypedBuffer_byteSize(outputs[0]);
+  if (data->decompressed_value_len != (uint32_t)decompressed_size) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s unexpected decompressed size: expected %" GRN_FMT_INT32U " bytes"
+        " but got %" GRN_FMT_SIZE " bytes",
+        tag,
+        data->decompressed_value_len,
+        decompressed_size);
+    ZL_DCtx_free(zl_dctx);
+    ZL_TypedBuffer_free(outputs[0]);
+    GRN_FREE(data->decompressed_value);
+    data->decompressed_value = NULL;
+    data->decompressed_value_len = 0;
+    return ctx->rc;
+  }
+
   memcpy(data->decompressed_value,
          ZL_TypedBuffer_rPtr(outputs[0]),
          data->decompressed_value_len);
