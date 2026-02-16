@@ -1149,7 +1149,10 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
-  size_t decompressed_size = ZL_TypedBuffer_byteSize(outputs[0]);
+  size_t decompressed_size = 0;
+  for (i = 0; i < n_output_elements; i++) {
+    decompressed_size += ZL_TypedBuffer_byteSize(outputs[i]);
+  }
   if (data->decompressed_value_len != (uint32_t)decompressed_size) {
     ERR(GRN_OPENZL_ERROR,
         "%s unexpected decompressed size: expected %" GRN_FMT_INT32U " bytes"
