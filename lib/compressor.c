@@ -933,34 +933,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  zl_report = ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to select starting graph ID: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
-  }
-
-  zl_report = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to reference compressor: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
-  }
-
   size_t n_input_elements = 0;
   ZL_TypedRef *inputs[3] = {0};
   if (data->header_len == 0 && data->footer_len == 0) {
@@ -1027,6 +999,44 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
       n_input_elements++;
     }
   }
+
+  const ZL_GraphID successors[3] = {ZL_GRAPH_ZSTD,
+                                    ZL_GRAPH_ZSTD,
+                                    ZL_GRAPH_ZSTD};
+  const ZL_GraphID zl_graph_id =
+    ZL_Compressor_registerStaticGraph_fromNode(zl_compressor,
+                                               ZL_NODE_CONCAT_SERIAL,
+                                               successors,
+                                               2);
+
+  zl_report = ZL_Compressor_selectStartingGraphID(zl_compressor, zl_graph_id);
+  if (ZL_isError(zl_report)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to select starting graph ID: %s",
+        tag,
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    GRN_FREE(data->compressed_value);
+    data->compressed_value = NULL;
+    data->compressed_value_len = 0;
+    ZL_Compressor_free(zl_compressor);
+    ZL_CCtx_free(zl_cctx);
+    return ctx->rc;
+  }
+
+  zl_report = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
+  if (ZL_isError(zl_report)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to reference compressor: %s",
+        tag,
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    GRN_FREE(data->compressed_value);
+    data->compressed_value = NULL;
+    data->compressed_value_len = 0;
+    ZL_Compressor_free(zl_compressor);
+    ZL_CCtx_free(zl_cctx);
+    return ctx->rc;
+  }
+
   /*
    * The input object is the same for both ZL_CCtx_compressMultiTypedRef()
    * and ZL_TypedRef_free(). However, the two functions expect different
