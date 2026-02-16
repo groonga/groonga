@@ -1046,7 +1046,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
    * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
    * only when calling ZL_CCtx_compressMultiTypedRef().
    */
-  const ZL_TypedRef *inputs_temporary[3] = { inputs[0], inputs[1], inputs[2] };
+  const ZL_TypedRef *inputs_temporary[3] = {inputs[0], inputs[1], inputs[2]};
   zl_report = ZL_CCtx_compressMultiTypedRef(zl_cctx,
                                             zl_value,
                                             zl_value_len_max,
