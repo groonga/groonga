@@ -1168,9 +1168,13 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
     return ctx->rc;
   }
 
-  memcpy(data->decompressed_value,
-         ZL_TypedBuffer_rPtr(outputs[0]),
-         data->decompressed_value_len);
+  void *current = data->decompressed_value;
+  for (i = 0; i < n_output_elements; i++) {
+    memcpy(current,
+           ZL_TypedBuffer_rPtr(outputs[i]),
+           ZL_TypedBuffer_byteSize(outputs[i]));
+    current = (char *)current + ZL_TypedBuffer_byteSize(outputs[i]);
+  }
 
   ZL_DCtx_free(zl_dctx);
   ZL_TypedBuffer_free(outputs[0]);
