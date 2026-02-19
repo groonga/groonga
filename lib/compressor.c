@@ -990,9 +990,7 @@ openzl_compress_sections(grn_ctx *ctx,
     inputs[n_input_elements] =
       ZL_TypedRef_createSerial(data->body, data->body_len);
     if (!inputs[n_input_elements]) {
-      ERR(GRN_OPENZL_ERROR,
-          "%s failed to allocate input buffer for body",
-          tag);
+      ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer for body", tag);
       return;
     }
     n_input_elements++;
@@ -1001,9 +999,7 @@ openzl_compress_sections(grn_ctx *ctx,
     inputs[n_input_elements] =
       ZL_TypedRef_createSerial(data->footer, data->footer_len);
     if (!inputs[n_input_elements]) {
-      ERR(GRN_OPENZL_ERROR,
-          "%s failed to allocate input buffer for body",
-          tag);
+      ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer for body", tag);
       return;
     }
     n_input_elements++;
@@ -1015,9 +1011,7 @@ openzl_compress_sections(grn_ctx *ctx,
         tag);
     return;
   }
-  const ZL_GraphID successors[] = {ZL_GRAPH_ZSTD,
-                                   ZL_GRAPH_ZSTD,
-                                   ZL_GRAPH_ZSTD};
+  const ZL_GraphID successors[] = {ZL_GRAPH_ZSTD, ZL_GRAPH_ZSTD, ZL_GRAPH_ZSTD};
   const ZL_GraphID zl_graph_id =
     ZL_Compressor_registerStaticGraph_fromNode(zl_compressor,
                                                ZL_NODE_CONCAT_SERIAL,
