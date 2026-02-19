@@ -915,6 +915,7 @@ openzl_compress(grn_ctx *ctx,
   size_t zl_compressed_size = ZL_validResult(zl_report);
   data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 }
+
 static inline void
 openzl_compress_only_body(grn_ctx *ctx,
                           const char *tag,
@@ -961,6 +962,7 @@ openzl_compress_only_body(grn_ctx *ctx,
                   1);
   ZL_TypedRef_free(input[0]);
 }
+
 static inline grn_rc
 grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
 {
