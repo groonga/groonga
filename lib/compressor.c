@@ -1190,7 +1190,9 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
   ZL_DCtx *zl_dctx = ZL_DCtx_create();
   if (!zl_dctx) {
     ERR(GRN_OPENZL_ERROR, "%s failed to allocate decompress context", tag);
-    ZL_TypedBuffer_free(outputs[0]);
+    for (i = 0; i < n_output_elements; i++) {
+      ZL_TypedBuffer_free(outputs[i]);
+    }
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
@@ -1208,7 +1210,9 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_decompress)));
     ZL_DCtx_free(zl_dctx);
-    ZL_TypedBuffer_free(outputs[0]);
+    for (i = 0; i < n_output_elements; i++) {
+      ZL_TypedBuffer_free(outputs[i]);
+    }
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
@@ -1227,7 +1231,9 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
         data->decompressed_value_len,
         decompressed_size);
     ZL_DCtx_free(zl_dctx);
-    ZL_TypedBuffer_free(outputs[0]);
+    for (i = 0; i < n_output_elements; i++) {
+      ZL_TypedBuffer_free(outputs[i]);
+    }
     GRN_FREE(data->decompressed_value);
     data->decompressed_value = NULL;
     data->decompressed_value_len = 0;
@@ -1243,7 +1249,9 @@ grn_compressor_decompress_openzl(grn_ctx *ctx, grn_decompress_data *data)
   }
 
   ZL_DCtx_free(zl_dctx);
-  ZL_TypedBuffer_free(outputs[0]);
+  for (i = 0; i < n_output_elements; i++) {
+    ZL_TypedBuffer_free(outputs[i]);
+  }
   return ctx->rc;
 }
 #endif /* GRN_WITH_OPENZL */
