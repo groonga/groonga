@@ -898,14 +898,8 @@ openzl_compress(grn_ctx *ctx,
         "%s failed to reference compressor: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
     return;
   }
-
   zl_report = ZL_CCtx_compressMultiTypedRef(zl_cctx,
                                             zl_value,
                                             zl_value_len_max,
@@ -916,11 +910,6 @@ openzl_compress(grn_ctx *ctx,
         "%s failed to compress data: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
     return;
   }
   size_t zl_compressed_size = ZL_validResult(zl_report);
@@ -936,15 +925,9 @@ openzl_compress_only_body(grn_ctx *ctx,
                           void *zl_value,
                           const size_t zl_value_len_max)
 {
-  ZL_TypedRef *inputs[] = {
-    ZL_TypedRef_createSerial(data->body, data->body_len)};
-  if (!inputs[0]) {
+  ZL_TypedRef *input[] = {ZL_TypedRef_createSerial(data->body, data->body_len)};
+  if (!input[0]) {
     ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer", tag);
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
     return;
   }
 
@@ -955,11 +938,7 @@ openzl_compress_only_body(grn_ctx *ctx,
         "%s failed to select starting graph ID: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
+    ZL_TypedRef_free(input[0]);
     return;
   }
   /*
@@ -971,7 +950,102 @@ openzl_compress_only_body(grn_ctx *ctx,
    * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
    * only when calling ZL_CCtx_compressMultiTypedRef().
    */
-  const ZL_TypedRef *inputs_temporary[] = {inputs[0]};
+  const ZL_TypedRef *input_temporary[] = {input[0]};
+  openzl_compress(ctx,
+                  tag,
+                  data,
+                  zl_cctx,
+                  zl_compressor,
+                  zl_value,
+                  zl_value_len_max,
+                  input_temporary,
+                  1);
+  ZL_TypedRef_free(input[0]);
+}
+
+static inline void
+openzl_compress_sections(grn_ctx *ctx,
+                         const char *tag,
+                         grn_compress_data *data,
+                         ZL_CCtx *zl_cctx,
+                         ZL_Compressor *zl_compressor,
+                         void *zl_value,
+                         const size_t zl_value_len_max)
+{
+  size_t n_input_elements = 0;
+  ZL_TypedRef *inputs[3];
+
+  if (data->header_len > 0) {
+    inputs[n_input_elements] =
+      ZL_TypedRef_createSerial(data->header, data->header_len);
+    if (!inputs[n_input_elements]) {
+      ERR(GRN_OPENZL_ERROR,
+          "%s failed to allocate input buffer for header",
+          tag);
+      return;
+    }
+    n_input_elements++;
+  }
+  if (data->body_len > 0) {
+    inputs[n_input_elements] =
+      ZL_TypedRef_createSerial(data->body, data->body_len);
+    if (!inputs[n_input_elements]) {
+      ERR(GRN_OPENZL_ERROR,
+          "%s failed to allocate input buffer for body",
+          tag);
+      return;
+    }
+    n_input_elements++;
+  }
+  if (data->footer_len > 0) {
+    inputs[n_input_elements] =
+      ZL_TypedRef_createSerial(data->footer, data->footer_len);
+    if (!inputs[n_input_elements]) {
+      ERR(GRN_OPENZL_ERROR,
+          "%s failed to allocate input buffer for body",
+          tag);
+      return;
+    }
+    n_input_elements++;
+  }
+
+  if (n_input_elements == 0 || n_input_elements > 3) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s No data to compress or corrupted input data",
+        tag);
+    return;
+  }
+  const ZL_GraphID successors[] = {ZL_GRAPH_ZSTD,
+                                   ZL_GRAPH_ZSTD,
+                                   ZL_GRAPH_ZSTD};
+  const ZL_GraphID zl_graph_id =
+    ZL_Compressor_registerStaticGraph_fromNode(zl_compressor,
+                                               ZL_NODE_CONCAT_SERIAL,
+                                               successors,
+                                               2);
+  ZL_Report zl_report =
+    ZL_Compressor_selectStartingGraphID(zl_compressor, zl_graph_id);
+  if (ZL_isError(zl_report)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to select starting graph ID: %s",
+        tag,
+        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
+    return;
+  }
+  /*
+   * The input object is the same for both ZL_CCtx_compressMultiTypedRef()
+   * and ZL_TypedRef_free(). However, the two functions expect different
+   * types (const vs. non-const), so the same variable cannot be used
+   * directly for both.
+   *
+   * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
+   * only when calling ZL_CCtx_compressMultiTypedRef().
+   */
+  size_t i = 0;
+  const ZL_TypedRef *inputs_temporary[3];
+  for (i = 0; i < n_input_elements; i++) {
+    inputs_temporary[i] = inputs[i];
+  }
   openzl_compress(ctx,
                   tag,
                   data,
@@ -980,10 +1054,10 @@ openzl_compress_only_body(grn_ctx *ctx,
                   zl_value,
                   zl_value_len_max,
                   inputs_temporary,
-                  1);
-  ZL_TypedRef_free(inputs[0]);
-  ZL_Compressor_free(zl_compressor);
-  ZL_CCtx_free(zl_cctx);
+                  n_input_elements);
+  for (i = 0; i < n_input_elements; i++) {
+    ZL_TypedRef_free(inputs[i]);
+  }
 }
 
 static inline grn_rc
@@ -1038,8 +1112,6 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
     return ctx->rc;
   }
 
-  size_t n_input_elements = 0;
-  ZL_TypedRef *inputs[3] = {0};
   if (data->header_len == 0 && data->footer_len == 0) {
     openzl_compress_only_body(ctx,
                               tag,
@@ -1048,131 +1120,29 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
                               zl_compressor,
                               zl_value,
                               zl_value_len_max);
-    return ctx->rc;
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_FREE(data->compressed_value);
+      data->compressed_value = NULL;
+      data->compressed_value_len = 0;
+    }
+    ZL_Compressor_free(zl_compressor);
+    ZL_CCtx_free(zl_cctx);
   } else {
-    if (data->header_len > 0) {
-      inputs[n_input_elements] =
-        ZL_TypedRef_createSerial(data->header, data->header_len);
-      if (!inputs[n_input_elements]) {
-        ERR(GRN_OPENZL_ERROR,
-            "%s failed to allocate input buffer for header",
-            tag);
-        GRN_FREE(data->compressed_value);
-        data->compressed_value = NULL;
-        data->compressed_value_len = 0;
-        ZL_Compressor_free(zl_compressor);
-        ZL_CCtx_free(zl_cctx);
-        return ctx->rc;
-      }
-      n_input_elements++;
+    openzl_compress_sections(ctx,
+                             tag,
+                             data,
+                             zl_cctx,
+                             zl_compressor,
+                             zl_value,
+                             zl_value_len_max);
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_FREE(data->compressed_value);
+      data->compressed_value = NULL;
+      data->compressed_value_len = 0;
     }
-
-    if (data->body_len > 0) {
-      inputs[n_input_elements] =
-        ZL_TypedRef_createSerial(data->body, data->body_len);
-      if (!inputs[n_input_elements]) {
-        ERR(GRN_OPENZL_ERROR,
-            "%s failed to allocate input buffer for body",
-            tag);
-        GRN_FREE(data->compressed_value);
-        data->compressed_value = NULL;
-        data->compressed_value_len = 0;
-        ZL_Compressor_free(zl_compressor);
-        ZL_CCtx_free(zl_cctx);
-        return ctx->rc;
-      }
-      n_input_elements++;
-    }
-
-    if (data->footer_len > 0) {
-      inputs[n_input_elements] =
-        ZL_TypedRef_createSerial(data->footer, data->footer_len);
-      if (!inputs[n_input_elements]) {
-        ERR(GRN_OPENZL_ERROR,
-            "%s failed to allocate input buffer for body",
-            tag);
-        GRN_FREE(data->compressed_value);
-        data->compressed_value = NULL;
-        data->compressed_value_len = 0;
-        ZL_Compressor_free(zl_compressor);
-        ZL_CCtx_free(zl_cctx);
-        return ctx->rc;
-      }
-      n_input_elements++;
-    }
-  }
-
-  const ZL_GraphID successors[3] = {ZL_GRAPH_ZSTD,
-                                    ZL_GRAPH_ZSTD,
-                                    ZL_GRAPH_ZSTD};
-  const ZL_GraphID zl_graph_id =
-    ZL_Compressor_registerStaticGraph_fromNode(zl_compressor,
-                                               ZL_NODE_CONCAT_SERIAL,
-                                               successors,
-                                               2);
-
-  zl_report = ZL_Compressor_selectStartingGraphID(zl_compressor, zl_graph_id);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to select starting graph ID: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
     ZL_Compressor_free(zl_compressor);
     ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
   }
-
-  zl_report = ZL_CCtx_refCompressor(zl_cctx, zl_compressor);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to reference compressor: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
-  }
-
-  /*
-   * The input object is the same for both ZL_CCtx_compressMultiTypedRef()
-   * and ZL_TypedRef_free(). However, the two functions expect different
-   * types (const vs. non-const), so the same variable cannot be used
-   * directly for both.
-   *
-   * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
-   * only when calling ZL_CCtx_compressMultiTypedRef().
-   */
-  const ZL_TypedRef *inputs_temporary[3] = {inputs[0], inputs[1], inputs[2]};
-  zl_report = ZL_CCtx_compressMultiTypedRef(zl_cctx,
-                                            zl_value,
-                                            zl_value_len_max,
-                                            inputs_temporary,
-                                            n_input_elements);
-  if (ZL_isError(zl_report)) {
-    ERR(GRN_OPENZL_ERROR,
-        "%s failed to compress body: %s",
-        tag,
-        ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    ZL_TypedRef_free(inputs[0]);
-    GRN_FREE(data->compressed_value);
-    data->compressed_value = NULL;
-    data->compressed_value_len = 0;
-    ZL_Compressor_free(zl_compressor);
-    ZL_CCtx_free(zl_cctx);
-    return ctx->rc;
-  }
-  size_t zl_compressed_size = ZL_validResult(zl_report);
-  data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
-
-  ZL_TypedRef_free(inputs[0]);
-  ZL_Compressor_free(zl_compressor);
-  ZL_CCtx_free(zl_cctx);
   return ctx->rc;
 }
 
