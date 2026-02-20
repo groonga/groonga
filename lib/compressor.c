@@ -925,8 +925,8 @@ openzl_compress_only_body(grn_ctx *ctx,
                           void *zl_value,
                           const size_t zl_value_len_max)
 {
-  ZL_TypedRef *input[] = {ZL_TypedRef_createSerial(data->body, data->body_len)};
-  if (!input[0]) {
+  ZL_TypedRef *body = ZL_TypedRef_createSerial(data->body, data->body_len);
+  if (!body) {
     ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer", tag);
     return;
   }
@@ -938,19 +938,26 @@ openzl_compress_only_body(grn_ctx *ctx,
         "%s failed to select starting graph ID: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    ZL_TypedRef_free(input[0]);
+    ZL_TypedRef_free(body);
     return;
   }
   /*
-   * The input object is the same for both ZL_CCtx_compressMultiTypedRef()
+   * The body object is the same for both ZL_CCtx_compressMultiTypedRef()
    * and ZL_TypedRef_free(). However, the two functions expect different
    * types (const vs. non-const), so the same variable cannot be used
    * directly for both.
+   * Ref:
+   *  - https://openzl.org/api/c/compress/#ZL_CCtx_compressMultiTypedRef
+   *  - https://openzl.org/api/c/compress/#ZL_TypedRef_free
    *
-   * Therefore, we temporarily assign it to a "const ZL_TypedRef *" variable
-   * only when calling ZL_CCtx_compressMultiTypedRef().
+   * Therefore, we assign it to a "const ZL_TypedRef *[]" variable for
+   * ZL_CCtx_compressMultiTypedRef().
+   * Since the OpenZL tests also repack the values before using them,
+   * We followed the same approach here.
+   * (Ref:
+   * https://github.com/facebook/openzl/blob/dev/tests/round_trip/test_n_to_n.cpp#L89-L109)
    */
-  const ZL_TypedRef *input_temporary[] = {input[0]};
+  const ZL_TypedRef *inputs[] = {body};
   openzl_compress(ctx,
                   tag,
                   data,
@@ -958,9 +965,9 @@ openzl_compress_only_body(grn_ctx *ctx,
                   zl_compressor,
                   zl_value,
                   zl_value_len_max,
-                  input_temporary,
+                  inputs,
                   1);
-  ZL_TypedRef_free(input[0]);
+  ZL_TypedRef_free(body);
 }
 
 static inline grn_rc
