@@ -942,18 +942,15 @@ openzl_compress_only_body(grn_ctx *ctx,
     return;
   }
   /*
-   * The body object is the same for both ZL_CCtx_compressMultiTypedRef()
-   * and ZL_TypedRef_free(). However, the two functions expect different
-   * types (const vs. non-const), so the same variable cannot be used
-   * directly for both.
-   * Ref:
-   *  - https://openzl.org/api/c/compress/#ZL_CCtx_compressMultiTypedRef
-   *  - https://openzl.org/api/c/compress/#ZL_TypedRef_free
+   * "ZL_CCtx_compressMultiTypedRef()" requires a value of type "const
+   * ZL_TypedRef *[]" as its fourth argument.
+   *   Ref: https://openzl.org/api/c/compress/#ZL_CCtx_compressMultiTypedRef
+   * Therefore, we prepare a "const ZL_TypedRef *[]" value here and pass it to
+   * "openzl_compress()".
+   * "ZL_CCtx_compressMultiTypedRef()" is called inside "openzl_compress()".
    *
-   * Therefore, we assign it to a "const ZL_TypedRef *[]" variable for
-   * ZL_CCtx_compressMultiTypedRef().
-   * Since the OpenZL tests also repack the values before using them,
-   * We followed the same approach here.
+   * Since the OpenZL tests uses the same approach, we are following it here as
+   * well.
    * (Ref:
    * https://github.com/facebook/openzl/blob/dev/tests/round_trip/test_n_to_n.cpp#L89-L109)
    */
