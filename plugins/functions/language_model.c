@@ -81,6 +81,34 @@ func_language_model_vectorize(grn_ctx *ctx,
     options = args[2];
   }
 
+  grn_obj *prefix = NULL;
+  if (options) {
+    grn_rc rc = grn_proc_options_parse(ctx,
+                                       options,
+                                       tag,
+                                       "prefix",
+                                       GRN_PROC_OPTION_VALUE_RAW,
+                                       &prefix,
+                                       NULL);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+
+    if (prefix && !grn_obj_is_text_family_bulk(ctx, prefix)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, prefix);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s prefix must be a string: %.*s",
+                       tag,
+                       (int)(GRN_TEXT_LEN(&inspected)),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+  }
+
   model = grn_language_model_loader_load(ctx, loader);
   if (!model) {
     GRN_PLUGIN_ERROR(ctx,
@@ -106,11 +134,24 @@ func_language_model_vectorize(grn_ctx *ctx,
   if (!vector) {
     return NULL;
   }
-  grn_rc rc = grn_language_model_inferencer_vectorize(ctx,
-                                                      inferencer,
-                                                      GRN_TEXT_VALUE(text),
-                                                      GRN_TEXT_LEN(text),
-                                                      vector);
+
+  grn_obj prefixed_text;
+  GRN_TEXT_INIT(&prefixed_text, 0);
+  if (prefix) {
+    GRN_TEXT_PUT(ctx,
+                 &prefixed_text,
+                 GRN_TEXT_VALUE(prefix),
+                 GRN_TEXT_LEN(prefix));
+  }
+  GRN_TEXT_PUT(ctx, &prefixed_text, GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text));
+  grn_rc rc =
+    grn_language_model_inferencer_vectorize(ctx,
+                                            inferencer,
+                                            GRN_TEXT_VALUE(&prefixed_text),
+                                            GRN_TEXT_LEN(&prefixed_text),
+                                            vector);
+  GRN_OBJ_FIN(ctx, &prefixed_text);
+
   if (rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
@@ -210,6 +251,44 @@ applier_language_model_vectorize(grn_ctx *ctx, grn_applier_data *data)
                      tag,
                      ctx->errbuf);
     goto exit;
+  }
+
+  if (options) {
+    grn_obj *prefix = NULL;
+    grn_rc rc = grn_proc_options_parse(ctx,
+                                       options,
+                                       tag,
+                                       "prefix",
+                                       GRN_PROC_OPTION_VALUE_RAW,
+                                       &prefix,
+                                       NULL);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+
+    if (prefix && !grn_obj_is_text_family_bulk(ctx, prefix)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, prefix);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s prefix must be a string: %.*s",
+                       tag,
+                       (int)(GRN_TEXT_LEN(&inspected)),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+    if (prefix && GRN_TEXT_LEN(prefix) > 0) {
+      grn_language_model_inferencer_set_input_column_value_prefix(
+        ctx,
+        inferencer,
+        GRN_TEXT_VALUE(prefix),
+        (int64_t)GRN_TEXT_LEN(prefix));
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
   }
 
   grn_rc rc = grn_language_model_inferencer_vectorize_applier(ctx,

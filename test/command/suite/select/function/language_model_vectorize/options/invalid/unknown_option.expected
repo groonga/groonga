@@ -1,0 +1,51 @@
+plugin_register functions/language_model
+[[0,0.0,0.0],true]
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"text": "I am a king."},
+{"text": "I am a queen."}
+]
+[[0,0.0,0.0],2]
+select Data   --output_columns '       text,       vector_size(language_model_vectorize("hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", text, {"unknown_option": "dummy"}))'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil"
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "text",
+          "ShortText"
+        ],
+        [
+          "vector_size",
+          null
+        ]
+      ],
+      [
+        "I am a king.",
+        "language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil"
+      ],
+      [
+        "I am a queen.",
+        "language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil"
+      ]
+    ]
+  ]
+]
+#|e| language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizers:(nil) keys:["unknown_option"] subrec:none>
