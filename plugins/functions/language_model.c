@@ -135,22 +135,28 @@ func_language_model_vectorize(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_obj prefixed_text;
-  GRN_TEXT_INIT(&prefixed_text, 0);
+  grn_rc rc;
   if (prefix) {
+    grn_obj prefixed_text;
+    GRN_TEXT_INIT(&prefixed_text, 0);
     GRN_TEXT_PUT(ctx,
                  &prefixed_text,
                  GRN_TEXT_VALUE(prefix),
                  GRN_TEXT_LEN(prefix));
+    GRN_TEXT_PUT(ctx, &prefixed_text, GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text));
+    rc = grn_language_model_inferencer_vectorize(ctx,
+                                                 inferencer,
+                                                 GRN_TEXT_VALUE(&prefixed_text),
+                                                 GRN_TEXT_LEN(&prefixed_text),
+                                                 vector);
+    GRN_OBJ_FIN(ctx, &prefixed_text);
+  } else {
+    rc = grn_language_model_inferencer_vectorize(ctx,
+                                                 inferencer,
+                                                 GRN_TEXT_VALUE(text),
+                                                 GRN_TEXT_LEN(text),
+                                                 vector);
   }
-  GRN_TEXT_PUT(ctx, &prefixed_text, GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text));
-  grn_rc rc =
-    grn_language_model_inferencer_vectorize(ctx,
-                                            inferencer,
-                                            GRN_TEXT_VALUE(&prefixed_text),
-                                            GRN_TEXT_LEN(&prefixed_text),
-                                            vector);
-  GRN_OBJ_FIN(ctx, &prefixed_text);
 
   if (rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
