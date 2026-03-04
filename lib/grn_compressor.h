@@ -38,11 +38,15 @@ typedef struct grn_compress_data {
   void *body;
   uint32_t body_len;
 
-  /* Only for GRN_COMPRESSION_TYPE_BLOSC: Start */
+  /* Only for GRN_COMPRESSION_TYPE_BLOSC/OPENZL: Start */
   size_t body_n_elements;
   grn_column_flags body_column_flags;
   grn_id body_range;
-  /* Only for GRN_COMPRESSION_TYPE_BLOSC: End */
+  /* Only for GRN_COMPRESSION_TYPE_BLOSC/OPENZL: End */
+
+  /* Only for GRN_COMPRESSION_TYPE_OPENZL: Start */
+  size_t body_element_size;
+  /* Only for GRN_COMPRESSION_TYPE_OPENZL: End */
 
   void *footer;
   uint32_t footer_len;

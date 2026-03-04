@@ -3816,7 +3816,8 @@ grn_ja_put(grn_ctx *ctx,
   if (data.type == GRN_COMPRESSION_TYPE_NONE) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   } else {
-    if (data.type == GRN_COMPRESSION_TYPE_BLOSC) {
+    if (data.type == GRN_COMPRESSION_TYPE_BLOSC ||
+        data.type == GRN_COMPRESSION_TYPE_OPENZL) {
       if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
           GRN_OBJ_COLUMN_VECTOR) {
         size_t element_size = grn_type_id_size(ctx, ja->obj.range);
@@ -3834,6 +3835,9 @@ grn_ja_put(grn_ctx *ctx,
           }
         }
         data.body_n_elements = value_len / element_size;
+        if (data.type == GRN_COMPRESSION_TYPE_OPENZL) {
+          data.body_element_size = element_size;
+        }
       } else {
         data.body_n_elements = 1;
       }
