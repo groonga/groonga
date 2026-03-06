@@ -1,0 +1,6 @@
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries values COLUMN_VECTOR|COMPRESS_OPENZL Float32
+
+#@generate-series 0 0 Entries '{"_key" => "1", "values" => [0.12345, -0.23456, 0.04321] * 50}'
+
+select Entries
