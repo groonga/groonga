@@ -881,6 +881,62 @@ grn_compressor_decompress_blosc(grn_ctx *ctx, grn_decompress_data *data)
 #endif
 
 #ifdef GRN_WITH_OPENZL
+static inline ZL_GraphID
+openzl_build_float32_graph_id(ZL_Compressor *zl_compressor)
+{
+  /*
+    ZL_NODE_FLOAT32_DECONSTRUCT outputs:
+      * fixed-size-fields stream containing sign and fraction bits
+      * serial stream containing exponent bits
+    See also:
+      https://github.com/facebook/openzl/blob/v0.1.0/include/openzl/codecs/zl_float_deconstruct.h#L12-L18
+  */
+  const ZL_GraphID successor_graphs[] = {ZL_GRAPH_STORE, ZL_GRAPH_FSE};
+  /*
+    n_successor_graphs must be equal to the number of
+    ZL_NODE_FLOAT32_DECONSTRUCT output items defined in the API documentation
+    for ZL_Compressor_buildStaticGraph().
+
+    See also:
+      https://openzl.org/api/c/compressor/#ZL_Compressor_buildStaticGraph
+  */
+  const size_t n_successor_graphs =
+    sizeof(successor_graphs) / sizeof(ZL_GraphID);
+  ZL_RESULT_OF(ZL_GraphID)
+  result = ZL_Compressor_buildStaticGraph(zl_compressor,
+                                          ZL_NODE_FLOAT32_DECONSTRUCT,
+                                          successor_graphs,
+                                          n_successor_graphs,
+                                          NULL);
+  if (ZL_RES_isError(result)) {
+    return ZL_GRAPH_ILLEGAL;
+  }
+  return ZL_RES_value(result);
+}
+
+static inline bool
+openzl_is_plain_vector_column(grn_compress_data *data)
+{
+  bool is_vector_column = ((data->body_column_flags &
+                            GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR);
+  bool is_with_weight = ((data->body_column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
+  return is_vector_column && !is_with_weight;
+}
+
+static inline ZL_GraphID
+openzl_build_graph_id(ZL_Compressor *zl_compressor, grn_compress_data *data)
+{
+  if (openzl_is_plain_vector_column(data)) {
+    switch (data->body_range) {
+    case GRN_DB_FLOAT32:
+      return openzl_build_float32_graph_id(zl_compressor);
+    default:
+      break;
+    }
+  }
+  return ZL_GRAPH_ZSTD;
+}
+
 static inline void
 openzl_compress(grn_ctx *ctx,
                 const char *tag,
@@ -916,6 +972,33 @@ openzl_compress(grn_ctx *ctx,
   data->compressed_value_len = COMPRESSED_VALUE_LEN(zl_compressed_size);
 }
 
+static inline ZL_TypedRef *
+openzl_create_type_ref(grn_ctx *ctx, const char *tag, grn_compress_data *data)
+{
+  ZL_TypedRef *typed_ref = NULL;
+  if (openzl_is_plain_vector_column(data)) {
+    switch (data->body_range) {
+    case GRN_DB_FLOAT32:
+      typed_ref = ZL_TypedRef_createNumeric(data->body,
+                                            data->body_element_size,
+                                            data->body_n_elements);
+      break;
+    default:
+      typed_ref = ZL_TypedRef_createSerial(data->body, data->body_len);
+      break;
+    }
+  } else {
+    typed_ref = ZL_TypedRef_createSerial(data->body, data->body_len);
+  }
+
+  if (!typed_ref) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s failed to create OpenZL input type reference",
+        tag);
+  }
+  return typed_ref;
+}
+
 static inline void
 openzl_compress_only_body(grn_ctx *ctx,
                           const char *tag,
@@ -925,20 +1008,29 @@ openzl_compress_only_body(grn_ctx *ctx,
                           void *zl_value,
                           const size_t zl_value_len_max)
 {
-  ZL_TypedRef *body = ZL_TypedRef_createSerial(data->body, data->body_len);
-  if (!body) {
-    ERR(GRN_OPENZL_ERROR, "%s failed to allocate input buffer", tag);
+  ZL_GraphID zl_graph_id = openzl_build_graph_id(zl_compressor, data);
+  if (!ZL_GraphID_isValid(zl_graph_id)) {
+    ERR(GRN_OPENZL_ERROR,
+        "%s Invalid API parameter passing for input data type: %s(%u)",
+        tag,
+        grn_type_id_to_string_builtin(ctx, data->body_range),
+        data->body_range);
+    return;
+  }
+
+  ZL_TypedRef *typed_ref = openzl_create_type_ref(ctx, tag, data);
+  if (!typed_ref) {
     return;
   }
 
   ZL_Report zl_report =
-    ZL_Compressor_selectStartingGraphID(zl_compressor, ZL_GRAPH_ZSTD);
+    ZL_Compressor_selectStartingGraphID(zl_compressor, zl_graph_id);
   if (ZL_isError(zl_report)) {
     ERR(GRN_OPENZL_ERROR,
         "%s failed to select starting graph ID: %s",
         tag,
         ZL_ErrorCode_toString(ZL_errorCode(zl_report)));
-    ZL_TypedRef_free(body);
+    ZL_TypedRef_free(typed_ref);
     return;
   }
   /*
@@ -954,7 +1046,7 @@ openzl_compress_only_body(grn_ctx *ctx,
    * (Ref:
    * https://github.com/facebook/openzl/blob/dev/tests/round_trip/test_n_to_n.cpp#L89-L109)
    */
-  const ZL_TypedRef *inputs[] = {body};
+  const ZL_TypedRef *inputs[] = {typed_ref};
   openzl_compress(ctx,
                   tag,
                   data,
@@ -964,7 +1056,7 @@ openzl_compress_only_body(grn_ctx *ctx,
                   zl_value_len_max,
                   inputs,
                   1);
-  ZL_TypedRef_free(body);
+  ZL_TypedRef_free(typed_ref);
 }
 
 static inline grn_rc
@@ -979,7 +1071,7 @@ grn_compressor_compress_openzl(grn_ctx *ctx, grn_compress_data *data)
 
   ZL_Compressor *zl_compressor = ZL_Compressor_create();
   if (!zl_compressor) {
-    ERR(GRN_OPENZL_ERROR, "%s failed to create compressor", tag);
+    ERR(GRN_OPENZL_ERROR, "%s failed to allocate compressor", tag);
     ZL_CCtx_free(zl_cctx);
     return ctx->rc;
   }
