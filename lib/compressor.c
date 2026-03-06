@@ -1011,9 +1011,9 @@ openzl_compress_only_body(grn_ctx *ctx,
   ZL_GraphID zl_graph_id = openzl_build_graph_id(zl_compressor, data);
   if (!ZL_GraphID_isValid(zl_graph_id)) {
     ERR(GRN_OPENZL_ERROR,
-        "%s Invalid API parameter passing for input data type. Input data type "
-        "is %d",
+        "%s Invalid API parameter passing for input data type: %s(%u)",
         tag,
+        grn_type_id_to_string_builtin(ctx, data->body_range),
         data->body_range);
     return;
   }
