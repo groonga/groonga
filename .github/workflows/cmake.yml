@@ -418,7 +418,7 @@ jobs:
           key: cmake-docker-${{ matrix.target }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: cmake-docker-${{ matrix.target }}-ccache-
       - name: Login to GitHub Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
