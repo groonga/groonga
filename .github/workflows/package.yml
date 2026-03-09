@@ -224,7 +224,7 @@ jobs:
           cd packages
           rake version:update RELEASE_DATE=$(date +%Y-%m-%d)
       - name: Login to GitHub Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
