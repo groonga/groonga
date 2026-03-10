@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2025-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -455,7 +455,7 @@ end
 class ParsedJSONWriter
   include ParsedJSON
 
-  class TagWriter
+  class ContainerTagsWriter
     include ParsedJSON
 
     attr_reader :buffer
@@ -496,7 +496,7 @@ class ParsedJSONWriter
     end
   end
 
-  class PositionWriter
+  class PositionsWriter
     include ParsedJSON
 
     attr_reader :buffer
@@ -516,7 +516,6 @@ class ParsedJSONWriter
     def write(size)
       i = @i
       @i += 1
-      last_position = @last_position
       position = @last_position + size
       if @size32 > 0 or position > 65535
         @buffer << [position].pack("L")
@@ -538,20 +537,21 @@ class ParsedJSONWriter
     @target = target
     @root_tag_writer = RootTagWriter.new(@output)
     @object_positions = +"".b
-    @object_positions_writer = PositionWriter.new(:object, @object_positions)
+    @object_positions_writer = PositionsWriter.new(:object, @object_positions)
     @object_keys = +"".b
     @object_key_positions = +"".b
     @object_key_positions_writer =
-      PositionWriter.new(:object_key, @object_key_positions)
+      PositionsWriter.new(:object_key, @object_key_positions)
     @object_value_tags = +"".b
-    @object_value_tags_writer = TagWriter.new(:object_value, @object_value_tags)
+    @object_value_tags_writer =
+      ContainerTagsWriter.new(:object_value, @object_value_tags)
     @array_positions = +"".b
-    @array_positions_writer = PositionWriter.new(:array, @array_positions)
+    @array_positions_writer = PositionsWriter.new(:array, @array_positions)
     @array_tags = +"".b
-    @array_tags_writer = TagWriter.new(:array, @array_tags)
+    @array_tags_writer = ContainerTagsWriter.new(:array, @array_tags)
     @string_values = +"".b
     @string_positions = +"".b
-    @string_positions_writer = PositionWriter.new(:string, @string_positions)
+    @string_positions_writer = PositionsWriter.new(:string, @string_positions)
     @int16_values = +"".b
     @int32_values = +"".b
     @int64_values = +"".b
@@ -619,12 +619,12 @@ class ParsedJSONWriter
     end
   end
 
-  def append_tag_buffer_offsets(flags,
-                                offset,
-                                buffer_offsets,
-                                tag_writer,
-                                flag16,
-                                flag32)
+  def append_tags_buffer_offsets(flags,
+                                 offset,
+                                 buffer_offsets,
+                                 tag_writer,
+                                 flag16,
+                                 flag32)
     if tag_writer.size16 > 0
       flags |= flag16
       buffer_offsets << offset
@@ -638,13 +638,13 @@ class ParsedJSONWriter
     [flags, offset]
   end
 
-  def append_position_buffer_offsets(flags,
-                                     offset,
-                                     buffer_offsets,
-                                     position_writer,
-                                     flag8,
-                                     flag16,
-                                     flag32)
+  def append_positions_buffer_offsets(flags,
+                                      offset,
+                                      buffer_offsets,
+                                      position_writer,
+                                      flag8,
+                                      flag16,
+                                      flag32)
     if position_writer.size8 > 0
       flags |= flag8
       buffer_offsets << offset
@@ -671,13 +671,14 @@ class ParsedJSONWriter
 
     unless @object_positions.empty?
       outputs << @object_positions
-      flags, offset = append_position_buffer_offsets(flags,
-                                                     offset,
-                                                     buffer_offsets,
-                                                     @object_positions_writer,
-                                                     Flags::OBJECT_POSITION8,
-                                                     Flags::OBJECT_POSITION16,
-                                                     Flags::OBJECT_POSITION32)
+      flags, offset =
+        append_positions_buffer_offsets(flags,
+                                        offset,
+                                        buffer_offsets,
+                                        @object_positions_writer,
+                                        Flags::OBJECT_POSITION8,
+                                        Flags::OBJECT_POSITION16,
+                                        Flags::OBJECT_POSITION32)
 
       unless @object_keys.empty?
         flags |= Flags::OBJECT_KEY
@@ -689,29 +690,29 @@ class ParsedJSONWriter
       unless @object_key_positions.empty?
         outputs << @object_key_positions
         flags, offset =
-          append_position_buffer_offsets(flags,
-                                         offset,
-                                         buffer_offsets,
-                                         @object_key_positions_writer,
-                                         Flags::OBJECT_KEY_POSITION8,
-                                         Flags::OBJECT_KEY_POSITION16,
-                                         Flags::OBJECT_KEY_POSITION32)
+          append_positions_buffer_offsets(flags,
+                                          offset,
+                                          buffer_offsets,
+                                          @object_key_positions_writer,
+                                          Flags::OBJECT_KEY_POSITION8,
+                                          Flags::OBJECT_KEY_POSITION16,
+                                          Flags::OBJECT_KEY_POSITION32)
       end
 
       unless @object_value_tags.empty?
         outputs << @object_value_tags
-        flags, offset = append_tag_buffer_offsets(flags,
-                                                  offset,
-                                                  buffer_offsets,
-                                                  @object_value_tags_writer,
-                                                  Flags::OBJECT_VALUE_TAG16,
-                                                  Flags::OBJECT_VALUE_TAG32)
+        flags, offset = append_tags_buffer_offsets(flags,
+                                                   offset,
+                                                   buffer_offsets,
+                                                   @object_value_tags_writer,
+                                                   Flags::OBJECT_VALUE_TAG16,
+                                                   Flags::OBJECT_VALUE_TAG32)
       end
     end
 
     unless @array_positions.empty?
       outputs << @array_positions
-      flags, offset = append_position_buffer_offsets(flags,
+      flags, offset = append_positions_buffer_offsets(flags,
                                                      offset,
                                                      buffer_offsets,
                                                      @array_positions_writer,
@@ -721,12 +722,12 @@ class ParsedJSONWriter
 
       unless @array_tags.empty?
         outputs << @array_tags
-        flags, offset = append_tag_buffer_offsets(flags,
-                                                  offset,
-                                                  buffer_offsets,
-                                                  @array_tags_writer,
-                                                  Flags::ARRAY_TAG16,
-                                                  Flags::ARRAY_TAG32)
+        flags, offset = append_tags_buffer_offsets(flags,
+                                                   offset,
+                                                   buffer_offsets,
+                                                   @array_tags_writer,
+                                                   Flags::ARRAY_TAG16,
+                                                   Flags::ARRAY_TAG32)
       end
     end
 
@@ -739,13 +740,13 @@ class ParsedJSONWriter
 
     unless @string_positions.empty?
       outputs << @string_positions
-      flags, offset = append_position_buffer_offsets(flags,
-                                                     offset,
-                                                     buffer_offsets,
-                                                     @string_positions_writer,
-                                                     Flags::STRING_POSITION8,
-                                                     Flags::STRING_POSITION16,
-                                                     Flags::STRING_POSITION32)
+      flags, offset = append_positions_buffer_offsets(flags,
+                                                      offset,
+                                                      buffer_offsets,
+                                                      @string_positions_writer,
+                                                      Flags::STRING_POSITION8,
+                                                      Flags::STRING_POSITION16,
+                                                      Flags::STRING_POSITION32)
     end
 
     unless @int16_values.empty?
@@ -937,10 +938,10 @@ class ParsedJSONReader
 
     def resolve(i)
       if i < @n16
-        offset = @offset16 + i * UINT16_SIZE
+        offset = @offset16 + (UINT16_SIZE * i)
         @input.unpack1("S", offset: offset)
       else
-        offset = @offset32 + (i - @n16) * UINT32_SIZE
+        offset = @offset32 + (UINT32_SIZE * (i - @n16))
         @input.unpack1("L", offset: offset)
       end
     end
@@ -961,7 +962,7 @@ class ParsedJSONReader
 
     def resolve(i)
       if i < @n8
-        offset = @offset8 + (i * UINT8_SIZE)
+        offset = @offset8 + (UINT8_SIZE * i)
         if i == 0
           start = 0
           next_start = @input.unpack1("C", offset: offset)
@@ -970,12 +971,12 @@ class ParsedJSONReader
           start, next_start = @input.unpack("C2", offset: previous_offset)
         end
       elsif i < @n8 + @n16
-        offset = @offset16 + ((i - @n8) * UINT16_SIZE)
+        offset = @offset16 + (UINT16_SIZE * (i - @n8))
         if i == 0
           start = 0
           next_start = @input.unpack1("S", offset: offset)
         elsif i == @n8
-          last_offset8_offset = @offset8 + (@n8 - 1) * UINT8_SIZE
+          last_offset8_offset = @offset8 + (UINT8_SIZE * (@n8 - 1))
           start = @input.unpack1("C", offset: last_offset8_offset)
           next_start = @input.unpack1("S", offset: offset)
         else
@@ -983,7 +984,7 @@ class ParsedJSONReader
           start, next_start = @input.unpack("S2", offset: previous_offset)
         end
       else
-        offset = @offset32 + ((i - @n8 - @n16) * UINT32_SIZE)
+        offset = @offset32 + (UINT32_SIZE * (i - @n8 - @n16))
         if i == 0
           start = 0
           next_start = @input.unpack1("L", offset: offset)
@@ -992,11 +993,11 @@ class ParsedJSONReader
             if @n8 == 0
               start = 0
             else
-              last_offset8_offset = @offset8 + ((@n8 - 1) * UINT8_SIZE)
+              last_offset8_offset = @offset8 + (UINT8_SIZE * (@n8 - 1))
               start = @input.unpack1("C", offset: last_offset8_offset)
             end
           else
-            last_offset16_offset = @offset16 + ((@n16 - 1) * UINT16_SIZE)
+            last_offset16_offset = @offset16 + (UINT16_SIZE * (@n16 - 1))
             start = @input.unpack1("S", offset: last_offset16_offset)
           end
           next_start = @input.unpack1("L", offset: offset)
@@ -1145,47 +1146,47 @@ class ParsedJSONReader
     buffer_offsets << @input.bytesize
     i = 0
     i, @object_position_resolver =
-      create_variable_size_position_resolver(Flags::OBJECT_POSITION8,
-                                             Flags::OBJECT_POSITION16,
-                                             Flags::OBJECT_POSITION32,
+      create_variable_size_position_resolver(i,
                                              buffer_offsets,
-                                             i)
+                                             Flags::OBJECT_POSITION8,
+                                             Flags::OBJECT_POSITION16,
+                                             Flags::OBJECT_POSITION32)
     if flagged?(Flags::OBJECT_KEY)
       @object_keys_offset = buffer_offsets[i]
       i += 1
     end
     i, @object_key_position_resolver =
-      create_variable_size_position_resolver(Flags::OBJECT_KEY_POSITION8,
+      create_variable_size_position_resolver(i,
+                                             buffer_offsets,
+                                             Flags::OBJECT_KEY_POSITION8,
                                              Flags::OBJECT_KEY_POSITION16,
-                                             Flags::OBJECT_KEY_POSITION32,
-                                             buffer_offsets,
-                                             i)
+                                             Flags::OBJECT_KEY_POSITION32)
     i, @object_value_tag_resolver =
-      create_variable_size_tag_resolver(Flags::OBJECT_VALUE_TAG16,
-                                        Flags::OBJECT_VALUE_TAG32,
+      create_variable_size_tag_resolver(i,
                                         buffer_offsets,
-                                        i)
+                                        Flags::OBJECT_VALUE_TAG16,
+                                        Flags::OBJECT_VALUE_TAG32)
     i, @array_position_resolver =
-      create_variable_size_position_resolver(Flags::ARRAY_POSITION8,
-                                             Flags::ARRAY_POSITION16,
-                                             Flags::ARRAY_POSITION32,
+      create_variable_size_position_resolver(i,
                                              buffer_offsets,
-                                             i)
+                                             Flags::ARRAY_POSITION8,
+                                             Flags::ARRAY_POSITION16,
+                                             Flags::ARRAY_POSITION32)
     i, @array_tag_resolver =
-      create_variable_size_tag_resolver(Flags::ARRAY_TAG16,
-                                        Flags::ARRAY_TAG32,
+      create_variable_size_tag_resolver(i,
                                         buffer_offsets,
-                                        i)
+                                        Flags::ARRAY_TAG16,
+                                        Flags::ARRAY_TAG32)
     if flagged?(Flags::STRING_VALUE)
       @string_values_offset = buffer_offsets[i]
       i += 1
     end
     i, @string_position_resolver =
-      create_variable_size_position_resolver(Flags::STRING_POSITION8,
-                                             Flags::STRING_POSITION16,
-                                             Flags::STRING_POSITION32,
+      create_variable_size_position_resolver(i,
                                              buffer_offsets,
-                                             i)
+                                             Flags::STRING_POSITION8,
+                                             Flags::STRING_POSITION16,
+                                             Flags::STRING_POSITION32)
     if flagged?(Flags::INT16)
       @int16_values_offset = buffer_offsets[i]
       i += 1
@@ -1208,10 +1209,10 @@ class ParsedJSONReader
     (@flags & flag) == flag
   end
 
-  def create_variable_size_tag_resolver(flag16,
-                                        flag32,
+  def create_variable_size_tag_resolver(i,
                                         buffer_offsets,
-                                        i)
+                                        flag16,
+                                        flag32)
     if flagged?(flag16)
       offset16 = buffer_offsets[i]
       n16 = (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT16_SIZE
@@ -1234,11 +1235,11 @@ class ParsedJSONReader
     [i, resolver]
   end
 
-  def create_variable_size_position_resolver(flag8,
-                                             flag16,
-                                             flag32,
+  def create_variable_size_position_resolver(i,
                                              buffer_offsets,
-                                             i)
+                                             flag8,
+                                             flag16,
+                                             flag32)
     if flagged?(flag8)
       offset8 = buffer_offsets[i]
       n8 = (buffer_offsets[i + 1] - buffer_offsets[i]) / UINT8_SIZE
@@ -1668,6 +1669,7 @@ class TestParsedJSON < Test::Unit::TestCase
     end
     assert_roundtrip(objects)
   end
+
   def test_object_size16
     object = {}
     256.times do |i|
