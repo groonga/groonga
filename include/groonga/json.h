@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2025-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -123,6 +123,18 @@ typedef enum {
   GRN_JSON_VALUE_ARRAY,
   GRN_JSON_VALUE_OBJECT,
 } grn_json_value_type;
+
+/**
+ * \brief Stringify \ref grn_json_value_type.
+ *
+ * \param type The \ref grn_json_value_type to stringify.
+ *
+ * \return The string representation of `type`.
+ *
+ * \since 16.0.1
+ */
+GRN_API const char *
+grn_json_value_type_to_string(grn_json_value_type type);
 
 /**
  * \brief Move to the next value.
