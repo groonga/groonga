@@ -768,9 +768,11 @@ namespace grn {
       uint32_t
       normalize_n_tokens(uint32_t n_tokens, uint32_t n_sequences)
       {
+#    ifdef GGML_KQ_MASK_PAD
         if (n_tokens < GGML_KQ_MASK_PAD) {
           n_tokens = GGML_KQ_MASK_PAD;
         }
+#    endif
         return ((n_tokens + (n_sequences - 1)) / n_sequences) * n_sequences;
       }
 
