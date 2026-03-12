@@ -1734,9 +1734,9 @@ else()
   set(GRN_WITH_H3 FALSE)
 endif()
 
-set(GRN_LLAMA_CPP_BUNDLED_VERSION "b6891")
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b8263")
 set(GRN_LLAMA_CPP_BUNDLED_SHA256
-    "9019efcdfe6366445ef252ffe0e3fcb078cc2aceac4a63809435115dd2378ddb")
+    "53ae7042f70c577a6fbd32a3a44a5ecd0ff043fa29da83b76706dbb36c58dbdf")
 set(GRN_WITH_LLAMA_CPP
     "auto"
     CACHE STRING "Use llama.cpp for LLM.")
