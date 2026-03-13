@@ -21,8 +21,10 @@
 #ifdef GRN_WITH_SIMDJSON
 #  include <cmath>
 #  include <limits>
+#  include <optional>
 #  include <queue>
 #  include <string>
+#  include <variant>
 
 #  include <simdjson.h>
 #endif
@@ -203,6 +205,13 @@ namespace {
     }
   };
 
+  struct JSONValue {
+    grn_json_value_type type;
+    using Data =
+      std::variant<int64_t, double, std::string_view, std::vector<JSONValue>>;
+    Data data;
+  };
+
   class JSONParser {
   public:
     JSONParser(grn_ctx *ctx, grn_obj *input, grn_obj *output)
@@ -211,11 +220,25 @@ namespace {
         output_(output),
         root_tag_writer_(ctx_, output),
         array_tags_writer_(ctx_),
-        array_positions_writer_(ctx_)
+        array_positions_writer_(ctx_),
+        int16_values_(),
+        int32_values_(),
+        int64_values_(),
+        double_values_()
     {
+      GRN_INT16_INIT(&int16_values_, 0);
+      GRN_INT32_INIT(&int32_values_, 0);
+      GRN_INT64_INIT(&int64_values_, 0);
+      GRN_FLOAT_INIT(&double_values_, 0);
     }
 
-    ~JSONParser() = default;
+    ~JSONParser()
+    {
+      GRN_OBJ_FIN(ctx_, &int16_values_);
+      GRN_OBJ_FIN(ctx_, &int32_values_);
+      GRN_OBJ_FIN(ctx_, &int64_values_);
+      GRN_OBJ_FIN(ctx_, &double_values_);
+    }
 
     void
     parse()
@@ -255,6 +278,16 @@ namespace {
     RootTagWriter root_tag_writer_;
     ContainerTagsWriter array_tags_writer_;
     PositionsWriter array_positions_writer_;
+    grn_obj int16_values_;
+    grn_obj int32_values_;
+    grn_obj int64_values_;
+    grn_obj double_values_;
+
+    bool
+    is_root(TagWriter *tag_writer)
+    {
+      return tag_writer == &root_tag_writer_;
+    }
 
     void
     append_tags_buffer_offsets(uint32_t &flags,
@@ -330,7 +363,36 @@ namespace {
                                    Flag::kArrayTag32);
       }
 
-      if (!buffer_offsets.empty() && buffer_offsets.back() > 65535) {
+      if (GRN_TEXT_LEN(&int16_values_) > 0) {
+        outputs.push_back(&int16_values_);
+        flags |= static_cast<uint32_t>(Flag::kInt16);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&int16_values_);
+      }
+
+      if (GRN_TEXT_LEN(&int32_values_) > 0) {
+        outputs.push_back(&int32_values_);
+        flags |= static_cast<uint32_t>(Flag::kInt32);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&int32_values_);
+      }
+
+      if (GRN_TEXT_LEN(&int64_values_) > 0) {
+        outputs.push_back(&int64_values_);
+        flags |= static_cast<uint32_t>(Flag::kInt64);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&int64_values_);
+      }
+
+      if (GRN_TEXT_LEN(&double_values_) > 0) {
+        outputs.push_back(&double_values_);
+        flags |= static_cast<uint32_t>(Flag::kDouble);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&double_values_);
+      }
+
+      if (!buffer_offsets.empty() &&
+          buffer_offsets.back() > std::numeric_limits<uint16_t>::max()) {
         flags |= static_cast<uint32_t>(Flag::kOffset32);
       }
 
@@ -381,9 +443,11 @@ namespace {
                 simdjson::error_message(error_code));
             return false;
           }
-          if (!parse_container(&root_tag_writer_, value)) {
+          auto container_value = extract_container(value);
+          if (!container_value) {
             return false;
           }
+          write_container(&root_tag_writer_, *container_value);
           write_footer();
         }
         return true;
@@ -391,33 +455,49 @@ namespace {
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s object isn't supported yet", tag);
         return false;
       case json_type::number:
-        if (!parse_number(&root_tag_writer_, document)) {
-          return false;
+        {
+          auto value = extract_number(document);
+          if (!value) {
+            return false;
+          }
+          write_number(&root_tag_writer_, *value);
+          return true;
         }
-        return true;
       case json_type::string:
-        if (!parse_string(&root_tag_writer_, document)) {
-          return false;
+        {
+          auto value = extract_string(document);
+          if (!value) {
+            return false;
+          }
+          write_string(&root_tag_writer_, *value);
+          return true;
         }
-        return true;
       case json_type::boolean:
-        if (!parse_boolean(&root_tag_writer_, document)) {
-          return false;
+        {
+          auto value = extract_boolean(document);
+          if (!value) {
+            return false;
+          }
+          write_boolean(&root_tag_writer_, *value);
+          return true;
         }
-        return true;
       case json_type::null:
-        if (!parse_null(&root_tag_writer_, document)) {
-          return false;
+        {
+          auto value = extract_null(document);
+          if (!value) {
+            return false;
+          }
+          write_null(&root_tag_writer_);
+          return true;
         }
-        return true;
       default:
         ERR(GRN_INVALID_ARGUMENT, "%s failed to get root value", tag);
         return false;
       }
     }
 
-    bool
-    parse_value(TagWriter *tag_writer, simdjson::ondemand::value &value)
+    std::optional<JSONValue>
+    extract_value(simdjson::ondemand::value &value)
     {
       const char *tag = "[json-parser][parse][value]";
       auto ctx = ctx_;
@@ -429,56 +509,58 @@ namespace {
             "%s failed to get value type: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
       switch (type) {
       case json_type::array:
-        if (!parse_container(tag_writer, value)) {
-          return false;
-        }
-        return true;
+        return extract_container(value);
       case json_type::object:
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s object isn't supported yet", tag);
-        return false;
+        return std::nullopt;
       case json_type::number:
-        if (!parse_number(tag_writer, value)) {
-          return false;
-        }
-        return true;
+        return extract_number(value);
       case json_type::string:
-        if (!parse_string(tag_writer, value)) {
-          return false;
+        {
+          auto string_value = extract_string(value);
+          if (!string_value) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_STRING, *string_value};
         }
-        return true;
       case json_type::boolean:
-        if (!parse_boolean(tag_writer, value)) {
-          return false;
+        {
+          auto boolean_value = extract_boolean(value);
+          if (!boolean_value) {
+            return std::nullopt;
+          }
+          if (*boolean_value) {
+            return JSONValue{GRN_JSON_VALUE_TRUE, {}};
+          } else {
+            return JSONValue{GRN_JSON_VALUE_FALSE, {}};
+          }
         }
-        return true;
       case json_type::null:
-        if (!parse_null(tag_writer, value)) {
-          return false;
+        {
+          if (!extract_null(value)) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_NULL, {}};
         }
-        return true;
       default:
         ERR(GRN_INVALID_ARGUMENT, "%s failed to get value", tag);
-        return false;
+        return std::nullopt;
       }
     }
 
-    bool
-    parse_container(TagWriter *tag_writer, simdjson::ondemand::value &value)
+    void
+    write_container(TagWriter *tag_writer, JSONValue &value)
     {
-      const char *tag = "[json-parser][parse][container]";
+      const char *tag = "[json-parser][write][container]";
       auto ctx = ctx_;
 
-      // TODO: We want to use breadth-first search but it doesn't work
-      // for now. simdjson::ondemand::value is available only while
-      // the value is currently processed. We can't process it later
-      // by keeping it in a queue.
-      std::queue<simdjson::ondemand::value> values;
+      std::queue<JSONValue *> values;
       std::queue<TagWriter *> tag_writers;
-      values.push(value);
+      values.push(&value);
       tag_writers.push(tag_writer);
       while (!values.empty()) {
         auto current_value = values.front();
@@ -486,87 +568,168 @@ namespace {
         auto current_tag_writer = tag_writers.front();
         tag_writers.pop();
 
-        json_type type;
-        auto error_code = current_value.type().get(type);
-        if (error_code != simdjson::SUCCESS) {
-          ERR(GRN_INVALID_ARGUMENT,
-              "%s failed to get value type: %s",
-              tag,
-              simdjson::error_message(error_code));
-          return false;
-        }
-
-        switch (type) {
-        case json_type::array:
+        switch (current_value->type) {
+        case GRN_JSON_VALUE_ARRAY:
           {
-            simdjson::ondemand::array array;
-            error_code = value.get_array().get(array);
-            if (error_code != simdjson::SUCCESS) {
-              ERR(GRN_INVALID_ARGUMENT,
-                  "%s failed to get array: %s",
-                  tag,
-                  simdjson::error_message(error_code));
-              return false;
-            }
-            size_t n_elements = 0;
-            for (auto element_result : array) {
-              simdjson::ondemand::value element;
-              error_code = element_result.get(element);
-              if (error_code != simdjson::SUCCESS) {
-                ERR(GRN_INVALID_ARGUMENT,
-                    "%s failed to get array element: %s",
-                    tag,
-                    simdjson::error_message(error_code));
-                return false;
-              }
-              values.push(element);
-              tag_writers.push(&array_tags_writer_);
-              n_elements++;
-            }
-            auto index = array_positions_writer_.write(n_elements);
+            auto &elements =
+              std::get<std::vector<JSONValue>>(current_value->data);
+            auto index = array_positions_writer_.write(elements.size());
             current_tag_writer->write(Type::kArray, false, 0, index);
+            for (auto &element : elements) {
+              values.push(&element);
+              tag_writers.push(&array_tags_writer_);
+            }
           }
           break;
-        case json_type::object:
+        case GRN_JSON_VALUE_OBJECT:
           ERR(GRN_INVALID_ARGUMENT, "%s object isn't supported yet", tag);
-          return false;
-        case json_type::number:
-          if (!parse_number(current_tag_writer, current_value)) {
-            return false;
-          }
+          return;
+        case GRN_JSON_VALUE_INT64:
+          write_int64(current_tag_writer,
+                      std::get<int64_t>(current_value->data));
           break;
-        case json_type::string:
+        case GRN_JSON_VALUE_FLOAT:
+          write_double(current_tag_writer,
+                       std::get<double>(current_value->data));
+          break;
+        case GRN_JSON_VALUE_STRING:
           ERR(GRN_INVALID_ARGUMENT,
               "%s string in container isn't supported yet",
               tag);
-          return false;
-        case json_type::boolean:
-          if (!parse_boolean(current_tag_writer, current_value)) {
-            return false;
-          }
+          return;
+        case GRN_JSON_VALUE_TRUE:
+          write_boolean(current_tag_writer, true);
           break;
-        case json_type::null:
-          if (!parse_null(current_tag_writer, current_value)) {
-            return false;
-          }
+        case GRN_JSON_VALUE_FALSE:
+          write_boolean(current_tag_writer, false);
+          break;
+        case GRN_JSON_VALUE_NULL:
+          write_null(current_tag_writer);
           break;
         default:
           ERR(GRN_INVALID_ARGUMENT,
               "%s invalid value type: %u",
               tag,
-              static_cast<unsigned int>(type));
-          return false;
+              static_cast<unsigned int>(current_value->type));
+          return;
         }
       }
-      return true;
+    }
+
+    std::optional<JSONValue>
+    extract_container(simdjson::ondemand::value &value)
+    {
+      const char *tag = "[json-parser][extract][container]";
+      auto ctx = ctx_;
+
+      json_type type;
+      auto error_code = value.type().get(type);
+      if (error_code != simdjson::SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s failed to get value type: %s",
+            tag,
+            simdjson::error_message(error_code));
+        return std::nullopt;
+      }
+
+      switch (type) {
+      case json_type::array:
+        {
+          simdjson::ondemand::array array;
+          error_code = value.get_array().get(array);
+          if (error_code != simdjson::SUCCESS) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "%s failed to get array: %s",
+                tag,
+                simdjson::error_message(error_code));
+            return std::nullopt;
+          }
+          std::vector<JSONValue> elements;
+          for (auto element_result : array) {
+            simdjson::ondemand::value element;
+            error_code = element_result.get(element);
+            if (error_code != simdjson::SUCCESS) {
+              ERR(GRN_INVALID_ARGUMENT,
+                  "%s failed to get array element: %s",
+                  tag,
+                  simdjson::error_message(error_code));
+              return std::nullopt;
+            }
+            auto json_value = extract_value(element);
+            if (!json_value) {
+              return std::nullopt;
+            }
+            elements.push_back(*json_value);
+          }
+          return JSONValue{GRN_JSON_VALUE_ARRAY, std::move(elements)};
+        }
+      case json_type::object:
+        ERR(GRN_INVALID_ARGUMENT, "%s object isn't supported yet", tag);
+        return std::nullopt;
+      case json_type::number:
+        return extract_number(value);
+      case json_type::string:
+        {
+          auto string_value = extract_string(value);
+          if (!string_value) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_STRING, *string_value};
+        }
+      case json_type::boolean:
+        {
+          auto boolean_value = extract_boolean(value);
+          if (!boolean_value) {
+            return std::nullopt;
+          }
+          if (*boolean_value) {
+            return JSONValue{GRN_JSON_VALUE_TRUE, {}};
+          } else {
+            return JSONValue{GRN_JSON_VALUE_FALSE, {}};
+          }
+        }
+      case json_type::null:
+        if (!extract_null(value)) {
+          return std::nullopt;
+        }
+        return JSONValue{GRN_JSON_VALUE_NULL, {}};
+      default:
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid value type: %u",
+            tag,
+            static_cast<unsigned int>(type));
+        return std::nullopt;
+      }
+    }
+
+    void
+    write_double(TagWriter *tag_writer, double value)
+    {
+      if (std::fpclassify(value) == FP_ZERO) {
+        uint8_t metadata =
+          std::signbit(value)
+            ? static_cast<uint8_t>(metadata::Float::kNegativeZero)
+            : static_cast<uint8_t>(metadata::Float::kPositiveZero);
+        tag_writer->write(Type::kFloat, true, metadata, 0);
+      } else {
+        grn_obj *output;
+        if (is_root(tag_writer)) {
+          output = output_;
+        } else {
+          output = &double_values_;
+        }
+        uint32_t offset = GRN_TEXT_LEN(output);
+        tag_writer->write(Type::kFloat, false, 0, offset);
+        GRN_FLOAT_PUT(ctx_, output, value);
+      }
     }
 
     template <typename ValueType>
-    bool
-    parse_double(TagWriter *tag_writer, ValueType &value)
+    std::optional<double>
+    extract_double(ValueType &value)
     {
       auto ctx = ctx_;
-      const char *tag = "[json-parser][parse][double]";
+      const char *tag = "[json-parser][extract][double]";
 
       double double_value;
       auto error_code = value.get_double().get(double_value);
@@ -575,72 +738,117 @@ namespace {
             "%s failed to get floating-point number: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
-      if (std::fpclassify(double_value) == FP_ZERO) {
-        uint8_t metadata =
-          std::signbit(double_value)
-            ? static_cast<uint8_t>(metadata::Float::kNegativeZero)
-            : static_cast<uint8_t>(metadata::Float::kPositiveZero);
-        tag_writer->write(Type::kFloat, true, metadata, 0);
+      return double_value;
+    }
+
+    void
+    write_int64(TagWriter *tag_writer, int64_t value)
+    {
+      uint8_t n_bytes;
+      if (std::numeric_limits<int8_t>::min() <= value &&
+          value <= std::numeric_limits<int8_t>::max()) {
+        n_bytes = 1;
+      } else if (std::numeric_limits<int16_t>::min() <= value &&
+                 value <= std::numeric_limits<int16_t>::max()) {
+        n_bytes = 2;
+      } else if (std::numeric_limits<int32_t>::min() <= value &&
+                 value <= std::numeric_limits<int32_t>::max()) {
+        n_bytes = 4;
       } else {
-        tag_writer->write(Type::kFloat, false, 0, 0);
-        GRN_FLOAT_PUT(ctx_, output_, double_value);
+        n_bytes = 8;
       }
-      return true;
+
+      // We can't embed an integer into the root tag.
+      if (!is_root(tag_writer)) {
+        auto container_tags_writer =
+          dynamic_cast<ContainerTagsWriter *>(tag_writer);
+        const bool is_tag32 = (container_tags_writer->size32 > 0);
+        bool is_embeddable;
+        if (is_tag32) {
+          is_embeddable = (-(1 << 15) <= value and value <= ((1 << 23) - 1));
+        } else {
+          is_embeddable = (n_bytes == 1);
+        }
+        if (is_embeddable) {
+          if (!is_tag32 && value < 0) {
+            value += 256;
+          }
+          tag_writer->write(Type::kInteger, true, n_bytes, value);
+          return;
+        }
+      }
+
+      grn_obj *output;
+      if (tag_writer == &root_tag_writer_) {
+        output = output_;
+      } else {
+        if (n_bytes == 2) {
+          output = &int16_values_;
+        } else if (n_bytes == 4) {
+          output = &int32_values_;
+        } else {
+          output = &int64_values_;
+        }
+      }
+      uint32_t offset = GRN_TEXT_LEN(output);
+      tag_writer->write(Type::kInteger, false, n_bytes, offset);
+      if (n_bytes == 1) {
+        GRN_INT8_PUT(ctx_, output, value);
+      } else if (n_bytes == 2) {
+        GRN_INT16_PUT(ctx_, output, value);
+      } else if (n_bytes == 4) {
+        GRN_INT32_PUT(ctx_, output, value);
+      } else {
+        GRN_INT64_PUT(ctx_, output, value);
+      }
     }
 
     template <typename ValueType>
-    bool
-    parse_int64(TagWriter *tag_writer, ValueType &value)
+    std::optional<JSONValue>
+    extract_int64(ValueType &value)
     {
       auto ctx = ctx_;
-      const char *tag = "[json-parser][parse][int64]";
+      const char *tag = "[json-parser][extract][int64]";
 
       int64_t int64_value;
       auto error_code = value.get_int64().get(int64_value);
       if (error_code != simdjson::SUCCESS) {
 #  ifndef BIGINT_NUMBER
-        return parse_double(tag_writer, value);
+        {
+          auto double_value = extract_double(value);
+          if (!double_value) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_FLOAT, *double_value};
+        }
 #  endif
         ERR(GRN_INVALID_ARGUMENT,
             "%s failed to get int64 number: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
-      uint8_t n_bytes;
-      if (std::numeric_limits<int8_t>::min() <= int64_value &&
-          int64_value <= std::numeric_limits<int8_t>::max()) {
-        n_bytes = 1;
-      } else if (std::numeric_limits<int16_t>::min() <= int64_value &&
-                 int64_value <= std::numeric_limits<int16_t>::max()) {
-        n_bytes = 2;
-      } else if (std::numeric_limits<int32_t>::min() <= int64_value &&
-                 int64_value <= std::numeric_limits<int32_t>::max()) {
-        n_bytes = 4;
+      return JSONValue{GRN_JSON_VALUE_INT64, int64_value};
+    }
+
+    void
+    write_number(TagWriter *tag_writer, JSONValue &value)
+    {
+      if (value.type == GRN_JSON_VALUE_FLOAT) {
+        write_double(tag_writer, std::get<double>(value.data));
       } else {
-        n_bytes = 8;
+        write_int64(tag_writer, std::get<int64_t>(value.data));
       }
-      tag_writer->write(Type::kInteger, false, n_bytes, 0);
-      if (n_bytes == 1) {
-        GRN_INT8_PUT(ctx_, output_, int64_value);
-      } else if (n_bytes == 2) {
-        GRN_INT16_PUT(ctx_, output_, int64_value);
-      } else if (n_bytes == 4) {
-        GRN_INT32_PUT(ctx_, output_, int64_value);
-      } else {
-        GRN_INT64_PUT(ctx_, output_, int64_value);
-      }
-      return true;
     }
 
     template <typename ValueType>
-    bool
-    parse_number(TagWriter *tag_writer, ValueType &value)
+    std::optional<JSONValue>
+    extract_number(ValueType &value)
     {
       using number_type = simdjson::ondemand::number_type;
-      const char *tag = "[json-parser][parse][number]";
+      const char *tag = "[json-parser][extract][number]";
       auto ctx = ctx_;
 
       number_type type;
@@ -650,7 +858,7 @@ namespace {
             "%s failed to get number type: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
 
       switch (type) {
@@ -658,8 +866,13 @@ namespace {
 #  ifdef BIGINT_NUMBER
       case number_type::big_integer: // simdjson 3.7.1 or later has this.
 #  endif
-        return parse_double(tag_writer, value);
-        break;
+        {
+          auto double_value = extract_double(value);
+          if (!double_value) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_FLOAT, *double_value};
+        }
       case number_type::unsigned_integer:
         // simdjson < 3.1.0 detects -9223372036854775808 as unsigned
         // integer: https://github.com/simdjson/simdjson/pull/1819
@@ -668,26 +881,38 @@ namespace {
                        simdjson::SIMDJSON_VERSION_MINOR < 1)) {
           // Try parsing this as an int64 value. parse_int64() falls
           // back to parse_double() when this is not an int64 value.
-          return parse_int64(tag_writer, value);
+          return extract_int64(value);
         }
-        return parse_double(tag_writer, value);
-        break;
+        {
+          auto double_value = extract_double(value);
+          if (!double_value) {
+            return std::nullopt;
+          }
+          return JSONValue{GRN_JSON_VALUE_FLOAT, *double_value};
+        }
       case number_type::signed_integer:
-        return parse_int64(tag_writer, value);
+        return extract_int64(value);
       default:
         ERR(GRN_INVALID_ARGUMENT,
-            "%s unsupported number type: %d",
+            "%s unsupported number type: %u",
             tag,
-            static_cast<int32_t>(type));
-        return false;
+            static_cast<unsigned int>(type));
+        return std::nullopt;
       }
     }
 
-    template <typename ValueType>
-    bool
-    parse_string(TagWriter *tag_writer, ValueType &value)
+    void
+    write_string(TagWriter *tag_writer, std::string_view value)
     {
-      const char *tag = "[json-parser][parse][string]";
+      tag_writer->write(Type::kString, false, 0, 0);
+      GRN_TEXT_PUT(ctx_, output_, value.data(), value.size());
+    }
+
+    template <typename ValueType>
+    std::optional<std::string_view>
+    extract_string(ValueType &value)
+    {
+      const char *tag = "[json-parser][extract][string]";
       auto ctx = ctx_;
 
       std::string_view string_value;
@@ -697,19 +922,25 @@ namespace {
             "%s failed to get value: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
+      return string_value;
+    }
 
-      tag_writer->write(Type::kString, false, 0, 0);
-      GRN_TEXT_PUT(ctx_, output_, string_value.data(), string_value.size());
-      return true;
+    void
+    write_boolean(TagWriter *tag_writer, bool value)
+    {
+      uint8_t metadata = value
+                           ? static_cast<uint8_t>(metadata::Constant::kTrue)
+                           : static_cast<uint8_t>(metadata::Constant::kFalse);
+      tag_writer->write(Type::kConstant, true, metadata, 0);
     }
 
     template <typename ValueType>
-    bool
-    parse_boolean(TagWriter *tag_writer, ValueType &value)
+    std::optional<bool>
+    extract_boolean(ValueType &value)
     {
-      const char *tag = "[json-parser][parse][boolean]";
+      const char *tag = "[json-parser][extract][boolean]";
       auto ctx = ctx_;
 
       bool bool_value;
@@ -719,20 +950,23 @@ namespace {
             "%s failed to get value: %s",
             tag,
             simdjson::error_message(error_code));
-        return false;
+        return std::nullopt;
       }
-      uint8_t metadata = bool_value
-                           ? static_cast<uint8_t>(metadata::Constant::kTrue)
-                           : static_cast<uint8_t>(metadata::Constant::kFalse);
+      return bool_value;
+    }
+
+    void
+    write_null(TagWriter *tag_writer)
+    {
+      uint8_t metadata = static_cast<uint8_t>(metadata::Constant::kNull);
       tag_writer->write(Type::kConstant, true, metadata, 0);
-      return true;
     }
 
     template <typename ValueType>
-    bool
-    parse_null(TagWriter *tag_writer, ValueType &value)
+    std::optional<bool>
+    extract_null(ValueType &value)
     {
-      const char *tag = "[json-parser][parse][null]";
+      const char *tag = "[json-parser][extract][null]";
       auto ctx = ctx_;
 
       bool is_null;
@@ -745,13 +979,15 @@ namespace {
               "%s failed to determine null: %s",
               tag,
               simdjson::error_message(error_code));
-          return false;
+          return std::nullopt;
         }
       } else {
         is_null = value.is_null();
       }
-      uint8_t metadata = static_cast<uint8_t>(metadata::Constant::kNull);
-      tag_writer->write(Type::kConstant, true, metadata, 0);
+      if (!is_null) {
+        ERR(GRN_INVALID_ARGUMENT, "%s not null", tag);
+        return std::nullopt;
+      }
       return true;
     }
   };
@@ -898,6 +1134,10 @@ namespace {
         flags_(0),
         array_position_resolver_(),
         array_tag_resolver_(),
+        int16_values_offset_(0),
+        int32_values_offset_(0),
+        int64_values_offset_(0),
+        double_values_offset_(0),
         states_(),
         current_type_(GRN_JSON_VALUE_UNKNOWN),
         current_value_(nullptr),
@@ -949,8 +1189,9 @@ namespace {
         return next_value(tag, false);
       } else {
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-            "%s unsupported value type: %u",
+            "%s unsupported value type: %s(%u)",
             log_tag,
+            grn_json_value_type_to_string(state.type),
             static_cast<uint32_t>(state.type));
         return ctx_->rc;
       }
@@ -992,6 +1233,10 @@ namespace {
     uint32_t flags_;
     std::unique_ptr<VariableSizePositionResolver> array_position_resolver_;
     std::unique_ptr<VariableSizeTagResolver> array_tag_resolver_;
+    uint32_t int16_values_offset_;
+    uint32_t int32_values_offset_;
+    uint32_t int64_values_offset_;
+    uint32_t double_values_offset_;
     std::stack<State> states_;
     grn_json_value_type current_type_;
     grn_obj *current_value_;
@@ -1184,6 +1429,22 @@ namespace {
                                           buffer_offsets,
                                           Flag::kArrayTag16,
                                           Flag::kArrayTag32);
+      if (flags_ & static_cast<uint32_t>(Flag::kInt16)) {
+        int16_values_offset_ = buffer_offsets[i];
+        i++;
+      }
+      if (flags_ & static_cast<uint32_t>(Flag::kInt32)) {
+        int32_values_offset_ = buffer_offsets[i];
+        i++;
+      }
+      if (flags_ & static_cast<uint32_t>(Flag::kInt64)) {
+        int64_values_offset_ = buffer_offsets[i];
+        i++;
+      }
+      if (flags_ & static_cast<uint32_t>(Flag::kDouble)) {
+        double_values_offset_ = buffer_offsets[i];
+        i++;
+      }
       return GRN_SUCCESS;
     }
 
@@ -1262,6 +1523,7 @@ namespace {
         current_value_ = &float_value_;
         current_size_ = 0;
       } else {
+        double value;
         if (is_root) {
           uint32_t offset = kRootTagSize;
           size_t size = GRN_JSON_LEN(json_) - offset;
@@ -1274,17 +1536,15 @@ namespace {
                 size);
             return ctx->rc;
           }
-          auto value = read_data<double>(offset);
-          current_type_ = GRN_JSON_VALUE_FLOAT;
-          GRN_FLOAT_SET(ctx_, &float_value_, value);
-          current_value_ = &float_value_;
-          current_size_ = 0;
+          value = read_data<double>(offset);
         } else {
-          ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-              "%s root value is only supported",
-              log_tag);
-          return ctx->rc;
+          uint32_t offset = tag.data;
+          value = read_data<double>(double_values_offset_ + offset);
         }
+        current_type_ = GRN_JSON_VALUE_FLOAT;
+        GRN_FLOAT_SET(ctx_, &float_value_, value);
+        current_value_ = &float_value_;
+        current_size_ = 0;
       }
       return ctx->rc;
     }
@@ -1295,8 +1555,9 @@ namespace {
       const char *log_tag = "[json-reader][next][integer]";
       auto ctx = ctx_;
 
+      uint8_t n_bytes = tag.metadata;
+      int64_t value;
       if (is_root) {
-        uint8_t n_bytes = tag.metadata;
         uint32_t offset = kRootTagSize;
         size_t size = GRN_JSON_LEN(json_) - offset;
         if (size != n_bytes) {
@@ -1307,7 +1568,6 @@ namespace {
               size);
           return ctx->rc;
         }
-        int64_t value;
         if (n_bytes == 1) {
           value = read_data<int8_t>(offset);
         } else if (n_bytes == 2) {
@@ -1317,16 +1577,31 @@ namespace {
         } else {
           value = read_data<int64_t>(offset);
         }
-        current_type_ = GRN_JSON_VALUE_INT64;
-        GRN_INT64_SET(ctx_, &int64_value_, value);
-        current_value_ = &int64_value_;
-        current_size_ = 0;
       } else {
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-            "%s root value is only supported",
-            log_tag);
-        return ctx->rc;
+        if (tag.is_embedded) {
+          if (n_bytes == 1) {
+            value = static_cast<int8_t>(tag.data);
+          } else if (n_bytes == 2) {
+            value = static_cast<int16_t>(tag.data);
+          } else {
+            // 3 bytes data is always positive
+            value = tag.data;
+          }
+        } else {
+          uint32_t offset = tag.data;
+          if (n_bytes == 2) {
+            value = read_data<int16_t>(int16_values_offset_ + offset);
+          } else if (n_bytes == 4) {
+            value = read_data<int32_t>(int32_values_offset_ + offset);
+          } else {
+            value = read_data<int64_t>(int64_values_offset_ + offset);
+          }
+        }
       }
+      current_type_ = GRN_JSON_VALUE_INT64;
+      GRN_INT64_SET(ctx_, &int64_value_, value);
+      current_value_ = &int64_value_;
+      current_size_ = 0;
       return ctx->rc;
     }
 
@@ -1494,6 +1769,7 @@ namespace {
 } // namespace
 
 extern "C" {
+
 struct _grn_json_parser {
 #ifdef GRN_WITH_SIMDJSON
   JSONParser *parser;
@@ -1604,6 +1880,31 @@ grn_json_reader_get_size(grn_ctx *ctx, grn_json_reader *reader)
   GRN_API_ENTER;
   size_t size = reader->reader->size();
   GRN_API_RETURN(size);
+}
+
+const char *
+grn_json_value_type_to_string(grn_json_value_type type)
+{
+  switch (type) {
+  case GRN_JSON_VALUE_NULL:
+    return "null";
+  case GRN_JSON_VALUE_FALSE:
+    return "false";
+  case GRN_JSON_VALUE_TRUE:
+    return "true";
+  case GRN_JSON_VALUE_INT64:
+    return "int64";
+  case GRN_JSON_VALUE_FLOAT:
+    return "float";
+  case GRN_JSON_VALUE_STRING:
+    return "string";
+  case GRN_JSON_VALUE_ARRAY:
+    return "array";
+  case GRN_JSON_VALUE_OBJECT:
+    return "object";
+  default:
+    return "unknown";
+  }
 }
 
 grn_rc
