@@ -348,6 +348,21 @@ output_envelope(
   grn_output_envelope(ctx, rc, head, body, foot, input_path, number_of_lines);
 }
 
+static void
+ensure_write(FILE *output, const char *data, size_t size)
+{
+  const char *rest_data = data;
+  size_t rest_size = size;
+  while (rest_size > 0) {
+    size_t written = fwrite(rest_data, 1, rest_size, output);
+    rest_data += written;
+    rest_size -= written;
+    if (rest_size > 0) {
+      fflush(output);
+    }
+  }
+}
+
 typedef struct {
   FILE *output;
   bool is_outputting;
@@ -364,7 +379,7 @@ s_output_raw(grn_ctx *ctx, int flags, standalone_output_context *output_context)
 
   grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
   if (chunk_size > 0) {
-    fwrite(chunk, 1, chunk_size, stream);
+    ensure_write(stream, chunk, chunk_size);
     written += chunk_size;
   }
 
@@ -374,8 +389,8 @@ s_output_raw(grn_ctx *ctx, int flags, standalone_output_context *output_context)
 
     if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_GROONGA_COMMAND_LIST &&
         chunk_size > 0 && chunk[chunk_size - 1] != '\n') {
-      fwrite("\n", 1, 1, stream);
-      written += 1;
+      ensure_write(stream, "\n", 1);
+      written++;
     }
     fflush(stream);
 
@@ -440,13 +455,13 @@ s_output_typed(grn_ctx *ctx,
     }
   }
 
-  fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
-  fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stream);
-  fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
+  ensure_write(stream, GRN_TEXT_VALUE(&head), GRN_TEXT_LEN(&head));
+  ensure_write(stream, GRN_TEXT_VALUE(&body), GRN_TEXT_LEN(&body));
+  ensure_write(stream, GRN_TEXT_VALUE(&foot), GRN_TEXT_LEN(&foot));
   size_t content_size =
     GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(&body) + GRN_TEXT_LEN(&foot);
   if (is_last_message && content_size > 0) {
-    fputc('\n', stream);
+    ensure_write(stream, "\n", 1);
     content_size++;
   }
   fflush(stream);
