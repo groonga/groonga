@@ -3,11 +3,7 @@
 table_create Notes TABLE_NO_KEY
 column_create Notes data COLUMN_SCALAR JSON
 
-load --table Notes
-[
-{"data": "\"\""},
-{"data": "\"hello\""}
-]
+#@generate-series 0 0 Notes '{"data" => [(0..257).to_a].to_json}'
 
 select Notes
 

@@ -5,8 +5,7 @@ column_create Notes data COLUMN_SCALAR JSON
 
 load --table Notes
 [
-{"data": "\"\""},
-{"data": "\"hello\""}
+{"data": "[true, false, null, -1, 1, 2.9]"}
 ]
 
 select Notes

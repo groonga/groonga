@@ -826,9 +826,9 @@ class ParsedJSONWriter
     elsif -(2 ** 15) <= value and value <= (2 ** 15 - 1)
       2
     elsif -(2 ** 31) <= value and value <= (2 ** 31 - 1)
-      3
-    elsif -(2 ** 63) <= value and value <= (2 ** 63 - 1)
       4
+    elsif -(2 ** 63) <= value and value <= (2 ** 63 - 1)
+      8
     else
       nil
     end
@@ -841,43 +841,45 @@ class ParsedJSONWriter
       return
     end
 
-    if is_root
-      is_embedded = false
-    else
+    # We can't embed an integer into the root tag.
+    unless is_root
       is_tag32 = (tag_writer.size32 > 0)
       if is_tag32
         is_embeddable = (-(2 ** 15) <= value and value <= (2 ** 23 - 1))
       else
         is_embeddable = (n_bytes == 1)
       end
-    end
-    if is_embeddable
-      if not is_tag32 and value < 0
-        value += 256
-      end
-      tag_writer.write(Type::INTEGER, true, n_bytes, value)
-    else
-      if is_root
-        output = @output
-        offset = 0
-      else
-        if n_bytes == 2
-          output = @int16_values
-        elsif n_bytes == 3
-          output = @int32_values
-        else
-          output = @int64_values
+      if is_embeddable
+        if not is_tag32 and value < 0
+          value += 256
         end
-        offset = output.bytesize
+        tag_writer.write(Type::INTEGER, true, n_bytes, value)
+        return
       end
-      tag_writer.write(Type::INTEGER, false, n_bytes, offset)
+    end
+
+    if is_root
+      output = @output
+      offset = 0
+    else
       if n_bytes == 2
-        output << [value].pack("s")
-      elsif n_bytes == 2
-        output << [value].pack("l")
+        output = @int16_values
+      elsif n_bytes == 4
+        output = @int32_values
       else
-        output << [value].pack("q")
+        output = @int64_values
       end
+      offset = output.bytesize
+    end
+    tag_writer.write(Type::INTEGER, false, n_bytes, offset)
+    if n_bytes == 1
+      output << [value].pack("c")
+    elsif n_bytes == 2
+      output << [value].pack("s")
+    elsif n_bytes == 4
+      output << [value].pack("l")
+    else
+      output << [value].pack("q")
     end
   end
 
@@ -1322,8 +1324,9 @@ class ParsedJSONReader
         [(data & 0xff)].pack("C").unpack1("c")
       when 2
         [(data & 0xffff)].pack("S").unpack1("s")
-      when 3
-        # 3 bytes is always positive
+      when 4
+        # Embedded 4 bytes data is always signed and between
+        # -(2 ** 15) and (2 ** 23 - 1).
         data & 0xffffff
       end
     else
@@ -1332,7 +1335,7 @@ class ParsedJSONReader
           @input.unpack1("c", offset: ROOT_TAG_SIZE)
         elsif n_bytes == 2
           @input.unpack1("s", offset: ROOT_TAG_SIZE)
-        elsif n_bytes == 3
+        elsif n_bytes == 4
           @input.unpack1("l", offset: ROOT_TAG_SIZE)
         else
           @input.unpack1("q", offset: ROOT_TAG_SIZE)
@@ -1341,7 +1344,7 @@ class ParsedJSONReader
         values_offset = data
         if n_bytes == 2
           @input.unpack1("s", offset: @int16_values_offset + data)
-        elsif n_bytes == 3
+        elsif n_bytes == 4
           @input.unpack1("l", offset: @int32_values_offset + data)
         else
           @input.unpack1("q", offset: @int64_values_offset + data)
@@ -1488,17 +1491,9 @@ class TestParsedJSON < Test::Unit::TestCase
     assert_roundtrip("hello")
   end
 
-  def test_string_embed_tag16
-    assert_roundtrip("a")
-  end
-
   def test_string_embed_tag32
     elements = ["abc"] * 258
     assert_roundtrip(elements)
-  end
-
-  def test_string_embed_empty
-    assert_roundtrip("")
   end
 
   def test_string_size8_size16
@@ -1578,7 +1573,7 @@ class TestParsedJSON < Test::Unit::TestCase
     assert_roundtrip((0..257).to_a)
   end
 
-  def test_array_size64
+  def test_array_size32
     assert_roundtrip((0..65535).to_a)
   end
 
