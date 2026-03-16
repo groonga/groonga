@@ -29,6 +29,7 @@
 #  include <simdjson.h>
 #endif
 
+#include <cstring>
 #include <memory>
 #include <stack>
 #include <utility>
@@ -57,7 +58,7 @@ namespace {
     kStringPosition16 = 0b00000001'00000000'00000000,
     kStringPosition32 = 0b00000010'00000000'00000000,
     kInt16 = 0b00000100'00000000'00000000,
-    kInt32 = 0b00001000'10000000'00000000,
+    kInt32 = 0b00001000'00000000'00000000,
     kInt64 = 0b00010000'00000000'00000000,
     kDouble = 0b00100000'00000000'00000000,
     kOffset32 = 0b01000000'00000000'00000000,
@@ -221,11 +222,14 @@ namespace {
         root_tag_writer_(ctx_, output),
         array_tags_writer_(ctx_),
         array_positions_writer_(ctx_),
+        string_values_(),
+        string_positions_writer_(ctx_),
         int16_values_(),
         int32_values_(),
         int64_values_(),
         double_values_()
     {
+      GRN_TEXT_INIT(&string_values_, 0);
       GRN_INT16_INIT(&int16_values_, 0);
       GRN_INT32_INIT(&int32_values_, 0);
       GRN_INT64_INIT(&int64_values_, 0);
@@ -234,6 +238,7 @@ namespace {
 
     ~JSONParser()
     {
+      GRN_OBJ_FIN(ctx_, &string_values_);
       GRN_OBJ_FIN(ctx_, &int16_values_);
       GRN_OBJ_FIN(ctx_, &int32_values_);
       GRN_OBJ_FIN(ctx_, &int64_values_);
@@ -278,6 +283,8 @@ namespace {
     RootTagWriter root_tag_writer_;
     ContainerTagsWriter array_tags_writer_;
     PositionsWriter array_positions_writer_;
+    grn_obj string_values_;
+    PositionsWriter string_positions_writer_;
     grn_obj int16_values_;
     grn_obj int32_values_;
     grn_obj int64_values_;
@@ -361,6 +368,23 @@ namespace {
                                    &array_tags_writer_,
                                    Flag::kArrayTag16,
                                    Flag::kArrayTag32);
+      }
+
+      if (GRN_TEXT_LEN(&string_values_) > 0) {
+        outputs.push_back(&string_values_);
+        flags |= static_cast<uint32_t>(Flag::kStringValue);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&string_values_);
+      }
+      if (GRN_TEXT_LEN(&(string_positions_writer_.buffer)) > 0) {
+        outputs.push_back(&(string_positions_writer_.buffer));
+        append_positions_buffer_offsets(flags,
+                                        offset,
+                                        buffer_offsets,
+                                        &string_positions_writer_,
+                                        Flag::kStringPosition8,
+                                        Flag::kStringPosition16,
+                                        Flag::kStringPosition32);
       }
 
       if (GRN_TEXT_LEN(&int16_values_) > 0) {
@@ -593,10 +617,9 @@ namespace {
                        std::get<double>(current_value->data));
           break;
         case GRN_JSON_VALUE_STRING:
-          ERR(GRN_INVALID_ARGUMENT,
-              "%s string in container isn't supported yet",
-              tag);
-          return;
+          write_string(current_tag_writer,
+                       std::get<std::string_view>(current_value->data));
+          break;
         case GRN_JSON_VALUE_TRUE:
           write_boolean(current_tag_writer, true);
           break;
@@ -904,8 +927,32 @@ namespace {
     void
     write_string(TagWriter *tag_writer, std::string_view value)
     {
-      tag_writer->write(Type::kString, false, 0, 0);
-      GRN_TEXT_PUT(ctx_, output_, value.data(), value.size());
+      // We can't embed a string into the root tag.
+      if (!is_root(tag_writer)) {
+        auto container_tags_writer =
+          dynamic_cast<ContainerTagsWriter *>(tag_writer);
+        const auto is_tag32 = (container_tags_writer->size32 > 0);
+        const size_t max_embeddable_size = is_tag32 ? 3 : 1;
+        const auto is_embeddable = (value.size() <= max_embeddable_size);
+        if (is_embeddable) {
+          uint32_t data = 0;
+          std::memcpy(&data, value.data(), value.size());
+          tag_writer->write(Type::kString, true, value.length(), data);
+          return;
+        }
+      }
+
+      grn_obj *output;
+      uint32_t index;
+      if (is_root(tag_writer)) {
+        output = output_;
+        index = 0;
+      } else {
+        output = &string_values_;
+        index = string_positions_writer_.write(value.size());
+      }
+      tag_writer->write(Type::kString, false, 0, index);
+      GRN_TEXT_PUT(ctx_, output, value.data(), value.size());
     }
 
     template <typename ValueType>
@@ -1134,6 +1181,8 @@ namespace {
         flags_(0),
         array_position_resolver_(),
         array_tag_resolver_(),
+        string_values_offset_(0),
+        string_position_resolver_(),
         int16_values_offset_(0),
         int32_values_offset_(0),
         int64_values_offset_(0),
@@ -1141,7 +1190,13 @@ namespace {
         states_(),
         current_type_(GRN_JSON_VALUE_UNKNOWN),
         current_value_(nullptr),
-        current_size_(0)
+        current_size_(0),
+        null_value_(),
+        bool_value_(),
+        int64_value_(),
+        float_value_(),
+        embedded_string_buffer_(),
+        string_value_()
     {
       // Root tag exists.
       if (GRN_JSON_LEN(json_) >= sizeof(uint8_t)) {
@@ -1233,6 +1288,8 @@ namespace {
     uint32_t flags_;
     std::unique_ptr<VariableSizePositionResolver> array_position_resolver_;
     std::unique_ptr<VariableSizeTagResolver> array_tag_resolver_;
+    uint32_t string_values_offset_;
+    std::unique_ptr<VariableSizePositionResolver> string_position_resolver_;
     uint32_t int16_values_offset_;
     uint32_t int32_values_offset_;
     uint32_t int64_values_offset_;
@@ -1245,6 +1302,7 @@ namespace {
     grn_obj bool_value_;
     grn_obj int64_value_;
     grn_obj float_value_;
+    char embedded_string_buffer_[3];
     grn_obj string_value_;
 
     Tag
@@ -1429,6 +1487,16 @@ namespace {
                                           buffer_offsets,
                                           Flag::kArrayTag16,
                                           Flag::kArrayTag32);
+      if (flags_ & static_cast<uint32_t>(Flag::kStringValue)) {
+        string_values_offset_ = buffer_offsets[i];
+        i++;
+      }
+      string_position_resolver_ =
+        create_variable_size_position_resolver(i,
+                                               buffer_offsets,
+                                               Flag::kStringPosition8,
+                                               Flag::kStringPosition16,
+                                               Flag::kStringPosition32);
       if (flags_ & static_cast<uint32_t>(Flag::kInt16)) {
         int16_values_offset_ = buffer_offsets[i];
         i++;
@@ -1609,25 +1677,36 @@ namespace {
     grn_rc
     next_string(const Tag &tag, bool is_root)
     {
-      const char *log_tag = "[json-reader][next][string]";
       auto ctx = ctx_;
 
       if (is_root) {
         uint32_t offset = kRootTagSize;
         size_t size = GRN_JSON_LEN(json_) - offset;
-        current_type_ = GRN_JSON_VALUE_STRING;
         GRN_TEXT_SET(ctx_,
                      &string_value_,
                      GRN_JSON_VALUE(json_) + offset,
                      size);
-        current_value_ = &string_value_;
-        current_size_ = 0;
       } else {
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-            "%s root value is only supported",
-            log_tag);
-        return ctx->rc;
+        if (tag.is_embedded) {
+          GRN_BULK_REWIND(&string_value_);
+          const size_t size = tag.metadata;
+          std::memcpy(embedded_string_buffer_, &(tag.data), size);
+          GRN_TEXT_SET(ctx_, &string_value_, embedded_string_buffer_, size);
+        } else {
+          const auto index = tag.data;
+          auto resolved = string_position_resolver_->resolve(index);
+          auto start = resolved.first;
+          auto next_start = resolved.second;
+          auto size = next_start - start;
+          GRN_TEXT_SET(ctx_,
+                       &string_value_,
+                       GRN_JSON_VALUE(json_) + string_values_offset_ + start,
+                       size);
+        }
       }
+      current_type_ = GRN_JSON_VALUE_STRING;
+      current_value_ = &string_value_;
+      current_size_ = 0;
       return ctx->rc;
     }
 
