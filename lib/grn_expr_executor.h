@@ -55,16 +55,19 @@ typedef union {
   struct {
     grn_obj *value;
   } constant;
+
   struct {
     grn_obj *column;
     grn_obj value_buffer;
   } value;
+
   struct {
     grn_obj result_buffer;
     void *regex;
     grn_obj value_buffer;
     grn_obj *normalizer;
   } simple_regexp;
+
   struct {
     grn_obj result_buffer;
     grn_obj *normalizer;
@@ -74,12 +77,15 @@ typedef union {
     unsigned int normalized_sub_text_raw_length_in_bytes;
     grn_obj value_buffer;
   } simple_match;
+
   struct {
     grn_expr_executor_data_simple_proc data;
   } simple_proc;
+
   struct {
     grn_obj result_buffer;
   } simple_condition_constant;
+
   struct {
     grn_obj result_buffer;
     grn_ra *ra;
@@ -89,6 +95,7 @@ typedef union {
     grn_obj constant_buffer;
     grn_operator_exec_func *exec;
   } simple_condition_ra;
+
   struct {
     bool need_exec;
     grn_obj result_buffer;
@@ -96,10 +103,12 @@ typedef union {
     grn_obj constant_buffer;
     grn_operator_exec_func *exec;
   } simple_condition;
+
   struct {
     grn_obj *score_column;
     grn_expr_executor_data_simple_proc data;
   } simple_proc_scorer;
+
   struct {
     grn_obj *score_column;
     grn_obj args;

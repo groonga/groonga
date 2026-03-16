@@ -273,11 +273,13 @@ grn_table_add_v(grn_ctx *ctx,
                 int key_size,
                 void **value,
                 int *added);
+
 typedef struct {
   bool added;
   bool ignore_empty_normalized_key;
   bool ignored;
 } grn_table_add_options;
+
 grn_id
 grn_table_add_by_key(grn_ctx *ctx,
                      grn_obj *table,
@@ -438,25 +440,31 @@ struct _grn_proc {
       grn_applier_func *applier;
       grn_sorter_func *sorter;
     } function;
+
     struct {
       grn_command_run_func *run;
     } command;
+
     struct {
       grn_tokenizer_build_func *build;
       grn_tokenizer_init_func *init;
       grn_tokenizer_next_func *next;
       grn_tokenizer_fin_func *fin;
     } tokenizer;
+
     struct {
       grn_token_filter_init_func *init;
       grn_token_filter_init_query_func *init_query;
       grn_token_filter_filter_func *filter;
       grn_token_filter_fin_func *fin;
     } token_filter;
+
     struct {
       grn_scorer_score_func *score;
     } scorer;
+
     grn_window_function_func *window_function;
+
     struct {
       grn_aggregator_init_func *init;
       grn_aggregator_update_func *update;

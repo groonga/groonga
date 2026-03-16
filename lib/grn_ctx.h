@@ -182,6 +182,7 @@ typedef struct {
   uint8_t subrec_offset;
   uint8_t record_unit;
   uint8_t subrec_unit;
+
   struct {
     grn_table_group_flags flags;
     grn_obj *calc_target;
@@ -189,6 +190,7 @@ typedef struct {
     grn_table_group_aggregator **aggregators;
     uint32_t n_aggregators;
   } group;
+
   uint32_t reference_count;
 } grn_db_obj;
 

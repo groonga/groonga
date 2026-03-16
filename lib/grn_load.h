@@ -94,6 +94,7 @@ typedef struct {
   grn_loader_stat stat;
   grn_content_type input_type;
   grn_loader_columns_status columns_status;
+
   struct {
     grn_rc rc;
     char buffer[GRN_CTX_MSGSIZE];
@@ -101,6 +102,7 @@ typedef struct {
     const char *file;
     const char *func;
   } error;
+
   bool output_ids;
   bool output_errors;
   bool lock_table;
@@ -112,6 +114,7 @@ typedef struct {
   grn_obj *record_value;
   grn_id id;
   grn_obj *key;
+
   struct {
     const char *column_name;
     uint32_t column_name_size;

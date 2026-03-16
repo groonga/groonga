@@ -671,6 +671,7 @@ namespace {
         buffer_(buffer)
     {
     }
+
     ~JSONStringifier() = default;
 
     void

@@ -55,6 +55,7 @@ struct _grn_highlighter {
   grn_obj raw_keywords;
 
   bool is_sequential_class_tag_mode;
+
   struct {
     grn_obj open;
     grn_obj close;

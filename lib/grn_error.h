@@ -121,6 +121,7 @@ grn_error_set(grn_ctx *ctx,
               const char *function,
               const char *format,
               ...) GRN_ATTRIBUTE_PRINTF(7);
+
 static inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,

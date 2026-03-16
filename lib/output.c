@@ -4066,11 +4066,13 @@ grn_output_envelope_close_apache_arrow_trace_log(grn_ctx *ctx, grn_obj *output)
     writer,
     "name",
     grn_ctx_at(ctx, GRN_DB_INT16));
+
   enum value_type {
     VALUE_TYPE_UINT32,
     VALUE_TYPE_SHORT_TEXT,
     N_VALUE_TYPES,
   };
+
   grn_obj *value_types[N_VALUE_TYPES];
   value_types[VALUE_TYPE_UINT32] = grn_ctx_at(ctx, GRN_DB_UINT32);
   value_types[VALUE_TYPE_SHORT_TEXT] = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);

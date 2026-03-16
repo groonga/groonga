@@ -252,6 +252,7 @@ namespace grn {
 #  ifdef _WIN32
     static char *windows_language_models_dir = NULL;
     static char windows_language_models_dir_buffer[PATH_MAX];
+
     namespace {
       const char *
       default_system_language_models_dir()
@@ -292,6 +293,7 @@ namespace grn {
     }
 
     static std::mutex capture_error_mutex;
+
     class CaptureError {
     public:
       CaptureError(grn_ctx *ctx) : lock_(capture_error_mutex)
@@ -408,6 +410,7 @@ namespace grn {
       llama_batch *batch_;
 
       BatchReleaser(llama_batch *batch) : batch_(batch) {}
+
       ~BatchReleaser()
       {
         if (batch_) {
@@ -1007,18 +1010,22 @@ namespace grn {
       std::mutex mutex;
       std::condition_variable cv;
       uintptr_t task_id = 0;
+
       struct ProcessedTask {
         ProcessedTask(grn_ctx *ctx) : ctx_(ctx), ids(), embeddings() {}
+
         ~ProcessedTask()
         {
           for (auto &embedding : embeddings) {
             GRN_OBJ_FIN(ctx_, &embedding);
           }
         }
+
         grn_ctx *ctx_;
         std::vector<grn_id> ids;
         std::vector<grn_obj> embeddings;
       };
+
       std::map<uintptr_t, std::unique_ptr<ProcessedTask>> processed_tasks;
 
       auto execute = [&](uintptr_t task_id, std::vector<grn_id> target_ids) {
@@ -1503,6 +1510,7 @@ struct grn_language_model_ {
   std::shared_ptr<grn::LanguageModel> model;
 
   grn_language_model_() : model(nullptr) {}
+
   ~grn_language_model_() = default;
 };
 
@@ -1510,12 +1518,15 @@ struct grn_language_model_inferencer_ {
   std::shared_ptr<grn::LanguageModelInferencer> inferencer;
 
   grn_language_model_inferencer_() : inferencer(nullptr) {}
+
   ~grn_language_model_inferencer_() = default;
 };
+
 struct grn_language_model_loader_ {
   grn::LanguageModelLoader loader;
 
   grn_language_model_loader_(grn_ctx *ctx) : loader(ctx) {}
+
   ~grn_language_model_loader_() = default;
 };
 

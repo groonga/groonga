@@ -158,11 +158,13 @@ pat_node_get_child(grn_pat *pat,
     return node->node.lr[direction];
   }
 }
+
 static inline grn_id
 pat_node_get_right(grn_pat *pat, pat_node_common *node)
 {
   return pat_node_get_child(pat, node, DIRECTION_RIGHT);
 }
+
 static inline grn_id
 pat_node_get_left(grn_pat *pat, pat_node_common *node)
 {
@@ -227,6 +229,7 @@ pat_node_is_deleting(grn_pat *pat, pat_node_common *node)
     return node->node.bits & PAT_DELETING;
   }
 }
+
 static inline bool
 pat_node_is_key_immediate(grn_pat *pat, pat_node_common *node)
 {
@@ -248,6 +251,7 @@ pat_node_get_key_length(grn_pat *pat, pat_node_common *node)
   }
   return (uint32_t)((bits >> 3) + 1);
 }
+
 static inline uint16_t
 pat_node_get_check(grn_pat *pat, pat_node_common *node)
 {
@@ -257,6 +261,7 @@ pat_node_get_check(grn_pat *pat, pat_node_common *node)
     return node->node.check;
   }
 }
+
 static inline void
 pat_node_set_deleting_on(grn_pat *pat, pat_node_common *node)
 {
@@ -276,6 +281,7 @@ pat_node_set_key_immediate_on(grn_pat *pat, pat_node_common *node)
     node->node.bits |= PAT_IMMEDIATE;
   }
 }
+
 static inline void
 pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
 {
@@ -285,6 +291,7 @@ pat_node_set_deleting_off(grn_pat *pat, pat_node_common *node)
     node->node.bits &= ~PAT_DELETING;
   }
 }
+
 static inline void
 pat_node_set_key_immediate_off(grn_pat *pat, pat_node_common *node)
 {
@@ -308,6 +315,7 @@ pat_node_set_key_length(grn_pat *pat,
       (node->node.bits & ((1 << 3) - 1)) | ((key_length - 1) << 3);
   }
 }
+
 static inline void
 pat_node_set_check(grn_pat *pat, pat_node_common *node, uint16_t check)
 {
@@ -3215,6 +3223,7 @@ typedef struct {
   uint32_t max_expansions;
   uint32_t prefix_match_size;
   fuzzy_heap *heap;
+
   struct {
     const char *key;
     uint32_t key_length;

@@ -467,6 +467,7 @@ typedef struct {
   grn_tokenizer_query *query;
   grn_ngram_options options;
   bool overlap;
+
   struct {
     bool ing;
     bool need;
@@ -476,6 +477,7 @@ typedef struct {
     int16_t *checks;
     uint64_t *offsets;
   } loose;
+
   uint32_t pos;
   uint32_t skip;
   unsigned int n_chars;
@@ -1291,9 +1293,11 @@ ngram_fin_deprecated(grn_ctx *ctx,
 typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
+
   struct {
     uint32_t n_skip_tokens;
   } get;
+
   bool is_begin;
   bool is_end;
   bool is_start_token;

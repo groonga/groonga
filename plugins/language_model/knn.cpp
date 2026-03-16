@@ -172,6 +172,7 @@ namespace {
   }
 
   const char *TOKENIZER_TAG = "[tokenizer][language-model]";
+
   struct Tokenizer {
     grn_obj *lexicon;
     grn_obj *source_table;
@@ -671,9 +672,11 @@ namespace {
       GRN_BULK_REWIND(&embeddings_);
       {
         bool need_progress = grn_ctx_get_progress_callback(ctx_);
+
         struct UserData {
           grn_tokenizer_build_data *data;
         } user_data;
+
         user_data.data = data_;
         auto progress_callback =
           [](grn_ctx *ctx, grn_progress *progress, void *user_data) {

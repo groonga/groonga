@@ -582,6 +582,7 @@ grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
 #ifdef WIN32
 static char *windows_plugins_dir = NULL;
 static char windows_plugins_dir_buffer[PATH_MAX];
+
 static const char *
 grn_plugin_get_default_system_plugins_dir(void)
 {

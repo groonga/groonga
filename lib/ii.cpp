@@ -2584,6 +2584,7 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
   }
   return input;
 }
+
 /* PFor implementation: end */
 
 /* Binary format used in grn_encv()/grn_decv().
@@ -4232,10 +4233,12 @@ typedef struct {
   uint64_t position;
   uint64_t max_position;
   grn_merging_data *merging_data;
+
   struct {
     merger_buffer_data buffer;
     merger_chunk_data chunk;
   } source;
+
   struct {
     uint32_t *record_id_gaps;
     uint32_t *section_id_gaps;
@@ -17700,6 +17703,7 @@ namespace grn::ii {
       if (rc != GRN_SUCCESS) {
         return rc;
       }
+
       struct UserData {
         Builder *builder;
         BlockBuilder *block_builder;
@@ -17708,6 +17712,7 @@ namespace grn::ii {
         bool progress_needed;
         grn_progress *progress;
       } user_data;
+
       user_data.builder = this;
       user_data.block_builder = &block_builder;
       user_data.current_rid = GRN_ID_NIL;

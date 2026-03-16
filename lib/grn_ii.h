@@ -42,8 +42,9 @@ struct _grn_ii {
   grn_table_flags lflags;
   grn_encoding encoding; /* Character encoding */
                          /* This member is used for matching */
-  uint32_t n_elements;   /* Number of elements in postings */
-                         /* rid, [sid], tf, [weight] and [pos] */
+  uint32_t n_elements;   /* Number of elements in postings. rid, [sid], tf,
+                            [weight] and [pos] */
+
   union {
     grn_ii_header_common *common;
     grn_ii_header_normal *normal;

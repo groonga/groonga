@@ -267,10 +267,12 @@ namespace {
     grn_obj *type;
     grn_column_flags flags;
     grn_raw_string value;
+
     struct {
       grn_raw_string sort_keys;
       grn_raw_string group_keys;
     } window;
+
     grn_obj dependency_names;
 
   private:
@@ -1201,14 +1203,17 @@ namespace {
     float fuzzy_max_distance_ratio;
     bool fuzzy_with_transposition;
     bool fuzzy_tokenize;
+
     struct {
       grn_obj *match_columns;
       grn_obj *expression;
       grn_obj *query_options_expression;
     } condition;
+
     struct {
       grn_obj *expression;
     } post_condition;
+
     grn_obj *filtered;
     grn_obj *post_filtered;
   };
@@ -1266,6 +1271,7 @@ namespace {
     grn_raw_string output_columns;
     int offset;
     int limit;
+
     struct {
       grn_obj *target;
       grn_obj *initial;
@@ -1273,6 +1279,7 @@ namespace {
       grn_obj *sorted;
       grn_obj *output;
     } tables;
+
     Drilldowns drilldowns;
     DynamicColumns dynamic_columns;
 
@@ -1646,6 +1653,7 @@ namespace {
     Tables tables;
     uint16_t cacheable;
     uint16_t taintable;
+
     struct {
       int n_elements;
       grn_select_output_formatter *formatter;
@@ -1657,6 +1665,7 @@ namespace {
       grn_raw_string columns;
       grn_raw_string values;
     } load;
+
     grn_raw_string table;
     Filter filter;
     grn_raw_string scorer;

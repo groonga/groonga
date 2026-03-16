@@ -42,6 +42,7 @@ struct _grn_token_cursor {
   grn_obj_flags table_flags;
   grn_encoding encoding;
   uint32_t flags;
+
   struct {
     grn_obj *object;
     grn_proc_ctx pctx;
@@ -53,10 +54,12 @@ struct _grn_token_cursor {
     grn_token next_token;
     grn_token original_token;
   } tokenizer;
+
   struct {
     grn_obj *objects;
     void **data;
   } token_filter;
+
   struct {
     grn_token_cursor_status status;
     grn_token *token;

@@ -27,6 +27,7 @@ namespace grn {
   namespace distance {
 #ifdef GRN_WITH_SIMSIMD
     bool use_simsimd = true;
+
     namespace simsimd {
       simsimd_capability_t capabilities = simsimd_cap_serial_k;
     }

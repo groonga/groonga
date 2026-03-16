@@ -36,4 +36,5 @@ PPIndentWidth: 2
 PackConstructorInitializers: CurrentLine
 QualifierAlignment: Custom
 QualifierOrder: ['static', 'inline', 'const', 'type']
+SeparateDefinitionBlocks: Always
 SortIncludes: Never

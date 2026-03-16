@@ -52,6 +52,7 @@ extern "C" {
 
 #ifdef GRN_WITH_MEMORY_DEBUG
 typedef struct _grn_alloc_info grn_alloc_info;
+
 struct _grn_alloc_info {
   void *address;
   bool freed;
@@ -66,6 +67,7 @@ struct _grn_alloc_info {
 #endif
 
 typedef struct _grn_mrb_data grn_mrb_data;
+
 struct _grn_mrb_data {
   bool initialized;
 #ifdef GRN_WITH_MRUBY
@@ -75,13 +77,16 @@ struct _grn_mrb_data {
   struct RClass *object_class;
   grn_hash *checked_procs;
   grn_hash *registered_plugins;
+
   struct {
     grn_obj from;
     grn_obj to;
   } buffer;
+
   struct {
     struct RClass *time_class;
   } builtin;
+
   struct {
     struct RClass *operator_class;
   } groonga;
@@ -89,6 +94,7 @@ struct _grn_mrb_data {
 };
 
 typedef struct _grn_lua_data grn_lua_data;
+
 struct _grn_lua_data {
   bool initialized;
 #ifdef GRN_WITH_LUAJIT
@@ -133,12 +139,14 @@ struct _grn_ctx_impl {
   struct {
     grn_obj *buf;
     grn_recv_handler_func func;
+
     union {
       void *ptr;
       int fd;
       uint32_t u32;
       uint64_t u64;
     } data;
+
     grn_content_type type;
     const char *mime_type;
     bool is_pretty;
@@ -158,6 +166,7 @@ struct _grn_ctx_impl {
   struct {
     int flags;
     grn_command_version version;
+
     struct {
       grn_obj *command;
       grn_command_version version;
@@ -209,6 +218,7 @@ struct _grn_ctx_impl {
     grn_critical_section lock;
     grn_obj pool;
   } children;
+
   grn_ctx *parent;
   grn_critical_section temporary_objects_lock;
 

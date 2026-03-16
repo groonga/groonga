@@ -757,12 +757,14 @@ struct _grn_ja_einfo {
       uint8_t c1;
       uint8_t c2;
     } n;
+
     struct {
       uint32_t size;
       uint16_t seg;
       uint8_t c1;
       uint8_t c2;
     } h;
+
     uint8_t c[8];
   } u;
 };

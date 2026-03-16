@@ -917,12 +917,14 @@ typedef struct _grn_obj_header {
 
 struct _grn_obj {
   grn_obj_header header;
+
   union {
     struct {
       char *head;
       char *curr;
       char *tail;
     } b;
+
     struct {
       grn_obj *body;
       grn_section *sections;

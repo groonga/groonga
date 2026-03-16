@@ -324,6 +324,7 @@ typedef enum {
   GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
   GRN_INDEX_COLUMN_DIFF_TYPE_LOOK_AHEAD,
 } grn_index_column_diff_type;
+
 /* Except LOOK_AHEAD */
 #define N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES 2
 
@@ -362,6 +363,7 @@ typedef struct {
   grn_index_column_diff_options *options;
   grn_obj *lexicon;
   grn_ii *ii;
+
   struct {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
@@ -369,6 +371,7 @@ typedef struct {
     bool with_position;
     uint32_t n_elements;
   } index;
+
   bool have_tokenizer;
   size_t n_posting_elements;
   grn_obj *source_table;
@@ -377,15 +380,18 @@ typedef struct {
   grn_hash *posting_lists;
   grn_obj *remains;
   grn_obj *missings;
+
   struct {
     grn_id token_id;
     grn_posting posting;
     grn_hash *token_counters;
   } current;
+
   struct {
     grn_obj value;
     grn_obj postings;
   } buffers;
+
   struct {
     grn_obj tag;
     grn_progress_logger logger;

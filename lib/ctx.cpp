@@ -2365,6 +2365,7 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
 /* This is for clang-format.
  * clang-format can't work with "static __declspec(noinline) void". */
 #  define grn_noinline __declspec(noinline)
+
 static grn_noinline void
 grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
 {
@@ -2509,6 +2510,7 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
 }
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
 static bool crashed = false;
+
 static void
 grn_crash_handler(int signal_number, siginfo_t *info, void *context)
 {
@@ -2608,6 +2610,7 @@ grn_set_abrt_handler(void)
 
 #if defined(HAVE_SIGNAL_H) && !defined(WIN32)
 static struct sigaction old_int_handler;
+
 static void
 int_handler(int signal_number, siginfo_t *info, void *context)
 {
@@ -2616,6 +2619,7 @@ int_handler(int signal_number, siginfo_t *info, void *context)
 }
 
 static struct sigaction old_term_handler;
+
 static void
 term_handler(int signal_number, siginfo_t *info, void *context)
 {

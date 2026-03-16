@@ -193,6 +193,7 @@ line_editor_prompt(EditLine *e __attribute__((unused)))
 {
   return L"> ";
 }
+
 static const wchar_t *const line_editor_editor = L"emacs";
 
 static void
@@ -818,6 +819,7 @@ typedef struct {
   grn_pat *entries;
   uint64_t earliest_unix_time_msec;
 } request_timer_data;
+
 static request_timer_data the_request_timer_data;
 
 static void *

@@ -1591,6 +1591,7 @@ exit:
   }
   GRN_API_RETURN(res);
 }
+
 #undef PUSH_N_ARGS_ARITHMETIC_OP
 #undef APPEND_UNARY_MINUS_OP
 
@@ -4196,6 +4197,7 @@ typedef struct {
   grn_hash *weight_set;
   snip_cond *snip_conds;
   int paren_depth;
+
   struct {
     const char *string;
     size_t string_length;
@@ -4225,10 +4227,12 @@ skip_space(grn_ctx *ctx, efs_info *q)
 
 typedef struct {
   grn_operator mode;
+
   union {
     struct {
       int32_t threshold;
     } similar;
+
     struct {
       int32_t max_interval;
       int32_t additional_last_interval;
@@ -4239,9 +4243,11 @@ typedef struct {
 #  undef near
 #endif
     } near;
+
     struct {
       int32_t policy;
     } term_extract;
+
     struct {
       int32_t threshold;
     } quorum;

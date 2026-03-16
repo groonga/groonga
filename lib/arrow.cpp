@@ -1591,6 +1591,7 @@ namespace grnarrow {
       }
       return builder.Finish(array);
     }
+
     arrow::Status
     build_uint64_array(std::vector<grn_id> &ids,
                        grn_obj *grn_column,
