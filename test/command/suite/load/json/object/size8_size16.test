@@ -1,0 +1,10 @@
+#@require-feature simdjson
+
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+#@generate-series 0 0 Notes '{"data" => 256.times.collect {|i| {i.to_s => i}}.to_json}'
+
+select Notes
+
+dump

@@ -1,0 +1,77 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes data COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"data": "[true,[false,null,[-1,1,2.9],[\"string\"],null],{\"string\":\"world\",\"sub_array\":[null,{\"sub_object\":false},[\"sub_string\",-2.9]],\"integer\":-29},false]"}
+]
+[[0,0.0,0.0],1]
+select Notes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "data",
+          "JSON"
+        ]
+      ],
+      [
+        1,
+        [
+          true,
+          [
+            false,
+            null,
+            [
+              -1,
+              1,
+              2.9
+            ],
+            [
+              "string"
+            ],
+            null
+          ],
+          {
+            "string": "world",
+            "sub_array": [
+              null,
+              {
+                "sub_object": false
+              },
+              [
+                "sub_string",
+                -2.9
+              ]
+            ],
+            "integer": -29
+          },
+          false
+        ]
+      ]
+    ]
+  ]
+]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+load --table Notes
+[
+["_id","data"],
+[1,"[true,[false,null,[-1,1,2.9],[\"string\"],null],{\"string\":\"world\",\"sub_array\":[null,{\"sub_object\":false},[\"sub_string\",-2.9]],\"integer\":-29},false]"]
+]
