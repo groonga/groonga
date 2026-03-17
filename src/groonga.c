@@ -349,12 +349,17 @@ output_envelope(
 }
 
 static void
-ensure_write(FILE *output, const char *data, size_t size)
+ensure_write(grn_ctx *ctx, FILE *output, const char *data, size_t size)
 {
   const char *rest_data = data;
   size_t rest_size = size;
   while (rest_size > 0) {
+    errno = 0;
     size_t written = fwrite(rest_data, 1, rest_size, output);
+    if (!(errno == 0 || errno == EAGAIN || errno == EWOULDBLOCK)) {
+      SERR("fwrite");
+      break;
+    }
     rest_data += written;
     rest_size -= written;
     if (rest_size > 0) {
@@ -379,7 +384,7 @@ s_output_raw(grn_ctx *ctx, int flags, standalone_output_context *output_context)
 
   grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
   if (chunk_size > 0) {
-    ensure_write(stream, chunk, chunk_size);
+    ensure_write(ctx, stream, chunk, chunk_size);
     written += chunk_size;
   }
 
@@ -389,7 +394,7 @@ s_output_raw(grn_ctx *ctx, int flags, standalone_output_context *output_context)
 
     if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_GROONGA_COMMAND_LIST &&
         chunk_size > 0 && chunk[chunk_size - 1] != '\n') {
-      ensure_write(stream, "\n", 1);
+      ensure_write(ctx, stream, "\n", 1);
       written++;
     }
     fflush(stream);
@@ -455,13 +460,13 @@ s_output_typed(grn_ctx *ctx,
     }
   }
 
-  ensure_write(stream, GRN_TEXT_VALUE(&head), GRN_TEXT_LEN(&head));
-  ensure_write(stream, GRN_TEXT_VALUE(&body), GRN_TEXT_LEN(&body));
-  ensure_write(stream, GRN_TEXT_VALUE(&foot), GRN_TEXT_LEN(&foot));
+  ensure_write(ctx, stream, GRN_TEXT_VALUE(&head), GRN_TEXT_LEN(&head));
+  ensure_write(ctx, stream, GRN_TEXT_VALUE(&body), GRN_TEXT_LEN(&body));
+  ensure_write(ctx, stream, GRN_TEXT_VALUE(&foot), GRN_TEXT_LEN(&foot));
   size_t content_size =
     GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(&body) + GRN_TEXT_LEN(&foot);
   if (is_last_message && content_size > 0) {
-    ensure_write(stream, "\n", 1);
+    ensure_write(ctx, stream, "\n", 1);
     content_size++;
   }
   fflush(stream);
