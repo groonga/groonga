@@ -1606,7 +1606,7 @@ class TestParsedJSON < Test::Unit::TestCase
                            "false" => false,
                            "double" => 2.9,
                          },
-                         "integer" => 2929,
+                         "object_integer" => 2929,
                        },
                        "true" => true,
                      })

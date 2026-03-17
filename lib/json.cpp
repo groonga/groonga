@@ -208,8 +208,11 @@ namespace {
 
   struct JSONValue {
     grn_json_value_type type;
-    using Data =
-      std::variant<int64_t, double, std::string_view, std::vector<JSONValue>>;
+    using Data = std::variant<int64_t,
+                              double,
+                              std::string_view,
+                              std::string,
+                              std::vector<JSONValue>>;
     Data data;
   };
 
@@ -220,8 +223,12 @@ namespace {
         input_(input),
         output_(output),
         root_tag_writer_(ctx_, output),
-        array_tags_writer_(ctx_),
+        object_positions_writer_(ctx_),
+        object_keys_(),
+        object_key_positions_writer_(ctx_),
+        object_value_tags_writer_(ctx_),
         array_positions_writer_(ctx_),
+        array_tags_writer_(ctx_),
         string_values_(),
         string_positions_writer_(ctx_),
         int16_values_(),
@@ -229,6 +236,7 @@ namespace {
         int64_values_(),
         double_values_()
     {
+      GRN_TEXT_INIT(&object_keys_, 0);
       GRN_TEXT_INIT(&string_values_, 0);
       GRN_INT16_INIT(&int16_values_, 0);
       GRN_INT32_INIT(&int32_values_, 0);
@@ -238,6 +246,7 @@ namespace {
 
     ~JSONParser()
     {
+      GRN_OBJ_FIN(ctx_, &object_keys_);
       GRN_OBJ_FIN(ctx_, &string_values_);
       GRN_OBJ_FIN(ctx_, &int16_values_);
       GRN_OBJ_FIN(ctx_, &int32_values_);
@@ -281,8 +290,12 @@ namespace {
     grn_obj *input_;
     grn_obj *output_;
     RootTagWriter root_tag_writer_;
-    ContainerTagsWriter array_tags_writer_;
+    PositionsWriter object_positions_writer_;
+    grn_obj object_keys_;
+    PositionsWriter object_key_positions_writer_;
+    ContainerTagsWriter object_value_tags_writer_;
     PositionsWriter array_positions_writer_;
+    ContainerTagsWriter array_tags_writer_;
     grn_obj string_values_;
     PositionsWriter string_positions_writer_;
     grn_obj int16_values_;
@@ -349,6 +362,44 @@ namespace {
       uint32_t offset = sizeof(uint32_t);
       std::vector<grn_obj *> outputs;
       std::vector<uint32_t> buffer_offsets;
+
+      if (GRN_TEXT_LEN(&(object_positions_writer_.buffer)) > 0) {
+        outputs.push_back(&(object_positions_writer_.buffer));
+        append_positions_buffer_offsets(flags,
+                                        offset,
+                                        buffer_offsets,
+                                        &object_positions_writer_,
+                                        Flag::kObjectPosition8,
+                                        Flag::kObjectPosition16,
+                                        Flag::kObjectPosition32);
+      }
+
+      if (GRN_TEXT_LEN(&object_keys_) > 0) {
+        outputs.push_back(&object_keys_);
+        flags |= static_cast<uint32_t>(Flag::kObjectKey);
+        buffer_offsets.push_back(offset);
+        offset += GRN_TEXT_LEN(&object_keys_);
+      }
+      if (GRN_TEXT_LEN(&(object_key_positions_writer_.buffer)) > 0) {
+        outputs.push_back(&(object_key_positions_writer_.buffer));
+        append_positions_buffer_offsets(flags,
+                                        offset,
+                                        buffer_offsets,
+                                        &object_key_positions_writer_,
+                                        Flag::kObjectKeyPosition8,
+                                        Flag::kObjectKeyPosition16,
+                                        Flag::kObjectKeyPosition32);
+      }
+
+      if (GRN_TEXT_LEN(&(object_value_tags_writer_.buffer)) > 0) {
+        outputs.push_back(&(object_value_tags_writer_.buffer));
+        append_tags_buffer_offsets(flags,
+                                   offset,
+                                   buffer_offsets,
+                                   &object_value_tags_writer_,
+                                   Flag::kObjectValueTag16,
+                                   Flag::kObjectValueTag32);
+      }
 
       if (GRN_TEXT_LEN(&(array_positions_writer_.buffer)) > 0) {
         outputs.push_back(&(array_positions_writer_.buffer));
@@ -456,6 +507,7 @@ namespace {
         return true;
       }
       switch (type) {
+      case json_type::object:
       case json_type::array:
         {
           simdjson::ondemand::value value;
@@ -475,9 +527,6 @@ namespace {
           write_footer();
         }
         return true;
-      case json_type::object:
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s object isn't supported yet", tag);
-        return false;
       case json_type::number:
         {
           auto value = extract_number(document);
@@ -536,11 +585,9 @@ namespace {
         return std::nullopt;
       }
       switch (type) {
+      case json_type::object:
       case json_type::array:
         return extract_container(value);
-      case json_type::object:
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s object isn't supported yet", tag);
-        return std::nullopt;
       case json_type::number:
         return extract_number(value);
       case json_type::string:
@@ -593,6 +640,23 @@ namespace {
         tag_writers.pop();
 
         switch (current_value->type) {
+        case GRN_JSON_VALUE_OBJECT:
+          {
+            auto &items = std::get<std::vector<JSONValue>>(current_value->data);
+            auto index = object_positions_writer_.write(items.size() / 2);
+            current_tag_writer->write(Type::kObject, false, 0, index);
+            for (size_t i = 0; i < items.size(); i += 2) {
+              auto &key = std::get<std::string>(items[i].data);
+              auto &value = items[i + 1];
+
+              object_key_positions_writer_.write(key.size());
+              GRN_TEXT_PUT(ctx_, &object_keys_, key.data(), key.size());
+
+              values.push(&value);
+              tag_writers.push(&object_value_tags_writer_);
+            }
+          }
+          break;
         case GRN_JSON_VALUE_ARRAY:
           {
             auto &elements =
@@ -605,9 +669,6 @@ namespace {
             }
           }
           break;
-        case GRN_JSON_VALUE_OBJECT:
-          ERR(GRN_INVALID_ARGUMENT, "%s object isn't supported yet", tag);
-          return;
         case GRN_JSON_VALUE_INT64:
           write_int64(current_tag_writer,
                       std::get<int64_t>(current_value->data));
@@ -656,6 +717,49 @@ namespace {
       }
 
       switch (type) {
+      case json_type::object:
+        {
+          simdjson::ondemand::object object;
+          error_code = value.get_object().get(object);
+          if (error_code != simdjson::SUCCESS) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "%s failed to get object: %s",
+                tag,
+                simdjson::error_message(error_code));
+            return std::nullopt;
+          }
+          std::vector<JSONValue> items;
+          for (auto field : object) {
+            std::string_view key;
+            error_code = field.unescaped_key().get(key);
+            if (error_code != simdjson::SUCCESS) {
+              ERR(GRN_INVALID_ARGUMENT,
+                  "%s failed to get object key: %s",
+                  tag,
+                  simdjson::error_message(error_code));
+              return std::nullopt;
+            }
+            // We need to copy key here because key is valid only in
+            // this iteration.
+            items.push_back(JSONValue{GRN_JSON_VALUE_STRING, std::string(key)});
+
+            simdjson::ondemand::value value;
+            error_code = field.value().get(value);
+            if (error_code != simdjson::SUCCESS) {
+              ERR(GRN_INVALID_ARGUMENT,
+                  "%s failed to get object value: %s",
+                  tag,
+                  simdjson::error_message(error_code));
+              return std::nullopt;
+            }
+            auto json_value = extract_value(value);
+            if (!json_value) {
+              return std::nullopt;
+            }
+            items.push_back(*json_value);
+          }
+          return JSONValue{GRN_JSON_VALUE_OBJECT, std::move(items)};
+        }
       case json_type::array:
         {
           simdjson::ondemand::array array;
@@ -686,9 +790,6 @@ namespace {
           }
           return JSONValue{GRN_JSON_VALUE_ARRAY, std::move(elements)};
         }
-      case json_type::object:
-        ERR(GRN_INVALID_ARGUMENT, "%s object isn't supported yet", tag);
-        return std::nullopt;
       case json_type::number:
         return extract_number(value);
       case json_type::string:
@@ -1133,7 +1234,7 @@ namespace {
           next_start = read_data<uint16_t>(offset);
         } else {
           auto previous_offset = offset - sizeof(uint16_t);
-          start = read_data<int16_t>(previous_offset);
+          start = read_data<uint16_t>(previous_offset);
           next_start = read_data<uint16_t>(offset);
         }
       } else {
@@ -1179,6 +1280,10 @@ namespace {
       : JSONDataReader(json),
         ctx_(ctx),
         flags_(0),
+        object_position_resolver_(),
+        object_keys_offset_(0),
+        object_key_position_resolver_(),
+        object_value_tag_resolver_(),
         array_position_resolver_(),
         array_tag_resolver_(),
         string_values_offset_(0),
@@ -1233,6 +1338,38 @@ namespace {
         states_.pop();
         auto tag = unpack_tag(read_data<uint8_t>(0));
         return next_value(tag, is_root);
+      } else if (state.type == GRN_JSON_VALUE_OBJECT) {
+        const auto index = state.index;
+        const auto is_key = state.is_key;
+        if (is_key) {
+          state.is_key = false;
+        } else {
+          if (index == state.last_index) {
+            states_.pop();
+          } else {
+            state.index++;
+            state.is_key = true;
+          }
+        }
+
+        if (is_key) {
+          auto resolved = object_key_position_resolver_->resolve(index);
+          auto start = resolved.first;
+          auto next_start = resolved.second;
+          auto size = next_start - start;
+          GRN_TEXT_SET(ctx_,
+                       &string_value_,
+                       GRN_JSON_VALUE(json_) + object_keys_offset_ + start,
+                       size);
+          current_type_ = GRN_JSON_VALUE_STRING;
+          current_value_ = &string_value_;
+          current_size_ = 0;
+          return ctx->rc;
+        } else {
+          auto raw_tag = object_value_tag_resolver_->resolve(index);
+          auto tag = unpack_tag(raw_tag);
+          return next_value(tag, false);
+        }
       } else if (state.type == GRN_JSON_VALUE_ARRAY) {
         auto raw_tag = array_tag_resolver_->resolve(state.index);
         if (state.index == state.last_index) {
@@ -1275,17 +1412,26 @@ namespace {
       grn_json_value_type type;
       uint32_t index;
       uint32_t last_index;
+      bool is_key; // This is only for GRN_JSON_VALUE_OBJECT
 
-      State(grn_json_value_type type, uint32_t index, uint32_t last_index)
+      State(grn_json_value_type type,
+            uint32_t index,
+            uint32_t last_index,
+            bool is_key = false)
         : type(type),
           index(index),
-          last_index(last_index)
+          last_index(last_index),
+          is_key(is_key)
       {
       }
     };
 
     grn_ctx *ctx_;
     uint32_t flags_;
+    std::unique_ptr<VariableSizePositionResolver> object_position_resolver_;
+    uint32_t object_keys_offset_;
+    std::unique_ptr<VariableSizePositionResolver> object_key_position_resolver_;
+    std::unique_ptr<VariableSizeTagResolver> object_value_tag_resolver_;
     std::unique_ptr<VariableSizePositionResolver> array_position_resolver_;
     std::unique_ptr<VariableSizeTagResolver> array_tag_resolver_;
     uint32_t string_values_offset_;
@@ -1476,6 +1622,27 @@ namespace {
       buffer_offsets.push_back(GRN_JSON_LEN(json_));
 
       uint32_t i = 0;
+      object_position_resolver_ =
+        create_variable_size_position_resolver(i,
+                                               buffer_offsets,
+                                               Flag::kObjectPosition8,
+                                               Flag::kObjectPosition16,
+                                               Flag::kObjectPosition32);
+      if (flags_ & static_cast<uint32_t>(Flag::kObjectKey)) {
+        object_keys_offset_ = buffer_offsets[i];
+        i++;
+      }
+      object_key_position_resolver_ =
+        create_variable_size_position_resolver(i,
+                                               buffer_offsets,
+                                               Flag::kObjectKeyPosition8,
+                                               Flag::kObjectKeyPosition16,
+                                               Flag::kObjectKeyPosition32);
+      object_value_tag_resolver_ =
+        create_variable_size_tag_resolver(i,
+                                          buffer_offsets,
+                                          Flag::kObjectValueTag16,
+                                          Flag::kObjectValueTag32);
       array_position_resolver_ =
         create_variable_size_position_resolver(i,
                                                buffer_offsets,
@@ -1534,6 +1701,8 @@ namespace {
       }
 
       switch (tag.type) {
+      case Type::kObject:
+        return next_object(tag, is_root);
       case Type::kArray:
         return next_array(tag, is_root);
       case Type::kInteger:
@@ -1548,6 +1717,22 @@ namespace {
             log_tag);
         return ctx->rc;
       }
+    }
+
+    grn_rc
+    next_object(const Tag &tag, bool is_root)
+    {
+      auto index = tag.data;
+      auto resolved = object_position_resolver_->resolve(index);
+      auto start = resolved.first;
+      auto next_start = resolved.second;
+      current_type_ = GRN_JSON_VALUE_OBJECT;
+      current_value_ = nullptr;
+      current_size_ = next_start - start;
+      if (current_size_ > 0) {
+        states_.emplace(GRN_JSON_VALUE_OBJECT, start, next_start - 1, true);
+      }
+      return GRN_SUCCESS;
     }
 
     grn_rc

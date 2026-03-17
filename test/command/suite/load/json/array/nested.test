@@ -1,0 +1,39 @@
+#@require-feature simdjson
+
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+# Source:
+#   [
+#     true,
+#     [
+#       false,
+#       null,
+#       [-1, 1, 2.9],
+#       ["string"],
+#       null
+#     ],
+#     {
+#       "string": "world",
+#       "sub_array": [
+#         null,
+#         {
+#           "sub_object": false
+#         },
+#         ["sub_string", -2.9]
+#       ],
+#       "integer": -29
+#     },
+#     false
+#   ]
+# JSONify:
+#   1. ruby -r json -e 'puts JSON.parse(ARGF.read.gsub(/^#/, "")).to_json.to_json'
+#   2. Paste the above source with comment to the stdin of 1.
+load --table Notes
+[
+{"data": "[true,[false,null,[-1,1,2.9],[\"string\"],null],{\"string\":\"world\",\"sub_array\":[null,{\"sub_object\":false},[\"sub_string\",-2.9]],\"integer\":-29},false]"}
+]
+
+select Notes
+
+dump
