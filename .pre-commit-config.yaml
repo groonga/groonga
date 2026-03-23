@@ -135,6 +135,7 @@ repos:
           ?lib/grn_util\.h|
           ?lib/grn_vector\.h|
           ?lib/h3\.c|
+          ?lib/hash\.c|
           ?lib/highlighter\.c|
           ?lib/ii\.cpp|
           ?lib/io\.c|
