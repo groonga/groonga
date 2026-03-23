@@ -177,6 +177,7 @@ repos:
           ?lib/store\.c|
           ?lib/str\.c|
           ?lib/table\.c|
+          ?lib/table_module\.c|
           ?lib/table_selector\.c|
           ?lib/token\.c|
           ?lib/token_cursor\.c|
