@@ -1,4 +1,4 @@
-# TODO: We'll add a small expected file after we add JSON functions.
+#@omit "TODO: We'll add a small expected file after we add JSON functions."
 
 #@require-feature simdjson
 
