@@ -33,38 +33,33 @@ typedef struct {
   grn_critical_section lock;
 } grn_table_module;
 
-void grn_table_module_init(grn_ctx *ctx,
-                           grn_table_module *module,
-                           grn_id module_id);
-void grn_table_module_set_proc(grn_ctx *ctx,
-                               grn_table_module *module,
-                               grn_obj *proc);
-void grn_table_module_set_options(grn_ctx *ctx,
-                                  grn_table_module *module,
-                                  void *options,
-                                  grn_option_revision revision,
-                                  grn_close_func close_func);
-void grn_table_module_fin(grn_ctx *ctx,
-                          grn_table_module *module);
+void
+grn_table_module_init(grn_ctx *ctx, grn_table_module *module, grn_id module_id);
+void
+grn_table_module_set_proc(grn_ctx *ctx,
+                          grn_table_module *module,
+                          grn_obj *proc);
+void
+grn_table_module_set_options(grn_ctx *ctx,
+                             grn_table_module *module,
+                             void *options,
+                             grn_option_revision revision,
+                             grn_close_func close_func);
+void
+grn_table_module_fin(grn_ctx *ctx, grn_table_module *module);
 
-void grn_table_modules_init(grn_ctx *ctx,
-                            grn_obj *modules_buffer);
-void grn_table_modules_fin(grn_ctx *ctx,
-                           grn_obj *modules_buffer);
-void grn_table_modules_add(grn_ctx *ctx,
-                           grn_obj *modules_buffer,
-                           grn_obj *proc);
-void grn_table_modules_rewind(grn_ctx *ctx,
-                              grn_obj *modules_buffer);
+void
+grn_table_modules_init(grn_ctx *ctx, grn_obj *modules_buffer);
+void
+grn_table_modules_fin(grn_ctx *ctx, grn_obj *modules_buffer);
+void
+grn_table_modules_add(grn_ctx *ctx, grn_obj *modules_buffer, grn_obj *proc);
+void
+grn_table_modules_rewind(grn_ctx *ctx, grn_obj *modules_buffer);
 grn_table_module *
-grn_table_modules_get_module(grn_ctx *ctx,
-                             grn_obj *modules_buffer,
-                             size_t i);
+grn_table_modules_get_module(grn_ctx *ctx, grn_obj *modules_buffer, size_t i);
 grn_obj *
-grn_table_modules_get_proc(grn_ctx *ctx,
-                           grn_obj *modules_buffer,
-                           size_t i);
-
+grn_table_modules_get_proc(grn_ctx *ctx, grn_obj *modules_buffer, size_t i);
 
 #ifdef __cplusplus
 }
