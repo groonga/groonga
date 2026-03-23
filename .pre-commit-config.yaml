@@ -101,8 +101,9 @@ repos:
           ?lib/grn_error\.h|
           ?lib/grn_expr\.h|
           ?lib/grn_expr_executor\.h|
-          ?lib/grn_geo\.h|
           ?lib/grn_generated_column\.h|
+          ?lib/grn_geo\.h|
+          ?lib/grn_hash\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_index_column\.h|
           ?lib/grn_io\.h|
