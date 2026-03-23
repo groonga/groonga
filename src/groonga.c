@@ -2109,6 +2109,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
         data = NULL;
         data_size = 0;
         GRN_BULK_REWIND(&buffer);
+        buffer_offset = 0;
         continue;
       }
       data++;
