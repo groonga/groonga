@@ -30,9 +30,7 @@ static const char *OPTION_NAME_NORMALIZER = "normalizer";
 static const char *OPTION_NAME_TOKEN_FILTER = "token_filter";
 
 void
-grn_table_module_init(grn_ctx *ctx,
-                      grn_table_module *module,
-                      grn_id module_id)
+grn_table_module_init(grn_ctx *ctx, grn_table_module *module, grn_id module_id)
 {
   if (module_id == GRN_ID_NIL) {
     module->proc = NULL;
@@ -46,8 +44,7 @@ grn_table_module_init(grn_ctx *ctx,
 }
 
 static void
-grn_table_module_fin_options(grn_ctx *ctx,
-                             grn_table_module *module)
+grn_table_module_fin_options(grn_ctx *ctx, grn_table_module *module)
 {
   if (module->options && module->options_close_func) {
     module->options_close_func(ctx, module->options);
@@ -58,17 +55,14 @@ grn_table_module_fin_options(grn_ctx *ctx,
 }
 
 void
-grn_table_module_fin(grn_ctx *ctx,
-                     grn_table_module *module)
+grn_table_module_fin(grn_ctx *ctx, grn_table_module *module)
 {
   grn_table_module_fin_options(ctx, module);
   CRITICAL_SECTION_FIN(module->lock);
 }
 
 void
-grn_table_module_set_proc(grn_ctx *ctx,
-                          grn_table_module *module,
-                          grn_obj *proc)
+grn_table_module_set_proc(grn_ctx *ctx, grn_table_module *module, grn_obj *proc)
 {
   CRITICAL_SECTION_ENTER(module->lock);
   grn_table_module_fin_options(ctx, module);
@@ -108,24 +102,20 @@ grn_table_module_set_options(grn_ctx *ctx,
 }
 
 void
-grn_table_modules_init(grn_ctx *ctx,
-                       grn_obj *modules_buffer)
+grn_table_modules_init(grn_ctx *ctx, grn_obj *modules_buffer)
 {
   GRN_TEXT_INIT(modules_buffer, 0);
 }
 
 void
-grn_table_modules_fin(grn_ctx *ctx,
-                      grn_obj *modules_buffer)
+grn_table_modules_fin(grn_ctx *ctx, grn_obj *modules_buffer)
 {
   grn_table_modules_rewind(ctx, modules_buffer);
   GRN_OBJ_FIN(ctx, modules_buffer);
 }
 
 void
-grn_table_modules_add(grn_ctx *ctx,
-                      grn_obj *modules_buffer,
-                      grn_obj *proc)
+grn_table_modules_add(grn_ctx *ctx, grn_obj *modules_buffer, grn_obj *proc)
 {
   grn_bulk_space(ctx, modules_buffer, sizeof(grn_table_module));
   size_t n = GRN_BULK_VSIZE(modules_buffer) / sizeof(grn_table_module);
@@ -136,8 +126,7 @@ grn_table_modules_add(grn_ctx *ctx,
 }
 
 void
-grn_table_modules_rewind(grn_ctx *ctx,
-                         grn_obj *modules_buffer)
+grn_table_modules_rewind(grn_ctx *ctx, grn_obj *modules_buffer)
 {
   grn_table_module *modules = (grn_table_module *)GRN_BULK_HEAD(modules_buffer);
   size_t n = GRN_BULK_VSIZE(modules_buffer) / sizeof(grn_table_module);
@@ -149,9 +138,7 @@ grn_table_modules_rewind(grn_ctx *ctx,
 }
 
 grn_table_module *
-grn_table_modules_get_module(grn_ctx *ctx,
-                             grn_obj *modules_buffer,
-                             size_t i)
+grn_table_modules_get_module(grn_ctx *ctx, grn_obj *modules_buffer, size_t i)
 {
   grn_table_module *modules = (grn_table_module *)GRN_BULK_HEAD(modules_buffer);
   size_t n = GRN_BULK_VSIZE(modules_buffer) / sizeof(grn_table_module);
@@ -162,9 +149,7 @@ grn_table_modules_get_module(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_table_modules_get_proc(grn_ctx *ctx,
-                           grn_obj *modules_buffer,
-                           size_t i)
+grn_table_modules_get_proc(grn_ctx *ctx, grn_obj *modules_buffer, size_t i)
 {
   grn_table_module *module =
     grn_table_modules_get_module(ctx, modules_buffer, i);
@@ -191,14 +176,9 @@ grn_table_set_module_options(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (options &&
-      options->header.type == GRN_VECTOR &&
+  if (options && options->header.type == GRN_VECTOR &&
       grn_vector_size(ctx, options) > 0) {
-    grn_obj_set_option_values(ctx,
-                              table,
-                              module_name,
-                              -1,
-                              options);
+    grn_obj_set_option_values(ctx, table, module_name, -1, options);
   } else {
     grn_obj current_options;
     GRN_VOID_INIT(&current_options);
@@ -212,11 +192,7 @@ grn_table_set_module_options(grn_ctx *ctx,
         grn_vector_size(ctx, &current_options) > 1) {
       grn_obj empty_options;
       GRN_TEXT_INIT(&empty_options, GRN_OBJ_VECTOR);
-      grn_obj_set_option_values(ctx,
-                                table,
-                                module_name,
-                                -1,
-                                &empty_options);
+      grn_obj_set_option_values(ctx, table, module_name, -1, &empty_options);
       GRN_OBJ_FIN(ctx, &empty_options);
     }
     GRN_OBJ_FIN(ctx, &current_options);
@@ -282,85 +258,81 @@ grn_table_cache_module_options(grn_ctx *ctx,
   }
 
   switch (data->type) {
-  case GRN_INFO_DEFAULT_TOKENIZER :
+  case GRN_INFO_DEFAULT_TOKENIZER:
     switch (table->header.type) {
-    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_HASH_KEY:
       module = &(((grn_hash *)table)->tokenizer);
       break;
-    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_PAT_KEY:
       module = &(((grn_pat *)table)->tokenizer);
       break;
-    case GRN_TABLE_DAT_KEY :
+    case GRN_TABLE_DAT_KEY:
       module = &(((grn_dat *)table)->tokenizer);
       break;
-    default :
+    default:
       break;
     }
     break;
-  case GRN_INFO_NORMALIZER :
+  case GRN_INFO_NORMALIZER:
     switch (table->header.type) {
-    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_HASH_KEY:
       module = grn_table_modules_get_module(ctx,
                                             &(((grn_hash *)table)->normalizers),
                                             0);
       break;
-    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_PAT_KEY:
       module = grn_table_modules_get_module(ctx,
                                             &(((grn_pat *)table)->normalizers),
                                             0);
       break;
-    case GRN_TABLE_DAT_KEY :
+    case GRN_TABLE_DAT_KEY:
       module = grn_table_modules_get_module(ctx,
                                             &(((grn_dat *)table)->normalizers),
                                             0);
       break;
-    default :
+    default:
       break;
     }
     break;
-  case GRN_INFO_TOKEN_FILTERS :
+  case GRN_INFO_TOKEN_FILTERS:
     {
       grn_obj *token_filters = NULL;
       switch (table->header.type) {
-      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_HASH_KEY:
         token_filters = &(((grn_hash *)table)->token_filters);
         break;
-      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_PAT_KEY:
         token_filters = &(((grn_pat *)table)->token_filters);
         break;
-      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_DAT_KEY:
         token_filters = &(((grn_dat *)table)->token_filters);
         break;
-      default :
+      default:
         break;
       }
-      module =
-        ((grn_table_module *)GRN_BULK_HEAD(token_filters)) +
-        data->index;
+      module = ((grn_table_module *)GRN_BULK_HEAD(token_filters)) + data->index;
     }
     break;
-  case GRN_INFO_NORMALIZERS :
+  case GRN_INFO_NORMALIZERS:
     {
       grn_obj *normalizers = NULL;
       switch (table->header.type) {
-      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_HASH_KEY:
         normalizers = &(((grn_hash *)table)->normalizers);
         break;
-      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_PAT_KEY:
         normalizers = &(((grn_pat *)table)->normalizers);
         break;
-      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_DAT_KEY:
         normalizers = &(((grn_dat *)table)->normalizers);
         break;
-      default :
+      default:
         break;
       }
-      module =
-        ((grn_table_module *)GRN_BULK_HEAD(normalizers)) +
-        data->index;
+      module = ((grn_table_module *)GRN_BULK_HEAD(normalizers)) + data->index;
     }
     break;
-  default :
+  default:
     break;
   }
 
@@ -442,12 +414,8 @@ grn_table_get_module_string_raw(grn_ctx *ctx,
         GRN_TEXT_PUTS(ctx, output, ", ");
       }
 
-      value_size = grn_vector_get_element(ctx,
-                                          &options,
-                                          i,
-                                          &value,
-                                          NULL,
-                                          &domain);
+      value_size =
+        grn_vector_get_element(ctx, &options, i, &value, NULL, &domain);
       grn_obj_reinit(ctx, &option, domain, 0);
       grn_bulk_write(ctx, &option, value, value_size);
       grn_text_otoj(ctx, output, &option, NULL);
@@ -463,39 +431,38 @@ grn_table_using_normalizer(grn_ctx *ctx, grn_obj *table)
 {
   grn_id proc_id = GRN_ID_NIL;
   switch (table->header.type) {
-  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_HASH_KEY:
     proc_id = ((grn_hash *)table)->header.common->normalizer;
     break;
-  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_PAT_KEY:
     proc_id = ((grn_pat *)table)->header->normalizer;
     break;
-  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_DAT_KEY:
     proc_id = ((grn_dat *)table)->header->normalizer;
     break;
-  default :
+  default:
     break;
   }
   return proc_id != GRN_ID_NIL;
 }
 
 static void
-grn_table_module_format_name(
-  grn_ctx *ctx,
-  grn_obj *table,
-  const char *module_name,
-  uint32_t i,
-  grn_info_type type,
-  bool for_get,
-  char real_module_name[GRN_TABLE_MAX_KEY_SIZE])
+grn_table_module_format_name(grn_ctx *ctx,
+                             grn_obj *table,
+                             const char *module_name,
+                             uint32_t i,
+                             grn_info_type type,
+                             bool for_get,
+                             char real_module_name[GRN_TABLE_MAX_KEY_SIZE])
 {
   bool need_index = false;
   switch (type) {
-  case GRN_INFO_NORMALIZER :
+  case GRN_INFO_NORMALIZER:
     if (for_get) {
       need_index = !grn_table_using_normalizer(ctx, table);
     }
     break;
-  case GRN_INFO_NORMALIZERS :
+  case GRN_INFO_NORMALIZERS:
     if (for_get) {
       if (i == 0) {
         need_index = !grn_table_using_normalizer(ctx, table);
@@ -506,10 +473,10 @@ grn_table_module_format_name(
       need_index = true;
     }
     break;
-  case GRN_INFO_TOKEN_FILTERS :
+  case GRN_INFO_TOKEN_FILTERS:
     need_index = true;
     break;
-  default :
+  default:
     break;
   }
 
@@ -606,11 +573,7 @@ grn_table_get_modules_string(grn_ctx *ctx,
                                  type,
                                  true,
                                  real_module_name);
-    grn_table_get_module_string_raw(ctx,
-                                    table,
-                                    output,
-                                    proc,
-                                    real_module_name);
+    grn_table_get_module_string_raw(ctx, table, output, proc, real_module_name);
   }
 
   GRN_OBJ_FIN(ctx, &procs);
@@ -643,11 +606,12 @@ grn_table_get_default_tokenizer_options(grn_ctx *ctx,
 }
 
 void *
-grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_table_module_open_options_func open_options_func,
-                                          grn_close_func close_options_func,
-                                          void *user_data)
+grn_table_cache_default_tokenizer_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data)
 {
   grn_table_cache_data data;
 
@@ -675,9 +639,7 @@ grn_table_get_default_tokenizer_string(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_set_normalizer_options(grn_ctx *ctx,
-                                 grn_obj *table,
-                                 grn_obj *options)
+grn_table_set_normalizer_options(grn_ctx *ctx, grn_obj *table, grn_obj *options)
 {
   return grn_table_set_module_options(ctx,
                                       table,
@@ -687,9 +649,7 @@ grn_table_set_normalizer_options(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_get_normalizer_options(grn_ctx *ctx,
-                                 grn_obj *table,
-                                 grn_obj *options)
+grn_table_get_normalizer_options(grn_ctx *ctx, grn_obj *table, grn_obj *options)
 {
   char module_name[GRN_TABLE_MAX_KEY_SIZE];
   grn_table_module_format_name(ctx,
@@ -707,12 +667,13 @@ grn_table_get_normalizer_options(grn_ctx *ctx,
 }
 
 void *
-grn_table_cache_normalizer_options(grn_ctx *ctx,
-                                   grn_obj *table,
-                                   grn_obj *string,
-                                   grn_table_module_open_options_func open_options_func,
-                                   grn_close_func close_options_func,
-                                   void *user_data)
+grn_table_cache_normalizer_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  grn_obj *string,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data)
 {
   grn_table_cache_data data;
 
@@ -736,9 +697,7 @@ grn_table_cache_normalizer_options(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_get_normalizer_string(grn_ctx *ctx,
-                                grn_obj *table,
-                                grn_obj *output)
+grn_table_get_normalizer_string(grn_ctx *ctx, grn_obj *table, grn_obj *output)
 {
   char module_name[GRN_TABLE_MAX_KEY_SIZE];
   grn_table_module_format_name(ctx,
@@ -829,9 +788,7 @@ grn_table_cache_normalizers_options(
 }
 
 grn_rc
-grn_table_get_normalizers_string(grn_ctx *ctx,
-                                 grn_obj *table,
-                                 grn_obj *output)
+grn_table_get_normalizers_string(grn_ctx *ctx, grn_obj *table, grn_obj *output)
 {
   return grn_table_get_modules_string(ctx,
                                       table,
@@ -910,8 +867,12 @@ grn_table_cache_token_filter_options(
   grn_close_func close_options_func,
   void *user_data)
 {
-  return grn_table_cache_token_filters_options(
-    ctx, table, i, open_options_func, close_options_func, user_data);
+  return grn_table_cache_token_filters_options(ctx,
+                                               table,
+                                               i,
+                                               open_options_func,
+                                               close_options_func,
+                                               user_data);
 }
 
 void *
