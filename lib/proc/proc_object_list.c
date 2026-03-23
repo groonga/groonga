@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016  Brazil
-  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -73,6 +73,58 @@ command_object_list_dump_flags(grn_ctx *ctx, grn_obj_spec *spec)
   grn_ctx_output_str(ctx, GRN_TEXT_VALUE(&flags), GRN_TEXT_LEN(&flags));
 
   GRN_OBJ_FIN(ctx, &flags);
+}
+
+static void
+command_object_list_output_table_modules(grn_ctx *ctx,
+                                         grn_obj *spec_vector,
+                                         unsigned int spec_index,
+                                         const char *singular,
+                                         const char *plural)
+{
+  const grn_id *ids;
+  int n_ids;
+
+  unsigned int n_elements = grn_vector_size(ctx, spec_vector);
+  if (n_elements > spec_index) {
+    uint32_t element_size;
+
+    element_size = grn_vector_get_element(ctx,
+                                          spec_vector,
+                                          spec_index,
+                                          (const char **)&ids,
+                                          NULL,
+                                          NULL);
+    n_ids = (int)(element_size / sizeof(grn_id));
+  } else {
+    ids = NULL;
+    n_ids = 0;
+  }
+
+  grn_ctx_output_cstr(ctx, plural);
+  grn_ctx_output_array_open(ctx, plural, n_ids);
+  grn_obj *db = grn_ctx_db(ctx);
+  for (int i = 0; i < n_ids; i++) {
+    grn_id id = ids[i];
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_table_get_key(ctx, db, id, name, GRN_TABLE_MAX_KEY_SIZE);
+
+    grn_ctx_output_map_open(ctx, singular, 2);
+    {
+      grn_ctx_output_cstr(ctx, "id");
+      grn_ctx_output_uint64(ctx, id);
+
+      grn_ctx_output_cstr(ctx, "name");
+      if (name_size == 0) {
+        grn_ctx_output_null(ctx);
+      } else {
+        grn_ctx_output_str(ctx, name, (size_t)name_size);
+      }
+    }
+    grn_ctx_output_map_close(ctx);
+  }
+  grn_ctx_output_array_close(ctx);
 }
 
 static grn_obj *
@@ -162,6 +214,7 @@ command_object_list(grn_ctx *ctx,
       bool need_sources = false;
       bool need_generator = false;
       bool need_token_filters = false;
+      bool need_normalizers = false;
 
       element_size = grn_vector_get_element(ctx,
                                             &vector,
@@ -200,9 +253,12 @@ command_object_list(grn_ctx *ctx,
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_HASH_KEY:
-      case GRN_TABLE_NO_KEY:
         need_token_filters = true;
         n_properties++;
+        need_normalizers = true;
+        n_properties++;
+        break;
+      case GRN_TABLE_NO_KEY:
         break;
       }
       grn_ctx_output_map_open(ctx, "object", n_properties);
@@ -355,55 +411,21 @@ command_object_list(grn_ctx *ctx,
         }
 
         if (need_token_filters) {
-          const grn_id *token_filter_ids;
-          int n_token_filter_ids;
-          int i;
+          command_object_list_output_table_modules(
+            ctx,
+            &vector,
+            GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+            "token_filter",
+            "token_filters");
+        }
 
-          if (n_elements > GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
-            uint32_t element_size;
-
-            element_size =
-              grn_vector_get_element(ctx,
-                                     &vector,
-                                     GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
-                                     (const char **)&token_filter_ids,
-                                     NULL,
-                                     NULL);
-            n_token_filter_ids = (int)(element_size / sizeof(grn_id));
-          } else {
-            token_filter_ids = NULL;
-            n_token_filter_ids = 0;
-          }
-
-          grn_ctx_output_cstr(ctx, "token_filters");
-          grn_ctx_output_array_open(ctx, "token_filters", n_token_filter_ids);
-          for (i = 0; i < n_token_filter_ids; i++) {
-            grn_id token_filter_id;
-            char name[GRN_TABLE_MAX_KEY_SIZE];
-            int name_size;
-
-            token_filter_id = token_filter_ids[i];
-            name_size = grn_table_get_key(ctx,
-                                          (grn_obj *)db,
-                                          token_filter_id,
-                                          name,
-                                          GRN_TABLE_MAX_KEY_SIZE);
-
-            grn_ctx_output_map_open(ctx, "token_filter", 2);
-            {
-              grn_ctx_output_cstr(ctx, "id");
-              grn_ctx_output_uint64(ctx, token_filter_id);
-
-              grn_ctx_output_cstr(ctx, "name");
-              if (name_size == 0) {
-                grn_ctx_output_null(ctx);
-              } else {
-                grn_ctx_output_str(ctx, name, (size_t)name_size);
-              }
-            }
-            grn_ctx_output_map_close(ctx);
-          }
-          grn_ctx_output_array_close(ctx);
+        if (need_normalizers) {
+          command_object_list_output_table_modules(
+            ctx,
+            &vector,
+            GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS,
+            "normalizer",
+            "normalizers");
         }
       }
       grn_ctx_output_map_close(ctx);

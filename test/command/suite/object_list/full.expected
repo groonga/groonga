@@ -510,7 +510,8 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": []
+      "token_filters": [],
+      "normalizers": []
     },
     "Users.description": {
       "id": 262,
@@ -572,7 +573,13 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": []
+      "token_filters": [],
+      "normalizers": [
+        {
+          "id": 83,
+          "name": "NormalizerAuto"
+        }
+      ]
     },
     "Terms.users": {
       "id": 265,
@@ -673,7 +680,13 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": []
+      "token_filters": [],
+      "normalizers": [
+        {
+          "id": 83,
+          "name": "NormalizerAuto"
+        }
+      ]
     },
     "Tags.users": {
       "id": 269,
