@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@
 static const char *OPTION_NAME_DEFAULT_TOKENIZER = "default_tokenizer";
 static const char *OPTION_NAME_NORMALIZER = "normalizer";
 static const char *OPTION_NAME_TOKEN_FILTER = "token_filter";
+static const char *OPTION_NAME_EXTRACTOR = "extractor";
 
 void
 grn_table_module_init(grn_ctx *ctx, grn_table_module *module, grn_id module_id)
@@ -332,6 +333,25 @@ grn_table_cache_module_options(grn_ctx *ctx,
       module = ((grn_table_module *)GRN_BULK_HEAD(normalizers)) + data->index;
     }
     break;
+  case GRN_INFO_EXTRACTORS:
+    {
+      grn_obj *extractors = NULL;
+      switch (table->header.type) {
+      case GRN_TABLE_HASH_KEY:
+        extractors = &(((grn_hash *)table)->extractors);
+        break;
+      case GRN_TABLE_PAT_KEY:
+        extractors = &(((grn_pat *)table)->extractors);
+        break;
+      case GRN_TABLE_DAT_KEY:
+        extractors = &(((grn_dat *)table)->extractors);
+        break;
+      default:
+        break;
+      }
+      module = ((grn_table_module *)GRN_BULK_HEAD(extractors)) + data->index;
+    }
+    break;
   default:
     break;
   }
@@ -474,6 +494,9 @@ grn_table_module_format_name(grn_ctx *ctx,
     }
     break;
   case GRN_INFO_TOKEN_FILTERS:
+    need_index = true;
+    break;
+  case GRN_INFO_EXTRACTORS:
     need_index = true;
     break;
   default:
@@ -916,4 +939,87 @@ grn_table_get_token_filters_string(grn_ctx *ctx,
                                       GRN_INFO_TOKEN_FILTERS,
                                       OPTION_NAME_TOKEN_FILTER,
                                       "token-filters");
+}
+
+grn_rc
+grn_table_set_extractors_options(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 uint32_t i,
+                                 grn_obj *options)
+{
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_table_module_format_name(ctx,
+                               table,
+                               OPTION_NAME_EXTRACTOR,
+                               i,
+                               GRN_INFO_EXTRACTORS,
+                               false,
+                               module_name);
+  return grn_table_set_module_options(ctx,
+                                      table,
+                                      module_name,
+                                      options,
+                                      "extractors");
+}
+
+grn_rc
+grn_table_get_extractors_options(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 uint32_t i,
+                                 grn_obj *options)
+{
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_table_module_format_name(ctx,
+                               table,
+                               OPTION_NAME_EXTRACTOR,
+                               i,
+                               GRN_INFO_EXTRACTORS,
+                               true,
+                               module_name);
+  return grn_table_get_module_options(ctx,
+                                      table,
+                                      module_name,
+                                      options,
+                                      "extractors");
+}
+
+void *
+grn_table_cache_extractors_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  uint32_t i,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data)
+{
+  grn_table_cache_data data;
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_table_module_format_name(ctx,
+                               table,
+                               OPTION_NAME_EXTRACTOR,
+                               i,
+                               GRN_INFO_EXTRACTORS,
+                               true,
+                               module_name);
+
+  memset(&data, 0, sizeof(data));
+  data.context_tag = "extractor";
+  data.module_name = module_name;
+  data.type = GRN_INFO_EXTRACTORS;
+  data.index = i;
+  data.open_options_func = open_options_func;
+  data.close_options_func = close_options_func;
+  data.user_data = user_data;
+  return grn_table_cache_module_options(ctx, table, &data);
+}
+
+grn_rc
+grn_table_get_extractors_string(grn_ctx *ctx, grn_obj *table, grn_obj *output)
+{
+  return grn_table_get_modules_string(ctx,
+                                      table,
+                                      output,
+                                      GRN_INFO_EXTRACTORS,
+                                      OPTION_NAME_EXTRACTOR,
+                                      "extractors");
 }

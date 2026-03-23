@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2011-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2011-2018  Brazil
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -165,6 +165,7 @@ namespace {
     grn_table_modules_init(ctx, &(dat->normalizers));
     grn_table_modules_init(ctx, &(dat->token_filters));
     GRN_PTR_INIT(&(dat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_table_modules_init(ctx, &(dat->extractors));
     CRITICAL_SECTION_INIT(dat->lock);
     dat->is_dirty = false;
   }
@@ -195,6 +196,7 @@ namespace {
     grn_table_module_fin(ctx, &(dat->tokenizer));
     grn_table_modules_fin(ctx, &(dat->normalizers));
     grn_dat_close_token_filters(ctx, dat);
+    grn_table_modules_fin(ctx, &(dat->extractors));
   }
 
   /*

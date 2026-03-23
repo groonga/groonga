@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2011-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2011-2018  Brazil
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -40,6 +40,7 @@ struct _grn_dat {
   grn_obj token_filters;
   /* For backward compatibility */
   grn_obj token_filter_procs;
+  grn_obj extractors;
   grn_critical_section lock;
   bool is_dirty;
 };

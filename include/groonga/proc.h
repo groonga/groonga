@@ -36,6 +36,7 @@ typedef enum {
   GRN_PROC_SCORER,
   GRN_PROC_WINDOW_FUNCTION,
   GRN_PROC_AGGREGATOR,
+  GRN_PROC_EXTRACTOR,
 } grn_proc_type;
 
 /**

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -208,6 +208,20 @@ GRN_API bool
 grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Return whether `obj` is a function that has a extractor
+ *        callback or not.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ *
+ * \return `true` if `obj` is a function that has a extractor
+ *         callback, `false` otherwise.
+ *
+ * Since: 16.0.1
+ */
+GRN_API bool
+grn_obj_is_extractor_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool

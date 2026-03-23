@@ -285,6 +285,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_PROC_AGGREGATOR:
     GRN_TEXT_PUTS(ctx, buf, "aggregator");
     break;
+  case GRN_PROC_EXTRACTOR:
+    GRN_TEXT_PUTS(ctx, buf, "extractor");
+    break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");
 

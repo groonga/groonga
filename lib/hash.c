@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2029,6 +2029,7 @@ grn_io_hash_init(grn_ctx *ctx,
   header->truncated = false;
   grn_table_modules_init(ctx, &(hash->token_filters));
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_table_modules_init(ctx, &(hash->extractors));
 
   hash->obj.header.flags = (header->flags & GRN_OBJ_FLAGS_MASK);
   hash->ctx = ctx;
@@ -2109,6 +2110,7 @@ grn_tiny_hash_init(grn_ctx *ctx,
   grn_table_modules_init(ctx, &(hash->normalizers));
   grn_table_modules_init(ctx, &(hash->token_filters));
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_table_modules_init(ctx, &(hash->extractors));
   grn_tiny_array_init(ctx,
                       &hash->a,
                       (uint16_t)entry_size,
@@ -2252,6 +2254,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             GRN_PTR_INIT(&(hash->token_filter_procs),
                          GRN_OBJ_VECTOR,
                          GRN_ID_NIL);
+            grn_table_modules_init(ctx, &(hash->extractors));
             hash->obj.header.flags = (grn_obj_flags)(header->flags);
             return hash;
           } else {
@@ -2314,6 +2317,7 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
+  grn_table_modules_fin(ctx, &(hash->extractors));
   return rc;
 }
 
@@ -2328,6 +2332,7 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
+  grn_table_modules_fin(ctx, &(hash->extractors));
 
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     uint32_t num_remaining_entries = *hash->n_entries;

@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2018  Brazil
-// Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+// Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16688,6 +16688,16 @@ namespace grn::ii {
                                 &token_filters);
         }
         GRN_OBJ_FIN(ctx_, &token_filters);
+      }
+      if (rc == GRN_SUCCESS) {
+        grn_obj extractors;
+        GRN_TEXT_INIT(&extractors, 0);
+        grn_table_get_extractors_string(ctx_, ii_->lexicon, &extractors);
+        if (GRN_TEXT_LEN(&extractors) > 0) {
+          rc =
+            grn_obj_set_info(ctx_, lexicon_, GRN_INFO_EXTRACTORS, &extractors);
+        }
+        GRN_OBJ_FIN(ctx_, &extractors);
       }
       if (rc != GRN_SUCCESS) {
         return rc;
