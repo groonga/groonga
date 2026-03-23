@@ -73,6 +73,7 @@ repos:
           ?lib/compressor\.c|
           ?lib/ctx\.cpp|
           ?lib/ctx_impl_mrb\.c|
+          ?lib/dat\.cpp|
           ?lib/db\.c|
           ?lib/db_wal_recover\.cpp|
           ?lib/distance\.cpp|
