@@ -55,6 +55,7 @@ repos:
           ?include/groonga/proc\.h|
           ?include/groonga/request_canceler\.h|
           ?include/groonga/table\.h|
+          ?include/groonga/table_module\.h|
           ?include/groonga/thread\.h|
           ?include/groonga/token\.h|
           ?include/groonga/token_cursor\.h|

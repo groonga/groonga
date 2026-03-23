@@ -19,7 +19,7 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -41,17 +41,17 @@ grn_table_get_default_tokenizer_options(grn_ctx *ctx,
                                         grn_obj *options);
 
 GRN_API void *
-grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_table_module_open_options_func open_options_func,
-                                          grn_close_func close_options_func,
-                                          void *user_data);
+grn_table_cache_default_tokenizer_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
 
 GRN_API grn_rc
 grn_table_get_default_tokenizer_string(grn_ctx *ctx,
                                        grn_obj *table,
                                        grn_obj *output);
-
 
 /* Deprecated since 8.0.9. Use grn_table_module_open_options_func instead. */
 typedef grn_table_module_open_options_func grn_normalizer_open_options_func;
@@ -68,17 +68,16 @@ grn_table_get_normalizer_options(grn_ctx *ctx,
 
 /* TODO: Remove string argument. It's needless. */
 GRN_API void *
-grn_table_cache_normalizer_options(grn_ctx *ctx,
-                                   grn_obj *table,
-                                   grn_obj *string,
-                                   grn_table_module_open_options_func open_options_func,
-                                   grn_close_func close_options_func,
-                                   void *user_data);
+grn_table_cache_normalizer_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  grn_obj *string,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
 
 GRN_API grn_rc
-grn_table_get_normalizer_string(grn_ctx *ctx,
-                                grn_obj *table,
-                                grn_obj *output);
+grn_table_get_normalizer_string(grn_ctx *ctx, grn_obj *table, grn_obj *output);
 
 GRN_API grn_rc
 grn_table_set_normalizers_options(grn_ctx *ctx,
@@ -93,19 +92,19 @@ grn_table_get_normalizers_options(grn_ctx *ctx,
                                   grn_obj *options);
 
 GRN_API void *
-grn_table_cache_normalizers_options(grn_ctx *ctx,
-                                    grn_obj *table,
-                                    uint32_t i,
-                                    grn_table_module_open_options_func open_options_func,
-                                    grn_close_func close_options_func,
-                                    void *user_data);
+grn_table_cache_normalizers_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  uint32_t i,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
 
 GRN_API grn_rc
-grn_table_get_normalizers_string(grn_ctx *ctx,
-                                 grn_obj *table,
-                                 grn_obj *output);
+grn_table_get_normalizers_string(grn_ctx *ctx, grn_obj *table, grn_obj *output);
 
-/* Deprecated since 11.0.4. Use grn_table_set_token_filters_options() instead. */
+/* Deprecated since 11.0.4. Use grn_table_set_token_filters_options() instead.
+ */
 GRN_API grn_rc
 grn_table_set_token_filter_options(grn_ctx *ctx,
                                    grn_obj *table,
@@ -118,7 +117,8 @@ grn_table_set_token_filters_options(grn_ctx *ctx,
                                     uint32_t i,
                                     grn_obj *options);
 
-/* Deprecated since 11.0.4. Use grn_table_get_token_filters_options() instead. */
+/* Deprecated since 11.0.4. Use grn_table_get_token_filters_options() instead.
+ */
 GRN_API grn_rc
 grn_table_get_token_filter_options(grn_ctx *ctx,
                                    grn_obj *table,
@@ -131,23 +131,25 @@ grn_table_get_token_filters_options(grn_ctx *ctx,
                                     uint32_t i,
                                     grn_obj *options);
 
-
-/* Deprecated since 11.0.4. Use grn_table_cache_token_filters_options() instead. */
+/* Deprecated since 11.0.4. Use grn_table_cache_token_filters_options() instead.
+ */
 GRN_API void *
-grn_table_cache_token_filter_options(grn_ctx *ctx,
-                                     grn_obj *table,
-                                     unsigned int i,
-                                     grn_table_module_open_options_func open_options_func,
-                                     grn_close_func close_options_func,
-                                     void *user_data);
+grn_table_cache_token_filter_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  unsigned int i,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
 
 GRN_API void *
-grn_table_cache_token_filters_options(grn_ctx *ctx,
-                                      grn_obj *table,
-                                      uint32_t i,
-                                      grn_table_module_open_options_func open_options_func,
-                                      grn_close_func close_options_func,
-                                      void *user_data);
+grn_table_cache_token_filters_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  uint32_t i,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
 
 GRN_API grn_rc
 grn_table_get_token_filters_string(grn_ctx *ctx,
