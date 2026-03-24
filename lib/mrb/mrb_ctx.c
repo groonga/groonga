@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2013-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1132,6 +1132,15 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
                  MESSAGE_SIZE,
                  MESSAGE_SIZE,
                  "OpenZL error: <%s>(%d)",
+                 utf8_error_message,
+                 ctx->rc);
+    break;
+  case GRN_EXTRACTOR_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "ExtractorError");
+    grn_snprintf(message,
+                 MESSAGE_SIZE,
+                 MESSAGE_SIZE,
+                 "extractor error: <%s>(%d)",
                  utf8_error_message,
                  ctx->rc);
     break;

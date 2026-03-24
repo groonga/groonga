@@ -17,6 +17,8 @@ libgroonga_c_sources =				\
 	error.c					\
 	expr.c					\
 	expr_code.c				\
+	extractor.c				\
+	extractors.c				\
 	file_lock.c				\
 	file_reader.c				\
 	float.c					\
@@ -47,6 +49,8 @@ libgroonga_c_sources =				\
 	grn_expr.h				\
 	grn_expr_code.h				\
 	grn_expr_executor.h			\
+	grn_extractor.h				\
+	grn_extractors.h			\
 	grn_file_lock.h				\
 	grn_float.h				\
 	grn_generated_column.h			\

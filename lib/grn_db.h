@@ -27,6 +27,7 @@
 #include "grn_store.h"
 
 #include <groonga/command.h>
+#include <groonga/extractor.h>
 #include <groonga/token_filter.h>
 #include <groonga/scorer.h>
 
@@ -463,6 +464,9 @@ struct _grn_proc {
       grn_aggregator_update_func *update;
       grn_aggregator_fin_func *fin;
     } aggregator;
+    struct {
+      grn_extractor_extract_func *extract;
+    } extractor;
   } callbacks;
 
   void *user_data;
