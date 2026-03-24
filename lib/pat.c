@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2025  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -1869,8 +1869,9 @@ _grn_pat_create(grn_ctx *ctx,
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = false;
-  GRN_TEXT_INIT(&(pat->token_filters), 0);
+  grn_table_modules_init(ctx, &(pat->token_filters));
   GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_table_modules_init(ctx, &(pat->extractors));
   pat->io = io;
   pat->header = header;
   pat->key_size = key_size;
@@ -2008,6 +2009,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   }
   grn_table_modules_init(ctx, &(pat->token_filters));
   GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_table_modules_init(ctx, &(pat->extractors));
   pat->obj.header.flags = header->flags;
   PAT_AT(pat, 0, node0);
   if (!node0) {
@@ -2074,6 +2076,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
   grn_table_module_fin(ctx, &(pat->tokenizer));
   grn_table_modules_fin(ctx, &(pat->normalizers));
   grn_pat_close_token_filters(ctx, pat);
+  grn_table_modules_fin(ctx, &(pat->extractors));
   if (pat->cache) {
     grn_pat_cache_disable(ctx, pat);
   }
@@ -2130,6 +2133,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   grn_table_module_fin(ctx, &(pat->tokenizer));
   grn_table_modules_fin(ctx, &(pat->normalizers));
   grn_pat_close_token_filters(ctx, pat);
+  grn_table_modules_fin(ctx, &(pat->extractors));
   pat->io = NULL;
   if (path && (rc = grn_pat_remove(ctx, path))) {
     goto exit;
