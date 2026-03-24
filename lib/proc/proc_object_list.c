@@ -215,6 +215,7 @@ command_object_list(grn_ctx *ctx,
       bool need_generator = false;
       bool need_token_filters = false;
       bool need_normalizers = false;
+      bool need_extractors = false;
 
       element_size = grn_vector_get_element(ctx,
                                             &vector,
@@ -256,6 +257,8 @@ command_object_list(grn_ctx *ctx,
         need_token_filters = true;
         n_properties++;
         need_normalizers = true;
+        n_properties++;
+        need_extractors = true;
         n_properties++;
         break;
       case GRN_TABLE_NO_KEY:
@@ -426,6 +429,15 @@ command_object_list(grn_ctx *ctx,
             GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS,
             "normalizer",
             "normalizers");
+        }
+
+        if (need_extractors) {
+          command_object_list_output_table_modules(
+            ctx,
+            &vector,
+            GRN_SERIALIZED_SPEC_INDEX_EXTRACTORS,
+            "extractor",
+            "extractors");
         }
       }
       grn_ctx_output_map_close(ctx);

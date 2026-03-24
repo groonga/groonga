@@ -511,7 +511,8 @@ object_list
         "name": null
       },
       "token_filters": [],
-      "normalizers": []
+      "normalizers": [],
+      "extractors": []
     },
     "Users.description": {
       "id": 262,
@@ -579,7 +580,8 @@ object_list
           "id": 83,
           "name": "NormalizerAuto"
         }
-      ]
+      ],
+      "extractors": []
     },
     "Terms.users": {
       "id": 265,
@@ -686,7 +688,8 @@ object_list
           "id": 83,
           "name": "NormalizerAuto"
         }
-      ]
+      ],
+      "extractors": []
     },
     "Tags.users": {
       "id": 269,
