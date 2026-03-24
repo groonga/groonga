@@ -348,6 +348,7 @@ schema
             ]
           }
         ],
+        "extractors": [],
         "indexes": [],
         "command": {
           "name": "table_create",

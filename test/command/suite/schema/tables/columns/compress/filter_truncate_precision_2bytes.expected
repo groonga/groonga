@@ -323,6 +323,7 @@ schema
         "normalizer": null,
         "normalizers": [],
         "token_filters": [],
+        "extractors": [],
         "indexes": [],
         "command": {
           "name": "table_create",

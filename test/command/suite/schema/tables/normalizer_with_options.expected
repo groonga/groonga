@@ -341,6 +341,7 @@ schema
           }
         ],
         "token_filters": [],
+        "extractors": [],
         "indexes": [],
         "command": {
           "name": "table_create",
