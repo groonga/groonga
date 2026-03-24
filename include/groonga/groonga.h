@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -149,6 +149,7 @@ typedef enum {
   GRN_CONNECTION_RESET = -80,
   GRN_BLOSC_ERROR = -81,
   GRN_OPENZL_ERROR = -82,
+  GRN_EXTRACTOR_ERROR = -83,
 } grn_rc;
 
 GRN_API grn_rc

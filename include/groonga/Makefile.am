@@ -19,6 +19,7 @@ groonga_include_HEADERS =			\
 	dump.h					\
 	error.h					\
 	expr.h					\
+	extractor.h				\
 	file_reader.h				\
 	float.h					\
 	h3.h					\

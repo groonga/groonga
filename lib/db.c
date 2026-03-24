@@ -26,6 +26,7 @@
 #include "grn_config.h"
 #include "grn_db.h"
 #include "grn_obj.h"
+#include "grn_extractors.h"
 #include "grn_hash.h"
 #include "grn_http_client.h"
 #include "grn_pat.h"
@@ -667,6 +668,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
     grn_db_init_builtin_window_functions(ctx);
     grn_db_init_builtin_token_filters(ctx);
     grn_db_init_builtin_aggregators(ctx);
+    grn_db_init_builtin_extractors(ctx);
 
     if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
       need_flush = true;
@@ -8190,12 +8192,12 @@ grn_obj_get_info(grn_ctx *ctx,
           break;
         }
         if (extractors) {
-          size_t n = GRN_PTR_VECTOR_SIZE(extractors);
+          grn_table_module *raw_extractors =
+            (grn_table_module *)GRN_BULK_HEAD(extractors);
+          size_t n = GRN_BULK_VSIZE(extractors) / sizeof(grn_table_module);
           size_t i;
           for (i = 0; i < n; i++) {
-            grn_table_module *extractor_module =
-              (grn_table_module *)GRN_PTR_VALUE_AT(extractors, i);
-            grn_obj *extractor = extractor_module->proc;
+            grn_obj *extractor = raw_extractors[i].proc;
             GRN_PTR_PUT(ctx, valuebuf, extractor);
           }
         }
@@ -15258,6 +15260,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   grn_db_init_builtin_window_functions(ctx);
   grn_db_init_builtin_token_filters(ctx);
   grn_db_init_builtin_aggregators(ctx);
+  grn_db_init_builtin_extractors(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_N_RESERVED_TYPES; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

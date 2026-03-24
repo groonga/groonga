@@ -1,4 +1,4 @@
-# Copyright (C) 2023-2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ repos:
           ?include/groonga/distance\.h|
           ?include/groonga/error\.h|
           ?include/groonga/expr\.h|
+          ?include/groonga/extractor\.h|
           ?include/groonga/float\.h|
           ?include/groonga/geo\.h|
           ?include/groonga/groonga\.h|
@@ -84,6 +85,8 @@ repos:
           ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/expr_executor\.cpp|
+          ?lib/extractor\.c|
+          ?lib/extractors\.c|
           ?lib/geo\.c|
           ?lib/generated_column\.c|
           ?lib/grn\.h|
@@ -103,6 +106,8 @@ repos:
           ?lib/grn_error\.h|
           ?lib/grn_expr\.h|
           ?lib/grn_expr_executor\.h|
+          ?lib/grn_extractor\.h|
+          ?lib/grn_extractors\.h|
           ?lib/grn_generated_column\.h|
           ?lib/grn_geo\.h|
           ?lib/grn_hash\.h|

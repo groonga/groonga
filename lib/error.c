@@ -488,14 +488,17 @@ grn_rc_to_string(grn_rc rc)
   case GRN_ZSTD_ERROR:
     message = "Zstandard error";
     break;
-  case GRN_OPENZL_ERROR:
-    message = "OpenZL error";
-    break;
   case GRN_CONNECTION_RESET:
     message = "connection reset";
     break;
   case GRN_BLOSC_ERROR:
     message = "Blosc error";
+    break;
+  case GRN_OPENZL_ERROR:
+    message = "OpenZL error";
+    break;
+  case GRN_EXTRACTOR_ERROR:
+    message = "extractor error";
     break;
   }
 
