@@ -409,8 +409,7 @@ object_list
       "range": {
         "id": 0,
         "name": null
-      },
-      "token_filters": []
+      }
     }
   }
 ]
