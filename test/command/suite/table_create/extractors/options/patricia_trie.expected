@@ -1,0 +1,6 @@
+table_create Terms TABLE_PAT_KEY ShortText   --extractors 'ExtractorHTML("remove_tag", "false")'
+[[0,0.0,0.0],true]
+database_unmap
+[[0,0.0,0.0],true]
+dump
+table_create Terms TABLE_PAT_KEY ShortText --extractors "ExtractorHTML(\"remove_tag\", \"false\")"

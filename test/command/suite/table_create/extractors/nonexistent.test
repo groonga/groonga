@@ -1,5 +1,5 @@
 table_create Terms TABLE_PAT_KEY ShortText \
-  --normalizers NormalizerNonexistent
+  --extractors ExtractorNonexistent
 
 # This dump doesn't output anything. We don't want to wait too long.
 #@read-timeout 0.1

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -933,6 +933,16 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_INIT(&sub_output, 0);
     grn_table_get_token_filters_string(ctx, table, &sub_output);
     dump_string(ctx, dumper, &sub_output);
+    GRN_OBJ_FIN(ctx, &sub_output);
+  }
+  if (domain) {
+    grn_obj sub_output;
+    GRN_TEXT_INIT(&sub_output, 0);
+    grn_table_get_extractors_string(ctx, table, &sub_output);
+    if (GRN_TEXT_LEN(&sub_output) > 0) {
+      GRN_TEXT_PUTS(ctx, dumper->output, " --extractors ");
+      dump_string(ctx, dumper, &sub_output);
+    }
     GRN_OBJ_FIN(ctx, &sub_output);
   }
   if ((flags & GRN_OBJ_CUSTOM_NAME) && dumper->is_dump_paths) {

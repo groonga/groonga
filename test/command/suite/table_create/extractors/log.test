@@ -1,0 +1,9 @@
+# Suppress startup notice logs
+#@disable-logging
+status
+#@enable-logging
+
+#@add-important-log-levels notice
+table_create Terms TABLE_PAT_KEY ShortText \
+  --extractors ExtractorHTML
+#@remove-important-log-levels notice

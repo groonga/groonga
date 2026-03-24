@@ -496,7 +496,7 @@ object_list
       "id": 261,
       "name": "Users",
       "opened": true,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 50,
         "name": "table:dat_key"
@@ -560,7 +560,7 @@ object_list
       "id": 264,
       "name": "Terms",
       "opened": false,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 49,
         "name": "table:pat_key"
@@ -668,7 +668,7 @@ object_list
       "id": 268,
       "name": "Tags",
       "opened": true,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 48,
         "name": "table:hash_key"

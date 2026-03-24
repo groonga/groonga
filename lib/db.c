@@ -8667,17 +8667,23 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_vector_delimit(ctx, &v, 0, 0);
     grn_table_modules_pack(ctx, &(((grn_hash *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_hash *)obj)->extractors), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_PAT_KEY:
     grn_table_modules_pack(ctx, &(((grn_pat *)obj)->token_filters), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     grn_table_modules_pack(ctx, &(((grn_pat *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_pat *)obj)->extractors), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_DAT_KEY:
     grn_table_modules_pack(ctx, &(((grn_dat *)obj)->token_filters), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     grn_table_modules_pack(ctx, &(((grn_dat *)obj)->normalizers), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_dat *)obj)->extractors), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_COLUMN_FIX_SIZE:
