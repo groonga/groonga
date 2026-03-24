@@ -349,6 +349,18 @@ command_list
         }
       ]
     },
+    "extract": {
+      "id": 226,
+      "name": "extract",
+      "arguments": [
+        {
+          "name": "extractors"
+        },
+        {
+          "name": "value"
+        }
+      ]
+    },
     "index_column_diff": {
       "id": 210,
       "name": "index_column_diff",

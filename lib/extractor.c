@@ -22,6 +22,15 @@
 #include "grn_db.h"
 #include "grn_extractor.h"
 
+grn_rc
+grn_extract_data_init(grn_ctx *ctx, grn_extract_data *data)
+{
+  data->table = NULL;
+  data->index = 0;
+  data->value = NULL;
+  return GRN_SUCCESS;
+}
+
 grn_obj *
 grn_extract_data_get_value(grn_ctx *ctx, grn_extract_data *data)
 {

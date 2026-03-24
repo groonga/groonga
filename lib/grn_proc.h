@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -78,6 +78,8 @@ void
 grn_proc_init_edit_distance(grn_ctx *ctx);
 void
 grn_proc_init_escalate(grn_ctx *ctx);
+void
+grn_proc_init_extract(grn_ctx *ctx);
 void
 grn_proc_init_fuzzy_search(grn_ctx *ctx);
 void
@@ -258,6 +260,10 @@ bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_raw_string *token_filters_raw);
+bool
+grn_proc_table_set_extractors(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_raw_string *extractors_raw);
 
 grn_column_flags
 grn_proc_column_parse_flags(grn_ctx *ctx,
@@ -313,6 +319,7 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                       grn_raw_string *tokenizer_raw,
                       grn_raw_string *normalizer_raw,
                       grn_raw_string *token_filters_raw,
+                      grn_raw_string *extractors_raw,
                       const char *context_tag);
 
 bool

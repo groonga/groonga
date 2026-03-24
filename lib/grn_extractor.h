@@ -32,6 +32,9 @@ struct grn_extract_data {
   grn_obj *value;
 };
 
+grn_rc
+grn_extract_data_init(grn_ctx *ctx, grn_extract_data *data);
+
 grn_obj *
 grn_extractor_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data);
 

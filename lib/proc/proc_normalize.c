@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -114,6 +114,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     lexicon = grn_proc_lexicon_open(ctx,
                                     NULL,
                                     &normalizers_raw,
+                                    NULL,
                                     NULL,
                                     context_tag);
     if (!lexicon) {

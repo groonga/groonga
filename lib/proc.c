@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -5663,4 +5663,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_distance_l2_norm_squared(ctx);
 
   grn_proc_init_command_list(ctx);
+
+  grn_proc_init_extract(ctx);
 }
