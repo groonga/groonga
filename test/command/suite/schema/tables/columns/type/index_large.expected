@@ -333,6 +333,7 @@ schema
         "normalizer": null,
         "normalizers": [],
         "token_filters": [],
+        "extractors": [],
         "indexes": [
           {
             "id": 260,
@@ -464,6 +465,7 @@ schema
           }
         ],
         "token_filters": [],
+        "extractors": [],
         "indexes": [],
         "command": {
           "name": "table_create",

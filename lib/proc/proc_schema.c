@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -627,33 +627,55 @@ command_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
-command_schema_table_output_normalizers(grn_ctx *ctx, grn_obj *table)
+command_schema_table_output_table_modules(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_info_type type,
+                                          const char *singular,
+                                          const char *plural)
 {
-  grn_obj normalizers;
-  GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj modules;
+  GRN_PTR_INIT(&modules, GRN_OBJ_VECTOR, GRN_ID_NIL);
   if (grn_obj_is_table_with_key(ctx, table)) {
-    grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZERS, &normalizers);
+    grn_obj_get_info(ctx, table, type, &modules);
   }
 
-  size_t n = GRN_PTR_VECTOR_SIZE(&normalizers);
-  grn_ctx_output_array_open(ctx, "normalizers", (int)n);
+  size_t n = GRN_PTR_VECTOR_SIZE(&modules);
+  grn_ctx_output_array_open(ctx, plural, (int)n);
   size_t i;
   for (i = 0; i < n; i++) {
-    grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+    grn_obj *module = GRN_PTR_VALUE_AT(&modules, i);
 
-    grn_ctx_output_map_open(ctx, "normalizer", 3);
+    grn_ctx_output_map_open(ctx, singular, 3);
     {
       grn_ctx_output_cstr(ctx, "id");
-      command_schema_output_id(ctx, normalizer);
+      command_schema_output_id(ctx, module);
 
       grn_ctx_output_cstr(ctx, "name");
-      command_schema_output_name(ctx, normalizer);
+      command_schema_output_name(ctx, module);
 
       grn_ctx_output_cstr(ctx, "options");
       {
         grn_obj options;
         GRN_VOID_INIT(&options);
-        grn_table_get_normalizers_options(ctx, table, (uint32_t)i, &options);
+        switch (type) {
+        case GRN_INFO_NORMALIZERS:
+          grn_table_get_normalizers_options(ctx, table, (uint32_t)i, &options);
+          break;
+        case GRN_INFO_TOKEN_FILTERS:
+          grn_table_get_token_filters_options(ctx,
+                                              table,
+                                              (uint32_t)i,
+                                              &options);
+          break;
+        case GRN_INFO_EXTRACTORS:
+          grn_table_get_token_filters_options(ctx,
+                                              table,
+                                              (uint32_t)i,
+                                              &options);
+          break;
+        default:
+          break;
+        }
         command_schema_table_output_options(ctx, &options);
         GRN_OBJ_FIN(ctx, &options);
       }
@@ -661,49 +683,8 @@ command_schema_table_output_normalizers(grn_ctx *ctx, grn_obj *table)
     grn_ctx_output_map_close(ctx);
   }
   grn_ctx_output_array_close(ctx);
-}
 
-static void
-command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
-{
-  grn_obj token_filters;
-
-  GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
-  if (grn_obj_is_table_with_key(ctx, table)) {
-    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
-  }
-
-  size_t i, n;
-  n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
-  grn_ctx_output_array_open(ctx, "token_filters", (int)n);
-  for (i = 0; i < n; i++) {
-    grn_obj *token_filter;
-
-    token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
-
-    grn_ctx_output_map_open(ctx, "token_filter", 3);
-
-    grn_ctx_output_cstr(ctx, "id");
-    command_schema_output_id(ctx, token_filter);
-
-    grn_ctx_output_cstr(ctx, "name");
-    command_schema_output_name(ctx, token_filter);
-
-    grn_ctx_output_cstr(ctx, "options");
-    {
-      grn_obj options;
-
-      GRN_VOID_INIT(&options);
-      grn_table_get_token_filters_options(ctx, table, (uint32_t)i, &options);
-      command_schema_table_output_options(ctx, &options);
-      GRN_OBJ_FIN(ctx, &options);
-    }
-
-    grn_ctx_output_map_close(ctx);
-  }
-  grn_ctx_output_array_close(ctx);
-
-  GRN_OBJ_FIN(ctx, &token_filters);
+  GRN_OBJ_FIN(ctx, &modules);
 }
 
 static void
@@ -818,6 +799,19 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
       GRN_OBJ_FIN(ctx, &sub_output);
     }
     GRN_OBJ_FIN(ctx, &token_filters);
+
+    grn_obj extractors;
+    GRN_PTR_INIT(&extractors, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_get_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
+    if (grn_vector_size(ctx, &extractors) > 0) {
+      grn_obj sub_output;
+      GRN_TEXT_INIT(&sub_output, 0);
+      grn_table_get_extractors_string(ctx, table, &sub_output);
+      GRN_TEXT_PUTC(ctx, &sub_output, '\0');
+      ADD("extractors", GRN_TEXT_VALUE(&sub_output));
+      GRN_OBJ_FIN(ctx, &sub_output);
+    }
+    GRN_OBJ_FIN(ctx, &extractors);
   }
 
 #undef ADD_OBJECT_NAME
@@ -1324,7 +1318,7 @@ command_schema_output_table(grn_ctx *ctx, grn_schema_data *data, grn_obj *table)
 {
   command_schema_output_name(ctx, table);
 
-  grn_ctx_output_map_open(ctx, "table", 12);
+  grn_ctx_output_map_open(ctx, "table", 13);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, table);
@@ -1348,10 +1342,25 @@ command_schema_output_table(grn_ctx *ctx, grn_schema_data *data, grn_obj *table)
   command_schema_table_output_normalizer(ctx, table);
 
   grn_ctx_output_cstr(ctx, "normalizers");
-  command_schema_table_output_normalizers(ctx, table);
+  command_schema_table_output_table_modules(ctx,
+                                            table,
+                                            GRN_INFO_NORMALIZERS,
+                                            "normalizer",
+                                            "normalizers");
 
   grn_ctx_output_cstr(ctx, "token_filters");
-  command_schema_table_output_token_filters(ctx, table);
+  command_schema_table_output_table_modules(ctx,
+                                            table,
+                                            GRN_INFO_TOKEN_FILTERS,
+                                            "token_filter",
+                                            "token_filters");
+
+  grn_ctx_output_cstr(ctx, "extractors");
+  command_schema_table_output_table_modules(ctx,
+                                            table,
+                                            GRN_INFO_EXTRACTORS,
+                                            "extractor",
+                                            "extractors");
 
   grn_ctx_output_cstr(ctx, "indexes");
   command_schema_output_indexes(ctx, table);
