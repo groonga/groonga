@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -114,6 +114,7 @@ struct _grn_db {
 #define GRN_SERIALIZED_SPEC_INDEX_HOOK          3
 #define GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
 #define GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS   5
+#define GRN_SERIALIZED_SPEC_INDEX_EXTRACTORS    6
 #define GRN_SERIALIZED_SPEC_INDEX_EXPR          4
 #define GRN_SERIALIZED_SPEC_INDEX_JA_GENERATOR  4
 #define GRN_SERIALIZED_SPEC_INDEX_RA_GENERATOR  4
@@ -880,6 +881,15 @@ grn_table_create_similar_id_map(grn_ctx *ctx,
     grn_table_get_token_filters_string(ctx, base_table, &buffer);
     if (GRN_TEXT_LEN(&buffer) > 0) {
       grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_extractors_string(ctx, base_table, &buffer);
+    if (GRN_TEXT_LEN(&buffer) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_EXTRACTORS, &buffer);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
   Copyright (C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -3259,6 +3259,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     grn_obj tokenizer;
     grn_obj normalizers;
     grn_obj token_filters;
+    grn_obj extractors;
     if ((cols = grn_hash_create(ctx,
                                 NULL,
                                 sizeof(grn_id),
@@ -3282,6 +3283,8 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       grn_table_get_normalizers_string(ctx, table, &normalizers);
       GRN_TEXT_INIT(&token_filters, 0);
       grn_table_get_token_filters_string(ctx, table, &token_filters);
+      GRN_TEXT_INIT(&extractors, 0);
+      grn_table_get_extractors_string(ctx, table, &extractors);
 
       rc = grn_table_truncate_reference_objects(ctx, table);
       if (rc != GRN_SUCCESS) {
@@ -3315,6 +3318,10 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
         grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
       }
       GRN_OBJ_FIN(ctx, &token_filters);
+      if (GRN_TEXT_LEN(&extractors) > 0) {
+        grn_obj_set_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
+      }
+      GRN_OBJ_FIN(ctx, &extractors);
     }
     if (rc == GRN_SUCCESS) {
       grn_obj_touch(ctx, table, NULL);
@@ -8151,6 +8158,49 @@ grn_obj_get_info(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_INFO_EXTRACTORS:
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_PVECTOR, 0, 0))) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "%s[extractors] failed to allocate value buffer",
+              tag);
+          goto exit;
+        }
+      }
+      {
+        grn_obj *extractors = NULL;
+        switch (obj->header.type) {
+        case GRN_TABLE_HASH_KEY:
+          extractors = &(((grn_hash *)obj)->extractors);
+          break;
+        case GRN_TABLE_PAT_KEY:
+          extractors = &(((grn_pat *)obj)->extractors);
+          break;
+        case GRN_TABLE_DAT_KEY:
+          extractors = &(((grn_dat *)obj)->extractors);
+          break;
+        default:
+          ERR(GRN_INVALID_ARGUMENT,
+              "[info][get][extractors] target object must be one of "
+              "%s, %s or %s: %s",
+              grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
+              grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
+              grn_obj_type_to_string(GRN_TABLE_DAT_KEY),
+              grn_obj_type_to_string(obj->header.type));
+          break;
+        }
+        if (extractors) {
+          size_t n = GRN_PTR_VECTOR_SIZE(extractors);
+          size_t i;
+          for (i = 0; i < n; i++) {
+            grn_table_module *extractor_module =
+              (grn_table_module *)GRN_PTR_VALUE_AT(extractors, i);
+            grn_obj *extractor = extractor_module->proc;
+            GRN_PTR_PUT(ctx, valuebuf, extractor);
+          }
+        }
+      }
+      break;
     case GRN_INFO_GENERATOR:
       if (!valuebuf) {
         if (!(valuebuf = grn_obj_open(ctx, GRN_DB_TEXT, 0, 0))) {
@@ -9167,6 +9217,9 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
     case GRN_INFO_TOKEN_FILTERS:
       is_valid_proc = grn_obj_is_token_filter_proc(ctx, proc);
       break;
+    case GRN_INFO_EXTRACTORS:
+      is_valid_proc = grn_obj_is_extractor_proc(ctx, proc);
+      break;
     default:
       break;
     }
@@ -9208,6 +9261,9 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
     break;
   case GRN_INFO_TOKEN_FILTERS:
     grn_table_set_token_filters_options(ctx, table, i, &options);
+    break;
+  case GRN_INFO_EXTRACTORS:
+    grn_table_set_extractors_options(ctx, table, i, &options);
     break;
   default:
     break;
@@ -9377,6 +9433,9 @@ grn_obj_set_info_table_modules_text(grn_ctx *ctx,
     case GRN_INFO_TOKEN_FILTERS:
       is_valid_proc = grn_obj_is_token_filter_proc(ctx, proc);
       break;
+    case GRN_INFO_EXTRACTORS:
+      is_valid_proc = grn_obj_is_extractor_proc(ctx, proc);
+      break;
     default:
       break;
     }
@@ -9408,6 +9467,9 @@ grn_obj_set_info_table_modules_text(grn_ctx *ctx,
     case GRN_INFO_TOKEN_FILTERS:
       GRN_PTR_PUT(ctx, procs, proc);
       grn_table_set_token_filters_options(ctx, table, i, &options);
+      break;
+    case GRN_INFO_EXTRACTORS:
+      grn_table_set_extractors_options(ctx, table, i, &options);
       break;
     default:
       break;
@@ -9515,6 +9577,9 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
       table_modules = &(((grn_hash *)table)->token_filters);
       procs = &(((grn_hash *)table)->token_filter_procs);
       break;
+    case GRN_INFO_EXTRACTORS:
+      table_modules = &(((grn_hash *)table)->extractors);
+      break;
     default:
       break;
     }
@@ -9528,6 +9593,9 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
       table_modules = &(((grn_pat *)table)->token_filters);
       procs = &(((grn_pat *)table)->token_filter_procs);
       break;
+    case GRN_INFO_EXTRACTORS:
+      table_modules = &(((grn_pat *)table)->extractors);
+      break;
     default:
       break;
     }
@@ -9540,6 +9608,9 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
     case GRN_INFO_TOKEN_FILTERS:
       table_modules = &(((grn_dat *)table)->token_filters);
       procs = &(((grn_dat *)table)->token_filter_procs);
+      break;
+    case GRN_INFO_EXTRACTORS:
+      table_modules = &(((grn_dat *)table)->extractors);
       break;
     default:
       break;
@@ -9805,6 +9876,15 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
                                         "[info][set][token-filters]",
                                         "token filters",
                                         "token_filters");
+    break;
+  case GRN_INFO_EXTRACTORS:
+    rc = grn_obj_set_info_table_modules(ctx,
+                                        obj,
+                                        type,
+                                        value,
+                                        "[info][set][extractors]",
+                                        "extractors",
+                                        "extractors");
     break;
   case GRN_INFO_GENERATOR:
     rc = grn_obj_set_info_generator(ctx,
@@ -12291,6 +12371,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     &(hash->normalizers),
                     NULL,
                     "[at][normalizers]");
+                  grn_table_modules_unpack(ctx,
+                                           &decoded_spec,
+                                           GRN_SERIALIZED_SPEC_INDEX_EXTRACTORS,
+                                           &(hash->extractors),
+                                           NULL,
+                                           "[at][extractors]");
                 }
                 break;
               case GRN_TABLE_PAT_KEY:
@@ -12315,6 +12401,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     &(pat->normalizers),
                     NULL,
                     "[at][normalizers]");
+                  grn_table_modules_unpack(ctx,
+                                           &decoded_spec,
+                                           GRN_SERIALIZED_SPEC_INDEX_EXTRACTORS,
+                                           &(pat->extractors),
+                                           NULL,
+                                           "[at][extractors]");
                   if (pat->tokenizer.proc) {
                     grn_pat_cache_enable(ctx,
                                          pat,
@@ -12344,6 +12436,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     &(dat->normalizers),
                     NULL,
                     "[at][normalizers]");
+                  grn_table_modules_unpack(ctx,
+                                           &decoded_spec,
+                                           GRN_SERIALIZED_SPEC_INDEX_EXTRACTORS,
+                                           &(dat->extractors),
+                                           NULL,
+                                           "[at][extractors]");
                 }
                 break;
               case GRN_TABLE_NO_KEY:

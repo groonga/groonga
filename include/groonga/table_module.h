@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -155,6 +155,30 @@ GRN_API grn_rc
 grn_table_get_token_filters_string(grn_ctx *ctx,
                                    grn_obj *table,
                                    grn_obj *output);
+
+GRN_API grn_rc
+grn_table_set_extractors_options(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 uint32_t i,
+                                 grn_obj *options);
+
+GRN_API grn_rc
+grn_table_get_extractors_options(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 uint32_t i,
+                                 grn_obj *options);
+
+GRN_API void *
+grn_table_cache_extractors_options(
+  grn_ctx *ctx,
+  grn_obj *table,
+  uint32_t i,
+  grn_table_module_open_options_func open_options_func,
+  grn_close_func close_options_func,
+  void *user_data);
+
+GRN_API grn_rc
+grn_table_get_extractors_string(grn_ctx *ctx, grn_obj *table, grn_obj *output);
 
 #ifdef __cplusplus
 }
