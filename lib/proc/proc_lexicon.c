@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2018 Brazil
+  Copyright (C) 2018-2026 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                       grn_raw_string *tokenizer_raw,
                       grn_raw_string *normalizer_raw,
                       grn_raw_string *token_filters_raw,
+                      grn_raw_string *extractors_raw,
                       const char *context_tag)
 {
   grn_obj *lexicon;
@@ -44,17 +45,18 @@ grn_proc_lexicon_open(grn_ctx *ctx,
     }
     grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
     GRN_OBJ_FIN(ctx, &tokenizer);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, lexicon);
+      GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                       "%s failed to set tokenizer: <%.*s>: %s",
+                       context_tag,
+                       (int)(tokenizer_raw->length),
+                       tokenizer_raw->value,
+                       ctx->errbuf);
+      return NULL;
+    }
   }
-  if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_close(ctx, lexicon);
-    GRN_PLUGIN_ERROR(ctx, ctx->rc,
-                     "%s failed to set tokenizer: <%.*s>: %s",
-                     context_tag,
-                     (int)(tokenizer_raw->length),
-                     tokenizer_raw->value,
-                     ctx->errbuf);
-    return NULL;
-  }
+
   {
     grn_obj normalizer;
     GRN_TEXT_INIT(&normalizer, GRN_OBJ_DO_SHALLOW_COPY);
@@ -66,29 +68,44 @@ grn_proc_lexicon_open(grn_ctx *ctx,
     }
     grn_obj_set_info(ctx, lexicon, GRN_INFO_NORMALIZER, &normalizer);
     GRN_OBJ_FIN(ctx, &normalizer);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, lexicon);
+      GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                       "%s failed to set normalizer: <%.*s>: %s",
+                       context_tag,
+                       (int)(normalizer_raw->length),
+                       normalizer_raw->value,
+                       ctx->errbuf);
+      return NULL;
+    }
   }
-  if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_close(ctx, lexicon);
-    GRN_PLUGIN_ERROR(ctx, ctx->rc,
-                     "%s failed to set normalizer: <%.*s>: %s",
-                     context_tag,
-                     (int)(normalizer_raw->length),
-                     normalizer_raw->value,
-                     ctx->errbuf);
-    return NULL;
-  }
+
   if (token_filters_raw) {
     grn_proc_table_set_token_filters(ctx, lexicon, token_filters_raw);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, lexicon);
+      GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                       "%s failed to set token filters: <%.*s>: %s",
+                       context_tag,
+                       (int)(token_filters_raw->length),
+                       token_filters_raw->value,
+                       ctx->errbuf);
+      return NULL;
+    }
   }
-  if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_close(ctx, lexicon);
-    GRN_PLUGIN_ERROR(ctx, ctx->rc,
-                     "%s failed to set token filters: <%.*s>: %s",
-                     context_tag,
-                     (int)(token_filters_raw->length),
-                     token_filters_raw->value,
-                     ctx->errbuf);
-    return NULL;
+
+  if (extractors_raw) {
+    grn_proc_table_set_extractors(ctx, lexicon, extractors_raw);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, lexicon);
+      GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                       "%s failed to set extractors: <%.*s>: %s",
+                       context_tag,
+                       (int)(extractors_raw->length),
+                       extractors_raw->value,
+                       ctx->errbuf);
+      return NULL;
+    }
   }
 
   return lexicon;

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -501,6 +501,7 @@ command_tokenize(grn_ctx *ctx,
                                     &tokenizer_raw,
                                     &normalizer_raw,
                                     &token_filters_raw,
+                                    NULL,
                                     context_tag);
     if (!lexicon) {
       return NULL;

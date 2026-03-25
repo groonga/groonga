@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -86,7 +86,28 @@ grn_proc_table_set_token_filters(grn_ctx *ctx,
   grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   GRN_OBJ_FIN(ctx, &token_filters);
 
-  return false;
+  return ctx->rc == GRN_SUCCESS;
+}
+
+bool
+grn_proc_table_set_extractors(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_raw_string *extractors_raw)
+{
+  if (extractors_raw->length == 0) {
+    return true;
+  }
+
+  grn_obj extractors;
+  GRN_TEXT_INIT(&extractors, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx,
+               &extractors,
+               extractors_raw->value,
+               extractors_raw->length);
+  grn_obj_set_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
+  GRN_OBJ_FIN(ctx, &extractors);
+
+  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_obj *
