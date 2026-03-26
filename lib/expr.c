@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1198,7 +1198,8 @@ grn_expr_append_obj(
               grn_obj_is_tokenizer_proc(ctx, proc) ||
               grn_obj_is_normalizer_proc(ctx, proc) ||
               grn_obj_is_token_filter_proc(ctx, proc) ||
-              grn_obj_is_aggregator_proc(ctx, proc))) {
+              grn_obj_is_aggregator_proc(ctx, proc) ||
+              grn_obj_is_extractor_proc(ctx, proc))) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);

@@ -897,6 +897,9 @@ command_list
         },
         {
           "name": "normalizers"
+        },
+        {
+          "name": "extractors"
         }
       ]
     },

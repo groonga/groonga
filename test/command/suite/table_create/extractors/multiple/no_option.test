@@ -1,0 +1,4 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --extractors ExtractorHTML,ExtractorHTML
+
+dump

@@ -123,6 +123,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *default_tokenizer_raw;
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
+  grn_raw_string extractors_raw;
   grn_obj *path_raw;
   grn_obj *normalizers_raw;
   grn_obj *key_type = NULL;
@@ -147,6 +148,7 @@ command_table_create(grn_ctx *ctx,
                                                   "default_tokenizer", -1);
   normalizer_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
   GET_VALUE(token_filters);
+  GET_VALUE(extractors);
   path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
   normalizers_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizers", -1);
 
@@ -262,6 +264,10 @@ command_table_create(grn_ctx *ctx,
     if (!grn_proc_table_set_token_filters(ctx, table, &token_filters_raw)) {
       goto exit;
     }
+
+    if (!grn_proc_table_set_extractors(ctx, table, &extractors_raw)) {
+      goto exit;
+    }
   }
 
 exit :
@@ -290,7 +296,7 @@ exit :
 void
 grn_proc_init_table_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[9];
+  grn_expr_var vars[10];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "flags", -1);
@@ -301,10 +307,11 @@ grn_proc_init_table_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[6]), "token_filters", -1);
   grn_plugin_expr_var_init(ctx, &(vars[7]), "path", -1);
   grn_plugin_expr_var_init(ctx, &(vars[8]), "normalizers", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[9]), "extractors", -1);
   grn_plugin_command_create(ctx,
                             "table_create", -1,
                             command_table_create,
-                            9,
+                            10,
                             vars);
 }
 
