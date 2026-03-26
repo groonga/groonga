@@ -36,7 +36,7 @@ language_model_vectorize(model_name, text)
 language_model_vectorize(model_name, text, options)
 ```
 
-`mode_name` is the name of language mode to be used. It's associated
+`model_name` is the name of language mode to be used. It's associated
 with file name. If
 `${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`
 exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by
@@ -152,7 +152,7 @@ There are two required parameters and optional parameters.
 
 #### `model_name`
 
-`mode_name` is the name of language mode to be used. It's associated
+`model_name` is the name of language mode to be used. It's associated
 with file name. If
 `${PREFIX}/share/groonga/language_models/mistral-7b-v0.1.Q4_K_M.gguf`
 exists, you can refer it by `mistral-7b-v0.1.Q4_K_M`. It's computed by
