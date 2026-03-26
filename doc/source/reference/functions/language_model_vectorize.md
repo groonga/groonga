@@ -29,10 +29,11 @@ plugin_register functions/language_model
 
 ## Syntax
 
-`language_model_vectorize` requires two parameters:
+`language_model_vectorize` requires two parameters and has optional parameters:
 
 ```
 language_model_vectorize(model_name, text)
+language_model_vectorize(model_name, text, options)
 ```
 
 `mode_name` is the name of language mode to be used. It's associated
@@ -48,6 +49,20 @@ You can also specify a Hugging Face URI for `model_name`.
 ```
 
 `text` is the input text.
+
+```{versionadded} 16.0.1
+
+Added `options`
+
+```
+
+`options` uses the following format. All of the key-value pairs are optional:
+
+```
+  {
+    "prefix": prefix_string
+  }
+```
 
 ## Requirements
 
@@ -131,9 +146,11 @@ select \
 
 ## Parameters
 
-There are two required parameters.
+There are two required parameters and optional parameters.
 
-### `model_name`
+### Required parameters
+
+#### `model_name`
 
 `mode_name` is the name of language mode to be used. It's associated
 with file name. If
@@ -159,9 +176,46 @@ language_model_vectorize("hf:///groonga/bge-m3-Q4_K_M-GGUF", content)
 
 ````
 
-### `text`
+#### `text`
 
 `text` is the input text.
+
+### Optional parameters
+
+#### `options`
+
+```{versionadded} 16.0.1
+
+```
+
+`options` can be passed as a JSON object.
+
+##### `prefix`
+
+```{versionadded} 16.0.1
+
+```
+
+`prefix` specifies the prefix for `text`.
+
+Some models such as `multilingual-e5` require a prefix for search target text and query text:
+
+- Use `"passage: "` when vectorizing search target text.
+- Use `"query: "` when vectorizing query text.
+
+Examples:
+
+```
+language_model_vectorize("hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                         content, \
+                         {"prefix": "passage: "})
+```
+
+```
+language_model_vectorize("hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                         "male child", \
+                         {"prefix": "query: "})
+```
 
 ## Return value
 
