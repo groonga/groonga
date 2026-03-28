@@ -106,7 +106,7 @@ Copyright: 2004-2005, 2007-2009, 2011-2015 Free Software Foundation, Inc.
 License: Permissive
 
 Files: vendor/mruby-source/*
-Copyright: 2016 mruby devevlopers
+Copyright: 2016 mruby developers
 License: MIT
 
 Files: vendor/mruby/*
