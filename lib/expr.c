@@ -86,6 +86,7 @@ grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, unsigned char flags)
 grn_hash *
 grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars)
 {
+  const char *tag = "[expr][get-vars]";
   grn_hash *vars = NULL;
   if (expr->header.type == GRN_PROC || expr->header.type == GRN_EXPR) {
     grn_id id = DB_OBJ(expr)->id;
@@ -132,9 +133,21 @@ grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars)
                          GRN_TEXT_VALUE(&v->value),
                          GRN_TEXT_LEN(&v->value));
           }
+        } else {
+          grn_rc rc = ctx->rc;
+          if (rc == GRN_SUCCESS) {
+            rc = GRN_UNKNOWN_ERROR;
+          }
+          ERR(rc, "%s[%u] failed to allocate vars", tag, id);
         }
       }
       vars = *vp;
+    } else {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc, "%s[%u] failed to allocate vars location", tag, id);
     }
     if (target_ctx != ctx) {
       CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
@@ -6178,6 +6191,8 @@ grn_expr_parse(grn_ctx *ctx,
                grn_operator default_op,
                grn_expr_flags flags)
 {
+  const char *tag = "[expr][parse]";
+
   void *parser = grn_ctx_expr_parser_pull(ctx);
   if (!parser) {
     return ctx->rc;
@@ -6188,94 +6203,121 @@ grn_expr_parse(grn_ctx *ctx,
   efsi.ctx = ctx;
   efsi.parser = parser;
   efsi.str = str;
-  if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
-      (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
-    GRN_TEXT_INIT(&efsi.buf, 0);
-    GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.additional_last_interval_stack, GRN_OBJ_VECTOR);
-    GRN_PTR_INIT(&efsi.max_element_intervals_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    GRN_INT32_INIT(&efsi.min_interval_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
-    GRN_FLOAT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
-    GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    efsi.e = expr;
-    efsi.str = str;
-    efsi.cur = str;
-    efsi.str_end = str + str_size;
-    efsi.default_column = default_column;
-    GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
-    GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
-    GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
-    GRN_FLOAT32_PUT(ctx, &efsi.weight_stack, 0);
-    efsi.default_flags = efsi.flags = flags;
-    efsi.escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
-    efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
-    efsi.weight_offset = 0;
-    memset(&(efsi.opt), 0, sizeof(grn_select_optarg));
-    efsi.opt.weight_vector = NULL;
-    efsi.weight_set = NULL;
-    efsi.paren_depth = 0;
-    efsi.pending_token.string = NULL;
-    efsi.pending_token.string_length = 0;
-    efsi.pending_token.token = 0;
 
-    if (flags & (GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
-                 GRN_EXPR_SYNTAX_ADJUSTER | GRN_EXPR_SYNTAX_SORT_KEYS |
-                 GRN_EXPR_SYNTAX_OPTIONS)) {
-      efs_info *q = &efsi;
-      if (flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
-        PARSE(GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS);
-      } else if (flags & GRN_EXPR_SYNTAX_ADJUSTER) {
-        PARSE(GRN_EXPR_TOKEN_START_ADJUSTER);
-      } else if (flags & GRN_EXPR_SYNTAX_SORT_KEYS) {
-        PARSE(GRN_EXPR_TOKEN_START_SORT_KEYS);
-      } else if (flags & GRN_EXPR_SYNTAX_OPTIONS) {
-        PARSE(GRN_EXPR_TOKEN_START_OPTIONS);
-      }
-      parse_script(ctx, q);
-    } else {
-      efs_info *q = &efsi;
-      if (flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
-        PARSE(GRN_EXPR_TOKEN_START_QUERY_NO_SYNTAX_ERROR);
-      }
-      parse_query(ctx, q);
+  efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0);
+  if (!efsi.v) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, expr);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s variable is not defined: <%.*s>",
+        tag,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  }
+
+  efsi.table = grn_ctx_at(ctx, efsi.v->header.domain);
+  if (!efsi.table) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, expr);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s variable refers to a nonexistent table: <%u>: <%.*s>",
+        tag,
+        efsi.v->header.domain,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  }
+
+  GRN_TEXT_INIT(&efsi.buf, 0);
+  GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&efsi.additional_last_interval_stack, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&efsi.max_element_intervals_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_INT32_INIT(&efsi.min_interval_stack, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
+  GRN_FLOAT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  efsi.e = expr;
+  efsi.str = str;
+  efsi.cur = str;
+  efsi.str_end = str + str_size;
+  efsi.default_column = default_column;
+  GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
+  GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
+  GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
+  GRN_FLOAT32_PUT(ctx, &efsi.weight_stack, 0);
+  efsi.default_flags = efsi.flags = flags;
+  efsi.escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
+  efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
+  efsi.weight_offset = 0;
+  memset(&(efsi.opt), 0, sizeof(grn_select_optarg));
+  efsi.opt.weight_vector = NULL;
+  efsi.weight_set = NULL;
+  efsi.paren_depth = 0;
+  efsi.pending_token.string = NULL;
+  efsi.pending_token.string_length = 0;
+  efsi.pending_token.token = 0;
+
+  if (flags & (GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
+               GRN_EXPR_SYNTAX_ADJUSTER | GRN_EXPR_SYNTAX_SORT_KEYS |
+               GRN_EXPR_SYNTAX_OPTIONS)) {
+    efs_info *q = &efsi;
+    if (flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
+      PARSE(GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS);
+    } else if (flags & GRN_EXPR_SYNTAX_ADJUSTER) {
+      PARSE(GRN_EXPR_TOKEN_START_ADJUSTER);
+    } else if (flags & GRN_EXPR_SYNTAX_SORT_KEYS) {
+      PARSE(GRN_EXPR_TOKEN_START_SORT_KEYS);
+    } else if (flags & GRN_EXPR_SYNTAX_OPTIONS) {
+      PARSE(GRN_EXPR_TOKEN_START_OPTIONS);
     }
+    parse_script(ctx, q);
+  } else {
+    efs_info *q = &efsi;
+    if (flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+      PARSE(GRN_EXPR_TOKEN_START_QUERY_NO_SYNTAX_ERROR);
+    }
+    parse_query(ctx, q);
+  }
 
-    /*
-        grn_obj strbuf;
-        GRN_TEXT_INIT(&strbuf, 0);
-        grn_expr_inspect_internal(ctx, &strbuf, expr);
-        GRN_TEXT_PUTC(ctx, &strbuf, '\0');
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
-        GRN_OBJ_FIN(ctx, &strbuf);
-    */
+  /*
+    grn_obj strbuf;
+    GRN_TEXT_INIT(&strbuf, 0);
+    grn_expr_inspect_internal(ctx, &strbuf, expr);
+    GRN_TEXT_PUTC(ctx, &strbuf, '\0');
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
+    GRN_OBJ_FIN(ctx, &strbuf);
+  */
 
-    /*
+  /*
     efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
     efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
     efsi.opt.func_arg = efsi.weight_set;
     efsi.snip_conds = NULL;
-    */
-    GRN_OBJ_FIN(ctx, &efsi.op_stack);
-    GRN_OBJ_FIN(ctx, &efsi.mode_stack);
-    GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
-    GRN_OBJ_FIN(ctx, &efsi.additional_last_interval_stack);
-    GRN_OBJ_FIN(ctx, &efsi.max_element_intervals_stack);
-    GRN_OBJ_FIN(ctx, &efsi.min_interval_stack);
-    GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
-    GRN_OBJ_FIN(ctx, &efsi.quorum_threshold_stack);
-    GRN_OBJ_FIN(ctx, &efsi.weight_stack);
-    GRN_OBJ_FIN(ctx, &efsi.column_stack);
-    GRN_OBJ_FIN(ctx, &efsi.token_stack);
-    GRN_OBJ_FIN(ctx, &efsi.buf);
-    grn_obj_unref(ctx, efsi.table);
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
-  }
+  */
+  GRN_OBJ_FIN(ctx, &efsi.op_stack);
+  GRN_OBJ_FIN(ctx, &efsi.mode_stack);
+  GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
+  GRN_OBJ_FIN(ctx, &efsi.additional_last_interval_stack);
+  GRN_OBJ_FIN(ctx, &efsi.max_element_intervals_stack);
+  GRN_OBJ_FIN(ctx, &efsi.min_interval_stack);
+  GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
+  GRN_OBJ_FIN(ctx, &efsi.quorum_threshold_stack);
+  GRN_OBJ_FIN(ctx, &efsi.weight_stack);
+  GRN_OBJ_FIN(ctx, &efsi.column_stack);
+  GRN_OBJ_FIN(ctx, &efsi.token_stack);
+  GRN_OBJ_FIN(ctx, &efsi.buf);
+  grn_obj_unref(ctx, efsi.table);
+
+exit:
   grn_ctx_expr_parser_release(ctx, parser);
   GRN_API_RETURN(ctx->rc);
 }
