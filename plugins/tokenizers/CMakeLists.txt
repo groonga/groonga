@@ -64,8 +64,8 @@ if(GRN_WITH_MECAB)
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(mecab_ko_tokenizer STATIC ${MECAB_KO_SOURCES})
-    set_target_properties(mecab_ko_tokenizer PROPERTIES POSITION_INDEPENDENT_CODE
-                                                        ON)
+    set_target_properties(mecab_ko_tokenizer
+                          PROPERTIES POSITION_INDEPENDENT_CODE ON)
   else()
     add_library(mecab_ko_tokenizer MODULE ${MECAB_KO_SOURCES})
     set_target_properties(mecab_ko_tokenizer PROPERTIES PREFIX "" OUTPUT_NAME
