@@ -1,0 +1,2 @@
+mecab_ko_la_SOURCES =				\
+	mecab-ko.c

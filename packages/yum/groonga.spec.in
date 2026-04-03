@@ -494,6 +494,7 @@ exit 0
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
+%{_libdir}/groonga/plugins/tokenizers/mecab-ko.so
 %endif
 
 %files token-filter-stem
