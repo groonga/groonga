@@ -1,6 +1,7 @@
 EXTRA_DIST =					\
 	CMakeLists.txt				\
-	h3_index.c
+	h3_index.c				\
+	mecab-ko.c
 
 AM_CPPFLAGS =					\
 	-I$(top_builddir)			\
@@ -19,6 +20,7 @@ LIBS =						\
 tokenizer_plugins_LTLIBRARIES =
 if WITH_MECAB
 tokenizer_plugins_LTLIBRARIES += mecab.la
+tokenizer_plugins_LTLIBRARIES += mecab_ko.la
 endif
 if WITH_KYTEA
 tokenizer_plugins_LTLIBRARIES += kytea.la
@@ -28,6 +30,11 @@ include mecab_sources.am
 mecab_la_CPPFLAGS = $(AM_CPPFLAGS) $(MECAB_CPPFLAGS)
 mecab_la_LIBADD = $(LIBS) $(MECAB_LIBS)
 mecab_la_LDFLAGS = $(AM_LDFLAGS) $(MECAB_LDFLAGS)
+
+include mecab_ko_sources.am
+mecab_ko_la_CPPFLAGS = $(AM_CPPFLAGS) $(MECAB_CPPFLAGS)
+mecab_ko_la_LIBADD = $(LIBS) $(MECAB_LIBS)
+mecab_ko_la_LDFLAGS = $(AM_LDFLAGS) $(MECAB_LDFLAGS)
 
 include kytea_sources.am
 kytea_la_CPPFLAGS = $(AM_CPPFLAGS) $(KYTEA_CFLAGS)

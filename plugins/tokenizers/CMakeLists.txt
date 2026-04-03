@@ -52,6 +52,33 @@ if(GRN_WITH_MECAB)
     endif()
   endif()
   target_link_libraries(mecab_tokenizer libgroonga libmecab)
+
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_ko_sources.am
+                 MECAB_KO_SOURCES)
+  if(GRN_WITH_BUNDLED_MECAB)
+    set_source_files_properties(
+      ${MECAB_KO_SOURCES} PROPERTIES COMPILE_DEFINITIONS
+                                     "${MECAB_COMPILE_DEFINITIONS}")
+  endif()
+  set_source_files_properties(${MECAB_KO_SOURCES}
+                              PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(mecab_ko_tokenizer STATIC ${MECAB_KO_SOURCES})
+    set_target_properties(mecab_ko_tokenizer PROPERTIES POSITION_INDEPENDENT_CODE
+                                                        ON)
+  else()
+    add_library(mecab_ko_tokenizer MODULE ${MECAB_KO_SOURCES})
+    set_target_properties(mecab_ko_tokenizer PROPERTIES PREFIX "" OUTPUT_NAME
+                                                                  "mecab-ko")
+    install(TARGETS mecab_ko_tokenizer DESTINATION "${TOKENIZERS_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:mecab_ko_tokenizer>
+        DESTINATION "${TOKENIZERS_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(mecab_ko_tokenizer libgroonga libmecab)
 endif()
 
 if(GRN_WITH_KYTEA)
