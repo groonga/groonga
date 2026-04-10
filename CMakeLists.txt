@@ -1215,6 +1215,9 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
             PRIVATE $<$<COMPILE_LANGUAGE:C>:${GRN_OPENZL_SUPPRESS_WARNINGS}>
                     $<$<COMPILE_LANGUAGE:CXX>:${GRN_OPENZL_SUPPRESS_WARNINGS}>)
         endif()
+        target_compile_options(
+          openzl
+          PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-declaration-after-statement>)
       endif()
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
