@@ -33,7 +33,6 @@ RUN \
     python2-devel \
     rapidjson-devel \
     ruby \
-    simdjson-devel \
     tar \
     xxhash-devel \
     zlib-devel && \
