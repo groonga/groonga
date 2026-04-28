@@ -1,6 +1,9 @@
 ARG FROM=almalinux:8
 FROM ${FROM}
 
+ENV \
+  SCL=gcc-toolset-12
+
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -15,11 +18,11 @@ RUN \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
+    ${SCL} \
     arrow-compute-devel-${APACHE_ARROW_VERSION} \
     ccache \
     cmake \
     curl-devel \
-    gcc-c++ \
     intltool \
     libedit-devel \
     libevent-devel \
