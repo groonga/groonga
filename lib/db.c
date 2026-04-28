@@ -14950,9 +14950,22 @@ grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
   data.for_reference = false;
 
   grn_obj *db = grn_ctx_db(ctx);
+  // Keep objct id, but some objects have not object id.
+  // This implementation only for objects with object id.
+  grn_id lock_target_object_id = grn_obj_id(ctx, obj);
   grn_rc rc = grn_obj_flush_lock(ctx, db, traverse_data.tag);
   if (rc != GRN_SUCCESS) {
     GRN_API_RETURN(rc);
+  }
+  // Get object from keeped obect id.
+  // compare object address. if addresses is not match, flush does not execute.
+  grn_obj *lock_target_object = grn_ctx_at(ctx, lock_target_object_id);
+  if (obj != lock_target_object) {
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "%s lock target object has been already removed",
+        data.tag);
+    grn_obj_flush_unlock(ctx, db, traverse_data.tag);
+    GRN_API_RETURN(ctx->rc);
   }
   if (obj != db) {
     rc = grn_obj_flush_lock(ctx, obj, traverse_data.tag);
