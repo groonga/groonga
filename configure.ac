@@ -95,7 +95,6 @@ if test "$HAVE_CXX20" != "1"; then
   m4_ifdef([AX_CXX_COMPILE_STDCXX],
            [AX_CXX_COMPILE_STDCXX([14], [ext], [optional])])
 fi
-
 AC_PROG_CC
 m4_ifdef([AC_PROG_CC_C99],
          [AC_PROG_CC_C99])
