@@ -68,9 +68,6 @@ gem install rubygems-requirements-system
 MAKEFLAGS=-j$(nproc) gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
-  wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
-  apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
-  apt update
   apt install -V -y \
     g++ \
     libre2-dev
