@@ -60,7 +60,7 @@ apt install -V -y \
   tzdata
 
 # Explicitly install libc6-dev because it is not pulled in by gcc in Ubuntu resolute.
-if [ "${code_name}" != "resolute" ]; then
+if [ "${code_name}" == "resolute" ]; then
   apt install -V -y libc6-dev
 fi
 
