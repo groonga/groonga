@@ -19,8 +19,10 @@ case "${distribution}" in
 esac
 architecture=$(dpkg --print-architecture)
 
-# Ubuntu resolute hasn't released any packages yet, so running apt update will result in an error.
-# Therefore, we are temporarily disabling this process.
+# packages.groonga.org repository does not distribute the Apache Arrow packages for Ubuntu resolute.
+# Therefore, both definitions are required for Ubuntu resolute.
+# However, we are currently skipping this process because the Groonga packages for Ubuntu resolute does not exist yet.
+# Once the Groonga packages is released, this condition will be removed.
 if [ "${code_name}" != "resolute" ]; then
   wget \
     https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
