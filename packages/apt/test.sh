@@ -58,6 +58,12 @@ apt install -V -y \
   make \
   ruby-dev \
   tzdata
+
+# Explicitly install libc6-dev because it is not pulled in by gcc in Ubuntu resolute.
+if [ "${code_name}" != "resolute" ]; then
+  apt install -V -y libc6-dev
+fi
+
 gem install rubygems-requirements-system
 MAKEFLAGS=-j$(nproc) gem install grntest
 
