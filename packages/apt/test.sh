@@ -19,10 +19,14 @@ case "${distribution}" in
 esac
 architecture=$(dpkg --print-architecture)
 
-wget \
-  https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
-apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
-apt update
+# Ubuntu resolute hasn't released any packages yet, so running apt update will result in an error.
+# Therefore, we are temporarily disabling this process.
+if [ "${code_name}" != "resolute" ]; then
+  wget \
+    https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
+  apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
+  apt update
+fi
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
