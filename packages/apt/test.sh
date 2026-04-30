@@ -26,11 +26,12 @@ if [ "${code_name}" != "resolute" ]; then
     https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
   apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
   apt update
+else
+  wget \
+    https://packages.apache.org/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+  apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+  apt update
 fi
-wget \
-  https://packages.apache.org/artifactory/arrow/${destribution}/apache-arrow-apt-source-latest-${code_name}.deb
-apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
-apt update
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
