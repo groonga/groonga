@@ -81,6 +81,9 @@ jobs:
           - cc: gcc
             cxx: g++
             mruby: "OFF"
+          - cc: gcc
+            cxx: g++
+            lto: "ON"
           - cc: clang
             cxx: clang++
           - cc: clang
@@ -91,6 +94,7 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
+      GRN_WITH_LTO: ${{ matrix.lto }}
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
       GRN_WITH_UBSAN: ${{ matrix.ubsan }}
     steps:
@@ -114,8 +118,8 @@ jobs:
         uses: actions/cache@v5
         with:
           path: cache
-          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-ccache-
+          key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-${{ matrix.lto }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-${{ matrix.lto }}-ccache-
       - name: Install common build dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
@@ -213,6 +217,7 @@ jobs:
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
             -DGRN_WITH_BLOSC=auto \
+            -DGRN_WITH_LTO=${GRN_WITH_LTO:-OFF} \
             -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON} \
             -DGRN_WITH_UBSAN=${GRN_WITH_UBSAN:-OFF}
       - name: Build

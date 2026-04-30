@@ -21,6 +21,8 @@
 
 #include "grn.h"
 
+#include "grn_tokenizer.h"
+
 #include "grn_ctx.h"
 #include "grn_options.h"
 #include "grn_rset.h"
