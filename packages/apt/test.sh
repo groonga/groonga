@@ -19,10 +19,21 @@ case "${distribution}" in
 esac
 architecture=$(dpkg --print-architecture)
 
-wget \
-  https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
-apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
-apt update
+# packages.groonga.org repository does not distribute the Apache Arrow packages for Ubuntu resolute.
+# Therefore, both definitions are required for Ubuntu resolute.
+# However, we are currently skipping this process because the Groonga packages for Ubuntu resolute does not exist yet.
+# Once the Groonga packages is released, this condition will be removed.
+if [ "${code_name}" != "resolute" ]; then
+  wget \
+    https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
+  apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
+  apt update
+else
+  wget \
+    https://packages.apache.org/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+  apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+  apt update
+fi
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
@@ -49,13 +60,16 @@ apt install -V -y \
   make \
   ruby-dev \
   tzdata
+
+# Explicitly install libc6-dev because it is not pulled in by gcc in Ubuntu resolute.
+if [ "${code_name}" == "resolute" ]; then
+  apt install -V -y libc6-dev
+fi
+
 gem install rubygems-requirements-system
 MAKEFLAGS=-j$(nproc) gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
-  wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
-  apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
-  apt update
   apt install -V -y \
     g++ \
     libre2-dev
