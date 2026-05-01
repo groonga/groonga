@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777617975736,
+  "lastUpdate": 1777619937715,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "abe@clear-code.com",
-            "name": "Abe Tomoaki",
-            "username": "abetomo"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "ff26d60d722bd61b3f00f5190e137c37397de4c6",
-          "message": "Relicensing to LGPL-2.1-or-later from LGPL-2.1-only (#2154)\n\nGitHub: fix GH-1774\r\n\r\nHere are patch authors:\r\n\r\n```\r\n$ git shortlog -sn\r\n 11409\tKouhei Sutou\r\n  3485\tSutou Kouhei\r\n  1818\tHAYASHI Kentaro\r\n  1078\tDaijiro MORI\r\n   647\tKentaro Hayashi\r\n   619\tSusumu Yata\r\n   449\tTasuku SUENAGA a.k.a. gunyarakun\r\n   408\tHorimoto Yasuhiro\r\n   371\tsusumu.yata\r\n   304\tYasuhiro Horimoto\r\n   267\tmori\r\n   262\tRyo Onodera\r\n   254\tMasafumi Yokoyama\r\n   162\tnaoa\r\n   120\tt2001\r\n   110\tTakashi Hashida\r\n    94\tNaoya Murakami\r\n    93\tcosmo0920\r\n    86\tAbe Tomoaki\r\n    66\tNobuyoshi Nakada\r\n    55\tYUKI Hiroshi\r\n    49\tHaruka Yoshihara\r\n    40\tHorimotoYasuhiro\r\n    39\tYoji SHIDARA\r\n    36\tHiroshi Hatake\r\n    35\tYuto Hayamizu\r\n    34\twhombx\r\n    30\tyoshihara haruka\r\n    26\tToshihisa\r\n    22\ttakuya kodama\r\n    19\tkhayashi\r\n    18\tYutaro Shimamura\r\n    18\twanabe\r\n    12\tHiroyuki Sato\r\n    12\tIWAI, Masaharu\r\n    10\tdependabot[bot]\r\n     6\tKenji Okimoto\r\n     6\tjacob16bit\r\n     5\torangain\r\n     4\tHiroshi Ohkubo\r\n     4\tMotoi Washida\r\n     3\tDaiki Ueno\r\n     3\tOBATA Akio\r\n     3\tTetsuro IKEDA\r\n     3\tdo-aki\r\n     3\tmori daijiro\r\n     3\ttamano\r\n     3\tyagisumi\r\n     2\tJun Kuriyama\r\n     2\tNoritada Kobayashi\r\n     2\tTetsuharu OHZEKI\r\n     2\tYUKI \"Piro\" Hiroshi\r\n     2\tbrazil\r\n     2\tkou\r\n     2\ttashiro\r\n     2\tunknown\r\n     2\twi24rd\r\n     1\tAkinori MUSHA\r\n     1\tAnthony M. Cook\r\n     1\tAyumu\r\n     1\tDylan Golow\r\n     1\tGenki Takiuchi\r\n     1\tHashidaTKS\r\n     1\tJasper Siepkes\r\n     1\tNOKUBI Takatsugu\r\n     1\tNatanael Copa\r\n     1\tSATOH Fumiyasu\r\n     1\tSHIDARA Yoji\r\n     1\tSHIMODA Hiroshi\r\n     1\tSebastian Wiedenroth\r\n     1\tShimomura Tatsuya\r\n     1\tSho Minagawa\r\n     1\tTasuku SUENAGA\r\n     1\tTim Gates\r\n     1\tYosuke Sekikawa\r\n     1\tYosuke Shiro\r\n     1\tYu.Shimamura\r\n     1\tYuya TAMANO\r\n     1\tcafedomancer\r\n     1\tmooz\r\n     1\tryo-pinus\r\n     1\ttSU-RooT\r\n     1\ttSU_RooT\r\n     1\tvagrant\r\n     1\tyu\r\n     1\tyutaro\r\n     1\tzunda\r\n```\r\n\r\nHere are patch authors whose agreement to relicensing has been verified:\r\n\r\n* @kou\r\n* @kenhys\r\n* @daijiro\r\n* @s-yata\r\n* @gunyarakun\r\n* @komainu8\r\n* @ryoqun\r\n* @myokoym\r\n* @naoa\r\n* @t2001\r\n* @HashidaTKS\r\n* @cosmo0920\r\n* @abetomo\r\n* @nobu\r\n* @piroor\r\n* @yoshihara\r\n* @darashi\r\n* @hayamiz\r\n* @yu\r\n* @otegami\r\n* @wanabe\r\n* @hiroyuki-sato\r\n* @iwaim\r\n* @orangain\r\n* @wm3\r\n* @ueno\r\n* @obache\r\n* @ikdttr\r\n* @do-aki\r\n* @tamano\r\n* @kuriyama \r\n* @noritada \r\n* @tetsuharuohzeki \r\n* @wi24rd\r\n* @knu \r\n* @genki\r\n* @siepkes\r\n* @knok \r\n* @wiedi\r\n* @ryo-pinus\r\n\r\nTrivial patch authors:\r\n\r\n* Kenji Okimoto: Typo fixes\r\n  * a0e3de50e45916daa3d2313a1a4e6128f4fc20fb\r\n  * 666f22af0a6d187fab67559f587f091fa7431e8f\r\n  * fcccbde106bb3b58cb8b4215b94e98aefdb6480f\r\n  * 1a81014950b422a207fba06211e41008facd9a7b\r\n  * adcda8b944193cbbd7e0558fa7cb4b207c0cdfb9\r\n  * db42c1007b43698721da91e668b5bf543bdfabd2\r\n* jacob16bit: groonga-httpd was extracted to\r\nhttps://github.com/groonga/groonga-nginx and it doesn't have RPM package\r\n  * https://github.com/groonga/groonga/pull/357\r\n  * https://github.com/groonga/groonga/pull/351\r\n* Ayumu: Remove unused code\r\n  * b518d63baab084dab9dac15c7cc5363f8a4fd337\r\n* Dylan Golow: Typo fix\r\n  * b827b5ef0810ca31f50136e33619109c0e094fcb\r\n* SATOH Fumiyasu: Remove redundant configurations\r\n  * ebdd2f6d1651a7b0ffa5b13a03dbe69142e76f6c\r\n* Tim Gates: Typo fix\r\n  * 26623b13f01dbcc1ea763cd4a20eb5671d6c52d5\r\n* cafedomancer: Typo fix\r\n  * 3b0daad671d30beee0486c1b077a2d6ffa878856\r\n* mooz: Typo fix\r\n  * 8f248d91235d597332f4fdf044dac615ea1e2088\r\n* tSU-RooT: Typo fixes\r\n  * b73eeb36a07b0d166f17612433bcbb3118766d37\r\n  * aaeff8e92bb2a1263b69b17ded5f5012998eb6f9\r\n* zunda: Typo fix\r\n  * 39b3788a2a638d0c571b57843d2114c919af0323\r\n* @yagisumi \r\n  * GH-1000\r\n  * GH-1023\r\n  * GH-1024\r\n* @ncopa \r\n  * cc4f6b865c6db1f79d6a300efc4af100386bf2e6 \r\n* @ohkubo\r\n* e52ced01210a038ed03d7878bb9874f911535682 This is not a trivial but\r\nreplaced with 7371926c25b8864c80362cd62929c830ed73c218\r\n  * 55c138060faf1a042d5d99d97fcb4fae53a98223\r\n  * 449ca69b2e3ead16e267da2c3164269170214f97\r\n  * 0d19f44061d8f025e66c4571dfe4307240070fc8\r\n* @msh5\r\n  * ada5ef5578d4443416efa7ce189c00f67ab03f63\r\n* @shiro615 \r\n  * GH-909\r\n\r\nPatch authors who can't be contacted on GitHub:\r\n* @t-shm\r\n  * #47\r\n\r\nPatch authors whose commits are replaced by other commits:\r\n\r\n* @OffGao\r\n  * 13de2b0b2817b7c9e6d5da087601dbe2dbe9c76f\r\n  * Replaced with GH-1821\r\n* @whombx\r\n  * We replaced all commits by migrating to Doxygen",
-          "timestamp": "2024-12-11T21:00:46+09:00",
-          "tree_id": "9ebfa96ce8d50ad2f0c69947bdca1d483de53678",
-          "url": "https://github.com/groonga/groonga/commit/ff26d60d722bd61b3f00f5190e137c37397de4c6"
-        },
-        "date": 1733918871350,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.36107147699999587,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.022149000000000196 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.2619282259998954,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.013648999999999967 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.0175871310001412,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00035300000000026976 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015515048999986902,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00036000000000022125 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.4838304230000858,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.0003700000000000092 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.21698042000025453,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006297000000000025 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.12919835000002422,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006067000000000183 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.016962017000082596,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0020079999999998155 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.01695120399983807,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002017999999999992 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.05935533199965448,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006972000000000478 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.06264031699981842,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0079419999999997 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.018236096999999063,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.002013000000000681 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.026516309000044203,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001883999999999969 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -51000,6 +50898,108 @@ window.BENCHMARK_DATA = {
             "value": 0.017719125999974494,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0020889999999999798 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "abe@clear-code.com",
+            "name": "Abe Tomoaki",
+            "username": "abetomo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d295b9a2117911c096d3decf09b4aa9be50eb2e1",
+          "message": "Fix one definition rule error (#2790)\n\nGitHub fixes GH-2787\n\nThe ODR violation happens because function pointer types like\n`grn_tokenizer_init_func` take `grn_tokenizer_query` as an argument, and\n`grn_tokenizer_query` has two different definitions.\n\nInclude `grn_tokenizer.h` from `grn_db.h` so that the non-deprecated\ndefinition is always used.\n\nReported by Nicolas PARLANT. Thanks!!!",
+          "timestamp": "2026-05-01T16:10:01+09:00",
+          "tree_id": "9de50551e60f13bf6e636f2da7bdbde993a05fb9",
+          "url": "https://github.com/groonga/groonga/commit/d295b9a2117911c096d3decf09b4aa9be50eb2e1"
+        },
+        "date": 1777619936740,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.38898699400004944,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.016721000000000208 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.29313924399997404,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.015623999999999832 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.014929872999971394,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.00035200000000035203 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015314710999973613,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.000324000000000213 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.4823571219999963,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.0001729999999998122 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2511157440000602,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006556999999999952 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.15292805000001408,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007002000000000119 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.016851551000058862,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0018449999999999855 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.01680110499995635,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.001635000000000053 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.06553702200000089,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006775999999999949 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.07016472699996257,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006634000000000251 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.021810200999993867,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005430999999999631 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.020452863999992132,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016640000000003041 s\nthreads: undefined"
           }
         ]
       }
