@@ -1451,9 +1451,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       set(Blosc2_FOUND FALSE)
     endif()
     if(NOT Blosc2_FOUND AND "${GRN_WITH_BLOSC}" STREQUAL "system")
-      message(
-        FATAL_ERROR
-          "Blosc >= ${GRN_BLOSC_REQUIRED_VERSION} not found")
+      message(FATAL_ERROR "Blosc >= ${GRN_BLOSC_REQUIRED_VERSION} not found")
     endif()
   endif()
   if(Blosc2_FOUND)
