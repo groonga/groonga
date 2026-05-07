@@ -35,7 +35,7 @@ msgstr "ODR(One Definition Rule)違反を修正"
 msgid "[GH-2787](https://github.com/groonga/groonga/issues/2787) Reported by Nicolas PARLANT."
 msgstr "[GH-2787](https://github.com/groonga/groonga/issues/2787) Nicolas PARLANTさんの報告。"
 
-msgid "The LTO(Link-Time Optimization) build was failing because `grn_tokenizer_query` had two different definitions. This change fixes the ODR violation, allowing the LTO process to complate successfully"
+msgid "The LTO(Link-Time Optimization) build was failing because `grn_tokenizer_query` had two different definitions. This change fixes the ODR violation, allowing the LTO process to complete successfully."
 msgstr "LTO(Link-Time Optimization)を有効にしたビルドが、`grn_tokenizer_query`の重複定義によって失敗していました。この変更で、ODR違反を修正し、LTOを有効にできるようになります。"
 
 msgid "Fixed missing files in benchmark directory of source archive"
