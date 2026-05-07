@@ -59,8 +59,8 @@ msgstr ""
 msgid "Fixed a bug where duplicate \"tools\" directories were created"
 msgstr "\"tools\"ディレクトリーが重複して作成される問題を修正"
 
-msgid "[GH-2798]( https://github.com/groonga/groonga/pull/2798 ) Reported by Kentaro Hayashi."
-msgstr "[GH-2798]( https://github.com/groonga/groonga/pull/2798 ) Kentaro Hayashiさんの報告。"
+msgid "[GH-2798](https://github.com/groonga/groonga/pull/2798) Reported by Kentaro Hayashi."
+msgstr "[GH-2798](https://github.com/groonga/groonga/pull/2798) Kentaro Hayashiさんの報告。"
 
 msgid "Fixed an issue where duplicate \"tools\" directories were created as below when installing the groonga-tools package on AlmaLinux and Amazon Linux:"
 msgstr "AlmaLinuxやAmazon Linux向けのgroonga-toolsパッケージをインストールした時、以下のように\"tools\"ディレクトリーが重複して作成される問題を修正しました。"
