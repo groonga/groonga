@@ -17,6 +17,21 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
+msgid "Release 16.0.3 - 2026-05-08"
+msgstr "16.0.3リリース - 2026-05-08"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug where Groonga for Windows failed to run due to a missing required DLL"
+msgstr "Windows版のGroongaに必要なDLLが不足していたため起動に失敗する問題を修正"
+
+msgid "The required DLL (`msvcp140_atomic_wait.dll`) for Groonga for Windows was missing from the `groonga-16.0.2-x64-vs2022-with-vcruntime.zip`."
+msgstr "Windows版のGroongaに必要なDLL(`msvcp140_atomic_wait.dll`)を`groonga-16.0.2-x64-vs2022-with-vcruntime.zip`に同梱していませんでした。"
+
+msgid "This issue only affects Groonga 16.0.2 for Windows."
+msgstr "この問題は、Windows版のGroonga 16.0.2のみ発生します。"
+
 msgid "Release 16.0.2 - 2026-05-07"
 msgstr "16.0.2リリース - 2026-05-07"
 
@@ -25,9 +40,6 @@ msgstr "改良"
 
 msgid "Added support for Ubuntu 26.04 LTS"
 msgstr "Ubuntu 26.04 LTSをサポート"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed the ODR(One Definition Rule) violation"
 msgstr "ODR(One Definition Rule)違反を修正"
