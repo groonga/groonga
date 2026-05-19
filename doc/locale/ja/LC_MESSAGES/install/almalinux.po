@@ -53,13 +53,13 @@ msgid "AlmaLinux 9"
 msgstr ""
 
 msgid "On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`."
-msgstr "Almalinux 9でのインストール方法は、Almalinux 10のインストール方法と同じです。 :ref:`almalinux10` を参照してください。"
+msgstr "AlmaLinux 9でのインストール方法は、AlmaLinux 10のインストール方法と同じです。 :ref:`almalinux10` を参照してください。"
 
 msgid "AlmaLinux 8"
 msgstr ""
 
 msgid "On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`."
-msgstr "Almalinux 8でのインストール方法は、Almalinux 10のインストール方法と同じです。 :ref:`almalinux10` を参照してください。"
+msgstr "AlmaLinux 8でのインストール方法は、AlmaLinux 10のインストール方法と同じです。 :ref:`almalinux10` を参照してください。"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
