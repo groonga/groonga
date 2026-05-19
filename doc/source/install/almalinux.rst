@@ -63,15 +63,15 @@ Install:
 
 Install groonga-tokenizer-mecab package:
 
-On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 Install groonga-token-filter-stem package:
 
-On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 Install groonga-normalizer-mysql package:
 
-On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 9, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 AlmaLinux 8
 -----------
@@ -86,15 +86,15 @@ Install:
 
 Install groonga-tokenizer-mecab package:
 
-On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 Install groonga-token-filter-stem package:
 
-On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 Install groonga-normalizer-mysql package:
 
-On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. See/Please refer :ref:`almalinux10`.
+On AlmaLinux 8, follow the same installation procedure as AlmaLinux 10. Please refer to :ref:`almalinux10`.
 
 Build from source
 -----------------
