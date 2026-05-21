@@ -28,6 +28,13 @@ See our Community page: https://groonga.org/docs/community.html
   * Path: vendor/onigmo-source
   * License: BSD license. See vendor/onigmo-source/COPYING for details.
 
+### Zulip icon
+
+  * Path: doc/source/images/zulip-icon-128x128.png
+  * License: The Apache 2.0 license. The icon is from Zulip (https://zulip.com/).  
+    Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors.  
+    See https://github.com/zulip/zulip/blob/main/LICENSE for details.
+
 ## Authors
 
 ### Primary authors
