@@ -4723,11 +4723,9 @@ html_files_relative_from_locale_dir = \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
 	html/_images/zulip-icon-128x128.png \
-	html/_static/base-stemmer.js \
 	html/_static/basic.css \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
-	html/_static/english-stemmer.js \
 	html/_static/favicon.ico \
 	html/_static/file.png \
 	html/_static/groonga.png \

@@ -1393,11 +1393,9 @@ set(GRN_DOC_HTML_FILES
     _images/used-when-indexing.png
     _images/used-when-searching.png
     _images/zulip-icon-128x128.png
-    _static/base-stemmer.js
     _static/basic.css
     _static/doctools.js
     _static/documentation_options.js
-    _static/english-stemmer.js
     _static/favicon.ico
     _static/file.png
     _static/groonga.png
