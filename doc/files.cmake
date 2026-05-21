@@ -1392,9 +1392,12 @@ set(GRN_DOC_HTML_FILES
     _images/geo-points.png
     _images/used-when-indexing.png
     _images/used-when-searching.png
+    _images/zulip-icon-128x128.png
+    _static/base-stemmer.js
     _static/basic.css
     _static/doctools.js
     _static/documentation_options.js
+    _static/english-stemmer.js
     _static/favicon.ico
     _static/file.png
     _static/groonga.png
@@ -1416,11 +1419,8 @@ set(GRN_DOC_HTML_FILES
     _static/styles/pydata-sphinx-theme.css.map
     _static/styles/theme.css
     _static/switcher.json
-    _static/vendor/fontawesome/webfonts/fa-brands-400.ttf
     _static/vendor/fontawesome/webfonts/fa-brands-400.woff2
-    _static/vendor/fontawesome/webfonts/fa-regular-400.ttf
     _static/vendor/fontawesome/webfonts/fa-regular-400.woff2
-    _static/vendor/fontawesome/webfonts/fa-solid-900.ttf
     _static/vendor/fontawesome/webfonts/fa-solid-900.woff2
     _static/webpack-macros.html
     characteristic.html
