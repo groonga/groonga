@@ -330,7 +330,7 @@ grn_ra_set_value_raw(
     } else {
       void *buffer = GRN_CALLOC(element_size);
       if (buffer) {
-        grn_memcpy(buffer, value, size);
+        grn_memcpy(buffer, value, size < element_size ? size : element_size);
         grn_memcpy(p, buffer, element_size);
         GRN_FREE(buffer);
       }
