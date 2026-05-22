@@ -4722,6 +4722,7 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
+	html/_images/zulip-icon-128x128.png \
 	html/_static/basic.css \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
@@ -4746,11 +4747,8 @@ html_files_relative_from_locale_dir = \
 	html/_static/styles/pydata-sphinx-theme.css.map \
 	html/_static/styles/theme.css \
 	html/_static/switcher.json \
-	html/_static/vendor/fontawesome/webfonts/fa-brands-400.ttf \
 	html/_static/vendor/fontawesome/webfonts/fa-brands-400.woff2 \
-	html/_static/vendor/fontawesome/webfonts/fa-regular-400.ttf \
 	html/_static/vendor/fontawesome/webfonts/fa-regular-400.woff2 \
-	html/_static/vendor/fontawesome/webfonts/fa-solid-900.ttf \
 	html/_static/vendor/fontawesome/webfonts/fa-solid-900.woff2 \
 	html/_static/webpack-macros.html \
 	html/characteristic.html \
