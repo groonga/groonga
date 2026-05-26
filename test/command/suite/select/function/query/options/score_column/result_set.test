@@ -18,5 +18,5 @@ select Users \
   --columns[ali_score].type Float \
   --columns[ali_score].flags COLUMN_SCALAR \
   --output_columns name,_score,ali_score \
-  --filter 'query("name * 10", "ali", {"score_column": ali_score}) && \
+  --filter 'query("name * 10", "ali", {"score_column": "ali_score"}) && \
             query("name * 2", "li")'
