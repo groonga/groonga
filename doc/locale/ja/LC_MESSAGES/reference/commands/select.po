@@ -1323,6 +1323,18 @@ msgstr ""
 msgid "Dynamic column is created at first."
 msgstr "最初に動的カラムを作成します。"
 
+msgid "``result_set``"
+msgstr ""
+
+msgid "Dynamic column is created before ``filtered`` stage."
+msgstr "``filtered`` ステージの前に動的カラムが作成されます。"
+
+msgid "Can't use :ref:`select-columns-name-value` for this stage. This stage does not initialize the column value. Therefore, if you need to initialize them, please use the ``initial`` stage."
+msgstr "このステージでは、 :ref:`select-columns-name-value` が使えず、カラムの値を初期化しません。値の初期化が必要な場合は ``initial`` ステージを使ってください。"
+
+msgid "This stage is for storing values by \"score_column\"."
+msgstr "このステージは、\"score_column\"の値を格納するためのものです。"
+
 msgid "``filtered``"
 msgstr ""
 
