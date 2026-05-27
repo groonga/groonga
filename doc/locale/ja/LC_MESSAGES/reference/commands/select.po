@@ -1353,8 +1353,8 @@ msgstr "以下は動的カラム作成タイミング入りの ``select`` の処
 msgid "Creates dynamic columns for ``initial`` stage. All records have these dynamic columns."
 msgstr "``initial`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラムを持ちます。"
 
-msgid "Creates dynamic columns for ``result_set`` stage. All records have these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized ot not."
-msgstr "``resutl_set`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラムを持ちます。 ``initial`` ステージとの違いは初期化されているかどうかです。"
+msgid "Creates dynamic columns for ``result_set`` stage. All records have these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized or not."
+msgstr "``result_set`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラムを持ちます。 ``initial`` ステージとの違いは初期化されているかどうかです。"
 
 msgid "Evaluates :ref:`select-query` and :ref:`select-filter`. You can use dynamic columns created in ``initial`` and ``result_set`` stage."
 msgstr ":ref:`select-query` と :ref:`select-filter` を評価します。 ``initial`` ステージまたは、 ``result_set`` ステージで作った動的カラムを使えます。"
