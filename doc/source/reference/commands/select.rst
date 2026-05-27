@@ -1865,7 +1865,7 @@ points. You should choose stage as late as possible:
      these dynamic columns.
 
   #. Creates dynamic columns for ``result_set`` stage. All records have
-     these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized ot not.
+     these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized or not.
 
   #. Evaluates :ref:`select-query` and :ref:`select-filter`. You can
      use dynamic columns created in ``initial`` and ``result_set`` stage.
