@@ -1843,6 +1843,14 @@ Here are available stages:
      - Description
    * - ``initial``
      - Dynamic column is created at first.
+   * - ``result_set``
+     - Dynamic column is created before ``filtered`` stage.
+
+       Can't use :ref:`select-columns-name-value` for this stage.
+       This stage does not initialize the column value.
+       Therefore, if you need to initialize it, please use the ``initial`` stage.
+
+       This stage is for storing values by ``score_column``.
    * - ``filtered``
      - Dynamic column is created after :ref:`select-query` and
        :ref:`select-filter` are evaluated.
@@ -1856,8 +1864,11 @@ points. You should choose stage as late as possible:
   #. Creates dynamic columns for ``initial`` stage. All records have
      these dynamic columns.
 
+  #. Creates dynamic columns for ``result_set`` stage. All records have
+     these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized or not.
+
   #. Evaluates :ref:`select-query` and :ref:`select-filter`. You can
-     use dynamic columns created in ``initial`` stage.
+     use dynamic columns created in ``initial`` and ``result_set`` stage.
 
   #. Creates dynamic columns for ``filtered`` stage. Only filtered
      records have these dynamic columns.

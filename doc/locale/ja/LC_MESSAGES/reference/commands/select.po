@@ -1323,6 +1323,18 @@ msgstr ""
 msgid "Dynamic column is created at first."
 msgstr "最初に動的カラムを作成します。"
 
+msgid "``result_set``"
+msgstr ""
+
+msgid "Dynamic column is created before ``filtered`` stage."
+msgstr "``filtered`` ステージの前に動的カラムが作成されます。"
+
+msgid "Can't use :ref:`select-columns-name-value` for this stage. This stage does not initialize the column value. Therefore, if you need to initialize it, please use the ``initial`` stage."
+msgstr "このステージでは、 :ref:`select-columns-name-value` が使えず、カラムの値を初期化しません。値の初期化が必要な場合は ``initial`` ステージを使ってください。"
+
+msgid "This stage is for storing values by ``score_column``."
+msgstr "このステージは、 ``score_column`` の値を格納するためのものです。"
+
 msgid "``filtered``"
 msgstr ""
 
@@ -1341,8 +1353,11 @@ msgstr "以下は動的カラム作成タイミング入りの ``select`` の処
 msgid "Creates dynamic columns for ``initial`` stage. All records have these dynamic columns."
 msgstr "``initial`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラムを持ちます。"
 
-msgid "Evaluates :ref:`select-query` and :ref:`select-filter`. You can use dynamic columns created in ``initial`` stage."
-msgstr ":ref:`select-query` と :ref:`select-filter` を評価します。 ``initial`` ステージで作った動的カラムを使えます。"
+msgid "Creates dynamic columns for ``result_set`` stage. All records have these dynamic columns. The difference between ``initial`` stage and ``result_set`` stage is whether it is initialized or not."
+msgstr "``result_set`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラムを持ちます。 ``initial`` ステージとの違いは初期化されているかどうかです。"
+
+msgid "Evaluates :ref:`select-query` and :ref:`select-filter`. You can use dynamic columns created in ``initial`` and ``result_set`` stage."
+msgstr ":ref:`select-query` と :ref:`select-filter` を評価します。 ``initial`` ステージまたは、 ``result_set`` ステージで作った動的カラムを使えます。"
 
 msgid "Creates dynamic columns for ``filtered`` stage. Only filtered records have these dynamic columns."
 msgstr "``filtered`` ステージの動的カラムを作ります。フィルター後のレコードだけがこの動的カラムを持ちます。"
