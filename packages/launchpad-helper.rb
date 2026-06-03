@@ -35,6 +35,7 @@ module LaunchpadHelper
     [
       ["jammy", "22.04"],
       ["noble", "24.04"],
+      ["resolute", "26.04"],
     ]
   end
 
