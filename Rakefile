@@ -262,17 +262,18 @@ Groonga #{version} (#{latest_release_date}) has been released!
 See: #{latest_release_url}#{latest_release_anchor}
     ANNOUNCE
 
-    x_credentials = {
-      api_key: ENV["X_API_KEY"],
-      api_key_secret: ENV["X_API_KEY_SECRET"],
-      access_token: ENV["X_ACCESS_TOKEN"],
-      access_token_secret: ENV["X_ACCESS_TOKEN_SECRET"]
-    }
-    x_client = X::Client.new(**x_credentials)
     tweet_body = { text: latest_release_announce }
     if dry_run?
       puts tweet_body
     else
+      x_credentials = {
+        client_id: ENV["X_CLIENT_ID"],
+        client_secret: ENV["X_CLIENT_SECRET"],
+        access_token: "dummy", # Refreshed by refresh token
+        refresh_token: ENV["X_REFRESH_TOKEN"],
+      }
+      x_client = X::Client.new(**x_credentials)
+      x_client.refresh_token!
       x_client.post("tweets", tweet_body.to_json)
     end
   end
