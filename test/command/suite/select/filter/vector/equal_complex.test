@@ -7,5 +7,5 @@ load --table Memos
 {"_key": "Rroonga is very fast", "tags": ["rroonga"]}
 ]
 
-# TODO: Suppor this!
+# TODO: Support this!
 select Memos --filter 'tags == ["groo" + "nga"]'
