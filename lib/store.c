@@ -2150,9 +2150,6 @@ static uint32_t
 grn_ja_compute_huge_n_segments(uint32_t element_size)
 {
   return (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
-  uint32_t aligned_element_size =
-    grn_ja_compute_sequence_aligned_element_size(element_size);
-  return grn_ja_compute_sequence_data_size(aligned_element_size);
 }
 
 #define DELETED 0x80000000
