@@ -167,6 +167,10 @@ elif type dnf > /dev/null 2>&1; then
   setup_with_dnf
 elif type brew > /dev/null 2>&1; then
   brew bundle --file="$(dirname "${0}")/Brewfile"
+  mecabrc="$(brew --prefix)/etc/mecabrc"
+  if [ ! -f "${mecabrc}" ]; then
+    echo "dicdir = $(brew --prefix)/lib/mecab/dic/ipadic" > "${mecabrc}"
+  fi
 else
   echo "This OS setup is not supported."
   exit 1
