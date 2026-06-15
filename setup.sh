@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -81,6 +81,16 @@ function setup_with_apt () {
           libfaiss-dev
         )
       fi
+      case "${distribution}-${code_name}" in
+        ubuntu-jammy|ubuntu-noble)
+          :
+          ;;
+        *)
+          package_names+=(
+            libjsoncons-dev
+          )
+          ;;
+      esac
       ;;
   esac
 

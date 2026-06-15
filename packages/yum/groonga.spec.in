@@ -407,6 +407,7 @@ exit 0
 %{_datadir}/groonga/c-blosc2/
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
+%{_datadir}/groonga/jsoncons/
 %{_datadir}/groonga/llama.cpp/
 %{_datadir}/groonga/mruby/
 %if %{is_amazon_linux}

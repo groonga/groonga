@@ -33,6 +33,7 @@ RUN \
     libedit-dev \
     libevent-dev \
     libfaiss-dev \
+    libjsoncons-dev \
     liblapack-dev \
     liblz4-dev \
     libmecab-dev \

@@ -1,0 +1,2 @@
+extract   --extractors 'ExtractorJSON("path", "$.a[*][*]")'   --value '{"a": [[true, false], [true, false, true], [false]], "b": "not-used"}'
+[[0,0.0,0.0],{"extracted":[true,false,true,false,true,false]}]
