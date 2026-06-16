@@ -583,7 +583,7 @@ namespace grn {
           uint32_t input_size = 0;
           auto input = grn_obj_get_value_(ctx, input_column, id, &input_size);
           if (prefix.empty()) {
-            tokenize(input, tokens);
+            tokenize(std::string_view(input, input_size), tokens);
           } else {
             auto prefixed_input = std::string(prefix);
             prefixed_input.append(input, input_size);
