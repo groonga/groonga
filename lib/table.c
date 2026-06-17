@@ -21,6 +21,9 @@
 #include "grn_applier.h"
 #include "grn_ctx.h"
 #include "grn_ctx_impl.h"
+#include "grn_dat.h"
+#include "grn_hash.h"
+#include "grn_pat.h"
 #include "grn_expr_executor.h"
 #include "grn_extractor.h"
 
@@ -814,6 +817,25 @@ grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table)
   return tokenizer != NULL;
 }
 
+static grn_obj *
+grn_table_get_extractors(grn_ctx *ctx, grn_obj *table)
+{
+  if (!table) {
+    return NULL;
+  }
+
+  switch (table->header.type) {
+  case GRN_TABLE_PAT_KEY:
+    return &(((grn_pat *)table)->extractors);
+  case GRN_TABLE_DAT_KEY:
+    return &(((grn_dat *)table)->extractors);
+  case GRN_TABLE_HASH_KEY:
+    return &(((grn_hash *)table)->extractors);
+  default:
+    return NULL;
+  }
+}
+
 grn_obj *
 grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
 {
@@ -821,31 +843,30 @@ grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
 
   const char *tag = "[table][extract]";
 
-  if (!grn_obj_is_table(ctx, table)) {
+  grn_obj *extractors = grn_table_get_extractors(ctx, table);
+  if (!extractors) {
     GRN_DEFINE_NAME(table);
     ERR(GRN_INVALID_ARGUMENT,
-        "%s must be a table: <%.*s>",
+        "%s must be a table with key: <%.*s>",
         tag,
         name_size,
         name);
     GRN_API_RETURN(NULL);
   }
 
-  grn_obj extractors;
-  GRN_PTR_INIT(&extractors, GRN_OBJ_VECTOR, 0);
-  grn_obj_get_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
-
   grn_extract_data data;
   grn_extract_data_init(ctx, &data);
   data.table = table;
   data.value = value;
 
+  grn_table_module *raw_extractors =
+    (grn_table_module *)GRN_BULK_HEAD(extractors);
   size_t i;
-  size_t n = GRN_PTR_VECTOR_SIZE(&extractors);
+  size_t n = GRN_BULK_VSIZE(extractors) / sizeof(grn_table_module);
   for (i = 0; i < n; i++) {
     data.index = i;
 
-    grn_obj *extractor = GRN_PTR_VALUE_AT(&extractors, i);
+    grn_obj *extractor = raw_extractors[i].proc;
     grn_obj *extracted = grn_extractor_extract(ctx, extractor, &data);
     if (ctx->rc != GRN_SUCCESS) {
       data.value = NULL;
@@ -858,7 +879,6 @@ grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
       data.value = extracted;
     }
   }
-  GRN_OBJ_FIN(ctx, &extractors);
 
   GRN_API_RETURN(data.value);
 }
