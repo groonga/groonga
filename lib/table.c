@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2017-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 #include "grn_ctx.h"
 #include "grn_ctx_impl.h"
 #include "grn_expr_executor.h"
+#include "grn_extractor.h"
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
@@ -811,4 +812,53 @@ grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table)
   grn_obj *tokenizer = NULL;
   grn_table_get_info(ctx, table, NULL, NULL, &tokenizer, NULL, NULL);
   return tokenizer != NULL;
+}
+
+grn_obj *
+grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
+{
+  GRN_API_ENTER;
+
+  const char *tag = "[table][extract]";
+
+  if (!grn_obj_is_table(ctx, table)) {
+    GRN_DEFINE_NAME(table);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s must be a table: <%.*s>",
+        tag,
+        name_size,
+        name);
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_obj extractors;
+  GRN_PTR_INIT(&extractors, GRN_OBJ_VECTOR, 0);
+  grn_obj_get_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
+
+  grn_extract_data data;
+  grn_extract_data_init(ctx, &data);
+  data.table = table;
+  data.value = value;
+
+  size_t i;
+  size_t n = GRN_PTR_VECTOR_SIZE(&extractors);
+  for (i = 0; i < n; i++) {
+    data.index = i;
+
+    grn_obj *extractor = GRN_PTR_VALUE_AT(&extractors, i);
+    grn_obj *extracted = grn_extractor_extract(ctx, extractor, &data);
+    if (ctx->rc != GRN_SUCCESS) {
+      data.value = NULL;
+      break;
+    }
+    if (extracted) {
+      if (data.value != value) {
+        grn_obj_close(ctx, data.value);
+      }
+      data.value = extracted;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &extractors);
+
+  GRN_API_RETURN(data.value);
 }

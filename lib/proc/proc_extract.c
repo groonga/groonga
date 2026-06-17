@@ -61,35 +61,11 @@ command_extract(grn_ctx *ctx,
     int n_elements = 1;
     grn_ctx_output_map_open(ctx, "RESULT", n_elements);
     {
-      grn_obj extractors;
-      GRN_PTR_INIT(&extractors, GRN_OBJ_VECTOR, 0);
-      grn_obj_get_info(ctx, lexicon, GRN_INFO_EXTRACTORS, &extractors);
-
-      grn_extract_data data;
-      grn_extract_data_init(ctx, &data);
-      data.table = lexicon;
-      data.value = value;
-
-      size_t i;
-      size_t n = GRN_PTR_VECTOR_SIZE(&extractors);
-      for (i = 0; i < n; i++) {
-        data.index = i;
-
-        grn_obj *extractor = GRN_PTR_VALUE_AT(&extractors, i);
-        grn_obj *extracted = grn_extractor_extract(ctx, extractor, &data);
-        if (extracted) {
-          if (data.value != value) {
-            grn_obj_close(ctx, data.value);
-          }
-          data.value = extracted;
-        }
-      }
-      GRN_OBJ_FIN(ctx, &extractors);
-
+      grn_obj *extracted_value = grn_table_extract(ctx, lexicon, value);
       grn_ctx_output_cstr(ctx, "extracted");
-      grn_ctx_output_obj(ctx, data.value, NULL);
-      if (data.value != value) {
-        GRN_OBJ_FIN(ctx, data.value);
+      grn_ctx_output_obj(ctx, extracted_value, NULL);
+      if (extracted_value != value) {
+        GRN_OBJ_FIN(ctx, extracted_value);
       }
     }
     grn_ctx_output_map_close(ctx);
