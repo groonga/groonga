@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -975,6 +975,36 @@ grn_table_have_duplicated_keys(grn_ctx *ctx, grn_obj *table);
 
 GRN_API bool
 grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table);
+
+/**
+ * \brief Extract data from the given value by extractors associated
+ *        with the given table.
+ *
+ * If the given table doesn't have any extractors, this returns the
+ * given value as-is.
+ *
+ * If all extractors don't extract anything, this returns the given
+ * value as-is.
+ *
+ * \param ctx The context object.
+ * \param table The table that has extractors.
+ * \param value The value to extract.
+ *
+ * \return An extracted data or `value` as-is on success, `NULL` on
+ *         error.
+ *
+ *         If the return value isn't same as `value`, you must free it
+ *         by \ref grn_obj_close when it's no longer needed.
+ *
+ *         Check `ctx->rc` for the specific error code (e.g., \ref
+ *         GRN_NO_MEMORY_AVAILABLE, \ref
+ *         GRN_INVALID_ARGUMENT). Additional details might be
+ *         available in `ctx->errbuf`.
+ *
+ * \since 16.0.6
+ */
+GRN_API grn_obj *
+grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value);
 
 typedef struct _grn_table_selector grn_table_selector;
 
