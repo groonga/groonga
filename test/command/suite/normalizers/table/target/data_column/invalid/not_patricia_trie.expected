@@ -29,4 +29,4 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized",         
     "checks": []
   }
 ]
-#|e| [normalizer][table][target] table must be a TABLE_PAT_KEY: <#<table:hash Terms key:ShortText value:(nil) size:1 columns:[nor...(149)>
+#|e| [normalizer][table][target] table must be a TABLE_PAT_KEY: <#<table:hash Terms key:ShortText value:(nil) size:1 columns:[nor...(186)>

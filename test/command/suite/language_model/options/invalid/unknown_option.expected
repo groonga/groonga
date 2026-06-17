@@ -29,4 +29,4 @@ select Data   --filter 'language_model_knn(text, "male child", { "unknown_option
     "language_model_knn():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size"
   ]
 ]
-#|e| language_model_knn():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizers:(nil) keys:["unknown_option"] subrec:none>
+#|e| language_model_knn():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] extractors:(nil) normalizers:(nil) default_tokenizer:(nil) token_filters:(nil) keys:["unknown_option"] subrec:none>

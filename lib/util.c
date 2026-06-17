@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -908,41 +908,45 @@ grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_table_default_tokenizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_table_module_inspect(grn_ctx *ctx,
+                         grn_obj *buf,
+                         grn_obj *obj,
+                         grn_info_type type)
 {
-  GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
-  grn_obj default_tokenizer;
-  GRN_TEXT_INIT(&default_tokenizer, 0);
-  grn_table_get_default_tokenizer_string(ctx, obj, &default_tokenizer);
-  if (GRN_TEXT_LEN(&default_tokenizer) == 0) {
+  grn_obj module_string;
+  GRN_TEXT_INIT(&module_string, 0);
+
+  switch (type) {
+  case GRN_INFO_EXTRACTORS:
+    GRN_TEXT_PUTS(ctx, buf, "extractors:");
+    grn_table_get_extractors_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_DEFAULT_TOKENIZER:
+    GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
+    grn_table_get_default_tokenizer_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_NORMALIZERS:
+    GRN_TEXT_PUTS(ctx, buf, "normalizers:");
+    grn_table_get_normalizers_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_TOKEN_FILTERS:
+    GRN_TEXT_PUTS(ctx, buf, "token_filters:");
+    grn_table_get_token_filters_string(ctx, obj, &module_string);
+    break;
+  default:
+    GRN_OBJ_FIN(ctx, &module_string);
+    return GRN_SUCCESS;
+  }
+
+  if (GRN_TEXT_LEN(&module_string) == 0) {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
   } else {
     GRN_TEXT_PUT(ctx,
                  buf,
-                 GRN_TEXT_VALUE(&default_tokenizer),
-                 GRN_TEXT_LEN(&default_tokenizer));
+                 GRN_TEXT_VALUE(&module_string),
+                 GRN_TEXT_LEN(&module_string));
   }
-  GRN_OBJ_FIN(ctx, &default_tokenizer);
-
-  return GRN_SUCCESS;
-}
-
-static grn_rc
-grn_table_normalizers_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
-{
-  GRN_TEXT_PUTS(ctx, buf, "normalizers:");
-  grn_obj normalizers;
-  GRN_TEXT_INIT(&normalizers, 0);
-  grn_table_get_normalizers_string(ctx, obj, &normalizers);
-  if (GRN_TEXT_LEN(&normalizers) == 0) {
-    GRN_TEXT_PUTS(ctx, buf, "(nil)");
-  } else {
-    GRN_TEXT_PUT(ctx,
-                 buf,
-                 GRN_TEXT_VALUE(&normalizers),
-                 GRN_TEXT_LEN(&normalizers));
-  }
-  GRN_OBJ_FIN(ctx, &normalizers);
+  GRN_OBJ_FIN(ctx, &module_string);
 
   return GRN_SUCCESS;
 }
@@ -1097,10 +1101,16 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     }
   } else {
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_default_tokenizer_inspect(ctx, buf, obj);
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_EXTRACTORS);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_normalizers_inspect(ctx, buf, obj);
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_NORMALIZERS);
+
+    GRN_TEXT_PUTS(ctx, buf, " ");
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_DEFAULT_TOKENIZER);
+
+    GRN_TEXT_PUTS(ctx, buf, " ");
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_TOKEN_FILTERS);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_keys_inspect(ctx, buf, obj);
