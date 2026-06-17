@@ -47,6 +47,7 @@ all_targets = [
   "croaring",
   "faiss",
   "h3",
+  "jsoncons",
   "llama.cpp",
   "message-pack",
   "openzl",
@@ -93,6 +94,11 @@ targets.each do |target|
     url = "https://github.com/uber/h3/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "h3-#{version}.tar.gz")
+  when "jsoncons"
+    version = cmakelists[/set\(GRN_JSONCONS_BUNDLED_VERSION \"(.+)"\)/, 1]
+    url = "https://github.com/danielaparker/jsoncons/archive/refs/tags/"
+    url << "v#{version}.tar.gz"
+    download(url, "jsoncons-#{version}.tar.gz")
   when "llama.cpp"
     version = cmakelists[/set\(GRN_LLAMA_CPP_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/ggerganov/llama.cpp/archive/refs/tags/"

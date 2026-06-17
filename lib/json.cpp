@@ -29,6 +29,11 @@
 #  include <simdjson.h>
 #endif
 
+#ifdef GRN_WITH_JSONCONS
+#  include <jsoncons/json.hpp>
+#  include <jsoncons_ext/jsonpath/jsonpath.hpp>
+#endif
+
 #include <cstring>
 #include <memory>
 #include <stack>
@@ -2031,6 +2036,141 @@ namespace {
       }
     }
   };
+
+#ifdef GRN_WITH_JSONCONS
+  using json_path_expression =
+    jsoncons::jsonpath::jsonpath_expression<jsoncons::json>;
+
+  class JSONExtractor {
+  public:
+    JSONExtractor(grn_ctx *ctx,
+                  grn_obj *json,
+                  json_path_expression *expr,
+                  grn_obj *values)
+      : ctx_(ctx),
+        json_(json),
+        expr_(expr),
+        values_(values)
+    {
+    }
+    ~JSONExtractor() = default;
+
+    void
+    extract()
+    {
+      JSONReader reader(ctx_, json_);
+      auto rc = reader.next();
+      if (rc != GRN_SUCCESS) {
+        return;
+      }
+
+      auto jsoncons_json = convert(reader);
+      expr_->select(jsoncons_json,
+                    [this](const jsoncons::jsonpath::path_node &path,
+                           const jsoncons::json &value) { push_value(value); });
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_obj *json_;
+    json_path_expression *expr_;
+    grn_obj *values_;
+
+    jsoncons::json
+    convert(JSONReader &reader)
+    {
+      switch (reader.type()) {
+      case GRN_JSON_VALUE_NULL:
+        return jsoncons::json::null();
+      case GRN_JSON_VALUE_FALSE:
+        return jsoncons::json(false, jsoncons::semantic_tag::none);
+      case GRN_JSON_VALUE_TRUE:
+        return jsoncons::json(true, jsoncons::semantic_tag::none);
+      case GRN_JSON_VALUE_INT64:
+        return jsoncons::json(GRN_INT64_VALUE(reader.value()));
+      case GRN_JSON_VALUE_FLOAT:
+        return jsoncons::json(GRN_FLOAT_VALUE(reader.value()));
+      case GRN_JSON_VALUE_STRING:
+        return jsoncons::json(std::string_view(GRN_TEXT_VALUE(reader.value()),
+                                               GRN_TEXT_LEN(reader.value())));
+      case GRN_JSON_VALUE_ARRAY:
+        {
+          jsoncons::json array(jsoncons::json_array_arg);
+          size_t n = reader.size();
+          for (size_t i = 0; i < n; ++i) {
+            if (reader.next() != GRN_SUCCESS) {
+              break;
+            }
+            array.push_back(convert(reader));
+          }
+          return array;
+        }
+      case GRN_JSON_VALUE_OBJECT:
+        {
+          jsoncons::json object;
+          size_t n = reader.size();
+          for (size_t i = 0; i < n; ++i) {
+            if (reader.next() != GRN_SUCCESS) {
+              break;
+            }
+            std::string key(GRN_TEXT_VALUE(reader.value()),
+                            GRN_TEXT_LEN(reader.value()));
+            if (reader.next() != GRN_SUCCESS) {
+              break;
+            }
+            auto value = convert(reader);
+            object.insert_or_assign(key, value);
+          }
+          return object;
+        }
+      default:
+        return jsoncons::json::null();
+      }
+    }
+
+    void
+    push_value(const jsoncons::json &value)
+    {
+      // Scalars are only supported for now.
+      if (value.is_bool()) {
+        auto bool_value = value.as_bool();
+        grn_vector_add_element_float(
+          ctx_,
+          values_,
+          reinterpret_cast<const char *>(&bool_value),
+          sizeof(bool_value),
+          0.0,
+          GRN_DB_BOOL);
+      } else if (value.is_int64()) {
+        auto int64 = value.as_integer<int64_t>();
+        grn_vector_add_element_float(ctx_,
+                                     values_,
+                                     reinterpret_cast<const char *>(&int64),
+                                     sizeof(int64),
+                                     0.0,
+                                     GRN_DB_INT64);
+      } else if (value.is_double()) {
+        auto double_value = value.as_double();
+        grn_vector_add_element_float(
+          ctx_,
+          values_,
+          reinterpret_cast<const char *>(&double_value),
+          sizeof(double_value),
+          0.0,
+          GRN_DB_FLOAT);
+      } else if (value.is_string()) {
+        auto string_view = value.as_string_view();
+        grn_vector_add_element_float(ctx_,
+                                     values_,
+                                     string_view.data(),
+                                     string_view.size(),
+                                     0.0,
+                                     GRN_DB_TEXT);
+      }
+    }
+  };
+#endif
+
 } // namespace
 
 extern "C" {
@@ -2177,6 +2317,81 @@ grn_json_to_string(grn_ctx *ctx, grn_obj *json, grn_obj *buffer)
   GRN_API_ENTER;
   JSONStringifier stringifier(ctx, json, buffer);
   stringifier.stringify();
+  GRN_API_RETURN(ctx->rc);
+}
+
+struct _grn_json_path {
+#ifdef GRN_WITH_JSONCONS
+  json_path_expression *expr;
+#else
+  void *expr;
+#endif
+};
+
+grn_json_path *
+grn_json_path_open(grn_ctx *ctx, const char *raw_path, int64_t raw_path_length)
+{
+  GRN_API_ENTER;
+  const char *tag = "[json-path][open]";
+#ifdef GRN_WITH_JSONCONS
+  auto path = static_cast<grn_json_path *>(GRN_MALLOC(sizeof(grn_json_path)));
+  if (!path) {
+    GRN_API_RETURN(nullptr);
+  }
+  if (raw_path_length < 0) {
+    raw_path_length = strlen(raw_path);
+  }
+  try {
+    path->expr = new json_path_expression(
+      jsoncons::jsonpath::make_expression<jsoncons::json>(
+        std::string_view(raw_path, raw_path_length)));
+  } catch (const jsoncons::json_exception &error) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s invalid JSONPath: %s: <%.*s>",
+        tag,
+        error.what(),
+        static_cast<int>(raw_path_length),
+        raw_path);
+    GRN_FREE(path);
+    path = nullptr;
+  }
+  GRN_API_RETURN(path);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s jsoncons isn't enabled", tag);
+  GRN_API_RETURN(NULL);
+#endif
+}
+
+grn_rc
+grn_json_path_close(grn_ctx *ctx, grn_json_path *path)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_JSONCONS
+  if (path) {
+    delete path->expr;
+    GRN_FREE(path);
+  }
+#else
+  const char *tag = "[json-path][close]";
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s jsoncons isn't enabled", tag);
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_json_extract(grn_ctx *ctx,
+                 grn_obj *json,
+                 grn_json_path *path,
+                 grn_obj *values)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_JSONCONS
+  JSONExtractor extractor(ctx, json, path->expr, values);
+  extractor.extract();
+#else
+  const char *tag = "[json][extract]";
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "%s jsoncons isn't enabled", tag);
+#endif
   GRN_API_RETURN(ctx->rc);
 }
 }

@@ -2237,6 +2237,84 @@ else()
   set(GRN_WITH_BASE64 FALSE)
 endif()
 
+set(GRN_JSONCONS_BUNDLED_VERSION "1.7.0")
+set(GRN_JSONCONS_BUNDLED_SHA256
+    "5a2aad4e791a1c93b0b0b326973459753a96a4c48d06d3035cd0ea0d262198d4")
+set(GRN_WITH_JSONCONS
+    "auto"
+    CACHE STRING "Support JSONPath by JSONCONS.")
+set(GRN_WITH_JSONCONS_BUNDLED FALSE)
+if(NOT "${GRN_WITH_JSONCONS}" STREQUAL "no")
+  if("${GRN_WITH_JSONCONS}" STREQUAL "bundled")
+    set(jsoncons_FOUND FALSE)
+  else()
+    if("${GRN_WITH_JSONCONS}" STREQUAL "system")
+      find_package(jsoncons REQUIRED)
+    else()
+      find_package(jsoncons)
+    endif()
+  endif()
+  if(jsoncons_FOUND)
+    set(GRN_WITH_JSONCONS TRUE)
+    if(TARGET jsoncons::jsoncons)
+      target_link_libraries(grn_dependencies INTERFACE jsoncons::jsoncons)
+    else()
+      # jsoncons < 1.4.0
+      target_link_libraries(grn_dependencies INTERFACE jsoncons)
+    endif()
+    message(STATUS "JSONCONS: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_jsoncons)
+      set(JSONCONS_SOURCE_BASE_NAME
+          "jsoncons-${GRN_JSONCONS_BUNDLED_VERSION}.tar.gz")
+      set(JSONCONS_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${JSONCONS_SOURCE_BASE_NAME}")
+      if(EXISTS ${JSONCONS_SOURCE_LOCAL_PATH})
+        set(JSONCONS_SOURCE_URL ${JSONCONS_SOURCE_LOCAL_PATH})
+      else()
+        set(JSONCONS_SOURCE_URL
+            "https://github.com/danielaparker/jsoncons/archive/refs/tags")
+        string(APPEND JSONCONS_SOURCE_URL
+               "/v${GRN_JSONCONS_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        jsoncons
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${JSONCONS_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_JSONCONS_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(JSONCONS_BUILD_TESTS OFF)
+      set(JSONCONS_WERROR OFF)
+      fetchcontent_makeavailable(jsoncons)
+      get_target_property(jsoncons_include_directories jsoncons
+                          INTERFACE_INCLUDE_DIRECTORIES)
+      set_target_properties(jsoncons PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
+                                                "")
+      target_include_directories(jsoncons SYSTEM
+                                 INTERFACE ${jsoncons_include_directories})
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${jsoncons_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                               TRUE)
+      endif()
+      install(FILES "${jsoncons_SOURCE_DIR}/LICENSE"
+                    "${jsoncons_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/jsoncons")
+    endfunction()
+    grn_build_jsoncons()
+    target_link_libraries(grn_dependencies INTERFACE jsoncons)
+    set(GRN_WITH_JSONCONS_BUNDLED TRUE)
+    message(STATUS "JSONCONS: bundled")
+  else()
+    set(GRN_WITH_JSONCONS FALSE)
+  endif()
+else()
+  set(GRN_WITH_JSONCONS FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"

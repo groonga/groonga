@@ -271,6 +271,64 @@ grn_json_reader_get_size(grn_ctx *ctx, grn_json_reader *reader);
 GRN_API grn_rc
 grn_json_to_string(grn_ctx *ctx, grn_obj *json, grn_obj *buffer);
 
+/**
+ * \brief JSONPath that represents path of values in JSON.
+ *
+ * \since 16.0.6
+ */
+typedef struct _grn_json_path grn_json_path;
+
+/**
+ * \brief Open a new JSONPath.
+ *
+ * \param ctx The context object.
+ * \param path The JSONPath to parse.
+ * \param path_length The byte size of `path`. You can use `-1` if
+ *                    `path` is a `\0`-terminated string.
+ *
+ * \return A newly created JSONPath on success, `NULL` on error.
+ *
+ * \since 16.0.6
+ */
+GRN_API grn_json_path *
+grn_json_path_open(grn_ctx *ctx, const char *path, int64_t path_length);
+
+/**
+ * \brief Close a JSONPath.
+ *
+ * \param ctx The context object.
+ * \param path The path to close.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ *
+ * \since 16.0.6
+ */
+GRN_API grn_rc
+grn_json_path_close(grn_ctx *ctx, grn_json_path *path);
+
+/**
+ * \brief Extract values specified by JSONPath in a parsed JSON.
+ *
+ * \param ctx The context object.
+ * \param json The JSON to extract.
+ * \param path The JSONPath that specifies values.
+ * \param values The output values. This must be initialized by
+ *               `GRN_VALUE_VAR_SIZE_INIT(&values, GRN_OBJ_VECTOR,
+ *               GRN_ID_NIL)` or `grn_obj_open(ctx, GRN_VECTOR, 0,
+ *               GRN_ID_NIL)`.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on
+ *         error.
+ *
+ * \since 16.0.6
+ */
+GRN_API grn_rc
+grn_json_extract(grn_ctx *ctx,
+                 grn_obj *json,
+                 grn_json_path *path,
+                 grn_obj *values);
+
 #ifdef __cplusplus
 }
 #endif

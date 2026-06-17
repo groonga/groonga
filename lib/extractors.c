@@ -336,6 +336,132 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
   return output;
 }
 
+typedef struct {
+  grn_json_path *path;
+} json_extract_options;
+
+static void
+json_extract_options_init(grn_ctx *ctx, json_extract_options *options)
+{
+  options->path = NULL;
+}
+
+static void
+json_extract_options_fin(grn_ctx *ctx, json_extract_options *options)
+{
+  if (options->path) {
+    grn_json_path_close(ctx, options->path);
+    options->path = NULL;
+  }
+}
+
+static void
+json_extract_close_options(grn_ctx *ctx, void *data)
+{
+  json_extract_options *options = data;
+  json_extract_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static void *
+json_extract_open_options(grn_ctx *ctx,
+                          grn_obj *extractor,
+                          grn_obj *raw_options,
+                          void *user_data)
+{
+  const char *tag = "[extractor][json]";
+  json_extract_options *options = GRN_CALLOC(sizeof(json_extract_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  json_extract_options_init(ctx, options);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "path")) {
+      const char *path;
+      unsigned int path_length;
+      grn_id domain;
+
+      path_length =
+        grn_vector_get_element(ctx, raw_options, i, &path, NULL, &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && path_length > 0) {
+        options->path = grn_json_path_open(ctx, path, path_length);
+      }
+    }
+  }
+  GRN_OPTION_VALUES_EACH_END();
+
+  if (!options->path) {
+    if (ctx->rc == GRN_SUCCESS) {
+      ERR(GRN_INVALID_ARGUMENT, "%s path is missing", tag);
+    }
+    json_extract_close_options(ctx, options);
+    return NULL;
+  }
+
+  return options;
+}
+
+static grn_obj *
+json_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
+{
+  const char *tag = "[extractor][json]";
+
+  grn_obj *value = grn_extract_data_get_value(ctx, data);
+  grn_obj *json;
+  grn_obj json_buffer;
+  GRN_JSON_INIT(&json_buffer, 0);
+  if (value->header.domain == GRN_DB_JSON) {
+    json = value;
+  } else {
+    grn_rc rc = grn_obj_cast(ctx, value, &json_buffer, false);
+    if (rc != GRN_SUCCESS) {
+      GRN_OBJ_FIN(ctx, &json_buffer);
+      return NULL;
+    }
+    json = &json_buffer;
+  }
+
+  grn_obj *table = grn_extract_data_get_table(ctx, data);
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT, "%s related table information is missing", tag);
+    GRN_OBJ_FIN(ctx, &json_buffer);
+    return NULL;
+  }
+
+  uint32_t i = grn_extract_data_get_index(ctx, data);
+  json_extract_options *options =
+    grn_table_cache_extractors_options(ctx,
+                                       table,
+                                       i,
+                                       json_extract_open_options,
+                                       json_extract_close_options,
+                                       NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_OBJ_FIN(ctx, &json_buffer);
+    return NULL;
+  }
+
+  grn_obj *output = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
+  grn_rc rc = grn_json_extract(ctx, json, options->path, output);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, output);
+    GRN_OBJ_FIN(ctx, &json_buffer);
+    return NULL;
+  }
+  GRN_OBJ_FIN(ctx, &json_buffer);
+  return output;
+}
+
 grn_rc
 grn_db_init_builtin_extractors(grn_ctx *ctx)
 {
@@ -343,6 +469,12 @@ grn_db_init_builtin_extractors(grn_ctx *ctx)
     grn_obj *extractor;
     extractor = grn_extractor_create(ctx, "ExtractorHTML", -1);
     grn_extractor_set_extract_func(ctx, extractor, html_extract);
+  }
+
+  {
+    grn_obj *extractor;
+    extractor = grn_extractor_create(ctx, "ExtractorJSON", -1);
+    grn_extractor_set_extract_func(ctx, extractor, json_extract);
   }
 
   return GRN_SUCCESS;

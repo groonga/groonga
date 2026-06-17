@@ -33,8 +33,7 @@ override_dh_auto_configure:
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
 	  -DGRN_WITH_MRUBY=ON					\
-	  -DGRN_WITH_MUNIN_PLUGINS=ON                           \
-	  -DGRN_WITH_SIMDJSON=auto
+	  -DGRN_WITH_MUNIN_PLUGINS=ON
 
 # disable 'make check'.
 override_dh_auto_test:
@@ -47,6 +46,7 @@ override_dh_auto_install:
 	install -m 0644 debian/groonga-munin-plugins.conf \
 	  debian/tmp/etc/munin/plugin-conf.d/groonga
 	install -d debian/tmp/usr/share/groonga/faiss/
+	install -d debian/tmp/usr/share/groonga/jsoncons/
 	install -d debian/tmp/usr/share/groonga/openzl/
 	mv debian/tmp/usr/share/doc/groonga/ \
 	  debian/tmp/usr/share/doc/groonga-doc/

@@ -12,6 +12,7 @@ Build-Depends:
   libevent-dev,
 @USE_SYSTEM_FAISS@  libfaiss-dev,
 @USE_BUNDLED_FAISS@  liblapack-dev,
+@USE_SYSTEM_JSONCONS@  libjsoncons-dev,
   liblz4-dev,
   libmecab-dev,
   libmsgpack-dev,
