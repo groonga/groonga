@@ -5,7 +5,7 @@ set -exu
 echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
 
 apt update
-apt install -V -y lsb-release wget
+apt install -V -y curl lsb-release wget
 
 distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
@@ -87,7 +87,13 @@ grntest_options+=(--n-retries=2)
 grntest_options+=(--reporter=mark)
 grntest_options+=(command/suite)
 grntest "${grntest_options[@]}"
-# Run only one job to reduce CI time
-if [ "${code_name}" == "bookworm" ]; then
-  grntest "${grntest_options[@]}" --interface http
+# Run only on Debian stable to reduce CI time
+if [ "${distribution}" = "debian" ]; then
+  stable_code_name=$(
+    curl -s https://ftp.debian.org/debian/dists/stable/Release | \
+      grep -o 'Codename: .*' | \
+      cut -d' ' -f 2)
+  if [ "${code_name}" = "${stable_code_name}" ]; then
+    grntest "${grntest_options[@]}" --interface http
+  fi
 fi
