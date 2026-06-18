@@ -836,6 +836,17 @@ grn_table_get_extractors(grn_ctx *ctx, grn_obj *table)
   }
 }
 
+bool
+grn_table_have_extractor(grn_ctx *ctx, grn_obj *table)
+{
+  grn_obj *extractors = grn_table_get_extractors(ctx, table);
+  if (!extractors) {
+    return false;
+  }
+
+  return GRN_BULK_VSIZE(extractors) > 0;
+}
+
 grn_obj *
 grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
 {
