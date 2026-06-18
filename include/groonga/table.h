@@ -977,6 +977,21 @@ GRN_API bool
 grn_table_have_tokenizer(grn_ctx *ctx, grn_obj *table);
 
 /**
+ * \brief Return whether the given table have one or more extractors
+ *        or not.
+ *
+ * \param ctx The context object.
+ * \param table The table to check.
+ *
+ * \return `true` if `table` has one or more extractors, `false`
+ *         otherwise.
+ *
+ * \since 16.0.6
+ */
+GRN_API bool
+grn_table_have_extractor(grn_ctx *ctx, grn_obj *table);
+
+/**
  * \brief Extract data from the given value by extractors associated
  *        with the given table.
  *
