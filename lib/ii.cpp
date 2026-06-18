@@ -9442,12 +9442,28 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   if (old_value || new_value) {
     bool is_text_vector_index = true;
     if (old_value) {
+      grn_obj *extracted_old_value =
+        grn_table_extract(ctx, ii->lexicon, old_value);
+      if (!extracted_old_value) {
+        return ctx->rc;
+      }
+      if (extracted_old_value != old_value) {
+        old_value = extracted_old_value;
+      }
       if (!(old_value->header.type == GRN_VECTOR &&
             grn_type_id_is_text_family(ctx, old_value->header.domain))) {
         is_text_vector_index = false;
       }
     }
     if (new_value) {
+      grn_obj *extracted_new_value =
+        grn_table_extract(ctx, ii->lexicon, new_value);
+      if (!extracted_new_value) {
+        return ctx->rc;
+      }
+      if (extracted_new_value != new_value) {
+        new_value = extracted_new_value;
+      }
       if (!(new_value->header.type == GRN_VECTOR &&
             grn_type_id_is_text_family(ctx, new_value->header.domain))) {
         is_text_vector_index = false;
@@ -9860,20 +9876,24 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   }
 exit:
   grn_io_unlock(ctx, ii->seg);
-  if (old_value && old_value->header.type == GRN_TABLE_HASH_KEY) {
-    grn_hash *o = (grn_hash *)old_value;
-    GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
-      grn_ii_updspec_close(ctx, *u);
-    });
+  if (old_value) {
+    if (old_value->header.type == GRN_TABLE_HASH_KEY) {
+      grn_hash *o = (grn_hash *)old_value;
+      GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
+        grn_ii_updspec_close(ctx, *u);
+      });
+    }
     if (old_value != oldvalue) {
       grn_obj_close(ctx, old_value);
     }
   }
-  if (new_value && new_value->header.type == GRN_TABLE_HASH_KEY) {
-    grn_hash *n = (grn_hash *)new_value;
-    GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
-      grn_ii_updspec_close(ctx, *u);
-    });
+  if (new_value) {
+    if (new_value->header.type == GRN_TABLE_HASH_KEY) {
+      grn_hash *n = (grn_hash *)new_value;
+      GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
+        grn_ii_updspec_close(ctx, *u);
+      });
+    }
     if (new_value != newvalue) {
       grn_obj_close(ctx, new_value);
     }
@@ -16348,16 +16368,22 @@ namespace grn::ii {
         src_token_columns_(src_token_columns),
         sid_bits_(sid_bits),
         values_(GRN_PTR_VECTOR_SIZE(srcs_)),
+        casted_token_value_(),
         n_processed_records_(0)
     {
       const size_t n = GRN_PTR_VECTOR_SIZE(srcs_);
       for (size_t i = 0; i < n; i++) {
         GRN_VOID_INIT(&values_[i]);
       }
+      GRN_OBJ_INIT(&casted_token_value_,
+                   GRN_BULK,
+                   0,
+                   ii_->lexicon->header.domain);
     }
 
     ~BlockBuilder()
     {
+      GRN_OBJ_FIN(ctx_, &casted_token_value_);
       const size_t n = GRN_PTR_VECTOR_SIZE(srcs_);
       for (size_t i = 0; i < n; i++) {
         GRN_OBJ_FIN(ctx_, &values_[i]);
@@ -16449,7 +16475,16 @@ namespace grn::ii {
             }
           }
           auto sid = static_cast<uint32_t>(i + 1);
-          rc = append_obj(src, rid, sid, value);
+          auto extracted_value = grn_table_extract(ctx_, lexicon_, value);
+          if (ctx_->rc != GRN_SUCCESS) {
+            return ctx_->rc;
+          }
+          if (extracted_value == value) {
+            rc = append_obj(src, rid, sid, value);
+          } else {
+            rc = append_obj(src, rid, sid, extracted_value);
+            grn_obj_close(ctx_, extracted_value);
+          }
           if (rc != GRN_SUCCESS) {
             return rc;
           }
@@ -16620,6 +16655,9 @@ namespace grn::ii {
     // Buffers for source column values. We use one grn_obj per column
     // to reuse effectively.
     std::vector<grn_obj> values_;
+
+    // Buffer for token value cast.
+    grn_obj casted_token_value_;
 
     size_t n_processed_records_; /* Number of processed records */
 
@@ -16895,6 +16933,25 @@ namespace grn::ii {
           grn_id tid;
           uint32_t max_key_size = 0;
           bool too_large_key = false;
+          if (value_domain != lexicon_->header.domain &&
+              !(grn_type_id_is_text_family(ctx_, value_domain) &&
+                grn_type_id_is_text_family(ctx_, lexicon_->header.domain))) {
+            grn_obj original_value;
+            GRN_OBJ_INIT(&original_value,
+                         GRN_BULK,
+                         GRN_OBJ_DO_SHALLOW_COPY,
+                         value_domain);
+            GRN_TEXT_SET(ctx_, &original_value, value, value_size);
+            GRN_BULK_REWIND(&casted_token_value_);
+            grn_rc rc =
+              grn_obj_cast(ctx_, &original_value, &casted_token_value_, false);
+            GRN_OBJ_FIN(ctx_, &original_value);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
+            value = GRN_BULK_HEAD(&casted_token_value_);
+            value_size = GRN_BULK_VSIZE(&casted_token_value_);
+          }
           switch (lexicon_->header.type) {
           case GRN_TABLE_PAT_KEY:
             if (value_size >= GRN_TABLE_MAX_KEY_SIZE) {

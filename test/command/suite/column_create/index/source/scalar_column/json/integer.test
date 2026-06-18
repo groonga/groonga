@@ -1,0 +1,25 @@
+#@require-feature simdjson
+#@require-feature jsoncons
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR JSON
+
+load --table Data
+[
+{"value": "{\"value\": [[1, 10], [100]]}"},
+{"value": "{\"value\": [[2], [20, 200]]}"},
+{"value": "{\"value\": [[-1, -10], [-100]]}"}
+]
+
+table_create Numbers TABLE_PAT_KEY Int32 \
+  --extractors 'ExtractorJSON("path", "$.value[*][*]")'
+column_create Numbers data_value COLUMN_INDEX Data value
+
+load --table Data
+[
+{"value": "{\"value\": [[], [15, 150]]}"}
+]
+
+select Data --filter 'between(Numbers.data_value, 10, 20)'
+
+index_column_diff Numbers data_value

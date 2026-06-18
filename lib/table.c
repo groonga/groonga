@@ -856,13 +856,19 @@ grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
 
   grn_obj *extractors = grn_table_get_extractors(ctx, table);
   if (!extractors) {
-    GRN_DEFINE_NAME(table);
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s must be a table with key: <%.*s>",
-        tag,
-        name_size,
-        name);
-    GRN_API_RETURN(NULL);
+    /* grn_array never have extractors but we accept it as a valid */
+    /* table. */
+    if (table && table->header.type == GRN_TABLE_NO_KEY) {
+      GRN_API_RETURN(value);
+    } else {
+      GRN_DEFINE_NAME(table);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s must be a table: <%.*s>",
+          tag,
+          name_size,
+          name);
+      GRN_API_RETURN(NULL);
+    }
   }
 
   grn_extract_data data;

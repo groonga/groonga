@@ -8924,6 +8924,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     }
   }
 
+  bool lexicon_have_extractor = grn_table_have_extractor(ctx, lexicon);
   for (i = 0; i < n_source_ids; i++) {
     grn_id source_id = source_ids[i];
     grn_obj *source;
@@ -8940,7 +8941,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
       source_type_id = DB_OBJ(source)->range;
     }
     source_type = grn_ctx_at(ctx, source_type_id);
-    if (!lexicon_have_tokenizer) {
+    if (!lexicon_have_extractor && !lexicon_have_tokenizer) {
       if (grn_obj_is_table(ctx, source_type)) {
         if (lexicon_id != source_type_id) {
           grn_obj_set_info_source_invalid_lexicon_error(
