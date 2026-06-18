@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ def list_paths(variable_name, paths, output)
   output.puts
 end
 
-source_dir = __dir__
+source_dir = File.expand_path(__dir__)
 
 # For GNU Autotools
 File.open(File.join(source_dir, "files.am"), "w") do |output|
@@ -75,6 +75,16 @@ File.open(File.join(source_dir, "files.am"), "w") do |output|
       next unless File.file?(path)
       next if path == "html/.buildinfo"
       next if path == "html/.buildinfo.bak"
+      if path.start_with?("html/reference/api/")
+        base_name = File.basename(path, ".html")
+        source = File.join(source_dir,
+                           "source",
+                           "reference",
+                           "api",
+                           "#{base_name}.rst")
+        # Ignore Doxygen generated files
+        next unless File.exist?(source)
+      end
       html_files << path
     end
     html_files.sort!
@@ -112,6 +122,16 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
       next unless File.file?(path)
       next if path == ".buildinfo"
       next if path == ".buildinfo.bak"
+      if path.start_with?("reference/api/")
+        base_name = File.basename(path, ".html")
+        source = File.join(source_dir,
+                           "source",
+                           "reference",
+                           "api",
+                           "#{base_name}.rst")
+        # Ignore Doxygen generated files
+        next unless File.exist?(source)
+      end
       html_files << path
     end
     html_files.sort!
