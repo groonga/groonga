@@ -1,0 +1,24 @@
+table_create Contents TABLE_NO_KEY
+column_create Contents html COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers NormalizerNFKC \
+  --extractors ExtractorHTML
+column_create Terms contents_html COLUMN_INDEX|WITH_POSITION Contents html
+
+load --table Contents
+[
+{"html": "<p>Groonga is a <b>fast</b> full text search engine.</p>"}
+]
+
+index_column_diff Terms contents_html
+
+select Contents \
+  --match_columns html \
+  --query "fast" \
+  --output_columns html
+select Contents \
+  --match_columns html \
+  --query "<b>" \
+  --output_columns html
