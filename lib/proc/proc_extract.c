@@ -63,9 +63,13 @@ command_extract(grn_ctx *ctx,
     {
       grn_obj *extracted_value = grn_table_extract(ctx, lexicon, value);
       grn_ctx_output_cstr(ctx, "extracted");
-      grn_ctx_output_obj(ctx, extracted_value, NULL);
-      if (extracted_value != value) {
-        GRN_OBJ_FIN(ctx, extracted_value);
+      if (extracted_value) {
+        grn_ctx_output_obj(ctx, extracted_value, NULL);
+        if (extracted_value != value) {
+          GRN_OBJ_FIN(ctx, extracted_value);
+        }
+      } else {
+        grn_ctx_output_null(ctx);
       }
     }
     grn_ctx_output_map_close(ctx);

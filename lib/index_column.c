@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2015  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1043,7 +1043,8 @@ static void
 grn_index_column_diff_process_token(grn_ctx *ctx,
                                     grn_index_column_diff_data *data,
                                     const void *value_data,
-                                    size_t value_size)
+                                    size_t value_size,
+                                    grn_id value_domain)
 {
   if (value_size == 0) {
     return;
@@ -1059,6 +1060,8 @@ grn_index_column_diff_process_token(grn_ctx *ctx,
   if (!token_cursor) {
     return;
   }
+
+  grn_token_cursor_set_query_domain(ctx, token_cursor, value_domain);
 
   const bool with_position = data->index.with_position;
   while (grn_token_cursor_get_status(ctx, token_cursor) ==
@@ -1086,7 +1089,6 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
 {
   grn_obj *source_columns = &(data->source_columns);
   const size_t n_source_columns = GRN_PTR_VECTOR_SIZE(source_columns);
-  grn_obj *value = &(data->buffers.value);
 
   grn_index_column_diff_init_progress(ctx, data);
 
@@ -1110,10 +1112,20 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
       }
       GRN_HASH_EACH_END(ctx, cursor);
 
+      grn_obj *value = &(data->buffers.value);
       GRN_BULK_REWIND(value);
       grn_obj_get_value(ctx, source, id, value);
       if (ctx->rc != GRN_SUCCESS) {
         break;
+      }
+      grn_obj *extracted_value = grn_table_extract(ctx, data->lexicon, value);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      bool extracted = false;
+      if (extracted_value != value) {
+        extracted = true;
+        value = extracted_value;
       }
 
       switch (value->header.type) {
@@ -1122,13 +1134,14 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
           const size_t n_elements = grn_vector_size(ctx, value);
           for (size_t j = 0; j < n_elements; j++) {
             const char *element = NULL;
+            grn_id domain = GRN_ID_NIL;
             const unsigned int element_size =
               grn_vector_get_element(ctx,
                                      value,
                                      (uint32_t)j,
                                      &element,
                                      NULL,
-                                     NULL);
+                                     &domain);
             data->current.posting.sid = (uint32_t)(j + 1);
             if (!data->have_tokenizer) {
               data->current.posting.pos = j;
@@ -1136,8 +1149,12 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
             grn_index_column_diff_process_token(ctx,
                                                 data,
                                                 element,
-                                                element_size);
+                                                element_size,
+                                                domain);
             if (ctx->rc != GRN_SUCCESS) {
+              if (extracted) {
+                grn_obj_close(ctx, extracted_value);
+              }
               break;
             }
           }
@@ -1200,12 +1217,17 @@ grn_index_column_diff_compute(grn_ctx *ctx, grn_index_column_diff_data *data)
             grn_index_column_diff_process_token(ctx,
                                                 data,
                                                 GRN_BULK_HEAD(value),
-                                                GRN_BULK_VSIZE(value));
+                                                GRN_BULK_VSIZE(value),
+                                                value->header.domain);
           }
         }
         break;
       default:
         break;
+      }
+
+      if (extracted) {
+        grn_obj_close(ctx, extracted_value);
       }
 
       if (ctx->rc != GRN_SUCCESS) {
