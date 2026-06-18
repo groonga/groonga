@@ -9413,6 +9413,8 @@ grn_ii_column_update_internal(grn_ctx *ctx,
   grn_ii_updspec **u, **un;
   grn_obj *old_value = oldvalue;
   grn_obj *new_value = newvalue;
+  grn_obj *old_value_bulk = NULL;
+  grn_obj *new_value_bulk = NULL;
   grn_obj old_buffer;
   grn_obj new_buffer;
   grn_obj buf, *post = NULL;
@@ -9549,17 +9551,14 @@ grn_ii_column_update_internal(grn_ctx *ctx,
         if (grn_bulk_is_zero(ctx, new_value)) {
           do_grn_ii_updspec_cmp = false;
         }
-        grn_obj *new_value_before = new_value;
+        new_value_bulk = new_value;
         GRN_OBJ_INIT(&new_buffer,
                      GRN_VECTOR,
                      GRN_OBJ_DO_SHALLOW_COPY,
                      new_value->header.domain);
         new_buffer.u.v.body = new_value;
         new_value = &new_buffer;
-        grn_vector_delimit(ctx, new_value, 0, new_value_before->header.domain);
-        if (new_value_before != newvalue) {
-          grn_obj_close(ctx, new_value_before);
-        }
+        grn_vector_delimit(ctx, new_value, 0, new_value_bulk->header.domain);
       }
       /* fallthru */
     case GRN_VECTOR:
@@ -9719,19 +9718,14 @@ grn_ii_column_update_internal(grn_ctx *ctx,
     switch (type) {
     case GRN_BULK:
       {
-        //        const char *str = GRN_BULK_HEAD(old);
-        //        unsigned int str_len = GRN_BULK_VSIZE(old);
-        grn_obj *old_value_before = old_value;
+        old_value_bulk = old_value;
         GRN_OBJ_INIT(&old_buffer,
                      GRN_VECTOR,
                      GRN_OBJ_DO_SHALLOW_COPY,
                      old_value->header.domain);
         old_buffer.u.v.body = old_value;
         old_value = &old_buffer;
-        grn_vector_delimit(ctx, old_value, 0, old_value_before->header.domain);
-        if (old_value_before != oldvalue) {
-          grn_obj_close(ctx, old_value_before);
-        }
+        grn_vector_delimit(ctx, old_value, 0, old_value_bulk->header.domain);
       }
       /* fallthru */
     case GRN_VECTOR:
@@ -9886,6 +9880,9 @@ exit:
     if (old_value != oldvalue) {
       grn_obj_close(ctx, old_value);
     }
+    if (old_value_bulk && old_value_bulk != oldvalue) {
+      grn_obj_close(ctx, old_value_bulk);
+    }
   }
   if (new_value) {
     if (new_value->header.type == GRN_TABLE_HASH_KEY) {
@@ -9896,6 +9893,9 @@ exit:
     }
     if (new_value != newvalue) {
       grn_obj_close(ctx, new_value);
+    }
+    if (new_value_bulk && new_value_bulk != newvalue) {
+      grn_obj_close(ctx, new_value_bulk);
     }
   }
   return ctx->rc;
