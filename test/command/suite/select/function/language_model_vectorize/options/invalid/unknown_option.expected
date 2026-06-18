@@ -48,4 +48,4 @@ select Data   --output_columns '       text,       vector_size(language_model_ve
     ]
   ]
 ]
-#|e| language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizers:(nil) keys:["unknown_option"] subrec:none>
+#|e| language_model_vectorize():[options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] extractors:(nil) normalizers:(nil) default_tokenizer:(nil) token_filters:(nil) keys:["unknown_option"] subrec:none>
