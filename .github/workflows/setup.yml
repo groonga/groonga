@@ -1,11 +1,6 @@
 name: Setup
 on:
   push:
-    branches:
-      - master
-      - 'maintenance/**'
-    tags:
-      - '*'
     paths:
       - '**/*.cmake'
       - '**/*.cmake.in'
@@ -20,7 +15,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'plugins/**/*.c'
       - 'plugins/**/*.cpp'
@@ -33,6 +28,7 @@ on:
       - 'test/command_line/**'
       - 'test/mruby/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
   pull_request:
     paths:
       - '**/*.cmake'
@@ -47,7 +43,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'plugins/**/*.c'
       - 'plugins/**/*.cpp'
@@ -60,22 +56,90 @@ on:
       - 'test/command_line/**'
       - 'test/mruby/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
 jobs:
-  test:
-    name: Test
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         image:
-          - ubuntu-focal
-    runs-on: macos-latest
+          - "images:debian/13"
+          - "images:ubuntu/22.04"
+          - "images:ubuntu/24.04"
+          - "images:almalinux/8"
+          - "images:almalinux/9"
+          - "images:almalinux/10"
+          - "images:amazonlinux/2023"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Install Incus
+        run: |
+          # We can use the official Ubuntu APT repository when
+          # ubuntu-latest is Ubuntu 24.04.
+          sudo curl -fsSL https://pkgs.zabbly.com/key.asc -o /etc/apt/keyrings/zabbly.asc
+          cat <<SOURCES | sudo tee /etc/apt/sources.list.d/zabbly-incus-stable.sources
+          Enabled: yes
+          Types: deb
+          URIs: https://pkgs.zabbly.com/incus/stable
+          Suites: $(. /etc/os-release && echo ${VERSION_CODENAME})
+          Components: main
+          Architectures: $(dpkg --print-architecture)
+          Signed-By: /etc/apt/keyrings/zabbly.asc
+          SOURCES
+
+          sudo apt update
+          sudo apt install -y -V incus
+      - name: Allow egress network traffic flows for Incus
+        # https://linuxcontainers.org/incus/docs/main/howto/network_bridge_firewalld/#prevent-connectivity-issues-with-incus-and-docker
+        run: |
+          sudo iptables -I DOCKER-USER -i incusbr0 -j ACCEPT
+          sudo iptables -I DOCKER-USER -o incusbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      - name: Setup
+        run: |
+          set -x
+          sudo incus admin init --auto
+          sudo incus launch --quiet ${{ matrix.image }} target
+          sudo incus config device add target host disk source=$PWD path=/host
+
+          # Ideally, we would use systemctl is-system-running --wait
+          # to ensure all services are fully operational. However,
+          # this option doesn't work in AlmaLinux 8 and results in an
+          # error. As a workaround, we introduced a 10-second sleep
+          # delay to allow network services time to stabilize,
+          # preventing DNS resolution errors when attempting to dnf
+          # install command.
+          #
+          # ref:
+          # https://discuss.linuxcontainers.org/t/network-issue-with-almalinux-8-9-on-github-actions-using-incus/20046
+          sleep 10
+
+          sudo incus exec target -- /host/setup.sh
+          sudo incus exec target -- /host/build.sh /host /tmp/build /tmp/local
+          sudo incus stop target
+          sudo incus delete target
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
       - name: Setup
         run: |
-          vagrant up ${{ matrix.image }}
+          # Workaround. pkg-config formula is deprecated but still
+          # installed in GitHub Actions runner. We can remove this
+          # when GitHub Actions runner doesn't include pkg-config
+          # formula by default.
+          brew uninstall pkg-config || :
+          brew uninstall pkg-config@0.29.2 || :
+          ./setup.sh
+          ./build.sh ./ /tmp/build /tmp/local

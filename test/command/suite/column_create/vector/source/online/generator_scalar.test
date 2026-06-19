@@ -1,0 +1,14 @@
+table_create Notes TABLE_NO_KEY
+column_create Notes title_html COLUMN_SCALAR ShortText
+column_create Notes title_text COLUMN_SCALAR ShortText title_html \
+  --generator 'html_untag(title_html)'
+
+load --table Notes
+[
+{"title_html": "Hello <em>Groonga</em>"},
+{"title_html": "<i>Hello</i> <em>Mroonga</em>"}
+]
+
+select Notes --output_columns title_html,title_text
+
+dump

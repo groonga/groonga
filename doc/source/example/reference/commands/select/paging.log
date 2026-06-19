@@ -3,42 +3,42 @@ Execution example::
   select Entries --offset 1 --limit 1
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         10, 
+  #         2,
+  #         "Groonga",
+  #         "I started to use Groonga. It's very fast!",
+  #         10,
   #         "Groonga"
   #       ]
   #     ]

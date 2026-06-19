@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 table_create Tags TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 
 schema

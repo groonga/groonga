@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2018  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,6 +26,8 @@
 extern "C" {
 #endif
 
+#define GRN_TABLE_SELECTOR_FUZZY_MAX_EXPANSIONS_DEFAULT 10
+
 void
 grn_table_selector_init_from_env(void);
 
@@ -37,8 +40,8 @@ typedef struct {
   grn_obj *initial_result_set;
   grn_obj *result_set;
   grn_id min_id;
-  grn_bool is_first_unskipped_scan_info;
-  grn_bool is_skipped;
+  bool is_first_unskipped_scan_info;
+  bool is_skipped;
   grn_search_optarg search_options;
 } grn_table_selector_data;
 
@@ -52,6 +55,8 @@ struct _grn_table_selector {
   float weight_factor;
   double enough_filtered_ratio;
   int64_t max_n_enough_filtered_records;
+  bool ensure_using_select_result;
+  grn_fuzzy_search_optarg fuzzy_options;
   grn_table_selector_data data;
 };
 
@@ -62,8 +67,7 @@ grn_table_selector_init(grn_ctx *ctx,
                         grn_obj *expr,
                         grn_operator op);
 void
-grn_table_selector_fin(grn_ctx *ctx,
-                       grn_table_selector *selector);
+grn_table_selector_fin(grn_ctx *ctx, grn_table_selector *selector);
 
 #ifdef __cplusplus
 }

@@ -30,10 +30,11 @@ This command useful in this case.
 Syntax
 ------
 
-This command takes two parameters.
-All parameters are required::
+Here is the syntax of this command::
 
-  index_column_diff table index_column
+  index_column_diff table
+                    name
+                    [progress_log_level=debug]
 
 Usage
 -----
@@ -71,14 +72,36 @@ Parameters
 This section describes all parameters.
 
 ``table``
-"""""""""
+^^^^^^^^^
 
 Specifies the name of a table include check target of the index column.
 
-``index_column``
-""""""""""""""""
+``name``
+^^^^^^^^
 
 Specifies the name of check target of the index column.
+
+.. _index-column-diff-progress-log-level:
+
+``progress_log_level``
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 14.1.3
+
+Specifies the log level of progress logs.
+
+The default log level is ``debug``. So you need to log all debug logs
+to see progress logs.
+
+If you use ``notice`` as a log level, you can see progress logs
+without other debug logs. See :ref:`log-level-level` for available log
+levels.
+
+The default is ``debug``.
+
+Example::
+
+  index_column_diff Terms data_index --progress_log_level notice
 
 Return value
 ------------
@@ -104,8 +127,8 @@ execute as below::
       },
       "remains": [
         {
-	  "record_id": RECORD_ID
-	}
+          "record_id": RECORD_ID
+        }
       ],
       "missings": [
         {
@@ -121,27 +144,27 @@ was supposed to delete is remaining in a index.
 If there are something in ``missing``, a token that Groonga
 is supposing to remain in a index has been deleted from the index.
 
-``index_column_diff`` returns nothing as below When indexes haven't broken::
+``index_column_diff`` returns nothing as below when indexes haven't broken::
 
   index_column_diff --table table --name index_column
   [[0,0.0,0.0],[]]
 
 ``TOKEN_ID``
-""""""""""""
+^^^^^^^^^^^^
 
 ``TOKEN_ID`` is id of a broken token.
 
 ``TOKEN_VALUE``
-"""""""""""""""
+^^^^^^^^^^^^^^^
 
 ``TOKEN_VALUE`` is value of a broken token.
 
 ``RECORD_ID``
-"""""""""""""
+^^^^^^^^^^^^^
 
 ``RECORD_ID`` is id of a record include a broken token.
 
 ``POSITION``
-""""""""""""
+^^^^^^^^^^^^
 
 ``POSITION`` is appearing position of a broken token.

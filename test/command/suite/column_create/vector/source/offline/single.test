@@ -13,7 +13,7 @@ load --table Notes
 
 column_create Notes title_terms COLUMN_VECTOR Terms title
 
-select Notes title_terms \
+select Notes \
   --query _id:2 \
   --output_columns title_terms
 

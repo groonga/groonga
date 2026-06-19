@@ -8,12 +8,24 @@
 ``NormalizerNFKC51``
 =====================
 
+.. deprecated:: 14.1.3
+
+   Use :doc:`./normalizer_nfkc` instead.
+
+   ``NormalizerNFKC51`` and ``NormalizerNFKC("version", "5.0.0")`` are equal.
+
+   It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0.
+
 Summary
 -------
 
 ``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization
-Form Compatibility Composition) for Unicode version 5.1. It supports
+Form Compatibility Composition) for Unicode version 5.0. It supports
 only UTF-8 encoding.
+
+.. note::
+
+   It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0.
 
 Normally you don't need to use ``NormalizerNFKC51`` explicitly. You can
 use ``NormalizerAuto`` instead.

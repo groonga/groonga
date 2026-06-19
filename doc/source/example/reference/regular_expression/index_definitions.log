@@ -3,7 +3,7 @@ Execution example::
   table_create RegexpLexicon TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenRegexp \
     --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create RegexpLexicon logs_message_index \
     COLUMN_INDEX|WITH_POSITION Logs message
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

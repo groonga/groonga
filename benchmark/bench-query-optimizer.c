@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,7 +52,7 @@
 typedef struct _BenchmarkData {
   grn_ctx context;
   grn_obj *database;
-  grn_bool use_mruby;
+  bool use_mruby;
   GString *command;
 } BenchmarkData;
 
@@ -173,14 +174,14 @@ main(int argc, gchar **argv)
                             &data)
 
     REGISTER("1 condition: with    mruby", data_one_condition_with_mruby,
-             GRN_TRUE,
+             true,
              "select Entries --cache no --query 'name:@Groonga'");
     REGISTER("1 condition: without mruby", data_one_condition_without_mruby,
-             GRN_FALSE,
+             false,
              "select Entries --cache no --query 'name:@Groonga'");
     REGISTER("4 conditions: with    mruby",
              data_multiple_conditions_with_mruby,
-             GRN_TRUE,
+             true,
              "select Entries --cache no --filter '"
              "name @ \"Groonga\" && "
              "description @ \"search\" && "
@@ -189,7 +190,7 @@ main(int argc, gchar **argv)
              "'");
     REGISTER("4 conditions: without mruby",
              data_multiple_conditions_without_mruby,
-             GRN_FALSE,
+             false,
              "select Entries --cache no --filter '"
              "name @ \"Groonga\" && "
              "description @ \"search\" && "

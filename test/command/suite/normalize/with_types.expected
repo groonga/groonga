@@ -15,10 +15,9 @@ normalize NormalizerAuto "a1!あア亜💕 " WITH_TYPES
       "katakana",
       "kanji",
       "others",
-      "others"
+      "others",
+      "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

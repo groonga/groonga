@@ -1,57 +1,48 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set -eux
+set -eu
 
-/source/configure \
-  --prefix=/tmp/local \
-  --enable-debug \
-  --with-ruby \
-  --enable-mruby
+echo "::group::Build"
+set -x
+cmake \
+  -S /source \
+  -B build \
+  -DCMAKE_INSTALL_PREFIX=/tmp/local \
+  -DGRN_WITH_APACHE_ARROW=OFF \
+  --preset=debug-maximum
+cmake --build build
+cmake --install build
+set +x
+echo "::endgroup::"
 
-make -j$(nproc) > /dev/null
-
-mkdir -p /tmp/local/var/log/groonga/httpd/
-
-rsync -a --include "*.rb" --include "*/" --exclude "*" \
-  /source/plugins/ \
-  plugins/
-
-mkdir -p test/command
-rsync -a --delete \
-  /source/test/command/suite/ \
-  test/command/suite/
-
-# BUILD_DIR=test/unit \
-#   /source/test/unit/run-test.sh
-
-BUILD_DIR=test/mruby \
-  /source/test/mruby/run-test.rb
-
-BUILD_DIR=test/command_line \
-  /source/test/command_line/run-test.rb
-
-if [ $(ruby -e 'print(RUBY_VERSION >= "2.4")') = "false" ]; then
-  # Disable test/command/ test suites for now because Red Arrow 0.16.0
-  # doesn't support Ruby 2.3.
-  exit 0
-fi
-
-BUILD_DIR=test/command \
-  /source/test/command/run-test.sh \
-    --reporter mark \
-    --read-timeout 30 \
-    test/command/suite
-
-BUILD_DIR=test/command \
-  /source/test/command/run-test.sh \
-    --reporter mark \
-    --read-timeout 30 \
-    --interface http \
-    test/command/suite
-
-BUILD_DIR=test/command \
-  /source/test/command/run-test.sh \
-    --reporter mark \
-    --read-timeout 30 \
-    --testee groonga-httpd \
-    test/command/suite
+echo "::group::Test"
+set -x
+export LD_LIBRARY_PATH=/tmp/local/lib
+export PATH=/tmp/local/bin:${PATH}
+export TZ=Asia/Tokyo
+cp -R /source/test/command test
+grntest \
+  --base-directory=test \
+  --interface=http \
+  --n-retries=2 \
+  --read-timeout=30 \
+  --reporter=mark \
+  test/suite
+set +x
+echo "::endgroup::"

@@ -33,10 +33,8 @@ check --obj Memos.content
           "valid": true
         }
       ],
-      "garbage_counts": {
-      },
-      "free_elements": {
-      }
+      "garbage_counts": {},
+      "free_elements": {}
     },
     "summary": {
       "flags": "0000C000",
@@ -141,10 +139,8 @@ check --obj Memos.content
           "valid": true
         }
       ],
-      "garbage_counts": {
-      },
-      "free_elements": {
-      }
+      "garbage_counts": {},
+      "free_elements": {}
     },
     "summary": {
       "flags": "0000C000",

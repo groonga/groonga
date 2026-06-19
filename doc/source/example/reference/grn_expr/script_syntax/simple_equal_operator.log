@@ -3,37 +3,37 @@ Execution example::
   select Entries --filter 'n_likes == 5'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
+  #         1,
+  #         "The first post!",
+  #         "Welcome! This is my first post!",
   #         5
   #       ]
   #     ]

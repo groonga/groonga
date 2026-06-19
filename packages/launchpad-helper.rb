@@ -33,10 +33,9 @@ module LaunchpadHelper
 
   def ubuntu_targets_default
     [
-      ["focal", "20.04"],
       ["jammy", "22.04"],
-      ["lunar", "23.04"],
-      ["mantic", "23.10"],
+      ["noble", "24.04"],
+      ["resolute", "26.04"],
     ]
   end
 
@@ -103,7 +102,12 @@ allow_unsigned_uploads = 0
         minor_version = ENV["UBUNTU_MINOR_VERSION"] || "1"
         version_suffix = "ubuntu#{version}.#{minor_version}"
         deb_version = "#{detect_current_deb_version}.#{version_suffix}"
-        sh("dch",
+        env = {
+          "DEBFULLNAME" => packager_name,
+          "DEBEMAIL" => packager_email,
+        }
+        sh(env,
+           "dch",
            "--distribution", code_name,
            "--newversion", deb_version,
            "Build for #{code_name}.")

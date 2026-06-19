@@ -1,0 +1,6 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR Text
+column_create Memos title_snippets COLUMN_VECTOR ShortText title \
+  --generator 'snippet(title, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+
+object_inspect Memos.title_snippets

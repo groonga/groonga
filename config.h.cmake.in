@@ -37,12 +37,20 @@
 #define GRN_PLUGINS_DIR      "${GRN_PLUGINS_DIR}"
 #define GRN_PLUGIN_SUFFIX    "${GRN_PLUGIN_SUFFIX}"
 
+#define GRN_RELATIVE_GGML_BACKENDS_DIR \
+  "${GRN_RELATIVE_GGML_BACKENDS_DIR}"
+#define GRN_GGML_BACKENDS_DIR "${GRN_GGML_BACKENDS_DIR}"
+
 #define GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE "${GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE}"
 #define GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE          "${GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE}"
 
 #define GRN_RELATIVE_RUBY_SCRIPTS_DIR \
   "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}"
 #define GRN_RUBY_SCRIPTS_DIR "${GRN_RUBY_SCRIPTS_DIR}"
+
+#define GRN_RELATIVE_LANGUAGE_MODELS_DIR \
+  "${GRN_RELATIVE_LANGUAGE_MODELS_DIR}"
+#define GRN_LANGUAGE_MODELS_DIR "${GRN_LANGUAGE_MODELS_DIR}"
 
 #define GRN_DLL_FILENAME     L"${GRN_DLL_FILENAME}"
 
@@ -52,7 +60,6 @@
 #cmakedefine USE_MAP_HUGETLB
 #cmakedefine USE_AIO
 #cmakedefine USE_EPOLL
-#cmakedefine USE_EXACT_ALLOC_COUNT
 #cmakedefine USE_FUTEX
 #cmakedefine USE_KQUEUE
 #cmakedefine USE_MSG_MORE
@@ -61,6 +68,11 @@
 #cmakedefine USE_SELECT
 
 #cmakedefine GRN_WITH_MEMORY_DEBUG
+#cmakedefine GRN_WITH_SIMD
+#cmakedefine GRN_WITH_SIMD_AVX
+#cmakedefine GRN_WITH_SIMD_AVX2
+#cmakedefine GRN_WITH_SIMD_AVX512
+#cmakedefine GRN_WITH_SIMD_NEON64
 
 /* compiler specific build options */
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
@@ -79,21 +91,35 @@
 
 /* packages */
 #cmakedefine GRN_WITH_APACHE_ARROW
+#cmakedefine GRN_WITH_BASE64
 #cmakedefine GRN_WITH_BENCHMARK
-#cmakedefine GRN_WITH_CUTTER
+#cmakedefine GRN_WITH_BLOSC
+#cmakedefine GRN_WITH_CURL
+#cmakedefine GRN_WITH_FAISS
+#cmakedefine GRN_WITH_H3
+#cmakedefine GRN_WITH_H3_BUNDLED
+#cmakedefine GRN_WITH_JSONCONS
 #cmakedefine GRN_WITH_KYTEA
+#cmakedefine GRN_WITH_LIBEDIT
+#cmakedefine GRN_WITH_LLAMA_CPP
+#cmakedefine GRN_WITH_LLAMA_CPP_BUNDLED
 #cmakedefine GRN_WITH_LZ4
-#cmakedefine GRN_WITH_ZSTD
-#cmakedefine GRN_WITH_RAPIDJSON
-#cmakedefine GRN_WITH_ROARING_BITMAPS
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK
 #cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
 #cmakedefine GRN_WITH_ONIGMO
+#cmakedefine GRN_WITH_OPENZL
+#cmakedefine GRN_WITH_RAPIDJSON
+#cmakedefine GRN_WITH_ROARING_BITMAPS
+#cmakedefine GRN_WITH_SIMDJSON
+#cmakedefine GRN_WITH_SIMSIMD
+#cmakedefine GRN_WITH_USEARCH
+#cmakedefine GRN_WITH_XSIMD
 #cmakedefine GRN_WITH_XXHASH
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB
+#cmakedefine GRN_WITH_ZSTD
 
 /* headers */
 #cmakedefine HAVE_DIRENT_H

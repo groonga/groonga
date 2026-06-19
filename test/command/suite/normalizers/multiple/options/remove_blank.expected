@@ -1,0 +1,28 @@
+table_create Nomalizations TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Nomalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+normalize   --string "ab cd"   --flags REMOVE_BLANK|WITH_TYPES|WITH_CHECKS   --normalizers 'NormalizerTable("normalized", "Nomalizations.normalized"), NormalizerNFKC150'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "abcd",
+    "types": [
+      "alpha",
+      "alpha|blank",
+      "alpha",
+      "alpha",
+      "null"
+    ],
+    "checks": [
+      1,
+      1,
+      2,
+      1
+    ]
+  }
+]

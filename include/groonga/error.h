@@ -19,13 +19,16 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API const char *grn_rc_to_string(grn_rc rc);
-GRN_API const char *grn_error_get_current_system_message(void);
-GRN_API grn_rc grn_windows_error_code_to_rc(int error_code);
+GRN_API const char *
+grn_rc_to_string(grn_rc rc);
+GRN_API const char *
+grn_error_get_current_system_message(void);
+GRN_API grn_rc
+grn_windows_error_code_to_rc(int error_code);
 
 #ifdef __cplusplus
 }

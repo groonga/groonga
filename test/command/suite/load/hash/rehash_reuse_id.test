@@ -1,0 +1,25 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+#$GRN_HASH_INITIAL_MAX_OFFSET=128
+
+table_create Data TABLE_HASH_KEY Int32
+
+#@disable-logging
+#@generate-series 1 127 Data '{"_key" => i}'
+#@enable-logging
+
+check Data
+
+delete Data --filter true
+
+check Data
+
+#@disable-logging
+#@generate-series 128 255 Data '{"_key" => i}'
+#@enable-logging
+
+check Data
+
+select Data --sort_keys _id --limit 3
+select Data --sort_keys -_id --limit 3

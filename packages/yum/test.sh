@@ -7,15 +7,6 @@ case ${os} in
   amazon)
     os=amazon-linux
     version=$(cut -d: -f6 /etc/system-release-cpe)
-    amazon-linux-extras install -y epel
-    yum install -y ca-certificates
-    ;;
-  centos)
-    version=$(cut -d: -f5 /etc/system-release-cpe)
-    ;;
-  linux)
-    os=oracle-linux
-    version=$(cut -d: -f5 /etc/system-release-cpe)
     ;;
   *) # For AlmaLinux
     version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
@@ -23,32 +14,23 @@ case ${os} in
 esac
 
 case ${os} in
-  oracle-linux)
-    DNF="dnf --enablerepo=ol${version}_codeready_builder"
-    ${DNF} install -y \
-      https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+  amazon-linux)
+    DNF="dnf"
     ;;
   *)
     case ${version} in
-      2)
-        DNF=yum
-        ;;
-      7)
-        DNF=yum
-        ;;
       8)
         DNF="dnf --enablerepo=powertools"
         ;;
       *)
         DNF="dnf --enablerepo=crb"
-        ${DNF} install -y \
-          https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
         ;;
     esac
     ;;
 esac
 
 ${DNF} install -y \
+  https://packages.apache.org/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm \
   https://packages.groonga.org/${os}/${version}/groonga-release-latest.noarch.rpm
 
 repositories_dir=/groonga/packages/yum/repositories
@@ -74,34 +56,43 @@ if [ "${run_test}" = "yes" ]; then
   cp -a /groonga/test/command ./
 
   case ${version} in
-    2)
-      amazon-linux-extras install -y ruby3.0
+    8)
+      ${DNF} module disable -y ruby
+      ${DNF} module enable -y ruby:3.1
       ${DNF} install -y ruby-devel
-      ;;
-    7)
-      ${DNF} install -y centos-release-scl-rh
-      ${DNF} install -y rh-ruby30-ruby-devel
-      set +u
-      . /opt/rh/rh-ruby30/enable
-      set -u
       ;;
     *)
       ${DNF} install -y ruby-devel
       ;;
   esac
 
+  if [ "${os}-${version}" = "almalinux-10" ]; then
+    # Float32 value format is different.
+    rm command/suite/tokenizers/document_vector_bm25/alphabet.test
+    rm command/suite/tokenizers/document_vector_bm25/reindex.test
+    rm command/suite/tokenizers/document_vector_bm25/token_column.test
+    rm command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon.test
+  fi
+
+  if [ "$(rpm --query libstemmer --queryformat '%{version}')" -eq 0 ]; then
+    # Arabic isn't supported.
+    rm command/suite/token_filters/stem/arabic.test
+  fi
+
   ${DNF} install -y \
     gcc \
-    make \
-    redhat-rpm-config
+    make
+  if [ ${os} != "amazon-linux" ]; then
+    ${DNF} install -y redhat-rpm-config
+  fi
+  gem install rubygems-requirements-system
   MAKEFLAGS=-j$(nproc) gem install grntest
 
   export TZ=Asia/Tokyo
 
   grntest_options=()
   grntest_options+=(--base-directory=command)
-  grntest_options+=(--n-retries=3)
-  grntest_options+=(--n-workers=$(nproc))
+  grntest_options+=(--n-retries=2)
   grntest_options+=(--reporter=mark)
   grntest_options+=(command/suite)
 

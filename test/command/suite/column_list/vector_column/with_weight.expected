@@ -42,6 +42,10 @@ column_list Bookmarks
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -52,9 +56,8 @@ column_list Bookmarks
       "COLUMN_SCALAR",
       "Bookmarks",
       "ShortText",
-      [
-
-      ]
+      [],
+      ""
     ],
     [
       257,
@@ -64,9 +67,8 @@ column_list Bookmarks
       "COLUMN_VECTOR|WITH_WEIGHT|PERSISTENT",
       "Bookmarks",
       "ShortText",
-      [
-
-      ]
+      [],
+      ""
     ]
   ]
 ]

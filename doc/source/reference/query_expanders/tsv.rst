@@ -148,4 +148,4 @@ loaded only at the plugin load time.
 See also
 --------
 
-  * :ref:`select-query-expansion`
+  * :ref:`select-query-expander`

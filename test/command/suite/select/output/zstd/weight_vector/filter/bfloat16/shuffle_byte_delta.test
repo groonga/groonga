@@ -1,0 +1,12 @@
+#@require-feature blosc
+#@require-feature bfloat16
+
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries values \
+  COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16|COMPRESS_ZSTD|COMPRESS_FILTER_SHUFFLE|COMPRESS_FILTER_BYTE_DELTA \
+  ShortText
+
+#@generate-series 0 0 Entries '{"_key" => "packed", "values" => {"abc": 0.5, "ABC": 1.5, "123": -3.5}}'
+#@generate-series 0 0 Entries '{"_key" => "filtered", "values" => Hash[*(50.times.collect {|j| ["abc#{j}", 0.5, "ABC#{j}", 1.5, "123#{j}", -3.5]}.flatten)]}'
+
+select Entries

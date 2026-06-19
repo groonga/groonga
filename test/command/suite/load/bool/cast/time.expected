@@ -37,7 +37,7 @@ select Entries
       [
         1,
         "Special news!",
-        1.0e-06
+        0.000001
       ],
       [
         2,

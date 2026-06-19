@@ -1,0 +1,65 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data bfloat16 COLUMN_SCALAR BFloat16
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"bfloat16": 0.0},
+{"bfloat16": 0.1},
+{"bfloat16": 1.2},
+{"bfloat16": -2.9}
+]
+[[0,0.0,0.0],4]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "bfloat16",
+          "BFloat16"
+        ]
+      ],
+      [
+        1,
+        0.0
+      ],
+      [
+        2,
+        0.09960938
+      ],
+      [
+        3,
+        1.195312
+      ],
+      [
+        4,
+        -2.890625
+      ]
+    ]
+  ]
+]
+dump
+table_create Data TABLE_NO_KEY
+column_create Data bfloat16 COLUMN_SCALAR BFloat16
+
+load --table Data
+[
+["_id","bfloat16"],
+[1,0.0],
+[2,0.09960938],
+[3,1.195312],
+[4,-2.890625]
+]

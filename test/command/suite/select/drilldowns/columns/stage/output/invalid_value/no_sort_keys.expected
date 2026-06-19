@@ -72,8 +72,7 @@ select Items   --drilldowns[label].keys price   --drilldowns[label].output_colum
         300
       ]
     ],
-    {
-    }
+    {}
   ]
 ]
 #|e| [expr][parse] unknown identifier: <garbage>

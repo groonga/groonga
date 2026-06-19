@@ -1,0 +1,24 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("report_source_location", true)' \
+  --normalizer 'NormalizerNFKC150'
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+load --table Entries
+[
+{"body": "斉藤 一代さん"},
+{"body": "斉藤の一人"}
+]
+
+# "斉藤" doesn't need prefix search but "一" needs prefix search.
+# Because the number of characters of "一" is 1 that is less than 2
+# (TokenNgram uses 2 chracters for one token by default).
+#
+# grn_highlighter calls keywords that need the prefix search as
+# "lazy keywords". "斉藤" isn't a lazy keyword and "一" is a lazy keyword.
+select Entries \
+  --match_columns body \
+  --query '斉藤 一' \
+  --output_columns 'highlight_html(body, Terms)'

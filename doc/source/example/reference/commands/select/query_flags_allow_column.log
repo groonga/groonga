@@ -3,42 +3,42 @@ Execution example::
   select Entries --query content:@mroonga --query_flags ALLOW_COLUMN
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         15, 
+  #         3,
+  #         "Mroonga",
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
+  #         15,
   #         "Groonga"
   #       ]
   #     ]

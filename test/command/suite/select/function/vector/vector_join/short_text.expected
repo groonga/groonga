@@ -47,9 +47,7 @@ select Memos   --output_columns 'tags, vector_join(tags, "\n")'
         "Groonga\nRuby"
       ],
       [
-        [
-
-        ],
+        [],
         ""
       ]
     ]

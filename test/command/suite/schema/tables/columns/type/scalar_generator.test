@@ -1,0 +1,8 @@
+#@require-feature mecab
+
+table_create Notes TABLE_NO_KEY
+column_create Notes title_html COLUMN_SCALAR ShortText
+column_create Notes title_text COLUMN_SCALAR ShortText title_html \
+  --generator 'html_untag(title_html)'
+
+schema

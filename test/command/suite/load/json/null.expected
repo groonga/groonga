@@ -1,0 +1,20 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes data COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"data": "null"}
+]
+[[0,0.0,0.0],1]
+select Notes
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["data","JSON"]],[1,null]]]]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+load --table Notes
+[
+["_id","data"],
+[1,"null"]
+]

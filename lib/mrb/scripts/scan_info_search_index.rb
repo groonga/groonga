@@ -1,6 +1,7 @@
 module Groonga
   class ScanInfoSearchIndex < Struct.new(:index_column,
                                          :section_id,
+                                         :start_position,
                                          :weight,
                                          :scorer,
                                          :scorer_args_expr,

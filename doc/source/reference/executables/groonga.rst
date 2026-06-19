@@ -97,7 +97,7 @@ default protocol. This section describes only about HTTP protocol
 usage.
 
 In server mode, ``groonga`` executable file runs in the foreground. If
-you want to run Groonga server in the background, see 
+you want to run Groonga server in the background, see
 :ref:`groonga-executable-file-daemon-mode`.
 
 Here is the syntax to run Groonga server with temporary database::
@@ -268,44 +268,57 @@ Options
 
    .. versionadded:: 8.1.1
 
-   Specify log flags. Default value is ``time|message``.
+   Specify log flags. Default value is ``time|+message``.
 
-   ``+`` prefix means that ``add the flag``.
+   ``+`` prefix means that you add a flag to the current
+   flags. For example, ``+process_id`` means that you add the
+   ``process_id`` flag to the current flags.
 
-   ``-`` prefix means that ``remove the flag``.
+   ``-`` prefix means that you remove a flag to the current flags. For
+   example, ``-time`` means that you remove the ``time`` flag from the
+   current flags.
 
-   No prefix means that ``replace existing flags``.
+   No prefix means that you replace the current flags with a flag. For
+   example, ``time|message`` equals to ``message`` because the first
+   ``time`` flag is replaced with the second ``message`` flag.
 
    Multiple log flags can be specified by separating flags with ``|``.
 
-   We can specify flags below.
+   Here are available flags:
 
-   ``none``
-     Output nothing into the log.
+   .. list-table::
+      :header-rows: 1
 
-   ``time``
-     Output timestamp into the log.
+      * - Name
+        - Description
+      * - ``none``
+        - Output nothing into the log.
+      * - ``time``
+        - Output timestamp into the log.
+      * - ``message``
+        - Output message into the log.
+      * - ``location``
+        - Output process ID and a location of an output of the log
+          (file name, line and function name) into the log.
+      * - ``process_id``
+        - Output process ID into the log.
+      * - ``pid``
+        - This flag is an alias of ``process_id``.
+      * - ``thread_id``
+        - Output thread ID into log.
+      * - ``context_id``
+        - .. versionadded:: 14.1.1
 
-   ``message``
-     Output log message into the log.
+          Output context ID into log.
 
-   ``location``
-     Output process id and a location of an output of the log (file name, line and function name) into the log.
-
-   ``process_id``
-     Output process id into the log.
-
-   ``pid``
-     This flag is an alias of ``process_id``.
-
-   ``thread_id``
-     Output thread id into log
-
-   ``all``
-     This flag specifies all flags except ``none`` and ``default`` flags.
-
-   ``default``
-     Output timestamp and log message into the log.
+          Context ID is logged in :ref:`query-log` too. So this is
+          useful to associate logs of the same context in
+          :ref:`process-log` and :ref:`query-log`.
+      * - ``all``
+        - This flag specifies all flags except ``none`` and ``default``
+          flags.
+      * - ``default``
+        - This equals to ``time|+message``.
 
 .. option:: --log-rotate-threshold-size <threshold>
 
@@ -323,7 +336,7 @@ Options
 
    Specifies threshold for query log rotation. Query log file is rotated when query log file size is larger than or equals to the threshold (default: 0; disabled).
 
-.. option:: -t, --max-threads <max threasd>
+.. option:: -t, --max-threads <max threads>
 
    最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)
 
@@ -355,6 +368,14 @@ Options
 .. option:: --default-match-escalation-threshold <threshold>
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
+
+.. option:: --default-n-workers <n>
+
+   .. versionadded:: 14.0.7
+
+   Specifies the default number of workers of the Groonga process. For example, it's used by the default value of ``n_workers`` of :doc:`/reference/commands/select`.
+
+   The default value is ``0``.
 
 .. option:: --default-request-timeout <timeout>
 

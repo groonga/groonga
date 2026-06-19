@@ -37,7 +37,7 @@ clangのインストール
 libmemcachedのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインストールできます。::
+memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUbuntuでは以下の用にしてインストールできます。::
 
  % sudo aptitude install -y libmemcached-dev
 

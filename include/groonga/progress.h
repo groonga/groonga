@@ -24,6 +24,7 @@ extern "C" {
 
 typedef enum {
   GRN_PROGRESS_INDEX,
+  GRN_PROGRESS_LANGUAGE_MODEL_INFERENCER,
 } grn_progress_type;
 
 typedef enum {
@@ -33,6 +34,8 @@ typedef enum {
   GRN_PROGRESS_INDEX_COMMIT,
   GRN_PROGRESS_INDEX_FINALIZE,
   GRN_PROGRESS_INDEX_DONE,
+  GRN_PROGRESS_INDEX_VECTORIZE,
+  GRN_PROGRESS_INDEX_CLUSTER,
 } grn_progress_index_phase;
 
 typedef struct _grn_progress grn_progress;
@@ -55,6 +58,10 @@ grn_progress_index_get_n_target_terms(grn_ctx *ctx,
 GRN_API uint32_t
 grn_progress_index_get_n_processed_terms(grn_ctx *ctx,
                                          grn_progress *progress);
+
+GRN_API uint32_t
+grn_progress_language_model_inferencer_get_n_processed_records(grn_ctx *ctx,
+                                                               grn_progress *progress);
 
 typedef void (*grn_progress_callback_func)(grn_ctx *ctx,
                                            grn_progress *progress,

@@ -6,11 +6,11 @@ Execution example::
   {"_key": 2, "content": "I'm using Groonga and Mroonga!"},
   {"_key": 3, "content": "I'm using Mroonga too!"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   load --table Articles
   [
   {"content": "Groonga is fast!", "comment": 1},
   {"content": "Groonga is useful!"},
   {"content": "Mroonga is fast!", "comment": 3}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]

@@ -298,6 +298,86 @@ object_list
       "path": null,
       "size": 4
     },
+    "BFloat16": {
+      "id": 20,
+      "name": "BFloat16",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "ShortBinary": {
+      "id": 21,
+      "name": "ShortBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 4096
+    },
+    "Binary": {
+      "id": 22,
+      "name": "Binary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 65536
+    },
+    "LongBinary": {
+      "id": 23,
+      "name": "LongBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
+    "JSON": {
+      "id": 24,
+      "name": "JSON",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",
@@ -331,16 +411,13 @@ object_list
       "range": {
         "id": 0,
         "name": null
-      },
-      "token_filters": [
-
-      ]
+      }
     },
     "Data.number": {
       "id": 257,
       "name": "Data.number",
       "opened": true,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 64,
         "name": "column:fix_size"
@@ -353,7 +430,9 @@ object_list
       "range": {
         "id": 10,
         "name": "Int64"
-      }
+      },
+      "sources": [],
+      "generator": ""
     }
   }
 ]
@@ -397,6 +476,10 @@ column_list Data
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -407,9 +490,8 @@ column_list Data
       "COLUMN_SCALAR|PERSISTENT",
       "Data",
       "Int64",
-      [
-
-      ]
+      [],
+      ""
     ]
   ]
 ]

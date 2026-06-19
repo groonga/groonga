@@ -1,13 +1,13 @@
 Execution example::
 
   table_create Users TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Users age COLUMN_SCALAR Int32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Ages TABLE_HASH_KEY Int32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Ages user_age COLUMN_INDEX Users age
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Users
   [
   {"_key": "Alice",  "age": 12},
@@ -17,4 +17,4 @@ Execution example::
   {"_key": "Eric",   "age": 20},
   {"_key": "Frank",  "age": 21}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 6]
+  # [[0,1337566253.89858,0.000355720520019531],6]

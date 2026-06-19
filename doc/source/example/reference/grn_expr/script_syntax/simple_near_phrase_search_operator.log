@@ -3,21 +3,21 @@ Execution example::
   select Entries --filter 'content *NP "I fast"'      --output_columns content
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I started to use Groonga. It's very fast!"
   #       ]
@@ -25,25 +25,25 @@ Execution example::
   #   ]
   # ]
   select Entries --filter 'content *NP "I Really"'    --output_columns content
-  # [[0, 1337566253.89858, 0.000355720520019531], [[[0], [["content", "Text"]]]]]
+  # [[0,1337566253.89858,0.000355720520019531],[[[0],[["content","Text"]]]]]
   select Entries --filter 'content *NP "also Really"' --output_columns content
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I also started to use Mroonga. It's also very fast! Really fast!"
   #       ]

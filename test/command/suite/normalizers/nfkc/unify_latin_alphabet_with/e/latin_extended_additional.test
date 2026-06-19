@@ -1,0 +1,7 @@
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+normalize \
+  'NormalizerNFKC("unify_latin_alphabet_with", true, \
+                  "version", "NFKC_VERSION")' \
+  "ḔḕḖḗḘḙḚḛḜḝẸẹẺẻẼẽẾếỀềỂểỄễỆệ" \
+  WITH_TYPES
+#@remove-substitution /"version",\s"(?:.+?)"/

@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -52,7 +53,7 @@ grn_ctx_impl_lua_fin_real(grn_ctx *ctx)
 void
 grn_ctx_impl_lua_init(grn_ctx *ctx)
 {
-  ctx->impl->lua.initialized = GRN_TRUE;
+  ctx->impl->lua.initialized = true;
   grn_ctx_impl_lua_init_real(ctx);
 }
 
@@ -63,6 +64,6 @@ grn_ctx_impl_lua_fin(grn_ctx *ctx)
     return;
   }
 
-  ctx->impl->lua.initialized = GRN_FALSE;
+  ctx->impl->lua.initialized = false;
   grn_ctx_impl_lua_fin_real(ctx);
 }

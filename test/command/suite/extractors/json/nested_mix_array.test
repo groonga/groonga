@@ -1,0 +1,6 @@
+#@require-feature simdjson
+#@require-feature jsoncons
+
+extract \
+  --extractors 'ExtractorJSON("path", "$.a[*][*]")' \
+  --value '{"a": [[true, -9223372036854775808, -1.1], [false, "a"], [9223372036854775807]], "b": "not-used"}'

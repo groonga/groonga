@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,7 +33,7 @@ command_query_log_flags_get(grn_ctx *ctx,
   current_flags = grn_query_logger_get_flags(ctx);
   GRN_TEXT_INIT(&inspected_flags, 0);
 
-  grn_inspect_query_log_flags(ctx, &inspected_flags,current_flags);
+  grn_inspect_query_log_flags(ctx, &inspected_flags, current_flags);
   grn_ctx_output_str(ctx,
                      GRN_TEXT_VALUE(&inspected_flags),
                      GRN_TEXT_LEN(&inspected_flags));
@@ -46,7 +47,8 @@ void
 grn_proc_init_query_log_flags_get(grn_ctx *ctx)
 {
   grn_plugin_command_create(ctx,
-                            "query_log_flags_get", -1,
+                            "query_log_flags_get",
+                            -1,
                             command_query_log_flags_get,
                             0,
                             NULL);
@@ -91,13 +93,13 @@ grn_query_log_flags_update(grn_ctx *ctx,
   }
 
   switch (mode) {
-  case UPDATE_SET :
+  case UPDATE_SET:
     grn_query_logger_set_flags(ctx, flags);
     break;
-  case UPDATE_ADD :
+  case UPDATE_ADD:
     grn_query_logger_add_flags(ctx, flags);
     break;
-  case UPDATE_REMOVE :
+  case UPDATE_REMOVE:
     grn_query_logger_remove_flags(ctx, flags);
     break;
   }
@@ -155,7 +157,8 @@ grn_proc_init_query_log_flags_set(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "flags", -1);
   grn_plugin_command_create(ctx,
-                            "query_log_flags_set", -1,
+                            "query_log_flags_set",
+                            -1,
                             command_query_log_flags_set,
                             1,
                             vars);
@@ -184,7 +187,8 @@ grn_proc_init_query_log_flags_add(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "flags", -1);
   grn_plugin_command_create(ctx,
-                            "query_log_flags_add", -1,
+                            "query_log_flags_add",
+                            -1,
                             command_query_log_flags_add,
                             1,
                             vars);
@@ -213,7 +217,8 @@ grn_proc_init_query_log_flags_remove(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "flags", -1);
   grn_plugin_command_create(ctx,
-                            "query_log_flags_remove", -1,
+                            "query_log_flags_remove",
+                            -1,
                             command_query_log_flags_remove,
                             1,
                             vars);

@@ -10,6 +10,10 @@ table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --def
 [[0,0.0,0.0],true]
 column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Users _key,description
 [[0,0.0,0.0],true]
+column_create Users description_terms COLUMN_VECTOR Terms description
+[[0,0.0,0.0],true]
+column_create Users description_snippets COLUMN_VECTOR ShortText description   --generator 'snippet(description, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+[[0,0.0,0.0],true]
 database_unmap
 [[0,0.0,0.0],true]
 table_create Tags TABLE_HASH_KEY ShortText   --normalizer NormalizerAuto
@@ -312,6 +316,86 @@ object_list
       "path": null,
       "size": 4
     },
+    "BFloat16": {
+      "id": 20,
+      "name": "BFloat16",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "ShortBinary": {
+      "id": 21,
+      "name": "ShortBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 4096
+    },
+    "Binary": {
+      "id": 22,
+      "name": "Binary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 65536
+    },
+    "LongBinary": {
+      "id": 23,
+      "name": "LongBinary",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
+    "JSON": {
+      "id": 24,
+      "name": "JSON",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",
@@ -412,7 +496,7 @@ object_list
       "id": 261,
       "name": "Users",
       "opened": true,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 50,
         "name": "table:dat_key"
@@ -426,15 +510,15 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": [],
+      "normalizers": [],
+      "extractors": []
     },
     "Users.description": {
       "id": 262,
       "name": "Users.description",
       "opened": false,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 65,
         "name": "column:var_size"
@@ -447,13 +531,15 @@ object_list
       "range": {
         "id": 14,
         "name": "ShortText"
-      }
+      },
+      "sources": [],
+      "generator": ""
     },
     "Users.tags": {
       "id": 263,
       "name": "Users.tags",
       "opened": true,
-      "n_elements": 4,
+      "n_elements": 5,
       "type": {
         "id": 65,
         "name": "column:var_size"
@@ -466,13 +552,15 @@ object_list
       "range": {
         "id": 14,
         "name": "ShortText"
-      }
+      },
+      "sources": [],
+      "generator": ""
     },
     "Terms": {
       "id": 264,
       "name": "Terms",
       "opened": false,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 49,
         "name": "table:pat_key"
@@ -486,9 +574,14 @@ object_list
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": [],
+      "normalizers": [
+        {
+          "id": 83,
+          "name": "NormalizerAuto"
+        }
+      ],
+      "extractors": []
     },
     "Terms.users": {
       "id": 265,
@@ -519,11 +612,63 @@ object_list
         }
       ]
     },
-    "Tags": {
+    "Users.description_terms": {
       "id": 266,
+      "name": "Users.description_terms",
+      "opened": false,
+      "n_elements": 5,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 32769,
+        "names": "COLUMN_VECTOR|PERSISTENT"
+      },
+      "path": "db/db.000010A",
+      "range": {
+        "id": 264,
+        "name": "Terms"
+      },
+      "sources": [
+        {
+          "id": 262,
+          "name": "Users.description"
+        }
+      ],
+      "generator": ""
+    },
+    "Users.description_snippets": {
+      "id": 267,
+      "name": "Users.description_snippets",
+      "opened": false,
+      "n_elements": 5,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 49153,
+        "names": "COLUMN_VECTOR|PERSISTENT"
+      },
+      "path": "db/db.000010B",
+      "range": {
+        "id": 14,
+        "name": "ShortText"
+      },
+      "sources": [
+        {
+          "id": 262,
+          "name": "Users.description"
+        }
+      ],
+      "generator": "snippet(description, \"Groonga\", {\"default_open_tag\": \"<\", \"default_close_tag\": \">\"})"
+    },
+    "Tags": {
+      "id": 268,
       "name": "Tags",
       "opened": true,
-      "n_elements": 6,
+      "n_elements": 7,
       "type": {
         "id": 48,
         "name": "table:hash_key"
@@ -532,17 +677,22 @@ object_list
         "value": 49152,
         "names": "TABLE_HASH_KEY|PERSISTENT"
       },
-      "path": "db/db.000010A",
+      "path": "db/db.000010C",
       "range": {
         "id": 0,
         "name": null
       },
-      "token_filters": [
-
-      ]
+      "token_filters": [],
+      "normalizers": [
+        {
+          "id": 83,
+          "name": "NormalizerAuto"
+        }
+      ],
+      "extractors": []
     },
     "Tags.users": {
-      "id": 267,
+      "id": 269,
       "name": "Tags.users",
       "opened": true,
       "n_elements": 4,
@@ -554,7 +704,7 @@ object_list
         "value": 32770,
         "names": "COLUMN_INDEX|PERSISTENT"
       },
-      "path": "db/db.000010B",
+      "path": "db/db.000010D",
       "range": {
         "id": 261,
         "name": "Users"

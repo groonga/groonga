@@ -8,7 +8,7 @@ Groonga provides two HTTP server implementations.
 * :doc:`http/groonga`
 * :doc:`http/groonga-httpd`
 
-:doc:`http/groonga` is a simple implemntation. It is fast but doesn't
+:doc:`http/groonga` is a simple implementation. It is fast but doesn't
 have many HTTP features. It is convenient to try Groonga because it
 requires just a few command line options to run.
 

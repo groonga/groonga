@@ -1,0 +1,61 @@
+table_create Entries TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries is_published COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "(empty)", "is_published": ""},
+{"_key": "0",       "is_published": "0"},
+{"_key": "1",       "is_published": "1"},
+{"_key": "(null)",  "is_published": null}
+]
+[[0,0.0,0.0],4]
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "is_published",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        "(empty)",
+        false
+      ],
+      [
+        2,
+        "0",
+        true
+      ],
+      [
+        3,
+        "1",
+        true
+      ],
+      [
+        4,
+        "(null)",
+        false
+      ]
+    ]
+  ]
+]

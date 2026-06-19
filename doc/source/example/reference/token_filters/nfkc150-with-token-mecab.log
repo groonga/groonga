@@ -1,12 +1,11 @@
 Execution example::
 
-
   tokenize   'TokenMecab("use_reading", true)'   "私は林檎を食べます。"   --token_filters 'TokenFilterNFKC150("unify_kana", true)'
   # [
   #   [
   #     0,
-  #     1545901819.377275,
-  #     0.0003833770751953125
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     {

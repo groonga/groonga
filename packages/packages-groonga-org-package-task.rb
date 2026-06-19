@@ -15,7 +15,12 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
+apache_arrow_repository = ENV["APACHE_ARROW_REPOSITORY"]
+if apache_arrow_repository.nil?
+  raise "Specify APACHE_ARROW_REPOSITORY environment variable"
+end
+require "#{apache_arrow_repository}/dev/tasks/linux-packages/package-task"
+
 require_relative "launchpad-helper"
 require_relative "repository-helper"
 
@@ -63,6 +68,60 @@ class PackagesGroongaOrgPackageTask < PackageTask
     super
   end
 
+  def yum_build(console: false)
+    super
+    yum_keep_srpm_paths_for_compatibility
+    yum_remove_srpm_from_non_primary_architectures
+  end
+
+  def yum_keep_srpm_paths_for_compatibility
+    repositories_path = "#{yum_dir}/repositories"
+
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+
+      # Rename SRPM directory only for the following distributions
+      # to keep backward compatibility:
+      #
+      # * AlmaLinux 8
+      # * AlmaLinux 9
+      # * AlmaLinux 10
+      # * Amazon Linux 2023
+      #
+      # They keep using source/SRPMS/*.src.rpm for SRPM path.
+      case "#{distribution}-#{version}"
+      when "almalinux-8",
+           "almalinux-9",
+           "almalinux-10",
+           "amazon-linux-2023"
+        next unless yum_primary_architecture?(architecture)
+        distribution_path = "#{repositories_path}/#{distribution}/#{version}"
+        backward_compatible_path = "#{distribution_path}/source/SRPMS"
+        new_path = "#{distribution_path}/Source/Packages"
+        mkdir_p(File.dirname(backward_compatible_path))
+        mv(new_path, backward_compatible_path)
+        rm_rf(File.dirname(new_path))
+      else
+        # Use SRPM path as-is for other distributions: Source/Packages/*.src.rpm
+      end
+    end
+  end
+
+  def yum_remove_srpm_from_non_primary_architectures
+    repositories_path = "#{yum_dir}/repositories"
+    yum_targets.each do |target|
+      distribution, version, architecture = split_target(target)
+      next if yum_primary_architecture?(architecture)
+      srpm_path =
+        "#{repositories_path}/#{distribution}/#{version}/Source/Packages"
+      rm_rf(File.dirname(srpm_path))
+    end
+  end
+
+  def yum_primary_architecture?(architecture)
+    architecture.nil?
+  end
+
   def enable_source?
     true
   end
@@ -87,7 +146,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         rm_rf("#{source_dir}/repositories")
       end
     end
-    desc "Release files for Source"
+    desc "Release files for source"
     task source: ["source:clean"]
   end
 
@@ -268,7 +327,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
 
     case target_namespace
-    when :source
+    when :source, :windows
       return unless use_packages_groonga_org?(target_namespace)
       rsync_dir =
         "#{repository_rsync_base_path}/#{target_namespace}/#{@package}/"

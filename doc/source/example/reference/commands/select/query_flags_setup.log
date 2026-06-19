@@ -1,12 +1,12 @@
 Execution example::
 
   table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table Magazine --name title --type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Magazine
   [
   {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
   {"_key":"http://test.jp/magazine/database","title":"DataBase"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

@@ -2,7 +2,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -188,7 +189,7 @@ module CommandRunner
           rescue SystemCallError
           end
         end
-        error_output = @error_output_log_path.read
+        error_output = read_log(@error_output_log_path)
         Result.new("", error_output)
       end
     end
@@ -200,8 +201,8 @@ module CommandRunner
       :err => @error_output_log_path.to_s,
     }
     succeeded = system(*command_line, options)
-    output = @output_log_path.read.encode("UTF-8", "filesystem")
-    error_output = @error_output_log_path.read.encode("UTF-8", "filesystem")
+    output = read_log(@output_log_path)
+    error_output = read_log(@error_output_log_path)
     unless succeeded
       message = <<-MESSAGE.chomp
 failed to run: #{command_line.join(" ").encode("UTF-8")}
@@ -215,5 +216,15 @@ failed to run: #{command_line.join(" ").encode("UTF-8")}
       raise Error.new(output, error_output, message)
     end
     Result.new(output, error_output)
+  end
+
+  def read_log(log_path)
+    return "" unless log_path.exist?
+    if windows?
+      # For Windows, Windows-31J is required to be specified to be converted.
+      log_path.read.encode("UTF-8", "Windows-31J")
+    else
+      log_path.read.encode("UTF-8", "locale")
+    end
   end
 end

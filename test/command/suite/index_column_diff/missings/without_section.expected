@@ -37,9 +37,7 @@ index_column_diff Terms data_value_index
         "id": 1,
         "value": "hello"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -64,9 +62,7 @@ index_column_diff Terms data_value_index
         "id": 2,
         "value": "world"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -87,9 +83,7 @@ index_column_diff Terms data_value_index
         "id": 3,
         "value": "groonga"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,

@@ -2,7 +2,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -129,6 +130,12 @@ if(GRN_WITH_ONIGMO)
     )
 
   set(ONIGMO_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # st_hash_type::hash doesn't have prototype of arguments.
+    # It's not supported in C23.
+    # TODO: We should fix Onigmo.
+    string(APPEND ONIGMO_C_COMPILE_FLAGS " -Wno-deprecated-non-prototype")
+  endif()
 
   add_library(onigmo STATIC ${ONIGMO_SOURCES})
   set_source_files_properties(${ONIGMO_SOURCES}

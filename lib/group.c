@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -565,7 +566,7 @@ grn_aggregator_create(grn_ctx *ctx,
   GRN_API_RETURN(aggregator);
 }
 
-grn_inline static void
+inline static void
 grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_obj *table,
                            grn_id group_id,
@@ -616,7 +617,7 @@ typedef struct {
   bool is_vector;
 } group_key;
 
-static grn_inline void
+static inline void
 group_key_init(grn_ctx *ctx,
                group_key *key,
                grn_obj *object,
@@ -636,7 +637,7 @@ group_key_init(grn_ctx *ctx,
   key->is_vector = (range_flags & GRN_OBJ_VECTOR) ? true : false;
 }
 
-static grn_inline void
+static inline void
 group_key_fin(grn_ctx *ctx,
               group_key *key)
 {
@@ -646,7 +647,7 @@ group_key_fin(grn_ctx *ctx,
   grn_obj_unref(ctx, key->range);
 }
 
-static grn_inline grn_obj *
+static inline grn_obj *
 group_key_get_value(grn_ctx *ctx,
                     group_key *key,
                     grn_id id,
@@ -678,7 +679,7 @@ typedef struct {
   grn_rset_recinfo *ri;
 } multi_keys_data;
 
-static grn_inline void
+static inline void
 grn_table_group_multi_keys_add_record(grn_ctx *ctx, multi_keys_data *data)
 {
   grn_obj *bulk = &(data->bulk);
@@ -794,7 +795,7 @@ typedef struct {
   multi_keys_data multi_keys_data;
 } single_key_records_data;
 
-static grn_inline grn_id
+static inline grn_id
 grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
                                               single_key_records_data *data,
                                               grn_table_cursor *cursor,
@@ -1398,7 +1399,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx, multi_keys_data *data)
   grn_table_cursor_close(ctx, tc);
 }
 
-static grn_inline void
+static inline void
 grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
                                          multi_keys_data *data,
                                          grn_obj *key_buffers,
@@ -1716,7 +1717,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     } else if (n_keys == 1 && n_results == 1) {
       grn_table_group_single_key_records(ctx, table, keys->key, results);
     } else {
-      grn_bool have_vector = GRN_FALSE;
+      bool have_vector = false;
       for (k = 0, kp = keys; k < n_keys; k++, kp++) {
         grn_id range_id;
         grn_obj_flags range_flags = 0;
@@ -1733,7 +1734,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           goto exit;
         }
         if (range_flags & GRN_OBJ_VECTOR) {
-          have_vector = GRN_TRUE;
+          have_vector = true;
           break;
         }
       }

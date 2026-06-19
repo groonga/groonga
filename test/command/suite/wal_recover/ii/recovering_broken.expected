@@ -1,0 +1,68 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+column_create Terms #recovering#memos_content   COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "hello world"},
+{"content": "good-by world"}
+]
+[[0,0.0,0.0],2]
+select Memos --query content:@hello
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
+io_flush
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|e| [column][index] file type must be 0x48: <0000>
+#|e| grn_ctx_at: failed to open object: <260>(<Terms.#recovering#memos_content>):<72>(<column:index>)
+#|e| grn_ctx_at: failed to open object: <260>(<Terms.#recovering#memos_content>):<72>(<column:index>)
+#|n| DDL:257:delete_hook:set Memos.content Terms.#recovering#memos_content(260) [Terms.memos_content(259)]
+#|n| spec:257:update:Memos.content:65(column:var_size):15(Text)
+select Memos --query content:@hello
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
+dump
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+load --table Memos
+[
+["_id","content"],
+[1,"hello world"],
+[2,"good-by world"]
+]
+
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+column_remove Memos content
+[[0,0.0,0.0],true]
+dump
+table_create Memos TABLE_NO_KEY
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+load --table Memos
+[
+["_id"],
+[1],
+[2]
+]
+
+load --table Terms
+[
+["_key"],
+["-"],
+["by"],
+["good"],
+["hello"],
+["world"]
+]

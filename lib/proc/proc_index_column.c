@@ -1,9 +1,10 @@
 /*
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,6 +20,7 @@
 
 #include "../grn_ctx.h"
 #include "../grn_db.h"
+#include "../grn_index_column.h"
 #include "../grn_str.h"
 
 #include <groonga/plugin.h>
@@ -35,25 +37,29 @@ typedef struct {
   grn_obj *table;
   grn_raw_string column_name;
   grn_obj *column;
+  grn_index_column_diff_options options;
 } index_column_data;
 
 static bool
 index_column_data_init(grn_ctx *ctx, index_column_data *data)
 {
+  grn_index_column_diff_options_init(ctx, &(data->options));
+
   data->table_name.value =
     grn_plugin_proc_get_var_string(ctx,
                                    data->user_data,
-                                   "table", -1,
+                                   "table",
+                                   -1,
                                    &(data->table_name.length));
   data->column_name.value =
     grn_plugin_proc_get_var_string(ctx,
                                    data->user_data,
-                                   "name", -1,
+                                   "name",
+                                   -1,
                                    &(data->column_name.length));
 
-  data->table = grn_ctx_get(ctx,
-                            data->table_name.value,
-                            (int)(data->table_name.length));
+  data->table =
+    grn_ctx_get(ctx, data->table_name.value, (int)(data->table_name.length));
   if (!data->table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -103,6 +109,20 @@ index_column_data_init(grn_ctx *ctx, index_column_data *data)
     return false;
   }
 
+  {
+    grn_log_level default_value =
+      grn_index_column_diff_options_get_progress_log_level(ctx,
+                                                           &(data->options));
+    grn_index_column_diff_options_set_progress_log_level(
+      ctx,
+      &(data->options),
+      grn_plugin_proc_get_var_log_level(ctx,
+                                        data->user_data,
+                                        "progress_log_level",
+                                        -1,
+                                        default_value));
+  }
+
   return true;
 }
 
@@ -112,6 +132,7 @@ index_column_data_fin(grn_ctx *ctx, index_column_data *data)
   if (grn_obj_is_accessor(ctx, data->column)) {
     grn_obj_close(ctx, data->column);
   }
+  grn_index_column_diff_options_fin(ctx, &(data->options));
 }
 
 static void
@@ -179,7 +200,8 @@ index_column_diff_output(grn_ctx *ctx,
   GRN_UINT32_INIT(&missings, GRN_OBJ_VECTOR);
   grn_ctx_output_array_open(ctx, "diffs", (int)grn_table_size(ctx, diff));
   {
-    GRN_TABLE_EACH_BEGIN(ctx, diff, cursor, id) {
+    GRN_TABLE_EACH_BEGIN(ctx, diff, cursor, id)
+    {
       grn_ctx_output_map_open(ctx, "diff", 3);
       {
         grn_ctx_output_cstr(ctx, "token");
@@ -220,7 +242,8 @@ index_column_diff_output(grn_ctx *ctx,
                                           "missings");
       }
       grn_ctx_output_map_close(ctx);
-    } GRN_TABLE_EACH_END(ctx, cursor);
+    }
+    GRN_TABLE_EACH_END(ctx, cursor);
   }
   grn_ctx_output_array_close(ctx);
   GRN_OBJ_FIN(ctx, &missings);
@@ -247,7 +270,7 @@ command_index_column_diff(grn_ctx *ctx,
     goto exit;
   }
 
-  grn_index_column_diff(ctx, data.column, &diff);
+  grn_index_column_diff_full(ctx, data.column, &(data.options), &diff);
   if (ctx->rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
@@ -267,7 +290,7 @@ command_index_column_diff(grn_ctx *ctx,
                            data.table,
                            grn_column_get_flags(ctx, data.column));
 
-exit :
+exit:
   index_column_data_fin(ctx, &data);
 
   if (diff) {
@@ -280,13 +303,15 @@ exit :
 void
 grn_proc_init_index_column_diff(grn_ctx *ctx)
 {
-  grn_expr_var vars[2];
+  grn_expr_var vars[3];
   unsigned int n_vars = 0;
 
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[n_vars++]), "progress_log_level", -1);
   grn_plugin_command_create(ctx,
-                            "index_column_diff", -1,
+                            "index_column_diff",
+                            -1,
                             command_index_column_diff,
                             n_vars,
                             vars);

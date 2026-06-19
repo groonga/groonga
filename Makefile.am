@@ -21,16 +21,18 @@ SUBDIRS =					\
 	doc
 EXTRA_DIST =					\
 	CMakeLists.txt				\
+	CMakePresets.json			\
 	README.md				\
 	base_version				\
 	bindings				\
+	build.sh				\
 	bundled_lz4_version			\
 	bundled_mecab_naist_jdic_version	\
 	bundled_mecab_version			\
 	bundled_rapidjson_version		\
 	bundled_xxhash_version			\
 	config.h.cmake.in			\
-	gpg_uid					\
+	setup.sh				\
 	version-gen.sh
 pkgdata_DATA = COPYING
 
@@ -50,7 +52,8 @@ $(srcdir)/version.sh: FORCE
 include $(srcdir)/version.sh
 
 dist-hook:
-	echo "$(GRN_VERSION)" > $(distdir)/version
+	echo "$(GRN_VERSION)" > $(distdir)/full_version
+	echo "GRN_VERSION_FULL=$(GRN_VERSION)" > $(distdir)/version.sh
 	cd $(distdir) && autoreconf --install --force && find . -name autom4te.cache | xargs rm -fr
 
 benchmark:

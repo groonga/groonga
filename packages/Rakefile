@@ -19,26 +19,21 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def detect_target_apache_arrow_version
-    cmakelists = File.join(__dir__,
-                           "..",
-                           "vendor",
-                           "apache-arrow-source",
-                           "cpp",
-                           "CMakeLists.txt")
-    matched = File.read(cmakelists).match(/^set\(ARROW_VERSION "(.+?)"\)/)
-    version = matched[1]
-    matched = version.match(/-SNAPSHOT\z/)
-    if matched
-      major_version = matched.pre_match.split(".", 2)[0].to_i
-      previous_major_version = major_version - 1
-      "#{previous_major_version}.0.0"
-    else
-      version
+    latest_release_url = "https://api.github.com/repos/apache/arrow/releases/latest"
+    headers = {}
+    gh_token = ENV["GH_TOKEN"]
+    headers["Authorization"] = "Bearer #{gh_token}" if gh_token
+    # e.g: apache-arrow-19.0.0
+    latest_tag_name = URI.open(latest_release_url, headers) do |latest_release|
+      JSON.parse(latest_release.read)["tag_name"]
     end
+    # apache-arrow-19.0.0 -> 19.0.0
+    latest_tag_name[/\Aapache-arrow-([\d.]+)\z/, 1]
   end
 
-  def detect_target_apache_arrow_major_version
-    detect_target_apache_arrow_version.split(".", 2)[0]
+  def detect_target_apache_arrow_so_version
+    major, minor, = detect_target_apache_arrow_version.split(".", 3)
+    (major.to_i * 100 + minor.to_i).to_s
   end
 
   def define_archive_task
@@ -60,13 +55,56 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def docker_run_options(os, architecture)
+    if os.start_with?("ubuntu-")
+      [
+        "--env", "DEB_EMULATE_LAUNCHPAD_ENVIRONMENT=yes",
+      ]
+    else
+      []
+    end
+  end
+
   def apt_targets_default
     [
-      "debian-bookworm",
-      "debian-bookworm-arm64",
-      "debian-bullseye",
-      "debian-bullseye-arm64",
+      "debian-trixie",
+      "debian-trixie-arm64",
+      "ubuntu-jammy",
+      "ubuntu-jammy-arm64",
+      "ubuntu-noble",
+      "ubuntu-noble-arm64",
+      "ubuntu-resolute",
+      "ubuntu-resolute-arm64",
     ]
+  end
+
+  def apt_prepare_debian_control_faiss(control, target)
+    if target.start_with?("ubuntu-noble")
+      use_bundled_faiss = ""
+      use_system_faiss = "#"
+    else
+      use_bundled_faiss = "#"
+      use_system_faiss = ""
+    end
+    control.
+      gsub(/@USE_BUNDLED_FAISS@/, use_bundled_faiss).
+      gsub(/@USE_SYSTEM_FAISS@/, use_system_faiss)
+  end
+
+  def apt_prepare_debian_control_jsoncons(control, target)
+    if target.start_with?("ubuntu-jammy") or target.start_with?("ubuntu-noble")
+      use_system_jsoncons = "#"
+    else
+      use_system_jsoncons = ""
+    end
+    control.gsub(/@USE_SYSTEM_JSONCONS@/, use_system_jsoncons)
+  end
+
+  def apt_prepare_debian_control(control_in, target)
+    control = control_in.dup
+    control = apt_prepare_debian_control_faiss(control, target)
+    control = apt_prepare_debian_control_jsoncons(control, target)
+    control
   end
 
   def yum_targets_default
@@ -75,10 +113,10 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "almalinux-8-aarch64",
       "almalinux-9",
       "almalinux-9-aarch64",
-      "amazon-linux-2",
-      "centos-7",
-      "oracle-linux-8",
-      "oracle-linux-9",
+      "almalinux-10",
+      "almalinux-10-aarch64",
+      "amazon-linux-2023",
+      "amazon-linux-2023-aarch64",
     ]
   end
 
@@ -86,8 +124,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     case key
     when "APACHE_ARROW_VERSION"
       detect_target_apache_arrow_version
-    when "APACHE_ARROW_MAJOR_VERSION"
-      detect_target_apache_arrow_major_version
+    when "APACHE_ARROW_SO_VERSION"
+      detect_target_apache_arrow_so_version
     else
       super
     end
@@ -104,8 +142,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     [
       "#{@package}-#{@version}-x64-vs2022.zip",
       "#{@package}-#{@version}-x64-vs2022-with-vcruntime.zip",
-      "#{@package}-#{@version}-x64-vs2019.zip",
-      "#{@package}-#{@version}-x64-vs2019-with-vcruntime.zip",
     ]
   end
 
@@ -114,7 +150,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def github_repository
-    "groonga/groonga"
+    ENV["GITHUB_REPOSITORY"] || "groonga/groonga"
   end
 
   def github_actions_workflow_file_name(target_namespace, target)

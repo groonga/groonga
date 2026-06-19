@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -229,7 +230,7 @@ func_in_records_next(grn_ctx *ctx,
   if (!found) {
     return NULL;
   }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+  GRN_BOOL_SET(ctx, found, false);
 
   if (!data) {
     return found;
@@ -306,7 +307,7 @@ func_in_records_next(grn_ctx *ctx,
                                          data->search_result,
                                          GRN_OP_OR);
   if (grn_table_size(ctx, data->search_result) > 0) {
-    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+    GRN_BOOL_SET(ctx, found, true);
 
     GRN_TABLE_EACH_BEGIN(ctx, data->search_result, cursor, id) {
       grn_table_cursor_delete(ctx, cursor);

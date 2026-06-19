@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -403,8 +404,13 @@ grn_windows_log_back_trace(grn_ctx *ctx,
   frame.AddrPC.Offset = context->Rip;
   frame.AddrFrame.Offset = context->Rbp;
   frame.AddrStack.Offset = context->Rsp;
+# elif defined(_M_ARM64)
+  machine_type = IMAGE_FILE_MACHINE_ARM64;
+  frame.AddrPC.Offset = context->Pc;
+  frame.AddrFrame.Offset = context->Fp;
+  frame.AddrStack.Offset = context->Sp;
 # else /* _M_IX86 */
-#  error "Intel x86, Intel Itanium and x64 are only supported architectures"
+#  error "Intel x86, Intel Itanium, x64 and ARM64 are only supported architectures"
 # endif /* _M_IX86 */
 
   DWORD64 previous_address = 0;

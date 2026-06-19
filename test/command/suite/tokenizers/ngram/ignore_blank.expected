@@ -1,0 +1,34 @@
+tokenize   'TokenNgram("ignore_blank", true)'   "日 本 語 ! ! !"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "日本",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "本語",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "語",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "!!!",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

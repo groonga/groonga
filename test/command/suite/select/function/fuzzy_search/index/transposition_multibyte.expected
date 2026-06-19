@@ -1,0 +1,62 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Names user COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "aaあ"},
+{"name": "あうi"},
+{"name": "あう"},
+{"name": "あi"},
+{"name": "iう"}
+]
+[[0,0.0,0.0],5]
+select Users   --filter 'fuzzy_search(name, "あiう", {"with_transposition": true, "max_distance": 3})'   --output_columns 'name, _score'   --match_escalation_threshold -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "aaあ",
+        1
+      ],
+      [
+        "あうi",
+        3
+      ],
+      [
+        "あう",
+        3
+      ],
+      [
+        "あi",
+        3
+      ],
+      [
+        "iう",
+        3
+      ]
+    ]
+  ]
+]

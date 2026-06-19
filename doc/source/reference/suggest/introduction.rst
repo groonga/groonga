@@ -90,5 +90,5 @@ Learning
 
 The suggest feature requires registered data before using
 the feature. Those data can be registered from user inputs.
-Gronnga-suggest-httpd and groonga-suggest-learner commands
+Groonga-suggest-httpd and groonga-suggest-learner commands
 are provided for the propose.

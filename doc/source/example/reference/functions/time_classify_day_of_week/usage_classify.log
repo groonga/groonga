@@ -5,51 +5,51 @@ Execution example::
     --output_columns '_key, time_classify_day_of_week(created_at)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         7
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "time_classify_day_of_week", 
+  #           "time_classify_day_of_week",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Sunday", 
+  #         "Sunday",
   #         0
-  #       ], 
+  #       ],
   #       [
-  #         "Monday", 
+  #         "Monday",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "Tuesday", 
+  #         "Tuesday",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "Wednesday", 
+  #         "Wednesday",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Thursday", 
+  #         "Thursday",
   #         4
-  #       ], 
+  #       ],
   #       [
-  #         "Friday", 
+  #         "Friday",
   #         5
-  #       ], 
+  #       ],
   #       [
-  #         "Saturday", 
+  #         "Saturday",
   #         6
   #       ]
   #     ]

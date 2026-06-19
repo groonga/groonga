@@ -1,15 +1,15 @@
 Execution example::
 
-  tokenize TokenDelimit "㎡" --token_filters 'TokenFilterNFKC150'
+  tokenize TokenDelimit "©" --token_filters TokenFilterNFKC150
   # [
   #   [
   #     0,
-  #     1546906509.304568,
-  #     0.0002825260162353516
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     {
-  #       "value": "m2",
+  #       "value": "©",
   #       "position": 0,
   #       "force_prefix": false,
   #       "force_prefix_search": false

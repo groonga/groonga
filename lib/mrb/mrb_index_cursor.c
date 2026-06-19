@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -190,7 +191,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   }
   while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
     if (expr) {
-      grn_bool matched_raw = GRN_FALSE;
+      bool matched_raw = false;
       grn_obj *matched;
 
       matched = grn_expr_executor_exec(ctx, &executor, posting->rid);

@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -49,7 +50,7 @@ grn_file_lock_init(grn_ctx *ctx,
 #endif /* WIN32 */
 }
 
-grn_bool
+bool
 grn_file_lock_acquire(grn_ctx *ctx,
                       grn_file_lock *file_lock,
                       int timeout,
@@ -80,10 +81,9 @@ grn_file_lock_acquire(grn_ctx *ctx,
     ERR(GRN_NO_LOCKS_AVAILABLE,
         "%s failed to acquire lock: <%s>",
         error_message_tag, file_lock->path);
-    return GRN_FALSE;
-  } else {
-    return GRN_TRUE;
+    return false;
   }
+  return true;
 }
 
 void

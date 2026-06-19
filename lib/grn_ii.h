@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -83,6 +84,8 @@ struct _grn_ii {
 
 #define GRN_II_PSEG_NOT_ASSIGNED 0xffffffff
 
+#define GRN_II_MAX_TF            0x1ffff
+
 #define GRN_II_HEADER_COMMON_FIELDS                                            \
   uint64_t total_chunk_size;                                                   \
   uint64_t bmax;                                                               \
@@ -131,7 +134,6 @@ struct _grn_ii_updspec {
   int32_t offset;
   struct _grn_ii_pos *pos;
   struct _grn_ii_pos *tail;
-  /* grn_vgram_vnode *vnodes; */
 };
 
 typedef struct _grn_ii_updspec grn_ii_updspec;
@@ -191,17 +193,6 @@ grn_ii_max_section(grn_ii *ii);
 
 const char *
 grn_ii_path(grn_ii *ii);
-grn_obj *
-grn_ii_lexicon(grn_ii *ii);
-
-/*
-grn_rc grn_ii_upd(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
-                   const char *oldvalue, unsigned int oldvalue_len,
-                   const char *newvalue, unsigned int newvalue_len);
-grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
-                      unsigned int section,
-                      grn_values *oldvalues, grn_values *newvalues);
-*/
 
 #define GRN_II_DEFAULT_NEAR_MIN_INTERVAL (INT32_MIN)
 
@@ -228,6 +219,7 @@ struct _grn_select_optarg {
   grn_obj *query_options;
   grn_obj *max_element_intervals;
   int min_interval;
+  grn_id query_domain;
 };
 
 GRN_API grn_rc
@@ -284,13 +276,11 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf);
 
 grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii);
-grn_rc
-grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity);
 
 typedef struct grn_ii_builder_options grn_ii_builder_options;
 
 grn_rc
-grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options);
+grn_ii_build(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options);
 
 grn_rc
 grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii);

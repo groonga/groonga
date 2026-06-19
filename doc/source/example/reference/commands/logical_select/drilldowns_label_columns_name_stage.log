@@ -12,54 +12,54 @@ Execution example::
     --drilldowns[tag].output_columns _key,_nsubrecs,is_popular
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     {
   #       "tag": [
   #         [
   #           3
-  #         ], 
+  #         ],
   #         [
   #           [
-  #             "_key", 
+  #             "_key",
   #             "ShortText"
-  #           ], 
+  #           ],
   #           [
-  #             "_nsubrecs", 
+  #             "_nsubrecs",
   #             "Int32"
-  #           ], 
+  #           ],
   #           [
-  #             "is_popular", 
+  #             "is_popular",
   #             "Bool"
   #           ]
-  #         ], 
+  #         ],
   #         [
-  #           "Hello", 
-  #           1, 
+  #           "Hello",
+  #           1,
   #           false
-  #         ], 
+  #         ],
   #         [
-  #           "Groonga", 
-  #           2, 
+  #           "Groonga",
+  #           2,
   #           true
-  #         ], 
+  #         ],
   #         [
-  #           "Senna", 
-  #           2, 
+  #           "Senna",
+  #           2,
   #           true
   #         ]
   #       ]

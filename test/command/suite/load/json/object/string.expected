@@ -1,0 +1,57 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes data COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"data": "{\"embedded\": \"X\"}"},
+{"data": "{\"not embedded\": \"hello\"}"}
+]
+[[0,0.0,0.0],2]
+select Notes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "data",
+          "JSON"
+        ]
+      ],
+      [
+        1,
+        {
+          "embedded": "X"
+        }
+      ],
+      [
+        2,
+        {
+          "not embedded": "hello"
+        }
+      ]
+    ]
+  ]
+]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+load --table Notes
+[
+["_id","data"],
+[1,"{\"embedded\":\"X\"}"],
+[2,"{\"not embedded\":\"hello\"}"]
+]

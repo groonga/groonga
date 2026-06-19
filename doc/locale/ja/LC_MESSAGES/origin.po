@@ -1,0 +1,69 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 14.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-12-12 17:06+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "The Pre-Groonga Era"
+msgstr "Groongaの起源以前について"
+
+msgid "By Naozumi Takenaka (Founder and current CEO of Mirai Kensaku - meaning Future Search - Brazil)"
+msgstr "竹中直純(未来検索ブラジル創業者、現代表取締役)"
+
+msgid "December 2024"
+msgstr "2024年12月"
+
+msgid "The Internet Landscape at that time"
+msgstr "インターネット界隈の状況"
+
+msgid "Around 2003, as Google's dominance in internet search became established, many major Japanese services including Yahoo! Japan began adopting Google's search engine. The development of Groonga originated when NTT's goo search service made the business decision to abandon their proprietary search engine and crawler system."
+msgstr "2003年、インターネット検索におけるGoogleの覇権が確立した頃、日本でもYahoo! Japanなど多くの大手サービスがGoogleの検索エンジンを採用する動きがありました。その中でNTTが提供していたgooが自社製検索エンジンおよびクローラーシステムを捨てるビジネス上の決断をしたことにGroongaの開発は端を発します。"
+
+msgid "At the time, it was clear not only to engineers but also to many users who viewed the internet as a cultural phenomenon that search engines were an indispensable technology for finding relevant information among the explosively growing content post-internet. Search engines had the potential to not just control but fundamentally change user behavior online."
+msgstr "検索エンジンはインターネットの出現後、爆発的に増えるコンテンツからユーザーが必要とする情報を適切に見つけるために絶対に欠かせない技術であり、インターネットユーザーの行動を握るだけでなく、変える可能性のある技術だということは技術者だけでなく、インターネットを文化として捉える多くのユーザーの目にも明らかでした。"
+
+msgid "From a software engineering perspective, search engines are a complex bundle of critical technologies including tokenization, tree construction, indexing methods, performance optimization for each component, and multilingual support - not something that can be achieved with half-hearted efforts. The same applies to crawler technology. Japanese language processing in particular presents numerous challenges absent in Western languages, such as tokenization, verb conjugation variations, mixed character sets, and kanji variants. Search engine technology for Japanese builds upon detailed technical expertise accumulated since the personal computer era. As an engineer working in the Japanese language sphere, I felt an urgent sense of crisis seeing this technological accumulation being casually discarded in favor of \"foreign-made\" engines. The \"Google is good enough\" decision in 2003 exemplified how software was being treated as merely a commodity in Japan's internet business landscape, with little regard for its cultural aspects and value."
+msgstr "ソフトウェア技術から見た検索エンジンはトークナイズやツリー構築、インデクス方法、それぞれの高速化、多言語対応など重要な要素技術の塊であり、生半可な努力でできるものではありません。クローラー技術についても同様です。特に日本語については前述トークナイザ、語尾表現の揺れ、異種文字の混在、異体字の存在など、西欧語に存在しない数々の課題があり、パソコン時代から綿々と引き継がれてきた細かいノウハウの上に成立するのが検索エンジン技術です。このような技術的蓄積をあっさり捨てて、「外国製」のエンジンに乗り換えるという経営判断を見て、日本語圏に居る技術者として、とても切迫した危機感を(筆者は)覚えました。単なる商材としてソフトウェアが扱われ、文化的側面や価値が顧みられることがないことの証左として「Googleでいいじゃん」という決定がされることが2003年時点でのインターネットビジネスの国内事情だったのです。"
+
+msgid "The Birth of Brazil Inc. and Senna"
+msgstr "ブラジル社の誕生とSenna"
+
+msgid "To counter this situation, Mirai Kensaku - meaning Future Search - Brazil LLC (hereinafter \"Brazil\") was founded. Due to legal requirements at the time mandating minimum capital of 10 million yen for stock companies, we opted for an LLC structure with 3 million yen in capital. One of the founders, Hiroyuki Nishimura, was then the administrator and developer of 2channel (2ch), which lacked comprehensive cross-board search functionality - there were only a few volunteer-run services offering limited search capabilities. This presented an opportunity to repurpose NTT's soon-to-be-abandoned search engine technology for 2ch."
+msgstr "そこで、この状況になんとか一矢報いることができないだろうかと考えて作られたのが有限会社未来検索ブラジル(以下ブラジル社)でした。当時は株式会社設立のための資本金は1000万円以上という法的縛りがあったので300万円の資本で作ることができる有限会社が選ばれました。また、設立者のひとりである西村博之氏は当時２ちゃんねるの管理人であり、開発者でもありましたが、全掲示板を横断的に検索するサービスを提供できておらず、部分的なコンテンツが制限付で検索できるようなボランティアサービスが点々といくつか存在する状況を改善したいという欲求があり、それはまさにgooで要らなくなりつつあったNTTの検索エンジン技術を２ちゃんねるで活用するという好機でもありました。"
+
+msgid "For about two years after establishing Brazil, we built the 2ch search service using NTT's licensed search engine software (eva) while simultaneously conceptualizing and developing an entirely new, original search engine. During this period, we also established our commitment to open source, which continues to this day. This new engine was named Senna - combining Brazil's \"Brazil\" connection with an emphasis on speed. While many pronounced it \"sen-na\", the correct pronunciation is \"se-na\" given this background."
+msgstr "ブラジル社の設立から二年ほどはNTTのライセンスを受けて検索エンジンソフトウェア(eva)を使用し、２ちゃんねる検索サービスを構築していたものの、その間、全く新規のオリジナル検索エンジンを構想し開発していました。また、そのソフトウェアはオープンであるべきだという考えもこの時期に確立し、現在まで続いています。その新規エンジンの名前はSennaといいます。ブラジル社の\"ブラジル\"と高速さをアピールするためにつけた名前でした。「せんな」と発音する方がたくさんいましたが、そういう経緯で生まれたエンジンなので「せな」が正しい発音です。"
+
+msgid "Around 2005, Livedoor was at its peak in Japan, with CEO Takafumi Horie publicly expressing his desire to build a search service that could compete with Google. Brazil saw this as a once-in-a-lifetime opportunity and planned to extend Senna with distributed server support and other features to create a large-scale search service that could match Google's speed and accuracy at the time. While these plans were ultimately derailed by the Livedoor incident in 2006, their implementation might have altered the course of the internet history."
+msgstr "その頃、2005年あたりは日本社会ではライブドア社が繁栄のピーク時期を迎えていて、その代表である堀江貴文氏はGoogleに対抗できる検索サービスを構築したいと公言していました。ブラジル社としては千載一遇の機会だと思い、オリジナル検索エンジンであるSennaを拡張し、分散サーバー対応などを行い、少なくとも検索精度とスピードでは当時のGoogleに負けない大規模な検索サービスを構築する計画を立て、堀江氏と協議を重ねました。この計画は、いわゆるライブドア事件によって頓挫したわけですが、実施されていたらインターネットの歴史が少し変わったのではないかと考えます。"
+
+msgid "The Evolution to Groonga"
+msgstr "そしてGroongaへ"
+
+msgid "Shortly after Senna went into operation, one of Brazil's founders, Daijiro Mori, exemplified the programming adage that \"you should write the same software three times\" by initiating the development of Groonga as the third iteration. Throughout this period, Brazil maintained its clear vision of preserving pure Japanese search engine technology for the future."
+msgstr "また、Sennaが稼働し始めてまもなく、ソフトウェア技術者間でよく言われる「同一要素技術のソフトウェアはとにかく三回書く」を地で行く活動がブラジル社創業者の一人である森大二郎氏によって行われ、三度目の正直としてGroongaの開発が始まることになります。この間、ブラジル社は一貫して純国産検索エンジン技術を未来に繋ぐ明確なビジョンを基に開発活動を続けました。"
+
+msgid "Regarding Groonga's name, Mori provided the true story:"
+msgstr "Groongaの名前について森氏から正史をもらえましたので記しておきます。"
+
+msgid "I named it Groonga after being strongly impressed by something Hideya Adachi of Fukuoka's progressive band 'Takenouchi Quartet' told me - that tracing the origins of the blue note scale leads to Grunga village in East Africa."
+msgstr "福岡の誇るプログレバンド「たけのうちカルテット」の安達ひでや氏から、ブルーノートスケールの起源をたどると東アフリカのグルンガ村に行き着くと聞いたことが強く印象に残っていたため、それにあやかってGroongaと命名しました。"
+
+msgid "This naming approach differed completely from Senna's - perhaps we could have renamed the company to \"Future Search Africa\" at that point :-)"
+msgstr "Sennaとは全く異なる命名の考え方で、それならその時に社名を「未来検索アフリカ」に変えてもよかったのかもしれません。"
+
+msgid "Subsequently, we decided to not just make it open source but to entrust development to the community, believing this would enable multifaceted, evolutionary development unrestricted by Brazil's internal resources - including debugging, feature expansion, and documentation enhancement. This led to strengthening links with various developers, including ClearCode Inc."
+msgstr "その後、さらに単にオープンソースであるだけでなく開発をコミュニティに委ねる開発スタイルをとることで、デバッグ、機能拡張、ドキュメントの拡充など、ブラジル社内リソースの制限がない多面的、発展的な活動が可能になると考えクリアコード社をはじめとする各開発者とのリンクを強めていくことになります。"
+
+msgid "I'll end this section hoping that contributors will continue writing this history."
+msgstr "続きはコントリビューターの方々によって書き継がれることを期待してこの項を終えます。"

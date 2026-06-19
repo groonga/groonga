@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,7 +43,9 @@ class GRN_DAT_API Key {
     return buf_;
   }
   UInt32 length() const {
-    return (length_high_ << 4) | (id_and_length_low_ & 0x0F);
+    const UInt32 length = (length_high_ << 4) | (id_and_length_low_ & 0x0F);
+    // 4096 bytes key overflows to 0, so 0 is treated as 4096.
+    return (length == 0) ? MAX_KEY_LENGTH : length;
   }
   UInt32 id() const {
     return id_and_length_low_ >> 4;

@@ -1,0 +1,5 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --extractors 'ExtractorHTML, \
+                ExtractorHTML("remove_tag", false)'
+
+dump

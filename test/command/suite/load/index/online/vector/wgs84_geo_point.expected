@@ -44,9 +44,7 @@ select Users --output_columns points
         ]
       ],
       [
-        [
-
-        ]
+        []
       ]
     ]
   ]

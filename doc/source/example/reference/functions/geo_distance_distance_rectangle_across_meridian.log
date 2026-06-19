@@ -3,21 +3,21 @@ Execution example::
   select Geo --output_columns distance --scorer 'distance = geo_distance("175904000x8464000", "145508000x-13291000", "rectangle")'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "distance", 
+  #           "distance",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         1051322
   #       ]

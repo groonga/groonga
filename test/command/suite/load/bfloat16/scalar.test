@@ -1,0 +1,16 @@
+#@require-feature bfloat16
+
+table_create Data TABLE_NO_KEY
+column_create Data bfloat16 COLUMN_SCALAR BFloat16
+
+load --table Data
+[
+{"bfloat16": 0.0},
+{"bfloat16": 0.1},
+{"bfloat16": 1.2},
+{"bfloat16": -2.9}
+]
+
+select Data
+
+dump

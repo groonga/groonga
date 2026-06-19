@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "report_source_offset", true)'   "っんぱ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_to_romaji", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "っんぱ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -11,7 +11,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       "alpha",
       "alpha",
       "alpha",
-      "alpha"
+      "alpha",
+      "null"
     ],
     "checks": [
       3,
@@ -23,7 +24,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       0,
       3,
       6,
-      6
+      6,
+      9
     ]
   }
 ]

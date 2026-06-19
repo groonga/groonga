@@ -1,0 +1,66 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create CopyBFloat16Value TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create CopyBFloat16Value source_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags
+[[0,0.0,0.0],true]
+column_create CopyBFloat16Value destination_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags
+[[0,0.0,0.0],true]
+load --table CopyBFloat16Value
+[
+{
+  "_key": "Groonga is fast!!!",
+  "source_tags": {
+    "Groonga": 2.8,
+    "full text search": 1.5
+  }
+}
+]
+[[0,0.0,0.0],1]
+column_copy CopyBFloat16Value source_tags CopyBFloat16Value destination_tags
+[[0,0.0,0.0],true]
+select CopyBFloat16Value
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "destination_tags",
+          "Tags"
+        ],
+        [
+          "source_tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!!!",
+        {
+          "Groonga": 2.796875,
+          "full text search": 1.5
+        },
+        {
+          "Groonga": 2.796875,
+          "full text search": 1.5
+        }
+      ]
+    ]
+  ]
+]

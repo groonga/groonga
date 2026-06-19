@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -122,7 +123,7 @@ typedef struct {
   score_heap_node *nodes;
 } score_heap;
 
-static grn_inline score_heap *
+static inline score_heap *
 score_heap_open(grn_ctx *ctx, uint32_t max)
 {
   score_heap *h = GRN_PLUGIN_MALLOC(ctx, sizeof(score_heap));
@@ -137,7 +138,7 @@ score_heap_open(grn_ctx *ctx, uint32_t max)
   return h;
 }
 
-static grn_inline grn_bool
+static inline bool
 score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
 {
   uint32_t n, n2;
@@ -148,7 +149,7 @@ score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
     score_heap_node *nodes;
     nodes = GRN_PLUGIN_REALLOC(ctx, h->nodes, sizeof(score_heap) * max);
     if (!nodes) {
-      return GRN_FALSE;
+      return false;
     }
     h->limit = max;
     h->nodes = nodes;
@@ -163,10 +164,10 @@ score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
     h->nodes[n2] = node2;
     n = n2;
   }
-  return GRN_TRUE;
+  return true;
 }
 
-static grn_inline void
+static inline void
 score_heap_close(grn_ctx *ctx, score_heap *h)
 {
   GRN_PLUGIN_FREE(ctx, h->nodes);
@@ -321,7 +322,7 @@ typedef struct {
   uint32_t max_distance;
   uint32_t prefix_length;
   uint32_t prefix_match_size;
-  uint32_t max_expansion;
+  uint32_t max_expansions;
   int flags;
 } fuzzy_search_data;
 
@@ -385,7 +386,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
                                  data->query,
                                  data->max_distance,
                                  data->prefix_match_size,
-                                 data->max_expansion,
+                                 data->max_expansions,
                                  data->flags,
                                  res,
                                  logical_op);
@@ -408,7 +409,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
     options.mode = GRN_OP_FUZZY;
     options.fuzzy.prefix_match_size = data->prefix_match_size;
     options.fuzzy.max_distance = data->max_distance;
-    options.fuzzy.max_expansion = data->max_expansion;
+    options.fuzzy.max_expansion = data->max_expansions;
     options.fuzzy.flags = data->flags;
     grn_obj_search(ctx, target, data->query, res, logical_op, &options);
   }
@@ -440,7 +441,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   data.max_distance = 1;
   data.prefix_length = 0;
   data.prefix_match_size = 0;
-  data.max_expansion = 0;
+  data.max_expansions = 0;
   data.flags = 0;
 
   if (nargs == 4) {
@@ -462,9 +463,14 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                     "prefix_length",
                                     GRN_PROC_OPTION_VALUE_UINT32,
                                     &(data.prefix_length),
+                                    /* Deprecated since 13.0.8.
+                                     * Keep this for backward compatibility. */
                                     "max_expansion",
                                     GRN_PROC_OPTION_VALUE_UINT32,
-                                    &(data.max_expansion),
+                                    &(data.max_expansions),
+                                    "max_expansions",
+                                    GRN_PROC_OPTION_VALUE_UINT32,
+                                    &(data.max_expansions),
                                     "with_transposition",
                                     GRN_PROC_OPTION_VALUE_BOOL,
                                     &with_transposition,

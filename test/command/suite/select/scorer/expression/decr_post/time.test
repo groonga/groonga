@@ -1,0 +1,12 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Time
+column_create Values output COLUMN_SCALAR Time
+
+load --table Values
+[
+{"value": 1702523650, "output": 29}
+]
+
+select Values \
+  --scorer 'output = value--' \
+  --output_columns 'value, output'

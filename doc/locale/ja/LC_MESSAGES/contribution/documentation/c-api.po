@@ -19,8 +19,23 @@ msgstr ""
 msgid "C API"
 msgstr ""
 
-msgid "We still have C API documentation in include/groonga.h. But we want to move them into doc/source/c-api/\\*.txt. We welcome to you help us by moving C API documentation."
-msgstr "今のところ、C APIのドキュメントはinclude/groonga.hにありますが、これをdoc/source/c-api/\\*.txtに移動したいと思っています。C APIのドキュメントを移動して、パッチを送ってくれるととても喜びます。"
+msgid "The C API documentation is auto-generated from header files using [Doxygen](https://www.doxygen.nl/). You can view the generated documentation at [C API Reference](https://groonga.org/docs/reference/api/index.html)."
+msgstr "C APIのドキュメントは、ヘッダーファイルから[Doxygen](https://www.doxygen.nl/)を用いて自動生成しています。生成されたドキュメントは[C API Reference](https://groonga.org/docs/reference/api/index.html)で確認できます。"
 
-msgid "We will use `the C domain markup`_ of Sphinx."
-msgstr "Sphinxの `the C domain markup`_ を使う予定です。"
+msgid "How to write"
+msgstr "書き方"
+
+msgid "To contribute to the C API documentation, add Doxygen-style comments to the header files in `include/groonga/`."
+msgstr "C API のドキュメントに貢献するには、`include/groonga/`配下のヘッダーファイルにDoxygen形式のコメントを追加してください。"
+
+msgid "Example:"
+msgstr "例："
+
+msgid "How to preview"
+msgstr "プレビュー方法"
+
+msgid "For instructions on how to generate documentation and preview it, see {doc}`introduction`."
+msgstr "ドキュメントの生成方法およびプレビュー方法については、{doc}`introduction`を参照してください。"
+
+msgid "The generated C API HTML documentation will be output to `../groonga.doc/doc/en/html/reference/api/`."
+msgstr "生成されたC APIのHTMLドキュメントは、次の`../groonga.doc/doc/en/html/reference/api/`ディレクトリに出力されます。"

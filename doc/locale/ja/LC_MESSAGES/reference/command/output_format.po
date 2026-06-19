@@ -32,7 +32,7 @@ msgstr "JSONまたはMessagePackの利用を推奨します。XMLは目視で結
 msgid "JSON and MessagePack"
 msgstr "JSONとMessagePack"
 
-msgid "This secsion describes the structure of command result on JSON and MessagePack format. JSON is used to show structure because MessagePack is binary format. Binary format isn't proper for documenataion."
+msgid "This section describes the structure of command result on JSON and MessagePack format. JSON is used to show structure because MessagePack is binary format. Binary format isn't proper for documenataion."
 msgstr "このセクションではJSONとMessagePack形式を使った時のコマンド実行結果の構造を説明します。MessagePackはバイナリー形式なのでここでは構造を示すためにJSONを使います。バイナリー形式はドキュメントには向いていません。"
 
 msgid "JSON and MessagePack uses the following structure::"

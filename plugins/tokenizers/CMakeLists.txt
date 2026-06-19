@@ -1,9 +1,10 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 set(TOKENIZERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/tokenizers")
+
 if(GRN_WITH_MECAB)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_sources.am MECAB_SOURCES)
   include_directories(${MECAB_INCLUDE_DIRS})
@@ -75,4 +77,27 @@ if(GRN_WITH_KYTEA)
     endif()
   endif()
   target_link_libraries(kytea_tokenizer libgroonga kytea)
+endif()
+
+if(GRN_WITH_H3)
+  set(H3_INDEX_SOURCES h3_index.c)
+  set_source_files_properties(${H3_INDEX_SOURCES}
+                              PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(h3_index_tokenizer STATIC ${H3_INDEX_SOURCES})
+    set_target_properties(h3_index_tokenizer
+                          PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(h3_index_tokenizer MODULE ${H3_INDEX_SOURCES})
+    set_target_properties(h3_index_tokenizer PROPERTIES PREFIX "" OUTPUT_NAME
+                                                                  "h3_index")
+    install(TARGETS h3_index_tokenizer DESTINATION "${TOKENIZERS_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:h3_index_tokenizer>
+        DESTINATION "${TOKENIZERS_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(h3_index_tokenizer libgroonga)
 endif()

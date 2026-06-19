@@ -14,6 +14,10 @@ Groonga組込コマンドの一つであるdefragについて説明します。�
 defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、オブジェクトのフラグメンテーショ
 ンを解消します。
 
+.. versionadded:: 14.1.1
+
+    You can resolve key fragmentation of a patricia trie table.
+
 Syntax
 ------
 ::

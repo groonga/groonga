@@ -1,0 +1,102 @@
+Execution example::
+
+  tokenize TokenNgram "Fulltext Search" --output_style full
+  # [
+  #   [
+  #     0,
+  #     1746572920.136098,
+  #     0.0004820823669433594
+  #   ],
+  #   [
+  #     {
+  #       "value": "Fu",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ul",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ll",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "lt",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "te",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ex",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "xt",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "t ",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": " S",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "Se",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ea",
+  #       "position": 10,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ar",
+  #       "position": 11,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "rc",
+  #       "position": 12,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ch",
+  #       "position": 13,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "h",
+  #       "position": 14,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

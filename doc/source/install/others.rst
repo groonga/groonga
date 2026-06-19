@@ -1,5 +1,10 @@
 .. -*- rst -*-
 
+:orphan:
+
+.. warning::
+   Building with GNU Autotools is deprecated, you should build with CMake: :doc:`/install/cmake`
+
 Others
 ======
 
@@ -74,9 +79,9 @@ Build from source
 Groonga uses GNU build system. So the following is the simplest build
 steps::
 
-  % wget https://packages.groonga.org/source/groonga/groonga-13.0.5.tar.gz
-  % tar xvzf groonga-13.0.5.tar.gz
-  % cd groonga-13.0.5
+  % wget https://packages.groonga.org/source/groonga/groonga-latest.tar.gz
+  % tar xvf groonga-latest.tar.gz
+  % cd groonga-*
   % ./configure
   % make
   % sudo make install
@@ -223,19 +228,14 @@ Here is an example that installs Munin plugins for Groonga::
 ``--with-package-platform=PLATFORM``
 ++++++++++++++++++++++++++++++++++++
 
-Installs platform specific system management files such as init
-script. Available platforms are ``centos``, ``centos5``, ``centos6``,
-``centos7`` and ``fedora``. Platform starts with ``centos`` are for
-Red Hat and Red Hat clone distributions such as CentOS. If ``centos``
-is specified, distribution version is guessed. ``fedora`` is for
-Fedora.
+Installs platform specific system management files such as init script.
+Only Red Hat and Red Hat clone distributions such as AlmaLinux are supported.
 
 Those system management files are not installed by default.
 
-Here is an example that installs CentOS specific system management
-files::
+Here is an example that installs Red Hat or Red Hat clone distributions specific system management files::
 
-  % ./configure --with-package-platform=centos
+  % ./configure --with-package-platform=rhel
 
 ``--help``
 ++++++++++
@@ -251,7 +251,7 @@ In addition to using Apache Arrow IPC streaming format output, you can also use
 multithreading processing that is used in :ref:`select-n-workers` and
 :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
 
-In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow 
+In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow
 is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``.
 
 When you specify ``--enable-apache-arrow`` explicitly, you must install Apache
@@ -260,7 +260,7 @@ Arrow on the system beforehand.
 You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_.
 Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
 
-When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow 
+When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow
 support even if Apache Arrow is installed on the system.
 
 Here is an example how to enable the Apache Arrow support explicitly.
@@ -291,20 +291,20 @@ When using libraries installed via a package manager, you do not need
 to specify this parameter because ``.pc`` files for the libraries are in
 the default search paths of ``pkg-config``.
 
-When using manual built libraries, you need to specify ``.pc`` file paths 
+When using manual built libraries, you need to specify ``.pc`` file paths
 of those libraries by this parameter.
 
 You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
 to use it as a ``configure`` parameter because of the following reason.
 
-``configure`` is generated from ``configure.ac`` by GNU Autotools. And when 
-``make`` detects that ``configure.ac`` has changed, GNU Autotools automatically 
-regenerates ``configure`` and re-executes it. If you specify ``PKG_CONFIG_PATH`` 
-as a ``configure`` parameter, ``PKG_CONFIG_PATH`` is specified automatically 
+``configure`` is generated from ``configure.ac`` by GNU Autotools. And when
+``make`` detects that ``configure.ac`` has changed, GNU Autotools automatically
+regenerates ``configure`` and re-executes it. If you specify ``PKG_CONFIG_PATH``
+as a ``configure`` parameter, ``PKG_CONFIG_PATH`` is specified automatically
 when ``configure`` is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH``
 as an environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
-Here is an example how to specify a ``.pc`` file path for 
+Here is an example how to specify a ``.pc`` file path for
 ``/tmp/local/lib/pkgconfig/arrow.pc``.
 
 .. code-block:: console

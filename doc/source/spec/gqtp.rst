@@ -252,24 +252,23 @@ Form::
 This command establishes a connection with a GQTP server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, Groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, Groonga uses the default port number 10043.
 
 .. groonga-command
-.. include:: ../example/tutorial/network-1.log
-.. .. % groonga -c
+.. database: spec_gqtp
+.. include:: ../example/spec/gqtp/client.log
+.. .. $ groonga -c
 .. status
 .. .. > ctrl-d
-.. .. %
+.. .. $
 
 In interactive mode, Groonga reads commands from the standard input and executes them one by one.
 
 How to terminate a GQTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` command.
+You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` command::
 
-.. groonga-command
-.. include:: ../example/tutorial/network-2.log
-.. .. % groonga -c
-.. .. > shutdown
-.. .. %
+  $ groonga -c
+  > shutdown
+  $
 
 See also
 --------

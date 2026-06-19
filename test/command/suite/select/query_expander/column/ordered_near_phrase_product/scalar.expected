@@ -1,0 +1,60 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC150   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --normalizers NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Terms expansion COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["content"],
+["Apache Arrow is fast. Rroonga is fast. Mroonga is fast."],
+["Apache Arrow is fast. Full text search by Ruby is fast. Mroonga is fast."],
+["Apache Arrow is fast. Ruby and Groonga are fast. Mroonga is fast."],
+["Apache Arrow is fast. Ruby is fast. Mroonga is fast."]
+]
+[[0,0.0,0.0],4]
+load --table Terms
+[
+{"_key": "PGroonga", "expansion": "PGroonga \"Groonga PostgreSQL\""},
+{"_key": "Rroonga",  "expansion": "Rroonga \"Ruby and Groonga\""}
+]
+[[0,0.0,0.0],2]
+select   --table Memos   --query_expander Terms.expansion   --match_columns content   --query '*ONPP"(Arrow) (Rroonga) (Mroonga)"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Apache Arrow is fast. Rroonga is fast. Mroonga is fast."
+      ],
+      [
+        3,
+        "Apache Arrow is fast. Ruby and Groonga are fast. Mroonga is fast."
+      ]
+    ]
+  ]
+]

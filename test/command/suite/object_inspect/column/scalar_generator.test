@@ -1,0 +1,6 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title_html COLUMN_SCALAR ShortText
+column_create Memos title_text COLUMN_SCALAR ShortText title_html \
+  --generator 'html_untag(title_html)'
+
+object_inspect Memos.title_text

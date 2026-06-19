@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,6 +24,7 @@
 #include "grn_output_columns.h"
 #include "grn_pat.h"
 #include "grn_sort.h"
+#include "grn_sorter.h"
 #include "grn_util.h"
 
 #include <stdio.h>
@@ -109,7 +111,7 @@ struct sort_key_ {
   grn_expr_executor expr_executor;
 };
 
-grn_inline static size_t
+inline static size_t
 grn_sort_key_size(sort_key_offset offset)
 {
   if (offset == KEY_BULK) {
@@ -119,7 +121,7 @@ grn_sort_key_size(sort_key_offset offset)
   }
 }
 
-grn_inline static uint32_t
+inline static uint32_t
 grn_sort_key_get_size(const uint8_t *size_raw,
                       sort_key_offset key_offset)
 {
@@ -130,7 +132,7 @@ grn_sort_key_get_size(const uint8_t *size_raw,
   }
 }
 
-grn_inline static void
+inline static void
 grn_sort_key_set_size(uint8_t *size_raw,
                       sort_key_offset key_offset,
                       uint32_t size)
@@ -207,7 +209,7 @@ struct sort_compare_data_ {
   }\
 } while (0)
 
-static grn_inline grn_id
+static inline grn_id
 sort_value_get_resolve_id(grn_ctx *ctx,
                           const sort_key *key,
                           sort_entry *entry,
@@ -336,7 +338,7 @@ sort_value_execute_expr(grn_ctx *ctx,
   }
 }
 
-static grn_inline int
+static inline int
 sort_value_compare(grn_ctx *ctx,
                    sort_entry *a,
                    sort_entry *b,
@@ -424,7 +426,7 @@ sort_value_compare(grn_ctx *ctx,
   return 0;
 }
 
-static grn_inline void
+static inline void
 sort_value_swap(grn_ctx *ctx, sort_entry *a, sort_entry *b, sort_data *data)
 {
   sort_entry c = *a;
@@ -432,7 +434,7 @@ sort_value_swap(grn_ctx *ctx, sort_entry *a, sort_entry *b, sort_data *data)
   *b = c;
 }
 
-static grn_inline sort_entry *
+static inline sort_entry *
 sort_value_part(grn_ctx *ctx,
                 sort_entry *b,
                 sort_entry *e,
@@ -470,7 +472,7 @@ sort_value_part(grn_ctx *ctx,
   return e;
 }
 
-static grn_inline void
+static inline void
 sort_value_body(grn_ctx *ctx,
                 sort_entry *head,
                 sort_entry *tail,
@@ -490,7 +492,7 @@ sort_value_body(grn_ctx *ctx,
   }
 }
 
-static grn_inline sort_entry *
+static inline sort_entry *
 sort_value_pack(grn_ctx *ctx,
                 grn_obj *table,
                 sort_entry *head,
@@ -705,13 +707,13 @@ exit :
   return n_sorted_records;
 }
 
-static grn_bool
+static bool
 is_compressed_column(grn_ctx *ctx, grn_obj *obj)
 {
   grn_obj *target_obj;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (obj->header.type == GRN_ACCESSOR) {
@@ -725,37 +727,38 @@ is_compressed_column(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (target_obj->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (target_obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
   case GRN_OBJ_COMPRESS_ZLIB :
   case GRN_OBJ_COMPRESS_LZ4 :
   case GRN_OBJ_COMPRESS_ZSTD :
-    return GRN_TRUE;
+  case GRN_OBJ_COMPRESS_OPENZL :
+    return true;
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 
-static grn_bool
+static bool
 is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (obj->header.type != GRN_ACCESSOR) {
-    return GRN_FALSE;
+    return false;
   }
 
   for (accessor = (grn_accessor *)obj; accessor; accessor = accessor->next) {
     switch (accessor->action) {
     case GRN_ACCESSOR_GET_VALUE :
       if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(accessor->obj)) {
-        return GRN_TRUE;
+        return true;
       }
       break;
     default :
@@ -763,16 +766,16 @@ is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-static grn_bool
+static bool
 is_encoded_pat_key_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
 
   if (!grn_obj_is_accessor(ctx, obj)) {
-    return GRN_FALSE;
+    return false;
   }
 
   accessor = (grn_accessor *)obj;
@@ -781,11 +784,11 @@ is_encoded_pat_key_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (accessor->action != GRN_ACCESSOR_GET_KEY) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (accessor->obj->header.type != GRN_TABLE_PAT_KEY) {
-    return GRN_FALSE;
+    return false;
   }
 
   return grn_pat_is_key_encoded(ctx, (grn_pat *)(accessor->obj));
@@ -1052,38 +1055,48 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     ERR(rc, "%s grn_output_range_normalize failed", tag);
     goto exit;
   }
-  if (keys->flags & GRN_TABLE_SORT_GEO) {
-    if (n_keys == 2) {
-      n_sorted_records = grn_geo_table_sort(ctx,
+  if (n_keys == 1) {
+    grn_obj *first_key = keys[0].key;
+    grn_sorter_data data;
+    bool have_sorter = grn_sorter_data_init(ctx,
+                                            &data,
                                             table,
-                                            offset,
-                                            limit,
-                                            result,
-                                            keys[0].key,
-                                            keys[1].key);
-    } else {
-      n_sorted_records = 0;
+                                            (size_t)offset,
+                                            (size_t)limit,
+                                            keys,
+                                            n_keys,
+                                            result);
+    bool processed = false;
+    if (have_sorter) {
+      if (grn_sorter_data_run(ctx, &data) == GRN_SUCCESS) {
+        n_sorted_records = grn_table_size(ctx, result);
+      } else {
+        n_sorted_records = 0;
+      }
+      processed = true;
+    } else if (!GRN_ACCESSORP(first_key)) {
+      grn_obj *index = 0;
+      int n_indexes = grn_column_index(ctx,
+                                       first_key,
+                                       GRN_OP_LESS,
+                                       &index,
+                                       1,
+                                       NULL);
+      if (n_indexes > 0) {
+        n_sorted_records = grn_table_sort_index(ctx,
+                                                table,
+                                                index,
+                                                offset,
+                                                limit,
+                                                result,
+                                                keys,
+                                                n_keys);
+        grn_obj_unref(ctx, index);
+        processed = true;
+      }
     }
-    goto exit;
-  }
-  if (n_keys == 1 && !GRN_ACCESSORP(keys->key)) {
-    grn_obj *index = 0;
-    int n_indexes = grn_column_index(ctx,
-                                     keys->key,
-                                     GRN_OP_LESS,
-                                     &index,
-                                     1,
-                                     NULL);
-    if (n_indexes > 0) {
-      n_sorted_records = grn_table_sort_index(ctx,
-                                              table,
-                                              index,
-                                              offset,
-                                              limit,
-                                              result,
-                                              keys,
-                                              n_keys);
-      grn_obj_unref(ctx, index);
+    grn_sorter_data_fin(ctx, &data);
+    if (processed) {
       goto exit;
     }
   }
@@ -1103,72 +1116,6 @@ exit :
   GRN_API_RETURN(n_sorted_records);
 }
 
-static grn_table_sort_key *
-grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_size,
-                                grn_obj *table, unsigned int *nkeys)
-{
-  const char **tokbuf;
-  const char *p = str, *pe = str + str_size;
-  grn_table_sort_key *keys = NULL, *k = NULL;
-  while ((*p++ != '(')) { if (p == pe) { return NULL; } }
-  str = p;
-  while ((*p != ')')) { if (++p == pe) { return NULL; } }
-  str_size = (unsigned int)(p - str);
-  p = str;
-  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    grn_id domain = GRN_ID_NIL;
-    int i;
-    int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
-    if ((keys = GRN_MALLOCN(grn_table_sort_key, (size_t)n))) {
-      k = keys;
-      for (i = 0; i < n; i++) {
-        const char *r = tokbuf[i];
-        while (p < r && (' ' == *p || ',' == *p)) { p++; }
-        if (p < r) {
-          k->flags = GRN_TABLE_SORT_ASC;
-          k->offset = 0;
-          if (*p == '+') {
-            p++;
-          } else if (*p == '-') {
-            k->flags = GRN_TABLE_SORT_DESC;
-            p++;
-          }
-          if (k == keys) {
-            if (!(k->key = grn_obj_column(ctx, table, p, (uint32_t)(r - p)))) {
-              GRN_LOG(ctx, GRN_WARN,
-                      "[table-sort-key][geo] "
-                      "ignore invalid sort key: <%.*s>(<%.*s>)",
-                      (int)(tokbuf[i] - p), p, str_size, str);
-              continue;
-            }
-            domain = grn_obj_get_range(ctx, k->key);
-          } else {
-            grn_obj buf;
-            GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
-            GRN_TEXT_SET(ctx, &buf, p + 1, r - p - 2); /* should be quoted */
-            k->key = grn_obj_open(ctx, GRN_BULK, 0, domain);
-            grn_obj_cast(ctx, &buf, k->key, GRN_FALSE);
-            GRN_OBJ_FIN(ctx, &buf);
-          }
-          k->flags |= GRN_TABLE_SORT_GEO;
-          k++;
-        }
-        p = r;
-      }
-    }
-    /* The cast is just for suppressing wrong Visual C++ warning. */
-    GRN_FREE((void *)tokbuf);
-  }
-  if (!ctx->rc && k - keys > 0) {
-    *nkeys = (unsigned int)(k - keys);
-  } else {
-    grn_table_sort_key_close(ctx, keys, (uint32_t)(k - keys));
-    *nkeys = 0;
-    keys = NULL;
-  }
-  return keys;
-}
-
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size,
                             grn_obj *table, uint32_t *nkeys)
@@ -1181,9 +1128,6 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
     return NULL;
   }
 
-  if ((keys = grn_table_sort_key_from_str_geo(ctx, str, str_size, table, nkeys))) {
-    return keys;
-  }
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i;
     int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
@@ -1295,7 +1239,6 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
     GRN_API_RETURN(keys);
   }
 
-  /* printf("\nparse: <%.*s>\n", raw_keys_length, raw_keys); */
   grn_obj offsets;
   GRN_UINT32_INIT(&offsets, GRN_OBJ_VECTOR);
   grn_obj *keys_expression = NULL;
@@ -1322,50 +1265,6 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
   }
 
   size_t n_offsets = GRN_UINT32_VECTOR_SIZE(&offsets) / 2;
-  if (n_offsets == 1) {
-    grn_expr *expr = (grn_expr *)keys_expression;
-    uint32_t code_start_offset = GRN_UINT32_VALUE_AT(&offsets, 0);
-    uint32_t code_end_offset = GRN_UINT32_VALUE_AT(&offsets, 1);
-    size_t n_codes = code_end_offset - code_start_offset;
-    grn_table_sort_flags flags = GRN_TABLE_SORT_ASC;
-    if (n_codes == 5 &&
-        expr->codes[code_start_offset].op == GRN_OP_PUSH &&
-        expr->codes[code_start_offset].modify == 3 &&
-        expr->codes[code_end_offset - 1].op == GRN_OP_MINUS) {
-      flags = GRN_TABLE_SORT_DESC;
-      n_codes--;
-      code_end_offset--;
-    }
-    if (n_codes == 4 &&
-        expr->codes[code_start_offset].op == GRN_OP_PUSH &&
-        expr->codes[code_start_offset].modify == 3 &&
-        expr->codes[code_end_offset - 1].op == GRN_OP_CALL &&
-        expr->codes[code_start_offset].value ==
-        grn_ctx_get(ctx, "geo_distance", -1)) {
-      keys = GRN_MALLOCN(grn_table_sort_key, 2);
-      if (!keys) {
-        goto exit;
-      }
-      keys[0].flags = flags | GRN_TABLE_SORT_GEO;
-      keys[0].key = expr->codes[code_start_offset + 1].value;
-      if (grn_obj_is_accessor(ctx, keys[0].key)) {
-        keys[0].key = grn_accessor_copy(ctx, keys[0].key);
-      } else {
-        grn_obj_refer(ctx, keys[0].key);
-      }
-      keys[1].flags = GRN_TABLE_SORT_GEO;
-      keys[1].key = grn_obj_open(ctx,
-                                 GRN_BULK,
-                                 0,
-                                 grn_obj_get_range(ctx, keys[0].key));
-      grn_obj_cast(ctx,
-                   expr->codes[code_start_offset + 2].value,
-                   keys[1].key,
-                   false);
-      *n_keys = 2;
-      goto exit;
-    }
-  }
   keys = GRN_MALLOCN(grn_table_sort_key, n_offsets);
   if (!keys) {
     goto exit;

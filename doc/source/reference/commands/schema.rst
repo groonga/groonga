@@ -322,10 +322,10 @@ Here are properties of ``TABLE``:
 
        This is one of the followings:
 
-         * ``array``: :ref:`table-no-key`
-         * ``hash``: :ref:`table-hash-key`
-         * ``patricia trie``: :ref:`table-pat-key`
-         * ``double array trie``: :ref:`table-dat-key`
+       * ``array``: :ref:`table-no-key`
+       * ``hash``: :ref:`table-hash-key`
+       * ``patricia trie``: :ref:`table-pat-key`
+       * ``double array trie``: :ref:`table-dat-key`
    * - ``key_type``
      - The type of the table's key.
 
@@ -334,9 +334,9 @@ Here are properties of ``TABLE``:
        If the table type isn't ``array``, this is an object
        that has the following properties:
 
-         * ``name``: The type name.
-         * ``type``: ``reference`` if the type is an table, ``type``
-           otherwise.
+       * ``name``: The type name.
+       * ``type``: ``reference`` if the type is an table, ``type``
+         otherwise.
    * - ``value_type``
      - The type of the table's value.
 
@@ -345,9 +345,9 @@ Here are properties of ``TABLE``:
        If the table uses value, this is an object that has the
        following properties:
 
-         * ``name``: The type name.
-         * ``type``: ``reference`` if the type is an table, ``type``
-           otherwise.
+       * ``name``: The type name.
+       * ``type``: ``reference`` if the type is an table, ``type``
+         otherwise.
    * - ``tokenizer``
      - The tokenizer of the table. It's specified by
        :ref:`table-create-default-tokenizer`.
@@ -357,7 +357,7 @@ Here are properties of ``TABLE``:
        If the table uses tokenizer, this is an object that has the
        following properties:
 
-         * ``name``: The tokenizer name.
+       * ``name``: The tokenizer name.
    * - ``normalizer``
      - The normalizer of the table. It's specified by
        :ref:`table-create-normalizer`.
@@ -367,7 +367,7 @@ Here are properties of ``TABLE``:
        If the table uses normalizer, this is an object that has the
        following properties:
 
-         * ``name``: The normalizer name.
+       * ``name``: The normalizer name.
    * - ``token_filters``
      - The token filters of the table. It's specified by
        :ref:`table-create-token-filters`.
@@ -375,7 +375,7 @@ Here are properties of ``TABLE``:
        This is an array of an object. The object has the following
        properties:
 
-         * ``name``: The token filter name.
+       * ``name``: The token filter name.
    * - ``indexes``
      - The indexes of the table's key.
 
@@ -493,6 +493,7 @@ Here are properties of ``COMMAND``:
       ...,
       SOURCE_n
     ],
+    "generator": GENERATOR,
     "indexes": [
       INDEX_1,
       INDEX_2,
@@ -526,17 +527,17 @@ Here are properties of ``COLUMN``:
 
        This is one of the followings:
 
-         * ``scalar``: :doc:`/reference/columns/scalar`
-         * ``vector``: :doc:`/reference/columns/vector`
-         * ``index``: :doc:`/reference/columns/index`
+       * ``scalar``: :doc:`/reference/columns/scalar`
+       * ``vector``: :doc:`/reference/columns/vector`
+       * ``index``: :doc:`/reference/columns/index`
    * - ``value_type``
      - The type of the column's value.
 
        This is an object that has the following properties:
 
-         * ``name``: The type name.
-         * ``type``: ``reference`` if the type is an table, ``type``
-           otherwise.
+       * ``name``: The type name.
+       * ``type``: ``reference`` if the type is an table, ``type``
+         otherwise.
    * - ``compress``
      - The compression method of the column.
 
@@ -546,8 +547,8 @@ Here are properties of ``COLUMN``:
        If the column uses a compression method, this is one of the
        followings:
 
-         * ``zlib``: The column uses zlib to compress column value.
-         * ``lz4``: The column uses LZ4 to compress column value.
+       * ``zlib``: The column uses zlib to compress column value.
+       * ``lz4``: The column uses LZ4 to compress column value.
    * - ``section``
      - Whether the column can store section information or not.
 
@@ -572,8 +573,16 @@ Here are properties of ``COLUMN``:
 
        This is an array of :ref:`schema-return-value-source`.
 
-       Normally, if the column isn't an index column, this is an
-       empty array.
+       If the column is an index column or a :ref:`generated-column`,
+       this has one or more elements. Otherwise, this is an empty
+       array.
+   * - ``generator``
+     - .. versionadded:: 14.1.0
+
+       The generator expression in :doc:`../grn_expr/script_syntax`.
+
+       If the column is not a :ref:`generated-column`, this is an
+       empty string.
    * - ``indexes``
      - The indexes of the column.
 
@@ -621,5 +630,5 @@ Here are properties of ``SOURCE``:
 See also
 --------
 
-  * :doc:`table_create`
-  * :doc:`column_create`
+* :doc:`table_create`
+* :doc:`column_create`

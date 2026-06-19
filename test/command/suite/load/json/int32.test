@@ -1,0 +1,14 @@
+#@require-feature simdjson
+
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+load --table Notes
+[
+{"data": "-2147483648"},
+{"data": "2147483647"}
+]
+
+select Notes
+
+dump

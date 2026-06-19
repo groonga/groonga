@@ -1,0 +1,9 @@
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+# "İ U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE" is broken with
+# NormalizerNFKC150 or older. Its tests exist in nkfcXXX/ instead of here.
+normalize \
+  'NormalizerNFKC("unify_latin_alphabet_with", true, \
+                  "version", "NFKC_VERSION")' \
+  "ĨĩĪīĬĭĮįı" \
+  WITH_TYPES
+#@remove-substitution /"version",\s"(?:.+?)"/

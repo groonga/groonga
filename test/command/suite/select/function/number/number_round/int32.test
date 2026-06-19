@@ -1,0 +1,13 @@
+plugin_register functions/number
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Int32
+
+load --table Data
+[
+{"value": 11},
+{"value": -11}
+]
+
+select Data --output_columns 'number_round(value)'
+select Data --output_columns 'number_round(value, -1)'

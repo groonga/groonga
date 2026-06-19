@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_katakana_wo_sound", true,                   "report_source_offset", true)'   "ヲ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_katakana_wo_sound", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "ヲ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -8,7 +8,8 @@ normalize   'NormalizerNFKC("unify_katakana_wo_sound", true,                   "
   {
     "normalized": "オ",
     "types": [
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,
@@ -16,7 +17,8 @@ normalize   'NormalizerNFKC("unify_katakana_wo_sound", true,                   "
       0
     ],
     "offsets": [
-      0
+      0,
+      3
     ]
   }
 ]

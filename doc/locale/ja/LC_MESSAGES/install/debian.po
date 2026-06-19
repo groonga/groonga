@@ -22,10 +22,7 @@ msgstr ""
 msgid "This section describes how to install Groonga related deb packages on Debian GNU/Linux. You can install them by ``apt``."
 msgstr "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストールする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-bit package for server. You should use a 32-bit package just only for tests or development. You will encounter an out of memory error with a 32-bit package even if you just process medium size data."
-msgstr "32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用にだけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータでもメモリ不足エラーになることがあります。"
-
-msgid "bookworm"
+msgid "trixie"
 msgstr ""
 
 msgid "Install ``groonga-apt-source``::"
@@ -41,7 +38,7 @@ msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
 msgid "If you want to use ``TokenFilterStem`` as a token filter, install groonga-token-filter-stem package."
-msgstr "``TokenFilterStem`` をトークンフィルターとして使いたいときはgroonga-tokenizer-filter-stemパッケージをインストールしてください。"
+msgstr "``TokenFilterStem`` をトークンフィルターとして使いたいときはgroonga-token-filter-stemパッケージをインストールしてください。"
 
 msgid "Install groonga-token-filter-stem package::"
 msgstr "groonga-token-filter-stemパッケージのインストール::"
@@ -58,23 +55,20 @@ msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
-msgid "bullseye"
+msgid "bookworm"
 msgstr ""
+
+msgid "On bookworm, follow the same installation procedure as trixie. See/Please refer :ref:`trixie`."
+msgstr "bookworm のインストール方法は、trixie のインストール方法と同じです。:ref:`trixie` を参照してください。"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install required packages to build Groonga for Debian bullseye::"
-msgstr "Debian bullseyeでGroongaをビルドするために必要なパッケージをインストールします::"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
-
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr "configureを実行します（ ``configure`` のオプションについては :ref:`source-configure` を参照してください）::"
-
-msgid "Build::"
-msgstr "ビルド::"
+msgid "See :doc:`/install/cmake` ."
+msgstr "詳細は :doc:`/install/cmake` を参照してください。"
 
 msgid "``groonga`` package is the minimum set of fulltext search engine. If you want to use Groonga for server use, you can install additional preconfigured packages."
 msgstr "``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"

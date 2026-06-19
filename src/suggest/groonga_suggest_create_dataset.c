@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -104,7 +105,7 @@ main(int argc, char **argv)
   const char *dataset_name;
   grn_ctx ctx_, *ctx;
   grn_obj *db;
-  grn_bool success = GRN_TRUE;
+  bool success = true;
   int parsed_argc, rest_argc;
   int flags = MODE_NONE;
   const char *default_tokenizer = NULL;
@@ -218,7 +219,7 @@ main(int argc, char **argv)
     GRN_OBJ_FIN(ctx, &text);
     GRN_OBJ_FIN(ctx, db);
   } else {
-    success = GRN_FALSE;
+    success = false;
   }
   grn_ctx_fin(ctx);
   grn_fin();

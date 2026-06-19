@@ -1,0 +1,68 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes data COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"data": "{\"string\":\"world\",\"integer\":29,\"object\":{\"null\":null,\"array\":[null,{\"array_object_array\":[-2.9]},true],\"sub_object\":{\"false\":false,\"double\":2.9},\"object_integer\":2929},\"true\":true}"}
+]
+[[0,0.0,0.0],1]
+select Notes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "data",
+          "JSON"
+        ]
+      ],
+      [
+        1,
+        {
+          "string": "world",
+          "integer": 29,
+          "object": {
+            "null": null,
+            "array": [
+              null,
+              {
+                "array_object_array": [
+                  -2.9
+                ]
+              },
+              true
+            ],
+            "sub_object": {
+              "false": false,
+              "double": 2.9
+            },
+            "object_integer": 2929
+          },
+          "true": true
+        }
+      ]
+    ]
+  ]
+]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes data COLUMN_SCALAR JSON
+
+load --table Notes
+[
+["_id","data"],
+[1,"{\"string\":\"world\",\"integer\":29,\"object\":{\"null\":null,\"array\":[null,{\"array_object_array\":[-2.9]},true],\"sub_object\":{\"false\":false,\"double\":2.9},\"object_integer\":2929},\"true\":true}"]
+]

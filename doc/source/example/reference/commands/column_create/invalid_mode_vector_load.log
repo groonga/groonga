@@ -4,56 +4,56 @@ Execution example::
   [
   {"_key": "key", "invalid_error":  [1, "invalid", 3]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table InvalidModeVector
   [
   {"_key": "key", "invalid_warn":   [1, "invalid", 3]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   load --table InvalidModeVector
   [
   {"_key": "key", "invalid_ignore": [1, "invalid", 3]}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select \
     --table InvalidModeVector \
     --output_columns invalid_error,invalid_warn,invalid_ignore
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "invalid_error", 
+  #           "invalid_error",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "invalid_warn", 
+  #           "invalid_warn",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "invalid_ignore", 
+  #           "invalid_ignore",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           1, 
+  #           1,
   #           3
-  #         ], 
+  #         ],
   #         [
-  #           1, 
+  #           1,
   #           3
-  #         ], 
+  #         ],
   #         [
-  #           1, 
+  #           1,
   #           3
   #         ]
   #       ]

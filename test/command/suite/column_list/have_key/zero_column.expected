@@ -40,6 +40,10 @@ column_list Users
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -50,9 +54,8 @@ column_list Users
       "COLUMN_SCALAR",
       "Users",
       "ShortText",
-      [
-
-      ]
+      [],
+      ""
     ]
   ]
 ]

@@ -1,0 +1,14 @@
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+column_create Notes title_snippets COLUMN_VECTOR ShortText title \
+  --generator 'snippet(title, "Groonga", {"default_open_tag": "<", "default_close_tag": ">"})'
+
+load --table Notes
+[
+{"title": "Hello Groonga"},
+{"title": "Hello Mroonga"}
+]
+
+select Notes --output_columns title,title_snippets
+
+dump

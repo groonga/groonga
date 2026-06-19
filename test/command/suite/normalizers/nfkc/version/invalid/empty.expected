@@ -1,0 +1,17 @@
+normalize 'NormalizerNFKC("version", "")' "groonga"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[normalizer][nfkc][version] must not be empty"
+  ],
+  {
+    "normalized": "",
+    "types": [],
+    "checks": []
+  }
+]
+#|e| [normalizer][nfkc][version] must not be empty

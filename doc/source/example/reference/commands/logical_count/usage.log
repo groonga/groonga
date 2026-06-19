@@ -4,4 +4,4 @@ Execution example::
     --logical_table Entries \
     --shard_key created_at \
     --filter 'query("content", "Groonga OR Senna")'
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

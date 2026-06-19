@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -284,7 +285,7 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
   }
 }
 
-static grn_inline void
+static inline void
 complete_add_item(grn_ctx *ctx, grn_id id, grn_obj *res, int frequency_threshold,
                   grn_obj *items_freq, grn_obj *items_boost,
                   grn_obj *item_freq, grn_obj *item_boost)
@@ -515,7 +516,7 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
               grn_obj_unlink(ctx, expr);
             } else {
               ERR(GRN_UNKNOWN_ERROR,
-                  "error on building expr. for calicurating edit distance");
+                  "error on building expr. for calculating edit distance");
             }
           }
         }
@@ -853,7 +854,7 @@ learner_fin_submit_learn(grn_ctx *ctx, grn_suggest_learner *learner)
   GRN_BULK_REWIND(&(learner->pre_events));
 }
 
-static grn_bool
+static bool
 learner_is_valid_input(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   return learner->post_event_id && learner->post_item_id && learner->seq_id;

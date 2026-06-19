@@ -1,0 +1,37 @@
+tokenize   'TokenNgram("report_source_location", true)'   " あいう"   'NormalizerNFKC150("report_source_offset", true)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "あい",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false,
+      "source_offset": 1,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "いう",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false,
+      "source_offset": 4,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "う",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false,
+      "source_offset": 7,
+      "source_length": 3,
+      "source_first_character_length": 3
+    }
+  ]
+]

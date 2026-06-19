@@ -1,0 +1,95 @@
+name: Build document
+on:
+  push:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document.yml'
+      - 'Rakefile'
+      - 'cmake/**'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+  pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/document.yml'
+      - 'Rakefile'
+      - 'cmake/**'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.hpp'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: Build the full document
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v5
+        with:
+          path: ccache
+          key: document-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: document-linux-ccache-
+      - name: Install dependencies
+        run: |
+          ./setup.sh
+          pip install -r doc/requirements.txt
+          (cd doc && bundle install)
+      - name: Build document
+        run: |
+          ccache --show-stats --verbose --version || :
+          cmake -S . -B /tmp/groonga.build --preset=doc
+          mkdir -p /tmp/groonga.org/ja
+          rake release:document:update BUILD_DIR=/tmp/groonga.build GROONGA_ORG_DIR=/tmp/groonga.org
+          ccache --show-stats --verbose --version || :
+      - name: Prepare for GitHub Pages
+        run: |
+          mkdir -p /tmp/github-pages
+          cp -r /tmp/groonga.org/docs/* /tmp/github-pages/
+          mkdir -p /tmp/github-pages/ja
+          cp -r /tmp/groonga.org/ja/docs/* /tmp/github-pages/ja/
+      - name: Upload
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: /tmp/github-pages/
+      - name: Create archive
+        run: |
+          version=$(cat base_version)
+          mv /tmp/groonga.org /tmp/document-${version}
+          tar -czf document-${version}.tar.gz -C /tmp/ document-${version}
+      # Artifact
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-document
+          path: document-*.tar.gz
+  deploy:
+    name: Deploy
+    if: >-
+      github.event_name == 'push' && github.repository != 'groonga/groonga'
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

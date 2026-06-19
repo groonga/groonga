@@ -646,7 +646,7 @@ msgid "Corresponds to :ref:`select-drilldown-calc-target` in :doc:`select`. See 
 msgstr ":doc:`select` の :ref:`select-drilldown-calc-target` に対応しています。詳細は :ref:`select-drilldown-calc-target` を見てください。"
 
 msgid "See also :ref:`logical-select-drilldown-calc-types` for an example."
-msgstr "具体例は :ref:`select-drilldown-calc-types` を見てください。"
+msgstr "具体例は :ref:`logical-select-drilldown-calc-types` を見てください。"
 
 msgid "``drilldown_filter``"
 msgstr ""

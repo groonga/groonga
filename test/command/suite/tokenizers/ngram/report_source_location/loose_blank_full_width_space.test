@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("loose_blank", true, "report_source_location", true)' \
+  "Groonga　高速！" \
+  'NormalizerNFKC150("report_source_offset", true)'

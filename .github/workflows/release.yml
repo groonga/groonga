@@ -1,0 +1,169 @@
+name: Release
+on:
+  push:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'doc/source/news/*'
+    tags:
+      - "*"
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'doc/source/news/*'
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download artifacts
+        if: |
+          github.ref_type == 'tag'
+        timeout-minutes: 60
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          workflows=(cmake.yml document.yml package.yml)
+          for workflow in "${workflows[@]}"; do
+            run_id=""
+            while true; do
+              echo "Waiting for run to start ${workflow}..."
+              run_id=$(gh run list \
+                         --branch ${GITHUB_REF_NAME} \
+                         --jq '.[].databaseId' \
+                         --json databaseId \
+                         --limit 1 \
+                         --workflow ${workflow})
+              if [ -n "${run_id}" ]; then
+                break
+              fi
+              sleep 300
+            done
+            gh run watch \
+              --exit-status \
+              --interval 300 \
+              ${run_id}
+            gh run download ${run_id} \
+              --dir release-artifacts \
+              --pattern "release-*"
+          done
+      - name: Generate release note
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+
+          latest_news_md=$(cd doc/source/news && \
+                             ls *.md | sort --human-numeric-sort | tail -n1)
+          (cd doc/source/news && \
+           ruby \
+             -e 'print("## Groonga "); \
+                 puts(ARGF.read.split(/^## Release /)[1]. \
+                        gsub(/^\(.+\)=$/, ""). \
+                        gsub(/{doc}`(.+?)`/) { \
+                          id = $1; \
+                          title = id.split("\/").last; \
+                          path = id.delete_prefix("/"); \
+                          url = "https://groonga.org/docs/#{path}.html"; \
+                          "[#{title}](#{url})"; \
+                        }. \
+                        gsub(/{ref}`(.+?)`/) {$1}.
+                        strip)' \
+             ${latest_news_md}) | \
+            tee release-note.md
+
+          previous_tag=$(gh release list \
+                           --jq '.[].tagName' \
+                           --json tagName \
+                           --limit 1)
+
+          echo | tee -a release-note.md
+          echo "### Contributors" | tee -a release-note.md
+          echo | tee -a release-note.md
+          command_line="git shortlog -sn ${previous_tag}.."
+          echo '```console' | tee -a release-note.md
+          echo "\$ ${command_line}" | tee -a release-note.md
+          ${command_line} | tee -a release-note.md
+          echo '```' | tee -a release-note.md
+
+          echo | tee -a release-note.md
+          echo "### Translations" | tee -a release-note.md
+          echo | tee -a release-note.md
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            version=${GITHUB_REF_NAME#v}
+          else
+            version=$(head -n1 release-note.md | \
+                        grep -E -o '[0-9]+\.[0-9]+\.[0-9]+')
+          fi
+          major_version=${version%%.*}
+          version_hyphen=$(echo ${version} | tr . -)
+          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" | \
+            tee -a release-note.md
+      - name: Publish release page
+        if: |
+          github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="$(head -n1 release-note.md | sed -e 's/^## //')"
+          tail -n +2 release-note.md > release-note-without-version.md
+          gh release create "${GITHUB_REF_NAME}" \
+            --discussion-category Releases \
+            --notes-file release-note-without-version.md \
+            --title "${title}" \
+            release-artifacts/*/*
+  launchpad:
+    name: Launchpad
+    runs-on: ubuntu-latest
+    needs: publish
+    environment: release
+    timeout-minutes: 10
+    if: |
+      github.ref_type == 'tag'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download source archive
+        run: |
+          wget https://github.com/groonga/groonga/releases/download/${GITHUB_REF_NAME}/groonga-${GITHUB_REF_NAME#v}.tar.gz
+      - name: Prepare
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            debhelper \
+            devscripts
+      - uses: actions/checkout@v6
+        with:
+          path: apache-arrow
+          repository: apache/arrow
+      - name: Publish
+        env:
+          APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
+          LAUNCHPAD_DEPLOY_KEY: ${{ secrets.LAUNCHPAD_DEPLOY_KEY }}
+          LAUNCHPAD_UPLOADER_PGP_KEY: "0x32862FBCD63D72C152EFF3A9BD481CAA9168EA87"
+        run: |
+          echo "${LAUNCHPAD_DEPLOY_KEY}" | gpg --import
+          echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
+          rake -C packages ubuntu
+  x:
+    name: X
+    runs-on: ubuntu-latest
+    needs: publish
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+          bundler-cache: true
+      - name: Post announcement
+        env:
+          DRY_RUN: ${{ github.ref_type != 'tag' }}
+          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
+          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
+          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
+        run: |
+          VERSION=${GITHUB_REF_NAME#v} bundle exec rake release:announce

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,13 @@ typedef uint32_t grn_id;
 /* Deprecated since 9.0.2. Use bool directly. */
 typedef bool grn_bool;
 
+#ifdef GRN_HAVE_BFLOAT16
+typedef __bf16 grn_bfloat16;
+#endif
+
+/**
+ * \brief Means "does not exist"
+ */
 #define GRN_ID_NIL (0x00)
 #define GRN_ID_MAX (0x3fffffff)
 
@@ -52,6 +59,7 @@ typedef bool grn_bool;
 #define GRN_FALSE  false
 
 typedef enum {
+  /// Success (0)
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
   GRN_UNKNOWN_ERROR = -1,
@@ -75,6 +83,7 @@ typedef enum {
   GRN_NO_SUCH_DEVICE = -19,
   GRN_NOT_A_DIRECTORY = -20,
   GRN_IS_A_DIRECTORY = -21,
+  /// Invalid function argument (-22)
   GRN_INVALID_ARGUMENT = -22,
   GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM = -23,
   GRN_TOO_MANY_OPEN_FILES = -24,
@@ -88,6 +97,7 @@ typedef enum {
   GRN_DOMAIN_ERROR = -32,
   GRN_RESULT_TOO_LARGE = -33,
   GRN_RESOURCE_DEADLOCK_AVOIDED = -34,
+  /// Not enough memory available (-35)
   GRN_NO_MEMORY_AVAILABLE = -35,
   GRN_FILENAME_TOO_LONG = -36,
   GRN_NO_LOCKS_AVAILABLE = -37,
@@ -126,6 +136,7 @@ typedef enum {
   GRN_TOO_LARGE_OFFSET = -68,
   GRN_TOO_SMALL_LIMIT = -69,
   GRN_CAS_ERROR = -70,
+  /// When a version not supported by the default version set is specified (-71)
   GRN_UNSUPPORTED_COMMAND_VERSION = -71,
   GRN_NORMALIZER_ERROR = -72,
   GRN_TOKEN_FILTER_ERROR = -73,
@@ -135,7 +146,10 @@ typedef enum {
   GRN_CANCEL = -77,
   GRN_WINDOW_FUNCTION_ERROR = -78,
   GRN_ZSTD_ERROR = -79,
-  GRN_CONNECTION_RESET = -80
+  GRN_CONNECTION_RESET = -80,
+  GRN_BLOSC_ERROR = -81,
+  GRN_OPENZL_ERROR = -82,
+  GRN_EXTRACTOR_ERROR = -83,
 } grn_rc;
 
 GRN_API grn_rc
@@ -147,12 +161,20 @@ GRN_API const char *
 grn_get_global_error_message(void);
 
 typedef enum {
+  /// The default encoding specified at build time (0).
+  /// The default at build time is "UTF-8".
   GRN_ENC_DEFAULT = 0,
+  /// Process strings as binary data (1)
   GRN_ENC_NONE,
+  /// EUC-JP (2)
   GRN_ENC_EUC_JP,
+  /// UTF-8 (3)
   GRN_ENC_UTF8,
+  /// Shift_JIS (4)
   GRN_ENC_SJIS,
+  /// Latin-1 (5)
   GRN_ENC_LATIN1,
+  /// KOI8-R (6)
   GRN_ENC_KOI8R
 } grn_encoding;
 
@@ -167,7 +189,7 @@ typedef enum {
 #define GRN_COMMAND_VERSION_STABLE GRN_COMMAND_VERSION_1
 #define GRN_COMMAND_VERSION_MAX    GRN_COMMAND_VERSION_3
 
-typedef enum {
+typedef enum /* : unsigned char */ {
   GRN_LOG_NONE = 0,
   GRN_LOG_EMERG,
   GRN_LOG_ALERT,
@@ -182,7 +204,7 @@ typedef enum {
 
 GRN_API const char *
 grn_log_level_to_string(grn_log_level level);
-GRN_API grn_bool
+GRN_API bool
 grn_log_level_parse(const char *string, grn_log_level *level);
 
 /* query log flags */
@@ -199,17 +221,114 @@ grn_log_level_parse(const char *string, grn_log_level *level);
    GRN_QUERY_LOG_SCORE)
 #define GRN_QUERY_LOG_DEFAULT GRN_QUERY_LOG_ALL
 
+/** \brief The input/output content format. */
 typedef enum {
+  /**
+   * The content is in no specific format. This means that either no content is
+   * produced or the content remains in its original format.
+   */
   GRN_CONTENT_NONE = 0,
+  /** The content is in a tab-separated values (TSV) format. */
   GRN_CONTENT_TSV,
+  /** The content is in JSON format. */
   GRN_CONTENT_JSON,
+  /** The content is in XML format. */
   GRN_CONTENT_XML,
+  /**
+   * The content is in MessagePack format. This requires that MessagePack is
+   * available during Groonga's build process. Without it, this type cannot be
+   * used.
+   */
   GRN_CONTENT_MSGPACK,
+  /** The content is a list of Groonga commands. */
   GRN_CONTENT_GROONGA_COMMAND_LIST,
+  /**
+   * The content is in Apache Arrow format, specifically using the only IPC
+   * Streaming Format, although Apache Arrow supports two IPC Formats which are
+   * the IPC Streaming Format and the IPC File Format. This requires that Apache
+   * Arrow is available during Groonga's build process. Without it, this type
+   * cannot be used.
+   */
   GRN_CONTENT_APACHE_ARROW
 } grn_content_type;
 
+/**
+ * \brief The generic Groonga object type.
+ *
+ * This is a generic type to represent most Groonga objects such as database,
+ * table, column, buffer and so on. You can use \ref grn_obj to represent
+ * different types of objects. For example, you can use \ref grn_obj both for
+ * \ref grn_hash and \ref grn_pat. This is convenient to provide generic API.
+ * For example, you can use \ref grn_obj_get_value for table, column and
+ * accessor.
+ *
+ * This is convenient but this may be difficult to understand when you don't
+ * have a common knowledge of object-oriented programming in C. Here are some
+ * examples of common \ref grn_obj usages:
+ *
+ * ## Buffer
+ *
+ * You can use \ref grn_obj as a buffer. You can store scalar values or vector
+ * values in a \ref grn_obj.
+ *
+ * For this usage, you need to allocate a \ref grn_obj on stack or heap. In
+ * general, stack is used to reduce memory allocation cost. Then you need to
+ * initialize the allocated \ref grn_obj by `GRN_*_INIT()` macros such as \ref
+ * GRN_TEXT_INIT and \ref GRN_INT32_INIT. You need to free the allocated \ref
+ * grn_obj when it's no longer needed. You can use \ref GRN_OBJ_FIN or \ref
+ * grn_obj_close for it. (\ref GRN_OBJ_FIN is an alias of \ref grn_obj_close.)
+ * In general, \ref GRN_OBJ_FIN is used for a \ref grn_obj in stack.
+ *
+ * Here is an example to use \ref grn_obj as a text buffer:
+ *
+ * ```c
+ * grn_obj text_buffer;
+ * GRN_TEXT_INIT(&text_buffer, 0);
+ * GRN_TEXT_PUTS(ctx, &text_buffer, "hello ");
+ * grn_text_printf(ctx, &text_buffer, "%s!", "world");
+ * GRN_OBJ_FIN(ctx, &text_buffer);
+ * ```
+ *
+ * ## Object
+ *
+ * You can use \ref grn_obj as a generic type for database, table, column and so
+ * on. In this usage, you use a heap allocated \ref grn_obj. So `grn_obj *` is
+ * used instead of \ref grn_obj.
+ *
+ * For example, you can use \ref grn_db_open to open a database:
+ *
+ * ```c
+ * grn_obj *db = grn_db_open(ctx, "/tmp/db/db");
+ * ```
+ *
+ * You can use \ref grn_obj_close to free the opened database:
+ *
+ * ```c
+ * grn_obj_close(ctx, db);
+ * ```
+ */
 typedef struct _grn_obj grn_obj;
+/**
+ * \brief \ref grn_ctx is the most important object.
+ *
+ * \ref grn_ctx keeps the current information such as:
+ * - The last occurred error.
+ * - The current encoding.
+ * - The default thresholds.
+ *   - e.g. `match_escalation_threshold`.
+ * - The default command version.
+ *
+ * \ref grn_ctx provides platform features such as:
+ * - Memory management.
+ * - Logging.
+ *
+ * \note Most APIs receive \ref grn_ctx as the first argument.
+ *
+ * \attention You can't use the same \ref grn_ctx from two or more threads. You
+ *            need to create a \ref grn_ctx for a thread. You can use two or
+ *            more \ref grn_ctx in a thread but it is not needed for usual
+ *            use-case.
+ */
 typedef struct _grn_ctx grn_ctx;
 
 #define GRN_CTX_MSGSIZE (0x80)
@@ -258,14 +377,70 @@ struct _grn_ctx {
 #define GRN_CTX_BATCH_MODE (0x04)
 #define GRN_CTX_PER_DB     (0x08)
 
+/**
+ * \brief Initialize the context.
+ *
+ * \param ctx The context object allocated by the caller.
+ * \param flags Initialization options.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_init(grn_ctx *ctx, int flags);
+/**
+ * \brief Finish the context.
+ *
+ * This function releases memory that was managed by the context and finishes.
+ *
+ * \attention This function finishes the context initialized by
+ *            \ref grn_ctx_init. If the context is opened with
+ *            \ref grn_ctx_open, it need to be closed with \ref grn_ctx_close.
+ *
+ * \param ctx The context object initialized by \ref grn_ctx_init.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_fin(grn_ctx *ctx);
+/**
+ * \brief Open the context.
+ *
+ * \note This function also allocates the context itself. However,
+ *       \ref grn_ctx_init requires the caller to allocate a context itself.
+ *
+ * \attention The context opened with this function should be closed with
+ *            \ref grn_ctx_close.
+ *
+ * \param flags Initialization options.
+ *
+ * \return Initialized context object, `NULL` if initialization fails.
+ */
 GRN_API grn_ctx *
 grn_ctx_open(int flags);
+/**
+ * \brief Close the context.
+ *
+ * This function releases memory that was managed by the context and closes.
+ * (Internally, \ref grn_ctx_fin is called to release allocated memory.)
+ *
+ * \attention This function closes the context opened by \ref grn_ctx_open.
+ *            If the context is initialized with \ref grn_ctx_init, it needs
+ *            to be closed with \ref grn_ctx_fin.
+ *
+ * \param ctx The context object initialized by \ref grn_ctx_open.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_close(grn_ctx *ctx);
+/**
+ * \brief Set the callback function to be called when the context is finished.
+ *
+ * \param ctx The context object.
+ * \param func The callback function called on finish.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func);
 
@@ -276,8 +451,19 @@ grn_ctx_pop_temporary_open_space(grn_ctx *ctx);
 GRN_API grn_rc
 grn_ctx_merge_temporary_open_space(grn_ctx *ctx);
 
+/**
+ * \return The default encoding
+ */
 GRN_API grn_encoding
 grn_get_default_encoding(void);
+/**
+ * \brief Set the default encoding
+ *
+ * \param encoding New encoding
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT on
+ *         error
+ */
 GRN_API grn_rc
 grn_set_default_encoding(grn_encoding encoding);
 
@@ -299,26 +485,98 @@ grn_get_package(void);
 GRN_API const char *
 grn_get_package_label(void);
 
+/**
+ * \return Default command version
+ */
 GRN_API grn_command_version
 grn_get_default_command_version(void);
+/**
+ * \brief Set default command version
+ *
+ * \param version New command version
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_UNSUPPORTED_COMMAND_VERSION on
+ *         error
+ */
 GRN_API grn_rc
 grn_set_default_command_version(grn_command_version version);
+/**
+ * \param ctx The context object.
+ *
+ * \return Command version of this context.
+ */
 GRN_API grn_command_version
 grn_ctx_get_command_version(grn_ctx *ctx);
+/**
+ * \brief Set command version for this context.
+ *
+ * \param ctx The context object.
+ * \param version New command version.
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_UNSUPPORTED_COMMAND_VERSION on
+ *         error.
+ */
 GRN_API grn_rc
 grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
+/**
+ * \param ctx The context object.
+ *
+ * \return The threshold to determine whether search strategy escalation is used
+ *         or not.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API int64_t
 grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
+/**
+ * \brief Set the threshold to determine whether search strategy escalation is
+ *        used or not.
+ *
+ * \param ctx The context object.
+ * \param threshold New threshold.
+ *
+ * \return \ref GRN_SUCCESS.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API grn_rc
 grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, int64_t threshold);
-GRN_API grn_bool
+GRN_API bool
 grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc
-grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
+grn_ctx_set_force_match_escalation(grn_ctx *ctx, bool force);
+GRN_API int32_t
+grn_ctx_get_n_workers(grn_ctx *ctx);
+GRN_API grn_rc
+grn_ctx_set_n_workers(grn_ctx *ctx, int32_t n_workers);
+/**
+ * \return The default threshold to determine whether search strategy escalation
+ *         is used or not.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API int64_t
 grn_get_default_match_escalation_threshold(void);
+/**
+ * \brief Set the default threshold to determine whether search strategy
+ *        escalation is used or not.
+ *
+ * \param threshold New default threshold.
+ *
+ * \return \ref GRN_SUCCESS.
+ *
+ * \see
+ * https://groonga.org/docs/reference/commands/select.html#match-escalation-threshold
+ */
 GRN_API grn_rc
 grn_set_default_match_escalation_threshold(int64_t threshold);
+GRN_API int32_t
+grn_get_default_n_workers(void);
+GRN_API grn_rc
+grn_set_default_n_workers(int32_t n_workers);
 GRN_API bool
 grn_is_back_trace_enable(void);
 GRN_API grn_rc
@@ -339,8 +597,53 @@ grn_ctx_get_variable(grn_ctx *ctx, const char *name, int name_size);
 GRN_API grn_rc
 grn_unset_variable(const char *name, int name_size);
 
+/**
+ * \brief Retrieve the current lock timeout.
+ *
+ * Groonga uses a read lock-free mechanism. It allows multiple threads or
+ * processes to perform read operations concurrently, even during write
+ * operations. Write operations, in contrast, require locking to ensure data
+ * consistency.
+ *
+ * When performing write operations:
+ * - If acquiring a lock is not immediately available, it waits for 1
+ *   millisecond before retrying.
+ * - The retries continue until the cumulative wait time reaches the lock
+ *   timeout duration.
+ * - If the lock cannot be acquired within the specified timeout duration, the
+ *   operation fails.
+ *
+ * The default lock timeout is set to 900,000 milliseconds (15 minutes).
+ *
+ * \return The current lock timeout in milliseconds.
+ */
 GRN_API int
 grn_get_lock_timeout(void);
+/**
+ * \brief Set the lock timeout used during write operations.
+ *
+ * Special cases for the `timeout` parameter:
+ * - **0**: If `timeout` is 0, Groonga will attempt to acquire the lock only
+ *   once. If it fails, it will not retry and the operation will fail
+ *   immediately without waiting for the lock to be released.
+ * - **Negative value**: If `timeout` is negative value, Groonga will wait
+ *   forever for retrying to acquire the lock without any timeout until it
+ *   succeeds.
+ *
+ * The default lock timeout is 900,000 milliseconds (15 minutes).
+ *
+ * **Lock Timeout Configuration**:
+ *
+ * Lock timeout can be configured in two ways:
+ * - **CMake Option**: Use `-DGRN_LOCK_TIMEOUT=<milliseconds>` when configuring
+ *   the build with CMake to specify a default lock timeout by milliseconds.
+ * - **API**: Use \ref grn_set_lock_timeout to override the default setting at
+ *   runtime.
+ *
+ * \param timeout The new lock timeout in milliseconds.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_set_lock_timeout(int timeout);
 
@@ -348,9 +651,26 @@ GRN_API size_t
 grn_get_memory_map_size(void);
 
 /* grn_encoding */
-
+/**
+ * \brief Return string representation for the encoding. For example,
+ *        `grn_encoding_to_string(GRN_ENC_UTF8)` returns `"utf8"`.
+ *
+ * \param encoding The encoding
+ *
+ * \return String representation for the encoding on success, "unknown"
+ *         on invalid encoding.
+ */
 GRN_API const char *
 grn_encoding_to_string(grn_encoding encoding);
+/**
+ * \brief Parse encoding name and return \ref grn_encoding. For example,
+ *        `grn_encoding_parse("UTF8")` returns \ref GRN_ENC_UTF8.
+ *
+ * \param name The encoding name
+ *
+ * \return \ref grn_encoding matching `name` on success, \ref GRN_ENC_UTF8 on
+ *         invalid encoding name.
+ */
 GRN_API grn_encoding
 grn_encoding_parse(const char *name);
 
@@ -370,34 +690,110 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_TABLE_DAT_KEY   (0x02)
 #define GRN_OBJ_TABLE_NO_KEY    (0x03)
 
-#define GRN_OBJ_KEY_MASK        (0x07 << 3)
-#define GRN_OBJ_KEY_UINT        (0x00 << 3)
-#define GRN_OBJ_KEY_INT         (0x01 << 3)
-#define GRN_OBJ_KEY_FLOAT       (0x02 << 3)
-#define GRN_OBJ_KEY_GEO_POINT   (0x03 << 3)
-
-#define GRN_OBJ_KEY_WITH_SIS    (0x01 << 6)
-#define GRN_OBJ_KEY_NORMALIZE   (0x01 << 7)
+/// Mask of `GRN_OBJ_KEY_*`
+#define GRN_OBJ_KEY_MASK (0x07 << 3)
+/// Unsigned integer
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_UINT (0x00 << 3)
+/// Signed integer
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_INT (0x01 << 3)
+/// Float
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_FLOAT (0x02 << 3)
+/// Latitude and longitude (\ref grn_geo_point)
+/// (Used to create data types. Used to determine sorting method.)
+#define GRN_OBJ_KEY_GEO_POINT (0x03 << 3)
+/// Enable semi-infinite string support.
+/// This is only available with \ref GRN_OBJ_TABLE_PAT_KEY.
+/// You can use efficient suffix search with this but it requires more
+/// storage/memory size. Because it generates many additional data for efficient
+/// suffix search implicitly.
+#define GRN_OBJ_KEY_WITH_SIS (0x01 << 6)
+/**
+ * \deprecated This was used when only NormalizerAuto was available.
+ *             Now you can specify a normalizer, so there is no need
+ *             to use it.
+ */
+#define GRN_OBJ_KEY_NORMALIZE (0x01 << 7)
 
 /* flags for grn_obj_flags and grn_column_flags */
 
+/**
+ * Mask for column types.
+ * Used to isolate the column type bits from the flags.
+ */
 #define GRN_OBJ_COLUMN_TYPE_MASK (0x07)
-#define GRN_OBJ_COLUMN_SCALAR    (0x00)
-#define GRN_OBJ_COLUMN_VECTOR    (0x01)
-#define GRN_OBJ_COLUMN_INDEX     (0x02)
+/**
+ * Scalar column type.
+ * Indicates that the column stores a scalar value.
+ */
+#define GRN_OBJ_COLUMN_SCALAR (0x00)
+/**
+ * Vector column type.
+ * Indicates that the column stores a vector of values.
+ */
+#define GRN_OBJ_COLUMN_VECTOR (0x01)
+/**
+ * Index column type.
+ * Indicates that the column is an inverted index.
+ */
+#define GRN_OBJ_COLUMN_INDEX  (0x02)
 
-#define GRN_OBJ_COMPRESS_MASK    (0x07 << 4)
-#define GRN_OBJ_COMPRESS_NONE    (0x00 << 4)
-#define GRN_OBJ_COMPRESS_ZLIB    (0x01 << 4)
-#define GRN_OBJ_COMPRESS_LZ4     (0x02 << 4)
+#define GRN_OBJ_COMPRESS_MASK (0x07 << 4)
+#define GRN_OBJ_COMPRESS_NONE (0x00 << 4)
+/**
+ * zlib compression.
+ * Indicates that the objects are compressed using zlib.
+ */
+#define GRN_OBJ_COMPRESS_ZLIB (0x01 << 4)
+/**
+ * LZ4 compression.
+ * Indicates that the objects are compressed using LZ4.
+ */
+#define GRN_OBJ_COMPRESS_LZ4 (0x02 << 4)
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
-#define GRN_OBJ_COMPRESS_LZO           GRN_OBJ_COMPRESS_LZ4
-#define GRN_OBJ_COMPRESS_ZSTD          (0x03 << 4)
+#define GRN_OBJ_COMPRESS_LZO GRN_OBJ_COMPRESS_LZ4
+/**
+ * Zstandard (zstd) compression.
+ * Indicates that the objects are compressed using Zstandard.
+ */
+#define GRN_OBJ_COMPRESS_ZSTD (0x03 << 4)
+/**
+ * OpenZL compression.
+ * Indicates that the objects are compressed using OpenZL.
+ *
+ * \since 15.2.2
+ */
+#define GRN_OBJ_COMPRESS_OPENZL (0x04 << 4)
 
-#define GRN_OBJ_WITH_SECTION           (0x01 << 7)
-#define GRN_OBJ_WITH_WEIGHT            (0x01 << 8)
+/**
+ * Enable section information.
+ * This flag is only effective when used in conjunction with
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store section
+ * information. This allows the same index column to support multiple documents
+ * using multiple columns.
+ */
+#define GRN_OBJ_WITH_SECTION (0x01 << 7)
+/**
+ * Enable weight information.
+ * This flag is only effective when used in conjunction with
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store weight
+ * information. This allows search results to be scored based on the weights
+ * assigned to individual columns.
+ */
+#define GRN_OBJ_WITH_WEIGHT (0x01 << 8)
+/**
+ * Enable position information.
+ * This flag is only effective when used in conjunction with
+ * \ref GRN_OBJ_COLUMN_INDEX. When set, the inverted index will store the
+ * occurrence positions of terms within documents. This enables phrase searches.
+ * Full-text search indexes must have position information enabled because
+ * phrase searches rely on it.
+ */
 #define GRN_OBJ_WITH_POSITION          (0x01 << 9)
 #define GRN_OBJ_RING_BUFFER            (0x01 << 10)
+#define GRN_OBJ_WEIGHT_BFLOAT16        (0x01 << 11)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f << 8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00 << 8)
@@ -412,13 +808,23 @@ typedef uint32_t grn_column_flags;
 
 /* Don't use (0x01<<12) because it's used internally. */
 
-#define GRN_OBJ_NO_SUBREC    (0x00 << 13)
-#define GRN_OBJ_WITH_SUBREC  (0x01 << 13)
+#define GRN_OBJ_NO_SUBREC   (0x00 << 13)
+#define GRN_OBJ_WITH_SUBREC (0x01 << 13)
 
+/// It shows that the key is variable size not fixed size.
+/// If you're using DB API such as \ref grn_table_create(), you don't need to
+/// use this.
+/// You can use type object such as `ShortText` instead.
+/// If you're using a low-level table such as \ref grn_hash and \ref grn_pat
+/// directly, you can use this to show that the table uses variable size key.
 #define GRN_OBJ_KEY_VAR_SIZE (0x01 << 14)
 
 #define GRN_OBJ_TEMPORARY    (0x00 << 15)
-#define GRN_OBJ_PERSISTENT   (0x01 << 15)
+/**
+ * Persistent object.
+ * When set, the object is persisted to storage.
+ */
+#define GRN_OBJ_PERSISTENT (0x01 << 15)
 
 /* flags only for grn_table_flags */
 
@@ -426,20 +832,25 @@ typedef uint32_t grn_column_flags;
 
 /* flags only for grn_column_flags */
 
-#define GRN_OBJ_INDEX_SMALL    (0x01 << 16)
-#define GRN_OBJ_INDEX_MEDIUM   (0x01 << 17)
-#define GRN_OBJ_INDEX_LARGE    (0x01 << 18)
-#define GRN_OBJ_WEIGHT_FLOAT32 (0x01 << 19)
+#define GRN_OBJ_INDEX_SMALL                               (0x01 << 16)
+#define GRN_OBJ_INDEX_MEDIUM                              (0x01 << 17)
+#define GRN_OBJ_INDEX_LARGE                               (0x01 << 18)
+#define GRN_OBJ_WEIGHT_FLOAT32                            (0x01 << 19)
 
-#define GRN_OBJ_MISSING_MASK   (0x03 << 20)
-#define GRN_OBJ_MISSING_ADD    (0x00 << 20)
-#define GRN_OBJ_MISSING_IGNORE (0x01 << 20)
-#define GRN_OBJ_MISSING_NIL    (0x02 << 20)
+#define GRN_OBJ_MISSING_MASK                              (0x03 << 20)
+#define GRN_OBJ_MISSING_ADD                               (0x00 << 20)
+#define GRN_OBJ_MISSING_IGNORE                            (0x01 << 20)
+#define GRN_OBJ_MISSING_NIL                               (0x02 << 20)
 
-#define GRN_OBJ_INVALID_MASK   (0x03 << 22)
-#define GRN_OBJ_INVALID_ERROR  (0x00 << 22)
-#define GRN_OBJ_INVALID_WARN   (0x01 << 22)
-#define GRN_OBJ_INVALID_IGNORE (0x02 << 22)
+#define GRN_OBJ_INVALID_MASK                              (0x03 << 22)
+#define GRN_OBJ_INVALID_ERROR                             (0x00 << 22)
+#define GRN_OBJ_INVALID_WARN                              (0x01 << 22)
+#define GRN_OBJ_INVALID_IGNORE                            (0x02 << 22)
+
+#define GRN_OBJ_COMPRESS_FILTER_SHUFFLE                   (0x01 << 24)
+#define GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA                (0x01 << 25)
+#define GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE  (0x01 << 26)
+#define GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES (0x01 << 27)
 
 /* flags only for grn_table_flags and grn_column_flags */
 
@@ -450,8 +861,16 @@ typedef uint32_t grn_column_flags;
 /* obj types */
 
 #define GRN_VOID (0x00)
+/**
+ * Auto-extendable buffer that can be used for storing a number and variable
+ * size string.
+ */
 #define GRN_BULK (0x02)
-#define GRN_PTR  (0x03)
+/**
+ * Buffer that has a `grn_obj *`. The hold `grn_obj *` can be closed
+ * automatically when this is closed by specifying \ref GRN_OBJ_OWN flag.
+ */
+#define GRN_PTR (0x03)
 /* vector of fixed size (uniform) data especially grn_id */
 #define GRN_UVECTOR                 (0x04)
 #define GRN_PVECTOR                 (0x05) /* vector of grn_obj* */
@@ -481,6 +900,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_COLUMN_FIX_SIZE         (0x40)
 #define GRN_COLUMN_VAR_SIZE         (0x41)
 #define GRN_COLUMN_INDEX            (0x48)
+#define GRN_HTTP_CLIENT             (0x50)
 
 typedef struct _grn_section {
   uint32_t offset;
@@ -514,7 +934,15 @@ struct _grn_obj {
 
 #define GRN_OBJ_REFER    (0x01 << 0)
 #define GRN_OBJ_OUTPLACE (0x01 << 1)
-#define GRN_OBJ_OWN      (0x01 << 5)
+/**
+ * A flag to represent that \ref GRN_PTR or \ref GRN_PVECTOR owns associated
+ * \ref grn_obj. When this flag is set, the associated \ref grn_obj will be
+ * automatically closed using \ref grn_obj_close when owning \ref GRN_PTR or
+ * \ref GRN_PVECTOR is closed.
+ *
+ * You can use this flag only with \ref GRN_PTR_INIT.
+ */
+#define GRN_OBJ_OWN (0x01 << 5)
 
 #define GRN_OBJ_INIT(obj, obj_type, obj_flags, obj_domain)                     \
   do {                                                                         \
@@ -529,12 +957,98 @@ struct _grn_obj {
 
 #define GRN_OBJ_FIN(ctx, obj) (grn_obj_close((ctx), (obj)))
 
+/**
+ * \brief Set the database that the context is using.
+ *
+ * You can initialize it if you specify `NULL` for the parameter `db`.
+ *
+ * \attention Don't use it with context that has \ref GRN_CTX_PER_DB flag.
+ *
+ * \param ctx The context object.
+ * \param db The database object.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_use(grn_ctx *ctx, grn_obj *db);
+/**
+ * \brief Retrieve the database that the context is using.
+ *
+ * \param ctx The context object.
+ *
+ * \return The database object in use, `NULL` if database is not in use.
+ */
 GRN_API grn_obj *
 grn_ctx_db(grn_ctx *ctx);
+/**
+ * \brief Retrieve the object corresponding to the specified name from the
+ *        database that the context is using.
+ *
+ * \param ctx The context object.
+ * \param name The name of the object to be retrieved.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref grn_obj if the object that has the specified name is found,
+ *         `NULL` otherwise.
+ */
 GRN_API grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
+/**
+ * \brief Retrieve all tables from the database that the context is using.
+ *
+ * \note Ensure that `tables_buffer` is properly initialized as a \ref
+ *       GRN_PVECTOR using \ref GRN_PTR_INIT with the \ref GRN_OBJ_VECTOR flag
+ *       before invoking this function.
+ *
+ * \attention After processing the tables, it is essential to release the
+ *            allocated resources by un-referring each table object and
+ *            finalizing the `tables_buffer` using \ref GRN_OBJ_FIN. Otherwise,
+ *            memory leaks may occur.
+ *
+ * Here is an example of how to use \ref grn_ctx_get_all_tables to retrieve and
+ * process all tables:
+ *
+ * ```c
+ * grn_rc rc;
+ * grn_obj tables;
+ * int i;
+ * int n_tables;
+ *
+ * // Initialize the tables buffer as a vector of `grn_obj *`.
+ * GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
+ *
+ * // Retrieve all tables in database that the context is using.
+ * rc = grn_ctx_get_all_tables(ctx, &tables);
+ * if (rc != GRN_SUCCESS) {
+ *     GRN_OBJ_FIN(ctx, &tables);
+ *     // Handle error appropriately.
+ *     return rc;
+ * }
+ *
+ * // Calculate the number of tables retrieved.
+ * n_tables = GRN_PTR_VECTOR_SIZE(&tables);
+ * // Iterate over each table.
+ * for (i = 0; i < n_tables; i++) {
+ *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
+ *     // Use table.
+ * }
+ *
+ * // Free resources by un-referring each table when the reference count mode is
+ * // enabled.
+ * for (i = 0; i < n_tables; i++) {
+ *     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
+ *     grn_obj_unref(ctx, table);
+ * }
+ * // Finalize the tables buffer.
+ * GRN_OBJ_FIN(ctx, &tables);
+ * ```
+ *
+ * \param ctx The context object.
+ * \param tables_buffer The buffer to store the retrieved tables (must be
+ *                      prepared by the caller).
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_ctx_get_all_tables(grn_ctx *ctx, grn_obj *tables_buffer);
 GRN_API grn_rc
@@ -566,7 +1080,12 @@ typedef enum {
   GRN_DB_LONG_TEXT,
   GRN_DB_TOKYO_GEO_POINT,
   GRN_DB_WGS84_GEO_POINT,
-  GRN_DB_FLOAT32
+  GRN_DB_FLOAT32,
+  GRN_DB_BFLOAT16,
+  GRN_DB_SHORT_BINARY,
+  GRN_DB_BINARY,
+  GRN_DB_LONG_BINARY,
+  GRN_DB_JSON,
 } grn_builtin_type;
 
 typedef enum {
@@ -577,9 +1096,27 @@ typedef enum {
   GRN_DB_TRIGRAM
 } grn_builtin_tokenizer;
 
+/**
+ * \brief Retrieve the object corresponding to the specified ID from the context
+ *        or the database that the context is using.
+ *
+ * \param ctx The context object.
+ * \param id The object ID to be retrieved.
+ *
+ * \return \ref grn_obj if the object that has the specified ID is found, `NULL`
+ *         otherwise.
+ */
 GRN_API grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id);
-GRN_API grn_bool
+/*
+ * \brief Check whether object with the ID is opened or not.
+ *
+ * \param ctx The context object.
+ * \param id The object ID to be checked.
+ *
+ * \return `true` if object with the ID is opened, `false` otherwise.
+ */
+GRN_API bool
 grn_ctx_is_opened(grn_ctx *ctx, grn_id id);
 
 GRN_API grn_rc
@@ -700,6 +1237,50 @@ typedef enum {
   GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT,
 } grn_operator;
 
+/**
+ * \brief Retrieve a column or an accessor from a specified table or accessor.
+ *
+ * This function returns a column corresponding to the given name from
+ * the specified table. If the name does not correspond to any column, it
+ * returns NULL. If the name is an accessor string, it returns the
+ * corresponding accessor. Accessor strings are dot-concatenated column
+ * names. Column names that are started with `_` such as `_id` and `_key`
+ * are pseudo column names. This function returns an accessor for a
+ * pseudo column name.
+ * See https://groonga.org/docs/reference/columns/pseudo.html for pseudo
+ * column.
+ *
+ * Column name examples: `name`, `age`
+ *
+ * Pseudo column name examples: `_key`, `_score`, `_nsubrecs`
+ *
+ * Accessor string examples: `tag.name`, `user.bookmarks.url`
+ *
+ * If this function returns an accessor, you must call \ref grn_obj_unlink
+ * with it when it's no longer needed. You can use
+ * \ref grn_obj_is_accessor to detect whether it's an accessor or not.
+ *
+ * To illustrate its usage, here is an example to use \ref grn_obj_column
+ * with pseudo column like \ref GRN_COLUMN_NAME_ID and
+ * \ref GRN_COLUMN_NAME_ID_LEN to retrieve the accessor object for `_id`.
+ *
+ * ```c
+ * grn_obj *id_accessor = grn_obj_column(ctx,
+ *                                       table,
+ *                                       GRN_COLUMN_NAME_ID,
+ *                                       GRN_COLUMN_NAME_ID_LEN);
+ * // ...
+ * grn_obj_unlink(ctx, id_accessor);
+ * ```
+ *
+ * \param ctx The context object.
+ * \param table The target table or accessor from which the column or accessor
+ *              is retrieved.
+ * \param name The name of the column or an accessor string.
+ * \param name_size The length of the `name` string.
+ *
+ * \return The column or accessor, or NULL if not found.
+ */
 GRN_API grn_obj *
 grn_obj_column(grn_ctx *ctx,
                grn_obj *table,
@@ -751,27 +1332,119 @@ typedef enum {
 #define GRN_INFO_SUPPORT_ARROW GRN_INFO_SUPPORT_APACHE_ARROW
   GRN_INFO_SUPPORT_APACHE_ARROW,
   GRN_INFO_NORMALIZERS,
+  GRN_INFO_GENERATOR,
+  GRN_INFO_SUPPORT_LLAMA_CPP,
+  GRN_INFO_SUPPORT_FAISS,
+  GRN_INFO_EXTRACTORS,
 } grn_info_type;
 
+/**
+ * \brief Get information on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param type The type of information.
+ * \param valuebuf The buffer to store the retrieved value (must be prepared by
+ *                 the caller).
+ *
+ * \return `valuebuf`.
+ */
 GRN_API grn_obj *
 grn_obj_get_info(grn_ctx *ctx,
                  grn_obj *obj,
                  grn_info_type type,
                  grn_obj *valuebuf);
+/**
+ * \brief Set information on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param type The type of information.
+ * \param value The value to set.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `obj` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_set_info(grn_ctx *ctx,
                  grn_obj *obj,
                  grn_info_type type,
                  grn_obj *value);
+/**
+ * \brief Get information on the record with the ID in the object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param id The target ID.
+ * \param type The type of information.
+ * \param valuebuf The buffer to store the retrieved value (must be prepared by
+ *                 the caller).
+ *
+ * \return `valuebuf`.
+ */
 GRN_API grn_obj *
 grn_obj_get_element_info(
-  grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *value);
+  grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *valuebuf);
+/**
+ * \brief Set information on the record with the ID in the object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param id The target ID.
+ * \param type The type of information.
+ * \param value The value to set.
+ *
+ * \return \ref GRN_SUCCESS.
+ */
 GRN_API grn_rc
 grn_obj_set_element_info(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_info_type type, grn_obj *value);
 
+/**
+ * \brief Retrieve the value of the record corresponding to the given ID
+ *        in the specified object.
+ *
+ * \param ctx The context object
+ * \param obj The target object from which to retrieve the value
+ * \param id The ID of the target record
+ * \param value The buffer to store the retrieved value (must be prepared by the
+ *              caller)
+ *
+ * \return The value of the specified record in the object.
+ */
 GRN_API grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
+/**
+ * \brief Retrieve an array of fixed-size column values starting from a
+ *        specified record ID.
+ *
+ *        This function retrieves values from a fixed-size column (`obj`),
+ *        starting at the record ID given by `offset`. The retrieved values are
+ *        stored in the array pointed to by `values`, and the number of records
+ *        that can be retrieved is returned.
+ *
+ * \attention It is not guaranteed that all record IDs within the specified
+ *            range are valid. For tables where records may have been deleted,
+ *            you must use functions such as \ref grn_table_at to check the
+ *            existence of each record.
+ *
+ * \note If an error occurs and the return value is `-1`, check `ctx->rc` for
+ *       the specific error code (e.g., \ref GRN_NO_MEMORY_AVAILABLE,
+ *       \ref GRN_INVALID_ARGUMENT). Additional details might be available in
+ *       `ctx->errbuf`.
+ *
+ * \param ctx The context object
+ * \param obj The target fixed-size column
+ * \param offset The starting record ID for retrieving values
+ * \param values A pointer to an array where the values will be stored
+ *
+ * \return The number of records retrieved, or `-1` if an error occurred.
+ */
 GRN_API int
 grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 
@@ -787,73 +1460,231 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
   } while (0)
 
 #define GRN_OBJ_SET_MASK (0x07)
-#define GRN_OBJ_SET      (0x01)
-#define GRN_OBJ_INCR     (0x02)
-#define GRN_OBJ_DECR     (0x03)
-#define GRN_OBJ_APPEND   (0x04)
-#define GRN_OBJ_PREPEND  (0x05)
-#define GRN_OBJ_GET      (0x01 << 4)
-#define GRN_OBJ_COMPARE  (0x01 << 5)
-#define GRN_OBJ_LOCK     (0x01 << 6)
-#define GRN_OBJ_UNLOCK   (0x01 << 7)
+/**
+ * \brief Replace the value of the record/column with the specified value
+ */
+#define GRN_OBJ_SET (0x01)
+/**
+ * \brief Add the specified value to the record/column value
+ */
+#define GRN_OBJ_INCR (0x02)
+/**
+ * \brief Subtract the specified value from the record/column value
+ */
+#define GRN_OBJ_DECR (0x03)
+/**
+ * \brief Append the specified value to the column value.
+ */
+#define GRN_OBJ_APPEND (0x04)
+/**
+ * \brief Prepend the specified value to the column value.
+ */
+#define GRN_OBJ_PREPEND (0x05)
+#define GRN_OBJ_GET     (0x01 << 4)
+#define GRN_OBJ_COMPARE (0x01 << 5)
+#define GRN_OBJ_LOCK    (0x01 << 6)
+#define GRN_OBJ_UNLOCK  (0x01 << 7)
 
+/**
+ * \brief Update the value of a record identified by the given ID in the
+ *        specified object.
+ *
+ *        This function updates the value of the record specified by `id` in the
+ *        given object (`obj`). If the corresponding record does not exist, it
+ *        returns \ref GRN_INVALID_ARGUMENT.
+ *
+ * \param ctx The context object.
+ * \param obj The target object where the value will be updated.
+ * \param id The ID of the record to be updated.
+ * \param value The value to be stored in the record.
+ * \param flags Only one flag can be specified, depending on the type of the
+ *              object (`obj`).
+ *              - For a table and a scalar column, use either \ref GRN_OBJ_SET,
+ *                \ref GRN_OBJ_INCR, or \ref GRN_OBJ_DECR.
+ *              - For a vector column, use either \ref GRN_OBJ_SET, \ref
+ *                GRN_OBJ_INCR, \ref GRN_OBJ_DECR \ref GRN_OBJ_APPEND or
+ *                \ref GRN_OBJ_PREPEND.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the
+ *         record does not exist.
+ */
 GRN_API grn_rc
 grn_obj_set_value(
   grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
+
+#define GRN_OBJ_REMOVE_DEPENDENT (0x01 << 0)
+#define GRN_OBJ_REMOVE_ENSURE    (0x01 << 1)
+
+/**
+ * \brief Remove the specified object.
+ *
+ *        This function frees the specified object (`obj`) from memory. If the
+ *        object is a persistent object, it also removes the associated files
+ *        from disk.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to be removed.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
+grn_obj_remove_flags(grn_ctx *ctx, grn_obj *obj, uint32_t flags);
+/* Deprecated since 14.0.5. Use grn_ctx_remove(...,
+ * GRN_OBJ_REMOVE_ENSURE) instead. */
+GRN_API grn_rc
 grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size);
+GRN_API grn_rc
+grn_ctx_remove(grn_ctx *ctx, const char *name, int name_size, uint32_t flags);
+GRN_API grn_rc
+grn_ctx_remove_by_id(grn_ctx *ctx, grn_id id, uint32_t flags);
+
+/**
+ * \brief Rename a persistent object in the database used by the context.
+ *
+ *        This function updates the name of the specified object (`obj`) to the
+ *        new name provided. The object must be a persistent object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to be renamed.
+ * \param name The new name for the given object.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_rename(grn_ctx *ctx,
                grn_obj *obj,
                const char *name,
                unsigned int name_size);
-GRN_API grn_rc
-grn_table_rename(grn_ctx *ctx,
-                 grn_obj *table,
-                 const char *name,
-                 unsigned int name_size);
 
+/**
+ * \brief Rename a column in the database used by the context.
+ *
+ * \param ctx The context object.
+ * \param column The column object to be renamed. It must be a persistent
+ *               object.
+ * \param name The new name for the column.
+ * \param name_size The size of the `name` in bytes.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if the new name
+ *         exceeds the maximum allowed size which is defined by \ref
+ *         GRN_TABLE_MAX_KEY_SIZE.
+ */
 GRN_API grn_rc
 grn_column_rename(grn_ctx *ctx,
                   grn_obj *column,
                   const char *name,
                   unsigned int name_size);
 
+/**
+ * \brief Close an object.
+ *
+ *        This function frees all resources used by the specified object (`obj`)
+ *        from memory. All resources include other associated objects.
+ *
+ *        In general, you must close temporary objects explicitly. You don't
+ *        need to close persistent objects explicitly because you can close
+ *        persistent objects implicitly by closing a DB object.
+ *
+ *        You can use \ref grn_obj_unlink instead. It closes temporary objects
+ *        but does nothing for most persistent objects. It's useful for normal
+ *        use cases.
+ *
+ * \attention In general, you should not close persistent objects such as tables
+ *            and columns for performance reasons. If you close persistent
+ *            objects, you need to re-open them when they are needed again. This
+ *            is inefficient.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be closed.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Reinitialize an object.
+ *
+ *        Buffer objects, \ref GRN_BULK, \ref GRN_PTR, \ref GRN_UVECTOR,
+ *        \ref GRN_PVECTOR, and \ref GRN_VECTOR, are only target objects
+ *        of this function. You can't use other objects such as table and
+ *        column for this function.
+ *
+ *        This function frees the current data in the specified object
+ *        (`obj`) and initializes the specified `obj` for the specified
+ *        `domain` and `flags`.
+ *
+ *        Before calling this function, the object must have been initialized.
+ *        You can use `GRN_XXX_INIT()` macros such as \ref GRN_TEXT_INIT to
+ *        initialize a buffer object.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be reinitialized. It must be a buffer object.
+ * \param domain The new type that the object can hold.
+ * \param flags `0` or \ref GRN_OBJ_VECTOR. If \ref GRN_OBJ_VECTOR is
+ *              specified, the object will be configured to store a vector of
+ *              values of the specified `domain`.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
-/* On non reference count mode (default):
- * This closes the following objects immediately:
+/**
+ * \brief Unlink an object.
  *
- *   * Acceessor
- *   * Bulk
- *   * DB
- *   * Temporary column
- *   * Temporary table
+ * This calls \ref grn_obj_close only when the specified object (`obj`)
+ * can be closed. See the following description for details.
  *
- * This does nothing for other objects such as persisted tables and
- * columns.
+ * **Reference Count Mode**:
  *
- * On reference count mode (GRN_ENABLE_REFERENCE_COUNT=yes):
- * This closes the following objects immediately:
+ * Reference count mode manages object lifetimes by keeping track of
+ * active references. It can be enabled in two ways:
+ * - **Environment Variable**: Set `GRN_ENABLE_REFERENCE_COUNT` to
+ *   `yes` before running the program.
+ * - **API**: Use \ref grn_set_reference_count_enable to enable it at runtime.
  *
- *   * Bulk
- *   * DB
+ * Non reference count mode:
  *
- * This decreases the reference count of the following objects:
+ * This is the default. You can disable reference count mode explicitly by
+ * `GRN_ENABLE_REFERENCE_COUNT=no` environment variable.
  *
- *   * Acceessor
- *   * Column (both persisted and temporary)
- *   * Table (both persisted and temporary)
+ * The following objects are closed immediately:
+ * - \ref GRN_ACCESSOR
+ * - \ref GRN_BULK
+ * - \ref GRN_DB
+ * - Temporary column
+ * - Temporary table
  *
- * If the decreased reference count is zero, the object is closed.
+ * Other objects such as persisted tables and columns are not closed.
+ *
+ * Reference count mode:
+ *
+ * You need to enable this explicitly by `GRN_ENABLE_REFERENCE_COUNT=yes`
+ * environment variable.
+ *
+ * The following objects are closed immediately:
+ * - \ref GRN_BULK
+ * - \ref GRN_DB
+ *
+ * The reference count is decreased for the following objects:
+ * - \ref GRN_ACCESSOR
+ * - Column (both persisted and temporary)
+ * - Table (both persisted and temporary)
+ *
+ * If the reference count reaches zero, the object is closed.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be unlinked and freed from memory.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
  */
-GRN_API void
+GRN_API grn_rc
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_refer(grn_ctx *ctx, grn_obj *obj);
@@ -870,36 +1701,206 @@ grn_obj_unref_recursive(grn_ctx *ctx, grn_obj *obj);
 GRN_API void
 grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Returns a pointer to user data that can be registered in the object
+ *
+ * \param ctx The context object
+ * \param obj Only table, column, proc, and expr can be specified
+ * \return Pointer to user data
+ */
 GRN_API grn_user_data *
 grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Set the callback function when finalizing the object.
+ *
+ * \param ctx The context object.
+ * \param obj Target object. Table, table cursor, column, procedure, and
+ *            expression can be specified.
+ * \param func Callback function when finalizing.
+ *
+ * \return \ref GRN_SUCCESS on success, \ref GRN_INVALID_ARGUMENT if `obj`
+ *         is not table, table cursor, column, procedure, or expression.
+ */
 GRN_API grn_rc
 grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
-
+/**
+ * \brief Return the file path associated with an object.
+ *
+ * \param ctx The context object.
+ * \param obj The object whose file path is to be retrieved.
+ *
+ * \return The file path on success, `NULL` if the object is temporary.
+ */
 GRN_API const char *
 grn_obj_path(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Return an object's name by storing it in `namebuf`.
+ *
+ *        If the object has a name and `buf_size` is greater than or equal to
+ *        the length of the name, the name is copied into `namebuf`.
+ *
+ *        If the length of the name exceeds `buf_size`, the name is not copied
+ *        into `namebuf`, but the length of the name is still returned.
+ *
+ *        The maximum possible length of the name is limited by
+ *        \ref GRN_TABLE_MAX_KEY_SIZE.
+ *
+ * \param ctx The context object.
+ * \param obj The object whose name is to be retrieved.
+ * \param namebuf A buffer allocated by the caller to store the object's name.
+ * \param buf_size The size of `namebuf` in bytes.
+ *
+ * \return The length of the object's name. Returns `0` if the object is unnamed
+ *         or `NULL`.
+ */
 GRN_API int
 grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
+/**
+ * \brief Return a column's name by storing it in `namebuf`.
+ *
+ * If the column has a name and `buf_size` is greater than or equal to
+ * the length of the name, the name is copied into `namebuf`.
+ *
+ * If the length of the name exceeds `buf_size`, the name is not copied
+ * into `namebuf`, but the length of the name is still returned.
+ *
+ * The maximum possible length of the name is limited by
+ * \ref GRN_TABLE_MAX_KEY_SIZE.
+ *
+ * If the `obj` is an accessor, it returns the accessor's name instead.
+ * For detailed information on accessor's naming conventions, see
+ * \ref grn_obj_column.
+ *
+ * \param ctx The context object.
+ * \param obj The column whose name is to be retrieved.
+ * \param namebuf A buffer allocated by the caller to store the column's name.
+ * \param buf_size The size of `namebuf` in bytes.
+ *
+ * \return The length of the column's name. Returns `0` if the `obj` parameter
+ *         is `NULL`.
+ */
 GRN_API int
 grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
+/**
+ * \brief Retrieve the value range based on the ID associated with an object.
+ *
+ *        For example, it may return \ref GRN_DB_INT32 from \ref
+ *        grn_builtin_type to indicate that the object operates within the
+ *        integer range.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose range ID is to be returned.
+ *
+ * \return The ID of the range object. Returns \ref GRN_ID_NIL if no range is
+ *         associated or the object is `NULL`.
+ */
 GRN_API grn_id
 grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 
 #define GRN_OBJ_GET_DOMAIN(obj)                                                \
   ((obj)->header.type == GRN_TABLE_NO_KEY ? GRN_ID_NIL : (obj)->header.domain)
 
+/**
+ * \brief Free allocatable memory occupied by an object based on a threshold.
+ *
+ * \note This function is not implemented yet.
+ *       The \ref grn_obj_expire function is intended to serve as a
+ *       generic version of grn_ii_expire() and grn_io_expire().
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose memory is to be managed.
+ * \param threshold The threshold value used as a benchmark for freeing memory
+ *                  spaces.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API int
 grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
+/**
+ * \brief Check the integrity of the file corresponding to an object.
+ *
+ * \note This function is not implemented yet.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose file is to be checked.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API int
 grn_obj_check(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Lock an object with a specified timeout.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to lock.
+ * \param id The ID of the target object.
+ * \param timeout The maximum time to wait for the lock, in seconds.
+ *
+ * \attention You should ensure that every call to \ref grn_obj_lock is paired
+ *            with a call to \ref grn_obj_unlock to maintain lock balance.
+ *            Failing to do can lead to deadlocks.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_RESOURCE_DEADLOCK_AVOIDED is returned if the
+ *         lock could not be acquired within the specified timeout.
+ */
 GRN_API grn_rc
 grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
+/**
+ * \brief Unlock an object.
+ *
+ * Unlike \ref grn_obj_clear_lock, which forcefully resets the lock count to
+ * zero, this function decrements the lock count of an object by one.
+ *
+ * \note Locks are managed using a counter mechanism where each lock acquisition
+ *       increments the count by one, and each unlock operation decrements it by
+ *       one. When the lock count reaches zero, the object is considered
+ *       unlocked.
+ *
+ * \attention You should ensure that every call to \ref grn_obj_unlock is paired
+ *            with a call to \ref grn_obj_lock to maintain lock balance. Failing
+ *            to do can lead to deadlocks.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to unlock.
+ * \param id The ID of the target object.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
+/**
+ * \brief Forcefully clear locks on an object.
+ *
+ * Unlike \ref grn_obj_unlock, which decrements the lock count by one,
+ * this function forcefully resets the lock count of an object to zero,
+ * unlocking it regardless of the current lock count.
+ *
+ * \attention In general you should not use this function. Forcefully
+ *            clearing locks might lead to data corruption or
+ *            inconsistencies within the database. Use it only
+ *            when absolutely necessary and ensure that you understand
+ *            the potential consequences.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose lock is to be cleared.
+ *
+ * \return \ref GRN_SUCCESS on success.
+ */
 GRN_API grn_rc
 grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
+/**
+ * \brief Check if an object is currently locked.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose lock status is to be checked.
+ *
+ * \return `0` if there are no locks. Return the number of acquired locks
+ *         if the object or any of its related sub-objects are currently locked.
+ */
 GRN_API unsigned int
 grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
@@ -910,25 +1911,73 @@ GRN_API grn_rc
 grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc
 grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj);
-GRN_API int
+/**
+ * \brief Defragment an object to reduce fragmentation in the database file.
+ *
+ * The defragmentation process aims to reduce the fragmentation in the database
+ * file area occupied by the object, based on the provided threshold value.
+ *
+ * \param ctx The context object.
+ * \param obj The target object to defragment.
+ * \param threshold The threshold value used to guide the defragmentation
+ *                  process.
+ *
+ * \return The total number of reduced bytes or segments on which
+ *         defragmentation was performed.
+ *
+ *         See `ctx->rc` for error details.
+ */
+GRN_API uint64_t
 grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
+/**
+ * \brief Return the database to which `obj` belongs.
+ *
+ * \param ctx The context object.
+ * \param obj Target object.
+ *
+ * \return The database object to which `obj` belongs, `NULL` if `obj` doesn't
+ *         belong to any database.
+ */
 GRN_API grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
+/**
+ * \brief Return the ID of an object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object whose ID is to be retrieved.
+ *
+ * \return The ID of the object, \ref GRN_ID_NIL if the object doesn't belong to
+ *         any database.
+ */
 GRN_API grn_id
 grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
 /* Flags for grn_fuzzy_search_optarg::flags. */
-#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION (0x01)
+#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION     (0x01 << 0)
+#define GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH      (0x01 << 1)
+#define GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO (0x01 << 2)
+/* We want to use GRN_TABLE_FUZZY_SEARCH_TOKENIZE but it breaks
+ * backward compatibility. So we use this inverted name. */
+#define GRN_TABLE_FUZZY_SEARCH_SKIP_TOKENIZE (0x01 << 3)
 
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
 struct _grn_fuzzy_search_optarg {
-  unsigned int max_distance;
-  unsigned int max_expansion;
-  unsigned int prefix_match_size;
-  int flags;
+  uint32_t max_distance;
+  /* We want to name this max_expansions but can't change it to keep
+   * backward compatibility. */
+  uint32_t max_expansion;
+  /* Unit is byte. */
+  uint32_t prefix_match_size;
+  uint32_t flags;
+  /* Unit is character. This is used only when
+   * GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH flag is set. */
+  uint32_t prefix_length;
+  /* This is used only when
+   * GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO flag is set. */
+  float max_distance_ratio;
 };
 
 #define GRN_MATCH_INFO_GET_MIN_RECORD_ID (0x01)
@@ -963,8 +2012,32 @@ struct _grn_search_optarg {
   grn_obj *query_options;
   grn_obj *max_element_intervals;
   int *min_interval;
+  int32_t *start_position;
+  grn_id *query_domain;
 };
 
+/**
+ * \brief Search for `obj` in `query`.
+ *
+ * \param ctx The context object.
+ * \param obj The object to be searched.
+ * \param query Search query.
+ * \param res The table to store results.
+ * \param op Logical operation of the table stored in `res` and the table of
+ *           the search result.
+ *           - \ref GRN_OP_OR
+ *           - \ref GRN_OP_AND
+ *           - \ref GRN_OP_AND_NOT
+ *           - \ref GRN_OP_ADJUST
+ * \param optarg Search options. For example, you can specify the search mode in
+ *               \ref grn_search_optarg::mode.
+ *               If \ref GRN_OP_EQUAL is specified for
+ *               \ref grn_search_optarg::mode, it searching for equal record.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `obj` is
+ *         `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_search(grn_ctx *ctx,
                grn_obj *obj,
@@ -974,8 +2047,8 @@ grn_obj_search(grn_ctx *ctx,
                grn_search_optarg *optarg);
 
 GRN_API grn_rc
-grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, grn_bool is_stable);
-GRN_API grn_bool
+grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, bool is_stable);
+GRN_API bool
 grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc);
 
 /*-------------------------------------------------------------
@@ -990,13 +2063,38 @@ GRN_API void *
 grn_proc_get_hook_local_data(grn_ctx *ctx, grn_obj *exec_info);
 
 typedef enum {
+  /// Hooked on update.
   GRN_HOOK_SET = 0,
+  /// Hooked on getting
   GRN_HOOK_GET,
+  /// Hooked on insertion.
   GRN_HOOK_INSERT,
+  /// Hooked on deletion.
   GRN_HOOK_DELETE,
+  /// Hooked during the search process. You can use it to check the status of a
+  /// process or to terminate a process.
   GRN_HOOK_SELECT
 } grn_hook_entry;
 
+#define GRN_N_HOOK_ENTRIES 5 /* (GRN_HOOK_SELECT + 1) */
+
+GRN_API const char *
+grn_hook_entry_to_string(grn_hook_entry entry);
+
+/**
+ * \brief Add a hook to the object. If multiple hooks are set for the object,
+ *        they are called in the order they are registered in the hook list.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ * \param offset The offset of execution order. Add to the beginning if `0` is
+ *               specified. Add to the end if `-1` is specified.
+ * \param proc The procedure object.
+ * \param data The hook data.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ */
 GRN_API grn_rc
 grn_obj_add_hook(grn_ctx *ctx,
                  grn_obj *obj,
@@ -1004,11 +2102,44 @@ grn_obj_add_hook(grn_ctx *ctx,
                  int offset,
                  grn_obj *proc,
                  grn_obj *data);
+/**
+ * \brief Get the number of hooks set on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ *
+ * \return The number of hooks set on the object.
+ */
 GRN_API int
 grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
+/**
+ * \brief Get the hook set on the object. If hook data is set, it is stored in
+ *        `data`.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ * \param offset The offset of execution order.
+ * \param data The buffer to store hook data.
+ *
+ * \return The procedure object if the hook is set, `NULL` otherwise.
+ */
 GRN_API grn_obj *
 grn_obj_get_hook(
   grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset, grn_obj *data);
+/**
+ * \brief Delete the hook set on the object.
+ *
+ * \param ctx The context object.
+ * \param obj The target object.
+ * \param entry The type of hook.
+ * \param offset The offset of execution order.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if there was no
+ *         hook in `offset`.
+ */
 GRN_API grn_rc
 grn_obj_delete_hook(grn_ctx *ctx,
                     grn_obj *obj,
@@ -1021,7 +2152,9 @@ grn_obj_open(grn_ctx *ctx,
              grn_obj_flags flags,
              grn_id domain);
 
-/* Deprecated since 5.0.1. Use grn_column_find_index_data() instead. */
+/**
+ * \deprecated Since 5.0.1. Use \ref grn_column_find_index_data instead.
+ */
 GRN_API int
 grn_column_index(grn_ctx *ctx,
                  grn_obj *column,
@@ -1036,7 +2169,29 @@ typedef struct _grn_index_datum {
   unsigned int section;
 } grn_index_datum;
 
-/* @since 5.0.1. */
+/**
+ * \brief Return indexes that can perform a specified operation by storing it in
+ *        `index_data`.
+ *
+ * \note This function replaces the deprecated \ref grn_column_index function.
+ *
+ * \since 5.0.1
+ *
+ * \param ctx The context object.
+ * \param column The target column to search for associated indexes.
+ * \param op The operator that the indexes should support.
+ *           (e.g., \ref GRN_OP_EQUAL, \ref GRN_OP_PREFIX, \ref GRN_OP_LESS, and
+ *           so on.).
+ * \param index_data An array to store information about the found indexes.
+ *                   Each element is a \ref grn_index_datum structure containing
+ *                   details about an index. The caller must allocate this array
+ *                   with at least `n_index_data` elements.
+ * \param n_index_data The maximum number of entries to store in `index_data`.
+ *
+ * \return The total number of found indexes that support the specified
+ *         operation. If more indexes are found than `n_index_data`, only the
+ *         first `n_index_data` entries are filled in `index_data`.
+ */
 GRN_API unsigned int
 grn_column_find_index_data(grn_ctx *ctx,
                            grn_obj *column,
@@ -1055,8 +2210,44 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
                                  grn_obj *column,
                                  grn_obj *index_columns);
 
+/**
+ * \brief Delete an object (such as a table or column) identified by the ID from
+ *        the database.
+ *
+ * \note In general, you should use \ref grn_obj_remove() instead.
+ *       \ref grn_obj_remove is a higher-level API that easily manages
+ *       operations for users. Use this lower-level API,
+ *       \ref grn_obj_delete_by_id, only when finer control over the
+ *       deletion process is necessary.
+ *
+ * \param ctx The context object.
+ * \param db The target database object.
+ * \param id The ID of the object to be deleted.
+ * \param remove_p A boolean flag indicating the deletion mode:
+ *                 - If true, the function clears the object cache and also
+ *                   removes the relation between the ID and the key in the
+ *                   database.
+ *                 - If false, the function only clears the object cache.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `id` is
+ *         \ref GRN_ID_NIL.
+ */
 GRN_API grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
+/**
+ * \brief Return the pathname of an object ID.
+ *
+ * \param ctx The context object.
+ * \param db The target database object.
+ * \param id The ID of the object whose pathname is to be obtained.
+ * \param buffer A pre-allocated buffer where the resulting pathname will be
+ *               stored. For example, `char buffer[PATH_MAX]` can be used.
+ *
+ * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
+ *         For example, \ref GRN_INVALID_ARGUMENT is returned if `db` is not
+ *         a database object or if `buffer` is `NULL`.
+ */
 GRN_API grn_rc
 grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
 
@@ -1140,6 +2331,10 @@ grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizer);
 GRN_API grn_obj *
 grn_snip_get_normalizer(grn_ctx *ctx, grn_obj *snip);
 GRN_API grn_rc
+grn_snip_set_normalizers(grn_ctx *ctx, grn_obj *snip, grn_obj *normalizers);
+GRN_API grn_obj *
+grn_snip_get_normalizers(grn_ctx *ctx, grn_obj *snip);
+GRN_API grn_rc
 grn_snip_set_delimiter_regexp(grn_ctx *ctx,
                               grn_obj *snip,
                               const char *pattern,
@@ -1172,9 +2367,12 @@ grn_snip_get_result(grn_ctx *ctx,
 #define GRN_LOG_PID        (0x01 << 4)
 #define GRN_LOG_PROCESS_ID GRN_LOG_PID
 #define GRN_LOG_THREAD_ID  (0x01 << 5)
+#define GRN_LOG_CONTEXT_ID (0x01 << 6)
+/* It's an alias of GRN_LOG_CONTEXT_ID because we have grn_ctx. */
+#define GRN_LOG_CTX_ID GRN_LOG_CONTEXT_ID
 #define GRN_LOG_ALL                                                            \
   (GRN_LOG_TIME | GRN_LOG_TITLE | GRN_LOG_MESSAGE | GRN_LOG_LOCATION |         \
-   GRN_LOG_PROCESS_ID | GRN_LOG_THREAD_ID)
+   GRN_LOG_PROCESS_ID | GRN_LOG_THREAD_ID | GRN_LOG_CONTEXT_ID)
 #define GRN_LOG_DEFAULT (GRN_LOG_TIME | GRN_LOG_MESSAGE)
 
 /* Deprecated since 2.1.2. Use grn_logger instead. */
@@ -1210,7 +2408,7 @@ struct _grn_logger {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API grn_bool
+GRN_API bool
 grn_log_flags_parse(const char *string, int string_size, int *flags);
 
 GRN_API grn_rc
@@ -1265,10 +2463,10 @@ grn_logger_putv(grn_ctx *ctx,
 GRN_API void
 grn_logger_reopen(grn_ctx *ctx);
 
-GRN_API grn_bool
+GRN_API bool
 grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
-GRN_API grn_bool
+GRN_API bool
 grn_logger_is_default_logger(grn_ctx *ctx);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
@@ -1345,7 +2543,7 @@ struct _grn_query_logger {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API grn_bool
+GRN_API bool
 grn_query_log_flags_parse(const char *string,
                           int string_size,
                           unsigned int *flags);
@@ -1368,7 +2566,7 @@ grn_query_logger_put(
 GRN_API void
 grn_query_logger_reopen(grn_ctx *ctx);
 
-GRN_API grn_bool
+GRN_API bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag);
 
 GRN_API void
@@ -1396,7 +2594,7 @@ grn_default_query_logger_get_rotate_threshold_size(void);
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 /* This assumes that GRN_BULK_BUFSIZE is less than 32 (= 0x20). */
 #define GRN_BULK_BUFSIZE_MAX          0x1f
-#define GRN_BULK_SIZE_IN_FLAGS(flags) (size_t)((flags)&GRN_BULK_BUFSIZE_MAX)
+#define GRN_BULK_SIZE_IN_FLAGS(flags) (size_t)((flags) & GRN_BULK_BUFSIZE_MAX)
 #define GRN_BULK_OUTP(bulk)           ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk)                                                  \
   do {                                                                         \
@@ -1423,7 +2621,7 @@ grn_default_query_logger_get_rotate_threshold_size(void);
     if (GRN_BULK_OUTP(buf)) {                                                  \
       (buf)->u.b.curr = (char *)(p);                                           \
     } else {                                                                   \
-      (buf)->header.flags = (grn_obj_flags)((char *)(p)-GRN_BULK_HEAD(buf));   \
+      (buf)->header.flags = (grn_obj_flags)((char *)(p) - GRN_BULK_HEAD(buf)); \
     }                                                                          \
   } while (0)
 #define GRN_BULK_INCR_LEN(bulk, len)                                           \
@@ -1484,6 +2682,10 @@ GRN_API grn_rc
 grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, size_t len);
 GRN_API grn_rc
 grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
+#ifdef GRN_HAVE_BFLOAT16
+GRN_API grn_rc
+grn_text_bf16toa(grn_ctx *ctx, grn_obj *bulk, grn_bfloat16 value);
+#endif
 GRN_API grn_rc
 grn_text_f32toa(grn_ctx *ctx, grn_obj *bulk, float f);
 GRN_API grn_rc
@@ -1528,19 +2730,20 @@ grn_ctx_recv_handler_set(grn_ctx *,
 /* various values exchanged via grn_obj */
 
 #define GRN_OBJ_DO_SHALLOW_COPY (GRN_OBJ_REFER | GRN_OBJ_OUTPLACE)
-#define GRN_OBJ_VECTOR          (0x01 << 7)
+/* A flag to initialize a vector object. */
+#define GRN_OBJ_VECTOR       (0x01 << 7)
 
-#define GRN_OBJ_MUTABLE(obj)    ((obj) && (obj)->header.type <= GRN_VECTOR)
+#define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK,              \
-               ((flags)&GRN_OBJ_DO_SHALLOW_COPY),                              \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK,            \
+               ((flags) & GRN_OBJ_DO_SHALLOW_COPY),                            \
                (domain))
 #define GRN_VALUE_VAR_SIZE_INIT(obj, flags, domain)                            \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,               \
-               ((flags)&GRN_OBJ_DO_SHALLOW_COPY),                              \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,             \
+               ((flags) & GRN_OBJ_DO_SHALLOW_COPY),                            \
                (domain))
 
 #define GRN_VOID_INIT(obj) GRN_OBJ_INIT((obj), GRN_VOID, 0, GRN_DB_VOID)
@@ -1586,6 +2789,56 @@ grn_ctx_recv_handler_set(grn_ctx *,
   (GRN_TEXT_LEN(bulk) == strlen(string) &&                                     \
    memcmp(GRN_TEXT_VALUE(bulk), string, GRN_TEXT_LEN(bulk)) == 0)
 
+#define GRN_BINARY_INIT(obj, flags)                                            \
+  GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_BINARY)
+#define GRN_SHORT_BINARY_INIT(obj, flags)                                      \
+  GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_SHORT_BINARY)
+#define GRN_LONG_BINARY_INIT(obj, flags)                                       \
+  GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_LONG_BINARY)
+#define GRN_BINARY_SET_REF(obj, data, len)                                     \
+  do {                                                                         \
+    (obj)->u.b.head = (char *)(data);                                          \
+    (obj)->u.b.curr = (char *)(data) + (len);                                  \
+  } while (0)
+#define GRN_BINARY_SET(ctx, obj, data, len)                                    \
+  do {                                                                         \
+    if ((obj)->header.impl_flags & GRN_OBJ_REFER) {                            \
+      GRN_BINARY_SET_REF((obj), (data), (len));                                \
+    } else {                                                                   \
+      grn_bulk_write_from((ctx),                                               \
+                          (obj),                                               \
+                          (const char *)(data),                                \
+                          0,                                                   \
+                          (unsigned int)(len));                                \
+    }                                                                          \
+  } while (0)
+#define GRN_BINARY_PUT(ctx, obj, data, len)                                    \
+  grn_bulk_write((ctx), (obj), (const char *)(data), (unsigned int)(len))
+#define GRN_BINARY_VALUE(obj) ((const uint8_t *)GRN_BULK_HEAD(obj))
+#define GRN_BINARY_LEN(obj)   GRN_BULK_VSIZE(obj)
+
+#define GRN_JSON_INIT(obj, flags)                                              \
+  GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_JSON)
+#define GRN_JSON_SET_REF(obj, data, len)                                       \
+  do {                                                                         \
+    (obj)->u.b.head = (char *)(data);                                          \
+    (obj)->u.b.curr = (char *)(data) + (len);                                  \
+  } while (0)
+#define GRN_JSON_SET(ctx, obj, data, len)                                      \
+  do {                                                                         \
+    if ((obj)->header.impl_flags & GRN_OBJ_REFER) {                            \
+      GRN_JSON_SET_REF((obj), (data), (len));                                  \
+    } else {                                                                   \
+      grn_bulk_write_from((ctx),                                               \
+                          (obj),                                               \
+                          (const char *)(data),                                \
+                          0,                                                   \
+                          (unsigned int)(len));                                \
+    }                                                                          \
+  } while (0)
+#define GRN_JSON_VALUE(obj) ((const uint8_t *)GRN_BULK_HEAD(obj))
+#define GRN_JSON_LEN(obj)   GRN_BULK_VSIZE(obj)
+
 #define GRN_BOOL_INIT(obj, flags)                                              \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BOOL)
 #define GRN_INT8_INIT(obj, flags)                                              \
@@ -1604,6 +2857,8 @@ grn_ctx_recv_handler_set(grn_ctx *,
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT64)
 #define GRN_UINT64_INIT(obj, flags)                                            \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_UINT64)
+#define GRN_BFLOAT16_INIT(obj, flags)                                          \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BFLOAT16)
 #define GRN_FLOAT32_INIT(obj, flags)                                           \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_FLOAT32)
 #define GRN_FLOAT_INIT(obj, flags)                                             \
@@ -1613,7 +2868,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_RECORD_INIT GRN_VALUE_FIX_SIZE_INIT
 #define GRN_PTR_INIT(obj, flags, domain)                                       \
   GRN_OBJ_INIT((obj),                                                          \
-               ((flags)&GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,               \
+               ((flags) & GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,             \
                ((flags) & (GRN_OBJ_DO_SHALLOW_COPY | GRN_OBJ_OWN)),            \
                (domain))
 #define GRN_TOKYO_GEO_POINT_INIT(obj, flags)                                   \
@@ -1666,6 +2921,11 @@ grn_ctx_recv_handler_set(grn_ctx *,
     uint64_t _val = (uint64_t)(val);                                           \
     grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint64_t));     \
   } while (0)
+#define GRN_BFLOAT16_SET(ctx, obj, val)                                        \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_bfloat16)); \
+  } while (0)
 #define GRN_FLOAT32_SET(ctx, obj, val)                                         \
   do {                                                                         \
     float _val = (float)(val);                                                 \
@@ -1689,8 +2949,14 @@ grn_ctx_recv_handler_set(grn_ctx *,
   } while (0)
 
 #define GRN_GEO_DEGREE2MSEC(degree)                                            \
-  ((int32_t)((degree)*3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
+  ((int32_t)((degree) * 3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
 #define GRN_GEO_MSEC2DEGREE(msec) ((((int32_t)(msec)) / 3600.0) * 0.001)
+#define GRN_GEO_RESOLUTION        3600000
+#define GRN_GEO_M_PI              3.14159265358979323846
+#define GRN_GEO_RADIAN2MSEC(radian)                                            \
+  ((int32_t)(((GRN_GEO_RESOLUTION * 180) / GRN_GEO_M_PI) * (radian)))
+#define GRN_GEO_MSEC2RADIAN(msec)                                              \
+  ((GRN_GEO_M_PI / (GRN_GEO_RESOLUTION * 180)) * (msec))
 
 #define GRN_GEO_POINT_SET(ctx, obj, _latitude, _longitude)                     \
   do {                                                                         \
@@ -1781,6 +3047,15 @@ grn_ctx_recv_handler_set(grn_ctx *,
                         (offset) * sizeof(uint64_t),                           \
                         sizeof(uint64_t));                                     \
   } while (0)
+#define GRN_BFLOAT16_SET_AT(ctx, obj, offset, val)                             \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write_from((ctx),                                                 \
+                        (obj),                                                 \
+                        (char *)&_val,                                         \
+                        (offset) * sizeof(grn_bfloat16),                       \
+                        sizeof(grn_bfloat16));                                 \
+  } while (0)
 #define GRN_FLOAT32_SET_AT(ctx, obj, offset, val)                              \
   do {                                                                         \
     float _val = (float)(val);                                                 \
@@ -1819,25 +3094,33 @@ grn_ctx_recv_handler_set(grn_ctx *,
                         sizeof(grn_obj *));                                    \
   } while (0)
 
-#define GRN_BOOL_VALUE(obj)    (*((bool *)GRN_BULK_HEAD(obj)))
-#define GRN_INT8_VALUE(obj)    (*((int8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT8_VALUE(obj)   (*((uint8_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT16_VALUE(obj)   (*((int16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT16_VALUE(obj)  (*((uint16_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT32_VALUE(obj)   (*((int32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT32_VALUE(obj)  (*((uint32_t *)GRN_BULK_HEAD(obj)))
-#define GRN_INT64_VALUE(obj)   (*((int64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_UINT64_VALUE(obj)  (*((uint64_t *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT32_VALUE(obj) (*((float *)GRN_BULK_HEAD(obj)))
-#define GRN_FLOAT_VALUE(obj)   (*((double *)GRN_BULK_HEAD(obj)))
-#define GRN_TIME_VALUE         GRN_INT64_VALUE
-#define GRN_RECORD_VALUE(obj)  (*((grn_id *)GRN_BULK_HEAD(obj)))
-#define GRN_PTR_VALUE(obj)     (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_BOOL_VALUE(obj)          (*((bool *)GRN_BULK_HEAD(obj)))
+#define GRN_INT8_VALUE(obj)          (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj)         (*((uint8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj)         (*((int16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj)        (*((uint16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT32_VALUE(obj)         (*((int32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT32_VALUE(obj)        (*((uint32_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT64_VALUE(obj)         (*((int64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT64_VALUE(obj)        (*((uint64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_BFLOAT16_VALUE(obj)      (*((grn_bfloat16 *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT32_VALUE(obj)       (*((float *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT_VALUE(obj)         (*((double *)GRN_BULK_HEAD(obj)))
+#define GRN_TIME_VALUE               GRN_INT64_VALUE
+#define GRN_RECORD_VALUE(obj)        (*((grn_id *)GRN_BULK_HEAD(obj)))
+#define GRN_PTR_VALUE(obj)           (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE(obj, _latitude, _longitude)                        \
   do {                                                                         \
-    grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);                 \
+    grn_geo_point *_val = GRN_GEO_POINT_VALUE_RAW(obj);                        \
     _latitude = _val->latitude;                                                \
     _longitude = _val->longitude;                                              \
+  } while (0)
+#define GRN_GEO_POINT_VALUE_RADIAN(obj, _latitude, _longitude)                 \
+  do {                                                                         \
+    grn_geo_point *_val = GRN_GEO_POINT_VALUE_RAW(obj);                        \
+    _latitude = GRN_GEO_MSEC2RADIAN(_val->latitude);                           \
+    _longitude = GRN_GEO_MSEC2RADIAN(_val->longitude);                         \
   } while (0)
 
 #define GRN_BOOL_VALUE_AT(obj, offset) (((bool *)GRN_BULK_HEAD(obj))[offset])
@@ -1856,6 +3139,8 @@ grn_ctx_recv_handler_set(grn_ctx *,
   (((int64_t *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT64_VALUE_AT(obj, offset)                                       \
   (((uint64_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_BFLOAT16_VALUE_AT(obj, offset)                                     \
+  (((grn_bfloat16 *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_FLOAT32_VALUE_AT(obj, offset)                                      \
   (((float *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_FLOAT_VALUE_AT(obj, offset) (((double *)GRN_BULK_HEAD(obj))[offset])
@@ -1909,6 +3194,11 @@ grn_ctx_recv_handler_set(grn_ctx *,
     uint64_t _val = (uint64_t)(val);                                           \
     grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint64_t));             \
   } while (0)
+#define GRN_BFLOAT16_PUT(ctx, obj, val)                                        \
+  do {                                                                         \
+    grn_bfloat16 _val = (grn_bfloat16)(val);                                   \
+    grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_bfloat16));         \
+  } while (0)
 #define GRN_FLOAT32_PUT(ctx, obj, val)                                         \
   do {                                                                         \
     float _val = (float)(val);                                                 \
@@ -1950,6 +3240,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_POP(obj, value)      GRN_BULK_POP(obj, value, uint32_t, 0)
 #define GRN_INT64_POP(obj, value)       GRN_BULK_POP(obj, value, int64_t, 0)
 #define GRN_UINT64_POP(obj, value)      GRN_BULK_POP(obj, value, uint64_t, 0)
+#define GRN_BFLOAT16_POP(obj, value)    GRN_BULK_POP(obj, value, grn_bfloat16, 0.0)
 #define GRN_FLOAT32_POP(obj, value)     GRN_BULK_POP(obj, value, float, 0.0)
 #define GRN_FLOAT_POP(obj, value)       GRN_BULK_POP(obj, value, double, 0.0)
 #define GRN_TIME_POP                    GRN_INT64_POP
@@ -1966,6 +3257,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_VECTOR_SIZE(obj)     GRN_BULK_VECTOR_SIZE(obj, uint32_t)
 #define GRN_INT64_VECTOR_SIZE(obj)      GRN_BULK_VECTOR_SIZE(obj, int64_t)
 #define GRN_UINT64_VECTOR_SIZE(obj)     GRN_BULK_VECTOR_SIZE(obj, uint64_t)
+#define GRN_BFLOAT16_VECTOR_SIZE(obj)   GRN_BULK_VECTOR_SIZE(obj, grn_bfloat16)
 #define GRN_FLOAT32_VECTOR_SIZE(obj)    GRN_BULK_VECTOR_SIZE(obj, float)
 #define GRN_FLOAT_VECTOR_SIZE(obj)      GRN_BULK_VECTOR_SIZE(obj, double)
 #define GRN_TIME_VECTOR_SIZE            GRN_INT64_VECTOR_SIZE
@@ -1977,7 +3269,7 @@ grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *
 grn_ctx_pop(grn_ctx *ctx);
 
-GRN_API int
+GRN_API grn_rc
 grn_obj_columns(grn_ctx *ctx,
                 grn_obj *table,
                 const char *str,

@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_kana", true,                      "unify_katakana_v_sounds", true,                      "report_source_offset", true)'   "うヴァヴィヴヴェヴォヴ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana", true,                   "unify_katakana_v_sounds", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "うヴァヴィヴヴェヴォヴ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -18,7 +18,8 @@ normalize   'NormalizerNFKC150("unify_kana", true,                      "unify_k
       "hiragana",
       "hiragana",
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
       3,
@@ -66,7 +67,8 @@ normalize   'NormalizerNFKC150("unify_kana", true,                      "unify_k
       21,
       24,
       27,
-      30
+      30,
+      33
     ]
   }
 ]

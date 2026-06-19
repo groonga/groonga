@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2014-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "groonga/build_option.h"
 #include "groonga/version.h"
 
 #include "groonga/portability.h"
@@ -27,6 +28,7 @@
 
 #include "groonga/accessor.h"
 #include "groonga/aggregator.h"
+#include "groonga/applier.h"
 #include "groonga/array.h"
 #include "groonga/arrow.h"
 #include "groonga/cache.h"
@@ -35,17 +37,23 @@
 #include "groonga/config.h"
 #include "groonga/dat.h"
 #include "groonga/db.h"
+#include "groonga/distance.h"
 #include "groonga/dump.h"
 #include "groonga/error.h"
 #include "groonga/expr.h"
 #include "groonga/file_reader.h"
+#include "groonga/float.h"
 #include "groonga/geo.h"
+#include "groonga/h3.h"
 #include "groonga/hash.h"
 #include "groonga/highlighter.h"
 #include "groonga/id.h"
 #include "groonga/ii.h"
 #include "groonga/index_column.h"
+#include "groonga/json.h"
+#include "groonga/language_model.h"
 #include "groonga/memory.h"
+#include "groonga/memory_map.h"
 #include "groonga/obj.h"
 #include "groonga/operator.h"
 #include "groonga/option.h"
@@ -59,6 +67,7 @@
 #include "groonga/request_timer.h"
 #include "groonga/result_set.h"
 #include "groonga/selector.h"
+#include "groonga/sorter.h"
 #include "groonga/string.h"
 #include "groonga/table.h"
 #include "groonga/table_module.h"

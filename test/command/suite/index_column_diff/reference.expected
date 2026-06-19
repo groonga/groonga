@@ -34,9 +34,7 @@ index_column_diff Values data_index
         "id": 1,
         "value": "Hello World"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1
@@ -48,9 +46,7 @@ index_column_diff Values data_index
         "id": 2,
         "value": "Hello Groonga"
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2

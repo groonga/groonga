@@ -11,4 +11,6 @@ load --table Entries
 table_create Numbers TABLE_PAT_KEY Int32
 column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION Entries numbers
 
+index_column_diff Numbers entries_numbers
+
 select Entries --filter 'numbers[1] > 19'

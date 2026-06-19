@@ -35,10 +35,8 @@ check --obj Memos.content
           "value": 0
         }
       ],
-      "garbage_counts": {
-      },
-      "free_elements": {
-      }
+      "garbage_counts": {},
+      "free_elements": {}
     },
     "summary": {
       "flags": "0000C000",
@@ -167,10 +165,8 @@ check --obj Memos.content
           "value": 0
         }
       ],
-      "garbage_counts": {
-      },
-      "free_elements": {
-      }
+      "garbage_counts": {},
+      "free_elements": {}
     },
     "summary": {
       "flags": "0000C000",

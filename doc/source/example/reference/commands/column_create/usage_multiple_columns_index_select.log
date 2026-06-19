@@ -1,51 +1,51 @@
 Execution example::
 
   log_level --level info
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   select \
     --table People \
     --filter 'roles @^ "Younger"'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "age", 
+  #           "age",
   #           "UInt8"
-  #         ], 
+  #         ],
   #         [
-  #           "roles", 
+  #           "roles",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "alice", 
-  #         7, 
+  #         1,
+  #         "alice",
+  #         7,
   #         [
-  #           "adventurer", 
+  #           "adventurer",
   #           "younger-sister"
   #         ]
   #       ]
   #     ]
   #   ]
   # ]
-  # log: 2022-03-28 15:41:01.320091|i| [table-selector][select][index][prefix] <Names.people_key_roles_index>
+  # log: 2023-10-05 17:26:13.890356|i| [table-selector][select][index][prefix] <Names.people_key_roles_index>
   log_level --level notice
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

@@ -24,10 +24,10 @@ msgstr "名前"
 msgid "groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
 msgstr ""
 
-msgid "SYNOPSTIS"
+msgid "SYNOPSIS"
 msgstr ""
 
-msgid "DESCTIPION"
+msgid "DESCRIPTION"
 msgstr ""
 
 msgid "groonga-suggest-create-dataset creates a dataset for :doc:`/reference/suggest`. A database has many datasets. This command just defines schema for a suggestion dataset."

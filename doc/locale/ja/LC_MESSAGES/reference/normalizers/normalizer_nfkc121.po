@@ -21,6 +21,12 @@ msgstr "実行例::"
 msgid "``NormalizerNFKC121``"
 msgstr ""
 
+msgid "Use :doc:`./normalizer_nfkc` instead."
+msgstr "代わりに :doc:`./normalizer_nfkc` をご利用ください。"
+
+msgid "``NormalizerNFKC121`` and ``NormalizerNFKC(\"version\", \"12.1.0\")`` are equal."
+msgstr "``NormalizerNFKC121`` は ``NormalizerNFKC(\"version\", \"12.1.0\")`` と同じです。"
+
 msgid "Summary"
 msgstr "概要"
 
@@ -34,7 +40,7 @@ msgid "Syntax"
 msgstr "構文"
 
 msgid "``NormalizerNFKC121`` has optional parameter."
-msgstr "``TokenFilterNFKC121`` は省略可能な引数があります。"
+msgstr "``NormalizerNFKC121`` は省略可能な引数があります。"
 
 msgid "No options::"
 msgstr "オプションなし::"

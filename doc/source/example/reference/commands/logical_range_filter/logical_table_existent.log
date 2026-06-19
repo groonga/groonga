@@ -1,12 +1,11 @@
 Execution example::
 
   logical_range_filter --logical_table Entries --shard_key created_at
-
   # [
   #   [
   #     0,
-  #     1519131606.676006,
-  #     0.0006020069122314453
+  #     1337566253.89858,
+  #     0.000355720520019531
   #   ],
   #   [
   #     [

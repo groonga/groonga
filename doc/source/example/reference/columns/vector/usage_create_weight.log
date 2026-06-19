@@ -1,6 +1,6 @@
 Execution example::
 
   table_create Bookmarks TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Bookmarks tags COLUMN_VECTOR|WITH_WEIGHT ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

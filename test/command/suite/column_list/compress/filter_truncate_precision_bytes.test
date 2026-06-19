@@ -1,0 +1,8 @@
+#@require-feature blosc
+
+table_create Memos TABLE_NO_KEY
+column_create Memos scores \
+  COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE|COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES \
+  Float
+
+column_list Memos

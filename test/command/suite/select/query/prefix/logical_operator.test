@@ -1,0 +1,12 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+["name"],
+["Alice"]
+]
+
+select Users \
+  --match_columns name \
+  --query "Bo* OR li"

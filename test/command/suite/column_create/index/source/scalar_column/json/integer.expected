@@ -1,0 +1,87 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": "{\"value\": [[1, 10], [100]]}"},
+{"value": "{\"value\": [[2], [20, 200]]}"},
+{"value": "{\"value\": [[-1, -10], [-100]]}"}
+]
+[[0,0.0,0.0],3]
+table_create Numbers TABLE_PAT_KEY Int32   --extractors 'ExtractorJSON("path", "$.value[*][*]")'
+[[0,0.0,0.0],true]
+column_create Numbers data_value COLUMN_INDEX Data value
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": "{\"value\": [[], [15, 150]]}"}
+]
+[[0,0.0,0.0],1]
+select Data --filter 'between(Numbers.data_value, 10, 20)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "value",
+          "JSON"
+        ]
+      ],
+      [
+        1,
+        {
+          "value": [
+            [
+              1,
+              10
+            ],
+            [
+              100
+            ]
+          ]
+        }
+      ],
+      [
+        4,
+        {
+          "value": [
+            [],
+            [
+              15,
+              150
+            ]
+          ]
+        }
+      ],
+      [
+        2,
+        {
+          "value": [
+            [
+              2
+            ],
+            [
+              20,
+              200
+            ]
+          ]
+        }
+      ]
+    ]
+  ]
+]
+index_column_diff Numbers data_value
+[[0,0.0,0.0],[]]

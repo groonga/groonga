@@ -9,43 +9,43 @@ Execution example::
     --drilldowns[tag.n_likes].offset 1
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     {
   #       "tag.n_likes": [
   #         [
   #           3
-  #         ], 
+  #         ],
   #         [
   #           [
-  #             "_key", 
+  #             "_key",
   #             "ShortText"
-  #           ], 
+  #           ],
   #           [
-  #             "_nsubrecs", 
+  #             "_nsubrecs",
   #             "Int32"
   #           ]
-  #         ], 
+  #         ],
   #         [
-  #           "Groonga", 
+  #           "Groonga",
   #           2
-  #         ], 
+  #         ],
   #         [
-  #           "Senna", 
+  #           "Senna",
   #           2
   #         ]
   #       ]

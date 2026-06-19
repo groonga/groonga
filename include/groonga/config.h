@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +39,7 @@ GRN_API grn_rc grn_config_delete(grn_ctx *ctx,
                                  const char *key, int32_t key_size);
 
 GRN_API grn_obj *grn_config_cursor_open(grn_ctx *ctx);
-GRN_API grn_bool grn_config_cursor_next(grn_ctx *ctx, grn_obj *cursor);
+GRN_API bool grn_config_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 GRN_API uint32_t grn_config_cursor_get_key(grn_ctx *ctx,
                                            grn_obj *cursor,
                                            const char **key);

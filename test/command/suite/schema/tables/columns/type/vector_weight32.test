@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerAuto
 
 table_create Posts TABLE_HASH_KEY ShortText

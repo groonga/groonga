@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,6 +44,8 @@ typedef enum {
   GRN_WAL_EVENT_DELETE_INFO_PHASE1,
   GRN_WAL_EVENT_DELETE_INFO_PHASE2,
   GRN_WAL_EVENT_DELETE_INFO_PHASE3,
+  GRN_WAL_EVENT_DEFRAG_KEY,
+  GRN_WAL_EVENT_DEFRAG_CURRENT_KEY,
 } grn_wal_event;
 
 const char *

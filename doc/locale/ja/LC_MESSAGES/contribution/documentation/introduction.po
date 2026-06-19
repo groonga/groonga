@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"PO-Revision-Date: 2025-12-24 11:01+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -19,35 +19,47 @@ msgstr ""
 msgid "Introduction"
 msgstr "導入"
 
-msgid "This documentation describes about how to write, generate and manage Groonga documentation."
-msgstr "この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
+msgid "This document outlines the procedures for writing, generating, and managing Groonga's documentation. By following the steps below, you can contribute to enhancing and updating Groonga's documentation."
+msgstr "このドキュメントは、Groongaドキュメントの執筆、生成、管理の手順について説明します。以下の手順で、Groongaドキュメントの向上や更新に貢献できます。"
 
-msgid "Install depended software"
+msgid "How to fork and clone Groonga repository"
+msgstr "Groongaリポジトリをフォークしクローンする方法"
+
+msgid "Contributing to Groonga's documentation begins with forking and cloning the Groonga repository. These actions are essential first steps that enable personal modifications and experimentation in your personal repository. And also, it enables you to submit them as your contributions to the Groonga repository. Follow these steps."
+msgstr "Groongaドキュメントへ貢献するには、まずはGroongaリポジトリをフォークしクローンするとこから始めます。そうすることで、あなたのリポジトリで個人的な変更や実験が可能になります。他にも、その成果をGroongaリポジトリにあなたの貢献として送ることもできます。まずは、次の手順に倣って、フォークとクローンをしてください。"
+
+msgid "Go to https://github.com/groonga/groonga on GitHub"
+msgstr "GitHubの https://github.com/groonga/groonga へ移動してください。"
+
+msgid "Click the `Fork` button to create a copy of the repository"
+msgstr "`Fork` ボタンをクリックして、Groongaリポジトリをフォークしてください。"
+
+msgid "Clone your Groonga repository with the following command"
+msgstr "下記のコマンドでフォークしたGroongaリポジトリをクローンしてください。"
+
+msgid "Install dependent software"
 msgstr "必要なソフトウェアのインストール"
 
-msgid "Groonga uses Sphinx_ as documentation tool."
-msgstr "Groongaはドキュメントツールとして Sphinx_ を使います。"
+msgid "Groonga uses [Sphinx](https://www.sphinx-doc.org/) as documentation tool."
+msgstr "Groongaはドキュメントツールとして [Sphinx](https://www.sphinx-doc.org/) を使います。"
 
 msgid "Here are command lines to install Sphinx."
 msgstr "以下はSphinxをインストールするコマンドラインです。"
 
-msgid "Debian GNU/Linux, Ubuntu::"
+msgid "Debian GNU/Linux, Ubuntu:"
 msgstr ""
 
-msgid "CentOS, Fedora::"
+msgid "AlmaLinux, Fedora:"
 msgstr ""
 
-msgid "OS X::"
+msgid "macOS:"
 msgstr ""
 
-msgid "If the version of Python on your platform is too old, you'll need to install a newer version of Python 2.7 by your hand. For example, here are installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_::"
-msgstr "プラットフォームに存在するPythonのバージョンが古すぎる場合は、Python 2.7のより新しいバージョンを手動でインストールする必要があります。例えば、 `pyenv <https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
+msgid "Run `cmake` with `--preset=doc`"
+msgstr "`cmake` を `--preset=doc` 付きで実行"
 
-msgid "Run ``configure`` with ``--enable-document``"
-msgstr "``configure`` を ``--enable-document`` 付きで実行"
-
-msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding ``--enable-document`` option to ``configure``::"
-msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 ``configure`` に ``--enable-document`` オプションを追加して明示的に有効にする必要があります。::"
+msgid "Groonga disables documentation generation by default. You need to enable it explicitly by adding `--preset=doc` option to `cmake`:"
+msgstr "Groonga は、デフォルトではドキュメントの生成を無効化しています。 `cmake` に `--preset=doc` オプションを追加して明示的に有効にする必要があります。:"
 
 msgid "Now, your Groonga build is documentation ready."
 msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
@@ -55,23 +67,164 @@ msgstr "これで、 Groonga ドキュメントをビルドする準備が出来
 msgid "Generate HTML"
 msgstr "HTMLファイルを生成"
 
-msgid "You can generate HTML by the following command::"
-msgstr "以下のコマンドでHTMLファイルを生成できます。::"
+msgid "You can generate HTML by the following command:"
+msgstr "以下のコマンドでHTMLファイルを生成できます。:"
 
-msgid "You can find generated HTML documentation at ``doc/locale/en/html/``."
-msgstr "生成されたHTMLドキュメントは ``doc/locale/ja/html/`` にあります。"
+msgid "You can find generated HTML documentation at `../groonga.doc/doc/en/html/`."
+msgstr "生成されたHTMLドキュメントは `../groonga.doc/doc/ja/html/` にあります。"
 
-msgid "Update"
-msgstr "更新"
+msgid "How to edit documentation"
+msgstr "ドキュメントを編集する方法"
 
-msgid "You can find sources of documentation at ``doc/source/``. The sources should be written in English. See :doc:`i18n` about how to translate documentation."
-msgstr "ドキュメントのソースは ``doc/source/`` にあります。ソースは英語で書かれているはずです。ドキュメントの翻訳方法については、 :doc:`i18n` をご覧ください。"
+msgid "The Groonga documentation is written in [reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) or [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) . These files are located in the `doc/source`. Each page of the documentation corresponds to a `.rst` file or a `.md` file. By modifying the corresponding file, you can edit the target document. For Example, if you want to edit this {doc}`introduction` page, you should edit the `doc/source/contribution/documentation/introduction.rst` file. Please find the file you wish to edit and make your changes."
+msgstr "Groongaドキュメントは、[reStructuredText (.rst)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) または [Markdown (.md)](https://myst-parser.readthedocs.io/en/latest/) で書かれています。Groongaドキュメントのファイルは、`doc/source` 配下にあります。それぞれのページに対応した `.rst` ファイルまたは、 `.md` が必ず１つあります。対応するファイルを変更することで、対象のドキュメントを編集できます。例えば、この {doc}`introduction` ページを編集したい場合は、`doc/source/contribution/documentation/introduction.rst` ファイルを編集すればよいです。編集したいファイルをみつけて、編集してください。"
 
-msgid "You can update the target file when you update the existing documentation file."
-msgstr "既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新できます。"
+msgid "How to add a new documentation"
+msgstr "新しいドキュメントを追加する方法"
 
-msgid "You need to update file list after you add a new file, change file path and delete existing file. You can update file list by the following command::"
-msgstr "新規ファイル追加・ファイル位置変更・ファイル削除の後は、ファイル一覧を更新する必要があります。以下のコマンドでファイル一覧を更新できます。::"
+msgid "If you want to add a new documentation, you need to add the new documentation into `doc/files.am` and `doc/files.cmake` by the following command lines."
+msgstr "新しいドキュメントを追加したい場合は、以下のコマンドで新しいドキュメントを `doc/files.am`と `doc/files.cmake` に追加する必要があります。"
 
-msgid "The command updates ``doc/files.am``."
-msgstr "このコマンドは ``doc/files.am`` を更新します。"
+msgid "Note that you need to commit not only the new documentation but also `doc/files.am` and `doc/files.cmake` in this case."
+msgstr "このケースでは、新しいドキュメントだけでなく、 `doc/files.am` と `doc/files.cmake` もコミットする必要があることに注意してください。"
+
+msgid "Preview changes on HTML files"
+msgstr "HTMLファイルで変更を確認する"
+
+msgid "You can preview your documentation changes in your browser in HTML format. Follow these two steps."
+msgstr "HTML形式でドキュメントの変更をブラウザで確認できます。次の２つの手順に倣ってください。"
+
+msgid "Generate the HTML files with your changes"
+msgstr "変更を反映したHTMLファイルを生成する"
+
+msgid "Preview the generated HTML files in your Web browser"
+msgstr "Webブラウザで生成されたHTMLファイルを確認する"
+
+msgid "Use the following command to generate HTML files that reflect your changes. The generated files will be located in `../groonga.doc/doc/en/html/`. Each file corresponds to a `.rst` or `.md` file:"
+msgstr "次のコマンドで、変更を反映したHTMLファイルを生成します。生成されたファイルは、`../groonga.doc/doc/en/html/` 配下にあります。各 `.rst` または `.md` ファイルに対応するファイルが生成されています。"
+
+msgid "Open the generated file in your Web browser to preview your changes. For example, if you have edited this {doc}`introduction` page, you can preview it by the following command:"
+msgstr "生成されたファイルをWebブラウザで開き、変更を確認できます。例えば、この {doc}`introduction` ページを編集した場合、次のコマンドで変更を確認できます。"
+
+msgid "Send patch"
+msgstr "パッチを送る"
+
+msgid "You can submit your patch to the Groonga repository on GitHub via a pull request. Feel free to send a pull request by following these steps."
+msgstr "GitHub上のGroongaリポジトリに対してプルリクエストを通じてパッチを送ることができます。次の手順で、気軽にプルリクエストを作ってみましょう。"
+
+msgid "Enable preview on your fork (optional)"
+msgstr "フォーク先リポジトリでプレビューを有効にする（任意）"
+
+msgid "Prepare your pull request"
+msgstr "プルリクエストの準備をする"
+
+msgid "Submit your pull request"
+msgstr "プルリクエストを送る"
+
+msgid "You can enable preview on your fork by following the steps below before pushing your commits:"
+msgstr "コミットをプッシュする前に、次の手順を実行することでフォークしたリポジトリ上でプレビューを有効にできます。"
+
+msgid "Enable GitHub Pages on your fork:"
+msgstr "フォークしたリポジトリで GitHub Pages を有効にする。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/pages`を開く"
+
+msgid "Select \"GitHub Actions\" as \"Source\""
+msgstr "\"Source\"に\"GitHub Actions\"を選択する"
+
+msgid "Accept publishing GitHub Pages from all branches on your fork:"
+msgstr "フォークしたリポジトリのすべてのブランチからGitHub Pagesの公開を許可する。"
+
+msgid "Open `https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`"
+msgstr "`https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga/settings/environments`を開く"
+
+msgid "Select the \"github-pages\" environment"
+msgstr "\"github-pages\"環境を選択する"
+
+msgid "Change the default \"Deployment branches and tags\" rule:"
+msgstr "デフォルトの\"Deployment branches and tags\"ルールを変更する"
+
+msgid "Press the \"Edit\" button"
+msgstr "\"Edit\"ボタンを押す"
+
+msgid "Change the \"Name pattern\" to `*` from `main`"
+msgstr "\"Name pattern\"を`main`から`*`に変更する"
+
+msgid "You can preview your changes at the following URLs after pushing your changes:"
+msgstr "変更をpushしたあと、次のURLで変更内容をプレビューできます。"
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/`"
+msgstr ""
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/ja/`"
+msgstr ""
+
+msgid "`https://${YOUR_GITHUB_ACCOUNT}.github.io/groonga/reference/api/`"
+msgstr ""
+
+msgid "Ensure your changes are committed and then push your changes to your fork repository on GitHub. Follow these commands:"
+msgstr "次のコマンドで、変更をコミットし、その変更をGitHubにある自分のフォークリポジトリにプッシュします。"
+
+msgid "Now you're ready to submit a pull request to the upstream Groonga repository. Follow these steps:"
+msgstr "これで、アップストリームのGroongaリポジトリにプルリクエストを送る準備ができました。次のステップに従い実際にプルリクエストを送ってみましょう。"
+
+msgid "Go to your fork repository on GitHub"
+msgstr "GitHubで自分のフォークリポジトリにアクセスします"
+
+msgid "Click the `Compare & pull request` button"
+msgstr "`Compare & pull request`ボタンをクリックします"
+
+msgid "Make sure your changes are reflected"
+msgstr "変更がすべて反映されているかを確認します"
+
+msgid "Click the `Create Pull Request` button and send your pull request"
+msgstr "`Create Pull Request`ボタンをクリックして、プルリクエストを送ります"
+
+msgid "Optional: Translate documentation"
+msgstr "任意: ドキュメントを翻訳する"
+
+msgid "This is an optional step."
+msgstr "任意のステップになります。"
+
+msgid "After editing and previewing the Groonga documentation, the next step is to translate the documents to make them accessible to a wider range of Groonga community users. Translating into languages other than English ensures that non-English speakers can also understand the Groonga documentation. Follow these steps to translate Groonga documentation."
+msgstr "Groongaドキュメントの編集とプレビューが完了したら、次のステップは、ドキュメントの翻訳になります。翻訳をすることで、Groongaコミュニティのより広い範囲のユーザーがGroongaを利用しやすくなります。英語以外の言語に翻訳することで、非英語話者でもGroongaのドキュメントを理解しやすくなります。次の手順で、Groongaドキュメントを翻訳しましょう。"
+
+msgid "Translate the documentation in `.edit.po` files"
+msgstr "`.edit.po` ファイル内のドキュメントを翻訳する"
+
+msgid "Reflect translations to `.po` files"
+msgstr "翻訳を `.po` ファイルに反映する"
+
+msgid "Preview translations on HTML files"
+msgstr "HTMLファイルで翻訳を確認する"
+
+msgid "Use the following command to generate `.edit.po` files, which are translation files, corresponding to your changes. The generated files will be located in `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. Please add your translations to `.edit.po` files:"
+msgstr "次のコマンドで、翻訳用である `.edit.po` ファイルを生成します。生成されたファイルは `../groonga.doc/doc/locale/${LANGUAGE}/LC_MESSAGES` 配下にあります。各 `.rst` または `.md` ファイルに対応するファイルが生成されています。対応する `.edit.po` ファイルに翻訳を追加します。"
+
+msgid "For example, if you have edited the {doc}`introduction` page and want to add Japanese translations, update this `../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` file."
+msgstr "例えば、この {doc}`introduction` ページを編集して、日本語訳を追加したい場合は、`../groonga.doc/doc/ja/LC_MESSAGES/contribution/documentation/introduction.edit.po` ファイルを更新します。"
+
+msgid "Please do not modify the `.rst` or `.md` files while adding translations to the `.edit.po` files. Editing `.rst` or `.md` files without first reflecting the translations in `.po` files will result in the loss of those translations. If you want to edit `.rst` or `.md` files, ensure you first reflect your translations in `.po` files. The method to reflect translations will be introduced in the next step."
+msgstr "`.edit.po` ファイルに翻訳を追加している最中に、翻訳元の `.rst` または `.md` ファイルを変更しないでください。翻訳した内容を `.po` ファイルに反映せずにを翻訳元を編集してしまうと、翻訳内容が消えてしまいます。翻訳元を編集したい場合は先に翻訳内容を `.po` ファイルに反映してください。反映方法は次のステップで紹介します。"
+
+msgid "After adding your translations to the `.edit.po` files, the next step is to reflect these translations to the `.po` files. `.po` files are the finalized translation files. These `.po` files are located in `doc/locale/${LANGUAGE}/LC_MESSAGES`. Each file corresponds to a `.rst` or `.md` file. If you want to edit your translations, edit the corresponding `.edit.po` file and then reflect your changes to the `.po` file."
+msgstr "`.edit.po` ファイルに翻訳を追加した後、`.po` ファイルへ翻訳を反映するのが、次のステップになります。`.po` ファイルは、最終的な翻訳ファイルになります。ファイルは、`doc/locale/${LANGUAGE}/LC_MESSAGES` 配下にあります。各 `.rst` または `.md` ファイルに対応しています。翻訳を編集したい場合は、対応する `.edit.po` ファイルを編集してから、変更内容を `.po` ファイルに反映し直す必要があります。"
+
+msgid "To reflect translations from the `.edit.po` files to the `.po` files, use the following command:"
+msgstr "次のコマンドで、翻訳内容を `.edit.po` ファイルから `.po` ファイルへ反映します。"
+
+msgid "For example, if you have added Japanese translations about the {doc}`introduction` page and then execute the command above, your translations will be reflected to `/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` file."
+msgstr "例えば、この {doc}`introduction` ページの日本語訳を行い、上記のコマンドを実行した場合、翻訳内容は、`/doc/locale/ja/LC_MESSAGES/contribution/documentation/introduction.po` ファイルに反映されます。"
+
+msgid "Actually, the command to generate translation `.edit.po` files is the same as the one used for reflecting translations. Therefore, there's no need to memorize different commands for generating translation files and reflecting the translations."
+msgstr "実は、翻訳を反映するコマンドは、翻訳用の `.edit.po` ファイルを生成するコマンドと同じコマンドです。なので、翻訳用のファイル生成と翻訳の反映で違うコマンドを覚える必要はありません。"
+
+msgid "You can preview your translations in your Web browser in HTML format. The step for reflecting translations into `.po` files also generates the corresponding HTML files. These files are located in `../groonga.doc/doc/${LANGUAGE}/html/`. Each file corresponds to a `.rst` or `.md` file. Open the generated HTML file in your Web browser to review your translations."
+msgstr "翻訳が反映されたHTML形式のドキュメントをWebブラウザで確認できます。翻訳を `.po` ファイルに反映するステップにて、HTMLファイルも生成されています。これらのファイルは `../groonga.doc/doc/${LANGUAGE}/html/` 配下に生成されています。各ファイルは `.rst` または `.md` ファイルに対応しています。生成されたファイルをWebブラウザで開き、翻訳を確認できます。"
+
+msgid "For example, to preview the Japanese translation of the {doc}`introduction` page, use the following command:"
+msgstr "例えば、{doc}`introduction` ページに日本語訳を追加した場合、次のコマンドで確認できます"
+
+msgid "If the translations seem correct after preview, please send a patch. For more information on this process, see the [Send patch](#send-patch)"
+msgstr "翻訳を確認して正しく反映されていたらパッチを送りましょう。送り方については、[パッチを送る](#send-patch)を参照してください。"

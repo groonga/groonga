@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. database: tokenizers
+.. database: tokenizers_delimit
 
 .. _token-delimit:
 
@@ -30,7 +30,7 @@ No options(Extracts token by splitting one or more space characters (``U+0020``)
 
 Specify delimiter::
 
-  TokenDelimit("delimiter",  "delimiter1", delimiter", "delimiter2", ...)
+  TokenDelimit("delimiter",  "delimiter1", "delimiter", "delimiter2", ...)
 
 Specify delimiter with regular expression::
 
@@ -75,7 +75,7 @@ You can except the needless spaces by a ``pattern`` option as below example.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-delimit-pattern-option.log
-.. tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
+.. tokenize 'TokenDelimit("pattern", "\\\\.\\\\s*")' "This is a pen. This is an apple."
 
 Advanced usage
 --------------
@@ -83,7 +83,7 @@ Advanced usage
 ``delimiter`` option can also specify multiple delimiters.
 
 For example, ``Hello, World`` is tokenized to ``Hello`` and ``World``.
-``,`` and `` `` are delimiters in below example.
+``","`` and ``" "`` are delimiters in below example.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log

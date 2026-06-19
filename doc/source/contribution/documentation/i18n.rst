@@ -10,7 +10,7 @@ English into other languages such as Japanese. We'll put
 all documentations into doc/source/ and process them by
 Sphinx.
 
-.. _Sphinx I18N feature: http://sphinx.pocoo.org/latest/intl.html
+.. _Sphinx I18N feature: https://www.sphinx-doc.org/en/master/usage/advanced/intl.html
 
 But we still use Japanese in doc/source/ for now. We need to
 translate Japanese documentation in doc/source/ into
@@ -92,14 +92,14 @@ You can update ``.edit`` files by running ``make`` on
 How to edit ``.edit``
 ---------------------
 
-Both of ``.edit`` files and ``.po`` files are `PO files <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`_. 
+Both of ``.edit`` files and ``.po`` files are `PO files <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`_.
 ``.edit`` files are for editing and ``.po`` files are for versioning.
 
 In order to edit ``.edit`` files, there are some tools to edit.
 ``.edit`` files are just text, so you can use your favorite editor.
 
 Here is a list of editors specialized for editing ``.po`` files.
-You can use these editors to edit ``.edit`` files because they are actually 
+You can use these editors to edit ``.edit`` files because they are actually
 ``.po`` files.
 
 Emacs's po-mode_
@@ -187,7 +187,7 @@ Here are command lines to create patch::
 
   % git add doc/locale/ja/LC_MESSAGES/*.po
   % git commit
-  % git format-patch origin/master
+  % git format-patch origin/main
 
 You can find 000X-YYY.patch files in the current
 directory. Please send those files to us!

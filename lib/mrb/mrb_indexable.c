@@ -1,9 +1,11 @@
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright (C) 2013-2016  Brazil
+  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,13 +53,14 @@ indexable_find_index(mrb_state *mrb, mrb_value self)
   } else {
     grn_mrb_data *data;
     struct RClass *klass;
-    mrb_value args[2];
+    mrb_value args[3];
 
     data = &(ctx->impl->mrb);
     klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
     args[0] = grn_mrb_value_from_grn_obj(mrb, index_datum.index);
     args[1] = mrb_int_value(mrb, index_datum.section);
-    return mrb_obj_new(mrb, klass, 2, args);
+    args[2] = mrb_nil_value();
+    return mrb_obj_new(mrb, klass, 3, args);
   }
 }
 
@@ -91,13 +94,14 @@ indexable_indexes(mrb_state *mrb, mrb_value self)
   for (i = 0; i < n_index_data; i++) {
     grn_mrb_data *data;
     struct RClass *klass;
-    mrb_value args[2];
+    mrb_value args[3];
 
     data = &(ctx->impl->mrb);
     klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
     args[0] = grn_mrb_value_from_grn_obj(mrb, index_data[i].index);
     args[1] = mrb_int_value(mrb, index_data[i].section);
-    mrb_ary_push(mrb, mrb_indexes, mrb_obj_new(mrb, klass, 2, args));
+    args[2] = mrb_nil_value();
+    mrb_ary_push(mrb, mrb_indexes, mrb_obj_new(mrb, klass, 3, args));
   }
 
   if (index_data != &index_datum) {

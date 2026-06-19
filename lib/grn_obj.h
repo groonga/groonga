@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,7 +26,8 @@
 extern "C" {
 #endif
 
-grn_io *grn_obj_get_io(grn_ctx *ctx, grn_obj *obj);
+grn_io *
+grn_obj_get_io(grn_ctx *ctx, grn_obj *obj);
 
 void
 grn_obj_set_error(grn_ctx *ctx,
@@ -44,7 +46,6 @@ grn_obj_log(grn_ctx *ctx,
             const char *tag,
             const char *format,
             ...);
-
 
 #ifdef __cplusplus
 }

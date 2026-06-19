@@ -13,7 +13,9 @@ This section describes about command and built-in commands.
    :glob:
 
    command/command_version
+   command/n_workers
    command/output_format
+   command/output_trace_log
    command/pretty_print
    command/request_id
    command/request_timeout

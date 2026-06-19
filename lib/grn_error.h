@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2013-2016  Brazil
-  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2016  Brazil
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,7 +48,12 @@ extern "C" {
     grn_gctx.rc = GRN_SUCCESS;                                                 \
   } while (0)
 
-static grn_inline grn_rc
+void
+grn_error_init_from_env(void);
+void
+grn_error_cancel(grn_ctx *ctx);
+
+static inline grn_rc
 grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)
 {
   if (rc != GRN_SUCCESS) {
@@ -56,7 +62,7 @@ grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)
   return ctx->rc;
 }
 
-GRN_API grn_bool
+GRN_API bool
 grn_ctx_impl_should_log(grn_ctx *ctx);
 GRN_API void
 grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
@@ -68,7 +74,7 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap);
 GRN_API void
 grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 
-static grn_inline void
+static inline void
 grn_error_setv(grn_ctx *ctx,
                grn_log_level level,
                grn_rc rc,
@@ -78,7 +84,7 @@ grn_error_setv(grn_ctx *ctx,
                const char *format,
                va_list args)
 {
-  ctx->errlvl = level;
+  ctx->errlvl = (unsigned char)level;
   if (ctx->rc != GRN_CANCEL) {
     ctx->rc = rc;
   }
@@ -106,7 +112,7 @@ grn_error_setv(grn_ctx *ctx,
   va_end(logger_putv_args);
 }
 
-static grn_inline void
+static inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,
               grn_rc rc,
@@ -115,7 +121,7 @@ grn_error_set(grn_ctx *ctx,
               const char *function,
               const char *format,
               ...) GRN_ATTRIBUTE_PRINTF(7);
-static grn_inline void
+static inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,
               grn_rc rc,
@@ -271,7 +277,7 @@ grn_error_set(grn_ctx *ctx,
     do {                                                                       \
       grn_rc rc;                                                               \
       int errno_keep = errno;                                                  \
-      grn_bool show_errno = GRN_FALSE;                                         \
+      bool show_errno = false;                                                 \
       const char *system_message;                                              \
       char user_message[USER_MESSAGE_SIZE];                                    \
       system_message = grn_strerror(errno);                                    \
@@ -376,7 +382,7 @@ grn_error_set(grn_ctx *ctx,
       /* case STRUNCATE : */                                                   \
       default:                                                                 \
         rc = GRN_UNKNOWN_ERROR;                                                \
-        show_errno = GRN_TRUE;                                                 \
+        show_errno = true;                                                     \
         break;                                                                 \
       }                                                                        \
       grn_snprintf(user_message,                                               \
@@ -396,11 +402,17 @@ grn_error_set(grn_ctx *ctx,
 
 #else /* WIN32 */
 
+#  ifdef ESHUTDOWN
+#    define GRN_ESHUTDOWN ESHUTDOWN
+#  else                        /* e.g. __wasi__ */
+#    define GRN_ESHUTDOWN 9999 /* unused errno value */
+#  endif
+
 #  define SERR(...)                                                            \
     do {                                                                       \
       grn_rc rc;                                                               \
       int errno_keep = errno;                                                  \
-      grn_bool show_errno = GRN_FALSE;                                         \
+      bool show_errno = false;                                                 \
       const char *system_message = grn_error_get_current_system_message();     \
       char user_message[USER_MESSAGE_SIZE];                                    \
       switch (errno_keep) {                                                    \
@@ -517,7 +529,7 @@ grn_error_set(grn_ctx *ctx,
       case EPROTONOSUPPORT:                                                    \
         rc = GRN_OPERATION_NOT_SUPPORTED;                                      \
         break;                                                                 \
-      case ESHUTDOWN:                                                          \
+      case GRN_ESHUTDOWN:                                                      \
         rc = GRN_SOCKET_IS_ALREADY_SHUTDOWNED;                                 \
         break;                                                                 \
       case ETIMEDOUT:                                                          \
@@ -534,7 +546,7 @@ grn_error_set(grn_ctx *ctx,
         break;                                                                 \
       default:                                                                 \
         rc = GRN_UNKNOWN_ERROR;                                                \
-        show_errno = GRN_TRUE;                                                 \
+        show_errno = true;                                                     \
         break;                                                                 \
       }                                                                        \
       grn_snprintf(user_message,                                               \

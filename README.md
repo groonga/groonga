@@ -4,20 +4,17 @@ Groonga is an open-source fulltext search engine and column store.
 
 ## Reference manual
 
-See doc/source/ directory or http://groonga.org/docs/.
+See doc/source/ directory or https://groonga.org/docs/.
 
 Here are shortcut links:
 
-  * How to install: http://groonga.org/docs/install.html
-  * Tutorial: http://groonga.org/docs/tutorial.html
-  * How to build as a developer: http://groonga.org/docs/contribution/development/build.html
+  * How to install: https://groonga.org/docs/install.html
+  * Tutorial: https://groonga.org/docs/tutorial.html
+  * How to build as a developer: https://groonga.org/docs/contribution/development/build.html
 
 ## Community
 
-  * [@groonga on Twitter](https://twitter.com/groonga/)
-  * [Groonga page on Facebook](https://www.facebook.com/groonga)
-  * [Mailing list on SourceForge.net](http://lists.sourceforge.net/mailman/listinfo/groonga-talk)
-  * [Chat room on Gitter](https://gitter.im/groonga/public)
+See our Community page: https://groonga.org/docs/community.html
 
 ## Bundled software
 
@@ -31,10 +28,12 @@ Here are shortcut links:
   * Path: vendor/onigmo-source
   * License: BSD license. See vendor/onigmo-source/COPYING for details.
 
-### nginx
+### Zulip icon
 
-  * Path: vendor/nginx-${VERSION}
-  * License: BSD license. See vendor/nginx-${VERSION}/LICENSE for details.
+  * Path: doc/source/images/zulip-icon-128x128.png
+  * License: The Apache 2.0 license. The icon is from Zulip (https://zulip.com/).
+    Copyright 2011-2020 Dropbox, Inc., Kandra Labs, Inc., and contributors.
+    See https://github.com/zulip/zulip/blob/main/LICENSE for details.
 
 ## Authors
 

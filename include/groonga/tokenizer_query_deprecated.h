@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +39,7 @@ struct _grn_tokenizer_query_deprecated {
   unsigned int length;
   grn_encoding encoding;
   unsigned int flags;
-  grn_bool have_tokenized_delimiter;
+  bool have_tokenized_delimiter;
   /* Deprecated since 4.0.8. Use tokenize_mode instead. */
   grn_token_mode token_mode;
   grn_tokenize_mode tokenize_mode;

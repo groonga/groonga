@@ -1,0 +1,16 @@
+table_create Terms TABLE_PAT_KEY ShortText   --extractors ExtractorNonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[info][set][extractors][Terms] failed to parse extractors: <ExtractorNonexistent>: Syntax error: <ExtractorNonexistent||>: [exp"
+  ],
+  false
+]
+#|e| [expr][parse] unknown identifier: <ExtractorNonexistent>
+#|e| Syntax error: <ExtractorNonexistent||>: [expr][parse] unknown identifier: <ExtractorNonexistent>
+#|e| [info][set][extractors][Terms] failed to parse extractors: <ExtractorNonexistent>: Syntax error: <ExtractorNonexistent||>: [expr][parse] unknown identifier: <ExtractorNonexistent>
+dump

@@ -38,4 +38,4 @@ Execution example::
     "content": "MySQL has replication feature. Mroonga can use it."
   }
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 7]
+  # [[0,1337566253.89858,0.000355720520019531],7]

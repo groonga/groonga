@@ -1,4 +1,4 @@
 Execution example::
 
-  % groonga-suggest-learner --daemon ${DB_PATH}
+  $ groonga-suggest-learner --daemon ${DB_PATH}
   

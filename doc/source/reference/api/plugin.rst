@@ -58,13 +58,6 @@ Reference
    grn_plugin_mutex is available to make a critical section. See the
    following functions.
 
-.. c:function:: grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx)
-
-   grn_plugin_mutex_open() returns a pointer to a new object of
-   grn_plugin_mutex. Memory for the new object is obtained with
-   GRN_PLUGIN_MALLOC(). grn_plugin_mutex_open() returns NULL if sufficient
-   memory is not available.
-
 .. c:function:: void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex)
 
    grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then

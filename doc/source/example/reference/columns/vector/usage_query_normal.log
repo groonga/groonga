@@ -3,36 +3,36 @@ Execution example::
   select Bookmarks --match_columns tags --query mysql --output_columns _key,tags,_score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "tags", 
+  #           "tags",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://mroonga.org/", 
+  #         "http://mroonga.org/",
   #         [
-  #           "mroonga", 
-  #           "mysql", 
+  #           "mroonga",
+  #           "mysql",
   #           "groonga"
-  #         ], 
+  #         ],
   #         1
   #       ]
   #     ]

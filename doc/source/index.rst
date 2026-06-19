@@ -27,6 +27,7 @@ Groonga documentation
    troubleshooting
    development
    contribution
+   origin
 
 * :ref:`genindex`
 * :ref:`modindex`

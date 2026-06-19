@@ -3,21 +3,21 @@ Execution example::
   select Entries --output_columns --match_columns body --query 'groonga mysql' --output_columns 'highlight_html(body)' --command_version 2
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "highlight_html", 
+  #           "highlight_html",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "Mroonga is a <span class=\"keyword\">ＭｙＳＱＬ</span> storage engine based on <span class=\"keyword\">Groonga</span>. &lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <span class=\"keyword\">Groonga</span>."
   #       ]

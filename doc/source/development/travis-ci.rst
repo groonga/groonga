@@ -22,7 +22,7 @@ use apt-line for Ubuntu 14.04 LTS provided by Groonga project to install
 Groonga on Travis CI.
 
 You can custom build lifecycle by ``.travis.yml``. (See `Travis CI:
-Conifugration your Travis CI build with .travis.yml
+Configuration your Travis CI build with .travis.yml
 <http://about.travis-ci.org/docs/user/build-configuration/>`_.) You
 can use ``before_install`` hook or ``install`` hook. You should use
 ``before_install`` if your software uses a language that is supported
@@ -33,7 +33,7 @@ Add the following ``sudo`` and ``before_install`` configuration to
 
   sudo: required
   before_install:
-    - curl --silent --location https://raw.githubusercontent.com/groonga/groonga/master/data/travis/setup.sh | sh
+    - curl --silent --location https://raw.githubusercontent.com/groonga/groonga/HEAD/data/travis/setup.sh | sh
 
 ``sudo: required`` configuration is required because ``sudo`` command
 is used in the setup script.

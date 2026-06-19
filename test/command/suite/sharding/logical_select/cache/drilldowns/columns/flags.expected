@@ -88,39 +88,27 @@ logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0  
         ],
         [
           "Drink",
-          [
-
-          ]
+          []
         ],
         [
           "Food",
-          [
-
-          ]
+          []
         ],
         [
           "Pen",
-          [
-
-          ]
+          []
         ],
         [
           "Box",
-          [
-
-          ]
+          []
         ],
         [
           "Book",
-          [
-
-          ]
+          []
         ],
         [
           "Note",
-          [
-
-          ]
+          []
         ]
       ]
     }
@@ -162,33 +150,27 @@ logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0  
         ],
         [
           "Drink",
-          {
-          }
+          {}
         ],
         [
           "Food",
-          {
-          }
+          {}
         ],
         [
           "Pen",
-          {
-          }
+          {}
         ],
         [
           "Box",
-          {
-          }
+          {}
         ],
         [
           "Book",
-          {
-          }
+          {}
         ],
         [
           "Note",
-          {
-          }
+          {}
         ]
       ]
     }

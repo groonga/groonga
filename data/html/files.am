@@ -50,7 +50,6 @@ nobase_dist_html_DATA = \
 	admin/assets/jquery-ui-1.12.1/jquery-ui.structure.css \
 	admin/assets/jquery-ui-1.12.1/jquery-ui.theme.css \
 	admin/assets/jquery-ui-1.12.1/package.json \
-	admin/assets/loading.gif \
 	admin/favicon.ico \
 	admin/favicon.png \
 	admin/favicon.svg \

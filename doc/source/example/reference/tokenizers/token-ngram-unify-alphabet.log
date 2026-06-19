@@ -1,66 +1,72 @@
 Execution example::
 
-  tokenize --tokenizer 'TokenNgram("unify_alphabet", false)' --string "abcd ABCD" --normaluzer NormalizeAuto
-  #[
-  #  [
-  #    0,
-  #    1558570398.145967,
-  #    0.0009109973907470703
-  #  ],
-  #  [
-  #    {
-  #      "value": "ab",
-  #      "position": 0,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "bc",
-  #      "position": 1,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "cd",
-  #      "position": 2,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "d ",
-  #      "position": 3,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": " A",
-  #      "position": 4,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "AB",
-  #      "position": 5,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "BC",
-  #      "position": 6,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "CD",
-  #      "position": 7,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "D",
-  #      "position": 8,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    }
-  #  ]
-  #]
+  tokenize --tokenizer 'TokenNgram("unify_alphabet", false)' --string "Hello World" --normalizer NormalizerAuto
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   [
+  #     {
+  #       "value": "he",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "el",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ll",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "lo",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "o",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "wo",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "or",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "rl",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "ld",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "d",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

@@ -2,6 +2,7 @@ groonga_includedir = $(pkgincludedir)/groonga
 groonga_include_HEADERS =			\
 	accessor.h				\
 	aggregator.h				\
+	applier.h				\
 	array.h					\
 	arrow.h					\
 	arrow.hpp				\
@@ -14,10 +15,14 @@ groonga_include_HEADERS =			\
 	config.h				\
 	dat.h					\
 	db.h					\
+	distance.h				\
 	dump.h					\
 	error.h					\
 	expr.h					\
+	extractor.h				\
 	file_reader.h				\
+	float.h					\
+	h3.h					\
 	hash.h					\
 	highlighter.h				\
 	geo.h					\
@@ -25,7 +30,10 @@ groonga_include_HEADERS =			\
 	id.h					\
 	ii.h					\
 	index_column.h				\
+	json.h					\
+	language_model.h			\
 	memory.h				\
+	memory_map.h				\
 	msgpack.h				\
 	obj.h					\
 	operator.h				\
@@ -42,9 +50,10 @@ groonga_include_HEADERS =			\
 	request_canceler.h			\
 	request_timer.h				\
 	result_set.h				\
-	selector.h				\
 	scorer.h				\
+	selector.h				\
 	smart_obj.hpp				\
+	sorter.h				\
 	string.h				\
 	table.h					\
 	table_module.h				\
@@ -68,4 +77,8 @@ groonga_include_HEADERS =			\
 	wal.h
 
 nodist_groonga_include_HEADERS =		\
+	build_option.h				\
 	version.h
+
+EXTRA_DIST =					\
+	build_option_cmake.h.in

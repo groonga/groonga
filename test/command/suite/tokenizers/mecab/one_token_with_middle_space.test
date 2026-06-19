@@ -1,0 +1,6 @@
+#@require-env MECAB_DICTIONARY_NAIST_JDIC
+#@require-feature mecab
+
+tokenize \
+  'TokenMecab' \
+  '聞き 糺せん'

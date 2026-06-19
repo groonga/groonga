@@ -3,109 +3,109 @@ Execution example::
   select --table Site --limit 0 --drilldown domain,country
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "country", 
+  #           "country",
   #           "SiteCountry"
-  #         ], 
+  #         ],
   #         [
-  #           "domain", 
+  #           "domain",
   #           "SiteDomain"
-  #         ], 
+  #         ],
   #         [
-  #           "link", 
+  #           "link",
   #           "Site"
-  #         ], 
+  #         ],
   #         [
-  #           "links", 
+  #           "links",
   #           "Site"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         ".org", 
+  #         ".org",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         ".net", 
+  #         ".net",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         ".com", 
+  #         ".com",
   #         3
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "japan", 
+  #         "japan",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "brazil", 
+  #         "brazil",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "usa", 
+  #         "usa",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "korea", 
+  #         "korea",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "china", 
+  #         "china",
   #         2
   #       ]
   #     ]

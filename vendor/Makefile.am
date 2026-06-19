@@ -3,7 +3,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +19,6 @@ SUBDIRS =					\
 	lz4					\
 	onigmo					\
 	mecab					\
-	message_pack				\
 	mruby					\
 	groonga-log
 
@@ -28,15 +28,13 @@ EXTRA_DIST =					\
 	download_groonga_normalizer_mysql.rb	\
 	download_lz4.rb				\
 	download_mecab.rb			\
-	download_message_pack.rb		\
 	download_rapidjson.rb			\
 	download.rb
 
 dist-hook:
 	GIT_DIR=$(srcdir)/mruby-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/mruby-source
-	$(MKDIR_P) $(distdir)/mruby-source/build
-	cp $(srcdir)/mruby-source/build/presym.inc $(distdir)/mruby-source/build
+	cp -r mruby/mruby-include $(distdir)/
 	$(MKDIR_P) $(distdir)/onigmo-source
 	GIT_DIR=$(srcdir)/onigmo-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/onigmo-source
@@ -46,3 +44,4 @@ dist-hook:
 	GIT_DIR=$(srcdir)/groonga-log-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/groonga-log-source
 	cd $(distdir) && $(RUBY) download_rapidjson.rb
+	cd $(distdir) && $(RUBY) download.rb

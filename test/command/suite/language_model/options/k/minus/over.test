@@ -1,0 +1,31 @@
+#@require-env GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR
+#@require-feature llama.cpp
+
+#@on-error omit
+plugin_register language_model/knn
+#@on-error default
+
+table_create Data TABLE_NO_KEY
+column_create Data text COLUMN_SCALAR ShortText
+column_create Data rabitq_code COLUMN_SCALAR ShortBinary
+
+load --table Data
+[
+{"text": "I am a boy."},
+{"text": "This is an apple."},
+{"text": "Groonga is a full text search engine."}
+]
+
+table_create RaBitQ TABLE_HASH_KEY ShortBinary \
+  --default_tokenizer \
+    'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF", \
+                           "code_column", "rabitq_code", \
+                           "passage_prefix", "passage: ", \
+                           "query_prefix", "query: ")'
+# This is for waiting for downloading model.
+#@timeout 300
+column_create RaBitQ data_text COLUMN_INDEX Data text
+
+select Data \
+  --filter 'language_model_knn(text, "male child", { "k" : -5 })' \
+  --output_columns text

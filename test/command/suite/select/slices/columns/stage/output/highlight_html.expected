@@ -81,6 +81,7 @@ select Memos   --query 'content:@is'   --slices[fast].query 'content:@fast'   --
     }
   ]
 ]
+#|d| DDL:2147483656:set_normalizers NormalizerAuto
 #>select --query "content:@is" --slices[fast].columns[highlighted_content].flags "COLUMN_SCALAR" --slices[fast].columns[highlighted_content].stage "output" --slices[fast].columns[highlighted_content].type "Text" --slices[fast].columns[highlighted_content].value "highlight_html(content)" --slices[fast].output_columns "_id,highlighted_content" --slices[fast].query "content:@fast" --slices[fast].sort_keys "-_id" --table "Memos"
 #:000000000000000 filter(3): Memos.content match "is"
 #:000000000000000 select(3)

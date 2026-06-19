@@ -1,45 +1,45 @@
 Execution example::
 
   column_create --table ToyBox --name location --type WGS84GeoPoint
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table ToyBox
   [
   {"_key":"Monkey","location":"128452975x503157902"}
   {"_key":"Block","location":"35.6813819x139.7660839"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   select --table ToyBox --output_columns _key,location
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Monkey", 
+  #         "Monkey",
   #         "128452975x503157902"
-  #       ], 
+  #       ],
   #       [
-  #         "Flower", 
+  #         "Flower",
   #         "0x0"
-  #       ], 
+  #       ],
   #       [
-  #         "Block", 
+  #         "Block",
   #         "128452975x503157902"
   #       ]
   #     ]

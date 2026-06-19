@@ -1,0 +1,37 @@
+plugin_register functions/string
+
+table_create --name Memos --flags TABLE_NO_KEY
+column_create \
+  --table Memos \
+  --name content_html \
+  --flags COLUMN_SCALAR \
+  --type ShortText
+
+load --table Memos
+[
+{"content_html": "Groonga is <em>fast</em> and <em>embeddable</em> full text search engine."},
+{"content_html": "PGroonga is a PostgreSQL extension that uses <em>Groonga</em>."},
+{"content_html": "PostgreSQL is a <em>RDBMS</em>."}
+]
+
+column_create \
+  --table Memos \
+  --name content_text \
+  --flags COLUMN_SCALAR \
+  --type ShortText \
+  --source content_html \
+  --generator 'html_untag(content_html)'
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+# This is important. This ensures Memos.content_text closed.
+database_unmap
+
+# Parsing string_length(content_text) opens Memos.content_text
+# implicitly. It parses --generator in Memos.content_text while
+# parsing string_length(content_text). Nested expression parsing must
+# happen.
+select \
+  --table Memos \
+  --output_columns "content_html,content_text,string_length(content_text)"

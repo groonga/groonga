@@ -1,0 +1,18 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("report_source_location", true)' \
+  --normalizer 'NormalizerNFKC150'
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+load --table Entries
+[
+{"body": "あいうえお"}
+]
+
+select Entries \
+  --match_columns body \
+  --query 'うえ' \
+  --output_columns 'highlight_html("", Terms)'
+

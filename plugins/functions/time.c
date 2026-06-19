@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -207,21 +208,21 @@ func_time_classify_raw(grn_ctx *ctx,
                        grn_time_classify_unit unit)
 {
   uint32_t interval_raw = 1;
-  bool accept_interval = GRN_TRUE;
+  bool accept_interval = true;
 
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
   case GRN_TIME_CLASSIFY_UNIT_MINUTE :
   case GRN_TIME_CLASSIFY_UNIT_HOUR :
-    accept_interval = GRN_TRUE;
+    accept_interval = true;
     break;
   case GRN_TIME_CLASSIFY_UNIT_DAY :
   case GRN_TIME_CLASSIFY_UNIT_WEEK :
-    accept_interval = GRN_FALSE;
+    accept_interval = false;
     break;
   case GRN_TIME_CLASSIFY_UNIT_MONTH :
   case GRN_TIME_CLASSIFY_UNIT_YEAR :
-    accept_interval = GRN_TRUE;
+    accept_interval = true;
     break;
   }
 
@@ -273,7 +274,7 @@ func_time_classify_raw(grn_ctx *ctx,
     }
 
     GRN_VALUE_FIX_SIZE_INIT(&casted_interval, 0, GRN_DB_UINT32);
-    grn_obj_cast(ctx, interval, &casted_interval, GRN_FALSE);
+    grn_obj_cast(ctx, interval, &casted_interval, false);
     interval_raw = GRN_UINT32_VALUE(&casted_interval);
     GRN_OBJ_FIN(ctx, &casted_interval);
 

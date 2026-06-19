@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,17 +38,17 @@ class GRN_DAT_API PrefixCursor : public Cursor {
             UInt32 limit = MAX_UINT32,
             UInt32 flags = 0);
 
-  void close();
+  void close() override;
 
-  const Key &next();
+  const Key &next() override;
 
-  UInt32 offset() const {
+  UInt32 offset() const override {
     return offset_;
   }
-  UInt32 limit() const {
+  UInt32 limit() const override {
     return limit_;
   }
-  UInt32 flags() const {
+  UInt32 flags() const override {
     return flags_;
   }
 

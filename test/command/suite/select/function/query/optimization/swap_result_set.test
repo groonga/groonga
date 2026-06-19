@@ -1,0 +1,13 @@
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR ShortText
+
+load --table Data
+[
+{"value": "a"},
+{"value": "b"},
+{"value": "c"},
+{"value": "d"},
+{"value": "e"}
+]
+
+select Data --filter 'query("value", "a OR b") && (true || true)'

@@ -71,8 +71,14 @@ The command returns the current status as an object::
       "starttime": STARTTIME,
       "uptime": UPTIME,
       "version": VERSION,
+      "n_jobs": N_JOBS,
       "features": FEATURES,
-      "apache_arrow": APACHE_ARROW_INFORMATION
+      "apache_arrow": APACHE_ARROW_INFORMATION,
+      "memory_map_size": MEMORY_MAP_SIZE,
+      "n_workers": N_WORKERS,
+      "default_n_workers": DEFAULT_N_WORKERS,
+      "os": OS,
+      "cpu": CPU_N_WORKERS
     }
   ]
 
@@ -150,9 +156,13 @@ values:
      - The version of the Groonga process.
      - ``5.0.7``
 
+   * - ``n_jobs``
+     - The number of unprocessed jobs.
+     - ``0``
+
    * - ``features``
      - .. versionadded:: 10.0.1
-     
+
        The list of Groonga's features and status (enabled or disabled).
      - .. code-block::
 
@@ -170,12 +180,15 @@ values:
              "poll": false,
              "rapidjson": false,
              "apache_arrow": false,
-             "xxhash": false
+             "xxhash": false,
+             "blosc": true,
+             "back_trace": true,
+             "reference_count": false
           }
-  
+
    * - ``apache_arrow``
      - .. versionadded:: 10.0.1
-     
+
        The information about Apache Arrow that Groonga currently uses. It's only displayed when Apache Arrow is enabled.
      - .. code-block::
 
@@ -185,3 +198,29 @@ values:
              "version_patch": 0,
              "version": "2.0.0"
           }
+
+   * - ``memory_map_size``
+     - The total mapped memory size by this Groonga process in bytes.
+     - ``2929``
+
+   * - ``n_workers``
+     - .. versionadded:: 13.1.2
+
+       The value of ``n_workers`` set in this context.
+     - ``0``
+
+   * - ``default_n_workers``
+     - .. versionadded:: 13.1.2
+
+       The default ``n_workers`` value of the Groonga process.
+     - ``0``
+   * - ``os``
+     - .. versionadded:: 14.0.8
+
+       The OS name.
+     - ``Linux``, ``Darwin``, ``Windows`` and so on
+   * - ``cpu``
+     - .. versionadded:: 14.0.8
+
+       The CPU architecture name.
+     - ``x86_64``, ``arm64`` and so on

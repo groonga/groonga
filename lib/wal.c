@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -88,6 +89,12 @@ grn_wal_event_to_string(grn_wal_event event)
     break;
   case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
     string = "delete-info-phase3";
+    break;
+  case GRN_WAL_EVENT_DEFRAG_KEY :
+    string = "defrag-key";
+    break;
+  case GRN_WAL_EVENT_DEFRAG_CURRENT_KEY :
+    string = "defrag-current-key";
     break;
   }
   return string;
@@ -658,6 +665,9 @@ bool
 grn_wal_exist(grn_ctx *ctx, grn_obj *obj)
 {
   grn_io *io = grn_obj_get_io(ctx, obj);
+  if (!io) {
+    return false;
+  }
   if (io->path[0] == '\0') {
     return false;
   }

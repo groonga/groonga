@@ -1,10 +1,11 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2020  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2013-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,56 +19,56 @@
 # set -x
 set -e
 
-if [ "$GROONGA_MASTER" = "yes" ]; then
+if [ "$GROONGA_MAIN" = "yes" ]; then
   sudo apt-get update -qq
   sudo apt install -qq -y -V \
        lsb-release \
        wget
-  wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+  wget https://packages.apache.org/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   sudo apt install -qq -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
-       autoconf-archive \
-       autotools-dev \
+       ccache \
+       cmake \
+       libarrow-compute-dev \
        libarrow-dev \
        libevent-dev \
        libmecab-dev \
        libmsgpack-dev \
        libstemmer-dev \
+       lsb-release \
        mecab-naist-jdic \
+       ninja-build \
        pkg-config
-  git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
-  cd groonga
-  touch lib/grn_ecmascript.c
-  ./autogen.sh
-  ./configure --prefix=/usr --localstatedir=/var --enable-debug
-  make -j$(nproc) > /dev/null
-  sudo make install > /dev/null
-  cd ..
+  distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
+  code_name=$(lsb_release --codename --short)
+  if [ "${distribution}-${code_name}" = "ubuntu-noble" ]; then
+    sudo apt-get install -qq -y -V \
+      libblas-dev \
+      liblapack-dev
+  else
+    sudo apt-get install -qq -y -V libfaiss-dev
+  fi
+  git clone --recursive --depth 1 --branch main https://github.com/groonga/groonga.git
+  touch groonga/lib/grn_ecmascript.c
+  cmake \
+    -S groonga \
+    -B groonga.build \
+    --preset debug-maximum \
+    -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_SYSCONFDIR=/etc
+  ninja -C groonga.build > /dev/null
+  sudo ninja -C groonga.build install > /dev/null
 else
   if dpkg -l libzmq3 > /dev/null 2>&1; then
     sudo apt-get purge libzmq3
   fi
 
   distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
-  case $distribution in
-    debian)
-      code_name=$(lsb_release --short --codename)
-      component=main
-      apt_url_base=https://packages.groonga.org
-      cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
-deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
-deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
-EOF
-      sudo apt-get update -qq
-      sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
-      ;;
-    ubuntu)
-      sudo apt-get install -qq -y -V software-properties-common
-      sudo add-apt-repository -y ppa:groonga/ppa
-      ;;
-  esac
-
+  codename=$(lsb_release --codename --short)
+  wget "https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${codename}.deb"
+  sudo apt install -y -V "./groonga-apt-source-latest-${codename}.deb"
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V groonga libgroonga-dev
 fi

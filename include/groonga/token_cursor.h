@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,8 +30,8 @@ typedef enum {
   GRN_TOKEN_CURSOR_NOT_FOUND
 } grn_token_cursor_status;
 
-#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01<<0)
-#define GRN_TOKEN_CURSOR_PARALLEL                   (0x01<<1)
+#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01 << 0)
+#define GRN_TOKEN_CURSOR_PARALLEL                   (0x01 << 1)
 
 typedef struct _grn_token_cursor grn_token_cursor;
 
@@ -58,7 +59,10 @@ GRN_API grn_rc
 grn_token_cursor_set_query_options(grn_ctx *ctx,
                                    grn_token_cursor *token_cursor,
                                    grn_obj *query_options);
-
+GRN_API grn_rc
+grn_token_cursor_set_query_domain(grn_ctx *ctx,
+                                  grn_token_cursor *token_cursor,
+                                  grn_id domain);
 GRN_API grn_id
 grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);
 

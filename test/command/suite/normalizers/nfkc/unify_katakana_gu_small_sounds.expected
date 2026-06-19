@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_katakana_gu_small_sounds", true,                   "report_source_offset", true)'   "グァグィググェグォ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_katakana_gu_small_sounds", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "グァグィググェグォ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -12,7 +12,8 @@ normalize   'NormalizerNFKC("unify_katakana_gu_small_sounds", true,             
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       6,
@@ -36,7 +37,8 @@ normalize   'NormalizerNFKC("unify_katakana_gu_small_sounds", true,             
       6,
       12,
       15,
-      21
+      21,
+      27
     ]
   }
 ]

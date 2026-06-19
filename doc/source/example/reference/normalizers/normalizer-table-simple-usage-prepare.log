@@ -1,12 +1,12 @@
 Execution example::
 
   table_create Normalizations TABLE_PAT_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Normalizations normalized COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Normalizations
   [
   {"_key": "a", "normalized": "<A>"},
   {"_key": "ac", "normalized": "<AC>"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

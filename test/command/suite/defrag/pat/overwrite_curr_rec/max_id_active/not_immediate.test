@@ -1,0 +1,37 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+column_create --table Users --name immediate --type Bool
+
+# Keys of 4 bytes or lower are stored immediately.
+# The max value of grn_id is immediate=false.
+load --table Users
+[
+{"_key":"User01", "immediate":false},
+{"_key":"User02", "immediate":false},
+{"_key":"User03", "immediate":false},
+{"_key":"U1", "immediate":true},
+{"_key":"U2", "immediate":true},
+{"_key":"User04", "immediate":false}
+]
+
+# Delete records with immediate=true/false to run defragmentation.
+delete Users User02
+delete Users U1
+
+# After defrag, curr_rec should be not reset.
+check Users
+defrag
+check Users
+select Users --sort_keys _id
+
+### Should load normally after defragmentation.
+load --table Users
+[
+{"_key":"Groonga", "immediate":false},
+{"_key":"Grn", "immediate":true}
+]
+
+check Users
+select Users --sort_keys _id

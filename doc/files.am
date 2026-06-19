@@ -20,9 +20,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/development/repository.rst \
 	$(top_srcdir)/doc/source/contribution/development/test.rst \
 	$(top_srcdir)/doc/source/contribution/documentation.rst \
-	$(top_srcdir)/doc/source/contribution/documentation/c-api.rst \
+	$(top_srcdir)/doc/source/contribution/documentation/c-api.md \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.rst \
-	$(top_srcdir)/doc/source/contribution/documentation/introduction.rst \
+	$(top_srcdir)/doc/source/contribution/documentation/introduction.md \
 	$(top_srcdir)/doc/source/contribution/report.rst \
 	$(top_srcdir)/doc/source/development.rst \
 	$(top_srcdir)/doc/source/development/travis-ci.rst \
@@ -48,6 +48,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_normal.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_weight.log \
+	$(top_srcdir)/doc/source/example/reference/command/n_workers/status.md \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_type.log \
@@ -64,6 +65,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/move_column_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/generated_column_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/generated_column_schema.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_load_initial.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_load_update.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_schema.log \
@@ -330,6 +333,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_distance.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_distance_ratio.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_max_expansions.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_prefix_length.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_tokenize.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/fuzzy_with_transposition.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/load_table.log \
@@ -368,7 +377,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_dynamic_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_fuzzy_max_distance_ratio.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_typo_tolerance_japanese.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_window_function.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/default.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/graceful.log \
@@ -415,6 +426,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_none.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/output_style/full.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/output_style/simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/string_include_spaces.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
@@ -469,6 +482,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/column_create.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/filter.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/index_column_create.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/sort_keys.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_k_option.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/usage_setup_schema.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_rerank.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_generated_column.md \
+	$(top_srcdir)/doc/source/example/reference/functions/language_model_vectorize/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/nearest_shops.log \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_schema.log \
@@ -625,6 +652,34 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-load.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-remove-symbol.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-hyphen.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-kana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-middle-dot.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-to-katakana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-to-romaji.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc-version.md \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc.md \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-katakana-gu-small-sounds.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log \
@@ -712,8 +767,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc150-unify-voiced-sound-mark-hiragana.log \
@@ -760,6 +817,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/suggest/correction/select.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/suggest/select.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/example-table-create.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-hyphen.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-kana.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-unify-to-romaji.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-version.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc-with-token-mecab.md \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc.md \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen.log \
@@ -795,6 +858,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop-word-columns-option.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop_word.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/column_create.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/index_column_create.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/select.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_register.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/language_model_knn/usage_setup_schema.md \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
@@ -851,6 +920,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_group_descending.log \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/window_functions/window_rank/usage_sort_keys.log \
+	$(top_srcdir)/doc/source/example/spec/gqtp/client.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -918,8 +988,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_posted_by.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_score.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_user.log \
-	$(top_srcdir)/doc/source/example/tutorial/network-1.log \
-	$(top_srcdir)/doc/source/example/tutorial/network-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-3.log \
 	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/patricia_trie_prefix_search.log \
@@ -1016,18 +1084,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-indexing.svg \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.png \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.svg \
+	$(top_srcdir)/doc/source/images/zulip-icon-128x128.png \
 	$(top_srcdir)/doc/source/index.rst \
 	$(top_srcdir)/doc/source/install.rst \
 	$(top_srcdir)/doc/source/install/almalinux.rst \
 	$(top_srcdir)/doc/source/install/amazon_linux.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
-	$(top_srcdir)/doc/source/install/cmake.rst \
+	$(top_srcdir)/doc/source/install/cmake.md \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
-	$(top_srcdir)/doc/source/install/server-use.inc \
-	$(top_srcdir)/doc/source/install/ubuntu.rst \
+	$(top_srcdir)/doc/source/install/server-use.md \
+	$(top_srcdir)/doc/source/install/server-use.rst \
+	$(top_srcdir)/doc/source/install/ubuntu.md \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
 	$(top_srcdir)/doc/source/news.rst \
@@ -1040,6 +1110,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/11.rst \
 	$(top_srcdir)/doc/source/news/12.rst \
 	$(top_srcdir)/doc/source/news/13.md \
+	$(top_srcdir)/doc/source/news/14.md \
+	$(top_srcdir)/doc/source/news/15.md \
+	$(top_srcdir)/doc/source/news/16.md \
 	$(top_srcdir)/doc/source/news/2.rst \
 	$(top_srcdir)/doc/source/news/3.rst \
 	$(top_srcdir)/doc/source/news/4.rst \
@@ -1049,6 +1122,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/8.rst \
 	$(top_srcdir)/doc/source/news/9.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
+	$(top_srcdir)/doc/source/origin.md \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/alias.rst \
 	$(top_srcdir)/doc/source/reference/api.rst \
@@ -1086,7 +1160,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/columns/vector.rst \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
+	$(top_srcdir)/doc/source/reference/command/n_workers.md \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
+	$(top_srcdir)/doc/source/reference/command/output_trace_log.md \
 	$(top_srcdir)/doc/source/reference/command/pretty_print.rst \
 	$(top_srcdir)/doc/source/reference/command/request_id.rst \
 	$(top_srcdir)/doc/source/reference/command/request_timeout.rst \
@@ -1105,6 +1181,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_rename.rst \
+	$(top_srcdir)/doc/source/reference/commands/compress_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_get.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_set.rst \
@@ -1187,6 +1264,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/language_model_knn.md \
+	$(top_srcdir)/doc/source/reference/functions/language_model_vectorize.md \
 	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/number_classify.rst \
@@ -1216,9 +1295,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.rst \
 	$(top_srcdir)/doc/source/reference/indexing.rst \
+	$(top_srcdir)/doc/source/reference/language_model.md \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_auto.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc.md \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc121.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc130.rst \
@@ -1245,6 +1326,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/token_filter/summary.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
+	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc.md \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc150.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
@@ -1261,6 +1343,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit_null.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_language_model_knn.md \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_ngram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_pattern.rst \
@@ -1328,9 +1411,9 @@ source_files_relative_from_doc_dir = \
 	source/contribution/development/repository.rst \
 	source/contribution/development/test.rst \
 	source/contribution/documentation.rst \
-	source/contribution/documentation/c-api.rst \
+	source/contribution/documentation/c-api.md \
 	source/contribution/documentation/i18n.rst \
-	source/contribution/documentation/introduction.rst \
+	source/contribution/documentation/introduction.md \
 	source/contribution/report.rst \
 	source/development.rst \
 	source/development/travis-ci.rst \
@@ -1356,6 +1439,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/columns/vector/usage_query_weight.log \
 	source/example/reference/columns/vector/usage_query_weight_normal.log \
 	source/example/reference/columns/vector/usage_query_weight_weight.log \
+	source/example/reference/command/n_workers/status.md \
 	source/example/reference/commands/cache_limit/get.log \
 	source/example/reference/commands/cache_limit/set.log \
 	source/example/reference/commands/column_copy/change_column_type.log \
@@ -1372,6 +1456,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_copy/move_column_setup.log \
 	source/example/reference/commands/column_copy/to_table.log \
 	source/example/reference/commands/column_copy/to_table_setup.log \
+	source/example/reference/commands/column_create/generated_column_load.log \
+	source/example/reference/commands/column_create/generated_column_schema.log \
 	source/example/reference/commands/column_create/invalid_mode_scalar_load_initial.log \
 	source/example/reference/commands/column_create/invalid_mode_scalar_load_update.log \
 	source/example/reference/commands/column_create/invalid_mode_scalar_schema.log \
@@ -1638,6 +1724,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldowns_label_table.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
+	source/example/reference/commands/select/fuzzy_max_distance.log \
+	source/example/reference/commands/select/fuzzy_max_distance_ratio.log \
+	source/example/reference/commands/select/fuzzy_max_expansions.log \
+	source/example/reference/commands/select/fuzzy_prefix_length.log \
+	source/example/reference/commands/select/fuzzy_tokenize.log \
+	source/example/reference/commands/select/fuzzy_with_transposition.log \
 	source/example/reference/commands/select/limit_negative.log \
 	source/example/reference/commands/select/limit_simple.log \
 	source/example/reference/commands/select/load_table.log \
@@ -1676,7 +1768,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/usage_drilldown.log \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
 	source/example/reference/commands/select/usage_dynamic_column.log \
+	source/example/reference/commands/select/usage_fuzzy_max_distance_ratio.log \
 	source/example/reference/commands/select/usage_setup.log \
+	source/example/reference/commands/select/usage_typo_tolerance_japanese.log \
 	source/example/reference/commands/select/usage_window_function.log \
 	source/example/reference/commands/shutdown/default.log \
 	source/example/reference/commands/shutdown/graceful.log \
@@ -1723,6 +1817,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/tokenize/normalizer_none.log \
 	source/example/reference/commands/tokenize/normalizer_use.log \
 	source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
+	source/example/reference/commands/tokenize/output_style/full.log \
+	source/example/reference/commands/tokenize/output_style/simple.log \
 	source/example/reference/commands/tokenize/simple_example.log \
 	source/example/reference/commands/tokenize/string_include_spaces.log \
 	source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
@@ -1777,6 +1873,20 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/language_model_knn/column_create.md \
+	source/example/reference/functions/language_model_knn/filter.md \
+	source/example/reference/functions/language_model_knn/index_column_create.md \
+	source/example/reference/functions/language_model_knn/sort_keys.md \
+	source/example/reference/functions/language_model_knn/usage_k_option.md \
+	source/example/reference/functions/language_model_knn/usage_register.md \
+	source/example/reference/functions/language_model_knn/usage_setup_data.md \
+	source/example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md \
+	source/example/reference/functions/language_model_knn/usage_setup_schema.md \
+	source/example/reference/functions/language_model_vectorize/usage_register.md \
+	source/example/reference/functions/language_model_vectorize/usage_rerank.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_data.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_generated_column.md \
+	source/example/reference/functions/language_model_vectorize/usage_setup_schema.md \
 	source/example/reference/functions/math_abs/nearest_shops.log \
 	source/example/reference/functions/math_abs/usage_setup_data.log \
 	source/example/reference/functions/math_abs/usage_setup_schema.log \
@@ -1933,6 +2043,34 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-load.log \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
+	source/example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.md \
+	source/example/reference/normalizers/normalizer-nfkc-remove-symbol.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-hyphen.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-kana.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-middle-dot.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-to-katakana.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-to-romaji.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.md \
+	source/example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.md \
+	source/example/reference/normalizers/normalizer-nfkc-version.md \
+	source/example/reference/normalizers/normalizer-nfkc.md \
 	source/example/reference/normalizers/normalizer-nfkc100-katakana-gu-small-sounds.log \
 	source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log \
@@ -2020,8 +2158,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log \
+	source/example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-to-romaji.log \
 	source/example/reference/normalizers/normalizer-nfkc150-unify-voiced-sound-mark-hiragana.log \
@@ -2068,6 +2208,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/suggest/correction/select.log \
 	source/example/reference/suggest/suggest/select.log \
 	source/example/reference/token_filters/example-table-create.log \
+	source/example/reference/token_filters/nfkc-unify-hyphen.md \
+	source/example/reference/token_filters/nfkc-unify-kana.md \
+	source/example/reference/token_filters/nfkc-unify-to-romaji.md \
+	source/example/reference/token_filters/nfkc-version.md \
+	source/example/reference/token_filters/nfkc-with-token-mecab.md \
+	source/example/reference/token_filters/nfkc.md \
 	source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
 	source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
 	source/example/reference/token_filters/nfkc100-unify-hyphen.log \
@@ -2103,6 +2249,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/token_filters/stem.log \
 	source/example/reference/token_filters/stop-word-columns-option.log \
 	source/example/reference/token_filters/stop_word.log \
+	source/example/reference/tokenizers/language_model_knn/column_create.md \
+	source/example/reference/tokenizers/language_model_knn/index_column_create.md \
+	source/example/reference/tokenizers/language_model_knn/select.md \
+	source/example/reference/tokenizers/language_model_knn/usage_register.md \
+	source/example/reference/tokenizers/language_model_knn/usage_setup_data.md \
+	source/example/reference/tokenizers/language_model_knn/usage_setup_schema.md \
 	source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
 	source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
 	source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
@@ -2159,6 +2311,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/window_functions/window_rank/usage_group_descending.log \
 	source/example/reference/window_functions/window_rank/usage_setup.log \
 	source/example/reference/window_functions/window_rank/usage_sort_keys.log \
+	source/example/spec/gqtp/client.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -2226,8 +2379,6 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/micro_blog_posted_by.log \
 	source/example/tutorial/micro_blog_score.log \
 	source/example/tutorial/micro_blog_user.log \
-	source/example/tutorial/network-1.log \
-	source/example/tutorial/network-2.log \
 	source/example/tutorial/network-3.log \
 	source/example/tutorial/patricia_trie-2.log \
 	source/example/tutorial/patricia_trie_prefix_search.log \
@@ -2324,18 +2475,20 @@ source_files_relative_from_doc_dir = \
 	source/images/reference/tokenizers/used-when-indexing.svg \
 	source/images/reference/tokenizers/used-when-searching.png \
 	source/images/reference/tokenizers/used-when-searching.svg \
+	source/images/zulip-icon-128x128.png \
 	source/index.rst \
 	source/install.rst \
 	source/install/almalinux.rst \
 	source/install/amazon_linux.rst \
 	source/install/centos.rst \
-	source/install/cmake.rst \
+	source/install/cmake.md \
 	source/install/debian.rst \
 	source/install/docker.rst \
 	source/install/mac_os_x.rst \
 	source/install/others.rst \
-	source/install/server-use.inc \
-	source/install/ubuntu.rst \
+	source/install/server-use.md \
+	source/install/server-use.rst \
+	source/install/ubuntu.md \
 	source/install/windows.rst \
 	source/limitations.rst \
 	source/news.rst \
@@ -2348,6 +2501,9 @@ source_files_relative_from_doc_dir = \
 	source/news/11.rst \
 	source/news/12.rst \
 	source/news/13.md \
+	source/news/14.md \
+	source/news/15.md \
+	source/news/16.md \
 	source/news/2.rst \
 	source/news/3.rst \
 	source/news/4.rst \
@@ -2357,6 +2513,7 @@ source_files_relative_from_doc_dir = \
 	source/news/8.rst \
 	source/news/9.rst \
 	source/news/senna.rst \
+	source/origin.md \
 	source/reference.rst \
 	source/reference/alias.rst \
 	source/reference/api.rst \
@@ -2394,7 +2551,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/columns/vector.rst \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
+	source/reference/command/n_workers.md \
 	source/reference/command/output_format.rst \
+	source/reference/command/output_trace_log.md \
 	source/reference/command/pretty_print.rst \
 	source/reference/command/request_id.rst \
 	source/reference/command/request_timeout.rst \
@@ -2413,6 +2572,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
 	source/reference/commands/column_rename.rst \
+	source/reference/commands/compress_filter.rst \
 	source/reference/commands/config_delete.rst \
 	source/reference/commands/config_get.rst \
 	source/reference/commands/config_set.rst \
@@ -2495,6 +2655,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/language_model_knn.md \
+	source/reference/functions/language_model_vectorize.md \
 	source/reference/functions/math_abs.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/number_classify.rst \
@@ -2524,9 +2686,11 @@ source_files_relative_from_doc_dir = \
 	source/reference/grn_expr/query_syntax.rst \
 	source/reference/grn_expr/script_syntax.rst \
 	source/reference/indexing.rst \
+	source/reference/language_model.md \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
 	source/reference/normalizers/normalizer_auto.rst \
+	source/reference/normalizers/normalizer_nfkc.md \
 	source/reference/normalizers/normalizer_nfkc100.rst \
 	source/reference/normalizers/normalizer_nfkc121.rst \
 	source/reference/normalizers/normalizer_nfkc130.rst \
@@ -2553,6 +2717,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tables.rst \
 	source/reference/token_filter/summary.rst \
 	source/reference/token_filters.rst \
+	source/reference/token_filters/token_filter_nfkc.md \
 	source/reference/token_filters/token_filter_nfkc100.rst \
 	source/reference/token_filters/token_filter_nfkc150.rst \
 	source/reference/token_filters/token_filter_stem.rst \
@@ -2569,6 +2734,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	source/reference/tokenizers/token_delimit.rst \
 	source/reference/tokenizers/token_delimit_null.rst \
+	source/reference/tokenizers/token_language_model_knn.md \
 	source/reference/tokenizers/token_mecab.rst \
 	source/reference/tokenizers/token_ngram.rst \
 	source/reference/tokenizers/token_pattern.rst \
@@ -2661,6 +2827,9 @@ po_files = \
 	news/11.po \
 	news/12.po \
 	news/13.po \
+	news/14.po \
+	news/15.po \
+	news/16.po \
 	news/2.po \
 	news/3.po \
 	news/4.po \
@@ -2670,6 +2839,7 @@ po_files = \
 	news/8.po \
 	news/9.po \
 	news/senna.po \
+	origin.po \
 	reference.po \
 	reference/alias.po \
 	reference/api.po \
@@ -2707,7 +2877,9 @@ po_files = \
 	reference/columns/vector.po \
 	reference/command.po \
 	reference/command/command_version.po \
+	reference/command/n_workers.po \
 	reference/command/output_format.po \
+	reference/command/output_trace_log.po \
 	reference/command/pretty_print.po \
 	reference/command/request_id.po \
 	reference/command/request_timeout.po \
@@ -2808,6 +2980,8 @@ po_files = \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
+	reference/functions/language_model_knn.po \
+	reference/functions/language_model_vectorize.po \
 	reference/functions/math_abs.po \
 	reference/functions/now.po \
 	reference/functions/number_classify.po \
@@ -2837,9 +3011,11 @@ po_files = \
 	reference/grn_expr/query_syntax.po \
 	reference/grn_expr/script_syntax.po \
 	reference/indexing.po \
+	reference/language_model.po \
 	reference/log.po \
 	reference/normalizers.po \
 	reference/normalizers/normalizer_auto.po \
+	reference/normalizers/normalizer_nfkc.po \
 	reference/normalizers/normalizer_nfkc100.po \
 	reference/normalizers/normalizer_nfkc121.po \
 	reference/normalizers/normalizer_nfkc130.po \
@@ -2865,6 +3041,7 @@ po_files = \
 	reference/tables.po \
 	reference/token_filter/summary.po \
 	reference/token_filters.po \
+	reference/token_filters/token_filter_nfkc.po \
 	reference/token_filters/token_filter_nfkc100.po \
 	reference/token_filters/token_filter_nfkc150.po \
 	reference/token_filters/token_filter_stem.po \
@@ -2881,6 +3058,7 @@ po_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.po \
 	reference/tokenizers/token_delimit.po \
 	reference/tokenizers/token_delimit_null.po \
+	reference/tokenizers/token_language_model_knn.po \
 	reference/tokenizers/token_mecab.po \
 	reference/tokenizers/token_ngram.po \
 	reference/tokenizers/token_pattern.po \
@@ -2972,6 +3150,9 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.po \
 	LC_MESSAGES/news/12.po \
 	LC_MESSAGES/news/13.po \
+	LC_MESSAGES/news/14.po \
+	LC_MESSAGES/news/15.po \
+	LC_MESSAGES/news/16.po \
 	LC_MESSAGES/news/2.po \
 	LC_MESSAGES/news/3.po \
 	LC_MESSAGES/news/4.po \
@@ -2981,6 +3162,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.po \
 	LC_MESSAGES/news/9.po \
 	LC_MESSAGES/news/senna.po \
+	LC_MESSAGES/origin.po \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/reference/alias.po \
 	LC_MESSAGES/reference/api.po \
@@ -3018,7 +3200,9 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.po \
 	LC_MESSAGES/reference/command.po \
 	LC_MESSAGES/reference/command/command_version.po \
+	LC_MESSAGES/reference/command/n_workers.po \
 	LC_MESSAGES/reference/command/output_format.po \
+	LC_MESSAGES/reference/command/output_trace_log.po \
 	LC_MESSAGES/reference/command/pretty_print.po \
 	LC_MESSAGES/reference/command/request_id.po \
 	LC_MESSAGES/reference/command/request_timeout.po \
@@ -3119,6 +3303,8 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
+	LC_MESSAGES/reference/functions/language_model_knn.po \
+	LC_MESSAGES/reference/functions/language_model_vectorize.po \
 	LC_MESSAGES/reference/functions/math_abs.po \
 	LC_MESSAGES/reference/functions/now.po \
 	LC_MESSAGES/reference/functions/number_classify.po \
@@ -3148,9 +3334,11 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.po \
 	LC_MESSAGES/reference/grn_expr/script_syntax.po \
 	LC_MESSAGES/reference/indexing.po \
+	LC_MESSAGES/reference/language_model.po \
 	LC_MESSAGES/reference/log.po \
 	LC_MESSAGES/reference/normalizers.po \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.po \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.po \
@@ -3176,6 +3364,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.po \
 	LC_MESSAGES/reference/token_filter/summary.po \
 	LC_MESSAGES/reference/token_filters.po \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.po \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.po \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.po \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.po \
@@ -3192,6 +3381,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.po \
 	LC_MESSAGES/reference/tokenizers/token_delimit.po \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.po \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.po \
 	LC_MESSAGES/reference/tokenizers/token_mecab.po \
 	LC_MESSAGES/reference/tokenizers/token_ngram.po \
 	LC_MESSAGES/reference/tokenizers/token_pattern.po \
@@ -3283,6 +3473,9 @@ edit_po_files = \
 	news/11.edit \
 	news/12.edit \
 	news/13.edit \
+	news/14.edit \
+	news/15.edit \
+	news/16.edit \
 	news/2.edit \
 	news/3.edit \
 	news/4.edit \
@@ -3292,6 +3485,7 @@ edit_po_files = \
 	news/8.edit \
 	news/9.edit \
 	news/senna.edit \
+	origin.edit \
 	reference.edit \
 	reference/alias.edit \
 	reference/api.edit \
@@ -3329,7 +3523,9 @@ edit_po_files = \
 	reference/columns/vector.edit \
 	reference/command.edit \
 	reference/command/command_version.edit \
+	reference/command/n_workers.edit \
 	reference/command/output_format.edit \
+	reference/command/output_trace_log.edit \
 	reference/command/pretty_print.edit \
 	reference/command/request_id.edit \
 	reference/command/request_timeout.edit \
@@ -3430,6 +3626,8 @@ edit_po_files = \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
+	reference/functions/language_model_knn.edit \
+	reference/functions/language_model_vectorize.edit \
 	reference/functions/math_abs.edit \
 	reference/functions/now.edit \
 	reference/functions/number_classify.edit \
@@ -3459,9 +3657,11 @@ edit_po_files = \
 	reference/grn_expr/query_syntax.edit \
 	reference/grn_expr/script_syntax.edit \
 	reference/indexing.edit \
+	reference/language_model.edit \
 	reference/log.edit \
 	reference/normalizers.edit \
 	reference/normalizers/normalizer_auto.edit \
+	reference/normalizers/normalizer_nfkc.edit \
 	reference/normalizers/normalizer_nfkc100.edit \
 	reference/normalizers/normalizer_nfkc121.edit \
 	reference/normalizers/normalizer_nfkc130.edit \
@@ -3487,6 +3687,7 @@ edit_po_files = \
 	reference/tables.edit \
 	reference/token_filter/summary.edit \
 	reference/token_filters.edit \
+	reference/token_filters/token_filter_nfkc.edit \
 	reference/token_filters/token_filter_nfkc100.edit \
 	reference/token_filters/token_filter_nfkc150.edit \
 	reference/token_filters/token_filter_stem.edit \
@@ -3503,6 +3704,7 @@ edit_po_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.edit \
 	reference/tokenizers/token_delimit.edit \
 	reference/tokenizers/token_delimit_null.edit \
+	reference/tokenizers/token_language_model_knn.edit \
 	reference/tokenizers/token_mecab.edit \
 	reference/tokenizers/token_ngram.edit \
 	reference/tokenizers/token_pattern.edit \
@@ -3594,6 +3796,9 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.edit \
 	LC_MESSAGES/news/12.edit \
 	LC_MESSAGES/news/13.edit \
+	LC_MESSAGES/news/14.edit \
+	LC_MESSAGES/news/15.edit \
+	LC_MESSAGES/news/16.edit \
 	LC_MESSAGES/news/2.edit \
 	LC_MESSAGES/news/3.edit \
 	LC_MESSAGES/news/4.edit \
@@ -3603,6 +3808,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.edit \
 	LC_MESSAGES/news/9.edit \
 	LC_MESSAGES/news/senna.edit \
+	LC_MESSAGES/origin.edit \
 	LC_MESSAGES/reference.edit \
 	LC_MESSAGES/reference/alias.edit \
 	LC_MESSAGES/reference/api.edit \
@@ -3640,7 +3846,9 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.edit \
 	LC_MESSAGES/reference/command.edit \
 	LC_MESSAGES/reference/command/command_version.edit \
+	LC_MESSAGES/reference/command/n_workers.edit \
 	LC_MESSAGES/reference/command/output_format.edit \
+	LC_MESSAGES/reference/command/output_trace_log.edit \
 	LC_MESSAGES/reference/command/pretty_print.edit \
 	LC_MESSAGES/reference/command/request_id.edit \
 	LC_MESSAGES/reference/command/request_timeout.edit \
@@ -3741,6 +3949,8 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
+	LC_MESSAGES/reference/functions/language_model_knn.edit \
+	LC_MESSAGES/reference/functions/language_model_vectorize.edit \
 	LC_MESSAGES/reference/functions/math_abs.edit \
 	LC_MESSAGES/reference/functions/now.edit \
 	LC_MESSAGES/reference/functions/number_classify.edit \
@@ -3770,9 +3980,11 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.edit \
 	LC_MESSAGES/reference/grn_expr/script_syntax.edit \
 	LC_MESSAGES/reference/indexing.edit \
+	LC_MESSAGES/reference/language_model.edit \
 	LC_MESSAGES/reference/log.edit \
 	LC_MESSAGES/reference/normalizers.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.edit \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.edit \
@@ -3798,6 +4010,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.edit \
 	LC_MESSAGES/reference/token_filter/summary.edit \
 	LC_MESSAGES/reference/token_filters.edit \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.edit \
@@ -3814,6 +4027,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.edit \
 	LC_MESSAGES/reference/tokenizers/token_delimit.edit \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.edit \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.edit \
 	LC_MESSAGES/reference/tokenizers/token_mecab.edit \
 	LC_MESSAGES/reference/tokenizers/token_ngram.edit \
 	LC_MESSAGES/reference/tokenizers/token_pattern.edit \
@@ -3905,6 +4119,9 @@ mo_files = \
 	news/11.mo \
 	news/12.mo \
 	news/13.mo \
+	news/14.mo \
+	news/15.mo \
+	news/16.mo \
 	news/2.mo \
 	news/3.mo \
 	news/4.mo \
@@ -3914,6 +4131,7 @@ mo_files = \
 	news/8.mo \
 	news/9.mo \
 	news/senna.mo \
+	origin.mo \
 	reference.mo \
 	reference/alias.mo \
 	reference/api.mo \
@@ -3951,7 +4169,9 @@ mo_files = \
 	reference/columns/vector.mo \
 	reference/command.mo \
 	reference/command/command_version.mo \
+	reference/command/n_workers.mo \
 	reference/command/output_format.mo \
+	reference/command/output_trace_log.mo \
 	reference/command/pretty_print.mo \
 	reference/command/request_id.mo \
 	reference/command/request_timeout.mo \
@@ -4052,6 +4272,8 @@ mo_files = \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
+	reference/functions/language_model_knn.mo \
+	reference/functions/language_model_vectorize.mo \
 	reference/functions/math_abs.mo \
 	reference/functions/now.mo \
 	reference/functions/number_classify.mo \
@@ -4081,9 +4303,11 @@ mo_files = \
 	reference/grn_expr/query_syntax.mo \
 	reference/grn_expr/script_syntax.mo \
 	reference/indexing.mo \
+	reference/language_model.mo \
 	reference/log.mo \
 	reference/normalizers.mo \
 	reference/normalizers/normalizer_auto.mo \
+	reference/normalizers/normalizer_nfkc.mo \
 	reference/normalizers/normalizer_nfkc100.mo \
 	reference/normalizers/normalizer_nfkc121.mo \
 	reference/normalizers/normalizer_nfkc130.mo \
@@ -4109,6 +4333,7 @@ mo_files = \
 	reference/tables.mo \
 	reference/token_filter/summary.mo \
 	reference/token_filters.mo \
+	reference/token_filters/token_filter_nfkc.mo \
 	reference/token_filters/token_filter_nfkc100.mo \
 	reference/token_filters/token_filter_nfkc150.mo \
 	reference/token_filters/token_filter_stem.mo \
@@ -4125,6 +4350,7 @@ mo_files = \
 	reference/tokenizers/token_bigram_split_symbol_alpha_digit.mo \
 	reference/tokenizers/token_delimit.mo \
 	reference/tokenizers/token_delimit_null.mo \
+	reference/tokenizers/token_language_model_knn.mo \
 	reference/tokenizers/token_mecab.mo \
 	reference/tokenizers/token_ngram.mo \
 	reference/tokenizers/token_pattern.mo \
@@ -4216,6 +4442,9 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/11.mo \
 	LC_MESSAGES/news/12.mo \
 	LC_MESSAGES/news/13.mo \
+	LC_MESSAGES/news/14.mo \
+	LC_MESSAGES/news/15.mo \
+	LC_MESSAGES/news/16.mo \
 	LC_MESSAGES/news/2.mo \
 	LC_MESSAGES/news/3.mo \
 	LC_MESSAGES/news/4.mo \
@@ -4225,6 +4454,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/news/8.mo \
 	LC_MESSAGES/news/9.mo \
 	LC_MESSAGES/news/senna.mo \
+	LC_MESSAGES/origin.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/reference/alias.mo \
 	LC_MESSAGES/reference/api.mo \
@@ -4262,7 +4492,9 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/columns/vector.mo \
 	LC_MESSAGES/reference/command.mo \
 	LC_MESSAGES/reference/command/command_version.mo \
+	LC_MESSAGES/reference/command/n_workers.mo \
 	LC_MESSAGES/reference/command/output_format.mo \
+	LC_MESSAGES/reference/command/output_trace_log.mo \
 	LC_MESSAGES/reference/command/pretty_print.mo \
 	LC_MESSAGES/reference/command/request_id.mo \
 	LC_MESSAGES/reference/command/request_timeout.mo \
@@ -4363,6 +4595,8 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
+	LC_MESSAGES/reference/functions/language_model_knn.mo \
+	LC_MESSAGES/reference/functions/language_model_vectorize.mo \
 	LC_MESSAGES/reference/functions/math_abs.mo \
 	LC_MESSAGES/reference/functions/now.mo \
 	LC_MESSAGES/reference/functions/number_classify.mo \
@@ -4392,9 +4626,11 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/grn_expr/query_syntax.mo \
 	LC_MESSAGES/reference/grn_expr/script_syntax.mo \
 	LC_MESSAGES/reference/indexing.mo \
+	LC_MESSAGES/reference/language_model.mo \
 	LC_MESSAGES/reference/log.mo \
 	LC_MESSAGES/reference/normalizers.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_auto.mo \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.mo \
@@ -4420,6 +4656,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tables.mo \
 	LC_MESSAGES/reference/token_filter/summary.mo \
 	LC_MESSAGES/reference/token_filters.mo \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.mo \
@@ -4436,6 +4673,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/tokenizers/token_bigram_split_symbol_alpha_digit.mo \
 	LC_MESSAGES/reference/tokenizers/token_delimit.mo \
 	LC_MESSAGES/reference/tokenizers/token_delimit_null.mo \
+	LC_MESSAGES/reference/tokenizers/token_language_model_knn.mo \
 	LC_MESSAGES/reference/tokenizers/token_mecab.mo \
 	LC_MESSAGES/reference/tokenizers/token_ngram.mo \
 	LC_MESSAGES/reference/tokenizers/token_pattern.mo \
@@ -4484,6 +4722,7 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
+	html/_images/zulip-icon-128x128.png \
 	html/_static/basic.css \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
@@ -4497,24 +4736,20 @@ html_files_relative_from_locale_dir = \
 	html/_static/scripts/bootstrap.js \
 	html/_static/scripts/bootstrap.js.LICENSE.txt \
 	html/_static/scripts/bootstrap.js.map \
+	html/_static/scripts/fontawesome.js \
+	html/_static/scripts/fontawesome.js.LICENSE.txt \
+	html/_static/scripts/fontawesome.js.map \
 	html/_static/scripts/pydata-sphinx-theme.js \
 	html/_static/scripts/pydata-sphinx-theme.js.map \
 	html/_static/searchtools.js \
 	html/_static/sphinx_highlight.js \
-	html/_static/styles/bootstrap.css \
 	html/_static/styles/pydata-sphinx-theme.css \
+	html/_static/styles/pydata-sphinx-theme.css.map \
 	html/_static/styles/theme.css \
 	html/_static/switcher.json \
-	html/_static/vendor/fontawesome/6.1.2/LICENSE.txt \
-	html/_static/vendor/fontawesome/6.1.2/css/all.min.css \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-brands-400.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-regular-400.woff2 \
+	html/_static/vendor/fontawesome/webfonts/fa-solid-900.woff2 \
 	html/_static/webpack-macros.html \
 	html/characteristic.html \
 	html/client.html \
@@ -4562,6 +4797,9 @@ html_files_relative_from_locale_dir = \
 	html/news/11.html \
 	html/news/12.html \
 	html/news/13.html \
+	html/news/14.html \
+	html/news/15.html \
+	html/news/16.html \
 	html/news/2.html \
 	html/news/3.html \
 	html/news/4.html \
@@ -4572,6 +4810,7 @@ html_files_relative_from_locale_dir = \
 	html/news/9.html \
 	html/news/senna.html \
 	html/objects.inv \
+	html/origin.html \
 	html/reference.html \
 	html/reference/alias.html \
 	html/reference/api.html \
@@ -4609,7 +4848,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/columns/vector.html \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
+	html/reference/command/n_workers.html \
 	html/reference/command/output_format.html \
+	html/reference/command/output_trace_log.html \
 	html/reference/command/pretty_print.html \
 	html/reference/command/request_id.html \
 	html/reference/command/request_timeout.html \
@@ -4710,6 +4951,8 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/language_model_knn.html \
+	html/reference/functions/language_model_vectorize.html \
 	html/reference/functions/math_abs.html \
 	html/reference/functions/now.html \
 	html/reference/functions/number_classify.html \
@@ -4739,9 +4982,11 @@ html_files_relative_from_locale_dir = \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
 	html/reference/indexing.html \
+	html/reference/language_model.html \
 	html/reference/log.html \
 	html/reference/normalizers.html \
 	html/reference/normalizers/normalizer_auto.html \
+	html/reference/normalizers/normalizer_nfkc.html \
 	html/reference/normalizers/normalizer_nfkc100.html \
 	html/reference/normalizers/normalizer_nfkc121.html \
 	html/reference/normalizers/normalizer_nfkc130.html \
@@ -4767,6 +5012,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tables.html \
 	html/reference/token_filter/summary.html \
 	html/reference/token_filters.html \
+	html/reference/token_filters/token_filter_nfkc.html \
 	html/reference/token_filters/token_filter_nfkc100.html \
 	html/reference/token_filters/token_filter_nfkc150.html \
 	html/reference/token_filters/token_filter_stem.html \
@@ -4783,6 +5029,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tokenizers/token_bigram_split_symbol_alpha_digit.html \
 	html/reference/tokenizers/token_delimit.html \
 	html/reference/tokenizers/token_delimit_null.html \
+	html/reference/tokenizers/token_language_model_knn.html \
 	html/reference/tokenizers/token_mecab.html \
 	html/reference/tokenizers/token_ngram.html \
 	html/reference/tokenizers/token_pattern.html \

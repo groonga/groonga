@@ -30,35 +30,5 @@ msgstr ""
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "Here are available values:"
-msgstr "指定可能な値は以下の通りです。"
-
-msgid "It means that outputting nothing or using the original format. :doc:`/reference/commands/dump` uses the type."
-msgstr ""
-
-msgid "`GRN_CONTENT_NONE`"
-msgstr ""
-
-msgid "`GRN_CONTENT_TSV`"
-msgstr ""
-
-msgid "It means tab separated values format."
-msgstr ""
-
-msgid "`GRN_CONTENT_JSON`"
-msgstr ""
-
-msgid "It means JSON format."
-msgstr "JSON形式::"
-
-msgid "`GRN_CONTENT_XML`"
-msgstr ""
-
-msgid "It means XML format."
-msgstr ""
-
-msgid "`GRN_CONTENT_MSGPACK`"
-msgstr ""
-
-msgid "It means MessagePack format. You need MessagePack library on building Groonga. If you don't have MessagePack library, you can't use this type."
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

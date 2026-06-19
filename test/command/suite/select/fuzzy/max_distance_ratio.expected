@@ -1,0 +1,175 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Lexicon memos_content   COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "012345678"},
+{"content": "002345678"},
+{"content": "000345678"},
+{"content": "000045678"},
+{"content": "000005678"},
+{"content": "000000678"},
+{"content": "000000078"},
+{"content": "000000008"},
+{"content": "000000000"},
+{"content": "000000000"},
+{"content": "000000000"},
+{"content": "00000000"},
+{"content": "0000000"},
+{"content": "000000"},
+{"content": "00000"},
+{"content": "0000"},
+{"content": "000"},
+{"content": "00"},
+{"content": "0"}
+]
+[[0,0.0,0.0],19]
+select Memos   --match_columns content   --query "9"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[[0,0.0,0.0],[[[0],[["content","ShortText"],["_score","Int32"]]]]]
+select Memos   --match_columns content   --query "09"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[[0,0.0,0.0],[[[0],[["content","ShortText"],["_score","Int32"]]]]]
+select Memos   --match_columns content   --query "009"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "000",
+        1
+      ],
+      [
+        "00",
+        1
+      ]
+    ]
+  ]
+]
+select Memos   --match_columns content   --query "0009"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "0000",
+        1
+      ],
+      [
+        "000",
+        1
+      ]
+    ]
+  ]
+]
+select Memos   --match_columns content   --query "00009"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "00000",
+        1
+      ],
+      [
+        "0000",
+        1
+      ]
+    ]
+  ]
+]
+select Memos   --match_columns content   --query "000009"   --fuzzy_max_distance_ratio 0.34   --output_columns *,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "0000000",
+        1
+      ],
+      [
+        "000000",
+        2
+      ],
+      [
+        "00000",
+        2
+      ],
+      [
+        "0000",
+        1
+      ]
+    ]
+  ]
+]

@@ -3,72 +3,72 @@ Execution example::
   select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         6, 
-  #         "http://example.com/rab", 
+  #         6,
+  #         "http://example.com/rab",
   #         424238335
-  #       ], 
+  #       ],
   #       [
-  #         9, 
-  #         "http://example.com/vdw", 
+  #         9,
+  #         "http://example.com/vdw",
   #         596516649
-  #       ], 
+  #       ],
   #       [
-  #         7, 
-  #         "http://example.net/atv", 
+  #         7,
+  #         "http://example.net/atv",
   #         719885386
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "http://example.net/", 
+  #         2,
+  #         "http://example.net/",
   #         846930886
-  #       ], 
+  #       ],
   #       [
-  #         8, 
-  #         "http://example.org/gat", 
+  #         8,
+  #         "http://example.org/gat",
   #         1649760492
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "http://example.com/", 
+  #         3,
+  #         "http://example.com/",
   #         1681692777
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "http://example.net/afr", 
+  #         4,
+  #         "http://example.net/afr",
   #         1714636915
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "http://example.org/", 
+  #         1,
+  #         "http://example.org/",
   #         1804289383
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "http://example.org/aba", 
+  #         5,
+  #         "http://example.org/aba",
   #         1957747793
   #       ]
   #     ]
@@ -77,72 +77,72 @@ Execution example::
   select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "http://example.net/afr", 
+  #         4,
+  #         "http://example.net/afr",
   #         783368690
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "http://example.net/", 
+  #         2,
+  #         "http://example.net/",
   #         1025202362
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "http://example.org/aba", 
+  #         5,
+  #         "http://example.org/aba",
   #         1102520059
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "http://example.org/", 
+  #         1,
+  #         "http://example.org/",
   #         1189641421
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "http://example.com/", 
+  #         3,
+  #         "http://example.com/",
   #         1350490027
-  #       ], 
+  #       ],
   #       [
-  #         8, 
-  #         "http://example.org/gat", 
+  #         8,
+  #         "http://example.org/gat",
   #         1365180540
-  #       ], 
+  #       ],
   #       [
-  #         9, 
-  #         "http://example.com/vdw", 
+  #         9,
+  #         "http://example.com/vdw",
   #         1540383426
-  #       ], 
+  #       ],
   #       [
-  #         7, 
-  #         "http://example.net/atv", 
+  #         7,
+  #         "http://example.net/atv",
   #         1967513926
-  #       ], 
+  #       ],
   #       [
-  #         6, 
-  #         "http://example.com/rab", 
+  #         6,
+  #         "http://example.com/rab",
   #         2044897763
   #       ]
   #     ]

@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,8 +36,26 @@ typedef enum {
   GRN_PROC_SCORER,
   GRN_PROC_WINDOW_FUNCTION,
   GRN_PROC_AGGREGATOR,
+  GRN_PROC_EXTRACTOR,
 } grn_proc_type;
 
+/**
+ * \brief Create the procedure in the database handled by `ctx`.
+ *
+ * \param ctx The context object.
+ * \param name Name of procedure.
+ * \param name_size The number of bytes of `name` parameter. If negative value
+ *                  is specified, `name` parameter is assumed that
+ *                  NULL-terminated string.
+ * \param type Type of procedure.
+ * \param init Initialization callback function.
+ * \param next Main callback function.
+ * \param fin Finalization callback function.
+ * \param nvars The number of `vars`.
+ * \param vars Variables used in callback functions.
+ *
+ * \return The procedure object on success, `NULL` on error.
+ */
 GRN_API grn_obj *
 grn_proc_create(grn_ctx *ctx,
                 const char *name,
@@ -47,6 +66,17 @@ grn_proc_create(grn_ctx *ctx,
                 grn_proc_func *fin,
                 unsigned int nvars,
                 grn_expr_var *vars);
+/**
+ * \brief Get information on procedure and expression that use `user_data`.
+ *
+ * \param ctx The context object.
+ * \param user_data The user data passed to \ref grn_proc_func.
+ * \param vars The buffer to store defined variables.
+ * \param nvars The buffer to store the number of `vars`.
+ * \param caller The buffer to store calling expression.
+ *
+ * \return The procedure object. It may be `NULL`.
+ */
 GRN_API grn_obj *
 grn_proc_get_info(grn_ctx *ctx,
                   grn_user_data *user_data,

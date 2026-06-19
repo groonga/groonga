@@ -5,33 +5,33 @@ Execution example::
   {"content": "groonga mroonga rroonga pgroonga"},
   {"content": "groonga rroonga pgroonga mroonga"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   select NearTokens \
     --match_columns content \
     --query '*NP"\\\"groonga mroonga\\\" pgroonga"'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         6, 
+  #         6,
   #         "groonga mroonga rroonga pgroonga"
   #       ]
   #     ]

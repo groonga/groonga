@@ -1,43 +1,43 @@
 Execution example::
 
   table_create Users TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Users
   [
   {"_key": "Alice"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   object_inspect Users
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "disk_usage": 16842752, 
-  #     "name": "Users", 
-  #     "n_records": 1, 
+  #     "id": 256,
+  #     "name": "Users",
+  #     "type": {
+  #       "id": 48,
+  #       "name": "table:hash_key"
+  #     },
+  #     "key": {
+  #       "type": {
+  #         "id": 14,
+  #         "name": "ShortText",
+  #         "type": {
+  #           "id": 32,
+  #           "name": "type"
+  #         },
+  #         "size": 4096
+  #       },
+  #       "total_size": 5,
+  #       "max_total_size": 4294967295
+  #     },
   #     "value": {
   #       "type": null
-  #     }, 
-  #     "key": {
-  #       "total_size": 5, 
-  #       "max_total_size": 4294967295, 
-  #       "type": {
-  #         "size": 4096, 
-  #         "type": {
-  #           "id": 32, 
-  #           "name": "type"
-  #         }, 
-  #         "id": 14, 
-  #         "name": "ShortText"
-  #       }
-  #     }, 
-  #     "type": {
-  #       "id": 48, 
-  #       "name": "table:hash_key"
-  #     }, 
-  #     "id": 256
+  #     },
+  #     "n_records": 1,
+  #     "disk_usage": 16842752
   #   }
   # ]

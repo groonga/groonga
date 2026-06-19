@@ -3,210 +3,250 @@ Execution example::
   tokenize TokenBigram "Groonga is a fast fulltext earch engine!"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "Gr"
-  #     }, 
+  #       "value": "Gr",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "ro"
-  #     }, 
+  #       "value": "ro",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "oo"
-  #     }, 
+  #       "value": "oo",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "on"
-  #     }, 
+  #       "value": "on",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "ng"
-  #     }, 
+  #       "value": "ng",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "ga"
-  #     }, 
+  #       "value": "ga",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 6, 
-  #       "force_prefix": false, 
-  #       "value": "a "
-  #     }, 
+  #       "value": "a ",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 7, 
-  #       "force_prefix": false, 
-  #       "value": " i"
-  #     }, 
+  #       "value": " i",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 8, 
-  #       "force_prefix": false, 
-  #       "value": "is"
-  #     }, 
+  #       "value": "is",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 9, 
-  #       "force_prefix": false, 
-  #       "value": "s "
-  #     }, 
+  #       "value": "s ",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 10, 
-  #       "force_prefix": false, 
-  #       "value": " a"
-  #     }, 
+  #       "value": " a",
+  #       "position": 10,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 11, 
-  #       "force_prefix": false, 
-  #       "value": "a "
-  #     }, 
+  #       "value": "a ",
+  #       "position": 11,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 12, 
-  #       "force_prefix": false, 
-  #       "value": " f"
-  #     }, 
+  #       "value": " f",
+  #       "position": 12,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 13, 
-  #       "force_prefix": false, 
-  #       "value": "fa"
-  #     }, 
+  #       "value": "fa",
+  #       "position": 13,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 14, 
-  #       "force_prefix": false, 
-  #       "value": "as"
-  #     }, 
+  #       "value": "as",
+  #       "position": 14,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 15, 
-  #       "force_prefix": false, 
-  #       "value": "st"
-  #     }, 
+  #       "value": "st",
+  #       "position": 15,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 16, 
-  #       "force_prefix": false, 
-  #       "value": "t "
-  #     }, 
+  #       "value": "t ",
+  #       "position": 16,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 17, 
-  #       "force_prefix": false, 
-  #       "value": " f"
-  #     }, 
+  #       "value": " f",
+  #       "position": 17,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 18, 
-  #       "force_prefix": false, 
-  #       "value": "fu"
-  #     }, 
+  #       "value": "fu",
+  #       "position": 18,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 19, 
-  #       "force_prefix": false, 
-  #       "value": "ul"
-  #     }, 
+  #       "value": "ul",
+  #       "position": 19,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 20, 
-  #       "force_prefix": false, 
-  #       "value": "ll"
-  #     }, 
+  #       "value": "ll",
+  #       "position": 20,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 21, 
-  #       "force_prefix": false, 
-  #       "value": "lt"
-  #     }, 
+  #       "value": "lt",
+  #       "position": 21,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 22, 
-  #       "force_prefix": false, 
-  #       "value": "te"
-  #     }, 
+  #       "value": "te",
+  #       "position": 22,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 23, 
-  #       "force_prefix": false, 
-  #       "value": "ex"
-  #     }, 
+  #       "value": "ex",
+  #       "position": 23,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 24, 
-  #       "force_prefix": false, 
-  #       "value": "xt"
-  #     }, 
+  #       "value": "xt",
+  #       "position": 24,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 25, 
-  #       "force_prefix": false, 
-  #       "value": "t "
-  #     }, 
+  #       "value": "t ",
+  #       "position": 25,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 26, 
-  #       "force_prefix": false, 
-  #       "value": " e"
-  #     }, 
+  #       "value": " e",
+  #       "position": 26,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 27, 
-  #       "force_prefix": false, 
-  #       "value": "ea"
-  #     }, 
+  #       "value": "ea",
+  #       "position": 27,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 28, 
-  #       "force_prefix": false, 
-  #       "value": "ar"
-  #     }, 
+  #       "value": "ar",
+  #       "position": 28,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 29, 
-  #       "force_prefix": false, 
-  #       "value": "rc"
-  #     }, 
+  #       "value": "rc",
+  #       "position": 29,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 30, 
-  #       "force_prefix": false, 
-  #       "value": "ch"
-  #     }, 
+  #       "value": "ch",
+  #       "position": 30,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 31, 
-  #       "force_prefix": false, 
-  #       "value": "h "
-  #     }, 
+  #       "value": "h ",
+  #       "position": 31,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 32, 
-  #       "force_prefix": false, 
-  #       "value": " e"
-  #     }, 
+  #       "value": " e",
+  #       "position": 32,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 33, 
-  #       "force_prefix": false, 
-  #       "value": "en"
-  #     }, 
+  #       "value": "en",
+  #       "position": 33,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 34, 
-  #       "force_prefix": false, 
-  #       "value": "ng"
-  #     }, 
+  #       "value": "ng",
+  #       "position": 34,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 35, 
-  #       "force_prefix": false, 
-  #       "value": "gi"
-  #     }, 
+  #       "value": "gi",
+  #       "position": 35,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 36, 
-  #       "force_prefix": false, 
-  #       "value": "in"
-  #     }, 
+  #       "value": "in",
+  #       "position": 36,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 37, 
-  #       "force_prefix": false, 
-  #       "value": "ne"
-  #     }, 
+  #       "value": "ne",
+  #       "position": 37,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 38, 
-  #       "force_prefix": false, 
-  #       "value": "e!"
-  #     }, 
+  #       "value": "e!",
+  #       "position": 38,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 39, 
-  #       "force_prefix": false, 
-  #       "value": "!"
+  #       "value": "!",
+  #       "position": 39,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

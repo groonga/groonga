@@ -1,0 +1,6 @@
+table_create Terms TABLE_PAT_KEY ShortText   --extractors ExtractorHTML
+[[0,0.0,0.0],true]
+#|n| DDL:256:table_create Terms
+#|n| spec:256:update:Terms:49(table:pat_key):0
+#|n| DDL:256:set_extractors ExtractorHTML
+#|n| spec:256:update:Terms:49(table:pat_key):0

@@ -39,4 +39,5 @@ load --table Groups
 
 select Groups \
   --filter 'sub_filter(users.files_author_index, "_key @^ \\"ha_\\"")' \
+  --sort_keys _id \
   --output_columns '_key, users'

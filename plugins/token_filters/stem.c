@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2014  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -175,14 +176,15 @@ stem_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return token_filter;
 }
 
-static grn_bool
-is_stemmable(grn_obj *data, grn_bool *is_all_upper)
+static bool
+is_stemmable(grn_ctx *ctx, grn_obj *data, bool *is_all_ascii_upper)
 {
   const char *current, *end;
-  grn_bool have_lower = GRN_FALSE;
-  grn_bool have_upper = GRN_FALSE;
+  bool have_ascii_lower = false;
+  bool have_ascii_upper = false;
+  bool have_non_ascii_alphabet = false;
 
-  *is_all_upper = GRN_FALSE;
+  *is_all_ascii_upper = false;
 
   switch (data->header.domain) {
   case GRN_DB_SHORT_TEXT :
@@ -190,44 +192,60 @@ is_stemmable(grn_obj *data, grn_bool *is_all_upper)
   case GRN_DB_LONG_TEXT :
     break;
   default :
-    return GRN_FALSE;
+    return false;
   }
 
   current = GRN_TEXT_VALUE(data);
   end = current + GRN_TEXT_LEN(data);
-
-  for (; current < end; current++) {
-    if (islower((unsigned char)*current)) {
-      have_lower = GRN_TRUE;
-      continue;
-    }
-    if (isupper((unsigned char)*current)) {
-      have_upper = GRN_TRUE;
-      continue;
-    }
-    if (isdigit((unsigned char)*current)) {
-      continue;
-    }
-    switch (*current) {
-    case '-' :
-    case '\'' :
-      break;
-    default :
-      return GRN_FALSE;
+  int length = 0;
+  for (; current < end; current += length) {
+    length = grn_plugin_charlen(ctx, current, end - current, GRN_ENC_UTF8);
+    if (length == 0) {
+      return false;
+    } else if (length == 1) {
+      if (islower((unsigned char)*current)) {
+        have_ascii_lower = true;
+        continue;
+      }
+      if (isupper((unsigned char)*current)) {
+        have_ascii_upper = true;
+        continue;
+      }
+      if (isdigit((unsigned char)*current)) {
+        continue;
+      }
+      if (isdigit((unsigned char)*current)) {
+        continue;
+      }
+      switch (*current) {
+      case '-' :
+      case '\'' :
+        break;
+      default :
+        return false;
+      }
+    } else {
+      grn_char_type type = grn_nfkc_latest_char_type(current);
+      if (type == GRN_CHAR_ALPHA) {
+        have_non_ascii_alphabet = true;
+        continue;
+      } else {
+        return false;
+      }
     }
   }
 
-  if (!have_lower && have_upper) {
-    *is_all_upper = GRN_TRUE;
+  if (!have_ascii_lower && have_ascii_upper && !have_non_ascii_alphabet) {
+    *is_all_ascii_upper = true;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
-normalize(grn_ctx *ctx,
-          const char *string, unsigned int length,
-          grn_obj *normalized)
+normalize_ascii(grn_ctx *ctx,
+                const char *string, unsigned int length,
+                grn_obj *normalized)
 {
   const char *current, *end;
   const char *unwritten;
@@ -251,9 +269,9 @@ normalize(grn_ctx *ctx,
 }
 
 static void
-unnormalize(grn_ctx *ctx,
-            const char *string, unsigned int length,
-            grn_obj *normalized)
+unnormalize_ascii(grn_ctx *ctx,
+                  const char *string, unsigned int length,
+                  grn_obj *normalized)
 {
   const char *current, *end;
   const char *unwritten;
@@ -284,7 +302,6 @@ stem_filter(grn_ctx *ctx,
 {
   grn_stem_token_filter *token_filter = user_data;
   grn_obj *data;
-  grn_bool is_all_upper = GRN_FALSE;
 
   if (!token_filter->is_enabled) {
     return;
@@ -295,21 +312,22 @@ stem_filter(grn_ctx *ctx,
   }
 
   data = grn_token_get_data(ctx, current_token);
-  if (!is_stemmable(data, &is_all_upper)) {
+  bool is_all_ascii_upper = false;
+  if (!is_stemmable(ctx, data, &is_all_ascii_upper)) {
     return;
   }
 
   {
     const sb_symbol *stemmed;
 
-    if (is_all_upper) {
+    if (is_all_ascii_upper) {
       grn_obj *buffer;
       buffer = &(token_filter->buffer);
       GRN_BULK_REWIND(buffer);
-      normalize(ctx,
-                GRN_TEXT_VALUE(data),
-                (unsigned int)GRN_TEXT_LEN(data),
-                buffer);
+      normalize_ascii(ctx,
+                      GRN_TEXT_VALUE(data),
+                      (unsigned int)GRN_TEXT_LEN(data),
+                      buffer);
       stemmed = sb_stemmer_stem(token_filter->stemmer,
                                 GRN_TEXT_VALUE(buffer),
                                 (int)GRN_TEXT_LEN(buffer));
@@ -323,10 +341,10 @@ stem_filter(grn_ctx *ctx,
         return;
       }
       GRN_BULK_REWIND(buffer);
-      unnormalize(ctx,
-                  stemmed,
-                  (unsigned int)sb_stemmer_length(token_filter->stemmer),
-                  buffer);
+      unnormalize_ascii(ctx,
+                        stemmed,
+                        (unsigned int)sb_stemmer_length(token_filter->stemmer),
+                        buffer);
       grn_token_set_data(ctx,
                          next_token,
                          GRN_TEXT_VALUE(buffer),

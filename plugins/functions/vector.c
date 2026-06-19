@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -138,7 +139,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     grn_rc rc;
 
     GRN_INT32_INIT(&buffer, 0);
-    rc = grn_obj_cast(ctx, from_raw, &buffer, GRN_FALSE);
+    rc = grn_obj_cast(ctx, from_raw, &buffer, false);
     if (rc == GRN_SUCCESS) {
       from = GRN_INT32_VALUE(&buffer);
     }
@@ -181,7 +182,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
       grn_rc rc;
 
       GRN_INT32_INIT(&buffer, 0);
-      rc = grn_obj_cast(ctx, length_raw, &buffer, GRN_FALSE);
+      rc = grn_obj_cast(ctx, length_raw, &buffer, false);
       if (rc == GRN_SUCCESS) {
         length = GRN_INT32_VALUE(&buffer);
       }
@@ -210,6 +211,9 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
 
   if (target->header.flags & GRN_OBJ_WITH_WEIGHT) {
     slice->header.flags |= GRN_OBJ_WITH_WEIGHT;
+    if (target->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      slice->header.flags |= GRN_OBJ_WEIGHT_BFLOAT16;
+    }
   }
 
   if (length < 0) {
@@ -279,7 +283,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
                                  slice,                                 \
                                  GRN_ ## type ## _VALUE_AT(target, i)); \
           }                                                             \
-        } while (GRN_FALSE)
+        } while (false)
         switch (target->header.domain) {
         case GRN_DB_BOOL :
           PUT_SLICE_VALUES(BOOL);
@@ -437,7 +441,7 @@ func_vector_find_uvector_number(grn_ctx *ctx,
     query_number = query;
   } else {
     GRN_VALUE_FIX_SIZE_INIT(&query_number_raw, 0, target->header.domain);
-    if (grn_obj_cast(ctx, query, &query_number_raw, GRN_FALSE) != GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, query, &query_number_raw, false) != GRN_SUCCESS) {
       GRN_OBJ_FIN(ctx, &query_number_raw);
       return NULL;
     }
@@ -524,7 +528,7 @@ func_vector_find_uvector_record(grn_ctx *ctx,
   } else {
     grn_obj query_id_raw;
     GRN_RECORD_INIT(&query_id_raw, 0, target->header.domain);
-    if (grn_obj_cast(ctx, query, &query_id_raw, GRN_FALSE) != GRN_SUCCESS) {
+    if (grn_obj_cast(ctx, query, &query_id_raw, false) != GRN_SUCCESS) {
       GRN_OBJ_FIN(ctx, &query_id_raw);
       return NULL;
     }

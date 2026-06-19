@@ -1,0 +1,825 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2024 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Horimoto Yasuhiro <horimoto@clear-code.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 13.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-27 17:53+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 14 series"
+msgstr "お知らせ - 14系"
+
+msgid "Release 14.1.3 - 2025-01-29"
+msgstr "14.1.3リリース - 2025-01-27"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "{ref}`offline-index-construction`: Added support for parallel execution"
+msgstr "{ref}`offline-index-construction`: 並列実行をサポート"
+
+msgid "If you have many CPU cores, you can improve {ref}`offline-index-construction` performance. You can use it by `column_create ... COLUMN_INDEX ... --n_workers -1`."
+msgstr "たくさんのCPUコアがある場合、{ref}`offline-index-construction`を高速化できます。この機能は `column_create ... COLUMN_INDEX ... --n_workers -1` とすることで使うことができます。"
+
+msgid "In general, {ref}`offline-index-construction` will be 2-10x faster by this."
+msgstr "多くの場合、これを使うことで{ref}`offline-index-construction`速度は2-10倍高速になります。"
+
+msgid "{doc}`/reference/functions/language_model_vectorize`: Added support for Phi-4"
+msgstr "{doc}`/reference/functions/language_model_vectorize`: Phi-4をサポート"
+
+msgid "You can use [Phi-4](https://huggingface.co/microsoft/phi-4) as a language model. Note that Phi-4 isn't designing for generating embeddings."
+msgstr "言語モデルとして[Phi-4](https://huggingface.co/microsoft/phi-4)を使うことができます。Phi-4はエンべディング生成用に設計されていないことに注意してください。"
+
+msgid "Added {doc}`/reference/normalizers/normalizer_nfkc`"
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`を追加"
+
+msgid "It's similar to existing `NormalizerNFKC*` such as {doc}`/reference/normalizers/normalizer_nfkc150`. But it's more generic than `NormalizerNFKC*`."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc150`のような既存の`NormalizerNFKC*`としています。しかし、`NormalizerNFKC*`より汎用的です。"
+
+msgid "{doc}`/reference/normalizers/normalizer_nfkc` accepts {ref}`normalizer-nfkc-version` argument to change used Unicode version. For example, `NormalizerNFKC(\"version\", \"15.0.0\")` equals to `NormalizerNFKC150`."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`は使用するUnicodeのバージョンを{ref}`normalizer-nfkc-version`引数で指定できます。たとえば、`NormalizerNFKC(\"version\", \"15.0.0\")`と`NormalizerNFKC150`は等価です。"
+
+msgid "`NormalizerNFKC*` are deprecated by {doc}`/reference/normalizers/normalizer_nfkc`. You should use {doc}`/reference/normalizers/normalizer_nfkc` for newly written applications."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`の導入により`NormalizerNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/normalizers/normalizer_nfkc`を使うべきです。"
+
+msgid "{doc}`/reference/normalizers/normalizer_nfkc` uses Unicode 16.0.0 by default."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc`はデフォルトでUnicode 16.0.0を使います。"
+
+msgid "Added {doc}`/reference/token_filters/token_filter_nfkc`"
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`を追加"
+
+msgid "It's similar to existing `TokenFilterNFKC*` such as {doc}`/reference/token_filters/token_filter_nfkc150`. But it's based on {doc}`/reference/normalizers/normalizer_nfkc`. So you can specify Unicode version as {ref}`normalizer-nfkc-version`."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc150`のような既存の`TokenFilterNFKC*`と似ています。しかし、{doc}`/reference/normalizers/normalizer_nfkc`を使います。そのため、Unicodeのバージョンを{ref}`normalizer-nfkc-version`で指定できます。"
+
+msgid "`TokenFilterNFKC*` are deprecated by {doc}`/reference/token_filters/token_filter_nfkc`. You should use {doc}`/reference/token_filters/token_filter_nfkc` for newly written applications."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`の導入により`TokenFilterNFKC*`は非推奨となりました。新しく書くアプリケーションでは{doc}`/reference/token_filters/token_filter_nfkc`を使うべきです。"
+
+msgid "{doc}`/reference/token_filters/token_filter_nfkc` uses Unicode 16.0.0 by default."
+msgstr "{doc}`/reference/token_filters/token_filter_nfkc`はデフォルトでUnicode 16.0.0を使います。"
+
+msgid "{doc}`/install/amazon_linux`: Added support for Amazon Linux 2023 aarch64"
+msgstr "{doc}`/install/amazon_linux`: Amazon Linux 2023 aarch64をサポート"
+
+msgid "See {doc}`/install/amazon_linux` how to install."
+msgstr "インストール方法は{doc}`/install/amazon_linux`を参照してください。"
+
+msgid "{doc}`/reference/commands/index_column_diff`: Added support for changing log level for progress logs"
+msgstr "{doc}`/reference/commands/index_column_diff`: プログレスログの変更をサポート"
+
+msgid "It's useful to see only progress logs without other debug logs."
+msgstr "他のデバッグログなしでプログレスログだけを見たい場合に有用です。"
+
+msgid "See {ref}`index-column-diff-progress-log-level` for details."
+msgstr "詳細は{ref}`index-column-diff-progress-log-level`を参照してください。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that deb/rpm packages can't be used on machines that don't have AVX"
+msgstr "AVXがないマシン上でdeb/rpmパッケージを使えなかった問題を修正"
+
+msgid "pgroonga/pgroonga#642"
+msgstr ""
+
+msgid "Groonga uses llama.cpp to use language models. llama.cpp uses SIMD for fast processing."
+msgstr "Groongaは言語モデルを使うためにllama.cppを使っています。llama.cppは高速処理のためにSIMDを使っています。"
+
+msgid "We defer llama.cpp initialization that needs SIMD. So you can use Groonga on machines that don't have AVX if you don't use language model related features such as {doc}`/reference/functions/language_model_vectorize`."
+msgstr "SIMDがllama.cppの初期化処理を遅延するようにしました。そのため、{doc}`/reference/functions/language_model_vectorize`のように言語モデル関連の機能を使わない場合はAVXがないマシンでもGroongaを使うことができます。"
+
+msgid "Reported by Yuki Shira."
+msgstr "しらゆきさんが報告しました。"
+
+msgid "{ref}`table-pat-key`: Fixed a bug that existing key may be broken after {doc}`/reference/commands/defrag`"
+msgstr "{ref}`table-pat-key`: {doc}`/reference/commands/defrag`後に既存のキーが壊れるかもしれない問題を修正"
+
+msgid "If you have some garbage nodes in {ref}`table-pat-key` and {doc}`/reference/commands/defrag` it, new added keys to the {ref}`table-pat-key` might override existing keys."
+msgstr "{ref}`table-pat-key`内にゴミノードが残った状態で{doc}`/reference/commands/defrag`をすると、この{ref}`table-pat-key`に追加したキーが既存のキーを上書きしてしまうかもしれませんでした。"
+
+msgid "This bug exists since {ref}`release-14-1-1`."
+msgstr "このバグは{ref}`release-14-1-1`から存在していました。"
+
+msgid "{ref}`table-pat-key`: Fixed a bug that some WALs are missing for {doc}`/reference/commands/defrag`"
+msgstr "{ref}`table-pat-key`: {doc}`/reference/commands/defrag`時にいくつかのWALが抜けていた問題を修正"
+
+msgid "This release added some missing WALs on {doc}`/reference/commands/defrag`. If some WALs are missing, we may not be able to recover a crash in {doc}`/reference/commands/defrag`."
+msgstr "{doc}`/reference/commands/defrag`中にいくつか漏れていたWALを追加しました。WALが漏れていると、{doc}`/reference/commands/defrag`中にクラッシュした場合に復旧できないことがあります。"
+
+msgid "{doc}`/reference/commands/defrag`: Fixed a bug that columns of {ref}`table-pat-key` aren't processed"
+msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`のカラムが処理されない問題を修正"
+
+msgid "[GH-2168](https://github.com/groonga/groonga/issues/2168)"
+msgstr ""
+
+msgid "`defrag pat` should process `pat` and its columns. But it processes only `pat` since {ref}`release-14-1-1`. It's a regression bug."
+msgstr "`defrag pat`は`pat`とそのカラムを処理するべきです。しかし、{ref}`release-14-1-1`から`pat`しか処理しなくなっていました。これはリグレッションバグです。"
+
+msgid "{doc}`/reference/columns/index`: Fixed an {ref}`offline-index-construction` bug"
+msgstr "{doc}`/reference/columns/index`: {ref}`offline-index-construction`の問題を修正"
+
+msgid "It happened when:"
+msgstr "次の場合に発生していました。"
+
+msgid "Source is a {ref}`reference-vector-column`"
+msgstr "ソースが{ref}`reference-vector-column`"
+
+msgid "Source has a `GRN_ID_NIL` element (an element that refers nothing) between `1..-2` position"
+msgstr "ソースが`1..-2`の位置に`GRN_ID_NIL`な要素（なにも参照していない要素）を持つ"
+
+msgid "Index column has `WITH_POSITION` flag"
+msgstr "インデックスカラムに`WITH_POSITION`フラグを指定している"
+
+msgid "Offline index construction always uses wrong position for elements after the `GRN_ID_NIL` element."
+msgstr "静的なインデックス構築では、`GRN_ID_NIL`要素の後のすべての要素で間違った位置情報を使っていました。"
+
+msgid "Offline index construction may use wrong index key. It depends on an uninitialized memory."
+msgstr "静的なインデックス構築では、間違ったインデックスキーを使うことがありました。これが発生するかどうかは未初期化のメモリーの内容に依存します。"
+
+msgid "{ref}`table-hash-key`: Fixed a bug that garbage entry may not be reused"
+msgstr "{ref}`table-hash-key`: ゴミエントリーが再利用されないかもしれない問題を修正"
+
+msgid "It happened when a {ref}`table-hash-key` is rehashed with garbage. Garbage is increased by deleting records."
+msgstr "ゴミエントリーがある状態で{ref}`table-hash-key`をリハッシュすると発生します。レコードを削除するとゴミエントリーが増えます。"
+
+msgid "If rehash is done with garbage, the garbage is never reused after the rehash. A {ref}`table-hash-key` may large even when it has only a few valid records."
+msgstr "ゴミエントリーがあるときにリハッシュされると、リハッシュ後はそのゴミエントリーが再利用されなくなります。すこしの有効なレコードしかないときでも{ref}`table-hash-key`が巨大になってしまう可能性があります。"
+
+msgid "This bug exists since {ref}`release-10-1-1`."
+msgstr "この問題は{ref}`release-10-1-1`から存在していました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Yuki Shira"
+msgstr "しらゆきさん"
+
+msgid "Release 14.1.2 - 2024-12-24"
+msgstr "14.1.2リリース - 2024-12-24"
+
+msgid "Relicensed to LGPL-2.1-or-later from LGPL-2.1-only"
+msgstr "LGPL-2.1-onlyからLGPL-2.1-or-laterにライセンスを変更"
+
+msgid "[GH-1774](https://github.com/groonga/groonga/issues/1774)"
+msgstr ""
+
+msgid "It improves GPL 3 or later compatibility."
+msgstr "これでGPL 3以降と一緒に使いやすくなります。"
+
+msgid "{doc}`/reference/commands/delete`: Added support for reference weight vector"
+msgstr "{doc}`/reference/commands/delete`: 参照重み付きベクターをサポート"
+
+msgid "If a reference column is indexed, `delete` can also delete the deleted reference value from the reference column. It works for a reference vector column but didn't work for a reference \"weight\" vector column."
+msgstr "参照されているカラムにインデックスがあると、`delete`は参照されているカラム内にある削除された参照されている値も一緒に削除します。参照ベクターカラムでもこの機能は動いていましたが、参照「重み付き」ベクターカラムでは動いていませんでした。"
+
+msgid "With this release, this also works for a reference \"weight\" vector column."
+msgstr "このリリースから参照「重み付き」ベクターカラムでも動くようになります。"
+
+msgid "{doc}`/reference/columns/vector`: Fixed a bug that needed cast may not be done"
+msgstr "{doc}`/reference/columns/vector`: 必要なキャストが実行されないことがある問題を修正"
+
+msgid "Groonga casts a value automatically when it's needed."
+msgstr "Groongaは必要に応じて自動的に値をキャストします。"
+
+msgid "If a reference vector column uses 32-bit floating number weight and a new value is a no weight reference vector, Groonga must cast the new value. But it was not done."
+msgstr "参照ベクターカラムが32ビット浮動小数点数の重みを使っていて、新しい値が重みなし参照ベクターの場合、Groongaは新しい値をキャストしなければいけません。しかし、キャストしていませんでした。"
+
+msgid "Release 14.1.1 - 2024-12-03"
+msgstr "14.1.1リリース - 2024-12-03"
+
+msgid "Stopped vendoring RapidJSON"
+msgstr "RapidJSONの同梱を終了"
+
+msgid "[GH-1462](https://github.com/groonga/groonga/issues/1462)"
+msgstr ""
+
+msgid "We added support for simdjson in 14.0.7. We don't need to vendor RapidJSON anymore. RapidJSON has a file that uses the JSON license. It's not a free software license / open source license. So we wanted to unvendor RapidJSON."
+msgstr "14.0.7でsimdjsonをサポートしました。これによりRapidJSONを同梱する必要がなくなりました。RapidJSONにはJSONライセンスのファイルが含まれていました。JSONライセンスはフリーソフトウェアライセンス・オープンソースライセンスではありません。そのため、RapidJSONの同梱をやめたかったのです。"
+
+msgid "Note that RapidJSON is still supported. You can still use RapidJSON by installing RapidJSON separately. But we recommend that you use simdjson not RapidJSON."
+msgstr "RapidJSONはまだサポートしています。別途RapidJSONをインストールすることで引き続きRapidJSONを使うことができます。しかし、RapidJSONよりsimdjsonを使うことをオススメします。"
+
+msgid "Made llama.cpp initialization lazy"
+msgstr "llama.cppの初期化処理を遅延化"
+
+msgid "[GH-2078](https://github.com/groonga/groonga/issues/2078)"
+msgstr ""
+
+msgid "llama.cpp requires recent SIMD features. If we always initialize llama.cpp, users who use old CPU and don't use llama.cpp related features can't use the official Groonga packages. So we made llama.cpp initialization lazy. Users who use llama.cpp related features still need recent CPU but users who don't use llama.cpp related features can use old CPU as usual."
+msgstr "llama.cppは最近のSIMD機能を必要とします。llama.cppを常に初期化すると、古いCPUを使っていて、かつ、llama.cppの機能を使っていないユーザーが公式のGroongaパッケージを使えません。そのため、llama.cppの初期化を遅延させることにしました。llama.cpp関連の機能を使っているユーザーは引き続き最近のCPUが必要ですが、llama.cpp関連の機能を使っていないユーザーはこれまで通り古いCPUを使えます。"
+
+msgid "`NormalizerNFKC`: Added support for mixing `unify_middle_dot` and `remove_symbol`"
+msgstr "`NormalizerNFKC`: `unify_middle_dot`と`remove_symbol`を同時使用をサポート"
+
+msgid "[GH-1538](https://github.com/groonga/groonga/issues/1538)"
+msgstr ""
+
+msgid "`NormalizerNFKC` family normalizers such as {doc}`/reference/normalizers/normalizer_nfkc150` can mix {ref}`normalizer-nfkc150-unify-middle-dot` and {ref}`normalizer-nfkc150-remove-symbol` options."
+msgstr "{doc}`/reference/normalizers/normalizer_nfkc150`のような`NormalizerNFKC`関連のノーマライザーで{ref}`normalizer-nfkc150-unify-middle-dot`オプションと{ref}`normalizer-nfkc150-remove-symbol`オプションを一緒に使えるようになりました。"
+
+msgid "{doc}`/reference/commands/defrag`: Added support for {ref}`table-pat-key`"
+msgstr "{doc}`/reference/commands/defrag`: {ref}`table-pat-key`をサポート"
+
+msgid "A {ref}`table-pat-key` table couldn't reuse spaces that are used by removed keys. They're still not be reusable automatically, but we can reuse them by executing {doc}`/reference/commands/defrag` explicitly since this release."
+msgstr "{ref}`table-pat-key`テーブルは削除されたキーの領域を再利用できませんでした。この領域は引き続き自動では再利用されませんが、このリリースからは明示的に{doc}`/reference/commands/defrag`を実行することで再利用できるようになりました。"
+
+msgid "{doc}`/reference/commands/load`: Improved error handling"
+msgstr "{doc}`/reference/commands/load`: エラー処理を改良"
+
+msgid "If there are any critical errors in {doc}`/reference/commands/load`, we will not wait for more data. Clients may stop sending more data in the case."
+msgstr "{doc}`/reference/commands/load`中にクリティカルなエラーが発生したときは後続のデータを待たないようにしました。このようなケースではクライアントは後続のデータを送らないかもしれません。"
+
+msgid "{doc}`/reference/executables/groonga`: Added `context_id` log flag"
+msgstr "{doc}`/reference/executables/groonga`: `context_id`ログフラグを追加"
+
+msgid "It's useful when you use {ref}`query-log` too. In {ref}`query-log`, the context ID is recorded. If we have the context ID in {ref}`process-log` and {ref}`query-log`, we can associate these logs easily."
+msgstr "{ref}`query-log`も使っている場合に便利です。{ref}`query-log`ではコンテキストIDが記録されています。{ref}`process-log`と{ref}`query-log`の中にコンテキストIDが記録されていると、これらのログをより簡単に紐付けられるようになります。"
+
+msgid "{doc}`/reference/executables/groonga`: Improved error handling"
+msgstr "{doc}`/reference/executables/groonga`: エラー処理を改良"
+
+msgid "{doc}`/reference/command/request_timeout` uses lock internally. It may be failed in some cases. We added some error checks for the case."
+msgstr "{doc}`/reference/command/request_timeout` 内部的にロックしています。場合によっては失敗することがあります。このようなケースを想定していくつかエラーチェックを追加しました。"
+
+msgid "{ref}`table-pat-key`: Improved key space efficiency"
+msgstr "{ref}`table-pat-key`: キー領域を効率化"
+
+msgid "[GH-2104](https://github.com/groonga/groonga/issues/2104)"
+msgstr ""
+
+msgid "There was a case that wastes key space. Now, we can use key space as efficiently as possible."
+msgstr "キー領域を無駄使いするケースがありました。このケースを改良して、できるだけ効率よくキー領域を使えるようにしました。"
+
+msgid "`grn_pat_size()`: Fixed a bug that `0` may not be returned on error"
+msgstr "`grn_pat_size()`: エラー時に`0`を返さない問題を修正"
+
+msgid "[GH-2097](https://github.com/groonga/groonga/issues/2097)"
+msgstr ""
+
+msgid "If the given `pat` is `NULL`, it returns `-22`. But it should have returned `0` with error `ctx->rc`."
+msgstr "指定された`pat`が`NULL`の場合、`-22`を返していました。しかし、エラーの場合は`0`を返して、`ctx->rc`にエラー情報を設定するべきでした。"
+
+msgid "Now, Groonga uses the expected behavior."
+msgstr "Groongaが期待した挙動をするようになりました。"
+
+msgid "{doc}`/reference/regular_expression`: Fixed a bug with an empty pattern"
+msgstr "{doc}`/reference/regular_expression`: 空のパターンのときの問題を修正"
+
+msgid "[GH-2121](https://github.com/groonga/groonga/issues/2121)"
+msgstr ""
+
+msgid "If the given pattern is an empty string, there were some problems:"
+msgstr "指定されたパターンが空文字列の場合、いくつかも問題がありました。"
+
+msgid "If there is an index for regular expression, Groonga was crashed."
+msgstr "正規表現用のインデックスがある場合、Groongaがクラッシュしていました。"
+
+msgid "If there is not an index for regular expression, Groonga returns all records."
+msgstr "正規表現用のインデックスがない場合、Groongaはすべてのレコードを返していました。"
+
+msgid "Now, Groonga returns an empty result for an empty pattern."
+msgstr "空のパターンのときは空の結果を返すようにしました。"
+
+msgid "Release 14.1.0 - 2024-11-05"
+msgstr "14.1.0リリース - 2024-11-05"
+
+msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"llama.cpp\"]` entry"
+msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"llama.cpp\"]`エントリーを追加"
+
+msgid "The `.[\"features\"]` entry shows whether each feature is enabled or not like the following:"
+msgstr "`.[\"features\"]`エントリーは次のように各機能が有効かどうかを示しています。"
+
+msgid "This release added `llama.cpp` to the `.[\"features\"]` entry:"
+msgstr "このリリースは`.[\"features\"]`エントリーに`llama.cpp`を追加しました。"
+
+msgid "You can use `.[\"features\"][\"llama.cpp\"]` to know whether [llama.cpp](https://github.com/ggerganov/llama.cpp) is enabled or not."
+msgstr "[llama.cpp](https://github.com/ggerganov/llama.cpp)が有効になっているかどうかを確認するために`.[\"features\"][\"llama.cpp\"]`を使うことができます。"
+
+msgid "You need the llama.cpp support to use {doc}`/reference/functions/language_model_vectorize` function described next."
+msgstr "次で紹介する{doc}`/reference/functions/language_model_vectorize`を使うためにはllama.cppサポートが必要です。"
+
+msgid "[{doc}`/reference/functions/language_model_vectorize`] Added (Experimental)"
+msgstr "[{doc}`/reference/functions/language_model_vectorize`] 追加（実験的）"
+
+msgid "This feature is still experimental and unstable."
+msgstr "この機能はまだ実験的で安定していません。"
+
+msgid "This feature may consume a significant amount of CPU and memory."
+msgstr "この機能は従来よりも多くのCPUとメモリーを使うかもしれません。"
+
+msgid "The function returns normalized embeddings (vector representations) of the given text. An embedding represents the semantic information of the text as a vector. By converting meanings of the text into vectors, you can perform semantic searches instead of keyword based searches."
+msgstr "この関数は、与えられたテキストの正規化されたエンべディング（ベクトル表現）を返します。エンべディングとは、与えられたテキストの意味情報をベクトルとして表現したものです。意味をベクトルとして表現することで、全文検索ではなくセマンティックサーチができるようになります。"
+
+msgid "For example, \"United States\" and \"America\" look completely different but share the same meaning. Traditionally, you could search for words with different spellings but the same meaning by using synonym expansion. But this required maintaining a synonym table."
+msgstr "例えば、「牛乳」と「ミルク」は字面は全然違いますが、同じ意味を持つ言葉です。従来でも同義語展開を使えば「牛乳」と「ミルク」のような字面の異なる意味が同じ言葉を検索できますが、同義語展開用のテーブルをメンテナンスしなければなりません。"
+
+msgid "With semantic search enabled, you can find words with similar meanings without preparing or maintaining a synonym table."
+msgstr "セマンティックサーチができるようになると、同義語展開用のテーブルを準備、メンテナンスせずに意味の近い言葉を検索できるようになります。"
+
+msgid "[{doc}`/reference/commands/column_create`] Added the {ref}`column-create-generator` parameter"
+msgstr "[{doc}`/reference/commands/column_create`] {ref}`column-create-generator`引数を追加"
+
+msgid "This release added the {ref}`generated-column` feature. You can use this feature to generate column values based on the values of other column automatically."
+msgstr "このリリースでは{ref}`generated-column`機能を追加しました。この機能を使うと、他のカラムの値を使ってカラムの値を自動生成できます。"
+
+msgid "You can create a generated column by using {doc}`/reference/commands/column_create` and {ref}`column-create-generator`. See {ref}`column-create-generated-column` for details."
+msgstr "{doc}`/reference/commands/column_create`と{ref}`column-create-generator`を使うと生成カラムを作ることができます。詳細は{ref}`column-create-generated-column`を参照してください。"
+
+msgid "Here are merits of this feature:"
+msgstr "この機能のメリットは次のとおりです。"
+
+msgid "You no longer need to manage generation processes manually"
+msgstr "生成処理を手動で管理する必要がない"
+
+msgid "You can reduce the amount of data to load since only the source columns are necessary"
+msgstr "生成元のカラムだけあればよいので、ロードするデータ量を減らせる"
+
+msgid "For example, you can use {doc}`/reference/functions/language_model_vectorize` to generate embeddings of the values of other columns. An embedding may not be small. If it's represented as an 1024 dimensions vector of 32-bit float, its size is 4KiB. If you generate embeddings automatically by {doc}`/reference/functions/language_model_vectorize` and {ref}`generated-column`, you don't need to send 4KiB embeddings to Groonga."
+msgstr "たとえば、他のカラムの値のエンべディングを生成するために{doc}`/reference/functions/language_model_vectorize`を使うことができます。エンべディングは小さくないかもしれません。もし、エンべディングが1024次元の32-bit浮動小数点数で表現されている場合、エンべディングのサイズは4KiBになります。{doc}`/reference/functions/language_model_vectorize`と{ref}`generated-column`でエンべディングを自動で生成すると4KiBのエンべディング一式をGroongaに送る必要はありません。"
+
+msgid "You can {doc}`/reference/commands/load` only the text to be searched while simultaneously storing the embedding with this feature."
+msgstr "この機能により、検索対象のテキストを{doc}`/reference/commands/load`するだけで、同時に対応するエンべディングも保存できます。"
+
+msgid "[{doc}`/server/gqtp`] Fixed a bug that wrong return code is returned"
+msgstr "[{doc}`/server/gqtp`] 間違ったリターンコードが返される問題を修正"
+
+msgid "This is a client side problem. This problem was introduced in 14.0.0."
+msgstr "これはクライアント側の問題です。この問題は14.0.0から存在します。"
+
+msgid "GQTP client converts {doc}`/reference/command/return_code` received from server wrongly. For example, `INVALID_ARGUMENT` code is `-22` but it was converted to `65514`."
+msgstr "GQTPクライアントはサーバーから受け取った{doc}`/reference/command/return_code`を間違って変換していました。たとえば、`INVALID_ARGUMENT`の値は`-22`ですが、これを`65514`に変換していました。"
+
+msgid "This fix does not affect users who are not using GQTP clients."
+msgstr "GQTPクライアントを利用していないユーザーには影響ありません。"
+
+msgid "[{doc}`/reference/commands/logical_range_filter`] Fixed a bug that invalid JSON format response may be returned"
+msgstr "[{doc}`/reference/commands/logical_range_filter`] 不正なJSONフォーマットのレスポンスが返されることがある問題を修正"
+
+msgid "This problem happens only with {doc}`/reference/command/command_version` 3. The default command version is 1."
+msgstr "この問題は{doc}`/reference/command/command_version` 3でのみ発生します。デフォルトのコマンドバージョンは1です。"
+
+msgid "You can check your Groonga's default command version using the {doc}`/reference/commands/status` command:"
+msgstr "あなたのGroongaのデフォルトのコマンドバージョンは{doc}`/reference/commands/status`コマンドで確認できます。"
+
+msgid "Here is an example invalid JSON format response. You can see that there is an extra `\"records\": []` before the actual `\"records: [...]\"`:"
+msgstr "以下が不正なJSONフォーマットのレスポンス例です。実際の`\"records: [...]\"`の前に不要な`\"records\": []`があります。"
+
+msgid "[{doc}`/reference/commands/request_cancel`] Fixed a bug that invalid JSON format response may be returned"
+msgstr "[{doc}`/reference/commands/logical_range_filter`] 不正なJSONフォーマットのレスポンスが返されることがある問題を修正"
+
+msgid "You can stop a running command by {doc}`/reference/commands/request_cancel`."
+msgstr "{doc}`/reference/commands/request_cancel`で実行中のコマンドを止めることができます。"
+
+msgid "You might get an invalid JSON format response when you cancel a command. It depends on the timing of the cancellation."
+msgstr "コマンドをキャンセルすると不正なJSONフォーマットのレスポンスを受け取ることがありました。これはキャンセルのタイミングによって発生したりしなかったりします。"
+
+msgid "This release fixed the cancellation process. You will not receive an invalid JSON format response even when you cancel a command."
+msgstr "このリリースではキャンセル処理時の出力処理を改良しました。コマンドをキャンセルしたときでも不正なJSONフォーマットのレスポンスを受け取ることはなくなるはずです。"
+
+msgid "[{doc}`/reference/commands/index_column_diff`] Fixed a bug that false positive diff may be reported"
+msgstr "[{doc}`/reference/commands/index_column_diff`] 擬陽性の差分が報告されるかもしれない問題を修正"
+
+msgid "You can use {doc}`/reference/commands/index_column_diff` to detect index corruption."
+msgstr "{doc}`/reference/commands/index_column_diff`を使うとインデックスの破損を検出できます。"
+
+msgid "{doc}`/reference/commands/index_column_diff` reports a missing record when a single record contains more than 131,072 instances of the same token. This release fixed this problem."
+msgstr "1つのレコード中に同じトークンが131,072個以上含まれている場合、{doc}`/reference/commands/index_column_diff`は本来インデックス内にあるべきレコードが含まれていないと報告します。このリリースではこの問題を修正しました。"
+
+msgid "Release 14.0.9 - 2024-09-27"
+msgstr "14.0.9リリース - 2024-09-27"
+
+msgid "Fixed build error when we build from source on Alpine Linux 3.20."
+msgstr "Alpine Linux 3.20上でソースからビルドする時にビルドエラーになる問題を修正しました。"
+
+msgid "Release 14.0.8 - 2024-09-25"
+msgstr "14.0.8リリース - 2024-09-25"
+
+msgid "[Amazon Linux 2023] Added support for Amazon Linux 2023. [GH-1845][Reported by takoyaki-nyokki and Watson]"
+msgstr "[Amazon Linux 2023] Amazon Linux 2023 をサポートしました。 [GH-1845][takoyaki-nyokkiさんとWatsonさんの報告]"
+
+msgid "However, we don't support Amazon Linux 2023 for aarch64 currently. Because the maintenance is costly because of the time of building a package for aarch64 is too time consuming."
+msgstr "今の所、Amazon Linux 2023のaarch64版はサポートしていません。パッケージのビルドに時間がかかりすぎるため、メンテナンスコストが高いためです。"
+
+msgid "We don't use TokenMecab in Groonga for Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide MeCab package."
+msgstr "Amazon Linux 2023版のGroongaではTokenMecabが使えません。Amazon Linux 2023がMecabパッケージを提供していないためです。"
+
+msgid "Fixed a crash bug when we specified `pgroonga.log_type` on PGroonga for Windows."
+msgstr "Windows版のPGroongaで`pgroonga.log_type`を指定するとクラッシュする問題を修正しました。"
+
+msgid "takoyaki-nyokki"
+msgstr "takoyaki-nyokkiさん"
+
+msgid "Watson"
+msgstr "Watsonさん"
+
+msgid "Release 14.0.7 - 2024-09-03"
+msgstr "14.0.7リリース - 2024-09-03"
+
+msgid "[NormalizerNFKC] Added a new option `unify_latin_alphabet_with`.[pgroonga/pgroonga#418][Reported by Man Hoang]"
+msgstr "[NormalizerNFKC] 新しいオプション `unify_latin_alphabet_with` を追加しました。[pgroonga/pgroonga#418][Man Hoangさんの報告]"
+
+msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "However, this feature focus on only `LATIN (SMALL|CAPITAL) LETTER X WITH XXX`. It doesn't support `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` characters."
+msgstr "ただし、この機能は `LATIN (SMALL|CAPITAL) LETTER X WITH XXX` にのみフォーカスしています。 `LATIN (SMALL|CAPITAL) LETTER X` + `COMBINING XXX` はサポートしていません。"
+
+msgid "We can confirm that can get `ngoằn` with `ngoan` in the following example."
+msgstr "以下の例で、`ngoan`で`ngoằn`を取得できることが確認できます。"
+
+msgid "Current normalizers has the following bug."
+msgstr "現在のノーマライザーには、以下の問題があります。"
+
+msgid "The lowercase of `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` must be `U+0069 LATIN SMALL LETTER I`. But the current implementation uses `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE`."
+msgstr "小文字の `U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE` は `U+0069 LATIN SMALL LETTER I` でなければなりませんが、現在の実装では、 `U+0069 LATIN SMALL LETTER I` + `U+0307 COMBINING DOT ABOVE` を使ってしまいます。"
+
+msgid "We will fix the bug from NormalizerNFKC160."
+msgstr "この問題は、NormalizerNFKC160から修正する予定です。"
+
+msgid "Added support for [simdjson](https://simdjson.org/)."
+msgstr "[simdjson](https://simdjson.org/) をサポートしました。"
+
+msgid "Currently, we keeps RapidJSON support but we'll remove RapidJSON support later."
+msgstr "現状、RapidJSONのサポートも維持しますが、RapidJSONは今後サポートをやめる予定です。"
+
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 23.10 (Mantic Minotaur)"
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 23.10 (Mantic Minotaur)のサポートをやめました。"
+
+msgid "Because Ubuntu 23.10 reached EOL at July 11, 2024."
+msgstr "Ubuntu 23.10 は 2024-07-11 にEOLになったためです。"
+
+msgid "Distributed the install packages which enabled `libedit`."
+msgstr "`libedit`を有効にしたパッケージを配布するようにしました。"
+
+msgid "Now in Groonga REPL, we can refer to the command history using the up arrow key."
+msgstr "Groonga REPLで↑キーを使ってコマンド履歴を参照できるようになりました。"
+
+msgid "[status] Fixed a bug that \"h3\" is never shown in `groonga --version`/`status`."
+msgstr "[status] \"h3\"が`groonga --version`や`status`で表示されない問題を修正しました。"
+
+msgid "Fixed a crash bug when log rotate is enabled."
+msgstr "ログローテートが有効な時にクラッシュする問題を修正しました。"
+
+msgid "This bug occurred in the following conditions."
+msgstr "この問題は、以下の条件で発生します。"
+
+msgid "When logging to a file by specification the following options."
+msgstr "以下のオプションを指定して、ファイルにロギングする時。"
+
+msgid "`--log-path <path>`"
+msgstr ""
+
+msgid "`--query-log-path <path>`"
+msgstr ""
+
+msgid "When log rotate is enabled by specification the following options."
+msgstr "以下のオプションを指定して、ログローテートが有効な時。"
+
+msgid "`--log-rotate-threshold-size <threshold>`"
+msgstr ""
+
+msgid "`--query-log-rotate-threshold-size <threshold>`"
+msgstr ""
+
+msgid "When process ID log output is enabled by specification the following options."
+msgstr "以下のオプションを指定して、プロセスIDの出力が有効な時。"
+
+msgid "`--log-flags process_id`"
+msgstr ""
+
+msgid "Fixed a bug that Groonga use bundled Onigmo even if we specify `GRN_WITH_BUNDLED_ONIGMO=OFF`. [termux/termux-packages#21252][Patch by Biswapriyo Nath]"
+msgstr "`GRN_WITH_BUNDLED_ONIGMO=OFF`を指定しているにも関わらず、GroongaがバンドルされているOnigmoを使う問題を修正しました。[termux/termux-packages#21252][Biswapriyo Nathさんがパッチ提供]"
+
+msgid "Man Hoang"
+msgstr "Man Hoangさん"
+
+msgid "Biswapriyo Nath"
+msgstr "Biswapriyo Nathさん"
+
+msgid "Release 14.0.6 - 2024-07-29"
+msgstr "14.0.6リリース - 2024-07-29"
+
+msgid "Added support for prefix search without index against vector column."
+msgstr "インデックスを設定していないベクターカラムに対して、前方一致検索ができるようになりました。"
+
+msgid "We can already prefix search with index against vector column. However, we can't prefix search without index against vector column until now."
+msgstr "すでに、インデックスを設定したベクターカラムに対しては前方一致検索できますが、インデックスを設定していないベクターカラムに対しては、今まで前方一致検索できませんでした。"
+
+msgid "We can also prefix search without index against vector column as below since this release."
+msgstr "このリリースから、以下のようにインデックスを設定していないベクターカラムに対しても前方一致検索ができます。"
+
+msgid "[{doc}`/install/debian`] Dropped support for Debian 11 (bullseye)."
+msgstr "[{doc}`/install/debian`] Debian 11 (bullseye) のサポートをやめました。"
+
+msgid "Release 14.0.5 - 2024-07-04"
+msgstr "14.0.5リリース - 2024-07-04"
+
+msgid "Dropped support for CentOS 7."
+msgstr "CentOS 7のサポートをやめました。"
+
+msgid "Because CentOS 7 reached EOL."
+msgstr "CentOS 7はEOLになったためです。"
+
+msgid "Added a new feature that objects(table or column) as remove as possible."
+msgstr "可能な限りオブジェクト（テーブルやカラム）を削除する機能を追加しました。"
+
+msgid "The crash safe feature of PGroonga will use this feature mainly."
+msgstr "この機能は主にPGroongaのクラッシュセーフ機能で使います。"
+
+msgid "PGroonga will apply PGroonga's WAL to standby database automatically by using [`Custom WAL Resource Managers`](https://www.postgresql.org/docs/current/custom-rmgr.html). However, when PGroonga use `Custom WAL Resource Managers`, all replications are stop if PGroonga fail application of PGroonga's WAL due to break Groonga's object. So, if broken objects exist in database, Groonga will try as remove as possible objects by using this feature."
+msgstr "PGroongaは[`Custom WAL Resource Managers`](https://www.postgresql.jp/document/16/html/custom-rmgr.html)を使うことで、PGroongaのWALをスタンバイへ自動で適用できるようになります。ただ、`Custom WAL Resource Managers`を使用していると、オブジェクトの破損などでPGroongaのWALの適用に失敗した場合にすべてのレプリケーションが停止します。そのため、壊れたオブジェクトがデータベース内に存在する場合、Groongaはこの機能を使って、できる限り壊れたオブジェクトを削除しようとします。"
+
+msgid "[{doc}`/reference/functions/query`] Fixed a bug that the order of evaluation of `'A || query(\"...\", \"B C\")'` is wrong"
+msgstr "[{doc}`/reference/functions/query`] `query()`の`AND`検索と`OR`検索検索を `'A || query(\"...\", \"B C\")'` の順で組み合わせたときに、誤った順序で評価される問題を修正しました"
+
+msgid "We expect that `{\"name\": \"Alice\", \"memo\": \"Groonga user\"}` is hit in the following example. However, if this problem occurred, the following query had not been hit."
+msgstr "以下の例では、`memo @ \"Groonga`の条件がマッチする`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットするはずですが、 この問題が発生した場合はヒットしません。したがって、下記の例では何もヒットしません。"
+
+msgid "After the fix, `{\"name\": \"Alice\", \"memo\": \"Groonga user\"}` is hit such as the following example."
+msgstr "修正後は、以下のように`{\"name\": \"Alice\", \"memo\": \"Groonga user\"}`がヒットします。"
+
+msgid "Here is occurrence condition of this problem."
+msgstr "この問題の発生条件は下記の通りです。"
+
+msgid "We use `OR` search and `query()`."
+msgstr "`OR`検索と`query()`を組み合わせて使っていること。"
+
+msgid "We use `AND` search in `query()`."
+msgstr "`query()`内で`AND`検索していること。"
+
+msgid "The order of condition expression is `'A || query(\"...\", \"B C\")'`."
+msgstr "`'A || query(\"...\", \"B C\")'`の順序で条件式が記述されていること。"
+
+msgid "So, this problem doesn't occur if we use only `query()` or we don't use `AND` search in `query()`."
+msgstr "そのため、`query()`を単独で使用している場合や、`query()`内で`AND`検索をしていない場合は問題ありません。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that a condition that evaluate prefix search in advance such as `--query \"A* OR B\"` returned wrong search result"
+msgstr "[{doc}`/reference/commands/select`] `--query \"A* OR B\"`のように先に前方一致検索を評価する条件が、誤った検索結果を返すことがある問題を修正しました"
+
+msgid "This problem may occur when prefix search evaluate in advance. This problem doesn't occur a condition that evaluate prefix search in the end such as `--query A OR B*`."
+msgstr "この問題は先に前方一致検索を評価する条件の時に発生する可能性があります。 `--query A OR B*`のように最後に前方一致検索を評価するケースでは発生しません。"
+
+msgid "If this problem occur, the `Bo` and the `li` of `--query \"Bo* OR li\"` are evaluated as a prefix search. As a result, The following query does not hit. Because `li` is evaluated as a prefix search as mentioned above."
+msgstr "この問題が発生すると、以下の`--query \"Bo* OR li\"`という条件が、`Bo`も`li`も前方一致検索として評価されてしまい`li`の検索結果が誤ったものになります。 `Alice`がヒットするのが期待値ですが、以下のように何もヒットしません。これは、前述の通り`li`が前方一致検索として評価されてしまうためです。"
+
+msgid "Release 14.0.4 - 2024-05-29"
+msgstr "14.0.4リリース - 2024-05-29"
+
+msgid "[{doc}`/reference/functions/query_parallel_or`] Fixed a bug that the {ref}`select-match-escalation-threshold` or `force_match_escalation` options were ignored when using `query_parallel_or()`."
+msgstr "[{doc}`/reference/functions/query_parallel_or`] `query_parallel_or()`を使用すると、{ref}`select-match-escalation-threshold` または `force_match_escalation` オプションが無視される問題を修正しました。"
+
+msgid "Before the fix, even when `match_escalation_threshold` was set to disable match escalation, the results still escalated when we use `query_parallel_or()`. This problem occurred only `query_parallel_or()`. {doc}`/reference/functions/query` don't occur this problem."
+msgstr "修正前は、検索エスカレーションを無効にしても、`query_parallel_or()`使用時はエスカレーションされていました。この問題は、`query_parallel_or()`でのみ発生します。{doc}`/reference/functions/query`では発生しません。"
+
+msgid "Generally, we don't disable match escalation. Because we want to get something search results. The number of hits is 0 is the unwelcome result of us. Therefore, this problem has no effect by many users. However, it has effect by user who use stop word as below."
+msgstr "一般的には、ヒット数が0件になってしまうのは嬉しくありません。何かしらの検索結果を得たいことが多いです。したがって、通常、検索エスカレーションは無効にしません。そのため、この問題は多くのユーザーには影響がありませんが、以下のようにストップワードを利用しているユーザーには影響があります。"
+
+msgid "We don't want to match a keyword that is registered as stopword. Therefore, we set `-1` to `match_escalation_threshold` in the above example. We expect that Groonga doesn't return records in the above example because of escalation disable and search keyword(`and`) is registered as stopword. However, If this problem occur, Groonga returns match record. Because if we use `query_parallel_or()`, `match_escalation_threshold` doesn't work."
+msgstr "ストップワードとして登録したキーワードではマッチしてほしくありません。そのため、上記の例では、`match_escalation_threshold`に`-1`を設定しています。エスカレーションが無効でかつ、ストップワードに検索キーワード（`and`）が登録されているため、上記の例では、Groongaは何もレコードを返さないことが期待値です。しかし、この問題が発生すると、Groongaはマッチしたレコードを返却してしまいます。`query_parallel_or()`を使うと、`match_escalation_threshold`が効かないためです。"
+
+msgid "Fixed a bug that full-text search against a reference column of a vector didn't work."
+msgstr "参照ベクターカラムに対する全文検索が動作しない問題を修正しました。"
+
+msgid "This problem has occured Groonga v14.0.0 or later. This problem has effect if we execute full-text search against a reference column of a vector."
+msgstr "この問題は、Groonga v14.0.0以降で発生します。また、この問題は、参照ベクターカラムに対して全文検索を実行している場合に影響があります。"
+
+msgid "We expected that Groonga returns `[1, \"Linux MySQL\"]` and `[2, \"MySQL Groonga\"]` as below example. However, before the fix, Groonga always returned 0 hits as below because of we executed full-text search on a reference column of a vector."
+msgstr "以下の例では、Groongaが`[1, \"Linux MySQL\"]` と `[2, \"MySQL Groonga\"]`を返すことが期待ですが、修正前は、以下のように常に0件ヒットになっていました。参照ベクターカラムに対して全文検索しているためです。"
+
+msgid "Release 14.0.3 - 2024-05-09"
+msgstr "14.0.3リリース - 2024-05-09"
+
+msgid "We optimized performance as below."
+msgstr "以下の最適化を行いました。"
+
+msgid "We optimized performance of `OR` and `AND` search when the number of hits were many."
+msgstr "ヒット数が多いときの`OR`検索と`AND`検索のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of prefix search(`@^`)."
+msgstr "前方一致検索(`@^`)のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of `AND` search when the number of records of `A` more than `B` in condition of `A AND B`."
+msgstr "`A AND B`という条件で、`B`より`A`のレコード数が多い場合の`AND`検索のパフォーマンスを向上しました。"
+
+msgid "We optimized performance of search when we used many dynamic columns."
+msgstr "多くの動的カラムを設定している場合の検索パフォーマンスを向上しました。"
+
+msgid "[{doc}`/reference/tokenizers/token_ngram`] Added new option `ignore_blank`."
+msgstr "[{doc}`/reference/tokenizers/token_ngram`] 新しいオプション`ignore_blank`を追加しました。"
+
+msgid "We can replace `TokenBigramIgnoreBlank` with `TokenNgram(\"ignore_blank\", true)` as below."
+msgstr "以下のように`TokenBigramIgnoreBlank`を`TokenNgram(\"ignore_blank\", true)`で置き換えることができます。"
+
+msgid "Here is example of use `TokenBigram`."
+msgstr "`TokenBigram`を使う例です。"
+
+msgid "Here is example of use `TokenBigramIgnoreBlank`."
+msgstr "`TokenBigramIgnoreBlank`を使う例です。"
+
+msgid "Here is example of use `TokenNgram(\"ignore_blank\", true)`."
+msgstr "`TokenNgram(\"ignore_blank\", true)`を使う例です。"
+
+msgid "[{doc}`/install/ubuntu`] Add support for Ubuntu 24.04 LTS (Noble Numbat)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 24.04 LTS (Noble Numbat) をサポートしました。"
+
+msgid "[{doc}`/reference/commands/request_cancel`] Fix a bug that Groonga may crash when we execute `request_cancel` command while we execute the other query."
+msgstr "[{doc}`/reference/commands/request_cancel`] `request_cancel`コマンドで実行中のクエリーを中断した時にGroongaがクラッシュすることがある問題を修正しました。"
+
+msgid "Fixed the unexpected error when using `--post_filter` with `--offset` greater than the post-filtered result"
+msgstr "`--post_filter`使用時に、`--offset`の値が`--post_filter`の結果より大きい場合に予期しないエラーになる問題を修正しました。"
+
+msgid "In the same situation, using `--filter` with `--offset` doesn't raise the error. This inconsistency in behavior between `--filter` and `--post-filter` has now been resolved."
+msgstr "`--filter` と `--offset`の組み合わせで、同様のケースになった場合はエラーは発生しません。`--filter` と `--post-filter`の挙動を合わせました。"
+
+msgid "Fixed a bug where incorrect search result could be returned when not all phrases within `(...)` matched using near phrase product."
+msgstr "近傍フレーズ直積検索で`(...)`内のすべてのフレーズがマッチしない場合に、誤った検索結果を返す場合がある問題を修正しました。"
+
+msgid "For example, there is no record which matched `(2)` condition using `--query '*NPP1\"(a) (2)\"'`. In this case, the expected behavior would be return no record. However, the actual behavior was equal to the query `--query '*NPP and \"(a)\"` as below. This means that despite no records matched `(2)`, records like `ax1` and `axx1` were incorrectly returned."
+msgstr "例えば以下の、`--query '*NPP1\"(a) (2)\"'`で指定している`(2)`にマッチするレコードはありません。この場合は、何もヒットしないのが正しい挙動ですが、`--query '*NPP1\"(a)`相当の挙動になっていました。つまり、`(2)`にマッチするレコードが無いにも関わらず、`ax1`と`axx1`がヒットしていました。"
+
+msgid "Fixed a bug that rehash failed or data in a table broke when rehash occurred that the table with `TABLE_HASH_KEY` has 2^28 or more records."
+msgstr "`TABLE_HASH_KEY`のテーブルに2^28以上のレコードが存在する時にリハッシュが発生すると、リハッシュが失敗するかテーブル内のデータが壊れる問題を修正しました。"
+
+msgid "Fixed a bug that highlight position slipped out of place in the following cases."
+msgstr "以下のケースでハイライト位置がずれる問題を修正しました。"
+
+msgid "If full width space existed before highlight target characters as below."
+msgstr "以下のようにハイライト対象の文字の前に全角スペースがある場合。"
+
+msgid "We expected that Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`. However, Groonga returned `\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"` as below."
+msgstr "`\"Groonga　<span class=\\\"keyword\\\">高</span>速！\"`となることが期待値ですが、以下のように`\"Groonga　<span class=\\\"keyword\\\">高速</span>！\"`となっていました。"
+
+msgid "If we used `TokenNgram(\"loose_blank\", true)` and if highlight target characters included full width space as below."
+msgstr "`以下のように`TokenNgram(\"loose_blank\", true)`を使っていて、ハイライト対象の文字が全角スペースを含んでいる場合。"
+
+msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山田 太郎</span>\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山田 太</span>\"` as below."
+msgstr "`\"<span class=\\\"keyword\\\">山田 太郎</span>\"`となることが期待値ですが、以下のように`\"<span class=\\\"keyword\\\">山田 太</span>\"`となっていました。"
+
+msgid "If white space existed in the front of highlight target characters as below."
+msgstr "以下のようにハイライト対象の文字の先頭に空白スペースがある場合。"
+
+msgid "We expected that Groonga returned `\" <span class=\\\"keyword\\\">山</span>田太郎\"`. However, Groonga returned `\" <span class=\\\"keyword\\\">山</span>\"` as below."
+msgstr "`\" <span class=\\\"keyword\\\">山</span>田太郎\"`となることが期待値ですが、以下のように`\" <span class=\\\"keyword\\\">山</span>\"`となっていました。"
+
+msgid "If the second character of highlight target was full width space as below."
+msgstr "以下のようにハイライト対象の２番めの文字が全角スペースの場合。"
+
+msgid "We expected that Groonga returned `\"<span class=\\\"keyword\\\">山　田</span>太郎\"`. However, Groonga returned `\"<span class=\\\"keyword\\\">山　田太</span>郎\"` as below."
+msgstr "`\"<span class=\\\"keyword\\\">山　田</span>太郎\"`となるのが期待値ですが、以下のように`\"<span class=\\\"keyword\\\">山　田太</span>郎\"`となっていました。"
+
+msgid "Release 14.0.2 - 2024-03-29"
+msgstr "14.0.2リリース - 2024-03-29"
+
+msgid "Reduced a log level of a log when Groonga setting normalizers/tokenizer/token_filters against temporary table."
+msgstr "一時テーブルに対して、normalizers/tokenizer/token_filtersを設定したときに出力されるログのログレベルを下げました。"
+
+msgid "For example, the target log of this modification is the following log."
+msgstr "例えば、この変更の対象のログは以下のようなログです。"
+
+msgid "PGroonga sets normalizers against temporary table on start. So, this log becomes noise. Because this log become output when PGroonga start because of PGroonga's default log level is `notice`."
+msgstr "PGroongaは起動時に一時テーブルに対してノーマライザーを設定するため、このログがノイズになっていました。このログのログレベルは`notice`なので、PGroonga起動時にこのログが出力されてしまうためです。"
+
+msgid "Therefore, we reduce log level to `debug` for the log since this release. Thus, this log does not output when PGroonga start in default."
+msgstr "そのため、今回のリリースからこのようなログのログレベルを`debug`にしました。これにより、デフォルトでは、PGroonga起動時にこのログが出力されないようになります。"
+
+msgid "Release 14.0.1 - 2024-03-14"
+msgstr "14.0.1リリース - 2024-03-14"
+
+msgid "[{doc}`/reference/commands/load`] Stopped reporting an error when we `load` key that becomes an empty key by normalization."
+msgstr "[{doc}`/reference/commands/load`] ノーマライズによって空のキーとなったキーを`load`する時のエラーを止めました。"
+
+msgid "`\"-\"` becomes `\"\"` with `NormalizerNFKC150(\"remove_symbol\", true)`. So the following case reports a \"empty key\" error."
+msgstr "`\"-\"` は、`NormalizerNFKC150(\"remove_symbol\", true)` によって `\"\"` になります。そのため、以下のケースでは\"empty key\"エラーが報告されます。"
+
+msgid "However, if we many `load` in such data, many error log are generated. Because Groonga output many \"empty key\" error because of Groonga can't register empty string to index."
+msgstr "しかし、このようなデータを大量に`load`した場合、多くのエラーログが生成されます。Groongaは空の文字列をインデックスに登録できないため、\"empty key\"エラーを大量に出力するためです。"
+
+msgid "No problem even if empty string can't register to index in such case. Because we don't match anything even if we search by empty string. So, we stop reporting an \"empty key\" error in such case."
+msgstr "ただ、このようなケースで空の文字列がインデックスへ登録できなくても問題ありません。空の文字列で検索しても何も一致しないためです。そのため、このようなケースの時に\"empty key\"エラーを報告するのを止めました。"
+
+msgid "Fixed a crash bug if a request is canceled {doc}`/reference/functions/between` or range search."
+msgstr "{doc}`/reference/functions/between` または、範囲検索時にリクエストキャンセルするとGroongaがクラッシュする問題を修正しました。"
+
+msgid "This bug doesn't necessarily occur. This bug occur when we cancel a request in the specific timing. This bug occur easily when search time is long such as sequential search."
+msgstr "この問題は必ず発生するわけではありません。特定のタイミングでリクエストキャンセルをすると発生します。シーケンシャルサーチなどの検索時間が長い場合に発生しやすいです。"
+
+msgid "Fixed a bug that {doc}`/reference/functions/highlight_html` may return invalid result when the following conditions are met."
+msgstr "以下の条件を満たした時に {doc}`/reference/functions/highlight_html` が正しくない結果を返すことがあります。"
+
+msgid "We use multiple normalizers such as `NormalizerTable` and `NormalizerNFKC150`."
+msgstr "`NormalizerTable` and `NormalizerNFKC150`のように複数のノーマライザーを使っている。"
+
+msgid "We highlight string include whitespace."
+msgstr "空白を含む文字列をハイライトする。"
+
+msgid "For example, this bug occur such as the following case."
+msgstr "例えば、以下のようなケースでこの問題は発生します。"
+
+msgid "[{doc}`/install/ubuntu`] We become able to provide package for Ubuntu again."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu向けパッケージを提供できるようになりました。"
+
+msgid "We don't provide packages for Ubuntu in Groonga version 14.0.0. Because we fail making Groonga package for Ubuntu by problrm of build environment for Ubuntu package."
+msgstr "Groonga 14.0.0では、GroongaのUbuntu向けパッケージを提供していませんでした。Ubuntu向けパッケージのビルド環境の問題で、パッケージを作るのに失敗したためです。"
+
+msgid "We fixed problrm of build environment for Ubuntu package in 14.0.1. So, we can provide packages for Ubuntu again since this release."
+msgstr "14.0.1でこの問題を修正したので、今回のリリースからGroongaのUbuntu向けパッケージを提供できるようになりました。"
+
+msgid "Fixed build error when we build from source by using [`clang`](https://clang.llvm.org/). [GitHub#1738][Reported by windymelt]"
+msgstr "[`clang`](https://clang.llvm.org/) を使ってソースからビルドした時にビルドエラーになる問題を修正しました。 [GitHub#1738][Reported by windymelt]"
+
+msgid "windymelt"
+msgstr "windymeltさん"
+
+msgid "Release 14.0.0 - 2024-02-29"
+msgstr "14.0.0リリース - 2024-02-29"
+
+msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 14.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく14.0.0へアップグレードできます。"
+
+msgid "Added a new tokenizer `TokenH3Index` (experimental)."
+msgstr "新しいトークナイザー`TokenH3Index`を追加しました。（実験的）"
+
+msgid "`TokenH3Index`tokenizes WGS84GetPoint to UInt64(H3 index)."
+msgstr "`TokenH3Index`は、`WGS84GetPoint` を `UInt64`(H3 index)に変換します。"
+
+msgid "Added support for offline and online index construction with non text based tokenizer (experimental)."
+msgstr "非テキストベースのトークナイザーを使ったインデックスのオンライン構築とオフライン構築をサポートしました。（実験的）"
+
+msgid "`TokenH3Index` is one of non text based tokenizers."
+msgstr "`TokenH3Index` は、非テキストベースのトークナイザーの一つです。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for searching by index with non text based tokenizer (experimental)."
+msgstr "[{doc}`/reference/commands/select`] 非テキストベースのトークナイザーを使ったインデックスでの検索をサポートしました。（実験的）."
+
+msgid "Added new functions `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()`."
+msgstr "新しい関数 `distance_cosine()`, `distance_inner_product()`, `distance_l2_norm_squared()`, `distance_l1_norm()` を追加しました。"
+
+msgid "We can only get records that a small distance as vector with these functions and `limit N`"
+msgstr "これらの関数と`limit N`を使うことで、ベクトル的に距離の近いレコードのみを取得することができます。"
+
+msgid "These functions calculate distance in the `output` stage."
+msgstr "これらの関数は、`output`ステージで距離を計算します。"
+
+msgid "However, we don't optimize these functions yet."
+msgstr "ただ、これらの関数はまだ最適化できていません。"
+
+msgid "`distance_cosine()`: Calculate cosine similarity."
+msgstr "`distance_cosine()`: コサイン類似度を計算します。"
+
+msgid "`distance_inner_product()`: Calculate inner product."
+msgstr "`distance_inner_product()`: 内積を計算します。"
+
+msgid "`distance_l2_norm_squared()`: Calculate euclidean distance."
+msgstr "`distance_l2_norm_squared()`: ユークリッド距離を計算します。"
+
+msgid "`distance_l1_norm()`: Calculate manhattan distance."
+msgstr "`distance_l1_norm()`: マンハッタン距離を計算します。"
+
+msgid "Added a new function `number_round()`."
+msgstr "新しい関数`number_round()`を追加しました。"
+
+msgid "[{doc}`/reference/commands/load`] Added support for parallel `load`."
+msgstr "[{doc}`/reference/commands/load`] `load`を並列に実行できるようになりました。"
+
+msgid "This feature only enable when the `input_type` of `load` is `apache-arrow`."
+msgstr "この機能は、`load`の`input_type`が`apache-arrow`の時のみ有効です。"
+
+msgid "This feature one thread per column. If there are many target columns, it will reduce load time."
+msgstr "この機能は、一つのカラムに対し一つのスレッドを割り当てます。対象のカラムがたくさんある時に、ロード時間の短縮が期待できます。"
+
+msgid "[{doc}`/reference/commands/select`] We can use uvector as much as possible for array literal in `--filter`."
+msgstr "[{doc}`/reference/commands/select`] `--filter`内で配列リテラルをなるべく、uvectorとして使えるようにしました。"
+
+msgid "uvector is vector of elements with fix size."
+msgstr "uvectorは、要素が固定長サイズのベクターです。"
+
+msgid "If all elements have the same type, we use uvector instead vector."
+msgstr "すべての要素の型が同じ場合、ベクターの変わりにuvactorを使えます。"
+
+msgid "[{doc}`/reference/commands/status`] Added `n_workers` to output of `status`."
+msgstr "[{doc}`/reference/commands/status`] `status`の結果に`n_workers`を追加しました。"
+
+msgid "Optimized a dynamic column creation."
+msgstr "動的カラムの作成を最適化しました。"
+
+msgid "[WAL] Added support for rebuilding broken indexes in parallel."
+msgstr "[WAL] 壊れたインデックスの再構築を並列で実行できるようになりました。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for `Int64` in `output_type=apache-arrow` for columns that reference other table."
+msgstr "[{doc}`/reference/commands/select`] `output_type=apache-arrow`の時に、`_key`が`Int64`型のテーブルへの参照カラムを表示できるようにしました。"
+
+msgid "[Windows] Fixed path for documents of `groonga-normalizer-mysql` in package for Windows."
+msgstr "[Windows] Windows向けパッケージ内の`groonga-normalizer-mysql`のドキュメントのパスを修正しました。"
+
+msgid "Documents of `groonga-normalizer-mysql` put under the `share/` in this release."
+msgstr "今回のリリースから、`groonga-normalizer-mysql`のドキュメントは`share/`以下に格納されます。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that Groonga may crash when we use bitwise operations."
+msgstr "[{doc}`/reference/commands/select`] ビットごとの演算を行うとGroongaがクラッシュすることがある問題を修正しました。"

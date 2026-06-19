@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -469,7 +470,7 @@ grn_column_copy_different(grn_ctx *ctx,
 
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
     grn_bulk_write(ctx, &from_key_buffer, key, (size_t)key_size);
-    cast_rc = grn_obj_cast(ctx, &from_key_buffer, &to_key_buffer, GRN_FALSE);
+    cast_rc = grn_obj_cast(ctx, &from_key_buffer, &to_key_buffer, false);
     if (cast_rc != GRN_SUCCESS) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
       int from_name_size;

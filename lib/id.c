@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,17 +20,16 @@
 #include "grn.h"
 #include "grn_db.h"
 
-grn_bool
+bool
 grn_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
   if (id == GRN_ID_NIL) {
-    return GRN_FALSE;
-  } else {
-    return id < GRN_N_RESERVED_TYPES;
+    return false;
   }
+  return id < GRN_N_RESERVED_TYPES;
 }
 
-grn_bool
+bool
 grn_id_is_builtin_type(grn_ctx *ctx, grn_id id)
 {
   return grn_type_id_is_builtin(ctx, id);

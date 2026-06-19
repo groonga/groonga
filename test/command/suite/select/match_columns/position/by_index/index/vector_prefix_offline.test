@@ -1,0 +1,19 @@
+table_create Users TABLE_NO_KEY
+column_create Users names COLUMN_VECTOR ShortText
+
+load --table Users
+[
+{"names": ["Alice", "Bob"]},
+{"names": ["Chris", "Ava"]}
+]
+
+table_create Names TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+column_create Names users_names COLUMN_INDEX|WITH_POSITION Users names
+
+index_column_diff Names users_names
+
+select \
+  --table Users \
+  --match_columns 'Names.users_names[0] * 10 || Names.users_names[1] * 5' \
+  --query a* \
+  --output_columns names,_score

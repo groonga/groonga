@@ -4,27 +4,27 @@ Execution example::
     --name MissingModeScalarReferred \
     --flags TABLE_HASH_KEY \
     --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create \
     --name MissingModeScalar \
     --flags TABLE_HASH_KEY \
     --key_type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create \
     --table MissingModeScalar \
     --name missing_add \
     --flags COLUMN_SCALAR|MISSING_ADD \
     --type MissingModeScalarReferred
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create \
     --table MissingModeScalar \
     --name missing_ignore \
     --flags COLUMN_SCALAR|MISSING_IGNORE \
     --type MissingModeScalarReferred
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create \
     --table MissingModeScalar \
     --name missing_nil \
     --flags COLUMN_SCALAR|MISSING_NIL \
     --type MissingModeScalarReferred
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

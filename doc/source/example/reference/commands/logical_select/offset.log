@@ -6,63 +6,63 @@ Execution example::
     --offset 2
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "created_at", 
+  #           "created_at",
   #           "Time"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         1436288400.0, 
-  #         15, 
+  #         3,
+  #         "Mroonga",
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
+  #         1436288400.0,
+  #         15,
   #         "Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "Good-bye Senna", 
-  #         "I migrated all Senna system!", 
-  #         1436367600.0, 
-  #         3, 
+  #         1,
+  #         "Good-bye Senna",
+  #         "I migrated all Senna system!",
+  #         1436367600.0,
+  #         3,
   #         "Senna"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
-  #         1436371200.0, 
-  #         3, 
+  #         2,
+  #         "Good-bye Tritonn",
+  #         "I also migrated all Tritonn system!",
+  #         1436371200.0,
+  #         3,
   #         "Senna"
   #       ]
   #     ]

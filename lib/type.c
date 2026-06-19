@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,34 +21,97 @@
 #include "grn_db.h"
 #include "grn_type.h"
 
-grn_bool
-grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
+const char *
+grn_type_id_to_string_builtin(grn_ctx *ctx, grn_id id)
 {
-  return id >= GRN_DB_OBJECT && id <= GRN_DB_FLOAT32;
+  switch (id) {
+  case GRN_DB_OBJECT:
+    return "Object";
+  case GRN_DB_BOOL:
+    return "Bool";
+  case GRN_DB_INT8:
+    return "Int8";
+  case GRN_DB_UINT8:
+    return "UInt8";
+  case GRN_DB_INT16:
+    return "Int16";
+  case GRN_DB_UINT16:
+    return "UInt16";
+  case GRN_DB_INT32:
+    return "Int32";
+  case GRN_DB_UINT32:
+    return "UInt32";
+  case GRN_DB_INT64:
+    return "Int64";
+  case GRN_DB_UINT64:
+    return "UInt64";
+  case GRN_DB_FLOAT:
+    return "Float";
+  case GRN_DB_TIME:
+    return "Time";
+  case GRN_DB_SHORT_TEXT:
+    return "ShortText";
+  case GRN_DB_TEXT:
+    return "Text";
+  case GRN_DB_LONG_TEXT:
+    return "LongText";
+  case GRN_DB_TOKYO_GEO_POINT:
+    return "TokyoGeoPoint";
+  case GRN_DB_WGS84_GEO_POINT:
+    return "TokyoWGS84GeoPoint";
+  case GRN_DB_FLOAT32:
+    return "Float32";
+  case GRN_DB_BFLOAT16:
+    return "BFloat16";
+  case GRN_DB_SHORT_BINARY:
+    return "ShortBinary";
+  case GRN_DB_BINARY:
+    return "Binary";
+  case GRN_DB_LONG_BINARY:
+    return "LongBinary";
+  case GRN_DB_JSON:
+    return "JSON";
+  default:
+    return "not a builtin type";
+  }
 }
 
-grn_bool
+bool
+grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
+{
+  return id >= GRN_DB_OBJECT && id <= GRN_DB_JSON;
+}
+
+bool
 grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
 {
-  return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32);
+  return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32) ||
+         (id == GRN_DB_BFLOAT16);
 }
 
 bool
 grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)
 {
   switch (id) {
-  case GRN_DB_FLOAT32 :
-  case GRN_DB_FLOAT :
+  case GRN_DB_BFLOAT16:
+  case GRN_DB_FLOAT32:
+  case GRN_DB_FLOAT:
     return true;
-  default :
+  default:
     return false;
   }
 }
 
-grn_bool
+bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
 {
   return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;
+}
+
+bool
+grn_type_id_is_binary_family(grn_ctx *ctx, grn_id id)
+{
+  return GRN_DB_SHORT_BINARY <= id && id <= GRN_DB_LONG_BINARY;
 }
 
 bool
@@ -67,40 +131,54 @@ size_t
 grn_type_id_size(grn_ctx *ctx, grn_id id)
 {
   switch (id) {
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     return sizeof(bool);
-  case GRN_DB_INT8 :
+  case GRN_DB_INT8:
     return sizeof(int8_t);
-  case GRN_DB_UINT8 :
+  case GRN_DB_UINT8:
     return sizeof(uint8_t);
-  case GRN_DB_INT16 :
+  case GRN_DB_INT16:
     return sizeof(int16_t);
-  case GRN_DB_UINT16 :
+  case GRN_DB_UINT16:
     return sizeof(uint16_t);
-  case GRN_DB_INT32 :
+  case GRN_DB_INT32:
     return sizeof(int32_t);
-  case GRN_DB_UINT32 :
+  case GRN_DB_UINT32:
     return sizeof(uint32_t);
-  case GRN_DB_INT64 :
+  case GRN_DB_INT64:
     return sizeof(int64_t);
-  case GRN_DB_UINT64 :
+  case GRN_DB_UINT64:
     return sizeof(uint64_t);
-  case GRN_DB_FLOAT32 :
+  case GRN_DB_BFLOAT16:
+#ifdef GRN_HAVE_BFLOAT16
+    return sizeof(grn_bfloat16);
+#else
+    return sizeof(uint16_t);
+#endif
+  case GRN_DB_FLOAT32:
     return sizeof(float);
-  case GRN_DB_FLOAT :
+  case GRN_DB_FLOAT:
     return sizeof(double);
-  case GRN_DB_TIME :
+  case GRN_DB_TIME:
     return sizeof(int64_t);
-  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_SHORT_TEXT:
     return GRN_TYPE_SHORT_TEXT_SIZE;
-  case GRN_DB_TEXT :
+  case GRN_DB_TEXT:
     return GRN_TYPE_TEXT_SIZE;
-  case GRN_DB_LONG_TEXT :
+  case GRN_DB_LONG_TEXT:
     return GRN_TYPE_LONG_TEXT_SIZE;
-  case GRN_DB_TOKYO_GEO_POINT :
-  case GRN_DB_WGS84_GEO_POINT :
+  case GRN_DB_TOKYO_GEO_POINT:
+  case GRN_DB_WGS84_GEO_POINT:
     return sizeof(grn_geo_point);
-  default :
+  case GRN_DB_SHORT_BINARY:
+    return GRN_TYPE_SHORT_BINARY_SIZE;
+  case GRN_DB_BINARY:
+    return GRN_TYPE_BINARY_SIZE;
+  case GRN_DB_LONG_BINARY:
+    return GRN_TYPE_LONG_BINARY_SIZE;
+  case GRN_DB_JSON:
+    return GRN_TYPE_JSON_SIZE;
+  default:
     {
       GRN_API_ENTER;
       size_t size = 0;
@@ -131,8 +209,11 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
 }
 
 grn_obj *
-grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
-                grn_obj_flags flags, unsigned int size)
+grn_type_create(grn_ctx *ctx,
+                const char *name,
+                unsigned int name_size,
+                grn_obj_flags flags,
+                unsigned int size)
 {
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {

@@ -38,17 +38,25 @@ class TestRegexp < QueryOptimizerTestCase
     filter = "(message @~ 'Groonga') && (message @~ 'Rroonga')"
     assert_equal(<<-DUMP, dump_plan(filter))
 [0]
-  op:         <regexp>
-  logical_op: <or>
-  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
-  query:      <"Rroonga">
-  expr:       <0..2>
+  op:              <regexp>
+  logical_op:      <or>
+  weight_factor:   <1.000000>
+  sections:        <[0]>
+  weights:         <[1.0]>
+  start_positions: <[-1]>
+  index:           <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:           <"Rroonga">
+  expr:            <0..2>
 [1]
-  op:         <regexp>
-  logical_op: <and>
-  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
-  query:      <"Groonga">
-  expr:       <3..5>
+  op:              <regexp>
+  logical_op:      <and>
+  weight_factor:   <1.000000>
+  sections:        <[0]>
+  weights:         <[1.0]>
+  start_positions: <[-1]>
+  index:           <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:           <"Groonga">
+  expr:            <3..5>
     DUMP
   end
 end

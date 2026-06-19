@@ -1,0 +1,59 @@
+Execution example:
+
+```shell
+status
+# [
+#   [
+#     0,
+#     1337566253.89858,
+#     0.000355720520019531
+#   ],
+#   {
+#     "alloc_count": 29,
+#     "starttime": 1696558618,
+#     "start_time": 1696558618,
+#     "uptime": 1,
+#     "version": "2.9.1",
+#     "n_queries": 0,
+#     "cache_hit_rate": 0.0,
+#     "command_version": 1,
+#     "default_command_version": 1,
+#     "max_command_version": 3,
+#     "n_jobs": 0,
+#     "features": {
+#       "nfkc": true,
+#       "mecab": true,
+#       "message_pack": true,
+#       "mruby": true,
+#       "onigmo": true,
+#       "zlib": true,
+#       "lz4": true,
+#       "zstandard": true,
+#       "kqueue": false,
+#       "epoll": true,
+#       "poll": false,
+#       "rapidjson": false,
+#       "apache_arrow": true,
+#       "xxhash": true,
+#       "blosc": true,
+#       "bfloat16": true,
+#       "h3": true,
+#       "simdjson": true,
+#       "llama.cpp": true,
+#       "back_trace": true,
+#       "reference_count": false
+#     },
+#     "apache_arrow": {
+#       "version_major": 2,
+#       "version_minor": 9,
+#       "version_patch": 1,
+#       "version": "2.9.1"
+#     },
+#     "memory_map_size": 2929,
+#     "n_workers": 0,
+#     "default_n_workers": 0,
+#     "os": "Linux",
+#     "cpu": "x86_64"
+#   }
+# ]
+```

@@ -38,6 +38,7 @@ AM_CXXFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CXXFLAGS)				\
+	$(MESSAGE_PACK_CFLAGS)			\
 	$(APACHE_ARROW_CFLAGS)			\
 	$(RAPIDJSON_CFLAGS)
 
@@ -124,6 +125,11 @@ endif
 EXTRA_DIST =						\
 	CMakeLists.txt					\
 	GroongaConfig.cmake.in				\
+	distance_avx.cpp				\
+	distance_avx2.cpp				\
+	distance_avx512.cpp				\
+	distance_common.cpp				\
+	distance_neon64.cpp				\
 	grn_ecmascript.c				\
 	grn_ecmascript.h				\
 	grn_ecmascript.lemon				\

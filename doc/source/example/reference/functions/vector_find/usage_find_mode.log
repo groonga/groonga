@@ -5,56 +5,56 @@ Execution example::
     --output_columns 'tags, vector_find(tags, "roonga", "@")'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "tags", 
+  #           "tags",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "vector_find", 
+  #           "vector_find",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
   #           "groonga"
-  #         ], 
+  #         ],
   #         "groonga"
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "mroonga", 
+  #           "mroonga",
   #           "groonga"
-  #         ], 
+  #         ],
   #         "mroonga"
-  #       ], 
+  #       ],
   #       [
   #         [
   #           "groonga"
-  #         ], 
+  #         ],
   #         "groonga"
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "droonga", 
+  #           "droonga",
   #           "groonga"
-  #         ], 
+  #         ],
   #         "droonga"
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "groonga", 
+  #           "groonga",
   #           "http"
-  #         ], 
+  #         ],
   #         "groonga"
   #       ]
   #     ]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-21 17:27+0900\n"
+"PO-Revision-Date: 2024-10-28 18:57+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -16,92 +16,146 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "``groonga`` package is the minimum set of fulltext search engine. If you want to use Groonga for server use, you can install additional preconfigured packages."
-msgstr "``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"
+msgid "`groonga` package is the minimum set of fulltext search engine. If you want to use Groonga for server use, you can install additional preconfigured packages."
+msgstr "`groonga`パッケージは全文検索のための最小構成パッケージです。Groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"
 
 msgid "There are two packages for server use."
 msgstr "サーバー用途のための2つのパッケージがあります。"
 
-msgid ":doc:`/reference/executables/groonga-server-http` (HTTP based server package)"
-msgstr ":doc:`/reference/executables/groonga-server-http` （HTTPベースのサーバーパッケージ）"
+msgid "{doc}`/reference/executables/groonga-server-http` (HTTP based server package)"
+msgstr "{doc}`/reference/executables/groonga-server-http`（HTTPベースのサーバーパッケージ）"
 
 msgid "groonga-server-gqtp (GQTP based server package)"
 msgstr "groonga-server-gqtp （GQTPベースのサーバーパッケージ）"
 
-msgid "See :doc:`/server` section about details."
-msgstr "詳細は :doc:`/server` を参照してください。"
+msgid "See {doc}`/server` section about details."
+msgstr "詳細は {doc}`/server` を参照してください。"
 
 msgid "Ubuntu"
 msgstr ""
 
-msgid "This section describes how to install Groonga related deb packages on Ubuntu. You can install them by ``apt``."
-msgstr "このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
+msgid "This section describes how to install Groonga related deb packages on Ubuntu. You can install them by `apt`."
+msgstr "このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法を説明します。これらのパッケージは `apt` でインストールできます。"
 
 msgid "We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-bit package for server. You should use a 32-bit package just only for tests or development. You will encounter an out of memory error with a 32-bit package even if you just process medium size data."
 msgstr "32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用にだけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータでもメモリ不足エラーになることがあります。"
 
-msgid "PPA (Personal Package Archive)"
-msgstr "PPA（Personal Package Archive）"
+msgid "Register Groonga APT repository"
+msgstr "GroongaのAPTリポジトリー登録"
 
-msgid "The Groonga APT repository for Ubuntu uses PPA (Personal Package Archive) on Launchpad. You can install Groonga by APT from the PPA."
-msgstr "Ubuntu用のGroongaのAPTリポジトリーはLaunchpad上のPPA（Personal Package Archive）を使っています。このPPAからAPTでGroongaをインストールできます。"
+msgid "Groonga APT Repository (packages.groonga.org)"
+msgstr "Groonga APTリポジトリー（packages.groonga.org）"
 
-msgid "Here are supported Ubuntu versions:"
-msgstr "サポートしているUbuntuのバージョンは次の通りです。"
+msgid "Groonga packages are distributed via our Groonga APT repository at https://packages.groonga.org."
+msgstr "Groongaパッケージは、Groonga APTリポジトリー（https://packages.groonga.org）にて配布されています。"
 
-msgid "20.04 LTS Focal Fossa"
-msgstr ""
+msgid "Install `groonga-apt-source` to enable Groonga APT repository."
+msgstr "`groonga-apt-source`をインストールすることで、Groonga APTリポジトリーを登録できます。"
 
-msgid "22.04 LTS Jammy Jellyfish"
-msgstr ""
+msgid "Deprecated Groonga PPA (Personal Package Archive)"
+msgstr "非推奨なGroonga PPA（Personal Package Archive）"
 
-msgid "23.04 Lunar Lobster"
-msgstr ""
+msgid "The Grppmga PPA (Personal Package Archive, ppa:groonga/ppa) is deprecated. We strongly recommend using our Groonga APT repository (packages.groonga.org) because packages from that repository are built with Apache Arrow enabled. This configuration unlocks extra features, such as parallel offline index building. If you are currently using the Groonga PPA, please see {ref}`migrate-from-ppa-to-apt-repository`."
+msgstr "Groonga PPA（Personal Package Archive, ppa:groonga/ppa）は非推奨となります。ご利用の場合は、Groonga APTリポジトリーの利用を強くお勧めします。なぜなら、Groonga APTリポジトリーではApache Arrowが有効な状態でビルドされたパッケージが提供されており、これにより並列オフラインインデックス構築などの追加機能が利用可能になるためです。Groonga PPAを利用されている場合は、{ref}`migrate-from-ppa-to-apt-repository`を確認してください。"
 
-msgid "Enable the universe repository to install Groonga::"
-msgstr "Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
+msgid "`groonga` package"
+msgstr "`groonga`パッケージ"
 
-msgid "Add the ``ppa:groonga/ppa`` PPA to your system::"
-msgstr "``ppa:groonga/ppa`` PPAをシステムに登録します::"
+msgid "Install:"
+msgstr "インストールします。"
 
-msgid "Install::"
-msgstr "インストール::"
+msgid "`groonga-tokenizer-mecab` package"
+msgstr "`groonga-tokenizer-mecab`パッケージ"
 
-msgid "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a tokenizer, install groonga-tokenizer-mecab package."
-msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいときは、groonga-tokenizer-mecabパッケージをインストールしてください。"
+msgid "If you want to use [MeCab](https://taku910.github.io/mecab/) as a tokenizer, install `groonga-tokenizer-mecab` package."
+msgstr "[MeCab](https://taku910.github.io/mecab/)をトークナイザーとして使いたいときは、`groonga-tokenizer-mecab`パッケージをインストールしてください。"
 
-msgid "Install groonga-tokenizer-mecab package::"
-msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+msgid "Install `groonga-tokenizer-mecab` package:"
+msgstr "`groonga-tokenizer-mecab`パッケージをインストールします。"
 
-msgid "If you want to use ``TokenFilterStem`` as a token filter, install groonga-token-filter-stem package."
-msgstr "``TokenFilterStem`` をトークンフィルターとして使いたいときはgroonga-tokenizer-filter-stemパッケージをインストールしてください。"
+msgid "`groonga-token-filter-stem` package"
+msgstr "`groonga-token-filter-stem`パッケージ"
 
-msgid "Install groonga-token-filter-stem package::"
-msgstr "groonga-token-filter-stemパッケージのインストール::"
+msgid "If you want to use `TokenFilterStem` as a token filter, install `groonga-token-filter-stem` package."
+msgstr "`TokenFilterStem`をトークンフィルターとして使いたいときは`groonga-token-filter-stem`パッケージをインストールします。"
 
-msgid "There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor Groonga status by Munin, install groonga-munin-plugins package."
-msgstr "`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあります。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッケージをインストールしてください。"
+msgid "Install groonga-token-filter-stem package:"
+msgstr "`groonga-token-filter-stem`パッケージをインストールします。"
 
-msgid "Install groonga-munin-plugins package::"
-msgstr "groonga-munin-pluginsパッケージのインストール::"
+msgid "There is a package that provides [Munin](http://munin-monitoring.org/) plugins. If you want to monitor Groonga status by Munin, install `groonga-munin-plugins` package."
+msgstr "[Munin](http://munin-monitoring.org/)プラグインを提供するパッケージもあります。MuninでGroongaの状態をモニターしたい場合は、`groonga-munin-plugins`パッケージをインストールします。"
 
-msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install groonga-normalizer-mysql package."
-msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッケージをインストールしてください。"
+msgid "Install `groonga-munin-plugins` package:"
+msgstr "`groonga-munin-plugins`パッケージをインストールします。"
 
-msgid "Install groonga-normalizer-mysql package::"
-msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install `groonga-normalizer-mysql` package."
+msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには`groonga-normalizer-mysql`パッケージをインストールします。"
+
+msgid "Install `groonga-normalizer-mysql` package:"
+msgstr "`groonga-normalizer-mysql`パッケージをインストールします。"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install required packages to build Groonga::"
-msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
+msgid "See {doc}`/install/cmake` ."
+msgstr "詳細は {doc}`/install/cmake` を参照してください。"
 
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr "configureを実行します（ ``configure`` のオプションについては :ref:`source-configure` を参照してください）::"
+msgid "Migration from Groonga PPA (ppa:groonga/ppa) to Groonga APT Repository (packages.groonga.org)"
+msgstr "Groonga PPA（ppa:groonga/ppa）から Groonga APTリポジトリー（packages.groonga.org）への移行"
 
-msgid "Build::"
-msgstr "ビルド::"
+msgid "This section guides you through the migration from the deprecated Groonga PPA (Personal Package Archive, ppa:groonga/ppa) to our new Groonga APT Repository (packages.groonga.org)."
+msgstr "このセクションでは、廃止予定のGroonga PPA（Personal Package Archive, ppa:groonga/ppa）から新しい Groonga APTリポジトリー（packages.groonga.org）への移行手順を案内します。"
+
+msgid "By switching to the Groonga APT Repository, you'll receive packages built with Apache Arrow enabled. Which unlocks extra features such as parallel offline index building. We strongly recommend you to migrate to enjoy these enhancements."
+msgstr "Groonga APTリポジトリーに切り替えることで、Apache Arrowが有効化されたパッケージを利用できるようになり、並列オフラインインデックス構築などの追加機能が利用可能になります。これらの機能を活用するためにも、移行することを強くお勧めします。"
+
+msgid "If you are currently using the Groonga PPA, please follow the steps below to switch to the new package source."
+msgstr "もし現在、Groonga PPAを使用している場合は、次の手順に従って新しいパッケージソースに切り替えてください。"
+
+msgid "Configure the Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの設定"
+
+msgid "Register Groonga APT Repository"
+msgstr "Groonga APTリポジトリーの登録"
+
+msgid "To register the Groonga APT Repository, install the `groonga-apt-source` package as follows."
+msgstr "Groonga APTリポジトリーを登録するには、次の手順で`groonga-apt-source`パッケージをインストールしてください。"
+
+msgid "Remove the Existing Package Source"
+msgstr "既存のパッケージソースの削除"
+
+msgid "Remove the old Groonga PPA:"
+msgstr "Groonga PPAを削除するには、次のコマンドを実行してください。"
+
+msgid "After these steps, your package source is now switched from Groonga PPA to Groonga APT Repository."
+msgstr "ここまでの手順を完了すると、パッケージソースをGroonga PPAからGroonga APTリポジトリーに移行完了です。"
+
+msgid "Upgrade Package"
+msgstr "パッケージをアップグレード"
+
+msgid "There are two approaches depending on your needs."
+msgstr "ニーズに応じて、パッケージをアップグレードしてください。方法は2通りあります。"
+
+msgid "Option 1: Use Groonga APT Repository from the Next Release (Recommended)"
+msgstr "オプション 1: 次のリリースからGroonga APTリポジトリーを利用する"
+
+msgid "Starting with the next package version, we strongly recommend using the Groonga APT Repository. When you upgrade Groonga via `apt`, you will automatically receive the next package version without having to specify a version explicitly as follows. This option is simpler and is recommended for most users:"
+msgstr "次のリリースパッケージバージョンへアップグレードする時から、Groonga APTリポジトリーを使用することを強くお勧めします。`apt`経由でパッケージをアップグレードすると、バージョンを明示的に指定することなく、次のパッケージバージョンにGroonga APTリポジトリーを利用して自動的にアップグレードできます。最もシンプルな方法なので、こちらをオススメします。"
+
+msgid "Option 2: Use Groonga APT Repository Immediately Without Waiting for Next Release"
+msgstr "オプション 2: 次のリリースを待たずにGroonga APTリポジトリーを利用する"
+
+msgid "If you wish to upgrade immediately without waiting for the next official release, you can force an upgrade to a specific package version in the Groonga APT Repository. In this case, you must upgrade the package by specifying the version. This is important because even if the version numbers match, the package's naming conventions between the Groonga PPA and the Groonga APT Repository differ, and the Groonga PPA package takes precedence."
+msgstr "もし次のリリースを待たずに即座にアップグレードしたい場合は、Groonga APTリポジトリーの特定のパッケージバージョンへ強制的にアップグレードできます。ただしこの場合は、パッケージバージョンを指定してアップグレードする必要があります。これは、バージョンが一致していても、Groonga PPAとGroonga APTリポジトリーではパッケージの命名規則が異なるため、Groonga PPAのパッケージが優先されてアップグレードされてしまう問題を防ぐためです。"
+
+msgid "If the package has dependencies, you also need to upgrade dependent packages by specifying the version."
+msgstr "パッケージに依存関係がある場合は、依存パッケージもバージョンを指定してアップグレードする必要があります。"
+
+msgid "For example, upgrade a specific version of `groonga-bin` package:"
+msgstr "例えば、`groonga-bin`パッケージの特定バージョンを指定する場合は、次のようにアップグレードします。"
+
+msgid "This command forces the upgrade to a specific package version from the new repository. In this case, it's Groonga APT Repository."
+msgstr "このコマンドは、Groonga APTリポジトリーの特定のパッケージバージョンへ強制的にアップグレードします。"

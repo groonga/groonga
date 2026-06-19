@@ -86,7 +86,7 @@ Let's search same query in previous section. You can get same search results.
    There may be a question that "which is the better solution for indexing."
    It depends on the case.
 
-   * Indexes for each column - The update performance tends to be better than multiple colum index because there is enough buffer for updating. On the other hand, the efficiency of disk usage is not so good.
+   * Indexes for each column - The update performance tends to be better than multiple column index because there is enough buffer for updating. On the other hand, the efficiency of disk usage is not so good.
    * Indexes for multiple column - It saves disk usage because it shares common buffer. On the other hand, the update performance is not so good.
 
 

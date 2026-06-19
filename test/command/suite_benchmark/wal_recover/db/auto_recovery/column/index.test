@@ -1,0 +1,95 @@
+# _database_close/_database_reopen can't use with HTTP because
+# requests via HTTP are always processed by workers. Workers never use
+# primary WAL role.
+#@require-interface stdio
+
+#@require-feature message_pack
+
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_WAL_ROLE=primary
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130 \
+  --default_tokenizer TokenNgram
+
+table_create Data TABLE_NO_KEY
+column_create Data content COLUMN_SCALAR ShortText
+
+#@timeout 300
+#@disable-logging
+#@generate-series 1 10000 Data '{"content" => 10.times.collect {rand(2 ** 30).to_s}.join(" ")}'
+#@enable-logging
+#@timeout default
+
+column_create Terms data_content1 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content2 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content3 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content4 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content5 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content6 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content7 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content8 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content9 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content10 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content11 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content12 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content13 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content14 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content15 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content16 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content17 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content18 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content19 COLUMN_INDEX|WITH_POSITION Data content
+column_create Terms data_content20 COLUMN_INDEX|WITH_POSITION Data content
+
+_database_close
+
+#@copy-path #{db_path}.0000103 #{db_path}.0000103.wal
+#@copy-path #{db_path}.0000104 #{db_path}.0000104.wal
+#@copy-path #{db_path}.0000105 #{db_path}.0000105.wal
+#@copy-path #{db_path}.0000106 #{db_path}.0000106.wal
+#@copy-path #{db_path}.0000107 #{db_path}.0000107.wal
+#@copy-path #{db_path}.0000108 #{db_path}.0000108.wal
+#@copy-path #{db_path}.0000109 #{db_path}.0000109.wal
+#@copy-path #{db_path}.000010A #{db_path}.000010A.wal
+#@copy-path #{db_path}.000010B #{db_path}.000010B.wal
+#@copy-path #{db_path}.000010C #{db_path}.000010C.wal
+#@copy-path #{db_path}.000010D #{db_path}.000010D.wal
+#@copy-path #{db_path}.000010E #{db_path}.000010E.wal
+#@copy-path #{db_path}.0000110 #{db_path}.0000110.wal
+#@copy-path #{db_path}.0000111 #{db_path}.0000111.wal
+#@copy-path #{db_path}.0000112 #{db_path}.0000112.wal
+#@copy-path #{db_path}.0000113 #{db_path}.0000113.wal
+#@copy-path #{db_path}.0000114 #{db_path}.0000114.wal
+#@copy-path #{db_path}.0000115 #{db_path}.0000115.wal
+#@copy-path #{db_path}.0000116 #{db_path}.0000116.wal
+#@start-benchmark 20 1 recover
+#@timeout 300
+#@read-timeout 300
+#@disable-logging
+_database_reopen
+#@enable-logging
+#@read-timeout default
+#@timeout default
+#@finish-benchmark
+
+index_column_diff --table Terms --name data_content1
+index_column_diff --table Terms --name data_content2
+index_column_diff --table Terms --name data_content3
+index_column_diff --table Terms --name data_content4
+index_column_diff --table Terms --name data_content5
+index_column_diff --table Terms --name data_content6
+index_column_diff --table Terms --name data_content7
+index_column_diff --table Terms --name data_content8
+index_column_diff --table Terms --name data_content9
+index_column_diff --table Terms --name data_content10
+index_column_diff --table Terms --name data_content11
+index_column_diff --table Terms --name data_content12
+index_column_diff --table Terms --name data_content13
+index_column_diff --table Terms --name data_content14
+index_column_diff --table Terms --name data_content15
+index_column_diff --table Terms --name data_content16
+index_column_diff --table Terms --name data_content17
+index_column_diff --table Terms --name data_content18
+index_column_diff --table Terms --name data_content19
+index_column_diff --table Terms --name data_content20

@@ -18,7 +18,7 @@ provides ID search and key search.
 Characteristics
 ---------------
 
-Here is a chracteristic table of all tables in Groonga. (``TABLE_``
+Here is a characteristic table of all tables in Groonga. (``TABLE_``
 prefix is omitted in the table.)
 
 .. list-table:: Characteristics of all tables
@@ -102,7 +102,8 @@ prefix is omitted in the table.)
      - \-
      - 4GiB or 1TiB (by specifying ``KEY_LARGE`` flag to
        :ref:`table-create-flags`)
-     - 4GiB
+     - 4GiB or 1TiB (by specifying ``KEY_LARGE`` flag to
+       :ref:`table-create-flags`)
      - 4GiB
    * - The maximum number of records
      - 1,073,741,815 (2 :sup:`30` - 9)

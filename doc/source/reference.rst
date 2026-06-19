@@ -29,6 +29,7 @@ Reference manual
    reference/suggest
    reference/indexing
    reference/sharding
+   reference/language_model
    reference/log
    reference/tuning
    reference/api

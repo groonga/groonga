@@ -1,0 +1,118 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create --table Users --name immediate --type Bool
+[[0,0.0,0.0],true]
+delete Users --filter true
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 60,
+      "curr_key": 300,
+      "curr_del": 60,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 60
+    }
+  ]
+]
+defrag
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 0,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]
+load --table Users
+[
+{"_key":"B-User0001", "immediate":false},
+{"_key":"B-User0002", "immediate":false},
+{"_key":"B99", "immediate":true}
+]
+[[0,0.0,0.0],3]
+select Users --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        "B-User0001",
+        false
+      ],
+      [
+        2,
+        "B-User0002",
+        false
+      ],
+      [
+        3,
+        "B99",
+        true
+      ]
+    ]
+  ]
+]
+dump Users
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users immediate COLUMN_SCALAR Bool
+
+load --table Users
+[
+["_key","immediate"],
+["B-User0001",false],
+["B-User0002",false],
+["B99",true]
+]

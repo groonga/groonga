@@ -1,0 +1,107 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Terms data_content1 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content2 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content3 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content4 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content5 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content6 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content7 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content8 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content9 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content10 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content11 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content12 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content13 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content14 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content15 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content16 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content17 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content18 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content19 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+column_create Terms data_content20 COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+#|e| [ii][wal][recover][Terms.data_content1] not implemented: path:<db/db.0000103>
+#|e| [ii][wal][recover][Terms.data_content2] not implemented: path:<db/db.0000104>
+#|e| [ii][wal][recover][Terms.data_content3] not implemented: path:<db/db.0000105>
+#|e| [ii][wal][recover][Terms.data_content4] not implemented: path:<db/db.0000106>
+#|e| [ii][wal][recover][Terms.data_content5] not implemented: path:<db/db.0000107>
+#|e| [ii][wal][recover][Terms.data_content6] not implemented: path:<db/db.0000108>
+#|e| [ii][wal][recover][Terms.data_content7] not implemented: path:<db/db.0000109>
+#|e| [ii][wal][recover][Terms.data_content8] not implemented: path:<db/db.000010A>
+#|e| [ii][wal][recover][Terms.data_content9] not implemented: path:<db/db.000010B>
+#|e| [ii][wal][recover][Terms.data_content10] not implemented: path:<db/db.000010C>
+#|e| [ii][wal][recover][Terms.data_content11] not implemented: path:<db/db.000010D>
+#|e| [ii][wal][recover][Terms.data_content12] not implemented: path:<db/db.000010E>
+#|e| [ii][wal][recover][Terms.data_content14] not implemented: path:<db/db.0000110>
+#|e| [ii][wal][recover][Terms.data_content15] not implemented: path:<db/db.0000111>
+#|e| [ii][wal][recover][Terms.data_content16] not implemented: path:<db/db.0000112>
+#|e| [ii][wal][recover][Terms.data_content17] not implemented: path:<db/db.0000113>
+#|e| [ii][wal][recover][Terms.data_content18] not implemented: path:<db/db.0000114>
+#|e| [ii][wal][recover][Terms.data_content19] not implemented: path:<db/db.0000115>
+#|e| [ii][wal][recover][Terms.data_content20] not implemented: path:<db/db.0000116>
+index_column_diff --table Terms --name data_content1
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content2
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content3
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content4
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content5
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content6
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content7
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content8
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content9
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content10
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content11
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content12
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content13
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content14
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content15
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content16
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content17
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content18
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content19
+[[0,0.0,0.0],[]]
+index_column_diff --table Terms --name data_content20
+[[0,0.0,0.0],[]]

@@ -1,0 +1,20 @@
+plugin_register tokenizers/h3_index
+[[0,0.0,0.0],true]
+table_create H3Indexes TABLE_PAT_KEY UInt64 --default_tokenizer TokenH3Index
+[[0,0.0,0.0],true]
+table_tokenize H3Indexes "35.80460x139.45649" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": 644847774602488686,
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

@@ -1,12 +1,12 @@
 Execution example::
 
   table_create Cities TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Cities location COLUMN_SCALAR WGS84GeoPoint
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Cities
   [
   ["_key", "location"],
   ["New York City", "146566000x-266422000"]
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]

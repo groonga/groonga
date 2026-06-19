@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2013-2015 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2013-2015  Brazil
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,8 +22,8 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
-#include <mruby/variable.h>
 #include <mruby/data.h>
+#include <mruby/variable.h>
 
 #include "../grn_db.h"
 #include "mrb_accessor.h"
@@ -216,12 +217,14 @@ mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   grn_obj *accessor;
   mrb_value mrb_query;
   grn_obj query;
-  mrb_value mrb_options = mrb_nil_value();
+  mrb_sym keyword_mode = mrb_intern_lit(mrb, "mode");
+  mrb_value mrb_mode;
+  const mrb_kwargs kwargs = {1, 0, &keyword_mode, &mrb_mode, NULL};
   grn_search_optarg optarg;
   uint32_t size;
 
   accessor = DATA_PTR(self);
-  mrb_get_args(mrb, "o|H", &mrb_query, &mrb_options);
+  mrb_get_args(mrb, "o:", &mrb_query, &kwargs);
 
   GRN_VOID_INIT(&query);
   grn_mrb_value_to_bulk(mrb, mrb_query, &query);
@@ -229,13 +232,8 @@ mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   memset(&optarg, 0, sizeof(grn_search_optarg));
   optarg.mode = GRN_OP_EXACT;
 
-  if (!mrb_nil_p(mrb_options)) {
-    mrb_value mrb_mode;
-
-    mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
-    if (!mrb_nil_p(mrb_mode)) {
-      optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
-    }
+  if (!mrb_undef_p(mrb_mode) && !mrb_nil_p(mrb_mode)) {
+    optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
   }
 
   size = grn_accessor_estimate_size_for_query(ctx,

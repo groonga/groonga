@@ -1,0 +1,11 @@
+table_create PostingLists TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create PostingLists deltas COLUMN_VECTOR Int64
+[[0,0.0,0.0],true]
+table_create Deltas TABLE_PAT_KEY Int64
+[[0,0.0,0.0],true]
+column_create Deltas index COLUMN_INDEX|WITH_POSITION PostingLists deltas
+[[0,0.0,0.0],true]
+#|w| [ii][update][one] too many postings: <Deltas.index>: <1>(1): record:<PostingLists>(1:1), n-postings:<131072>, n-discarded-postings:<1>
+index_column_diff Deltas index
+[[0,0.0,0.0],[]]

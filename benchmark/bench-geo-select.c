@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -86,7 +87,7 @@ set_geo_point(grn_ctx *context, grn_obj *geo_point, const gchar *geo_point_text)
 
   GRN_TEXT_INIT(&point_text, 0);
   GRN_TEXT_PUTS(context, &point_text, geo_point_text);
-  grn_obj_cast(context, &point_text, geo_point, GRN_FALSE);
+  grn_obj_cast(context, &point_text, geo_point, false);
   grn_obj_unlink(context, &point_text);
 }
 

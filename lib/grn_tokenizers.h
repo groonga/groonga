@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,11 +26,15 @@ extern "C" {
 
 extern grn_obj *grn_tokenizer_uvector;
 
-grn_rc grn_tokenizers_init(void);
-grn_rc grn_tokenizers_fin(void);
+grn_rc
+grn_tokenizers_init(void);
+grn_rc
+grn_tokenizers_fin(void);
 
-grn_rc grn_db_init_mecab_tokenizer(grn_ctx *ctx);
-grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
+grn_rc
+grn_db_init_mecab_tokenizer(grn_ctx *ctx);
+grn_rc
+grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }

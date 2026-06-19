@@ -1,10 +1,10 @@
 libmruby_la_SOURCES = \
 	../mruby-source/src/array.c \
 	../mruby-source/src/backtrace.c \
+	../mruby-source/src/cdump.c \
 	../mruby-source/src/class.c \
 	../mruby-source/src/codedump.c \
 	../mruby-source/src/compar.c \
-	../mruby-source/src/crc.c \
 	../mruby-source/src/debug.c \
 	../mruby-source/src/dump.c \
 	../mruby-source/src/enum.c \
@@ -18,12 +18,16 @@ libmruby_la_SOURCES = \
 	../mruby-source/src/kernel.c \
 	../mruby-source/src/load.c \
 	../mruby-source/src/numeric.c \
+	../mruby-source/src/numops.c \
 	../mruby-source/src/object.c \
 	../mruby-source/src/opcode.h \
 	../mruby-source/src/pool.c \
 	../mruby-source/src/print.c \
 	../mruby-source/src/proc.c \
 	../mruby-source/src/range.c \
+	../mruby-source/src/readfloat.c \
+	../mruby-source/src/readint.c \
+	../mruby-source/src/readnum.c \
 	../mruby-source/src/state.c \
 	../mruby-source/src/string.c \
 	../mruby-source/src/symbol.c \
@@ -42,7 +46,6 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-io/src/file_test.c \
 	../mruby-source/mrbgems/mruby-io/src/io.c \
 	../mruby-source/mrbgems/mruby-io/src/mruby_io_gem.c \
-	../mruby-source/mrbgems/mruby-io/test/mruby_io_test.c \
 	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c \
 	../mruby-source/mrbgems/mruby-math/src/math.c \
 	../mruby-source/mrbgems/mruby-metaprog/src/metaprog.c \
@@ -51,7 +54,6 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-objectspace/src/mruby_objectspace.c \
 	../mruby-source/mrbgems/mruby-print/src/print.c \
 	../mruby-source/mrbgems/mruby-proc-ext/src/proc.c \
-	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
 	../mruby-source/mrbgems/mruby-random/src/random.c \
 	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
 	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
@@ -59,4 +61,9 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-struct/src/struct.c \
 	../mruby-source/mrbgems/mruby-symbol-ext/src/symbol.c \
 	../mruby-source/mrbgems/mruby-time/include/mruby/time.h \
-	../mruby-source/mrbgems/mruby-time/src/time.c
+	../mruby-source/mrbgems/mruby-time/src/time.c \
+	mrbgems/mruby-dir/src/dir.c \
+	mrbgems/mruby-env/src/env.c \
+	mrbgems/mruby-errno/src/errno.c \
+	mrbgems/mruby-file-stat/src/file-stat.c \
+	mrbgems/mruby-onig-regexp/src/mruby_onig_regexp.c

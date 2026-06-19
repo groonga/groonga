@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 plugin_register token_filters/stop_word
 
 table_create Terms TABLE_PAT_KEY ShortText \

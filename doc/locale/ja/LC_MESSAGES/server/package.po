@@ -34,7 +34,7 @@ msgstr ":doc:`/reference/executables/groonga-server-http` （HTTPベースのサ
 msgid "``groonga-server-gqtp`` (:doc:`/spec/gqtp` based server package)"
 msgstr "``groonga-server-gqtp`` （ :doc:`/spec/gqtp` ベースのサーバーパッケージ）"
 
-msgid "There is the reason why groonga supports not only GQTP but also two HTTP server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is desined to reduce overheads and improve performance. But, GQTP is less support of client library than HTTP protocol does. As HTTP is matured protocol, you can take advantage of existing tool and there are many client library (See `related projects <https://groonga.org/related-projects.html>`_ for details). If you use :doc:`/reference/executables/groonga-httpd` package, you can also take benefits of nginx functionality."
+msgid "There is the reason why groonga supports not only GQTP but also two HTTP server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is designed to reduce overheads and improve performance. But, GQTP is less support of client library than HTTP protocol does. As HTTP is matured protocol, you can take advantage of existing tool and there are many client library (See `related projects <https://groonga.org/related-projects.html>`_ for details). If you use :doc:`/reference/executables/groonga-httpd` package, you can also take benefits of nginx functionality."
 msgstr "GroongaがGQTPだけでなく、2つのHTTPサーバーパッケージをサポートしているのには理由があります。 :doc:`/spec/gqtp` はオーバーヘッドを低減し、パフォーマンスを向上させるように設計されていますが、HTTPプロトコルほどクライアントライブラリのサポートがありません。HTTPは枯れたプロトコルなので既存のツールを活用できたり、多くのクライアントライブラリが存在します。（詳細は `関連プロジェクト <https://groonga.org/ja/related-projects.html>`_ を参照。） :doc:`/reference/executables/groonga-httpd` パッケージを使うと nginxの機能の恩恵を受けることができます。"
 
 msgid "We recommend to use :doc:`/reference/executables/groonga-server-http` at first, because it provides fulfilling server functionality. If you have performance issues which is derived from protocol overheads, consider to use ``groonga-server-gqtp``."
@@ -67,7 +67,7 @@ msgstr ""
 msgid "Access log path"
 msgstr "アクセスログ"
 
-msgid "/var/log/groonga/httpd/acccess.log"
+msgid "/var/log/groonga/httpd/access.log"
 msgstr ""
 
 msgid "Error log path"
@@ -91,8 +91,8 @@ msgstr ""
 msgid "Start HTTP server"
 msgstr "HTTPサーバーを起動"
 
-msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを起動(Debian/Ubuntu/CentOS)::"
+msgid "Starting groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Starting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを起動(Fedora)::"
@@ -100,14 +100,14 @@ msgstr "groonga HTTPサーバーを起動(Fedora)::"
 msgid "Stop HTTP server"
 msgstr "HTTPサーバーを終了"
 
-msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを終了(Debian/Ubuntu/CentOS)::"
+msgid "Stopping groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Restart HTTP server"
 msgstr "HTTPサーバーを再起動"
 
-msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga HTTPサーバーを再起動(Debian/Ubuntu/CentOS)::"
+msgid "Restarting groonga HTTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを再起動(Fedora)::"
@@ -136,14 +136,11 @@ msgstr ""
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
 msgstr "サーバー設定ファイル (Debian/Ubuntu)::"
 
-msgid "Configuration file for server setting (CentOS)::"
-msgstr "サーバー設定ファイル(CentOS)::"
-
 msgid "Start GQTP server"
 msgstr "GQTPサーバーを起動"
 
-msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga GQTPサーバーを起動(Debian/Ubuntu/CentOS)::"
+msgid "Starting groonga GQTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Starting groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを起動(Fedora)::"
@@ -151,8 +148,8 @@ msgstr "groonga GQTPサーバーを起動(Fedora)::"
 msgid "Stop GQTP server"
 msgstr "GQTPサーバーを終了"
 
-msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr "groonga GQTPサーバーを終了(Debian/Ubuntu/CentOS)::"
+msgid "Stopping groonga GQTP server(Debian/Ubuntu/AlmaLinux)::"
+msgstr ""
 
 msgid "Stopping groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを終了(Fedora)::"

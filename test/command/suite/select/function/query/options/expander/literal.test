@@ -1,0 +1,22 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create Lexicon memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+["content"],
+["Start Groonga!"],
+["Start Mroonga!"],
+["Start Rroonga!"],
+["Start Ruby!"],
+["Learning Ruby and Groonga..."]
+]
+
+select \
+  --table Memos \
+  --filter 'query("content", "rroonga content:@rroonga", \
+                  {"expander": {"rroonga": ["rroonga", "Ruby groonga"]}})'

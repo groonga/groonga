@@ -106,7 +106,7 @@ msgstr ""
 msgid "The value of drilldown are returned as the value of ``_nsubrecs`` column. In this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. ``_nsubrecs`` shows that each three domain has three records."
 msgstr "ドリルダウン結果は ``_nsubrecs`` カラムの値として返ります。この場合は、``Site`` テーブルは \".org\"、\".net\"、\".com\"ドメインでグループ化されています。 ``_nsubrecs`` はグループ化されたドメインが3つのレコードをそれぞれもつことを意味します。"
 
-msgid "If you execute drildown to the column which has table as a type, you can get the value of column which is stored in referenced table. ``_nsubrecs`` pseudo column is added to the table which is used for drilldown. this pseudo column stores the number of records which is grouped by."
+msgid "If you execute drilldown to the column which has table as a type, you can get the value of column which is stored in referenced table. ``_nsubrecs`` pseudo column is added to the table which is used for drilldown. this pseudo column stores the number of records which is grouped by."
 msgstr "テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、 ``_nsubrecs`` という仮想的なカラムが追加されます。このカラムには、グループ化されたレコード数が入ります。"
 
 msgid "Then, investigate referenced table in detail. As ``Site`` table use ``SiteDomain`` table as column type of ``domain``, you can use ``--drilldown_output_columns`` to know detail of referenced column."
@@ -118,16 +118,16 @@ msgstr "これでグループ化されたドメインの詳細がわかります
 msgid "Drilldown with multiple column"
 msgstr "複数のカラムでドリルダウン"
 
-msgid "Drilldown feature supports multiple column. Use comma separated multiple column names as ``drildown`` parameter. You can get the each result of drilldown at once."
+msgid "Drilldown feature supports multiple column. Use comma separated multiple column names as ``drilldown`` parameter. You can get the each result of drilldown at once."
 msgstr "ドリルダウンでは複数のカラムをサポートしています。 ``drilldown`` パラメータの引数にカンマ区切りの値を指定します。すると一度にまとめてドリルダウン結果を取得できます。"
 
-msgid "Sorting drildown results"
+msgid "Sorting drilldown results"
 msgstr "ドリルダウン結果をソートする"
 
 msgid "Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order."
 msgstr "ドリルダウン結果をソートしたい場合には ``--drilldown_sort_keys`` を使います。指定した ``_nsubrecs`` カラムを昇順でソートします。"
 
-msgid "limits drildown results"
+msgid "limits drilldown results"
 msgstr "ドリルダウン結果の制限"
 
 msgid "The number of drilldown results is limited to 10 as a default. Use ``drilldown_limit`` and ``drilldown_offset`` parameter to customize orilldown results."

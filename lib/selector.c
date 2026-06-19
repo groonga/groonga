@@ -1,9 +1,10 @@
 /*
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,25 +22,6 @@
 #include "grn_posting.h"
 #include "grn_selector.h"
 
-struct _grn_selector_data {
-  grn_obj *selector;
-  grn_obj *expr;
-  grn_obj *table;
-  grn_obj *index;
-  size_t n_args;
-  grn_obj **args;
-  float weight_factor;
-  grn_obj *result_set;
-  grn_operator op;
-  grn_obj *score_table;
-  grn_obj *score_column;
-  grn_obj score;
-  grn_obj *tags_table;
-  grn_obj *tags_column;
-  grn_obj tags;
-  grn_obj default_tags;
-};
-
 grn_selector_data *
 grn_selector_data_get(grn_ctx *ctx)
 {
@@ -47,90 +29,97 @@ grn_selector_data_get(grn_ctx *ctx)
 }
 
 grn_rc
-grn_selector_run(grn_ctx *ctx,
-                 grn_obj *selector,
-                 grn_obj *expr,
-                 grn_obj *table,
-                 grn_obj *index,
-                 size_t n_args,
-                 grn_obj **args,
-                 float weight_factor,
-                 grn_obj *result_set,
-                 grn_operator op)
+grn_selector_run(grn_ctx *ctx, grn_selector_data *data)
 {
-  grn_selector_data data;
-  data.selector = selector;
-  data.expr = expr;
-  data.table = table;
-  data.index = index;
-  data.n_args = n_args;
-  data.args = args;
-  data.weight_factor = weight_factor;
-  data.result_set = result_set;
-  data.op = op;
-  data.score_table = NULL;
-  data.score_column = NULL;
-  GRN_FLOAT_INIT(&(data.score), 0);
-  data.tags_table = NULL;
-  data.tags_column = NULL;
-  GRN_TEXT_INIT(&(data.tags), GRN_OBJ_VECTOR);
-  GRN_TEXT_INIT(&(data.default_tags), GRN_OBJ_VECTOR);
-
   grn_selector_data *previous_data = ctx->impl->current_selector_data;
-  ctx->impl->current_selector_data = &data;
-  grn_proc *proc = (grn_proc *)selector;
+  ctx->impl->current_selector_data = data;
+  grn_proc *proc = (grn_proc *)(data->selector);
   grn_rc rc = proc->callbacks.function.selector(ctx,
-                                                table,
-                                                index,
-                                                (int)n_args,
-                                                args,
-                                                result_set,
-                                                op);
+                                                data->table,
+                                                data->index,
+                                                (int)(data->n_args),
+                                                data->args,
+                                                data->result_set,
+                                                data->op);
   ctx->impl->current_selector_data = previous_data;
-
-  GRN_OBJ_FIN(ctx, &(data.score));
-  if (data.score_table) {
-    if (data.score_table != data.result_set) {
-      grn_obj_unref(ctx, data.score_table);
-    }
-    data.score_table = NULL;
-  }
-  GRN_OBJ_FIN(ctx, &(data.default_tags));
-  GRN_OBJ_FIN(ctx, &(data.tags));
-  if (data.tags_table) {
-    if (data.tags_table != data.result_set) {
-      grn_obj_unref(ctx, data.tags_table);
-    }
-    data.tags_table = NULL;
-  }
-
   return rc;
 }
 
+grn_rc
+grn_selector_data_init(grn_ctx *ctx,
+                       grn_selector_data *data,
+                       grn_obj *selector,
+                       grn_obj *expr,
+                       grn_obj *table,
+                       grn_obj *index,
+                       size_t n_args,
+                       grn_obj **args,
+                       float weight_factor,
+                       grn_obj *result_set,
+                       grn_operator op)
+{
+  data->selector = selector;
+  data->expr = expr;
+  data->table = table;
+  data->index = index;
+  data->n_args = n_args;
+  data->args = args;
+  data->weight_factor = weight_factor;
+  data->result_set = result_set;
+  data->op = op;
+  data->score_table = NULL;
+  data->score_column = NULL;
+  GRN_FLOAT_INIT(&(data->score), 0);
+  data->tags_table = NULL;
+  data->tags_column = NULL;
+  GRN_TEXT_INIT(&(data->tags), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(data->default_tags), GRN_OBJ_VECTOR);
+  data->can_swap_result_set = false;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_selector_data_fin(grn_ctx *ctx, grn_selector_data *data)
+{
+
+  GRN_OBJ_FIN(ctx, &(data->score));
+  if (data->score_table) {
+    if (data->score_table != data->result_set) {
+      grn_obj_unref(ctx, data->score_table);
+    }
+    data->score_table = NULL;
+  }
+  GRN_OBJ_FIN(ctx, &(data->default_tags));
+  GRN_OBJ_FIN(ctx, &(data->tags));
+  if (data->tags_table) {
+    if (data->tags_table != data->result_set) {
+      grn_obj_unref(ctx, data->tags_table);
+    }
+    data->tags_table = NULL;
+  }
+  return GRN_SUCCESS;
+}
+
 grn_obj *
-grn_selector_data_get_selector(grn_ctx *ctx,
-                               grn_selector_data *data)
+grn_selector_data_get_selector(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->selector;
 }
 
 grn_obj *
-grn_selector_data_get_expr(grn_ctx *ctx,
-                           grn_selector_data *data)
+grn_selector_data_get_expr(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->expr;
 }
 
 grn_obj *
-grn_selector_data_get_table(grn_ctx *ctx,
-                            grn_selector_data *data)
+grn_selector_data_get_table(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->table;
 }
 
 grn_obj *
-grn_selector_data_get_index(grn_ctx *ctx,
-                            grn_selector_data *data)
+grn_selector_data_get_index(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->index;
 }
@@ -147,24 +136,44 @@ grn_selector_data_get_args(grn_ctx *ctx,
 }
 
 float
-grn_selector_data_get_weight_factor(grn_ctx *ctx,
-                                    grn_selector_data *data)
+grn_selector_data_get_weight_factor(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->weight_factor;
 }
 
+grn_rc
+grn_selector_data_set_result_set(grn_ctx *ctx,
+                                 grn_selector_data *data,
+                                 grn_obj *result_set)
+{
+  data->result_set = result_set;
+  return GRN_SUCCESS;
+}
+
 grn_obj *
-grn_selector_data_get_result_set(grn_ctx *ctx,
-                                 grn_selector_data *data)
+grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->result_set;
 }
 
 grn_operator
-grn_selector_data_get_op(grn_ctx *ctx,
-                         grn_selector_data *data)
+grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->op;
+}
+
+grn_rc
+grn_selector_data_set_can_swap_result_set(grn_ctx *ctx,
+                                          grn_selector_data *data,
+                                          bool can)
+{
+  return data->can_swap_result_set = can;
+}
+
+bool
+grn_selector_data_get_can_swap_result_set(grn_ctx *ctx, grn_selector_data *data)
+{
+  return data->can_swap_result_set;
 }
 
 grn_rc
@@ -179,7 +188,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
     value = GRN_PTR_VALUE(value);
   }
   switch (value->header.type) {
-  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_FIX_SIZE:
     {
       if (value->header.domain == data->result_set->header.domain) {
         data->score_column = value;
@@ -202,7 +211,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
       }
     }
     break;
-  default :
+  default:
     if (grn_obj_is_text_family_bulk(ctx, value)) {
       data->score_column = grn_obj_column(ctx,
                                           data->result_set,
@@ -228,8 +237,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
 }
 
 bool
-grn_selector_data_have_score_column(grn_ctx *ctx,
-                                    grn_selector_data *data)
+grn_selector_data_have_score_column(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->score_column != NULL;
 }
@@ -259,19 +267,10 @@ grn_selector_data_set_tags_internal(grn_ctx *ctx,
     for (i = 0; i < n; i++) {
       const char *element;
       grn_id domain;
-      uint32_t element_size = grn_vector_get_element(ctx,
-                                                     new_tags,
-                                                     i,
-                                                     &element,
-                                                     NULL,
-                                                     &domain);
+      uint32_t element_size =
+        grn_vector_get_element(ctx, new_tags, i, &element, NULL, &domain);
       if (grn_type_id_is_text_family(ctx, domain) && element_size > 0) {
-        grn_vector_add_element(ctx,
-                               tags,
-                               element,
-                               element_size,
-                               0,
-                               domain);
+        grn_vector_add_element(ctx, tags, element, element_size, 0, domain);
       }
     }
   } else {
@@ -337,7 +336,7 @@ grn_selector_data_parse_tags_column_option_value(grn_ctx *ctx,
             (int)GRN_TEXT_LEN(&inspected),
             GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
-        }
+      }
     }
   } else {
     if (grn_obj_is_text_family_bulk(ctx, value)) {
@@ -366,8 +365,7 @@ grn_selector_data_parse_tags_column_option_value(grn_ctx *ctx,
 }
 
 bool
-grn_selector_data_have_tags_column(grn_ctx *ctx,
-                                   grn_selector_data *data)
+grn_selector_data_have_tags_column(grn_ctx *ctx, grn_selector_data *data)
 {
   return data->tags_column != NULL;
 }
@@ -408,7 +406,7 @@ grn_selector_data_current_set_default_tag_raw_no_validation(grn_ctx *ctx,
   return rc;
 }
 
-static grn_inline void
+static inline void
 grn_selector_data_add_score(grn_ctx *ctx,
                             grn_selector_data *data,
                             grn_obj *result_set,
@@ -425,10 +423,8 @@ grn_selector_data_add_score(grn_ctx *ctx,
     if (data->score_table == data->result_set) {
       score_id = result_set_record_id;
     } else {
-      score_id = grn_table_get(ctx,
-                               data->score_table,
-                               &record_id,
-                               sizeof(grn_id));
+      score_id =
+        grn_table_get(ctx, data->score_table, &record_id, sizeof(grn_id));
       if (score_id == GRN_ID_NIL) {
         return;
       }
@@ -445,7 +441,7 @@ grn_selector_data_add_score(grn_ctx *ctx,
                     GRN_OBJ_INCR);
 }
 
-static grn_inline void
+static inline void
 grn_selector_data_append_tags(grn_ctx *ctx,
                               grn_selector_data *data,
                               grn_obj *result_set,
@@ -471,10 +467,8 @@ grn_selector_data_append_tags(grn_ctx *ctx,
     if (data->tags_table == data->result_set) {
       tags_id = result_set_record_id;
     } else {
-      tags_id = grn_table_get(ctx,
-                              data->tags_table,
-                              &record_id,
-                              sizeof(grn_id));
+      tags_id =
+        grn_table_get(ctx, data->tags_table, &record_id, sizeof(grn_id));
       if (tags_id == GRN_ID_NIL) {
         return;
       }
@@ -483,11 +477,7 @@ grn_selector_data_append_tags(grn_ctx *ctx,
     tags_id = record_id;
   }
 
-  grn_obj_set_value(ctx,
-                    data->tags_column,
-                    tags_id,
-                    tags,
-                    GRN_OBJ_APPEND);
+  grn_obj_set_value(ctx, data->tags_column, tags_id, tags, GRN_OBJ_APPEND);
 }
 
 grn_rc
@@ -500,6 +490,32 @@ grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
   grn_selector_data *data = ctx->impl->current_selector_data;
 
   if (data->result_set != result_set) {
+    /* This is for 'A || query("...", "B C", {"tags_column": "tags"})'
+     * case. In this case, we want to use a temporary result set
+     * instead of data->result_set in query(). If we use
+     * data->result_set, it's evaluated as '(A || B) && C' not 'A ||
+     * (B && C)'.
+     *
+     * This is for putting tags data to data->result_set instead of
+     * the temporary result set. If we don't do here, we need to
+     * create a tags_column to the temporary result set and merge
+     * tags_column values in the temporary result set to data->result
+     * later. It may be better approach but I can't decide which
+     * approach is better for now. */
+    if (data->tags_table == data->result_set) {
+      grn_id data_result_set_record_id = GRN_ID_NIL;
+      if (grn_hash_get_key(ctx,
+                           (grn_hash *)result_set,
+                           result_set_record_id,
+                           &data_result_set_record_id,
+                           sizeof(grn_id)) == sizeof(grn_id)) {
+        grn_selector_data_append_tags(ctx,
+                                      data,
+                                      data->result_set,
+                                      data_result_set_record_id,
+                                      record_id);
+      }
+    }
     return ctx->rc;
   }
 

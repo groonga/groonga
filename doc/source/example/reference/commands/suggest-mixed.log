@@ -3,70 +3,74 @@ Execution example::
   suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "suggest": [
-  #       [
-  #         2
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "_score", 
-  #           "Int32"
-  #         ]
-  #       ], 
-  #       [
-  #         "search engine", 
-  #         1
-  #       ], 
-  #       [
-  #         "web search realtime", 
-  #         1
-  #       ]
-  #     ], 
   #     "complete": [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "search engine", 
+  #         "search",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "search", 
-  #         1
+  #         "search engine",
+  #         2
   #       ]
-  #     ], 
+  #     ],
   #     "correct": [
   #       [
-  #         0
-  #       ], 
+  #         1
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
+  #       ],
+  #       [
+  #         "search",
+  #         2
+  #       ]
+  #     ],
+  #     "suggest": [
+  #       [
+  #         2
+  #       ],
+  #       [
+  #         [
+  #           "_key",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "_score",
+  #           "Int32"
+  #         ]
+  #       ],
+  #       [
+  #         "search engine",
+  #         1
+  #       ],
+  #       [
+  #         "web search realtime",
+  #         1
   #       ]
   #     ]
   #   }

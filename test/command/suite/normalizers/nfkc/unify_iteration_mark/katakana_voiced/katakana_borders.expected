@@ -1,0 +1,25 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "オヾッヾナヾノヾマヾ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "オヾッヾナヾノヾマヾ",
+    "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "null"
+    ],
+    "checks": []
+  }
+]

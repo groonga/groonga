@@ -3,120 +3,142 @@ Execution example::
   tokenize TokenRegexp "/home/alice/test.txt" NormalizerAuto --mode ADD
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "￯"
-  #     }, 
+  #       "value": "￯",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "/h"
-  #     }, 
+  #       "value": "/h",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 2, 
-  #       "force_prefix": false, 
-  #       "value": "ho"
-  #     }, 
+  #       "value": "ho",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 3, 
-  #       "force_prefix": false, 
-  #       "value": "om"
-  #     }, 
+  #       "value": "om",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 4, 
-  #       "force_prefix": false, 
-  #       "value": "me"
-  #     }, 
+  #       "value": "me",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 5, 
-  #       "force_prefix": false, 
-  #       "value": "e/"
-  #     }, 
+  #       "value": "e/",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 6, 
-  #       "force_prefix": false, 
-  #       "value": "/a"
-  #     }, 
+  #       "value": "/a",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 7, 
-  #       "force_prefix": false, 
-  #       "value": "al"
-  #     }, 
+  #       "value": "al",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 8, 
-  #       "force_prefix": false, 
-  #       "value": "li"
-  #     }, 
+  #       "value": "li",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 9, 
-  #       "force_prefix": false, 
-  #       "value": "ic"
-  #     }, 
+  #       "value": "ic",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 10, 
-  #       "force_prefix": false, 
-  #       "value": "ce"
-  #     }, 
+  #       "value": "ce",
+  #       "position": 10,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 11, 
-  #       "force_prefix": false, 
-  #       "value": "e/"
-  #     }, 
+  #       "value": "e/",
+  #       "position": 11,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 12, 
-  #       "force_prefix": false, 
-  #       "value": "/t"
-  #     }, 
+  #       "value": "/t",
+  #       "position": 12,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 13, 
-  #       "force_prefix": false, 
-  #       "value": "te"
-  #     }, 
+  #       "value": "te",
+  #       "position": 13,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 14, 
-  #       "force_prefix": false, 
-  #       "value": "es"
-  #     }, 
+  #       "value": "es",
+  #       "position": 14,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 15, 
-  #       "force_prefix": false, 
-  #       "value": "st"
-  #     }, 
+  #       "value": "st",
+  #       "position": 15,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 16, 
-  #       "force_prefix": false, 
-  #       "value": "t."
-  #     }, 
+  #       "value": "t.",
+  #       "position": 16,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 17, 
-  #       "force_prefix": false, 
-  #       "value": ".t"
-  #     }, 
+  #       "value": ".t",
+  #       "position": 17,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 18, 
-  #       "force_prefix": false, 
-  #       "value": "tx"
-  #     }, 
+  #       "value": "tx",
+  #       "position": 18,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 19, 
-  #       "force_prefix": false, 
-  #       "value": "xt"
-  #     }, 
+  #       "value": "xt",
+  #       "position": 19,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 20, 
-  #       "force_prefix": false, 
-  #       "value": "t"
-  #     }, 
+  #       "value": "t",
+  #       "position": 20,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
   #     {
-  #       "position": 21, 
-  #       "force_prefix": false, 
-  #       "value": "￰"
+  #       "value": "￰",
+  #       "position": 21,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

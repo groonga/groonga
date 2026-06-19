@@ -8,6 +8,12 @@
 ``NormalizerNFKC150``
 =====================
 
+.. deprecated:: 14.1.3
+
+   Use :doc:`./normalizer_nfkc` instead.
+
+   ``NormalizerNFKC150`` and ``NormalizerNFKC("version", "15.0.0")`` are equal.
+
 Summary
 -------
 
@@ -48,6 +54,8 @@ Specify option::
 
   NormalizerNFKC150("unify_katakana_bu_sound", true)
 
+  NormalizerNFKC150("unify_to_katakana", true)
+
   NormalizerNFKC150("unify_to_romaji", true)
 
   NormalizerNFKC150("remove_symbol", true)
@@ -69,6 +77,12 @@ Specify option::
   NormalizerNFKC150("unify_kana_prolonged_sound_mark", true)
 
   NormalizerNFKC150("unify_kana_hyphen", true)
+
+  NormalizerNFKC150("unify_latin_alphabet_with", true)
+
+.. versionadded:: 14.0.7
+
+  :ref:`normalizer-nfkc150-unify-latin-alphabet-with` is added.
 
 .. versionadded:: 13.0.1
 
@@ -151,6 +165,8 @@ This option enables normalize hyphen and prolonged sound to "-" (U+002D HYPHEN-M
 Here is an example of :ref:`normalizer-nfkc150-unify-middle-dot` option.
 This option enables normalize middle dot to "·" (U+00B7 MIDDLE DOT) as below.
 
+You can use it with :ref:`normalizer-nfkc150-remove-symbol` to remove all characters like middle dot.
+
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log
 .. normalize   'NormalizerNFKC150("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
@@ -168,6 +184,13 @@ This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ" as below
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-katakana-bu-sounds.log
 .. normalize   'NormalizerNFKC150("unify_katakana_bu_sound", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
+
+Here is an example of :ref:`normalizer-nfkc150-unify-to-katakana` option.
+This option normalizes hiragana to katakana.
+
+.. groonga-command
+.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log
+.. normalize   'NormalizerNFKC150("unify_to_katakana", true)'   "ゔぁゔぃゔゔぇゔぉ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc150-unify-to-romaji` option.
 This option enables normalize hiragana and katakana to romaji as below.
@@ -233,7 +256,7 @@ This option enables to normalize "ヅァヅィヅェヅォ" to "ザジゼゾ".
 .. normalize   'NormalizerNFKC150("unify_katakana_du_small_sounds", true)'   "ヅァヅィヅェヅォ"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc150-unify-kana-prolonged-sound-mark` option.
-This option enables to normalize "ー" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) 
+This option enables to normalize "ー" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)
 to a vowel of a previous kana letter.
 
 If a previous kana letter is "ん" , "ー" is normalized to "ん",
@@ -253,8 +276,20 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
 .. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-kana-hyphen.log
 .. normalize   'NormalizerNFKC150("unify_kana_hyphen", true)'   "カ-キ-ク-ケ-コ-"   WITH_TYPES
 
+Here is an example of :ref:`normalizer-nfkc150-unify-latin-alphabet-with` option.
+This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
+
+However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
+
+.. groonga-command
+.. include:: ../../example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log
+.. normalize   'NormalizerNFKC150("unify_latin_alphabet_with", true)'   "ngoằn"   WITH_TYPES
+
 Advanced usage
 ^^^^^^^^^^^^^^
+
+With ``TokenMecab``
+"""""""""""""""""""
 
 You can output romaji of specific a part of speech with using to combine
 ``TokenMecab`` and ``NormalizerNFKC150`` as below.
@@ -269,6 +304,37 @@ Next, you normalize reading of the noun that extracted with ``unify_to_romaji`` 
 .. normalize   'NormalizerNFKC150("unify_to_romaji", true)'   "カレ"   WITH_TYPES
 .. normalize   'NormalizerNFKC150("unify_to_romaji", true)'   "ナマエ"   WITH_TYPES
 .. normalize   'NormalizerNFKC150("unify_to_romaji", true)'   "ヤマダ"   WITH_TYPES
+
+Use ``unify_to_katakana`` with other options
+""""""""""""""""""""""""""""""""""""""""""""
+
+:ref:`normalizer-nfkc150-unify-to-katakana` can be combined with the following options to equate special katakana with general katakana.
+
+* :ref:`normalizer-nfkc150-unify-katakana-v-sounds`
+
+  * Equivalent: "ゔぁゔぃゔゔぇゔぉ", "ばびぶべぼ", "ヴァヴィヴヴェヴォ" and "バビブベボ"
+
+* :ref:`normalizer-nfkc150-unify-katakana-gu-small-sounds`
+
+  * Equivalent: "ぐぁぐぃぐぇぐぉ", "がぎげご", "グァグィグェグォ" and "ガギゲゴ"
+
+* :ref:`normalizer-nfkc150-unify-katakana-zu-small-sounds`
+
+  * Equivalent: "ずぁずぃずぇずぉ", "ざじぜぞ", "ズァズィズェズォ" and "ザジゼゾ"
+
+* :ref:`normalizer-nfkc150-unify-katakana-wo-sound`
+
+  * Equivalent: "お", "を", "オ" and "ヲ"
+
+* :ref:`normalizer-nfkc150-unify-katakana-di-sound`
+
+  * Equivalent: "じ", "ぢ", "ジ" and "ヂ"
+
+* :ref:`normalizer-nfkc150-unify-katakana-du-sound`
+
+  * Equivalent: "ず", "づ", "ズ" and "ヅ"
+
+For example, using ``unify_to_katakana`` and ``unify_katakana_v_sounds`` together, you can search "バイオリン", "ヴァイオリン", "ばいおりん" and "ゔぁいおりん" with "ばいおりん".
 
 Parameters
 ----------
@@ -378,6 +444,8 @@ Middle dot of the target of normalizing is as below.
 * "・" (U+30FB KATAKANA MIDDLE DOT)
 * "･" (U+FF65 HALFWIDTH KATAKANA MIDDLE DOT)
 
+You can use it with :ref:`normalizer-nfkc150-remove-symbol` to remove all characters like middle dot.
+
 .. _normalizer-nfkc150-unify-katakana-v-sounds:
 
 ``unify_katakana_v_sounds``
@@ -391,6 +459,13 @@ This option enables normalize "ヴァヴィヴヴェヴォ" to "バビブベボ"
 """""""""""""""""""""""""""
 
 This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ".
+
+.. _normalizer-nfkc150-unify-to-katakana:
+
+``unify_to_katakana``
+"""""""""""""""""""""
+
+This option normalizes hiragana to katakana.
 
 .. _normalizer-nfkc150-unify-to-romaji:
 
@@ -495,7 +570,7 @@ This option enables to normalize "ヅァヅィヅェヅォ" to "ザジゼゾ".
 
 .. versionadded:: 13.0.1
 
-This option enables to normalize "ー" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) 
+This option enables to normalize "ー" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)
 to a vowel of a previous kana letter.
 
 If a previous kana letter is "ん" , "ー" is normalized to "ん",
@@ -503,47 +578,47 @@ And a previous kana letter is "ン" , "ー" is normalized to "ン".
 
 .. code-block::
 
-   ァー -> ァア, アー -> アア, ヵー -> ヵア, カー -> カア, ガー -> ガア, サー -> サア, ザー -> ザア, 
-   ター -> タア, ダー -> ダア, ナー -> ナア, ハー -> ハア, バー -> バア, パー -> パア, マー -> マア, 
+   ァー -> ァア, アー -> アア, ヵー -> ヵア, カー -> カア, ガー -> ガア, サー -> サア, ザー -> ザア,
+   ター -> タア, ダー -> ダア, ナー -> ナア, ハー -> ハア, バー -> バア, パー -> パア, マー -> マア,
    ャー -> ャア, ヤー -> ヤア, ラー -> ラア, ヮー -> ヮア, ワー -> ワア, ヷー -> ヷア,
    ィー -> ィイ, イー -> イイ, キー -> キイ, ギー -> ギイ, シー -> シイ, ジー -> ジイ, チー -> チイ,
    ヂー -> ヂイ, ニー -> ニイ, ヒー -> ヒイ, ビー -> ビイ, ピー -> ピイ, ミー -> ミイ, リー -> リイ,
-   ヰー -> ヰイ, ヸー -> ヸイ, 
-   
+   ヰー -> ヰイ, ヸー -> ヸイ,
+
    ゥー -> ゥウ, ウー -> ウウ, クー -> クウ, グー -> グウ, スー -> スウ, ズー -> ズウ, ツー -> ツウ,
    ヅー -> ヅウ, ヌー -> ヌウ, フー -> フウ, ブー -> ブウ, プー -> プウ, ムー -> ムウ, ュー -> ュウ,
    ユー -> ユウ, ルー -> ルウ, ヱー -> ヱウ, ヴー -> ヴウ,
-   
+
    ェー -> ェエ, エー -> エエ, ヶー -> ヶエ, ケー -> ケエ, ゲー -> ゲエ, セー -> セエ, ゼー -> ゼエ,
    テー -> テエ, デー -> デエ, ネー -> ネエ, ヘー -> ヘエ, ベー -> ベエ, ペー -> ペエ, メー -> メエ,
    レー -> レエ, ヹー -> ヹエ,
-   
+
    ォー -> ォオ, オー -> オオ, コー -> コオ, ゴー -> ゴオ, ソー -> ソオ, ゾー -> ゾオ, トー -> トオ,
    ドー -> ドオ, ノー -> ノオ, ホー -> ホオ, ボー -> ボオ, ポー -> ポオ, モー -> モオ, ョー -> ョオ,
-   ヨー -> ヨオ, ロー -> ロオ, ヲー -> ヲオ, ヺー -> ヺオ, 
-   
+   ヨー -> ヨオ, ロー -> ロオ, ヲー -> ヲオ, ヺー -> ヺオ,
+
    ンー -> ンン
-   
-   ぁー -> ぁあ, あー -> ああ, ゕー -> ゕあ, かー -> かあ, がー -> があ, さー -> さあ, ざー -> ざあ, 
-   たー -> たあ, だー -> だあ, なー -> なあ, はー -> はあ, ばー -> ばあ, ぱー -> ぱあ, まー -> まあ, 
-   ゃー -> ゃあ, やー -> やあ, らー -> らあ, ゎー -> ゎあ, わー -> わあ 
-   
+
+   ぁー -> ぁあ, あー -> ああ, ゕー -> ゕあ, かー -> かあ, がー -> があ, さー -> さあ, ざー -> ざあ,
+   たー -> たあ, だー -> だあ, なー -> なあ, はー -> はあ, ばー -> ばあ, ぱー -> ぱあ, まー -> まあ,
+   ゃー -> ゃあ, やー -> やあ, らー -> らあ, ゎー -> ゎあ, わー -> わあ
+
    ぃー -> ぃい, いー -> いい, きー -> きい, ぎー -> ぎい, しー -> しい, じー -> じい, ちー -> ちい,
    ぢー -> ぢい, にー -> にい, ひー -> ひい, びー -> びい, ぴー -> ぴい, みー -> みい, りー -> りい,
    ゐー -> ゐい
-   
+
    ぅー -> ぅう, うー -> うう, くー -> くう, ぐー -> ぐう, すー -> すう, ずー -> ずう, つー -> つう,
    づー -> づう, ぬー -> ぬう, ふー -> ふう, ぶー -> ぶう, ぷー -> ぷう, むー -> むう, ゅー -> ゅう,
    ゆー -> ゆう, るー -> るう, ゑー -> ゑう, ゔー -> ゔう
-   
+
    ぇー -> ぇえ, えー -> ええ, ゖー -> ゖえ, けー -> けえ, げー -> げえ, せー -> せえ, ぜー -> ぜえ,
    てー -> てえ, でー -> でえ, ねー -> ねえ, へー -> へえ, べー -> べえ, ぺー -> ぺえ, めー -> めえ,
    れー -> れえ
-   
+
    ぉー -> ぉお, おー -> おお, こー -> こお, ごー -> ごお, そー -> そお, ぞー -> ぞお, とー -> とお,
    どー -> どお, のー -> のお, ほー -> ほお, ぼー -> ぼお, ぽー -> ぽお, もー -> もお, ょー -> ょお,
    よー -> よお, ろー -> ろお, をー -> をお
-   
+
    んー -> んん
 
 .. _normalizer-nfkc150-unify-kana-hyphen:
@@ -560,48 +635,59 @@ And a previous kana letter is "ン" , "-" is normalized to "ン".
 
 .. code-block::
 
-   ァ- -> ァア, ア- -> アア, ヵ- -> ヵア, カ- -> カア, ガ- -> ガア, サ- -> サア, ザ- -> ザア, 
-   タ- -> タア, ダ- -> ダア, ナ- -> ナア, ハ- -> ハア, バ- -> バア, パ- -> パア, マ- -> マア, 
+   ァ- -> ァア, ア- -> アア, ヵ- -> ヵア, カ- -> カア, ガ- -> ガア, サ- -> サア, ザ- -> ザア,
+   タ- -> タア, ダ- -> ダア, ナ- -> ナア, ハ- -> ハア, バ- -> バア, パ- -> パア, マ- -> マア,
    ャ- -> ャア, ヤ- -> ヤア, ラ- -> ラア, ヮ- -> ヮア, ワ- -> ワア, ヷ- -> ヷア,
    ィ- -> ィイ, イ- -> イイ, キ- -> キイ, ギ- -> ギイ, シ- -> シイ, ジ- -> ジイ, チ- -> チイ,
    ヂ- -> ヂイ, ニ- -> ニイ, ヒ- -> ヒイ, ビ- -> ビイ, ピ- -> ピイ, ミ- -> ミイ, リ- -> リイ,
-   ヰ- -> ヰイ, ヸ- -> ヸイ, 
-   
+   ヰ- -> ヰイ, ヸ- -> ヸイ,
+
    ゥ- -> ゥウ, ウ- -> ウウ, ク- -> クウ, グ- -> グウ, ス- -> スウ, ズ- -> ズウ, ツ- -> ツウ,
    ヅ- -> ヅウ, ヌ- -> ヌウ, フ- -> フウ, ブ- -> ブウ, プ- -> プウ, ム- -> ムウ, ュ- -> ュウ,
    ユ- -> ユウ, ル- -> ルウ, ヱ- -> ヱウ, ヴ- -> ヴウ,
-   
+
    ェ- -> ェエ, エ- -> エエ, ヶ- -> ヶエ, ケ- -> ケエ, ゲ- -> ゲエ, セ- -> セエ, ゼ- -> ゼエ,
    テ- -> テエ, デ- -> デエ, ネ- -> ネエ, ヘ- -> ヘエ, ベ- -> ベエ, ペ- -> ペエ, メ- -> メエ,
    レ- -> レエ, ヹ- -> ヹエ,
-   
+
    ォ- -> ォオ, オ- -> オオ, コ- -> コオ, ゴ- -> ゴオ, ソ- -> ソオ, ゾ- -> ゾオ, ト- -> トオ,
    ド- -> ドオ, ノ- -> ノオ, ホ- -> ホオ, ボ- -> ボオ, ポ- -> ポオ, モ- -> モオ, ョ- -> ョオ,
-   ヨ- -> ヨオ, ロ- -> ロオ, ヲ- -> ヲオ, ヺ- -> ヺオ, 
-   
+   ヨ- -> ヨオ, ロ- -> ロオ, ヲ- -> ヲオ, ヺ- -> ヺオ,
+
    ン- -> ンン
-   
-   ぁ- -> ぁあ, あ- -> ああ, ゕ- -> ゕあ, か- -> かあ, が- -> があ, さ- -> さあ, ざ- -> ざあ, 
-   た- -> たあ, だ- -> だあ, な- -> なあ, は- -> はあ, ば- -> ばあ, ぱ- -> ぱあ, ま- -> まあ, 
-   ゃ- -> ゃあ, や- -> やあ, ら- -> らあ, ゎ- -> ゎあ, わ- -> わあ 
-   
+
+   ぁ- -> ぁあ, あ- -> ああ, ゕ- -> ゕあ, か- -> かあ, が- -> があ, さ- -> さあ, ざ- -> ざあ,
+   た- -> たあ, だ- -> だあ, な- -> なあ, は- -> はあ, ば- -> ばあ, ぱ- -> ぱあ, ま- -> まあ,
+   ゃ- -> ゃあ, や- -> やあ, ら- -> らあ, ゎ- -> ゎあ, わ- -> わあ
+
    ぃ- -> ぃい, い- -> いい, き- -> きい, ぎ- -> ぎい, し- -> しい, じ- -> じい, ち- -> ちい,
    ぢ- -> ぢい, に- -> にい, ひ- -> ひい, び- -> びい, ぴ- -> ぴい, み- -> みい, り- -> りい,
    ゐ- -> ゐい
-   
+
    ぅ- -> ぅう, う- -> うう, く- -> くう, ぐ- -> ぐう, す- -> すう, ず- -> ずう, つ- -> つう,
    づ- -> づう, ぬ- -> ぬう, ふ- -> ふう, ぶ- -> ぶう, ぷ- -> ぷう, む- -> むう, ゅ- -> ゅう,
    ゆ- -> ゆう, る- -> るう, ゑ- -> ゑう, ゔ- -> ゔう
-   
+
    ぇ- -> ぇえ, え- -> ええ, ゖ- -> ゖえ, け- -> けえ, げ- -> げえ, せ- -> せえ, ぜ- -> ぜえ,
    て- -> てえ, で- -> でえ, ね- -> ねえ, へ- -> へえ, べ- -> べえ, ぺ- -> ぺえ, め- -> めえ,
    れ- -> れえ
-   
+
    ぉ- -> ぉお, お- -> おお, こ- -> こお, ご- -> ごお, そ- -> そお, ぞ- -> ぞお, と- -> とお,
    ど- -> どお, の- -> のお, ほ- -> ほお, ぼ- -> ぼお, ぽ- -> ぽお, も- -> もお, ょ- -> ょお,
    よ- -> よお, ろ- -> ろお, を- -> をお
-   
+
    ん- -> んん
+
+.. _normalizer-nfkc150-unify-latin-alphabet-with:
+
+``unify_latin_alphabet_with``
+"""""""""""""""""""""""""""""
+
+.. versionadded:: 14.0.7
+
+This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below.
+
+However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters.
 
 See also
 ----------

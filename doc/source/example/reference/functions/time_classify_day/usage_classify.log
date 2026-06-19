@@ -5,47 +5,47 @@ Execution example::
     --output_columns 'name, time_classify_day(timestamp)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         6
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "name", 
+  #           "name",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "time_classify_day", 
+  #           "time_classify_day",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Apple", 
+  #         "Apple",
   #         1588258800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Apple", 
+  #         "Apple",
   #         1588258800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Orange", 
+  #         "Orange",
   #         1588258800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Apple", 
+  #         "Apple",
   #         1588258800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Banana", 
+  #         "Banana",
   #         1588258800.0
-  #       ], 
+  #       ],
   #       [
-  #         "Banana", 
+  #         "Banana",
   #         1588258800.0
   #       ]
   #     ]

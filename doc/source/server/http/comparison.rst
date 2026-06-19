@@ -124,7 +124,7 @@ Custom command version
 Groonga has :doc:`/reference/command/command_version` mechanism. It is for
 upgrading groonga commands with backward compatibility.
 
-:doc:`groonga` can change the default command veresion by
+:doc:`groonga` can change the default command version by
 ``--default-command-version`` option. Here is a sample command line to
 use command version 2 as the default command version::
 
@@ -135,7 +135,7 @@ yet. But it will be supported soon. If it is supported, you can
 provides different command version groonga commands in the same
 :doc:`groonga-httpd` process. Here is a sample configuration to
 provide command version 1 commands under ``/api/1/`` and command
-version 2 comamnds under ``/api/2/``::
+version 2 commands under ``/api/2/``::
 
   events {
   }

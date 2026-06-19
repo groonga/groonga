@@ -20,7 +20,7 @@ select Entries   --output_columns '_id, ["A", "B"] + ["C", "D"]'  --command_vers
         "type": "UInt32"
       },
       {
-        "name": "([{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}] + [{\"value\":\"C\", \"weight\":0.0}, {\"value\":\"D\", \"weight\":0.0}])",
+        "name": "([\"A\", \"B\"] + [\"C\", \"D\"])",
         "type": "Text"
       }
     ],

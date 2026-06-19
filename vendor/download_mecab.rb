@@ -50,6 +50,24 @@ def download(url, base)
   FileUtils.rm_rf(base)
   extract_tar_gz(tar_gz)
   FileUtils.rm_rf(tar_gz)
+
+  return if base.start_with?("mecab-naist-jdic")
+
+  pull_requests = [71]
+  pull_requests.each do |pr|
+    patch_url = "https://github.com/taku910/mecab/pull/#{pr}.patch"
+    URI(patch_url).open(:ssl_verify_mode => ssl_verify_mode) do |patch|
+      Dir.chdir(base) do
+        IO.pipe do |in_read, in_write|
+          pid = spawn("patch", "-p2", in: in_read)
+          in_read.close
+          IO.copy_stream(patch, in_write)
+          in_write.close
+          Process.waitpid(pid)
+        end
+      end
+    end
+  end
 end
 
 download("https://packages.groonga.org/source/mecab/#{mecab_base}.tar.gz",

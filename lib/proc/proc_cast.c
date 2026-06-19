@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -59,9 +60,9 @@ func_cast_loose(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     return NULL;
   }
 
-  rc = grn_obj_cast(ctx, value, casted_value, GRN_FALSE);
+  rc = grn_obj_cast(ctx, value, casted_value, false);
   if (rc != GRN_SUCCESS) {
-    rc = grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
+    rc = grn_obj_cast(ctx, default_value, casted_value, false);
     if (rc != GRN_SUCCESS) {
       char type_name[GRN_TABLE_MAX_KEY_SIZE];
       int type_name_size;

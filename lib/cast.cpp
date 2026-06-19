@@ -1,9 +1,10 @@
 /*
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,411 +17,174 @@
 */
 
 #include "grn_cast.h"
+#include "grn_float.h"
 #include "grn_geo.h"
 #include "grn_pat.h"
 #include "grn_str.h"
 
-#ifdef GRN_WITH_RAPIDJSON
-# include "grn_db.h"
-# include <groonga/smart_obj.hpp>
+#include <groonga/bulk.hpp>
 
-# include <limits>
-# include <string>
-# include <vector>
+#ifdef GRN_WITH_BASE64
+#  include <libbase64.h>
 
-# define RAPIDJSON_NAMESPACE grn_rapidjson
-# include <rapidjson/document.h>
-# include <rapidjson/memorystream.h>
+#  include <cmath>
+#elif defined(GRN_WITH_APACHE_ARROW)
+#  include <arrow/util/base64.h>
+#endif
 
+#if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
+#  include "grn_db.h"
+#  include <groonga/smart_obj.hpp>
+
+#  include <limits>
+#  include <string>
+#  include <vector>
+#endif
+
+#ifdef GRN_WITH_SIMDJSON
+#  include <simdjson.h>
+#elif defined(GRN_WITH_RAPIDJSON)
+#  define RAPIDJSON_NAMESPACE grn_rapidjson
+#  include <rapidjson/document.h>
+#  include <rapidjson/memorystream.h>
+#endif
+
+#if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
 namespace {
-  struct Int8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
+  grn_rc
+  json_to_weight_uvector_add(grn_ctx *ctx,
+                             grn_caster *caster,
+                             grn_obj *table,
+                             const char *key,
+                             size_t size,
+                             float weight)
   {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    Int8Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      GRN_INT8_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Uint(unsigned int value) {
-      return Int(value);
-    }
-
-    bool Int64(int64_t value) {
-      return Int(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Int(value);
-    }
-  };
-
-  struct UInt8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    UInt8Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      return Uint(value);
-    }
-
-    bool Uint(unsigned int value) {
-      GRN_UINT8_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Int64(int64_t value) {
-      return Uint(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Uint(value);
-    }
-  };
-
-  struct Int16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    Int16Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      GRN_INT16_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Uint(unsigned int value) {
-      return Int(value);
-    }
-
-    bool Int64(int64_t value) {
-      return Int(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Int(value);
-    }
-  };
-
-  struct UInt16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    UInt16Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      return Uint(value);
-    }
-
-    bool Uint(unsigned int value) {
-      GRN_UINT16_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Int64(int64_t value) {
-      return Uint(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Uint(value);
-    }
-  };
-
-  struct Int32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    Int32Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      GRN_INT32_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Uint(unsigned int value) {
-      return Int(value);
-    }
-
-    bool Int64(int64_t value) {
-      return Int(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Int(value);
-    }
-  };
-
-  struct UInt32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    UInt32Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      return Uint(value);
-    }
-
-    bool Uint(unsigned int value) {
-      GRN_UINT32_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Int64(int64_t value) {
-      return Uint(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Uint(value);
-    }
-  };
-
-  struct Int64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    Int64Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      return Int64(value);
-    }
-
-    bool Uint(unsigned int value) {
-      return Int64(value);
-    }
-
-    bool Int64(int64_t value) {
-      GRN_INT64_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-
-    bool Uint64(uint64_t value) {
-      return Int64(value);
-    }
-  };
-
-  struct UInt64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-
-    UInt64Handler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
-    }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      return Uint64(value);
-    }
-
-    bool Uint(unsigned int value) {
-      return Uint64(value);
-    }
-
-    bool Int64(int64_t value) {
-      return Uint64(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      GRN_UINT64_PUT(ctx_, caster_->dest, value);
-      return true;
-    }
-  };
-
-  struct TableWeightHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
-    TableWeightHandler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster),
-        table_(grn_ctx_at(ctx, caster->dest->header.domain)),
-        weight_(0.0) {
-    }
-
-    ~TableWeightHandler() {
-      grn_obj_unref(ctx_, table_);
-    }
-
-    bool Default() {return false;}
-
-    bool String(const char *data, size_t size, bool copy) {
-      uint32_t missing_mode = (caster_->flags & GRN_OBJ_MISSING_MASK);
-      grn_id id;
+    uint32_t missing_mode = (caster->flags & GRN_OBJ_MISSING_MASK);
+    grn_id id = GRN_ID_NIL;
+    grn::TextBulk key_bulk(ctx, GRN_OBJ_DO_SHALLOW_COPY);
+    GRN_TEXT_SET(ctx, *key_bulk, key, size);
+    grn_table_add_options options;
+    memset(&options, 0, sizeof(grn_table_add_options));
+    options.ignore_empty_normalized_key = true;
+    if (size == 0) {
+      options.ignored = true;
+    } else {
       if (missing_mode == GRN_OBJ_MISSING_ADD) {
-        id = grn_table_add(ctx_, table_, data, size, NULL);
+        id = grn_table_add_by_key(ctx, table, *key_bulk, &options);
       } else {
-        id = grn_table_get(ctx_, table_, data, size);
+        id = grn_table_get_by_key(ctx, table, *key_bulk);
       }
-      if (id == GRN_ID_NIL) {
-        uint32_t invalid_mode = (caster_->flags & GRN_OBJ_INVALID_MASK);
-        if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
-          ERRCLR(ctx_);
-        }
-        grn_ctx *ctx = ctx_;
-        grn_obj src;
-        GRN_TEXT_INIT(&src, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_TEXT_SET(ctx, &src, data, size);
-        grn_caster element_caster = {
-          &src,
-          caster_->dest,
-          caster_->flags,
-          caster_->target,
-        };
-        CAST_FAILED(&element_caster);
-        if (ctx->rc == GRN_SUCCESS) {
-          if (missing_mode != GRN_OBJ_MISSING_NIL) {
-            return true;
-          }
-        } else {
-          ERRCLR(ctx);
-          return true;
-        }
+    }
+    if (id == GRN_ID_NIL && !options.ignored) {
+      uint32_t invalid_mode = (caster->flags & GRN_OBJ_INVALID_MASK);
+      if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+        ERRCLR(ctx);
       }
-      auto rc = grn_uvector_add_element_record(ctx_,
-                                               caster_->dest,
-                                               id,
-                                               weight_);
-      return rc == GRN_SUCCESS;
+      grn_caster element_caster = {
+        *key_bulk,
+        caster->dest,
+        caster->flags,
+        caster->target,
+      };
+      CAST_FAILED(&element_caster);
+      if (ctx->rc == GRN_SUCCESS) {
+        if (missing_mode != GRN_OBJ_MISSING_NIL) {
+          return GRN_SUCCESS;
+        }
+      } else {
+        ERRCLR(ctx);
+        return GRN_SUCCESS;
+      }
     }
+    return grn_uvector_add_element_record(ctx, caster->dest, id, weight);
+  }
 
-    bool Int(int value) {
-      weight_ = value;
-      return true;
-    }
-
-    bool Uint(unsigned int value) {
-      weight_ = value;
-      return true;
-    }
-
-    bool Double(double value) {
-      weight_ = value;
-      return true;
-    }
-
-  private:
-    grn_ctx *ctx_;
-    grn_caster *caster_;
-    grn_obj *table_;
-    float weight_;
-  };
-
-  class Array
-  {
+  class Array {
   public:
-    Array(grn_ctx *ctx)
-      : ctx_(ctx),
-        values_() {
-    }
+    Array(grn_ctx *ctx) : ctx_(ctx), values_() {}
 
-    ~Array() {
+    ~Array()
+    {
       for (auto value : values_) {
         grn_obj_close(ctx_, value);
       }
     }
 
-    bool add_bool_value(const bool value) {
+    bool
+    add_bool_value(const bool value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_BOOL);
       GRN_BOOL_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_int32_value(const int32_t value) {
+    bool
+    add_int32_value(const int32_t value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_INT32);
       GRN_INT32_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_uint32_value(const uint32_t value) {
+    bool
+    add_uint32_value(const uint32_t value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_UINT32);
       GRN_UINT32_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_int64_value(const int64_t value) {
+    bool
+    add_int64_value(const int64_t value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_INT64);
       GRN_INT64_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_uint64_value(const uint64_t value) {
+    bool
+    add_uint64_value(const uint64_t value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_UINT64);
       GRN_UINT64_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_double_value(const double value) {
+    bool
+    add_double_value(const double value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_FLOAT);
       GRN_FLOAT_SET(ctx_, bulk, value);
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_string_value(const std::string &value) {
+    bool
+    add_string_value(std::string_view value)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, GRN_DB_TEXT);
       GRN_TEXT_SET(ctx_, bulk, value.data(), value.size());
       values_.push_back(bulk);
       return true;
     }
 
-    bool add_record_value(grn_id domain, grn_id id) {
+    bool
+    add_record_value(grn_id domain, grn_id id)
+    {
       auto bulk = grn_obj_open(ctx_, GRN_BULK, 0, domain);
       GRN_RECORD_SET(ctx_, bulk, id);
       values_.push_back(bulk);
       return true;
     }
 
-    const std::vector<grn_obj *> &values() const {
+    const std::vector<grn_obj *> &
+    values() const
+    {
       return values_;
     }
 
@@ -429,8 +193,7 @@ namespace {
     std::vector<grn_obj *> values_;
   };
 
-  class Record
-  {
+  class Record {
   public:
     Record(grn_ctx *ctx, grn_obj *table)
       : ctx_(ctx),
@@ -439,16 +202,80 @@ namespace {
         _key_index_(std::numeric_limits<size_t>::max()),
         _id_(GRN_ID_NIL),
         keys_(),
-        values_() {
+        values_()
+    {
     }
 
-    ~Record() {
+    ~Record()
+    {
       for (auto value : values_) {
         grn_obj_close(ctx_, value);
       }
     }
 
-    bool add_key(const std::string &key) {
+    bool
+    add_to_table(grn_caster *caster, grn_id *added_id)
+    {
+      uint32_t missing_mode = (caster->flags & GRN_OBJ_MISSING_MASK);
+      if (have__id()) {
+        if (_id_ == GRN_ID_NIL) {
+          *added_id = GRN_ID_NIL;
+        } else {
+          if (grn_table_at(ctx_, table_, _id_) == _id_) {
+            *added_id = _id_;
+          } else {
+            *added_id = GRN_ID_NIL;
+          }
+        }
+      } else if (have__key()) {
+        auto _key = get_value(_key_index_);
+        if (missing_mode == GRN_OBJ_MISSING_ADD) {
+          *added_id = grn_table_add_by_key(ctx_, table_, _key, nullptr);
+        } else {
+          *added_id = grn_table_get_by_key(ctx_, table_, _key);
+        }
+      } else {
+        if (grn_obj_is_table_with_key(ctx_, table_)) {
+          return false;
+        }
+        if (missing_mode == GRN_OBJ_MISSING_ADD) {
+          *added_id = grn_table_add(ctx_, table_, nullptr, 0, nullptr);
+        }
+      }
+      if (*added_id == GRN_ID_NIL) {
+        if ((caster->flags & GRN_OBJ_INVALID_MASK) == GRN_OBJ_INVALID_ERROR) {
+          return false;
+        }
+        if (missing_mode == GRN_OBJ_MISSING_IGNORE) {
+          return true;
+        }
+      }
+      for (size_t i = 0; i < keys_.size(); ++i) {
+        if (have__id() && i == _id_index_) {
+          continue;
+        }
+        if (have__key() && i == _key_index_) {
+          continue;
+        }
+        const auto &column_name = keys_[i];
+        auto column =
+          grn_obj_column(ctx_, table_, column_name.data(), column_name.size());
+        if (!column) {
+          return false;
+        }
+        grn::SharedObj shared_column(ctx_, column);
+        const auto &value = values_[i];
+        grn_obj_set_value(ctx_, column, *added_id, value, GRN_OBJ_SET);
+        if (ctx_->rc != GRN_SUCCESS) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    bool
+    add_key(std::string_view key)
+    {
       if (key == GRN_COLUMN_NAME_ID) {
         if (_id_index_ != std::numeric_limits<size_t>::max()) {
           return false;
@@ -466,11 +293,13 @@ namespace {
         }
         _key_index_ = keys_.size();
       }
-      keys_.push_back(key);
+      keys_.push_back(std::string(key));
       return true;
     }
 
-    bool add_bool_value(const bool value) {
+    bool
+    add_bool_value(const bool value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         return false;
       }
@@ -480,7 +309,9 @@ namespace {
       return true;
     }
 
-    bool add_int32_value(const int32_t value) {
+    bool
+    add_int32_value(const int32_t value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         if (value == 0) {
           return false;
@@ -493,7 +324,9 @@ namespace {
       return true;
     }
 
-    bool add_uint32_value(const uint32_t value) {
+    bool
+    add_uint32_value(const uint32_t value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         if (value == 0) {
           return false;
@@ -506,7 +339,9 @@ namespace {
       return true;
     }
 
-    bool add_int64_value(const int64_t value) {
+    bool
+    add_int64_value(const int64_t value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         if (value == 0) {
           return false;
@@ -519,7 +354,9 @@ namespace {
       return true;
     }
 
-    bool add_uint64_value(const uint64_t value) {
+    bool
+    add_uint64_value(const uint64_t value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         if (value == 0) {
           return false;
@@ -532,7 +369,9 @@ namespace {
       return true;
     }
 
-    bool add_double_value(const double value) {
+    bool
+    add_double_value(const double value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         return false;
       }
@@ -542,7 +381,9 @@ namespace {
       return true;
     }
 
-    bool add_string_value(const std::string &value) {
+    bool
+    add_string_value(std::string_view value)
+    {
       if (_id_index_ == keys_.size() - 1) {
         return false;
       }
@@ -552,7 +393,9 @@ namespace {
       return true;
     }
 
-    bool add_record_value(grn_id domain, grn_id id) {
+    bool
+    add_record_value(grn_id domain, grn_id id)
+    {
       if (_id_index_ == keys_.size() - 1) {
         return false;
       }
@@ -562,7 +405,9 @@ namespace {
       return true;
     }
 
-    bool add_array_value(const Array *array) {
+    bool
+    add_array_value(const Array *array)
+    {
       if (_id_index_ == keys_.size() - 1) {
         return false;
       }
@@ -579,35 +424,51 @@ namespace {
       return true;
     }
 
-    grn_obj *table() const {
+    grn_obj *
+    table() const
+    {
       return table_;
     }
 
-    grn_id id() const {
+    grn_id
+    id() const
+    {
       return _id_;
     }
 
-    bool have__id() const {
+    bool
+    have__id() const
+    {
       return _id_index_ != std::numeric_limits<size_t>::max();
     }
 
-    size_t _id_index() const {
+    size_t
+    _id_index() const
+    {
       return _id_index_;
     }
 
-    bool have__key() const {
+    bool
+    have__key() const
+    {
       return _key_index_ != std::numeric_limits<size_t>::max();
     }
 
-    size_t _key_index() const {
+    size_t
+    _key_index() const
+    {
       return _key_index_;
     }
 
-    const std::string &get_key(size_t i) const {
+    const std::string &
+    get_key(size_t i) const
+    {
       return keys_[i];
     }
 
-    grn_obj *get_value(size_t i) {
+    grn_obj *
+    get_value(size_t i)
+    {
       return values_[i];
     }
 
@@ -621,8 +482,475 @@ namespace {
     std::vector<grn_obj *> values_;
   };
 
-  class TableHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
+#  ifdef GRN_WITH_RAPIDJSON
+  struct Int8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Int8Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      GRN_INT8_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Int(value);
+    }
+  };
+
+  struct UInt8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    UInt8Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      GRN_UINT8_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Uint(value);
+    }
+  };
+
+  struct Int16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Int16Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      GRN_INT16_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Int(value);
+    }
+  };
+
+  struct UInt16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    UInt16Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      GRN_UINT16_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Uint(value);
+    }
+  };
+
+  struct Int32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Int32Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      GRN_INT32_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Int(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Int(value);
+    }
+  };
+
+  struct UInt32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    UInt32Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      GRN_UINT32_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Uint(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Uint(value);
+    }
+  };
+
+  struct Int64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Int64Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Int64(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Int64(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      GRN_INT64_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Int64(value);
+    }
+  };
+
+  struct UInt64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    UInt64Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Uint64(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Uint64(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Uint64(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      GRN_UINT64_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+  };
+
+  struct FloatHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    FloatHandler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Double(double value)
+    {
+      GRN_FLOAT_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+  };
+
+  struct Float32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Float32Handler(grn_ctx *ctx, grn_caster *caster)
+      : ctx_(ctx),
+        caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Double(double value)
+    {
+      GRN_FLOAT32_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+  };
+
+  struct TableWeightHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    TableWeightHandler(grn_ctx *ctx, grn_caster *caster)
+      : ctx_(ctx),
+        caster_(caster),
+        table_(grn_ctx_at(ctx, caster->dest->header.domain)),
+        weight_(0.0)
+    {
+    }
+
+    ~TableWeightHandler() { grn_obj_unref(ctx_, table_); }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    String(const char *data, size_t size, bool copy)
+    {
+      auto rc =
+        json_to_weight_uvector_add(ctx_, caster_, table_, data, size, weight_);
+      return rc == GRN_SUCCESS;
+    }
+
+    bool
+    Int(int value)
+    {
+      weight_ = value;
+      return true;
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      weight_ = value;
+      return true;
+    }
+
+    bool
+    Double(double value)
+    {
+      weight_ = value;
+      return true;
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+    grn_obj *table_;
+    float weight_;
+  };
+
+  class TableHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
   public:
     TableHandler(grn_ctx *ctx, grn_caster *caster)
       : ctx_(ctx),
@@ -630,19 +958,27 @@ namespace {
         table_stack_(),
         record_stack_(),
         array_stack_(),
-        container_type_stack_() {
+        container_type_stack_()
+    {
       table_stack_.push_back(grn_ctx_at(ctx, caster_->dest->header.domain));
     }
 
-    ~TableHandler() {
+    ~TableHandler()
+    {
       for (auto table : table_stack_) {
         grn_obj_unref(ctx_, table);
       }
     }
 
-    bool Default() {return false;}
+    bool
+    Default()
+    {
+      return false;
+    }
 
-    bool StartObject() {
+    bool
+    StartObject()
+    {
       // Top level must be array.
       if (container_type_stack_.size() == 0) {
         return false;
@@ -658,72 +994,28 @@ namespace {
       return true;
     }
 
-    bool Key(const char *data, size_t size, bool copy) {
+    bool
+    Key(const char *data, size_t size, bool copy)
+    {
       auto record = &(record_stack_.back());
-      return record->add_key(std::string(data, size));
+      return record->add_key(std::string_view(data, size));
     }
 
-    bool EndObject(size_t n) {
+    bool
+    EndObject(size_t n)
+    {
       auto record = &(record_stack_.back());
       auto table = record->table();
       grn_id domain = DB_OBJ(table)->id;
       grn_id id = GRN_ID_NIL;
-      uint32_t missing_mode = (caster_->flags & GRN_OBJ_MISSING_MASK);
-      if (record->have__id()) {
-        id = record->id();
-        if (id != GRN_ID_NIL) {
-          if (grn_table_at(ctx_, table, id) != id) {
-            id = GRN_ID_NIL;
-          }
-        }
-      } else if (record->have__key()) {
-        auto _key_index = record->_key_index();
-        auto _key = record->get_value(_key_index);
-        if (missing_mode == GRN_OBJ_MISSING_ADD) {
-          id = grn_table_add_by_key(ctx_, table, _key, NULL);
-        } else {
-          id = grn_table_get_by_key(ctx_, table, _key);
-        }
-      } else {
-        if (grn_obj_is_table_with_key(ctx_, table)) {
-          return false;
-        }
-        if (missing_mode == GRN_OBJ_MISSING_ADD) {
-          id = grn_table_add(ctx_, table, NULL, 0, NULL);
-        }
-      }
-      if (id == GRN_ID_NIL) {
-        if ((caster_->flags & GRN_OBJ_INVALID_MASK) == GRN_OBJ_INVALID_ERROR) {
-          return false;
-        }
-        if (missing_mode == GRN_OBJ_MISSING_IGNORE) {
-          return GRN_SUCCESS;
-        }
-      }
-      for (size_t i = 0; i < n; ++i) {
-        if (record->have__id() && i == record->_id_index()) {
-          continue;
-        }
-        if (record->have__key() && i == record->_key_index()) {
-          continue;
-        }
-        auto column_name = record->get_key(i);
-        auto column = grn_obj_column(ctx_,
-                                     table,
-                                     column_name.data(),
-                                     column_name.size());
-        if (!column) {
-          return false;
-        }
-        grn::SharedObj shared_column(ctx_, column);
-        auto value = record->get_value(i);
-        grn_obj_set_value(ctx_, column, id, value, GRN_OBJ_SET);
-        if (ctx_->rc != GRN_SUCCESS) {
-          return false;
-        }
+      if (!record->add_to_table(caster_, &id)) {
+        return false;
       }
       record_stack_.pop_back();
       container_type_stack_.pop_back();
+      if (id == GRN_ID_NIL) {
+        return true;
+      }
       bool success = add_value(
         [&](Record *record) {
           record->add_record_value(domain, id);
@@ -736,13 +1028,17 @@ namespace {
       return success;
     }
 
-    bool StartArray() {
+    bool
+    StartArray()
+    {
       container_type_stack_.push_back(ContainerType::ARRAY);
       array_stack_.emplace_back(ctx_);
       return true;
     }
 
-    bool EndArray(size_t n) {
+    bool
+    EndArray(size_t n)
+    {
       auto array = &(array_stack_.back());
       container_type_stack_.pop_back();
       if (container_type_stack_.empty()) {
@@ -778,10 +1074,7 @@ namespace {
               continue;
             }
           }
-          auto rc = grn_uvector_add_element_record(ctx_,
-                                                   caster_->dest,
-                                                   id,
-                                                   0);
+          auto rc = grn_uvector_add_element_record(ctx_, caster_->dest, id, 0);
           if (rc != GRN_SUCCESS) {
             return false;
           }
@@ -790,16 +1083,16 @@ namespace {
       } else {
         const auto container_type = container_type_stack_.back();
         switch (container_type) {
-        case ContainerType::OBJECT :
+        case ContainerType::OBJECT:
           {
             auto record = &(record_stack_.back());
             record->add_array_value(array);
             return true;
           }
-        case ContainerType::ARRAY :
+        case ContainerType::ARRAY:
           // Nested array isn't supported.
           return false;
-        default :
+        default:
           return false;
         }
       }
@@ -807,7 +1100,9 @@ namespace {
       return true;
     }
 
-    bool Bool(bool value) {
+    bool
+    Bool(bool value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_bool_value(value);
@@ -819,7 +1114,9 @@ namespace {
         });
     }
 
-    bool Int(int value) {
+    bool
+    Int(int value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_int32_value(value);
@@ -831,7 +1128,9 @@ namespace {
         });
     }
 
-    bool Uint(unsigned int value) {
+    bool
+    Uint(unsigned int value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_uint32_value(value);
@@ -843,7 +1142,9 @@ namespace {
         });
     }
 
-    bool Int64(int value) {
+    bool
+    Int64(int value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_int64_value(value);
@@ -855,7 +1156,9 @@ namespace {
         });
     }
 
-    bool Uint64(unsigned int value) {
+    bool
+    Uint64(unsigned int value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_uint64_value(value);
@@ -867,7 +1170,9 @@ namespace {
         });
     }
 
-    bool Double(double value) {
+    bool
+    Double(double value)
+    {
       return add_value(
         [&](Record *record) {
           record->add_double_value(value);
@@ -879,35 +1184,38 @@ namespace {
         });
     }
 
-    bool String(const char *data, size_t size, bool copy) {
+    bool
+    String(const char *data, size_t size, bool copy)
+    {
       return add_value(
         [&](Record *record) {
-          record->add_string_value(std::string(data, size));
+          record->add_string_value(std::string_view(data, size));
           return true;
         },
         [&](Array *array) {
-          array->add_string_value(std::string(data, size));
+          array->add_string_value(std::string_view(data, size));
           return true;
         });
     }
 
   private:
     template <typename ObjectAddValue, typename ArrayAddValue>
-    bool add_value(ObjectAddValue object_add_value,
-                   ArrayAddValue array_add_value) {
+    bool
+    add_value(ObjectAddValue object_add_value, ArrayAddValue array_add_value)
+    {
       const auto container_type = container_type_stack_.back();
       switch (container_type) {
-      case ContainerType::OBJECT :
+      case ContainerType::OBJECT:
         {
           auto record = &(record_stack_.back());
           return object_add_value(record);
         }
-      case ContainerType::ARRAY :
+      case ContainerType::ARRAY:
         {
           auto array = &(array_stack_.back());
           return array_add_value(array);
         }
-      default :
+      default:
         return false;
       }
     }
@@ -925,19 +1233,23 @@ namespace {
     std::vector<ContainerType> container_type_stack_;
   };
 
-  struct TextHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
-  {
+  struct TextHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
     grn_ctx *ctx_;
     grn_caster *caster_;
 
-    TextHandler(grn_ctx *ctx, grn_caster *caster)
-      : ctx_(ctx),
-        caster_(caster) {
+    TextHandler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
     }
 
-    bool Default() {return false;}
+    bool
+    Default()
+    {
+      return false;
+    }
 
-    bool String(const char *data, size_t size, bool copy) {
+    bool
+    String(const char *data, size_t size, bool copy)
+    {
       grn_vector_add_element_float(ctx_,
                                    caster_->dest,
                                    data,
@@ -947,12 +1259,364 @@ namespace {
       return true;
     }
   };
+#  endif
 
+  bool
+  json_maybe_container(const char *json, size_t length)
+  {
+    const char *start = json;
+    const char *end = json + length;
+    for (; start < end; start++) {
+      bool is_whitespace = false;
+      switch (start[0]) {
+      case ' ':
+      case '\n':
+      case '\r':
+      case '\t':
+        is_whitespace = true;
+        break;
+      default:
+        break;
+      }
+      if (!is_whitespace) {
+        break;
+      }
+    }
+    if (start >= end) {
+      return false;
+    }
+    switch (start[0]) {
+    case '[':
+    case '{':
+      return true;
+    default:
+      return false;
+    }
+  }
+
+#  ifdef GRN_WITH_SIMDJSON
+  template <typename Document>
+  grn_rc
+  cast_text_to_uvector_simdjson_int64(grn_ctx *ctx,
+                                      grn_caster *caster,
+                                      Document &document)
+  {
+    simdjson::ondemand::array array;
+    auto error = document.get_array().get(array);
+    if (error != simdjson::SUCCESS) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    for (auto value : array) {
+      int64_t int64_value;
+      auto error = value.get_int64().get(int64_value);
+      if (error != simdjson::SUCCESS) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      auto rc = grn::bulk::put(ctx, caster->dest, int64_value);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+    return GRN_SUCCESS;
+  }
+
+  template <typename Document>
+  grn_rc
+  cast_text_to_uvector_simdjson_uint64(grn_ctx *ctx,
+                                       grn_caster *caster,
+                                       Document &document)
+  {
+    simdjson::ondemand::array array;
+    if (document.get_array().get(array) != simdjson::SUCCESS) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    for (auto value : array) {
+      uint64_t uint64_value;
+      if (value.get_uint64().get(uint64_value) != simdjson::SUCCESS) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      auto rc = grn::bulk::put(ctx, caster->dest, uint64_value);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+    return GRN_SUCCESS;
+  }
+
+  template <typename Document>
+  grn_rc
+  cast_text_to_uvector_simdjson_double(grn_ctx *ctx,
+                                       grn_caster *caster,
+                                       Document &document)
+  {
+    simdjson::ondemand::array array;
+    if (document.get_array().get(array) != simdjson::SUCCESS) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    for (auto value : array) {
+      double double_value;
+      auto error = value.get_double().get(double_value);
+      if (error != simdjson::SUCCESS) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      auto rc = grn::bulk::put(ctx, caster->dest, double_value);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+    return GRN_SUCCESS;
+  }
+
+  template <typename Document>
+  grn_rc
+  cast_text_to_uvector_simdjson_reference_weight(grn_ctx *ctx,
+                                                 grn_caster *caster,
+                                                 Document &document)
+  {
+    grn::SharedObj domain(ctx, caster->dest->header.domain);
+    if (!grn_obj_is_table_with_key(ctx, domain.get())) {
+      return GRN_INVALID_ARGUMENT;
+    }
+
+    simdjson::ondemand::array array;
+    simdjson::ondemand::object object;
+    if (document.get_array().get(array) == simdjson::SUCCESS) {
+      for (auto value : array) {
+        simdjson::ondemand::object object;
+        auto error = value.get_object().get(object);
+        if (error != simdjson::SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        for (auto field : object) {
+          std::string_view name;
+          if (field.unescaped_key().get(name) != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          double weight;
+          if (field.value().get_double().get(weight) != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto rc = json_to_weight_uvector_add(ctx,
+                                               caster,
+                                               domain.get(),
+                                               name.data(),
+                                               name.length(),
+                                               weight);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+      }
+      return GRN_SUCCESS;
+    } else if (document.get_object().get(object) == simdjson::SUCCESS) {
+      for (auto field : object) {
+        std::string_view name;
+        if (field.unescaped_key().get(name) != simdjson::SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        double weight;
+        if (field.value().get_double().get(weight) != simdjson::SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        auto rc = json_to_weight_uvector_add(ctx,
+                                             caster,
+                                             domain.get(),
+                                             name.data(),
+                                             name.length(),
+                                             weight);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    } else {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+
+  template <typename Document>
+  grn_rc
+  cast_text_to_uvector_simdjson_reference(grn_ctx *ctx,
+                                          grn_caster *caster,
+                                          Document &document)
+  {
+    const uint32_t missing_mode = (caster->flags & GRN_OBJ_MISSING_MASK);
+
+    simdjson::ondemand::array array;
+    if (document.get_array().get(array) != simdjson::SUCCESS) {
+      return GRN_INVALID_ARGUMENT;
+    }
+
+    grn::SharedObj domain(ctx, caster->dest->header.domain);
+    for (auto value : array) {
+      grn_obj grn_value;
+      GRN_VOID_INIT(&grn_value);
+      grn::UniqueObj unique_grn_value(ctx, &grn_value);
+      std::string_view string_value;
+      uint64_t uint64_value;
+      int64_t int64_value;
+      simdjson::ondemand::object object;
+      if (value.get_string().get(string_value) == simdjson::SUCCESS) {
+        grn_obj_reinit(ctx,
+                       &grn_value,
+                       GRN_DB_SHORT_TEXT,
+                       GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx,
+                     &grn_value,
+                     string_value.data(),
+                     string_value.length());
+      } else if (value.get_uint64().get(uint64_value) == simdjson::SUCCESS) {
+        grn_obj_reinit(ctx, &grn_value, GRN_DB_UINT64, 0);
+        GRN_UINT64_SET(ctx, &grn_value, uint64_value);
+      } else if (value.get_int64().get(int64_value) == simdjson::SUCCESS) {
+        grn_obj_reinit(ctx, &grn_value, GRN_DB_INT64, 0);
+        GRN_INT64_SET(ctx, &grn_value, int64_value);
+      } else if (value.get_object().get(object) == simdjson::SUCCESS) {
+      } else {
+        return GRN_INVALID_ARGUMENT;
+      }
+
+      if (grn_value.header.domain == GRN_DB_VOID) {
+        // TODO: Nested object isn't supported yet.
+        Record record(ctx, domain.get());
+        for (auto field : object) {
+          std::string_view name;
+          if (field.unescaped_key().get(name) != simdjson::SUCCESS) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          if (!record.add_key(name)) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto value = field.value();
+          bool bool_value;
+          int64_t int64_value;
+          uint64_t uint64_value;
+          double double_value;
+          std::string_view string_value;
+          if (value.get_bool().get(bool_value) == simdjson::SUCCESS) {
+            record.add_bool_value(bool_value);
+          } else if (value.get_int64().get(int64_value) == simdjson::SUCCESS) {
+            record.add_int64_value(int64_value);
+          } else if (value.get_uint64().get(uint64_value) ==
+                     simdjson::SUCCESS) {
+            record.add_uint64_value(uint64_value);
+          } else if (value.get_double().get(double_value) ==
+                     simdjson::SUCCESS) {
+            record.add_double_value(double_value);
+          } else if (value.get_string().get(string_value) ==
+                     simdjson::SUCCESS) {
+            record.add_string_value(string_value);
+          } else {
+            return GRN_INVALID_ARGUMENT;
+          }
+        }
+        grn_id id = GRN_ID_NIL;
+        if (!record.add_to_table(caster, &id)) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        if (id != GRN_ID_NIL) {
+          auto rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+      } else {
+        if (grn_obj_is_table_with_key(ctx, domain.get())) {
+          grn_obj casted_value;
+          GRN_RECORD_INIT(&casted_value, GRN_BULK, caster->dest->header.domain);
+          grn::UniqueObj unique_casted_value(ctx, &casted_value);
+          grn_caster value_caster = {
+            &grn_value,
+            &casted_value,
+            caster->flags,
+            caster->target,
+          };
+          auto rc = grn_caster_cast(ctx, &value_caster);
+          grn_id id = GRN_ID_NIL;
+          if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&casted_value) > 0) {
+            id = GRN_RECORD_VALUE(&casted_value);
+          }
+          if (id == GRN_ID_NIL) {
+            if (ctx->rc == GRN_SUCCESS) {
+              if (missing_mode != GRN_OBJ_MISSING_NIL) {
+                continue;
+              }
+            } else {
+              ERRCLR(ctx);
+              continue;
+            }
+          }
+          rc = grn_uvector_add_element_record(ctx, caster->dest, id, 0);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        } else {
+          if (grn_value.header.domain != GRN_DB_UINT64) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          auto rc = grn_uvector_add_element_record(ctx,
+                                                   caster->dest,
+                                                   GRN_UINT64_VALUE(&grn_value),
+                                                   0);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+      }
+    }
+
+    return GRN_SUCCESS;
+  }
+
+  grn_rc
+  cast_text_to_uvector_simdjson(grn_ctx *ctx, grn_caster *caster)
+  {
+    auto rc = grn_bulk_reserve(ctx, caster->src, simdjson::SIMDJSON_PADDING);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+
+    simdjson::ondemand::parser parser;
+    auto document = parser.iterate(GRN_TEXT_VALUE(caster->src),
+                                   GRN_TEXT_LEN(caster->src),
+                                   GRN_BULK_WSIZE(caster->src));
+    if (document.error() != simdjson::SUCCESS) {
+      return GRN_INVALID_ARGUMENT;
+    }
+
+    switch (caster->dest->header.domain) {
+    case GRN_DB_INT8:
+    case GRN_DB_INT16:
+    case GRN_DB_INT32:
+    case GRN_DB_INT64:
+      return cast_text_to_uvector_simdjson_int64(ctx, caster, document);
+    case GRN_DB_UINT8:
+    case GRN_DB_UINT16:
+    case GRN_DB_UINT32:
+    case GRN_DB_UINT64:
+      return cast_text_to_uvector_simdjson_uint64(ctx, caster, document);
+    case GRN_DB_FLOAT32:
+    case GRN_DB_FLOAT:
+      return cast_text_to_uvector_simdjson_double(ctx, caster, document);
+    default:
+      if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
+        return cast_text_to_uvector_simdjson_reference_weight(ctx,
+                                                              caster,
+                                                              document);
+      } else {
+        return cast_text_to_uvector_simdjson_reference(ctx, caster, document);
+      }
+    }
+  }
+#  endif
+
+#  ifdef GRN_WITH_RAPIDJSON
   template <typename Handler>
   grn_rc
-  json_to_uvector(grn_ctx *ctx,
-                  RAPIDJSON_NAMESPACE::Document *document,
-                  grn_caster *caster) {
+  json_to_uvector_rapidjson(grn_ctx *ctx,
+                            RAPIDJSON_NAMESPACE::Document *document,
+                            grn_caster *caster)
+  {
     Handler handler(ctx, caster);
     if (document->IsArray()) {
       auto n = document->Size();
@@ -987,66 +1651,8 @@ namespace {
   }
 
   grn_rc
-  json_to_text_vector(grn_ctx *ctx,
-                      RAPIDJSON_NAMESPACE::Document *document,
-                      grn_caster *caster) {
-    TextHandler handler(ctx, caster);
-    if (document->IsArray()) {
-      auto n = document->Size();
-      for (size_t i = 0; i < n; ++i) {
-        const auto &element = (*document)[i];
-        if (!element.Accept(handler)) {
-          return GRN_INVALID_ARGUMENT;
-        }
-      }
-      return GRN_SUCCESS;
-    } else {
-      return GRN_INVALID_ARGUMENT;
-    }
-  }
-
-  bool
-  json_maybe_container(const char *json, size_t length)
+  cast_text_to_uvector_rapidjson(grn_ctx *ctx, grn_caster *caster)
   {
-    const char *start = json;
-    const char *end = json + length;
-    for (; start < end; start++) {
-      bool is_whitespace = false;
-      switch (start[0]) {
-      case ' ' :
-      case '\n' :
-      case '\r' :
-      case '\t' :
-        is_whitespace = true;
-        break;
-      default :
-        break;
-      }
-      if (!is_whitespace) {
-        break;
-      }
-    }
-    if (start >= end) {
-      return false;
-    }
-    switch (start[0]) {
-    case '[' :
-    case '{' :
-      return true;
-    default :
-      return false;
-    }
-  }
-
-
-  grn_rc
-  cast_text_to_uvector(grn_ctx *ctx, grn_caster *caster)
-  {
-    if (!json_maybe_container(GRN_TEXT_VALUE(caster->src),
-                              GRN_TEXT_LEN(caster->src))) {
-      return GRN_INVALID_ARGUMENT;
-    }
-
     RAPIDJSON_NAMESPACE::Document document;
     RAPIDJSON_NAMESPACE::MemoryStream stream(GRN_TEXT_VALUE(caster->src),
                                              GRN_TEXT_LEN(caster->src));
@@ -1056,29 +1662,35 @@ namespace {
     }
 
     switch (caster->dest->header.domain) {
-    case GRN_DB_INT8 :
-      return json_to_uvector<Int8Handler>(ctx, &document, caster);
-    case GRN_DB_UINT8 :
-      return json_to_uvector<UInt8Handler>(ctx, &document, caster);
-    case GRN_DB_INT16 :
-      return json_to_uvector<Int16Handler>(ctx, &document, caster);
-    case GRN_DB_UINT16 :
-      return json_to_uvector<UInt16Handler>(ctx, &document, caster);
-    case GRN_DB_INT32 :
-      return json_to_uvector<Int32Handler>(ctx, &document, caster);
-    case GRN_DB_UINT32 :
-      return json_to_uvector<UInt32Handler>(ctx, &document, caster);
-    case GRN_DB_INT64 :
-      return json_to_uvector<Int64Handler>(ctx, &document, caster);
-    case GRN_DB_UINT64 :
-      return json_to_uvector<UInt64Handler>(ctx, &document, caster);
-    default :
+    case GRN_DB_INT8:
+      return json_to_uvector_rapidjson<Int8Handler>(ctx, &document, caster);
+    case GRN_DB_UINT8:
+      return json_to_uvector_rapidjson<UInt8Handler>(ctx, &document, caster);
+    case GRN_DB_INT16:
+      return json_to_uvector_rapidjson<Int16Handler>(ctx, &document, caster);
+    case GRN_DB_UINT16:
+      return json_to_uvector_rapidjson<UInt16Handler>(ctx, &document, caster);
+    case GRN_DB_INT32:
+      return json_to_uvector_rapidjson<Int32Handler>(ctx, &document, caster);
+    case GRN_DB_UINT32:
+      return json_to_uvector_rapidjson<UInt32Handler>(ctx, &document, caster);
+    case GRN_DB_INT64:
+      return json_to_uvector_rapidjson<Int64Handler>(ctx, &document, caster);
+    case GRN_DB_UINT64:
+      return json_to_uvector_rapidjson<UInt64Handler>(ctx, &document, caster);
+    case GRN_DB_FLOAT:
+      return json_to_uvector_rapidjson<FloatHandler>(ctx, &document, caster);
+    case GRN_DB_FLOAT32:
+      return json_to_uvector_rapidjson<Float32Handler>(ctx, &document, caster);
+    default:
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;
         auto domain = grn_ctx_at(ctx, caster->dest->header.domain);
         if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
           if (grn_obj_is_table_with_key(ctx, domain)) {
-            rc = json_to_uvector<TableWeightHandler>(ctx, &document, caster);
+            rc = json_to_uvector_rapidjson<TableWeightHandler>(ctx,
+                                                               &document,
+                                                               caster);
           }
         } else {
           TableHandler handler(ctx, caster);
@@ -1091,9 +1703,64 @@ namespace {
       }
     }
   }
+#  endif
 
   grn_rc
-  cast_text_to_text_vector(grn_ctx *ctx, grn_caster *caster)
+  cast_text_to_uvector(grn_ctx *ctx, grn_caster *caster)
+  {
+    if (!json_maybe_container(GRN_TEXT_VALUE(caster->src),
+                              GRN_TEXT_LEN(caster->src))) {
+      return GRN_INVALID_ARGUMENT;
+    }
+
+#  ifdef GRN_WITH_SIMDJSON
+    return cast_text_to_uvector_simdjson(ctx, caster);
+#  elif defined(GRN_WITH_RAPIDJSON)
+    return cast_text_to_uvector_rapidjson(ctx, caster);
+#  endif
+  }
+
+#  ifdef GRN_WITH_SIMDJSON
+  grn_rc
+  cast_text_to_text_vector_simdjson(grn_ctx *ctx, grn_caster *caster)
+  {
+    auto rc = grn_bulk_reserve(ctx, caster->src, simdjson::SIMDJSON_PADDING);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    simdjson::ondemand::parser parser;
+    auto document = parser.iterate(GRN_TEXT_VALUE(caster->src),
+                                   GRN_TEXT_LEN(caster->src),
+                                   GRN_BULK_WSIZE(caster->src));
+    simdjson::ondemand::array array;
+    auto error = document.get_array().get(array);
+    if (error == simdjson::SUCCESS) {
+      for (auto value : array) {
+        std::string_view text;
+        error = value.get_string().get(text);
+        if (error != simdjson::SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        rc = grn_vector_add_element_float(ctx,
+                                          caster->dest,
+                                          text.data(),
+                                          text.length(),
+                                          0.0,
+                                          GRN_DB_SHORT_TEXT);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    } else {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+#  endif
+
+#  ifdef GRN_WITH_RAPIDJSON
+  grn_rc
+  cast_text_to_text_vector_rapidjson(grn_ctx *ctx, grn_caster *caster)
   {
     RAPIDJSON_NAMESPACE::Document document;
     RAPIDJSON_NAMESPACE::MemoryStream stream(GRN_TEXT_VALUE(caster->src),
@@ -1102,9 +1769,33 @@ namespace {
     if (document.HasParseError()) {
       return GRN_INVALID_ARGUMENT;
     }
-    return json_to_text_vector(ctx, &document, caster);
+
+    TextHandler handler(ctx, caster);
+    if (document.IsArray()) {
+      auto n = document.Size();
+      for (size_t i = 0; i < n; ++i) {
+        const auto &element = document[i];
+        if (!element.Accept(handler)) {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+      return GRN_SUCCESS;
+    } else {
+      return GRN_INVALID_ARGUMENT;
+    }
   }
-}
+#  endif
+
+  grn_rc
+  cast_text_to_text_vector(grn_ctx *ctx, grn_caster *caster)
+  {
+#  ifdef GRN_WITH_SIMDJSON
+    return cast_text_to_text_vector_simdjson(ctx, caster);
+#  elif defined(GRN_WITH_RAPIDJSON)
+    return cast_text_to_text_vector_rapidjson(ctx, caster);
+#  endif
+  }
+} // namespace
 #endif
 
 // NOTE: We may need to change the following current design:
@@ -1124,7 +1815,7 @@ namespace {
 // consistent implementation but there are custom cast processes in
 // load.c and arrow.cpp for a vector value. We can reconsider the
 // current design later.
-grn_inline static grn_rc
+static inline grn_rc
 grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -1156,12 +1847,15 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
     }
     if (rc == GRN_SUCCESS) {
       if (GRN_BULK_VSIZE(p_key) > 0) {
+        grn_table_add_options options;
+        memset(&options, 0, sizeof(grn_table_add_options));
+        options.ignore_empty_normalized_key = true;
         if (missing_mode == GRN_OBJ_MISSING_ADD) {
-          id = grn_table_add_by_key(ctx, table, p_key, NULL);
+          id = grn_table_add_by_key(ctx, table, p_key, &options);
         } else {
           id = grn_table_get_by_key(ctx, table, p_key);
         }
-        if (id == GRN_ID_NIL) {
+        if (id == GRN_ID_NIL && !options.ignored) {
           if (invalid_mode == GRN_OBJ_INVALID_ERROR) {
             rc = GRN_INVALID_ARGUMENT;
             bool called_from_grn_obj_cast = (caster->target == NULL);
@@ -1207,8 +1901,7 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
         }
       } else {
         id = GRN_UINT32_VALUE(&record_id);
-        if (!(GRN_ID_NIL < id &&
-              id <= GRN_ID_MAX &&
+        if (!(GRN_ID_NIL < id && id <= GRN_ID_MAX &&
               grn_table_at(ctx, table, id) == id)) {
           valid = false;
         }
@@ -1227,218 +1920,381 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
   return rc;
 }
 
-grn_inline static grn_rc
+static inline grn_rc
 grn_caster_cast_bool(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
 
   switch (caster->dest->header.domain) {
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     GRN_BOOL_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_INT8 :
+  case GRN_DB_INT8:
     GRN_INT8_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_UINT8 :
+  case GRN_DB_UINT8:
     GRN_UINT8_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_INT16 :
+  case GRN_DB_INT16:
     GRN_INT16_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_UINT16 :
+  case GRN_DB_UINT16:
     GRN_UINT16_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_INT32 :
+  case GRN_DB_INT32:
     GRN_INT32_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_UINT32 :
+  case GRN_DB_UINT32:
     GRN_UINT32_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_INT64 :
+  case GRN_DB_INT64:
     GRN_INT64_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_UINT64 :
+  case GRN_DB_UINT64:
     GRN_UINT64_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_FLOAT32 :
+  case GRN_DB_FLOAT32:
     GRN_FLOAT32_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_FLOAT :
+  case GRN_DB_FLOAT:
     GRN_FLOAT_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_TIME :
+  case GRN_DB_TIME:
     GRN_TIME_SET(ctx, caster->dest, GRN_BOOL_VALUE(caster->src));
     break;
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-  {
-    const char *bool_text;
-    bool_text = GRN_BOOL_VALUE(caster->src) ? "true" : "false";
-    GRN_TEXT_PUTS(ctx, caster->dest, bool_text);
-  }
-  break;
-  case GRN_DB_TOKYO_GEO_POINT :
-  case GRN_DB_WGS84_GEO_POINT :
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    {
+      const char *bool_text;
+      bool_text = GRN_BOOL_VALUE(caster->src) ? "true" : "false";
+      GRN_TEXT_PUTS(ctx, caster->dest, bool_text);
+    }
+    break;
+  case GRN_DB_TOKYO_GEO_POINT:
+  case GRN_DB_WGS84_GEO_POINT:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  default :
+  default:
     rc = grn_caster_cast_to_record(ctx, caster);
     break;
   }
   return rc;
 }
 
-#define NUM2DEST(getvalue,totext,tobool,totime,tofloat32,tofloat)\
-  switch (caster->dest->header.domain) {\
-  case GRN_DB_BOOL :\
-    tobool(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_INT8 :\
-    GRN_INT8_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_UINT8 :\
-    GRN_UINT8_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_INT16 :\
-    GRN_INT16_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_UINT16 :\
-    GRN_UINT16_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_INT32 :\
-    GRN_INT32_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_UINT32 :\
-    GRN_UINT32_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_TIME :\
-    totime(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_INT64 :\
-    GRN_INT64_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_UINT64 :\
-    GRN_UINT64_SET(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_FLOAT32 :\
-    tofloat32(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_FLOAT :\
-    tofloat(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_SHORT_TEXT :\
-  case GRN_DB_TEXT :\
-  case GRN_DB_LONG_TEXT :\
-    totext(ctx, caster->dest, getvalue(caster->src));\
-    break;\
-  case GRN_DB_TOKYO_GEO_POINT :\
-  case GRN_DB_WGS84_GEO_POINT :\
-    rc = GRN_INVALID_ARGUMENT;\
-    break;\
-  default :\
-    rc = grn_caster_cast_to_record(ctx, caster);\
-    break;\
+namespace {
+  template <typename NUMERIC>
+  grn_rc
+  num2time(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    switch (caster->src->header.domain) {
+    case GRN_DB_TIME:
+    case GRN_DB_FLOAT32:
+    case GRN_DB_FLOAT:
+      return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);
+    default:
+      return grn::bulk::put<int64_t>(ctx,
+                                     caster->dest,
+                                     static_cast<int64_t>(value) *
+                                       GRN_TIME_USEC_PER_SEC);
+    }
   }
 
-#define TEXT2DEST(type,tonum,setvalue) do {\
-  const char *cur, *str = GRN_TEXT_VALUE(caster->src);\
-  const char *str_end = GRN_BULK_CURR(caster->src);\
-  type i = tonum(str, str_end, &cur);\
-  if (cur == str_end) {\
-    setvalue(ctx, caster->dest, i);\
-  } else if (cur != str) {\
-    const char *rest;\
-    grn_obj buf;\
-    GRN_VOID_INIT(&buf);\
-    rc = grn_aton(ctx, str, str_end, &rest, &buf);\
-    if (rc == GRN_SUCCESS) {\
-      if (rest == str_end) {\
-        grn_caster number_caster = {\
-          &buf,\
-          caster->dest,\
-          caster->flags,\
-          caster->target,\
-        };\
-        rc = grn_caster_cast(ctx, &number_caster);\
-      } else {\
-        rc = GRN_INVALID_ARGUMENT;\
-      }\
-    }\
-    GRN_OBJ_FIN(ctx, &buf);\
-  } else {\
-    rc = GRN_INVALID_ARGUMENT;\
-  }\
-} while (0)
+  template <typename FLOATING_POINT, typename NUMERIC>
+  std::enable_if_t<std::is_floating_point_v<FLOATING_POINT>, grn_rc>
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::put<FLOATING_POINT>(ctx,
+                                            caster->dest,
+                                            static_cast<FLOATING_POINT>(value) /
+                                              GRN_TIME_USEC_PER_SEC);
+    } else {
+      return grn::bulk::put<FLOATING_POINT>(ctx, caster->dest, value);
+    }
+  }
 
-#define NUM2BOOL(ctx, dest, value) GRN_BOOL_SET(ctx, dest, value != 0)
-#define FLOAT322BOOL(ctx, dest, value) do {\
-  float value_ = value;\
-  GRN_BOOL_SET(ctx, dest, value_ < -FLT_EPSILON || FLT_EPSILON < value_);\
-} while (0)
-#define FLOAT2BOOL(ctx, dest, value) do {\
-  double value_ = value;\
-  GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
-} while (0)
+#ifdef GRN_HAVE_BFLOAT16
+  template <typename FLOATING_POINT, typename NUMERIC>
+  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
+                     std::is_same_v<NUMERIC, grn_bfloat16>,
+                   grn_rc>
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::put<FLOATING_POINT>(ctx,
+                                            caster->dest,
+                                            grn_bfloat32_to_float32(value) /
+                                              GRN_TIME_USEC_PER_SEC);
+    } else {
+      return grn::bulk::put<FLOATING_POINT>(ctx, caster->dest, value);
+    }
+  }
 
-#define NUM2TIME(ctx, dest, value)\
-  GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
-#define TIME2TIME(ctx, dest, value)\
-  GRN_TIME_SET(ctx, dest, value);
-#define FLOAT322TIME(ctx, dest, value) do {\
-  int64_t usec = llroundf(value * GRN_TIME_USEC_PER_SEC);\
-  GRN_TIME_SET(ctx, dest, usec);\
-} while (0)
-#define FLOAT2TIME(ctx, dest, value) do {\
-  int64_t usec = llround(value * GRN_TIME_USEC_PER_SEC);\
-  GRN_TIME_SET(ctx, dest, usec);\
-} while (0)
+  template <typename FLOATING_POINT, typename NUMERIC>
+  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
+                     !std::is_same_v<NUMERIC, grn_bfloat16>,
+                   grn_rc>
+  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    if (caster->src->header.domain == GRN_DB_TIME) {
+      return grn::bulk::put<FLOATING_POINT>(
+        ctx,
+        caster->dest,
+        grn::numeric::to_bfloat16(static_cast<double>(value) /
+                                  GRN_TIME_USEC_PER_SEC));
+    } else {
+      return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);
+    }
+  }
+#endif
 
-#define NUM2FLOAT(ctx, dest, value)\
-  GRN_FLOAT_SET(ctx, dest, value);
-#define TIME2FLOAT(ctx, dest, value)\
-  GRN_FLOAT_SET(ctx, dest, (double)(value) / GRN_TIME_USEC_PER_SEC);
-#define FLOAT322FLOAT(ctx, dest, value)\
-  GRN_FLOAT_SET(ctx, dest, value);
-#define FLOAT2FLOAT(ctx, dest, value)\
-  GRN_FLOAT_SET(ctx, dest, value);
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_integral_v<NUMERIC> && std::is_signed_v<NUMERIC>,
+                   grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_lltoa(ctx, caster->dest, value);
+  }
 
-#define NUM2FLOAT32(ctx, dest, value)\
-  GRN_FLOAT32_SET(ctx, dest, value);
-#define TIME2FLOAT32(ctx, dest, value)\
-  GRN_FLOAT32_SET(ctx, dest, (float)(value) / GRN_TIME_USEC_PER_SEC);
-#define FLOAT322FLOAT32(ctx, dest, value)\
-  GRN_FLOAT32_SET(ctx, dest, value);
-#define FLOAT2FLOAT32(ctx, dest, value)\
-  GRN_FLOAT32_SET(ctx, dest, value);
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_integral_v<NUMERIC> && !std::is_signed_v<NUMERIC>,
+                   grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_ulltoa(ctx, caster->dest, value);
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_same_v<NUMERIC, float>, grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_f32toa(ctx, caster->dest, value);
+  }
+
+  template <typename NUMERIC>
+  std::enable_if_t<std::is_same_v<NUMERIC, double>, grn_rc>
+  num2text(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
+  {
+    return grn_text_ftoa(ctx, caster->dest, value);
+  }
+
+  template <typename SOURCE>
+  grn_rc
+  num2dest_bulk(grn_ctx *ctx, grn_caster *caster)
+  {
+    switch (caster->dest->header.domain) {
+    case GRN_DB_BOOL:
+      return grn::bulk::put<SOURCE>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT8:
+      return grn::bulk::put<int8_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT8:
+      return grn::bulk::put<uint8_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT16:
+      return grn::bulk::put<int16_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT16:
+      return grn::bulk::put<uint16_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT32:
+      return grn::bulk::put<int32_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT32:
+      return grn::bulk::put<uint32_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_INT64:
+      return grn::bulk::put<int64_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_UINT64:
+      return grn::bulk::put<uint64_t>(
+        ctx,
+        caster->dest,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_TIME:
+      return num2time(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+#ifdef GRN_HAVE_BFLOAT16
+    case GRN_DB_BFLOAT16:
+      return num2float<grn_bfloat16>(
+        ctx,
+        caster,
+        grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+#endif
+    case GRN_DB_FLOAT32:
+      return num2float<float>(ctx,
+                              caster,
+                              grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_FLOAT:
+      return num2float<double>(ctx,
+                               caster,
+                               grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT:
+      return num2text(ctx, caster, grn::bulk::get<SOURCE>(ctx, caster->src, 0));
+    case GRN_DB_TOKYO_GEO_POINT:
+    case GRN_DB_WGS84_GEO_POINT:
+      return GRN_INVALID_ARGUMENT;
+    default:
+      return grn_caster_cast_to_record(ctx, caster);
+    }
+  }
+
+  template <typename SOURCE>
+  grn_rc
+  num2dest(grn_ctx *ctx, grn_caster *caster)
+  {
+    switch (caster->src->header.type) {
+    case GRN_BULK:
+      return num2dest_bulk<SOURCE>(ctx, caster);
+    case GRN_UVECTOR:
+      {
+        grn_obj sub_src;
+        GRN_VALUE_FIX_SIZE_INIT(&sub_src, 0, caster->src->header.domain);
+        grn_caster sub_caster = {
+          &sub_src,
+          caster->dest,
+          caster->flags,
+          caster->target,
+        };
+        auto raw_values =
+          reinterpret_cast<SOURCE *>(GRN_BULK_HEAD(caster->src));
+        auto n = GRN_BULK_VSIZE(caster->src) / sizeof(SOURCE);
+        grn_rc rc = GRN_SUCCESS;
+        for (size_t i = 0; i < n && rc == GRN_SUCCESS; i++) {
+          auto raw_value = raw_values[i];
+          GRN_TEXT_SET(ctx, &sub_src, &raw_value, sizeof(SOURCE));
+          rc = num2dest_bulk<SOURCE>(ctx, &sub_caster);
+        }
+        GRN_OBJ_FIN(ctx, &sub_src);
+        return rc;
+      }
+    default:
+      return GRN_FUNCTION_NOT_IMPLEMENTED;
+    }
+  }
+} // namespace
+
+#define TEXT2DEST(type, tonum, setvalue)                                       \
+  do {                                                                         \
+    const char *cur, *str = GRN_TEXT_VALUE(caster->src);                       \
+    const char *str_end = GRN_BULK_CURR(caster->src);                          \
+    type i = tonum(str, str_end, &cur);                                        \
+    if (cur == str_end) {                                                      \
+      setvalue(ctx, caster->dest, i);                                          \
+    } else if (cur != str) {                                                   \
+      const char *rest;                                                        \
+      grn_obj buf;                                                             \
+      GRN_VOID_INIT(&buf);                                                     \
+      rc = grn_aton(ctx, str, str_end, &rest, &buf);                           \
+      if (rc == GRN_SUCCESS) {                                                 \
+        if (rest == str_end) {                                                 \
+          grn_caster number_caster = {                                         \
+            &buf,                                                              \
+            caster->dest,                                                      \
+            caster->flags,                                                     \
+            caster->target,                                                    \
+          };                                                                   \
+          rc = grn_caster_cast(ctx, &number_caster);                           \
+        } else {                                                               \
+          rc = GRN_INVALID_ARGUMENT;                                           \
+        }                                                                      \
+      }                                                                        \
+      GRN_OBJ_FIN(ctx, &buf);                                                  \
+    } else {                                                                   \
+      rc = GRN_INVALID_ARGUMENT;                                               \
+    }                                                                          \
+  } while (0)
+
+static grn_rc
+grn_caster_cast_text_to_bulk_binary(grn_ctx *ctx, grn_caster *caster)
+{
+#ifdef GRN_WITH_BASE64
+  grn_rc rc = grn_bulk_reserve(
+    ctx,
+    caster->dest,
+    static_cast<size_t>(std::ceil(GRN_TEXT_LEN(caster->src) * (3.0 / 4.0))));
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  size_t written_size = 0;
+  base64_decode(GRN_TEXT_VALUE(caster->src),
+                GRN_TEXT_LEN(caster->src),
+                GRN_BULK_CURR(caster->dest),
+                &written_size,
+                0);
+  GRN_BULK_INCR_LEN(caster->dest, written_size);
+  return rc;
+#elif defined(GRN_WITH_APACHE_ARROW)
+  auto decoded = arrow::util::base64_decode(
+    std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+  GRN_BINARY_PUT(ctx, caster->dest, decoded.data(), decoded.size());
+  return GRN_SUCCESS;
+#else
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+#endif
+}
+
+static grn_rc
+grn_caster_cast_text_to_bulk_json(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_json_parser *parser =
+    grn_json_parser_open(ctx, caster->src, caster->dest);
+  if (!parser) {
+    return ctx->rc;
+  }
+
+  grn_rc rc = grn_json_parser_parse(ctx, parser);
+  grn_json_parser_close(ctx, parser);
+
+  return rc;
+}
 
 static grn_rc
 grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (caster->dest->header.domain) {
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     GRN_BOOL_SET(ctx, caster->dest, GRN_TEXT_LEN(caster->src) > 0);
     break;
-  case GRN_DB_INT8 :
+  case GRN_DB_INT8:
     TEXT2DEST(int8_t, grn_atoi8, GRN_INT8_SET);
     break;
-  case GRN_DB_UINT8 :
+  case GRN_DB_UINT8:
     TEXT2DEST(uint8_t, grn_atoui8, GRN_UINT8_SET);
     break;
-  case GRN_DB_INT16 :
+  case GRN_DB_INT16:
     TEXT2DEST(int16_t, grn_atoi16, GRN_INT16_SET);
     break;
-  case GRN_DB_UINT16 :
+  case GRN_DB_UINT16:
     TEXT2DEST(uint16_t, grn_atoui16, GRN_UINT16_SET);
     break;
-  case GRN_DB_INT32 :
+  case GRN_DB_INT32:
     TEXT2DEST(int32_t, grn_atoi, GRN_INT32_SET);
     break;
-  case GRN_DB_UINT32 :
+  case GRN_DB_UINT32:
     TEXT2DEST(uint32_t, grn_atoui, GRN_UINT32_SET);
     break;
-  case GRN_DB_TIME :
+  case GRN_DB_TIME:
     {
       grn_timeval v;
       int len = GRN_TEXT_LEN(caster->src);
@@ -1460,19 +2316,23 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
         }
         GRN_OBJ_FIN(ctx, &buf);
       }
-      GRN_TIME_SET(ctx, caster->dest,
-                   GRN_TIME_PACK((int64_t)v.tv_sec,
-                                 GRN_TIME_NSEC_TO_USEC(v.tv_nsec)));
+      GRN_TIME_SET(
+        ctx,
+        caster->dest,
+        GRN_TIME_PACK((int64_t)v.tv_sec, GRN_TIME_NSEC_TO_USEC(v.tv_nsec)));
     }
     break;
-  case GRN_DB_INT64 :
+  case GRN_DB_INT64:
     TEXT2DEST(int64_t, grn_atoll, GRN_INT64_SET);
     break;
-  case GRN_DB_UINT64 :
+  case GRN_DB_UINT64:
     TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
     break;
-  case GRN_DB_FLOAT32 :
-  case GRN_DB_FLOAT :
+#ifdef GRN_HAVE_BFLOAT16
+  case GRN_DB_BFLOAT16:
+#endif
+  case GRN_DB_FLOAT32:
+  case GRN_DB_FLOAT:
     {
       char *end;
       grn_obj buf;
@@ -1483,15 +2343,7 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
                    GRN_TEXT_LEN(caster->src));
       GRN_TEXT_PUTC(ctx, &buf, '\0');
       errno = 0;
-      if (caster->dest->header.domain == GRN_DB_FLOAT32) {
-        float value;
-        value = strtof(GRN_TEXT_VALUE(&buf), &end);
-        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-          GRN_FLOAT32_SET(ctx, caster->dest, value);
-        } else {
-          rc = GRN_INVALID_ARGUMENT;
-        }
-      } else {
+      if (caster->dest->header.domain == GRN_DB_FLOAT) {
         double value;
         value = strtod(GRN_TEXT_VALUE(&buf), &end);
         if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
@@ -1499,20 +2351,34 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
         } else {
           rc = GRN_INVALID_ARGUMENT;
         }
+      } else {
+        float value;
+        value = strtof(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+          if (caster->dest->header.domain == GRN_DB_FLOAT32) {
+            GRN_FLOAT32_SET(ctx, caster->dest, value);
+          } else {
+#ifdef GRN_HAVE_BFLOAT16
+            grn::bulk::put(ctx, caster->dest, value);
+#endif
+          }
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
       }
       GRN_OBJ_FIN(ctx, &buf);
     }
     break;
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
     GRN_TEXT_PUT(ctx,
                  caster->dest,
                  GRN_TEXT_VALUE(caster->src),
                  GRN_TEXT_LEN(caster->src));
     break;
-  case GRN_DB_TOKYO_GEO_POINT :
-  case GRN_DB_WGS84_GEO_POINT :
+  case GRN_DB_TOKYO_GEO_POINT:
+  case GRN_DB_WGS84_GEO_POINT:
     {
       int latitude, longitude;
       double degree;
@@ -1572,11 +2438,21 @@ grn_caster_cast_text_to_bulk(grn_ctx *ctx, grn_caster *caster)
         } else {
           rc = GRN_INVALID_ARGUMENT;
         }
-        if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
+        if (buf_p) {
+          GRN_OBJ_FIN(ctx, buf_p);
+        }
       }
     }
     break;
-  default :
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    rc = grn_caster_cast_text_to_bulk_binary(ctx, caster);
+    break;
+  case GRN_DB_JSON:
+    rc = grn_caster_cast_text_to_bulk_json(ctx, caster);
+    break;
+  default:
     rc = grn_caster_cast_to_record(ctx, caster);
     break;
   }
@@ -1588,13 +2464,124 @@ grn_caster_cast_text(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (caster->dest->header.type) {
-  case GRN_BULK :
+  case GRN_BULK:
     rc = grn_caster_cast_text_to_bulk(ctx, caster);
     break;
-  case GRN_UVECTOR :
+  case GRN_UVECTOR:
     rc = grn_caster_cast_text_to_uvector(ctx, caster);
     break;
-  default :
+  default:
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_binary_to_bulk_text(grn_ctx *ctx, grn_caster *caster)
+{
+#ifdef GRN_WITH_BASE64
+  grn_rc rc = grn_bulk_reserve(
+    ctx,
+    caster->dest,
+    static_cast<size_t>(std::ceil(GRN_TEXT_LEN(caster->src) * (4.0 / 3.0))));
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  size_t written_size = 0;
+  base64_encode(reinterpret_cast<const char *>(GRN_BINARY_VALUE(caster->src)),
+                GRN_BINARY_LEN(caster->src),
+                GRN_BULK_CURR(caster->dest),
+                &written_size,
+                0);
+  GRN_BULK_INCR_LEN(caster->dest, written_size);
+  return rc;
+#elif defined(GRN_WITH_APACHE_ARROW)
+  auto encoded = arrow::util::base64_encode(
+    std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+  GRN_TEXT_PUT(ctx, caster->dest, encoded.data(), encoded.size());
+  return GRN_SUCCESS;
+#else
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+#endif
+}
+
+static grn_rc
+grn_caster_cast_binary_to_bulk(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.domain) {
+  case GRN_DB_BOOL:
+    GRN_BOOL_SET(ctx, caster->dest, GRN_BINARY_LEN(caster->src) > 0);
+    break;
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    rc = grn_caster_cast_binary_to_bulk_text(ctx, caster);
+    break;
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    GRN_BINARY_PUT(ctx,
+                   caster->dest,
+                   GRN_BINARY_VALUE(caster->src),
+                   GRN_BINARY_LEN(caster->src));
+    break;
+  default:
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_binary(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.type) {
+  case GRN_BULK:
+    rc = grn_caster_cast_binary_to_bulk(ctx, caster);
+    break;
+  default:
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_json_to_bulk_text(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_json_to_string(ctx, caster->src, caster->dest);
+  return ctx->rc;
+}
+
+static grn_rc
+grn_caster_cast_json_to_bulk(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    rc = grn_caster_cast_json_to_bulk_text(ctx, caster);
+    break;
+  default:
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_caster_cast_json(grn_ctx *ctx, grn_caster *caster)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (caster->dest->header.type) {
+  case GRN_BULK:
+    rc = grn_caster_cast_json_to_bulk(ctx, caster);
+    break;
+  default:
     rc = GRN_INVALID_ARGUMENT;
     break;
   }
@@ -1662,10 +2649,7 @@ grn_caster_cast_record_data(grn_ctx *ctx,
     }
   } else {
     if (GRN_BULK_VSIZE(caster->src) > 0) {
-      grn_obj_get_value(ctx,
-                        key_accessor,
-                        GRN_RECORD_VALUE(caster->src),
-                        &key);
+      grn_obj_get_value(ctx, key_accessor, GRN_RECORD_VALUE(caster->src), &key);
       if (ctx->rc == GRN_SUCCESS) {
         grn_caster key_caster = {
           &key,
@@ -1711,10 +2695,8 @@ grn_caster_cast_record_record(grn_ctx *ctx,
   uint32_t key_size;
   const char *key;
   if (get_key_optimizable) {
-    key = _grn_table_key(ctx,
-                         src_table,
-                         GRN_RECORD_VALUE(caster->src),
-                         &key_size);
+    key =
+      _grn_table_key(ctx, src_table, GRN_RECORD_VALUE(caster->src), &key_size);
   } else {
     grn_table_get_key2(ctx,
                        src_table,
@@ -1806,7 +2788,7 @@ grn_caster_cast_record(grn_ctx *ctx, grn_caster *caster)
     rc = grn_caster_cast_record_record(ctx, caster, src_table, dest_table);
   }
 
-exit :
+exit:
   grn_obj_unref(ctx, src_table);
   grn_obj_unref(ctx, dest_table);
 
@@ -1817,7 +2799,7 @@ extern "C" grn_rc
 grn_caster_cast_text_to_uvector(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
-#ifdef GRN_WITH_RAPIDJSON
+#if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
   rc = cast_text_to_uvector(ctx, caster);
   if (rc == GRN_SUCCESS) {
     return rc;
@@ -1852,7 +2834,7 @@ grn_caster_cast_text_to_uvector(grn_ctx *ctx, grn_caster *caster)
 extern "C" grn_rc
 grn_caster_cast_text_to_text_vector(grn_ctx *ctx, grn_caster *caster)
 {
-#ifdef GRN_WITH_RAPIDJSON
+#if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
   return cast_text_to_text_vector(ctx, caster);
 #else
   return GRN_INVALID_ARGUMENT;
@@ -1864,106 +2846,50 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (caster->src->header.domain) {
-  case GRN_DB_BOOL :
+  case GRN_DB_BOOL:
     rc = grn_caster_cast_bool(ctx, caster);
     break;
-  case GRN_DB_INT8 :
-    NUM2DEST(GRN_INT8_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_INT8:
+    rc = num2dest<int8_t>(ctx, caster);
     break;
-  case GRN_DB_UINT8 :
-    NUM2DEST(GRN_UINT8_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_UINT8:
+    rc = num2dest<uint8_t>(ctx, caster);
     break;
-  case GRN_DB_INT16 :
-    NUM2DEST(GRN_INT16_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_INT16:
+    rc = num2dest<int16_t>(ctx, caster);
     break;
-  case GRN_DB_UINT16 :
-    NUM2DEST(GRN_UINT16_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_UINT16:
+    rc = num2dest<uint16_t>(ctx, caster);
     break;
-  case GRN_DB_INT32 :
-    NUM2DEST(GRN_INT32_VALUE,
-             grn_text_itoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_INT32:
+    rc = num2dest<int32_t>(ctx, caster);
     break;
-  case GRN_DB_UINT32 :
-    NUM2DEST(GRN_UINT32_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_UINT32:
+    rc = num2dest<uint32_t>(ctx, caster);
     break;
-  case GRN_DB_INT64 :
-    NUM2DEST(GRN_INT64_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_INT64:
+    rc = num2dest<int64_t>(ctx, caster);
     break;
-  case GRN_DB_TIME :
-    NUM2DEST(GRN_TIME_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             TIME2TIME,
-             TIME2FLOAT32,
-             TIME2FLOAT);
+  case GRN_DB_UINT64:
+    rc = num2dest<uint64_t>(ctx, caster);
     break;
-  case GRN_DB_UINT64 :
-    NUM2DEST(GRN_UINT64_VALUE,
-             grn_text_lltoa,
-             NUM2BOOL,
-             NUM2TIME,
-             NUM2FLOAT32,
-             NUM2FLOAT);
+  case GRN_DB_FLOAT32:
+    rc = num2dest<float>(ctx, caster);
     break;
-  case GRN_DB_FLOAT32 :
-    NUM2DEST(GRN_FLOAT32_VALUE,
-             grn_text_f32toa,
-             FLOAT322BOOL,
-             FLOAT322TIME,
-             FLOAT322FLOAT32,
-             FLOAT322FLOAT);
+  case GRN_DB_FLOAT:
+    rc = num2dest<double>(ctx, caster);
     break;
-  case GRN_DB_FLOAT :
-    NUM2DEST(GRN_FLOAT_VALUE,
-             grn_text_ftoa,
-             FLOAT2BOOL,
-             FLOAT2TIME,
-             FLOAT2FLOAT32,
-             FLOAT2FLOAT);
+  case GRN_DB_TIME:
+    rc = num2dest<int64_t>(ctx, caster);
     break;
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
     rc = grn_caster_cast_text(ctx, caster);
     break;
-  case GRN_DB_TOKYO_GEO_POINT :
-  case GRN_DB_WGS84_GEO_POINT :
-    if (caster->src->header.domain ==
-        caster->dest->header.domain) {
+  case GRN_DB_TOKYO_GEO_POINT:
+  case GRN_DB_WGS84_GEO_POINT:
+    if (caster->src->header.domain == caster->dest->header.domain) {
       GRN_TEXT_PUT(ctx,
                    caster->dest,
                    GRN_TEXT_VALUE(caster->src),
@@ -1993,14 +2919,12 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
         double wgs84_longitude_in_degree = longitude_in_degree;
         int tokyo_latitude, tokyo_longitude;
         double tokyo_latitude_in_degree, tokyo_longitude_in_degree;
-        tokyo_latitude_in_degree =
-          wgs84_latitude_in_degree * 1.000106961 -
-          wgs84_longitude_in_degree * 0.000017467 -
-          0.004602017;
-        tokyo_longitude_in_degree =
-          wgs84_longitude_in_degree * 1.000083049 +
-          wgs84_latitude_in_degree  * 0.000046047 -
-          0.010041046;
+        tokyo_latitude_in_degree = wgs84_latitude_in_degree * 1.000106961 -
+                                   wgs84_longitude_in_degree * 0.000017467 -
+                                   0.004602017;
+        tokyo_longitude_in_degree = wgs84_longitude_in_degree * 1.000083049 +
+                                    wgs84_latitude_in_degree * 0.000046047 -
+                                    0.010041046;
         tokyo_latitude = GRN_GEO_DEGREE2MSEC(tokyo_latitude_in_degree);
         tokyo_longitude = GRN_GEO_DEGREE2MSEC(tokyo_longitude_in_degree);
         GRN_GEO_POINT_SET(ctx, caster->dest, tokyo_latitude, tokyo_longitude);
@@ -2010,39 +2934,43 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
         int wgs84_latitude, wgs84_longitude;
         double wgs84_latitude_in_degree, wgs84_longitude_in_degree;
         wgs84_latitude_in_degree =
-          tokyo_latitude_in_degree -
-          tokyo_latitude_in_degree * 0.00010695 +
-          tokyo_longitude_in_degree * 0.000017464 +
-          0.0046017;
+          tokyo_latitude_in_degree - tokyo_latitude_in_degree * 0.00010695 +
+          tokyo_longitude_in_degree * 0.000017464 + 0.0046017;
         wgs84_longitude_in_degree =
-          tokyo_longitude_in_degree -
-          tokyo_latitude_in_degree * 0.000046038 -
-          tokyo_longitude_in_degree * 0.000083043 +
-          0.010040;
+          tokyo_longitude_in_degree - tokyo_latitude_in_degree * 0.000046038 -
+          tokyo_longitude_in_degree * 0.000083043 + 0.010040;
         wgs84_latitude = GRN_GEO_DEGREE2MSEC(wgs84_latitude_in_degree);
         wgs84_longitude = GRN_GEO_DEGREE2MSEC(wgs84_longitude_in_degree);
         GRN_GEO_POINT_SET(ctx, caster->dest, wgs84_latitude, wgs84_longitude);
       }
     }
     break;
-  case GRN_VOID :
+  case GRN_DB_SHORT_BINARY:
+  case GRN_DB_BINARY:
+  case GRN_DB_LONG_BINARY:
+    rc = grn_caster_cast_binary(ctx, caster);
+    break;
+  case GRN_DB_JSON:
+    rc = grn_caster_cast_json(ctx, caster);
+    break;
+  case GRN_VOID:
     rc = grn_obj_reinit(ctx,
                         caster->dest,
                         caster->dest->header.domain,
                         caster->dest->header.flags);
     break;
-  default :
+  default:
     if (caster->src->header.domain >= GRN_N_RESERVED_TYPES) {
       grn_obj *table;
       table = grn_ctx_at(ctx, caster->src->header.domain);
       switch (table->header.type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
-      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_HASH_KEY:
+      case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_DAT_KEY:
+      case GRN_TABLE_NO_KEY:
         rc = grn_caster_cast_record(ctx, caster);
         break;
-      default :
+      default:
         rc = GRN_FUNCTION_NOT_IMPLEMENTED;
         break;
       }
@@ -2055,7 +2983,9 @@ grn_caster_cast(grn_ctx *ctx, grn_caster *caster)
 }
 
 extern "C" grn_rc
-grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
+grn_obj_cast(grn_ctx *ctx,
+             grn_obj *src,
+             grn_obj *dest,
              bool add_record_if_not_exist)
 {
   uint32_t flags = 0;

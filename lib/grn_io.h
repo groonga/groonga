@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -200,7 +201,7 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
 /*
  * io mustn't be NULL;
  */
-static grn_inline void *
+static inline void *
 grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
 {
   const char *tag = "[io][seg][ref]";
@@ -361,7 +362,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
   return info->map;
 }
 
-static grn_inline void
+static inline void
 grn_io_seg_unref(grn_ctx *ctx, grn_io *io, uint32_t segno)
 {
   if (GRN_IO_EXPIRE_SEGMENT ==
@@ -417,12 +418,12 @@ void
 grn_io_clear_lock(grn_io *io);
 uint32_t
 grn_io_is_locked(grn_io *io);
-grn_bool
+bool
 grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
 size_t
 grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);
 
-static grn_inline void *
+static inline void *
 grn_io_array_at(
   grn_ctx *ctx, grn_io *io, uint32_t array, uint64_t offset, int *flags)
 {
@@ -455,7 +456,7 @@ grn_io_array_at(
     int flags_ = 0;                                                            \
     uint8_t *ptr_ =                                                            \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_, );     \
-    res = ptr_ ? ((*ptr_ >> ((offset)&7)) & 1) : 0;                            \
+    res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;                          \
   } while (0)
 
 #define GRN_IO_ARRAY_BIT_ON(io, array, offset)                                 \
@@ -464,7 +465,7 @@ grn_io_array_at(
     uint8_t *ptr_ =                                                            \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);       \
     if (ptr_) {                                                                \
-      *ptr_ |= (1 << ((offset)&7));                                            \
+      *ptr_ |= (1 << ((offset) & 7));                                          \
     }                                                                          \
   } while (0)
 
@@ -474,7 +475,7 @@ grn_io_array_at(
     uint8_t *ptr =                                                             \
       grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);       \
     if (ptr_) {                                                                \
-      *ptr_ &= ~(1 << ((offset)&7));                                           \
+      *ptr_ &= ~(1 << ((offset) & 7));                                         \
     }                                                                          \
   } while (0)
 
@@ -484,7 +485,7 @@ grn_io_array_at(
     uint8_t *ptr_ =                                                            \
       grn_io_array_at((io), (array), ((offset) >> 3) + 1, &flags_);            \
     if (ptr_) {                                                                \
-      *ptr_ ^= (1 << ((offset)&7));                                            \
+      *ptr_ ^= (1 << ((offset) & 7));                                          \
     }                                                                          \
   } while (0)
 

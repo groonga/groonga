@@ -3,15 +3,16 @@ Execution example::
   tokenize TokenDelimitNull "Groonga\u0000full-text-search\u0000HTTP" NormalizerAuto
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "groongau0000full-text-searchu0000http"
+  #       "value": "groongau0000full-text-searchu0000http",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
   #     }
   #   ]
   # ]

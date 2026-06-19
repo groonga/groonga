@@ -3,31 +3,31 @@ Execution example::
   select --table Comments --query comment:@Now --output_columns comment,_score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "comment", 
+  #           "comment",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "I've just used 'Try-Groonga' now! #groonga", 
+  #         "I've just used 'Try-Groonga' now! #groonga",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "I'm at the Museum of Modern Art in NY now!", 
+  #         "I'm at the Museum of Modern Art in NY now!",
   #         1
   #       ]
   #     ]

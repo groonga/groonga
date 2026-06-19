@@ -16,12 +16,15 @@ noinst_PROGRAMS =				\
 	bench-result-set-raw			\
 	bench-between-sequential		\
 	bench-nfkc				\
-	bench-cache
+	bench-cache				\
+	bench-distance
 endif
 
 EXTRA_DIST =					\
+	CMakeLists.txt				\
 	bench-geo-select.sh			\
 	bench-query-optimizer-ddl.grn		\
+	geo-distance-summary.rb			\
 	geo-select-generate-grn.rb
 
 AM_CPPFLAGS =					\
@@ -73,6 +76,9 @@ nodist_EXTRA_bench_nfkc_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_cache_SOURCES = bench-cache.c
 nodist_EXTRA_bench_cache_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_distance_SOURCES = bench-distance.c
+nodist_EXTRA_bench_distance_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
@@ -84,7 +90,8 @@ benchmarks =					\
 	run-bench-result-set-raw		\
 	run-bench-between-sequential		\
 	run-bench-nfkc				\
-	run-bench-cache
+	run-bench-cache				\
+	run-bench-distance
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -172,5 +179,11 @@ run-bench-nfkc: bench-nfkc
 run-bench-cache: bench-cache
 	@echo $@:
 	./bench-cache
+
+run-bench-distance: bench-distance
+	@echo $@:
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-distance
 
 benchmark: $(benchmarks)

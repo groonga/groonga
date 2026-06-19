@@ -123,5 +123,5 @@ msgstr "ユーザが\"MySQL\"と入力したときは何も返しません。こ
 msgid "Learning"
 msgstr "学習"
 
-msgid "The suggest feature requires registered data before using the feature. Those data can be registered from user inputs. Gronnga-suggest-httpd and groonga-suggest-learner commands are provided for the propose."
+msgid "The suggest feature requires registered data before using the feature. Those data can be registered from user inputs. Groonga-suggest-httpd and groonga-suggest-learner commands are provided for the propose."
 msgstr "サジェスト機能を使う場合は、事前に登録済みのデータを用意する必要があります。これらのデータはユーザの入力を使って登録できます。これ用にgroonga-suggest-httpdコマンドとgroonga-suggest-learnerコマンドがあります。"

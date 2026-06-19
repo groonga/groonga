@@ -1,8 +1,9 @@
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,13 +27,26 @@ endif()
 if(Groongamsgpackc_FIND_QUIETLY)
   list(APPEND find_package_args QUIET)
 endif()
-find_package(msgpackc ${find_package_args})
-set(Groongamsgpackc_FOUND ${msgpackc_FOUND})
+
+find_package(msgpack-c ${find_package_args})
+set(Groongamsgpackc_FOUND ${msgpack-c_FOUND})
 if(Groongamsgpackc_FOUND)
-  if(TARGET msgpackc)
-    add_library(Groonga::msgpackc ALIAS msgpackc)
+  if(TARGET msgpack-c)
+    add_library(Groonga::msgpackc ALIAS msgpack-c)
   else()
-    add_library(Groonga::msgpackc ALIAS msgpackc-static)
+    add_library(Groonga::msgpackc ALIAS msgpack-c-static)
+  endif()
+endif()
+
+if(NOT Groongamsgpackc_FOUND)
+  find_package(msgpackc ${find_package_args})
+  set(Groongamsgpackc_FOUND ${msgpackc_FOUND})
+  if(Groongamsgpackc_FOUND)
+    if(TARGET msgpackc)
+      add_library(Groonga::msgpackc ALIAS msgpackc)
+    else()
+      add_library(Groonga::msgpackc ALIAS msgpackc-static)
+    endif()
   endif()
 endif()
 
@@ -42,8 +56,11 @@ if(NOT Groongamsgpackc_FOUND AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
   if(Groongamsgpackc_FOUND)
     if(TARGET msgpackc)
       add_library(Groonga::msgpackc ALIAS msgpackc)
-    else()
+    elseif(TARGET msgpackc-static)
       add_library(Groonga::msgpackc ALIAS msgpackc-static)
+    else()
+      # msgpackc-cxx's msgpack CMake package is found...
+      set(Groongamsgpackc_FOUND FALSE)
     endif()
   endif()
 endif()

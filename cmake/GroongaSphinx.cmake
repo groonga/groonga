@@ -2,7 +2,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +22,12 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
     list(APPEND ALL_ABSOLUTE_SOURCES ${SOURCE_DIR}/${SOURCE})
     if("${SOURCE}" STREQUAL "conf.py")
       # target
-    elseif("${SOURCE}" STREQUAL "reference/scoring_note.rst")
+    elseif(
+      "${SOURCE}" STREQUAL "install/server-use.rst"
+      OR "${SOURCE}" STREQUAL "install/server-use.md"
+      OR "${SOURCE}" STREQUAL "reference/commands/compress_filter.rst"
+      OR "${SOURCE}" STREQUAL "reference/scoring_note.rst"
+      OR "${SOURCE}" MATCHES "^example/")
       # not target
       continue()
     elseif(NOT "${SOURCE}" MATCHES "\\.(rst|md)\$")
@@ -69,8 +75,9 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
       COMMAND
         ${CMAKE_COMMAND} -E env DOCUMENT_VERSION=${GRN_VERSION}
         DOCUMENT_VERSION_FULL=${GRN_VERSION_FULL} LOCALE=${LOCALE}
-        ${SPHINX_BUILD} -j auto -D language=${LOCALE} -b ${BUILDER} -d
-        ${LOCALE}/doctrees/${BUILDER} ${SOURCE_DIR} ${LOCALE}/${BUILDER}
+        ${SPHINX_BUILD} $<$<CONFIG:Debug>:--fail-on-warning> --quiet -j auto -D
+        language=${LOCALE} -b ${BUILDER} -d ${LOCALE}/doctrees/${BUILDER}
+        ${SOURCE_DIR} ${LOCALE}/${BUILDER}
       COMMAND ${CMAKE_COMMAND} -E touch ${LOCALE}-${BUILDER}.time_stamp
       DEPENDS ${TARGET_SOURCES})
     if("${BUILDER}" STREQUAL "html")

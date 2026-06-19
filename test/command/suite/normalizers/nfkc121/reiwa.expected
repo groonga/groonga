@@ -9,7 +9,8 @@ normalize   'NormalizerNFKC121'   "㋿"   WITH_CHECKS|WITH_TYPES
     "normalized": "令和",
     "types": [
       "kanji",
-      "kanji"
+      "kanji",
+      "null"
     ],
     "checks": [
       3,

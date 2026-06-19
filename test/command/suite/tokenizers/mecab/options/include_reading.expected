@@ -47,8 +47,7 @@ tokenize   'TokenMecab("include_reading", true)'   '焼き肉と焼肉とyakinik
       "position": 4,
       "force_prefix": false,
       "force_prefix_search": false,
-      "metadata": {
-      }
+      "metadata": {}
     }
   ]
 ]

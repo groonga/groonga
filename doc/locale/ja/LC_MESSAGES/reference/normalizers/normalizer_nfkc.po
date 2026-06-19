@@ -1,0 +1,605 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2023 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 13.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2023-07-12 09:29+0900\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr ""
+
+msgid "`NormalizerNFKC`"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`NormalizerNFKC` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "`NormalizerNFKC` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+
+msgid "The Unicode version can be specified by option."
+msgstr "Unicodeのバージョンはオプションで指定することができます。"
+
+msgid "In addition to Unicode version, this normalizer has ohter options that can change behavior."
+msgstr "また、このノーマライザーにはUnicodeバージョン以外にもオプションがあり、それらのオプションを指定することで動作を変更できます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`NormalizerNFKC` has optional parameter."
+msgstr "`NormalizerNFKC` は省略可能な引数があります。"
+
+msgid "No options:"
+msgstr "オプションなし:"
+
+msgid "Specify option:"
+msgstr "オプション指定:"
+
+msgid "{ref}`normalizer-nfkc-unify-iteration-mark` is added."
+msgstr "{ref}`normalizer-nfkc-unify-iteration-mark`追加。"
+
+msgid "Specify multiple options:"
+msgstr "複数のオプション指定:"
+
+msgid "`NormalizerNFKC` also specify multiple options as above. You can also specify mingle multiple options except above example."
+msgstr "上記のように、 `NormalizerNFKC` は複数のオプションを指定することもできます。上記の例以外にも複数のオプションを組み合わせて指定できます。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Simple usage"
+msgstr "簡単な使い方"
+
+msgid "Here is an example of `NormalizerNFKC`. `NormalizerNFKC` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)."
+msgstr "以下は、 `NormalizerNFKC` の使用例です。 `NormalizerNFKC` はUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-version` option. You can specify the Unicode version for this option."
+msgstr "以下は {ref}`normalizer-nfkc-version` オプションの使用例です。Unicodeのバージョンを指定できます。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana` option."
+msgstr "以下は {ref}`normalizer-nfkc-unify-kana` オプションの使用例です。"
+
+msgid "This option enables that same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below."
+msgstr "このオプションは、以下のように同じ音となる全角ひらがな、全角カタカナ、半角カタカナの文字を同一視します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana-case` option."
+msgstr "以下は {ref}`normalizer-nfkc-unify-kana-case` オプションの使用例です。"
+
+msgid "This option enables that large and small versions of same letters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below."
+msgstr "このオプションは、以下のように、全角ひらがな、全角カタカナ、半角カタカナの小さな文字を大きな文字と同一視します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana-voiced-sound-mark` option."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-kana-voiced-sound-mark` オプションの使用例です。"
+
+msgid "This option enables that letters with/without voiced sound mark and semi voiced sound mark in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character as below."
+msgstr "このオプションは、以下のように、全角ひらがな、全角カタカナ、半角カタカナで濁点や半濁点の有無を同一視します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-hyphen` option. This option enables normalize hyphen to \"-\" (U+002D HYPHEN-MINUS) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-hyphen` オプションの使用例です。このオプションは、以下のように、ハイフンを\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-prolonged-sound-mark` option. This option enables normalize prolonged sound to \"-\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-prolonged-sound-mark` オプションの使用例です。このオプションは、以下のように長音記号を\"-\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark` option. This option enables normalize hyphen and prolonged sound to \"-\" (U+002D HYPHEN-MINUS) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark` オプションの使用例です。このオプションは、以下のように、ハイフンと長音記号を\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-middle-dot` option. This option enables normalize middle dot to \"·\" (U+00B7 MIDDLE DOT) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-middle-dot` オプションの使用例です。このオプションは、中点を\"·\" (U+00B7 MIDDLE DOT)に正規化します。"
+
+msgid "You can use it with {ref}`normalizer-nfkc-remove-symbol` to remove all characters like middle dot."
+msgstr "{ref}`normalizer-nfkc-remove-symbol` と一緒に使うと中点のような文字をすべて削除できます。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-v-sounds` option. This option enables normalize \"ヴァヴィヴヴェヴォ\" to \"バビブベボ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-v-sounds` オプションの使用例です。このオプションは、以下のように、\"ヴァヴィヴヴェヴォ\"を\"バビブベボ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-bu-sounds` option. This option enables normalize \"ヴァヴィヴゥヴェヴォ\" to \"ブ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-bu-sounds` オプションの使用例です。このオプションは、以下のように、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-to-katakana` option. This option normalizes hiragana to katakana."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-to-katakana` オプションの使用例です。このオプションは、以下のように、ひらがなをカタカナに正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-to-romaji` option. This option enables normalize hiragana and katakana to romaji as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-to-romaji` オプションの使用例です。このオプションは、以下のように、ひらがなとカタカナをローマ字に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-remove-symbol` option. This option removes symbols (e.g. #, !, \", &, %, ...) as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-remove-symbol` オプションの使用例です。このオプションは、以下のように記号(例えば #, !, \", &, % 等)を削除します 。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-gu-small-sounds` option. This option enables to normalize \"グァグィグェグォ\" to \"ガギゲゴ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-gu-small-sounds` オプションの使用例です。このオプションは、以下のように、\"グァグィグェグォ\"を\"ガギゲゴ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-di-sound` option. This option enables to normalize \"ヂ\" to \"ジ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-di-sound` オプションの使用例です。このオプションは、以下のように、\"ヂ\"を\"ジ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-wo-sound` option. This option enables to normalize \"ヲ\" to \"オ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-wo-sound` オプションの使用例です。このオプションは、以下のように、\"ヲ\"を\"オ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-zu-small-sounds` option. This option enables to normalize \"ズァズィズェズォ\" to \"ザジゼゾ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-zu-small-sounds` オプションの使用例です。このオプションは、以下のように、\"ズァズィズェズォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-du-sound` option. This option enables to normalize \"ヅ\" to \"ズ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-du-sound` オプションの使用例です。このオプションは、以下のように、\"ヅ\"を\"ズ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-trailing-o` option. This option enables to normalize \"オ\" to \"ウ\" when the vowel in the previous letter is \"オ\" as below."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-trailing-o` オプションの使用例です。このオプションは、以下のように、前の文字の母音が\"オ\"のとき、\"オ\"を\"ウ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-katakana-du-small-sounds` option. This option enables to normalize \"ヅァヅィヅェヅォ\" to \"ザジゼゾ\"."
+msgstr "以下は、 {ref}`normalizer-nfkc-unify-katakana-du-small-sounds` オプションの使用例です。このオプションは、以下のように、\"ヅァヅィヅェヅォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana-prolonged-sound-mark` option. This option enables to normalize \"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) to a vowel of a previous kana letter."
+msgstr "以下は {ref}`normalizer-nfkc-unify-kana-prolonged-sound-mark` オプションの使用例です。このオプションは、\"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) を一文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "If a previous kana letter is \"ん\" , \"ー\" is normalized to \"ん\", And a previous kana letter is \"ン\" , \"ー\" is normalized to \"ン\"."
+msgstr "もし、一文字前の文字が\"ん\"であれば、\"ー\"は\"ん\"に正規化されます。また、一文字前の文字が\"ン\"であれば、\"ー\"は\"ン\"に正規化されます。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-kana-hyphen` option. This option enables to normalize \"-\" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter."
+msgstr "以下は {ref}`normalizer-nfkc-unify-kana-hyphen` オプションの使用例です。このオプションは、\"-\" (U+002D HYPHEN-MINUS) を一文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "If a previous kana letter is \"ん\" , \"-\" is normalized to \"ん\", And a previous kana letter is \"ン\" , \"-\" is normalized to \"ン\"."
+msgstr "もし、一文字前の文字が\"ん\"であれば、\"-\"は\"ん\"に正規化されます。また、一文字前の文字が\"ン\"であれば、\"-\"は\"ン\"に正規化されます。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-latin-alphabet-with` option. This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "以下は {ref}`normalizer-nfkc-unify-latin-alphabet-with` オプションの使用例です。このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "However, this feature focus on only LATIN (SMALL|CAPITAL) LETTER X WITH XXX. It doesn't support LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX characters."
+msgstr "ただし、この機能は LATIN (SMALL|CAPITAL) LETTER X WITH XXX にのみフォーカスしています。 LATIN (SMALL|CAPITAL) LETTER X + COMBINING XXX はサポートしていません。"
+
+msgid "Here is an example of {ref}`normalizer-nfkc-unify-iteration-mark` option. This option enables normalization of iteration marks by replacing them with the actual repeated character."
+msgstr "以下は {ref}`normalizer-nfkc-unify-iteration-mark` オプションの使用例です。このオプションは、踊り字を直前の文字に置き換えて正規化します。"
+
+msgid "Advanced usage"
+msgstr "高度な使い方"
+
+msgid "With `TokenMecab`"
+msgstr "`TokenMecab` と使う"
+
+msgid "You can output romaji of specific a part of speech with using to combine `TokenMecab` and `NormalizerNFKC` as below."
+msgstr "`TokenMecab` と `NormalizerNFKC` を組み合わせて使うことで、特定の品詞の読みをローマ字で出力できます。"
+
+msgid "First of all, you extract reading of a noun with excluding non-independent word and suffix of person name with `target_class` option and `include_reading` option."
+msgstr "まずはじめに、 `TokenMecab` の `target_class` オプションと `include_reading` オプションを使って人名の接尾語と非自立語を除いた名詞を抽出します。"
+
+msgid "Next, you normalize reading of the noun that extracted with `unify_to_romaji` option of `NormalizerNFKC`."
+msgstr "次に、抽出した名詞の読みを `NormalizerNFKC1` の `unify_to_romaji` を使って正規化します。"
+
+msgid "Use `unify_to_katakana` with other options"
+msgstr "`unify_to_katakana` を他のオプションと使う"
+
+msgid "{ref}`normalizer-nfkc-unify-to-katakana` can be combined with the following options to equate special katakana with general katakana."
+msgstr "{ref}`normalizer-nfkc-unify-to-katakana` は以下に列挙するオプションと組み合わせることで、特殊なカタカナを一般的なカタカナと同一視します。"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-v-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ゔぁゔぃゔゔぇゔぉ\", \"ばびぶべぼ\", \"ヴァヴィヴヴェヴォ\" and \"バビブベボ\""
+msgstr "\"ゔぁゔぃゔゔぇゔぉ\"、\"ばびぶべぼ\"、\"ヴァヴィヴヴェヴォ\"、\"バビブベボ\"を同一視します"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-gu-small-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ぐぁぐぃぐぇぐぉ\", \"がぎげご\", \"グァグィグェグォ\" and \"ガギゲゴ\""
+msgstr "\"ぐぁぐぃぐぇぐぉ\"、\"がぎげご\"、\"グァグィグェグォ\"、\"ガギゲゴ\"を同一視します"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-zu-small-sounds`"
+msgstr ""
+
+msgid "Equivalent: \"ずぁずぃずぇずぉ\", \"ざじぜぞ\", \"ズァズィズェズォ\" and \"ザジゼゾ\""
+msgstr "\"ずぁずぃずぇずぉ\"、\"ざじぜぞ\"、\"ズァズィズェズォ\"、\"ザジゼゾ\"を同一視します"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-wo-sound`"
+msgstr ""
+
+msgid "Equivalent: \"お\", \"を\", \"オ\" and \"ヲ\""
+msgstr "\"お\"、\"を\"、\"オ\"、\"ヲ\"を同一視します"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-di-sound`"
+msgstr ""
+
+msgid "Equivalent: \"じ\", \"ぢ\", \"ジ\" and \"ヂ\""
+msgstr "\"じ\"、\"ぢ\"、\"ジ\"、\"ヂ\"を同一視します"
+
+msgid "{ref}`normalizer-nfkc-unify-katakana-du-sound`"
+msgstr ""
+
+msgid "Equivalent: \"ず\", \"づ\", \"ズ\" and \"ヅ\""
+msgstr "\"ず\"、\"づ\"、\"ズ\"、\"ヅ\"を同一視します"
+
+msgid "For example, using `unify_to_katakana` and `unify_katakana_v_sounds` together, you can search \"バイオリン\", \"ヴァイオリン\", \"ばいおりん\" and \"ゔぁいおりん\" with \"ばいおりん\"."
+msgstr "例えば、 `unify_to_katakana` と `unify_katakana_v_sounds` を使うと、\"\"ばいおりん\"で\"バイオリン\"、\"ヴァイオリン\"、\"ばいおりん\"、\"ゔぁいおりん\"が検索できます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters as below."
+msgstr "省略可能な引数は以下の通りです。"
+
+msgid "`version`"
+msgstr ""
+
+msgid "This option specifies the Unicode version."
+msgstr "このオプションで、Unicodeのバージョンを指定します。"
+
+msgid "Here are the available versions."
+msgstr "利用可能なバージョンは以下の通りです。"
+
+msgid "Unicode version"
+msgstr "Unicodeバージョン"
+
+msgid "Value"
+msgstr "指定する値"
+
+msgid "Note"
+msgstr "備考"
+
+msgid "16.0.0"
+msgstr ""
+
+msgid "``\"16.0.0\"``"
+msgstr ""
+
+msgid "This is the default value."
+msgstr "デフォルト値"
+
+msgid "15.0.0"
+msgstr ""
+
+msgid "``\"15.0.0\"``"
+msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc150`"
+msgstr "{doc}`./normalizer_nfkc150` と同じ"
+
+msgid "13.0.0"
+msgstr ""
+
+msgid "``\"13.0.0\"``"
+msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc130`"
+msgstr "{doc}`./normalizer_nfkc130` と同じ"
+
+msgid "12.1.0"
+msgstr ""
+
+msgid "``\"12.1.0\"``"
+msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc121`"
+msgstr "{doc}`./normalizer_nfkc121` と同じ"
+
+msgid "10.0.0"
+msgstr ""
+
+msgid "``\"10.0.0\"``"
+msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc100`"
+msgstr "{doc}`./normalizer_nfkc100` と同じ"
+
+msgid "5.0.0"
+msgstr ""
+
+msgid "``\"5.0.0\"``"
+msgstr ""
+
+msgid "Same as :doc:`./normalizer_nfkc51` (It is called ``NormalizerNFKC51``, but it is for Unicode version 5.0)"
+msgstr "{doc}`./normalizer_nfkc51` と同じ（``NormalizerNFKC51`` という名前ですが Unicode5.0用）"
+
+msgid "`unify_kana`"
+msgstr ""
+
+msgid "This option enables that same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "このオプションは、同じ音となる全角ひらがな、全角カタカナ、半角カタカナの文字を同一視します。"
+
+msgid "`unify_kana_case`"
+msgstr ""
+
+msgid "This option enables that large and small versions of same letters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "このオプションは、全角ひらがな、全角カタカナ、半角カタカナの小さな文字を大きな文字と同一視します。"
+
+msgid "`unify_kana_voiced_sound_mark`"
+msgstr ""
+
+msgid "This option enables that letters with/without voiced sound mark and semi voiced sound mark in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "このオプションは、全角ひらがな、全角カタカナ、半角カタカナで濁点や半濁点の有無を同一視します。"
+
+msgid "`unify_hyphen`"
+msgstr ""
+
+msgid "This option enables normalize hyphen to \"-\" (U+002D HYPHEN-MINUS)."
+msgstr "このオプションは、ハイフンを\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
+
+msgid "Hyphen of the target of normalizing is as below."
+msgstr "正規化対象のハイフンは以下の通りです。"
+
+msgid "\"-\" (U+002D HYPHEN-MINUS)"
+msgstr ""
+
+msgid "\"֊\" (U+058A ARMENIAN HYPHEN)"
+msgstr ""
+
+msgid "\"˗\" (U+02D7 MODIFIER LETTER MINUS SIGN)"
+msgstr ""
+
+msgid "\"‐\" (U+2010 HYPHEN)"
+msgstr ""
+
+msgid "\"—\" (U+2014 EM DASH)"
+msgstr ""
+
+msgid "\"⁃\" (U+2043 HYPHEN BULLET)"
+msgstr ""
+
+msgid "\"⁻\" (U+207B SUPERSCRIPT MINUS)"
+msgstr ""
+
+msgid "\"₋\" (U+208B SUBSCRIPT MINUS)"
+msgstr ""
+
+msgid "\"−\" (U+2212 MINUS SIGN)"
+msgstr ""
+
+msgid "`unify_prolonged_sound_mark`"
+msgstr ""
+
+msgid "This option enables normalize prolonged sound to \"-\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)."
+msgstr "このオプションは、長音記号を\"-\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)に正規化します。"
+
+msgid "Prolonged sound of the target of normalizing is as below."
+msgstr "正規化対象の長音記号は以下の通りです。"
+
+msgid "\"―\" (U+2015 HORIZONTAL BAR)"
+msgstr ""
+
+msgid "\"─\" (U+2500 BOX DRAWINGS LIGHT HORIZONTAL)"
+msgstr ""
+
+msgid "\"━\" (U+2501 BOX DRAWINGS HEAVY HORIZONTAL)"
+msgstr ""
+
+msgid "\"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK)"
+msgstr ""
+
+msgid "\"ｰ\" (U+FF70 HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK)"
+msgstr ""
+
+msgid "`unify_hyphen_and_prolonged_sound_mark`"
+msgstr ""
+
+msgid "This option enables normalize hyphen and prolonged sound to \"-\" (U+002D HYPHEN-MINUS)."
+msgstr "このオプションは、ハイフンと長音記号を\"-\" (U+002D HYPHEN-MINUS)に正規化します。"
+
+msgid "Hyphen and prolonged sound of the target normalizing is below."
+msgstr "正規化対象のハイフンと長音記号は以下の通りです。"
+
+msgid "`unify_middle_dot`"
+msgstr ""
+
+msgid "This option enables normalize middle dot to \"·\" (U+00B7 MIDDLE DOT)."
+msgstr "このオプションは、中点を\"·\" (U+00B7 MIDDLE DOT)に正規化します。"
+
+msgid "Middle dot of the target of normalizing is as below."
+msgstr "正規化対象の中点は以下の通りです。"
+
+msgid "\"·\" (U+00B7 MIDDLE DOT)"
+msgstr ""
+
+msgid "\"ᐧ\" (U+1427 CANADIAN SYLLABICS FINAL MIDDLE DOT)"
+msgstr ""
+
+msgid "\"•\" (U+2022 BULLET)"
+msgstr ""
+
+msgid "\"∙\" (U+2219 BULLET OPERATOR)"
+msgstr ""
+
+msgid "\"⋅\" (U+22C5 DOT OPERATOR)"
+msgstr ""
+
+msgid "\"⸱\" (U+2E31 WORD SEPARATOR MIDDLE DOT)"
+msgstr ""
+
+msgid "\"・\" (U+30FB KATAKANA MIDDLE DOT)"
+msgstr ""
+
+msgid "\"･\" (U+FF65 HALFWIDTH KATAKANA MIDDLE DOT)"
+msgstr ""
+
+msgid "`unify_katakana_v_sounds`"
+msgstr ""
+
+msgid "This option enables normalize \"ヴァヴィヴヴェヴォ\" to \"バビブベボ\"."
+msgstr "このオプションは、\"ヴァヴィヴヴェヴォ\"を\"バビブベボ\"に正規化します。"
+
+msgid "`unify_katakana_bu_sound`"
+msgstr ""
+
+msgid "This option enables normalize \"ヴァヴィヴゥヴェヴォ\" to \"ブ\"."
+msgstr "このオプションは、\"ヴァヴィヴゥヴェヴォ\"を\"ブ\"に正規化します。"
+
+msgid "`unify_to_katakana`"
+msgstr ""
+
+msgid "This option normalizes hiragana to katakana."
+msgstr "このオプションは、ひらがなをカタカナに正規化します。"
+
+msgid "`unify_to_romaji`"
+msgstr ""
+
+msgid "This option enables normalize hiragana and katakana to romaji."
+msgstr "このオプションは、ひらがなとカタカナをローマ字に正規化します。"
+
+msgid "`remove_symbol`"
+msgstr ""
+
+msgid "This option removes symbols (e.g. #, !, \", &, %, ...) from the string that the target of normalizing."
+msgstr "このオプションは、正規化対象の文字列から記号(例えば #, !, \", &, % 等)を削除します。"
+
+msgid "`unify_katakana_gu_small_sounds`"
+msgstr ""
+
+msgid "This option enables to normalize \"グァグィグェグォ\" to \"ガギゲゴ\"."
+msgstr "このオプションは、\"グァグィグェグォ\"を\"ガギゲゴ\"に正規化します。"
+
+msgid "`unify_katakana_di_sound`"
+msgstr ""
+
+msgid "This option enables to normalize \"ヂ\" to \"ジ\"."
+msgstr "このオプションは、\"ヂ\"を\"ジ\"に正規化します。"
+
+msgid "`unify_katakana_wo_sound`"
+msgstr ""
+
+msgid "This option enables to normalize \"ヲ\" to \"オ\"."
+msgstr "このオプションは、\"ヲ\"を\"オ\"に正規化します。"
+
+msgid "`unify_katakana_zu_small_sounds`"
+msgstr ""
+
+msgid "This option enables to normalize \"ズァズィズェズォ\" to \"ザジゼゾ\"."
+msgstr "このオプションは、\"ズァズィズェズォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "`unify_katakana_du_sound`"
+msgstr ""
+
+msgid "This option enables to normalize \"ヅ\" to \"ズ\"."
+msgstr "このオプションは、\"ヅ\"を\"ズ\"に正規化します。"
+
+msgid "`unify_katakana_trailing_o`"
+msgstr ""
+
+msgid "This option enables to normalize \"オ\" to \"ウ\" when the vowel in the previous letter is \"オ\"."
+msgstr "このオプションは、前の文字の母音が\"オ\"のとき、\"オ\"を\"ウ\"に正規化します。"
+
+msgid "\"ォオ\" -> \"ォウ\""
+msgstr ""
+
+msgid "\"オオ\" -> \"オウ\""
+msgstr ""
+
+msgid "\"コオ\" -> \"コウ\""
+msgstr ""
+
+msgid "\"ソオ\" -> \"ソウ\""
+msgstr ""
+
+msgid "\"トオ\" -> \"トウ\""
+msgstr ""
+
+msgid "\"ノオ\" -> \"ノウ\""
+msgstr ""
+
+msgid "\"ホオ\" -> \"ホウ\""
+msgstr ""
+
+msgid "\"モオ\" -> \"モウ\""
+msgstr ""
+
+msgid "\"ョオ\" -> \"ョオ\""
+msgstr ""
+
+msgid "\"ヨオ\" -> \"ヨウ\""
+msgstr ""
+
+msgid "\"ロオ\" -> \"ロウ\""
+msgstr ""
+
+msgid "\"ゴオ\" -> \"ゴウ\""
+msgstr ""
+
+msgid "\"ゾオ\" -> \"ゾウ\""
+msgstr ""
+
+msgid "\"ドオ\" -> \"ドウ\""
+msgstr ""
+
+msgid "\"ボオ\" -> \"ボウ\""
+msgstr ""
+
+msgid "\"ポオ\" -> \"ポウ\""
+msgstr ""
+
+msgid "\"ヺオ\" -> \"ヺウ\""
+msgstr ""
+
+msgid "`unify_katakana_du_small_sounds`"
+msgstr ""
+
+msgid "This option enables to normalize \"ヅァヅィヅェヅォ\" to \"ザジゼゾ\"."
+msgstr "このオプションは、\"ヅァヅィヅェヅォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "`unify_kana_prolonged_sound_mark`"
+msgstr ""
+
+msgid "This option enables to normalize \"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) to a vowel of a previous kana letter."
+msgstr "このオプションは、\"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) を一文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "`unify_kana_hyphen`"
+msgstr ""
+
+msgid "This option enables to normalize \"-\" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter."
+msgstr "このオプションは、\"-\" (U+002D HYPHEN-MINUS) を一文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "`unify_latin_alphabet_with`"
+msgstr ""
+
+msgid "This option enables that alphabets with diacritical mark and alphabets without diacritical mark regarded as the same character as below."
+msgstr "このオプションは、以下のように発音記号付きの文字と発音記号なしの文字を同じ文字とみなすことができます。"
+
+msgid "`unify_iteration_mark`"
+msgstr ""
+
+msgid "This option enables normalization of iteration marks by replacing them with the actual repeated character."
+msgstr "このオプションは、踊り字を直前の文字に置き換えて正規化します。"
+
+msgid "The following iteration marks are normalize."
+msgstr "正規化対象の踊り字は以下の通りです。"
+
+msgid "Hiragana Iteration Mark ゝ (U+309D)"
+msgstr ""
+
+msgid "Hiragana Voiced Iteration Mark ゞ (U+309E)"
+msgstr ""
+
+msgid "Katakana Iteration Mark ヽ (U+30FD)"
+msgstr ""
+
+msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
+msgstr ""
+
+msgid "Ideographic Iteration Mark 々 (U+3005) - limitation: only repeats the immediately preceding single character"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 制限：直前の単一文字の繰り返しのみサポート"
+
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - limitation: only repeats the immediately preceding single character"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 制限：直前の単一文字の繰り返しのみサポート"
+
+msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
+msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」以外のパターンは **非対応** です。"
+
+msgid "Examples:"
+msgstr "例"
+
+msgid "\"部分々々\" -> \"部分部分\""
+msgstr ""
+
+msgid "\"古々々米\" -> \"古古古米\""
+msgstr ""
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`../commands/normalize`"
+msgstr ""

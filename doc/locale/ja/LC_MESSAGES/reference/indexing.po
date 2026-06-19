@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2025-01-27 18:05+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -62,6 +62,9 @@ msgstr "インデックスがないときはシーケンシャルサーチで検
 
 msgid "We create index for ``Tweets.content``. Already registered data in ``Tweets.content`` are indexed by offline index construction:"
 msgstr "``Tweets.content`` 用のインデックスを作成します。すでに ``Tweets.content`` に登録されているデータは静的なインデックス構築方法でインデックスを構築します:"
+
+msgid "We can create an index in parallel by adding ``--n_workers -1``. For example::"
+msgstr "``--n_workers -1`` を指定すると並列にインデックスを構築できます。例::"
 
 msgid "We search with index. We get a matched record:"
 msgstr "インデックスありで検索します。1件ヒットします:"

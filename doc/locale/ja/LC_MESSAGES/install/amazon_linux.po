@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 12.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-21 17:24+0900\n"
+"PO-Revision-Date: 2024-12-23 18:10+0900\n"
 "Language-Team: none\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -19,47 +19,38 @@ msgstr ""
 msgid "Amazon Linux"
 msgstr ""
 
-msgid "This section describes how to install Groonga related RPM packages on Amazon Linux. You can install them by ``yum``."
-msgstr "このセクションではAmazon Linux上でGroonga関連のRPMパッケージをインストールする方法を説明します。これらのパッケージは ``yum`` でインストールできます。"
+msgid "This section describes how to install Groonga related RPM packages on Amazon Linux. You can install them by ``dnf``."
+msgstr "このセクションではAmazon Linux上でGroonga関連のRPMパッケージをインストールする方法を説明します。これらのパッケージは ``dnf`` でインストールできます。"
 
-msgid "Amazon Linux 2"
+msgid "Amazon Linux 2023"
 msgstr ""
 
-msgid "Install::"
-msgstr "インストール::"
+msgid "Install:"
+msgstr "インストール:"
 
-msgid "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a tokenizer, install groonga-tokenizer-mecab package."
-msgstr "`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいときは、groonga-tokenizer-mecabパッケージをインストールしてください。"
+msgid "You can't install groonga-tokenizer-mecab package in Amazon Linux 2023. Because Amazon Linux 2023 doesn't provide `MeCab <https://taku910.github.io/mecab/>`_ package."
+msgstr "Amazon Linux 2023 では、groonga-tokenizer-mecabパッケージはインストールできません。 Amazon Linux 2023が、 `MeCab <https://taku910.github.io/mecab/>`_ パッケージを提供していないためです。"
 
-msgid "Install groonga-tokenizer-mecab package::"
-msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+msgid "If you want to use :doc:`/reference/token_filters/token_filter_stem`, install groonga-token-filter-stem package."
+msgstr ":doc:`/reference/token_filters/token_filter_stem` を使いたいときは、groonga-token-filter-stemパッケージをインストールしてください。"
 
-msgid "There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor Groonga status by Munin, install groonga-munin-plugins package."
-msgstr "`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあります。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッケージをインストールしてください。"
-
-msgid "Install groonga-munin-plugins package::"
-msgstr "groonga-munin-pluginsパッケージのインストール::"
+msgid "Install groonga-token-filter-stem package:"
+msgstr "groonga-token-filter-stemパッケージのインストール:"
 
 msgid "There is a package that provides MySQL compatible normalizer as a Groonga plugin. If you want to use that one, install groonga-normalizer-mysql package."
 msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあります。MySQL互換のノーマライザーを使うには `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>`_ パッケージをインストールしてください。"
 
-msgid "Install groonga-normalizer-mysql package::"
-msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+msgid "Install groonga-normalizer-mysql package:"
+msgstr "groonga-normalizer-mysqlパッケージのインストール:"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid "Install required packages to build Groonga::"
-msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+msgid "Build from source is for developers."
+msgstr "ソースからビルドする方法は開発者向けの内容になっています。"
 
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
-
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr "configureを実行します（ ``configure`` のオプションについては :ref:`source-configure` を参照してください）:"
-
-msgid "Build::"
-msgstr "ビルド::"
+msgid "See :doc:`/install/cmake` ."
+msgstr "詳細は :doc:`/install/cmake` を参照してください。"
 
 msgid "``groonga`` package is the minimum set of fulltext search engine. If you want to use Groonga for server use, you can install additional preconfigured packages."
 msgstr "``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"

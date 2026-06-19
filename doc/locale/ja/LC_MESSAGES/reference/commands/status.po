@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-08-10 18:57+0900\n"
+"PO-Revision-Date: 2024-09-25 13:19+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -186,6 +186,15 @@ msgstr "このGroongaプロセスのバージョンです。"
 msgid "``5.0.7``"
 msgstr ""
 
+msgid "``n_jobs``"
+msgstr ""
+
+msgid "The number of unprocessed jobs."
+msgstr "未処理のジョブ数です。"
+
+msgid "``0``"
+msgstr ""
+
 msgid "``features``"
 msgstr ""
 
@@ -197,3 +206,42 @@ msgstr ""
 
 msgid "The information about Apache Arrow that Groonga currently uses. It's only displayed when Apache Arrow is enabled."
 msgstr "Groongaの使用しているApache Arrowの情報です。Apache Arrowが有効な場合のみ表示されます。"
+
+msgid "``memory_map_size``"
+msgstr ""
+
+msgid "The total mapped memory size by this Groonga process in bytes."
+msgstr "このGroongaプロセスのメモリーマップサイズの合計です。単位はバイトです。"
+
+msgid "``2929``"
+msgstr ""
+
+msgid "``n_workers``"
+msgstr ""
+
+msgid "The value of ``n_workers`` set in this context."
+msgstr "このコンテキストで設定されている ``n_workers`` の値です。"
+
+msgid "``default_n_workers``"
+msgstr ""
+
+msgid "The default ``n_workers`` value of the Groonga process."
+msgstr "このGroongaプロセスのデフォルト ``n_workers`` の値です。"
+
+msgid "``os``"
+msgstr ""
+
+msgid "The OS name."
+msgstr "OS名です。"
+
+msgid "``Linux``, ``Darwin``, ``Windows`` and so on"
+msgstr "``Linux`` 、 ``Darwin`` 、 ``Windows`` など"
+
+msgid "``cpu``"
+msgstr ""
+
+msgid "The CPU architecture name."
+msgstr "CPUのアーキテクチャー名です。"
+
+msgid "``x86_64``, ``arm64`` and so on"
+msgstr "``x86_64`` 、 ``arm64`` など"

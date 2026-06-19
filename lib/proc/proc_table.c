@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -66,16 +67,15 @@ command_table_create_parse_flags(grn_ctx *ctx,
   return flags;
 }
 
-grn_bool
+bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_raw_string *token_filters_raw)
 {
-  grn_bool succeeded = GRN_FALSE;
   grn_obj token_filters;
 
   if (token_filters_raw->length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   GRN_TEXT_INIT(&token_filters, GRN_OBJ_DO_SHALLOW_COPY);
@@ -86,7 +86,28 @@ grn_proc_table_set_token_filters(grn_ctx *ctx,
   grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   GRN_OBJ_FIN(ctx, &token_filters);
 
-  return succeeded;
+  return ctx->rc == GRN_SUCCESS;
+}
+
+bool
+grn_proc_table_set_extractors(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_raw_string *extractors_raw)
+{
+  if (extractors_raw->length == 0) {
+    return true;
+  }
+
+  grn_obj extractors;
+  GRN_TEXT_INIT(&extractors, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx,
+               &extractors,
+               extractors_raw->value,
+               extractors_raw->length);
+  grn_obj_set_info(ctx, table, GRN_INFO_EXTRACTORS, &extractors);
+  GRN_OBJ_FIN(ctx, &extractors);
+
+  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_obj *
@@ -102,6 +123,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *default_tokenizer_raw;
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
+  grn_raw_string extractors_raw;
   grn_obj *path_raw;
   grn_obj *normalizers_raw;
   grn_obj *key_type = NULL;
@@ -126,6 +148,7 @@ command_table_create(grn_ctx *ctx,
                                                   "default_tokenizer", -1);
   normalizer_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
   GET_VALUE(token_filters);
+  GET_VALUE(extractors);
   path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
   normalizers_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizers", -1);
 
@@ -241,11 +264,15 @@ command_table_create(grn_ctx *ctx,
     if (!grn_proc_table_set_token_filters(ctx, table, &token_filters_raw)) {
       goto exit;
     }
+
+    if (!grn_proc_table_set_extractors(ctx, table, &extractors_raw)) {
+      goto exit;
+    }
   }
 
 exit :
   {
-    grn_bool success = (ctx->rc == GRN_SUCCESS);
+    bool success = (ctx->rc == GRN_SUCCESS);
     if (key_type) {
       grn_obj_unref(ctx, key_type);
     }
@@ -269,7 +296,7 @@ exit :
 void
 grn_proc_init_table_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[9];
+  grn_expr_var vars[10];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "flags", -1);
@@ -280,10 +307,11 @@ grn_proc_init_table_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[6]), "token_filters", -1);
   grn_plugin_expr_var_init(ctx, &(vars[7]), "path", -1);
   grn_plugin_expr_var_init(ctx, &(vars[8]), "normalizers", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[9]), "extractors", -1);
   grn_plugin_command_create(ctx,
                             "table_create", -1,
                             command_table_create,
-                            9,
+                            10,
                             vars);
 }
 
@@ -380,13 +408,13 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
       const char *name;
       void *key;
       int i, key_size;
-      grn_bool have_period = GRN_FALSE;
+      bool have_period = false;
 
       key_size = grn_table_cursor_get_key(ctx, cursor, &key);
       name = key;
       for (i = 0; i < key_size; i++) {
         if (name[i] == '.') {
-          have_period = GRN_TRUE;
+          have_period = true;
           break;
         }
       }
@@ -482,11 +510,15 @@ command_table_remove(grn_ctx *ctx,
 {
   grn_obj *name;
   grn_obj *table;
-  grn_bool dependent;
+  uint32_t flags = 0;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  dependent = grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1,
-                                           GRN_FALSE);
+  if (grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1, false)) {
+    flags |= GRN_OBJ_REMOVE_DEPENDENT;
+  }
+  if (grn_plugin_proc_get_var_bool(ctx, user_data, "ensure", -1, false)) {
+    flags |= GRN_OBJ_REMOVE_ENSURE;
+  }
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       (int)GRN_TEXT_LEN(name));
@@ -496,7 +528,7 @@ command_table_remove(grn_ctx *ctx,
                      "[table][remove] table isn't found: <%.*s>",
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
@@ -510,31 +542,31 @@ command_table_remove(grn_ctx *ctx,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name),
                      type_name);
-    grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_ctx_output_bool(ctx, false);
     return NULL;
   }
 
-  if (dependent) {
-    grn_obj_remove_dependent(ctx, table);
-  } else {
-    grn_obj_remove(ctx, table);
-  }
-  grn_ctx_output_bool(ctx, !ctx->rc);
+  grn_obj_remove_flags(ctx, table, flags);
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 
 void
 grn_proc_init_table_remove(grn_ctx *ctx)
 {
-  grn_expr_var vars[2];
+#define N_VARS 3
+  grn_expr_var vars[N_VARS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "dependent", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[2]), "ensure", -1);
   grn_plugin_command_create(ctx,
-                            "table_remove", -1,
+                            "table_remove",
+                            -1,
                             command_table_remove,
-                            2,
+                            N_VARS,
                             vars);
+#undef N_VARS
 }
 
 static grn_obj *

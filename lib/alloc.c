@@ -1,10 +1,11 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,30 +25,23 @@
 #  include <execinfo.h>
 #endif
 
-static int alloc_count = 0;
+static uint32_t alloc_count = 0;
 
-static grn_bool grn_fail_malloc_enable = GRN_FALSE;
+static bool grn_fail_malloc_enable = false;
 static double grn_fail_malloc_prob = 0.0;
-static grn_bool grn_fail_malloc_location = GRN_FALSE;
+static bool grn_fail_malloc_location = false;
 static char *grn_fail_malloc_func = NULL;
 static char *grn_fail_malloc_file = NULL;
 static int grn_fail_malloc_line = 0;
 static int grn_fail_malloc_max_count = -1;
 
-#ifdef USE_EXACT_ALLOC_COUNT
-#  define GRN_ADD_ALLOC_COUNT(count)                                           \
-    do {                                                                       \
-      uint32_t alloced;                                                        \
-      GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced);                         \
-    } while (0)
-#else /* USE_EXACT_ALLOC_COUNT */
-#  define GRN_ADD_ALLOC_COUNT(count)                                           \
-    do {                                                                       \
-      alloc_count += count;                                                    \
-    } while (0)
-#endif
+#define GRN_ADD_ALLOC_COUNT(count)                                             \
+  do {                                                                         \
+    uint32_t alloced;                                                          \
+    GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced);                           \
+  } while (0)
 
-int
+uint32_t
 grn_alloc_count(void)
 {
   return alloc_count;
@@ -62,9 +56,9 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_fail_malloc_enable_env, "yes") == 0) {
-      grn_fail_malloc_enable = GRN_TRUE;
+      grn_fail_malloc_enable = true;
     } else {
-      grn_fail_malloc_enable = GRN_FALSE;
+      grn_fail_malloc_enable = false;
     }
   }
   {
@@ -91,7 +85,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_func_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_func_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_func = grn_fail_malloc_func_env;
     }
   }
@@ -101,7 +95,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_file_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_file_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_file = grn_fail_malloc_file_env;
     }
   }
@@ -111,7 +105,7 @@ grn_alloc_init_from_env(void)
                grn_fail_malloc_line_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_fail_malloc_line_env[0]) {
-      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_location = true;
       grn_fail_malloc_line = atoi(grn_fail_malloc_line_env);
     }
   }
@@ -141,7 +135,7 @@ grn_alloc_info_fin(void)
   CRITICAL_SECTION_FIN(grn_alloc_info_lock);
 }
 
-grn_inline static void
+static inline void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
 #  ifdef HAVE_BACKTRACE
@@ -180,7 +174,7 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
 #  endif /* HAVE_BACKTRACE */
 }
 
-grn_inline static void
+static inline void
 grn_alloc_info_add(
   void *address, size_t size, const char *file, int line, const char *func)
 {
@@ -197,7 +191,7 @@ grn_alloc_info_add(
   if (new_alloc_info) {
     new_alloc_info->address = address;
     new_alloc_info->size = size;
-    new_alloc_info->freed = GRN_FALSE;
+    new_alloc_info->freed = false;
     grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
                                  sizeof(new_alloc_info->alloc_backtrace));
     if (file) {
@@ -217,7 +211,7 @@ grn_alloc_info_add(
   CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
-grn_inline static void
+static inline void
 grn_alloc_info_change(void *old_address, void *new_address, size_t size)
 {
   grn_ctx *ctx;
@@ -276,7 +270,7 @@ grn_alloc_info_dump(grn_ctx *ctx)
   printf("total: %" GRN_FMT_SIZE ":%d\n", total, i);
 }
 
-grn_inline static void
+static inline void
 grn_alloc_info_check(grn_ctx *ctx, void *address)
 {
   grn_alloc_info *alloc_info;
@@ -302,7 +296,7 @@ grn_alloc_info_check(grn_ctx *ctx, void *address)
                 alloc_info->alloc_backtrace,
                 alloc_info->free_backtrace);
       } else {
-        alloc_info->freed = GRN_TRUE;
+        alloc_info->freed = true;
         grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
                                      sizeof(alloc_info->free_backtrace));
       }
@@ -828,7 +822,7 @@ grn_malloc_default(
              "size:%" GRN_FMT_SIZE ", "
              "file:%s, "
              "line:%d, "
-             "alloc_count:%d, "
+             "alloc_count:%u, "
              "message:%s",
              size,
              file,
@@ -862,7 +856,7 @@ grn_calloc_default(
              "size:%" GRN_FMT_SIZE ", "
              "file:%s, "
              "line:%d, "
-             "alloc_count:%d, "
+             "alloc_count:%u, "
              "message:%s",
              size,
              file,
@@ -892,7 +886,7 @@ grn_free_default(
     } else {
       GRN_LOG(ctx,
               GRN_LOG_ALERT,
-              "free fail (%p) (%s:%d) <%d>",
+              "free fail (%p) (%s:%d) <%u>",
               ptr,
               file,
               line,
@@ -922,7 +916,7 @@ grn_realloc_default(grn_ctx *ctx,
              "size:%" GRN_FMT_SIZE ", "
              "file:%s, "
              "line:%d, "
-             "alloc_count:%d, "
+             "alloc_count:%u, "
              "message:%s",
              ptr,
              size,
@@ -969,7 +963,7 @@ grn_strdup_default(
              "address:%p, "
              "file:%s, "
              "line:%d, "
-             "alloc_count:%d, "
+             "alloc_count:%u, "
              "message:%s",
              s,
              file,
@@ -985,52 +979,52 @@ grn_strdup_default(
   }
 }
 
-grn_bool
+bool
 grn_fail_malloc_should_fail(size_t size,
                             const char *file,
                             int line,
                             const char *func)
 {
   if (!grn_fail_malloc_enable) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (grn_fail_malloc_location) {
     if (grn_fail_malloc_file) {
       if (strcmp(file, grn_fail_malloc_file) != 0) {
-        return GRN_FALSE;
+        return false;
       }
     }
     if (grn_fail_malloc_line > 0) {
       if (line != grn_fail_malloc_line) {
-        return GRN_FALSE;
+        return false;
       }
     }
     if (grn_fail_malloc_func) {
       if (strcmp(func, grn_fail_malloc_func) != 0) {
-        return GRN_FALSE;
+        return false;
       }
     }
-    return GRN_TRUE;
+    return true;
   }
 
   if (grn_fail_malloc_prob > 0.0 && grn_fail_malloc_prob >= rand()) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (grn_fail_malloc_max_count >= 0 &&
-      alloc_count >= grn_fail_malloc_max_count) {
-    return GRN_TRUE;
+      alloc_count >= (uint32_t)grn_fail_malloc_max_count) {
+    return true;
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
 void *
 grn_malloc_fail(
   grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
-  MERR("[alloc][fail][malloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
+  MERR("[alloc][fail][malloc] <%u>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
        alloc_count,
        size,
        file,
@@ -1043,7 +1037,7 @@ void *
 grn_calloc_fail(
   grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
-  MERR("[alloc][fail][calloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
+  MERR("[alloc][fail][calloc] <%u>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
        alloc_count,
        size,
        file,
@@ -1060,7 +1054,7 @@ grn_realloc_fail(grn_ctx *ctx,
                  int line,
                  const char *func)
 {
-  MERR("[alloc][fail][realloc] <%d>: <%p:%" GRN_FMT_SIZE ">: %s:%d: %s",
+  MERR("[alloc][fail][realloc] <%u>: <%p:%" GRN_FMT_SIZE ">: %s:%d: %s",
        alloc_count,
        ptr,
        size,
@@ -1074,7 +1068,7 @@ char *
 grn_strdup_fail(
   grn_ctx *ctx, const char *s, const char *file, int line, const char *func)
 {
-  MERR("[alloc][fail][strdup] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s: <%s>",
+  MERR("[alloc][fail][strdup] <%u>: <%" GRN_FMT_SIZE ">: %s:%d: %s: <%s>",
        alloc_count,
        s ? strlen(s) : 0,
        file,

@@ -1,0 +1,14 @@
+# int64_t
+# max: 9223372036854775807
+# min: -9223372036854775808
+
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt64
+
+load --table Values
+[
+{"value": 9223372036854775809}
+]
+
+select Values \
+  --output_columns 'value, value / -1'

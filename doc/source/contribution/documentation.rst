@@ -5,7 +5,7 @@ How to contribute in documentation topics
 
 We use Sphinx_ for documentation tool.
 
-.. _Sphinx: http://sphinx.pocoo.org/
+.. _Sphinx: https://www.sphinx-doc.org/
 
 .. toctree::
    :maxdepth: 1

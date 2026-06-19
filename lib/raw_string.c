@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -124,12 +125,14 @@ grn_raw_string_substring(grn_ctx *ctx,
   grn_raw_string substring;
   substring.value = string->value + start;
   if (length < 0) {
-    substring.length = (size_t)((int64_t)(string->length - start) + length + 1);
+    int64_t substring_length = (int64_t)(string->length - start) + length + 1;
+    if (substring_length < 0) {
+      substring.length = 0;
+    } else {
+      substring.length = (size_t)substring_length;
+    }
   } else {
     substring.length = (size_t)length;
-  }
-  if (substring.length < 0) {
-    substring.length = 0;
   }
   return substring;
 }

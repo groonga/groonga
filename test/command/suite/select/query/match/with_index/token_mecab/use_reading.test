@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 table_create Menus TABLE_NO_KEY
 column_create Menus name COLUMN_SCALAR Text
 

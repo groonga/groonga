@@ -3,72 +3,72 @@ Execution example::
   select --table Site --output_columns _key,title,_score --query title:@test
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/", 
-  #         "This is test record 1!", 
+  #         "http://example.org/",
+  #         "This is test record 1!",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.net/", 
-  #         "test record 2.", 
+  #         "http://example.net/",
+  #         "test record 2.",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.com/", 
-  #         "test test record three.", 
+  #         "http://example.com/",
+  #         "test test record three.",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.net/afr", 
-  #         "test record four.", 
+  #         "http://example.net/afr",
+  #         "test record four.",
   #         1
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/aba", 
-  #         "test test test record five.", 
+  #         "http://example.org/aba",
+  #         "test test test record five.",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.com/rab", 
-  #         "test test test test record six.", 
+  #         "http://example.com/rab",
+  #         "test test test test record six.",
   #         4
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.net/atv", 
-  #         "test test test record seven.", 
+  #         "http://example.net/atv",
+  #         "test test test record seven.",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/gat", 
-  #         "test test record eight.", 
+  #         "http://example.org/gat",
+  #         "test test record eight.",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.com/vdw", 
-  #         "test test record nine.", 
+  #         "http://example.com/vdw",
+  #         "test test record nine.",
   #         2
   #       ]
   #     ]

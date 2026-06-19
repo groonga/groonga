@@ -12,61 +12,61 @@ Execution example::
     --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes_cumulative_sum_per_tag", 
+  #           "n_likes_cumulative_sum_per_tag",
   #           "UInt32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         "Groonga", 
-  #         10, 
+  #         "Groonga",
+  #         "Groonga",
+  #         10,
   #         10
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         "Mroonga", 
-  #         15, 
+  #         "Groonga",
+  #         "Mroonga",
+  #         15,
   #         25
-  #       ], 
+  #       ],
   #       [
-  #         "Hello", 
-  #         "The first post!", 
-  #         5, 
+  #         "Hello",
+  #         "The first post!",
+  #         5,
   #         5
-  #       ], 
+  #       ],
   #       [
-  #         "Senna", 
-  #         "Good-bye Senna", 
-  #         3, 
+  #         "Senna",
+  #         "Good-bye Senna",
+  #         3,
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Senna", 
-  #         "Good-bye Tritonn", 
-  #         3, 
+  #         "Senna",
+  #         "Good-bye Tritonn",
+  #         3,
   #         6
   #       ]
   #     ]

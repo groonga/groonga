@@ -1,9 +1,10 @@
-# Copyright(C) 2015-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2015-2018  Brazil
+# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,7 +62,7 @@ target_include_directories(string_functions PRIVATE ${ONIGMO_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am NUMBER_SOURCES)
 set_source_files_properties(${NUMBER_SOURCES}
-                            PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+                            PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(number_functions STATIC ${NUMBER_SOURCES})
   set_target_properties(number_functions PROPERTIES POSITION_INDEPENDENT_CODE
@@ -140,3 +141,48 @@ else()
   endif()
 endif()
 target_link_libraries(math_functions libgroonga)
+
+if(GRN_WITH_H3)
+  set(H3_SOURCES h3.c)
+  set_source_files_properties(${H3_SOURCES} PROPERTIES COMPILE_FLAGS
+                                                       "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(h3_functions STATIC ${H3_SOURCES})
+    set_target_properties(h3_functions PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(h3_functions MODULE ${H3_SOURCES})
+    set_target_properties(h3_functions PROPERTIES PREFIX "" OUTPUT_NAME "h3")
+    install(TARGETS h3_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:h3_functions>
+        DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(h3_functions libgroonga)
+endif()
+
+if(GRN_WITH_LLAMA_CPP)
+  set(LANGUAGE_MODEL_SOURCES language_model.c)
+  set_source_files_properties(${LANGUAGE_MODEL_SOURCES}
+                              PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(GRN_EMBED)
+    add_library(language_model_functions STATIC ${LANGUAGE_MODEL_SOURCES})
+    set_target_properties(language_model_functions
+                          PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  else()
+    add_library(language_model_functions MODULE ${LANGUAGE_MODEL_SOURCES})
+    set_target_properties(language_model_functions
+                          PROPERTIES PREFIX "" OUTPUT_NAME "language_model")
+    install(TARGETS language_model_functions
+            DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:language_model_functions>
+        DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+        OPTIONAL)
+    endif()
+  endif()
+  target_link_libraries(language_model_functions libgroonga)
+endif()

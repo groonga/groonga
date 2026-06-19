@@ -9,9 +9,11 @@ Vector column
 Summary
 -------
 
-Vector column is a data store object. It can stores zero or more
-scalar values. In short, scalar value is a single value such as number
-and string. See :doc:`scalar` about scalar value details.
+Vector column is a data store object.
+
+It can stores zero or more scalar values per records. In short, scalar
+value is a single value such as number and string. See :doc:`scalar`
+about scalar value details.
 
 One of vector column use cases is tags store. You can use a vector
 column to store tag values.
@@ -29,11 +31,12 @@ with weight carefully.
 Usage
 -----
 
-There are three vector column types:
+There are four vector column types:
 
-  * Normal vector column
-  * Reference vector column
-  * Weight vector column
+* Normal vector column
+* Reference vector column
+* Weight vector column
+* Generated vector column
 
 This section describes how to use these types.
 
@@ -328,3 +331,15 @@ of record ``"http://mroonga.org/"``.
 .. groonga-command
 .. table_remove Tags
 .. table_remove Bookmarks
+
+.. _generated-vector-column:
+
+Generated vector column
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use a vector column as a :ref:`generated-column`.
+
+How to create
+"""""""""""""
+
+See :ref:`column-create-generated-column` for details.

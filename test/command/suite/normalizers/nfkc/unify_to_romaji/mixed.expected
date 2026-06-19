@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "report_source_offset", true)'   "あイｳｪおざジたチなニぱピまミヽヾ漢字"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_to_romaji", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "あイｳｪおざジたチなニぱピまミヽヾ漢字"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -38,7 +38,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       "katakana",
       "katakana",
       "kanji",
-      "kanji"
+      "kanji",
+      "null"
     ],
     "checks": [
       3,
@@ -112,7 +113,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       45,
       48,
       51,
-      54
+      54,
+      57
     ]
   }
 ]

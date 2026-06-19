@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,7 +37,7 @@ grn_char_type_to_string(grn_char_type type)
     } else {                                            \
       string = type_string;                             \
     }                                                   \
-  } while (GRN_FALSE)
+  } while (false)
 
   switch (GRN_CHAR_TYPE(type)) {
   case GRN_CHAR_NULL :
@@ -253,8 +254,7 @@ grn_string_open_(grn_ctx *ctx,
                        GRN_INFO_NORMALIZERS,
                        &normalizers);
     } else {
-      grn_bool is_normalizer_auto;
-      is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
+      bool is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
       if (is_normalizer_auto) {
         grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
         if (!normalizer) {
@@ -305,11 +305,17 @@ grn_string_open_(grn_ctx *ctx,
             for (current_i = 0;
                  current_i < string_->normalized_length_in_bytes;
                  current_i++) {
-              int16_t previous_check = string_->checks[current_i];
-              if (previous_check > 0) {
-                int16_t original_check = previous_checks[previous_i];
-                string_->checks[current_i] = original_check;
-                previous_i += (unsigned int)previous_check;
+              int16_t current_check = string_->checks[current_i];
+              if (current_check > 0) {
+                int16_t previous_check = previous_checks[previous_i];
+                /* TODO: How to merge check? This logic may be
+                 * wrong. We need many cases. We have only a few cases
+                 * in
+                 * test/command/suite/normalizers/multiple/options/ .*/
+                if (previous_check > current_check) {
+                  string_->checks[current_i] = previous_check;
+                }
+                previous_i += (unsigned int)current_check;
               }
             }
           }
@@ -327,7 +333,7 @@ grn_string_open_(grn_ctx *ctx,
             unsigned int previous_i = 0;
             unsigned int current_i = 0;
             for (current_i = 0;
-                 current_i < string_->n_characters;
+                 current_i <= string_->n_characters;
                  current_i++) {
               while (string_->offsets[current_i] > previous_offset) {
                 int previous_character_length =

@@ -20,8 +20,7 @@ size data.
    install/mac_os_x
    install/debian
    install/ubuntu
-   install/centos
    install/almalinux
    install/amazon_linux
    install/docker
-   install/others
+   install/cmake

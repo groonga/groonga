@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,15 +20,20 @@
 
 #include "grn.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-int64_t grn_bulk_get_int64(grn_ctx *ctx, grn_obj *bulk);
-grn_rc grn_bulk_set_int64(grn_ctx *ctx, grn_obj *bulk, int64_t value);
-double grn_bulk_get_float(grn_ctx *ctx, grn_obj *bulk);
-grn_rc grn_bulk_set_float(grn_ctx *ctx, grn_obj *bulk, double value);
-grn_rc grn_bulk_copy(grn_ctx *ctx, grn_obj *bulk, grn_obj *dest);
+int64_t
+grn_bulk_get_int64(grn_ctx *ctx, grn_obj *bulk);
+grn_rc
+grn_bulk_set_int64(grn_ctx *ctx, grn_obj *bulk, int64_t value);
+double
+grn_bulk_get_float(grn_ctx *ctx, grn_obj *bulk);
+grn_rc
+grn_bulk_set_float(grn_ctx *ctx, grn_obj *bulk, double value);
+grn_rc
+grn_bulk_copy(grn_ctx *ctx, grn_obj *bulk, grn_obj *dest);
 
 #ifdef __cplusplus
 }

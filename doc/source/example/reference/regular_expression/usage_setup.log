@@ -1,9 +1,9 @@
 Execution example::
 
   table_create Logs TABLE_NO_KEY
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs message COLUMN_SCALAR Text
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Logs
   [
   {"message": "host1:[error]: No memory"},
@@ -12,4 +12,4 @@ Execution example::
   {"message": "host2:[error]: No memory"},
   {"message": "host2:[info]: Shutdown"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  # [[0,1337566253.89858,0.000355720520019531],5]

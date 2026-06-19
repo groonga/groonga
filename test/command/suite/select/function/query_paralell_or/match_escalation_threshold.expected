@@ -1,0 +1,45 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"content": "hello world"},
+{"content": "It's an apple"}
+]
+[[0,0.0,0.0],2]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizers NormalizerNFKC150   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+select Data   --filter 'query_parallel_or(["content"], "a")'   --match_escalation_threshold -1
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","ShortText"]]]]]
+select Data   --filter 'query_parallel_or(["content"], "a")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "It's an apple"
+      ]
+    ]
+  ]
+]

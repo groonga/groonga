@@ -1,16 +1,16 @@
 Execution example::
 
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&q=G'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&q=G'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&q=Gr'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&q=Gr'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&q=Gro'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&q=Gro'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&q=Groo'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&q=Groo'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&q=Grooon'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&q=Grooon'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&q=Groonga'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&q=Groonga'
   {}
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=Groonga'
+  $ curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=Groonga'
   {}

@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,19 +22,23 @@
 #include "grn_ctx.h"
 
 #ifdef GRN_WITH_MRUBY
-# include <mruby.h>
+#  include <mruby.h>
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void grn_mrb_init_from_env(void);
+void
+grn_mrb_init_from_env(void);
 
 #ifdef GRN_WITH_MRUBY
-GRN_API mrb_value grn_mrb_load(grn_ctx *ctx, const char *path);
-GRN_API const char *grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx);
-grn_bool grn_mrb_is_order_by_estimated_size_enabled(void);
+GRN_API mrb_value
+grn_mrb_load(grn_ctx *ctx, const char *path);
+GRN_API const char *
+grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx);
+bool
+grn_mrb_is_order_by_estimated_size_enabled(void);
 #endif
 
 #ifdef __cplusplus

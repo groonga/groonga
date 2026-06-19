@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,13 +35,14 @@ typedef struct grn_load_input_ {
   grn_raw_string values;
   grn_raw_string if_exists;
   grn_raw_string each;
-  grn_bool output_ids;
-  grn_bool output_errors;
-  grn_bool lock_table;
+  bool output_ids;
+  bool output_errors;
+  bool lock_table;
   uint32_t emit_level;
 } grn_load_input;
 
-void grn_load_internal(grn_ctx *ctx, grn_load_input *input);
+void
+grn_load_internal(grn_ctx *ctx, grn_load_input *input);
 
 typedef enum {
   GRN_LOADER_BEGIN = 0,
@@ -92,11 +94,16 @@ typedef struct {
   grn_loader_stat stat;
   grn_content_type input_type;
   grn_loader_columns_status columns_status;
-  grn_rc rc;
-  char errbuf[GRN_CTX_MSGSIZE];
-  grn_bool output_ids;
-  grn_bool output_errors;
-  grn_bool lock_table;
+  struct {
+    grn_rc rc;
+    char buffer[GRN_CTX_MSGSIZE];
+    uint32_t line;
+    const char *file;
+    const char *func;
+  } error;
+  bool output_ids;
+  bool output_errors;
+  bool lock_table;
 } grn_loader;
 
 typedef struct {
@@ -116,9 +123,7 @@ typedef struct {
 void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
 void
-grn_loader_on_record_added(grn_ctx *ctx,
-                           grn_loader *loader,
-                           grn_id id);
+grn_loader_on_record_added(grn_ctx *ctx, grn_loader *loader, grn_id id);
 void
 grn_loader_on_column_set(grn_ctx *ctx,
                          grn_loader *loader,
@@ -127,15 +132,19 @@ void
 grn_loader_on_no_identifier_error(grn_ctx *ctx,
                                   grn_loader *loader,
                                   grn_obj *table);
+void
+grn_loader_merge(grn_ctx *ctx, grn_loader *loader, grn_loader *loader_other);
+grn_id
+grn_loader_add_record(grn_ctx *ctx,
+                      grn_loader *loader,
+                      grn_loader_add_record_data *data);
 grn_obj *
 grn_loader_get_column(grn_ctx *ctx,
                       grn_loader *loader,
                       const char *name,
                       size_t name_length);
 void
-grn_loader_apply_each(grn_ctx *ctx,
-                      grn_loader *loader,
-                      grn_id id);
+grn_loader_apply_each(grn_ctx *ctx, grn_loader *loader, grn_id id);
 
 void
 grn_p_loader(grn_ctx *ctx, grn_loader *loader);

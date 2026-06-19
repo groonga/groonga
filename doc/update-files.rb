@@ -4,7 +4,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -73,6 +74,7 @@ File.open(File.join(source_dir, "files.am"), "w") do |output|
     Find.find("html") do |path|
       next unless File.file?(path)
       next if path == "html/.buildinfo"
+      next if path == "html/.buildinfo.bak"
       html_files << path
     end
     html_files.sort!
@@ -109,6 +111,7 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
       path = path.delete_prefix("./")
       next unless File.file?(path)
       next if path == ".buildinfo"
+      next if path == ".buildinfo.bak"
       html_files << path
     end
     html_files.sort!

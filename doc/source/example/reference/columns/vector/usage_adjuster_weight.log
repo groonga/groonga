@@ -6,51 +6,51 @@ Execution example::
     --output_columns _key,tags,_score
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "tags", 
+  #           "tags",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://groonga.org/", 
+  #         "http://groonga.org/",
   #         {
   #           "groonga": 100
-  #         }, 
+  #         },
   #         506
-  #       ], 
+  #       ],
   #       [
-  #         "http://mroonga.org/", 
+  #         "http://mroonga.org/",
   #         {
-  #           "mroonga": 100, 
-  #           "groonga": 10, 
-  #           "mysql": 50
-  #         }, 
+  #           "mroonga": 100,
+  #           "mysql": 50,
+  #           "groonga": 10
+  #         },
   #         566
-  #       ], 
+  #       ],
   #       [
-  #         "http://ranguba.org/", 
+  #         "http://ranguba.org/",
   #         {
-  #           "ruby": 100, 
+  #           "ruby": 100,
   #           "groonga": 50
-  #         }, 
+  #         },
   #         256
   #       ]
   #     ]

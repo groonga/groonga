@@ -18,7 +18,7 @@ to use TSV.
 JSON and MessagePack
 --------------------
 
-This secsion describes the structure of command result on JSON and
+This section describes the structure of command result on JSON and
 MessagePack format. JSON is used to show structure because MessagePack
 is binary format. Binary format isn't proper for documenataion.
 

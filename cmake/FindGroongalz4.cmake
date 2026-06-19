@@ -2,7 +2,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,10 +30,10 @@ endif()
 find_package(lz4 ${find_package_args})
 set(Groongalz4_FOUND ${lz4_FOUND})
 if(Groongalz4_FOUND)
-  if(TARGET lz4::liblz4_shared)
-    add_library(Groonga::liblz4 ALIAS lz4::liblz4_shared)
+  if(TARGET LZ4::lz4_shared)
+    set(GRN_LZ4_TARGET LZ4::lz4_shared)
   else()
-    add_library(Groonga::liblz4 ALIAS lz4::liblz4_static)
+    set(GRN_LZ4_TARGET LZ4::lz4_static)
   endif()
   return()
 endif()
@@ -49,7 +50,7 @@ if(NOT Groongalz4_FOUND)
     endif()
     set(Groongalz4_FOUND ${Groongalz4_pkg_liblz4_FOUND})
     if(Groongalz4_pkg_liblz4_FOUND)
-      add_library(Groonga::liblz4 ALIAS PkgConfig::Groongalz4_pkg_liblz4)
+      set(GRN_LZ4_TARGET PkgConfig::Groongalz4_pkg_liblz4)
     endif()
   endif()
 endif()

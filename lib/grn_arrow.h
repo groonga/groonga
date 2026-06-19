@@ -1,9 +1,10 @@
 /*
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,37 +21,47 @@
 #include "grn.h"
 #include "grn_load.h"
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
+
+void
+grn_arrow_init_external_libraries(void);
 
 typedef struct _grn_arrow_stream_loader grn_arrow_stream_loader;
 
 grn_arrow_stream_loader *
-grn_arrow_stream_loader_open(grn_ctx *ctx,
-                             grn_loader *loader);
+grn_arrow_stream_loader_open(grn_ctx *ctx, grn_loader *loader);
 grn_rc
-grn_arrow_stream_loader_close(grn_ctx *ctx,
-                              grn_arrow_stream_loader *loader);
+grn_arrow_stream_loader_close(grn_ctx *ctx, grn_arrow_stream_loader *loader);
 grn_rc
 grn_arrow_stream_loader_consume(grn_ctx *ctx,
                                 grn_arrow_stream_loader *loader,
                                 const char *data,
                                 size_t data_size);
 
-
 typedef struct _grn_arrow_stream_writer grn_arrow_stream_writer;
 grn_arrow_stream_writer *
-grn_arrow_stream_writer_open(grn_ctx *ctx,
-                             grn_obj *output_buffer);
+grn_arrow_stream_writer_open(grn_ctx *ctx, grn_obj *output_buffer);
 grn_rc
-grn_arrow_stream_writer_close(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer);
+grn_arrow_stream_writer_close(grn_ctx *ctx, grn_arrow_stream_writer *writer);
 grn_rc
 grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   grn_arrow_stream_writer *writer,
                                   const char *name,
                                   grn_obj *column);
+grn_rc
+grn_arrow_stream_writer_add_field_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *name,
+  grn_obj *index_type);
+grn_rc
+grn_arrow_stream_writer_add_field_union(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *name,
+                                        grn_obj **columns,
+                                        size_t n_columns);
 grn_rc
 grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
                                      grn_arrow_stream_writer *writer,
@@ -66,14 +77,32 @@ grn_rc
 grn_arrow_stream_writer_close_record(grn_ctx *ctx,
                                      grn_arrow_stream_writer *writer);
 grn_rc
-grn_arrow_stream_writer_add_column_string(grn_ctx *ctx,
+grn_arrow_stream_writer_add_column_null(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer);
+grn_rc
+grn_arrow_stream_writer_add_column_text(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        const char *value,
+                                        size_t value_length);
+grn_rc
+grn_arrow_stream_writer_add_column_text_dictionary(
+  grn_ctx *ctx,
+  grn_arrow_stream_writer *writer,
+  const char *value,
+  size_t value_length);
+grn_rc
+grn_arrow_stream_writer_add_column_binary(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
-                                          const char *value,
+                                          const uint8_t *value,
                                           size_t value_length);
 grn_rc
 grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
                                         grn_arrow_stream_writer *writer,
                                         int8_t value);
+grn_rc
+grn_arrow_stream_writer_add_column_uint16(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          uint16_t value);
 grn_rc
 grn_arrow_stream_writer_add_column_int32(grn_ctx *ctx,
                                          grn_arrow_stream_writer *writer,
@@ -90,6 +119,12 @@ grn_rc
 grn_arrow_stream_writer_add_column_uint64(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           uint64_t value);
+#ifdef GRN_HAVE_BFLOAT16
+grn_rc
+grn_arrow_stream_writer_add_column_bfloat16(grn_ctx *ctx,
+                                            grn_arrow_stream_writer *writer,
+                                            grn_bfloat16 value);
+#endif
 grn_rc
 grn_arrow_stream_writer_add_column_float32(grn_ctx *ctx,
                                            grn_arrow_stream_writer *writer,
@@ -103,10 +138,6 @@ grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
                                              grn_timeval value);
 grn_rc
-grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
-                                          grn_arrow_stream_writer *writer,
-                                          double value);
-grn_rc
 grn_arrow_stream_writer_add_column_record(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           grn_obj *record);
@@ -115,8 +146,11 @@ grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
                                            grn_arrow_stream_writer *writer,
                                            grn_obj *uvector);
 grn_rc
-grn_arrow_stream_writer_flush(grn_ctx *ctx,
-                              grn_arrow_stream_writer *writer);
+grn_arrow_stream_writer_add_column_union(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int8_t type);
+grn_rc
+grn_arrow_stream_writer_flush(grn_ctx *ctx, grn_arrow_stream_writer *writer);
 
 #ifdef __cplusplus
 }

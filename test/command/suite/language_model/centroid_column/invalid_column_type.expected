@@ -1,0 +1,31 @@
+plugin_register language_model/knn
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Data rabitq_code COLUMN_SCALAR ShortBinary
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"text": "I am a boy."},
+{"text": "This is an apple."}
+]
+[[0,0.0,0.0],2]
+table_create RaBitQ TABLE_HASH_KEY UInt32   --default_tokenizer     'TokenLanguageModelKNN("model", "hf:///groonga/multilingual-e5-base-Q4_K_M-GGUF",                            "centroid_column", "centroid",                            "code_column", "rabitq_code",                            "passage_prefix", "passage: ",                            "query_prefix", "query: ")'
+[[0,0.0,0.0],true]
+column_create RaBitQ centroid COLUMN_VECTOR Binary
+[[0,0.0,0.0],true]
+column_create RaBitQ data_text COLUMN_INDEX Data text
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[tokenizer][language-model] centroid column must be Float32 vector: <RaBitQ.centroid>: <Binary>: <VECTOR>"
+  ],
+  false
+]
+#|e| [tokenizer][language-model] centroid column must be Float32 vector: <RaBitQ.centroid>: <Binary>: <VECTOR>

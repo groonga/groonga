@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,27 @@
 #include <groonga.hpp>
 
 namespace grn {
-  int32_t CommandArguments::arg_to_int32(grn_obj *arg,
-                                         int32_t default_value)
+  bool
+  CommandArguments::arg_to_bool(grn_obj *arg, bool default_value)
+  {
+    return grn_proc_option_value_bool(ctx_, arg, default_value);
+  }
+
+  int32_t
+  CommandArguments::arg_to_int32(grn_obj *arg, int32_t default_value)
   {
     return grn_proc_option_value_int32(ctx_, arg, default_value);
   }
-}
+
+  uint32_t
+  CommandArguments::arg_to_uint32(grn_obj *arg, uint32_t default_value)
+  {
+    return grn_proc_option_value_uint32(ctx_, arg, default_value);
+  }
+
+  float
+  CommandArguments::arg_to_float(grn_obj *arg, float default_value)
+  {
+    return grn_proc_option_value_float(ctx_, arg, default_value);
+  }
+} // namespace grn

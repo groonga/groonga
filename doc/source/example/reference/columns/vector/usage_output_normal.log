@@ -3,50 +3,50 @@ Execution example::
   select Bookmarks
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "tags", 
+  #           "tags",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "http://groonga.org/", 
+  #         1,
+  #         "http://groonga.org/",
   #         [
   #           "groonga"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "http://mroonga.org/", 
+  #         2,
+  #         "http://mroonga.org/",
   #         [
-  #           "mroonga", 
-  #           "mysql", 
+  #           "mroonga",
+  #           "mysql",
   #           "groonga"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "http://ranguba.org/", 
+  #         3,
+  #         "http://ranguba.org/",
   #         [
-  #           "ruby", 
+  #           "ruby",
   #           "groonga"
   #         ]
   #       ]

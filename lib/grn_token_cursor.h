@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,6 +46,8 @@ struct _grn_token_cursor {
     grn_obj *object;
     grn_proc_ctx pctx;
     grn_tokenizer_query query;
+    grn_id query_domain;
+    grn_obj casted_query;
     void *user_data;
     grn_token current_token;
     grn_token next_token;

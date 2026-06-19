@@ -97,7 +97,7 @@ msgstr "[:doc:`/reference/commands/load`] エラーメッセージを改善し�
 msgid "Response of ``load`` command includes error message also."
 msgstr "``load`` コマンドのレスポンスにエラーメッセージも含むようにしました。"
 
-msgid "If we faile data load, Groonga output error detail of ``load`` command by this Improvement."
+msgid "If we fail data load, Groonga output error detail of ``load`` command by this Improvement."
 msgstr "この変更によって、データのロードに失敗した場合、 ``load`` コマンドのエラーの詳細を出力します。"
 
 msgid "[httpd] Updated bundled nginx to 1.17.7."
@@ -313,7 +313,7 @@ msgstr "[:doc:`/reference/commands/select`] ネストされた等価演算を使
 msgid "[geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]"
 msgstr "[geo_distance_location_rectangle] ``load`` のフォーマットが誤っている例を修正しました。 [GitHub#1023] [yagisumiさんがパッチ提供]"
 
-msgid "[:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]"
+msgid "[:doc:`/tutorial/micro_blog`] Fixed an example that has wrong search results. [GitHub#1024][Patched by yagisumi]"
 msgstr "[:doc:`/tutorial/micro_blog`] 検索結果が誤っている例を修正しました。[GitHub#1024][yagisumiさんがパッチ提供]"
 
 msgid "Release 9.0.5 - 2019-07-30"
@@ -706,7 +706,7 @@ msgstr "HashidaTKSさん"
 msgid "Release 9.0.1 - 2019-03-29"
 msgstr "9.0.1リリース - 2019-03-29"
 
-msgid "Added support to acccept null for vector value."
+msgid "Added support to accept null for vector value."
 msgstr "ベクターの値にnullが使えるようになりました。"
 
 msgid "You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value \"null\"`"
@@ -739,7 +739,7 @@ msgstr "このようにして、``--load_values`` で指定したカラムの値
 msgid "[:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``."
 msgstr "[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--load_columns`` 、 ``--load_values`` を追加しました。 "
 
-msgid "[:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log."
+msgid "[:doc:`/reference/commands/load`] Added support to display a table of load destination in a query log."
 msgstr "[:doc:`/reference/commands/load`] ロード先のテーブルをクエリーログに表示するようにしました。"
 
 msgid "A name of table of load destination display as string in ``[]`` as below."
@@ -769,7 +769,7 @@ msgstr "[:doc:`/reference/functions/snippet_html`] 一致しない場合、空�
 msgid "In such a case, an empty vector ``[]`` is returned instead of ``null``."
 msgstr "そのような場合、 ``null`` の代わりに空のベクター ``[]`` が返されます。"
 
-msgid "Fixed a warning about possibility of counting threads overflow. In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]"
+msgid "Fixed a warning about possibility of counting threads overflow. In real world, it doesn't affect user because enormous number of threads is not used. [GitHub#904]"
 msgstr "スレッドカウントがオーバフローする可能性についての警告を修正しました。実運用では、膨大な数のスレッドが使用されていないため、ユーザーに影響はありません。[GitHub#904]"
 
 msgid "Fixed build error on macOS [GitHub#909] [Reported by shiro615]"
@@ -847,7 +847,7 @@ msgstr "既存のテーブルのカラムの値を使ってトークンを抽出
 msgid "[:doc:`/reference/commands/dump`] Added support for dumping binary data."
 msgstr "[:doc:`/reference/commands/dump`] バイナリデータのダンプに対応しました。"
 
-msgid "[:doc:`/reference/commands/select`] Added support for similer search against index column."
+msgid "[:doc:`/reference/commands/select`] Added support for similar search against index column."
 msgstr "[:doc:`/reference/commands/select`] インデックスカラムに対する類似文書検索をサポートしました。"
 
 msgid "If you have used multi column index, you can similar search against all source columns by this feature."

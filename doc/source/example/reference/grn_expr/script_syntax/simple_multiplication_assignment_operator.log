@@ -3,52 +3,52 @@ Execution example::
   select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score *= n_likes'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Senna", 
-  #         3, 
+  #         "Good-bye Senna",
+  #         3,
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Good-bye Tritonn", 
-  #         3, 
+  #         "Good-bye Tritonn",
+  #         3,
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         "Groonga", 
-  #         10, 
+  #         "Groonga",
+  #         10,
   #         10
-  #       ], 
+  #       ],
   #       [
-  #         "Mroonga", 
-  #         15, 
+  #         "Mroonga",
+  #         15,
   #         15
-  #       ], 
+  #       ],
   #       [
-  #         "The first post!", 
-  #         5, 
+  #         "The first post!",
+  #         5,
   #         5
   #       ]
   #     ]

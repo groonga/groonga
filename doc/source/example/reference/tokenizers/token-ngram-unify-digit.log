@@ -1,72 +1,72 @@
 Execution example::
 
   tokenize --tokenizer 'TokenNgram("unify_digit", false)' --string "012345 6789" --normalizer NormalizerAuto
-  #[
-  #  [
-  #    0,
-  #    1558914023.967506,
-  #    0.001635313034057617
-  #  ],
-  #  [
-  #    {
-  #      "value": "01",
-  #      "position": 0,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "12",
-  #      "position": 1,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "23",
-  #      "position": 2,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "34",
-  #      "position": 3,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "45",
-  #      "position": 4,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "5",
-  #      "position": 5,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "67",
-  #      "position": 6,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "78",
-  #      "position": 7,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "89",
-  #      "position": 8,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    },
-  #    {
-  #      "value": "9",
-  #      "position": 9,
-  #      "force_prefix": false,
-  #      "force_prefix_search": false
-  #    }
-  #  ]
-  #]
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   [
+  #     {
+  #       "value": "01",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "12",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "23",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "34",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "45",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "5",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "67",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "78",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "89",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "9",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

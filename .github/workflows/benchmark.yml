@@ -1,0 +1,205 @@
+# Copyright (C) 2024-2025  Sutou Kouhei <kou@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+name: Benchmark
+on:
+  push:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/benchmark.yml'
+      - 'ci/**'
+      - 'cmake/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.hpp'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
+      - 'vendor/mruby/**'
+  pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '.github/workflows/benchmark.yml'
+      - 'ci/**'
+      - 'cmake/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.hpp'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+      - 'tools/prepare-gh-pages.sh'
+      - 'vendor/mruby/**'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v5
+        with:
+          path: ccache
+          key: benchmark-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: benchmark-linux-ccache-
+      - name: Install packages
+        run: |
+          ./setup.sh
+      - name: CMake
+        run: |
+          ccache --show-stats --verbose --version || :
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            --preset=benchmark
+      - name: Build
+        run: |
+          ninja -C ../groonga.build
+          ccache --show-stats --verbose --version || :
+      - name: Install
+        run: |
+          ninja -C ../groonga.build install
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=${PWD}/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=${PWD}/install/lib/pkgconfig" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+          echo "${PWD}/install/bin" >> ${GITHUB_PATH}
+      - name: Install test dependencies
+        run: |
+          sudo gem install rubygems-requirements-system
+          sudo --preserve-env env MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config \
+            red-arrow \
+            rroonga
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/red-datasets
+          key: red-datasets-ubuntu
+      - name: "Benchmark: stdio: json"
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            test/command/suite_benchmark | \
+              tee benchmark-stdio-json.json
+      - name: "Benchmark: http: json"
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            --interface http \
+            test/command/suite_benchmark | \
+              tee benchmark-http-json.json
+      - name: "Benchmark: http: apache-arrow"
+        env:
+          GRN_N_WORKERS_DEFAULT: "-1"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --benchmark \
+            --input-type apache-arrow \
+            --interface http \
+            --output-type apache-arrow \
+            test/command/suite_benchmark | \
+              tee benchmark-http-apache-arrow.json
+      - name: Merge benchmark results
+        run: |
+          # json1: {"context": ..., "benchmarks": [{"name": "bench1-1", ...}, ...]}
+          # json2: {"context": ..., "benchmarks": [{"name": "bench2-1", ...}, ...]}
+          # jq ... | \ # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        [json1's benchmark1, ...],
+          #            #        [json2's benchmark1, ...]
+          #            #      ]
+          #            #    }
+          #   jq ...   # => {
+          #            #      "context": json1's context,
+          #            #      "benchmarks": [
+          #            #        json1's benchmark1,
+          #            #        ...,
+          #            #        json2's benchmark1,
+          #            #        ...
+          #            #      ]
+          #            #    }
+          jq -s \
+            '{"context": .[0].context, "benchmarks": [.[].benchmarks]}' \
+            benchmark-stdio-json.json \
+            benchmark-http-json.json \
+            benchmark-http-apache-arrow.json | \
+              jq '{"context": .context, "benchmarks": .benchmarks | flatten}' | \
+                tee benchmark.json
+      - name: Prepare gh-pages branch
+        if: github.event_name == 'push'
+        run: |
+          tools/prepare-gh-pages.sh
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Benchmark
+          tool: 'googlecpp'
+          max-items-in-chart: 500
+          output-file-path: benchmark.json
+          fail-on-alert: ${{ github.event_name == 'pull_request' }}
+      - name: Push benchmark result
+        if: github.event_name == 'push'
+        run: |
+          git push origin gh-pages:gh-pages

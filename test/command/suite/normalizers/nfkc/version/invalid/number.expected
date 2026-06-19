@@ -1,0 +1,17 @@
+normalize 'NormalizerNFKC("version", 15)' "groonga"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[normalizer][nfkc][version] must be a text: <15>"
+  ],
+  {
+    "normalized": "",
+    "types": [],
+    "checks": []
+  }
+]
+#|e| [normalizer][nfkc][version] must be a text: <15>

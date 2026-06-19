@@ -1,3 +1,5 @@
+#@require-feature mecab
+
 table_create Posts TABLE_HASH_KEY ShortText
 column_create Posts title COLUMN_SCALAR ShortText
 column_create Posts content COLUMN_SCALAR Text

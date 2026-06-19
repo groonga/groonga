@@ -2,12 +2,13 @@ libgroonga_c_sources =				\
 	accessor.c				\
 	aggregators.c				\
 	alloc.c					\
+	applier.c				\
 	cache.c					\
 	column.c				\
 	com.c					\
 	command.c				\
+	compressor.c				\
 	config.c				\
-	ctx.c					\
 	ctx_impl_lua.c				\
 	ctx_impl_mrb.c				\
 	db.c					\
@@ -16,18 +17,25 @@ libgroonga_c_sources =				\
 	error.c					\
 	expr.c					\
 	expr_code.c				\
-	expr_executor.c				\
+	extractor.c				\
+	extractors.c				\
 	file_lock.c				\
 	file_reader.c				\
 	float.c					\
+	generated_column.c			\
 	geo.c					\
 	grn.h					\
 	grn_accessor.h				\
 	grn_aggregators.h			\
 	grn_alloc.h				\
+	grn_applier.h				\
+	grn_arrow.h				\
+	grn_bulk.h				\
 	grn_cache.h				\
+	grn_cast.h				\
 	grn_column.h				\
 	grn_com.h				\
+	grn_compressor.h			\
 	grn_config.h				\
 	grn_ctx.h				\
 	grn_ctx_impl.h				\
@@ -35,16 +43,21 @@ libgroonga_c_sources =				\
 	grn_ctx_impl_mrb.h			\
 	grn_dat.h				\
 	grn_db.h				\
+	grn_distance.h				\
 	grn_encoding.h				\
 	grn_error.h				\
 	grn_expr.h				\
 	grn_expr_code.h				\
 	grn_expr_executor.h			\
+	grn_extractor.h				\
+	grn_extractors.h			\
 	grn_file_lock.h				\
 	grn_float.h				\
+	grn_generated_column.h			\
 	grn_geo.h				\
 	grn_group.h				\
 	grn_hash.h				\
+	grn_http_client.h			\
 	grn_ii.h				\
 	grn_ii_select_cursor.h			\
 	grn_index_column.h			\
@@ -63,9 +76,11 @@ libgroonga_c_sources =				\
 	grn_output_columns.h			\
 	grn_pat.h				\
 	grn_plugin.h				\
+	grn_portability.h			\
 	grn_posting.h				\
 	grn_proc.h				\
 	grn_progress.h				\
+	grn_progress_logger.h			\
 	grn_report.h				\
 	grn_request_canceler.h			\
 	grn_request_timer.h			\
@@ -79,6 +94,7 @@ libgroonga_c_sources =				\
 	grn_slow_log.h				\
 	grn_snip.h				\
 	grn_sort.h				\
+	grn_sorter.h				\
 	grn_store.h				\
 	grn_str.h				\
 	grn_string.h				\
@@ -87,6 +103,7 @@ libgroonga_c_sources =				\
 	grn_table_selector.h			\
 	grn_time.h				\
 	grn_token.h				\
+	grn_token_column.h			\
 	grn_token_cursor.h			\
 	grn_token_filters.h			\
 	grn_token_metadata.h			\
@@ -101,16 +118,18 @@ libgroonga_c_sources =				\
 	grn_window_functions.h			\
 	grn_windows.h				\
 	group.c					\
+	h3.c					\
 	hash.c					\
 	highlighter.c				\
+	http_client.c				\
 	id.c					\
-	ii.c					\
 	index_column.c				\
 	index_cursor.c				\
 	io.c					\
 	load.c					\
 	logger.c				\
 	memory.c				\
+	memory_map.c				\
 	mrb.c					\
 	msgpack.c				\
 	nfkc.c					\
@@ -118,6 +137,7 @@ libgroonga_c_sources =				\
 	nfkc121.c				\
 	nfkc130.c				\
 	nfkc150.c				\
+	nfkc160.c				\
 	nfkc50.c				\
 	normalizer.c				\
 	obj.c					\
@@ -131,6 +151,7 @@ libgroonga_c_sources =				\
 	posting.c				\
 	proc.c					\
 	progress.c				\
+	progress_logger.c			\
 	raw_string.c				\
 	report.c				\
 	request_canceler.c			\
@@ -144,6 +165,7 @@ libgroonga_c_sources =				\
 	slow_log.c				\
 	snip.c					\
 	sort.c					\
+	sorter.c				\
 	store.c					\
 	str.c					\
 	string.c				\

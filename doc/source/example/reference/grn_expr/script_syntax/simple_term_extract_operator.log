@@ -1,7 +1,7 @@
 Execution example::
 
   table_create Words TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Words
   [
   {"_key": "groonga"},
@@ -9,28 +9,28 @@ Execution example::
   {"_key": "Senna"},
   {"_key": "Tritonn"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  # [[0,1337566253.89858,0.000355720520019531],4]
   select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "groonga"
-  #       ], 
+  #       ],
   #       [
   #         "senna"
   #       ]

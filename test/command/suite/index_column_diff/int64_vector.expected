@@ -33,9 +33,7 @@ index_column_diff Numbers data_index
         "id": 1,
         "value": -9223372036854775808
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -48,9 +46,7 @@ index_column_diff Numbers data_index
         "id": 2,
         "value": 9223372036854775807
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 1,
@@ -63,9 +59,7 @@ index_column_diff Numbers data_index
         "id": 3,
         "value": -9223372036854775807
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,
@@ -78,9 +72,7 @@ index_column_diff Numbers data_index
         "id": 4,
         "value": 9223372036854775806
       },
-      "remains": [
-
-      ],
+      "remains": [],
       "missings": [
         {
           "record_id": 2,

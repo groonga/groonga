@@ -1,0 +1,62 @@
+plugin_register functions/number
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data vector COLUMN_VECTOR Float
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"vector": [0.1, -0.2, 0.3]},
+{"vector": [0.8, 0.5, -0.1]},
+{"vector": [-0.2, 0.9, 0.1]}
+]
+[[0,0.0,0.0],3]
+select   --table Data   --output_columns 'vector, number_round(distance_cosine(vector, [0.5, 0.2, 0.9]), 5)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "vector",
+          "Float"
+        ],
+        [
+          "number_round",
+          null
+        ]
+      ],
+      [
+        [
+          0.1,
+          -0.2,
+          0.3
+        ],
+        0.28649
+      ],
+      [
+        [
+          0.8,
+          0.5,
+          -0.1
+        ],
+        0.58793
+      ],
+      [
+        [
+          -0.2,
+          0.9,
+          0.1
+        ],
+        0.82522
+      ]
+    ]
+  ]
+]

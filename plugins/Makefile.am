@@ -1,11 +1,12 @@
 SUBDIRS =					\
-	tokenizers				\
-	suggest					\
+	functions				\
+	language_model				\
 	query_expanders				\
 	ruby					\
-	token_filters				\
 	sharding				\
-	functions
+	suggest					\
+	token_filters				\
+	tokenizers
 
 EXTRA_DIST =					\
 	CMakeLists.txt

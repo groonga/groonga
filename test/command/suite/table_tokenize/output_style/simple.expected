@@ -1,0 +1,4 @@
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_tokenize Terms "aBcDe 123" --mode ADD --output_style simple
+[[0,0.0,0.0],["abcde","123"]]

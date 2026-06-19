@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋−"   WITH_TYPES
+normalize   'NormalizerNFKC("unify_hyphen", true,                   "version", "NFKC_VERSION")'   "-˗֊‐‑‒–⁃⁻₋−"   WITH_TYPES
 [
   [
     0,
@@ -18,10 +18,9 @@ normalize   'NormalizerNFKC("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋
       "symbol",
       "symbol",
       "symbol",
-      "symbol"
+      "symbol",
+      "null"
     ],
-    "checks": [
-
-    ]
+    "checks": []
   }
 ]

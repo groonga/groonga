@@ -1,9 +1,10 @@
-# Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,9 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# * Ubuntu 20.04: 3.16
-# * CentOS 7's EPEL: 3.17
-cmake_minimum_required(VERSION 3.16)
+# * Ubuntu 22.04: 3.22
+cmake_minimum_required(VERSION 3.22)
 
 message(STATUS "CMake: ${CMAKE_VERSION}")
 
@@ -53,6 +53,24 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+# https://cmake.org/cmake/help/latest/policy/CMP0077.html
+#
+# option() honors normal variables.
+cmake_policy(SET CMP0077 NEW)
+
+# https://cmake.org/cmake/help/latest/policy/CMP0135.html
+#
+# When using the URL download method with the ExternalProject_Add()
+# command, CMake 3.23 and below sets the timestamps of the extracted
+# contents to the same as the timestamps in the archive. When the URL
+# changes, the new archive is downloaded and extracted, but the
+# timestamps of the extracted contents might not be newer than the
+# previous contents. Anything that depends on the extracted contents
+# might not be rebuilt, even though the contents may change.
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
 # https://cmake.org/cmake/help/latest/policy/CMP0141.html
 #
 # MSVC debug information format flags are selected by an abstraction.
@@ -72,6 +90,17 @@ project(
   LANGUAGES C CXX)
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
 set(GRN_PROJECT_LABEL "Groonga")
+
+message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+
+if(NOT DEFINED CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
+set(CMAKE_C_STANDARD_REQUIRED TRUE)
+if(NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 17)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -115,6 +144,8 @@ endif()
 
 configure_file(include/groonga/version.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
+configure_file(include/groonga/build_option_cmake.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/build_option.h)
 
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
@@ -124,6 +155,7 @@ include(CheckSymbolExists)
 include(CheckStructHasMember)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+include(CheckCSourceCompiles)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 include(CMakePackageConfigHelpers)
@@ -186,6 +218,10 @@ set(GRN_RELATIVE_PLUGINS_DIR
     "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/plugins")
 set(GRN_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_PLUGINS_DIR}")
 set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
+set(GRN_RELATIVE_GGML_BACKENDS_DIR
+    "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/ggml")
+set(GRN_GGML_BACKENDS_DIR
+    "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_GGML_BACKENDS_DIR}")
 set(GRN_DLL_FILENAME "libgroonga${CMAKE_SHARED_LIBRARY_SUFFIX}")
 set(GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE
     "${GRN_CONFIG_DIR}/synonyms.tsv")
@@ -194,6 +230,10 @@ set(GRN_RELATIVE_RUBY_SCRIPTS_DIR
     "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/scripts/ruby")
 set(GRN_RUBY_SCRIPTS_DIR
     "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
+set(GRN_RELATIVE_LANGUAGE_MODELS_DIR
+    "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/language_models")
+set(GRN_LANGUAGE_MODELS_DIR
+    "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_LANGUAGE_MODELS_DIR}")
 
 if(GRN_C_COMPILER_GNU_LIKE)
   set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
@@ -203,8 +243,6 @@ if(GRN_C_COMPILER_GNU_LIKE)
       "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
   set(GRN_CXX_COMPILE_FLAGS
       "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
-  set(CMAKE_C_STANDARD 99)
-  set(CMAKE_C_STANDARD_REQUIRED TRUE)
 endif()
 
 # /Ob1 is used with RelWithDebInfo by default but it's slower than /Ob2 which is
@@ -241,11 +279,100 @@ macro(check_build_flag flag)
   check_cxxflag(${flag})
 endmacro()
 
+set(GRN_C_FLAGS_AVX "")
+set(GRN_C_FLAGS_AVX2 "")
+set(GRN_C_FLAGS_AVX512 "")
+set(GRN_C_FLAGS_NEON64 "")
+if(MSVC)
+  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+    set(GRN_SYSTEM_PROCESSOR "x86_64")
+    set(GRN_C_FLAGS_AVX "/arch:AVX")
+    set(GRN_C_FLAGS_AVX2 "/arch:AVX2")
+    set(GRN_C_FLAGS_AVX512 "/arch:AVX512")
+  elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+    set(GRN_SYSTEM_PROCESSOR "arm64")
+    set(GRN_C_FLAGS_NEON64 "/arch:armv8.0")
+  else()
+    set(GRN_SYSTEM_PROCESSOR "unknown")
+  endif()
+else()
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+    set(GRN_SYSTEM_PROCESSOR "x86_64")
+    check_c_compiler_flag("-mavx" GRN_HAVE_AVX_FLAG)
+    if(GRN_HAVE_AVX_FLAG)
+      set(GRN_C_FLAGS_AVX "-mavx")
+    endif()
+    check_c_compiler_flag("-mavx2" GRN_HAVE_AVX2_FLAG)
+    if(GRN_HAVE_AVX2_FLAG)
+      set(GRN_C_FLAGS_AVX2 "-mavx2")
+    endif()
+    check_c_compiler_flag("-mavx512cd" GRN_HAVE_AVX512CD_FLAG)
+    check_c_compiler_flag("-mavx512dq" GRN_HAVE_AVX512DQ_FLAG)
+    check_c_compiler_flag("-mavx512f" GRN_HAVE_AVX512F_FLAG)
+    check_c_compiler_flag("-mavx512fp16" GRN_HAVE_AVX512FP16_FLAG)
+    check_c_compiler_flag("-mavx512vnni" GRN_HAVE_AVX512VNNI_FLAG)
+    check_c_compiler_flag("-mavx512vpopcntdq" GRN_HAVE_AVX512VPOPCNTDQ_FLAG)
+    if(GRN_HAVE_AVX512CD_FLAG
+       AND GRN_HAVE_AVX512DQ_FLAG
+       AND GRN_HAVE_AVX512F_FLAG
+       AND GRN_HAVE_AVX512FP16_FLAG
+       AND GRN_HAVE_AVX512VNNI_FLAG
+       AND GRN_HAVE_AVX512VPOPCNTDQ_FLAG)
+      set(GRN_C_FLAGS_AVX512)
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512f")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512fp16")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512cd")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512dq")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512vnni")
+      string(APPEND GRN_C_FLAGS_AVX512 " -mavx512vpopcntdq")
+    endif()
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64)$")
+    set(GRN_SYSTEM_PROCESSOR "arm64")
+    check_c_compiler_flag("-march=armv8-a" GRN_HAVE_ARCH_ARMV8_A_FLAG)
+    if(GRN_HAVE_ARCH_ARMV8_A_FLAG)
+      set(GRN_C_FLAGS_NEON64 "-march=armv8-a")
+    endif()
+  else()
+    set(GRN_SYSTEM_PROCESSOR "unknown")
+  endif()
+endif()
+
+set(GRN_WITH_SIMD OFF)
+if(GRN_C_FLAGS_AVX)
+  message(STATUS "AVX flags: ${GRN_C_FLAGS_AVX}")
+  set(GRN_WITH_SIMD_AVX ON)
+  set(GRN_WITH_SIMD ON)
+else()
+  set(GRN_WITH_SIMD_AVX OFF)
+endif()
+if(GRN_C_FLAGS_AVX2)
+  message(STATUS "AVX2 flags: ${GRN_C_FLAGS_AVX2}")
+  set(GRN_WITH_SIMD_AVX2 ON)
+  set(GRN_WITH_SIMD ON)
+else()
+  set(GRN_WITH_SIMD_AVX2 OFF)
+endif()
+if(GRN_C_FLAGS_AVX512)
+  message(STATUS "AVX512 flags: ${GRN_C_FLAGS_AVX512}")
+  set(GRN_WITH_SIMD_AVX512 ON)
+  set(GRN_WITH_SIMD ON)
+else()
+  set(GRN_WITH_SIMD_AVX512 OFF)
+endif()
+if(GRN_C_FLAGS_NEON64)
+  message(STATUS "NEON64 flags: ${GRN_C_FLAGS_NEON64}")
+  set(GRN_WITH_SIMD_NEON64 ON)
+  set(GRN_WITH_SIMD ON)
+else()
+  set(GRN_WITH_SIMD_NEON64 OFF)
+endif()
+
 if(GRN_C_COMPILER_GNU_LIKE)
   check_build_flag("-Wall")
   check_build_flag("-Wno-unused-but-set-variable")
   check_build_flag("-Wno-unused-parameter")
   check_cflag("-Wno-pointer-sign")
+  check_build_flag("-Wfloat-equal")
   check_build_flag("-Wformat")
   check_build_flag("-Wno-format-truncation")
   check_build_flag("-Wstrict-aliasing=2")
@@ -255,11 +382,57 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_cflag("-Wbad-function-cast")
   check_build_flag("-Wwrite-strings")
   check_build_flag("-Wsign-compare")
+  check_build_flag("-Wtype-limits")
   check_build_flag("-Wmissing-field-initializers")
   check_cflag("-Wno-declaration-after-statement")
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
+  check_build_flag("-Wsuggest-override")
   check_build_flag("-Wno-implicit-fallthrough")
+  check_cflag("-Wno-frame-larger-than")
+elseif(MSVC)
+  # Enable warnings
+
+  # unary minus operator applied to unsigned type, result still unsigned
+  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
+  string(APPEND GRN_C_COMPILE_FLAGS " /w24146")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " /w24146")
+
+  # Disable warnings
+
+  # 'operator': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+  # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4334
+  string(APPEND GRN_C_COMPILE_FLAGS " /wd4334")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4334")
+endif()
+
+option(GRN_WARN_CONVERSION "Enable -Wconversion" OFF)
+if(GRN_WARN_CONVERSION)
+  if(GRN_C_COMPILER_GNU_LIKE)
+    check_build_flag("-Wconversion")
+  elseif(MSVC)
+    string(APPEND GRN_C_COMPILE_FLAGS " /W3")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /W3")
+    # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+    string(APPEND GRN_C_COMPILE_FLAGS " /w24244")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /w24244")
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    string(APPEND GRN_C_COMPILE_FLAGS " /w34267")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /w34267")
+  endif()
+else()
+  if(MSVC)
+    # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+    string(APPEND GRN_C_COMPILE_FLAGS " /wd4244")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4244")
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    string(APPEND GRN_C_COMPILE_FLAGS " /wd4267")
+    string(APPEND GRN_CXX_COMPILE_FLAGS " /wd4267")
+  endif()
 endif()
 
 option(GRN_ALLOW_WARNING "allow warning." ON)
@@ -271,6 +444,27 @@ if(NOT GRN_ALLOW_WARNING)
     set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} /WX")
     set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} /WX")
   endif()
+endif()
+
+set(GRN_WITH_BFLOAT16
+    "auto"
+    CACHE STRING "Support bfloat16.")
+check_c_source_compiles(
+  [=[
+int
+main(int argc, char *argv)
+{
+  __bf16 value = 1.0;
+  return 0;
+}
+]=]
+  GRN_HAVE_BFLOAT16)
+if(GRN_WITH_BFLOAT16 STREQUAL "yes")
+  if(!GRN_HAVE_BFLOAT16)
+    message(FATAL_ERROR "Compiler doesn't support bfloat16")
+  endif()
+elseif(GRN_WITH_BFLOAT16 STREQUAL "no")
+  set(GRN_HAVE_BFLOAT16 NO)
 endif()
 
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
@@ -336,22 +530,54 @@ endif()
 check_struct_has_member("struct tm" "tm_gmtoff" "time.h"
                         HAVE_STRUCT_TM_TM_GMTOFF)
 
-find_package(Threads REQUIRED)
-if(WIN32)
-  set(HAVE_PTHREAD_H FALSE)
-else()
-  set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
+if(NOT WASI)
+  find_package(Threads REQUIRED)
+  if(WIN32)
+    set(HAVE_PTHREAD_H FALSE)
+  else()
+    set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
+  endif()
 endif()
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
 option(GRN_WITH_MEMORY_DEBUG "use debug memory management" OFF)
 
+option(GRN_WITH_UBSAN "Enable Undefined Behavior Sanitizer (UBSAN) checking"
+       OFF)
+if(GRN_WITH_UBSAN)
+  # UBSAN support requires Clang.
+  # GCC does not currently support `-fno-sanitize=alignment`, which is needed to
+  # suppress alignment-related sanitizer errors. Enabling UBSAN with GCC without
+  # this flag produces excessive misalignment errors. Once GCC adds support for
+  # `-fno-sanitize=alignment`, we can consider enabling UBSAN for GCC here as
+  # well.
+  if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    set(GRN_UBSAN_FLAGS "-fsanitize=undefined -fno-sanitize=alignment,vptr")
+    string(APPEND CMAKE_C_FLAGS " ${GRN_UBSAN_FLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS " ${GRN_UBSAN_FLAGS}")
+    message(STATUS "UBSAN flags: ${GRN_UBSAN_FLAGS}")
+  else()
+    message(FATAL_ERROR "UBSAN support is available only for Clang")
+  endif()
+endif()
+
+option(GRN_WITH_LTO "Enable link-time optimization" OFF)
+if(GRN_WITH_LTO)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
+  if(lto_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+  else()
+    message(FATAL_ERROR "LTO not supported: ${lto_error}")
+  endif()
+  check_build_flag("-Werror=odr")
+endif()
+
 if(WIN32)
   target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
   target_link_libraries(grn_dependencies INTERFACE psapi.lib)
 
-  set(USE_EXACT_ALLOC_COUNT TRUE)
   set(USE_SELECT TRUE)
 else()
   ac_check_headers(sys/epoll.h)
@@ -398,7 +624,13 @@ endif()
 option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
 if(GRN_WITH_APACHE_ARROW)
   find_package(Arrow REQUIRED)
-  target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
+  if(Arrow_VERSION VERSION_GREATER_EQUAL 21.0.0)
+    find_package(ArrowCompute REQUIRED)
+    target_link_libraries(grn_dependencies
+                          INTERFACE ArrowCompute::arrow_compute_shared)
+  else()
+    target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
+  endif()
 endif()
 
 set(GRN_WITH_ZLIB
@@ -422,6 +654,29 @@ if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   endif()
 endif()
 
+include(FetchContent)
+set(GRN_FETCH_CONTENT_COMMON_OPTIONS)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.28)
+  list(APPEND GRN_FETCH_CONTENT_COMMON_OPTIONS EXCLUDE_FROM_ALL TRUE)
+endif()
+macro(grn_prepare_fetchcontent)
+  set(BUILD_SHARED_LIBS OFF)
+  set(BUILD_STATIC_LIBS ON)
+  set(BUILD_TESTING OFF)
+  set(CMAKE_COMPILE_WARNING_AS_ERROR FALSE)
+  set(CMAKE_EXPORT_NO_PACKAGE_REGISTRY TRUE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+  if(NOT GRN_ALLOW_WARNING)
+    if(GRN_C_COMPILER_GNU_LIKE)
+      string(APPEND CMAKE_C_FLAGS " -Werror")
+      string(APPEND CMAKE_CXX_FLAGS " -Werror")
+    elseif(MSVC)
+      string(APPEND CMAKE_C_FLAGS " /WX")
+      string(APPEND CMAKE_CXX_FLAGS " /WX")
+    endif()
+  endif()
+endmacro()
+
 include(ExternalProject)
 set(GRN_EP_COMMON_OPTIONS
     LOG_DOWNLOAD
@@ -443,7 +698,9 @@ set(GRN_EP_COMMON_OPTIONS
     LOG_OUTPUT_ON_FAILURE
     TRUE)
 
-set(GRN_ZSTD_EP_VERSION "1.4.8")
+set(GRN_ZSTD_BUNDLED_VERSION "1.5.7")
+set(GRN_ZSTD_BUNDLED_SHA256
+    "eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3")
 set(GRN_WITH_ZSTD
     "auto"
     CACHE STRING "Support data compression by Zstandard.")
@@ -460,60 +717,131 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
   if(Groongazstd_FOUND)
     set(GRN_WITH_ZSTD TRUE)
     message(STATUS "Zstandard: system")
-  else()
-    set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
-    if(MSVC)
-      set(ZSTD_LIBRARY_BASE_NAME zstd_static)
-    else()
-      set(ZSTD_LIBRARY_BASE_NAME zstd)
-    endif()
-    set(ZSTD_STATIC_LIBRARY "${ZSTD_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-    string(APPEND ZSTD_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
-    string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
-    string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    set(ZSTD_CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
-        -DZSTD_BUILD_PROGRAMS=OFF
-        -DZSTD_BUILD_SHARED=OFF
-        -DZSTD_BUILD_STATIC=ON
-        -DZSTD_USE_STATIC_RUNTIME=ON)
-    set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
-    set(ZSTD_SOURCE_LOCAL_PATH
-        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
-    if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
-      set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
-    else()
-      set(ZSTD_SOURCE_URL "https://github.com/facebook/zstd/releases/download")
-      string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
-      string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
-    endif()
-    externalproject_add(
-      zstd-ep
-      ${GRN_EP_COMMON_OPTIONS}
-      CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
-      SOURCE_SUBDIR "build/cmake"
-      URL ${ZSTD_SOURCE_URL}
-      BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
-    file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
-    add_library(Groonga::libzstd STATIC IMPORTED)
-    set_target_properties(
-      Groonga::libzstd
-      PROPERTIES IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
-                 INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
-    add_dependencies(Groonga::libzstd zstd-ep)
-    set(ZSTD_SOURCE_DIR
-        "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
-    install(FILES "${ZSTD_SOURCE_DIR}/CHANGELOG" "${ZSTD_SOURCE_DIR}/COPYING"
-                  "${ZSTD_SOURCE_DIR}/LICENSE" "${ZSTD_SOURCE_DIR}/README.md"
-            DESTINATION "${GRN_DATA_DIR}/zstd")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_zstd)
+      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_BUNDLED_VERSION}.tar.gz")
+      set(ZSTD_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
+      if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
+        set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
+      else()
+        set(ZSTD_SOURCE_URL
+            "https://github.com/facebook/zstd/releases/download")
+        string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_BUNDLED_VERSION}")
+        string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
+      endif()
+      fetchcontent_declare(
+        zstd
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS} SOURCE_SUBDIR "build/cmake"
+        URL ${ZSTD_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_ZSTD_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(ZSTD_BUILD_PROGRAMS OFF)
+      set(ZSTD_BUILD_SHARED OFF)
+      set(ZSTD_BUILD_STATIC ON)
+      set(ZSTD_USE_STATIC_RUNTIME ON)
+      fetchcontent_makeavailable(zstd)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${zstd_SOURCE_DIR}/build/cmake"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      set(ZSTD_INCLUDE_DIR
+          "${zstd_SOURCE_DIR}/lib"
+          PARENT_SCOPE)
+      add_library(libzstd_headers INTERFACE)
+      target_include_directories(
+        libzstd_headers SYSTEM
+        INTERFACE "$<BUILD_INTERFACE:${zstd_SOURCE_DIR}/lib>")
+      target_link_libraries(grn_dependencies INTERFACE libzstd_headers)
+      install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
+                    "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/zstd")
+    endfunction()
+    grn_build_zstd()
+    set(GRN_ZSTD_TARGET libzstd_static)
+    set(GRN_WITH_BUNDLED_ZSTD TRUE)
     set(GRN_WITH_ZSTD TRUE)
-    message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
+    message(STATUS "Zstandard: (bundled)")
   endif()
-  target_link_libraries(grn_dependencies INTERFACE Groonga::libzstd)
+  target_link_libraries(grn_dependencies INTERFACE ${GRN_ZSTD_TARGET})
 else()
   set(GRN_WITH_ZSTD FALSE)
+endif()
+
+set(GRN_SIMDJSON_BUNDLED_VERSION "3.13.0")
+set(GRN_SIMDJSON_BUNDLED_SHA256
+    "07a1bb3587aac18fd6a10a83fe4ab09f1100ab39f0cb73baea1317826b9f9e0d")
+set(GRN_WITH_SIMDJSON
+    "auto"
+    CACHE STRING "Support JSON processing by simdjson.")
+if(NOT "${GRN_WITH_SIMDJSON}" STREQUAL "no")
+  if("${GRN_WITH_SIMDJSON}" STREQUAL "bundled")
+    set(simdjson_FOUND FALSE)
+  else()
+    if("${GRN_WITH_SIMDJSON}" STREQUAL "system")
+      find_package(simdjson REQUIRED)
+    else()
+      find_package(simdjson)
+    endif()
+  endif()
+  if(simdjson_FOUND)
+    set(GRN_WITH_SIMDJSON TRUE)
+    target_link_libraries(grn_dependencies INTERFACE simdjson::simdjson)
+    message(STATUS "simdjson: (system)")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_simdjson)
+      set(SIMDJSON_SOURCE_BASE_NAME
+          "simdjson-${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+      set(SIMDJSON_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${SIMDJSON_SOURCE_BASE_NAME}")
+      if(EXISTS ${SIMDJSON_SOURCE_LOCAL_PATH})
+        set(SIMDJSON_SOURCE_URL ${SIMDJSON_SOURCE_LOCAL_PATH})
+      else()
+        set(SIMDJSON_SOURCE_URL
+            "https://github.com/simdjson/simdjson/archive/refs/tags/")
+        string(APPEND SIMDJSON_SOURCE_URL
+               "v${GRN_SIMDJSON_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        simdjson
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${SIMDJSON_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_SIMDJSON_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(simdjson)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${simdjson_SOURCE_DIR}"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      set(SIMDJSON_INCLUDE_DIR
+          "${simdjson_SOURCE_DIR}/lib"
+          PARENT_SCOPE)
+      add_library(libsimdjson_headers INTERFACE)
+      install(
+        FILES "${simdjson_SOURCE_DIR}/AUTHORS"
+              "${simdjson_SOURCE_DIR}/CONTRIBUTORS"
+              "${simdjson_SOURCE_DIR}/LICENSE"
+              "${simdjson_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/simdjson")
+    endfunction()
+    grn_build_simdjson()
+    set(GRN_WITH_BUNDLED_SIMDJSON TRUE)
+    set(GRN_WITH_SIMDJSON TRUE)
+    target_link_libraries(grn_dependencies INTERFACE simdjson::simdjson)
+    message(STATUS "simdjson: (bundled)")
+  else()
+    set(GRN_WITH_SIMDJSON FALSE)
+  endif()
+else()
+  set(GRN_WITH_SIMDJSON FALSE)
 endif()
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_rapidjson_version"
@@ -524,15 +852,34 @@ set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 set(GRN_WITH_RAPIDJSON
     "auto"
     CACHE STRING "Support JSON processing by RapidJSON.")
+if(GRN_WITH_SIMDJSON)
+  set(GRN_WITH_RAPIDJSON "no")
+endif()
 if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
-  find_package(GroongaRapidJSON)
+  if("${GRN_WITH_RAPIDJSON}" STREQUAL "bundled")
+    set(GroongaRapidJSON_FOUND FALSE)
+  else()
+    if("${GRN_WITH_RAPIDJSON}" STREQUAL "system")
+      find_package(GroongaRapidJSON REQUIRED)
+    else()
+      find_package(GroongaRapidJSON)
+    endif()
+  endif()
   if(GroongaRapidJSON_FOUND)
     set(GRN_WITH_RAPIDJSON TRUE)
+    message(STATUS "RapidJSON: system")
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   else()
-    set(RAPIDJSON_SOURCE_URL
-        "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz"
+    set(GRN_BUNDLED_RAPIDJSON_DIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/rapidjson-${GRN_BUNDLED_RAPIDJSON_VERSION}"
     )
+    if(EXISTS ${GRN_BUNDLED_RAPIDJSON_DIR})
+      set(RAPIDJSON_SOURCE_URL ${GRN_BUNDLED_RAPIDJSON_DIR})
+    else()
+      set(RAPIDJSON_SOURCE_URL
+          "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz"
+      )
+    endif()
     set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
     set(RAPIDJSON_CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -548,8 +895,9 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
       URL ${RAPIDJSON_SOURCE_URL})
     add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
-    target_include_directories(Groonga::RapidJSON
-                               INTERFACE "${RAPIDJSON_PREFIX}/include")
+    target_include_directories(
+      Groonga::RapidJSON SYSTEM
+      INTERFACE "$<BUILD_INTERFACE:${RAPIDJSON_PREFIX}/include>")
     add_dependencies(Groonga::RapidJSON rapidjson-ep)
     set(RAPIDJSON_SOURCE_DIR
         "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
@@ -559,6 +907,7 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
             "${RAPIDJSON_SOURCE_DIR}/readme.md"
       DESTINATION "${GRN_DATA_DIR}/rapidjson")
     set(GRN_WITH_RAPIDJSON TRUE)
+    message(STATUS "RapidJSON: bundled")
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   endif()
 else()
@@ -605,7 +954,7 @@ if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
   if(MECAB_LIBRARIES)
     set(GRN_WITH_MECAB TRUE)
     add_library(libmecab INTERFACE IMPORTED)
-    target_include_directories(libmecab INTERFACE ${MECAB_INCLUDE_DIR})
+    target_include_directories(libmecab SYSTEM INTERFACE ${MECAB_INCLUDE_DIR})
     target_link_libraries(libmecab INTERFACE ${MECAB_LIBRARIES})
     message(STATUS "MeCab: ${MECAB_LIBRARIES}")
   else()
@@ -645,11 +994,7 @@ set(GRN_WITH_KYTEA
     CACHE STRING "use KyTea for morphological analysis")
 if(NOT ${GRN_WITH_KYTEA} STREQUAL "no")
   if(PkgConfig_FOUND)
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
-      pkg_check_modules(pkg_kytea kytea IMPORTED_TARGET)
-    else()
-      pkg_check_modules(pkg_kytea kytea IMPORTED_TARGET GLOBAL)
-    endif()
+    pkg_check_modules(pkg_kytea kytea IMPORTED_TARGET)
   endif()
   if(pkg_kytea_FOUND)
     set(GRN_WITH_KYTEA TRUE)
@@ -687,11 +1032,7 @@ set(GRN_WITH_ZEROMQ
     CACHE STRING "use ZeroMQ for suggestion")
 if(NOT ${GRN_WITH_ZEROMQ} STREQUAL "no")
   if(PkgConfig_FOUND)
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
-      pkg_check_modules(pkg_libzmq libzmq IMPORTED_TARGET)
-    else()
-      pkg_check_modules(pkg_libzmq libzmq IMPORTED_TARGET GLOBAL)
-    endif()
+    pkg_check_modules(pkg_libzmq libzmq IMPORTED_TARGET)
   endif()
   if(pkg_libzmq_FOUND)
     set(GRN_WITH_ZEROMQ TRUE)
@@ -711,11 +1052,7 @@ set(GRN_WITH_LIBEVENT
     CACHE STRING "use libevent for suggestion")
 if(NOT ${GRN_WITH_LIBEVENT} STREQUAL "no")
   if(PkgConfig_FOUND)
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
-      pkg_check_modules(pkg_libevent libevent IMPORTED_TARGET)
-    else()
-      pkg_check_modules(pkg_libevent libevent IMPORTED_TARGET GLOBAL)
-    endif()
+    pkg_check_modules(pkg_libevent libevent IMPORTED_TARGET)
   endif()
   if(pkg_libevent_FOUND)
     set(GRN_WITH_LIBEVENT TRUE)
@@ -730,17 +1067,25 @@ else()
   set(GRN_WITH_LIBEVENT FALSE)
 endif()
 
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_message_pack_version"
-     GRN_BUNDLED_MESSAGE_PACK_VERSION)
-string(STRIP "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
-             GRN_BUNDLED_MESSAGE_PACK_VERSION)
-
+set(GRN_MESSAGE_PACK_BUNDLED_VERSION "6.1.0")
+set(GRN_MESSAGE_PACK_BUNDLED_SHA256
+    "674119f1a85b5f2ecc4c7d5c2859edf50c0b05e0c10aa0df85eefa2c8c14b796")
 set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
 set(GRN_WITH_MESSAGE_PACK
     "auto"
-    CACHE STRING "use MessagePack for suggestion")
+    CACHE STRING "use MessagePack for suggestion, WAL and so on")
+option(GRN_BUNDLED_MESSAGE_PACK_SHARED
+       "Build bundled MessagePack as a shared library and install it" OFF)
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
-  find_package(Groongamsgpackc)
+  if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "bundled")
+    set(Groongamsgpackc_FOUND FALSE)
+  else()
+    if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "system")
+      find_package(Groongamsgpackc REQUIRED)
+    else()
+      find_package(Groongamsgpackc)
+    endif()
+  endif()
   if(Groongamsgpackc_FOUND)
     set(GRN_WITH_MESSAGE_PACK TRUE)
     target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
@@ -748,30 +1093,169 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
       install(FILES "cmake/FindGroongamsgpackc.cmake"
               DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
     endif()
-  else()
-    set(GRN_BUNDLED_MESSAGE_PACK_DIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
-    )
-    if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
-      set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
-      set(GRN_WITH_MESSAGE_PACK TRUE)
-      target_link_libraries(grn_dependencies INTERFACE msgpackc)
-      message(STATUS "MessagePack: (bundled)")
-    else()
-      if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")
-        message(FATAL_ERROR "No MessagePack found")
+    message(STATUS "MessagePack: (system)")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_message_pack)
+      set(MESSAGE_PACK_SOURCE_BASE_NAME
+          "msgpack-c-${GRN_MESSAGE_PACK_BUNDLED_VERSION}.tar.gz")
+      set(MESSAGE_PACK_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${MESSAGE_PACK_SOURCE_BASE_NAME}")
+      if(EXISTS ${MESSAGE_PACK_SOURCE_LOCAL_PATH})
+        set(MESSAGE_PACK_SOURCE_URL ${MESSAGE_PACK_SOURCE_LOCAL_PATH})
+      else()
+        set(MESSAGE_PACK_SOURCE_URL
+            "https://github.com/msgpack/msgpack-c/releases/download")
+        string(APPEND MESSAGE_PACK_SOURCE_URL
+               "/c-${GRN_MESSAGE_PACK_BUNDLED_VERSION}")
+        string(APPEND MESSAGE_PACK_SOURCE_URL
+               "/${MESSAGE_PACK_SOURCE_BASE_NAME}")
       endif()
-      set(GRN_WITH_MESSAGE_PACK FALSE)
-      message(STATUS "No MessagePack")
-    endif()
+      set(FETCH_CONTENT_OPTIONS ${GRN_FETCH_CONTENT_COMMON_OPTIONS})
+      if(GRN_BUNDLED_MESSAGE_PACK_SHARED)
+        list(FIND FETCH_CONTENT_OPTIONS EXCLUDE_FROM_ALL EXCLUDE_FROM_ALL_INDEX)
+        if(NOT EXCLUDE_FROM_ALL_INDEX EQUAL -1)
+          # Remove EXCLUDE_FROM_ALL itself.
+          list(REMOVE_AT FETCH_CONTENT_OPTIONS ${EXCLUDE_FROM_ALL_INDEX})
+          # Remove EXCLUDE_FROM_ALL value (TRUE).
+          list(REMOVE_AT FETCH_CONTENT_OPTIONS ${EXCLUDE_FROM_ALL_INDEX})
+        endif()
+      endif()
+      fetchcontent_declare(
+        msgpack-c
+        ${FETCH_CONTENT_OPTIONS}
+        URL ${MESSAGE_PACK_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_MESSAGE_PACK_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      if(GRN_BUNDLED_MESSAGE_PACK_SHARED)
+        set(BUILD_SHARED_LIBS ON)
+      endif()
+      set(MSGPACK_BUILD_EXAMPLES OFF)
+      fetchcontent_makeavailable(msgpack-c)
+      if(CMAKE_VERSION VERSION_LESS 3.28 AND NOT
+                                             GRN_BUNDLED_MESSAGE_PACK_SHARED)
+        set_property(DIRECTORY "${msgpack-c_SOURCE_DIR}"
+                     PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      install(
+        FILES "${msgpack-c_SOURCE_DIR}/AUTHORS"
+              "${msgpack-c_SOURCE_DIR}/COPYING"
+              "${msgpack-c_SOURCE_DIR}/ChangeLog"
+              "${msgpack-c_SOURCE_DIR}/LICENSE_1_0.txt"
+              "${msgpack-c_SOURCE_DIR}/NOTICE"
+              "${msgpack-c_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/msgpack-c")
+    endfunction()
+    grn_build_message_pack()
+    set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
+    set(GRN_WITH_MESSAGE_PACK TRUE)
+    target_link_libraries(grn_dependencies INTERFACE msgpack-c)
+    add_library(Groonga::msgpackc ALIAS msgpack-c)
+    message(STATUS "MessagePack: (bundled)")
+  else()
+    set(GRN_WITH_MESSAGE_PACK FALSE)
   endif()
 else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+set(GRN_OPENZL_BUNDLED_VERSION "0.1.0")
+set(GRN_OPENZL_BUNDLED_SHA256
+    "3278546dcdbae3aef3887f07b435ebe0aa9f6943a5ac74cf9b7baeefe6526c2e")
+set(GRN_WITH_OPENZL
+    "auto"
+    CACHE STRING "Support data compression by OpenZL.")
+if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
+  if("${GRN_WITH_OPENZL}" STREQUAL "bundled")
+    set(openzl_FOUND FALSE)
+  else()
+    if("${GRN_WITH_OPENZL}" STREQUAL "system")
+      find_package(openzl REQUIRED)
+    else()
+      find_package(openzl)
+    endif()
+  endif()
+  if(openzl_FOUND)
+    set(GRN_WITH_OPENZL TRUE)
+    target_link_libraries(grn_dependencies INTERFACE OpenZL::openzl)
+    message(STATUS "OpenZL: system")
+  elseif(
+    NOT FETCHCONTENT_FULLY_DISCONNECTED
+    AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.24"
+    AND NOT MSVC
+    AND NOT MINGW)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+    #
+    # CMake >= 3.24 is required because OpenZL uses DOWNLOAD_EXTRACT_TIMESTAMP
+    # and OVERRIDE_FIND_PACKAGE option internally.
+    #
+    # MSVC is not supported yet because OpenZL always builds its bundled zstd
+    # via add_subdirectory(), which conflicts with Groonga's bundled zstd build.
+    #
+    # We need to use function to create a variable scope
+    function(grn_build_openzl)
+      set(OPENZL_SOURCE_BASE_NAME "openzl-${GRN_OPENZL_BUNDLED_VERSION}.tar.gz")
+      set(OPENZL_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${OPENZL_SOURCE_BASE_NAME}")
+      set(GRN_OPENZL_FETCH_CONTENT_SOURCE)
+      if(EXISTS ${OPENZL_SOURCE_LOCAL_PATH})
+        list(APPEND GRN_OPENZL_FETCH_CONTENT_SOURCE URL
+             ${OPENZL_SOURCE_LOCAL_PATH})
+      else()
+        list(
+          APPEND
+          GRN_OPENZL_FETCH_CONTENT_SOURCE
+          URL
+          "https://github.com/facebook/openzl/archive/refs/tags/v${GRN_OPENZL_BUNDLED_VERSION}.tar.gz"
+          URL_HASH
+          "SHA256=${GRN_OPENZL_BUNDLED_SHA256}")
+      endif()
+      fetchcontent_declare(openzl ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+                                  ${GRN_OPENZL_FETCH_CONTENT_SOURCE})
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(openzl)
+      if(GRN_C_COMPILER_GNU_LIKE)
+        if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+          set(GRN_OPENZL_SUPPRESS_WARNINGS -Wno-conversion
+                                           -Wno-format-nonliteral)
+          target_compile_options(
+            openzl
+            PRIVATE $<$<COMPILE_LANGUAGE:C>:${GRN_OPENZL_SUPPRESS_WARNINGS}>
+                    $<$<COMPILE_LANGUAGE:CXX>:${GRN_OPENZL_SUPPRESS_WARNINGS}>)
+        endif()
+        target_compile_options(
+          openzl
+          PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-declaration-after-statement>)
+      endif()
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
+                                                               TRUE)
+      endif()
+      install(
+        FILES "${openzl_SOURCE_DIR}/CHANGELOG" "${openzl_SOURCE_DIR}/LICENSE"
+              "${openzl_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/openzl")
+    endfunction()
+    grn_build_openzl()
+    target_link_libraries(grn_dependencies INTERFACE openzl)
+    set(GRN_WITH_BUNDLED_OPENZL TRUE)
+    set(GRN_WITH_OPENZL TRUE)
+    message(STATUS "OpenZL: (bundled)")
+  else()
+    set(GRN_WITH_OPENZL FALSE)
+  endif()
+else()
+  set(GRN_WITH_OPENZL FALSE)
+endif()
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_xxhash_version"
      GRN_BUNDLED_XXHASH_VERSION)
 string(STRIP "${GRN_BUNDLED_XXHASH_VERSION}" GRN_BUNDLED_XXHASH_VERSION)
+set(GRN_XXHASH_REQUIRED_VERSION "0.8.0")
 
 set(GRN_WITH_BUNDLED_XXHASH FALSE)
 set(GRN_WITH_XXHASH
@@ -782,9 +1266,9 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
     set(GroongaxxHash_FOUND FALSE)
   else()
     if("${GRN_WITH_XXHASH}" STREQUAL "system")
-      find_package(GroongaxxHash REQUIRED)
+      find_package(GroongaxxHash ${GRN_XXHASH_REQUIRED_VERSION} REQUIRED)
     else()
-      find_package(GroongaxxHash)
+      find_package(GroongaxxHash ${GRN_XXHASH_REQUIRED_VERSION})
     endif()
   endif()
   if(GroongaxxHash_FOUND)
@@ -798,8 +1282,9 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
       set(GRN_WITH_BUNDLED_XXHASH TRUE)
       set(GRN_WITH_XXHASH TRUE)
       add_library(xxhash INTERFACE)
-      target_include_directories(xxhash BEFORE
-                                 INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
+      target_include_directories(
+        xxhash SYSTEM BEFORE
+        INTERFACE "$<BUILD_INTERFACE:${GRN_BUNDLED_XXHASH_DIR}>")
       target_compile_definitions(xxhash INTERFACE XXH_INLINE_ALL)
       target_link_libraries(grn_dependencies INTERFACE xxhash)
       message(STATUS "xxHash: (bundled)")
@@ -818,6 +1303,25 @@ else()
   set(GRN_WITH_XXHASH FALSE)
 endif()
 
+set(GRN_WITH_LIBEDIT
+    "auto"
+    CACHE STRING "Support command line editing in groonga command by libedit.")
+if(NOT "${GRN_WITH_LIBEDIT}" STREQUAL "no")
+  if("${GRN_WITH_LIBEDIT}" STREQUAL "system")
+    find_package(Groongalibedit REQUIRED)
+  else()
+    find_package(Groongalibedit)
+  endif()
+  if(Groongalibedit_FOUND)
+    set(GRN_WITH_LIBEDIT TRUE)
+    message(STATUS "libedit: system")
+  else()
+    set(GRN_WITH_LIBEDIT FALSE)
+  endif()
+else()
+  set(GRN_WITH_LIBEDIT FALSE)
+endif()
+
 # We need to find LZ4 after xxHash because bundled LZ4 includes its xxhash.h.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
      GRN_BUNDLED_LZ4_VERSION)
@@ -831,7 +1335,7 @@ if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
   if("${GRN_WITH_LZ4}" STREQUAL "bundled")
     set(Groongalz4_FOUND FALSE)
   else()
-    if("${GRN_WITH_XXHASH}" STREQUAL "system")
+    if("${GRN_WITH_LZ4}" STREQUAL "system")
       find_package(Groongalz4 REQUIRED)
     else()
       find_package(Groongalz4)
@@ -839,14 +1343,16 @@ if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
   endif()
   if(Groongalz4_FOUND)
     set(GRN_WITH_LZ4 TRUE)
-    target_link_libraries(grn_dependencies INTERFACE Groonga::liblz4)
+    target_link_libraries(grn_dependencies INTERFACE ${GRN_LZ4_TARGET})
   else()
     set(GRN_BUNDLED_LZ4_DIR
         "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
     if(EXISTS ${GRN_BUNDLED_LZ4_DIR})
       set(GRN_WITH_BUNDLED_LZ4 TRUE)
       set(GRN_WITH_LZ4 TRUE)
-      target_link_libraries(grn_dependencies INTERFACE liblz4)
+      add_subdirectory(vendor/lz4)
+      set(GRN_LZ4_TARGET liblz4)
+      target_link_libraries(grn_dependencies INTERFACE ${GRN_LZ4_TARGET})
       message(STATUS "LZ4: (bundled)")
     else()
       if("${GRN_WITH_LZ4}" STREQUAL "yes")
@@ -929,6 +1435,886 @@ else()
   set(GRN_WITH_ROARING_BITMAPS FALSE)
 endif()
 
+set(GRN_BLOSC_REQUIRED_VERSION "2.10.0")
+set(GRN_BLOSC_BUNDLED_VERSION "2.13.2")
+set(GRN_BLOSC_BUNDLED_SHA256
+    "f2adcd9615f138d1bb16dc27feadab1bb1eab01d77e5e2323d14ad4ca8c3ca21")
+set(GRN_WITH_BLOSC
+    "no"
+    CACHE STRING "Support column compression by Blosc.")
+if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
+  if("${GRN_WITH_BLOSC}" STREQUAL "bundled")
+    set(Blosc2_FOUND FALSE)
+  else()
+    find_package(Blosc2)
+    if(Blosc2_FOUND AND Blosc2_VERSION VERSION_LESS GRN_BLOSC_REQUIRED_VERSION)
+      set(Blosc2_FOUND FALSE)
+    endif()
+    if(NOT Blosc2_FOUND AND "${GRN_WITH_BLOSC}" STREQUAL "system")
+      message(FATAL_ERROR "Blosc >= ${GRN_BLOSC_REQUIRED_VERSION} not found")
+    endif()
+  endif()
+  if(Blosc2_FOUND)
+    set(GRN_WITH_BLOSC TRUE)
+    target_link_libraries(grn_dependencies INTERFACE Blosc2::blosc2_shared)
+    message(STATUS "Blosc: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_blosc)
+      set(BLOSC_SOURCE_BASE_NAME "c-blosc2-${GRN_BLOSC_BUNDLED_VERSION}.tar.gz")
+      set(BLOSC_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BLOSC_SOURCE_BASE_NAME}")
+      if(EXISTS ${BLOSC_SOURCE_LOCAL_PATH})
+        set(BLOSC_SOURCE_URL ${BLOSC_SOURCE_LOCAL_PATH})
+      else()
+        set(BLOSC_SOURCE_URL
+            "https://github.com/Blosc/c-blosc2/archive/refs/tags")
+        string(APPEND BLOSC_SOURCE_URL "/v${GRN_BLOSC_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        blosc
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${BLOSC_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_BLOSC_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_EXAMPLES OFF)
+      set(BUILD_FUZZERS OFF)
+      set(BUILD_TESTS OFF)
+      set(PREFER_EXTERNAL_LZ4 ON)
+      if(GRN_WITH_LZ4)
+        set(LZ4_INCLUDE_DIR
+            "$<TARGET_PROPERTY:${GRN_LZ4_TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
+        )
+        if(GRN_WITH_BUNDLED_LZ4)
+          if(MSVC)
+            if(CMAKE_VERSION VERSION_LESS "3.27")
+              message(
+                FATAL_ERROR
+                  "CMake 3.27 or later is required for bundled LZ4 and bundled Blosc"
+              )
+            endif()
+            # Because we use shared library for now. We may want to use
+            # static library for LZ4 like Zstandard.
+            set(LZ4_LIBRARY "$<TARGET_IMPORT_FILE:${GRN_LZ4_TARGET}>")
+          else()
+            set(LZ4_LIBRARY "$<TARGET_FILE:${GRN_LZ4_TARGET}>")
+          endif()
+        else()
+          set(LZ4_LIBRARY
+              "$<TARGET_PROPERTY:${GRN_LZ4_TARGET},INTERFACE_LINK_LIBRARIES>")
+        endif()
+      endif()
+      set(PREFER_EXTERNAL_ZLIB ON)
+      set(PREFER_EXTERNAL_ZSTD ON)
+      if(GRN_WITH_ZSTD)
+        if(GRN_WITH_BUNDLED_ZSTD)
+          set(ZSTD_LIBRARY "$<TARGET_FILE:${GRN_ZSTD_TARGET}>")
+        else()
+          set(ZSTD_INCLUDE_DIR
+              "$<TARGET_PROPERTY:${GRN_ZSTD_TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
+          )
+          set(ZSTD_LIBRARY
+              "$<TARGET_PROPERTY:${GRN_ZSTD_TARGET},INTERFACE_LINK_LIBRARIES>")
+        endif()
+      endif()
+      fetchcontent_makeavailable(blosc)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${blosc_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
+      endif()
+      target_include_directories(
+        blosc2_static SYSTEM
+        INTERFACE "$<BUILD_INTERFACE:${blosc_SOURCE_DIR}/include>")
+      install(
+        FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
+              "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"
+              "${blosc_SOURCE_DIR}/LICENSES/FASTLZ.txt"
+              "${blosc_SOURCE_DIR}/README.rst"
+        DESTINATION "${GRN_DATA_DIR}/c-blosc2")
+    endfunction()
+    grn_build_blosc()
+    set(GRN_WITH_BLOSC TRUE)
+    target_link_libraries(grn_dependencies INTERFACE blosc2_static)
+    message(STATUS "Blosc: bundled")
+  else()
+    set(GRN_WITH_BLOSC FALSE)
+  endif()
+else()
+  set(GRN_WITH_BLOSC FALSE)
+endif()
+
+set(GRN_XSIMD_BUNDLED_VERSION "14.0.0")
+set(GRN_XSIMD_BUNDLED_SHA256
+    "17de0236954955c10c09d6938d4c5f3a3b92d31be5dadd1d5d09fc1b15490dce")
+set(GRN_WITH_XSIMD
+    "auto"
+    CACHE STRING "Support SIMD by xsimd.")
+if(NOT GRN_WITH_SIMD)
+  set(GRN_WITH_XSIMD "no")
+endif()
+if(NOT "${GRN_WITH_XSIMD}" STREQUAL "no")
+  if("${GRN_WITH_XSIMD}" STREQUAL "bundled")
+    set(xsimd_FOUND FALSE)
+  else()
+    if("${GRN_WITH_XSIMD}" STREQUAL "system")
+      find_package(xsimd REQUIRED)
+    else()
+      find_package(xsimd)
+    endif()
+  endif()
+  if(xsimd_FOUND)
+    set(GRN_WITH_XSIMD TRUE)
+    target_link_libraries(grn_dependencies INTERFACE xsimd)
+    message(STATUS "xsimd: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_xsimd)
+      set(XSIMD_SOURCE_BASE_NAME "xsimd-${GRN_XSIMD_BUNDLED_VERSION}.tar.gz")
+      set(XSIMD_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${XSIMD_SOURCE_BASE_NAME}")
+      if(EXISTS ${XSIMD_SOURCE_LOCAL_PATH})
+        set(XSIMD_SOURCE_URL ${XSIMD_SOURCE_LOCAL_PATH})
+      else()
+        set(XSIMD_SOURCE_URL
+            "https://github.com/xtensor-stack/xsimd/archive/refs/tags")
+        string(APPEND XSIMD_SOURCE_URL "/${GRN_XSIMD_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        xsimd
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${XSIMD_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_XSIMD_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_EXAMPLES OFF)
+      set(BUILD_TESTS OFF)
+      fetchcontent_makeavailable(xsimd)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${xsimd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
+      endif()
+      target_include_directories(
+        xsimd SYSTEM INTERFACE "$<BUILD_INTERFACE:${xsimd_SOURCE_DIR}/include>")
+      install(FILES "${xsimd_SOURCE_DIR}/LICENSE"
+                    "${xsimd_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/xsimd")
+    endfunction()
+    grn_build_xsimd()
+    set(GRN_WITH_XSIMD TRUE)
+    target_link_libraries(grn_dependencies INTERFACE xsimd)
+    message(STATUS "xsimd: bundled")
+  else()
+    set(GRN_WITH_XSIMD FALSE)
+  endif()
+else()
+  set(GRN_WITH_XSIMD FALSE)
+endif()
+
+set(GRN_SIMSIMD_BUNDLED_VERSION "3.8.0")
+set(GRN_SIMSIMD_BUNDLED_SHA256
+    "e1213104f63ecf107bd2a15d63d29bb2241d8571b11702dd07dd0812c1b600bf")
+option(GRN_WITH_SIMSIMD "Use SimSIMD for similarity distance functions." OFF)
+if(GRN_WITH_SIMSIMD)
+  # We need to use function to create a variable scope
+  function(grn_build_simsimd)
+    set(SIMSIMD_SOURCE_BASE_NAME
+        "simsimd-${GRN_SIMSIMD_BUNDLED_VERSION}.tar.gz")
+    set(SIMSIMD_SOURCE_LOCAL_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${SIMSIMD_SOURCE_BASE_NAME}")
+    if(EXISTS ${SIMSIMD_SOURCE_LOCAL_PATH})
+      set(SIMSIMD_SOURCE_URL ${SIMSIMD_SOURCE_LOCAL_PATH})
+    else()
+      set(SIMSIMD_SOURCE_URL
+          "https://github.com/ashvardanian/SimSIMD/archive/refs/tags")
+      string(APPEND SIMSIMD_SOURCE_URL
+             "/v${GRN_SIMSIMD_BUNDLED_VERSION}.tar.gz")
+    endif()
+    fetchcontent_declare(
+      simsimd
+      ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+      URL ${SIMSIMD_SOURCE_URL}
+      URL_HASH "SHA256=${GRN_SIMSIMD_BUNDLED_SHA256}")
+    grn_prepare_fetchcontent()
+    fetchcontent_makeavailable(simsimd)
+    if(CMAKE_VERSION VERSION_LESS 3.28)
+      set_property(DIRECTORY ${simsimd_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                            TRUE)
+    endif()
+    install(FILES "${simsimd_SOURCE_DIR}/LICENSE"
+                  "${simsimd_SOURCE_DIR}/README.md"
+            DESTINATION "${GRN_DATA_DIR}/simsimd")
+  endfunction()
+  grn_build_simsimd()
+  target_link_libraries(grn_dependencies INTERFACE simsimd)
+  message(STATUS "SimSIMD: bundled")
+endif()
+
+if(NOT (GRN_WITH_XSIMD OR GRN_WITH_SIMSIMD))
+  set(GRN_WITH_SIMD OFF)
+  set(GRN_WITH_SIMD_AVX OFF)
+  set(GRN_WITH_SIMD_AVX2 OFF)
+  set(GRN_WITH_SIMD_AVX512 OFF)
+  set(GRN_WITH_SIMD_NEON64 OFF)
+endif()
+
+set(GRN_H3_BUNDLED_VERSION "4.1.0")
+set(GRN_H3_BUNDLED_SHA256
+    "ec99f1f5974846bde64f4513cf8d2ea1b8d172d2218ab41803bf6a63532272bc")
+set(GRN_WITH_H3
+    "auto"
+    CACHE STRING "Use H3 for geospatial index.")
+set(GRN_WITH_H3_BUNDLED FALSE)
+if(NOT "${GRN_WITH_H3}" STREQUAL "no")
+  if("${GRN_WITH_H3}" STREQUAL "bundled")
+    set(h3_FOUND FALSE)
+  else()
+    if("${GRN_WITH_H3}" STREQUAL "system")
+      find_package(h3 REQUIRED)
+    else()
+      find_package(h3)
+    endif()
+  endif()
+  if(h3_FOUND)
+    set(GRN_WITH_H3 TRUE)
+    target_link_libraries(grn_dependencies INTERFACE h3::h3)
+    message(STATUS "H3: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_h3)
+      set(H3_SOURCE_BASE_NAME "h3-${GRN_H3_BUNDLED_VERSION}.tar.gz")
+      set(H3_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${H3_SOURCE_BASE_NAME}")
+      if(EXISTS ${H3_SOURCE_LOCAL_PATH})
+        set(H3_SOURCE_URL ${H3_SOURCE_LOCAL_PATH})
+      else()
+        set(H3_SOURCE_URL "https://github.com/uber/h3/archive/refs/tags")
+        string(APPEND H3_SOURCE_URL "/v${GRN_H3_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        h3
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${H3_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_H3_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      if(MSVC)
+        # 'operation' : different 'modifier' qualifiers
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4090
+        string(APPEND CMAKE_C_FLAGS " /wd4090")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4090")
+        # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+        # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+        string(APPEND CMAKE_C_FLAGS " /wd4244")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4244")
+        # 'operator' : signed integral constant overflow
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4307
+        string(APPEND CMAKE_C_FLAGS " /wd4307")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4307")
+      elseif(GRN_C_COMPILER_GNU_LIKE)
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+               " -Wno-declaration-after-statement")
+      endif()
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_FILTERS OFF)
+      set(BUILD_FUZZERS OFF)
+      set(BUILD_GENERATORS OFF)
+      set(BUILD_SHARED_LIBS OFF)
+      set(ENABLE_DOCS OFF)
+      set(ENABLE_FORMAT OFF)
+      set(ENABLE_LINTING OFF)
+      fetchcontent_makeavailable(h3)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${h3_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+      endif()
+      install(FILES "${h3_SOURCE_DIR}/CHANGELOG.md" "${h3_SOURCE_DIR}/LICENSE"
+                    "${h3_SOURCE_DIR}/NOTICE" "${h3_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/h3")
+    endfunction()
+    grn_build_h3()
+    target_link_libraries(grn_dependencies INTERFACE h3)
+    set(GRN_WITH_H3_BUNDLED TRUE)
+    message(STATUS "H3: bundled")
+  else()
+    set(GRN_WITH_H3 FALSE)
+  endif()
+else()
+  set(GRN_WITH_H3 FALSE)
+endif()
+
+set(GRN_LLAMA_CPP_BUNDLED_VERSION "b8263")
+set(GRN_LLAMA_CPP_BUNDLED_SHA256
+    "53ae7042f70c577a6fbd32a3a44a5ecd0ff043fa29da83b76706dbb36c58dbdf")
+set(GRN_WITH_LLAMA_CPP
+    "auto"
+    CACHE STRING "Use llama.cpp for LLM.")
+set(GRN_WITH_LLAMA_CPP_BUNDLED FALSE)
+if(NOT "${GRN_WITH_LLAMA_CPP}" STREQUAL "no")
+  if("${GRN_WITH_LLAMA_CPP}" STREQUAL "bundled")
+    set(llama_FOUND FALSE)
+  else()
+    if("${GRN_WITH_LLAMA_CPP}" STREQUAL "system")
+      find_package(llama REQUIRED)
+    else()
+      find_package(llama)
+    endif()
+  endif()
+  if(llama_FOUND)
+    set(GRN_WITH_LLAMA_CPP TRUE)
+    target_link_libraries(grn_dependencies INTERFACE llama)
+    message(STATUS "llama.cpp: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_llama_cpp)
+      set(LLAMA_CPP_SOURCE_BASE_NAME
+          "llama.cpp-${GRN_LLAMA_CPP_BUNDLED_VERSION}.tar.gz")
+      set(LLAMA_CPP_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${LLAMA_CPP_SOURCE_BASE_NAME}")
+      if(EXISTS ${LLAMA_CPP_SOURCE_LOCAL_PATH})
+        set(LLAMA_CPP_SOURCE_URL ${LLAMA_CPP_SOURCE_LOCAL_PATH})
+      else()
+        set(LLAMA_CPP_SOURCE_URL
+            "https://github.com/ggerganov/llama.cpp/archive/refs/tags")
+        string(APPEND LLAMA_CPP_SOURCE_URL
+               "/${GRN_LLAMA_CPP_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        llama_cpp
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${LLAMA_CPP_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_LLAMA_CPP_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      if(MSVC)
+        # 'identifier' : macro redefinition
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4005
+        string(APPEND CMAKE_C_FLAGS " /wd4005")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4005")
+        # 'identifier': unreferenced local variable
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4101
+        string(APPEND CMAKE_C_FLAGS " /wd4101")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4101")
+        # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+        # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+        string(APPEND CMAKE_C_FLAGS " /wd4244")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4244")
+        # 'var' : conversion from 'size_t' to 'type', possible loss of data
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+        string(APPEND CMAKE_C_FLAGS " /wd4267")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4267")
+        # 'conversion': truncation from 'type1' to 'type2'
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
+        string(APPEND CMAKE_C_FLAGS " /wd4305")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4305")
+        # 'operation' : unsafe mix of type 'type' and type 'type' in operation
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4805
+        string(APPEND CMAKE_C_FLAGS " /wd4805")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4805")
+        # deprecated symbols
+        # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
+        string(APPEND CMAKE_C_FLAGS " /wd4996")
+        string(APPEND CMAKE_CXX_FLAGS " /wd4996")
+      elseif(GRN_C_COMPILER_GNU_LIKE)
+        if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+          # TODO: Remove this suppression if upstream PR is merged.
+          # https://github.com/ggml-org/llama.cpp/pull/16573
+          string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-discarded-qualifiers")
+          string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+                 " -Wno-discarded-qualifiers")
+        elseif(CMAKE_C_COMPILER_ID STREQUAL Clang)
+          # This is for old Clang...?
+          #
+          # https://github.com/ggml-org/llama.cpp/issues/15374 will not
+          # be fixed.
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-absolute-value")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-absolute-value")
+          string(APPEND CMAKE_C_FLAGS_DEBUG
+                 " -Wno-incompatible-pointer-types-discards-qualifiers")
+          string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+                 " -Wno-incompatible-pointer-types-discards-qualifiers")
+        endif()
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+               " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-frame-larger-than")
+        string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-frame-larger-than")
+        # TODO: Remove this suppression if upstream PR is merged.
+        # https://github.com/ggml-org/llama.cpp/pull/16614
+        string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-missing-braces")
+        string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-missing-braces")
+        string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-non-virtual-dtor")
+        string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-non-virtual-dtor")
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-unused-function")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO " -Wno-unused-function")
+        string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-unused-function")
+        string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-unused-function")
+      endif()
+      set(BUILD_SHARED_LIBS ON)
+      set(BUILD_STATIC_LIBS OFF)
+      set(GGML_BACKEND_DL ON)
+      string(SUBSTRING "${GRN_LLAMA_CPP_BUNDLED_VERSION}" 1 -1
+                       GGML_BUILD_NUMBER)
+      set(GGML_CPU_ALL_VARIANTS ON)
+      if(WIN32 AND GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
+        # GGML_CPU_ALL_VARIANTS doesn't support Windows ARM64 yet
+        #
+        # https://github.com/ggml-org/llama.cpp/blob/master/.github/workflows/release.yml#L288
+        set(GGML_CPU_ALL_VARIANTS OFF)
+      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        if(GRN_SYSTEM_PROCESSOR STREQUAL "x86_64")
+          # GCC 11.5 or later is needed for "-mavxvnni" and so on
+          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.5")
+            set(GGML_CPU_ALL_VARIANTS OFF)
+          endif()
+          # binutils 2.36 or later is needed for "vpdpbusd"
+          enable_language(ASM)
+          if(CMAKE_ASM_COMPILER_ID STREQUAL "GNU")
+            execute_process(
+              COMMAND
+                ${CMAKE_COMMAND} -E env
+                # Force to use English
+                LC_MESSAGES=C ${CMAKE_ASM_COMPILER}
+                # Force to use C
+                -xc
+                # Only compile
+                -c
+                # Empty input
+                /dev/null
+                # Pass --version to assembler
+                -Wa,--version
+              OUTPUT_VARIABLE ASM_VERSION_FULL)
+            string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" ASM_VERSION
+                         "${ASM_VERSION_FULL}")
+            message(STATUS "GNU Assembler version: ${ASM_VERSION}")
+            if(ASM_VERSION VERSION_LESS "2.36")
+              set(GGML_CPU_ALL_VARIANTS OFF)
+            endif()
+          endif()
+        elseif(GRN_SYSTEM_PROCESSOR STREQUAL "arm64")
+          # GCC 14 or later is needed for "-march=...+sme".
+          #
+          # https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers
+          if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
+            set(GGML_CPU_ALL_VARIANTS OFF)
+          endif()
+        else()
+          set(GGML_CPU_ALL_VARIANTS OFF)
+        endif()
+      endif()
+      if(NOT GGML_CPU_ALL_VARIANTS)
+        # We need to disable GGML_NATIVE without GGML_CPU_ALL_VARIANTS.
+        set(GGML_NATIVE OFF)
+      endif()
+      set(GGML_LLAMAFILE ON)
+      set(LLAMA_ALL_WARNINGS OFF)
+      fetchcontent_makeavailable(llama_cpp)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${llama_cpp_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                                TRUE)
+      endif()
+      # We need additional library for std::filesystem with old GCC/Clang.
+      # We can remove this workaround when we drop support for AlmaLinux 8.
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
+                                                  VERSION_LESS "9")
+        target_link_libraries(ggml PRIVATE "stdc++fs")
+      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+             AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8")
+        target_link_libraries(ggml PRIVATE "c++fs")
+      endif()
+      set_target_properties(llama PROPERTIES OUTPUT_NAME "groonga-llama")
+      set_target_properties(ggml-base PROPERTIES OUTPUT_NAME
+                                                 "groonga-ggml-base")
+      set_target_properties(ggml PROPERTIES OUTPUT_NAME "groonga-ggml")
+      # If llama.cpp set version, we can remove this.
+      set_target_properties(llama PROPERTIES VERSION "0.0.0" SOVERSION "0")
+      set_target_properties(ggml-base PROPERTIES VERSION "0.0.0" SOVERSION "0")
+      set_target_properties(ggml PROPERTIES VERSION "0.0.0" SOVERSION "0")
+      install(
+        FILES "${llama_cpp_SOURCE_DIR}/AUTHORS"
+              "${llama_cpp_SOURCE_DIR}/LICENSE"
+              "${llama_cpp_SOURCE_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/llama.cpp")
+      install(TARGETS llama ggml-base ggml PUBLIC_HEADER EXCLUDE_FROM_ALL)
+      get_property(
+        GGML_TARGETS
+        DIRECTORY ${llama_cpp_SOURCE_DIR}/ggml/src
+        PROPERTY BUILDSYSTEM_TARGETS)
+      foreach(GGML_TARGET ${GGML_TARGETS})
+        if(GGML_TARGET STREQUAL "ggml")
+          continue()
+        endif()
+        if(GGML_TARGET STREQUAL "ggml-base")
+          continue()
+        endif()
+        if(GGML_TARGET MATCHES "-feats$")
+          continue()
+        endif()
+        install(TARGETS ${GGML_TARGET}
+                LIBRARY DESTINATION "${GRN_RELATIVE_GGML_BACKENDS_DIR}")
+      endforeach()
+    endfunction()
+    grn_build_llama_cpp()
+    target_link_libraries(grn_dependencies INTERFACE llama)
+    add_library(Groonga::ggml-base ALIAS ggml-base)
+    add_library(Groonga::ggml ALIAS ggml)
+    add_library(Groonga::llama ALIAS llama)
+    set(GRN_WITH_LLAMA_CPP_BUNDLED TRUE)
+    message(STATUS "llama.cpp: bundled")
+  else()
+    set(GRN_WITH_LLAMA_CPP FALSE)
+  endif()
+else()
+  set(GRN_WITH_LLAMA_CPP FALSE)
+endif()
+
+set(GRN_USEARCH_BUNDLED_VERSION "2.16.6")
+set(GRN_WITH_USEARCH
+    "no"
+    CACHE STRING "Use USearch for ANN Search.")
+set(GRN_WITH_USEARCH_BUNDLED FALSE)
+if(NOT "${GRN_WITH_USEARCH}" STREQUAL "no")
+  if("${GRN_WITH_USEARCH}" STREQUAL "bundled")
+    set(usearch_FOUND FALSE)
+  else()
+    if("${GRN_WITH_USEARCH}" STREQUAL "system")
+      find_package(usearch REQUIRED)
+    else()
+      find_package(usearch)
+    endif()
+  endif()
+  if(usearch_FOUND)
+    set(GRN_WITH_USEARCH TRUE)
+    target_link_libraries(grn_dependencies INTERFACE usearch::usearch)
+    message(STATUS "usearch: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_usearch)
+      set(USEARCH_SOURCE_BASE_NAME
+          "usearch-${GRN_USEARCH_BUNDLED_VERSION}.tar.gz")
+      set(USEARCH_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${USEARCH_SOURCE_BASE_NAME}")
+      if(EXISTS ${USEARCH_SOURCE_LOCAL_PATH})
+        fetchcontent_declare(
+          usearch
+          ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+          URL ${USEARCH_SOURCE_LOCAL_PATH})
+      else()
+        set(USEARCH_SUBMODULES "fp16")
+        fetchcontent_declare(
+          usearch
+          GIT_REPOSITORY "https://github.com/unum-cloud/usearch.git"
+          GIT_TAG "v${GRN_USEARCH_BUNDLED_VERSION}"
+          GIT_SUBMODULES ${USEARCH_SUBMODULES})
+      endif()
+      grn_prepare_fetchcontent()
+      fetchcontent_makeavailable(usearch)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${usearch_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                              TRUE)
+      endif()
+      install(FILES "${usearch_SOURCE_DIR}/LICENSE"
+                    "${usearch_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/usearch")
+    endfunction()
+    grn_build_usearch()
+    target_link_libraries(grn_dependencies INTERFACE usearch)
+    set(GRN_WITH_USEARCH_BUNDLED TRUE)
+    message(STATUS "usearch: bundled")
+  else()
+    set(GRN_WITH_USEARCH FALSE)
+  endif()
+else()
+  set(GRN_WITH_USEARCH FALSE)
+endif()
+
+set(GRN_FAISS_BUNDLED_VERSION "1.12.0")
+set(GRN_FAISS_BUNDLED_SHA256
+    "561376d1a44771bf1230fabeef9c81643468009b45a585382cf38d3a7a94990a")
+set(GRN_WITH_FAISS
+    "auto"
+    CACHE STRING "Use Faiss for ANN search.")
+set(GRN_WITH_FAISS_BUNDLED FALSE)
+if(NOT "${GRN_WITH_FAISS}" STREQUAL "no")
+  if("${GRN_WITH_FAISS}" STREQUAL "bundled")
+    set(faiss_FOUND FALSE)
+  else()
+    if(UNIX AND NOT APPLE)
+      find_package(OpenMP)
+    endif()
+    if("${GRN_WITH_FAISS}" STREQUAL "system")
+      find_package(faiss REQUIRED)
+    else()
+      find_package(faiss)
+    endif()
+  endif()
+  if(faiss_FOUND)
+    set(GRN_WITH_FAISS TRUE)
+    message(STATUS "faiss: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    find_package(OpenMP)
+    find_package(BLAS)
+    find_package(LAPACK)
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24
+       AND NOT WIN32
+       AND OpenMP_FOUND
+       AND BLAS_FOUND
+       AND LAPACK_FOUND)
+      # We need to use function to create a variable scope
+      function(grn_build_faiss)
+        list(APPEND CMAKE_MESSAGE_INDENT "Faiss: ")
+        set(GRN_FAISS_SOURCE_BASE_NAME
+            "faiss-${GRN_FAISS_BUNDLED_VERSION}.tar.gz")
+        set(GRN_FAISS_SOURCE_LOCAL_PATH
+            "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${GRN_FAISS_SOURCE_BASE_NAME}")
+        set(GRN_FAISS_FETCH_CONTENT_SOURCE)
+        if(EXISTS ${GRN_FAISS_SOURCE_LOCAL_PATH})
+          list(APPEND GRN_FAISS_FETCH_CONTENT_SOURCE URL
+               ${GRN_FAISS_SOURCE_LOCAL_PATH} URL_HASH
+               "SHA256=${GRN_FAISS_BUNDLED_SHA256}")
+        else()
+          list(APPEND GRN_FAISS_FETCH_CONTENT_SOURCE GIT_REPOSITORY
+               "https://github.com/facebookresearch/faiss.git" GIT_TAG
+               "v${GRN_FAISS_BUNDLED_VERSION}")
+        endif()
+        fetchcontent_declare(faiss ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+                                   ${GRN_FAISS_FETCH_CONTENT_SOURCE})
+        grn_prepare_fetchcontent()
+        if(GRN_C_COMPILER_GNU_LIKE)
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-ignored-attributes")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                 " -Wno-ignored-attributes")
+          # We can remove -Wno-psabi with 1.12.1 or later.
+          string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-psabi")
+          string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -Wno-psabi")
+          if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Wno-switch-unreachable")
+            string(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                   " -Wno-switch-unreachable")
+          endif()
+        endif()
+        set(FAISS_ENABLE_EXTRAS OFF)
+        set(FAISS_ENABLE_GPU OFF)
+        set(FAISS_ENABLE_PYTHON OFF)
+        fetchcontent_makeavailable(faiss)
+        if(CMAKE_VERSION VERSION_LESS 3.28)
+          set_property(DIRECTORY ${faiss_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                              TRUE)
+        endif()
+        install(FILES "${faiss_SOURCE_DIR}/LICENSE"
+                      "${faiss_SOURCE_DIR}/README.md"
+                DESTINATION "${GRN_DATA_DIR}/faiss")
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+      endfunction()
+      grn_build_faiss()
+      set(GRN_WITH_FAISS TRUE)
+      set(GRN_WITH_FAISS_BUNDLED TRUE)
+      message(STATUS "Faiss: bundled")
+    else()
+      if("${GRN_WITH_FAISS}" STREQUAL "bundled")
+        message(
+          FATAL_ERROR
+            "CMake >= 3.24, not Windows, OpenMP, BLAS and LAPACK are required for bundled Faiss"
+        )
+      endif()
+      set(GRN_WITH_FAISS FALSE)
+    endif()
+  else()
+    set(GRN_WITH_FAISS FALSE)
+  endif()
+else()
+  set(GRN_WITH_FAISS FALSE)
+endif()
+
+if(WIN32)
+  set(GRN_WITH_CURL_DEFAULT "no")
+else()
+  set(GRN_WITH_CURL_DEFAULT "auto")
+endif()
+set(GRN_WITH_CURL
+    ${GRN_WITH_CURL_DEFAULT}
+    CACHE STRING "Use curl as HTTP client backend.")
+if(NOT "${GRN_WITH_CURL}" STREQUAL "no")
+  if("${GRN_WITH_CURL}" STREQUAL "system")
+    find_package(CURL REQUIRED)
+  else()
+    find_package(CURL)
+  endif()
+  if(CURL_FOUND)
+    set(GRN_WITH_CURL TRUE)
+    target_link_libraries(grn_dependencies INTERFACE CURL::libcurl)
+    message(STATUS "curl: system")
+  else()
+    set(GRN_WITH_CURL FALSE)
+  endif()
+else()
+  set(GRN_WITH_CURL FALSE)
+endif()
+
+set(GRN_BASE64_BUNDLED_VERSION "0.5.2")
+set(GRN_BASE64_BUNDLED_SHA256
+    "723a0f9f4cf44cf79e97bcc315ec8f85e52eb104c8882942c3f2fba95acc080d")
+set(GRN_WITH_BASE64
+    "auto"
+    CACHE STRING "Use aklomp/base64 for ShortBinary/Binary/LargeBinary.")
+set(GRN_WITH_BASE64_BUNDLED FALSE)
+if(NOT "${GRN_WITH_BASE64}" STREQUAL "no")
+  if("${GRN_WITH_BASE64}" STREQUAL "bundled")
+    set(base64_FOUND FALSE)
+  else()
+    if("${GRN_WITH_BASE64}" STREQUAL "system")
+      find_package(base64 REQUIRED)
+    else()
+      find_package(base64)
+    endif()
+  endif()
+  if(base64_FOUND)
+    set(GRN_WITH_BASE64 TRUE)
+    target_link_libraries(grn_dependencies INTERFACE aklomp::base64)
+    message(STATUS "base64: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_base64)
+      set(BASE64_SOURCE_BASE_NAME "base64-${GRN_BASE64_BUNDLED_VERSION}.tar.gz")
+      set(BASE64_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${BASE64_SOURCE_BASE_NAME}")
+      if(EXISTS ${BASE64_SOURCE_LOCAL_PATH})
+        set(BASE64_SOURCE_URL ${BASE64_SOURCE_LOCAL_PATH})
+      else()
+        set(BASE64_SOURCE_URL
+            "https://github.com/aklomp/base64/archive/refs/tags")
+        string(APPEND BASE64_SOURCE_URL
+               "/v${GRN_BASE64_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        base64
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${BASE64_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_BASE64_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      if(GRN_C_COMPILER_GNU_LIKE)
+        string(APPEND CMAKE_C_FLAGS_DEBUG " -Wno-declaration-after-statement")
+        string(APPEND CMAKE_C_FLAGS_RELWITHDEBINFO
+               " -Wno-declaration-after-statement")
+      endif()
+      set(BASE64_WERROR OFF)
+      fetchcontent_makeavailable(base64)
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${base64_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                             TRUE)
+      endif()
+      install(FILES "${base64_SOURCE_DIR}/LICENSE"
+                    "${base64_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/base64")
+    endfunction()
+    grn_build_base64()
+    target_link_libraries(grn_dependencies INTERFACE base64)
+    set(GRN_WITH_BASE64_BUNDLED TRUE)
+    message(STATUS "base64: bundled")
+  else()
+    set(GRN_WITH_BASE64 FALSE)
+  endif()
+else()
+  set(GRN_WITH_BASE64 FALSE)
+endif()
+
+set(GRN_JSONCONS_BUNDLED_VERSION "1.7.0")
+set(GRN_JSONCONS_BUNDLED_SHA256
+    "5a2aad4e791a1c93b0b0b326973459753a96a4c48d06d3035cd0ea0d262198d4")
+set(GRN_WITH_JSONCONS
+    "auto"
+    CACHE STRING "Support JSONPath by JSONCONS.")
+set(GRN_WITH_JSONCONS_BUNDLED FALSE)
+if(NOT "${GRN_WITH_JSONCONS}" STREQUAL "no")
+  if("${GRN_WITH_JSONCONS}" STREQUAL "bundled")
+    set(jsoncons_FOUND FALSE)
+  else()
+    if("${GRN_WITH_JSONCONS}" STREQUAL "system")
+      find_package(jsoncons REQUIRED)
+    else()
+      find_package(jsoncons)
+    endif()
+  endif()
+  if(jsoncons_FOUND)
+    set(GRN_WITH_JSONCONS TRUE)
+    if(TARGET jsoncons::jsoncons)
+      target_link_libraries(grn_dependencies INTERFACE jsoncons::jsoncons)
+    else()
+      # jsoncons < 1.4.0
+      target_link_libraries(grn_dependencies INTERFACE jsoncons)
+    endif()
+    message(STATUS "JSONCONS: system")
+  elseif(NOT FETCHCONTENT_FULLY_DISCONNECTED)
+    # FETCHCONTENT_FULLY_DISCONNECTED isn't for disabling network
+    # access but deb uses it...
+
+    # We need to use function to create a variable scope
+    function(grn_build_jsoncons)
+      set(JSONCONS_SOURCE_BASE_NAME
+          "jsoncons-${GRN_JSONCONS_BUNDLED_VERSION}.tar.gz")
+      set(JSONCONS_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${JSONCONS_SOURCE_BASE_NAME}")
+      if(EXISTS ${JSONCONS_SOURCE_LOCAL_PATH})
+        set(JSONCONS_SOURCE_URL ${JSONCONS_SOURCE_LOCAL_PATH})
+      else()
+        set(JSONCONS_SOURCE_URL
+            "https://github.com/danielaparker/jsoncons/archive/refs/tags")
+        string(APPEND JSONCONS_SOURCE_URL
+               "/v${GRN_JSONCONS_BUNDLED_VERSION}.tar.gz")
+      endif()
+      fetchcontent_declare(
+        jsoncons
+        ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
+        URL ${JSONCONS_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_JSONCONS_BUNDLED_SHA256}")
+      grn_prepare_fetchcontent()
+      set(JSONCONS_BUILD_TESTS OFF)
+      set(JSONCONS_WERROR OFF)
+      fetchcontent_makeavailable(jsoncons)
+      get_target_property(jsoncons_include_directories jsoncons
+                          INTERFACE_INCLUDE_DIRECTORIES)
+      set_target_properties(jsoncons PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
+                                                "")
+      target_include_directories(jsoncons SYSTEM
+                                 INTERFACE ${jsoncons_include_directories})
+      if(CMAKE_VERSION VERSION_LESS 3.28)
+        set_property(DIRECTORY ${jsoncons_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL
+                                                               TRUE)
+      endif()
+      install(FILES "${jsoncons_SOURCE_DIR}/LICENSE"
+                    "${jsoncons_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/jsoncons")
+    endfunction()
+    grn_build_jsoncons()
+    target_link_libraries(grn_dependencies INTERFACE jsoncons)
+    set(GRN_WITH_JSONCONS_BUNDLED TRUE)
+    message(STATUS "JSONCONS: bundled")
+  else()
+    set(GRN_WITH_JSONCONS FALSE)
+  endif()
+else()
+  set(GRN_WITH_JSONCONS FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"
@@ -959,11 +2345,7 @@ endif()
 set(GRN_WITH_ONIGMO ON)
 option(GRN_WITH_BUNDLED_ONIGMO "use bundled Onigmo" ON)
 if(NOT GRN_WITH_BUNDLED_ONIGMO)
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
-    pkg_check_modules(pkg_onigmo onigmo REQUIRED IMPORTED_TARGET)
-  else()
-    pkg_check_modules(pkg_onigmo onigmo REQUIRED IMPORTED_TARGET GLOBAL)
-  endif()
+  pkg_check_modules(pkg_onigmo onigmo REQUIRED IMPORTED_TARGET)
   add_library(onigmo ALIAS PkgConfig::pkg_onigmo)
 endif()
 
@@ -992,7 +2374,6 @@ configure_file(config.h.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
 set(GROONGA_SUGGEST_CREATE_DATASET
     "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
-set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
 configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
 
 set(prefix "${CMAKE_INSTALL_PREFIX}")
@@ -1017,6 +2398,21 @@ install(FILES "COPYING" "README.md" DESTINATION "${GRN_DATA_DIR}")
 
 add_subdirectory(vendor/plugins)
 
+option(GRN_FOR_RHEL "install RHEL related files" OFF)
+if(GRN_FOR_RHEL)
+  install(FILES data/tmpfiles.d/groonga.conf
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/tmpfiles.d/)
+  install(FILES data/logrotate.d/rhel/groonga-server-gqtp
+                data/logrotate.d/rhel/groonga-server-http
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/logrotate.d/)
+  install(FILES data/systemd/rhel/sysconfig/groonga-server-gqtp
+                data/systemd/rhel/sysconfig/groonga-server-http
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/sysconfig/)
+  install(FILES data/systemd/rhel/groonga-server-gqtp.service
+                data/systemd/rhel/groonga-server-http.service
+          DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/)
+endif()
+
 option(GRN_WITH_MUNIN_PLUGINS "install Munin plugins" OFF)
 if(GRN_WITH_MUNIN_PLUGINS)
   install(
@@ -1032,6 +2428,11 @@ if(GRN_WITH_MUNIN_PLUGINS)
     DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/munin/plugins)
 endif()
 
+option(GRN_WITH_BENCHMARKS "build benchmarks" OFF)
+if(GRN_WITH_BENCHMARKS)
+  add_subdirectory(benchmark)
+endif()
+
 option(GRN_WITH_EXAMPLES "install examples" OFF)
 if(GRN_WITH_EXAMPLES)
   install(
@@ -1040,4 +2441,14 @@ if(GRN_WITH_EXAMPLES)
     USE_SOURCE_PERMISSIONS FILES_MATCHING
     PATTERN "*"
     PATTERN "Makefile.*" EXCLUDE)
+endif()
+
+option(GRN_WITH_TOOLS "install tools" OFF)
+if(GRN_WITH_TOOLS)
+  install(
+    DIRECTORY tools
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}
+    USE_SOURCE_PERMISSIONS FILES_MATCHING
+    PATTERN "*.rb"
+    PATTERN "*.sh")
 endif()

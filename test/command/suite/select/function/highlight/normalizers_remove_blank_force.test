@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"body": "Groonga はとても速い"},
+{"body": "Groongaはとても速い"}
+]
+
+select Entries --output_columns \
+  'highlight(body, \
+    "gaはとても", "<keyword>", "</keyword>", \
+    {"normalizers": "NormalizerNFKC150(\\"remove_blank_force\\", false)"} \
+  )'

@@ -1,45 +1,45 @@
 Execution example::
 
   column_create --table ToyBox --name name --type ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table ToyBox
   [
   {"_key":"Monkey","name":"Grease"}
   {"_key":"Flower","name":"Rose"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]
   select --table ToyBox --output_columns _key,name
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "name", 
+  #           "name",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Monkey", 
+  #         "Monkey",
   #         "Grease"
-  #       ], 
+  #       ],
   #       [
-  #         "Flower", 
+  #         "Flower",
   #         "Rose"
-  #       ], 
+  #       ],
   #       [
-  #         "Block", 
+  #         "Block",
   #         ""
   #       ]
   #     ]

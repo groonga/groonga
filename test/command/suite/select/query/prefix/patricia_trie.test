@@ -6,4 +6,4 @@ load --table Names
 {"_key":"ひろあき"},
 {"_key":"ゆきひろ"}
 ]
-select --table Names --query _key:^ひろ
+select --table Names --query _key:^ひろ --sort_keys _id

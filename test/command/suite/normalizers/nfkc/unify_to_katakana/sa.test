@@ -1,0 +1,8 @@
+#@add-substitution /"version",\s"(?:.+?)"/ "\"version\", \"#{ENV['NFKC'] || '10.0.0'}\"" "\"version\", \"NFKC_VERSION\""
+normalize \
+  'NormalizerNFKC("unify_to_katakana", true, \
+                  "report_source_offset", true, \
+                  "version", "NFKC_VERSION")' \
+  "さしすせそ" \
+  WITH_CHECKS|WITH_TYPES
+#@remove-substitution /"version",\s"(?:.+?)"/

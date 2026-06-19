@@ -18,4 +18,4 @@ select Entries   --filter 'content *ONPP2 "(a b) 1 2 (x y)"'   --output_columns 
   ]
 ]
 #|e| [ii][token-info][build] all phrases must be in parenthesis: <(a b) |1| 2 (x y)>
-#|e| grn_ii_select on grn_ii_sel(1) failed !
+#|e| grn_ii_select on grn_ii_sel() failed!

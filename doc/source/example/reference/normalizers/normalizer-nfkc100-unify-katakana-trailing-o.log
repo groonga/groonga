@@ -3,24 +3,27 @@ Execution example::
   normalize   'NormalizerNFKC100("unify_katakana_trailing_o", true)'   "オオコオソオトオノオ"   WITH_TYPES
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "normalized": "オウコウソウトウノウ", 
+  #     "normalized": "オウコウソウトウノウ",
   #     "types": [
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana", 
-  #       "katakana"
-  #     ], 
-  #     "checks": []
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "null"
+  #     ],
+  #     "checks": [
+  # 
+  #     ]
   #   }
   # ]

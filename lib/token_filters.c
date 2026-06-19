@@ -1,9 +1,10 @@
 /*
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -40,15 +41,14 @@ nfkc_open_options(grn_ctx *ctx,
   if (!options) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "[token-filter]%s "
-                     "failed to allocate memory for options",
+                     "%s failed to allocate memory for options",
                      tag);
     return NULL;
   }
 
   init_func(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -89,8 +89,7 @@ nfkc_init(grn_ctx *ctx,
   token_filter = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_nfkc_token_filter));
   if (!token_filter) {
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[token-filter]%s "
-                     "failed to allocate grn_nfkc_token_filter",
+                     "%s failed to allocate grn_nfkc_token_filter",
                      tag);
     return NULL;
   }
@@ -170,7 +169,7 @@ nfkc100_open_options(grn_ctx *ctx,
                            raw_options,
                            user_data,
                            grn_nfkc100_normalize_options_init,
-                           "[nfkc100]");
+                           "[token-filter][nfkc100]");
 }
 
 static void *
@@ -180,7 +179,7 @@ nfkc100_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    query,
                    nfkc100_open_options,
                    "NormalierNFKC100",
-                   "[nfkc100]");
+                   "[token-filter][nfkc100]");
 }
 
 static void *
@@ -194,7 +193,7 @@ nfkc121_open_options(grn_ctx *ctx,
                            raw_options,
                            user_data,
                            grn_nfkc121_normalize_options_init,
-                           "[nfkc121]");
+                           "[token-filter][nfkc121]");
 }
 
 static void *
@@ -204,7 +203,7 @@ nfkc121_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    query,
                    nfkc121_open_options,
                    "NormalierNFKC121",
-                   "[nfkc121]");
+                   "[token-filter][nfkc121]");
 }
 
 static void *
@@ -218,7 +217,7 @@ nfkc130_open_options(grn_ctx *ctx,
                            raw_options,
                            user_data,
                            grn_nfkc130_normalize_options_init,
-                           "[nfkc130]");
+                           "[token-filter][nfkc130]");
 }
 
 static void *
@@ -228,7 +227,7 @@ nfkc130_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    query,
                    nfkc130_open_options,
                    "NormalierNFKC130",
-                   "[nfkc130]");
+                   "[token-filter][nfkc130]");
 }
 
 static void *
@@ -242,7 +241,7 @@ nfkc150_open_options(grn_ctx *ctx,
                            raw_options,
                            user_data,
                            grn_nfkc150_normalize_options_init,
-                           "[nfkc150]");
+                           "[token-filter][nfkc150]");
 }
 
 static void *
@@ -252,7 +251,35 @@ nfkc150_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    query,
                    nfkc150_open_options,
                    "NormalierNFKC150",
-                   "[nfkc150]");
+                   "[token-filter][nfkc150]");
+}
+
+static void *
+nfkc_generic_open_options(grn_ctx *ctx,
+                          grn_obj *token_filter,
+                          grn_obj *raw_options,
+                          void *user_data)
+{
+  return nfkc_open_options(ctx,
+                           token_filter,
+                           raw_options,
+                           user_data,
+                           /* This default value is the latest NFKC
+                            * version when we implement this. This
+                            * must not change to keep backward
+                            * compatibility. */
+                           grn_nfkc160_normalize_options_init,
+                           "[token-filter][nfkc]");
+}
+
+static void *
+nfkc_generic_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return nfkc_init(ctx,
+                   query,
+                   nfkc_generic_open_options,
+                   "NormalierNFKC",
+                   "[token-filter][nfkc]");
 }
 
 grn_rc
@@ -286,6 +313,14 @@ grn_db_init_builtin_token_filters(grn_ctx *ctx)
     grn_obj *token_filter;
     token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC150", -1);
     grn_token_filter_set_init_func(ctx, token_filter, nfkc150_init);
+    grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
+    grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
+  }
+
+  {
+    grn_obj *token_filter;
+    token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC", -1);
+    grn_token_filter_set_init_func(ctx, token_filter, nfkc_generic_init);
     grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
     grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
   }

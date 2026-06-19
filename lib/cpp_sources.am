@@ -3,13 +3,23 @@ libgroonga_cpp_source =				\
 	bulk.cpp				\
 	cast.cpp				\
 	command_arguments.cpp			\
+	ctx.cpp					\
 	dat.cpp					\
-	grn_arrow.h				\
+	db_wal_recover.cpp			\
+	distance.cpp				\
+	expr_executor.cpp			\
 	grn_arrow.hpp				\
-	grn_bulk.h				\
-	grn_cast.h				\
 	grn_ctx.hpp				\
-	grn_token_column.h			\
+	grn_distance.hpp			\
+	grn_distance_impl.hpp			\
+	grn_distance_instantiation.hpp		\
+	grn_language_model.hpp			\
+	grn_task_executor.hpp			\
+	ii.cpp					\
+	json.cpp				\
+	language_model.cpp			\
+	portability.cpp				\
 	token_column.cpp			\
+	trace_log.cpp				\
 	vector.cpp				\
 	window_function_executor.cpp

@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -385,7 +386,7 @@ grn_window_reset(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-static grn_bool
+static bool
 grn_expr_is_window_function_call(grn_ctx *ctx,
                                  grn_obj *window_function_call)
 {
@@ -397,20 +398,20 @@ grn_expr_is_window_function_call(grn_ctx *ctx,
   call = &(expr->codes[expr->codes_curr - 1]);
 
   if (func->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
+    return false;
   }
   if (!grn_obj_is_window_function_proc(ctx, func->value)) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (call->op != GRN_OP_CALL) {
-    return GRN_FALSE;
+    return false;
   }
   if (call->nargs != (int32_t)(expr->codes_curr - 1)) {
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static bool
@@ -545,7 +546,7 @@ grn_window_is_sorted(grn_ctx *ctx, grn_window *window)
 
   if (!window) {
     ERR(GRN_INVALID_ARGUMENT, "[window][is-sorted] window is NULL");
-    GRN_API_RETURN(GRN_FALSE);
+    GRN_API_RETURN(false);
   }
 
   GRN_API_RETURN(window->is_sorted);

@@ -39,7 +39,7 @@ msgstr "``type`` : キャスト後の値の型を指定します。"
 msgid "``value`` : Specify the target of a cast."
 msgstr "``value`` : キャスト対象を指定します。"
 
-msgid "``default_value`` : Speficy the value of setting when failed a cast."
+msgid "``default_value`` : Specify the value of setting when failed a cast."
 msgstr "``default_value`` : キャストに失敗した時に設定する値を指定します。"
 
 msgid "Usage"

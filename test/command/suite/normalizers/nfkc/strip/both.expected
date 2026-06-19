@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("strip", true,                      "report_source_offset", true)'   "  hello world\t! \t "   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("strip", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "  hello world\t! \t "   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -19,7 +19,8 @@ normalize   'NormalizerNFKC150("strip", true,                      "report_sourc
       "alpha",
       "alpha",
       "alpha|blank",
-      "symbol|blank"
+      "symbol|blank",
+      "null"
     ],
     "checks": [
       3,
@@ -47,7 +48,8 @@ normalize   'NormalizerNFKC150("strip", true,                      "report_sourc
       10,
       11,
       12,
-      14
+      14,
+      18
     ]
   }
 ]

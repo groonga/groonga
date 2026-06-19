@@ -3,54 +3,54 @@ Execution example::
   select --table Comments --query posted_by:bob --output_columns comment --drilldown hash_tags
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         4
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "comment", 
+  #           "comment",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "First post. test,test..."
-  #       ], 
+  #       ],
   #       [
   #         "@alice Thanks!"
-  #       ], 
+  #       ],
   #       [
   #         "I've just used 'Try-Groonga' now! #groonga"
-  #       ], 
+  #       ],
   #       [
   #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "groonga", 
+  #         "groonga",
   #         2
-  #       ], 
+  #       ],
   #       [
-  #         "travel", 
+  #         "travel",
   #         1
   #       ]
   #     ]

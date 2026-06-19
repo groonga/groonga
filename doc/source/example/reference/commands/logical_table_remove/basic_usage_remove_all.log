@@ -3,4 +3,4 @@ Execution example::
   logical_table_remove \
     --logical_table Logs \
     --shard_key timestamp
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

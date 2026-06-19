@@ -20,3 +20,12 @@ msgstr "API"
 
 msgid "Groonga can be used as a fulltext search library. This section describes APIs that are provided by groonga."
 msgstr "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供しているAPIを示します。"
+
+msgid "C API Reference"
+msgstr "C APIリファレンス"
+
+msgid "See `C API Reference <https://groonga.org/docs/reference/api/index.html>`_ for auto-generated API documentation from header files."
+msgstr "ヘッダーファイルから自動生成された API ドキュメントについては、 `C API リファレンス <https://groonga.org/docs/reference/api/index.html>`_ を参照してください。"
+
+msgid "We are currently switching to automatic generation using Doxygen. The C API Reference link above points to the Doxygen-generated documentation."
+msgstr "現在、Doxygen を用いた自動生成へ移行しています。上のC API リファレンスは、Doxygenによって生成されたドキュメントです。"

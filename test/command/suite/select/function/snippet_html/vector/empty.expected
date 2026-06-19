@@ -39,9 +39,7 @@ select Entries   --output_columns 'snippet_html(contents), contents'   --match_c
       ],
       [
         null,
-        [
-
-        ]
+        []
       ]
     ]
   ]

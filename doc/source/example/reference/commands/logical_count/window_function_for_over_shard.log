@@ -1,46 +1,42 @@
 Execution example::
 
   plugin_register sharding
-  
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Logs_20170415 TABLE_NO_KEY
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170415 price COLUMN_SCALAR UInt32
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170415 n_likes COLUMN_SCALAR UInt32
-  
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Logs_20170416 TABLE_NO_KEY
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170416 price COLUMN_SCALAR UInt32
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Logs_20170416 n_likes COLUMN_SCALAR UInt32
-  
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Logs_20170415
   [
   {"timestamp": "2017/04/15 00:00:00", "n_likes": 2, "price": 100},
   {"timestamp": "2017/04/15 01:00:00", "n_likes": 1, "price": 100},
   {"timestamp": "2017/04/15 01:00:00", "n_likes": 2, "price": 200}
   ]
-  
+  # [[0,1337566253.89858,0.000355720520019531],3]
   load --table Logs_20170416
   [
   {"timestamp": "2017/04/16 10:00:00", "n_likes": 1, "price": 200},
   {"timestamp": "2017/04/16 11:00:00", "n_likes": 2, "price": 300},
   {"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 300}
   ]
-  
+  # [[0,1337566253.89858,0.000355720520019531],3]
   logical_count Logs \
     --shard_key timestamp \
     --columns[count].stage initial \
     --columns[count].type UInt32 \
     --columns[count].flags COLUMN_SCALAR \
     --columns[count].value 'window_count()' \
-    --columns[count].window.group_keys price \
-    --filter 'count >= 1'
-  # [
-  #   [
-  #     0,
-  #     0.0,
-  #     0.0
-  #   ],
-  #   [
-  #     4
-  #   ]
-  # ]
+    --columns[count].window.group_keys price
+  # [[0,1337566253.89858,0.000355720520019531],6]

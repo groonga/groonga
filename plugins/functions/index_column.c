@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -159,7 +160,7 @@ caller_index_info_init(grn_ctx *ctx,
 
     caller_index_info->term_table = grn_ctx_at(ctx, variable->header.domain);
     caller_index_info->term_id = GRN_RECORD_VALUE(variable);
-    while (GRN_TRUE) {
+    while (true) {
       grn_obj *key_type;
 
       key_type = grn_ctx_at(ctx, caller_index_info->term_table->header.domain);

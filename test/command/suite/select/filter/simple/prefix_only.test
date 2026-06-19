@@ -11,7 +11,7 @@ load --table Tags
 log_level --level info
 #@add-important-log-levels info
 #@add-ignore-log-pattern /\A\[io\]/
-select Tags --filter '_key @^ "s"'
+select Tags --filter '_key @^ "s"' --sort_keys _id
 #@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice

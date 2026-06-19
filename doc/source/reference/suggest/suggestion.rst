@@ -1,8 +1,8 @@
 .. -*- rst -*-
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/suggestion query
 .. database: suggestion
+.. $ groonga-suggest-create-dataset ${DB_PATH} query
 
 Suggestion
 ==========
@@ -116,7 +116,7 @@ How to extract learning data
 ----------------------------
 
 The learning data is stored into ``item_DATASET`` and ``pair_DATASET`` tables.
-By using select command for such tables, you can all extract learing data.
+By using select command for such tables, you can all extract learning data.
 
 Here is the query to extract all learning data::
 
@@ -127,4 +127,3 @@ Without '--limit -1', you can't get all data.
 In pair table, the valid value of ``freq0``, ``freq1`` and ``freq2`` column must be larger than 0.
 
 Don't execute above query via HTTP request because enormous number of records are fetched.
- 

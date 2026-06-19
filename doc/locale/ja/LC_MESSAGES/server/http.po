@@ -28,7 +28,7 @@ msgstr ""
 msgid ":doc:`http/groonga-httpd`"
 msgstr ""
 
-msgid ":doc:`http/groonga` is a simple implemntation. It is fast but doesn't have many HTTP features. It is convenient to try Groonga because it requires just a few command line options to run."
+msgid ":doc:`http/groonga` is a simple implementation. It is fast but doesn't have many HTTP features. It is convenient to try Groonga because it requires just a few command line options to run."
 msgstr ":doc:`http/groonga` はシンプルな実装です。高速に動作しますがHTTPの機能の多くは実装されていません。コマンドラインオプションをいくつか指定するだけで動くのでGroongaを簡単に試すことができます。"
 
 msgid ":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based implementation. It is also fast and has many HTTP features."

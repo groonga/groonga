@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +20,7 @@
 #include "grn_onigmo.h"
 
 #ifdef GRN_SUPPORT_REGEXP
-grn_bool
+bool
 grn_onigmo_is_valid_encoding(grn_ctx *ctx)
 {
   switch (ctx->encoding) {
@@ -28,9 +29,9 @@ grn_onigmo_is_valid_encoding(grn_ctx *ctx)
   case GRN_ENC_SJIS :
   case GRN_ENC_LATIN1 :
   case GRN_ENC_KOI8R :
-    return GRN_TRUE;
+    return true;
   default :
-    return GRN_FALSE;
+    return false;
   }
 }
 

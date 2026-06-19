@@ -17,7 +17,7 @@ Script syntax doesn't support full ECMAScript syntax. For example,
 script syntax doesn't support statement such as ``if`` control
 statement, ``for`` iteration statement and variable definition
 statement. Function definion is not supported too. But script syntax
-addes the original additional operators.  They are described after
+adds the original additional operators.  They are described after
 ECMAScript syntax is described.
 
 .. _script-syntax-security:
@@ -150,12 +150,12 @@ String
 ^^^^^^
 
 String literal is ``"..."``. You need to escape ``"`` in literal by
-prepending ``\\'' such as ``\"``. For example, ``"Say \"Hello!\"."`` is
+prepending ``\`` such as ``\"``. For example, ``"Say \"Hello!\"."`` is
 a literal for ``Say "Hello!".`` string.
 
 String encoding must be the same as encoding of database. The default
 encoding is UTF-8. It can be changed by ``--with-default-encoding``
-configure option, ``--encodiong`` :doc:`/reference/executables/groonga` option
+configure option, ``--encoding`` :doc:`/reference/executables/groonga` option
 and so on.
 
 .. _script-syntax-literal-boolean:
@@ -285,12 +285,12 @@ matched.
 Function call
 -------------
 
-Its syntax is ``name(arugment1, argument2, ...)``.
+Its syntax is ``name(argument1, argument2, ...)``.
 
 ``name(argument1, argument2, ...)`` calls a function that is named
 ``name`` with arguments ``argument1``, ``argument2`` and ``...``.
 
-See :doc:`/reference/function` for available functin list.
+See :doc:`/reference/function` for available function list.
 
 Here is a simple example:
 
@@ -300,7 +300,7 @@ Here is a simple example:
 
 The expression uses :doc:`/reference/functions/edit_distance`. It
 matches records that ``_key`` column value is similar to
-``"Groonga"``. Similality of ``"Groonga"`` is computed as edit
+``"Groonga"``. Similarity of ``"Groonga"`` is computed as edit
 distance. If edit distance is less than or equal to 1, the value is
 treated as similar. In this case, ``"Groonga"`` and ``"Mroonga"`` are
 treated as similar.
@@ -860,7 +860,7 @@ So the expression ``1 ^ 3`` is evaluated and stored to ``_score`` column as the 
 Original operators
 ------------------
 
-Script syntax adds the original binary opearators to ECMAScript
+Script syntax adds the original binary operators to ECMAScript
 syntax. They operate search specific operations. They are starts with
 ``@`` or ``*``.
 
@@ -1036,7 +1036,7 @@ Here is a simple example:
 
 The first expression matches records that contain ``I`` and ``fast``
 and the max interval of those words are in 10 words. So the record
-that its content is ``I started to use Groonga. It's very fast!`` is matched. 
+that its content is ``I started to use Groonga. It's very fast!`` is matched.
 The number of words between ``I`` and ``fast`` is 7.
 
 The second expression matches records that contain ``I`` and
@@ -1484,7 +1484,7 @@ This operator does ordered near phrase product search. Ordered near
 phrase product search is similar to
 :ref:`script-syntax-near-phrase-product-search-operator` but ordered
 near phrase product search checks phrases order like
-:ref:`script-syntax-ordered-near-phrase-search-operator`. For example,
+:ref:`query-syntax-ordered-near-phrase-search-condition`. For example,
 ``column *ONPP "(a b c) (d e)"`` matches ``a 1 d`` but doesn't match
 ``d 1 a``. Because the latter uses different order.
 
@@ -1559,7 +1559,7 @@ Here is a simple example:
 .. ]
 .. select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
 
-The expression extrcts terms that included in document ``Groonga is
+The expression extracts terms that included in document ``Groonga is
 the successor project to Senna.``. In this case, ``NormalizerAuto``
 normalizer is specified to ``Words``. So ``Groonga`` can be extracted
 even if it is loaded as ``groonga`` into ``Words``. All of extracted

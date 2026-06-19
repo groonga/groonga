@@ -1,0 +1,60 @@
+Execution example::
+
+  table_create JapaneseEntries TABLE_NO_KEY
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  column_create JapaneseEntries content COLUMN_SCALAR Text
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  table_create JapaneseTerms TABLE_PAT_KEY ShortText \
+    --default_tokenizer TokenMecab \
+    --normalizer NormalizerNFKC150
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  column_create JapaneseTerms japanese_entries_content \
+    COLUMN_INDEX|WITH_POSITION JapaneseEntries content
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  load --table JapaneseEntries
+  [
+  {"content": "ようこそ！これが最初の投稿です！"},
+  {"content": "Groongaを使い始めました。とても速いですね！"},
+  {"content": "Mroongaも使い始めました。これもとても速いですね！本当に速い！"},
+  {"content": "Sennaのシステムをすべて移行しました！"},
+  {"content": "Tritonnのシステムもすべて移行しました！"}
+  ]
+  # [[0,1337566253.89858,0.000355720520019531],5]
+  select \
+    --table JapaneseEntries \
+    --fuzzy_max_distance_ratio 0.34 \
+    --match_columns content \
+    --query ともて \
+    --output_columns content,_score
+  # [
+  #   [
+  #     0,
+  #     1337566253.89858,
+  #     0.000355720520019531
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ],
+  #       [
+  #         [
+  #           "content",
+  #           "Text"
+  #         ],
+  #         [
+  #           "_score",
+  #           "Int32"
+  #         ]
+  #       ],
+  #       [
+  #         "Groongaを使い始めました。とても速いですね！",
+  #         1
+  #       ],
+  #       [
+  #         "Mroongaも使い始めました。これもとても速いですね！本当に速い！",
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]

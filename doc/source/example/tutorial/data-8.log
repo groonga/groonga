@@ -1,53 +1,53 @@
 Execution example::
 
   column_create --table Site --name links --flags COLUMN_VECTOR --type Site
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Site
   [
   {"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
   select --table Site --output_columns _key,title,links._key,links.title --query title:@this
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "links._key", 
+  #           "links._key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "links.title", 
+  #           "links.title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/", 
-  #         "This is test record 1!", 
+  #         "http://example.org/",
+  #         "This is test record 1!",
   #         [
-  #           "http://example.net/", 
-  #           "http://example.org/", 
+  #           "http://example.net/",
+  #           "http://example.org/",
   #           "http://example.com/"
-  #         ], 
+  #         ],
   #         [
-  #           "test record 2.", 
-  #           "This is test record 1!", 
+  #           "test record 2.",
+  #           "This is test record 1!",
   #           "test test record three."
   #         ]
   #       ]

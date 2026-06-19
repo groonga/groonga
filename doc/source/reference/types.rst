@@ -91,7 +91,7 @@ Signed 64bit integer. It's -9,223,372,036,854,775,808 or more and 9,223,372,036,
 
 Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or less. (default: 0)
 
-.. _builtin-type-float:
+.. _builtin-type-float32:
 
 ``Float32``
 ^^^^^^^^^^^
@@ -101,6 +101,8 @@ Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or less. (
 Single-precision floating-point number of IEEE 754 as a real number. (default: 0.0)
 
 See `IEEE floating point - Wikipedia, the free encyclopedia <http://en.wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE 754 format.
+
+.. _builtin-type-float:
 
 ``Float``
 ^^^^^^^^^
@@ -160,6 +162,45 @@ String of 2,147,483,647 or less bytes. (default: "")
 世界測地系（World Geodetic System, WGS 84）による経緯度であり、経度と緯度をミリ秒単位で表現した整数の組により表現します。（デフォルト値: 0x0）
 
 度分秒形式からミリ秒形式への変換方法や :doc:`/reference/commands/load` コマンドにおける指定方法はTokyoGeoPointと同じです。
+
+.. _builtin-type-short-binary:
+
+``ShortBinary``
+^^^^^^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 4,095 or less bytes. (default: "")
+
+.. _builtin-type-binary:
+
+``Binary``
+^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 65,535 or less bytes. (default: "")
+
+.. _builtin-type-long-binary:
+
+``LongBinary``
+^^^^^^^^^^^^^^
+
+.. versionadded:: 15.1.8
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+Binary of 2,147,483,647 or less bytes. (default: "")
 
 Limitations about types
 -----------------------

@@ -3,70 +3,70 @@ Execution example::
   select Entries --sort_keys 'n_likes, _id'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
-  #         ], 
+  #         ],
   #         [
-  #           "n_likes", 
+  #           "n_likes",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "tag", 
+  #           "tag",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         4, 
-  #         "Good-bye Senna", 
-  #         "I migrated all Senna system!", 
-  #         3, 
+  #         4,
+  #         "Good-bye Senna",
+  #         "I migrated all Senna system!",
+  #         3,
   #         "Senna"
-  #       ], 
+  #       ],
   #       [
-  #         5, 
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
-  #         3, 
+  #         5,
+  #         "Good-bye Tritonn",
+  #         "I also migrated all Tritonn system!",
+  #         3,
   #         "Senna"
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         5, 
+  #         1,
+  #         "The first post!",
+  #         "Welcome! This is my first post!",
+  #         5,
   #         "Hello"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         10, 
+  #         2,
+  #         "Groonga",
+  #         "I started to use Groonga. It's very fast!",
+  #         10,
   #         "Groonga"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         15, 
+  #         3,
+  #         "Mroonga",
+  #         "I also started to use Mroonga. It's also very fast! Really fast!",
+  #         15,
   #         "Groonga"
   #       ]
   #     ]

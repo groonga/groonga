@@ -1,0 +1,10 @@
+table_create Entries TABLE_HASH_KEY Int64
+column_create Entries is_published COLUMN_SCALAR Bool
+
+load --table Entries
+[
+{"_key": 0, "is_published": 0},
+{"_key": 1, "is_published": 1}
+]
+
+select Entries

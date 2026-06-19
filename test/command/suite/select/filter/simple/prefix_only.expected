@@ -9,7 +9,7 @@ load --table Tags
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Tags --filter '_key @^ "s"'
+select Tags --filter '_key @^ "s"' --sort_keys _id
 [
   [
     0,
@@ -32,12 +32,12 @@ select Tags --filter '_key @^ "s"'
         ]
       ],
       [
-        2,
-        "start"
-      ],
-      [
         1,
         "shutdown"
+      ],
+      [
+        2,
+        "start"
       ]
     ]
   ]

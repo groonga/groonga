@@ -42,6 +42,10 @@ column_list Memos
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -52,9 +56,8 @@ column_list Memos
       "COLUMN_SCALAR|COMPRESS_LZ4|PERSISTENT",
       "Memos",
       "Text",
-      [
-
-      ]
+      [],
+      ""
     ]
   ]
 ]

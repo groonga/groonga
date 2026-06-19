@@ -4,7 +4,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,22 +26,18 @@ set -eux
 
 source_directory="$1"
 shift
-install_prefix="$1"
-shift
 build_directory="$1"
+shift
+install_prefix="$1"
 shift
 
 rm -rf "${build_directory}"
 cmake_args=(
   -S "${source_directory}"
   -B "${build_directory}"
-  -G Ninja
+  --preset debug-default
   -DCMAKE_INSTALL_PREFIX="${install_prefix}"
 )
-if type ccache > /dev/null 2>&1; then
-  cmake_args+=(-DCMAKE_C_COMPILER_LAUNCHER=ccache)
-  cmake_args+=(-DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
-fi
 cmake "${cmake_args[@]}" "$@"
 cmake --build "${build_directory}"
 cmake --install "${build_directory}"

@@ -14,7 +14,7 @@ load --table Notes
 [[0,0.0,0.0],4]
 column_create Notes title_terms COLUMN_VECTOR Terms title
 [[0,0.0,0.0],true]
-select Notes title_terms   --query _id:2   --output_columns title_terms
+select Notes   --query _id:2   --output_columns title_terms
 [[0,0.0,0.0],[[[1],[["title_terms","Terms"]],[[]]]]]
 dump
 table_create Notes TABLE_NO_KEY

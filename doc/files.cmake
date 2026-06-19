@@ -20,9 +20,9 @@ set(GRN_DOC_SOURCES
     contribution/development/repository.rst
     contribution/development/test.rst
     contribution/documentation.rst
-    contribution/documentation/c-api.rst
+    contribution/documentation/c-api.md
     contribution/documentation/i18n.rst
-    contribution/documentation/introduction.rst
+    contribution/documentation/introduction.md
     contribution/report.rst
     development.rst
     development/travis-ci.rst
@@ -48,6 +48,7 @@ set(GRN_DOC_SOURCES
     example/reference/columns/vector/usage_query_weight.log
     example/reference/columns/vector/usage_query_weight_normal.log
     example/reference/columns/vector/usage_query_weight_weight.log
+    example/reference/command/n_workers/status.md
     example/reference/commands/cache_limit/get.log
     example/reference/commands/cache_limit/set.log
     example/reference/commands/column_copy/change_column_type.log
@@ -64,6 +65,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/column_copy/move_column_setup.log
     example/reference/commands/column_copy/to_table.log
     example/reference/commands/column_copy/to_table_setup.log
+    example/reference/commands/column_create/generated_column_load.log
+    example/reference/commands/column_create/generated_column_schema.log
     example/reference/commands/column_create/invalid_mode_scalar_load_initial.log
     example/reference/commands/column_create/invalid_mode_scalar_load_update.log
     example/reference/commands/column_create/invalid_mode_scalar_schema.log
@@ -330,6 +333,12 @@ set(GRN_DOC_SOURCES
     example/reference/commands/select/drilldowns_label_table.log
     example/reference/commands/select/filter_equal.log
     example/reference/commands/select/filter_less_than.log
+    example/reference/commands/select/fuzzy_max_distance.log
+    example/reference/commands/select/fuzzy_max_distance_ratio.log
+    example/reference/commands/select/fuzzy_max_expansions.log
+    example/reference/commands/select/fuzzy_prefix_length.log
+    example/reference/commands/select/fuzzy_tokenize.log
+    example/reference/commands/select/fuzzy_with_transposition.log
     example/reference/commands/select/limit_negative.log
     example/reference/commands/select/limit_simple.log
     example/reference/commands/select/load_table.log
@@ -368,7 +377,9 @@ set(GRN_DOC_SOURCES
     example/reference/commands/select/usage_drilldown.log
     example/reference/commands/select/usage_drilldown_only_query.log
     example/reference/commands/select/usage_dynamic_column.log
+    example/reference/commands/select/usage_fuzzy_max_distance_ratio.log
     example/reference/commands/select/usage_setup.log
+    example/reference/commands/select/usage_typo_tolerance_japanese.log
     example/reference/commands/select/usage_window_function.log
     example/reference/commands/shutdown/default.log
     example/reference/commands/shutdown/graceful.log
@@ -415,6 +426,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/tokenize/normalizer_none.log
     example/reference/commands/tokenize/normalizer_use.log
     example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log
+    example/reference/commands/tokenize/output_style/full.log
+    example/reference/commands/tokenize/output_style/simple.log
     example/reference/commands/tokenize/simple_example.log
     example/reference/commands/tokenize/string_include_spaces.log
     example/reference/commands/tokenize/tokenizer_token_trigram.log
@@ -469,6 +482,20 @@ set(GRN_DOC_SOURCES
     example/reference/functions/in_values/usage_options.log
     example/reference/functions/in_values/usage_setup_data.log
     example/reference/functions/in_values/usage_setup_schema.log
+    example/reference/functions/language_model_knn/column_create.md
+    example/reference/functions/language_model_knn/filter.md
+    example/reference/functions/language_model_knn/index_column_create.md
+    example/reference/functions/language_model_knn/sort_keys.md
+    example/reference/functions/language_model_knn/usage_k_option.md
+    example/reference/functions/language_model_knn/usage_register.md
+    example/reference/functions/language_model_knn/usage_setup_data.md
+    example/reference/functions/language_model_knn/usage_setup_data_for_k_option.md
+    example/reference/functions/language_model_knn/usage_setup_schema.md
+    example/reference/functions/language_model_vectorize/usage_register.md
+    example/reference/functions/language_model_vectorize/usage_rerank.md
+    example/reference/functions/language_model_vectorize/usage_setup_data.md
+    example/reference/functions/language_model_vectorize/usage_setup_generated_column.md
+    example/reference/functions/language_model_vectorize/usage_setup_schema.md
     example/reference/functions/math_abs/nearest_shops.log
     example/reference/functions/math_abs/usage_setup_data.log
     example/reference/functions/math_abs/usage_setup_schema.log
@@ -625,6 +652,34 @@ set(GRN_DOC_SOURCES
     example/reference/normalizers/example-load.log
     example/reference/normalizers/example-table-create.log
     example/reference/normalizers/normalizer-auto.log
+    example/reference/normalizers/normalizer-nfkc-katakana-gu-small-sounds.md
+    example/reference/normalizers/normalizer-nfkc-remove-symbol.md
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen-and-prolonged-sound-mark.md
+    example/reference/normalizers/normalizer-nfkc-unify-hyphen.md
+    example/reference/normalizers/normalizer-nfkc-unify-iteration-mark.md
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-hiragana.md
+    example/reference/normalizers/normalizer-nfkc-unify-kana-case-katakana.md
+    example/reference/normalizers/normalizer-nfkc-unify-kana-hyphen.md
+    example/reference/normalizers/normalizer-nfkc-unify-kana-prolonged-sound-mark.md
+    example/reference/normalizers/normalizer-nfkc-unify-kana.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-bu-sounds.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-di-sound.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-small-sounds.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-du-sound.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-trailing-o.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-v-sounds.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-wo-sound.md
+    example/reference/normalizers/normalizer-nfkc-unify-katakana-zu-small-sounds.md
+    example/reference/normalizers/normalizer-nfkc-unify-latin-alphabet-with.md
+    example/reference/normalizers/normalizer-nfkc-unify-middle-dot.md
+    example/reference/normalizers/normalizer-nfkc-unify-prolonged-sound-mark.md
+    example/reference/normalizers/normalizer-nfkc-unify-to-katakana.md
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji-complex.md
+    example/reference/normalizers/normalizer-nfkc-unify-to-romaji.md
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-hiragana.md
+    example/reference/normalizers/normalizer-nfkc-unify-voiced-sound-mark-katakana.md
+    example/reference/normalizers/normalizer-nfkc-version.md
+    example/reference/normalizers/normalizer-nfkc.md
     example/reference/normalizers/normalizer-nfkc100-katakana-gu-small-sounds.log
     example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log
     example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log
@@ -712,8 +767,10 @@ set(GRN_DOC_SOURCES
     example/reference/normalizers/normalizer-nfkc150-unify-katakana-v-sounds.log
     example/reference/normalizers/normalizer-nfkc150-unify-katakana-wo-sound.log
     example/reference/normalizers/normalizer-nfkc150-unify-katakana-zu-small-sounds.log
+    example/reference/normalizers/normalizer-nfkc150-unify-latin-alphabet-with.log
     example/reference/normalizers/normalizer-nfkc150-unify-middle-dot.log
     example/reference/normalizers/normalizer-nfkc150-unify-prolonged-sound-mark.log
+    example/reference/normalizers/normalizer-nfkc150-unify-to-katakana.log
     example/reference/normalizers/normalizer-nfkc150-unify-to-romaji-complex.log
     example/reference/normalizers/normalizer-nfkc150-unify-to-romaji.log
     example/reference/normalizers/normalizer-nfkc150-unify-voiced-sound-mark-hiragana.log
@@ -760,6 +817,12 @@ set(GRN_DOC_SOURCES
     example/reference/suggest/correction/select.log
     example/reference/suggest/suggest/select.log
     example/reference/token_filters/example-table-create.log
+    example/reference/token_filters/nfkc-unify-hyphen.md
+    example/reference/token_filters/nfkc-unify-kana.md
+    example/reference/token_filters/nfkc-unify-to-romaji.md
+    example/reference/token_filters/nfkc-version.md
+    example/reference/token_filters/nfkc-with-token-mecab.md
+    example/reference/token_filters/nfkc.md
     example/reference/token_filters/nfkc100-hiragana-and-kanji.log
     example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log
     example/reference/token_filters/nfkc100-unify-hyphen.log
@@ -795,6 +858,12 @@ set(GRN_DOC_SOURCES
     example/reference/token_filters/stem.log
     example/reference/token_filters/stop-word-columns-option.log
     example/reference/token_filters/stop_word.log
+    example/reference/tokenizers/language_model_knn/column_create.md
+    example/reference/tokenizers/language_model_knn/index_column_create.md
+    example/reference/tokenizers/language_model_knn/select.md
+    example/reference/tokenizers/language_model_knn/usage_register.md
+    example/reference/tokenizers/language_model_knn/usage_setup_data.md
+    example/reference/tokenizers/language_model_knn/usage_setup_schema.md
     example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log
     example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log
     example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log
@@ -851,6 +920,7 @@ set(GRN_DOC_SOURCES
     example/reference/window_functions/window_rank/usage_group_descending.log
     example/reference/window_functions/window_rank/usage_setup.log
     example/reference/window_functions/window_rank/usage_sort_keys.log
+    example/spec/gqtp/client.log
     example/tutorial/data-1.log
     example/tutorial/data-2.log
     example/tutorial/data-3.log
@@ -918,8 +988,6 @@ set(GRN_DOC_SOURCES
     example/tutorial/micro_blog_posted_by.log
     example/tutorial/micro_blog_score.log
     example/tutorial/micro_blog_user.log
-    example/tutorial/network-1.log
-    example/tutorial/network-2.log
     example/tutorial/network-3.log
     example/tutorial/patricia_trie-2.log
     example/tutorial/patricia_trie_prefix_search.log
@@ -1016,18 +1084,20 @@ set(GRN_DOC_SOURCES
     images/reference/tokenizers/used-when-indexing.svg
     images/reference/tokenizers/used-when-searching.png
     images/reference/tokenizers/used-when-searching.svg
+    images/zulip-icon-128x128.png
     index.rst
     install.rst
     install/almalinux.rst
     install/amazon_linux.rst
     install/centos.rst
-    install/cmake.rst
+    install/cmake.md
     install/debian.rst
     install/docker.rst
     install/mac_os_x.rst
     install/others.rst
-    install/server-use.inc
-    install/ubuntu.rst
+    install/server-use.md
+    install/server-use.rst
+    install/ubuntu.md
     install/windows.rst
     limitations.rst
     news.rst
@@ -1040,6 +1110,9 @@ set(GRN_DOC_SOURCES
     news/11.rst
     news/12.rst
     news/13.md
+    news/14.md
+    news/15.md
+    news/16.md
     news/2.rst
     news/3.rst
     news/4.rst
@@ -1049,6 +1122,7 @@ set(GRN_DOC_SOURCES
     news/8.rst
     news/9.rst
     news/senna.rst
+    origin.md
     reference.rst
     reference/alias.rst
     reference/api.rst
@@ -1086,7 +1160,9 @@ set(GRN_DOC_SOURCES
     reference/columns/vector.rst
     reference/command.rst
     reference/command/command_version.rst
+    reference/command/n_workers.md
     reference/command/output_format.rst
+    reference/command/output_trace_log.md
     reference/command/pretty_print.rst
     reference/command/request_id.rst
     reference/command/request_timeout.rst
@@ -1105,6 +1181,7 @@ set(GRN_DOC_SOURCES
     reference/commands/column_list.rst
     reference/commands/column_remove.rst
     reference/commands/column_rename.rst
+    reference/commands/compress_filter.rst
     reference/commands/config_delete.rst
     reference/commands/config_get.rst
     reference/commands/config_set.rst
@@ -1187,6 +1264,8 @@ set(GRN_DOC_SOURCES
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
+    reference/functions/language_model_knn.md
+    reference/functions/language_model_vectorize.md
     reference/functions/math_abs.rst
     reference/functions/now.rst
     reference/functions/number_classify.rst
@@ -1216,9 +1295,11 @@ set(GRN_DOC_SOURCES
     reference/grn_expr/query_syntax.rst
     reference/grn_expr/script_syntax.rst
     reference/indexing.rst
+    reference/language_model.md
     reference/log.rst
     reference/normalizers.rst
     reference/normalizers/normalizer_auto.rst
+    reference/normalizers/normalizer_nfkc.md
     reference/normalizers/normalizer_nfkc100.rst
     reference/normalizers/normalizer_nfkc121.rst
     reference/normalizers/normalizer_nfkc130.rst
@@ -1245,6 +1326,7 @@ set(GRN_DOC_SOURCES
     reference/tables.rst
     reference/token_filter/summary.rst
     reference/token_filters.rst
+    reference/token_filters/token_filter_nfkc.md
     reference/token_filters/token_filter_nfkc100.rst
     reference/token_filters/token_filter_nfkc150.rst
     reference/token_filters/token_filter_stem.rst
@@ -1261,6 +1343,7 @@ set(GRN_DOC_SOURCES
     reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst
     reference/tokenizers/token_delimit.rst
     reference/tokenizers/token_delimit_null.rst
+    reference/tokenizers/token_language_model_knn.md
     reference/tokenizers/token_mecab.rst
     reference/tokenizers/token_ngram.rst
     reference/tokenizers/token_pattern.rst
@@ -1309,6 +1392,7 @@ set(GRN_DOC_HTML_FILES
     _images/geo-points.png
     _images/used-when-indexing.png
     _images/used-when-searching.png
+    _images/zulip-icon-128x128.png
     _static/basic.css
     _static/doctools.js
     _static/documentation_options.js
@@ -1322,24 +1406,20 @@ set(GRN_DOC_HTML_FILES
     _static/scripts/bootstrap.js
     _static/scripts/bootstrap.js.LICENSE.txt
     _static/scripts/bootstrap.js.map
+    _static/scripts/fontawesome.js
+    _static/scripts/fontawesome.js.LICENSE.txt
+    _static/scripts/fontawesome.js.map
     _static/scripts/pydata-sphinx-theme.js
     _static/scripts/pydata-sphinx-theme.js.map
     _static/searchtools.js
     _static/sphinx_highlight.js
-    _static/styles/bootstrap.css
     _static/styles/pydata-sphinx-theme.css
+    _static/styles/pydata-sphinx-theme.css.map
     _static/styles/theme.css
     _static/switcher.json
-    _static/vendor/fontawesome/6.1.2/LICENSE.txt
-    _static/vendor/fontawesome/6.1.2/css/all.min.css
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.ttf
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.ttf
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.ttf
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.ttf
-    _static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.woff2
+    _static/vendor/fontawesome/webfonts/fa-brands-400.woff2
+    _static/vendor/fontawesome/webfonts/fa-regular-400.woff2
+    _static/vendor/fontawesome/webfonts/fa-solid-900.woff2
     _static/webpack-macros.html
     characteristic.html
     client.html
@@ -1372,7 +1452,6 @@ set(GRN_DOC_HTML_FILES
     install/cmake.html
     install/debian.html
     install/docker.html
-    install/fedora.html
     install/mac_os_x.html
     install/others.html
     install/ubuntu.html
@@ -1388,6 +1467,9 @@ set(GRN_DOC_HTML_FILES
     news/11.html
     news/12.html
     news/13.html
+    news/14.html
+    news/15.html
+    news/16.html
     news/2.html
     news/3.html
     news/4.html
@@ -1398,6 +1480,7 @@ set(GRN_DOC_HTML_FILES
     news/9.html
     news/senna.html
     objects.inv
+    origin.html
     reference.html
     reference/alias.html
     reference/api.html
@@ -1435,7 +1518,9 @@ set(GRN_DOC_HTML_FILES
     reference/columns/vector.html
     reference/command.html
     reference/command/command_version.html
+    reference/command/n_workers.html
     reference/command/output_format.html
+    reference/command/output_trace_log.html
     reference/command/pretty_print.html
     reference/command/request_id.html
     reference/command/request_timeout.html
@@ -1536,6 +1621,8 @@ set(GRN_DOC_HTML_FILES
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
+    reference/functions/language_model_knn.html
+    reference/functions/language_model_vectorize.html
     reference/functions/math_abs.html
     reference/functions/now.html
     reference/functions/number_classify.html
@@ -1565,9 +1652,11 @@ set(GRN_DOC_HTML_FILES
     reference/grn_expr/query_syntax.html
     reference/grn_expr/script_syntax.html
     reference/indexing.html
+    reference/language_model.html
     reference/log.html
     reference/normalizers.html
     reference/normalizers/normalizer_auto.html
+    reference/normalizers/normalizer_nfkc.html
     reference/normalizers/normalizer_nfkc100.html
     reference/normalizers/normalizer_nfkc121.html
     reference/normalizers/normalizer_nfkc130.html
@@ -1593,6 +1682,7 @@ set(GRN_DOC_HTML_FILES
     reference/tables.html
     reference/token_filter/summary.html
     reference/token_filters.html
+    reference/token_filters/token_filter_nfkc.html
     reference/token_filters/token_filter_nfkc100.html
     reference/token_filters/token_filter_nfkc150.html
     reference/token_filters/token_filter_stem.html
@@ -1609,6 +1699,7 @@ set(GRN_DOC_HTML_FILES
     reference/tokenizers/token_bigram_split_symbol_alpha_digit.html
     reference/tokenizers/token_delimit.html
     reference/tokenizers/token_delimit_null.html
+    reference/tokenizers/token_language_model_knn.html
     reference/tokenizers/token_mecab.html
     reference/tokenizers/token_ngram.html
     reference/tokenizers/token_pattern.html

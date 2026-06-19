@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2017-2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2017-2018  Brazil
+  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -33,11 +34,12 @@ typedef struct {
 
 typedef struct _grn_expr_executor grn_expr_executor;
 
-typedef double (*grn_expr_executor_scorer_func)(grn_ctx *ctx,
-                                                grn_expr_executor *executor,
-                                                grn_id id,
-                                                grn_obj *args,
-                                                grn_expr_executor_scorer_data *data);
+typedef double (*grn_expr_executor_scorer_func)(
+  grn_ctx *ctx,
+  grn_expr_executor *executor,
+  grn_id id,
+  grn_obj *args,
+  grn_expr_executor_scorer_data *data);
 
 typedef struct {
   uint32_t codes_start_offset;
@@ -118,6 +120,8 @@ typedef void (*grn_expr_executor_fin_func)(grn_ctx *ctx,
 struct _grn_expr_executor {
   grn_obj *expr;
   grn_obj *variable;
+  grn_obj replace_ids;
+  grn_obj replace_values;
   grn_expr_executor_exec_func exec;
   grn_expr_executor_fin_func fin;
   grn_expr_executor_data data;
@@ -128,20 +132,22 @@ grn_expr_executor_init(grn_ctx *ctx,
                        grn_expr_executor *executor,
                        grn_obj *expr);
 grn_rc
-grn_expr_executor_fin(grn_ctx *ctx,
-                      grn_expr_executor *executor);
+grn_expr_executor_fin(grn_ctx *ctx, grn_expr_executor *executor);
 
 grn_expr_executor *
-grn_expr_executor_open(grn_ctx *ctx,
-                       grn_obj *expr);
+grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr);
 grn_rc
-grn_expr_executor_close(grn_ctx *ctx,
-                        grn_expr_executor *executor);
+grn_expr_executor_close(grn_ctx *ctx, grn_expr_executor *executor);
+
+/* Replace `GRN_OP_GET_VALUE` of `id` object's value with `value`. */
+grn_rc
+grn_expr_executor_add_replace_value(grn_ctx *ctx,
+                                    grn_expr_executor *executor,
+                                    grn_id id,
+                                    grn_obj *value);
 
 grn_obj *
-grn_expr_executor_exec(grn_ctx *ctx,
-                       grn_expr_executor *executor,
-                       grn_id id);
+grn_expr_executor_exec(grn_ctx *ctx, grn_expr_executor *executor, grn_id id);
 
 grn_rc
 grn_expr_executor_exec_batch(grn_ctx *ctx,

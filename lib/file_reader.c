@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,7 +32,7 @@
 
 struct _grn_file_reader {
   FILE *file;
-  grn_bool file_need_close;
+  bool file_need_close;
 };
 
 grn_file_reader *
@@ -39,7 +40,7 @@ grn_file_reader_open(grn_ctx *ctx, const char *path)
 {
   grn_file_reader *reader;
   FILE *file;
-  grn_bool file_need_close;
+  bool file_need_close;
 
   GRN_API_ENTER;
 
@@ -50,14 +51,14 @@ grn_file_reader_open(grn_ctx *ctx, const char *path)
 
   if (strcmp(path, "-") == 0) {
     file = stdin;
-    file_need_close = GRN_FALSE;
+    file_need_close = false;
   } else {
     file = grn_fopen(path, "r");
     if (!file) {
       SERR("[file-reader][open] failed to open path: <%s>", path);
       GRN_API_RETURN(NULL);
     }
-    file_need_close = GRN_TRUE;
+    file_need_close = true;
   }
 
   reader = GRN_CALLOC(sizeof(grn_file_reader));

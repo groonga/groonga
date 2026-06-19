@@ -1,0 +1,27 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Names TABLE_PAT_KEY ShortText
+column_create Names user COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Som"},
+{"name": "Tomy"},
+{"name": "Pom"},
+{"name": "Ken"}
+]
+
+# Names:
+# 4{0,3,false}
+#   L:4{0,3,false}("Ken")[01001011 01100101 01101110]
+#   R:2{0,5,false} <- Start ID because "Tomy" starts with "T"
+#     L:3{0,6,false}
+#       L:3{0,6,false}("Pom")[01010000 01101111 01101101] <- Non prefixed node
+#       R:1{2,7,false}
+#         L:0{0,0,false}
+#         R:1{2,7,false}("Som")[01010011 01101111 01101101] <- Non prefixed node
+#     R:2{0,5,false}("Tomy")[01010100 01101111 01101101 01111001]
+select Names --filter 'fuzzy_search(_key, "Tom", {"max_distance": 2, "prefix_length": 1})' \
+  --output_columns '_key, _score' \
+  --match_escalation_threshold -1

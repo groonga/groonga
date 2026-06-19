@@ -1,0 +1,12 @@
+table_create Terms TABLE_PAT_KEY ShortText --normalizers NormalizerNFKC150
+column_create Terms expansions COLUMN_VECTOR ShortText
+
+load --table Terms
+[
+{"_key": "PGroonga", "expansions": ["PGroonga", "\"Groonga PostgreSQL\""]},
+{"_key": "Rroonga",  "expansions": ["Rroonga", "\"Ruby Groonga\""]}
+]
+
+query_expand \
+  Terms.expansions \
+  '*NPP11,0,5|5"(Groonga) (Rroonga) (Mroonga)"'

@@ -1,19 +1,19 @@
 Execution example::
 
   table_create Entries TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Entries content COLUMN_SCALAR Text
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Entries n_likes COLUMN_SCALAR UInt32
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Entries tag COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table Entries
   [
   {"_key":    "The first post!",
@@ -37,4 +37,4 @@ Execution example::
    "n_likes": 3,
    "tag": "Senna"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  # [[0,1337566253.89858,0.000355720520019531],5]

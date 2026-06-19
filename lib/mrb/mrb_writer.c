@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,11 +44,11 @@ writer_write(mrb_state *mrb, mrb_value self)
     if (mrb_nil_p(target)) {
       GRN_OUTPUT_NULL();
     } else {
-      GRN_OUTPUT_BOOL(GRN_FALSE);
+      GRN_OUTPUT_BOOL(false);
     }
     break;
   case MRB_TT_TRUE :
-    GRN_OUTPUT_BOOL(GRN_TRUE);
+    GRN_OUTPUT_BOOL(true);
     break;
   case MRB_TT_INTEGER :
     GRN_OUTPUT_INT64(mrb_integer(target));
@@ -134,7 +135,7 @@ writer_close_map(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-writer_open_result_set(mrb_state *mrb, mrb_value self)
+writer_open_result_set_internal(mrb_state *mrb, mrb_value self, bool with_records)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table;
@@ -164,10 +165,26 @@ writer_open_result_set(mrb_state *mrb, mrb_value self)
       grn_mrb_ctx_check(mrb);
     }
   }
-  GRN_OUTPUT_RESULT_SET_OPEN(table, &format, (uint32_t)n_additional_elements);
+  if (with_records) {
+    GRN_OUTPUT_RESULT_SET_OPEN(table, &format, (uint32_t)n_additional_elements);
+  } else {
+    GRN_OUTPUT_RESULT_SET_OPEN_METADATA(table, &format, (uint32_t)n_additional_elements);
+  }
   grn_obj_format_fin(ctx, &format);
 
   return mrb_nil_value();
+}
+
+static mrb_value
+writer_open_result_set(mrb_state *mrb, mrb_value self)
+{
+  return writer_open_result_set_internal(mrb, self, true);
+}
+
+static mrb_value
+writer_open_result_set_metadata(mrb_state *mrb, mrb_value self)
+{
+  return writer_open_result_set_internal(mrb, self, false);
 }
 
 static mrb_value
@@ -321,6 +338,8 @@ grn_mrb_writer_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "open_result_set",
                     writer_open_result_set, MRB_ARGS_ARG(3, 1));
+  mrb_define_method(mrb, klass, "open_result_set_metadata",
+                    writer_open_result_set_metadata, MRB_ARGS_ARG(3, 1));
   mrb_define_method(mrb, klass, "close_result_set",
                     writer_close_result_set, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "open_table_records",

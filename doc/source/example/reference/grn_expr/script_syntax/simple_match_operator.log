@@ -3,24 +3,24 @@ Execution example::
   select Entries --filter 'content @ "fast"' --output_columns content
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "content", 
+  #           "content",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "I started to use Groonga. It's very fast!"
-  #       ], 
+  #       ],
   #       [
   #         "I also started to use Mroonga. It's also very fast! Really fast!"
   #       ]

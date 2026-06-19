@@ -36,8 +36,7 @@ select Documents   --match_columns content --query 'MySQL'   --output_columns '_
       ],
       [
         "Groonga",
-        {
-        }
+        {}
       ]
     ]
   ]

@@ -15,54 +15,54 @@ Execution example::
     --drilldowns[tag].output_columns _key,_nsubrecs,record_number
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     {
   #       "tag": [
   #         [
   #           3
-  #         ], 
+  #         ],
   #         [
   #           [
-  #             "_key", 
+  #             "_key",
   #             "ShortText"
-  #           ], 
+  #           ],
   #           [
-  #             "_nsubrecs", 
+  #             "_nsubrecs",
   #             "Int32"
-  #           ], 
+  #           ],
   #           [
-  #             "record_number", 
+  #             "record_number",
   #             "UInt32"
   #           ]
-  #         ], 
+  #         ],
   #         [
-  #           "Hello", 
-  #           1, 
+  #           "Hello",
+  #           1,
   #           1
-  #         ], 
+  #         ],
   #         [
-  #           "Groonga", 
-  #           2, 
+  #           "Groonga",
+  #           2,
   #           1
-  #         ], 
+  #         ],
   #         [
-  #           "Senna", 
-  #           2, 
+  #           "Senna",
+  #           2,
   #           2
   #         ]
   #       ]

@@ -1,13 +1,46 @@
 table_create Users TABLE_PAT_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice"},
+{"_key": "Bob"},
+{"_key": "Charlie"}
+]
+[[0,0.0,0.0],3]
+select Users
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[table][create] large key support is available only for TABLE_HASH_KEY key table: <Users>(TABLE_PAT_KEY)"
+    0,
+    0.0,
+    0.0
   ],
-  false
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Alice"
+      ],
+      [
+        2,
+        "Bob"
+      ],
+      [
+        3,
+        "Charlie"
+      ]
+    ]
+  ]
 ]
-#|e| [table][create] large key support is available only for TABLE_HASH_KEY key table: <Users>(TABLE_PAT_KEY)

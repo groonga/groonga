@@ -44,6 +44,10 @@ column_list Users
       [
         "source",
         "ShortText"
+      ],
+      [
+        "generator",
+        "ShortText"
       ]
     ],
     [
@@ -54,9 +58,8 @@ column_list Users
       "COLUMN_SCALAR",
       "Users",
       "ShortText",
-      [
-
-      ]
+      [],
+      ""
     ],
     [
       258,
@@ -66,9 +69,8 @@ column_list Users
       "COLUMN_SCALAR|PERSISTENT",
       "Users",
       "UInt8",
-      [
-
-      ]
+      [],
+      ""
     ],
     [
       257,
@@ -78,9 +80,8 @@ column_list Users
       "COLUMN_SCALAR|PERSISTENT",
       "Users",
       "ShortText",
-      [
-
-      ]
+      [],
+      ""
     ]
   ]
 ]

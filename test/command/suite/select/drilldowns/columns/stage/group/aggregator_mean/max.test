@@ -1,0 +1,36 @@
+table_create Tags TABLE_HASH_KEY ShortText
+column_create Tags weight COLUMN_SCALAR UInt32
+
+load --table Tags
+[
+{"_key": "A", "weight": 10},
+{"_key": "B", "weight": 10},
+{"_key": "C", "weight": 4}
+]
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+column_create Items tag COLUMN_SCALAR Tags
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000, "tag": "A"},
+{"_key": "Note",  "price": 800,  "tag": "B"},
+{"_key": "Box",   "price": 500,  "tag": "B"},
+{"_key": "Pen",   "price": 500,  "tag": "A"},
+{"_key": "Food",  "price": 500,  "tag": "C"},
+{"_key": "Drink", "price": 300,  "tag": "B"}
+]
+
+select Items \
+  --drilldowns[tags].keys tag \
+  --drilldowns[tags].calc_types MAX \
+  --drilldowns[tags].calc_target price \
+  --drilldowns[tags].output_columns _key,_max \
+  --drilldowns[types].table tags \
+  --drilldowns[types].keys weight \
+  --drilldowns[types].output_columns _key,_max,max_mean \
+  --drilldowns[types].columns[max_mean].stage group \
+  --drilldowns[types].columns[max_mean].type Float \
+  --drilldowns[types].columns[max_mean].flags COLUMN_SCALAR \
+  --drilldowns[types].columns[max_mean].value 'aggregator_mean(_max)'

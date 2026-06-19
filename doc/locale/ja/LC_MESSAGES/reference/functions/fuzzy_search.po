@@ -14,3 +14,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``fuzzy_search``"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Syntax"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "Return value"
+msgstr ""

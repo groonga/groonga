@@ -36,29 +36,9 @@ Install::
 
   % brew install mecab-ipadic
 
-Configure::
-
-  % sed -i '' -e 's,dicrc.*=.*,dicrc = /usr/local/lib/mecab/dic/ipadic,g' /usr/local/etc/mecabrc
-
 Build from source
 -----------------
 
-Install `Xcode <https://developer.apple.com/xcode/>`_.
+Build from source is for developers.
 
-Download source::
-
-  % curl -O https://packages.groonga.org/source/groonga/groonga-13.0.5.tar.gz
-  % tar xvzf groonga-13.0.5.tar.gz
-  % cd groonga-13.0.5
-
-Configure (see :ref:`source-configure` about ``configure`` options)::
-
-  % ./configure
-
-Build::
-
-  % make -j$(/usr/sbin/sysctl -n hw.ncpu)
-
-Install::
-
-  % sudo make install
+See :doc:`/install/cmake` .

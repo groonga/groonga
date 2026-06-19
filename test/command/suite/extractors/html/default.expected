@@ -1,0 +1,2 @@
+extract   --extractors 'ExtractorHTML'   --value "<html><body>He&lt;ll&gt;o</body></html>"
+[[0,0.0,0.0],{"extracted":"He<ll>o"}]

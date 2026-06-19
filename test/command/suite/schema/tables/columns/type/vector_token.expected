@@ -14,9 +14,22 @@ schema
     0.0
   ],
   {
-    "plugins": {
-    },
+    "plugins": {},
     "types": {
+      "BFloat16": {
+        "id": 20,
+        "name": "BFloat16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Binary": {
+        "id": 22,
+        "name": "Binary",
+        "size": 65536,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
       "Bool": {
         "id": 3,
         "name": "Bool",
@@ -66,6 +79,20 @@ schema
         "can_be_key_type": true,
         "can_be_value_type": true
       },
+      "JSON": {
+        "id": 24,
+        "name": "JSON",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "LongBinary": {
+        "id": 23,
+        "name": "LongBinary",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
       "LongText": {
         "id": 16,
         "name": "LongText",
@@ -79,6 +106,13 @@ schema
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
+      },
+      "ShortBinary": {
+        "id": 21,
+        "name": "ShortBinary",
+        "size": 4096,
+        "can_be_key_type": true,
+        "can_be_value_type": false
       },
       "ShortText": {
         "id": 14,
@@ -228,8 +262,12 @@ schema
         "name": "NormalizerAuto"
       },
       "NormalizerHTML": {
-        "id": 90,
+        "id": 91,
         "name": "NormalizerHTML"
+      },
+      "NormalizerNFKC": {
+        "id": 89,
+        "name": "NormalizerNFKC"
       },
       "NormalizerNFKC100": {
         "id": 85,
@@ -252,25 +290,29 @@ schema
         "name": "NormalizerNFKC51"
       },
       "NormalizerTable": {
-        "id": 89,
+        "id": 90,
         "name": "NormalizerTable"
       }
     },
     "token_filters": {
+      "TokenFilterNFKC": {
+        "id": 236,
+        "name": "TokenFilterNFKC"
+      },
       "TokenFilterNFKC100": {
-        "id": 226,
+        "id": 232,
         "name": "TokenFilterNFKC100"
       },
       "TokenFilterNFKC121": {
-        "id": 227,
+        "id": 233,
         "name": "TokenFilterNFKC121"
       },
       "TokenFilterNFKC130": {
-        "id": 228,
+        "id": 234,
         "name": "TokenFilterNFKC130"
       },
       "TokenFilterNFKC150": {
-        "id": 229,
+        "id": 235,
         "name": "TokenFilterNFKC150"
       }
     },
@@ -283,15 +325,10 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
-        "normalizers": [
-
-        ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "normalizers": [],
+        "token_filters": [],
+        "extractors": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -318,13 +355,11 @@ schema
             "section": false,
             "weight": false,
             "weight_float32": false,
+            "weight_bfloat16": false,
             "position": false,
-            "sources": [
-
-            ],
-            "indexes": [
-
-            ],
+            "sources": [],
+            "generator": "",
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -353,6 +388,7 @@ schema
             "section": false,
             "weight": false,
             "weight_float32": false,
+            "weight_bfloat16": false,
             "position": false,
             "sources": [
               {
@@ -362,9 +398,8 @@ schema
                 "full_name": "Notes.title"
               }
             ],
-            "indexes": [
-
-            ],
+            "generator": "",
+            "indexes": [],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -406,12 +441,9 @@ schema
             "options": null
           }
         ],
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
+        "token_filters": [],
+        "extractors": [],
+        "indexes": [],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -423,8 +455,7 @@ schema
           },
           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC121"
         },
-        "columns": {
-        }
+        "columns": {}
       }
     }
   }

@@ -25,7 +25,7 @@ To enable this function, register ``functions/string`` plugin by following the c
 Syntax
 ------
 
-``string_slice`` requires two to four parameters. The required parametars are depending on the extraction method.
+``string_slice`` requires two to four parameters. The required parameters are depending on the extraction method.
 
 Extraction by position
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -43,7 +43,7 @@ Extraction by position
 
 Extraction by regular expression
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
 ::
 
   string_slice(target, regexp, nth[, options])
@@ -146,7 +146,7 @@ Specify the following key.
 
 ``default_value``
   Specify a string to be returned when a substring is an empty string except when specifying 0 for ``length``.
-  
+
   The default is an empty string.
 
 Extraction by regular expression
@@ -186,7 +186,7 @@ Specify either ``nth`` or ``name``.
 
 Specify a name of the named capturing group for ``regexp``.
 
-A captured string of the named capturing group that matches ``name`` is returned 
+A captured string of the named capturing group that matches ``name`` is returned
 when ``regexp`` is matched to ``target``.
 
 Specify either ``nth`` or ``name``.

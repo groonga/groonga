@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,8 +32,10 @@
   Just for backward compatibility. See grn_plugin_charlen() instead.
  */
 int
-grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
-                      unsigned int str_length, grn_encoding encoding)
+grn_tokenizer_charlen(grn_ctx *ctx,
+                      const char *str_ptr,
+                      unsigned int str_length,
+                      grn_encoding encoding)
 {
   return grn_plugin_charlen(ctx, str_ptr, str_length, encoding);
 }
@@ -41,24 +44,26 @@ grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
   Just for backward compatibility. See grn_plugin_isspace() instead.
  */
 int
-grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
-                      unsigned int str_length, grn_encoding encoding)
+grn_tokenizer_isspace(grn_ctx *ctx,
+                      const char *str_ptr,
+                      unsigned int str_length,
+                      grn_encoding encoding)
 {
   return grn_plugin_isspace(ctx, str_ptr, str_length, encoding);
 }
 
-grn_bool
+bool
 grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                                      const char *str_ptr,
                                      unsigned int str_length,
                                      grn_encoding encoding)
 {
   if (encoding != GRN_ENC_UTF8) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (str_length != GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) {
-    return GRN_FALSE;
+    return false;
   }
 
   return memcmp(str_ptr,
@@ -66,7 +71,7 @@ grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                 GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) == 0;
 }
 
-grn_bool
+bool
 grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                        const char *str_ptr,
                                        unsigned int str_length,
@@ -77,11 +82,11 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
   const char *end = str_ptr + str_length;
 
   if (encoding != GRN_ENC_UTF8) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (str_length == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   while ((char_length = grn_charlen_(ctx, current, end, encoding)) > 0) {
@@ -89,11 +94,11 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                              current,
                                              (unsigned int)char_length,
                                              encoding)) {
-      return GRN_TRUE;
+      return true;
     }
     current += char_length;
   }
-  return GRN_FALSE;
+  return false;
 }
 
 static void
@@ -103,25 +108,30 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     return;
   }
 
-  query->need_normalize = GRN_FALSE;
+  query->need_normalize = false;
 
   if (query->normalized_query) {
     grn_obj_close(ctx, query->normalized_query);
   }
   query->normalized_query = grn_string_open_(ctx,
-                                             query->ptr,
-                                             query->length,
+                                             query->data,
+                                             query->size,
                                              query->lexicon,
                                              (int)(query->normalize_flags),
                                              query->encoding);
   if (!query->normalized_query) {
-    query->have_tokenized_delimiter = GRN_FALSE;
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][normalize] failed to open normalized string");
+    query->have_tokenized_delimiter = false;
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_TOKENIZER_ERROR,
+                     "[tokenizer][normalize] failed to open normalized string: "
+                     "<%.*s>(%s)",
+                     (int)(query->size),
+                     query->data,
+                     grn_encoding_to_string(query->encoding));
     return;
   }
 
-  query->need_delimiter_check = GRN_TRUE;
+  query->need_delimiter_check = true;
 }
 
 static void
@@ -134,7 +144,7 @@ grn_tokenizer_query_ensure_have_tokenized_delimiter(grn_ctx *ctx,
     return;
   }
 
-  query->need_delimiter_check = GRN_FALSE;
+  query->need_delimiter_check = false;
 
   if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
     const char *normalized_string;
@@ -151,7 +161,7 @@ grn_tokenizer_query_ensure_have_tokenized_delimiter(grn_ctx *ctx,
                                              normalized_string_length,
                                              query->encoding);
   } else {
-    query->have_tokenized_delimiter = GRN_FALSE;
+    query->have_tokenized_delimiter = false;
   }
 }
 
@@ -160,9 +170,9 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   query->normalize_flags = 0;
   query->normalized_query = NULL;
-  query->query_buf = NULL;
+  query->data = NULL;
   query->ptr = NULL;
-  query->length = 0;
+  query->size = 0;
   query->flags = 0;
   query->tokenize_mode = GRN_TOKENIZE_ADD;
   query->token_mode = query->tokenize_mode;
@@ -173,16 +183,20 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->source_id = GRN_ID_NIL;
   query->index_column = NULL;
 
-  query->need_normalize = GRN_TRUE;
-  query->need_delimiter_check = GRN_TRUE;
+  query->need_normalize = true;
+  query->need_delimiter_check = true;
 
   query->options = NULL;
+
+  query->domain = GRN_ID_NIL;
 
   return ctx->rc;
 }
 
 grn_tokenizer_query *
-grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
+grn_tokenizer_query_open(grn_ctx *ctx,
+                         int num_args,
+                         grn_obj **args,
                          uint32_t normalize_flags)
 {
   grn_obj *flags;
@@ -206,8 +220,8 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
   }
 
   {
-    grn_tokenizer_query * const query =
-        GRN_PLUGIN_MALLOC(ctx, sizeof(grn_tokenizer_query));
+    grn_tokenizer_query *const query =
+      GRN_PLUGIN_MALLOC(ctx, sizeof(grn_tokenizer_query));
     if (!query) {
       GRN_API_RETURN(NULL);
     }
@@ -247,8 +261,8 @@ grn_tokenizer_query_fin(grn_ctx *ctx, grn_tokenizer_query *query)
   if (query->normalized_query) {
     grn_obj_unlink(ctx, query->normalized_query);
   }
-  if (query->query_buf) {
-    GRN_PLUGIN_FREE(ctx, query->query_buf);
+  if (query->data) {
+    GRN_PLUGIN_FREE(ctx, query->data);
   }
 }
 
@@ -277,7 +291,7 @@ grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
   GRN_API_ENTER;
   if (query->normalize_flags != normalize_flags) {
     query->normalize_flags = normalize_flags;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -305,31 +319,11 @@ grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
                                    const char *string,
                                    size_t string_length)
 {
-  GRN_API_ENTER;
-
-  if (query->query_buf) {
-    GRN_PLUGIN_FREE(ctx, query->query_buf);
-  }
-
-  if (string_length == 0) {
-    query->query_buf = NULL;
-    query->ptr = NULL;
-    query->length = 0;
-    query->need_normalize = GRN_TRUE;
-  } else {
-    query->query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, string_length + 1);
-    if (!query->query_buf) {
-      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer][query] failed to duplicate query");
-      GRN_API_RETURN(ctx->rc);
-    }
-    grn_memcpy(query->query_buf, string, string_length);
-    query->query_buf[string_length] = '\0';
-    query->ptr = query->query_buf;
-    query->length = (unsigned int)string_length;
-  }
-
-  GRN_API_RETURN(ctx->rc);
+  return grn_tokenizer_query_set_data(ctx,
+                                      query,
+                                      string,
+                                      string_length,
+                                      GRN_DB_TEXT);
 }
 
 const char *
@@ -339,9 +333,70 @@ grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (length) {
-    *length = query->length;
+    *length = query->size;
   }
-  GRN_API_RETURN(query->ptr);
+  GRN_API_RETURN(query->data);
+}
+
+grn_rc
+grn_tokenizer_query_set_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             const char *data,
+                             size_t size,
+                             grn_id domain)
+{
+  GRN_API_ENTER;
+
+  if (query->data) {
+    GRN_PLUGIN_FREE(ctx, query->data);
+  }
+
+  if (size == 0) {
+    query->data = NULL;
+  } else {
+    if (grn_type_id_is_text_family(ctx, domain)) {
+      query->data = (char *)GRN_PLUGIN_MALLOC(ctx, size + 1);
+      if (!query->data) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_TOKENIZER_ERROR,
+                         "[tokenizer][query] failed to duplicate query");
+        GRN_API_RETURN(ctx->rc);
+      }
+      grn_memcpy(query->data, data, size);
+      query->data[size] = '\0';
+    } else {
+      query->data = (char *)GRN_PLUGIN_MALLOC(ctx, size);
+      if (!query->data) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_TOKENIZER_ERROR,
+                         "[tokenizer][query] failed to duplicate query");
+        GRN_API_RETURN(ctx->rc);
+      }
+      grn_memcpy(query->data, data, size);
+    }
+  }
+  query->size = size;
+  query->ptr = query->data;
+  query->domain = domain;
+  query->need_normalize = true;
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_tokenizer_query_get_data(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             size_t *size,
+                             grn_id *domain)
+{
+  GRN_API_ENTER;
+  if (size) {
+    *size = query->size;
+  }
+  if (domain) {
+    *domain = query->domain;
+  }
+  GRN_API_RETURN(query->data);
 }
 
 grn_encoding
@@ -359,7 +414,7 @@ grn_tokenizer_query_set_flags(grn_ctx *ctx,
   GRN_API_ENTER;
   if (query->flags != flags) {
     query->flags = flags;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -371,7 +426,7 @@ grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
   GRN_API_RETURN(query->flags);
 }
 
-grn_bool
+bool
 grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
                                              grn_tokenizer_query *query)
 {
@@ -389,7 +444,7 @@ grn_tokenizer_query_set_mode(grn_ctx *ctx,
   if (query->tokenize_mode != mode) {
     query->tokenize_mode = mode;
     query->token_mode = query->tokenize_mode;
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -421,7 +476,7 @@ grn_tokenizer_query_set_lexicon(grn_ctx *ctx,
     } else {
       query->encoding = ctx->encoding;
     }
-    query->need_normalize = GRN_TRUE;
+    query->need_normalize = true;
   }
 
   GRN_API_RETURN(ctx->rc);
@@ -463,8 +518,7 @@ grn_tokenizer_query_set_source_column(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_tokenizer_query_get_source_column(grn_ctx *ctx,
-                                      grn_tokenizer_query *query)
+grn_tokenizer_query_get_source_column(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->source_column);
@@ -481,16 +535,14 @@ grn_tokenizer_query_set_source_id(grn_ctx *ctx,
 }
 
 grn_id
-grn_tokenizer_query_get_source_id(grn_ctx *ctx,
-                                  grn_tokenizer_query *query)
+grn_tokenizer_query_get_source_id(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->source_id);
 }
 
 grn_obj *
-grn_tokenizer_query_get_index_column(grn_ctx *ctx,
-                                     grn_tokenizer_query *query)
+grn_tokenizer_query_get_index_column(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->index_column);
@@ -507,8 +559,7 @@ grn_tokenizer_query_set_index_column(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_tokenizer_query_get_options(grn_ctx *ctx,
-                                grn_tokenizer_query *query)
+grn_tokenizer_query_get_options(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->options);
@@ -539,8 +590,10 @@ grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token)
 }
 
 void
-grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
-                         const char *str_ptr, unsigned int str_length,
+grn_tokenizer_token_push(grn_ctx *ctx,
+                         grn_tokenizer_token *token,
+                         const char *str_ptr,
+                         unsigned int str_length,
                          grn_token_status status)
 {
   GRN_TEXT_SET_REF(&token->str, str_ptr, str_length);
@@ -630,9 +683,11 @@ grn_tokenizer_next_by_tokenized_delimiter(grn_ctx *ctx,
 }
 
 grn_rc
-grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
+grn_tokenizer_register(grn_ctx *ctx,
+                       const char *plugin_name_ptr,
                        unsigned int plugin_name_length,
-                       grn_proc_func *init, grn_proc_func *next,
+                       grn_proc_func *init,
+                       grn_proc_func *next,
                        grn_proc_func *fin)
 {
   grn_expr_var vars[3];
@@ -646,10 +701,15 @@ grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
       grn_proc_create() registers a plugin to the database which is associated
       with `ctx'. A returned object must not be finalized here.
      */
-    grn_obj * const obj = grn_proc_create(ctx, plugin_name_ptr,
-                                          (int)plugin_name_length,
-                                          GRN_PROC_TOKENIZER,
-                                          init, next, fin, 3, vars);
+    grn_obj *const obj = grn_proc_create(ctx,
+                                         plugin_name_ptr,
+                                         (int)plugin_name_length,
+                                         GRN_PROC_TOKENIZER,
+                                         init,
+                                         next,
+                                         fin,
+                                         3,
+                                         vars);
     if (obj == NULL) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR, "grn_proc_create() failed");
       return ctx->rc;
@@ -659,9 +719,7 @@ grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
 }
 
 grn_obj *
-grn_tokenizer_create(grn_ctx *ctx,
-                     const char *name,
-                     int name_length)
+grn_tokenizer_create(grn_ctx *ctx, const char *name, int name_length)
 {
   grn_obj *tokenizer;
 
@@ -682,10 +740,27 @@ grn_tokenizer_create(grn_ctx *ctx,
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKENIZER_ERROR,
                      "[tokenizer][create] failed to create: <%.*s>",
-                     name_length, name);
+                     name_length,
+                     name);
   }
 
   GRN_API_RETURN(tokenizer);
+}
+
+grn_rc
+grn_tokenizer_set_build_func(grn_ctx *ctx,
+                             grn_obj *tokenizer,
+                             grn_tokenizer_build_func *build)
+{
+  GRN_API_ENTER;
+  if (tokenizer) {
+    ((grn_proc *)tokenizer)->callbacks.tokenizer.build = build;
+  } else {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[tokenizer][build][set] tokenizer is NULL");
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -734,4 +809,119 @@ grn_tokenizer_set_fin_func(grn_ctx *ctx,
                      "[tokenizer][fin][set] tokenizer is NULL");
   }
   GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_tokenizer_have_build_func(grn_ctx *ctx, grn_obj *tokenizer)
+{
+  return ((grn_proc *)tokenizer)->callbacks.tokenizer.build;
+}
+
+grn_rc
+grn_tokenizer_build(grn_ctx *ctx,
+                    grn_obj *tokenizer,
+                    grn_tokenizer_build_data *data)
+{
+  return ((grn_proc *)tokenizer)->callbacks.tokenizer.build(ctx, data);
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_source_table(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data)
+{
+  return data->source_table;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_source_columns(grn_ctx *ctx,
+                                            grn_tokenizer_build_data *data)
+{
+  return data->source_columns;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_lexicon(grn_ctx *ctx,
+                                     grn_tokenizer_build_data *data)
+{
+  return data->lexicon;
+}
+
+grn_obj *
+grn_tokenizer_build_data_get_index_column(grn_ctx *ctx,
+                                          grn_tokenizer_build_data *data)
+{
+  return data->index_column;
+}
+
+grn_rc
+grn_tokenizer_build_data_processed_n_records(grn_ctx *ctx,
+                                             grn_tokenizer_build_data *data,
+                                             uint32_t n_records)
+{
+  return data->processed_n_records_func(ctx, data, n_records, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_vectorize(grn_ctx *ctx,
+                                         grn_tokenizer_build_data *data,
+                                         uint32_t n_total_records)
+{
+  return data->start_vectorize_func(ctx,
+                                    data,
+                                    n_total_records,
+                                    data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_cluster(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t n_total_records)
+{
+  return data->start_cluster_func(ctx, data, n_total_records, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_load(grn_ctx *ctx,
+                                    grn_tokenizer_build_data *data,
+                                    uint32_t n_total_records)
+{
+  return data->start_load_func(ctx, data, n_total_records, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_record(grn_ctx *ctx,
+                                      grn_tokenizer_build_data *data,
+                                      grn_id rid)
+{
+  return data->start_record_func(ctx, data, rid, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_start_section(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       uint32_t sid)
+{
+  return data->start_section_func(ctx, data, sid, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_append_tokens(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data,
+                                       grn_obj *tokens)
+{
+  return data->append_tokens_func(ctx, data, tokens, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_finish_section(grn_ctx *ctx,
+                                        grn_tokenizer_build_data *data)
+{
+  return data->finish_section_func(ctx, data, data->user_data);
+}
+
+grn_rc
+grn_tokenizer_build_data_finish_record(grn_ctx *ctx,
+                                       grn_tokenizer_build_data *data)
+{
+  return data->finish_record_func(ctx, data, data->user_data);
 }

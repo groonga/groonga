@@ -26,6 +26,7 @@ optional::
            [flags=NONE]
            [mode=ADD]
            [token_filters=NONE]
+           [output_style=full]
 
 Usage
 -----
@@ -124,7 +125,7 @@ Here is an example that uses normalizer.
 Continuous alphabets are tokenized as one token. For example,
 ``fulltext`` is a token.
 
-If you want to tokenize by two characters with noramlizer, use
+If you want to tokenize by two characters with normalizer, use
 ``TokenBigramSplitSymbolAlpha``.
 
 .. groonga-command
@@ -167,7 +168,7 @@ tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter.
 Tokenized delimiter is special character that indicates token
 border. It is ``U+FFFE``. The character is not assigned any
 character. It means that the character is not appeared in normal
-string. So the character is good character for this puropose. If
+string. So the character is good character for this purpose. If
 ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is
 treated as already tokenized string. Tokenizer just tokenizes by
 tokenized delimiter.
@@ -209,6 +210,39 @@ Specifies the token filter names. ``tokenize`` command uses the
 tokenizer that is named ``token_filters``.
 
 See :doc:`/reference/token_filters` about token filters.
+
+.. _tokenize-output-style:
+
+``output_style``
+""""""""""""""""
+
+.. versionadded:: 15.0.9
+
+Specifies the output style of the ``tokenize`` command.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Style
+     - Description
+   * - ``full``
+     - This is the default output style. Returns an array of objects with full
+       token attributes (value, position, flags, etc.) as usual.
+   * - ``simple``
+     - Shows only the token values for readability. Returns an array of
+       tokens like ``["We", "are", …]``.
+
+Here is an example with ``full`` (default) output sytle.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/output_style/full.log
+.. tokenize TokenNgram "Fulltext Search" --output_style full
+
+And here is the same command with ``simple`` output style.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/output_style/simple.log
+.. tokenize TokenNgram "Fulltext Search" --output_style simple
 
 .. _tokenize-return-value:
 

@@ -52,9 +52,7 @@ select Memos   --output_columns 'tags, vector_find(tags, "Gr", "invalid")'
         "vector_find() mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">="
       ],
       [
-        [
-
-        ],
+        [],
         "vector_find() mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">="
       ]
     ]

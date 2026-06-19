@@ -1,9 +1,10 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,6 +27,10 @@ extern "C" {
 #define GRN_TYPE_SHORT_TEXT_SIZE GRN_TABLE_MAX_KEY_SIZE
 #define GRN_TYPE_TEXT_SIZE (1U << 16)
 #define GRN_TYPE_LONG_TEXT_SIZE (1U << 31)
+#define GRN_TYPE_SHORT_BINARY_SIZE GRN_TABLE_MAX_KEY_SIZE
+#define GRN_TYPE_BINARY_SIZE (1U << 16)
+#define GRN_TYPE_LONG_BINARY_SIZE (1U << 31)
+#define GRN_TYPE_JSON_SIZE (1U << 31)
 
 grn_obj *
 grn_type_create_internal(grn_ctx *ctx,

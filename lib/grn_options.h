@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,42 +27,47 @@ extern "C" {
 
 typedef struct _grn_options grn_options;
 
-grn_options *grn_options_create(grn_ctx *ctx,
-                                const char *path,
-                                const char *context_tag);
-grn_options *grn_options_open(grn_ctx *ctx,
-                              const char *path,
-                              const char *context_tag);
-grn_rc grn_options_close(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_remove(grn_ctx *ctx, const char *path);
+grn_options *
+grn_options_create(grn_ctx *ctx, const char *path, const char *context_tag);
+grn_options *
+grn_options_open(grn_ctx *ctx, const char *path, const char *context_tag);
+grn_rc
+grn_options_close(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_remove(grn_ctx *ctx, const char *path);
 
-grn_bool grn_options_is_locked(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_clear_lock(grn_ctx *ctx, grn_options *options);
-grn_bool grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
-grn_rc grn_options_flush(grn_ctx *ctx, grn_options *options);
+bool
+grn_options_is_locked(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_clear_lock(grn_ctx *ctx, grn_options *options);
+bool
+grn_options_is_corrupt(grn_ctx *ctx, grn_options *options);
+grn_rc
+grn_options_flush(grn_ctx *ctx, grn_options *options);
 
-grn_rc grn_options_set(grn_ctx *ctx,
-                       grn_options *options,
-                       grn_id id,
-                       const char *name,
-                       int name_length,
-                       grn_obj *values);
-grn_option_revision grn_options_get(grn_ctx *ctx,
-                                    grn_options *options,
-                                    grn_id id,
-                                    const char *name,
-                                    int name_length,
-                                    grn_option_revision revision,
-                                    grn_obj *values);
-grn_rc grn_options_clear(grn_ctx *ctx,
-                         grn_options *options,
-                         grn_id id);
+grn_rc
+grn_options_set(grn_ctx *ctx,
+                grn_options *options,
+                grn_id id,
+                const char *name,
+                int name_length,
+                grn_obj *values);
+grn_option_revision
+grn_options_get(grn_ctx *ctx,
+                grn_options *options,
+                grn_id id,
+                const char *name,
+                int name_length,
+                grn_option_revision revision,
+                grn_obj *values);
+grn_rc
+grn_options_clear(grn_ctx *ctx, grn_options *options, grn_id id);
 
-grn_rc grn_options_wal_recover(grn_ctx *ctx,
-                               grn_options *options);
+grn_rc
+grn_options_wal_recover(grn_ctx *ctx, grn_options *options);
 
-grn_rc grn_options_warm(grn_ctx *ctx,
-                        grn_options *options);
+grn_rc
+grn_options_warm(grn_ctx *ctx, grn_options *options);
 
 #ifdef __cplusplus
 }

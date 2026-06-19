@@ -1,0 +1,30 @@
+normalize   'NormalizerNFKC("unify_iteration_mark", true,                   "version", "NFKC_VERSION")'   "私は、バナヽジュースを買った。"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "私は、バナナジュースを買った。",
+    "types": [
+      "kanji",
+      "hiragana",
+      "symbol",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "hiragana",
+      "kanji",
+      "hiragana",
+      "hiragana",
+      "symbol",
+      "null"
+    ],
+    "checks": []
+  }
+]

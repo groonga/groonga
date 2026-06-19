@@ -3,27 +3,27 @@ Execution example::
   select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "http://example.org/", 
+  #         "http://example.org/",
   #         "128452975x503157902"
   #       ]
   #     ]

@@ -6,4 +6,4 @@ Execution example::
     --flags COLUMN_INDEX \
     --type People \
     --source age
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

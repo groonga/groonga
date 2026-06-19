@@ -89,11 +89,11 @@ AC_MSG_RESULT([$solaris])
 
 AC_C_BIGENDIAN
 AC_PROG_CXX
-m4_ifdef([AX_CXX_COMPILE_STDCXX_17],
-         [AX_CXX_COMPILE_STDCXX_17([ext], [optional])])
-if test "$HAVE_CXX17" != "1"; then
-  m4_ifdef([AX_CXX_COMPILE_STDCXX_11],
-           [AX_CXX_COMPILE_STDCXX_11([ext], [optional])])
+m4_ifdef([AX_CXX_COMPILE_STDCXX],
+         [AX_CXX_COMPILE_STDCXX([20], [ext], [optional])])
+if test "$HAVE_CXX20" != "1"; then
+  m4_ifdef([AX_CXX_COMPILE_STDCXX],
+           [AX_CXX_COMPILE_STDCXX([17], [ext], [optional])])
 fi
 AC_PROG_CC
 m4_ifdef([AC_PROG_CC_C99],
@@ -472,17 +472,6 @@ AC_ARG_ENABLE(uyield,
   [enable_uyield="no"])
 AC_MSG_RESULT($enable_uyield)
 
-# exact-alloc-count
-AC_MSG_CHECKING([whether enable exact-alloc-count])
-AC_ARG_ENABLE(exact-alloc-count,
-  [AS_HELP_STRING([--enable-exact-alloc-count],
-    [atomic counting for memory alloc count. [default=yes]])],,
-  [enable_exact_alloc_count="yes"])
-if test "x$enable_exact_alloc_count" != "xno"; then
-  AC_DEFINE(USE_EXACT_ALLOC_COUNT, [1], [alloc_count with atomic])
-fi
-AC_MSG_RESULT($enable_exact_alloc_count)
-
 # memory debug
 AC_MSG_CHECKING([whether debug memory management])
 AC_ARG_ENABLE(memory-debug,
@@ -609,22 +598,6 @@ AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
 GROONGA_MRUBY="${ac_pwd}/src/groonga-mruby"
 AC_SUBST(GROONGA_MRUBY)
 
-# check Cutter with GLib support if available
-REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
-REQUIRED_MINIMUM_CPPCUTTER_VERSION=1.2.0
-m4_ifdef([AC_CHECK_GCUTTER],
-         [AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)],
-         [cutter_use_cutter="no"])
-m4_ifdef([AC_CHECK_CPPCUTTER],
-         [AC_CHECK_CPPCUTTER(>= $REQUIRED_MINIMUM_CPPCUTTER_VERSION)],
-         [cutter_use_cppcutter="no"])
-
-AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
-AM_CONDITIONAL([WITH_CPPCUTTER], [test "$cutter_use_cppcutter" = "yes"])
-if test "$cutter_use_cutter" = "yes"; then
-  AC_DEFINE(GRN_WITH_CUTTER, 1, [Define to 1 if you use Cutter])
-fi
-
 # check for benchmark
 AC_ARG_ENABLE(benchmark,
   [AS_HELP_STRING([--disable-benchmark],
@@ -704,10 +677,6 @@ else
 fi
 AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
-
-AM_CONDITIONAL([WITH_UNIT_TEST],
-               [test "$cutter_use_cutter" = "yes" -o \
-                     "$ac_cv_ruby_available" = "yes"])
 
 AM_CONDITIONAL([WITH_COMMAND_TEST],
                [test "$ac_cv_ruby_available" = "yes"])
@@ -961,7 +930,7 @@ AC_ARG_ENABLE(apache-arrow,
 if test "x$enable_apache_arrow" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([APACHE_ARROW],
-                      [arrow >= 3.0.0],
+                      [arrow-compute >= 3.0.0],
                       [GRN_WITH_APACHE_ARROW=yes],
                       [GRN_WITH_APACHE_ARROW=no])
   ],
@@ -1289,9 +1258,6 @@ AC_SUBST(LIBEVENT_CFLAGS)
 AC_SUBST(LIBEVENT_LIBS)
 
 # MessagePack
-BUNDLED_MESSAGE_PACK_VERSION=m4_include([bundled_message_pack_version])
-AC_SUBST(BUNDLED_MESSAGE_PACK_VERSION)
-
 AC_ARG_ENABLE(message-pack,
   [AS_HELP_STRING([--disable-message-pack],
     [Disable MessagePack support. [default=auto-detect]])],
@@ -1408,22 +1374,6 @@ For OS X with Homebrew:
     AC_SUBST(SPHINX_BUILD)
   fi
 fi
-
-# Check for misc.
-AC_ARG_WITH([cutter-source-path],
-            AS_HELP_STRING([--with-cutter-source-path=PATH],
-                           [Specify Cutter source path for
-                            groonga's release manager.]),
-                           [CUTTER_SOURCE_PATH="$withval"])
-case "$CUTTER_SOURCE_PATH" in
-  ""|/*)
-    : # do nothing
-    ;;
-  *)
-    CUTTER_SOURCE_PATH="\$(top_builddir)/${CUTTER_SOURCE_PATH}"
-    ;;
-esac
-AC_SUBST(CUTTER_SOURCE_PATH)
 
 AM_CONDITIONAL([DOCUMENT_AVAILABLE],
                [test "${document_available}" = "yes"])
@@ -1691,12 +1641,6 @@ AC_ARG_WITH(launchpad-uploader-pgp-key,
             [LAUNCHPAD_UPLOADER_PGP_KEY=""])
 AC_SUBST(LAUNCHPAD_UPLOADER_PGP_KEY)
 
-GPG_UID=m4_include(gpg_uid)
-AC_SUBST(GPG_UID)
-
-GPG_UID_RSA4096=m4_include(gpg_uid_rsa4096)
-AC_SUBST(GPG_UID_RSA4096)
-
 pkgsysconfdir="\${sysconfdir}/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
 
@@ -1735,13 +1679,13 @@ AC_CONFIG_FILES([
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
-  examples/dictionary/eijiro/Makefile
   examples/dictionary/gene95/Makefile
   examples/dictionary/jmdict/Makefile
   groonga-arrow.pc
   groonga.pc
   include/Makefile
   include/groonga/Makefile
+  include/groonga/build_option.h
   include/groonga/version.h
   lib/Makefile
   lib/dat/Makefile
@@ -1757,10 +1701,9 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/query_logger/Makefile
   lib/proc/Makefile
   packages/Makefile
-  packages/apt/debian/groonga-keyring.postrm
-  packages/apt/env.sh
   plugins/Makefile
   plugins/functions/Makefile
+  plugins/language_model/Makefile
   plugins/query_expanders/Makefile
   plugins/ruby/Makefile
   plugins/sharding/Makefile
@@ -1771,25 +1714,11 @@ AC_CONFIG_FILES([
   src/suggest/Makefile
   test/Makefile
   test/command/Makefile
-  test/unit/Makefile
-  test/unit/core/Makefile
-  test/unit/core/dat/Makefile
-  test/unit/fixtures/Makefile
-  test/unit/fixtures/geo/Makefile
-  test/unit/fixtures/inverted-index/Makefile
-  test/unit/fixtures/plugins/Makefile
-  test/unit/fixtures/story/Makefile
-  test/unit/fixtures/story/taiyaki/Makefile
-  test/unit/fixtures/stress/Makefile
-  test/unit/lib/Makefile
-  test/unit/story/Makefile
-  test/unit/util/Makefile
   tools/Makefile
   vendor/Makefile
   vendor/groonga-log/Makefile
   vendor/lz4/Makefile
   vendor/mecab/Makefile
-  vendor/message_pack/Makefile
   vendor/mruby/Makefile
   vendor/onigmo/Makefile
 ])
@@ -1900,13 +1829,11 @@ echo "Tools:"
 echo "  Sphinx:                ${SPHINX_BUILD}"
 echo "  lemon:                 ${LEMON}"
 echo "  Ruby:                  ${RUBY}"
-echo "  Cutter:                ${CUTTER}"
 echo
 
 echo "For packages:"
 echo "  rsync path:            ${RSYNC_PATH}"
 echo "  Launchpad PGP key:     ${LAUNCHPAD_UPLOADER_PGP_KEY}"
-echo "  GPG UID:               ${GPG_UID}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"

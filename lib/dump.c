@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -74,6 +75,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_FLOAT32");
     }
+    if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_BFLOAT16");
+    }
     break;
   case GRN_OBJ_COLUMN_INDEX:
     GRN_TEXT_PUTS(ctx, buffer, "COLUMN_INDEX");
@@ -98,6 +102,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_FLOAT32");
     }
+    if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WEIGHT_BFLOAT16");
+    }
     break;
   }
   switch (flags & GRN_OBJ_COMPRESS_MASK) {
@@ -111,6 +118,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     break;
   case GRN_OBJ_COMPRESS_ZSTD:
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZSTD");
+    break;
+  case GRN_OBJ_COMPRESS_OPENZL:
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_OPENZL");
     break;
   }
   switch (flags & GRN_OBJ_MISSING_MASK) {
@@ -132,6 +142,17 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   case GRN_OBJ_INVALID_IGNORE:
     GRN_TEXT_PUTS(ctx, buffer, "|INVALID_IGNORE");
     break;
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_SHUFFLE");
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_BYTE_DELTA");
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES");
+  } else if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE");
   }
   if (flags & GRN_OBJ_PERSISTENT) {
     GRN_TEXT_PUTS(ctx, buffer, "|PERSISTENT");

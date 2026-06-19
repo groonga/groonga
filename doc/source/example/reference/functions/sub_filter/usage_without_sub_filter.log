@@ -3,24 +3,24 @@ Execution example::
   select Blog --output_columns _key --filter "comments.name @ \"A\" && comments.content @ \"groonga\""
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "groonga's blog"
-  #       ], 
+  #       ],
   #       [
   #         "mroonga's blog"
   #       ]

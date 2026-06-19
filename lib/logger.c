@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -72,58 +73,57 @@ grn_log_level_to_string(grn_log_level level)
   }
 }
 
-grn_bool
+bool
 grn_log_level_parse(const char *string, grn_log_level *level)
 {
   if (strcmp(string, " ") == 0 ||
       grn_strcasecmp(string, "none") == 0) {
     *level = GRN_LOG_NONE;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "E") == 0 ||
              grn_strcasecmp(string, "emerg") == 0 ||
              grn_strcasecmp(string, "emergency") == 0) {
     *level = GRN_LOG_EMERG;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "A") == 0 ||
              grn_strcasecmp(string, "alert") == 0) {
     *level = GRN_LOG_ALERT;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "C") == 0 ||
              grn_strcasecmp(string, "crit") == 0 ||
              grn_strcasecmp(string, "critical") == 0) {
     *level = GRN_LOG_CRIT;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "e") == 0 ||
              grn_strcasecmp(string, "error") == 0) {
     *level = GRN_LOG_ERROR;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "w") == 0 ||
              grn_strcasecmp(string, "warn") == 0 ||
              grn_strcasecmp(string, "warning") == 0) {
     *level = GRN_LOG_WARNING;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "n") == 0 ||
              grn_strcasecmp(string, "notice") == 0) {
     *level = GRN_LOG_NOTICE;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "i") == 0 ||
              grn_strcasecmp(string, "info") == 0) {
     *level = GRN_LOG_INFO;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "d") == 0 ||
              grn_strcasecmp(string, "debug") == 0) {
     *level = GRN_LOG_DEBUG;
-    return GRN_TRUE;
+    return true;
   } else if (strcmp(string, "-") == 0 ||
              grn_strcasecmp(string, "dump") == 0) {
     *level = GRN_LOG_DUMP;
-    return GRN_TRUE;
-  } else {
-    return GRN_FALSE;
+    return true;
   }
+  return false;
 }
 
-grn_bool
+bool
 grn_log_flags_parse(const char *string,
                     int string_size,
                     int *flags)
@@ -133,7 +133,7 @@ grn_log_flags_parse(const char *string,
   *flags = GRN_LOG_DEFAULT;
 
   if (!string) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (string_size < 0) {
@@ -185,15 +185,17 @@ grn_log_flags_parse(const char *string,
     CHECK_FLAG(PID);
     CHECK_FLAG(PROCESS_ID);
     CHECK_FLAG(THREAD_ID);
+    CHECK_FLAG(CTX_ID);
+    CHECK_FLAG(CONTEXT_ID);
     CHECK_FLAG(ALL);
     CHECK_FLAG(DEFAULT);
 
 #undef CHECK_FLAG
 
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 typedef struct {
@@ -314,6 +316,11 @@ grn_logger_output_end(grn_ctx *ctx,
         output->file != stderr &&
         (output->rotate_threshold_size > 0 &&
          output->size >= output->rotate_threshold_size)) {
+#ifndef _WIN32
+      if (output->need_flock) {
+        flock(fileno(output->file), LOCK_UN);
+      }
+#endif
       fclose(output->file);
       output->file = NULL;
       grn_logger_output_rotate(ctx, output);
@@ -322,7 +329,7 @@ grn_logger_output_end(grn_ctx *ctx,
     }
   }
 #ifndef _WIN32
-  if (output->need_flock) {
+  if (output->need_flock && output->file) {
     flock(fileno(output->file), LOCK_UN);
   }
 #endif
@@ -374,6 +381,9 @@ default_logger_reopen(grn_ctx *ctx, void *user_data)
 static void
 default_logger_fin(grn_ctx *ctx, void *user_data)
 {
+  if (!logger_inited) {
+    return;
+  }
   grn_logger_output_close(ctx, &default_logger_output);
 }
 
@@ -522,7 +532,7 @@ grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
   return GRN_SUCCESS;
 }
 
-grn_bool
+bool
 grn_logger_is_default_logger(grn_ctx *ctx)
 {
   return current_logger.log == default_logger.log;
@@ -540,7 +550,7 @@ grn_logger_get_max_level(grn_ctx *ctx)
   return current_logger.max_level;
 }
 
-grn_bool
+bool
 grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 {
   return level <= current_logger.max_level;
@@ -623,6 +633,17 @@ grn_logger_putv(grn_ctx *ctx,
         lbuf_current += lbuf_size;
         lbuf_rest_size -= lbuf_size;
       }
+      if (current_logger.flags & GRN_LOG_CONTEXT_ID) {
+        const char *prefix = "";
+        if (lbuf_current != lbuf) {
+          prefix = "|";
+        }
+        grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
+                     "%s%p", prefix, ctx);
+        const size_t lbuf_size = strlen(lbuf_current);
+        lbuf_current += lbuf_size;
+        lbuf_rest_size -= lbuf_size;
+      }
       if (current_logger.flags & GRN_LOG_LOCATION) {
         const char *prefix = "";
         if (lbuf_current != lbuf) {
@@ -687,7 +708,7 @@ grn_logger_fin(grn_ctx *ctx)
 static bool query_logger_inited = false;
 static grn_logger_output default_query_logger_output = {0};
 
-grn_bool
+bool
 grn_query_log_flags_parse(const char *string,
                           int string_size,
                           unsigned int *flags)
@@ -697,7 +718,7 @@ grn_query_log_flags_parse(const char *string,
   *flags = GRN_QUERY_LOG_NONE;
 
   if (!string) {
-    return GRN_TRUE;
+    return true;
   }
 
   if (string_size < 0) {
@@ -735,10 +756,10 @@ grn_query_log_flags_parse(const char *string,
 
 #undef CHECK_FLAG
 
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
@@ -911,7 +932,7 @@ grn_query_logger_get_flags(grn_ctx *ctx)
   return current_query_logger.flags;
 }
 
-grn_bool
+bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
 {
   return current_query_logger.flags & flag;

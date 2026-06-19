@@ -12,5 +12,7 @@ load --table Users
 {"name": "Pom"}
 ]
 
-select Names --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})' \
+select Names \
+  --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})' \
+  --sort_keys _id \
   --output_columns '_key, _score'

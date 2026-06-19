@@ -1,4 +1,4 @@
 Execution example::
 
-  % curl 'http://localhost:8080/?n=query&t=complete&q=G&frequency_threshold=1'
-  
+  $ curl 'http://localhost:8080/?n=query&t=complete&q=G&frequency_threshold=1'
+  {"complete":[[1],[["_key","ShortText"],["_score","Int32"]],["groonga",1]]}

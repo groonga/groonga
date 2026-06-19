@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,8 +33,6 @@ void
 grn_proc_init_from_env(void);
 void
 grn_proc_query_init_from_env(void);
-void
-grn_proc_select_init_from_env(void);
 
 GRN_VAR const char *grn_document_root;
 void
@@ -56,6 +55,8 @@ grn_proc_init_column_remove(grn_ctx *ctx);
 void
 grn_proc_init_column_rename(grn_ctx *ctx);
 void
+grn_proc_init_command_list(grn_ctx *ctx);
+void
 grn_proc_init_config_get(grn_ctx *ctx);
 void
 grn_proc_init_config_set(grn_ctx *ctx);
@@ -64,11 +65,21 @@ grn_proc_init_config_delete(grn_ctx *ctx);
 void
 grn_proc_init_define_selector(grn_ctx *ctx);
 void
+grn_proc_init_distance_cosine(grn_ctx *ctx);
+void
+grn_proc_init_distance_inner_product(grn_ctx *ctx);
+void
+grn_proc_init_distance_l1_norm(grn_ctx *ctx);
+void
+grn_proc_init_distance_l2_norm_squared(grn_ctx *ctx);
+void
 grn_proc_init_dump(grn_ctx *ctx);
 void
 grn_proc_init_edit_distance(grn_ctx *ctx);
 void
 grn_proc_init_escalate(grn_ctx *ctx);
+void
+grn_proc_init_extract(grn_ctx *ctx);
 void
 grn_proc_init_fuzzy_search(grn_ctx *ctx);
 void
@@ -156,14 +167,18 @@ grn_proc_init_thread_limit(grn_ctx *ctx);
 void
 grn_proc_init_tokenize(grn_ctx *ctx);
 
-grn_bool
-grn_proc_option_value_bool(grn_ctx *ctx,
-                           grn_obj *option,
-                           grn_bool default_value);
+bool
+grn_proc_option_value_bool(grn_ctx *ctx, grn_obj *option, bool default_value);
 int32_t
 grn_proc_option_value_int32(grn_ctx *ctx,
                             grn_obj *option,
                             int32_t default_value);
+uint32_t
+grn_proc_option_value_uint32(grn_ctx *ctx,
+                             grn_obj *option,
+                             uint32_t default_value);
+float
+grn_proc_option_value_float(grn_ctx *ctx, grn_obj *option, float default_value);
 double
 grn_proc_option_value_double(grn_ctx *ctx,
                              grn_obj *option,
@@ -174,6 +189,10 @@ grn_content_type
 grn_proc_option_value_content_type(grn_ctx *ctx,
                                    grn_obj *option,
                                    grn_content_type default_value);
+grn_log_level
+grn_proc_option_value_log_level(grn_ctx *ctx,
+                                grn_obj *option,
+                                grn_log_level default_value);
 bool
 grn_proc_get_value_bool(grn_ctx *ctx,
                         grn_obj *value,
@@ -237,10 +256,14 @@ grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void
 grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
 
-grn_bool
+bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_raw_string *token_filters_raw);
+bool
+grn_proc_table_set_extractors(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_raw_string *extractors_raw);
 
 grn_column_flags
 grn_proc_column_parse_flags(grn_ctx *ctx,
@@ -248,7 +271,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
                             const char *text,
                             const char *end);
 
-grn_bool
+bool
 grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     grn_obj_format *format,
                                     grn_obj *result_set,
@@ -259,11 +282,11 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
                                     unsigned int columns_len,
                                     grn_obj *condition,
                                     uint32_t n_additional_elements);
-grn_bool
+bool
 grn_proc_select_output_columns_close(grn_ctx *ctx,
                                      grn_obj_format *format,
                                      grn_obj *result_set);
-grn_bool
+bool
 grn_proc_select_output_columns(grn_ctx *ctx,
                                grn_obj *res,
                                int n_hits,
@@ -278,8 +301,7 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                              const char *query,
                              unsigned int query_len,
                              grn_expr_flags flags,
-                             const char *query_expander_name,
-                             unsigned int query_expander_name_len,
+                             grn_obj *query_expander,
                              const char *term_column_name,
                              unsigned int term_column_name_len,
                              const char *expanded_term_column_name,
@@ -297,9 +319,10 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                       grn_raw_string *tokenizer_raw,
                       grn_raw_string *normalizer_raw,
                       grn_raw_string *token_filters_raw,
+                      grn_raw_string *extractors_raw,
                       const char *context_tag);
 
-grn_bool
+bool
 grn_proc_text_include_special_character(grn_ctx *ctx,
                                         const char *text,
                                         size_t size);

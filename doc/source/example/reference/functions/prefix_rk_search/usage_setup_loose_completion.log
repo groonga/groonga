@@ -1,13 +1,13 @@
 Execution example::
 
   table_create LooseItems TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create LooseItems label COLUMN_SCALAR ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create LooseItems readings COLUMN_VECTOR Readings
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Readings loose_items_index COLUMN_INDEX LooseItems readings
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table LooseItems
   [
   {"_key": "日本",     "label": "日本",     "readings": ["ニホン", "ニッポン"]},
@@ -15,4 +15,4 @@ Execution example::
   {"_key": "漢字",     "label": "漢字",     "readings": ["カンジ"]},
   {"_key": "Nihon",    "label": "日本",     "readings": []}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  # [[0,1337566253.89858,0.000355720520019531],4]

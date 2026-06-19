@@ -3,49 +3,49 @@ Execution example::
   select --table Blog1 --match_columns 'IndexBlog1.index_title * 10 || IndexBlog1.index_message' --query 'Groonga' --output_columns "_id, _score, *"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_score", 
+  #           "_score",
   #           "Int32"
-  #         ], 
+  #         ],
   #         [
-  #           "message", 
+  #           "message",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         11, 
-  #         "Groonga message", 
+  #         1,
+  #         11,
+  #         "Groonga message",
   #         "Groonga test"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         10, 
-  #         "none", 
+  #         3,
+  #         10,
+  #         "none",
   #         "Groonga message"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         1, 
-  #         "rakutan eggs 4 - 4 Groonga moritars", 
+  #         2,
+  #         1,
+  #         "rakutan eggs 4 - 4 Groonga moritars",
   #         "baseball result"
   #       ]
   #     ]

@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -66,4 +67,13 @@ grn_progress_index_get_n_processed_terms(grn_ctx *ctx, grn_progress *progress)
     return 0;
   }
   return progress->value.index.n_processed_terms;
+}
+
+uint32_t
+grn_progress_language_model_inferencer_get_n_processed_records(grn_ctx *ctx, grn_progress *progress)
+{
+  if (progress->type != GRN_PROGRESS_LANGUAGE_MODEL_INFERENCER) {
+    return 0;
+  }
+  return progress->value.language_model_inferencer.n_processed_records;
 }

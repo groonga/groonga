@@ -16,8 +16,9 @@ A table has the following limitations.
   * 4GiB by default.
 
   * 1TiB by specifying ``KEY_LARGE`` flag to
-    :ref:`table-create-flags`. ``KEY_LARGE`` can be used only with
-    :ref:`table-hash-key`.
+    :ref:`table-create-flags`. ``KEY_LARGE`` can be used with
+    :ref:`table-hash-key` or :ref:`table-pat-key`.
+    However, ``KEY_LARGE`` with ``TABLE_PAT_KEY`` supports version 15.1.5 or later.
 
 * The maximum number of records:
 

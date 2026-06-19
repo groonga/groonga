@@ -25,12 +25,8 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized",         
   ],
   {
     "normalized": "",
-    "types": [
-
-    ],
-    "checks": [
-
-    ]
+    "types": [],
+    "checks": []
   }
 ]
 #|e| [normalizer][table][target] no equal index: <target>

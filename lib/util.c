@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,12 +18,13 @@
 */
 
 #include "grn_db.h"
-#include "grn_pat.h"
-#include "grn_ii.h"
-#include "grn_util.h"
-#include "grn_string.h"
 #include "grn_expr.h"
+#include "grn_float.h"
+#include "grn_ii.h"
 #include "grn_load.h"
+#include "grn_pat.h"
+#include "grn_string.h"
+#include "grn_util.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -33,6 +35,8 @@
 #ifdef WIN32
 #  include <io.h>
 #  include <share.h>
+#else /* WIN32 */
+#  include <sys/file.h>
 #endif /* WIN32 */
 
 grn_obj *
@@ -211,7 +215,7 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
 grn_obj *
 grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
 {
-  grn_bool have_content = GRN_FALSE;
+  bool have_content = false;
 
   if (flags == GRN_QUERY_LOG_NONE) {
     GRN_TEXT_PUTS(ctx, buffer, "NONE");
@@ -225,9 +229,9 @@ grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
         GRN_TEXT_PUTS(ctx, buffer, "|");                                       \
       }                                                                        \
       GRN_TEXT_PUTS(ctx, buffer, #NAME);                                       \
-      have_content = GRN_TRUE;                                                 \
+      have_content = true;                                                     \
     }                                                                          \
-  } while (GRN_FALSE)
+  } while (false)
 
   CHECK_FLAG(COMMAND);
   CHECK_FLAG(RESULT_CODE);
@@ -280,6 +284,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     break;
   case GRN_PROC_AGGREGATOR:
     GRN_TEXT_PUTS(ctx, buf, "aggregator");
+    break;
+  case GRN_PROC_EXTRACTOR:
+    GRN_TEXT_PUTS(ctx, buf, "extractor");
     break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");
@@ -431,6 +438,15 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
   uint32_t i;
   grn_obj *body = vector->u.v.body;
 
+  bool have_weight = false;
+  for (i = 0; i < vector->u.v.n_sections; i++) {
+    grn_section *section = &(vector->u.v.sections[i]);
+    if (!grn_float32_is_zero(section->weight)) {
+      have_weight = true;
+      break;
+    }
+  }
+
   GRN_TEXT_PUTS(ctx, buffer, "[");
   for (i = 0; i < vector->u.v.n_sections; i++) {
     grn_section *section = &(vector->u.v.sections[i]);
@@ -441,8 +457,10 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
     }
 
     value_raw = GRN_BULK_HEAD(body) + section->offset;
-    GRN_TEXT_PUTS(ctx, buffer, "{");
-    GRN_TEXT_PUTS(ctx, buffer, "\"value\":");
+    if (have_weight) {
+      GRN_TEXT_PUTS(ctx, buffer, "{");
+      GRN_TEXT_PUTS(ctx, buffer, "\"value\":");
+    }
     {
       grn_obj value_object;
       GRN_OBJ_INIT(&value_object,
@@ -453,9 +471,11 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
       grn_inspect(ctx, buffer, &value_object);
       GRN_OBJ_FIN(ctx, &value_object);
     }
-    GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
-    grn_text_f32toa(ctx, buffer, section->weight);
-    GRN_TEXT_PUTS(ctx, buffer, "}");
+    if (have_weight) {
+      GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
+      grn_text_f32toa(ctx, buffer, section->weight);
+      GRN_TEXT_PUTS(ctx, buffer, "}");
+    }
   }
   GRN_TEXT_PUTS(ctx, buffer, "]");
 
@@ -565,6 +585,9 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_OBJ_COMPRESS_ZSTD:
     GRN_TEXT_PUTS(ctx, buf, "zstd");
     break;
+  case GRN_OBJ_COMPRESS_OPENZL:
+    GRN_TEXT_PUTS(ctx, buf, "openzl");
+    break;
   default:
     break;
   }
@@ -572,6 +595,8 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (flags & GRN_OBJ_WITH_WEIGHT) {
     if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
       GRN_TEXT_PUTS(ctx, buf, " weight:float32");
+    } else if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+      GRN_TEXT_PUTS(ctx, buf, " weight:bfloat16");
     } else {
       GRN_TEXT_PUTS(ctx, buf, " weight:uint32");
     }
@@ -603,6 +628,18 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     default:
       break;
     }
+  }
+
+  if (flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:shuffle");
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:byte-delta");
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-precision-2bytes");
+  } else if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-precision-1byte");
   }
 
   if (flags & GRN_OBJ_RING_BUFFER) {
@@ -713,6 +750,13 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       GRN_TEXT_PUTS(ctx, buf, "|");
     }
     GRN_TEXT_PUTS(ctx, buf, "WEIGHT_FLOAT32");
+    have_flags = true;
+  }
+  if (flags & GRN_OBJ_WEIGHT_BFLOAT16) {
+    if (have_flags) {
+      GRN_TEXT_PUTS(ctx, buf, "|");
+    }
+    GRN_TEXT_PUTS(ctx, buf, "WEIGHT_BFLOAT16");
     have_flags = true;
   }
   if (!have_flags) {
@@ -864,41 +908,45 @@ grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_table_default_tokenizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_table_module_inspect(grn_ctx *ctx,
+                         grn_obj *buf,
+                         grn_obj *obj,
+                         grn_info_type type)
 {
-  GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
-  grn_obj default_tokenizer;
-  GRN_TEXT_INIT(&default_tokenizer, 0);
-  grn_table_get_default_tokenizer_string(ctx, obj, &default_tokenizer);
-  if (GRN_TEXT_LEN(&default_tokenizer) == 0) {
+  grn_obj module_string;
+  GRN_TEXT_INIT(&module_string, 0);
+
+  switch (type) {
+  case GRN_INFO_EXTRACTORS:
+    GRN_TEXT_PUTS(ctx, buf, "extractors:");
+    grn_table_get_extractors_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_DEFAULT_TOKENIZER:
+    GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
+    grn_table_get_default_tokenizer_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_NORMALIZERS:
+    GRN_TEXT_PUTS(ctx, buf, "normalizers:");
+    grn_table_get_normalizers_string(ctx, obj, &module_string);
+    break;
+  case GRN_INFO_TOKEN_FILTERS:
+    GRN_TEXT_PUTS(ctx, buf, "token_filters:");
+    grn_table_get_token_filters_string(ctx, obj, &module_string);
+    break;
+  default:
+    GRN_OBJ_FIN(ctx, &module_string);
+    return GRN_SUCCESS;
+  }
+
+  if (GRN_TEXT_LEN(&module_string) == 0) {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
   } else {
     GRN_TEXT_PUT(ctx,
                  buf,
-                 GRN_TEXT_VALUE(&default_tokenizer),
-                 GRN_TEXT_LEN(&default_tokenizer));
+                 GRN_TEXT_VALUE(&module_string),
+                 GRN_TEXT_LEN(&module_string));
   }
-  GRN_OBJ_FIN(ctx, &default_tokenizer);
-
-  return GRN_SUCCESS;
-}
-
-static grn_rc
-grn_table_normalizers_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
-{
-  GRN_TEXT_PUTS(ctx, buf, "normalizers:");
-  grn_obj normalizers;
-  GRN_TEXT_INIT(&normalizers, 0);
-  grn_table_get_normalizers_string(ctx, obj, &normalizers);
-  if (GRN_TEXT_LEN(&normalizers) == 0) {
-    GRN_TEXT_PUTS(ctx, buf, "(nil)");
-  } else {
-    GRN_TEXT_PUT(ctx,
-                 buf,
-                 GRN_TEXT_VALUE(&normalizers),
-                 GRN_TEXT_LEN(&normalizers));
-  }
-  GRN_OBJ_FIN(ctx, &normalizers);
+  GRN_OBJ_FIN(ctx, &module_string);
 
   return GRN_SUCCESS;
 }
@@ -988,7 +1036,7 @@ grn_table_subrec_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       GRN_TEXT_PUTS(ctx, buf, "section:none");
       break;
     case GRN_OBJ_UNIT_SECTION_POSITION:
-      GRN_TEXT_PUTS(ctx, buf, "section:popsition");
+      GRN_TEXT_PUTS(ctx, buf, "section:position");
       break;
     case GRN_OBJ_UNIT_POSITION_NONE:
       GRN_TEXT_PUTS(ctx, buf, "section:none");
@@ -1053,10 +1101,16 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     }
   } else {
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_default_tokenizer_inspect(ctx, buf, obj);
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_EXTRACTORS);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_normalizers_inspect(ctx, buf, obj);
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_NORMALIZERS);
+
+    GRN_TEXT_PUTS(ctx, buf, " ");
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_DEFAULT_TOKENIZER);
+
+    GRN_TEXT_PUTS(ctx, buf, " ");
+    grn_table_module_inspect(ctx, buf, obj, GRN_INFO_TOKEN_FILTERS);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_keys_inspect(ctx, buf, obj);
@@ -1239,7 +1293,7 @@ static grn_rc
 grn_record_inspect_common(grn_ctx *ctx,
                           grn_obj *buf,
                           grn_obj *obj,
-                          grn_bool with_columns)
+                          bool with_columns)
 {
   grn_obj *table;
 
@@ -1330,20 +1384,20 @@ grn_record_inspect_common(grn_ctx *ctx,
 grn_rc
 grn_record_inspect_without_columns(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+  return grn_record_inspect_common(ctx, buf, obj, false);
 }
 
 static grn_rc
 grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_record_inspect_common(ctx, buf, obj, GRN_TRUE);
+  return grn_record_inspect_common(ctx, buf, obj, true);
 }
 
 static grn_rc
 grn_uvector_record_inspect_common(grn_ctx *ctx,
                                   grn_obj *buf,
                                   grn_obj *obj,
-                                  grn_bool with_columns)
+                                  bool with_columns)
 {
   unsigned int i, n = 0;
   grn_obj record;
@@ -1376,13 +1430,13 @@ grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
                                            grn_obj *buf,
                                            grn_obj *obj)
 {
-  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+  return grn_uvector_record_inspect_common(ctx, buf, obj, false);
 }
 
 static grn_rc
 grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_TRUE);
+  return grn_uvector_record_inspect_common(ctx, buf, obj, true);
 }
 
 grn_obj *
@@ -1714,11 +1768,108 @@ grn_mkstemp(char *path_template)
 }
 #endif   /* WIN32 */
 
-grn_bool
+bool
 grn_path_exist(const char *path)
 {
   struct stat status;
   return stat(path, &status) == 0;
+}
+
+grn_rc
+grn_path_copy(grn_ctx *ctx,
+              const char *source_path,
+              const char *destination_path)
+{
+  const char *tag = "[path][copy]";
+
+  GRN_API_ENTER;
+
+  int source_fd;
+  grn_open(source_fd, source_path, O_RDONLY | GRN_OPEN_FLAG_BINARY);
+  if (source_fd == -1) {
+    SERR("%s failed to open source path: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  int destination_fd;
+  grn_open(destination_fd,
+           destination_path,
+           O_WRONLY | O_CREAT | O_EXCL | GRN_OPEN_FLAG_BINARY);
+  if (destination_fd == -1) {
+    SERR("%s failed to open destination path: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    grn_close(source_fd);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+#ifndef _WIN32
+  if (flock(destination_fd, LOCK_EX) == -1) {
+    SERR("%s failed to lock destination file: <%s> -> <%s>",
+         tag,
+         source_path,
+         destination_path);
+    grn_close(source_fd);
+    grn_close(destination_fd);
+    grn_unlink(destination_path);
+    GRN_API_RETURN(ctx->rc);
+  }
+#endif
+
+  char buffer[4096];
+  while (true) {
+    ssize_t read_bytes = grn_read(source_fd, buffer, sizeof(buffer));
+    if (read_bytes == -1) {
+      SERR("%s failed to read from source: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+
+    if (read_bytes == 0) {
+      break;
+    }
+
+    ssize_t written_bytes = grn_write(destination_fd, buffer, read_bytes);
+    if (written_bytes == -1) {
+      SERR("%s failed to write to destination: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+
+    if (written_bytes != read_bytes) {
+      SERR("%s couldn't write to destination: <%s> -> <%s>",
+           tag,
+           source_path,
+           destination_path);
+      grn_close(source_fd);
+      grn_close(destination_fd);
+      grn_unlink(destination_path);
+      GRN_API_RETURN(ctx->rc);
+    }
+  }
+
+#ifndef _WIN32
+  flock(destination_fd, LOCK_UN);
+#endif
+
+  grn_close(source_fd);
+  grn_close(destination_fd);
+
+  GRN_API_RETURN(ctx->rc);
 }
 
 /* todo : refine */

@@ -17,9 +17,7 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   ".あ
   ],
   {
     "normalized": ".<あ>。1.",
-    "types": [
-
-    ],
+    "types": [],
     "checks": [
       1,
       3,

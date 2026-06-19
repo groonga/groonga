@@ -1,0 +1,27 @@
+Execution example::
+
+  tokenize TokenNgram "Fulltext Search" --output_style simple
+  # [
+  #   [
+  #     0,
+  #     1746573056.540744,
+  #     0.0007045269012451172
+  #   ],
+  #   [
+  #     "Fu",
+  #     "ul",
+  #     "ll",
+  #     "lt",
+  #     "te",
+  #     "ex",
+  #     "xt",
+  #     "t ",
+  #     " S",
+  #     "Se",
+  #     "ea",
+  #     "ar",
+  #     "rc",
+  #     "ch",
+  #     "h"
+  #   ]
+  # ]

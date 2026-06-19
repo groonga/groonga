@@ -1,0 +1,154 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "release-with-debug-info",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "maximum",
+      "hidden": true,
+      "cacheVariables": {
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "auto",
+        "GRN_WITH_MRUBY": "ON"
+      }
+    },
+    {
+      "name": "wasi",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_COMPILER_TARGET": "wasm32-unknown-wasi",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_C_COMPILER_TARGET": "wasm32-unknown-wasi",
+        "CMAKE_SYSTEM_NAME": "WASI",
+        "GRN_WITH_BLOSC": "no",
+        "GRN_WITH_H3": "no",
+        "GRN_WITH_KYTEA": "no",
+        "GRN_WITH_LIBEDIT": "no",
+        "GRN_WITH_LIBEVENT": "no",
+        "GRN_WITH_LIBSTEMMER": "no",
+        "GRN_WITH_LLAMA_CPP": "no",
+        "GRN_WITH_LZ4": "no",
+        "GRN_WITH_MECAB": "no",
+        "GRN_WITH_MESSAGE_PACK": "no",
+        "GRN_WITH_MRUBY": "no",
+        "GRN_WITH_RAPIDJSON": "no",
+        "GRN_WITH_ROARING_BITMAPS": "no",
+        "GRN_WITH_SIMDJSON": "no",
+        "GRN_WITH_SIMSIMD": "no",
+        "GRN_WITH_USEARCH": "no",
+        "GRN_WITH_XSIMD": "no",
+        "GRN_WITH_XXHASH": "no",
+        "GRN_WITH_ZEROMQ": "no",
+        "GRN_WITH_ZLIB": "no",
+        "GRN_WITH_ZSTD": "no"
+      }
+    },
+    {
+      "name": "debug-default",
+      "displayName": "Optional features may not be enabled (debug build)",
+      "inherits": ["base", "debug"]
+    },
+    {
+      "name": "release-default",
+      "displayName": "Optional features may not be enabled (release build)",
+      "inherits": ["base", "release"]
+    },
+    {
+      "name": "release-with-debug-info-default",
+      "displayName": "Optional features may not be enabled (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info"]
+    },
+    {
+      "name": "debug-maximum",
+      "displayName": "Enable all features (debug build)",
+      "inherits": ["base", "debug", "maximum"]
+    },
+    {
+      "name": "release-maximum",
+      "displayName": "Enable all features (release build)",
+      "inherits": ["base", "release", "maximum"]
+    },
+    {
+      "name": "release-with-debug-info-maximum",
+      "displayName": "Enable all features (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info", "maximum"]
+    },
+    {
+      "name": "debug-wasi",
+      "displayName": "Build for WASI (debug build)",
+      "inherits": ["base", "debug", "wasi"]
+    },
+    {
+      "name": "release-wasi",
+      "displayName": "Build for WASI (release build)",
+      "inherits": ["base", "release", "wasi"]
+    },
+    {
+      "name": "release-with-debug-info-wasi",
+      "displayName": "Build for WASI (release build with debug info)",
+      "inherits": ["base", "release-with-debug-info", "wasi"]
+    },
+    {
+      "name": "doc",
+      "displayName": "For documentation",
+      "inherits": ["base"],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "auto",
+        "GRN_WITH_DOC": "ON",
+        "GRN_WITH_MRUBY": "ON"
+      }
+    },
+    {
+      "name": "memory-debug",
+      "displayName": "For memory debug",
+      "inherits": ["base"],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "GRN_WITH_APACHE_ARROW": "ON",
+        "GRN_WITH_BLOSC": "auto",
+        "GRN_WITH_MEMORY_DEBUG": "ON",
+        "GRN_WITH_MRUBY": "ON"
+      }
+    },
+    {
+      "name": "benchmark",
+      "displayName": "For benchmark",
+      "inherits": ["base", "release-with-debug-info", "maximum"]
+    }
+  ]
+}

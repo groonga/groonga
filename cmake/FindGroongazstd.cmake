@@ -2,7 +2,8 @@
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +30,7 @@ endif()
 find_package(zstd ${find_package_args})
 set(Groongazstd_FOUND ${zstd_FOUND})
 if(Groongazstd_FOUND)
-  add_library(Groonga::libzstd ALIAS zstd::libzstd_shared)
+  set(GRN_ZSTD_TARGET zstd::libzstd_shared)
   return()
 endif()
 
@@ -45,7 +46,7 @@ if(NOT Groongazstd_FOUND)
     endif()
     set(Groongazstd_FOUND ${Groongazstd_pkg_libzstd_FOUND})
     if(Groongazstd_pkg_libzstd_FOUND)
-      add_library(Groonga::libzstd ALIAS PkgConfig::Groongazstd_pkg_libzstd)
+      set(GRN_ZSTD_TARGET PkgConfig::Groongazstd_pkg_libzstd)
     endif()
   endif()
 endif()

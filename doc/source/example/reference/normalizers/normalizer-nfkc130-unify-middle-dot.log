@@ -3,22 +3,25 @@ Execution example::
   normalize   'NormalizerNFKC130("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   {
-  #     "normalized": "········", 
+  #     "normalized": "········",
   #     "types": [
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol", 
-  #       "symbol"
-  #     ], 
-  #     "checks": []
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "null"
+  #     ],
+  #     "checks": [
+  # 
+  #     ]
   #   }
   # ]

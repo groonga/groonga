@@ -1,1 +1,3 @@
+#@require-feature mecab
+
 tokenize TokenMecab '　'

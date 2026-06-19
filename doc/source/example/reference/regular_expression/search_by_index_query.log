@@ -3,35 +3,35 @@ Execution example::
   select Logs --query message:~\\\\Ahost1
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "message", 
+  #           "message",
   #           "Text"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
+  #         1,
   #         "host1:[error]: No memory"
-  #       ], 
+  #       ],
   #       [
-  #         2, 
+  #         2,
   #         "host1:[warning]: Remained disk space is less than 30%"
-  #       ], 
+  #       ],
   #       [
-  #         3, 
+  #         3,
   #         "host1:[error]: Disk full"
   #       ]
   #     ]

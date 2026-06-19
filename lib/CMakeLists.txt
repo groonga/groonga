@@ -1,9 +1,10 @@
-# Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,6 +48,59 @@ set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNPROC_CPP_SOURCES}
   PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
+if(GRN_C_COMPILER_GNU_LIKE)
+  set_property(
+    SOURCE distance.cpp
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " -Wno-unknown-pragmas -Wno-float-equal")
+endif()
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  # TODO: Remove this when OpenZL fixes duplicate typedef definitions
+  # in their headers.
+  # ref: https://github.com/facebook/openzl/pull/293
+  set_property(
+    SOURCE compressor.c
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " -Wno-typedef-redefinition")
+endif()
+if(GRN_WITH_XSIMD)
+  if(GRN_WITH_SIMD_AVX)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx.cpp)
+    set_property(
+      SOURCE distance_avx.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX}")
+  endif()
+  if(GRN_WITH_SIMD_AVX2)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx2.cpp)
+    set_property(
+      SOURCE distance_avx2.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX2}")
+  endif()
+  if(GRN_WITH_SIMD_AVX512)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_avx512.cpp)
+    set_property(
+      SOURCE distance_avx512.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_AVX512}")
+  endif()
+  if(GRN_WITH_SIMD_NEON64)
+    list(APPEND LIBGROONGA_CPP_SOURCES distance_neon64.cpp)
+    set_property(
+      SOURCE distance_neon64.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " ${GRN_C_FLAGS_NEON64}")
+  endif()
+  list(APPEND LIBGROONGA_CPP_SOURCES distance_common.cpp)
+  if(GRN_C_COMPILER_GNU_LIKE)
+    set_property(
+      SOURCE distance_common.cpp
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-float-equal")
+  endif()
+endif()
+
 set(GRN_ALL_SOURCES
     ${LIBGROONGA_C_SOURCES}
     ${LIBGROONGA_CPP_SOURCES}
@@ -64,6 +118,9 @@ else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
 endif()
+if(GRN_WITH_LTO AND CFLAG_WERROR_ODR)
+  target_link_options(libgroonga PRIVATE -Werror=odr)
+endif()
 target_compile_definitions(libgroonga PUBLIC "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
 target_include_directories(libgroonga BEFORE
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dat)
@@ -76,12 +133,22 @@ target_include_directories(
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
-if(GRN_WITH_APACHE_ARROW AND Arrow_VERSION VERSION_GREATER 9.0.0)
-  set_target_properties(libgroonga PROPERTIES CXX_STANDARD 17)
-elseif(GRN_WITH_RAPIDJSON OR GRN_WITH_APACHE_ARROW)
-  set_target_properties(libgroonga PROPERTIES CXX_STANDARD 11)
-endif()
 set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
+
+find_program(LEMON lemon)
+if(LEMON)
+  set_property(
+    SOURCE expr.c
+    PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"
+             "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.h")
+  add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"
+           "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.h"
+    COMMAND ${LEMON} grn_ecmascript.lemon
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.lemon"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM)
+endif()
 
 if(GRN_EMBED)
   set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
@@ -126,14 +193,24 @@ else()
 endif()
 if(GRN_WITH_MESSAGE_PACK)
   if(GRN_WITH_BUNDLED_MESSAGE_PACK)
-    target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:msgpackc>")
+    target_link_libraries(libgroonga
+                          INTERFACE "$<BUILD_INTERFACE:Groonga::msgpackc>")
   else()
     target_link_libraries(libgroonga INTERFACE Groonga::msgpackc)
   endif()
 endif()
-target_link_libraries(libgroonga PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
+if(GRN_WITH_LLAMA_CPP_BUNDLED)
+  target_link_libraries(libgroonga
+                        INTERFACE "$<BUILD_INTERFACE:Groonga::llama>")
+  target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:Groonga::ggml>")
+  target_link_libraries(libgroonga
+                        INTERFACE "$<BUILD_INTERFACE:Groonga::ggml-base>")
+endif()
+if(NOT WASI)
+  target_link_libraries(libgroonga PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
+endif()
 if(WIN32)
-  target_link_libraries(libgroonga PUBLIC ws2_32.lib)
+  target_link_libraries(libgroonga PRIVATE ws2_32.lib)
 endif()
 
 if(GRN_WITH_MRUBY)

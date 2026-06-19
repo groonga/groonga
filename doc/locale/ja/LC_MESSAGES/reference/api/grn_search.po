@@ -15,9 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
 msgid "``grn_search``"
 msgstr ""
 
@@ -33,20 +30,5 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "objを対象としてqueryにマッチするレコードを検索し、opの指定に従ってresにレコードを追加あるいは削除します。"
-msgstr ""
-
-msgid "検索対象のobjectを指定します。"
-msgstr ""
-
-msgid "検索クエリを指定します。"
-msgstr ""
-
-msgid "検索結果を格納するテーブルを指定します。"
-msgstr ""
-
-msgid "``GRN_OP_OR``, ``GRN_OP_AND``, ``GRN_OP_AND_NOT``, ``GRN_OP_ADJUST`` のいずれかを指定します。"
-msgstr ""
-
-msgid "詳細検索条件を指定します。"
-msgstr ""
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

@@ -1,55 +1,55 @@
 Execution example::
 
   column_create --table ToyBox --name price --type Int8
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create --table ToyBox --name weight --type Float
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   load --table ToyBox
   [
   {"_key":"Monkey","price":15.9}
   {"_key":"Flower","price":200,"weight":0.13}
   {"_key":"Block","weight":25.7}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0,1337566253.89858,0.000355720520019531],3]
   select --table ToyBox --output_columns _key,price,weight
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "price", 
+  #           "price",
   #           "Int8"
-  #         ], 
+  #         ],
   #         [
-  #           "weight", 
+  #           "weight",
   #           "Float"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         "Monkey", 
-  #         15, 
+  #         "Monkey",
+  #         15,
   #         0.0
-  #       ], 
+  #       ],
   #       [
-  #         "Flower", 
-  #         -56, 
+  #         "Flower",
+  #         -56,
   #         0.13
-  #       ], 
+  #       ],
   #       [
-  #         "Block", 
-  #         0, 
+  #         "Block",
+  #         0,
   #         25.7
   #       ]
   #     ]

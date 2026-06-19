@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "report_source_offset", true)'   "ア-ァ-イ-ィ-ウ-ゥ-エ-ェ-オ-ォ-"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC("unify_kana_hyphen", true,                   "report_source_offset", true,                   "version", "NFKC_VERSION")'   "ア-ァ-イ-ィ-ウ-ゥ-エ-ェ-オ-ォ-"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -27,7 +27,8 @@ normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,
@@ -111,7 +112,8 @@ normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "
       32,
       35,
       36,
-      39
+      39,
+      40
     ]
   }
 ]

@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,17 +31,23 @@ struct _grn_token {
   uint64_t source_offset;
   uint32_t source_length;
   uint32_t source_first_character_length;
-  grn_bool have_overlap;
+  bool have_overlap;
   grn_obj metadata;
-  grn_bool force_prefix_search;
+  bool force_prefix_search;
   uint32_t position;
   float weight;
 };
 
-grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_fin(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_reset(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
+grn_rc
+grn_token_init(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_init_deep(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_fin(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_reset(grn_ctx *ctx, grn_token *token);
+grn_rc
+grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
 
 #ifdef __cplusplus
 }

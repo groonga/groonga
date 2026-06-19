@@ -1,0 +1,621 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2025 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 15.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-10-31 13:57+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 15 series"
+msgstr "お知らせ - 15系"
+
+msgid "Release 15.2.5 - 2026-01-30"
+msgstr "15.2.5リリース - 2026-01-30"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a compatibility bug with the `ShortBinary`, `Binary`, `LongBinary`, and `JSON` types"
+msgstr "`ShortBinary`、`Binary`、`LongBinary`、`JSON`型の互換性バグを修正しました。"
+
+msgid "Fixed a bug that prevented the `ShortBinary`, `Binary`, and `LongBinary` types added in {ref}`release-15-1-8`, and the `JSON` type added in {ref}`release-15-2-3`, from working correctly in databases created before those versions."
+msgstr "{ref}`release-15-1-8`で`ShortBinary`、`Binary`、`LongBinary`型が、{ref}`release-15-2-3`で`JSON`型が追加されましたが、そのバージョン以前に作成したデータベースでそれらの型が使えなかった不具合を修正しました。"
+
+msgid "Additionally, a bug that caused Groonga databases created with versions before {ref}`release-15-2-1` to crash when opened in {ref}`release-15-2-3` or later, when the {doc}`/reference/commands/schema` command was executed, has been fixed."
+msgstr "また{ref}`release-15-2-1`以前のGroongaで作ったデータベースを、{ref}`release-15-2-3`以降のGroongaで開き、{doc}`/reference/commands/schema` コマンドを実行するとクラッシュする不具合も修正しました。"
+
+msgid "When upgrading from Groonga versions before 15.2.1, please upgrade to version 15.2.5 or later."
+msgstr "15.2.1以前のGroongaを使っている環境でバージョンアップをする場合は、15.2.5以降のバージョンにバージョンアップするようにしてください。"
+
+msgid "You can resolve this issue by upgrading to version 15.2.5, even if you have already upgraded to versions 15.2.3 or 15.2.4."
+msgstr "既に15.2.3, 15.2.4へバージョンアップしている場合であっても、15.2.5へバージョンアップすることで、この問題を修正できます。"
+
+msgid "Release 15.2.4 - 2026-01-29"
+msgstr "15.2.4リリース - 2026-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/executables/grndb`] Added support for closing used object immediately in `grndb check`."
+msgstr "[{doc}`/reference/executables/grndb`] `grndb check` で使用したオブジェクトを即時閉じるように改良"
+
+msgid "We can reduce memory usage by this."
+msgstr "これにより、メモリ消費を抑制できます。"
+
+msgid "We used to leave used object opened on memory. We needed too much memory if we checked a large database by using `grndb check`. Therefore, `grndb check` is not practical on low-memory environment because it takes a long time to complete check."
+msgstr "今までは、使用したオブジェクトをメモリー上に開いたままにしていました。大きなデータベースをチェックする際に多くのメモリーを必要とします。そのため、メモリーの少ない環境では`grndb check`の完了に長い時間がかかり実用的ではありませんでした。"
+
+msgid "We can complete `grndb check` within a realistic time even if we use low-memory environment by this modification."
+msgstr "今回の変更によって、メモリーの少ない環境でも、現実的な時間で`grndb check`が完了するようになります。"
+
+msgid "Release 15.2.3 - 2026-01-15"
+msgstr "15.2.3リリース - 2026-01-15"
+
+msgid "Fixed a bug that Groonga couldn't find records that were added after index construction when `centroid_column` was used"
+msgstr "`centroid_column`を使った時に、インデックス構築の後に追加したレコードが見つからない問題を修正しました。"
+
+msgid "If this bug occurs, Groonga doesn't return records that added as below."
+msgstr "このバグが発生すると、以下のようにGroongaは追加したレコードを返しません。"
+
+msgid "Experimental features"
+msgstr "実験的な機能"
+
+msgid "These features are still experimental and unstable. We must not use these features in production."
+msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、絶対に実運用環境では使わないでください。"
+
+msgid "Bundled OpenZL"
+msgstr "OpenZLをバンドル"
+
+msgid "[OpenZL](https://openzl.org/) is a compression framework. It provides high compression ratios and high speed."
+msgstr "[OpenZL](https://openzl.org/)は高い圧縮率と速度を提供する圧縮フレームワークです。"
+
+msgid "We can specify `COMPRESS_OPENZL` in `column_create`, but if we specify `COMPRESS_OPENZL`, it doesn't work yet. Because we haven't implemented the feature for compression and decompression."
+msgstr "`column_create`に`COMPRESS_OPENZL`を指定することができますが、まだ圧縮や解凍の機能を実装していないため、これを指定しても何もしません。"
+
+msgid "Added support for JSON type"
+msgstr "JSON型をサポート"
+
+msgid "We can `load` and `dump` against some data types. However, we don't implement other features yet."
+msgstr "いくつかのデータ型に対して、`load`と`dump`ができますが、その他の機能はまだ実装していません。"
+
+msgid "Release 15.2.1 - 2025-12-02"
+msgstr "15.2.1リリース - 2025-12-02"
+
+msgid "[{doc}`/reference/commands/column_create`] Added support for progress log of index construction"
+msgstr "[{doc}`/reference/commands/column_create`] インデックス構築のプログレスログをサポート"
+
+msgid "You can view the progress log during offline index construction."
+msgstr "プログレスログは静的インデックス構築のときに出力されます。"
+
+msgid "The default log level is `debug`. This means you must enable debug level logging to view progress logs. If you set the log level to `notice`, you can view progress logs without other debug logs."
+msgstr "デフォルトのログレベルは`debug`です。そのため、プログレスログを見るためにはすべてのデバッグログも出力する必要があります。ログレベルに`notice`を使うと、他のデバッグログなしでプログレスログを確認できます。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `centroid_column` option"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] `centroid_column`オプションをサポート"
+
+msgid "This option is for large embeddings with more than 1025 dimensions (more than 4100 bytes). Groonga table keys must be 4 KiB or smaller. Embeddings larger than 4 KiB cannot be stored as keys."
+msgstr "このオプションは、1025次元（4100バイト）以上の大きなエンベディング向けです。Groongaのテーブルキーは4KiB以下でなければなりません。4KiBを超えるエンベディングはキーとして保存できません。"
+
+msgid "You can use this option to store large embeddings in a column instead of in the table key. Specify the column for storing embeddings and add it to the table for the index as below."
+msgstr "このオプションを使うと、大きなエンベディングをテーブルのキーではなく指定したカラムに保存します。以下のように、エンべディングを保存するためのカラムを指定し、インデックス用のテーブルにそれを追加します。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added `n_gpu_layers` option"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] `n_gpu_layers`オプションをサポート"
+
+msgid "Specify the number of GPU layers to use for language model. If not specified, Groonga uses GPU as much as possible."
+msgstr "言語モデルが利用するGPUレイヤー数を指定します。省略すると、可能な限りのGPUを使用します。"
+
+msgid "In most cases, you don't need to set this option explicitly."
+msgstr "多くの場合、明示的にこのオプションを設定する必要はありません。"
+
+msgid "To disable GPU usage, set `n_gpu_layers` to 0."
+msgstr "`n_gpu_layers`に`0`を設定することで、GPUを無効にすることができます。"
+
+msgid "[{doc}`/reference/functions/language_model_knn`] Added `k` option"
+msgstr "[{doc}`/reference/functions/language_model_knn`] `k`オプションをサポート"
+
+msgid "Specify the number of records to return. If you don't set this option, the upper limit of the number of returned records is `10`."
+msgstr "返すレコード数を指定します。このオプションを設定しない場合、返すレコード数の上限は`10`になります。"
+
+msgid "You can specify a negative value. It means: (number of matched records) + `k` + 1. For example, `\"{ \"k\" : -1 }\"` outputs all records. It’s a very useful value to show all records."
+msgstr "負の値を指定することもできます。負の値の場合は、最大で\"マッチしたレコード数 + k + 1\"件のレコードを出力するという意味になります。例えば、`\"{ \"k\" : -1 }\"`はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
+
+msgid "Fixed a bug that causes overflow in the key of `TABLE_PAT_KEY` tables."
+msgstr "`TABLE_PAT_KEY`テーブルのキーでオーバーフローを引き起こす問題を修正しました。"
+
+msgid "This issue is found in PGroonga by [pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901). If you execute offline index construction against a column that has a large size value (When the size of a token is 4096 bytes after tokenization), the index may be broken."
+msgstr "この問題は、PGroongaの[pgroonga/pgroonga#901](https://github.com/pgroonga/pgroonga/issues/901)で発見されたものです。サイズの大きな値（トークナイズ後のトークンが4096byteになるような値）を持つカラムに対して静的インデックス構築を行った場合、インデックスが破損する可能性があります。"
+
+msgid "Reported by lilydjwg."
+msgstr "lilydjwgさんの報告。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "lilydjwg"
+msgstr "lilydjwgさん"
+
+msgid "Release 15.2.0 - 2025-11-10"
+msgstr "15.2.0リリース - 2025-11-10"
+
+msgid "In this release, we provide packages for Ubuntu that are provided for PPA (Personal Package Archive) again by resolving the issue causing the build failure."
+msgstr "このリリースでは、ビルドに失敗する問題を解決しPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを再度提供しました。"
+
+msgid "[{doc}`/install/ubuntu`] Provided packages for Ubuntu that are provided for PPA (Personal Package Archive) again"
+msgstr "[{doc}`/install/ubuntu`] PPA (Personal Package Archive) で提供しているUbuntu向けのパッケージを再度提供"
+
+msgid "We couldn't provide packages for Ubuntu that are provided for PPA (Personal Package Archive) in Groonga 15.1.8 and 15.1.9 due to a build failure in Launchpad."
+msgstr "Launchpadでのビルド失敗が原因で、Groonga 15.1.8と15.1.9ではPPA(Personal Package Archive)で提供しているUbuntu向けパッケージを提供できていませんでした。"
+
+msgid "In this release, we provide packages for Ubuntu again by resolving the issue causing the build failure."
+msgstr "今回のリリースで、ビルドが失敗する問題を解決し、再度パッケージを提供しました。"
+
+msgid "Release 15.1.9 - 2025-11-05"
+msgstr "15.1.9リリース - 2025-11-05"
+
+msgid "In this release, we added support for parallel vectorization."
+msgstr "今回のリリースでは、ベクトル化の並列処理をサポートしました。"
+
+msgid "Added support for parallel vectorization"
+msgstr "ベクトル化の並列処理をサポート"
+
+msgid "We can execute parallel vectorization in {doc}`/reference/functions/language_model_knn`, {doc}`/reference/tokenizers/token_language_model_knn`, and {doc}`/reference/functions/language_model_vectorize`."
+msgstr "{doc}`/reference/functions/language_model_knn` や {doc}`/reference/tokenizers/token_language_model_knn` や {doc}`/reference/functions/language_model_vectorize` で並列にベクトル化できるようになりました。"
+
+msgid "If we set `--n-default-workers=-1`, Groonga executes in parallel using up to as many threads as the number of CPU cores; however, this setting will not be optimal because it's based on the number of CPUs."
+msgstr "`--n-default-workers=-1`をセットすると、GroongaはCPUのコア数以下のスレッドで並列実行します。ただ、この設定はCPU数をベースにするため最適ではありません。"
+
+msgid "We must check GPU usage not CPU usage for the optimal number of workers."
+msgstr "最適なワーカー数にするにはCPU使用率ではなく、GPU使用率を確認する必要があります。"
+
+msgid "[{doc}`/reference/tokenizers/token_language_model_knn`] Added support for prefix"
+msgstr "[{doc}`/reference/tokenizers/token_language_model_knn`] プレフィックスをサポート"
+
+msgid "Some models such as multilingual-e5 require a prefix for search target texts and query texts. This improvement adds support for these cases."
+msgstr "multilingual-e5 のようないくつかのモデルは、検索対象のテキストや検索クエリーのテキストにプレフィックスを要求します。この改良はこれらのケースをサポートします。"
+
+msgid "`passage_prefix` is the prefix for search target text."
+msgstr "`passage_prefix`は、検索対象のテキストのプレフィックスです。"
+
+msgid "`query_prefix` is the prefix for query text."
+msgstr "`query_prefix`は、検索クエリーのテキストのプレフィックスです。"
+
+msgid "For example, we can set `passage: ` prefix in search target text and `query: ` prefix in query text as below."
+msgstr "例えば以下のように、検索対象のテキストのプレフィックスに`passage: `を、検索クエリーのテキストのプレフィックスに`query: `を設定できます。"
+
+msgid "Release 15.1.8 - 2025-10-31"
+msgstr "15.1.8リリース - 2025-10-31"
+
+msgid "In this release, semantic search is supported."
+msgstr "今回のリリースでは、セマンティックサーチができるようになりました。"
+
+msgid "[{doc}`/reference/commands/status`] Added `.[\"features\"][\"faiss\"]` entry"
+msgstr "[{doc}`/reference/commands/status`] `.[\"features\"][\"faiss\"]`エントリーを追加"
+
+msgid "The `.[\"features\"]` entry shows whether each feature is enabled or not like the following:"
+msgstr "`.[\"features\"]`エントリーは次のように各機能が有効かどうかを示しています。"
+
+msgid "This release added `faiss` to the `.[\"features\"]` entry:"
+msgstr "このリリースは`.[\"features\"]`エントリーに`faiss`を追加しました。"
+
+msgid "You can use `.[\"features\"][\"faiss\"]` to know whether [Faiss](https://github.com/facebookresearch/faiss) is enabled or not."
+msgstr "[Faiss](https://github.com/facebookresearch/faiss)が有効になっているかどうかを確認するために`.[\"features\"][\"faiss\"]`を使うことができます。"
+
+msgid "You need the Faiss support to use semantic search described next."
+msgstr "次で紹介するセマンティックサーチを使うためにはFaissサポートが必要です。"
+
+msgid "Supported semantic search"
+msgstr "セマンティックサーチが使えるようになりました。"
+
+msgid "This feature is still experimental and unstable."
+msgstr "この機能はまだ実験的で安定していません。"
+
+msgid "Added {doc}`/reference/tokenizers/token_language_model_knn` tokenizer and {doc}`/reference/functions/language_model_knn` function. Using these together you can do semantic search."
+msgstr "{doc}`/reference/tokenizers/token_language_model_knn`トークナイザーと、{doc}`/reference/functions/language_model_knn`関数を追加しました。これらを合わせて使うことでセマンティックサーチができます。"
+
+msgid "Here is an example of semantic search."
+msgstr "セマンティックサーチをしている例は次のとおりです。"
+
+msgid "The important feature is that it searches using text, just like keyword search. Internally, Groonga creates embedding automatically and use it for semantic search."
+msgstr "キーワード検索と同様にテキストで検索しているところがポイントです。内部的にはGroongaがエンベディングを生成し、それを使ってセマンティックサーチを実現しています。"
+
+msgid "Users do not need to create embeddings and search using them. You can do semantic search with text, just like keyword search."
+msgstr "ユーザーが自分でエンべディングを作成し、それを使って検索する必要はありません。キーワード検索と同じようにテキストで検索できます。"
+
+msgid "We omitted examples, but the same works when loading text for search. Simply load text into Groonga as before, and you can do semantic search. Users don't need to create embeddings and load them. This is because Groonga automatically generates embeddings as well."
+msgstr "具体例の記載は割愛しましたが、これは検索対象のテキストをロードするときも同様です。これまでと同じようにテキストをGroongaにロードするだけで、セマンティックサーチができるようになります。ユーザーがエンべディングを作成し、それをロードする必要はありません。Groongaが自動でエンベディングの生成も行うためです。"
+
+msgid "For details on setting up indexes and more, see the pages for {doc}`/reference/tokenizers/token_language_model_knn` tokenizer and {doc}`/reference/functions/language_model_knn` function."
+msgstr "インデックスの設定方法など、詳しくは{doc}`/reference/tokenizers/token_language_model_knn`トークナイザーと、{doc}`/reference/functions/language_model_knn`関数のページをご覧ください。"
+
+msgid "[{doc}`/reference/functions/language_model_vectorize`] Added support for auto download from Hugging Face"
+msgstr "[{doc}`/reference/functions/language_model_vectorize`] 言語モデルの自動ダウンロードをサポート"
+
+msgid "Specifying a Hugging Face URI in `model_name` will automatically download the language model. The model is downloaded during the first execution and located in the Groonga database directory. Subsequent executions use the local model files."
+msgstr "次のように`model_name`にHugging Face URIを指定すると自動でモデルのダウンロードをします。初回の実行にダウンロードをして、Groongaのデータベースディレクトリに配置します。その後の実行ではローカルのモデルを利用します。"
+
+msgid "Using this feature is useful because Groonga handles the download and placement."
+msgstr "この機能を活用するとGroongaがダウンロードと配置をやってくれるので便利です。"
+
+msgid "[{doc}`/reference/types`] Add `ShortBinary`, `Binary` and `LongBinary`"
+msgstr "[{doc}`/reference/types`] `ShortBinary`、`Binary`、`LongBinary`を追加"
+
+msgid "Release 15.1.7 - 2025-09-29"
+msgstr "15.1.7リリース - 2025-09-29"
+
+msgid "In this release, `NormalizerNFKC` can normalize Japanese iteration marks and fixed installation failure on AlmaLinux 10."
+msgstr "今回のリリースでは、`NormalizerNFKC`で日本語の踊り字を正規化できるようになりました。また、AlmaLinux 10でインストール失敗していた問題を修正しました。"
+
+msgid "[{doc}`/reference/executables/grndb`] Improved error handling for large database files"
+msgstr "[{doc}`/reference/executables/grndb`] 大きなデータベースファイルに対するエラー処理を改善"
+
+msgid "Previously, `grndb` terminated abnormally when processing database files that exceeded the filesystem stat limit (such as files files larger than 2GB on Windows). In this release, when `grndb` processes such files in the Groonga database directory (the db file and related db.\\* files), it records an error for each problematic file and continues to completion without aborting."
+msgstr "これまで、`grndb`はファイルシステムのstat上限（例：Windows環境で2GBを超えるファイル）を超えるデータベースファイルを処理すると異常終了していました。今回のリリースでは、`grndb`がGroongaのデータベースディレクトリ（db本体および関連するdb.*ファイル）内でそのようなファイルを処理した場合、問題のある各ファイルについてエラーを記録しつつ、異常終了せず最後まで継続するように改善しました。"
+
+msgid "[{ref}`normalizer-nfkc-unify-iteration-mark`] Added support for iteration marks with `unify_iteration_mark` option"
+msgstr "[{ref}`normalizer-nfkc-unify-iteration-mark`] `unify_iteration_mark`オプションで踊り字をサポート"
+
+msgid "The `unify_iteration_mark` option now supports additional iteration mark characters. This option treats iteration marks as repeats of the immediately preceding character as below."
+msgstr "`unify_iteration_mark`オプションを利用することで、次の踊り字をサポートします。これらの踊り字は直前の1文字を繰り返すものとして扱われます。"
+
+msgid "Hiragana Iteration Mark ゝ (U+309D)"
+msgstr ""
+
+msgid "Hiragana Voiced Iteration Mark ゞ (U+309E)"
+msgstr ""
+
+msgid "Katakana Iteration Mark ヽ (U+30FD)"
+msgstr ""
+
+msgid "Katakana Voiced Iteration Mark ヾ (U+30FE)"
+msgstr ""
+
+msgid "Ideographic Iteration Mark 々 (U+3005) - limitation: only repeats the immediately preceding single character"
+msgstr "Ideographic Iteration Mark 々 (U+3005) - 制限: 直前の単一文字の繰り返しのみサポート"
+
+msgid "Vertical Ideographic Iteration Mark 〻 (U+303B) - limitation: only repeats the immediately preceding single character"
+msgstr "Vertical Ideographic Iteration Mark 〻 (U+303B) - 制限: 直前の単一文字の繰り返しのみサポート"
+
+msgid "Here is an example of using `unify_iteration_mark` option."
+msgstr "`unify_iteration_mark`オプションの使用例"
+
+msgid "For Ideographic Iteration Mark (々) and Vertical Ideographic Iteration Mark (〻), this feature only repeats the immediately preceding single character. Patterns beyond **repeat the previous one character** are **not** supported like the following cases."
+msgstr "**々** と **〻** については、**直前の1文字のみ**を繰り返すケースのみに限ります。 次のような「直前1文字の繰り返し」を以外のパターンは **非対応** です。"
+
+msgid "Examples:"
+msgstr "例"
+
+msgid "\"部分々々\" -> \"部分部分\""
+msgstr ""
+
+msgid "\"古々々米\" -> \"古古古米\""
+msgstr ""
+
+msgid "Added new command to list available commands"
+msgstr "利用可能なコマンド一覧を取得する新コマンドを追加"
+
+msgid "A new `command_list` command has been added that returns a list of all available Groonga commands. Currently, this command returns only the command ID and name for each command. Using this command could enable automatic generation of client library APIs and help implement Groonga MCP (Model Context Protocol) servers. In future releases, we plan to expand the output to include command summaries, descriptions, and detailed argument information."
+msgstr "利用可能なGroongaの全コマンドを一覧で返す新しい`command_list`コマンドを追加しました。現時点では、各コマンドについてIDと名前のみを返します。このコマンドを利用することで、クライアントライブラリAPIの自動生成や、Groonga MCP（Model Context Protocol）サーバーの実装を支援できます。将来のリリースでは、コマンドの概要、説明、引数の詳細情報などを出力に含める予定です。"
+
+msgid "[{doc}`/reference/token_filters/token_filter_stem`] Added support for non-ASCII alphabets"
+msgstr "[{doc}`/reference/token_filters/token_filter_stem`] 非ASCIIアルファベットのサポートを追加"
+
+msgid "[GH-2539](https://github.com/groonga/groonga/issues/2539)"
+msgstr ""
+
+msgid "Reported by Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさんが報告"
+
+msgid "Previously, the `TokenFilterStem` filter only worked with ASCII alphabets. Now it supports stemming for non-ASCII alphabets such as Arabic."
+msgstr "これまで`TokenFilterStem`フィルターは、ASCIIアルファベットのみに対応していました。今回の変更により、アラビア語などの非ASCIIアルファベットでもステミングをサポートします。"
+
+msgid "Here is an example of using `TokenFilterStem` with Arabic text:"
+msgstr "以下はアラビア語テキストで`TokenFilterStem`を使用する例です。"
+
+msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 10"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10でインストールが失敗する問題を修正"
+
+msgid "Previously, installation could fail with a dnf GPG check error due to the following outdated RPM GPG key in groonga-release. We’ve removed the old key and now ship only the RSA4096 key, so installs work as expected now."
+msgstr "groonga-releaseに含まれていた古いRPM GPGキーが原因で、`dnf`のGPGチェックエラーに失敗してインストールできない場合がありました。古いキーを削除し、RSA4096キーのみを配布するようにしたため、現在は期待どおりにインストールできます。"
+
+msgid "Who should upgrade?"
+msgstr "どのユーザーがアップグレードすべきですか？"
+
+msgid "Most users do not need to upgrade. Only users who installed groonga-release on AlmaLinux 10 **before 2025/09/24** need to upgrade to the latest package using the steps below. If you installed groonga-release on AlmaLinux 10 on or **after 2025/09/24**, no action is required."
+msgstr "ほとんどのユーザーはアップグレードの必要はありません。アップグレードの必要があるのは、AlmaLinux 10で**2025/09/24以前**にgroonga-releaseをインストールしたユーザーのみです。AlmaLinux 10でも**2025/09/24以降**にgroonga-releaseをインストールした場合は対応は不要です。"
+
+msgid "After upgrading the package, groonga-release contains only the new key:"
+msgstr "アップグレード後に、`groonga-release`に新しいキーのみが含まれていることを次のように確認できます。"
+
+msgid "Tsai, Xing Wei"
+msgstr "Tsai, Xing Weiさん"
+
+msgid "Release 15.1.5 - 2025-08-29"
+msgstr "15.1.5リリース - 2025-08-29"
+
+msgid "In this release, we supported `KEY_LARGE` flag for `TABLE_PAT_KEY`!"
+msgstr "今回のリリースでは、`TABLE_PAT_KEY`テーブルで`KEY_LARGE`フラグをサポートしました！"
+
+msgid "Debian 13 \"Trixie\" has been released on 9 August 2025. Groonga is already supported on Debian 13! Please try it!"
+msgstr "Debian 13 \"Trixie\" が2025-08-09にリリースされました。GroongaはすでにDebian 13で使えます！ ぜひ試してみてください！"
+
+msgid "[{doc}`/reference/commands/table_create`] Added support for `KEY_LARGE` flag for `TABLE_PAT_KEY`"
+msgstr "[{doc}`/reference/commands/table_create`] `TABLE_PAT_KEY`で`KEY_LARGE`フラグをサポート"
+
+msgid "You can now use the `KEY_LARGE` flag with `TABLE_PAT_KEY` tables to expand the maximum total key size from 4GiB to 1TiB, similar to `TABLE_HASH_KEY` tables as below. This allows you to store more keys in total."
+msgstr "`TABLE_HASH_KEY`テーブルと同様に、`TABLE_PAT_KEY`テーブルでも `KEY_LARGE`フラグを使用して、最大合計キーサイズを4GiBから1TiBに拡張できるようになりました。これにより、より多くのキーを保存できるようになります。"
+
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc`] Added support for `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` combination"
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc`] `unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の組み合わせをサポート"
+
+msgid "Previously, when both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` options were enabled together, This combination didn't remove hyphen characters as expected because the hyphen characters were not properly treated as symbols to be removed."
+msgstr "以前は、`unify_hyphen_and_prolonged_sound_mark`と`remove_symbol`の両方のオプションを同時に有効にした場合、ハイフン記号が期待通りに削除されませんでした。なぜなら、ハイフン記号が削除されるシンボルとして適切に扱われていなかったためです。"
+
+msgid "This release fixes this issue. So, hyphen characters are properly removed from the normalized text as below."
+msgstr "このリリースでこの問題を修正し、両方のオプションが有効な場合に次のようにハイフン記号が取り除かれるようになりました。"
+
+msgid "[{doc}`/install/almalinux`] Added support for AlmaLinux 10"
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 10をサポート"
+
+msgid "AlmaLinux 10 packages are now available. You can install Groonga on AlmaLinux 10 using the standard package installation methods."
+msgstr "AlmaLinux 10用のパッケージが利用可能になりました。標準的なパッケージインストール方法でAlmaLinux 10にGroongaをインストールできます。"
+
+msgid "[{doc}`/install/cmake`] Fixed how to build/install"
+msgstr "[{doc}`/install/cmake`] ビルド・インストール方法を修正"
+
+msgid "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
+msgstr "[GH-2479](https://github.com/groonga/groonga/issues/2479)"
+
+msgid "Patched by Tsutomu Katsube"
+msgstr "かつべさんがパッチ提供"
+
+msgid "The documentation included an incorrect `-B` option in the `cmake --build` and `cmake --install` commands, which caused build errors."
+msgstr "ドキュメントの`cmake --build`と`cmake --install`コマンドに誤った`-B`オプションが記載されており、実際に実行した際にビルドエラーの原因となっていました。"
+
+msgid "The corrected commands are now:"
+msgstr "正しいコマンドは次のとおりです。"
+
+msgid "[{doc}`/reference/commands/truncate`] Fixed a bug where `KEY_LARGE` flag was lost after executing `truncate` command"
+msgstr "[{doc}`/reference/commands/truncate`] `truncate` コマンド実行後に `KEY_LARGE`フラグが失われる不具合を修正"
+
+msgid "This issue meant that when you executed the `truncate` command on a `TABLE_HASH_KEY` table with the `KEY_LARGE` flag, the table could no longer hold more than 4 GiB of total key data, because the `KEY_LARGE` flag was removed during the truncation."
+msgstr "この問題により、`KEY_LARGE`フラグが設定された`TABLE_HASH_KEY`テーブルに対して`truncate`コマンドを実行すると、`KEY_LARGE`フラグがトランケート時に削除されてしまうため、テーブルは合計で4 GiBを超えるキーを保持できなくなっていました。"
+
+msgid "[{doc}`/reference/executables/grndb`] Fixed a bug that the database checked by `grndb check` command was not enough"
+msgstr "[{doc}`/reference/executables/grndb`] `grndb check` コマンドによるデータベースのチェックが不十分だった問題を修正"
+
+msgid "The issue occurred because the `grndb check` command did not check part of the database files."
+msgstr "`grndb check` コマンドが一部のデータベースファイルをチェックしていませんでした。"
+
+msgid "However, even without this modification, grndb check correctly returns the results of table and column checks. `grndb cehck` can check database correctly by this modification."
+msgstr "ただ、この修正が入る前でも `grndb check` によるテーブルとカラムのチェックは正しい結果を返します。 この修正によって、データベースのチェックも正しい結果を返せるようになります。"
+
+msgid "Tsutomu Katsube"
+msgstr "かつべさん"
+
+msgid "Release 15.1.4 - 2025-07-29"
+msgstr "15.1.4リリース - 2025-07-29"
+
+msgid "In this release, we fixed a bug in the interval calculation between phrases in `*ONPP` operator."
+msgstr "今回のリリースでは、`*ONPP`演算子のフレーズ間の距離の計算の間違いを修正しました。"
+
+msgid "[Ordered near phrase product search] Fixed a bug in the interval calculation between phrases"
+msgstr "[順序付き近傍フレーズ直積検索] フレーズ間の距離の計算の間違いを修正しました"
+
+msgid "This problem may occur when we use `*ONPP` with `MAX_ELEMENT_INTERVAL` such as `*ONPP-1,0,10\"(abc bcd) (defg)\"`. If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
+msgstr "この問題は、 `*ONPP-1,0,10\"(abc bcd) (defg)\"` のように `*ONPP` と `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。 `MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
+
+msgid "Please refer to the following links for usage and syntax of `*ONPP`."
+msgstr "`*ONPP` の構文や使い方については以下のリンクを参照してください。"
+
+msgid "[`*ONPP` in query syntax] {ref}`query-syntax-ordered-near-phrase-product-search-condition`"
+msgstr "[`*ONPP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-product-search-condition`"
+
+msgid "[`*ONPP` in script syntax] {ref}`script-syntax-ordered-near-phrase-product-search-operator`"
+msgstr "[`*ONPP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-product-search-operator`"
+
+msgid "If this problem occurs, the following things may happen."
+msgstr "この問題が発生すると、以下のようなことが起こる可能性があります。"
+
+msgid "Groonga may return records that shouldn't be matched."
+msgstr "ヒットしないはずのレコードを返すことがあります。"
+
+msgid "Groonga may not return records that should be matched."
+msgstr "ヒットするはずのレコードを返さないことがあります。"
+
+msgid "Release 15.1.3 - 2025-07-18"
+msgstr "15.1.3リリース - 2025-07-18"
+
+msgid "[Apache Arrow] Added support for Apache Arrow C++ 21.0.0"
+msgstr "[Apache Arrow] Apache Arrow C++ 21.0.0 をサポートしました"
+
+msgid "Release 15.1.2 - 2025-07-07"
+msgstr "15.1.2リリース - 2025-07-07"
+
+msgid "[Windows] Drop support for Groonga package that is built with Visual Studio 2019"
+msgstr "[Windows] Visual Studio 2019 でビルドしたパッケージのサポートをやめました"
+
+msgid "We don't provide the following packages since this release."
+msgstr "このリリースから以下のパッケージは提供しなくなります。"
+
+msgid "groonga-xx.x.x-x64-vs2019.zip"
+msgstr ""
+
+msgid "groonga-xx.x.x-x64-vs2019-with-vcruntime.zip"
+msgstr ""
+
+msgid "[Near phrase search] Fixed a bug that interval between phrases calculation"
+msgstr "[近傍フレーズ検索] フレーズ間の距離の計算の間違いを修正しました"
+
+msgid "This problem may occur when we use `*NP`, `*NPP`, or `*ONP` with `MAX_ELEMENT_INTERVAL` as below."
+msgstr "この問題は、以下のように`*NP` や `*NPP`、 `*ONP` を `MAX_ELEMENT_INTERVAL` を指定して使っている時に発生することがあります。"
+
+msgid "`*NP-1,0,12\"abc ef\"`"
+msgstr ""
+
+msgid "`*NPP-1,0,10\"(abc bcd) (ef)\"`"
+msgstr ""
+
+msgid "`*ONP-1,0,5|6 \"abc defghi jklmnop\"`"
+msgstr ""
+
+msgid "If you don't use `MAX_ELEMENT_INTERVAL`, this problem doesn't occur."
+msgstr "`MAX_ELEMENT_INTERVAL` を使ってない場合は、この問題は発生しません。"
+
+msgid "Please refer to the following links about usage and syntax of `*NP`, `*NPP`, or `*ONP`."
+msgstr "`*NP` や `*NPP`、 `*ONP` の構文や使い方については以下のリンクを参照してください。"
+
+msgid "[`*NP` in query syntax] {ref}`query-syntax-near-phrase-search-condition`"
+msgstr "[`*NP` のクエリー構文] {ref}`query-syntax-near-phrase-search-condition`"
+
+msgid "[`*NP` in script syntax] {ref}`script-syntax-near-phrase-search-operator`"
+msgstr "[`*NP` のスクリプト構文] {ref}`script-syntax-near-phrase-search-operator`"
+
+msgid "[`*NPP` in query syntax] {ref}`query-syntax-near-phrase-product-search-condition`"
+msgstr "[`*NPP` のクエリー構文] {ref}`query-syntax-near-phrase-product-search-condition`"
+
+msgid "[`*NPP` in script syntax] {ref}`script-syntax-near-phrase-product-search-operator`"
+msgstr "[`*NPP` のスクリプト構文] {ref}`script-syntax-near-phrase-product-search-operator`"
+
+msgid "[`*ONP` in query syntax] {ref}`query-syntax-ordered-near-phrase-search-condition`"
+msgstr "[`*ONP` のクエリー構文] {ref}`query-syntax-ordered-near-phrase-search-condition`"
+
+msgid "[`*ONP` in script syntax] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+msgstr "[`*ONP` のスクリプト構文] {ref}`script-syntax-ordered-near-phrase-search-operator`"
+
+msgid "Groonga may return records shouldn't be a hit."
+msgstr "ヒットしないはずのレコードを返すことがあります。"
+
+msgid "Groonga may not return records that should be returned as hits."
+msgstr "ヒットするはずのレコードを返さないことがあります。"
+
+msgid "Release 15.1.1 - 2025-06-02"
+msgstr "15.1.1リリース - 2025-06-02"
+
+msgid "This release updates TokenMecab to preserve user-defined entries with spaces as single tokens."
+msgstr "このリリースでは、TokenMecabがスペースを含むユーザー定義エントリを単一トークンとして保持できるようにする変更をおこないました。"
+
+msgid "{doc}`/reference/tokenizers/token_mecab`: Fix unintended splitting of user-defined entries with spaces"
+msgstr "{doc}`/reference/tokenizers/token_mecab`: スペースを含むユーザー定義エントリの意図しないトークン分割を修正"
+
+msgid "Previously, {ref}`token-mecab` split user-defined entries containing spaces (e.g., \"search engine\") into separate tokens (\"search\" and \"engine\"). This release fixes this issue, so entries with embedded spaces are now preserved and handled as single tokens like \"search engine\" as follows."
+msgstr "従来、{ref}`token-mecab`はスペースを含むユーザー定義エントリ（例: \"search engine\"）を\"search\"や\"engine\"のように別々のトークンとして分割していました。本リリースではこの問題を修正し、スペースを含むエントリを\"search engine\"のように単一のトークンとしてトークナイズできるように修正しました。"
+
+msgid "Fixed many typos in documentation"
+msgstr "ドキュメント内の複数の誤記を修正"
+
+msgid "[GH-2332](https://github.com/groonga/groonga/pull/2332), [GH-2333](https://github.com/groonga/groonga/pull/2333), [GH-2334](https://github.com/groonga/groonga/pull/2334), [GH-2335](https://github.com/groonga/groonga/pull/2335), [GH-2336](https://github.com/groonga/groonga/pull/2336), [GH-2337](https://github.com/groonga/groonga/pull/2337), [GH-2338](https://github.com/groonga/groonga/pull/2338)"
+msgstr "[GH-2332](https://github.com/groonga/groonga/pull/2332)、[GH-2333](https://github.com/groonga/groonga/pull/2333)、[GH-2334](https://github.com/groonga/groonga/pull/2334)、[GH-2335](https://github.com/groonga/groonga/pull/2335)、[GH-2336](https://github.com/groonga/groonga/pull/2336)、[GH-2337](https://github.com/groonga/groonga/pull/2337)、[GH-2338](https://github.com/groonga/groonga/pull/2338)"
+
+msgid "Patched by Vasilii Lakhin."
+msgstr "Vasilii Lakhinさんがパッチ提供。"
+
+msgid "Vasilii Lakhin"
+msgstr "Vasilii Lakhinさん"
+
+msgid "Release 15.0.9 - 2025-05-08"
+msgstr "15.0.9リリース - 2025-05-08"
+
+msgid "This release adds the tokenizer's option to make token inspection simpler and improves negative-division semantics for unsigned integer."
+msgstr "このリリースでは、トークナイザのオプションを追加してトークンの確認を簡単にするとともに、符号なし整数を負の数で除算したときのセマンティクスを改善しました。"
+
+msgid "{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`: Added {ref}`tokenize-output-style` option"
+msgstr "{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`: {ref}`tokenize-output-style`オプションの追加"
+
+msgid "This {ref}`tokenize-output-style` option to the {doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize` command makes it easier to focus on the tokens when you don’t need the full attribute set."
+msgstr "{ref}`tokenize-output-style`オプションを{doc}`/reference/commands/tokenize`/{doc}`/reference/commands/table_tokenize`コマンドに追加しました。これにより、トークンの属性情報を表示する必要がない場合に、トークン情報のみを表示できます。"
+
+msgid "Here is example of using {ref}`tokenize-output-style` option."
+msgstr "以下は {ref}`tokenize-output-style`オプション使用例です。"
+
+msgid "Clarified `X / negative value` semantics"
+msgstr "`X / 負の整数`のセマンティクスを明確にした"
+
+msgid "Previously, only dividing `X` by `-1`/`1.0` returns `-X` for unsigned integers. From this release, dividing by any negative value will yield the mathematically expected negative result as follows."
+msgstr "これまでは、符号なし整数`X`を`-1`または`-1.0`で割った場合のみ`-X`を返すようにしていました。今回のリリース以降は任意の負の整数で割った際にも数学的に期待される負の結果を返すようになります。"
+
+msgid "Before: `X / -2` might not return `-(X / 2)`."
+msgstr "変更前： `X / -2`は必ずしも`-(X / 2)`を返すとは限りませんでした。"
+
+msgid "After: `X / -2` always returns `-(X / 2)`."
+msgstr "変更後： `X / -2`は常に`-(X / 2)`を返すようになります。"
+
+msgid "This is a backward incompatible change but we assume that no user depends on this behavior."
+msgstr "これは後方非互換な変更ですが、この挙動に依存しているユーザーはいないはずです。"
+
+msgid "Release 15.0.4 - 2025-03-29"
+msgstr "15.0.4リリース - 2025-03-29"
+
+msgid "Clarified `X / -1` and `X / -1.0` semantics"
+msgstr "`X / -1`と`X / -1.0`のセマンティクスを明確にした"
+
+msgid "In many languages, `X / -1` and `X / -1.0` return `-X`. But Groonga may not return `-X` when `X` is unsigned integer."
+msgstr "多くの言語では`X / -1`と`X / -1.0`は`-X`を返します。しかし、Groongaは`X`が非負整数のときは`-X`を返さないことがありました。"
+
+msgid "`X / -1` and `X / -1.0` always return `-X` from this release."
+msgstr "このリリースからは`X / -1`と`X / -1.0`は常に`-X`を返します。"
+
+msgid "Release 15.0.3 - 2025-03-10"
+msgstr "15.0.3リリース - 2025-03-10"
+
+msgid "{ref}`offline-index-construction`: Added support for parallel construction with {ref}`table-hash-key` lexicon"
+msgstr "{ref}`offline-index-construction`: 語彙表が{ref}`table-hash-key`の場合でも並列構築をサポート"
+
+msgid "Parallel offline index construction iterates sorted terms internally. {ref}`table-pat-key` and {ref}`table-pat-key` can do it effectively because they are based on tree. But {ref}`table-hash-key` can't do it effectively because it's not based on tree. So we didn't support parallel offline index construction with {ref}`table-hash-key` lexicon."
+msgstr "並列静的インデックス構築は内部的にすべての単語をソートして処理しています。{ref}`table-pat-key`と{ref}`table-pat-key`は効率よくこの処理をできます。なぜなら、これらはツリーベースだからです。しかし、{ref}`table-hash-key`は効率よくこの処理をすることができません。なぜならツリーベースではないからです。そのため、語彙表が{ref}`table-hash-key`の場合は並列静的インデックス構築をサポートしていませんでした。"
+
+msgid "This release adds support for parallel offline index construction with {ref}`table-hash-key` lexicon. It sort terms in a normal way. So it's not so effective. Parallel offline index construction with {ref}`table-hash-key` lexicon will be slower than {ref}`table-pat-key`/{ref}`table-dat-key`. But it may be faster than sequential offline index construction with {ref}`table-hash-key` lexicon."
+msgstr "このリリースでは語彙表が{ref}`table-hash-key`の場合でも並列静的インデックス構築を使えるようにしました。これは通常の方法で単語をソートしています。そのため、それほど効率的ではありません。語彙表が{ref}`table-hash-key`の場合の並列静的インデックス構築は語彙表が{ref}`table-pat-key`または{ref}`table-dat-key`の場合より遅いでしょう。しかし、語彙表が{ref}`table-hash-key`で直列に静的インデックス構築をするよりも速い可能性があります。"
+
+msgid "Release 15.0.2 - 2025-02-21"
+msgstr "15.0.2リリース - 2025-02-21"
+
+msgid "{ref}`offline-index-construction`: Fixed a bug that options may be ignored in parallel construction"
+msgstr "{ref}`offline-index-construction`: 並列に構築するとオプションを無視することがある問題を修正"
+
+msgid "Groonga may ignore options of {doc}`/reference/normalizers`, {doc}`/reference/tokenizers` and/or {doc}`/reference/token_filters` in the target index when offline index construction is executed in parallel."
+msgstr "静的なインデックス構築を並列で実行しているときにGroongaが{doc}`/reference/normalizers`、{doc}`/reference/tokenizers`、{doc}`/reference/token_filters`のオプションを無視することがある問題を修正しました。"
+
+msgid "This issue may occur when:"
+msgstr "次の場合に発生することがあります。"
+
+msgid "Offline index construction is executed in parallel."
+msgstr "静的なインデックス構築を並列実行する。"
+
+msgid "{doc}`/reference/normalizers`, {doc}`/reference/tokenizers`, and/or {doc}`/reference/token_filters` options are used."
+msgstr "{doc}`/reference/normalizers`、 {doc}`/reference/tokenizers`、 {doc}`/reference/token_filters` のオプションを使っている。"
+
+msgid "If {doc}`/reference/normalizers/normalizer_table` is used and this happens, the offline index construction is failed. Because {doc}`/reference/normalizers/normalizer_table` has a required parameter. If options are ignored, the required parameter is missing."
+msgstr "{doc}`/reference/normalizers/normalizer_table` を使っていてこの問題が発生した場合、静的なインデックス構築は失敗します。 {doc}`/reference/normalizers/normalizer_table` には必須の引数がありますが、オプションが無視されると必須の引数が指定されていないことになるためです。"
+
+msgid "Release 15.0.1 - 2025-02-20"
+msgstr "15.0.1リリース - 2025-02-20"
+
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 20.04 (Focal Fossa)"
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 20.04 (Focal Fossa) のサポート終了"
+
+msgid "Ubuntu 20.04 will reach EOL in May 2025, so support for it has been dropped starting with this release."
+msgstr "Ubuntu 20.04は2025年5月にサポート終了（EOL）となるため、今回のリリースからサポートを終了しました。"
+
+msgid "Release 15.0.0 - 2025-02-09"
+msgstr "15.0.0リリース - 2025-02-09"
+
+msgid "This is our annual major release! This release doesn't have any backward incompatible changes! So you can upgrade Groonga without migrating your existing databases. You can still use your existing databases as-is."
+msgstr "毎年恒例の肉の日メジャーリリースです！このリリースには後方互換性が壊れる変更はありません！既存のデータベースを移行せずにGroongaをアップグレードできます。既存のデータベースをそのまま使い続けることができます。"
+
+msgid "{ref}`table-pat-key`: Added support for {ref}`builtin-type-float32` as key type"
+msgstr "{ref}`table-pat-key`: キーの型として{ref}`builtin-type-float32`をサポート"
+
+msgid "[GH-2211](https://github.com/groonga/groonga/issues/2211)"
+msgstr ""
+
+msgid "{ref}`table-pat-key` encodes/decodes numeric keys for fast search internally. So {ref}`table-pat-key` must know how to encode/decode keys. {ref}`table-pat-key` didn't know how to encode/decode {ref}`builtin-type-float32` before this release. Now, {ref}`table-pat-key` can encode/decode {ref}`builtin-type-float32`. So you can use {ref}`builtin-type-float32` as a {ref}`table-pat-key` key type like other numeric types such as {ref}`builtin-type-int32` and {ref}`builtin-type-float` now."
+msgstr "{ref}`table-pat-key`は高速な検索のために内部では数値キーをエンコード・デコードしています。そのため、{ref}`table-pat-key`はキーをどのようにエンコード・デコードするかを知らなければいけません。{ref}`table-pat-key`はこのリリースまでは{ref}`builtin-type-float32`をどのようにエンコード・デコードすればよいかを知りませんでした。今回のリリースから、{ref}`table-pat-key`は{ref}`builtin-type-float32`をエンコード・デコードできるようになりました。そのため、{ref}`builtin-type-float32`を他の{ref}`builtin-type-int32`や{ref}`builtin-type-float`のような数値型のように{ref}`table-pat-key`のキーとして使えるようになりました。"

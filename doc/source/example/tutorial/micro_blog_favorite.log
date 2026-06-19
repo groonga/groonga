@@ -3,32 +3,32 @@ Execution example::
   select --table Users --query _key:bob --output_columns favorites.posted_by,favorites.comment
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         1
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "favorites.posted_by", 
+  #           "favorites.posted_by",
   #           "Users"
-  #         ], 
+  #         ],
   #         [
-  #           "favorites.comment", 
+  #           "favorites.comment",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "alice", 
+  #           "alice",
   #           "charlie"
-  #         ], 
+  #         ],
   #         [
-  #           "I've created micro-blog!", 
+  #           "I've created micro-blog!",
   #           "@alice @bob I've tried to register!"
   #         ]
   #       ]

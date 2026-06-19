@@ -1,0 +1,57 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create Users secret COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+delete Users --filter '_id == 2'
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 3,
+      "curr_rec": 4,
+      "curr_key": 36,
+      "curr_del": 1,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 1
+    }
+  ]
+]
+defrag Users
+[[0,0.0,0.0],true]
+#|w| segment_infos[1] = 2097160 after defrag
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 3,
+      "curr_rec": 4,
+      "curr_key": 27,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]

@@ -5,15 +5,15 @@ Execution example::
     --shard_key timestamp
   # [
   #   [
-  #     -55, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "object corrupt: <[column][remove][index] hook has a dangling reference: <Logs_20160320.timestamp> -> <Timestamps.logs_20160320_", 
+  #     -55,
+  #     1337566253.89858,
+  #     0.000355720520019531,
+  #     "object corrupt: <[object][remove][index][Logs_20160320.timestamp][set] hook has a dangling reference: <Timestamps.logs_20160320",
   #     [
   #       [
-  #         "Groonga::Sharding::LogicalTableRemoveCommand.remove_table", 
-  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_table_remove.rb", 
-  #         199
+  #         "remove",
+  #         "lib/groonga/plugins/sharding/logical_table_remove.rb",
+  #         2929
   #       ]
   #     ]
   #   ]

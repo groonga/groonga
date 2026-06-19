@@ -15,12 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "パラメータ"
-msgstr ""
-
-msgid "戻り値"
-msgstr ""
-
 msgid "``grn_cache``"
 msgstr "``grn_cache``"
 
@@ -51,56 +45,5 @@ msgstr "以下はキャッシュを変更する例です。"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()`."
-msgstr "``grn_cache`` は詳細を公開していないオブジェクトです。 :c:func:`grn_cache_open()` で作成し、 :c:func:`grn_cache_close()` で解放できます。"
-
-msgid "Creates a new cache object."
-msgstr "新規にキャッシュオブジェクトを作成します。"
-
-msgid "If memory allocation for the new cache object is failed, ``NULL`` is returned. Error information is stored into the ``ctx``."
-msgstr "新しいキャッシュオブジェクト作成のためのメモリ割り当てに失敗した場合、 ``NULL`` を返します。エラー情報は ``ctx`` に格納されます。"
-
-msgid "The context."
-msgstr "その時点のコンテキスト。"
-
-msgid "A newly allocated cache object on success, ``NULL`` otherwise. The returned cache object must be freed by :c:func:`grn_cache_close()`."
-msgstr "新しいキャッシュオブジェクトの作成に成功した場合は ``NULL`` 以外の値を返します。このキャッシュオブジェクトは :c:func:`grn_cache_close()` で解放されなければなりません。"
-
-msgid "Frees resourses of the ``cache``."
-msgstr "``cache`` のリソースを解放。"
-
-msgid "The cache object to be freed."
-msgstr "キャッシュオブジェクトを解放する。"
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
-
-msgid "Sets the cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを設定します。"
-
-msgid "The cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。"
-
-msgid "Gets the cache object that is used in :doc:`/reference/commands/select` command."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを取得します。"
-
-msgid "The cache object that is used in :doc:`/reference/commands/select` command. It may be ``NULL``."
-msgstr ":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。 ``NULL`` のこともあります。"
-
-msgid "Sets the max number of entries of the cache object."
-msgstr "キャッシュオブジェクトのエントリの最大数を設定します。"
-
-msgid "The cache object to be changed."
-msgstr "変更するキャッシュオブジェクト。"
-
-msgid "The new max number of entries of the cache object."
-msgstr "キャッシュオブジェクトの新しい最大エントリ数。"
-
-msgid "Gets the max number of entries of the cache object."
-msgstr "キャッシュオブジェクトのエントリの最大数を取得します。"
-
-msgid "The target cache object."
-msgstr "ターゲットキャッシュオブジェクト。"
-
-msgid "The max number of entries of the cache object."
-msgstr "キャッシュオブジェクトの最大エントリ数。"
+msgid "We are currently switching to automatic generation using Doxygen."
+msgstr "現在、Doxygenを使った自動生成に切り替え中です。"

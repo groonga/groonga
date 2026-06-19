@@ -10,27 +10,27 @@ Execution example::
                               })'
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         2
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "snippet", 
+  #           "snippet",
   #           null
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "Groonga is a [fast] and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, gro", 
+  #           "Groonga is a [fast] and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, gro",
   #           "onga allows updates without read locks. These characteristics result in superior [performance] on real-time applications."
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         null
   #       ]

@@ -133,8 +133,8 @@ column (pseudo column associated primary key) as the one of
 ``COLUMN_NAME``.
 
 If you specify ``apache-arrow`` as ``input_type``, you must use
-`Apache Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC
-File Format`_.
+`Apache Arrow IPC Streaming Format`_. You can't use
+`Apache Arrow IPC File Format`_.
 
 You must use HTTP interface to use Apache Arrow. You can't use Apache
 Arrow in command line interface.

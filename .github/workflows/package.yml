@@ -1,11 +1,6 @@
 name: Package
 on:
   push:
-    branches:
-      - master
-      - 'maintenance/**'
-    tags:
-      - '*'
     paths:
       - '**/*.cmake'
       - '**/*.cmake.in'
@@ -21,7 +16,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'packages/**'
       - 'plugins/**/*.c'
@@ -31,6 +26,7 @@ on:
       - 'src/**/*.c'
       - 'src/**/*.h'
       - 'test/command/**'
+      - 'vendor/mruby/**'
   pull_request:
     paths:
       - '**/*.cmake'
@@ -47,7 +43,7 @@ on:
       - 'lib/**/*.c'
       - 'lib/**/*.cpp'
       - 'lib/**/*.h'
-      - 'lib/**/*.rb'
+      - 'lib/**/*.hpp'
       - 'lib/**/*.rb'
       - 'packages/**'
       - 'plugins/**/*.c'
@@ -57,6 +53,7 @@ on:
       - 'src/**/*.c'
       - 'src/**/*.h'
       - 'test/command/**'
+      - 'vendor/mruby/**'
   schedule:
     - cron: |
         0 0 * * *
@@ -71,8 +68,9 @@ jobs:
        github.repository_owner == 'groonga')
     name: Source
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
       - name: Install dependencies
@@ -83,7 +81,7 @@ jobs:
             devscripts \
             ruby \
             zip
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: 3
       - name: Install Sphinx
@@ -93,7 +91,6 @@ jobs:
         run: |
           cd ..
           git clone --depth 1 https://github.com/groonga/groonga.org.git
-          git clone --depth 1 https://github.com/clear-code/cutter.git
       - name: Generate configure
         run: |
           ./autogen.sh
@@ -102,7 +99,6 @@ jobs:
           ./configure \
             --enable-document \
             --enable-mruby \
-            --with-cutter-source-path=../cutter \
             --with-groonga-org-path=../groonga.org \
             --with-ruby
       - name: Build archive
@@ -115,60 +111,25 @@ jobs:
           pushd groonga-${version}/vendor
           ruby download_lz4.rb
           ruby download_mecab.rb
-          ruby download_message_pack.rb
-          ruby download_rapidjson.rb
           ruby download.rb
           popd
           zip -r groonga-${version}.zip groonga-${version}
           rm -rf groonga-${version}
+      - name: Generate chechsum
+        run: |
+          version=$(cat base_version)
+          for sha in sha256 sha512; do
+            ${sha}sum groonga-${version}.tar.gz > groonga-${version}.tar.gz.${sha}
+            ${sha}sum groonga-${version}.zip > groonga-${version}.zip.${sha}
+          done
 
       # Artifact
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
-          name: source
+          name: release-source
           path: |
-            groonga-*.tar.gz
-            groonga-*.zip
-
-      # Release
-      - name: Upload to release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          (cd doc/source/news && \
-           ruby \
-             -e 'print("## Groonga "); \
-                 puts(ARGF.read.split(/^## Release /)[1]. \
-                        gsub(/^\(.+\)=$/, ""). \
-                        gsub(/ {.+?}/, ""). \
-                        gsub(/{doc}`(.+?)`/) { \
-                          id = $1; \
-                          title = id.split("\/").last; \
-                          path = id.delete_prefix("/"); \
-                          url = "https://groonga.org/docs/#{path}.html"; \
-                          "[#{title}](#{url})"; \
-                        }. \
-                        gsub(/{ref}`(.+?)`/) {$1}.
-                        strip)' \
-             $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
-            release-note.md
-          echo "" >> release-note.md
-          echo "### Translations" >> release-note.md
-          echo "" >> release-note.md
-          version=${GITHUB_REF_NAME#v}
-          major_version=${version%%.*}
-          version_hyphen=$(echo ${version} | tr . -)
-          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
-          title="$(head -n1 release-note.md | sed -e 's/^## //')"
-          tail -n +2 release-note.md > release-note-without-version.md
-          gh release create ${GITHUB_REF_NAME} \
-            --discussion-category Releases \
-            --notes-file release-note-without-version.md \
-            --title "${title}" \
-            groonga-*.tar.gz \
-            groonga-*.zip
-        env:
-          GH_TOKEN: ${{ github.token }}
+            groonga-*.tar.gz*
+            groonga-*.zip*
 
   build:
     name: Build
@@ -176,145 +137,181 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        label:
-          - Debian GNU/Linux bookworm amd64
-          - Debian GNU/Linux bookworm arm64
-          - Debian GNU/Linux bullseye amd64
-          - Debian GNU/Linux bullseye arm64
-          - CentOS 7 x86_64
-          - Amazon Linux 2 x86_64
-          - AlmaLinux 8 x86_64
-          - AlmaLinux 8 aarch64
-          - AlmaLinux 9 x86_64
-          - AlmaLinux 9 aarch64
-        include:
-          - label: Debian GNU/Linux bookworm amd64
-            id: debian-bookworm-amd64
-            task-namespace: apt
-            target: debian-bookworm
-            test-docker-image: debian:bookworm
-          - label: Debian GNU/Linux bookworm arm64
-            id: debian-bookworm-arm64
-            task-namespace: apt
-            target: debian-bookworm-arm64
-            test-docker-image: arm64v8/debian:bookworm
-          - label: Debian GNU/Linux bullseye amd64
-            id: debian-bullseye-amd64
-            task-namespace: apt
-            target: debian-bullseye
-            test-docker-image: debian:bullseye
-          - label: Debian GNU/Linux bullseye arm64
-            id: debian-bullseye-arm64
-            task-namespace: apt
-            target: debian-bullseye-arm64
-            test-docker-image: arm64v8/debian:bullseye
-          - label: CentOS 7 x86_64
-            id: centos-7-x86_64
-            task-namespace: yum
-            target: centos-7
-            test-docker-image: centos:7
-          - label: Amazon Linux 2 x86_64
-            id: amazon-linux-2-x86_64
-            task-namespace: yum
-            target: amazon-linux-2
-            test-docker-image: amazonlinux:2
-          - label: AlmaLinux 8 x86_64
-            id: almalinux-8-x86_64
-            task-namespace: yum
-            target: almalinux-8
-            test-docker-image: almalinux:8
-          - label: AlmaLinux 8 aarch64
-            id: almalinux-8-aarch64
-            task-namespace: yum
-            target: almalinux-8-aarch64
-            test-docker-image: arm64v8/almalinux:8
-          - label: AlmaLinux 9 x86_64
-            id: almalinux-9-x86_64
-            task-namespace: yum
-            target: almalinux-9
-            test-docker-image: almalinux:9
-          - label: AlmaLinux 9 aarch64
-            id: almalinux-9-aarch64
-            task-namespace: yum
-            target: almalinux-9-aarch64
-            test-docker-image: arm64v8/almalinux:9
-    runs-on: ubuntu-latest
+        id:
+          - debian-trixie-amd64
+          - debian-trixie-arm64
+          - ubuntu-jammy-amd64
+          - ubuntu-jammy-arm64
+          - ubuntu-noble-amd64
+          - ubuntu-noble-arm64
+          - ubuntu-resolute-amd64
+          - ubuntu-resolute-arm64
+          - almalinux-8-x86_64
+          - almalinux-8-aarch64
+          - almalinux-9-x86_64
+          - almalinux-9-aarch64
+          - almalinux-10-x86_64
+          - almalinux-10-aarch64
+          - amazon-linux-2023-x86_64
+          - amazon-linux-2023-aarch64
+    env:
+      APACHE_ARROW_REPOSITORY: ${{ github.workspace }}/apache-arrow
+    # condition && true-case || false-case
+    # ==
+    # condition ? true-case : false-case
+    runs-on: >-
+      ${{ (contains(matrix.id, 'arm64') ||
+           contains(matrix.id, 'aarch64')) && 'ubuntu-24.04-arm' ||
+                                              'ubuntu-latest' }}
+    timeout-minutes: ${{ matrix.timeout-minutes || 30 }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
+      - uses: actions/checkout@v6
+        with:
+          path: apache-arrow
+          repository: apache/arrow
+      - name: Prepare environment variables
+        run: |
+          id=${{ matrix.id }}
+          os_version=${id%-*}
+          os=${os_version%-*}
+          version=${os_version##*-}
+          architecture=${id##*-}
+
+          if [ "${os}" = "debian" ] || [ "${os}" = "ubuntu" ]; then
+            TASK_NAMESPACE=apt
+            if [ "${architecture}" = "amd64" ]; then
+              TARGET="${os_version}"
+              TEST_DOCKER_IMAGE="${os}:${version}"
+            else
+              TARGET="${id}"
+              TEST_DOCKER_IMAGE="arm64v8/${os}:${version}"
+            fi
+          else
+            TASK_NAMESPACE=yum
+            # amazon-linux -> amazonlinux
+            docker_os=${os/-/}
+            if [ "${architecture}" = "x86_64" ]; then
+              TARGET="${os_version}"
+              TEST_DOCKER_IMAGE="${docker_os}:${version}"
+            else
+              TARGET="${id}"
+              TEST_DOCKER_IMAGE="arm64v8/${docker_os}:${version}"
+            fi
+          fi
+          echo "ARCHITECTURE=${architecture}" >> ${GITHUB_ENV}
+          echo "TASK_NAMESPACE=${TASK_NAMESPACE}" >> ${GITHUB_ENV}
+          echo "TARGET=${TARGET}" >> ${GITHUB_ENV}
+          echo "APT_TARGETS=${TARGET}" >> ${GITHUB_ENV}
+          echo "YUM_TARGETS=${TARGET}" >> ${GITHUB_ENV}
+          echo "TEST_DOCKER_IMAGE=${TEST_DOCKER_IMAGE}" >> ${GITHUB_ENV}
       - name: Install dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             devscripts \
-            qemu-user-static \
             ruby
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v8
         with:
-          name: source
+          name: release-source
       - name: Update version
         if: |
-          !startsWith(github.ref, 'refs/tags/') &&
-          !startsWith(github.ref, 'refs/heads/maintenance/')
+          github.ref_type != 'tag' &&
+          !startsWith(github.ref_name, 'maintenance/')
         run: |
           cd packages
           rake version:update RELEASE_DATE=$(date +%Y-%m-%d)
       - name: Login to GitHub Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
-          path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
+          path: packages/${{ env.TASK_NAMESPACE }}/build/${{ env.TARGET }}/ccache
           key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd packages
           rake docker:pull || :
-          rake ${{ matrix.task-namespace }}:build BUILD_DIR=build
-        env:
-          APT_TARGETS: ${{ matrix.target }}
-          YUM_TARGETS: ${{ matrix.target }}
+          rake ${TASK_NAMESPACE}:build BUILD_DIR=build
       - name: Push the built Docker image
         continue-on-error: true
         run: |
           cd packages
           rake docker:push
-        env:
-          APT_TARGETS: ${{ matrix.target }}
-          YUM_TARGETS: ${{ matrix.target }}
 
       # Artifact
-      - uses: actions/upload-artifact@v3
+      - name: Create assets
+        run: |
+          tar czf ${{ matrix.id }}.tar.gz packages/${TASK_NAMESPACE}/repositories/
+      - uses: actions/upload-artifact@v7
         with:
           name: packages-${{ matrix.id }}
-          path: packages/${{ matrix.task-namespace }}/repositories/
-
-      # Release
-      - name: Create assets
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          tar czf ${{ matrix.id }}.tar.gz packages/${{ matrix.task-namespace }}/repositories/
-      - name: Upload to release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          gh release upload ${GITHUB_REF_NAME} \
-            ${{ matrix.id }}.tar.gz
-        env:
-          GH_TOKEN: ${{ github.token }}
+          path: ${{ matrix.id }}.tar.gz
 
       # Test
       - name: Test
         run: |
+          case "${TEST_DOCKER_IMAGE}" in
+            arm64v8/*)
+              platform=linux/arm64
+              ;;
+            *)
+              platform=linux/amd64
+              ;;
+          esac
           docker run \
+            --platform ${platform} \
             --rm \
             --volume ${PWD}:/groonga:ro \
-            ${{ matrix.test-docker-image }} \
-            /groonga/packages/${{ matrix.task-namespace }}/test.sh
+            ${TEST_DOCKER_IMAGE} \
+            /groonga/packages/${TASK_NAMESPACE}/test.sh
+
+  prepare-for-release:
+    name: Prepare for release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: packages
+          pattern: packages-*
+      - name: Group by distribution and version
+        run: |
+          set -x
+          for packages_path in packages/*; do
+            # packages/packages-debian-bookworm-amd64 ->
+            # debian-bookworm
+            os=$(echo ${packages_path} | \
+                   grep -E -o '(almalinux|amazon-linux|debian|ubuntu)-[^-]+')
+
+            mkdir -p release/${os}/
+            # packages/packages-debian-bookworm-amd64/debian-bookworm-amd64.tar.gz:
+            #   packages/apt/repositories/debian/... ->
+            #   release/debian-bookworm/debian/...
+            tar xf ${packages_path}/*.tar.gz \
+              -C release/${os}/ \
+              --strip-components 3
+          done
+          for release_os_path in release/*; do
+            # release/debian-bookworm ->
+            # debian-bookworm
+            os=$(basename ${release_os_path})
+
+            # release/debian-bookworm/debian/... ->
+            # debian-bookworm/debian/...
+            tar czf ${os}.tar.gz -C $(dirname ${release_os_path}) ${os}
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-linux-packages
+          path: "*.tar.gz"

@@ -1,9 +1,10 @@
-# Copyright(C) 2013-2018  Brazil
-# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2018  Brazil
+# Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,15 +24,15 @@ if(GRN_WITH_MRUBY)
 
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/built_sources.am"
     MRUBY_BUILT_SOURCES)
+  set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mrbgems/mruby-file-stat/src/file-stat.c
+    PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src)
   set(mruby_pre_build_timestamp
     "${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.timestamp")
   if(EXISTS "${mruby_pre_build_timestamp}")
     set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
-    set_source_files_properties(
-      ${CMAKE_CURRENT_SOURCE_DIR}/mruby-file-stat/src/file-stat.c
-      PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src)
   else()
     set(mruby_build_timestamp
       "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
@@ -71,13 +72,13 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_FILE_STAT_CONFIG_H_CONTENT "")
   endif()
   file(WRITE
-    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src/config.h"
     "${MRUBY_FILE_STAT_CONFIG_H_CONTENT}")
 
   set(MRUBY_ALL_SOURCES
     ${MRUBY_SOURCES}
     ${MRUBY_BUILT_SOURCES}
-    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/mrbgems/mruby-file-stat/src/config.h"
     )
   add_library(mruby_headers INTERFACE)
   target_include_directories(mruby_headers INTERFACE
@@ -87,6 +88,10 @@ if(GRN_WITH_MRUBY)
     PUBLIC
     "${MRUBY_SOURCE_DIR}/include"
     PRIVATE
+    # For build from repository
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-include"
+    # For build from archive
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include"
     "${MRUBY_SOURCE_DIR}/src"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
@@ -94,6 +99,10 @@ if(GRN_WITH_MRUBY)
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
   target_compile_definitions(mruby PUBLIC "MRB_INT64" "HAVE_ONIGMO_H")
+  if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/mruby-include" AND
+      NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include")
+    target_compile_definitions(mruby PUBLIC "MRB_NO_PRESYM")
+  endif()
   if(WIN32)
     target_compile_definitions(mruby PRIVATE "MRB_BUILD_AS_DLL" "MRB_CORE")
     target_link_libraries(mruby PUBLIC ws2_32.lib)
@@ -105,28 +114,31 @@ if(GRN_WITH_MRUBY)
 
   set(MRUBY_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_C_COMPILER_GNU_LIKE)
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-float-equal")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-missing-field-initializers")
-    set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-sign-compare")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-bad-function-cast")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-float-equal")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-missing-field-initializers")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-sign-compare")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-type-limits")
   elseif(MSVC)
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4018")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4018")
+    # formal parameter 'number' different from declaration
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4028
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4028")
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4244")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4244")
     # 'var' : conversion from 'size_t' to 'type', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4267")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4267")
+    # 'function' : inconsistent DLL linkage
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4273
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4273")
     # Your code uses a function, class member, variable, or typedef
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4996")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4996")
   endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES

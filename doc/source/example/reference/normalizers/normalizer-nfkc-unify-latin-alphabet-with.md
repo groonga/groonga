@@ -1,0 +1,27 @@
+Execution example:
+
+```shell
+normalize \
+  'NormalizerNFKC("unify_latin_alphabet_with", true)' \
+  "ngoằn" \
+  WITH_TYPES
+# [
+#   [
+#     0,
+#     1337566253.89858,
+#     0.000355720520019531
+#   ],
+#   {
+#     "normalized": "ngoan",
+#     "types": [
+#       "alpha",
+#       "alpha",
+#       "alpha",
+#       "alpha",
+#       "alpha",
+#       "null"
+#     ],
+#     "checks": []
+#   }
+# ]
+```

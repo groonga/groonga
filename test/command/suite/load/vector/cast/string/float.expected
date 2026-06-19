@@ -1,0 +1,27 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data numbers COLUMN_VECTOR Float
+[[0,0.0,0.0],true]
+table_create Numbers TABLE_PAT_KEY Float
+[[0,0.0,0.0],true]
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"numbers": "[0.1, 0.0, -0.2]"},
+{"numbers": "[-3, 2, -4294967296, 4294967296]"}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Data
+[
+["_id","numbers"],
+[1,[0.1,0.0,-0.2]],
+[2,[-3.0,2.0,-4294967296.0,4294967296.0]]
+]
+
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+select Data --filter 'vector_size(numbers) == 3'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","Float"]],[1,[0.1,0.0,-0.2]]]]]

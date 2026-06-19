@@ -46,17 +46,25 @@ class TestAndOrder < QueryOptimizerTestCase
       "updated_at >= '2015-10-03 00:00:00'"
     assert_equal(<<-DUMP, dump_plan(code))
 [0]
-  op:         <greater_equal>
-  logical_op: <or>
-  index:      <[#<column:index Timestamps.Logs_updated_at range:Logs sources:[Logs.updated_at] flags:NONE>]>
-  query:      <"2015-10-03 00:00:00">
-  expr:       <0..2>
+  op:              <greater_equal>
+  logical_op:      <or>
+  weight_factor:   <1.000000>
+  sections:        <[0]>
+  weights:         <[1.0]>
+  start_positions: <[-1]>
+  index:           <[#<column:index Timestamps.Logs_updated_at range:Logs sources:[Logs.updated_at] flags:NONE>]>
+  query:           <"2015-10-03 00:00:00">
+  expr:            <0..2>
 [1]
-  op:         <less_equal>
-  logical_op: <and>
-  index:      <[#<column:index Timestamps.Logs_created_at range:Logs sources:[Logs.created_at] flags:NONE>]>
-  query:      <"2015-10-01 00:00:00">
-  expr:       <3..5>
+  op:              <less_equal>
+  logical_op:      <and>
+  weight_factor:   <1.000000>
+  sections:        <[0]>
+  weights:         <[1.0]>
+  start_positions: <[-1]>
+  index:           <[#<column:index Timestamps.Logs_created_at range:Logs sources:[Logs.created_at] flags:NONE>]>
+  query:           <"2015-10-01 00:00:00">
+  expr:            <3..5>
     DUMP
   end
 end

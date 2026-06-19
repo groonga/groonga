@@ -1,10 +1,11 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,18 +19,19 @@
 
 #include "../grn_ctx.hpp"
 #include "../grn_expr.h"
-#include "../grn_proc.h"
 #include "../grn_hash.h"
+#include "../grn_proc.h"
+#include "../grn_selector.h"
 #include "../grn_table_selector.h"
 
 #include <groonga/plugin.h>
 #include <groonga.hpp>
 
 #ifdef GRN_WITH_APACHE_ARROW
-# include "../grn_arrow.hpp"
-# include <arrow/util/thread_pool.h>
-# include <mutex>
-# include <thread>
+#  include "../grn_arrow.hpp"
+#  include <arrow/util/thread_pool.h>
+#  include <mutex>
+#  include <thread>
 #endif
 
 #include <vector>
@@ -43,9 +45,7 @@ grn_proc_query_init_from_env(void)
 {
   {
     char env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_QUERY_MIN_ID_SKIP_ENABLE",
-               env,
-               GRN_ENV_BUFFER_SIZE);
+    grn_getenv("GRN_QUERY_MIN_ID_SKIP_ENABLE", env, GRN_ENV_BUFFER_SIZE);
     if (std::string(env) == "yes") {
       grn_query_min_id_skip_enable = true;
     }
@@ -86,28 +86,33 @@ namespace {
                       grn_obj *res,
                       grn_operator op,
                       grn_selector_data *selector_data,
-                      const char *tag) :
-      ctx_(ctx),
-      table_(table),
-      n_args_(n_args),
-      args_(args),
-      res_(res),
-      op_(op),
-      selector_data_(selector_data),
-      tag_(tag),
-      match_columns_raw_(nullptr),
-      query_expander_name_(nullptr),
-      query_options_(nullptr),
-      default_mode_(GRN_OP_MATCH),
-      default_operator_(GRN_OP_AND),
-      flags_(GRN_EXPR_SYNTAX_QUERY),
-      flags_specified_(-1),
-      enough_filtered_ratio_(-1),
-      max_n_enough_filtered_records_(-1),
-      match_columns_(nullptr) {
+                      const char *tag)
+      : ctx_(ctx),
+        table_(table),
+        n_args_(n_args),
+        args_(args),
+        res_(res),
+        op_(op),
+        selector_data_(selector_data),
+        tag_(tag),
+        match_columns_raw_(nullptr),
+        query_expander_(nullptr),
+        query_options_(nullptr),
+        default_mode_(GRN_OP_MATCH),
+        default_operator_(GRN_OP_AND),
+        flags_(GRN_EXPR_SYNTAX_QUERY),
+        flags_specified_(-1),
+        enough_filtered_ratio_(-1),
+        max_n_enough_filtered_records_(-1),
+        match_columns_(nullptr)
+    {
     }
 
-    virtual ~BaseQueryExecutor() {
+    virtual ~BaseQueryExecutor()
+    {
+      if (query_expander_ && grn_obj_is_accessor(ctx_, query_expander_)) {
+        grn_obj_close(ctx_, query_expander_);
+      }
       if (match_columns_) {
         grn_obj_close(ctx_, match_columns_);
       }
@@ -115,7 +120,8 @@ namespace {
 
   public:
     grn_rc
-    execute() {
+    execute()
+    {
       if (!prepare()) {
         return ctx_->rc;
       }
@@ -128,12 +134,15 @@ namespace {
     }
 
   private:
-    virtual bool prepare() = 0;
-    virtual bool run() = 0;
+    virtual bool
+    prepare() = 0;
+    virtual bool
+    run() = 0;
 
   protected:
     grn_id
-    get_min_id() {
+    get_min_id()
+    {
       if (op_ == GRN_OP_OR) {
         return GRN_ID_NIL;
       }
@@ -148,7 +157,8 @@ namespace {
     }
 
     float
-    get_weight_factor() {
+    get_weight_factor()
+    {
       if (selector_data_) {
         return grn_selector_data_get_weight_factor(ctx_, selector_data_);
       } else {
@@ -156,20 +166,22 @@ namespace {
       }
     }
 
+    virtual bool
+    can_swap_result_set()
+    {
+      return selector_data_ &&
+             grn_selector_data_get_can_swap_result_set(ctx_, selector_data_);
+    }
+
     void
     init_table_selector(grn_ctx *ctx,
                         grn_table_selector *table_selector,
                         grn_obj *condition,
                         grn_operator op,
-                        grn_id min_id) {
-      grn_table_selector_init(ctx,
-                              table_selector,
-                              table_,
-                              condition,
-                              op);
-      grn_table_selector_set_min_id(ctx,
-                                    table_selector,
-                                    min_id);
+                        grn_id min_id)
+    {
+      grn_table_selector_init(ctx, table_selector, table_, condition, op);
+      grn_table_selector_set_min_id(ctx, table_selector, min_id);
       grn_table_selector_set_weight_factor(ctx,
                                            table_selector,
                                            get_weight_factor());
@@ -184,10 +196,16 @@ namespace {
           table_selector,
           max_n_enough_filtered_records_);
       }
+      if (can_swap_result_set()) {
+        grn_table_selector_set_ensure_using_select_result(ctx_,
+                                                          table_selector,
+                                                          true);
+      }
     }
 
     bool
-    parse_match_columns_arg() {
+    parse_match_columns_arg()
+    {
       match_columns_raw_ = args_[0];
       if (!grn_obj_is_text_family_bulk(ctx_, match_columns_raw_) &&
           !grn_obj_is_vector(ctx_, match_columns_raw_)) {
@@ -205,30 +223,18 @@ namespace {
     }
 
     bool
-    parse_options(grn_obj *options) {
+    parse_options(grn_obj *options)
+    {
       grn_obj *query_options_ptr = NULL;
-#define OPTIONS                                                         \
-      "expander",                                                       \
-        GRN_PROC_OPTION_VALUE_RAW,                                      \
-        &query_expander_name_,                                          \
-        "default_mode",                                                 \
-        GRN_PROC_OPTION_VALUE_MODE,                                     \
-        &default_mode_,                                                 \
-        "default_operator",                                             \
-        GRN_PROC_OPTION_VALUE_OPERATOR,                                 \
-        &default_operator_,                                             \
-        "flags",                                                        \
-        GRN_PROC_OPTION_VALUE_EXPR_FLAGS,                               \
-        &flags_specified_,                                              \
-        "options",                                                      \
-        GRN_PROC_OPTION_VALUE_RAW,                                      \
-        &query_options_ptr,                                             \
-        "enough_filtered_ratio",                                        \
-        GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
-        &enough_filtered_ratio_,                                        \
-        "max_n_enough_filtered_records",                                \
-        GRN_PROC_OPTION_VALUE_INT64,                                    \
-        &max_n_enough_filtered_records_
+#define OPTIONS                                                                \
+  "expander", GRN_PROC_OPTION_VALUE_RAW, &query_expander_, "default_mode",     \
+    GRN_PROC_OPTION_VALUE_MODE, &default_mode_, "default_operator",            \
+    GRN_PROC_OPTION_VALUE_OPERATOR, &default_operator_, "flags",               \
+    GRN_PROC_OPTION_VALUE_EXPR_FLAGS, &flags_specified_, "options",            \
+    GRN_PROC_OPTION_VALUE_RAW, &query_options_ptr, "enough_filtered_ratio",    \
+    GRN_PROC_OPTION_VALUE_DOUBLE, &enough_filtered_ratio_,                     \
+    "max_n_enough_filtered_records", GRN_PROC_OPTION_VALUE_INT64,              \
+    &max_n_enough_filtered_records_
       if (selector_data_) {
         grn_selector_data_parse_options(ctx_,
                                         selector_data_,
@@ -237,27 +243,28 @@ namespace {
                                         OPTIONS,
                                         NULL);
       } else {
-        grn_proc_options_parse(ctx_,
-                               options,
-                               tag_,
-                               OPTIONS,
-                               NULL);
+        grn_proc_options_parse(ctx_, options, tag_, OPTIONS, NULL);
       }
 #undef OPTIONS
       if (ctx_->rc != GRN_SUCCESS) {
         return false;
       }
-      if (query_expander_name_ &&
-          !grn_obj_is_text_family_bulk(ctx_, query_expander_name_)) {
-        grn::TextBulk inspected(ctx_);
-        grn_inspect(ctx_, *inspected, query_expander_name_);
-        GRN_PLUGIN_ERROR(ctx_,
-                         GRN_INVALID_ARGUMENT,
-                         "%s query expander name must be string: <%.*s>",
-                         tag_,
-                         (int)GRN_TEXT_LEN(*inspected),
-                         GRN_TEXT_VALUE(*inspected));
-        return false;
+      if (query_expander_) {
+        if (query_expander_->header.type == GRN_PTR) {
+          query_expander_ = GRN_PTR_VALUE(query_expander_);
+        }
+        if (!(grn_obj_is_text_family_bulk(ctx_, query_expander_) ||
+              query_expander_->header.type == GRN_TABLE_HASH_KEY)) {
+          grn::TextBulk inspected(ctx_);
+          grn_inspect(ctx_, *inspected, query_expander_);
+          GRN_PLUGIN_ERROR(ctx_,
+                           GRN_INVALID_ARGUMENT,
+                           "%s expander must be string or table: <%.*s>",
+                           tag_,
+                           (int)GRN_TEXT_LEN(*inspected),
+                           GRN_TEXT_VALUE(*inspected));
+          return false;
+        }
       }
       if (query_options_ptr) {
         query_options_ = GRN_PTR_VALUE(query_options_ptr);
@@ -266,7 +273,8 @@ namespace {
     }
 
     bool
-    prepare_flags() {
+    prepare_flags()
+    {
       if (flags_specified_ == static_cast<grn_expr_flags>(-1)) {
         flags_ |= GRN_EXPR_ALLOW_PRAGMA | GRN_EXPR_ALLOW_COLUMN;
       } else {
@@ -276,7 +284,8 @@ namespace {
     }
 
     bool
-    prepare_match_columns() {
+    prepare_match_columns()
+    {
       if (grn_obj_is_text_family_bulk(ctx_, match_columns_raw_)) {
         return prepare_match_columns_bulk();
       } else {
@@ -287,14 +296,12 @@ namespace {
     bool
     prepare_match_columns_one(const char *match_columns_string,
                               size_t match_columns_string_length,
-                              grn_obj **match_columns_inout) {
+                              grn_obj **match_columns_inout)
+    {
       grn_obj *match_columns = *match_columns_inout;
       if (!match_columns) {
         grn_obj *dummy_variable;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx_,
-                                  table_,
-                                  match_columns,
-                                  dummy_variable);
+        GRN_EXPR_CREATE_FOR_QUERY(ctx_, table_, match_columns, dummy_variable);
         *match_columns_inout = match_columns;
         if (!match_columns) {
           return false;
@@ -313,7 +320,8 @@ namespace {
     }
 
     virtual bool
-    prepare_match_columns_bulk() {
+    prepare_match_columns_bulk()
+    {
       if (GRN_TEXT_LEN(match_columns_raw_) == 0) {
         return true;
       }
@@ -324,7 +332,8 @@ namespace {
     }
 
     virtual bool
-    prepare_match_columns_vector() {
+    prepare_match_columns_vector()
+    {
       auto n_match_columns = grn_vector_size(ctx_, match_columns_raw_);
       if (n_match_columns == 0) {
         return true;
@@ -357,24 +366,27 @@ namespace {
     }
 
     bool
-    expand_query(grn_obj *query, grn::TextBulk &expanded_query)
+    expand_query(grn_raw_string *query, grn::TextBulk &expanded_query)
     {
-      if (!query_expander_name_ ||
-          GRN_TEXT_LEN(query_expander_name_) == 0) {
-        GRN_TEXT_SET(ctx_,
-                     *expanded_query,
-                     GRN_TEXT_VALUE(query),
-                     GRN_TEXT_LEN(query));
+      bool valid_query_expander = true;
+      if (!query_expander_) {
+        valid_query_expander = false;
+      } else if (grn_obj_is_text_family_bulk(ctx_, query_expander_)) {
+        valid_query_expander = (GRN_TEXT_LEN(query_expander_) > 0);
+      }
+      if (!valid_query_expander) {
+        GRN_TEXT_SET(ctx_, *expanded_query, query->value, query->length);
         return true;
       }
       grn_proc_syntax_expand_query(ctx_,
-                                   GRN_TEXT_VALUE(query),
-                                   GRN_TEXT_LEN(query),
+                                   query->value,
+                                   query->length,
                                    flags_,
-                                   GRN_TEXT_VALUE(query_expander_name_),
-                                   GRN_TEXT_LEN(query_expander_name_),
-                                   NULL, 0,
-                                   NULL, 0,
+                                   query_expander_,
+                                   NULL,
+                                   0,
+                                   NULL,
+                                   0,
                                    *expanded_query,
                                    tag_);
       return ctx_->rc == GRN_SUCCESS;
@@ -384,13 +396,11 @@ namespace {
     build_condition(grn_ctx *ctx,
                     grn_obj *match_columns,
                     const char *query,
-                    size_t query_length) {
+                    size_t query_length)
+    {
       grn_obj *condition;
       grn_obj *dummy_variable;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx,
-                                table_,
-                                condition,
-                                dummy_variable);
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, condition, dummy_variable);
       if (!condition) {
         return nullptr;
       }
@@ -419,7 +429,8 @@ namespace {
                size_t query_length,
                grn_operator op,
                grn_id min_id,
-               grn_obj **result_set) {
+               grn_obj **result_set)
+    {
       if (ctx->rc != GRN_SUCCESS) {
         GRN_LOG(ctx,
                 GRN_LOG_DEBUG,
@@ -434,10 +445,7 @@ namespace {
                 ctx->errline,
                 ctx->errbuf);
       }
-      auto condition = build_condition(ctx,
-                                       match_columns,
-                                       query,
-                                       query_length);
+      auto condition = build_condition(ctx, match_columns, query, query_length);
       if (!condition) {
         grn_rc rc = ctx->rc;
         if (rc == GRN_SUCCESS) {
@@ -467,11 +475,7 @@ namespace {
       }
       grn::UniqueObj unique_condition(ctx, condition);
       grn_table_selector table_selector;
-      init_table_selector(ctx,
-                          &table_selector,
-                          condition,
-                          op,
-                          min_id);
+      init_table_selector(ctx, &table_selector, condition, op, min_id);
       if (ctx->rc != GRN_SUCCESS) {
         GRN_LOG(ctx,
                 GRN_LOG_DEBUG,
@@ -486,12 +490,37 @@ namespace {
                 ctx->errline,
                 ctx->errbuf);
       }
-      auto new_result_set = grn_table_selector_select(ctx,
-                                                      &table_selector,
-                                                      *result_set);
+      auto base_result_set = *result_set;
+      const auto have_multiple_conditions =
+        (grn_expr_get_n_logical_ops(ctx, condition) >= 1);
+      // TODO: We can avoid this when condition uses only OR for
+      // logical operations.
+      const auto need_manual_or =
+        (op == GRN_OP_OR && have_multiple_conditions && base_result_set &&
+         grn_table_size(ctx, base_result_set) > 0);
+      if (need_manual_or) {
+        // We can't use *result_set as the base_result_set with this case.
+        // If we use it for 'A || query("...", "B C")', this expression
+        // is evaluated as '(A || B) && C' not 'A || (B && C)'.
+        base_result_set = nullptr;
+      }
+      auto new_result_set =
+        grn_table_selector_select(ctx, &table_selector, base_result_set);
       if (new_result_set) {
         if (ctx->rc == GRN_SUCCESS) {
-          *result_set = new_result_set;
+          if (need_manual_or) {
+            grn_table_setoperation(ctx,
+                                   *result_set,
+                                   new_result_set,
+                                   *result_set,
+                                   op);
+            grn_obj_close(ctx, new_result_set);
+          } else {
+            *result_set = new_result_set;
+          }
+          if (can_swap_result_set()) {
+            grn_selector_data_set_result_set(ctx, selector_data_, *result_set);
+          }
         } else {
           if (new_result_set != *result_set) {
             grn_obj_close(ctx, new_result_set);
@@ -526,7 +555,7 @@ namespace {
     const char *tag_;
 
     grn_obj *match_columns_raw_;
-    grn_obj *query_expander_name_;
+    grn_obj *query_expander_;
     grn_obj *query_options_;
     grn_operator default_mode_;
     grn_operator default_operator_;
@@ -545,24 +574,19 @@ namespace {
                   grn_obj **args,
                   grn_obj *res,
                   grn_operator op,
-                  grn_selector_data *selector_data) :
-      BaseQueryExecutor(ctx,
-                        table,
-                        n_args,
-                        args,
-                        res,
-                        op,
-                        selector_data,
-                        "[query]"),
-      query_(nullptr) {
+                  grn_selector_data *selector_data)
+      : BaseQueryExecutor(
+          ctx, table, n_args, args, res, op, selector_data, "[query]"),
+        query_()
+    {
     }
 
-    ~QueryExecutor() override {
-    }
+    ~QueryExecutor() override {}
 
   private:
     bool
-    prepare() override {
+    prepare() override
+    {
       if (!validate_args()) {
         return false;
       }
@@ -575,15 +599,15 @@ namespace {
       if (n_args_ == 3) {
         grn_obj *options = args_[2];
         switch (options->header.type) {
-        case GRN_BULK :
-          query_expander_name_ = options;
+        case GRN_BULK:
+          query_expander_ = options;
           break;
-        case GRN_TABLE_HASH_KEY :
+        case GRN_TABLE_HASH_KEY:
           if (!parse_options(options)) {
             return false;
           }
           break;
-        default :
+        default:
           {
             grn::TextBulk inspected(ctx_);
             grn_inspect(ctx_, *inspected, options);
@@ -610,7 +634,8 @@ namespace {
     }
 
     bool
-    validate_args() {
+    validate_args()
+    {
       if (!(2 <= n_args_ && n_args_ <= 3)) {
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
@@ -623,11 +648,12 @@ namespace {
     }
 
     bool
-    parse_query_arg() {
-      query_ = args_[1];
-      if (!grn_obj_is_text_family_bulk(ctx_, query_)) {
+    parse_query_arg()
+    {
+      auto query = args_[1];
+      if (!grn_obj_is_text_family_bulk(ctx_, query)) {
         grn::TextBulk inspected(ctx_);
-        grn_inspect(ctx_, *inspected, query_);
+        grn_inspect(ctx_, *inspected, query);
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
                          "%s 2nd argument must be string: <%.*s>",
@@ -636,17 +662,20 @@ namespace {
                          GRN_TEXT_VALUE(*inspected));
         return false;
       }
+      GRN_RAW_STRING_SET(query_, query);
+      grn_raw_string_lstrip(ctx_, &query_);
       return true;
     }
 
     bool
-    run() override {
-      if (GRN_TEXT_LEN(query_) == 0) {
+    run() override
+    {
+      if (query_.length == 0) {
         return true;
       }
 
       grn::TextBulk expanded_query(ctx_);
-      if (!expand_query(query_, expanded_query)) {
+      if (!expand_query(&query_, expanded_query)) {
         return false;
       }
 
@@ -659,7 +688,7 @@ namespace {
                         &res_);
     }
 
-    grn_obj *query_;
+    grn_raw_string query_;
   };
 
   class QueryParallelOrExecutor : public BaseQueryExecutor {
@@ -670,29 +699,39 @@ namespace {
                             grn_obj **args,
                             grn_obj *res,
                             grn_operator op,
-                            grn_selector_data *selector_data) :
-      BaseQueryExecutor(ctx,
-                        table,
-                        n_args,
-                        args,
-                        res,
-                        op,
-                        selector_data,
-                        "[query-parallel-or]"),
-      expanded_queries_(),
-      sub_match_columns_() {
+                            grn_selector_data *selector_data)
+      : BaseQueryExecutor(ctx,
+                          table,
+                          n_args,
+                          args,
+                          res,
+                          op,
+                          selector_data,
+                          "[query-parallel-or]"),
+        expanded_queries_(),
+        sub_match_columns_()
+    {
       GRN_PTR_INIT(&sub_match_columns_,
                    GRN_OBJ_VECTOR | GRN_OBJ_OWN,
                    GRN_ID_NIL);
     }
 
-    ~QueryParallelOrExecutor() override {
+    ~QueryParallelOrExecutor() override
+    {
       GRN_OBJ_FIN(ctx_, &sub_match_columns_);
+    }
+
+  protected:
+    bool
+    can_swap_result_set() override
+    {
+      return false;
     }
 
   private:
     bool
-    prepare_match_columns_bulk() override {
+    prepare_match_columns_bulk() override
+    {
       if (GRN_TEXT_LEN(match_columns_raw_) > 0) {
         grn_obj *sub_match_columns = nullptr;
         if (!prepare_match_columns_one(GRN_TEXT_VALUE(match_columns_raw_),
@@ -708,7 +747,8 @@ namespace {
     }
 
     bool
-    prepare_match_columns_vector() override {
+    prepare_match_columns_vector() override
+    {
       auto n_match_columns = grn_vector_size(ctx_, match_columns_raw_);
       if (n_match_columns == 0) {
         return true;
@@ -738,7 +778,8 @@ namespace {
     }
 
     bool
-    prepare() override {
+    prepare() override
+    {
       if (!validate_args()) {
         return false;
       }
@@ -746,7 +787,8 @@ namespace {
         return false;
       }
       auto n_queries_ = n_args_ - 1;
-      if (n_args_ > 2 && args_[n_args_ - 1]->header.type == GRN_TABLE_HASH_KEY) {
+      if (n_args_ > 2 &&
+          args_[n_args_ - 1]->header.type == GRN_TABLE_HASH_KEY) {
         n_queries_--;
         auto options = args_[n_args_ - 1];
         if (!parse_options(options)) {
@@ -766,7 +808,8 @@ namespace {
     }
 
     bool
-    validate_args() {
+    validate_args()
+    {
       if (n_args_ < 2) {
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
@@ -779,13 +822,14 @@ namespace {
     }
 
     bool
-    parse_query_args(grn_obj **queries, int n_queries) {
+    parse_query_args(grn_obj **queries, int n_queries)
+    {
       grn::TextBulk expanded_query(ctx_);
       for (int i = 0; i < n_queries; ++i) {
-        auto query = queries[i];
-        if (!grn_obj_is_text_family_bulk(ctx_, query)) {
+        auto query_bulk = queries[i];
+        if (!grn_obj_is_text_family_bulk(ctx_, query_bulk)) {
           grn::TextBulk inspected(ctx_);
-          grn_inspect(ctx_, *inspected, query);
+          grn_inspect(ctx_, *inspected, query_bulk);
           GRN_PLUGIN_ERROR(ctx_,
                            GRN_INVALID_ARGUMENT,
                            "%s %dth argument must be string: <%.*s>",
@@ -795,11 +839,14 @@ namespace {
                            GRN_TEXT_VALUE(*inspected));
           return false;
         }
-        if (GRN_TEXT_LEN(query) == 0) {
+        grn_raw_string query;
+        GRN_RAW_STRING_SET(query, query_bulk);
+        grn_raw_string_lstrip(ctx_, &query);
+        if (query.length == 0) {
           continue;
         }
         GRN_BULK_REWIND(*expanded_query);
-        if (!expand_query(query, expanded_query)) {
+        if (!expand_query(&query, expanded_query)) {
           return false;
         }
         expanded_queries_.emplace_back(GRN_TEXT_VALUE(*expanded_query),
@@ -809,7 +856,8 @@ namespace {
     }
 
     bool
-    run() override {
+    run() override
+    {
       if (expanded_queries_.empty()) {
         return true;
       }
@@ -820,12 +868,12 @@ namespace {
     }
 
     bool
-    select() {
+    select()
+    {
       bool processed = false;
 #ifdef GRN_WITH_APACHE_ARROW
       int n_conditions =
-        GRN_PTR_VECTOR_SIZE(&sub_match_columns_) *
-        expanded_queries_.size();
+        GRN_PTR_VECTOR_SIZE(&sub_match_columns_) * expanded_queries_.size();
       if (n_conditions >= grn_query_parallel_or_n_conditions_threshold) {
         auto capacity = grn_query_parallel_or_n_threads_limit;
         if (capacity < 0) {
@@ -850,7 +898,8 @@ namespace {
 
 #ifdef GRN_WITH_APACHE_ARROW
     bool
-    select_parallel(std::shared_ptr<::arrow::internal::ThreadPool> pool) {
+    select_parallel(std::shared_ptr<::arrow::internal::ThreadPool> pool)
+    {
       grn_id min_id = get_min_id();
       // merge isn't parallel. This is just used for queue.
       auto merge_pool_result = ::arrow::internal::ThreadPool::MakeEternal(1);
@@ -892,14 +941,14 @@ namespace {
           if (n_unique_sub_results < 2) {
             sub_result =
               grn_table_create(sub_ctx,
-                               nullptr, 0,
                                nullptr,
-                               GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                               0,
+                               nullptr,
+                               GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
                                table_,
                                nullptr);
           } else {
-            sub_result =
-              unique_sub_results[n_unique_sub_results - 1].release();
+            sub_result = unique_sub_results[n_unique_sub_results - 1].release();
             unique_sub_results.pop_back();
             clear_result_set(ctx_, sub_result);
           }
@@ -946,9 +995,8 @@ namespace {
         for (size_t i = 0; i < n_sub_match_columns; ++i) {
           grn_obj *sub_match_column = GRN_PTR_VALUE_AT(&sub_match_columns_, i);
           for (const auto &expanded_query : expanded_queries_) {
-            auto select_future = pool->Submit(select,
-                                              sub_match_column,
-                                              expanded_query);
+            auto select_future =
+              pool->Submit(select, sub_match_column, expanded_query);
             if (!select_future.ok()) {
               std::lock_guard<std::mutex> lock(mutex);
               if (!grnarrow::check(ctx_,
@@ -965,7 +1013,7 @@ namespace {
           }
         }
         auto status = ::arrow::Status::OK();
-        for (auto& select_future : select_futures) {
+        for (auto &select_future : select_futures) {
           status &= select_future.status();
         }
         if (!grnarrow::check(ctx_,
@@ -974,7 +1022,7 @@ namespace {
                              tag_)) {
           return false;
         }
-        for (auto& merge_future : merge_futures) {
+        for (auto &merge_future : merge_futures) {
           status &= merge_future.status();
         }
         if (!grnarrow::check(ctx_,
@@ -990,13 +1038,14 @@ namespace {
                                unique_sub_results[0].get(),
                                res_,
                                op_);
-       }
+      }
       return ctx_->rc == GRN_SUCCESS;
     }
 #endif
 
     bool
-    select_sequential() {
+    select_sequential()
+    {
       grn_id min_id = get_min_id();
       grn::UniqueObj unique_sub_result(ctx_, nullptr);
       grn::UniqueObj unique_working_sub_result(ctx_, nullptr);
@@ -1034,21 +1083,23 @@ namespace {
     }
 
     void
-    clear_result_set(grn_ctx *ctx, grn_obj *result_set) {
+    clear_result_set(grn_ctx *ctx, grn_obj *result_set)
+    {
       // This is faster than grn_hash_truncate() or grn_table_create().
       GRN_HASH_EACH_BEGIN(ctx,
                           reinterpret_cast<grn_hash *>(result_set),
                           cursor,
-                          id) {
+                          id)
+      {
         grn_hash_cursor_delete(ctx, cursor, nullptr);
-      } GRN_HASH_EACH_END(ctx, cursor);
+      }
+      GRN_HASH_EACH_END(ctx, cursor);
     }
 
     std::vector<std::string> expanded_queries_;
     grn_obj sub_match_columns_;
   };
-}
-
+} // namespace
 
 static grn_rc
 run_query(grn_ctx *ctx,
@@ -1059,13 +1110,7 @@ run_query(grn_ctx *ctx,
           grn_operator op,
           grn_selector_data *selector_data)
 {
-  QueryExecutor executor(ctx,
-                         table,
-                         n_args,
-                         args,
-                         res,
-                         op,
-                         selector_data);
+  QueryExecutor executor(ctx, table, n_args, args, res, op, selector_data);
   return executor.execute();
 }
 
@@ -1076,7 +1121,8 @@ func_query(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user_data)
 
   if (grn_proc_selector_to_function_data_init(ctx, &data, user_data)) {
     grn_rc rc;
-    rc = run_query(ctx, data.table, n_args, args, data.records, GRN_OP_AND, NULL);
+    rc =
+      run_query(ctx, data.table, n_args, args, data.records, GRN_OP_AND, NULL);
     if (rc == GRN_SUCCESS) {
       grn_proc_selector_to_function_data_selected(ctx, &data);
     }
@@ -1087,9 +1133,13 @@ func_query(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_rc
-selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-               int n_args, grn_obj **args,
-               grn_obj *res, grn_operator op)
+selector_query(grn_ctx *ctx,
+               grn_obj *table,
+               grn_obj *index,
+               int n_args,
+               grn_obj **args,
+               grn_obj *res,
+               grn_operator op)
 {
   return run_query(ctx,
                    table,
@@ -1104,7 +1154,8 @@ void
 grn_proc_init_query(grn_ctx *ctx)
 {
   grn_obj *selector_proc = grn_proc_create(ctx,
-                                           "query", -1,
+                                           "query",
+                                           -1,
                                            GRN_PROC_FUNCTION,
                                            func_query,
                                            NULL,
@@ -1124,13 +1175,8 @@ run_query_parallel_or(grn_ctx *ctx,
                       grn_operator op,
                       grn_selector_data *selector_data)
 {
-  QueryParallelOrExecutor executor(ctx,
-                                   table,
-                                   n_args,
-                                   args,
-                                   res,
-                                   op,
-                                   selector_data);
+  QueryParallelOrExecutor
+    executor(ctx, table, n_args, args, res, op, selector_data);
   return executor.execute();
 }
 
@@ -1182,7 +1228,8 @@ void
 grn_proc_init_query_parallel_or(grn_ctx *ctx)
 {
   grn_obj *selector_proc = grn_proc_create(ctx,
-                                           "query_parallel_or", -1,
+                                           "query_parallel_or",
+                                           -1,
                                            GRN_PROC_FUNCTION,
                                            func_query_parallel_or,
                                            NULL,
@@ -1194,11 +1241,12 @@ grn_proc_init_query_parallel_or(grn_ctx *ctx)
 }
 
 static grn_obj *
-command_query_expand(grn_ctx *ctx, int n_args, grn_obj **args,
+command_query_expand(grn_ctx *ctx,
+                     int n_args,
+                     grn_obj **args,
                      grn_user_data *user_data)
 {
-  const char *expander;
-  size_t expander_size;
+  grn_obj *expander;
   const char *query;
   size_t query_size;
   const char *flags_raw;
@@ -1210,26 +1258,19 @@ command_query_expand(grn_ctx *ctx, int n_args, grn_obj **args,
   size_t expanded_term_column_size;
   grn_obj expanded_query;
 
-  expander = grn_plugin_proc_get_var_string(ctx,
-                                            user_data,
-                                            "expander",
-                                            -1,
-                                            &expander_size);
-  query = grn_plugin_proc_get_var_string(ctx,
-                                         user_data,
-                                         "query",
-                                         -1,
-                                         &query_size);
+  expander = grn_plugin_proc_get_var(ctx, user_data, "expander", -1);
+  query =
+    grn_plugin_proc_get_var_string(ctx, user_data, "query", -1, &query_size);
   flags_raw = grn_plugin_proc_get_var_string(ctx,
                                              user_data,
                                              "flags",
                                              -1,
                                              &flags_raw_size);
   term_column = grn_plugin_proc_get_var_string(ctx,
-                                            user_data,
-                                            "term_column",
-                                            -1,
-                                            &term_column_size);
+                                               user_data,
+                                               "term_column",
+                                               -1,
+                                               &term_column_size);
   expanded_term_column =
     grn_plugin_proc_get_var_string(ctx,
                                    user_data,
@@ -1240,13 +1281,9 @@ command_query_expand(grn_ctx *ctx, int n_args, grn_obj **args,
   if (flags_raw_size > 0) {
     grn_obj flags_bulk;
     GRN_TEXT_INIT(&flags_bulk, GRN_OBJ_DO_SHALLOW_COPY);
-    GRN_TEXT_SET(ctx,
-                 &flags_bulk,
-                 flags_raw,
-                 flags_raw_size);
-    flags |= grn_proc_expr_query_flags_parse(ctx,
-                                             &flags_bulk,
-                                             "[query][expand]");
+    GRN_TEXT_SET(ctx, &flags_bulk, flags_raw, flags_raw_size);
+    flags |=
+      grn_proc_expr_query_flags_parse(ctx, &flags_bulk, "[query][expand]");
   } else {
     flags |= GRN_EXPR_ALLOW_PRAGMA | GRN_EXPR_ALLOW_COLUMN;
   }
@@ -1261,7 +1298,6 @@ command_query_expand(grn_ctx *ctx, int n_args, grn_obj **args,
                                query_size,
                                flags,
                                expander,
-                               expander_size,
                                term_column,
                                term_column_size,
                                expanded_term_column,
@@ -1289,7 +1325,8 @@ grn_proc_init_query_expand(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "term_column", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "expanded_term_column", -1);
   grn_plugin_command_create(ctx,
-                            "query_expand", -1,
+                            "query_expand",
+                            -1,
                             command_query_expand,
                             5,
                             vars);

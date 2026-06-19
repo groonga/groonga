@@ -1,10 +1,11 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -53,7 +54,7 @@ extern "C" {
 typedef struct _grn_alloc_info grn_alloc_info;
 struct _grn_alloc_info {
   void *address;
-  int freed;
+  bool freed;
   size_t size;
   char alloc_backtrace[4096];
   char free_backtrace[4096];
@@ -66,7 +67,7 @@ struct _grn_alloc_info {
 
 typedef struct _grn_mrb_data grn_mrb_data;
 struct _grn_mrb_data {
-  grn_bool initialized;
+  bool initialized;
 #ifdef GRN_WITH_MRUBY
   mrb_state *state;
   char base_directory[PATH_MAX];
@@ -89,7 +90,7 @@ struct _grn_mrb_data {
 
 typedef struct _grn_lua_data grn_lua_data;
 struct _grn_lua_data {
-  grn_bool initialized;
+  bool initialized;
 #ifdef GRN_WITH_LUAJIT
   lua_State *state;
 #endif
@@ -117,12 +118,11 @@ struct _grn_ctx_impl {
   grn_obj *curr_expr;
   grn_obj current_request_id;
   void *current_request_timer_id;
-  void *parser;
+  grn_obj expr_parsers;
   grn_timeval tv;
   grn_selector_data *current_selector_data;
 
   /* loader portion */
-  grn_edge *edge;
   grn_loader loader;
   grn_arrow_stream_loader *arrow_stream_loader;
 
@@ -141,7 +141,7 @@ struct _grn_ctx_impl {
     } data;
     grn_content_type type;
     const char *mime_type;
-    grn_bool is_pretty;
+    bool is_pretty;
     grn_obj names;
     grn_obj levels;
 #ifdef GRN_WITH_MESSAGE_PACK
@@ -151,17 +151,23 @@ struct _grn_ctx_impl {
   } output;
 
   struct {
+    int32_t n_workers;
+    void *task_executor;
+  } parallel;
+
+  struct {
     int flags;
     grn_command_version version;
     struct {
       grn_obj *command;
       grn_command_version version;
+      int32_t n_workers;
     } keep;
   } command;
 
   /* match escalation portion */
   int64_t match_escalation_threshold;
-  grn_bool force_match_escalation;
+  bool force_match_escalation;
 
   /* lifetime portion */
   grn_proc_func *finalizer;
@@ -210,9 +216,33 @@ struct _grn_ctx_impl {
     grn_progress_callback_func callback;
     void *user_data;
   } progress;
+
+  struct {
+    uint64_t start_time;
+    uint16_t current_depth;
+    grn_obj depths;
+    grn_obj sequence_stack;
+    grn_obj sequences;
+    grn_obj names;
+    grn_obj values;
+    /* in nano seconds */
+    grn_obj elapsed_times;
+  } trace_log;
 };
 
 #define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)
+
+static inline bool
+grn_ctx_trace_log_is_enabled(grn_ctx *ctx)
+{
+  if (!ctx) {
+    return false;
+  }
+  if (!ctx->impl) {
+    return false;
+  }
+  return ctx->impl->trace_log.start_time != 0;
+}
 
 void
 grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);

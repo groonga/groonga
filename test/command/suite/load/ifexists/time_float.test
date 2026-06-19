@@ -1,0 +1,21 @@
+table_create Reports TABLE_HASH_KEY ShortText
+
+column_create Reports content COLUMN_SCALAR Text
+column_create Reports modified_at COLUMN_SCALAR Time
+
+load --table Reports
+[
+{"_key": "a", "content": "", "modified_at": 1663989875.438}
+]
+
+load --table Reports --ifexists 'content == "" && modified_at <= 1663989875.437'
+[
+{"_key": "a", "content": "not update"}
+]
+select Reports
+
+load --table Reports --ifexists 'content == "" && modified_at <= 1663989875.438'
+[
+{"_key": "a", "content": "update"}
+]
+select Reports

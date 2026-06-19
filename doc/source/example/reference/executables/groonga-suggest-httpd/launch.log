@@ -1,4 +1,4 @@
 Execution example::
 
-  % groonga-suggest-httpd --send-endpoint 'tcp://127.0.0.1:1234' --receive-endpoint 'tcp://127.0.0.1:1235' --daemon ${DB_PATH}
+  $ groonga-suggest-httpd --send-endpoint 'tcp://127.0.0.1:1234' --receive-endpoint 'tcp://127.0.0.1:1235' --daemon ${DB_PATH}
   

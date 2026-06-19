@@ -1,0 +1,9 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --extractors 'ExtractorHTML("remove_tag", "false")'
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+database_unmap
+
+dump

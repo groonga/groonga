@@ -1,11 +1,12 @@
 /*
-  Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
-  Copyright(C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -84,7 +85,7 @@ static unsigned char symbol[] = {
   0,    0,   0,   0,   0,   0,   '$', 0,    0,   '%', '#', '&', '*', '@',
   0,    0,   0,   0,   0,   0,   0,   0};
 
-grn_inline static grn_obj *
+static inline grn_obj *
 eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -362,7 +363,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-grn_inline static grn_obj *
+static inline grn_obj *
 sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -654,16 +655,16 @@ typedef struct {
   grn_string *string;
   grn_nfkc_normalize_options *options;
   grn_nfkc_normalize_context context;
-  grn_bool remove_blank_p;
-  grn_bool remove_tokenized_delimiter_p;
+  bool remove_blank_p;
+  bool remove_tokenized_delimiter_p;
 } grn_nfkc_normalize_data;
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_context_init(grn_ctx *ctx,
                                 grn_nfkc_normalize_context *context,
-                                grn_bool need_checks,
-                                grn_bool need_types,
-                                grn_bool need_offsets,
+                                bool need_checks,
+                                bool need_types,
+                                bool need_offsets,
                                 const char *context_tag)
 {
   if (!(context->dest = GRN_MALLOC(context->size + 1))) {
@@ -706,7 +707,7 @@ grn_nfkc_normalize_context_init(grn_ctx *ctx,
   context->o = context->offsets;
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_context_fin(grn_ctx *ctx,
                                grn_nfkc_normalize_context *context)
 {
@@ -724,7 +725,7 @@ grn_nfkc_normalize_context_fin(grn_ctx *ctx,
   }
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_context_swap(grn_ctx *ctx,
                                 grn_nfkc_normalize_context *context1,
                                 grn_nfkc_normalize_context *context2)
@@ -735,7 +736,7 @@ grn_nfkc_normalize_context_swap(grn_ctx *ctx,
   *context2 = tmp;
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_context_rewind(grn_ctx *ctx,
                                   grn_nfkc_normalize_context *context)
 {
@@ -747,7 +748,7 @@ grn_nfkc_normalize_context_rewind(grn_ctx *ctx,
   context->o = context->offsets;
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_data_init(grn_ctx *ctx,
                              grn_nfkc_normalize_data *data,
                              grn_obj *string,
@@ -758,8 +759,12 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
-                         data->options->remove_blank;
+  if (data->options->remove_blank_force_is_set) {
+    data->remove_blank_p = data->options->remove_blank_force;
+  } else {
+    data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
+                           data->options->remove_blank;
+  }
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
 
@@ -774,7 +779,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
                                   "");
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_context_expand(grn_ctx *ctx,
                                   grn_nfkc_normalize_context *context,
                                   size_t least_required_size,
@@ -830,7 +835,7 @@ grn_nfkc_normalize_context_expand(grn_ctx *ctx,
   }
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_expand(grn_ctx *ctx,
                           grn_nfkc_normalize_data *data,
                           size_t least_required_size)
@@ -841,7 +846,965 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
                                     "");
 }
 
-grn_inline static const unsigned char *
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_a(
+  const unsigned char *utf8_char)
+{
+  /*
+   * Latin-1 Supplement
+   * U+00E0 LATIN SMALL LETTER A WITH GRAVE ..
+   * U+00E5 LATIN SMALL LETTER A WITH RING ABOVE
+   */
+  return (utf8_char[0] == 0xc3 && 0xa0 <= utf8_char[1] &&
+          utf8_char[1] <= 0xa5) ||
+         /*
+          * Latin Extended-A
+          * U+0101 LATIN SMALL LETTER A WITH MACRON
+          * U+0103 LATIN SMALL LETTER A WITH BREVE
+          * U+0105 LATIN SMALL LETTER A WITH OGONEK
+          * Uppercase counterparts (U+0102 and U+0104) are covered by the
+          * following condition but they are never appeared here. Because NFKC
+          * normalization converts them to their lowercase equivalents.
+          */
+         (utf8_char[0] == 0xc4 &&
+          (0x81 <= utf8_char[1] && utf8_char[1] <= 0x85)) ||
+         /*
+          * Latin Extended-B
+          * U+01CE LATIN SMALL LETTER A WITH CARON
+          * U+01DF LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
+          * U+01E1 LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
+          * U+01FB LATIN SMALL LETTER A WITH RING ABOVE AND ACUTE
+          */
+         (utf8_char[0] == 0xc7 &&
+          (utf8_char[1] == 0x8e || utf8_char[1] == 0x9f ||
+           utf8_char[1] == 0xa1 || utf8_char[1] == 0xbb)) ||
+         /*
+          * Latin Extended-B
+          * U+0201 LATIN SMALL LETTER A WITH DOUBLE GRAVE
+          * U+0203 LATIN SMALL LETTER A WITH INVERTED BREVE
+          * U+0227 LATIN SMALL LETTER A WITH DOT ABOVE
+          */
+         (utf8_char[0] == 0xc8 &&
+          (utf8_char[1] == 0x81 || utf8_char[1] == 0x83 ||
+           utf8_char[1] == 0xa7)) ||
+         /*
+          * Latin Extended Additional
+          * U+1E01 LATIN SMALL LETTER A WITH RING BELOW
+          */
+         (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+          utf8_char[2] == 0x81) ||
+         /*
+          * Latin Extended Additional
+          * U+1EA1 LATIN SMALL LETTER A WITH DOT BELOW
+          * U+1EA3 LATIN SMALL LETTER A WITH HOOK ABOVE
+          * U+1EA5 LATIN SMALL LETTER A WITH CIRCUMFLEX
+          * U+1EA7 LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
+          * U+1EA9 LATIN SMALL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
+          * U+1EAB LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
+          * U+1EAD LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
+          * U+1EAF LATIN SMALL LETTER A WITH BREVE AND ACUTE
+          * U+1EB1 LATIN SMALL LETTER A WITH BREVE AND GRAVE
+          * U+1EB3 LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
+          * U+1EB5 LATIN SMALL LETTER A WITH BREVE AND TILDE
+          * U+1EB7 LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
+          * Uppercase counterparts (U+1EA2, U+1EA4, U+1EA6, U+1EA8, U+1EAA,
+          * U+1EAC, U+1EAE, U+1EB0, U+1EB2, U+1EB4, and U+1EB6) are covered by
+          * the following condition but they are never appeared here. Because
+          * NFKC normalization converts them to their lowercase equivalents.
+          */
+         (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+          (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xb7));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_b(
+  const unsigned char *utf8_char)
+{
+  /*
+   * Latin Extended Additional
+   * U+1E03 LATIN SMALL LETTER B WITH DOT ABOVE
+   * U+1E05 LATIN SMALL LETTER B WITH DOT BELOW
+   * U+1E07 LATIN SMALL LETTER B WITH LINE BELOW
+   * Uppercase counterparts (U+1E04, U+1E06) are covered by the
+   * following condition but they are never appeared here. Because NFKC
+   * normalization converts them to their lowercase equivalents.
+   */
+  return utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+         (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87);
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_c(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00E7 LATIN SMALL LETTER C WITH CEDILLA
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xa7) ||
+    /*
+     * Latin Extended-A
+     * U+0107 LATIN SMALL LETTER C WITH ACUTE
+     * U+0109 LATIN SMALL LETTER C WITH CIRCUMFLEX
+     * U+010B LATIN SMALL LETTER C WITH DOT ABOVE
+     * U+010D LATIN SMALL LETTER C WITH CARON
+     * Uppercase counterparts (U+0108, U+010A, U+010C) are covered by the
+     * following condition but they are never appeared here. Because NFKC
+     * normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0x87 <= utf8_char[1] && utf8_char[1] <= 0x8d) ||
+    /*
+     * Latin Extended Additional
+     * U+1E09 LATIN SMALL LETTER C WITH CEDILLA AND ACUTE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x89));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_d(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+010F LATIN SMALL LETTER D WITH CARON
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0x8f) ||
+    /*
+     * Latin Extended Additional
+     * U+1E0B LATIN SMALL LETTER D WITH DOT ABOVE
+     * U+1E0D LATIN SMALL LETTER D WITH DOT BELOW
+     * U+1E0F LATIN SMALL LETTER D WITH LINE BELOW
+     * U+1E11 LATIN SMALL LETTER D WITH CEDILLA
+     * U+1E13 LATIN SMALL LETTER D WITH CIRCUMFLEX BELOW
+     * Uppercase counterparts (U+1E0C, U+1E0E, U+1E10, U+1E12, U+1E14) are
+     * covered by the following condition but they are never appeared here.
+     * Because NFKC normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0x8b <= utf8_char[2] && utf8_char[2] <= 0x93)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_e(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00E8 LATIN SMALL LETTER E WITH GRAVE
+     * U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     * U+00EA LATIN SMALL LETTER E WITH CIRCUMFLEX
+     * U+00EB LATIN SMALL LETTER E WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xa8 <= utf8_char[1] && utf8_char[1] <= 0xab) ||
+    /*
+     * Latin Extended-A
+     * U+0113 LATIN SMALL LETTER E WITH MACRON
+     * U+0115 LATIN SMALL LETTER E WITH BREVE
+     * U+0117 LATIN SMALL LETTER E WITH DOT ABOVE
+     * U+0119 LATIN SMALL LETTER E WITH OGONEK
+     * U+011B LATIN SMALL LETTER E WITH CARON
+     * Uppercase counterparts (U+0114, U+0116, U+0118, U+011A) are covered
+     * by the following condition but they are never appeared here. Because
+     * NFKC normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0x93 <= utf8_char[1] && utf8_char[1] <= 0x9b) ||
+    /*
+     * Latin Extended-B
+     * U+0205 LATIN SMALL LETTER E WITH DOUBLE GRAVE
+     * U+0207 LATIN SMALL LETTER E WITH INVERTED BREVE
+     * U+0229 LATIN SMALL LETTER E WITH CEDILLA
+     * Uppercase counterparts (U+0206) are covered by the following condition
+     * but they are never appeared here. Because NFKC normalization converts
+     * them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc8 && ((0x85 <= utf8_char[1] && utf8_char[1] <= 0x87) ||
+                              utf8_char[1] == 0xa9)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E15 LATIN SMALL LETTER E WITH MACRON AND GRAVE
+     * U+1E17 LATIN SMALL LETTER E WITH MACRON AND ACUTE
+     * U+1E19 LATIN SMALL LETTER E WITH CIRCUMFLEX BELOW
+     * U+1E1B LATIN SMALL LETTER E WITH TILDE BELOW
+     * U+1E1D LATIN SMALL LETTER E WITH CEDILLA AND BREVE
+     *
+     * U+1EB9 LATIN SMALL LETTER E WITH DOT BELOW
+     * U+1EBB LATIN SMALL LETTER E WITH HOOK ABOVE
+     * U+1EBD LATIN SMALL LETTER E WITH TILDE
+     * U+1EBF LATIN SMALL LETTER E WITH CIRCUMFLEX AND ACUTE
+     *
+     * U+1EC1 LATIN SMALL LETTER E WITH CIRCUMFLEX AND GRAVE
+     * U+1EC3 LATIN SMALL LETTER E WITH CIRCUMFLEX AND HOOK ABOVE
+     * U+1EC5 LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
+     * U+1EC7 LATIN SMALL LETTER E WITH CIRCUMFLEX AND DOT BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0x95 <= utf8_char[2] && utf8_char[2] <= 0x9d)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (0xb9 <= utf8_char[2] && utf8_char[2] <= 0xbf)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0x81 <= utf8_char[2] && utf8_char[2] <= 0x87)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_f(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E1F LATIN SMALL LETTER F WITH DOT ABOVE
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0x9f);
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_g(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+011D LATIN SMALL LETTER G WITH CIRCUMFLEX
+     * U+011F LATIN SMALL LETTER G WITH BREVE
+     * U+0121 LATIN SMALL LETTER G WITH DOT ABOVE
+     * U+0123 LATIN SMALL LETTER G WITH CEDILLA
+     * Uppercase counterparts (U+011E, U+0120, U+0122) are covered by the
+     * following condition but they are never appeared here. Because NFKC
+     * normalization converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0x9d <= utf8_char[1] && utf8_char[1] <= 0xa3) ||
+    /*
+     * Latin Extended-B
+     * U+01E7 LATIN SMALL LETTER G WITH CARON
+     * U+01F5 LATIN SMALL LETTER G WITH ACUTE
+     */
+    (utf8_char[0] == 0xc7 && (utf8_char[1] == 0xa7 || utf8_char[1] == 0xb5)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E21 LATIN SMALL LETTER G WITH MACRON
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 && utf8_char[2] == 0xa1));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_h(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0125 LATIN SMALL LETTER H WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0xa5) ||
+    /*
+     * Latin Extended-B
+     * U+021F LATIN SMALL LETTER H WITH CARON
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0x9f) ||
+    /*
+     * Latin Extended Additional
+     * U+1E23 LATIN SMALL LETTER H WITH DOT ABOVE
+     * U+1E25 LATIN SMALL LETTER H WITH DOT BELOW
+     * U+1E27 LATIN SMALL LETTER H WITH DIAERESIS
+     * U+1E29 LATIN SMALL LETTER H WITH CEDILLA
+     * U+1E2B LATIN SMALL LETTER H WITH BREVE BELOW
+     * Uppercase counterparts (e.g. U+1E24) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     *
+     * U+1E96 LATIN SMALL LETTER H WITH LINE BELOW
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0xa3 <= utf8_char[2] && utf8_char[2] <= 0xab)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x96));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_i(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00EC LATIN SMALL LETTER I WITH GRAVE
+     * U+00ED LATIN SMALL LETTER I WITH ACUTE
+     * U+00EE LATIN SMALL LETTER I WITH CIRCUMFLEX
+     * U+00EF LATIN SMALL LETTER I WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xac <= utf8_char[1] && utf8_char[1] <= 0xaf) ||
+    /*
+     * Latin Extended-A
+     * U+0129 LATIN SMALL LETTER I WITH TILDE
+     * U+012B LATIN SMALL LETTER I WITH MACRON
+     * U+012D LATIN SMALL LETTER I WITH BREVE
+     * U+012F LATIN SMALL LETTER I WITH OGONEK
+     * Uppercase counterparts (e.g. U+012A) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0xa9 <= utf8_char[1] && utf8_char[1] <= 0xaf) ||
+    /*
+     * Latin Extended-B
+     * U+01D0 LATIN SMALL LETTER I WITH CARON
+     * U+0209 LATIN SMALL LETTER I WITH DOUBLE GRAVE
+     * U+020B LATIN SMALL LETTER I WITH INVERTED BREVE
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0x90) ||
+    (utf8_char[0] == 0xc8 && (utf8_char[1] == 0x89 || utf8_char[1] == 0x8b)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E2D LATIN SMALL LETTER I WITH TILDE BELOW
+     * U+1E2F LATIN SMALL LETTER I WITH DIAERESIS AND ACUTE
+     * U+1EC9 LATIN SMALL LETTER I WITH HOOK ABOVE
+     * U+1ECB LATIN SMALL LETTER I WITH DOT BELOW
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (utf8_char[2] == 0xad || utf8_char[2] == 0xaf)) ||
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (utf8_char[2] == 0x89 || utf8_char[2] == 0x8b)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_j(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0135 LATIN SMALL LETTER J WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0xb5) ||
+    /*
+     * Latin Extended-B
+     * U+01F0 LATIN SMALL LETTER J WITH CARON
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0xb0));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_k(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0137 LATIN SMALL LETTER K WITH CEDILLA
+     */
+    (utf8_char[0] == 0xc4 && utf8_char[1] == 0xb7) ||
+    /*
+     * Latin Extended-B
+     * U+01E9 LATIN SMALL LETTER K WITH CARON
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0xa9) ||
+    /*
+     * Latin Extended Additional
+     * U+1E31 LATIN SMALL LETTER K WITH ACUTE
+     * U+1E33 LATIN SMALL LETTER K WITH DOT BELOW
+     * U+1E35 LATIN SMALL LETTER K WITH LINE BELOW
+     * Uppercase counterparts (e.g. U+1E32) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0xb1 <= utf8_char[2] && utf8_char[2] <= 0xb5)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_l(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+013A LATIN SMALL LETTER L WITH ACUTE
+     * U+013C LATIN SMALL LETTER L WITH CEDILLA
+     * U+013E LATIN SMALL LETTER L WITH CARON
+     * Uppercase counterparts (e.g. U+013B) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc4 && 0xba <= utf8_char[1] && utf8_char[1] <= 0xbe) ||
+    /*
+     * Latin Extended Additional
+     * U+1E37 LATIN SMALL LETTER L WITH DOT BELOW
+     * U+1E39 LATIN SMALL LETTER L WITH DOT BELOW AND MACRON
+     * U+1E3B LATIN SMALL LETTER L WITH LINE BELOW
+     * U+1E3D LATIN SMALL LETTER L WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb8 &&
+     (0xb7 <= utf8_char[2] && utf8_char[2] <= 0xbd)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_m(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E3F LATIN SMALL LETTER M WITH ACUTE
+     * U+1E41 LATIN SMALL LETTER M WITH DOT ABOVE
+     * U+1E43 LATIN SMALL LETTER M WITH DOT BELOW
+     * Uppercase counterparts (e.g. U+1E42) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 &&
+     ((utf8_char[1] == 0xb8 && utf8_char[2] == 0xbf) ||
+      (utf8_char[1] == 0xb9 && 0x81 <= utf8_char[2] && utf8_char[2] <= 0x83))));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_n(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00F1 LATIN SMALL LETTER N WITH TILDE
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xb1) ||
+    /*
+     * Latin Extended-A
+     * U+0144 LATIN SMALL LETTER N WITH ACUTE
+     * U+0146 LATIN SMALL LETTER N WITH CEDILLA
+     * U+0148 LATIN SMALL LETTER N WITH CARON
+     * Uppercase counterparts (e.g. U+0145) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0x84 <= utf8_char[1] && utf8_char[1] <= 0x88) ||
+    /*
+     * Latin Extended-B
+     * U+01F9 LATIN SMALL LETTER N WITH GRAVE
+     */
+    (utf8_char[0] == 0xc7 && utf8_char[1] == 0xb9) ||
+    /*
+     * Latin Extended Additional
+     * U+1E45 LATIN SMALL LETTER N WITH DOT ABOVE
+     * U+1E47 LATIN SMALL LETTER N WITH DOT BELOW
+     * U+1E49 LATIN SMALL LETTER N WITH LINE BELOW
+     * U+1E4B LATIN SMALL LETTER N WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0x85 <= utf8_char[2] && utf8_char[2] <= 0x8b)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_o(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00F2 LATIN SMALL LETTER O WITH GRAVE
+     * U+00F3 LATIN SMALL LETTER O WITH ACUTE
+     * U+00F4 LATIN SMALL LETTER O WITH CIRCUMFLEX
+     * U+00F5 LATIN SMALL LETTER O WITH TILDE
+     * U+00F6 LATIN SMALL LETTER O WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xb2 <= utf8_char[1] && utf8_char[1] <= 0xb6) ||
+    /*
+     * Latin Extended-A
+     * U+014D LATIN SMALL LETTER O WITH MACRON
+     * U+014F LATIN SMALL LETTER O WITH BREVE
+     * U+0151 LATIN SMALL LETTER O WITH DOUBLE ACUTE
+     * Uppercase counterparts (U+014E) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && ((0x8d <= utf8_char[1] && utf8_char[1] <= 0x8f) ||
+                              utf8_char[1] == 0x91)) ||
+    /*
+     * Latin Extended-B
+     * U+01A1 LATIN SMALL LETTER O WITH HORN
+     */
+    (utf8_char[0] == 0xc6 && utf8_char[1] == 0xa1) ||
+    /*
+     * Latin Extended-B
+     * U+01D2 LATIN SMALL LETTER O WITH CARON
+     * U+01EB LATIN SMALL LETTER O WITH OGONEK
+     * U+01ED LATIN SMALL LETTER O WITH OGONEK AND MACRON
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc7 &&
+     ((utf8_char[1] == 0x92) ||
+      (0xab <= utf8_char[1] && utf8_char[1] <= 0xad))) ||
+    /*
+     * Latin Extended-B
+     * U+020D LATIN SMALL LETTER O WITH DOUBLE GRAVE
+     * U+020F LATIN SMALL LETTER O WITH INVERTED BREVE
+     * U+022B LATIN SMALL LETTER O WITH DIAERESIS AND MACRON
+     * U+022D LATIN SMALL LETTER O WITH TILDE AND MACRON
+     * U+022F LATIN SMALL LETTER O WITH DOT ABOVE
+     * U+0231 LATIN SMALL LETTER O WITH DOT ABOVE AND MACRON
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc8 &&
+     ((0x8d <= utf8_char[1] && utf8_char[1] <= 0x8f) ||
+      (0xab <= utf8_char[1] && utf8_char[1] <= 0xb1))) ||
+    /*
+     * Latin Extended Additional
+     * U+1E4D LATIN SMALL LETTER O WITH TILDE AND ACUTE
+     * U+1E4F LATIN SMALL LETTER O WITH TILDE AND DIAERESIS
+     * U+1E51 LATIN SMALL LETTER O WITH MACRON AND GRAVE
+     * U+1E53 LATIN SMALL LETTER O WITH MACRON AND ACUTE
+     * U+1ECD LATIN SMALL LETTER O WITH DOT BELOW
+     * U+1ECF LATIN SMALL LETTER O WITH HOOK ABOVE
+     * U+1ED1 LATIN SMALL LETTER O WITH CIRCUMFLEX AND ACUTE
+     * U+1ED3 LATIN SMALL LETTER O WITH CIRCUMFLEX AND GRAVE
+     * U+1ED5 LATIN SMALL LETTER O WITH CIRCUMFLEX AND HOOK ABOVE
+     * U+1ED7 LATIN SMALL LETTER O WITH CIRCUMFLEX AND TILDE
+     * U+1ED9 LATIN SMALL LETTER O WITH CIRCUMFLEX AND DOT BELOW
+     * U+1EDB LATIN SMALL LETTER O WITH HORN AND ACUTE
+     * U+1EDD LATIN SMALL LETTER O WITH HORN AND GRAVE
+     * U+1EDF LATIN SMALL LETTER O WITH HORN AND HOOK ABOVE
+     * U+1EE1 LATIN SMALL LETTER O WITH HORN AND TILDE
+     * U+1EE3 LATIN SMALL LETTER O WITH HORN AND DOT BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 &&
+     ((utf8_char[1] == 0xb9 && 0x8d <= utf8_char[2] && utf8_char[2] <= 0x93) ||
+      (utf8_char[1] == 0xbb && 0x8d <= utf8_char[2] && utf8_char[2] <= 0xa3))));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_p(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E55 LATIN SMALL LETTER P WITH ACUTE
+     * U+1E57 LATIN SMALL LETTER P WITH DOT ABOVE
+     * Uppercase counterparts (U+1E56) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+    (0x95 <= utf8_char[2] && utf8_char[2] <= 0x97));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_r(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0155 LATIN SMALL LETTER R WITH ACUTE
+     * U+0157 LATIN SMALL LETTER R WITH CEDILLA
+     * U+0159 LATIN SMALL LETTER R WITH CARON
+     * Uppercase counterparts (e.g. U+0156) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0x95 <= utf8_char[1] && utf8_char[1] <= 0x99) ||
+    /*
+     * Latin Extended-B
+     * U+0211 LATIN SMALL LETTER R WITH DOUBLE GRAVE
+     * U+0213 LATIN SMALL LETTER R WITH INVERTED BREVE
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc8 && 0x91 <= utf8_char[1] && utf8_char[1] <= 0x93) ||
+    /*
+     * Latin Extended Additional
+     * U+1E59 LATIN SMALL LETTER R WITH DOT ABOVE
+     * U+1E5B LATIN SMALL LETTER R WITH DOT BELOW
+     * U+1E5D LATIN SMALL LETTER R WITH DOT BELOW AND MACRON
+     * U+1E5F LATIN SMALL LETTER R WITH LINE BELOW
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0x99 <= utf8_char[2] && utf8_char[2] <= 0x9f)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_s(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+015B LATIN SMALL LETTER S WITH ACUTE
+     * U+015D LATIN SMALL LETTER S WITH CIRCUMFLEX
+     * U+015F LATIN SMALL LETTER S WITH CEDILLA
+     * U+0161 LATIN SMALL LETTER S WITH CARON
+     * Uppercase counterparts (e.g. U+015C) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0x9b <= utf8_char[1] && utf8_char[1] <= 0xa1) ||
+    /*
+     * Latin Extended-B
+     * U+0219 LATIN SMALL LETTER S WITH COMMA BELOW
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0x99) ||
+    /*
+     * Latin Extended Additional
+     * U+1E61 LATIN SMALL LETTER S WITH DOT ABOVE
+     * U+1E63 LATIN SMALL LETTER S WITH DOT BELOW
+     * U+1E65 LATIN SMALL LETTER S WITH ACUTE AND DOT ABOVE
+     * U+1E67 LATIN SMALL LETTER S WITH CARON AND DOT ABOVE
+     * U+1E69 LATIN SMALL LETTER S WITH DOT BELOW AND DOT ABOVE
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xa9)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_t(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0163 LATIN SMALL LETTER T WITH CEDILLA
+     * U+0165 LATIN SMALL LETTER T WITH CARON
+     * Uppercase counterparts (e.g. U+0164) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0xa3 <= utf8_char[1] && utf8_char[1] <= 0xa5) ||
+    /*
+     * Latin Extended-B
+     * U+021B LATIN SMALL LETTER T WITH COMMA BELOW
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0x9b) ||
+    /*
+     * Latin Extended Additional
+     * U+1E6B LATIN SMALL LETTER T WITH DOT ABOVE
+     * U+1E6D LATIN SMALL LETTER T WITH DOT BELOW
+     * U+1E6F LATIN SMALL LETTER T WITH LINE BELOW
+     * U+1E71 LATIN SMALL LETTER T WITH CIRCUMFLEX BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0xab <= utf8_char[2] && utf8_char[2] <= 0xb1)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E97 LATIN SMALL LETTER T WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x97));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_u(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00F9 LATIN SMALL LETTER U WITH GRAVE
+     * U+00FA LATIN SMALL LETTER U WITH ACUTE
+     * U+00FB LATIN SMALL LETTER U WITH CIRCUMFLEX
+     * U+00FC LATIN SMALL LETTER U WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && 0xb9 <= utf8_char[1] && utf8_char[1] <= 0xbc) ||
+    /*
+     * Latin Extended-A
+     * U+0169 LATIN SMALL LETTER U WITH TILDE
+     * U+016B LATIN SMALL LETTER U WITH MACRON
+     * U+016D LATIN SMALL LETTER U WITH BREVE
+     * U+016F LATIN SMALL LETTER U WITH RING ABOVE
+     * U+0171 LATIN SMALL LETTER U WITH DOUBLE ACUTE
+     * U+0173 LATIN SMALL LETTER U WITH OGONEK
+     * Uppercase counterparts (e.g. #U+016A) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0xa9 <= utf8_char[1] && utf8_char[1] <= 0xb3) ||
+    /*
+     * Latin Extended-B
+     * U+01B0 LATIN SMALL LETTER U WITH HORN
+     */
+    (utf8_char[0] == 0xc6 && utf8_char[1] == 0xb0) ||
+    /*
+     * Latin Extended-B
+     * U+01D4 LATIN SMALL LETTER U WITH CARON
+     * U+01D6 LATIN SMALL LETTER U WITH DIAERESIS AND MACRON
+     * U+01D8 LATIN SMALL LETTER U WITH DIAERESIS AND ACUTE
+     * U+01DA LATIN SMALL LETTER U WITH DIAERESIS AND CARON
+     * U+01DC LATIN SMALL LETTER U WITH DIAERESIS AND GRAVE
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc7 && 0x94 <= utf8_char[1] && utf8_char[1] <= 0x9c) ||
+    /*
+     * Latin Extended-B
+     * U+0215 LATIN SMALL LETTER U WITH DOUBLE GRAVE
+     * U+0217 LATIN SMALL LETTER U WITH INVERTED BREVE
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xc8 && 0x95 <= utf8_char[1] && utf8_char[1] <= 0x97) ||
+    /*
+     * Latin Extended Additional
+     * U+1E73 LATIN SMALL LETTER U WITH DIAERESIS BELOW
+     * U+1E75 LATIN SMALL LETTER U WITH TILDE BELOW
+     * U+1E77 LATIN SMALL LETTER U WITH CIRCUMFLEX BELOW
+     * U+1E79 LATIN SMALL LETTER U WITH TILDE AND ACUTE
+     * U+1E7B LATIN SMALL LETTER U WITH MACRON AND DIAERESIS
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+     (0xb3 <= utf8_char[2] && utf8_char[2] <= 0xbb)) ||
+    /*
+     * Latin Extended Additional
+     * U+1EE5 LATIN SMALL LETTER U WITH DOT BELOW
+     * U+1EE7 LATIN SMALL LETTER U WITH HOOK ABOVE
+     * U+1EE9 LATIN SMALL LETTER U WITH HORN AND ACUTE
+     * U+1EEB LATIN SMALL LETTER U WITH HORN AND GRAVE
+     * U+1EED LATIN SMALL LETTER U WITH HORN AND HOOK ABOVE
+     * U+1EEF LATIN SMALL LETTER U WITH HORN AND TILDE
+     * U+1EF1 LATIN SMALL LETTER U WITH HORN AND DOT BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0xa5 <= utf8_char[2] && utf8_char[2] <= 0xb1)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_v(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E7D LATIN SMALL LETTER V WITH TILDE
+     * U+1E7F LATIN SMALL LETTER V WITH DOT BELOW
+     * Uppercase counterparts (U+1E7E) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xb9 &&
+    (0xbd <= utf8_char[2] && utf8_char[2] <= 0xbf));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_w(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+0175 LATIN SMALL LETTER W WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc5 && utf8_char[1] == 0xb5) ||
+    /*
+     * Latin Extended Additional
+     * U+1E81 LATIN SMALL LETTER W WITH GRAVE
+     * U+1E83 LATIN SMALL LETTER W WITH ACUTE
+     * U+1E85 LATIN SMALL LETTER W WITH DIAERESIS
+     * U+1E87 LATIN SMALL LETTER W WITH DOT ABOVE
+     * U+1E89 LATIN SMALL LETTER W WITH DOT BELOW
+     * Uppercase counterparts (e.g. U+1E82) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (0x81 <= utf8_char[2] && utf8_char[2] <= 0x89)) ||
+    /*
+     * Latin Extended Additional
+     * U+1E98 LATIN SMALL LETTER W WITH RING ABOVE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba && utf8_char[2] == 0x98));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_x(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended Additional
+     * U+1E8B LATIN SMALL LETTER X WITH DOT ABOVE
+     * U+1E8D LATIN SMALL LETTER X WITH DIAERESIS
+     * Uppercase counterparts (U+1E8C) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+    (0x8b <= utf8_char[2] && utf8_char[2] <= 0x8d));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_y(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin-1 Supplement
+     * U+00FD LATIN SMALL LETTER Y WITH ACUTE
+     * U+00FF LATIN SMALL LETTER Y WITH DIAERESIS
+     */
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xbd) ||
+    (utf8_char[0] == 0xc3 && utf8_char[1] == 0xbf) ||
+    /*
+     * Latin Extended-A
+     * U+0177 LATIN SMALL LETTER Y WITH CIRCUMFLEX
+     */
+    (utf8_char[0] == 0xc5 && utf8_char[1] == 0xb7) ||
+    /*
+     * Latin Extended-B
+     * U+0233 LATIN SMALL LETTER Y WITH MACRON
+     */
+    (utf8_char[0] == 0xc8 && utf8_char[1] == 0xb3) ||
+    /*
+     * Latin Extended Additional
+     * U+1E8F LATIN SMALL LETTER Y WITH DOT ABOVE
+     * U+1E99 LATIN SMALL LETTER Y WITH RING ABOVE
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (utf8_char[2] == 0x8f || utf8_char[2] == 0x99)) ||
+    /*
+     * Latin Extended Additional
+     * U+1EF3 LATIN SMALL LETTER Y WITH GRAVE
+     * U+1EF5 LATIN SMALL LETTER Y WITH DOT BELOW
+     * U+1EF7 LATIN SMALL LETTER Y WITH HOOK ABOVE
+     * U+1EF9 LATIN SMALL LETTER Y WITH TILDE
+     * Uppercase counterparts (e.g. U+1EF4) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xbb &&
+     (0xb3 <= utf8_char[2] && utf8_char[2] <= 0xb9)));
+}
+
+static inline bool
+grn_nfkc_normalize_unify_latin_alphabet_with_is_z(
+  const unsigned char *utf8_char)
+{
+  return (
+    /*
+     * Latin Extended-A
+     * U+017A LATIN SMALL LETTER Z WITH ACUTE
+     * U+017C LATIN SMALL LETTER Z WITH DOT ABOVE
+     * U+017E LATIN SMALL LETTER Z WITH CARON
+     * Uppercase counterparts (e.g. U+017B) are covered by the following
+     * condition but they are never appeared here. Because NFKC normalization
+     * converts them to their lowercase equivalents.
+     */
+    (utf8_char[0] == 0xc5 && 0xba <= utf8_char[1] && utf8_char[1] <= 0xbe) ||
+    /*
+     * Latin Extended Additional
+     * U+1E91 LATIN SMALL LETTER Z WITH CIRCUMFLEX
+     * U+1E93 LATIN SMALL LETTER Z WITH DOT BELOW
+     * U+1E95 LATIN SMALL LETTER Z WITH LINE BELOW
+     *
+     * Each missing one is an upper case.
+     */
+    (utf8_char[0] == 0xe1 && utf8_char[1] == 0xba &&
+     (0x91 <= utf8_char[2] && utf8_char[2] <= 0x95)));
+}
+
+/*
+ * This function assumes that the input utf8_char is a valid UTF-8 character.
+ * It is the caller's responsibility to ensure that utf8_char is valid UTF-8
+ * before calling this function. This is a precondition in terms of contract
+ * programming.
+ */
+static inline const unsigned char *
+grn_nfkc_normalize_unify_latin_alphabet_with(const unsigned char *utf8_char,
+                                             unsigned char *unified)
+{
+  if (grn_nfkc_normalize_unify_latin_alphabet_with_is_a(utf8_char)) {
+    *unified = 'a';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_b(utf8_char)) {
+    *unified = 'b';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_c(utf8_char)) {
+    *unified = 'c';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_d(utf8_char)) {
+    *unified = 'd';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_e(utf8_char)) {
+    *unified = 'e';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_f(utf8_char)) {
+    *unified = 'f';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_g(utf8_char)) {
+    *unified = 'g';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_h(utf8_char)) {
+    *unified = 'h';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_i(utf8_char)) {
+    *unified = 'i';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_j(utf8_char)) {
+    *unified = 'j';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_k(utf8_char)) {
+    *unified = 'k';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_l(utf8_char)) {
+    *unified = 'l';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_m(utf8_char)) {
+    *unified = 'm';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_n(utf8_char)) {
+    *unified = 'n';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_o(utf8_char)) {
+    *unified = 'o';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_p(utf8_char)) {
+    *unified = 'p';
+    return unified;
+    /* 'q' has no "LATIN (SMALL|CAPITAL) LETTER X WITH XXX" */
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_r(utf8_char)) {
+    *unified = 'r';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_s(utf8_char)) {
+    *unified = 's';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_t(utf8_char)) {
+    *unified = 't';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_u(utf8_char)) {
+    *unified = 'u';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_v(utf8_char)) {
+    *unified = 'v';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_w(utf8_char)) {
+    *unified = 'w';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_x(utf8_char)) {
+    *unified = 'x';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_y(utf8_char)) {
+    *unified = 'y';
+    return unified;
+  } else if (grn_nfkc_normalize_unify_latin_alphabet_with_is_z(utf8_char)) {
+    *unified = 'z';
+    return unified;
+  } else {
+    return utf8_char;
+  }
+}
+
+static inline const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
 {
@@ -868,7 +1831,7 @@ grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+static inline const unsigned char *
 grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
@@ -915,7 +1878,7 @@ grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+static inline const unsigned char *
 grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
@@ -962,7 +1925,7 @@ grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+static inline const unsigned char *
 grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
@@ -1004,7 +1967,59 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
   return utf8_char;
 }
 
-grn_inline static const unsigned char *
+static inline bool
+grn_nfkc_normalize_process_hiragana_voiced_iteration_mark(
+  const unsigned char *utf8_char, unsigned char *voiced)
+{
+  if (utf8_char[0] == 0xe3 && utf8_char[1] == 0x81) {
+    if (0x8b <= utf8_char[2] && utf8_char[2] <= 0xa2) {
+      /* U+304B HIRAGANA LETTER KA ..
+       * U+3062 HIRAGANA LETTER DI */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (utf8_char[2] & 0x1) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if (0xa4 <= utf8_char[2] && utf8_char[2] <= 0xa9) {
+      /* U+3064 HIRAGANA LETTER TU ..
+       * U+3069 HIRAGANA LETTER DO */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (!(utf8_char[2] & 0x1)) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if (0xaf <= utf8_char[2] && utf8_char[2] <= 0xbd) {
+      /* U+306F HIRAGANA LETTER HA ..
+       * U+307D HIRAGANA LETTER PO */
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 0xaf) % 3);
+      if (mod3 == 0) {
+        /* Unvoiced -> add voiced mark */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return true;
+      } else if (mod3 == 1) {
+        /* Already voiced -> no change */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2];
+        return true;
+      } else {
+        /* Semi-voiced -> not normalized to voiced */
+        return false;
+      }
+    }
+  }
+  return false;
+}
+
+static inline const unsigned char *
 grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
   const unsigned char *utf8_char, unsigned char *unified)
 {
@@ -1052,14 +2067,77 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
   return utf8_char;
 }
 
-grn_inline static bool
+static inline bool
+grn_nfkc_normalize_process_katakana_voiced_iteration_mark(
+  const unsigned char *utf8_char, unsigned char *voiced)
+{
+  if (utf8_char[0] == 0xe3) {
+    if (utf8_char[1] == 0x82 && utf8_char[2] == 0xBF) {
+      /* U+30BF KATAKANA LETTER TA =>
+       * U+30C0 KATAKANA LETTER DA */
+      voiced[0] = utf8_char[0];
+      voiced[1] = 0x83;
+      voiced[2] = 0x80;
+      return true;
+    } else if ((utf8_char[1] == 0x82 && 0xab <= utf8_char[2]) ||
+               (utf8_char[1] == 0x83 && utf8_char[2] <= 0x82)) {
+      /* U+30AB KATAKANA LETTER KA ..
+       * U+30C2 KATAKANA LETTER DI */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (utf8_char[2] & 0x1) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x84 <= utf8_char[2] && utf8_char[2] <= 0x89))) {
+      /* U+30C4 KATAKANA LETTER TU ..
+       * U+30C9 KATAKANA LETTER DO */
+      voiced[0] = utf8_char[0];
+      voiced[1] = utf8_char[1];
+      voiced[2] = utf8_char[2];
+      if (!(utf8_char[2] & 0x1)) {
+        /* Unvoiced -> add voiced mark */
+        voiced[2] += 1;
+      }
+      return true;
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x8F <= utf8_char[2] && utf8_char[2] <= 0x9d))) {
+      /* U+30D0 KATAKANA LETTER BA ..
+       * U+30DD KATAKANA LETTER PO */
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 2) % 3);
+      if (mod3 == 0) {
+        /* Unvoiced -> add voiced mark */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2] + 1;
+        return true;
+      } else if (mod3 == 1) {
+        /* Already voiced -> no change */
+        voiced[0] = utf8_char[0];
+        voiced[1] = utf8_char[1];
+        voiced[2] = utf8_char[2];
+        return true;
+      } else {
+        /* Semi-voiced -> not normalized to voiced */
+        return false;
+      }
+    }
+  }
+
+  return false;
+}
+
+static inline bool
 grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char, size_t length)
 {
   /* U+002D HYPHEN-MINUS */
   return (length == 1 && utf8_char[0] == '-');
 }
 
-grn_inline static bool
+static inline bool
 grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
                                            size_t length)
 {
@@ -1068,27 +2146,27 @@ grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
           utf8_char[2] == 0xbc);
 }
 
-grn_inline static grn_bool
+static inline bool
 grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
                                     size_t length)
 {
   if (length == 1) {
     if (utf8_char[0] == '-') {
       /* U+002D HYPHEN-MINUS */
-      return GRN_TRUE;
+      return true;
     }
   } else if (length == 2) {
     switch (utf8_char[0]) {
     case 0xcb:
       if (utf8_char[1] == 0x97) {
         /* U+02D7 MODIFIER LETTER MINUS SIGN */
-        return GRN_TRUE;
+        return true;
       }
       break;
     case 0xd6:
       if (utf8_char[1] == 0x8a) {
         /* U+058A ARMENIAN HYPHEN */
-        return GRN_TRUE;
+        return true;
       }
       break;
     default:
@@ -1100,26 +2178,26 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
           (0x90 <= utf8_char[2] && utf8_char[2] <= 0x93)) {
         /* U+2010 HYPHEN ..
          * U+2013 EN DASH */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x81 &&
                  (utf8_char[2] == 0x83 || utf8_char[2] == 0xbb)) {
         /* U+2043 HYPHEN BULLET */
         /* U+207B SUPERSCRIPT MINUS */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x8b) {
         /* U+208B SUBSCRIPT MINUS */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x92) {
         /* U+2212 MINUS SIGN */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-grn_inline static grn_bool
+static inline bool
 grn_nfkc_normalize_is_prolonged_sound_mark_family(
   const unsigned char *utf8_char, size_t length)
 {
@@ -1129,30 +2207,30 @@ grn_nfkc_normalize_is_prolonged_sound_mark_family(
           (0x94 <= utf8_char[2] && utf8_char[2] <= 0x95)) {
         /* U+2014 EM DASH ..
          * U+2015 HORIZONTAL BAR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x94 &&
                  (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
         /* U+2500 BOX DRAWINGS LIGHT HORIZONTAL ..
          * U+2501 BOX DRAWINGS HEAVY HORIZONTAL */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe3) {
       if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbc) {
         /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xef) {
       if (utf8_char[1] == 0xbd && utf8_char[2] == 0xb0) {
         /* U+FF70 HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-grn_inline static grn_bool
+static inline bool
 grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
                                         size_t length)
 {
@@ -1160,39 +2238,39 @@ grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
     if (utf8_char[0] == 0xe1) {
       if (utf8_char[1] == 0x90 && utf8_char[2] == 0xa7) {
         /* U+1427 CANADIAN SYLLABICS FINAL MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe2) {
       if (utf8_char[1] == 0x80 && utf8_char[2] == 0xa2) {
         /* U+2022 BULLET */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x99) {
         /* U+2219 BULLET OPERATOR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0x8b && utf8_char[2] == 0x85) {
         /* U+22C5 DOT OPERATOR */
-        return GRN_TRUE;
+        return true;
       } else if (utf8_char[1] == 0xb8 && utf8_char[2] == 0xb1) {
         /* U+2E31 WORD SEPARATOR MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xe3) {
       if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbb) {
         /* U+30FB KATAKANA MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     } else if (utf8_char[0] == 0xef) {
       if (utf8_char[1] == 0xbd && utf8_char[2] == 0xa5) {
         /* U+FF65 HALFWIDTH KATAKANA MIDDLE DOT */
-        return GRN_TRUE;
+        return true;
       }
     }
   }
 
-  return GRN_FALSE;
+  return false;
 }
 
-grn_inline static const unsigned char *
+static inline const unsigned char *
 grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
                                      unsigned char *unified)
 {
@@ -1243,6 +2321,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
   i_byte = 0;
   i_character = 0;
   while (current < end) {
+    unsigned char unified_alphabet[1];
     unsigned char unified_kana[3];
     unsigned char unified_kana_case[3];
     unsigned char unified_kana_voiced_sound_mark[3];
@@ -1264,6 +2343,16 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       char_type = data->context.types[i_character];
     } else {
       char_type = data->options->char_type_func(current);
+    }
+
+    if (before && data->options->unify_latin_alphabet_with &&
+        GRN_CHAR_TYPE(char_type) == GRN_CHAR_ALPHA &&
+        (unified_char_length == 2 || unified_char_length == 3)) {
+      unifying = grn_nfkc_normalize_unify_latin_alphabet_with(unifying,
+                                                              unified_alphabet);
+      if (unifying == unified_alphabet) {
+        unified_char_length = sizeof(unified_alphabet);
+      }
     }
 
     if (before && data->options->unify_kana &&
@@ -1343,7 +2432,12 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
-    if (before && data->options->unify_hyphen_and_prolonged_sound_mark) {
+    /* When both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` are
+     * enabled, the hyphen is handled as a symbol and has already been removed.
+     * Therefore, when `unify_hyphen_and_prolonged_sound_mark` is enabled and
+     * `remove_symbol` is disabled, the hyphen is unified. */
+    if (before && data->options->unify_hyphen_and_prolonged_sound_mark &&
+        !data->options->remove_symbol) {
       if (grn_nfkc_normalize_is_hyphen_family(unifying, unified_char_length) ||
           grn_nfkc_normalize_is_prolonged_sound_mark_family(
             unifying,
@@ -1354,7 +2448,12 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
-    if (before && data->options->unify_middle_dot) {
+    /* When both `unify_middle_dot` and `remove_symbol` are enabled, the middle
+     * dot is handled as a symbol and has already been removed. Therefore, when
+     * `unify_middle_dot` is enabled and `remove_symbol` is disabled, the middle
+     * dot is unified. */
+    if (before && data->options->unify_middle_dot &&
+        !data->options->remove_symbol) {
       if (grn_nfkc_normalize_is_middle_dot_family(unifying,
                                                   unified_char_length)) {
         unifying = unified_middle_dot;
@@ -2444,6 +3543,135 @@ grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
                                     n_unified_characters);
 }
 
+typedef struct {
+  size_t previous_length;
+} grn_nfkc_normalize_iteration_mark_data;
+
+static const unsigned char *
+grn_nfkc_normalize_unify_iteration_mark(grn_ctx *ctx,
+                                        const unsigned char *start,
+                                        const unsigned char *current,
+                                        const unsigned char *end,
+                                        size_t *n_used_bytes,
+                                        size_t *n_used_characters,
+                                        unsigned char *unified_buffer,
+                                        size_t *n_unified_bytes,
+                                        size_t *n_unified_characters,
+                                        void *user_data)
+{
+  grn_nfkc_normalize_iteration_mark_data *data = user_data;
+  size_t previous_length = data->previous_length;
+  size_t current_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  data->previous_length = current_length;
+
+  *n_used_bytes = current_length;
+  *n_used_characters = 1;
+
+  const unsigned char *previous = current - previous_length;
+
+#  define N_HIRAGANA_BYTES 3
+  if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
+      current[2] == 0x9d && previous_length == N_HIRAGANA_BYTES &&
+      GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
+    /* U+309D HIRAGANA ITERATION MARK */
+    unsigned char unvoiced_buffer[N_HIRAGANA_BYTES];
+    const unsigned char *unvoiced_char =
+      grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(previous,
+                                                          unvoiced_buffer);
+    for (size_t i = 0; i < N_HIRAGANA_BYTES; i++) {
+      unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
+    }
+    data->previous_length = N_HIRAGANA_BYTES;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  } else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
+             current[2] == 0x9e && previous_length == N_HIRAGANA_BYTES &&
+             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_HIRAGANA) {
+    /* U+309E HIRAGANA VOICED ITERATION MARK */
+    const bool processed =
+      grn_nfkc_normalize_process_hiragana_voiced_iteration_mark(previous,
+                                                                unified_buffer);
+    if (processed) {
+      *n_unified_bytes += N_HIRAGANA_BYTES;
+      data->previous_length = N_HIRAGANA_BYTES;
+      (*n_unified_characters)++;
+      return unified_buffer;
+    }
+  }
+#  undef N_HIRAGANA_BYTES
+#  define N_KATAKANA_BYTES 3
+  else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
+           current[2] == 0xbd && previous_length == N_KATAKANA_BYTES &&
+           GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KATAKANA) {
+    /* U+30FD KATAKANA ITERATION MARK */
+    unsigned char unvoiced_buffer[N_KATAKANA_BYTES];
+    const unsigned char *unvoiced_char =
+      grn_nfkc_normalize_unify_katakana_voiced_sound_mark(previous,
+                                                          unvoiced_buffer);
+    for (size_t i = 0; i < N_KATAKANA_BYTES; i++) {
+      unified_buffer[(*n_unified_bytes)++] = unvoiced_char[i];
+    }
+    data->previous_length = N_KATAKANA_BYTES;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  } else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
+             current[2] == 0xbe && previous_length == N_KATAKANA_BYTES &&
+             GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KATAKANA) {
+    /* U+30FE KATAKANA VOICED ITERATION MARK */
+    const bool processed =
+      grn_nfkc_normalize_process_katakana_voiced_iteration_mark(previous,
+                                                                unified_buffer);
+    if (processed) {
+      *n_unified_bytes += N_KATAKANA_BYTES;
+      data->previous_length = N_KATAKANA_BYTES;
+      (*n_unified_characters)++;
+      return unified_buffer;
+    }
+  }
+#  undef N_KATAKANA_BYTES
+  else if (current_length == 3 && current[0] == 0xe3 && current[1] == 0x80 &&
+           (current[2] == 0x85 || current[2] == 0xbb) && previous_length >= 3 &&
+           GRN_CHAR_TYPE(grn_nfkc_char_type(previous)) == GRN_CHAR_KANJI) {
+    /**
+     * U+3005 IDEOGRAPHIC ITERATION MARK
+     * U+303B VERTICAL IDEOGRAPHIC ITERATION MARK
+     * For kanji iteration mark, we simply repeat the previous kanji character.
+     * This implementation only handles simple cases as follows.
+     * - U+5404 U+3005 -> U+5404 U+5404
+     *   ("CJK UNIFIED IDEOGRAPH-5404" "IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-5404" "CJK UNIFIED IDEOGRAPH-5404")
+     * - U+2000B U+3005 -> U+2000B U+2000B
+     *   ("CJK UNIFIED IDEOGRAPH-2000B" "IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-2000B" "CJK UNIFIED IDEOGRAPH-2000B")
+     * More complex patterns are not supported as follows.
+     * - 2 or more characters are iterated:
+     *   U+90E8 U+5206 U+3005 U+3005 -> U+90E8 U+5206 U+90E8 U+5206
+     *   ("CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206"
+     *    "IDEOGRAPHIC ITERATION MARK"
+     *    "IDEOGRAPHIC ITERATION MARK" ->
+     *    "CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206"
+     *    "CJK UNIFIED IDEOGRAPH-90E8" "CJK UNIFIED IDEOGRAPH-5206")
+     * - The same character is iterated multiple times:
+     *   U+53E4 U+3005 U+3005 U+7C73 -> U+53E4 U+53E4 U+53E4 U+7C73
+     *   ("CJK UNIFIED IDEOGRAPH-53E4" "IDEOGRAPHIC ITERATION MARK"
+     *    "IDEOGRAPHIC ITERATION MARK" "CJK UNIFIED IDEOGRAPH-7C73" ->
+     *    "CJK UNIFIED IDEOGRAPH-53E4" "CJK UNIFIED IDEOGRAPH-53E4"
+     *    "CJK UNIFIED IDEOGRAPH-53E4" "CJK UNIFIED IDEOGRAPH-7C73")
+     */
+    for (size_t i = 0; i < previous_length; i++) {
+      unified_buffer[(*n_unified_bytes)++] = previous[i];
+    }
+    data->previous_length = previous_length;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  }
+
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
 static const unsigned char *
 grn_nfkc_normalize_strip(grn_ctx *ctx,
                          const unsigned char *start,
@@ -2483,7 +3711,7 @@ grn_nfkc_normalize_strip(grn_ctx *ctx,
   return current;
 }
 
-grn_inline static void
+static inline void
 grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
                                   grn_nfkc_normalize_data *data,
                                   grn_nfkc_normalize_context *unify,
@@ -2606,14 +3834,22 @@ static void
 grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
 {
   grn_nfkc_normalize_context unify;
-  grn_bool need_swap = GRN_FALSE;
+  bool need_swap = false;
+  /* If both `unify_hyphen_and_prolonged_sound_mark` and `remove_symbol` are
+   * enabled, unification is not necessary because the hyphen has already been
+   * removed. Same for `unify_middle_dot`. */
+  bool unify_hyphen_and_prolonged_sound_mark =
+    (data->options->unify_hyphen_and_prolonged_sound_mark &&
+     !data->options->remove_symbol);
+  bool unify_middle_dot =
+    (data->options->unify_middle_dot && !data->options->remove_symbol);
 
-  if (!(data->options->unify_kana || data->options->unify_kana_case ||
+  if (!(data->options->unify_latin_alphabet_with || data->options->unify_kana ||
+        data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
-        data->options->unify_hyphen_and_prolonged_sound_mark ||
-        data->options->unify_middle_dot ||
+        unify_hyphen_and_prolonged_sound_mark || unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
         data->options->unify_katakana_du_small_sounds ||
@@ -2625,8 +3861,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         data->options->unify_kana_hyphen ||
         data->options->unify_kana_prolonged_sound_mark ||
         data->options->unify_katakana_trailing_o ||
-        data->options->unify_to_romaji || data->options->unify_to_katakana ||
-        data->options->strip)) {
+        data->options->unify_iteration_mark || data->options->unify_to_romaji ||
+        data->options->unify_to_katakana || data->options->strip)) {
     return;
   }
 
@@ -2642,17 +3878,17 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     goto exit;
   }
 
-  if (data->options->unify_kana ||
+  if (data->options->unify_latin_alphabet_with || data->options->unify_kana ||
       data->options->unify_kana_voiced_sound_mark ||
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||
-      data->options->unify_hyphen_and_prolonged_sound_mark ||
-      data->options->unify_middle_dot || data->options->unify_to_katakana) {
+      unify_hyphen_and_prolonged_sound_mark || unify_middle_dot ||
+      data->options->unify_to_katakana) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify, true);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_v_sounds) {
@@ -2670,7 +3906,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_bu_sound) {
@@ -2688,7 +3924,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_du_small_sounds) {
@@ -2706,7 +3942,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_du_sound) {
@@ -2724,7 +3960,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_zu_small_sounds) {
@@ -2742,7 +3978,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_wo_sound) {
@@ -2760,7 +3996,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_di_sound) {
@@ -2778,7 +4014,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_gu_small_sounds) {
@@ -2796,7 +4032,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_kana_hyphen) {
@@ -2817,7 +4053,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_kana_prolonged_sound_mark) {
@@ -2838,7 +4074,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_katakana_trailing_o) {
@@ -2857,7 +4093,26 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
+  }
+
+  if (data->options->unify_iteration_mark) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_iteration_mark_data subdata;
+    subdata.previous_length = 0;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_iteration_mark,
+                                      &subdata,
+                                      "[unify][iteration-mark]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = true;
   }
 
   if (data->options->unify_kana_case) {
@@ -2869,7 +4124,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->unify_to_romaji) {
@@ -2886,7 +4141,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   if (data->options->strip) {
@@ -2909,7 +4164,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
         unify.types[unify.n_characters - 1] |= GRN_CHAR_BLANK;
       }
     }
-    need_swap = GRN_TRUE;
+    need_swap = true;
   }
 
   grn_nfkc_normalize_context_fin(ctx, &(data->context));
@@ -2938,7 +4193,7 @@ exit:
   grn_nfkc_normalize_context_fin(ctx, &unify);
 }
 
-static grn_inline bool
+static inline bool
 grn_nfkc_normalize_remove_target_blank_character_p(
   grn_ctx *ctx,
   const grn_nfkc_normalize_data *data,
@@ -2965,16 +4220,40 @@ grn_nfkc_normalize_remove_target_blank_character_p(
   }
 }
 
-static grn_inline bool
+static inline bool
 grn_nfkc_normalize_remove_target_non_blank_character_p(
   grn_ctx *ctx,
   const grn_nfkc_normalize_data *data,
   const unsigned char *current,
   size_t current_length)
 {
-  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
-    return data->options->remove_symbol;
+  if (!data->options->remove_symbol) {
+    return false;
   }
+
+  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
+    return true;
+  }
+
+  /* `unify_hyphen_and_prolonged_sound_mark` is `true` and the unified hyphen is
+   * handled as a symbol.
+   *
+   * The best implementation is to normalize and then remove the symbols.
+   * However, at the time of this change, that way had a large impact, so this
+   * is the implementation. */
+  if (data->options->unify_hyphen_and_prolonged_sound_mark &&
+      (grn_nfkc_normalize_is_hyphen_family(current, current_length) ||
+       grn_nfkc_normalize_is_prolonged_sound_mark_family(current,
+                                                         current_length))) {
+    return true;
+  }
+  /* If `unify_middle_dot` is `true`, middle dot is removed
+   * as in `unify_hyphen_and_prolonged_sound_mark`. */
+  if (data->options->unify_middle_dot &&
+      grn_nfkc_normalize_is_middle_dot_family(current, current_length)) {
+    return true;
+  }
+
   return false;
 }
 
@@ -3048,6 +4327,8 @@ grn_nfkc_normalize(grn_ctx *ctx,
           context->n_characters--;
         }
       }
+      bool have_ignored_character = false;
+      bool have_used_character = false;
       for (; current < current_end; current += current_length) {
         current_length =
           (size_t)grn_charlen_(ctx, current, current_end, GRN_ENC_UTF8);
@@ -3063,7 +4344,7 @@ grn_nfkc_normalize(grn_ctx *ctx,
             context->t[-1] |= GRN_CHAR_BLANK;
           }
           if (!data.options->include_removed_source_location) {
-            source_ += current_length;
+            have_ignored_character = true;
           }
         } else if (grn_nfkc_normalize_remove_target_non_blank_character_p(
                      ctx,
@@ -3071,9 +4352,10 @@ grn_nfkc_normalize(grn_ctx *ctx,
                      current,
                      current_length)) {
           if (!data.options->include_removed_source_location) {
-            source_ += current_length;
+            have_ignored_character = true;
           }
         } else {
+          have_used_character = true;
           if (context->dest_end <= context->d + current_length) {
             grn_nfkc_normalize_expand(ctx, &data, current_length);
             if (ctx->rc != GRN_SUCCESS) {
@@ -3111,6 +4393,9 @@ grn_nfkc_normalize(grn_ctx *ctx,
           }
         }
       }
+      if (have_ignored_character && !have_used_character) {
+        source_ = source + source_char_length;
+      }
     }
   }
   grn_nfkc_normalize_unify(ctx, &data);
@@ -3140,7 +4425,7 @@ exit:
 }
 #endif /* GRN_WITH_NFKC */
 
-grn_inline static grn_obj *
+static inline grn_obj *
 ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -3254,7 +4539,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 
 /* use cp1252 as latin1 */
-grn_inline static grn_obj *
+static inline grn_obj *
 latin1_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -3401,7 +4686,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-grn_inline static grn_obj *
+static inline grn_obj *
 koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -3601,19 +4886,20 @@ nfkc100_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc100]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc100] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc100_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -3664,19 +4950,20 @@ nfkc121_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc121]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc121] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc121_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -3727,19 +5014,20 @@ nfkc130_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc130]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc130] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc130_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -3790,19 +5078,20 @@ nfkc150_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
+  const char *tag = "[normalizer][nfkc150]";
   grn_nfkc_normalize_options *options;
 
   options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalizer][nfkc150] "
-        "failed to allocate memory for options");
+        "%s failed to allocate memory for options",
+        tag);
     return NULL;
   }
 
   grn_nfkc150_normalize_options_init(ctx, options);
 
-  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
 
   return options;
 }
@@ -3837,6 +5126,70 @@ nfkc150_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   } else {
     grn_nfkc150_normalize_options_init(ctx, &options_raw);
+    options = &options_raw;
+  }
+
+  grn_nfkc_normalize(ctx, string, options);
+  if (!table) {
+    grn_nfkc_normalize_options_fin(ctx, options);
+  }
+  return NULL;
+}
+
+static void *
+nfkc_open_options(grn_ctx *ctx,
+                  grn_obj *normalizer,
+                  grn_obj *raw_options,
+                  void *user_data)
+{
+  const char *tag = "[normalizer][nfkc]";
+  grn_nfkc_normalize_options *options;
+
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  grn_nfkc160_normalize_options_init(ctx, options);
+
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options, tag);
+
+  return options;
+}
+
+static void
+nfkc_close_options(grn_ctx *ctx, void *data)
+{
+  grn_nfkc_normalize_options *options = data;
+  grn_nfkc_normalize_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static grn_obj *
+nfkc_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *string = args[0];
+  grn_obj *table;
+  grn_nfkc_normalize_options *options;
+  grn_nfkc_normalize_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  nfkc_open_options,
+                                                  nfkc_close_options,
+                                                  NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    grn_nfkc160_normalize_options_init(ctx, &options_raw);
     options = &options_raw;
   }
 
@@ -4182,68 +5535,6 @@ table_options_close(grn_ctx *ctx, void *data)
   GRN_FREE(options);
 }
 
-static grn_get_char_type_func
-unicode_version_option_process(grn_ctx *ctx,
-                               grn_obj *raw_options,
-                               unsigned int i,
-                               grn_raw_string *name_raw,
-                               const char *tag)
-{
-  const char *version;
-  grn_id domain;
-  unsigned int version_length =
-    grn_vector_get_element(ctx, raw_options, i, &version, NULL, &domain);
-  if (!grn_type_id_is_text_family(ctx, domain)) {
-    grn_obj value;
-    GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
-    GRN_TEXT_SET(ctx, &value, version, version_length);
-    grn_obj inspected;
-    grn_inspect(ctx, &inspected, &value);
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must be a text: <%.*s>",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value,
-        (int)GRN_TEXT_LEN(&inspected),
-        GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    GRN_OBJ_FIN(ctx, &value);
-    return NULL;
-  }
-  if (version_length == 0) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must not be empty",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value);
-    return NULL;
-  }
-  grn_raw_string version_raw;
-  version_raw.value = version;
-  version_raw.length = version_length;
-  if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
-    return grn_nfkc_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
-    return grn_nfkc100_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
-    return grn_nfkc121_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
-    return grn_nfkc130_char_type;
-  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "15.0.0")) {
-    return grn_nfkc150_char_type;
-  } else {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", "
-        "\"13.0.0\" or \"15.0.0\": <%.*s>",
-        tag,
-        (int)(name_raw->length),
-        name_raw->value,
-        (int)(version_raw.length),
-        version_raw.value);
-    return NULL;
-  }
-}
-
 static void *
 table_options_open(grn_ctx *ctx,
                    grn_obj *normalizer,
@@ -4370,11 +5661,12 @@ table_options_open(grn_ctx *ctx,
       }
       GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
-      options->get_char_type =
-        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
+      grn_nfkc_funcs funcs =
+        grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      options->get_char_type = funcs.char_type_func;
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
       options->report_source_offset =
         grn_vector_get_element_bool(ctx,
@@ -4705,7 +5997,7 @@ table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 typedef struct {
   bool remove_tag;
   bool expand_character_reference;
-  grn_get_char_type_func get_char_type;
+  grn_nfkc_char_type_func get_char_type;
   bool report_source_offset;
 } html_options;
 
@@ -4765,11 +6057,12 @@ html_options_open(grn_ctx *ctx,
                                     i,
                                     options->expand_character_reference);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
-      options->get_char_type =
-        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
+      grn_nfkc_funcs funcs =
+        grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      options->get_char_type = funcs.char_type_func;
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
       options->report_source_offset =
         grn_vector_get_element_bool(ctx,
@@ -5124,6 +6417,7 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   const char *normalizer_nfkc121_name = "NormalizerNFKC121";
   const char *normalizer_nfkc130_name = "NormalizerNFKC130";
   const char *normalizer_nfkc150_name = "NormalizerNFKC150";
+  const char *normalizer_nfkc_name = "NormalizerNFKC";
 
   grn_normalizer_register(ctx,
                           GRN_NORMALIZER_AUTO_NAME,
@@ -5163,12 +6457,14 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
                           NULL,
                           nfkc150_next,
                           NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc_name, -1, NULL, nfkc_next, NULL);
 #else  /* GRN_WITH_NFKC */
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc100_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc121_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc130_name, -1, NULL, NULL, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc150_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc_name, -1, NULL, NULL, NULL);
 #endif /* GRN_WITH_NFKC */
 
   grn_normalizer_register(ctx, "NormalizerTable", -1, NULL, table_next, NULL);

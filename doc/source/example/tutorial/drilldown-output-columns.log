@@ -3,81 +3,81 @@ Execution example::
   select --table Site --limit 0 --drilldown domain --drilldown_output_columns _id,_key,_nsubrecs
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         9
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "country", 
+  #           "country",
   #           "SiteCountry"
-  #         ], 
+  #         ],
   #         [
-  #           "domain", 
+  #           "domain",
   #           "SiteDomain"
-  #         ], 
+  #         ],
   #         [
-  #           "link", 
+  #           "link",
   #           "Site"
-  #         ], 
+  #         ],
   #         [
-  #           "links", 
+  #           "links",
   #           "Site"
-  #         ], 
+  #         ],
   #         [
-  #           "location", 
+  #           "location",
   #           "WGS84GeoPoint"
-  #         ], 
+  #         ],
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
-  #         ], 
+  #         ],
   #         [
-  #           "_key", 
+  #           "_key",
   #           "ShortText"
-  #         ], 
+  #         ],
   #         [
-  #           "_nsubrecs", 
+  #           "_nsubrecs",
   #           "Int32"
   #         ]
-  #       ], 
+  #       ],
   #       [
-  #         1, 
-  #         ".org", 
+  #         1,
+  #         ".org",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         2, 
-  #         ".net", 
+  #         2,
+  #         ".net",
   #         3
-  #       ], 
+  #       ],
   #       [
-  #         3, 
-  #         ".com", 
+  #         3,
+  #         ".com",
   #         3
   #       ]
   #     ]

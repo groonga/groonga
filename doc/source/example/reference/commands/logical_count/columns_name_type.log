@@ -7,4 +7,4 @@ Execution example::
     --columns[n_likes_string].type ShortText \
     --columns[n_likes_string].value n_likes \
     --filter 'n_likes_string == "3"'
-  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  # [[0,1337566253.89858,0.000355720520019531],2]

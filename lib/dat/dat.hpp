@@ -3,7 +3,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -115,8 +116,9 @@ const UInt32 MAX_KEY_ID      = MAX_NODE_ID;
 const UInt32 INVALID_KEY_ID  = 0;
 
 // A key length is represented as a 12-bit unsigned integer in Key.
+// 4096 bytes key overflows to 0, so 0 is treated as 4096.
 // A key ID is represented as a 28-bit unsigned integer in Key.
-const UInt32 MAX_KEY_LENGTH  = (1U << 12) - 1;
+const UInt32 MAX_KEY_LENGTH  = (1U << 12);
 const UInt32 MAX_NUM_KEYS    = (1U << 28) - 1;
 
 const UInt64 MIN_FILE_SIZE              = 1 << 16;
@@ -186,7 +188,7 @@ class Exception : public std::exception {
   virtual int line() const throw() {
     return line_;
   }
-  virtual const char *what() const throw() {
+  virtual const char *what() const throw() override {
     return what_;
   }
 
@@ -207,7 +209,7 @@ class Error : public Exception {
       : Exception(ex) {}
   virtual ~Error() throw() {}
 
-  virtual ErrorCode code() const throw() {
+  virtual ErrorCode code() const throw() override {
     return T;
   }
 };

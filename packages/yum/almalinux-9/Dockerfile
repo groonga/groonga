@@ -1,6 +1,9 @@
 ARG FROM=almalinux:9
 FROM ${FROM}
 
+ENV \
+  SCL=gcc-toolset-12
+
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -15,11 +18,15 @@ RUN \
   dnf config-manager --set-enabled crb && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    arrow-devel-${APACHE_ARROW_VERSION} \
+    ${SCL} \
+    arrow-compute-devel-${APACHE_ARROW_VERSION} \
+    blas-devel \
     ccache \
-    gcc-c++ \
+    cmake \
+    curl-devel \
     intltool \
     mecab-devel \
+    lapack-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \
@@ -27,10 +34,9 @@ RUN \
     lz4-devel \
     msgpack-devel \
     openssl-devel \
-    pcre-devel \
-    php-devel \
     pkgconfig \
     ruby \
+    simdjson-devel \
     tar \
     which \
     xxhash-devel \

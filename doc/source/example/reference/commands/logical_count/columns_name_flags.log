@@ -1,7 +1,7 @@
 Execution example::
 
   plugin_register functions/vector
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   logical_count \
     --logical_table Entries \
     --shard_key created_at \
@@ -10,4 +10,4 @@ Execution example::
     --columns[vector].type UInt32 \
     --columns[vector].value 'vector_new(1, 2, 3)' \
     --filter 'vector_size(vector) > 2'
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  # [[0,1337566253.89858,0.000355720520019531],5]

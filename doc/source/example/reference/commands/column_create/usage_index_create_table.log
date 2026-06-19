@@ -4,4 +4,4 @@ Execution example::
     --name Ages \
     --flags TABLE_PAT_KEY \
     --key_type UInt8
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]

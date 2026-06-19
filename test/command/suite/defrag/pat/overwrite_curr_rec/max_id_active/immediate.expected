@@ -1,0 +1,206 @@
+table_create --name Users --flags TABLE_PAT_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create --table Users --name immediate --type Bool
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key":"User01", "immediate":false},
+{"_key":"User02", "immediate":false},
+{"_key":"User03", "immediate":false},
+{"_key":"U1", "immediate":true},
+{"_key":"User04", "immediate":false},
+{"_key":"U2", "immediate":true}
+]
+[[0,0.0,0.0],6]
+delete Users User02
+[[0,0.0,0.0],true]
+delete Users U1
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 4,
+      "curr_rec": 6,
+      "curr_key": 24,
+      "curr_del": 2,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 2
+    }
+  ]
+]
+defrag
+[[0,0.0,0.0],true]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 4,
+      "curr_rec": 6,
+      "curr_key": 18,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]
+select Users --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        "User01",
+        false
+      ],
+      [
+        3,
+        "User03",
+        false
+      ],
+      [
+        5,
+        "User04",
+        false
+      ],
+      [
+        6,
+        "U2",
+        true
+      ]
+    ]
+  ]
+]
+load --table Users
+[
+{"_key":"Groonga", "immediate":false},
+{"_key":"Grn", "immediate":true}
+]
+[[0,0.0,0.0],2]
+check Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 6,
+      "curr_rec": 8,
+      "curr_key": 25,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]
+select Users --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "immediate",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        "User01",
+        false
+      ],
+      [
+        3,
+        "User03",
+        false
+      ],
+      [
+        5,
+        "User04",
+        false
+      ],
+      [
+        6,
+        "U2",
+        true
+      ],
+      [
+        7,
+        "Groonga",
+        false
+      ],
+      [
+        8,
+        "Grn",
+        true
+      ]
+    ]
+  ]
+]

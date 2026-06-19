@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,7 +25,7 @@
 extern "C" {
 #endif
 
-int grn_alloc_count(void);
+uint32_t grn_alloc_count(void);
 
 void grn_alloc_init_from_env(void);
 
@@ -121,10 +122,10 @@ void *grn_realloc_default(grn_ctx *ctx,
 GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 GRN_API void grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func);
 
-grn_bool grn_fail_malloc_should_fail(size_t size,
-                                     const char *file,
-                                     int line,
-                                     const char *func);
+bool grn_fail_malloc_should_fail(size_t size,
+                                 const char *file,
+                                 int line,
+                                 const char *func);
 void *grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);

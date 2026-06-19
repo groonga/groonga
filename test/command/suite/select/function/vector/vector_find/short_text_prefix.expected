@@ -49,9 +49,7 @@ select Memos   --output_columns 'tags, vector_find(tags, "Gr", "@^")'
         "Groonga"
       ],
       [
-        [
-
-        ],
+        [],
         null
       ]
     ]

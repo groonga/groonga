@@ -77,6 +77,7 @@ module Groonga
           data.end = i
           data.weight = code.value.value if code.value
           data.match_resolve_index
+          data.start_position = nil
           @data_list << data
           context.data = nil
         when *LOGICAL_OPERATORS
@@ -141,6 +142,7 @@ module Groonga
             data.op = code_op
             data.end = i
             data.call_relational_resolve_indexes
+            data.start_position = nil
             @data_list << data
             context.data = nil
           else

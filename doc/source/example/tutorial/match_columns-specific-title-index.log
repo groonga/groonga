@@ -3,27 +3,27 @@ Execution example::
   select --table Entries --output_columns title --match_columns Terms.entries_title --query "Groonga"
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
+  #     0,
+  #     1337566253.89858,
   #     0.000355720520019531
-  #   ], 
+  #   ],
   #   [
   #     [
   #       [
   #         3
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "title", 
+  #           "title",
   #           "ShortText"
   #         ]
-  #       ], 
+  #       ],
   #       [
   #         "Hello Groonga."
-  #       ], 
+  #       ],
   #       [
   #         "Hello Mroonga, bye Groonga."
-  #       ], 
+  #       ],
   #       [
   #         "Say, Hello Groonga!"
   #       ]

@@ -1,0 +1,16 @@
+table_create Data TABLE_NO_KEY
+column_create Data value1 COLUMN_SCALAR Text
+
+#@timeout 120
+#@disable-logging
+#@generate-series 1 10241 Data '{"value1" => i.to_s.chars.join(" ")}'
+#@enable-logging
+#@timeout default
+
+table_create Terms TABLE_DAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizers NormalizerNFKC
+column_create Terms data_values COLUMN_INDEX|WITH_POSITION \
+  Data value1 --n_workers -1
+
+index_column_diff Terms data_values

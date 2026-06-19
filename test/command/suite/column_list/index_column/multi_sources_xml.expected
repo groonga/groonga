@@ -34,6 +34,9 @@ column_list Lexicon --output_type xml
 <TEXT>ShortText</TEXT></PROPERTY>
 <PROPERTY>
 <TEXT>source</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>generator</TEXT>
 <TEXT>ShortText</TEXT></PROPERTY></HEADER>
 <COLUMN>
 <INT>258</INT>
@@ -43,7 +46,8 @@ column_list Lexicon --output_type xml
 <TEXT>COLUMN_SCALAR</TEXT>
 <TEXT>Lexicon</TEXT>
 <TEXT>ShortText</TEXT>
-<SOURCES></SOURCES></COLUMN>
+<SOURCES></SOURCES>
+<TEXT></TEXT></COLUMN>
 <COLUMN>
 <INT>259</INT>
 <TEXT>users_name</TEXT>
@@ -54,6 +58,7 @@ column_list Lexicon --output_type xml
 <TEXT>Users</TEXT>
 <SOURCES>
 <TEXT>Users</TEXT>
-<TEXT>Users.name</TEXT></SOURCES></COLUMN></COLUMN_LIST>
+<TEXT>Users.name</TEXT></SOURCES>
+<TEXT></TEXT></COLUMN></COLUMN_LIST>
 </RESULT>
 

@@ -196,7 +196,7 @@ msgstr "Yutaro SHIMAMURAさん"
 msgid "Release 5.1.0 - 2015-11-29"
 msgstr "5.1.0リリース - 2015-11-29"
 
-msgid "[patiricia trie] Added an error check for the max total key size. See :doc:`/limitations` about the max total key size."
+msgid "[patricia trie] Added an error check for the max total key size. See :doc:`/limitations` about the max total key size."
 msgstr "[パトリシアトライ] 最大総キーサイズのチェックを追加しました。最大総キーサイズについては :doc:`/limitations` を参照してください。"
 
 msgid "[:doc:`/reference/executables/grndb`] Added a check for broken object. The check can detect a case that the object can't be opened."
@@ -1045,7 +1045,7 @@ msgstr "[:doc:`/reference/commands/dump`] 語彙表のレコードをダンプ�
 msgid "[:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again."
 msgstr "[:doc:`/reference/commands/dump`] 再度 ``TABLE_NO_KEY`` のときに ``_id`` を表示するようにしました。"
 
-msgid "[:doc:`/reference/commands/dump`] Used offline index construnction."
+msgid "[:doc:`/reference/commands/dump`] Used offline index construction."
 msgstr "[:doc:`/reference/commands/dump`] オフラインインデックス構築するようにしました。"
 
 msgid "Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte)."
@@ -1156,7 +1156,7 @@ msgstr "5.0.1のバグフィックスリリースです。"
 msgid "Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]"
 msgstr "MessagePack 1.0.1をサポート。 [畑ケさんが報告]"
 
-msgid "[logical_range_filter] Disabled range index by default. It's enabled when you set the enviromnent variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` to ``yes``."
+msgid "[logical_range_filter] Disabled range index by default. It's enabled when you set the environment variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` to ``yes``."
 msgstr "[logical_range_filter] 範囲検索をデフォルトで無効にした。 環境変数 ``GRN_LOGICAL_RANGE_FILTER_ENABLED`` に ``yes`` を設定すれば有効になる。"
 
 msgid "Fixed a regression bug that JSONP doesn't work. It was introduced in Groonga 4.1.1."

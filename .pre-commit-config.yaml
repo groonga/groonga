@@ -1,8 +1,9 @@
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,36 +16,214 @@
 
 repos:
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: "v15.0.7"
+    rev: "v19.1.3"
     hooks:
       - id: clang-format
         files: >-
           (
+          ?benchmark/bench-distance\.c|
+          ?include/groonga/accessor\.h|
+          ?include/groonga/applier\.h|
+          ?include/groonga/bulk\.hpp|
+          ?include/groonga/cache\.h|
+          ?include/groonga/cast\.h|
+          ?include/groonga/column\.h|
+          ?include/groonga/command\.h|
+          ?include/groonga/command_arguments\.hpp|
+          ?include/groonga/dat\.h|
+          ?include/groonga/db\.h|
+          ?include/groonga/distance\.h|
+          ?include/groonga/error\.h|
+          ?include/groonga/expr\.h|
+          ?include/groonga/extractor\.h|
+          ?include/groonga/float\.h|
+          ?include/groonga/geo\.h|
           ?include/groonga/groonga\.h|
+          ?include/groonga/h3\.h|
+          ?include/groonga/hash\.h|
           ?include/groonga/highlighter\.h|
+          ?include/groonga/ii\.h|
+          ?include/groonga/index_column\.h|
+          ?include/groonga/json\.h|
+          ?include/groonga/language_model\.h|
+          ?include/groonga/memory_map\.h|
+          ?include/groonga/obj\.h|
+          ?include/groonga/operator\.h|
+          ?include/groonga/output\.h|
+          ?include/groonga/pat\.h|
+          ?include/groonga/plugin\.h|
+          ?include/groonga/portability\.h|
           ?include/groonga/proc\.h|
+          ?include/groonga/request_canceler\.h|
+          ?include/groonga/table\.h|
+          ?include/groonga/table_module\.h|
+          ?include/groonga/thread\.h|
+          ?include/groonga/token\.h|
+          ?include/groonga/token_cursor\.h|
+          ?include/groonga/tokenizer\.h|
+          ?include/groonga/type\.h|
           ?include/groonga/util\.h|
+          ?lib/accessor\.c|
+          ?lib/aggregators\.c|
           ?lib/alloc\.c|
-          ?lib/ctx\.c|
+          ?lib/applier\.c|
+          ?lib/arrow\.cpp|
+          ?lib/cast\.cpp|
+          ?lib/com\.c|
+          ?lib/command_arguments\.cpp|
+          ?lib/compressor\.c|
+          ?lib/ctx\.cpp|
           ?lib/ctx_impl_mrb\.c|
+          ?lib/dat\.cpp|
           ?lib/db\.c|
+          ?lib/db_wal_recover\.cpp|
+          ?lib/distance\.cpp|
+          ?lib/distance_avx\.cpp|
+          ?lib/distance_avx2\.cpp|
+          ?lib/distance_avx512\.cpp|
+          ?lib/distance_common\.cpp|
+          ?lib/error\.c|
           ?lib/expr\.c|
+          ?lib/expr_executor\.cpp|
+          ?lib/extractor\.c|
+          ?lib/extractors\.c|
+          ?lib/geo\.c|
+          ?lib/generated_column\.c|
+          ?lib/grn\.h|
+          ?lib/grn_applier\.h|
+          ?lib/grn_arrow\.h|
+          ?lib/grn_bulk\.h|
+          ?lib/grn_compressor\.h|
+          ?lib/grn_ctx\.hpp|
+          ?lib/grn_ctx\.h|
           ?lib/grn_ctx_impl\.h|
+          ?lib/grn_dat\.h|
+          ?lib/grn_db\.h|
+          ?lib/grn_distance\.hpp|
+          ?lib/grn_distance\.h|
+          ?lib/grn_distance_impl\.hpp|
+          ?lib/grn_distance_instantiation\.hpp|
           ?lib/grn_error\.h|
+          ?lib/grn_expr\.h|
+          ?lib/grn_expr_executor\.h|
+          ?lib/grn_extractor\.h|
+          ?lib/grn_extractors\.h|
+          ?lib/grn_generated_column\.h|
+          ?lib/grn_geo\.h|
+          ?lib/grn_hash\.h|
           ?lib/grn_ii\.h|
+          ?lib/grn_index_column\.h|
           ?lib/grn_io\.h|
+          ?lib/grn_language_model\.hpp|
+          ?lib/grn_load\.h|
+          ?lib/grn_mrb\.h|
+          ?lib/grn_obj\.h|
+          ?lib/grn_options\.h|
+          ?lib/grn_output\.h|
+          ?lib/grn_pat\.h|
+          ?lib/grn_portability\.h|
           ?lib/grn_proc\.h|
+          ?lib/grn_progress_logger\.h|
+          ?lib/grn_request_canceler\.h|
+          ?lib/grn_request_timer\.h|
+          ?lib/grn_scan_info\.h|
+          ?lib/grn_scanner\.h|
+          ?lib/grn_selector\.h|
+          ?lib/grn_snip\.h|
+          ?lib/grn_store\.h|
+          ?lib/grn_str\.h|
+          ?lib/grn_table\.h|
+          ?lib/grn_table_module\.h|
+          ?lib/grn_table_selector\.h|
+          ?lib/grn_token\.h|
+          ?lib/grn_token_cursor\.h|
+          ?lib/grn_tokenizer\.h|
+          ?lib/grn_tokenizers\.h|
+          ?lib/grn_util\.h|
+          ?lib/grn_vector\.h|
+          ?lib/h3\.c|
+          ?lib/hash\.c|
           ?lib/highlighter\.c|
-          ?lib/ii\.c|
+          ?lib/ii\.cpp|
+          ?lib/io\.c|
+          ?lib/index_column\.c|
+          ?lib/json\.cpp|
+          ?lib/language_model\.cpp|
+          ?lib/load\.c|
+          ?lib/memory_map\.c|
+          ?lib/mrb/mrb_bulk\.c|
+          ?lib/mrb/mrb_bulk\.h|
+          ?lib/mrb/mrb_ctx\.c|
+          ?lib/mrb/mrb_error\.c|
+          ?lib/mrb/mrb_expr\.c|
+          ?lib/mrb/mrb_object\.c|
+          ?lib/msgpack\.c|
+          ?lib/nfkc\.c|
           ?lib/normalizer\.c|
+          ?lib/obj\.c|
+          ?lib/operator\.c|
+          ?lib/output\.c|
+          ?lib/pat\.c|
+          ?lib/plugin\.c|
+          ?lib/portability\.cpp|
+          ?lib/proc/proc_column\.c|
+          ?lib/proc/proc_distance\.c|
+          ?lib/proc/proc_dump\.c|
+          ?lib/proc/proc_extract\.c|
           ?lib/proc/proc_highlight\.c|
+          ?lib/proc/proc_index_column\.c|
+          ?lib/proc/proc_object\.c|
+          ?lib/proc/proc_object_inspect\.c|
+          ?lib/proc/proc_object_list\.c|
+          ?lib/proc/proc_query\.c|
+          ?lib/proc/proc_query_log_flags\.c|
+          ?lib/proc/proc_schema\.c|
+          ?lib/proc/proc_select\.cpp|
+          ?lib/proc/proc_snippet\.c|
+          ?lib/proc/proc_tokenize\.c|
           ?lib/proc\.c|
+          ?lib/progress_logger\.c|
+          ?lib/selector\.c|
+          ?lib/snip\.c|
+          ?lib/store\.c|
+          ?lib/str\.c|
+          ?lib/table\.c|
+          ?lib/table_module\.c|
+          ?lib/table_selector\.c|
+          ?lib/token\.c|
+          ?lib/token_cursor\.c|
+          ?lib/tokenizer\.c|
+          ?lib/tokenizers\.c|
+          ?lib/trace_log\.cpp|
+          ?lib/type\.c|
           ?lib/util\.c|
+          ?lib/vector\.cpp|
+          ?plugins/functions/h3\.c|
+          ?plugins/functions/language_model\.c|
+          ?plugins/functions/number\.cpp|
+          ?plugins/tokenizers/h3_index\.c|
+          ?plugins/tokenizers/mecab\.c|
+          ?plugins/language_model/knn\.cpp|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
     hooks:
       - id: cmake-format
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.3"
+    hooks:
+      - id: prettier
+        files: >-
+          (
+          ?CMakePresets\.json|
+          ?doc/source/.*\.md|
+          )
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        # Disable horizontal-tab to allow documentation of TSV output examples.
+        args: ["--disable", "horizontal-tab"]
 
 exclude: "^vendor/.*"

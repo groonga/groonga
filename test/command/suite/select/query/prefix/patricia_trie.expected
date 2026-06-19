@@ -8,7 +8,7 @@ load --table Names
 {"_key":"ゆきひろ"}
 ]
 [[0,0.0,0.0],4]
-select --table Names --query _key:^ひろ
+select --table Names --query _key:^ひろ --sort_keys _id
 [
   [
     0,

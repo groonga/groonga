@@ -4,7 +4,8 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -126,7 +127,7 @@ parse_keyval(grn_ctx *ctx,
   if (limit) { *limit = -1; }
 
   TAILQ_FOREACH(get, get_args, next) {
-    grn_bool is_pass_through_parameter = GRN_FALSE;
+    bool is_pass_through_parameter = false;
     size_t key_length;
 
     key_length = strlen(get->key);
@@ -183,7 +184,7 @@ parse_keyval(grn_ctx *ctx,
         }
         break;
       default:
-        is_pass_through_parameter = GRN_TRUE;
+        is_pass_through_parameter = true;
         break;
       }
       break;
@@ -195,11 +196,11 @@ parse_keyval(grn_ctx *ctx,
             *callback = get->value;
           }
         } else {
-          is_pass_through_parameter = GRN_TRUE;
+          is_pass_through_parameter = true;
         }
         break;
       default:
-        is_pass_through_parameter = GRN_TRUE;
+        is_pass_through_parameter = true;
       }
     }
 

@@ -1,11 +1,11 @@
 Execution example::
 
   table_create Names TABLE_HASH_KEY ShortText
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0,1337566253.89858,0.000355720520019531],true]
   column_create Names used COLUMN_SCALAR Bool
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
-  load --table Entries
+  # [[0,1337566253.89858,0.000355720520019531],true]
+  load --table Names
   [
   {"_key": "alice", "used": false}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  # [[0,1337566253.89858,0.000355720520019531],1]
