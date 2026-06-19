@@ -110,6 +110,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/database_unmap/usage_success.log
     example/reference/commands/delete/cascade.log
     example/reference/commands/delete/status.log
+    example/reference/commands/extract/html.md
+    example/reference/commands/extract/json.md
     example/reference/commands/index_column_diff/index_column.log
     example/reference/commands/io_flush/all.log
     example/reference/commands/io_flush/only_opened_yes.log
@@ -441,6 +443,15 @@ set(GRN_DOC_SOURCES
     example/reference/executables/groonga-suggest-httpd/learn-and-complete.log
     example/reference/executables/groonga-suggest-httpd/learn.log
     example/reference/executables/groonga-suggest-httpd/setup.log
+    example/reference/extractors/example_extract.md
+    example/reference/extractors/example_table_create.md
+    example/reference/extractors/extractor_html/default.md
+    example/reference/extractors/extractor_html/expand_character_reference.md
+    example/reference/extractors/extractor_html/index.md
+    example/reference/extractors/extractor_html/remove_tag.md
+    example/reference/extractors/extractor_json/index.md
+    example/reference/extractors/extractor_json/nested.md
+    example/reference/extractors/extractor_json/string.md
     example/reference/functions/between/usage_age.log
     example/reference/functions/between/usage_options.log
     example/reference/functions/between/usage_setup.log
@@ -1190,6 +1201,7 @@ set(GRN_DOC_SOURCES
     reference/commands/defrag.rst
     reference/commands/delete.rst
     reference/commands/dump.rst
+    reference/commands/extract.md
     reference/commands/index_column_diff.rst
     reference/commands/io_flush.rst
     reference/commands/load.rst
@@ -1249,6 +1261,9 @@ set(GRN_DOC_SOURCES
     reference/executables/groonga-suggest-httpd.rst
     reference/executables/groonga-suggest-learner.rst
     reference/executables/groonga.rst
+    reference/extractors.md
+    reference/extractors/extractor_html.md
+    reference/extractors/extractor_json.md
     reference/function.rst
     reference/functions/between.rst
     reference/functions/cast_loose.rst
@@ -1547,6 +1562,7 @@ set(GRN_DOC_HTML_FILES
     reference/commands/defrag.html
     reference/commands/delete.html
     reference/commands/dump.html
+    reference/commands/extract.html
     reference/commands/index_column_diff.html
     reference/commands/io_flush.html
     reference/commands/load.html
@@ -1606,6 +1622,9 @@ set(GRN_DOC_HTML_FILES
     reference/executables/groonga-suggest-httpd.html
     reference/executables/groonga-suggest-learner.html
     reference/executables/groonga.html
+    reference/extractors.html
+    reference/extractors/extractor_html.html
+    reference/extractors/extractor_json.html
     reference/function.html
     reference/functions/between.html
     reference/functions/cast_loose.html

@@ -110,6 +110,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/extract/html.md \
+	$(top_srcdir)/doc/source/example/reference/commands/extract/json.md \
 	$(top_srcdir)/doc/source/example/reference/commands/index_column_diff/index_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/only_opened_yes.log \
@@ -441,6 +443,15 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/setup.log \
+	$(top_srcdir)/doc/source/example/reference/extractors/example_extract.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/example_table_create.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/default.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/expand_character_reference.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/index.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/remove_tag.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/index.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/nested.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/string.md \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_setup.log \
@@ -1190,6 +1201,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
+	$(top_srcdir)/doc/source/reference/commands/extract.md \
 	$(top_srcdir)/doc/source/reference/commands/index_column_diff.rst \
 	$(top_srcdir)/doc/source/reference/commands/io_flush.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
@@ -1249,6 +1261,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-httpd.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-learner.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga.rst \
+	$(top_srcdir)/doc/source/reference/extractors.md \
+	$(top_srcdir)/doc/source/reference/extractors/extractor_html.md \
+	$(top_srcdir)/doc/source/reference/extractors/extractor_json.md \
 	$(top_srcdir)/doc/source/reference/function.rst \
 	$(top_srcdir)/doc/source/reference/functions/between.rst \
 	$(top_srcdir)/doc/source/reference/functions/cast_loose.rst \
@@ -1501,6 +1516,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
+	source/example/reference/commands/extract/html.md \
+	source/example/reference/commands/extract/json.md \
 	source/example/reference/commands/index_column_diff/index_column.log \
 	source/example/reference/commands/io_flush/all.log \
 	source/example/reference/commands/io_flush/only_opened_yes.log \
@@ -1832,6 +1849,15 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	source/example/reference/executables/groonga-suggest-httpd/setup.log \
+	source/example/reference/extractors/example_extract.md \
+	source/example/reference/extractors/example_table_create.md \
+	source/example/reference/extractors/extractor_html/default.md \
+	source/example/reference/extractors/extractor_html/expand_character_reference.md \
+	source/example/reference/extractors/extractor_html/index.md \
+	source/example/reference/extractors/extractor_html/remove_tag.md \
+	source/example/reference/extractors/extractor_json/index.md \
+	source/example/reference/extractors/extractor_json/nested.md \
+	source/example/reference/extractors/extractor_json/string.md \
 	source/example/reference/functions/between/usage_age.log \
 	source/example/reference/functions/between/usage_options.log \
 	source/example/reference/functions/between/usage_setup.log \
@@ -2581,6 +2607,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/defrag.rst \
 	source/reference/commands/delete.rst \
 	source/reference/commands/dump.rst \
+	source/reference/commands/extract.md \
 	source/reference/commands/index_column_diff.rst \
 	source/reference/commands/io_flush.rst \
 	source/reference/commands/load.rst \
@@ -2640,6 +2667,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/executables/groonga-suggest-httpd.rst \
 	source/reference/executables/groonga-suggest-learner.rst \
 	source/reference/executables/groonga.rst \
+	source/reference/extractors.md \
+	source/reference/extractors/extractor_html.md \
+	source/reference/extractors/extractor_json.md \
 	source/reference/function.rst \
 	source/reference/functions/between.rst \
 	source/reference/functions/cast_loose.rst \
@@ -2906,6 +2936,7 @@ po_files = \
 	reference/commands/defrag.po \
 	reference/commands/delete.po \
 	reference/commands/dump.po \
+	reference/commands/extract.po \
 	reference/commands/index_column_diff.po \
 	reference/commands/io_flush.po \
 	reference/commands/load.po \
@@ -2965,6 +2996,9 @@ po_files = \
 	reference/executables/groonga-suggest-httpd.po \
 	reference/executables/groonga-suggest-learner.po \
 	reference/executables/groonga.po \
+	reference/extractors.po \
+	reference/extractors/extractor_html.po \
+	reference/extractors/extractor_json.po \
 	reference/function.po \
 	reference/functions/between.po \
 	reference/functions/cast_loose.po \
@@ -3229,6 +3263,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.po \
 	LC_MESSAGES/reference/commands/delete.po \
 	LC_MESSAGES/reference/commands/dump.po \
+	LC_MESSAGES/reference/commands/extract.po \
 	LC_MESSAGES/reference/commands/index_column_diff.po \
 	LC_MESSAGES/reference/commands/io_flush.po \
 	LC_MESSAGES/reference/commands/load.po \
@@ -3288,6 +3323,9 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.po \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.po \
 	LC_MESSAGES/reference/executables/groonga.po \
+	LC_MESSAGES/reference/extractors.po \
+	LC_MESSAGES/reference/extractors/extractor_html.po \
+	LC_MESSAGES/reference/extractors/extractor_json.po \
 	LC_MESSAGES/reference/function.po \
 	LC_MESSAGES/reference/functions/between.po \
 	LC_MESSAGES/reference/functions/cast_loose.po \
@@ -3552,6 +3590,7 @@ edit_po_files = \
 	reference/commands/defrag.edit \
 	reference/commands/delete.edit \
 	reference/commands/dump.edit \
+	reference/commands/extract.edit \
 	reference/commands/index_column_diff.edit \
 	reference/commands/io_flush.edit \
 	reference/commands/load.edit \
@@ -3611,6 +3650,9 @@ edit_po_files = \
 	reference/executables/groonga-suggest-httpd.edit \
 	reference/executables/groonga-suggest-learner.edit \
 	reference/executables/groonga.edit \
+	reference/extractors.edit \
+	reference/extractors/extractor_html.edit \
+	reference/extractors/extractor_json.edit \
 	reference/function.edit \
 	reference/functions/between.edit \
 	reference/functions/cast_loose.edit \
@@ -3875,6 +3917,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.edit \
 	LC_MESSAGES/reference/commands/delete.edit \
 	LC_MESSAGES/reference/commands/dump.edit \
+	LC_MESSAGES/reference/commands/extract.edit \
 	LC_MESSAGES/reference/commands/index_column_diff.edit \
 	LC_MESSAGES/reference/commands/io_flush.edit \
 	LC_MESSAGES/reference/commands/load.edit \
@@ -3934,6 +3977,9 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.edit \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.edit \
 	LC_MESSAGES/reference/executables/groonga.edit \
+	LC_MESSAGES/reference/extractors.edit \
+	LC_MESSAGES/reference/extractors/extractor_html.edit \
+	LC_MESSAGES/reference/extractors/extractor_json.edit \
 	LC_MESSAGES/reference/function.edit \
 	LC_MESSAGES/reference/functions/between.edit \
 	LC_MESSAGES/reference/functions/cast_loose.edit \
@@ -4198,6 +4244,7 @@ mo_files = \
 	reference/commands/defrag.mo \
 	reference/commands/delete.mo \
 	reference/commands/dump.mo \
+	reference/commands/extract.mo \
 	reference/commands/index_column_diff.mo \
 	reference/commands/io_flush.mo \
 	reference/commands/load.mo \
@@ -4257,6 +4304,9 @@ mo_files = \
 	reference/executables/groonga-suggest-httpd.mo \
 	reference/executables/groonga-suggest-learner.mo \
 	reference/executables/groonga.mo \
+	reference/extractors.mo \
+	reference/extractors/extractor_html.mo \
+	reference/extractors/extractor_json.mo \
 	reference/function.mo \
 	reference/functions/between.mo \
 	reference/functions/cast_loose.mo \
@@ -4521,6 +4571,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.mo \
 	LC_MESSAGES/reference/commands/delete.mo \
 	LC_MESSAGES/reference/commands/dump.mo \
+	LC_MESSAGES/reference/commands/extract.mo \
 	LC_MESSAGES/reference/commands/index_column_diff.mo \
 	LC_MESSAGES/reference/commands/io_flush.mo \
 	LC_MESSAGES/reference/commands/load.mo \
@@ -4580,6 +4631,9 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.mo \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.mo \
 	LC_MESSAGES/reference/executables/groonga.mo \
+	LC_MESSAGES/reference/extractors.mo \
+	LC_MESSAGES/reference/extractors/extractor_html.mo \
+	LC_MESSAGES/reference/extractors/extractor_json.mo \
 	LC_MESSAGES/reference/function.mo \
 	LC_MESSAGES/reference/functions/between.mo \
 	LC_MESSAGES/reference/functions/cast_loose.mo \
@@ -4877,6 +4931,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
 	html/reference/commands/dump.html \
+	html/reference/commands/extract.html \
 	html/reference/commands/index_column_diff.html \
 	html/reference/commands/io_flush.html \
 	html/reference/commands/load.html \
@@ -4936,6 +4991,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/executables/groonga-suggest-httpd.html \
 	html/reference/executables/groonga-suggest-learner.html \
 	html/reference/executables/groonga.html \
+	html/reference/extractors.html \
+	html/reference/extractors/extractor_html.html \
+	html/reference/extractors/extractor_json.html \
 	html/reference/function.html \
 	html/reference/functions/between.html \
 	html/reference/functions/cast_loose.html \
