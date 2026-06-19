@@ -19,6 +19,7 @@
 
 #include "../grn_proc.h"
 #include "../grn_ctx.h"
+#include "../grn_normalizer.h"
 #include "../grn_token_cursor.h"
 
 #include <groonga/plugin.h>
@@ -69,19 +70,19 @@ fin_tokens(grn_ctx *ctx, grn_obj *tokens)
   GRN_OBJ_FIN(ctx, tokens);
 }
 
-static grn_bool
+static bool
 normalizer_table_variant_source_init(grn_ctx *ctx,
                                      normalizer_table_variant_source *source,
                                      grn_obj *raw_options)
 {
-  grn_raw_string normalized_column_name;
-  grn_raw_string target_column_name;
+  const char *tag = "[table_tokenize][normalizer-table-variants]";
+  grn_obj target_name_buffer;
+  grn_obj *target_name = &target_name_buffer;
 
   source->table = NULL;
   source->normalized_column = NULL;
   source->target_column = NULL;
-  GRN_RAW_STRING_INIT(normalized_column_name);
-  GRN_RAW_STRING_INIT(target_column_name);
+  GRN_TEXT_INIT(&target_name_buffer, 0);
 
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
   {
@@ -90,56 +91,48 @@ normalizer_table_variant_source_init(grn_ctx *ctx,
     name_raw.length = name_length;
 
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column") ||
-        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalized")) {
-      normalized_column_name.length =
-        grn_vector_get_element(ctx,
-                               raw_options,
-                               i,
-                               &(normalized_column_name.value),
-                               NULL,
-                               NULL);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
-      target_column_name.length =
-        grn_vector_get_element(ctx,
-                               raw_options,
-                               i,
-                               &(target_column_name.value),
-                               NULL,
-                               NULL);
+        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalized") ||
+        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
+      if (!grn_normalizer_table_option_process(ctx,
+                                               raw_options,
+                                               i,
+                                               &name_raw,
+                                               tag,
+                                               &(source->normalized_column),
+                                               target_name)) {
+        break;
+      }
     }
   }
   GRN_OPTION_VALUES_EACH_END();
 
-  if (ctx->rc != GRN_SUCCESS || normalized_column_name.length == 0) {
-    return GRN_FALSE;
+  if (ctx->rc != GRN_SUCCESS || !source->normalized_column) {
+    GRN_OBJ_FIN(ctx, &target_name_buffer);
+    return false;
   }
-
-  source->normalized_column =
-    grn_ctx_get(ctx,
-                normalized_column_name.value,
-                (int)(normalized_column_name.length));
-  if (!source->normalized_column) {
-    return GRN_FALSE;
-  }
-
   source->table = grn_ctx_at(ctx, source->normalized_column->header.domain);
   if (!source->table) {
-    return GRN_FALSE;
+    GRN_OBJ_FIN(ctx, &target_name_buffer);
+    return false;
   }
 
-  if (target_column_name.length > 0 &&
-      !GRN_RAW_STRING_EQUAL_CSTRING(target_column_name, "_key")) {
+  grn_raw_string target_name_raw;
+  GRN_RAW_STRING_SET(target_name_raw, target_name);
+  if (!GRN_RAW_STRING_EQUAL_CSTRING(target_name_raw, "") &&
+      !GRN_RAW_STRING_EQUAL_CSTRING(target_name_raw, "_key")) {
     source->target_column =
       grn_table_column(ctx,
                        source->table,
-                       target_column_name.value,
-                       (ssize_t)(target_column_name.length));
+                       target_name_raw.value,
+                       (ssize_t)(target_name_raw.length));
     if (!source->target_column) {
-      return GRN_FALSE;
+      GRN_OBJ_FIN(ctx, &target_name_buffer);
+      return false;
     }
   }
 
-  return GRN_TRUE;
+  GRN_OBJ_FIN(ctx, &target_name_buffer);
+  return true;
 }
 
 static void
@@ -157,7 +150,7 @@ normalizer_table_variant_source_fin(grn_ctx *ctx,
   }
 }
 
-static grn_bool
+static bool
 normalizer_table_variant_data_init(grn_ctx *ctx,
                                    normalizer_table_variant_data *data,
                                    grn_obj *lexicon)
@@ -175,7 +168,7 @@ normalizer_table_variant_data_init(grn_ctx *ctx,
   n_normalizers = grn_vector_size(ctx, &normalizers);
   if (n_normalizers == 0) {
     GRN_OBJ_FIN(ctx, &normalizers);
-    return GRN_TRUE;
+    return true;
   }
 
   data->sources =
@@ -186,7 +179,7 @@ normalizer_table_variant_data_init(grn_ctx *ctx,
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[table_tokenize][normalizer-table-variants] "
         "failed to allocate sources");
-    return GRN_FALSE;
+    return false;
   }
 
   for (i = 0; i < n_normalizers; i++) {
@@ -230,7 +223,7 @@ normalizer_table_variant_data_init(grn_ctx *ctx,
     data->sources = NULL;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static void
@@ -247,7 +240,7 @@ normalizer_table_variant_data_fin(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(data->variants));
 }
 
-static grn_bool
+static bool
 normalizer_table_variants_have(grn_ctx *ctx,
                                grn_obj *variants,
                                const char *variant,
@@ -266,10 +259,10 @@ normalizer_table_variants_have(grn_ctx *ctx,
                                             NULL);
     if (current_length == variant_length &&
         memcmp(current, variant, variant_length) == 0) {
-      return GRN_TRUE;
+      return true;
     }
   }
-  return GRN_FALSE;
+  return false;
 }
 
 static void
@@ -497,20 +490,20 @@ output_tokens(grn_ctx *ctx,
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
+    char value[GRN_TABLE_MAX_KEY_SIZE];
+    int value_size;
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    value_size = grn_table_get_key(ctx,
+                                   lexicon,
+                                   token->id,
+                                   value,
+                                   GRN_TABLE_MAX_KEY_SIZE);
 
     grn_ctx_output_map_open(ctx, "TOKEN", (int)n_elements);
 
     grn_ctx_output_cstr(ctx, "value");
     {
-      char value[GRN_TABLE_MAX_KEY_SIZE];
-      int value_size;
-      value_size = grn_table_get_key(ctx,
-                                     lexicon,
-                                     token->id,
-                                     value,
-                                     GRN_TABLE_MAX_KEY_SIZE);
       grn_obj key;
       GRN_OBJ_INIT(&key,
                    GRN_BULK,
@@ -733,7 +726,7 @@ command_table_tokenize(grn_ctx *ctx,
     uint32_t flags;
     grn_obj *lexicon;
     grn_obj *index_column = NULL;
-    grn_bool with_normalizer_table_variants = GRN_FALSE;
+    bool with_normalizer_table_variants = false;
 
     flags = grn_proc_get_value_token_cursor_flags(ctx,
                                                   flags_raw,
@@ -748,7 +741,7 @@ command_table_tokenize(grn_ctx *ctx,
                                    user_data,
                                    "with_normalizer_table_variants",
                                    strlen("with_normalizer_table_variants"),
-                                   GRN_FALSE);
+                                   false);
 
     lexicon = grn_ctx_get(ctx,
                           table_raw.value,
@@ -833,7 +826,7 @@ command_table_tokenize(grn_ctx *ctx,
 void
 grn_proc_init_table_tokenize(grn_ctx *ctx)
 {
-  #define N_ARGS 7
+#define N_ARGS 7
   grn_expr_var vars[N_ARGS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
@@ -933,7 +926,7 @@ command_tokenize(grn_ctx *ctx,
                                          mode_raw,
                                          GRN_TOKENIZE_ADD,
                                          "[tokenize][mode]");
-        
+
       if (ctx->rc == GRN_SUCCESS) {
         tokenize(ctx, lexicon, &string_raw, GRN_TOKENIZE_ADD, flags, &tokens);
         if (mode != GRN_TOKENIZE_ADD) {
