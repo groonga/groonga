@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2026-06-21 12:03+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -378,6 +378,24 @@ msgstr "``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABL
 msgid "See :doc:`/reference/token_filters` for all token filters."
 msgstr "トークンフィルターの一覧は :doc:`/reference/token_filters` にあります。"
 
+msgid "``extractors``"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Specifies extractors separated by ``,``. Extractors extract plain text or values from structured data such as HTML and JSON before tokenizing and indexing a value."
+msgstr "エクストラクターを「,」（カンマ）区切りで指定します。エクストラクターは、値をトークナイズしてインデックスする前に、HTMLやJSONなどの構造化されたデータからプレーンテキストや値を抽出します。"
+
+msgid "When extractors are set to a lexicon, they are applied automatically when an index of the lexicon is updated. If you specify multiple extractors, they are applied in order. The output of an extractor is passed to the next extractor as its input."
+msgstr "エクストラクターを語彙表に設定すると、その語彙表のインデックスが更新されるときに自動的に適用されます。複数のエクストラクターを指定した場合は、順番に適用されます。あるエクストラクターの出力は、次のエクストラクターの入力として渡されます。"
+
+msgid "You cannot use ``extractors`` with ``TABLE_NO_KEY`` because ``TABLE_NO_KEY`` doesn't support key."
+msgstr "``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と ``extractors`` を一緒に指定することはできません。"
+
+msgid "See :doc:`/reference/extractors` for all extractors."
+msgstr "エクストラクターの一覧は :doc:`/reference/extractors` にあります。"
+
 msgid "``path``"
 msgstr ""
 
@@ -415,6 +433,9 @@ msgid ":doc:`/reference/tokenizers`"
 msgstr ""
 
 msgid ":doc:`/reference/normalizers`"
+msgstr ""
+
+msgid ":doc:`/reference/extractors`"
 msgstr ""
 
 msgid ":doc:`/reference/command/output_format`"

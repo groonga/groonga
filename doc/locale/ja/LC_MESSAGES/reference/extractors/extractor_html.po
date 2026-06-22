@@ -1,0 +1,99 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-06-21 12:12+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`ExtractorHTML`"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "`ExtractorHTML` extracts text content from HTML. It removes HTML tags and expands character references (HTML entities such as `&lt;`) by default. You can use this extractor to index only the text in HTML without markup."
+msgstr "`ExtractorHTML` はHTMLからテキストの内容を抽出します。デフォルトでは、HTMLタグを取り除き、文字参照（ `&lt;` などのHTMLエンティティ）を展開します。このエクストラクターを使うと、HTMLの中のテキストだけをマークアップなしでインデックスできます。"
+
+msgid "`ExtractorHTML` does nothing for a value that isn't a text type such as `ShortText`, `Text` and `LongText`. The value is returned as-is in this case."
+msgstr "`ExtractorHTML` は、 `ShortText` 、 `Text` 、 `LongText` などのテキスト型ではない値に対しては何もしません。この場合、値はそのまま返されます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`ExtractorHTML` has optional parameters."
+msgstr "`ExtractorHTML` には省略可能なパラメーターがあります。"
+
+msgid "No options:"
+msgstr "オプションなし："
+
+msgid "Specify options:"
+msgstr "オプション指定："
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example that extracts text content from HTML by the default parameters. HTML tags (`<html>`, `<body>` and so on) are removed and character references (`&lt;` and `&gt;`) are expanded:"
+msgstr "以下は、デフォルトのパラメーターでHTMLからテキストの内容を抽出する例です。HTMLタグ（ `<html>` や `<body>` など）が取り除かれ、文字参照（ `&lt;` と `&gt;` ）が展開されます。"
+
+msgid "You can keep HTML tags by setting {ref}`extractor-html-remove-tag` to `false`. Character references are still expanded in this case:"
+msgstr "{ref}`extractor-html-remove-tag` を `false` に設定すると、HTMLタグを残せます。この場合でも、文字参照は展開されます。"
+
+msgid "You can keep character references as-is by setting {ref}`extractor-html-expand-character-reference` to `false`. HTML tags are still removed in this case:"
+msgstr "{ref}`extractor-html-expand-character-reference` を `false` に設定すると、文字参照をそのまま残せます。この場合でも、HTMLタグは取り除かれます。"
+
+msgid "When you attach `ExtractorHTML` to a lexicon, the lexicon indexes the extracted text content. The original HTML is kept in the data column:"
+msgstr "`ExtractorHTML` を語彙表に割り当てると、語彙表は抽出されたテキストの内容をインデックスします。元のHTMLはデータカラムに保持されます。"
+
+msgid "The query `fast` matches but the query `<b>` doesn't match because the indexed token comes from the extracted text `Groonga is a fast full text search engine.` instead of the raw HTML."
+msgstr "インデックスされたトークンは生のHTMLではなく抽出されたテキスト `Groonga is a fast full text search engine.` から作られるため、クエリー `fast` はマッチしますが、クエリー `<b>` はマッチしません。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "`remove_tag`"
+msgstr ""
+
+msgid "Specifies whether HTML tags are removed."
+msgstr "HTMLタグを取り除くかどうかを指定します。"
+
+msgid "If this is `true`, HTML tags such as `<p>` are removed. If this is `false`, HTML tags are kept as-is."
+msgstr "これが `true` の場合、 `<p>` などのHTMLタグが取り除かれます。 `false` の場合、HTMLタグはそのまま残されます。"
+
+msgid "The default value is `true`."
+msgstr "デフォルト値は `true` です。"
+
+msgid "`expand_character_reference`"
+msgstr ""
+
+msgid "Specifies whether character references (HTML entities) are expanded."
+msgstr "文字参照（HTMLエンティティ）を展開するかどうかを指定します。"
+
+msgid "If this is `true`, both named character references such as `&lt;` and numeric character references such as `&#x3042;` are expanded to the corresponding characters. If this is `false`, character references are kept as-is."
+msgstr "これが `true` の場合、 `&lt;` などの名前付き文字参照と `&#x3042;` などの数値文字参照の両方が、対応する文字に展開されます。 `false` の場合、文字参照はそのまま残されます。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`/reference/extractors`"
+msgstr ""
+
+msgid "{doc}`/reference/commands/table_create`"
+msgstr ""

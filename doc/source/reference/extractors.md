@@ -51,9 +51,10 @@ example, you can extract a string from JSON by
 {doc}`extractors/extractor_json` and then remove HTML tags in the
 string by {doc}`extractors/extractor_html`.
 
-You can use the `extract` command to check how extractors process a
-value. The `extract` command applies the specified extractors to the
-given value and returns the extracted value. It doesn't need a table:
+You can use the {doc}`/reference/commands/extract` command to check
+how extractors process a value. The {doc}`/reference/commands/extract`
+command applies the specified extractors to the given value and
+returns the extracted value. It doesn't need a table:
 
 <!-- groonga-command -->
 
@@ -79,4 +80,5 @@ extractors/*
 
 ## See also
 
+- {doc}`/reference/commands/extract`
 - {doc}`/reference/commands/table_create`
