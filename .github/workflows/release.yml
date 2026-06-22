@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Download artifacts
@@ -124,7 +124,7 @@ jobs:
     if: |
       github.ref_type == 'tag'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Download source archive
         run: |
           wget https://github.com/groonga/groonga/releases/download/${GITHUB_REF_NAME}/groonga-${GITHUB_REF_NAME#v}.tar.gz
@@ -135,7 +135,7 @@ jobs:
             build-essential \
             debhelper \
             devscripts
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: apache-arrow
           repository: apache/arrow
@@ -154,7 +154,7 @@ jobs:
     needs: publish
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ruby

@@ -76,7 +76,7 @@ jobs:
           - "images:almalinux/10"
           - "images:amazonlinux/2023"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Install Incus
@@ -130,7 +130,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Setup
