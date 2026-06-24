@@ -294,3 +294,6 @@ Here is a command line to build and install Groonga by `cmake
 
 You should specify `--config Debug` instead of `--config Release` when
 debugging.
+
+We showed an example specifying `-G "Visual Studio 17 2022"` for the generator, but we recommend specifying Ninja for the generator, like `-G Ninja`.
+Ninja builds in parallel by default using all CPU cores, so you can expect fast builds.
