@@ -29,6 +29,7 @@ makedepends=("git"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-rapidjson"
              "${MINGW_PACKAGE_PREFIX}-ruby"
+             "${MINGW_PACKAGE_PREFIX}-simdjson"
              "${MINGW_PACKAGE_PREFIX}-xsimd")
 sha256sums=('SKIP'
             'SKIP')
