@@ -1,0 +1,10 @@
+table_create Data TABLE_NO_KEY
+
+load --table Data
+[
+{}
+]
+
+# 18 is ignored because the first element is float but 18 is not float.
+# The first element's type is only used.
+select Data --filter 'between([180.0, 18], 18, "include", 20, "exclude")'
