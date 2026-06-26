@@ -1,0 +1,12 @@
+table_create Data TABLE_NO_KEY
+
+load --table Data
+[
+{}
+]
+
+select Data --filter 'between([17, 170, 1700], 18, "include", 20, "exclude")'
+select Data --filter 'between([18, 180, 1800], 18, "include", 20, "exclude")'
+select Data --filter 'between([19, 190],       18, "include", 20, "exclude")'
+select Data --filter 'between([20],            18, "include", 20, "exclude")'
+select Data --filter 'between([21, 210, 2100], 18, "include", 20, "exclude")'

@@ -1,0 +1,10 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Data
+[
+{}
+]
+[[0,0.0,0.0],1]
+select Data --filter 'between([], 18, "include", 20, "exclude")'
+[[[-38,0.0,0.0],"between(): failed to cast min: <18> -> <Void>"]]
+#|e| between(): failed to cast min: <18> -> <Void>
