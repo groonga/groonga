@@ -1,17 +1,17 @@
-table_create Data TABLE_NO_KEY
+table_create Data TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 load --table Data
 [
-{}
+{"_key": "key"}
 ]
 [[0,0.0,0.0],1]
 select Data --filter 'between([17, 170, 1700], 18, "include", 20, "exclude")'
-[[0,0.0,0.0],[[[0],[["_id","UInt32"]]]]]
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
 select Data --filter 'between([18, 180, 1800], 18, "include", 20, "exclude")'
-[[0,0.0,0.0],[[[1],[["_id","UInt32"]],[1]]]]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"key"]]]]
 select Data --filter 'between([19, 190],       18, "include", 20, "exclude")'
-[[0,0.0,0.0],[[[1],[["_id","UInt32"]],[1]]]]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"key"]]]]
 select Data --filter 'between([20],            18, "include", 20, "exclude")'
-[[0,0.0,0.0],[[[0],[["_id","UInt32"]]]]]
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
 select Data --filter 'between([21, 210, 2100], 18, "include", 20, "exclude")'
-[[0,0.0,0.0],[[[0],[["_id","UInt32"]]]]]
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
