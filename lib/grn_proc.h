@@ -93,6 +93,8 @@ grn_proc_init_in_records(grn_ctx *ctx);
 void
 grn_proc_init_index_column_diff(grn_ctx *ctx);
 void
+grn_proc_init_json_extract(grn_ctx *ctx);
+void
 grn_proc_init_lock_acquire(grn_ctx *ctx);
 void
 grn_proc_init_lock_clear(grn_ctx *ctx);
