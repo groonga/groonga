@@ -456,6 +456,7 @@ set(GRN_DOC_SOURCES
     example/reference/functions/between/usage_options.log
     example/reference/functions/between/usage_setup.log
     example/reference/functions/between/usage_value.log
+    example/reference/functions/between/usage_vector.log
     example/reference/functions/cast_loose/usage_basic.log
     example/reference/functions/cast_loose/usage_setup.log
     example/reference/functions/escalate/usage_age.log

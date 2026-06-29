@@ -22,6 +22,8 @@ Syntax
   between(column_or_value, min, min_border, max, max_border)
   between(column_or_value, min, min_border, max, max_border, {"option": "value of option"})
 
+.. _between-usage:
+
 Usage
 -----
 
@@ -62,6 +64,36 @@ If it doesn't match the specified range, the ``select`` returns no records becau
 
 In the above case, it returns all the records because 14 exists in between 13 and 16.
 This behavior is used for checking the specified value exists or not in the table.
+
+.. versionadded:: 16.0.6
+
+   ``between`` also accepts a vector as the 1st parameter.
+
+   Vector is supported only in sequential search. ``between`` doesn't use an index for a vector value yet.
+
+The 1st parameter can be a vector value such as a ``COLUMN_VECTOR`` column or a vector literal. In this case, ``between`` returns true if any of the elements is included in the specified range. So you can use ``between`` to search records that have at least one value in the range.
+
+The following example uses a ``COLUMN_VECTOR`` column. Each record has multiple prices. ``between`` selects the records that have at least one price in ``[18, 20)``:
+
+.. groonga-command
+.. include:: ../../example/reference/functions/between/usage_vector.log
+.. table_create Products TABLE_HASH_KEY ShortText
+.. column_create Products prices COLUMN_VECTOR Int32
+.. load --table Products
+.. [
+.. {"_key": "A", "prices": [17, 170, 1700]},
+.. {"_key": "B", "prices": [18, 180, 1800]},
+.. {"_key": "C", "prices": [19, 190]},
+.. {"_key": "D", "prices": [20]},
+.. {"_key": "E", "prices": [21, 210, 2100]}
+.. ]
+.. select Products --filter 'between(prices, 18, "include", 20, "exclude")'
+
+``A`` and ``E`` are excluded because none of their prices is in the range.
+``D`` is excluded because ``20`` is excluded by ``"exclude"``.
+``B`` and ``C`` are selected because each of them has at least one price in the range.
+
+If the elements of a vector use different types, the type of the first element is used as the target type and the elements that use other types are ignored. For example, in ``[180.0, 18]``, ``18`` is ignored because the first element ``180.0`` is a floating point number while ``18`` isn't.
 
 Then, you can also specify options of ``between``.
 Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
@@ -109,6 +141,10 @@ There are three required parameters ``column_or_value``, ``min`` and ``max``.
 """""""""""""""""""
 
 Specifies a column or value.
+
+.. versionadded:: 16.0.6
+
+   A vector is also accepted only with sequential search. ``between`` returns true if any of the elements is included in the specified range. See :ref:`between-usage` for details.
 
 ``min``
 """""""
