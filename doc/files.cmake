@@ -493,6 +493,8 @@ set(GRN_DOC_SOURCES
     example/reference/functions/in_values/usage_options.log
     example/reference/functions/in_values/usage_setup_data.log
     example/reference/functions/in_values/usage_setup_schema.log
+    example/reference/functions/json_extract/usage_select.md
+    example/reference/functions/json_extract/usage_setup.md
     example/reference/functions/language_model_knn/column_create.md
     example/reference/functions/language_model_knn/filter.md
     example/reference/functions/language_model_knn/index_column_create.md
@@ -1279,6 +1281,7 @@ set(GRN_DOC_SOURCES
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
+    reference/functions/json_extract.md
     reference/functions/language_model_knn.md
     reference/functions/language_model_vectorize.md
     reference/functions/math_abs.rst
@@ -1640,6 +1643,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
+    reference/functions/json_extract.html
     reference/functions/language_model_knn.html
     reference/functions/language_model_vectorize.html
     reference/functions/math_abs.html
