@@ -1,0 +1,105 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-06-29 16:33+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`json_extract`"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`json_extract` extracts values from a JSON by a JSONPath expression."
+msgstr "`json_extract` は、JSONPath式を使ってJSONから値を抽出します。"
+
+msgid "The extracted values keep their JSON types. For example, a string in JSON is extracted as a text and an integer in JSON is extracted as an integer. So you can use `json_extract` for both full text search against strings and range search against numbers."
+msgstr "抽出された値は、JSONでの型を保持します。例えば、JSON中の文字列はテキストとして抽出され、JSON中の整数は整数として抽出されます。そのため、 `json_extract` は文字列に対する全文検索と数値に対する範囲検索の両方に使えます。"
+
+msgid "`json_extract` is often used in combination with the {ref}`select-filter` option of {doc}`/reference/commands/select`. For example, you can combine `json_extract` with {doc}`between` to do a range search against values that are stored in a JSON."
+msgstr "`json_extract` は {doc}`/reference/commands/select` の {ref}`select-filter` オプションと組み合わせてよく使われます。例えば、 `json_extract` と {doc}`between` を組み合わせて、JSONに格納された値に対して範囲検索ができます。"
+
+msgid "`json_extract` requires the [simdjson](https://github.com/simdjson/simdjson) and [jsoncons](https://danielaparker.github.io/jsoncons/) libraries. It isn't available if Groonga is built without them."
+msgstr "`json_extract` は [simdjson](https://github.com/simdjson/simdjson) と [jsoncons](https://danielaparker.github.io/jsoncons/) ライブラリーを必要とします。これらなしでGroongaをビルドした場合は利用できません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`json_extract` requires two parameters:"
+msgstr "`json_extract`には必須の引数が2つあります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage. The `value` column uses the `JSON` type and stores nested arrays:"
+msgstr "以下は、使い方を示すためのスキーマ定義とサンプルデータです。 `value` カラムは `JSON` 型で、ネストした配列を格納します。"
+
+msgid "The following example extracts all elements of the nested arrays by the `$.value[*][*]` JSONPath and selects the records that have a value between `10` and `20`:"
+msgstr "以下の例では、 `$.value[*][*]` というJSONPathでネストした配列のすべての要素を抽出し、 `10` から `20` の間の値を持つレコードを選択します。"
+
+msgid "The records whose extracted values are between `10` and `20` are selected even though the values are stored in nested arrays in JSON."
+msgstr "値がJSONのネストした配列に格納されていても、抽出された値が `10` から `20` の間にあるレコードが選択されます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "There are two required parameters."
+msgstr "必須の引数が2つあります。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "`json`"
+msgstr ""
+
+msgid "`json` is the target JSON. It must be a parsed JSON, such as a value of a `JSON` typed column, or a JSON string."
+msgstr "`json` は対象のJSONです。 `JSON` 型カラムの値のようなパース済みのJSON、またはJSON文字列でなければなりません。"
+
+msgid "`json_extract` reports an error if this parameter isn't a parsed JSON nor a JSON string."
+msgstr "このパラメーターがパース済みのJSONでもJSON文字列でもない場合、 `json_extract` はエラーを報告します。"
+
+msgid "`jsonpath`"
+msgstr ""
+
+msgid "`jsonpath` is a JSONPath expression that matches the values to extract."
+msgstr "`jsonpath` は、抽出する値にマッチするJSONPath式です。"
+
+msgid "A JSONPath expression begins with `$`, which means the root of the JSON value. For example, `$.value[*]` matches all elements of the `value` array, and `$.value[*][*]` matches all elements of nested arrays under `value`."
+msgstr "JSONPath式は `$` で始まります。これはJSON値のルートを意味します。例えば、 `$.value[*]` は `value` 配列のすべての要素にマッチし、 `$.value[*][*]` は `value` の下のネストした配列のすべての要素にマッチします。"
+
+msgid "`json_extract` reports an error if this parameter isn't a valid JSONPath string."
+msgstr "このパラメーターが有効なJSONPath文字列でない場合、 `json_extract` はエラーを報告します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "`json_extract` returns a vector that contains all values matched by the JSONPath expression. The extracted values keep their JSON types."
+msgstr "`json_extract` は、JSONPath式にマッチしたすべての値を含むベクターを返します。抽出された値は、JSONでの型を保持します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`between`"
+msgstr ""
+
+msgid "{ref}`extractor-json`"
+msgstr ""
+
+msgid "{doc}`/reference/commands/select`"
+msgstr ""

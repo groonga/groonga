@@ -493,6 +493,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/json_extract/usage_select.md \
+	$(top_srcdir)/doc/source/example/reference/functions/json_extract/usage_setup.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/column_create.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/filter.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/index_column_create.md \
@@ -1279,6 +1281,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/json_extract.md \
 	$(top_srcdir)/doc/source/reference/functions/language_model_knn.md \
 	$(top_srcdir)/doc/source/reference/functions/language_model_vectorize.md \
 	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
@@ -1899,6 +1902,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/json_extract/usage_select.md \
+	source/example/reference/functions/json_extract/usage_setup.md \
 	source/example/reference/functions/language_model_knn/column_create.md \
 	source/example/reference/functions/language_model_knn/filter.md \
 	source/example/reference/functions/language_model_knn/index_column_create.md \
@@ -2685,6 +2690,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/json_extract.md \
 	source/reference/functions/language_model_knn.md \
 	source/reference/functions/language_model_vectorize.md \
 	source/reference/functions/math_abs.rst \
@@ -3014,6 +3020,7 @@ po_files = \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
+	reference/functions/json_extract.po \
 	reference/functions/language_model_knn.po \
 	reference/functions/language_model_vectorize.po \
 	reference/functions/math_abs.po \
@@ -3341,6 +3348,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
+	LC_MESSAGES/reference/functions/json_extract.po \
 	LC_MESSAGES/reference/functions/language_model_knn.po \
 	LC_MESSAGES/reference/functions/language_model_vectorize.po \
 	LC_MESSAGES/reference/functions/math_abs.po \
@@ -3668,6 +3676,7 @@ edit_po_files = \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
+	reference/functions/json_extract.edit \
 	reference/functions/language_model_knn.edit \
 	reference/functions/language_model_vectorize.edit \
 	reference/functions/math_abs.edit \
@@ -3995,6 +4004,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
+	LC_MESSAGES/reference/functions/json_extract.edit \
 	LC_MESSAGES/reference/functions/language_model_knn.edit \
 	LC_MESSAGES/reference/functions/language_model_vectorize.edit \
 	LC_MESSAGES/reference/functions/math_abs.edit \
@@ -4322,6 +4332,7 @@ mo_files = \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
+	reference/functions/json_extract.mo \
 	reference/functions/language_model_knn.mo \
 	reference/functions/language_model_vectorize.mo \
 	reference/functions/math_abs.mo \
@@ -4649,6 +4660,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
+	LC_MESSAGES/reference/functions/json_extract.mo \
 	LC_MESSAGES/reference/functions/language_model_knn.mo \
 	LC_MESSAGES/reference/functions/language_model_vectorize.mo \
 	LC_MESSAGES/reference/functions/math_abs.mo \
@@ -5009,6 +5021,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/json_extract.html \
 	html/reference/functions/language_model_knn.html \
 	html/reference/functions/language_model_vectorize.html \
 	html/reference/functions/math_abs.html \
