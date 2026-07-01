@@ -8163,6 +8163,7 @@ grn_expr_copy_options(grn_ctx *ctx, grn_obj *source)
     }
     grn_obj *entry = (grn_obj *)value;
     grn_obj *copied_entry = (grn_obj *)copied_value;
+    GRN_VOID_INIT(copied_entry);
     switch (entry->header.type) {
     case GRN_PTR:
       {
@@ -8194,6 +8195,13 @@ grn_expr_copy_options(grn_ctx *ctx, grn_obj *source)
   }
   GRN_HASH_EACH_END(ctx, cursor);
   if (ctx->rc != GRN_SUCCESS) {
+    GRN_HASH_EACH_BEGIN(ctx, copied, cleanup_cursor, cleanup_id)
+    {
+      void *value;
+      grn_hash_cursor_get_value(ctx, cleanup_cursor, &value);
+      GRN_OBJ_FIN(ctx, (grn_obj *)value);
+    }
+    GRN_HASH_EACH_END(ctx, cleanup_cursor);
     grn_hash_close(ctx, copied);
     return NULL;
   }
