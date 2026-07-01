@@ -8165,8 +8165,19 @@ grn_expr_copy_options(grn_ctx *ctx, grn_obj *source)
     grn_obj *copied_entry = (grn_obj *)copied_value;
     switch (entry->header.type) {
     case GRN_PTR:
-      GRN_OBJ_INIT(copied_entry, GRN_PTR, 0, GRN_ID_NIL);
-      GRN_PTR_SET(ctx, copied_entry, GRN_PTR_VALUE(entry));
+      {
+        grn_obj *pointee = GRN_PTR_VALUE(entry);
+        if (pointee && grn_expr_is_options(ctx, pointee)) {
+          pointee = grn_expr_copy_options(ctx, pointee);
+          if (!pointee) {
+            break;
+          }
+          GRN_PTR_INIT(copied_entry, GRN_OBJ_OWN, GRN_ID_NIL);
+        } else {
+          GRN_PTR_INIT(copied_entry, 0, GRN_ID_NIL);
+        }
+        GRN_PTR_SET(ctx, copied_entry, pointee);
+      }
       break;
     case GRN_VECTOR:
       GRN_OBJ_INIT(copied_entry, entry->header.type, 0, entry->header.domain);
