@@ -8126,6 +8126,86 @@ grn_expr_get_condition(grn_ctx *ctx, grn_obj *expr)
   GRN_API_RETURN(e->condition);
 }
 
+static bool
+grn_expr_is_options(grn_ctx *ctx, grn_obj *obj)
+{
+  return obj->header.type == GRN_TABLE_HASH_KEY &&
+         grn_obj_is_temporary(ctx, obj) &&
+         ((grn_hash *)obj)->value_size == sizeof(grn_obj);
+}
+
+static grn_obj *
+grn_expr_copy_options(grn_ctx *ctx, grn_obj *expr, grn_obj *options)
+{
+  grn_hash *source = (grn_hash *)options;
+  grn_hash *copied = grn_hash_create(ctx,
+                                     NULL,
+                                     source->key_size,
+                                     source->value_size,
+                                     source->obj.header.flags);
+  if (!copied) {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "[expr][copy-options] failed to create hash");
+    return NULL;
+  }
+  copied->obj.header.domain = source->obj.header.domain;
+  GRN_HASH_EACH_BEGIN(ctx, source, cursor, id)
+  {
+    void *key;
+    unsigned int key_size;
+    void *value;
+    grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+    void *copied_value;
+    grn_id copied_id =
+      grn_hash_add(ctx, copied, key, key_size, &copied_value, NULL);
+    if (copied_id == GRN_ID_NIL) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "[expr][copy-options] failed to add key");
+      break;
+    }
+    grn_obj *entry = (grn_obj *)value;
+    grn_obj *copied_entry = (grn_obj *)copied_value;
+    switch (entry->header.type) {
+    case GRN_PTR:
+      {
+        grn_obj *pointer = GRN_PTR_VALUE(entry);
+        if (pointer && grn_expr_is_options(ctx, pointer)) {
+          pointer = grn_expr_copy_options(ctx, expr, pointer);
+          if (!pointer) {
+            break;
+          }
+          grn_expr_take_obj(ctx, expr, pointer);
+        }
+        GRN_PTR_INIT(copied_entry, 0, GRN_ID_NIL);
+        GRN_PTR_SET(ctx, copied_entry, pointer);
+      }
+      break;
+    case GRN_VECTOR:
+      GRN_OBJ_INIT(copied_entry, entry->header.type, 0, entry->header.domain);
+      grn_vector_copy(ctx, entry, copied_entry);
+      break;
+    default:
+      GRN_OBJ_INIT(copied_entry, entry->header.type, 0, entry->header.domain);
+      GRN_TEXT_PUT(ctx,
+                   copied_entry,
+                   GRN_TEXT_VALUE(entry),
+                   GRN_TEXT_LEN(entry));
+      break;
+    }
+  }
+  GRN_HASH_EACH_END(ctx, cursor);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_HASH_EACH_BEGIN(ctx, copied, cleanup_cursor, cleanup_id)
+    {
+      void *value;
+      grn_hash_cursor_get_value(ctx, cleanup_cursor, &value);
+      GRN_OBJ_FIN(ctx, (grn_obj *)value);
+    }
+    GRN_HASH_EACH_END(ctx, cleanup_cursor);
+    grn_hash_close(ctx, copied);
+    return NULL;
+  }
+  return (grn_obj *)copied;
+}
+
 grn_obj *
 grn_expr_slice(grn_ctx *ctx,
                grn_obj *expr,
@@ -8186,6 +8266,12 @@ grn_expr_slice(grn_ctx *ctx,
       } else {
         if (grn_obj_is_accessor(ctx, value)) {
           value = grn_accessor_copy(ctx, value);
+        } else if (grn_expr_is_options(ctx, value)) {
+          value = grn_expr_copy_options(ctx, sliced_expr, value);
+          if (!value) {
+            grn_expr_close(ctx, sliced_expr);
+            GRN_API_RETURN(NULL);
+          }
         } else {
           grn_obj_refer(ctx, value);
         }
