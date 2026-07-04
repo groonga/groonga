@@ -8135,20 +8135,20 @@ grn_expr_is_options(grn_ctx *ctx, grn_obj *obj)
 }
 
 static grn_obj *
-grn_expr_copy_options(grn_ctx *ctx, grn_obj *source)
+grn_expr_copy_options(grn_ctx *ctx, grn_obj *expr, grn_obj *options)
 {
-  grn_hash *source_hash = (grn_hash *)source;
+  grn_hash *source = (grn_hash *)options;
   grn_hash *copied = grn_hash_create(ctx,
                                      NULL,
-                                     source_hash->key_size,
-                                     source_hash->value_size,
-                                     source_hash->obj.header.flags);
+                                     source->key_size,
+                                     source->value_size,
+                                     source->obj.header.flags);
   if (!copied) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "[expr][copy-options] failed to create hash");
     return NULL;
   }
-  copied->obj.header.domain = source_hash->obj.header.domain;
-  GRN_HASH_EACH_BEGIN(ctx, source_hash, cursor, id)
+  copied->obj.header.domain = source->obj.header.domain;
+  GRN_HASH_EACH_BEGIN(ctx, source, cursor, id)
   {
     void *key;
     unsigned int key_size;
@@ -8168,14 +8168,13 @@ grn_expr_copy_options(grn_ctx *ctx, grn_obj *source)
       {
         grn_obj *pointer = GRN_PTR_VALUE(entry);
         if (pointer && grn_expr_is_options(ctx, pointer)) {
-          pointer = grn_expr_copy_options(ctx, pointer);
+          pointer = grn_expr_copy_options(ctx, expr, pointer);
           if (!pointer) {
             break;
           }
-          GRN_PTR_INIT(copied_entry, GRN_OBJ_OWN, GRN_ID_NIL);
-        } else {
-          GRN_PTR_INIT(copied_entry, 0, GRN_ID_NIL);
+          grn_expr_take_obj(ctx, expr, pointer);
         }
+        GRN_PTR_INIT(copied_entry, 0, GRN_ID_NIL);
         GRN_PTR_SET(ctx, copied_entry, pointer);
       }
       break;
@@ -8268,7 +8267,7 @@ grn_expr_slice(grn_ctx *ctx,
         if (grn_obj_is_accessor(ctx, value)) {
           value = grn_accessor_copy(ctx, value);
         } else if (grn_expr_is_options(ctx, value)) {
-          value = grn_expr_copy_options(ctx, value);
+          value = grn_expr_copy_options(ctx, sliced_expr, value);
           if (!value) {
             grn_expr_close(ctx, sliced_expr);
             GRN_API_RETURN(NULL);
