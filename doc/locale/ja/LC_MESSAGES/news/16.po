@@ -17,11 +17,59 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.0.5 - 2026-05-22"
-msgstr "16.0.5リリース - 2026-05-22"
+msgid "Release 16.0.7 - 2026-07-07"
+msgstr "16.0.7リリース - 2026-07-07"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/functions/between`] Added support for vector type value as the 1st parameter"
+msgstr "[{doc}`/reference/functions/between`] 最初の引数にベクター型の値をサポート"
+
+msgid "Note that `between` does not use an index for a vector value yet."
+msgstr "`between`はまだベクターの値に対してインデックスを使用しないことに注意してください。"
+
+msgid "In the following example, `between` returns `true` if any of the elements is included in the specified range. Therefore, we can use `between` to search records that have at least one value in the range."
+msgstr "以下の例では、`between`はいずれかの要素が指定した範囲に含まれていれば`true`を返します。したがって、`between`を使って、範囲内に少なくとも1つの値を持つレコードを検索できます。"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "Dropped support for Debian 12 (bookworm)"
+msgstr "Debian 12 (bookworm)のサポートをやめました"
+
+msgid "It reached EOL on 2026-06-10."
+msgstr "2026-06-10にEOLになったためです。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "Fixed a crash bug when we specify `language_model_knn(...)` as `sort_keys`"
+msgstr "`sort_keys`として`language_model_knn(...)`を指定するとクラッシュする問題を修正"
+
+msgid "For example, if you specify `language_model_knn(text, \"male child\", {\"k\" : 2 })` as `sort_keys`, Groonga crashes due to a double free that occurs while processing the `{ \"k\" : 2 }` option in the sort routine."
+msgstr "例えば、`sort_keys`に`language_model_knn(text, \"male child\", {\"k\" : 2 })`を指定すると、`{ \"k\" : 2 }`がソート処理内で二重解放されてGroongaがクラッシュします。"
+
+msgid "Fixed a crash bug when we use `language_model_knn()` with empty value"
+msgstr "空の値に対して`language_model_knn()`を使用した時にクラッシュする問題を修正"
+
+msgid "Groonga crashes when `language_model_knn()` is used with empty value as shown below:"
+msgstr "以下のように、`language_model_knn()`を空の値に対して使った時にGroongaがクラッシュします："
+
+msgid "Experimental features"
+msgstr "実験的な機能"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "[{doc}`/reference/functions/json_extract`] Added support for `json_extractor()`"
+msgstr "`json_extractor()`をサポート"
+
+msgid "`json_extract` extracts values from a JSON by a JSONPath expression. The extracted values keep their JSON types. For example, a string in JSON is extracted as a text and an integer in JSON is extracted as an integer. Therefore, we can use `json_extract` for both full text search against strings and range search against numbers as shown below:"
+msgstr "`json_extract`は、JSONPath式を使ってJSONから値を抽出します。抽出された値は、JSONでの型を保持します。例えば、JSON中の文字列はテキストとして抽出され、JSON中の整数は整数として抽出されます。したがって、`json_extract`は文字列に対する全文検索と数値に対する範囲検索の両方に使えます。"
+
+msgid "Release 16.0.5 - 2026-05-22"
+msgstr "16.0.5リリース - 2026-05-22"
 
 msgid "Fixed a bug where Groonga for Windows failed to run due to a missing required DLL"
 msgstr "Windows版のGroongaに必要なDLLが不足していたため起動に失敗する問題を修正"
@@ -34,9 +82,6 @@ msgstr "この問題は、Windows版のGroonga 16.0.2のみ発生します。"
 
 msgid "Release 16.0.2 - 2026-05-07"
 msgstr "16.0.2リリース - 2026-05-07"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "Added support for Ubuntu 26.04 LTS"
 msgstr "Ubuntu 26.04 LTSをサポート"
@@ -124,9 +169,6 @@ msgstr "Daniel Blackさんが報告"
 
 msgid "See also: https://jira.mariadb.org/browse/MDEV-39098"
 msgstr "関連: https://jira.mariadb.org/browse/MDEV-39098"
-
-msgid "Experimental features"
-msgstr "実験的な機能"
 
 msgid "These features are still experimental and unstable. We must not use these features in production."
 msgstr "これらの機能はまだ実験的で安定していません。これらの機能は、絶対に実運用環境では使わないでください。"
