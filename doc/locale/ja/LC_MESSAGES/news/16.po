@@ -62,11 +62,11 @@ msgstr "実験的な機能"
 msgid "This is an experimental feature. Currently, this feature is still not stable."
 msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
 
-msgid "[{doc}`/reference/functions/json_extract`] Added support for `json_extractor()`"
-msgstr "`json_extractor()`をサポート"
+msgid "[{doc}`/reference/functions/json_extract`] Added support for `json_extract()`"
+msgstr "`json_extract()`をサポート"
 
-msgid "`json_extract` extracts values from a JSON by a JSONPath expression. The extracted values keep their JSON types. For example, a string in JSON is extracted as a text and an integer in JSON is extracted as an integer. Therefore, we can use `json_extract` for both full text search against strings and range search against numbers as shown below:"
-msgstr "`json_extract`は、JSONPath式を使ってJSONから値を抽出します。抽出された値は、JSONでの型を保持します。例えば、JSON中の文字列はテキストとして抽出され、JSON中の整数は整数として抽出されます。したがって、`json_extract`は文字列に対する全文検索と数値に対する範囲検索の両方に使えます。"
+msgid "`json_extract()` extracts values from a JSON by a JSONPath expression. The extracted values keep their JSON types. For example, a string in JSON is extracted as a text and an integer in JSON is extracted as an integer. Therefore, we can use `json_extract()` for both full text search against strings and range search against numbers as shown below:"
+msgstr "`json_extract()`は、JSONPath式を使ってJSONから値を抽出します。抽出された値は、JSONでの型を保持します。例えば、JSON中の文字列はテキストとして抽出され、JSON中の整数は整数として抽出されます。したがって、`json_extract()`は文字列に対する全文検索と数値に対する範囲検索の両方に使えます。"
 
 msgid "Release 16.0.5 - 2026-05-22"
 msgstr "16.0.5リリース - 2026-05-22"
