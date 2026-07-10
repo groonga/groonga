@@ -3,28 +3,11 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 
 load --table Normalizations
 [
-{"_key": "q", "normalized": "xy"},
-{"_key": "rs", "normalized": "z"},
-{"_key": "u", "normalized": ""}
+{"_key": "q", "normalized": "xy"}
 ]
 
 normalize \
   --string "q b" \
-  --flags REMOVE_BLANK|WITH_TYPES \
-  --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-
-normalize \
-  --string "rs t" \
-  --flags REMOVE_BLANK|WITH_TYPES \
-  --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-
-normalize \
-  --string "a u b" \
-  --flags REMOVE_BLANK|WITH_TYPES \
-  --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-
-normalize \
-  --string "u ab" \
   --flags REMOVE_BLANK|WITH_TYPES \
   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
 

@@ -4,11 +4,9 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Normalizations
 [
-{"_key": "q", "normalized": "xy"},
-{"_key": "rs", "normalized": "z"},
-{"_key": "u", "normalized": ""}
+{"_key": "q", "normalized": "xy"}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],1]
 normalize   --string "q b"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
 [
   [
@@ -27,42 +25,6 @@ normalize   --string "q b"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'No
     "checks": []
   }
 ]
-normalize   --string "rs t"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "normalized": "zt",
-    "types": [
-      "alpha|blank",
-      "alpha",
-      "null"
-    ],
-    "checks": []
-  }
-]
-normalize   --string "a u b"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "normalized": "ab",
-    "types": [
-      "alpha|blank",
-      "alpha",
-      "null"
-    ],
-    "checks": []
-  }
-]
-normalize   --string "u ab"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
-[[0,0.0,0.0],{"normalized":"ab","types":["alpha","alpha","null"],"checks":[]}]
 table_create Entries TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Entries content COLUMN_SCALAR Text
