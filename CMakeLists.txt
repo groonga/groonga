@@ -254,6 +254,13 @@ if(MSVC)
       "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
 endif()
 
+if(MSVC)
+  check_c_compiler_flag(-Wa,-mbig-obj C_SUPPORTS_BIG_OBJ)
+  if(C_SUPPORTS_BIG_OBJ)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -Wa,-mbig-obj")
+  endif()
+endif()
+
 macro(check_cflag flag)
   string(REGEX REPLACE "[-=]" "_" temporary_variable_name ${flag})
   string(TOUPPER "${temporary_variable_name}" temporary_variable_name)
