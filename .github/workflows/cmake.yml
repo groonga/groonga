@@ -127,7 +127,6 @@ jobs:
             build-essential \
             ccache \
             cmake \
-            libxsimd-dev \
             ninja-build
       - uses: actions/checkout@v7
         if: matrix.apache-arrow-main == 'yes'
