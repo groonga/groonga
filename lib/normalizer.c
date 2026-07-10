@@ -5213,6 +5213,7 @@ typedef struct {
   grn_obj types;
   bool need_types;
   size_t current_source_offset;
+  size_t pending_source_length;
   grn_obj offsets;
   bool need_offsets;
   size_t n_normalized_characters;
@@ -5237,6 +5238,7 @@ substitutor_data_init(grn_ctx *ctx,
   data->need_types =
     (string->flags & GRN_STRING_WITH_TYPES) && (ctx->encoding == GRN_ENC_UTF8);
   data->current_source_offset = 0;
+  data->pending_source_length = 0;
   GRN_UINT64_INIT(&(data->offsets), GRN_OBJ_VECTOR);
   data->need_offsets = report_source_offset;
   data->n_normalized_characters = 0;
@@ -5303,7 +5305,11 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
       }
     }
     if (data->need_checks) {
-      GRN_INT16_PUT(ctx, checks, source_char_length);
+      GRN_INT16_PUT(ctx,
+                    checks,
+                    (int16_t)(data->pending_source_length +
+                              (size_t)source_char_length));
+      data->pending_source_length = 0;
       int i;
       for (i = 1; i < normalized_char_length; i++) {
         GRN_INT16_PUT(ctx, checks, 0);
@@ -5325,6 +5331,7 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
   if (source_current < source_end) {
     size_t last_check_index = GRN_INT16_VECTOR_SIZE(checks);
     if (last_check_index == 0) {
+      data->pending_source_length += (size_t)(source_end - source_current);
       return;
     }
     for (last_check_index--; last_check_index > 0; last_check_index--) {

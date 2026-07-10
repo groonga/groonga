@@ -1,0 +1,114 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Normalizations
+[
+{"_key": "q", "normalized": "xy"},
+{"_key": "rs", "normalized": "z"},
+{"_key": "u", "normalized": ""}
+]
+[[0,0.0,0.0],3]
+normalize   --string "q b"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "xyb",
+    "types": [
+      "alpha",
+      "alpha|blank",
+      "alpha",
+      "null"
+    ],
+    "checks": []
+  }
+]
+normalize   --string "rs t"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "zt",
+    "types": [
+      "alpha|blank",
+      "alpha",
+      "null"
+    ],
+    "checks": []
+  }
+]
+normalize   --string "a u b"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ab",
+    "types": [
+      "alpha|blank",
+      "alpha",
+      "null"
+    ],
+    "checks": []
+  }
+]
+normalize   --string "u ab"   --flags REMOVE_BLANK|WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+[[0,0.0,0.0],{"normalized":"ab","types":["alpha","alpha","null"],"checks":[]}]
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false)'   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+[[0,0.0,0.0],true]
+column_create Terms content_index COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "abc def"}
+]
+[[0,0.0,0.0],1]
+table_tokenize Terms "abc def" --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ab",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "bc",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "de",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "ef",
+      "position": 4,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
+select Entries   --match_columns content   --query cde   --output_columns _id,content
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","Text"]]]]]

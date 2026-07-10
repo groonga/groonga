@@ -213,6 +213,87 @@ grn_string_init(grn_ctx *ctx,
   return ctx->rc;
 }
 
+static void
+grn_string_merge_blank_types(grn_ctx *ctx,
+                             grn_string *string,
+                             const char *previous_normalized,
+                             unsigned int previous_normalized_length_in_bytes,
+                             unsigned int previous_n_characters,
+                             const uint8_t *previous_types)
+{
+  if (!string->ctypes || !string->checks || string->n_characters == 0) {
+    return;
+  }
+
+  const char *previous_current = previous_normalized;
+  const char *previous_end =
+    previous_normalized + previous_normalized_length_in_bytes;
+  unsigned int previous_i = 0;
+  unsigned int n_consumed_bytes = 0;
+  bool blank = false;
+  unsigned int current_byte_offset = 0;
+  unsigned int current_i;
+  for (current_i = 0; current_i < string->n_characters; current_i++) {
+    int current_character_length =
+      grn_charlen(ctx,
+                  string->normalized + current_byte_offset,
+                  string->normalized + string->normalized_length_in_bytes);
+    if (current_character_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[string][open] invalid character in normalized string: <%.*s>",
+          (int)(string->normalized_length_in_bytes - current_byte_offset),
+          string->normalized + current_byte_offset);
+      return;
+    }
+
+    int16_t check = string->checks[current_byte_offset];
+    if (check > 0) {
+      /* A positive check starts a new replacement. Inserted characters for
+       * the preceding replacement have negative checks, so the character
+       * just before this one is the end of that replacement. */
+      if (blank && current_i > 0) {
+        string->ctypes[current_i - 1] |= GRN_CHAR_BLANK;
+        blank = false;
+      }
+
+      n_consumed_bytes += (unsigned int)check;
+      while (previous_i < previous_n_characters &&
+             previous_current < previous_end &&
+             (unsigned int)(previous_current - previous_normalized) <
+               n_consumed_bytes) {
+        int previous_character_length =
+          grn_charlen(ctx, previous_current, previous_end);
+        if (previous_character_length == 0) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[string][open] invalid character in previous normalized string: "
+              "<%.*s>",
+              (int)(previous_end - previous_current),
+              previous_current);
+          return;
+        }
+        previous_current += previous_character_length;
+        previous_i++;
+      }
+      if ((unsigned int)(previous_current - previous_normalized) ==
+            n_consumed_bytes &&
+          previous_i > 0 &&
+          (previous_types[previous_i - 1] & GRN_CHAR_BLANK)) {
+        /* Only a boundary at the end of this source-consumption group can
+         * be represented on its last output character. A boundary inside
+         * the group may come from leading/deleted input and must not split
+         * the replacement output itself. */
+        blank = true;
+      }
+    }
+
+    current_byte_offset += (unsigned int)current_character_length;
+  }
+
+  if (blank) {
+    string->ctypes[string->n_characters - 1] |= GRN_CHAR_BLANK;
+  }
+}
+
 grn_obj *
 grn_string_open_(grn_ctx *ctx,
                  const char *str,
@@ -274,8 +355,18 @@ grn_string_open_(grn_ctx *ctx,
       GRN_OBJ_FIN(ctx, &normalizers);
       return (grn_obj *)grn_fake_string_open(ctx, string_);
     }
+    /* Character checks are needed only internally to map each normalizer's
+     * output back to the immediately preceding normalized string. */
+    bool added_checks =
+      n > 1 &&
+      (string_->flags & GRN_STRING_WITH_TYPES) &&
+      !(string_->flags & GRN_STRING_WITH_CHECKS);
+    if (added_checks) {
+      string_->flags |= GRN_STRING_WITH_CHECKS;
+    }
     char *previous_normalized = NULL;
     unsigned int previous_normalized_length_in_bytes = 0;
+    unsigned int previous_n_characters = 0;
     int16_t *previous_checks = NULL;
     uint8_t *previous_types = NULL;
     uint64_t *previous_offsets = NULL;
@@ -287,6 +378,7 @@ grn_string_open_(grn_ctx *ctx,
         previous_normalized = string_->normalized;
         previous_normalized_length_in_bytes =
           string_->normalized_length_in_bytes;
+        previous_n_characters = string_->n_characters;
         previous_checks = string_->checks;
         previous_types = string_->ctypes;
         previous_offsets = string_->offsets;
@@ -297,6 +389,17 @@ grn_string_open_(grn_ctx *ctx,
       if (i > 0) {
         if (ctx->rc != GRN_SUCCESS) {
           break;
+        }
+        if (previous_types) {
+          grn_string_merge_blank_types(ctx,
+                                       string_,
+                                       previous_normalized,
+                                       previous_normalized_length_in_bytes,
+                                       previous_n_characters,
+                                       previous_types);
+          if (ctx->rc != GRN_SUCCESS) {
+            break;
+          }
         }
         if (previous_checks) {
           if (string_->checks) {
@@ -367,6 +470,11 @@ grn_string_open_(grn_ctx *ctx,
     string_->original = str;
     string_->original_length_in_bytes = str_len;
     string_->normalizer_index = 0;
+    if (added_checks) {
+      GRN_FREE(string_->checks);
+      string_->checks = NULL;
+      string_->flags &= (int)(~GRN_STRING_WITH_CHECKS);
+    }
     GRN_OBJ_FIN(ctx, &normalizers);
   }
   if (ctx->rc != GRN_SUCCESS) {
