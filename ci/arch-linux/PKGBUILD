@@ -60,7 +60,7 @@ build() {
     -D CMAKE_INSTALL_PREFIX=/usr
     -D CMAKE_SKIP_RPATH=ON
     -D GRN_WITH_APACHE_ARROW=ON
-    -D GRN_WITH_BLOSC=system
+    -D GRN_WITH_BLOSC=bundled
     -D GRN_WITH_MRUBY=ON
   )
   cmake "${cmake_options[@]}"
