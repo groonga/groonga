@@ -5305,10 +5305,10 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
       }
     }
     if (data->need_checks) {
-      GRN_INT16_PUT(ctx,
-                    checks,
-                    (int16_t)(data->pending_source_length +
-                              (size_t)source_char_length));
+      GRN_INT16_PUT(
+        ctx,
+        checks,
+        (int16_t)(data->pending_source_length + (size_t)source_char_length));
       data->pending_source_length = 0;
       int i;
       for (i = 1; i < normalized_char_length; i++) {
