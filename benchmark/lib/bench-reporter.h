@@ -47,7 +47,7 @@ struct _BenchReporterClass
   GObjectClass parent_class;
 };
 
-GType           bench_reporter_get_type  (void) G_GNUC_CONST;
+GType           bench_reporter_get_type  (void);
 
 BenchReporter  *bench_reporter_new       (void);
 void            bench_reporter_register  (BenchReporter     *reporter,
