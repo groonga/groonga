@@ -1,0 +1,42 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Memos   --output_columns '_key, string_truncate(_key, 0, { "unknown_option" : 2 })'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[string_truncate][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 c"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "string_truncate",
+          null
+        ]
+      ],
+      [
+        "Groonga",
+        "[string_truncate][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 c"
+      ]
+    ]
+  ]
+]
+#|e| [string_truncate][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] extractors:(nil) normalizers:(nil) default_tokenizer:(nil) token_filters:(nil) keys:["unknown_option"] subrec:none>

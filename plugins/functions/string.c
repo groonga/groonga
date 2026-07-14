@@ -25,6 +25,21 @@
 
 #include <groonga/plugin.h>
 
+static int64_t
+string_n_chars(grn_ctx *ctx, const char *string, size_t string_size)
+{
+  const char *p = string;
+  const char *end = string + string_size;
+  int64_t n_chars = 0;
+  int char_size = 0;
+
+  for (; p < end && (char_size = grn_charlen(ctx, p, end)); p += char_size) {
+    n_chars++;
+  }
+
+  return n_chars;
+}
+
 /*
  * func_string_length() returns the number of characters in a string.
  * If the string contains an invalid byte sequence, this function returns the
@@ -63,16 +78,7 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
     return NULL;
   }
 
-  {
-    const char *s = GRN_TEXT_VALUE(target);
-    const char *e = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
-    const char *p;
-    int cl = 0;
-    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
-      length++;
-    }
-  }
-
+  length = string_n_chars(ctx, GRN_TEXT_VALUE(target), GRN_TEXT_LEN(target));
   grn_length = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT32, 0);
   if (!grn_length) {
     return NULL;
@@ -262,6 +268,146 @@ exit:
 
   return substring;
 #undef string_substring_tag
+}
+
+static bool
+string_is_over_n_chars(grn_ctx *ctx, const char *string, size_t string_size,
+                       int64_t max_n_chars, int64_t n_keep_chars, const char **kept_end)
+{
+  const char *p = string;
+  const char *end = string + string_size;
+  int64_t n_chars = 0;
+  int char_size = 0;
+
+  *kept_end = string;
+  for (; p < end && (char_size = grn_charlen(ctx, p, end)); p += char_size) {
+    n_chars++;
+    if (n_chars == n_keep_chars) {
+      *kept_end = p + char_size;
+    }
+    if (n_chars > max_n_chars) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/*
+ * func_string_truncate() truncates a string to at most `length` characters.
+ * If truncation occurs, the tail of the kept portion is replaced so that the
+ * result (kept portion + omission) is `length` characters long, in the same
+ * way as Ruby on Rails' String#truncate.
+ *
+ * Note:
+ * If `omission` itself is longer than `length`, the result is `omission` alone.
+ * This is the same as Ruby on Rails' String#truncate.
+ */
+static grn_obj *
+func_string_truncate(grn_ctx *ctx, int n_args, grn_obj **args,
+                     grn_user_data *user_data)
+{
+#define string_truncate_tag "[string_truncate]"
+
+  if (n_args < 2 || n_args > 3) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s "
+                     "wrong number of arguments (%d for 2..3)",
+                     string_truncate_tag,
+                     n_args);
+    return NULL;
+  }
+
+  grn_obj *target = args[0];
+  grn_obj *options = NULL;
+  if (n_args == 3) {
+    options = args[2];
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, target)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, target);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s[target] must be a text bulk: <%.*s>",
+                     string_truncate_tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  grn_obj *omission = NULL;
+  if (options) {
+    grn_rc rc = grn_proc_options_parse(ctx,
+                                       options,
+                                       string_truncate_tag,
+                                       "omission",
+                                       GRN_PROC_OPTION_VALUE_RAW,
+                                       &omission,
+                                       NULL);
+
+    if (rc != GRN_SUCCESS) {
+      return NULL;
+    }
+
+    if (omission && !grn_obj_is_text_family_bulk(ctx, omission)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, omission);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s[omission] must be a text bulk: <%.*s>",
+                       string_truncate_tag,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+  }
+
+  int64_t max_n_chars = grn_plugin_proc_get_value_int64(ctx, args[1], 0, string_truncate_tag "[length]");
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  const char *omission_value = "...";
+  size_t omission_size = 3;
+  int64_t n_omission_chars = 3;
+  if (omission) {
+    omission_value = GRN_TEXT_VALUE(omission);
+    omission_size = GRN_TEXT_LEN(omission);
+    n_omission_chars = string_n_chars(ctx, omission_value, omission_size);
+  }
+
+  grn_obj *result = grn_plugin_proc_alloc(ctx, user_data, target->header.domain, 0);
+  if (!result) {
+    return NULL;
+  }
+  if (max_n_chars < 0) {
+    GRN_TEXT_SET(ctx, result, omission_value, omission_size);
+    return result;
+  }
+
+  int64_t n_keep_chars = max_n_chars - n_omission_chars;
+  if (n_keep_chars < 0) {
+    n_keep_chars = 0;
+  }
+  const char *kept_end = NULL;
+  bool is_over = string_is_over_n_chars(ctx,
+                                        GRN_TEXT_VALUE(target),
+                                        GRN_TEXT_LEN(target),
+                                        max_n_chars,
+                                        n_keep_chars,
+                                        &kept_end);
+  if (!is_over) {
+    GRN_TEXT_SET(ctx, result, GRN_TEXT_VALUE(target), GRN_TEXT_LEN(target));
+    return result;
+  }
+
+  const char *kept_start = GRN_TEXT_VALUE(target);
+  GRN_TEXT_SET(ctx, result, kept_start, kept_end - kept_start);
+  GRN_TEXT_PUT(ctx, result, omission_value, omission_size);
+  return result;
+#undef string_truncate_tag
 }
 
 static grn_obj *
@@ -583,6 +729,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_proc_create(ctx, "string_substring", -1,
                   GRN_PROC_FUNCTION,
                   func_string_substring,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "string_truncate", -1,
+                  GRN_PROC_FUNCTION,
+                  func_string_truncate,
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx, "string_tokenize", -1,
