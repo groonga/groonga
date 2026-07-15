@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@
 #  include <cmath>
 #elif defined(GRN_WITH_APACHE_ARROW)
 #  include <arrow/util/base64.h>
+#  include <arrow/util/config.h>
 #endif
 
 #if defined(GRN_WITH_RAPIDJSON) || defined(GRN_WITH_SIMDJSON)
@@ -2244,8 +2245,17 @@ grn_caster_cast_text_to_bulk_binary(grn_ctx *ctx, grn_caster *caster)
   GRN_BULK_INCR_LEN(caster->dest, written_size);
   return rc;
 #elif defined(GRN_WITH_APACHE_ARROW)
+#  if ARROW_VERSION_MAJOR >= 25
+  auto decoded_result = arrow::util::base64_decode(
+    std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+  if (!decoded_result.ok()) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  auto decoded = *decoded_result;
+#  else
   auto decoded = arrow::util::base64_decode(
     std::string_view(GRN_TEXT_VALUE(caster->src), GRN_TEXT_LEN(caster->src)));
+#  endif
   GRN_BINARY_PUT(ctx, caster->dest, decoded.data(), decoded.size());
   return GRN_SUCCESS;
 #else
