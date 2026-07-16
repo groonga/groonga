@@ -1,0 +1,120 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.9\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-07-15 04:12+0000\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例:"
+
+msgid "`string_truncate`"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`string_truncate` truncates a string to at most the specified number of characters. If the string is truncated, the tail of the kept characters is replaced with an omission mark so that the result, including the omission mark, is `length` characters long, in the same way as Ruby on Rails' `String#truncate`."
+msgstr "`string_truncate`は、文字列を指定された文字数以下に切り詰めます。文字列が切り詰められた場合、残された文字の末尾を省略記号に置き換えます。その結果、省略記号を含めて`length`文字の長さになります。これはRuby on Railsの`String#truncate`と同様の動作です。"
+
+msgid "To enable this function, register `functions/string` plugin with the following command:"
+msgstr "この関数を有効にするには、以下のコマンドで`functions/string`プラグインを登録します:"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`string_truncate` requires two or three parameters."
+msgstr "`string_truncate`は2つから3つの引数を指定できます。"
+
+msgid "`options` uses the following format. All key-value pairs are optional:"
+msgstr "`options`には以下のキーを指定します。すべてのキー・値のペアは省略可能です:"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid "Here is a simple example. Because the string is longer than the specified `length`, it's truncated and `\"...\"` is appended so that the result is 15 characters long."
+msgstr "以下は簡単な使用例です。文字列が指定された`length`より長いため、切り詰められ`\"...\"`が追加されて、結果として15文字になります。"
+
+msgid "If the string isn't longer than `length`, it's returned as-is without an omission mark."
+msgstr "文字列の長さが`length`以下である場合、省略記号を付けずにそのまま返されます。"
+
+msgid "The following example specifies a custom `omission` in `options`."
+msgstr "次の例では、`options`で`omission`を指定しています。"
+
+msgid "When truncation occurs and `length` is smaller than the number of characters in `omission`, the result is only `omission` even if `omission` is longer than `length`."
+msgstr "`length`が`omission`の文字数よりも小さい状態で切り詰められた場合、`omission`の文字数が`length`より多くても、結果は`omission`のみとなります。"
+
+msgid "You can specify a string literal instead of a column."
+msgstr "カラムの代わりに文字列リテラルを指定することもできます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "`target`"
+msgstr ""
+
+msgid "Specify a string literal or a string type column."
+msgstr "対象となる文字列または文字列型カラムを指定します。"
+
+msgid "`length`"
+msgstr ""
+
+msgid "Specify the maximum number of characters of the result, including the `omission` mark when truncation occurs. If the number of characters in `target` is less than or equal to `length`, `target` is returned as-is."
+msgstr "切り詰めが発生した場合の`omission`の文字数を含め、結果の最大文字数を指定します。`target`の文字数が`length`以下である場合、`target`はそのまま返されます。"
+
+msgid "If `target` is longer than `length`, `string_truncate` subtracts the number of characters in `omission` from `length`, extracts that many characters from the beginning of `target`, and appends `omission`. If `omission` is longer than `length` or `length` is negative, the result is `omission`."
+msgstr "`target`の長さが`length`より長い場合、`string_truncate`は`target`の先頭から「`length` - `omission`の文字数」分を切り出し、末尾に`omission`を追加します。`omission`が`length`より長い場合や`length`が負の場合は、`omission`のみになります。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "`options`"
+msgstr ""
+
+msgid "Specify the following key."
+msgstr "以下のキーを指定します。"
+
+msgid "`omission`"
+msgstr ""
+
+msgid "Specify a string to be appended to the truncated string to show that it was truncated."
+msgstr "切り詰められたことを示す文字列を指定します。"
+
+msgid "The default is `\"...\"`."
+msgstr "デフォルトは`\"...\"`です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "`string_truncate` returns `target` truncated. When truncation occurs, the result (kept part + `omission`) is `length` characters long unless `omission` is longer than `length` or `length` is negative, in which case the result is `omission`."
+msgstr "`string_truncate`は`target`を切り詰めた結果を返します。切り詰めが行われた場合、結果（保持された部分と`omission`の合計）の長さは`length`文字になります。ただし、`omission`が`length`より長い場合や`length`が負の値の場合は、`omission`のみになります。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`snippet`"
+msgstr ""
+
+msgid "{doc}`string_substring`"
+msgstr ""

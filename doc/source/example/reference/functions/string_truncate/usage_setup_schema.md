@@ -1,0 +1,8 @@
+Execution example:
+
+```shell
+plugin_register functions/string
+# [[0,1337566253.89858,0.000355720520019531],true]
+table_create Memos TABLE_HASH_KEY ShortText
+# [[0,1337566253.89858,0.000355720520019531],true]
+```
