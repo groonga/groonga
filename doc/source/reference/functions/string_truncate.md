@@ -1,5 +1,5 @@
 <!-- groonga-command -->
-<!-- database: string_truncate -->
+<!-- database: functions_string_truncate -->
 
 # `string_truncate`
 
