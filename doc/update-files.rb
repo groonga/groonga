@@ -18,6 +18,15 @@
 
 require "find"
 
+IGNORE_PATHS = [
+  ".buildinfo",
+  ".buildinfo.bak",
+
+  # These are unnecessary for Japanese and cause build errors.
+  "_static/base-stemmer.js",
+  "_static/english-stemmer.js",
+]
+
 def list_paths(variable_name, paths, output)
   output.puts("#{variable_name} = \\")
   paths.each do |path|
@@ -73,8 +82,7 @@ File.open(File.join(source_dir, "files.am"), "w") do |output|
     html_files = []
     Find.find("html") do |path|
       next unless File.file?(path)
-      next if path == "html/.buildinfo"
-      next if path == "html/.buildinfo.bak"
+      next if IGNORE_PATHS.include?(path.delete_prefix("html/"))
       if path.start_with?("html/reference/api/")
         base_name = File.basename(path, ".html")
         source = File.join(source_dir,
@@ -120,8 +128,7 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
     Find.find(".") do |path|
       path = path.delete_prefix("./")
       next unless File.file?(path)
-      next if path == ".buildinfo"
-      next if path == ".buildinfo.bak"
+      next if IGNORE_PATHS.include?(path)
       if path.start_with?("reference/api/")
         base_name = File.basename(path, ".html")
         source = File.join(source_dir,
