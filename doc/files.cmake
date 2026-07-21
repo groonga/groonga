@@ -553,6 +553,13 @@ set(GRN_DOC_SOURCES
     example/reference/functions/string_substring/usage_setup_data.log
     example/reference/functions/string_substring/usage_setup_schema.log
     example/reference/functions/string_substring/usage_string_literal.log
+    example/reference/functions/string_truncate/usage_basic.md
+    example/reference/functions/string_truncate/usage_no_truncation.md
+    example/reference/functions/string_truncate/usage_omission.md
+    example/reference/functions/string_truncate/usage_omission_only.md
+    example/reference/functions/string_truncate/usage_setup_data.md
+    example/reference/functions/string_truncate/usage_setup_schema.md
+    example/reference/functions/string_truncate/usage_string_literal.md
     example/reference/functions/sub_filter/usage_setup_data.log
     example/reference/functions/sub_filter/usage_setup_schema.log
     example/reference/functions/sub_filter/usage_with_sub_filter.log
@@ -1297,6 +1304,7 @@ set(GRN_DOC_SOURCES
     reference/functions/string_length.rst
     reference/functions/string_slice.rst
     reference/functions/string_substring.rst
+    reference/functions/string_truncate.md
     reference/functions/sub_filter.rst
     reference/functions/time_classify_day.rst
     reference/functions/time_classify_day_of_week.rst
@@ -1659,6 +1667,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/string_length.html
     reference/functions/string_slice.html
     reference/functions/string_substring.html
+    reference/functions/string_truncate.html
     reference/functions/sub_filter.html
     reference/functions/time_classify_day.html
     reference/functions/time_classify_day_of_week.html

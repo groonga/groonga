@@ -553,6 +553,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_basic.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_no_truncation.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_omission.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_omission_only.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_setup_schema.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_string_literal.md \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -1297,6 +1304,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_slice.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
+	$(top_srcdir)/doc/source/reference/functions/string_truncate.md \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day_of_week.rst \
@@ -1963,6 +1971,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/string_substring/usage_setup_data.log \
 	source/example/reference/functions/string_substring/usage_setup_schema.log \
 	source/example/reference/functions/string_substring/usage_string_literal.log \
+	source/example/reference/functions/string_truncate/usage_basic.md \
+	source/example/reference/functions/string_truncate/usage_no_truncation.md \
+	source/example/reference/functions/string_truncate/usage_omission.md \
+	source/example/reference/functions/string_truncate/usage_omission_only.md \
+	source/example/reference/functions/string_truncate/usage_setup_data.md \
+	source/example/reference/functions/string_truncate/usage_setup_schema.md \
+	source/example/reference/functions/string_truncate/usage_string_literal.md \
 	source/example/reference/functions/sub_filter/usage_setup_data.log \
 	source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -2707,6 +2722,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/string_length.rst \
 	source/reference/functions/string_slice.rst \
 	source/reference/functions/string_substring.rst \
+	source/reference/functions/string_truncate.md \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
 	source/reference/functions/time_classify_day_of_week.rst \
@@ -3037,6 +3053,7 @@ po_files = \
 	reference/functions/string_length.po \
 	reference/functions/string_slice.po \
 	reference/functions/string_substring.po \
+	reference/functions/string_truncate.po \
 	reference/functions/sub_filter.po \
 	reference/functions/time_classify_day.po \
 	reference/functions/time_classify_day_of_week.po \
@@ -3365,6 +3382,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.po \
 	LC_MESSAGES/reference/functions/string_slice.po \
 	LC_MESSAGES/reference/functions/string_substring.po \
+	LC_MESSAGES/reference/functions/string_truncate.po \
 	LC_MESSAGES/reference/functions/sub_filter.po \
 	LC_MESSAGES/reference/functions/time_classify_day.po \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.po \
@@ -3693,6 +3711,7 @@ edit_po_files = \
 	reference/functions/string_length.edit \
 	reference/functions/string_slice.edit \
 	reference/functions/string_substring.edit \
+	reference/functions/string_truncate.edit \
 	reference/functions/sub_filter.edit \
 	reference/functions/time_classify_day.edit \
 	reference/functions/time_classify_day_of_week.edit \
@@ -4021,6 +4040,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.edit \
 	LC_MESSAGES/reference/functions/string_slice.edit \
 	LC_MESSAGES/reference/functions/string_substring.edit \
+	LC_MESSAGES/reference/functions/string_truncate.edit \
 	LC_MESSAGES/reference/functions/sub_filter.edit \
 	LC_MESSAGES/reference/functions/time_classify_day.edit \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.edit \
@@ -4349,6 +4369,7 @@ mo_files = \
 	reference/functions/string_length.mo \
 	reference/functions/string_slice.mo \
 	reference/functions/string_substring.mo \
+	reference/functions/string_truncate.mo \
 	reference/functions/sub_filter.mo \
 	reference/functions/time_classify_day.mo \
 	reference/functions/time_classify_day_of_week.mo \
@@ -4677,6 +4698,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.mo \
 	LC_MESSAGES/reference/functions/string_slice.mo \
 	LC_MESSAGES/reference/functions/string_substring.mo \
+	LC_MESSAGES/reference/functions/string_truncate.mo \
 	LC_MESSAGES/reference/functions/sub_filter.mo \
 	LC_MESSAGES/reference/functions/time_classify_day.mo \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.mo \
@@ -5038,6 +5060,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/string_length.html \
 	html/reference/functions/string_slice.html \
 	html/reference/functions/string_substring.html \
+	html/reference/functions/string_truncate.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
 	html/reference/functions/time_classify_day_of_week.html \
