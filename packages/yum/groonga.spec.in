@@ -383,6 +383,7 @@ exit 0
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/ggml/*.so
 %{_libdir}/groonga/plugins/*.rb
+%{_libdir}/groonga/plugins/functions/binary.so
 %{_libdir}/groonga/plugins/functions/index_column.so
 %{_libdir}/groonga/plugins/functions/math.so
 %{_libdir}/groonga/plugins/functions/number.so
