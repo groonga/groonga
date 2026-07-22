@@ -1,0 +1,12 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+
+load --table Normalizations
+[
+{"_key": "rs", "normalized": "z"}
+]
+
+normalize \
+  --string "rs t" \
+  --flags REMOVE_BLANK|WITH_TYPES \
+  --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
