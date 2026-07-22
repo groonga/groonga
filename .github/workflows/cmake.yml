@@ -557,6 +557,9 @@ jobs:
           - msystem: UCRT64
             package-prefix: mingw-w64-ucrt-x86_64
             runner: windows-latest
+          - msystem: CLANG64
+            package-prefix: mingw-w64-clang-x86_64
+            runner: windows-latest
           - msystem: CLANGARM64
             package-prefix: mingw-w64-clang-aarch64
             runner: windows-11-arm
