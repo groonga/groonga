@@ -1,0 +1,11 @@
+plugin_register functions/binary
+
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+
+select Memos \
+  --output_columns '_key, binary_length(_key)'
