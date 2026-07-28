@@ -1,0 +1,28 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer 'NormalizerAuto, NormalizerTable("normalized", "Normalizations.normalized")'
+[[0,0.0,0.0],true]
+table_tokenize Terms "aBcDe fgH" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "abcde",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "fgh",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

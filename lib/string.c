@@ -279,6 +279,7 @@ grn_string_open_(grn_ctx *ctx,
     int16_t *previous_checks = NULL;
     uint8_t *previous_types = NULL;
     uint64_t *previous_offsets = NULL;
+    unsigned int previous_n_characters = 0;
     size_t i;
     for (i = 0; i < n; i++) {
       grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
@@ -287,6 +288,7 @@ grn_string_open_(grn_ctx *ctx,
         previous_normalized = string_->normalized;
         previous_normalized_length_in_bytes =
           string_->normalized_length_in_bytes;
+        previous_n_characters = string_->n_characters;
         previous_checks = string_->checks;
         previous_types = string_->ctypes;
         previous_offsets = string_->offsets;
@@ -322,6 +324,29 @@ grn_string_open_(grn_ctx *ctx,
           GRN_FREE(previous_checks);
         }
         if (previous_types) {
+          /*
+           * Currently, ctypes are merged only in a limited case.
+           * Specifically, ctypes are merged only when the number of characters
+           * in the first normalized result is equal to the number of characters
+           * in the latter normalized result.
+           *
+           * In other words, this works only when NormalizerTable performs
+           * normalization without changing the number of characters.
+           *
+           * The latter normalizer is NormalizerTable, and users can define any
+           * normalization pattern in NormalizerTable.
+           *
+           * It is difficult to handle all such cases with single
+           * implementation here.
+           * Therefore, we currently support only the simple case.
+           */
+          if (string_->ctypes &&
+              string_->n_characters == previous_n_characters) {
+            unsigned int i = 0;
+            for (i = 0; i < previous_n_characters; i++) {
+              string_->ctypes[i] |= previous_types[i];
+            }
+          }
           GRN_FREE(previous_types);
         }
         if (previous_offsets) {

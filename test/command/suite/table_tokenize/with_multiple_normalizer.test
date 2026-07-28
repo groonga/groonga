@@ -1,0 +1,8 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer 'NormalizerAuto, NormalizerTable("normalized", "Normalizations.normalized")'
+
+table_tokenize Terms "aBcDe fgH" --mode ADD
