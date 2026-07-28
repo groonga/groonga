@@ -142,6 +142,7 @@ jobs:
             -S apache-arrow/cpp \
             --preset ninja-debug-minimal \
             -DARROW_COMPUTE=ON \
+            -DMAKE_CXX_FLAGS="-Wno-error=unused-variable"
             -DCMAKE_INSTALL_PREFIX=$PWD/install
       - name: Build Apache Arrow
         if: matrix.apache-arrow-main == 'yes'
