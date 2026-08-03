@@ -1,0 +1,11 @@
+table_create Nomalizations TABLE_PAT_KEY ShortText
+column_create Nomalizations normalized COLUMN_SCALAR ShortText
+load --table Normalizations
+[
+{"_key": "aBcDe", "normalized": "12345"}
+]
+
+normalize \
+  --string "aBcDe fgH" \
+  --flags WITH_TYPES \
+  --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Nomalizations.normalized")'
