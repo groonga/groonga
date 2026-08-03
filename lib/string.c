@@ -325,10 +325,10 @@ grn_string_open_(grn_ctx *ctx,
         }
         if (previous_types) {
           /*
-           * Currently, ctypes are merged only in a limited case.
+           * Currently, ctypes are merged only in a limited cases.
            * Specifically, ctypes are merged only when the number of characters
-           * in the first normalized result is equal to the number of characters
-           * in the latter normalized result.
+           * in the first normalized result is equal to that in the latter
+           * normalized result, and "previous_types" contains a "GRN_CHAR_BLANK".
            *
            * In other words, this works only when NormalizerTable performs
            * normalization without changing the number of characters.
@@ -344,7 +344,9 @@ grn_string_open_(grn_ctx *ctx,
               string_->n_characters == previous_n_characters) {
             unsigned int i = 0;
             for (i = 0; i < previous_n_characters; i++) {
-              string_->ctypes[i] |= previous_types[i];
+              if (previous_types[i] & GRN_CHAR_BLANK) {
+                string_->ctypes[i] |= previous_types[i];
+              }
             }
           }
           GRN_FREE(previous_types);
