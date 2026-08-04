@@ -4,10 +4,10 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Normalizations
 [
-{"_key": "aBcDe", "normalized": "12345"}
+{"_key": "abcde", "normalized": "12345"}
 ]
 [[0,0.0,0.0],1]
-normalize   --string "aBcDe fgH"   --flags WITH_TYPES   --normalizers 'NormalizerNFKC150, NormalizerTable("normalized", "Normalizations.normalized")'
+normalize   --string "aBcDe fgH"   --flags WITH_TYPES|WITH_CHECKS|REMOVE_BLANK   --normalizers 'NormalizerNFKC, NormalizerTable("normalized", "Normalizations.normalized")'
 [
   [
     0,
@@ -24,8 +24,18 @@ normalize   --string "aBcDe fgH"   --flags WITH_TYPES   --normalizers 'Normalize
       "digit|blank",
       "alpha",
       "alpha",
-      "alpha"
+      "alpha",
       "null"
+    ],
+    "checks": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      1
     ]
   }
 ]

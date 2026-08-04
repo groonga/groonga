@@ -4,10 +4,10 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Normalizations
 [
-{"_key": "aBcDe", "normalized": "12345"}
+{"_key": "abcde", "normalized": "12345"}
 ]
 [[0,0.0,0.0],1]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer 'NormalizerAuto, NormalizerTable("normalized", "Normalizations.normalized")'
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer 'NormalizerNFKC, NormalizerTable("normalized", "Normalizations.normalized")'
 [[0,0.0,0.0],true]
 table_tokenize Terms "aBcDe fgH" --mode ADD
 [
