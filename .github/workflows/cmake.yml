@@ -324,6 +324,17 @@ jobs:
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
+      - name: "Test: stdio: NFKC: 17.0.0"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        env:
+          NFKC: "17.0.0"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
       - name: "Test: stdio: n_workers"
         if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
