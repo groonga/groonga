@@ -343,10 +343,11 @@ grn_string_open_(grn_ctx *ctx,
            */
           if (string_->ctypes &&
               string_->n_characters == previous_n_characters) {
-            unsigned int i = 0;
-            for (i = 0; i < previous_n_characters; i++) {
-              if (previous_types[i] & GRN_CHAR_BLANK) {
-                string_->ctypes[i] |= GRN_CHAR_BLANK;
+            unsigned int character_i = 0;
+            for (character_i = 0; character_i < previous_n_characters;
+                 character_i++) {
+              if (previous_types[character_i] & GRN_CHAR_BLANK) {
+                string_->ctypes[character_i] |= GRN_CHAR_BLANK;
               }
             }
           }
