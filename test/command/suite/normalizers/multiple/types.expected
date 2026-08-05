@@ -1,0 +1,41 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Normalizations
+[
+{"_key": "abcde", "normalized": "12345"}
+]
+[[0,0.0,0.0],1]
+normalize   --string "aBcDe fgH"   --flags WITH_TYPES|WITH_CHECKS|REMOVE_BLANK   --normalizers 'NormalizerNFKC, NormalizerTable("normalized", "Normalizations.normalized")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "12345fgh",
+    "types": [
+      "digit",
+      "digit",
+      "digit",
+      "digit",
+      "digit|blank",
+      "alpha",
+      "alpha",
+      "alpha",
+      "null"
+    ],
+    "checks": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      1
+    ]
+  }
+]

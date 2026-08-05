@@ -279,6 +279,7 @@ grn_string_open_(grn_ctx *ctx,
     int16_t *previous_checks = NULL;
     uint8_t *previous_types = NULL;
     uint64_t *previous_offsets = NULL;
+    unsigned int previous_n_characters = 0;
     size_t i;
     for (i = 0; i < n; i++) {
       grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
@@ -287,6 +288,7 @@ grn_string_open_(grn_ctx *ctx,
         previous_normalized = string_->normalized;
         previous_normalized_length_in_bytes =
           string_->normalized_length_in_bytes;
+        previous_n_characters = string_->n_characters;
         previous_checks = string_->checks;
         previous_types = string_->ctypes;
         previous_offsets = string_->offsets;
@@ -322,6 +324,33 @@ grn_string_open_(grn_ctx *ctx,
           GRN_FREE(previous_checks);
         }
         if (previous_types) {
+          /*
+           * Currently, ctypes are merged only in limited cases.
+           * Specifically, we merge only GRN_CHAR_BLANK when the
+           * number of characters in the first normalized result is equal to
+           * that in the latter normalized result, and previous_types has
+           * GRN_CHAR_BLANK set.
+           *
+           * In other words, this works only when NormalizerTable performs
+           * normalization without changing the number of characters.
+           *
+           * The latter normalizer is NormalizerTable, and users can define any
+           * normalization pattern in NormalizerTable.
+           *
+           * It is difficult to handle all such cases with a single
+           * implementation here.
+           * Therefore, we currently support only this simple case.
+           */
+          if (string_->ctypes &&
+              string_->n_characters == previous_n_characters) {
+            unsigned int character_i = 0;
+            for (character_i = 0; character_i < previous_n_characters;
+                 character_i++) {
+              if (previous_types[character_i] & GRN_CHAR_BLANK) {
+                string_->ctypes[character_i] |= GRN_CHAR_BLANK;
+              }
+            }
+          }
           GRN_FREE(previous_types);
         }
         if (previous_offsets) {
