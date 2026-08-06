@@ -324,14 +324,12 @@ task release: [
 
 namespace :nfkc do
   icu_version = ENV["ICU_VERSION"] || ""
-  icu_version_hyphen = icu_version.gsub(".", "-")
-  icu_version_underscore = icu_version.gsub(".", "_")
 
-  icu4c_src_tgz = File.basename("icu4c-#{icu_version_underscore}-src.tgz")
+  icu4c_src_tgz = File.basename("icu4c-#{icu_version}-sources.tgz")
 
   file icu4c_src_tgz do
     icu4c_src_tgz_uri = "https://github.com/unicode-org/icu/releases/download/"
-    icu4c_src_tgz_uri += "release-#{icu_version_hyphen}/"
+    icu4c_src_tgz_uri += "release-#{icu_version}/"
     icu4c_src_tgz_uri += icu4c_src_tgz
     icu4c_src_tgz_uri = URI(icu4c_src_tgz_uri)
     icu4c_src_tgz_uri.open do |input|

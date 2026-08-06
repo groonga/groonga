@@ -34,7 +34,7 @@ grn_char_type
 grn_nfkc_latest_char_type(const unsigned char *utf8)
 {
   /* This must be updated when we add the latest Unicode support. */
-  return grn_nfkc160_char_type(utf8);
+  return grn_nfkc170_char_type(utf8);
 }
 
 const char *
@@ -147,6 +147,17 @@ grn_nfkc160_normalize_options_init(grn_ctx *ctx,
                                   grn_nfkc160_compose);
 }
 
+void
+grn_nfkc170_normalize_options_init(grn_ctx *ctx,
+                                   grn_nfkc_normalize_options *options)
+{
+  grn_nfkc_normalize_options_init(ctx,
+                                  options,
+                                  grn_nfkc170_char_type,
+                                  grn_nfkc170_decompose,
+                                  grn_nfkc170_compose);
+}
+
 static const grn_nfkc_funcs grn_nfkc_funcs_null = {
   NULL,
   NULL,
@@ -187,6 +198,12 @@ static const grn_nfkc_funcs grn_nfkc160_funcs = {
   grn_nfkc160_char_type,
   grn_nfkc160_decompose,
   grn_nfkc160_compose,
+};
+
+static const grn_nfkc_funcs grn_nfkc170_funcs = {
+  grn_nfkc170_char_type,
+  grn_nfkc170_decompose,
+  grn_nfkc170_compose,
 };
 
 grn_nfkc_funcs
@@ -241,10 +258,12 @@ grn_nfkc_version_option_process(grn_ctx *ctx,
     return grn_nfkc150_funcs;
   } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "16.0.0")) {
     return grn_nfkc160_funcs;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "17.0.0")) {
+    return grn_nfkc170_funcs;
   } else {
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", "
-        "\"13.0.0\", \"15.0.0\" or \"16.0.0\": <%.*s>",
+        "\"13.0.0\", \"15.0.0\", \"16.0.0\" or \"17.0.0\": <%.*s>",
         tag,
         (int)(name_raw->length),
         name_raw->value,

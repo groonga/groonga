@@ -6,7 +6,7 @@ normalize 'NormalizerNFKC("version", "unknown")' "groonga"
       0.0,
       0.0
     ],
-    "[normalizer][nfkc][version] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", \"13.0.0\", \"15.0.0\" or \"16.0.0\": <unknown>"
+    "[normalizer][nfkc][version] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", \"13.0.0\", \"15.0.0\", \"16.0.0\" or \"17.0.0\": <unknown>"
   ],
   {
     "normalized": "",
@@ -14,4 +14,4 @@ normalize 'NormalizerNFKC("version", "unknown")' "groonga"
     "checks": []
   }
 ]
-#|e| [normalizer][nfkc][version] must be one of "5.0.0", "10.0.0", "12.1.0", "13.0.0", "15.0.0" or "16.0.0": <unknown>
+#|e| [normalizer][nfkc][version] must be one of "5.0.0", "10.0.0", "12.1.0", "13.0.0", "15.0.0", "16.0.0" or "17.0.0": <unknown>
