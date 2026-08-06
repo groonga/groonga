@@ -1,0 +1,10 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
+table_create Data TABLE_NO_KEY
+column_create Data string COLUMN_SCALAR|COLUMN_LARGE LongText --path data.string
+
+schema
+
+column_list Data
+
+object_inspect Data.string

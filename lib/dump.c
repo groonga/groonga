@@ -66,6 +66,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
   case GRN_OBJ_COLUMN_SCALAR:
     GRN_TEXT_PUTS(ctx, buffer, "COLUMN_SCALAR");
+    if (flags & GRN_OBJ_COLUMN_LARGE) {
+      GRN_TEXT_PUTS(ctx, buffer, "|COLUMN_LARGE");
+    }
     break;
   case GRN_OBJ_COLUMN_VECTOR:
     GRN_TEXT_PUTS(ctx, buffer, "COLUMN_VECTOR");
