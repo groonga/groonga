@@ -44,6 +44,12 @@ msgstr "`string_truncate()`は、文字列を指定された文字数以下に�
 msgid "Execution example:"
 msgstr "実行例："
 
+msgid "Added new function `binary_length()`"
+msgstr "新しい関数 `binary_length()` を追加"
+
+msgid "`binary_length()` returns the size of the data in a column in bytes. You can use it to check the data size of each column as shown below."
+msgstr "`binary_length()` はカラム内のデータのバイト数を返します。以下のように、各カラムのデータサイズを確認できます。"
+
 msgid "[normalizers] Added support for Unicode 17.0.0"
 msgstr "[normalizers] Unicode 17.0.0をサポート"
 
