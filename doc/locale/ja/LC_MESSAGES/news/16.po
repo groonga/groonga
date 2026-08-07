@@ -17,11 +17,71 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.0.8 - 2026-07-13"
-msgstr "16.0.8リリース - 2026-07-13"
+msgid "Release 16.0.9 - 2026-08-07"
+msgstr "16.0.9リリース - 2026-08-07"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[benchmark] Remove incorrect `G_GNUC_CONST` usage"
+msgstr "[benchmark] `G_GNUC_CONST`の誤った使い方を削除"
+
+msgid "[GH-2857](https://github.com/groonga/groonga/issues/2857) Reported by correctmost."
+msgstr "[GH-2857](https://github.com/groonga/groonga/issues/2857) correctmostさんの報告。"
+
+msgid "[GH-2858](https://github.com/groonga/groonga/pull/2858) Patched by correctmost."
+msgstr "[GH-2858](https://github.com/groonga/groonga/pull/2858) correctmostさんのパッチ提供。"
+
+msgid "Changed for compatibility with recent GCC versions. See https://gitlab.gnome.org/GNOME/glib/-/commit/016829559 for details."
+msgstr "最新のGCCとの互換性のための変更です。詳細は、 https://gitlab.gnome.org/GNOME/glib/-/commit/016829559 を参照してください。"
+
+msgid "[{doc}`/reference/functions/string_truncate`] Added new function `string_truncate()`"
+msgstr "[{doc}`/reference/functions/string_truncate`] 新しい関数 `string_truncate()` を追加"
+
+msgid "`string_truncate()` truncates a string to at most the specified number of characters. If the string is truncated, the tail of the kept characters is replaced with an omission mark so that the result, including the omission mark, is `length` characters long, in the same way as Ruby on Rails' `String#truncate`."
+msgstr "`string_truncate()`は、文字列を指定された文字数以下に切り詰めます。文字列が切り詰められた場合、残された文字の末尾を省略記号に置き換えます。その結果、省略記号を含めて`length`文字の長さになります。これはRuby on Railsの`String#truncate`と同様の動作です。"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "Added new function `binary_length()`"
+msgstr "新しい関数 `binary_length()` を追加"
+
+msgid "`binary_length()` returns the size of the data in a column in bytes. You can use it to check the data size of each column as shown below."
+msgstr "`binary_length()` はカラム内のデータのバイト数を返します。以下のように、各カラムのデータサイズを確認できます。"
+
+msgid "[normalizers] Added support for Unicode 17.0.0"
+msgstr "[normalizers] Unicode 17.0.0をサポート"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug where input was unintentionally tokenized while ignoring whitespace when using multiple normalizers"
+msgstr "ノーマライザーを複数使用したときに、意図せず空白が無視されてトークナイズされてしまう問題を修正"
+
+msgid "[GH-2853](https://github.com/groonga/groonga/issues/2853) Reported by askdkc."
+msgstr "[GH-2853](https://github.com/groonga/groonga/issues/2853) askdkcさんの報告。"
+
+msgid "For example, the following text incorrectly matches the query \"sayuri\" cause of this issue:"
+msgstr "例えば、この問題が原因で、\"sayuri\"で以下のテキストがマッチしてしまいます。"
+
+msgid "However, the text does not contain \"sayuri\"."
+msgstr "しかし、このテキストには、\"sayuri\"は含まれていません。"
+
+msgid "This issue occurs only when using multiple normalizers as shown below:"
+msgstr "この問題は、以下のように複数のノーマライザーを使ったときにのみ発生します："
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "askdkc"
+msgstr "askdkcさん"
+
+msgid "correctmost"
+msgstr "correctmostさん"
+
+msgid "Release 16.0.8 - 2026-07-13"
+msgstr "16.0.8リリース - 2026-07-13"
 
 msgid "[{doc}`/reference/functions/between`] Added support for vector type value as the 1st parameter"
 msgstr "[{doc}`/reference/functions/between`] 最初の引数にベクター型の値をサポート"
@@ -32,17 +92,11 @@ msgstr "`between`はまだベクターの値に対してインデックスを使
 msgid "In the following example, `between` returns `true` if any of the elements is included in the specified range. Therefore, we can use `between` to search records that have at least one value in the range."
 msgstr "以下の例では、`between`はいずれかの要素が指定した範囲に含まれていれば`true`を返します。したがって、`between`を使って、範囲内に少なくとも1つの値を持つレコードを検索できます。"
 
-msgid "Execution example:"
-msgstr "実行例："
-
 msgid "Dropped support for Debian 12 (bookworm)"
 msgstr "Debian 12 (bookworm)のサポートをやめました"
 
 msgid "It reached EOL on 2026-06-10."
 msgstr "2026-06-10にEOLになったためです。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a crash bug when we specify `language_model_knn(...)` as `sort_keys`"
 msgstr "`sort_keys`として`language_model_knn(...)`を指定するとクラッシュする問題を修正"
@@ -133,9 +187,6 @@ msgstr "[GH-2798](https://github.com/groonga/groonga/pull/2798) Kentaro Hayashi�
 
 msgid "Fixed an issue where duplicate \"tools\" directories were created as below when installing the groonga-tools package on AlmaLinux and Amazon Linux:"
 msgstr "AlmaLinuxやAmazon Linux向けのgroonga-toolsパッケージをインストールした時、以下のように\"tools\"ディレクトリーが重複して作成される問題を修正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Nicolas PARLANT"
 msgstr "Nicolas PARLANTさん"
