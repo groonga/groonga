@@ -48,6 +48,7 @@ object_inspect Notes.title_terms
         },
         "size": 4
       },
+      "size": "normal",
       "compress": null,
       "weight": false,
       "weight_float32": false,

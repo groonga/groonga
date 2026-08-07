@@ -58,6 +58,7 @@ object_inspect Users.age
         },
         "size": 1
       },
+      "size": "normal",
       "compress": null,
       "compress_filters": []
     },
