@@ -56,7 +56,7 @@ msgstr "[normalizers] Unicode 17.0.0をサポート"
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a bug where input unintentionally tokenized while ignoring whitespace when using multiple normalizers"
+msgid "Fixed a bug where input was unintentionally tokenized while ignoring whitespace when using multiple normalizers"
 msgstr "ノーマライザーを複数使用したときに、意図せず空白が無視されてトークナイズされてしまう問題を修正"
 
 msgid "[GH-2853](https://github.com/groonga/groonga/issues/2853) Reported by askdkc."
