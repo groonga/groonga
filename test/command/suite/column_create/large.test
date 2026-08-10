@@ -1,4 +1,4 @@
-#$GRN_ENABLE_REFERENCE_COUNT=no
+#@require-feature mecab
 
 table_create Data TABLE_NO_KEY
 column_create Data string COLUMN_SCALAR|COLUMN_LARGE LongText --path data.string
