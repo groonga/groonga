@@ -445,7 +445,7 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   if (is_index) {
     n_elements += 5;
   } else {
-    n_elements += 2;
+    n_elements += 3;
     if (is_vector) {
       n_elements += 3;
     }
@@ -484,6 +484,12 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
       command_object_inspect_column_index_value_statistics(ctx,
                                                            (grn_ii *)column);
     } else {
+      grn_ctx_output_cstr(ctx, "size");
+      if ((column_flags & GRN_OBJ_COLUMN_LARGE) != 0) {
+        grn_ctx_output_cstr(ctx, "large");
+      } else {
+        grn_ctx_output_cstr(ctx, "normal");
+      }
       grn_ctx_output_cstr(ctx, "compress");
       command_object_inspect_column_data_value_compress(ctx, column);
       if (is_vector) {

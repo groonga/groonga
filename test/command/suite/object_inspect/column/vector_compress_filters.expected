@@ -44,6 +44,7 @@ object_inspect Memos.embedding
         },
         "size": 4
       },
+      "size": "normal",
       "compress": "zstd",
       "weight": false,
       "weight_float32": false,

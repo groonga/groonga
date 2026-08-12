@@ -834,7 +834,8 @@ typedef uint32_t grn_column_flags;
 
 #define GRN_OBJ_INDEX_SMALL                               (0x01 << 16)
 #define GRN_OBJ_INDEX_MEDIUM                              (0x01 << 17)
-#define GRN_OBJ_INDEX_LARGE                               (0x01 << 18)
+#define GRN_OBJ_COLUMN_LARGE                              (0x01 << 18)
+#define GRN_OBJ_INDEX_LARGE                               GRN_OBJ_COLUMN_LARGE
 #define GRN_OBJ_WEIGHT_FLOAT32                            (0x01 << 19)
 
 #define GRN_OBJ_MISSING_MASK                              (0x03 << 20)
