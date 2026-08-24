@@ -84,6 +84,24 @@ allow_unsigned_uploads = 0
     $1
   end
 
+  def dput_with_retry
+    max_n_retries = 2
+    (0..max_n_retries).each do |n_retry|
+      begin
+        sh("dput",
+           dput_configuration_name,
+           "../#{@package}_#{deb_version}_source.changes")
+      rescue RuntimeError => e
+        if e.message.include?("internal server error") &&
+           (n_retry < max_n_retries)
+          sleep 1
+          next
+        end
+        return false
+      end
+    end
+  end
+
   def ubuntu_upload(code_name, version)
     ensure_dput_configuration
 
@@ -121,9 +139,7 @@ allow_unsigned_uploads = 0
            "-S",
            "-sa",
            "-k#{ubuntu_pgp_sign_key}")
-        sh("dput",
-           dput_configuration_name,
-           "../#{@package}_#{deb_version}_source.changes")
+        dput_with_retry
       end
     end
   end
