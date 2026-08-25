@@ -117,12 +117,19 @@ jobs:
             release-artifacts/*/*
   launchpad:
     name: Launchpad
+    if: |
+      github.ref_type == 'tag'
     runs-on: ubuntu-latest
     needs: publish
     environment: release
     timeout-minutes: 10
-    if: |
-      github.ref_type == 'tag'
+    strategy:
+      fail-fast: false
+      matrix:
+        code-name:
+          - jammy
+          - noble
+          - resolute
     steps:
       - uses: actions/checkout@v7
       - name: Download source archive
@@ -147,7 +154,7 @@ jobs:
         run: |
           echo "${LAUNCHPAD_DEPLOY_KEY}" | gpg --import
           echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
-          rake -C packages ubuntu
+          rake -C packages ubuntu:upload:${{ matrix.code-name }}
   x:
     name: X
     runs-on: ubuntu-latest
