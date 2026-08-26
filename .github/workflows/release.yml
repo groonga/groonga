@@ -126,6 +126,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Keep in sync with packages/launchpad-helper.rb:ubuntu_targets_default
         code-name:
           - jammy
           - noble
