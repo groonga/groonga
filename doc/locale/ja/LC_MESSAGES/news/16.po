@@ -17,6 +17,24 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
+msgid "Release 16.1.0 - 2026-08-28"
+msgstr "16.1.0リリース - 2026-08-28"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a crash bug when allocation of a new segment fails"
+msgstr "新しいセグメントの確保に失敗した時にクラッシュする問題を修正"
+
+msgid "This issue may occur when updating the index in an environment with insufficient memory or when the limit on the number of memory mappings has been reached."
+msgstr "この問題は、メモリー不足や、メモリーマップ数の上限に到達しているような環境で、インデックスの更新時に発生することがあります。"
+
+msgid "Groonga outputs an error message when it cannot allocate memory while updating the index. However, the error message refers to an uninitialized value when it is generated."
+msgstr "Groongaは、インデックスの更新に必要な領域が確保出来ない時にエラーメッセージを出力しますが、そのエラーメッセージ内で未初期化の領域を参照していました。"
+
+msgid "This error message is generated only when Groonga cannot allocate memory due to insufficient memory or when the limit on the number of memory mappings has been reached. Therefore, this issue does not occur in an environment with sufficient memory."
+msgstr "このエラーメッセージは、Groongaがメモリ不足やメモリーマップ数の上限に到達していて、メモリーを確保できない時にのみ生成されます。よって、メモリーに余裕のある環境では発生しません。"
+
 msgid "Release 16.0.9 - 2026-08-07"
 msgstr "16.0.9リリース - 2026-08-07"
 
@@ -52,9 +70,6 @@ msgstr "`binary_length()` はカラム内のデータのバイト数を返しま
 
 msgid "[normalizers] Added support for Unicode 17.0.0"
 msgstr "[normalizers] Unicode 17.0.0をサポート"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a bug where input was unintentionally tokenized while ignoring whitespace when using multiple normalizers"
 msgstr "ノーマライザーを複数使用したときに、意図せず空白が無視されてトークナイズされてしまう問題を修正"
