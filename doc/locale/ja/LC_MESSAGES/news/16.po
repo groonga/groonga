@@ -23,7 +23,7 @@ msgstr "16.1.0リリース - 2026-08-28"
 msgid "Fixes"
 msgstr "修正"
 
-msgid "Fixed a crash bug when allocation a new segment fails"
+msgid "Fixed a crash bug when allocation of a new segment fails"
 msgstr "新しいセグメントの確保に失敗した時にクラッシュする問題を修正"
 
 msgid "This issue may occur when updating the index in an environment with insufficient memory or when the limit on the number of memory maps has been reached."
