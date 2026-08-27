@@ -7154,7 +7154,7 @@ grn_ii_update_one_internal(
                "<%.*s>(%u): "
                "(%u:%u): "
                "segment:<%u>, "
-               "free:<%u>, "
+               "max-segment:<%u>, "
                "required:<%u>",
                tag,
                name_size,
@@ -7165,7 +7165,7 @@ grn_ii_update_one_internal(
                u->rid,
                u->sid,
                pos,
-               b->header.buffer_free,
+               ii->seg->header->max_segment,
                size);
           GRN_OBJ_FIN(ctx, &term);
           goto exit;
@@ -7278,7 +7278,7 @@ grn_ii_update_one_internal(
                    "(%u:%u): "
                    "segment:<%u>, "
                    "new-segment:<%u>, "
-                   "free:<%u>, "
+                   "max-segment:<%u>, "
                    "required:<%u>",
                    tag,
                    name_size,
@@ -7290,7 +7290,7 @@ grn_ii_update_one_internal(
                    u->sid,
                    pos,
                    a[0],
-                   b->header.buffer_free,
+                   ii->seg->header->max_segment,
                    size);
               GRN_OBJ_FIN(ctx, &term);
             }
