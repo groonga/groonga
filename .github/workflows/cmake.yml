@@ -680,6 +680,10 @@ jobs:
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
+          # Temporarily disabled because MeCab is no longer installed as a dependency.
+          # Normally, we would install MeCab separately and run the tests,
+          # but since naist-jdic is not available, the tests would fail even if MeCab were installed.
+          # See: https://github.com/msys2/MINGW-packages/pull/30998
           rm -rf test/command/suite/select/filter/near_phrase/mecab.test \
                  test/command/suite/select/filter/ordered_near_phrase/mecab.test \
                  test/command/suite/select/fuzzy/tokenize.test \
