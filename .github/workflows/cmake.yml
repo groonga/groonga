@@ -600,6 +600,19 @@ jobs:
           cd ci/msys2
           sed -i'' -e 's/^CheckSpace/#CheckSpace/g' /etc/pacman.conf
           MINGW-packages/.ci/fetch-validpgpkeys.sh
+          # mingw-w64-mecab-naist-jdic was dropped from MSYS2 by
+          # https://github.com/msys2/MINGW-packages/pull/30998 but
+          # mingw-w64-mecab still uses naist-jdic as its default dictionary.
+          # So we build and install it by ourselves.
+          (cd mecab-naist-jdic && \
+             MINGW_ARCH=${{ matrix.msystem }} \
+               makepkg-mingw \
+                 --cleanbuild \
+                 --install \
+                 --nocheck \
+                 --noconfirm \
+                 --noprogressbar \
+                 --syncdeps)
       - name: Prepare ccache
         shell: msys2 {0}
         run: |
@@ -638,7 +651,7 @@ jobs:
             --noprogressbar \
             --upgrade \
             *.pkg.tar.*
-          cp -a *.pkg.tar.* ../../
+          cp -a *.pkg.tar.* mecab-naist-jdic/*.pkg.tar.* ../../
 
       # Artifact
       - uses: actions/upload-artifact@v7
