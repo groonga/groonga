@@ -680,6 +680,24 @@ jobs:
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
+          # Temporarily disabled because MeCab is no longer installed as a dependency.
+          # Normally, we would install MeCab separately and run the tests,
+          # but since naist-jdic is not available, the tests would fail even if MeCab were installed.
+          # See: https://github.com/msys2/MINGW-packages/pull/30998
+          rm -rf test/command/suite/select/filter/near_phrase/mecab.test \
+                 test/command/suite/select/filter/ordered_near_phrase/mecab.test \
+                 test/command/suite/select/fuzzy/tokenize.test \
+                 test/command/suite/select/fuzzy/tokenize_default.test \
+                 test/command/suite/select/output_columns/star/function_call.test \
+                 test/command/suite/select/query/match/with_index/token_mecab/ \
+                 test/command/suite/table_create/default_tokenizer/mecab/ \
+                 test/command/suite/token_filters/nfkc100/unify_kana.test \
+                 test/command/suite/token_filters/nfkc121/unify_kana.test \
+                 test/command/suite/token_filters/nfkc130/unify_kana.test \
+                 test/command/suite/token_filters/nfkc150/unify_kana.test \
+                 test/command/suite/tokenize/output_style/full.test \
+                 test/command/suite/tokenize/output_style/simple.test \
+                 test/command/suite/tokenizers/mecab/
           ruby \
             -r./setup-extpp \
             -S \

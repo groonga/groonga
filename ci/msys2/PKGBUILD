@@ -15,11 +15,13 @@ source=(${_realname}-${pkgver}.tar.gz
         001-aarch64.patch)
 depends=("${MINGW_PACKAGE_PREFIX}-arrow"
          "${MINGW_PACKAGE_PREFIX}-blosc2"
+         "${MINGW_PACKAGE_PREFIX}-cc-libs"
+         "${MINGW_PACKAGE_PREFIX}-llama.cpp"
          "${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-mecab"
-         "${MINGW_PACKAGE_PREFIX}-mecab-naist-jdic"
          "${MINGW_PACKAGE_PREFIX}-msgpack-c"
-         "${MINGW_PACKAGE_PREFIX}-onigmo"
+         "${MINGW_PACKAGE_PREFIX}-simdjson"
+#         "${MINGW_PACKAGE_PREFIX}-onigmo"
          "${MINGW_PACKAGE_PREFIX}-xxhash"
          "${MINGW_PACKAGE_PREFIX}-zlib"
          "${MINGW_PACKAGE_PREFIX}-zstd")
@@ -27,9 +29,14 @@ makedepends=("git"
              "${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja"
+             "${MINGW_PACKAGE_PREFIX}-mecab"
+             "${MINGW_PACKAGE_PREFIX}-omp"
+             "${MINGW_PACKAGE_PREFIX}-openblas"
              "${MINGW_PACKAGE_PREFIX}-rapidjson"
              "${MINGW_PACKAGE_PREFIX}-ruby"
-             "${MINGW_PACKAGE_PREFIX}-xsimd")
+             "${MINGW_PACKAGE_PREFIX}-xsimd"
+             "${MINGW_PACKAGE_PREFIX}-git")
+optdepends=("${MINGW_PACKAGE_PREFIX}-mecab")
 sha256sums=('SKIP'
             'SKIP')
 validpgpkeys=('2701F317CFCCCB975CADE9C2624CF77434839225') # Groonga Key <packages@groonga.org>
