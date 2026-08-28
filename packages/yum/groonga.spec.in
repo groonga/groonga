@@ -510,6 +510,9 @@ exit 0
 %endif
 
 %changelog
+* Fri Aug 28 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.1.0-1
+- New upstream release.
+
 * Fri Aug 07 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.9-1
 - New upstream release.
 
