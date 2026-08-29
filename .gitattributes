@@ -1,1 +1,2 @@
 *.data binary
+ci/msys2/** text eol=lf
