@@ -222,3 +222,6 @@ msgstr "以下は `cmake --build` を使ってGroongaをビルド、インスト
 
 msgid "You should specify `--config Debug` instead of `--config Release` when debugging."
 msgstr "デバッグをする場合は、 `--config Release` の代わりに `--config Debug` を指定してください。"
+
+msgid "We showed an example specifying `-G \"Visual Studio 17 2022\"` for the generator, but we recommend specifying Ninja for the generator, like `-G Ninja`. Ninja builds in parallel by default using all CPU cores, so you can expect fast builds."
+msgstr "ジェネレーターには `-G \"Visual Studio 17 2022\"` を指定する例を示しましたが、`-G Ninja` のようにNinjaをジェネレーターとして指定することをおすすめします。Ninja はデフォルトですべてのCPUコアを使用して並列ビルドを行うため、高速なビルドが期待できます。"
