@@ -34,7 +34,7 @@ groonga \
   --log-path /tmp/db/groonga.log \
   --query-log-path /tmp/db/query.log \
   --document-root examples/dictionary/html \
-  --protocol httl \
+  --protocol http \
   -s \
   -n \
   /tmp/db/db
