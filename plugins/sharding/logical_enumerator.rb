@@ -66,27 +66,10 @@ module Groonga
       end
 
       def each_shard_with_around(order)
-        context = Context.instance
-        prefix = "#{@logical_table}_"
         unref_immediately = @options.fetch(:unref_immediately, false)
-
         shards = [nil]
         begin
-          context.database.each_name(:prefix => prefix,
-                                     :order_by => :key,
-                                     :order => order) do |name|
-            shard_range_raw = name[prefix.size..-1]
-
-            case shard_range_raw
-            when /\A(\d{4})(\d{2})\z/
-              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, nil)
-            when /\A(\d{4})(\d{2})(\d{2})\z/
-              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
-            else
-              next
-            end
-
-            shard = Shard.new(name, @shard_key_name, shard_range_data)
+          each_prefix_shard(order) do |shard|
             previous_shard = shards.last
             if previous_shard
               shard.previous_shard = previous_shard
@@ -108,6 +91,29 @@ module Groonga
           end
         ensure
           unref if unref_immediately
+        end
+      end
+
+      def each_prefix_shard(order)
+        context = Context.instance
+        prefix = "#{@logical_table}_"
+        context.database.each_name(:prefix => prefix,
+                                   :order_by => :key,
+                                   :order => order) do |name|
+          shard_range_data = parse_shard_range_data(name[prefix.size..-1])
+          next unless shard_range_data
+          yield(Shard.new(name, @shard_key_name, shard_range_data))
+        end
+      end
+
+      def parse_shard_range_data(raw_range)
+        case raw_range
+        when /\A(\d{4})(\d{2})\z/
+          ShardRangeData.new($1.to_i, $2.to_i, nil)
+        when /\A(\d{4})(\d{2})(\d{2})\z/
+          ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
+        else
+          nil
         end
       end
 
