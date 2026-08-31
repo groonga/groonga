@@ -168,9 +168,9 @@ jobs:
       - name: Install test dependencies
         run: |
           sudo env MAKEFLAGS=-j$(nproc) gem install \
-            grntest \
+            grntest:1.7.5 \
             pkg-config \
-            red-arrow \
+            red-arrow:16.1.0 \
             rroonga
       - uses: actions/cache@v4
         with:
