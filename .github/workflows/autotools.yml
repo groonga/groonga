@@ -174,61 +174,63 @@ jobs:
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite
-
-  macos:
-    name: macOS
-    runs-on: macos-12
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Install packages
-        run: |
-          brew bundle
-      - name: Prepare ccache
-        run: |
-          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
-          echo "$(brew --prefix ccache)/libexec" >> ${GITHUB_PATH}
-      - name: Cache ccache
-        uses: actions/cache@v4
-        with:
-          path: ccache
-          key: autotools-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: autotools-macos-ccache-
-      - name: Generate configure
-        run: |
-          ./autogen.sh
-      - name: Configure
-        run: |
-          ccache --show-stats --verbose --version || :
-          mkdir -p ../groonga.build
-          cd ../groonga.build
-          ../groonga/configure \
-            --enable-debug \
-            --enable-mruby \
-            --prefix=/usr/local \
-            --with-ruby
-      - name: Build
-        run: |
-          make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.physicalcpu)
-      - name: Install
-        run: |
-          sudo make -C ../groonga.build install
-      - name: Install test dependencies
-        run: |
-          MAKEFLAGS=-j$(nproc) gem install \
-            grntest \
-            pkg-config
-      - name: Set environment variables
-        run: |
-          echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
-      - name: "Test: stdio"
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite
+  # Only the Groonga package for Linux is needed in the maintenance/14.0.6 branch.
+  # Support for the other OS is disabled.
+  # Re-enable them if support is needed in the future.
+  #macos:
+  #  name: macOS
+  #  runs-on: macos-12
+  #  timeout-minutes: 45
+  #  steps:
+  #    - uses: actions/checkout@v4
+  #      with:
+  #        submodules: recursive
+  #    - name: Install packages
+  #      run: |
+  #        brew bundle
+  #    - name: Prepare ccache
+  #      run: |
+  #        echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+  #        echo "$(brew --prefix ccache)/libexec" >> ${GITHUB_PATH}
+  #    - name: Cache ccache
+  #      uses: actions/cache@v4
+  #      with:
+  #        path: ccache
+  #        key: autotools-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+  #        restore-keys: autotools-macos-ccache-
+  #    - name: Generate configure
+  #      run: |
+  #        ./autogen.sh
+  #    - name: Configure
+  #      run: |
+  #        ccache --show-stats --verbose --version || :
+  #        mkdir -p ../groonga.build
+  #        cd ../groonga.build
+  #        ../groonga/configure \
+  #          --enable-debug \
+  #          --enable-mruby \
+  #          --prefix=/usr/local \
+  #          --with-ruby
+  #    - name: Build
+  #      run: |
+  #        make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.physicalcpu)
+  #    - name: Install
+  #      run: |
+  #        sudo make -C ../groonga.build install
+  #    - name: Install test dependencies
+  #      run: |
+  #        MAKEFLAGS=-j$(nproc) gem install \
+  #          grntest \
+  #          pkg-config
+  #    - name: Set environment variables
+  #      run: |
+  #        echo "COLUMNS=79" >> ${GITHUB_ENV}
+  #        echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+  #    - name: "Test: stdio"
+  #      run: |
+  #        grntest \
+  #          --base-dir test/command \
+  #          --n-retries=2 \
+  #          --read-timeout=30 \
+  #          --reporter=mark \
+  #          test/command/suite
