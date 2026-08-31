@@ -31,6 +31,9 @@ case ${os} in
         DNF="dnf --enablerepo=powertools"
         ${DNF} install -y \
           https://packages.apache.org/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
+        ${DNF} install -y \
+          arrow-devel-16.1.0-1.el8.x86_64 \
+          arrow16-libs-16.1.0-1.el8.x86_64
         ;;
       *)
         DNF="dnf --enablerepo=crb"
@@ -86,6 +89,7 @@ if [ "${run_test}" = "yes" ]; then
 
   ${DNF} install -y \
     gcc \
+    libffi-devel \
     make \
     redhat-rpm-config
   MAKEFLAGS=-j$(nproc) gem install grntest
