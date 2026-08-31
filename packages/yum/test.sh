@@ -29,6 +29,8 @@ case ${os} in
         ;;
       8)
         DNF="dnf --enablerepo=powertools"
+        ${DNF} install -y \
+          https://packages.apache.org/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
         ;;
       *)
         DNF="dnf --enablerepo=crb"
