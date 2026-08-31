@@ -10,6 +10,7 @@ RUN \
   dnf install -y ${quiet} \
     epel-release \
     'dnf-command(config-manager)' \
+    https://packages.apache.org/artifactory/arrow/almalinux/8/apache-arrow-release-latest.rpm && \
     https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm && \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
