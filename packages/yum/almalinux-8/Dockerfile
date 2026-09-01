@@ -10,11 +10,13 @@ RUN \
   dnf install -y ${quiet} \
     epel-release \
     'dnf-command(config-manager)' \
+    https://packages.apache.org/artifactory/arrow/almalinux/8/apache-arrow-release-latest.rpm \
     https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm && \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    arrow-devel-${APACHE_ARROW_VERSION} \
+    arrow-devel-16.1.0-1.el8.x86_64 \
+    arrow16-libs-16.1.0-1.el8.x86_64 \
     ccache \
     cmake \
     gcc-c++ \
