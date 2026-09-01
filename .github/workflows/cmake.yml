@@ -116,7 +116,7 @@ jobs:
             cmake \
             gdb \
             gettext \
-            libarrow-dev \
+            libarrow-dev=16.1.0-1 \
             libevent-dev \
             libluajit-5.1-dev \
             liblz4-dev \
