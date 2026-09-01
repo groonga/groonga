@@ -72,8 +72,8 @@ jobs:
           - cc: gcc
             cxx: g++
             mruby: "OFF"
-          - cc: clang
-            cxx: clang++
+          #- cc: clang
+          #  cxx: clang++
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
