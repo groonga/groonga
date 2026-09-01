@@ -89,6 +89,7 @@ if [ "${run_test}" = "yes" ]; then
 
   ${DNF} install -y \
     gcc \
+    libffi-devel \
     make \
     redhat-rpm-config
 
