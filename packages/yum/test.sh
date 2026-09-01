@@ -92,11 +92,15 @@ if [ "${run_test}" = "yes" ]; then
     libffi-devel \
     make \
     redhat-rpm-config
-  MAKEFLAGS=-j$(nproc) gem install \
-              json:2.7.2 \
-              groonga-command-parser:1.1.4 \
-              grntest:1.7.5
-  gem uninstall json:2.21.2
+
+  cat > Gemfile <<'EOF'
+source "https://rubygems.org"
+
+gem "json", "2.7.2"
+gem "groonga-command-parser", "1.1.4"
+gem "grntest", "1.7.5"
+EOF
+  bundle install
 
   export TZ=Asia/Tokyo
 
