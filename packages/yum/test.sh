@@ -93,6 +93,7 @@ if [ "${run_test}" = "yes" ]; then
     make \
     redhat-rpm-config
   MAKEFLAGS=-j$(nproc) gem install json:2.7.2 grntest:1.7.5
+  gem uninstall json -v 2.21.2
 
   export TZ=Asia/Tokyo
 
