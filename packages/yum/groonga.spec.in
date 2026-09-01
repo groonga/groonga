@@ -14,7 +14,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	2%{?dist}
+Release:	@RELEASE@%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -429,10 +429,6 @@ exit 0
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
-* Mon Sep 01 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.0.6-2
-- Fixed a crash bug when allocation of a new segment fails.
-  This change is backported from main.
-
 * Mon Jul 29 2024 Horimoto Yasuhiro <horimoto@clear-code.com> - 14.0.6-1
 - New upstream release.
 

@@ -5,6 +5,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     super("groonga", detect_version, detect_release_time)
     @archive_name = "groonga-#{@version}.tar.gz"
     @original_archive_name = @archive_name
+    @rpm_release = rpm_release
   end
 
   private
@@ -93,6 +94,10 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     else
       super
     end
+  end
+
+  def rpm_release
+    2
   end
 
   def source_targets_default
