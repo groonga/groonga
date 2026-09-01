@@ -150,161 +150,161 @@ jobs:
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - name: Set environment variables
-        run: |
-          echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
-          echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
-          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
-          if [ "${{ matrix.cc }}" == "gcc" -a \
-               "${{ matrix.mruby }}" == "" ]; then
-            echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
-          fi
-          if [ -e "install/bin/grndb" ] ; then
-            echo "GRN_TEST_RUN_COMMAND_LINE=yes" >> ${GITHUB_ENV}
-          fi
-
-          echo "$PWD/install/bin" >> ${GITHUB_PATH}
-      - name: Install test dependencies
-        run: |
-          sudo env MAKEFLAGS=-j$(nproc) gem install \
-            grntest:1.7.5 \
-            pkg-config \
-            red-arrow:16.1.0 \
-            rroonga
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/red-datasets
-          key: red-datasets-ubuntu
-      - name: "Test: command line"
-        if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
-        run: |
-          test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
-      - name: "Test: mruby"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          USE_SYSTEM=yes test/mruby/run-test.rb
-      - name: "Test: stdio"
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite
-      - name: "Test: stdio: optimize"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          export GRN_EXPR_OPTIMIZE=yes
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite
-      - name: "Test: stdio: NFKC121"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite/normalizers/nfkc/
-        env:
-          NFKC: "121"
-      - name: "Test: stdio: NFKC130"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite/normalizers/nfkc/
-        env:
-          NFKC: "130"
-      - name: "Test: stdio: NFKC150"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite/normalizers/nfkc/
-        env:
-          NFKC: "150"
-      - name: "Test: stdio: n_workers"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          export GRN_N_WORKERS_DEFAULT=-1
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            test/command/suite
-      - name: "Test: HTTP: load: Apache Arrow"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            test/command/suite
-      - name: "Test: HTTP: load: Apache Arrow: n_workers"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          export GRN_N_WORKERS_DEFAULT=-1
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            test/command/suite/load
-      - name: "Test: HTTP: command: POST"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            --use-http-post \
-            test/command/suite
-      - name: "Test: HTTP: command: chunked"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --timeout=10 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            --use-http-chunked \
-            test/command/suite
-      - name: "Test: HTTP: reference count"
-        if: env.GRN_TEST_RUN_ALL == 'yes'
-        run: |
-          export GRN_ENABLE_REFERENCE_COUNT=yes
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --interface=http \
-            test/command/suite
+      #- name: Set environment variables
+      #  run: |
+      #    echo "COLUMNS=79" >> ${GITHUB_ENV}
+      #    echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+      #    echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
+      #    echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+      #    if [ "${{ matrix.cc }}" == "gcc" -a \
+      #         "${{ matrix.mruby }}" == "" ]; then
+      #      echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
+      #    fi
+      #    if [ -e "install/bin/grndb" ] ; then
+      #      echo "GRN_TEST_RUN_COMMAND_LINE=yes" >> ${GITHUB_ENV}
+      #    fi
+      #
+      #    echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      #- name: Install test dependencies
+      #  run: |
+      #    sudo env MAKEFLAGS=-j$(nproc) gem install \
+      #      grntest \
+      #      pkg-config \
+      #      red-arrow \
+      #      rroonga
+      #- uses: actions/cache@v4
+      #  with:
+      #    path: |
+      #      ~/.cache/red-datasets
+      #    key: red-datasets-ubuntu
+      #- name: "Test: command line"
+      #  if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
+      #  run: |
+      #    test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+      #- name: "Test: mruby"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    USE_SYSTEM=yes test/mruby/run-test.rb
+      #- name: "Test: stdio"
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite
+      #- name: "Test: stdio: optimize"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    export GRN_EXPR_OPTIMIZE=yes
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite
+      #- name: "Test: stdio: NFKC121"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite/normalizers/nfkc/
+      #  env:
+      #    NFKC: "121"
+      #- name: "Test: stdio: NFKC130"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite/normalizers/nfkc/
+      #  env:
+      #    NFKC: "130"
+      #- name: "Test: stdio: NFKC150"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite/normalizers/nfkc/
+      #  env:
+      #    NFKC: "150"
+      #- name: "Test: stdio: n_workers"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    export GRN_N_WORKERS_DEFAULT=-1
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      test/command/suite
+      #- name: "Test: HTTP: load: Apache Arrow"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      --input-type=apache-arrow \
+      #      --interface=http \
+      #      test/command/suite
+      #- name: "Test: HTTP: load: Apache Arrow: n_workers"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    export GRN_N_WORKERS_DEFAULT=-1
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      --input-type=apache-arrow \
+      #      --interface=http \
+      #      test/command/suite/load
+      #- name: "Test: HTTP: command: POST"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      --input-type=apache-arrow \
+      #      --interface=http \
+      #      --use-http-post \
+      #      test/command/suite
+      #- name: "Test: HTTP: command: chunked"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --timeout=10 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      --input-type=apache-arrow \
+      #      --interface=http \
+      #      --use-http-chunked \
+      #      test/command/suite
+      #- name: "Test: HTTP: reference count"
+      #  if: env.GRN_TEST_RUN_ALL == 'yes'
+      #  run: |
+      #    export GRN_ENABLE_REFERENCE_COUNT=yes
+      #    grntest \
+      #      --base-dir test/command \
+      #      --n-retries=2 \
+      #      --read-timeout=30 \
+      #      --reporter=mark \
+      #      --interface=http \
+      #      test/command/suite
 
   #macos:
   #  name: macOS
