@@ -92,7 +92,7 @@ if [ "${run_test}" = "yes" ]; then
     libffi-devel \
     make \
     redhat-rpm-config
-  MAKEFLAGS=-j$(nproc) gem install grntest -v "1.7.5"
+  MAKEFLAGS=-j$(nproc) gem install json:2.7.2 grntest:1.7.5
 
   export TZ=Asia/Tokyo
 
