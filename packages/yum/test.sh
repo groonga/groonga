@@ -91,7 +91,15 @@ if [ "${run_test}" = "yes" ]; then
     gcc \
     make \
     redhat-rpm-config
-  MAKEFLAGS=-j$(nproc) gem install grntest
+
+  cat > Gemfile <<'EOF'
+source "https://rubygems.org"
+
+gem "json", "2.7.2"
+gem "groonga-command-parser", "1.1.4"
+gem "grntest", "1.7.5"
+EOF
+  MAKEFLAGS=-j$(nproc) bundle install
 
   export TZ=Asia/Tokyo
 
