@@ -1245,7 +1245,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     klass,
                     "append_object",
                     mrb_grn_expression_append_object,
-                    MRB_ARGS_REQ(2));
+                    MRB_ARGS_REQ(3));
   mrb_define_method(mrb,
                     klass,
                     "append_constant",
