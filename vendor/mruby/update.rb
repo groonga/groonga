@@ -74,9 +74,33 @@ sources = []
 source_dirs = ["#{mruby_source_dir}/src"] + build.config.gem_dirs
 source_dirs.each do |source_dir|
   Find.find(source_dir) do |path|
+    if File.directory?(path)
+      # Ignore mruby bundled in a gem to avoid duplicated entries.
+      Find.prune if path == "#{source_dir}/mruby"
+      # Use only the POSIX port. CMakeLists.txt and Makefile.am
+      # substitute the Windows port on Windows.
+      Find.prune if path == "#{source_dir}/ports/win"
+      if File.dirname(path) == "#{source_dir}/lib/prism"
+        # Prism has many non-C bindings and tools. Only src/ and
+        # include/ are needed to build the mruby compiler.
+        case File.basename(path)
+        when "include", "src"
+        else
+          Find.prune
+        end
+      end
+    end
     case path
-    when "mrbgems/mruby-dir/src/Win/dirent.c",
-         /\/test\//
+    when /\/test\//
+      next
+    when "#{source_dir}/lib/prism/include/prism/ast.h",
+         "#{source_dir}/lib/prism/include/prism/diagnostic.h",
+         "#{source_dir}/lib/prism/src/diagnostic.c",
+         "#{source_dir}/lib/prism/src/node.c",
+         "#{source_dir}/lib/prism/src/prettyprint.c",
+         "#{source_dir}/lib/prism/src/serialize.c",
+         "#{source_dir}/lib/prism/src/token_type.c"
+      # Ignore generated Prism sources.
       next
     when /\.[ch]\z/
       sources << path

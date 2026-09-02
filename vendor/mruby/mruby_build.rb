@@ -42,3 +42,20 @@ File.open("mrbgems_init.c", "w") do |mrbgems_init|
     mrbgems_init.puts(File.read(gem_init))
   end
 end
+
+prism_dir = "#{mruby_build_dir}/prism"
+prism_generated_files = [
+  "include/prism/ast.h",
+  "include/prism/diagnostic.h",
+  "src/diagnostic.c",
+  "src/node.c",
+  "src/prettyprint.c",
+  "src/serialize.c",
+  "src/token_type.c",
+]
+FileUtils.rm_rf("prism-generated")
+prism_generated_files.each do |file|
+  destination = "prism-generated/#{file}"
+  FileUtils.mkdir_p(File.dirname(destination))
+  FileUtils.cp("#{prism_dir}/#{file}", destination)
+end

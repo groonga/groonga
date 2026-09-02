@@ -1,3 +1,10 @@
 built_sources =						\
 	mrblib.c					\
-	mrbgems_init.c
+	mrbgems_init.c					\
+	prism-generated/include/prism/ast.h		\
+	prism-generated/include/prism/diagnostic.h	\
+	prism-generated/src/diagnostic.c		\
+	prism-generated/src/node.c			\
+	prism-generated/src/prettyprint.c		\
+	prism-generated/src/serialize.c			\
+	prism-generated/src/token_type.c

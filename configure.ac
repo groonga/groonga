@@ -1558,6 +1558,10 @@ if test "$enable_mruby" = "yes"; then
   fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
+  dnl For build from repository
+  MRUBY_CFLAGS="$MRUBY_CFLAGS -I\$(top_builddir)/vendor/mruby/mruby-include"
+  dnl For build from archive
+  MRUBY_CFLAGS="$MRUBY_CFLAGS -I\$(top_srcdir)/vendor/mruby-include"
   GRN_WITH_MRUBY="yes"
 else
   MRUBY_CFLAGS=""
@@ -1566,7 +1570,9 @@ AC_SUBST(GRN_WITH_MRUBY)
 AC_SUBST(MRUBY_CFLAGS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
-MRUBY_CPPFLAGS="-DMRB_INT64"
+# MRC_*/PRISM_* must be synchronized with
+# vendor/mruby-source/mrbgems/mruby-compiler/mrbgem.rake.
+MRUBY_CPPFLAGS="-DMRB_INT64 -DMRC_TARGET_MRUBY -DPRISM_BUILD_MINIMAL -DPRISM_DEPTH_MAXIMUM=256 -DPRISM_XALLOCATOR"
 AC_SUBST(MRUBY_CPPFLAGS)
 
 # For mruby-file-stat
