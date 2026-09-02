@@ -521,7 +521,7 @@ grn_mrb_table_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "apply_expression",
                     mrb_grn_table_apply_expression, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, klass, "apply_window_function_raw",
-                    mrb_grn_table_apply_window_function_raw, MRB_ARGS_REQ(4));
+                    mrb_grn_table_apply_window_function_raw, MRB_ARGS_REQ(3));
 
   mrb_define_method(mrb, klass, "parse_output_columns",
                     mrb_grn_table_parse_output_columns, MRB_ARGS_REQ(1));
