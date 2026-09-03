@@ -65,9 +65,11 @@ prism-generated/src/serialize.c: mruby_build.timestamp
 prism-generated/src/token_type.c: mruby_build.timestamp
 if HAVE_SYS_SYSMACROS_H
 mrbgems/mruby-file-stat/src/config.h:
+	$(MKDIR_P) "$(builddir)/$(@D)"
 	echo "#define HAVE_SYS_SYSMACROS_H 1" > "$(builddir)/$@"
 else
 mrbgems/mruby-file-stat/src/config.h:
+	$(MKDIR_P) "$(builddir)/$(@D)"
 	touch "$(builddir)/$@"
 endif
 
