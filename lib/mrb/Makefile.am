@@ -16,8 +16,19 @@ AM_CFLAGS =					\
 	$(MRUBY_CFLAGS)                         \
 	$(LUAJIT_CFLAGS)
 
+AM_CXXFLAGS =					\
+	$(NO_STRICT_ALIASING_CFLAGS)		\
+	$(COVERAGE_CFLAGS)			\
+	$(GRN_CFLAGS)				\
+	$(MESSAGE_PACK_CFLAGS)			\
+	$(MRUBY_CFLAGS)				\
+	$(LUAJIT_CFLAGS)			\
+	$(APACHE_ARROW_CFLAGS)
+
 noinst_LTLIBRARIES = libgrnmrb.la
 
 include sources.am
+include cpp_sources.am
+libgrnmrb_la_SOURCES += $(libgrnmrb_cpp_sources)
 
 CLEANFILES = *.gcno *.gcda
