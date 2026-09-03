@@ -4575,7 +4575,7 @@ section_weight_cb(
 void *
 grn_expr_parser_open(grn_ctx *ctx)
 {
-  return (void *)grn_expr_parserAlloc(malloc);
+  return (void *)grn_expr_parserAlloc(malloc, ctx);
 }
 
 grn_rc

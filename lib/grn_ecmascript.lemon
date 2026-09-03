@@ -7,6 +7,20 @@
 #endif
 #define assert GRN_ASSERT
 
+  /* Lemon (SQLite) 3.52.0 or later is required for %extra_context for
+   * %realloc and %free. */
+  static void *
+  realloc_wrap(void *ptr, size_t size, grn_ctx *ctx)
+  {
+    return GRN_REALLOC(ptr, size);
+  }
+
+  static void
+  free_wrap(void *ptr, grn_ctx *ctx)
+  {
+    GRN_FREE(ptr);
+  }
+
   static void
   array_literal_end(efs_info *efsi, int n_elements)
   {
@@ -168,14 +182,19 @@
   }
 }
 
+%realloc realloc_wrap
+%free free_wrap
+
 %token_type { int }
 
 %type suppress_unused_variable_warning { void * }
 %destructor suppress_unused_variable_warning {
   (void)efsi;
+  (void)ctx;
 }
 
 %extra_argument { efs_info *efsi }
+%extra_context { grn_ctx *ctx }
 
 %syntax_error {
   {

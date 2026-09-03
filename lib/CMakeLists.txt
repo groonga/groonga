@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -135,8 +135,11 @@ if(NOT MSVC)
 endif()
 set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
-find_program(LEMON lemon)
-if(LEMON)
+# We require Lemon (SQLite) 3.52.0 or later but Lemon doesn't provide
+# a way to get version information. ("lemon -x" always prints "Lemon
+# version 1.0") So we can't detect Lemon version automatically.
+if(GRN_USE_LEMON)
+  find_program(LEMON lemon REQUIRED)
   set_property(
     SOURCE expr.c
     PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"
