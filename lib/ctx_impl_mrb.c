@@ -69,6 +69,7 @@
 #  include "mrb/mrb_content_type.h"
 #  include "mrb/mrb_writer.h"
 #  include "mrb/mrb_config.h"
+#  include "mrb/mrb_child_context.h"
 #  include "mrb/mrb_eval_context.h"
 #  include "mrb/mrb_task_executor.h"
 #  include "mrb/mrb_thread.h"
@@ -209,6 +210,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_content_type_init(ctx);
   grn_mrb_writer_init(ctx);
   grn_mrb_config_init(ctx);
+  grn_mrb_child_context_init(ctx);
   grn_mrb_eval_context_init(ctx);
   grn_mrb_task_executor_init(ctx);
   grn_mrb_thread_init(ctx);

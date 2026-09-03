@@ -25,6 +25,8 @@ require "plugin_loader"
 
 require "eval_context"
 
+require "task_executor"
+
 require "labeled_arguments"
 
 require "command_line_parser"

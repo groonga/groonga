@@ -1,3 +1,5 @@
 libgrnmrb_cpp_sources =				\
+	mrb_child_context.cpp			\
+	mrb_child_context.h			\
 	mrb_task_executor.cpp			\
 	mrb_task_executor.h

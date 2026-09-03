@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 void
-grn_mrb_task_executor_init(grn_ctx *ctx);
+grn_mrb_child_context_init(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
