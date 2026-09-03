@@ -1,1 +1,2 @@
 *.data binary
+lib/grn_ecmascript.[ch] linguist-generated=true

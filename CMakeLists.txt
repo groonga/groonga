@@ -2349,6 +2349,8 @@ if(NOT GRN_WITH_BUNDLED_ONIGMO)
   add_library(onigmo ALIAS PkgConfig::pkg_onigmo)
 endif()
 
+option(GRN_USE_LEMON "Use Lemon to re-generate grn_ecmascript.[ch]" OFF)
+
 add_subdirectory(vendor)
 if(GRN_WITH_MRUBY)
   target_link_libraries(grn_dependencies INTERFACE mruby)
