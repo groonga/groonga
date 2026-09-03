@@ -56,6 +56,17 @@ def archive_name
   "#{base_name}.#{archive_format}"
 end
 
+def tar
+  # We use GNU tar only features such as --hard-dereference. tar on
+  # macOS is BSD tar. So we need to use GNU tar installed by Homebrew
+  # on macOS.
+  if RUBY_PLATFORM.include?("darwin")
+    "gtar"
+  else
+    "tar"
+  end
+end
+
 def env_var(name, default=nil)
   value = ENV[name] || default
   raise "${#{name}} is missing" if value.nil?
@@ -109,28 +120,47 @@ dist_files = sh_capture_output("git", "ls-files").split("\n").reject do |file|
 end
 
 file archive_name => dist_files do
+  rm_rf(base_name)
   sh("git",
      "archive",
      "--format=tar",
      "--output=#{base_name}.tar",
      "--prefix=#{base_name}/",
      "HEAD")
+  sh(tar,
+     "--extract",
+     "--file=#{base_name}.tar")
+  # ${sm_path} and ${toplevel} are relative to the parent submodule
+  # not this repository's top directory for a nested submodule such as
+  # Prism in mruby. Use ${displaypath} that is relative to the current
+  # working directory instead.
   sh("git",
      "submodule",
      "foreach",
      "--recursive",
      "git " +
      "archive " +
-     "--prefix=#{base_name}/${sm_path}/ " +
-     "--output=$(basename ${sm_path}).tar " +
-     "HEAD " +
-     "&& " +
-     "tar " +
-     "--concatenate " +
-     "--file=${toplevel}/#{base_name}.tar " +
-     "$(basename ${sm_path}).tar " +
-     "&& " +
-     "rm $(basename ${sm_path}).tar")
+     "--prefix=#{base_name}/${displaypath}/ " +
+     "--output=submodule.tar " +
+     "HEAD")
+  Dir.glob("*/**/submodule.tar") do |submodule_tar|
+    sh(tar,
+       "--extract",
+       "--file=#{submodule_tar}")
+    rm(submodule_tar)
+  end
+  # bsdtar on Windows can't extract a symbolic link such as Prism's
+  # fuzz/corpus/parse. Create the archive with dereferencing symbolic
+  # links and hard links to remove links.
+  sh(tar,
+     "--create",
+     "--dereference",
+     "--file=#{base_name}.tar",
+     "--group=root:0",
+     "--hard-dereference",
+     "--owner=root:0",
+     base_name)
+  rm_rf(base_name)
   sh("gzip", "--force", "#{base_name}.tar")
 end
 

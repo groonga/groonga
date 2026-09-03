@@ -21,6 +21,11 @@ if(GRN_WITH_MRUBY)
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/sources.am" MRUBY_SOURCES)
   string(REGEX REPLACE "\\.\\./" "${CMAKE_CURRENT_SOURCE_DIR}/../"
     MRUBY_SOURCES "${MRUBY_SOURCES}")
+  if(WIN32)
+    # sources.am is generated on a POSIX system. Each gem's HAL must
+    # be the Windows port on Windows.
+    string(REPLACE "/ports/posix/" "/ports/win/" MRUBY_SOURCES "${MRUBY_SOURCES}")
+  endif()
 
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/built_sources.am"
     MRUBY_BUILT_SOURCES)
@@ -82,23 +87,40 @@ if(GRN_WITH_MRUBY)
     )
   add_library(mruby_headers INTERFACE)
   target_include_directories(mruby_headers INTERFACE
-    "${MRUBY_SOURCE_DIR}/include")
+    "${MRUBY_SOURCE_DIR}/include"
+    # For build from repository
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-include"
+    # For build from archive
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include")
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
   target_include_directories(mruby
     PUBLIC
     "${MRUBY_SOURCE_DIR}/include"
-    PRIVATE
     # For build from repository
     "${CMAKE_CURRENT_BINARY_DIR}/mruby-include"
     # For build from archive
     "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include"
+    PRIVATE
     "${MRUBY_SOURCE_DIR}/src"
-    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/include"
+    # For build from repository
+    "${CMAKE_CURRENT_BINARY_DIR}/prism-generated/include"
+    # For build from archive
+    "${CMAKE_CURRENT_SOURCE_DIR}/prism-generated/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/lib/prism/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-dir/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-time/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
   target_compile_definitions(mruby PUBLIC "MRB_INT64" "HAVE_ONIGMO_H")
+  # These must be synchronized with
+  # mruby-source/mrbgems/mruby-compiler/mrbgem.rake.
+  target_compile_definitions(mruby PRIVATE
+    "MRC_TARGET_MRUBY"
+    "PRISM_BUILD_MINIMAL"
+    "PRISM_DEPTH_MAXIMUM=256"
+    "PRISM_XALLOCATOR")
   if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/mruby-include" AND
       NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include")
     target_compile_definitions(mruby PUBLIC "MRB_NO_PRESYM")
@@ -139,6 +161,15 @@ if(GRN_WITH_MRUBY)
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
     string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4996")
+    # This is a bug of Visual Studio: https://developercommunity.visualstudio.com/t/warning-C5287:-operands-are-different-e/10877942
+    #
+    # Visual Studio 2026 fixed this.
+    if(MSVC_TOOLSET_VERSION VERSION_LESS 145)
+      # operands are different enum types 'type1' and 'type2'; use an
+      # explicit cast to silence this warning
+      # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-c5200-through-c5399
+      string(APPEND MRUBY_C_COMPILE_FLAGS " /wd5287")
+    endif()
   endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES

@@ -6,15 +6,19 @@ EXTRA_DIST =					\
 	mruby_build.timestamp			\
 	version
 
-DEFAULT_INCLUDES =						\
-	-I$(builddir)/../mruby-build/host/include		\
-	-I$(builddir)/mrbgems/mruby-file-stat/src		\
-	-I$(builddir)/mruby-include				\
-	-I$(srcdir)/../mruby-include				\
-	-I$(srcdir)/../mruby-source/include			\
-	-I$(srcdir)/../mruby-source/src				\
-	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/core	\
-	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/include	\
+DEFAULT_INCLUDES =							     \
+	-I$(builddir)/../mruby-build/host/include			     \
+	-I$(builddir)/mrbgems/mruby-file-stat/src			     \
+	-I$(builddir)/mruby-include					     \
+	-I$(srcdir)/../mruby-include					     \
+	-I$(srcdir)/../mruby-source/include				     \
+	-I$(srcdir)/../mruby-source/src					     \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/include	     \
+	-I$(builddir)/prism-generated/include				     \
+	-I$(srcdir)/prism-generated/include				     \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/lib/prism/include \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-dir/include		     \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/include		     \
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-time/include
 
 CFLAGS +=					\
@@ -52,6 +56,13 @@ nodist_libmruby_la_SOURCES =			\
 LEGAL: mruby_build.timestamp
 mrblib.c: mruby_build.timestamp
 mrbgems_init.c: mruby_build.timestamp
+prism-generated/include/prism/ast.h: mruby_build.timestamp
+prism-generated/include/prism/diagnostic.h: mruby_build.timestamp
+prism-generated/src/diagnostic.c: mruby_build.timestamp
+prism-generated/src/node.c: mruby_build.timestamp
+prism-generated/src/prettyprint.c: mruby_build.timestamp
+prism-generated/src/serialize.c: mruby_build.timestamp
+prism-generated/src/token_type.c: mruby_build.timestamp
 if HAVE_SYS_SYSMACROS_H
 mrbgems/mruby-file-stat/src/config.h:
 	echo "#define HAVE_SYS_SYSMACROS_H 1" > "$(builddir)/$@"
