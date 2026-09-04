@@ -679,115 +679,66 @@ module Groonga
 
         def execute_plain_drilldown
           drilldown = @context.plain_drilldown
-          query_log_prefix = "drilldown"
-          group_result = TableGroupResult.new
-          begin
-            group_result.key_begin = 0
-            group_result.key_end = 0
-            group_result.limit = 1
-            group_result.flags = drilldown.calc_types
-            drilldown.keys.each do |key|
-              @context.results.each do |result|
-                result_set = result[:result_set]
-                with_calc_target(group_result,
-                                 drilldown.calc_target(result_set)) do
-                  result_set.group([key], group_result)
-                end
-              end
-              result_set = group_result.table
-              query_logger.log(:size,
-                               ":",
-                               "#{query_log_prefix}(#{result_set.size})")
-              result = apply_drilldown_filter(query_log_prefix,
-                                              drilldown,
-                                              result_set)
-              drilldown.temporary_tables << result[:result_set]
-              group_result.table = nil
-              drilldown.results << result
-            end
-          ensure
-            group_result.close
+          target_tables = @context.results.collect do |result|
+            result[:result_set]
+          end
+          drilldown.keys.each do |key|
+            executor = DrilldownExecutor.new(target_tables,
+                                             [key],
+                                             calc_types: drilldown.calc_types,
+                                             calc_target_name: drilldown.calc_target_name,
+                                             filter: drilldown.filter,
+                                             query_log_prefix: "drilldown")
+            result_set, condition = run_drilldown_executor(executor, drilldown)
+            drilldown.results << {
+              result_set: result_set,
+              condition: condition,
+            }
           end
         end
 
         def execute_labeled_drilldowns
           drilldowns = @context.labeled_drilldowns
-
           drilldowns.tsort_each do |drilldown|
-            query_log_prefix = "drilldowns[#{drilldown.label}]"
-            group_result = TableGroupResult.new
-            keys = drilldown.keys
-            begin
-              group_result.key_begin = 0
-              group_result.key_end = keys.size - 1
-              if keys.size > 1
-                group_result.max_n_sub_records = 1
-              end
-              group_result.limit = 1
-              group_result.flags = drilldown.calc_types
-              if drilldown.table
-                target_table = drilldowns[drilldown.table].result_set
-                with_calc_target(group_result,
-                                 drilldown.calc_target(target_table)) do
-                  target_table.group(keys, group_result)
-                end
-              else
-                @context.results.each do |result|
-                  result_set = result[:result_set]
-                  with_calc_target(group_result,
-                                   drilldown.calc_target(result_set)) do
-                    result_set.group(keys, group_result)
-                  end
-                end
-              end
-              result_set = group_result.table
-              query_logger.log(:size,
-                               ":",
-                               "#{query_log_prefix}(#{result_set.size})")
-              options = {query_log_prefix: "#{query_log_prefix}."}
-              drilldown.dynamic_columns.apply_initial([[result_set]],
-                                                      options)
-              result = apply_drilldown_filter(query_log_prefix,
-                                             drilldown,
-                                             result_set)
-              result_set = result[:result_set]
-              drilldown.temporary_tables << result_set
-              group_result.table = nil
-              drilldown.result_set = result_set
-              drilldown.condition = result[:condition]
-            ensure
-              group_result.close
+            execute_labeled_drilldown(drilldowns, drilldown)
+          end
+        end
+
+        def execute_labeled_drilldown(drilldowns, drilldown)
+          target_tables = labeled_drilldown_target_tables(drilldowns,
+                                                          drilldown)
+          executor =
+            DrilldownExecutor.new(target_tables,
+                                  drilldown.keys,
+                                  calc_types: drilldown.calc_types,
+                                  calc_target_name: drilldown.calc_target_name,
+                                  filter: drilldown.filter,
+                                  dynamic_columns: drilldown.dynamic_columns,
+                                  query_log_prefix: "drilldowns[#{drilldown.label}]")
+          result_set, condition = run_drilldown_executor(executor, drilldown)
+          drilldown.result_set = result_set
+          drilldown.condition = condition
+        end
+
+        def labeled_drilldown_target_tables(drilldowns, drilldown)
+          if drilldown.table
+            [drilldowns[drilldown.table].result_set]
+          else
+            @context.results.collect do |result|
+              result[:result_set]
             end
           end
         end
 
-        def with_calc_target(group_result, calc_target)
-          group_result.calc_target = calc_target
+        # Temporary objects created by the executor are kept in the
+        # drilldown to be closed even when the executor raises.
+        def run_drilldown_executor(executor, drilldown)
           begin
-            yield
+            executor.execute
           ensure
-            calc_target.close if calc_target
-            group_result.calc_target = nil
+            drilldown.temporary_tables.concat(executor.temporary_tables)
+            drilldown.expressions.concat(executor.expressions)
           end
-        end
-
-        def apply_drilldown_filter(query_log_prefix, drilldown, result_set)
-          filter = drilldown.filter
-          return {result_set: result_set} if filter.nil?
-
-          expression = Expression.create(result_set)
-          drilldown.expressions << expression
-          expression.parse(filter)
-          filtered_result_set = result_set.select(expression)
-          drilldown.temporary_tables << result_set
-          n_records = filtered_result_set.size
-          query_logger.log(:size,
-                           ":",
-                           "#{query_log_prefix}.filter(#{n_records})")
-          {
-            result_set: filtered_result_set,
-            condition: expression,
-          }
         end
       end
 
