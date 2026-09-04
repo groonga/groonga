@@ -9,6 +9,7 @@ require "sharding/stream_shard_executor"
 require "sharding/stream_executor"
 
 require "sharding/dynamic_columns"
+require "sharding/drilldown_executor"
 
 require "sharding/logical_parameters"
 
