@@ -20,14 +20,15 @@ module Groonga
       # @param cover_type [Symbol] How the target range covers the
       #   shard: `:all`, `:partial_min`, `:partial_max` or
       #   `:partial_min_and_max`.
-      def initialize(table, shard_key, target_range, cover_type, options={})
+      def initialize(table, shard_key, target_range, cover_type,
+                     match_columns: nil, query: nil, filter: nil)
         @table = table
         @shard_key = shard_key
         @target_range = target_range
         @cover_type = cover_type
-        @match_columns = options[:match_columns]
-        @query = options[:query]
-        @filter = options[:filter]
+        @match_columns = match_columns
+        @query = query
+        @filter = filter
         @expressions = []
       end
 
