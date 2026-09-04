@@ -832,11 +832,7 @@ module Groonga
               if @cover_type == :all
                 @target_table = @target_table.select_all
               else
-                expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                                @target_range)
-                expression = create_expression(@target_table)
-                expression_builder.build(expression, @shard_range)
-                @target_table = @target_table.select(expression)
+                @target_table, _condition = select_shard(shard_key)
                 @cover_type = :all
               end
               @temporary_tables << @target_table
@@ -846,24 +842,14 @@ module Groonga
         end
 
         def execute
-          create_expression_builder(@shard.key) do |expression_builder|
-            case @cover_type
-            when :all
-              filter_shard_all(expression_builder)
-            when :partial_min
-              filter_table do |expression|
-                expression_builder.build_partial_min(expression)
-              end
-            when :partial_max
-              filter_table do |expression|
-                expression_builder.build_partial_max(expression)
-              end
-            when :partial_min_and_max
-              filter_table do |expression|
-                expression_builder.build_partial_min_and_max(expression)
-              end
-            end
+          result_set, condition = select_shard(@shard.key,
+                                               match_columns: @match_columns,
+                                               query: @query,
+                                               filter: @filter)
+          if condition.nil?
+            @temporary_tables.delete(@target_table)
           end
+          add_result(result_set, condition)
         end
 
         def execute_post(result_set, condition)
@@ -878,14 +864,18 @@ module Groonga
         end
 
         private
-        def filter_shard_all(expression_builder)
-          if @query.nil? and @filter.nil?
-            @temporary_tables.delete(@target_table)
-            add_result(@target_table, nil)
-          else
-            filter_table do |expression|
-              expression_builder.build_all(expression)
-            end
+        # Expressions created by the selector are kept in the context
+        # to be closed even when the selector raises.
+        def select_shard(shard_key, **options)
+          selector = ShardSelector.new(@target_table,
+                                       shard_key,
+                                       @target_range,
+                                       @cover_type,
+                                       **options)
+          begin
+            selector.select
+          ensure
+            @context.expressions.concat(selector.expressions)
           end
         end
 
@@ -893,27 +883,6 @@ module Groonga
           expression = Expression.create(table)
           @context.expressions << expression
           expression
-        end
-
-        def create_expression_builder(shard_key)
-          expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                          @target_range)
-          expression_builder.match_columns = @match_columns
-          expression_builder.query = @query
-          expression_builder.filter = @filter
-          begin
-            yield(expression_builder)
-          ensure
-            expression = expression_builder.match_columns_expression
-            @context.expressions << expression if expression
-          end
-        end
-
-        def filter_table
-          table = @target_table
-          expression = create_expression(table)
-          yield(expression)
-          add_result(table.select(expression), expression)
         end
 
         def apply_post_filter(table)
