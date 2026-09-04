@@ -152,6 +152,10 @@ namespace grn {
 #ifdef GRN_WITH_APACHE_ARROW
       if (is_parallel()) {
         thread_pool_->WaitForIdle();
+        {
+          std::unique_lock<std::mutex> lock(futures_mutex_);
+          futures_.clear();
+        }
         return ctx_->rc == GRN_SUCCESS;
       }
 #endif
