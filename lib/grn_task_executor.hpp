@@ -23,6 +23,7 @@
 #ifdef GRN_WITH_APACHE_ARROW
 #  include "grn_arrow.hpp"
 #  include <arrow/util/thread_pool.h>
+#  include <cinttypes>
 #  include <mutex>
 #  include <unordered_map>
 #endif
@@ -112,7 +113,18 @@ namespace grn {
         }
         {
           std::unique_lock<std::mutex> lock(futures_mutex_);
-          futures_.emplace(id, *future_result);
+          /* The same ID must not be used until it's waited by wait()
+           * or wait_all(). This is a bug of the caller. */
+          if (!futures_.emplace(id, *future_result).second) {
+            lock.unlock();
+            ERRSET(ctx_,
+                   GRN_LOG_ERROR,
+                   GRN_INVALID_ARGUMENT,
+                   "%s[task-executor][execute] ID is already used: %" PRIuPTR,
+                   tag,
+                   id);
+            return false;
+          }
         }
         return true;
       }
