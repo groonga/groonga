@@ -77,6 +77,7 @@ load --table Logs_20150205
 #@sleep 1
 
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select Logs \
   --shard_key timestamp \
   --limit 0 \
@@ -106,4 +107,5 @@ logical_select Logs \
   --drilldowns[start].keys 'action' \
   --drilldowns[start].filter "_key @ 'Start'" \
   --drilldowns[start].output_columns _key
+#@sort-query-log-operations none
 #@collect-query-log false
