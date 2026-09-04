@@ -1,0 +1,5 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {loaded = require 'sharding/parameters'; [loaded, Groonga::Sharding::Parameters.to_s]}; executor.wait_all.inspect"

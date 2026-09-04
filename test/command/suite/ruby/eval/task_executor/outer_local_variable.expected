@@ -1,0 +1,4 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; outer = 1; executor.execute(0, '[test]') {[outer, [1].collect {|x| outer}].inspect}; executor.wait_all.inspect"
+[[0,0.0,0.0],{"value":"{0 => \"[nil, [nil]]\"}"}]

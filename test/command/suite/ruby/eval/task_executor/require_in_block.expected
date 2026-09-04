@@ -1,0 +1,4 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {loaded = require 'sharding/parameters'; [loaded, Groonga::Sharding::Parameters.to_s]}; executor.wait_all.inspect"
+[[0,0.0,0.0],{"value":"{0 => [true, \"Groonga::Sharding::Parameters\"]}"}]

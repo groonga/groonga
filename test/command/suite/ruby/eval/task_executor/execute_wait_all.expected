@@ -1,0 +1,13 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]', 1, 1.5, 'string', :symbol) {|*args| args}; executor.execute(1, '[test]', [1, [2, 3]], {'key' => 'value', 'nested' => {'k' => 1}}, nil, true, false) {|*args| args}; executor.execute(2, '[test]') {'no argument'}; executor.wait_all.inspect"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "value": "{0 => [1, 1.5, \"string\", :symbol], 1 => [[1, [2, 3]], {\"key\" => \"value\", \"nested\" => {\"k\" => 1}}, nil, true, false], 2 => \"no argument\"}"
+  }
+]

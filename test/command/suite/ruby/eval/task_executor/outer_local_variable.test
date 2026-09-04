@@ -1,0 +1,6 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+# A local variable outside the block is nil in the child context.
+ruby_eval "executor = Groonga::TaskExecutor.new; outer = 1; executor.execute(0, '[test]') {[outer, [1].collect {|x| outer}].inspect}; executor.wait_all.inspect"

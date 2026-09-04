@@ -1,0 +1,4 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 200.times {|i| executor.execute(i, '[test]', i, 'x' * i) {|x, s| [x, s.size]}}; results = executor.wait_all; [results.size, results.all? {|id, (x, size)| id == x and x == size}].inspect"
+[[0,0.0,0.0],{"value":"[200, true]"}]

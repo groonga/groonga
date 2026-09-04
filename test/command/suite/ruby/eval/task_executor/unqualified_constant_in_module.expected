@@ -1,0 +1,19 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "module Groonga::TableCursorFlags; def self.task_executor_test(executor); executor.execute(0, '[test]') {ASCENDING}; end; end; executor = Groonga::TaskExecutor.new; Groonga::TableCursorFlags.task_executor_test(executor); executor.wait_all.inspect"
+[
+  [
+    [
+      -1,
+      0.0,
+      0.0
+    ],
+    "[test][0] NameError: uninitialized constant ASCENDING"
+  ],
+  {
+    "exception": {
+      "message": "unknown error: <[test][0] NameError: uninitialized constant ASCENDING>(-1)"
+    }
+  }
+]
+#|e| [test][0] NameError: uninitialized constant ASCENDING
