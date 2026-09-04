@@ -7,6 +7,8 @@ module Groonga
     # command execution context. So this can be used in a child
     # context.
     class ShardSelector
+      include QueryLoggable
+
       # Expressions created by #select. The caller must close them
       # after the result set is no longer used.
       attr_reader :expressions
@@ -19,6 +21,8 @@ module Groonga
       #   `max` and `max_border`.
       # @param shard_table_name [String] The shard table name for
       #   query log. `filter(N)[SHARD_TABLE_NAME]` is logged.
+      #   The number of selected records is logged with
+      #   it immediately after selection.
       # @param cover_type [Symbol] How the target range covers the
       #   shard: `:all`, `:partial_min`, `:partial_max` or
       #   `:partial_min_and_max`.
@@ -33,6 +37,7 @@ module Groonga
         @match_columns = match_columns
         @query = query
         @filter = filter
+        @shard_table_name = shard_table_name
         @expressions = []
       end
 
@@ -41,6 +46,15 @@ module Groonga
       #   and the condition is `nil` when the whole target table is
       #   selected without any condition.
       def select
+        result_set, condition = select_internal
+        query_logger.log(:size,
+                         ":",
+                         "select(#{result_set.size})[#{@shard_table_name}]")
+        [result_set, condition]
+      end
+
+      private
+      def select_internal
         expression_builder = RangeExpressionBuilder.new(@shard_key,
                                                         @target_range)
         expression_builder.match_columns = @match_columns
@@ -79,7 +93,6 @@ module Groonga
         end
       end
 
-      private
       def filter_table
         expression = Expression.create(@table)
         @expressions << expression

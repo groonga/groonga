@@ -46,6 +46,7 @@ load --table Logs_20170317
 ]
 
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select Logs \
   --shard_key timestamp \
   --output_columns _id \
@@ -58,4 +59,5 @@ logical_select Logs \
   --drilldowns[item].columns[sun].window.sort_keys price \
   --drilldowns[item].sort_keys 'sun' \
   --drilldowns[item].output_columns 'sun, _key, price'
+#@sort-query-log-operations none
 #@collect-query-log false

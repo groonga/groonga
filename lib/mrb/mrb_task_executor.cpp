@@ -60,6 +60,7 @@
 #  include <mruby/irep.h>
 #  include <mruby/proc.h>
 #  include <mruby/string.h>
+#  include <mruby/variable.h>
 
 #  include "mrb_ctx.h"
 #  include "mrb_detached_value.hpp"
@@ -136,6 +137,7 @@ namespace {
     data->ctx = ctx;
     data->executor = grn_ctx_get_task_executor(ctx);
     mrb_data_init(self, data, &mrb_grn_task_executor_type);
+    mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@results"), mrb_hash_new(mrb));
     return self;
   }
 
@@ -218,8 +220,15 @@ namespace {
     return mrb_obj_as_string(mrb, *static_cast<mrb_value *>(user_data));
   }
 
-  /* Keep the error of the child context in the task. It's used to
-   * report the error to the caller's context. */
+  /* Move the error of the child context to the task. It's reported
+   * to the caller's context by report_task_errors() after all tasks
+   * are finished.
+   *
+   * The error must not be propagated to the caller's context by
+   * grn_ctx_release_child() because other tasks may be running.
+   * Groonga APIs called in other tasks use the caller's context for
+   * shared data such as temporary objects and they fail when the
+   * caller's context has an error. So the error is cleared here. */
   void
   record_task_error(Task *task, grn_ctx *ctx)
   {
@@ -228,6 +237,7 @@ namespace {
     task->error_file = ctx->errfile;
     task->error_line = ctx->errline;
     task->error_function = ctx->errfunc;
+    ERRCLR(ctx);
   }
 
   /* Run on a worker thread. This must not touch the caller's
@@ -302,11 +312,10 @@ namespace {
   }
 
   /* Report the first error of tasks to the caller's context if the
-   * error isn't reported yet. An error in a child context is
-   * normally propagated by grn_ctx_release_child() but the error may
-   * be lost. The error message is already logged by the task. So
-   * this doesn't log it again. This must be run on the caller's
-   * thread after all tasks are finished. */
+   * caller's context doesn't have an error yet. The error message is
+   * already logged by the task. So this doesn't log it again. This
+   * must be run on the caller's thread after all tasks are
+   * finished. */
   void
   report_task_errors(TaskExecutorData *data)
   {
@@ -469,21 +478,14 @@ namespace {
     return mrb_nil_value();
   }
 
-  /* Convert the result of the task to a value in the caller's mruby
-   * and remove the task. The task must be finished. */
-  mrb_value
-  take_result(mrb_state *mrb, TaskExecutorData *data, uintptr_t id)
-  {
-    auto it = data->tasks.find(id);
-    if (it == data->tasks.end()) {
-      return mrb_nil_value();
-    }
-    auto result = it->second->result.to_mrb(mrb);
-    data->tasks.erase(it);
-    return result;
-  }
-
-  /* Groonga::TaskExecutor#wait_all: {id => result, ...} */
+  /* Groonga::TaskExecutor#wait_all
+   *
+   * Waits all tasks. Results of succeeded tasks are added to
+   * #results. If one of tasks is failed, an error is raised after
+   * #results is updated. So the caller can release resources such
+   * as temporary tables created by succeeded tasks on error. Note
+   * that the context has the error in this case. So bindings that
+   * raise on the context error can't be used for it. */
   mrb_value
   task_executor_wait_all(mrb_state *mrb, mrb_value self)
   {
@@ -491,20 +493,38 @@ namespace {
     data->executor->wait_all();
     report_task_errors(data);
 
-    auto results =
-      mrb_hash_new_capa(mrb, static_cast<mrb_int>(data->task_ids.size()));
+    auto results = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@results"));
     for (const auto id : data->task_ids) {
+      auto it = data->tasks.find(id);
+      if (it == data->tasks.end()) {
+        continue;
+      }
+      if (it->second->rc != GRN_SUCCESS) {
+        continue;
+      }
       auto arena_index = mrb_gc_arena_save(mrb);
       mrb_hash_set(mrb,
                    results,
                    mrb_int_value(mrb, static_cast<mrb_int>(id)),
-                   take_result(mrb, data, id));
+                   it->second->result.to_mrb(mrb));
       mrb_gc_arena_restore(mrb, arena_index);
     }
     data->task_ids.clear();
     data->tasks.clear();
     grn_mrb_ctx_check(mrb);
-    return results;
+    return mrb_nil_value();
+  }
+
+  /* Groonga::TaskExecutor#results: {id => result, ...}
+   *
+   * Results of succeeded tasks. Results of failed tasks aren't
+   * included. #wait_all adds results to this. This isn't cleared
+   * automatically. The caller must clear this by `results.clear`
+   * when the caller reuses task IDs. */
+  mrb_value
+  task_executor_get_results(mrb_state *mrb, mrb_value self)
+  {
+    return mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@results"));
   }
 } // namespace
 
@@ -541,6 +561,11 @@ grn_mrb_task_executor_init(grn_ctx *ctx)
                     klass,
                     "wait_all",
                     task_executor_wait_all,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "results",
+                    task_executor_get_results,
                     MRB_ARGS_NONE());
 }
 #endif

@@ -1,0 +1,14 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 4.times {|i| executor.execute(i, '[test]', i) {|x| raise 'error in task 2' if x == 2; x * 10}}; begin; executor.wait_all; rescue Groonga::Error => error; Groonga::Context.instance.rc = 0; [error.class.to_s, executor.results].inspect; end"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "value": "[\"Groonga::UnknownError\", {0 => 0, 1 => 10, 3 => 30}]"
+  }
+]
+#|e| [test][2] RuntimeError: error in task 2

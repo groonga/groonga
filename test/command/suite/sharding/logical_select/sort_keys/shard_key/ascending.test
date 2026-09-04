@@ -63,6 +63,8 @@ load --table Logs_20150205
 ]
 
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select Logs timestamp \
   --sort_keys timestamp
+#@sort-query-log-operations none
 #@collect-query-log false

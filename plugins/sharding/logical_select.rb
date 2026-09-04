@@ -354,6 +354,7 @@ module Groonga
       class ExecuteContext
         include KeysParsable
 
+        attr_reader :input
         attr_reader :enumerator
         attr_reader :match_columns
         attr_reader :query
@@ -651,9 +652,7 @@ module Groonga
             end
             @context.dynamic_columns.apply_initial(targets)
           end
-          @context.shard_targets.each do |shard_executor, target_table|
-            shard_executor.execute
-          end
+          execute_shards
 
           if @context.shard_results.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
@@ -673,6 +672,103 @@ module Groonga
             @context.dynamic_columns.apply_filtered(targets)
             @context.shard_results.each do |shard_executor, result_set, condition|
               shard_executor.execute_post(result_set, condition)
+            end
+          end
+        end
+
+        # Selects records in each shard. Shards are processed in
+        # parallel when the task executor is parallel.
+        def execute_shards
+          # A child context isn't used when there is only one shard
+          # because there is nothing to parallelize.
+          task_executor = TaskExecutor.new
+          if !task_executor.parallel? or @context.shard_targets.size == 1
+            @context.shard_targets.each do |shard_executor, _|
+              shard_executor.execute
+            end
+            return
+          end
+
+          input = @context.input
+          range = {
+            min: input[:min],
+            min_border: input[:min_border],
+            max: input[:max],
+            max_border: input[:max_border],
+          }
+          @context.shard_targets.each_with_index do |(shard_executor, target_table), i|
+            shard = shard_executor.shard
+            # The block is evaluated at the top level of a child
+            # context. It must not refer any local variable outside
+            # the block and must use full names for constants.
+            task_executor.execute(i,
+                                  "[logical_select][#{shard.table_name}]",
+                                  shard.table_name,
+                                  target_table.id,
+                                  shard.key.id,
+                                  range,
+                                  shard_executor.cover_type,
+                                  @context.match_columns,
+                                  @context.query,
+                                  @context.filter) do |shard_table_name,
+                                                       table_id,
+                                                       shard_key_id,
+                                                       range_input,
+                                                       cover_type,
+                                                       match_columns,
+                                                       query,
+                                                       filter|
+              require "sharding/range_expression_builder"
+              require "sharding/logical_enumerator"
+              require "sharding/shard_selector"
+              context = Groonga::Context.instance
+              target_range =
+                Groonga::Sharding::LogicalEnumerator::TargetRange.new("logical_select",
+                                                                      range_input)
+              selector = Groonga::Sharding::ShardSelector.new(context[table_id],
+                                                              context[shard_key_id],
+                                                              target_range,
+                                                              cover_type,
+                                                              match_columns: match_columns,
+                                                              query: query,
+                                                              filter: filter,
+                                                              shard_table_name: shard_table_name)
+              begin
+                result_set, condition = selector.select
+                expression_ids = selector.expressions.collect(&:id)
+                # Expressions are closed by the parent context.
+                selector.expressions.clear
+                [result_set.id, condition&.id, expression_ids]
+              ensure
+                selector.expressions.each(&:close)
+              end
+            end
+          end
+          results = task_executor.results
+          begin
+            task_executor.wait_all
+            @context.shard_targets.each_with_index do |(shard_executor, _), i|
+              # The result is deleted from results before it's added
+              # to the context because the result is closed by the
+              # context after this.
+              result_set_id, condition_id, expression_ids = results.delete(i)
+              shard_executor.add_selected(result_set_id,
+                                          condition_id,
+                                          expression_ids)
+            end
+          ensure
+            # Only Groonga::Context#[] and Groonga::Object#close are
+            # used here because the context may have an error and
+            # bindings that check it raise.
+            context = Context.instance
+            results.each_value do |result|
+              result_set_id, condition_id, expression_ids = result
+              expression_ids.each do |expression_id|
+                context[expression_id].close
+              end
+              # The result set is the target table when there is no
+              # condition. It's not created by the task.
+              context[result_set_id].close if condition_id
             end
           end
         end
@@ -745,6 +841,9 @@ module Groonga
       class ShardExecutor
         include QueryLoggable
 
+        attr_reader :shard
+        attr_reader :cover_type
+
         def initialize(context, shard, shard_range)
           @context = context
           @shard = shard
@@ -783,7 +882,7 @@ module Groonga
               if @cover_type == :all
                 @target_table = @target_table.select_all
               else
-                @target_table, _condition = select_shard(shard_key)
+                @target_table = select_range
                 @cover_type = :all
               end
               @temporary_tables << @target_table
@@ -793,10 +892,28 @@ module Groonga
         end
 
         def execute
-          result_set, condition = select_shard(@shard.key,
-                                               match_columns: @match_columns,
+          result_set, condition = select_shard(match_columns: @match_columns,
                                                query: @query,
                                                filter: @filter)
+          if condition.nil?
+            @temporary_tables.delete(@target_table)
+          end
+          add_result(result_set, condition)
+        end
+
+        # Adds the result of ShardSelector#select run in a child
+        # context. Objects are passed by ID because they are created in
+        # the child context. Temporary objects created in a child
+        # context are registered to the parent context. So they can
+        # be used after the child context is released. They must be
+        # closed by the parent context.
+        def add_selected(result_set_id, condition_id, expression_ids)
+          context = Context.instance
+          expression_ids.each do |expression_id|
+            @context.expressions << context[expression_id]
+          end
+          result_set = context[result_set_id]
+          condition = condition_id ? context[condition_id] : nil
           if condition.nil?
             @temporary_tables.delete(@target_table)
           end
@@ -817,9 +934,9 @@ module Groonga
         private
         # Expressions created by the selector are kept in the context
         # to be closed even when the selector raises.
-        def select_shard(shard_key, **options)
+        def select_shard(**options)
           selector = ShardSelector.new(@target_table,
-                                       shard_key,
+                                       @shard.key,
                                        @target_range,
                                        @cover_type,
                                        shard_table_name: @shard.table_name,
@@ -837,6 +954,19 @@ module Groonga
           expression
         end
 
+        # Narrows the shard table by the target range to apply
+        # initial stage dynamic columns. This isn't logged as
+        # "select" like grn_select_create_all_selected_result_table()
+        # in select because this isn't the selection of the command.
+        def select_range
+          expression = create_expression(@target_table)
+          expression.query_log_tag_suffix = "[#{@shard.table_name}]"
+          expression_builder = RangeExpressionBuilder.new(@shard.key,
+                                                          @target_range)
+          expression_builder.build(expression, @shard_range)
+          @target_table.select(expression)
+        end
+
         def apply_post_filter(table)
           expression = create_expression(table)
           expression.query_log_tag_suffix = "[#{@shard.table_name}]"
@@ -845,9 +975,6 @@ module Groonga
         end
 
         def add_result(result_set, condition)
-          query_logger.log(:size, ":",
-                           "select(#{result_set.size})[#{@shard.table_name}]")
-
           if result_set.empty?
             result_set.close
             return
