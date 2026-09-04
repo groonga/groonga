@@ -1,0 +1,19 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {raise 'block error'}; executor.wait_all"
+[
+  [
+    [
+      -1,
+      0.0,
+      0.0
+    ],
+    "[test][0] RuntimeError: block error"
+  ],
+  {
+    "exception": {
+      "message": "unknown error: <[test][0] RuntimeError: block error>(-1)"
+    }
+  }
+]
+#|e| [test][0] RuntimeError: block error

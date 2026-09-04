@@ -1,3 +1,4 @@
 libgrnmrb_cpp_sources =				\
+	mrb_detached_value.hpp			\
 	mrb_task_executor.cpp			\
 	mrb_task_executor.h

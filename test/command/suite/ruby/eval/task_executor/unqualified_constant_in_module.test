@@ -1,0 +1,5 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+ruby_eval "module Groonga::TableCursorFlags; def self.task_executor_test(executor); executor.execute(0, '[test]') {ASCENDING}; end; end; executor = Groonga::TaskExecutor.new; Groonga::TableCursorFlags.task_executor_test(executor); executor.wait_all.inspect"

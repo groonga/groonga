@@ -1,0 +1,6 @@
+#@require-apache-arrow
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 8.times {|i| executor.execute(i, '[test]', i) {|x| x * 2}}; [executor.parallel?, executor.n_workers, executor.wait_all].inspect"

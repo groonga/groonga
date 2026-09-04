@@ -93,6 +93,13 @@ if(GRN_WITH_MRUBY)
     # For build from archive
     "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include")
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
+  # Each gem's HAL header includes a header in the port's include/
+  # such as ports/posix/include/io_hal_features.h.
+  if(WIN32)
+    set(MRUBY_PORT "win")
+  else()
+    set(MRUBY_PORT "posix")
+  endif()
   target_include_directories(mruby
     PUBLIC
     "${MRUBY_SOURCE_DIR}/include"
@@ -109,7 +116,9 @@ if(GRN_WITH_MRUBY)
     "${CMAKE_CURRENT_SOURCE_DIR}/prism-generated/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/lib/prism/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-dir/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-dir/ports/${MRUBY_PORT}/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/ports/${MRUBY_PORT}/include"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-time/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )

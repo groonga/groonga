@@ -18,7 +18,9 @@ DEFAULT_INCLUDES =							     \
 	-I$(srcdir)/prism-generated/include				     \
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/lib/prism/include \
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-dir/include		     \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-dir/ports/posix/include    \
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/include		     \
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/ports/posix/include     \
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-time/include
 
 CFLAGS +=					\

@@ -158,6 +158,9 @@ repos:
           ?lib/mrb/mrb_error\.c|
           ?lib/mrb/mrb_expr\.c|
           ?lib/mrb/mrb_object\.c|
+          ?lib/mrb/mrb_detached_value\.hpp|
+          ?lib/mrb/mrb_task_executor\.cpp|
+          ?lib/mrb/mrb_task_executor\.h|
           ?lib/msgpack\.c|
           ?lib/nfkc\.c|
           ?lib/normalizer\.c|

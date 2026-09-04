@@ -107,6 +107,7 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-compiler/src/pool.c \
 	../mruby-source/mrbgems/mruby-dir/include/dir_hal.h \
 	../mruby-source/mrbgems/mruby-dir/ports/posix/dir_hal.c \
+	../mruby-source/mrbgems/mruby-dir/ports/posix/include/dir_hal_features.h \
 	../mruby-source/mrbgems/mruby-dir/src/dir.c \
 	../mruby-source/mrbgems/mruby-enum-ext/src/enum.c \
 	../mruby-source/mrbgems/mruby-env/src/env.c \
@@ -115,6 +116,7 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-hash-ext/src/hash_ext.c \
 	../mruby-source/mrbgems/mruby-io/include/io_hal.h \
 	../mruby-source/mrbgems/mruby-io/include/mruby/io.h \
+	../mruby-source/mrbgems/mruby-io/ports/posix/include/io_hal_features.h \
 	../mruby-source/mrbgems/mruby-io/ports/posix/io_hal.c \
 	../mruby-source/mrbgems/mruby-io/src/file.c \
 	../mruby-source/mrbgems/mruby-io/src/file_test.c \

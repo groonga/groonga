@@ -1,0 +1,15 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "age": 20},
+{"_key": "bob", "age": 30},
+{"_key": "carol", "age": 40}
+]
+[[0,0.0,0.0],3]
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; [20, 30, 40].each_with_index {|age, i| executor.execute(i, '[test]', 'Users', age) {|name, min_age| table = Groonga::Context.instance[name]; expression = Groonga::Expression.create(table); expression.parse('age >= ' + min_age.to_s); table.select(expression).id}}; executor.wait_all.collect {|id, table_id| [id, Groonga::Context.instance[table_id].size]}.inspect"
+[[0,0.0,0.0],{"value":"[[0, 3], [1, 2], [2, 1]]"}]

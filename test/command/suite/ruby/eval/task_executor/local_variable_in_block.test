@@ -1,0 +1,6 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+# Local variables in the block can be used in nested blocks.
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]', 1) {|x| y = x + 1; [1, 2].collect {|v| [v + x, v + y]}}; executor.wait_all.inspect"
