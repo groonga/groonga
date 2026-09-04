@@ -135,6 +135,7 @@ repos:
           ?lib/grn_table\.h|
           ?lib/grn_table_module\.h|
           ?lib/grn_table_selector\.h|
+          ?lib/grn_task_executor\.hpp|
           ?lib/grn_token\.h|
           ?lib/grn_token_cursor\.h|
           ?lib/grn_tokenizer\.h|
