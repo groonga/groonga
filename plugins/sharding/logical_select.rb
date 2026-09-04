@@ -866,12 +866,12 @@ module Groonga
         private
         # Expressions created by the selector are kept in the context
         # to be closed even when the selector raises.
-        def select_shard(shard_key, options={})
+        def select_shard(shard_key, **options)
           selector = ShardSelector.new(@target_table,
                                        shard_key,
                                        @target_range,
                                        @cover_type,
-                                       options)
+                                       **options)
           begin
             selector.select
           ensure
