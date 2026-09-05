@@ -44,6 +44,15 @@ grn_rc grn_nfkc_normalize(grn_ctx *ctx,
 
 grn_rc grn_db_init_builtin_normalizers(grn_ctx *ctx);
 
+bool
+grn_normalizer_table_option_process(grn_ctx *ctx,
+                                    grn_obj *raw_options,
+                                    unsigned int i,
+                                    grn_raw_string *name_raw,
+                                    const char *tag,
+                                    grn_obj **normalized_column,
+                                    grn_obj *target_name);
+
 #ifdef __cplusplus
 }
 #endif
