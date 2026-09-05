@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -267,6 +267,25 @@ grn_expr_set_query_log_tag_prefix(grn_ctx *ctx,
                                   int prefix_len);
 GRN_API const char *
 grn_expr_get_query_log_tag_prefix(grn_ctx *ctx, grn_obj *expr);
+
+/**
+ * \brief Set the suffix of the tag for query log entries of the
+ *        expression such as `filter(N)`. For example,
+ *        `filter(N)[SUFFIX]: CONDITION` is logged when this is
+ *        `[SUFFIX]`.
+ *
+ * \since 15.1.0
+ */
+GRN_API grn_rc
+grn_expr_set_query_log_tag_suffix(grn_ctx *ctx,
+                                  grn_obj *expr,
+                                  const char *suffix,
+                                  int suffix_len);
+/**
+ * \since 15.1.0
+ */
+GRN_API const char *
+grn_expr_get_query_log_tag_suffix(grn_ctx *ctx, grn_obj *expr);
 
 GRN_API grn_rc
 grn_expr_set_parent(grn_ctx *ctx, grn_obj *expr, grn_obj *parent);

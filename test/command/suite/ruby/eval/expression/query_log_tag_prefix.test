@@ -1,0 +1,8 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+table_create Memos TABLE_NO_KEY
+column_create Memos price COLUMN_SCALAR UInt32
+
+ruby_eval "expression = Groonga::Expression.create(Groonga::Context.instance['Memos']); before = expression.query_log_tag_prefix; expression.query_log_tag_prefix = 'tag.'; after = expression.query_log_tag_prefix; expression.query_log_tag_prefix = nil; [before, after, expression.query_log_tag_prefix].inspect"

@@ -1,0 +1,8 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+ruby_eval "expression = Groonga::Expression.create(Groonga::Context.instance['Memos']); before = expression.query_log_tag_prefix; expression.query_log_tag_prefix = 'tag.'; after = expression.query_log_tag_prefix; expression.query_log_tag_prefix = nil; [before, after, expression.query_log_tag_prefix].inspect"
+[[0,0.0,0.0],{"value":"[\"\", \"tag.\", \"\"]"}]
