@@ -29,6 +29,7 @@ log_level --level info
 #@add-important-log-levels info
 #@add-ignore-log-pattern /\A\[io\]/
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select Logs \
   --shard_key timestamp \
   --columns[content].stage initial \
@@ -38,6 +39,7 @@ logical_select Logs \
   --match_columns item \
   --output_columns content \
   --query "Book"
+#@sort-query-log-operations none
 #@collect-query-log false
 #@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info

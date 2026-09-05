@@ -33,6 +33,7 @@ load --table Logs_20150204
 ]
 
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select \
   --logical_table Logs \
   --shard_key timestamp \
@@ -41,6 +42,7 @@ logical_select \
   --load_columns "_key, original_id, timestamp_text" \
   --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp" \
   --limit 0
+#@sort-query-log-operations none
 #@collect-query-log false
 
 select --table Logs

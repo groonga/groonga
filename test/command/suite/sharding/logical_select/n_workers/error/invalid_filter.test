@@ -1,0 +1,19 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 message COLUMN_SCALAR Text
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "message": "Start"},
+{"timestamp": "2017/03/15 01:00:00", "message": "Shutdown"}
+]
+
+# All shards are processed even if one of them is failed in parallel
+# mode. Only one shard is used to make the log deterministic.
+logical_select --n_workers 4 Logs \
+  --shard_key timestamp \
+  --filter 'nonexistent == "Shutdown"'
