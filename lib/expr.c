@@ -600,6 +600,8 @@ grn_expr_open(grn_ctx *ctx,
     GRN_PTR_INIT(&expr->objs, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_TEXT_INIT(&expr->query_log_tag_prefix, 0);
     GRN_TEXT_PUTC(ctx, &expr->query_log_tag_prefix, '\0');
+    GRN_TEXT_INIT(&expr->query_log_tag_suffix, 0);
+    GRN_TEXT_PUTC(ctx, &expr->query_log_tag_suffix, '\0');
     expr->parent = NULL;
     expr->condition = NULL;
     expr->vars = NULL;
@@ -632,6 +634,7 @@ grn_expr_open(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &expr->dfi);
     GRN_OBJ_FIN(ctx, &expr->objs);
     GRN_OBJ_FIN(ctx, &expr->query_log_tag_prefix);
+    GRN_OBJ_FIN(ctx, &expr->query_log_tag_suffix);
     GRN_FREE(expr);
     expr = NULL;
   }
@@ -745,6 +748,8 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     GRN_PTR_INIT(&expr->objs, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_TEXT_INIT(&expr->query_log_tag_prefix, 0);
     GRN_TEXT_PUTC(ctx, &expr->query_log_tag_prefix, '\0');
+    GRN_TEXT_INIT(&expr->query_log_tag_suffix, 0);
+    GRN_TEXT_PUTC(ctx, &expr->query_log_tag_suffix, '\0');
     expr->parent = NULL;
     expr->condition = NULL;
     expr->code0 = NULL;
@@ -781,6 +786,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     GRN_OBJ_FIN(ctx, &expr->dfi);
     GRN_OBJ_FIN(ctx, &expr->objs);
     GRN_OBJ_FIN(ctx, &expr->query_log_tag_prefix);
+    GRN_OBJ_FIN(ctx, &expr->query_log_tag_suffix);
     GRN_FREE(expr);
     expr = NULL;
   }
@@ -801,6 +807,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   }
   */
   GRN_OBJ_FIN(ctx, &(e->query_log_tag_prefix));
+  GRN_OBJ_FIN(ctx, &(e->query_log_tag_suffix));
   if (e->cache.codes) {
     grn_expr_executor_fin(ctx, &(e->cache.executor));
   }
@@ -8090,6 +8097,41 @@ grn_expr_get_query_log_tag_prefix(grn_ctx *ctx, grn_obj *expr)
   grn_expr *e = (grn_expr *)expr;
   const char *prefix = GRN_TEXT_VALUE(&(e->query_log_tag_prefix));
   GRN_API_RETURN(prefix);
+}
+
+grn_rc
+grn_expr_set_query_log_tag_suffix(grn_ctx *ctx,
+                                  grn_obj *expr,
+                                  const char *suffix,
+                                  int suffix_len)
+{
+  GRN_API_ENTER;
+  if (suffix_len < 0) {
+    if (suffix) {
+      suffix_len = strlen(suffix);
+    } else {
+      suffix_len = 0;
+    }
+  }
+
+  grn_expr *e = (grn_expr *)expr;
+  if (suffix_len == 0) {
+    GRN_BULK_REWIND(&(e->query_log_tag_suffix));
+  } else {
+    GRN_TEXT_SET(ctx, &(e->query_log_tag_suffix), suffix, suffix_len);
+  }
+  GRN_TEXT_PUTC(ctx, &(e->query_log_tag_suffix), '\0');
+
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+const char *
+grn_expr_get_query_log_tag_suffix(grn_ctx *ctx, grn_obj *expr)
+{
+  GRN_API_ENTER;
+  grn_expr *e = (grn_expr *)expr;
+  const char *suffix = GRN_TEXT_VALUE(&(e->query_log_tag_suffix));
+  GRN_API_RETURN(suffix);
 }
 
 grn_rc

@@ -822,6 +822,7 @@ module Groonga
                                        shard_key,
                                        @target_range,
                                        @cover_type,
+                                       shard_table_name: @shard.table_name,
                                        **options)
           begin
             selector.select
@@ -838,6 +839,7 @@ module Groonga
 
         def apply_post_filter(table)
           expression = create_expression(table)
+          expression.query_log_tag_suffix = "[#{@shard.table_name}]"
           expression.parse(@post_filter)
           table.select(expression)
         end

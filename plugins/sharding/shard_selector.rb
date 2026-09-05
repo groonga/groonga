@@ -17,15 +17,19 @@ module Groonga
       # @param shard_key [Groonga::Column] The shard key column.
       # @param target_range An object that has `min`, `min_border`,
       #   `max` and `max_border`.
+      # @param shard_table_name [String] The shard table name for
+      #   query log. `filter(N)[SHARD_TABLE_NAME]` is logged.
       # @param cover_type [Symbol] How the target range covers the
       #   shard: `:all`, `:partial_min`, `:partial_max` or
       #   `:partial_min_and_max`.
       def initialize(table, shard_key, target_range, cover_type,
+                     shard_table_name:,
                      match_columns: nil, query: nil, filter: nil)
         @table = table
         @shard_key = shard_key
         @target_range = target_range
         @cover_type = cover_type
+        @shard_table_name = shard_table_name
         @match_columns = match_columns
         @query = query
         @filter = filter
@@ -79,6 +83,7 @@ module Groonga
       def filter_table
         expression = Expression.create(@table)
         @expressions << expression
+        expression.query_log_tag_suffix = "[#{@shard_table_name}]"
         yield(expression)
         [@table.select(expression), expression]
       end

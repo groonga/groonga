@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2356,9 +2356,10 @@ grn_table_selector_select(grn_ctx *ctx,
         ctx,
         GRN_QUERY_LOG_SIZE,
         ":",
-        "%sfilter(%d)%s",
+        "%sfilter(%d)%s%s",
         grn_expr_get_query_log_tag_prefix(ctx, table_selector->expr),
         grn_table_size(ctx, data->result_set),
+        grn_expr_get_query_log_tag_suffix(ctx, table_selector->expr),
         inspect_condition(ctx, &condition_inspect_buffer, si, e));
       if (ctx->rc != GRN_SUCCESS) {
         if (result_set_created) {

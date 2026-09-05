@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2013-2018  Brazil
-  Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -709,6 +709,64 @@ mrb_grn_expression_set_condition(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_get_query_log_tag_prefix(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  const char *prefix;
+
+  expr = DATA_PTR(self);
+  prefix = grn_expr_get_query_log_tag_prefix(ctx, expr);
+  return mrb_str_new_cstr(mrb, prefix);
+}
+
+static mrb_value
+mrb_grn_expression_set_query_log_tag_prefix(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  char *prefix = NULL;
+  mrb_int prefix_length = 0;
+
+  mrb_get_args(mrb, "s!", &prefix, &prefix_length);
+
+  expr = DATA_PTR(self);
+  grn_expr_set_query_log_tag_prefix(ctx, expr, prefix, (int)prefix_length);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_expression_get_query_log_tag_suffix(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  const char *suffix;
+
+  expr = DATA_PTR(self);
+  suffix = grn_expr_get_query_log_tag_suffix(ctx, expr);
+  return mrb_str_new_cstr(mrb, suffix);
+}
+
+static mrb_value
+mrb_grn_expression_set_query_log_tag_suffix(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  char *suffix = NULL;
+  mrb_int suffix_length = 0;
+
+  mrb_get_args(mrb, "s!", &suffix, &suffix_length);
+
+  expr = DATA_PTR(self);
+  grn_expr_set_query_log_tag_suffix(ctx, expr, suffix, (int)suffix_length);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
 mrb_grn_expression_take_object(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -1223,6 +1281,26 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     klass,
                     "condition=",
                     mrb_grn_expression_set_condition,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "query_log_tag_prefix",
+                    mrb_grn_expression_get_query_log_tag_prefix,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "query_log_tag_prefix=",
+                    mrb_grn_expression_set_query_log_tag_prefix,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    klass,
+                    "query_log_tag_suffix",
+                    mrb_grn_expression_get_query_log_tag_suffix,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb,
+                    klass,
+                    "query_log_tag_suffix=",
+                    mrb_grn_expression_set_query_log_tag_suffix,
                     MRB_ARGS_REQ(1));
   mrb_define_method(mrb,
                     klass,
