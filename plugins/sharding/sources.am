@@ -9,6 +9,7 @@ sharding_scripts =				\
 	parameters.rb				\
 	range_expression_builder.rb		\
 	shard_selector.rb			\
+	specified_shard.rb			\
 	keys_parsable.rb			\
 	dynamic_columns.rb			\
 	drilldown_executor.rb			\

@@ -1,0 +1,74 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_period1 TABLE_NO_KEY
+column_create Logs_period1 timestamp COLUMN_SCALAR Time
+column_create Logs_period1 memo COLUMN_SCALAR ShortText
+table_create Times_period1 TABLE_PAT_KEY Time
+column_create Times_period1 timestamp_index COLUMN_INDEX Logs_period1 timestamp
+
+table_create Logs_period2 TABLE_NO_KEY
+column_create Logs_period2 timestamp COLUMN_SCALAR Time
+column_create Logs_period2 memo COLUMN_SCALAR ShortText
+table_create Times_period2 TABLE_PAT_KEY Time
+column_create Times_period2 timestamp_index COLUMN_INDEX Logs_period2 timestamp
+
+table_create Logs_period3 TABLE_NO_KEY
+column_create Logs_period3 timestamp COLUMN_SCALAR Time
+column_create Logs_period3 memo COLUMN_SCALAR ShortText
+table_create Times_period3 TABLE_PAT_KEY Time
+column_create Times_period3 timestamp_index COLUMN_INDEX Logs_period3 timestamp
+
+load --table Logs_period1
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+  "memo":      "2015-02-03 12:49:00"
+},
+{
+  "timestamp": "2015-02-03 23:59:59",
+  "memo":      "2015-02-03 23:59:59"
+}
+]
+
+load --table Logs_period2
+[
+{
+  "timestamp": "2015-02-04 00:00:00",
+  "memo":      "2015-02-04 00:00:00"
+},
+{
+  "timestamp": "2015-02-04 13:49:00",
+  "memo":      "2015-02-04 13:49:00"
+},
+{
+  "timestamp": "2015-02-04 13:50:00",
+  "memo":      "2015-02-04 13:50:00"
+}
+]
+
+load --table Logs_period3
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+  "memo":      "2015-02-05 13:49:00"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+  "memo":      "2015-02-05 13:50:00"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+  "memo":      "2015-02-05 13:51:00"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+  "memo":      "2015-02-05 13:52:00"
+}
+]
+
+logical_select \
+  --shard_key timestamp \
+  --shard[20150203].table Logs_period1 \
+  --shard[20150205].table Logs_period3

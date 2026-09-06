@@ -111,6 +111,10 @@ module Groonga
         end
         dynamic_columns = DynamicColumns.parse("[logical_select]", input)
         key << dynamic_columns.cache_key
+        specified_shards = SpecifiedShard.parse("[logical_select]", input)
+        specified_shards.each do |specified_shard|
+          key << "#{specified_shard.table_name}\0"
+        end
         key
       end
 
@@ -377,7 +381,10 @@ module Groonga
         attr_reader :expressions
         def initialize(input)
           @input = input
-          @enumerator = LogicalEnumerator.new("logical_select", @input)
+          @enumerator =
+            LogicalEnumerator.new("logical_select",
+                                  @input,
+                                  specified_shards: SpecifiedShard.parse("[logical_select]", @input))
           @match_columns = @input[:match_columns]
           @query = @input[:query]
           @filter = @input[:filter]
