@@ -1,0 +1,124 @@
+plugin_register sharding --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170301 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170301 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170301 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170302 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170302 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170302 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170303 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170303 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170303 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170304 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170304 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170304 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170305 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170305 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170305 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170306 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170306 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170306 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170307 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170307 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170307 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170308 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170308 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170308 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170309 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170309 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170309 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170310 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170310 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170310 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170311 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170311 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170311 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170312 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170312 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170312 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170313 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170313 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170313 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170314 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170314 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170314 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170318 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170318 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170318 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170319 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170319 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170319 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+table_create Logs_20170320 TABLE_NO_KEY --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170320 timestamp COLUMN_SCALAR Time --output_type json
+[[0,0.0,0.0],true]
+column_create Logs_20170320 price COLUMN_SCALAR UInt32 --output_type json
+[[0,0.0,0.0],true]
+logical_count Logs --shard_key timestamp --output_type json
+[[0,0.0,0.0],4000000]

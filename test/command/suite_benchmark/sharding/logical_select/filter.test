@@ -1,0 +1,97 @@
+plugin_register sharding --output_type json
+
+table_create Logs_20170301 TABLE_NO_KEY --output_type json
+column_create Logs_20170301 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170301 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170302 TABLE_NO_KEY --output_type json
+column_create Logs_20170302 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170302 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170303 TABLE_NO_KEY --output_type json
+column_create Logs_20170303 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170303 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170304 TABLE_NO_KEY --output_type json
+column_create Logs_20170304 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170304 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170305 TABLE_NO_KEY --output_type json
+column_create Logs_20170305 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170305 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170306 TABLE_NO_KEY --output_type json
+column_create Logs_20170306 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170306 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170307 TABLE_NO_KEY --output_type json
+column_create Logs_20170307 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170307 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170308 TABLE_NO_KEY --output_type json
+column_create Logs_20170308 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170308 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170309 TABLE_NO_KEY --output_type json
+column_create Logs_20170309 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170309 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170310 TABLE_NO_KEY --output_type json
+column_create Logs_20170310 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170310 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170311 TABLE_NO_KEY --output_type json
+column_create Logs_20170311 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170311 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170312 TABLE_NO_KEY --output_type json
+column_create Logs_20170312 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170312 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170313 TABLE_NO_KEY --output_type json
+column_create Logs_20170313 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170313 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170314 TABLE_NO_KEY --output_type json
+column_create Logs_20170314 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170314 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170315 TABLE_NO_KEY --output_type json
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170315 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170316 TABLE_NO_KEY --output_type json
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170316 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170317 TABLE_NO_KEY --output_type json
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170317 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170318 TABLE_NO_KEY --output_type json
+column_create Logs_20170318 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170318 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170319 TABLE_NO_KEY --output_type json
+column_create Logs_20170319 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170319 price COLUMN_SCALAR UInt32 --output_type json
+table_create Logs_20170320 TABLE_NO_KEY --output_type json
+column_create Logs_20170320 timestamp COLUMN_SCALAR Time --output_type json
+column_create Logs_20170320 price COLUMN_SCALAR UInt32 --output_type json
+
+#@disable-logging
+#@generate-series 1 200000 Logs_20170301 '{"timestamp" => (Time.utc(2017, 3, 1) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170302 '{"timestamp" => (Time.utc(2017, 3, 2) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170303 '{"timestamp" => (Time.utc(2017, 3, 3) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170304 '{"timestamp" => (Time.utc(2017, 3, 4) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170305 '{"timestamp" => (Time.utc(2017, 3, 5) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170306 '{"timestamp" => (Time.utc(2017, 3, 6) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170307 '{"timestamp" => (Time.utc(2017, 3, 7) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170308 '{"timestamp" => (Time.utc(2017, 3, 8) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170309 '{"timestamp" => (Time.utc(2017, 3, 9) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170310 '{"timestamp" => (Time.utc(2017, 3, 10) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170311 '{"timestamp" => (Time.utc(2017, 3, 11) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170312 '{"timestamp" => (Time.utc(2017, 3, 12) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170313 '{"timestamp" => (Time.utc(2017, 3, 13) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170314 '{"timestamp" => (Time.utc(2017, 3, 14) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170315 '{"timestamp" => (Time.utc(2017, 3, 15) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170316 '{"timestamp" => (Time.utc(2017, 3, 16) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170317 '{"timestamp" => (Time.utc(2017, 3, 17) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170318 '{"timestamp" => (Time.utc(2017, 3, 18) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170319 '{"timestamp" => (Time.utc(2017, 3, 19) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@generate-series 1 200000 Logs_20170320 '{"timestamp" => (Time.utc(2017, 3, 20) + ((i - 1) * 86400) / 200000).strftime("%Y-%m-%d %H:%M:%S"), "price" => rand(1000)}'
+#@enable-logging
+
+logical_count Logs --shard_key timestamp --output_type json
+
+#@start-benchmark 4000000 5 logical-select-filter
+#@disable-logging
+logical_select Logs \
+  --shard_key timestamp \
+  --filter 'price < 10' \
+  --limit 0 \
+  --cache no
+#@enable-logging
+#@finish-benchmark

@@ -58,7 +58,7 @@ RUN \
 RUN \
   gem install \
     bundler \
-    grntest \
+    "grntest:>=1.8.6" \
     groonga-client \
     pkg-config \
     rake

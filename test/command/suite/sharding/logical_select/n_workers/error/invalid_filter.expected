@@ -1,0 +1,41 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 message COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 message COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Logs_20170316 extra COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "message": "Start"},
+{"timestamp": "2017/03/15 01:00:00", "message": "Shutdown"}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 00:00:00", "message": "Start", "extra": 1},
+{"timestamp": "2017/03/16 01:00:00", "message": "Shutdown", "extra": 2}
+]
+[[0,0.0,0.0],2]
+logical_select --n_workers 4 Logs   --shard_key timestamp   --filter 'extra == 1'
+[
+  [
+    [
+      -63,
+      0.0,
+      0.0
+    ],
+    "syntax error: <Syntax error: <extra| |== 1>: [expr][parse] unknown identifier: <extra>>(-63)"
+  ]
+]
+#|e| [expr][parse] unknown identifier: <extra>
+#|e| Syntax error: <extra| |== 1>: [expr][parse] unknown identifier: <extra>

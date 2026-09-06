@@ -1,0 +1,31 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 message COLUMN_SCALAR Text
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 message COLUMN_SCALAR Text
+column_create Logs_20170316 extra COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "message": "Start"},
+{"timestamp": "2017/03/15 01:00:00", "message": "Shutdown"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 00:00:00", "message": "Start", "extra": 1},
+{"timestamp": "2017/03/16 01:00:00", "message": "Shutdown", "extra": 2}
+]
+
+# Only Logs_20170315 doesn't have the "extra" column. So only the task
+# for Logs_20170315 is failed. Logs_20170316 is processed successfully
+# in parallel mode. Its result must be closed.
+logical_select --n_workers 4 Logs \
+  --shard_key timestamp \
+  --filter 'extra == 1'
