@@ -50,7 +50,7 @@ load --table Logs_20170317
 {"timestamp": "2017/03/17 20:00:00", "items": ["Drink", "Note"]}
 ]
 [[0,0.0,0.0],2]
-logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].output_columns _key,_nsubrecs,price,price_with_tax   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type UInt32   --drilldowns[item].columns[price_with_tax].flags COLUMN_SCALAR   --drilldowns[item].columns[price_with_tax].value 'price * 1.08'   --drilldowns[real_price].table item   --drilldowns[real_price].keys price_with_tax
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].output_columns _key,_nsubrecs,price,price_with_tax   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type UInt32   --drilldowns[item].columns[price_with_tax].flags COLUMN_SCALAR   --drilldowns[item].columns[price_with_tax].value 'price * 1.08'   --drilldowns[real_price].table item   --drilldowns[real_price].keys price_with_tax   --drilldowns[unit_price].keys items.price   --drilldowns[unit_price].output_columns _key,_nsubrecs
 [
   [
     0,
@@ -155,20 +155,49 @@ logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0  
           324,
           1
         ]
+      ],
+      "unit_price": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "UInt32"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          1000,
+          6
+        ],
+        [
+          500,
+          8
+        ],
+        [
+          300,
+          3
+        ]
       ]
     }
   ]
 ]
-#>logical_select --drilldowns[item].columns[price_with_tax].flags "COLUMN_SCALAR" --drilldowns[item].columns[price_with_tax].stage "initial" --drilldowns[item].columns[price_with_tax].type "UInt32" --drilldowns[item].columns[price_with_tax].value "price * 1.08" --drilldowns[item].keys "items" --drilldowns[item].output_columns "_key,_nsubrecs,price,price_with_tax" --drilldowns[item].sort_keys "price" --drilldowns[real_price].keys "price_with_tax" --drilldowns[real_price].table "item" --limit "0" --logical_table "Logs" --output_columns "_id" --shard_key "timestamp"
+#>logical_select --drilldowns[item].columns[price_with_tax].flags "COLUMN_SCALAR" --drilldowns[item].columns[price_with_tax].stage "initial" --drilldowns[item].columns[price_with_tax].type "UInt32" --drilldowns[item].columns[price_with_tax].value "price * 1.08" --drilldowns[item].keys "items" --drilldowns[item].output_columns "_key,_nsubrecs,price,price_with_tax" --drilldowns[item].sort_keys "price" --drilldowns[real_price].keys "price_with_tax" --drilldowns[real_price].table "item" --drilldowns[unit_price].keys "items.price" --drilldowns[unit_price].output_columns "_key,_nsubrecs" --limit "0" --logical_table "Logs" --output_columns "_id" --shard_key "timestamp"
 #:000000000000000 select(2)[Logs_20170315]
 #:000000000000000 select(2)[Logs_20170316]
 #:000000000000000 select(2)[Logs_20170317]
-#:000000000000000 drilldowns[item](6)
+#:000000000000000 drilldowns[item](6): items
 #:000000000000000 drilldowns[item].columns[price_with_tax](6)
-#:000000000000000 drilldowns[real_price](3)
+#:000000000000000 drilldowns[real_price](3): price_with_tax
+#:000000000000000 drilldowns[unit_price](3): items.price
 #:000000000000000 output(0)
 #:000000000000000 drilldowns[item].sort(6): price
 #:000000000000000 output.drilldowns[item](6)
 #:000000000000000 output.drilldowns[real_price](3)
+#:000000000000000 output.drilldowns[unit_price](3)
 #:000000000000000 send(0)
 #<000000000000000 rc=0

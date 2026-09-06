@@ -59,5 +59,5 @@ logical_select Logs \
   --drilldowns[item].columns[sun].window.sort_keys price \
   --drilldowns[item].sort_keys 'sun' \
   --drilldowns[item].output_columns 'sun, _key, price'
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false

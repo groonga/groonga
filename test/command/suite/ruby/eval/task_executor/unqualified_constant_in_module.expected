@@ -4,7 +4,7 @@ ruby_eval "module Groonga::TableCursorFlags; def self.task_executor_test(executo
 [
   [
     [
-      -1,
+      -74,
       0.0,
       0.0
     ],
@@ -12,7 +12,7 @@ ruby_eval "module Groonga::TableCursorFlags; def self.task_executor_test(executo
   ],
   {
     "exception": {
-      "message": "unknown error: <[test][0] NameError: uninitialized constant ASCENDING>(-1)"
+      "message": "command error: <[test][0] NameError: uninitialized constant ASCENDING>(-74)"
     }
   }
 ]

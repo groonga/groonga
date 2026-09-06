@@ -429,11 +429,15 @@ module Groonga
         attr_reader :calc_target_name
         attr_reader :calc_types
         attr_reader :filter
+        attr_reader :tag
+        attr_reader :query_log_prefix
         attr_reader :results
         attr_reader :temporary_tables
         attr_reader :expressions
         def initialize(input)
           @input = input
+          @tag = "[logical_select][drilldown]"
+          @query_log_prefix = "drilldown"
           @keys = parse_keys(@input[:drilldown])
           @offset = (@input[:drilldown_offset] || 0).to_i
           @limit = (@input[:drilldown_limit] || 10).to_i
@@ -468,6 +472,11 @@ module Groonga
 
         def n_results
           @results.size
+        end
+
+        # Plain drilldown doesn't support dynamic columns.
+        def dynamic_columns_arguments
+          nil
         end
       end
 
@@ -549,27 +558,34 @@ module Groonga
         attr_reader :calc_types
         attr_reader :filter
         attr_reader :table
+        attr_reader :tag
+        attr_reader :query_log_prefix
         attr_reader :dynamic_columns
+        # Raw arguments of this drilldown. They are used to
+        # reconstruct dynamic columns in a child context.
+        attr_reader :dynamic_columns_arguments
         attr_accessor :result_set
         attr_accessor :condition
         attr_reader :temporary_tables
         attr_reader :expressions
-        def initialize(label, parameters)
+        def initialize(label, arguments)
           @label = label
-          @keys = parse_keys(parameters["keys"])
-          @offset = (parameters["offset"] || 0).to_i
-          @limit = (parameters["limit"] || 10).to_i
-          @sort_keys = parse_keys(parameters["sort_keys"] ||
-                                  parameters["sortby"])
-          @output_columns = parameters["output_columns"]
+          @tag = "[logical_select][drilldowns][#{@label}]"
+          @query_log_prefix = "drilldowns[#{@label}]"
+          @keys = parse_keys(arguments["keys"])
+          @offset = (arguments["offset"] || 0).to_i
+          @limit = (arguments["limit"] || 10).to_i
+          @sort_keys = parse_keys(arguments["sort_keys"] ||
+                                  arguments["sortby"])
+          @output_columns = arguments["output_columns"]
           @output_columns ||= "_key, _nsubrecs"
-          @calc_target_name = parameters["calc_target"]
-          @calc_types = parse_calc_types(parameters["calc_types"])
-          @filter = parameters["filter"]
-          @table = parameters["table"]
+          @calc_target_name = arguments["calc_target"]
+          @calc_types = parse_calc_types(arguments["calc_types"])
+          @filter = arguments["filter"]
+          @table = arguments["table"]
 
-          tag = "[logical_select][drilldowns][#{@label}]"
-          @dynamic_columns = DynamicColumns.parse(tag, parameters)
+          @dynamic_columns_arguments = arguments
+          @dynamic_columns = DynamicColumns.parse(@tag, arguments)
 
           @result_set = nil
           @condition = nil
@@ -679,16 +695,17 @@ module Groonga
         # Selects records in each shard. Shards are processed in
         # parallel when the task executor is parallel.
         def execute_shards
-          # A child context isn't used when there is only one shard
-          # because there is nothing to parallelize.
           task_executor = TaskExecutor.new
-          if !task_executor.parallel? or @context.shard_targets.size == 1
+          if task_executor.parallel?(@context.shard_targets.size)
+            execute_shards_in_parallel(task_executor)
+          else
             @context.shard_targets.each do |shard_executor, _|
               shard_executor.execute
             end
-            return
           end
+        end
 
+        def execute_shards_in_parallel(task_executor)
           input = @context.input
           range = {
             min: input[:min],
@@ -699,8 +716,8 @@ module Groonga
           @context.shard_targets.each_with_index do |(shard_executor, target_table), i|
             shard = shard_executor.shard
             # The block is evaluated at the top level of a child
-            # context. It must not refer any local variable outside
-            # the block and must use full names for constants.
+            # context. It must not refer nor assign any local variable
+            # outside the block and must use full names for constants.
             task_executor.execute(i,
                                   "[logical_select][#{shard.table_name}]",
                                   shard.table_name,
@@ -778,25 +795,77 @@ module Groonga
           target_tables = @context.results.collect do |result|
             result[:result_set]
           end
-          drilldown.keys.each do |key|
-            executor = DrilldownExecutor.new(target_tables,
-                                             [key],
-                                             calc_types: drilldown.calc_types,
-                                             calc_target_name: drilldown.calc_target_name,
-                                             filter: drilldown.filter,
-                                             query_log_prefix: "drilldown")
-            result_set, condition = run_drilldown_executor(executor, drilldown)
-            drilldown.results << {
-              result_set: result_set,
-              condition: condition,
-            }
+          task_executor = TaskExecutor.new
+          if task_executor.parallel?(drilldown.keys.size)
+            target_table_ids = target_tables.collect(&:id)
+            drilldown.keys.each_with_index do |key, i|
+              execute_drilldown_task(task_executor,
+                                     i,
+                                     drilldown,
+                                     target_table_ids,
+                                     [key])
+            end
+            wait_drilldown_tasks(task_executor) do |results|
+              drilldown.keys.each_index do |i|
+                result_set, condition =
+                  add_drilldown_result(drilldown, results.delete(i))
+                drilldown.results << {
+                  result_set: result_set,
+                  condition: condition,
+                }
+              end
+            end
+          else
+            drilldown.keys.each do |key|
+              executor = DrilldownExecutor.new(target_tables,
+                                               [key],
+                                               calc_types: drilldown.calc_types,
+                                               calc_target_name: drilldown.calc_target_name,
+                                               filter: drilldown.filter,
+                                               query_log_prefix: drilldown.query_log_prefix)
+              result_set, condition = run_drilldown_executor(executor, drilldown)
+              drilldown.results << {
+                result_set: result_set,
+                condition: condition,
+              }
+            end
           end
         end
 
         def execute_labeled_drilldowns
           drilldowns = @context.labeled_drilldowns
-          drilldowns.tsort_each do |drilldown|
-            execute_labeled_drilldown(drilldowns, drilldown)
+          # A drilldown that depends on another drilldown by `table`
+          # is processed after the depended drilldown is finished.
+          task_executor = TaskExecutor.new
+          remaining_drilldowns = drilldowns.tsort
+          until remaining_drilldowns.empty?
+            ready_drilldowns = remaining_drilldowns.select do |drilldown|
+              drilldown.table.nil? or drilldowns[drilldown.table].result_set
+            end
+            if task_executor.parallel?(ready_drilldowns.size)
+              ready_drilldowns.each_with_index do |drilldown, i|
+                target_tables = labeled_drilldown_target_tables(drilldowns,
+                                                                drilldown)
+                execute_drilldown_task(task_executor,
+                                       i,
+                                       drilldown,
+                                       target_tables.collect(&:id),
+                                       drilldown.keys)
+              end
+              wait_drilldown_tasks(task_executor) do |results|
+                ready_drilldowns.each_with_index do |drilldown, i|
+                  result_set, condition =
+                    add_drilldown_result(drilldown, results.delete(i))
+                  drilldown.result_set = result_set
+                  drilldown.condition = condition
+                end
+              end
+            else
+              ready_drilldowns.each do |drilldown|
+                execute_labeled_drilldown(drilldowns, drilldown)
+              end
+            end
+            remaining_drilldowns -= ready_drilldowns
           end
         end
 
@@ -810,7 +879,7 @@ module Groonga
                                   calc_target_name: drilldown.calc_target_name,
                                   filter: drilldown.filter,
                                   dynamic_columns: drilldown.dynamic_columns,
-                                  query_log_prefix: "drilldowns[#{drilldown.label}]")
+                                  query_log_prefix: drilldown.query_log_prefix)
           result_set, condition = run_drilldown_executor(executor, drilldown)
           drilldown.result_set = result_set
           drilldown.condition = condition
@@ -835,6 +904,112 @@ module Groonga
             drilldown.temporary_tables.concat(executor.temporary_tables)
             drilldown.expressions.concat(executor.expressions)
           end
+        end
+
+        # Runs DrilldownExecutor for the drilldown in a child
+        # context. See execute_shards_in_parallel for restrictions of
+        # the block.
+        def execute_drilldown_task(task_executor,
+                                   id,
+                                   drilldown,
+                                   target_table_ids,
+                                   keys)
+          task_executor.execute(id,
+                                drilldown.tag,
+                                target_table_ids,
+                                keys,
+                                drilldown.calc_types,
+                                drilldown.calc_target_name,
+                                drilldown.filter,
+                                drilldown.dynamic_columns_arguments,
+                                drilldown.query_log_prefix,
+                                drilldown.tag) do |target_table_ids,
+                                                   keys,
+                                                   calc_types,
+                                                   calc_target_name,
+                                                   filter,
+                                                   dynamic_columns_arguments,
+                                                   query_log_prefix,
+                                                   tag|
+            require "sharding/keys_parsable"
+            require "sharding/window"
+            require "sharding/dynamic_columns"
+            require "sharding/drilldown_executor"
+            context = Groonga::Context.instance
+            target_tables = target_table_ids.collect do |table_id|
+              context[table_id]
+            end
+            dynamic_columns = nil
+            if dynamic_columns_arguments
+              dynamic_columns =
+                Groonga::Sharding::DynamicColumns.parse(tag,
+                                                        dynamic_columns_arguments)
+            end
+            executor =
+              Groonga::Sharding::DrilldownExecutor.new(target_tables,
+                                                       keys,
+                                                       calc_types: calc_types,
+                                                       calc_target_name: calc_target_name,
+                                                       filter: filter,
+                                                       dynamic_columns: dynamic_columns,
+                                                       query_log_prefix: query_log_prefix)
+            begin
+              result_set, condition = executor.execute
+              temporary_table_ids = executor.temporary_tables.collect(&:id)
+              expression_ids = executor.expressions.collect(&:id)
+              # Temporary tables and expressions are closed by the
+              # parent context.
+              executor.temporary_tables.clear
+              executor.expressions.clear
+              [result_set.id, condition&.id, temporary_table_ids, expression_ids]
+            ensure
+              executor.expressions.each(&:close)
+              executor.temporary_tables.each(&:close)
+            end
+          end
+        end
+
+        # Waits all drilldown tasks and yields the results. The block
+        # must delete results that are added to drilldowns. Temporary
+        # objects of the remaining results are closed here.
+        def wait_drilldown_tasks(task_executor)
+          results = task_executor.results
+          begin
+            task_executor.wait_all
+            yield(results)
+          ensure
+            # Only Groonga::Context#[] and Groonga::Object#close are
+            # used here because the context may have an error and
+            # bindings that check it raise.
+            context = Context.instance
+            results.each_value do |result|
+              _, _, temporary_table_ids, expression_ids = result
+              expression_ids.each do |expression_id|
+                context[expression_id].close
+              end
+              temporary_table_ids.each do |table_id|
+                context[table_id].close
+              end
+            end
+            results.clear
+          end
+        end
+
+        # Adds the result of DrilldownExecutor run in a child
+        # context. Objects are passed by ID. See
+        # ShardExecutor#add_selected for details.
+        def add_drilldown_result(drilldown, result)
+          result_set_id, condition_id, temporary_table_ids, expression_ids =
+            result
+          context = Context.instance
+          temporary_table_ids.each do |table_id|
+            drilldown.temporary_tables << context[table_id]
+          end
+          expression_ids.each do |expression_id|
+            drilldown.expressions << context[expression_id]
+          end
+          condition = condition_id ? context[condition_id] : nil
+          [context[result_set_id], condition]
         end
       end
 

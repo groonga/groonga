@@ -42,5 +42,5 @@ logical_select Logs \
   --columns[filtered_id].value '_id' \
   --filter 'price < 910' \
   --output_columns _id,filtered_id,price
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false

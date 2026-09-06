@@ -49,13 +49,17 @@ load --table Memos_20150710
 ]
 
 #@collect-query-log true
-#@sort-query-log-operations shard
+#@sort-query-log-operations shard drilldown
 logical_select Memos \
   --shard_key created_at \
   --limit 0 \
   --drilldowns[tag].keys tag,user \
   --drilldowns[tag].calc_types 'AVG, MAX, MIN, SUM' \
   --drilldowns[tag].calc_target priority \
-  --drilldowns[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_avg
-#@sort-query-log-operations none
+  --drilldowns[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_avg \
+  --drilldowns[user].keys user \
+  --drilldowns[user].calc_types 'AVG, MAX, MIN, SUM' \
+  --drilldowns[user].calc_target priority \
+  --drilldowns[user].output_columns _key,_max,_min,_sum,_avg
+#@sort-query-log-operations
 #@collect-query-log false

@@ -57,4 +57,12 @@ logical_select Logs \
   --drilldowns[item].columns[sum].value 'window_sum(price)' \
   --drilldowns[item].columns[sum].window.group_keys price \
   --drilldowns[item].columns[sum].window.sort_keys _key \
-  --drilldowns[item].output_columns 'sum, _key, price, type'
+  --drilldowns[item].output_columns 'sum, _key, price, type' \
+  --drilldowns[item_by_type].keys item \
+  --drilldowns[item_by_type].columns[sum].stage initial \
+  --drilldowns[item_by_type].columns[sum].type UInt32 \
+  --drilldowns[item_by_type].columns[sum].flags COLUMN_SCALAR \
+  --drilldowns[item_by_type].columns[sum].value 'window_sum(price)' \
+  --drilldowns[item_by_type].columns[sum].window.group_keys type \
+  --drilldowns[item_by_type].columns[sum].window.sort_keys _key \
+  --drilldowns[item_by_type].output_columns 'sum, _key, price, type'

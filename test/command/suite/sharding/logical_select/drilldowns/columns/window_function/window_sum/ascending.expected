@@ -126,7 +126,7 @@ logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0  
 #:000000000000000 select(2)[Logs_20170315]
 #:000000000000000 select(2)[Logs_20170316]
 #:000000000000000 select(2)[Logs_20170317]
-#:000000000000000 drilldowns[item](6)
+#:000000000000000 drilldowns[item](6): item
 #:000000000000000 drilldowns[item].columns[sun](6)
 #:000000000000000 output(0)
 #:000000000000000 drilldowns[item].sort(6): sun

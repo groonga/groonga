@@ -81,7 +81,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action   --drilldowns[action].filter '_key == "Restart"'
+logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action   --drilldowns[action].filter '_key == "Restart"'   --drilldowns[start].keys action   --drilldowns[start].filter '_key == "Start"'
 [
   [
     0,
@@ -131,18 +131,41 @@ logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action   -
           "Restart",
           6
         ]
+      ],
+      "start": [
+        [
+          1
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "Start",
+          2
+        ]
       ]
     }
   ]
 ]
-#>logical_select --drilldowns[action].filter "_key == \"Restart\"" --drilldowns[action].keys "action" --limit "0" --logical_table "Logs" --shard_key "timestamp"
+#>logical_select --drilldowns[action].filter "_key == \"Restart\"" --drilldowns[action].keys "action" --drilldowns[start].filter "_key == \"Start\"" --drilldowns[start].keys "action" --limit "0" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 select(2)[Logs_20150203]
 #:000000000000000 select(3)[Logs_20150204]
 #:000000000000000 select(4)[Logs_20150205]
-#:000000000000000 drilldowns[action](3)
-#:000000000000000 filter(1): #<accessor _key(anonymous)> equal "Restart"
+#:000000000000000 drilldowns[action](3): action
+#:000000000000000 drilldowns[action].filter(1): #<accessor _key(anonymous)> equal "Restart"
 #:000000000000000 drilldowns[action].filter(1)
+#:000000000000000 drilldowns[start](3): action
+#:000000000000000 drilldowns[start].filter(1): #<accessor _key(anonymous)> equal "Start"
+#:000000000000000 drilldowns[start].filter(1)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns[action](1)
+#:000000000000000 output.drilldowns[start](1)
 #:000000000000000 send(0)
 #<000000000000000 rc=0

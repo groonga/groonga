@@ -1,0 +1,7 @@
+#@require-apache-arrow
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+# There is nothing to parallelize when the number of tasks is 1 or less.
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; [executor.parallel?, executor.parallel?(0), executor.parallel?(1), executor.parallel?(2)].inspect"

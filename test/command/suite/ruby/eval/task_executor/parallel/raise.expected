@@ -4,7 +4,7 @@ ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 8.times {|i| exec
 [
   [
     [
-      -1,
+      -74,
       0.0,
       0.0
     ],
@@ -12,7 +12,7 @@ ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 8.times {|i| exec
   ],
   {
     "exception": {
-      "message": "unknown error: <[test][3] RuntimeError: error in task 3>(-1)"
+      "message": "command error: <[test][3] RuntimeError: error in task 3>(-74)"
     }
   }
 ]

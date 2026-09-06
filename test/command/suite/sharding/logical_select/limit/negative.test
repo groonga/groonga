@@ -72,5 +72,5 @@ load --table Logs_20150205
 #@sort-query-log-operations shard
 logical_select Logs timestamp \
   --limit -6
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false
