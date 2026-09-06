@@ -53,7 +53,8 @@ module Groonga
         @temporary_tables << result_set
         query_logger.log(:size,
                          ":",
-                         "#{@query_log_prefix}(#{result_set.size})")
+                         "#{@query_log_prefix}(#{result_set.size}): " +
+                         @keys.join(","))
         if @dynamic_columns
           options = {query_log_prefix: "#{@query_log_prefix}."}
           @dynamic_columns.apply_initial([[result_set]], options)
@@ -62,6 +63,7 @@ module Groonga
 
         expression = Expression.create(result_set)
         @expressions << expression
+        expression.query_log_tag_prefix = "#{@query_log_prefix}."
         expression.parse(@filter)
         filtered_result_set = result_set.select(expression)
         @temporary_tables << filtered_result_set
@@ -89,7 +91,9 @@ module Groonga
             begin
               table.group(@keys, group_result)
             ensure
-              calc_target.close if calc_target
+              # A persistent column must not be closed. It's shared
+              # with other contexts.
+              calc_target.close if calc_target.is_a?(Accessor)
               group_result.calc_target = nil
             end
           end

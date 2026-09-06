@@ -80,5 +80,5 @@ logical_select Logs timestamp \
   --limit 0 \
   --drilldown action \
   --drilldown_offset -1
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false

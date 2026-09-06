@@ -43,7 +43,7 @@ load --table Memos_20150710
 logical_select Memos \
   --shard_key created_at \
   --limit 0 \
-  --drilldown tag \
+  --drilldown tag,priority \
   --drilldown_calc_types 'MAX, MIN, SUM, AVG' \
   --drilldown_calc_target priority \
   --drilldown_output_columns _key,_max,_min,_sum,_avg

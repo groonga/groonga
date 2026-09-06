@@ -4,7 +4,7 @@ ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {
 [
   [
     [
-      -1,
+      -74,
       0.0,
       0.0
     ],
@@ -12,7 +12,7 @@ ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {
   ],
   {
     "exception": {
-      "message": "unknown error: <[test][0] RuntimeError: block error>(-1)"
+      "message": "command error: <[test][0] RuntimeError: block error>(-74)"
     }
   }
 ]

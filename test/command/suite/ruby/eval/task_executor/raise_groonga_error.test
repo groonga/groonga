@@ -1,0 +1,6 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+# The rc of a Groonga::GroongaError raised in a task is used.
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {raise Groonga::InvalidArgument, 'block error'}; executor.wait_all"

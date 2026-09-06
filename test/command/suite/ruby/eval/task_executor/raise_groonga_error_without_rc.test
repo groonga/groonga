@@ -1,0 +1,7 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+# A Groonga::GroongaError subclass without rc is reported as a command
+# error. The error must not be lost.
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {Object.const_set(:TestError, Class.new(Groonga::GroongaError)); raise TestError, 'block error'}; executor.wait_all"

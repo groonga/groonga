@@ -4,7 +4,7 @@ ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {
 [
   [
     [
-      -1,
+      -74,
       0.0,
       0.0
     ],
@@ -12,7 +12,7 @@ ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {
   ],
   {
     "exception": {
-      "message": "unknown error: <[test][0] ArgumentError: can't return Object from the block>(-1)"
+      "message": "command error: <[test][0] ArgumentError: can't return Object from the block>(-74)"
     }
   }
 ]

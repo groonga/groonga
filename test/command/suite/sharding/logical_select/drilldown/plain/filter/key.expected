@@ -81,7 +81,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_filter '_key == "Restart"'
+logical_select Logs timestamp   --limit 0   --drilldown action,memo   --drilldown_filter '_key == "Restart"'
 [
   [
     0,
@@ -129,6 +129,21 @@ logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_fil
       [
         "Restart",
         6
+      ]
+    ],
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
       ]
     ]
   ]

@@ -6,6 +6,8 @@ column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 [[0,0.0,0.0],true]
 column_create Logs_20150203 memo COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
+column_create Logs_20150203 date COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
 column_create Logs_20150203 action COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 table_create Logs_20150204 TABLE_NO_KEY
@@ -13,6 +15,8 @@ table_create Logs_20150204 TABLE_NO_KEY
 column_create Logs_20150204 timestamp COLUMN_SCALAR Time
 [[0,0.0,0.0],true]
 column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150204 date COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 column_create Logs_20150204 action COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
@@ -22,6 +26,8 @@ column_create Logs_20150205 timestamp COLUMN_SCALAR Time
 [[0,0.0,0.0],true]
 column_create Logs_20150205 memo COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
+column_create Logs_20150205 date COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
 column_create Logs_20150205 action COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Logs_20150203
@@ -29,11 +35,13 @@ load --table Logs_20150203
 {
   "timestamp": "2015-02-03 12:49:00",
   "memo":      "2015-02-03 12:49:00",
+  "date":      "2015-02-03",
   "action":    "Start"
 },
 {
   "timestamp": "2015-02-03 23:59:59",
   "memo":      "2015-02-03 23:59:59",
+  "date":      "2015-02-03",
   "action":    "Shutdown"
 }
 ]
@@ -43,16 +51,19 @@ load --table Logs_20150204
 {
   "timestamp": "2015-02-04 00:00:00",
   "memo":      "2015-02-04 00:00:00",
+  "date":      "2015-02-04",
   "action":    "Start"
 },
 {
   "timestamp": "2015-02-04 13:49:00",
   "memo":      "2015-02-04 13:49:00",
+  "date":      "2015-02-04",
   "action":    "Restart"
 },
 {
   "timestamp": "2015-02-04 13:50:00",
   "memo":      "2015-02-04 13:50:00",
+  "date":      "2015-02-04",
   "action":    "Restart"
 }
 ]
@@ -62,26 +73,30 @@ load --table Logs_20150205
 {
   "timestamp": "2015-02-05 13:49:00",
   "memo":      "2015-02-05 13:49:00",
+  "date":      "2015-02-05",
   "action":    "Restart"
 },
 {
   "timestamp": "2015-02-05 13:50:00",
   "memo":      "2015-02-05 13:50:00",
+  "date":      "2015-02-05",
   "action":    "Restart"
 },
 {
   "timestamp": "2015-02-05 13:51:00",
   "memo":      "2015-02-05 13:51:00",
+  "date":      "2015-02-05",
   "action":    "Restart"
 },
 {
   "timestamp": "2015-02-05 13:52:00",
   "memo":      "2015-02-05 13:52:00",
+  "date":      "2015-02-05",
   "action":    "Restart"
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldown action,action,action
+logical_select Logs timestamp   --limit 0   --drilldown action,date
 [
   [
     0,
@@ -100,6 +115,10 @@ logical_select Logs timestamp   --limit 0   --drilldown action,action,action
         ],
         [
           "action",
+          "ShortText"
+        ],
+        [
+          "date",
           "ShortText"
         ],
         [
@@ -154,44 +173,28 @@ logical_select Logs timestamp   --limit 0   --drilldown action,action,action
         ]
       ],
       [
-        "Start",
+        "2015-02-03",
         2
       ],
       [
-        "Shutdown",
-        1
-      ],
-      [
-        "Restart",
-        6
-      ]
-    ],
-    [
-      [
+        "2015-02-04",
         3
       ],
       [
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "_nsubrecs",
-          "Int32"
-        ]
-      ],
-      [
-        "Start",
-        2
-      ],
-      [
-        "Shutdown",
-        1
-      ],
-      [
-        "Restart",
-        6
+        "2015-02-05",
+        4
       ]
     ]
   ]
 ]
+#>logical_select --drilldown "action,date" --limit "0" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 drilldown(3): action
+#:000000000000000 drilldown(3): date
+#:000000000000000 output(0)
+#:000000000000000 output.drilldown(3)
+#:000000000000000 output.drilldown(3)
+#:000000000000000 send(0)
+#<000000000000000 rc=0

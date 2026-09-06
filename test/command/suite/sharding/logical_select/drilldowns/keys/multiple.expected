@@ -96,7 +96,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldowns[action_date].keys action,date   --drilldowns[action_date].output_columns _key[0],_key[1],_nsubrecs
+logical_select Logs timestamp   --limit 0   --drilldowns[action_date].keys action,date   --drilldowns[action_date].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[date_action].keys date,action   --drilldowns[date_action].output_columns _key[0],_key[1],_nsubrecs
 [
   [
     0,
@@ -173,6 +173,50 @@ logical_select Logs timestamp   --limit 0   --drilldowns[action_date].keys actio
         [
           "Restart",
           "2015-02-05",
+          4
+        ]
+      ],
+      "date_action": [
+        [
+          5
+        ],
+        [
+          [
+            "_key[0]",
+            null
+          ],
+          [
+            "_key[1]",
+            null
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "2015-02-03",
+          "Start",
+          1
+        ],
+        [
+          "2015-02-03",
+          "Shutdown",
+          1
+        ],
+        [
+          "2015-02-04",
+          "Start",
+          1
+        ],
+        [
+          "2015-02-04",
+          "Restart",
+          2
+        ],
+        [
+          "2015-02-05",
+          "Restart",
           4
         ]
       ]

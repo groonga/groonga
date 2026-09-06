@@ -75,10 +75,12 @@ load --table Logs_20150205
 ]
 
 #@collect-query-log true
-#@sort-query-log-operations shard
+#@sort-query-log-operations shard drilldown
 logical_select Logs timestamp \
   --limit 0 \
   --drilldowns[action].keys action \
-  --drilldowns[action].filter '_key == "Restart"'
-#@sort-query-log-operations none
+  --drilldowns[action].filter '_key == "Restart"' \
+  --drilldowns[start].keys action \
+  --drilldowns[start].filter '_key == "Start"'
+#@sort-query-log-operations
 #@collect-query-log false

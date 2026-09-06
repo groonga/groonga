@@ -148,9 +148,19 @@ namespace {
     return mrb_int_value(mrb, data->executor->get_n_workers());
   }
 
+  /* Groonga::TaskExecutor#parallel?(n_tasks=nil)
+   *
+   * Returns whether tasks are run in parallel. If n_tasks is given,
+   * this returns false when n_tasks is 1 or less because there is
+   * nothing to parallelize. */
   mrb_value
   task_executor_is_parallel(mrb_state *mrb, mrb_value self)
   {
+    mrb_int n_tasks;
+    auto n_args = mrb_get_args(mrb, "|i", &n_tasks);
+    if (n_args > 0 && n_tasks <= 1) {
+      return mrb_false_value();
+    }
     auto data = task_executor_data(mrb, self);
     return mrb_bool_value(data->executor->is_parallel());
   }
@@ -220,6 +230,16 @@ namespace {
     return mrb_obj_as_string(mrb, *static_cast<mrb_value *>(user_data));
   }
 
+  /* exception.class.rc.to_i */
+  mrb_value
+  groonga_error_rc_body(mrb_state *mrb, void *user_data)
+  {
+    auto exception = *static_cast<mrb_value *>(user_data);
+    auto exception_class = mrb_obj_value(mrb_obj_class(mrb, exception));
+    auto rc = mrb_funcall(mrb, exception_class, "rc", 0);
+    return mrb_funcall(mrb, rc, "to_i", 0);
+  }
+
   /* Move the error of the child context to the task. It's reported
    * to the caller's context by report_task_errors() after all tasks
    * are finished.
@@ -285,18 +305,37 @@ namespace {
     auto exception = mrb_protect_error(mrb, run_task_body, task, &error);
     if (error) {
       if (ctx->rc == GRN_SUCCESS) {
+        /* This is the same rule as Groonga::Command#run_internal: The
+         * rc of a Groonga::GroongaError is the rc of its class. Other
+         * exceptions are command errors. */
+        auto rc = GRN_COMMAND_ERROR;
+        auto groonga_error_class =
+          mrb_class_get_under(mrb, ctx->impl->mrb.module, "GroongaError");
+        if (mrb_obj_is_kind_of(mrb, exception, groonga_error_class)) {
+          mrb_bool rc_error = FALSE;
+          auto rc_value = mrb_protect_error(mrb,
+                                            groonga_error_rc_body,
+                                            &exception,
+                                            &rc_error);
+          /* rc may be GRN_SUCCESS when the class doesn't have rc.
+           * The error must not be lost. */
+          if (!rc_error && mrb_integer_p(rc_value) &&
+              mrb_integer(rc_value) != GRN_SUCCESS) {
+            rc = static_cast<grn_rc>(mrb_integer(rc_value));
+          }
+        }
         auto class_name = mrb_obj_classname(mrb, exception);
         mrb_bool message_error = FALSE;
         auto message =
           mrb_protect_error(mrb, to_s_body, &exception, &message_error);
         if (message_error || mrb_type(message) != MRB_TT_STRING) {
-          ERR(GRN_UNKNOWN_ERROR,
+          ERR(rc,
               "%s[%llu] %s",
               task->tag.c_str(),
               static_cast<unsigned long long>(task->id),
               class_name);
         } else {
-          ERR(GRN_UNKNOWN_ERROR,
+          ERR(rc,
               "%s[%llu] %s: %.*s",
               task->tag.c_str(),
               static_cast<unsigned long long>(task->id),
@@ -551,7 +590,7 @@ grn_mrb_task_executor_init(grn_ctx *ctx)
                     klass,
                     "parallel?",
                     task_executor_is_parallel,
-                    MRB_ARGS_NONE());
+                    MRB_ARGS_OPT(1));
   mrb_define_method(mrb,
                     klass,
                     "execute",

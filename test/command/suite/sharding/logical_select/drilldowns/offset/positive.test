@@ -93,5 +93,5 @@ logical_select Logs timestamp \
   --drilldowns[action_date].keys action,date \
   --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs \
   --drilldowns[action_date].offset 1
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false

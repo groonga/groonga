@@ -39,7 +39,7 @@ logical_select Logs \
   --match_columns item \
   --output_columns content \
   --query "Book"
-#@sort-query-log-operations none
+#@sort-query-log-operations
 #@collect-query-log false
 #@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
