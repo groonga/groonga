@@ -1,0 +1,13 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+logical_select   --shard_key timestamp   --shard[1].table Nonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[logical_select][shards][1] table doesn't exist: <Nonexistent>"
+  ]
+]

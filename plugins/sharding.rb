@@ -1,6 +1,7 @@
 require "sharding/parameters"
 require "sharding/range_expression_builder"
 require "sharding/shard_selector"
+require "sharding/specified_shard"
 require "sharding/logical_enumerator"
 require "sharding/keys_parsable"
 require "sharding/window"

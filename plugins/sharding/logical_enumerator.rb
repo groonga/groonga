@@ -33,8 +33,12 @@ module Groonga
         context = Context.instance
         each_shard_with_around(order) do |prev_shard, current_shard, next_shard|
           shard_range_data = current_shard.range_data
-          shard_range = nil
+          unless shard_range_data
+            yield(current_shard, nil)
+            next
+          end
 
+          shard_range = nil
           if shard_range_data.day.nil?
             if order == :ascending
               if next_shard
@@ -69,7 +73,7 @@ module Groonga
         unref_immediately = @options.fetch(:unref_immediately, false)
         shards = [nil]
         begin
-          each_prefix_shard(order) do |shard|
+          each_shard(order) do |shard|
             previous_shard = shards.last
             if previous_shard
               shard.previous_shard = previous_shard
@@ -94,6 +98,14 @@ module Groonga
         end
       end
 
+      def each_shard(order, &block)
+        if @specified_shards.empty?
+          each_prefix_shard(order, &block)
+        else
+          each_specified_shard(order, &block)
+        end
+      end
+
       def each_prefix_shard(order)
         context = Context.instance
         prefix = "#{@logical_table}_"
@@ -103,6 +115,17 @@ module Groonga
           shard_range_data = parse_shard_range_data(name[prefix.size..-1])
           next unless shard_range_data
           yield(Shard.new(name, @shard_key_name, shard_range_data))
+        end
+      end
+
+      def each_specified_shard(order)
+        specified_shards = @specified_shards
+        specified_shards = specified_shards.reverse if order == :descending
+        specified_shards.each do |specified_shard|
+          # TODO:
+          # Generate `range_data` from the labels.
+          # Or specify it using something like `shard[xxx].range`.
+          yield(Shard.new(specified_shard.table_name, @shard_key_name, nil))
         end
       end
 
@@ -119,7 +142,8 @@ module Groonga
 
       def initialize_parameters
         @logical_table = @input[:logical_table]
-        if @logical_table.nil?
+        @specified_shards = @options.fetch(:specified_shards, [])
+        if @logical_table.nil? and @specified_shards.empty?
           raise InvalidArgument, "[#{@command_name}] logical_table is missing"
         end
 
@@ -277,6 +301,18 @@ module Groonga
 
         def cover_type(shard_range)
           return :all if @min.nil? and @max.nil?
+
+          unless shard_range
+            # If you are not able to set `shard_range` for `--shard[xxx].table`,
+            # use only `@min` and `@max` as conditions.
+            if @min and @max
+              return :partial_min_and_max
+            elsif @min
+              return :partial_min
+            else
+              return :partial_max
+            end
+          end
 
           if @min and @max
             return :none unless in_min?(shard_range)
