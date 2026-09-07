@@ -136,3 +136,6 @@ msgstr ""
 
 msgid "{ref}`select <select-n-workers>`"
 msgstr ""
+
+msgid "{ref}`logical_select <logical-select-n-workers>`"
+msgstr ""
