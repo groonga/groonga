@@ -441,6 +441,27 @@ msgstr "``logical_select`` の結果のカラムを指定します。 :ref:`logi
 msgid "This argument must use with :ref:`logical-select-load-table` and :ref:`logical-select-load-columns`."
 msgstr "この引数は、 :ref:`logical-select-load-table` と :ref:`logical-select-load-columns` と一緒に使う必要があります。"
 
+msgid "``n_workers``"
+msgstr ""
+
+msgid "Specifies the number of threads for parallel execution. See :doc:`/reference/command/n_workers` for available values and notes."
+msgstr "並列実行するスレッド数を指定します。指定できる値と注意点は :doc:`/reference/command/n_workers` を参照してください。"
+
+msgid "The following processes are executed in parallel when this parameter is ``-1`` or ``2`` or more:"
+msgstr "このパラメーターに ``-1`` または ``2`` 以上を指定すると、次の処理を並列に実行します。"
+
+msgid "Searching each shard"
+msgstr "各シャードの検索"
+
+msgid "Each key of :ref:`logical-select-drilldown`"
+msgstr ":ref:`logical-select-drilldown` の各キー"
+
+msgid "Independent :ref:`drilldowns <logical-select-advanced-drilldown-related-parameters>`"
+msgstr "依存関係のない :ref:`drilldowns <logical-select-advanced-drilldown-related-parameters>`"
+
+msgid "\"independent\" means not using ``drilldowns[${LABEL}].table`` to refer the result of another drilldown. A drilldown that refers the result of another drilldown is executed after the referred drilldown is finished. Therefore, the degree of parallelism is reduced if drilldowns have dependencies."
+msgstr "依存関係がないとは、 ``drilldowns[${LABEL}].table`` を使用して他のドリルダウンの結果を参照していないことです。他のドリルダウンの結果を参照しているドリルダウンは、参照先のドリルダウンが終わってから実行します。そのため、依存関係があると並列度が下がります。"
+
 msgid "Advanced search parameters"
 msgstr "高度な検索のための引数"
 
