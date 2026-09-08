@@ -465,6 +465,54 @@ jobs:
           name: arch-linux
           path: "*.pkg.tar.*"
 
+  wasi:
+    name: WASI
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: Prepare cache
+        run: |
+          cache_dir="${PWD}/cache"
+          ccache_dir="${cache_dir}/ccache"
+          mkdir -p "${ccache_dir}"
+          echo "CCACHE_DIR=${ccache_dir}" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v6
+        with:
+          path: cache
+          key: cmake-wasi-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-wasi-ccache-
+      - name: Install build dependencies
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            build-essential \
+            ccache \
+            cmake \
+            libc++-dev-wasm32 \
+            libclang-rt-dev-wasm32 \
+            ninja-build \
+            wasi-libc
+      - name: CMake
+        run: |
+          ccache --show-stats --verbose --version
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            --preset debug-wasi
+      - name: Build
+        continue-on-error: true
+        run: |
+          cmake --build ../groonga.build
+          ccache --show-stats --verbose --version
+      - name: Install
+        continue-on-error: true
+        run: |
+          cmake --install ../groonga.build
+
   macos:
     name: macOS
     runs-on: macos-latest
