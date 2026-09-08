@@ -59,18 +59,16 @@
 
 #if !defined(WIN32) && defined(HAVE_SIGNAL_H)
 #  define ENABLE_LOG_REOPEN_BY_SIGNAL
+#  define ENABLE_IGNORE_SIGPIPE
 #endif
 
-#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
+#if defined(ENABLE_LOG_REOPEN_BY_SIGNAL) || defined(ENABLE_IGNORE_SIGPIPE)
 #  include <signal.h>
 #endif
 
-#ifndef USE_MSG_NOSIGNAL
-#  ifdef MSG_NOSIGNAL
-#    undef MSG_NOSIGNAL
-#  endif
+#ifndef MSG_NOSIGNAL
 #  define MSG_NOSIGNAL 0
-#endif /* USE_MSG_NOSIGNAL */
+#endif
 
 #ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
@@ -4798,6 +4796,16 @@ main(int argc, char **argv)
     }
     grn_set_default_n_workers(value);
   }
+
+#ifdef ENABLE_IGNORE_SIGPIPE
+  /* Writing to a pipe or a socket whose reader is closed such as
+   * stdout of this command raises SIGPIPE. If it's not ignored, this
+   * process is killed without closing the database. */
+  if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+    fprintf(stderr, "failed to ignore SIGPIPE: %s\n", strerror(errno));
+    return EXIT_FAILURE;
+  }
+#endif
 
   grn_gctx.errbuf[0] = '\0';
   if (grn_init()) {

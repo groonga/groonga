@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,9 +31,6 @@
 #  endif /* HAVE_SYS_SOCKET_H */
 #  include <netinet/in.h>
 #  include <netinet/tcp.h>
-#  ifdef HAVE_SIGNAL_H
-#    include <signal.h>
-#  endif /* HAVE_SIGNAL_H */
 #  include <sys/uio.h>
 #endif /* WIN32 */
 
@@ -59,12 +56,9 @@
 #  define MSG_MORE 0
 #endif /* USE_MSG_MORE */
 
-#ifndef USE_MSG_NOSIGNAL
-#  ifdef MSG_NOSIGNAL
-#    undef MSG_NOSIGNAL
-#  endif
+#ifndef MSG_NOSIGNAL
 #  define MSG_NOSIGNAL 0
-#endif /* USE_MSG_NOSIGNAL */
+#endif
 /******* grn_com_queue ********/
 
 grn_rc
@@ -265,14 +259,7 @@ grn_com_init(void)
     grn_ctx *ctx = &grn_gctx;
     SOERR("WSAStartup");
   }
-#else /* WIN32 */
-#  ifndef USE_MSG_NOSIGNAL
-  if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-    grn_ctx *ctx = &grn_gctx;
-    SERR("signal");
-  }
-#  endif /* USE_MSG_NOSIGNAL */
-#endif   /* WIN32 */
+#endif /* WIN32 */
   return grn_gctx.rc;
 }
 
