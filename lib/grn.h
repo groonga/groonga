@@ -319,7 +319,24 @@ typedef CONDITION_VARIABLE grn_cond;
 #    define COND_FIN(c)
 
 #  else /* WIN32 */
-/* todo */
+/* Single thread: WASI (wasm32-wasip1) doesn't have threads. */
+typedef int grn_thread;
+typedef void *grn_thread_func_result;
+#    define GRN_THREAD_FUNC_RETURN_VALUE     NULL
+/* Threads are not supported. Always failed. */
+#    define THREAD_CREATE(thread, func, arg) (1)
+#    define THREAD_JOIN(thread)              (1)
+typedef int grn_mutex;
+#    define MUTEX_INIT(m)                    ((m) = 0)
+#    define MUTEX_LOCK(m)
+#    define MUTEX_LOCK_CHECK(m) (1)
+#    define MUTEX_UNLOCK(m)
+#    define MUTEX_FIN(m)
+typedef int grn_critical_section;
+#    define CRITICAL_SECTION_INIT(cs) ((cs) = 0)
+#    define CRITICAL_SECTION_ENTER(cs)
+#    define CRITICAL_SECTION_LEAVE(cs)
+#    define CRITICAL_SECTION_FIN(cs)
 typedef int grn_cond;
 #    define COND_INIT(c) ((c) = 0)
 #    define COND_SIGNAL(c)
