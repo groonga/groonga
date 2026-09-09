@@ -23,8 +23,10 @@ Syntax
 
 This command takes many parameters.
 
-The required parameters are ``logical_table`` and ``shard_key``. Other
-parameters are optional::
+``shard_key`` is a required parameter. ``logical_table`` is also
+required unless you use :ref:`logical-select-shard-label-table`.
+If you omit ``logical_table``, specify ``shard_key`` as a named parameter.
+Other parameters are optional::
 
   logical_select logical_table
                  shard_key
@@ -138,6 +140,11 @@ The following parameters specify two drilldowns:
   * ``--drilldowns[label2].keys column2``
   * ``--drilldowns[label2].sort_keys _key``
 
+This command has the following named parameters for specifying actual
+tables explicitly:
+
+  * ``shard[${LABEL}].table=null``
+
 Differences from ``select``
 ---------------------------
 
@@ -147,8 +154,9 @@ format is same and so on.
 
 But there are some differences from :doc:`select`:
 
-  * ``logical_table`` and ``shard_key`` parameters are required
-    instead of ``table`` parameter.
+  * ``shard_key`` and either ``logical_table`` or one or more
+    ``shard[${LABEL}].table`` are required instead of ``table``
+    parameter.
   * ``sort_keys`` isn't supported when multiple shards are used. (Only
     one shard is used, they are supported. There is one exception
     about ``sort_keys`` for multiple shards. When ``shard_keys`` and
@@ -283,7 +291,8 @@ This section describes parameters of ``logical_select``.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There are required parameters, ``logical_table`` and ``shard_key``.
+``shard_key`` is always required. You must also specify either ``logical_table``
+or one or more :ref:`logical-select-shard-label-table`.
 
 .. _logical-select-logical-table:
 
@@ -296,7 +305,7 @@ Specifies logical table name. It means table name without
 name is ``Entries``.
 
 You can show 5 records by specifying ``logical_table`` and
-``shard_key`` parameters. They are required parameters.
+``shard_key`` parameters.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/logical_table_existent.log
@@ -320,6 +329,43 @@ suitable shards.
 Shard key must be ``Time`` type for now.
 
 See :ref:`logical-select-logical-table` how to specify ``shard_key``.
+
+.. _logical-select-shard-label-table:
+
+``shard[${LABEL}].table``
+"""""""""""""""""""""""""
+
+.. versionadded:: 16.1.1
+
+Specifies an actual table explicitly.
+
+Normally, ``logical_select`` finds actual tables automatically by
+``${LOGICAL_TABLE}_${YYYYMMDD}`` naming rule. If your actual tables
+don't follow the naming rule, you can specify them explicitly by this
+parameter::
+
+  logical_select \
+    --shard_key timestamp \
+    --shard[1].table Logs_host1 \
+    --shard[2].table Logs_host2
+
+``${LABEL}`` is just a label. It's used only for sorting the specified
+actual tables. If all labels consist of only digits such as ``1``,
+``2`` and ``10``, they are sorted numerically. Otherwise, they are
+sorted as strings.
+
+Note that a label isn't used for choosing shards to be searched with
+:ref:`logical-select-min` and :ref:`logical-select-max` even when it
+looks like ``YYYYMM`` or ``YYYYMMDD``. All of the specified actual
+tables are searched.
+
+You don't need to specify :ref:`logical-select-logical-table` when you
+specify one or more ``shard[${LABEL}].table``. If both of them are
+specified, ``shard[${LABEL}].table`` is used and
+:ref:`logical-select-logical-table` is ignored.
+
+:ref:`logical-select-shard-key` is still required. All of the
+specified actual tables must have the column that is specified by it.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^

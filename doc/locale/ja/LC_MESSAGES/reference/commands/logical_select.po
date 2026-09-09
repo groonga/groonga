@@ -36,8 +36,8 @@ msgstr "構文"
 msgid "This command takes many parameters."
 msgstr "このコマンドにはたくさんの引数があります。"
 
-msgid "The required parameters are ``logical_table`` and ``shard_key``. Other parameters are optional::"
-msgstr "必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可能です::"
+msgid "``shard_key`` is a required parameter. ``logical_table`` is also required unless you use :ref:`logical-select-shard-label-table`. If you omit ``logical_table``, specify ``shard_key`` as a named parameter. Other parameters are optional::"
+msgstr "``shard_key`` は必須の引数です。 :ref:`logical-select-shard-label-table` を使わない場合は ``logical_table`` も必須です。 ``logical_table`` を省略する場合は、``shard_key`` を名前付き引数として指定してください。それ以外の引数は省略可能です::"
 
 msgid "There are some parameters that can be only used as named parameters. You can't use these parameters as ordered parameters. You must specify parameter name."
 msgstr "いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の引数」として使うことはできません。必ず名前を指定する必要があります。"
@@ -189,6 +189,12 @@ msgstr ""
 msgid "``--drilldowns[label2].sort_keys _key``"
 msgstr ""
 
+msgid "This command has the following named parameters for specifying actual tables explicitly:"
+msgstr "このコマンドには実際のテーブルを明示的に指定するために以下の名前付き引数があります。"
+
+msgid "``shard[${LABEL}].table=null``"
+msgstr ""
+
 msgid "Differences from ``select``"
 msgstr "``select`` との違い"
 
@@ -198,8 +204,8 @@ msgstr "``logical_select`` の多くの機能は :doc:`select` の機能と対�
 msgid "But there are some differences from :doc:`select`:"
 msgstr "しかし、いくつか :doc:`select` と違うところもあります。"
 
-msgid "``logical_table`` and ``shard_key`` parameters are required instead of ``table`` parameter."
-msgstr "``table`` 引数ではなく、 ``logical_table`` と ``shard_key`` 引数が必須です。"
+msgid "``shard_key`` and either ``logical_table`` or one or more ``shard[${LABEL}].table`` are required instead of ``table`` parameter."
+msgstr "``table`` 引数ではなく、 ``shard_key`` と、 ``logical_table`` か1つ以上の ``shard[${LABEL}].table`` が必須です。"
 
 msgid "``sort_keys`` isn't supported when multiple shards are used. (Only one shard is used, they are supported. There is one exception about ``sort_keys`` for multiple shards. When ``shard_keys`` and ``sort_keys`` are same, they are supported. See :ref:`logical-select-sort-keys` about details)"
 msgstr "複数のシャードを使った場合の ``sort_keys`` はサポートしていません。（1つのシャードのみを使った場合はサポートしています。複数のシャードについては1つ例外があります。``shard_key`` と ``sort_keys`` が同じ場合です。その場合はサポートしています。詳細は :ref:`logical-select-sort-keys` を参照してください。）"
@@ -267,8 +273,8 @@ msgstr "このセクションでは ``logical_select`` の引数について説�
 msgid "Required parameters"
 msgstr "必須引数"
 
-msgid "There are required parameters, ``logical_table`` and ``shard_key``."
-msgstr "必須引数は二つあります。 ``logical_table`` と ``shard_key`` です。"
+msgid "``shard_key`` is always required. You must also specify either ``logical_table`` or one or more :ref:`logical-select-shard-label-table`."
+msgstr "``shard_key`` は常に必須です。加えて、 ``logical_table`` または1つ以上の :ref:`logical-select-shard-label-table` のどちらかを指定する必要があります。"
 
 msgid "``logical_table``"
 msgstr ""
@@ -276,8 +282,8 @@ msgstr ""
 msgid "Specifies logical table name. It means table name without ``_YYYYMMDD`` postfix. If you use actual table such as ``Entries_20150708``, ``Entries_20150709`` and so on, logical table name is ``Entries``."
 msgstr "論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名からのぞいたものです。実際のテーブルが ``Entries_20150708`` や ``Entries_20150709`` といったものなら、論理テーブル名は ``Entries`` です。"
 
-msgid "You can show 5 records by specifying ``logical_table`` and ``shard_key`` parameters. They are required parameters."
-msgstr "``logical_table`` と ``shard_key`` 引数を指定すると5レコード表示できます。これらの引数は必須の引数です。"
+msgid "You can show 5 records by specifying ``logical_table`` and ``shard_key`` parameters."
+msgstr "``logical_table`` と ``shard_key`` 引数を指定すると5レコード表示できます。"
 
 msgid "If nonexistent table is specified, an error is returned."
 msgstr "存在しないテーブルを指定するとエラーが返ります。"
@@ -293,6 +299,27 @@ msgstr "今のところ、シャードキーは ``Time`` 型でなければい�
 
 msgid "See :ref:`logical-select-logical-table` how to specify ``shard_key``."
 msgstr "``shard_key`` の指定方法は :ref:`logical-select-logical-table` を見てください。"
+
+msgid "``shard[${LABEL}].table``"
+msgstr ""
+
+msgid "Specifies an actual table explicitly."
+msgstr "実際のテーブルを明示的に指定します。"
+
+msgid "Normally, ``logical_select`` finds actual tables automatically by ``${LOGICAL_TABLE}_${YYYYMMDD}`` naming rule. If your actual tables don't follow the naming rule, you can specify them explicitly by this parameter::"
+msgstr "通常、``logical_select`` は ``${LOGICAL_TABLE}_${YYYYMMDD}`` という命名規則に基づいて実際のテーブルを自動的に特定します。実際のテーブルがこの命名規則に従っていない場合は、このパラメータを使用して明示的に指定することができます::"
+
+msgid "``${LABEL}`` is just a label. It's used only for sorting the specified actual tables. If all labels consist of only digits such as ``1``, ``2`` and ``10``, they are sorted numerically. Otherwise, they are sorted as strings."
+msgstr "``${LABEL}`` は単なるラベルです。これは、指定された実際のテーブルを並べ替えるためにのみ使用されます。すべてのラベルが ``1``、``2``、``10`` のように数字のみで構成されている場合は数値順に、それ以外の場合は文字列として並べ替えます。"
+
+msgid "Note that a label isn't used for choosing shards to be searched with :ref:`logical-select-min` and :ref:`logical-select-max` even when it looks like ``YYYYMM`` or ``YYYYMMDD``. All of the specified actual tables are searched."
+msgstr "注意： :ref:`logical-select-min` や :ref:`logical-select-max` と一緒に使うとき、ラベルが ``YYYYMM`` や ``YYYYMMDD`` であっても、シャードの取捨選択には使いません。指定された実際のテーブルをすべて検索します。"
+
+msgid "You don't need to specify :ref:`logical-select-logical-table` when you specify one or more ``shard[${LABEL}].table``. If both of them are specified, ``shard[${LABEL}].table`` is used and :ref:`logical-select-logical-table` is ignored."
+msgstr "1つ以上の ``shard[${LABEL}].table`` を指定した場合、:ref:`logical-select-logical-table` を指定する必要はありません。両方が指定された場合、 ``shard[${LABEL}].table`` が使用され、:ref:`logical-select-logical-table` は無視されます。"
+
+msgid ":ref:`logical-select-shard-key` is still required. All of the specified actual tables must have the column that is specified by it."
+msgstr ":ref:`logical-select-shard-key` は必須です。指定されたすべての実際のテーブルは、指定されたカラムを含んでいる必要があります。"
 
 msgid "Optional parameters"
 msgstr "省略可能引数"
