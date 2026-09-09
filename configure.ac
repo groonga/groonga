@@ -552,25 +552,6 @@ int main(int argc, char **argv)
       AC_MSG_RESULT(no)
     ])
 
-# check MSG_NOSIGNAL defined
-AC_MSG_CHECKING([whether MSG_NOSIGNAL defined])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#include <sys/types.h>
-#include <sys/socket.h>
-
-int main(int argc, char **argv)
-{
-  return MSG_NOSIGNAL;
-}
-    ])],
-    [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_MSG_NOSIGNAL, [1], [use MSG_NOSIGNAL])
-    ],
-    [
-      AC_MSG_RESULT(no)
-    ])
-
 # MinGW
 if test "$os_win32" = "yes"; then
   WINDOWS_LDFLAGS="-mwindows"
