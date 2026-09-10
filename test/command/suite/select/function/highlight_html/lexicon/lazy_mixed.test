@@ -14,7 +14,7 @@ load --table Entries
 
 # "斉藤" doesn't need prefix search but "一" needs prefix search.
 # Because the number of characters of "一" is 1 that is less than 2
-# (TokenNgram uses 2 chracters for one token by default).
+# (TokenNgram uses 2 characters for one token by default).
 #
 # grn_highlighter calls keywords that need the prefix search as
 # "lazy keywords". "斉藤" isn't a lazy keyword and "一" is a lazy keyword.

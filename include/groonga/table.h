@@ -379,7 +379,7 @@ GRN_API grn_rc
 grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
 
 /**
- * \brief Move the cursur forward to the next and return its record ID.
+ * \brief Move the cursor forward to the next and return its record ID.
  *        Return GRN_ID_NIL when the end is reached
  *
  * \param ctx The context object

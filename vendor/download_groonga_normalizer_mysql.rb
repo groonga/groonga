@@ -9,7 +9,7 @@ require "zlib"
 
 @debug = (ENV["DEBUG"] == "true" or ARGV.include?("--debug"))
 
-groonga_nromalizer_mysql_base =
+groonga_normalizer_mysql_base =
   Pathname.new(__dir__).expand_path + "plugins" + "groonga-normalizer-mysql"
 
 def extract_tar_gz(tar_gz_path, base)
@@ -63,4 +63,4 @@ def download(url, base)
 end
 
 download("https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.tar.gz",
-         groonga_nromalizer_mysql_base)
+         groonga_normalizer_mysql_base)
