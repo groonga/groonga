@@ -509,6 +509,7 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
   }
 }
 
+#ifdef GRN_HAVE_SOCKET
 grn_rc
 grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
 {
@@ -548,6 +549,25 @@ grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev)
   }
   GRN_API_RETURN(ctx->rc);
 }
+#else  /* GRN_HAVE_SOCKET */
+grn_rc
+grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
+{
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[com][event][start-accept] socket isn't supported");
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev)
+{
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[com][event][stop-accept] socket isn't supported");
+  GRN_API_RETURN(ctx->rc);
+}
+#endif /* GRN_HAVE_SOCKET */
 
 static void
 grn_com_receiver(grn_ctx *ctx, grn_com *com)
@@ -802,6 +822,7 @@ grn_com_send_http(
   return ctx->rc;
 }
 
+#ifdef GRN_HAVE_SOCKET
 grn_rc
 grn_com_send(grn_ctx *ctx,
              grn_com *cs,
@@ -825,7 +846,7 @@ grn_com_send(grn_ctx *ctx,
           header->status);
 
   if (size) {
-#ifdef WIN32
+#  ifdef WIN32
     WSABUF wsabufs[2];
     DWORD n_sent;
     wsabufs[0].buf = (char *)header;
@@ -836,7 +857,7 @@ grn_com_send(grn_ctx *ctx,
       SOERR("WSASend");
     }
     ret = n_sent;
-#else  /* WIN32 */
+#  else  /* WIN32 */
     struct iovec msg_iov[2];
     struct msghdr msg;
     memset(&msg, 0, sizeof(struct msghdr));
@@ -852,7 +873,7 @@ grn_com_send(grn_ctx *ctx,
       SOERR("sendmsg");
       rc = ctx->rc;
     }
-#endif /* WIN32 */
+#  endif /* WIN32 */
   } else {
     if ((ret = send(cs->fd,
                     (const void *)header,
@@ -880,6 +901,19 @@ grn_com_send(grn_ctx *ctx,
                 whole_size);
   return rc;
 }
+#else  /* GRN_HAVE_SOCKET */
+grn_rc
+grn_com_send(grn_ctx *ctx,
+             grn_com *cs,
+             grn_com_header *header,
+             const char *body,
+             uint32_t size,
+             int flags)
+{
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "[com][send] socket isn't supported");
+  return ctx->rc;
+}
+#endif /* GRN_HAVE_SOCKET */
 
 #define RETRY_MAX 10
 
@@ -1053,6 +1087,7 @@ exit:
   return ctx->rc;
 }
 
+#ifdef GRN_HAVE_SOCKET
 grn_com *
 grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 {
@@ -1066,9 +1101,9 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-#ifdef AI_NUMERICSERV
+#  ifdef AI_NUMERICSERV
   hints.ai_flags = AI_NUMERICSERV;
-#endif
+#  endif
   grn_snprintf(port_string,
                sizeof(port_string),
                sizeof(port_string),
@@ -1078,7 +1113,7 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
   getaddrinfo_result = getaddrinfo(dest, port_string, &hints, &addrinfo_list);
   if (getaddrinfo_result != 0) {
     switch (getaddrinfo_result) {
-#ifdef EAI_MEMORY
+#  ifdef EAI_MEMORY
     case EAI_MEMORY:
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "getaddrinfo: <%s:%s>: %s",
@@ -1086,12 +1121,12 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
           port_string,
           gai_strerror(getaddrinfo_result));
       break;
-#endif
-#ifdef EAI_SYSTEM
+#  endif
+#  ifdef EAI_SYSTEM
     case EAI_SYSTEM:
       SOERR("getaddrinfo");
       break;
-#endif
+#  endif
     default:
       ERR(GRN_INVALID_ARGUMENT,
           "getaddrinfo: <%s:%s>: %s",
@@ -1112,7 +1147,7 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
       SOERR("socket");
       continue;
     }
-#ifdef TCP_NODELAY
+#  ifdef TCP_NODELAY
     {
       static const int value = 1;
       if (setsockopt(fd, 6, TCP_NODELAY, (const char *)&value, sizeof(value)) !=
@@ -1122,7 +1157,7 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
         continue;
       }
     }
-#endif
+#  endif
     if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen) != 0) {
       SOERR("connect");
       grn_sock_close(fd);
@@ -1153,6 +1188,17 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
   }
   return cs;
 }
+#else  /* GRN_HAVE_SOCKET */
+grn_com *
+grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
+{
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[com][copen] socket isn't supported: <%s:%d>",
+      dest,
+      port);
+  return NULL;
+}
+#endif /* GRN_HAVE_SOCKET */
 
 void
 grn_com_close_(grn_ctx *ctx, grn_com *com)
@@ -1188,6 +1234,7 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
   return GRN_SUCCESS;
 }
 
+#ifdef GRN_HAVE_SOCKET
 grn_rc
 grn_com_sopen(grn_ctx *ctx,
               grn_com_event *ev,
@@ -1215,14 +1262,14 @@ grn_com_sopen(grn_ctx *ctx,
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-#ifdef AI_NUMERICSERV
+#  ifdef AI_NUMERICSERV
   hints.ai_flags = AI_NUMERICSERV;
-#endif
+#  endif
   getaddrinfo_result =
     getaddrinfo(bind_address, port_string, &hints, &bind_address_info);
   if (getaddrinfo_result != 0) {
     switch (getaddrinfo_result) {
-#ifdef EAI_MEMORY
+#  ifdef EAI_MEMORY
     case EAI_MEMORY:
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "getaddrinfo: <%s:%s>: %s",
@@ -1230,12 +1277,12 @@ grn_com_sopen(grn_ctx *ctx,
           port_string,
           gai_strerror(getaddrinfo_result));
       break;
-#endif
-#ifdef EAI_SYSTEM
+#  endif
+#  ifdef EAI_SYSTEM
     case EAI_SYSTEM:
       SOERR("getaddrinfo");
       break;
-#endif
+#  endif
     default:
       ERR(GRN_INVALID_ARGUMENT,
           "getaddrinfo: <%s:%s>: %s",
@@ -1255,12 +1302,12 @@ grn_com_sopen(grn_ctx *ctx,
   ev->curr_edge_id.sid = 0;
   {
     int v = 1;
-#ifdef TCP_NODELAY
+#  ifdef TCP_NODELAY
     if (setsockopt(lfd, SOL_TCP, TCP_NODELAY, (void *)&v, sizeof(int)) == -1) {
       SOERR("setsockopt");
       goto exit;
     }
-#endif
+#  endif
     if (setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (void *)&v, sizeof(int)) ==
         -1) {
       SOERR("setsockopt");
@@ -1302,6 +1349,23 @@ exit:
   }
   GRN_API_RETURN(ctx->rc);
 }
+#else  /* GRN_HAVE_SOCKET */
+grn_rc
+grn_com_sopen(grn_ctx *ctx,
+              grn_com_event *ev,
+              const char *bind_address,
+              uint16_t port,
+              grn_msg_handler *func,
+              struct hostent *he)
+{
+  GRN_API_ENTER;
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[com][sopen] socket isn't supported: <%s:%u>",
+      bind_address ? bind_address : "0.0.0.0",
+      port);
+  GRN_API_RETURN(ctx->rc);
+}
+#endif /* GRN_HAVE_SOCKET */
 
 grn_hash *grn_edges = NULL;
 void (*grn_dispatcher)(grn_ctx *ctx, grn_edge *edge);
