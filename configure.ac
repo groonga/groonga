@@ -533,25 +533,6 @@ if test "x$have_epoll" != "xyes"; then
   fi
 fi
 
-# check MSG_MORE defined
-AC_MSG_CHECKING([whether MSG_MORE defined])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#include <sys/types.h>
-#include <sys/socket.h>
-
-int main(int argc, char **argv)
-{
-  return MSG_MORE;
-}
-    ])],
-    [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_MSG_MORE, [1], [use MSG_MORE])
-    ],
-    [
-      AC_MSG_RESULT(no)
-    ])
-
 # MinGW
 if test "$os_win32" = "yes"; then
   WINDOWS_LDFLAGS="-mwindows"

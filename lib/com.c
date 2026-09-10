@@ -49,12 +49,9 @@
 #  endif /* IPPROTO_TCP */
 #endif   /* SOL_TCP */
 
-#ifndef USE_MSG_MORE
-#  ifdef MSG_MORE
-#    undef MSG_MORE
-#  endif
+#ifndef MSG_MORE
 #  define MSG_MORE 0
-#endif /* USE_MSG_MORE */
+#endif
 
 #ifndef MSG_NOSIGNAL
 #  define MSG_NOSIGNAL 0
