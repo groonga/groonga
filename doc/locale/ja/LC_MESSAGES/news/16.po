@@ -17,11 +17,89 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.1.0 - 2026-08-28"
-msgstr "16.1.0リリース - 2026-08-28"
+msgid "Release 16.1.1 - 2026-09-14"
+msgstr "16.1.1リリース - 2026-09-14"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for parallel execution by `n_workers`"
+msgstr "[{doc}`/reference/commands/logical_select`] `n_workers` による並列実行に対応"
+
+msgid "`logical_select` executes the following processes in parallel when `--n_workers` is `-1` or `2` or more:"
+msgstr "`--n_workers` に `-1` または `2` 以上を指定すると、 `logical_select` は次の処理を並列に実行します。"
+
+msgid "Searching each shard"
+msgstr "各シャードの検索"
+
+msgid "Each key of `--drilldown`"
+msgstr "`--drilldown` の各キー"
+
+msgid "Independent `--drilldowns[${LABEL}]`"
+msgstr "依存関係のない `--drilldowns[${LABEL}]`"
+
+msgid "\"Independent\" means that a drilldown doesn't refer the result of another drilldown by `--drilldowns[${LABEL}].table`. A drilldown that refers the result of another drilldown is executed after the referred drilldown is finished. Therefore, the degree of parallelism is reduced if drilldowns have dependencies."
+msgstr "依存関係がないとは、 `--drilldowns[${LABEL}].table` を使用して他のドリルダウンの結果を参照していないことです。他のドリルダウンの結果を参照しているドリルダウンは、参照先のドリルダウンが終わってから実行します。そのため、依存関係があると並列度が下がります。"
+
+msgid "For example, `logical_select` with `--n_workers 2` against 20 shards that have 4,000,000 records in total is 1.5x faster than `--n_workers 1` on a 20-core machine."
+msgstr "例えば、合計400万レコードの20個のシャードに対して `--n_workers 2` を指定した `logical_select` は、20コアのマシンで `--n_workers 1` を指定した場合より1.5倍高速です。"
+
+msgid "Note that the following behaviors are changed when `logical_select` is executed in parallel:"
+msgstr "注意： `logical_select` を並列に実行すると、次の挙動が変わります。"
+
+msgid "All shards are processed even if one of them fails. The first error is reported."
+msgstr "いずれかのシャードの処理が失敗しても、すべてのシャードを処理します。また、最初のエラーを報告します。"
+
+msgid "Query log entries of each shard such as `filter(N)[SHARD]` and `select(N)[SHARD]` are logged in finished order not in shard order."
+msgstr "`filter(N)[SHARD]` や `select(N)[SHARD]` といった各シャードのクエリーログは、シャード順ではなく終了順に出力します。"
+
+msgid "Query log entries of drilldowns are also improved. `drilldown(N)` and `drilldowns[${LABEL}](N)` show their keys and the filter operation of a drilldown shows its prefix such as `drilldowns[${LABEL}].filter(N)`."
+msgstr "ドリルダウンのクエリーログも改良しました。 `drilldown(N)` と `drilldowns[${LABEL}](N)` はキーを出力するようになり、ドリルダウンのフィルター操作は `drilldowns[${LABEL}].filter(N)` のようにプレフィックスを出力するようになりました。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added `shard[${LABEL}].table`"
+msgstr "[{doc}`/reference/commands/logical_select`] `shard[${LABEL}].table` を追加"
+
+msgid "`logical_select` finds actual tables automatically by `${LOGICAL_TABLE}_${YYYYMMDD}` naming rule. So you couldn't use `logical_select` for actual tables that don't follow the naming rule."
+msgstr "`logical_select` は `${LOGICAL_TABLE}_${YYYYMMDD}` という命名規則に基づいて実際のテーブルを自動的に特定します。そのため、この命名規則に従っていない実際のテーブルに対しては `logical_select` を使えませんでした。"
+
+msgid "You can specify actual tables explicitly by `--shard[${LABEL}].table`:"
+msgstr "`--shard[${LABEL}].table` を使って実際のテーブルを明示的に指定できます。"
+
+msgid "`${LABEL}` is just a label. It's used only for sorting the specified actual tables."
+msgstr "`${LABEL}` は単なるラベルです。これは指定された実際のテーブルを並べ替えるためにのみ使用されます。"
+
+msgid "You don't need to specify `--logical_table` when you specify one or more `--shard[${LABEL}].table`."
+msgstr "1つ以上の `--shard[${LABEL}].table` を指定した場合、 `--logical_table` を指定する必要はありません。"
+
+msgid "Note that a label isn't used for choosing shards to be searched with `--min` and `--max` even when it looks like `YYYYMM` or `YYYYMMDD`. All of the specified actual tables are searched."
+msgstr "注意： `--min` や `--max` と一緒に使うとき、ラベルが `YYYYMM` や `YYYYMMDD` であっても、シャードの取捨選択には使いません。指定された実際のテーブルをすべて検索します。"
+
+msgid "`grn_init()` doesn't ignore `SIGPIPE` anymore"
+msgstr "`grn_init()` は `SIGPIPE` を無視しなくなりました"
+
+msgid "This is a behavior change for programs that embed `libgroonga`."
+msgstr "これは `libgroonga` を組み込んでいるプログラムに対する非互換な変更です。"
+
+msgid "Programs that write to pipes must handle `SIGPIPE` by themselves."
+msgstr "パイプに書き込むプログラムは、自分で `SIGPIPE` を処理する必要があります。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that a persistent column specified by `drilldown_calc_target` was closed after grouping"
+msgstr "[{doc}`/reference/commands/logical_select`] `drilldown_calc_target` に指定した永続カラムをグループ化後にクローズしていた問題を修正"
+
+msgid "A persistent column is shared with other contexts. So this may cause a crash."
+msgstr "永続カラムは他のコンテキストと共有しています。そのため、クラッシュする可能性がありました。"
+
+msgid "[autotools] Fixed a bug that out-of-source builds fail"
+msgstr "[autotools] ソースディレクトリ外でのビルドが失敗する問題を修正"
+
+msgid "The build directory for a generated file wasn't created."
+msgstr "生成するファイル用のビルドディレクトリを作成していませんでした。"
+
+msgid "Release 16.1.0 - 2026-08-28"
+msgstr "16.1.0リリース - 2026-08-28"
 
 msgid "Fixed a crash bug when allocation of a new segment fails"
 msgstr "新しいセグメントの確保に失敗した時にクラッシュする問題を修正"
@@ -37,9 +115,6 @@ msgstr "このエラーメッセージは、Groongaがメモリ不足やメモ�
 
 msgid "Release 16.0.9 - 2026-08-07"
 msgstr "16.0.9リリース - 2026-08-07"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[benchmark] Remove incorrect `G_GNUC_CONST` usage"
 msgstr "[benchmark] `G_GNUC_CONST`の誤った使い方を削除"
