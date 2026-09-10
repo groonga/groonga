@@ -165,6 +165,20 @@ typedef int grn_sock;
 
 #endif /* WIN32 */
 
+/* wasm32-wasip1 (WASI Preview 1) doesn't have socket(), bind(),
+ * listen(), connect(), getaddrinfo() and so on. It only has accept(),
+ * recv(), send() and shutdown() for pre-opened sockets. wasm32-wasip2
+ * (WASI Preview 2) has all of them. wasi-libc defines
+ * __wasilibc_use_wasip2 in <sys/socket.h> only for wasm32-wasip2. */
+#ifdef __wasi__
+#  include <sys/socket.h>
+#  ifdef __wasilibc_use_wasip2
+#    define GRN_HAVE_SOCKET
+#  endif
+#else
+#  define GRN_HAVE_SOCKET
+#endif
+
 #ifndef INT8_MAX
 #  define INT8_MAX (127)
 #endif /* INT8_MAX */
