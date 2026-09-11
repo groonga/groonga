@@ -2463,10 +2463,11 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx, grn_obj *table)
   return result;
 }
 
-static grn_obj *
-grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
-                                            grn_select_data *data,
-                                            grn_obj *table)
+grn_obj *
+grn_proc_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
+                                                 grn_obj *table,
+                                                 int offset,
+                                                 int limit)
 {
   grn_obj *sorted;
   grn_table_cursor *cursor;
@@ -2484,8 +2485,8 @@ grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
                                  0,
                                  NULL,
                                  0,
-                                 data->offset,
-                                 data->limit,
+                                 offset,
+                                 limit,
                                  GRN_CURSOR_ASCENDING);
   if (cursor) {
     grn_id id;
@@ -4014,9 +4015,10 @@ grn_select_apply_output_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
 
   if (!data->tables.sorted) {
     data->tables.sorted =
-      grn_select_create_no_sort_keys_sorted_table(ctx,
-                                                  data,
-                                                  data->tables.result);
+      grn_proc_select_create_no_sort_keys_sorted_table(ctx,
+                                                       data->tables.result,
+                                                       data->offset,
+                                                       data->limit);
     if (!data->tables.sorted) {
       return false;
     }
@@ -4258,8 +4260,10 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     } else {
       grn_obj *sorted = NULL;
       if (drilldown->dynamic_columns.output) {
-        sorted =
-          grn_select_create_no_sort_keys_sorted_table(ctx, data, target_table);
+        sorted = grn_proc_select_create_no_sort_keys_sorted_table(ctx,
+                                                                  target_table,
+                                                                  data->offset,
+                                                                  data->limit);
         if (!sorted) {
           succeeded = false;
         } else {
