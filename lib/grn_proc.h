@@ -298,6 +298,12 @@ grn_proc_select_output_columns(grn_ctx *ctx,
                                unsigned int columns_len,
                                grn_obj *condition);
 
+grn_obj *
+grn_proc_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
+                                                 grn_obj *table,
+                                                 int offset,
+                                                 int limit);
+
 grn_rc
 grn_proc_syntax_expand_query(grn_ctx *ctx,
                              const char *query,
