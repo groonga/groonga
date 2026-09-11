@@ -24,7 +24,11 @@
 #include "grn_hash.h"
 
 #ifdef HAVE_NETDB_H
-#include <netdb.h>
+#  include <netdb.h>
+#else /* HAVE_NETDB_H */
+/* wasm32-wasip1 doesn't have <netdb.h>. Windows has struct hostent in
+ * <winsock2.h> that is included by grn.h. */
+struct hostent;
 #endif /* HAVE_NETDB_H */
 
 #ifdef __cplusplus

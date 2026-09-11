@@ -1,5 +1,5 @@
 # Copyright (C) 2015-2018  Brazil
-# Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2024-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -186,3 +186,24 @@ if(GRN_WITH_LLAMA_CPP)
   endif()
   target_link_libraries(language_model_functions libgroonga)
 endif()
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/binary_sources.am BINARY_SOURCES)
+set_source_files_properties(${BINARY_SOURCES}
+                            PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(binary_functions STATIC ${BINARY_SOURCES})
+  set_target_properties(binary_functions PROPERTIES POSITION_INDEPENDENT_CODE
+                                                    ON)
+else()
+  add_library(binary_functions MODULE ${BINARY_SOURCES})
+  set_target_properties(binary_functions PROPERTIES PREFIX "" OUTPUT_NAME
+                                                              "binary")
+  install(TARGETS binary_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  if(MSVC)
+    install(
+      FILES $<TARGET_PDB_FILE:binary_functions>
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+      OPTIONAL)
+  endif()
+endif()
+target_link_libraries(binary_functions libgroonga)

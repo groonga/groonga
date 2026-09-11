@@ -54,6 +54,24 @@ msgstr "最初の引数に値を指定した場合、その値が含まれてい
 msgid "In the above case, it returns all the records because 14 exists in between 13 and 16. This behavior is used for checking the specified value exists or not in the table."
 msgstr "上記の例では、すべてのレコードを返します。これは、14は指定した範囲である13から16の間にあるからです。この振舞いは指定した値がテーブルに存在するかどうかの確認に使えます。"
 
+msgid "``between`` also accepts a vector as the 1st parameter."
+msgstr "``between`` は最初の引数としてベクターも受け付けます。"
+
+msgid "Vector is supported only in sequential search. ``between`` doesn't use an index for a vector value yet."
+msgstr "ベクターはシーケンシャルサーチでのみサポートしています。 ``between`` はまだベクターの値に対してインデックスを使いません。"
+
+msgid "The 1st parameter can be a vector value such as a ``COLUMN_VECTOR`` column or a vector literal. In this case, ``between`` returns true if any of the elements is included in the specified range. So you can use ``between`` to search records that have at least one value in the range."
+msgstr "最初の引数には、 ``COLUMN_VECTOR`` カラムやベクターリテラルなどのベクターの値を指定できます。この場合、 ``between`` はいずれかの要素が指定した範囲に含まれていればtrueを返します。そのため、 ``between`` を使って、範囲内に少なくとも1つの値を持つレコードを検索できます。"
+
+msgid "The following example uses a ``COLUMN_VECTOR`` column. Each record has multiple prices. ``between`` selects the records that have at least one price in ``[18, 20)``:"
+msgstr "以下の例では ``COLUMN_VECTOR`` カラムを使います。各レコードは複数の価格を持ちます。 ``between`` は、 ``[18, 20)`` の範囲に少なくとも1つの価格が含まれるレコードを選択します。"
+
+msgid "``A`` and ``E`` are excluded because none of their prices is in the range. ``D`` is excluded because ``20`` is excluded by ``\"exclude\"``. ``B`` and ``C`` are selected because each of them has at least one price in the range."
+msgstr "``A`` と ``E`` は、どの価格も範囲内にないため除外されます。 ``D`` は、 ``20`` が ``\"exclude\"`` によって除外されるため除外されます。 ``B`` と ``C`` は、それぞれ範囲内に少なくとも1つの価格を持つため選択されます。"
+
+msgid "If the elements of a vector use different types, the type of the first element is used as the target type and the elements that use other types are ignored. For example, in ``[180.0, 18]``, ``18`` is ignored because the first element ``180.0`` is a floating point number while ``18`` isn't."
+msgstr "ベクターの要素が異なる型を使っている場合、最初の要素の型が対象の型として使われ、他の型を使っている要素は無視されます。例えば、 ``[180.0, 18]`` では、最初の要素 ``180.0`` が浮動小数点数で ``18`` はそうではないため、 ``18`` は無視されます。"
+
 msgid "Then, you can also specify options of ``between``. Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``."
 msgstr "また、 ``between`` はオプションも指定できます。現在は、 ``too_many_index_match_ratio`` のみ指定できます。この値は、 ``double`` 型です。"
 
@@ -95,6 +113,9 @@ msgstr ""
 
 msgid "Specifies a column or value."
 msgstr "カラムもしくは値を指定します。"
+
+msgid "A vector is also accepted only with sequential search. ``between`` returns true if any of the elements is included in the specified range. See :ref:`between-usage` for details."
+msgstr "ベクターもシーケンシャルサーチでのみ受け付けます。 ``between`` はいずれかの要素が指定した範囲に含まれていればtrueを返します。詳細は :ref:`between-usage` を参照してください。"
 
 msgid "``min``"
 msgstr ""

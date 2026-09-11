@@ -1,0 +1,111 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-06-21 12:09+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`extract`"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "`extract` command extracts plain text or values from structured data such as HTML and JSON by the specified extractors."
+msgstr "`extract` コマンドは、指定したエクストラクターを使って、HTMLやJSONなどの構造化されたデータからプレーンテキストや値を抽出します。"
+
+msgid "There is no need to create a table to use `extract` command. It is useful for you to check the results of extractors before you attach them to a lexicon by the {ref}`table-create-extractors` option of {doc}`table_create`."
+msgstr "`extract` コマンドを使うのにテーブルを作る必要はありません。 {doc}`table_create` の {ref}`table-create-extractors` オプションでエクストラクターを語彙表に割り当てる前に、エクストラクターの結果を確認するのに便利です。"
+
+msgid "See {doc}`/reference/extractors` for details of extractors."
+msgstr "エクストラクターの詳細については {doc}`/reference/extractors` を参照してください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes two parameters."
+msgstr "このコマンドは2つの引数を受け取ります。"
+
+msgid "Both `extractors` and `value` are required:"
+msgstr "`extractors` と `value` はどちらも必須です。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example that extracts text content from HTML by {doc}`/reference/extractors/extractor_html`. It removes HTML tags and expands character references:"
+msgstr "以下は、 {doc}`/reference/extractors/extractor_html` を使ってHTMLからテキストの内容を抽出する例です。HTMLタグを取り除き、文字参照を展開します。"
+
+msgid "Here is an example that extracts values from JSON by {doc}`/reference/extractors/extractor_json`. The `$.tags[*]` JSONPath matches all elements of the `tags` array:"
+msgstr "以下は、 {doc}`/reference/extractors/extractor_json` を使ってJSONから値を抽出する例です。 `$.tags[*]` というJSONPathは `tags` 配列のすべての要素にマッチします。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of `extract`."
+msgstr "このセクションでは `extract` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There are required parameters, `extractors` and `value`."
+msgstr "必須引数として `extractors` と `value` があります。"
+
+msgid "`extractors`"
+msgstr ""
+
+msgid "Specifies extractors separated by `,`. `extract` command applies the extractors to `value` in order. The output of an extractor is passed to the next extractor as its input."
+msgstr "`,` で区切ってエクストラクターを指定します。 `extract` コマンドは、エクストラクターを `value` に順番に適用します。あるエクストラクターの出力は、次のエクストラクターの入力として渡されます。"
+
+msgid "See {doc}`/reference/extractors` for all extractors."
+msgstr "すべてのエクストラクターについては {doc}`/reference/extractors` を参照してください。"
+
+msgid "`value`"
+msgstr ""
+
+msgid "Specifies the value that you want to extract plain text or values from."
+msgstr "プレーンテキストや値を抽出したい対象の値を指定します。"
+
+msgid "If you want to include spaces in `value`, you need to quote `value` by single quotation (`'`) or double quotation (`\"`)."
+msgstr "`value` に空白を含めたい場合は、シングルクォート（ `'` ）またはダブルクォート（ `\"` ）で `value` を囲む必要があります。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "`HEADER`"
+msgstr ""
+
+msgid "See {doc}`/reference/command/output_format` about `HEADER`."
+msgstr "`HEADER` については {doc}`/reference/command/output_format` を参照してください。"
+
+msgid "`EXTRACTED_VALUE`"
+msgstr ""
+
+msgid "The value extracted by the specified extractors. It's a single value when the extractors return a single value such as {doc}`/reference/extractors/extractor_html`. It's an array when the extractors return multiple values such as {doc}`/reference/extractors/extractor_json`."
+msgstr "指定したエクストラクターによって抽出された値です。 {doc}`/reference/extractors/extractor_html` のようにエクストラクターが単一の値を返す場合は単一の値になります。 {doc}`/reference/extractors/extractor_json` のようにエクストラクターが複数の値を返す場合は配列になります。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`/reference/extractors`"
+msgstr ""
+
+msgid "{doc}`table_create`"
+msgstr ""
+
+msgid "{doc}`/reference/command/output_format`"
+msgstr ""

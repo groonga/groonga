@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -187,11 +187,12 @@ class Updator
   end
 
   def detect_markup(path)
-    File.extname(path)[1..-1].to_sym
+    markup = File.extname(path)[1..-1].to_sym
+    markup = :rst if markup == :log
+    markup
   end
 
   def execute_command(input, output, command, current_output_path, output_log)
-    markup = detect_markup(current_output_path)
     input.puts(command)
     input.flush
     is_command = /\A[a-z\/]/.match?(command)
@@ -212,6 +213,7 @@ class Updator
     end
     puts(formatted_result)
     if current_output_path
+      markup = detect_markup(current_output_path)
       File.open(current_output_path, "a") do |o|
         command_prefix = +""
         command_prefix << "  " if markup == :rst

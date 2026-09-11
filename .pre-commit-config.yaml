@@ -135,6 +135,7 @@ repos:
           ?lib/grn_table\.h|
           ?lib/grn_table_module\.h|
           ?lib/grn_table_selector\.h|
+          ?lib/grn_task_executor\.hpp|
           ?lib/grn_token\.h|
           ?lib/grn_token_cursor\.h|
           ?lib/grn_tokenizer\.h|
@@ -157,6 +158,9 @@ repos:
           ?lib/mrb/mrb_error\.c|
           ?lib/mrb/mrb_expr\.c|
           ?lib/mrb/mrb_object\.c|
+          ?lib/mrb/mrb_detached_value\.hpp|
+          ?lib/mrb/mrb_task_executor\.cpp|
+          ?lib/mrb/mrb_task_executor\.h|
           ?lib/msgpack\.c|
           ?lib/nfkc\.c|
           ?lib/normalizer\.c|
@@ -172,6 +176,7 @@ repos:
           ?lib/proc/proc_extract\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/proc/proc_index_column\.c|
+          ?lib/proc/proc_json\.c|
           ?lib/proc/proc_object\.c|
           ?lib/proc/proc_object_inspect\.c|
           ?lib/proc/proc_object_list\.c|
@@ -201,9 +206,10 @@ repos:
           ?plugins/functions/h3\.c|
           ?plugins/functions/language_model\.c|
           ?plugins/functions/number\.cpp|
+          ?plugins/functions/string\.c|
+          ?plugins/language_model/knn\.cpp|
           ?plugins/tokenizers/h3_index\.c|
           ?plugins/tokenizers/mecab\.c|
-          ?plugins/language_model/knn\.cpp|
           ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit

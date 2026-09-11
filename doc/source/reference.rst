@@ -13,6 +13,7 @@ Reference manual
    reference/types
    reference/tables
    reference/column
+   reference/extractors
    reference/normalizers
    reference/tokenizers
    reference/token_filters

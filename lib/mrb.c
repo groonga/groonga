@@ -25,6 +25,7 @@
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby/compile.h>
+# include <mruby/error.h>
 # include <mruby/opcode.h>
 # include <mruby/proc.h>
 # include <mruby/string.h>
@@ -165,6 +166,62 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
   return true;
 }
 
+typedef struct {
+  grn_ctx *ctx;
+  const char *expanded_path;
+  FILE *file;
+  mrb_ccontext *ccontext;
+  struct mrb_parser_state *parser;
+} grn_mrb_load_data;
+
+static mrb_value
+grn_mrb_load_body(mrb_state *mrb, void *user_data)
+{
+  grn_mrb_load_data *data = user_data;
+  grn_ctx *ctx = data->ctx;
+  struct RProc *proc = NULL;
+
+  data->ccontext = mrb_ccontext_new(mrb);
+  data->ccontext->capture_errors = TRUE;
+  {
+    const char *utf8_expanded_path;
+    utf8_expanded_path =
+      grn_encoding_convert_to_utf8_from_locale(ctx,
+                                               data->expanded_path,
+                                               -1,
+                                               NULL);
+    mrb_ccontext_filename(mrb, data->ccontext, utf8_expanded_path);
+    grn_encoding_converted_free(ctx, utf8_expanded_path);
+  }
+  data->parser = mrb_parse_file(mrb, data->file, data->ccontext);
+  fclose(data->file);
+  data->file = NULL;
+
+  if (data->parser && data->parser->nerr == 0) {
+    proc = mrb_generate_code(mrb, data->parser);
+  }
+  if (!proc) {
+    const char *message = "failed to parse mruby script";
+    if (data->parser &&
+        data->parser->nerr > 0 &&
+        data->parser->error_buffer[0].message) {
+      message = data->parser->error_buffer[0].message;
+    }
+    ERR(GRN_INVALID_ARGUMENT,
+        "failed to parse mruby script: <%s>: %s",
+        data->expanded_path,
+        message);
+    mrb_raise(mrb, E_LOAD_ERROR, ctx->errbuf);
+  }
+  MRB_PROC_SET_TARGET_CLASS(proc, mrb->object_class);
+  return mrb_yield_with_class(mrb,
+                              mrb_obj_value(proc),
+                              0,
+                              NULL,
+                              mrb_top_self(mrb),
+                              mrb->object_class);
+}
+
 mrb_value
 grn_mrb_load(grn_ctx *ctx, const char *path)
 {
@@ -173,7 +230,6 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   char expanded_path[PATH_MAX];
   FILE *file;
   mrb_value result;
-  struct mrb_parser_state *parser;
 
   if (!mrb) {
     return mrb_nil_value();
@@ -210,37 +266,35 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
       last_directory[0] = '\0';
     }
 
-    parser = mrb_parser_new(mrb);
     {
-      const char *utf8_expanded_path;
-      utf8_expanded_path =
-        grn_encoding_convert_to_utf8_from_locale(ctx,
-                                                 expanded_path,
-                                                 -1,
-                                                 NULL);
-      mrb_parser_set_filename(parser, utf8_expanded_path);
-      grn_encoding_converted_free(ctx, utf8_expanded_path);
-    }
-    parser->s = parser->send = NULL;
-    parser->f = file;
-    mrb_parser_parse(parser, NULL);
-    fclose(file);
-
-    {
-      struct RProc *proc;
+      grn_mrb_load_data load_data;
       int arena_index;
-      proc = mrb_generate_code(mrb, parser);
-      MRB_PROC_SET_TARGET_CLASS(proc, mrb->object_class);
+      mrb_bool error = FALSE;
+
+      load_data.ctx = ctx;
+      load_data.expanded_path = expanded_path;
+      load_data.file = file;
+      load_data.ccontext = NULL;
+      load_data.parser = NULL;
       arena_index = mrb_gc_arena_save(mrb);
-      result = mrb_yield_with_class(mrb,
-                                    mrb_obj_value(proc),
-                                    0,
-                                    NULL,
-                                    mrb_top_self(mrb),
-                                    mrb->object_class);
+      result = mrb_protect_error(mrb, grn_mrb_load_body, &load_data, &error);
+      if (error) {
+        /* mrb_protect_error() clears mrb->exc but callers detect an
+         * error by mrb->exc. */
+        mrb->exc = mrb_obj_ptr(result);
+        result = mrb_nil_value();
+      }
       mrb_gc_arena_restore(mrb, arena_index);
+      if (load_data.file) {
+        fclose(load_data.file);
+      }
+      if (load_data.parser) {
+        mrb_parser_free(load_data.parser);
+      }
+      if (load_data.ccontext) {
+        mrb_ccontext_free(mrb, load_data.ccontext);
+      }
     }
-    mrb_parser_free(parser);
 
     grn_strcpy(data->base_directory, PATH_MAX, current_base_directory);
   }

@@ -64,6 +64,7 @@
         "GRN_WITH_MECAB": "no",
         "GRN_WITH_MESSAGE_PACK": "no",
         "GRN_WITH_MRUBY": "no",
+        "GRN_WITH_OPENZL": "no",
         "GRN_WITH_RAPIDJSON": "no",
         "GRN_WITH_ROARING_BITMAPS": "no",
         "GRN_WITH_SIMDJSON": "no",

@@ -1,0 +1,66 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-06-21 12:07+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "Extractors"
+msgstr "エクストラクター"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Groonga has extractor module that extracts plain text or values from structured data such as HTML and JSON. It is used before tokenizing and indexing a value. For example, {doc}`extractors/extractor_html` extracts only the text content from HTML by removing tags, so that markup such as `<p>` isn't indexed as a token."
+msgstr "Groongaには、HTMLやJSONなどの構造化されたデータからプレーンテキストや値を抽出するエクストラクターモジュールがあります。これは、値をトークナイズしてインデックスを更新する前に使われます。例えば、 {doc}`extractors/extractor_html` はタグを取り除くことでHTMLからテキストの内容だけを抽出するので、 `<p>` などのマークアップはトークンとしてインデックスされません。"
+
+msgid "Extractor module can be added as a plugin. You can customize value extraction by registering your extractor plugins to Groonga."
+msgstr "エクストラクターモジュールはプラグインとして追加できます。自作のエクストラクタープラグインをGroongaに登録することで、値の抽出をカスタマイズできます。"
+
+msgid "An extractor module is attached to a table. The table is normally a lexicon for an index. A table can have zero or more extractor modules. You can attach extractor modules to a table by the {ref}`table-create-extractors` option in {doc}`/reference/commands/table_create`."
+msgstr "エクストラクターモジュールはテーブルに割り当てます。このテーブルは通常、インデックス用の語彙表です。1つのテーブルには0個以上のエクストラクターモジュールを割り当てられます。 {doc}`/reference/commands/table_create` の {ref}`table-create-extractors` オプションで、エクストラクターモジュールをテーブルに割り当てられます。"
+
+msgid "Here is an example `table_create` that uses the {doc}`extractors/extractor_html` extractor module:"
+msgstr "以下は、 {doc}`extractors/extractor_html` エクストラクターモジュールを使う `table_create` の例です。"
+
+msgid "When extractors are set to a lexicon, they are applied automatically when an index of the lexicon is updated. The extracted value is tokenized and indexed instead of the original value. The original value is still stored as-is in its data column. So you can search against the extracted content while keeping the original structured data."
+msgstr "エクストラクターを語彙表に設定すると、その語彙表のインデックスが更新されるときに自動的に適用されます。元の値の代わりに、抽出された値がトークナイズされてインデックスされます。元の値はそのままデータカラムに格納されます。そのため、元の構造化されたデータを保持したまま、抽出された内容を対象に検索できます。"
+
+msgid "If a table has multiple extractors, they are applied in order. The output of an extractor is passed to the next extractor as its input. This is useful when you need to combine extractors. For example, you can extract a string from JSON by {doc}`extractors/extractor_json` and then remove HTML tags in the string by {doc}`extractors/extractor_html`."
+msgstr "テーブルに複数のエクストラクターがある場合は、順番に適用されます。あるエクストラクターの出力は、次のエクストラクターの入力として渡されます。これはエクストラクターを組み合わせる必要があるときに便利です。例えば、 {doc}`extractors/extractor_json` でJSONから文字列を抽出し、その文字列の中のHTMLタグを {doc}`extractors/extractor_html` で取り除けます。"
+
+msgid "You can use the {doc}`/reference/commands/extract` command to check how extractors process a value. The {doc}`/reference/commands/extract` command applies the specified extractors to the given value and returns the extracted value. It doesn't need a table:"
+msgstr "{doc}`/reference/commands/extract` コマンドを使うと、エクストラクターが値をどのように処理するかを確認できます。 {doc}`/reference/commands/extract` コマンドは、指定したエクストラクターを与えられた値に適用し、抽出された値を返します。テーブルは必要ありません。"
+
+msgid "The `extract` command is useful to confirm the result of extractors before you attach them to a lexicon."
+msgstr "`extract` コマンドは、エクストラクターを語彙表に割り当てる前に、その結果を確認するのに便利です。"
+
+msgid "Built-in extractors"
+msgstr "組み込みのエクストラクター"
+
+msgid "Here is a list of built-in extractors:"
+msgstr "以下は組み込みのエクストラクターの一覧です。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`/reference/commands/extract`"
+msgstr ""
+
+msgid "{doc}`/reference/commands/table_create`"
+msgstr ""

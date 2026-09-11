@@ -1,0 +1,15 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]', 1, Object.new) {|number, object| number}"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "exception": {
+      "message": "[test][execute] can't pass Object as the 2-th argument"
+    }
+  }
+]

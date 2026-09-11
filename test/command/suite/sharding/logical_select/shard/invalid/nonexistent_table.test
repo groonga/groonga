@@ -1,0 +1,7 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+logical_select \
+  --shard_key timestamp \
+  --shard[1].table Nonexistent

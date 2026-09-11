@@ -44,6 +44,7 @@ object_inspect Memos.tags
         },
         "size": 4096
       },
+      "size": "normal",
       "compress": null,
       "weight": false,
       "weight_float32": false,

@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,7 @@
 #  include "mrb/mrb_writer.h"
 #  include "mrb/mrb_config.h"
 #  include "mrb/mrb_eval_context.h"
+#  include "mrb/mrb_task_executor.h"
 #  include "mrb/mrb_thread.h"
 #  include "mrb/mrb_window_definition.h"
 #  include "mrb/mrb_window_function_executor.h"
@@ -209,6 +210,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_writer_init(ctx);
   grn_mrb_config_init(ctx);
   grn_mrb_eval_context_init(ctx);
+  grn_mrb_task_executor_init(ctx);
   grn_mrb_thread_init(ctx);
   grn_mrb_window_definition_init(ctx);
   grn_mrb_window_function_executor_init(ctx);
@@ -243,27 +245,6 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);
 }
 
-#  ifndef GRN_WITH_MEMORY_DEBUG
-static void *
-grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
-{
-  grn_ctx *ctx = ud;
-
-  if (size == 0) {
-    if (ptr) {
-      grn_free(ctx, ptr, __FILE__, __LINE__, __FUNCTION__);
-    }
-    return NULL;
-  } else {
-    if (ptr) {
-      return grn_realloc(ctx, ptr, size, __FILE__, __LINE__, __FUNCTION__);
-    } else {
-      return grn_malloc(ctx, size, __FILE__, __LINE__, __FUNCTION__);
-    }
-  }
-}
-#  endif
-
 static void
 grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
 {
@@ -277,12 +258,7 @@ grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
     ctx->impl->mrb.builtin.time_class = NULL;
     ctx->impl->mrb.groonga.operator_class = NULL;
   } else {
-    mrb_state *mrb;
-#  ifdef GRN_WITH_MEMORY_DEBUG
-    mrb = mrb_open();
-#  else
-    mrb = mrb_open_allocf(grn_ctx_impl_mrb_allocf, ctx);
-#  endif
+    mrb_state *mrb = mrb_open();
     ctx->impl->mrb.state = mrb;
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);

@@ -109,6 +109,11 @@ const char *grn_nfkc160_decompose(const unsigned char *utf8);
 const char *grn_nfkc160_compose(const unsigned char *prefix_utf8,
                                 const unsigned char *suffix_utf8);
 
+GRN_API grn_char_type grn_nfkc170_char_type(const unsigned char *utf8);
+const char *grn_nfkc170_decompose(const unsigned char *utf8);
+const char *grn_nfkc170_compose(const unsigned char *prefix_utf8,
+                                const unsigned char *suffix_utf8);
+
 void grn_nfkc_normalize_options_init(grn_ctx *ctx,
                                      grn_nfkc_normalize_options *options,
                                      grn_nfkc_char_type_func char_type_func,
@@ -123,6 +128,8 @@ void grn_nfkc130_normalize_options_init(grn_ctx *ctx,
 void grn_nfkc150_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 void grn_nfkc160_normalize_options_init(grn_ctx *ctx,
+                                        grn_nfkc_normalize_options *options);
+void grn_nfkc170_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 grn_nfkc_funcs
 grn_nfkc_version_option_process(grn_ctx *ctx,

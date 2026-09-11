@@ -46,6 +46,7 @@ load --table Logs_20170317
 ]
 
 #@collect-query-log true
+#@sort-query-log-operations shard drilldown
 logical_select Logs \
   --shard_key timestamp \
   --output_columns _id \
@@ -58,5 +59,8 @@ logical_select Logs \
   --drilldowns[item].columns[price_with_tax].flags COLUMN_SCALAR \
   --drilldowns[item].columns[price_with_tax].value 'price * 1.08' \
   --drilldowns[real_price].table item \
-  --drilldowns[real_price].keys price_with_tax
+  --drilldowns[real_price].keys price_with_tax \
+  --drilldowns[unit_price].keys items.price \
+  --drilldowns[unit_price].output_columns _key,_nsubrecs
+#@sort-query-log-operations
 #@collect-query-log false

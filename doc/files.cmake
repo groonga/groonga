@@ -110,6 +110,8 @@ set(GRN_DOC_SOURCES
     example/reference/commands/database_unmap/usage_success.log
     example/reference/commands/delete/cascade.log
     example/reference/commands/delete/status.log
+    example/reference/commands/extract/html.md
+    example/reference/commands/extract/json.md
     example/reference/commands/index_column_diff/index_column.log
     example/reference/commands/io_flush/all.log
     example/reference/commands/io_flush/only_opened_yes.log
@@ -441,10 +443,20 @@ set(GRN_DOC_SOURCES
     example/reference/executables/groonga-suggest-httpd/learn-and-complete.log
     example/reference/executables/groonga-suggest-httpd/learn.log
     example/reference/executables/groonga-suggest-httpd/setup.log
+    example/reference/extractors/example_extract.md
+    example/reference/extractors/example_table_create.md
+    example/reference/extractors/extractor_html/default.md
+    example/reference/extractors/extractor_html/expand_character_reference.md
+    example/reference/extractors/extractor_html/index.md
+    example/reference/extractors/extractor_html/remove_tag.md
+    example/reference/extractors/extractor_json/index.md
+    example/reference/extractors/extractor_json/nested.md
+    example/reference/extractors/extractor_json/string.md
     example/reference/functions/between/usage_age.log
     example/reference/functions/between/usage_options.log
     example/reference/functions/between/usage_setup.log
     example/reference/functions/between/usage_value.log
+    example/reference/functions/between/usage_vector.log
     example/reference/functions/cast_loose/usage_basic.log
     example/reference/functions/cast_loose/usage_setup.log
     example/reference/functions/escalate/usage_age.log
@@ -482,6 +494,8 @@ set(GRN_DOC_SOURCES
     example/reference/functions/in_values/usage_options.log
     example/reference/functions/in_values/usage_setup_data.log
     example/reference/functions/in_values/usage_setup_schema.log
+    example/reference/functions/json_extract/usage_select.md
+    example/reference/functions/json_extract/usage_setup.md
     example/reference/functions/language_model_knn/column_create.md
     example/reference/functions/language_model_knn/filter.md
     example/reference/functions/language_model_knn/index_column_create.md
@@ -539,6 +553,13 @@ set(GRN_DOC_SOURCES
     example/reference/functions/string_substring/usage_setup_data.log
     example/reference/functions/string_substring/usage_setup_schema.log
     example/reference/functions/string_substring/usage_string_literal.log
+    example/reference/functions/string_truncate/usage_basic.md
+    example/reference/functions/string_truncate/usage_no_truncation.md
+    example/reference/functions/string_truncate/usage_omission.md
+    example/reference/functions/string_truncate/usage_omission_only.md
+    example/reference/functions/string_truncate/usage_setup_data.md
+    example/reference/functions/string_truncate/usage_setup_schema.md
+    example/reference/functions/string_truncate/usage_string_literal.md
     example/reference/functions/sub_filter/usage_setup_data.log
     example/reference/functions/sub_filter/usage_setup_schema.log
     example/reference/functions/sub_filter/usage_with_sub_filter.log
@@ -1190,6 +1211,7 @@ set(GRN_DOC_SOURCES
     reference/commands/defrag.rst
     reference/commands/delete.rst
     reference/commands/dump.rst
+    reference/commands/extract.md
     reference/commands/index_column_diff.rst
     reference/commands/io_flush.rst
     reference/commands/load.rst
@@ -1249,6 +1271,9 @@ set(GRN_DOC_SOURCES
     reference/executables/groonga-suggest-httpd.rst
     reference/executables/groonga-suggest-learner.rst
     reference/executables/groonga.rst
+    reference/extractors.md
+    reference/extractors/extractor_html.md
+    reference/extractors/extractor_json.md
     reference/function.rst
     reference/functions/between.rst
     reference/functions/cast_loose.rst
@@ -1264,6 +1289,7 @@ set(GRN_DOC_SOURCES
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
+    reference/functions/json_extract.md
     reference/functions/language_model_knn.md
     reference/functions/language_model_vectorize.md
     reference/functions/math_abs.rst
@@ -1278,6 +1304,7 @@ set(GRN_DOC_SOURCES
     reference/functions/string_length.rst
     reference/functions/string_slice.rst
     reference/functions/string_substring.rst
+    reference/functions/string_truncate.md
     reference/functions/sub_filter.rst
     reference/functions/time_classify_day.rst
     reference/functions/time_classify_day_of_week.rst
@@ -1547,6 +1574,7 @@ set(GRN_DOC_HTML_FILES
     reference/commands/defrag.html
     reference/commands/delete.html
     reference/commands/dump.html
+    reference/commands/extract.html
     reference/commands/index_column_diff.html
     reference/commands/io_flush.html
     reference/commands/load.html
@@ -1606,6 +1634,9 @@ set(GRN_DOC_HTML_FILES
     reference/executables/groonga-suggest-httpd.html
     reference/executables/groonga-suggest-learner.html
     reference/executables/groonga.html
+    reference/extractors.html
+    reference/extractors/extractor_html.html
+    reference/extractors/extractor_json.html
     reference/function.html
     reference/functions/between.html
     reference/functions/cast_loose.html
@@ -1621,6 +1652,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
+    reference/functions/json_extract.html
     reference/functions/language_model_knn.html
     reference/functions/language_model_vectorize.html
     reference/functions/math_abs.html
@@ -1635,6 +1667,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/string_length.html
     reference/functions/string_slice.html
     reference/functions/string_substring.html
+    reference/functions/string_truncate.html
     reference/functions/sub_filter.html
     reference/functions/time_classify_day.html
     reference/functions/time_classify_day_of_week.html

@@ -60,7 +60,16 @@ build() {
     -D CMAKE_INSTALL_PREFIX=/usr
     -D CMAKE_SKIP_RPATH=ON
     -D GRN_WITH_APACHE_ARROW=ON
-    -D GRN_WITH_BLOSC=system
+    # This is a workaround.
+    # Currently, the system-provided Blosc2 is not used when building Groonga due to the following error.
+    #
+    # CMake Error at /usr/lib/cmake/Blosc2/Blosc2Targets.cmake:108 (message):
+    # The imported target "Blosc2::blosc2_static" references the file
+    # "/usr/lib/libblosc2.a"
+    #
+    # This is an upstream issue.
+    # So, we use bundled Blosc2 until the upstream issue is resolved.
+    -D GRN_WITH_BLOSC=bundled
     -D GRN_WITH_MRUBY=ON
   )
   cmake "${cmake_options[@]}"

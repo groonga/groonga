@@ -110,6 +110,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/extract/html.md \
+	$(top_srcdir)/doc/source/example/reference/commands/extract/json.md \
 	$(top_srcdir)/doc/source/example/reference/commands/index_column_diff/index_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/only_opened_yes.log \
@@ -441,10 +443,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/setup.log \
+	$(top_srcdir)/doc/source/example/reference/extractors/example_extract.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/example_table_create.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/default.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/expand_character_reference.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/index.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/remove_tag.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/index.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/nested.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/string.md \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_value.log \
+	$(top_srcdir)/doc/source/example/reference/functions/between/usage_vector.log \
 	$(top_srcdir)/doc/source/example/reference/functions/cast_loose/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/cast_loose/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/escalate/usage_age.log \
@@ -482,6 +494,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/json_extract/usage_select.md \
+	$(top_srcdir)/doc/source/example/reference/functions/json_extract/usage_setup.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/column_create.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/filter.md \
 	$(top_srcdir)/doc/source/example/reference/functions/language_model_knn/index_column_create.md \
@@ -539,6 +553,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_basic.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_no_truncation.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_omission.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_omission_only.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_setup_data.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_setup_schema.md \
+	$(top_srcdir)/doc/source/example/reference/functions/string_truncate/usage_string_literal.md \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -1190,6 +1211,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
+	$(top_srcdir)/doc/source/reference/commands/extract.md \
 	$(top_srcdir)/doc/source/reference/commands/index_column_diff.rst \
 	$(top_srcdir)/doc/source/reference/commands/io_flush.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
@@ -1249,6 +1271,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-httpd.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-learner.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga.rst \
+	$(top_srcdir)/doc/source/reference/extractors.md \
+	$(top_srcdir)/doc/source/reference/extractors/extractor_html.md \
+	$(top_srcdir)/doc/source/reference/extractors/extractor_json.md \
 	$(top_srcdir)/doc/source/reference/function.rst \
 	$(top_srcdir)/doc/source/reference/functions/between.rst \
 	$(top_srcdir)/doc/source/reference/functions/cast_loose.rst \
@@ -1264,6 +1289,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/json_extract.md \
 	$(top_srcdir)/doc/source/reference/functions/language_model_knn.md \
 	$(top_srcdir)/doc/source/reference/functions/language_model_vectorize.md \
 	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
@@ -1278,6 +1304,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_slice.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
+	$(top_srcdir)/doc/source/reference/functions/string_truncate.md \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day_of_week.rst \
@@ -1501,6 +1528,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
+	source/example/reference/commands/extract/html.md \
+	source/example/reference/commands/extract/json.md \
 	source/example/reference/commands/index_column_diff/index_column.log \
 	source/example/reference/commands/io_flush/all.log \
 	source/example/reference/commands/io_flush/only_opened_yes.log \
@@ -1832,10 +1861,20 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	source/example/reference/executables/groonga-suggest-httpd/setup.log \
+	source/example/reference/extractors/example_extract.md \
+	source/example/reference/extractors/example_table_create.md \
+	source/example/reference/extractors/extractor_html/default.md \
+	source/example/reference/extractors/extractor_html/expand_character_reference.md \
+	source/example/reference/extractors/extractor_html/index.md \
+	source/example/reference/extractors/extractor_html/remove_tag.md \
+	source/example/reference/extractors/extractor_json/index.md \
+	source/example/reference/extractors/extractor_json/nested.md \
+	source/example/reference/extractors/extractor_json/string.md \
 	source/example/reference/functions/between/usage_age.log \
 	source/example/reference/functions/between/usage_options.log \
 	source/example/reference/functions/between/usage_setup.log \
 	source/example/reference/functions/between/usage_value.log \
+	source/example/reference/functions/between/usage_vector.log \
 	source/example/reference/functions/cast_loose/usage_basic.log \
 	source/example/reference/functions/cast_loose/usage_setup.log \
 	source/example/reference/functions/escalate/usage_age.log \
@@ -1873,6 +1912,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/json_extract/usage_select.md \
+	source/example/reference/functions/json_extract/usage_setup.md \
 	source/example/reference/functions/language_model_knn/column_create.md \
 	source/example/reference/functions/language_model_knn/filter.md \
 	source/example/reference/functions/language_model_knn/index_column_create.md \
@@ -1930,6 +1971,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/string_substring/usage_setup_data.log \
 	source/example/reference/functions/string_substring/usage_setup_schema.log \
 	source/example/reference/functions/string_substring/usage_string_literal.log \
+	source/example/reference/functions/string_truncate/usage_basic.md \
+	source/example/reference/functions/string_truncate/usage_no_truncation.md \
+	source/example/reference/functions/string_truncate/usage_omission.md \
+	source/example/reference/functions/string_truncate/usage_omission_only.md \
+	source/example/reference/functions/string_truncate/usage_setup_data.md \
+	source/example/reference/functions/string_truncate/usage_setup_schema.md \
+	source/example/reference/functions/string_truncate/usage_string_literal.md \
 	source/example/reference/functions/sub_filter/usage_setup_data.log \
 	source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -2581,6 +2629,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/defrag.rst \
 	source/reference/commands/delete.rst \
 	source/reference/commands/dump.rst \
+	source/reference/commands/extract.md \
 	source/reference/commands/index_column_diff.rst \
 	source/reference/commands/io_flush.rst \
 	source/reference/commands/load.rst \
@@ -2640,6 +2689,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/executables/groonga-suggest-httpd.rst \
 	source/reference/executables/groonga-suggest-learner.rst \
 	source/reference/executables/groonga.rst \
+	source/reference/extractors.md \
+	source/reference/extractors/extractor_html.md \
+	source/reference/extractors/extractor_json.md \
 	source/reference/function.rst \
 	source/reference/functions/between.rst \
 	source/reference/functions/cast_loose.rst \
@@ -2655,6 +2707,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/json_extract.md \
 	source/reference/functions/language_model_knn.md \
 	source/reference/functions/language_model_vectorize.md \
 	source/reference/functions/math_abs.rst \
@@ -2669,6 +2722,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/string_length.rst \
 	source/reference/functions/string_slice.rst \
 	source/reference/functions/string_substring.rst \
+	source/reference/functions/string_truncate.md \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
 	source/reference/functions/time_classify_day_of_week.rst \
@@ -2906,6 +2960,7 @@ po_files = \
 	reference/commands/defrag.po \
 	reference/commands/delete.po \
 	reference/commands/dump.po \
+	reference/commands/extract.po \
 	reference/commands/index_column_diff.po \
 	reference/commands/io_flush.po \
 	reference/commands/load.po \
@@ -2965,6 +3020,9 @@ po_files = \
 	reference/executables/groonga-suggest-httpd.po \
 	reference/executables/groonga-suggest-learner.po \
 	reference/executables/groonga.po \
+	reference/extractors.po \
+	reference/extractors/extractor_html.po \
+	reference/extractors/extractor_json.po \
 	reference/function.po \
 	reference/functions/between.po \
 	reference/functions/cast_loose.po \
@@ -2980,6 +3038,7 @@ po_files = \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
+	reference/functions/json_extract.po \
 	reference/functions/language_model_knn.po \
 	reference/functions/language_model_vectorize.po \
 	reference/functions/math_abs.po \
@@ -2994,6 +3053,7 @@ po_files = \
 	reference/functions/string_length.po \
 	reference/functions/string_slice.po \
 	reference/functions/string_substring.po \
+	reference/functions/string_truncate.po \
 	reference/functions/sub_filter.po \
 	reference/functions/time_classify_day.po \
 	reference/functions/time_classify_day_of_week.po \
@@ -3229,6 +3289,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.po \
 	LC_MESSAGES/reference/commands/delete.po \
 	LC_MESSAGES/reference/commands/dump.po \
+	LC_MESSAGES/reference/commands/extract.po \
 	LC_MESSAGES/reference/commands/index_column_diff.po \
 	LC_MESSAGES/reference/commands/io_flush.po \
 	LC_MESSAGES/reference/commands/load.po \
@@ -3288,6 +3349,9 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.po \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.po \
 	LC_MESSAGES/reference/executables/groonga.po \
+	LC_MESSAGES/reference/extractors.po \
+	LC_MESSAGES/reference/extractors/extractor_html.po \
+	LC_MESSAGES/reference/extractors/extractor_json.po \
 	LC_MESSAGES/reference/function.po \
 	LC_MESSAGES/reference/functions/between.po \
 	LC_MESSAGES/reference/functions/cast_loose.po \
@@ -3303,6 +3367,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
+	LC_MESSAGES/reference/functions/json_extract.po \
 	LC_MESSAGES/reference/functions/language_model_knn.po \
 	LC_MESSAGES/reference/functions/language_model_vectorize.po \
 	LC_MESSAGES/reference/functions/math_abs.po \
@@ -3317,6 +3382,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.po \
 	LC_MESSAGES/reference/functions/string_slice.po \
 	LC_MESSAGES/reference/functions/string_substring.po \
+	LC_MESSAGES/reference/functions/string_truncate.po \
 	LC_MESSAGES/reference/functions/sub_filter.po \
 	LC_MESSAGES/reference/functions/time_classify_day.po \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.po \
@@ -3552,6 +3618,7 @@ edit_po_files = \
 	reference/commands/defrag.edit \
 	reference/commands/delete.edit \
 	reference/commands/dump.edit \
+	reference/commands/extract.edit \
 	reference/commands/index_column_diff.edit \
 	reference/commands/io_flush.edit \
 	reference/commands/load.edit \
@@ -3611,6 +3678,9 @@ edit_po_files = \
 	reference/executables/groonga-suggest-httpd.edit \
 	reference/executables/groonga-suggest-learner.edit \
 	reference/executables/groonga.edit \
+	reference/extractors.edit \
+	reference/extractors/extractor_html.edit \
+	reference/extractors/extractor_json.edit \
 	reference/function.edit \
 	reference/functions/between.edit \
 	reference/functions/cast_loose.edit \
@@ -3626,6 +3696,7 @@ edit_po_files = \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
+	reference/functions/json_extract.edit \
 	reference/functions/language_model_knn.edit \
 	reference/functions/language_model_vectorize.edit \
 	reference/functions/math_abs.edit \
@@ -3640,6 +3711,7 @@ edit_po_files = \
 	reference/functions/string_length.edit \
 	reference/functions/string_slice.edit \
 	reference/functions/string_substring.edit \
+	reference/functions/string_truncate.edit \
 	reference/functions/sub_filter.edit \
 	reference/functions/time_classify_day.edit \
 	reference/functions/time_classify_day_of_week.edit \
@@ -3875,6 +3947,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.edit \
 	LC_MESSAGES/reference/commands/delete.edit \
 	LC_MESSAGES/reference/commands/dump.edit \
+	LC_MESSAGES/reference/commands/extract.edit \
 	LC_MESSAGES/reference/commands/index_column_diff.edit \
 	LC_MESSAGES/reference/commands/io_flush.edit \
 	LC_MESSAGES/reference/commands/load.edit \
@@ -3934,6 +4007,9 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.edit \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.edit \
 	LC_MESSAGES/reference/executables/groonga.edit \
+	LC_MESSAGES/reference/extractors.edit \
+	LC_MESSAGES/reference/extractors/extractor_html.edit \
+	LC_MESSAGES/reference/extractors/extractor_json.edit \
 	LC_MESSAGES/reference/function.edit \
 	LC_MESSAGES/reference/functions/between.edit \
 	LC_MESSAGES/reference/functions/cast_loose.edit \
@@ -3949,6 +4025,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
+	LC_MESSAGES/reference/functions/json_extract.edit \
 	LC_MESSAGES/reference/functions/language_model_knn.edit \
 	LC_MESSAGES/reference/functions/language_model_vectorize.edit \
 	LC_MESSAGES/reference/functions/math_abs.edit \
@@ -3963,6 +4040,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.edit \
 	LC_MESSAGES/reference/functions/string_slice.edit \
 	LC_MESSAGES/reference/functions/string_substring.edit \
+	LC_MESSAGES/reference/functions/string_truncate.edit \
 	LC_MESSAGES/reference/functions/sub_filter.edit \
 	LC_MESSAGES/reference/functions/time_classify_day.edit \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.edit \
@@ -4198,6 +4276,7 @@ mo_files = \
 	reference/commands/defrag.mo \
 	reference/commands/delete.mo \
 	reference/commands/dump.mo \
+	reference/commands/extract.mo \
 	reference/commands/index_column_diff.mo \
 	reference/commands/io_flush.mo \
 	reference/commands/load.mo \
@@ -4257,6 +4336,9 @@ mo_files = \
 	reference/executables/groonga-suggest-httpd.mo \
 	reference/executables/groonga-suggest-learner.mo \
 	reference/executables/groonga.mo \
+	reference/extractors.mo \
+	reference/extractors/extractor_html.mo \
+	reference/extractors/extractor_json.mo \
 	reference/function.mo \
 	reference/functions/between.mo \
 	reference/functions/cast_loose.mo \
@@ -4272,6 +4354,7 @@ mo_files = \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
+	reference/functions/json_extract.mo \
 	reference/functions/language_model_knn.mo \
 	reference/functions/language_model_vectorize.mo \
 	reference/functions/math_abs.mo \
@@ -4286,6 +4369,7 @@ mo_files = \
 	reference/functions/string_length.mo \
 	reference/functions/string_slice.mo \
 	reference/functions/string_substring.mo \
+	reference/functions/string_truncate.mo \
 	reference/functions/sub_filter.mo \
 	reference/functions/time_classify_day.mo \
 	reference/functions/time_classify_day_of_week.mo \
@@ -4521,6 +4605,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/commands/defrag.mo \
 	LC_MESSAGES/reference/commands/delete.mo \
 	LC_MESSAGES/reference/commands/dump.mo \
+	LC_MESSAGES/reference/commands/extract.mo \
 	LC_MESSAGES/reference/commands/index_column_diff.mo \
 	LC_MESSAGES/reference/commands/io_flush.mo \
 	LC_MESSAGES/reference/commands/load.mo \
@@ -4580,6 +4665,9 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/executables/groonga-suggest-httpd.mo \
 	LC_MESSAGES/reference/executables/groonga-suggest-learner.mo \
 	LC_MESSAGES/reference/executables/groonga.mo \
+	LC_MESSAGES/reference/extractors.mo \
+	LC_MESSAGES/reference/extractors/extractor_html.mo \
+	LC_MESSAGES/reference/extractors/extractor_json.mo \
 	LC_MESSAGES/reference/function.mo \
 	LC_MESSAGES/reference/functions/between.mo \
 	LC_MESSAGES/reference/functions/cast_loose.mo \
@@ -4595,6 +4683,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
+	LC_MESSAGES/reference/functions/json_extract.mo \
 	LC_MESSAGES/reference/functions/language_model_knn.mo \
 	LC_MESSAGES/reference/functions/language_model_vectorize.mo \
 	LC_MESSAGES/reference/functions/math_abs.mo \
@@ -4609,6 +4698,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/string_length.mo \
 	LC_MESSAGES/reference/functions/string_slice.mo \
 	LC_MESSAGES/reference/functions/string_substring.mo \
+	LC_MESSAGES/reference/functions/string_truncate.mo \
 	LC_MESSAGES/reference/functions/sub_filter.mo \
 	LC_MESSAGES/reference/functions/time_classify_day.mo \
 	LC_MESSAGES/reference/functions/time_classify_day_of_week.mo \
@@ -4877,6 +4967,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
 	html/reference/commands/dump.html \
+	html/reference/commands/extract.html \
 	html/reference/commands/index_column_diff.html \
 	html/reference/commands/io_flush.html \
 	html/reference/commands/load.html \
@@ -4936,6 +5027,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/executables/groonga-suggest-httpd.html \
 	html/reference/executables/groonga-suggest-learner.html \
 	html/reference/executables/groonga.html \
+	html/reference/extractors.html \
+	html/reference/extractors/extractor_html.html \
+	html/reference/extractors/extractor_json.html \
 	html/reference/function.html \
 	html/reference/functions/between.html \
 	html/reference/functions/cast_loose.html \
@@ -4951,6 +5045,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/json_extract.html \
 	html/reference/functions/language_model_knn.html \
 	html/reference/functions/language_model_vectorize.html \
 	html/reference/functions/math_abs.html \
@@ -4965,6 +5060,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/string_length.html \
 	html/reference/functions/string_slice.html \
 	html/reference/functions/string_substring.html \
+	html/reference/functions/string_truncate.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
 	html/reference/functions/time_classify_day_of_week.html \

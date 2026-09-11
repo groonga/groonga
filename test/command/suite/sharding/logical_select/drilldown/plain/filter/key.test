@@ -76,5 +76,5 @@ load --table Logs_20150205
 
 logical_select Logs timestamp \
   --limit 0 \
-  --drilldown action \
+  --drilldown action,memo \
   --drilldown_filter '_key == "Restart"'

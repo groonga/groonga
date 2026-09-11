@@ -98,7 +98,7 @@ jobs:
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
       GRN_WITH_UBSAN: ${{ matrix.ubsan }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Prepare cache
@@ -115,7 +115,7 @@ jobs:
             echo "GRN_LANGUAGE_MODEL_DOWNLOAD_CACHE_DIR=${download_cache_dir}" >> ${GITHUB_ENV}
           fi
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: cache
           key: cmake-ubuntu-${{ matrix.cc }}-${{ matrix.apache-arrow-main }}-${{ matrix.mruby }}-${{ matrix.ubsan }}-${{ matrix.lto }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -127,9 +127,8 @@ jobs:
             build-essential \
             ccache \
             cmake \
-            libxsimd-dev \
             ninja-build
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: matrix.apache-arrow-main == 'yes'
         with:
           path: apache-arrow
@@ -248,7 +247,7 @@ jobs:
             pkg-config \
             red-arrow \
             rroonga
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cache/red-datasets
@@ -318,6 +317,17 @@ jobs:
         if: env.GRN_TEST_RUN_ALL == 'yes'
         env:
           NFKC: "16.0.0"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
+      - name: "Test: stdio: NFKC: 17.0.0"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        env:
+          NFKC: "17.0.0"
         run: |
           grntest \
             --base-dir test/command \
@@ -406,7 +416,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Source archive
@@ -417,7 +427,7 @@ jobs:
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" ccache
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ccache
           key: cmake-docker-${{ matrix.target }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -455,12 +465,60 @@ jobs:
           name: arch-linux
           path: "*.pkg.tar.*"
 
+  wasi:
+    name: WASI
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: Prepare cache
+        run: |
+          cache_dir="${PWD}/cache"
+          ccache_dir="${cache_dir}/ccache"
+          mkdir -p "${ccache_dir}"
+          echo "CCACHE_DIR=${ccache_dir}" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v6
+        with:
+          path: cache
+          key: cmake-wasi-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-wasi-ccache-
+      - name: Install build dependencies
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            build-essential \
+            ccache \
+            cmake \
+            libc++-dev-wasm32 \
+            libclang-rt-dev-wasm32 \
+            ninja-build \
+            wasi-libc
+      - name: CMake
+        run: |
+          ccache --show-stats --verbose --version
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            --preset debug-wasi
+      - name: Build
+        continue-on-error: true
+        run: |
+          cmake --build ../groonga.build
+          ccache --show-stats --verbose --version
+      - name: Install
+        continue-on-error: true
+        run: |
+          cmake --install ../groonga.build
+
   macos:
     name: macOS
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Install packages
@@ -470,7 +528,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ccache
           key: cmake-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -562,10 +620,10 @@ jobs:
             package-prefix: mingw-w64-clang-aarch64
             runner: windows-11-arm
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: msys2/MINGW-packages
           path: ci/msys2/MINGW-packages
@@ -595,7 +653,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ccache
           key: cmake-windows-msys2-${{ matrix.msystem }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
@@ -670,6 +728,24 @@ jobs:
       - name: "Test: stdio"
         shell: msys2 {0}
         run: |
+          # Temporarily disabled because MeCab is no longer installed as a dependency.
+          # Normally, we would install MeCab separately and run the tests,
+          # but since naist-jdic is not available, the tests would fail even if MeCab were installed.
+          # See: https://github.com/msys2/MINGW-packages/pull/30998
+          rm -rf test/command/suite/select/filter/near_phrase/mecab.test \
+                 test/command/suite/select/filter/ordered_near_phrase/mecab.test \
+                 test/command/suite/select/fuzzy/tokenize.test \
+                 test/command/suite/select/fuzzy/tokenize_default.test \
+                 test/command/suite/select/output_columns/star/function_call.test \
+                 test/command/suite/select/query/match/with_index/token_mecab/ \
+                 test/command/suite/table_create/default_tokenizer/mecab/ \
+                 test/command/suite/token_filters/nfkc100/unify_kana.test \
+                 test/command/suite/token_filters/nfkc121/unify_kana.test \
+                 test/command/suite/token_filters/nfkc130/unify_kana.test \
+                 test/command/suite/token_filters/nfkc150/unify_kana.test \
+                 test/command/suite/tokenize/output_style/full.test \
+                 test/command/suite/tokenize/output_style/simple.test \
+                 test/command/suite/tokenizers/mecab/
           ruby \
             -r./setup-extpp \
             -S \
@@ -700,7 +776,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       # Use CMake 3.27 not 3.26.
@@ -771,7 +847,7 @@ jobs:
           Write-Output "CCACHE_DIR=${{ github.workspace }}\ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ccache
           key: cmake-windows-msvc-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}

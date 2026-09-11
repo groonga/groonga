@@ -1,0 +1,87 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-06-21 12:13+0900\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`ExtractorJSON`"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "`ExtractorJSON` extracts values from JSON data by a JSONPath expression. You can use this extractor to index only the values you need from JSON without indexing the whole JSON text."
+msgstr "`ExtractorJSON` は、JSONPath式を使ってJSONデータから値を抽出します。このエクストラクターを使うと、JSONテキスト全体をインデックスすることなく、必要な値だけをJSONからインデックスできます。"
+
+msgid "The extracted values keep their JSON types. For example, a string in JSON is extracted as a text and an integer in JSON is extracted as an integer. So you can use `ExtractorJSON` for both full text search against strings and range search against numbers."
+msgstr "抽出された値は、JSONでの型を保持します。例えば、JSON中の文字列はテキストとして抽出され、JSON中の整数は整数として抽出されます。そのため、 `ExtractorJSON` は文字列に対する全文検索と数値に対する範囲検索の両方に使えます。"
+
+msgid "`ExtractorJSON` requires the [jsoncons](https://danielaparker.github.io/jsoncons/) library. It isn't available if Groonga is built without jsoncons."
+msgstr "`ExtractorJSON` は [jsoncons](https://danielaparker.github.io/jsoncons/) ライブラリーを必要とします。jsonconsなしでGroongaをビルドした場合は利用できません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`ExtractorJSON` has a required `path` parameter:"
+msgstr "`ExtractorJSON` には必須の `path` パラメーターがあります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example that extracts all elements of the `tags` array by the `$.tags[*]` JSONPath. The `title` value isn't extracted because it doesn't match the JSONPath:"
+msgstr "以下は、 `$.tags[*]` というJSONPathで `tags` 配列のすべての要素を抽出する例です。 `title` の値はJSONPathにマッチしないため抽出されません。"
+
+msgid "A JSONPath can match nested values. The following example extracts all elements of nested arrays by the `$.values[*][*]` JSONPath:"
+msgstr "JSONPathはネストした値にもマッチできます。以下の例では、 `$.values[*][*]` というJSONPathでネストした配列のすべての要素を抽出します。"
+
+msgid "When you attach `ExtractorJSON` to a lexicon, the lexicon indexes the extracted values. The original JSON is kept in the data column."
+msgstr "`ExtractorJSON` を語彙表に割り当てると、語彙表は抽出された値をインデックスします。元のJSONはデータカラムに保持されます。"
+
+msgid "The following example indexes integers in a JSON column. The lexicon key type is `Int32` because the extracted values are integers. The index is used automatically when the JSON column is loaded, so you can search the original records by the extracted values:"
+msgstr "以下の例では、JSONカラム中の整数をインデックスします。抽出される値が整数なので、語彙表のキーの型は `Int32` です。JSONカラムがロードされるときにインデックスが自動的に使われるため、抽出された値で元のレコードを検索できます。"
+
+msgid "The records whose extracted values are between `10` and `20` are selected even though the values are stored in nested arrays in JSON."
+msgstr "値がJSONのネストした配列に格納されていても、抽出された値が `10` から `20` の間にあるレコードが選択されます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameter"
+msgstr "必須引数"
+
+msgid "`path`"
+msgstr ""
+
+msgid "Specifies a JSONPath expression that matches the values to extract."
+msgstr "抽出する値にマッチするJSONPath式を指定します。"
+
+msgid "A JSONPath expression begins with `$`, which means the root of the JSON value. For example, `$.tags[*]` matches all elements of the `tags` array, and `$.values[*][*]` matches all elements of nested arrays under `values`."
+msgstr "JSONPath式は `$` で始まります。これはJSON値のルートを意味します。例えば、 `$.tags[*]` は `tags` 配列のすべての要素にマッチし、 `$.values[*][*]` は `values` の下のネストした配列のすべての要素にマッチします。"
+
+msgid "This parameter is required. `ExtractorJSON` reports an error if this parameter is missing."
+msgstr "このパラメーターは必須です。このパラメーターがない場合、 `ExtractorJSON` はエラーを報告します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{doc}`/reference/extractors`"
+msgstr ""
+
+msgid "{doc}`/reference/commands/table_create`"
+msgstr ""

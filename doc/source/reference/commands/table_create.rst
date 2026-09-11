@@ -28,6 +28,7 @@ The required parameter is only ``name`` and otehrs are optional::
                [default_tokenizer=null]
                [normalizer=null]
                [token_filters=null]
+               [extractors=null]
                [path=null]
 
 Usage
@@ -365,6 +366,34 @@ See :doc:`/reference/token_filters` for all token filters.
 
 The default value is none.
 
+.. _table-create-extractors:
+
+``extractors``
+""""""""""""""
+
+.. versionadded:: 16.0.6
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still
+   not stable.
+
+Specifies extractors separated by ``,``. Extractors extract plain text
+or values from structured data such as HTML and JSON before tokenizing
+and indexing a value.
+
+When extractors are set to a lexicon, they are applied automatically
+when an index of the lexicon is updated. If you specify multiple
+extractors, they are applied in order. The output of an extractor is
+passed to the next extractor as its input.
+
+You cannot use ``extractors`` with ``TABLE_NO_KEY`` because
+``TABLE_NO_KEY`` doesn't support key.
+
+See :doc:`/reference/extractors` for all extractors.
+
+The default value is none.
+
 ``path``
 """"""""
 
@@ -398,4 +427,5 @@ See also
 * :doc:`/reference/commands/column_create`
 * :doc:`/reference/tokenizers`
 * :doc:`/reference/normalizers`
+* :doc:`/reference/extractors`
 * :doc:`/reference/command/output_format`

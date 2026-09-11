@@ -89,4 +89,6 @@ load --table Logs_20150205
 logical_select Logs timestamp \
   --limit 0 \
   --drilldowns[action_date].keys action,date \
-  --drilldowns[action_date].output_columns _key[0],_key[1],_nsubrecs
+  --drilldowns[action_date].output_columns _key[0],_key[1],_nsubrecs \
+  --drilldowns[date_action].keys date,action \
+  --drilldowns[date_action].output_columns _key[0],_key[1],_nsubrecs

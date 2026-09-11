@@ -1,0 +1,12 @@
+#@require-feature simdjson
+#@require-feature jsoncons
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Int32
+
+load --table Data
+[
+{"value": 29}
+]
+
+select Data --filter 'between(json_extract(value, "$.value[*][*]"), 10, 20)'

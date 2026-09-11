@@ -11,6 +11,7 @@ libgrnproc_c_sources =				\
 	proc_highlight.c			\
 	proc_in_records.c			\
 	proc_index_column.c			\
+	proc_json.c				\
 	proc_lexicon.c				\
 	proc_lock.c				\
 	proc_log.c				\

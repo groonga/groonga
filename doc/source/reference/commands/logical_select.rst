@@ -53,6 +53,7 @@ parameters are optional::
                  [load_table=null]
                  [load_columns=null]
                  [load_values=null]
+                 [n_workers=0]
 
 There are some parameters that can be only used as named
 parameters. You can't use these parameters as ordered parameters. You
@@ -607,6 +608,29 @@ You must specify columns that already exists.
 This argument must use with :ref:`logical-select-load-table` and :ref:`logical-select-load-columns`.
 
 See example of ``--load_table`` for how to use this argument.
+
+.. _logical-select-n-workers:
+
+``n_workers``
+"""""""""""""
+
+.. versionadded:: 16.1.1
+
+Specifies the number of threads for parallel execution. See
+:doc:`/reference/command/n_workers` for available values and notes.
+
+The following processes are executed in parallel when this parameter
+is ``-1`` or ``2`` or more:
+
+* Searching each shard
+* Each key of :ref:`logical-select-drilldown`
+* Independent :ref:`drilldowns <logical-select-advanced-drilldown-related-parameters>`
+
+"independent" means not using ``drilldowns[${LABEL}].table`` to
+refer the result of another drilldown. A drilldown that refers the
+result of another drilldown is executed after the referred drilldown
+is finished. Therefore, the degree of parallelism is reduced if
+drilldowns have dependencies.
 
 .. _logical-select-advanced-search-parameters:
 

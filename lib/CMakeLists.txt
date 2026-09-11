@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2019-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,10 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1" LIBGRNDAT_SOURCES
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
 string(REGEX REPLACE "([^;]+)" "mrb/\\1" LIBGRNMRB_SOURCES
                      "${LIBGRNMRB_SOURCES}")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/cpp_sources.am
+               LIBGRNMRB_CPP_SOURCES)
+string(REGEX REPLACE "([^;]+)" "mrb/\\1" LIBGRNMRB_CPP_SOURCES
+                     "${LIBGRNMRB_CPP_SOURCES}")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/c_sources.am
                LIBGRNPROC_C_SOURCES)
 string(REGEX REPLACE "([^;]+)" "proc/\\1" LIBGRNPROC_C_SOURCES
@@ -45,8 +49,8 @@ set_source_files_properties(
   ${LIBGROONGA_C_SOURCES} ${LIBGRNMRB_SOURCES} ${LIBGRNPROC_C_SOURCES}
   PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(
-  ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNPROC_CPP_SOURCES}
-  PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
+  ${LIBGROONGA_CPP_SOURCES} ${LIBGRNDAT_SOURCES} ${LIBGRNMRB_CPP_SOURCES}
+  ${LIBGRNPROC_CPP_SOURCES} PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
 if(GRN_C_COMPILER_GNU_LIKE)
   set_property(
@@ -106,6 +110,7 @@ set(GRN_ALL_SOURCES
     ${LIBGROONGA_CPP_SOURCES}
     ${LIBGRNDAT_SOURCES}
     ${LIBGRNMRB_SOURCES}
+    ${LIBGRNMRB_CPP_SOURCES}
     ${LIBGRNPROC_C_SOURCES}
     ${LIBGRNPROC_CPP_SOURCES}
     ${LIBGROONGA_METADATA_SOURCES})
@@ -135,8 +140,11 @@ if(NOT MSVC)
 endif()
 set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
-find_program(LEMON lemon)
-if(LEMON)
+# We require Lemon (SQLite) 3.52.0 or later but Lemon doesn't provide
+# a way to get version information. ("lemon -x" always prints "Lemon
+# version 1.0") So we can't detect Lemon version automatically.
+if(GRN_USE_LEMON)
+  find_program(LEMON lemon REQUIRED)
   set_property(
     SOURCE expr.c
     PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grn_ecmascript.c"

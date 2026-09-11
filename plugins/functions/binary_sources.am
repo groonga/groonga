@@ -1,0 +1,2 @@
+binary_la_SOURCES =				\
+	binary.c

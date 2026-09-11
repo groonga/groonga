@@ -81,6 +81,7 @@ if [ "${run_test}" = "yes" ]; then
 
   ${DNF} install -y \
     gcc \
+    libffi-devel \
     make
   if [ ${os} != "amazon-linux" ]; then
     ${DNF} install -y redhat-rpm-config

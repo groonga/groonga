@@ -533,44 +533,6 @@ if test "x$have_epoll" != "xyes"; then
   fi
 fi
 
-# check MSG_MORE defined
-AC_MSG_CHECKING([whether MSG_MORE defined])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#include <sys/types.h>
-#include <sys/socket.h>
-
-int main(int argc, char **argv)
-{
-  return MSG_MORE;
-}
-    ])],
-    [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_MSG_MORE, [1], [use MSG_MORE])
-    ],
-    [
-      AC_MSG_RESULT(no)
-    ])
-
-# check MSG_NOSIGNAL defined
-AC_MSG_CHECKING([whether MSG_NOSIGNAL defined])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#include <sys/types.h>
-#include <sys/socket.h>
-
-int main(int argc, char **argv)
-{
-  return MSG_NOSIGNAL;
-}
-    ])],
-    [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_MSG_NOSIGNAL, [1], [use MSG_NOSIGNAL])
-    ],
-    [
-      AC_MSG_RESULT(no)
-    ])
-
 # MinGW
 if test "$os_win32" = "yes"; then
   WINDOWS_LDFLAGS="-mwindows"
@@ -1558,6 +1520,10 @@ if test "$enable_mruby" = "yes"; then
   fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
+  dnl For build from repository
+  MRUBY_CFLAGS="$MRUBY_CFLAGS -I\$(top_builddir)/vendor/mruby/mruby-include"
+  dnl For build from archive
+  MRUBY_CFLAGS="$MRUBY_CFLAGS -I\$(top_srcdir)/vendor/mruby-include"
   GRN_WITH_MRUBY="yes"
 else
   MRUBY_CFLAGS=""
@@ -1566,7 +1532,9 @@ AC_SUBST(GRN_WITH_MRUBY)
 AC_SUBST(MRUBY_CFLAGS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
-MRUBY_CPPFLAGS="-DMRB_INT64"
+# MRC_*/PRISM_* must be synchronized with
+# vendor/mruby-source/mrbgems/mruby-compiler/mrbgem.rake.
+MRUBY_CPPFLAGS="-DMRB_INT64 -DMRC_TARGET_MRUBY -DPRISM_BUILD_MINIMAL -DPRISM_DEPTH_MAXIMUM=256 -DPRISM_XALLOCATOR"
 AC_SUBST(MRUBY_CPPFLAGS)
 
 # For mruby-file-stat

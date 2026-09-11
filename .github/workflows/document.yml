@@ -30,7 +30,7 @@ jobs:
     name: Build the full document
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - uses: ruby/setup-ruby@v1
@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ccache
           key: document-linux-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}

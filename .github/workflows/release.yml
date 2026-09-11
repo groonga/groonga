@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Download artifacts
@@ -117,14 +117,22 @@ jobs:
             release-artifacts/*/*
   launchpad:
     name: Launchpad
+    if: |
+      github.ref_type == 'tag'
     runs-on: ubuntu-latest
     needs: publish
     environment: release
     timeout-minutes: 10
-    if: |
-      github.ref_type == 'tag'
+    strategy:
+      fail-fast: false
+      matrix:
+        # Keep in sync with packages/launchpad-helper.rb:ubuntu_targets_default
+        code-name:
+          - jammy
+          - noble
+          - resolute
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Download source archive
         run: |
           wget https://github.com/groonga/groonga/releases/download/${GITHUB_REF_NAME}/groonga-${GITHUB_REF_NAME#v}.tar.gz
@@ -135,7 +143,7 @@ jobs:
             build-essential \
             debhelper \
             devscripts
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: apache-arrow
           repository: apache/arrow
@@ -147,14 +155,14 @@ jobs:
         run: |
           echo "${LAUNCHPAD_DEPLOY_KEY}" | gpg --import
           echo "trusted-key ${LAUNCHPAD_UPLOADER_PGP_KEY}" > ~/.gnupg/gpg.conf
-          rake -C packages ubuntu
+          rake -C packages ubuntu:upload:${{ matrix.code-name }}
   x:
     name: X
     runs-on: ubuntu-latest
     needs: publish
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ruby

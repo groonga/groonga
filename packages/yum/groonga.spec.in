@@ -383,6 +383,7 @@ exit 0
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/ggml/*.so
 %{_libdir}/groonga/plugins/*.rb
+%{_libdir}/groonga/plugins/functions/binary.so
 %{_libdir}/groonga/plugins/functions/index_column.so
 %{_libdir}/groonga/plugins/functions/math.so
 %{_libdir}/groonga/plugins/functions/number.so
@@ -509,6 +510,24 @@ exit 0
 %endif
 
 %changelog
+* Fri Aug 28 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.1.0-1
+- New upstream release.
+
+* Fri Aug 07 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.9-1
+- New upstream release.
+
+* Mon Jul 13 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.8-1
+- New upstream release.
+
+* Wed Jul 08 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.7-1
+- New upstream release.
+
+* Wed Jul 08 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.6-1
+- New upstream release.
+
+* Wed Jul 08 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.6-1
+- New upstream release.
+
 * Fri May 22 2026 Horimoto Yasuhiro <horimoto@clear-code.com> - 16.0.5-1
 - New upstream release.
 

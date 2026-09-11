@@ -1,0 +1,23 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR JSON
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": "{\"value\": [[1, 10], [100]]}"},
+{"value": "{\"value\": [[2], [20, 200]]}"},
+{"value": "{\"value\": [[-1, -10], [-100]]}"}
+]
+[[0,0.0,0.0],3]
+select Data --filter 'between(json_extract(value, 29), 10, 20)'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "json_extract(): the second argument must be a JSONPath string: <29>"
+  ]
+]
+#|e| json_extract(): the second argument must be a JSONPath string: <29>

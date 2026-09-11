@@ -1,0 +1,59 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users counts COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",  "counts": [17, 170, 1700]},
+{"_key": "bob",    "counts": [18, 180, 1800]},
+{"_key": "calros", "counts": [19, 190]},
+{"_key": "dave",   "counts": [20]},
+{"_key": "eric",   "counts": [21, 210, 2100]}
+]
+[[0,0.0,0.0],5]
+select Users --filter 'between(counts, 18, "include", 20, "exclude")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "counts",
+          "Int32"
+        ]
+      ],
+      [
+        2,
+        "bob",
+        [
+          18,
+          180,
+          1800
+        ]
+      ],
+      [
+        3,
+        "calros",
+        [
+          19,
+          190
+        ]
+      ]
+    ]
+  ]
+]

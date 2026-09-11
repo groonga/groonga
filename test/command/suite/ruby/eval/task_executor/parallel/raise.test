@@ -1,0 +1,5 @@
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
+
+ruby_eval --n_workers 4 "executor = Groonga::TaskExecutor.new; 8.times {|i| executor.execute(i, '[test]', i) {|x| raise 'error in task 3' if x == 3; x}}; executor.wait_all"

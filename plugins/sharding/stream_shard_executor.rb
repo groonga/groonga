@@ -38,6 +38,20 @@ module Groonga
         @filtered = false
       end
 
+      protected
+      def add_initial_stage_context(apply_targets)
+        ensure_prepared
+        return unless @initial_table
+        apply_targets << [@initial_table, { context: true }]
+      end
+
+      def add_filtered_stage_context(apply_targets)
+        ensure_filtered
+        @filtered_result_sets.each do |table|
+          apply_targets << [table, { context: true }]
+        end
+      end
+
       private
       def have_record?
         return false if @cover_type == :none
@@ -70,19 +84,6 @@ module Groonga
             end
             yield(result_set)
           end
-        end
-      end
-
-      def add_initial_stage_context(apply_targets)
-        ensure_prepared
-        return unless @initial_table
-        apply_targets << [@initial_table, { context: true }]
-      end
-
-      def add_filtered_stage_context(apply_targets)
-        ensure_filtered
-        @filtered_result_sets.each do |table|
-          apply_targets << [table, { context: true }]
         end
       end
 

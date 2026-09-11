@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,15 @@
 
 require "find"
 
+IGNORE_PATHS = [
+  ".buildinfo",
+  ".buildinfo.bak",
+
+  # These are unnecessary for Japanese and cause build errors.
+  "_static/base-stemmer.js",
+  "_static/english-stemmer.js",
+]
+
 def list_paths(variable_name, paths, output)
   output.puts("#{variable_name} = \\")
   paths.each do |path|
@@ -27,7 +36,7 @@ def list_paths(variable_name, paths, output)
   output.puts
 end
 
-source_dir = __dir__
+source_dir = File.expand_path(__dir__)
 
 # For GNU Autotools
 File.open(File.join(source_dir, "files.am"), "w") do |output|
@@ -73,8 +82,17 @@ File.open(File.join(source_dir, "files.am"), "w") do |output|
     html_files = []
     Find.find("html") do |path|
       next unless File.file?(path)
-      next if path == "html/.buildinfo"
-      next if path == "html/.buildinfo.bak"
+      next if IGNORE_PATHS.include?(path.delete_prefix("html/"))
+      if path.start_with?("html/reference/api/")
+        base_name = File.basename(path, ".html")
+        source = File.join(source_dir,
+                           "source",
+                           "reference",
+                           "api",
+                           "#{base_name}.rst")
+        # Ignore Doxygen generated files
+        next unless File.exist?(source)
+      end
       html_files << path
     end
     html_files.sort!
@@ -110,8 +128,17 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
     Find.find(".") do |path|
       path = path.delete_prefix("./")
       next unless File.file?(path)
-      next if path == ".buildinfo"
-      next if path == ".buildinfo.bak"
+      next if IGNORE_PATHS.include?(path)
+      if path.start_with?("reference/api/")
+        base_name = File.basename(path, ".html")
+        source = File.join(source_dir,
+                           "source",
+                           "reference",
+                           "api",
+                           "#{base_name}.rst")
+        # Ignore Doxygen generated files
+        next unless File.exist?(source)
+      end
       html_files << path
     end
     html_files.sort!

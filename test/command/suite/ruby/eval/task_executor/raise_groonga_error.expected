@@ -1,0 +1,19 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "executor = Groonga::TaskExecutor.new; executor.execute(0, '[test]') {raise Groonga::InvalidArgument, 'block error'}; executor.wait_all"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[test][0] Groonga::InvalidArgument: block error"
+  ],
+  {
+    "exception": {
+      "message": "invalid argument: <[test][0] Groonga::InvalidArgument: block error>(-22)"
+    }
+  }
+]
+#|e| [test][0] Groonga::InvalidArgument: block error

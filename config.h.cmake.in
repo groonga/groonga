@@ -62,8 +62,6 @@
 #cmakedefine USE_EPOLL
 #cmakedefine USE_FUTEX
 #cmakedefine USE_KQUEUE
-#cmakedefine USE_MSG_MORE
-#cmakedefine USE_MSG_NOSIGNAL
 #cmakedefine USE_POLL
 #cmakedefine USE_SELECT
 

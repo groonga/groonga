@@ -1,0 +1,14 @@
+#@require-feature simdjson
+#@require-feature jsoncons
+
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR Text
+
+load --table Data
+[
+{"value": "{\"value\": [[1, 10], [100]]}"},
+{"value": "{\"value\": [[2], [20, 200]]}"},
+{"value": "{\"value\": [[-1, -10], [-100]]}"}
+]
+
+select Data --filter 'between(json_extract(value, "$.value[*][*]"), 10, 20)'

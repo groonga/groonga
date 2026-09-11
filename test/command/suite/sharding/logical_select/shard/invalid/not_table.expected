@@ -1,0 +1,17 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_period1 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_period1 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+logical_select   --shard_key timestamp   --shard[1].table Logs_period1.timestamp
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[logical_select][shards][1] table must be a table: <Logs_period1.timestamp>"
+  ]
+]

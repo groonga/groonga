@@ -110,3 +110,4 @@ When specifying greater than `2`, the degree of parallelism can be higher than t
 - {ref}`offline-index-construction`
 - {doc}`/reference/commands/load`
 - {ref}`select <select-n-workers>`
+- {ref}`logical_select <logical-select-n-workers>`

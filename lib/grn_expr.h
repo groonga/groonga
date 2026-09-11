@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2013-2018  Brazil
-  Copyright (C) 2018-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,7 @@ struct _grn_expr {
   } cache;
 
   grn_obj query_log_tag_prefix;
+  grn_obj query_log_tag_suffix;
   grn_obj *parent;
   grn_obj *condition;
 };

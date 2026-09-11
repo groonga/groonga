@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -149,11 +149,11 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
  * \param query_size The byte size of \p query. A value of -1 indicates that
  *                   the query is null-terminated.
  * \param target_characters A null-terminated string containing the characters
- *                          to be escaped. For example, `"+-><~*()\"\\:"` is
- *                          used for query syntax.
+ *                          to be escaped. For example, `+-><~*()":` and
+ *                          backslash are used for query syntax.
  * \param escape_character The character to use for escaping characters found
- *                         in \p target_characters. For example, `"\\"`
- *                         (backslash) is used.
+ *                         in \p target_characters. For example, backslash is
+ *                         used for query syntax.
  * \param escaped_query The buffer where the escaped query is stored.
  *
  * \return \ref GRN_SUCCESS on success, the appropriate \ref grn_rc on error.
@@ -267,6 +267,25 @@ grn_expr_set_query_log_tag_prefix(grn_ctx *ctx,
                                   int prefix_len);
 GRN_API const char *
 grn_expr_get_query_log_tag_prefix(grn_ctx *ctx, grn_obj *expr);
+
+/**
+ * \brief Set the suffix of the tag for query log entries of the
+ *        expression such as `filter(N)`. For example,
+ *        `filter(N)[SUFFIX]: CONDITION` is logged when this is
+ *        `[SUFFIX]`.
+ *
+ * \since 15.1.0
+ */
+GRN_API grn_rc
+grn_expr_set_query_log_tag_suffix(grn_ctx *ctx,
+                                  grn_obj *expr,
+                                  const char *suffix,
+                                  int suffix_len);
+/**
+ * \since 15.1.0
+ */
+GRN_API const char *
+grn_expr_get_query_log_tag_suffix(grn_ctx *ctx, grn_obj *expr);
 
 GRN_API grn_rc
 grn_expr_set_parent(grn_ctx *ctx, grn_obj *expr, grn_obj *parent);
