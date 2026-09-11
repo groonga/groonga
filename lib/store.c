@@ -809,11 +809,6 @@ struct _grn_ja_einfo {
   } while (0)
 
 typedef struct {
-  uint32_t seg;
-  uint32_t pos;
-} ja_pos;
-
-typedef struct {
   uint32_t head;
   uint32_t tail;
   uint32_t nrecs;
@@ -846,21 +841,6 @@ struct grn_ja_header_v2 {
   uint8_t chunk_threshold;
   uint8_t n_element_variations;
   uint64_t wal_id;
-};
-
-struct grn_ja_header {
-  uint32_t flags;
-  uint32_t *curr_seg;
-  uint32_t *curr_pos;
-  uint32_t max_element_size;
-  ja_pos *free_elements;
-  uint32_t *garbages;
-  uint32_t *n_garbages;
-  uint32_t *segment_infos;
-  uint32_t *element_segs;
-  uint8_t chunk_threshold;
-  uint8_t n_element_variations;
-  uint64_t *wal_id;
 };
 
 typedef enum {
@@ -2885,10 +2865,24 @@ exit:
   return processed;
 }
 
+static grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_ja_alloc_data *data)
+{
+  if (data->ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    // TODO: calculate current partition and return current partition
+    GRN_LOG(ctx,
+            GRN_LOG_INFO,
+            "USE the COLUMN_LARGE flag. However, the handling for COLUMN_LARGE "
+            "has not been implemented yet");
+    return data->ja;
+  }
+  return data->ja;
+}
+
 static grn_rc
 grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
 {
-  grn_ja *ja = data->ja;
+  grn_ja *ja = grn_ja_get(ctx, data);
   uint32_t element_size = data->element_size;
   uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
   uint32_t chunk_variation = chunk_msb - JA_W_EINFO;

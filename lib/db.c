@@ -8768,6 +8768,15 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
             range_name,
             range_name_size == 0 ? "" : ")");
   }
+  /*
+   * s->specs is already initialized and does not have the flag information at
+   * this point. The flags in obj would be lost in subsequent processing.
+   * Therefore, if obj is a column, copy its flags to s->specs here.
+   */
+  if (grn_obj_is_column(ctx, (grn_obj *)obj)) {
+    grn_column_flags flags = grn_ja_get_flags(ctx, (grn_ja *)obj);
+    s->specs->header->flags |= flags;
+  }
   grn_ja_putv(ctx, s->specs, obj->id, &v, GRN_OBJ_SET);
   grn_obj_close(ctx, &v);
 }

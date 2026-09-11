@@ -1,6 +1,11 @@
 table_create Data TABLE_NO_KEY
 [[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
 column_create Data string COLUMN_SCALAR|COLUMN_LARGE LongText --path data.string
+[[0,0.0,0.0],true]
+#|i| USE the COLUMN_LARGE flag. However, the handling for COLUMN_LARGE has not been implemented yet
+log_level --level notice
 [[0,0.0,0.0],true]
 schema
 [
