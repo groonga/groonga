@@ -1,7 +1,11 @@
 #@require-feature mecab
 
 table_create Data TABLE_NO_KEY
+log_level --level info
+#@add-important-log-levels info
 column_create Data string COLUMN_SCALAR|COLUMN_LARGE LongText --path data.string
+#@remove-important-log-levels info
+log_level --level notice
 
 schema
 

@@ -119,6 +119,26 @@ struct _grn_ja {
   grn_obj *parsed_generator;
 };
 
+typedef struct {
+  uint32_t seg;
+  uint32_t pos;
+} ja_pos;
+
+struct grn_ja_header {
+  uint32_t flags;
+  uint32_t *curr_seg;
+  uint32_t *curr_pos;
+  uint32_t max_element_size;
+  ja_pos *free_elements;
+  uint32_t *garbages;
+  uint32_t *n_garbages;
+  uint32_t *segment_infos;
+  uint32_t *element_segs;
+  uint8_t chunk_threshold;
+  uint8_t n_element_variations;
+  uint64_t *wal_id;
+};
+
 void
 grn_ja_init_from_env(void);
 const char *
