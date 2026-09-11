@@ -1162,8 +1162,8 @@ grn_ja_remove(grn_ctx *ctx, const char *path)
   return rc;
 }
 
-grn_rc
-grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
+static grn_rc
+_grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
   const char *io_path;
@@ -1207,6 +1207,22 @@ exit:
     GRN_FREE((char *)(generator.value));
   }
   return rc;
+}
+
+static grn_rc
+grn_ja_truncate_all_partition(grn_ctx *ctx, grn_ja *ja)
+{
+  return _grn_ja_truncate(ctx, ja);
+}
+
+grn_rc
+grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    return grn_ja_truncate_all_partition(ctx, ja);
+  } else {
+    return _grn_ja_truncate(ctx, ja);
+  }
 }
 
 static void *
@@ -2883,6 +2899,16 @@ exit:
   }
 
   return processed;
+}
+
+grn_ja *
+grn_ja_get_by_id(grn_ctx *ctx, grn_obj *obj, grn_id id)
+{
+  if (((grn_ja *)obj)->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    //TODO: implements that return partition contain specified id
+    return (grn_ja *)obj;
+  }
+  return (grn_ja *)obj;
 }
 
 static grn_rc
@@ -4969,8 +4995,8 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
   return GRN_SUCCESS;
 }
 
-int
-grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
+static int
+_grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 {
   int nsegs = 0;
   uint32_t seg, ts = 1U << (GRN_JA_W_SEGMENT - threshold);
@@ -4986,6 +5012,21 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
     }
   }
   return nsegs;
+}
+
+static int
+grn_ja_defrag_all_partitions(grn_ctx *ctx, grn_ja *ja, int threshold)
+{
+  return _grn_ja_defrag(ctx, ja, threshold);
+}
+
+int
+grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
+{
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    return grn_ja_defrag_all_partitions(ctx, ja, threshold);
+  }
+  return _grn_ja_defrag(ctx, ja, threshold);
 }
 
 static bool
