@@ -19,9 +19,13 @@
 
 #include "../grn_proc.h"
 #include "../grn_ctx.h"
+#include "../grn_normalizer.h"
 #include "../grn_token_cursor.h"
 
 #include <groonga/plugin.h>
+#include <groonga/table_module.h>
+
+#define MAX_NORMALIZER_TABLE_VARIANTS 1024
 
 typedef struct {
   grn_id id;
@@ -32,6 +36,18 @@ typedef struct {
   uint32_t source_first_character_length;
   grn_obj metadata;
 } tokenize_token;
+
+typedef struct {
+  grn_obj *table;
+  grn_obj *normalized_column;
+  grn_obj *target_column;
+} normalizer_table_variant_source;
+
+typedef struct {
+  normalizer_table_variant_source *sources;
+  size_t n_sources;
+  grn_obj variants;
+} normalizer_table_variant_data;
 
 static void
 init_tokens(grn_ctx *ctx, grn_obj *tokens)
@@ -52,6 +68,361 @@ fin_tokens(grn_ctx *ctx, grn_obj *tokens)
     GRN_OBJ_FIN(ctx, &(token->metadata));
   }
   GRN_OBJ_FIN(ctx, tokens);
+}
+
+static bool
+normalizer_table_variant_source_init(grn_ctx *ctx,
+                                     normalizer_table_variant_source *source,
+                                     grn_obj *raw_options)
+{
+  const char *tag = "[table_tokenize][normalizer-table-variants]";
+  grn_obj target_name_buffer;
+  grn_obj *target_name = &target_name_buffer;
+
+  source->table = NULL;
+  source->normalized_column = NULL;
+  source->target_column = NULL;
+  GRN_TEXT_INIT(&target_name_buffer, 0);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column") ||
+        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalized") ||
+        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
+      if (!grn_normalizer_table_option_process(ctx,
+                                               raw_options,
+                                               i,
+                                               &name_raw,
+                                               tag,
+                                               &(source->normalized_column),
+                                               target_name)) {
+        break;
+      }
+    }
+  }
+  GRN_OPTION_VALUES_EACH_END();
+
+  if (ctx->rc != GRN_SUCCESS || !source->normalized_column) {
+    GRN_OBJ_FIN(ctx, &target_name_buffer);
+    return false;
+  }
+  source->table = grn_ctx_at(ctx, source->normalized_column->header.domain);
+  if (!source->table) {
+    GRN_OBJ_FIN(ctx, &target_name_buffer);
+    return false;
+  }
+
+  grn_raw_string target_name_raw;
+  GRN_RAW_STRING_SET(target_name_raw, target_name);
+  if (!GRN_RAW_STRING_EQUAL_CSTRING(target_name_raw, "") &&
+      !GRN_RAW_STRING_EQUAL_CSTRING(target_name_raw, "_key")) {
+    source->target_column =
+      grn_table_column(ctx,
+                       source->table,
+                       target_name_raw.value,
+                       (ssize_t)(target_name_raw.length));
+    if (!source->target_column) {
+      GRN_OBJ_FIN(ctx, &target_name_buffer);
+      return false;
+    }
+  }
+
+  GRN_OBJ_FIN(ctx, &target_name_buffer);
+  return true;
+}
+
+static void
+normalizer_table_variant_source_fin(grn_ctx *ctx,
+                                    normalizer_table_variant_source *source)
+{
+  if (source->target_column) {
+    grn_obj_unlink(ctx, source->target_column);
+  }
+  if (source->table) {
+    grn_obj_unlink(ctx, source->table);
+  }
+  if (source->normalized_column) {
+    grn_obj_unlink(ctx, source->normalized_column);
+  }
+}
+
+static bool
+normalizer_table_variant_data_init(grn_ctx *ctx,
+                                   normalizer_table_variant_data *data,
+                                   grn_obj *lexicon)
+{
+  grn_obj normalizers;
+  unsigned int i, n_normalizers;
+  size_t n_sources = 0;
+
+  data->sources = NULL;
+  data->n_sources = 0;
+  GRN_TEXT_INIT(&(data->variants), GRN_OBJ_VECTOR);
+
+  GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_get_info(ctx, lexicon, GRN_INFO_NORMALIZERS, &normalizers);
+  n_normalizers = grn_vector_size(ctx, &normalizers);
+  if (n_normalizers == 0) {
+    GRN_OBJ_FIN(ctx, &normalizers);
+    return true;
+  }
+
+  data->sources =
+    GRN_CALLOC(sizeof(normalizer_table_variant_source) * n_normalizers);
+  if (!data->sources) {
+    GRN_OBJ_FIN(ctx, &normalizers);
+    GRN_OBJ_FIN(ctx, &(data->variants));
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[table_tokenize][normalizer-table-variants] "
+        "failed to allocate sources");
+    return false;
+  }
+
+  for (i = 0; i < n_normalizers; i++) {
+    grn_obj *normalizer;
+    char normalizer_name[GRN_TABLE_MAX_KEY_SIZE];
+    int normalizer_name_size;
+
+    normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+    if (!normalizer) {
+      continue;
+    }
+    normalizer_name_size =
+      grn_obj_name(ctx, normalizer, normalizer_name, GRN_TABLE_MAX_KEY_SIZE);
+    if (!(normalizer_name_size == strlen("NormalizerTable") &&
+          memcmp(normalizer_name,
+                 "NormalizerTable",
+                 normalizer_name_size) == 0)) {
+      continue;
+    }
+
+    grn_obj options;
+    GRN_VOID_INIT(&options);
+    grn_table_get_normalizers_options(ctx, lexicon, i, &options);
+    if (ctx->rc == GRN_SUCCESS &&
+        normalizer_table_variant_source_init(ctx,
+                                             data->sources + n_sources,
+                                             &options)) {
+      n_sources++;
+    } else {
+      normalizer_table_variant_source_fin(ctx, data->sources + n_sources);
+      ERRCLR(ctx);
+    }
+    GRN_OBJ_FIN(ctx, &options);
+  }
+
+  GRN_OBJ_FIN(ctx, &normalizers);
+
+  data->n_sources = n_sources;
+  if (n_sources == 0) {
+    GRN_FREE(data->sources);
+    data->sources = NULL;
+  }
+
+  return true;
+}
+
+static void
+normalizer_table_variant_data_fin(grn_ctx *ctx,
+                                  normalizer_table_variant_data *data)
+{
+  size_t i;
+  for (i = 0; i < data->n_sources; i++) {
+    normalizer_table_variant_source_fin(ctx, data->sources + i);
+  }
+  if (data->sources) {
+    GRN_FREE(data->sources);
+  }
+  GRN_OBJ_FIN(ctx, &(data->variants));
+}
+
+static bool
+normalizer_table_variants_have(grn_ctx *ctx,
+                               grn_obj *variants,
+                               const char *variant,
+                               size_t variant_length)
+{
+  size_t i;
+  size_t n = grn_vector_size(ctx, variants);
+  for (i = 0; i < n; i++) {
+    const char *current;
+    unsigned int current_length;
+    current_length = grn_vector_get_element(ctx,
+                                            variants,
+                                            (uint32_t)i,
+                                            &current,
+                                            NULL,
+                                            NULL);
+    if (current_length == variant_length &&
+        memcmp(current, variant, variant_length) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static void
+normalizer_table_variants_add(grn_ctx *ctx,
+                              grn_obj *variants,
+                              grn_obj *variant)
+{
+  if (grn_vector_size(ctx, variants) >= MAX_NORMALIZER_TABLE_VARIANTS) {
+    return;
+  }
+  if (normalizer_table_variants_have(ctx,
+                                     variants,
+                                     GRN_TEXT_VALUE(variant),
+                                     GRN_TEXT_LEN(variant))) {
+    return;
+  }
+  grn_vector_add_element(ctx,
+                         variants,
+                         GRN_TEXT_VALUE(variant),
+                         (uint32_t)GRN_TEXT_LEN(variant),
+                         0,
+                         GRN_DB_TEXT);
+}
+
+static void
+normalizer_table_variants_generate(grn_ctx *ctx,
+                                   normalizer_table_variant_data *data,
+                                   const char *value,
+                                   size_t value_length,
+                                   size_t offset,
+                                   grn_obj *current)
+{
+  size_t i;
+  const char *rest = value + offset;
+  const char *end = value + value_length;
+
+  if (grn_vector_size(ctx, &(data->variants)) >=
+      MAX_NORMALIZER_TABLE_VARIANTS) {
+    return;
+  }
+
+  if (offset == value_length) {
+    normalizer_table_variants_add(ctx, &(data->variants), current);
+    return;
+  }
+
+  for (i = 0; i < data->n_sources; i++) {
+    normalizer_table_variant_source *source = data->sources + i;
+    grn_table_cursor *cursor;
+
+    cursor =
+      grn_table_cursor_open(ctx, source->table, NULL, 0, NULL, 0, 0, -1, 0);
+    if (!cursor) {
+      continue;
+    }
+
+    grn_id id;
+    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_obj normalized;
+      GRN_TEXT_INIT(&normalized, 0);
+      grn_obj_get_value(ctx, source->normalized_column, id, &normalized);
+      if (GRN_TEXT_LEN(&normalized) > 0 &&
+          GRN_TEXT_LEN(&normalized) <= (value_length - offset) &&
+          memcmp(rest,
+                 GRN_TEXT_VALUE(&normalized),
+                 GRN_TEXT_LEN(&normalized)) == 0) {
+        grn_obj target;
+        size_t current_length = GRN_TEXT_LEN(current);
+
+        GRN_TEXT_INIT(&target, 0);
+        if (source->target_column) {
+          grn_obj_get_value(ctx, source->target_column, id, &target);
+        } else {
+          char key[GRN_TABLE_MAX_KEY_SIZE];
+          int key_size;
+          key_size = grn_table_get_key(ctx,
+                                       source->table,
+                                       id,
+                                       key,
+                                       GRN_TABLE_MAX_KEY_SIZE);
+          GRN_TEXT_PUT(ctx, &target, key, key_size);
+        }
+        if (GRN_TEXT_LEN(&target) > 0) {
+          GRN_TEXT_PUT(ctx,
+                       current,
+                       GRN_TEXT_VALUE(&target),
+                       GRN_TEXT_LEN(&target));
+          normalizer_table_variants_generate(ctx,
+                                             data,
+                                             value,
+                                             value_length,
+                                             offset + GRN_TEXT_LEN(&normalized),
+                                             current);
+          GRN_BULK_SET_CURR(current, GRN_BULK_HEAD(current) + current_length);
+        }
+        GRN_OBJ_FIN(ctx, &target);
+      }
+      GRN_OBJ_FIN(ctx, &normalized);
+
+      if (grn_vector_size(ctx, &(data->variants)) >=
+          MAX_NORMALIZER_TABLE_VARIANTS) {
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
+
+  {
+    int char_length = grn_charlen(ctx, rest, end);
+    size_t current_length = GRN_TEXT_LEN(current);
+    if (char_length <= 0) {
+      return;
+    }
+    GRN_TEXT_PUT(ctx, current, rest, (size_t)char_length);
+    normalizer_table_variants_generate(ctx,
+                                       data,
+                                       value,
+                                       value_length,
+                                       offset + (size_t)char_length,
+                                       current);
+    GRN_BULK_SET_CURR(current, GRN_BULK_HEAD(current) + current_length);
+  }
+}
+
+static void
+output_normalizer_table_variants(grn_ctx *ctx,
+                                 normalizer_table_variant_data *data,
+                                 const char *value,
+                                 size_t value_length)
+{
+  size_t i;
+  size_t n;
+  grn_obj current;
+
+  GRN_BULK_REWIND(&(data->variants));
+  GRN_TEXT_INIT(&current, 0);
+  if (data->n_sources > 0) {
+    normalizer_table_variants_generate(ctx,
+                                       data,
+                                       value,
+                                       value_length,
+                                       0,
+                                       &current);
+  }
+  GRN_OBJ_FIN(ctx, &current);
+
+  n = grn_vector_size(ctx, &(data->variants));
+  grn_ctx_output_array_open(ctx, "VARIANTS", (int)n);
+  for (i = 0; i < n; i++) {
+    const char *variant;
+    unsigned int variant_length;
+    variant_length = grn_vector_get_element(ctx,
+                                            &(data->variants),
+                                            (uint32_t)i,
+                                            &variant,
+                                            NULL,
+                                            NULL);
+    grn_ctx_output_str(ctx, variant, variant_length);
+  }
+  grn_ctx_output_array_close(ctx);
 }
 
 static void
@@ -82,7 +453,8 @@ static void
 output_tokens(grn_ctx *ctx,
               grn_obj *tokens,
               grn_obj *lexicon,
-              grn_obj *index_column)
+              grn_obj *index_column,
+              normalizer_table_variant_data *variant_data)
 {
   size_t i, n_tokens, n_elements;
   grn_obj estimated_size;
@@ -94,6 +466,9 @@ output_tokens(grn_ctx *ctx,
   if (index_column) {
     n_elements++;
     GRN_UINT32_INIT(&estimated_size, 0);
+  }
+  if (variant_data) {
+    n_elements++;
   }
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
@@ -115,20 +490,20 @@ output_tokens(grn_ctx *ctx,
   grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
+    char value[GRN_TABLE_MAX_KEY_SIZE];
+    int value_size;
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    value_size = grn_table_get_key(ctx,
+                                   lexicon,
+                                   token->id,
+                                   value,
+                                   GRN_TABLE_MAX_KEY_SIZE);
 
     grn_ctx_output_map_open(ctx, "TOKEN", (int)n_elements);
 
     grn_ctx_output_cstr(ctx, "value");
     {
-      char value[GRN_TABLE_MAX_KEY_SIZE];
-      int value_size;
-      value_size = grn_table_get_key(ctx,
-                                     lexicon,
-                                     token->id,
-                                     value,
-                                     GRN_TABLE_MAX_KEY_SIZE);
       grn_obj key;
       GRN_OBJ_INIT(&key,
                    GRN_BULK,
@@ -137,6 +512,14 @@ output_tokens(grn_ctx *ctx,
       GRN_TEXT_SET(ctx, &key, value, value_size);
       grn_ctx_output_obj(ctx, &key, NULL);
       GRN_OBJ_FIN(ctx, &key);
+    }
+
+    if (variant_data) {
+      grn_ctx_output_cstr(ctx, "variants");
+      output_normalizer_table_variants(ctx,
+                                       variant_data,
+                                       value,
+                                       (size_t)value_size);
     }
 
     grn_ctx_output_cstr(ctx, "position");
@@ -343,6 +726,7 @@ command_table_tokenize(grn_ctx *ctx,
     uint32_t flags;
     grn_obj *lexicon;
     grn_obj *index_column = NULL;
+    bool with_normalizer_table_variants = false;
 
     flags = grn_proc_get_value_token_cursor_flags(ctx,
                                                   flags_raw,
@@ -352,6 +736,16 @@ command_table_tokenize(grn_ctx *ctx,
       return NULL;
     }
 
+    with_normalizer_table_variants =
+      grn_plugin_proc_get_var_bool(ctx,
+                                   user_data,
+                                   "with_normalizer_table_variants",
+                                   strlen("with_normalizer_table_variants"),
+                                   false);
+
+    lexicon = grn_ctx_get(ctx,
+                          table_raw.value,
+                          (int)(table_raw.length));
     lexicon = grn_ctx_get(ctx, table_raw.value, (int)(table_raw.length));
     if (!lexicon) {
       GRN_PLUGIN_ERROR(ctx,
@@ -388,7 +782,17 @@ command_table_tokenize(grn_ctx *ctx,
 
     {
       grn_obj tokens;
+      normalizer_table_variant_data variant_data;
+      normalizer_table_variant_data *variant_data_ptr = NULL;
+
       init_tokens(ctx, &tokens);
+      if (with_normalizer_table_variants) {
+        if (!normalizer_table_variant_data_init(ctx, &variant_data, lexicon)) {
+          fin_tokens(ctx, &tokens);
+          goto exit;
+        }
+        variant_data_ptr = &variant_data;
+      }
       grn_tokenize_mode mode =
         grn_proc_get_value_tokenize_mode(ctx,
                                          mode_raw,
@@ -399,8 +803,11 @@ command_table_tokenize(grn_ctx *ctx,
         if (GRN_RAW_STRING_EQUAL_CSTRING(output_style_raw, "simple")) {
           output_tokens_simple(ctx, &tokens, lexicon);
         } else {
-          output_tokens(ctx, &tokens, lexicon, index_column);
+          output_tokens(ctx, &tokens, lexicon, index_column, variant_data_ptr);
         }
+      }
+      if (variant_data_ptr) {
+        normalizer_table_variant_data_fin(ctx, variant_data_ptr);
       }
       fin_tokens(ctx, &tokens);
     }
@@ -419,7 +826,7 @@ command_table_tokenize(grn_ctx *ctx,
 void
 grn_proc_init_table_tokenize(grn_ctx *ctx)
 {
-#define N_ARGS 6
+#define N_ARGS 7
   grn_expr_var vars[N_ARGS];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
@@ -428,6 +835,10 @@ grn_proc_init_table_tokenize(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "mode", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "index_column", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "output_style", -1);
+  grn_plugin_expr_var_init(ctx,
+                           &(vars[6]),
+                           "with_normalizer_table_variants",
+                           -1);
   grn_plugin_command_create(ctx,
                             "table_tokenize",
                             -1,
@@ -515,6 +926,7 @@ command_tokenize(grn_ctx *ctx,
                                          mode_raw,
                                          GRN_TOKENIZE_ADD,
                                          "[tokenize][mode]");
+
       if (ctx->rc == GRN_SUCCESS) {
         tokenize(ctx, lexicon, &string_raw, GRN_TOKENIZE_ADD, flags, &tokens);
         if (mode != GRN_TOKENIZE_ADD) {
@@ -524,7 +936,7 @@ command_tokenize(grn_ctx *ctx,
         if (GRN_RAW_STRING_EQUAL_CSTRING(output_style_raw, "simple")) {
           output_tokens_simple(ctx, &tokens, lexicon);
         } else {
-          output_tokens(ctx, &tokens, lexicon, NULL);
+          output_tokens(ctx, &tokens, lexicon, NULL, NULL);
         }
       }
       fin_tokens(ctx, &tokens);
