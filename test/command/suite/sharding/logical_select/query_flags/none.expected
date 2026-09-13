@@ -1,0 +1,80 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Users_20260901 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Users_20260901 age COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Users_20260901 description COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms_20260901 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create Terms_20260901 description_index COLUMN_INDEX|WITH_POSITION Users_20260901 description
+[[0,0.0,0.0],true]
+table_create Users_20260902 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Users_20260902 age COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Users_20260902 description COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms_20260902 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create Terms_20260902 description_index COLUMN_INDEX|WITH_POSITION Users_20260902 description
+[[0,0.0,0.0],true]
+load --table Users_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "alice", "age": 18, "description": "brother's age:20"}
+]
+[[0,0.0,0.0],1]
+load --table Users_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "bob", "age": 20, "description": "sister's age:18"}
+]
+[[0,0.0,0.0],1]
+logical_select Users   --shard_key timestamp   --match_columns "description"   --query "age:18"   --query_flags "NONE"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "UInt32"
+        ],
+        [
+          "description",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "bob",
+        20,
+        "sister's age:18",
+        1788274800.0
+      ]
+    ]
+  ]
+]

@@ -27,6 +27,7 @@ module Groonga
                  "drilldown_sort_keys",
                  "match_columns",
                  "query",
+                 "query_flags",
                  "drilldown_filter",
                  "load_table",
                  "load_columns",
@@ -86,6 +87,7 @@ module Groonga
         key << "#{drilldown_sort_keys}\0"
         key << "#{input[:match_columns]}\0"
         key << "#{input[:query]}\0"
+        key << "#{input[:query_flags]}\0"
         key << "#{input[:drilldown_output_columns]}\0"
         key << "#{input[:drilldown_offset]}\0"
         key << "#{input[:drilldown_limit]}\0"
@@ -362,6 +364,7 @@ module Groonga
         attr_reader :enumerator
         attr_reader :match_columns
         attr_reader :query
+        attr_reader :query_flags
         attr_reader :filter
         attr_reader :offset
         attr_reader :limit
@@ -387,6 +390,7 @@ module Groonga
                                   specified_shards: SpecifiedShard.parse("[logical_select]", @input))
           @match_columns = @input[:match_columns]
           @query = @input[:query]
+          @query_flags = parse_query_flags(@input[:query_flags])
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
@@ -421,6 +425,11 @@ module Groonga
           @temporary_tables.each do |table|
             table.close
           end
+        end
+
+        def parse_query_flags(raw_query_flags)
+          return nil if raw_query_flags.nil? or raw_query_flags.empty?
+          Expression.parse_query_flags("[logical_select]", raw_query_flags)
         end
       end
 
@@ -734,6 +743,7 @@ module Groonga
                                   shard_executor.cover_type,
                                   @context.match_columns,
                                   @context.query,
+                                  @context.query_flags,
                                   @context.filter) do |shard_table_name,
                                                        table_id,
                                                        shard_key_id,
@@ -741,6 +751,7 @@ module Groonga
                                                        cover_type,
                                                        match_columns,
                                                        query,
+                                                       query_flags,
                                                        filter|
               require "sharding/range_expression_builder"
               require "sharding/logical_enumerator"
@@ -755,6 +766,7 @@ module Groonga
                                                               cover_type,
                                                               match_columns: match_columns,
                                                               query: query,
+                                                              query_flags: query_flags,
                                                               filter: filter,
                                                               shard_table_name: shard_table_name)
               begin
@@ -1035,6 +1047,7 @@ module Groonga
 
           @match_columns = @context.match_columns
           @query = @context.query
+          @query_flags = @context.query_flags
           @filter = @context.filter
           @post_filter = @context.post_filter
           @sort_keys = @context.sort_keys
@@ -1076,6 +1089,7 @@ module Groonga
         def execute
           result_set, condition = select_shard(match_columns: @match_columns,
                                                query: @query,
+                                               query_flags: @query_flags,
                                                filter: @filter)
           if condition.nil?
             @temporary_tables.delete(@target_table)

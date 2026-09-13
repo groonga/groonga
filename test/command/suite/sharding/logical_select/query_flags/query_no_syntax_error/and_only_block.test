@@ -1,0 +1,33 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Names_20260901 TABLE_PAT_KEY ShortText
+column_create Names_20260901 timestamp COLUMN_SCALAR Time
+table_create Tokens_20260901 TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Tokens_20260901 names_key COLUMN_INDEX|WITH_POSITION Names_20260901 _key
+
+table_create Names_20260902 TABLE_PAT_KEY ShortText
+column_create Names_20260902 timestamp COLUMN_SCALAR Time
+table_create Tokens_20260902 TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Tokens_20260902 names_key COLUMN_INDEX|WITH_POSITION Names_20260902 _key
+
+load --table Names_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "name (x+y)"}
+]
+
+load --table Names_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "name (x y)"}
+]
+
+logical_select Names \
+  --shard_key timestamp \
+  --match_columns "_key" \
+  --query "(+)" \
+  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
