@@ -899,3 +899,48 @@ grn_table_extract(grn_ctx *ctx, grn_obj *table, grn_obj *value)
 
   GRN_API_RETURN(data.value);
 }
+
+int
+grn_table_slice(
+  grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result)
+{
+  const char *tag = "[table][slice]";
+  int n_records = 0;
+  GRN_API_ENTER;
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT, "%s table is null", tag);
+    goto exit;
+  }
+  if (!(result && result->header.type == GRN_TABLE_NO_KEY)) {
+    ERR(GRN_INVALID_ARGUMENT, "%s result is not an array", tag);
+    goto exit;
+  }
+
+  grn_table_cursor *cursor = grn_table_cursor_open(ctx,
+                                                   table,
+                                                   NULL,
+                                                   0,
+                                                   NULL,
+                                                   0,
+                                                   offset,
+                                                   limit,
+                                                   GRN_CURSOR_ASCENDING);
+  if (!cursor) {
+    goto exit;
+  }
+
+  grn_id id;
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_id *value;
+    if (grn_array_add(ctx, (grn_array *)result, (void **)&value) ==
+        GRN_ID_NIL) {
+      break;
+    }
+    *value = id;
+    n_records++;
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+exit:
+  GRN_API_RETURN(n_records);
+}

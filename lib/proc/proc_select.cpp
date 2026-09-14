@@ -27,6 +27,7 @@
 #include "../grn_posting.h"
 #include "../grn_proc.h"
 #include "../grn_str.h"
+#include "../grn_table.h"
 #include "../grn_table_selector.h"
 #include "../grn_task_executor.hpp"
 #include "../grn_util.h"
@@ -2468,36 +2469,12 @@ grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
                                             grn_select_data *data,
                                             grn_obj *table)
 {
-  grn_obj *sorted;
-  grn_table_cursor *cursor;
-
-  sorted =
+  grn_obj *sorted =
     grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, NULL, table);
-
   if (!sorted) {
     return NULL;
   }
-
-  cursor = grn_table_cursor_open(ctx,
-                                 table,
-                                 NULL,
-                                 0,
-                                 NULL,
-                                 0,
-                                 data->offset,
-                                 data->limit,
-                                 GRN_CURSOR_ASCENDING);
-  if (cursor) {
-    grn_id id;
-    while ((id = grn_table_cursor_next(ctx, cursor))) {
-      grn_id *value;
-      if (grn_array_add(ctx, (grn_array *)sorted, (void **)&value)) {
-        *value = id;
-      }
-    }
-    grn_table_cursor_close(ctx, cursor);
-  }
-
+  grn_table_slice(ctx, table, data->offset, data->limit, sorted);
   return sorted;
 }
 
