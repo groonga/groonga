@@ -1,0 +1,33 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Users_20260901 TABLE_HASH_KEY ShortText
+column_create Users_20260901 timestamp COLUMN_SCALAR Time
+column_create Users_20260901 age COLUMN_SCALAR UInt32
+column_create Users_20260901 description COLUMN_SCALAR ShortText
+table_create Terms_20260901 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+column_create Terms_20260901 description_index COLUMN_INDEX|WITH_POSITION Users_20260901 description
+
+table_create Users_20260902 TABLE_HASH_KEY ShortText
+column_create Users_20260902 timestamp COLUMN_SCALAR Time
+column_create Users_20260902 age COLUMN_SCALAR UInt32
+column_create Users_20260902 description COLUMN_SCALAR ShortText
+table_create Terms_20260902 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+column_create Terms_20260902 description_index COLUMN_INDEX|WITH_POSITION Users_20260902 description
+
+load --table Users_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "alice", "age": 18, "description": "brother's age:20"}
+]
+
+load --table Users_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "bob", "age": 20, "description": "sister's age:18"}
+]
+
+logical_select Users \
+  --shard_key timestamp \
+  --match_columns "description" \
+  --query "age:18" \
+  --query_flags "NONE"

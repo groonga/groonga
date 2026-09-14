@@ -1,0 +1,54 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Users_20260901 TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Users_20260902 TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Users_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "alice"}
+]
+[[0,0.0,0.0],1]
+load --table Users_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "b-a"}
+]
+[[0,0.0,0.0],1]
+logical_select Users   --shard_key timestamp   --match_columns "_key"   --query "-a"   --query_flags "DISABLE_AND_NOT"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "b-a",
+        1788274800.0
+      ]
+    ]
+  ]
+]

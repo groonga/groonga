@@ -1,0 +1,25 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Users_20260901 TABLE_PAT_KEY ShortText
+column_create Users_20260901 timestamp COLUMN_SCALAR Time
+
+table_create Users_20260902 TABLE_PAT_KEY ShortText
+column_create Users_20260902 timestamp COLUMN_SCALAR Time
+
+load --table Users_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "alice"}
+]
+
+load --table Users_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "b-a"}
+]
+
+logical_select Users \
+  --shard_key timestamp \
+  --match_columns "_key" \
+  --query "-a" \
+  --query_flags "DISABLE_AND_NOT"

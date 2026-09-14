@@ -1,0 +1,29 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Users_20260901 TABLE_HASH_KEY ShortText
+column_create Users_20260901 timestamp COLUMN_SCALAR Time
+column_create Users_20260901 age COLUMN_SCALAR UInt32
+
+table_create Users_20260902 TABLE_HASH_KEY ShortText
+column_create Users_20260902 timestamp COLUMN_SCALAR Time
+column_create Users_20260902 age COLUMN_SCALAR UInt32
+
+load --table Users_20260901
+[
+{"timestamp": "2026/09/01 00:00:00", "_key": "alice", "age": 18}
+]
+
+load --table Users_20260902
+[
+{"timestamp": "2026/09/02 00:00:00", "_key": "bob", "age": 20}
+]
+
+logical_select Users \
+  --shard_key timestamp \
+  --query "age:=19" \
+  --query_flags "ALLOW_COLUMN|ALLOW_UPDATE"
+
+logical_select Users \
+  --shard_key timestamp

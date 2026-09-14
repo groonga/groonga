@@ -5,6 +5,7 @@ module Groonga
 
       attr_writer :match_columns
       attr_writer :query
+      attr_writer :query_flags
       attr_writer :filter
 
       def initialize(key, target_range)
@@ -13,6 +14,7 @@ module Groonga
         @match_columns_expression = nil
         @match_columns = nil
         @query = nil
+        @query_flags = nil
         @filter = nil
       end
 
@@ -83,9 +85,12 @@ module Groonga
             @match_columns_expression = Expression.create(table)
             @match_columns_expression.parse(@match_columns)
           end
-          flags = Expression::SYNTAX_QUERY |
-            Expression::ALLOW_PRAGMA |
-            Expression::ALLOW_COLUMN
+          flags = Expression::SYNTAX_QUERY
+          if @query_flags
+            flags |= @query_flags
+          else
+            flags |= Expression::ALLOW_PRAGMA | Expression::ALLOW_COLUMN
+          end
           expression.parse(@query,
                            default_column: @match_columns_expression,
                            flags: flags)

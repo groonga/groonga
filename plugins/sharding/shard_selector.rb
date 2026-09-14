@@ -28,7 +28,8 @@ module Groonga
       #   `:partial_min_and_max`.
       def initialize(table, shard_key, target_range, cover_type,
                      shard_table_name:,
-                     match_columns: nil, query: nil, filter: nil)
+                     match_columns: nil, query: nil, query_flags: nil,
+                     filter: nil)
         @table = table
         @shard_key = shard_key
         @target_range = target_range
@@ -36,6 +37,7 @@ module Groonga
         @shard_table_name = shard_table_name
         @match_columns = match_columns
         @query = query
+        @query_flags = query_flags
         @filter = filter
         @shard_table_name = shard_table_name
         @expressions = []
@@ -59,6 +61,7 @@ module Groonga
                                                         @target_range)
         expression_builder.match_columns = @match_columns
         expression_builder.query = @query
+        expression_builder.query_flags = @query_flags
         expression_builder.filter = @filter
         begin
           case @cover_type

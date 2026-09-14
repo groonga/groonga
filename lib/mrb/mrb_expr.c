@@ -582,6 +582,31 @@ mrb_grn_expr_code_get_modify(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_class_parse_query_flags(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  char *error_message_tag;
+  char *query_flags_text;
+  mrb_int query_flags_text_size;
+  grn_obj query_flags;
+  grn_expr_flags flags;
+
+  mrb_get_args(mrb,
+               "zs",
+               &error_message_tag,
+               &query_flags_text,
+               &query_flags_text_size);
+
+  GRN_TEXT_INIT(&query_flags, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &query_flags, query_flags_text, query_flags_text_size);
+  flags = grn_proc_expr_query_flags_parse(ctx, &query_flags, error_message_tag);
+  GRN_OBJ_FIN(ctx, &query_flags);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_int_value(mrb, flags);
+}
+
+static mrb_value
 mrb_grn_expression_class_create(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -1250,6 +1275,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
   DEFINE_FLAG(ALLOW_LEADING_NOT);
 
 #  undef DEFINE_FLAG
+
+  mrb_define_class_method(mrb,
+                          klass,
+                          "parse_query_flags",
+                          mrb_grn_expression_class_parse_query_flags,
+                          MRB_ARGS_REQ(2));
 
   mrb_define_class_method(mrb,
                           klass,
