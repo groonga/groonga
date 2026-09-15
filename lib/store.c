@@ -2938,7 +2938,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
            sizeof(path),
            "%s.partitions.%d",
            ja->io->path,
-           (ja->n_partitions+1));
+           (ja->n_partitions + 1));
 
   grn_ja *new_partition =
     grn_ja_create(ctx, path, ja->header->max_element_size, ja->header->flags);
@@ -3974,7 +3974,6 @@ _grn_ja_put(grn_ctx *ctx,
     }
   }
 }
-
 
 grn_ja *
 grn_ja_get_free_partition(grn_ja *ja)
