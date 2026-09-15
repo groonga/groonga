@@ -53,6 +53,10 @@ grn_table_find_reference_object_raw(grn_ctx *ctx, grn_id table_id);
 grn_hash *
 grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 
+int
+grn_table_slice(
+  grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result);
+
 #define GRN_TABLE_LOCK_BEGIN(ctx, table)                                       \
   do {                                                                         \
     grn_io *io_ = grn_obj_get_io(ctx, table);                                  \
