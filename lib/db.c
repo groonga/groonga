@@ -7360,7 +7360,7 @@ static grn_rc
 grn_obj_set_value_column_var_size(
   grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *value, int flags)
 {
-  grn_ja *ja = (grn_ja *)column;
+  grn_ja *ja = grn_ja_get_by_id(ctx, column, id);
   grn_obj buffer;
   GRN_VOID_INIT(&buffer);
   grn_obj *casted_value = grn_ja_cast_value(ctx, ja, value, &buffer, flags);
@@ -7555,7 +7555,8 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
   case GRN_COLUMN_VAR_SIZE:
     {
       grn_io_win jw;
-      if ((value = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, size))) {
+      grn_ja *column = grn_ja_get_by_id(ctx, obj, id);
+      if ((value = grn_ja_ref(ctx, column, id, &jw, size))) {
         grn_ja_unref(ctx, &jw);
       }
     }
@@ -11257,7 +11258,8 @@ grn_obj_remove_internal(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
     break;
   case GRN_COLUMN_VAR_SIZE:
     grn_ctx_impl_columns_cache_delete(ctx, obj->header.domain);
-    rc = grn_obj_remove_ja(ctx, obj, db, id, path, flags);
+    grn_ja *ja = grn_ja_get_by_id(ctx, obj, id);
+    rc = grn_obj_remove_ja(ctx, (grn_obj *)ja, db, id, path, flags);
     is_temporary_open_target = true;
     break;
   case GRN_COLUMN_FIX_SIZE:

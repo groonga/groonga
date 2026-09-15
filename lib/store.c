@@ -992,6 +992,19 @@ _grn_ja_create(grn_ctx *ctx,
   ja->parsed_generator = NULL;
   SEGMENT_EINFO_ON(ja, 0, 0);
   header->element_segs[0] = 0;
+  ja->n_partitions = 0;
+  ja->partitions = NULL;
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    char partition_map_path[PATH_MAX];
+    snprintf(partition_map_path,
+             sizeof(partition_map_path),
+             "%s.partitions",
+             path);
+    ja->partition_mapping =
+      grn_ra_create(ctx, partition_map_path, sizeof(grn_id), 0);
+  } else {
+    ja->partition_mapping = NULL;
+  }
   return ja;
 }
 
@@ -1162,8 +1175,8 @@ grn_ja_remove(grn_ctx *ctx, const char *path)
   return rc;
 }
 
-grn_rc
-grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
+static grn_rc
+_grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
   const char *io_path;
@@ -1207,6 +1220,29 @@ exit:
     GRN_FREE((char *)(generator.value));
   }
   return rc;
+}
+
+static grn_rc
+grn_ja_truncate_all_partition(grn_ctx *ctx, grn_ja *ja)
+{
+  uint8_t i;
+  for (i = 0; i < ja->n_partitions; i++) {
+    grn_rc rc = _grn_ja_truncate(ctx, ja->partitions[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return _grn_ja_truncate(ctx, ja);
+}
+
+grn_rc
+grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    return grn_ja_truncate_all_partition(ctx, ja);
+  } else {
+    return _grn_ja_truncate(ctx, ja);
+  }
 }
 
 static void *
@@ -2885,6 +2921,65 @@ exit:
   return processed;
 }
 
+static grn_ja *
+grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
+{
+  GRN_LOG(ctx,
+          GRN_LOG_INFO,
+          "current ja partition is full. create and use a new partiotion.");
+
+  if (ja->n_partitions >= UINT8_MAX) {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "cannot create a new partition");
+    ctx->rc = GRN_NO_MEMORY_AVAILABLE;
+    return NULL;
+  }
+  char path[PATH_MAX];
+  snprintf(path,
+           sizeof(path),
+           "%s.partitions.%d",
+           ja->io->path,
+           (ja->n_partitions + 1));
+
+  grn_ja *new_partition =
+    grn_ja_create(ctx, path, ja->header->max_element_size, ja->header->flags);
+  grn_ja **partitions =
+    (grn_ja **)GRN_REALLOC(ja->partitions,
+                           sizeof(grn_ja *) * (ja->n_partitions + 1));
+  if (!partitions) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "cannot realloc partitions area for a new partition");
+    ctx->rc = GRN_NO_MEMORY_AVAILABLE;
+    return NULL;
+  }
+  ja->partitions[ja->n_partitions++] = new_partition;
+  grn_obj partition_id;
+  GRN_UINT8_SET(ctx, &partition_id, ja->n_partitions);
+  grn_ra_set_value(ctx, ja->partition_mapping, id, &partition_id, GRN_OBJ_SET);
+  GRN_OBJ_FIN(ctx, &partition_id);
+  return new_partition;
+}
+
+static uint32_t
+grn_ja_get_current_n_data_segemnts(grn_ja *ja)
+{
+  uint32_t seg;
+  for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+    if (SEGMENT_INFO_AT(ja, seg) == 0) break;
+  }
+  return seg;
+}
+
+grn_ja *
+grn_ja_get_by_id(grn_ctx *ctx, grn_obj *obj, grn_id id)
+{
+  if (((grn_ja *)obj)->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    uint8_t *partition_id =
+      grn_ra_ref(ctx, ((grn_ja *)obj)->partition_mapping, id);
+    return ((grn_ja *)obj)->partitions[*partition_id];
+  }
+  return (grn_ja *)obj;
+}
+
 static grn_rc
 grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
 {
@@ -3799,14 +3894,14 @@ exit:
   return value;
 }
 
-grn_rc
-grn_ja_put(grn_ctx *ctx,
-           grn_ja *ja,
-           grn_id id,
-           void *value,
-           uint32_t value_len,
-           int flags,
-           uint64_t *cas)
+static grn_rc
+_grn_ja_put(grn_ctx *ctx,
+            grn_ja *ja,
+            grn_id id,
+            void *value,
+            uint32_t value_len,
+            int flags,
+            uint64_t *cas)
 {
   if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
@@ -3878,6 +3973,40 @@ grn_ja_put(grn_ctx *ctx,
       return rc;
     }
   }
+}
+
+grn_ja *
+grn_ja_get_free_partition(grn_ja *ja)
+{
+  uint8_t i = ja->n_partitions - 1;
+  for (; i == 0; i--) {
+    if (grn_ja_get_current_n_data_segemnts(ja->partitions[i]) ==
+        JA_N_DATA_SEGMENTS) {
+      continue;
+    } else {
+      return ja->partitions[i];
+    }
+  }
+  return NULL;
+}
+
+grn_rc
+grn_ja_put(grn_ctx *ctx,
+           grn_ja *ja,
+           grn_id id,
+           void *value,
+           uint32_t value_len,
+           int flags,
+           uint64_t *cas)
+{
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    grn_ja *partition = grn_ja_get_free_partition(ja);
+    if (!partition) {
+      partition = grn_ja_create_new_partition(ctx, ja, id);
+    }
+    _grn_ja_put(ctx, partition, id, value, value_len, flags, cas);
+  }
+  return _grn_ja_put(ctx, ja, id, value, value_len, flags, cas);
 }
 
 static inline grn_rc
@@ -4969,8 +5098,8 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
   return GRN_SUCCESS;
 }
 
-int
-grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
+static int
+_grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 {
   int nsegs = 0;
   uint32_t seg, ts = 1U << (GRN_JA_W_SEGMENT - threshold);
@@ -4986,6 +5115,28 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
     }
   }
   return nsegs;
+}
+
+static int
+grn_ja_defrag_all_partitions(grn_ctx *ctx, grn_ja *ja, int threshold)
+{
+  uint8_t i;
+  int nseg = 0;
+
+  for (i = 0; i < ja->n_partitions; i++) {
+    nseg += _grn_ja_defrag(ctx, ja->partitions[i], threshold);
+  }
+  nseg += _grn_ja_defrag(ctx, ja, threshold);
+  return nseg;
+}
+
+int
+grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
+{
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    return grn_ja_defrag_all_partitions(ctx, ja, threshold);
+  }
+  return _grn_ja_defrag(ctx, ja, threshold);
 }
 
 static bool

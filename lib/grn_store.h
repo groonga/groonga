@@ -117,6 +117,9 @@ struct _grn_ja {
   struct grn_ja_header *header;
   grn_raw_string generator;
   grn_obj *parsed_generator;
+  uint8_t n_partitions;
+  grn_ja **partitions;
+  grn_ra *partition_mapping;
 };
 
 void
@@ -133,6 +136,8 @@ grn_ja_create(grn_ctx *ctx,
               uint32_t flags);
 grn_ja *
 grn_ja_open(grn_ctx *ctx, const char *path);
+grn_ja *
+grn_ja_get_by_id(grn_ctx *ctx, grn_obj *obj, grn_id id);
 grn_rc
 grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size);
 grn_column_flags
