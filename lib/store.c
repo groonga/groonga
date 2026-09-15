@@ -2905,7 +2905,7 @@ grn_ja *
 grn_ja_get_by_id(grn_ctx *ctx, grn_obj *obj, grn_id id)
 {
   if (((grn_ja *)obj)->header->flags & GRN_OBJ_COLUMN_LARGE) {
-    //TODO: implements that return partition contain specified id
+    // TODO: implements that return partition contain specified id
     return (grn_ja *)obj;
   }
   return (grn_ja *)obj;
