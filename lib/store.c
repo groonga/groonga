@@ -1212,6 +1212,8 @@ exit:
 static grn_rc
 grn_ja_truncate_all_partition(grn_ctx *ctx, grn_ja *ja)
 {
+  // TODO: Implement this so that _grn_ja_truncate() is executed for all
+  // partitions.
   return _grn_ja_truncate(ctx, ja);
 }
 
@@ -5017,6 +5019,8 @@ _grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 static int
 grn_ja_defrag_all_partitions(grn_ctx *ctx, grn_ja *ja, int threshold)
 {
+  // TODO: Implement this so that _grn_ja_defrag() is executed for all
+  // partitions.
   return _grn_ja_defrag(ctx, ja, threshold);
 }
 
