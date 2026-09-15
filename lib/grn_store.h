@@ -117,6 +117,9 @@ struct _grn_ja {
   struct grn_ja_header *header;
   grn_raw_string generator;
   grn_obj *parsed_generator;
+  uint8_t n_partitions;
+  grn_ja **partitions;
+  grn_ra *partition_mapping;
 };
 
 void
