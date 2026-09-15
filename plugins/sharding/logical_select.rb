@@ -172,62 +172,99 @@ module Groonga
                          "[#{load_table}][#{to.size}]")
       end
 
+      def sort_result_set(context, result_set, offset, limit)
+        sort_keys = context.sort_keys
+        sorted_result_set = result_set.sort(sort_keys,
+                                            offset: offset,
+                                            limit: limit)
+        context.temporary_tables << sorted_result_set
+        message = "sort(#{sorted_result_set.size}): "
+        message << sort_keys.join(",")
+        query_logger.log(:size, ":", message)
+        sorted_result_set
+      end
+
+      def create_output_target(context,
+                               result_set,
+                               condition,
+                               offset,
+                               limit,
+                               n_records)
+        if context.sort_keys.empty?
+          # TODO
+          # With dynamic columns, only the records needed for output are processed.
+          return {
+            table: result_set,
+            offset: offset,
+            limit: limit,
+            condition: condition,
+            n_records: n_records,
+          }
+        end
+
+        table = sort_result_set(context, result_set, offset, limit)
+        {
+          table: table,
+          offset: 0,
+          limit: -1,
+          condition: condition,
+          n_records: n_records,
+        }
+      end
+
+      def collect_output_targets(context, n_hits)
+        results = context.results
+        if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
+          results = results.reverse
+        end
+
+        current_offset = context.offset
+        current_offset += n_hits if current_offset < 0
+        current_limit = context.limit
+        current_limit += n_hits + 1 if current_limit < 0
+
+        targets = []
+        results.each do |result|
+          break if current_limit <= 0
+          result_set = result[:result_set]
+          if result_set.size > current_offset
+            n_records = [result_set.size - current_offset, current_limit].min
+            targets << create_output_target(context,
+                                            result_set,
+                                            result[:condition],
+                                            current_offset,
+                                            current_limit,
+                                            n_records)
+            current_limit -= n_records
+          end
+          if current_offset > 0
+            current_offset = [current_offset - result_set.size, 0].max
+          end
+        end
+        targets
+      end
+
       def write_records(writer, context)
         results = context.results
 
         n_hits = 0
-        n_elements = 2 # for N hits and columns
         results.each do |result|
-          result_set = result[:result_set]
-          n_hits += result_set.size
-          n_elements += result_set.size
+          n_hits += result[:result_set].size
         end
+
+        targets = collect_output_targets(context, n_hits)
 
         first_result_set = results.first[:result_set]
         output_columns = context.output_columns
         writer.result_set(first_result_set, output_columns, n_hits) do
           n_outputs = 0
-          current_offset = context.offset
-          current_offset += n_hits if current_offset < 0
-          current_limit = context.limit
-          current_limit += n_hits + 1 if current_limit < 0
-          options = {
-            :offset => current_offset,
-            :limit => current_limit,
-          }
-          if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
-            results = results.reverse
-          end
-          results.each do |result|
-            result_set = result[:result_set]
-            condition = result[:condition]
-            if result_set.size > current_offset
-              if context.sort_keys.empty?
-                writer.write_table_records(result_set,
-                                           output_columns,
-                                           options.merge(condition: condition))
-              else
-                sorted_result_set = result_set.sort(context.sort_keys, options)
-                context.temporary_tables << sorted_result_set
-                message = "sort(#{sorted_result_set.size}): "
-                message << context.sort_keys.join(",")
-                query_logger.log(:size, ":", message)
-                writer.write_table_records(sorted_result_set,
-                                           output_columns,
-                                           offset: 0,
-                                           limit: -1,
-                                           condition: condition)
-              end
-              n_written = [result_set.size - current_offset, current_limit].min
-              current_limit -= n_written
-              n_outputs += n_written
-            end
-            if current_offset > 0
-              current_offset = [current_offset - result_set.size, 0].max
-            end
-            break if current_limit <= 0
-            options[:offset] = current_offset
-            options[:limit] = current_limit
+          targets.each do |target|
+            writer.write_table_records(target[:table],
+                                       output_columns,
+                                       offset: target[:offset],
+                                       limit: target[:limit],
+                                       condition: target[:condition])
+            n_outputs += target[:n_records]
           end
           query_logger.log(:size, ":", "output(#{n_outputs})")
         end
