@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2011-2016 Brazil
+  Copyright (C) 2011-2016  Brazil
+  Copyright (C) 2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,55 +20,65 @@
 #pragma once
 
 #ifdef WIN32
-# include <windows.h>
-#endif  // WIN32
+#  include <windows.h>
+#endif // WIN32
 
 #include "dat.hpp"
 
-namespace grn {
-namespace dat {
+namespace grn::dat {
 
-class FileImpl {
- public:
-  FileImpl();
-  ~FileImpl();
+  class FileImpl {
+  public:
+    FileImpl();
+    ~FileImpl();
 
-  void create(const char *path, UInt64 size);
-  void open(const char *path);
-  void close();
+    void
+    create(const char *path, UInt64 size);
+    void
+    open(const char *path);
+    void
+    close();
 
-  void *ptr() const {
-    return ptr_;
-  }
-  UInt64 size() const {
-    return size_;
-  }
+    void *
+    ptr() const
+    {
+      return ptr_;
+    }
+    UInt64
+    size() const
+    {
+      return size_;
+    }
 
-  void swap(FileImpl *rhs);
+    void
+    swap(FileImpl *rhs);
 
-  void flush();
+    void
+    flush();
 
- private:
-  void *ptr_;
-  UInt64 size_;
+  private:
+    void *ptr_;
+    UInt64 size_;
 
 #ifdef WIN32
-  HANDLE file_;
-  HANDLE map_;
-  LPVOID addr_;
+    HANDLE file_;
+    HANDLE map_;
+    LPVOID addr_;
 #else  // WIN32
-  int fd_;
-  void *addr_;
-  ::size_t length_;
-#endif  // WIN32
+    int fd_;
+    void *addr_;
+    ::size_t length_;
+#endif // WIN32
 
-  void create_(const char *path, UInt64 size);
-  void open_(const char *path);
+    void
+    create_(const char *path, UInt64 size);
+    void
+    open_(const char *path);
 
-  // Disallows copy and assignment.
-  FileImpl(const FileImpl &);
-  FileImpl &operator=(const FileImpl &);
-};
+    // Disallows copy and assignment.
+    FileImpl(const FileImpl &);
+    FileImpl &
+    operator=(const FileImpl &);
+  };
 
-}  // namespace dat
-}  // namespace grn
+} // namespace grn::dat
