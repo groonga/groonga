@@ -190,9 +190,12 @@ module Groonga
                                offset,
                                limit,
                                n_records)
-        if context.sort_keys.empty?
-          # TODO
-          # With dynamic columns, only the records needed for output are processed.
+        if not context.sort_keys.empty?
+          table = sort_result_set(context, result_set, offset, limit)
+        elsif context.dynamic_columns.have_output?
+          table = result_set.slice(offset, limit)
+          context.temporary_tables << table
+        else
           return {
             table: result_set,
             offset: offset,
@@ -202,13 +205,29 @@ module Groonga
           }
         end
 
-        table = sort_result_set(context, result_set, offset, limit)
         {
           table: table,
           offset: 0,
           limit: -1,
           condition: condition,
           n_records: n_records,
+        }
+      end
+
+      def create_empty_output_target(context)
+        result = context.results.first
+        result_set = result[:result_set]
+        table = result_set
+        if context.dynamic_columns.have_output?
+          table = Array.create("", result_set)
+          context.temporary_tables << table
+        end
+        {
+          table: table,
+          offset: 0,
+          limit: 0,
+          condition: result[:condition],
+          n_records: 0,
         }
       end
 
@@ -241,6 +260,7 @@ module Groonga
             current_offset = [current_offset - result_set.size, 0].max
           end
         end
+        targets << create_empty_output_target(context) if targets.empty?
         targets
       end
 
@@ -253,12 +273,18 @@ module Groonga
         end
 
         targets = collect_output_targets(context, n_hits)
+        if context.dynamic_columns.have_output?
+          apply_targets = targets.collect do |target|
+            [target[:table], {condition: target[:condition]}]
+          end
+          context.dynamic_columns.apply_output(apply_targets)
+        end
 
-        first_result_set = results.first[:result_set]
         output_columns = context.output_columns
-        writer.result_set(first_result_set, output_columns, n_hits) do
+        writer.result_set(targets.first[:table], output_columns, n_hits) do
           n_outputs = 0
           targets.each do |target|
+            next if target[:n_records].zero?
             writer.write_table_records(target[:table],
                                        output_columns,
                                        offset: target[:offset],

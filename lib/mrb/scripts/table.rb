@@ -36,6 +36,17 @@ module Groonga
       end
     end
 
+    def slice(offset, limit)
+      sliced = Array.create("", self)
+      begin
+        slice_raw(offset, limit, sliced)
+      rescue Exception => error
+        sliced.close
+        raise error
+      end
+      sliced
+    end
+
     def group(keys, result)
       ensure_sort_keys(keys) do |sort_keys|
         group_raw(sort_keys, result)
