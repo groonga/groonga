@@ -1,21 +1,10 @@
 module Groonga
   module Sharding
-    class RangeExpressionBuilder
-      attr_reader :match_columns_expression
-
-      attr_writer :match_columns
-      attr_writer :query
-      attr_writer :query_flags
-      attr_writer :filter
-
+    class RangeExpressionBuilder < ExpressionBuilder
       def initialize(key, target_range)
+        super()
         @key = key
         @target_range = target_range
-        @match_columns_expression = nil
-        @match_columns = nil
-        @query = nil
-        @query_flags = nil
-        @filter = nil
       end
 
       def build(expression, shard_range)
@@ -74,34 +63,6 @@ module Groonga
                                    Operator::PUSH, 1)
         expression.append_operator(Operator::CALL, 5)
         build_condition(expression)
-      end
-
-      private
-      def build_condition(expression)
-        if @query
-          is_empty = expression.empty?
-          if @match_columns
-            table = Context.instance[expression[0].domain_id]
-            @match_columns_expression = Expression.create(table)
-            @match_columns_expression.parse(@match_columns)
-          end
-          flags = Expression::SYNTAX_QUERY
-          if @query_flags
-            flags |= @query_flags
-          else
-            flags |= Expression::ALLOW_PRAGMA | Expression::ALLOW_COLUMN
-          end
-          expression.parse(@query,
-                           default_column: @match_columns_expression,
-                           flags: flags)
-          expression.append_operator(Operator::AND, 2) unless is_empty
-        end
-
-        if @filter
-          is_empty = expression.empty?
-          expression.parse(@filter)
-          expression.append_operator(Operator::AND, 2) unless is_empty
-        end
       end
     end
   end

@@ -753,6 +753,7 @@ module Groonga
                                                        query,
                                                        query_flags,
                                                        filter|
+              require "sharding/expression_builder"
               require "sharding/range_expression_builder"
               require "sharding/logical_enumerator"
               require "sharding/shard_selector"
