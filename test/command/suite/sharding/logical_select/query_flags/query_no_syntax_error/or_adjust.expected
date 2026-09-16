@@ -68,9 +68,9 @@ logical_select Names   --shard_key timestamp   --match_columns "_key"   --query 
 #>logical_select --logical_table "Names" --match_columns "_key" --query "xxx OR <0.0yyy" --query_flags "ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR" --shard_key "timestamp"
 #:000000000000000 filter(1)[Names_20260901]: (match columns) match "xxx"
 #:000000000000000 filter(1)[Names_20260901]: (match columns) match "yyy"
-#:000000000000000 select(1)[Names_20260901]
 #:000000000000000 filter(0)[Names_20260902]: (match columns) match "xxx"
 #:000000000000000 filter(1)[Names_20260902]: (match columns) match "yyy"
+#:000000000000000 select(1)[Names_20260901]
 #:000000000000000 select(1)[Names_20260902]
 #:000000000000000 output(2)
 #:000000000000000 send(0)

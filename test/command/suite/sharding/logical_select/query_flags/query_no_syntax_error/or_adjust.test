@@ -27,9 +27,11 @@ load --table Names_20260902
 ]
 
 #@collect-query-log true
+#@sort-query-log-operations shard
 logical_select Names \
   --shard_key timestamp \
   --match_columns "_key" \
   --query "xxx OR <0.0yyy" \
   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
+#@sort-query-log-operations
 #@collect-query-log false
