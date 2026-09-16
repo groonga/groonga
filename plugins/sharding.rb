@@ -1,4 +1,5 @@
 require "sharding/parameters"
+require "sharding/expression_builder"
 require "sharding/range_expression_builder"
 require "sharding/shard_selector"
 require "sharding/specified_shard"
