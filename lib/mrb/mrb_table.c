@@ -18,6 +18,7 @@
 */
 
 #include "../grn_ctx_impl.h"
+#include "../grn_table.h"
 #include <string.h>
 
 #ifdef GRN_WITH_MRUBY
@@ -279,6 +280,26 @@ mrb_grn_table_sort_raw(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_table_slice_raw(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  mrb_int offset;
+  mrb_int limit;
+  mrb_value mrb_result;
+  grn_obj *result;
+
+  table = DATA_PTR(self);
+  mrb_get_args(mrb, "iio", &offset, &limit, &mrb_result);
+
+  result = DATA_PTR(mrb_result);
+  grn_table_slice(ctx, table, (int)offset, (int)limit, result);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_result;
+}
+
+static mrb_value
 mrb_grn_table_group_raw(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -509,6 +530,8 @@ grn_mrb_table_init(grn_ctx *ctx)
                     mrb_grn_table_select, MRB_ARGS_ARG(1, 1));
   mrb_define_method(mrb, klass, "sort_raw",
                     mrb_grn_table_sort_raw, MRB_ARGS_REQ(4));
+  mrb_define_method(mrb, klass, "slice_raw",
+                    mrb_grn_table_slice_raw, MRB_ARGS_REQ(3));
   mrb_define_method(mrb, klass, "group_raw",
                     mrb_grn_table_group_raw, MRB_ARGS_REQ(2));
 
