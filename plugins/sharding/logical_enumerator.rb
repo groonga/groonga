@@ -27,6 +27,10 @@ module Groonga
         @shards.clear
       end
 
+      def specified_shards?
+        not @specified_shards.empty?
+      end
+
       private
       def each_internal(order)
         return enum_for(__method__, order) unless block_given?
