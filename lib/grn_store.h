@@ -131,14 +131,14 @@ struct _grn_ja {
    *   - This is an array of actual partitions.
    *   - The initial value is NULL.
    *   - We can access a partition using ja->partitions[partition_id].
-   *   - The partition_id ranges from 0 to 255, as n_partitions has a maximum
-   *     value of 256.
+   *   - The partition_id ranges from 0 to 255, as max_partition_id has a
+   *     maximum value of 255.
    *
    * partition_mapping:
    *   - This variable maps which ID belongs to which partition.
    *   - The initial value is NULL.
    *     It is created when a partition is initialized for the first time.
-   *     So, it is not created when n_partitions is 0.
+   *     So, it is not created when the number of partitions is 0.
    *   - Once this mapping is created, a file named *.partitions is saved to
    *     storage.
    */
