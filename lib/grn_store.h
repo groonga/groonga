@@ -124,7 +124,7 @@ struct _grn_ja {
    *   - Each partition can contain up to JA_N_DATA_SEGMENTS (65,536) segments,
    *     with each segment being JA_SEGMENT_SIZE (4 MiB), resulting in a maximum
    *     capacity of 256 GiB per partition.
-   *   - Therefore, the maximum total capacity across all partitons is 64TiB.
+   *   - Therefore, the maximum total capacity across all partitions is 64TiB.
    *
    * partitions:
    *   - This is an array of actual partitions.
