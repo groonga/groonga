@@ -117,6 +117,34 @@ struct _grn_ja {
   struct grn_ja_header *header;
   grn_raw_string generator;
   grn_obj *parsed_generator;
+  /* These variables are used for partitioning.
+   *
+   * max_partition_id:
+   *   - The ID of the last partition in the current set of partitions.
+   *   - The maximum value is UINT8_MAX(255) and it ranges from 0 to 255.
+   *   - Each partition can contain up to JA_N_DATA_SEGMENTS (65,536) segments,
+   *     with each segment being JA_SEGMENT_SIZE (4 MiB), resulting in a maximum
+   *     capacity of 256 GiB per partition.
+   *   - Therefore, the maximum total capacity across all partitions is 64TiB.
+   *
+   * partitions:
+   *   - This is an array of actual partitions.
+   *   - The initial value is NULL.
+   *   - We can access a partition using ja->partitions[partition_id].
+   *   - The partition_id ranges from 0 to 255, as max_partition_id has a
+   *     maximum value of 255.
+   *
+   * partition_mapping:
+   *   - This variable maps which ID belongs to which partition.
+   *   - The initial value is NULL.
+   *     It is created when a partition is initialized for the first time.
+   *     So, it is not created when the number of partitions is 0.
+   *   - Once this mapping is created, a file named *.partitions is saved to
+   *     storage.
+   */
+  uint8_t max_partition_id;
+  grn_ja **partitions;
+  grn_ra *partition_mapping;
 };
 
 void
