@@ -992,7 +992,7 @@ _grn_ja_create(grn_ctx *ctx,
   ja->parsed_generator = NULL;
   SEGMENT_EINFO_ON(ja, 0, 0);
   header->element_segs[0] = 0;
-  ja->n_partitions = 0;
+  ja->max_partition_id = 0;
   ja->partitions = NULL;
   ja->partition_mapping = NULL;
   return ja;
