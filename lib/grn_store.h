@@ -130,7 +130,7 @@ struct _grn_ja {
    * partitions:
    *   - This is an array of actual partitions.
    *   - The initial value is NULL.
-   *   - We can access a partition using ja->partition[partition_id].
+   *   - We can access a partition using ja->partitions[partition_id].
    *   - The partition_id ranges from 0 to 255, as n_partitions has a maximum
    *     value of 256.
    *
