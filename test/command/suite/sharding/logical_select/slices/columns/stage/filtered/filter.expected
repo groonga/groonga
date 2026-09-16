@@ -1,0 +1,133 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Items_20260901 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Items_20260901 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Items_20260902 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Items_20260902 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items_20260901
+[
+{"_key": "Book",  "timestamp": "2026-09-01 12:00:00", "price": 1498},
+{"_key": "Food",  "timestamp": "2026-09-01 12:00:01", "price": 1198}
+]
+[[0,0.0,0.0],2]
+load --table Items_20260902
+[
+{"_key": "Drink", "timestamp": "2026-09-02 12:00:00", "price": 600}
+]
+[[0,0.0,0.0],1]
+logical_select Items   --shard_key timestamp   --filter true   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_columns _id,_key,_score,price,filtered   --slices[cheep].columns[filtered].stage filtered   --slices[cheep].columns[filtered].type UInt32   --slices[cheep].columns[filtered].flags COLUMN_SCALAR   --slices[cheep].columns[filtered].value '_id'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1498,
+        1788231600.0
+      ],
+      [
+        2,
+        "Food",
+        1198,
+        1788231601.0
+      ],
+      [
+        1,
+        "Drink",
+        600,
+        1788318000.0
+      ]
+    ],
+    {
+      "cheep": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_score",
+            "Int32"
+          ],
+          [
+            "price",
+            "UInt32"
+          ],
+          [
+            "filtered",
+            "UInt32"
+          ]
+        ],
+        [
+          2,
+          "Food",
+          2,
+          1198,
+          2
+        ],
+        [
+          1,
+          "Drink",
+          2,
+          600,
+          1
+        ]
+      ]
+    }
+  ]
+]
+#>logical_select --filter "true" --logical_table "Items" --shard_key "timestamp" --slices[cheep].columns[filtered].flags "COLUMN_SCALAR" --slices[cheep].columns[filtered].stage "filtered" --slices[cheep].columns[filtered].type "UInt32" --slices[cheep].columns[filtered].value "_id" --slices[cheep].filter "price < 1200" --slices[cheep].output_columns "_id,_key,_score,price,filtered"
+#:000000000000000 filter(2)[Items_20260901]: true
+#:000000000000000 filter(1)[Items_20260902]: true
+#:000000000000000 select(2)[Items_20260901]
+#:000000000000000 select(1)[Items_20260902]
+#:000000000000000 slices[cheep].filter(1): #<accessor _key(anonymous).price(Items_20260901)> less 1200
+#:000000000000000 slices[cheep].filter(1): #<accessor _key(anonymous).price(Items_20260902)> less 1200
+#:000000000000000 slices[cheep](2)
+#:000000000000000 slices[cheep].columns[filtered](1)
+#:000000000000000 slices[cheep].columns[filtered](1)
+#:000000000000000 output(3)
+#:000000000000000 slices[cheep].output(2)
+#:000000000000000 send(0)
+#<000000000000000 rc=0

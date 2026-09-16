@@ -43,6 +43,8 @@ module Groonga
           load_records(context)
 
           n_results = 1
+          n_slices = context.slices.n_results
+          n_results += 1 if n_slices > 0
           n_plain_drilldowns = context.plain_drilldown.n_results
           n_labeled_drilldowns = context.labeled_drilldowns.n_results
           if n_plain_drilldowns > 0
@@ -55,6 +57,7 @@ module Groonga
 
           writer.array("RESULT", n_results) do
             write_records(writer, context)
+            write_slices(writer, context) if n_slices > 0
             if n_plain_drilldowns > 0
               write_plain_drilldowns(writer, context)
             elsif n_labeled_drilldowns > 0
@@ -98,6 +101,19 @@ module Groonga
         key << "#{input[:load_table]}\0"
         key << "#{input[:load_columns]}\0"
         key << "#{input[:load_values]}\0"
+        slices = Slices.parse(input).sort_by(&:label)
+        slices.each do |slice|
+          key << "#{slice.label}\0"
+          key << "#{slice.match_columns}\0"
+          key << "#{slice.query}\0"
+          key << "#{slice.query_flags}\0"
+          key << "#{slice.filter}\0"
+          key << "#{slice.sort_keys.join(',')}\0"
+          key << "#{slice.output_columns}\0"
+          key << "#{slice.offset}\0"
+          key << "#{slice.limit}\0"
+          key << slice.dynamic_columns.cache_key
+        end
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
@@ -178,7 +194,7 @@ module Groonga
                                             offset: offset,
                                             limit: limit)
         context.temporary_tables << sorted_result_set
-        message = "sort(#{sorted_result_set.size}): "
+        message = "#{context.query_log_prefix}sort(#{sorted_result_set.size}): "
         message << sort_keys.join(",")
         query_logger.log(:size, ":", message)
         sorted_result_set
@@ -277,7 +293,8 @@ module Groonga
           apply_targets = targets.collect do |target|
             [target[:table], {condition: target[:condition]}]
           end
-          context.dynamic_columns.apply_output(apply_targets)
+          context.dynamic_columns.apply_output(apply_targets,
+                                               query_log_prefix: context.query_log_prefix)
         end
 
         output_columns = context.output_columns
@@ -292,7 +309,26 @@ module Groonga
                                        condition: target[:condition])
             n_outputs += target[:n_records]
           end
-          query_logger.log(:size, ":", "output(#{n_outputs})")
+          query_logger.log(:size, ":", "#{context.query_log_prefix}output(#{n_outputs})")
+        end
+      end
+
+      def write_slices(writer, execute_context)
+        slices = execute_context.slices
+        writer.map("SLICES", slices.n_results) do
+          slices.each do |slice|
+            writer.write(slice.label)
+            begin
+              write_records(writer, slice)
+            rescue Error, ArgumentError => error
+              # An error while writing a slice breaks the response.
+              # So an empty result set is written for the slice.
+              logger.log(:error, error.message)
+              context.rc = Context::RC::SUCCESS.to_i
+              writer.array("RECORDS", 0) do
+              end
+            end
+          end
         end
       end
 
@@ -441,6 +477,7 @@ module Groonga
         attr_reader :results
         attr_reader :shard_targets
         attr_reader :shard_results
+        attr_reader :slices
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
@@ -469,6 +506,7 @@ module Groonga
           @results = []
           @shard_targets = []
           @shard_results = []
+          @slices = Slices.parse(@input)
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
 
@@ -478,6 +516,7 @@ module Groonga
         end
 
         def close
+          @slices.close
           @plain_drilldown.close
           @labeled_drilldowns.close
 
@@ -490,9 +529,110 @@ module Groonga
           end
         end
 
+        def query_log_prefix
+          ""
+        end
+
         def parse_query_flags(raw_query_flags)
           return nil if raw_query_flags.nil? or raw_query_flags.empty?
           Expression.parse_query_flags("[logical_select]", raw_query_flags)
+        end
+      end
+
+      class Slices
+        include Enumerable
+
+        class << self
+          def parse(input)
+            contexts = {}
+            labeled_arguments = LabeledArguments.new(input, /slices/)
+            labeled_arguments.each do |label, arguments|
+              contexts[label] = SliceExecuteContext.new(label, arguments)
+            end
+            new(contexts)
+          end
+        end
+
+        def initialize(contexts)
+          @contexts = contexts
+        end
+
+        def close
+          @contexts.each_value do |context|
+            context.close
+          end
+        end
+
+        def [](label)
+          @contexts[label]
+        end
+
+        def empty?
+          @contexts.empty?
+        end
+
+        def n_results
+          @contexts.size
+        end
+
+        def each(&block)
+          @contexts.each_value(&block)
+        end
+      end
+
+      class SliceExecuteContext
+        include KeysParsable
+
+        attr_reader :label
+        attr_reader :match_columns
+        attr_reader :query
+        attr_reader :query_flags
+        attr_reader :filter
+        attr_reader :sort_keys
+        attr_reader :output_columns
+        attr_reader :offset
+        attr_reader :limit
+        attr_reader :tag
+        attr_reader :query_log_prefix
+        attr_reader :dynamic_columns
+        attr_reader :results
+        attr_reader :temporary_tables
+        attr_reader :expressions
+        def initialize(label, arguments)
+          @label = label
+          @tag = "[logical_select][slices][#{@label}]"
+          @query_log_prefix = "slices[#{@label}]."
+          @match_columns = arguments["match_columns"]
+          @query = arguments["query"]
+          @query_flags = parse_query_flags(arguments["query_flags"])
+          @filter = arguments["filter"]
+          @sort_keys = parse_keys(arguments["sort_keys"])
+          @output_columns = arguments["output_columns"] || "_id, _key, *"
+          @offset = (arguments["offset"] || 0).to_i
+          @limit = (arguments["limit"] || 10).to_i
+
+          @dynamic_columns = DynamicColumns.parse(@tag, arguments)
+
+          @results = []
+
+          @temporary_tables = []
+
+          @expressions = []
+        end
+
+        def close
+          @expressions.each do |expression|
+            expression.close
+          end
+
+          @temporary_tables.each do |table|
+            table.close
+          end
+        end
+
+        def parse_query_flags(raw_query_flags)
+          return nil if raw_query_flags.nil? or raw_query_flags.empty?
+          Expression.parse_query_flags(@tag, raw_query_flags)
         end
       end
 
@@ -716,6 +856,7 @@ module Groonga
 
         def execute
           execute_search
+          execute_slices unless @context.slices.empty?
           if @context.plain_drilldown.have_keys?
             execute_plain_drilldown
           elsif @context.labeled_drilldowns.have_keys?
@@ -870,6 +1011,76 @@ module Groonga
               # condition. It's not created by the task.
               context[result_set_id].close if condition_id
             end
+          end
+        end
+
+        def execute_slices
+          @context.slices.each do |slice|
+            execute_slice(slice)
+          end
+        end
+
+        def execute_slice(slice)
+          if slice.query.nil? and slice.filter.nil?
+            raise InvalidArgument, "#{slice.tag} slice requires query or filter"
+          end
+
+          dynamic_columns = slice.dynamic_columns
+          options = {query_log_prefix: slice.query_log_prefix}
+
+          target_tables = @context.results.collect do |result|
+            target_table = result[:result_set]
+            if dynamic_columns.have_initial?
+              target_table = target_table.select_all
+              slice.temporary_tables << target_table
+            end
+            target_table
+          end
+          if dynamic_columns.have_initial?
+            targets = target_tables.collect do |target_table|
+              [target_table]
+            end
+            dynamic_columns.apply_initial(targets, options)
+          end
+
+          @context.results.zip(target_tables).each do |result, target_table|
+            expression = Expression.create(target_table)
+            slice.expressions << expression
+            expression.query_log_tag_prefix = slice.query_log_prefix
+            build_slice_condition(slice, expression)
+            sliced_result_set = target_table.select(expression)
+            slice.temporary_tables << sliced_result_set
+            slice.results << {
+              result_set: sliced_result_set,
+              condition: expression,
+            }
+          end
+
+          n_hits = 0
+          slice.results.each do |result|
+            n_hits += result[:result_set].size
+          end
+          query_logger.log(:size, ":", "slices[#{slice.label}](#{n_hits})")
+
+          if dynamic_columns.have_filtered?
+            apply_targets = slice.results.collect do |result|
+              [result[:result_set], {condition: result[:condition]}]
+            end
+            dynamic_columns.apply_filtered(apply_targets, options)
+          end
+        end
+
+        def build_slice_condition(slice, expression)
+          builder = ExpressionBuilder.new
+          builder.match_columns = slice.match_columns
+          builder.query = slice.query
+          builder.query_flags = slice.query_flags
+          builder.filter = slice.filter
+          begin
+            builder.build_condition(expression)
+          ensure
+            match_columns_expression = builder.match_columns_expression
+            slice.expressions << match_columns_expression if match_columns_expression
           end
         end
 

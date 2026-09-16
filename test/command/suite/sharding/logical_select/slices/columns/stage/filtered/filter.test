@@ -1,0 +1,36 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Items_20260901 TABLE_HASH_KEY ShortText
+column_create Items_20260901 timestamp COLUMN_SCALAR Time
+column_create Items_20260901 price COLUMN_SCALAR UInt32
+
+table_create Items_20260902 TABLE_HASH_KEY ShortText
+column_create Items_20260902 timestamp COLUMN_SCALAR Time
+column_create Items_20260902 price COLUMN_SCALAR UInt32
+
+load --table Items_20260901
+[
+{"_key": "Book",  "timestamp": "2026-09-01 12:00:00", "price": 1498},
+{"_key": "Food",  "timestamp": "2026-09-01 12:00:01", "price": 1198}
+]
+
+load --table Items_20260902
+[
+{"_key": "Drink", "timestamp": "2026-09-02 12:00:00", "price": 600}
+]
+
+#@collect-query-log true
+#@sort-query-log-operations shard
+logical_select Items \
+  --shard_key timestamp \
+  --filter true \
+  --slices[cheep].filter 'price < 1200' \
+  --slices[cheep].output_columns _id,_key,_score,price,filtered \
+  --slices[cheep].columns[filtered].stage filtered \
+  --slices[cheep].columns[filtered].type UInt32 \
+  --slices[cheep].columns[filtered].flags COLUMN_SCALAR \
+  --slices[cheep].columns[filtered].value '_id'
+#@sort-query-log-operations
+#@collect-query-log false

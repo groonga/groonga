@@ -1,0 +1,31 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos_20260901 TABLE_HASH_KEY ShortText
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+column_create Memos_20260901 tag COLUMN_SCALAR Tags
+
+table_create Memos_20260902 TABLE_HASH_KEY ShortText
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+column_create Memos_20260902 tag COLUMN_SCALAR Tags
+
+load --table Memos_20260901
+[
+{"_key": "Groonga is fast!", "timestamp": "2026-09-01 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "timestamp": "2026-09-01 12:00:01", "tag": "Mroonga"}
+]
+
+load --table Memos_20260902
+[
+{"_key": "Groonga sticker!", "timestamp": "2026-09-02 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "timestamp": "2026-09-02 12:00:03", "tag": "Rroonga"}
+]
+
+logical_select Memos \
+  --shard_key timestamp \
+  --slices[not_groonga].match_columns 'tag' \
+  --slices[not_groonga].query '-Groonga' \
+  --slices[not_groonga].query_flags ALLOW_LEADING_NOT
