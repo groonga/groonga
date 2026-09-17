@@ -529,7 +529,7 @@ module Groonga
           @results = []
           @shard_targets = []
           @shard_results = []
-          @slices = Slices.parse(@input)
+          @slices = Slices.parse(@input, @enumerator)
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
 
@@ -570,11 +570,11 @@ module Groonga
         include Enumerable
 
         class << self
-          def parse(input)
+          def parse(input, enumerator=nil)
             contexts = {}
             labeled_arguments = LabeledArguments.new(input, /slices/)
             labeled_arguments.each do |label, arguments|
-              contexts[label] = SliceExecuteContext.new(label, arguments)
+              contexts[label] = SliceExecuteContext.new(label, arguments, enumerator)
             end
             new(contexts)
           end
@@ -611,6 +611,7 @@ module Groonga
         include KeysParsable
 
         attr_reader :label
+        attr_reader :enumerator
         attr_reader :match_columns
         attr_reader :query
         attr_reader :query_flags
@@ -625,8 +626,9 @@ module Groonga
         attr_reader :results
         attr_reader :temporary_tables
         attr_reader :expressions
-        def initialize(label, arguments)
+        def initialize(label, arguments, enumerator)
           @label = label
+          @enumerator = enumerator
           @tag = "[logical_select][slices][#{@label}]"
           @query_log_prefix = "slices[#{@label}]."
           @match_columns = arguments["match_columns"]
@@ -645,6 +647,10 @@ module Groonga
           @temporary_tables = []
 
           @expressions = []
+        end
+
+        def shard_key_name
+          @enumerator.shard_key_name
         end
 
         def close
