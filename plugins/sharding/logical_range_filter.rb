@@ -208,6 +208,7 @@ module Groonga
       end
 
       class ShardExecutor < StreamShardExecutor
+        include KeysParsable
         include QueryLoggable
 
         def initialize(context, shard, shard_range)
@@ -621,14 +622,12 @@ module Groonga
             ]
           else
             sort_keys = @context.sort_keys.collect do |sort_key|
-              if sort_key.start_with?("-")
-                key = sort_key[1..-1]
+              if sort_key_descending?(sort_key)
                 order = :descending
               else
-                key = sort_key
                 order = :ascending
               end
-              {:key => key, :order => order}
+              {:key => sort_key_name(sort_key), :order => order}
             end
           end
           if @context.current_limit > 0

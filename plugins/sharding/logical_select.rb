@@ -1,6 +1,8 @@
 module Groonga
   module Sharding
     class LogicalSelectCommand < Command
+      include KeysParsable
+
       register("logical_select",
                [
                  "logical_table",
@@ -237,7 +239,7 @@ module Groonga
         end
 
         results = context.results
-        if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
+        if context.sort_keys.any? {|sort_key| sort_key_descending?(sort_key)}
           results = results.reverse
         end
 
@@ -283,7 +285,7 @@ module Groonga
       def sort_keys_only_shard_key?(context)
         shard_key_name = context.shard_key_name
         context.sort_keys.all? do |sort_key|
-          sort_key.sub(/\A[-+]/, "") == shard_key_name
+          sort_key_name(sort_key) == shard_key_name
         end
       end
 
