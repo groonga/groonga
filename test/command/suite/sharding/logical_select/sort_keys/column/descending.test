@@ -1,0 +1,42 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 memo COLUMN_SCALAR ShortText
+column_create Logs_20170315 n_likes COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 memo COLUMN_SCALAR ShortText
+column_create Logs_20170316 n_likes COLUMN_SCALAR UInt32
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 memo COLUMN_SCALAR ShortText
+column_create Logs_20170317 n_likes COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "memo": "a1", "n_likes": 5},
+{"timestamp": "2017/03/15 01:00:00", "memo": "a2", "n_likes": 30}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "memo": "b1", "n_likes": 1},
+{"timestamp": "2017/03/16 11:00:00", "memo": "b2", "n_likes": 20}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "memo": "c1", "n_likes": 10},
+{"timestamp": "2017/03/17 21:00:00", "memo": "c2", "n_likes": 40}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --sort_keys -n_likes \
+  --output_columns memo,n_likes \
+  --limit -1

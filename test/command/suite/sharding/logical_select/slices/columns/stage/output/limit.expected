@@ -81,12 +81,12 @@ logical_select Memos   --shard_key timestamp   --slices[fast].query 'content:@fa
           ]
         ],
         [
-          1,
-          "PGroonga is <span class=\"keyword\">fast</span> and easy to use."
-        ],
-        [
           2,
           "Mroonga is <span class=\"keyword\">fast</span> and easy to use."
+        ],
+        [
+          1,
+          "PGroonga is <span class=\"keyword\">fast</span> and easy to use."
         ]
       ]
     }
@@ -99,7 +99,7 @@ logical_select Memos   --shard_key timestamp   --slices[fast].query 'content:@fa
 #:000000000000000 slices[fast].filter(1): Memos_20260902.content match "fast"
 #:000000000000000 slices[fast](3)
 #:000000000000000 output(3)
-#:000000000000000 slices[fast].sort(1): -_id
+#:000000000000000 slices[fast].sort(2): -_id
 #:000000000000000 slices[fast].sort(1): -_id
 #:000000000000000 slices[fast].columns[highlighted_content](1)
 #:000000000000000 slices[fast].columns[highlighted_content](1)

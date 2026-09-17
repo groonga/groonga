@@ -60,6 +60,11 @@ logical_select Entries   --shard_key timestamp   --output_columns '_key,content,
         ]
       ],
       [
+        "Good-bye Senna",
+        "I migrated all Senna system!",
+        1
+      ],
+      [
         "Good-bye Tritonn",
         "I also migrated all Tritonn system!",
         1
@@ -67,11 +72,6 @@ logical_select Entries   --shard_key timestamp   --output_columns '_key,content,
       [
         "The first post!",
         "Welcome! This is my first post!",
-        1
-      ],
-      [
-        "Good-bye Senna",
-        "I migrated all Senna system!",
         1
       ]
     ]

@@ -1,0 +1,77 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Entries_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Entries_20170315 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Entries_20170315 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Terms entries_20170315_content COLUMN_INDEX|WITH_POSITION   Entries_20170315 content
+[[0,0.0,0.0],true]
+table_create Entries_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Entries_20170316 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Entries_20170316 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Terms entries_20170316_content COLUMN_INDEX|WITH_POSITION   Entries_20170316 content
+[[0,0.0,0.0],true]
+load --table Entries_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "memo": "a1", "content": "groonga"},
+{"timestamp": "2017/03/15 01:00:00", "memo": "a2", "content": "groonga groonga groonga"}
+]
+[[0,0.0,0.0],2]
+load --table Entries_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "memo": "b1", "content": "groonga groonga groonga groonga"},
+{"timestamp": "2017/03/16 11:00:00", "memo": "b2", "content": "groonga groonga"}
+]
+[[0,0.0,0.0],2]
+logical_select Entries   --shard_key timestamp   --match_columns content   --query groonga   --sort_keys -_score   --output_columns memo,_score   --limit -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "memo",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "b1",
+        4
+      ],
+      [
+        "a2",
+        3
+      ],
+      [
+        "b2",
+        2
+      ],
+      [
+        "a1",
+        1
+      ]
+    ]
+  ]
+]
