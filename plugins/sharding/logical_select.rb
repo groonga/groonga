@@ -232,6 +232,10 @@ module Groonga
       end
 
       def collect_output_targets(context, n_hits)
+        if sort_across_shards?(context)
+          # TODO: Sort records of all shards as one result set.
+        end
+
         results = context.results
         if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
           results = results.reverse
@@ -262,6 +266,25 @@ module Groonga
         end
         targets << create_empty_output_target(context) if targets.empty?
         targets
+      end
+
+      def sort_across_shards?(context)
+        return false if context.sort_keys.empty?
+        return false if context.results.size < 2
+        # Explicitly specified shards may not be partitioned by the shard key.
+        # So records of them are sorted across shards.
+        return true if context.enumerator.specified_shards?
+        # Records in a shard are already sorted by the shard key because
+        # a shard has records in a specific range of the shard key.
+        # So they can be output in the order of shards.
+        not sort_keys_only_shard_key?(context)
+      end
+
+      def sort_keys_only_shard_key?(context)
+        shard_key_name = context.shard_key_name
+        context.sort_keys.all? do |sort_key|
+          sort_key.sub(/\A[-+]/, "") == shard_key_name
+        end
       end
 
       def write_records(writer, context)
@@ -475,6 +498,10 @@ module Groonga
           @temporary_tables = []
 
           @expressions = []
+        end
+
+        def shard_key_name
+          @enumerator.shard_key_name
         end
 
         def close
