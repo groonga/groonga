@@ -1,0 +1,34 @@
+#@on-error omit
+plugin_register sharding
+plugin_register ruby/eval
+#@on-error default
+
+table_create Memos_20260901 TABLE_NO_KEY
+column_create Memos_20260901 price COLUMN_SCALAR UInt32
+
+table_create Memos_20260902 TABLE_NO_KEY
+column_create Memos_20260902 price COLUMN_SCALAR UInt32
+
+load --table Memos_20260901
+[
+{"price": 100},
+{"price": 300}
+]
+
+load --table Memos_20260902
+[
+{"price": 200},
+{"price": 400}
+]
+
+ruby_eval " \
+  tables = [\"Memos_20260901\", \"Memos_20260902\"].collect {|name| \
+    Groonga::Context.instance[name] \
+  }; \
+  sorter = Groonga::Sharding::MultiTableSorter.new(tables, [\"-price\"]); \
+  records = []; \
+  sorter.each(1, 2) {|table_index, record_offset| \
+    records << [table_index, record_offset] \
+  }; \
+  records.inspect \
+"

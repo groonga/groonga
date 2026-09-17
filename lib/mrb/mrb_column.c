@@ -88,6 +88,27 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_column_array_set(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *column;
+  mrb_int record_id;
+  mrb_value mrb_column_value;
+  grn_obj column_value;
+
+  column = DATA_PTR(self);
+  mrb_get_args(mrb, "io", &record_id, &mrb_column_value);
+
+  GRN_VOID_INIT(&column_value);
+  grn_mrb_value_to_bulk(mrb, mrb_column_value, &column_value);
+  grn_obj_set_value(ctx, column, (grn_id)record_id, &column_value, GRN_OBJ_SET);
+  GRN_OBJ_FIN(ctx, &column_value);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_column_value;
+}
+
+static mrb_value
 mrb_grn_column_is_scalar(mrb_state *mrb, mrb_value self)
 {
   grn_obj *column;
@@ -188,6 +209,8 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_column_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "[]=",
+                    mrb_grn_column_array_set, MRB_ARGS_REQ(2));
 
   mrb_define_method(mrb, klass, "scalar?",
                     mrb_grn_column_is_scalar, MRB_ARGS_NONE());

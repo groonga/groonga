@@ -15,6 +15,8 @@ require "sharding/drilldown_executor"
 
 require "sharding/logical_parameters"
 
+require "sharding/multi_table_sorter"
+
 require "sharding/logical_count"
 require "sharding/logical_range_filter"
 require "sharding/logical_select"
