@@ -323,18 +323,34 @@ module Groonga
         end
 
         output_columns = context.output_columns
-        writer.result_set(targets.first[:table], output_columns, n_hits) do
-          n_outputs = 0
-          targets.each do |target|
-            next if target[:n_records].zero?
-            writer.write_table_records(target[:table],
-                                       output_columns,
-                                       offset: target[:offset],
-                                       limit: target[:limit],
-                                       condition: target[:condition])
-            n_outputs += target[:n_records]
+        n_outputs = 0
+        targets.each do |target|
+          n_outputs += target[:n_records]
+        end
+        # Records of all targets must be written as one "records" in
+        # command version 3.
+        # So metadata and records are written separately.
+        writer.open_result_set_metadata(targets.first[:table],
+                                        output_columns,
+                                        n_hits,
+                                        1)
+        begin
+          writer.open_table_records(n_outputs)
+          begin
+            targets.each do |target|
+              next if target[:n_records].zero?
+              writer.write_table_records_content(target[:table],
+                                                 output_columns,
+                                                 offset: target[:offset],
+                                                 limit: target[:limit],
+                                                 condition: target[:condition])
+            end
+          ensure
+            writer.close_table_records
           end
           query_logger.log(:size, ":", "#{context.query_log_prefix}output(#{n_outputs})")
+        ensure
+          writer.close_result_set
         end
       end
 
