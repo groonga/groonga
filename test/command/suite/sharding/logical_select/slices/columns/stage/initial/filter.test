@@ -1,0 +1,39 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Items_20260901 TABLE_HASH_KEY ShortText
+column_create Items_20260901 timestamp COLUMN_SCALAR Time
+column_create Items_20260901 price COLUMN_SCALAR UInt32
+
+table_create Items_20260902 TABLE_HASH_KEY ShortText
+column_create Items_20260902 timestamp COLUMN_SCALAR Time
+column_create Items_20260902 price COLUMN_SCALAR UInt32
+
+load --table Items_20260901
+[
+{"_key": "Book",  "timestamp": "2026-09-01 12:00:00", "price": 1000},
+{"_key": "Note",  "timestamp": "2026-09-01 12:00:01", "price": 1000},
+{"_key": "Box",   "timestamp": "2026-09-01 12:00:02", "price":  520}
+]
+
+load --table Items_20260902
+[
+{"_key": "Pen",   "timestamp": "2026-09-02 12:00:00", "price":  510},
+{"_key": "Food",  "timestamp": "2026-09-02 12:00:01", "price":  500},
+{"_key": "Drink", "timestamp": "2026-09-02 12:00:02", "price":  300}
+]
+
+#@collect-query-log true
+#@sort-query-log-operations shard
+logical_select Items \
+  --shard_key timestamp \
+  --filter true \
+  --slices[expensive].columns[price_with_tax].stage initial \
+  --slices[expensive].columns[price_with_tax].type UInt32 \
+  --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR \
+  --slices[expensive].columns[price_with_tax].value 'price * 1.08' \
+  --slices[expensive].filter 'price_with_tax > 550' \
+  --slices[expensive].output_columns '_id,_key,_score,price,price_with_tax'
+#@sort-query-log-operations
+#@collect-query-log false

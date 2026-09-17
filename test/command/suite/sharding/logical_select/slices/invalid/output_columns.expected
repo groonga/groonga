@@ -1,0 +1,90 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos_20260901 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260901 tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+table_create Memos_20260902 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260902 tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos_20260901
+[
+{"_key": "Groonga is fast!", "timestamp": "2026-09-01 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "timestamp": "2026-09-01 12:00:01", "tag": "Mroonga"}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20260902
+[
+{"_key": "Groonga sticker!", "timestamp": "2026-09-02 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "timestamp": "2026-09-02 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],2]
+logical_select Memos   --shard_key timestamp   --slices[groonga].match_columns '_key'   --slices[groonga].query 'Groonga'   --slices[groonga].output_columns ':'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        "Groonga",
+        1788231600.0
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        "Mroonga",
+        1788231601.0
+      ],
+      [
+        1,
+        "Groonga sticker!",
+        "Groonga",
+        1788318002.0
+      ],
+      [
+        2,
+        "Rroonga is fast!",
+        "Rroonga",
+        1788318003.0
+      ]
+    ],
+    {
+      "groonga": []
+    }
+  ]
+]
+#|e| Syntax error: <|:|>
+#|e| syntax error: <Syntax error: <|:|>>(-63)

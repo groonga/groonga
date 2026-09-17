@@ -1,0 +1,126 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+table_create Memos_20260901 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260901 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Terms memos_20260901_content COLUMN_INDEX|WITH_POSITION   Memos_20260901 content
+[[0,0.0,0.0],true]
+table_create Memos_20260902 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260902 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Terms memos_20260902_content COLUMN_INDEX|WITH_POSITION   Memos_20260902 content
+[[0,0.0,0.0],true]
+load --table Memos_20260901
+[
+{"timestamp": "2026-09-01 00:00:00", "content": "Groonga is fast."},
+{"timestamp": "2026-09-01 01:00:00", "content": "Mroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20260902
+[
+{"timestamp": "2026-09-02 00:00:00", "content": "PGroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],1]
+logical_select Memos   --shard_key timestamp   --query 'content:@is'   --slices[fast].query 'content:@fast'   --slices[fast].sort_keys '-_id'   --slices[fast].columns[snippets].stage output   --slices[fast].columns[snippets].type Text   --slices[fast].columns[snippets].flags COLUMN_VECTOR   --slices[fast].columns[snippets].value 'snippet_html(content)'   --slices[fast].output_columns _id,snippets
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast.",
+        1788188400.0
+      ],
+      [
+        2,
+        "Mroonga is fast and easy to use.",
+        1788192000.0
+      ],
+      [
+        1,
+        "PGroonga is fast and easy to use.",
+        1788274800.0
+      ]
+    ],
+    {
+      "fast": [
+        [
+          3
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "snippets",
+            "Text"
+          ]
+        ],
+        [
+          1,
+          [
+            "PGroonga is <span class=\"keyword\">fast</span> and easy to use."
+          ]
+        ],
+        [
+          2,
+          [
+            "Mroonga is <span class=\"keyword\">fast</span> and easy to use."
+          ]
+        ],
+        [
+          1,
+          [
+            "Groonga is <span class=\"keyword\">fast</span>."
+          ]
+        ]
+      ]
+    }
+  ]
+]
+#>logical_select --logical_table "Memos" --query "content:@is" --shard_key "timestamp" --slices[fast].columns[snippets].flags "COLUMN_VECTOR" --slices[fast].columns[snippets].stage "output" --slices[fast].columns[snippets].type "Text" --slices[fast].columns[snippets].value "snippet_html(content)" --slices[fast].output_columns "_id,snippets" --slices[fast].query "content:@fast" --slices[fast].sort_keys "-_id"
+#:000000000000000 filter(2)[Memos_20260901]: Memos_20260901.content match "is"
+#:000000000000000 filter(1)[Memos_20260902]: Memos_20260902.content match "is"
+#:000000000000000 select(2)[Memos_20260901]
+#:000000000000000 select(1)[Memos_20260902]
+#:000000000000000 slices[fast].filter(2): #<accessor _key(anonymous).content(Memos_20260901)> match "fast"
+#:000000000000000 slices[fast].filter(1): #<accessor _key(anonymous).content(Memos_20260902)> match "fast"
+#:000000000000000 slices[fast](3)
+#:000000000000000 output(3)
+#:000000000000000 slices[fast].sort(1): -_id
+#:000000000000000 slices[fast].sort(2): -_id
+#:000000000000000 slices[fast].columns[snippets](1)
+#:000000000000000 slices[fast].columns[snippets](2)
+#:000000000000000 slices[fast].output(3)
+#:000000000000000 send(0)
+#<000000000000000 rc=0

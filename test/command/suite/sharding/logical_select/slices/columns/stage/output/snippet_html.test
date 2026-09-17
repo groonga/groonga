@@ -1,0 +1,47 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+
+table_create Memos_20260901 TABLE_NO_KEY
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+column_create Memos_20260901 content COLUMN_SCALAR Text
+column_create Terms memos_20260901_content COLUMN_INDEX|WITH_POSITION \
+  Memos_20260901 content
+
+table_create Memos_20260902 TABLE_NO_KEY
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+column_create Memos_20260902 content COLUMN_SCALAR Text
+column_create Terms memos_20260902_content COLUMN_INDEX|WITH_POSITION \
+  Memos_20260902 content
+
+load --table Memos_20260901
+[
+{"timestamp": "2026-09-01 00:00:00", "content": "Groonga is fast."},
+{"timestamp": "2026-09-01 01:00:00", "content": "Mroonga is fast and easy to use."}
+]
+
+load --table Memos_20260902
+[
+{"timestamp": "2026-09-02 00:00:00", "content": "PGroonga is fast and easy to use."}
+]
+
+#@collect-query-log true
+#@sort-query-log-operations shard
+logical_select Memos \
+  --shard_key timestamp \
+  --query 'content:@is' \
+  --slices[fast].query 'content:@fast' \
+  --slices[fast].sort_keys '-_id' \
+  --slices[fast].columns[snippets].stage output \
+  --slices[fast].columns[snippets].type Text \
+  --slices[fast].columns[snippets].flags COLUMN_VECTOR \
+  --slices[fast].columns[snippets].value 'snippet_html(content)' \
+  --slices[fast].output_columns _id,snippets
+#@sort-query-log-operations
+#@collect-query-log false
+
+# TODO: The highlighted text is incorrect. It will be fixed later.
