@@ -1083,6 +1083,8 @@ module Groonga
             slice.expressions << expression
             expression.query_log_tag_prefix = slice.query_log_prefix
             build_slice_condition(slice, expression)
+            expression.parent = result[:condition]
+
             sliced_result_set = target_table.select(expression)
             slice.temporary_tables << sliced_result_set
             slice.results << {

@@ -35,5 +35,3 @@ logical_select Memos \
   --slices[fast].output_columns _id,highlighted_content
 #@sort-query-log-operations
 #@collect-query-log false
-
-# TODO: The highlighted text is incorrect. It will be fixed later.
