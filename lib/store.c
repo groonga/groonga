@@ -2888,6 +2888,43 @@ exit:
   return processed;
 }
 
+grn_ja *
+grn_ja_get_by_id(grn_ctx *ctx, grn_ja *ja, grn_id id)
+{
+  if (!ja->partition_mapping) {
+    return ja;
+  }
+
+  uint8_t *partition_id_ptr =
+    (uint8_t *)grn_ra_ref(ctx, ja->partition_mapping, id);
+  if (!partition_id_ptr) {
+    return ja;
+  }
+  uint8_t partition_id = *partition_id_ptr;
+  grn_ra_unref(ctx, ja->partition_mapping, id);
+
+  return ja->partitions[partition_id];
+}
+static inline bool
+grn_ja_is_column_scalar(grn_ja *ja)
+{
+  return (ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+         GRN_OBJ_COLUMN_SCALAR;
+}
+
+grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_obj *obj, grn_id id)
+{
+  grn_ja *ja = (grn_ja *)obj;
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    if (grn_ja_is_column_scalar(ja)) {
+      return grn_ja_get_by_id(ctx, ja, id);
+    }
+    return ja;
+  }
+  return ja;
+}
+
 static grn_rc
 grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
 {
