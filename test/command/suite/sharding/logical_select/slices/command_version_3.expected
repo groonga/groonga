@@ -1,0 +1,137 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos_20260901 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260901 tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+table_create Memos_20260902 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20260902 tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos_20260901
+[
+{"_key": "Groonga is fast!", "timestamp": "2026-09-01 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "timestamp": "2026-09-01 12:00:01", "tag": "Mroonga"}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20260902
+[
+{"_key": "Groonga sticker!", "timestamp": "2026-09-02 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "timestamp": "2026-09-02 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],2]
+logical_select Memos   --shard_key timestamp   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].sort_keys 'timestamp'   --slices[groonga].output_columns '_key, timestamp'   --slices[groonga].columns[timestamp_day].stage filtered   --slices[groonga].columns[timestamp_day].type Time   --slices[groonga].columns[timestamp_day].value 'time_classify_day(timestamp)'   --slices[groonga].drilldowns[day].keys 'timestamp_day'   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": [
+    {
+      "n_hits": 4,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "UInt32"
+        },
+        {
+          "name": "_key",
+          "type": "ShortText"
+        },
+        {
+          "name": "tag",
+          "type": "Tags"
+        },
+        {
+          "name": "timestamp",
+          "type": "Time"
+        }
+      ],
+      "records": [
+        [
+          1,
+          "Groonga is fast!",
+          "Groonga",
+          1788231600.0
+        ],
+        [
+          2,
+          "Mroonga is fast!",
+          "Mroonga",
+          1788231601.0
+        ],
+        [
+          1,
+          "Groonga sticker!",
+          "Groonga",
+          1788318002.0
+        ],
+        [
+          2,
+          "Rroonga is fast!",
+          "Rroonga",
+          1788318003.0
+        ]
+      ]
+    },
+    {
+      "groonga": {
+        "n_hits": 2,
+        "columns": [
+          {
+            "name": "_key",
+            "type": "ShortText"
+          },
+          {
+            "name": "timestamp",
+            "type": "Time"
+          }
+        ],
+        "records": [
+          [
+            "Groonga is fast!",
+            1788231600.0
+          ],
+          [
+            "Groonga sticker!",
+            1788318002.0
+          ]
+        ],
+        "drilldowns": {
+          "day": {
+            "n_hits": 2,
+            "columns": [
+              {
+                "name": "_key",
+                "type": "Time"
+              },
+              {
+                "name": "_nsubrecs",
+                "type": "Int32"
+              }
+            ],
+            "records": [
+              [
+                1788188400.0,
+                1
+              ],
+              [
+                1788274800.0,
+                1
+              ]
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
