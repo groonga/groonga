@@ -1065,6 +1065,26 @@ mrb_grn_expression_append_operator(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_expression_set_parent(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_parent;
+  grn_obj *parent = NULL;
+
+  mrb_get_args(mrb, "o", &mrb_parent);
+  if (!mrb_nil_p(mrb_parent)) {
+    parent = DATA_PTR(mrb_parent);
+  }
+
+  expr = DATA_PTR(self);
+  grn_expr_set_parent(ctx, expr, parent);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_parent;
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -1365,6 +1385,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     "append_operator",
                     mrb_grn_expression_append_operator,
                     MRB_ARGS_REQ(2));
+
+  mrb_define_method(mrb,
+                    klass,
+                    "parent=",
+                    mrb_grn_expression_set_parent,
+                    MRB_ARGS_REQ(1));
 }
 
 grn_obj *

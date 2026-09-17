@@ -43,5 +43,3 @@ logical_select Memos \
   --slices[fast].output_columns _id,snippets
 #@sort-query-log-operations
 #@collect-query-log false
-
-# TODO: The highlighted text is incorrect. It will be fixed later.
