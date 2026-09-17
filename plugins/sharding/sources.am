@@ -14,6 +14,7 @@ sharding_scripts =				\
 	keys_parsable.rb			\
 	dynamic_columns.rb			\
 	drilldown_executor.rb			\
+	multi_table_sorter.rb			\
 	window.rb			\
 	stream_execute_context.rb		\
 	stream_shard_executor.rb		\

@@ -70,6 +70,20 @@ mrb_grn_array_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_grn_array_add(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *array;
+  grn_id id;
+
+  array = DATA_PTR(self);
+  id = grn_table_add(ctx, array, NULL, 0, NULL);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_int_value(mrb, id);
+}
+
 void
 grn_mrb_array_init(grn_ctx *ctx)
 {
@@ -89,5 +103,7 @@ grn_mrb_array_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_array_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "add",
+                    mrb_grn_array_add, MRB_ARGS_NONE());
 }
 #endif

@@ -50,6 +50,27 @@ mrb_grn_accessor_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_accessor_array_reference(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+  mrb_int record_id;
+  grn_obj value;
+  mrb_value mrb_value_;
+
+  accessor = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &record_id);
+
+  GRN_VOID_INIT(&value);
+  grn_obj_get_value(ctx, accessor, (grn_id)record_id, &value);
+  mrb_value_ = grn_mrb_value_from_bulk(mrb, &value);
+  GRN_OBJ_FIN(ctx, &value);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_value_;
+}
+
+static mrb_value
 mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
 {
   grn_accessor *accessor;
@@ -259,6 +280,8 @@ grn_mrb_accessor_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_accessor_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "[]",
+                    mrb_grn_accessor_array_reference, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "next",
                     mrb_grn_accessor_next, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "have_next?",
