@@ -23,6 +23,10 @@
 #  include <windows.h>
 #endif // WIN32
 
+#ifdef __wasi__
+#  include <memory>
+#endif // __wasi__
+
 #include "dat.hpp"
 
 namespace grn::dat {
@@ -64,11 +68,18 @@ namespace grn::dat {
     HANDLE file_;
     HANDLE map_;
     LPVOID addr_;
-#else  // WIN32
+#elif defined(__wasi__) // WIN32
+    int fd_;
+    std::unique_ptr<char[]> buffer_;
+    ::size_t length_;
+
+    bool
+    write_back_();
+#else                   // WIN32
     int fd_;
     void *addr_;
     ::size_t length_;
-#endif // WIN32
+#endif                  // WIN32
 
     void
     create_(const char *path, UInt64 size);

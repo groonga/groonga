@@ -1022,8 +1022,16 @@ grn_rc
 grn_dat_close(grn_ctx *ctx, grn_dat *dat)
 {
   if (dat) {
-    if (dat->io->path[0] != '\0' &&
-        GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
+    bool need_flush = (dat->io->path[0] != '\0');
+    // The mmap() emulation for WASI writes back the trie file in
+    // ~Trie() but it can't report errors. So we always flush explicitly
+    // here to report errors on WASI.
+#ifndef __wasi__
+    if (need_flush && GRN_CTX_GET_WAL_ROLE(ctx) != GRN_WAL_ROLE_PRIMARY) {
+      need_flush = false;
+    }
+#endif
+    if (need_flush) {
       grn_obj_flush(ctx, reinterpret_cast<grn_obj *>(dat));
     }
     grn_dat_fin(ctx, dat);
@@ -1724,7 +1732,15 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
   char trie_path[PATH_MAX];
   grn_dat_generate_trie_path(path.c_str(), trie_path, dat->header->file_id + 1);
   try {
-    grn::dat::Trie().create(trie_path);
+    grn::dat::Trie new_trie;
+    new_trie.create(trie_path);
+#ifdef __wasi__
+    // The mmap() emulation for WASI writes back the trie file in
+    // ~Trie() but it can't report errors. So we flush explicitly here
+    // to ensure that the new trie file is written before we switch to
+    // it.
+    new_trie.flush();
+#endif
   } catch (const grn::dat::Exception &ex) {
     const grn_rc error_code = grn_dat_translate_error_code(ex.code());
     ERR(error_code, "grn::dat::Trie::create failed: %s", ex.what());
@@ -1839,7 +1855,12 @@ grn_dat_repair(grn_ctx *ctx, grn_dat *dat)
                              trie_path,
                              dat->header->file_id + 1);
   try {
-    grn::dat::Trie().repair(*trie, trie_path);
+    grn::dat::Trie new_trie;
+    new_trie.repair(*trie, trie_path);
+#ifdef __wasi__
+    // See grn_dat_truncate() for details.
+    new_trie.flush();
+#endif
   } catch (const grn::dat::Exception &ex) {
     const grn_rc error_code = grn_dat_translate_error_code(ex.code());
     ERR(error_code, "grn::dat::Trie::create failed: %s", ex.what());
