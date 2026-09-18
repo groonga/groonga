@@ -115,20 +115,9 @@ module Groonga
           key << "#{slice.offset}\0"
           key << "#{slice.limit}\0"
           key << slice.dynamic_columns.cache_key
+          key << slice.drilldowns.cache_key
         end
-        labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
-        labeled_drilldowns.each do |drilldown|
-          key << "#{drilldown.label}\0"
-          key << "#{drilldown.table}\0"
-          key << "#{drilldown.keys.join(',')}\0"
-          key << "#{drilldown.output_columns}\0"
-          key << "#{drilldown.offset}\0"
-          key << "#{drilldown.limit}\0"
-          key << "#{drilldown.calc_types}\0"
-          key << "#{drilldown.calc_target_name}\0"
-          key << "#{drilldown.filter}\0"
-          key << drilldown.dynamic_columns.cache_key
-        end
+        key << LabeledDrilldowns.parse(input).cache_key
         dynamic_columns = DynamicColumns.parse("[logical_select]", input)
         key << dynamic_columns.cache_key
         specified_shards = SpecifiedShard.parse("[logical_select]", input)
@@ -386,7 +375,7 @@ module Groonga
         targets
       end
 
-      def write_records(writer, context)
+      def write_records(writer, context, n_additional_elements=0)
         results = context.results
 
         n_hits = 0
@@ -418,7 +407,7 @@ module Groonga
         writer.open_result_set_metadata(targets.first[:table],
                                         output_columns,
                                         n_hits,
-                                        1)
+                                        n_additional_elements + 1)
         begin
           writer.open_table_records(n_outputs)
           begin
@@ -433,6 +422,9 @@ module Groonga
           ensure
             writer.close_table_records
           end
+
+          yield if block_given?
+
           query_logger.log(:size, ":", "#{context.query_log_prefix}output(#{n_outputs})")
         ensure
           writer.close_result_set
@@ -445,7 +437,7 @@ module Groonga
           slices.each do |slice|
             writer.write(slice.label)
             begin
-              write_records(writer, slice)
+              write_slice(writer, slice)
             rescue Error, ArgumentError => error
               # An error while writing a slice breaks the response.
               # So an empty result set is written for the slice.
@@ -455,6 +447,24 @@ module Groonga
               end
             end
           end
+        end
+      end
+
+      def write_slice(writer, slice)
+        drilldowns = slice.drilldowns
+        if drilldowns.have_keys?
+          write_records(writer, slice, 1) do
+            # The result set is a map in command version 3.
+            # So a key for drilldowns is needed.
+            if context.command_version >= 3
+              writer.write("drilldowns")
+            end
+            write_labeled_drilldowns_internal(writer,
+                                              drilldowns,
+                                              slice.query_log_prefix)
+          end
+        else
+          write_records(writer, slice)
         end
       end
 
@@ -486,22 +496,30 @@ module Groonga
             query_logger.log(:size, ":", message)
             options = {offset: 0, limit: -1}
           end
-          writer.result_set(result_set, output_columns, n_records) do
+          writer.open_result_set_metadata(result_set, output_columns, n_records, 1)
+          begin
             writer.write_table_records(result_set,
                                        output_columns,
                                        options.merge(condition: condition))
+          ensure
+            writer.close_result_set
           end
           query_logger.log(:size, ":", "output.drilldown(#{n_written})")
         end
       end
 
       def write_labeled_drilldowns(writer, execute_context)
-        labeled_drilldowns = execute_context.labeled_drilldowns
+        write_labeled_drilldowns_internal(writer,
+                                          execute_context.labeled_drilldowns)
+      end
+
+      def write_labeled_drilldowns_internal(writer, labeled_drilldowns, query_log_prefix="")
         is_command_version1 = (context.command_version == 1)
 
         writer.map("DRILLDOWNS", labeled_drilldowns.n_results) do
           labeled_drilldowns.each do |drilldown|
-            query_log_tag = "drilldowns[#{drilldown.label}]"
+            query_log_tag = "#{query_log_prefix}drilldowns[#{drilldown.label}]"
+            output_query_log_tag = "#{query_log_prefix}output.drilldowns[#{drilldown.label}]"
 
             writer.write(drilldown.label)
 
@@ -528,7 +546,8 @@ module Groonga
               options = {offset: 0, limit: -1}
               n_written = result_set.size
             end
-            writer.result_set(result_set, output_columns, n_records) do
+            writer.open_result_set_metadata(result_set, output_columns, n_records, 1)
+            begin
               write_options = options.merge(condition: drilldown.condition)
               if is_command_version1 and drilldown.need_command_version2?
                 context.with_command_version(2) do
@@ -541,10 +560,12 @@ module Groonga
                                            output_columns,
                                            write_options)
               end
+            ensure
+              writer.close_result_set
             end
             query_logger.log(:size,
                              ":",
-                             "output.#{query_log_tag}(#{n_written})")
+                             "#{output_query_log_tag}(#{n_written})")
           end
         end
       end
@@ -725,6 +746,7 @@ module Groonga
         attr_reader :limit
         attr_reader :tag
         attr_reader :query_log_prefix
+        attr_reader :drilldowns
         attr_reader :dynamic_columns
         attr_reader :results
         attr_reader :temporary_tables
@@ -743,6 +765,7 @@ module Groonga
           @offset = (arguments["offset"] || 0).to_i
           @limit = (arguments["limit"] || 10).to_i
 
+          @drilldowns = LabeledDrilldowns.parse(arguments)
           @dynamic_columns = DynamicColumns.parse(@tag, arguments)
 
           @results = []
@@ -757,6 +780,8 @@ module Groonga
         end
 
         def close
+          @drilldowns.close
+
           @expressions.each do |expression|
             expression.close
           end
@@ -872,6 +897,24 @@ module Groonga
           @contexts.each_value do |context|
             context.close
           end
+        end
+
+        def cache_key
+          key = ""
+          sort_by(&:label).each do |drilldown|
+            key << "#{drilldown.label}\0"
+            key << "#{drilldown.table}\0"
+            key << "#{drilldown.keys.join(',')}\0"
+            key << "#{drilldown.sort_keys.join(',')}\0"
+            key << "#{drilldown.output_columns}\0"
+            key << "#{drilldown.offset}\0"
+            key << "#{drilldown.limit}\0"
+            key << "#{drilldown.calc_types}\0"
+            key << "#{drilldown.calc_target_name}\0"
+            key << "#{drilldown.filter}\0"
+            key << drilldown.dynamic_columns.cache_key
+          end
+          key
         end
 
         def [](label)
@@ -1205,6 +1248,34 @@ module Groonga
               [result[:result_set], {condition: result[:condition]}]
             end
             dynamic_columns.apply_filtered(apply_targets, options)
+          end
+
+          execute_slice_drilldowns(slice)
+        end
+
+        def execute_slice_drilldowns(slice)
+          drilldowns = slice.drilldowns
+          return unless drilldowns.have_keys?
+
+          target_tables = slice.results.collect do |result|
+            result[:result_set]
+          end
+          drilldowns.tsort.each do |drilldown|
+            tables = target_tables
+            if drilldown.table
+              tables = [drilldowns[drilldown.table].result_set]
+            end
+            query_log_prefix = "#{slice.query_log_prefix}#{drilldown.query_log_prefix}"
+            executor = DrilldownExecutor.new(tables,
+                                             drilldown.keys,
+                                             calc_types: drilldown.calc_types,
+                                             calc_target_name: drilldown.calc_target_name,
+                                             filter: drilldown.filter,
+                                             dynamic_columns: drilldown.dynamic_columns,
+                                             query_log_prefix: query_log_prefix)
+            result_set, condition = run_drilldown_executor(executor, drilldown)
+            drilldown.result_set = result_set
+            drilldown.condition = condition
           end
         end
 
