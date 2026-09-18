@@ -17346,11 +17346,17 @@ namespace grn::ii {
     create_file()
     {
       auto ctx = ctx_;
-      grn_snprintf(path_,
-                   PATH_MAX,
-                   PATH_MAX,
-                   "%sXXXXXX",
-                   grn_io_path(ii_->seg));
+      const char *base_path = grn_io_path(ii_->seg);
+      // grn_mkstemp() requires that the template ends with "XXXXXX".
+      // We must not truncate it.
+      const char suffix[] = "XXXXXX";
+      if (strlen(base_path) + sizeof(suffix) > PATH_MAX) {
+        ERR(GRN_FILENAME_TOO_LONG,
+            "failed to create a temporary file: path is too long: <%s>",
+            base_path);
+        return ctx->rc;
+      }
+      grn_snprintf(path_, PATH_MAX, PATH_MAX, "%s%s", base_path, suffix);
       fd_ = grn_mkstemp(path_);
       if (fd_ == -1) {
         SERR("failed to create a temporary file: path = \"%s\"", path_);

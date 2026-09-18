@@ -1762,8 +1762,22 @@ grn_mkstemp(char *path_template)
 #  ifdef HAVE_MKSTEMP
   return mkstemp(path_template);
 #  else  /* HAVE_MKSTEMP */
-  mktemp(path_template);
-  return open(path_template, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+  /* wasi-libc doesn't provide mkstemp(). We generate a random suffix
+   * by getentropy() and create a file exclusively by ourselves. */
+  char *suffix = path_template + strlen(path_template) - 6;
+  /* 100 is the same as musl. */
+  for (int i = 0; i < 100; i++) {
+    uint32_t random_value;
+    if (getentropy(&random_value, sizeof(random_value)) == -1) {
+      return -1;
+    }
+    grn_itoh(random_value, suffix, 6);
+    int fd = open(path_template, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+    if (fd != -1 || errno != EEXIST) {
+      return fd;
+    }
+  }
+  return -1;
 #  endif /* HAVE_MKSTEMP */
 }
 #endif   /* WIN32 */
