@@ -219,9 +219,6 @@ msgstr "複数のシャードを使った場合、 ``drilldowns[${LABEL}].output
 msgid "``match_escalation_threshold`` isn't supported yet."
 msgstr "``match_escalation_threshold`` はまだサポートしていません。"
 
-msgid "``query_flags`` isn't supported yet."
-msgstr "``query_flags`` はまだサポートしていません。"
-
 msgid "``query_expander`` isn't supported yet."
 msgstr "``query_expander`` はまだサポートしていません。"
 
@@ -492,8 +489,8 @@ msgstr "依存関係がないとは、 ``drilldowns[${LABEL}].table`` を使用�
 msgid "Advanced search parameters"
 msgstr "高度な検索のための引数"
 
-msgid "``logical_select`` doesn't implement advanced search parameters yet."
-msgstr "``logical_select`` は高度な検索パラメーターをまだ実装していません。"
+msgid "Most of the advanced search parameters aren't implemented yet."
+msgstr "高度な検索パラメーターはほとんど実装されていません。"
 
 msgid "``match_escalation_threshold``"
 msgstr ""
@@ -503,6 +500,12 @@ msgstr "未実装です。"
 
 msgid "``query_flags``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-query-flags` in :doc:`select`. See :ref:`select-query-flags` for details."
+msgstr ":doc:`select` の :ref:`select-query-flags` に対応しています。詳細は :ref:`select-query-flags` を見てください。"
+
+msgid "The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``. It's the same as :doc:`select`."
+msgstr "デフォルト値は ``ALLOW_PRAGMA|ALLOW_COLUMN`` です。 :doc:`select` と同じです。"
 
 msgid "``query_expander``"
 msgstr ""
