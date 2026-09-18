@@ -2983,8 +2983,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
                   ja->header->max_element_size,
                   (ja->header->flags & (~GRN_OBJ_COLUMN_LARGE)));
   if (!new_partition) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "cannot create a new partition");
+    ERR(GRN_NO_MEMORY_AVAILABLE, "cannot create a new partition");
     return NULL;
   }
 
