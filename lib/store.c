@@ -2996,6 +2996,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
         "cannot realloc partitions area for a new partition");
     return NULL;
   }
+  ja->partitions = partitions;
   ja->partitions[ja->max_partition_id] = new_partition;
   grn_obj partition_id;
   GRN_UINT8_SET(ctx, &partition_id, ja->max_partition_id);
