@@ -33,11 +33,9 @@
 #endif
 
 #include <algorithm>
-#include <cerrno>
 #include <cmath>
 #include <condition_variable>
 #include <cstring>
-#include <fstream>
 #include <functional>
 #include <map>
 #include <mutex>
@@ -1409,26 +1407,11 @@ namespace grn {
 
       auto url = build_manifest_url();
       grn_http_client_set_url(ctx_, client_, url.data());
-      if (grn_http_client_download(ctx_, client_) != GRN_SUCCESS) {
-        return false;
-      }
-      auto manifest = grn_http_client_get_output(ctx_, client_);
       auto tmp_manifest_path = manifest_path_ + ".tmp";
-      {
-        std::ofstream tmp_manifest;
-        tmp_manifest.open(tmp_manifest_path,
-                          std::ios_base::binary | std::ios_base::trunc);
-        if (!tmp_manifest) {
-          auto ctx = ctx_;
-          ERR(GRN_INVALID_ARGUMENT,
-              "%s failed to save manifest: <%s>: <%s>: <%s>",
-              TAG,
-              url.data(),
-              tmp_manifest_path.data(),
-              std::strerror(errno));
-          return false;
-        }
-        tmp_manifest.write(GRN_TEXT_VALUE(manifest), GRN_TEXT_LEN(manifest));
+      grn_http_client_set_output_path(ctx_, client_, tmp_manifest_path.data());
+      if (grn_http_client_download(ctx_, client_) != GRN_SUCCESS) {
+        grn_io_remove_if_exist(ctx_, tmp_manifest_path.data());
+        return false;
       }
       if (rename(tmp_manifest_path.data(), manifest_path_.data()) != 0) {
         auto ctx = ctx_;
