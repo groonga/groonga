@@ -30,6 +30,7 @@
 #include "grn_plugin.h"
 #include "grn_hash.h"
 #include "grn_ctx_impl.h"
+#include "grn_mmap_emulation.h"
 #include "grn_util.h"
 
 #ifdef WIN32
@@ -148,6 +149,19 @@ inline static int
 grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length);
 #define GRN_MSYNC(ctx, fi, start, length)                                      \
   (grn_msync((ctx), (fi), (start), (length)))
+
+#ifdef __wasi__
+static inline void
+grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length);
+static inline int
+grn_io_lock_write_back(grn_io *io);
+/* Discards the mapping without writing back. This is for the case
+ * that GRN_MUNMAP() failed and there is no chance to retry. */
+#  define GRN_MUNMAP_DISCARD(ctx, start, length)                               \
+    grn_mmap_emulation_free((ctx), (start), (length))
+#else /* __wasi__ */
+#  define GRN_MUNMAP_DISCARD(ctx, start, length)
+#endif /* __wasi__ */
 
 inline static grn_rc
 grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
@@ -807,17 +821,21 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
           uint32_t fno = bseg / n_segments_per_file;
           fi = &io->fis[fno];
         }
-        GRN_MUNMAP(ctx, io, &mi->fmo, fi, mi->map, segment_size);
+        if (GRN_MUNMAP(ctx, io, &mi->fmo, fi, mi->map, segment_size) != 0) {
+          GRN_MUNMAP_DISCARD(ctx, mi->map, segment_size);
+        }
       }
     }
     GRN_FREE(io->maps);
   }
-  GRN_MUNMAP(ctx,
-             io,
-             (io->fis ? &io->fis->fmo : NULL),
-             io->fis,
-             io->header,
-             io->base);
+  if (GRN_MUNMAP(ctx,
+                 io,
+                 (io->fis ? &io->fis->fmo : NULL),
+                 io->fis,
+                 io->header,
+                 io->base) != 0) {
+    GRN_MUNMAP_DISCARD(ctx, io->header, io->base);
+  }
   if (io->fis) {
     uint32_t i;
     for (i = 0; i < max_nfiles; i++) {
@@ -1443,12 +1461,17 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
       } else {
         uint32_t nmaps;
         fileinfo *fi = &(io->fis[segno]);
-        GRN_MUNMAP(ctx,
-                   io,
-                   &info->fmo,
-                   fi,
-                   info->map,
-                   io->header->segment_size);
+        if (GRN_MUNMAP(ctx,
+                       io,
+                       &info->fmo,
+                       fi,
+                       info->map,
+                       io->header->segment_size) != 0) {
+          /* Keep the mapping. It's written back later. */
+          GRN_ATOMIC_ADD_EX(pnref, reset_max_ref_by_overflow, nref);
+          GRN_FUTEX_WAKE(pnref);
+          return GRN_INPUT_OUTPUT_ERROR;
+        }
         info->map = NULL;
         GRN_ATOMIC_ADD_EX(pnref, reset_max_ref_by_overflow, nref);
         GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
@@ -1488,12 +1511,15 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit)
             grn_io_mapinfo *info = &(io->maps[fno]);
             if (info->map) {
               fileinfo *fi = &(io->fis[fno]);
-              GRN_MUNMAP(ctx,
-                         io,
-                         &info->fmo,
-                         fi,
-                         info->map,
-                         io->header->segment_size);
+              if (GRN_MUNMAP(ctx,
+                             io,
+                             &info->fmo,
+                             fi,
+                             info->map,
+                             io->header->segment_size) != 0) {
+                /* Keep the mapping. It's written back later. */
+                continue;
+              }
               info->map = NULL;
               info->nref = 0;
               info->count = grn_gtick;
@@ -1521,16 +1547,19 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit)
           uint32_t nmaps, nref, *pnref = &info->nref;
           GRN_ATOMIC_ADD_EX(pnref, 1, nref);
           if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
-            GRN_MUNMAP(ctx,
-                       io,
-                       &info->fmo,
-                       NULL,
-                       info->map,
-                       io->header->segment_size);
-            GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
-            info->map = NULL;
-            info->count = grn_gtick;
-            n++;
+            /* If GRN_MUNMAP() fails, keep the mapping. It's written
+             * back later. */
+            if (GRN_MUNMAP(ctx,
+                           io,
+                           &info->fmo,
+                           NULL,
+                           info->map,
+                           io->header->segment_size) == 0) {
+              GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+              info->map = NULL;
+              info->count = grn_gtick;
+              n++;
+            }
           }
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);
         }
@@ -1619,6 +1648,13 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
       grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
       continue;
     }
+#ifdef __wasi__
+    if (grn_io_lock_write_back(io) == -1) {
+      GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+      SERR("[io][lock] failed to write lock marker: <%s>", io->path);
+      return ctx->rc;
+    }
+#endif
     return GRN_SUCCESS;
   }
   ERR(GRN_RESOURCE_DEADLOCK_AVOIDED, "grn_io_lock failed");
@@ -1631,6 +1667,15 @@ grn_io_unlock(grn_ctx *ctx, grn_io *io)
   if (io) {
     uint32_t lock;
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+#ifdef __wasi__
+    if (grn_io_lock_write_back(io) == -1) {
+      GRN_LOG(ctx,
+              GRN_LOG_ERROR,
+              "[io][unlock] failed to write lock marker: <%s>: %s",
+              io->path,
+              strerror(errno));
+    }
+#endif
   }
 }
 
@@ -1686,10 +1731,18 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 
       pnref = &info->nref;
       GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+#ifndef __wasi__
+      /* WASI is single thread. So nobody is changing or expiring this
+       * segment now. Somebody just keeps a reference. The mmap()
+       * emulation for WASI writes back the content only on msync()
+       * and munmap(). So we must write back the content here even if
+       * the segment is referenced. Otherwise, the changes aren't
+       * persisted but this function returns GRN_SUCCESS. */
       if (nref != 0) {
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
         continue;
       }
+#endif
 
       if (!info->map) {
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
@@ -2424,11 +2477,180 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
   return GRN_SUCCESS;
 }
 
-#  if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
-#    define MAP_ANONYMOUS MAP_ANON
-#  endif
+#  ifdef __wasi__
+/* WASI doesn't have mmap(). wasi-libc provides an emulation but it
+ * doesn't write back changes to the file: munmap() just frees the
+ * buffer and msync() doesn't exist. We use mmap() for persistent
+ * data. So we need to write back changes. This is our own emulation
+ * that reads the file content on mmap() and writes back the buffer
+ * to the file on msync() and munmap(). The file descriptor and the
+ * offset are kept in a header that is placed before the returned
+ * address because munmap() may be called without fileinfo. */
+typedef struct {
+  int fd;
+  int64_t offset;
+} grn_mmap_emulation_header;
 
-#  include <sys/mman.h>
+static inline int
+grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
+{
+  grn_mmap_emulation_header *header = ((grn_mmap_emulation_header *)start) - 1;
+  if (header->fd == -1) {
+    return 0;
+  }
+  if (grn_mmap_emulation_pwrite(header->fd, start, length, header->offset) ==
+      -1) {
+    SERR("[io][mmap][emulation] pwrite(%d,%" GRN_FMT_SIZE ",%" GRN_FMT_INT64D
+         ") failed",
+         header->fd,
+         length,
+         header->offset);
+    return -1;
+  }
+  return 0;
+}
+
+/* The mmap() emulation keeps the header in memory until it's flushed
+ * or unmapped. So the lock marker in the header doesn't reach the
+ * file on crash and crash detection by grn_io_is_locked() doesn't
+ * work. This writes only the lock marker to the file. Returns -1 with
+ * errno on error. */
+static inline int
+grn_io_lock_write_back(grn_io *io)
+{
+  grn_mmap_emulation_header *header =
+    ((grn_mmap_emulation_header *)io->header) - 1;
+  if (header->fd == -1) {
+    return 0;
+  }
+  int64_t offset =
+    header->offset + ((const char *)io->lock - (const char *)io->header);
+  return grn_mmap_emulation_pwrite(header->fd,
+                                   io->lock,
+                                   sizeof(*io->lock),
+                                   offset);
+}
+
+static inline void
+grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length)
+{
+  GRN_FREE(((grn_mmap_emulation_header *)start) - 1);
+  mmap_size -= length;
+}
+
+static inline void *
+grn_mmap(grn_ctx *ctx,
+         grn_io *io,
+         fileinfo *fi,
+         int64_t offset,
+         size_t length,
+         const char *file,
+         int line,
+         const char *func)
+{
+  if (grn_fail_malloc_should_fail(length, file, line, func)) {
+    MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
+         "<%d:%" GRN_FMT_INT64D ":%" GRN_FMT_SIZE ">: "
+         "%s:%d: %s",
+         grn_alloc_count(),
+         mmap_size,
+         io ? (io->path[0] ? io->path : "(memory)") : "(null)",
+         fi ? fi->fd : 0,
+         offset,
+         length,
+         file,
+         line,
+         func);
+    return NULL;
+  } else {
+    int fd = -1;
+    int64_t file_size = 0;
+    if (fi) {
+      struct stat s;
+      int64_t tail = offset + (int64_t)length;
+      fd = fi->fd;
+      if (fstat(fd, &s) == -1) {
+        SERR("[io][mmap][emulation] fstat(%d) failed", fd);
+        return NULL;
+      }
+      if (s.st_size < tail && ftruncate(fd, tail) == -1) {
+        SERR("[io][mmap][emulation] ftruncate(%d,%" GRN_FMT_INT64D ") failed",
+             fd,
+             tail);
+        return NULL;
+      }
+      file_size = (int64_t)(s.st_size);
+    }
+    grn_mmap_emulation_header *header =
+      GRN_MALLOC(sizeof(grn_mmap_emulation_header) + length);
+    if (!header) {
+      return NULL;
+    }
+    header->fd = fd;
+    header->offset = offset;
+    void *res = header + 1;
+    if (fd == -1 || offset >= file_size) {
+      /* Anonymous mapping or a region after EOF that is just extended
+       * by ftruncate() above. The content is all zero. So we don't
+       * need to read it. */
+      memset(res, 0, length);
+    } else {
+      ssize_t r = grn_mmap_emulation_pread(fd, res, length, offset);
+      if (r == -1) {
+        SERR("[io][mmap][emulation] pread(%d,%" GRN_FMT_SIZE ",%" GRN_FMT_INT64D
+             ") failed",
+             fd,
+             length,
+             offset);
+        GRN_FREE(header);
+        return NULL;
+      }
+      if ((size_t)r != length) {
+        /* The file is extended to cover this region above. So EOF
+         * here means that the file is truncated by someone. */
+        ERR(GRN_INPUT_OUTPUT_ERROR,
+            "[io][mmap][emulation] pread(%d,%" GRN_FMT_SIZE ",%" GRN_FMT_INT64D
+            ") reached EOF: %" GRN_FMT_SSIZE " < %" GRN_FMT_SIZE,
+            fd,
+            length,
+            offset,
+            r,
+            length);
+        GRN_FREE(header);
+        return NULL;
+      }
+    }
+    mmap_size += length;
+    return res;
+  }
+}
+
+static inline int
+grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+{
+  /* pwrite() updates the modification time of the file. So we don't
+   * need to update it explicitly like the mmap() version. */
+  return grn_mmap_emulation_write_back(ctx, start, length);
+}
+
+static inline int
+grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+{
+  if (grn_mmap_emulation_write_back(ctx, start, length) != 0) {
+    /* The buffer is the only copy of the modified content. Keep it so
+     * that the caller can retry the write back later. The caller must
+     * keep the mapping. */
+    return -1;
+  }
+  grn_mmap_emulation_free(ctx, start, length);
+  return 0;
+}
+#  else /* __wasi__ */
+#    if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
+#      define MAP_ANONYMOUS MAP_ANON
+#    endif
+
+#    include <sys/mman.h>
 
 inline static void *
 grn_mmap(grn_ctx *ctx,
@@ -2470,9 +2692,9 @@ grn_mmap(grn_ctx *ctx,
     } else {
       fd = -1;
       flags = MAP_PRIVATE | MAP_ANONYMOUS;
-#  ifdef MAP_ALIGNED_SUPER
+#    ifdef MAP_ALIGNED_SUPER
       flags |= MAP_ALIGNED_SUPER;
-#  endif
+#    endif
     }
     res = mmap(NULL, length, PROT_READ | PROT_WRITE, flags, fd, offset);
     if (MAP_FAILED == res) {
@@ -2531,6 +2753,7 @@ grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
   }
   return res;
 }
+#  endif /* __wasi__ */
 
 static inline grn_rc
 grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)

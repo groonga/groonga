@@ -20,15 +20,19 @@
 
 #include "grn_ctx.h"
 #include "grn_error.h"
+#include "grn_mmap_emulation.h"
 
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef _WIN32
 #  include <windows.h>
 #else
 #  include <fcntl.h>
-#  include <sys/mman.h>
+#  ifndef __wasi__
+#    include <sys/mman.h>
+#  endif
 #  include <sys/stat.h>
 #  include <sys/types.h>
 #endif
@@ -43,6 +47,9 @@ struct grn_memory_map {
   HANDLE mapping;
 #else
   int fd;
+#  ifdef __wasi__
+  grn_memory_map_flags flags;
+#  endif
 #endif
 };
 
@@ -256,7 +263,9 @@ grn_memory_map_open(grn_ctx *ctx,
   } else if (flags & GRN_MEMORY_MAP_READ) {
     open_flags |= O_RDONLY;
   } else if (flags & GRN_MEMORY_MAP_WRITE) {
-    open_flags |= O_WRONLY | O_CREAT;
+    /* mmap() with PROT_WRITE and MAP_SHARED requires a file descriptor
+     * that is opened for reading and writing. */
+    open_flags |= O_RDWR | O_CREAT;
   }
   if ((open_flags & O_CREAT) && (flags & GRN_MEMORY_MAP_EXCLUDE)) {
     open_flags |= O_EXCL;
@@ -312,6 +321,50 @@ grn_memory_map_open(grn_ctx *ctx,
     }
   }
 
+#  ifdef __wasi__
+  /* The mmap() emulation in wasi-libc doesn't write back changes to
+   * the file. See lib/io.c for details. We emulate it by reading the
+   * file content on open and writing back the buffer on close. */
+  map->flags = flags;
+  map->address = GRN_MALLOC(length);
+  if (!map->address) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate buffer: <%s> (%" GRN_FMT_SIZE "+%" GRN_FMT_INT64U
+        "): %s",
+        tag,
+        path,
+        length,
+        offset,
+        message);
+    close(map->fd);
+    GRN_FREE(map);
+    GRN_API_RETURN(NULL);
+  }
+  /* Load the existing content regardless of flags like mmap(). If we
+   * don't load the existing content for write only, the existing
+   * content is overwritten by zero on close. */
+  {
+    ssize_t r =
+      grn_mmap_emulation_pread(map->fd, map->address, length, (int64_t)offset);
+    if (r == -1) {
+      SERR("%s failed to read: <%s> (%" GRN_FMT_SIZE "+%" GRN_FMT_INT64U ")",
+           tag,
+           path,
+           length,
+           offset);
+      GRN_FREE(map->address);
+      close(map->fd);
+      GRN_FREE(map);
+      GRN_API_RETURN(NULL);
+    }
+    if ((size_t)r != length) {
+      /* Fill the rest with zero like mmap() for the part after EOF. */
+      memset(((char *)map->address) + r, 0, length - (size_t)r);
+    }
+  }
+#  else  /* __wasi__ */
   int mmap_prot = 0;
   int mmap_flags = MAP_SHARED;
   if (flags & GRN_MEMORY_MAP_READ) {
@@ -331,6 +384,7 @@ grn_memory_map_open(grn_ctx *ctx,
     GRN_FREE(map);
     GRN_API_RETURN(NULL);
   }
+#  endif /* __wasi__ */
 
   map->path = GRN_STRDUP(path);
   GRN_API_RETURN(map);
@@ -342,6 +396,21 @@ grn_memory_map_close(grn_ctx *ctx, grn_memory_map *map)
   const char *tag = "[memory-map][close]";
 
   GRN_API_ENTER;
+#  ifdef __wasi__
+  if (map->flags & GRN_MEMORY_MAP_WRITE) {
+    if (grn_mmap_emulation_pwrite(map->fd,
+                                  map->address,
+                                  map->length,
+                                  (int64_t)map->offset) == -1) {
+      SERR("%s failed to write: <%s> (%" GRN_FMT_SIZE "+%" GRN_FMT_INT64U ")",
+           tag,
+           map->path,
+           map->length,
+           map->offset);
+    }
+  }
+  GRN_FREE(map->address);
+#  else  /* __wasi__ */
   if (munmap(map->address, map->length) == -1) {
     SERR("%s failed to munmap: <%s> (%" GRN_FMT_SIZE "+%" GRN_FMT_INT64U ")",
          tag,
@@ -349,6 +418,7 @@ grn_memory_map_close(grn_ctx *ctx, grn_memory_map *map)
          map->length,
          map->offset);
   }
+#  endif /* __wasi__ */
   if (close(map->fd) == -1) {
     SERR("%s failed to close: <%s> (%" GRN_FMT_SIZE "+%" GRN_FMT_INT64U ")",
          tag,

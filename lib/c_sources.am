@@ -65,6 +65,7 @@ libgroonga_c_sources =				\
 	grn_io.h				\
 	grn_load.h				\
 	grn_logger.h				\
+	grn_mmap_emulation.h			\
 	grn_mrb.h				\
 	grn_msgpack.h				\
 	grn_nfkc.h				\

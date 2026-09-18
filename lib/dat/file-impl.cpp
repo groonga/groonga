@@ -19,6 +19,10 @@
 
 #include "file-impl.hpp"
 
+#ifdef __wasi__
+#  include "grn_mmap_emulation.h"
+#endif // __wasi__
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -31,12 +35,16 @@
 #  endif // max
 #else    // WIN32
 #  include <fcntl.h>
-#  include <sys/mman.h>
+#  ifndef __wasi__
+#    include <sys/mman.h>
+#  endif // __wasi__
 #  include <unistd.h>
 #endif // WIN32
 
 #include <algorithm>
 #include <limits>
+#include <new>
+#include <utility>
 
 /* Must be the same value as GRN_OPEN_CREATE_MODE */
 #ifdef WIN32
@@ -70,6 +78,35 @@ namespace grn::dat {
 
     if (file_ != INVALID_HANDLE_VALUE) {
       ::CloseHandle(file_);
+    }
+  }
+
+#elif defined(__wasi__) // WIN32
+
+  // The mmap() emulation in wasi-libc doesn't write back changes to the
+  // file. See lib/io.c for details. This is an emulation that reads the
+  // whole file content on open and writes back the buffer on flush and
+  // close.
+  //
+  // Limitation: The whole file is kept in memory. The POSIX version
+  // uses a sparse mapping that costs nothing until it's touched but
+  // this version needs the whole file size in memory. It matters on
+  // rebuild (grn_dat_rebuild_trie()): The current trie (S), the
+  // previous trie (S/2) and the new trie (2S) exist at the same
+  // time. So it needs about 3.5S memory. wasm32 has only 4GiB address
+  // space. So a trie file larger than about 1GiB can't be rebuilt.
+
+  FileImpl::FileImpl() : ptr_(nullptr), size_(0), fd_(-1), buffer_(), length_(0)
+  {
+  }
+
+  FileImpl::~FileImpl()
+  {
+    if (fd_ != -1) {
+      // We can't throw an exception here. So errors are ignored. Callers
+      // must call flush() explicitly to detect write errors.
+      write_back_();
+      ::close(fd_);
     }
   }
 
@@ -238,6 +275,91 @@ namespace grn::dat {
 
     ptr_ = addr_;
     size_ = static_cast<::size_t>(st.st_size);
+  }
+
+#elif defined(__wasi__) // WIN32
+
+  void
+  FileImpl::swap(FileImpl *rhs)
+  {
+    std::swap(ptr_, rhs->ptr_);
+    std::swap(size_, rhs->size_);
+    std::swap(fd_, rhs->fd_);
+    std::swap(buffer_, rhs->buffer_);
+    std::swap(length_, rhs->length_);
+  }
+
+  void
+  FileImpl::flush()
+  {
+    GRN_DAT_THROW_IF(IO_ERROR, !write_back_());
+  }
+
+  // Writes the whole buffer back to the file. Returns false on error.
+  bool
+  FileImpl::write_back_()
+  {
+    if (!buffer_ || fd_ == -1) {
+      return true;
+    }
+
+    return grn_mmap_emulation_pwrite(fd_, buffer_.get(), length_, 0) == 0;
+  }
+
+  void
+  FileImpl::create_(const char *path, UInt64 size)
+  {
+    GRN_DAT_THROW_IF(
+      PARAM_ERROR,
+      size > static_cast<UInt64>(std::numeric_limits<::off_t>::max()));
+
+    if ((path != nullptr) && (path[0] != '\0')) {
+      fd_ = ::open(path, O_RDWR | O_CREAT | O_TRUNC, GRN_IO_FILE_CREATE_MODE);
+      GRN_DAT_THROW_IF(IO_ERROR, fd_ == -1);
+
+      const ::off_t file_size = static_cast<::off_t>(size);
+      GRN_DAT_THROW_IF(IO_ERROR, ::ftruncate(fd_, file_size) == -1);
+    }
+
+    length_ = static_cast<::size_t>(size);
+    // The file is just truncated. So the content is all zero. "()"
+    // zero-initializes the buffer.
+    buffer_.reset(new (std::nothrow) char[length_]());
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buffer_);
+
+    ptr_ = buffer_.get();
+    size_ = length_;
+  }
+
+  void
+  FileImpl::open_(const char *path)
+  {
+    struct stat st;
+    GRN_DAT_THROW_IF(IO_ERROR, ::stat(path, &st) == -1);
+    GRN_DAT_THROW_IF(IO_ERROR, (st.st_mode & S_IFMT) != S_IFREG);
+    GRN_DAT_THROW_IF(IO_ERROR, st.st_size == 0);
+    GRN_DAT_THROW_IF(IO_ERROR,
+                     static_cast<UInt64>(st.st_size) >
+                       std::numeric_limits<::size_t>::max());
+
+    fd_ = ::open(path, O_RDWR);
+    GRN_DAT_THROW_IF(IO_ERROR, fd_ == -1);
+
+    const std::size_t length = static_cast<std::size_t>(st.st_size);
+    // Don't assign buffer_ until the content is loaded. If we throw
+    // with buffer_ set, ~FileImpl() writes the unloaded buffer back to
+    // the file and destroys the existing content.
+    std::unique_ptr<char[]> buffer(new (std::nothrow) char[length]);
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buffer);
+    // The size is checked above. So EOF before length is an error.
+    const ::ssize_t result =
+      grn_mmap_emulation_pread(fd_, buffer.get(), length, 0);
+    GRN_DAT_THROW_IF(IO_ERROR, result != static_cast<::ssize_t>(length));
+
+    length_ = length;
+    buffer_ = std::move(buffer);
+    ptr_ = buffer_.get();
+    size_ = length_;
   }
 
 #else // WIN32
