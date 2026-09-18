@@ -1,0 +1,46 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Memos_20260901 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Memos_20260902 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos_20260902 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Memos_20260901
+[
+{"_key": "Groonga is fast!", "timestamp": "2026-09-01 12:00:00"},
+{"_key": "Mroonga is fast!", "timestamp": "2026-09-01 12:00:01"}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20260902
+[
+{"_key": "Groonga sticker!", "timestamp": "2026-09-02 12:00:02"},
+{"_key": "Rroonga is fast!", "timestamp": "2026-09-02 12:00:03"}
+]
+[[0,0.0,0.0],2]
+logical_select Memos   --shard_key timestamp   --output_columns _key,timestamp   --offset 100   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": [
+    {
+      "n_hits": 4,
+      "columns": [
+        {
+          "name": "_key",
+          "type": "ShortText"
+        },
+        {
+          "name": "timestamp",
+          "type": "Time"
+        }
+      ],
+      "records": []
+    }
+  ]
+}
