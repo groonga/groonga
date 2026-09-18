@@ -50,6 +50,7 @@ Other parameters are optional::
                  [drilldown_sort_keys=null]
                  [match_columns=null]
                  [query=null]
+                 [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN]
                  [drilldown_filter=null]
                  [post_filter=null]
                  [load_table=null]
@@ -170,7 +171,6 @@ But there are some differences from :doc:`select`:
     also doesn't work with multiple shards either. It works with one
     shard.
   * ``match_escalation_threshold`` isn't supported yet.
-  * ``query_flags`` isn't supported yet.
   * ``query_expander`` isn't supported yet.
   * ``adjuster`` isn't supported yet.
 
@@ -683,7 +683,7 @@ drilldowns have dependencies.
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``logical_select`` doesn't implement advanced search parameters yet.
+Most of the advanced search parameters aren't implemented yet.
 
 .. _logical-select-match-escalation-threshold:
 
@@ -697,7 +697,13 @@ Not implemented yet.
 ``query_flags``
 """""""""""""""
 
-Not implemented yet.
+.. versionadded:: 16.1.1
+
+Corresponds to :ref:`select-query-flags` in :doc:`select`. See
+:ref:`select-query-flags` for details.
+
+The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``. It's the same as
+:doc:`select`.
 
 .. _logical-select-query-expander:
 
