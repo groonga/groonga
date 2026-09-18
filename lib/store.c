@@ -3033,16 +3033,18 @@ grn_ja_get_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
     return grn_ja_create_new_partition(ctx, ja, id);
   }
 
-  uint8_t *partition_id =
+  uint8_t *partition_id_ptr =
     (uint8_t *)grn_ra_ref(ctx, ja->partition_mapping, id);
-  if (partition_id) {
-    if (grn_ja_available(ja->partitions[*partition_id])) {
-      return ja->partitions[*partition_id];
-    }
-    return grn_ja_create_new_partition(ctx, ja, id);
-  } else {
+  if (!partition_id_ptr) {
     return grn_ja_get_avalable_partition(ctx, ja, id);
   }
+  uint8_t partition_id = *partition_id_ptr;
+  grn_ra_unref(ctx, ja->partition_mapping, id);
+
+  if (grn_ja_available(ja->partitions[partition_id])) {
+    return ja->partitions[partition_id];
+  }
+  return grn_ja_create_new_partition(ctx, ja, id);
 }
 
 grn_ja *
