@@ -2961,7 +2961,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
 {
   GRN_LOG(ctx,
           GRN_LOG_INFO,
-          "current ja partition is full. create and use a new partiotion.");
+          "current ja partition is full. create and use a new partition.");
 
   if (ja->max_partition_id >= UINT8_MAX) {
     ERR(
@@ -3008,7 +3008,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
 }
 
 static grn_ja *
-grn_ja_get_avalable_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
+grn_ja_get_available_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
 {
   uint8_t i;
   for (i = ja->max_partition_id;; i--) {
@@ -3036,7 +3036,7 @@ grn_ja_get_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
   uint8_t *partition_id_ptr =
     (uint8_t *)grn_ra_ref(ctx, ja->partition_mapping, id);
   if (!partition_id_ptr) {
-    return grn_ja_get_avalable_partition(ctx, ja, id);
+    return grn_ja_get_available_partition(ctx, ja, id);
   }
   uint8_t partition_id = *partition_id_ptr;
   grn_ra_unref(ctx, ja->partition_mapping, id);
