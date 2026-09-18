@@ -48,11 +48,14 @@
 #include "grn_selector.h"
 #include "grn_wal.h"
 
-#include <condition_variable>
-#include <map>
 #include <memory>
-#include <mutex>
 #include <vector>
+
+#ifdef GRN_WITH_APACHE_ARROW
+#  include <condition_variable>
+#  include <map>
+#  include <mutex>
+#endif
 
 #ifdef GRN_SUPPORT_REGEXP
 #  define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
@@ -17608,6 +17611,7 @@ namespace grn::ii {
       return rc;
     }
 
+#ifdef GRN_WITH_APACHE_ARROW
     // Reads values from source columns and appends the values in parallel.
     grn_rc
     append_srcs_parallel(grn::TaskExecutor *executor, size_t n_records_per_task)
@@ -17708,6 +17712,7 @@ namespace grn::ii {
       executor->wait_all();
       return ctx_->rc;
     }
+#endif
 
     // Reads values from source columns and appends the values in sequential.
     grn_rc
@@ -17919,6 +17924,7 @@ namespace grn::ii {
         return append_srcs_sequential();
       }
 
+#ifdef GRN_WITH_APACHE_ARROW
       // This is a heuristic rule. We may want to revisit this.
       const size_t n_postings_per_source = 1024; // No reason.
       const size_t max_n_records_per_task =
@@ -17935,6 +17941,9 @@ namespace grn::ii {
       } else {
         return append_srcs_parallel(task_executor, n_records_per_task);
       }
+#else
+      return append_srcs_sequential();
+#endif
     }
 
     // Sets a source table.
