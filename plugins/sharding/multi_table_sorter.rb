@@ -60,6 +60,22 @@ module Groonga
         column.close if column.is_a?(Accessor)
       end
 
+      # TODO: Support vector columns in `sort_keys`.
+      def validate_sort_key(sort_key, source_column)
+        column = source_column
+        while column.is_a?(Accessor) and column.have_next?
+          column = column.next
+        end
+        column = column.object if column.is_a?(Accessor)
+        return unless column.is_a?(Column)
+        return unless column.vector?
+
+        message =
+          "[logical_select][sort_keys] " +
+          "vector column isn't supported: <#{sort_key}>"
+        raise InvalidArgument, message
+      end
+
       def create_columns(union_records)
         flags = ObjectFlags::COLUMN_SCALAR
         uint32 = Context.instance["UInt32"]
@@ -71,6 +87,7 @@ module Groonga
         @sort_keys.each_with_index do |sort_key, i|
           source_column = @tables.first.find_column(sort_key_name(sort_key))
           begin
+            validate_sort_key(sort_key, source_column)
             sort_key_columns << union_records.create_column(sort_key_column_name(i),
                                                             flags,
                                                             source_column.range)

@@ -1,0 +1,41 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+table_create Entries_20170315 TABLE_NO_KEY
+column_create Entries_20170315 timestamp COLUMN_SCALAR Time
+column_create Entries_20170315 memo COLUMN_SCALAR ShortText
+column_create Entries_20170315 content COLUMN_SCALAR Text
+column_create Terms entries_20170315_content COLUMN_INDEX|WITH_POSITION \
+  Entries_20170315 content
+
+table_create Entries_20170316 TABLE_NO_KEY
+column_create Entries_20170316 timestamp COLUMN_SCALAR Time
+column_create Entries_20170316 memo COLUMN_SCALAR ShortText
+column_create Entries_20170316 content COLUMN_SCALAR Text
+column_create Terms entries_20170316_content COLUMN_INDEX|WITH_POSITION \
+  Entries_20170316 content
+
+load --table Entries_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "memo": "a1", "content": "groonga"},
+{"timestamp": "2017/03/15 01:00:00", "memo": "a2", "content": "groonga groonga groonga"}
+]
+
+load --table Entries_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "memo": "b1", "content": "groonga groonga groonga groonga"},
+{"timestamp": "2017/03/16 11:00:00", "memo": "b2", "content": "groonga groonga"}
+]
+
+logical_select Entries \
+  --shard_key timestamp \
+  --match_columns content \
+  --query groonga \
+  --sort_keys -_score \
+  --output_columns memo,_score \
+  --limit -1

@@ -250,19 +250,36 @@ module Groonga
       end
 
       def collect_output_targets(context, n_hits)
-        if sort_across_shards?(context)
-          # TODO: Sort records of all shards as one result set.
+        offset = context.offset
+        limit = context.limit
+        limit += n_hits + 1 if limit < 0
+        if offset < 0
+          offset += n_hits
+          if offset < 0
+            # Records are output from the beginning when `offset` is
+            # still negative. The number of output records is
+            # `limit + offset`. It's 0 when the number is negative.
+            limit += offset
+            limit = 0 if limit < 0
+            offset = 0
+          end
         end
 
+        if sort_across_shards?(context)
+          collect_output_targets_sorted_across_shards(context, offset, limit)
+        else
+          collect_output_targets_in_shard_order(context, offset, limit)
+        end
+      end
+
+      def collect_output_targets_in_shard_order(context, offset, limit)
         results = context.results
         if context.sort_keys.any? {|sort_key| sort_key_descending?(sort_key)}
           results = results.reverse
         end
 
-        current_offset = context.offset
-        current_offset += n_hits if current_offset < 0
-        current_limit = context.limit
-        current_limit += n_hits + 1 if current_limit < 0
+        current_offset = offset
+        current_limit = limit
 
         targets = []
         results.each do |result|
@@ -305,6 +322,70 @@ module Groonga
         end
       end
 
+      def sort_top_records_of_shards(context, offset, limit)
+        n_target_records = offset + limit
+        context.results.collect do |result|
+          {
+            table: sort_result_set(context,
+                                   result[:result_set],
+                                   0,
+                                   n_target_records),
+            condition: result[:condition],
+          }
+        end
+      end
+
+      def collect_output_targets_sorted_across_shards(context, offset, limit)
+        targets = []
+        if limit > 0
+          sorted_results = sort_top_records_of_shards(context, offset, limit)
+          tables = sorted_results.collect do |sorted_result|
+            sorted_result[:table]
+          end
+          sorter = MultiTableSorter.new(tables, context.sort_keys)
+          sorter.each(offset, limit) do |table_index, record_offset|
+            sorted_result = sorted_results[table_index]
+            table = sorted_result[:table]
+
+            target = targets.last
+            if target and target[:table].equal?(table) and
+                (target[:offset] + target[:limit]) == record_offset
+              # Continuous records in the same table are output by one target.
+              target[:limit] += 1
+              target[:n_records] += 1
+            else
+              targets << {
+                table: table,
+                offset: record_offset,
+                limit: 1,
+                condition: sorted_result[:condition],
+                n_records: 1,
+              }
+            end
+          end
+          if context.dynamic_columns.have_output?
+            # `target[:table]` has the top `offset + limit` records of the shard.
+            # But only the range of `target[:offset]` and `target[:limit]` is
+            # actually output.
+            # Dynamic columns are applied to all records in the given table.
+            # So only output records must be passed to them.
+            targets = targets.collect do |target|
+              table = target[:table].slice(target[:offset], target[:limit])
+              context.temporary_tables << table
+              {
+                table: table,
+                offset: 0,
+                limit: -1,
+                condition: target[:condition],
+                n_records: target[:n_records],
+              }
+            end
+          end
+        end
+        targets << create_empty_output_target(context) if targets.empty?
+        targets
+      end
+
       def write_records(writer, context)
         results = context.results
 
@@ -315,7 +396,11 @@ module Groonga
 
         targets = collect_output_targets(context, n_hits)
         if context.dynamic_columns.have_output?
-          apply_targets = targets.collect do |target|
+          # The same table may appear in multiple targets when records of
+          # multiple tables are sorted as one.
+          # Dynamic columns must be applied to each table only once.
+          # So targets are made unique by table.
+          apply_targets = targets.uniq {|target| target[:table]}.collect do |target|
             [target[:table], {condition: target[:condition]}]
           end
           context.dynamic_columns.apply_output(apply_targets,
