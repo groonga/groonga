@@ -143,9 +143,6 @@
 /vendor/mecab/mecabrc
 /vendor/mruby-build/
 /vendor/mruby/LEGAL
-/vendor/mruby/mrbgems/mruby-dir/
-/vendor/mruby/mrbgems/mruby-env/
-/vendor/mruby/mrbgems/mruby-errno/
 /vendor/mruby/mrbgems_init.c
 /vendor/mruby/mrblib.c
 /vendor/mruby/mruby-compiler/
