@@ -1821,7 +1821,7 @@ grn_path_copy(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-#ifndef _WIN32
+#ifdef HAVE_FLOCK
   if (flock(destination_fd, LOCK_EX) == -1) {
     SERR("%s failed to lock destination file: <%s> -> <%s>",
          tag,
@@ -1876,7 +1876,7 @@ grn_path_copy(grn_ctx *ctx,
     }
   }
 
-#ifndef _WIN32
+#ifdef HAVE_FLOCK
   flock(destination_fd, LOCK_UN);
 #endif
 
