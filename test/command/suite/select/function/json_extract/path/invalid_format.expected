@@ -11,5 +11,5 @@ load --table Data
 [[0,0.0,0.0],3]
 select Data --filter 'between(json_extract(value, "$."), 10, 20)'
 [[[-22,0.0,0.0],"json_extract(): failed to parse JSONPath: <$.>"]]
-#|e| [json-path][open] invalid JSONPath: Syntax error at line 1 and column 3: <$.>
+#|e| [json-path][open] invalid JSONPath: Syntax error: <$.>
 #|e| json_extract(): failed to parse JSONPath: <$.>
