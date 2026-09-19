@@ -2163,7 +2163,37 @@ msgstr "スライス関連の引数"
 msgid "This section describes slice related parameters."
 msgstr "このセクションではスライス関連のパラメーターについて説明します。"
 
-msgid "TODO"
+msgid "A slice searches records from the search result of the main search. You can get multiple search results by one ``select`` with slices. It's useful when you want to show some narrowed results with the whole result."
+msgstr "スライスは本体の検索の結果からレコードを絞り込む機能です。スライスを使えば、1回の ``select`` で複数の検索結果を取得できます。検索結果全体と、絞り込んだ結果を一緒に表示したい場合に便利です。"
+
+msgid "Each slice has its own ``${LABEL}``. Results of slices are output as an additional element of the response. It uses pairs of ``${LABEL}`` and the result of the slice. The result of a slice has the same format as the result of the main search."
+msgstr "各スライスには ``${LABEL}`` があります。スライスの結果はレスポンスの追加要素として出力されます。これは ``${LABEL}`` とスライスの結果のペアの集まりです。スライスの結果は本体の検索結果と同じフォーマットです。"
+
+msgid "Slices use the following output format::"
+msgstr "スライスの出力フォーマットは以下の通りです::"
+
+msgid "For example, the following parameters specify one slice:"
+msgstr "たとえば、以下の引数は1つのスライスを指定しています。"
+
+msgid "``--slices[label].filter 'column > 100'``"
+msgstr ""
+
+msgid "``--slices[label].sort_keys -column``"
+msgstr ""
+
+msgid "The following parameters specify two slices:"
+msgstr "以下の引数は2つのスライスを指定しています。"
+
+msgid "``--slices[label1].filter 'column > 100'``"
+msgstr ""
+
+msgid "``--slices[label1].sort_keys -column``"
+msgstr ""
+
+msgid "``--slices[label2].filter 'column < 10'``"
+msgstr ""
+
+msgid "``--slices[label2].sort_keys column``"
 msgstr ""
 
 msgid "Here are parameters for slice:"
@@ -2190,6 +2220,9 @@ msgstr ""
 msgid "``--slices[${LABEL}].query_flags``"
 msgstr ""
 
+msgid "``--slices[${LABEL}].post_filter``"
+msgstr ""
+
 msgid "``--slices[${LABEL}].sort_keys``"
 msgstr ""
 
@@ -2202,32 +2235,119 @@ msgstr ""
 msgid "``--slices[${LABEL}].limit``"
 msgstr ""
 
+msgid "``--slices[${LABEL}].columns[${NAME}].*``"
+msgstr ""
+
+msgid "``--slices[${LABEL}].drilldowns[${LABEL}].*``"
+msgstr ""
+
 msgid "``slices[${LABEL}].match_columns``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-match-columns`."
+msgstr ":ref:`select-match-columns` に対応しています。"
+
+msgid "It's applied to the slice instead of the main search."
+msgstr "本体の検索ではなくスライスに適用されます。"
+
+msgid "See :ref:`select-match-columns` for details."
+msgstr "詳細は :ref:`select-match-columns` を参照してください。"
 
 msgid "``slices[${LABEL}].query``"
 msgstr ""
 
+msgid "Corresponds to :ref:`select-query`."
+msgstr ":ref:`select-query` に対応しています。"
+
+msgid "See :ref:`select-query` for details."
+msgstr "詳細は :ref:`select-query` を参照してください。"
+
 msgid "``slices[${LABEL}].filter``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-filter`."
+msgstr ":ref:`select-filter` に対応しています。"
+
+msgid "See :ref:`select-filter` for details."
+msgstr "詳細は :ref:`select-filter` を参照してください。"
 
 msgid "``slices[${LABEL}].query_expander``"
 msgstr ""
 
+msgid "Corresponds to :ref:`select-query-expander`."
+msgstr ":ref:`select-query-expander` に対応しています。"
+
+msgid "See :ref:`select-query-expander` for details."
+msgstr "詳細は :ref:`select-query-expander` を参照してください。"
+
 msgid "``slices[${LABEL}].query_flags``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-query-flags`."
+msgstr ":ref:`select-query-flags` に対応しています。"
+
+msgid "See :ref:`select-query-flags` for details."
+msgstr "詳細は :ref:`select-query-flags` を参照してください。"
+
+msgid "``slices[${LABEL}].post_filter``"
+msgstr ""
+
+msgid "Specifies the filter text that is processed after ``filtered`` stage dynamic columns are generated. You can use ``post_filter`` to filter by ``filtered`` stage dynamic columns. Others are the same as :ref:`select-slices-label-filter`."
+msgstr "``filtered`` ステージの動的カラムが生成されてから実行するフィルターを指定します。 ``post_filter`` を使うと ``filtered`` ステージの動的カラムを使って絞り込むことができます。他は :ref:`select-slices-label-filter` と同じです。"
 
 msgid "``slices[${LABEL}].sort_keys``"
 msgstr ""
 
+msgid "Corresponds to :ref:`select-sort-keys`."
+msgstr ":ref:`select-sort-keys` に対応しています。"
+
+msgid "See :ref:`select-sort-keys` for details."
+msgstr "詳細は :ref:`select-sort-keys` を参照してください。"
+
 msgid "``slices[${LABEL}].output_columns``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-output-columns`."
+msgstr ":ref:`select-output-columns` に対応しています。"
+
+msgid "See :ref:`select-output-columns` for details."
+msgstr "詳細は :ref:`select-output-columns` を参照してください。"
 
 msgid "``slices[${LABEL}].offset``"
 msgstr ""
 
+msgid "Corresponds to :ref:`select-offset`."
+msgstr ":ref:`select-offset` に対応しています。"
+
+msgid "See :ref:`select-offset` for details."
+msgstr "詳細は :ref:`select-offset` を参照してください。"
+
 msgid "``slices[${LABEL}].limit``"
 msgstr ""
+
+msgid "Corresponds to :ref:`select-limit`."
+msgstr ":ref:`select-limit` に対応しています。"
+
+msgid "See :ref:`select-limit` for details."
+msgstr "詳細は :ref:`select-limit` を参照してください。"
+
+msgid "``slices[${LABEL}].columns[${NAME}]``"
+msgstr ""
+
+msgid "Specifies dynamic columns of the slice. The parameters are the same as :ref:`select-dynamic-column-related-parameters` except that they have the ``slices[${LABEL}].`` prefix."
+msgstr "スライスの動的カラムを指定します。引数は ``slices[${LABEL}].`` が付く以外は :ref:`select-dynamic-column-related-parameters` と同じです。"
+
+msgid "A dynamic column of a slice is added to the result of the slice. Use it when you need a dynamic column only in the slice."
+msgstr "スライスの動的カラムはそのスライスの結果に追加します。そのスライスの中だけで動的カラムが必要な場合に使ってください。"
+
+msgid "``slices[${LABEL}].drilldowns[${LABEL}]``"
+msgstr ""
+
+msgid "Specifies drilldowns of the slice. The parameters are the same as :ref:`select-advanced-drilldown-related-parameters` except that they have the ``slices[${LABEL}].`` prefix."
+msgstr "スライスのドリルダウンを指定します。引数は ``slices[${LABEL}].`` が付く以外は :ref:`select-advanced-drilldown-related-parameters` と同じです。"
+
+msgid "Drilldowns of a slice are output as an additional element of the result of the slice."
+msgstr "スライスのドリルダウンはそのスライスの結果の追加の要素として出力します。"
 
 msgid "Cache related parameter"
 msgstr "キャッシュ関連の引数"
