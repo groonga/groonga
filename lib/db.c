@@ -7360,7 +7360,7 @@ static grn_rc
 grn_obj_set_value_column_var_size(
   grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *value, int flags)
 {
-  grn_ja *ja = (grn_ja *)column;
+  grn_ja *ja = grn_ja_get(ctx, column, id, flags);
   grn_obj buffer;
   GRN_VOID_INIT(&buffer);
   grn_obj *casted_value = grn_ja_cast_value(ctx, ja, value, &buffer, flags);
@@ -7766,7 +7766,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     case GRN_OBJ_COLUMN_SCALAR:
       grn_obj_ensure_bulk(ctx, value);
       if (id) {
-        grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
+        grn_ja_get_value(ctx, grn_ja_get(ctx, obj, id, GRN_OBJ_GET), id, value);
       }
       value->header.type = GRN_BULK;
       break;
