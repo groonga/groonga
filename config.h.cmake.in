@@ -164,6 +164,7 @@
 #cmakedefine HAVE_CLOCK_GETTIME
 #cmakedefine HAVE_DUP2
 #cmakedefine HAVE_FDATASYNC
+#cmakedefine HAVE_FLOCK
 #cmakedefine HAVE_FORK
 #cmakedefine HAVE_FPCLASSIFY
 #cmakedefine HAVE_FSYNC
