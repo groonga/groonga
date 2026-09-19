@@ -30,6 +30,13 @@
 #endif
 
 #ifdef GRN_WITH_JSONCONS
+// jsoncons calls std::terminate() without including <exception> when
+// C++ exceptions are disabled.
+//
+// We can remove this workaround once
+// https://github.com/danielaparker/jsoncons/pull/745 is included in
+// all supported jsoncons.
+#  include <exception>
 #  include <jsoncons/json.hpp>
 #  include <jsoncons_ext/jsonpath/jsonpath.hpp>
 #endif
@@ -39,6 +46,7 @@
 #include <stack>
 #include <utility>
 #include <vector>
+#include <system_error>
 
 // See tools/parsed-json.rb for format details.
 
@@ -2341,19 +2349,24 @@ grn_json_path_open(grn_ctx *ctx, const char *raw_path, int64_t raw_path_length)
   if (raw_path_length < 0) {
     raw_path_length = strlen(raw_path);
   }
-  try {
-    path->expr = new json_path_expression(
-      jsoncons::jsonpath::make_expression<jsoncons::json>(
-        std::string_view(raw_path, raw_path_length)));
-  } catch (const jsoncons::json_exception &error) {
+  std::error_code error;
+  auto expr = jsoncons::jsonpath::make_expression<jsoncons::json>(
+    std::string_view(raw_path, raw_path_length),
+    error);
+  if (error) {
     ERR(GRN_INVALID_ARGUMENT,
         "%s invalid JSONPath: %s: <%.*s>",
         tag,
-        error.what(),
+        error.message().c_str(),
         static_cast<int>(raw_path_length),
         raw_path);
     GRN_FREE(path);
-    path = nullptr;
+    GRN_API_RETURN(nullptr);
+  }
+  path->expr = new (std::nothrow) json_path_expression(std::move(expr));
+  if (!path->expr) {
+    GRN_FREE(path);
+    GRN_API_RETURN(nullptr);
   }
   GRN_API_RETURN(path);
 #else
