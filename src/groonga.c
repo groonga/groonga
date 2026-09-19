@@ -830,6 +830,7 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
   groonga_set_thread_limit_with_ctx(NULL, new_limit, data);
 }
 
+#ifdef GRN_HAVE_SOCKET
 typedef struct {
   grn_mutex mutex;
   grn_ctx ctx;
@@ -1066,6 +1067,7 @@ request_timer_process_timeout(void)
   }
   grn_pat_cursor_close(ctx, cursor);
 }
+#endif /* GRN_HAVE_SOCKET */
 
 static void
 reset_ready_notify_pipe(void)
@@ -1113,7 +1115,7 @@ static int
 daemonize(void)
 {
   int exit_code = EXIT_SUCCESS;
-#ifndef WIN32
+#ifdef HAVE_FORK
 
   if (pipe(ready_notify_pipe) == -1) {
     reset_ready_notify_pipe();
@@ -1167,10 +1169,11 @@ daemonize(void)
       }
     }
   }
-#endif /* WIN32 */
+#endif /* HAVE_FORK */
   return exit_code;
 }
 
+#ifdef GRN_HAVE_SOCKET
 static void
 run_server_loop(grn_ctx *ctx, grn_com_event *ev)
 {
@@ -1178,9 +1181,9 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   running_event_loop = true;
   while (!grn_com_event_poll(ctx, ev, request_timer_get_poll_timeout()) &&
          grn_gctx.stat != GRN_CTX_QUIT) {
-#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
+#  ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
     reopen_log_by_signal(ctx);
-#endif
+#  endif
     grn_edge *edge;
     while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
       grn_obj *msg;
@@ -1236,6 +1239,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     });
   }
 }
+#endif /* GRN_HAVE_SOCKET */
 
 static int
 run_server(grn_ctx *ctx,
@@ -1245,6 +1249,7 @@ run_server(grn_ctx *ctx,
            grn_handler_func handler)
 {
   int exit_code = EXIT_SUCCESS;
+#ifdef GRN_HAVE_SOCKET
   struct hostent *he;
   if (!(he = gethostbyname(hostname))) {
     send_ready_notify();
@@ -1268,6 +1273,10 @@ run_server(grn_ctx *ctx,
     grn_job_queue_current_set(ctx, NULL);
     grn_edges_fin(ctx);
   }
+#else  /* GRN_HAVE_SOCKET */
+  /* Server mode options aren't provided without socket support. */
+  exit_code = EXIT_FAILURE;
+#endif /* GRN_HAVE_SOCKET */
   return exit_code;
 }
 
@@ -1428,7 +1437,7 @@ h_output_send(grn_ctx *ctx,
     }
     ret = sent;
   }
-#else  /* WIN32 */
+#elif defined(GRN_HAVE_SOCKET) /* WIN32 */
   struct iovec msg_iov[4];
   struct msghdr msg;
   msg.msg_name = NULL;
@@ -1466,7 +1475,10 @@ h_output_send(grn_ctx *ctx,
   if ((ret = sendmsg(fd, &msg, MSG_NOSIGNAL)) == -1) {
     SOERR("sendmsg");
   }
-#endif /* WIN32 */
+#else                          /* WIN32 */
+  /* Server mode options aren't provided without socket support. */
+  ret = -1;
+#endif                         /* WIN32 */
   if (ret != len) {
     GRN_LOG(&grn_gctx,
             GRN_LOG_NOTICE,
@@ -3314,7 +3326,7 @@ enum {
 static void
 check_rlimit_nofile(grn_ctx *ctx)
 {
-#ifndef WIN32
+#ifdef HAVE_SYS_RESOURCE_H
   struct rlimit limit;
   limit.rlim_cur = 0;
   limit.rlim_max = 0;
@@ -3332,7 +3344,7 @@ check_rlimit_nofile(grn_ctx *ctx)
           "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
           (long long int)limit.rlim_cur,
           (long long int)limit.rlim_max);
-#endif /* WIN32 */
+#endif /* HAVE_SYS_RESOURCE_H */
 }
 
 static grn_thread_func_result CALLBACK
@@ -4115,9 +4127,11 @@ show_usage(FILE *output)
     "\n"
     "Mode options: (default: standalone)\n"
     " By default, groonga runs in standalone mode.\n"
+#ifdef GRN_HAVE_SOCKET
     "  -c:   run in client mode\n"
     "  -s:   run in server mode\n"
     "  -d:   run in daemon mode\n"
+#endif
     "\n"
     "Database creation options:\n"
     "  -n:                  create new database (except client mode)\n"
@@ -4127,9 +4141,11 @@ show_usage(FILE *output)
     "\n"
     "Standalone/client options:\n"
     "      --file <path>:          read commands from specified file\n"
+#ifdef HAVE_DUP2
     "      --input-fd <FD>:        read commands from specified file "
     "descriptor\n"
     "                              --file has a priority over --input-fd\n"
+#endif
     "      --output-fd <FD>:       output response to specified file "
     "descriptor\n"
     "  -p, --port <port number>:   specify server port number (client mode "
@@ -4277,7 +4293,9 @@ main(int argc, char **argv)
   const char *document_root_arg = NULL;
   const char *default_command_version_arg = NULL;
   const char *default_match_escalation_threshold_arg = NULL;
+#ifdef HAVE_DUP2
   const char *input_fd_arg = NULL;
+#endif
   const char *output_fd_arg = NULL;
   const char *working_directory_arg = NULL;
   const char *config_path = NULL;
@@ -4295,76 +4313,72 @@ main(int argc, char **argv)
   int64_t default_match_escalation_threshold = 0;
   double default_request_timeout = 0.0;
   bool need_line_editor = false;
-  static grn_str_getopt_opt opts[] = {
-    {'p', "port", NULL, 0, GETOPT_OP_NONE},
-    {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
-    {'t', "max-threads", NULL, 0, GETOPT_OP_NONE},
+  grn_str_getopt_opt opts[] = {
+    {'p', "port", &port_arg, 0, GETOPT_OP_NONE},
+    {'e', "encoding", &encoding_arg, 0, GETOPT_OP_NONE},
+    {'t', "max-threads", &max_n_threads_arg, 0, GETOPT_OP_NONE},
     {'h', "help", NULL, ACTION_USAGE, GETOPT_OP_UPDATE},
+#ifdef GRN_HAVE_SOCKET
     {'c', NULL, NULL, FLAG_MODE_CLIENT, GETOPT_OP_ON},
     {'d', NULL, NULL, FLAG_MODE_DAEMON, GETOPT_OP_ON},
     {'s', NULL, NULL, FLAG_MODE_SERVER, GETOPT_OP_ON},
-    {'l', "log-level", NULL, 0, GETOPT_OP_NONE},
-    {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
+#endif
+    {'l', "log-level", &log_level_arg, 0, GETOPT_OP_NONE},
+    {'i', "server-id", &hostname_arg, 0, GETOPT_OP_NONE},
     {'n', NULL, NULL, FLAG_NEW_DB, GETOPT_OP_ON},
-    {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "protocol", &protocol_arg, 0, GETOPT_OP_NONE},
     {'\0', "version", NULL, ACTION_VERSION, GETOPT_OP_UPDATE},
-    {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "log-rotate-threshold-size", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "query-log-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "query-log-rotate-threshold-size", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "config-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "log-path", &log_path_arg, 0, GETOPT_OP_NONE},
+    {'\0',
+     "log-rotate-threshold-size",
+     &log_rotate_threshold_size_arg,
+     0,
+     GETOPT_OP_NONE},
+    {'\0', "query-log-path", &query_log_path_arg, 0, GETOPT_OP_NONE},
+    {'\0',
+     "query-log-rotate-threshold-size",
+     &query_log_rotate_threshold_size_arg,
+     0,
+     GETOPT_OP_NONE},
+    {'\0', "pid-path", &pid_file_path, 0, GETOPT_OP_NONE},
+    {'\0', "config-path", &config_path, 0, GETOPT_OP_NONE},
     {'\0', "show-config", NULL, ACTION_SHOW_CONFIG, GETOPT_OP_UPDATE},
-    {'\0', "cache-limit", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "file", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "document-root", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "default-command-version", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "default-match-escalation-threshold", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "bind-address", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "input-fd", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "output-fd", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "cache-limit", &cache_limit_arg, 0, GETOPT_OP_NONE},
+    {'\0', "file", &input_path, 0, GETOPT_OP_NONE},
+    {'\0', "document-root", &document_root_arg, 0, GETOPT_OP_NONE},
+    {'\0',
+     "default-command-version",
+     &default_command_version_arg,
+     0,
+     GETOPT_OP_NONE},
+    {'\0',
+     "default-match-escalation-threshold",
+     &default_match_escalation_threshold_arg,
+     0,
+     GETOPT_OP_NONE},
+    {'\0', "bind-address", &bind_address_arg, 0, GETOPT_OP_NONE},
+#ifdef HAVE_DUP2
+    {'\0', "input-fd", &input_fd_arg, 0, GETOPT_OP_NONE},
+#endif
+    {'\0', "output-fd", &output_fd_arg, 0, GETOPT_OP_NONE},
+    {'\0', "working-directory", &working_directory_arg, 0, GETOPT_OP_NONE},
     {'\0',
      "use-windows-event-log",
      NULL,
      FLAG_USE_WINDOWS_EVENT_LOG,
      GETOPT_OP_ON},
-    {'\0', "memcached-column", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "log-flags", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "wal-role", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "default-n-workers", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "memcached-column", &memcached_column_name, 0, GETOPT_OP_NONE},
+    {'\0',
+     "default-request-timeout",
+     &default_request_timeout_arg,
+     0,
+     GETOPT_OP_NONE},
+    {'\0', "cache-base-path", &cache_base_path, 0, GETOPT_OP_NONE},
+    {'\0', "listen-backlog", &listen_backlog_arg, 0, GETOPT_OP_NONE},
+    {'\0', "log-flags", &log_flags_arg, 0, GETOPT_OP_NONE},
+    {'\0', "wal-role", &wal_role_arg, 0, GETOPT_OP_NONE},
+    {'\0', "default-n-workers", &default_n_workers_arg, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}};
-  opts[0].arg = &port_arg;
-  opts[1].arg = &encoding_arg;
-  opts[2].arg = &max_n_threads_arg;
-  opts[7].arg = &log_level_arg;
-  opts[8].arg = &hostname_arg;
-  opts[10].arg = &protocol_arg;
-  opts[12].arg = &log_path_arg;
-  opts[13].arg = &log_rotate_threshold_size_arg;
-  opts[14].arg = &query_log_path_arg;
-  opts[15].arg = &query_log_rotate_threshold_size_arg;
-  opts[16].arg = &pid_file_path;
-  opts[17].arg = &config_path;
-  opts[19].arg = &cache_limit_arg;
-  opts[20].arg = &input_path;
-  opts[21].arg = &document_root_arg;
-  opts[22].arg = &default_command_version_arg;
-  opts[23].arg = &default_match_escalation_threshold_arg;
-  opts[24].arg = &bind_address_arg;
-  opts[25].arg = &input_fd_arg;
-  opts[26].arg = &output_fd_arg;
-  opts[27].arg = &working_directory_arg;
-  opts[29].arg = &memcached_column_name;
-  opts[30].arg = &default_request_timeout_arg;
-  opts[31].arg = &cache_base_path;
-  opts[32].arg = &listen_backlog_arg;
-  opts[33].arg = &log_flags_arg;
-  opts[34].arg = &wal_role_arg;
-  opts[35].arg = &default_n_workers_arg;
 
   reset_ready_notify_pipe();
 
@@ -4856,6 +4870,7 @@ main(int argc, char **argv)
     }
     batchmode = true;
   } else {
+#ifdef HAVE_DUP2
     if (input_fd_arg) {
       const char *const end = input_fd_arg + strlen(input_fd_arg);
       const char *rest = NULL;
@@ -4877,7 +4892,9 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
       }
       batchmode = true;
-    } else {
+    } else
+#endif
+    {
       input_reader = grn_file_reader_open(&grn_gctx, "-");
       if (!input_reader) {
         fprintf(stderr, "%s", grn_gctx.errbuf);
