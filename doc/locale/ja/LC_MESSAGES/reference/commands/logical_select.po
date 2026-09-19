@@ -207,9 +207,6 @@ msgstr "しかし、いくつか :doc:`select` と違うところもあります
 msgid "``shard_key`` and either ``logical_table`` or one or more ``shard[${LABEL}].table`` are required instead of ``table`` parameter."
 msgstr "``table`` 引数ではなく、 ``shard_key`` と、 ``logical_table`` か1つ以上の ``shard[${LABEL}].table`` が必須です。"
 
-msgid "``sort_keys`` isn't supported when multiple shards are used. (Only one shard is used, they are supported. There is one exception about ``sort_keys`` for multiple shards. When ``shard_keys`` and ``sort_keys`` are same, they are supported. See :ref:`logical-select-sort-keys` about details)"
-msgstr "複数のシャードを使った場合の ``sort_keys`` はサポートしていません。（1つのシャードのみを使った場合はサポートしています。複数のシャードについては1つ例外があります。``shard_key`` と ``sort_keys`` が同じ場合です。その場合はサポートしています。詳細は :ref:`logical-select-sort-keys` を参照してください。）"
-
 msgid "``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys`` doesn't work with multiple shards. It works with one shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with multiple shards."
 msgstr "複数のシャードを使った場合、 ``drilldowns[${LABEL}].sort_keys`` の中で ``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えます。複数のシャードを使った場合、``_key`` は、``drilldowns[${LABEL}].sort_keys`` の中で使えます。"
 
@@ -531,14 +528,17 @@ msgstr ""
 msgid "Corresponds to :ref:`select-sort-keys` in :doc:`select`. See :ref:`select-sort-keys` for details."
 msgstr ":doc:`select` の :ref:`select-sort-keys` に対応しています。詳細は :ref:`select-sort-keys` を見てください。"
 
-msgid "``sort_keys`` has a limitation. It works only when the number of search target shards is one. If the number of search target shards is larger than one, ``sort_keys`` doesn't work."
-msgstr "``sort_keys`` には制限があります。検索対象のシャードが1つの場合のみ動作します。もし、検索対象のシャードが複数ある場合、 ``sort_keys`` は正常な動作をしません。"
+msgid "``sort_keys`` also works with multiple shards since 16.1.1. Records of all search target shards are sorted as one result set."
+msgstr "16.1.1 から ``sort_keys`` は複数のシャードでも動作します。検索対象のすべてのシャードのレコードを1つの結果セットとしてソートします。"
 
-msgid "There is one exception for multiple shards. When the same value is specified for ``shard_key`` and ``sort_keys``, they are supported. This command processes target shards one by one by ascending order. Thus, in this process, magnitude correlation about the value of ``shard_key`` is kept among them. This is because ``sort_keys`` is supported when ``shard_key`` and ``sort_keys`` is same."
-msgstr "複数のシャードに関して例外があります。``shard_key`` と ``sort_keys`` に同じ値が指定された場合です。その場合はサポートしています。このコマンドはシャードを昇順で順番に処理します。そのため、``shard_key`` の大小関係は保たれるので、正しくソートできます。"
+msgid "You can't use a vector column in ``sort_keys`` with multiple shards."
+msgstr "複数のシャードでは ``sort_keys`` にベクターカラムを使えません。"
 
-msgid "Here is an example that uses only one shard:"
-msgstr "以下は1つのシャードのみを使っている例です。"
+msgid ":doc:`/reference/scorers/scorer_tf_idf` should use the number of records in all shards but it uses the number of records in each shard. So its score isn't accurate with multiple shards."
+msgstr ":doc:`/reference/scorers/scorer_tf_idf` は本来すべてのシャードのレコード数を使って計算すべきですが、各シャード内のレコード数で計算されます。そのため、複数のシャードでは正確なスコアになりません。"
+
+msgid "The cost of sorting depends on ``offset + limit`` because each shard sorts the top ``offset + limit`` records. Sorting with a large ``offset`` is slow."
+msgstr "各シャードの上位 ``offset + limit`` 件を使ってソートするため、ソートのコストは ``offset + limit`` に依存します。大きな ``offset`` を指定したソートは遅くなります。"
 
 msgid "``offset``"
 msgstr ""
