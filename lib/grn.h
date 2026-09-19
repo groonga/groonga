@@ -336,12 +336,13 @@ typedef CONDITION_VARIABLE grn_cond;
 /* Single thread: WASI (wasm32-wasip1) doesn't have threads. */
 typedef int grn_thread;
 typedef void *grn_thread_func_result;
-#    define GRN_THREAD_FUNC_RETURN_VALUE     NULL
+#    define GRN_THREAD_FUNC_RETURN_VALUE NULL
 /* Threads are not supported. Always failed. */
-#    define THREAD_CREATE(thread, func, arg) (1)
-#    define THREAD_JOIN(thread)              (1)
+#    define THREAD_CREATE(thread, func, arg)                                   \
+      ((void)(thread), (void)(func), (void)(arg), 1)
+#    define THREAD_JOIN(thread) ((void)(thread), 1)
 typedef int grn_mutex;
-#    define MUTEX_INIT(m)                    ((m) = 0)
+#    define MUTEX_INIT(m)       ((m) = 0)
 #    define MUTEX_LOCK(m)
 #    define MUTEX_LOCK_CHECK(m) (1)
 #    define MUTEX_UNLOCK(m)
