@@ -42,7 +42,6 @@
 #include "groonga/error.h"
 #include "groonga/expr.h"
 #include "groonga/file_reader.h"
-#include "groonga/float.h"
 #include "groonga/geo.h"
 #include "groonga/h3.h"
 #include "groonga/hash.h"

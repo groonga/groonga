@@ -2089,7 +2089,7 @@ grn_proc_get_value_double(grn_ctx *ctx,
     value_raw = GRN_FLOAT32_VALUE(value);
 #ifdef GRN_HAVE_BFLOAT16
   } else if (value->header.domain == GRN_DB_BFLOAT16) {
-    value_raw = grn_bfloat16_to_float32(GRN_BFLOAT16_VALUE(value));
+    value_raw = (float)GRN_BFLOAT16_VALUE(value);
 #endif
   } else {
     grn_obj buffer;

@@ -17,41 +17,10 @@
 #pragma once
 
 #include <cmath>
-#include <cstring>
 #include <string>
 
 namespace grn {
   namespace numeric {
-#ifdef GRN_HAVE_BFLOAT16
-    template <typename TYPE>
-    grn_bfloat16
-    to_bfloat16(TYPE value)
-    {
-      if constexpr (std::is_same_v<TYPE, grn_bfloat16>) {
-        return value;
-      } else {
-        grn_bfloat16 value_bfloat16 = 0;
-        float value_float = value;
-        std::memcpy(&value_bfloat16,
-                    reinterpret_cast<char *>(&value_float) + sizeof(float) -
-                      sizeof(grn_bfloat16),
-                    sizeof(grn_bfloat16));
-        return value_bfloat16;
-      }
-    }
-
-    inline float
-    bfloat16_to_float32(grn_bfloat16 value)
-    {
-      float value_float = 0;
-      std::memcpy(reinterpret_cast<char *>(&value_float) + sizeof(float) -
-                    sizeof(grn_bfloat16),
-                  &value,
-                  sizeof(grn_bfloat16));
-      return value_float;
-    }
-#endif
-
     template <typename TYPE>
     std::enable_if_t<std::is_integral_v<TYPE>, bool>
     is_zero(TYPE value)
@@ -71,7 +40,7 @@ namespace grn {
     std::enable_if_t<std::is_same_v<TYPE, grn_bfloat16>, bool>
     is_zero(TYPE value)
     {
-      return is_zero(bfloat16_to_float32(value));
+      return is_zero(static_cast<float>(value));
     }
 #endif
   }; // namespace numeric
@@ -149,7 +118,14 @@ namespace grn {
         break;
 #ifdef GRN_HAVE_BFLOAT16
       case GRN_DB_BFLOAT16:
-        GRN_BFLOAT16_SET(ctx, bulk, numeric::to_bfloat16(value));
+        // Convert an integer via double for the same result with all
+        // compilers. GCC converts an integer to bfloat16 directly but
+        // Clang converts an integer to float then to bfloat16.
+        if constexpr (std::is_integral_v<NUMERIC>) {
+          GRN_BFLOAT16_SET(ctx, bulk, static_cast<double>(value));
+        } else {
+          GRN_BFLOAT16_SET(ctx, bulk, value);
+        }
         break;
 #endif
       case GRN_DB_FLOAT32:
@@ -204,7 +180,12 @@ namespace grn {
         break;
 #ifdef GRN_HAVE_BFLOAT16
       case GRN_DB_BFLOAT16:
-        GRN_BFLOAT16_PUT(ctx, bulk, numeric::to_bfloat16(value));
+        // See set().
+        if constexpr (std::is_integral_v<NUMERIC>) {
+          GRN_BFLOAT16_PUT(ctx, bulk, static_cast<double>(value));
+        } else {
+          GRN_BFLOAT16_PUT(ctx, bulk, value);
+        }
         break;
 #endif
       case GRN_DB_FLOAT32:

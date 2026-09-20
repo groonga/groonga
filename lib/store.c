@@ -4604,7 +4604,7 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
       if (value_is_weight_bfloat16) {
         grn_bfloat16 weight_bfloat16 =
           *((grn_bfloat16 *)(value_raw + offset + element_value_size));
-        weight = grn_bfloat16_to_float32(weight_bfloat16);
+        weight = (float)weight_bfloat16;
       } else {
         weight = *((float *)(value_raw + offset + element_value_size));
       }
@@ -4613,7 +4613,7 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
 #endif
 #ifdef GRN_HAVE_BFLOAT16
       if (is_weight_bfloat16) {
-        GRN_BFLOAT16_PUT(ctx, buffer, grn_float32_to_bfloat16(weight));
+        GRN_BFLOAT16_PUT(ctx, buffer, weight);
       } else {
         GRN_FLOAT32_PUT(ctx, buffer, weight);
       }
@@ -4709,7 +4709,7 @@ grn_ja_cast_value_vector_fixed_vector(grn_ctx *ctx,
     if (with_weight) {
       if (is_weight_bfloat16) {
 #ifdef GRN_HAVE_BFLOAT16
-        GRN_BFLOAT16_PUT(ctx, buffer, grn_float32_to_bfloat16(weight));
+        GRN_BFLOAT16_PUT(ctx, buffer, weight);
 #else
         GRN_FLOAT32_PUT(ctx, buffer, weight);
 #endif

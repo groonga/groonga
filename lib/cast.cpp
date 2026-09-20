@@ -2017,32 +2017,14 @@ namespace {
 
 #ifdef GRN_HAVE_BFLOAT16
   template <typename FLOATING_POINT, typename NUMERIC>
-  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
-                     std::is_same_v<NUMERIC, grn_bfloat16>,
-                   grn_rc>
-  num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
-  {
-    if (caster->src->header.domain == GRN_DB_TIME) {
-      return grn::bulk::put<FLOATING_POINT>(ctx,
-                                            caster->dest,
-                                            grn_bfloat32_to_float32(value) /
-                                              GRN_TIME_USEC_PER_SEC);
-    } else {
-      return grn::bulk::put<FLOATING_POINT>(ctx, caster->dest, value);
-    }
-  }
-
-  template <typename FLOATING_POINT, typename NUMERIC>
-  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16> &&
-                     !std::is_same_v<NUMERIC, grn_bfloat16>,
-                   grn_rc>
+  std::enable_if_t<std::is_same_v<FLOATING_POINT, grn_bfloat16>, grn_rc>
   num2float(grn_ctx *ctx, grn_caster *caster, NUMERIC value)
   {
     if (caster->src->header.domain == GRN_DB_TIME) {
       return grn::bulk::put<FLOATING_POINT>(
         ctx,
         caster->dest,
-        grn::numeric::to_bfloat16(static_cast<double>(value) /
+        static_cast<grn_bfloat16>(static_cast<double>(value) /
                                   GRN_TIME_USEC_PER_SEC));
     } else {
       return grn::bulk::put<NUMERIC>(ctx, caster->dest, value);

@@ -44,7 +44,7 @@ select Memos
         "Groonga is fast",
         {
           "groonga": 2.796875,
-          "full text search": 1.195312
+          "full text search": 1.203125
         }
       ]
     ]
