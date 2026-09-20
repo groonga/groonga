@@ -142,11 +142,6 @@ else()
   set(GRN_C_COMPILER_GNU_LIKE FALSE)
 endif()
 
-configure_file(include/groonga/version.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
-configure_file(include/groonga/build_option_cmake.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/build_option.h)
-
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
 include(CheckFunctionExists)
@@ -2454,3 +2449,8 @@ if(GRN_WITH_TOOLS)
     PATTERN "*.rb"
     PATTERN "*.sh")
 endif()
+
+configure_file(include/groonga/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
+configure_file(include/groonga/build_option_cmake.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/build_option.h)
