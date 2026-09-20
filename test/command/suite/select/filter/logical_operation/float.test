@@ -1,0 +1,12 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR Float
+
+load --table Items
+[
+{"_key": "zero", "price": 0.0},
+{"_key": "nonzero", "price": 1.5}
+]
+
+select Items --filter '!price' --output_columns _key
+select Items --filter 'price && true' --output_columns _key
+select Items --filter 'false || price' --output_columns _key

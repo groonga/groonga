@@ -80,20 +80,20 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
       {
         grn_bfloat16 bfloat16_value;
         bfloat16_value = GRN_BFLOAT16_VALUE(obj);
-        return grn_bfloat16_is_zero(bfloat16_value);
+        return !grn_bfloat16_is_zero(bfloat16_value);
       }
 #endif
     case GRN_DB_FLOAT32:
       {
         float float_value;
         float_value = GRN_FLOAT32_VALUE(obj);
-        return grn_float32_is_zero(float_value);
+        return !grn_float32_is_zero(float_value);
       }
     case GRN_DB_FLOAT:
       {
         double float_value;
         float_value = GRN_FLOAT_VALUE(obj);
-        return grn_float_is_zero(float_value);
+        return !grn_float_is_zero(float_value);
       }
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
