@@ -137,22 +137,22 @@ namespace grn {
     {
 #ifdef GRN_WITH_APACHE_ARROW
       if (is_parallel()) {
-        try {
-          std::unique_lock<std::mutex> lock(futures_mutex_);
-          auto future = futures_.at(id);
-          lock.unlock();
-          auto status = future.status();
-          lock.lock();
-          futures_.erase(id);
-          lock.unlock();
-          return grnarrow::check(ctx_,
-                                 status,
-                                 tag,
-                                 " failed to wait a job: ",
-                                 id);
-        } catch (std::out_of_range &) {
+        std::unique_lock<std::mutex> lock(futures_mutex_);
+        auto it = futures_.find(id);
+        if (it == futures_.end()) {
           return true;
         }
+        auto future = it->second;
+        lock.unlock();
+        auto status = future.status();
+        lock.lock();
+        futures_.erase(id);
+        lock.unlock();
+        return grnarrow::check(ctx_,
+                               status,
+                               tag,
+                               " failed to wait a job: ",
+                               id);
       }
 #endif
       return true;
