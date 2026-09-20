@@ -1265,7 +1265,7 @@ namespace grn {
             simdjson::error_message(manifest_result.error()));
         return false;
       }
-      auto manifest = std::move(manifest_result.value());
+      auto manifest = std::move(manifest_result).value_unsafe();
       simdjson::ondemand::parser parser;
       auto doc = parser.iterate(manifest);
       auto model_file_name_result = doc["ggufFile"]["rfilename"].get_string();
@@ -1280,7 +1280,7 @@ namespace grn {
             manifest.data());
         return false;
       }
-      auto model_file_name = model_file_name_result.value();
+      auto model_file_name = model_file_name_result.value_unsafe();
 
       return ensure_model(model_file_name);
 #else
