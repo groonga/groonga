@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2020-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4489,7 +4489,7 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
   const bool is_weight_bfloat16 = ((flags & GRN_OBJ_WEIGHT_BFLOAT16) != 0);
   bool value_is_weight_uvector = grn_obj_is_weight_uvector(ctx, value);
   const bool value_is_weight_bfloat16 =
-    ((value->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) != 0);
+    grn_obj_is_bfloat16_weight_uvector(ctx, value);
 
   bool need_convert = false;
   bool need_cast = false;
