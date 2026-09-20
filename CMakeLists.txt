@@ -151,6 +151,7 @@ include(CheckStructHasMember)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckCSourceCompiles)
+include(CheckCXXSourceCompiles)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 include(CMakePackageConfigHelpers)
@@ -444,22 +445,32 @@ endif()
 set(GRN_WITH_BFLOAT16
     "auto"
     CACHE STRING "Support bfloat16.")
-check_c_source_compiles(
-  [=[
+# This uses volatile to ensure that conversion functions such as
+# __truncsfbf2() and __extendbfsf2() are linked.
+set(GRN_BFLOAT16_CHECK_SOURCE
+    [=[
 int
-main(int argc, char *argv)
+main(int argc, char **argv)
 {
-  __bf16 value = 1.0;
-  return 0;
+  volatile float value = argc;
+  __bf16 value_bfloat16 = value;
+  volatile float value_float = value_bfloat16;
+  return value_float != value;
 }
-]=]
-  GRN_HAVE_BFLOAT16)
+]=])
+check_c_source_compiles("${GRN_BFLOAT16_CHECK_SOURCE}" GRN_C_HAVE_BFLOAT16)
+check_cxx_source_compiles("${GRN_BFLOAT16_CHECK_SOURCE}" GRN_CXX_HAVE_BFLOAT16)
+if(GRN_C_HAVE_BFLOAT16 AND GRN_CXX_HAVE_BFLOAT16)
+  set(GRN_HAVE_BFLOAT16 TRUE)
+else()
+  set(GRN_HAVE_BFLOAT16 FALSE)
+endif()
 if(GRN_WITH_BFLOAT16 STREQUAL "yes")
-  if(!GRN_HAVE_BFLOAT16)
+  if(NOT GRN_HAVE_BFLOAT16)
     message(FATAL_ERROR "Compiler doesn't support bfloat16")
   endif()
 elseif(GRN_WITH_BFLOAT16 STREQUAL "no")
-  set(GRN_HAVE_BFLOAT16 NO)
+  set(GRN_HAVE_BFLOAT16 FALSE)
 endif()
 
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
