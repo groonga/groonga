@@ -468,9 +468,7 @@ grn_vector_pack(grn_ctx *ctx,
         GRN_FLOAT32_PUT(ctx, footer, section->weight);
       } else if (flags & GRN_VECTOR_PACK_WEIGHT_BFLOAT16) {
 #ifdef GRN_HAVE_BFLOAT16
-        GRN_BFLOAT16_PUT(ctx,
-                         footer,
-                         grn::numeric::to_bfloat16(section->weight));
+        GRN_BFLOAT16_PUT(ctx, footer, section->weight);
 #else
         GRN_FLOAT32_PUT(ctx, footer, section->weight);
 #endif
@@ -544,7 +542,7 @@ grn_vector_unpack(grn_ctx *ctx,
           grn_bfloat16 weight_bfloat16;
           grn_memcpy(&weight_bfloat16, p, sizeof(grn_bfloat16));
           p += sizeof(grn_bfloat16);
-          section->weight = grn_bfloat16_to_float32(weight_bfloat16);
+          section->weight = static_cast<float>(weight_bfloat16);
 #else
           grn_memcpy(&(section->weight), p, sizeof(float));
           p += sizeof(float);
@@ -754,7 +752,7 @@ grn_uvector_add_element_record(grn_ctx *ctx,
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
     if (uvector->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) {
 #ifdef GRN_HAVE_BFLOAT16
-      GRN_BFLOAT16_PUT(ctx, uvector, grn::numeric::to_bfloat16(weight));
+      GRN_BFLOAT16_PUT(ctx, uvector, weight);
 #else
       GRN_FLOAT32_PUT(ctx, uvector, weight);
 #endif
@@ -834,7 +832,7 @@ grn_uvector_get_element_record(grn_ctx *ctx,
           grn_bfloat16 weight_bfloat16 =
             *reinterpret_cast<const grn_bfloat16 *>(
               elements_start + (element_size * offset) + element_value_size);
-          *weight = grn_bfloat16_to_float32(weight_bfloat16);
+          *weight = static_cast<float>(weight_bfloat16);
 #else
           *weight = *reinterpret_cast<const float *>(
             elements_start + (element_size * offset) + element_value_size);

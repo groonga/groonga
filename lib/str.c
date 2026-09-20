@@ -2510,7 +2510,7 @@ grn_text_ftoa_adjust(grn_ctx *ctx, grn_obj *buf, size_t before_size)
 grn_rc
 grn_text_bf16toa(grn_ctx *ctx, grn_obj *buf, grn_bfloat16 value)
 {
-  return grn_text_f32toa(ctx, buf, grn_bfloat16_to_float32(value));
+  return grn_text_f32toa(ctx, buf, (float)value);
 }
 #endif
 

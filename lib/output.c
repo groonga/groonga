@@ -696,7 +696,7 @@ grn_output_bfloat16(grn_ctx *ctx,
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
-    switch (fpclassify(grn_bfloat16_to_float32(value))) {
+    switch (fpclassify((float)value)) {
     case FP_NAN:
     case FP_INFINITE:
       GRN_TEXT_PUTS(ctx, outbuf, "null");
@@ -716,8 +716,7 @@ grn_output_bfloat16(grn_ctx *ctx,
     break;
   case GRN_CONTENT_MSGPACK:
 #  ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_float(&ctx->impl->output.msgpacker,
-                       grn_bfloat16_to_float32(value));
+    msgpack_pack_float(&ctx->impl->output.msgpacker, (float)value);
 #  endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST:

@@ -32,5 +32,5 @@ load --table Tags
 load --table Memos
 [
 ["_key","tags"],
-["Groonga is fast",{"groonga":2.796875,"full text search":1.195312}]
+["Groonga is fast",{"groonga":2.796875,"full text search":1.203125}]
 ]

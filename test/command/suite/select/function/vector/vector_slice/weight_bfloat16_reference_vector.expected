@@ -38,22 +38,22 @@ select Memos   --columns[slice].stage output   --columns[slice].type Tags   --co
       [
         {
           "Groonga": 100.0,
-          "Full text search": 92.0
+          "Full text search": 92.5
         },
         {
-          "Full text search": 92.0
+          "Full text search": 92.5
         }
       ],
       [
         {
           "Groonga": 100.0,
           "Full text search": 94.5,
-          "Ruby": 56.5,
-          "Library": 30.0
+          "Ruby": 56.75,
+          "Library": 30.125
         },
         {
           "Full text search": 94.5,
-          "Ruby": 56.5
+          "Ruby": 56.75
         }
       ],
       [
