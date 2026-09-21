@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024  Sutou Kouhei <kou@clear-code.com>
+// Copyright (C) 2020-2026  Sutou Kouhei <kou@clear-code.com>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,39 @@
 
 #pragma once
 
+#include "groonga/float.h"
+
 #include <cmath>
 #include <string>
 
 namespace grn {
   namespace numeric {
+#ifdef GRN_HAVE_BFLOAT16
+    /**
+     * \deprecated Since 16.1.1. Use `static_cast<grn_bfloat16>(value)`
+     *             instead.
+     */
+    template <typename TYPE>
+    grn_bfloat16
+    to_bfloat16(TYPE value)
+    {
+      if constexpr (std::is_same_v<TYPE, grn_bfloat16>) {
+        return value;
+      } else {
+        return static_cast<grn_bfloat16>(value);
+      }
+    }
+
+    /**
+     * \deprecated Since 16.1.1. Use `static_cast<float>(value)` instead.
+     */
+    inline float
+    bfloat16_to_float32(grn_bfloat16 value)
+    {
+      return static_cast<float>(value);
+    }
+#endif
+
     template <typename TYPE>
     std::enable_if_t<std::is_integral_v<TYPE>, bool>
     is_zero(TYPE value)

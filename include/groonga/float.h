@@ -16,40 +16,25 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn.h"
-#include "grn_float.h"
+#pragma once
 
-#include <math.h>
-#include <float.h>
-
-#ifdef GRN_HAVE_BFLOAT16
-float
-grn_bfloat16_to_float32(grn_bfloat16 value)
-{
-  return (float)value;
-}
-
-grn_bfloat16
-grn_float32_to_bfloat16(float value)
-{
-  return (grn_bfloat16)value;
-}
-
-bool
-grn_bfloat16_is_zero(grn_bfloat16 value)
-{
-  return grn_float32_is_zero((float)value);
-}
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-bool
-grn_float32_is_zero(float value)
-{
-  return fabsf(value) < FLT_EPSILON;
-}
+#ifdef GRN_HAVE_BFLOAT16
+/**
+ * \deprecated Since 16.1.1. Use `(float)value` instead.
+ */
+GRN_API float
+grn_bfloat16_to_float32(grn_bfloat16 value);
+/**
+ * \deprecated Since 16.1.1. Use `(grn_bfloat16)value` instead.
+ */
+GRN_API grn_bfloat16
+grn_float32_to_bfloat16(float value);
+#endif
 
-bool
-grn_float_is_zero(double value)
-{
-  return fabs(value) < DBL_EPSILON;
+#ifdef __cplusplus
 }
+#endif
