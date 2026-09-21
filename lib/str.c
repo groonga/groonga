@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2017  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3915,4 +3915,16 @@ grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk)
   }
   GRN_BULK_REWIND(bulk);
   return data;
+}
+
+const char *
+grn_bulk_get_head(grn_ctx *ctx, grn_obj *bulk)
+{
+  return GRN_BULK_HEAD(bulk);
+}
+
+size_t
+grn_bulk_get_size(grn_ctx *ctx, grn_obj *bulk)
+{
+  return GRN_BULK_VSIZE(bulk);
 }
