@@ -280,6 +280,16 @@ grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_bfloat16_weight_uvector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_weight_uvector(ctx, obj)) {
+    return false;
+  }
+
+  return obj->header.flags & GRN_OBJ_WEIGHT_BFLOAT16;
+}
+
+bool
 grn_obj_is_db(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
