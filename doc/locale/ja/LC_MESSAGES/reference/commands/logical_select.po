@@ -837,6 +837,48 @@ msgstr "メインの検索の :ref:`logical-select-columns-name-window-group-key
 msgid "Here is an example that computes the Nth record ordered by tag name for each the same number of sub records:"
 msgstr "以下はサブレコード数が同じグループ毎にタグ名順で何番目のレコードかを計算する例です。"
 
+msgid "Slice related parameters"
+msgstr "スライス関連の引数"
+
+msgid "Here are slice related parameters that are supported:"
+msgstr "サポートしているスライス関連の引数は以下の通りです。"
+
+msgid "``slices[${LABEL}].match_columns``"
+msgstr ""
+
+msgid "``slices[${LABEL}].query``"
+msgstr ""
+
+msgid "``slices[${LABEL}].query_flags``"
+msgstr ""
+
+msgid "``slices[${LABEL}].filter``"
+msgstr ""
+
+msgid "``slices[${LABEL}].sort_keys``"
+msgstr ""
+
+msgid "``slices[${LABEL}].output_columns``"
+msgstr ""
+
+msgid "``slices[${LABEL}].offset``"
+msgstr ""
+
+msgid "``slices[${LABEL}].limit``"
+msgstr ""
+
+msgid "``slices[${LABEL}].columns[${NAME}]``"
+msgstr ""
+
+msgid "``slices[${LABEL}].drilldowns[${LABEL}]``"
+msgstr ""
+
+msgid "See :ref:`select-slice-related-parameters` for details."
+msgstr "詳細は :ref:`select-slice-related-parameters` を見てください。"
+
+msgid "``slices[${LABEL}].sort_keys`` has the same limitation as :ref:`logical-select-sort-keys`."
+msgstr "``slices[${LABEL}].sort_keys`` には :ref:`logical-select-sort-keys` と同じ制限があります。"
+
 msgid "Cache related parameter"
 msgstr "キャッシュ関連の引数"
 
