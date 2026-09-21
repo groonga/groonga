@@ -1,0 +1,21 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 1.003906251,
+    "mroonga": 200
+  }
+}
+]
+[[0,0.0,0.0],1]
+dump   --dump_plugins no   --dump_schema no
+load --table Memos
+[
+["_key","tags"],
+["Groonga is fast",{"groonga":1.007812,"mroonga":200.0}]
+]

@@ -1,0 +1,24 @@
+#@require-feature bfloat16
+#@require-input-type json
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_BFLOAT16 Tags
+
+# 1.003906251 is a tie in Float32 but not in BFloat16. It must be
+# rounded to BFloat16 directly not via Float32.
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 1.003906251,
+    "mroonga": 200
+  }
+}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

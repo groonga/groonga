@@ -306,7 +306,23 @@ grn_loader_brace_add_weight_vector_element(grn_ctx *ctx,
                                            grn_obj *brace_value)
 {
   grn_obj weight_buffer;
+#ifdef GRN_HAVE_BFLOAT16
+  /* Round a weight to BFloat16 here for a BFloat16 weight column so
+   * that the weight is rounded only once (double -> BFloat16). If we
+   * cast a weight to Float32 here, the weight is rounded twice
+   * (double -> Float32 -> BFloat16) and it may be different from
+   * the directly rounded value. A BFloat16 value is exactly
+   * representable as Float32. So we can pass it as Float32. */
+  const bool is_weight_bfloat16 =
+    (DB_OBJ(data->current.column)->header.flags & GRN_OBJ_WEIGHT_BFLOAT16) != 0;
+  if (is_weight_bfloat16) {
+    GRN_BFLOAT16_INIT(&weight_buffer, 0);
+  } else {
+    GRN_FLOAT32_INIT(&weight_buffer, 0);
+  }
+#else
   GRN_FLOAT32_INIT(&weight_buffer, 0);
+#endif
 
   grn_obj *value = brace_value + 1;
   grn_obj *value_end = value + GRN_UINT32_VALUE(brace_value);
@@ -317,22 +333,32 @@ grn_loader_brace_add_weight_vector_element(grn_ctx *ctx,
       break;
     }
     value = values_next(ctx, value);
-    grn_obj *weight = value;
+    grn_obj *raw_weight = value;
 
     GRN_BULK_REWIND(&weight_buffer);
-    grn_rc rc = grn_obj_cast(ctx, weight, &weight_buffer, true);
+    grn_rc rc = grn_obj_cast(ctx, raw_weight, &weight_buffer, true);
     if (rc != GRN_SUCCESS) {
       grn_obj *range;
       range = grn_ctx_at(ctx, weight_buffer.header.domain);
-      ERR_CAST(data->current.column, range, weight);
+      ERR_CAST(data->current.column, range, raw_weight);
       grn_obj_unlink(ctx, range);
       break;
     }
+    float weight;
+#ifdef GRN_HAVE_BFLOAT16
+    if (is_weight_bfloat16) {
+      weight = (float)GRN_BFLOAT16_VALUE(&weight_buffer);
+    } else {
+      weight = GRN_FLOAT32_VALUE(&weight_buffer);
+    }
+#else
+    weight = GRN_FLOAT32_VALUE(&weight_buffer);
+#endif
     grn_vector_add_element_float(ctx,
                                  vector,
                                  GRN_BULK_HEAD(key),
                                  (uint32_t)GRN_BULK_VSIZE(key),
-                                 GRN_FLOAT32_VALUE(&weight_buffer),
+                                 weight,
                                  key->header.domain);
   }
   GRN_OBJ_FIN(ctx, &weight_buffer);
