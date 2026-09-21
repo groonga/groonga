@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2014-2018  Brazil
-  Copyright (C) 2018-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@
 #include "groonga/error.h"
 #include "groonga/expr.h"
 #include "groonga/file_reader.h"
+#include "groonga/float.h"
 #include "groonga/geo.h"
 #include "groonga/h3.h"
 #include "groonga/hash.h"
