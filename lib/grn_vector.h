@@ -28,6 +28,50 @@ typedef uint32_t grn_vector_pack_flags;
 #define GRN_VECTOR_PACK_WEIGHT_FLOAT32  (1 << 1)
 #define GRN_VECTOR_PACK_WEIGHT_BFLOAT16 (1 << 2)
 
+static inline size_t
+grn_weight_size(bool is_bfloat16)
+{
+#ifdef GRN_HAVE_BFLOAT16
+  if (is_bfloat16) {
+    return sizeof(grn_bfloat16);
+  }
+#else
+  (void)is_bfloat16;
+#endif
+  return sizeof(float);
+}
+
+static inline float
+grn_weight_get(const void *raw, bool is_bfloat16)
+{
+#ifdef GRN_HAVE_BFLOAT16
+  if (is_bfloat16) {
+    grn_bfloat16 weight;
+    grn_memcpy(&weight, raw, sizeof(grn_bfloat16));
+    return (float)weight;
+  }
+#else
+  (void)is_bfloat16;
+#endif
+  float weight;
+  grn_memcpy(&weight, raw, sizeof(float));
+  return weight;
+}
+
+static inline void
+grn_weight_put(grn_ctx *ctx, grn_obj *bulk, float weight, bool is_bfloat16)
+{
+#ifdef GRN_HAVE_BFLOAT16
+  if (is_bfloat16) {
+    GRN_BFLOAT16_PUT(ctx, bulk, weight);
+    return;
+  }
+#else
+  (void)is_bfloat16;
+#endif
+  GRN_FLOAT32_PUT(ctx, bulk, weight);
+}
+
 grn_rc
 grn_vector_delimit(grn_ctx *ctx, grn_obj *vector, float weight, grn_id domain);
 grn_obj *

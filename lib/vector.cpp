@@ -226,15 +226,8 @@ grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
 {
   size_t element_size = grn_type_id_size(ctx, uvector->header.domain);
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
-#ifdef GRN_HAVE_BFLOAT16
-    if (grn_obj_is_bfloat16_weight_uvector(ctx, uvector)) {
-      element_size += sizeof(grn_bfloat16);
-    } else {
-      element_size += sizeof(float);
-    }
-#else
-    element_size += sizeof(float);
-#endif
+    element_size +=
+      grn_weight_size(grn_obj_is_bfloat16_weight_uvector(ctx, uvector));
   }
   return static_cast<uint32_t>(element_size);
 }
@@ -465,13 +458,9 @@ grn_vector_pack(grn_ctx *ctx,
     for (uint32_t i = 0; i < n; ++i) {
       grn_section *section = &(vector->u.v.sections[i + offset]);
       if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
-        GRN_FLOAT32_PUT(ctx, footer, section->weight);
+        grn_weight_put(ctx, footer, section->weight, false);
       } else if (flags & GRN_VECTOR_PACK_WEIGHT_BFLOAT16) {
-#ifdef GRN_HAVE_BFLOAT16
-        GRN_BFLOAT16_PUT(ctx, footer, section->weight);
-#else
-        GRN_FLOAT32_PUT(ctx, footer, section->weight);
-#endif
+        grn_weight_put(ctx, footer, section->weight, true);
       } else {
         grn_text_benc(ctx, footer, static_cast<unsigned int>(section->weight));
       }
@@ -535,18 +524,11 @@ grn_vector_unpack(grn_ctx *ctx,
           return GRN_INVALID_ARGUMENT;
         }
         if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
-          grn_memcpy(&(section->weight), p, sizeof(float));
-          p += sizeof(float);
+          section->weight = grn_weight_get(p, false);
+          p += grn_weight_size(false);
         } else if (flags & GRN_VECTOR_PACK_WEIGHT_BFLOAT16) {
-#ifdef GRN_HAVE_BFLOAT16
-          grn_bfloat16 weight_bfloat16;
-          grn_memcpy(&weight_bfloat16, p, sizeof(grn_bfloat16));
-          p += sizeof(grn_bfloat16);
-          section->weight = static_cast<float>(weight_bfloat16);
-#else
-          grn_memcpy(&(section->weight), p, sizeof(float));
-          p += sizeof(float);
-#endif
+          section->weight = grn_weight_get(p, true);
+          p += grn_weight_size(true);
         } else {
           uint32_t weight;
           GRN_B_DEC(weight, p);
@@ -750,15 +732,10 @@ grn_uvector_add_element_record(grn_ctx *ctx,
   }
   GRN_RECORD_PUT(ctx, uvector, id);
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
-    if (grn_obj_is_bfloat16_weight_uvector(ctx, uvector)) {
-#ifdef GRN_HAVE_BFLOAT16
-      GRN_BFLOAT16_PUT(ctx, uvector, weight);
-#else
-      GRN_FLOAT32_PUT(ctx, uvector, weight);
-#endif
-    } else {
-      GRN_FLOAT32_PUT(ctx, uvector, weight);
-    }
+    grn_weight_put(ctx,
+                   uvector,
+                   weight,
+                   grn_obj_is_bfloat16_weight_uvector(ctx, uvector));
   }
 exit:
   GRN_API_RETURN(ctx->rc);
@@ -803,15 +780,8 @@ grn_uvector_get_element_record(grn_ctx *ctx,
     size_t element_value_size = sizeof(grn_id);
     size_t element_size = element_value_size;
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      if (grn_obj_is_bfloat16_weight_uvector(ctx, uvector)) {
-#ifdef GRN_HAVE_BFLOAT16
-        element_size += sizeof(grn_bfloat16);
-#else
-        element_size += sizeof(float);
-#endif
-      } else {
-        element_size += sizeof(float);
-      }
+      element_size +=
+        grn_weight_size(grn_obj_is_bfloat16_weight_uvector(ctx, uvector));
     }
     const char *elements_start = GRN_BULK_HEAD(uvector);
     const char *elements_end = GRN_BULK_CURR(uvector);
@@ -827,20 +797,9 @@ grn_uvector_get_element_record(grn_ctx *ctx,
     id = *((grn_id *)(elements_start + (element_size * offset)));
     if (weight) {
       if (grn_obj_is_weight_uvector(ctx, uvector)) {
-        if (grn_obj_is_bfloat16_weight_uvector(ctx, uvector)) {
-#ifdef GRN_HAVE_BFLOAT16
-          grn_bfloat16 weight_bfloat16 =
-            *reinterpret_cast<const grn_bfloat16 *>(
-              elements_start + (element_size * offset) + element_value_size);
-          *weight = static_cast<float>(weight_bfloat16);
-#else
-          *weight = *reinterpret_cast<const float *>(
-            elements_start + (element_size * offset) + element_value_size);
-#endif
-        } else {
-          *weight = *reinterpret_cast<const float *>(
-            elements_start + (element_size * offset) + element_value_size);
-        }
+        *weight = grn_weight_get(
+          elements_start + (element_size * offset) + element_value_size,
+          grn_obj_is_bfloat16_weight_uvector(ctx, uvector));
       } else {
         *weight = 0.0;
       }
@@ -910,15 +869,8 @@ grn_uvector_join(grn_ctx *ctx,
   uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
   uint32_t element_content_size = element_size;
   if (grn_obj_is_weight_uvector(ctx, uvector)) {
-    if (grn_obj_is_bfloat16_weight_uvector(ctx, uvector)) {
-#ifdef GRN_HAVE_BFLOAT16
-      element_content_size -= static_cast<uint32_t>(sizeof(grn_bfloat16));
-#else
-      element_content_size -= static_cast<uint32_t>(sizeof(float));
-#endif
-    } else {
-      element_content_size -= static_cast<uint32_t>(sizeof(float));
-    }
+    element_content_size -= static_cast<uint32_t>(
+      grn_weight_size(grn_obj_is_bfloat16_weight_uvector(ctx, uvector)));
   }
   uint32_t n_elements = grn_uvector_size_internal(ctx, uvector);
   uint32_t i;
