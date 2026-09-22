@@ -2672,6 +2672,33 @@ GRN_API grn_rc
 grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len);
 GRN_API char *
 grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk);
+/**
+ * \brief Return the content of the given bulk.
+ *
+ * This is the function version of \ref GRN_BULK_HEAD. Use this when you
+ * can't use a macro such as in a binding for another language.
+ *
+ * \param ctx The context object.
+ * \param bulk The bulk object.
+ *
+ * \return The content of `bulk`. It's not `NUL` terminated. Use
+ *         \ref grn_bulk_get_size to get its size.
+ */
+GRN_API const char *
+grn_bulk_get_head(grn_ctx *ctx, grn_obj *bulk);
+/**
+ * \brief Return the size of the content of the given bulk.
+ *
+ * This is the function version of \ref GRN_BULK_VSIZE. Use this when you
+ * can't use a macro such as in a binding for another language.
+ *
+ * \param ctx The context object.
+ * \param bulk The bulk object.
+ *
+ * \return The size of the content of `bulk` in bytes.
+ */
+GRN_API size_t
+grn_bulk_get_size(grn_ctx *ctx, grn_obj *bulk);
 GRN_API grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 
