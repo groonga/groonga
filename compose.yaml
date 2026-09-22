@@ -44,3 +44,22 @@ services:
     shm_size: 512mb
     volumes:
       - .:/source:delegated
+
+  wasi:
+    image: ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-wasi
+    build:
+      cache_from:
+        - ghcr.io/${GITHUB_REPOSITORY:-groonga/groonga}:ci-wasi
+      cache_to:
+        - type=inline
+      context: dockerfiles
+      dockerfile: wasi.dockerfile
+      args:
+        NODE_VERSION: "24"
+        WASI_SDK_VERSION: "34"
+    shm_size: 512mb
+    volumes:
+      - .:/source:delegated
+    command:
+      /source/dockerfiles/wasi-run.sh
+

@@ -114,7 +114,32 @@ set(GRN_ALL_SOURCES
     ${LIBGRNPROC_C_SOURCES}
     ${LIBGRNPROC_CPP_SOURCES}
     ${LIBGROONGA_METADATA_SOURCES})
-if(GRN_EMBED)
+if(WASI)
+  # WASI doesn't support dynamic linking. libgroonga.wasm is a
+  # WebAssembly module that exports the C API.
+  add_executable(libgroonga ${GRN_ALL_SOURCES})
+  set_target_properties(libgroonga PROPERTIES PREFIX "lib" SUFFIX ".wasm")
+  target_link_options(
+    libgroonga
+    PRIVATE
+    # libgroonga.wasm is a library. So it doesn't have main().
+    "-mexec-model=reactor"
+    # Export all symbols that have the default visibility. See GRN_API
+    # in lib/grn.h.
+    "-Wl,--export-dynamic"
+    # A user of libgroonga.wasm needs them to pass a string to the C
+    # API and to use a callback of the C API.
+    "-Wl,--export=malloc"
+    "-Wl,--export=free"
+    "-Wl,--export-table"
+    "-Wl,--growable-table"
+    # The default stack size of wasm-ld is only 64KiB. Stack overflow
+    # corrupts static data silently because the stack is placed after
+    # static data by default. Use 8MiB like the main thread on Linux
+    # and place the stack first to detect stack overflow as a trap.
+    "-Wl,--stack-first"
+    "-Wl,-z,stack-size=8388608")
+elseif(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PUBLIC GRN_STATIC)
   target_compile_definitions(libgroonga PUBLIC GRN_EMBEDDED)
@@ -138,7 +163,9 @@ target_include_directories(
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
-set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
+if(NOT WASI)
+  set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
+endif()
 
 # We require Lemon (SQLite) 3.52.0 or later but Lemon doesn't provide
 # a way to get version information. ("lemon -x" always prints "Lemon
@@ -170,33 +197,40 @@ else()
   target_include_directories(
     libgroonga
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}/groonga>")
-  install(
-    TARGETS libgroonga
-    EXPORT libgroonga_export
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-  set(CONFIG_CMAKE "GroongaConfig.cmake")
-  set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
-  configure_package_config_file("${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
-                                INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
-  set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
-  set(BUILT_CONFIG_VERSION_CMAKE
-      "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
-  write_basic_package_version_file("${BUILT_CONFIG_VERSION_CMAKE}"
-                                   COMPATIBILITY AnyNewerVersion)
-  install(FILES "${BUILT_CONFIG_CMAKE}" "${BUILT_CONFIG_VERSION_CMAKE}"
-          DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
-  install(
-    EXPORT libgroonga_export
-    DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
-    NAMESPACE "Groonga::"
-    FILE "GroongaTargets.cmake")
-  if(MSVC)
+  if(WASI)
+    # Exporting libgroonga.wasm requires exporting grn_dependencies
+    # too. We don't provide the CMake package for WASI for now.
+    install(TARGETS libgroonga RUNTIME DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  else()
     install(
-      FILES $<TARGET_PDB_FILE:libgroonga>
-      DESTINATION "${CMAKE_INSTALL_BINDIR}"
-      OPTIONAL)
+      TARGETS libgroonga
+      EXPORT libgroonga_export
+      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    set(CONFIG_CMAKE "GroongaConfig.cmake")
+    set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
+    configure_package_config_file(
+      "${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
+      INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+    set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
+    set(BUILT_CONFIG_VERSION_CMAKE
+        "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
+    write_basic_package_version_file("${BUILT_CONFIG_VERSION_CMAKE}"
+                                     COMPATIBILITY AnyNewerVersion)
+    install(FILES "${BUILT_CONFIG_CMAKE}" "${BUILT_CONFIG_VERSION_CMAKE}"
+            DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+    install(
+      EXPORT libgroonga_export
+      DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
+      NAMESPACE "Groonga::"
+      FILE "GroongaTargets.cmake")
+    if(MSVC)
+      install(
+        FILES $<TARGET_PDB_FILE:libgroonga>
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        OPTIONAL)
+    endif()
   endif()
 endif()
 if(GRN_WITH_MESSAGE_PACK)
@@ -215,8 +249,10 @@ if(GRN_WITH_LLAMA_CPP_BUNDLED)
                         INTERFACE "$<BUILD_INTERFACE:Groonga::ggml-base>")
 endif()
 if(NOT WASI)
-  target_link_libraries(libgroonga PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
+  target_link_libraries(libgroonga PRIVATE Threads::Threads)
 endif()
+# wasi-libc provides dlopen() in libdl.a too.
+target_link_libraries(libgroonga PRIVATE ${CMAKE_DL_LIBS})
 if(WIN32)
   target_link_libraries(libgroonga PRIVATE ws2_32.lib)
 endif()

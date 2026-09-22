@@ -431,6 +431,20 @@ else()
   endif()
 endif()
 
+if(WASI)
+  # wasi-sdk 33 or later provides two C++ standard libraries: with C++
+  # exceptions and without C++ exceptions. These flags are needed to
+  # use the former. They must be used for both compiling and linking.
+  set(GRN_WASI_EXCEPTION_FLAGS
+      "-fwasm-exceptions -mllvm -wasm-use-legacy-eh=false")
+  string(APPEND GRN_C_COMPILE_FLAGS " ${GRN_WASI_EXCEPTION_FLAGS}")
+  string(APPEND GRN_CXX_COMPILE_FLAGS " ${GRN_WASI_EXCEPTION_FLAGS}")
+  string(APPEND CMAKE_EXE_LINKER_FLAGS " -fwasm-exceptions -lunwind")
+  # libgroonga.wasm exports only the C API. See GRN_API in lib/grn.h.
+  set(CMAKE_C_VISIBILITY_PRESET hidden)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+endif()
+
 option(GRN_ALLOW_WARNING "allow warning." ON)
 if(NOT GRN_ALLOW_WARNING)
   if(GRN_C_COMPILER_GNU_LIKE)
@@ -2367,8 +2381,12 @@ if(GRN_EMBED)
 endif()
 add_subdirectory(lib)
 if(NOT GRN_EMBED)
-  add_subdirectory(src)
-  add_subdirectory(plugins)
+  # WASI doesn't support dynamic linking. So we can't use plugins. We
+  # don't provide the groonga command for WASI yet.
+  if(NOT WASI)
+    add_subdirectory(src)
+    add_subdirectory(plugins)
+  endif()
   add_subdirectory(include)
   add_subdirectory(data)
 endif()
