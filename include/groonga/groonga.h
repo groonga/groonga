@@ -513,6 +513,8 @@ grn_ctx_get_command_version(grn_ctx *ctx);
  * This is the function version of `ctx->rc`. Use this when you can't
  * access a struct member such as in a binding for another language.
  *
+ * \since 16.1.1
+ *
  * \param ctx The context object.
  *
  * \return The return code of the last operation.
@@ -525,6 +527,8 @@ grn_ctx_get_rc(grn_ctx *ctx);
  * This is the function version of `ctx->errbuf`. Use this when you can't
  * access a struct member such as in a binding for another language.
  *
+ * \since 16.1.1
+ *
  * \param ctx The context object.
  *
  * \return The `NUL` terminated error message of the last operation. It's
@@ -534,6 +538,8 @@ GRN_API const char *
 grn_ctx_get_error_message(grn_ctx *ctx);
 /**
  * \brief Check whether the given context received the `quit` command.
+ *
+ * \since 16.1.1
  *
  * \param ctx The context object.
  *
@@ -2743,6 +2749,8 @@ grn_bulk_rewind(grn_ctx *ctx, grn_obj *bulk);
  * This is the function version of \ref GRN_BULK_HEAD. Use this when you
  * can't use a macro such as in a binding for another language.
  *
+ * \since 16.1.1
+ *
  * \param ctx The context object.
  * \param bulk The bulk object.
  *
@@ -2756,6 +2764,8 @@ grn_bulk_get_head(grn_ctx *ctx, grn_obj *bulk);
  *
  * This is the function version of \ref GRN_BULK_VSIZE. Use this when you
  * can't use a macro such as in a binding for another language.
+ *
+ * \since 16.1.1
  *
  * \param ctx The context object.
  * \param bulk The bulk object.
