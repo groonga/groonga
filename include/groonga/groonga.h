@@ -2707,6 +2707,37 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len);
 GRN_API char *
 grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk);
 /**
+ * \brief Set the content of the given bulk.
+ *
+ * This is the function version of \ref GRN_TEXT_SET. Use this when you
+ * can't use a macro such as in a binding for another language.
+ *
+ * If `bulk` is opened with \ref GRN_OBJ_DO_SHALLOW_COPY, `bulk` just
+ * refers `content`. `content` must be alive while `bulk` is used.
+ *
+ * \since 16.1.1
+ *
+ * \param ctx The context object.
+ * \param bulk The bulk object.
+ * \param content The content to be set.
+ * \param size The size of `content` in bytes.
+ */
+GRN_API void
+grn_bulk_set(grn_ctx *ctx, grn_obj *bulk, const char *content, size_t size);
+/**
+ * \brief Remove all content of the given bulk.
+ *
+ * This is the function version of \ref GRN_BULK_REWIND. Use this when
+ * you can't use a macro such as in a binding for another language.
+ *
+ * \since 16.1.1
+ *
+ * \param ctx The context object.
+ * \param bulk The bulk object.
+ */
+GRN_API void
+grn_bulk_rewind(grn_ctx *ctx, grn_obj *bulk);
+/**
  * \brief Return the content of the given bulk.
  *
  * This is the function version of \ref GRN_BULK_HEAD. Use this when you

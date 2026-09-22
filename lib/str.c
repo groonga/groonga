@@ -3917,6 +3917,18 @@ grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk)
   return data;
 }
 
+void
+grn_bulk_set(grn_ctx *ctx, grn_obj *bulk, const char *content, size_t size)
+{
+  GRN_TEXT_SET(ctx, bulk, content, size);
+}
+
+void
+grn_bulk_rewind(grn_ctx *ctx, grn_obj *bulk)
+{
+  GRN_BULK_REWIND(bulk);
+}
+
 const char *
 grn_bulk_get_head(grn_ctx *ctx, grn_obj *bulk)
 {
