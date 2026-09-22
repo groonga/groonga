@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2025  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1312,6 +1312,24 @@ grn_ctx_get_command_version(grn_ctx *ctx)
   } else {
     return GRN_COMMAND_VERSION_STABLE;
   }
+}
+
+grn_rc
+grn_ctx_get_rc(grn_ctx *ctx)
+{
+  return ctx->rc;
+}
+
+const char *
+grn_ctx_get_error_message(grn_ctx *ctx)
+{
+  return ctx->errbuf;
+}
+
+bool
+grn_ctx_is_quitting(grn_ctx *ctx)
+{
+  return ctx->stat == GRN_CTX_QUIT;
 }
 
 grn_rc

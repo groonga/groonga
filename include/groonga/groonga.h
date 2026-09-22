@@ -508,6 +508,40 @@ grn_set_default_command_version(grn_command_version version);
 GRN_API grn_command_version
 grn_ctx_get_command_version(grn_ctx *ctx);
 /**
+ * \brief Return the return code of the last operation in the given context.
+ *
+ * This is the function version of `ctx->rc`. Use this when you can't
+ * access a struct member such as in a binding for another language.
+ *
+ * \param ctx The context object.
+ *
+ * \return The return code of the last operation.
+ */
+GRN_API grn_rc
+grn_ctx_get_rc(grn_ctx *ctx);
+/**
+ * \brief Return the error message of the last operation in the given context.
+ *
+ * This is the function version of `ctx->errbuf`. Use this when you can't
+ * access a struct member such as in a binding for another language.
+ *
+ * \param ctx The context object.
+ *
+ * \return The `NUL` terminated error message of the last operation. It's
+ *         an empty string when the last operation isn't failed.
+ */
+GRN_API const char *
+grn_ctx_get_error_message(grn_ctx *ctx);
+/**
+ * \brief Check whether the given context received the `quit` command.
+ *
+ * \param ctx The context object.
+ *
+ * \return `true` if `ctx` received the `quit` command, `false` otherwise.
+ */
+GRN_API bool
+grn_ctx_is_quitting(grn_ctx *ctx);
+/**
  * \brief Set command version for this context.
  *
  * \param ctx The context object.
