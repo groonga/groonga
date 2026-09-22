@@ -1619,6 +1619,30 @@ for each the same number of sub records:
 ..   --drilldowns[tag].sort_keys _nsubrecs,record_number \
 ..   --drilldowns[tag].output_columns _key,_nsubrecs,record_number
 
+.. _logical-select-slice-related-parameters:
+
+Slice related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 16.1.1
+
+Here are slice related parameters that are supported:
+
+  * ``slices[${LABEL}].match_columns``
+  * ``slices[${LABEL}].query``
+  * ``slices[${LABEL}].query_flags``
+  * ``slices[${LABEL}].filter``
+  * ``slices[${LABEL}].sort_keys``
+  * ``slices[${LABEL}].output_columns``
+  * ``slices[${LABEL}].offset``
+  * ``slices[${LABEL}].limit``
+  * ``slices[${LABEL}].columns[${NAME}]``
+  * ``slices[${LABEL}].drilldowns[${LABEL}]``
+
+See :ref:`select-slice-related-parameters` for details.
+
+``slices[${LABEL}].sort_keys`` has the same limitation as :ref:`logical-select-sort-keys`.
+
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
 
