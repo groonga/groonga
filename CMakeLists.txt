@@ -2381,13 +2381,16 @@ if(GRN_EMBED)
 endif()
 add_subdirectory(lib)
 if(NOT GRN_EMBED)
-  # WASI doesn't support dynamic linking. So we can't use plugins. We
-  # don't provide the groonga command for WASI yet.
   if(NOT WASI)
+    # We don't provide the groonga command for WASI yet.
     add_subdirectory(src)
+    # WASI doesn't support dynamic linking. So we can't use plugins.
     add_subdirectory(plugins)
+    # We don't install headers for WASI because a user of
+    # libgroonga.wasm uses the C API from JavaScript and so on. They
+    # don't use a C compiler.
+    add_subdirectory(include)
   endif()
-  add_subdirectory(include)
   add_subdirectory(data)
 endif()
 option(GRN_WITH_DOC "build document" OFF)
@@ -2415,7 +2418,7 @@ set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
-if(NOT GRN_EMBED)
+if(NOT GRN_EMBED AND NOT WASI)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
           DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif()
