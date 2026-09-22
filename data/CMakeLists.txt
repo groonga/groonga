@@ -1,4 +1,5 @@
-# Copyright(C) 2012-2015 Brazil
+# Copyright (C) 2012-2015  Brazil
+# Copyright (C) 2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +15,13 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(html)
+if(NOT WASI)
+  # The administration HTML is served by the HTTP server mode. We
+  # don't provide it for WASI yet.
+  add_subdirectory(html)
+  # groonga.conf is read by the groonga command. We don't provide the
+  # groonga command for WASI yet.
+  install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
+endif()
 
-install(FILES groonga.conf synonyms.tsv DESTINATION "${GRN_CONFIG_DIR}/")
+install(FILES synonyms.tsv DESTINATION "${GRN_CONFIG_DIR}/")

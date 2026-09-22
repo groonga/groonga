@@ -288,8 +288,10 @@ jobs:
       - name: Extract source archive
         run: |
           tar xzf groonga-*.tar.gz
-          echo "SOURCE_DIRECTORY=$(echo groonga-*/ | sed -e 's,/$,,')" >> \
-            ${GITHUB_ENV}
+          source_directory=$(echo groonga-*/ | sed -e 's,/$,,')
+          version=$(echo ${source_directory} | sed -e 's,^groonga-,,')
+          echo "SOURCE_DIRECTORY=${source_directory}" >> ${GITHUB_ENV}
+          echo "BASE_NAME=groonga-wasm-${version}" >> ${GITHUB_ENV}
       - name: Login to GitHub Container registry
         uses: docker/login-action@v4
         with:
@@ -305,21 +307,34 @@ jobs:
           docker compose build wasi
       - name: Build
         run: |
-          mkdir -p wasi
-          chmod -R go+rwx wasi
+          mkdir -p ${BASE_NAME}
+          # The container runs as a different user. So it can't write
+          # to the directory that is created by this user.
+          chmod go+w ${BASE_NAME}
           docker run \
             --env PREFIX=/install \
             --rm \
             --volume ${PWD}/dockerfiles:/dockerfiles:ro \
             --volume ${PWD}/${SOURCE_DIRECTORY}:/source:ro \
-            --volume ${PWD}/wasi:/install \
+            --volume ${PWD}/${BASE_NAME}:/install \
             ghcr.io/${{ github.repository }}:ci-wasi \
             /dockerfiles/wasi-run.sh
+          chmod go-w ${BASE_NAME}
       - name: Push the built Docker image
         if: github.ref_name == 'main'
         continue-on-error: true
         run: |
           docker compose push wasi
+      - name: Create archive
+        run: |
+          tar czf ${BASE_NAME}.tar.gz ${BASE_NAME}
+
+      # Artifact
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-wasm
+          path: |
+            groonga-wasm-*.tar.gz
 
   prepare-for-release:
     name: Prepare for release
