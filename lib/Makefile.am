@@ -133,9 +133,11 @@ EXTRA_DIST =						\
 	grn_ecmascript.c				\
 	grn_ecmascript.h				\
 	grn_ecmascript.lemon				\
+	libgroonga.mjs					\
 	nfkc.rb						\
 	normalizer_html_expand_named_char_ref.c		\
-	normalizer_html_expand_named_char_ref.rb
+	normalizer_html_expand_named_char_ref.rb		\
+	wasm_callback.c
 
 CLEANFILES = *.gcno *.gcda
 

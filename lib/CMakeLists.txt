@@ -148,6 +148,23 @@ else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
 endif()
+if(WASI)
+  add_executable(libgroonga_callback wasm_callback.c)
+  set_target_properties(
+    libgroonga_callback PROPERTIES OUTPUT_NAME "libgroonga-callback" SUFFIX
+                                                                     ".wasm")
+  target_link_options(
+    libgroonga_callback
+    PRIVATE
+    # This module only forwards a call. So it doesn't have main() and
+    # doesn't need libc.
+    "-mexec-model=reactor"
+    "-nostdlib"
+    "-Wl,--no-entry"
+    "-Wl,--strip-all")
+  install(TARGETS libgroonga_callback DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  install(FILES libgroonga.mjs DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
 if(GRN_WITH_LTO AND CFLAG_WERROR_ODR)
   target_link_options(libgroonga PRIVATE -Werror=odr)
 endif()
