@@ -69,7 +69,12 @@
 #  include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
-#ifdef GRN_STATIC
+#ifdef __wasi__
+/* libgroonga.wasm exports the C API. wasm-ld exports a symbol that has
+ * the default visibility with -Wl,--export-dynamic. */
+#  define GRN_API __attribute__((visibility("default")))
+#  define GRN_VAR extern
+#elif defined(GRN_STATIC)
 #  define GRN_API
 #  define GRN_VAR extern
 #else
