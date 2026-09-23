@@ -303,7 +303,7 @@ See: #{latest_release_url}#{latest_release_anchor}
         refresh_token: ENV["X_REFRESH_TOKEN"],
       }
       x_client = X::Client.new(**x_credentials)
-      x_client.refresh_token!
+      x_client.authenticator.refresh_token!
       x_client.post("tweets", tweet_body.to_json)
     end
   end
