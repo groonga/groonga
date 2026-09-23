@@ -229,6 +229,7 @@ repos:
           ?CMakePresets\.json|
           ?doc/source/.*\.md|
           ?lib/libgroonga\.mjs|
+          ?src/groonga\.mjs|
           )
   - repo: https://github.com/sphinx-contrib/sphinx-lint
     rev: v1.0.0

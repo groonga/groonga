@@ -11,7 +11,8 @@ noinst_PROGRAMS += groonga-mruby
 endif
 
 EXTRA_DIST =					\
-	CMakeLists.txt
+	CMakeLists.txt				\
+	groonga.mjs
 
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\

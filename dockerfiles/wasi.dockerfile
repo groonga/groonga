@@ -24,9 +24,11 @@ RUN \
   quiet="-o=Dpkg::Use-Pty=0" && \
   apt update ${quiet} -o="APT::Acquire::Retries=3" && \
   apt install -y -V ${quiet} -o="APT::Acquire::Retries=3" \
+    build-essential \
     ccache \
     cmake \
-    ninja-build && \
+    ninja-build \
+    ruby-dev && \
   apt clean && \
   rm -rf /var/lib/apt/lists/*
 
@@ -51,6 +53,10 @@ RUN \
   mv /opt/${base_name} /opt/wasi-sdk
 
 ENV WASI_SDK_PATH=/opt/wasi-sdk
+
+RUN \
+  gem install --no-document \
+    "grntest:>=1.8.8"
 
 USER node
 WORKDIR /home/node
