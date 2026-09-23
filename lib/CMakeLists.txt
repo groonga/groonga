@@ -163,7 +163,8 @@ if(WASI)
     "-Wl,--no-entry"
     "-Wl,--strip-all")
   install(TARGETS libgroonga_callback DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-  install(FILES libgroonga.mjs DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  install(FILES libgroonga.mjs libgroonga-node.mjs libgroonga-wasi.mjs
+                libgroonga-web.mjs DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 endif()
 if(GRN_WITH_LTO AND CFLAG_WERROR_ODR)
   target_link_options(libgroonga PRIVATE -Werror=odr)

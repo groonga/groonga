@@ -169,3 +169,6 @@ Makefile
 Makefile.in
 cmake_install.cmake
 version.sh
+
+# Created by the user for examples/web/.
+/examples/web/database/

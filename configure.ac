@@ -1646,6 +1646,7 @@ AC_CONFIG_FILES([
   doc/locale/ja/Makefile
   examples/Makefile
   examples/dictionary/Makefile
+  examples/web/Makefile
   examples/dictionary/edict/Makefile
   examples/dictionary/gene95/Makefile
   examples/dictionary/jmdict/Makefile
