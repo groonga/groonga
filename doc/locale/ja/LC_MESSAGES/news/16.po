@@ -17,11 +17,197 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.1.0 - 2026-08-28"
-msgstr "16.1.0リリース - 2026-08-28"
+msgid "Release 16.1.1 - 2026-09-23"
+msgstr "16.1.1リリース - 2026-09-23"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for parallel execution by `n_workers`"
+msgstr "[{doc}`/reference/commands/logical_select`] `n_workers` による並列実行に対応"
+
+msgid "`logical_select` executes the following processes in parallel when `--n_workers` is `-1` or `2` or more:"
+msgstr "`--n_workers` に `-1` または `2` 以上を指定すると、 `logical_select` は次の処理を並列に実行します。"
+
+msgid "Searching each shard"
+msgstr "各シャードの検索"
+
+msgid "Each key of `--drilldown`"
+msgstr "`--drilldown` の各キー"
+
+msgid "Independent `--drilldowns[${LABEL}]`"
+msgstr "依存関係のない `--drilldowns[${LABEL}]`"
+
+msgid "\"Independent\" means that a drilldown doesn't refer to the result of another drilldown by `--drilldowns[${LABEL}].table`. A drilldown that refers to the result of another drilldown is executed after the referred drilldown is finished. Therefore, the degree of parallelism is reduced if drilldowns have dependencies."
+msgstr "依存関係がないとは、 `--drilldowns[${LABEL}].table` を使用して他のドリルダウンの結果を参照していないことです。他のドリルダウンの結果を参照しているドリルダウンは、参照先のドリルダウンが終わってから実行します。そのため、依存関係があると並列度が下がります。"
+
+msgid "For example, `logical_select` with `--n_workers 2` against 20 shards that have 4,000,000 records in total is 1.5x faster than `--n_workers 1` on a 20-core machine."
+msgstr "例えば、合計400万レコードの20個のシャードに対して `--n_workers 2` を指定した `logical_select` は、20コアのマシンで `--n_workers 1` を指定した場合より1.5倍高速です。"
+
+msgid "Note that the following behaviors are changed when `logical_select` is executed in parallel:"
+msgstr "注意： `logical_select` を並列に実行すると、次の挙動が変わります。"
+
+msgid "All shards are processed even if one of them fails. The first error is reported."
+msgstr "いずれかのシャードの処理が失敗しても、すべてのシャードを処理します。また、最初のエラーを報告します。"
+
+msgid "Query log entries of each shard such as `filter(N)[SHARD]` and `select(N)[SHARD]` are logged in finished order not in shard order."
+msgstr "`filter(N)[SHARD]` や `select(N)[SHARD]` といった各シャードのクエリーログは、シャード順ではなく終了順に出力します。"
+
+msgid "Query log entries of drilldowns are also improved. `drilldown(N)` and `drilldowns[${LABEL}](N)` show their keys and the filter operation of a drilldown shows its prefix such as `drilldowns[${LABEL}].filter(N)`."
+msgstr "ドリルダウンのクエリーログも改良しました。 `drilldown(N)` と `drilldowns[${LABEL}](N)` はキーを出力するようになり、ドリルダウンのフィルター操作は `drilldowns[${LABEL}].filter(N)` のようにプレフィックスを出力するようになりました。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added `shard[${LABEL}].table`"
+msgstr "[{doc}`/reference/commands/logical_select`] `shard[${LABEL}].table` を追加"
+
+msgid "`logical_select` finds actual tables automatically by `${LOGICAL_TABLE}_${YYYYMMDD}` naming rule. So you couldn't use `logical_select` for actual tables that don't follow the naming rule."
+msgstr "`logical_select` は `${LOGICAL_TABLE}_${YYYYMMDD}` という命名規則に基づいて実際のテーブルを自動的に特定します。そのため、この命名規則に従っていない実際のテーブルに対しては `logical_select` を使えませんでした。"
+
+msgid "You can specify actual tables explicitly by `--shard[${LABEL}].table`:"
+msgstr "`--shard[${LABEL}].table` を使って実際のテーブルを明示的に指定できます。"
+
+msgid "`${LABEL}` is just a label. It's used only for sorting the specified actual tables."
+msgstr "`${LABEL}` は単なるラベルです。これは指定された実際のテーブルを並べ替えるためにのみ使用されます。"
+
+msgid "You don't need to specify `--logical_table` when you specify one or more `--shard[${LABEL}].table`."
+msgstr "1つ以上の `--shard[${LABEL}].table` を指定した場合、 `--logical_table` を指定する必要はありません。"
+
+msgid "Note that a label isn't used for choosing shards to be searched with `--min` and `--max` even when it looks like `YYYYMM` or `YYYYMMDD`. All of the specified actual tables are searched."
+msgstr "注意： `--min` や `--max` と一緒に使うとき、ラベルが `YYYYMM` や `YYYYMMDD` であっても、シャードの取捨選択には使いません。指定された実際のテーブルをすべて検索します。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for keys other than `shard_key` in `sort_keys`"
+msgstr "[{doc}`/reference/commands/logical_select`] `sort_keys` で `shard_key` 以外のキーをサポート"
+
+msgid "Only the same key as `shard_key` was supported. You can use other keys now. Records of all search target shards are sorted as one result set."
+msgstr "`shard_key` と同じキーのみをサポートしていました。それ以外のキーも使えるようになりました。検索対象のすべてのシャードのレコードを1つの結果セットとしてソートします。"
+
+msgid "Note that you can't use a vector column in `sort_keys` with multiple shards. {doc}`/reference/scorers/scorer_tf_idf` should use the number of records in all shards but it uses the number of records in each shard. So its score isn't accurate with multiple shards."
+msgstr "注意: `sort_keys` でベクターカラムはまだサポートしていません。また {doc}`/reference/scorers/scorer_tf_idf` は本来すべてのシャードのレコード数を使って計算すべきですが、各シャード内のレコード数で計算されます。そのため、複数のシャードでは正確なスコアになりません。"
+
+msgid "The cost of sorting depends on `offset + limit` because each shard sorts the top `offset + limit` records. Sorting with a large `offset` is slow."
+msgstr "各シャードの上位 `offset + limit` 件を使ってソートするため、ソートのコストは `offset + limit` に依存します。大きな `offset` を指定したソートは遅くなります。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for `slices[${LABEL}]`"
+msgstr "[{doc}`/reference/commands/logical_select`] `slices[${LABEL}]` をサポート"
+
+msgid "You can get multiple search results with one `logical_select` as with {doc}`/reference/commands/select`."
+msgstr "{doc}`/reference/commands/select` と同様に、1度の `logical_select` で複数の検索結果を取得できます。"
+
+msgid "Note that only some of slice related parameters in {doc}`/reference/commands/select` are supported. See {doc}`/reference/commands/logical_select` for supported parameters."
+msgstr "注意: 現在 {doc}`/reference/commands/select` のスライス関連の引数のうち、一部のみをサポートしています。サポートしている引数は {doc}`/reference/commands/logical_select` を参照してください。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for `query_flags`"
+msgstr "[{doc}`/reference/commands/logical_select`] `query_flags` をサポート"
+
+msgid "It's the same as `query_flags` of {doc}`/reference/commands/select`."
+msgstr "{doc}`/reference/commands/select` の `query_flags` と同じものです。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Added support for `columns[${NAME}].stage=output`"
+msgstr "[{doc}`/reference/commands/logical_select`] `columns[${NAME}].stage=output` をサポート"
+
+msgid "A dynamic column of the `output` stage is created only for output target records. So it's faster than the `filtered` stage when you use it only in `output_columns`."
+msgstr "`output` ステージの動的カラムは出力対象のレコードに対してだけ作成します。そのため、`output_columns` の中だけで使う場合は `filtered` ステージより高速です。"
+
+msgid "[BFloat16] Changed the conversion from `Float32` to `BFloat16` to round to nearest even"
+msgstr "[BFloat16] `Float32` から `BFloat16` への変換を、最も近い偶数に丸めるようにしました"
+
+msgid "We truncated the lower 16 bits of `Float32`. Round to nearest even is used now. It's the standard conversion that is used by Intel AVX512-BF16, Arm, TensorFlow and PyTorch."
+msgstr "これまでは `Float32` の下位16ビットを切り捨てていました。これを最も近い偶数に丸めるようにしました。これは Intel AVX512-BF16 や Arm 、TensorFlow、PyTorch などで採用されている標準的な変換方法です。"
+
+msgid "Truncation has a bias and may convert NaN to Inf."
+msgstr "切り捨て処理には偏りがあり、NaNをInfに変換する場合があります。"
+
+msgid "Note that a converted value may be different from the value that is converted by 16.1.0 or earlier."
+msgstr "注意: 変換後の値は、バージョン16.1.0以前で変換された値とは異なる場合があります。"
+
+msgid "Deprecated `BFloat16` conversion functions"
+msgstr "非推奨となった `BFloat16` 変換関数"
+
+msgid "They are just casts now. Use a cast instead."
+msgstr "これらは単なるキャストになりました。キャストを使ってください。"
+
+msgid "`grn::numeric::bfloat16_to_float32()`: Use `static_cast<float>(value)` instead."
+msgstr "`grn::numeric::bfloat16_to_float32()`: 代わりに `static_cast<float>(value)` を使ってください。"
+
+msgid "`grn::numeric::to_bfloat16()`: Use `static_cast<grn_bfloat16>(value)` instead."
+msgstr "`grn::numeric::to_bfloat16()`: 代わりに `static_cast<grn_bfloat16>(value)` を使ってください。"
+
+msgid "`grn_bfloat16_to_float32()`: Use `(float)value` instead."
+msgstr "`grn_bfloat16_to_float32()`: 代わりに `(float)value` を使ってください。"
+
+msgid "`grn_float32_to_bfloat16()`: Use `(grn_bfloat16)value` instead."
+msgstr "`grn_float32_to_bfloat16()`: 代わりに `(grn_bfloat16)value` を使ってください。"
+
+msgid "[WASI] Added `libgroonga.wasm` that exports the C API"
+msgstr "[WASI] C API をエクスポートする `libgroonga.wasm` を追加"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "You can use it from JavaScript and so on. `groonga-wasm-${VERSION}.tar.gz` is available as a release asset."
+msgstr "JavaScript などから使うことができます。 `groonga-wasm-${VERSION}.tar.gz` という名前でリリースページからダウンロードできます。"
+
+msgid "Headers aren't provided because a user of `libgroonga.wasm` doesn't use a C compiler. `groonga.pc` isn't provided because `libgroonga.wasm` can't be linked. The `groonga` command isn't provided for WASI yet."
+msgstr "`libgroonga.wasm` を使うユーザーはCコンパイラーを使わないため、ヘッダーは提供していません。`libgroonga.wasm` はリンクできないため、`groonga.pc` は提供していません。WASI では `groonga` コマンドをまだ提供していません。"
+
+msgid "`libgroonga.mjs` is also provided as a convenience wrapper of the C API in `libgroonga.wasm` for JavaScript."
+msgstr "JavaScript向けに `libgroonga.wasm` のC APIをラップした便利な `libgroonga.mjs` も提供しています。"
+
+msgid "`grn_init()` doesn't ignore `SIGPIPE` anymore"
+msgstr "`grn_init()` は `SIGPIPE` を無視しなくなりました"
+
+msgid "This is a behavior change for programs that embed `libgroonga`."
+msgstr "これは `libgroonga` を組み込んでいるプログラムに対する非互換な変更です。"
+
+msgid "Programs that write to pipes must handle `SIGPIPE` by themselves."
+msgstr "パイプに書き込むプログラムは、自分で `SIGPIPE` を処理する必要があります。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that a persistent column specified by `drilldown_calc_target` was closed after grouping"
+msgstr "[{doc}`/reference/commands/logical_select`] `drilldown_calc_target` に指定した永続カラムをグループ化後にクローズしていた問題を修正"
+
+msgid "A persistent column is shared with other contexts. So this may cause a crash."
+msgstr "永続カラムは他のコンテキストと共有しています。そのため、クラッシュする可能性がありました。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that `records` was duplicated in command version 3"
+msgstr "[{doc}`/reference/commands/logical_select`] コマンドバージョン3で `records` が重複していた問題を修正"
+
+msgid "`records` was output multiple times in one result set."
+msgstr "1つの結果セットの中に `records` を複数回出力していました。"
+
+msgid "Fixed a bug that a floating point number was treated as an inverted boolean value"
+msgstr "浮動小数点数の真偽値が反転して扱われていた問題を修正"
+
+msgid "`0.0` was treated as true and a non `0.0` value was treated as false with `Float`, `Float32` and `BFloat16`."
+msgstr "`Float` と `Float32` と `BFloat16` では、`0.0` を真として、`0.0` 以外を偽として扱っていました。"
+
+msgid "So `!float_column`, `float_column && ...` and `... || float_column` in {ref}`select-filter`, {doc}`/reference/functions/between` and `load --ifexists` worked incorrectly."
+msgstr "そのため、{ref}`select-filter` や {doc}`/reference/functions/between`、`load --ifexists` の中の `!float_column` や `float_column && ...`、`... || float_column` が正しく動作していませんでした。"
+
+msgid "[{doc}`/reference/commands/load`] Fixed a bug that a weight for a `BFloat16` weight vector column was rounded twice"
+msgstr "[{doc}`/reference/commands/load`] `BFloat16` の重み付きベクターカラムの重みを2回丸めていた問題を修正"
+
+msgid "A weight in JSON was converted to `Float32` and then converted to `BFloat16`. The result may be different from the directly converted value."
+msgstr "JSON内の重みを `Float32` に変換した後、さらに `BFloat16` に変換していました。その結果、直接変換された値とは異なる場合がありました。"
+
+msgid "For example, `1.003906251` was `1.0` by the twice conversion but it's `1.0078125` by the direct conversion."
+msgstr "例えば`1.003906251` を二重に変換した場合は `1.0` でしたが、直接変換では `1.0078125` になります。"
+
+msgid "Fixed a bug that `distance_cosine()` and `distance_inner_product()` sometimes returned an unexpected value"
+msgstr "`distance_cosine()` と `distance_inner_product()` が予期しない値を返すことがある問題を修正"
+
+msgid "The SIMD implementations read data after the end of a vector in some cases. The result was normally correct because the read data was normally zero. But it was incorrect when the read data was left by the previous use of the buffer."
+msgstr "SIMD実装では、ベクターの終端より後のデータを読む場合がありました。通常は読み込んだデータがゼロであるため結果は正しい値でしたが、以前に使用したバッファでデータが残っていた場合は結果が不正確になっていました。"
+
+msgid "[autotools] Fixed a bug that out-of-source builds fail"
+msgstr "[autotools] ソースディレクトリ外でのビルドが失敗する問題を修正"
+
+msgid "The build directory for a generated file wasn't created."
+msgstr "生成するファイル用のビルドディレクトリを作成していませんでした。"
+
+msgid "Release 16.1.0 - 2026-08-28"
+msgstr "16.1.0リリース - 2026-08-28"
 
 msgid "Fixed a crash bug when allocation of a new segment fails"
 msgstr "新しいセグメントの確保に失敗した時にクラッシュする問題を修正"
@@ -37,9 +223,6 @@ msgstr "このエラーメッセージは、Groongaがメモリ不足やメモ�
 
 msgid "Release 16.0.9 - 2026-08-07"
 msgstr "16.0.9リリース - 2026-08-07"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[benchmark] Remove incorrect `G_GNUC_CONST` usage"
 msgstr "[benchmark] `G_GNUC_CONST`の誤った使い方を削除"
@@ -127,9 +310,6 @@ msgstr "以下のように、`language_model_knn()`を空の値に対して使�
 
 msgid "Experimental features"
 msgstr "実験的な機能"
-
-msgid "This is an experimental feature. Currently, this feature is still not stable."
-msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
 
 msgid "[{doc}`/reference/functions/json_extract`] Added support for `json_extract()`"
 msgstr "[{doc}`/reference/functions/json_extract`] `json_extract()`をサポート"
