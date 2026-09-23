@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2022-2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2022-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+if(WASI)
+  # groonga.mjs is the groonga command for WASI. It uses
+  # libgroonga.mjs in lib/.
+  install(PROGRAMS groonga.mjs DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  return()
+endif()
 
 add_subdirectory(suggest)
 

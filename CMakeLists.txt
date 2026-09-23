@@ -2381,9 +2381,8 @@ if(GRN_EMBED)
 endif()
 add_subdirectory(lib)
 if(NOT GRN_EMBED)
+  add_subdirectory(src)
   if(NOT WASI)
-    # We don't provide the groonga command for WASI yet.
-    add_subdirectory(src)
     # WASI doesn't support dynamic linking. So we can't use plugins.
     add_subdirectory(plugins)
     # We don't install headers for WASI because a user of
