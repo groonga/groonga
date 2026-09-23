@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2024-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ namespace grn {
         auto adjust_size = Arch::alignment() - unaligned_size;
         if ((adjust_size % sizeof(ElementType)) != 0) {
           // Can't align.
-          for (; i < n_elements; i += batch::size) {
+          for (; i + batch::size <= n_elements; i += batch::size) {
             auto vector_batch = batch::load_unaligned(vector_raw + i);
             batch_func(vector_batch);
           }
@@ -56,7 +56,7 @@ namespace grn {
         }
       }
       // Aligned batches.
-      for (; i < n_elements; i += batch::size) {
+      for (; i + batch::size <= n_elements; i += batch::size) {
         auto vector_batch = batch::load_aligned(vector_raw + i);
         batch_func(vector_batch);
       }
@@ -99,7 +99,7 @@ namespace grn {
       }
       if (!aligned) {
         // Can't align.
-        for (; i < n_elements; i += batch::size) {
+        for (; i + batch::size <= n_elements; i += batch::size) {
           auto vector_batch1 = batch::load_unaligned(vector_raw1 + i);
           auto vector_batch2 = batch::load_unaligned(vector_raw2 + i);
           batch_func(vector_batch1, vector_batch2);
@@ -110,7 +110,7 @@ namespace grn {
         return;
       }
       // Aligned batches.
-      for (; i < n_elements; i += batch::size) {
+      for (; i + batch::size <= n_elements; i += batch::size) {
         auto vector_batch1 = batch::load_aligned(vector_raw1 + i);
         auto vector_batch2 = batch::load_aligned(vector_raw2 + i);
         batch_func(vector_batch1, vector_batch2);
