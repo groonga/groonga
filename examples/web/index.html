@@ -1,0 +1,30 @@
+<!doctype html>
+<!--
+  Copyright (C) 2026  Sutou Kouhei <kou@clear-code.com>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Groonga on a Web browser</title>
+  </head>
+  <body>
+    <h1>Groonga on a Web browser</h1>
+    <p>
+      This downloads a file of a Groonga database by HTTP when it's used at
+      first, puts it into an in-memory file system and runs commands by
+      libgroonga.wasm.
+    </p>
+    <p id="status">Loading...</p>
+    <form id="form">
+      <input id="command" size="80" value="status" />
+      <button type="submit">Send</button>
+    </form>
+    <pre id="output"></pre>
+    <script type="module" src="./index.mjs"></script>
+  </body>
+</html>

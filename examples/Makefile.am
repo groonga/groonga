@@ -1,1 +1,3 @@
-SUBDIRS = dictionary
+SUBDIRS =					\
+	dictionary				\
+	web

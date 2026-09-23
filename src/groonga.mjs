@@ -21,7 +21,20 @@ import { resolve } from "node:path";
 import { StringDecoder } from "node:string_decoder";
 import { parseArgs } from "node:util";
 
-import { Groonga, GRN_SUCCESS } from "../lib/libgroonga.mjs";
+// node:wasi reports ExperimentalWarning when it's imported. We always
+// use WASI. So it's just noise. We must remove it before node:wasi is
+// imported. A static import is evaluated before any statement. So we
+// import libgroonga-node.mjs dynamically.
+const emitWarning = process.emitWarning;
+process.emitWarning = (warning, ...rest) => {
+  const type = typeof rest[0] === "string" ? rest[0] : rest[0]?.type;
+  if (type === "ExperimentalWarning" && String(warning).includes("WASI")) {
+    return;
+  }
+  emitWarning.call(process, warning, ...rest);
+};
+
+const { open, GRN_SUCCESS } = await import("../lib/libgroonga-node.mjs");
 
 function parseArguments(rawArguments) {
   // parseArgs() accepts a short option only as an alias of a long
@@ -127,7 +140,7 @@ if (options.workingDirectory) {
   process.chdir(options.workingDirectory);
 }
 
-const groonga = await Groonga.open({
+const groonga = await open({
   logPath: options.logPath && resolve(workingDirectory, options.logPath),
   queryLogPath:
     options.queryLogPath && resolve(workingDirectory, options.queryLogPath),

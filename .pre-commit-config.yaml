@@ -228,6 +228,11 @@ repos:
           (
           ?CMakePresets\.json|
           ?doc/source/.*\.md|
+          ?examples/web/index\.mjs|
+          ?examples/web/serve\.mjs|
+          ?lib/libgroonga-node\.mjs|
+          ?lib/libgroonga-wasi\.mjs|
+          ?lib/libgroonga-web\.mjs|
           ?lib/libgroonga\.mjs|
           ?src/groonga\.mjs|
           )
