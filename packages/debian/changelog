@@ -1,3 +1,9 @@
+groonga (16.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Abe Tomoaki <abe@clear-code.com>  Wed, 23 Sep 2026 04:05:56 -0000
+
 groonga (16.1.0-1) unstable; urgency=low
 
   * New upstream release.
