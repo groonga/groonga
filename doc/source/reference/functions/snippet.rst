@@ -205,12 +205,57 @@ Parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-TODO
+There is one required parameter ``column``.
+
+.. _snippet-column:
+
+``column``
+""""""""""
+
+We specify the snippet target text.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-TODO
+There are fourteen optional parameters.
+
+.. _snippet-keyword:
+
+``keyword``
+"""""""""""
+
+We specify the search keyword.
+We can specify multiple search keywords.
+
+.. _snippet-open-tag:
+
+``open-tag``
+""""""""""""
+
+We specify an open tag put on the start point of the search keyword.
+
+.. _snippet-close-tag:
+
+``close-tag``
+"""""""""""""
+
+We specify a close tag put on the end point of the search keyword.
+
+.. _snippet-default-open-tag:
+
+``default_open_tag``
+""""""""""""""""""""
+
+We specify an open tag put on the start point of the search keyword.
+When we don't specify ``open-tag``, Groonga uses an open tag of ``default_open_tag``.
+
+.. _snippet-default-close-tag:
+
+``default_close_tag``
+"""""""""""""""""""""
+
+We specify a close tag put on the start point of the search keyword.
+When we don't specify ``close-tag``, Groonga uses an open tag of ``default_close_tag``.
 
 .. _snippet-max-n-results:
 
@@ -223,6 +268,57 @@ TODO
 
 ``width``
 """""""""
+
+TODO
+
+.. _snippet-skip-leading-spaces:
+
+``skip_leading_spaces``
+"""""""""""""""""""""""
+
+TODO
+
+.. _snippet-html-escape:
+
+``html_escape``
+"""""""""""""""
+
+TODO
+
+.. _snippet-prefix:
+
+``prefix``
+""""""""""
+
+TODO
+
+.. _snippet-suffix:
+
+``suffix``
+""""""""""
+
+TODO
+
+.. _snippet-normalizer:
+
+``normalizer``
+""""""""""""""
+
+TODO
+
+.. _snippet-default:
+
+``default``
+"""""""""""
+
+TODO
+
+.. versionadded:: 11.0.8
+
+.. _snippet-delimiter-pattern:
+
+``delimiter_pattern``
+"""""""""""""""""""""
 
 TODO
 
