@@ -3013,15 +3013,15 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
     return NULL;
   }
 
-  char path[PATH_MAX];
-  snprintf(path,
-           sizeof(path),
+  char new_partition_path[PATH_MAX];
+  snprintf(new_partition_path,
+           sizeof(new_partition_path),
            "%s.partitions.%d",
            ja->io->path,
            (ja->max_partition_id));
   grn_ja *new_partition =
     grn_ja_create(ctx,
-                  path,
+                  new_partition_path,
                   ja->header->max_element_size,
                   (ja->header->flags & (~GRN_OBJ_COLUMN_LARGE)));
   if (!new_partition) {
