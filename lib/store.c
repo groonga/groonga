@@ -28,6 +28,7 @@
 #include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_db.h"
+#include "grn_util.h"
 #include "grn_vector.h"
 #include "grn_wal.h"
 #include <string.h>
@@ -934,6 +935,45 @@ grn_ja_segment_info_value(grn_ctx *ctx, uint32_t info)
   (SEGMENT_INFO_AT(ja, seg) = SEG_GINFO | (width))
 #define SEGMENT_OFF(ja, seg) (SEGMENT_INFO_AT(ja, seg) = 0)
 
+static void
+grn_ja_open_partitions(grn_ctx *ctx, grn_ja *ja)
+{
+  char partition_map_path[PATH_MAX];
+  snprintf(partition_map_path,
+           sizeof(partition_map_path),
+           "%s.partitions",
+           ja->io->path);
+  if (!grn_path_exist(partition_map_path)) {
+    ; //error handling
+  }
+  ja->partition_mapping = grn_ra_open(ctx, partition_map_path);
+  if (!ja->partition_mapping) {
+    ; //error handling
+  }
+
+  uint8_t n_partitions;
+  for (n_partitions = 0; n_partitions < ja->max_partition_id; n_partitions++) {
+    char partition_path[PATH_MAX];
+    snprintf(partition_path,
+             sizeof(partition_path),
+             "%s.partitoins.%d",
+             ja->io->path,
+             n_partitions);
+    grn_ja *partition = grn_ja_open(ctx, partition_path);
+    if (!partition) {
+      ; //error handling
+    }
+    grn_ja **new_partitions =
+      GRN_REALLOC(ja->partitions, sizeof(grn_ja *) * (n_partitions + 1));
+    if (!new_partitions) {
+      grn_ja_close(ctx, partition);
+      // error handling
+    }
+    ja->partitions = new_partitions;
+    ja->partitions[n_partitions] = partition;
+  }
+}
+
 static grn_ja *
 _grn_ja_create(grn_ctx *ctx,
                grn_ja *ja,
@@ -1091,6 +1131,8 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   ja->header = header;
   GRN_RAW_STRING_INIT(ja->generator);
   ja->parsed_generator = NULL;
+
+  grn_ja_open_partitions(ctx, ja);
 
   return ja;
 }
