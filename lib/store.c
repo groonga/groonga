@@ -3035,6 +3035,7 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
   if (!partitions) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "cannot realloc partitions area for a new partition");
+    grn_ja_close(ctx, new_partition);
     return NULL;
   }
   ja->partitions = partitions;
