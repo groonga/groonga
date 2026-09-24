@@ -3061,8 +3061,16 @@ static grn_ja *
 grn_ja_get_available_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
 {
   uint8_t i;
-  for (i = ja->max_partition_id;; i--) {
+  for (i = (ja->max_partition_id - 1);; i--) {
     if (grn_ja_available(ja->partitions[i])) {
+      grn_obj partition_id;
+      GRN_UINT8_SET(ctx, &partition_id, i);
+      grn_ra_set_value(ctx,
+                       ja->partition_mapping,
+                       id,
+                       &partition_id,
+                       GRN_OBJ_SET);
+      GRN_OBJ_FIN(ctx, &partition_id);
       return ja->partitions[i];
     }
     if (i == 0) break;
