@@ -3042,8 +3042,16 @@ grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
   ja->partitions[ja->max_partition_id] = new_partition;
   grn_obj partition_id;
   GRN_UINT8_SET(ctx, &partition_id, ja->max_partition_id);
-  grn_ra_set_value(ctx, ja->partition_mapping, id, &partition_id, GRN_OBJ_SET);
+  grn_rc rc = grn_ra_set_value(ctx,
+                               ja->partition_mapping,
+                               id,
+                               &partition_id,
+                               GRN_OBJ_SET);
   GRN_OBJ_FIN(ctx, &partition_id);
+  if (rc != GRN_SUCCESS) {
+    ctx->rc = rc;
+    return NULL;
+  }
   ja->max_partition_id++;
 
   return new_partition;
