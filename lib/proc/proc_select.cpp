@@ -2466,15 +2466,16 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx, grn_obj *table)
 
 static grn_obj *
 grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
-                                            grn_select_data *data,
-                                            grn_obj *table)
+                                            grn_obj *table,
+                                            int offset,
+                                            int limit)
 {
   grn_obj *sorted =
     grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, NULL, table);
   if (!sorted) {
     return NULL;
   }
-  grn_table_slice(ctx, table, data->offset, data->limit, sorted);
+  grn_table_slice(ctx, table, offset, limit, sorted);
   return sorted;
 }
 
@@ -3992,8 +3993,9 @@ grn_select_apply_output_dynamic_columns(grn_ctx *ctx, grn_select_data *data)
   if (!data->tables.sorted) {
     data->tables.sorted =
       grn_select_create_no_sort_keys_sorted_table(ctx,
-                                                  data,
-                                                  data->tables.result);
+                                                  data->tables.result,
+                                                  data->offset,
+                                                  data->limit);
     if (!data->tables.sorted) {
       return false;
     }
@@ -4234,9 +4236,12 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       }
     } else {
       grn_obj *sorted = NULL;
+      int output_offset = offset;
       if (drilldown->dynamic_columns.output) {
-        sorted =
-          grn_select_create_no_sort_keys_sorted_table(ctx, data, target_table);
+        sorted = grn_select_create_no_sort_keys_sorted_table(ctx,
+                                                             target_table,
+                                                             output_offset,
+                                                             limit);
         if (!sorted) {
           succeeded = false;
         } else {
@@ -4251,6 +4256,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
           succeeded = (ctx->rc == GRN_SUCCESS);
         }
         target_table = sorted;
+        output_offset = 0;
       }
 
       if (succeeded) {
@@ -4259,7 +4265,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                                               data,
                                               target_table,
                                               n_hits,
-                                              offset,
+                                              output_offset,
                                               limit,
                                               drilldown->output_columns.value,
                                               drilldown->output_columns.length,
