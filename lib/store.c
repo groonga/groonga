@@ -755,6 +755,9 @@ grn_ja_init_from_env(void)
                                           strlen(grn_ja_n_data_segments_env),
                                         NULL);
     }
+    if (grn_ja_n_data_segments > JA_N_DATA_SEGMENTS) {
+      grn_ja_n_data_segments = JA_N_DATA_SEGMENTS;
+    }
   }
 }
 
