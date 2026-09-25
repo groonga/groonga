@@ -730,6 +730,7 @@ grn_ra_set_generator(grn_ctx *ctx, grn_ra *ra, grn_raw_string generator)
 #define JA_N_ELEMENT_SEGMENTS      (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
 
 static uint32_t grn_ja_n_garbages_in_a_segment = JA_N_GARBAGES_IN_A_SEGMENT;
+static uint32_t grn_ja_n_data_segments = JA_N_DATA_SEGMENTS;
 
 void
 grn_ja_init_from_env(void)
@@ -742,6 +743,17 @@ grn_ja_init_from_env(void)
                GRN_ENV_BUFFER_SIZE);
     if (grn_ja_n_garbages_in_a_segment_env[0]) {
       grn_ja_n_garbages_in_a_segment = atoi(grn_ja_n_garbages_in_a_segment_env);
+    }
+    /* Just for test. */
+    char grn_ja_n_data_segments_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GEN_JA_N_DATA_SEGMENTS",
+               grn_ja_n_data_segments_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ja_n_data_segments_env[0]) {
+      grn_ja_n_data_segments = grn_atoi(grn_ja_n_data_segments_env,
+                                        grn_ja_n_data_segments_env +
+                                          strlen(grn_ja_n_data_segments_env),
+                                        NULL);
     }
   }
 }
@@ -949,7 +961,7 @@ _grn_ja_create(grn_ctx *ctx,
                      path,
                      sizeof(struct grn_ja_header_v2),
                      JA_SEGMENT_SIZE,
-                     JA_N_DATA_SEGMENTS,
+                     grn_ja_n_data_segments,
                      GRN_IO_AUTO,
                      GRN_IO_EXPIRE_SEGMENT);
   if (!io) {
@@ -2432,12 +2444,12 @@ grn_ja_free_chunk(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
     wal_data->garbage_segment = lseg_current;
   } else {
     uint32_t segment = 0;
-    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
       if (SEGMENT_INFO_AT(ja, segment) == 0) {
         break;
       }
     }
-    if (segment == JA_N_DATA_SEGMENTS) {
+    if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
                         GRN_NOT_ENOUGH_SPACE,
@@ -2636,12 +2648,12 @@ grn_ja_replace(
   wal_data.segment = ja->header->element_segs[lseg];
   if (wal_data.segment == JA_ELEMENT_SEG_VOID) {
     uint32_t segment;
-    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
       if (SEGMENT_INFO_AT(ja, segment) == 0) {
         break;
       }
     }
-    if (segment == JA_N_DATA_SEGMENTS) {
+    if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
                         GRN_NOT_ENOUGH_SPACE,
@@ -2905,12 +2917,12 @@ grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
   ja_pos *vp = &(ja->header->free_elements[chunk_variation]);
   if (vp->seg == 0) {
     uint32_t seg = 0;
-    for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+    for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
       if (SEGMENT_INFO_AT(ja, seg) == 0) {
         break;
       }
     }
-    if (seg == JA_N_DATA_SEGMENTS) {
+    if (seg == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
                         GRN_NO_MEMORY_AVAILABLE,
@@ -2986,12 +2998,12 @@ grn_ja_alloc_sequential(grn_ctx *ctx, grn_ja_alloc_data *data)
   data->wal_data.position = *(ja->header->curr_pos);
   if (data->wal_data.position + data_size > JA_SEGMENT_SIZE) {
     uint32_t segment;
-    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
       if (SEGMENT_INFO_AT(ja, segment) == 0) {
         break;
       }
     }
-    if (segment == JA_N_DATA_SEGMENTS) {
+    if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(
         ctx,
         (grn_obj *)ja,
@@ -3064,7 +3076,7 @@ grn_ja_alloc_huge(grn_ctx *ctx, grn_ja_alloc_data *data)
   uint32_t i;
   uint32_t last_using_segment = 0;
   uint32_t n_segments = grn_ja_compute_huge_n_segments(data->element_size);
-  for (i = 0; i < JA_N_DATA_SEGMENTS; i++) {
+  for (i = 0; i < grn_ja_n_data_segments; i++) {
     if (SEGMENT_INFO_AT(ja, i) != 0) {
       last_using_segment = i;
       continue;
@@ -3073,7 +3085,7 @@ grn_ja_alloc_huge(grn_ctx *ctx, grn_ja_alloc_data *data)
       break;
     }
   }
-  if (i == JA_N_DATA_SEGMENTS) {
+  if (i == grn_ja_n_data_segments) {
     grn_obj_set_error(ctx,
                       (grn_obj *)ja,
                       GRN_NOT_ENOUGH_SPACE,
@@ -4931,7 +4943,7 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 {
   int nsegs = 0;
   uint32_t seg, ts = 1U << (GRN_JA_W_SEGMENT - threshold);
-  for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+  for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
     if (seg == *(ja->header->curr_seg)) {
       continue;
     }
@@ -5308,7 +5320,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     n_existing_records++;
     uint32_t garbage_segment = ginfo->recs[index].seg;
     uint32_t garbage_position = ginfo->recs[index].pos;
-    if (garbage_segment >= JA_N_DATA_SEGMENTS) {
+    if (garbage_segment >= grn_ja_n_data_segments) {
       GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
@@ -5575,7 +5587,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   uint32_t n_using_segments = 0;
   {
     uint32_t seg;
-    for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+    for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
       int info = SEGMENT_INFO_AT(ja, seg);
       if (info != 0) {
         n_using_segments++;
@@ -5590,7 +5602,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
     {
       GRN_OUTPUT_ARRAY_OPEN("segments", n_using_segments);
       uint32_t seg;
-      for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+      for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
         uint32_t info = SEGMENT_INFO_AT(ja, seg);
         if (info != 0) {
           if (!grn_ja_check_segment(ctx, ja, seg, info)) {
@@ -5631,7 +5643,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             GRN_OUTPUT_UINT32(ja->header->n_garbages[i]);
             uint32_t n_segments = 0;
             uint32_t segment;
-            for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+            for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
               uint32_t info = SEGMENT_INFO_AT(ja, segment);
               if (grn_ja_segment_info_type(ctx, info) != SEG_GINFO) {
                 continue;
@@ -5641,7 +5653,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             GRN_OUTPUT_CSTR("details");
             {
               GRN_OUTPUT_MAP_OPEN("segment", n_segments);
-              for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+              for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
                 uint32_t info = SEGMENT_INFO_AT(ja, segment);
                 if (grn_ja_segment_info_type(ctx, info) != SEG_GINFO) {
                   continue;
