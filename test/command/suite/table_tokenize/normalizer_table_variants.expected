@@ -1,0 +1,124 @@
+table_create Normalizations TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Normalizations
+[
+{"_key": "齋", "normalized": "斉"},
+{"_key": "斎", "normalized": "斉"},
+{"_key": "渡邉", "normalized": "渡辺"},
+{"_key": "渡邊", "normalized": "渡辺"},
+{"_key": "渡部", "normalized": "渡辺"}
+]
+[[0,0.0,0.0],5]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizers 'NormalizerTable("normalized", "Normalizations.normalized")'
+[[0,0.0,0.0],true]
+table_tokenize Terms "斉藤"   --mode ADD   --with_normalizer_table_variants yes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "斉藤",
+      "variants": [
+        "斎藤",
+        "齋藤",
+        "斉藤"
+      ],
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "藤",
+      "variants": [
+        "藤"
+      ],
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
+table_tokenize Terms "渡辺"   --mode ADD   --with_normalizer_table_variants yes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "渡辺",
+      "variants": [
+        "渡邉",
+        "渡邊",
+        "渡部",
+        "渡辺"
+      ],
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "辺",
+      "variants": [
+        "辺"
+      ],
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
+table_create ColumnNormalizations TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create ColumnNormalizations target COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create ColumnNormalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Targets TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Targets column_normalizations_target   COLUMN_INDEX ColumnNormalizations target
+[[0,0.0,0.0],true]
+load --table ColumnNormalizations
+[
+{"target": "齋", "normalized": "斉"},
+{"target": "斎", "normalized": "斉"}
+]
+[[0,0.0,0.0],2]
+table_create ColumnTerms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizers 'NormalizerTable("normalized",                                  "ColumnNormalizations.normalized",                                  "target",                                  "target")'
+[[0,0.0,0.0],true]
+table_tokenize ColumnTerms "斉藤"   --mode ADD   --with_normalizer_table_variants yes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "斉藤",
+      "variants": [
+        "齋藤",
+        "斎藤",
+        "斉藤"
+      ],
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "藤",
+      "variants": [
+        "藤"
+      ],
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
