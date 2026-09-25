@@ -2856,11 +2856,12 @@ grn_ctx_recv_handler_set(grn_ctx *,
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_SHORT_TEXT)
 #define GRN_LONG_TEXT_INIT(obj, flags)                                         \
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_LONG_TEXT)
-#define GRN_TEXT_SET_REF(obj, str, len)                                        \
+#define GRN_BULK_SET_REF(obj, value, len)                                      \
   do {                                                                         \
-    (obj)->u.b.head = (char *)(str);                                           \
-    (obj)->u.b.curr = (char *)(str) + (len);                                   \
+    (obj)->u.b.head = (char *)(value);                                         \
+    (obj)->u.b.curr = (char *)(value) + (len);                                 \
   } while (0)
+#define GRN_TEXT_SET_REF(obj, str, len) GRN_BULK_SET_REF((obj), (str), (len))
 #define GRN_TEXT_SET(ctx, obj, str, len)                                       \
   do {                                                                         \
     if ((obj)->header.impl_flags & GRN_OBJ_REFER) {                            \
@@ -2979,6 +2980,7 @@ grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_WGS84_GEO_POINT_INIT(obj, flags)                                   \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_WGS84_GEO_POINT)
 
+#define GRN_BOOL_SET_REF(obj, ref) GRN_BULK_SET_REF((obj), (ref), sizeof(bool))
 #define GRN_BOOL_SET(ctx, obj, val)                                            \
   do {                                                                         \
     bool _val = (bool)(val);                                                   \
