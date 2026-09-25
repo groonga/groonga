@@ -71,7 +71,7 @@ sed \
 rm ${pkgbuild}.bak
 
 git add ${pkgbuild}
-git commit -m "Groonga: Update to ${version}"
+git commit -m "groonga: update to ${version}"
 git push origin ${branch}
 
 owner=$(git remote get-url origin | \
@@ -79,4 +79,4 @@ owner=$(git remote get-url origin | \
           cut -d/ -f1)
 echo "Create a pull request:"
 echo "  https://github.com/${owner}/MINGW-packages/pull/new/${branch}"
-echo "with title: 'Groonga: Update to ${version}'"
+echo "with title: 'groonga: update to ${version}'"
