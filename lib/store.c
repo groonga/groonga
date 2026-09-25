@@ -746,7 +746,7 @@ grn_ja_init_from_env(void)
     }
     /* Just for test. */
     char grn_ja_n_data_segments_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GEN_JA_N_DATA_SEGMENTS",
+    grn_getenv("GRN_JA_N_DATA_SEGMENTS",
                grn_ja_n_data_segments_env,
                GRN_ENV_BUFFER_SIZE);
     if (grn_ja_n_data_segments_env[0]) {
