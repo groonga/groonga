@@ -126,6 +126,7 @@ if(GRN_WITH_MRUBY)
   # These must be synchronized with
   # mruby-source/mrbgems/mruby-compiler/mrbgem.rake.
   target_compile_definitions(mruby PRIVATE
+    "MRC_ALLOC_LIBC"
     "MRC_TARGET_MRUBY"
     "PRISM_BUILD_MINIMAL"
     "PRISM_DEPTH_MAXIMUM=256"
@@ -150,6 +151,7 @@ if(GRN_WITH_MRUBY)
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-missing-field-initializers")
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-sign-compare")
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-type-limits")
+    string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-unused-variable")
   elseif(MSVC)
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
