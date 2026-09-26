@@ -3270,7 +3270,45 @@ Slice related parameters
 
 This section describes slice related parameters.
 
-TODO
+A slice searches records from the search result of the main search.
+You can get multiple search results by one ``select`` with slices.
+It's useful when you want to show some narrowed results with the whole result.
+
+Each slice has its own ``${LABEL}``.
+Results of slices are output as an additional element of the response.
+It uses pairs of ``${LABEL}`` and the result of the slice.
+The result of a slice has the same format as the result of the main search.
+
+Slices use the following output format::
+
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      {
+        "LABEL1": SLICE_RESULT1,
+        "LABEL2": SLICE_RESULT2,
+        ...
+      }
+    ]
+  ]
+
+You can use one or more alphabets, digits, ``_`` and ``.`` for ``${LABEL}``.
+For example, ``parent.sub1`` is a valid ``${LABEL}``.
+
+Parameters that have the same ``${LABEL}`` are grouped.
+
+For example, the following parameters specify one slice:
+
+  * ``--slices[label].filter 'column > 100'``
+  * ``--slices[label].sort_keys -column``
+
+The following parameters specify two slices:
+
+  * ``--slices[label1].filter 'column > 100'``
+  * ``--slices[label1].sort_keys -column``
+  * ``--slices[label2].filter 'column < 10'``
+  * ``--slices[label2].sort_keys column``
 
 Here are parameters for slice:
 
@@ -3289,6 +3327,8 @@ Here are parameters for slice:
      - Optional
    * - ``--slices[${LABEL}].query_flags``
      - Optional
+   * - ``--slices[${LABEL}].post_filter``
+     - Optional
    * - ``--slices[${LABEL}].sort_keys``
      - Optional
    * - ``--slices[${LABEL}].output_columns``
@@ -3297,69 +3337,141 @@ Here are parameters for slice:
      - Optional
    * - ``--slices[${LABEL}].limit``
      - Optional
+   * - ``--slices[${LABEL}].columns[${NAME}].*``
+     - Optional
+   * - ``--slices[${LABEL}].drilldowns[${LABEL}].*``
+     - Optional
 
 .. _select-slices-label-match-columns:
 
 ``slices[${LABEL}].match_columns``
 """"""""""""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-match-columns`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-match-columns` for details.
 
 .. _select-slices-label-query:
 
 ``slices[${LABEL}].query``
 """"""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-query`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-query` for details.
 
 .. _select-slices-label-filter:
 
 ``slices[${LABEL}].filter``
 """""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-filter`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-filter` for details.
 
 .. _select-slices-label-query-expander:
 
 ``slices[${LABEL}].query_expander``
 """""""""""""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-query-expander`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-query-expander` for details.
 
 .. _select-slices-label-query-flags:
 
 ``slices[${LABEL}].query_flags``
 """"""""""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-query-flags`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-query-flags` for details.
+
+.. _select-slices-label-post-filter:
+
+``slices[${LABEL}].post_filter``
+""""""""""""""""""""""""""""""""
+
+.. versionadded:: 11.0.2
+
+Specifies the filter text that is processed after ``filtered`` stage dynamic columns are generated.
+You can use ``post_filter`` to filter by ``filtered`` stage dynamic columns.
+Others are the same as :ref:`select-slices-label-filter`.
 
 .. _select-slices-label-sort-keys:
 
 ``slices[${LABEL}].sort_keys``
 """"""""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-sort-keys`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-sort-keys` for details.
 
 .. _select-slices-label-output-columns:
 
 ``slices[${LABEL}].output_columns``
 """""""""""""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-output-columns`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-output-columns` for details.
 
 .. _select-slices-label-offset:
 
 ``slices[${LABEL}].offset``
 """""""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-offset`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-offset` for details.
 
 .. _select-slices-label-limit:
 
 ``slices[${LABEL}].limit``
 """"""""""""""""""""""""""
 
-TODO
+Corresponds to :ref:`select-limit`.
+
+It's applied to the slice instead of the main search.
+
+See :ref:`select-limit` for details.
+
+.. _select-slices-label-columns-name:
+
+``slices[${LABEL}].columns[${NAME}]``
+"""""""""""""""""""""""""""""""""""""
+
+Specifies dynamic columns of the slice.
+The parameters are the same as :ref:`select-dynamic-column-related-parameters` except that they have the ``slices[${LABEL}].`` prefix.
+
+A dynamic column of a slice is added to the result of the slice.
+Use it when you need a dynamic column only in the slice.
+
+.. _select-slices-label-drilldowns-label:
+
+``slices[${LABEL}].drilldowns[${LABEL}]``
+"""""""""""""""""""""""""""""""""""""""""
+
+Specifies drilldowns of the slice.
+The parameters are the same as :ref:`select-advanced-drilldown-related-parameters` except that they have the ``slices[${LABEL}].`` prefix.
+
+Drilldowns of a slice are output as an additional element of the result of the slice.
 
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
