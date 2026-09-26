@@ -24,6 +24,7 @@ libmruby_la_SOURCES = \
 	../mruby-source/src/range.c \
 	../mruby-source/src/readint.c \
 	../mruby-source/src/readnum.c \
+	../mruby-source/src/refinement.c \
 	../mruby-source/src/state.c \
 	../mruby-source/src/string.c \
 	../mruby-source/src/symbol.c \
