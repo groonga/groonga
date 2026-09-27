@@ -136,6 +136,14 @@ if(GRN_WITH_ONIGMO)
     # TODO: We should fix Onigmo.
     string(APPEND ONIGMO_C_COMPILE_FLAGS " -Wno-deprecated-non-prototype")
   endif()
+  if(MSVC)
+    # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
+    string(APPEND ONIGMO_C_COMPILE_FLAGS " /wd4244")
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    string(APPEND ONIGMO_C_COMPILE_FLAGS " /wd4267")
+  endif()
 
   add_library(onigmo STATIC ${ONIGMO_SOURCES})
   set_source_files_properties(${ONIGMO_SOURCES}
