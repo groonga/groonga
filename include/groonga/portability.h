@@ -48,7 +48,7 @@
       size_t dest_size_ = (dest_size);                                         \
       if (dest_size_ > 0) {                                                    \
         DWORD env_size;                                                        \
-        env_size = GetEnvironmentVariableA((name), dest_, dest_size_);         \
+        env_size = GetEnvironmentVariableA((name), dest_, (DWORD)dest_size_);  \
         if (env_size == 0 || env_size > dest_size_) {                          \
           dest_[0] = '\0';                                                     \
         }                                                                      \
