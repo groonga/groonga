@@ -27,29 +27,27 @@ logical_select Memos   --shard_key timestamp   --output_columns _key,timestamp  
     "start_time": 0.0,
     "elapsed_time": 0.0
   },
-  "body": [
-    {
-      "n_hits": 4,
-      "columns": [
-        {
-          "name": "_key",
-          "type": "ShortText"
-        },
-        {
-          "name": "timestamp",
-          "type": "Time"
-        }
+  "body": {
+    "n_hits": 4,
+    "columns": [
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "timestamp",
+        "type": "Time"
+      }
+    ],
+    "records": [
+      [
+        "Mroonga is fast!",
+        1788231601.0
       ],
-      "records": [
-        [
-          "Mroonga is fast!",
-          1788231601.0
-        ],
-        [
-          "Groonga sticker!",
-          1788318002.0
-        ]
+      [
+        "Groonga sticker!",
+        1788318002.0
       ]
-    }
-  ]
+    ]
+  }
 }

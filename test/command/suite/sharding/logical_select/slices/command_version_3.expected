@@ -35,55 +35,53 @@ logical_select Memos   --shard_key timestamp   --slices[groonga].filter 'tag == 
     "start_time": 0.0,
     "elapsed_time": 0.0
   },
-  "body": [
-    {
-      "n_hits": 4,
-      "columns": [
-        {
-          "name": "_id",
-          "type": "UInt32"
-        },
-        {
-          "name": "_key",
-          "type": "ShortText"
-        },
-        {
-          "name": "tag",
-          "type": "Tags"
-        },
-        {
-          "name": "timestamp",
-          "type": "Time"
-        }
+  "body": {
+    "n_hits": 4,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "tag",
+        "type": "Tags"
+      },
+      {
+        "name": "timestamp",
+        "type": "Time"
+      }
+    ],
+    "records": [
+      [
+        1,
+        "Groonga is fast!",
+        "Groonga",
+        1788231600.0
       ],
-      "records": [
-        [
-          1,
-          "Groonga is fast!",
-          "Groonga",
-          1788231600.0
-        ],
-        [
-          2,
-          "Mroonga is fast!",
-          "Mroonga",
-          1788231601.0
-        ],
-        [
-          1,
-          "Groonga sticker!",
-          "Groonga",
-          1788318002.0
-        ],
-        [
-          2,
-          "Rroonga is fast!",
-          "Rroonga",
-          1788318003.0
-        ]
+      [
+        2,
+        "Mroonga is fast!",
+        "Mroonga",
+        1788231601.0
+      ],
+      [
+        1,
+        "Groonga sticker!",
+        "Groonga",
+        1788318002.0
+      ],
+      [
+        2,
+        "Rroonga is fast!",
+        "Rroonga",
+        1788318003.0
       ]
-    },
-    {
+    ],
+    "slices": {
       "groonga": {
         "n_hits": 2,
         "columns": [
@@ -133,5 +131,5 @@ logical_select Memos   --shard_key timestamp   --slices[groonga].filter 'tag == 
         }
       }
     }
-  ]
+  }
 }
