@@ -153,6 +153,9 @@ if(GRN_WITH_MRUBY)
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-type-limits")
     string(APPEND MRUBY_C_COMPILE_FLAGS " -Wno-unused-variable")
   elseif(MSVC)
+    # unary minus operator applied to unsigned type, result still unsigned
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
+    string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4146")
     # 'token' : signed/unsigned mismatch
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
     string(APPEND MRUBY_C_COMPILE_FLAGS " /wd4018")
