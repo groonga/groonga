@@ -814,7 +814,7 @@ grn_cache_fetch_persistent(grn_ctx *ctx,
         if (flags & GRN_CACHE_FLAG_WITH_TRACE_LOG) {
           size_t used_size = grn_ctx_trace_log_restore(ctx, data, data_size);
           data += used_size;
-          data_size -= used_size;
+          data_size -= (uint32_t)used_size;
         }
         GRN_TEXT_PUT(ctx, output, data, data_size);
         grn_ja_unref(ctx, &iw);
