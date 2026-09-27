@@ -121,6 +121,8 @@ typedef int64_t off64_t;
 #  define SHUT_RDWR   SD_BOTH
 
 typedef SOCKET grn_sock;
+/* send()/recv() in Winsock accept int for length. */
+typedef int grn_sock_size;
 #  define grn_sock_close(sock) closesocket(sock)
 #  define GRN_INVALID_SOCKET   INVALID_SOCKET
 
@@ -164,6 +166,7 @@ typedef char int_least8_t;
 typedef unsigned char uint_least8_t;
 #  endif /* UINT_LEAST8_MAX */
 typedef int grn_sock;
+typedef size_t grn_sock_size;
 #  define grn_sock_close(sock) close(sock)
 #  define GRN_INVALID_SOCKET   -1
 #  define CALLBACK

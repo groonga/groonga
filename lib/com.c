@@ -181,8 +181,10 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     case GRN_COM_PROTO_HTTP:
       {
         ssize_t ret;
-        ret =
-          send(peer->fd, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), MSG_NOSIGNAL);
+        ret = send(peer->fd,
+                   GRN_BULK_HEAD(msg),
+                   (grn_sock_size)GRN_BULK_VSIZE(msg),
+                   MSG_NOSIGNAL);
         if (ret == -1) {
           SOERR("send");
         }
@@ -807,7 +809,7 @@ grn_com_send_http(
   // todo : refine
   if ((ret = send(cs->fd,
                   GRN_BULK_HEAD(&buf),
-                  GRN_BULK_VSIZE(&buf),
+                  (grn_sock_size)GRN_BULK_VSIZE(&buf),
                   MSG_NOSIGNAL | flags)) == -1) {
     SOERR("send");
   }
@@ -877,7 +879,7 @@ grn_com_send(grn_ctx *ctx,
   } else {
     if ((ret = send(cs->fd,
                     (const void *)header,
-                    whole_size,
+                    (grn_sock_size)whole_size,
                     MSG_NOSIGNAL | flags)) == -1) {
       SOERR("send");
       rc = ctx->rc;
@@ -1011,7 +1013,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
   byte *p = (byte *)header;
   size_t rest = sizeof(grn_com_header);
   do {
-    if ((ret = recv(com->fd, p, rest, 0)) < 0) {
+    if ((ret = recv(com->fd, p, (grn_sock_size)rest, 0)) < 0) {
       SOERR("recv size");
       GRN_LOG(ctx, GRN_LOG_ERROR, "recv error (%" GRN_FMT_SOCKET ")", com->fd);
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
@@ -1057,7 +1059,10 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       }
       retry = 0;
       for (rest = value_size; rest;) {
-        if ((ret = recv(com->fd, GRN_BULK_CURR(buf), rest, MSG_WAITALL)) < 0) {
+        if ((ret = recv(com->fd,
+                        GRN_BULK_CURR(buf),
+                        (grn_sock_size)rest,
+                        MSG_WAITALL)) < 0) {
           SOERR("recv body");
           if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
               ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
@@ -1158,7 +1163,9 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
       }
     }
 #  endif
-    if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen) != 0) {
+    if (connect(fd,
+                addrinfo_ptr->ai_addr,
+                (socklen_t)(addrinfo_ptr->ai_addrlen)) != 0) {
       SOERR("connect");
       grn_sock_close(fd);
       continue;
@@ -1314,8 +1321,9 @@ grn_com_sopen(grn_ctx *ctx,
       goto exit;
     }
   }
-  if (bind(lfd, bind_address_info->ai_addr, bind_address_info->ai_addrlen) <
-      0) {
+  if (bind(lfd,
+           bind_address_info->ai_addr,
+           (socklen_t)(bind_address_info->ai_addrlen)) < 0) {
     SOERR("bind");
     goto exit;
   }
