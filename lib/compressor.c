@@ -92,7 +92,7 @@ static inline grn_rc
 grn_compressor_pack(grn_ctx *ctx, grn_compress_data *data)
 {
   uint64_t input_len = data->header_len + data->body_len + data->footer_len;
-  data->packed_value_len = COMPRESSED_VALUE_LEN(input_len);
+  data->packed_value_len = (uint32_t)COMPRESSED_VALUE_LEN(input_len);
   uint64_t packed_value_metadata =
     COMPRESSED_VALUE_METADATA_PACK(input_len,
                                    COMPRESSED_VALUE_METADATA_FLAG_RAW);
@@ -390,7 +390,7 @@ grn_compressor_compress_lz4(grn_ctx *ctx, grn_compress_data *data)
   }
   int lz4_value_len_real = LZ4_compress_default(GRN_TEXT_VALUE(&value),
                                                 lz4_value,
-                                                GRN_TEXT_LEN(&value),
+                                                (int)GRN_TEXT_LEN(&value),
                                                 lz4_value_len_max);
   GRN_OBJ_FIN(ctx, &value);
   if (lz4_value_len_real <= 0) {
@@ -477,7 +477,8 @@ grn_compressor_compress_zstd(grn_ctx *ctx, grn_compress_data *data)
       data->compressed_value = NULL;
       return ctx->rc;
     }
-    data->compressed_value_len = COMPRESSED_VALUE_LEN(zstd_value_len_real);
+    data->compressed_value_len =
+      (uint32_t)COMPRESSED_VALUE_LEN(zstd_value_len_real);
   } else {
     ZSTD_outBuffer zstd_output = {0};
     zstd_output.dst = zstd_value;
@@ -558,7 +559,8 @@ grn_compressor_compress_zstd(grn_ctx *ctx, grn_compress_data *data)
         return ctx->rc;
       }
     }
-    data->compressed_value_len = COMPRESSED_VALUE_LEN(zstd_output.pos);
+    data->compressed_value_len =
+      (uint32_t)COMPRESSED_VALUE_LEN(zstd_output.pos);
   }
   ZSTD_freeCCtx(zstd_cctx);
 
@@ -628,7 +630,7 @@ grn_compressor_compress_blosc_create_schunk(grn_ctx *ctx,
   if (grn_type_id_is_text_family(ctx, data->body_range)) {
     cparams->typesize = sizeof(char);
   } else {
-    cparams->typesize = grn_type_id_size(ctx, data->body_range);
+    cparams->typesize = (int32_t)grn_type_id_size(ctx, data->body_range);
     if (data->body_column_flags & GRN_OBJ_WITH_WEIGHT) {
       if (data->body_column_flags & GRN_OBJ_WEIGHT_BFLOAT16) {
 #  ifdef GRN_HAVE_BFLOAT16
@@ -648,7 +650,7 @@ grn_compressor_compress_blosc_create_schunk(grn_ctx *ctx,
   if (data->body_n_elements > 1) {
     if (data->body_column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
       cparams->filters[current_filter_id] = BLOSC_FILTER_BYTEDELTA;
-      cparams->filters_meta[current_filter_id] = cparams->typesize;
+      cparams->filters_meta[current_filter_id] = (uint8_t)cparams->typesize;
       current_filter_id--;
     }
     if (cparams->typesize > (int32_t)sizeof(char)) {
@@ -718,7 +720,10 @@ grn_compressor_compress_blosc(grn_ctx *ctx, grn_compress_data *data)
     int64_t n_chunks =
       blosc2_schunk_append_buffer(schunk, data->body, data->body_len);
     if (n_chunks < 0) {
-      ERR(GRN_BLOSC_ERROR, "%s compress body: %s", tag, print_error(n_chunks));
+      ERR(GRN_BLOSC_ERROR,
+          "%s compress body: %s",
+          tag,
+          print_error((int)n_chunks));
       blosc2_schunk_free(schunk);
       return ctx->rc;
     }
@@ -732,12 +737,12 @@ grn_compressor_compress_blosc(grn_ctx *ctx, grn_compress_data *data)
     ERR(GRN_BLOSC_ERROR,
         "%s serialize compressed value: %s",
         tag,
-        print_error(blosc_value_len));
+        print_error((int)blosc_value_len));
     blosc2_schunk_free(schunk);
     return ctx->rc;
   }
 
-  data->compressed_value_len = COMPRESSED_VALUE_LEN(blosc_value_len);
+  data->compressed_value_len = (uint32_t)COMPRESSED_VALUE_LEN(blosc_value_len);
   data->compressed_value = GRN_MALLOC(data->compressed_value_len);
   if (!data->compressed_value) {
     ERR(GRN_BLOSC_ERROR, "%s allocate packed value buffer", tag);
