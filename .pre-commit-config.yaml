@@ -68,6 +68,7 @@ repos:
           ?lib/alloc\.c|
           ?lib/applier\.c|
           ?lib/arrow\.cpp|
+          ?lib/cache\.c|
           ?lib/cast\.cpp|
           ?lib/com\.c|
           ?lib/command_arguments\.cpp|
