@@ -214,7 +214,7 @@ else()
   target_link_libraries(libgroonga PRIVATE grn_dependencies)
   target_include_directories(
     libgroonga
-    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}/groonga>")
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/groonga>")
   if(WASI)
     # Exporting libgroonga.wasm requires exporting grn_dependencies
     # too. We don't provide the CMake package for WASI for now.
@@ -230,7 +230,8 @@ else()
     set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
     configure_package_config_file(
       "${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
-      INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+      INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
+      PATH_VARS GRN_RELATIVE_PLUGINS_DIR)
     set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
     set(BUILT_CONFIG_VERSION_CMAKE
         "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
