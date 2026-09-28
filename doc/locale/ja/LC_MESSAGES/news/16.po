@@ -17,11 +17,62 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.1.1 - 2026-09-23"
-msgstr "16.1.1リリース - 2026-09-23"
+msgid "Release 16.1.2 - 2026-09-29"
+msgstr "16.1.2リリース - 2026-09-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[WASI] Added the `groonga` command"
+msgstr "[WASI] `groonga` コマンドを追加"
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "`groonga.mjs` is the `groonga` command for WASI written in JavaScript. It uses `libgroonga.mjs`."
+msgstr "`groonga.mjs` はJavaScriptで書かれたWASI向けの `groonga` コマンドです。 `libgroonga.mjs` を使っています。"
+
+msgid "[WASI] Added support for running on a Web browser"
+msgstr "[WASI] Webブラウザ上での実行に対応"
+
+msgid "A Web browser doesn't provide WASI nor a file system. `libgroonga-web.mjs` implements the needed WASI functions with an in-memory file system, and downloads a database over HTTP on demand. See `examples/web/` for a working example."
+msgstr "WebブラウザはWASIもファイルシステムも提供しません。 そこで `libgroonga-web.mjs` にはインメモリのファイルシステムで必要なWASI関数を実装しています。データベースは必要に応じてHTTP経由でダウンロードします。`examples/web/` に例があるので参照してください。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that `drilldowns[${LABEL}].columns[${NAME}]` with `stage=output` used `offset`/`limit` of the main search"
+msgstr "[{doc}`/reference/commands/select`] `stage=output` を指定した `drilldowns[${LABEL}].columns[${NAME}]` が本体検索の `offset`/`limit` を使っていた問題を修正"
+
+msgid "It should use `offset`/`limit` of the drilldown instead."
+msgstr "本体検索ではなく、ドリルダウンで指定されたパラメーターの `offset`/`limit` を使うべきでした。"
+
+msgid "When the drilldown's `offset`/`limit` differed from the main search's `offset`/`limit`, the result could be unexpected such as fewer drilldown records than expected."
+msgstr "ドリルダウンの `offset`/`limit` が本体検索の `offset`/`limit` と異なる場合、ドリルダウンのレコードが少なくなるなど、期待通りの結果が得られないことがありました。"
+
+msgid "This bug has existed since v10.0.3."
+msgstr "このバグはv10.0.3から存在していました。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that the response of command version 3 was wrapped by an unnecessary array"
+msgstr "[{doc}`/reference/commands/logical_select`] コマンドバージョン3のレスポンスが不要な配列になっていた問題を修正"
+
+msgid "`body` was `[{...}]`. It's `{...}` now, the same as {doc}`/reference/commands/select`."
+msgstr "`body` は `[{...}]` でしたが、 {doc}`/reference/commands/select` と同じ `{...}` になりました。"
+
+msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that a plain `drilldown` with command version 3 was output in command version 1 format"
+msgstr "[{doc}`/reference/commands/logical_select`] コマンドバージョン3で `drilldown` （ラベル無し）を指定した際、コマンドバージョン1の形式で出力していた問題を修正"
+
+msgid "It's output in command version 3 format now: each key of `drilldown` is used as its label in `drilldowns`, the same as {doc}`/reference/commands/select`."
+msgstr "コマンドバージョン3の形式で出力するようになりました。 {doc}`/reference/commands/select` と同様に、 `drilldown` の各キーが `drilldowns` のラベルとして使われます。"
+
+msgid "Fixed a bug that the CMake package embedded absolute paths of the install prefix"
+msgstr "CMakeパッケージにインストール先の絶対パスが埋め込まれていた問題を修正"
+
+msgid "You couldn't use the CMake package such as `groonga-16.1.1-x64-vs2022.zip` after you extracted it to a location other than where it was built."
+msgstr "`groonga-16.1.1-x64-vs2022.zip` のようなCMakeパッケージは、ビルドした場所とは別の場所に展開すると使えませんでした。"
+
+msgid "Release 16.1.1 - 2026-09-23"
+msgstr "16.1.1リリース - 2026-09-23"
 
 msgid "[{doc}`/reference/commands/logical_select`] Added support for parallel execution by `n_workers`"
 msgstr "[{doc}`/reference/commands/logical_select`] `n_workers` による並列実行に対応"
@@ -140,9 +191,6 @@ msgstr "`grn_float32_to_bfloat16()`: 代わりに `(grn_bfloat16)value` を使�
 msgid "[WASI] Added `libgroonga.wasm` that exports the C API"
 msgstr "[WASI] C API をエクスポートする `libgroonga.wasm` を追加"
 
-msgid "This is an experimental feature. Currently, this feature is still not stable."
-msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
-
 msgid "You can use it from JavaScript and so on. `groonga-wasm-${VERSION}.tar.gz` is available as a release asset."
 msgstr "JavaScript などから使うことができます。 `groonga-wasm-${VERSION}.tar.gz` という名前でリリースページからダウンロードできます。"
 
@@ -160,9 +208,6 @@ msgstr "これは `libgroonga` を組み込んでいるプログラムに対す�
 
 msgid "Programs that write to pipes must handle `SIGPIPE` by themselves."
 msgstr "パイプに書き込むプログラムは、自分で `SIGPIPE` を処理する必要があります。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/commands/logical_select`] Fixed a bug that a persistent column specified by `drilldown_calc_target` was closed after grouping"
 msgstr "[{doc}`/reference/commands/logical_select`] `drilldown_calc_target` に指定した永続カラムをグループ化後にクローズしていた問題を修正"
