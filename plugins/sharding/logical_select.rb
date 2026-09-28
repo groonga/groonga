@@ -37,37 +37,24 @@ module Groonga
                ])
 
       def run_body(input)
-        context = ExecuteContext.new(input)
+        execute_context = ExecuteContext.new(input)
         begin
-          executor = Executor.new(context)
+          executor = Executor.new(execute_context)
           executor.execute
 
-          load_records(context)
+          load_records(execute_context)
 
-          n_results = 1
-          n_slices = context.slices.n_results
-          n_results += 1 if n_slices > 0
-          n_plain_drilldowns = context.plain_drilldown.n_results
-          n_labeled_drilldowns = context.labeled_drilldowns.n_results
-          if n_plain_drilldowns > 0
-            n_results += n_plain_drilldowns
-          elsif
-            if n_labeled_drilldowns > 0
-              n_results += 1
-            end
-          end
+          n_slices = execute_context.slices.n_results
+          n_plain_drilldowns = execute_context.plain_drilldown.n_results
+          n_labeled_drilldowns = execute_context.labeled_drilldowns.n_results
 
-          writer.array("RESULT", n_results) do
-            write_records(writer, context)
-            write_slices(writer, context) if n_slices > 0
-            if n_plain_drilldowns > 0
-              write_plain_drilldowns(writer, context)
-            elsif n_labeled_drilldowns > 0
-              write_labeled_drilldowns(writer, context)
-            end
+          if context.command_version >= 3
+            write_body_v3(execute_context, n_slices, n_plain_drilldowns, n_labeled_drilldowns)
+          else
+            write_body_v1(execute_context, n_slices, n_plain_drilldowns, n_labeled_drilldowns)
           end
         ensure
-          context.close
+          execute_context.close
         end
       end
 
@@ -103,6 +90,7 @@ module Groonga
         key << "#{input[:load_table]}\0"
         key << "#{input[:load_columns]}\0"
         key << "#{input[:load_values]}\0"
+        key << "#{context.command_version}\0"
         slices = Slices.parse(input).sort_by(&:label)
         slices.each do |slice|
           key << "#{slice.label}\0"
@@ -375,6 +363,46 @@ module Groonga
         targets
       end
 
+      def write_body_v1(context, n_slices, n_plain_drilldowns, n_labeled_drilldowns)
+        n_results = 1
+        n_results += 1 if n_slices > 0
+        if n_plain_drilldowns > 0
+          n_results += n_plain_drilldowns
+        elsif n_labeled_drilldowns > 0
+          n_results += 1
+        end
+
+        writer.array("RESULT", n_results) do
+          write_records(writer, context)
+          write_slices(writer, context) if n_slices > 0
+          if n_plain_drilldowns > 0
+            write_plain_drilldowns(writer, context)
+          elsif n_labeled_drilldowns > 0
+            write_labeled_drilldowns(writer, context)
+          end
+        end
+      end
+
+      def write_body_v3(context, n_slices, n_plain_drilldowns, n_labeled_drilldowns)
+        have_drilldowns = (n_plain_drilldowns > 0 or n_labeled_drilldowns > 0)
+        n_additional_elements = 0
+        n_additional_elements += 1 if n_slices > 0
+        n_additional_elements += 1 if have_drilldowns
+        write_records(writer, context, n_additional_elements) do
+          if n_slices > 0
+            writer.write("slices")
+            write_slices(writer, context)
+          end
+          if n_plain_drilldowns > 0
+            writer.write("drilldowns")
+            write_plain_drilldowns(writer, context)
+          elsif n_labeled_drilldowns > 0
+            writer.write("drilldowns")
+            write_labeled_drilldowns(writer, context)
+          end
+        end
+      end
+
       def write_records(writer, context, n_additional_elements=0)
         results = context.results
 
@@ -469,43 +497,65 @@ module Groonga
       end
 
       def write_plain_drilldowns(writer, execute_context)
-        plain_drilldown = execute_context.plain_drilldown
+        if context.command_version >= 3
+          write_plain_drilldowns_v3(writer, execute_context)
+        else
+          write_plain_drilldowns_v1(writer, execute_context)
+        end
+      end
 
-        results = plain_drilldown.results
+      def write_plain_drilldowns_v1(writer, execute_context)
+        plain_drilldown = execute_context.plain_drilldown
+        plain_drilldown.results.each do |result|
+          write_plain_drilldown_result(writer, plain_drilldown, result)
+        end
+      end
+
+      def write_plain_drilldowns_v3(writer, execute_context)
+        plain_drilldown = execute_context.plain_drilldown
+        writer.map("DRILLDOWNS", plain_drilldown.keys.size) do
+          plain_drilldown.keys.each_with_index do |key, i|
+            writer.write(key)
+            write_plain_drilldown_result(writer,
+                                         plain_drilldown,
+                                         plain_drilldown.results[i])
+          end
+        end
+      end
+
+      def write_plain_drilldown_result(writer, plain_drilldown, result)
         sort_keys = plain_drilldown.sort_keys
         output_columns = plain_drilldown.output_columns
 
-        results.each do |result|
-          result_set = result[:result_set]
-          condition = result[:condition]
-          options = {
-            :offset => plain_drilldown.offset,
-            :limit  => plain_drilldown.limit,
-          }
-          n_records = result_set.size
-          limit = options[:limit]
-          limit += n_records + 1 if limit < 0
-          offset = options[:offset]
-          offset += n_records if offset < 0
-          n_written = [n_records - offset, limit].min
-          unless sort_keys.empty?
-            result_set = result_set.sort(sort_keys, options)
-            plain_drilldown.temporary_tables << result_set
-            message = "drilldown.sort(#{result_set.size}): "
-            message << sort_keys.join(",")
-            query_logger.log(:size, ":", message)
-            options = {offset: 0, limit: -1}
-          end
-          writer.open_result_set_metadata(result_set, output_columns, n_records, 1)
-          begin
-            writer.write_table_records(result_set,
-                                       output_columns,
-                                       options.merge(condition: condition))
-          ensure
-            writer.close_result_set
-          end
-          query_logger.log(:size, ":", "output.drilldown(#{n_written})")
+        result_set = result[:result_set]
+        condition = result[:condition]
+        options = {
+          :offset => plain_drilldown.offset,
+          :limit  => plain_drilldown.limit,
+        }
+        n_records = result_set.size
+        limit = options[:limit]
+        limit += n_records + 1 if limit < 0
+        offset = options[:offset]
+        offset += n_records if offset < 0
+        n_written = [n_records - offset, limit].min
+        unless sort_keys.empty?
+          result_set = result_set.sort(sort_keys, options)
+          plain_drilldown.temporary_tables << result_set
+          message = "drilldown.sort(#{result_set.size}): "
+          message << sort_keys.join(",")
+          query_logger.log(:size, ":", message)
+          options = {offset: 0, limit: -1}
         end
+        writer.open_result_set_metadata(result_set, output_columns, n_records, 1)
+        begin
+          writer.write_table_records(result_set,
+                                     output_columns,
+                                     options.merge(condition: condition))
+        ensure
+          writer.close_result_set
+        end
+        query_logger.log(:size, ":", "output.drilldown(#{n_written})")
       end
 
       def write_labeled_drilldowns(writer, execute_context)

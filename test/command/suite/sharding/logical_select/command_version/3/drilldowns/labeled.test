@@ -1,0 +1,20 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Memos_20260901 TABLE_HASH_KEY ShortText
+column_create Memos_20260901 timestamp COLUMN_SCALAR Time
+column_create Memos_20260901 price COLUMN_SCALAR UInt32
+
+load --table Memos_20260901
+[
+{"_key": "Groonga is fast!", "timestamp": "2026-09-01 12:00:00", "price": 100},
+{"_key": "Mroonga is fast!", "timestamp": "2026-09-01 12:00:01", "price": 200}
+]
+
+logical_select Memos \
+  --shard_key timestamp \
+  --output_columns _key,timestamp \
+  --drilldowns[price].keys price \
+  --drilldowns[price].output_columns _key,_nsubrecs \
+  --command_version 3
