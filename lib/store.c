@@ -1015,6 +1015,31 @@ _grn_ja_create(grn_ctx *ctx,
   return ja;
 }
 
+static void
+grn_ja_init_partition_map(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->partition_mapping) {
+    return;
+  }
+
+  char path[PATH_MAX];
+  if (strlen(ja->io->path) + strlen(".partitions") >= PATH_MAX) {
+    ERR(GRN_FILENAME_TOO_LONG,
+        "The path of partition map file is too long path: %s.partitions",
+        ja->io->path);
+  }
+  snprintf(path, sizeof(path), "%s.partitions", ja->io->path);
+  if (grn_path_exist(path)) {
+    ja->partition_mapping = grn_ra_open(ctx, path);
+    return;
+  }
+  /*
+   * partition_id is stored per record id. Its range is 0..255,
+   * so the element size is sizeof(uint8_t).
+   */
+  ja->partition_mapping = grn_ra_create(ctx, path, sizeof(uint8_t), 0);
+}
+
 grn_ja *
 grn_ja_create(grn_ctx *ctx,
               const char *path,
