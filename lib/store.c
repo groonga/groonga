@@ -2377,6 +2377,25 @@ grn_ja_ginfo_segment_free(grn_ctx *ctx,
   }
 }
 
+static inline uint32_t
+grn_ja_segment_at(grn_ja *ja)
+{
+  uint32_t seg;
+  for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
+    if (SEGMENT_INFO_AT(ja, seg) == 0) {
+      break;
+    }
+  }
+  return seg;
+}
+
+static inline bool
+grn_ja_is_full(grn_ja *ja)
+{
+  uint32_t seg = grn_ja_segment_at(ja);
+  return (seg == grn_ja_n_data_segments);
+}
+
 static grn_rc
 grn_ja_free_huge(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
 {
@@ -2447,12 +2466,7 @@ grn_ja_free_chunk(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
   if (ginfo_current) {
     wal_data->garbage_segment = lseg_current;
   } else {
-    uint32_t segment = 0;
-    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
-      if (SEGMENT_INFO_AT(ja, segment) == 0) {
-        break;
-      }
-    }
+    uint32_t segment = grn_ja_segment_at(ja);
     if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
@@ -2651,12 +2665,7 @@ grn_ja_replace(
   }
   wal_data.segment = ja->header->element_segs[lseg];
   if (wal_data.segment == JA_ELEMENT_SEG_VOID) {
-    uint32_t segment;
-    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
-      if (SEGMENT_INFO_AT(ja, segment) == 0) {
-        break;
-      }
-    }
+    uint32_t segment = grn_ja_segment_at(ja);
     if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
@@ -2920,12 +2929,7 @@ grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
   }
   ja_pos *vp = &(ja->header->free_elements[chunk_variation]);
   if (vp->seg == 0) {
-    uint32_t seg = 0;
-    for (seg = 0; seg < grn_ja_n_data_segments; seg++) {
-      if (SEGMENT_INFO_AT(ja, seg) == 0) {
-        break;
-      }
-    }
+    uint32_t seg = grn_ja_segment_at(ja);
     if (seg == grn_ja_n_data_segments) {
       grn_obj_set_error(ctx,
                         (grn_obj *)ja,
@@ -3001,12 +3005,7 @@ grn_ja_alloc_sequential(grn_ctx *ctx, grn_ja_alloc_data *data)
   data->wal_data.segment = *(ja->header->curr_seg);
   data->wal_data.position = *(ja->header->curr_pos);
   if (data->wal_data.position + data_size > JA_SEGMENT_SIZE) {
-    uint32_t segment;
-    for (segment = 0; segment < grn_ja_n_data_segments; segment++) {
-      if (SEGMENT_INFO_AT(ja, segment) == 0) {
-        break;
-      }
-    }
+    uint32_t segment = grn_ja_segment_at(ja);
     if (segment == grn_ja_n_data_segments) {
       grn_obj_set_error(
         ctx,
