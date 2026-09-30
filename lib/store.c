@@ -1016,7 +1016,7 @@ _grn_ja_create(grn_ctx *ctx,
 }
 
 static void
-grn_ja_init_partition_map(grn_ctx *ctx, grn_ja *ja)
+grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
 {
   if (ja->partition_mapping) {
     return;
