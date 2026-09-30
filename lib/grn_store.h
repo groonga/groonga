@@ -198,6 +198,9 @@ grn_ja_unref(grn_ctx *ctx, grn_io_win *iw);
 int
 grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
 
+grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_obj *obj, grn_id id, int flags);
+
 GRN_API grn_rc
 grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags);
 GRN_API uint32_t
