@@ -1015,6 +1015,13 @@ _grn_ja_create(grn_ctx *ctx,
   return ja;
 }
 
+/*
+ * This function allocates the space needed to map each ID to its partition.
+ *
+ * If the mapping is already open, it returns without taking any action.
+ * If the mapping is not open, it creates a new file if one does not exist, or
+ * opens the existing file.
+ */
 static void
 grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
 {
