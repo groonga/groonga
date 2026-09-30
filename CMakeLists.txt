@@ -1250,7 +1250,8 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
         target_compile_options(
           openzl
           PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-declaration-after-statement>
-                  $<$<COMPILE_LANGUAGE:C>:-Wno-frame-larger-than>)
+                  $<$<COMPILE_LANGUAGE:C>:-Wno-frame-larger-than>
+                  $<$<COMPILE_LANGUAGE:C>:-Wno-write-strings>)
       endif()
       if(CMAKE_VERSION VERSION_LESS 3.28)
         set_property(DIRECTORY "${openzl_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL
