@@ -46,15 +46,24 @@ grn_encoding_convert(grn_ctx *ctx,
     goto exit;
   }
 
+  if (from_string_size > INT32_MAX) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s too large string to convert: max=<%d>: <%" GRN_FMT_SSIZE ">",
+        context,
+        INT32_MAX,
+        from_string_size);
+    goto exit;
+  }
+
   {
     WCHAR *utf16_string;
     DWORD n_utf16_chars;
-    size_t converted_string_size_;
+    int converted_string_size_;
 
     n_utf16_chars = MultiByteToWideChar(from_code_page,
                                         0,
                                         from_string,
-                                        from_string_size,
+                                        (int)from_string_size,
                                         NULL,
                                         0);
     if (n_utf16_chars == 0) {
@@ -66,7 +75,7 @@ grn_encoding_convert(grn_ctx *ctx,
     n_utf16_chars = MultiByteToWideChar(from_code_page,
                                         0,
                                         from_string,
-                                        from_string_size,
+                                        (int)from_string_size,
                                         utf16_string,
                                         n_utf16_chars);
     if (n_utf16_chars == 0) {
