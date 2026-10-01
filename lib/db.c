@@ -1038,7 +1038,7 @@ grn_alias_resolve(grn_ctx *ctx,
   db = (grn_db *)(ctx->impl->db);
 
   if (name_size < 0) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
 
   while (true) {
@@ -1438,7 +1438,7 @@ grn_proc_create(grn_ctx *ctx,
     range = grn_plugin_reference(ctx, path);
   }
   if (name_size < 0) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
   if (grn_db_check_name(ctx, name, name_size)) {
     GRN_DB_CHECK_NAME_ERR("[proc][create]", name, name_size);
@@ -5442,7 +5442,7 @@ grn_obj_column_(grn_ctx *ctx,
     grn_pat_get(target_ctx,
                 target_ctx->impl->temporary_columns,
                 column_name,
-                strlen(column_name),
+                (unsigned int)strlen(column_name),
                 &value);
     if (value) {
       column = *((grn_obj **)value);
@@ -5547,7 +5547,7 @@ grn_table_columns(grn_ctx *ctx,
     cursor = grn_pat_cursor_open(target_ctx,
                                  target_ctx->impl->temporary_columns,
                                  search_key,
-                                 strlen(search_key),
+                                 (unsigned int)strlen(search_key),
                                  NULL,
                                  0,
                                  0,
@@ -5701,7 +5701,7 @@ grn_column_create(grn_ctx *ctx,
                    GRN_TABLE_MAX_KEY_SIZE,
                    "%u",
                    domain);
-      table_name_len = strlen(fullname);
+      table_name_len = (int)strlen(fullname);
     }
     if (name_size + 1 + table_name_len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -8816,7 +8816,7 @@ grn_obj_set_info_source_invalid_lexicon_error(grn_ctx *ctx,
                 GRN_TABLE_MAX_KEY_SIZE,
                 "._key",
                 GRN_TABLE_MAX_KEY_SIZE - source_name_size - 1);
-    source_name_size = strlen(source_name);
+    source_name_size = (int)strlen(source_name);
   }
 
   ERR(GRN_INVALID_ARGUMENT,
@@ -9161,7 +9161,7 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
   name_size = grn_obj_name(ctx, table, name, sizeof(name));
   if (name_size == 0) {
     grn_strcpy(name, sizeof(name), "(anonymous)");
-    name_size = strlen(name);
+    name_size = (unsigned int)strlen(name);
   }
   if (grn_obj_is_text_family_bulk(ctx, module)) {
     if (GRN_TEXT_LEN(module) == 0) {
@@ -9393,7 +9393,7 @@ grn_obj_set_info_table_modules_text(grn_ctx *ctx,
   name_size = grn_obj_name(ctx, table, name, sizeof(name));
   if (name_size == 0) {
     grn_strcpy(name, sizeof(name), "(anonymous)");
-    name_size = strlen(name);
+    name_size = (unsigned int)strlen(name);
   }
 
   if (GRN_TEXT_LEN(modules) == 0) {
@@ -11355,7 +11355,7 @@ grn_obj_remove_force(grn_ctx *ctx, const char *name, int name_size)
 
   db = ctx->impl->db;
   if (name_size == -1) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
   grn_id id = grn_table_get(ctx, db, name, name_size);
   if (id == GRN_ID_NIL) {
@@ -11479,7 +11479,7 @@ grn_ctx_remove(grn_ctx *ctx, const char *name, int name_size, uint32_t flags)
   GRN_API_ENTER;
 
   if (name_size < 0) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
 
   if (!(ctx->impl && ctx->impl->db)) {
@@ -14758,7 +14758,7 @@ grn_obj_flush_without_lock(grn_ctx *ctx, grn_obj *obj, const char *tag)
       }
     }
     grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(DB)");
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
     flushed = true;
     break;
   case GRN_TABLE_DAT_KEY:
@@ -14794,7 +14794,7 @@ grn_obj_flush_without_lock(grn_ctx *ctx, grn_obj *obj, const char *tag)
                  GRN_TABLE_MAX_KEY_SIZE,
                  grn_obj_type_to_string(obj->header.type));
       grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, ")");
-      name_size = strlen(name);
+      name_size = (int)strlen(name);
     }
   }
 
@@ -15129,9 +15129,9 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
 static grn_obj *
 deftype(grn_ctx *ctx, const char *name, grn_obj_flags flags, unsigned int size)
 {
-  grn_obj *o = grn_ctx_get(ctx, name, strlen(name));
+  grn_obj *o = grn_ctx_get(ctx, name, (int)strlen(name));
   if (!o) {
-    o = grn_type_create(ctx, name, strlen(name), flags, size);
+    o = grn_type_create(ctx, name, (unsigned int)strlen(name), flags, size);
   }
   return o;
 }
