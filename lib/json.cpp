@@ -110,6 +110,8 @@ namespace {
 
 #ifdef GRN_WITH_SIMDJSON
   struct TagWriter {
+    virtual ~TagWriter() = default;
+
     virtual void
     write(Type type, bool is_embedded, uint8_t metadata, uint32_t data) = 0;
 
