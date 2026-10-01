@@ -2389,7 +2389,10 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
   if (grn_type_id_is_compatible(ctx,
                                 table->header.domain,
                                 key->header.domain)) {
-    id = grn_table_get(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key));
+    id = grn_table_get(ctx,
+                       table,
+                       GRN_TEXT_VALUE(key),
+                       (unsigned int)GRN_TEXT_LEN(key));
   } else {
     grn_rc rc;
     grn_obj buf;
@@ -2398,7 +2401,10 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
       grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
       ERR_CAST(table, domain, key);
     } else {
-      id = grn_table_get(ctx, table, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+      id = grn_table_get(ctx,
+                         table,
+                         GRN_TEXT_VALUE(&buf),
+                         (unsigned int)GRN_TEXT_LEN(&buf));
     }
     GRN_OBJ_FIN(ctx, &buf);
   }
@@ -2418,7 +2424,7 @@ grn_table_add_by_key(grn_ctx *ctx,
     id = grn_table_add_internal(ctx,
                                 table,
                                 GRN_TEXT_VALUE(key),
-                                GRN_TEXT_LEN(key),
+                                (unsigned int)GRN_TEXT_LEN(key),
                                 options);
   } else {
     grn_rc rc;
@@ -2431,7 +2437,7 @@ grn_table_add_by_key(grn_ctx *ctx,
       id = grn_table_add_internal(ctx,
                                   table,
                                   GRN_TEXT_VALUE(&buf),
-                                  GRN_TEXT_LEN(&buf),
+                                  (unsigned int)GRN_TEXT_LEN(&buf),
                                   options);
     }
     GRN_OBJ_FIN(ctx, &buf);
@@ -4198,7 +4204,8 @@ grn_table_search(grn_ctx *ctx,
             const char *sp = key;
             const char *se = sp + key_size;
             for (; sp < se; sp += len) {
-              if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
+              if ((tid =
+                     grn_pat_lcp_search(ctx, pat, sp, (uint32_t)(se - sp)))) {
                 grn_table_add(ctx, res, &tid, sizeof(grn_id), NULL);
                 /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
               }
@@ -4267,7 +4274,10 @@ grn_table_search(grn_ctx *ctx,
             const char *sp = key;
             const char *se = sp + key_size;
             for (; sp < se; sp += len) {
-              if ((tid = grn_dat_lcp_search(ctx, dat, sp, se - sp))) {
+              if ((tid = grn_dat_lcp_search(ctx,
+                                            dat,
+                                            sp,
+                                            (unsigned int)(se - sp)))) {
                 grn_table_add(ctx, res, &tid, sizeof(grn_id), NULL);
                 /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
               }
@@ -4587,7 +4597,7 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
     rc = grn_obj_cast(ctx, query, &casted_query, false);
     if (rc == GRN_SUCCESS) {
       key = GRN_BULK_HEAD(&casted_query);
-      key_len = GRN_BULK_VSIZE(&casted_query);
+      key_len = (unsigned int)GRN_BULK_VSIZE(&casted_query);
       if (optarg) {
         optarg->query_domain = &key_type;
       }
@@ -4595,7 +4605,7 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx,
   } else {
     rc = GRN_SUCCESS;
     key = GRN_BULK_HEAD(query);
-    key_len = GRN_BULK_VSIZE(query);
+    key_len = (unsigned int)GRN_BULK_VSIZE(query);
     if (optarg) {
       optarg->query_domain = &(query->header.domain);
     }
@@ -4789,7 +4799,7 @@ grn_obj_search(grn_ctx *ctx,
     case GRN_TABLE_HASH_KEY:
       {
         const void *key = GRN_BULK_HEAD(query);
-        uint32_t key_size = GRN_BULK_VSIZE(query);
+        uint32_t key_size = (uint32_t)GRN_BULK_VSIZE(query);
         bool need_cast = false;
         grn_obj casted_query;
         if (!grn_type_id_is_compatible(ctx,
@@ -4799,7 +4809,7 @@ grn_obj_search(grn_ctx *ctx,
           GRN_VALUE_FIX_SIZE_INIT(&casted_query, 0, obj->header.domain);
           if (grn_obj_cast(ctx, query, &casted_query, false) == GRN_SUCCESS) {
             key = GRN_BULK_HEAD(&casted_query);
-            key_size = GRN_BULK_VSIZE(&casted_query);
+            key_size = (uint32_t)GRN_BULK_VSIZE(&casted_query);
           }
         }
         grn_operator mode = optarg ? optarg->mode : GRN_OP_EXACT;
