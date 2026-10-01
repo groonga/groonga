@@ -2389,12 +2389,16 @@ grn_ja_find_free_segment(grn_ja *ja)
   return seg;
 }
 
-static inline bool
-grn_ja_is_full(grn_ja *ja)
-{
-  uint32_t seg = grn_ja_find_free_segment(ja);
-  return (seg == grn_ja_n_data_segments);
-}
+/*
+ * Temporarily disable this function to suppress the unused-function error.
+ * This function will be used for column partitioning.
+ */
+// static inline bool
+// grn_ja_is_full(grn_ja *ja)
+// {
+//   uint32_t seg = grn_ja_find_free_segment(ja);
+//   return (seg == grn_ja_n_data_segments);
+// }
 
 static grn_rc
 grn_ja_free_huge(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
